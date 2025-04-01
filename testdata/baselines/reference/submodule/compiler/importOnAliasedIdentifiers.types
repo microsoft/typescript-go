@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/importOnAliasedIdentifiers.ts] ////
+
+=== importOnAliasedIdentifiers.ts ===
+module A {
+>A : typeof A
+
+    export interface X { s: string }
+>s : string
+
+    export var X: X;
+>X : X
+}
+module B {
+>B : typeof B
+
+    interface A { n: number }
+>n : number
+
+    import Y = A; // Alias only for module A
+>Y : typeof A
+>A : typeof A
+
+    import Z = A.X; // Alias for both type and member A.X
+>Z : X
+>A : typeof A
+>X : X
+
+    var v: Z = Z;
+>v : X
+>Z : X
+}

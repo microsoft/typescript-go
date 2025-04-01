@@ -125,6 +125,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 	saveParsingMode := p.scanner.JSDocParsingMode
 	saveScannerState := p.scanner.Mark()
 	saveDiagnosticsLength := len(p.diagnostics)
+	saveHasParseError := p.hasParseError
 
 	// initial indent is start+4 to account for leading `/** `
 	// + 1 because \n is one character before the first character in the line and,
@@ -153,6 +154,7 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 	p.scanner.JSDocParsingMode = saveParsingMode
 	p.scanner.Rewind(saveScannerState)
 	p.token = saveToken
+	p.hasParseError = saveHasParseError
 
 	return comment
 }
@@ -977,18 +979,11 @@ func (p *Parser) parseJSDocTypeNameWithNamespace(nested bool) *ast.Node {
 	typeNameOrNamespaceName := p.parseJSDocIdentifierName(nil)
 	if p.parseOptional(ast.KindDotToken) {
 		body := p.parseJSDocTypeNameWithNamespace(true)
-		var flags ast.NodeFlags
-		if nested {
-			flags = ast.NodeFlagsNestedNamespace
-		}
-		jsDocNamespaceNode := p.factory.NewModuleDeclaration(nil, typeNameOrNamespaceName, body, flags)
+		jsDocNamespaceNode := p.factory.NewModuleDeclaration(nil /*modifiers*/, ast.KindModuleKeyword, typeNameOrNamespaceName, body)
 		p.finishNode(jsDocNamespaceNode, start)
 		return jsDocNamespaceNode
 	}
 
-	if nested {
-		typeNameOrNamespaceName.Flags |= ast.NodeFlagsIdentifierIsInJSDocNamespace
-	}
 	return typeNameOrNamespaceName
 }
 

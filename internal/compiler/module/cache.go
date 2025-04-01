@@ -1,7 +1,6 @@
 package module
 
 import (
-	"slices"
 	"strings"
 	"sync"
 
@@ -68,7 +67,7 @@ func newResolutionCache[T comparable](
 ) *resolutionCache[T] {
 	return &resolutionCache[T]{
 		perDirectoryResolutionCache:    newPerDirectoryResolutionCache[T](currentDirectory, useCaseSensitiveFileNames, options, optionsToRedirectsKey),
-		nonRelativeNameResolutionCache: newNonRelativeNameResolutionCache[T](currentDirectory, useCaseSensitiveFileNames, options, getResolvedFileName, optionsToRedirectsKey),
+		nonRelativeNameResolutionCache: newNonRelativeNameResolutionCache(currentDirectory, useCaseSensitiveFileNames, options, getResolvedFileName, optionsToRedirectsKey),
 		isReadonly:                     isReadonly,
 	}
 }
@@ -96,9 +95,9 @@ func (c *resolutionCache[T]) appendLookupLocations(resolved T, failedLookupLocat
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	lookupLocations := c.lookupLocations[resolved]
-	lookupLocations.FailedLookupLocations = slices.Concat(lookupLocations.FailedLookupLocations, failedLookupLocations)
-	lookupLocations.AffectingLocations = slices.Concat(lookupLocations.AffectingLocations, affectingLocations)
-	lookupLocations.ResolutionDiagnostics = slices.Concat(lookupLocations.ResolutionDiagnostics, resolutionDiagnostics)
+	lookupLocations.FailedLookupLocations = append(lookupLocations.FailedLookupLocations, failedLookupLocations...)
+	lookupLocations.AffectingLocations = append(lookupLocations.AffectingLocations, affectingLocations...)
+	lookupLocations.ResolutionDiagnostics = append(lookupLocations.ResolutionDiagnostics, resolutionDiagnostics...)
 }
 
 type perDirectoryResolutionCache[T any] struct {

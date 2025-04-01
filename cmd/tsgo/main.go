@@ -6,9 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"path/filepath"
 	"runtime"
-	"runtime/pprof"
 	"slices"
 	"strconv"
 	"strings"
@@ -21,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -121,19 +120,26 @@ func parseArgs() *cliOptions {
 }
 
 func main() {
+	os.Exit(runMain())
+}
+
+func runMain() int {
+	// TypeScript uses ANSI escape sequences which cmd.exe won't parse without enabling virtual terminal processing.
+	enableVirtualTerminalProcessing()
+
 	if args := os.Args[1:]; len(args) > 0 {
 		switch args[0] {
 		case "tsc":
-			os.Exit(int(execute.CommandLine(newSystem(), nil, args[1:])))
+			return int(execute.CommandLine(newSystem(), nil, args[1:]))
 		case "lsp":
-			os.Exit(runLSP(args[1:]))
+			return runLSP(args[1:])
 		}
 	}
 	opts := parseArgs()
 
 	if opts.devel.pprofDir != "" {
-		profileSession := beginProfiling(opts.devel.pprofDir)
-		defer profileSession.stop()
+		profileSession := pprof.BeginProfiling(opts.devel.pprofDir, os.Stdout)
+		defer profileSession.Stop()
 	}
 
 	startTime := time.Now()
@@ -141,7 +147,7 @@ func main() {
 	currentDirectory, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
-		os.Exit(1)
+		return 1
 	}
 
 	fs := bundled.WrapFS(osvfs.FS())
@@ -152,7 +158,7 @@ func main() {
 		configFileName = tspath.CombinePaths(configFileName, "tsconfig.json")
 		if !fs.FileExists(configFileName) {
 			fmt.Fprintf(os.Stderr, "Error: The file %v does not exist.\n", configFileName)
-			os.Exit(1)
+			return 1
 		}
 	}
 
@@ -176,7 +182,7 @@ func main() {
 
 	if compilerOptions.ListFilesOnly.IsTrue() {
 		listFiles(program)
-		os.Exit(0)
+		return 0
 	}
 
 	if compilerOptions.ShowConfig.IsTrue() {
@@ -184,9 +190,9 @@ func main() {
 		enc.SetIndent("", "    ")
 		if err := enc.Encode(compilerOptions); err != nil {
 			fmt.Fprintf(os.Stderr, "Error encoding JSON: %v\n", err)
-			os.Exit(1)
+			return 1
 		}
-		os.Exit(0)
+		return 0
 	}
 
 	var bindTime, checkTime time.Duration
@@ -194,7 +200,7 @@ func main() {
 	diagnostics := program.GetConfigFileParsingDiagnostics()
 	if len(diagnostics) != 0 {
 		printDiagnostics(diagnostics, host, compilerOptions)
-		os.Exit(1)
+		return 1
 	}
 
 	diagnostics = program.GetSyntacticDiagnostics(nil)
@@ -218,7 +224,7 @@ func main() {
 	var emitTime time.Duration
 	if compilerOptions.NoEmit.IsFalseOrUnknown() {
 		emitStart := time.Now()
-		result := program.Emit(&ts.EmitOptions{})
+		result := program.Emit(ts.EmitOptions{})
 		diagnostics = append(diagnostics, result.Diagnostics...)
 		emitTime = time.Since(emitStart)
 	}
@@ -226,23 +232,21 @@ func main() {
 	totalTime := time.Since(startTime)
 
 	var memStats runtime.MemStats
+	// GC must be called twice to allow things to settle.
 	runtime.GC()
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 
-	if !opts.devel.quiet && len(diagnostics) != 0 {
-		printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+	exitCode := 0
+	if len(diagnostics) != 0 {
+		if !opts.devel.quiet {
+			printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+		}
+		exitCode = 1
 	}
 
-	var unsupportedExtensions []string
-	for _, file := range program.SourceFiles() {
-		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
-			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
-		}
-	}
-	if len(unsupportedExtensions) != 0 {
-		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not fully type-checked.\n", strings.Join(unsupportedExtensions, ", "))
+	if exts := program.UnsupportedExtensions(); len(exts) != 0 {
+		fmt.Fprintf(os.Stderr, "Warning: The project contains unsupported file types (%s), which are currently not fully type-checked.\n", strings.Join(exts, ", "))
 	}
 
 	if compilerOptions.ListFiles.IsTrue() {
@@ -252,7 +256,13 @@ func main() {
 	var stats table
 
 	stats.add("Files", len(program.SourceFiles()))
+	stats.add("Lines", program.LineCount())
+	stats.add("Identifiers", program.IdentifierCount())
+	stats.add("Symbols", program.SymbolCount())
 	stats.add("Types", program.TypeCount())
+	stats.add("Instantiations", program.InstantiationCount())
+	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 	stats.add("Parse time", parseTime)
 	if bindTime != 0 {
 		stats.add("Bind time", bindTime)
@@ -264,10 +274,10 @@ func main() {
 		stats.add("Emit time", emitTime)
 	}
 	stats.add("Total time", totalTime)
-	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
-	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 
 	stats.print()
+
+	return exitCode
 }
 
 type tableRow struct {
@@ -303,6 +313,14 @@ func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3fs", d.Seconds())
 }
 
+func identifierCount(p *ts.Program) int {
+	count := 0
+	for _, file := range p.SourceFiles() {
+		count += file.IdentifierCount
+	}
+	return count
+}
+
 func listFiles(p *ts.Program) {
 	for _, file := range p.SourceFiles() {
 		fmt.Println(file.FileName())
@@ -330,55 +348,4 @@ func printDiagnostics(diagnostics []*ast.Diagnostic, host ts.CompilerHost, compi
 			printDiagnostic(diagnostic, 0, formatOpts.ComparePathsOptions)
 		}
 	}
-}
-
-type profileSession struct {
-	cpuFilePath string
-	memFilePath string
-	cpuFile     *os.File
-	memFile     *os.File
-}
-
-func beginProfiling(profileDir string) *profileSession {
-	if err := os.MkdirAll(profileDir, 0o755); err != nil {
-		panic(err)
-	}
-
-	pid := os.Getpid()
-
-	cpuProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-cpuprofile.pb.gz", pid))
-	memProfilePath := filepath.Join(profileDir, fmt.Sprintf("%d-memprofile.pb.gz", pid))
-	cpuFile, err := os.Create(cpuProfilePath)
-	if err != nil {
-		panic(err)
-	}
-	memFile, err := os.Create(memProfilePath)
-	if err != nil {
-		panic(err)
-	}
-
-	if err := pprof.StartCPUProfile(cpuFile); err != nil {
-		panic(err)
-	}
-
-	return &profileSession{
-		cpuFilePath: cpuProfilePath,
-		memFilePath: memProfilePath,
-		cpuFile:     cpuFile,
-		memFile:     memFile,
-	}
-}
-
-func (p *profileSession) stop() {
-	pprof.StopCPUProfile()
-	err := pprof.Lookup("allocs").WriteTo(p.memFile, 0)
-	if err != nil {
-		panic(err)
-	}
-
-	p.cpuFile.Close()
-	p.memFile.Close()
-
-	fmt.Printf("CPU profile: %v\n", p.cpuFilePath)
-	fmt.Printf("Memory profile: %v\n", p.memFilePath)
 }

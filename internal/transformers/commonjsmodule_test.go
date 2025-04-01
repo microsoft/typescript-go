@@ -9,7 +9,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+type fakeSourceFileMetaDataProvider struct{}
+
+func (p *fakeSourceFileMetaDataProvider) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
+	return nil
+}
 
 func TestCommonJSModuleTransformer(t *testing.T) {
 	t.Parallel()
@@ -810,6 +817,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const other_1 = require("other");
 ({ a: other_1.a });`,
 		},
+		{
+			title: "ShorthandPropertyAssignment#2",
+			input: `import { a } from "other"
+({
+    a,
+})`,
+			output: `"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const other_1 = require("other");
+({
+    a: other_1.a,
+});`,
+		},
 
 		// CallExpression
 		{
@@ -970,6 +990,17 @@ const isNotOverloadAndNotAccessor = (0, ts_js_1.and)(isNotOverload, isNotAccesso
 		},
 
 		{
+			title: "Identifier#6 (in template literal)",
+			input: `export var x = 1;
+` + "`" + `${x}` + "`" + `;`,
+			output: `"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 1;
+` + "`" + `${exports.x}` + "`" + `;`,
+		},
+
+		{
 			title: "Other",
 			input: `export const a = class {
     p = 10;
@@ -1002,9 +1033,11 @@ exports.a = a;`,
 			}
 
 			emitContext := printer.NewEmitContext()
-			resolver := binder.NewReferenceResolver(binder.ReferenceResolverHooks{})
+			resolver := binder.NewReferenceResolver(&compilerOptions, binder.ReferenceResolverHooks{})
+			program := &fakeSourceFileMetaDataProvider{}
+
 			file = NewRuntimeSyntaxTransformer(emitContext, &compilerOptions, resolver).TransformSourceFile(file)
-			file = NewCommonJSModuleTransformer(emitContext, &compilerOptions, resolver).TransformSourceFile(file)
+			file = NewCommonJSModuleTransformer(emitContext, &compilerOptions, resolver, program).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}

@@ -9,6 +9,8 @@ import (
 type TypeEraserTransformer struct {
 	Transformer
 	compilerOptions *core.CompilerOptions
+	parentNode      *ast.Node
+	currentNode     *ast.Node
 }
 
 func NewTypeEraserTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions) *Transformer {
@@ -16,12 +18,38 @@ func NewTypeEraserTransformer(emitContext *printer.EmitContext, compilerOptions 
 	return tx.newTransformer(tx.visit, emitContext)
 }
 
+// Pushes a new child node onto the ancestor tracking stack, returning the grandparent node to be restored later via `popNode`.
+func (tx *TypeEraserTransformer) pushNode(node *ast.Node) (grandparentNode *ast.Node) {
+	grandparentNode = tx.parentNode
+	tx.parentNode = tx.currentNode
+	tx.currentNode = node
+	return
+}
+
+// Pops the last child node off the ancestor tracking stack, restoring the grandparent node.
+func (tx *TypeEraserTransformer) popNode(grandparentNode *ast.Node) {
+	tx.currentNode = tx.parentNode
+	tx.parentNode = grandparentNode
+}
+
+func (tx *TypeEraserTransformer) elide(node *ast.Statement) *ast.Statement {
+	statement := tx.factory.NewNotEmittedStatement()
+	tx.emitContext.SetOriginal(statement, node)
+	statement.Loc = node.Loc
+	return statement
+}
+
 func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
-	// !!! TransformFlags were traditionally used here to skip over subtrees that contain no TypeScript syntax
-	if ast.IsStatement(node) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) {
-		// !!! Use NotEmittedStatement to preserve comments
-		return nil
+	if node.SubtreeFacts()&ast.SubtreeContainsTypeScript == 0 {
+		return node
 	}
+
+	if ast.IsStatement(node) && ast.HasSyntacticModifier(node, ast.ModifierFlagsAmbient) {
+		return tx.elide(node)
+	}
+
+	grandparentNode := tx.pushNode(node)
+	defer tx.popNode(grandparentNode)
 
 	switch node.Kind {
 	case
@@ -68,10 +96,12 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		return nil
 
 	case ast.KindTypeAliasDeclaration,
-		ast.KindInterfaceDeclaration,
-		ast.KindNamespaceExportDeclaration:
+		ast.KindInterfaceDeclaration:
 		// TypeScript type-only declarations are elided.
-		// !!! Use NotEmittedStatement to preserve comments
+		return tx.elide(node)
+
+	case ast.KindNamespaceExportDeclaration:
+		// TypeScript namespace export declarations are elided.
 		return nil
 
 	case ast.KindModuleDeclaration:
@@ -79,7 +109,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			!isInstantiatedModule(node, tx.compilerOptions.ShouldPreserveConstEnums()) ||
 			getInnermostModuleDeclarationFromDottedModule(node.AsModuleDeclaration()).Body == nil {
 			// TypeScript module declarations are elided if they are not instantiated or have no body
-			return nil
+			return tx.elide(node)
 		}
 		return tx.visitor.VisitEachChild(node)
 
@@ -151,7 +181,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		n := node.AsFunctionDeclaration()
 		if n.Body == nil {
 			// TypeScript overloads are elided
-			return nil
+			return tx.elide(node)
 		}
 		return tx.factory.UpdateFunctionDeclaration(n, tx.visitor.VisitModifiers(n.Modifiers()), n.AsteriskToken, tx.visitor.VisitNode(n.Name()), nil, tx.visitor.VisitNodes(n.Parameters), nil, tx.visitor.VisitNode(n.Body))
 
@@ -169,7 +199,12 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		n := node.AsParameterDeclaration()
-		return tx.factory.UpdateParameterDeclaration(n, nil, n.DotDotDotToken, tx.visitor.VisitNode(n.Name()), nil, nil, tx.visitor.VisitNode(n.Initializer))
+		// preserve parameter property modifiers to be handled by the runtime transformer
+		var modifiers *ast.ModifierList
+		if ast.IsParameterPropertyDeclaration(node, tx.parentNode) {
+			modifiers = extractModifiers(tx.emitContext, n.Modifiers(), ast.ModifierFlagsParameterPropertyModifier)
+		}
+		return tx.factory.UpdateParameterDeclaration(n, modifiers, n.DotDotDotToken, tx.visitor.VisitNode(n.Name()), nil, nil, tx.visitor.VisitNode(n.Initializer))
 
 	case ast.KindCallExpression:
 		n := node.AsCallExpression()
@@ -183,28 +218,20 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		n := node.AsTaggedTemplateExpression()
 		return tx.factory.UpdateTaggedTemplateExpression(n, tx.visitor.VisitNode(n.Tag), n.QuestionDotToken, nil, tx.visitor.VisitNode(n.Template))
 
-	case ast.KindNonNullExpression:
-		// !!! Use PartiallyEmittedExpression to preserve comments
-		return tx.visitor.VisitNode(node.AsNonNullExpression().Expression)
-
-	case ast.KindTypeAssertionExpression:
-		// !!! Use PartiallyEmittedExpression to preserve comments
-		return tx.visitor.VisitNode(node.AsTypeAssertion().Expression)
-
-	case ast.KindAsExpression:
-		// !!! Use PartiallyEmittedExpression to preserve comments
-		return tx.visitor.VisitNode(node.AsAsExpression().Expression)
-
-	case ast.KindSatisfiesExpression:
-		// !!! Use PartiallyEmittedExpression to preserve comments
-		return tx.visitor.VisitNode(node.AsSatisfiesExpression().Expression)
+	case ast.KindNonNullExpression, ast.KindTypeAssertionExpression, ast.KindAsExpression, ast.KindSatisfiesExpression:
+		partial := tx.factory.NewPartiallyEmittedExpression(tx.visitor.VisitNode(node.Expression()))
+		tx.emitContext.SetOriginal(partial, node)
+		partial.Loc = node.Loc
+		return partial
 
 	case ast.KindParenthesizedExpression:
 		n := node.AsParenthesizedExpression()
 		expression := ast.SkipOuterExpressions(n.Expression, ^(ast.OEKTypeAssertions | ast.OEKExpressionsWithTypeArguments))
 		if ast.IsAssertionExpression(expression) || ast.IsSatisfiesExpression(expression) {
-			// !!! Use PartiallyEmittedExpression to preserve comments
-			return tx.visitor.VisitNode(n.Expression)
+			partial := tx.factory.NewPartiallyEmittedExpression(tx.visitor.VisitNode(n.Expression))
+			tx.emitContext.SetOriginal(partial, node)
+			partial.Loc = node.Loc
+			return partial
 		}
 		return tx.visitor.VisitEachChild(node)
 
@@ -236,6 +263,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		return tx.factory.UpdateImportDeclaration(n, n.Modifiers(), importClause, n.ModuleSpecifier, n.Attributes)
+
 	case ast.KindImportClause:
 		n := node.AsImportClause()
 		if n.IsTypeOnly {
@@ -249,14 +277,20 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		return tx.factory.UpdateImportClause(n, false /*isTypeOnly*/, name, namedBindings)
+
 	case ast.KindNamedImports:
 		n := node.AsNamedImports()
+		if len(n.Elements.Nodes) == 0 {
+			// Do not elide a side-effect only import declaration.
+			return node
+		}
 		elements := tx.visitor.VisitNodes(n.Elements)
 		if !tx.compilerOptions.VerbatimModuleSyntax.IsTrue() && len(elements.Nodes) == 0 {
 			// all import specifiers were elided
 			return nil
 		}
 		return tx.factory.UpdateNamedImports(n, elements)
+
 	case ast.KindImportSpecifier:
 		n := node.AsImportSpecifier()
 		if n.IsTypeOnly {
@@ -264,6 +298,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		return node
+
 	case ast.KindExportDeclaration:
 		n := node.AsExportDeclaration()
 		if n.IsTypeOnly {
@@ -279,14 +314,21 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			}
 		}
 		return tx.factory.UpdateExportDeclaration(n, nil /*modifiers*/, false /*isTypeOnly*/, exportClause, tx.visitor.VisitNode(n.ModuleSpecifier), tx.visitor.VisitNode(n.Attributes))
+
 	case ast.KindNamedExports:
 		n := node.AsNamedExports()
+		if len(n.Elements.Nodes) == 0 {
+			// Do not elide an empty export declaration.
+			return node
+		}
+
 		elements := tx.visitor.VisitNodes(n.Elements)
 		if !tx.compilerOptions.VerbatimModuleSyntax.IsTrue() && len(elements.Nodes) == 0 {
 			// all export specifiers were elided
 			return nil
 		}
 		return tx.factory.UpdateNamedExports(n, elements)
+
 	case ast.KindExportSpecifier:
 		n := node.AsExportSpecifier()
 		if n.IsTypeOnly {
@@ -294,6 +336,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		return node
+
 	default:
 		return tx.visitor.VisitEachChild(node)
 	}

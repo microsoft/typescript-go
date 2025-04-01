@@ -1,0 +1,33 @@
+//// [tests/cases/conformance/jsx/tsxDefaultAttributesResolution1.tsx] ////
+
+=== file.tsx ===
+import React = require('react');
+>React : typeof __React
+
+interface Prop {
+    x: boolean;
+>x : boolean
+}
+class Poisoned extends React.Component<Prop, {}> {
+>Poisoned : Poisoned
+>React.Component : Component<Prop, {}>
+>React : typeof __React
+>Component : typeof Component
+
+    render() {
+>render : () => any
+
+        return <div>Hello</div>;
+><div>Hello</div> : any
+>div : any
+>div : any
+    }
+}
+
+// OK
+let p = <Poisoned x/>;
+>p : any
+><Poisoned x/> : any
+>Poisoned : typeof Poisoned
+>x : any
+

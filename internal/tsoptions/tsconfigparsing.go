@@ -139,18 +139,11 @@ func parseOwnConfigOfJsonSourceFile(
 		}
 		if parentOption != nil && parentOption.Name != "undefined" && value != nil {
 			if option != nil && option.Name != "" {
-				commandLineOptionEnumMapVal := option.EnumMap()
-				if commandLineOptionEnumMapVal != nil {
-					val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
-					if ok {
-						propertySetErrors = append(propertySetErrors, ParseCompilerOptions(option.Name, val, options)...)
-					}
-				} else {
-					propertySetErrors = append(propertySetErrors, ParseCompilerOptions(option.Name, value, options)...)
-				}
+				propertySetErrors = append(propertySetErrors, ParseCompilerOptions(option.Name, value, options)...)
 			} else if keyText != "" {
 				if parentOption.ElementOptions != nil {
-					propertySetErrors = append(propertySetErrors, ast.NewCompilerDiagnostic(diagnostics.Option_build_must_be_the_first_command_line_argument, keyText))
+					// !!! TODO: support suggestion
+					propertySetErrors = append(propertySetErrors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, propertyAssignment.Name(), diagnostics.Unknown_compiler_option_0, keyText))
 				} else {
 					// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
@@ -275,8 +268,7 @@ func isCompilerOptionsValue(option *CommandLineOption, value any) bool {
 			return reflect.TypeOf(value) == orderedMapType
 		}
 		if option.Kind == "enum" && reflect.TypeOf(value).Kind() == reflect.String {
-			_, ok := option.EnumMap().Get(strings.ToLower(value.(string)))
-			return ok || (option.DeprecatedKeys() != nil && option.DeprecatedKeys().Has(strings.ToLower(value.(string))))
+			return true
 		}
 	}
 	return false
@@ -312,8 +304,8 @@ func convertJsonOptionOfListType(
 ) ([]any, []*ast.Diagnostic) {
 	var expression *ast.Node
 	var errors []*ast.Diagnostic
-	if _, ok := values.([]any); ok {
-		mappedValues := core.MapIndex(values.([]any), func(v any, index int) any {
+	if values, ok := values.([]any); ok {
+		mappedValues := core.MapIndex(values, func(v any, index int) any {
 			if valueExpression != nil {
 				expression = valueExpression.AsArrayLiteralExpression().Elements.Nodes[index]
 			}
@@ -375,18 +367,19 @@ func convertJsonOption(
 		}
 	}
 	if isCompilerOptionsValue(opt, value) {
-		optType := opt.Kind
-		if optType == "list" {
+		switch opt.Kind {
+		case CommandLineOptionTypeList:
 			return convertJsonOptionOfListType(opt, value, basePath, propertyAssignment, valueExpression, sourceFile) // as ArrayLiteralExpression | undefined
-		} else if optType == "listOrElement" {
+		case CommandLineOptionTypeListOrElement:
 			if reflect.TypeOf(value).Kind() == reflect.Slice {
 				return convertJsonOptionOfListType(opt, value, basePath, propertyAssignment, valueExpression, sourceFile)
 			} else {
 				return convertJsonOption(opt.Elements(), value, basePath, propertyAssignment, valueExpression, sourceFile)
 			}
-		} else if !(reflect.TypeOf(optType).Kind() == reflect.String) {
+		case CommandLineOptionTypeEnum:
 			return convertJsonOptionOfEnumType(opt, value.(string), valueExpression, sourceFile)
 		}
+
 		validatedValue, errors := validateJsonOptionValue(opt, value, valueExpression, sourceFile)
 		if len(errors) > 0 || validatedValue == nil {
 			return validatedValue, errors
@@ -516,21 +509,24 @@ func convertOptionsFromJson[O optionParser](optionsNameMap map[string]*CommandLi
 	var errors []*ast.Diagnostic
 	for key, value := range jsonMap.Entries() {
 		opt, ok := optionsNameMap[key]
+		if !ok {
+			// !!! TODO?: support suggestion
+			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0, key))
+			continue
+		}
+
 		commandLineOptionEnumMapVal := opt.EnumMap()
 		if commandLineOptionEnumMapVal != nil {
 			val, ok := commandLineOptionEnumMapVal.Get(strings.ToLower(value.(string)))
 			if ok {
 				errors = result.ParseOption(key, val)
 			}
-		} else if ok {
+		} else {
 			convertJson, err := convertJsonOption(opt, value, basePath, nil, nil, nil)
 			errors = append(errors, err...)
 			compilerOptionsErr := result.ParseOption(key, convertJson)
 			errors = append(errors, compilerOptionsErr...)
 		}
-		// else {
-		//     errors.push(createUnknownOptionError(id, diagnostics));
-		// }
 	}
 	return result, errors
 }
@@ -549,6 +545,8 @@ func convertArrayLiteralExpressionToJson(
 	}
 	// Filter out invalid values
 	if len(elements) == 0 {
+		// Always return an empty array, even if elements is nil.
+		// The parser will produce nil slices instead of allocating empty ones.
 		return []any{}, nil
 	}
 	var errors []*ast.Diagnostic
@@ -913,26 +911,28 @@ func parseConfig(
 				}
 				if propertyName == "include" || propertyName == "exclude" || propertyName == "files" {
 					if rawMap, ok := extendsRaw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
-						value := core.Map(rawMap.GetOrZero(propertyName).([]any), func(path any) any {
-							if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
-								return path.(string)
-							} else {
-								if relativeDifference == "" {
-									t := tspath.ComparePathsOptions{
-										UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-										CurrentDirectory:          host.GetCurrentDirectory(),
+						if slice, _ := rawMap.GetOrZero(propertyName).([]any); slice != nil {
+							value := core.Map(slice, func(path any) any {
+								if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
+									return path.(string)
+								} else {
+									if relativeDifference == "" {
+										t := tspath.ComparePathsOptions{
+											UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+											CurrentDirectory:          host.GetCurrentDirectory(),
+										}
+										relativeDifference = tspath.ConvertToRelativePath(basePath, t)
 									}
-									relativeDifference = tspath.ConvertToRelativePath(basePath, t)
+									return tspath.CombinePaths(relativeDifference, path.(string))
 								}
-								return tspath.CombinePaths(relativeDifference, path.(string))
+							})
+							if propertyName == "include" {
+								result.include = value
+							} else if propertyName == "exclude" {
+								result.exclude = value
+							} else if propertyName == "files" {
+								result.files = value
 							}
-						})
-						if propertyName == "include" {
-							result.include = value
-						} else if propertyName == "exclude" {
-							result.exclude = value
-						} else if propertyName == "files" {
-							result.files = value
 						}
 					}
 				}
@@ -1032,7 +1032,7 @@ func parseJsonConfigFileContentWorker(
 	}
 	getPropFromRaw := func(prop string, validateElement func(value any) bool, elementTypeName string) propOfRaw {
 		value, exists := rawConfig.Get(prop)
-		if exists {
+		if exists && value != nil {
 			if reflect.TypeOf(value).Kind() == reflect.Slice {
 				result := rawConfig.GetOrZero(prop)
 				if _, ok := result.([]any); ok {
@@ -1079,7 +1079,7 @@ func parseJsonConfigFileContentWorker(
 		outDir := parsedConfig.options.OutDir
 		declarationDir := parsedConfig.options.DeclarationDir
 		if outDir != "" || declarationDir != "" {
-			values := []any{}
+			var values []any
 			if outDir != "" {
 				values = append(values, outDir)
 			}
@@ -1422,8 +1422,7 @@ func removeWildcardFilesWithLowerPriorityExtension(file string, wildcardFiles co
 // basePath is the base path for any relative file specifications.
 // options is the Compiler options.
 // host is the host used to resolve files and directories.
-// extraFileExtensions optionaly file extra file extension information from host
-
+// extraFileExtensions optionally file extra file extension information from host
 func getFileNamesFromConfigSpecs(
 	configFileSpecs configFileSpecs,
 	basePath string, // considering this is the current directory

@@ -24,7 +24,7 @@ func isConstEnumOrConstEnumOnlyModule(s *ast.Symbol) bool {
 
 func (r *emitResolver) IsReferencedAliasDeclaration(node *ast.Node) bool {
 	c := r.checker
-	if !c.canCollectSymbolAliasAccessabilityData || !ast.IsParseTreeNode(node) {
+	if !c.canCollectSymbolAliasAccessibilityData || !ast.IsParseTreeNode(node) {
 		return true
 	}
 
@@ -50,7 +50,7 @@ func (r *emitResolver) IsReferencedAliasDeclaration(node *ast.Node) bool {
 
 func (r *emitResolver) IsValueAliasDeclaration(node *ast.Node) bool {
 	c := r.checker
-	if !c.canCollectSymbolAliasAccessabilityData || !ast.IsParseTreeNode(node) {
+	if !c.canCollectSymbolAliasAccessibilityData || !ast.IsParseTreeNode(node) {
 		return true
 	}
 
@@ -81,7 +81,7 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 			core.Some(exportClause.AsNamedExports().Elements.Nodes, r.isValueAliasDeclaration))
 	case ast.KindExportAssignment:
 		if node.AsExportAssignment().Expression != nil && node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
-			return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node) /*excludeTypeOnlyValues*/, true)
+			return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), true /*excludeTypeOnlyValues*/)
 		}
 		return true
 	}
@@ -97,7 +97,7 @@ func (r *emitResolver) isAliasResolvedToValue(symbol *ast.Symbol, excludeTypeOnl
 		if container := ast.GetSourceFileOfNode(symbol.ValueDeclaration); container != nil {
 			fileSymbol := c.getSymbolOfDeclaration(container.AsNode())
 			// Ensures cjs export assignment is setup, since this symbol may point at, and merge with, the file itself.
-			// If we don't, the merge may not have yet occured, and the flags check below will be missing flags that
+			// If we don't, the merge may not have yet occurred, and the flags check below will be missing flags that
 			// are added as a result of the merge.
 			c.resolveExternalModuleSymbol(fileSymbol, false /*dontResolveAlias*/)
 		}
@@ -115,7 +115,7 @@ func (r *emitResolver) isAliasResolvedToValue(symbol *ast.Symbol, excludeTypeOnl
 
 func (r *emitResolver) IsTopLevelValueImportEqualsWithEntityName(node *ast.Node) bool {
 	c := r.checker
-	if !c.canCollectSymbolAliasAccessabilityData {
+	if !c.canCollectSymbolAliasAccessibilityData {
 		return true
 	}
 	if !ast.IsParseTreeNode(node) || node.Kind != ast.KindImportEqualsDeclaration || node.Parent.Kind != ast.KindSourceFile {
@@ -166,7 +166,7 @@ func (r *emitResolver) GetExternalModuleFileFromDeclaration(node *ast.Node) *ast
 
 func (r *emitResolver) getReferenceResolver() binder.ReferenceResolver {
 	if r.referenceResolver == nil {
-		r.referenceResolver = binder.NewReferenceResolver(binder.ReferenceResolverHooks{
+		r.referenceResolver = binder.NewReferenceResolver(r.checker.compilerOptions, binder.ReferenceResolverHooks{
 			ResolveName:                            r.checker.resolveName,
 			GetResolvedSymbol:                      r.checker.getResolvedSymbol,
 			GetMergedSymbol:                        r.checker.getMergedSymbol,

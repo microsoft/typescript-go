@@ -66,8 +66,10 @@ type Parser struct {
 	parsingContexts             ParsingContexts
 	statementHasAwaitIdentifier bool
 	hasDeprecatedTag            bool
+	hasParseError               bool
 
 	identifiers             map[string]string
+	identifierCount         int
 	notParenthesizedArrow   core.Set[int]
 	nodeSlicePool           core.Pool[*ast.Node]
 	jsdocCache              map[*ast.Node][]*ast.Node
@@ -76,6 +78,8 @@ type Parser struct {
 	jsdocCommentRangesSpace []ast.CommentRange
 	jsdocTagCommentsSpace   []string
 }
+
+var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
 
 var parserPool = sync.Pool{
 	New: func() any {
@@ -196,6 +200,7 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	default:
 		p.contextFlags = ast.NodeFlagsNone
 	}
+	p.hasParseError = false
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetScriptTarget(p.languageVersion)
@@ -218,12 +223,13 @@ func (p *Parser) parseErrorAtCurrentToken(message *diagnostics.Message, args ...
 
 func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	// Don't report another error if it would just be at the same location as the last error
-	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Loc() != loc {
-		result := ast.NewDiagnostic(nil, loc, message, args...)
+	var result *ast.Diagnostic
+	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Pos() != loc.Pos() {
+		result = ast.NewDiagnostic(nil, loc, message, args...)
 		p.diagnostics = append(p.diagnostics, result)
-		return result
 	}
-	return nil
+	p.hasParseError = true
+	return result
 }
 
 type ParserState struct {
@@ -231,6 +237,7 @@ type ParserState struct {
 	contextFlags                ast.NodeFlags
 	diagnosticsLen              int
 	statementHasAwaitIdentifier bool
+	hasParseError               bool
 }
 
 func (p *Parser) mark() ParserState {
@@ -239,6 +246,7 @@ func (p *Parser) mark() ParserState {
 		contextFlags:                p.contextFlags,
 		diagnosticsLen:              len(p.diagnostics),
 		statementHasAwaitIdentifier: p.statementHasAwaitIdentifier,
+		hasParseError:               p.hasParseError,
 	}
 }
 
@@ -247,6 +255,8 @@ func (p *Parser) rewind(state ParserState) {
 	p.token = p.scanner.Token()
 	p.contextFlags = state.contextFlags
 	p.diagnostics = p.diagnostics[0:state.diagnosticsLen]
+	p.statementHasAwaitIdentifier = state.statementHasAwaitIdentifier
+	p.hasParseError = state.hasParseError
 }
 
 func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
@@ -257,6 +267,16 @@ func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
 }
 
 func (p *Parser) nextToken() ast.Kind {
+	// if the keyword had an escape
+	if isKeyword(p.token) && (p.scanner.HasUnicodeEscape() || p.scanner.HasExtendedUnicodeEscape()) {
+		// issue a parse error for the escape
+		p.parseErrorAtCurrentToken(diagnostics.Keywords_cannot_contain_escape_characters)
+	}
+	p.token = p.scanner.Scan()
+	return p.token
+}
+
+func (p *Parser) nextTokenWithoutCheck() ast.Kind {
 	p.token = p.scanner.Scan()
 	return p.token
 }
@@ -324,6 +344,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
+	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
 	p.jsdocCache = nil
 	p.identifiers = nil
@@ -1874,18 +1895,30 @@ func (p *Parser) parseErrorForMissingSemicolonAfter(node *ast.Node) {
 		p.parseErrorForInvalidName(diagnostics.Type_alias_name_cannot_be_0, diagnostics.Type_alias_must_be_given_a_name, ast.KindEqualsToken)
 		return
 	}
-	// !!! The user alternatively might have misspelled or forgotten to add a space after a common keyword.
-	// const suggestion = getSpellingSuggestion(expressionText, viableKeywordSuggestions, identity) ?? getSpaceSuggestion(expressionText);
-	// if (suggestion) {
-	// 	parseErrorAt(pos, node.end, Diagnostics.Unknown_keyword_or_identifier_Did_you_mean_0, suggestion);
-	// 	return;
-	// }
+	// The user alternatively might have misspelled or forgotten to add a space after a common keyword.
+	suggestion := core.GetSpellingSuggestion(expressionText, viableKeywordSuggestions, func(s string) string { return s })
+	if suggestion == "" {
+		suggestion = getSpaceSuggestion(expressionText)
+	}
+	if suggestion != "" {
+		p.parseErrorAt(pos, node.End(), diagnostics.Unknown_keyword_or_identifier_Did_you_mean_0, suggestion)
+		return
+	}
 	// Unknown tokens are handled with their own errors in the scanner
 	if p.token == ast.KindUnknown {
 		return
 	}
 	// Otherwise, we know this some kind of unknown word, not just a missing expected semicolon.
 	p.parseErrorAt(pos, node.End(), diagnostics.Unexpected_keyword_or_identifier)
+}
+
+func getSpaceSuggestion(expressionText string) string {
+	for _, keyword := range viableKeywordSuggestions {
+		if len(expressionText) > len(keyword)+2 && strings.HasPrefix(expressionText, keyword) {
+			return keyword + " " + expressionText[len(keyword):]
+		}
+	}
+	return ""
 }
 
 func (p *Parser) parseErrorForInvalidName(nameDiagnostic *diagnostics.Message, blankDiagnostic *diagnostics.Message, tokenIfBlankName ast.Kind) {
@@ -1970,29 +2003,29 @@ func (p *Parser) parseEnumDeclaration(pos int, hasJSDoc bool, modifiers *ast.Mod
 }
 
 func (p *Parser) parseModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Statement {
-	var flags ast.NodeFlags
+	keyword := ast.KindModuleKeyword
 	if p.token == ast.KindGlobalKeyword {
 		// global augmentation
 		return p.parseAmbientExternalModuleDeclaration(pos, hasJSDoc, modifiers)
 	} else if p.parseOptional(ast.KindNamespaceKeyword) {
-		flags |= ast.NodeFlagsNamespace
+		keyword = ast.KindNamespaceKeyword
 	} else {
 		p.parseExpected(ast.KindModuleKeyword)
 		if p.token == ast.KindStringLiteral {
 			return p.parseAmbientExternalModuleDeclaration(pos, hasJSDoc, modifiers)
 		}
 	}
-	return p.parseModuleOrNamespaceDeclaration(pos, hasJSDoc, modifiers, flags)
+	return p.parseModuleOrNamespaceDeclaration(pos, hasJSDoc, modifiers, false /*nested*/, keyword)
 }
 
 func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList) *ast.Node {
-	var flags ast.NodeFlags
 	var name *ast.Node
+	keyword := ast.KindModuleKeyword
 	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	if p.token == ast.KindGlobalKeyword {
 		// parse 'global' as name of global scope augmentation
 		name = p.parseIdentifier()
-		flags |= ast.NodeFlagsGlobalAugmentation
+		keyword = ast.KindGlobalKeyword
 	} else {
 		// parse string literal
 		name = p.parseLiteralExpression(true /*intern*/)
@@ -2003,7 +2036,7 @@ func (p *Parser) parseAmbientExternalModuleDeclaration(pos int, hasJSDoc bool, m
 	} else {
 		p.parseSemicolon()
 	}
-	result := p.factory.NewModuleDeclaration(modifiers, name, body, flags)
+	result := p.factory.NewModuleDeclaration(modifiers, keyword, name, body)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
@@ -2024,24 +2057,27 @@ func (p *Parser) parseModuleBlock() *ast.Node {
 	return result
 }
 
-func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList, flags ast.NodeFlags) *ast.Node {
+func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modifiers *ast.ModifierList, nested bool, keyword ast.Kind) *ast.Node {
 	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
-	// If we are parsing a dotted namespace name, we want to
-	// propagate the 'Namespace' flag across the names if set.
-	namespaceFlag := flags & ast.NodeFlagsNamespace
 	var name *ast.Node
-	if flags&ast.NodeFlagsNestedNamespace != 0 {
+	if nested {
 		name = p.parseIdentifierName()
 	} else {
 		name = p.parseIdentifier()
 	}
 	var body *ast.Node
 	if p.parseOptional(ast.KindDotToken) {
-		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, nil /*modifiers*/, ast.NodeFlagsNestedNamespace|namespaceFlag)
+		implicitExport := p.factory.NewModifier(ast.KindExportKeyword)
+		implicitExport.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
+		implicitExport.Flags = ast.NodeFlagsReparsed
+		nodes := p.nodeSlicePool.NewSlice(1)
+		nodes[0] = implicitExport
+		implicitModifiers := p.newModifierList(implicitExport.Loc, nodes)
+		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, implicitModifiers, true /*nested*/, keyword)
 	} else {
 		body = p.parseModuleBlock()
 	}
-	result := p.factory.NewModuleDeclaration(modifiers, name, body, flags)
+	result := p.factory.NewModuleDeclaration(modifiers, keyword, name, body)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
@@ -2798,6 +2834,7 @@ func (p *Parser) parseRightSideOfDot(allowIdentifierNames bool, allowPrivateIden
 }
 
 func (p *Parser) newIdentifier(text string) *ast.Node {
+	p.identifierCount++
 	id := p.factory.NewIdentifier(text)
 	if text == "await" {
 		p.statementHasAwaitIdentifier = true
@@ -3775,7 +3812,7 @@ func (p *Parser) parseDecorator() *ast.Node {
 
 func (p *Parser) parseDecoratorExpression() *ast.Expression {
 	if p.inAwaitContext() && p.token == ast.KindAwaitKeyword {
-		// `@await` is is disallowed in an [Await] context, but can cause parsing to go off the rails
+		// `@await` is disallowed in an [Await] context, but can cause parsing to go off the rails
 		// This simply parses the missing identifier and moves on.
 		pos := p.nodePos()
 		awaitExpression := p.parseIdentifierWithDiagnostic(diagnostics.Expression_expected, nil)
@@ -5287,9 +5324,12 @@ func (p *Parser) parsePropertyAccessExpressionRest(pos int, expression *ast.Expr
 	if isOptionalChain && ast.IsPrivateIdentifier(name) {
 		p.parseErrorAtRange(p.skipRangeTrivia(name.Loc), diagnostics.An_optional_chain_cannot_contain_private_identifiers)
 	}
-	if ast.IsExpressionWithTypeArguments(expression) && expression.AsExpressionWithTypeArguments().TypeArguments != nil {
-		loc := p.skipRangeTrivia(expression.AsExpressionWithTypeArguments().TypeArguments.Loc)
-		p.parseErrorAtRange(loc, diagnostics.An_instantiation_expression_cannot_be_followed_by_a_property_access)
+	if ast.IsExpressionWithTypeArguments(expression) {
+		typeArguments := expression.AsExpressionWithTypeArguments().TypeArguments
+		if typeArguments != nil {
+			loc := core.NewTextRange(typeArguments.Pos()-1, scanner.SkipTrivia(p.sourceText, typeArguments.End())+1)
+			p.parseErrorAtRange(loc, diagnostics.An_instantiation_expression_cannot_be_followed_by_a_property_access)
+		}
 	}
 	p.finishNode(propertyAccess, pos)
 	return propertyAccess
@@ -5700,6 +5740,7 @@ func (p *Parser) parseLiteralExpression(intern bool) *ast.Node {
 		result.AsBigIntLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsNumericLiteralFlags
 	case ast.KindRegularExpressionLiteral:
 		result = p.factory.NewRegularExpressionLiteral(text)
+		result.AsRegularExpressionLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsRegularExpressionLiteralFlags
 	case ast.KindNoSubstitutionTemplateLiteral:
 		result = p.factory.NewNoSubstitutionTemplateLiteral(text)
 		result.AsNoSubstitutionTemplateLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsTemplateLiteralLikeFlags
@@ -5758,7 +5799,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 			pos = p.nodePos()
 		}
 		text := p.scanner.TokenValue()
-		p.nextToken()
+		p.nextTokenWithoutCheck()
 		result := p.newIdentifier(p.internIdentifier(text))
 		p.finishNode(result, pos)
 		return result
@@ -5812,6 +5853,10 @@ func (p *Parser) finishNode(node *ast.Node, pos int) {
 func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 	node.Loc = core.NewTextRange(pos, end)
 	node.Flags |= p.contextFlags
+	if p.hasParseError {
+		node.Flags |= ast.NodeFlagsThisNodeHasError
+		p.hasParseError = false
+	}
 }
 
 func (p *Parser) nextTokenIsSlash() bool {
@@ -6339,6 +6384,9 @@ func tagNamesAreEquivalent(lhs *ast.Expression, rhs *ast.Expression) bool {
 func attachFileToDiagnostics(diagnostics []*ast.Diagnostic, file *ast.SourceFile) []*ast.Diagnostic {
 	for _, d := range diagnostics {
 		d.SetFile(file)
+		for _, r := range d.RelatedInformation() {
+			r.SetFile(file)
+		}
 	}
 	return diagnostics
 }

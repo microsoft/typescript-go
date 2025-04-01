@@ -501,7 +501,7 @@ func getSourceFileOfModule(module *ast.Symbol) *ast.SourceFile {
 
 func getNonAugmentationDeclaration(symbol *ast.Symbol) *ast.Node {
 	return core.Find(symbol.Declarations, func(d *ast.Node) bool {
-		return !isExternalModuleAugmentation(d) && !(ast.IsModuleDeclaration(d) && ast.IsGlobalScopeAugmentation(d))
+		return !isExternalModuleAugmentation(d) && !ast.IsGlobalScopeAugmentation(d)
 	})
 }
 
@@ -522,10 +522,6 @@ func isSyntacticDefault(node *ast.Node) bool {
 
 func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
 	return moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil
-}
-
-func parsePseudoBigInt(stringValue string) string {
-	return stringValue // !!!
 }
 
 func isTypeAlias(node *ast.Node) bool {
@@ -669,7 +665,7 @@ func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
 	return n1.Pos() - n2.Pos()
 }
 
-func compareTypes(t1, t2 *Type) int {
+func CompareTypes(t1, t2 *Type) int {
 	if t1 == t2 {
 		return 0
 	}
@@ -754,7 +750,7 @@ func compareTypes(t1, t2 *Type) int {
 		} else if o2 == nil {
 			return -1
 		} else {
-			if c := compareTypes(o1, o2); c != 0 {
+			if c := CompareTypes(o1, o2); c != 0 {
 				return c
 			}
 		}
@@ -763,7 +759,7 @@ func compareTypes(t1, t2 *Type) int {
 		if c := compareTypeLists(t1.Types(), t2.Types()); c != 0 {
 			return c
 		}
-	case t1.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0:
+	case t1.flags&(TypeFlagsEnum|TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0:
 		// Enum members are ordered by their symbol (and thus their declaration order).
 		if c := t1.checker.compareSymbols(t1.symbol, t2.symbol); c != 0 {
 			return c
@@ -792,17 +788,17 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsIndex != 0:
-		if c := compareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
+		if c := CompareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
 			return c
 		}
 		if c := int(t1.AsIndexType().flags) - int(t2.AsIndexType().flags); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
-		if c := compareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
 			return c
 		}
-		if c := compareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsConditional != 0:
@@ -813,10 +809,10 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsSubstitution != 0:
-		if c := compareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
+		if c := CompareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
 			return c
 		}
-		if c := compareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
+		if c := CompareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsTemplateLiteral != 0:
@@ -827,7 +823,7 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsStringMapping != 0:
-		if c := compareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
+		if c := CompareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
 			return c
 		}
 	}
@@ -836,9 +832,11 @@ func compareTypes(t1, t2 *Type) int {
 }
 
 func getSortOrderFlags(t *Type) int {
-	// We want enum literal and computed values to be ordered by their declarations, so we merge TypeFlagsEnum into
-	// TypeFlagsEnumLiteral and clear TypeFlagsEnum.
-	return int((t.flags&TypeFlagsEnum)>>1 | t.flags&^TypeFlagsEnum)
+	// Return TypeFlagsEnum for all enum-like unit types (they'll be sorted by their symbols)
+	if t.flags&(TypeFlagsEnumLiteral|TypeFlagsEnum) != 0 && t.flags&TypeFlagsUnion == 0 {
+		return int(TypeFlagsEnum)
+	}
+	return int(t.flags)
 }
 
 func compareTypeNames(t1, t2 *Type) int {
@@ -917,7 +915,7 @@ func compareTypeLists(s1, s2 []*Type) int {
 		return len(s1) - len(s2)
 	}
 	for i, t1 := range s1 {
-		if c := compareTypes(t1, s2[i]); c != 0 {
+		if c := CompareTypes(t1, s2[i]); c != 0 {
 			return c
 		}
 	}
@@ -943,10 +941,10 @@ func compareTypeMappers(m1, m2 *TypeMapper) int {
 	case TypeMapperKindSimple:
 		m1 := m1.data.(*SimpleTypeMapper)
 		m2 := m2.data.(*SimpleTypeMapper)
-		if c := compareTypes(m1.source, m2.source); c != 0 {
+		if c := CompareTypes(m1.source, m2.source); c != 0 {
 			return c
 		}
-		return compareTypes(m1.target, m2.target)
+		return CompareTypes(m1.target, m2.target)
 	case TypeMapperKindArray:
 		m1 := m1.data.(*ArrayTypeMapper)
 		m2 := m2.data.(*ArrayTypeMapper)
@@ -1208,21 +1206,6 @@ func isThisProperty(node *ast.Node) bool {
 	return (ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) && node.Expression().Kind == ast.KindThisKeyword
 }
 
-func anyToString(v any) string {
-	// !!! This function should behave identically to the expression `"" + v` in JS
-	switch v := v.(type) {
-	case string:
-		return v
-	case jsnum.Number:
-		return v.String()
-	case bool:
-		return core.IfElse(v, "true", "false")
-	case PseudoBigInt:
-		return "(BigInt)" // !!!
-	}
-	panic("Unhandled case in anyToString")
-}
-
 func isValidNumberString(s string, roundTripOnly bool) bool {
 	if s == "" {
 		return false
@@ -1232,7 +1215,29 @@ func isValidNumberString(s string, roundTripOnly bool) bool {
 }
 
 func isValidBigIntString(s string, roundTripOnly bool) bool {
-	return false // !!!
+	if s == "" {
+		return false
+	}
+	scanner := scanner.NewScanner()
+	scanner.SetSkipTrivia(false)
+	success := true
+	scanner.SetOnError(func(diagnostic *diagnostics.Message, start, length int, args ...any) {
+		success = false
+	})
+	scanner.SetText(s + "n")
+	result := scanner.Scan()
+	negative := result == ast.KindMinusToken
+	if negative {
+		result = scanner.Scan()
+	}
+	flags := scanner.TokenFlags()
+	// validate that
+	// * scanning proceeded without error
+	// * a bigint can be scanned, and that when it is scanned, it is
+	// * the full length of the input string (so the scanner is one character beyond the augmented input length)
+	// * it does not contain a numeric separator (the `BigInt` constructor does not accept a numeric separator in its input)
+	return success && result == ast.KindBigIntLiteral && scanner.TokenEnd() == len(s)+1 && flags&ast.TokenFlagsContainsSeparator == 0 &&
+		(!roundTripOnly || s == pseudoBigIntToString(jsnum.NewPseudoBigInt(jsnum.ParsePseudoBigInt(scanner.TokenValue()), negative)))
 }
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
@@ -1261,58 +1266,9 @@ func getThisParameter(signature *ast.Node) *ast.Node {
 	// callback tags do not currently support this parameters
 	if len(signature.Parameters()) != 0 {
 		thisParameter := signature.Parameters()[0]
-		if parameterIsThisKeyword(thisParameter) {
+		if ast.IsThisParameter(thisParameter) {
 			return thisParameter
 		}
-	}
-	return nil
-}
-
-// Deprecated: use ast.IsThisParameter
-func parameterIsThisKeyword(parameter *ast.Node) bool {
-	return ast.IsThisParameter(parameter)
-}
-
-func getExtendsTypeNode(node *ast.Node) *ast.Node {
-	return core.FirstOrNil(getExtendsTypeNodes(node))
-}
-
-func getExtendsTypeNodes(node *ast.Node) []*ast.Node {
-	return getHeritageTypeNodes(node, ast.KindExtendsKeyword)
-}
-
-func getImplementsTypeNodes(node *ast.Node) []*ast.Node {
-	return getHeritageTypeNodes(node, ast.KindImplementsKeyword)
-}
-
-func getHeritageTypeNodes(node *ast.Node, kind ast.Kind) []*ast.Node {
-	clause := getHeritageClause(node, kind)
-	if clause != nil {
-		return clause.AsHeritageClause().Types.Nodes
-	}
-	return nil
-}
-
-func getHeritageClause(node *ast.Node, kind ast.Kind) *ast.Node {
-	clauses := getHeritageClauses(node)
-	if clauses != nil {
-		for _, clause := range clauses.Nodes {
-			if clause.AsHeritageClause().Token == kind {
-				return clause
-			}
-		}
-	}
-	return nil
-}
-
-func getHeritageClauses(node *ast.Node) *ast.NodeList {
-	switch node.Kind {
-	case ast.KindClassDeclaration:
-		return node.AsClassDeclaration().HeritageClauses
-	case ast.KindClassExpression:
-		return node.AsClassExpression().HeritageClauses
-	case ast.KindInterfaceDeclaration:
-		return node.AsInterfaceDeclaration().HeritageClauses
 	}
 	return nil
 }
@@ -1465,136 +1421,6 @@ func isObjectLiteralElementLike(node *ast.Node) bool {
 	return ast.IsObjectLiteralElement(node)
 }
 
-type EvaluatorResult struct {
-	value                 any
-	isSyntacticallyString bool
-	resolvedOtherFiles    bool
-	hasExternalReferences bool
-}
-
-func evaluatorResult(value any, isSyntacticallyString bool, resolvedOtherFiles bool, hasExternalReferences bool) EvaluatorResult {
-	return EvaluatorResult{value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences}
-}
-
-type Evaluator func(expr *ast.Node, location *ast.Node) EvaluatorResult
-
-func createEvaluator(evaluateEntity Evaluator) Evaluator {
-	var evaluate Evaluator
-	evaluateTemplateExpression := func(expr *ast.Node, location *ast.Node) EvaluatorResult {
-		var sb strings.Builder
-		sb.WriteString(expr.AsTemplateExpression().Head.Text())
-		resolvedOtherFiles := false
-		hasExternalReferences := false
-		for _, span := range expr.AsTemplateExpression().TemplateSpans.Nodes {
-			spanResult := evaluate(span.Expression(), location)
-			if spanResult.value == nil {
-				return evaluatorResult(nil, true /*isSyntacticallyString*/, false, false)
-			}
-			sb.WriteString(anyToString(spanResult.value))
-			sb.WriteString(span.AsTemplateSpan().Literal.Text())
-			resolvedOtherFiles = resolvedOtherFiles || spanResult.resolvedOtherFiles
-			hasExternalReferences = hasExternalReferences || spanResult.hasExternalReferences
-		}
-		return evaluatorResult(sb.String(), true, resolvedOtherFiles, hasExternalReferences)
-	}
-	evaluate = func(expr *ast.Node, location *ast.Node) EvaluatorResult {
-		isSyntacticallyString := false
-		resolvedOtherFiles := false
-		hasExternalReferences := false
-		// It's unclear when/whether we should consider skipping other kinds of outer expressions.
-		// Type assertions intentionally break evaluation when evaluating literal types, such as:
-		//     type T = `one ${"two" as any} three`; // string
-		// But it's less clear whether such an assertion should break enum member evaluation:
-		//     enum E {
-		//       A = "one" as any
-		//     }
-		// SatisfiesExpressions and non-null assertions seem to have even less reason to break
-		// emitting enum members as literals. However, these expressions also break Babel's
-		// evaluation (but not esbuild's), and the isolatedModules errors we give depend on
-		// our evaluation results, so we're currently being conservative so as to issue errors
-		// on code that might break Babel.
-		expr = ast.SkipParentheses(expr)
-		switch expr.Kind {
-		case ast.KindPrefixUnaryExpression:
-			result := evaluate(expr.AsPrefixUnaryExpression().Operand, location)
-			resolvedOtherFiles = result.resolvedOtherFiles
-			hasExternalReferences = result.hasExternalReferences
-			if value, ok := result.value.(jsnum.Number); ok {
-				switch expr.AsPrefixUnaryExpression().Operator {
-				case ast.KindPlusToken:
-					return evaluatorResult(value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindMinusToken:
-					return evaluatorResult(-value, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindTildeToken:
-					return evaluatorResult(value.BitwiseNOT(), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				}
-			}
-		case ast.KindBinaryExpression:
-			left := evaluate(expr.AsBinaryExpression().Left, location)
-			right := evaluate(expr.AsBinaryExpression().Right, location)
-			operator := expr.AsBinaryExpression().OperatorToken.Kind
-			isSyntacticallyString = (left.isSyntacticallyString || right.isSyntacticallyString) && expr.AsBinaryExpression().OperatorToken.Kind == ast.KindPlusToken
-			resolvedOtherFiles = left.resolvedOtherFiles || right.resolvedOtherFiles
-			hasExternalReferences = left.hasExternalReferences || right.hasExternalReferences
-			leftNum, leftIsNum := left.value.(jsnum.Number)
-			rightNum, rightIsNum := right.value.(jsnum.Number)
-			if leftIsNum && rightIsNum {
-				switch operator {
-				case ast.KindBarToken:
-					return evaluatorResult(leftNum.BitwiseOR(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindAmpersandToken:
-					return evaluatorResult(leftNum.BitwiseAND(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindGreaterThanGreaterThanToken:
-					return evaluatorResult(leftNum.SignedRightShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindGreaterThanGreaterThanGreaterThanToken:
-					return evaluatorResult(leftNum.UnsignedRightShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindLessThanLessThanToken:
-					return evaluatorResult(leftNum.LeftShift(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindCaretToken:
-					return evaluatorResult(leftNum.BitwiseXOR(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindAsteriskToken:
-					return evaluatorResult(leftNum*rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindSlashToken:
-					return evaluatorResult(leftNum/rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindPlusToken:
-					return evaluatorResult(leftNum+rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindMinusToken:
-					return evaluatorResult(leftNum-rightNum, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindPercentToken:
-					return evaluatorResult(leftNum.Remainder(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				case ast.KindAsteriskAsteriskToken:
-					return evaluatorResult(leftNum.Exponentiate(rightNum), isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-				}
-			}
-			leftStr, leftIsStr := left.value.(string)
-			rightStr, rightIsStr := right.value.(string)
-			if (leftIsStr || leftIsNum) && (rightIsStr || rightIsNum) && operator == ast.KindPlusToken {
-				if leftIsNum {
-					leftStr = leftNum.String()
-				}
-				if rightIsNum {
-					rightStr = rightNum.String()
-				}
-				return evaluatorResult(leftStr+rightStr, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-			}
-		case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
-			return evaluatorResult(expr.Text(), true /*isSyntacticallyString*/, false, false)
-		case ast.KindTemplateExpression:
-			return evaluateTemplateExpression(expr, location)
-		case ast.KindNumericLiteral:
-			return evaluatorResult(jsnum.FromString(expr.Text()), false, false, false)
-		case ast.KindIdentifier, ast.KindElementAccessExpression:
-			return evaluateEntity(expr, location)
-		case ast.KindPropertyAccessExpression:
-			if ast.IsEntityNameExpression(expr) {
-				return evaluateEntity(expr, location)
-			}
-		}
-		return evaluatorResult(nil, isSyntacticallyString, resolvedOtherFiles, hasExternalReferences)
-	}
-	return evaluate
-}
-
 func isInfinityOrNaNString(name string) bool {
 	return name == "Infinity" || name == "-Infinity" || name == "NaN"
 }
@@ -1699,7 +1525,7 @@ func hasContextSensitiveParameters(node *ast.Node) bool {
 			// If the first parameter is not an explicit 'this' parameter, then the function has
 			// an implicit 'this' parameter which is subject to contextual typing.
 			parameter := core.FirstOrNil(node.Parameters())
-			if parameter == nil || !parameterIsThisKeyword(parameter) {
+			if parameter == nil || !ast.IsThisParameter(parameter) {
 				return true
 			}
 		}
@@ -1886,11 +1712,8 @@ func expressionResultIsUnused(node *ast.Node) bool {
 	}
 }
 
-func pseudoBigIntToString(value PseudoBigInt) string {
-	if value.negative && value.base10Value != "0" {
-		return "-" + value.base10Value
-	}
-	return value.base10Value
+func pseudoBigIntToString(value jsnum.PseudoBigInt) string {
+	return value.String()
 }
 
 func getSuperContainer(node *ast.Node, stopOnFunctions bool) *ast.Node {
@@ -2036,7 +1859,9 @@ func isModuleExportsAccessExpression(node *ast.Node) bool {
 func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {
 	pos := node.Pos()
 	if node.Modifiers() != nil {
-		pos = core.LastOrNil(node.Modifiers().Nodes).End()
+		if last := ast.FindLastVisibleNode(node.Modifiers().Nodes); last != nil {
+			pos = last.Pos()
+		}
 	}
 	return scanner.GetRangeOfTokenAtPosition(ast.GetSourceFileOfNode(node), pos)
 }
@@ -2061,11 +1886,45 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		"AsyncIterator": {
 			{lib: "es2015", props: []string{}},
 		},
+		"ArrayBuffer": {
+			{lib: "es2024", props: []string{
+				"maxByteLength",
+				"resizable",
+				"resize",
+				"detached",
+				"transfer",
+				"transferToFixedLength",
+			}},
+		},
 		"Atomics": {
-			{lib: "es2017", props: []string{}},
+			{lib: "es2017", props: []string{
+				"add",
+				"and",
+				"compareExchange",
+				"exchange",
+				"isLockFree",
+				"load",
+				"or",
+				"store",
+				"sub",
+				"wait",
+				"notify",
+				"xor",
+			}},
+			{lib: "es2024", props: []string{
+				"waitAsync",
+			}},
 		},
 		"SharedArrayBuffer": {
-			{lib: "es2017", props: []string{}},
+			{lib: "es2017", props: []string{
+				"byteLength",
+				"slice",
+			}},
+			{lib: "es2024", props: []string{
+				"growable",
+				"maxByteLength",
+				"grow",
+			}},
 		},
 		"AsyncIterable": {
 			{lib: "es2018", props: []string{}},
@@ -2082,6 +1941,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		"RegExp": {
 			{lib: "es2015", props: []string{"flags", "sticky", "unicode"}},
 			{lib: "es2018", props: []string{"dotAll"}},
+			{lib: "es2024", props: []string{"unicodeSets"}},
 		},
 		"Reflect": {
 			{lib: "es2015", props: []string{"apply", "construct", "defineProperty", "deleteProperty", "get", "getOwnPropertyDescriptor", "getPrototypeOf", "has", "isExtensible", "ownKeys", "preventExtensions", "set", "setPrototypeOf"}},
@@ -2095,6 +1955,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2017", props: []string{"values", "entries", "getOwnPropertyDescriptors"}},
 			{lib: "es2019", props: []string{"fromEntries"}},
 			{lib: "es2022", props: []string{"hasOwn"}},
+			{lib: "es2024", props: []string{"groupBy"}},
 		},
 		"NumberConstructor": {
 			{lib: "es2015", props: []string{"isFinite", "isInteger", "isNaN", "isSafeInteger", "parseFloat", "parseInt"}},
@@ -2105,13 +1966,26 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		"Map": {
 			{lib: "es2015", props: []string{"entries", "keys", "values"}},
 		},
+		"MapConstructor": {
+			{lib: "es2024", props: []string{"groupBy"}},
+		},
 		"Set": {
 			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+			{lib: "esnext", props: []string{
+				"union",
+				"intersection",
+				"difference",
+				"symmetricDifference",
+				"isSubsetOf",
+				"isSupersetOf",
+				"isDisjointFrom",
+			}},
 		},
 		"PromiseConstructor": {
 			{lib: "es2015", props: []string{"all", "race", "reject", "resolve"}},
 			{lib: "es2020", props: []string{"allSettled"}},
 			{lib: "es2021", props: []string{"any"}},
+			{lib: "es2024", props: []string{"withResolvers"}},
 		},
 		"Symbol": {
 			{lib: "es2015", props: []string{"for", "keyFor"}},
@@ -2130,7 +2004,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2020", props: []string{"matchAll"}},
 			{lib: "es2021", props: []string{"replaceAll"}},
 			{lib: "es2022", props: []string{"at"}},
-			{lib: "esnext", props: []string{"isWellFormed", "toWellFormed"}},
+			{lib: "es2024", props: []string{"isWellFormed", "toWellFormed"}},
 		},
 		"StringConstructor": {
 			{lib: "es2015", props: []string{"fromCodePoint", "raw"}},
@@ -2156,6 +2030,11 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		},
 		"SymbolConstructor": {
 			{lib: "es2020", props: []string{"matchAll"}},
+			{lib: "esnext", props: []string{
+				"metadata",
+				"dispose",
+				"asyncDispose",
+			}},
 		},
 		"DataView": {
 			{lib: "es2020", props: []string{"setBigInt64", "setBigUint64", "getBigInt64", "getBigUint64"}},

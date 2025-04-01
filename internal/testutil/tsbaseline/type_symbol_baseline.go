@@ -52,16 +52,68 @@ func DoTypeAndSymbolBaseline(
 
 	fullWalker := newTypeWriterWalker(program, hasErrorBaseline)
 
-	if !opts.IsSubmodule {
-		t.Run("type", func(t *testing.T) {
-			defer testutil.RecoverAndFail(t, "Panic on creating type baseline for test "+header)
-			checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, false /*isSymbolBaseline*/)
-		})
-	}
+	t.Run("type", func(t *testing.T) {
+		defer testutil.RecoverAndFail(t, "Panic on creating type baseline for test "+header)
+
+		// !!! Remove once the type baselines print node reuse lines
+		typesOpts := opts
+		typesOpts.DiffFixupOld = func(s string) string {
+			var sb strings.Builder
+			sb.Grow(len(s))
+
+			perfStats := false
+			for line := range strings.SplitSeq(s, "\n") {
+				if isTypeBaselineNodeReuseLine(line) {
+					continue
+				}
+
+				if !perfStats && strings.HasPrefix(line, "=== Performance Stats ===") {
+					perfStats = true
+					continue
+				} else if perfStats {
+					if strings.HasPrefix(line, "=== ") {
+						perfStats = false
+					} else {
+						continue
+					}
+				}
+
+				sb.WriteString(line)
+				sb.WriteString("\n")
+			}
+
+			return sb.String()[:sb.Len()-1]
+		}
+		typesOpts.IsSubmoduleAccepted = len(program.UnsupportedExtensions()) != 0 // TODO(jakebailey): read submoduleAccepted.txt
+
+		checkBaselines(t, baselinePath, allFiles, fullWalker, header, typesOpts, false /*isSymbolBaseline*/)
+	})
 	t.Run("symbol", func(t *testing.T) {
 		defer testutil.RecoverAndFail(t, "Panic on creating symbol baseline for test "+header)
 		checkBaselines(t, baselinePath, allFiles, fullWalker, header, opts, true /*isSymbolBaseline*/)
 	})
+}
+
+func isTypeBaselineNodeReuseLine(line string) bool {
+	line, ok := strings.CutPrefix(line, ">")
+	if !ok {
+		return false
+	}
+	line = strings.TrimLeft(line[1:], " ")
+	line, ok = strings.CutPrefix(line, ":")
+	if !ok {
+		return false
+	}
+
+	for _, c := range line {
+		switch c {
+		case ' ', '^', '\r':
+			// Okay
+		default:
+			return false
+		}
+	}
+	return true
 }
 
 func checkBaselines(
@@ -284,8 +336,12 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		// Exception for `T` in `type T = something` because that may evaluate to some interesting type.
 		if ast.IsPartOfTypeNode(node) ||
 			ast.IsIdentifier(node) &&
-				(ast.GetMeaningFromDeclaration(node)&ast.SemanticMeaningValue) == 0 &&
+				(ast.GetMeaningFromDeclaration(node.Parent)&ast.SemanticMeaningValue) == 0 &&
 				!(ast.IsTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
+			return nil
+		}
+
+		if ast.IsOmittedExpression(node) {
 			return nil
 		}
 
@@ -304,11 +360,11 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 			!ast.IsBindingElement(node.Parent) &&
 			!ast.IsPropertyAccessOrQualifiedName(node.Parent) &&
 			!ast.IsLabelName(node) &&
-			!(ast.IsModuleDeclaration(node.Parent) && ast.IsGlobalScopeAugmentation(node.Parent)) &&
+			!ast.IsGlobalScopeAugmentation(node.Parent) &&
 			!ast.IsMetaProperty(node.Parent) &&
 			!isImportStatementName(node) &&
 			!isExportStatementName(node) &&
-			!isIntrinsicJsxTag(node) {
+			!isIntrinsicJsxTag(node, walker.currentSourceFile) {
 			typeString = t.AsIntrinsicType().IntrinsicName()
 		} else {
 			// !!! TODO: full type printing and underline when we have node builder
@@ -400,12 +456,13 @@ func isExportStatementName(node *ast.Node) bool {
 	return false
 }
 
-func isIntrinsicJsxTag(node *ast.Node) bool {
+func isIntrinsicJsxTag(node *ast.Node, sourceFile *ast.SourceFile) bool {
 	if !(ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxClosingElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) {
 		return false
 	}
 	if node.Parent.TagName() != node {
 		return false
 	}
-	return checker.IsIntrinsicJsxName(node.Text())
+	text := scanner.GetSourceTextOfNodeFromSourceFile(sourceFile, node, false /*includeTrivia*/)
+	return checker.IsIntrinsicJsxName(text)
 }

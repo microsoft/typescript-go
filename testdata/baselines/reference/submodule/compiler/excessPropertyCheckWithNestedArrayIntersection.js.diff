@@ -1,0 +1,11 @@
+--- old.excessPropertyCheckWithNestedArrayIntersection.js
++++ new.excessPropertyCheckWithNestedArrayIntersection.js
+@@= skipped -25, +25 lines =@@
+ 
+ 
+ //// [excessPropertyCheckWithNestedArrayIntersection.js]
+-var repro = {
++const repro = {
+     dataType: {
+         fields: [{
+                 key: 'bla', // should be OK: Not excess

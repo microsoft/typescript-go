@@ -1,0 +1,10 @@
+--- old.declarationEmitFBoundedTypeParams.js
++++ new.declarationEmitFBoundedTypeParams.js
+@@= skipped -14, +14 lines =@@
+     result.push(value);
+     return result;
+ }
+-
+-
+-//// [declarationEmitFBoundedTypeParams.d.ts]
+-declare function append<a, b extends a>(result: a[], value: b): a[];

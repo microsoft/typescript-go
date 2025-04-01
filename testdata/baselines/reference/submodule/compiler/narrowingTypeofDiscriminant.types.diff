@@ -1,0 +1,20 @@
+--- old.narrowingTypeofDiscriminant.types
++++ new.narrowingTypeofDiscriminant.types
+@@= skipped -93, +93 lines =@@
+     }
+     return wrapped.value;
+ >wrapped.value : string
+->wrapped : { value?: string; }
++>wrapped : { value?: string | undefined; }
+ >value : string
+ }
+ 
+@@= skipped -21, +21 lines =@@
+     }
+     return wrapped.value;
+ >wrapped.value : string
+->wrapped : { value?: string; }
++>wrapped : { value?: string | undefined; }
+ >value : string
+ }
+ 

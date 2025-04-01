@@ -1,0 +1,36 @@
+--- old.controlFlowInstanceof.types
++++ new.controlFlowInstanceof.types
+@@= skipped -265, +265 lines =@@
+ === uglify.js ===
+ /** @constructor */
+ function AtTop(val) { this.val = val }
+->AtTop : typeof AtTop
++>AtTop : (val: any) => void
+ >val : any
+ >this.val = val : any
+ >this.val : any
+->this : this
++>this : any
+ >val : any
+ >val : any
+ 
+ /** @type {*} */
+ var v = 1;
+->v : any
++>v : number
+ >1 : 1
+ 
+ if (v instanceof AtTop) {
+ >v instanceof AtTop : boolean
+->v : any
+->AtTop : typeof AtTop
++>v : number
++>AtTop : (val: any) => void
+ 
+     v.val
+ >v.val : any
+->v : AtTop
++>v : number
+ >val : any
+ }
+ 

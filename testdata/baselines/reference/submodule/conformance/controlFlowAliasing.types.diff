@@ -1,0 +1,56 @@
+--- old.controlFlowAliasing.types
++++ new.controlFlowAliasing.types
+@@= skipped -531, +531 lines =@@
+ }
+ 
+ function f28(obj?: { kind: 'foo', foo: string } | { kind: 'bar', bar: number }) {
+->f28 : (obj?: { kind: "foo"; foo: string; } | { kind: "bar"; bar: number; }) => void
++>f28 : (obj?: { kind: "foo"; foo: string; } | { kind: "bar"; bar: number; } | undefined) => void
+ >obj : { kind: "foo"; foo: string; } | { kind: "bar"; bar: number; } | undefined
+ >kind : "foo"
+ >foo : string
+@@= skipped -277, +277 lines =@@
+ // Mixing of aliased discriminants and conditionals
+ 
+ function f40(obj: { kind: 'foo', foo?: string } | { kind: 'bar', bar?: number }) {
+->f40 : (obj: { kind: "foo"; foo?: string; } | { kind: "bar"; bar?: number; }) => void
+->obj : { kind: "foo"; foo?: string; } | { kind: "bar"; bar?: number; }
++>f40 : (obj: { kind: "foo"; foo?: string | undefined; } | { kind: "bar"; bar?: number | undefined; }) => void
++>obj : { kind: "foo"; foo?: string | undefined; } | { kind: "bar"; bar?: number | undefined; }
+ >kind : "foo"
+ >foo : string | undefined
+ >kind : "bar"
+@@= skipped -9, +9 lines =@@
+ 
+     const { kind } = obj;
+ >kind : "bar" | "foo"
+->obj : { kind: "foo"; foo?: string; } | { kind: "bar"; bar?: number; }
++>obj : { kind: "foo"; foo?: string | undefined; } | { kind: "bar"; bar?: number | undefined; }
+ 
+     const isFoo = kind == 'foo';
+ >isFoo : boolean
+@@= skipped -12, +12 lines =@@
+ >isFoo && obj.foo : string | false | undefined
+ >isFoo : boolean
+ >obj.foo : string | undefined
+->obj : { kind: "foo"; foo?: string; }
++>obj : { kind: "foo"; foo?: string | undefined; }
+ >foo : string | undefined
+ 
+         let t: string = obj.foo;
+ >t : string
+ >obj.foo : string
+->obj : { kind: "foo"; foo?: string; }
++>obj : { kind: "foo"; foo?: string | undefined; }
+ >foo : string
+     }
+ }
+@@= skipped -47, +47 lines =@@
+ }
+ 
+ function foo({ kind, payload }: Data) {
+->foo : ({ kind, payload }: Data) => void
++>foo : (__0: Data) => void
+ >kind : "num" | "str"
+ >payload : string | number
+ 

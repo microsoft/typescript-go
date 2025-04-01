@@ -1,0 +1,14 @@
+--- old.nodeModulesImportMeta(module=node16).js
++++ new.nodeModulesImportMeta(module=node16).js
+@@= skipped -29, +29 lines =@@
+ // esm format file
+ const x = import.meta.url;
+ export { x };
+-
+-
+-//// [index.d.ts]
+-declare const x: string;
+-export { x };
+-//// [index.d.ts]
+-declare const x: string;
+-export { x };

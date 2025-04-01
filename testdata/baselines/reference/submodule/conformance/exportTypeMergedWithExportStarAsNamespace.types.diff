@@ -1,0 +1,34 @@
+--- old.exportTypeMergedWithExportStarAsNamespace.types
++++ new.exportTypeMergedWithExportStarAsNamespace.types
+@@= skipped -5, +5 lines =@@
+ 
+ export const myValue: Something<string> = Something.of("abc")
+ >myValue : Something<string>
+->Something.of("abc") : import("Something").Something<string>
+->Something.of : <A>(value: A) => import("Something").Something<A>
++>Something.of("abc") : Something<string>
++>Something.of : <A>(value: A) => Something<A>
+ >Something : typeof import("Something")
+->of : <A>(value: A) => import("Something").Something<A>
++>of : <A>(value: A) => Something<A>
+ >"abc" : "abc"
+ 
+ export type MyType = Something.SubType<string>
+->MyType : MyType
++>MyType : SubType<string>
+ >Something : any
+ 
+ === Something.ts ===
+@@= skipped -25, +25 lines =@@
+ 
+ === prelude.ts ===
+ import * as S from "./Something"
+->S : typeof S
++>S : typeof import("Something")
+ 
+ export * as Something from "./Something"
+->Something : typeof S
++>Something : typeof import("Something")
+ 
+ export type Something<A> = S.Something<A>
+ >Something : Something<A>

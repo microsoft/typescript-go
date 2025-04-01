@@ -1,0 +1,12 @@
+--- old.nodeModulesCjsFormatFileAlwaysHasDefault(module=nodenext).js
++++ new.nodeModulesCjsFormatFileAlwaysHasDefault(module=nodenext).js
+@@= skipped -27, +27 lines =@@
+ // esm format file
+ import mod from "./subfolder/index.js";
+ mod;
+-
+-
+-//// [index.d.ts]
+-export declare const a = 1;
+-//// [index.d.ts]
+-export {};

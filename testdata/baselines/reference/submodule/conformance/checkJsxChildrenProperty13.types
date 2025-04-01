@@ -1,0 +1,68 @@
+//// [tests/cases/conformance/jsx/checkJsxChildrenProperty13.tsx] ////
+
+=== file.tsx ===
+import React = require('react');
+>React : typeof __React
+
+interface ButtonProp {
+    a: number,
+>a : number
+
+    b: string,
+>b : string
+
+    children: Button;
+>children : Button
+}
+
+class Button extends React.Component<ButtonProp, any> {
+>Button : Button
+>React.Component : Component<ButtonProp, any>
+>React : typeof __React
+>Component : typeof Component
+
+    render() {
+>render : () => any
+
+        // Error children are specified twice
+        return (<InnerButton {...this.props} children="hi">
+>(<InnerButton {...this.props} children="hi">            <div>Hello World</div>            </InnerButton>) : any
+><InnerButton {...this.props} children="hi">            <div>Hello World</div>            </InnerButton> : any
+>InnerButton : typeof InnerButton
+>this.props : ButtonProp & { children?: ReactNode | undefined; }
+>this : this
+>props : ButtonProp & { children?: ReactNode | undefined; }
+>children : any
+
+            <div>Hello World</div>
+><div>Hello World</div> : any
+>div : any
+>div : any
+
+            </InnerButton>);
+>InnerButton : typeof InnerButton
+    }
+}
+
+interface InnerButtonProp {
+	a: number
+>a : number
+}
+
+class InnerButton extends React.Component<InnerButtonProp, any> {
+>InnerButton : InnerButton
+>React.Component : Component<InnerButtonProp, any>
+>React : typeof __React
+>Component : typeof Component
+
+	render() {
+>render : () => any
+
+		return (<button>Hello</button>);
+>(<button>Hello</button>) : any
+><button>Hello</button> : any
+>button : any
+>button : any
+	}
+}
+

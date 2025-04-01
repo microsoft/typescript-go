@@ -1,0 +1,121 @@
+--- old.truthinessCallExpressionCoercion2.types
++++ new.truthinessCallExpressionCoercion2.types
+@@= skipped -15, +15 lines =@@
+ }
+ 
+ function test(required1: () => boolean, required2: () => boolean, b: boolean, optional?: () => boolean) {
+->test : (required1: () => boolean, required2: () => boolean, b: boolean, optional?: () => boolean) => void
++>test : (required1: () => boolean, required2: () => boolean, b: boolean, optional?: (() => boolean) | undefined) => void
+ >required1 : () => boolean
+ >required2 : () => boolean
+ >b : boolean
+@@= skipped -306, +306 lines =@@
+ >window : Window & typeof globalThis
+ >console : Console
+ >firebug : any
+->(window.console.error && window.console.table) : (tabularData?: any, properties?: string[]) => void
+->window.console.error && window.console.table : (tabularData?: any, properties?: string[]) => void
++>(window.console.error && window.console.table) : (tabularData?: any, properties?: string[] | undefined) => void
++>window.console.error && window.console.table : (tabularData?: any, properties?: string[] | undefined) => void
+ >window.console.error : (...data: any[]) => void
+ >window.console : Console
+ >window : Window & typeof globalThis
+ >console : Console
+ >error : (...data: any[]) => void
+->window.console.table : (tabularData?: any, properties?: string[]) => void
++>window.console.table : (tabularData?: any, properties?: string[] | undefined) => void
+ >window.console : Console
+ >window : Window & typeof globalThis
+ >console : Console
+->table : (tabularData?: any, properties?: string[]) => void
++>table : (tabularData?: any, properties?: string[] | undefined) => void
+ }
+ 
+ function checksPropertyAccess() {
+ >checksPropertyAccess : () => void
+ 
+     const x = {
+->x : { foo: { bar(): boolean; }; }
+->{        foo: {            bar() { return true; }        }    } : { foo: { bar(): boolean; }; }
++>x : { foo: { bar: () => boolean; }; }
++>{        foo: {            bar() { return true; }        }    } : { foo: { bar: () => boolean; }; }
+ 
+         foo: {
+->foo : { bar(): boolean; }
+->{            bar() { return true; }        } : { bar(): boolean; }
++>foo : { bar: () => boolean; }
++>{            bar() { return true; }        } : { bar: () => boolean; }
+ 
+             bar() { return true; }
+ >bar : () => boolean
+@@= skipped -35, +35 lines =@@
+     x.foo.bar && console.log('x.foo.bar');
+ >x.foo.bar && console.log('x.foo.bar') : void
+ >x.foo.bar : () => boolean
+->x.foo : { bar(): boolean; }
+->x : { foo: { bar(): boolean; }; }
+->foo : { bar(): boolean; }
++>x.foo : { bar: () => boolean; }
++>x : { foo: { bar: () => boolean; }; }
++>foo : { bar: () => boolean; }
+ >bar : () => boolean
+ >console.log('x.foo.bar') : void
+ >console.log : (...data: any[]) => void
+@@= skipped -16, +16 lines =@@
+ >1 && x.foo.bar : () => boolean
+ >1 : 1
+ >x.foo.bar : () => boolean
+->x.foo : { bar(): boolean; }
+->x : { foo: { bar(): boolean; }; }
+->foo : { bar(): boolean; }
++>x.foo : { bar: () => boolean; }
++>x : { foo: { bar: () => boolean; }; }
++>foo : { bar: () => boolean; }
+ >bar : () => boolean
+ >console.log('x.foo.bar') : void
+ >console.log : (...data: any[]) => void
+@@= skipped -14, +14 lines =@@
+     x.foo.bar && x.foo.bar();
+ >x.foo.bar && x.foo.bar() : boolean
+ >x.foo.bar : () => boolean
+->x.foo : { bar(): boolean; }
+->x : { foo: { bar(): boolean; }; }
+->foo : { bar(): boolean; }
++>x.foo : { bar: () => boolean; }
++>x : { foo: { bar: () => boolean; }; }
++>foo : { bar: () => boolean; }
+ >bar : () => boolean
+ >x.foo.bar() : boolean
+ >x.foo.bar : () => boolean
+->x.foo : { bar(): boolean; }
+->x : { foo: { bar(): boolean; }; }
+->foo : { bar(): boolean; }
++>x.foo : { bar: () => boolean; }
++>x : { foo: { bar: () => boolean; }; }
++>foo : { bar: () => boolean; }
+ >bar : () => boolean
+ 
+     // ok
+@@= skipped -16, +16 lines =@@
+ >x.foo.bar && 1 && x.foo.bar() : boolean
+ >x.foo.bar && 1 : 1
+ >x.foo.bar : () => boolean
+->x.foo : { bar(): boolean; }
+->x : { foo: { bar(): boolean; }; }
+->foo : { bar(): boolean; }
++>x.foo : { bar: () => boolean; }
++>x : { foo: { bar: () => boolean; }; }
++>foo : { bar: () => boolean; }
+ >bar : () => boolean
+ >1 : 1
+ >x.foo.bar() : boolean
+ >x.foo.bar : () => boolean
+->x.foo : { bar(): boolean; }
+->x : { foo: { bar(): boolean; }; }
+->foo : { bar(): boolean; }
++>x.foo : { bar: () => boolean; }
++>x : { foo: { bar: () => boolean; }; }
++>foo : { bar: () => boolean; }
+ >bar : () => boolean
+ 
+     // ok

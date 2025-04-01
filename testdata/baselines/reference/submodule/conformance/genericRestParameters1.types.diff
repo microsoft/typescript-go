@@ -1,0 +1,97 @@
+--- old.genericRestParameters1.types
++++ new.genericRestParameters1.types
+@@= skipped -571, +571 lines =@@
+ >f23 : () => string[]
+ 
+ declare const g20: (x: number, y?: string, z?: boolean) => string[];
+->g20 : (x: number, y?: string, z?: boolean) => string[]
++>g20 : (x: number, y?: string | undefined, z?: boolean | undefined) => string[]
+ >x : number
+ >y : string | undefined
+ >z : boolean | undefined
+@@= skipped -9, +9 lines =@@
+ >g21 : (y?: string | undefined, z?: boolean | undefined) => string[]
+ >bind(g20, 42) : (y?: string | undefined, z?: boolean | undefined) => string[]
+ >bind : <T, U extends unknown[], V>(f: (x: T, ...rest: U) => V, x: T) => (...rest: U) => V
+->g20 : (x: number, y?: string, z?: boolean) => string[]
++>g20 : (x: number, y?: string | undefined, z?: boolean | undefined) => string[]
+ >42 : 42
+ 
+ const g22 = bind(g21, "hello");  // (z: boolean) => string[]
+@@= skipped -19, +19 lines =@@
+ 
+ g20(42, "hello", true);
+ >g20(42, "hello", true) : string[]
+->g20 : (x: number, y?: string, z?: boolean) => string[]
++>g20 : (x: number, y?: string | undefined, z?: boolean | undefined) => string[]
+ >42 : 42
+ >"hello" : "hello"
+ >true : true
+ 
+ g20(42, "hello");
+ >g20(42, "hello") : string[]
+->g20 : (x: number, y?: string, z?: boolean) => string[]
++>g20 : (x: number, y?: string | undefined, z?: boolean | undefined) => string[]
+ >42 : 42
+ >"hello" : "hello"
+ 
+ g20(42);
+ >g20(42) : string[]
+->g20 : (x: number, y?: string, z?: boolean) => string[]
++>g20 : (x: number, y?: string | undefined, z?: boolean | undefined) => string[]
+ >42 : 42
+ 
+ g21("hello", true);
+@@= skipped -125, +125 lines =@@
+ >EventType : EventType<T>
+ 
+   emit<K extends keyof T = keyof T>(e: K, ...payload: T[K] extends any[] ? T[K] : [T[K]]): void; 
+->emit : <K extends keyof T = keyof T>(e: K, ...payload: T[K] extends any[] ? T[K] : [T[K]]) => void
++>emit : <K extends keyof T>(e: K, ...payload: T[K] extends any[] ? T[K] : [T[K]]) => void
+ >e : K
+ >payload : T[K] extends any[] ? T[K] : [T[K]]
+ }
+@@= skipped -10, +10 lines =@@
+ 
+ events.emit('move', 10, 'left');
+ >events.emit('move', 10, 'left') : void
+->events.emit : <K extends keyof Record1 = keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
++>events.emit : <K extends keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
+ >events : EventType<Record1>
+->emit : <K extends keyof Record1 = keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
++>emit : <K extends keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
+ >'move' : "move"
+ >10 : 10
+ >'left' : "left"
+ 
+ events.emit('jump', 20, 'up');
+ >events.emit('jump', 20, 'up') : void
+->events.emit : <K extends keyof Record1 = keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
++>events.emit : <K extends keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
+ >events : EventType<Record1>
+->emit : <K extends keyof Record1 = keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
++>emit : <K extends keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
+ >'jump' : "jump"
+ >20 : 20
+ >'up' : "up"
+ 
+ events.emit('stop', 'Bye!');
+ >events.emit('stop', 'Bye!') : void
+->events.emit : <K extends keyof Record1 = keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
++>events.emit : <K extends keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
+ >events : EventType<Record1>
+->emit : <K extends keyof Record1 = keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
++>emit : <K extends keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
+ >'stop' : "stop"
+ >'Bye!' : "Bye!"
+ 
+ events.emit('done');
+ >events.emit('done') : void
+->events.emit : <K extends keyof Record1 = keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
++>events.emit : <K extends keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
+ >events : EventType<Record1>
+->emit : <K extends keyof Record1 = keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
++>emit : <K extends keyof Record1>(e: K, ...payload: Record1[K] extends any[] ? Record1[K] : [Record1[K]]) => void
+ >'done' : "done"
+ 
+ // Repro from #25871

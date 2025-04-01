@@ -1,0 +1,17 @@
+--- old.propertyNameWithoutTypeAnnotation.js
++++ new.propertyNameWithoutTypeAnnotation.js
+@@= skipped -23, +23 lines =@@
+ var r4 = b.foo;
+ 
+ //// [propertyNameWithoutTypeAnnotation.js]
+-var C = /** @class */ (function () {
+-    function C() {
+-    }
+-    return C;
+-}());
++class C {
++    foo;
++}
+ var a;
+ var b = {
+     foo: null
