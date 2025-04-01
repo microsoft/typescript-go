@@ -152,7 +152,7 @@ test("Dispose", () => {
 function spawnAPI(files: Record<string, string> = defaultFiles) {
     return new API({
         cwd: new URL("../../../", import.meta.url).pathname,
-        tsserverPath: new URL("../../../built/local/tsgo", import.meta.url).pathname,
+        tsserverPath: new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).pathname,
         fs: createVirtualFileSystem(files),
     });
 }

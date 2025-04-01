@@ -6,7 +6,6 @@ import {
     type FileSystem,
     type FileSystemEntries,
 } from "@typescript/api/fs";
-import type { GetSymbolAtPositionParams } from "@typescript/api/proto";
 import {
     type SourceFile,
     SyntaxKind,
@@ -101,16 +100,6 @@ bench
         });
     }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
     .add("getSymbolAtPosition - all identifiers (batched)", () => {
-        const positions: GetSymbolAtPositionParams[] = [];
-        file.forEachChild(function visit(node) {
-            if (node.kind === SyntaxKind.Identifier) {
-                positions.push({ fileName: "program.ts", position: node.pos });
-            }
-            node.forEachChild(visit);
-        });
-        project.getSymbolAtPosition(positions);
-    }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
-    .add("getSymbolAtPosition - all identifiers (batched 2)", () => {
         const positions: number[] = [];
         file.forEachChild(function visit(node) {
             if (node.kind === SyntaxKind.Identifier) {
@@ -136,7 +125,7 @@ console.table(bench.table());
 function spawnAPI() {
     api = new API({
         cwd: new URL("../../../", import.meta.url).pathname,
-        tsserverPath: new URL("../../../built/local/tsgo", import.meta.url).pathname,
+        tsserverPath: new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).pathname,
     });
 }
 
