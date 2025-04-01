@@ -62,8 +62,10 @@ type ServerOptions struct {
 	DefaultLibraryPath string
 }
 
-var _ APIHost = (*Server)(nil)
-var _ vfs.FS = (*Server)(nil)
+var (
+	_ APIHost = (*Server)(nil)
+	_ vfs.FS  = (*Server)(nil)
+)
 
 type Server struct {
 	r      *bufio.Reader

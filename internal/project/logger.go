@@ -44,7 +44,7 @@ func (l *Logger) SetFile(file string) {
 		l.fileHandle.Close()
 	}
 	if file != "" {
-		f, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		f, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
 		if err != nil {
 			panic(err)
 		}
