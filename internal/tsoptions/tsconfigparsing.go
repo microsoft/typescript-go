@@ -2,8 +2,6 @@ package tsoptions
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
 	"reflect"
 	"regexp"
 	"slices"
@@ -1478,7 +1476,7 @@ func getFileNamesFromConfigSpecs(
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeRegexes == nil {
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					includeFilePatterns := core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return "^" + pattern + "$" })
+					includeFilePatterns := core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$",pattern)})
 					if includeFilePatterns != nil {
 						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
 							return getRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
