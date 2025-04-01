@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -68,6 +69,9 @@ func (c *Checker) TypeToString(t *Type) string {
 
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
 	p := c.newPrinter(flags)
+	if flags&TypeFormatFlagsNoTypeReduction == 0 {
+		t = c.getReducedType(t)
+	}
 	p.printType(t)
 	return p.string()
 }
@@ -235,7 +239,7 @@ func (p *Printer) printValue(value any) {
 
 func (p *Printer) printStringLiteral(s string) {
 	p.print("\"")
-	p.print(s)
+	p.print(printer.EscapeString(s, '"'))
 	p.print("\"")
 }
 
@@ -478,16 +482,21 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 		p.printType(p.c.getTypeOfSymbol(sig.thisParameter))
 		tail = true
 	}
-	for i, param := range sig.parameters {
+	expandedParameters := p.c.GetExpandedParameters(sig)
+	// If the expanded parameter list had a variadic in a non-trailing position, don't expand it
+	parameters := core.IfElse(core.Some(expandedParameters, func(s *ast.Symbol) bool {
+		return s != expandedParameters[len(expandedParameters)-1] && s.CheckFlags&ast.CheckFlagsRestParameter != 0
+	}), sig.parameters, expandedParameters)
+	for i, param := range parameters {
 		if tail {
 			p.print(", ")
 		}
-		if sig.flags&SignatureFlagsHasRestParameter != 0 && i == len(sig.parameters)-1 {
+		if param.ValueDeclaration != nil && isRestParameter(param.ValueDeclaration) || param.CheckFlags&ast.CheckFlagsRestParameter != 0 {
 			p.print("...")
 			p.printName(param)
 		} else {
 			p.printName(param)
-			if i >= int(sig.minArgumentCount) {
+			if i >= p.c.getMinArgumentCountEx(sig, MinArgumentCountFlagsVoidIsNonOptional) {
 				p.print("?")
 			}
 		}
