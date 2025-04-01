@@ -2,6 +2,8 @@ package tsoptions
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"reflect"
 	"regexp"
 	"slices"
@@ -1432,32 +1434,41 @@ func getFileNamesFromConfigSpecs(
 	extraFileExtensions []fileExtensionInfo,
 ) []string {
 	extraFileExtensions = []fileExtensionInfo{}
+
+	if basePath == "" {
+		basePath, _ = os.Getwd()
+	} else if !filepath.IsAbs(basePath) {
+		basePath, _ = filepath.Abs(basePath)
+	}
+
 	basePath = tspath.NormalizePath(basePath)
-	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
-	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
-	// file map with a possibly case insensitive key. We use this map later when when including
-	// wildcard paths.
-	var literalFileMap collections.OrderedMap[string, string]
-	// Wildcard paths (provided via the "includes" array in tsconfig.json) are stored in a
-	// file map with a possibly case insensitive key. We use this map to store paths matched
-	// via wildcard, and to handle extension priority.
-	var wildcardFileMap collections.OrderedMap[string, string]
-	// Wildcard paths of json files (provided via the "includes" array in tsconfig.json) are stored in a
-	// file map with a possibly case insensitive key. We use this map to store paths matched
-	// via wildcard of *.json kind
-	var wildCardJsonFileMap collections.OrderedMap[string, string]
-	validatedFilesSpec := configFileSpecs.validatedFilesSpec
-	validatedIncludeSpecs := configFileSpecs.validatedIncludeSpecs
-	validatedExcludeSpecs := configFileSpecs.validatedExcludeSpecs
-	// Rather than re-query this for each file and filespec, we query the supported extensions
-	// once and store it on the expansion context.
-	supportedExtensions := GetSupportedExtensions(options, extraFileExtensions)
-	supportedExtensionsWithJsonIfResolveJsonModule := GetSupportedExtensionsWithJsonIfResolveJsonModule(options, supportedExtensions)
-	// Literal files are always included verbatim. An "include" or "exclude" specification cannot
-	// remove a literal file.
+	keyMapper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
+
+	var (
+		literalFileMap      collections.OrderedMap[string, string]
+		wildcardFileMap     collections.OrderedMap[string, string]
+		wildCardJsonFileMap collections.OrderedMap[string, string]
+	)
+
+	var (
+		validatedFilesSpec    = configFileSpecs.validatedFilesSpec
+		validatedIncludeSpecs = configFileSpecs.validatedIncludeSpecs
+		validatedExcludeSpecs = configFileSpecs.validatedExcludeSpecs
+	)
+
+	var (
+		supportedExtensions                            = GetSupportedExtensions(options, extraFileExtensions)
+		supportedExtensionsWithJsonIfResolveJsonModule = GetSupportedExtensionsWithJsonIfResolveJsonModule(options, supportedExtensions)
+	)
+
 	for _, fileName := range validatedFilesSpec {
 		file := tspath.GetNormalizedAbsolutePath(fileName, basePath)
-		literalFileMap.Set(keyMappper(fileName), file)
+
+		if !filepath.IsAbs(file) {
+			panic(fmt.Sprintf("Path %q is not absolute (base: %q)", file, basePath))
+		}
+
+		literalFileMap.Set(keyMapper(fileName), file)
 	}
 
 	var jsonOnlyIncludeRegexes []*regexp2.Regexp
@@ -1467,7 +1478,7 @@ func getFileNamesFromConfigSpecs(
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeRegexes == nil {
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					includeFilePatterns := core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
+					includeFilePatterns := core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return "^" + pattern + "$" })
 					if includeFilePatterns != nil {
 						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
 							return getRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
@@ -1478,28 +1489,18 @@ func getFileNamesFromConfigSpecs(
 				}
 				includeIndex := core.FindIndex(jsonOnlyIncludeRegexes, func(re *regexp2.Regexp) bool { return core.Must(re.MatchString(file)) })
 				if includeIndex != -1 {
-					key := keyMappper(file)
+					key := keyMapper(file)
 					if !literalFileMap.Has(key) && !wildCardJsonFileMap.Has(key) {
 						wildCardJsonFileMap.Set(key, file)
 					}
 				}
 				continue
 			}
-			// If we have already included a literal or wildcard path with a
-			// higher priority extension, we should skip this file.
-			//
-			// This handles cases where we may encounter both <file>.ts and
-			// <file>.d.ts (or <file>.js if "allowJs" is enabled) in the same
-			// directory when they are compilation outputs.
-			if hasFileWithHigherPriorityExtension(file, literalFileMap, wildcardFileMap, supportedExtensions, keyMappper) {
+			if hasFileWithHigherPriorityExtension(file, literalFileMap, wildcardFileMap, supportedExtensions, keyMapper) {
 				continue
 			}
-			// We may have included a wildcard path with a lower priority
-			// extension due to the user-defined order of entries in the
-			// "include" array. If there is a lower priority extension in the
-			// same directory, we should remove it.
-			removeWildcardFilesWithLowerPriorityExtension(file, wildcardFileMap, supportedExtensions, keyMappper)
-			key := keyMappper(file)
+			removeWildcardFilesWithLowerPriorityExtension(file, wildcardFileMap, supportedExtensions, keyMapper)
+			key := keyMapper(file)
 			if !literalFileMap.Has(key) && !wildcardFileMap.Has(key) {
 				wildcardFileMap.Set(key, file)
 			}
