@@ -581,6 +581,13 @@ type Type struct {
 	data        TypeData // Type specific data
 }
 
+func (t *Type) Symbol() *ast.Symbol {
+	if t == nil {
+		return nil
+	}
+	return t.symbol
+}
+
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
@@ -1080,6 +1087,31 @@ type Signature struct {
 	mapper                   *TypeMapper
 	isolatedSignatureType    *Type
 	composite                *CompositeSignature
+}
+
+func (s *Signature) TypeParameters() []*Type {
+	if len(s.typeParameters) == 0 {
+		return nil
+	}
+	return s.typeParameters
+}
+
+func (s *Signature) Declaration() *ast.Node {
+	return s.declaration
+}
+
+func (s *Signature) Parameters() []*ast.Symbol {
+	if len(s.parameters) == 0 {
+		return nil
+	}
+	return s.parameters
+}
+
+func (s *Signature) Target() *Signature {
+	if s.target == nil {
+		return nil
+	}
+	return s.target
 }
 
 type CompositeSignature struct {

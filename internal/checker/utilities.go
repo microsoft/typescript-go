@@ -1353,7 +1353,7 @@ func isCallLikeExpression(node *ast.Node) bool {
 	return false
 }
 
-func isCallOrNewExpression(node *ast.Node) bool {
+func IsCallOrNewExpression(node *ast.Node) bool {
 	return ast.IsCallExpression(node) || ast.IsNewExpression(node)
 }
 
@@ -1712,7 +1712,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return isCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
+	return IsCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {
@@ -2242,7 +2242,7 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 	return ""
 }
 
-func getInvokedExpression(node *ast.Node) *ast.Node {
+func GetInvokedExpression(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindTaggedTemplateExpression:
 		return node.AsTaggedTemplateExpression().Tag

@@ -483,7 +483,7 @@ func (c *Checker) isOrHasGenericConditional(t *Type) bool {
 }
 
 func (c *Checker) elaborateDidYouMeanToCallOrConstruct(node *ast.Node, source *Type, target *Type, relation *Relation, kind SignatureKind, headMessage *diagnostics.Message, diagnosticOutput *[]*ast.Diagnostic) bool {
-	if core.Some(c.getSignaturesOfType(source, kind), func(s *Signature) bool {
+	if core.Some(c.GetSignaturesOfType(source, kind), func(s *Signature) bool {
 		returnType := c.getReturnTypeOfSignature(s)
 		return returnType.flags&(TypeFlagsAny|TypeFlagsNever) == 0 && c.checkTypeRelatedTo(returnType, target, relation, nil /*errorNode*/)
 	}) {
@@ -649,7 +649,7 @@ func (c *Checker) elaborateArrowFunction(node *ast.Node, source *Type, target *T
 	if sourceSig == nil {
 		return false
 	}
-	targetSignatures := c.getSignaturesOfType(target, SignatureKindCall)
+	targetSignatures := c.GetSignaturesOfType(target, SignatureKindCall)
 	if len(targetSignatures) == 0 {
 		return false
 	}
@@ -914,8 +914,8 @@ func (c *Checker) findMatchingTypeReferenceOrTypeAliasReference(source *Type, un
 }
 
 func (c *Checker) findBestTypeForInvokable(source *Type, unionTarget *Type, kind SignatureKind) *Type {
-	if len(c.getSignaturesOfType(source, kind)) != 0 {
-		return core.Find(unionTarget.Types(), func(t *Type) bool { return len(c.getSignaturesOfType(t, kind)) != 0 })
+	if len(c.GetSignaturesOfType(source, kind)) != 0 {
+		return core.Find(unionTarget.Types(), func(t *Type) bool { return len(c.GetSignaturesOfType(t, kind)) != 0 })
 	}
 	return nil
 }
@@ -961,8 +961,8 @@ func (c *Checker) shouldReportUnmatchedPropertyError(source *Type, target *Type)
 	typeConstructSignatures := c.getSignaturesOfStructuredType(source, SignatureKindConstruct)
 	typeProperties := c.getPropertiesOfObjectType(source)
 	if (len(typeCallSignatures) != 0 || len(typeConstructSignatures) != 0) && len(typeProperties) == 0 {
-		if (len(c.getSignaturesOfType(target, SignatureKindCall)) != 0 && len(typeCallSignatures) != 0) ||
-			len(c.getSignaturesOfType(target, SignatureKindConstruct)) != 0 && len(typeConstructSignatures) != 0 {
+		if (len(c.GetSignaturesOfType(target, SignatureKindCall)) != 0 && len(typeCallSignatures) != 0) ||
+			len(c.GetSignaturesOfType(target, SignatureKindConstruct)) != 0 && len(typeConstructSignatures) != 0 {
 			// target has similar signature kinds to source, still focus on the unmatched property
 			return true
 		}
@@ -1543,10 +1543,10 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 			var sourceSig *Signature
 			var targetSig *Signature
 			if checkMode&SignatureCheckModeCallback == 0 && !c.isInstantiatedGenericParameter(source, i) {
-				sourceSig = c.getSingleCallSignature(c.getNonNullableType(sourceType))
+				sourceSig = c.getSingleCallSignature(c.GetNonNullableType(sourceType))
 			}
 			if checkMode&SignatureCheckModeCallback == 0 && !c.isInstantiatedGenericParameter(target, i) {
-				targetSig = c.getSingleCallSignature(c.getNonNullableType(targetType))
+				targetSig = c.getSingleCallSignature(c.GetNonNullableType(targetType))
 			}
 			callbacks := sourceSig != nil && targetSig != nil && c.getTypePredicateOfSignature(sourceSig) == nil && c.getTypePredicateOfSignature(targetSig) == nil &&
 				c.getTypeFacts(sourceType, TypeFactsIsUndefinedOrNull) == c.getTypeFacts(targetType, TypeFactsIsUndefinedOrNull)
@@ -2618,8 +2618,8 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 			if reportErrors {
 				sourceString := r.c.TypeToString(core.IfElse(originalSource.alias != nil, originalSource, source))
 				targetString := r.c.TypeToString(core.IfElse(originalTarget.alias != nil, originalTarget, target))
-				calls := r.c.getSignaturesOfType(source, SignatureKindCall)
-				constructs := r.c.getSignaturesOfType(source, SignatureKindConstruct)
+				calls := r.c.GetSignaturesOfType(source, SignatureKindCall)
+				constructs := r.c.GetSignaturesOfType(source, SignatureKindConstruct)
 				if len(calls) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(calls[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse ||
 					len(constructs) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(constructs[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse {
 					r.reportError(diagnostics.Value_of_type_0_has_no_properties_in_common_with_type_1_Did_you_mean_to_call_it, sourceString, targetString)
@@ -4350,8 +4350,8 @@ func (r *Relater) signaturesRelatedTo(source *Type, target *Type, kind Signature
 	if target == r.c.anyFunctionType || source == r.c.anyFunctionType {
 		return TernaryTrue
 	}
-	sourceSignatures := r.c.getSignaturesOfType(source, kind)
-	targetSignatures := r.c.getSignaturesOfType(target, kind)
+	sourceSignatures := r.c.GetSignaturesOfType(source, kind)
+	targetSignatures := r.c.GetSignaturesOfType(target, kind)
 	if kind == SignatureKindConstruct && len(sourceSignatures) != 0 && len(targetSignatures) != 0 {
 		sourceIsAbstract := sourceSignatures[0].flags&SignatureFlagsAbstract != 0
 		targetIsAbstract := targetSignatures[0].flags&SignatureFlagsAbstract != 0
@@ -4460,8 +4460,8 @@ func (r *Relater) signatureRelatedTo(source *Signature, target *Signature, erase
 }
 
 func (r *Relater) signaturesIdenticalTo(source *Type, target *Type, kind SignatureKind) Ternary {
-	sourceSignatures := r.c.getSignaturesOfType(source, kind)
-	targetSignatures := r.c.getSignaturesOfType(target, kind)
+	sourceSignatures := r.c.GetSignaturesOfType(source, kind)
+	targetSignatures := r.c.GetSignaturesOfType(target, kind)
 	if len(sourceSignatures) != len(targetSignatures) {
 		return TernaryFalse
 	}

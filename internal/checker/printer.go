@@ -350,8 +350,8 @@ func (p *Printer) printTupleType(t *Type) {
 
 func (p *Printer) printAnonymousType(t *Type) {
 	props := p.c.getPropertiesOfObjectType(t)
-	callSignatures := p.c.getSignaturesOfType(t, SignatureKindCall)
-	constructSignatures := p.c.getSignaturesOfType(t, SignatureKindConstruct)
+	callSignatures := p.c.GetSignaturesOfType(t, SignatureKindCall)
+	constructSignatures := p.c.GetSignaturesOfType(t, SignatureKindConstruct)
 	if len(props) == 0 {
 		if len(callSignatures) == 1 && len(constructSignatures) == 0 {
 			p.printSignature(callSignatures[0], " => ")

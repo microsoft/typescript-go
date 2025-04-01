@@ -210,3 +210,32 @@ func positionToLineAndCharacter(position int, lineMap []core.TextPos) lsproto.Po
 		Character: uint32(character),
 	}
 }
+
+func toLspSignatureHelp(signatureHelpResult *ls.SignatureHelpItems) *lsproto.SignatureHelp {
+	signatureHelp := &lsproto.SignatureHelp{
+		Signatures:      make([]lsproto.SignatureInformation, len(signatureHelpResult.Signatures)),
+		ActiveSignature: ptrTo(uint32(signatureHelpResult.ActiveSignature)),
+		ActiveParameter: ptrTo(lsproto.ToNullable(uint32(signatureHelpResult.ActiveParameter))),
+	}
+	for i, signature := range signatureHelpResult.Signatures {
+		var parameters *[]lsproto.ParameterInformation = nil
+		if signature.Parameters != nil {
+			tempParams := make([]lsproto.ParameterInformation, len(*signature.Parameters))
+			parameters = &tempParams
+			for j, param := range *signature.Parameters {
+				(*parameters)[j] = lsproto.ParameterInformation{
+					Label:         lsproto.StringOrUintegerPair{String: &param.Label},
+					Documentation: nil, //param.Documentation
+				}
+			}
+		}
+
+		signatureHelp.Signatures[i] = lsproto.SignatureInformation{
+			Label:           signature.Label,
+			Documentation:   nil, //tbd
+			Parameters:      parameters,
+			ActiveParameter: ptrTo(lsproto.ToNullable(uint32(signature.ActiveParameter))),
+		}
+	}
+	return signatureHelp
+}

@@ -192,6 +192,8 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 		return s.handleHover(req)
 	case *lsproto.DefinitionParams:
 		return s.handleDefinition(req)
+	case *lsproto.SignatureHelpParams:
+		return s.handleSignatureHelp(req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -339,6 +341,66 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 			},
 		},
 	})
+}
+
+func (s *Server) handleSignatureHelp(req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.SignatureHelpParams)
+	file, project := s.getFileAndProject(params.TextDocument.Uri)
+	pos, err := s.converters.lineAndCharacterToPosition(params.Position, file.FileName())
+	if err != nil {
+		return s.sendError(req.ID, err)
+	}
+	var triggerReason *ls.SignatureHelpTriggerReason
+	if params.Context != nil {
+		if params.Context.TriggerKind == 1 {
+			triggerReason = &ls.SignatureHelpTriggerReason{
+				Invoked: &ls.SignatureHelpInvokedReason{
+					Kind:             "invoked",
+					TriggerCharacter: params.Context.TriggerCharacter,
+				},
+			}
+		} else if params.Context.TriggerKind == 2 {
+			var triggerCharacter *ls.SignatureHelpTriggerCharacter = new(ls.SignatureHelpTriggerCharacter)
+			if params.Context.TriggerCharacter != nil {
+				if *params.Context.TriggerCharacter == "(" {
+					*triggerCharacter = ls.OpenParenTriggerCharacter
+				} else if *params.Context.TriggerCharacter == "," {
+					*triggerCharacter = ls.CommaTriggerCharacter
+				} else if *params.Context.TriggerCharacter == "<" {
+					*triggerCharacter = ls.LessThanTriggerCharacter
+				}
+			}
+			triggerReason = &ls.SignatureHelpTriggerReason{
+				CharacterTyped: &ls.SignatureHelpCharacterTypedReason{
+					Kind:             "characterTyped",
+					TriggerCharacter: triggerCharacter,
+				},
+			}
+		} else if params.Context.TriggerKind == 3 {
+			var triggerCharacter *ls.SignatureHelpRetriggerCharacter = new(ls.SignatureHelpRetriggerCharacter)
+			if params.Context.TriggerCharacter != nil {
+				if *params.Context.TriggerCharacter == "(" {
+					triggerCharacter.OpenParenTrigger = ls.OpenParenTriggerCharacter
+				} else if *params.Context.TriggerCharacter == "," {
+					triggerCharacter.CommaTrigger = ls.CommaTriggerCharacter
+				} else if *params.Context.TriggerCharacter == "<" {
+					triggerCharacter.LessThanTrigger = ls.LessThanTriggerCharacter
+				} else if *params.Context.TriggerCharacter == ")" {
+					triggerCharacter.CloseParenTrigger = ls.CloseParenTriggerCharacter
+				}
+			}
+			triggerReason = &ls.SignatureHelpTriggerReason{
+				Retriggered: &ls.SignatureHelpRetriggeredReason{
+					Kind:             "retrigger",
+					TriggerCharacter: triggerCharacter,
+				},
+			}
+		}
+
+	}
+	signatureHelp := project.LanguageService().GetSignatureHelpItems(file.FileName(), pos, triggerReason)
+	toLspSignatureHelp := toLspSignatureHelp(signatureHelp)
+	return s.sendResult(req.ID, toLspSignatureHelp)
 }
 
 func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {

@@ -926,7 +926,7 @@ func (c *Checker) getInstanceType(constructorType *Type) *Type {
 	if prototypePropertyType != nil && !IsTypeAny(prototypePropertyType) {
 		return prototypePropertyType
 	}
-	constructSignatures := c.getSignaturesOfType(constructorType, SignatureKindConstruct)
+	constructSignatures := c.GetSignaturesOfType(constructorType, SignatureKindConstruct)
 	if len(constructSignatures) != 0 {
 		return c.getUnionType(core.Map(constructSignatures, func(signature *Signature) *Type {
 			return c.getReturnTypeOfSignature(c.getErasedSignature(signature))
@@ -2021,7 +2021,7 @@ func (c *Checker) getEffectsSignature(node *ast.Node) *Signature {
 		if funcType != nil {
 			apparentType = c.getApparentType(funcType)
 		}
-		signatures := c.getSignaturesOfType(core.OrElse(apparentType, c.unknownType), SignatureKindCall)
+		signatures := c.GetSignaturesOfType(core.OrElse(apparentType, c.unknownType), SignatureKindCall)
 		switch {
 		case len(signatures) == 1 && signatures[0].typeParameters == nil:
 			signature = signatures[0]
@@ -2048,7 +2048,7 @@ func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
 		hasInstanceProperty := c.getPropertyOfType(t, hasInstancePropertyName)
 		if hasInstanceProperty != nil {
 			hasInstancePropertyType := c.getTypeOfSymbol(hasInstanceProperty)
-			if hasInstancePropertyType != nil && len(c.getSignaturesOfType(hasInstancePropertyType, SignatureKindCall)) != 0 {
+			if hasInstancePropertyType != nil && len(c.GetSignaturesOfType(hasInstancePropertyType, SignatureKindCall)) != 0 {
 				return hasInstancePropertyType
 			}
 		}

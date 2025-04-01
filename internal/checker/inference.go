@@ -747,12 +747,12 @@ func (c *Checker) inferFromProperties(n *InferenceState, source *Type, target *T
 }
 
 func (c *Checker) inferFromSignatures(n *InferenceState, source *Type, target *Type, kind SignatureKind) {
-	sourceSignatures := c.getSignaturesOfType(source, kind)
+	sourceSignatures := c.GetSignaturesOfType(source, kind)
 	sourceLen := len(sourceSignatures)
 	if sourceLen > 0 {
 		// We match source and target signatures from the bottom up, and if the source has fewer signatures
 		// than the target, we infer from the first source signature to the excess target signatures.
-		targetSignatures := c.getSignaturesOfType(target, kind)
+		targetSignatures := c.GetSignaturesOfType(target, kind)
 		targetLen := len(targetSignatures)
 		for i := range targetLen {
 			sourceIndex := max(sourceLen-targetLen+i, 0)
@@ -1216,7 +1216,7 @@ func (c *Checker) inferFromIntraExpressionSites(n *InferenceContext) {
 		if ast.IsMethodDeclaration(site.node) {
 			contextualType = c.getContextualTypeForObjectLiteralMethod(site.node, ContextFlagsNoConstraints)
 		} else {
-			contextualType = c.getContextualType(site.node, ContextFlagsNoConstraints)
+			contextualType = c.GetContextualType(site.node, ContextFlagsNoConstraints)
 		}
 		if contextualType != nil {
 			c.inferTypes(n.inferences, site.t, contextualType, InferencePriorityNone, false)

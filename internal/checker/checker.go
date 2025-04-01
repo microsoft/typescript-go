@@ -3520,7 +3520,7 @@ func (c *Checker) checkTestingKnownTruthyType(condExpr *ast.Node, condType *Type
 	// the block as a heuristic to identify the most common bugs. There
 	// are too many false positives for values sourced from type
 	// definitions without strictNullChecks otherwise.
-	callSignatures := c.getSignaturesOfType(t, SignatureKindCall)
+	callSignatures := c.GetSignaturesOfType(t, SignatureKindCall)
 	isPromise := c.getAwaitedTypeOfPromise(t) != nil
 	if len(callSignatures) == 0 && !isPromise {
 		return
@@ -3966,7 +3966,7 @@ func (c *Checker) checkClassLikeDeclaration(node *ast.Node) {
 				if !c.isMixinConstructorType(staticType) {
 					c.error(core.OrElse(node.Name(), node), diagnostics.A_mixin_class_must_have_a_constructor_with_a_single_rest_parameter_of_type_any)
 				} else {
-					constructSignatures := c.getSignaturesOfType(baseConstructorType, SignatureKindConstruct)
+					constructSignatures := c.GetSignaturesOfType(baseConstructorType, SignatureKindConstruct)
 					if core.Some(constructSignatures, func(signature *Signature) bool {
 						return signature.flags&SignatureFlagsAbstract != 0
 					}) && !ast.HasSyntacticModifier(node, ast.ModifierFlagsAbstract) {
@@ -4083,7 +4083,7 @@ func (c *Checker) areTypeParametersIdentical(declarations []*ast.Node, targetPar
 }
 
 func (c *Checker) checkBaseTypeAccessibility(t *Type, node *ast.Node) {
-	signatures := c.getSignaturesOfType(t, SignatureKindConstruct)
+	signatures := c.GetSignaturesOfType(t, SignatureKindConstruct)
 	if len(signatures) != 0 {
 		declaration := signatures[0].declaration
 		if declaration != nil && hasEffectiveModifier(declaration, ast.ModifierFlagsPrivate) {
@@ -5926,7 +5926,7 @@ func (c *Checker) getIterationTypesOfIterableSlow(t *Type, r *IterationTypesReso
 		if IsTypeAny(methodType) {
 			return IterationTypes{c.anyType, c.anyType, c.anyType}
 		}
-		if signatures := c.getSignaturesOfType(methodType, SignatureKindCall); len(signatures) != 0 {
+		if signatures := c.GetSignaturesOfType(methodType, SignatureKindCall); len(signatures) != 0 {
 			iteratorType := c.getIntersectionType(core.Map(signatures, c.getReturnTypeOfSignature))
 			return c.getIterationTypesOfIteratorWorker(iteratorType, r, errorNode)
 		}
@@ -6014,7 +6014,7 @@ func (c *Checker) getIterationTypesOfMethod(t *Type, resolver *IterationTypesRes
 	// Both async and non-async iterators *must* have a `next` method.
 	var methodSignatures []*Signature
 	if methodType != nil {
-		methodSignatures = c.getSignaturesOfType(methodType, SignatureKindCall)
+		methodSignatures = c.GetSignaturesOfType(methodType, SignatureKindCall)
 	}
 	if len(methodSignatures) == 0 {
 		if errorNode != nil {
@@ -6751,7 +6751,7 @@ func (c *Checker) checkNonNullTypeWithReporter(t *Type, node *ast.Node, reportEr
 	facts := c.getTypeFacts(t, TypeFactsIsUndefinedOrNull)
 	if facts&TypeFactsIsUndefinedOrNull != 0 {
 		reportError(c, node, facts)
-		nonNullable := c.getNonNullableType(t)
+		nonNullable := c.GetNonNullableType(t)
 		if nonNullable.flags&(TypeFlagsNullable|TypeFlagsNever) != 0 {
 			return c.errorType
 		}
@@ -6933,7 +6933,7 @@ func (c *Checker) instantiateTypeWithSingleGenericCallSignature(node *ast.Node, 
 	if contextualType == nil {
 		return t
 	}
-	contextualSignature := c.getSingleSignature(c.getNonNullableType(contextualType), core.IfElse(callSignature != nil, SignatureKindCall, SignatureKindConstruct), false /*allowMembers*/)
+	contextualSignature := c.getSingleSignature(c.GetNonNullableType(contextualType), core.IfElse(callSignature != nil, SignatureKindCall, SignatureKindConstruct), false /*allowMembers*/)
 	if contextualSignature == nil || len(contextualSignature.typeParameters) != 0 {
 		return t
 	}
@@ -7398,7 +7398,7 @@ func (c *Checker) checkTemplateExpression(node *ast.Node) *Type {
 	if evaluated != nil {
 		return c.getFreshTypeOfLiteralType(c.getStringLiteralType(evaluated.(string)))
 	}
-	if c.isConstContext(node) || c.isTemplateLiteralContext(node) || someType(core.OrElse(c.getContextualType(node, ContextFlagsNone), c.unknownType), c.isTemplateLiteralContextualType) {
+	if c.isConstContext(node) || c.isTemplateLiteralContext(node) || someType(core.OrElse(c.GetContextualType(node, ContextFlagsNone), c.unknownType), c.isTemplateLiteralContextualType) {
 		return c.getTemplateLiteralType(texts, types)
 	}
 	return c.stringType
@@ -7520,7 +7520,7 @@ func (c *Checker) createArrayLiteralType(t *Type) *Type {
 
 func isSpreadIntoCallOrNew(node *ast.Node) bool {
 	parent := ast.WalkUpParenthesizedExpressions(node.Parent)
-	return ast.IsSpreadElement(parent) && isCallOrNewExpression(parent.Parent)
+	return ast.IsSpreadElement(parent) && IsCallOrNewExpression(parent.Parent)
 }
 
 func (c *Checker) checkQualifiedName(node *ast.Node, checkMode CheckMode) *Type {
@@ -7757,7 +7757,7 @@ func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
 	}
 	if sig.declaration != nil && sig.declaration.Flags&ast.NodeFlagsDeprecated != 0 {
 		suggestionNode := c.getDeprecatedSuggestionNode(node)
-		name := tryGetPropertyAccessOrIdentifierToString(getInvokedExpression(node))
+		name := tryGetPropertyAccessOrIdentifierToString(GetInvokedExpression(node))
 		c.addDeprecatedSuggestionWithSignature(suggestionNode, sig.declaration, name, c.signatureToString(sig))
 	}
 }
@@ -7908,8 +7908,8 @@ func (c *Checker) resolveCallExpression(node *ast.Node, candidatesOutArray *[]*S
 	// but we are not including call signatures that may have been added to the Object or
 	// Function interface, since they have none by default. This is a bit of a leap of faith
 	// that the user will not add any.
-	callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
-	numConstructSignatures := len(c.getSignaturesOfType(apparentType, SignatureKindConstruct))
+	callSignatures := c.GetSignaturesOfType(apparentType, SignatureKindCall)
+	numConstructSignatures := len(c.GetSignaturesOfType(apparentType, SignatureKindConstruct))
 	// TS 1.0 Spec: 4.12
 	// In an untyped function call no TypeArgs are permitted, Args can be any argument list, no contextual
 	// types are provided for the argument expressions, and the result is always of type Any.
@@ -7987,7 +7987,7 @@ func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Si
 	// but we are not including construct signatures that may have been added to the Object or
 	// Function interface, since they have none by default. This is a bit of a leap of faith
 	// that the user will not add any.
-	constructSignatures := c.getSignaturesOfType(expressionType, SignatureKindConstruct)
+	constructSignatures := c.GetSignaturesOfType(expressionType, SignatureKindConstruct)
 	if len(constructSignatures) != 0 {
 		if !c.isConstructorAccessible(node, constructSignatures[0]) {
 			return c.resolveErrorCall(node)
@@ -8015,7 +8015,7 @@ func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Si
 	// one or more call signatures, the expression is processed as a function call. A compile-time
 	// error occurs if the result of the function call is not Void. The type of the result of the
 	// operation is Any. It is an error to have a Void this type.
-	callSignatures := c.getSignaturesOfType(expressionType, SignatureKindCall)
+	callSignatures := c.GetSignaturesOfType(expressionType, SignatureKindCall)
 	if len(callSignatures) != 0 {
 		signature := c.resolveCall(node, callSignatures, candidatesOutArray, checkMode, SignatureFlagsNone, nil)
 		if !c.noImplicitAny {
@@ -8111,8 +8111,8 @@ func (c *Checker) resolveTaggedTemplateExpression(node *ast.Node, candidatesOutA
 		// Another error has already been reported
 		return c.resolveErrorCall(node)
 	}
-	callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
-	numConstructSignatures := len(c.getSignaturesOfType(apparentType, SignatureKindConstruct))
+	callSignatures := c.GetSignaturesOfType(apparentType, SignatureKindCall)
+	numConstructSignatures := len(c.GetSignaturesOfType(apparentType, SignatureKindConstruct))
 	if c.isUntypedFunctionCall(tagType, apparentType, len(callSignatures), numConstructSignatures) {
 		return c.resolveUntypedCall(node)
 	}
@@ -8133,8 +8133,8 @@ func (c *Checker) resolveDecorator(node *ast.Node, candidatesOutArray *[]*Signat
 	if c.isErrorType(apparentType) {
 		return c.resolveErrorCall(node)
 	}
-	callSignatures := c.getSignaturesOfType(apparentType, SignatureKindCall)
-	numConstructSignatures := len(c.getSignaturesOfType(apparentType, SignatureKindConstruct))
+	callSignatures := c.GetSignaturesOfType(apparentType, SignatureKindCall)
+	numConstructSignatures := len(c.GetSignaturesOfType(apparentType, SignatureKindConstruct))
 	if c.isUntypedFunctionCall(funcType, apparentType, len(callSignatures), numConstructSignatures) {
 		return c.resolveUntypedCall(node)
 	}
@@ -8768,7 +8768,7 @@ func (c *Checker) getThisArgumentType(node *ast.Node) *Type {
 	thisArgumentType := c.checkExpression(node)
 	switch {
 	case ast.IsOptionalChainRoot(node.Parent):
-		return c.getNonNullableType(thisArgumentType)
+		return c.GetNonNullableType(thisArgumentType)
 	case ast.IsOptionalChain(node.Parent):
 		return c.removeOptionalTypeMarker(thisArgumentType)
 	}
@@ -8795,12 +8795,12 @@ func (c *Checker) inferTypeArguments(node *ast.Node, signature *Signature, args 
 	// return type of 'wrap'.
 	if !ast.IsDecorator(node) && !ast.IsBinaryExpression(node) {
 		skipBindingPatterns := core.Every(signature.typeParameters, func(p *Type) bool { return c.getDefaultFromTypeParameter(p) != nil })
-		contextualType := c.getContextualType(node, core.IfElse(skipBindingPatterns, ContextFlagsSkipBindingPatterns, ContextFlagsNone))
+		contextualType := c.GetContextualType(node, core.IfElse(skipBindingPatterns, ContextFlagsSkipBindingPatterns, ContextFlagsNone))
 		if contextualType != nil {
 			inferenceTargetType := c.getReturnTypeOfSignature(signature)
 			if c.couldContainTypeVariables(inferenceTargetType) {
 				outerContext := c.getInferenceContext(node)
-				isFromBindingPattern := !skipBindingPatterns && c.getContextualType(node, ContextFlagsSkipBindingPatterns) != contextualType
+				isFromBindingPattern := !skipBindingPatterns && c.GetContextualType(node, ContextFlagsSkipBindingPatterns) != contextualType
 				// A return type inference from a binding pattern can be used in instantiating the contextual
 				// type of an argument later in inference, but cannot stand on its own as the final return type.
 				// It is incorporated into `context.returnMapper` which is used in `instantiateContextualType`,
@@ -9296,7 +9296,7 @@ func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Ty
 	var diagnostic *ast.Diagnostic
 	isCall := kind == SignatureKindCall
 	awaitedType := c.getAwaitedType(apparentType)
-	maybeMissingAwait := awaitedType != nil && len(c.getSignaturesOfType(awaitedType, kind)) > 0
+	maybeMissingAwait := awaitedType != nil && len(c.GetSignaturesOfType(awaitedType, kind)) > 0
 	target := errorTarget
 	if ast.IsPropertyAccessExpression(errorTarget) && ast.IsCallExpression(errorTarget.Parent) {
 		target = errorTarget.Name()
@@ -9305,7 +9305,7 @@ func (c *Checker) invocationErrorDetails(errorTarget *ast.Node, apparentType *Ty
 		types := apparentType.Types()
 		hasSignatures := false
 		for _, constituent := range types {
-			signatures := c.getSignaturesOfType(constituent, kind)
+			signatures := c.GetSignaturesOfType(constituent, kind)
 			if len(signatures) != 0 {
 				hasSignatures = true
 				if diagnostic != nil {
@@ -9365,7 +9365,7 @@ func (c *Checker) invocationErrorRecovery(apparentType *Type, kind SignatureKind
 	// Create a diagnostic on the originating import if possible onto which we can attach a quickfix
 	//  An import call expression cannot be rewritten into another form to correct the error - the only solution is to use `.default` at the use-site
 	if importNode != nil && !ast.IsImportCall(importNode) {
-		sigs := c.getSignaturesOfType(c.getTypeOfSymbol(c.valueSymbolLinks.Get(apparentType.symbol).target), kind)
+		sigs := c.GetSignaturesOfType(c.getTypeOfSymbol(c.valueSymbolLinks.Get(apparentType.symbol).target), kind)
 		if len(sigs) == 0 {
 			return
 		}
@@ -9453,7 +9453,7 @@ func (c *Checker) contextuallyCheckFunctionExpressionOrObjectLiteralMethod(node 
 		// already assigned contextual types.
 		if links.flags&NodeCheckFlagsContextChecked == 0 {
 			links.flags |= NodeCheckFlagsContextChecked
-			signature := core.FirstOrNil(c.getSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
+			signature := core.FirstOrNil(c.GetSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
 			if signature == nil {
 				return
 			}
@@ -9596,7 +9596,7 @@ func (c *Checker) createUnionSignature(sig *Signature, unionSignatures []*Signat
 // If the given type is an object or union type with a single signature, and if that signature has at
 // least as many parameters as the given function, return the signature. Otherwise return undefined.
 func (c *Checker) getContextualCallSignature(t *Type, node *ast.Node) *Signature {
-	signatures := c.getSignaturesOfType(t, SignatureKindCall)
+	signatures := c.GetSignaturesOfType(t, SignatureKindCall)
 	applicableByArity := core.Filter(signatures, func(s *Signature) bool { return !c.isAritySmaller(s, node) })
 	if len(applicableByArity) == 1 {
 		return applicableByArity[0]
@@ -9803,13 +9803,13 @@ func (c *Checker) checkNonNullAssertion(node *ast.Node) *Type {
 	if node.Flags&ast.NodeFlagsOptionalChain != 0 {
 		return c.checkNonNullChain(node)
 	}
-	return c.getNonNullableType(c.checkExpression(node.Expression()))
+	return c.GetNonNullableType(c.checkExpression(node.Expression()))
 }
 
 func (c *Checker) checkNonNullChain(node *ast.Node) *Type {
 	leftType := c.checkExpression(node.Expression())
 	nonOptionalType := c.getOptionalExpressionType(leftType, node.Expression())
-	return c.propagateOptionalTypeMarker(c.getNonNullableType(nonOptionalType), node, nonOptionalType != leftType)
+	return c.propagateOptionalTypeMarker(c.GetNonNullableType(nonOptionalType), node, nonOptionalType != leftType)
 }
 
 func (c *Checker) checkExpressionWithTypeArguments(node *ast.Node) *Type {
@@ -10179,7 +10179,7 @@ func (c *Checker) checkYieldExpression(node *ast.Node) *Type {
 	if t == nil {
 		t = c.anyType
 		if c.noImplicitAny && !expressionResultIsUnused(node) {
-			contextualType := c.getContextualType(node, ContextFlagsNone)
+			contextualType := c.GetContextualType(node, ContextFlagsNone)
 			if contextualType == nil || IsTypeAny(contextualType) {
 				c.error(node, diagnostics.X_yield_expression_implicitly_results_in_an_any_type_because_its_containing_generator_lacks_a_return_type_annotation)
 			}
@@ -10379,7 +10379,7 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 	}
 	var flowType *Type
 	if isAutomaticTypeInNonNull {
-		flowType = c.getNonNullableType(c.getFlowTypeOfReferenceEx(node, t, initialType, flowContainer, nil))
+		flowType = c.GetNonNullableType(c.getFlowTypeOfReferenceEx(node, t, initialType, flowContainer, nil))
 	} else {
 		flowType = c.getFlowTypeOfReferenceEx(node, t, initialType, flowContainer, nil)
 	}
@@ -10653,7 +10653,7 @@ func (c *Checker) isMethodAccessForCall(node *ast.Node) bool {
 	for ast.IsParenthesizedExpression(node.Parent) {
 		node = node.Parent
 	}
-	return isCallOrNewExpression(node.Parent) && node.Parent.Expression() == node
+	return IsCallOrNewExpression(node.Parent) && node.Parent.Expression() == node
 }
 
 // Lookup the private identifier lexically.
@@ -10861,7 +10861,7 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 			parent = node.Parent
 		}
 		if isCallLikeExpression(parent) {
-			return isCallOrNewExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
+			return IsCallOrNewExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
 		}
 		return core.Every(symbol.Declarations, func(d *ast.Node) bool {
 			return !ast.IsFunctionLike(d) || c.isDeprecatedDeclaration(d)
@@ -11226,7 +11226,7 @@ func (c *Checker) getContextualThisParameterType(fn *ast.Node) *Type {
 			// for 'this' is the non-null form of the contextual type for the containing object literal or
 			// the type of the object literal itself.
 			if contextualType != nil {
-				thisType = c.getNonNullableType(contextualType)
+				thisType = c.GetNonNullableType(contextualType)
 			} else {
 				thisType = c.checkExpressionCached(containingLiteral)
 			}
@@ -11636,7 +11636,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 	case ast.KindBarBarToken, ast.KindBarBarEqualsToken:
 		resultType := leftType
 		if c.hasTypeFacts(leftType, TypeFactsFalsy) {
-			resultType = c.getUnionTypeEx([]*Type{c.getNonNullableType(c.removeDefinitelyFalsyTypes(leftType)), rightType}, UnionReductionSubtype, nil, nil)
+			resultType = c.getUnionTypeEx([]*Type{c.GetNonNullableType(c.removeDefinitelyFalsyTypes(leftType)), rightType}, UnionReductionSubtype, nil, nil)
 		}
 		if operator == ast.KindBarBarEqualsToken {
 			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
@@ -11648,7 +11648,7 @@ func (c *Checker) checkBinaryLikeExpression(left *ast.Node, operatorToken *ast.N
 		}
 		resultType := leftType
 		if c.hasTypeFacts(leftType, TypeFactsEQUndefinedOrNull) {
-			resultType = c.getUnionTypeEx([]*Type{c.getNonNullableType(leftType), rightType}, UnionReductionSubtype, nil, nil)
+			resultType = c.getUnionTypeEx([]*Type{c.GetNonNullableType(leftType), rightType}, UnionReductionSubtype, nil, nil)
 		}
 		if operator == ast.KindQuestionQuestionEqualsToken {
 			c.checkAssignmentOperator(left, operator, right, leftType, rightType)
@@ -12668,7 +12668,7 @@ func (c *Checker) hasDefaultValue(node *ast.Node) bool {
 func (c *Checker) isConstContext(node *ast.Node) bool {
 	parent := node.Parent
 	return isConstAssertion(parent) ||
-		c.isValidConstAssertionArgument(node) && c.isConstTypeVariable(c.getContextualType(node, ContextFlagsNone), 0) ||
+		c.isValidConstAssertionArgument(node) && c.isConstTypeVariable(c.GetContextualType(node, ContextFlagsNone), 0) ||
 		(ast.IsParenthesizedExpression(parent) || ast.IsArrayLiteralExpression(parent) || ast.IsSpreadElement(parent)) && c.isConstContext(parent) ||
 		(ast.IsPropertyAssignment(parent) || ast.IsShorthandPropertyAssignment(parent) || ast.IsTemplateSpan(parent)) && c.isConstContext(parent.Parent)
 }
@@ -12893,7 +12893,7 @@ func (c *Checker) checkExpressionForMutableLocation(node *ast.Node, checkMode Ch
 	case isTypeAssertion(node):
 		return t
 	default:
-		return c.getWidenedLiteralLikeTypeForContextualType(t, c.instantiateContextualType(c.getContextualType(node, ContextFlagsNone), node, ContextFlagsNone))
+		return c.getWidenedLiteralLikeTypeForContextualType(t, c.instantiateContextualType(c.GetContextualType(node, ContextFlagsNone), node, ContextFlagsNone))
 	}
 }
 
@@ -15371,7 +15371,7 @@ func (c *Checker) getBaseConstructorTypeOfClass(t *Type) *Type {
 			constraint := c.getConstraintFromTypeParameter(baseConstructorType)
 			var ctorReturn *Type = c.unknownType
 			if constraint != nil {
-				ctorSigs := c.getSignaturesOfType(constraint, SignatureKindConstruct)
+				ctorSigs := c.GetSignaturesOfType(constraint, SignatureKindConstruct)
 				if len(ctorSigs) != 0 {
 					ctorReturn = c.getReturnTypeOfSignature(ctorSigs[0])
 				}
@@ -15392,11 +15392,11 @@ func (c *Checker) getBaseConstructorTypeOfClass(t *Type) *Type {
 }
 
 func (c *Checker) isFunctionType(t *Type) bool {
-	return t.flags&TypeFlagsObject != 0 && len(c.getSignaturesOfType(t, SignatureKindCall)) > 0
+	return t.flags&TypeFlagsObject != 0 && len(c.GetSignaturesOfType(t, SignatureKindCall)) > 0
 }
 
 func (c *Checker) isConstructorType(t *Type) bool {
-	if len(c.getSignaturesOfType(t, SignatureKindConstruct)) > 0 {
+	if len(c.GetSignaturesOfType(t, SignatureKindConstruct)) > 0 {
 		return true
 	}
 	if t.flags&TypeFlagsTypeVariable != 0 {
@@ -15409,7 +15409,7 @@ func (c *Checker) isConstructorType(t *Type) bool {
 // A type is a mixin constructor if it has a single construct signature taking no type parameters and a single
 // rest parameter of type any[].
 func (c *Checker) isMixinConstructorType(t *Type) bool {
-	signatures := c.getSignaturesOfType(t, SignatureKindConstruct)
+	signatures := c.GetSignaturesOfType(t, SignatureKindConstruct)
 	if len(signatures) == 1 {
 		s := signatures[0]
 		if len(s.typeParameters) == 0 && len(s.parameters) == 1 && signatureHasRestParameter(s) {
@@ -16091,7 +16091,7 @@ func (c *Checker) getBindingElementTypeFromParentType(declaration *ast.Node, par
 	pattern := declaration.Parent
 	// Relax null check on ambient destructuring parameters, since the parameters have no implementation and are just documentation
 	if c.strictNullChecks && declaration.Flags&ast.NodeFlagsAmbient != 0 && ast.IsPartOfParameterDeclaration(declaration) {
-		parentType = c.getNonNullableType(parentType)
+		parentType = c.GetNonNullableType(parentType)
 	} else if c.strictNullChecks && pattern.Parent.Initializer() != nil && !(c.hasTypeFacts(c.getTypeOfInitializer(pattern.Parent.Initializer()), TypeFactsEQUndefined)) {
 		parentType = c.getTypeWithFacts(parentType, TypeFactsNEUndefined)
 	}
@@ -16843,9 +16843,16 @@ func (c *Checker) getNullableType(t *Type, flags TypeFlags) *Type {
 	return c.getUnionType([]*Type{t, c.undefinedType, c.nullType})
 }
 
-func (c *Checker) getNonNullableType(t *Type) *Type {
+func (c *Checker) GetNonNullableType(t *Type) *Type {
 	if c.strictNullChecks {
 		return c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
+	}
+	return t
+}
+
+func (c *Checker) GetNonOptionalType(t *Type) *Type {
+	if c.strictNullChecks {
+		return c.removeType(t, c.optionalType)
 	}
 	return t
 }
@@ -16856,7 +16863,7 @@ func (c *Checker) isNullableType(t *Type) bool {
 
 func (c *Checker) getNonNullableTypeIfNeeded(t *Type) *Type {
 	if c.isNullableType(t) {
-		return c.getNonNullableType(t)
+		return c.GetNonNullableType(t)
 	}
 	return t
 }
@@ -17128,7 +17135,7 @@ func (c *Checker) getTypeOfPropertyOfType(t *Type, name string) *Type {
 	return nil
 }
 
-func (c *Checker) getSignaturesOfType(t *Type, kind SignatureKind) []*Signature {
+func (c *Checker) GetSignaturesOfType(t *Type, kind SignatureKind) []*Signature {
 	return c.getSignaturesOfStructuredType(c.getReducedApparentType(t), kind)
 }
 
@@ -17309,8 +17316,8 @@ func (c *Checker) resolveObjectTypeMembers(t *Type, source *Type, typeParameters
 				instantiatedBaseType = c.getTypeWithThisArgument(c.instantiateType(baseType, mapper), thisArgument, false /*needsApparentType*/)
 			}
 			members = c.addInheritedMembers(members, c.getPropertiesOfType(instantiatedBaseType))
-			callSignatures = core.Concatenate(callSignatures, c.getSignaturesOfType(instantiatedBaseType, SignatureKindCall))
-			constructSignatures = core.Concatenate(constructSignatures, c.getSignaturesOfType(instantiatedBaseType, SignatureKindConstruct))
+			callSignatures = core.Concatenate(callSignatures, c.GetSignaturesOfType(instantiatedBaseType, SignatureKindCall))
+			constructSignatures = core.Concatenate(constructSignatures, c.GetSignaturesOfType(instantiatedBaseType, SignatureKindConstruct))
 			var inheritedIndexInfos []*IndexInfo
 			if instantiatedBaseType != c.anyType {
 				inheritedIndexInfos = c.getIndexInfosOfType(instantiatedBaseType)
@@ -17455,7 +17462,7 @@ func (c *Checker) getInstantiatedConstructorsForTypeArguments(t *Type, typeArgum
 
 func (c *Checker) getConstructorsForTypeArguments(t *Type, typeArgumentNodes []*ast.Node, location *ast.Node) []*Signature {
 	typeArgCount := len(typeArgumentNodes)
-	return core.Filter(c.getSignaturesOfType(t, SignatureKindConstruct), func(sig *Signature) bool {
+	return core.Filter(c.GetSignaturesOfType(t, SignatureKindConstruct), func(sig *Signature) bool {
 		return typeArgCount >= c.getMinTypeArgumentCount(sig.typeParameters) && typeArgCount <= len(sig.typeParameters)
 	})
 }
@@ -18452,7 +18459,7 @@ func (c *Checker) checkAndAggregateYieldOperandTypes(fn *ast.Node, checkMode Che
 			iterationTypes := c.getIterationTypesOfIterable(yieldExprType, core.IfElse(isAsync, IterationUseAsyncYieldStar, IterationUseYieldStar), yieldExpr.Expression())
 			nextType = iterationTypes.nextType
 		} else {
-			nextType = c.getContextualType(yieldExpr, ContextFlagsNone)
+			nextType = c.GetContextualType(yieldExpr, ContextFlagsNone)
 		}
 		if nextType != nil {
 			nextTypes = core.AppendIfUnique(nextTypes, nextType)
@@ -18768,8 +18775,8 @@ func (c *Checker) resolveAnonymousTypeMembers(t *Type) {
 	if d.target != nil {
 		c.setStructuredTypeMembers(t, nil, nil, nil, nil)
 		members := c.createInstantiatedSymbolTable(c.getPropertiesOfObjectType(d.target), d.mapper)
-		callSignatures := c.instantiateSignatures(c.getSignaturesOfType(d.target, SignatureKindCall), d.mapper)
-		constructSignatures := c.instantiateSignatures(c.getSignaturesOfType(d.target, SignatureKindConstruct), d.mapper)
+		callSignatures := c.instantiateSignatures(c.GetSignaturesOfType(d.target, SignatureKindCall), d.mapper)
+		constructSignatures := c.instantiateSignatures(c.GetSignaturesOfType(d.target, SignatureKindConstruct), d.mapper)
 		indexInfos := c.instantiateIndexInfos(c.getIndexInfosOfType(d.target), d.mapper)
 		c.setStructuredTypeMembers(t, members, callSignatures, constructSignatures, indexInfos)
 		return
@@ -18975,7 +18982,7 @@ func isThislessTypeParameter(node *ast.Node) bool {
 
 func (c *Checker) getDefaultConstructSignatures(classType *Type) []*Signature {
 	baseConstructorType := c.getBaseConstructorTypeOfClass(classType)
-	baseSignatures := c.getSignaturesOfType(baseConstructorType, SignatureKindConstruct)
+	baseSignatures := c.GetSignaturesOfType(baseConstructorType, SignatureKindConstruct)
 	declaration := getClassLikeDeclarationOfSymbol(classType.symbol)
 	isAbstract := declaration != nil && ast.HasSyntacticModifier(declaration, ast.ModifierFlagsAbstract)
 	if len(baseSignatures) == 0 {
@@ -19171,13 +19178,13 @@ func (c *Checker) resolveUnionTypeMembers(t *Type) {
 		if t == c.globalFunctionType {
 			return []*Signature{c.unknownSignature}
 		}
-		return c.getSignaturesOfType(t, SignatureKindCall)
+		return c.GetSignaturesOfType(t, SignatureKindCall)
 	}))
 	if len(callSignatures) == 0 {
 		callSignatures = c.getArrayMemberCallSignatures(t)
 	}
 	constructSignatures := c.getUnionSignatures(core.Map(t.Types(), func(t *Type) []*Signature {
-		return c.getSignaturesOfType(t, SignatureKindConstruct)
+		return c.GetSignaturesOfType(t, SignatureKindConstruct)
 	}))
 	indexInfos := c.getUnionIndexInfos(t.Types())
 	c.setStructuredTypeMembers(t, nil, callSignatures, constructSignatures, indexInfos)
@@ -19203,7 +19210,7 @@ func (c *Checker) getArrayMemberCallSignatures(t *Type) []*Signature {
 	arrayType := c.createArrayTypeEx(arrayArg, someType(t, func(t *Type) bool {
 		return c.isReadonlyArraySymbol(t.symbol.Parent)
 	}))
-	return c.getSignaturesOfType(c.getTypeOfPropertyOfType(arrayType, memberName), SignatureKindCall)
+	return c.GetSignaturesOfType(c.getTypeOfPropertyOfType(arrayType, memberName), SignatureKindCall)
 }
 
 func (c *Checker) isArrayOrTupleSymbol(symbol *ast.Symbol) bool {
@@ -19429,7 +19436,7 @@ func (c *Checker) resolveIntersectionTypeMembers(t *Type) {
 		// '{ new(...args: any[]) => A } & { new(s: string) => B }' has a single construct signature
 		// 'new(s: string) => A & B'.
 		if !mixinFlags[i] {
-			signatures := c.getSignaturesOfType(t, SignatureKindConstruct)
+			signatures := c.GetSignaturesOfType(t, SignatureKindConstruct)
 			if len(signatures) != 0 && mixinCount > 0 {
 				signatures = core.Map(signatures, func(s *Signature) *Signature {
 					clone := c.cloneSignature(s)
@@ -19439,7 +19446,7 @@ func (c *Checker) resolveIntersectionTypeMembers(t *Type) {
 			}
 			constructSignatures = c.appendSignatures(constructSignatures, signatures)
 		}
-		callSignatures = c.appendSignatures(callSignatures, c.getSignaturesOfType(t, SignatureKindCall))
+		callSignatures = c.appendSignatures(callSignatures, c.GetSignaturesOfType(t, SignatureKindCall))
 		for _, info := range c.getIndexInfosOfType(t) {
 			indexInfos = c.appendIndexInfo(indexInfos, info, false /*union*/)
 		}
@@ -19482,7 +19489,7 @@ func (c *Checker) findMixins(types []*Type) ([]bool, int) {
 	var constructorTypeCount, mixinCount int
 	firstMixinIndex := -1
 	for i, t := range types {
-		if len(c.getSignaturesOfType(t, SignatureKindConstruct)) > 0 {
+		if len(c.GetSignaturesOfType(t, SignatureKindConstruct)) > 0 {
 			constructorTypeCount++
 		}
 		if mixinFlags[i] {
@@ -19505,7 +19512,7 @@ func (c *Checker) includeMixinType(t *Type, types []*Type, mixinFlags []bool, in
 		if i == index {
 			mixedTypes = append(mixedTypes, t)
 		} else if mixinFlags[i] {
-			mixedTypes = append(mixedTypes, c.getReturnTypeOfSignature(c.getSignaturesOfType(types[i], SignatureKindConstruct)[0]))
+			mixedTypes = append(mixedTypes, c.getReturnTypeOfSignature(c.GetSignaturesOfType(types[i], SignatureKindConstruct)[0]))
 		}
 	}
 	return c.getIntersectionType(mixedTypes)
@@ -19603,7 +19610,7 @@ func (c *Checker) createUnionOrIntersectionProperty(containingType *Type, name s
 						// If we merged instantiations of a generic type, we replicate the symbol parent resetting behavior we used
 						// to do when we recorded multiple distinct symbols so that we still get, eg, `Array<T>.length` printed
 						// back and not `Array<string>.length` when we're looking at a `.length` access on a `string[] | number[]`
-						mergedInstantiations = singleProp.Parent != nil && len(c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.Parent)) != 0
+						mergedInstantiations = singleProp.Parent != nil && len(c.GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(singleProp.Parent)) != 0
 					} else {
 						if propSet.Size() == 0 {
 							propSet.Add(singleProp)
@@ -21683,7 +21690,7 @@ func (c *Checker) getAliasSymbolForTypeNode(node *ast.Node) *ast.Symbol {
 
 func (c *Checker) getTypeArgumentsForAliasSymbol(symbol *ast.Symbol) []*Type {
 	if symbol != nil {
-		return c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+		return c.GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
 	}
 	return nil
 }
@@ -21721,7 +21728,7 @@ func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) 
 			ast.KindConditionalType:
 			outerTypeParameters := c.getOuterTypeParameters(node, includeThisTypes)
 			if (kind == ast.KindFunctionExpression || kind == ast.KindArrowFunction || ast.IsObjectLiteralMethod(node)) && c.isContextSensitive(node) {
-				signature := core.FirstOrNil(c.getSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
+				signature := core.FirstOrNil(c.GetSignaturesOfType(c.getTypeOfSymbol(c.getSymbolOfDeclaration(node)), SignatureKindCall))
 				if signature != nil && len(signature.typeParameters) != 0 {
 					return append(outerTypeParameters, signature.typeParameters...)
 				}
@@ -21757,7 +21764,7 @@ func (c *Checker) getInferTypeParameters(node *ast.Node) []*Type {
 
 // The local type parameters are the combined set of type parameters from all declarations of the class,
 // interface, or type alias.
-func (c *Checker) getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol *ast.Symbol) []*Type {
+func (c *Checker) GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol *ast.Symbol) []*Type {
 	return c.appendLocalTypeParametersOfClassOrInterfaceOrTypeAlias(nil, symbol)
 }
 
@@ -21800,7 +21807,7 @@ func (c *Checker) getDeclaredTypeOfTypeAlias(symbol *ast.Symbol) *Type {
 		typeNode := declaration.AsTypeAliasDeclaration().Type
 		t := c.getTypeFromTypeNode(typeNode)
 		if c.popTypeResolution() {
-			typeParameters := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+			typeParameters := c.GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
 			if len(typeParameters) != 0 {
 				// Initialize the instantiation cache for generic type aliases. The declared type corresponds to
 				// an instantiation of the type alias with the type parameters supplied as type arguments.
@@ -26325,7 +26332,7 @@ func (c *Checker) getPromisedTypeOfPromiseEx(t *Type, errorNode *ast.Node, thisT
 	}
 	var thenSignatures []*Signature
 	if thenFunction != nil {
-		thenSignatures = c.getSignaturesOfType(thenFunction, SignatureKindCall)
+		thenSignatures = c.GetSignaturesOfType(thenFunction, SignatureKindCall)
 	}
 	if len(thenSignatures) == 0 {
 		if errorNode != nil {
@@ -26357,7 +26364,7 @@ func (c *Checker) getPromisedTypeOfPromiseEx(t *Type, errorNode *ast.Node, thisT
 	if IsTypeAny(onfulfilledParameterType) {
 		return nil
 	}
-	onfulfilledParameterSignatures := c.getSignaturesOfType(onfulfilledParameterType, SignatureKindCall)
+	onfulfilledParameterSignatures := c.GetSignaturesOfType(onfulfilledParameterType, SignatureKindCall)
 	if len(onfulfilledParameterSignatures) == 0 {
 		if errorNode != nil {
 			c.error(errorNode, diagnostics.The_first_parameter_of_the_then_method_of_a_promise_must_be_a_callback)
@@ -26435,7 +26442,7 @@ func isPartialMappedType(t *Type) bool {
 func (c *Checker) getOptionalExpressionType(exprType *Type, expression *ast.Node) *Type {
 	switch {
 	case ast.IsExpressionOfOptionalChainRoot(expression):
-		return c.getNonNullableType(exprType)
+		return c.GetNonNullableType(exprType)
 	case ast.IsOptionalChain(expression):
 		return c.removeOptionalTypeMarker(exprType)
 	default:
@@ -26700,15 +26707,15 @@ func (c *Checker) getTypeOfPropertyOrIndexSignatureOfType(t *Type, name string) 
  * Otherwise this may not be very useful.
  *
  * In cases where you *are* working on this function, you should understand
- * when it is appropriate to use 'getContextualType' and 'getApparentTypeOfContextualType'.
+ * when it is appropriate to use 'GetContextualType' and 'getApparentTypeOfContextualType'.
  *
- *   - Use 'getContextualType' when you are simply going to propagate the result to the expression.
+ *   - Use 'GetContextualType' when you are simply going to propagate the result to the expression.
  *   - Use 'getApparentTypeOfContextualType' when you're going to need the members of the type.
  *
  * @param node the expression whose contextual type will be returned.
  * @returns the contextual type of an expression.
  */
-func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *Type {
+func (c *Checker) GetContextualType(node *ast.Node, contextFlags ContextFlags) *Type {
 	if node.Flags&ast.NodeFlagsInWithStatement != 0 {
 		// We cannot answer semantic questions within a with block, do not proceed any further
 		return nil
@@ -26735,16 +26742,16 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 		return c.getContextualTypeForDecorator(parent)
 	case ast.KindTypeAssertionExpression, ast.KindAsExpression:
 		if isConstAssertion(parent) {
-			return c.getContextualType(parent, contextFlags)
+			return c.GetContextualType(parent, contextFlags)
 		}
 		return c.getTypeFromTypeNode(getAssertedTypeNode(parent))
 	case ast.KindBinaryExpression:
 		return c.getContextualTypeForBinaryOperand(node, contextFlags)
 	case ast.KindPropertyAssignment,
 		ast.KindShorthandPropertyAssignment:
-		return c.getContextualTypeForObjectLiteralElement(parent, contextFlags)
+		return c.GetContextualTypeForObjectLiteralElement(parent, contextFlags)
 	case ast.KindSpreadAssignment:
-		return c.getContextualType(parent.Parent, contextFlags)
+		return c.GetContextualType(parent.Parent, contextFlags)
 	case ast.KindArrayLiteralExpression:
 		t := c.getApparentTypeOfContextualType(parent, contextFlags)
 		elementIndex := indexOfNode(parent.AsArrayLiteralExpression().Elements.Nodes, node)
@@ -26755,9 +26762,9 @@ func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *
 	case ast.KindTemplateSpan:
 		return c.getContextualTypeForSubstitutionExpression(parent.Parent, node)
 	case ast.KindParenthesizedExpression:
-		return c.getContextualType(parent, contextFlags)
+		return c.GetContextualType(parent, contextFlags)
 	case ast.KindNonNullExpression:
-		return c.getContextualType(parent, contextFlags)
+		return c.GetContextualType(parent, contextFlags)
 	case ast.KindSatisfiesExpression:
 		return c.getTypeFromTypeNode(parent.AsSatisfiesExpression().Type)
 	case ast.KindExportAssignment:
@@ -26976,7 +26983,7 @@ func (c *Checker) getContextualTypeForBindingElement(declaration *ast.Node, cont
 
 func (c *Checker) getContextualTypeForStaticPropertyDeclaration(declaration *ast.Node, contextFlags ContextFlags) *Type {
 	if ast.IsExpression(declaration.Parent) {
-		if parentType := c.getContextualType(declaration.Parent, contextFlags); parentType != nil {
+		if parentType := c.GetContextualType(declaration.Parent, contextFlags); parentType != nil {
 			return c.getTypeOfPropertyOfContextualType(parentType, c.getSymbolOfDeclaration(declaration).Name)
 		}
 	}
@@ -27051,7 +27058,7 @@ func (c *Checker) getContextualReturnType(functionDecl *ast.Node, contextFlags C
 	}
 	iife := ast.GetImmediatelyInvokedFunctionExpression(functionDecl)
 	if iife != nil {
-		return c.getContextualType(iife, contextFlags)
+		return c.GetContextualType(iife, contextFlags)
 	}
 	return nil
 }
@@ -27094,7 +27101,7 @@ func (c *Checker) getContextualTypeForYieldOperand(node *ast.Node, contextFlags 
 			if isYieldStar {
 				iterationTypes := c.getIterationTypesOfGeneratorFunctionReturnType(contextualReturnType, isAsyncGenerator)
 				yieldType := core.OrElse(iterationTypes.yieldType, c.silentNeverType)
-				returnType := core.OrElse(c.getContextualType(node, contextFlags), c.silentNeverType)
+				returnType := core.OrElse(c.GetContextualType(node, contextFlags), c.silentNeverType)
 				nextType := core.OrElse(iterationTypes.nextType, c.unknownType)
 				generatorType := c.createGeneratorType(yieldType, returnType, nextType, false /*isAsyncGenerator*/)
 				if isAsyncGenerator {
@@ -27110,7 +27117,7 @@ func (c *Checker) getContextualTypeForYieldOperand(node *ast.Node, contextFlags 
 }
 
 func (c *Checker) getContextualTypeForAwaitOperand(node *ast.Node, contextFlags ContextFlags) *Type {
-	contextualType := c.getContextualType(node, contextFlags)
+	contextualType := c.GetContextualType(node, contextFlags)
 	if contextualType != nil {
 		contextualAwaitedType := c.getAwaitedTypeNoAlias(contextualType)
 		if contextualAwaitedType != nil {
@@ -27184,14 +27191,14 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 		// the left operand. When an || expression has no contextual type, the right operand is contextually typed
 		// by the type of the left operand, except for the special case of Javascript declarations of the form
 		// `namespace.prop = namespace.prop || {}`.
-		t := c.getContextualType(binary.AsNode(), contextFlags)
+		t := c.GetContextualType(binary.AsNode(), contextFlags)
 		if node == binary.Right && (t == nil || c.patternForType[t] != nil) {
 			return c.getTypeOfExpression(binary.Left)
 		}
 		return t
 	case ast.KindAmpersandAmpersandToken, ast.KindCommaToken:
 		if node == binary.Right {
-			return c.getContextualType(binary.AsNode(), contextFlags)
+			return c.GetContextualType(binary.AsNode(), contextFlags)
 		}
 	}
 	return nil
@@ -27224,7 +27231,7 @@ func (c *Checker) getContextualTypeFromAssignmentTarget(node *ast.Node) *Type {
 	return c.getTypeOfExpression(node)
 }
 
-func (c *Checker) getContextualTypeForObjectLiteralElement(element *ast.Node, contextFlags ContextFlags) *Type {
+func (c *Checker) GetContextualTypeForObjectLiteralElement(element *ast.Node, contextFlags ContextFlags) *Type {
 	objectLiteral := element.Parent
 	t := c.getApparentTypeOfContextualType(objectLiteral, contextFlags)
 	if t != nil {
@@ -27270,7 +27277,7 @@ func (c *Checker) getContextualTypeForObjectLiteralMethod(node *ast.Node, contex
 		// We cannot answer semantic questions within a with block, do not proceed any further
 		return nil
 	}
-	return c.getContextualTypeForObjectLiteralElement(node, contextFlags)
+	return c.GetContextualTypeForObjectLiteralElement(node, contextFlags)
 }
 
 func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, length int, firstSpreadIndex int, lastSpreadIndex int) *Type {
@@ -27326,7 +27333,7 @@ func (c *Checker) getContextualTypeForElementExpression(t *Type, index int, leng
 func (c *Checker) getContextualTypeForConditionalOperand(node *ast.Node, contextFlags ContextFlags) *Type {
 	conditional := node.Parent.AsConditionalExpression()
 	if node == conditional.WhenTrue || node == conditional.WhenFalse {
-		return c.getContextualType(node.Parent, contextFlags)
+		return c.GetContextualType(node.Parent, contextFlags)
 	}
 	return nil
 }
@@ -27998,7 +28005,7 @@ func (c *Checker) getApparentTypeOfContextualType(node *ast.Node, contextFlags C
 	if ast.IsObjectLiteralMethod(node) {
 		contextualType = c.getContextualTypeForObjectLiteralMethod(node, contextFlags)
 	} else {
-		contextualType = c.getContextualType(node, contextFlags)
+		contextualType = c.GetContextualType(node, contextFlags)
 	}
 	instantiatedType := c.instantiateContextualType(contextualType, node, contextFlags)
 	if instantiatedType != nil && !(contextFlags&ContextFlagsNoConstraints != 0 && instantiatedType.flags&TypeFlagsTypeVariable != 0) {
@@ -28175,7 +28182,7 @@ func (c *Checker) instantiateInstantiableTypes(t *Type, mapper *TypeMapper) *Typ
 }
 
 func (c *Checker) pushCachedContextualType(node *ast.Node) {
-	c.pushContextualType(node, c.getContextualType(node, ContextFlagsNone), true /*isCache*/)
+	c.pushContextualType(node, c.GetContextualType(node, ContextFlagsNone), true /*isCache*/)
 }
 
 func (c *Checker) pushContextualType(node *ast.Node, t *Type, isCache bool) {
@@ -28747,7 +28754,7 @@ func (c *Checker) isThenableType(t *Type) bool {
 		return false
 	}
 	thenFunction := c.getTypeOfPropertyOfType(t, "then")
-	return thenFunction != nil && len(c.getSignaturesOfType(c.getTypeWithFacts(thenFunction, TypeFactsNEUndefinedOrNull), SignatureKindCall)) != 0
+	return thenFunction != nil && len(c.GetSignaturesOfType(c.getTypeWithFacts(thenFunction, TypeFactsNEUndefinedOrNull), SignatureKindCall)) != 0
 }
 
 func (c *Checker) getAwaitedTypeOfPromise(t *Type) *Type {
@@ -28832,7 +28839,7 @@ func (c *Checker) hasContextualTypeWithNoGenericTypes(node *ast.Node, checkMode 
 	// as we want the type of a rest element to be generic when possible.
 	if (ast.IsIdentifier(node) || ast.IsPropertyAccessExpression(node) || ast.IsElementAccessExpression(node)) &&
 		!((ast.IsJsxOpeningElement(node.Parent) || ast.IsJsxSelfClosingElement(node.Parent)) && getTagNameOfNode(node.Parent) == node) {
-		contextualType := c.getContextualType(node, core.IfElse(checkMode&CheckModeRestBindingElement != 0, ContextFlagsSkipBindingPatterns, ContextFlagsNone))
+		contextualType := c.GetContextualType(node, core.IfElse(checkMode&CheckModeRestBindingElement != 0, ContextFlagsSkipBindingPatterns, ContextFlagsNone))
 		if contextualType != nil {
 			return !c.isGenericType(contextualType)
 		}

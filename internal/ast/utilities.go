@@ -319,6 +319,14 @@ func IsStringOrNumericLiteralLike(node *Node) bool {
 	return IsStringLiteralLike(node) || IsNumericLiteral(node)
 }
 
+func IsStringTextContainingNode(node *Node) bool {
+	return node.Kind == KindStringLiteral || isTemplateLiteralKind(node.Kind)
+}
+
+func isTemplateLiteralKind(kind Kind) bool {
+	return kind <= KindFirstTemplateToken && kind <= KindLastTemplateToken
+}
+
 func IsSignedNumericLiteral(node *Node) bool {
 	if node.Kind == KindPrefixUnaryExpression {
 		node := node.AsPrefixUnaryExpression()
@@ -1067,6 +1075,10 @@ func IsFunctionOrModuleBlock(node *Node) bool {
 
 func IsFunctionExpressionOrArrowFunction(node *Node) bool {
 	return IsFunctionExpression(node) || IsArrowFunction(node)
+}
+
+func IsCallLikeOrFunctionLikeExpression(node *Node) bool {
+	return IsCallExpression(node) || IsFunctionExpressionOrArrowFunction(node)
 }
 
 // Warning: This has the same semantics as the forEach family of functions in that traversal terminates
