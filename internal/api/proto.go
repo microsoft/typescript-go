@@ -54,7 +54,7 @@ func parseNodeHandle(handle Handle[ast.Node]) (Handle[ast.SourceFile], int, ast.
 	if err != nil {
 		return "", 0, 0, fmt.Errorf("invalid node handle %q: %w", handle, err)
 	}
-	kind, err := strconv.ParseInt(parts[2], 10, 32)
+	kind, err := strconv.ParseInt(parts[2], 10, 16)
 	if err != nil {
 		return "", 0, 0, fmt.Errorf("invalid node handle %q: %w", handle, err)
 	}
