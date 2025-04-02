@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -110,9 +111,12 @@ func (e *emitter) emitJsFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	}
 
 	printerOptions := printer.PrinterOptions{
-		NewLine:        options.NewLine,
-		NoEmitHelpers:  options.NoEmitHelpers.IsTrue(),
-		RemoveComments: options.RemoveComments.IsTrue(),
+		RemoveComments:  options.RemoveComments.IsTrue(),
+		NewLine:         options.NewLine,
+		NoEmitHelpers:   options.NoEmitHelpers.IsTrue(),
+		SourceMap:       options.SourceMap.IsTrue(),
+		InlineSourceMap: options.InlineSourceMap.IsTrue(),
+		InlineSources:   options.InlineSources.IsTrue(),
 		// !!!
 	}
 
@@ -141,10 +145,12 @@ func (e *emitter) emitBuildInfo(buildInfoPath string) {
 
 func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, sourceFile *ast.SourceFile, printer *printer.Printer) bool {
 	// !!! sourceMapGenerator
+	var sourceMapGenerator *sourcemap.Generator
+
 	// !!! bundles not implemented, may be deprecated
 	sourceFiles := []*ast.SourceFile{sourceFile}
 
-	printer.Write(sourceFile.AsNode(), sourceFile, e.writer /*, sourceMapGenerator*/)
+	printer.Write(sourceFile.AsNode(), sourceFile, e.writer, sourceMapGenerator)
 
 	// !!! add sourceMapGenerator to sourceMapDataList
 	// !!! append sourceMappingURL to output
