@@ -12,6 +12,7 @@ import {
 } from "@typescript/ast";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { Bench } from "tinybench";
 import ts from "typescript";
 
@@ -124,15 +125,15 @@ console.table(bench.table());
 
 function spawnAPI() {
     api = new API({
-        cwd: new URL("../../../", import.meta.url).pathname,
-        tsserverPath: new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).pathname,
+        cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
+        tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
     });
 }
 
 function spawnAPIHosted() {
     api = new API({
-        cwd: new URL("../../../", import.meta.url).pathname,
-        tsserverPath: new URL("../../../built/local/tsgo", import.meta.url).pathname,
+        cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
+        tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         fs: createNodeFileSystem(),
     });
 }
@@ -142,7 +143,7 @@ function loadProject() {
 }
 
 function tsCreateProgram() {
-    const configFileName = new URL("../../../_submodules/TypeScript/src/compiler/tsconfig.json", import.meta.url).pathname;
+    const configFileName = fileURLToPath(new URL("../../../_submodules/TypeScript/src/compiler/tsconfig.json", import.meta.url).toString());
     const configFile = ts.readConfigFile(configFileName, ts.sys.readFile);
     const parsedCommandLine = ts.parseJsonConfigFileContent(configFile.config, ts.sys, path.dirname(configFileName));
     const host = ts.createCompilerHost(parsedCommandLine.options);
@@ -172,7 +173,7 @@ function getProgramTS() {
 }
 
 function tsGetProgramTS() {
-    tsFile = tsProgram.getSourceFile(new URL("../../../_submodules/TypeScript/src/compiler/program.ts", import.meta.url).pathname)!;
+    tsFile = tsProgram.getSourceFile(fileURLToPath(new URL("../../../_submodules/TypeScript/src/compiler/program.ts", import.meta.url).toString()))!;
 }
 
 function getCheckerTS() {

@@ -17,6 +17,7 @@ import {
     describe,
     test,
 } from "node:test";
+import { fileURLToPath } from "node:url";
 
 const defaultFiles = {
     "/tsconfig.json": "{}",
@@ -151,8 +152,8 @@ test("Dispose", () => {
 
 function spawnAPI(files: Record<string, string> = defaultFiles) {
     return new API({
-        cwd: new URL("../../../", import.meta.url).pathname,
-        tsserverPath: new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).pathname,
+        cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
+        tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         fs: createVirtualFileSystem(files),
     });
 }
