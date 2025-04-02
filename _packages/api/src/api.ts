@@ -114,7 +114,7 @@ export class Project extends DisposableObject {
 
     getSymbolAtLocation(node: Node): Symbol | undefined;
     getSymbolAtLocation(nodes: readonly Node[]): (Symbol | undefined)[];
-    getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Symbol | undefined {
+    getSymbolAtLocation(nodeOrNodes: Node | readonly Node[]): Symbol | (Symbol | undefined)[] | undefined {
         this.ensureNotDisposed();
         if (Array.isArray(nodeOrNodes)) {
             const data = this.client.request("getSymbolsAtLocations", { project: this.id, locations: nodeOrNodes.map(node => node.id) });
