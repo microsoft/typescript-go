@@ -92,7 +92,21 @@ jobs:
 
       - name: Tests
         id: test
-        run: npx hereby test:all ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"} ${CONCURRENTTESTPROGRAM_FLAG:+"$CONCURRENTTESTPROGRAM_FLAG"}
+        run: npx hereby test ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"} ${CONCURRENTTESTPROGRAM_FLAG:+"$CONCURRENTTESTPROGRAM_FLAG"}
+        env:
+          RACE_FLAG: ${{ (matrix.race && '--race') || '' }}
+          NOEMBED_FLAG: ${{ (matrix.noembed && '--noembed') || '' }}
+          CONCURRENTTESTPROGRAM_FLAG: ${{ (matrix.concurrent-test-program && '--concurrentTestPrograms') || '' }}
+
+      - name: API Tests
+        run: npx hereby test:api ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"} ${CONCURRENTTESTPROGRAM_FLAG:+"$CONCURRENTTESTPROGRAM_FLAG"}
+        env:
+          RACE_FLAG: ${{ (matrix.race && '--race') || '' }}
+          NOEMBED_FLAG: ${{ (matrix.noembed && '--noembed') || '' }}
+          CONCURRENTTESTPROGRAM_FLAG: ${{ (matrix.concurrent-test-program && '--concurrentTestPrograms') || '' }}
+
+      - name: Benchmarks
+        run: npx hereby test:benchmarks ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"} ${CONCURRENTTESTPROGRAM_FLAG:+"$CONCURRENTTESTPROGRAM_FLAG"}
         env:
           RACE_FLAG: ${{ (matrix.race && '--race') || '' }}
           NOEMBED_FLAG: ${{ (matrix.noembed && '--noembed') || '' }}

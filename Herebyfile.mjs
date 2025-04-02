@@ -267,7 +267,7 @@ async function runTestTools() {
     await $test({ cwd: path.join(__dirname, "_tools") })`${gotestsum()} ./...`;
 }
 
-async function runTestJS() {
+async function runTestAPI() {
     await $`npm run -w @typescript/api test`;
 }
 
@@ -276,29 +276,17 @@ export const testTools = task({
     run: runTestTools,
 });
 
-export const buildJSTest = task({
-    name: "build:js:test",
+export const buildAPITests = task({
+    name: "build:api:test",
     run: async () => {
         await $`npm run -w @typescript/api build:test`;
     },
 });
 
-export const testJS = task({
-    name: "test:js",
-    dependencies: [tsgo, buildJSTest],
-    run: runTestJS,
-});
-
-export const testAll = task({
-    name: "test:all",
-    dependencies: [tsgo, buildJSTest],
-    run: async () => {
-        // Prevent interleaving by running these directly instead of in parallel.
-        await runTests();
-        await runTestBenchmarks();
-        await runTestTools();
-        await runTestJS();
-    },
+export const testAPI = task({
+    name: "test:api",
+    dependencies: [tsgo, buildAPITests],
+    run: runTestAPI,
 });
 
 const customLinterPath = "./_tools/custom-gcl";
