@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/api/encoder"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -115,12 +114,10 @@ func (api *API) NewLine() string {
 }
 
 func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, error) {
-	now := time.Now()
 	params, err := unmarshalPayload(method, payload)
 	if err != nil {
 		return nil, err
 	}
-	api.options.Logger.PerfTrace(fmt.Sprintf("%s unmarshal - %s", method, time.Since(now)))
 
 	switch Method(method) {
 	case MethodRelease:

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io"
 	"sync"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -137,11 +136,8 @@ func (s *Server) Run() error {
 
 		switch messageType {
 		case MessageTypeRequest:
-			now := time.Now()
 			result, err := s.handleRequest(method, payload)
 
-			s.logger.PerfTrace(fmt.Sprintf("%s handled - %s", method, time.Since(now)))
-			now = time.Now()
 			if err != nil {
 				if err := s.sendError(method, err); err != nil {
 					return err
@@ -150,7 +146,6 @@ func (s *Server) Run() error {
 				if err := s.sendResponse(method, result); err != nil {
 					return err
 				}
-				s.logger.PerfTrace(fmt.Sprintf("%s sent - %s", method, time.Since(now)))
 			}
 		default:
 			return fmt.Errorf("%w: expected request, received: %s", ErrInvalidRequest, messageType.String())

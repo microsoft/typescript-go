@@ -7,6 +7,7 @@ import {
     type FileSystemEntries,
 } from "@typescript/api/fs";
 import {
+    type Node,
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
@@ -18,14 +19,7 @@ import ts from "typescript";
 
 const bench = new Bench({
     name: "Sync API",
-    teardown: () => {
-        api?.close();
-        api = undefined!;
-        project = undefined!;
-        file = undefined!;
-        tsProgram = undefined!;
-        tsFile = undefined!;
-    },
+    teardown,
 });
 
 let api: API;
@@ -33,6 +27,21 @@ let project: Project;
 let tsProgram: ts.Program;
 let file: SourceFile;
 let tsFile: ts.SourceFile;
+
+const programIdentifierCount = (() => {
+    spawnAPI();
+    loadProject();
+    getProgramTS();
+    let count = 0;
+    file!.forEachChild(function visit(node) {
+        if (node.kind === SyntaxKind.Identifier) {
+            count++;
+        }
+        node.forEachChild(visit);
+    });
+    teardown();
+    return count;
+})();
 
 const SMALL_STRING = "ping";
 const LARGE_STRING = "a".repeat(1_000_000);
@@ -92,7 +101,7 @@ bench
             ts.getTokenAtPosition(tsFile, 8895),
         );
     }, { beforeAll: all(tsCreateProgram, tsCreateChecker, tsGetProgramTS) })
-    .add("getSymbolAtPosition - all identifiers", () => {
+    .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers`, () => {
         file.forEachChild(function visit(node) {
             if (node.kind === SyntaxKind.Identifier) {
                 project.getSymbolAtPosition("program.ts", node.pos);
@@ -100,7 +109,7 @@ bench
             node.forEachChild(visit);
         });
     }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
-    .add("getSymbolAtPosition - all identifiers (batched)", () => {
+    .add(`getSymbolAtPosition - ${programIdentifierCount} identifiers (batched)`, () => {
         const positions: number[] = [];
         file.forEachChild(function visit(node) {
             if (node.kind === SyntaxKind.Identifier) {
@@ -110,7 +119,25 @@ bench
         });
         project.getSymbolAtPosition("program.ts", positions);
     }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
-    .add("TS - getSymbolAtPosition - all identifiers", () => {
+    .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
+        file.forEachChild(function visit(node) {
+            if (node.kind === SyntaxKind.Identifier) {
+                project.getSymbolAtLocation(node);
+            }
+            node.forEachChild(visit);
+        });
+    }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+    .add(`getSymbolAtLocation - ${programIdentifierCount} identifiers (batched)`, () => {
+        const nodes: Node[] = [];
+        file.forEachChild(function visit(node) {
+            if (node.kind === SyntaxKind.Identifier) {
+                nodes.push(node);
+            }
+            node.forEachChild(visit);
+        });
+        project.getSymbolAtLocation(nodes);
+    }, { beforeAll: all(spawnAPI, loadProject, createChecker, getProgramTS) })
+    .add(`TS - getSymbolAtLocation - ${programIdentifierCount} identifiers`, () => {
         const checker = tsProgram.getTypeChecker();
         tsFile.forEachChild(function visit(node) {
             if (node.kind === ts.SyntaxKind.Identifier) {
@@ -178,6 +205,15 @@ function tsGetProgramTS() {
 
 function getCheckerTS() {
     file = project.getSourceFile("checker.ts")!;
+}
+
+function teardown() {
+    api?.close();
+    api = undefined!;
+    project = undefined!;
+    file = undefined!;
+    tsProgram = undefined!;
+    tsFile = undefined!;
 }
 
 function all(...fns: (() => void)[]) {
