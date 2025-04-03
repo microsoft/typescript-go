@@ -18,6 +18,7 @@ import {
     test,
 } from "node:test";
 import { fileURLToPath } from "node:url";
+import { runBenchmarks } from "./api.bench.ts";
 
 const defaultFiles = {
     "/tsconfig.json": "{}",
@@ -148,6 +149,10 @@ test("Dispose", () => {
         name: "Error",
         message: `symbol "${symbol.id}" not found`,
     });
+});
+
+test("Benchmarks", async () => {
+    await runBenchmarks(/*singleIteration*/ true);
 });
 
 function spawnAPI(files: Record<string, string> = defaultFiles) {
