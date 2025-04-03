@@ -147,156 +147,267 @@ func (b *Binder) declareSymbol(symbolTable ast.SymbolTable, parent *ast.Symbol, 
 	return b.declareSymbolEx(symbolTable, parent, node, includes, excludes, false /*isReplaceableByMethod*/, false /*isComputedName*/)
 }
 
-func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node, includes ast.SymbolFlags, excludes ast.SymbolFlags, isReplaceableByMethod bool, isComputedName bool) *ast.Symbol {
+func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol, node *ast.Node,
+	includes ast.SymbolFlags, excludes ast.SymbolFlags,
+	isReplaceableByMethod bool, isComputedName bool,
+) *ast.Symbol {
 	// Debug.assert(isComputedName || !ast.HasDynamicName(node))
-	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) || ast.IsExportSpecifier(node) && ast.ModuleExportNameIsDefault(node.AsExportSpecifier().Name())
-	// The exported symbol for an export default function/class node is always named "default"
-	var name string
-	switch {
-	case isComputedName:
-		name = ast.InternalSymbolNameComputed
-	case isDefaultExport && parent != nil:
-		name = ast.InternalSymbolNameDefault
-	default:
-		name = b.getDeclarationName(node)
-	}
+	isDefaultExport := ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) ||
+		(ast.IsExportSpecifier(node) && ast.ModuleExportNameIsDefault(node.AsExportSpecifier().Name()))
+
+	// Determine symbol name
+	name := b.determineSymbolName(node, parent, isComputedName, isDefaultExport)
+
 	var symbol *ast.Symbol
+
+	// Handle missing name case
 	if name == ast.InternalSymbolNameMissing {
 		symbol = b.newSymbol(ast.SymbolFlagsNone, ast.InternalSymbolNameMissing)
 	} else {
-		// Check and see if the symbol table already has a symbol with this name.  If not,
-		// create a new symbol with this name and add it to the table.  Note that we don't
-		// give the new symbol any flags *yet*.  This ensures that it will not conflict
-		// with the 'excludes' flags we pass in.
-		//
-		// If we do get an existing symbol, see if it conflicts with the new symbol we're
-		// creating.  For example, a 'var' symbol and a 'class' symbol will conflict within
-		// the same symbol table.  If we have a conflict, report the issue on each
-		// declaration we have for this symbol, and then create a new symbol for this
-		// declaration.
-		//
-		// Note that when properties declared in Javascript constructors
-		// (marked by isReplaceableByMethod) conflict with another symbol, the property loses.
-		// Always. This allows the common Javascript pattern of overwriting a prototype method
-		// with an bound instance method of the same type: `this.method = this.method.bind(this)`
-		//
-		// If we created a new symbol, either because we didn't have a symbol with this name
-		// in the symbol table, or we conflicted with an existing symbol, then just add this
-		// node as the sole declaration of the new symbol.
-		//
-		// Otherwise, we'll be merging into a compatible existing symbol (for example when
-		// you have multiple 'vars' with the same name in the same container).  In this case
-		// just add this node into the declarations list of the symbol.
-		symbol = symbolTable[name]
-		if includes&ast.SymbolFlagsClassifiable != 0 {
-			b.classifiableNames.Add(name)
-		}
-		if symbol == nil {
-			symbol = b.newSymbol(ast.SymbolFlagsNone, name)
-			symbolTable[name] = symbol
-			if isReplaceableByMethod {
-				symbol.Flags |= ast.SymbolFlagsReplaceableByMethod
-			}
-		} else if isReplaceableByMethod && symbol.Flags&ast.SymbolFlagsReplaceableByMethod == 0 {
-			// A symbol already exists, so don't add this as a declaration.
-			return symbol
-		} else if symbol.Flags&excludes != 0 {
-			if symbol.Flags&ast.SymbolFlagsReplaceableByMethod != 0 {
-				// Javascript constructor-declared symbols can be discarded in favor of
-				// prototype symbols like methods.
-				symbol = b.newSymbol(ast.SymbolFlagsNone, name)
-				symbolTable[name] = symbol
-			} else if !(includes&ast.SymbolFlagsVariable != 0 && symbol.Flags&ast.SymbolFlagsAssignment != 0 ||
-				includes&ast.SymbolFlagsAssignment != 0 && symbol.Flags&ast.SymbolFlagsVariable != 0) {
-				// Assignment declarations are allowed to merge with variables, no matter what other flags they have.
-				if node.Name() != nil {
-					setParent(node.Name(), node)
-				}
-				// Report errors every position with duplicate declaration
-				// Report errors on previous encountered declarations
-				var message *diagnostics.Message
-				if symbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 {
-					message = diagnostics.Cannot_redeclare_block_scoped_variable_0
-				} else {
-					message = diagnostics.Duplicate_identifier_0
-				}
-				messageNeedsName := true
-				if symbol.Flags&ast.SymbolFlagsEnum != 0 || includes&ast.SymbolFlagsEnum != 0 {
-					message = diagnostics.Enum_declarations_can_only_merge_with_namespace_or_other_enum_declarations
-					messageNeedsName = false
-				}
-				multipleDefaultExports := false
-				if len(symbol.Declarations) != 0 {
-					// If the current node is a default export of some sort, then check if
-					// there are any other default exports that we need to error on.
-					// We'll know whether we have other default exports depending on if `symbol` already has a declaration list set.
-					if isDefaultExport {
-						message = diagnostics.A_module_cannot_have_multiple_default_exports
-						messageNeedsName = false
-						multipleDefaultExports = true
-					} else {
-						// This is to properly report an error in the case "export default { }" is after export default of class declaration or function declaration.
-						// Error on multiple export default in the following case:
-						// 1. multiple export default of class declaration or function declaration by checking NodeFlags.Default
-						// 2. multiple export default of export assignment. This one doesn't have NodeFlags.Default on (as export default doesn't considered as modifiers)
-						if len(symbol.Declarations) != 0 && ast.IsExportAssignment(node) && !node.AsExportAssignment().IsExportEquals {
-							message = diagnostics.A_module_cannot_have_multiple_default_exports
-							messageNeedsName = false
-							multipleDefaultExports = true
-						}
-					}
-				}
-				var declarationName *ast.Node = ast.GetNameOfDeclaration(node)
-				if declarationName == nil {
-					declarationName = node
-				}
-				var diag *ast.Diagnostic
-				if messageNeedsName {
-					diag = b.createDiagnosticForNode(declarationName, message, b.getDisplayName(node))
-				} else {
-					diag = b.createDiagnosticForNode(declarationName, message)
-				}
-				if ast.IsTypeAliasDeclaration(node) && ast.NodeIsMissing(node.AsTypeAliasDeclaration().Type) && ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) && symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
-					// export type T; - may have meant export type { T }?
-					diag.AddRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().Name().AsIdentifier().Text+" }"))
-				}
-				for index, declaration := range symbol.Declarations {
-					var decl *ast.Node = ast.GetNameOfDeclaration(declaration)
-					if decl == nil {
-						decl = declaration
-					}
-					var d *ast.Diagnostic
-					if messageNeedsName {
-						d = b.createDiagnosticForNode(decl, message, b.getDisplayName(declaration))
-					} else {
-						d = b.createDiagnosticForNode(decl, message)
-					}
-					if multipleDefaultExports {
-						d.AddRelatedInfo(b.createDiagnosticForNode(declarationName, core.IfElse(index == 0, diagnostics.Another_export_default_is_here, diagnostics.X_and_here)))
-					}
-					b.addDiagnostic(d)
-					if multipleDefaultExports {
-						diag.AddRelatedInfo(b.createDiagnosticForNode(decl, diagnostics.The_first_export_default_is_here))
-					}
-				}
-				b.addDiagnostic(diag)
-				// When get or set accessor conflicts with a non-accessor or an accessor of a different kind, we mark
-				// the symbol as a full accessor such that all subsequent declarations are considered conflicting. This
-				// for example ensures that a get accessor followed by a non-accessor followed by a set accessor with the
-				// same name are all marked as duplicates.
-				if symbol.Flags&ast.SymbolFlagsAccessor != 0 && symbol.Flags&ast.SymbolFlagsAccessor != includes&ast.SymbolFlagsAccessor {
-					symbol.Flags |= ast.SymbolFlagsAccessor
-				}
-				symbol = b.newSymbol(ast.SymbolFlagsNone, name)
+		// Handle normal name case
+		symbol = b.processNamedSymbol(symbolTable, name, node, includes, excludes,
+			isReplaceableByMethod, isDefaultExport)
+	}
+
+	// Add declaration and set parent
+	b.addDeclarationToSymbol(symbol, node, includes)
+	b.checkAndUpdateSymbolParent(symbol, parent)
+
+	return symbol
+}
+
+// determineSymbolName extracts the appropriate name for a symbol based on node properties
+func (b *Binder) determineSymbolName(node *ast.Node, parent *ast.Symbol, isComputedName bool, isDefaultExport bool) string {
+	// Debug.assert(isComputedName || !ast.HasDynamicName(node))
+
+	switch {
+	case isComputedName:
+		return ast.InternalSymbolNameComputed
+	case isDefaultExport && parent != nil:
+		return ast.InternalSymbolNameDefault
+	default:
+		return b.getDeclarationName(node)
+	}
+}
+
+// handleSymbolConflicts handles cases where a symbol conflicts with existing symbols
+func (b *Binder) handleSymbolConflicts(symbol *ast.Symbol, node *ast.Node, name string,
+	includes ast.SymbolFlags, excludes ast.SymbolFlags, isDefaultExport bool,
+) *ast.Symbol {
+	// Report errors every position with duplicate declaration
+	// Report errors on previous encountered declarations
+	var message *diagnostics.Message
+	if symbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 {
+		message = diagnostics.Cannot_redeclare_block_scoped_variable_0
+	} else {
+		message = diagnostics.Duplicate_identifier_0
+	}
+	messageNeedsName := true
+	if symbol.Flags&ast.SymbolFlagsEnum != 0 || includes&ast.SymbolFlagsEnum != 0 {
+		message = diagnostics.Enum_declarations_can_only_merge_with_namespace_or_other_enum_declarations
+		messageNeedsName = false
+	}
+
+	multipleDefaultExports := b.checkForMultipleDefaultExports(symbol, node, isDefaultExport, &message, &messageNeedsName)
+
+	// Create and report diagnostics
+	b.reportSymbolConflictDiagnostics(symbol, node, message, messageNeedsName, multipleDefaultExports)
+
+	// When get or set accessor conflicts with a non-accessor or an accessor of a different kind, we mark
+	// the symbol as a full accessor such that all subsequent declarations are considered conflicting. This
+	// for example ensures that a get accessor followed by a non-accessor followed by a set accessor with the
+	// same name are all marked as duplicates.
+	if symbol.Flags&ast.SymbolFlagsAccessor != 0 && symbol.Flags&ast.SymbolFlagsAccessor != includes&ast.SymbolFlagsAccessor {
+		symbol.Flags |= ast.SymbolFlagsAccessor
+	}
+
+	// Create a new symbol to replace the conflicting one
+	return b.newSymbol(ast.SymbolFlagsNone, name)
+}
+
+// checkForMultipleDefaultExports checks if there are multiple default exports and sets appropriate message
+func (b *Binder) checkForMultipleDefaultExports(symbol *ast.Symbol, node *ast.Node,
+	isDefaultExport bool, message **diagnostics.Message, messageNeedsName *bool,
+) bool {
+	multipleDefaultExports := false
+	if len(symbol.Declarations) != 0 {
+		// If the current node is a default export of some sort, then check if
+		// there are any other default exports that we need to error on.
+		// We'll know whether we have other default exports depending on if `symbol` already has a declaration list set.
+		if isDefaultExport {
+			*message = diagnostics.A_module_cannot_have_multiple_default_exports
+			*messageNeedsName = false
+			multipleDefaultExports = true
+		} else {
+			// This is to properly report an error in the case "export default { }" is after export default of class declaration or function declaration.
+			// Error on multiple export default in the following case:
+			// 1. multiple export default of class declaration or function declaration by checking NodeFlags.Default
+			// 2. multiple export default of export assignment. This one doesn't have NodeFlags.Default on (as export default doesn't considered as modifiers)
+			if len(symbol.Declarations) != 0 && ast.IsExportAssignment(node) && !node.AsExportAssignment().IsExportEquals {
+				*message = diagnostics.A_module_cannot_have_multiple_default_exports
+				*messageNeedsName = false
+				multipleDefaultExports = true
 			}
 		}
 	}
-	b.addDeclarationToSymbol(symbol, node, includes)
+	return multipleDefaultExports
+}
+
+// reportSymbolConflictDiagnostics creates and reports diagnostic errors for symbol conflicts
+func (b *Binder) reportSymbolConflictDiagnostics(symbol *ast.Symbol, node *ast.Node,
+	message *diagnostics.Message, messageNeedsName bool, multipleDefaultExports bool,
+) {
+	var declarationName *ast.Node = ast.GetNameOfDeclaration(node)
+	if declarationName == nil {
+		declarationName = node
+	}
+
+	var diag *ast.Diagnostic
+	if messageNeedsName {
+		diag = b.createDiagnosticForNode(declarationName, message, b.getDisplayName(node))
+	} else {
+		diag = b.createDiagnosticForNode(declarationName, message)
+	}
+
+	if ast.IsTypeAliasDeclaration(node) && ast.NodeIsMissing(node.AsTypeAliasDeclaration().Type) &&
+		ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) &&
+		symbol.Flags&(ast.SymbolFlagsAlias|ast.SymbolFlagsType|ast.SymbolFlagsNamespace) != 0 {
+		// export type T; - may have meant export type { T }?
+		diag.AddRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0,
+			"export type { "+node.AsTypeAliasDeclaration().Name().AsIdentifier().Text+" }"))
+	}
+
+	// Report errors for all existing declarations
+	for index, declaration := range symbol.Declarations {
+		var decl *ast.Node = ast.GetNameOfDeclaration(declaration)
+		if decl == nil {
+			decl = declaration
+		}
+
+		var d *ast.Diagnostic
+		if messageNeedsName {
+			d = b.createDiagnosticForNode(decl, message, b.getDisplayName(declaration))
+		} else {
+			d = b.createDiagnosticForNode(decl, message)
+		}
+
+		if multipleDefaultExports {
+			d.AddRelatedInfo(b.createDiagnosticForNode(declarationName,
+				core.IfElse(index == 0, diagnostics.Another_export_default_is_here, diagnostics.X_and_here)))
+		}
+
+		b.addDiagnostic(d)
+
+		if multipleDefaultExports {
+			diag.AddRelatedInfo(b.createDiagnosticForNode(decl, diagnostics.The_first_export_default_is_here))
+		}
+	}
+
+	b.addDiagnostic(diag)
+}
+
+// createOrReuseSymbol creates a new symbol or reuses an existing compatible one
+func (b *Binder) createOrReuseSymbol(symbolTable ast.SymbolTable, name string, isReplaceableByMethod bool) *ast.Symbol {
+	symbol := symbolTable[name]
+
+	if symbol == nil {
+		// Create new symbol if none exists
+		symbol = b.newSymbol(ast.SymbolFlagsNone, name)
+		symbolTable[name] = symbol
+		if isReplaceableByMethod {
+			symbol.Flags |= ast.SymbolFlagsReplaceableByMethod
+		}
+	}
+
+	return symbol
+}
+
+// handleExcludedSymbol handles cases where a symbol has excluded flags
+func (b *Binder) handleExcludedSymbol(symbol *ast.Symbol, node *ast.Node, name string,
+	includes ast.SymbolFlags, excludes ast.SymbolFlags, isDefaultExport bool,
+	symbolTable ast.SymbolTable,
+) *ast.Symbol {
+	if symbol.Flags&ast.SymbolFlagsReplaceableByMethod != 0 {
+		// Javascript constructor-declared symbols can be discarded in favor of
+		// prototype symbols like methods.
+		symbol = b.newSymbol(ast.SymbolFlagsNone, name)
+		symbolTable[name] = symbol
+		return symbol
+	}
+
+	// Check if assignment declarations can merge with variables
+	if includes&ast.SymbolFlagsVariable != 0 && symbol.Flags&ast.SymbolFlagsAssignment != 0 ||
+		includes&ast.SymbolFlagsAssignment != 0 && symbol.Flags&ast.SymbolFlagsVariable != 0 {
+		// Assignment declarations are allowed to merge with variables
+		return symbol
+	}
+
+	// Set parent for the node's name if it exists
+	if node.Name() != nil {
+		setParent(node.Name(), node)
+	}
+
+	// Handle symbol conflicts and create a new symbol
+	return b.handleSymbolConflicts(symbol, node, name, includes, excludes, isDefaultExport)
+}
+
+// checkAndUpdateSymbolParent verifies and updates the symbol's parent if needed
+func (b *Binder) checkAndUpdateSymbolParent(symbol *ast.Symbol, parent *ast.Symbol) {
 	if symbol.Parent == nil {
 		symbol.Parent = parent
 	} else if symbol.Parent != parent {
 		panic("Existing symbol parent should match new one")
 	}
+}
+
+// processNamedSymbol processes a symbol with a valid name
+func (b *Binder) processNamedSymbol(symbolTable ast.SymbolTable, name string, node *ast.Node,
+	includes ast.SymbolFlags, excludes ast.SymbolFlags,
+	isReplaceableByMethod bool, isDefaultExport bool,
+) *ast.Symbol {
+	// Check and see if the symbol table already has a symbol with this name.  If not,
+	// create a new symbol with this name and add it to the table.  Note that we don't
+	// give the new symbol any flags *yet*.  This ensures that it will not conflict
+	// with the 'excludes' flags we pass in.
+	//
+	// If we do get an existing symbol, see if it conflicts with the new symbol we're
+	// creating.  For example, a 'var' symbol and a 'class' symbol will conflict within
+	// the same symbol table.  If we have a conflict, report the issue on each
+	// declaration we have for this symbol, and then create a new symbol for this
+	// declaration.
+	//
+	// Note that when properties declared in Javascript constructors
+	// (marked by isReplaceableByMethod) conflict with another symbol, the property loses.
+	// Always. This allows the common Javascript pattern of overwriting a prototype method
+	// with an bound instance method of the same type: `this.method = this.method.bind(this)`
+	//
+	// If we created a new symbol, either because we didn't have a symbol with this name
+	// in the symbol table, or we conflicted with an existing symbol, then just add this
+	// node as the sole declaration of the new symbol.
+	//
+	// Otherwise, we'll be merging into a compatible existing symbol (for example when
+	// you have multiple 'vars' with the same name in the same container).  In this case
+	// just add this node into the declarations list of the symbol.
+
+	// Mark name as classifiable if needed
+	if includes&ast.SymbolFlagsClassifiable != 0 {
+		b.classifiableNames.Add(name)
+	}
+
+	// Get or create symbol
+	symbol := b.createOrReuseSymbol(symbolTable, name, isReplaceableByMethod)
+
+	// Handle special cases
+	if isReplaceableByMethod && symbol.Flags&ast.SymbolFlagsReplaceableByMethod == 0 {
+		// A symbol already exists, so don't add this as a declaration.
+		return symbol
+	}
+
+	// Check for conflicts
+	if symbol.Flags&excludes != 0 {
+		symbol = b.handleExcludedSymbol(symbol, node, name, includes, excludes, isDefaultExport, symbolTable)
+	}
+
 	return symbol
 }
 
