@@ -138,16 +138,7 @@
  
      a() { return 42 },
  >a : () => 42
-@@= skipped -115, +115 lines =@@
- >outputs : O
- 
-     map?: (inputs: Unwrap<I>) => Unwrap<O>;
-->map : ((inputs: Unwrap<I>) => Unwrap<O>) | undefined
-+>map : (inputs: Unwrap<I>) => Unwrap<O> | undefined
- >inputs : Unwrap<I>
- 
- };
-@@= skipped -12, +12 lines =@@
+@@= skipped -127, +127 lines =@@
  createMappingComponent({
  >createMappingComponent({    setup() {        return {            inputs: {                num: new Wrapper<number>(),                str: new Wrapper<string>()            },            outputs: {                bool: new Wrapper<boolean>(),                str: new Wrapper<string>()            }        };    },    map(inputs) {        return {            bool: inputs.nonexistent,            str: inputs.num,  // Causes error        }    }}) : void
  >createMappingComponent : <I extends WrappedMap, O extends WrappedMap>(def: MappingComponent<I, O>) => void
@@ -156,63 +147,7 @@
  
      setup() {
  >setup : () => { inputs: { num: Wrapper<number>; str: Wrapper<string>; }; outputs: { bool: Wrapper<boolean>; str: Wrapper<string>; }; }
-@@= skipped -106, +106 lines =@@
- whatIWant({ generator: (bob) => bob ? 1 : 2, receiver: (t) => console.log(t + 2) })
- >whatIWant({ generator: (bob) => bob ? 1 : 2, receiver: (t) => console.log(t + 2) }) : void
- >whatIWant : <T>(props: { generator: (bob: any) => T; receiver: (t: T) => any; }) => void
-->{ generator: (bob) => bob ? 1 : 2, receiver: (t) => console.log(t + 2) } : { generator: (bob: any) => 2 | 1; receiver: (t: 2 | 1) => void; }
-->generator : (bob: any) => 2 | 1
-->(bob) => bob ? 1 : 2 : (bob: any) => 2 | 1
-+>{ generator: (bob) => bob ? 1 : 2, receiver: (t) => console.log(t + 2) } : { generator: (bob: any) => 1 | 2; receiver: (t: 1 | 2) => void; }
-+>generator : (bob: any) => 1 | 2
-+>(bob) => bob ? 1 : 2 : (bob: any) => 1 | 2
- >bob : any
-->bob ? 1 : 2 : 2 | 1
-+>bob ? 1 : 2 : 1 | 2
- >bob : any
- >1 : 1
- >2 : 2
-->receiver : (t: 2 | 1) => void
-->(t) => console.log(t + 2) : (t: 2 | 1) => void
-->t : 2 | 1
-+>receiver : (t: 1 | 2) => void
-+>(t) => console.log(t + 2) : (t: 1 | 2) => void
-+>t : 1 | 2
- >console.log(t + 2) : void
- >console.log : (...data: any[]) => void
- >console : Console
- >log : (...data: any[]) => void
- >t + 2 : number
-->t : 2 | 1
-+>t : 1 | 2
- >2 : 2
- 
- nonObject((bob) => bob ? 1 : 2, (t) => console.log(t + 2))
- >nonObject((bob) => bob ? 1 : 2, (t) => console.log(t + 2)) : void
- >nonObject : <T>(generator: (bob: any) => T, receiver: (t: T) => any) => void
-->(bob) => bob ? 1 : 2 : (bob: any) => 2 | 1
-+>(bob) => bob ? 1 : 2 : (bob: any) => 1 | 2
- >bob : any
-->bob ? 1 : 2 : 2 | 1
-+>bob ? 1 : 2 : 1 | 2
- >bob : any
- >1 : 1
- >2 : 2
-->(t) => console.log(t + 2) : (t: 2 | 1) => void
-->t : 2 | 1
-+>(t) => console.log(t + 2) : (t: 1 | 2) => void
-+>t : 1 | 2
- >console.log(t + 2) : void
- >console.log : (...data: any[]) => void
- >console : Console
- >log : (...data: any[]) => void
- >t + 2 : number
-->t : 2 | 1
-+>t : 1 | 2
- >2 : 2
- 
- // Repro from #48466
-@@= skipped -229, +229 lines =@@
+@@= skipped -335, +335 lines =@@
  
        arg.toString();
  >arg.toString() : string
@@ -236,27 +171,7 @@
  >"," : ","
  
    },
-@@= skipped -128, +128 lines =@@
- >resWithConditionalExpression : [string[], "first" | "two", boolean]
- >withConditionalExpression({  a: (arg) => [arg],  b: Math.random() ? (arg) => "first" as const : (arg) => "two" as const,  c: (arg) => Boolean(arg),}) : [string[], "first" | "two", boolean]
- >withConditionalExpression : <T, T2, T3>(arg: { a: (arg1: string) => T; b: (arg2: T) => T2; c: (arg2: T2) => T3; }) => [T, T2, T3]
-->{  a: (arg) => [arg],  b: Math.random() ? (arg) => "first" as const : (arg) => "two" as const,  c: (arg) => Boolean(arg),} : { a: (arg: string) => string[]; b: ((arg: string[]) => "first") | ((arg: string[]) => "two"); c: (arg: "first" | "two") => boolean; }
-+>{  a: (arg) => [arg],  b: Math.random() ? (arg) => "first" as const : (arg) => "two" as const,  c: (arg) => Boolean(arg),} : { a: (arg: string) => string[]; b: (arg: string[]) => "first" | (arg: string[]) => "two"; c: (arg: "first" | "two") => boolean; }
- 
-   a: (arg) => [arg],
- >a : (arg: string) => string[]
-@@= skipped -10, +10 lines =@@
- >arg : string
- 
-   b: Math.random() ? (arg) => "first" as const : (arg) => "two" as const,
-->b : ((arg: string[]) => "first") | ((arg: string[]) => "two")
-->Math.random() ? (arg) => "first" as const : (arg) => "two" as const : ((arg: string[]) => "first") | ((arg: string[]) => "two")
-+>b : (arg: string[]) => "first" | (arg: string[]) => "two"
-+>Math.random() ? (arg) => "first" as const : (arg) => "two" as const : (arg: string[]) => "first" | (arg: string[]) => "two"
- >Math.random() : number
- >Math.random : () => number
- >Math : Math
-@@= skipped -73, +73 lines =@@
+@@= skipped -211, +211 lines =@@
  >(arg) => arg.join(",") : (arg: string[]) => string
  >arg : string[]
  >arg.join(",") : string

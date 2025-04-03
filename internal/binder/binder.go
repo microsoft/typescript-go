@@ -66,6 +66,7 @@ type Binder struct {
 	hasFlowEffects         bool
 	inStrictMode           bool
 	inAssignmentPattern    bool
+	seenParseError         bool
 	symbolCount            int
 	classifiableNames      core.Set[string]
 	symbolPool             core.Pool[ast.Symbol]
@@ -279,6 +280,13 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 					}
 				}
 				b.addDiagnostic(diag)
+				// When get or set accessor conflicts with a non-accessor or an accessor of a different kind, we mark
+				// the symbol as a full accessor such that all subsequent declarations are considered conflicting. This
+				// for example ensures that a get accessor followed by a non-accessor followed by a set accessor with the
+				// same name are all marked as duplicates.
+				if symbol.Flags&ast.SymbolFlagsAccessor != 0 && symbol.Flags&ast.SymbolFlagsAccessor != includes&ast.SymbolFlagsAccessor {
+					symbol.Flags |= ast.SymbolFlagsAccessor
+				}
 				symbol = b.newSymbol(ast.SymbolFlagsNone, name)
 			}
 		}
@@ -706,16 +714,23 @@ func (b *Binder) bind(node *ast.Node) bool {
 	// the current 'container' node when it changes. This helps us know which symbol table
 	// a local should go into for example. Since terminal nodes are known not to have
 	// children, as an optimization we don't process those.
+	thisNodeOrAnySubnodesHasError := node.Flags&ast.NodeFlagsThisNodeHasError != 0
 	if node.Kind > ast.KindLastToken {
 		saveParent := b.parent
+		saveSeenParseError := b.seenParseError
 		b.parent = node
+		b.seenParseError = false
 		containerFlags := GetContainerFlags(node)
 		if containerFlags == ContainerFlagsNone {
 			b.bindChildren(node)
 		} else {
 			b.bindContainer(node, containerFlags)
 		}
+		if b.seenParseError {
+			thisNodeOrAnySubnodesHasError = true
+		}
 		b.parent = saveParent
+		b.seenParseError = saveSeenParseError
 	} else {
 		saveParent := b.parent
 		if node.Kind == ast.KindEndOfFile {
@@ -723,6 +738,10 @@ func (b *Binder) bind(node *ast.Node) bool {
 		}
 		b.bindJSDoc(node)
 		b.parent = saveParent
+	}
+	if thisNodeOrAnySubnodesHasError {
+		node.Flags |= ast.NodeFlagsThisNodeOrAnySubNodesHasError
+		b.seenParseError = true
 	}
 	b.inStrictMode = saveInStrictMode
 	return false
@@ -779,7 +798,9 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 				}
 			}
 			symbol := b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsValueModule, ast.SymbolFlagsValueModuleExcludes)
-			b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
+			if pattern.StarIndex >= 0 {
+				b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
+			}
 		}
 	} else {
 		state := b.declareModuleSymbol(node)
@@ -1038,7 +1059,7 @@ func (b *Binder) bindParameter(node *ast.Node) {
 	// 	return
 	// }
 	decl := node.AsParameterDeclaration()
-	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 9 {
+	if b.inStrictMode && node.Flags&ast.NodeFlagsAmbient == 0 {
 		// It is a SyntaxError if the identifier eval or arguments appears within a FormalParameterList of a
 		// strict mode FunctionLikeDeclaration or FunctionExpression(13.1)
 		b.checkStrictModeEvalOrArguments(node, decl.Name())

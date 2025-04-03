@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-node@1d0ff469b7ec7b3cb9d8673fde0c81c44821de2a # v4.2.0
+      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
 
       - run: npm ci
 
@@ -119,7 +119,7 @@ jobs:
           npx hereby baseline-accept
           git add testdata/baselines/reference
           git diff --staged --exit-code
-      - uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: ${{ failure() && steps.test.conclusion == 'failure' }}
         with:
           name: ${{ matrix.os }}-${{ (matrix.race && 'race') || 'norace' }}-new-baselines-artifact
@@ -228,6 +228,58 @@ jobs:
           cache-name: misc
 
       - run: go -C ./_tools run ./cmd/checkmodpaths $PWD
+
+  baselines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: true
+      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+      - uses: ./.github/actions/setup-go
+        with:
+          cache-name: baselines
+
+      - run: npm ci
+
+      - name: Remove all baselines
+        run: rm -rf testdata/baselines/reference
+
+      - name: Run tests
+        run: npx hereby test &> /dev/null || exit 0
+
+      - name: Accept baselines
+        run: |
+          npx hereby baseline-accept
+          git add testdata/baselines/reference
+
+      - name: Run tests
+        run: npx hereby test
+
+      - name: Check baselines
+        id: check-baselines
+        run: |
+          function print_diff() {
+            if ! git diff --staged --exit-code --quiet --diff-filter=$1; then
+              echo "$2:"
+              git diff --staged --name-only --diff-filter=$1
+            fi
+          }
+
+          if ! git diff --staged --exit-code --quiet; then
+            print_diff ACR "Missing baselines"
+            print_diff MTUXB "Modified baselines"
+            print_diff D "Unused baselines"
+            git diff --staged > fix_baselines.patch
+            exit 1
+          fi
+
+      - name: Upload baseline diff artifact
+        if: ${{ failure() && steps.check-baselines.conclusion == 'failure' }}
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
+        with:
+          name: fix_baselines.patch
+          path: fix_baselines.patch
 
   required:
     runs-on: ubuntu-latest

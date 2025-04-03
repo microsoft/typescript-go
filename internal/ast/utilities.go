@@ -1825,6 +1825,8 @@ func IsPartOfTypeNode(node *Node) bool {
 		KindBooleanKeyword, KindSymbolKeyword, KindObjectKeyword, KindUndefinedKeyword, KindNullKeyword,
 		KindNeverKeyword:
 		return true
+	case KindVoidKeyword:
+		return node.Parent.Kind != KindVoidExpression
 	case KindExpressionWithTypeArguments:
 		return isPartOfTypeExpressionWithTypeArguments(node)
 	case KindTypeParameter:
@@ -2387,7 +2389,10 @@ func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.Compi
 
 func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
 	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext && sourceFileMetaData != nil {
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+		if sourceFileMetaData == nil {
+			return core.ModuleKindNone
+		}
 		return sourceFileMetaData.ImpliedNodeFormat
 	}
 	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
@@ -2565,4 +2570,8 @@ func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 		return false
 	}
 	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
+}
+
+func IsUnterminatedLiteral(node *Node) bool {
+	return node.LiteralLikeData().TokenFlags&TokenFlagsUnterminated != 0
 }

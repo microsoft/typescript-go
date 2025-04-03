@@ -5,16 +5,11 @@
  === file.tsx ===
  import React = require('react')
 ->React : typeof React
-+>React : any
++>React : typeof __React
  
  export interface ClickableProps {
      children?: string;
-@@= skipped -18, +18 lines =@@
- 
- export interface LinkProps extends ClickableProps {
-     goTo: "home" | "contact";
-->goTo : "home" | "contact"
-+>goTo : "contact" | "home"
+@@= skipped -22, +22 lines =@@
  }
  
  export function MainButton(buttonProps: ButtonProps): JSX.Element;
@@ -35,19 +30,7 @@
  >props : ButtonProps | LinkProps
  >JSX : any
  
-@@= skipped -24, +24 lines =@@
- >props : ButtonProps | LinkProps
- 
-     if(linkProps.goTo) {
-->linkProps.goTo : "home" | "contact"
-+>linkProps.goTo : "contact" | "home"
- >linkProps : LinkProps
-->goTo : "home" | "contact"
-+>goTo : "contact" | "home"
- 
-         return this._buildMainLink(props);
- >this._buildMainLink(props) : any
-@@= skipped -21, +21 lines =@@
+@@= skipped -41, +41 lines =@@
  }
  
  const b0 = <MainButton {...{onClick: (k) => {console.log(k)}}} extra />;  // k has type "left" | "right"
@@ -58,12 +41,6 @@
 ->onClick : (k: "left" | "right") => void
 ->(k) => {console.log(k)} : (k: "left" | "right") => void
 ->k : "left" | "right"
-->console.log(k) : void
-->console.log : (message?: any, ...optionalParams: any[]) => void
-->console : Console
-->log : (message?: any, ...optionalParams: any[]) => void
-->k : "left" | "right"
-->extra : true
 +>b0 : any
 +><MainButton {...{onClick: (k) => {console.log(k)}}} extra /> : any
 +>MainButton : { (buttonProps: ButtonProps): Element; (linkProps: LinkProps): Element; }
@@ -71,10 +48,12 @@
 +>onClick : (k: any) => void
 +>(k) => {console.log(k)} : (k: any) => void
 +>k : any
-+>console.log(k) : any
-+>console.log : any
-+>console : any
-+>log : any
+ >console.log(k) : void
+ >console.log : (message?: any, ...optionalParams: any[]) => void
+ >console : Console
+ >log : (message?: any, ...optionalParams: any[]) => void
+->k : "left" | "right"
+->extra : true
 +>k : any
 +>extra : any
  
@@ -85,22 +64,18 @@
 ->onClick : (k: "left" | "right") => void
 ->(k)=>{console.log(k)} : (k: "left" | "right") => void
 ->k : "left" | "right"
-->console.log(k) : void
-->console.log : (message?: any, ...optionalParams: any[]) => void
-->console : Console
-->log : (message?: any, ...optionalParams: any[]) => void
-->k : "left" | "right"
-->extra : true
 +>b2 : any
 +><MainButton onClick={(k)=>{console.log(k)}} extra /> : any
 +>MainButton : { (buttonProps: ButtonProps): Element; (linkProps: LinkProps): Element; }
 +>onClick : any
 +>(k)=>{console.log(k)} : (k: any) => void
 +>k : any
-+>console.log(k) : any
-+>console.log : any
-+>console : any
-+>log : any
+ >console.log(k) : void
+ >console.log : (message?: any, ...optionalParams: any[]) => void
+ >console : Console
+ >log : (message?: any, ...optionalParams: any[]) => void
+->k : "left" | "right"
+->extra : true
 +>k : any
 +>extra : any
  
@@ -146,12 +121,6 @@
 ->onClick : (k: "left" | "right") => void
 ->(k) => {console.log(k)} : (k: "left" | "right") => void
 ->k : "left" | "right"
-->console.log(k) : void
-->console.log : (message?: any, ...optionalParams: any[]) => void
-->console : Console
-->log : (message?: any, ...optionalParams: any[]) => void
-->k : "left" | "right"
-->extra : true
 +>c1 : any
 +><NoOverload  {...{onClick: (k) => {console.log(k)}}} extra /> : any
 +>NoOverload : (buttonProps: ButtonProps) => Element
@@ -159,10 +128,12 @@
 +>onClick : (k: any) => void
 +>(k) => {console.log(k)} : (k: any) => void
 +>k : any
-+>console.log(k) : any
-+>console.log : any
-+>console : any
-+>log : any
+ >console.log(k) : void
+ >console.log : (message?: any, ...optionalParams: any[]) => void
+ >console : Console
+ >log : (message?: any, ...optionalParams: any[]) => void
+->k : "left" | "right"
+->extra : true
 +>k : any
 +>extra : any
  
