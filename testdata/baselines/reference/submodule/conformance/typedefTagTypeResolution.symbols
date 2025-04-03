@@ -3,7 +3,7 @@
 === github20832.js ===
 // #20832
 /** @typedef {U} T - should be "error, can't find type named 'U' */
->T : Symbol(T, Decl(github20832.js, 9, 1))
+>T : Symbol(T, Decl(github20832.js, 1, 4))
 >U : Symbol(U)
 
 /**

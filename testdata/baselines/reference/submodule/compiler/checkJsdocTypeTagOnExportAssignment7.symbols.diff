@@ -4,7 +4,7 @@
  >c : Symbol(c, Decl(a.js, 6, 25))
  
  /** @type {Foo} */
-+>Foo : Symbol(Foo, Decl(a.js, 6, 33))
++>Foo : Symbol(Foo, Decl(a.js, 1, 3))
 +
  export default abc;
  >abc : Symbol(abc, Decl(a.js, 6, 5))

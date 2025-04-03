@@ -41,7 +41,7 @@
  
  let a = /** @type {Foo} */(/** @type {*} */(undefined)); 
  >a : Symbol(a, Decl(index.js, 4, 3))
-+>Foo : Symbol(Foo, Decl(index.js, 4, 56))
++>Foo : Symbol(Foo, Decl(index.js, 1, 3))
  >undefined : Symbol(undefined)
  
  a = new Foo({doer: Foo.Bar});

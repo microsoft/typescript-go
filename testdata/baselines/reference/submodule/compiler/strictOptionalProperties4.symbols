@@ -8,20 +8,20 @@
 
 const x = /** @type {Foo} */ ({});
 >x : Symbol(x, Decl(a.js, 5, 5))
->Foo : Symbol(Foo, Decl(a.js, 5, 34))
+>Foo : Symbol(Foo, Decl(a.js, 1, 3))
 
 x.foo; // number | undefined
->x.foo : Symbol(foo, Decl(a.js, 5, 34))
+>x.foo : Symbol(foo, Decl(a.js, 2, 3))
 >x : Symbol(x, Decl(a.js, 5, 5))
->foo : Symbol(foo, Decl(a.js, 5, 34))
+>foo : Symbol(foo, Decl(a.js, 2, 3))
 
 const y = /** @type {Required<Foo>} */ ({});
 >y : Symbol(y, Decl(a.js, 8, 5))
 >Required : Symbol(Required, Decl(lib.es5.d.ts, --, --))
->Foo : Symbol(Foo, Decl(a.js, 5, 34))
+>Foo : Symbol(Foo, Decl(a.js, 1, 3))
 
 y.foo; // number
->y.foo : Symbol(foo, Decl(a.js, 5, 34))
+>y.foo : Symbol(foo, Decl(a.js, 2, 3))
 >y : Symbol(y, Decl(a.js, 8, 5))
->foo : Symbol(foo, Decl(a.js, 5, 34))
+>foo : Symbol(foo, Decl(a.js, 2, 3))
 

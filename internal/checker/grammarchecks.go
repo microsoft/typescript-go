@@ -1857,16 +1857,6 @@ func (c *Checker) checkGrammarMetaProperty(node *ast.MetaProperty) bool {
 }
 
 func (c *Checker) checkGrammarConstructorTypeParameters(node *ast.ConstructorDeclaration) bool {
-	// !!!
-	// var jsdocTypeParameters []*ast.TypeParameterDeclaration
-	// if ast.IsInJSFile(node.AsNode()) {
-	// 	jsdocTypeParameters = getJSDocTypeParameterDeclarations(node)
-	// } else {
-	// 	jsdocTypeParameters = nil
-	// }
-	// if range_ == nil {
-	// 	range_ = core.FirstOrNil(jsdocTypeParameters)
-	// }
 	range_ := node.TypeParameters
 	if range_ != nil {
 		var pos int

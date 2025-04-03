@@ -80,13 +80,13 @@ func (p *Parser) attachTagsToHost(parent *ast.Node, jsDoc []*ast.Node) {
 					break
 				}
 				export := p.factory.NewModifier(ast.KindExportKeyword)
-				export.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
+				export.Loc = tag.Loc
 				export.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				nodes := p.nodeSlicePool.NewSlice(1)
 				nodes[0] = export
 				modifiers := p.newModifierList(export.Loc, nodes)
 
-				typeParameters := p.gatherTypeParameters(j, export.Loc)
+				typeParameters := p.gatherTypeParameters(j)
 
 				var t *ast.Node
 				switch typeExpression.Kind {
@@ -96,18 +96,18 @@ func (p *Parser) attachTagsToHost(parent *ast.Node, jsDoc []*ast.Node) {
 					members := p.nodeSlicePool.NewSlice(0)
 					for _, member := range typeExpression.AsJSDocTypeLiteral().JsDocPropertyTags {
 						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), nil /*postfixToken*/, member.Type(), nil /*initializer*/)
-						prop.Loc = export.Loc
+						prop.Loc = member.Loc
 						prop.Flags = p.contextFlags | ast.NodeFlagsReparsed
 						members = append(members, prop)
 					}
-					t = p.factory.NewTypeLiteralNode(p.newNodeList(export.Loc, members))
-					t.Loc = export.Loc
+					t = p.factory.NewTypeLiteralNode(p.newNodeList(typeExpression.Loc, members))
+					t.Loc = typeExpression.Loc
 					t.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				default:
 					panic("typedef tag type expression should be a name reference or a type expression" + typeExpression.Kind.String())
 				}
 				typeAlias := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), typeParameters, t)
-				typeAlias.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
+				typeAlias.Loc = core.NewTextRange(tag.Pos(), tag.End())
 				typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				p.reparseList = append(p.reparseList, typeAlias)
 				// !!! @overload and other unattached tags (@callback, @import et al) support goes here
@@ -148,17 +148,17 @@ func (p *Parser) attachTagsToHost(parent *ast.Node, jsDoc []*ast.Node) {
 			case ast.KindJSDocTemplateTag:
 				if fun, ok := getFunctionLikeHost(parent); ok {
 					if fun.TypeParameters() == nil {
-						fun.FunctionLikeData().TypeParameters = p.gatherTypeParameters(j, fun.Loc)
+						fun.FunctionLikeData().TypeParameters = p.gatherTypeParameters(j)
 					}
 				} else if parent.Kind == ast.KindClassDeclaration {
 					class := parent.AsClassDeclaration()
 					if class.TypeParameters == nil {
-						class.TypeParameters = p.gatherTypeParameters(j, parent.Loc)
+						class.TypeParameters = p.gatherTypeParameters(j)
 					}
 				} else if parent.Kind == ast.KindClassExpression {
 					class := parent.AsClassExpression()
 					if class.TypeParameters == nil {
-						class.TypeParameters = p.gatherTypeParameters(j, parent.Loc)
+						class.TypeParameters = p.gatherTypeParameters(j)
 					}
 				}
 			case ast.KindJSDocParameterTag:
@@ -198,24 +198,31 @@ func findMatchingParameter(fun *ast.Node, tag *ast.JSDocParameterTag) (*ast.Node
 	return nil, false
 }
 
-func (p *Parser) gatherTypeParameters(j *ast.Node, loc core.TextRange) *ast.NodeList {
+func (p *Parser) gatherTypeParameters(j *ast.Node) *ast.NodeList {
 	typeParameters := p.nodeSlicePool.NewSlice(0)
+	pos := -1
+	end := -1
+	first := true
 	for _, tag := range j.AsJSDoc().Tags.Nodes {
 		if tag.Kind == ast.KindJSDocTemplateTag {
-			template := tag.AsJSDocTemplateTag()
-			constraint := template.Constraint
-			for _, tp := range template.TypeParameters().Nodes {
+			if first {
+				pos = tag.Pos()
+				first = false
+			}
+			end = tag.End()
+			
+			constraint := tag.AsJSDocTemplateTag().Constraint
+			for _, tp := range tag.AsJSDocTemplateTag().TypeParameters().Nodes {
 				typeParameter := tp.AsTypeParameter()
 				var reparse *ast.Node
 				if constraint == nil {
 					reparse = typeParameter.Clone(&p.factory)
 				} else {
 					clone := constraint.Type().Clone(&p.factory)
-					clone.Loc = loc
 					clone.Flags |= ast.NodeFlagsReparsed
 					reparse = p.factory.NewTypeParameterDeclaration(typeParameter.Modifiers(), typeParameter.Name(), clone, typeParameter.DefaultType)
+					reparse.Loc = typeParameter.Loc
 				}
-				reparse.Loc = loc
 				reparse.Flags |= ast.NodeFlagsReparsed
 				typeParameters = append(typeParameters, reparse)
 			}
@@ -224,7 +231,7 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, loc core.TextRange) *ast.Node
 	if len(typeParameters) == 0 {
 		return nil
 	} else {
-		return p.newNodeList(loc, typeParameters)
+		return p.newNodeList(core.NewTextRange(pos, end), typeParameters)
 	}
 }
 

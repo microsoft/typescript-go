@@ -1,6 +1,6 @@
-0.js(15,5): error TS2739: Type '{ x: string; }' is missing the following properties from type 'Opts': w, y, z
+0.js(15,5): error TS2739: Type '{ x: string; }' is missing the following properties from type 'Opts': y, z, w
 0.js(28,6): error TS2741: Property 'anotherY' is missing in type '{ anotherX: string; }' but required in type 'AnotherOpts'.
-0.js(42,6): error TS2739: Type '{ x: string; }' is missing the following properties from type 'Opts1': w, y, z
+0.js(42,6): error TS2739: Type '{ x: string; }' is missing the following properties from type 'Opts1': y, z, w
 
 
 ==== 0.js (3 errors) ====
@@ -20,7 +20,7 @@
     
     foo({x: 'abc'});
         ~~~~~~~~~~
-!!! error TS2739: Type '{ x: string; }' is missing the following properties from type 'Opts': w, y, z
+!!! error TS2739: Type '{ x: string; }' is missing the following properties from type 'Opts': y, z, w
     
     /**
      * @typedef {Object} AnotherOpts
@@ -52,5 +52,5 @@
     }
     foo2({x: 'abc'});
          ~~~~~~~~~~
-!!! error TS2739: Type '{ x: string; }' is missing the following properties from type 'Opts1': w, y, z
+!!! error TS2739: Type '{ x: string; }' is missing the following properties from type 'Opts1': y, z, w
     

@@ -1,8 +1,8 @@
 file.js(3,15): error TS2304: Cannot find name 'T'.
+file.js(33,14): error TS2706: Required type parameters may not follow optional type parameters.
 file.js(38,17): error TS2744: Type parameter defaults can only reference previously declared type parameters.
 file.js(45,17): error TS2304: Cannot find name 'T'.
-file.js(49,21): error TS2706: Required type parameters may not follow optional type parameters.
-file.js(57,1): error TS2706: Required type parameters may not follow optional type parameters.
+file.js(53,14): error TS2706: Required type parameters may not follow optional type parameters.
 file.js(60,17): error TS2304: Cannot find name 'U'.
 file.js(61,17): error TS2304: Cannot find name 'T'.
 
@@ -43,6 +43,8 @@ file.js(61,17): error TS2304: Cannot find name 'T'.
     /**
      * @template {string | number} [T=string]
      * @template U - error: Required type parameters cannot follow optional type parameters
+                 ~
+!!! error TS2706: Required type parameters may not follow optional type parameters.
      * @typedef {[T, U]} E
      */
     
@@ -63,18 +65,16 @@ file.js(61,17): error TS2304: Cannot find name 'T'.
      * @param {U} b
      */
     function f1(a, b) {}
-                        
-!!! error TS2706: Required type parameters may not follow optional type parameters.
     
      /**
      * @template {string | number} [T=string]
      * @template U - error: Required type parameters cannot follow optional type parameters
+                 ~
+!!! error TS2706: Required type parameters may not follow optional type parameters.
      * @param {T} a
      * @param {U} b
      */
     function f2(a, b) {}
-    ~~~~~~~~~~~~~~~~~~~~
-!!! error TS2706: Required type parameters may not follow optional type parameters.
     
     /**
      * @template [T=U] - error: Type parameter defaults can only reference previously declared type parameters.

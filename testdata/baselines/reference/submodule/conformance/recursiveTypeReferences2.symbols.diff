@@ -5,15 +5,15 @@
  === bug39372.js ===
  /** @typedef {ReadonlyArray<Json>} JsonArray */
 +>ReadonlyArray : Symbol(ReadonlyArray, Decl(lib.es5.d.ts, --, --))
-+>Json : Symbol(Json, Decl(bug39372.js, 24, 13))
++>Json : Symbol(Json, Decl(bug39372.js, 2, 4))
 +
  /** @typedef {{ readonly [key: string]: Json }} JsonRecord */
 +>key : Symbol(key, Decl(bug39372.js, 1, 26))
-+>Json : Symbol(Json, Decl(bug39372.js, 24, 13))
++>Json : Symbol(Json, Decl(bug39372.js, 2, 4))
 +
  /** @typedef {boolean | number | string | null | JsonRecord | JsonArray | readonly []} Json */
-+>JsonRecord : Symbol(JsonRecord, Decl(bug39372.js, 24, 13))
-+>JsonArray : Symbol(JsonArray, Decl(bug39372.js, 24, 13))
++>JsonRecord : Symbol(JsonRecord, Decl(bug39372.js, 1, 4))
++>JsonArray : Symbol(JsonArray, Decl(bug39372.js, 0, 4))
  
  /**
   * @template T
@@ -24,7 +24,7 @@
      [K in keyof T]?: XMLObject<T[K]>[]
 +>K : Symbol(K, Decl(bug39372.js, 8, 5))
 +>T : Symbol(T)
-+>XMLObject : Symbol(XMLObject, Decl(bug39372.js, 24, 13))
++>XMLObject : Symbol(XMLObject, Decl(bug39372.js, 6, 3))
 +>T : Symbol(T)
 +>K : Symbol(K, Decl(bug39372.js, 8, 5))
 +
@@ -44,7 +44,7 @@
 +>T : Symbol(T)
 +>K : Symbol(K, Decl(bug39372.js, 11, 5))
 +>$ : Symbol($, Decl(bug39372.js, 13, 32))
-+>XMLObject : Symbol(XMLObject, Decl(bug39372.js, 24, 13))
++>XMLObject : Symbol(XMLObject, Decl(bug39372.js, 6, 3))
 +>T : Symbol(T)
 +>K : Symbol(K, Decl(bug39372.js, 11, 5))
 +
@@ -63,7 +63,7 @@
 +>K : Symbol(K, Decl(bug39372.js, 17, 3))
 +
        : XMLObject<T[K]>
-+>XMLObject : Symbol(XMLObject, Decl(bug39372.js, 24, 13))
++>XMLObject : Symbol(XMLObject, Decl(bug39372.js, 6, 3))
 +>T : Symbol(T)
 +>K : Symbol(K, Decl(bug39372.js, 17, 3))
 +

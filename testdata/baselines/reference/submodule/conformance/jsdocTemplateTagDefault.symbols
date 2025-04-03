@@ -28,25 +28,25 @@ const aNumber = [0];
  * @template T
  * @template [U=T] - ok: default can reference earlier type parameter
  * @typedef {[T, U]} B
->B : Symbol(B, Decl(file.js, 48, 20))
->T : Symbol(T, Decl(file.js, 48, 20))
->U : Symbol(U, Decl(file.js, 48, 20))
+>B : Symbol(B, Decl(file.js, 17, 3))
+>T : Symbol(T, Decl(file.js, 15, 13))
+>U : Symbol(U, Decl(file.js, 16, 13))
 
  */
 
 /**
  * @template {string | number} [T] - error: default requires an `=type`
  * @typedef {[T]} C
->C : Symbol(C, Decl(file.js, 48, 20))
->T : Symbol(T, Decl(file.js, 48, 20))
+>C : Symbol(C, Decl(file.js, 22, 3))
+>T : Symbol(T, Decl(file.js, 21, 31))
 
  */
 
 /**
  * @template {string | number} [T=] - error: default requires a `type`
  * @typedef {[T]} D
->D : Symbol(D, Decl(file.js, 48, 20))
->T : Symbol(T, Decl(file.js, 48, 20))
+>D : Symbol(D, Decl(file.js, 27, 3))
+>T : Symbol(T, Decl(file.js, 26, 31))
 
  */
 
@@ -54,9 +54,9 @@ const aNumber = [0];
  * @template {string | number} [T=string]
  * @template U - error: Required type parameters cannot follow optional type parameters
  * @typedef {[T, U]} E
->E : Symbol(E, Decl(file.js, 48, 20))
->T : Symbol(T, Decl(file.js, 48, 20))
->U : Symbol(U, Decl(file.js, 48, 20))
+>E : Symbol(E, Decl(file.js, 33, 3))
+>T : Symbol(T, Decl(file.js, 31, 31))
+>U : Symbol(U, Decl(file.js, 32, 13))
 
  */
 
@@ -64,9 +64,9 @@ const aNumber = [0];
  * @template [T=U] - error: Type parameter defaults can only reference previously declared type parameters.
  * @template [U=T]
  * @typedef {[T, U]} G
->G : Symbol(G, Decl(file.js, 48, 20))
->T : Symbol(T, Decl(file.js, 48, 20))
->U : Symbol(U, Decl(file.js, 48, 20))
+>G : Symbol(G, Decl(file.js, 39, 3))
+>T : Symbol(T, Decl(file.js, 37, 13))
+>U : Symbol(U, Decl(file.js, 38, 13))
 
  */
 

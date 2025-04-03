@@ -4,7 +4,7 @@
  
      /**
       * @typedef {C~A} C~B
-+>C : Symbol(C, Decl(bug25104.js, 7, 5))
++>C : Symbol(C, Decl(bug25104.js, 3, 7))
 +
       * @typedef {object} C~A
       */

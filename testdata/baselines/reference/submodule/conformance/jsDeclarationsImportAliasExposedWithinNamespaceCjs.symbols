@@ -10,13 +10,13 @@ const {myTypes} = require('./file.js');
  * @type {Object<string,*>}
  */
 const testFnTypes = {
->testFnTypes : Symbol(testFnTypes, Decl(file2.js, 7, 5), Decl(file2.js, 25, 1))
+>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 7, 5), Decl(file2.js, 11, 4))
 
     // SOME PROPS HERE
 };
 
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
->testFnTypes : Symbol(testFnTypes, Decl(file2.js, 25, 1))
+>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 11, 4))
 >myTypes : Symbol(myTypes)
 >typeC : Symbol(typeC)
 

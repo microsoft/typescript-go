@@ -4,10 +4,10 @@
  
  /**
   * @typedef Nested
-+>Nested : Symbol(Nested, Decl(templateInsideCallback.js, 53, 1))
++>Nested : Symbol(Nested, Decl(templateInsideCallback.js, 19, 3))
 +
   * @property {Object} oh
-+>oh : Symbol(oh, Decl(templateInsideCallback.js, 53, 1))
++>oh : Symbol(oh, Decl(templateInsideCallback.js, 20, 3))
 +
   * @property {number} oh.no
   * @template T
