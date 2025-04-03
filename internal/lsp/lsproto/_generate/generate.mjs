@@ -87,8 +87,8 @@ function writeDocumentation(doc) {
  */
 function writeProposed(proposed) {
     if (proposed) {
-        writeLine("// ")
-        writeLine("// Proposed.")
+        writeLine("// ");
+        writeLine("// Proposed.");
     }
 }
 
@@ -98,11 +98,12 @@ function writeProposed(proposed) {
  */
 function writeSince(since, sinceTags) {
     if (since && !sinceTags) {
-        const sinceLines = since.split('\n')
+        const sinceLines = since.split("\n");
         writeSinceLines(sinceLines);
-    } else if (sinceTags) {
+    }
+    else if (sinceTags) {
         for (const [idx, sinceTag] of sinceTags.entries()) {
-            const sinceLines = sinceTag.split('\n')
+            const sinceLines = sinceTag.split("\n");
             writeSinceLines(sinceLines);
 
             if (idx !== sinceTags.length - 1) {
@@ -128,14 +129,15 @@ function writeSinceLines(sinceLines) {
  * @param {string | undefined} doc
  */
 function writeDeprecation(deprecated, doc) {
-    const inlineDeprication = "is deprecated @since"
+    const inlineDeprication = "is deprecated @since";
 
     if (deprecated) {
         writeLine("// ");
         write("// Deprecated: ");
         writeLine(deprecated);
-    } else if (doc?.includes(inlineDeprication)) {
-        const lines = doc.split('\n');
+    }
+    else if (doc?.includes(inlineDeprication)) {
+        const lines = doc.split("\n");
         const matchingLine = lines.find(x => x.includes(inlineDeprication));
 
         if (matchingLine) {
