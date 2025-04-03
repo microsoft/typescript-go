@@ -18,24 +18,24 @@ var (
 )
 
 func GetNodeId(node *Node) NodeId {
-	id := node.Id.Load()
+	id := node.id.Load()
 	if id == 0 {
 		// Worst case, we burn a few ids if we have to CAS.
 		id = nextNodeId.Add(1)
-		if !node.Id.CompareAndSwap(0, id) {
-			id = node.Id.Load()
+		if !node.id.CompareAndSwap(0, id) {
+			id = node.id.Load()
 		}
 	}
 	return NodeId(id)
 }
 
 func GetSymbolId(symbol *Symbol) SymbolId {
-	id := symbol.Id.Load()
+	id := symbol.id.Load()
 	if id == 0 {
 		// Worst case, we burn a few ids if we have to CAS.
 		id = nextSymbolId.Add(1)
-		if !symbol.Id.CompareAndSwap(0, id) {
-			id = symbol.Id.Load()
+		if !symbol.id.CompareAndSwap(0, id) {
+			id = symbol.id.Load()
 		}
 	}
 	return SymbolId(id)

@@ -27,7 +27,7 @@ func ProjectHandle(p *project.Project) Handle[project.Project] {
 }
 
 func SymbolHandle(symbol *ast.Symbol) Handle[ast.Symbol] {
-	return createHandle[ast.Symbol]("s", symbol.Id.Load())
+	return createHandle[ast.Symbol]("s", ast.GetSymbolId(symbol))
 }
 
 func TypeHandle(t *checker.Type) Handle[checker.Type] {
@@ -35,7 +35,7 @@ func TypeHandle(t *checker.Type) Handle[checker.Type] {
 }
 
 func FileHandle(file *ast.SourceFile) Handle[ast.SourceFile] {
-	return createHandle[ast.SourceFile]("f", file.AsNode().Id.Load())
+	return createHandle[ast.SourceFile]("f", ast.GetNodeId(file.AsNode()))
 }
 
 func NodeHandle(node *ast.Node) Handle[ast.Node] {
