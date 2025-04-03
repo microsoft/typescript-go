@@ -292,7 +292,7 @@ func (api *API) GetSourceFile(projectId Handle[project.Project], fileName string
 
 func (api *API) releaseHandle(handle string) error {
 	switch handle[0] {
-	case 'p':
+	case handlePrefixProject:
 		projectId := Handle[project.Project](handle)
 		project, ok := api.projects[projectId]
 		if !ok {
@@ -300,7 +300,7 @@ func (api *API) releaseHandle(handle string) error {
 		}
 		delete(api.projects, projectId)
 		project.Close()
-	case 'f':
+	case handlePrefixFile:
 		fileId := Handle[ast.SourceFile](handle)
 		api.filesMu.Lock()
 		defer api.filesMu.Unlock()
@@ -309,7 +309,7 @@ func (api *API) releaseHandle(handle string) error {
 			return fmt.Errorf("file %q not found", handle)
 		}
 		delete(api.files, fileId)
-	case 's':
+	case handlePrefixSymbol:
 		symbolId := Handle[ast.Symbol](handle)
 		api.symbolsMu.Lock()
 		defer api.symbolsMu.Unlock()
@@ -318,7 +318,7 @@ func (api *API) releaseHandle(handle string) error {
 			return fmt.Errorf("symbol %q not found", handle)
 		}
 		delete(api.symbols, symbolId)
-	case 't':
+	case handlePrefixType:
 		typeId := Handle[checker.Type](handle)
 		api.typesMu.Lock()
 		defer api.typesMu.Unlock()

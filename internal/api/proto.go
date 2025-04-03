@@ -22,20 +22,28 @@ type Method string
 
 type Handle[T any] string
 
+const (
+	handlePrefixProject = 'p'
+	handlePrefixSymbol  = 's'
+	handlePrefixType    = 't'
+	handlePrefixFile    = 'f'
+	handlePrefixNode    = 'n'
+)
+
 func ProjectHandle(p *project.Project) Handle[project.Project] {
-	return createHandle[project.Project]("p", p.Name())
+	return createHandle[project.Project](handlePrefixProject, p.Name())
 }
 
 func SymbolHandle(symbol *ast.Symbol) Handle[ast.Symbol] {
-	return createHandle[ast.Symbol]("s", ast.GetSymbolId(symbol))
+	return createHandle[ast.Symbol](handlePrefixSymbol, ast.GetSymbolId(symbol))
 }
 
 func TypeHandle(t *checker.Type) Handle[checker.Type] {
-	return createHandle[checker.Type]("t", t.Id())
+	return createHandle[checker.Type](handlePrefixType, t.Id())
 }
 
 func FileHandle(file *ast.SourceFile) Handle[ast.SourceFile] {
-	return createHandle[ast.SourceFile]("f", ast.GetNodeId(file.AsNode()))
+	return createHandle[ast.SourceFile](handlePrefixFile, ast.GetNodeId(file.AsNode()))
 }
 
 func NodeHandle(node *ast.Node) Handle[ast.Node] {
@@ -61,8 +69,8 @@ func parseNodeHandle(handle Handle[ast.Node]) (Handle[ast.SourceFile], int, ast.
 	return fileHandle, int(pos), ast.Kind(kind), nil
 }
 
-func createHandle[T any](prefix string, id any) Handle[T] {
-	return Handle[T](fmt.Sprintf("%s%016x", prefix, id))
+func createHandle[T any](prefix rune, id any) Handle[T] {
+	return Handle[T](fmt.Sprintf("%c%016x", prefix, id))
 }
 
 const (
