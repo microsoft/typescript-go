@@ -60,8 +60,22 @@ function writeLine(s) {
 
 /**
  * @param {string | undefined} doc
+ * @param {string | undefined} proposed,
+ * @param {string | undefined} since,
+ * @param {string | undefined} sinceTags,
+ * @param {string | undefined} deprecated
  */
-function writeDocumentation(doc) {
+function writeDocumentation(doc, proposed, since, sinceTags, deprecated) {
+    writeDescription(doc);
+    writeSince(since, sinceTags);
+    writeProposed(proposed);
+    writeDeprecation(deprecated, doc);
+}
+
+/**
+ * @param {string | undefined} doc
+ */
+function writeDescription(doc) {
     if (doc) {
         const lines = doc.split("\n");
         for (let line of lines) {
@@ -358,10 +372,7 @@ writeLine("");
 writeLine("// Structures\n");
 
 for (const t of model.structures) {
-    writeDocumentation(t.documentation);
-    writeSince(t.since, t.sinceTags);
-    writeProposed(t.proposed);
-    writeDeprecation(t.deprecated, t.documentation);
+    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
 
     writeLine("type " + t.name + " struct {");
 
@@ -383,10 +394,7 @@ for (const t of model.structures) {
     }
 
     for (const p of t.properties) {
-        writeDocumentation(p.documentation);
-        writeSince(p.since, p.sinceTags);
-        writeProposed(p.proposed);
-        writeDeprecation(p.deprecated, p.documentation);
+        writeDocumentation(p.documentation, p.proposed, p.since, p.sinceTags, p.deprecated);
 
         write(titleCase(p.name) + " ");
 
@@ -411,10 +419,7 @@ for (const t of model.structures) {
 writeLine("// Enumerations\n");
 
 for (const t of model.enumerations) {
-    writeDocumentation(t.documentation);
-    writeSince(t.since, t.sinceTags);
-    writeProposed(t.proposed);
-    writeDeprecation(t.deprecated, t.documentation);
+    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
 
     /** @type {string} */
     let underlyingType;
@@ -443,10 +448,7 @@ for (const t of model.enumerations) {
 
     writeLine("const (");
     for (const v of t.values) {
-        writeDocumentation(v.documentation);
-        writeSince(v.since, v.sinceTags);
-        writeProposed(v.proposed);
-        writeDeprecation(v.deprecated, v.documentation);
+        writeDocumentation(v.documentation, v.proposed, v.since, v.sinceTags, v.deprecated);
 
         write(t.name);
         write(v.name);
@@ -473,10 +475,7 @@ for (const t of model.enumerations) {
 writeLine("// Type aliases\n");
 
 for (const t of model.typeAliases) {
-    writeDocumentation(t.documentation);
-    writeSince(t.since, t.sinceTags);
-    writeProposed(t.proposed);
-    writeDeprecation(t.deprecated, t.documentation);
+    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
 
     if (t.name === "LSPAny") {
         writeLine("type LSPAny = any\n");
@@ -519,10 +518,7 @@ writeLine("}");
 writeLine("// Requests");
 writeLine("const (");
 for (const t of model.requests) {
-    writeDocumentation(t.documentation);
-    writeSince(t.since, t.sinceTags);
-    writeProposed(t.proposed);
-    writeDeprecation(t.deprecated, t.documentation);
+    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
     writeLine("Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"');
 }
 writeLine(")\n");
@@ -530,10 +526,7 @@ writeLine(")\n");
 writeLine("// Notifications");
 writeLine("const (");
 for (const t of model.notifications) {
-    writeDocumentation(t.documentation);
-    writeSince(t.since, t.sinceTags);
-    writeProposed(t.proposed);
-    writeDeprecation(t.deprecated, t.documentation);
+    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
     writeLine("Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"');
 }
 writeLine(")\n");
