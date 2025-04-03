@@ -103,6 +103,8 @@ jobs:
           CONCURRENTTESTPROGRAM_FLAG: ${{ (matrix.concurrent-test-program && '--concurrentTestPrograms') || '' }}
           COVERAGE_FLAG: ${{ (matrix.coverage && '--coverage') || '' }}
 
+      - run: git add .
+
       - uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
         if: ${{ always() && matrix.coverage }}
         with:
@@ -110,7 +112,6 @@ jobs:
           disable_search: true
           files: ./coverage.out
 
-      - run: git add .
       - run: git diff --staged --exit-code --stat
 
       - name: Print baseline diff on failure
