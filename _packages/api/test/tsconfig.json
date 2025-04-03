@@ -1,11 +1,5 @@
 {
-    "compilerOptions": {
-        "module": "nodenext",
-        "strict": true,
-        "noEmit": true,
-        "verbatimModuleSyntax": true,
-        "allowImportingTsExtensions": true
-    },
+    "extends": "../tsconfig.dev.json",
     "references": [
         { "path": ".." }
     ]

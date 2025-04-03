@@ -1,11 +1,7 @@
 {
+    "extends": "./tsconfig.base.json",
     "compilerOptions": {
         "module": "node16",
-        "strict": true,
-        "composite": true,
-        "forceConsistentCasingInFileNames": true,
-        "rewriteRelativeImportExtensions": true,
-        "verbatimModuleSyntax": true,
         "isolatedDeclarations": true,
         "sourceMap": true,
         "declaration": true,
