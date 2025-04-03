@@ -142,7 +142,14 @@ func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	if options.Target != ScriptTargetNone {
 		return options.Target
 	}
-	return ScriptTargetES5
+	switch options.GetEmitModuleKind() {
+	case ModuleKindNode16:
+		return ScriptTargetES2022
+	case ModuleKindNodeNext:
+		return ScriptTargetESNext
+	default:
+		return ScriptTargetES5
+	}
 }
 
 func (options *CompilerOptions) GetEmitModuleKind() ModuleKind {
@@ -400,6 +407,7 @@ const (
 	ScriptTargetES2021 ScriptTarget = 8
 	ScriptTargetES2022 ScriptTarget = 9
 	ScriptTargetES2023 ScriptTarget = 10
+	ScriptTargetES2024 ScriptTarget = 11
 	ScriptTargetESNext ScriptTarget = 99
 	ScriptTargetJSON   ScriptTarget = 100
 	ScriptTargetLatest ScriptTarget = ScriptTargetESNext
