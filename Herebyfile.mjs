@@ -316,6 +316,18 @@ export const testAPI = task({
     run: runTestAPI,
 });
 
+export const testAll = task({
+    name: "test:all",
+    dependencies: [buildAPITests],
+    run: async () => {
+        // Prevent interleaving by running these directly instead of in parallel.
+        await runTests();
+        await runTestBenchmarks();
+        await runTestTools();
+        await runTestAPI();
+    },
+});
+
 const customLinterPath = "./_tools/custom-gcl";
 const customLinterHashPath = customLinterPath + ".hash";
 
