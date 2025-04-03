@@ -64,6 +64,7 @@ jobs:
           - os: ubuntu-latest
             name: 'concurrent test programs'
             concurrent-test-program: true
+            coverage: true
 
     name: test (${{ matrix.name || matrix.os }})
 
@@ -110,6 +111,7 @@ jobs:
         with:
           use_oidc: true
           disable_search: true
+          name: ${{ matrix.name || matrix.os }}
           files: ./coverage.out
 
       - run: git diff --staged --exit-code --stat
