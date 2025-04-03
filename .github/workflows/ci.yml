@@ -110,7 +110,6 @@ jobs:
         if: ${{ always() && matrix.coverage }}
         with:
           use_oidc: true
-          disable_search: true
           name: ${{ matrix.name || matrix.os }}
           directory: ./coverage
 
