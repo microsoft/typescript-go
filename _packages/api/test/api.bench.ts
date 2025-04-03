@@ -11,7 +11,7 @@ import {
     type SourceFile,
     SyntaxKind,
 } from "@typescript/ast";
-import fs from "node:fs";
+import fs, { existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { Bench } from "tinybench";
@@ -23,6 +23,12 @@ if (isMain) {
 }
 
 export async function runBenchmarks(singleIteration?: boolean) {
+    const repoRoot = fileURLToPath(new URL("../../../", import.meta.url).toString());
+    if (!existsSync(path.join(repoRoot, "_submodules/TypeScript/src/compiler"))) {
+        console.warn("Warning: TypeScript submodule is not cloned; skipping benchmarks.");
+        return;
+    }
+
     const bench = new Bench({
         name: "Sync API",
         teardown,
@@ -163,14 +169,14 @@ export async function runBenchmarks(singleIteration?: boolean) {
 
     function spawnAPI() {
         api = new API({
-            cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
+            cwd: repoRoot,
             tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
         });
     }
 
     function spawnAPIHosted() {
         api = new API({
-            cwd: fileURLToPath(new URL("../../../", import.meta.url).toString()),
+            cwd: repoRoot,
             tsserverPath: fileURLToPath(new URL(`../../../built/local/tsgo${process.platform === "win32" ? ".exe" : ""}`, import.meta.url).toString()),
             fs: createNodeFileSystem(),
         });
