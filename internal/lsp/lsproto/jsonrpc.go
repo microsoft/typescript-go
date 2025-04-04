@@ -97,7 +97,7 @@ func (r *RequestOrNotificationMessage) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-func unmarhalParams(rawMethod Method, rawParams []byte) (any, error) {
+func unmarshalParams(rawMethod Method, rawParams []byte) (any, error) {
 	if rawMethod == MethodShutdown || rawMethod == MethodExit {
 		// These methods have no params.
 		return nil, nil
