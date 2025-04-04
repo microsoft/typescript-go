@@ -1506,13 +1506,19 @@ func getFileNamesFromConfigSpecs(
 	}
 	files := make([]string, 0, literalFileMap.Size()+wildcardFileMap.Size()+wildCardJsonFileMap.Size())
 	for file := range literalFileMap.Values() {
-		files = append(files, file)
+		if file != "" {
+			files = append(files, file)
+		}
 	}
 	for file := range wildcardFileMap.Values() {
-		files = append(files, file)
+		if file != "" {
+			files = append(files, file)
+		}
 	}
 	for file := range wildCardJsonFileMap.Values() {
-		files = append(files, file)
+		if file != "" {
+			files = append(files, file)
+		}
 	}
 	return files
 }
