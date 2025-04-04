@@ -122,13 +122,13 @@ func unmarshalParams(rawMethod Method, rawParams []byte) (any, error) {
 
 type ResponseMessage struct {
 	Message
-	ID     *ID            `json:"id,omitempty"`
+	ID     *ID            `json:"id,omitzero"`
 	Result any            `json:"result"`
-	Error  *ResponseError `json:"error,omitempty"`
+	Error  *ResponseError `json:"error,omitzero"`
 }
 
 type ResponseError struct {
 	Code    int32  `json:"code"`
 	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
+	Data    any    `json:"data,omitzero"`
 }
