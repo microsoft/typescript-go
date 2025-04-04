@@ -51,7 +51,7 @@ func (vfs *FS) Realpath(path string) string {
 }
 
 func (vfs *FS) Remove(path string) error {
-	panic("cachedvfs: Remove not implemented")
+	return vfs.fs.Remove(path)
 }
 
 func (vfs *FS) Stat(path string) vfs.FileInfo {
@@ -67,7 +67,7 @@ func (vfs *FS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 }
 
 func (vfs *FS) WriteFile(path string, data string, writeByteOrderMark bool) error {
-	panic("cachedvfs: WriteFile not implemented")
+	return vfs.fs.WriteFile(path, data, writeByteOrderMark)
 }
 
 func cached[Arg any, Ret any](cache *sync.Map, key Arg, fn func(Arg) Ret) Ret {

@@ -96,7 +96,7 @@ func TestStat(t *testing.T) {
 	assert.Equal(t, 2, len(underlying.StatCalls()))
 }
 
-func TestReadFileNotCached(t *testing.T) {
+func TestReadFile(t *testing.T) {
 	t.Parallel()
 
 	underlying := createMockFS()
@@ -109,7 +109,7 @@ func TestReadFileNotCached(t *testing.T) {
 	assert.Equal(t, 2, len(underlying.ReadFileCalls()), "ReadFile should not be cached")
 }
 
-func TestUseCaseSensitiveFileNamesNotCached(t *testing.T) {
+func TestUseCaseSensitiveFileNames(t *testing.T) {
 	t.Parallel()
 
 	underlying := createMockFS()
@@ -122,7 +122,7 @@ func TestUseCaseSensitiveFileNamesNotCached(t *testing.T) {
 	assert.Equal(t, 2, len(underlying.UseCaseSensitiveFileNamesCalls()), "UseCaseSensitiveFileNames should not be cached")
 }
 
-func TestWalkDirNotCached(t *testing.T) {
+func TestWalkDir(t *testing.T) {
 	t.Parallel()
 
 	underlying := createMockFS()
@@ -137,4 +137,30 @@ func TestWalkDirNotCached(t *testing.T) {
 
 	cached.WalkDir("/some/path", walkFn)
 	assert.Equal(t, 2, len(underlying.WalkDirCalls()), "WalkDir should not be cached")
+}
+
+func TestRemove(t *testing.T) {
+	t.Parallel()
+
+	underlying := createMockFS()
+	cached := cachedvfs.From(underlying)
+
+	cached.Remove("/some/path/file.txt")
+	assert.Equal(t, 1, len(underlying.RemoveCalls()))
+
+	cached.Remove("/some/path/file.txt")
+	assert.Equal(t, 2, len(underlying.RemoveCalls()), "Remove should not be cached")
+}
+
+func TestWriteFile(t *testing.T) {
+	t.Parallel()
+
+	underlying := createMockFS()
+	cached := cachedvfs.From(underlying)
+
+	cached.WriteFile("/some/path/file.txt", "new content", false)
+	assert.Equal(t, 1, len(underlying.WriteFileCalls()))
+
+	cached.WriteFile("/some/path/file.txt", "another content", true)
+	assert.Equal(t, 2, len(underlying.WriteFileCalls()), "WriteFile should not be cached")
 }
