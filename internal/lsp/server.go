@@ -105,15 +105,20 @@ func (s *Server) Run() error {
 		}
 
 		if s.initializeParams == nil {
-			if req.Method == lsproto.MethodInitialize {
-				if err := s.handleInitialize(req); err != nil {
-					return err
-				}
-			} else {
-				if err := s.sendError(req.ID, lsproto.ErrServerNotInitialized); err != nil {
-					return err
+			if req.RequestMessage != nil {
+				message := req.RequestMessage
+
+				if message.Method == lsproto.MethodInitialize {
+					if err := s.handleInitialize(message); err != nil {
+						return err
+					}
+				} else {
+					if err := s.sendError(message.ID, lsproto.ErrServerNotInitialized); err != nil {
+						return err
+					}
 				}
 			}
+
 			continue
 		}
 
@@ -123,13 +128,13 @@ func (s *Server) Run() error {
 	}
 }
 
-func (s *Server) read() (*lsproto.RequestMessage, error) {
+func (s *Server) read() (*lsproto.RequestOrNotificationMessage, error) {
 	data, err := s.r.Read()
 	if err != nil {
 		return nil, err
 	}
 
-	req := &lsproto.RequestMessage{}
+	req := &lsproto.RequestOrNotificationMessage{}
 	if err := json.Unmarshal(data, req); err != nil {
 		return nil, fmt.Errorf("%w: %w", lsproto.ErrInvalidRequest, err)
 	}
@@ -170,45 +175,45 @@ func (s *Server) sendResponse(resp *lsproto.ResponseMessage) error {
 	return s.w.Write(data)
 }
 
-func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
-	s.requestTime = time.Now()
-	s.requestMethod = string(req.Method)
-
-	params := req.Params
-	switch params.(type) {
-	case *lsproto.InitializeParams:
-		return s.sendError(req.ID, lsproto.ErrInvalidRequest)
-	case *lsproto.InitializedParams:
-		return s.handleInitialized(req)
-	case *lsproto.DidOpenTextDocumentParams:
-		return s.handleDidOpen(req)
-	case *lsproto.DidChangeTextDocumentParams:
-		return s.handleDidChange(req)
-	case *lsproto.DidSaveTextDocumentParams:
-		return s.handleDidSave(req)
-	case *lsproto.DidCloseTextDocumentParams:
-		return s.handleDidClose(req)
-	case *lsproto.DocumentDiagnosticParams:
-		return s.handleDocumentDiagnostic(req)
-	case *lsproto.HoverParams:
-		return s.handleHover(req)
-	case *lsproto.DefinitionParams:
-		return s.handleDefinition(req)
-	default:
+func (s *Server) handleMessage(msg *lsproto.RequestOrNotificationMessage) error {
+	if req := msg.RequestMessage; req != nil {
 		switch req.Method {
+		case lsproto.MethodInitialize:
+			return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+		case lsproto.MethodTextDocumentDiagnostic:
+			return s.handleDocumentDiagnostic(req)
+		case lsproto.MethodTextDocumentHover:
+			return s.handleHover(req)
+		case lsproto.MethodTextDocumentDefinition:
+			return s.handleDefinition(req)
 		case lsproto.MethodShutdown:
 			s.projectService.Close()
 			return s.sendResult(req.ID, nil)
+		default:
+			s.Log("unknown method", req.Method)
+		}
+	} else if notif := msg.NotificationMessage; notif != nil {
+		switch notif.Method {
+		case lsproto.MethodInitialized:
+			return s.handleInitialized()
+		case lsproto.MethodTextDocumentDidOpen:
+			return s.handleDidOpen(notif)
+		case lsproto.MethodTextDocumentDidChange:
+			return s.handleDidChange(notif)
+		case lsproto.MethodTextDocumentDidSave:
+			return s.handleDidSave(notif)
+		case lsproto.MethodTextDocumentDidClose:
+			return s.handleDidClose(notif)
 		case lsproto.MethodExit:
 			return nil
 		default:
-			s.Log("unknown method", req.Method)
-			if req.ID != nil {
-				return s.sendError(req.ID, lsproto.ErrInvalidRequest)
-			}
-			return nil
+			s.Log("unknown method", notif.Method)
 		}
+	} else {
+		s.Log("Failed to parse unknown message")
 	}
+
+	return nil
 }
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
@@ -254,7 +259,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	})
 }
 
-func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
+func (s *Server) handleInitialized() error {
 	s.logger = project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose)
 	s.projectService = project.NewService(s, project.ServiceOptions{
 		DefaultLibraryPath: s.defaultLibraryPath,
@@ -264,24 +269,26 @@ func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 	return nil
 }
 
-func (s *Server) handleDidOpen(req *lsproto.RequestMessage) error {
+func (s *Server) handleDidOpen(req *lsproto.NotificationMessage) error {
 	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
 	s.projectService.OpenFile(documentUriToFileName(params.TextDocument.Uri), params.TextDocument.Text, languageKindToScriptKind(params.TextDocument.LanguageId), "")
 	return nil
 }
 
-func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
+func (s *Server) handleDidChange(req *lsproto.NotificationMessage) error {
 	params := req.Params.(*lsproto.DidChangeTextDocumentParams)
 	scriptInfo := s.projectService.GetScriptInfo(documentUriToFileName(params.TextDocument.Uri))
 	if scriptInfo == nil {
-		return s.sendError(req.ID, lsproto.ErrRequestFailed)
+		s.logger.Error("Failed to get script info")
+		return nil
 	}
 
 	changes := make([]ls.TextChange, len(params.ContentChanges))
 	for i, change := range params.ContentChanges {
 		if partialChange := change.TextDocumentContentChangePartial; partialChange != nil {
 			if textChange, err := s.converters.fromLspTextChange(partialChange, scriptInfo.FileName()); err != nil {
-				return s.sendError(req.ID, err)
+				s.logger.Error(fmt.Sprintf("Error converting %v:", err))
+				return nil
 			} else {
 				changes[i] = textChange
 			}
@@ -291,7 +298,8 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 				NewText:   wholeChange.Text,
 			}
 		} else {
-			return s.sendError(req.ID, lsproto.ErrInvalidRequest)
+			s.logger.Error(fmt.Sprintf("Invalid request"))
+			return nil
 		}
 	}
 
@@ -299,13 +307,13 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	return nil
 }
 
-func (s *Server) handleDidSave(req *lsproto.RequestMessage) error {
+func (s *Server) handleDidSave(req *lsproto.NotificationMessage) error {
 	params := req.Params.(*lsproto.DidSaveTextDocumentParams)
 	s.projectService.MarkFileSaved(documentUriToFileName(params.TextDocument.Uri), *params.Text)
 	return nil
 }
 
-func (s *Server) handleDidClose(req *lsproto.RequestMessage) error {
+func (s *Server) handleDidClose(req *lsproto.NotificationMessage) error {
 	params := req.Params.(*lsproto.DidCloseTextDocumentParams)
 	s.projectService.CloseFile(documentUriToFileName(params.TextDocument.Uri))
 	return nil
