@@ -18,9 +18,7 @@
 +index.js(28,31): error TS2300: Duplicate identifier 'a'.
 +index.js(31,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(31,25): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+index.js(37,10): error TS2300: Duplicate identifier 'g'.
 +index.js(41,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+index.js(41,16): error TS2300: Duplicate identifier 'g'.
 +index.js(51,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(53,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(54,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -30,7 +28,7 @@
 +index.js(58,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
-+==== index.js (25 errors) ====
++==== index.js (23 errors) ====
 +    module.exports.a = function a() {}
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -98,16 +96,12 @@
 +     * @param {{y: typeof module.exports.b}} b
 +     */
 +    function g(a, b) {
-+             ~
-+!!! error TS2300: Duplicate identifier 'g'.
 +        return a.x && b.y();
 +    }
 +    
 +    module.exports.g = g;
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+                   ~
-+!!! error TS2300: Duplicate identifier 'g'.
 +    
 +    /**
 +     * @param {{x: string}} a

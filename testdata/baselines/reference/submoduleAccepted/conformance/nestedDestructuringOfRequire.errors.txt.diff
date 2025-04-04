@@ -2,26 +2,20 @@
 +++ new.nestedDestructuringOfRequire.errors.txt
 @@= skipped -0, +0 lines =@@
  main.js(5,1): error TS2304: Cannot find name 'chalk'.
-+mod1.js(1,7): error TS2451: Cannot redeclare block-scoped variable 'chalk'.
 +mod1.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+mod1.js(4,16): error TS2451: Cannot redeclare block-scoped variable 'chalk'.
  
  
  ==== main.js (1 errors) ====
-@@= skipped -9, +12 lines =@@
+@@= skipped -9, +10 lines =@@
      ~~~~~
  !!! error TS2304: Cannot find name 'chalk'.
      
 -==== mod1.js (0 errors) ====
-+==== mod1.js (3 errors) ====
++==== mod1.js (1 errors) ====
      const chalk = {
-+          ~~~~~
-+!!! error TS2451: Cannot redeclare block-scoped variable 'chalk'.
          grey: {}
      };
      module.exports.chalk = chalk
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+                   ~~~~~
-+!!! error TS2451: Cannot redeclare block-scoped variable 'chalk'.
      

@@ -1,12 +1,6 @@
-index.js(2,7): error TS2451: Cannot redeclare block-scoped variable 'Thing'.
 index.js(7,1): error TS2304: Cannot find name 'exports'.
-index.js(7,9): error TS2451: Cannot redeclare block-scoped variable 'Thing'.
-index.js(12,10): error TS2300: Duplicate identifier 'useThing'.
 index.js(14,1): error TS2304: Cannot find name 'exports'.
-index.js(14,9): error TS2300: Duplicate identifier 'useThing'.
-index.js(19,10): error TS2300: Duplicate identifier 'cbThing'.
 index.js(21,1): error TS2304: Cannot find name 'exports'.
-index.js(21,9): error TS2300: Duplicate identifier 'cbThing'.
 
 
 ==== usage.js (0 errors) ====
@@ -28,11 +22,9 @@ index.js(21,9): error TS2300: Duplicate identifier 'cbThing'.
         };
     });
     
-==== index.js (9 errors) ====
+==== index.js (3 errors) ====
     /** @enum {string} */
     const Thing = Object.freeze({
-          ~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'Thing'.
         a: "thing",
         b: "chill"
     });
@@ -40,32 +32,22 @@ index.js(21,9): error TS2300: Duplicate identifier 'cbThing'.
     exports.Thing = Thing;
     ~~~~~~~
 !!! error TS2304: Cannot find name 'exports'.
-            ~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'Thing'.
     
     /**
      * @param {Thing} x
      */
     function useThing(x) {}
-             ~~~~~~~~
-!!! error TS2300: Duplicate identifier 'useThing'.
     
     exports.useThing = useThing;
     ~~~~~~~
 !!! error TS2304: Cannot find name 'exports'.
-            ~~~~~~~~
-!!! error TS2300: Duplicate identifier 'useThing'.
     
     /**
      * @param {(x: Thing) => void} x
      */
     function cbThing(x) {}
-             ~~~~~~~
-!!! error TS2300: Duplicate identifier 'cbThing'.
     
     exports.cbThing = cbThing;
     ~~~~~~~
 !!! error TS2304: Cannot find name 'exports'.
-            ~~~~~~~
-!!! error TS2300: Duplicate identifier 'cbThing'.
     

@@ -3,9 +3,7 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+lateBoundAssignmentDeclarationSupport7.js(4,10): error TS2300: Duplicate identifier 'F'.
 +lateBoundAssignmentDeclarationSupport7.js(8,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+lateBoundAssignmentDeclarationSupport7.js(8,16): error TS2300: Duplicate identifier 'F'.
 +lateBoundAssignmentDeclarationSupport7.js(9,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
@@ -14,21 +12,17 @@
 +    const y = x.F["my-fake-sym"];
 +    const z = x.F[x.S];
 +    
-+==== lateBoundAssignmentDeclarationSupport7.js (4 errors) ====
++==== lateBoundAssignmentDeclarationSupport7.js (2 errors) ====
 +    const _sym = Symbol();
 +    const _str = "my-fake-sym";
 +    
 +    function F() {
-+             ~
-+!!! error TS2300: Duplicate identifier 'F'.
 +    }
 +    F[_sym] = "ok";
 +    F[_str] = "ok";
 +    module.exports.F = F;
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+                   ~
-+!!! error TS2300: Duplicate identifier 'F'.
 +    module.exports.S = _sym;
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

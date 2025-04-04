@@ -1,12 +1,10 @@
 source.js(9,9): error TS2339: Property 'statische' does not exist on type 'typeof Handler'.
-source.js(10,7): error TS2451: Cannot redeclare block-scoped variable 'Strings'.
 source.js(15,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 source.js(15,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 source.js(16,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-source.js(16,16): error TS2451: Cannot redeclare block-scoped variable 'Strings'.
 
 
-==== source.js (6 errors) ====
+==== source.js (4 errors) ====
     class Handler {
     	static get OPTIONS() {
     		return 1;
@@ -19,8 +17,6 @@ source.js(16,16): error TS2451: Cannot redeclare block-scoped variable 'Strings'
             ~~~~~~~~~
 !!! error TS2339: Property 'statische' does not exist on type 'typeof Handler'.
     const Strings = {
-          ~~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'Strings'.
         a: "A",
         b: "B"
     }
@@ -33,8 +29,6 @@ source.js(16,16): error TS2451: Cannot redeclare block-scoped variable 'Strings'
     module.exports.Strings = Strings
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-                   ~~~~~~~
-!!! error TS2451: Cannot redeclare block-scoped variable 'Strings'.
     
     /**
      * @typedef {Object} HandlerOptions

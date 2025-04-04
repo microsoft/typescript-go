@@ -1,45 +1,33 @@
-mod.js(2,5): error TS2395: Individual declarations in merged declaration 'A' must be all exported or all local.
-mod.js(5,5): error TS2395: Individual declarations in merged declaration 'B' must be all exported or all local.
-mod.js(8,1): error TS7022: 'A' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-mod.js(8,9): error TS2395: Individual declarations in merged declaration 'A' must be all exported or all local.
-mod.js(9,1): error TS7022: 'B' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-mod.js(9,9): error TS2395: Individual declarations in merged declaration 'B' must be all exported or all local.
 mod.js(12,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
+use.js(3,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
+use.js(4,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
-==== use.js (0 errors) ====
+==== use.js (2 errors) ====
     /// <reference path='./types.d.ts'/>
     var mod = require('./mod');
     var a = new mod.A()
+            ~~~~~~~~~~~
+!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     var b = new mod.B()
+            ~~~~~~~~~~~
+!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
     a.m('nope')
     b.m('not really')
     
 ==== types.d.ts (0 errors) ====
     declare function require(name: string): any;
     declare var exports: any;
-==== mod.js (7 errors) ====
+==== mod.js (1 errors) ====
     /// <reference path='./types.d.ts'/>
     var A = function A() {
-        ~
-!!! error TS2395: Individual declarations in merged declaration 'A' must be all exported or all local.
         this.a = 1
     }
     var B = function B() {
-        ~
-!!! error TS2395: Individual declarations in merged declaration 'B' must be all exported or all local.
         this.b = 2
     }
     exports.A = A
-    ~~~~~~~~~~~~~
-!!! error TS7022: 'A' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-            ~
-!!! error TS2395: Individual declarations in merged declaration 'A' must be all exported or all local.
     exports.B = B
-    ~~~~~~~~~~~~~
-!!! error TS7022: 'B' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-            ~
-!!! error TS2395: Individual declarations in merged declaration 'B' must be all exported or all local.
     A.prototype = B.prototype = {
         /** @param {number} n */
         m(n) {

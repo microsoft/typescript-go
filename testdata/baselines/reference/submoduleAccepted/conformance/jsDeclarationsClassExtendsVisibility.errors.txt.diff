@@ -4,18 +4,14 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +bar.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+cls.js(2,7): error TS2451: Cannot redeclare block-scoped variable 'Strings'.
 +cls.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +cls.js(7,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +cls.js(8,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+cls.js(8,16): error TS2451: Cannot redeclare block-scoped variable 'Strings'.
 +
 +
-+==== cls.js (5 errors) ====
++==== cls.js (3 errors) ====
 +    const Bar = require("./bar");
 +    const Strings = {
-+          ~~~~~~~
-+!!! error TS2451: Cannot redeclare block-scoped variable 'Strings'.
 +        a: "A",
 +        b: "B"
 +    };
@@ -28,8 +24,6 @@
 +    module.exports.Strings = Strings;
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+                   ~~~~~~~
-+!!! error TS2451: Cannot redeclare block-scoped variable 'Strings'.
 +==== bar.js (1 errors) ====
 +    class Bar {}
 +    module.exports = Bar;

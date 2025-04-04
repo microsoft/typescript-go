@@ -9,10 +9,8 @@
 -  Property 'my-fake-sym' does not exist on type 'F'.
 -usage.js(4,11): error TS7053: Element implicitly has an 'any' type because expression of type 'unique symbol' can't be used to index type 'F'.
 -  Property '[_sym]' does not exist on type 'F'.
-+lateBoundAssignmentDeclarationSupport5.js(5,10): error TS2300: Duplicate identifier 'F'.
 +lateBoundAssignmentDeclarationSupport5.js(11,15): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 +lateBoundAssignmentDeclarationSupport5.js(14,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+lateBoundAssignmentDeclarationSupport5.js(14,16): error TS2300: Duplicate identifier 'F'.
 +lateBoundAssignmentDeclarationSupport5.js(15,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +usage.js(2,15): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
  
@@ -33,17 +31,11 @@
 -!!! error TS7053:   Property '[_sym]' does not exist on type 'F'.
      
 -==== lateBoundAssignmentDeclarationSupport5.js (2 errors) ====
-+==== lateBoundAssignmentDeclarationSupport5.js (5 errors) ====
++==== lateBoundAssignmentDeclarationSupport5.js (3 errors) ====
      // currently unsupported
      const _sym = Symbol();
      const _str = "my-fake-sym";
-     
-     function F() {
-+             ~
-+!!! error TS2300: Duplicate identifier 'F'.
-     }
-     F.prototype = {
-         [_sym]: "ok",
+@@= skipped -31, +23 lines =@@
          [_str]: "ok"
      }
      const inst =  new F();
@@ -60,8 +52,6 @@
      module.exports.F = F;
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+                   ~
-+!!! error TS2300: Duplicate identifier 'F'.
      module.exports.S = _sym;
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

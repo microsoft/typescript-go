@@ -96,14 +96,14 @@
 ->ns : typeof ns
 ->ns : typeof ns
 +>ns : any
-+>ns : any
-+>module.exports.ns = ns : any
++>ns : typeof import("cls")
++>module.exports.ns = ns : typeof import("cls")
 +>module.exports.ns : any
 +>module.exports : any
 +>module : any
 +>exports : any
 +>ns : any
-+>ns : any
++>ns : typeof import("cls")
  
  === cjs4.js ===
  const ns = require("./cls");

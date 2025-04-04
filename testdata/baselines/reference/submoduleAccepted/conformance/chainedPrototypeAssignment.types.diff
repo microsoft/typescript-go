@@ -19,9 +19,9 @@
 ->A : typeof A
 +>a : any
 +>new mod.A() : any
-+>mod.A : any
++>mod.A : () => void
 +>mod : typeof import("mod")
-+>A : any
++>A : () => void
  
  var b = new mod.B()
 ->b : B
@@ -31,9 +31,9 @@
 ->B : typeof B
 +>b : any
 +>new mod.B() : any
-+>mod.B : any
++>mod.B : () => void
 +>mod : typeof import("mod")
-+>B : any
++>B : () => void
  
  a.m('nope')
 ->a.m('nope') : number
@@ -100,12 +100,12 @@
 ->A : typeof A
 ->A : typeof A
 +>A : any
-+>A : any
-+>exports.A = A : any
++>A : () => void
++>exports.A = A : () => void
 +>exports.A : any
 +>exports : any
 +>A : any
-+>A : any
++>A : () => void
  
  exports.B = B
 ->exports.B = B : typeof B
@@ -114,12 +114,12 @@
 ->B : typeof B
 ->B : typeof B
 +>B : any
-+>B : any
-+>exports.B = B : any
++>B : () => void
++>exports.B = B : () => void
 +>exports.B : any
 +>exports : any
 +>B : any
-+>B : any
++>B : () => void
  
  A.prototype = B.prototype = {
 ->A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
@@ -133,11 +133,11 @@
 ->{    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
 +>A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
 +>A.prototype : any
-+>A : any
++>A : () => void
 +>prototype : any
 +>B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
 +>B.prototype : any
-+>B : any
++>B : () => void
 +>prototype : any
 +>{    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
  

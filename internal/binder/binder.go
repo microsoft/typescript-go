@@ -403,7 +403,7 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	//       and this case is specially handled. Module augmentations should only be merged with original module definition
 	//       and should never be merged directly with other augmentation, and the latter case would be possible if automatic merge is allowed.
 	if !ast.IsAmbientModule(node) && (hasExportModifier || b.container.Flags&ast.NodeFlagsExportContext != 0) {
-		if !ast.IsLocalsContainer(b.container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == ast.InternalSymbolNameMissing) {
+		if !ast.IsLocalsContainer(b.container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == ast.InternalSymbolNameMissing) || ast.IsCommonJSExport(node) {
 			return b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
 			// No local symbol for an unnamed default!
 		}
@@ -420,20 +420,21 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 }
 
 // // TODO: This can probably be called through normal b.declareSourceFileMember, adding a case for IsCommonJSModule
-// func (b *Binder) bindCommonJSExport(node *ast.Node) {
-// 	b.setCommonJSModuleIndicator(node)
+func (b *Binder) bindCommonJSExport(node *ast.Node) {
+	b.setCommonJSModuleIndicator(node)
+	b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 
-// 	symbolFlags := ast.SymbolFlagsFunctionScopedVariable
-// 	symbolExcludes := ast.SymbolFlagsFunctionScopedVariableExcludes
-// 	exportKind := ast.SymbolFlagsExportValue
-// 	// TODO: s/b.container/b.file.AsNode()/ but this is inefficient I'm sure
-// 	// local exists for CommonJSExport, but it's in `namespace module { namespace exports { export var <name> = <init> } }` (and also doesn't need a local)
-// 	local := b.declareModuleExportsProperty(b.file, node, exportKind, symbolExcludes)
-// 	// b.declareSymbol(ast.GetLocals(b.file.AsNode()), nil /*parent*/, node, exportKind, symbolExcludes)
-// 	local.ExportSymbol = b.declareSymbol(ast.GetExports(b.file.DeclarationData().Symbol), b.file.DeclarationData().Symbol, node, symbolFlags, symbolExcludes)
-// 	node.ExportableData().LocalSymbol = local
-// 	// b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
-// }
+	// symbolFlags := ast.SymbolFlagsFunctionScopedVariable
+	// symbolExcludes := ast.SymbolFlagsFunctionScopedVariableExcludes
+	// exportKind := ast.SymbolFlagsExportValue
+	// // TODO: s/b.container/b.file.AsNode()/ but this is inefficient I'm sure
+	// // local exists for CommonJSExport, but it's in `namespace module { namespace exports { export var <name> = <init> } }` (and also doesn't need a local)
+	// local := b.declareModuleExportsProperty(b.file, node, exportKind, symbolExcludes)
+	// // b.declareSymbol(ast.GetLocals(b.file.AsNode()), nil /*parent*/, node, exportKind, symbolExcludes)
+	// local.ExportSymbol = b.declareSymbol(ast.GetExports(b.file.DeclarationData().Symbol), b.file.DeclarationData().Symbol, node, symbolFlags, symbolExcludes)
+	// node.ExportableData().LocalSymbol = local
+	// // b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
+}
 
 // // based on bindExportsPropertyAssignment + forEachIdentifierInEntityName
 // func (b *Binder) declareModuleExportsProperty(file *ast.SourceFile, node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
@@ -694,10 +695,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
 	case ast.KindCommonJSExport:
-		if b.file.ExternalModuleIndicator == nil {
-			b.setCommonJSModuleIndicator(node)
-		}
-		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
+		b.bindCommonJSExport(node)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
