@@ -26,10 +26,14 @@ func TestDirectoryExists(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.DirectoryExistsCalls()))
 
 	cached.DirectoryExists("/some/path")
-	assert.Equal(t, 1, len(underlying.DirectoryExistsCalls()), "DirectoryExists called underlying FS more than once")
+	assert.Equal(t, 1, len(underlying.DirectoryExistsCalls()))
+
+	cached.ClearCache()
+	cached.DirectoryExists("/some/path")
+	assert.Equal(t, 2, len(underlying.DirectoryExistsCalls()))
 
 	cached.DirectoryExists("/other/path")
-	assert.Equal(t, 2, len(underlying.DirectoryExistsCalls()))
+	assert.Equal(t, 3, len(underlying.DirectoryExistsCalls()))
 }
 
 func TestFileExists(t *testing.T) {
@@ -42,10 +46,14 @@ func TestFileExists(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.FileExistsCalls()))
 
 	cached.FileExists("/some/path/file.txt")
-	assert.Equal(t, 1, len(underlying.FileExistsCalls()), "FileExists called underlying FS more than once")
+	assert.Equal(t, 1, len(underlying.FileExistsCalls()))
+
+	cached.ClearCache()
+	cached.FileExists("/some/path/file.txt")
+	assert.Equal(t, 2, len(underlying.FileExistsCalls()))
 
 	cached.FileExists("/other/path/file.txt")
-	assert.Equal(t, 2, len(underlying.FileExistsCalls()))
+	assert.Equal(t, 3, len(underlying.FileExistsCalls()))
 }
 
 func TestGetAccessibleEntries(t *testing.T) {
@@ -58,10 +66,14 @@ func TestGetAccessibleEntries(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.GetAccessibleEntriesCalls()))
 
 	cached.GetAccessibleEntries("/some/path")
-	assert.Equal(t, 1, len(underlying.GetAccessibleEntriesCalls()), "GetAccessibleEntries called underlying FS more than once")
+	assert.Equal(t, 1, len(underlying.GetAccessibleEntriesCalls()))
+
+	cached.ClearCache()
+	cached.GetAccessibleEntries("/some/path")
+	assert.Equal(t, 2, len(underlying.GetAccessibleEntriesCalls()))
 
 	cached.GetAccessibleEntries("/other/path")
-	assert.Equal(t, 2, len(underlying.GetAccessibleEntriesCalls()))
+	assert.Equal(t, 3, len(underlying.GetAccessibleEntriesCalls()))
 }
 
 func TestRealpath(t *testing.T) {
@@ -74,10 +86,14 @@ func TestRealpath(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.RealpathCalls()))
 
 	cached.Realpath("/some/path")
-	assert.Equal(t, 1, len(underlying.RealpathCalls()), "Realpath called underlying FS more than once")
+	assert.Equal(t, 1, len(underlying.RealpathCalls()))
+
+	cached.ClearCache()
+	cached.Realpath("/some/path")
+	assert.Equal(t, 2, len(underlying.RealpathCalls()))
 
 	cached.Realpath("/other/path")
-	assert.Equal(t, 2, len(underlying.RealpathCalls()))
+	assert.Equal(t, 3, len(underlying.RealpathCalls()))
 }
 
 func TestStat(t *testing.T) {
@@ -90,10 +106,14 @@ func TestStat(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.StatCalls()))
 
 	cached.Stat("/some/path")
-	assert.Equal(t, 1, len(underlying.StatCalls()), "Stat called underlying FS more than once")
+	assert.Equal(t, 1, len(underlying.StatCalls()))
+
+	cached.ClearCache()
+	cached.Stat("/some/path")
+	assert.Equal(t, 2, len(underlying.StatCalls()))
 
 	cached.Stat("/other/path")
-	assert.Equal(t, 2, len(underlying.StatCalls()))
+	assert.Equal(t, 3, len(underlying.StatCalls()))
 }
 
 func TestReadFile(t *testing.T) {
@@ -106,7 +126,11 @@ func TestReadFile(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.ReadFileCalls()))
 
 	cached.ReadFile("/some/path/file.txt")
-	assert.Equal(t, 2, len(underlying.ReadFileCalls()), "ReadFile should not be cached")
+	assert.Equal(t, 2, len(underlying.ReadFileCalls()))
+
+	cached.ClearCache()
+	cached.ReadFile("/some/path/file.txt")
+	assert.Equal(t, 3, len(underlying.ReadFileCalls()))
 }
 
 func TestUseCaseSensitiveFileNames(t *testing.T) {
@@ -119,7 +143,11 @@ func TestUseCaseSensitiveFileNames(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.UseCaseSensitiveFileNamesCalls()))
 
 	cached.UseCaseSensitiveFileNames()
-	assert.Equal(t, 2, len(underlying.UseCaseSensitiveFileNamesCalls()), "UseCaseSensitiveFileNames should not be cached")
+	assert.Equal(t, 2, len(underlying.UseCaseSensitiveFileNamesCalls()))
+
+	cached.ClearCache()
+	cached.UseCaseSensitiveFileNames()
+	assert.Equal(t, 3, len(underlying.UseCaseSensitiveFileNamesCalls()))
 }
 
 func TestWalkDir(t *testing.T) {
@@ -136,7 +164,11 @@ func TestWalkDir(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.WalkDirCalls()))
 
 	cached.WalkDir("/some/path", walkFn)
-	assert.Equal(t, 2, len(underlying.WalkDirCalls()), "WalkDir should not be cached")
+	assert.Equal(t, 2, len(underlying.WalkDirCalls()))
+
+	cached.ClearCache()
+	cached.WalkDir("/some/path", walkFn)
+	assert.Equal(t, 3, len(underlying.WalkDirCalls()))
 }
 
 func TestRemove(t *testing.T) {
@@ -149,7 +181,11 @@ func TestRemove(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.RemoveCalls()))
 
 	cached.Remove("/some/path/file.txt")
-	assert.Equal(t, 2, len(underlying.RemoveCalls()), "Remove should not be cached")
+	assert.Equal(t, 2, len(underlying.RemoveCalls()))
+
+	cached.ClearCache()
+	cached.Remove("/some/path/file.txt")
+	assert.Equal(t, 3, len(underlying.RemoveCalls()))
 }
 
 func TestWriteFile(t *testing.T) {
@@ -162,5 +198,14 @@ func TestWriteFile(t *testing.T) {
 	assert.Equal(t, 1, len(underlying.WriteFileCalls()))
 
 	cached.WriteFile("/some/path/file.txt", "another content", true)
-	assert.Equal(t, 2, len(underlying.WriteFileCalls()), "WriteFile should not be cached")
+	assert.Equal(t, 2, len(underlying.WriteFileCalls()))
+
+	cached.ClearCache()
+	cached.WriteFile("/some/path/file.txt", "third content", false)
+	assert.Equal(t, 3, len(underlying.WriteFileCalls()))
+
+	call := underlying.WriteFileCalls()[2]
+	assert.Equal(t, "/some/path/file.txt", call.Path)
+	assert.Equal(t, "third content", call.Data)
+	assert.Equal(t, false, call.WriteByteOrderMark)
 }

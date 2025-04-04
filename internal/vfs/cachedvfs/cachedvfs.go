@@ -16,7 +16,7 @@ type FS struct {
 	statCache                 sync.Map // map[string]vfs.FileInfo
 }
 
-var _ vfs.FS = &FS{}
+var _ vfs.FS = (*FS)(nil)
 
 func From(fs vfs.FS) *FS {
 	return &FS{fs: fs}
@@ -51,6 +51,7 @@ func (vfs *FS) Realpath(path string) string {
 }
 
 func (vfs *FS) Remove(path string) error {
+	// TODO: should this call ClearCache?
 	return vfs.fs.Remove(path)
 }
 
@@ -67,6 +68,7 @@ func (vfs *FS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
 }
 
 func (vfs *FS) WriteFile(path string, data string, writeByteOrderMark bool) error {
+	// TODO: should this call ClearCache?
 	return vfs.fs.WriteFile(path, data, writeByteOrderMark)
 }
 
