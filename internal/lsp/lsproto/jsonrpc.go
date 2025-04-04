@@ -68,7 +68,7 @@ type RequestOrNotificationMessage struct {
 func (r *RequestOrNotificationMessage) UnmarshalJSON(data []byte) error {
 	var raw struct {
 		JSONRPC JSONRPCVersion  `json:"jsonrpc"`
-		ID      *ID             `json:"id,omitempty"`
+		ID      *ID             `json:"id,omitzero"`
 		Method  Method          `json:"method"`
 		Params  json.RawMessage `json:"params"`
 	}
@@ -76,7 +76,7 @@ func (r *RequestOrNotificationMessage) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
 	}
 
-	params, err := unmarhalParams(raw.Method, raw.Params)
+	params, err := unmarshalParams(raw.Method, raw.Params)
 	if err != nil {
 		return err
 	}
