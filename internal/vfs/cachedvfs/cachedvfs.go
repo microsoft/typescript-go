@@ -22,61 +22,75 @@ func From(fs vfs.FS) *FS {
 	return &FS{fs: fs}
 }
 
-func (vfs *FS) ClearCache() {
-	vfs.directoryExistsCache.Clear()
-	vfs.fileExistsCache.Clear()
-	vfs.getAccessibleEntriesCache.Clear()
-	vfs.realpathCache.Clear()
-	vfs.statCache.Clear()
+func (fsys *FS) ClearCache() {
+	fsys.directoryExistsCache.Clear()
+	fsys.fileExistsCache.Clear()
+	fsys.getAccessibleEntriesCache.Clear()
+	fsys.realpathCache.Clear()
+	fsys.statCache.Clear()
 }
 
-func (vfs *FS) DirectoryExists(path string) bool {
-	return cached(&vfs.directoryExistsCache, path, vfs.fs.DirectoryExists)
-}
-
-func (vfs *FS) FileExists(path string) bool {
-	return cached(&vfs.fileExistsCache, path, vfs.fs.FileExists)
-}
-
-func (vfs *FS) GetAccessibleEntries(path string) vfs.Entries {
-	return cached(&vfs.getAccessibleEntriesCache, path, vfs.fs.GetAccessibleEntries)
-}
-
-func (vfs *FS) ReadFile(path string) (contents string, ok bool) {
-	return vfs.fs.ReadFile(path)
-}
-
-func (vfs *FS) Realpath(path string) string {
-	return cached(&vfs.realpathCache, path, vfs.fs.Realpath)
-}
-
-func (vfs *FS) Remove(path string) error {
-	// TODO: should this call ClearCache?
-	return vfs.fs.Remove(path)
-}
-
-func (vfs *FS) Stat(path string) vfs.FileInfo {
-	return cached(&vfs.statCache, path, vfs.fs.Stat)
-}
-
-func (vfs *FS) UseCaseSensitiveFileNames() bool {
-	return vfs.fs.UseCaseSensitiveFileNames()
-}
-
-func (vfs *FS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
-	return vfs.fs.WalkDir(root, walkFn)
-}
-
-func (vfs *FS) WriteFile(path string, data string, writeByteOrderMark bool) error {
-	// TODO: should this call ClearCache?
-	return vfs.fs.WriteFile(path, data, writeByteOrderMark)
-}
-
-func cached[Arg any, Ret any](cache *sync.Map, key Arg, fn func(Arg) Ret) Ret {
-	if ret, ok := cache.Load(key); ok {
-		return ret.(Ret)
+func (fsys *FS) DirectoryExists(path string) bool {
+	if ret, ok := fsys.directoryExistsCache.Load(path); ok {
+		return ret.(bool)
 	}
-	ret := fn(key)
-	cache.Store(key, ret)
+	ret := fsys.fs.DirectoryExists(path)
+	fsys.directoryExistsCache.Store(path, ret)
 	return ret
+}
+
+func (fsys *FS) FileExists(path string) bool {
+	if ret, ok := fsys.fileExistsCache.Load(path); ok {
+		return ret.(bool)
+	}
+	ret := fsys.fs.FileExists(path)
+	fsys.fileExistsCache.Store(path, ret)
+	return ret
+}
+
+func (fsys *FS) GetAccessibleEntries(path string) vfs.Entries {
+	if ret, ok := fsys.getAccessibleEntriesCache.Load(path); ok {
+		return ret.(vfs.Entries)
+	}
+	ret := fsys.fs.GetAccessibleEntries(path)
+	fsys.getAccessibleEntriesCache.Store(path, ret)
+	return ret
+}
+
+func (fsys *FS) ReadFile(path string) (contents string, ok bool) {
+	return fsys.fs.ReadFile(path)
+}
+
+func (fsys *FS) Realpath(path string) string {
+	if ret, ok := fsys.realpathCache.Load(path); ok {
+		return ret.(string)
+	}
+	ret := fsys.fs.Realpath(path)
+	fsys.realpathCache.Store(path, ret)
+	return ret
+}
+
+func (fsys *FS) Remove(path string) error {
+	return fsys.fs.Remove(path)
+}
+
+func (fsys *FS) Stat(path string) vfs.FileInfo {
+	if ret, ok := fsys.statCache.Load(path); ok {
+		return ret.(vfs.FileInfo)
+	}
+	ret := fsys.fs.Stat(path)
+	fsys.statCache.Store(path, ret)
+	return ret
+}
+
+func (fsys *FS) UseCaseSensitiveFileNames() bool {
+	return fsys.fs.UseCaseSensitiveFileNames()
+}
+
+func (fsys *FS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
+	return fsys.fs.WalkDir(root, walkFn)
+}
+
+func (fsys *FS) WriteFile(path string, data string, writeByteOrderMark bool) error {
+	return fsys.fs.WriteFile(path, data, writeByteOrderMark)
 }
