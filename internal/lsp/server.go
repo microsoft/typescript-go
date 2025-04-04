@@ -255,10 +255,9 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 }
 
 func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
-	s.logger = project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose)
+	s.logger = project.NewLogger([]io.Writer{s.stderr}, "" /*file*/, project.LogLevelVerbose)
 	s.projectService = project.NewService(s, project.ServiceOptions{
-		DefaultLibraryPath: s.defaultLibraryPath,
-		Logger:             s.logger,
+		Logger: s.logger,
 	})
 	s.converters = &converters{projectService: s.projectService, positionEncoding: s.positionEncoding}
 	return nil
