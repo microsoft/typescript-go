@@ -3,41 +3,41 @@
 === a.js ===
 /// <reference path='./requires.d.ts' />
 var mod1 = require('./mod1')
->mod1 : any
->require('./mod1') : any
+>mod1 : typeof A
+>require('./mod1') : typeof A
 >require : (name: string) => any
 >'./mod1' : "./mod1"
 
 mod1.justExport.toFixed()
->mod1.justExport.toFixed() : any
->mod1.justExport.toFixed : any
->mod1.justExport : any
->mod1 : any
->justExport : any
->toFixed : any
+>mod1.justExport.toFixed() : string
+>mod1.justExport.toFixed : (fractionDigits?: number) => string
+>mod1.justExport : number
+>mod1 : typeof A
+>justExport : number
+>toFixed : (fractionDigits?: number) => string
 
 mod1.bothBefore.toFixed() // error
 >mod1.bothBefore.toFixed() : any
 >mod1.bothBefore.toFixed : any
->mod1.bothBefore : any
->mod1 : any
->bothBefore : any
+>mod1.bothBefore : "string"
+>mod1 : typeof A
+>bothBefore : "string"
 >toFixed : any
 
 mod1.bothAfter.toFixed()
 >mod1.bothAfter.toFixed() : any
 >mod1.bothAfter.toFixed : any
->mod1.bothAfter : any
->mod1 : any
->bothAfter : any
+>mod1.bothAfter : "string"
+>mod1 : typeof A
+>bothAfter : "string"
 >toFixed : any
 
 mod1.justProperty.length
->mod1.justProperty.length : any
->mod1.justProperty : any
->mod1 : any
->justProperty : any
->length : any
+>mod1.justProperty.length : number
+>mod1.justProperty : "string"
+>mod1 : typeof A
+>justProperty : "string"
+>length : number
 
 === requires.d.ts ===
 declare var module: { exports: any };
@@ -47,4 +47,78 @@ declare var module: { exports: any };
 declare function require(name: string): any;
 >require : (name: string) => any
 >name : string
+
+=== mod1.js ===
+/// <reference path='./requires.d.ts' />
+module.exports.bothBefore = 'string'
+>bothBefore : any
+>'string' : "string"
+>module.exports.bothBefore = 'string' : "string"
+>module.exports.bothBefore : any
+>module.exports : any
+>module : { exports: any; }
+>exports : any
+>bothBefore : any
+>'string' : "string"
+
+A.justExport = 4
+>A.justExport = 4 : 4
+>A.justExport : number
+>A : typeof A
+>justExport : number
+>4 : 4
+
+A.bothBefore = 2
+>A.bothBefore = 2 : 2
+>A.bothBefore : "string"
+>A : typeof A
+>bothBefore : "string"
+>2 : 2
+
+A.bothAfter = 3
+>A.bothAfter = 3 : 3
+>A.bothAfter : "string"
+>A : typeof A
+>bothAfter : "string"
+>3 : 3
+
+module.exports = A
+>A : typeof A
+>module.exports = A : typeof A
+>module.exports : any
+>module : { exports: any; }
+>exports : any
+>A : typeof A
+
+function A() {
+>A : typeof A
+
+    this.p = 1
+>this.p = 1 : 1
+>this.p : any
+>this : any
+>p : any
+>1 : 1
+}
+module.exports.bothAfter = 'string'
+>bothAfter : any
+>'string' : "string"
+>module.exports.bothAfter = 'string' : "string"
+>module.exports.bothAfter : any
+>module.exports : any
+>module : { exports: any; }
+>exports : any
+>bothAfter : any
+>'string' : "string"
+
+module.exports.justProperty = 'string'
+>justProperty : any
+>'string' : "string"
+>module.exports.justProperty = 'string' : "string"
+>module.exports.justProperty : any
+>module.exports : any
+>module : { exports: any; }
+>exports : any
+>justProperty : any
+>'string' : "string"
 

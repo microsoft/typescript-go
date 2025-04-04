@@ -6453,6 +6453,10 @@ func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces 
 			result |= c.getDeclarationSpaces(d)
 		}
 		return result
+	case ast.KindCommonJSExport:
+		// TODO: Alias handling means that this should maybe be handled above. But its initialiser isn't a declaration, and has no symbol,
+		// unlike export assignment.
+		return DeclarationSpacesExportValue
 	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindFunctionDeclaration, ast.KindImportSpecifier:
 		return DeclarationSpacesExportValue
 	case ast.KindMethodSignature, ast.KindPropertySignature:
@@ -15319,7 +15323,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindEnumMember:
 		result = c.getTypeOfEnumMember(symbol)
 	case ast.KindCommonJSExport:
-		// TODO: Ignore if ES module marker is set ofn the file what is this CPU carspk	
+		// TODO: Ignore if ES module marker is set ofn the file what is this CPU carspk
 		result = c.checkExpression(declaration.AsCommonJSExport().Initializer)
 	default:
 		panic("Unhandled case in getTypeOfVariableOrParameterOrPropertyWorker: " + declaration.Kind.String())

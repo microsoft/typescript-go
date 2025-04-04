@@ -31,5 +31,6 @@ var myAssert = require('assert')
 === app.js ===
 exports.equal = myAssert.equal
 >myAssert : Symbol(myAssert, Decl(ns.ts, 0, 0), Decl(ns.ts, 4, 3))
+>myAssert : Symbol(myAssert, Decl(ns.ts, 0, 0), Decl(ns.ts, 4, 3))
 
 exports.equal()

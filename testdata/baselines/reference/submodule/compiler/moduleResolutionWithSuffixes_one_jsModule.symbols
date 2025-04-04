@@ -12,6 +12,7 @@ function ios() {}
 
 exports.ios = ios;
 >ios : Symbol(ios, Decl(foo.ios.js, 1, 26))
+>ios : Symbol(ios, Decl(foo.ios.js, 1, 26))
 
 === /foo.js ===
 "use strict";
@@ -20,5 +21,6 @@ function base() {}
 >base : Symbol(base, Decl(foo.js, 1, 26))
 
 exports.base = base;
+>base : Symbol(base, Decl(foo.js, 1, 26))
 >base : Symbol(base, Decl(foo.js, 1, 26))
 

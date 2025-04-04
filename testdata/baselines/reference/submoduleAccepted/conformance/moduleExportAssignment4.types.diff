@@ -1,6 +1,19 @@
 --- old.moduleExportAssignment4.types
 +++ new.moduleExportAssignment4.types
-@@= skipped -12, +12 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === async.js ===
+ exports.default = { m: 1, a: 1 }
++>default : any
++>{ m: 1, a: 1 } : { m: number; a: number; }
++>m : number
++>1 : 1
++>a : number
++>1 : 1
+ >exports.default = { m: 1, a: 1 } : { m: number; a: number; }
+ >exports.default : any
+ >exports : any
+@@= skipped -11, +17 lines =@@
  >1 : 1
  
  module.exports = exports['default'];

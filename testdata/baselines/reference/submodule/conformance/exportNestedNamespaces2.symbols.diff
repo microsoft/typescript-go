@@ -14,30 +14,21 @@
  === first.js ===
  exports = require('./mod')
  >exports : Symbol("first", Decl(first.js, 0, 0))
- >require : Symbol(require)
-->'./mod' : Symbol("mod", Decl(mod.js, 0, 0))
- 
- exports.formatters.j = function (v) {
- >exports : Symbol("first", Decl(first.js, 0, 0))
-@@= skipped -23, +19 lines =@@
- exports = require('./mod')
- >exports : Symbol("second", Decl(second.js, 0, 0))
- >require : Symbol(require)
-->'./mod' : Symbol("mod", Decl(mod.js, 0, 0))
- 
- exports.formatters.o = function (v) {
- >exports : Symbol("second", Decl(second.js, 0, 0))
-@@= skipped -15, +14 lines =@@
+@@= skipped -38, +35 lines =@@
  >debug : Symbol(debug, Decl(use.js, 0, 6))
  
  debug.formatters.j
 ->debug.formatters : Symbol(debug.formatters, Decl(mod.js, 0, 0))
++>debug.formatters : Symbol(formatters, Decl(mod.js, 0, 0))
  >debug : Symbol(debug, Decl(use.js, 0, 6))
 ->formatters : Symbol(debug.formatters, Decl(mod.js, 0, 0))
++>formatters : Symbol(formatters, Decl(mod.js, 0, 0))
  
  var one = debug.formatters.o(1)
  >one : Symbol(one, Decl(use.js, 3, 3))
 ->debug.formatters : Symbol(debug.formatters, Decl(mod.js, 0, 0))
++>debug.formatters : Symbol(formatters, Decl(mod.js, 0, 0))
  >debug : Symbol(debug, Decl(use.js, 0, 6))
 ->formatters : Symbol(debug.formatters, Decl(mod.js, 0, 0))
++>formatters : Symbol(formatters, Decl(mod.js, 0, 0))
  

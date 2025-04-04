@@ -1,17 +1,11 @@
 --- old.moduleResolutionWithSuffixes_one_jsModule.types
 +++ new.moduleResolutionWithSuffixes_one_jsModule.types
-@@= skipped -1, +1 lines =@@
- 
- === /index.ts ===
- import { ios } from "./foo.js";
-->ios : () => void
-+>ios : any
- 
- === /foo.ios.js ===
- "use strict";
 @@= skipped -8, +8 lines =@@
+ >"use strict" : "use strict"
  
  exports.__esModule = true;
++>__esModule : any
++>true : true
  >exports.__esModule = true : true
 ->exports.__esModule : true
 ->exports : typeof import("/foo.ios")
@@ -22,9 +16,11 @@
  >true : true
  
  function ios() {}
-@@= skipped -10, +10 lines =@@
+ >ios : () => void
  
  exports.ios = ios;
++>ios : any
++>ios : () => void
  >exports.ios = ios : () => void
 ->exports.ios : () => void
 ->exports : typeof import("/foo.ios")
@@ -36,9 +32,11 @@
  
  === /foo.js ===
  "use strict";
-@@= skipped -11, +11 lines =@@
+ >"use strict" : "use strict"
  
  exports.__esModule = true;
++>__esModule : any
++>true : true
  >exports.__esModule = true : true
 ->exports.__esModule : true
 ->exports : typeof import("/foo")
@@ -49,9 +47,11 @@
  >true : true
  
  function base() {}
-@@= skipped -10, +10 lines =@@
+ >base : () => void
  
  exports.base = base;
++>base : any
++>base : () => void
  >exports.base = base : () => void
 ->exports.base : () => void
 ->exports : typeof import("/foo")

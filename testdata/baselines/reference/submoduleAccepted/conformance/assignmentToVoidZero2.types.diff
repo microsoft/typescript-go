@@ -1,8 +1,11 @@
 --- old.assignmentToVoidZero2.types
 +++ new.assignmentToVoidZero2.types
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
  === assignmentToVoidZero2.js ===
  exports.j = 1;
++>j : any
++>1 : 1
  >exports.j = 1 : 1
 ->exports.j : 1
 ->exports : typeof import("assignmentToVoidZero2")
@@ -13,6 +16,9 @@
  >1 : 1
  
  exports.k = void 0;
++>k : any
++>void 0 : undefined
++>0 : 0
  >exports.k = void 0 : undefined
  >exports.k : any
 ->exports : typeof import("assignmentToVoidZero2")
@@ -102,13 +108,13 @@
  
  === importer.js ===
  import { j, k } from './assignmentToVoidZero2'
-->j : 1
-+>j : any
- >k : any
+ >j : 1
+->k : any
++>k : undefined
  
  j + k
  >j + k : any
-->j : 1
-+>j : any
- >k : any
+ >j : 1
+->k : any
++>k : undefined
  

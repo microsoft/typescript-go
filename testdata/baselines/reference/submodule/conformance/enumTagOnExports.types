@@ -3,6 +3,8 @@
 === enumTagOnExports.js ===
 /** @enum {number} */
 exports.a = {};
+>a : any
+>{} : {}
 >exports.a = {} : {}
 >exports.a : any
 >exports : any

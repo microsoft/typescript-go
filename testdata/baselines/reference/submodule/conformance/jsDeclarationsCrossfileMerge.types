@@ -8,16 +8,16 @@ const m = require("./exporter");
 >"./exporter" : "./exporter"
 
 module.exports = m.default;
->m.default : () => void
+>m.default : { (): void; memberName: "thing"; }
 >m : typeof import("exporter")
->default : () => void
->module.exports = m.default : () => void
+>default : { (): void; memberName: "thing"; }
+>module.exports = m.default : { (): void; memberName: "thing"; }
 >module.exports : any
 >module : any
 >exports : any
->m.default : () => void
+>m.default : { (): void; memberName: "thing"; }
 >m : typeof import("exporter")
->default : () => void
+>default : { (): void; memberName: "thing"; }
 
 module.exports.memberName = "thing";
 >memberName : any
@@ -32,8 +32,8 @@ module.exports.memberName = "thing";
 
 === exporter.js ===
 function validate() {}
->validate : () => void
+>validate : typeof validate
 
 export default validate;
->validate : () => void
+>validate : typeof validate
 

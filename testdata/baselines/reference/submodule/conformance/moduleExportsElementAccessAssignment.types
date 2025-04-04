@@ -2,40 +2,117 @@
 
 === mod2.js ===
 const mod1 = require("./mod1");
->mod1 : any
->require("./mod1") : any
+>mod1 : typeof import("mod1")
+>require("./mod1") : typeof import("mod1")
 >require : any
 >"./mod1" : "./mod1"
 
 mod1.a;
->mod1.a : any
->mod1 : any
->a : any
+>mod1.a : { x: string; }
+>mod1 : typeof import("mod1")
+>a : { x: string; }
 
 mod1.b;
->mod1.b : any
->mod1 : any
->b : any
+>mod1.b : { x: string; }
+>mod1 : typeof import("mod1")
+>b : { x: string; }
 
 mod1.c;
->mod1.c : any
->mod1 : any
->c : any
+>mod1.c : { x: string; }
+>mod1 : typeof import("mod1")
+>c : { x: string; }
 
 mod1.d;
->mod1.d : any
->mod1 : any
->d : any
+>mod1.d : {}
+>mod1 : typeof import("mod1")
+>d : {}
 
 mod1.d.e;
 >mod1.d.e : any
->mod1.d : any
->mod1 : any
->d : any
+>mod1.d : {}
+>mod1 : typeof import("mod1")
+>d : {}
 >e : any
 
 mod1.default;
->mod1.default : any
->mod1 : any
->default : any
+>mod1.default : { x: string; }
+>mod1 : typeof import("mod1")
+>default : { x: string; }
+
+=== mod1.js ===
+exports.a = { x: "x" };
+>a : any
+>{ x: "x" } : { x: string; }
+>x : string
+>"x" : "x"
+>exports.a = { x: "x" } : { x: string; }
+>exports.a : any
+>exports : any
+>a : any
+>{ x: "x" } : { x: string; }
+>x : string
+>"x" : "x"
+
+exports["b"] = { x: "x" };
+>"b" : "b"
+>{ x: "x" } : { x: string; }
+>x : string
+>"x" : "x"
+>exports["b"] = { x: "x" } : { x: string; }
+>exports["b"] : any
+>exports : any
+>"b" : "b"
+>{ x: "x" } : { x: string; }
+>x : string
+>"x" : "x"
+
+exports["default"] = { x: "x" };
+>"default" : "default"
+>{ x: "x" } : { x: string; }
+>x : string
+>"x" : "x"
+>exports["default"] = { x: "x" } : { x: string; }
+>exports["default"] : any
+>exports : any
+>"default" : "default"
+>{ x: "x" } : { x: string; }
+>x : string
+>"x" : "x"
+
+module.exports["c"] = { x: "x" };
+>"c" : "c"
+>{ x: "x" } : { x: string; }
+>x : string
+>"x" : "x"
+>module.exports["c"] = { x: "x" } : { x: string; }
+>module.exports["c"] : any
+>module.exports : any
+>module : any
+>exports : any
+>"c" : "c"
+>{ x: "x" } : { x: string; }
+>x : string
+>"x" : "x"
+
+module["exports"]["d"] = {};
+>"d" : "d"
+>{} : {}
+>module["exports"]["d"] = {} : {}
+>module["exports"]["d"] : any
+>module["exports"] : any
+>module : any
+>"exports" : "exports"
+>"d" : "d"
+>{} : {}
+
+module["exports"]["d"].e = 0;
+>module["exports"]["d"].e = 0 : 0
+>module["exports"]["d"].e : any
+>module["exports"]["d"] : any
+>module["exports"] : any
+>module : any
+>"exports" : "exports"
+>"d" : "d"
+>e : any
+>0 : 0
 

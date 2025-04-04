@@ -1,11 +1,11 @@
-file2.js(1,27): error TS2307: Cannot find module './file.js' or its corresponding type declarations.
+file.js(6,7): error TS2451: Cannot redeclare block-scoped variable 'myTypes'.
+file.js(20,1): error TS2304: Cannot find name 'exports'.
+file.js(20,9): error TS2451: Cannot redeclare block-scoped variable 'myTypes'.
 file2.js(28,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== file2.js (2 errors) ====
+==== file2.js (1 errors) ====
     const {myTypes} = require('./file.js');
-                              ~~~~~~~~~~~
-!!! error TS2307: Cannot find module './file.js' or its corresponding type declarations.
     
     /**
      * @namespace testFnTypes
@@ -35,13 +35,15 @@ file2.js(28,1): error TS2580: Cannot find name 'module'. Do you need to install 
     module.exports = {testFn, testFnTypes};
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-==== file.js (0 errors) ====
+==== file.js (3 errors) ====
     /**
      * @namespace myTypes
      * @global
      * @type {Object<string,*>}
      */
     const myTypes = {
+          ~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'myTypes'.
         // SOME PROPS HERE
     };
     
@@ -56,3 +58,7 @@ file2.js(28,1): error TS2580: Cannot find name 'module'. Do you need to install 
     /** @typedef {myTypes.typeB|Function} myTypes.typeC */
     
     exports.myTypes = myTypes;
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
+            ~~~~~~~
+!!! error TS2451: Cannot redeclare block-scoped variable 'myTypes'.

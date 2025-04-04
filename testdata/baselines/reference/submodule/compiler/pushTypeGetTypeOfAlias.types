@@ -10,6 +10,10 @@ module.exports = function () {};
 >function () {} : () => void
 
 exports.blah = exports.someProp;
+>blah : any
+>exports.someProp : any
+>exports : any
+>someProp : any
 >exports.blah = exports.someProp : any
 >exports.blah : any
 >exports : any

@@ -97,9 +97,6 @@ class Thing {
 
 /** @type {DoneStatus} */
 exports.x = {
->exports.x = {    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
->exports.x : any
->exports : any
 >x : any
 >{    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
 
@@ -108,6 +105,8 @@ exports.x = {
 >"done" : "done"
 
     m(n) { }
+>m : (n: any) => void
+>n : any
 >m : (n: any) => void
 >n : any
 }

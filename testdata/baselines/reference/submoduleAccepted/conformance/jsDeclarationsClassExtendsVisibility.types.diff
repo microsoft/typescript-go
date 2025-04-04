@@ -1,22 +1,7 @@
 --- old.jsDeclarationsClassExtendsVisibility.types
 +++ new.jsDeclarationsClassExtendsVisibility.types
-@@= skipped -1, +1 lines =@@
- 
- === cls.js ===
- const Bar = require("./bar");
-->Bar : typeof Bar
-->require("./bar") : typeof Bar
-+>Bar : any
-+>require("./bar") : any
- >require : any
- >"./bar" : "./bar"
- 
-@@= skipped -20, +20 lines =@@
- };
- class Foo extends Bar {}
- >Foo : Foo
-->Bar : Bar
-+>Bar : any
+@@= skipped -24, +24 lines =@@
+ >Bar : Bar
  
  module.exports = Foo;
 +>Foo : typeof Foo
@@ -45,14 +30,18 @@
  >Strings : { a: string; b: string; }
 ->Strings : { a: string; b: string; }
  
--=== bar.js ===
--class Bar {}
-->Bar : Bar
--
--module.exports = Bar;
-->module.exports = Bar : typeof Bar
+ === bar.js ===
+ class Bar {}
+ >Bar : Bar
+ 
+ module.exports = Bar;
++>Bar : typeof Bar
+ >module.exports = Bar : typeof Bar
 ->module.exports : typeof Bar
 ->module : { exports: typeof Bar; }
 ->exports : typeof Bar
-->Bar : typeof Bar
--
++>module.exports : any
++>module : any
++>exports : any
+ >Bar : typeof Bar
+ 

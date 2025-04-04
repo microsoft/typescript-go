@@ -3,19 +3,25 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+main.js(1,17): error TS2307: Cannot find module './first' or its corresponding type declarations.
++first.js(5,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++first.js(5,28): error TS2300: Duplicate identifier 'x'.
++first.js(5,31): error TS2300: Duplicate identifier 'k'.
 +
 +
-+==== main.js (1 errors) ====
++==== main.js (0 errors) ====
 +    var f = require('./first');
-+                    ~~~~~~~~~
-+!!! error TS2307: Cannot find module './first' or its corresponding type declarations.
 +    f(1, n => { })
 +    
-+==== first.js (0 errors) ====
++==== first.js (3 errors) ====
 +    /** @template T
 +     * @param {T} x
 +     * @param {(t: T) => void} k
 +     */
 +    module.exports = function (x, k) { return k(x) }
++    ~~~~~~
++!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++                               ~
++!!! error TS2300: Duplicate identifier 'x'.
++                                  ~
++!!! error TS2300: Duplicate identifier 'k'.
 +    

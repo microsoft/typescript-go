@@ -52,9 +52,6 @@
 ->exports : typeof import("mod3")
 ->C : typeof C
 ->function() {    this.p = 1} : typeof C
-+>exports.C = function() {    this.p = 1} : () => void
-+>exports.C : any
-+>exports : any
 +>C : any
 +>function() {    this.p = 1} : () => void
  
@@ -65,8 +62,13 @@
 +>this : any
  >p : any
  >1 : 1
++>this.p = 1 : 1
++>this.p : any
++>this : any
++>p : any
++>1 : 1
  }
-@@= skipped -17, +17 lines =@@
+ 
  === use.js ===
  /** @type {import('./mod1').Both} */
  var both1 = { type: 'a', x: 1 };

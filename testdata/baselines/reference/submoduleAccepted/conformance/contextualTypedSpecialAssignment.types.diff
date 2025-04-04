@@ -129,9 +129,6 @@
 ->exports : typeof import("test")
 ->x : DoneStatus
 ->{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
-+>exports.x = {    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
-+>exports.x : any
-+>exports : any
 +>x : any
 +>{    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
  
@@ -143,6 +140,8 @@
      m(n) { }
 ->m : (n: number) => void
 ->n : number
++>m : (n: any) => void
++>n : any
 +>m : (n: any) => void
 +>n : any
  }

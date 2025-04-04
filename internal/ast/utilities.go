@@ -1624,20 +1624,7 @@ func IsEnumConst(node *Node) bool {
 }
 
 func ExportAssignmentIsAlias(node *Node) bool {
-	return isAliasableExpression(getExportAssignmentExpression(node))
-}
-
-func getExportAssignmentExpression(node *Node) *Node {
-	switch node.Kind {
-	case KindExportAssignment, KindJSExportAssignment:
-		return node.Expression()
-	case KindBinaryExpression:
-		return node.AsBinaryExpression().Right
-	}
-	panic("Unhandled case in getExportAssignmentExpression")
-}
-
-func isAliasableExpression(e *Node) bool {
+	e := node.AsExportAssignment().Expression
 	return IsEntityNameExpression(e) || IsClassExpression(e)
 }
 

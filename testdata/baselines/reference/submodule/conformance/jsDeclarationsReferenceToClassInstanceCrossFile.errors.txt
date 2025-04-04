@@ -1,15 +1,23 @@
-test.js(1,26): error TS2307: Cannot find module './index' or its corresponding type declarations.
+index.js(1,29): error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
+index.js(9,14): error TS2339: Property 'objects' does not exist on type 'Render'.
+index.js(18,14): error TS2339: Property 'objects' does not exist on type 'Render'.
+index.js(23,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+rectangle.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+test.js(1,26): error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
+test.js(5,31): error TS2339: Property 'objects' does not exist on type 'Render'.
 
 
-==== test.js (1 errors) ====
+==== test.js (2 errors) ====
     const {Render} = require("./index");
                              ~~~~~~~~~
-!!! error TS2307: Cannot find module './index' or its corresponding type declarations.
+!!! error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
     let render = new Render();
     
     render.addRectangle();
     console.log("Objects", render.objects);
-==== rectangle.js (0 errors) ====
+                                  ~~~~~~~
+!!! error TS2339: Property 'objects' does not exist on type 'Render'.
+==== rectangle.js (1 errors) ====
     class Rectangle {
         constructor() {
             console.log("I'm a rectangle!");
@@ -17,8 +25,12 @@ test.js(1,26): error TS2307: Cannot find module './index' or its corresponding t
     }
     
     module.exports = { Rectangle };
-==== index.js (0 errors) ====
+    ~~~~~~
+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+==== index.js (4 errors) ====
     const {Rectangle} = require('./rectangle');
+                                ~~~~~~~~~~~~~
+!!! error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
     
     class Render {
         constructor() {
@@ -27,6 +39,8 @@ test.js(1,26): error TS2307: Cannot find module './index' or its corresponding t
              * @type {Rectangle[]}
              */
             this.objects = [];
+                 ~~~~~~~
+!!! error TS2339: Property 'objects' does not exist on type 'Render'.
         }
         /**
          * Adds a rectangle
@@ -36,8 +50,12 @@ test.js(1,26): error TS2307: Cannot find module './index' or its corresponding t
         addRectangle() {
             const obj = new Rectangle();
             this.objects.push(obj);
+                 ~~~~~~~
+!!! error TS2339: Property 'objects' does not exist on type 'Render'.
             return obj;
         }
     }
     
     module.exports = { Render };
+    ~~~~~~
+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

@@ -4,6 +4,8 @@
 exports.default = { m: 1, a: 1 }
 >m : Symbol(m, Decl(async.js, 0, 19))
 >a : Symbol(a, Decl(async.js, 0, 25))
+>m : Symbol(m, Decl(async.js, 0, 19))
+>a : Symbol(a, Decl(async.js, 0, 25))
 
 module.exports = exports['default'];
 

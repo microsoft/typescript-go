@@ -2,6 +2,12 @@
 
 === async.js ===
 exports.default = { m: 1, a: 1 }
+>default : any
+>{ m: 1, a: 1 } : { m: number; a: number; }
+>m : number
+>1 : 1
+>a : number
+>1 : 1
 >exports.default = { m: 1, a: 1 } : { m: number; a: number; }
 >exports.default : any
 >exports : any

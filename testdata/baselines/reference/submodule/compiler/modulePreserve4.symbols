@@ -129,7 +129,9 @@ import g2 = require("./g"); // { default: 0 }
 >g2 : Symbol(g2, Decl(main1.ts, 29, 11))
 
 g2.default;
+>g2.default : Symbol(default, Decl(g.js, 0, 0))
 >g2 : Symbol(g2, Decl(main1.ts, 29, 11))
+>default : Symbol(default, Decl(g.js, 0, 0))
 
 === /main2.mts ===
 import { x, y } from "./a"; // No y
@@ -245,11 +247,14 @@ import g1 from "./g"; // { default: 0 }
 const g2 = require("./g"); // { default: 0 }
 >g2 : Symbol(g2, Decl(main3.cjs, 17, 5))
 >require : Symbol(require)
+>"./g" : Symbol("/g", Decl(g.js, 0, 0))
 
 === /main4.cjs ===
 exports.x = require("./g");
->exports : Symbol("/main4", Decl(main4.cjs, 0, 0))
 >require : Symbol(require)
+>"./g" : Symbol("/g", Decl(g.js, 0, 0))
+>require : Symbol(require)
+>"./g" : Symbol("/g", Decl(g.js, 0, 0))
 
 === /dummy.ts ===
 

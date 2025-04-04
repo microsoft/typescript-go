@@ -1,12 +1,13 @@
-index.js(1,23): error TS2307: Cannot find module './namespacer' or its corresponding type declarations.
 index.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 index.js(3,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+namespacer.js(2,3): error TS2339: Property 'NS' does not exist on type '{}'.
+namespacer.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+namespacey.js(2,3): error TS2339: Property 'bar' does not exist on type '{}'.
+namespacey.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== index.js (3 errors) ====
+==== index.js (2 errors) ====
     const _item = require("./namespacer");
-                          ~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module './namespacer' or its corresponding type declarations.
     module.exports = 12;
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -14,13 +15,21 @@ index.js(3,23): error TS2580: Cannot find name 'module'. Do you need to install 
                           ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
     
-==== namespacey.js (0 errors) ====
+==== namespacey.js (2 errors) ====
     const A = {}
     A.bar = class Q {}
+      ~~~
+!!! error TS2339: Property 'bar' does not exist on type '{}'.
     module.exports = A;
-==== namespacer.js (0 errors) ====
+    ~~~~~~
+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+==== namespacer.js (2 errors) ====
     const B = {}
     B.NS = require("./namespacey");
+      ~~
+!!! error TS2339: Property 'NS' does not exist on type '{}'.
     Object.defineProperty(B, "NS", { value: "why though", writable: true });
     module.exports = B;
+    ~~~~~~
+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
     

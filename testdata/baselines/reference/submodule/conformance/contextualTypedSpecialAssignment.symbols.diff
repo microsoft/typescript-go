@@ -73,8 +73,11 @@
      status: "done",
  >status : Symbol(status, Decl(test.js, 41, 13))
  
-@@= skipped -12, +8 lines =@@
+     m(n) { }
+ >m : Symbol(m, Decl(test.js, 42, 19))
  >n : Symbol(n, Decl(test.js, 43, 6))
++>m : Symbol(m, Decl(test.js, 42, 19))
++>n : Symbol(n, Decl(test.js, 43, 6))
  }
  exports.x
 ->exports.x : Symbol(x, Decl(test.js, 36, 1))
@@ -118,7 +121,7 @@
  
      status: 'done',
  >status : Symbol(status, Decl(test.js, 56, 21))
-@@= skipped -43, +29 lines =@@
+@@= skipped -55, +39 lines =@@
  >n : Symbol(n, Decl(test.js, 58, 6))
  }
  Thing.prototype.x

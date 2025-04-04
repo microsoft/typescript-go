@@ -4,6 +4,7 @@
 const Obj = require("./obj");
 >Obj : Symbol(Obj, Decl(index.js, 0, 5))
 >require : Symbol(require)
+>"./obj" : Symbol("obj", Decl(obj.js, 0, 0))
 
 class Container {
 >Container : Symbol(Container, Decl(index.js, 0, 29))
@@ -19,3 +20,13 @@ module.exports = Container;
 >Container : Symbol(Container, Decl(index.js, 0, 29))
 >Container : Symbol(Container, Decl(index.js, 0, 29))
 
+=== obj.js ===
+module.exports = class Obj {
+>Obj : Symbol(Obj, Decl(obj.js, 0, 16))
+
+    constructor() {
+        this.x = 12;
+>this : Symbol(Obj, Decl(obj.js, 0, 16))
+>this : Symbol(Obj, Decl(obj.js, 0, 16))
+    }
+}

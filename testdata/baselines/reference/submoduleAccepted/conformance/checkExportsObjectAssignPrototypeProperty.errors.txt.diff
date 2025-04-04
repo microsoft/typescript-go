@@ -6,7 +6,10 @@
 -validator.ts(21,1): error TS2322: Type 'string' is not assignable to type 'number'.
 -validator.ts(22,1): error TS2322: Type 'string' is not assignable to type 'number'.
 -validator.ts(23,1): error TS2322: Type 'number' is not assignable to type 'string'.
-+validator.ts(3,25): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
++mod1.js(5,17): error TS7006: Parameter 'name' implicitly has an 'any' type.
++mod1.js(6,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
++mod1.js(21,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++validator.ts(5,12): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
  
  
 -==== validator.ts (5 errors) ====
@@ -14,12 +17,14 @@
      import "./";
      
      import Person = require("./mod1");
-+                            ~~~~~~~~
-+!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
      
      const m1 = new Person("Name")
++               ~~~~~~~~~~~~~~~~~~
++!!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
      
-@@= skipped -24, +22 lines =@@
+     m1.thing;
+     m1.readonlyProp;
+@@= skipped -24, +25 lines =@@
      
      // disallowed assignments
      m1.readonlyProp = "name";
@@ -39,4 +44,26 @@
 -!!! error TS2322: Type 'number' is not assignable to type 'string'.
      
      
- ==== mod1.js (0 errors) ====
+-==== mod1.js (0 errors) ====
++==== mod1.js (3 errors) ====
+     /**
+      * @constructor
+      * @param {string} name
+      */
+     function Person(name) {
++                    ~~~~
++!!! error TS7006: Parameter 'name' implicitly has an 'any' type.
+         this.name = name;
++        ~~~~
++!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
++!!! related TS2738 mod1.js:5:10: An outer value of 'this' is shadowed by this container.
+     }
+     Person.prototype.describe = function () {
+         return "Person called " + this.name;
+@@= skipped -38, +33 lines =@@
+         }
+     });
+     module.exports = Person;
++    ~~~~~~
++!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+     

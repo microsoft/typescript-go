@@ -3,16 +3,41 @@
 === utils/index.js ===
 // issue arises here on compilation
 const errors = require("./errors");
->errors : any
->require("./errors") : any
+>errors : { FancyError: typeof FancyError; }
+>require("./errors") : { FancyError: typeof FancyError; }
 >require : any
 >"./errors" : "./errors"
 
 module.exports = {
->{    errors} : { errors: any; }
+>{    errors} : { errors: { FancyError: typeof FancyError; }; }
 
     errors
->errors : any
->errors : any
+>errors : { FancyError: typeof FancyError; }
+>errors : { FancyError: typeof FancyError; }
 
 };
+=== utils/errors.js ===
+class FancyError extends Error {
+>FancyError : FancyError
+>Error : Error
+
+    constructor(status) {
+>status : any
+
+        super(`error with status ${status}`);
+>super(`error with status ${status}`) : void
+>super : ErrorConstructor
+>`error with status ${status}` : string
+>status : any
+    }
+}
+
+module.exports = {
+>{    FancyError} : { FancyError: typeof FancyError; }
+
+    FancyError
+>FancyError : typeof FancyError
+>FancyError : typeof FancyError
+
+};
+

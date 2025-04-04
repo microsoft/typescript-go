@@ -2,19 +2,19 @@
 
 === usage.js ===
 const { Thing, useThing, cbThing } = require("./index");
->Thing : any
->useThing : any
->cbThing : any
->require("./index") : any
+>Thing : Readonly<{ a: "thing"; b: "chill"; }>
+>useThing : (x: any) => void
+>cbThing : (x: any) => void
+>require("./index") : typeof import("index")
 >require : any
 >"./index" : "./index"
 
 useThing(Thing.a);
->useThing(Thing.a) : any
->useThing : any
->Thing.a : any
->Thing : any
->a : any
+>useThing(Thing.a) : void
+>useThing : (x: any) => void
+>Thing.a : "thing"
+>Thing : Readonly<{ a: "thing"; b: "chill"; }>
+>a : "thing"
 
 /**
  * @typedef {Object} LogEntry
@@ -23,8 +23,8 @@ useThing(Thing.a);
  */
 
 cbThing(type => {
->cbThing(type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };}) : any
->cbThing : any
+>cbThing(type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };}) : void
+>cbThing : (x: any) => void
 >type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };} : (type: any) => void
 >type : any
 
@@ -45,4 +45,65 @@ cbThing(type => {
 
     };
 });
+
+=== index.js ===
+/** @enum {string} */
+const Thing = Object.freeze({
+>Thing : Readonly<{ a: "thing"; b: "chill"; }>
+>Object.freeze({    a: "thing",    b: "chill"}) : Readonly<{ a: "thing"; b: "chill"; }>
+>Object.freeze : { <T extends Function>(f: T): T; <T extends { [idx: string]: U | object; }, U extends string | number | bigint | symbol | boolean>(o: T): Readonly<T>; <T>(o: T): Readonly<T>; }
+>Object : ObjectConstructor
+>freeze : { <T extends Function>(f: T): T; <T extends { [idx: string]: U | object; }, U extends string | number | bigint | symbol | boolean>(o: T): Readonly<T>; <T>(o: T): Readonly<T>; }
+>{    a: "thing",    b: "chill"} : { a: "thing"; b: "chill"; }
+
+    a: "thing",
+>a : "thing"
+>"thing" : "thing"
+
+    b: "chill"
+>b : "chill"
+>"chill" : "chill"
+
+});
+
+exports.Thing = Thing;
+>Thing : any
+>Thing : Readonly<{ a: "thing"; b: "chill"; }>
+>exports.Thing = Thing : Readonly<{ a: "thing"; b: "chill"; }>
+>exports.Thing : any
+>exports : any
+>Thing : any
+>Thing : Readonly<{ a: "thing"; b: "chill"; }>
+
+/**
+ * @param {Thing} x
+ */
+function useThing(x) {}
+>useThing : (x: any) => void
+>x : any
+
+exports.useThing = useThing;
+>useThing : any
+>useThing : (x: any) => void
+>exports.useThing = useThing : (x: any) => void
+>exports.useThing : any
+>exports : any
+>useThing : any
+>useThing : (x: any) => void
+
+/**
+ * @param {(x: Thing) => void} x
+ */
+function cbThing(x) {}
+>cbThing : (x: any) => void
+>x : any
+
+exports.cbThing = cbThing;
+>cbThing : any
+>cbThing : (x: any) => void
+>exports.cbThing = cbThing : (x: any) => void
+>exports.cbThing : any
+>exports : any
+>cbThing : any
+>cbThing : (x: any) => void
 

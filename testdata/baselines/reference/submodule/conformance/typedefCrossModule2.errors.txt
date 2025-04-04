@@ -1,17 +1,21 @@
-use.js(1,19): error TS2307: Cannot find module './mod1.js' or its corresponding type declarations.
+mod1.js(7,1): error TS2304: Cannot find name 'exports'.
+mod1.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+mod1.js(10,1): error TS2300: Duplicate identifier 'export='.
+mod1.js(10,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+mod1.js(20,1): error TS2304: Cannot find name 'exports'.
+mod1.js(23,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
 
 
-==== use.js (1 errors) ====
+==== use.js (0 errors) ====
     var mod = require('./mod1.js');
-                      ~~~~~~~~~~~
-!!! error TS2307: Cannot find module './mod1.js' or its corresponding type declarations.
     /** @type {import("./mod1.js").Baz} */
     var b;
     /** @type {mod.Baz} */
     var bb;
     var bbb = new mod.Baz();
     
-==== mod1.js (0 errors) ====
+==== mod1.js (7 errors) ====
     // error
     
     /** @typedef {number} Foo */
@@ -19,11 +23,23 @@ use.js(1,19): error TS2307: Cannot find module './mod1.js' or its corresponding 
     
     /** @typedef {number} Bar */
     exports.Bar = class { }
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     
     /** @typedef {number} Baz */
     module.exports = {
+    ~~~~~~
+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+    ~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~
         Baz: class { }
+    ~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~
     }
+    ~
+!!! error TS2300: Duplicate identifier 'export='.
+    ~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     
     // ok
     
@@ -32,9 +48,17 @@ use.js(1,19): error TS2307: Cannot find module './mod1.js' or its corresponding 
     
     /** @typedef {number} Quid */
     exports.Quid = 2;
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     
     /** @typedef {number} Quack */
     module.exports = {
+    ~~~~~~
+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+    ~~~~~~~~~~~~~~~~~~
         Quack: 2
+    ~~~~~~~~~~~~
     }
+    ~
+!!! error TS2300: Duplicate identifier 'export='.
     

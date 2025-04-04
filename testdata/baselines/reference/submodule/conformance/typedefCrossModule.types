@@ -53,13 +53,15 @@ export function C() {
 /** @typedef {A | B} Both */
 
 exports.C = function() {
->exports.C = function() {    this.p = 1} : () => void
->exports.C : any
->exports : any
 >C : any
 >function() {    this.p = 1} : () => void
 
     this.p = 1
+>this.p = 1 : 1
+>this.p : any
+>this : any
+>p : any
+>1 : 1
 >this.p = 1 : 1
 >this.p : any
 >this : any

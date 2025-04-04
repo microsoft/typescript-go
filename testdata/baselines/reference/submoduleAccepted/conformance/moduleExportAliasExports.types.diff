@@ -6,41 +6,41 @@
  >(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports})() : void
 ->(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : () => void
 ->function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : () => void
-+>(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : { (): void; exports: any; }
-+>function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : { (): void; exports: any; }
++>(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : { (): void; bigOak: 1; everywhere: 2; exports: typeof import("Eloquent"); }
++>function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : { (): void; bigOak: 1; everywhere: 2; exports: typeof import("Eloquent"); }
  
  exports.bigOak = 1
++>bigOak : any
++>1 : 1
  >exports.bigOak = 1 : 1
 ->exports.bigOak : 1
-->exports : typeof import("Eloquent")
-->bigOak : 1
 +>exports.bigOak : any
-+>exports : any
+ >exports : typeof import("Eloquent")
+->bigOak : 1
 +>bigOak : any
  >1 : 1
  
  exports.everywhere = 2
++>everywhere : any
++>2 : 2
  >exports.everywhere = 2 : 2
 ->exports.everywhere : 2
-->exports : typeof import("Eloquent")
-->everywhere : 2
 +>exports.everywhere : any
-+>exports : any
+ >exports : typeof import("Eloquent")
+->everywhere : 2
 +>everywhere : any
  >2 : 2
  
  module.exports = exports
-->module.exports = exports : typeof import("Eloquent")
++>exports : typeof import("Eloquent")
+ >module.exports = exports : typeof import("Eloquent")
 ->module.exports : typeof import("Eloquent")
 ->module : { exports: typeof import("Eloquent"); }
-->exports : typeof import("Eloquent")
-->exports : typeof import("Eloquent")
-+>exports : any
-+>module.exports = exports : any
 +>module.exports : any
 +>module : any
 +>exports : any
-+>exports : any
+ >exports : typeof import("Eloquent")
+->exports : typeof import("Eloquent")
  
  })()
  

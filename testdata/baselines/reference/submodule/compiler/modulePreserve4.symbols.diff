@@ -74,12 +74,14 @@
  
  g2.default;
 ->g2.default : Symbol(g1.default, Decl(g.js, 0, 0))
++>g2.default : Symbol(default, Decl(g.js, 0, 0))
  >g2 : Symbol(g2, Decl(main1.ts, 29, 11))
 ->default : Symbol(g1.default, Decl(g.js, 0, 0))
++>default : Symbol(default, Decl(g.js, 0, 0))
  
  === /main2.mts ===
  import { x, y } from "./a"; // No y
-@@= skipped -86, +82 lines =@@
+@@= skipped -86, +84 lines =@@
  const a2 = require("./a"); // { x: 0 }
  >a2 : Symbol(a2, Decl(main3.cjs, 2, 5))
  >require : Symbol(require)
@@ -111,15 +113,17 @@
  >g2 : Symbol(g2, Decl(main3.cjs, 17, 5))
  >require : Symbol(require)
 ->"./g" : Symbol(g1, Decl(g.js, 0, 0))
++>"./g" : Symbol("/g", Decl(g.js, 0, 0))
  
  === /main4.cjs ===
  exports.x = require("./g");
 ->exports.x : Symbol(x, Decl(main4.cjs, 0, 0))
 ->exports : Symbol(x, Decl(main4.cjs, 0, 0))
 ->x : Symbol(x, Decl(main4.cjs, 0, 0))
-+>exports : Symbol("/main4", Decl(main4.cjs, 0, 0))
  >require : Symbol(require)
-->"./g" : Symbol("/g", Decl(g.js, 0, 0))
+ >"./g" : Symbol("/g", Decl(g.js, 0, 0))
++>require : Symbol(require)
++>"./g" : Symbol("/g", Decl(g.js, 0, 0))
  
  === /dummy.ts ===
  

@@ -1,4 +1,7 @@
-/index.ts(1,21): error TS2306: File '/foo.ios.js' is not a module.
+/foo.ios.js(3,10): error TS2300: Duplicate identifier 'ios'.
+/foo.ios.js(4,9): error TS2300: Duplicate identifier 'ios'.
+/foo.js(3,10): error TS2300: Duplicate identifier 'base'.
+/foo.js(4,9): error TS2300: Duplicate identifier 'base'.
 
 
 ==== /tsconfig.json (0 errors) ====
@@ -13,18 +16,24 @@
     	}
     }
     
-==== /index.ts (1 errors) ====
+==== /index.ts (0 errors) ====
     import { ios } from "./foo.js";
-                        ~~~~~~~~~~
-!!! error TS2306: File '/foo.ios.js' is not a module.
-==== /foo.ios.js (0 errors) ====
+==== /foo.ios.js (2 errors) ====
     "use strict";
     exports.__esModule = true;
     function ios() {}
+             ~~~
+!!! error TS2300: Duplicate identifier 'ios'.
     exports.ios = ios;
-==== /foo.js (0 errors) ====
+            ~~~
+!!! error TS2300: Duplicate identifier 'ios'.
+==== /foo.js (2 errors) ====
     "use strict";
     exports.__esModule = true;
     function base() {}
+             ~~~~
+!!! error TS2300: Duplicate identifier 'base'.
     exports.base = base;
+            ~~~~
+!!! error TS2300: Duplicate identifier 'base'.
     

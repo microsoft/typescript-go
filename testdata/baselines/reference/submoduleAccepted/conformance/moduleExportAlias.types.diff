@@ -186,6 +186,8 @@
  >function () { } : () => void
  
  exports.func2 = function () { };
++>func2 : any
++>function () { } : () => void
  >exports.func2 = function () { } : () => void
 ->exports.func2 : () => void
 ->exports : typeof import("b")
@@ -395,6 +397,8 @@
  >{} : {}
  
  exports.func11 = function () { };
++>func11 : any
++>function () { } : () => void
  >exports.func11 = function () { } : () => void
 ->exports.func11 : () => void
 ->exports : typeof import("b")
@@ -438,6 +442,8 @@
  >{} : {}
  
  exports.func11 = function () { };
++>func11 : any
++>function () { } : () => void
  >exports.func11 = function () { } : () => void
 ->exports.func11 : () => void
 ->exports : typeof import("b")
@@ -479,6 +485,8 @@
  >{} : {}
  
  exports.func13 = function () { };
++>func13 : any
++>function () { } : () => void
  >exports.func13 = function () { } : () => void
 ->exports.func13 : () => void
 ->exports : typeof import("b")
@@ -520,6 +528,8 @@
  >{} : {}
  
  exports.func15 = function () { };
++>func15 : any
++>function () { } : () => void
  >exports.func15 = function () { } : () => void
 ->exports.func15 : () => void
 ->exports : typeof import("b")
@@ -563,6 +573,8 @@
 +>{} : {}
  
  exports.func17 = function () { };
++>func17 : any
++>function () { } : () => void
  >exports.func17 = function () { } : () => void
 ->exports.func17 : () => void
 ->exports : typeof import("b")
@@ -601,6 +613,8 @@
 +>{} : {}
  
  exports.func19 = function () { };
++>func19 : any
++>function () { } : () => void
  >exports.func19 = function () { } : () => void
 ->exports.func19 : () => void
 ->exports : typeof import("b")

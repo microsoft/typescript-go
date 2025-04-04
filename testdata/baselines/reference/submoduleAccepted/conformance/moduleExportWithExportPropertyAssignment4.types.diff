@@ -6,24 +6,19 @@
  var mod1 = require('./mod1')
 ->mod1 : typeof mod1
 ->require('./mod1') : typeof mod1
-+>mod1 : any
-+>require('./mod1') : any
++>mod1 : typeof A
++>require('./mod1') : typeof A
  >require : (name: string) => any
  >'./mod1' : "./mod1"
  
- mod1.justExport.toFixed()
-->mod1.justExport.toFixed() : string
-->mod1.justExport.toFixed : (fractionDigits?: number) => string
-->mod1.justExport : number
+@@= skipped -9, +9 lines =@@
+ >mod1.justExport.toFixed() : string
+ >mod1.justExport.toFixed : (fractionDigits?: number) => string
+ >mod1.justExport : number
 ->mod1 : typeof mod1
-->justExport : number
-->toFixed : (fractionDigits?: number) => string
-+>mod1.justExport.toFixed() : any
-+>mod1.justExport.toFixed : any
-+>mod1.justExport : any
-+>mod1 : any
-+>justExport : any
-+>toFixed : any
++>mod1 : typeof A
+ >justExport : number
+ >toFixed : (fractionDigits?: number) => string
  
  mod1.bothBefore.toFixed() // error
  >mod1.bothBefore.toFixed() : any
@@ -31,9 +26,9 @@
 ->mod1.bothBefore : number | "string"
 ->mod1 : typeof mod1
 ->bothBefore : number | "string"
-+>mod1.bothBefore : any
-+>mod1 : any
-+>bothBefore : any
++>mod1.bothBefore : "string"
++>mod1 : typeof A
++>bothBefore : "string"
  >toFixed : any
  
  mod1.bothAfter.toFixed()
@@ -42,93 +37,109 @@
 ->mod1.bothAfter : number | "string"
 ->mod1 : typeof mod1
 ->bothAfter : number | "string"
-+>mod1.bothAfter : any
-+>mod1 : any
-+>bothAfter : any
++>mod1.bothAfter : "string"
++>mod1 : typeof A
++>bothAfter : "string"
  >toFixed : any
  
  mod1.justProperty.length
-->mod1.justProperty.length : number
-->mod1.justProperty : "string"
+ >mod1.justProperty.length : number
+ >mod1.justProperty : "string"
 ->mod1 : typeof mod1
-->justProperty : "string"
-->length : number
-+>mod1.justProperty.length : any
-+>mod1.justProperty : any
-+>mod1 : any
-+>justProperty : any
-+>length : any
++>mod1 : typeof A
+ >justProperty : "string"
+ >length : number
  
- === requires.d.ts ===
- declare var module: { exports: any };
-@@= skipped -45, +45 lines =@@
- >require : (name: string) => any
- >name : string
- 
--=== mod1.js ===
--/// <reference path='./requires.d.ts' />
--module.exports.bothBefore = 'string'
-->module.exports.bothBefore = 'string' : "string"
+@@= skipped -39, +39 lines =@@
+ === mod1.js ===
+ /// <reference path='./requires.d.ts' />
+ module.exports.bothBefore = 'string'
++>bothBefore : any
++>'string' : "string"
+ >module.exports.bothBefore = 'string' : "string"
 ->module.exports.bothBefore : number | "string"
 ->module.exports : typeof A
 ->module : { exports: typeof A; }
 ->exports : typeof A
 ->bothBefore : number | "string"
-->'string' : "string"
--
--A.justExport = 4
-->A.justExport = 4 : 4
-->A.justExport : number
-->A : typeof A
-->justExport : number
-->4 : 4
--
--A.bothBefore = 2
-->A.bothBefore = 2 : 2
++>module.exports.bothBefore : any
++>module.exports : any
++>module : { exports: any; }
++>exports : any
++>bothBefore : any
+ >'string' : "string"
+ 
+ A.justExport = 4
+@@= skipped -17, +19 lines =@@
+ 
+ A.bothBefore = 2
+ >A.bothBefore = 2 : 2
 ->A.bothBefore : number | "string"
-->A : typeof A
++>A.bothBefore : "string"
+ >A : typeof A
 ->bothBefore : number | "string"
-->2 : 2
--
--A.bothAfter = 3
-->A.bothAfter = 3 : 3
++>bothBefore : "string"
+ >2 : 2
+ 
+ A.bothAfter = 3
+ >A.bothAfter = 3 : 3
 ->A.bothAfter : number | "string"
-->A : typeof A
++>A.bothAfter : "string"
+ >A : typeof A
 ->bothAfter : number | "string"
-->3 : 3
--
--module.exports = A
-->module.exports = A : typeof A
++>bothAfter : "string"
+ >3 : 3
+ 
+ module.exports = A
++>A : typeof A
+ >module.exports = A : typeof A
 ->module.exports : typeof A
 ->module : { exports: typeof A; }
 ->exports : typeof A
-->A : typeof A
--
--function A() {
-->A : typeof A
--
--    this.p = 1
-->this.p = 1 : 1
-->this.p : any
++>module.exports : any
++>module : { exports: any; }
++>exports : any
+ >A : typeof A
+ 
+ function A() {
+@@= skipped -25, +26 lines =@@
+     this.p = 1
+ >this.p = 1 : 1
+ >this.p : any
 ->this : this
-->p : any
-->1 : 1
--}
--module.exports.bothAfter = 'string'
-->module.exports.bothAfter = 'string' : "string"
++>this : any
+ >p : any
+ >1 : 1
+ }
+ module.exports.bothAfter = 'string'
++>bothAfter : any
++>'string' : "string"
+ >module.exports.bothAfter = 'string' : "string"
 ->module.exports.bothAfter : number | "string"
 ->module.exports : typeof A
 ->module : { exports: typeof A; }
 ->exports : typeof A
 ->bothAfter : number | "string"
-->'string' : "string"
--
--module.exports.justProperty = 'string'
-->module.exports.justProperty = 'string' : "string"
++>module.exports.bothAfter : any
++>module.exports : any
++>module : { exports: any; }
++>exports : any
++>bothAfter : any
+ >'string' : "string"
+ 
+ module.exports.justProperty = 'string'
++>justProperty : any
++>'string' : "string"
+ >module.exports.justProperty = 'string' : "string"
 ->module.exports.justProperty : "string"
 ->module.exports : typeof A
 ->module : { exports: typeof A; }
 ->exports : typeof A
 ->justProperty : "string"
-->'string' : "string"
--
++>module.exports.justProperty : any
++>module.exports : any
++>module : { exports: any; }
++>exports : any
++>justProperty : any
+ >'string' : "string"
+ 

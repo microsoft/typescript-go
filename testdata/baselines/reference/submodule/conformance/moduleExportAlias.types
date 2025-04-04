@@ -118,6 +118,8 @@ exportsAlias.func1 = function () { };
 >function () { } : () => void
 
 exports.func2 = function () { };
+>func2 : any
+>function () { } : () => void
 >exports.func2 = function () { } : () => void
 >exports.func2 : any
 >exports : any
@@ -255,6 +257,8 @@ exports = module.exports = someOtherVariable = {};
 >{} : {}
 
 exports.func11 = function () { };
+>func11 : any
+>function () { } : () => void
 >exports.func11 = function () { } : () => void
 >exports.func11 : any
 >exports : any
@@ -284,6 +288,8 @@ exports = module.exports = someOtherVariable = {};
 >{} : {}
 
 exports.func11 = function () { };
+>func11 : any
+>function () { } : () => void
 >exports.func11 = function () { } : () => void
 >exports.func11 : any
 >exports : any
@@ -311,6 +317,8 @@ exports = module.exports = {};
 >{} : {}
 
 exports.func13 = function () { };
+>func13 : any
+>function () { } : () => void
 >exports.func13 = function () { } : () => void
 >exports.func13 : any
 >exports : any
@@ -338,6 +346,8 @@ exports = module.exports = {};
 >{} : {}
 
 exports.func15 = function () { };
+>func15 : any
+>function () { } : () => void
 >exports.func15 = function () { } : () => void
 >exports.func15 : any
 >exports : any
@@ -368,6 +378,8 @@ module.exports = exports = {};
 >{} : {}
 
 exports.func17 = function () { };
+>func17 : any
+>function () { } : () => void
 >exports.func17 = function () { } : () => void
 >exports.func17 : any
 >exports : any
@@ -394,6 +406,8 @@ module.exports = {};
 >{} : {}
 
 exports.func19 = function () { };
+>func19 : any
+>function () { } : () => void
 >exports.func19 = function () { } : () => void
 >exports.func19 : any
 >exports : any

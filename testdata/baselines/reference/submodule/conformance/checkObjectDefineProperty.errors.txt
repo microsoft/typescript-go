@@ -1,28 +1,70 @@
-validate.ts(2,20): error TS2307: Cannot find module './' or its corresponding type declarations.
+index.js(17,19): error TS7006: Parameter 'named' implicitly has an 'any' type.
+index.js(23,11): error TS2339: Property 'zip' does not exist on type '{}'.
+index.js(28,11): error TS2339: Property 'houseNumber' does not exist on type '{}'.
+index.js(40,16): error TS7006: Parameter 'a' implicitly has an 'any' type.
+index.js(40,19): error TS7006: Parameter 'b' implicitly has an 'any' type.
+index.js(44,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+validate.ts(3,3): error TS2339: Property 'name' does not exist on type '{}'.
+validate.ts(4,3): error TS2339: Property 'middleInit' does not exist on type '{}'.
+validate.ts(5,3): error TS2339: Property 'lastName' does not exist on type '{}'.
+validate.ts(6,3): error TS2339: Property 'zip' does not exist on type '{}'.
+validate.ts(7,3): error TS2339: Property 'houseNumber' does not exist on type '{}'.
+validate.ts(8,3): error TS2339: Property 'zipStr' does not exist on type '{}'.
+validate.ts(10,3): error TS2339: Property 'name' does not exist on type '{}'.
+validate.ts(11,3): error TS2339: Property 'zip' does not exist on type '{}'.
+validate.ts(12,3): error TS2339: Property 'zipStr' does not exist on type '{}'.
+validate.ts(14,3): error TS2339: Property 'lastName' does not exist on type '{}'.
+validate.ts(15,3): error TS2339: Property 'houseNumber' does not exist on type '{}'.
+validate.ts(16,3): error TS2339: Property 'zipStr' does not exist on type '{}'.
+validate.ts(17,3): error TS2339: Property 'middleInit' does not exist on type '{}'.
 
 
-==== validate.ts (1 errors) ====
+==== validate.ts (13 errors) ====
     // Validate in TS as simple validations would usually be interpreted as more special assignments
     import x = require("./");
-                       ~~~~
-!!! error TS2307: Cannot find module './' or its corresponding type declarations.
     x.name;
+      ~~~~
+!!! error TS2339: Property 'name' does not exist on type '{}'.
     x.middleInit;
+      ~~~~~~~~~~
+!!! error TS2339: Property 'middleInit' does not exist on type '{}'.
     x.lastName;
+      ~~~~~~~~
+!!! error TS2339: Property 'lastName' does not exist on type '{}'.
     x.zip;
+      ~~~
+!!! error TS2339: Property 'zip' does not exist on type '{}'.
     x.houseNumber;
+      ~~~~~~~~~~~
+!!! error TS2339: Property 'houseNumber' does not exist on type '{}'.
     x.zipStr;
+      ~~~~~~
+!!! error TS2339: Property 'zipStr' does not exist on type '{}'.
     
     x.name = "Another";
+      ~~~~
+!!! error TS2339: Property 'name' does not exist on type '{}'.
     x.zip = 98123;
+      ~~~
+!!! error TS2339: Property 'zip' does not exist on type '{}'.
     x.zipStr = "OK";
+      ~~~~~~
+!!! error TS2339: Property 'zipStr' does not exist on type '{}'.
     
     x.lastName = "should fail";
+      ~~~~~~~~
+!!! error TS2339: Property 'lastName' does not exist on type '{}'.
     x.houseNumber = 12; // should also fail
+      ~~~~~~~~~~~
+!!! error TS2339: Property 'houseNumber' does not exist on type '{}'.
     x.zipStr = 12; // should fail
+      ~~~~~~
+!!! error TS2339: Property 'zipStr' does not exist on type '{}'.
     x.middleInit = "R"; // should also fail
+      ~~~~~~~~~~
+!!! error TS2339: Property 'middleInit' does not exist on type '{}'.
     
-==== index.js (0 errors) ====
+==== index.js (6 errors) ====
     const x = {};
     Object.defineProperty(x, "name", { value: "Charles", writable: true });
     Object.defineProperty(x, "middleInit", { value: "H" });
@@ -40,17 +82,23 @@ validate.ts(2,20): error TS2307: Cannot find module './' or its corresponding ty
      * @param {{name: string}} named
      */
     function takeName(named) { return named.name; }
+                      ~~~~~
+!!! error TS7006: Parameter 'named' implicitly has an 'any' type.
     
     takeName(x);
     /**
      * @type {number}
      */
     var a = x.zip;
+              ~~~
+!!! error TS2339: Property 'zip' does not exist on type '{}'.
     
     /**
      * @type {number}
      */
     var b = x.houseNumber;
+              ~~~~~~~~~~~
+!!! error TS2339: Property 'houseNumber' does not exist on type '{}'.
     
     const returnExemplar = () => x;
     const needsExemplar = (_ = x) => void 0;
@@ -63,8 +111,14 @@ validate.ts(2,20): error TS2307: Cannot find module './' or its corresponding ty
      * @param {typeof needsExemplar} b 
      */
     function match(a, b) {}
+                   ~
+!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
+                      ~
+!!! error TS7006: Parameter 'b' implicitly has an 'any' type.
     
     match(() => expected, (x = expected) => void 0);
     
     module.exports = x;
+    ~~~~~~
+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
     

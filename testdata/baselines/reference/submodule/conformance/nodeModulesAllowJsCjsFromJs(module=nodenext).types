@@ -2,6 +2,8 @@
 
 === foo.cjs ===
 exports.foo = "foo"
+>foo : any
+>"foo" : "foo"
 >exports.foo = "foo" : "foo"
 >exports.foo : any
 >exports : any

@@ -1,14 +1,14 @@
-requireTwoPropertyAccesses.js(1,23): error TS2307: Cannot find module './mod' or its corresponding type declarations.
+mod.js(1,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== requireTwoPropertyAccesses.js (1 errors) ====
+==== requireTwoPropertyAccesses.js (0 errors) ====
     const value = require("./mod").x.y
-                          ~~~~~~~
-!!! error TS2307: Cannot find module './mod' or its corresponding type declarations.
     console.log(value)
     
-==== mod.js (0 errors) ====
+==== mod.js (1 errors) ====
     module.exports = {
+    ~~~~~~
+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
         x: {
             y: "value"
         }

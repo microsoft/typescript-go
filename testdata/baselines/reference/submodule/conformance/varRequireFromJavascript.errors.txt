@@ -1,15 +1,18 @@
-use.js(1,18): error TS2307: Cannot find module './ex' or its corresponding type declarations.
+ex.js(3,17): error TS7006: Parameter 'n' implicitly has an 'any' type.
+ex.js(4,14): error TS2339: Property 'n' does not exist on type 'Crunch'.
+ex.js(7,21): error TS2339: Property 'n' does not exist on type 'Crunch'.
+use.js(5,8): error TS2339: Property 'n' does not exist on type 'Crunch'.
 use.js(12,12): error TS7006: Parameter 'wrap' implicitly has an 'any' type.
 
 
 ==== use.js (2 errors) ====
     var ex = require('./ex')
-                     ~~~~~~
-!!! error TS2307: Cannot find module './ex' or its corresponding type declarations.
     
     // values work
     var crunch = new ex.Crunch(1);
     crunch.n
+           ~
+!!! error TS2339: Property 'n' does not exist on type 'Crunch'.
     
     
     // types work
@@ -22,14 +25,20 @@ use.js(12,12): error TS7006: Parameter 'wrap' implicitly has an 'any' type.
         wrap.n
     }
     
-==== ex.js (0 errors) ====
+==== ex.js (3 errors) ====
     export class Crunch {
         /** @param {number} n */
         constructor(n) {
+                    ~
+!!! error TS7006: Parameter 'n' implicitly has an 'any' type.
             this.n = n
+                 ~
+!!! error TS2339: Property 'n' does not exist on type 'Crunch'.
         }
         m() {
             return this.n
+                        ~
+!!! error TS2339: Property 'n' does not exist on type 'Crunch'.
         }
     }
     

@@ -4,3 +4,8 @@
 import foobar from "foo/bar/foobar.js";
 >foobar : Symbol(foobar, Decl(a.ts, 0, 6))
 
+=== /node_modules/foo/bar/foobar.js ===
+module.exports = { a: 10 };
+>a : Symbol(a, Decl(foobar.js, 0, 18))
+>a : Symbol(a, Decl(foobar.js, 0, 18))
+

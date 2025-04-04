@@ -3,22 +3,20 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+utils/index.js(2,24): error TS2307: Cannot find module './errors' or its corresponding type declarations.
++utils/errors.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +utils/index.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
-+==== utils/index.js (2 errors) ====
++==== utils/index.js (1 errors) ====
 +    // issue arises here on compilation
 +    const errors = require("./errors");
-+                           ~~~~~~~~~~
-+!!! error TS2307: Cannot find module './errors' or its corresponding type declarations.
 +    
 +    module.exports = {
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +        errors
 +    };
-+==== utils/errors.js (0 errors) ====
++==== utils/errors.js (1 errors) ====
 +    class FancyError extends Error {
 +        constructor(status) {
 +            super(`error with status ${status}`);
@@ -26,6 +24,8 @@
 +    }
 +    
 +    module.exports = {
++    ~~~~~~
++!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +        FancyError
 +    };
 +    

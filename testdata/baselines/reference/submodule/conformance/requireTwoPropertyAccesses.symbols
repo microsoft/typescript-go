@@ -3,7 +3,12 @@
 === requireTwoPropertyAccesses.js ===
 const value = require("./mod").x.y
 >value : Symbol(value, Decl(requireTwoPropertyAccesses.js, 0, 5))
+>require("./mod").x.y : Symbol(y, Decl(mod.js, 1, 8))
+>require("./mod").x : Symbol(x, Decl(mod.js, 0, 18))
 >require : Symbol(require)
+>"./mod" : Symbol("mod", Decl(mod.js, 0, 0))
+>x : Symbol(x, Decl(mod.js, 0, 18))
+>y : Symbol(y, Decl(mod.js, 1, 8))
 
 console.log(value)
 >console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
@@ -11,3 +16,13 @@ console.log(value)
 >log : Symbol(log, Decl(lib.dom.d.ts, --, --))
 >value : Symbol(value, Decl(requireTwoPropertyAccesses.js, 0, 5))
 
+=== mod.js ===
+module.exports = {
+    x: {
+>x : Symbol(x, Decl(mod.js, 0, 18))
+
+        y: "value"
+>y : Symbol(y, Decl(mod.js, 1, 8))
+>y : Symbol(y, Decl(mod.js, 1, 8))
+    }
+}

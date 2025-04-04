@@ -3691,7 +3691,12 @@ func (p *Printer) emitCommonJSExport(node *ast.CommonJSExport) {
 	p.writeSpace()
 	p.writeKeyword("var")
 	p.writeSpace()
-	p.emitBindingName(node.Name())
+	if node.Name().Kind == ast.KindStringLiteral {
+		// TODO: This doesn't work for illegal names.
+		p.write(node.Name().AsStringLiteral().Text)
+	} else {
+		p.emitBindingName(node.Name())
+	}
 	p.emitInitializer(node.Initializer, node.Name().End(), node.AsNode())
 	p.writeTrailingSemicolon()
 	p.exitNode(node.AsNode(), state)

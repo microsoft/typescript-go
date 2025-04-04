@@ -1,5 +1,6 @@
 cjs.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 cjs2.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+cjs3.js(1,7): error TS2440: Import declaration conflicts with local declaration of 'ns'.
 cjs3.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 cjs4.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
@@ -45,8 +46,10 @@ cjs4.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install ty
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
     
-==== cjs3.js (1 errors) ====
+==== cjs3.js (2 errors) ====
     const ns = require("./cls");
+          ~~
+!!! error TS2440: Import declaration conflicts with local declaration of 'ns'.
     module.exports.ns = ns;
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

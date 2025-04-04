@@ -80,6 +80,8 @@ exports.x = {
     m(n) { }
 >m : Symbol(m, Decl(test.js, 42, 19))
 >n : Symbol(n, Decl(test.js, 43, 6))
+>m : Symbol(m, Decl(test.js, 42, 19))
+>n : Symbol(n, Decl(test.js, 43, 6))
 }
 exports.x
 

@@ -1,20 +1,26 @@
-a.js(2,20): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
+a.js(4,6): error TS2339: Property 'f' does not exist on type '() => void'.
+mod1.js(2,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+mod1.js(4,30): error TS2300: Duplicate identifier 'a'.
 
 
 ==== a.js (1 errors) ====
     /// <reference path='./requires.d.ts' />
     var mod1 = require('./mod1')
-                       ~~~~~~~~
-!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
     mod1()
     mod1.f() // error, not enough arguments
+         ~
+!!! error TS2339: Property 'f' does not exist on type '() => void'.
     
 ==== requires.d.ts (0 errors) ====
     declare var module: { exports: any };
     declare function require(name: string): any;
-==== mod1.js (0 errors) ====
+==== mod1.js (2 errors) ====
     /// <reference path='./requires.d.ts' />
     module.exports = function () { }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     /** @param {number} a */
     module.exports.f = function (a) { }
+                                 ~
+!!! error TS2300: Duplicate identifier 'a'.
     

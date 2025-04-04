@@ -8,6 +8,10 @@ exports.fn1();
 >fn1 : any
 
 exports.fn2 = Math.min;
+>fn2 : any
+>Math.min : (...values: number[]) => number
+>Math : Math
+>min : (...values: number[]) => number
 >exports.fn2 = Math.min : (...values: number[]) => number
 >exports.fn2 : any
 >exports : any

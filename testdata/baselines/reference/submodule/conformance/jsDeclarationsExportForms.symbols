@@ -68,13 +68,13 @@ module.exports = ns;
 
 === cjs3.js ===
 const ns = require("./cls");
->ns : Symbol(ns, Decl(cjs3.js, 0, 5))
+>ns : Symbol(ns, Decl(cjs3.js, 0, 5), Decl(cjs3.js, 0, 28))
 >require : Symbol(require)
 >"./cls" : Symbol("cls", Decl(cls.js, 0, 0))
 
 module.exports.ns = ns;
->ns : Symbol(ns, Decl(cjs3.js, 0, 5))
->ns : Symbol(ns, Decl(cjs3.js, 0, 5))
+>ns : Symbol(ns, Decl(cjs3.js, 0, 5), Decl(cjs3.js, 0, 28))
+>ns : Symbol(ns, Decl(cjs3.js, 0, 5), Decl(cjs3.js, 0, 28))
 
 === cjs4.js ===
 const ns = require("./cls");

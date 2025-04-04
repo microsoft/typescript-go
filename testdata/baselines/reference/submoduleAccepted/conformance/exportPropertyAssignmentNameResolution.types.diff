@@ -20,3 +20,8 @@
  >class { } : typeof D
  
  new D()
+->new D() : any
+->D : any
++>new D() : D
++>D : typeof D
+ 

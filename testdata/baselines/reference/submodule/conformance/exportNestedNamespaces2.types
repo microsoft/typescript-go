@@ -3,6 +3,8 @@
 === mod.js ===
 // Based on a pattern from adonis
 exports.formatters = {}
+>formatters : any
+>{} : {}
 >exports.formatters = {} : {}
 >exports.formatters : any
 >exports : any
@@ -11,9 +13,9 @@ exports.formatters = {}
 
 === first.js ===
 exports = require('./mod')
->exports = require('./mod') : any
+>exports = require('./mod') : typeof import("mod")
 >exports : any
->require('./mod') : any
+>require('./mod') : typeof import("mod")
 >require : any
 >'./mod' : "./mod"
 
@@ -32,9 +34,9 @@ exports.formatters.j = function (v) {
 }
 === second.js ===
 exports = require('./mod')
->exports = require('./mod') : any
+>exports = require('./mod') : typeof import("mod")
 >exports : any
->require('./mod') : any
+>require('./mod') : typeof import("mod")
 >require : any
 >'./mod' : "./mod"
 
@@ -54,22 +56,22 @@ exports.formatters.o = function (v) {
 
 === use.js ===
 import * as debug from './mod'
->debug : any
+>debug : typeof import("mod")
 
 debug.formatters.j
 >debug.formatters.j : any
->debug.formatters : any
->debug : any
->formatters : any
+>debug.formatters : {}
+>debug : typeof import("mod")
+>formatters : {}
 >j : any
 
 var one = debug.formatters.o(1)
 >one : any
 >debug.formatters.o(1) : any
 >debug.formatters.o : any
->debug.formatters : any
->debug : any
->formatters : any
+>debug.formatters : {}
+>debug : typeof import("mod")
+>formatters : {}
 >o : any
 >1 : 1
 

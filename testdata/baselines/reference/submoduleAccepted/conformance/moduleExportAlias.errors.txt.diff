@@ -42,11 +42,15 @@
 +b.js(28,1): error TS2304: Cannot find name 'exports'.
 +b.js(28,11): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +b.js(29,1): error TS2304: Cannot find name 'exports'.
++b.js(29,1): error TS2323: Cannot redeclare exported variable 'func11'.
 +b.js(30,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++b.js(30,1): error TS2323: Cannot redeclare exported variable 'func12'.
 +b.js(32,1): error TS2304: Cannot find name 'exports'.
 +b.js(32,11): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +b.js(33,1): error TS2304: Cannot find name 'exports'.
++b.js(33,1): error TS2323: Cannot redeclare exported variable 'func11'.
 +b.js(34,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++b.js(34,1): error TS2323: Cannot redeclare exported variable 'func12'.
 +b.js(36,1): error TS2304: Cannot find name 'exports'.
 +b.js(36,11): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +b.js(37,1): error TS2304: Cannot find name 'exports'.
@@ -57,6 +61,7 @@
 +b.js(42,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +b.js(44,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +b.js(44,1): error TS2300: Duplicate identifier 'export='.
++b.js(44,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +b.js(44,18): error TS2304: Cannot find name 'exports'.
 +b.js(45,1): error TS2304: Cannot find name 'exports'.
 +b.js(46,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -130,7 +135,7 @@
 +!!! error TS2339: Property 'func20' does not exist on type '{}'.
 +    
 +    
-+==== b.js (41 errors) ====
++==== b.js (46 errors) ====
 +    var exportsAlias = exports;
 +                       ~~~~~~~
 +!!! error TS2304: Cannot find name 'exports'.
@@ -198,9 +203,13 @@
 +    exports.func11 = function () { };
 +    ~~~~~~~
 +!!! error TS2304: Cannot find name 'exports'.
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2323: Cannot redeclare exported variable 'func11'.
 +    module.exports.func12 = function () { };
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2323: Cannot redeclare exported variable 'func12'.
 +    
 +    exports = module.exports = someOtherVariable = {};
 +    ~~~~~~~
@@ -210,9 +219,13 @@
 +    exports.func11 = function () { };
 +    ~~~~~~~
 +!!! error TS2304: Cannot find name 'exports'.
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2323: Cannot redeclare exported variable 'func11'.
 +    module.exports.func12 = function () { };
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2323: Cannot redeclare exported variable 'func12'.
 +    
 +    exports = module.exports = {};
 +    ~~~~~~~
@@ -243,6 +256,8 @@
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2300: Duplicate identifier 'export='.
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +                     ~~~~~~~
 +!!! error TS2304: Cannot find name 'exports'.
 +    exports.func17 = function () { };

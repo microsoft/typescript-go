@@ -696,8 +696,8 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindCommonJSExport:
 		if b.file.ExternalModuleIndicator == nil {
 			b.setCommonJSModuleIndicator(node)
-			b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 		}
+		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:

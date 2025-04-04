@@ -58,9 +58,9 @@ var k = new s.n.K()
 >k : any
 >new s.n.K() : any
 >s.n.K : any
->s.n : any
+>s.n : {}
 >s : typeof import("mod")
->n : any
+>n : {}
 >K : any
 
 k.x
@@ -69,11 +69,11 @@ k.x
 >x : any
 
 var classic = new s.Classic()
->classic : any
->new s.Classic() : any
->s.Classic : any
+>classic : Classic
+>new s.Classic() : Classic
+>s.Classic : typeof Classic
 >s : typeof import("mod")
->Classic : any
+>Classic : typeof Classic
 
 
 /** @param {s.n.K} c

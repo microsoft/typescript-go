@@ -14,6 +14,8 @@ module.exports = window.nonprop;
 >nonprop : any
 
 exports.foo = bar;
+>foo : any
+>bar : any
 >exports.foo = bar : any
 >exports.foo : any
 >exports : any

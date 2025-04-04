@@ -1,7 +1,7 @@
-use.js(7,19): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
+mod1.js(4,14): error TS2339: Property 'chunk' does not exist on type 'Chunk'.
 
 
-==== use.js (1 errors) ====
+==== use.js (0 errors) ====
     /// <reference path='./types.d.ts'/>
     /** @typedef {import("./mod1")} C
      * @type {C} */
@@ -9,8 +9,6 @@ use.js(7,19): error TS2307: Cannot find module './mod1' or its corresponding typ
     c.chunk;
     
     const D = require("./mod1");
-                      ~~~~~~~~
-!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
     /** @type {D} */
     var d;
     d.chunk;
@@ -19,11 +17,13 @@ use.js(7,19): error TS2307: Cannot find module './mod1' or its corresponding typ
     declare function require(name: string): any;
     declare var exports: any;
     declare var module: { exports: any };
-==== mod1.js (0 errors) ====
+==== mod1.js (1 errors) ====
     /// <reference path='./types.d.ts'/>
     module.exports = class Chunk {
         constructor() {
             this.chunk = 1;
+                 ~~~~~
+!!! error TS2339: Property 'chunk' does not exist on type 'Chunk'.
         }
     }
     

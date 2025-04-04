@@ -1,15 +1,6 @@
 --- old.commonJSImportClassTypeReference.types
 +++ new.commonJSImportClassTypeReference.types
-@@= skipped -1, +1 lines =@@
- 
- === main.js ===
- const { K } = require("./mod1");
-->K : typeof K
-->require("./mod1") : typeof import("mod1")
-+>K : any
-+>require("./mod1") : any
- >require : any
- >"./mod1" : "./mod1"
+@@= skipped -8, +8 lines =@@
  
  /** @param {K} k */
  function f(k) {
@@ -30,9 +21,12 @@
  }
  
  === mod1.js ===
-@@= skipped -31, +31 lines =@@
+@@= skipped -23, +23 lines =@@
+     }
  }
  exports.K = K;
++>K : any
++>K : typeof K
  >exports.K = K : typeof K
 ->exports.K : typeof K
 ->exports : typeof import("mod1")

@@ -2,5 +2,15 @@
 
 === /src/index.ts ===
 import { x } from "../node_modules/foo";
+>x : 0
+
+=== /node_modules/foo/index.js ===
+exports.x = 0;
 >x : any
+>0 : 0
+>exports.x = 0 : 0
+>exports.x : any
+>exports : any
+>x : any
+>0 : 0
 

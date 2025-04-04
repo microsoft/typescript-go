@@ -59,12 +59,17 @@ func getAssignmentDeclarationKind(bin *ast.BinaryExpression) jsDeclarationKind {
 	if isModuleExportsAccessExpression(bin.Left) {
 		return jsDeclarationKindModuleExports
 	} else if ast.IsAccessExpression(bin.Left) &&
-		isModuleExportsAccessExpression(bin.Left.Expression()) &&
-		(ast.IsIdentifier(bin.Left.Name()) || ast.IsStringLiteralLike(bin.Left.Name())) {
+		(isModuleExportsAccessExpression(bin.Left.Expression()) || isExport(bin.Left.Expression())) &&
+		
+		(ast.IsIdentifier(ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left)) || ast.IsStringLiteralLike(ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left))) {
 		return jsDeclarationKindExportsProperty
 	}
 	// !!! module.exports property, this.property, expando.property
 	return jsDeclarationKindNone
+}
+
+func isExport(node *ast.Node) bool {
+	return ast.IsIdentifier(node) && node.AsIdentifier().Text == "exports"
 }
 
 func isModuleExportsAccessExpression(node *ast.Node) bool {

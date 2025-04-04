@@ -14,3 +14,11 @@
  >exports : any
  >window.nonprop : any
  >window : Window & typeof globalThis
+ >nonprop : any
+ 
+ exports.foo = bar;
++>foo : any
++>bar : any
+ >exports.foo = bar : any
+ >exports.foo : any
+ >exports : any

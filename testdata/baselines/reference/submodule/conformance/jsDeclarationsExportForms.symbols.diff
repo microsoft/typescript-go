@@ -30,7 +30,8 @@
  
  === cjs3.js ===
  const ns = require("./cls");
- >ns : Symbol(ns, Decl(cjs3.js, 0, 5))
+->ns : Symbol(ns, Decl(cjs3.js, 0, 5))
++>ns : Symbol(ns, Decl(cjs3.js, 0, 5), Decl(cjs3.js, 0, 28))
  >require : Symbol(require)
 ->"./cls" : Symbol(ns, Decl(cls.js, 0, 0))
 +>"./cls" : Symbol("cls", Decl(cls.js, 0, 0))
@@ -41,8 +42,9 @@
 ->module : Symbol(module, Decl(cjs3.js, 0, 28))
 ->exports : Symbol(module.exports, Decl(cjs3.js, 0, 0))
 ->ns : Symbol(ns, Decl(cjs3.js, 0, 28))
- >ns : Symbol(ns, Decl(cjs3.js, 0, 5))
-+>ns : Symbol(ns, Decl(cjs3.js, 0, 5))
+->ns : Symbol(ns, Decl(cjs3.js, 0, 5))
++>ns : Symbol(ns, Decl(cjs3.js, 0, 5), Decl(cjs3.js, 0, 28))
++>ns : Symbol(ns, Decl(cjs3.js, 0, 5), Decl(cjs3.js, 0, 28))
  
  === cjs4.js ===
  const ns = require("./cls");

@@ -6,20 +6,18 @@
  const C = require("./semver")
 ->C : typeof C
 ->require("./semver") : typeof C
-+>C : any
-+>require("./semver") : any
++>C : typeof import("semver")
++>require("./semver") : typeof import("semver")
  >require : (name: string) => any
  >"./semver" : "./semver"
  
- var two = C.f(1)
+@@= skipped -9, +9 lines =@@
  >two : any
  >C.f(1) : any
-->C.f : (n: any) => any
+ >C.f : (n: any) => any
 ->C : typeof C
-->f : (n: any) => any
-+>C.f : any
-+>C : any
-+>f : any
++>C : typeof import("semver")
+ >f : (n: any) => any
  >1 : 1
  
  var c = new C
@@ -28,17 +26,14 @@
 ->C : typeof C
 +>c : any
 +>new C : any
-+>C : any
++>C : typeof import("semver")
  
  === node.d.ts ===
  declare function require(name: string): any;
-@@= skipped -30, +30 lines =@@
- >module : { exports: any; }
- >exports : any
- 
--=== semver.js ===
--/// <reference path='node.d.ts' />
--exports = module.exports = C
+@@= skipped -24, +24 lines =@@
+ === semver.js ===
+ /// <reference path='node.d.ts' />
+ exports = module.exports = C
 ->exports = module.exports = C : typeof C
 ->exports : typeof C
 ->module.exports = C : typeof C
@@ -46,25 +41,43 @@
 ->module : { exports: typeof C; }
 ->exports : typeof C
 ->C : typeof C
--
--exports.f = n => n + 1
-->exports.f = n => n + 1 : (n: any) => any
++>exports = module.exports = C : () => void
++>exports : any
++>module.exports = C : () => void
++>module.exports : any
++>module : { exports: any; }
++>exports : any
++>C : () => void
+ 
+ exports.f = n => n + 1
++>f : any
++>n => n + 1 : (n: any) => any
++>n : any
++>n + 1 : any
++>n : any
++>1 : 1
+ >exports.f = n => n + 1 : (n: any) => any
 ->exports.f : (n: any) => any
 ->exports : typeof C
 ->f : (n: any) => any
-->n => n + 1 : (n: any) => any
-->n : any
-->n + 1 : any
-->n : any
-->1 : 1
--
--function C() {
++>exports.f : any
++>exports : any
++>f : any
+ >n => n + 1 : (n: any) => any
+ >n : any
+ >n + 1 : any
+@@= skipped -20, +26 lines =@@
+ >1 : 1
+ 
+ function C() {
 ->C : typeof C
--
--    this.p = 1
-->this.p = 1 : 1
-->this.p : any
++>C : () => void
+ 
+     this.p = 1
+ >this.p = 1 : 1
+ >this.p : any
 ->this : this
-->p : any
-->1 : 1
--}
++>this : any
+ >p : any
+ >1 : 1
+ }

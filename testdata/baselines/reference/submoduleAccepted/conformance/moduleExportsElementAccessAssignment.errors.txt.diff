@@ -3,24 +3,42 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+mod2.js(1,22): error TS2307: Cannot find module './mod1' or its corresponding type declarations.
++mod1.js(1,1): error TS2304: Cannot find name 'exports'.
++mod1.js(2,1): error TS2304: Cannot find name 'exports'.
++mod1.js(3,1): error TS2304: Cannot find name 'exports'.
++mod1.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++mod1.js(5,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++mod1.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++mod2.js(6,8): error TS2339: Property 'e' does not exist on type '{}'.
 +
 +
 +==== mod2.js (1 errors) ====
 +    const mod1 = require("./mod1");
-+                         ~~~~~~~~
-+!!! error TS2307: Cannot find module './mod1' or its corresponding type declarations.
 +    mod1.a;
 +    mod1.b;
 +    mod1.c;
 +    mod1.d;
 +    mod1.d.e;
++           ~
++!!! error TS2339: Property 'e' does not exist on type '{}'.
 +    mod1.default;
-+==== mod1.js (0 errors) ====
++==== mod1.js (6 errors) ====
 +    exports.a = { x: "x" };
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
 +    exports["b"] = { x: "x" };
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
 +    exports["default"] = { x: "x" };
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
 +    module.exports["c"] = { x: "x" };
++    ~~~~~~
++!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    module["exports"]["d"] = {};
++    ~~~~~~
++!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    module["exports"]["d"].e = 0;
++    ~~~~~~
++!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    
