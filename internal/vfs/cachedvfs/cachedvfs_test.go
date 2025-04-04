@@ -160,14 +160,14 @@ func TestWalkDir(t *testing.T) {
 		return nil
 	})
 
-	cached.WalkDir("/some/path", walkFn)
+	_ = cached.WalkDir("/some/path", walkFn)
 	assert.Equal(t, 1, len(underlying.WalkDirCalls()))
 
-	cached.WalkDir("/some/path", walkFn)
+	_ = cached.WalkDir("/some/path", walkFn)
 	assert.Equal(t, 2, len(underlying.WalkDirCalls()))
 
 	cached.ClearCache()
-	cached.WalkDir("/some/path", walkFn)
+	_ = cached.WalkDir("/some/path", walkFn)
 	assert.Equal(t, 3, len(underlying.WalkDirCalls()))
 }
 
@@ -177,14 +177,14 @@ func TestRemove(t *testing.T) {
 	underlying := createMockFS()
 	cached := cachedvfs.From(underlying)
 
-	cached.Remove("/some/path/file.txt")
+	_ = cached.Remove("/some/path/file.txt")
 	assert.Equal(t, 1, len(underlying.RemoveCalls()))
 
-	cached.Remove("/some/path/file.txt")
+	_ = cached.Remove("/some/path/file.txt")
 	assert.Equal(t, 2, len(underlying.RemoveCalls()))
 
 	cached.ClearCache()
-	cached.Remove("/some/path/file.txt")
+	_ = cached.Remove("/some/path/file.txt")
 	assert.Equal(t, 3, len(underlying.RemoveCalls()))
 }
 
@@ -194,14 +194,14 @@ func TestWriteFile(t *testing.T) {
 	underlying := createMockFS()
 	cached := cachedvfs.From(underlying)
 
-	cached.WriteFile("/some/path/file.txt", "new content", false)
+	_ = cached.WriteFile("/some/path/file.txt", "new content", false)
 	assert.Equal(t, 1, len(underlying.WriteFileCalls()))
 
-	cached.WriteFile("/some/path/file.txt", "another content", true)
+	_ = cached.WriteFile("/some/path/file.txt", "another content", true)
 	assert.Equal(t, 2, len(underlying.WriteFileCalls()))
 
 	cached.ClearCache()
-	cached.WriteFile("/some/path/file.txt", "third content", false)
+	_ = cached.WriteFile("/some/path/file.txt", "third content", false)
 	assert.Equal(t, 3, len(underlying.WriteFileCalls()))
 
 	call := underlying.WriteFileCalls()[2]

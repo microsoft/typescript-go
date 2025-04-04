@@ -16,7 +16,7 @@ func TestWrap(t *testing.T) {
 	wrapperValue := reflect.ValueOf(wrapper).Elem()
 	wrapperType := wrapperValue.Type()
 
-	for i := 0; i < wrapperType.NumField(); i++ {
+	for i := range wrapperType.NumField() {
 		field := wrapperType.Field(i)
 		if field.IsExported() {
 			fieldValue := wrapperValue.Field(i)
