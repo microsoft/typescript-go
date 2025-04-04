@@ -43,19 +43,32 @@ func (id *ID) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &id.int)
 }
 
-// TODO(jakebailey): NotificationMessage? Use RequestMessage without ID?
-
-type RequestMessage struct {
+type Message struct {
 	JSONRPC JSONRPCVersion `json:"jsonrpc"`
-	ID      *ID            `json:"id"`
-	Method  Method         `json:"method"`
-	Params  any            `json:"params"`
 }
 
-func (r *RequestMessage) UnmarshalJSON(data []byte) error {
+type NotificationMessage struct {
+	Message
+	Method Method `json:"method"`
+	Params any    `json:"params"`
+}
+
+type RequestMessage struct {
+	Message
+	ID     *ID    `json:"id"`
+	Method Method `json:"method"`
+	Params any    `json:"params"`
+}
+
+type RequestOrNotificationMessage struct {
+	NotificationMessage *NotificationMessage
+	RequestMessage      *RequestMessage
+}
+
+func (r *RequestOrNotificationMessage) UnmarshalJSON(data []byte) error {
 	var raw struct {
 		JSONRPC JSONRPCVersion  `json:"jsonrpc"`
-		ID      *ID             `json:"id"`
+		ID      *ID             `json:"id,omitempty"`
 		Method  Method          `json:"method"`
 		Params  json.RawMessage `json:"params"`
 	}
@@ -63,36 +76,55 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
 	}
 
-	r.ID = raw.ID
-	r.Method = raw.Method
-	if r.Method == MethodShutdown || r.Method == MethodExit {
-		// These methods have no params.
-		return nil
-	}
-
-	var params any
-	var err error
-
-	if unmarshalParams, ok := unmarshallers[raw.Method]; ok {
-		params, err = unmarshalParams(raw.Params)
-	} else {
-		// Fall back to default; it's probably an unknown message and we will probably not handle it.
-		err = json.Unmarshal(raw.Params, &params)
-	}
-	r.Params = params
-
+	params, err := unmarhalParams(raw.Method, raw.Params)
 	if err != nil {
-		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
+		return err
+	}
+
+	if raw.ID != nil {
+		r.RequestMessage = &RequestMessage{
+			ID:     raw.ID,
+			Method: raw.Method,
+			Params: params,
+		}
+	} else {
+		r.NotificationMessage = &NotificationMessage{
+			Method: raw.Method,
+			Params: params,
+		}
 	}
 
 	return nil
 }
 
+func unmarhalParams(rawMethod Method, rawParams []byte) (any, error) {
+	if rawMethod == MethodShutdown || rawMethod == MethodExit {
+		// These methods have no params.
+		return nil, nil
+	}
+
+	var params any
+	var err error
+
+	if unmarshaller, ok := unmarshallers[rawMethod]; ok {
+		params, err = unmarshaller(rawParams)
+	} else {
+		// Fall back to default; it's probably an unknown message and we will probably not handle it.
+		err = json.Unmarshal(rawParams, &params)
+	}
+
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrInvalidRequest, err)
+	}
+
+	return params, nil
+}
+
 type ResponseMessage struct {
-	JSONRPC JSONRPCVersion `json:"jsonrpc"`
-	ID      *ID            `json:"id,omitempty"`
-	Result  any            `json:"result"`
-	Error   *ResponseError `json:"error,omitempty"`
+	Message
+	ID     *ID            `json:"id,omitempty"`
+	Result any            `json:"result"`
+	Error  *ResponseError `json:"error,omitempty"`
 }
 
 type ResponseError struct {
