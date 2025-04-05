@@ -2,6 +2,8 @@
 
 === bug24492.js ===
 module.exports.D = class { }
+>D : any
+>class { } : typeof D
 >module.exports.D = class { } : typeof D
 >module.exports.D : any
 >module.exports : any
@@ -11,6 +13,6 @@ module.exports.D = class { }
 >class { } : typeof D
 
 new D()
->new D() : any
->D : any
+>new D() : D
+>D : typeof D
 

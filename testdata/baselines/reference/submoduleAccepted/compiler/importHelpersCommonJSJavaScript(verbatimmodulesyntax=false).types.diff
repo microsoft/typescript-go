@@ -1,8 +1,10 @@
 --- old.importHelpersCommonJSJavaScript(verbatimmodulesyntax=false).types
 +++ new.importHelpersCommonJSJavaScript(verbatimmodulesyntax=false).types
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
+ >Foo : Foo
  
  module.exports = Bar;
++>Bar : typeof Bar
  >module.exports = Bar : typeof Bar
 ->module.exports : typeof Bar
 ->module : { exports: typeof Bar; }

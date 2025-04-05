@@ -1,0 +1,16 @@
+--- old.moduleResolution_explicitNodeModulesImport_implicitAny.types
++++ new.moduleResolution_explicitNodeModulesImport_implicitAny.types
+@@= skipped -3, +3 lines =@@
+ import { y } from "../node_modules/foo";
+ >y : any
+ 
++=== /node_modules/foo/index.js ===
++exports.x = 0;
++>x : any
++>0 : 0
++>exports.x = 0 : 0
++>exports.x : any
++>exports : any
++>x : any
++>0 : 0
++

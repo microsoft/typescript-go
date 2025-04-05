@@ -8,19 +8,18 @@
 ->module.exports : { a: string | number; }
 ->module : { exports: { a: string | number; }; }
 ->exports : { a: string | number; }
-+>module.exports = {  a: "ok"} : { a: string; }
-+>module.exports : any
-+>module : any
-+>exports : any
  >{  a: "ok"} : { a: string; }
  
    a: "ok"
-@@= skipped -14, +14 lines =@@
+ >a : string
+ >"ok" : "ok"
++>a : string
++>"ok" : "ok"
  
- === /index.ts ===
- import { a } from "./test";
-->a : string
-+>a : any
+ };
+ 
+@@= skipped -17, +15 lines =@@
+ >a : string
  
  declare module "./test" {
 ->"./test" : { a: string | number; }
@@ -28,11 +27,3 @@
  
    export const a: number;
  >a : number
-@@= skipped -12, +12 lines =@@
- a.toFixed();
- >a.toFixed() : any
- >a.toFixed : any
-->a : string
-+>a : any
- >toFixed : any
- 

@@ -4,3 +4,7 @@
 import { x } from "../node_modules/foo";
 >x : Symbol(x, Decl(index.ts, 0, 8))
 
+=== /node_modules/foo/index.js ===
+
+exports.x = 0;
+

@@ -303,4 +303,5 @@
 ->apply : Symbol(apply, Decl(a.js, 0, 1900))
 ->undefined : Symbol(apply)
 +>undefined : Symbol(undefined)
++>undefined : Symbol(undefined)
  

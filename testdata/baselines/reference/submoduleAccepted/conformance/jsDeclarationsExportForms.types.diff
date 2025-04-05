@@ -35,8 +35,8 @@
  const ns = require("./cls");
 ->ns : typeof ns
 ->require("./cls") : typeof ns
-+>ns : any
-+>require("./cls") : any
++>ns : typeof import("cls")
++>require("./cls") : typeof import("cls")
  >require : any
  >"./cls" : "./cls"
  
@@ -47,19 +47,21 @@
 ->exports : typeof module.exports
 ->{ ns } : { ns: typeof ns; }
 ->ns : typeof ns
-+>module.exports = { ns } : { ns: any; }
++>{ ns } : { ns: typeof import("cls"); }
++>ns : typeof import("cls")
++>module.exports = { ns } : { ns: typeof import("cls"); }
 +>module.exports : any
 +>module : any
 +>exports : any
-+>{ ns } : { ns: any; }
-+>ns : any
++>{ ns } : { ns: typeof import("cls"); }
++>ns : typeof import("cls")
  
  === cjs2.js ===
  const ns = require("./cls");
 ->ns : typeof ns
 ->require("./cls") : typeof ns
-+>ns : any
-+>require("./cls") : any
++>ns : typeof import("cls")
++>require("./cls") : typeof import("cls")
  >require : any
  >"./cls" : "./cls"
  
@@ -69,18 +71,19 @@
 ->module : { exports: typeof ns; }
 ->exports : typeof ns
 ->ns : typeof ns
-+>module.exports = ns : any
++>ns : typeof import("cls")
++>module.exports = ns : typeof import("cls")
 +>module.exports : any
 +>module : any
 +>exports : any
-+>ns : any
++>ns : typeof import("cls")
  
  === cjs3.js ===
  const ns = require("./cls");
 ->ns : typeof ns
 ->require("./cls") : typeof ns
-+>ns : any
-+>require("./cls") : any
++>ns : typeof import("cls")
++>require("./cls") : typeof import("cls")
  >require : any
  >"./cls" : "./cls"
  
@@ -92,20 +95,22 @@
 ->exports : typeof module.exports
 ->ns : typeof ns
 ->ns : typeof ns
-+>module.exports.ns = ns : any
++>ns : any
++>ns : typeof import("cls")
++>module.exports.ns = ns : typeof import("cls")
 +>module.exports.ns : any
 +>module.exports : any
 +>module : any
 +>exports : any
 +>ns : any
-+>ns : any
++>ns : typeof import("cls")
  
  === cjs4.js ===
  const ns = require("./cls");
 ->ns : typeof ns
 ->require("./cls") : typeof ns
-+>ns : any
-+>require("./cls") : any
++>ns : typeof import("cls")
++>require("./cls") : typeof import("cls")
  >require : any
  >"./cls" : "./cls"
  
@@ -117,13 +122,15 @@
 ->exports : typeof module.exports
 ->names : typeof ns
 ->ns : typeof ns
-+>module.exports.names = ns : any
++>names : any
++>ns : typeof import("cls")
++>module.exports.names = ns : typeof import("cls")
 +>module.exports.names : any
 +>module.exports : any
 +>module : any
 +>exports : any
 +>names : any
-+>ns : any
++>ns : typeof import("cls")
  
  === includeAll.js ===
  

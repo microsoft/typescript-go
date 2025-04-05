@@ -2,8 +2,8 @@
 
 === cls.js ===
 const Bar = require("./bar");
->Bar : any
->require("./bar") : any
+>Bar : typeof Bar
+>require("./bar") : typeof Bar
 >require : any
 >"./bar" : "./bar"
 
@@ -22,9 +22,10 @@ const Strings = {
 };
 class Foo extends Bar {}
 >Foo : Foo
->Bar : any
+>Bar : Bar
 
 module.exports = Foo;
+>Foo : typeof Foo
 >module.exports = Foo : typeof Foo
 >module.exports : any
 >module : any
@@ -32,6 +33,8 @@ module.exports = Foo;
 >Foo : typeof Foo
 
 module.exports.Strings = Strings;
+>Strings : any
+>Strings : { a: string; b: string; }
 >module.exports.Strings = Strings : { a: string; b: string; }
 >module.exports.Strings : any
 >module.exports : any
@@ -39,4 +42,16 @@ module.exports.Strings = Strings;
 >exports : any
 >Strings : any
 >Strings : { a: string; b: string; }
+
+=== bar.js ===
+class Bar {}
+>Bar : Bar
+
+module.exports = Bar;
+>Bar : typeof Bar
+>module.exports = Bar : typeof Bar
+>module.exports : any
+>module : any
+>exports : any
+>Bar : typeof Bar
 

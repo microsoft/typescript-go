@@ -22,6 +22,8 @@
 ->exports : typeof module.exports
 ->{ Thing } : { Thing: typeof Thing; }
 ->Thing : typeof Thing
++>{ Thing } : { Thing: any; }
++>Thing : any
 +>module.exports = { Thing } : { Thing: any; }
 +>module.exports : any
 +>module : any

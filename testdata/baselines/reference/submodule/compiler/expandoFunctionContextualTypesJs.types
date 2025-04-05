@@ -87,13 +87,11 @@ function foo() {
  * @type {MyComponentProps}
  */
 module.exports = {
->module.exports = {    color: "red"} : { color: string; }
->module.exports : any
->module : any
->exports : any
 >{    color: "red"} : { color: string; }
 
     color: "red"
+>color : string
+>"red" : "red"
 >color : string
 >"red" : "red"
 }

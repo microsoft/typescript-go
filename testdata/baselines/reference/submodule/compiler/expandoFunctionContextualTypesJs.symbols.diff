@@ -70,8 +70,9 @@
 -
      color: "red"
  >color : Symbol(color, Decl(input.js, 47, 18))
++>color : Symbol(color, Decl(input.js, 47, 18))
  }
-@@= skipped -25, +17 lines =@@
+ 
  expectLiteral({ props: module.exports });
  >expectLiteral : Symbol(expectLiteral, Decl(input.js, 27, 27))
  >props : Symbol(props, Decl(input.js, 51, 15))

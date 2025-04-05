@@ -17,10 +17,6 @@ class Q {
 >42 : 42
 }
 module.exports = class Q {
->module.exports = class Q {    constructor() {        this.x = new A();    }} : typeof Q
->module.exports : any
->module : any
->exports : any
 >class Q {    constructor() {        this.x = new A();    }} : typeof Q
 >Q : typeof Q
 
@@ -32,9 +28,17 @@ module.exports = class Q {
 >x : any
 >new A() : A
 >A : typeof A
+>this.x = new A() : A
+>this.x : any
+>this : this
+>x : any
+>new A() : A
+>A : typeof A
     }
 }
 module.exports.Another = Q;
+>Another : any
+>Q : typeof Q
 >module.exports.Another = Q : typeof Q
 >module.exports.Another : any
 >module.exports : any

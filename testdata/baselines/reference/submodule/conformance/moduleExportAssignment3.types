@@ -2,12 +2,29 @@
 
 === npm.js ===
 var mod = require('./mod')
->mod : any
->require('./mod') : any
+>mod : () => void
+>require('./mod') : () => void
 >require : any
 >'./mod' : "./mod"
 
 mod() // should be callable from here too
->mod() : any
->mod : any
+>mod() : void
+>mod : () => void
+
+=== mod.js ===
+module.exports = function x() { }
+>function x() { } : () => void
+>x : () => void
+>module.exports = function x() { } : () => void
+>module.exports : any
+>module : any
+>exports : any
+>function x() { } : () => void
+>x : () => void
+
+module.exports() // should be callable
+>module.exports() : any
+>module.exports : any
+>module : any
+>exports : any
 

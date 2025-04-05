@@ -5,7 +5,7 @@ assignmentToVoidZero2.js(5,3): error TS2339: Property 'y' does not exist on type
 assignmentToVoidZero2.js(6,3): error TS2339: Property 'x' does not exist on type '{}'.
 assignmentToVoidZero2.js(6,9): error TS2339: Property 'y' does not exist on type '{}'.
 assignmentToVoidZero2.js(12,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
-importer.js(1,22): error TS2306: File 'assignmentToVoidZero2.js' is not a module.
+importer.js(2,1): error TS2365: Operator '+' cannot be applied to types '1' and 'undefined'.
 
 
 ==== assignmentToVoidZero2.js (7 errors) ====
@@ -39,7 +39,7 @@ importer.js(1,22): error TS2306: File 'assignmentToVoidZero2.js' is not a module
     
 ==== importer.js (1 errors) ====
     import { j, k } from './assignmentToVoidZero2'
-                         ~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2306: File 'assignmentToVoidZero2.js' is not a module.
     j + k
+    ~~~~~
+!!! error TS2365: Operator '+' cannot be applied to types '1' and 'undefined'.
     

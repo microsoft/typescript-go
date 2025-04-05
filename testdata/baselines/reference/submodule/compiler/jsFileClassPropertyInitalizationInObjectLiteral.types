@@ -2,10 +2,6 @@
 
 === foo.js ===
 module.exports = function () {
->module.exports = function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: number; }
->module.exports : any
->module : any
->exports : any
 >function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: number; }
 
   class A { }
@@ -15,6 +11,12 @@ module.exports = function () {
 >{    c: A.b = 1,  } : { c: number; }
 
     c: A.b = 1,
+>c : number
+>A.b = 1 : 1
+>A.b : any
+>A : typeof A
+>b : any
+>1 : 1
 >c : number
 >A.b = 1 : 1
 >A.b : any

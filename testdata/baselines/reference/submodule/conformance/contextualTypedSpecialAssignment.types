@@ -97,9 +97,6 @@ class Thing {
 
 /** @type {DoneStatus} */
 exports.x = {
->exports.x = {    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
->exports.x : any
->exports : any
 >x : any
 >{    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
 
@@ -110,6 +107,8 @@ exports.x = {
     m(n) { }
 >m : (n: any) => void
 >n : any
+>m : (n: any) => void
+>n : any
 }
 exports.x
 >exports.x : any
@@ -118,11 +117,6 @@ exports.x
 
 /** @type {DoneStatus} */
 module.exports.y = {
->module.exports.y = {    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
->module.exports.y : any
->module.exports : any
->module : any
->exports : any
 >y : any
 >{    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
 
@@ -131,6 +125,8 @@ module.exports.y = {
 >"done" : "done"
 
     m(n) { }
+>m : (n: any) => void
+>n : any
 >m : (n: any) => void
 >n : any
 }
@@ -192,10 +188,6 @@ F.prototype = {
 // module.exports assignment
 /** @type {{ status: 'done', m(n: number): void }} */
 module.exports = {
->module.exports = {    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
->module.exports : any
->module : any
->exports : any
 >{    status: "done",    m(n) { }} : { status: string; m: (n: any) => void; }
 
     status: "done",
@@ -203,6 +195,8 @@ module.exports = {
 >"done" : "done"
 
     m(n) { }
+>m : (n: any) => void
+>n : any
 >m : (n: any) => void
 >n : any
 }

@@ -305,6 +305,8 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 func (b *Binder) getDeclarationName(node *ast.Node) string {
 	if ast.IsExportAssignment(node) {
 		return core.IfElse(node.AsExportAssignment().IsExportEquals, ast.InternalSymbolNameExportEquals, ast.InternalSymbolNameDefault)
+	} else if ast.IsJSExportAssignment(node) {
+		return ast.InternalSymbolNameExportEquals
 	}
 	name := ast.GetNameOfDeclaration(node)
 	if name != nil {
@@ -401,7 +403,7 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	//       and this case is specially handled. Module augmentations should only be merged with original module definition
 	//       and should never be merged directly with other augmentation, and the latter case would be possible if automatic merge is allowed.
 	if !ast.IsAmbientModule(node) && (hasExportModifier || b.container.Flags&ast.NodeFlagsExportContext != 0) {
-		if !ast.IsLocalsContainer(b.container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == ast.InternalSymbolNameMissing) {
+		if !ast.IsLocalsContainer(b.container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == ast.InternalSymbolNameMissing) || ast.IsCommonJSExport(node) {
 			return b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
 			// No local symbol for an unnamed default!
 		}
@@ -416,6 +418,52 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	}
 	return b.declareSymbol(ast.GetLocals(b.container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 }
+
+// // TODO: This can probably be called through normal b.declareSourceFileMember, adding a case for IsCommonJSModule
+func (b *Binder) bindCommonJSExport(node *ast.Node) {
+	b.setCommonJSModuleIndicator(node)
+	b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
+
+	// symbolFlags := ast.SymbolFlagsFunctionScopedVariable
+	// symbolExcludes := ast.SymbolFlagsFunctionScopedVariableExcludes
+	// exportKind := ast.SymbolFlagsExportValue
+	// // TODO: s/b.container/b.file.AsNode()/ but this is inefficient I'm sure
+	// // local exists for CommonJSExport, but it's in `namespace module { namespace exports { export var <name> = <init> } }` (and also doesn't need a local)
+	// local := b.declareModuleExportsProperty(b.file, node, exportKind, symbolExcludes)
+	// // b.declareSymbol(ast.GetLocals(b.file.AsNode()), nil /*parent*/, node, exportKind, symbolExcludes)
+	// local.ExportSymbol = b.declareSymbol(ast.GetExports(b.file.DeclarationData().Symbol), b.file.DeclarationData().Symbol, node, symbolFlags, symbolExcludes)
+	// node.ExportableData().LocalSymbol = local
+	// // b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
+}
+
+// // based on bindExportsPropertyAssignment + forEachIdentifierInEntityName
+// func (b *Binder) declareModuleExportsProperty(file *ast.SourceFile, node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
+// 	lhs := node.AsCommonJSExport().Original.AsBinaryExpression().Left
+// 	if !ast.IsAccessExpression(lhs) {
+// 		panic("Expected access expression")
+// 	}
+// 	name := ast.GetElementOrPropertyAccessArgumentExpressionOrName(lhs)
+// 	if ast.IsIdentifier(name) {
+// 		// TODO: Figure out the right excludes flags (whatever namespaces use)
+// 		return b.declareSymbol(ast.GetLocals(b.file.AsNode()), b.file.DeclarationData().Symbol, name, ast.SymbolFlagsModule|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone)
+// 	} else if ast.IsPropertyAccessExpression(name) {
+// 		// TODO: name isn't a namespace declaration, it's just an identifier/property access expression.
+// 		// can I fake it by passing node over and over again? But then the name is wrong.
+// 		module := b.declareSymbol(ast.GetLocals(b.file.AsNode()), b.file.DeclarationData().Symbol, name, ast.SymbolFlagsModule|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone)
+// 		return b.declareSymbol(module.Exports, module, name, ast.SymbolFlagsModule|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone)
+// 	}
+// 	// declare exports in the file (locally)
+// 	// TODO: Flags? (copied from original) (except that it special-cases aliases)
+// 	// so, no: resolver has special-case code to resolve exports/module.exports to the file symbol
+// 	// I think that sucks but I don't know what to do better. Well,
+// 	b.addDeclarationToSymbol(b.file.DeclarationData().Symbol, node, ast.SymbolFlagsModule|ast.SymbolFlagsAssignment)
+// 	symbol := b.file.DeclarationData().Symbol
+// 	// declare name on exports <-- previous function *just did that*
+// 	setParent(lhs, node)
+// 	return b.declareSymbol(symbol.Exports, symbol, name, symbolFlags, ast.SymbolFlagsNone)
+// 	// bind exports into the file's symbol table
+// 	// bind a namespace with property =  like in Strada
+// }
 
 func (b *Binder) declareClassMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
 	if ast.IsStatic(node) {
@@ -646,6 +694,8 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindBindingElement:
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
+	case ast.KindCommonJSExport:
+		b.bindCommonJSExport(node)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
@@ -679,6 +729,10 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindClassLikeDeclaration(node)
 	case ast.KindInterfaceDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsInterface, ast.SymbolFlagsInterfaceExcludes)
+	case ast.KindCallExpression:
+		if ast.IsInJSFile(node) {
+			b.bindCallExpression(node)
+		}
 	case ast.KindTypeAliasDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
 	case ast.KindEnumDeclaration:
@@ -693,7 +747,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindImportClause(node)
 	case ast.KindExportDeclaration:
 		b.bindExportDeclaration(node)
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		b.bindExportAssignment(node)
 	case ast.KindSourceFile:
 		b.updateStrictModeStatementList(node.AsSourceFile().Statements)
@@ -871,7 +925,7 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
 		symbol := b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, flags, ast.SymbolFlagsAll)
-		if node.AsExportAssignment().IsExportEquals {
+		if ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals {
 			// Will be an error later, since the module already has other exports. Just make sure this has a valueDeclaration set.
 			SetValueDeclaration(symbol, node)
 		}
@@ -908,7 +962,7 @@ func (b *Binder) hasExportDeclarations(node *ast.Node) bool {
 		}
 	}
 	return core.Some(statements, func(s *ast.Node) bool {
-		return ast.IsExportDeclaration(s) || ast.IsExportAssignment(s)
+		return ast.IsExportDeclaration(s) || ast.IsExportAssignment(s) || ast.IsJSExportAssignment(s)
 	})
 }
 
@@ -920,6 +974,26 @@ func (b *Binder) bindFunctionExpression(node *ast.Node) {
 		bindingName = node.AsFunctionExpression().Name().AsIdentifier().Text
 	}
 	b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunction, bindingName)
+}
+
+func (b *Binder) bindCallExpression(node *ast.Node) {
+	// TODO: This code needs to be called for JSExportAssignment too, so should be extracted to a method
+	if ast.IsRequireCall(node, false /*requireStringLiteralLikeArgument*/) {
+		b.setCommonJSModuleIndicator(node)
+	}
+}
+
+func (b *Binder) setCommonJSModuleIndicator(node *ast.Node) bool {
+	/// !!! for ModuleDetectionKind.Force, external module indicator is forced to `true` in Strada for source files, in which case
+	//  we should set the commonjs module indicator but not call b.bindSourceFileAsExternalModule
+	if b.file.ExternalModuleIndicator != nil { // !!! && file.externalModuleIndicator !== true (used for ModuleDetectionKind.Force)
+		return false
+	}
+	if b.file.CommonJsModuleIndicator == nil {
+		b.file.CommonJsModuleIndicator = node
+		b.bindSourceFileAsExternalModule()
+	}
+	return true
 }
 
 func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
@@ -1033,7 +1107,16 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 		b.checkStrictModeEvalOrArguments(node, node.Name())
 	}
 	if name := node.Name(); name != nil && !ast.IsBindingPattern(name) {
+		possibleVariableDecl := node
+		if node.Kind != ast.KindVariableDeclaration {
+			possibleVariableDecl = node.Parent.Parent
+		}
 		switch {
+		case ast.IsInJSFile(node) &&
+			ast.IsVariableDeclarationInitializedToRequire(possibleVariableDecl) &&
+			node.Type() == nil &&
+			node.ModifierFlags()&ast.ModifierFlagsExport == 0:
+			b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 		case ast.IsBlockOrCatchScoped(node):
 			b.bindBlockScopedDeclaration(node, ast.SymbolFlagsBlockScopedVariable, ast.SymbolFlagsBlockScopedVariableExcludes)
 		case ast.IsPartOfParameterDeclaration(node):

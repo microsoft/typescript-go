@@ -18,6 +18,7 @@ const items = [];
 >[] : undefined[]
 
 module.exports = items;
+>items : any[]
 >module.exports = items : any[]
 >module.exports : any
 >module : any

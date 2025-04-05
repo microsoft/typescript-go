@@ -80,6 +80,8 @@ exports.x = {
     m(n) { }
 >m : Symbol(m, Decl(test.js, 42, 19))
 >n : Symbol(n, Decl(test.js, 43, 6))
+>m : Symbol(m, Decl(test.js, 42, 19))
+>n : Symbol(n, Decl(test.js, 43, 6))
 }
 exports.x
 
@@ -89,6 +91,8 @@ module.exports.y = {
 >status : Symbol(status, Decl(test.js, 48, 20))
 
     m(n) { }
+>m : Symbol(m, Decl(test.js, 49, 19))
+>n : Symbol(n, Decl(test.js, 50, 6))
 >m : Symbol(m, Decl(test.js, 49, 19))
 >n : Symbol(n, Decl(test.js, 50, 6))
 }
@@ -139,6 +143,8 @@ module.exports = {
 >status : Symbol(status, Decl(mod.js, 2, 18))
 
     m(n) { }
+>m : Symbol(m, Decl(mod.js, 3, 19))
+>n : Symbol(n, Decl(mod.js, 4, 6))
 >m : Symbol(m, Decl(mod.js, 3, 19))
 >n : Symbol(n, Decl(mod.js, 4, 6))
 }

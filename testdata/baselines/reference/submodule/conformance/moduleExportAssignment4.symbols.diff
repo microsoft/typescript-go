@@ -8,6 +8,8 @@
 ->default : Symbol(default, Decl(async.js, 0, 0))
  >m : Symbol(m, Decl(async.js, 0, 19))
  >a : Symbol(a, Decl(async.js, 0, 25))
++>m : Symbol(m, Decl(async.js, 0, 19))
++>a : Symbol(a, Decl(async.js, 0, 25))
  
  module.exports = exports['default'];
 ->module.exports : Symbol(module.exports, Decl(async.js, 0, 0))

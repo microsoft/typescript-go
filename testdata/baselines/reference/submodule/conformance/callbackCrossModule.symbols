@@ -7,6 +7,7 @@
  */
 module.exports = C
 >C : Symbol(C, Decl(mod1.js, 4, 18))
+>C : Symbol(C, Decl(mod1.js, 4, 18))
 
 function C() {
 >C : Symbol(C, Decl(mod1.js, 4, 18))

@@ -114,16 +114,14 @@
 ->module : { exports: MyComponentProps; }
 ->exports : MyComponentProps
 ->{    color: "red"} : { color: "red"; }
-+>module.exports = {    color: "red"} : { color: string; }
-+>module.exports : any
-+>module : any
-+>exports : any
 +>{    color: "red"} : { color: string; }
  
      color: "red"
 ->color : "red"
 +>color : string
  >"red" : "red"
++>color : string
++>"red" : "red"
  }
  
  expectLiteral({ props: module.exports });

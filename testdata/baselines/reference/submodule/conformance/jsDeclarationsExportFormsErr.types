@@ -16,6 +16,7 @@ import * as ns from "./cls";
 >ns : typeof import("cls")
 
 module.exports = ns; // We refuse to bind cjs module exports assignments in the same file we find an import in
+>ns : typeof import("cls")
 >module.exports = ns : typeof import("cls")
 >module.exports : any
 >module : any

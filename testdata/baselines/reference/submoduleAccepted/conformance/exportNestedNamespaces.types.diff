@@ -8,11 +8,13 @@
 ->exports.n : typeof n
 ->exports : typeof import("mod")
 ->n : typeof n
++>n : any
+ >{} : {}
 +>exports.n = {} : {}
 +>exports.n : any
 +>exports : any
 +>n : any
- >{} : {}
++>{} : {}
  
  exports.n.K = function () {
 ->exports.n.K = function () {    this.x = 10;} : typeof K
@@ -39,22 +41,30 @@
  >10 : 10
  }
  exports.Classic = class {
- >exports.Classic = class {    constructor() {        this.p = 1    }} : typeof Classic
+->exports.Classic = class {    constructor() {        this.p = 1    }} : typeof Classic
 ->exports.Classic : typeof Classic
 ->exports : typeof import("mod")
 ->Classic : typeof Classic
-+>exports.Classic : any
-+>exports : any
 +>Classic : any
  >class {    constructor() {        this.p = 1    }} : typeof Classic
  
      constructor() {
-@@= skipped -41, +41 lines =@@
+@@= skipped -36, +35 lines =@@
+ >this : this
+ >p : any
+ >1 : 1
++>this.p = 1 : 1
++>this.p : any
++>this : this
++>p : any
++>1 : 1
+     }
+ }
  
  === use.js ===
  import * as s from './mod'
 ->s : typeof s
-+>s : any
++>s : typeof import("mod")
  
  var k = new s.n.K()
 ->k : K
@@ -67,9 +77,9 @@
 +>k : any
 +>new s.n.K() : any
 +>s.n.K : any
-+>s.n : any
-+>s : any
-+>n : any
++>s.n : {}
++>s : typeof import("mod")
++>n : {}
 +>K : any
  
  k.x
@@ -86,11 +96,11 @@
 ->s.Classic : typeof s.Classic
 ->s : typeof s
 ->Classic : typeof s.Classic
-+>classic : any
-+>new s.Classic() : any
-+>s.Classic : any
-+>s : any
-+>Classic : any
++>classic : Classic
++>new s.Classic() : Classic
++>s.Classic : typeof Classic
++>s : typeof import("mod")
++>Classic : typeof Classic
  
  
  /** @param {s.n.K} c

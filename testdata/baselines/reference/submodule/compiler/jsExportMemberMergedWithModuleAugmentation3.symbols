@@ -1,9 +1,12 @@
 //// [tests/cases/compiler/jsExportMemberMergedWithModuleAugmentation3.ts] ////
 
 === /x.js ===
-
 module.exports.x = 1;
 module.exports = require("./y.js");
+>require : Symbol(require)
+>"./y.js" : Symbol("/y", Decl(y.d.ts, 0, 0))
+>require : Symbol(require)
+>"./y.js" : Symbol("/y", Decl(y.d.ts, 0, 0))
 
 === /y.d.ts ===
 export declare type x = 1;

@@ -1,19 +1,17 @@
 --- old.jsFileClassPropertyInitalizationInObjectLiteral.types
 +++ new.jsFileClassPropertyInitalizationInObjectLiteral.types
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
  === foo.js ===
  module.exports = function () {
- >module.exports = function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: number; }
+->module.exports = function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: number; }
 ->module.exports : () => { c: number; }
 ->module : { exports: () => { c: number; }; }
 ->exports : () => { c: number; }
-+>module.exports : any
-+>module : any
-+>exports : any
  >function () {  class A { }  return {    c: A.b = 1,  }} : () => { c: number; }
  
    class A { }
-@@= skipped -14, +14 lines =@@
+@@= skipped -15, +11 lines =@@
      c: A.b = 1,
  >c : number
  >A.b = 1 : 1
@@ -22,3 +20,12 @@
  >A : typeof A
  >b : any
  >1 : 1
++>c : number
++>A.b = 1 : 1
++>A.b : any
++>A : typeof A
++>b : any
++>1 : 1
+   }
+ };
+ 

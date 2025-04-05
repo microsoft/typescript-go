@@ -4,14 +4,16 @@
 /// <reference types="node" />
 
 const Something = require("fs").Something;
->Something : any
->require("fs").Something : any
->require("fs") : any
+>Something : typeof Something
+>require("fs").Something : typeof Something
+>require("fs") : typeof import("fs")
 >require : any
 >"fs" : "fs"
->Something : any
+>Something : typeof Something
 
 module.exports.A = {}
+>A : any
+>{} : {}
 >module.exports.A = {} : {}
 >module.exports.A : any
 >module.exports : any
@@ -21,7 +23,7 @@ module.exports.A = {}
 >{} : {}
 
 module.exports.A.B = {
->module.exports.A.B = {    thing: new Something()} : { thing: any; }
+>module.exports.A.B = {    thing: new Something()} : { thing: Something; }
 >module.exports.A.B : any
 >module.exports.A : any
 >module.exports : any
@@ -29,12 +31,12 @@ module.exports.A.B = {
 >exports : any
 >A : any
 >B : any
->{    thing: new Something()} : { thing: any; }
+>{    thing: new Something()} : { thing: Something; }
 
     thing: new Something()
->thing : any
->new Something() : any
->Something : any
+>thing : Something
+>new Something() : Something
+>Something : typeof Something
 }
 
 === node_modules/@types/node/index.d.ts ===

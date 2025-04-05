@@ -25,6 +25,7 @@
 ->module : { exports: typeof Timer; }
 ->exports : typeof Timer
 ->Timer : typeof Timer
++>Timer : (timeout: any) => void
 +>module.exports = Timer : (timeout: any) => void
 +>module.exports : any
 +>module : any
@@ -33,7 +34,7 @@
  
  === hook.js ===
  /**
-@@= skipped -25, +25 lines =@@
+@@= skipped -25, +26 lines =@@
   * @param {HookHandler} handle
   */
  function Hook(handle) {
@@ -58,6 +59,7 @@
 ->module : { exports: typeof Hook; }
 ->exports : typeof Hook
 ->Hook : typeof Hook
++>Hook : (handle: any) => void
 +>module.exports = Hook : (handle: any) => void
 +>module.exports : any
 +>module : any
@@ -66,7 +68,7 @@
  
  === context.js ===
  /**
-@@= skipped -50, +50 lines =@@
+@@= skipped -50, +51 lines =@@
   */
  
  function Context(input) {
@@ -149,6 +151,7 @@
 ->module : { exports: { (input: Input): Context; new (input: Input): Context; prototype: { construct(input: Input, handle?: HookHandler | undefined): State; }; }; }
 ->exports : { (input: Input): Context; new (input: Input): Context; prototype: { construct(input: Input, handle?: HookHandler | undefined): State; }; }
 ->Context : typeof Context
++>Context : { (input: any): any; prototype: { construct: (input: any, handle?: () => any) => any; }; }
 +>module.exports = Context : { (input: any): any; prototype: { construct: (input: any, handle?: () => any) => any; }; }
 +>module.exports : any
 +>module : any

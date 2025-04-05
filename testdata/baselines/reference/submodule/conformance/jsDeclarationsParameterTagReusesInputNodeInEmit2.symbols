@@ -23,6 +23,7 @@ BaseFactory.Base = Base;
 
 module.exports = BaseFactory;
 >BaseFactory : Symbol(BaseFactory, Decl(base.js, 4, 5))
+>BaseFactory : Symbol(BaseFactory, Decl(base.js, 4, 5))
 
 === file.js ===
 /** @typedef {typeof import('./base')} BaseFactory */

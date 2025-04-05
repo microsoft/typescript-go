@@ -6,6 +6,7 @@ class Foo {}
 
 module.exports = Foo;
 >Foo : Symbol(Foo, Decl(cls.js, 0, 0))
+>Foo : Symbol(Foo, Decl(cls.js, 0, 0))
 
 === usage.js ===
 import {default as Fooa} from "./cls";

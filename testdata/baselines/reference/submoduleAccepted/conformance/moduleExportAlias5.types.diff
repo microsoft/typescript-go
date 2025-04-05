@@ -19,6 +19,8 @@
  >webpack : { (): void; WebpackOptionsDefaulter: number; }
  
  exports.version = 1001;
++>version : any
++>1001 : 1001
  >exports.version = 1001 : 1001
 ->exports.version : 1001
 ->exports : { (): void; version: 1001; WebpackOptionsDefaulter: number; }

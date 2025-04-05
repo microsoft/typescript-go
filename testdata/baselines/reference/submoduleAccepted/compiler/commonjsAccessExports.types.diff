@@ -1,8 +1,11 @@
 --- old.commonjsAccessExports.types
 +++ new.commonjsAccessExports.types
-@@= skipped -2, +2 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
  === /a.js ===
  exports.x = 0;
++>x : any
++>0 : 0
  >exports.x = 0 : 0
 ->exports.x : 0
 ->exports : typeof import("/a")
@@ -29,9 +32,6 @@
 ->exports : typeof import("/a")
 ->Cls : typeof Cls
 ->function() {        this.x = 0;    } : typeof Cls
-+>exports.Cls = function() {        this.x = 0;    } : () => void
-+>exports.Cls : any
-+>exports : any
 +>Cls : any
 +>function() {        this.x = 0;    } : () => void
  
@@ -42,6 +42,11 @@
 +>this : any
  >x : any
  >0 : 0
++>this.x = 0 : 0
++>this.x : any
++>this : any
++>x : any
++>0 : 0
      }
  }
  

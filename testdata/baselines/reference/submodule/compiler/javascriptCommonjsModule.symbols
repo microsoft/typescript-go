@@ -10,4 +10,5 @@ class Bar extends Foo {}
 
 module.exports = Bar;
 >Bar : Symbol(Bar, Decl(index.js, 0, 12))
+>Bar : Symbol(Bar, Decl(index.js, 0, 12))
 

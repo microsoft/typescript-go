@@ -2,13 +2,15 @@
 
 === b.js ===
 exports.E = function() {
->exports.E = function() {    this.e = 'exported'} : () => void
->exports.E : any
->exports : any
 >E : any
 >function() {    this.e = 'exported'} : () => void
 
     this.e = 'exported'
+>this.e = 'exported' : "exported"
+>this.e : any
+>this : any
+>e : any
+>'exported' : "exported"
 >this.e = 'exported' : "exported"
 >this.e : any
 >this : any

@@ -5,9 +5,8 @@
  === main.js ===
  const { K } = require("./mod1");
 ->K : typeof K
-->require("./mod1") : typeof import("mod1")
 +>K : any
-+>require("./mod1") : any
+ >require("./mod1") : typeof import("mod1")
  >require : any
  >"./mod1" : "./mod1"
  
@@ -68,6 +67,10 @@
 ->NS.K : typeof K
 ->NS : typeof NS
 ->K : typeof K
++>K : any
++>NS.K : any
++>NS : {}
++>K : any
 +>exports.K = NS.K : any
 +>exports.K : any
 +>exports : any

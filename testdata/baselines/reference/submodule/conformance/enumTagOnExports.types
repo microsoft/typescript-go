@@ -3,6 +3,8 @@
 === enumTagOnExports.js ===
 /** @enum {number} */
 exports.a = {};
+>a : any
+>{} : {}
 >exports.a = {} : {}
 >exports.a : any
 >exports : any
@@ -11,6 +13,8 @@ exports.a = {};
 
 /** @enum {string} */
 module.exports.b = {};
+>b : any
+>{} : {}
 >module.exports.b = {} : {}
 >module.exports.b : any
 >module.exports : any

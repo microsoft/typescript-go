@@ -9,9 +9,6 @@
 ->exports : typeof import("b")
 ->E : typeof E
 ->function() {    this.e = 'exported'} : typeof E
-+>exports.E = function() {    this.e = 'exported'} : () => void
-+>exports.E : any
-+>exports : any
 +>E : any
 +>function() {    this.e = 'exported'} : () => void
  
@@ -22,6 +19,11 @@
 +>this : any
  >e : any
  >'exported' : "exported"
++>this.e = 'exported' : "exported"
++>this.e : any
++>this : any
++>e : any
++>'exported' : "exported"
  }
  var e = new exports.E();
 ->e : E
@@ -131,7 +133,7 @@
  >b : any
  >'binding pattern' : "binding pattern"
      }
-@@= skipped -97, +97 lines =@@
+@@= skipped -97, +99 lines =@@
  >undefined : undefined
  
  var b = new B();

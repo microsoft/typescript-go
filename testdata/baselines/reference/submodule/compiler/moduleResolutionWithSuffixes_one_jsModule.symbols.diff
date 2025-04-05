@@ -16,6 +16,7 @@
 ->exports : Symbol(ios, Decl(foo.ios.js, 2, 17))
 ->ios : Symbol(ios, Decl(foo.ios.js, 2, 17))
  >ios : Symbol(ios, Decl(foo.ios.js, 1, 26))
++>ios : Symbol(ios, Decl(foo.ios.js, 1, 26))
  
  === /foo.js ===
  "use strict";
@@ -32,4 +33,5 @@
 ->exports : Symbol(base, Decl(foo.js, 2, 18))
 ->base : Symbol(base, Decl(foo.js, 2, 18))
  >base : Symbol(base, Decl(foo.js, 1, 26))
++>base : Symbol(base, Decl(foo.js, 1, 26))
  

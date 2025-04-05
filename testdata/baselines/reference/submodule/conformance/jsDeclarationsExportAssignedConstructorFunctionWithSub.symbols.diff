@@ -14,6 +14,7 @@
 ->this : Symbol(exports, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 16))
 ->t : Symbol(exports.t, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 31))
  >p : Symbol(p, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 27))
++>p : Symbol(p, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 27))
  }
  module.exports.Sub = function() {
 ->module.exports.Sub : Symbol(Sub, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 5, 1), Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 9, 15))

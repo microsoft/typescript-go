@@ -10,8 +10,11 @@
 -
    a: "ok"
  >a : Symbol(a, Decl(test.js, 0, 18))
++>a : Symbol(a, Decl(test.js, 0, 18))
  
-@@= skipped -14, +10 lines =@@
+ };
+ 
+@@= skipped -14, +11 lines =@@
  >a : Symbol(a, Decl(index.ts, 0, 8))
  
  declare module "./test" {

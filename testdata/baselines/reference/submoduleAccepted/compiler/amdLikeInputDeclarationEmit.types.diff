@@ -24,7 +24,7 @@
  (BaseClass) => {    
 ->(BaseClass) => {            const ExtendedClass = BaseClass.extends({        f: function() {            return "something";        }    });    // Exports the module in a way tsc recognize class export     const module = {};    module.exports = ExtendedClass    return module.exports;} : (BaseClass: typeof import("deps/BaseClass")) => any
 ->BaseClass : typeof import("deps/BaseClass")
-+>(BaseClass) => {            const ExtendedClass = BaseClass.extends({        f: function() {            return "something";        }    });    // Exports the module in a way tsc recognize class export     const module = {};    module.exports = ExtendedClass    return module.exports;} : (BaseClass: unknown) => any
++>(BaseClass) => {            const ExtendedClass = BaseClass.extends({        f: function() {            return "something";        }    });    // Exports the module in a way tsc recognize class export     const module = {};    module.exports = ExtendedClass    return module.exports;} : { (BaseClass: unknown): any; ExtendedClass: any; }
 +>BaseClass : unknown
      
      const ExtendedClass = BaseClass.extends({
@@ -49,7 +49,12 @@
  
              return "something";
  >"something" : "something"
-@@= skipped -30, +30 lines =@@
+@@= skipped -26, +26 lines =@@
+ >{} : {}
+ 
+     module.exports = ExtendedClass
++>ExtendedClass : any
+ >module.exports = ExtendedClass : any
  >module.exports : any
  >module : {}
  >exports : any

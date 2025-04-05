@@ -2,6 +2,8 @@
 
 === /a.js ===
 exports.x = 0;
+>x : any
+>0 : 0
 >exports.x = 0 : 0
 >exports.x : any
 >exports : any
@@ -17,13 +19,15 @@ exports.x;
 {
     // 'exports' does not provide a contextual type to a function-class
     exports.Cls = function() {
->exports.Cls = function() {        this.x = 0;    } : () => void
->exports.Cls : any
->exports : any
 >Cls : any
 >function() {        this.x = 0;    } : () => void
 
         this.x = 0;
+>this.x = 0 : 0
+>this.x : any
+>this : any
+>x : any
+>0 : 0
 >this.x = 0 : 0
 >this.x : any
 >this : any

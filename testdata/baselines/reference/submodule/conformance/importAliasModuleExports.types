@@ -9,6 +9,7 @@ class Alias {
 >1 : 1
 }
 module.exports = Alias;
+>Alias : typeof Alias
 >module.exports = Alias : typeof Alias
 >module.exports : any
 >module : any

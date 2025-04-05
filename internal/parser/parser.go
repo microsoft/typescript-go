@@ -77,6 +77,7 @@ type Parser struct {
 	jsdocCommentsSpace      []string
 	jsdocCommentRangesSpace []ast.CommentRange
 	jsdocTagCommentsSpace   []string
+	reparseList             []*ast.Node
 }
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
@@ -462,7 +463,12 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 	list := make([]*ast.Node, 0, 16)
 	for i := 0; !p.isListTerminator(kind); i++ {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
-			list = append(list, parseElement(p, i))
+			elt := parseElement(p, i)
+			if len(p.reparseList) > 0 {
+				list = append(list, p.reparseList...)
+				p.reparseList = nil
+			}
+			list = append(list, elt)
 			continue
 		}
 		if p.abortParsingListOrMoveToNextToken(kind) {
@@ -1385,6 +1391,7 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	result := p.factory.NewExpressionStatement(expression)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc && !hasParen)
+	p.withCommonJS(result)
 	return result
 }
 

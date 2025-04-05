@@ -4,6 +4,7 @@
 module.exports = {
    message: ""
 >message : Symbol(message, Decl(test.js, 0, 18))
+>message : Symbol(message, Decl(test.js, 0, 18))
 }
 
 === types1.ts ===

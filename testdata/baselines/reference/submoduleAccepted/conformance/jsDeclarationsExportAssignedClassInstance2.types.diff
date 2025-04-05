@@ -1,8 +1,11 @@
 --- old.jsDeclarationsExportAssignedClassInstance2.types
 +++ new.jsDeclarationsExportAssignedClassInstance2.types
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
+ }
  
  module.exports = new Foo();
++>new Foo() : Foo
++>Foo : typeof Foo
  >module.exports = new Foo() : Foo
 ->module.exports : Foo
 ->module : { exports: Foo; }

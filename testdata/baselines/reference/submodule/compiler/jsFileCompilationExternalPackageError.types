@@ -22,6 +22,8 @@ var a = 10;
 
 === node_modules/c.js ===
 exports.a = 10;
+>a : any
+>10 : 10
 >exports.a = 10 : 10
 >exports.a : any
 >exports : any

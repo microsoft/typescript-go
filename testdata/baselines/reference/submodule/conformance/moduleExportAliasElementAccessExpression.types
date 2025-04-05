@@ -5,6 +5,8 @@ function D () { }
 >D : () => void
 
 exports["D"] = D;
+>"D" : "D"
+>D : () => void
 >exports["D"] = D : () => void
 >exports["D"] : any
 >exports : any
@@ -13,6 +15,8 @@ exports["D"] = D;
 
  // (the only package I could find that uses spaces in identifiers is webidl-conversions)
 exports["Does not work yet"] = D;
+>"Does not work yet" : "Does not work yet"
+>D : () => void
 >exports["Does not work yet"] = D : () => void
 >exports["Does not work yet"] : any
 >exports : any

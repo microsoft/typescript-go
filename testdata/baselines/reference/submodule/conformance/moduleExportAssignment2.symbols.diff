@@ -26,5 +26,6 @@
 ->module : Symbol(module, Decl(npm.js, 0, 9), Decl(npm.js, 3, 13))
 ->exports : Symbol(module.exports, Decl(npm.js, 0, 0))
  >tree : Symbol(tree, Decl(npm.js, 2, 43))
++>tree : Symbol(tree, Decl(npm.js, 2, 43))
  }
  

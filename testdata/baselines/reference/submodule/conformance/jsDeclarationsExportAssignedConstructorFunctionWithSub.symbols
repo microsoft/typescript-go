@@ -9,6 +9,7 @@ module.exports = function (p) {
 
     this.t = 12 + p;
 >p : Symbol(p, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 27))
+>p : Symbol(p, Decl(jsDeclarationsExportAssignedConstructorFunctionWithSub.js, 3, 27))
 }
 module.exports.Sub = function() {
     this.instance = new module.exports(10);

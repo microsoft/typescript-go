@@ -2,13 +2,15 @@
 
 === /index.ts ===
 import { ios } from "./foo.js";
->ios : any
+>ios : () => void
 
 === /foo.ios.js ===
 "use strict";
 >"use strict" : "use strict"
 
 exports.__esModule = true;
+>__esModule : any
+>true : true
 >exports.__esModule = true : true
 >exports.__esModule : any
 >exports : any
@@ -19,6 +21,8 @@ function ios() {}
 >ios : () => void
 
 exports.ios = ios;
+>ios : any
+>ios : () => void
 >exports.ios = ios : () => void
 >exports.ios : any
 >exports : any
@@ -30,6 +34,8 @@ exports.ios = ios;
 >"use strict" : "use strict"
 
 exports.__esModule = true;
+>__esModule : any
+>true : true
 >exports.__esModule = true : true
 >exports.__esModule : any
 >exports : any
@@ -40,6 +46,8 @@ function base() {}
 >base : () => void
 
 exports.base = base;
+>base : any
+>base : () => void
 >exports.base = base : () => void
 >exports.base : any
 >exports : any

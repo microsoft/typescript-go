@@ -2,6 +2,14 @@
 
 === file.js ===
 module.exports = [{ name: 'other', displayName: 'Other', defaultEnabled: true }];
+>[{ name: 'other', displayName: 'Other', defaultEnabled: true }] : { name: string; displayName: string; defaultEnabled: boolean; }[]
+>{ name: 'other', displayName: 'Other', defaultEnabled: true } : { name: string; displayName: string; defaultEnabled: boolean; }
+>name : string
+>'other' : "other"
+>displayName : string
+>'Other' : "Other"
+>defaultEnabled : boolean
+>true : true
 >module.exports = [{ name: 'other', displayName: 'Other', defaultEnabled: true }] : { name: string; displayName: string; defaultEnabled: boolean; }[]
 >module.exports : any
 >module : any

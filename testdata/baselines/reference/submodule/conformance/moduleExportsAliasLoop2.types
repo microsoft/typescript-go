@@ -14,6 +14,10 @@ exports.fn1();
 >fn1 : any
 
 exports.fn2 = Foo.min;
+>fn2 : any
+>Foo.min : number
+>Foo : { min: number; }
+>min : number
 >exports.fn2 = Foo.min : number
 >exports.fn2 : any
 >exports : any
