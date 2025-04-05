@@ -6443,12 +6443,12 @@ var (
 )
 
 func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
+	var matches []string
 	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
-		matches := tripleSlashXMLCommentStartRegEx.FindStringSubmatch(text)
-		if len(matches) < 2 {
-			return nil
-		}
-
+		matches = tripleSlashXMLCommentStartRegEx.FindStringSubmatch(text)
+	}
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia &&
+		len(matches) > 1 {
 		name := strings.ToLower(matches[1])
 		pragmaSpec, ok := getCommentPragmaSpec(name)
 		if !(ok && pragmaSpec.IsTripleSlash()) {
@@ -6495,12 +6495,21 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 		}
 		return []ast.Pragma{pragma}
 	}
-	return nil
 
-	// const singleLine = range.kind === SyntaxKind.SingleLineCommentTrivia && singleLinePragmaRegEx.exec(text);
-	// if (singleLine) {
-	//     return addPragmaForMatch(pragmas, range, PragmaKindFlags.SingleLine, singleLine);
-	// }
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
+		matches = singleLinePragmaRegEx.FindStringSubmatch(text)
+	}
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia &&
+		len(matches) > 1 &&
+		(matches[1] == "ts-nocheck" || matches[1] == "ts-check") {
+		return []ast.Pragma{
+			{
+				Name:      matches[1],
+				Args:      make(map[string]ast.PragmaArgument),
+				ArgsRange: commentRange,
+			},
+		}
+	}
 
 	// if (range.kind === SyntaxKind.MultiLineCommentTrivia) {
 	//     const multiLinePragmaRegEx = /@(\S+)(\s+(?:\S.*)?)?$/gm; // Defined inline since it uses the "g" flag, which keeps a persistent index (for iterating)
@@ -6509,10 +6518,12 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 	//         addPragmaForMatch(pragmas, range, PragmaKindFlags.MultiLine, multiLineMatch);
 	//     }
 	// }
+
+	return nil
 }
 
 func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic func(*ast.Diagnostic)*/) {
-	// context.CheckJsDirective = nil
+	context.CheckJsDirective = nil
 	context.ReferencedFiles = nil
 	context.TypeReferenceDirectives = nil
 	context.LibReferenceDirectives = nil
@@ -6555,6 +6566,16 @@ func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic fu
 				})
 			} else {
 				// reportDiagnostic(argMap.Pos, argMap.End-argMap.Pos, "Invalid reference directive syntax")
+			}
+		case "ts-check", "ts-nocheck":
+			// _last_ of either nocheck or check in a file is the "winner"
+			for _, directive := range context.Pragmas {
+				if context.CheckJsDirective == nil || directive.ArgsRange.Pos() > context.CheckJsDirective.Range.Pos() {
+					context.CheckJsDirective = &ast.CheckJsDirective{
+						Enabled: directive.Name == "ts-check",
+						Range:   directive.ArgsRange,
+					}
+				}
 			}
 
 		default:

@@ -1787,8 +1787,9 @@ func skipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions)
 }
 
 func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
-	// !!!
-	// if (!!sourceFile.checkJsDirective && sourceFile.checkJsDirective.enabled === false) return false;
+	if sourceFile.CheckJsDirective != nil && !sourceFile.CheckJsDirective.Enabled {
+		return false
+	}
 
 	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
 		return true
@@ -1806,17 +1807,14 @@ func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core
 }
 
 func isCheckJsEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
-	// !!!
-	// if sourceFile.CheckJsDirective != nil {
-	// 	return sourceFile.CheckJsDirective.Enabled
-	// }
+	if sourceFile.CheckJsDirective != nil {
+		return sourceFile.CheckJsDirective.Enabled
+	}
 	return compilerOptions.CheckJs == core.TSTrue
 }
 
 func isPlainJsFile(file *ast.SourceFile, checkJs core.Tristate) bool {
-	// !!!
-	// return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
-	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && checkJs == core.TSUnknown
+	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {

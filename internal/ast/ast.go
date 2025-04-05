@@ -9595,6 +9595,11 @@ type SourceFileMetaData struct {
 	ImpliedNodeFormat core.ResolutionMode
 }
 
+type CheckJsDirective struct {
+	Enabled bool
+	Range   CommentRange
+}
+
 type SourceFile struct {
 	NodeBase
 	DeclarationBase
@@ -9629,6 +9634,7 @@ type SourceFile struct {
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
+	CheckJsDirective            *CheckJsDirective
 
 	// Fields set by binder
 
