@@ -1294,7 +1294,7 @@ func isThisTypeParameter(t *Type) bool {
 	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
 }
 
-func isCallLikeExpression(node *ast.Node) bool {
+func IsCallLikeExpression(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement, ast.KindCallExpression, ast.KindNewExpression,
 		ast.KindTaggedTemplateExpression, ast.KindDecorator:
@@ -1829,6 +1829,10 @@ func getNonRestParameterCount(sig *Signature) int {
 	return len(sig.parameters) - core.IfElse(signatureHasRestParameter(sig), 1, 0)
 }
 
+func GetDeclaration(sig *Signature) *ast.Node {
+	return sig.declaration
+}
+
 func minAndMax[T any](slice []T, getValue func(value T) int) (int, int) {
 	var minValue, maxValue int
 	for i, element := range slice {
@@ -2113,7 +2117,7 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 	return ""
 }
 
-func getInvokedExpression(node *ast.Node) *ast.Node {
+func GetInvokedExpression(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindTaggedTemplateExpression:
 		return node.AsTaggedTemplateExpression().Tag

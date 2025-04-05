@@ -2040,7 +2040,7 @@ func (c *Checker) getEffectsSignature(node *ast.Node) *Signature {
 		case len(signatures) == 1 && signatures[0].typeParameters == nil:
 			signature = signatures[0]
 		case core.Some(signatures, c.hasTypePredicateOrNeverReturnType):
-			signature = c.getResolvedSignature(node, nil, CheckModeNormal)
+			signature = c.GetResolvedSignature(node, nil, CheckModeNormal)
 		}
 		if !(signature != nil && c.hasTypePredicateOrNeverReturnType(signature)) {
 			signature = c.unknownSignature

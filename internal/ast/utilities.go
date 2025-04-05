@@ -2650,3 +2650,8 @@ func getPragmaArgument(pragma *Pragma, name string) string {
 	}
 	return ""
 }
+
+func IsRightSideOfPropertyAccess(node *Node) bool {
+	parent := node.Parent
+	return IsPropertyAccessExpression(parent) && parent.AsPropertyAccessExpression().Name() == node
+}
