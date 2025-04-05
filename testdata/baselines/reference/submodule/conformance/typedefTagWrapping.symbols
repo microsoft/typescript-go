@@ -3,6 +3,9 @@
 === mod1.js ===
 /** 
  * @typedef {function(string): boolean}
+> : Symbol(, Decl(mod1.js, 1, 3))
+>function : Symbol(function)
+
  * Type1
  */
 
@@ -30,6 +33,8 @@ function callIt(func, arg) {
  *   str: string,
  *   boo: boolean
  * }} Type2
+>Type2 : Symbol(Type2, Decl(mod2.js, 1, 3))
+
  */
 
 /**
@@ -42,9 +47,15 @@ function check(obj) {
 >obj : Symbol(obj, Decl(mod2.js, 13, 15))
 
   return obj.boo ? obj.num : obj.str;
+>obj.boo : Symbol(boo, Decl(mod2.js, 3, 17))
 >obj : Symbol(obj, Decl(mod2.js, 13, 15))
+>boo : Symbol(boo, Decl(mod2.js, 3, 17))
+>obj.num : Symbol(num, Decl(mod2.js, 1, 14))
 >obj : Symbol(obj, Decl(mod2.js, 13, 15))
+>num : Symbol(num, Decl(mod2.js, 1, 14))
+>obj.str : Symbol(str, Decl(mod2.js, 2, 17))
 >obj : Symbol(obj, Decl(mod2.js, 13, 15))
+>str : Symbol(str, Decl(mod2.js, 2, 17))
 }
 
 === mod3.js ===
@@ -52,6 +63,9 @@ function check(obj) {
  * A function whose signature is very long.
  *
  * @typedef {function(boolean, string, number):
+> : Symbol(, Decl(mod3.js, 3, 3))
+>function : Symbol(function)
+
  *     (string|number)} StringOrNumber1
  */
 
@@ -82,6 +96,9 @@ function use1(func, bool, str, num) {
  * A function whose signature is very long.
  *
  * @typedef {function(boolean, string,
+> : Symbol(, Decl(mod4.js, 3, 3))
+>function : Symbol(function)
+
  *    number):
  *    (string|number)} StringOrNumber2
  */
@@ -118,6 +135,8 @@ function use2(func, bool, str, num) {
  *   boo:
  *   boolean
  * }} Type5
+>Type5 : Symbol(Type5, Decl(mod5.js, 1, 3))
+
  */
 
 /**
@@ -130,9 +149,15 @@ function check5(obj) {
 >obj : Symbol(obj, Decl(mod5.js, 16, 16))
 
   return obj.boo ? obj.num : obj.str;
+>obj.boo : Symbol(boo, Decl(mod5.js, 5, 12))
 >obj : Symbol(obj, Decl(mod5.js, 16, 16))
+>boo : Symbol(boo, Decl(mod5.js, 5, 12))
+>obj.num : Symbol(num, Decl(mod5.js, 1, 14))
 >obj : Symbol(obj, Decl(mod5.js, 16, 16))
+>num : Symbol(num, Decl(mod5.js, 1, 14))
+>obj.str : Symbol(str, Decl(mod5.js, 3, 12))
 >obj : Symbol(obj, Decl(mod5.js, 16, 16))
+>str : Symbol(str, Decl(mod5.js, 3, 12))
 }
 
 === mod6.js ===
@@ -143,6 +168,8 @@ function check5(obj) {
  *   bar:
  *   *
  * }} Type6
+>Type6 : Symbol(Type6, Decl(mod6.js, 1, 3))
+
  */
 
 /**
@@ -155,7 +182,9 @@ function check6(obj) {
 >obj : Symbol(obj, Decl(mod6.js, 14, 16))
 
   return obj.foo;
+>obj.foo : Symbol(foo, Decl(mod6.js, 1, 14))
 >obj : Symbol(obj, Decl(mod6.js, 14, 16))
+>foo : Symbol(foo, Decl(mod6.js, 1, 14))
 }
 
 

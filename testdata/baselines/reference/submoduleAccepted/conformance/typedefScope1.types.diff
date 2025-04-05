@@ -1,10 +1,20 @@
 --- old.typedefScope1.types
 +++ new.typedefScope1.types
-@@= skipped -22, +22 lines =@@
+@@= skipped -4, +4 lines =@@
+ >B1 : () => void
  
- /** @type {B} */
- var notOK = 0;
-->notOK : B
-+>notOK : number
- >0 : 0
+     /** @typedef {number} B */
++>B : any
++
+     /** @type {B} */
+     var ok1 = 0;
+ >ok1 : number
+@@= skipped -10, +12 lines =@@
+ >B2 : () => void
  
+     /** @typedef {string} B */
++>B : any
++
+     /** @type {B} */
+     var ok2 = 'hi';
+ >ok2 : string

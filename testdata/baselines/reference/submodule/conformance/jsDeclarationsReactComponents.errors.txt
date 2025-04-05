@@ -2,6 +2,7 @@ jsDeclarationsReactComponents1.jsx(2,19): error TS2307: Cannot find module 'reac
 jsDeclarationsReactComponents1.jsx(3,23): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
 jsDeclarationsReactComponents2.jsx(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
 jsDeclarationsReactComponents3.jsx(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+jsDeclarationsReactComponents3.jsx(3,73): error TS2503: Cannot find namespace 'JSX'.
 jsDeclarationsReactComponents4.jsx(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
 jsDeclarationsReactComponents5.jsx(1,19): error TS2307: Cannot find module 'react' or its corresponding type declarations.
 jsDeclarationsReactComponents5.jsx(2,23): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
@@ -55,12 +56,14 @@ jsDeclarationsReactComponents5.jsx(2,23): error TS2307: Cannot find module 'prop
     
     export default TabbedShowLayout;
     
-==== jsDeclarationsReactComponents3.jsx (1 errors) ====
+==== jsDeclarationsReactComponents3.jsx (2 errors) ====
     import React from "react";
                       ~~~~~~~
 !!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
     /**
      * @type {{defaultProps: {tabs: string}} & ((props?: {elem: string}) => JSX.Element)}
+                                                                            ~~~
+!!! error TS2503: Cannot find namespace 'JSX'.
      */
     const TabbedShowLayout = () => {
         return (

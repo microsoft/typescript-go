@@ -1,0 +1,11 @@
+--- old.typedefOnSemicolonClassElement.types
++++ new.typedefOnSemicolonClassElement.types
+@@= skipped -4, +4 lines =@@
+ >Preferences : Preferences
+ 
+   /** @typedef {string} A */
++>A : any
++
+   ;
+   /** @type {A} */
+   a = 'ok'

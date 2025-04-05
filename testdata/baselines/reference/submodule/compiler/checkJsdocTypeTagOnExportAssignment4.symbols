@@ -3,12 +3,13 @@
 === checkJsdocTypeTagOnExportAssignment4.js ===
 
 === a.js ===
-
 /**
  * @typedef {number} Foo
  */
 
 /** @type {Foo} */
+>Foo : Symbol(Foo, Decl(a.js, 1, 3))
+
 export default "";
 
 

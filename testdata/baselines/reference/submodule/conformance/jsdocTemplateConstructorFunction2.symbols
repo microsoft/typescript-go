@@ -52,6 +52,8 @@ let answer = z.add(3, { nested: 4 })
 /**
  * @typedef {Object} A
  * @property {T} value
+>T : Symbol(T)
+
  */
 /** @type {A} */
 const options = { value: null };

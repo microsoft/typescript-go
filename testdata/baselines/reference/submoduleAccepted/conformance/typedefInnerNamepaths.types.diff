@@ -1,0 +1,14 @@
+--- old.typedefInnerNamepaths.types
++++ new.typedefInnerNamepaths.types
+@@= skipped -5, +5 lines =@@
+ 
+     /**
+      * @typedef {C~A} C~B
++> : any
++
+      * @typedef {object} C~A
++>C : any
++
+      */
+     /** @param {C~A} o */
+     constructor(o) {

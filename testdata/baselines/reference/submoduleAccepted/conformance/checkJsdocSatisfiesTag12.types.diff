@@ -1,6 +1,36 @@
 --- old.checkJsdocSatisfiesTag12.types
 +++ new.checkJsdocSatisfiesTag12.types
-@@= skipped -75, +75 lines =@@
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ /**
+  * @typedef {Object} T1
++>T1 : any
++
+  * @property {number} a
++>a : any
++
+  */
+ 
+ /**
+  * @typedef {Object} T2
++>T2 : any
++
+  * @property {string} a
++>a : any
++
+  */
+ 
+ /**
+  * @typedef {Object} T3
++>T3 : any
++
+  * @property {"a" | "b"} a
++>a : any
++
+  */
+ 
+ /**
+@@= skipped -73, +85 lines =@@
   * @satisfies {T3}
   */
  const t7 = { a: "a" };

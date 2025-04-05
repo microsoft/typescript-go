@@ -3,12 +3,15 @@
 === checkJsdocTypeTagOnExportAssignment4.js ===
 
 === a.js ===
-
 /**
  * @typedef {number} Foo
+>Foo : any
+
  */
 
 /** @type {Foo} */
 export default "";
+>"" : number
+>"" : ""
 
 

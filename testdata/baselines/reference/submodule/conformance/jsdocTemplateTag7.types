@@ -4,13 +4,15 @@
 /**
  * @template const T
  * @typedef {[T]} X
+>X : any
+
  */
 
 /**
  * @template const T
  */
 class C { }
->C : C
+>C : C<T>
 
 /**
  * @template private T
@@ -18,10 +20,10 @@ class C { }
  * @returns {T}
  */
 function f(x) {
->f : (x: any) => any
->x : any
+>f : <T>(x: T) => T
+>x : T
 
     return x;
->x : any
+>x : T
 }
 

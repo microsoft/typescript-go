@@ -3,8 +3,14 @@
 === /a.js ===
 /**
  * @typedef {Object} Point2d
+>Point2d : any
+
  * @property {number} x
+>x : any
+
  * @property {number} y
+>y : any
+
  */
 
 // Undesirable behavior today with type annotation

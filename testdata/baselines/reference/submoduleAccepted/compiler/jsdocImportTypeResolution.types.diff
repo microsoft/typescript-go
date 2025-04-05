@@ -1,9 +1,14 @@
 --- old.jsdocImportTypeResolution.types
 +++ new.jsdocImportTypeResolution.types
-@@= skipped -11, +11 lines =@@
+@@= skipped -7, +7 lines =@@
+ === usage.js ===
+ /**
+  * @typedef {Object} options
++>options : any
++
+  * @property {import("./module").MyClass} option
++>option : any
++
   */
  /** @type {options} */
  let v;
-->v : options
-+>v : any
- 

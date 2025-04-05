@@ -1,6 +1,17 @@
 --- old.checkJsdocTypeTag7.types
 +++ new.checkJsdocTypeTag7.types
-@@= skipped -9, +9 lines =@@
+@@= skipped -2, +2 lines =@@
+ === test.js ===
+ /**
+  * @typedef {(a: string, b: number) => void} Foo
++>Foo : any
++>a : string
++>b : number
++
+  */
+ 
+ class C {
+@@= skipped -7, +11 lines =@@
  
      /** @type {Foo} */
      foo(a, b) {}

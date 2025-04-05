@@ -18,8 +18,14 @@ useThing(Thing.a);
 
 /**
  * @typedef {Object} LogEntry
+>LogEntry : any
+
  * @property {string} type
+>type : any
+
  * @property {number} time
+>time : any
+
  */
 
 cbThing(type => {
@@ -30,7 +36,7 @@ cbThing(type => {
 
     /** @type {LogEntry} */
     const logEntry = {
->logEntry : { time: number; type: any; }
+>logEntry : LogEntry
 >{        time: Date.now(),        type,    } : { time: number; type: any; }
 
         time: Date.now(),

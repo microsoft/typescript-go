@@ -10,6 +10,8 @@ var exports = {};
 /**
  * @typedef {string}
  */
+> : any
+
 exports.SomeName;
 >exports.SomeName : any
 >exports : {}
@@ -17,6 +19,6 @@ exports.SomeName;
 
 /** @type {exports.SomeName} */
 const myString = 'str';
->myString : "str"
+>myString : SomeName
 >'str' : "str"
 

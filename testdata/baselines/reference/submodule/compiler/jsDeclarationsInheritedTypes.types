@@ -3,12 +3,20 @@
 === a.js ===
 /**
  * @typedef A
+>A : any
+
  * @property {string} a
+>a : any
+
  */
 
 /**
  * @typedef B
+>B : any
+
  * @property {number} b
+>b : any
+
  */
 
  class C1 {
@@ -18,7 +26,7 @@
      * @type {A}
      */
     value;
->value : any
+>value : A
 }
 
 class C2 extends C1 {
@@ -29,7 +37,7 @@ class C2 extends C1 {
      * @type {A}
      */
     value;
->value : any
+>value : A
 }
 
 class C3 extends C1 {
@@ -40,6 +48,6 @@ class C3 extends C1 {
      * @type {A & B}
      */
     value;
->value : any
+>value : A & B
 }
 

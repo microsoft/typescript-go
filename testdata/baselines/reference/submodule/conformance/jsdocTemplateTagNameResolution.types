@@ -5,6 +5,8 @@
  * @template T
  * @template {keyof T} K
  * @typedef {T[K]} Foo
+>Foo : any
+
  */
 
 const x = { a: 1 };
@@ -15,6 +17,6 @@ const x = { a: 1 };
 
 /** @type {Foo<typeof x, "a">} */
 const y = "a";
->y : "a"
+>y : T
 >"a" : "a"
 

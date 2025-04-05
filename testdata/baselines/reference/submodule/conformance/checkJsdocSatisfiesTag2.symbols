@@ -2,6 +2,8 @@
 
 === /a.js ===
 /** @typedef {Object.<string, (n: number) => boolean>} Predicates */
+>Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+>n : Symbol(n, Decl(a.js, 0, 31))
 
 const p = /** @satisfies {Predicates} */ ({
 >p : Symbol(p, Decl(a.js, 2, 5))

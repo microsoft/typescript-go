@@ -1,22 +1,17 @@
 --- old.topLevelBlockExpando.types
 +++ new.topLevelBlockExpando.types
-@@= skipped -55, +55 lines =@@
-  * @param {Human} param used as a validation tool
+@@= skipped -47, +47 lines =@@
+ // Creates a type { first:string, last: string }
+ /**
+  * @typedef {Object} Human - creates a new type named 'SpecialType'
++>Human : Human
++
+  * @property {string} first - a string property of SpecialType
++>first : any
++
+  * @property {string} last - a number property of SpecialType
++>last : any
++
   */
- function doHumanThings(param) {}
-->doHumanThings : (param: Human) => void
-->param : Human
-+>doHumanThings : (param: any) => void
-+>param : any
  
- const dice1 = () => Math.floor(Math.random() * 6);
- >dice1 : { (): number; last: string; }
-@@= skipped -59, +59 lines =@@
-   
-   doHumanThings(dice2)
- >doHumanThings(dice2) : void
-->doHumanThings : (param: Human) => void
-+>doHumanThings : (param: any) => void
- >dice2 : { (): number; first: string; last: string; }
- }
- 
+ /**

@@ -1,10 +1,23 @@
 --- old.checkJsdocTypeTagOnExportAssignment8.types
 +++ new.checkJsdocTypeTagOnExportAssignment8.types
-@@= skipped -10, +10 lines =@@
+@@= skipped -4, +4 lines =@@
+ === a.js ===
+ /**
+  * @typedef Foo
++>Foo : any
++
+  * @property {string} a
++>a : any
++
+  * @property {'b'} b
++>b : any
++
+  */
  
  /** @type {Foo} */
  export default {
 ->{    a: 'a',    b: 'b'} : { a: string; b: "b"; }
++>{    a: 'a',    b: 'b'} : Foo
 +>{    a: 'a',    b: 'b'} : { a: string; b: string; }
  
      a: 'a',

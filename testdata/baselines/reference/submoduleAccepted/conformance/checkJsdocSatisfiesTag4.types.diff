@@ -1,0 +1,26 @@
+--- old.checkJsdocSatisfiesTag4.types
++++ new.checkJsdocSatisfiesTag4.types
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ /**
+  * @typedef {Object} Foo
++>Foo : any
++
+  * @property {number} a
++>a : any
++
+  */
+ export default /** @satisfies {Foo} */ ({});
+ >({}) : {}
+@@= skipped -9, +13 lines =@@
+ === /b.js ===
+ /**
+  * @typedef {Object} Foo
++>Foo : any
++
+  * @property {number} a
++>a : any
++
+  */
+ 
+ export default /** @satisfies {Foo} */ ({ a: 1 });

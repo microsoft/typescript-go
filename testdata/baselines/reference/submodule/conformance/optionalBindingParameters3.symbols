@@ -3,7 +3,11 @@
 === /a.js ===
 /**
  * @typedef Foo
+>Foo : Symbol(Foo, Decl(a.js, 1, 3))
+
  * @property {string} a
+>a : Symbol(a, Decl(a.js, 2, 3))
+
  */
 
 /**

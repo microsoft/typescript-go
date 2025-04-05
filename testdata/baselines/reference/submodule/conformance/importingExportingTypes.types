@@ -22,6 +22,8 @@ import { writeFile, WriteFileOptions, WriteFileOptions as OtherName } from "fs";
 >OtherName : any
 
 /** @typedef {{ x: any }} JSDocType */
+>JSDocType : any
+>x : any
 
 export { JSDocType };
 >JSDocType : any

@@ -2,6 +2,8 @@
 
 === mod1.js ===
 /** @typedef {number} Foo */
+>Foo : any
+
 class Bar {}
 >Bar : Bar
 

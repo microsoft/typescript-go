@@ -1,6 +1,15 @@
 --- old.jsDeclarationsImportTypeBundled.symbols
 +++ new.jsDeclarationsImportTypeBundled.symbols
-@@= skipped -11, +11 lines =@@
+@@= skipped -2, +2 lines =@@
+ === folder/mod1.js ===
+ /**
+  * @typedef {{x: number}} Item
++>x : Symbol(x, Decl(mod1.js, 1, 14))
++
+  */
+ /**
+  * @type {Item};
+@@= skipped -9, +11 lines =@@
  >x : Symbol(x, Decl(mod1.js, 6, 11))
  
  module.exports = x;

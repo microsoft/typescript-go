@@ -1,11 +1,14 @@
 --- old.jsdocTypedefMissingType.types
 +++ new.jsdocTypedefMissingType.types
-@@= skipped -15, +15 lines =@@
+@@= skipped -10, +10 lines =@@
+ // OK: missing a type, but have property tags.
+ /**
+  * @typedef Person
++>Person : any
++
+  * @property {string} name
++>name : any
++
+  */
  
  /** @type Person */
- const person = { name: "" };
-->person : Person
-+>person : { name: string; }
- >{ name: "" } : { name: string; }
- >name : string
- >"" : ""
