@@ -438,6 +438,9 @@ func entityNameToString(name *ast.Node) string {
 	case ast.KindThisKeyword:
 		return "this"
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
+		if ast.NodeIsSynthesized(name) {
+			return name.Text()
+		}
 		return scanner.GetTextOfNode(name)
 	case ast.KindQualifiedName:
 		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
