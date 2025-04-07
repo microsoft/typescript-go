@@ -61,7 +61,7 @@ func getAssignmentDeclarationKind(bin *ast.BinaryExpression) jsDeclarationKind {
 		return jsDeclarationKindModuleExports
 	} else if ast.IsAccessExpression(bin.Left) &&
 		(isModuleExportsAccessExpression(bin.Left.Expression()) || isExport(bin.Left.Expression())) &&
-		
+
 		(ast.IsIdentifier(ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left)) || ast.IsStringLiteralLike(ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left))) {
 		return jsDeclarationKindExportsProperty
 	}
