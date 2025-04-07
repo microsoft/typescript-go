@@ -1,12 +1,6 @@
 --- old.jsxChildrenArrayWrongType.errors.txt
 +++ new.jsxChildrenArrayWrongType.errors.txt
 @@= skipped -0, +0 lines =@@
-+react18/react18.d.ts(39,22): error TS2307: Cannot find module 'csstype' or its corresponding type declarations.
-+react18/react18.d.ts(40,28): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
-+react18/react18.d.ts(41,53): error TS2307: Cannot find module 'scheduler/tracing' or its corresponding type declarations.
-+react18/react18.d.ts(230,10): error TS2456: Type alias 'ReactFragment' circularly references itself.
-+react18/react18.d.ts(230,26): error TS2304: Cannot find name 'Iterable'.
-+react18/react18.d.ts(231,10): error TS2456: Type alias 'ReactNode' circularly references itself.
  index.tsx(11,6): error TS2769: No overload matches this call.
 -  Overload 2 of 2, '(props: PropsType, context: any): Foo', gave the following error.
 -    Type 'unknown' is not assignable to type 'string | boolean'.
@@ -22,7 +16,7 @@
  
  
  ==== index.tsx (1 errors) ====
-@@= skipped -18, +27 lines =@@
+@@= skipped -18, +21 lines =@@
          <Foo>
           ~~~
  !!! error TS2769: No overload matches this call.

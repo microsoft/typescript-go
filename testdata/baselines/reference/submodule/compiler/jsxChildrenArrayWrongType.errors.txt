@@ -1,9 +1,3 @@
-react18/react18.d.ts(39,22): error TS2307: Cannot find module 'csstype' or its corresponding type declarations.
-react18/react18.d.ts(40,28): error TS2307: Cannot find module 'prop-types' or its corresponding type declarations.
-react18/react18.d.ts(41,53): error TS2307: Cannot find module 'scheduler/tracing' or its corresponding type declarations.
-react18/react18.d.ts(230,10): error TS2456: Type alias 'ReactFragment' circularly references itself.
-react18/react18.d.ts(230,26): error TS2304: Cannot find name 'Iterable'.
-react18/react18.d.ts(231,10): error TS2456: Type alias 'ReactNode' circularly references itself.
 index.tsx(11,6): error TS2769: No overload matches this call.
   The last overload gave the following error.
     Type '{ children: [unknown, string]; }' is not assignable to type 'Readonly<PropsType>'.
