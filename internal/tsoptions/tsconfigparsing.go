@@ -1433,7 +1433,7 @@ func getFileNamesFromConfigSpecs(
 	extraFileExtensions = []fileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
-	
+
 	var (
 		// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
 		// file map with a possibly case insensitive key. We use this map later when when including
