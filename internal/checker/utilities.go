@@ -650,9 +650,11 @@ func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
 	if n2 == nil {
 		return -1
 	}
-	f1 := c.fileIndexMap[ast.GetSourceFileOfNode(n1)]
-	f2 := c.fileIndexMap[ast.GetSourceFileOfNode(n2)]
-	if f1 != f2 {
+	s1 := ast.GetSourceFileOfNode(n1)
+	s2 := ast.GetSourceFileOfNode(n2)
+	if s1 != s2 {
+		f1 := c.fileIndexMap[s1]
+		f2 := c.fileIndexMap[s2]
 		// Order by index of file in the containing program
 		return f1 - f2
 	}
@@ -1664,7 +1666,7 @@ func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
 	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
 }
 
-func getTypeParameterFromJsDoc(node *ast.Node) *ast.Node {
+func getTypeParameterFromJSDoc(node *ast.Node) *ast.Node {
 	name := node.Name().Text()
 	typeParameters := node.Parent.Parent.Parent.TypeParameters()
 	return core.Find(typeParameters, func(p *ast.Node) bool { return p.Name().Text() == name })
@@ -1783,34 +1785,34 @@ func skipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions)
 
 func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
 	// !!!
-	// if (!!sourceFile.checkJsDirective && sourceFile.checkJsDirective.enabled === false) return false;
+	// if (!!sourceFile.checkJSDirective && sourceFile.checkJSDirective.enabled === false) return false;
 
 	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
 		return true
 	}
 
-	isJs := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
-	isCheckJs := isJs && isCheckJsEnabledForFile(sourceFile, options)
-	isPlainJs := isPlainJsFile(sourceFile, options.CheckJs)
+	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isCheckJS := isJS && isCheckJSEnabledForFile(sourceFile, options)
+	isPlainJS := isPlainJSFile(sourceFile, options.CheckJs)
 
 	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
 	// - external: files that are added by plugins
-	return isPlainJs || isCheckJs || sourceFile.ScriptKind == core.ScriptKindDeferred
+	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
 }
 
-func isCheckJsEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
+func isCheckJSEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
 	// !!!
-	// if sourceFile.CheckJsDirective != nil {
-	// 	return sourceFile.CheckJsDirective.Enabled
+	// if sourceFile.CheckJSDirective != nil {
+	// 	return sourceFile.CheckJSDirective.Enabled
 	// }
 	return compilerOptions.CheckJs == core.TSTrue
 }
 
-func isPlainJsFile(file *ast.SourceFile, checkJs core.Tristate) bool {
+func isPlainJSFile(file *ast.SourceFile, checkJs core.Tristate) bool {
 	// !!!
-	// return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
+	// return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJSDirective == nil && checkJs == core.TSUnknown
 	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && checkJs == core.TSUnknown
 }
 

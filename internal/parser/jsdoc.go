@@ -40,15 +40,15 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 	p.hasDeprecatedTag = false
 	ranges := getJSDocCommentRanges(&p.factory, p.jsdocCommentRangesSpace, node, p.sourceText)
 	p.jsdocCommentRangesSpace = ranges[:0]
-	jsDoc := p.nodeSlicePool.NewSlice(len(ranges))[:0]
+	jsdoc := p.nodeSlicePool.NewSlice(len(ranges))[:0]
 	pos := node.Pos()
 	for _, comment := range ranges {
 		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End(), pos); parsed != nil {
-			jsDoc = append(jsDoc, parsed)
+			jsdoc = append(jsdoc, parsed)
 			pos = parsed.End()
 		}
 	}
-	if len(jsDoc) != 0 {
+	if len(jsdoc) != 0 {
 		if node.Flags&ast.NodeFlagsHasJSDoc == 0 {
 			node.Flags |= ast.NodeFlagsHasJSDoc
 		}
@@ -57,9 +57,9 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 			node.Flags |= ast.NodeFlagsDeprecated
 		}
 		if p.scriptKind == core.ScriptKindJS || p.scriptKind == core.ScriptKindJSX {
-			p.attachTagsToHost(node, jsDoc)
+			p.attachTagsToHost(node, jsdoc)
 		}
-		p.jsdocCache[node] = jsDoc
+		p.jsdocCache[node] = jsdoc
 	}
 }
 
@@ -94,7 +94,7 @@ func (p *Parser) attachTagsToHost(parent *ast.Node, jsDoc []*ast.Node) {
 					t = typeExpression.Type()
 				case ast.KindJSDocTypeLiteral:
 					members := p.nodeSlicePool.NewSlice(0)
-					for _, member := range typeExpression.AsJSDocTypeLiteral().JsDocPropertyTags {
+					for _, member := range typeExpression.AsJSDocTypeLiteral().JSDocPropertyTags {
 						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), nil /*postfixToken*/, member.Type(), nil /*initializer*/)
 						prop.Loc = member.Loc
 						prop.Flags = p.contextFlags | ast.NodeFlagsReparsed
@@ -1070,7 +1070,7 @@ func (p *Parser) parseImportTag(start int, tagName *ast.IdentifierNode, margin i
 		identifier = p.parseIdentifier()
 	}
 
-	importClause := p.tryParseImportClause(identifier, afterImportTagPos, true /*isTypeOnly*/, true /*skipJsDocLeadingAsterisks*/)
+	importClause := p.tryParseImportClause(identifier, afterImportTagPos, true /*isTypeOnly*/, true /*skipJSDocLeadingAsterisks*/)
 	moduleSpecifier := p.parseModuleSpecifier()
 	attributes := p.tryParseImportAttributes()
 
@@ -1084,9 +1084,9 @@ func (p *Parser) parseExpressionWithTypeArgumentsForAugments() *ast.Node {
 	usedBrace := p.parseOptional(ast.KindOpenBraceToken)
 	pos := p.nodePos()
 	expression := p.parsePropertyAccessEntityNameExpression()
-	p.scanner.SetSkipJsDocLeadingAsterisks(true)
+	p.scanner.SetSkipJSDocLeadingAsterisks(true)
 	typeArguments := p.parseTypeArguments()
-	p.scanner.SetSkipJsDocLeadingAsterisks(false)
+	p.scanner.SetSkipJSDocLeadingAsterisks(false)
 	node := p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
 	res := node
 	p.finishNode(node, pos)
@@ -1133,7 +1133,7 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 	if typeExpression == nil || isObjectOrObjectArrayTypeReference(typeExpression.Type()) {
 		var child *ast.Node
 		var childTypeTag *ast.JSDocTypeTag
-		var jsDocPropertyTags []*ast.Node
+		var jsdocPropertyTags []*ast.Node
 		for {
 			state := p.mark()
 			child = p.parseChildPropertyTag(indent)
@@ -1157,12 +1157,12 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 					break
 				}
 			} else {
-				jsDocPropertyTags = append(jsDocPropertyTags, child)
+				jsdocPropertyTags = append(jsdocPropertyTags, child)
 			}
 		}
 		if hasChildren {
 			isArrayType := typeExpression != nil && typeExpression.Type().Kind == ast.KindArrayType
-			jsdocTypeLiteral := p.factory.NewJSDocTypeLiteral(jsDocPropertyTags, isArrayType)
+			jsdocTypeLiteral := p.factory.NewJSDocTypeLiteral(jsdocPropertyTags, isArrayType)
 			if childTypeTag != nil && childTypeTag.TypeExpression != nil && !isObjectOrObjectArrayTypeReference(childTypeTag.TypeExpression.Type()) {
 				typeExpression = childTypeTag.TypeExpression
 			} else {

@@ -86,7 +86,7 @@ loop:
 		withinDeferredContext = withinDeferredContext || getIsDeferredContext(location, lastLocation)
 		switch location.Kind {
 		case ast.KindSourceFile:
-			if !ast.IsExternalOrCommonJsModule(location.AsSourceFile()) {
+			if !ast.IsExternalOrCommonJSModule(location.AsSourceFile()) {
 				break
 			}
 			fallthrough
