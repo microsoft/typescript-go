@@ -1433,25 +1433,35 @@ func getFileNamesFromConfigSpecs(
 	extraFileExtensions = []fileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
-	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
-	// file map with a possibly case insensitive key. We use this map later when when including
-	// wildcard paths.
-	var literalFileMap collections.OrderedMap[string, string]
-	// Wildcard paths (provided via the "includes" array in tsconfig.json) are stored in a
-	// file map with a possibly case insensitive key. We use this map to store paths matched
-	// via wildcard, and to handle extension priority.
-	var wildcardFileMap collections.OrderedMap[string, string]
-	// Wildcard paths of json files (provided via the "includes" array in tsconfig.json) are stored in a
-	// file map with a possibly case insensitive key. We use this map to store paths matched
-	// via wildcard of *.json kind
-	var wildCardJsonFileMap collections.OrderedMap[string, string]
-	validatedFilesSpec := configFileSpecs.validatedFilesSpec
-	validatedIncludeSpecs := configFileSpecs.validatedIncludeSpecs
-	validatedExcludeSpecs := configFileSpecs.validatedExcludeSpecs
-	// Rather than re-query this for each file and filespec, we query the supported extensions
-	// once and store it on the expansion context.
-	supportedExtensions := GetSupportedExtensions(options, extraFileExtensions)
-	supportedExtensionsWithJsonIfResolveJsonModule := GetSupportedExtensionsWithJsonIfResolveJsonModule(options, supportedExtensions)
+	
+	var (
+		// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
+		// file map with a possibly case insensitive key. We use this map later when when including
+		// wildcard paths.
+		literalFileMap collections.OrderedMap[string, string]
+		// Wildcard paths (provided via the "includes" array in tsconfig.json) are stored in a
+		// file map with a possibly case insensitive key. We use this map to store paths matched
+		// via wildcard, and to handle extension priority.
+		wildcardFileMap collections.OrderedMap[string, string]
+		// Wildcard paths of json files (provided via the "includes" array in tsconfig.json) are stored in a
+		// file map with a possibly case insensitive key. We use this map to store paths matched
+		// via wildcard of *.json kind
+		wildCardJsonFileMap collections.OrderedMap[string, string]
+	)
+
+	var (
+		validatedFilesSpec    = configFileSpecs.validatedFilesSpec
+		validatedIncludeSpecs = configFileSpecs.validatedIncludeSpecs
+		validatedExcludeSpecs = configFileSpecs.validatedExcludeSpecs
+	)
+
+	var (
+		// Rather than re-query this for each file and filespec, we query the supported extensions
+		// once and store it on the expansion context.
+		supportedExtensions                            = GetSupportedExtensions(options, extraFileExtensions)
+		supportedExtensionsWithJsonIfResolveJsonModule = GetSupportedExtensionsWithJsonIfResolveJsonModule(options, supportedExtensions)
+	)
+
 	// Literal files are always included verbatim. An "include" or "exclude" specification cannot
 	// remove a literal file.
 	for _, fileName := range validatedFilesSpec {
