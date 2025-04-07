@@ -8634,7 +8634,6 @@ func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *S
 	case ast.IsBinaryExpression(node):
 		argCount = 1
 	case isJsxOpeningLikeElement(node):
-		argCount = len(args)
 		callIsIncomplete = node.Attributes().End() == node.End()
 		if callIsIncomplete {
 			return true
