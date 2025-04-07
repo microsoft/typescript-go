@@ -74,6 +74,8 @@ class Thing {
 
 /** @type {DoneStatus} */
 exports.x = {
+>x : Symbol(x, Decl(test.js, 36, 1))
+
     status: "done",
 >status : Symbol(status, Decl(test.js, 41, 13))
 
@@ -84,6 +86,9 @@ exports.x = {
 >n : Symbol(n, Decl(test.js, 43, 6))
 }
 exports.x
+>exports.x : Symbol(x, Decl(test.js, 36, 1))
+>exports : Symbol("test", Decl(test.js, 0, 0))
+>x : Symbol(x, Decl(test.js, 36, 1))
 
 /** @type {DoneStatus} */
 module.exports.y = {

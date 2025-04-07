@@ -1,20 +1,17 @@
 --- old.exportNestedNamespaces2.symbols
 +++ new.exportNestedNamespaces2.symbols
-@@= skipped -0, +0 lines =@@
- //// [tests/cases/conformance/salsa/exportNestedNamespaces2.ts] ////
- 
+@@= skipped -2, +2 lines =@@
  === mod.js ===
-+
  // Based on a pattern from adonis
  exports.formatters = {}
-->exports.formatters : Symbol(formatters, Decl(mod.js, 0, 0))
++>formatters : Symbol(formatters, Decl(mod.js, 0, 0))
+ >exports.formatters : Symbol(formatters, Decl(mod.js, 0, 0))
 ->exports : Symbol(formatters, Decl(mod.js, 0, 0))
-->formatters : Symbol(formatters, Decl(mod.js, 0, 0))
--
++>exports : Symbol("mod", Decl(mod.js, 0, 0))
+ >formatters : Symbol(formatters, Decl(mod.js, 0, 0))
+ 
  === first.js ===
- exports = require('./mod')
- >exports : Symbol("first", Decl(first.js, 0, 0))
-@@= skipped -38, +35 lines =@@
+@@= skipped -36, +37 lines =@@
  >debug : Symbol(debug, Decl(use.js, 0, 6))
  
  debug.formatters.j

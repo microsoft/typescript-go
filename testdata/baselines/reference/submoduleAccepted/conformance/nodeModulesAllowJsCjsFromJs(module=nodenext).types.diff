@@ -4,16 +4,12 @@
  
  === foo.cjs ===
  exports.foo = "foo"
-+>foo : any
++>foo : "foo"
 +>"foo" : "foo"
  >exports.foo = "foo" : "foo"
-->exports.foo : "foo"
-->exports : typeof import("foo")
-->foo : "foo"
-+>exports.foo : any
-+>exports : any
-+>foo : any
- >"foo" : "foo"
+ >exports.foo : "foo"
+ >exports : typeof import("foo")
+@@= skipped -8, +10 lines =@@
  
  === bar.ts ===
  import foo from "./foo.cjs"

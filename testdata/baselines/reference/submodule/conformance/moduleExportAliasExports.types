@@ -4,25 +4,25 @@
 // bug #27365, crashes from github.com/marijnh/Eloquent-JavaScript
 (function() {
 >(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports})() : void
->(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : { (): void; bigOak: 1; everywhere: 2; exports: typeof import("Eloquent"); }
->function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : { (): void; bigOak: 1; everywhere: 2; exports: typeof import("Eloquent"); }
+>(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : () => void
+>function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : () => void
 
 exports.bigOak = 1
->bigOak : any
+>bigOak : 1
 >1 : 1
 >exports.bigOak = 1 : 1
->exports.bigOak : any
+>exports.bigOak : 1
 >exports : typeof import("Eloquent")
->bigOak : any
+>bigOak : 1
 >1 : 1
 
 exports.everywhere = 2
->everywhere : any
+>everywhere : 2
 >2 : 2
 >exports.everywhere = 2 : 2
->exports.everywhere : any
+>exports.everywhere : 2
 >exports : typeof import("Eloquent")
->everywhere : any
+>everywhere : 2
 >2 : 2
 
 module.exports = exports

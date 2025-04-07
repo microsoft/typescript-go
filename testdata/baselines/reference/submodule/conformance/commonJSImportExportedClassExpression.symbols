@@ -17,6 +17,7 @@ function f(k) {
 
 === mod1.js ===
 exports.K = class K {
+>K : Symbol(K, Decl(mod1.js, 0, 0))
 >K : Symbol(K, Decl(mod1.js, 0, 11))
 
     values() {

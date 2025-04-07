@@ -1,9 +1,7 @@
 test.js(1,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-types1.ts(1,8): error TS1192: Module '"test"' has no default export.
 types1.ts(3,1): error TS1005: '=' expected.
-types2.ts(1,8): error TS1192: Module '"test"' has no default export.
 types2.ts(3,1): error TS1110: Type expected.
-types3.ts(1,8): error TS1192: Module '"test"' has no default export.
+types3.ts(2,13): error TS2456: Type alias 'test' circularly references itself.
 
 
 ==== test.js (1 errors) ====
@@ -13,25 +11,21 @@ types3.ts(1,8): error TS1192: Module '"test"' has no default export.
        message: ""
     }
     
-==== types1.ts (2 errors) ====
+==== types1.ts (1 errors) ====
     import test from "./test";
-           ~~~~
-!!! error TS1192: Module '"test"' has no default export.
     export type test
     
     
 !!! error TS1005: '=' expected.
-==== types2.ts (2 errors) ====
+==== types2.ts (1 errors) ====
     import test from "./test";
-           ~~~~
-!!! error TS1192: Module '"test"' has no default export.
     export type test = 
     
     
 !!! error TS1110: Type expected.
 ==== types3.ts (1 errors) ====
     import test from "./test";
-           ~~~~
-!!! error TS1192: Module '"test"' has no default export.
     export type test = test;
+                ~~~~
+!!! error TS2456: Type alias 'test' circularly references itself.
     

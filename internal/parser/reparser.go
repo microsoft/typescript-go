@@ -31,25 +31,26 @@ func (p *Parser) withCommonJS(node *ast.Node) {
 	}
 	bin := node.AsExpressionStatement().Expression.AsBinaryExpression()
 	kind := getAssignmentDeclarationKind(bin)
+	var export *ast.Node
 	switch kind {
 	case jsDeclarationKindModuleExports:
-		export := p.factory.NewJSExportAssignment(bin.Right)
+		export = p.factory.NewJSExportAssignment(bin.Right)
 		export.Flags = ast.NodeFlagsReparsed
 		export.Loc = bin.Loc
-		p.reparseList = append(p.reparseList, export)
 	case jsDeclarationKindExportsProperty:
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)
 		nodes[0].Flags = ast.NodeFlagsReparsed
 		nodes[0].Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export := p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left), bin.Right, node.AsExpressionStatement().Expression)
+		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left), bin.Right, node.AsExpressionStatement().Expression)
 		export.Flags = ast.NodeFlagsReparsed
 		export.Loc = bin.Loc
-		p.reparseList = append(p.reparseList, export)
 	}
-
-	// TODO: mark the file as a (commonjs) module if either is found
+	if export != nil {
+		p.reparseList = append(p.reparseList, export)
+		p.commonJSModuleIndicator = export
+	}
 }
 
 func getAssignmentDeclarationKind(bin *ast.BinaryExpression) jsDeclarationKind {

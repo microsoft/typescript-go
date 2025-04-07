@@ -12,13 +12,13 @@ module.exports = function () {};
 exports.blah = exports.someProp;
 >blah : any
 >exports.someProp : any
->exports : any
+>exports : typeof import("bar")
 >someProp : any
 >exports.blah = exports.someProp : any
 >exports.blah : any
->exports : any
+>exports : typeof import("bar")
 >blah : any
 >exports.someProp : any
->exports : any
+>exports : typeof import("bar")
 >someProp : any
 

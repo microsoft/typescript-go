@@ -36,13 +36,17 @@ export function C() {
 }
 
 === mod3.js ===
-
 /// <reference path="./commonjs.d.ts"/>
 /** @typedef {{ type: "a", x: 1 }} A */
 /** @typedef {{ type: "b", y: 1 }} B */
 /** @typedef {A | B} Both */
 
 exports.C = function() {
+>C : Symbol(C, Decl(mod3.js, 0, 0))
+>exports.C : Symbol(C, Decl(mod3.js, 0, 0))
+>exports : Symbol("mod3", Decl(mod3.js, 0, 0))
+>C : Symbol(C, Decl(mod3.js, 0, 0))
+
     this.p = 1
 }
 

@@ -1,11 +1,7 @@
 --- old.jsDeclarationsExportDoubleAssignmentInClosure.types
 +++ new.jsDeclarationsExportDoubleAssignmentInClosure.types
-@@= skipped -2, +2 lines =@@
- === index.js ===
- // @ts-nocheck
- function foo() {
-->foo : () => void
-+>foo : { (): void; export=: (o: any) => any; methods: () => void; }
+@@= skipped -5, +5 lines =@@
+ >foo : () => void
  
      module.exports = exports = function (o) {
 ->module.exports = exports = function (o) {        return (o == null) ? create(base) : defineProperties(Object(o), descriptors);    } : { (o: any): any; methods: () => void; }
@@ -54,16 +50,19 @@
  
      };
      const m = function () {
-@@= skipped -35, +44 lines =@@
+@@= skipped -32, +41 lines =@@
          // I have no idea what to put here
      }
      exports.methods = m;
-+>methods : any
++>methods : () => void
 +>m : () => void
  >exports.methods = m : () => void
- >exports.methods : any
+->exports.methods : any
 ->exports : any
+->methods : any
++>exports.methods : () => void
 +>exports : typeof import("index")
- >methods : any
++>methods : () => void
  >m : () => void
  }
+ 

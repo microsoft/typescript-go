@@ -4281,7 +4281,7 @@ func IsAnyExportAssignment(node *Node) bool {
 
 // It is exported, so safest to have it require a modifier list, but it should always only contain `export`.
 // bind: This represents an export, but *not* a local declaration.
-// bind: it needs to result in a export on module.exports 
+// bind: it needs to result in a export on module.exports
 // ugh: Strada uses its horrible undeclared namespace code to bind this.
 // bind: wait no! it also marks it with a symbolflag. So I guess I need an ad-hoc version of this (not sure what to with `exports`, nested or otherwise, ofc)
 // (and, sadly, I need it for ExportAssignment too)
@@ -4291,9 +4291,9 @@ type CommonJSExport struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
-	name     *IdentifierNode
+	name        *IdentifierNode
 	Initializer *Expression
-	Original *Expression // BinaryExpression
+	Original    *Expression // BinaryExpression
 }
 
 func (f *NodeFactory) NewCommonJSExport(modifiers *ModifierList, name *IdentifierNode, initializer *Expression, original *Expression) *Node {
@@ -9733,7 +9733,7 @@ type SourceFile struct {
 
 	// !!!
 
-	CommonJsModuleIndicator *Node
+	CommonJSModuleIndicator *Node
 	ExternalModuleIndicator *Node
 	JsGlobalAugmentations   SymbolTable
 }
@@ -9817,7 +9817,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.ReferencedFiles = other.ReferencedFiles
 	node.TypeReferenceDirectives = other.TypeReferenceDirectives
 	node.LibReferenceDirectives = other.LibReferenceDirectives
-	node.CommonJsModuleIndicator = other.CommonJsModuleIndicator
+	node.CommonJSModuleIndicator = other.CommonJSModuleIndicator
 	node.ExternalModuleIndicator = other.ExternalModuleIndicator
 	node.JsGlobalAugmentations = other.JsGlobalAugmentations
 	node.Flags |= other.Flags

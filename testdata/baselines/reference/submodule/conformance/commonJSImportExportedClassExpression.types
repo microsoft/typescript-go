@@ -21,7 +21,7 @@ function f(k) {
 
 === mod1.js ===
 exports.K = class K {
->K : any
+>K : typeof K
 >class K {    values() {    }} : typeof K
 >K : typeof K
 

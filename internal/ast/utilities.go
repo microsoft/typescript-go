@@ -1441,18 +1441,12 @@ func IsExternalModule(file *SourceFile) bool {
 }
 
 func IsExternalOrCommonJsModule(file *SourceFile) bool {
-	return file.ExternalModuleIndicator != nil || file.CommonJsModuleIndicator != nil
+	return file.ExternalModuleIndicator != nil || file.CommonJSModuleIndicator != nil
 }
 
 // TODO: Should we deprecate `IsExternalOrCommonJsModule` in favor of this function?
-// Answer: yes, I don't think we ever care about the difference
-// Second answer: I don't think we ever set CommonJsModuleIndicator, so IsExternalModule is sufficient
 func IsEffectiveExternalModule(node *SourceFile, compilerOptions *core.CompilerOptions) bool {
-	return IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJsModuleIndicator != nil)
-}
-
-func IsEffectiveExternalModuleWorker(node *SourceFile, moduleKind core.ModuleKind) bool {
-	return IsExternalModule(node) || (isCommonJSContainingModuleKind(moduleKind) && node.CommonJsModuleIndicator != nil)
+	return IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJSModuleIndicator != nil)
 }
 
 func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
@@ -1462,7 +1456,7 @@ func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
 func IsExternalModuleIndicator(node *Statement) bool {
 	return HasSyntacticModifier(node, ModifierFlagsExport) ||
 		IsImportEqualsDeclaration(node) && IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) ||
-		IsImportDeclaration(node) || IsExportAssignment(node) || IsJSExportAssignment(node) || IsExportDeclaration(node)
+		IsImportDeclaration(node) || IsExportAssignment(node) || IsExportDeclaration(node)
 }
 
 func IsExportNamespaceAsDefaultDeclaration(node *Node) bool {
@@ -2411,17 +2405,17 @@ func IsNonLocalAlias(symbol *Symbol, excludes SymbolFlags) bool {
 
 // An alias symbol is created by one of the following declarations:
 //
-//			import <symbol> = ...
-//	        const <symbol> = ... (JS only)
-//	        const { <symbol>, ... } = ... (JS only)
-//			import <symbol> from ...
-//			import * as <symbol> from ...
-//			import { x as <symbol> } from ...
-//			export { x as <symbol> } from ...
-//			export * as ns <symbol> from ...
-//			export = <EntityNameExpression>
-//			export default <EntityNameExpression>
-//		    module.exports = <EntityNameExpression> (JS only)
+//	import <symbol> = ...
+//	const <symbol> = ... (JS only)
+//	const { <symbol>, ... } = ... (JS only)
+//	import <symbol> from ...
+//	import * as <symbol> from ...
+//	import { x as <symbol> } from ...
+//	export { x as <symbol> } from ...
+//	export * as ns <symbol> from ...
+//	export = <EntityNameExpression>
+//	export default <EntityNameExpression>
+//	module.exports = <EntityNameExpression> (JS only)
 func IsAliasSymbolDeclaration(node *Node) bool {
 	switch node.Kind {
 	case KindImportEqualsDeclaration, KindNamespaceExportDeclaration, KindNamespaceImport, KindNamespaceExport,

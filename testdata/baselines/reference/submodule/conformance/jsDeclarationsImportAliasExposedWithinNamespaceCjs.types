@@ -83,11 +83,11 @@ const myTypes = {
 /** @typedef {myTypes.typeB|Function} myTypes.typeC */
 
 exports.myTypes = myTypes;
->myTypes : any
+>myTypes : {}
 >myTypes : {}
 >exports.myTypes = myTypes : {}
->exports.myTypes : any
->exports : any
->myTypes : any
+>exports.myTypes : {}
+>exports : typeof import("file")
+>myTypes : {}
 >myTypes : {}
 

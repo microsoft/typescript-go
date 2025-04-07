@@ -112,7 +112,7 @@ exports.x = {
 }
 exports.x
 >exports.x : any
->exports : any
+>exports : typeof import("test")
 >x : any
 
 /** @type {DoneStatus} */

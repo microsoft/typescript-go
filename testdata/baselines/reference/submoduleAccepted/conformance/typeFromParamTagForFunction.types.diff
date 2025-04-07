@@ -30,7 +30,7 @@
  === a.js ===
  const { A } = require("./a-ext");
 ->A : typeof A
-+>A : () => void
++>A : any
  >require("./a-ext") : typeof import("a-ext")
  >require : (id: string) => any
  >"./a-ext" : "./a-ext"
@@ -53,11 +53,9 @@
 ->exports.B = class {    constructor() {        this.x = 1;    }} : typeof B
 ->exports.B : typeof B
 ->exports : typeof import("b-ext")
-->B : typeof B
-+>B : any
+ >B : typeof B
  >class {    constructor() {        this.x = 1;    }} : typeof B
  
-     constructor() {
 @@= skipped -45, +44 lines =@@
  >this : this
  >x : any

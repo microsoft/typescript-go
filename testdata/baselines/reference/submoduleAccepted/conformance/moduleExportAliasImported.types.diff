@@ -4,18 +4,16 @@
  
  === bug28014.js ===
  exports.version = 1
-+>version : any
++>version : 1
 +>1 : 1
  >exports.version = 1 : 1
-->exports.version : 1
+ >exports.version : 1
 ->exports : typeof alias
-->version : 1
-+>exports.version : any
-+>exports : any
-+>version : any
++>exports : typeof import("bug28014")
+ >version : 1
  >1 : 1
  
- function alias() { }
+@@= skipped -10, +12 lines =@@
  >alias : typeof alias
  
  module.exports = alias

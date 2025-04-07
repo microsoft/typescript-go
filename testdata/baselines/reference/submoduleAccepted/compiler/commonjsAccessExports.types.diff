@@ -4,26 +4,12 @@
  
  === /a.js ===
  exports.x = 0;
-+>x : any
++>x : 0
 +>0 : 0
  >exports.x = 0 : 0
-->exports.x : 0
-->exports : typeof import("/a")
-->x : 0
-+>exports.x : any
-+>exports : any
-+>x : any
- >0 : 0
- 
- exports.x;
-->exports.x : 0
-->exports : typeof import("/a")
-->x : 0
-+>exports.x : any
-+>exports : any
-+>x : any
- 
- // Works nested
+ >exports.x : 0
+ >exports : typeof import("/a")
+@@= skipped -15, +17 lines =@@
  {
      // 'exports' does not provide a contextual type to a function-class
      exports.Cls = function() {
@@ -54,11 +40,10 @@
 ->instance : Cls
 ->new exports.Cls() : Cls
 ->exports.Cls : typeof Cls
-->exports : typeof import("/a")
-->Cls : typeof Cls
 +>instance : any
 +>new exports.Cls() : any
 +>exports.Cls : any
-+>exports : any
+ >exports : typeof import("/a")
+->Cls : typeof Cls
 +>Cls : any
  

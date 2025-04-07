@@ -1,8 +1,6 @@
-mod1.js(7,1): error TS2304: Cannot find name 'exports'.
 mod1.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod1.js(10,1): error TS2300: Duplicate identifier 'export='.
 mod1.js(10,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-mod1.js(20,1): error TS2304: Cannot find name 'exports'.
 mod1.js(23,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
 
@@ -15,7 +13,7 @@ mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
     var bb;
     var bbb = new mod.Baz();
     
-==== mod1.js (7 errors) ====
+==== mod1.js (5 errors) ====
     // error
     
     /** @typedef {number} Foo */
@@ -23,8 +21,6 @@ mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
     
     /** @typedef {number} Bar */
     exports.Bar = class { }
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'exports'.
     
     /** @typedef {number} Baz */
     module.exports = {
@@ -48,8 +44,6 @@ mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
     
     /** @typedef {number} Quid */
     exports.Quid = 2;
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'exports'.
     
     /** @typedef {number} Quack */
     module.exports = {

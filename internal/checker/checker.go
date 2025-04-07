@@ -5050,20 +5050,6 @@ func (c *Checker) getTypeFromImportAttributes(node *ast.Node) *Type {
 	return links.resolvedType
 }
 
-func (c *Checker) checkJSImportEqualsDeclaration(node *ast.Node) {
-	if c.checkGrammarModuleElementContext(node, diagnostics.An_import_declaration_can_only_be_used_at_the_top_level_of_a_module) {
-		return // If we hit an import declaration in an illegal context, just bail out to avoid cascading errors.
-	}
-	if c.checkExternalImportOrExportDeclaration(node) {
-		c.checkImportBinding(node)
-		c.markLinkedReferences(node, ReferenceHintExportImportEquals, nil, nil)
-		if core.ModuleKindES2015 <= c.moduleKind && c.moduleKind <= core.ModuleKindESNext {
-			// Import equals declaration cannot be emitted as ESM
-			c.grammarErrorOnNode(node, diagnostics.Import_assignment_cannot_be_used_when_targeting_ECMAScript_modules_Consider_using_import_Asterisk_as_ns_from_mod_import_a_from_mod_import_d_from_mod_or_another_module_format_instead)
-		}
-	}
-}
-
 func (c *Checker) checkImportEqualsDeclaration(node *ast.Node) {
 	diagnostic := core.IfElse(ast.IsInJSFile(node),
 		diagnostics.An_import_declaration_can_only_be_used_at_the_top_level_of_a_module,
@@ -15323,7 +15309,8 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindEnumMember:
 		result = c.getTypeOfEnumMember(symbol)
 	case ast.KindCommonJSExport:
-		// TODO: Ignore if ES module marker is set ofn the file what is this CPU carspk
+		// TODO: Ignore if ES module marker is set on the file
+		// TODO: This is only needed to get the type of the export (or check the initializer against it, but that's tautological)
 		result = c.checkExpression(declaration.AsCommonJSExport().Initializer)
 	default:
 		panic("Unhandled case in getTypeOfVariableOrParameterOrPropertyWorker: " + declaration.Kind.String())
@@ -29313,7 +29300,7 @@ func (c *Checker) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
 // `getSymbolOfDeclaration` for a declaration, etc.
 func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Symbol {
 	if ast.IsSourceFile(node) {
-		if ast.IsExternalModule(node.AsSourceFile()) {
+		if ast.IsExternalOrCommonJsModule(node.AsSourceFile()) {
 			return c.getMergedSymbol(node.Symbol())
 		}
 		return nil
@@ -29617,7 +29604,7 @@ func (c *Checker) isThisPropertyAndThisTyped(node *ast.Node) bool {
 }
 
 func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
-	if ast.IsSourceFile(node) && !ast.IsExternalModule(node.AsSourceFile()) {
+	if ast.IsSourceFile(node) && !ast.IsExternalOrCommonJsModule(node.AsSourceFile()) {
 		return c.errorType
 	}
 

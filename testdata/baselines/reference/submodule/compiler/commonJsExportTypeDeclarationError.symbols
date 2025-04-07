@@ -31,5 +31,5 @@ import test from "./test";
 
 export type test = test;
 >test : Symbol(test, Decl(types3.ts, 0, 26))
->test : Symbol(test, Decl(types3.ts, 0, 6), Decl(types3.ts, 0, 26))
+>test : Symbol(test, Decl(types3.ts, 0, 26))
 

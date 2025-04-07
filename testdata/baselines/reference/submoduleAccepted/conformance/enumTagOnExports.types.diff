@@ -8,10 +8,9 @@
 +>{} : {}
  >exports.a = {} : {}
 ->exports.a : typeof a
-->exports : typeof import("enumTagOnExports")
-->a : typeof a
 +>exports.a : any
-+>exports : any
+ >exports : typeof import("enumTagOnExports")
+->a : typeof a
 +>a : any
  >{} : {}
  

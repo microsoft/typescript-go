@@ -5,22 +5,20 @@
 -mod1.js(4,7): error TS2300: Duplicate identifier 'Foo'.
 -mod1.js(9,23): error TS2300: Duplicate identifier 'Baz'.
 -mod1.js(11,5): error TS2300: Duplicate identifier 'Baz'.
-+mod1.js(7,1): error TS2304: Cannot find name 'exports'.
 +mod1.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +mod1.js(10,1): error TS2300: Duplicate identifier 'export='.
 +mod1.js(10,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-+mod1.js(20,1): error TS2304: Cannot find name 'exports'.
 +mod1.js(23,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
  
  
  ==== use.js (0 errors) ====
-@@= skipped -11, +14 lines =@@
+@@= skipped -11, +12 lines =@@
      var bb;
      var bbb = new mod.Baz();
      
 -==== mod1.js (4 errors) ====
-+==== mod1.js (7 errors) ====
++==== mod1.js (5 errors) ====
      // error
      
      /** @typedef {number} Foo */
@@ -32,8 +30,6 @@
      
      /** @typedef {number} Bar */
      exports.Bar = class { }
-+    ~~~~~~~
-+!!! error TS2304: Cannot find name 'exports'.
      
      /** @typedef {number} Baz */
 -                          ~~~
@@ -58,12 +54,7 @@
      
      // ok
      
-@@= skipped -31, +33 lines =@@
-     
-     /** @typedef {number} Quid */
-     exports.Quid = 2;
-+    ~~~~~~~
-+!!! error TS2304: Cannot find name 'exports'.
+@@= skipped -34, +34 lines =@@
      
      /** @typedef {number} Quack */
      module.exports = {

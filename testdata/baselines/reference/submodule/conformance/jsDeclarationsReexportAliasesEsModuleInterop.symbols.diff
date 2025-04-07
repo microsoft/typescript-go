@@ -13,13 +13,15 @@
  === usage.js ===
  import {default as Fooa} from "./cls";
 ->default : Symbol(export=, Decl(cls.js, 0, 12))
++>default : Symbol(Foo, Decl(cls.js, 0, 12))
  >Fooa : Symbol(Fooa, Decl(usage.js, 0, 8))
  
  export const x = new Fooa();
-@@= skipped -15, +12 lines =@@
+@@= skipped -15, +13 lines =@@
  >Fooa : Symbol(Fooa, Decl(usage.js, 0, 8))
  
  export {default as Foob} from "./cls";
 ->default : Symbol(export=, Decl(cls.js, 0, 12))
++>default : Symbol(Foo, Decl(cls.js, 0, 12))
  >Foob : Symbol(Foob, Decl(usage.js, 4, 8))
  

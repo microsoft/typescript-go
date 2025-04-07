@@ -48,13 +48,19 @@ var B = function B() {
     this.b = 2
 }
 exports.A = A
+>A : Symbol(A, Decl(mod.js, 6, 1))
 >A : Symbol(A, Decl(mod.js, 1, 3))
->exports : Symbol(exports, Decl(types.d.ts, 1, 11))
+>exports.A : Symbol(A, Decl(mod.js, 6, 1))
+>exports : Symbol("mod", Decl(mod.js, 0, 0))
+>A : Symbol(A, Decl(mod.js, 6, 1))
 >A : Symbol(A, Decl(mod.js, 1, 3))
 
 exports.B = B
+>B : Symbol(B, Decl(mod.js, 7, 13))
 >B : Symbol(B, Decl(mod.js, 4, 3))
->exports : Symbol(exports, Decl(types.d.ts, 1, 11))
+>exports.B : Symbol(B, Decl(mod.js, 7, 13))
+>exports : Symbol("mod", Decl(mod.js, 0, 0))
+>B : Symbol(B, Decl(mod.js, 7, 13))
 >B : Symbol(B, Decl(mod.js, 4, 3))
 
 A.prototype = B.prototype = {

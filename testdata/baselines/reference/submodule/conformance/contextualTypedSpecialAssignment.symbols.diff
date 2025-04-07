@@ -68,11 +68,10 @@
  exports.x = {
 ->exports.x : Symbol(x, Decl(test.js, 36, 1))
 ->exports : Symbol(x, Decl(test.js, 36, 1))
-->x : Symbol(x, Decl(test.js, 36, 1))
--
-     status: "done",
- >status : Symbol(status, Decl(test.js, 41, 13))
+ >x : Symbol(x, Decl(test.js, 36, 1))
  
+     status: "done",
+@@= skipped -10, +8 lines =@@
      m(n) { }
  >m : Symbol(m, Decl(test.js, 42, 19))
  >n : Symbol(n, Decl(test.js, 43, 6))
@@ -80,9 +79,8 @@
 +>n : Symbol(n, Decl(test.js, 43, 6))
  }
  exports.x
-->exports.x : Symbol(x, Decl(test.js, 36, 1))
-->exports : Symbol("test", Decl(test.js, 0, 0))
-->x : Symbol(x, Decl(test.js, 36, 1))
+ >exports.x : Symbol(x, Decl(test.js, 36, 1))
+@@= skipped -8, +10 lines =@@
  
  /** @type {DoneStatus} */
  module.exports.y = {
@@ -121,7 +119,7 @@
  
      status: 'done',
  >status : Symbol(status, Decl(test.js, 56, 21))
-@@= skipped -55, +39 lines =@@
+@@= skipped -37, +26 lines =@@
  >n : Symbol(n, Decl(test.js, 58, 6))
  }
  Thing.prototype.x

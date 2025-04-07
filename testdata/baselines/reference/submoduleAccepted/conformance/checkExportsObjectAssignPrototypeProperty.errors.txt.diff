@@ -56,11 +56,10 @@
          this.name = name;
 +        ~~~~
 +!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-+!!! related TS2738 mod1.js:5:10: An outer value of 'this' is shadowed by this container.
      }
      Person.prototype.describe = function () {
          return "Person called " + this.name;
-@@= skipped -38, +33 lines =@@
+@@= skipped -38, +32 lines =@@
          }
      });
      module.exports = Person;

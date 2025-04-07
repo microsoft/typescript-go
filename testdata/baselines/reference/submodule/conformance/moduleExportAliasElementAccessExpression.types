@@ -8,8 +8,8 @@ exports["D"] = D;
 >"D" : "D"
 >D : () => void
 >exports["D"] = D : () => void
->exports["D"] : any
->exports : any
+>exports["D"] : () => void
+>exports : typeof import("moduleExportAliasElementAccessExpression")
 >"D" : "D"
 >D : () => void
 
@@ -18,8 +18,8 @@ exports["Does not work yet"] = D;
 >"Does not work yet" : "Does not work yet"
 >D : () => void
 >exports["Does not work yet"] = D : () => void
->exports["Does not work yet"] : any
->exports : any
+>exports["Does not work yet"] : () => void
+>exports : typeof import("moduleExportAliasElementAccessExpression")
 >"Does not work yet" : "Does not work yet"
 >D : () => void
 

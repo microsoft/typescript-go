@@ -59,7 +59,10 @@
  exports.f = exports.g = function fg(n) {
 ->exports.f = exports.g = function fg(n) {    return n + 1} : (n: number) => number
 ->exports.f : (n: number) => number
-->exports : typeof import("mod")
++>f : (n: any) => any
++>exports.g = function fg(n) {    return n + 1} : (n: any) => any
++>exports.g : any
+ >exports : typeof import("mod")
 ->f : (n: number) => number
 ->exports.g = function fg(n) {    return n + 1} : (n: number) => number
 ->exports.g : (n: number) => number
@@ -68,10 +71,6 @@
 ->function fg(n) {    return n + 1} : (n: number) => number
 ->fg : (n: number) => number
 ->n : number
-+>f : any
-+>exports.g = function fg(n) {    return n + 1} : (n: any) => any
-+>exports.g : any
-+>exports : any
 +>g : any
 +>function fg(n) {    return n + 1} : (n: any) => any
 +>fg : (n: any) => any

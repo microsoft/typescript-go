@@ -2,10 +2,21 @@
 
 === mod.js ===
 exports.n = {};
+>n : Symbol(n, Decl(mod.js, 0, 0))
+>exports.n : Symbol(n, Decl(mod.js, 0, 0))
+>exports : Symbol("mod", Decl(mod.js, 0, 0))
+>n : Symbol(n, Decl(mod.js, 0, 0))
+
 exports.n.K = function () {
+>exports.n : Symbol(n, Decl(mod.js, 0, 0))
+>exports : Symbol("mod", Decl(mod.js, 0, 0))
+>n : Symbol(n, Decl(mod.js, 0, 0))
+
     this.x = 10;
 }
 exports.Classic = class {
+>Classic : Symbol(Classic, Decl(mod.js, 3, 1))
+
     constructor() {
         this.p = 1
 >this : Symbol(Classic, Decl(mod.js, 4, 17))

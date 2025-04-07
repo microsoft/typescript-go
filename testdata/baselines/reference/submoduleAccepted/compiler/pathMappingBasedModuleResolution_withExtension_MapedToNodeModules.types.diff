@@ -1,8 +1,11 @@
 --- old.pathMappingBasedModuleResolution_withExtension_MapedToNodeModules.types
 +++ new.pathMappingBasedModuleResolution_withExtension_MapedToNodeModules.types
-@@= skipped -3, +3 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === /a.ts ===
  import foobar from "foo/bar/foobar.js";
- >foobar : any
+->foobar : any
++>foobar : { a: number; }
  
 +=== /node_modules/foo/bar/foobar.js ===
 +module.exports = { a: 10 };

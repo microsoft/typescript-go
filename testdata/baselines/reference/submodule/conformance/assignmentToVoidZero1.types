@@ -3,39 +3,39 @@
 === assignmentToVoidZero1.js ===
 // #38552
 exports.y = exports.x = void 0;
->y : any
+>y : undefined
 >exports.x = void 0 : undefined
->exports.x : any
->exports : any
->x : any
+>exports.x : 1
+>exports : typeof import("assignmentToVoidZero1")
+>x : 1
 >void 0 : undefined
 >0 : 0
 >exports.y = exports.x = void 0 : undefined
->exports.y : any
->exports : any
->y : any
+>exports.y : undefined
+>exports : typeof import("assignmentToVoidZero1")
+>y : undefined
 >exports.x = void 0 : undefined
->exports.x : any
->exports : any
->x : any
+>exports.x : 1
+>exports : typeof import("assignmentToVoidZero1")
+>x : 1
 >void 0 : undefined
 >0 : 0
 
 exports.x = 1;
->x : any
+>x : 1
 >1 : 1
 >exports.x = 1 : 1
->exports.x : any
->exports : any
->x : any
+>exports.x : 1
+>exports : typeof import("assignmentToVoidZero1")
+>x : 1
 >1 : 1
 
 exports.y = 2;
->y : any
+>y : undefined
 >2 : 2
 >exports.y = 2 : 2
->exports.y : any
->exports : any
->y : any
+>exports.y : undefined
+>exports : typeof import("assignmentToVoidZero1")
+>y : undefined
 >2 : 2
 

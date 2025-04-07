@@ -30,8 +30,11 @@ export = 0;
 export default 0;
 
 === /g.js ===
-
 exports.default = 0;
+>default : Symbol(default, Decl(g.js, 0, 0))
+>exports.default : Symbol(default, Decl(g.js, 0, 0))
+>exports : Symbol("/g", Decl(g.js, 0, 0))
+>default : Symbol(default, Decl(g.js, 0, 0))
 
 === /main1.ts ===
 import { x, y } from "./a"; // No y
@@ -251,8 +254,12 @@ const g2 = require("./g"); // { default: 0 }
 
 === /main4.cjs ===
 exports.x = require("./g");
+>x : Symbol(x, Decl(main4.cjs, 0, 0))
 >require : Symbol(require)
 >"./g" : Symbol("/g", Decl(g.js, 0, 0))
+>exports.x : Symbol(x, Decl(main4.cjs, 0, 0))
+>exports : Symbol("/main4", Decl(main4.cjs, 0, 0))
+>x : Symbol(x, Decl(main4.cjs, 0, 0))
 >require : Symbol(require)
 >"./g" : Symbol("/g", Decl(g.js, 0, 0))
 

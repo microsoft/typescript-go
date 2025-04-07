@@ -38,10 +38,10 @@ mod.i(1)
 === mod.js ===
 /** @param {number} n */
 exports.f = exports.g = function fg(n) {
->f : any
+>f : (n: any) => any
 >exports.g = function fg(n) {    return n + 1} : (n: any) => any
 >exports.g : any
->exports : any
+>exports : typeof import("mod")
 >g : any
 >function fg(n) {    return n + 1} : (n: any) => any
 >fg : (n: any) => any

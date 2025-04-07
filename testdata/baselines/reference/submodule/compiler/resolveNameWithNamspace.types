@@ -35,7 +35,7 @@ exports.equal = myAssert.equal
 >equal : any
 >exports.equal = myAssert.equal : any
 >exports.equal : any
->exports : any
+>exports : typeof import("app")
 >equal : any
 >myAssert.equal : any
 >myAssert : any
@@ -44,6 +44,6 @@ exports.equal = myAssert.equal
 exports.equal()
 >exports.equal() : any
 >exports.equal : any
->exports : any
+>exports : typeof import("app")
 >equal : any
 

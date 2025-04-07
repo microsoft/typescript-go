@@ -2,18 +2,18 @@
 
 === /a.js ===
 exports.x = 0;
->x : any
+>x : 0
 >0 : 0
 >exports.x = 0 : 0
->exports.x : any
->exports : any
->x : any
+>exports.x : 0
+>exports : typeof import("/a")
+>x : 0
 >0 : 0
 
 exports.x;
->exports.x : any
->exports : any
->x : any
+>exports.x : 0
+>exports : typeof import("/a")
+>x : 0
 
 // Works nested
 {
@@ -40,6 +40,6 @@ const instance = new exports.Cls();
 >instance : any
 >new exports.Cls() : any
 >exports.Cls : any
->exports : any
+>exports : typeof import("/a")
 >Cls : any
 

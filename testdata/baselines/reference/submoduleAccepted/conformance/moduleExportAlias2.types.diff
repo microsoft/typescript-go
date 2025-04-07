@@ -11,13 +11,15 @@
  >require : (name: string) => any
  >"./semver" : "./semver"
  
-@@= skipped -9, +9 lines =@@
+ var two = C.f(1)
  >two : any
  >C.f(1) : any
- >C.f : (n: any) => any
+->C.f : (n: any) => any
 ->C : typeof C
+->f : (n: any) => any
++>C.f : any
 +>C : typeof import("semver")
- >f : (n: any) => any
++>f : any
  >1 : 1
  
  var c = new C
@@ -30,7 +32,7 @@
  
  === node.d.ts ===
  declare function require(name: string): any;
-@@= skipped -24, +24 lines =@@
+@@= skipped -33, +33 lines =@@
  === semver.js ===
  /// <reference path='node.d.ts' />
  exports = module.exports = C
@@ -61,7 +63,7 @@
 ->exports : typeof C
 ->f : (n: any) => any
 +>exports.f : any
-+>exports : any
++>exports : typeof import("semver")
 +>f : any
  >n => n + 1 : (n: any) => any
  >n : any

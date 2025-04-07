@@ -3,7 +3,6 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+file.js(20,1): error TS2304: Cannot find name 'exports'.
 +file2.js(28,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
@@ -38,7 +37,7 @@
 +    module.exports = {testFn, testFnTypes};
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+==== file.js (1 errors) ====
++==== file.js (0 errors) ====
 +    /**
 +     * @namespace myTypes
 +     * @global
@@ -59,5 +58,3 @@
 +    /** @typedef {myTypes.typeB|Function} myTypes.typeC */
 +    
 +    exports.myTypes = myTypes;
-+    ~~~~~~~
-+!!! error TS2304: Cannot find name 'exports'.

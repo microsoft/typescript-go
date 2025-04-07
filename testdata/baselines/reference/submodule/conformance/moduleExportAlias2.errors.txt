@@ -1,5 +1,6 @@
 index.js(4,13): error TS2351: This expression is not constructable.
   Type 'typeof import("semver")' has no construct signatures.
+semver.js(2,1): error TS2631: Cannot assign to '"semver"' because it is a namespace.
 semver.js(3,13): error TS2300: Duplicate identifier 'n'.
 
 
@@ -16,9 +17,11 @@ semver.js(3,13): error TS2300: Duplicate identifier 'n'.
     declare function require(name: string): any;
     declare var exports: any;
     declare var module: { exports: any };
-==== semver.js (1 errors) ====
+==== semver.js (2 errors) ====
     /// <reference path='node.d.ts' />
     exports = module.exports = C
+    ~~~~~~~
+!!! error TS2631: Cannot assign to '"semver"' because it is a namespace.
     exports.f = n => n + 1
                 ~
 !!! error TS2300: Duplicate identifier 'n'.

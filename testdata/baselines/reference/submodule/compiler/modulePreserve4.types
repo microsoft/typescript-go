@@ -44,12 +44,12 @@ export default 0;
 
 === /g.js ===
 exports.default = 0;
->default : any
+>default : 0
 >0 : 0
 >exports.default = 0 : 0
->exports.default : any
->exports : any
->default : any
+>exports.default : 0
+>exports : typeof import("/g")
+>default : 0
 >0 : 0
 
 === /main1.ts ===
@@ -303,14 +303,14 @@ const g2 = require("./g"); // { default: 0 }
 
 === /main4.cjs ===
 exports.x = require("./g");
->x : any
+>x : typeof import("/g")
 >require("./g") : typeof import("/g")
 >require : any
 >"./g" : "./g"
 >exports.x = require("./g") : typeof import("/g")
->exports.x : any
->exports : any
->x : any
+>exports.x : typeof import("/g")
+>exports : typeof import("/main4")
+>x : typeof import("/g")
 >require("./g") : typeof import("/g")
 >require : any
 >"./g" : "./g"

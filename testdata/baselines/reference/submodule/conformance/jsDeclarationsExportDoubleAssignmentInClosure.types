@@ -3,7 +3,7 @@
 === index.js ===
 // @ts-nocheck
 function foo() {
->foo : { (): void; export=: (o: any) => any; methods: () => void; }
+>foo : () => void
 
     module.exports = exports = function (o) {
 >exports = function (o) {        return (o == null) ? create(base) : defineProperties(Object(o), descriptors);    } : (o: any) => any
@@ -47,12 +47,12 @@ function foo() {
         // I have no idea what to put here
     }
     exports.methods = m;
->methods : any
+>methods : () => void
 >m : () => void
 >exports.methods = m : () => void
->exports.methods : any
+>exports.methods : () => void
 >exports : typeof import("index")
->methods : any
+>methods : () => void
 >m : () => void
 }
 

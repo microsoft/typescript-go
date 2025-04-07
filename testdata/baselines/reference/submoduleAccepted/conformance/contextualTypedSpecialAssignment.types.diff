@@ -147,10 +147,9 @@
  }
  exports.x
 ->exports.x : DoneStatus
-->exports : typeof import("test")
-->x : DoneStatus
 +>exports.x : any
-+>exports : any
+ >exports : typeof import("test")
+->x : DoneStatus
 +>x : any
  
  /** @type {DoneStatus} */

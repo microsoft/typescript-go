@@ -8,14 +8,14 @@ const mod1 = require("./mod1");
 >"./mod1" : "./mod1"
 
 mod1.a;
->mod1.a : { x: string; }
+>mod1.a : any
 >mod1 : typeof import("mod1")
->a : { x: string; }
+>a : any
 
 mod1.b;
->mod1.b : { x: string; }
+>mod1.b : any
 >mod1 : typeof import("mod1")
->b : { x: string; }
+>b : any
 
 mod1.c;
 >mod1.c : { x: string; }
@@ -35,9 +35,9 @@ mod1.d.e;
 >e : any
 
 mod1.default;
->mod1.default : { x: string; }
+>mod1.default : any
 >mod1 : typeof import("mod1")
->default : { x: string; }
+>default : any
 
 === mod1.js ===
 exports.a = { x: "x" };
@@ -47,7 +47,7 @@ exports.a = { x: "x" };
 >"x" : "x"
 >exports.a = { x: "x" } : { x: string; }
 >exports.a : any
->exports : any
+>exports : typeof import("mod1")
 >a : any
 >{ x: "x" } : { x: string; }
 >x : string
@@ -60,7 +60,7 @@ exports["b"] = { x: "x" };
 >"x" : "x"
 >exports["b"] = { x: "x" } : { x: string; }
 >exports["b"] : any
->exports : any
+>exports : typeof import("mod1")
 >"b" : "b"
 >{ x: "x" } : { x: string; }
 >x : string
@@ -73,7 +73,7 @@ exports["default"] = { x: "x" };
 >"x" : "x"
 >exports["default"] = { x: "x" } : { x: string; }
 >exports["default"] : any
->exports : any
+>exports : typeof import("mod1")
 >"default" : "default"
 >{ x: "x" } : { x: string; }
 >x : string

@@ -1,6 +1,5 @@
 /a.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 /f.cts(1,1): error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
-/g.js(1,1): error TS2304: Cannot find name 'exports'.
 /main1.ts(3,12): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 /main1.ts(19,4): error TS2339: Property 'default' does not exist on type '() => void'.
 /main1.ts(30,4): error TS2339: Property 'default' does not exist on type '0'.
@@ -21,7 +20,6 @@
 /main3.cjs(15,7): error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
 /main3.cjs(17,8): error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
 /main3.cjs(18,7): error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
-/main4.cjs(1,1): error TS2304: Cannot find name 'exports'.
 
 
 ==== /a.js (1 errors) ====
@@ -49,10 +47,8 @@
     ~~~~~~~~~~~~~~~~~
 !!! error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
     
-==== /g.js (1 errors) ====
+==== /g.js (0 errors) ====
     exports.default = 0;
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'exports'.
     
 ==== /main1.ts (3 errors) ====
     import { x, y } from "./a"; // No y
@@ -170,10 +166,8 @@
           ~~
 !!! error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
     
-==== /main4.cjs (1 errors) ====
+==== /main4.cjs (0 errors) ====
     exports.x = require("./g");
-    ~~~~~~~
-!!! error TS2304: Cannot find name 'exports'.
     
 ==== /dummy.ts (0 errors) ====
     export {}; // Silly test harness

@@ -4,10 +4,16 @@
 // bug #27365, crashes from github.com/marijnh/Eloquent-JavaScript
 (function() {
 exports.bigOak = 1
+>bigOak : Symbol(bigOak, Decl(Eloquent.js, 1, 13))
+>exports.bigOak : Symbol(bigOak, Decl(Eloquent.js, 1, 13))
 >exports : Symbol("Eloquent", Decl(Eloquent.js, 0, 0))
+>bigOak : Symbol(bigOak, Decl(Eloquent.js, 1, 13))
 
 exports.everywhere = 2
+>everywhere : Symbol(everywhere, Decl(Eloquent.js, 2, 18))
+>exports.everywhere : Symbol(everywhere, Decl(Eloquent.js, 2, 18))
 >exports : Symbol("Eloquent", Decl(Eloquent.js, 0, 0))
+>everywhere : Symbol(everywhere, Decl(Eloquent.js, 2, 18))
 
 module.exports = exports
 >exports : Symbol("Eloquent", Decl(Eloquent.js, 0, 0))

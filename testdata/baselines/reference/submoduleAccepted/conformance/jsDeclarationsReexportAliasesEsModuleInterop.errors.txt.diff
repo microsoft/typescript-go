@@ -4,8 +4,6 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +cls.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+usage.js(1,9): error TS2305: Module '"cls"' has no exported member 'default'.
-+usage.js(5,9): error TS2305: Module '"cls"' has no exported member 'default'.
 +
 +
 +==== cls.js (1 errors) ====
@@ -14,14 +12,10 @@
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    
-+==== usage.js (2 errors) ====
++==== usage.js (0 errors) ====
 +    import {default as Fooa} from "./cls";
-+            ~~~~~~~
-+!!! error TS2305: Module '"cls"' has no exported member 'default'.
 +    
 +    export const x = new Fooa();
 +    
 +    export {default as Foob} from "./cls";
-+            ~~~~~~~
-+!!! error TS2305: Module '"cls"' has no exported member 'default'.
 +    

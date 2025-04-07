@@ -1,18 +1,17 @@
 --- old.modulePreserve4.symbols
 +++ new.modulePreserve4.symbols
-@@= skipped -29, +29 lines =@@
- export default 0;
+@@= skipped -30, +30 lines =@@
  
  === /g.js ===
-+
  exports.default = 0;
-->exports.default : Symbol(default, Decl(g.js, 0, 0))
++>default : Symbol(default, Decl(g.js, 0, 0))
+ >exports.default : Symbol(default, Decl(g.js, 0, 0))
 ->exports : Symbol(default, Decl(g.js, 0, 0))
-->default : Symbol(default, Decl(g.js, 0, 0))
++>exports : Symbol("/g", Decl(g.js, 0, 0))
+ >default : Symbol(default, Decl(g.js, 0, 0))
  
  === /main1.ts ===
- import { x, y } from "./a"; // No y
-@@= skipped -18, +16 lines =@@
+@@= skipped -17, +18 lines =@@
  
  const a3 = await import("./a"); // { x: 0 }
  >a3 : Symbol(a3, Decl(main1.ts, 3, 5))
@@ -117,13 +116,12 @@
  
  === /main4.cjs ===
  exports.x = require("./g");
-->exports.x : Symbol(x, Decl(main4.cjs, 0, 0))
-->exports : Symbol(x, Decl(main4.cjs, 0, 0))
-->x : Symbol(x, Decl(main4.cjs, 0, 0))
- >require : Symbol(require)
- >"./g" : Symbol("/g", Decl(g.js, 0, 0))
++>x : Symbol(x, Decl(main4.cjs, 0, 0))
 +>require : Symbol(require)
 +>"./g" : Symbol("/g", Decl(g.js, 0, 0))
- 
- === /dummy.ts ===
- 
+ >exports.x : Symbol(x, Decl(main4.cjs, 0, 0))
+->exports : Symbol(x, Decl(main4.cjs, 0, 0))
++>exports : Symbol("/main4", Decl(main4.cjs, 0, 0))
+ >x : Symbol(x, Decl(main4.cjs, 0, 0))
+ >require : Symbol(require)
+ >"./g" : Symbol("/g", Decl(g.js, 0, 0))

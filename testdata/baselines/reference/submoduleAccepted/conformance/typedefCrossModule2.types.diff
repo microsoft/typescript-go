@@ -34,15 +34,13 @@
  
  /** @typedef {number} Bar */
  exports.Bar = class { }
-+>Bar : any
++>Bar : typeof Bar
 +>class { } : typeof Bar
  >exports.Bar = class { } : typeof Bar
-->exports.Bar : typeof Bar
+ >exports.Bar : typeof Bar
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
-->Bar : typeof Bar
-+>exports.Bar : any
-+>exports : any
-+>Bar : any
++>exports : typeof import("mod1")
+ >Bar : typeof Bar
  >class { } : typeof Bar
  
  /** @typedef {number} Baz */
@@ -65,15 +63,13 @@
  
  /** @typedef {number} Quid */
  exports.Quid = 2;
-+>Quid : any
++>Quid : 2
 +>2 : 2
  >exports.Quid = 2 : 2
-->exports.Quid : 2
+ >exports.Quid : 2
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
-->Quid : 2
-+>exports.Quid : any
-+>exports : any
-+>Quid : any
++>exports : typeof import("mod1")
+ >Quid : 2
  >2 : 2
  
  /** @typedef {number} Quack */

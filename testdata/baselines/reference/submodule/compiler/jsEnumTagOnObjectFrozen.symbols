@@ -57,7 +57,11 @@ const Thing = Object.freeze({
 });
 
 exports.Thing = Thing;
+>Thing : Symbol(Thing, Decl(index.js, 4, 3))
 >Thing : Symbol(Thing, Decl(index.js, 1, 5))
+>exports.Thing : Symbol(Thing, Decl(index.js, 4, 3))
+>exports : Symbol("index", Decl(index.js, 0, 0))
+>Thing : Symbol(Thing, Decl(index.js, 4, 3))
 >Thing : Symbol(Thing, Decl(index.js, 1, 5))
 
 /**
@@ -68,7 +72,11 @@ function useThing(x) {}
 >x : Symbol(x, Decl(index.js, 11, 18))
 
 exports.useThing = useThing;
+>useThing : Symbol(useThing, Decl(index.js, 11, 23))
 >useThing : Symbol(useThing, Decl(index.js, 6, 22))
+>exports.useThing : Symbol(useThing, Decl(index.js, 11, 23))
+>exports : Symbol("index", Decl(index.js, 0, 0))
+>useThing : Symbol(useThing, Decl(index.js, 11, 23))
 >useThing : Symbol(useThing, Decl(index.js, 6, 22))
 
 /**
@@ -79,6 +87,10 @@ function cbThing(x) {}
 >x : Symbol(x, Decl(index.js, 18, 17))
 
 exports.cbThing = cbThing;
+>cbThing : Symbol(cbThing, Decl(index.js, 18, 22))
 >cbThing : Symbol(cbThing, Decl(index.js, 13, 28))
+>exports.cbThing : Symbol(cbThing, Decl(index.js, 18, 22))
+>exports : Symbol("index", Decl(index.js, 0, 0))
+>cbThing : Symbol(cbThing, Decl(index.js, 18, 22))
 >cbThing : Symbol(cbThing, Decl(index.js, 13, 28))
 

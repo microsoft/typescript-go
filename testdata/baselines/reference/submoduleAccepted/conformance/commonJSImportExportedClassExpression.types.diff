@@ -25,8 +25,7 @@
 ->exports.K = class K {    values() {    }} : typeof K
 ->exports.K : typeof K
 ->exports : typeof import("mod1")
-->K : typeof K
-+>K : any
+ >K : typeof K
  >class K {    values() {    }} : typeof K
  >K : typeof K
  

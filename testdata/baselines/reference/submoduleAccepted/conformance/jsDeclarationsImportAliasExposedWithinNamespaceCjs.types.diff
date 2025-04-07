@@ -81,14 +81,13 @@
  exports.myTypes = myTypes;
 ->exports.myTypes = myTypes : { [x: string]: any; }
 ->exports.myTypes : { [x: string]: any; }
-->exports : typeof import("file")
-->myTypes : { [x: string]: any; }
-->myTypes : { [x: string]: any; }
-+>myTypes : any
++>myTypes : {}
 +>myTypes : {}
 +>exports.myTypes = myTypes : {}
-+>exports.myTypes : any
-+>exports : any
-+>myTypes : any
++>exports.myTypes : {}
+ >exports : typeof import("file")
+->myTypes : { [x: string]: any; }
+->myTypes : { [x: string]: any; }
++>myTypes : {}
 +>myTypes : {}
  

@@ -4,60 +4,35 @@
  >"use strict" : "use strict"
  
  exports.__esModule = true;
-+>__esModule : any
++>__esModule : true
 +>true : true
  >exports.__esModule = true : true
-->exports.__esModule : true
-->exports : typeof import("/foo.ios")
-->__esModule : true
-+>exports.__esModule : any
-+>exports : any
-+>__esModule : any
- >true : true
- 
- function ios() {}
+ >exports.__esModule : true
+ >exports : typeof import("/foo.ios")
+@@= skipped -10, +12 lines =@@
  >ios : () => void
  
  exports.ios = ios;
-+>ios : any
++>ios : () => void
 +>ios : () => void
  >exports.ios = ios : () => void
-->exports.ios : () => void
-->exports : typeof import("/foo.ios")
-+>exports.ios : any
-+>exports : any
-+>ios : any
- >ios : () => void
-->ios : () => void
- 
- === /foo.js ===
- "use strict";
+ >exports.ios : () => void
+ >exports : typeof import("/foo.ios")
+@@= skipped -11, +13 lines =@@
  >"use strict" : "use strict"
  
  exports.__esModule = true;
-+>__esModule : any
++>__esModule : true
 +>true : true
  >exports.__esModule = true : true
-->exports.__esModule : true
-->exports : typeof import("/foo")
-->__esModule : true
-+>exports.__esModule : any
-+>exports : any
-+>__esModule : any
- >true : true
- 
- function base() {}
+ >exports.__esModule : true
+ >exports : typeof import("/foo")
+@@= skipped -10, +12 lines =@@
  >base : () => void
  
  exports.base = base;
-+>base : any
++>base : () => void
 +>base : () => void
  >exports.base = base : () => void
-->exports.base : () => void
-->exports : typeof import("/foo")
-+>exports.base : any
-+>exports : any
-+>base : any
- >base : () => void
-->base : () => void
- 
+ >exports.base : () => void
+ >exports : typeof import("/foo")

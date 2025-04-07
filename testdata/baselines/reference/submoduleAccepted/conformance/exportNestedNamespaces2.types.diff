@@ -8,10 +8,9 @@
 +>{} : {}
  >exports.formatters = {} : {}
 ->exports.formatters : {}
-->exports : typeof import("mod")
-->formatters : {}
 +>exports.formatters : any
-+>exports : any
+ >exports : typeof import("mod")
+->formatters : {}
 +>formatters : any
  >{} : {}
  
@@ -41,18 +40,24 @@
  
  debug.formatters.j
  >debug.formatters.j : any
- >debug.formatters : {}
+->debug.formatters : {}
 ->debug : typeof debug
+->formatters : {}
++>debug.formatters : any
 +>debug : typeof import("mod")
- >formatters : {}
++>formatters : any
  >j : any
  
-@@= skipped -14, +14 lines =@@
+ var one = debug.formatters.o(1)
+ >one : any
  >debug.formatters.o(1) : any
  >debug.formatters.o : any
- >debug.formatters : {}
+->debug.formatters : {}
 ->debug : typeof debug
+->formatters : {}
++>debug.formatters : any
 +>debug : typeof import("mod")
- >formatters : {}
++>formatters : any
  >o : any
  >1 : 1
+ 

@@ -1,34 +1,24 @@
 --- old.moduleExportAliasExports.types
 +++ new.moduleExportAliasExports.types
-@@= skipped -3, +3 lines =@@
- // bug #27365, crashes from github.com/marijnh/Eloquent-JavaScript
- (function() {
- >(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports})() : void
-->(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : () => void
-->function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : () => void
-+>(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : { (): void; bigOak: 1; everywhere: 2; exports: typeof import("Eloquent"); }
-+>function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : { (): void; bigOak: 1; everywhere: 2; exports: typeof import("Eloquent"); }
+@@= skipped -7, +7 lines =@@
+ >function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : () => void
  
  exports.bigOak = 1
-+>bigOak : any
++>bigOak : 1
 +>1 : 1
  >exports.bigOak = 1 : 1
-->exports.bigOak : 1
-+>exports.bigOak : any
+ >exports.bigOak : 1
  >exports : typeof import("Eloquent")
-->bigOak : 1
-+>bigOak : any
+@@= skipped -7, +9 lines =@@
  >1 : 1
  
  exports.everywhere = 2
-+>everywhere : any
++>everywhere : 2
 +>2 : 2
  >exports.everywhere = 2 : 2
-->exports.everywhere : 2
-+>exports.everywhere : any
+ >exports.everywhere : 2
  >exports : typeof import("Eloquent")
-->everywhere : 2
-+>everywhere : any
+@@= skipped -7, +9 lines =@@
  >2 : 2
  
  module.exports = exports

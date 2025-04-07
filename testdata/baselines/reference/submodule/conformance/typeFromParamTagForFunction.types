@@ -30,7 +30,7 @@ exports.A = function () {
 
 === a.js ===
 const { A } = require("./a-ext");
->A : () => void
+>A : any
 >require("./a-ext") : typeof import("a-ext")
 >require : (id: string) => any
 >"./a-ext" : "./a-ext"
@@ -45,7 +45,7 @@ function a(p) { p.x; }
 
 === b-ext.js ===
 exports.B = class {
->B : any
+>B : typeof B
 >class {    constructor() {        this.x = 1;    }} : typeof B
 
     constructor() {

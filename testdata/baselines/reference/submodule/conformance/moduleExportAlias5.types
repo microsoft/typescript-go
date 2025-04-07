@@ -16,12 +16,12 @@ exports = module.exports = webpack;
 >webpack : { (): void; WebpackOptionsDefaulter: number; }
 
 exports.version = 1001;
->version : any
+>version : 1001
 >1001 : 1001
 >exports.version = 1001 : 1001
->exports.version : any
->exports : any
->version : any
+>exports.version : 1001
+>exports : typeof import("bug24754")
+>version : 1001
 >1001 : 1001
 
 webpack.WebpackOptionsDefaulter = 1111;

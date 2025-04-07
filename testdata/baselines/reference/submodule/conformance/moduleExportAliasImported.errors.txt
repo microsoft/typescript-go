@@ -1,14 +1,10 @@
-bug28014.js(1,1): error TS2552: Cannot find name 'exports'. Did you mean 'alias'?
 bug28014.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 bug28014.js(3,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 bug28014.js(3,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 
 
-==== bug28014.js (4 errors) ====
+==== bug28014.js (3 errors) ====
     exports.version = 1
-    ~~~~~~~
-!!! error TS2552: Cannot find name 'exports'. Did you mean 'alias'?
-!!! related TS2728 bug28014.js:3:1: 'alias' is declared here.
     function alias() { }
     module.exports = alias
     ~~~~~~
