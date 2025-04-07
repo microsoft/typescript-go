@@ -73,7 +73,7 @@
  const TabbedShowLayout = () => {
 ->TabbedShowLayout : React.SFC<{}>
 ->() => {    return (        <div className="" key="">            ok        </div>    );} : { (): JSX.Element; defaultProps: Partial<{}> | undefined; }
-+>TabbedShowLayout : SFC
++>TabbedShowLayout : SFC<{}>
 +>() => {    return (        <div className="" key="">            ok        </div>    );} : { (): any; defaultProps: { tabs: string; }; }
  
      return (
@@ -91,25 +91,21 @@
  
              ok
          </div>
-@@= skipped -21, +21 lines =@@
- 
+@@= skipped -22, +22 lines =@@
  TabbedShowLayout.defaultProps = {
  >TabbedShowLayout.defaultProps = {    tabs: "default value"} : { tabs: string; }
-->TabbedShowLayout.defaultProps : Partial<{}> | undefined
+ >TabbedShowLayout.defaultProps : Partial<{}> | undefined
 ->TabbedShowLayout : React.SFC<{}>
-->defaultProps : Partial<{}> | undefined
-+>TabbedShowLayout.defaultProps : any
-+>TabbedShowLayout : SFC
-+>defaultProps : any
++>TabbedShowLayout : SFC<{}>
+ >defaultProps : Partial<{}> | undefined
  >{    tabs: "default value"} : { tabs: string; }
  
-     tabs: "default value"
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
  };
  
  export default TabbedShowLayout;
 ->TabbedShowLayout : React.SFC<{}>
-+>TabbedShowLayout : SFC
++>TabbedShowLayout : SFC<{}>
  
  === jsDeclarationsReactComponents3.jsx ===
  import React from "react";
