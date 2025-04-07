@@ -1,20 +1,11 @@
 --- old.jsxIssuesErrorWhenTagExpectsTooManyArguments.types
 +++ new.jsxIssuesErrorWhenTagExpectsTooManyArguments.types
-@@= skipped -3, +3 lines =@@
- /// <reference path="react16.d.ts" />
- 
- import * as React from "react";
-->React : typeof React
-+>React : any
- 
- interface MyProps {
-     x: number;
-@@= skipped -8, +8 lines =@@
+@@= skipped -11, +11 lines =@@
  }
  
  function MyComp4(props: MyProps, context: any, bad: any, verybad: any) {
 ->MyComp4 : (props: MyProps, context: any, bad: any, verybad: any) => JSX.Element
-+>MyComp4 : (props: MyProps, context: any, bad: any, verybad: any) => any
++>MyComp4 : (props: MyProps, context: any, bad: any, verybad: any) => Element
  >props : MyProps
  >context : any
  >bad : any
@@ -22,32 +13,32 @@
  
      return <div></div>;
 -><div></div> : JSX.Element
-+><div></div> : any
++><div></div> : Element
  >div : any
  >div : any
  }
  function MyComp3(props: MyProps, context: any, bad: any) {
 ->MyComp3 : (props: MyProps, context: any, bad: any) => JSX.Element
-+>MyComp3 : (props: MyProps, context: any, bad: any) => any
++>MyComp3 : (props: MyProps, context: any, bad: any) => Element
  >props : MyProps
  >context : any
  >bad : any
  
      return <div></div>;
 -><div></div> : JSX.Element
-+><div></div> : any
++><div></div> : Element
  >div : any
  >div : any
  }
  function MyComp2(props: MyProps, context: any) {
 ->MyComp2 : (props: MyProps, context: any) => JSX.Element
-+>MyComp2 : (props: MyProps, context: any) => any
++>MyComp2 : (props: MyProps, context: any) => Element
  >props : MyProps
  >context : any
  
      return <div></div>
 -><div></div> : JSX.Element
-+><div></div> : any
++><div></div> : Element
  >div : any
  >div : any
  }
@@ -56,9 +47,9 @@
 ->a : JSX.Element
 -><MyComp4 x={2}/> : JSX.Element
 ->MyComp4 : (props: MyProps, context: any, bad: any, verybad: any) => JSX.Element
-+>a : any
-+><MyComp4 x={2}/> : any
-+>MyComp4 : (props: MyProps, context: any, bad: any, verybad: any) => any
++>a : Element
++><MyComp4 x={2}/> : Element
++>MyComp4 : (props: MyProps, context: any, bad: any, verybad: any) => Element
  >x : number
  >2 : 2
  
@@ -66,9 +57,9 @@
 ->b : JSX.Element
 -><MyComp3 x={2}/> : JSX.Element
 ->MyComp3 : (props: MyProps, context: any, bad: any) => JSX.Element
-+>b : any
-+><MyComp3 x={2}/> : any
-+>MyComp3 : (props: MyProps, context: any, bad: any) => any
++>b : Element
++><MyComp3 x={2}/> : Element
++>MyComp3 : (props: MyProps, context: any, bad: any) => Element
  >x : number
  >2 : 2
  
@@ -76,9 +67,9 @@
 ->c : JSX.Element
 -><MyComp2 x={2}/> : JSX.Element
 ->MyComp2 : (props: MyProps, context: any) => JSX.Element
-+>c : any
-+><MyComp2 x={2}/> : any
-+>MyComp2 : (props: MyProps, context: any) => any
++>c : Element
++><MyComp2 x={2}/> : Element
++>MyComp2 : (props: MyProps, context: any) => Element
  >x : number
  >2 : 2
  
@@ -94,8 +85,8 @@
 ->d : JSX.Element
 -><MyTagWithOptionalNonJSXBits x={2} /> : JSX.Element
 ->MyTagWithOptionalNonJSXBits : (props: MyProps, context: any, nonReactArg?: string) => JSX.Element
-+>d : any
-+><MyTagWithOptionalNonJSXBits x={2} /> : any
++>d : Element
++><MyTagWithOptionalNonJSXBits x={2} /> : Element
 +>MyTagWithOptionalNonJSXBits : (props: MyProps, context: any, nonReactArg?: string) => Element
  >x : number
  >2 : 2
