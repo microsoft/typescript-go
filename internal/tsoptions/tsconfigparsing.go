@@ -1446,7 +1446,7 @@ func getFileNamesFromConfigSpecs(
 		// Wildcard paths of json files (provided via the "includes" array in tsconfig.json) are stored in a
 		// file map with a possibly case insensitive key. We use this map to store paths matched
 		// via wildcard of *.json kind
-		wildCardJsonFileMap collections.OrderedMap[string, string]
+		wildcardJsonFileMap collections.OrderedMap[string, string]
 	)
 
 	var (
@@ -1488,8 +1488,8 @@ func getFileNamesFromConfigSpecs(
 				includeIndex := core.FindIndex(jsonOnlyIncludeRegexes, func(re *regexp2.Regexp) bool { return core.Must(re.MatchString(file)) })
 				if includeIndex != -1 {
 					key := keyMappper(file)
-					if !literalFileMap.Has(key) && !wildCardJsonFileMap.Has(key) {
-						wildCardJsonFileMap.Set(key, file)
+					if !literalFileMap.Has(key) && !wildcardJsonFileMap.Has(key) {
+						wildcardJsonFileMap.Set(key, file)
 					}
 				}
 				continue
@@ -1514,14 +1514,14 @@ func getFileNamesFromConfigSpecs(
 			}
 		}
 	}
-	files := make([]string, 0, literalFileMap.Size()+wildcardFileMap.Size()+wildCardJsonFileMap.Size())
+	files := make([]string, 0, literalFileMap.Size()+wildcardFileMap.Size()+wildcardJsonFileMap.Size())
 	for file := range literalFileMap.Values() {
 		files = append(files, file)
 	}
 	for file := range wildcardFileMap.Values() {
 		files = append(files, file)
 	}
-	for file := range wildCardJsonFileMap.Values() {
+	for file := range wildcardJsonFileMap.Values() {
 		files = append(files, file)
 	}
 	return files
