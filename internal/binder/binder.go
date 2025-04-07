@@ -476,7 +476,7 @@ func (b *Binder) declareClassMember(node *ast.Node, symbolFlags ast.SymbolFlags,
 }
 
 func (b *Binder) declareSourceFileMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
-	if ast.IsExternalOrCommonJsModule(b.file) {
+	if ast.IsExternalOrCommonJSModule(b.file) {
 		return b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	}
 	return b.declareSymbol(ast.GetLocals(b.file.AsNode()), nil /*parent*/, node, symbolFlags, symbolExcludes)
@@ -820,7 +820,7 @@ func (b *Binder) bindPropertyWorker(node *ast.Node) {
 
 func (b *Binder) bindSourceFileIfExternalModule() {
 	b.setExportContextFlag(b.file.AsNode())
-	if ast.IsExternalOrCommonJsModule(b.file) {
+	if ast.IsExternalOrCommonJSModule(b.file) {
 		b.bindSourceFileAsExternalModule()
 	} else if ast.IsJsonSourceFile(b.file) {
 		b.bindSourceFileAsExternalModule()
@@ -1194,7 +1194,7 @@ func (b *Binder) bindBlockScopedDeclaration(node *ast.Node, symbolFlags ast.Symb
 	case ast.KindModuleDeclaration:
 		b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	case ast.KindSourceFile:
-		if ast.IsExternalOrCommonJsModule(b.container.AsSourceFile()) {
+		if ast.IsExternalOrCommonJSModule(b.container.AsSourceFile()) {
 			b.declareModuleMember(node, symbolFlags, symbolExcludes)
 			break
 		}
@@ -1237,7 +1237,7 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 		}
 	}
 	if ast.IsSourceFile(container) {
-		local := container.AsSourceFile().JsGlobalAugmentations[name]
+		local := container.AsSourceFile().JSGlobalAugmentations[name]
 		if local != nil {
 			return local
 		}
