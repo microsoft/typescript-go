@@ -39,13 +39,19 @@ func (p *Pattern) MatchedText(candidate string) string {
 }
 
 func FindBestPatternMatch(patterns []Pattern, candidate string) Pattern {
-	var bestPattern Pattern
+	return FindBestPatternMatchMapped(patterns, func(p Pattern) Pattern { return p }, candidate)
+}
+
+func FindBestPatternMatchMapped[T any](values []T, getPattern func(v T) Pattern, candidate string) T {
+	var bestPattern T
 	longestMatchPrefixLength := -1
-	for _, pattern := range patterns {
+	for _, value := range values {
+		pattern := getPattern(value)
 		if (pattern.StarIndex == -1 || pattern.StarIndex > longestMatchPrefixLength) && pattern.Matches(candidate) {
-			bestPattern = pattern
+			bestPattern = value
 			longestMatchPrefixLength = pattern.StarIndex
 		}
 	}
 	return bestPattern
 }
+
