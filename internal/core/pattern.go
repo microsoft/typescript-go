@@ -38,11 +38,7 @@ func (p *Pattern) MatchedText(candidate string) string {
 	return candidate[p.StarIndex : len(candidate)-len(p.Text)+p.StarIndex+1]
 }
 
-func FindBestPatternMatch(patterns []Pattern, candidate string) Pattern {
-	return FindBestPatternMatchMapped(patterns, func(p Pattern) Pattern { return p }, candidate)
-}
-
-func FindBestPatternMatchMapped[T any](values []T, getPattern func(v T) Pattern, candidate string) T {
+func FindBestPatternMatch[T any](values []T, getPattern func(v T) Pattern, candidate string) T {
 	var bestPattern T
 	longestMatchPrefixLength := -1
 	for _, value := range values {
@@ -54,4 +50,3 @@ func FindBestPatternMatchMapped[T any](values []T, getPattern func(v T) Pattern,
 	}
 	return bestPattern
 }
-

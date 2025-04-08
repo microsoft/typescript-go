@@ -14219,7 +14219,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 	}
 
 	if len(c.patternAmbientModules) != 0 {
-		pattern := core.FindBestPatternMatchMapped(c.patternAmbientModules, func(v *ast.PatternAmbientModule) core.Pattern { return v.Pattern }, moduleReference)
+		pattern := core.FindBestPatternMatch(c.patternAmbientModules, func(v *ast.PatternAmbientModule) core.Pattern { return v.Pattern }, moduleReference)
 		if pattern != nil {
 			augmentation := c.patternAmbientModuleAugmentations[moduleReference]
 			if augmentation != nil {
