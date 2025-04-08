@@ -824,6 +824,8 @@ type Checker struct {
 }
 
 func NewChecker(program Program) *Checker {
+	program.BindSourceFiles()
+
 	c := &Checker{}
 	c.id = nextCheckerID.Add(1)
 	c.program = program
@@ -1198,7 +1200,6 @@ func (c *Checker) initializeIterationResolvers() {
 }
 
 func (c *Checker) initializeChecker() {
-	c.program.BindSourceFiles()
 	// Initialize global symbol table
 	augmentations := make([][]*ast.Node, 0, len(c.files))
 	for _, file := range c.files {
