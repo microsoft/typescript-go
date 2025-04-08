@@ -1,18 +1,6 @@
 --- old.jsdocTemplateConstructorFunction.symbols
 +++ new.jsdocTemplateConstructorFunction.symbols
-@@= skipped -3, +3 lines =@@
- /**
-  * @template U
-  * @typedef {(u: U) => U} Id
-+>Id : Symbol(Id, Decl(templateTagOnConstructorFunctions.js, 2, 3))
-+>u : Symbol(u, Decl(templateTagOnConstructorFunctions.js, 2, 14))
-+>U : Symbol(U, Decl(templateTagOnConstructorFunctions.js, 1, 13))
-+>U : Symbol(U, Decl(templateTagOnConstructorFunctions.js, 1, 13))
-+
-  */
- /**
-  * @param {T} t
-@@= skipped -11, +16 lines =@@
+@@= skipped -14, +14 lines =@@
  
      /** @type {T} */
      this.u

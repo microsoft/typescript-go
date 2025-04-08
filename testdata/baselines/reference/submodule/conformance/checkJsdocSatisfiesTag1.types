@@ -3,36 +3,21 @@
 === /a.js ===
 /**
  * @typedef {Object} T1
->T1 : any
-
  * @property {number} a
->a : any
-
  */
 
 /**
  * @typedef {Object} T2
->T2 : any
-
  * @property {"a" | "b"} a
->a : any
-
  */
 
 /**
  * @typedef {(x: string) => string} T3
->T3 : any
->x : string
-
  */
 
 /**
  * @typedef {Object} T4
->T4 : any
-
  * @property {string} a
->a : any
-
  */
 
 const t1 = /** @satisfies {T1} */ ({ a: 1 });

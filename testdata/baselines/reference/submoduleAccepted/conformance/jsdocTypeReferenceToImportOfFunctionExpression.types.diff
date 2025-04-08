@@ -11,8 +11,7 @@
  >require : any
  >"./MW" : "./MW"
  
- /** @typedef {number} Meyerhauser */
-+>Meyerhauser : any
+@@= skipped -9, +9 lines =@@
  
  /** @class */
  module.exports = function MC() {
@@ -31,7 +30,7 @@
  
      /** @type {any} */
      var x = {}
-@@= skipped -22, +23 lines =@@
+@@= skipped -13, +13 lines =@@
  >{} : {}
  
      return new MW(x);

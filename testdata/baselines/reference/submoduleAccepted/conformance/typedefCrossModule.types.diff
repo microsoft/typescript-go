@@ -1,21 +1,8 @@
 --- old.typedefCrossModule.types
 +++ new.typedefCrossModule.types
-@@= skipped -7, +7 lines =@@
- === mod1.js ===
- /// <reference path="./commonjs.d.ts"/>
- /** @typedef {{ type: "a", x: 1 }} A */
-+>A : any
-+>type : "a"
-+>x : 1
-+
+@@= skipped -10, +10 lines =@@
  /** @typedef {{ type: "b", y: 1 }} B */
-+>B : any
-+>type : "b"
-+>y : 1
-+
  /** @typedef {A | B} Both */
-+>Both : any
-+
  module.exports = C
 ->module.exports = C : typeof C
 ->module.exports : typeof C
@@ -40,21 +27,8 @@
  >p : any
  >1 : 1
  }
-@@= skipped -23, +33 lines =@@
- === mod2.js ===
- /// <reference path="./commonjs.d.ts"/>
- /** @typedef {{ type: "a", x: 1 }} A */
-+>A : A
-+>type : "a"
-+>x : 1
-+
- /** @typedef {{ type: "b", y: 1 }} B */
-+>B : B
-+>type : "b"
-+>y : 1
-+
+@@= skipped -24, +24 lines =@@
  /** @typedef {A | B} Both */
-+>Both : Both
  
  export function C() {
 ->C : typeof C
@@ -68,21 +42,8 @@
  >p : any
  >1 : 1
  }
-@@= skipped -17, +26 lines =@@
- === mod3.js ===
- /// <reference path="./commonjs.d.ts"/>
- /** @typedef {{ type: "a", x: 1 }} A */
-+>A : any
-+>type : "a"
-+>x : 1
-+
- /** @typedef {{ type: "b", y: 1 }} B */
-+>B : any
-+>type : "b"
-+>y : 1
-+
+@@= skipped -17, +17 lines =@@
  /** @typedef {A | B} Both */
-+>Both : any
  
  exports.C = function() {
 ->exports.C = function() {    this.p = 1} : typeof C
@@ -104,7 +65,7 @@
  >p : any
  >1 : 1
  }
-@@= skipped -21, +30 lines =@@
+@@= skipped -17, +17 lines =@@
  === use.js ===
  /** @type {import('./mod1').Both} */
  var both1 = { type: 'a', x: 1 };

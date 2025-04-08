@@ -11,10 +11,6 @@ function acceptNum(num) {}
 
 /**
  * @typedef {(a: string, b: number) => void} Fn
->Fn : any
->a : string
->b : number
-
  */
 
 /** @type {Fn} */

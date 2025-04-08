@@ -1,15 +1,6 @@
 --- old.jsdocTemplateConstructorFunction.types
 +++ new.jsdocTemplateConstructorFunction.types
-@@= skipped -3, +3 lines =@@
- /**
-  * @template U
-  * @typedef {(u: U) => U} Id
-+>Id : Id<U>
-+>u : U
-+
-  */
- /**
-  * @param {T} t
+@@= skipped -9, +9 lines =@@
   * @template T
   */
  function Zet(t) {
@@ -34,7 +25,7 @@
  >t : any
  >t : T
  }
-@@= skipped -27, +30 lines =@@
+@@= skipped -21, +21 lines =@@
   * @param {Id<T>} id
   */
  Zet.prototype.add = function(v, id) {

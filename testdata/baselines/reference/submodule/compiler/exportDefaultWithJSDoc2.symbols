@@ -1,13 +1,13 @@
 //// [tests/cases/compiler/exportDefaultWithJSDoc2.ts] ////
 
 === a.js ===
+
 /**
  * A number, or a string containing a number.
  * @typedef {(number|string)} NumberLike
  */
 
 export default /** @type {NumberLike[]} */([ ]);
->NumberLike : Symbol(NumberLike, Decl(a.js, 2, 3))
 
 === b.ts ===
 import A from './a'

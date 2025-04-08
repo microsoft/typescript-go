@@ -13,9 +13,3 @@
  }
  
  === b.js ===
- /** @type {import("./a").Foo} */
-+>Foo : Symbol(Foo, Decl(a.ts, 0, 0))
-+
- export default { c: false };
- >c : Symbol(c, Decl(b.js, 1, 16))
- 

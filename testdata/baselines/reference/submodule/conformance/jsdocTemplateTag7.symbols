@@ -4,8 +4,6 @@
 /**
  * @template const T
  * @typedef {[T]} X
->T : Symbol(T, Decl(a.js, 6, 13))
-
  */
 
 /**

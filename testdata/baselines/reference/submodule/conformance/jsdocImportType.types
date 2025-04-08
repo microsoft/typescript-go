@@ -3,8 +3,6 @@
 === use.js ===
 /// <reference path='./types.d.ts'/>
 /** @typedef {import("./mod1")} C
->C : any
-
  * @type {C} */
 var c;
 >c : any

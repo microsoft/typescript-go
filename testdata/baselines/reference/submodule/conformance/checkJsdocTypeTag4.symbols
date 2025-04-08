@@ -11,9 +11,6 @@ type A<T extends string> = { a: T }
 /** Also should error for jsdoc typedefs
  * @template {string} U
  * @typedef {{ b: U }} B
->b : Symbol(b, Decl(test.js, 2, 14))
->U : Symbol(U)
-
  */
 /** @type {A<number>} */
 var a;

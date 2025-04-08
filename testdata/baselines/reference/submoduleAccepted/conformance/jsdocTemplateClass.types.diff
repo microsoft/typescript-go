@@ -1,25 +1,6 @@
 --- old.jsdocTemplateClass.types
 +++ new.jsdocTemplateClass.types
-@@= skipped -3, +3 lines =@@
- /**
-  * @template T
-  * @typedef {(t: T) => T} Id
-+>Id : any
-+>t : T
-+
-  */
- /** @template T */
- class Foo {
- >Foo : Foo<T>
- 
-     /** @typedef {(t: T) => T} Id2 */
-+>Id2 : any
-+>t : T
-+
-     /** @param {T} x */
-     constructor (x) {
- >x : T
-@@= skipped -25, +31 lines =@@
+@@= skipped -28, +28 lines =@@
       * @return {T}
       */
      foo(x, y, alpha) {

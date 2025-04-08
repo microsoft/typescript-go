@@ -52,11 +52,8 @@
  >x : number
  >x : number
  
- 
+@@= skipped -42, +42 lines =@@
  /** @typedef {(x: 'hi' | 'bye') => 0 | 1 | 2} Argle */
-+>Argle : Argle
-+>x : "bye" | "hi"
-+
  /** @type {Argle} */
  function blargle(s) {
 ->blargle : (x: "hi" | "bye") => 0 | 1 | 2
@@ -66,7 +63,7 @@
  
      return 0;
  >0 : 0
-@@= skipped -52, +55 lines =@@
+@@= skipped -10, +10 lines =@@
  /** @type {0 | 1 | 2} - assignment should not error */
  var zeroonetwo = blargle('hi')
  >zeroonetwo : 0 | 1 | 2
@@ -77,9 +74,3 @@
  >'hi' : "hi"
  
  /** @typedef {{(s: string): 0 | 1; (b: boolean): 2 | 3 }} Gioconda */
-+>Gioconda : Gioconda
-+>s : string
-+>b : boolean
- 
- /** @type {Gioconda} */
- function monaLisa(sb) {

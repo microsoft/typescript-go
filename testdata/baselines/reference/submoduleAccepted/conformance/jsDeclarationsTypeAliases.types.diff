@@ -1,16 +1,6 @@
 --- old.jsDeclarationsTypeAliases.types
 +++ new.jsDeclarationsTypeAliases.types
-@@= skipped -31, +31 lines =@@
- === mixed.js ===
- /**
-  * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
-+>SomeType : SomeType
-+>x : string
-+
-  */
- /**
-  * @param {number} x
-@@= skipped -24, +27 lines =@@
+@@= skipped -55, +55 lines =@@
  >"ok" : "ok"
  }
  module.exports = {

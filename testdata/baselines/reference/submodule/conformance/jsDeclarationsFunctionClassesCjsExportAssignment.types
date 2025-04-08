@@ -25,9 +25,6 @@ module.exports = Timer;
 === hook.js ===
 /**
  * @typedef {(arg: import("./context")) => void} HookHandler
->HookHandler : HookHandler
->arg : any
-
  */
 /**
  * @param {HookHandler} handle
@@ -55,42 +52,24 @@ module.exports = Hook;
  * Imports
  *
  * @typedef {import("./timer")} Timer
->Timer : any
-
  * @typedef {import("./hook")} Hook
->Hook : any
-
  * @typedef {import("./hook").HookHandler} HookHandler
->HookHandler : HookHandler
-
  */
 
 /**
  * Input type definition
  *
  * @typedef {Object} Input
->Input : Input
-
  * @prop {Timer} timer
->timer : any
-
  * @prop {Hook} hook
->hook : any
-
  */
  
 /**
  * State type definition
  *
  * @typedef {Object} State
->State : State
-
  * @prop {Timer} timer
->timer : any
-
  * @prop {Hook} hook
->hook : any
-
  */
 
 /**

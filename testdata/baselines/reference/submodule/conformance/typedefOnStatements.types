@@ -2,121 +2,71 @@
 
 === typedefOnStatements.js ===
 /** @typedef {{a: string}} A */
->A : any
->a : string
-
 ;
 /** @typedef {{ b: string }} B */
->B : any
->b : string
-
 debugger;
 /** @typedef {{ c: string }} C */
->C : any
->c : string
 {
 }
 /** @typedef {{ d: string }} D */
->D : any
->d : string
-
 1 + 1;
 >1 + 1 : number
 >1 : 1
 >1 : 1
 
 /** @typedef {{ e: string }} E */
->E : any
->e : string
-
 if (false) {
 >false : false
 }
 /** @typedef {{ f: string }} F */
->F : any
->f : string
-
 do {
 } while (false);
 >false : false
 
 /** @typedef {{ g: string }} G */
->G : any
->g : string
-
 while (false) {
 >false : false
 }
 /** @typedef {{ h: string }} H */
->H : any
->h : string
-
 for (;; false) {
 >false : false
 }
 /** @typedef {{ i: string }} I */
->I : any
->i : string
-
 for (let i in []) {
 >i : string
 >[] : never[]
 }
 /** @typedef {{ j: string }} J */
->J : any
->j : string
-
 break;
 /** @typedef {{ k: string }} K */
->K : any
->k : string
-
 for (let k of []) {
 >k : never
 >[] : never[]
 }
 /** @typedef {{ l: string }} L */
->L : any
->l : string
-
 continue;
 /** @typedef {{ m: string }} M */
->M : any
->m : string
-
 with (name) {
 >name : void
 }
 /** @typedef {{ n: string }} N */
->N : any
->n : string
-
 switch (name) {
 >name : void
 }
 
 /** @typedef {{ o: string }} O */
->O : any
->o : string
-
 fork: while (false) {
 >fork : any
 >false : false
 }
 
 /** @typedef {{ p: string }} P */
->P : any
->p : string
-
 throw new Error('Unreachable')
 >new Error('Unreachable') : Error
 >Error : ErrorConstructor
 >'Unreachable' : "Unreachable"
 
 /** @typedef {{ q: string }} Q */
->Q : any
->q : string
-
 try {
 }
 catch (e) {
@@ -227,9 +177,6 @@ function proof (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q) {
 >"aleph" : "aleph"
 
     /** @typedef {{ alpha: string }} Alpha */
->Alpha : any
->alpha : string
-
     return
 }
 

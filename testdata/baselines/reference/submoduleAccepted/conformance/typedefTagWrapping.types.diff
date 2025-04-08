@@ -1,15 +1,6 @@
 --- old.typedefTagWrapping.types
 +++ new.typedefTagWrapping.types
-@@= skipped -2, +2 lines =@@
- === mod1.js ===
- /** 
-  * @typedef {function(string): boolean}
-+> : function
-+
-  * Type1
-  */
- 
-@@= skipped -16, +18 lines =@@
+@@= skipped -18, +18 lines =@@
  >arg : string
  
    return func(arg);
@@ -18,25 +9,7 @@
  >func : Type1
  >arg : string
  }
-@@= skipped -12, +12 lines =@@
-  *   str: string,
-  *   boo: boolean
-  * }} Type2
-+>Type2 : Type2
-+
-  */
- 
- /**
-@@= skipped -29, +31 lines =@@
-  * A function whose signature is very long.
-  *
-  * @typedef {function(boolean, string, number):
-+> : function
-+
-  *     (string|number)} StringOrNumber1
-  */
- 
-@@= skipped -19, +21 lines =@@
+@@= skipped -60, +60 lines =@@
  >num : number
  
    return func(bool, str, num)
@@ -45,16 +18,7 @@
  >func : StringOrNumber1
  >bool : boolean
  >str : string
-@@= skipped -12, +12 lines =@@
-  * A function whose signature is very long.
-  *
-  * @typedef {function(boolean, string,
-+> : function
-+
-  *    number):
-  *    (string|number)} StringOrNumber2
-  */
-@@= skipped -20, +22 lines =@@
+@@= skipped -32, +32 lines =@@
  >num : number
  
    return func(bool, str, num)
@@ -63,21 +27,3 @@
  >func : StringOrNumber2
  >bool : boolean
  >str : string
-@@= skipped -17, +17 lines =@@
-  *   boo:
-  *   boolean
-  * }} Type5
-+>Type5 : Type5
-+
-  */
- 
- /**
-@@= skipped -32, +34 lines =@@
-  *   bar:
-  *   *
-  * }} Type6
-+>Type6 : Type6
-+
-  */
- 
- /**

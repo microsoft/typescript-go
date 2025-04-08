@@ -3,17 +3,9 @@
 === /a.js ===
 /**
  * @typedef {Object} Color
->Color : any
-
  * @property {number} r
->r : any
-
  * @property {number} g
->g : any
-
  * @property {number} b
->b : any
-
  */
 
 // All of these should be Colors, but I only use some of them here.

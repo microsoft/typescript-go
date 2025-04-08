@@ -41,14 +41,10 @@ Host.UserMetrics.Action = {
 };
 /**
  * @typedef {string} Host.UserMetrics.Bargh
->Host : any
-
  */
 /**
  * @typedef {string}
  */
-> : any
-
 Host.UserMetrics.Blah = {
 >Host.UserMetrics.Blah = {    x: 12} : { x: number; }
 >Host.UserMetrics.Blah : any

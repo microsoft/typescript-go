@@ -3,11 +3,7 @@
 === /a.js ===
 /**
  * @typedef Foo
->Foo : any
-
  * @property foo
->foo : any
-
  */
 
 /** @type {Foo} */

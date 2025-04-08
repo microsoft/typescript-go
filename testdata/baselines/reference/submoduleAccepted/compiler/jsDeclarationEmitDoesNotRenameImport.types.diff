@@ -1,19 +1,6 @@
 --- old.jsDeclarationEmitDoesNotRenameImport.types
 +++ new.jsDeclarationEmitDoesNotRenameImport.types
-@@= skipped -21, +21 lines =@@
- 
- /**
-  * @typedef {Object} Options
-+>Options : any
-+
-  * @property {typeof import("./Test.js").default} [test]
-+>test : any
-+>default : any
-+
-  */
- 
- class X extends Test {
-@@= skipped -18, +23 lines =@@
+@@= skipped -39, +39 lines =@@
  >super : typeof Test
  
          if (options.test) {

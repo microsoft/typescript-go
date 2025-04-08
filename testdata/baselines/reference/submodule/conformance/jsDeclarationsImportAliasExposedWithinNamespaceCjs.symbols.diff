@@ -18,15 +18,7 @@
  
      // SOME PROPS HERE
  };
- 
- /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
-+>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 11, 4))
-+>myTypes : Symbol(myTypes)
-+>typeC : Symbol(typeC)
- 
- /**
-  * @function testFn
-@@= skipped -29, +32 lines =@@
+@@= skipped -29, +29 lines =@@
  }
  
  module.exports = {testFn, testFnTypes};

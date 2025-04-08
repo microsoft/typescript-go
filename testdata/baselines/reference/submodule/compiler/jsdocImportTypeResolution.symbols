@@ -9,8 +9,6 @@ export class MyClass {
 /**
  * @typedef {Object} options
  * @property {import("./module").MyClass} option
->MyClass : Symbol(MyClass, Decl(module.js, 0, 0))
-
  */
 /** @type {options} */
 let v;

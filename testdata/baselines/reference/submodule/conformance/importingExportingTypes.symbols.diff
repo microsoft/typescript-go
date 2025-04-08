@@ -1,10 +1,7 @@
 --- old.importingExportingTypes.symbols
 +++ new.importingExportingTypes.symbols
-@@= skipped -25, +25 lines =@@
- >OtherName : Symbol(OtherName, Decl(index.js, 0, 37))
- 
+@@= skipped -27, +27 lines =@@
  /** @typedef {{ x: any }} JSDocType */
-+>x : Symbol(x, Decl(index.js, 2, 15))
  
  export { JSDocType };
 ->JSDocType : Symbol(JSDocType, Decl(index.js, 4, 8), Decl(index.js, 2, 4))

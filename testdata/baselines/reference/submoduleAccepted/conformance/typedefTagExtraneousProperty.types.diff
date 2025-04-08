@@ -1,13 +1,6 @@
 --- old.typedefTagExtraneousProperty.types
 +++ new.typedefTagExtraneousProperty.types
-@@= skipped -1, +1 lines =@@
- 
- === typedefTagExtraneousProperty.js ===
- /** @typedef {Object.<string,string>} Mmap
-+>Mmap : any
-+
-  * @property {string} ignoreMe - should be ignored
-  */
+@@= skipped -6, +6 lines =@@
  
  /** @type {Mmap} */
  var y = { bye: "no" };

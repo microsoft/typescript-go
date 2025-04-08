@@ -2,7 +2,6 @@
 
 === /a.js ===
 /** @typedef {Object.<string, boolean>} Facts */
->Facts : any
 
 // Should be able to detect a failure here
 const x = /** @satisfies {Facts} */ ({

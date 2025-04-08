@@ -9,27 +9,15 @@ const {taskGroups, taskNameToGroup} = require('./module.js');
 >'./module.js' : "./module.js"
 
 /** @typedef {import('./module.js').TaskGroup} TaskGroup */
->TaskGroup : any
 
 /**
  * @typedef TaskNode
->TaskNode : any
-
  * @prop {TaskNode[]} children
->children : any
-
  * @prop {TaskNode|undefined} parent
->parent : any
-
  * @prop {TaskGroup} group
->group : any
-
  */
 
 /** @typedef {{timers: Map<string, TaskNode>}} PriorTaskData */
->PriorTaskData : any
->timers : Map<string, TaskNode>
-
 class MainThreadTasks {
 >MainThreadTasks : MainThreadTasks
 

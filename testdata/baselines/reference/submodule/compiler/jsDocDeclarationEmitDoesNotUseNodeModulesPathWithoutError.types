@@ -12,8 +12,6 @@ export interface LionRequestInit {
 === index.js ===
 /**
  * @typedef {import('@lion/ajax').LionRequestInit} LionRequestInit
->LionRequestInit : any
-
  */
 
 export class NewAjax {

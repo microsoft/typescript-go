@@ -4,9 +4,6 @@
 /**
  * @template U
  * @typedef {(u: U) => U} Id
->Id : Id<U>
->u : U
-
  */
 /**
  * @param {T} t

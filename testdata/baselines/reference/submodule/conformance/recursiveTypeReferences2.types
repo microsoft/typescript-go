@@ -2,14 +2,8 @@
 
 === bug39372.js ===
 /** @typedef {ReadonlyArray<Json>} JsonArray */
->JsonArray : any
-
 /** @typedef {{ readonly [key: string]: Json }} JsonRecord */
->JsonRecord : any
->key : string
-
 /** @typedef {boolean | number | string | null | JsonRecord | JsonArray | readonly []} Json */
->Json : any
 
 /**
  * @template T
@@ -29,7 +23,6 @@
       : XMLObject<T[K]>
   )
 }} XMLObject<T> */
->XMLObject : any
 
 /** @type {XMLObject<{foo:string}>} */
 const p = {};

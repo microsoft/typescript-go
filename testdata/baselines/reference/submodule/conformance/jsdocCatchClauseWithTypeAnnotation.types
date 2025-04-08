@@ -3,14 +3,10 @@
 === foo.js ===
 /**
  * @typedef {any} Any
->Any : any
-
  */
 
 /**
  * @typedef {unknown} Unknown
->Unknown : unknown
-
  */
 
 function fn() {

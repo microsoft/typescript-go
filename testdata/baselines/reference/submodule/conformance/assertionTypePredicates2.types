@@ -3,16 +3,10 @@
 === assertionTypePredicates2.js ===
 /**
  * @typedef {{ x: number }} A
->A : any
->x : number
-
  */
 
 /**
  * @typedef { A & { y: number } } B
->B : any
->y : number
-
  */
 
 /**

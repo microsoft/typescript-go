@@ -44,8 +44,6 @@ var mistake;
 /** @typedef {Object} Upp
  * @property {string} name
  * @property {Object} not
->Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-
  * @property {string} nested
  */
 

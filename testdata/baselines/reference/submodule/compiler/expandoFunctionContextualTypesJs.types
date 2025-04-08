@@ -2,14 +2,10 @@
 
 === input.js ===
 /** @typedef {{ color: "red" | "blue" }} MyComponentProps */
->MyComponentProps : any
->color : "blue" | "red"
 
 /**
  * @template P 
  * @typedef {{ (): any; defaultProps?: Partial<P> }} StatelessComponent */
->StatelessComponent : any
->defaultProps : P
 
  /**
   * @type {StatelessComponent<MyComponentProps>}

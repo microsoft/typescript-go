@@ -69,11 +69,3 @@
  >nested : Symbol(nested, Decl(templateTagWithNestedTypeLiteral.js, 22, 23))
  
  // lookup in typedef should not crash the compiler, even when the type is unknown
- /**
-  * @typedef {Object} A
-  * @property {T} value
-+>T : Symbol(T)
-+
-  */
- /** @type {A} */
- const options = { value: null };

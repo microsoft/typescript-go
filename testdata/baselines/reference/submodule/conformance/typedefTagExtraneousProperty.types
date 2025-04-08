@@ -2,8 +2,6 @@
 
 === typedefTagExtraneousProperty.js ===
 /** @typedef {Object.<string,string>} Mmap
->Mmap : any
-
  * @property {string} ignoreMe - should be ignored
  */
 

@@ -35,18 +35,8 @@
  >{    WindowDocked: 1,    WindowUndocked: 2,    ScriptsBreakpointSet: 3,    TimelineStarted: 4,} : { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }
  
      WindowDocked: 1,
-@@= skipped -39, +39 lines =@@
- };
- /**
-  * @typedef {string} Host.UserMetrics.Bargh
-+>Host : any
-+
+@@= skipped -45, +45 lines =@@
   */
- /**
-  * @typedef {string}
-  */
-+> : any
-+
  Host.UserMetrics.Blah = {
  >Host.UserMetrics.Blah = {    x: 12} : { x: number; }
 ->Host.UserMetrics.Blah : { x: number; }
@@ -62,7 +52,7 @@
  >{    x: 12} : { x: number; }
  
      x: 12
-@@= skipped -19, +23 lines =@@
+@@= skipped -13, +13 lines =@@
  }
  === index.js ===
  var Other = {};

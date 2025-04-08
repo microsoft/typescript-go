@@ -5,14 +5,8 @@
 === a.js ===
 /**
  * @typedef {Object} Foo
->Foo : any
-
  * @property {boolean} a
->a : any
-
  * @property {boolean} b
->b : any
-
  */
 
 /** @type {Foo} */

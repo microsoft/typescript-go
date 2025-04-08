@@ -6,8 +6,6 @@
 *     a: number | string;
 *     b: boolean | string[];
 * }} Foo
->Foo : any
-
 */
 
 /**

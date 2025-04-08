@@ -20,8 +20,6 @@ const testFnTypes = {
 };
 
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
->testFnTypes : any
->myTypes : any
 
 /**
  * @function testFn

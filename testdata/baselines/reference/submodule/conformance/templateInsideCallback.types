@@ -25,22 +25,10 @@ const identity = x => x;
 
 /**
  * @typedef Nested
->Nested : Nested
-
  * @property {Object} oh
->oh : any
-
  * @property {number} oh.no
->property : any
->oh : any
->no : any
-
  * @template T
  * @property {string} oh.noooooo
->property : any
->oh : any
->noooooo : any
-
  */
 
 

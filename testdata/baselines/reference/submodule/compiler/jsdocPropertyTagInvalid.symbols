@@ -3,12 +3,7 @@
 === /a.js ===
 /**
  * @typedef MyType
->MyType : Symbol(MyType, Decl(a.js, 1, 3))
-
  * @property {sting} [x]
->x : Symbol(x, Decl(a.js, 2, 3))
->sting : Symbol(sting)
-
  */
 
 /** @param {MyType} p  */

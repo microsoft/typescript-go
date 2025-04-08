@@ -1,16 +1,6 @@
 --- old.contextualTypedSpecialAssignment.symbols
 +++ new.contextualTypedSpecialAssignment.symbols
-@@= skipped -2, +2 lines =@@
- === test.js ===
- /** @typedef {{
-     status: 'done'
-+>status : Symbol(status, Decl(test.js, 0, 15))
-+
-     m(n: number): void
-+>m : Symbol(m, Decl(test.js, 1, 18))
-+>n : Symbol(n, Decl(test.js, 2, 6))
-+
- }} DoneStatus */
+@@= skipped -7, +7 lines =@@
  
  // property assignment
  var ns = {}
@@ -26,7 +16,7 @@
  
      status: 'done',
  >status : Symbol(status, Decl(test.js, 8, 8))
-@@= skipped -22, +25 lines =@@
+@@= skipped -17, +15 lines =@@
  }
  
  ns.x = {

@@ -5,8 +5,6 @@
  * @template T
  * @template {keyof T} K
  * @typedef {T[K]} Foo
->Foo : any
-
  */
 
 const x = { a: 1 };

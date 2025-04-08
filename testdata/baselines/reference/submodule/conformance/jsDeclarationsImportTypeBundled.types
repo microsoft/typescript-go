@@ -3,9 +3,6 @@
 === folder/mod1.js ===
 /**
  * @typedef {{x: number}} Item
->Item : any
->x : number
-
  */
 /**
  * @type {Item};

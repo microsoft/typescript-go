@@ -4,11 +4,7 @@
 /**
  * @template out T
  * @typedef {Object} Covariant
->Covariant : any
-
  * @property {T} x
->x : any
-
  */
 
 /**
@@ -42,12 +38,7 @@ sub_covariant   = super_covariant; // Error
 /**
  * @template in T
  * @typedef {Object} Contravariant
->Contravariant : any
-
  * @property {(x: T) => void} f
->f : any
->x : T
-
  */
 
 /**
@@ -83,12 +74,7 @@ sub_contravariant = super_contravariant;
 /**
  * @template in out T
  * @typedef {Object} Invariant
->Invariant : any
-
  * @property {(x: T) => T} f
->f : any
->x : T
-
  */
 
 /**

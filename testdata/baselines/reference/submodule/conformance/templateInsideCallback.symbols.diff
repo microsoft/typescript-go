@@ -1,18 +1,6 @@
 --- old.templateInsideCallback.symbols
 +++ new.templateInsideCallback.symbols
-@@= skipped -23, +23 lines =@@
- 
- /**
-  * @typedef Nested
-+>Nested : Symbol(Nested, Decl(templateInsideCallback.js, 19, 3))
-+
-  * @property {Object} oh
-+>oh : Symbol(oh, Decl(templateInsideCallback.js, 20, 3))
-+
-  * @property {number} oh.no
-  * @template T
-  * @property {string} oh.noooooo
-@@= skipped -39, +43 lines =@@
+@@= skipped -62, +62 lines =@@
    for (let i = 0; i < array.length; i += 1) {
  >i : Symbol(i, Decl(templateInsideCallback.js, 49, 10))
  >i : Symbol(i, Decl(templateInsideCallback.js, 49, 10))

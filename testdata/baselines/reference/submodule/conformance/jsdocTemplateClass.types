@@ -4,18 +4,12 @@
 /**
  * @template T
  * @typedef {(t: T) => T} Id
->Id : any
->t : T
-
  */
 /** @template T */
 class Foo {
 >Foo : Foo<T>
 
     /** @typedef {(t: T) => T} Id2 */
->Id2 : any
->t : T
-
     /** @param {T} x */
     constructor (x) {
 >x : T

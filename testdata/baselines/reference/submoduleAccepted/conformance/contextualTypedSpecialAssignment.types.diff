@@ -1,10 +1,6 @@
 --- old.contextualTypedSpecialAssignment.types
 +++ new.contextualTypedSpecialAssignment.types
-@@= skipped -4, +4 lines =@@
-     status: 'done'
-     m(n: number): void
- }} DoneStatus */
-+>DoneStatus : any
+@@= skipped -7, +7 lines =@@
  
  // property assignment
  var ns = {}
@@ -70,7 +66,7 @@
  
  
  // this-property assignment
-@@= skipped -51, +52 lines =@@
+@@= skipped -48, +48 lines =@@
      constructor() {
          /** @type {DoneStatus} */
          this.s = {

@@ -9,25 +9,8 @@
  
      // SOME PROPS HERE
  };
- 
- /** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
-+>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
-+>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
- 
- /**
-  * @typedef myTypes.typeB
-  * @property {myTypes.typeA}    prop1 - Prop 1.
-+>myTypes : Symbol(myTypes)
-+>typeA : Symbol(typeA)
-+
-  * @property {string}           prop2 - Prop 2.
-  */
- 
+@@= skipped -16, +16 lines =@@
  /** @typedef {myTypes.typeB|Function} myTypes.typeC */
-+>myTypes : Symbol(myTypes)
-+>typeB : Symbol(typeB)
-+>Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  
  export {myTypes};
 ->myTypes : Symbol(myTypes, Decl(file.js, 19, 8), Decl(file.js, 9, 50), Decl(file.js, 12, 12), Decl(file.js, 17, 38))
@@ -35,7 +18,7 @@
  
  === file2.js ===
  import {myTypes} from './file.js';
-@@= skipped -28, +37 lines =@@
+@@= skipped -12, +12 lines =@@
   * @type {Object<string,*>}
   */
  const testFnTypes = {
@@ -44,15 +27,7 @@
  
      // SOME PROPS HERE
  };
- 
- /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
-+>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 11, 4), Decl(file2.js, 27, 15))
-+>myTypes : Symbol(myTypes)
-+>typeC : Symbol(typeC)
- 
- /**
-  * @function testFn
-@@= skipped -30, +33 lines =@@
+@@= skipped -30, +30 lines =@@
  
  export {testFn, testFnTypes};
  >testFn : Symbol(testFn, Decl(file2.js, 27, 8))

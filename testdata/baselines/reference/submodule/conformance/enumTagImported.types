@@ -2,8 +2,6 @@
 
 === type.js ===
 /** @typedef {import("./mod1").TestEnum} TE */
->TE : any
-
 /** @type {TE} */
 const test = 'add'
 >test : any

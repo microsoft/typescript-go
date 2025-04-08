@@ -9,12 +9,7 @@
  >MyClass : any
  }
  declare global {
-@@= skipped -16, +16 lines =@@
- === index.js ===
- /**
-  * @typedef {import("./externs")} Foo
-+>Foo : any
-+
+@@= skipped -19, +19 lines =@@
   */
  
  let a = /** @type {Foo} */(/** @type {*} */(undefined)); 
@@ -52,12 +47,11 @@
  >{ doer: q => q } : { doer: (q: string) => string; }
  >doer : (q: string) => string
  >q => q : (q: string) => string
-@@= skipped -31, +36 lines =@@
+@@= skipped -28, +31 lines =@@
  const r = /** @type {typeof import("./externs").Bar} */(r => r);
  >r : (x: string, y?: number) => void
  >(r => r) : (x: string, y?: number) => void
 +>r => r : (x: string, y?: number) => void
-+>Bar : any
  >r => r : (r: string) => string
  >r : string
  >r : string

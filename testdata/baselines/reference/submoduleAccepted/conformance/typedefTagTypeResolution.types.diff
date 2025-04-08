@@ -1,14 +1,6 @@
 --- old.typedefTagTypeResolution.types
 +++ new.typedefTagTypeResolution.types
-@@= skipped -2, +2 lines =@@
- === github20832.js ===
- // #20832
- /** @typedef {U} T - should be "error, can't find type named 'U' */
-+>T : U
-+
- /**
-  * @template U
-  * @param {U} x
+@@= skipped -8, +8 lines =@@
   * @return {T}
   */
  function f(x) {
@@ -17,7 +9,7 @@
  >x : U
  
      return x;
-@@= skipped -34, +36 lines =@@
+@@= skipped -28, +28 lines =@@
  /** @type {Cb} */
  const cb = x => {}
  >cb : Cb

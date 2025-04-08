@@ -29,7 +29,6 @@
      a = /** @type {Foo} */(null);
 ->a : Symbol(Foo.a, Decl(index3.js, 0, 26))
 +>a : Symbol(a, Decl(index3.js, 0, 26))
-+>Foo : Symbol(default, Decl(index3.js, 0, 0))
  
  };
  export const X = Foo;
@@ -43,17 +42,16 @@
  >Bar : Symbol(Bar, Decl(index3.js, 4, 8))
  
  === index4.js ===
-@@= skipped -38, +39 lines =@@
+@@= skipped -38, +38 lines =@@
  >Fab : Symbol(Fab, Decl(index4.js, 0, 6))
  
      x = /** @type {Bar} */(null);
 ->x : Symbol(Bar.x, Decl(index4.js, 1, 23))
 +>x : Symbol(x, Decl(index4.js, 1, 23))
-+>Bar : Symbol(Bar, Decl(index4.js, 0, 27))
  }
  export default Bar;
  >Bar : Symbol(Bar, Decl(index4.js, 0, 27))
-@@= skipped -16, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  === index6.js ===
  // merge type alias and function (OK)
  export default function func() {};

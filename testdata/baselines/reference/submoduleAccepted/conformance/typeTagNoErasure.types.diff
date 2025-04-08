@@ -1,11 +1,6 @@
 --- old.typeTagNoErasure.types
 +++ new.typeTagNoErasure.types
-@@= skipped -1, +1 lines =@@
- 
- === typeTagNoErasure.js ===
- /** @template T @typedef {<T1 extends T>(data: T1) => T1} Test */
-+>Test : any
-+>data : T1
+@@= skipped -4, +4 lines =@@
  
  /** @type {Test<number>} */
  const test = dibbity => dibbity

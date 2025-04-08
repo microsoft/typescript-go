@@ -9,27 +9,8 @@
  >{    // SOME PROPS HERE} : {}
  
      // SOME PROPS HERE
- };
- 
- /** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
-+>myTypes : any
- 
- /**
-  * @typedef myTypes.typeB
-+>myTypes : any
-+
-  * @property {myTypes.typeA}    prop1 - Prop 1.
-+>prop1 : any
-+>myTypes : any
-+
-  * @property {string}           prop2 - Prop 2.
-+>prop2 : any
-+
-  */
- 
+@@= skipped -17, +17 lines =@@
  /** @typedef {myTypes.typeB|Function} myTypes.typeC */
-+>myTypes : any
-+>myTypes : any
  
  export {myTypes};
 ->myTypes : { [x: string]: any; }
@@ -42,7 +23,7 @@
  
  /**
   * @namespace testFnTypes
-@@= skipped -29, +39 lines =@@
+@@= skipped -12, +12 lines =@@
   * @type {Object<string,*>}
   */
  const testFnTypes = {
@@ -51,15 +32,7 @@
  >{    // SOME PROPS HERE} : {}
  
      // SOME PROPS HERE
- };
- 
- /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
-+>testFnTypes : any
-+>myTypes : any
- 
- /**
-  * @function testFn
-@@= skipped -15, +17 lines =@@
+@@= skipped -15, +15 lines =@@
   * @returns {number|null} Result.
   */
  function testFn(input) {

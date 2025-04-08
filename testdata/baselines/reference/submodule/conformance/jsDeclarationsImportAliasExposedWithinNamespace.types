@@ -14,24 +14,14 @@ const myTypes = {
 };
 
 /** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
->myTypes : any
 
 /**
  * @typedef myTypes.typeB
->myTypes : any
-
  * @property {myTypes.typeA}    prop1 - Prop 1.
->prop1 : any
->myTypes : any
-
  * @property {string}           prop2 - Prop 2.
->prop2 : any
-
  */
 
 /** @typedef {myTypes.typeB|Function} myTypes.typeC */
->myTypes : any
->myTypes : any
 
 export {myTypes};
 >myTypes : any
@@ -53,8 +43,6 @@ const testFnTypes = {
 };
 
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
->testFnTypes : any
->myTypes : any
 
 /**
  * @function testFn

@@ -1,27 +1,6 @@
 --- old.checkJsdocTypedefInParamTag1.types
 +++ new.checkJsdocTypedefInParamTag1.types
-@@= skipped -3, +3 lines =@@
- // @ts-check
- /**
-  * @typedef {Object} Opts
-+>Opts : Opts
-+
-  * @property {string} x
-+>x : any
-+
-  * @property {string=} y
-+>y : any
-+
-  * @property {string} [z]
-+>z : any
-+
-  * @property {string} [w="hi"]
-+>w : any
-+
-  *
-  * @param {Opts} opts
-  */
-@@= skipped -12, +22 lines =@@
+@@= skipped -15, +15 lines =@@
  >opts : Opts
  
      opts.x;
@@ -33,22 +12,7 @@
  }
  
  foo({x: 'abc'});
-@@= skipped -14, +14 lines =@@
- 
- /**
-  * @typedef {Object} AnotherOpts
-+>AnotherOpts : AnotherOpts
-+
-  * @property anotherX {string}
-+>anotherX : any
-+
-  * @property anotherY {string=}
-+>anotherY : any
-+
-  * 
-  * @param {AnotherOpts} opts
-  */
-@@= skipped -10, +16 lines =@@
+@@= skipped -24, +24 lines =@@
  >opts : AnotherOpts
  
      opts.anotherX;
@@ -60,28 +24,7 @@
  }
  
  foo1({anotherX: "world"});
-@@= skipped -14, +14 lines =@@
- 
- /**
-  * @typedef {object} Opts1
-+>Opts1 : Opts1
-+
-  * @property {string} x
-+>x : any
-+
-  * @property {string=} y
-+>y : any
-+
-  * @property {string} [z]
-+>z : any
-+
-  * @property {string} [w="hi"]
-+>w : any
-+
-  *
-  * @param {Opts1} opts
-  */
-@@= skipped -12, +22 lines =@@
+@@= skipped -26, +26 lines =@@
  >opts : Opts1
  
      opts.x;

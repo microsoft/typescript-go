@@ -2,8 +2,6 @@
 
 === /a.js ===
 /** @typedef {Object.<string, (n: number) => boolean>} Predicates */
->Predicates : any
->n : number
 
 const p = /** @satisfies {Predicates} */ ({
 >p : { isEven: (n: any) => boolean; isOdd: (n: any) => boolean; }

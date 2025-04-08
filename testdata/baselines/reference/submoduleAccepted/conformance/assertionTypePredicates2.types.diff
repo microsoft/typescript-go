@@ -1,23 +1,6 @@
 --- old.assertionTypePredicates2.types
 +++ new.assertionTypePredicates2.types
-@@= skipped -2, +2 lines =@@
- === assertionTypePredicates2.js ===
- /**
-  * @typedef {{ x: number }} A
-+>A : any
-+>x : number
-+
-  */
- 
- /**
-  * @typedef { A & { y: number } } B
-+>B : any
-+>y : number
-+
-  */
- 
- /**
-@@= skipped -11, +17 lines =@@
+@@= skipped -13, +13 lines =@@
   * @returns { asserts a is B }
   */
  const foo = (a) => {

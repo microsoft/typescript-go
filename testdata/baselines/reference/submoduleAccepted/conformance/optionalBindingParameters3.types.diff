@@ -1,17 +1,6 @@
 --- old.optionalBindingParameters3.types
 +++ new.optionalBindingParameters3.types
-@@= skipped -2, +2 lines =@@
- === /a.js ===
- /**
-  * @typedef Foo
-+>Foo : Foo
-+
-  * @property {string} a
-+>a : any
-+
-  */
- 
- /**
+@@= skipped -9, +9 lines =@@
   * @param {Foo} [options]
   */
  function f({ a = "a" }) {}

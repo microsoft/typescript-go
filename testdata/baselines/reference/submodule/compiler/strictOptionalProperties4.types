@@ -3,11 +3,7 @@
 === a.js ===
 /**
  * @typedef Foo
->Foo : any
-
  * @property {number} [foo]
->foo : any
-
  */
 
 const x = /** @type {Foo} */ ({});

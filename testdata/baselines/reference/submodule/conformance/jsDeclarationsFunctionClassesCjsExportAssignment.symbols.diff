@@ -16,15 +16,7 @@
  >Timer : Symbol(Timer, Decl(timer.js, 0, 0))
  
  === hook.js ===
- /**
-  * @typedef {(arg: import("./context")) => void} HookHandler
-+>HookHandler : Symbol(HookHandler, Decl(hook.js, 1, 3))
-+>arg : Symbol(arg, Decl(hook.js, 1, 14))
-+
-  */
- /**
-  * @param {HookHandler} handle
-@@= skipped -23, +20 lines =@@
+@@= skipped -23, +17 lines =@@
  >handle : Symbol(handle, Decl(hook.js, 6, 14))
  
      this.handle = handle;
@@ -40,55 +32,7 @@
  >Hook : Symbol(Hook, Decl(hook.js, 0, 0))
  
  === context.js ===
-@@= skipped -16, +10 lines =@@
-  * Imports
-  *
-  * @typedef {import("./timer")} Timer
-+>Timer : Symbol(Timer, Decl(context.js, 3, 3))
-+
-  * @typedef {import("./hook")} Hook
-+>Hook : Symbol(Hook, Decl(context.js, 4, 3))
-+
-  * @typedef {import("./hook").HookHandler} HookHandler
-+>HookHandler : Symbol(HookHandler, Decl(context.js, 5, 3))
-+>HookHandler : Symbol(HookHandler, Decl(hook.js, 1, 3))
-+
-  */
- 
- /**
-  * Input type definition
-  *
-  * @typedef {Object} Input
-+>Input : Symbol(Input, Decl(context.js, 11, 3))
-+
-  * @prop {Timer} timer
-+>timer : Symbol(timer, Decl(context.js, 12, 3))
-+>Timer : Symbol(Timer, Decl(context.js, 3, 3))
-+
-  * @prop {Hook} hook
-+>hook : Symbol(hook, Decl(context.js, 13, 3))
-+>Hook : Symbol(Hook, Decl(context.js, 4, 3))
-+
-  */
-  
- /**
-  * State type definition
-  *
-  * @typedef {Object} State
-+>State : Symbol(State, Decl(context.js, 19, 3))
-+
-  * @prop {Timer} timer
-+>timer : Symbol(timer, Decl(context.js, 20, 3))
-+>Timer : Symbol(Timer, Decl(context.js, 3, 3))
-+
-  * @prop {Hook} hook
-+>hook : Symbol(hook, Decl(context.js, 21, 3))
-+>Hook : Symbol(Hook, Decl(context.js, 4, 3))
-+
-  */
- 
- /**
-@@= skipped -28, +51 lines =@@
+@@= skipped -44, +38 lines =@@
   */
  
  function Context(input) {

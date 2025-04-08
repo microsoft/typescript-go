@@ -3,9 +3,6 @@
 === test.js ===
 /**
  * @typedef {(a: string, b: number) => void} Foo
->a : Symbol(a, Decl(test.js, 1, 14))
->b : Symbol(b, Decl(test.js, 1, 24))
-
  */
 
 class C {

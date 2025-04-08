@@ -1,15 +1,6 @@
 --- old.jsDeclarationsTypedefFunction.types
 +++ new.jsDeclarationsTypedefFunction.types
-@@= skipped -4, +4 lines =@@
-  * @typedef {{
-  *   [id: string]: [Function, Function];
-  * }} ResolveRejectMap
-+>ResolveRejectMap : any
-+
-  */
- 
- let id = 0
-@@= skipped -11, +13 lines =@@
+@@= skipped -15, +15 lines =@@
   * @returns {Promise<any>}
   */
  const send = handlers => new Promise((resolve, reject) => {

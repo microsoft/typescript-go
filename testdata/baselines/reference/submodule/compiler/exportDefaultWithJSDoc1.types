@@ -4,8 +4,6 @@
 /**
  * A number, or a string containing a number.
  * @typedef {(number|string)} NumberLike
->NumberLike : any
-
  */
 
 /** @type {NumberLike[]} */export default ([ ]);

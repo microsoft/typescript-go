@@ -14,8 +14,6 @@ const bar = { c: 1 };
 >c : Symbol(c, Decl(a.js, 6, 13))
 
 /** @type {Foo} */
->Foo : Symbol(Foo, Decl(a.js, 1, 3))
-
 export default bar;
 >bar : Symbol(bar, Decl(a.js, 6, 5))
 

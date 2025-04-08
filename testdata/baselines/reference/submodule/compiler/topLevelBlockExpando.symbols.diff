@@ -42,22 +42,7 @@
  
    const diceP: Person = dice;  
  >diceP : Symbol(diceP, Decl(check.ts, 10, 7))
-@@= skipped -36, +36 lines =@@
- // Creates a type { first:string, last: string }
- /**
-  * @typedef {Object} Human - creates a new type named 'SpecialType'
-+>Human : Symbol(Human, Decl(check.js, 2, 3))
-+
-  * @property {string} first - a string property of SpecialType
-+>first : Symbol(first, Decl(check.js, 3, 3))
-+
-  * @property {string} last - a number property of SpecialType
-+>last : Symbol(last, Decl(check.js, 4, 3))
-+
-  */
- 
- /**
-@@= skipped -12, +18 lines =@@
+@@= skipped -48, +48 lines =@@
  >param : Symbol(param, Decl(check.js, 10, 23))
  
  const dice1 = () => Math.floor(Math.random() * 6);

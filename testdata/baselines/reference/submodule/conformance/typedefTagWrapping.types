@@ -3,8 +3,6 @@
 === mod1.js ===
 /** 
  * @typedef {function(string): boolean}
-> : function
-
  * Type1
  */
 
@@ -33,8 +31,6 @@ function callIt(func, arg) {
  *   str: string,
  *   boo: boolean
  * }} Type2
->Type2 : Type2
-
  */
 
 /**
@@ -64,8 +60,6 @@ function check(obj) {
  * A function whose signature is very long.
  *
  * @typedef {function(boolean, string, number):
-> : function
-
  *     (string|number)} StringOrNumber1
  */
 
@@ -97,8 +91,6 @@ function use1(func, bool, str, num) {
  * A function whose signature is very long.
  *
  * @typedef {function(boolean, string,
-> : function
-
  *    number):
  *    (string|number)} StringOrNumber2
  */
@@ -136,8 +128,6 @@ function use2(func, bool, str, num) {
  *   boo:
  *   boolean
  * }} Type5
->Type5 : Type5
-
  */
 
 /**
@@ -170,8 +160,6 @@ function check5(obj) {
  *   bar:
  *   *
  * }} Type6
->Type6 : Type6
-
  */
 
 /**

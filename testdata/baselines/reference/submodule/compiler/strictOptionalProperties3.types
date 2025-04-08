@@ -3,11 +3,7 @@
 === a.js ===
 /**
  * @typedef {object} A
->A : any
-
  * @property {number} [value]
->value : any
-
  */
 
 /** @type {A} */
@@ -19,9 +15,6 @@ const a = { value: undefined }; // error
 
 /**
  * @typedef {{ value?: number }} B
->B : any
->value : number | undefined
-
  */
 
 /** @type {B} */

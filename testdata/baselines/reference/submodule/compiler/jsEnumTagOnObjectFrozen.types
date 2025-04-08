@@ -18,14 +18,8 @@ useThing(Thing.a);
 
 /**
  * @typedef {Object} LogEntry
->LogEntry : any
-
  * @property {string} type
->type : any
-
  * @property {number} time
->time : any
-
  */
 
 cbThing(type => {

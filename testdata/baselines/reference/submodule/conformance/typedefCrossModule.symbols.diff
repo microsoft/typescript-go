@@ -1,20 +1,8 @@
 --- old.typedefCrossModule.symbols
 +++ new.typedefCrossModule.symbols
-@@= skipped -7, +7 lines =@@
- === mod1.js ===
- /// <reference path="./commonjs.d.ts"/>
- /** @typedef {{ type: "a", x: 1 }} A */
-+>type : Symbol(type, Decl(mod1.js, 1, 15))
-+>x : Symbol(x, Decl(mod1.js, 1, 26))
-+
+@@= skipped -10, +10 lines =@@
  /** @typedef {{ type: "b", y: 1 }} B */
-+>type : Symbol(type, Decl(mod1.js, 2, 15))
-+>y : Symbol(y, Decl(mod1.js, 2, 26))
-+
  /** @typedef {A | B} Both */
-+>A : Symbol(A, Decl(mod1.js, 1, 4))
-+>B : Symbol(B, Decl(mod1.js, 2, 4))
-+
  module.exports = C
 ->module.exports : Symbol(module.exports, Decl(mod1.js, 0, 0))
 ->module : Symbol(export=, Decl(mod1.js, 0, 0))
@@ -34,23 +22,7 @@
  }
  
  === mod2.js ===
- /// <reference path="./commonjs.d.ts"/>
- /** @typedef {{ type: "a", x: 1 }} A */
-+>A : Symbol(A, Decl(mod2.js, 1, 4))
-+>type : Symbol(type, Decl(mod2.js, 1, 15))
-+>x : Symbol(x, Decl(mod2.js, 1, 26))
-+
- /** @typedef {{ type: "b", y: 1 }} B */
-+>B : Symbol(B, Decl(mod2.js, 2, 4))
-+>type : Symbol(type, Decl(mod2.js, 2, 15))
-+>y : Symbol(y, Decl(mod2.js, 2, 26))
-+
- /** @typedef {A | B} Both */
-+>Both : Symbol(Both, Decl(mod2.js, 3, 4))
-+>A : Symbol(A, Decl(mod2.js, 1, 4))
-+>B : Symbol(B, Decl(mod2.js, 2, 4))
- 
- export function C() {
+@@= skipped -24, +21 lines =@@
  >C : Symbol(C, Decl(mod2.js, 0, 0))
  
      this.p = 1
@@ -60,18 +32,11 @@
  }
  
  === mod3.js ===
++
  /// <reference path="./commonjs.d.ts"/>
  /** @typedef {{ type: "a", x: 1 }} A */
-+>type : Symbol(type, Decl(mod3.js, 1, 15))
-+>x : Symbol(x, Decl(mod3.js, 1, 26))
-+
  /** @typedef {{ type: "b", y: 1 }} B */
-+>type : Symbol(type, Decl(mod3.js, 2, 15))
-+>y : Symbol(y, Decl(mod3.js, 2, 26))
-+
  /** @typedef {A | B} Both */
-+>A : Symbol(A, Decl(mod3.js, 1, 4))
-+>B : Symbol(B, Decl(mod3.js, 2, 4))
  
  exports.C = function() {
 ->exports.C : Symbol(C, Decl(mod3.js, 0, 0))

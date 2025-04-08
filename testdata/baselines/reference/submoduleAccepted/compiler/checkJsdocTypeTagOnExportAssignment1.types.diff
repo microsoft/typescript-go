@@ -1,18 +1,6 @@
 --- old.checkJsdocTypeTagOnExportAssignment1.types
 +++ new.checkJsdocTypeTagOnExportAssignment1.types
-@@= skipped -4, +4 lines =@@
- === a.js ===
- /**
-  * @typedef {Object} Foo
-+>Foo : any
-+
-  * @property {boolean} a
-+>a : any
-+
-  * @property {boolean} b
-+>b : any
-+
-  */
+@@= skipped -10, +10 lines =@@
  
  /** @type {Foo} */
  export default { c: false };

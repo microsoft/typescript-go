@@ -32,9 +32,6 @@ export {}; // flag file as module
 === mixed.js ===
 /**
  * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
->SomeType : SomeType
->x : string
-
  */
 /**
  * @param {number} x

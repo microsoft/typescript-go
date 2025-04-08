@@ -1,16 +1,6 @@
 --- old.thisTag3.symbols
 +++ new.thisTag3.symbols
-@@= skipped -2, +2 lines =@@
- === /a.js ===
- /**
-  * @typedef {{fn(a: string): void}} T
-+>fn : Symbol(fn, Decl(a.js, 1, 14))
-+>a : Symbol(a, Decl(a.js, 1, 17))
-+
-  */
- 
- class C {
-@@= skipped -10, +13 lines =@@
+@@= skipped -12, +12 lines =@@
       * @param {string} a
       */
      p = (a) => this.fn("" + a);

@@ -1,16 +1,6 @@
 --- old.checkJsdocTypeTag7.symbols
 +++ new.checkJsdocTypeTag7.symbols
-@@= skipped -2, +2 lines =@@
- === test.js ===
- /**
-  * @typedef {(a: string, b: number) => void} Foo
-+>a : Symbol(a, Decl(test.js, 1, 14))
-+>b : Symbol(b, Decl(test.js, 1, 24))
-+
-  */
- 
- class C {
-@@= skipped -7, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  
      /** @type {Foo} */
      foo(a, b) {}

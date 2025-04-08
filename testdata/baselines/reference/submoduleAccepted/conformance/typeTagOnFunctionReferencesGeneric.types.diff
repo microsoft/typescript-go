@@ -1,13 +1,6 @@
 --- old.typeTagOnFunctionReferencesGeneric.types
 +++ new.typeTagOnFunctionReferencesGeneric.types
-@@= skipped -2, +2 lines =@@
- === typeTagOnFunctionReferencesGeneric.js ===
- /**
-  * @typedef {<T>(m : T) => T} IFn
-+>IFn : IFn
-+>m : T
-+
-  */
+@@= skipped -6, +6 lines =@@
  
  /**@type {IFn}*/
  export function inJs(l) {

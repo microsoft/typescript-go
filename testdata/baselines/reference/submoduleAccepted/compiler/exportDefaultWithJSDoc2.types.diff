@@ -1,11 +1,6 @@
 --- old.exportDefaultWithJSDoc2.types
 +++ new.exportDefaultWithJSDoc2.types
-@@= skipped -3, +3 lines =@@
- /**
-  * A number, or a string containing a number.
-  * @typedef {(number|string)} NumberLike
-+>NumberLike : any
-+
+@@= skipped -6, +6 lines =@@
   */
  
  export default /** @type {NumberLike[]} */([ ]);

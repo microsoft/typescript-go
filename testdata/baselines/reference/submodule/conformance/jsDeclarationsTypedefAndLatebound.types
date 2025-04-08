@@ -24,8 +24,6 @@ stringSet.addAll(stringSet);
 // Comment out this JSDoc, and note that the errors index.js go away.
 /**
  * @typedef {Object} SomeObject
->SomeObject : any
-
  */
 class LazySet {
 >LazySet : LazySet

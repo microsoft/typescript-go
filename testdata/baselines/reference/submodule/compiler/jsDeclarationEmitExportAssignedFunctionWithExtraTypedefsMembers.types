@@ -3,11 +3,7 @@
 === index.js ===
 /**
  * @typedef Options
->Options : any
-
  * @property {string} opt
->opt : any
-
  */
 
 /**

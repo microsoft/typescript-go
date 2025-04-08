@@ -5,8 +5,6 @@ export class Preferences {
 >Preferences : Preferences
 
   /** @typedef {string} A */
->A : any
-
   ;
   /** @type {A} */
   a = 'ok'

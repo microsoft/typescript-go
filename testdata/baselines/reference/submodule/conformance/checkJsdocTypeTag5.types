@@ -44,9 +44,6 @@ var k = function (x) { return x }
 
 
 /** @typedef {(x: 'hi' | 'bye') => 0 | 1 | 2} Argle */
->Argle : Argle
->x : "bye" | "hi"
-
 /** @type {Argle} */
 function blargle(s) {
 >blargle : (s: any) => number
@@ -64,9 +61,6 @@ var zeroonetwo = blargle('hi')
 >'hi' : "hi"
 
 /** @typedef {{(s: string): 0 | 1; (b: boolean): 2 | 3 }} Gioconda */
->Gioconda : Gioconda
->s : string
->b : boolean
 
 /** @type {Gioconda} */
 function monaLisa(sb) {

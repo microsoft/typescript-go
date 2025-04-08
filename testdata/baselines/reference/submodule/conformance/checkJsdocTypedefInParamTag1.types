@@ -4,20 +4,10 @@
 // @ts-check
 /**
  * @typedef {Object} Opts
->Opts : Opts
-
  * @property {string} x
->x : any
-
  * @property {string=} y
->y : any
-
  * @property {string} [z]
->z : any
-
  * @property {string} [w="hi"]
->w : any
-
  *
  * @param {Opts} opts
  */
@@ -40,14 +30,8 @@ foo({x: 'abc'});
 
 /**
  * @typedef {Object} AnotherOpts
->AnotherOpts : AnotherOpts
-
  * @property anotherX {string}
->anotherX : any
-
  * @property anotherY {string=}
->anotherY : any
-
  * 
  * @param {AnotherOpts} opts
  */
@@ -70,20 +54,10 @@ foo1({anotherX: "world"});
 
 /**
  * @typedef {object} Opts1
->Opts1 : Opts1
-
  * @property {string} x
->x : any
-
  * @property {string=} y
->y : any
-
  * @property {string} [z]
->z : any
-
  * @property {string} [w="hi"]
->w : any
-
  *
  * @param {Opts1} opts
  */

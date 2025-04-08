@@ -2,8 +2,6 @@
 
 === assertionsAndNonReturningFunctions.js ===
 /** @typedef {(check: boolean) => asserts check} AssertFunc */
->AssertFunc : any
->check : boolean
 
 /** @type {AssertFunc} */
 const assert = check => {

@@ -2,8 +2,6 @@
 
 === /a.js ===
 /** @typedef {{ move(distance: number): void }} Movable */
->move : Symbol(move, Decl(a.js, 0, 15))
->distance : Symbol(distance, Decl(a.js, 0, 21))
 
 const car = /** @satisfies {Movable & Record<string, unknown>} */ ({
 >car : Symbol(car, Decl(a.js, 2, 5))

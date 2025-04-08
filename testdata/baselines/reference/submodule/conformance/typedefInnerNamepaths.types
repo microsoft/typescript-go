@@ -6,11 +6,7 @@ class C {
 
     /**
      * @typedef {C~A} C~B
-> : any
-
      * @typedef {object} C~A
->C : any
-
      */
     /** @param {C~A} o */
     constructor(o) {

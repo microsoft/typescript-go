@@ -5,8 +5,6 @@
 === a.js ===
 /**
  * @typedef {number} Foo
->Foo : any
-
  */
 
 /** @type {Foo} */

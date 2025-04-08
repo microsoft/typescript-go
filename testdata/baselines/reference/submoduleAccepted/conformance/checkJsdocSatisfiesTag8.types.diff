@@ -1,10 +1,6 @@
 --- old.checkJsdocSatisfiesTag8.types
 +++ new.checkJsdocSatisfiesTag8.types
-@@= skipped -1, +1 lines =@@
- 
- === /a.js ===
- /** @typedef {Object.<string, boolean>} Facts */
-+>Facts : any
+@@= skipped -4, +4 lines =@@
  
  // Should be able to detect a failure here
  const x = /** @satisfies {Facts} */ ({

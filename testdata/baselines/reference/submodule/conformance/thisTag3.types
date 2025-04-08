@@ -3,10 +3,6 @@
 === /a.js ===
 /**
  * @typedef {{fn(a: string): void}} T
->T : any
->fn : (a: string) => void
->a : string
-
  */
 
 class C {

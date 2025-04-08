@@ -22,12 +22,7 @@ import Test from './test/Test.js'
 
 /**
  * @typedef {Object} Options
->Options : any
-
  * @property {typeof import("./Test.js").default} [test]
->test : any
->default : any
-
  */
 
 class X extends Test {

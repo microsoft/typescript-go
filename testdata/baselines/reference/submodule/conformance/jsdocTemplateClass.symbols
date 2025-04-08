@@ -4,20 +4,12 @@
 /**
  * @template T
  * @typedef {(t: T) => T} Id
->t : Symbol(t, Decl(templateTagOnClasses.js, 2, 14))
->T : Symbol(T, Decl(templateTagOnClasses.js, 4, 14))
->T : Symbol(T, Decl(templateTagOnClasses.js, 4, 14))
-
  */
 /** @template T */
 class Foo {
 >Foo : Symbol(Foo, Decl(templateTagOnClasses.js, 0, 0))
 
     /** @typedef {(t: T) => T} Id2 */
->t : Symbol(t, Decl(templateTagOnClasses.js, 6, 19))
->T : Symbol(T, Decl(templateTagOnClasses.js, 4, 14))
->T : Symbol(T, Decl(templateTagOnClasses.js, 4, 14))
-
     /** @param {T} x */
     constructor (x) {
 >x : Symbol(x, Decl(templateTagOnClasses.js, 8, 17))

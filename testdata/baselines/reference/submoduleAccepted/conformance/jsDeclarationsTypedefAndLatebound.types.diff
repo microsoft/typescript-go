@@ -25,16 +25,7 @@
  >stringSet : LazySet
  
  
-@@= skipped -11, +11 lines =@@
- // Comment out this JSDoc, and note that the errors index.js go away.
- /**
-  * @typedef {Object} SomeObject
-+>SomeObject : any
-+
-  */
- class LazySet {
- >LazySet : LazySet
-@@= skipped -9, +11 lines =@@
+@@= skipped -20, +20 lines =@@
       */
      addAll(iterable) {}
  >addAll : (iterable: LazySet) => void

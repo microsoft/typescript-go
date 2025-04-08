@@ -1,19 +1,6 @@
 --- old.contravariantOnlyInferenceFromAnnotatedFunctionJs.types
 +++ new.contravariantOnlyInferenceFromAnnotatedFunctionJs.types
-@@= skipped -2, +2 lines =@@
- === index.js ===
- /**
-  * @typedef {{ [K in keyof B]: { fn: (a: A, b: B) => void; thing: B[K]; } }} Funcs
-+>Funcs : Funcs<A, B>
-+>fn : (a: A, b: B) => void
-+>a : A
-+>b : B
-+>thing : B[K]
-+
-  * @template A
-  * @template {Record<string, unknown>} B
-  */
-@@= skipped -16, +22 lines =@@
+@@= skipped -18, +18 lines =@@
  
    return /** @type {any} */ (null);
  >(null) : any

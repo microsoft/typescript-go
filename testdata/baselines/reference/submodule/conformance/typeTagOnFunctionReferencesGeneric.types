@@ -3,9 +3,6 @@
 === typeTagOnFunctionReferencesGeneric.js ===
 /**
  * @typedef {<T>(m : T) => T} IFn
->IFn : IFn
->m : T
-
  */
 
 /**@type {IFn}*/

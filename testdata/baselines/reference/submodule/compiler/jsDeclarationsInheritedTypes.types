@@ -3,20 +3,12 @@
 === a.js ===
 /**
  * @typedef A
->A : any
-
  * @property {string} a
->a : any
-
  */
 
 /**
  * @typedef B
->B : any
-
  * @property {number} b
->b : any
-
  */
 
  class C1 {

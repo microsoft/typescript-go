@@ -1,19 +1,6 @@
 --- old.expandoFunctionContextualTypesJs.types
 +++ new.expandoFunctionContextualTypesJs.types
-@@= skipped -1, +1 lines =@@
- 
- === input.js ===
- /** @typedef {{ color: "red" | "blue" }} MyComponentProps */
-+>MyComponentProps : any
-+>color : "blue" | "red"
- 
- /**
-  * @template P 
-  * @typedef {{ (): any; defaultProps?: Partial<P> }} StatelessComponent */
-+>StatelessComponent : any
-+>defaultProps : P
- 
-  /**
+@@= skipped -10, +10 lines =@@
    * @type {StatelessComponent<MyComponentProps>}
    */
  const MyComponent = () => /* @type {any} */(null);
@@ -69,7 +56,7 @@
  >"red" : "red"
  }
  
-@@= skipped -49, +53 lines =@@
+@@= skipped -40, +40 lines =@@
    * @type {StatelessComponent<MyComponentProps>}
   */
  const check = MyComponent2;

@@ -13,23 +13,14 @@ const myTypes = {
 };
 
 /** @typedef {string|RegExp|Array<string|RegExp>} myTypes.typeA */
->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
->Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
->RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 /**
  * @typedef myTypes.typeB
  * @property {myTypes.typeA}    prop1 - Prop 1.
->myTypes : Symbol(myTypes)
->typeA : Symbol(typeA)
-
  * @property {string}           prop2 - Prop 2.
  */
 
 /** @typedef {myTypes.typeB|Function} myTypes.typeC */
->myTypes : Symbol(myTypes)
->typeB : Symbol(typeB)
->Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 
 export {myTypes};
 >myTypes : Symbol(myTypes, Decl(file.js, 9, 4), Decl(file.js, 19, 8))
@@ -50,9 +41,6 @@ const testFnTypes = {
 };
 
 /** @typedef {boolean|myTypes.typeC} testFnTypes.input */
->testFnTypes : Symbol(testFnTypes, Decl(file2.js, 11, 4), Decl(file2.js, 27, 15))
->myTypes : Symbol(myTypes)
->typeC : Symbol(typeC)
 
 /**
  * @function testFn

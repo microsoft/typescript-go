@@ -20,11 +20,8 @@ export = Foo;
 
 === something.js ===
 /** @typedef {typeof import("./file")} Foo */
->Foo : any
 
 /** @typedef {(foo: Foo) => string} FooFun */
->FooFun : any
->foo : typeof Foo
 
 module.exports = /** @type {FooFun} */(void 0);
 >module.exports = /** @type {FooFun} */(void 0) : (foo: typeof Foo) => string

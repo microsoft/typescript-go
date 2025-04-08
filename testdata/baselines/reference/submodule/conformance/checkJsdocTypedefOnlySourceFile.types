@@ -10,8 +10,6 @@ var exports = {};
 /**
  * @typedef {string}
  */
-> : any
-
 exports.SomeName;
 >exports.SomeName : any
 >exports : {}

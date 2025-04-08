@@ -1,16 +1,6 @@
 --- old.strictOptionalProperties4.types
 +++ new.strictOptionalProperties4.types
-@@= skipped -2, +2 lines =@@
- === a.js ===
- /**
-  * @typedef Foo
-+>Foo : any
-+
-  * @property {number} [foo]
-+>foo : any
-+
-  */
- 
+@@= skipped -8, +8 lines =@@
  const x = /** @type {Foo} */ ({});
  >x : Foo
  >({}) : Foo

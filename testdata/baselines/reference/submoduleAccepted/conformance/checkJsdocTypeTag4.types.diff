@@ -1,16 +1,6 @@
 --- old.checkJsdocTypeTag4.types
 +++ new.checkJsdocTypeTag4.types
-@@= skipped -8, +8 lines =@@
- /** Also should error for jsdoc typedefs
-  * @template {string} U
-  * @typedef {{ b: U }} B
-+>B : any
-+>b : U
-+
-  */
- /** @type {A<number>} */
- var a;
-@@= skipped -7, +10 lines =@@
+@@= skipped -15, +15 lines =@@
  
  /** @type {B<number>} */
  var b;

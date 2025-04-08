@@ -3,12 +3,6 @@
 === index.js ===
 /**
  * @typedef {{ [K in keyof B]: { fn: (a: A, b: B) => void; thing: B[K]; } }} Funcs
->Funcs : Funcs<A, B>
->fn : (a: A, b: B) => void
->a : A
->b : B
->thing : B[K]
-
  * @template A
  * @template {Record<string, unknown>} B
  */

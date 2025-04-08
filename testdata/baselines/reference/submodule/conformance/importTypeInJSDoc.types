@@ -36,8 +36,6 @@ export = MyClass;
 === index.js ===
 /**
  * @typedef {import("./externs")} Foo
->Foo : any
-
  */
 
 let a = /** @type {Foo} */(/** @type {*} */(undefined)); 
@@ -73,7 +71,6 @@ const r = /** @type {typeof import("./externs").Bar} */(r => r);
 >r : (x: string, y?: number) => void
 >(r => r) : (x: string, y?: number) => void
 >r => r : (x: string, y?: number) => void
->Bar : any
 >r => r : (r: string) => string
 >r : string
 >r : string

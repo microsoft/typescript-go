@@ -1,11 +1,8 @@
 --- old.moduleExportAssignment7.types
 +++ new.moduleExportAssignment7.types
-@@= skipped -19, +19 lines =@@
- >4 : 4
+@@= skipped -20, +20 lines =@@
  
  /** @typedef {() => number} buz */
-+>buz : any
-+
  module.exports = {
 ->module.exports = {    Thing,    AnotherThing,    foo,    qux: bar,    baz() { return 5 },    literal: "",} : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz(): number; literal: string; }
 ->module.exports : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz(): number; literal: string; }
@@ -20,7 +17,7 @@
  
      Thing,
  >Thing : typeof Thing
-@@= skipped -39, +41 lines =@@
+@@= skipped -38, +38 lines =@@
   * @param {import("./mod").literal} g
   */
  function jstypes(a, b, c, d, e, f, g) {

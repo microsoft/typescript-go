@@ -3,11 +3,7 @@
 === /a.js ===
 /**
  * @typedef MyType
->MyType : MyType
-
  * @property {sting} [x]
->x : any
-
  */
 
 /** @param {MyType} p  */

@@ -13,8 +13,6 @@
 
 /**
  * @typedef {(x: string) => string} T3
->x : Symbol(x, Decl(a.js, 11, 14))
-
  */
 
 /**

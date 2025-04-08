@@ -1,15 +1,6 @@
 --- old.jsdocTemplateTagNameResolution.types
 +++ new.jsdocTemplateTagNameResolution.types
-@@= skipped -4, +4 lines =@@
-  * @template T
-  * @template {keyof T} K
-  * @typedef {T[K]} Foo
-+>Foo : any
-+
-  */
- 
- const x = { a: 1 };
-@@= skipped -10, +12 lines =@@
+@@= skipped -14, +14 lines =@@
  
  /** @type {Foo<typeof x, "a">} */
  const y = "a";

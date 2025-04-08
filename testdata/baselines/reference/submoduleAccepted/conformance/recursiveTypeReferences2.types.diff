@@ -1,25 +1,6 @@
 --- old.recursiveTypeReferences2.types
 +++ new.recursiveTypeReferences2.types
-@@= skipped -1, +1 lines =@@
- 
- === bug39372.js ===
- /** @typedef {ReadonlyArray<Json>} JsonArray */
-+>JsonArray : any
-+
- /** @typedef {{ readonly [key: string]: Json }} JsonRecord */
-+>JsonRecord : any
-+>key : string
-+
- /** @typedef {boolean | number | string | null | JsonRecord | JsonArray | readonly []} Json */
-+>Json : any
- 
- /**
-  * @template T
-@@= skipped -21, +27 lines =@@
-       : XMLObject<T[K]>
-   )
- }} XMLObject<T> */
-+>XMLObject : any
+@@= skipped -25, +25 lines =@@
  
  /** @type {XMLObject<{foo:string}>} */
  const p = {};

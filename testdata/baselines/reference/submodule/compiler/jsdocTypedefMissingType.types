@@ -11,11 +11,7 @@ const t = 0;
 // OK: missing a type, but have property tags.
 /**
  * @typedef Person
->Person : any
-
  * @property {string} name
->name : any
-
  */
 
 /** @type Person */

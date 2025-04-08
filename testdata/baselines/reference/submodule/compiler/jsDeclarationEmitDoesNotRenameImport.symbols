@@ -23,8 +23,6 @@ import Test from './test/Test.js'
 /**
  * @typedef {Object} Options
  * @property {typeof import("./Test.js").default} [test]
->default : Symbol(default, Decl(Test.js, 1, 13))
-
  */
 
 class X extends Test {

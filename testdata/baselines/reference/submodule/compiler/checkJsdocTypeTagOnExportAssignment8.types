@@ -5,14 +5,8 @@
 === a.js ===
 /**
  * @typedef Foo
->Foo : any
-
  * @property {string} a
->a : any
-
  * @property {'b'} b
->b : any
-
  */
 
 /** @type {Foo} */

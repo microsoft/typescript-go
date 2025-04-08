@@ -26,7 +26,6 @@ import { writeFile, WriteFileOptions, WriteFileOptions as OtherName } from "fs";
 >OtherName : Symbol(OtherName, Decl(index.js, 0, 37))
 
 /** @typedef {{ x: any }} JSDocType */
->x : Symbol(x, Decl(index.js, 2, 15))
 
 export { JSDocType };
 >JSDocType : Symbol(JSDocType, Decl(index.js, 2, 4), Decl(index.js, 4, 8))

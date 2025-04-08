@@ -1,43 +1,6 @@
 --- old.checkJsdocSatisfiesTag1.types
 +++ new.checkJsdocSatisfiesTag1.types
-@@= skipped -2, +2 lines =@@
- === /a.js ===
- /**
-  * @typedef {Object} T1
-+>T1 : any
-+
-  * @property {number} a
-+>a : any
-+
-  */
- 
- /**
-  * @typedef {Object} T2
-+>T2 : any
-+
-  * @property {"a" | "b"} a
-+>a : any
-+
-  */
- 
- /**
-  * @typedef {(x: string) => string} T3
-+>T3 : any
-+>x : string
-+
-  */
- 
- /**
-  * @typedef {Object} T4
-+>T4 : any
-+
-  * @property {string} a
-+>a : any
-+
-  */
- 
- const t1 = /** @satisfies {T1} */ ({ a: 1 });
-@@= skipped -41, +56 lines =@@
+@@= skipped -43, +43 lines =@@
  /** @type {T2} */
  const t4 = /** @satisfies {T2} */ ({ a: "a" });
  >t4 : T2

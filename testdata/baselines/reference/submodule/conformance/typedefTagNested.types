@@ -2,24 +2,10 @@
 
 === a.js ===
 /** @typedef {Object} App
->App : any
-
  * @property {string} name
->name : any
-
  * @property {Object} icons
->icons : any
-
  * @property {string} icons.image32
->property : any
->icons : any
->image32 : any
-
  * @property {string} icons.image64
->property : any
->icons : any
->image64 : any
-
  */
 var ex;
 >ex : any
@@ -48,8 +34,6 @@ const app = {
 }
 
 /** @typedef {Object} Opp
->Opp : any
-
  * @property {string} name
  * @property {Object} oops
  * @property {string} horrible
@@ -64,17 +48,9 @@ var mistake;
 >mistake : string
 
 /** @typedef {Object} Upp
->Upp : any
-
  * @property {string} name
->name : any
-
  * @property {Object} not
->not : any
-
  * @property {string} nested
->nested : any
-
  */
 
 /** @type {Upp} */

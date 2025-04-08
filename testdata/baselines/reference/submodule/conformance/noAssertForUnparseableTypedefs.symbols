@@ -2,8 +2,6 @@
 
 === bug26693.js ===
 /** @typedef {module:locale} hi */
->module : Symbol(module)
-
 import { nope } from 'nope';
 >nope : Symbol(nope, Decl(bug26693.js, 1, 8))
 

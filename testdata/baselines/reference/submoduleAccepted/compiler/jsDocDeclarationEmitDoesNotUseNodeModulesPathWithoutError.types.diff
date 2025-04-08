@@ -9,16 +9,7 @@
  
  === node_modules/@lion/ajax/dist-types/types/types.d.ts ===
  export interface LionRequestInit {
-@@= skipped -10, +10 lines =@@
- === index.js ===
- /**
-  * @typedef {import('@lion/ajax').LionRequestInit} LionRequestInit
-+>LionRequestInit : any
-+
-  */
- 
- export class NewAjax {
-@@= skipped -9, +11 lines =@@
+@@= skipped -19, +19 lines =@@
       * @param {LionRequestInit} [init]
       */
      case5_unexpectedlyResolvesPathToNodeModules(init) {}

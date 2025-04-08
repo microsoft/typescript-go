@@ -4,8 +4,6 @@
 /**
  * @template const T
  * @typedef {[T]} X
->X : any
-
  */
 
 /**

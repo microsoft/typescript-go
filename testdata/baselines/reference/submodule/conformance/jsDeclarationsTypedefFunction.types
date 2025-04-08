@@ -5,8 +5,6 @@
  * @typedef {{
  *   [id: string]: [Function, Function];
  * }} ResolveRejectMap
->ResolveRejectMap : any
-
  */
 
 let id = 0

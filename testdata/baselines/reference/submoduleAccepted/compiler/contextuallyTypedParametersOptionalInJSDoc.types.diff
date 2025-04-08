@@ -1,14 +1,6 @@
 --- old.contextuallyTypedParametersOptionalInJSDoc.types
 +++ new.contextuallyTypedParametersOptionalInJSDoc.types
-@@= skipped -10, +10 lines =@@
- 
- /**
-  * @typedef {(a: string, b: number) => void} Fn
-+>Fn : any
-+>a : string
-+>b : number
-+
-  */
+@@= skipped -14, +14 lines =@@
  
  /** @type {Fn} */
  const fn1 =
@@ -17,7 +9,7 @@
  
    /**
     * @param [b]
-@@= skipped -35, +39 lines =@@
+@@= skipped -31, +31 lines =@@
  
  /** @type {Fn} */
  const fn2 =

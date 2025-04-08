@@ -1,11 +1,7 @@
 --- old.enumTagImported.types
 +++ new.enumTagImported.types
-@@= skipped -1, +1 lines =@@
- 
- === type.js ===
+@@= skipped -3, +3 lines =@@
  /** @typedef {import("./mod1").TestEnum} TE */
-+>TE : any
-+
  /** @type {TE} */
  const test = 'add'
 ->test : string
@@ -19,7 +15,7 @@
  >'remove' : "remove"
  
  === value.js ===
-@@= skipped -16, +18 lines =@@
+@@= skipped -14, +14 lines =@@
  
  /** @type {TestEnum} */
  const tist = TestEnum.ADD

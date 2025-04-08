@@ -9,8 +9,3 @@
  
  === mod1.js ===
  /** @typedef {number} Dotted.Name */
-+>Dotted : any
-+
- export var dummy = 1
- >dummy : number
- >1 : 1

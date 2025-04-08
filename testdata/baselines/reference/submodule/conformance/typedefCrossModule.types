@@ -8,18 +8,8 @@ declare var module: { exports: any};
 === mod1.js ===
 /// <reference path="./commonjs.d.ts"/>
 /** @typedef {{ type: "a", x: 1 }} A */
->A : any
->type : "a"
->x : 1
-
 /** @typedef {{ type: "b", y: 1 }} B */
->B : any
->type : "b"
->y : 1
-
 /** @typedef {A | B} Both */
->Both : any
-
 module.exports = C
 >module.exports = C : () => void
 >module.exports : any
@@ -41,17 +31,8 @@ function C() {
 === mod2.js ===
 /// <reference path="./commonjs.d.ts"/>
 /** @typedef {{ type: "a", x: 1 }} A */
->A : A
->type : "a"
->x : 1
-
 /** @typedef {{ type: "b", y: 1 }} B */
->B : B
->type : "b"
->y : 1
-
 /** @typedef {A | B} Both */
->Both : Both
 
 export function C() {
 >C : () => void
@@ -67,17 +48,8 @@ export function C() {
 === mod3.js ===
 /// <reference path="./commonjs.d.ts"/>
 /** @typedef {{ type: "a", x: 1 }} A */
->A : any
->type : "a"
->x : 1
-
 /** @typedef {{ type: "b", y: 1 }} B */
->B : any
->type : "b"
->y : 1
-
 /** @typedef {A | B} Both */
->Both : any
 
 exports.C = function() {
 >exports.C = function() {    this.p = 1} : () => void

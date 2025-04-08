@@ -2,8 +2,6 @@
 
 === bug26693.js ===
 /** @typedef {module:locale} hi */
-> : any
-
 import { nope } from 'nope';
 >nope : any
 

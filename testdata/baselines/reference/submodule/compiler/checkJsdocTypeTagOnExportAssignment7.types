@@ -5,14 +5,8 @@
 === a.js ===
 /**
  * @typedef {Object} Foo
->Foo : any
-
  * @property {number} a
->a : any
-
  * @property {number} b
->b : any
-
  */
 
 const abc = { a: 1, b: 1, c: 1 };

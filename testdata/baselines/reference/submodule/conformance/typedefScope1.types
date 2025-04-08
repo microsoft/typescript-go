@@ -5,8 +5,6 @@ function B1() {
 >B1 : () => void
 
     /** @typedef {number} B */
->B : any
-
     /** @type {B} */
     var ok1 = 0;
 >ok1 : number
@@ -17,8 +15,6 @@ function B2() {
 >B2 : () => void
 
     /** @typedef {string} B */
->B : any
-
     /** @type {B} */
     var ok2 = 'hi';
 >ok2 : string

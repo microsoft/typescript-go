@@ -89,11 +89,7 @@ let answer = z.add(3, { nested: 4 })
 // lookup in typedef should not crash the compiler, even when the type is unknown
 /**
  * @typedef {Object} A
->A : any
-
  * @property {T} value
->value : any
-
  */
 /** @type {A} */
 const options = { value: null };
