@@ -20,10 +20,9 @@
 +>children : Symbol(children, Decl(contextuallyTypedJsxChildren.tsx, 10, 49))
  >props : Symbol(props, Decl(contextuallyTypedJsxChildren.tsx, 11, 13))
  >onClose : Symbol(onClose, Decl(contextuallyTypedJsxChildren.tsx, 11, 21))
-->JSX : Symbol(JSX, Decl(react16.d.ts, 2493, 12))
+ >JSX : Symbol(JSX, Decl(react16.d.ts, 2493, 12))
 ->Element : Symbol(JSX.Element, Decl(react16.d.ts, 2494, 23))
-+>JSX : Symbol(JSX)
-+>Element : Symbol(Element)
++>Element : Symbol(Element, Decl(react16.d.ts, 2494, 23))
  
      controls?: never | undefined;
 ->controls : Symbol(PropsWithChildren.controls, Decl(contextuallyTypedJsxChildren.tsx, 11, 58))
@@ -56,7 +55,7 @@
  >DropdownMenu : Symbol(DropdownMenu, Decl(contextuallyTypedJsxChildren.tsx, 2, 26), Decl(contextuallyTypedJsxChildren.tsx, 23, 13))
  >React : Symbol(React, Decl(contextuallyTypedJsxChildren.tsx, 2, 6))
 ->ComponentType : Symbol(React.ComponentType, Decl(react16.d.ts, 117, 60))
-+>ComponentType : Symbol(ComponentType)
++>ComponentType : Symbol(ComponentType, Decl(react16.d.ts, 117, 60))
  >DropdownMenu : Symbol(DropdownMenu, Decl(contextuallyTypedJsxChildren.tsx, 2, 26), Decl(contextuallyTypedJsxChildren.tsx, 23, 13))
 ->Props : Symbol(DropdownMenu.Props, Decl(contextuallyTypedJsxChildren.tsx, 20, 3))
 +>Props : Symbol(Props, Decl(contextuallyTypedJsxChildren.tsx, 20, 3))
@@ -68,34 +67,40 @@
  
      <div>
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(react16.d.ts, 2546, 114))
--
++>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
+ 
        <button onClick={onClose}>Click me</button>
 ->button : Symbol(JSX.IntrinsicElements.button, Decl(react16.d.ts, 2532, 96))
++>button : Symbol(button, Decl(react16.d.ts, 2532, 96))
  >onClick : Symbol(onClick, Decl(contextuallyTypedJsxChildren.tsx, 28, 13))
  >onClose : Symbol(onClose, Decl(contextuallyTypedJsxChildren.tsx, 26, 5))
 ->button : Symbol(JSX.IntrinsicElements.button, Decl(react16.d.ts, 2532, 96))
++>button : Symbol(button, Decl(react16.d.ts, 2532, 96))
  
      </div>
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(react16.d.ts, 2546, 114))
--
++>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
+ 
    )}
  </DropdownMenu>;
- >DropdownMenu : Symbol(DropdownMenu, Decl(contextuallyTypedJsxChildren.tsx, 2, 26), Decl(contextuallyTypedJsxChildren.tsx, 23, 13))
-@@= skipped -29, +23 lines =@@
+@@= skipped -29, +29 lines =@@
  >onClose : Symbol(onClose, Decl(contextuallyTypedJsxChildren.tsx, 36, 14))
  
      <div>
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(react16.d.ts, 2546, 114))
--
++>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
+ 
        <button onClick={onClose}>Click me</button>
 ->button : Symbol(JSX.IntrinsicElements.button, Decl(react16.d.ts, 2532, 96))
++>button : Symbol(button, Decl(react16.d.ts, 2532, 96))
  >onClick : Symbol(onClick, Decl(contextuallyTypedJsxChildren.tsx, 38, 13))
  >onClose : Symbol(onClose, Decl(contextuallyTypedJsxChildren.tsx, 36, 14))
 ->button : Symbol(JSX.IntrinsicElements.button, Decl(react16.d.ts, 2532, 96))
++>button : Symbol(button, Decl(react16.d.ts, 2532, 96))
  
      </div>
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(react16.d.ts, 2546, 114))
--
++>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
+ 
    )}
  />;
- 
