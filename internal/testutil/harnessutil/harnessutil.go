@@ -745,10 +745,10 @@ func (c *CompilationResult) GetSourceMapRecord() string {
 		return getSourceMapRecord(
 			c.Result.SourceMaps,
 			c.Program,
-			core.Filter(slices.Collect(c.Js.Values()), func(d *TestFile) bool {
+			core.Filter(slices.Collect(c.JS.Values()), func(d *TestFile) bool {
 				return !tspath.FileExtensionIs(d.UnitName, tspath.ExtensionJson)
 			}),
-			slices.Collect(c.Dts.Values()),
+			slices.Collect(c.DTS.Values()),
 		)
 	}
 	return ""

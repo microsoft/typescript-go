@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -248,7 +249,7 @@ func (sw *recordedSpanWriter) getMarkerId(markerIndex int) string {
 		}
 		markerId = "1->"
 	} else {
-		markerId = fmt.Sprintf("%d", markerIndex+1)
+		markerId = strconv.Itoa(markerIndex + 1)
 		if len(markerId) < 2 {
 			markerId += " "
 		}
@@ -259,7 +260,7 @@ func (sw *recordedSpanWriter) getMarkerId(markerIndex int) string {
 
 func (sw *recordedSpanWriter) iterateSpans(fn func(currentSpan *sourceMapSpanWithDecodeErrors, index int)) {
 	sw.prevEmittedCol = 0
-	for i := 0; i < len(sw.w.spansOnSingleLine); i++ {
+	for i := range len(sw.w.spansOnSingleLine) {
 		fn(&sw.w.spansOnSingleLine[i], i)
 		sw.prevEmittedCol = sw.w.spansOnSingleLine[i].sourceMapSpan.GeneratedCharacter
 	}
@@ -267,7 +268,7 @@ func (sw *recordedSpanWriter) iterateSpans(fn func(currentSpan *sourceMapSpanWit
 
 func (sw *recordedSpanWriter) writeSourceMapIndent(indentLength int, indentPrefix string) {
 	sw.w.sourceMapRecorder.WriteString(indentPrefix)
-	for i := 0; i < indentLength; i++ {
+	for range indentLength {
 		sw.w.sourceMapRecorder.WriteString(" ")
 	}
 }
@@ -305,7 +306,7 @@ func (sw *recordedSpanWriter) writeSourceMapSourceText(currentSpan *sourceMapSpa
 	}
 
 	tsCodeLineMap := core.ComputeLineStarts(sourceText)
-	for i := 0; i < len(tsCodeLineMap); i++ {
+	for i := range tsCodeLineMap {
 		if i == 0 {
 			sw.writeSourceMapIndent(sw.prevEmittedCol, sw.markerIds[index])
 		} else {

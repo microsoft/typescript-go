@@ -196,7 +196,10 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 		// Write the source map
 		if len(sourceMapFilePath) > 0 {
 			sourceMap := sourceMapGenerator.String()
-			e.host.WriteFile(sourceMapFilePath, sourceMap, false /*writeByteOrderMark*/, sourceFiles, nil /*data*/)
+			err := e.host.WriteFile(sourceMapFilePath, sourceMap, false /*writeByteOrderMark*/, sourceFiles, nil /*data*/)
+			if err != nil {
+				e.emitterDiagnostics.Add(ast.NewCompilerDiagnostic(diagnostics.Could_not_write_file_0_Colon_1, jsFilePath, err.Error()))
+			}
 		}
 	} else {
 		e.writer.WriteLine()
