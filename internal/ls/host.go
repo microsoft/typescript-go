@@ -24,4 +24,5 @@ type Host interface {
 	// because they were bidirectionally interdependent.
 	GetProgram() *compiler.Program
 	GetDefaultLibraryPath() string
+	GetScriptInfo(fileName string) ScriptInfo
 }

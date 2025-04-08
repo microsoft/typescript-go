@@ -161,6 +161,11 @@ func (p *Project) GetDefaultLibraryPath() string {
 	return p.projectService.options.DefaultLibraryPath
 }
 
+// GetScriptInfo implements ls.Host.
+func (p *Project) GetScriptInfo(fileName string) ls.ScriptInfo {
+	return p.projectService.GetScriptInfo(fileName)
+}
+
 func (p *Project) Name() string {
 	return p.name
 }

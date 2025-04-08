@@ -11,7 +11,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/lsp/lspconv"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -44,7 +43,6 @@ func NewServer(opts *ServerOptions) *Server {
 }
 
 var _ project.ServiceHost = (*Server)(nil)
-var _ lspconv.ConvertersHost = (*Server)(nil)
 
 type Server struct {
 	r *lsproto.BaseReader
@@ -65,7 +63,7 @@ type Server struct {
 
 	logger         *project.Logger
 	projectService *project.Service
-	converters     *lspconv.Converters
+	converters     *ls.Converters
 }
 
 // FS implements project.ProjectServiceHost.
@@ -91,11 +89,6 @@ func (s *Server) NewLine() string {
 // Trace implements project.ProjectServiceHost.
 func (s *Server) Trace(msg string) {
 	s.Log(msg)
-}
-
-// GetScriptInfo implements lspconv.ConvertersHost.
-func (s *Server) GetScriptInfo(fileName string) lspconv.ScriptInfo {
-	return s.projectService.GetScriptInfo(fileName)
 }
 
 func (s *Server) Run() error {
@@ -231,26 +224,26 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	return s.sendResult(req.ID, &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
-			Version: core.PtrTo(core.Version),
+			Version: ptrTo(core.Version),
 		},
 		Capabilities: lsproto.ServerCapabilities{
-			PositionEncoding: core.PtrTo(s.positionEncoding),
+			PositionEncoding: ptrTo(s.positionEncoding),
 			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrTextDocumentSyncKind{
 				TextDocumentSyncOptions: &lsproto.TextDocumentSyncOptions{
-					OpenClose: core.PtrTo(true),
-					Change:    core.PtrTo(lsproto.TextDocumentSyncKindIncremental),
+					OpenClose: ptrTo(true),
+					Change:    ptrTo(lsproto.TextDocumentSyncKindIncremental),
 					Save: &lsproto.BooleanOrSaveOptions{
 						SaveOptions: &lsproto.SaveOptions{
-							IncludeText: core.PtrTo(true),
+							IncludeText: ptrTo(true),
 						},
 					},
 				},
 			},
 			HoverProvider: &lsproto.BooleanOrHoverOptions{
-				Boolean: core.PtrTo(true),
+				Boolean: ptrTo(true),
 			},
 			DefinitionProvider: &lsproto.BooleanOrDefinitionOptions{
-				Boolean: core.PtrTo(true),
+				Boolean: ptrTo(true),
 			},
 			DiagnosticProvider: &lsproto.DiagnosticOptionsOrDiagnosticRegistrationOptions{
 				DiagnosticOptions: &lsproto.DiagnosticOptions{
@@ -267,19 +260,23 @@ func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 		DefaultLibraryPath: s.defaultLibraryPath,
 		Logger:             s.logger,
 	})
-	s.converters = &lspconv.Converters{Host: s, PositionEncoding: s.positionEncoding}
+
+	s.converters = ls.NewConverters(s.positionEncoding, func(fileName string) ls.ScriptInfo {
+		return s.projectService.GetScriptInfo(fileName)
+	})
+
 	return nil
 }
 
 func (s *Server) handleDidOpen(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
-	s.projectService.OpenFile(lspconv.DocumentURIToFileName(params.TextDocument.Uri), params.TextDocument.Text, lspconv.LanguageKindToScriptKind(params.TextDocument.LanguageId), "")
+	s.projectService.OpenFile(ls.DocumentURIToFileName(params.TextDocument.Uri), params.TextDocument.Text, ls.LanguageKindToScriptKind(params.TextDocument.LanguageId), "")
 	return nil
 }
 
 func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidChangeTextDocumentParams)
-	scriptInfo := s.projectService.GetScriptInfo(lspconv.DocumentURIToFileName(params.TextDocument.Uri))
+	scriptInfo := s.projectService.GetScriptInfo(ls.DocumentURIToFileName(params.TextDocument.Uri))
 	if scriptInfo == nil {
 		return s.sendError(req.ID, lsproto.ErrRequestFailed)
 	}
@@ -302,19 +299,19 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 		}
 	}
 
-	s.projectService.ChangeFile(lspconv.DocumentURIToFileName(params.TextDocument.Uri), changes)
+	s.projectService.ChangeFile(ls.DocumentURIToFileName(params.TextDocument.Uri), changes)
 	return nil
 }
 
 func (s *Server) handleDidSave(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidSaveTextDocumentParams)
-	s.projectService.MarkFileSaved(lspconv.DocumentURIToFileName(params.TextDocument.Uri), *params.Text)
+	s.projectService.MarkFileSaved(ls.DocumentURIToFileName(params.TextDocument.Uri), *params.Text)
 	return nil
 }
 
 func (s *Server) handleDidClose(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidCloseTextDocumentParams)
-	s.projectService.CloseFile(lspconv.DocumentURIToFileName(params.TextDocument.Uri))
+	s.projectService.CloseFile(ls.DocumentURIToFileName(params.TextDocument.Uri))
 	return nil
 }
 
@@ -381,7 +378,7 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 }
 
 func (s *Server) getFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {
-	fileName := lspconv.DocumentURIToFileName(uri)
+	fileName := ls.DocumentURIToFileName(uri)
 	return s.projectService.EnsureDefaultProjectForFile(fileName)
 }
 
@@ -410,4 +407,8 @@ func codeFence(lang string, code string) string {
 		result.WriteByte('`')
 	}
 	return result.String()
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }

@@ -1,4 +1,4 @@
-package lspconv
+package ls
 
 import (
 	"fmt"
@@ -11,7 +11,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -20,17 +19,20 @@ type ScriptInfo interface {
 	LineMap() *LineMap
 }
 
-type ConvertersHost interface {
-	GetScriptInfo(fileName string) ScriptInfo
+type Converters struct {
+	getScriptInfo    func(fileName string) ScriptInfo
+	positionEncoding lsproto.PositionEncodingKind
 }
 
-type Converters struct {
-	Host             ConvertersHost
-	PositionEncoding lsproto.PositionEncodingKind
+func NewConverters(positionEncoding lsproto.PositionEncodingKind, getScriptInfo func(fileName string) ScriptInfo) *Converters {
+	return &Converters{
+		getScriptInfo:    getScriptInfo,
+		positionEncoding: positionEncoding,
+	}
 }
 
 func (c *Converters) ToLSPRange(fileName string, textRange core.TextRange) (lsproto.Range, error) {
-	scriptInfo := c.Host.GetScriptInfo(fileName)
+	scriptInfo := c.getScriptInfo(fileName)
 	if scriptInfo == nil {
 		return lsproto.Range{}, fmt.Errorf("no script info found for %s", fileName)
 	}
@@ -42,7 +44,7 @@ func (c *Converters) ToLSPRange(fileName string, textRange core.TextRange) (lspr
 }
 
 func (c *Converters) FromLSPRange(textRange lsproto.Range, fileName string) (core.TextRange, error) {
-	scriptInfo := c.Host.GetScriptInfo(fileName)
+	scriptInfo := c.getScriptInfo(fileName)
 	if scriptInfo == nil {
 		return core.TextRange{}, fmt.Errorf("no script info found for %s", fileName)
 	}
@@ -52,18 +54,18 @@ func (c *Converters) FromLSPRange(textRange lsproto.Range, fileName string) (cor
 	), nil
 }
 
-func (c *Converters) FromLSPTextChange(change *lsproto.TextDocumentContentChangePartial, fileName string) (ls.TextChange, error) {
+func (c *Converters) FromLSPTextChange(change *lsproto.TextDocumentContentChangePartial, fileName string) (TextChange, error) {
 	textRange, err := c.FromLSPRange(change.Range, fileName)
 	if err != nil {
-		return ls.TextChange{}, fmt.Errorf("error converting range: %w", err)
+		return TextChange{}, fmt.Errorf("error converting range: %w", err)
 	}
-	return ls.TextChange{
+	return TextChange{
 		TextRange: textRange,
 		NewText:   change.Text,
 	}, nil
 }
 
-func (c *Converters) ToLSPLocation(location ls.Location) (lsproto.Location, error) {
+func (c *Converters) ToLSPLocation(location Location) (lsproto.Location, error) {
 	rng, err := c.ToLSPRange(location.FileName, location.Range)
 	if err != nil {
 		return lsproto.Location{}, err
@@ -74,13 +76,13 @@ func (c *Converters) ToLSPLocation(location ls.Location) (lsproto.Location, erro
 	}, nil
 }
 
-func (c *Converters) FromLSPLocation(location lsproto.Location) (ls.Location, error) {
+func (c *Converters) FromLSPLocation(location lsproto.Location) (Location, error) {
 	fileName := DocumentURIToFileName(location.Uri)
 	rng, err := c.FromLSPRange(location.Range, fileName)
 	if err != nil {
-		return ls.Location{}, err
+		return Location{}, err
 	}
-	return ls.Location{
+	return Location{
 		FileName: fileName,
 		Range:    rng,
 	}, nil
@@ -122,17 +124,17 @@ func (c *Converters) ToLSPDiagnostic(diagnostic *ast.Diagnostic) (lsproto.Diagno
 	return lsproto.Diagnostic{
 		Range: textRange,
 		Code: &lsproto.IntegerOrString{
-			Integer: core.PtrTo(diagnostic.Code()),
+			Integer: ptrTo(diagnostic.Code()),
 		},
 		Severity:           &severity,
 		Message:            diagnostic.Message(),
-		Source:             core.PtrTo("ts"),
+		Source:             ptrTo("ts"),
 		RelatedInformation: &relatedInformation,
 	}, nil
 }
 
 func (c *Converters) LineAndCharacterToPositionForFile(lineAndCharacter lsproto.Position, fileName string) (int, error) {
-	scriptInfo := c.Host.GetScriptInfo(fileName)
+	scriptInfo := c.getScriptInfo(fileName)
 	if scriptInfo == nil {
 		return 0, fmt.Errorf("no script info found for %s", fileName)
 	}
@@ -213,7 +215,7 @@ func (c *Converters) LineAndCharacterToPosition(scriptInfo ScriptInfo, lineAndCh
 	}
 
 	start := lineMap.LineStarts[line]
-	if lineMap.AsciiOnly || c.PositionEncoding == lsproto.PositionEncodingKindUTF8 {
+	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
 		return start + char
 	}
 
@@ -245,7 +247,7 @@ func (c *Converters) PositionToLineAndCharacter(scriptInfo ScriptInfo, position 
 	start := lineMap.LineStarts[line]
 
 	var character core.TextPos
-	if lineMap.AsciiOnly || c.PositionEncoding == lsproto.PositionEncodingKindUTF8 {
+	if lineMap.AsciiOnly || c.positionEncoding == lsproto.PositionEncodingKindUTF8 {
 		character = position - start
 	} else {
 		// We need to rescan the text as UTF-16 to find the character offset.
@@ -258,4 +260,8 @@ func (c *Converters) PositionToLineAndCharacter(scriptInfo ScriptInfo, position 
 		Line:      uint32(line),
 		Character: uint32(character),
 	}
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }

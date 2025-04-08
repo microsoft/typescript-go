@@ -5,12 +5,11 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/lsp/lspconv"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-var _ lspconv.ScriptInfo = (*ScriptInfo)(nil)
+var _ ls.ScriptInfo = (*ScriptInfo)(nil)
 
 type ScriptInfo struct {
 	fileName   string
@@ -20,7 +19,7 @@ type ScriptInfo struct {
 	scriptKind core.ScriptKind
 	text       string
 	version    int
-	lineMap    *lspconv.LineMap
+	lineMap    *ls.LineMap
 
 	isOpen                bool
 	pendingReloadFromDisk bool
@@ -50,9 +49,9 @@ func (s *ScriptInfo) Path() tspath.Path {
 	return s.path
 }
 
-func (s *ScriptInfo) LineMap() *lspconv.LineMap {
+func (s *ScriptInfo) LineMap() *ls.LineMap {
 	if s.lineMap == nil {
-		s.lineMap = lspconv.ComputeLineStarts(s.text)
+		s.lineMap = ls.ComputeLineStarts(s.text)
 	}
 	return s.lineMap
 }

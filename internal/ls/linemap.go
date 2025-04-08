@@ -1,4 +1,4 @@
-package lspconv
+package ls
 
 import (
 	"strings"
