@@ -20123,7 +20123,7 @@ func (c *Checker) getApparentTypeOfIntersectionType(t *Type, thisArgument *Type)
 
 /**
  * Return the reduced form of the given type. For a union type, it is a union of the normalized constituent types.
- * For an intersection of types containing one or more mututally exclusive discriminant properties, it is 'never'.
+ * For an intersection of types containing one or more mutually exclusive discriminant properties, it is 'never'.
  * For all other types, it is simply the type itself. Discriminant properties are considered mutually exclusive when
  * no constituent property has type 'never', but the intersection of the constituent property types is 'never'.
  */
@@ -22691,8 +22691,8 @@ func (c *Checker) getRestrictiveInstantiation(t *Type) *Type {
 	c.cachedTypes[key] = result
 	// We set the following so we don't attempt to set the restrictive instance of a restrictive instance
 	// which is redundant - we'll produce new type identities, but all type params have already been mapped.
-	// This also gives us a way to detect restrictive instances upon comparisons and _disable_ the "distributeive constraint"
-	// assignability check for them, which is distinctly unsafe, as once you have a restrctive instance, all the type parameters
+	// This also gives us a way to detect restrictive instances upon comparisons and _disable_ the "distributive constraint"
+	// assignability check for them, which is distinctly unsafe, as once you have a restrictive instance, all the type parameters
 	// are constrained to `unknown` and produce tons of false positives/negatives!
 	c.cachedTypes[CachedTypeKey{kind: CachedTypeKindRestrictiveInstantiation, typeId: result.id}] = result
 	return result
@@ -25011,7 +25011,7 @@ func (c *Checker) getIndexTypeForMappedType(t *Type, indexFlags IndexFlags) *Typ
 		keyTypes = append(keyTypes, core.IfElse(propNameType == c.stringType, c.stringOrNumberType, propNameType))
 	}
 	// Calling getApparentType on the `T` of a `keyof T` in the constraint type of a generic mapped type can
-	// trigger a circularity. For example, `T extends { [P in keyof T & string as Captitalize<P>]: any }` is
+	// trigger a circularity. For example, `T extends { [P in keyof T & string as Capitalize<P>]: any }` is
 	// a circular definition. For this reason, we only eagerly manifest the keys if the constraint is non-generic.
 	if c.isGenericIndexType(constraintType) {
 		if c.isMappedTypeWithKeyofConstraintDeclaration(t) {
@@ -28345,7 +28345,7 @@ func (c *Checker) isCircularMappedProperty(symbol *ast.Symbol) bool {
 func (c *Checker) appendContextualPropertyTypeConstituent(types []*Type, t *Type) []*Type {
 	// any doesn't provide any contextual information but could spoil the overall result by nullifying contextual information
 	// provided by other intersection constituents so it gets replaced with `unknown` as `T & unknown` is just `T` and all
-	// types computed based on the contextual information provided by other constituens are still assignable to any
+	// types computed based on the contextual information provided by other constituents are still assignable to any
 	if t == nil {
 		return types
 	}
@@ -29610,7 +29610,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 	}
 
 	if ast.IsDeclaration(node) {
-		// In this case, we call getSymbolOfDeclaration instead of getSymbolLAtocation because it is a declaration
+		// In this case, we call getSymbolOfDeclaration instead of getSymbolAtLocation because it is a declaration
 		symbol := c.getSymbolOfDeclaration(node)
 		if symbol != nil {
 			return c.getTypeOfSymbol(symbol)
