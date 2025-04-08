@@ -4,7 +4,7 @@
 /// <reference path="react16.d.ts" />
 
 import React from 'react'
->React : any
+>React : typeof React
 
 interface ResizablePanelProps {
   children: [React.ReactNode, React.ReactNode]
@@ -15,43 +15,43 @@ interface ResizablePanelProps {
 
 class ResizablePanel extends React.Component<
 >ResizablePanel : ResizablePanel
->React.Component : any
->React : any
->Component : any
+>React.Component : Component<ResizablePanelProps, any, any>
+>React : typeof React
+>Component : typeof Component
 
   ResizablePanelProps, any> {}
 
 const test = <ResizablePanel>
->test : any
-><ResizablePanel>  <div />  <div /></ResizablePanel> : any
+>test : Element
+><ResizablePanel>  <div />  <div /></ResizablePanel> : Element
 >ResizablePanel : typeof ResizablePanel
 
   <div />
-><div /> : any
+><div /> : Element
 >div : any
 
   <div />
-><div /> : any
+><div /> : Element
 >div : any
 
 </ResizablePanel>
 >ResizablePanel : typeof ResizablePanel
 
 const testErr = <ResizablePanel>
->testErr : any
-><ResizablePanel>  <div />  <div />  <div /></ResizablePanel> : any
+>testErr : Element
+><ResizablePanel>  <div />  <div />  <div /></ResizablePanel> : Element
 >ResizablePanel : typeof ResizablePanel
 
   <div />
-><div /> : any
+><div /> : Element
 >div : any
 
   <div />
-><div /> : any
+><div /> : Element
 >div : any
 
   <div />
-><div /> : any
+><div /> : Element
 >div : any
 
 </ResizablePanel>
