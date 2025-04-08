@@ -8,11 +8,11 @@ import (
 type FS struct {
 	fs vfs.FS
 
-	directoryExistsCache      collections.SyncMap[string,bool]
-	fileExistsCache           collections.SyncMap[string,bool]
-	getAccessibleEntriesCache collections.SyncMap[string,vfs.Entries]
-	realpathCache             collections.SyncMap[string,string]
-	statCache                 collections.SyncMap[string,vfs.FileInfo]
+	directoryExistsCache      collections.SyncMap[string, bool]
+	fileExistsCache           collections.SyncMap[string, bool]
+	getAccessibleEntriesCache collections.SyncMap[string, vfs.Entries]
+	realpathCache             collections.SyncMap[string, string]
+	statCache                 collections.SyncMap[string, vfs.FileInfo]
 }
 
 var _ vfs.FS = (*FS)(nil)
