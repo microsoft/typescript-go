@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -27,7 +28,8 @@ type assignProjectResult struct {
 }
 
 type ServiceOptions struct {
-	Logger *Logger
+	Logger           *Logger
+	PositionEncoding lsproto.PositionEncodingKind
 }
 
 var _ ProjectHost = (*Service)(nil)
@@ -112,9 +114,14 @@ func (s *Service) FS() vfs.FS {
 	return s.host.FS()
 }
 
-// GetScriptInfoForFile implements ProjectHost.
+// GetOrCreateScriptInfoForFile implements ProjectHost.
 func (s *Service) GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
 	return s.getOrCreateScriptInfoNotOpenedByClient(fileName, path, scriptKind)
+}
+
+// PositionEncoding implements ProjectHost.
+func (s *Service) PositionEncoding() lsproto.PositionEncodingKind {
+	return s.options.PositionEncoding
 }
 
 func (s *Service) Projects() []*Project {

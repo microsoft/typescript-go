@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -111,6 +112,11 @@ func (api *API) Log(s string) {
 // NewLine implements ProjectHost.
 func (api *API) NewLine() string {
 	return api.host.NewLine()
+}
+
+// PositionEncoding implements ProjectHost.
+func (api *API) PositionEncoding() lsproto.PositionEncodingKind {
+	return lsproto.PositionEncodingKindUTF8
 }
 
 func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, error) {

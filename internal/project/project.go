@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -39,6 +40,7 @@ type ProjectHost interface {
 	GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo
 	OnDiscoveredSymlink(info *ScriptInfo)
 	Log(s string)
+	PositionEncoding() lsproto.PositionEncodingKind
 }
 
 type Project struct {
@@ -171,6 +173,16 @@ func (p *Project) Trace(msg string) {
 // GetDefaultLibraryPath implements ls.Host.
 func (p *Project) GetDefaultLibraryPath() string {
 	return p.host.DefaultLibraryPath()
+}
+
+// GetScriptInfo implements ls.Host.
+func (p *Project) GetScriptInfo(fileName string) ls.ScriptInfo {
+	return p.host.GetScriptInfoByPath(p.toPath(fileName))
+}
+
+// GetPositionEncoding implements ls.Host.
+func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
+	return p.host.PositionEncoding()
 }
 
 func (p *Project) Name() string {
