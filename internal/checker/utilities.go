@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -33,12 +32,7 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 }
 
 func IsIntrinsicJsxName(name string) bool {
-	if len(name) == 0 {
-		return false
-	}
-
-	ch := name[0]
-	return (ch >= 'a' && ch <= 'z') || strings.ContainsRune(name, '-')
+	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
 }
 
 func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
@@ -438,6 +432,9 @@ func entityNameToString(name *ast.Node) string {
 	case ast.KindThisKeyword:
 		return "this"
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
+		if ast.NodeIsSynthesized(name) {
+			return name.Text()
+		}
 		return scanner.GetTextOfNode(name)
 	case ast.KindQualifiedName:
 		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
@@ -1776,16 +1773,17 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func skipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
 	return options.NoCheck.IsTrue() ||
-		options.SkipLibCheck.IsTrue() && tspath.IsDeclarationFileName(sourceFile.FileName()) ||
+		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
 		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
 
 func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
-	// !!!
-	// if (!!sourceFile.checkJSDirective && sourceFile.checkJSDirective.enabled === false) return false;
+	if sourceFile.CheckJsDirective != nil && !sourceFile.CheckJsDirective.Enabled {
+		return false
+	}
 
 	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
 		return true
@@ -1803,17 +1801,14 @@ func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core
 }
 
 func isCheckJSEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
-	// !!!
-	// if sourceFile.CheckJSDirective != nil {
-	// 	return sourceFile.CheckJSDirective.Enabled
-	// }
+	if sourceFile.CheckJsDirective != nil {
+		return sourceFile.CheckJsDirective.Enabled
+	}
 	return compilerOptions.CheckJs == core.TSTrue
 }
 
 func isPlainJSFile(file *ast.SourceFile, checkJs core.Tristate) bool {
-	// !!!
-	// return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJSDirective == nil && checkJs == core.TSUnknown
-	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && checkJs == core.TSUnknown
+	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {
