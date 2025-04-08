@@ -6,7 +6,6 @@ var axios = {}
 >{} : {}
 
 module.exports = axios // both assignments should be ok
->axios : {}
 >module.exports = axios : {}
 >module.exports : any
 >module : any
@@ -14,8 +13,6 @@ module.exports = axios // both assignments should be ok
 >axios : {}
 
 module.exports.default = axios
->default : any
->axios : {}
 >module.exports.default = axios : {}
 >module.exports.default : any
 >module.exports : any

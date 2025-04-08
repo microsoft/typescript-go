@@ -1,10 +1,8 @@
 --- old.jsDeclarationsParameterTagReusesInputNodeInEmit2.types
 +++ new.jsDeclarationsParameterTagReusesInputNodeInEmit2.types
-@@= skipped -24, +24 lines =@@
- >Base : typeof Base
+@@= skipped -25, +25 lines =@@
  
  module.exports = BaseFactory;
-+>BaseFactory : { (): Base; Base: typeof Base; }
  >module.exports = BaseFactory : { (): Base; Base: typeof Base; }
 ->module.exports : { (): Base; Base: typeof Base; }
 ->module : { exports: { (): Base; Base: typeof Base; }; }
@@ -15,7 +13,7 @@
  >BaseFactory : { (): Base; Base: typeof Base; }
  
  === file.js ===
-@@= skipped -15, +16 lines =@@
+@@= skipped -14, +14 lines =@@
   * @returns {InstanceType<BaseFactory["Base"]>}
   */
  const test = (base) => {

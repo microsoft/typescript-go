@@ -27,16 +27,7 @@
    plugins: {
  >plugins : Symbol(plugins, Decl(eslint-plugin-react.js, 8, 18))
  
-@@= skipped -16, +12 lines =@@
-       rules: allRules,
- >rules : Symbol(rules, Decl(eslint-plugin-react.js, 11, 22))
- >allRules : Symbol(allRules, Decl(eslint-plugin-react.js, 4, 5))
-+>rules : Symbol(rules, Decl(eslint-plugin-react.js, 11, 22))
-+>allRules : Symbol(allRules, Decl(eslint-plugin-react.js, 4, 5))
- 
-     },
-   },
-@@= skipped -22, +24 lines =@@
+@@= skipped -38, +34 lines =@@
  >configs : Symbol(configs, Decl(typescript-eslint.js, 11, 16))
  
  module.exports = { config };
@@ -44,5 +35,4 @@
 ->module : Symbol(module, Decl(typescript-eslint.js, 11, 31))
 ->exports : Symbol(module.exports, Decl(typescript-eslint.js, 0, 0))
  >config : Symbol(config, Decl(typescript-eslint.js, 13, 18))
-+>config : Symbol(config, Decl(typescript-eslint.js, 13, 18))
  

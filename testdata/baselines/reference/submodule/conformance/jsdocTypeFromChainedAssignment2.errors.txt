@@ -1,9 +1,8 @@
-mod.js(2,21): error TS2339: Property 'g' does not exist on type 'typeof import("mod")'.
-mod.js(2,37): error TS2300: Duplicate identifier 'n'.
+mod.js(2,1): error TS2304: Cannot find name 'exports'.
+mod.js(2,13): error TS2304: Cannot find name 'exports'.
 mod.js(2,37): error TS7006: Parameter 'n' implicitly has an 'any' type.
 mod.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod.js(6,20): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-mod.js(6,51): error TS2300: Duplicate identifier 'mom'.
 mod.js(6,51): error TS7006: Parameter 'mom' implicitly has an 'any' type.
 use.js(3,5): error TS2339: Property 'g' does not exist on type 'typeof import("mod")'.
 use.js(5,5): error TS2339: Property 'i' does not exist on type 'typeof import("mod")'.
@@ -20,13 +19,13 @@ use.js(5,5): error TS2339: Property 'i' does not exist on type 'typeof import("m
         ~
 !!! error TS2339: Property 'i' does not exist on type 'typeof import("mod")'.
     
-==== mod.js (7 errors) ====
+==== mod.js (6 errors) ====
     /** @param {number} n */
     exports.f = exports.g = function fg(n) {
-                        ~
-!!! error TS2339: Property 'g' does not exist on type 'typeof import("mod")'.
-                                        ~
-!!! error TS2300: Duplicate identifier 'n'.
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
+                ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
                                         ~
 !!! error TS7006: Parameter 'n' implicitly has an 'any' type.
         return n + 1
@@ -37,8 +36,6 @@ use.js(5,5): error TS2339: Property 'i' does not exist on type 'typeof import("m
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
                        ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-                                                      ~~~
-!!! error TS2300: Duplicate identifier 'mom'.
                                                       ~~~
 !!! error TS7006: Parameter 'mom' implicitly has an 'any' type.
         return `hi, ${mom}!`;

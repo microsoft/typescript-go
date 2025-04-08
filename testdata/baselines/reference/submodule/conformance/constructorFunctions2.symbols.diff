@@ -50,7 +50,6 @@
 ->module.exports : Symbol(module.exports, Decl(other.js, 0, 0))
 ->module : Symbol(export=, Decl(other.js, 0, 29))
 ->exports : Symbol(export=, Decl(other.js, 0, 29))
- >A : Symbol(A, Decl(other.js, 0, 0))
 +>module : Symbol(module, Decl(node.d.ts, 1, 11))
-+>A : Symbol(A, Decl(other.js, 0, 0))
+ >A : Symbol(A, Decl(other.js, 0, 0))
  

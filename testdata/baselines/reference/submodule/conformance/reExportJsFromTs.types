@@ -2,11 +2,13 @@
 
 === /lib/constants.js ===
 module.exports = {
+>module.exports = {  str: 'x',} : { str: string; }
+>module.exports : any
+>module : any
+>exports : any
 >{  str: 'x',} : { str: string; }
 
   str: 'x',
->str : string
->'x' : "x"
 >str : string
 >'x' : "x"
 

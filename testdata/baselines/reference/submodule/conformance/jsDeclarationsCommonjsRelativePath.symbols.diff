@@ -14,7 +14,6 @@
 ->module : Symbol(module, Decl(reexport.js, 1, 38))
 ->exports : Symbol(module.exports, Decl(reexport.js, 0, 0))
  >Thing : Symbol(Thing, Decl(reexport.js, 2, 18))
-+>Thing : Symbol(Thing, Decl(reexport.js, 2, 18))
  
 -=== thing.js ===
 -'use strict';

@@ -63,9 +63,7 @@ const _z = inst[_sym];
 
 module.exports.F = F;
 >F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport4.js, 2, 27))
->F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport4.js, 2, 27))
 
 module.exports.S = _sym;
->_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport4.js, 1, 5))
 >_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport4.js, 1, 5))
 

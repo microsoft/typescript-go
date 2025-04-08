@@ -64,11 +64,9 @@
  >_str : "my-fake-sym"
  >{ value: "ok" } : { value: string; }
  >value : string
- >"ok" : "ok"
+@@= skipped -27, +27 lines =@@
  
  module.exports.S = _sym;
-+>S : any
-+>_sym : unique symbol
  >module.exports.S = _sym : unique symbol
 ->module.exports.S : unique symbol
 ->module.exports : typeof module.exports

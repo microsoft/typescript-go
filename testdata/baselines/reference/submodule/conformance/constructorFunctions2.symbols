@@ -42,7 +42,6 @@ function A() { this.id = 1; }
 >A : Symbol(A, Decl(other.js, 0, 0))
 
 module.exports = A;
->A : Symbol(A, Decl(other.js, 0, 0))
 >module : Symbol(module, Decl(node.d.ts, 1, 11))
 >A : Symbol(A, Decl(other.js, 0, 0))
 

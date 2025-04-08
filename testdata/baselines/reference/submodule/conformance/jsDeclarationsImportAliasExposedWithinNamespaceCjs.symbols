@@ -43,8 +43,6 @@ function testFn(input) {
 module.exports = {testFn, testFnTypes};
 >testFn : Symbol(testFn, Decl(file2.js, 27, 18))
 >testFnTypes : Symbol(testFnTypes, Decl(file2.js, 27, 25))
->testFn : Symbol(testFn, Decl(file2.js, 27, 18))
->testFnTypes : Symbol(testFnTypes, Decl(file2.js, 27, 25))
 
 === file.js ===
 /**
@@ -69,10 +67,5 @@ const myTypes = {
 /** @typedef {myTypes.typeB|Function} myTypes.typeC */
 
 exports.myTypes = myTypes;
->myTypes : Symbol(myTypes, Decl(file.js, 7, 2))
->myTypes : Symbol(myTypes, Decl(file.js, 5, 5))
->exports.myTypes : Symbol(myTypes, Decl(file.js, 7, 2))
->exports : Symbol("file", Decl(file.js, 0, 0))
->myTypes : Symbol(myTypes, Decl(file.js, 7, 2))
 >myTypes : Symbol(myTypes, Decl(file.js, 5, 5))
 

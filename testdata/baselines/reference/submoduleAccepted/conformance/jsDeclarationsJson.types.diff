@@ -1,10 +1,8 @@
 --- old.jsDeclarationsJson.types
 +++ new.jsDeclarationsJson.types
-@@= skipped -7, +7 lines =@@
- >"./obj.json" : "./obj.json"
+@@= skipped -8, +8 lines =@@
  
  module.exports = j;
-+>j : { x: number; y: number; obj: { items: ({ x: number; y?: undefined; err?: undefined; } | { x: number; y: number; err?: undefined; } | { y?: undefined; x: number; err: boolean; })[]; }; }
  >module.exports = j : { x: number; y: number; obj: { items: ({ x: number; y?: undefined; err?: undefined; } | { x: number; y: number; err?: undefined; } | { y?: undefined; x: number; err: boolean; })[]; }; }
 ->module.exports : { x: number; y: number; obj: { items: ({ x: number; y?: undefined; err?: undefined; } | { x: number; y: number; err?: undefined; } | { y?: undefined; x: number; err: boolean; })[]; }; }
 ->module : { exports: { x: number; y: number; obj: { items: ({ x: number; y?: undefined; err?: undefined; } | { x: number; y: number; err?: undefined; } | { y?: undefined; x: number; err: boolean; })[]; }; }; }

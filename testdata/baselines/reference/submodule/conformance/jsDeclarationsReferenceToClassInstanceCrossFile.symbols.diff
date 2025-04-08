@@ -39,11 +39,9 @@
 ->module : Symbol(module, Decl(rectangle.js, 4, 1))
 ->exports : Symbol(module.exports, Decl(rectangle.js, 0, 0))
  >Rectangle : Symbol(Rectangle, Decl(rectangle.js, 6, 18))
-+>Rectangle : Symbol(Rectangle, Decl(rectangle.js, 6, 18))
  
  === index.js ===
- const {Rectangle} = require('./rectangle');
-@@= skipped -27, +25 lines =@@
+@@= skipped -27, +24 lines =@@
           * @type {Rectangle[]}
           */
          this.objects = [];
@@ -81,5 +79,4 @@
 ->module : Symbol(module, Decl(index.js, 20, 1))
 ->exports : Symbol(module.exports, Decl(index.js, 0, 0))
  >Render : Symbol(Render, Decl(index.js, 22, 18))
-+>Render : Symbol(Render, Decl(index.js, 22, 18))
  

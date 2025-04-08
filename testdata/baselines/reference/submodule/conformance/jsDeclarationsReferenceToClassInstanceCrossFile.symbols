@@ -35,7 +35,6 @@ class Rectangle {
 
 module.exports = { Rectangle };
 >Rectangle : Symbol(Rectangle, Decl(rectangle.js, 6, 18))
->Rectangle : Symbol(Rectangle, Decl(rectangle.js, 6, 18))
 
 === index.js ===
 const {Rectangle} = require('./rectangle');
@@ -76,6 +75,5 @@ class Render {
 }
 
 module.exports = { Render };
->Render : Symbol(Render, Decl(index.js, 22, 18))
 >Render : Symbol(Render, Decl(index.js, 22, 18))
 

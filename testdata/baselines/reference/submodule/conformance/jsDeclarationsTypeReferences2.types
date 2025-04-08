@@ -17,10 +17,13 @@ const thing = a + m
 >m : number
 
 module.exports = {
+>module.exports = {    thing} : { thing: number; }
+>module.exports : any
+>module : any
+>exports : any
 >{    thing} : { thing: number; }
 
     thing
->thing : number
 >thing : number
 
 };

@@ -2,9 +2,6 @@
 
 === bug27025.js ===
 module.exports = window.nonprop;
->window.nonprop : any
->window : Window & typeof globalThis
->nonprop : any
 >module.exports = window.nonprop : any
 >module.exports : any
 >module : any
@@ -14,11 +11,9 @@ module.exports = window.nonprop;
 >nonprop : any
 
 exports.foo = bar;
->foo : any
->bar : any
 >exports.foo = bar : any
 >exports.foo : any
->exports : typeof import("bug27025")
+>exports : any
 >foo : any
 >bar : any
 

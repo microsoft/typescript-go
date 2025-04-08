@@ -1,11 +1,8 @@
 --- old.jsdocImportTypeReferenceToClassAlias.types
 +++ new.jsdocImportTypeReferenceToClassAlias.types
-@@= skipped -7, +7 lines =@@
- >s : () => void
+@@= skipped -8, +8 lines =@@
  }
  module.exports.C = C
-+>C : any
-+>C : typeof C
  >module.exports.C = C : typeof C
 ->module.exports.C : typeof C
 ->module.exports : typeof module.exports

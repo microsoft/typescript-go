@@ -16,7 +16,6 @@ function Timer(timeout) {
 >timeout : any
 }
 module.exports = Timer;
->Timer : (timeout: any) => void
 >module.exports = Timer : (timeout: any) => void
 >module.exports : any
 >module : any
@@ -42,7 +41,6 @@ function Hook(handle) {
 >handle : any
 }
 module.exports = Hook;
->Hook : (handle: any) => void
 >module.exports = Hook : (handle: any) => void
 >module.exports : any
 >module : any
@@ -133,7 +131,6 @@ Context.prototype = {
     }
 }
 module.exports = Context;
->Context : { (input: any): any; prototype: { construct: (input: any, handle?: () => any) => any; }; }
 >module.exports = Context : { (input: any): any; prototype: { construct: (input: any, handle?: () => any) => any; }; }
 >module.exports : any
 >module : any

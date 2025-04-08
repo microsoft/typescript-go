@@ -22,12 +22,10 @@ var a = 10;
 
 === node_modules/c.js ===
 exports.a = 10;
->a : 10
->10 : 10
 >exports.a = 10 : 10
->exports.a : 10
->exports : typeof import("node_modules/c")
->a : 10
+>exports.a : any
+>exports : any
+>a : any
 >10 : 10
 
 c = 10;

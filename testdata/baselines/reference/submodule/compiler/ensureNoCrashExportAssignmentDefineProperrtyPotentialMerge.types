@@ -8,7 +8,6 @@ const _item = require("./namespacer");
 >"./namespacer" : "./namespacer"
 
 module.exports = 12;
->12 : 12
 >module.exports = 12 : 12
 >module.exports : any
 >module : any
@@ -40,7 +39,6 @@ A.bar = class Q {}
 >Q : typeof Q
 
 module.exports = A;
->A : {}
 >module.exports = A : {}
 >module.exports : any
 >module : any
@@ -75,7 +73,6 @@ Object.defineProperty(B, "NS", { value: "why though", writable: true });
 >true : true
 
 module.exports = B;
->B : {}
 >module.exports = B : {}
 >module.exports : any
 >module : any

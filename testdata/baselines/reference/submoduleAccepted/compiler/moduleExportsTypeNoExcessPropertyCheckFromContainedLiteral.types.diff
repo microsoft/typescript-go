@@ -22,27 +22,20 @@
  >eslintReact : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
  
  === eslint-plugin-react.js ===
-@@= skipped -32, +32 lines =@@
- }
+@@= skipped -33, +33 lines =@@
  
  module.exports = {
-->module.exports = {  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
+ >module.exports = {  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
 ->module.exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
 ->module : { exports: { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }; }
 ->exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
++>module.exports : any
++>module : any
++>exports : any
  >{  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
  
    plugins: {
-@@= skipped -20, +16 lines =@@
-       rules: allRules,
- >rules : { 'no-unsafe': boolean; }
- >allRules : { 'no-unsafe': boolean; }
-+>rules : { 'no-unsafe': boolean; }
-+>allRules : { 'no-unsafe': boolean; }
- 
-     },
-   },
-@@= skipped -18, +20 lines =@@
+@@= skipped -37, +37 lines =@@
   * @type {(...configs: Config[]) => void}
   */
  function config(...configs) { }
@@ -58,8 +51,6 @@
 ->exports : typeof module.exports
 ->{ config } : { config: (...configs: Config[]) => void; }
 ->config : (...configs: Config[]) => void
-+>{ config } : { config: (...configs: any[]) => void; }
-+>config : (...configs: any[]) => void
 +>module.exports = { config } : { config: (...configs: any[]) => void; }
 +>module.exports : any
 +>module : any

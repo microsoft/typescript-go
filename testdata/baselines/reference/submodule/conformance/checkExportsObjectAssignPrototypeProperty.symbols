@@ -131,5 +131,4 @@ Object.defineProperty(Person.prototype, "setonlyAccessor", {
 });
 module.exports = Person;
 >Person : Symbol(Person, Decl(mod1.js, 0, 0))
->Person : Symbol(Person, Decl(mod1.js, 0, 0))
 

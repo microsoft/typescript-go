@@ -55,5 +55,4 @@
 ->exports : Symbol(module.exports, Decl(lateBoundAssignmentDeclarationSupport3.js, 0, 0))
 ->S : Symbol(S, Decl(lateBoundAssignmentDeclarationSupport3.js, 5, 61))
  >_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport3.js, 1, 5))
-+>_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport3.js, 1, 5))
  

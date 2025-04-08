@@ -24,7 +24,6 @@
 ->module : { exports: typeof ns; }
 ->exports : typeof ns
 ->ns : typeof ns
-+>ns : {}
 +>module.exports = ns : {}
 +>module.exports : any
 +>module : any

@@ -10,22 +10,16 @@
 ->exports : typeof import("MC")
 ->class MC {  watch() {    return new MW(this);  }} : typeof import("MC")
 ->MC : typeof import("MC")
++>module.exports = class MC {  watch() {    return new MW(this);  }} : typeof MC
++>module.exports : any
++>module : any
++>exports : any
 +>class MC {  watch() {    return new MW(this);  }} : typeof MC
 +>MC : typeof MC
  
    watch() {
  >watch : () => MW
-@@= skipped -14, +10 lines =@@
- >new MW(this) : MW
- >MW : typeof MW
- >this : this
-+>new MW(this) : MW
-+>MW : typeof MW
-+>this : this
-   }
- };
- 
-@@= skipped -13, +16 lines =@@
+@@= skipped -27, +27 lines =@@
     * @param {MC} compiler the compiler
     */
    constructor(compiler) {
@@ -44,7 +38,6 @@
  }
  
  module.exports = MW;
-+>MW : typeof MW
  >module.exports = MW : typeof MW
 ->module.exports : typeof MW
 ->module : { exports: typeof MW; }

@@ -2,8 +2,6 @@
 
 === bug24492.js ===
 module.exports.D = class { }
->D : any
->class { } : typeof D
 >module.exports.D = class { } : typeof D
 >module.exports.D : any
 >module.exports : any

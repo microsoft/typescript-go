@@ -10,6 +10,10 @@
 ->exports : { (): MW; new (): MC; }
 ->function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : typeof MC
 ->MC : typeof MC
++>module.exports = function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => MW
++>module.exports : any
++>module : any
++>exports : any
 +>function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => MW
 +>MC : () => MW
  
@@ -24,13 +28,10 @@
  >MW : typeof MW
 ->x : any
 +>x : {}
-+>new MW(x) : MW
-+>MW : typeof MW
-+>x : {}
  
  };
  
-@@= skipped -29, +28 lines =@@
+@@= skipped -29, +29 lines =@@
     * @param {MC} compiler the compiler
     */
    constructor(compiler) {
@@ -49,7 +50,6 @@
  }
  
  module.exports = MW;
-+>MW : typeof MW
  >module.exports = MW : typeof MW
 ->module.exports : typeof MW
 ->module : { exports: typeof MW; }

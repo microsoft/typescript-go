@@ -26,7 +26,6 @@ foo.y // ignored from shortid/index.js
 // z will not be found because maxNodeModulesJsDepth: 0
 module.exports = { z: 'no' };
 >z : Symbol(z, Decl(index.js, 1, 18))
->z : Symbol(z, Decl(index.js, 1, 18))
 
 === /node_modules/shortid/index.js ===
 var z = require('z');
@@ -39,6 +38,5 @@ var y = { y: 'foo' };
 >y : Symbol(y, Decl(index.js, 1, 9))
 
 module.exports = y;
->y : Symbol(y, Decl(index.js, 1, 3))
 >y : Symbol(y, Decl(index.js, 1, 3))
 

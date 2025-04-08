@@ -4,18 +4,13 @@
  
  === assignmentToVoidZero2.js ===
  exports.j = 1;
-+>j : Symbol(j, Decl(assignmentToVoidZero2.js, 0, 0))
- >exports.j : Symbol(j, Decl(assignmentToVoidZero2.js, 0, 0))
+->exports.j : Symbol(j, Decl(assignmentToVoidZero2.js, 0, 0))
 ->exports : Symbol(j, Decl(assignmentToVoidZero2.js, 0, 0))
-+>exports : Symbol("assignmentToVoidZero2", Decl(assignmentToVoidZero2.js, 0, 0))
- >j : Symbol(j, Decl(assignmentToVoidZero2.js, 0, 0))
- 
+->j : Symbol(j, Decl(assignmentToVoidZero2.js, 0, 0))
+-
  exports.k = void 0;
-+>k : Symbol(k, Decl(assignmentToVoidZero2.js, 0, 14))
-+>exports.k : Symbol(k, Decl(assignmentToVoidZero2.js, 0, 14))
- >exports : Symbol("assignmentToVoidZero2", Decl(assignmentToVoidZero2.js, 0, 0))
-+>k : Symbol(k, Decl(assignmentToVoidZero2.js, 0, 14))
- 
+->exports : Symbol("assignmentToVoidZero2", Decl(assignmentToVoidZero2.js, 0, 0))
+-
  var o = {}
 ->o : Symbol(o, Decl(assignmentToVoidZero2.js, 2, 3), Decl(assignmentToVoidZero2.js, 2, 10))
 +>o : Symbol(o, Decl(assignmentToVoidZero2.js, 2, 3))

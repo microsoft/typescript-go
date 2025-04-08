@@ -18,18 +18,13 @@
  
  === mod.js ===
  module.exports = {
-->module.exports = {    x: {        y: "value"    }} : { x: { y: string; }; }
+ >module.exports = {    x: {        y: "value"    }} : { x: { y: string; }; }
 ->module.exports : { x: { y: string; }; }
 ->module : { exports: { x: { y: string; }; }; }
 ->exports : { x: { y: string; }; }
++>module.exports : any
++>module : any
++>exports : any
  >{    x: {        y: "value"    }} : { x: { y: string; }; }
  
      x: {
-@@= skipped -17, +13 lines =@@
-         y: "value"
- >y : string
- >"value" : "value"
-+>y : string
-+>"value" : "value"
-     }
- }

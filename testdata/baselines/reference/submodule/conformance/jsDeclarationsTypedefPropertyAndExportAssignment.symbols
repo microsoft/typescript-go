@@ -31,7 +31,6 @@ class MainThreadTasks {
 
 module.exports = MainThreadTasks;
 >MainThreadTasks : Symbol(MainThreadTasks, Decl(index.js, 0, 61))
->MainThreadTasks : Symbol(MainThreadTasks, Decl(index.js, 0, 61))
 
 === module.js ===
 /** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
@@ -80,7 +79,6 @@ module.exports = {
 >taskGroups : Symbol(taskGroups, Decl(module.js, 26, 18))
 
     taskNameToGroup,
->taskNameToGroup : Symbol(taskNameToGroup, Decl(module.js, 27, 15))
 >taskNameToGroup : Symbol(taskNameToGroup, Decl(module.js, 27, 15))
 
 };

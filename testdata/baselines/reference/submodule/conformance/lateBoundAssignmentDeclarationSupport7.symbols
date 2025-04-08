@@ -43,9 +43,7 @@ F[_str] = "ok";
 
 module.exports.F = F;
 >F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport7.js, 1, 27))
->F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport7.js, 1, 27))
 
 module.exports.S = _sym;
->_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 5))
 >_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport7.js, 0, 5))
 

@@ -6440,8 +6440,6 @@ func (c *Checker) getDeclarationSpaces(node *ast.Declaration) DeclarationSpaces 
 		}
 		return result
 	case ast.KindCommonJSExport:
-		// TODO: Alias handling means that this should maybe be handled above. But its initialiser isn't a declaration, and has no symbol,
-		// unlike export assignment.
 		return DeclarationSpacesExportValue
 	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindFunctionDeclaration, ast.KindImportSpecifier:
 		return DeclarationSpacesExportValue
@@ -7856,18 +7854,6 @@ func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type
 		}
 	}
 	return returnType
-}
-
-func (c *Checker) resolveExternalModuleTypeByLiteral(name *ast.Node) *Type {
-	moduleSym := c.resolveExternalModuleName(name, name, false /*ignoreErrors*/)
-	if moduleSym != nil {
-		resolvedModuleSymbol := c.resolveExternalModuleSymbol(moduleSym, false /*ignoreErrors*/)
-		if resolvedModuleSymbol != nil {
-			return c.getTypeOfSymbol(resolvedModuleSymbol)
-		}
-	}
-
-	return c.anyType
 }
 
 func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
@@ -13633,6 +13619,17 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node, dontResolve
 	return resolved
 }
 
+func (c *Checker) resolveExternalModuleTypeByLiteral(name *ast.Node) *Type {
+	moduleSym := c.resolveExternalModuleName(name, name, false /*ignoreErrors*/)
+	if moduleSym != nil {
+		resolvedModuleSymbol := c.resolveExternalModuleSymbol(moduleSym, false /*dontResolveAlias*/)
+		if resolvedModuleSymbol != nil {
+			return c.getTypeOfSymbol(resolvedModuleSymbol)
+		}
+	}
+	return c.anyType
+}
+
 // This function is only for imports with entity names
 func (c *Checker) getSymbolOfPartOfRightHandSideOfImportEquals(entityName *ast.Node, dontResolveAlias bool) *ast.Symbol {
 	// There are three things we might try to look for. In the following examples,
@@ -14099,7 +14096,7 @@ func (c *Checker) getTargetOfExportSpecifier(node *ast.Node, meaning ast.SymbolF
 }
 
 func (c *Checker) getTargetOfExportAssignment(node *ast.Node, dontResolveAlias bool) *ast.Symbol {
-	resolved := c.getTargetOfAliasLikeExpression(node.Expression(), dontResolveAlias)
+	resolved := c.getTargetOfAliasLikeExpression(node.AsExportAssignment().Expression, dontResolveAlias)
 	c.markSymbolOfAliasDeclarationIfTypeOnly(node, nil /*immediateTarget*/, resolved, false /*overwriteEmpty*/, nil, "")
 	return resolved
 }
@@ -15301,7 +15298,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindMethodDeclaration:
 		result = c.checkObjectLiteralMethod(declaration, CheckModeNormal)
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
-		result = c.widenTypeForVariableLikeDeclaration(c.checkExpressionCached(declaration.Expression()), declaration, false /*reportErrors*/)
+		result = c.widenTypeForVariableLikeDeclaration(c.checkExpressionCached(declaration.AsExportAssignment().Expression), declaration, false /*reportErrors*/)
 	case ast.KindBinaryExpression:
 		result = c.getWidenedTypeForAssignmentDeclaration(symbol)
 	case ast.KindJsxAttribute:
@@ -15309,8 +15306,6 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	case ast.KindEnumMember:
 		result = c.getTypeOfEnumMember(symbol)
 	case ast.KindCommonJSExport:
-		// TODO: Ignore if ES module marker is set on the file
-		// TODO: This is only needed to get the type of the export (or check the initializer against it, but that's tautological)
 		result = c.checkExpression(declaration.AsCommonJSExport().Initializer)
 	default:
 		panic("Unhandled case in getTypeOfVariableOrParameterOrPropertyWorker: " + declaration.Kind.String())
@@ -26340,7 +26335,8 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 		if ast.IsIdentifier(location) &&
 			(ast.IsExpressionNode(location) ||
 				ast.IsShorthandPropertyAssignment(location.Parent) ||
-				(ast.IsImportEqualsDeclaration(location.Parent) && location.Parent.AsImportEqualsDeclaration().ModuleReference == location)) &&
+				(ast.IsImportEqualsDeclaration(location.Parent) &&
+					location.Parent.AsImportEqualsDeclaration().ModuleReference == location)) &&
 			shouldMarkIdentifierAliasReferenced(location) {
 			if ast.IsPropertyAccessOrQualifiedName(location.Parent) {
 				var left *ast.Node

@@ -4,7 +4,6 @@
 module.exports = {
   a: "ok"
 >a : Symbol(a, Decl(test.js, 0, 18))
->a : Symbol(a, Decl(test.js, 0, 18))
 
 };
 

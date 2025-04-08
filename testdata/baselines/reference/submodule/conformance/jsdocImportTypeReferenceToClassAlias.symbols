@@ -9,7 +9,6 @@ class C {
 }
 module.exports.C = C
 >C : Symbol(C, Decl(mod1.js, 0, 0))
->C : Symbol(C, Decl(mod1.js, 0, 0))
 
 === test.js ===
 /** @typedef {import('./mod1').C} X */

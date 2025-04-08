@@ -6,7 +6,6 @@ const alias = {};
 
 module.exports = alias;
 >alias : Symbol(alias, Decl(a.js, 0, 5))
->alias : Symbol(alias, Decl(a.js, 0, 5))
 
 === /b.js ===
 import a from "./a";

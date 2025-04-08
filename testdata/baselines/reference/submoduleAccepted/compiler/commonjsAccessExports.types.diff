@@ -1,15 +1,26 @@
 --- old.commonjsAccessExports.types
 +++ new.commonjsAccessExports.types
-@@= skipped -1, +1 lines =@@
- 
+@@= skipped -2, +2 lines =@@
  === /a.js ===
  exports.x = 0;
-+>x : 0
-+>0 : 0
  >exports.x = 0 : 0
- >exports.x : 0
- >exports : typeof import("/a")
-@@= skipped -15, +17 lines =@@
+->exports.x : 0
+->exports : typeof import("/a")
+->x : 0
++>exports.x : any
++>exports : any
++>x : any
+ >0 : 0
+ 
+ exports.x;
+->exports.x : 0
+->exports : typeof import("/a")
+->x : 0
++>exports.x : any
++>exports : any
++>x : any
+ 
+ // Works nested
  {
      // 'exports' does not provide a contextual type to a function-class
      exports.Cls = function() {
@@ -18,6 +29,9 @@
 ->exports : typeof import("/a")
 ->Cls : typeof Cls
 ->function() {        this.x = 0;    } : typeof Cls
++>exports.Cls = function() {        this.x = 0;    } : () => void
++>exports.Cls : any
++>exports : any
 +>Cls : any
 +>function() {        this.x = 0;    } : () => void
  
@@ -28,11 +42,6 @@
 +>this : any
  >x : any
  >0 : 0
-+>this.x = 0 : 0
-+>this.x : any
-+>this : any
-+>x : any
-+>0 : 0
      }
  }
  
@@ -40,10 +49,11 @@
 ->instance : Cls
 ->new exports.Cls() : Cls
 ->exports.Cls : typeof Cls
+->exports : typeof import("/a")
+->Cls : typeof Cls
 +>instance : any
 +>new exports.Cls() : any
 +>exports.Cls : any
- >exports : typeof import("/a")
-->Cls : typeof Cls
++>exports : any
 +>Cls : any
  

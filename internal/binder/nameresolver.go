@@ -316,13 +316,6 @@ loop:
 		}
 	}
 	if result == nil {
-		if lastLocation != nil &&
-			lastLocation.Kind == ast.KindSourceFile &&
-			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
-			name == "exports" &&
-			meaning&lastLocation.Symbol().Flags != 0 {
-			return lastLocation.Symbol()
-		}
 		if !excludeGlobals {
 			result = r.lookup(r.Globals, name, meaning|ast.SymbolFlagsGlobalLookup)
 		}

@@ -4,6 +4,7 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +main.js(3,12): error TS7006: Parameter 'k' implicitly has an 'any' type.
++mod1.js(6,1): error TS2304: Cannot find name 'exports'.
 +
 +
 +==== main.js (1 errors) ====
@@ -15,11 +16,13 @@
 +        k.values()
 +    }
 +    
-+==== mod1.js (0 errors) ====
++==== mod1.js (1 errors) ====
 +    class K {
 +        values() {
 +            return new K()
 +        }
 +    }
 +    exports.K = K;
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
 +    

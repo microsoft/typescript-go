@@ -23,6 +23,4 @@ function b() {
 module.exports = {x, b}
 >x : Symbol(x, Decl(index1.js, 14, 18))
 >b : Symbol(b, Decl(index1.js, 14, 20))
->x : Symbol(x, Decl(index1.js, 14, 18))
->b : Symbol(b, Decl(index1.js, 14, 20))
 

@@ -38,10 +38,13 @@ mod.i(1)
 === mod.js ===
 /** @param {number} n */
 exports.f = exports.g = function fg(n) {
->f : (n: any) => any
+>exports.f = exports.g = function fg(n) {    return n + 1} : (n: any) => any
+>exports.f : any
+>exports : any
+>f : any
 >exports.g = function fg(n) {    return n + 1} : (n: any) => any
 >exports.g : any
->exports : typeof import("mod")
+>exports : any
 >g : any
 >function fg(n) {    return n + 1} : (n: any) => any
 >fg : (n: any) => any
@@ -51,12 +54,14 @@ exports.f = exports.g = function fg(n) {
 >n + 1 : any
 >n : any
 >1 : 1
->n + 1 : any
->n : any
->1 : 1
 }
 /** @param {string} mom */
 module.exports.h = module.exports.i = function hi(mom) {
+>module.exports.h = module.exports.i = function hi(mom) {    return `hi, ${mom}!`;} : (mom: any) => string
+>module.exports.h : any
+>module.exports : any
+>module : any
+>exports : any
 >h : any
 >module.exports.i = function hi(mom) {    return `hi, ${mom}!`;} : (mom: any) => string
 >module.exports.i : any
@@ -69,8 +74,6 @@ module.exports.h = module.exports.i = function hi(mom) {
 >mom : any
 
     return `hi, ${mom}!`;
->`hi, ${mom}!` : string
->mom : any
 >`hi, ${mom}!` : string
 >mom : any
 }

@@ -2,7 +2,6 @@
 
 === /node_modules/foo/src/index.js ===
 module.exports = 1;
->1 : 1
 >module.exports = 1 : 1
 >module.exports : any
 >module : any

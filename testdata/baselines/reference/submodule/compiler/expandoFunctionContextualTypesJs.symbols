@@ -72,7 +72,6 @@ function foo() {
 module.exports = {
     color: "red"
 >color : Symbol(color, Decl(input.js, 47, 18))
->color : Symbol(color, Decl(input.js, 47, 18))
 }
 
 expectLiteral({ props: module.exports });

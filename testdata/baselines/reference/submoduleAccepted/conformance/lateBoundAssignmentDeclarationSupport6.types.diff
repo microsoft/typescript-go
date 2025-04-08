@@ -108,8 +108,6 @@
 ->exports : typeof module.exports
 ->F : typeof F
 ->F : typeof F
-+>F : any
-+>F : () => void
 +>module.exports.F = F : () => void
 +>module.exports.F : any
 +>module.exports : any
@@ -119,8 +117,6 @@
 +>F : () => void
  
  module.exports.S = _sym;
-+>S : any
-+>_sym : unique symbol
  >module.exports.S = _sym : unique symbol
 ->module.exports.S : unique symbol
 ->module.exports : typeof module.exports

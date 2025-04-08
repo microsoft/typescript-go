@@ -42,5 +42,4 @@ Object.defineProperty(module.exports, _str, { value: "ok" });
 
 module.exports.S = _sym;
 >_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport3.js, 1, 5))
->_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport3.js, 1, 5))
 

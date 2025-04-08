@@ -33,7 +33,6 @@ declare function require(name: string): any;
 === mod1.js ===
 /// <reference path='./requires.d.ts' />
 module.exports = 1
->1 : 1
 >module.exports = 1 : 1
 >module.exports : any
 >module : { exports: any; }
@@ -41,8 +40,6 @@ module.exports = 1
 >1 : 1
 
 module.exports.f = function () { }
->f : any
->function () { } : () => void
 >module.exports.f = function () { } : () => void
 >module.exports.f : any
 >module.exports : any

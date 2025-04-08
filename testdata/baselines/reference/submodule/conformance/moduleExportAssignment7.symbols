@@ -35,7 +35,6 @@ module.exports = {
 
     literal: "",
 >literal : Symbol(literal, Decl(mod.js, 10, 23))
->literal : Symbol(literal, Decl(mod.js, 10, 23))
 }
 === main.js ===
 /**

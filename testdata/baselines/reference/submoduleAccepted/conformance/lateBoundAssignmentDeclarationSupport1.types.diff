@@ -29,12 +29,30 @@
  >S : unique symbol
  
  === lateBoundAssignmentDeclarationSupport1.js ===
-@@= skipped -45, +45 lines =@@
+@@= skipped -33, +33 lines =@@
+ exports[_sym] = "ok";
+ >exports[_sym] = "ok" : "ok"
+ >exports[_sym] : any
+->exports : typeof import("lateBoundAssignmentDeclarationSupport1")
++>exports : any
+ >_sym : unique symbol
+ >"ok" : "ok"
+ 
+ exports[_str] = "ok";
+ >exports[_str] = "ok" : "ok"
+ >exports[_str] : any
+->exports : typeof import("lateBoundAssignmentDeclarationSupport1")
++>exports : any
+ >_str : "my-fake-sym"
  >"ok" : "ok"
  
  exports.S = _sym;
-+>S : unique symbol
-+>_sym : unique symbol
  >exports.S = _sym : unique symbol
- >exports.S : unique symbol
- >exports : typeof import("lateBoundAssignmentDeclarationSupport1")
+->exports.S : unique symbol
+->exports : typeof import("lateBoundAssignmentDeclarationSupport1")
+->S : unique symbol
++>exports.S : any
++>exports : any
++>S : any
+ >_sym : unique symbol
+ 

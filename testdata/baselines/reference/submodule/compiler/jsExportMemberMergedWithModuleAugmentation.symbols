@@ -12,7 +12,6 @@ class Abcde {
 module.exports = {
   Abcde
 >Abcde : Symbol(Abcde, Decl(test.js, 5, 18))
->Abcde : Symbol(Abcde, Decl(test.js, 5, 18))
 
 };
 

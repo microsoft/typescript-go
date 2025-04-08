@@ -10,5 +10,4 @@
 ->exports : Symbol(module.exports, Decl(mod1.js, 0, 0))
 ->chalk : Symbol(chalk, Decl(mod1.js, 2, 2))
  >chalk : Symbol(chalk, Decl(mod1.js, 0, 5))
-+>chalk : Symbol(chalk, Decl(mod1.js, 0, 5))
  

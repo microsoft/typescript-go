@@ -40,6 +40,10 @@ const allRules = {
 }
 
 module.exports = {
+>module.exports = {  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
+>module.exports : any
+>module : any
+>exports : any
 >{  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
 
   plugins: {
@@ -54,8 +58,6 @@ module.exports = {
 >deprecatedRules : { "jsx-sort-default-props": boolean; }
 
       rules: allRules,
->rules : { 'no-unsafe': boolean; }
->allRules : { 'no-unsafe': boolean; }
 >rules : { 'no-unsafe': boolean; }
 >allRules : { 'no-unsafe': boolean; }
 
@@ -80,8 +82,6 @@ function config(...configs) { }
 >configs : any[]
 
 module.exports = { config };
->{ config } : { config: (...configs: any[]) => void; }
->config : (...configs: any[]) => void
 >module.exports = { config } : { config: (...configs: any[]) => void; }
 >module.exports : any
 >module : any

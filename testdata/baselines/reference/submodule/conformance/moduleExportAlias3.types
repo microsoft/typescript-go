@@ -6,10 +6,13 @@ class C {
 >C : C
 }
 module.exports = {
+>module.exports = {    C} : { C: typeof C; }
+>module.exports : any
+>module : any
+>exports : any
 >{    C} : { C: typeof C; }
 
     C
->C : typeof C
 >C : typeof C
 
 };

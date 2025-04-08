@@ -62,7 +62,6 @@ define("lib/ExtendedClass", ["deps/BaseClass"],
 >{} : {}
 
     module.exports = ExtendedClass
->ExtendedClass : any
 >module.exports = ExtendedClass : any
 >module.exports : any
 >module : {}

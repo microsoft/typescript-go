@@ -1,8 +1,9 @@
 file.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 file.js(4,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+file.js(8,1): error TS2304: Cannot find name 'exports'.
 
 
-==== file.js (2 errors) ====
+==== file.js (3 errors) ====
     const customSymbol = Symbol("custom");
     
     // This is a common pattern in Node’s built-in modules:
@@ -17,3 +18,5 @@ file.js(4,1): error TS2309: An export assignment cannot be used in a module with
 !!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     
     exports.customSymbol2 = Symbol("custom");
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.

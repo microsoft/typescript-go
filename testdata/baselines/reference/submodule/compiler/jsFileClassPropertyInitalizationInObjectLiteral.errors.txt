@@ -1,15 +1,12 @@
 foo.js(1,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-foo.js(2,9): error TS2300: Duplicate identifier 'A'.
 foo.js(4,10): error TS2339: Property 'b' does not exist on type 'typeof A'.
 
 
-==== foo.js (3 errors) ====
+==== foo.js (2 errors) ====
     module.exports = function () {
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
       class A { }
-            ~
-!!! error TS2300: Duplicate identifier 'A'.
       return {
         c: A.b = 1,
              ~

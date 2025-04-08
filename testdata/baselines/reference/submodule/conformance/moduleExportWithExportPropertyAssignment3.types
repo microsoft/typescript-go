@@ -51,8 +51,6 @@ declare function require(name: string): any;
 === mod1.js ===
 /// <reference path='./requires.d.ts' />
 module.exports.bothBefore = 'string'
->bothBefore : any
->'string' : "string"
 >module.exports.bothBefore = 'string' : "string"
 >module.exports.bothBefore : any
 >module.exports : any
@@ -62,6 +60,10 @@ module.exports.bothBefore = 'string'
 >'string' : "string"
 
 module.exports = {
+>module.exports = {    justExport: 1,    bothBefore: 2,    bothAfter: 3,} : { justExport: number; bothBefore: number; bothAfter: number; }
+>module.exports : any
+>module : { exports: any; }
+>exports : any
 >{    justExport: 1,    bothBefore: 2,    bothAfter: 3,} : { justExport: number; bothBefore: number; bothAfter: number; }
 
     justExport: 1,
@@ -75,12 +77,8 @@ module.exports = {
     bothAfter: 3,
 >bothAfter : number
 >3 : 3
->bothAfter : number
->3 : 3
 }
 module.exports.bothAfter = 'string'
->bothAfter : any
->'string' : "string"
 >module.exports.bothAfter = 'string' : "string"
 >module.exports.bothAfter : any
 >module.exports : any
@@ -90,8 +88,6 @@ module.exports.bothAfter = 'string'
 >'string' : "string"
 
 module.exports.justProperty = 'string'
->justProperty : any
->'string' : "string"
 >module.exports.justProperty = 'string' : "string"
 >module.exports.justProperty : any
 >module.exports : any

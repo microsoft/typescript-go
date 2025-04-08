@@ -71,21 +71,17 @@ var B = function B() {
 >2 : 2
 }
 exports.A = A
->A : () => void
->A : () => void
 >exports.A = A : () => void
->exports.A : () => void
->exports : typeof import("mod")
->A : () => void
+>exports.A : any
+>exports : any
+>A : any
 >A : () => void
 
 exports.B = B
->B : () => void
->B : () => void
 >exports.B = B : () => void
->exports.B : () => void
->exports : typeof import("mod")
->B : () => void
+>exports.B : any
+>exports : any
+>B : any
 >B : () => void
 
 A.prototype = B.prototype = {

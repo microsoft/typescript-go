@@ -95,8 +95,6 @@ const _z = inst[_sym];
 >_sym : unique symbol
 
 module.exports.F = F;
->F : any
->F : () => void
 >module.exports.F = F : () => void
 >module.exports.F : any
 >module.exports : any
@@ -106,8 +104,6 @@ module.exports.F = F;
 >F : () => void
 
 module.exports.S = _sym;
->S : any
->_sym : unique symbol
 >module.exports.S = _sym : unique symbol
 >module.exports.S : any
 >module.exports : any

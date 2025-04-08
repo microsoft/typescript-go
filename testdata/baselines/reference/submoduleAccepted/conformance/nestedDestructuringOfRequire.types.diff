@@ -1,11 +1,8 @@
 --- old.nestedDestructuringOfRequire.types
 +++ new.nestedDestructuringOfRequire.types
-@@= skipped -27, +27 lines =@@
- 
+@@= skipped -28, +28 lines =@@
  };
  module.exports.chalk = chalk
-+>chalk : any
-+>chalk : { grey: {}; }
  >module.exports.chalk = chalk : { grey: {}; }
 ->module.exports.chalk : { grey: {}; }
 ->module.exports : typeof module.exports

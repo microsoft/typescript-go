@@ -3,15 +3,25 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++mod.js(1,1): error TS2304: Cannot find name 'exports'.
++mod.js(2,1): error TS2304: Cannot find name 'exports'.
++mod.js(5,1): error TS2304: Cannot find name 'exports'.
 +mod.js(7,14): error TS2339: Property 'p' does not exist on type 'Classic'.
++use.js(3,17): error TS2339: Property 'K' does not exist on type '{}'.
 +
 +
-+==== mod.js (1 errors) ====
++==== mod.js (4 errors) ====
 +    exports.n = {};
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
 +    exports.n.K = function () {
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
 +        this.x = 10;
 +    }
 +    exports.Classic = class {
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
 +        constructor() {
 +            this.p = 1
 +                 ~
@@ -19,10 +29,12 @@
 +        }
 +    }
 +    
-+==== use.js (0 errors) ====
++==== use.js (1 errors) ====
 +    import * as s from './mod'
 +    
 +    var k = new s.n.K()
++                    ~
++!!! error TS2339: Property 'K' does not exist on type '{}'.
 +    k.x
 +    var classic = new s.Classic()
 +    

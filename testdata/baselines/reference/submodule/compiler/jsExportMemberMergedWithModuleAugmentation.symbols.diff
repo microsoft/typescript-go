@@ -20,11 +20,8 @@
 -
    Abcde
  >Abcde : Symbol(Abcde, Decl(test.js, 5, 18))
-+>Abcde : Symbol(Abcde, Decl(test.js, 5, 18))
  
- };
- 
-@@= skipped -22, +19 lines =@@
+@@= skipped -22, +18 lines =@@
  >Abcde : Symbol(Abcde, Decl(index.ts, 0, 8))
  
  declare module "./test" {

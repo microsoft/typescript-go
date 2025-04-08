@@ -10,13 +10,16 @@ const { SomeClass, SomeClass: Another } = require('./lib');
 >'./lib' : "./lib"
 
 module.exports = {
+>module.exports = {    SomeClass,    Another} : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
+>module.exports : any
+>module : any
+>exports : any
 >{    SomeClass,    Another} : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
 
     SomeClass,
 >SomeClass : typeof SomeClass
 
     Another
->Another : typeof SomeClass
 >Another : typeof SomeClass
 }
 === lib.js ===
@@ -45,12 +48,15 @@ class SomeClass {
 }
 
 module.exports = {
+>module.exports = {    bar,    SomeClass} : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
+>module.exports : any
+>module : any
+>exports : any
 >{    bar,    SomeClass} : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
 
     bar,
 >bar : (a: any) => any
 
     SomeClass
->SomeClass : typeof SomeClass
 >SomeClass : typeof SomeClass
 }

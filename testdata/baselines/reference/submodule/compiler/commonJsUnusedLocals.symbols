@@ -5,8 +5,4 @@ const x = 0;
 >x : Symbol(x, Decl(a.js, 0, 5))
 
 exports.y = 1;
->y : Symbol(y, Decl(a.js, 0, 12))
->exports.y : Symbol(y, Decl(a.js, 0, 12))
->exports : Symbol("/a", Decl(a.js, 0, 0))
->y : Symbol(y, Decl(a.js, 0, 12))
 

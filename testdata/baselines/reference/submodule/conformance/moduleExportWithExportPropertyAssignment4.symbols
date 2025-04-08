@@ -63,7 +63,6 @@ A.bothAfter = 3
 >bothAfter : Symbol(bothAfter, Decl(mod1.js, 3, 16), Decl(mod1.js, 8, 1), Decl(mod1.js, 3, 16))
 
 module.exports = A
->A : Symbol(A, Decl(mod1.js, 5, 18))
 >module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
 >module : Symbol(module, Decl(requires.d.ts, 0, 11))
 >exports : Symbol(exports, Decl(requires.d.ts, 0, 21))

@@ -18,8 +18,6 @@
 ->exports : typeof wat
 ->class C {} : typeof wat
 ->C : typeof wat
-+>class C {} : typeof C
-+>C : typeof C
 +>module.exports = class C {} : typeof C
 +>module.exports : any
 +>module : any
@@ -36,9 +34,6 @@
 ->D : typeof wat.D
 ->class D { } : typeof wat.D
 ->D : typeof wat.D
-+>D : any
-+>class D { } : typeof D
-+>D : typeof D
 +>module.exports.D = class D { } : typeof D
 +>module.exports.D : any
 +>module.exports : any

@@ -8,20 +8,16 @@
 ->module.exports : { thing: string; also: string; desc: { item: string; }; Strings: { a: string; b: string; }; }
 ->module : { exports: { thing: string; also: string; desc: { item: string; }; Strings: { a: string; b: string; }; }; }
 ->exports : { thing: string; also: string; desc: { item: string; }; Strings: { a: string; b: string; }; }
++>module.exports = {    thing: "ok",    also: "ok",    desc: {        item: "ok"    }} : { thing: string; also: string; desc: { item: string; }; }
++>module.exports : any
++>module : any
++>exports : any
  >{    thing: "ok",    also: "ok",    desc: {        item: "ok"    }} : { thing: string; also: string; desc: { item: string; }; }
  
      thing: "ok",
-@@= skipped -21, +17 lines =@@
-         item: "ok"
- >item : string
- >"ok" : "ok"
-+>item : string
-+>"ok" : "ok"
-     }
+@@= skipped -25, +25 lines =@@
  };
  module.exports.Strings = Strings;
-+>Strings : any
-+>Strings : { a: string; b: string; }
  >module.exports.Strings = Strings : { a: string; b: string; }
 ->module.exports.Strings : { a: string; b: string; }
 ->module.exports : { thing: string; also: string; desc: { item: string; }; Strings: { a: string; b: string; }; }

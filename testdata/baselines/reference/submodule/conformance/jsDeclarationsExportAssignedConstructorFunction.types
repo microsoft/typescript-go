@@ -3,15 +3,15 @@
 === jsDeclarationsExportAssignedConstructorFunction.js ===
 /** @constructor */
 module.exports.MyClass = function() {
+>module.exports.MyClass = function() {    this.x = 1} : () => void
+>module.exports.MyClass : any
+>module.exports : any
+>module : any
+>exports : any
 >MyClass : any
 >function() {    this.x = 1} : () => void
 
     this.x = 1
->this.x = 1 : 1
->this.x : any
->this : any
->x : any
->1 : 1
 >this.x = 1 : 1
 >this.x : any
 >this : any

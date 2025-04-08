@@ -23,7 +23,6 @@ A.bar = class Q {}
 
 module.exports = A;
 >A : Symbol(A, Decl(namespacey.js, 0, 5))
->A : Symbol(A, Decl(namespacey.js, 0, 5))
 
 === namespacer.js ===
 const B = {}
@@ -43,6 +42,5 @@ Object.defineProperty(B, "NS", { value: "why though", writable: true });
 >writable : Symbol(writable, Decl(namespacer.js, 2, 53))
 
 module.exports = B;
->B : Symbol(B, Decl(namespacer.js, 0, 5))
 >B : Symbol(B, Decl(namespacer.js, 0, 5))
 

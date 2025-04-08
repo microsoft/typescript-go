@@ -1,3 +1,5 @@
+assignmentToVoidZero2.js(1,1): error TS2304: Cannot find name 'exports'.
+assignmentToVoidZero2.js(2,1): error TS2304: Cannot find name 'exports'.
 assignmentToVoidZero2.js(4,3): error TS2339: Property 'x' does not exist on type '{}'.
 assignmentToVoidZero2.js(5,3): error TS2339: Property 'y' does not exist on type '{}'.
 assignmentToVoidZero2.js(6,3): error TS2339: Property 'x' does not exist on type '{}'.
@@ -6,9 +8,13 @@ assignmentToVoidZero2.js(12,9): error TS7009: 'new' expression, whose target lac
 importer.js(2,1): error TS2365: Operator '+' cannot be applied to types '1' and 'undefined'.
 
 
-==== assignmentToVoidZero2.js (5 errors) ====
+==== assignmentToVoidZero2.js (7 errors) ====
     exports.j = 1;
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     exports.k = void 0;
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     var o = {}
     o.x = 1
       ~

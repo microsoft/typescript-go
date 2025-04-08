@@ -16,21 +16,16 @@
 ->module.exports : typeof m.default
 ->module : { exports: typeof m.default; }
 ->exports : typeof m.default
- >m.default : { (): void; memberName: "thing"; }
-->m : typeof m
-+>m : typeof import("exporter")
- >default : { (): void; memberName: "thing"; }
 +>module.exports = m.default : { (): void; memberName: "thing"; }
 +>module.exports : any
 +>module : any
 +>exports : any
-+>m.default : { (): void; memberName: "thing"; }
+ >m.default : { (): void; memberName: "thing"; }
+->m : typeof m
 +>m : typeof import("exporter")
-+>default : { (): void; memberName: "thing"; }
+ >default : { (): void; memberName: "thing"; }
  
  module.exports.memberName = "thing";
-+>memberName : any
-+>"thing" : "thing"
  >module.exports.memberName = "thing" : "thing"
 ->module.exports.memberName : "thing"
 ->module.exports : typeof m.default

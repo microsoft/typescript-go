@@ -9,6 +9,9 @@
 ->exports : typeof import("a-ext")
 ->A : typeof A
 ->function () {    this.x = 1;} : typeof A
++>exports.A = function () {    this.x = 1;} : () => void
++>exports.A : any
++>exports : any
 +>A : any
 +>function () {    this.x = 1;} : () => void
  
@@ -19,18 +22,13 @@
 +>this : any
  >x : any
  >1 : 1
-+>this.x = 1 : 1
-+>this.x : any
-+>this : any
-+>x : any
-+>1 : 1
  
- };
+@@= skipped -17, +17 lines =@@
  
  === a.js ===
  const { A } = require("./a-ext");
 ->A : typeof A
-+>A : any
++>A : () => void
  >require("./a-ext") : typeof import("a-ext")
  >require : (id: string) => any
  >"./a-ext" : "./a-ext"
@@ -50,25 +48,17 @@
  
  === b-ext.js ===
  exports.B = class {
-->exports.B = class {    constructor() {        this.x = 1;    }} : typeof B
+ >exports.B = class {    constructor() {        this.x = 1;    }} : typeof B
 ->exports.B : typeof B
 ->exports : typeof import("b-ext")
- >B : typeof B
+->B : typeof B
++>exports.B : any
++>exports : any
++>B : any
  >class {    constructor() {        this.x = 1;    }} : typeof B
  
-@@= skipped -45, +44 lines =@@
- >this : this
- >x : any
- >1 : 1
-+>this.x = 1 : 1
-+>this.x : any
-+>this : this
-+>x : any
-+>1 : 1
-     }
- };
- 
-@@= skipped -12, +17 lines =@@
+     constructor() {
+@@= skipped -40, +40 lines =@@
  
  /** @param {B} p */
  function b(p) { p.x; }

@@ -9,10 +9,13 @@ const errors = require("./errors");
 >"./errors" : "./errors"
 
 module.exports = {
+>module.exports = {    errors} : { errors: { FancyError: typeof FancyError; }; }
+>module.exports : any
+>module : any
+>exports : any
 >{    errors} : { errors: { FancyError: typeof FancyError; }; }
 
     errors
->errors : { FancyError: typeof FancyError; }
 >errors : { FancyError: typeof FancyError; }
 
 };
@@ -33,10 +36,13 @@ class FancyError extends Error {
 }
 
 module.exports = {
+>module.exports = {    FancyError} : { FancyError: typeof FancyError; }
+>module.exports : any
+>module : any
+>exports : any
 >{    FancyError} : { FancyError: typeof FancyError; }
 
     FancyError
->FancyError : typeof FancyError
 >FancyError : typeof FancyError
 
 };

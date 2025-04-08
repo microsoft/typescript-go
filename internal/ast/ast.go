@@ -4279,13 +4279,6 @@ func IsAnyExportAssignment(node *Node) bool {
 
 // CommonJSExport
 
-// It is exported, so safest to have it require a modifier list, but it should always only contain `export`.
-// bind: This represents an export, but *not* a local declaration.
-// bind: it needs to result in a export on module.exports
-// ugh: Strada uses its horrible undeclared namespace code to bind this.
-// bind: wait no! it also marks it with a symbolflag. So I guess I need an ad-hoc version of this (not sure what to with `exports`, nested or otherwise, ofc)
-// (and, sadly, I need it for ExportAssignment too)
-// check: type checking it delegates to the initialiser, so maybe it should save that too.
 type CommonJSExport struct {
 	StatementBase
 	DeclarationBase
@@ -4293,21 +4286,19 @@ type CommonJSExport struct {
 	ModifiersBase
 	name        *IdentifierNode
 	Initializer *Expression
-	Original    *Expression // BinaryExpression
 }
 
-func (f *NodeFactory) NewCommonJSExport(modifiers *ModifierList, name *IdentifierNode, initializer *Expression, original *Expression) *Node {
+func (f *NodeFactory) NewCommonJSExport(modifiers *ModifierList, name *IdentifierNode, initializer *Expression) *Node {
 	data := &CommonJSExport{}
 	data.modifiers = modifiers
 	data.name = name
 	data.Initializer = initializer
-	data.Original = original
 	return newNode(KindCommonJSExport, data, f.hooks)
 }
 
-func (f *NodeFactory) UpdateCommonJSExport(node *CommonJSExport, modifiers *ModifierList, name *IdentifierNode, initializer *Expression, original *Expression) *Node {
-	if modifiers != node.modifiers || initializer != node.Initializer || name != node.name || original != node.Original {
-		return updateNode(f.NewCommonJSExport(node.modifiers, name, initializer, original), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateCommonJSExport(node *CommonJSExport, modifiers *ModifierList, name *IdentifierNode, initializer *Expression) *Node {
+	if modifiers != node.modifiers || initializer != node.Initializer || name != node.name {
+		return updateNode(f.NewCommonJSExport(node.modifiers, name, initializer), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4317,11 +4308,11 @@ func (node *CommonJSExport) ForEachChild(v Visitor) bool {
 }
 
 func (node *CommonJSExport) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateCommonJSExport(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.Initializer), node.Original)
+	return v.Factory.UpdateCommonJSExport(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.Initializer))
 }
 
 func (node *CommonJSExport) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewCommonJSExport(node.Modifiers(), node.name, node.Initializer, node.Original), node.AsNode(), f.hooks)
+	return cloneNode(f.NewCommonJSExport(node.Modifiers(), node.name, node.Initializer), node.AsNode(), f.hooks)
 }
 
 func IsCommonJSExport(node *Node) bool {

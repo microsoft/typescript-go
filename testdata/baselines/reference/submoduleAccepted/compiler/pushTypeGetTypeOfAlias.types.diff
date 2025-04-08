@@ -8,25 +8,20 @@
 ->module.exports : { (): void; blah: any; }
 ->module : { exports: { (): void; blah: any; }; }
 ->exports : { (): void; blah: any; }
- >function () {} : () => void
 +>module.exports = function () {} : () => void
 +>module.exports : any
 +>module : any
 +>exports : any
-+>function () {} : () => void
+ >function () {} : () => void
  
  exports.blah = exports.someProp;
-+>blah : any
-+>exports.someProp : any
-+>exports : typeof import("bar")
-+>someProp : any
  >exports.blah = exports.someProp : any
  >exports.blah : any
 ->exports : { (): void; blah: any; }
-+>exports : typeof import("bar")
++>exports : any
  >blah : any
  >exports.someProp : any
 ->exports : { (): void; blah: any; }
-+>exports : typeof import("bar")
++>exports : any
  >someProp : any
  

@@ -59,8 +59,6 @@ Object.defineProperty(module.exports, _str, { value: "ok" });
 >"ok" : "ok"
 
 module.exports.S = _sym;
->S : any
->_sym : unique symbol
 >module.exports.S = _sym : unique symbol
 >module.exports.S : any
 >module.exports : any

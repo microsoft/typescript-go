@@ -45,7 +45,6 @@ declare var module: any;
 === minimatch.js ===
 /// <reference path='./types.d.ts'/>
 module.exports = minimatch
->minimatch : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 >module.exports = minimatch : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 >module.exports : any
 >module : any

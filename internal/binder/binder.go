@@ -423,51 +423,6 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	return b.declareSymbol(ast.GetLocals(container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 }
 
-// // TODO: This can probably be called through normal b.declareSourceFileMember, adding a case for IsCommonJSModule
-func (b *Binder) bindCommonJSExport(node *ast.Node) {
-	b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
-
-	// symbolFlags := ast.SymbolFlagsFunctionScopedVariable
-	// symbolExcludes := ast.SymbolFlagsFunctionScopedVariableExcludes
-	// exportKind := ast.SymbolFlagsExportValue
-	// // TODO: s/b.container/b.file.AsNode()/ but this is inefficient I'm sure
-	// // local exists for CommonJSExport, but it's in `namespace module { namespace exports { export var <name> = <init> } }` (and also doesn't need a local)
-	// local := b.declareModuleExportsProperty(b.file, node, exportKind, symbolExcludes)
-	// // b.declareSymbol(ast.GetLocals(b.file.AsNode()), nil /*parent*/, node, exportKind, symbolExcludes)
-	// local.ExportSymbol = b.declareSymbol(ast.GetExports(b.file.DeclarationData().Symbol), b.file.DeclarationData().Symbol, node, symbolFlags, symbolExcludes)
-	// node.ExportableData().LocalSymbol = local
-	// // b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
-}
-
-// // based on bindExportsPropertyAssignment + forEachIdentifierInEntityName
-// func (b *Binder) declareModuleExportsProperty(file *ast.SourceFile, node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
-// 	lhs := node.AsCommonJSExport().Original.AsBinaryExpression().Left
-// 	if !ast.IsAccessExpression(lhs) {
-// 		panic("Expected access expression")
-// 	}
-// 	name := ast.GetElementOrPropertyAccessArgumentExpressionOrName(lhs)
-// 	if ast.IsIdentifier(name) {
-// 		// TODO: Figure out the right excludes flags (whatever namespaces use)
-// 		return b.declareSymbol(ast.GetLocals(b.file.AsNode()), b.file.DeclarationData().Symbol, name, ast.SymbolFlagsModule|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone)
-// 	} else if ast.IsPropertyAccessExpression(name) {
-// 		// TODO: name isn't a namespace declaration, it's just an identifier/property access expression.
-// 		// can I fake it by passing node over and over again? But then the name is wrong.
-// 		module := b.declareSymbol(ast.GetLocals(b.file.AsNode()), b.file.DeclarationData().Symbol, name, ast.SymbolFlagsModule|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone)
-// 		return b.declareSymbol(module.Exports, module, name, ast.SymbolFlagsModule|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone)
-// 	}
-// 	// declare exports in the file (locally)
-// 	// TODO: Flags? (copied from original) (except that it special-cases aliases)
-// 	// so, no: resolver has special-case code to resolve exports/module.exports to the file symbol
-// 	// I think that sucks but I don't know what to do better. Well,
-// 	b.addDeclarationToSymbol(b.file.DeclarationData().Symbol, node, ast.SymbolFlagsModule|ast.SymbolFlagsAssignment)
-// 	symbol := b.file.DeclarationData().Symbol
-// 	// declare name on exports <-- previous function *just did that*
-// 	setParent(lhs, node)
-// 	return b.declareSymbol(symbol.Exports, symbol, name, symbolFlags, ast.SymbolFlagsNone)
-// 	// bind exports into the file's symbol table
-// 	// bind a namespace with property =  like in Strada
-// }
-
 func (b *Binder) declareClassMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
 	if ast.IsStatic(node) {
 		return b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
@@ -698,7 +653,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
 	case ast.KindCommonJSExport:
-		b.bindCommonJSExport(node)
+		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
@@ -1665,6 +1620,8 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	case ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression, ast.KindPropertyAssignment, ast.KindSpreadElement:
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
+	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
+		return // Synthetic nodes do not double-bind children
 	default:
 		b.bindEachChild(node)
 	}

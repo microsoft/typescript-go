@@ -80,7 +80,7 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 		return exportClause != nil && (ast.IsNamespaceExport(exportClause) ||
 			core.Some(exportClause.AsNamedExports().Elements.Nodes, r.isValueAliasDeclaration))
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
-		if node.Expression() != nil && node.Expression().Kind == ast.KindIdentifier {
+		if node.AsExportAssignment().Expression != nil && node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
 			return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), true /*excludeTypeOnlyValues*/)
 		}
 		return true

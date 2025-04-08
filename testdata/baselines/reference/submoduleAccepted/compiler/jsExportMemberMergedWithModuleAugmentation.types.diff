@@ -13,15 +13,14 @@
 ->module.exports : typeof module."./test"
 ->module : { exports: typeof module."./test"; }
 ->exports : typeof module."./test"
++>module.exports = {  Abcde} : { Abcde: typeof Abcde; }
++>module.exports : any
++>module : any
++>exports : any
  >{  Abcde} : { Abcde: typeof Abcde; }
  
    Abcde
- >Abcde : typeof Abcde
-+>Abcde : typeof Abcde
- 
- };
- 
-@@= skipped -20, +17 lines =@@
+@@= skipped -20, +20 lines =@@
  >Abcde : typeof Abcde
  
  declare module "./test" {

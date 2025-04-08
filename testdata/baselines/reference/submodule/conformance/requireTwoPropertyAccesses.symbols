@@ -23,6 +23,5 @@ module.exports = {
 
         y: "value"
 >y : Symbol(y, Decl(mod.js, 1, 8))
->y : Symbol(y, Decl(mod.js, 1, 8))
     }
 }

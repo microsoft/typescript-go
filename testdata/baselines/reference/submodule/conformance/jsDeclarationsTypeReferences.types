@@ -17,10 +17,13 @@ const thing = new Something();
 >Something : typeof Something
 
 module.exports = {
+>module.exports = {    thing} : { thing: Something; }
+>module.exports : any
+>module : any
+>exports : any
 >{    thing} : { thing: Something; }
 
     thing
->thing : Something
 >thing : Something
 
 };

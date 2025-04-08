@@ -2,15 +2,13 @@
 
 === b.js ===
 exports.E = function() {
+>exports.E = function() {    this.e = 'exported'} : () => void
+>exports.E : any
+>exports : any
 >E : any
 >function() {    this.e = 'exported'} : () => void
 
     this.e = 'exported'
->this.e = 'exported' : "exported"
->this.e : any
->this : any
->e : any
->'exported' : "exported"
 >this.e = 'exported' : "exported"
 >this.e : any
 >this : any
@@ -21,7 +19,7 @@ var e = new exports.E();
 >e : any
 >new exports.E() : any
 >exports.E : any
->exports : typeof import("b")
+>exports : any
 >E : any
 
 var o = {

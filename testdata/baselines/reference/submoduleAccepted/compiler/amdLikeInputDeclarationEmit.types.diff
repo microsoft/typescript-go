@@ -49,12 +49,7 @@
  
              return "something";
  >"something" : "something"
-@@= skipped -26, +26 lines =@@
- >{} : {}
- 
-     module.exports = ExtendedClass
-+>ExtendedClass : any
- >module.exports = ExtendedClass : any
+@@= skipped -30, +30 lines =@@
  >module.exports : any
  >module : {}
  >exports : any

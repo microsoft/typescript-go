@@ -47,8 +47,6 @@
 ->exports : typeof module.exports
 ->{ ns } : { ns: typeof ns; }
 ->ns : typeof ns
-+>{ ns } : { ns: typeof import("cls"); }
-+>ns : typeof import("cls")
 +>module.exports = { ns } : { ns: typeof import("cls"); }
 +>module.exports : any
 +>module : any
@@ -71,7 +69,6 @@
 ->module : { exports: typeof ns; }
 ->exports : typeof ns
 ->ns : typeof ns
-+>ns : typeof import("cls")
 +>module.exports = ns : typeof import("cls")
 +>module.exports : any
 +>module : any
@@ -95,8 +92,6 @@
 ->exports : typeof module.exports
 ->ns : typeof ns
 ->ns : typeof ns
-+>ns : any
-+>ns : typeof import("cls")
 +>module.exports.ns = ns : typeof import("cls")
 +>module.exports.ns : any
 +>module.exports : any
@@ -122,8 +117,6 @@
 ->exports : typeof module.exports
 ->names : typeof ns
 ->ns : typeof ns
-+>names : any
-+>ns : typeof import("cls")
 +>module.exports.names = ns : typeof import("cls")
 +>module.exports.names : any
 +>module.exports : any

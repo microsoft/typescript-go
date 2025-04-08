@@ -14,11 +14,8 @@
 -
      errors
  >errors : Symbol(errors, Decl(index.js, 3, 18))
-+>errors : Symbol(errors, Decl(index.js, 3, 18))
  
- };
- === utils/errors.js ===
-@@= skipped -26, +23 lines =@@
+@@= skipped -26, +22 lines =@@
  }
  
  module.exports = {
@@ -28,7 +25,4 @@
 -
      FancyError
  >FancyError : Symbol(FancyError, Decl(errors.js, 6, 18))
-+>FancyError : Symbol(FancyError, Decl(errors.js, 6, 18))
- 
- };
  

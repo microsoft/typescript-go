@@ -1,0 +1,12 @@
+/node_modules/foo/index.js(1,1): error TS2304: Cannot find name 'exports'.
+
+
+==== /a.ts (0 errors) ====
+    import foo from "foo";
+    foo.bar();
+    
+==== /node_modules/foo/index.js (1 errors) ====
+    exports.default = { bar() { return 0; } }
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
+    

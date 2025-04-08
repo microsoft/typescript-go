@@ -8,7 +8,6 @@ const j = require("./obj.json");
 
 module.exports = j;
 >j : Symbol(j, Decl(index.js, 0, 5))
->j : Symbol(j, Decl(index.js, 0, 5))
 
 === obj.json ===
 {

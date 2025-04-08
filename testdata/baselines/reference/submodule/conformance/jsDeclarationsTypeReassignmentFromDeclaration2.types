@@ -9,7 +9,6 @@ const items = require("./some-mod")();
 >"./some-mod" : "./some-mod"
 
 module.exports = items;
->items : Item[]
 >module.exports = items : Item[]
 >module.exports : any
 >module : any

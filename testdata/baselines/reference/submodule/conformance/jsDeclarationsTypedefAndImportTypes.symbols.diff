@@ -17,11 +17,9 @@
 ->module : Symbol(export=, Decl(conn.js, 8, 1))
 ->exports : Symbol(export=, Decl(conn.js, 8, 1))
  >Conn : Symbol(Conn, Decl(conn.js, 0, 0))
-+>Conn : Symbol(Conn, Decl(conn.js, 0, 0))
  
  === usage.js ===
- /**
-@@= skipped -27, +25 lines =@@
+@@= skipped -27, +24 lines =@@
  >c : Symbol(c, Decl(usage.js, 8, 16))
  
          this.connItem = c.item;
@@ -47,7 +45,4 @@
 -
      Wrap
  >Wrap : Symbol(Wrap, Decl(usage.js, 15, 18))
-+>Wrap : Symbol(Wrap, Decl(usage.js, 15, 18))
- 
- };
  

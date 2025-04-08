@@ -1,6 +1,7 @@
 main.js(3,12): error TS7006: Parameter 'k' implicitly has an 'any' type.
 mod1.js(2,4): error TS2339: Property 'K' does not exist on type '{}'.
 mod1.js(4,23): error TS2339: Property 'K' does not exist on type '{}'.
+mod1.js(7,1): error TS2304: Cannot find name 'exports'.
 mod1.js(7,16): error TS2339: Property 'K' does not exist on type '{}'.
 
 
@@ -13,7 +14,7 @@ mod1.js(7,16): error TS2339: Property 'K' does not exist on type '{}'.
         k.values()
     }
     
-==== mod1.js (3 errors) ====
+==== mod1.js (4 errors) ====
     var NS = {}
     NS.K =class {
        ~
@@ -25,6 +26,8 @@ mod1.js(7,16): error TS2339: Property 'K' does not exist on type '{}'.
         }
     }
     exports.K = NS.K;
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
                    ~
 !!! error TS2339: Property 'K' does not exist on type '{}'.
     

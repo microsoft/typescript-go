@@ -8,11 +8,10 @@
 ->module.exports : string
 ->module : { exports: string; }
 ->exports : string
- >'anything' : "anything"
 +>module.exports = 'anything' : "anything"
 +>module.exports : any
 +>module : any
 +>exports : any
-+>'anything' : "anything"
+ >'anything' : "anything"
  
  

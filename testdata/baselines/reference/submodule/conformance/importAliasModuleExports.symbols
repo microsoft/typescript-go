@@ -9,7 +9,6 @@ class Alias {
 }
 module.exports = Alias;
 >Alias : Symbol(Alias, Decl(mod1.js, 0, 0))
->Alias : Symbol(Alias, Decl(mod1.js, 0, 0))
 
 === main.js ===
 import A from './mod1'

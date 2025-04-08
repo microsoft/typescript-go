@@ -1,11 +1,8 @@
 --- old.moduleExportAssignment3.types
 +++ new.moduleExportAssignment3.types
-@@= skipped -12, +12 lines =@@
- 
+@@= skipped -13, +13 lines =@@
  === mod.js ===
  module.exports = function x() { }
-+>function x() { } : () => void
-+>x : () => void
  >module.exports = function x() { } : () => void
 ->module.exports : () => void
 ->module : { exports: () => void; }

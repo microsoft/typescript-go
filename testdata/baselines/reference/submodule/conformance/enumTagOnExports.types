@@ -3,18 +3,14 @@
 === enumTagOnExports.js ===
 /** @enum {number} */
 exports.a = {};
->a : any
->{} : {}
 >exports.a = {} : {}
 >exports.a : any
->exports : typeof import("enumTagOnExports")
+>exports : any
 >a : any
 >{} : {}
 
 /** @enum {string} */
 module.exports.b = {};
->b : any
->{} : {}
 >module.exports.b = {} : {}
 >module.exports.b : any
 >module.exports : any

@@ -1,11 +1,14 @@
 --- old.moduleResolution_explicitNodeModulesImport.types
 +++ new.moduleResolution_explicitNodeModulesImport.types
-@@= skipped -5, +5 lines =@@
- 
+@@= skipped -6, +6 lines =@@
  === /node_modules/foo/index.js ===
  exports.x = 0;
-+>x : 0
-+>0 : 0
  >exports.x = 0 : 0
- >exports.x : 0
- >exports : typeof import("/node_modules/foo/index")
+->exports.x : 0
+->exports : typeof import("/node_modules/foo/index")
+->x : 0
++>exports.x : any
++>exports : any
++>x : any
+ >0 : 0
+ 

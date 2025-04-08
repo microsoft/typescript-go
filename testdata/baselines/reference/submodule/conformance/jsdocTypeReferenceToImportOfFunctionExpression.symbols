@@ -19,8 +19,6 @@ module.exports = function MC() {
     return new MW(x);
 >MW : Symbol(MW, Decl(MC.js, 0, 5))
 >x : Symbol(x, Decl(MC.js, 7, 7))
->MW : Symbol(MW, Decl(MC.js, 0, 5))
->x : Symbol(x, Decl(MC.js, 7, 7))
 
 };
 
@@ -43,6 +41,5 @@ class MW {
 }
 
 module.exports = MW;
->MW : Symbol(MW, Decl(MW.js, 0, 0))
 >MW : Symbol(MW, Decl(MW.js, 0, 0))
 

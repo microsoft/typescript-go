@@ -8,11 +8,10 @@
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
++>module.exports = {    thing} : { thing: Something; }
++>module.exports : any
++>module : any
++>exports : any
  >{    thing} : { thing: Something; }
  
      thing
- >thing : Something
-+>thing : Something
- 
- };
- 

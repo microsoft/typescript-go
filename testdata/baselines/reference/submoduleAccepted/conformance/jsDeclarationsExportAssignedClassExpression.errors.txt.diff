@@ -4,11 +4,10 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +index.js(1,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+index.js(5,17): error TS2300: Duplicate identifier 'p'.
 +index.js(6,14): error TS2339: Property 't' does not exist on type 'Thing'.
 +
 +
-+==== index.js (3 errors) ====
++==== index.js (2 errors) ====
 +    module.exports = class Thing {
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -16,8 +15,6 @@
 +         * @param {number} p
 +         */
 +        constructor(p) {
-+                    ~
-+!!! error TS2300: Duplicate identifier 'p'.
 +            this.t = 12 + p;
 +                 ~
 +!!! error TS2339: Property 't' does not exist on type 'Thing'.

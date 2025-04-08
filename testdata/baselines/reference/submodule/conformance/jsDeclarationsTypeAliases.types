@@ -56,13 +56,16 @@ class ExportedThing {
 >"ok" : "ok"
 }
 module.exports = {
+>module.exports = {    doTheThing,    ExportedThing,} : { doTheThing: (x: any) => { x: string; }; ExportedThing: typeof ExportedThing; }
+>module.exports : any
+>module : any
+>exports : any
 >{    doTheThing,    ExportedThing,} : { doTheThing: (x: any) => { x: string; }; ExportedThing: typeof ExportedThing; }
 
     doTheThing,
 >doTheThing : (x: any) => { x: string; }
 
     ExportedThing,
->ExportedThing : typeof ExportedThing
 >ExportedThing : typeof ExportedThing
 
 };

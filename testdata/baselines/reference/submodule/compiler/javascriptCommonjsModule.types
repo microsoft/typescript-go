@@ -9,7 +9,6 @@ class Bar extends Foo {}
 >Foo : Foo
 
 module.exports = Bar;
->Bar : typeof Bar
 >module.exports = Bar : typeof Bar
 >module.exports : any
 >module : any

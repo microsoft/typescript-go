@@ -9,14 +9,10 @@ declare function factory(type: string): {};
 // from util
 /** @param {function} ctor - A big long explanation follows */
 exports.inherits = factory('inherits')
->inherits : {}
->factory('inherits') : {}
->factory : (type: string) => {}
->'inherits' : "inherits"
 >exports.inherits = factory('inherits') : {}
->exports.inherits : {}
->exports : typeof import("a")
->inherits : {}
+>exports.inherits : any
+>exports : any
+>inherits : any
 >factory('inherits') : {}
 >factory : (type: string) => {}
 >'inherits' : "inherits"

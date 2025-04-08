@@ -42,16 +42,15 @@ declare var module: { exports: any };
 === mod1.js ===
 /// <reference path='./types.d.ts'/>
 module.exports = class Chunk {
+>module.exports = class Chunk {    constructor() {        this.chunk = 1;    }} : typeof Chunk
+>module.exports : any
+>module : { exports: any; }
+>exports : any
 >class Chunk {    constructor() {        this.chunk = 1;    }} : typeof Chunk
 >Chunk : typeof Chunk
 
     constructor() {
         this.chunk = 1;
->this.chunk = 1 : 1
->this.chunk : any
->this : this
->chunk : any
->1 : 1
 >this.chunk = 1 : 1
 >this.chunk : any
 >this : this

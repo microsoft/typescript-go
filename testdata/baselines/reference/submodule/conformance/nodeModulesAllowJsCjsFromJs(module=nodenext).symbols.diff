@@ -1,17 +1,17 @@
 --- old.nodeModulesAllowJsCjsFromJs(module=nodenext).symbols
 +++ new.nodeModulesAllowJsCjsFromJs(module=nodenext).symbols
-@@= skipped -1, +1 lines =@@
+@@= skipped -0, +0 lines =@@
+ //// [tests/cases/conformance/node/allowJs/nodeModulesAllowJsCjsFromJs.ts] ////
  
  === foo.cjs ===
- exports.foo = "foo"
-+>foo : Symbol(foo, Decl(foo.cjs, 0, 0))
- >exports.foo : Symbol(foo, Decl(foo.cjs, 0, 0))
+-exports.foo = "foo"
+->exports.foo : Symbol(foo, Decl(foo.cjs, 0, 0))
 ->exports : Symbol(foo, Decl(foo.cjs, 0, 0))
-+>exports : Symbol("foo", Decl(foo.cjs, 0, 0))
- >foo : Symbol(foo, Decl(foo.cjs, 0, 0))
+->foo : Symbol(foo, Decl(foo.cjs, 0, 0))
  
++exports.foo = "foo"
  === bar.ts ===
-@@= skipped -9, +10 lines =@@
+ import foo from "./foo.cjs"
  >foo : Symbol(foo, Decl(bar.ts, 0, 6))
  
  foo.foo;

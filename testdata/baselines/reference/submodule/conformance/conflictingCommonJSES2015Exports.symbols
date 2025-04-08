@@ -9,7 +9,6 @@ export function abc(a, b, c) { return 5; }
 
 module.exports = { abc };
 >abc : Symbol(abc, Decl(bug24934.js, 1, 18))
->abc : Symbol(abc, Decl(bug24934.js, 1, 18))
 
 === use.js ===
 import { abc } from './bug24934';

@@ -21,11 +21,8 @@ module.exports = class Q {
         this.x = new A();
 >this : Symbol(Q, Decl(index.js, 6, 16))
 >A : Symbol(A, Decl(index.js, 0, 0))
->this : Symbol(Q, Decl(index.js, 6, 16))
->A : Symbol(A, Decl(index.js, 0, 0))
     }
 }
 module.exports.Another = Q;
->Q : Symbol(Q, Decl(index.js, 2, 1))
 >Q : Symbol(Q, Decl(index.js, 2, 1))
 

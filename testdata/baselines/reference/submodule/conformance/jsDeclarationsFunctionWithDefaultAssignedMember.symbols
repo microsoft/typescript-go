@@ -18,5 +18,4 @@ foo.default = foo;
 
 module.exports = foo;
 >foo : Symbol(foo, Decl(index.js, 0, 0))
->foo : Symbol(foo, Decl(index.js, 0, 0))
 

@@ -30,13 +30,6 @@ module.exports = {
 >arg.x : Symbol(x, Decl(index.js, 7, 28))
 >arg : Symbol(arg, Decl(index.js, 7, 21))
 >x : Symbol(x, Decl(index.js, 7, 28))
->[InnerSym] : Symbol([InnerSym], Decl(index.js, 6, 12))
->InnerSym : Symbol(InnerSym, Decl(index.js, 1, 5))
->arg : Symbol(arg, Decl(index.js, 7, 21))
->x : Symbol(x, Decl(index.js, 7, 28))
->arg.x : Symbol(x, Decl(index.js, 7, 28))
->arg : Symbol(arg, Decl(index.js, 7, 21))
->x : Symbol(x, Decl(index.js, 7, 28))
     }
 }
 

@@ -9,20 +9,15 @@
 ->module : { exports: { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz(): number; literal: string; }; }
 ->exports : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz(): number; literal: string; }
 ->{    Thing,    AnotherThing,    foo,    qux: bar,    baz() { return 5 },    literal: "",} : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz(): number; literal: string; }
++>module.exports = {    Thing,    AnotherThing,    foo,    qux: bar,    baz() { return 5 },    literal: "",} : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz: () => number; literal: string; }
++>module.exports : any
++>module : any
++>exports : any
 +>{    Thing,    AnotherThing,    foo,    qux: bar,    baz() { return 5 },    literal: "",} : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz: () => number; literal: string; }
  
      Thing,
  >Thing : typeof Thing
-@@= skipped -26, +22 lines =@@
-     literal: "",
- >literal : string
- >"" : ""
-+>literal : string
-+>"" : ""
- }
- === main.js ===
- /**
-@@= skipped -12, +14 lines =@@
+@@= skipped -38, +38 lines =@@
   * @param {import("./mod").literal} g
   */
  function jstypes(a, b, c, d, e, f, g) {

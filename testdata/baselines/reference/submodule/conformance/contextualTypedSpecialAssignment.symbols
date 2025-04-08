@@ -74,21 +74,14 @@ class Thing {
 
 /** @type {DoneStatus} */
 exports.x = {
->x : Symbol(x, Decl(test.js, 36, 1))
-
     status: "done",
 >status : Symbol(status, Decl(test.js, 41, 13))
 
     m(n) { }
 >m : Symbol(m, Decl(test.js, 42, 19))
 >n : Symbol(n, Decl(test.js, 43, 6))
->m : Symbol(m, Decl(test.js, 42, 19))
->n : Symbol(n, Decl(test.js, 43, 6))
 }
 exports.x
->exports.x : Symbol(x, Decl(test.js, 36, 1))
->exports : Symbol("test", Decl(test.js, 0, 0))
->x : Symbol(x, Decl(test.js, 36, 1))
 
 /** @type {DoneStatus} */
 module.exports.y = {
@@ -96,8 +89,6 @@ module.exports.y = {
 >status : Symbol(status, Decl(test.js, 48, 20))
 
     m(n) { }
->m : Symbol(m, Decl(test.js, 49, 19))
->n : Symbol(n, Decl(test.js, 50, 6))
 >m : Symbol(m, Decl(test.js, 49, 19))
 >n : Symbol(n, Decl(test.js, 50, 6))
 }
@@ -148,8 +139,6 @@ module.exports = {
 >status : Symbol(status, Decl(mod.js, 2, 18))
 
     m(n) { }
->m : Symbol(m, Decl(mod.js, 3, 19))
->n : Symbol(n, Decl(mod.js, 4, 6))
 >m : Symbol(m, Decl(mod.js, 3, 19))
 >n : Symbol(n, Decl(mod.js, 4, 6))
 }

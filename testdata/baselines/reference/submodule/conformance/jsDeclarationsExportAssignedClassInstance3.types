@@ -14,8 +14,6 @@ class Foo {
 }
 
 module.exports = new Foo();
->new Foo() : Foo
->Foo : typeof Foo
 >module.exports = new Foo() : Foo
 >module.exports : any
 >module : any
@@ -24,8 +22,6 @@ module.exports = new Foo();
 >Foo : typeof Foo
 
 module.exports.additional = 20;
->additional : any
->20 : 20
 >module.exports.additional = 20 : 20
 >module.exports.additional : any
 >module.exports : any

@@ -31,7 +31,6 @@ class MainThreadTasks {
 }
 
 module.exports = MainThreadTasks;
->MainThreadTasks : typeof MainThreadTasks
 >module.exports = MainThreadTasks : typeof MainThreadTasks
 >module.exports : any
 >module : any
@@ -89,13 +88,16 @@ const taskNameToGroup = {};
 >{} : {}
 
 module.exports = {
+>module.exports = {    taskGroups,    taskNameToGroup,} : { taskGroups: { parseHTML: { id: string; label: string; }; styleLayout: { id: string; label: string; }; }; taskNameToGroup: {}; }
+>module.exports : any
+>module : any
+>exports : any
 >{    taskGroups,    taskNameToGroup,} : { taskGroups: { parseHTML: { id: string; label: string; }; styleLayout: { id: string; label: string; }; }; taskNameToGroup: {}; }
 
     taskGroups,
 >taskGroups : { parseHTML: { id: string; label: string; }; styleLayout: { id: string; label: string; }; }
 
     taskNameToGroup,
->taskNameToGroup : {}
 >taskNameToGroup : {}
 
 };

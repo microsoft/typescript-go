@@ -59,8 +59,6 @@ npmlog.x = 1
 >1 : 1
 
 module.exports.y = 2
->y : any
->2 : 2
 >module.exports.y = 2 : 2
 >module.exports.y : any
 >module.exports : any

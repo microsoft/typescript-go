@@ -9,23 +9,22 @@ const customSymbol = Symbol("custom");
 
 // This is a common pattern in Node’s built-in modules:
 module.exports = {
+>module.exports = {    customSymbol,} : { customSymbol: symbol; }
+>module.exports : any
+>module : any
+>exports : any
 >{    customSymbol,} : { customSymbol: symbol; }
 
     customSymbol,
->customSymbol : symbol
 >customSymbol : symbol
 
 };
 
 exports.customSymbol2 = Symbol("custom");
->customSymbol2 : symbol
->Symbol("custom") : symbol
->Symbol : SymbolConstructor
->"custom" : "custom"
 >exports.customSymbol2 = Symbol("custom") : symbol
->exports.customSymbol2 : symbol
->exports : typeof import("file")
->customSymbol2 : symbol
+>exports.customSymbol2 : any
+>exports : any
+>customSymbol2 : any
 >Symbol("custom") : symbol
 >Symbol : SymbolConstructor
 >"custom" : "custom"

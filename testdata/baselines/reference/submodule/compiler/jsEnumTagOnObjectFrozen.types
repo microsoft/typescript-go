@@ -67,12 +67,10 @@ const Thing = Object.freeze({
 });
 
 exports.Thing = Thing;
->Thing : Readonly<{ a: "thing"; b: "chill"; }>
->Thing : Readonly<{ a: "thing"; b: "chill"; }>
 >exports.Thing = Thing : Readonly<{ a: "thing"; b: "chill"; }>
->exports.Thing : Readonly<{ a: "thing"; b: "chill"; }>
->exports : typeof import("index")
->Thing : Readonly<{ a: "thing"; b: "chill"; }>
+>exports.Thing : any
+>exports : any
+>Thing : any
 >Thing : Readonly<{ a: "thing"; b: "chill"; }>
 
 /**
@@ -83,12 +81,10 @@ function useThing(x) {}
 >x : any
 
 exports.useThing = useThing;
->useThing : (x: any) => void
->useThing : (x: any) => void
 >exports.useThing = useThing : (x: any) => void
->exports.useThing : (x: any) => void
->exports : typeof import("index")
->useThing : (x: any) => void
+>exports.useThing : any
+>exports : any
+>useThing : any
 >useThing : (x: any) => void
 
 /**
@@ -99,11 +95,9 @@ function cbThing(x) {}
 >x : any
 
 exports.cbThing = cbThing;
->cbThing : (x: any) => void
->cbThing : (x: any) => void
 >exports.cbThing = cbThing : (x: any) => void
->exports.cbThing : (x: any) => void
->exports : typeof import("index")
->cbThing : (x: any) => void
+>exports.cbThing : any
+>exports : any
+>cbThing : any
 >cbThing : (x: any) => void
 

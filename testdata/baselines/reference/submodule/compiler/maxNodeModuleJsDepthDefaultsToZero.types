@@ -27,9 +27,6 @@ foo.y // ignored from shortid/index.js
 === /node_modules/shortid/node_modules/z/index.js ===
 // z will not be found because maxNodeModulesJsDepth: 0
 module.exports = { z: 'no' };
->{ z: 'no' } : { z: string; }
->z : string
->'no' : "no"
 >module.exports = { z: 'no' } : { z: string; }
 >module.exports : any
 >module : any
@@ -52,7 +49,6 @@ var y = { y: 'foo' };
 >'foo' : "foo"
 
 module.exports = y;
->y : { y: string; }
 >module.exports = y : { y: string; }
 >module.exports : any
 >module : any

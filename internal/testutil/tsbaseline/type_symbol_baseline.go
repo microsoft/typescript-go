@@ -321,6 +321,9 @@ func forEachASTNode(node *ast.Node) []*ast.Node {
 	for len(work) > 0 {
 		elem := work[len(work)-1]
 		work = work[:len(work)-1]
+		if elem.Flags & ast.NodeFlagsReparsed != 0 {
+			continue
+		}
 		result = append(result, elem)
 		elem.ForEachChild(addChild)
 		slices.Reverse(resChildren)

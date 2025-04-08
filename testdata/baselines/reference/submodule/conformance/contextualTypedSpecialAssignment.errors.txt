@@ -1,5 +1,4 @@
 mod.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-mod.js(5,7): error TS2300: Duplicate identifier 'n'.
 mod.js(5,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 test.js(9,4): error TS2339: Property 'x' does not exist on type '{}'.
 test.js(11,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
@@ -10,11 +9,10 @@ test.js(25,14): error TS2339: Property 's' does not exist on type 'Thing'.
 test.js(27,15): error TS7006: Parameter 'n' implicitly has an 'any' type.
 test.js(32,14): error TS2339: Property 's' does not exist on type 'Thing'.
 test.js(34,15): error TS7006: Parameter 'n' implicitly has an 'any' type.
-test.js(42,1): error TS7022: 'x' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-test.js(44,7): error TS2300: Duplicate identifier 'n'.
+test.js(42,1): error TS2304: Cannot find name 'exports'.
 test.js(44,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
+test.js(46,1): error TS2304: Cannot find name 'exports'.
 test.js(49,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-test.js(51,7): error TS2300: Duplicate identifier 'n'.
 test.js(51,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 test.js(53,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 test.js(57,17): error TS2339: Property 'x' does not exist on type 'Thing'.
@@ -23,7 +21,7 @@ test.js(61,17): error TS2339: Property 'x' does not exist on type 'Thing'.
 test.js(69,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 
 
-==== test.js (20 errors) ====
+==== test.js (19 errors) ====
     /** @typedef {{
         status: 'done'
         m(n: number): void
@@ -84,19 +82,16 @@ test.js(69,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
     
     /** @type {DoneStatus} */
     exports.x = {
-    ~~~~~~~~~~~~~
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
         status: "done",
-    ~~~~~~~~~~~~~~~~~~~
         m(n) { }
-    ~~~~~~~~~~~~
-          ~
-!!! error TS2300: Duplicate identifier 'n'.
           ~
 !!! error TS7006: Parameter 'n' implicitly has an 'any' type.
     }
-    ~
-!!! error TS7022: 'x' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
     exports.x
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     
     /** @type {DoneStatus} */
     module.exports.y = {
@@ -104,8 +99,6 @@ test.js(69,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
         status: "done",
         m(n) { }
-          ~
-!!! error TS2300: Duplicate identifier 'n'.
           ~
 !!! error TS7006: Parameter 'n' implicitly has an 'any' type.
     }
@@ -138,7 +131,7 @@ test.js(69,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 !!! error TS7006: Parameter 'n' implicitly has an 'any' type.
     }
     
-==== mod.js (3 errors) ====
+==== mod.js (2 errors) ====
     // module.exports assignment
     /** @type {{ status: 'done', m(n: number): void }} */
     module.exports = {
@@ -146,8 +139,6 @@ test.js(69,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
         status: "done",
         m(n) { }
-          ~
-!!! error TS2300: Duplicate identifier 'n'.
           ~
 !!! error TS7006: Parameter 'n' implicitly has an 'any' type.
     }

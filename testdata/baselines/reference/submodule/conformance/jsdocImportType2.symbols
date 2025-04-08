@@ -37,11 +37,13 @@ declare var module: { exports: any };
 === mod1.js ===
 /// <reference path='./types.d.ts'/>
 module.exports = class Chunk {
+>module.exports : Symbol(exports, Decl(types.d.ts, 2, 21))
+>module : Symbol(module, Decl(types.d.ts, 2, 11))
+>exports : Symbol(exports, Decl(types.d.ts, 2, 21))
 >Chunk : Symbol(Chunk, Decl(mod1.js, 1, 16))
 
     constructor() {
         this.chunk = 1;
->this : Symbol(Chunk, Decl(mod1.js, 1, 16))
 >this : Symbol(Chunk, Decl(mod1.js, 1, 16))
     }
 }

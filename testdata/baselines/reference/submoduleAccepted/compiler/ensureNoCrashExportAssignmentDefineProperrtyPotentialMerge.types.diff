@@ -16,12 +16,11 @@
 ->module.exports : number
 ->module : typeof module
 ->exports : number
- >12 : 12
 +>module.exports = 12 : 12
 +>module.exports : any
 +>module : any
 +>exports : any
-+>12 : 12
+ >12 : 12
  
  Object.defineProperty(module, "exports", { value: "oh no" });
 ->Object.defineProperty(module, "exports", { value: "oh no" }) : typeof module
@@ -34,7 +33,7 @@
  >"exports" : "exports"
  >{ value: "oh no" } : { value: string; }
  >value : string
-@@= skipped -25, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
  === namespacey.js ===
  const A = {}
@@ -59,7 +58,6 @@
 ->module : { exports: typeof A; }
 ->exports : typeof A
 ->A : typeof A
-+>A : {}
 +>module.exports = A : {}
 +>module.exports : any
 +>module : any
@@ -97,7 +95,7 @@
  >"NS" : "NS"
  >{ value: "why though", writable: true } : { value: string; writable: true; }
  >value : string
-@@= skipped -46, +47 lines =@@
+@@= skipped -46, +46 lines =@@
  >true : true
  
  module.exports = B;
@@ -106,7 +104,6 @@
 ->module : { exports: typeof B; }
 ->exports : typeof B
 ->B : typeof B
-+>B : {}
 +>module.exports = B : {}
 +>module.exports : any
 +>module : any

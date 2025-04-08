@@ -6,6 +6,10 @@ var x = 12;
 >12 : 12
 
 module.exports = {
+>module.exports = {    extends: 'base',    more: {        others: ['strs']    },    x} : { extends: string; more: { others: string[]; }; x: number; }
+>module.exports : any
+>module : any
+>exports : any
 >{    extends: 'base',    more: {        others: ['strs']    },    x} : { extends: string; more: { others: string[]; }; x: number; }
 
     extends: 'base',
@@ -23,7 +27,6 @@ module.exports = {
 
     },
     x
->x : number
 >x : number
 
 };

@@ -50,12 +50,9 @@
  >justProperty : "string"
  >length : number
  
-@@= skipped -39, +39 lines =@@
- === mod1.js ===
+@@= skipped -40, +40 lines =@@
  /// <reference path='./requires.d.ts' />
  module.exports.bothBefore = 'string'
-+>bothBefore : any
-+>'string' : "string"
  >module.exports.bothBefore = 'string' : "string"
 ->module.exports.bothBefore : number | "string"
 ->module.exports : typeof A
@@ -70,7 +67,7 @@
  >'string' : "string"
  
  A.justExport = 4
-@@= skipped -17, +19 lines =@@
+@@= skipped -16, +16 lines =@@
  
  A.bothBefore = 2
  >A.bothBefore = 2 : 2
@@ -91,7 +88,6 @@
  >3 : 3
  
  module.exports = A
-+>A : typeof A
  >module.exports = A : typeof A
 ->module.exports : typeof A
 ->module : { exports: typeof A; }
@@ -102,7 +98,7 @@
  >A : typeof A
  
  function A() {
-@@= skipped -25, +26 lines =@@
+@@= skipped -25, +25 lines =@@
      this.p = 1
  >this.p = 1 : 1
  >this.p : any
@@ -112,8 +108,6 @@
  >1 : 1
  }
  module.exports.bothAfter = 'string'
-+>bothAfter : any
-+>'string' : "string"
  >module.exports.bothAfter = 'string' : "string"
 ->module.exports.bothAfter : number | "string"
 ->module.exports : typeof A
@@ -128,8 +122,6 @@
  >'string' : "string"
  
  module.exports.justProperty = 'string'
-+>justProperty : any
-+>'string' : "string"
  >module.exports.justProperty = 'string' : "string"
 ->module.exports.justProperty : "string"
 ->module.exports : typeof A

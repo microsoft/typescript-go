@@ -8,18 +8,14 @@
 ->module.exports : { member: number; additional: 20; }
 ->module : { exports: { member: number; additional: 20; }; }
 ->exports : { member: number; additional: 20; }
- >new Foo() : Foo
- >Foo : typeof Foo
 +>module.exports = new Foo() : Foo
 +>module.exports : any
 +>module : any
 +>exports : any
-+>new Foo() : Foo
-+>Foo : typeof Foo
+ >new Foo() : Foo
+ >Foo : typeof Foo
  
  module.exports.additional = 20;
-+>additional : any
-+>20 : 20
  >module.exports.additional = 20 : 20
 ->module.exports.additional : 20
 ->module.exports : { member: number; additional: 20; }

@@ -25,5 +25,4 @@ const chalk = {
 };
 module.exports.chalk = chalk
 >chalk : Symbol(chalk, Decl(mod1.js, 0, 5))
->chalk : Symbol(chalk, Decl(mod1.js, 0, 5))
 

@@ -1,23 +1,21 @@
 --- old.moduleExportAliasImported.types
 +++ new.moduleExportAliasImported.types
-@@= skipped -1, +1 lines =@@
- 
+@@= skipped -2, +2 lines =@@
  === bug28014.js ===
  exports.version = 1
-+>version : 1
-+>1 : 1
  >exports.version = 1 : 1
- >exports.version : 1
+->exports.version : 1
 ->exports : typeof alias
-+>exports : typeof import("bug28014")
- >version : 1
+->version : 1
++>exports.version : any
++>exports : any
++>version : any
  >1 : 1
  
-@@= skipped -10, +12 lines =@@
- >alias : typeof alias
+ function alias() { }
+@@= skipped -10, +10 lines =@@
  
  module.exports = alias
-+>alias : typeof alias
  >module.exports = alias : typeof alias
 ->module.exports : typeof alias
 ->module : { exports: typeof alias; }

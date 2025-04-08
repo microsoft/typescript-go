@@ -14,17 +14,14 @@
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
++>module.exports = {    SomeClass,    Another} : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
++>module.exports : any
++>module : any
++>exports : any
  >{    SomeClass,    Another} : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
  
      SomeClass,
-@@= skipped -16, +12 lines =@@
- 
-     Another
- >Another : typeof SomeClass
-+>Another : typeof SomeClass
- }
- === lib.js ===
- /**
+@@= skipped -22, +22 lines =@@
   * @param {string} a
   */
  function bar(a) {
@@ -43,7 +40,7 @@
  }
  
  class SomeClass {
-@@= skipped -27, +28 lines =@@
+@@= skipped -21, +21 lines =@@
  }
  
  module.exports = {
@@ -52,6 +49,10 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->{    bar,    SomeClass} : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
++>module.exports = {    bar,    SomeClass} : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
++>module.exports : any
++>module : any
++>exports : any
 +>{    bar,    SomeClass} : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
  
      bar,
@@ -60,5 +61,3 @@
  
      SomeClass
  >SomeClass : typeof SomeClass
-+>SomeClass : typeof SomeClass
- }

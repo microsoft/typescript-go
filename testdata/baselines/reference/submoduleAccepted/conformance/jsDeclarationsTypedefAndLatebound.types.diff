@@ -33,11 +33,9 @@
  
      [Symbol.iterator]() {}
  >[Symbol.iterator] : () => void
-@@= skipped -11, +11 lines =@@
- }
+@@= skipped -12, +12 lines =@@
  
  module.exports = LazySet;
-+>LazySet : typeof LazySet
  >module.exports = LazySet : typeof LazySet
 ->module.exports : typeof LazySet
 ->module : { exports: typeof LazySet; }

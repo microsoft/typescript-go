@@ -1,17 +1,41 @@
 --- old.exportNestedNamespaces2.symbols
 +++ new.exportNestedNamespaces2.symbols
-@@= skipped -2, +2 lines =@@
+@@= skipped -0, +0 lines =@@
+ //// [tests/cases/conformance/salsa/exportNestedNamespaces2.ts] ////
+ 
  === mod.js ===
++
  // Based on a pattern from adonis
  exports.formatters = {}
-+>formatters : Symbol(formatters, Decl(mod.js, 0, 0))
- >exports.formatters : Symbol(formatters, Decl(mod.js, 0, 0))
+->exports.formatters : Symbol(formatters, Decl(mod.js, 0, 0))
 ->exports : Symbol(formatters, Decl(mod.js, 0, 0))
-+>exports : Symbol("mod", Decl(mod.js, 0, 0))
- >formatters : Symbol(formatters, Decl(mod.js, 0, 0))
- 
+->formatters : Symbol(formatters, Decl(mod.js, 0, 0))
+-
  === first.js ===
-@@= skipped -36, +37 lines =@@
+ exports = require('./mod')
+->exports : Symbol("first", Decl(first.js, 0, 0))
+ >require : Symbol(require)
+ >'./mod' : Symbol("mod", Decl(mod.js, 0, 0))
+ 
+ exports.formatters.j = function (v) {
+->exports : Symbol("first", Decl(first.js, 0, 0))
+ >v : Symbol(v, Decl(first.js, 1, 33))
+ 
+     return v
+@@= skipped -21, +16 lines =@@
+ }
+ === second.js ===
+ exports = require('./mod')
+->exports : Symbol("second", Decl(second.js, 0, 0))
+ >require : Symbol(require)
+ >'./mod' : Symbol("mod", Decl(mod.js, 0, 0))
+ 
+ exports.formatters.o = function (v) {
+->exports : Symbol("second", Decl(second.js, 0, 0))
+ >v : Symbol(v, Decl(second.js, 1, 33))
+ 
+     return v
+@@= skipped -17, +15 lines =@@
  >debug : Symbol(debug, Decl(use.js, 0, 6))
  
  debug.formatters.j

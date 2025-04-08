@@ -61,7 +61,6 @@
 ->module : { exports: typeof minimatch; }
 ->exports : typeof minimatch
 ->minimatch : typeof minimatch
-+>minimatch : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 +>module.exports = minimatch : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 +>module.exports : any
 +>module : any
@@ -88,7 +87,7 @@
  >filter : () => void
  >filter : () => void
  
-@@= skipped -25, +26 lines =@@
+@@= skipped -25, +25 lines =@@
  
      return minimatch()
  >minimatch() : void

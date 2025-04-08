@@ -12,8 +12,6 @@ const Something = require("fs").Something;
 >Something : typeof Something
 
 module.exports.A = {}
->A : any
->{} : {}
 >module.exports.A = {} : {}
 >module.exports.A : any
 >module.exports : any

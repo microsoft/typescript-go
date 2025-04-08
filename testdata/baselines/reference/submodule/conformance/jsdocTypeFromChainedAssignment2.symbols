@@ -25,13 +25,10 @@ mod.i(1)
 === mod.js ===
 /** @param {number} n */
 exports.f = exports.g = function fg(n) {
->f : Symbol(f, Decl(mod.js, 0, 0))
->exports : Symbol("mod", Decl(mod.js, 0, 0))
 >fg : Symbol(fg, Decl(mod.js, 1, 23))
 >n : Symbol(n, Decl(mod.js, 1, 36))
 
     return n + 1
->n : Symbol(n, Decl(mod.js, 1, 36))
 >n : Symbol(n, Decl(mod.js, 1, 36))
 }
 /** @param {string} mom */
@@ -40,7 +37,6 @@ module.exports.h = module.exports.i = function hi(mom) {
 >mom : Symbol(mom, Decl(mod.js, 5, 50))
 
     return `hi, ${mom}!`;
->mom : Symbol(mom, Decl(mod.js, 5, 50))
 >mom : Symbol(mom, Decl(mod.js, 5, 50))
 }
 

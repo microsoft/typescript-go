@@ -13,5 +13,4 @@ class Foo {
 
 module.exports = new Foo();
 >Foo : Symbol(Foo, Decl(index.js, 0, 0))
->Foo : Symbol(Foo, Decl(index.js, 0, 0))
 

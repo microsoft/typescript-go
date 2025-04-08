@@ -2,7 +2,6 @@
 
 === index.js ===
 module.exports = {}
->{} : {}
 >module.exports = {} : {}
 >module.exports : any
 >module : any

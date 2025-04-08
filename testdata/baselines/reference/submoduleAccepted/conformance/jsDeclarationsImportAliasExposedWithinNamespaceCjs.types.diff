@@ -53,9 +53,6 @@
 ->{testFn, testFnTypes} : { testFn: (input: testFnTypes.input) => number | null; testFnTypes: { [x: string]: any; }; }
 ->testFn : (input: testFnTypes.input) => number | null
 ->testFnTypes : { [x: string]: any; }
-+>{testFn, testFnTypes} : { testFn: (input: any) => number; testFnTypes: {}; }
-+>testFn : (input: any) => number
-+>testFnTypes : {}
 +>module.exports = {testFn, testFnTypes} : { testFn: (input: any) => number; testFnTypes: {}; }
 +>module.exports : any
 +>module : any
@@ -66,7 +63,7 @@
  
  === file.js ===
  /**
-@@= skipped -15, +18 lines =@@
+@@= skipped -15, +15 lines =@@
   * @type {Object<string,*>}
   */
  const myTypes = {
@@ -81,13 +78,12 @@
  exports.myTypes = myTypes;
 ->exports.myTypes = myTypes : { [x: string]: any; }
 ->exports.myTypes : { [x: string]: any; }
-+>myTypes : {}
-+>myTypes : {}
+->exports : typeof import("file")
+->myTypes : { [x: string]: any; }
+->myTypes : { [x: string]: any; }
 +>exports.myTypes = myTypes : {}
-+>exports.myTypes : {}
- >exports : typeof import("file")
-->myTypes : { [x: string]: any; }
-->myTypes : { [x: string]: any; }
-+>myTypes : {}
++>exports.myTypes : any
++>exports : any
++>myTypes : any
 +>myTypes : {}
  

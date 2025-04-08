@@ -8,17 +8,14 @@
 ->module.exports : { a: string | number; }
 ->module : { exports: { a: string | number; }; }
 ->exports : { a: string | number; }
++>module.exports = {  a: "ok"} : { a: string; }
++>module.exports : any
++>module : any
++>exports : any
  >{  a: "ok"} : { a: string; }
  
    a: "ok"
- >a : string
- >"ok" : "ok"
-+>a : string
-+>"ok" : "ok"
- 
- };
- 
-@@= skipped -17, +15 lines =@@
+@@= skipped -17, +17 lines =@@
  >a : string
  
  declare module "./test" {

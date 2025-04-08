@@ -8,9 +8,6 @@ const m = require("./exporter");
 >"./exporter" : "./exporter"
 
 module.exports = m.default;
->m.default : { (): void; memberName: "thing"; }
->m : typeof import("exporter")
->default : { (): void; memberName: "thing"; }
 >module.exports = m.default : { (): void; memberName: "thing"; }
 >module.exports : any
 >module : any
@@ -20,8 +17,6 @@ module.exports = m.default;
 >default : { (): void; memberName: "thing"; }
 
 module.exports.memberName = "thing";
->memberName : any
->"thing" : "thing"
 >module.exports.memberName = "thing" : "thing"
 >module.exports.memberName : any
 >module.exports : any

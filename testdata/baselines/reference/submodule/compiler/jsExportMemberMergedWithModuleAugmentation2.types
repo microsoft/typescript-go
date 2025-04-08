@@ -2,11 +2,13 @@
 
 === /test.js ===
 module.exports = {
+>module.exports = {  a: "ok"} : { a: string; }
+>module.exports : any
+>module : any
+>exports : any
 >{  a: "ok"} : { a: string; }
 
   a: "ok"
->a : string
->"ok" : "ok"
 >a : string
 >"ok" : "ok"
 

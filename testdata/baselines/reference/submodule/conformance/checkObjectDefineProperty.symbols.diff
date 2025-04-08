@@ -207,5 +207,4 @@
 ->exports : Symbol(export=, Decl(index.js, 41, 48))
 ->x : Symbol(x, Decl(index.js, 0, 5), Decl(index.js, 1, 22), Decl(index.js, 2, 22), Decl(index.js, 3, 22), Decl(index.js, 4, 22) ... and 2 more)
 +>x : Symbol(x, Decl(index.js, 0, 5))
-+>x : Symbol(x, Decl(index.js, 0, 5))
  

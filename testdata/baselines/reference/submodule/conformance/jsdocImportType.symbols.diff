@@ -33,9 +33,8 @@
 ->module.exports : Symbol(module.exports, Decl(mod1.js, 0, 0))
 ->module : Symbol(export=, Decl(mod1.js, 5, 1))
 ->exports : Symbol(export=, Decl(mod1.js, 5, 1))
- >Chunk : Symbol(Chunk, Decl(mod1.js, 0, 0))
 +>module.exports : Symbol(exports, Decl(types.d.ts, 2, 21))
 +>module : Symbol(module, Decl(types.d.ts, 2, 11))
 +>exports : Symbol(exports, Decl(types.d.ts, 2, 21))
-+>Chunk : Symbol(Chunk, Decl(mod1.js, 0, 0))
+ >Chunk : Symbol(Chunk, Decl(mod1.js, 0, 0))
  

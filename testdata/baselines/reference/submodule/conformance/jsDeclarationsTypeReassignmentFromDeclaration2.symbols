@@ -8,7 +8,6 @@ const items = require("./some-mod")();
 
 module.exports = items;
 >items : Symbol(items, Decl(index.js, 0, 5))
->items : Symbol(items, Decl(index.js, 0, 5))
 
 === some-mod.d.ts ===
 interface Item {

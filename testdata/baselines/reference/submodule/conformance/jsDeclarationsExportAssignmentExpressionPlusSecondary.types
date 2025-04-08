@@ -15,6 +15,10 @@ const Strings = {
 
 };
 module.exports = {
+>module.exports = {    thing: "ok",    also: "ok",    desc: {        item: "ok"    }} : { thing: string; also: string; desc: { item: string; }; }
+>module.exports : any
+>module : any
+>exports : any
 >{    thing: "ok",    also: "ok",    desc: {        item: "ok"    }} : { thing: string; also: string; desc: { item: string; }; }
 
     thing: "ok",
@@ -32,13 +36,9 @@ module.exports = {
         item: "ok"
 >item : string
 >"ok" : "ok"
->item : string
->"ok" : "ok"
     }
 };
 module.exports.Strings = Strings;
->Strings : any
->Strings : { a: string; b: string; }
 >module.exports.Strings = Strings : { a: string; b: string; }
 >module.exports.Strings : any
 >module.exports : any

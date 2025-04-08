@@ -57,7 +57,6 @@ module.exports = {
 
     ExportedThing,
 >ExportedThing : Symbol(ExportedThing, Decl(mixed.js, 14, 15))
->ExportedThing : Symbol(ExportedThing, Decl(mixed.js, 14, 15))
 
 };
 class LocalThing {

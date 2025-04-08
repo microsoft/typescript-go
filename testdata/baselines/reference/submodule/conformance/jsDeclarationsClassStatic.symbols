@@ -29,10 +29,8 @@ const Strings = {
 
 module.exports = Handler;
 >Handler : Symbol(Handler, Decl(source.js, 0, 0))
->Handler : Symbol(Handler, Decl(source.js, 0, 0))
 
 module.exports.Strings = Strings
->Strings : Symbol(Strings, Decl(source.js, 9, 5))
 >Strings : Symbol(Strings, Decl(source.js, 9, 5))
 
 /**

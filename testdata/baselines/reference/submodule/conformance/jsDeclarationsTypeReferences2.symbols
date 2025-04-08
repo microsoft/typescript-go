@@ -17,7 +17,6 @@ const thing = a + m
 module.exports = {
     thing
 >thing : Symbol(thing, Decl(index.js, 4, 18))
->thing : Symbol(thing, Decl(index.js, 4, 18))
 
 };
 

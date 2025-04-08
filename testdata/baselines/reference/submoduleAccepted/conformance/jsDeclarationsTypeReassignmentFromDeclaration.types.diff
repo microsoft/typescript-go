@@ -14,7 +14,6 @@
 ->module : { exports: Item[]; }
 ->exports : Item[]
 ->items : Item[]
-+>items : any[]
 +>module.exports = items : any[]
 +>module.exports : any
 +>module : any

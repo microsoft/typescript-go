@@ -2,11 +2,9 @@
 
 === mod.js ===
 exports.n = {};
->n : any
->{} : {}
 >exports.n = {} : {}
 >exports.n : any
->exports : typeof import("mod")
+>exports : any
 >n : any
 >{} : {}
 
@@ -14,7 +12,7 @@ exports.n.K = function () {
 >exports.n.K = function () {    this.x = 10;} : () => void
 >exports.n.K : any
 >exports.n : any
->exports : typeof import("mod")
+>exports : any
 >n : any
 >K : any
 >function () {    this.x = 10;} : () => void
@@ -27,16 +25,14 @@ exports.n.K = function () {
 >10 : 10
 }
 exports.Classic = class {
->Classic : typeof Classic
+>exports.Classic = class {    constructor() {        this.p = 1    }} : typeof Classic
+>exports.Classic : any
+>exports : any
+>Classic : any
 >class {    constructor() {        this.p = 1    }} : typeof Classic
 
     constructor() {
         this.p = 1
->this.p = 1 : 1
->this.p : any
->this : this
->p : any
->1 : 1
 >this.p = 1 : 1
 >this.p : any
 >this : this
@@ -53,9 +49,9 @@ var k = new s.n.K()
 >k : any
 >new s.n.K() : any
 >s.n.K : any
->s.n : any
+>s.n : {}
 >s : typeof import("mod")
->n : any
+>n : {}
 >K : any
 
 k.x

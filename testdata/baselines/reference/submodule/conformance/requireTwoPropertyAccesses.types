@@ -20,6 +20,10 @@ console.log(value)
 
 === mod.js ===
 module.exports = {
+>module.exports = {    x: {        y: "value"    }} : { x: { y: string; }; }
+>module.exports : any
+>module : any
+>exports : any
 >{    x: {        y: "value"    }} : { x: { y: string; }; }
 
     x: {
@@ -27,8 +31,6 @@ module.exports = {
 >{        y: "value"    } : { y: string; }
 
         y: "value"
->y : string
->"value" : "value"
 >y : string
 >"value" : "value"
     }

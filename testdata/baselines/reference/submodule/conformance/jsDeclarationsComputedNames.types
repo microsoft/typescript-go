@@ -12,6 +12,10 @@ const InnerSym = Symbol();
 >Symbol : SymbolConstructor
 
 module.exports = {
+>module.exports = {    [TopLevelSym](x = 12) {        return x;    },    items: {        [InnerSym]: (arg = {x: 12}) => arg.x    }} : { [TopLevelSym]: (x?: number) => number; items: { [InnerSym]: (arg?: { x: number; }) => number; }; }
+>module.exports : any
+>module : any
+>exports : any
 >{    [TopLevelSym](x = 12) {        return x;    },    items: {        [InnerSym]: (arg = {x: 12}) => arg.x    }} : { [TopLevelSym]: (x?: number) => number; items: { [InnerSym]: (arg?: { x: number; }) => number; }; }
 
     [TopLevelSym](x = 12) {
@@ -29,16 +33,6 @@ module.exports = {
 >{        [InnerSym]: (arg = {x: 12}) => arg.x    } : { [InnerSym]: (arg?: { x: number; }) => number; }
 
         [InnerSym]: (arg = {x: 12}) => arg.x
->[InnerSym] : (arg?: { x: number; }) => number
->InnerSym : unique symbol
->(arg = {x: 12}) => arg.x : (arg?: { x: number; }) => number
->arg : { x: number; }
->{x: 12} : { x: number; }
->x : number
->12 : 12
->arg.x : number
->arg : { x: number; }
->x : number
 >[InnerSym] : (arg?: { x: number; }) => number
 >InnerSym : unique symbol
 >(arg = {x: 12}) => arg.x : (arg?: { x: number; }) => number

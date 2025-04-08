@@ -1,0 +1,58 @@
+--- old.jsEnumTagOnObjectFrozen.errors.txt
++++ new.jsEnumTagOnObjectFrozen.errors.txt
+@@= skipped -0, +-1 lines =@@
+-<no content>
+@@= skipped --1, +1 lines =@@
++index.js(7,1): error TS2304: Cannot find name 'exports'.
++index.js(14,1): error TS2304: Cannot find name 'exports'.
++index.js(21,1): error TS2304: Cannot find name 'exports'.
++
++
++==== usage.js (0 errors) ====
++    const { Thing, useThing, cbThing } = require("./index");
++    
++    useThing(Thing.a);
++    
++    /**
++     * @typedef {Object} LogEntry
++     * @property {string} type
++     * @property {number} time
++     */
++    
++    cbThing(type => {
++        /** @type {LogEntry} */
++        const logEntry = {
++            time: Date.now(),
++            type,
++        };
++    });
++    
++==== index.js (3 errors) ====
++    /** @enum {string} */
++    const Thing = Object.freeze({
++        a: "thing",
++        b: "chill"
++    });
++    
++    exports.Thing = Thing;
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
++    
++    /**
++     * @param {Thing} x
++     */
++    function useThing(x) {}
++    
++    exports.useThing = useThing;
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
++    
++    /**
++     * @param {(x: Thing) => void} x
++     */
++    function cbThing(x) {}
++    
++    exports.cbThing = cbThing;
++    ~~~~~~~
++!!! error TS2304: Cannot find name 'exports'.
++    

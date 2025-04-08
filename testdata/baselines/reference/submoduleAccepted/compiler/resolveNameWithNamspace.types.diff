@@ -1,27 +1,24 @@
 --- old.resolveNameWithNamspace.types
 +++ new.resolveNameWithNamspace.types
-@@= skipped -28, +28 lines =@@
- 
+@@= skipped -29, +29 lines =@@
  === app.js ===
  exports.equal = myAssert.equal
-+>equal : any
-+>myAssert.equal : any
-+>myAssert : any
-+>equal : any
  >exports.equal = myAssert.equal : any
 ->exports.equal : error
+->exports : typeof import("app")
 +>exports.equal : any
- >exports : typeof import("app")
++>exports : any
  >equal : any
  >myAssert.equal : any
-@@= skipped -9, +13 lines =@@
+ >myAssert : any
  >equal : any
  
  exports.equal()
 ->exports.equal() : error
 ->exports.equal : error
+->exports : typeof import("app")
 +>exports.equal() : any
 +>exports.equal : any
- >exports : typeof import("app")
++>exports : any
  >equal : any
  

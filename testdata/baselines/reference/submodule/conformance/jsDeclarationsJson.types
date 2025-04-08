@@ -8,7 +8,6 @@ const j = require("./obj.json");
 >"./obj.json" : "./obj.json"
 
 module.exports = j;
->j : { x: number; y: number; obj: { items: ({ x: number; y?: undefined; err?: undefined; } | { x: number; y: number; err?: undefined; } | { y?: undefined; x: number; err: boolean; })[]; }; }
 >module.exports = j : { x: number; y: number; obj: { items: ({ x: number; y?: undefined; err?: undefined; } | { x: number; y: number; err?: undefined; } | { y?: undefined; x: number; err: boolean; })[]; }; }
 >module.exports : any
 >module : any

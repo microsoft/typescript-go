@@ -10,15 +10,13 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->A : typeof A
-+>A : any
- >{} : {}
 +>module.exports.A = {} : {}
 +>module.exports.A : any
 +>module.exports : any
 +>module : any
 +>exports : any
 +>A : any
-+>{} : {}
+ >{} : {}
  
  module.exports.A.B = {
  >module.exports.A.B = {    thing: new Something()} : { thing: Something; }

@@ -13,8 +13,6 @@ mod() // should be callable from here too
 
 === mod.js ===
 module.exports = function x() { }
->function x() { } : () => void
->x : () => void
 >module.exports = function x() { } : () => void
 >module.exports : any
 >module : any

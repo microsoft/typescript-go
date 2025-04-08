@@ -9,7 +9,6 @@
 ->exports : Symbol(export=, Decl(source.js, 0, 0))
 ->MyClass : Symbol(MyClass, Decl(source.js, 0, 25), Decl(source.js, 2, 21), Decl(source.js, 4, 40))
 +>MyClass : Symbol(MyClass, Decl(source.js, 0, 25))
-+>MyClass : Symbol(MyClass, Decl(source.js, 0, 25))
  
  function MyClass() {}
 ->MyClass : Symbol(MyClass, Decl(source.js, 0, 25), Decl(source.js, 2, 21), Decl(source.js, 4, 40))

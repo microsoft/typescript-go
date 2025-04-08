@@ -12,7 +12,6 @@
 -
     message: ""
  >message : Symbol(message, Decl(test.js, 0, 18))
-+>message : Symbol(message, Decl(test.js, 0, 18))
  }
  
 -=== ./types1.ts ===
@@ -20,7 +19,7 @@
  import test from "./test";
  >test : Symbol(test, Decl(types1.ts, 0, 6), Decl(types1.ts, 0, 26))
  
-@@= skipped -18, +15 lines =@@
+@@= skipped -18, +14 lines =@@
  
  > : Symbol(unknown)
  

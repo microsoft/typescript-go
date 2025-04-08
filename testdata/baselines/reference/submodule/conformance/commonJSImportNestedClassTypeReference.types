@@ -42,13 +42,9 @@ NS.K =class {
     }
 }
 exports.K = NS.K;
->K : any
->NS.K : any
->NS : {}
->K : any
 >exports.K = NS.K : any
 >exports.K : any
->exports : typeof import("mod1")
+>exports : any
 >K : any
 >NS.K : any
 >NS : {}

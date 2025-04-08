@@ -14,7 +14,6 @@
 ->module : { exports: typeof axios; }
 ->exports : typeof axios
 ->axios : typeof axios
-+>axios : {}
 +>module.exports = axios : {}
 +>module.exports : any
 +>module : any
@@ -29,8 +28,6 @@
 ->exports : typeof axios
 ->default : typeof axios
 ->axios : typeof axios
-+>default : any
-+>axios : {}
 +>module.exports.default = axios : {}
 +>module.exports.default : any
 +>module.exports : any

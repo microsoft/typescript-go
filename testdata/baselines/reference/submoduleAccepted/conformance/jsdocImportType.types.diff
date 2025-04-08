@@ -38,11 +38,9 @@
  
  === types.d.ts ===
  declare function require(name: string): any;
-@@= skipped -49, +49 lines =@@
-     }
+@@= skipped -50, +50 lines =@@
  }
  module.exports = Chunk;
-+>Chunk : typeof Chunk
  >module.exports = Chunk : typeof Chunk
 ->module.exports : typeof Chunk
 ->module : { exports: typeof Chunk; }

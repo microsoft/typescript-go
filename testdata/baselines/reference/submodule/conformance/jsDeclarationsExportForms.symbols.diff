@@ -12,7 +12,6 @@
 ->module : Symbol(module, Decl(cjs.js, 0, 28))
 ->exports : Symbol(module.exports, Decl(cjs.js, 0, 0))
  >ns : Symbol(ns, Decl(cjs.js, 1, 18))
-+>ns : Symbol(ns, Decl(cjs.js, 1, 18))
  
  === cjs2.js ===
  const ns = require("./cls");
@@ -26,7 +25,6 @@
 ->module : Symbol(export=, Decl(cjs2.js, 0, 28))
 ->exports : Symbol(export=, Decl(cjs2.js, 0, 28))
  >ns : Symbol(ns, Decl(cjs2.js, 0, 5))
-+>ns : Symbol(ns, Decl(cjs2.js, 0, 5))
  
  === cjs3.js ===
  const ns = require("./cls");
@@ -42,7 +40,6 @@
 ->exports : Symbol(module.exports, Decl(cjs3.js, 0, 0))
 ->ns : Symbol(ns, Decl(cjs3.js, 0, 28))
  >ns : Symbol(ns, Decl(cjs3.js, 0, 5))
-+>ns : Symbol(ns, Decl(cjs3.js, 0, 5))
  
  === cjs4.js ===
  const ns = require("./cls");
@@ -58,7 +55,5 @@
 ->exports : Symbol(module.exports, Decl(cjs4.js, 0, 0))
 ->names : Symbol(names, Decl(cjs4.js, 0, 28))
  >ns : Symbol(ns, Decl(cjs4.js, 0, 5))
-+>ns : Symbol(ns, Decl(cjs4.js, 0, 5))
  
  === includeAll.js ===
- 

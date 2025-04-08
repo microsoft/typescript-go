@@ -59,10 +59,7 @@
  exports.f = exports.g = function fg(n) {
 ->exports.f = exports.g = function fg(n) {    return n + 1} : (n: number) => number
 ->exports.f : (n: number) => number
-+>f : (n: any) => any
-+>exports.g = function fg(n) {    return n + 1} : (n: any) => any
-+>exports.g : any
- >exports : typeof import("mod")
+->exports : typeof import("mod")
 ->f : (n: number) => number
 ->exports.g = function fg(n) {    return n + 1} : (n: number) => number
 ->exports.g : (n: number) => number
@@ -71,6 +68,13 @@
 ->function fg(n) {    return n + 1} : (n: number) => number
 ->fg : (n: number) => number
 ->n : number
++>exports.f = exports.g = function fg(n) {    return n + 1} : (n: any) => any
++>exports.f : any
++>exports : any
++>f : any
++>exports.g = function fg(n) {    return n + 1} : (n: any) => any
++>exports.g : any
++>exports : any
 +>g : any
 +>function fg(n) {    return n + 1} : (n: any) => any
 +>fg : (n: any) => any
@@ -82,9 +86,6 @@
 +>n + 1 : any
 +>n : any
  >1 : 1
-+>n + 1 : any
-+>n : any
-+>1 : 1
  }
  /** @param {string} mom */
  module.exports.h = module.exports.i = function hi(mom) {
@@ -103,6 +104,11 @@
 ->function hi(mom) {    return `hi, ${mom}!`;} : (mom: string) => string
 ->hi : (mom: string) => string
 ->mom : string
++>module.exports.h = module.exports.i = function hi(mom) {    return `hi, ${mom}!`;} : (mom: any) => string
++>module.exports.h : any
++>module.exports : any
++>module : any
++>exports : any
 +>h : any
 +>module.exports.i = function hi(mom) {    return `hi, ${mom}!`;} : (mom: any) => string
 +>module.exports.i : any
@@ -117,8 +123,6 @@
      return `hi, ${mom}!`;
  >`hi, ${mom}!` : string
 ->mom : string
-+>mom : any
-+>`hi, ${mom}!` : string
 +>mom : any
  }
  

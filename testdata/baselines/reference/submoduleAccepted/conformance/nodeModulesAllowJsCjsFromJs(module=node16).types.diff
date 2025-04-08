@@ -1,15 +1,16 @@
 --- old.nodeModulesAllowJsCjsFromJs(module=node16).types
 +++ new.nodeModulesAllowJsCjsFromJs(module=node16).types
-@@= skipped -1, +1 lines =@@
- 
+@@= skipped -2, +2 lines =@@
  === foo.cjs ===
  exports.foo = "foo"
-+>foo : "foo"
-+>"foo" : "foo"
  >exports.foo = "foo" : "foo"
- >exports.foo : "foo"
- >exports : typeof import("foo")
-@@= skipped -8, +10 lines =@@
+->exports.foo : "foo"
+->exports : typeof import("foo")
+->foo : "foo"
++>exports.foo : any
++>exports : any
++>foo : any
+ >"foo" : "foo"
  
  === bar.ts ===
  import foo from "./foo.cjs"

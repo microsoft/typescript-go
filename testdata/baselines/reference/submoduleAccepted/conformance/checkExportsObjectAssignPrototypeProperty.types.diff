@@ -258,7 +258,6 @@
 ->module : { exports: typeof Person; }
 ->exports : typeof Person
 ->Person : typeof Person
-+>Person : (name: any) => void
 +>module.exports = Person : (name: any) => void
 +>module.exports : any
 +>module : any

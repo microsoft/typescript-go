@@ -1,11 +1,14 @@
 --- old.commonJsUnusedLocals.types
 +++ new.commonJsUnusedLocals.types
-@@= skipped -5, +5 lines =@@
- >0 : 0
+@@= skipped -6, +6 lines =@@
  
  exports.y = 1;
-+>y : 1
-+>1 : 1
  >exports.y = 1 : 1
- >exports.y : 1
- >exports : typeof import("/a")
+->exports.y : 1
+->exports : typeof import("/a")
+->y : 1
++>exports.y : any
++>exports : any
++>y : any
+ >1 : 1
+ 

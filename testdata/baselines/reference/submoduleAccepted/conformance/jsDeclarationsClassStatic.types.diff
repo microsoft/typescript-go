@@ -12,11 +12,9 @@
  >function() { } : () => void
  
  const Strings = {
-@@= skipped -19, +19 lines =@@
- }
+@@= skipped -20, +20 lines =@@
  
  module.exports = Handler;
-+>Handler : typeof Handler
  >module.exports = Handler : typeof Handler
 ->module.exports : typeof Handler
 ->module : { exports: typeof Handler; }
@@ -27,8 +25,6 @@
  >Handler : typeof Handler
  
  module.exports.Strings = Strings
-+>Strings : any
-+>Strings : { a: string; b: string; }
  >module.exports.Strings = Strings : { a: string; b: string; }
 ->module.exports.Strings : { a: string; b: string; }
 ->module.exports : typeof Handler

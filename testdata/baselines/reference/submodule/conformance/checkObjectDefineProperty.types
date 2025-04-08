@@ -248,7 +248,6 @@ match(() => expected, (x = expected) => void 0);
 >0 : 0
 
 module.exports = x;
->x : {}
 >module.exports = x : {}
 >module.exports : any
 >module : any

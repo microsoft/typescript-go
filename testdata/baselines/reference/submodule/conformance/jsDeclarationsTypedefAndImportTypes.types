@@ -18,7 +18,6 @@ class Conn {
 }
 
 module.exports = Conn;
->Conn : typeof Conn
 >module.exports = Conn : typeof Conn
 >module.exports : any
 >module : any
@@ -59,10 +58,13 @@ class Wrap {
 }
 
 module.exports = {
+>module.exports = {    Wrap} : { Wrap: typeof Wrap; }
+>module.exports : any
+>module : any
+>exports : any
 >{    Wrap} : { Wrap: typeof Wrap; }
 
     Wrap
->Wrap : typeof Wrap
 >Wrap : typeof Wrap
 
 };

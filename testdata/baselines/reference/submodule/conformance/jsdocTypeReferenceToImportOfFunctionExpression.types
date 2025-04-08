@@ -11,6 +11,10 @@ const MW = require("./MW");
 
 /** @class */
 module.exports = function MC() {
+>module.exports = function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => MW
+>module.exports : any
+>module : any
+>exports : any
 >function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => MW
 >MC : () => MW
 
@@ -20,9 +24,6 @@ module.exports = function MC() {
 >{} : {}
 
     return new MW(x);
->new MW(x) : MW
->MW : typeof MW
->x : {}
 >new MW(x) : MW
 >MW : typeof MW
 >x : {}
@@ -51,7 +52,6 @@ class MW {
 }
 
 module.exports = MW;
->MW : typeof MW
 >module.exports = MW : typeof MW
 >module.exports : any
 >module : any

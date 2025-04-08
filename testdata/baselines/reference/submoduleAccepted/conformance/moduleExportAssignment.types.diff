@@ -88,8 +88,6 @@
  >1 : 1
  
  module.exports.y = 2
-+>y : any
-+>2 : 2
  >module.exports.y = 2 : 2
 ->module.exports.y : 2
 ->module.exports : { on(s: string): void; x: number; y: 2; }

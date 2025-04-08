@@ -5,8 +5,6 @@ class Foo {}
 >Foo : Foo
 
 module.exports = new Foo();
->new Foo() : Foo
->Foo : typeof Foo
 >module.exports = new Foo() : Foo
 >module.exports : any
 >module : any

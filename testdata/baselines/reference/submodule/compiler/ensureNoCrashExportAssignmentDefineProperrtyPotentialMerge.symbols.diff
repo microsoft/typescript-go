@@ -36,7 +36,6 @@
 ->exports : Symbol(export=, Decl(namespacey.js, 1, 18))
 ->A : Symbol(A, Decl(namespacey.js, 0, 5), Decl(namespacey.js, 0, 12))
 +>A : Symbol(A, Decl(namespacey.js, 0, 5))
-+>A : Symbol(A, Decl(namespacey.js, 0, 5))
  
  === namespacer.js ===
  const B = {}
@@ -68,6 +67,5 @@
 ->module : Symbol(export=, Decl(namespacer.js, 2, 72))
 ->exports : Symbol(export=, Decl(namespacer.js, 2, 72))
 ->B : Symbol(B, Decl(namespacer.js, 0, 5), Decl(namespacer.js, 0, 12), Decl(namespacer.js, 2, 22))
-+>B : Symbol(B, Decl(namespacer.js, 0, 5))
 +>B : Symbol(B, Decl(namespacer.js, 0, 5))
  

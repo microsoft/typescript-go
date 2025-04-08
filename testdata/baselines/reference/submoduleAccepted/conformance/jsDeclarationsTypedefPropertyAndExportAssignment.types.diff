@@ -24,7 +24,6 @@
  }
  
  module.exports = MainThreadTasks;
-+>MainThreadTasks : typeof MainThreadTasks
  >module.exports = MainThreadTasks : typeof MainThreadTasks
 ->module.exports : typeof MainThreadTasks
 ->module : { exports: typeof MainThreadTasks; }
@@ -35,7 +34,7 @@
  >MainThreadTasks : typeof MainThreadTasks
  
  === module.js ===
-@@= skipped -25, +26 lines =@@
+@@= skipped -25, +25 lines =@@
   * @type {{[P in TaskGroupIds]: {id: P, label: string}}}
   */
  const taskGroups = {
@@ -85,6 +84,10 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->{    taskGroups,    taskNameToGroup,} : { taskGroups: { parseHTML: { id: "parseHTML"; label: string; }; styleLayout: { id: "styleLayout"; label: string; }; }; taskNameToGroup: { [x: string]: TaskGroup; }; }
++>module.exports = {    taskGroups,    taskNameToGroup,} : { taskGroups: { parseHTML: { id: string; label: string; }; styleLayout: { id: string; label: string; }; }; taskNameToGroup: {}; }
++>module.exports : any
++>module : any
++>exports : any
 +>{    taskGroups,    taskNameToGroup,} : { taskGroups: { parseHTML: { id: string; label: string; }; styleLayout: { id: string; label: string; }; }; taskNameToGroup: {}; }
  
      taskGroups,
@@ -93,7 +96,6 @@
  
      taskNameToGroup,
 ->taskNameToGroup : { [x: string]: TaskGroup; }
-+>taskNameToGroup : {}
 +>taskNameToGroup : {}
  
  };

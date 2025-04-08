@@ -384,7 +384,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 // - The `statements` parameter is a statement list to which the down-level export statements are to be appended.
 func (tx *CommonJSModuleTransformer) appendExportEqualsIfNeeded(statements []*ast.Statement) []*ast.Statement {
 	if tx.currentModuleInfo.exportEquals != nil {
-		expressionResult := tx.visitor.VisitNode(tx.currentModuleInfo.exportEquals.Expression())
+		expressionResult := tx.visitor.VisitNode(tx.currentModuleInfo.exportEquals.Expression)
 		if expressionResult != nil {
 			statement := tx.factory.NewExpressionStatement(
 				tx.factory.NewBinaryExpression(
@@ -399,7 +399,7 @@ func (tx *CommonJSModuleTransformer) appendExportEqualsIfNeeded(statements []*as
 				),
 			)
 
-			tx.emitContext.AssignCommentAndSourceMapRanges(statement, tx.currentModuleInfo.exportEquals)
+			tx.emitContext.AssignCommentAndSourceMapRanges(statement, tx.currentModuleInfo.exportEquals.AsNode())
 			tx.emitContext.AddEmitFlags(statement, printer.EFNoComments)
 			statements = append(statements, statement)
 		}

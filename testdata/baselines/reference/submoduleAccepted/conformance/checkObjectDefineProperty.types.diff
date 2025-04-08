@@ -339,7 +339,6 @@
 ->module : { exports: typeof x; }
 ->exports : typeof x
 ->x : typeof x
-+>x : {}
 +>module.exports = x : {}
 +>module.exports : any
 +>module : any

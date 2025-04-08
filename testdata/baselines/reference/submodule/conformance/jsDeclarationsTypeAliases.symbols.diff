@@ -15,12 +15,7 @@
      doTheThing,
  >doTheThing : Symbol(doTheThing, Decl(mixed.js, 13, 18))
  
-     ExportedThing,
- >ExportedThing : Symbol(ExportedThing, Decl(mixed.js, 14, 15))
-+>ExportedThing : Symbol(ExportedThing, Decl(mixed.js, 14, 15))
- 
- };
- class LocalThing {
+@@= skipped -18, +14 lines =@@
  >LocalThing : Symbol(LocalThing, Decl(mixed.js, 16, 2))
  
      y = "ok"

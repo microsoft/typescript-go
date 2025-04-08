@@ -6,7 +6,6 @@ const alias = {};
 >{} : {}
 
 module.exports = alias;
->alias : {}
 >module.exports = alias : {}
 >module.exports : any
 >module : any

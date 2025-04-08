@@ -214,7 +214,6 @@ Object.defineProperty(Person.prototype, "setonlyAccessor", {
     }
 });
 module.exports = Person;
->Person : (name: any) => void
 >module.exports = Person : (name: any) => void
 >module.exports : any
 >module : any

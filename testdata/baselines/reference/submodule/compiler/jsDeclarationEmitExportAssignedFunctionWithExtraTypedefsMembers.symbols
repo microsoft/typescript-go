@@ -12,6 +12,4 @@
 module.exports = function loader(options) {}
 >loader : Symbol(loader, Decl(index.js, 8, 16))
 >options : Symbol(options, Decl(index.js, 8, 33))
->loader : Symbol(loader, Decl(index.js, 8, 16))
->options : Symbol(options, Decl(index.js, 8, 33))
 

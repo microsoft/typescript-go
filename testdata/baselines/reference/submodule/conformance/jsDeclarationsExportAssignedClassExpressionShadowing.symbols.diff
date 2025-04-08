@@ -27,8 +27,6 @@
  >this : Symbol(Q, Decl(index.js, 6, 16))
 ->x : Symbol(Q.x, Decl(index.js, 7, 19))
  >A : Symbol(A, Decl(index.js, 0, 0))
-+>this : Symbol(Q, Decl(index.js, 6, 16))
-+>A : Symbol(A, Decl(index.js, 0, 0))
      }
  }
  module.exports.Another = Q;
@@ -38,5 +36,4 @@
 ->exports : Symbol(module.exports, Decl(index.js, 0, 0))
 ->Another : Symbol(Another, Decl(index.js, 10, 1))
  >Q : Symbol(Q, Decl(index.js, 2, 1))
-+>Q : Symbol(Q, Decl(index.js, 2, 1))
  

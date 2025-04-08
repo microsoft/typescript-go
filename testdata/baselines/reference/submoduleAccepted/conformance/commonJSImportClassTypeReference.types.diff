@@ -21,12 +21,15 @@
  }
  
  === mod1.js ===
-@@= skipped -23, +23 lines =@@
-     }
+@@= skipped -24, +24 lines =@@
  }
  exports.K = K;
-+>K : typeof K
-+>K : typeof K
  >exports.K = K : typeof K
- >exports.K : typeof K
- >exports : typeof import("mod1")
+->exports.K : typeof K
+->exports : typeof import("mod1")
++>exports.K : any
++>exports : any
++>K : any
+ >K : typeof K
+->K : typeof K
+ 

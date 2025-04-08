@@ -17,16 +17,19 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->{    errors} : { errors: typeof errors; }
++>module.exports = {    errors} : { errors: { FancyError: typeof FancyError; }; }
++>module.exports : any
++>module : any
++>exports : any
 +>{    errors} : { errors: { FancyError: typeof FancyError; }; }
  
      errors
 ->errors : typeof errors
 +>errors : { FancyError: typeof FancyError; }
-+>errors : { FancyError: typeof FancyError; }
  
  };
  === utils/errors.js ===
-@@= skipped -33, +30 lines =@@
+@@= skipped -33, +33 lines =@@
  }
  
  module.exports = {
@@ -34,11 +37,10 @@
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
++>module.exports = {    FancyError} : { FancyError: typeof FancyError; }
++>module.exports : any
++>module : any
++>exports : any
  >{    FancyError} : { FancyError: typeof FancyError; }
  
      FancyError
- >FancyError : typeof FancyError
-+>FancyError : typeof FancyError
- 
- };
- 

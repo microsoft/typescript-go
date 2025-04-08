@@ -1,10 +1,8 @@
 --- old.importAliasModuleExports.types
 +++ new.importAliasModuleExports.types
-@@= skipped -8, +8 lines =@@
- >1 : 1
+@@= skipped -9, +9 lines =@@
  }
  module.exports = Alias;
-+>Alias : typeof Alias
  >module.exports = Alias : typeof Alias
 ->module.exports : typeof Alias
 ->module : { exports: typeof Alias; }
@@ -64,7 +62,7 @@
  >"def" : "def"
  >{ value: 0 } : { value: number; }
  >value : number
-@@= skipped -48, +49 lines =@@
+@@= skipped -47, +47 lines =@@
  
  new A().bar
  >new A().bar : () => number

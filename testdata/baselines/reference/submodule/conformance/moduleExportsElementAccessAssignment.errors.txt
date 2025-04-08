@@ -1,6 +1,6 @@
-mod1.js(1,1): error TS7022: 'a' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-mod1.js(2,1): error TS7022: 'b' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
-mod1.js(3,1): error TS7022: 'default' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+mod1.js(1,1): error TS2304: Cannot find name 'exports'.
+mod1.js(2,1): error TS2304: Cannot find name 'exports'.
+mod1.js(3,1): error TS2304: Cannot find name 'exports'.
 mod1.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod1.js(5,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod1.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -19,14 +19,14 @@ mod2.js(6,8): error TS2339: Property 'e' does not exist on type '{}'.
     mod1.default;
 ==== mod1.js (6 errors) ====
     exports.a = { x: "x" };
-    ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7022: 'a' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     exports["b"] = { x: "x" };
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7022: 'b' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     exports["default"] = { x: "x" };
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS7022: 'default' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     module.exports["c"] = { x: "x" };
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

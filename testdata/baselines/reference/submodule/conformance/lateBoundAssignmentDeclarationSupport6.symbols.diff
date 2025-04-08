@@ -78,7 +78,6 @@
 ->exports : Symbol(module.exports, Decl(lateBoundAssignmentDeclarationSupport6.js, 0, 0))
 ->F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport6.js, 11, 22))
  >F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport6.js, 2, 27))
-+>F : Symbol(F, Decl(lateBoundAssignmentDeclarationSupport6.js, 2, 27))
  
  module.exports.S = _sym;
 ->module.exports.S : Symbol(S, Decl(lateBoundAssignmentDeclarationSupport6.js, 12, 21))
@@ -87,5 +86,4 @@
 ->exports : Symbol(module.exports, Decl(lateBoundAssignmentDeclarationSupport6.js, 0, 0))
 ->S : Symbol(S, Decl(lateBoundAssignmentDeclarationSupport6.js, 12, 21))
  >_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport6.js, 1, 5))
-+>_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport6.js, 1, 5))
  

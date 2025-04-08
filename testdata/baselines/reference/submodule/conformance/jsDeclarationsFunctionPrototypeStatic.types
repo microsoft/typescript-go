@@ -2,7 +2,6 @@
 
 === source.js ===
 module.exports = MyClass;
->MyClass : { (): void; staticMethod: () => void; staticProperty: number; }
 >module.exports = MyClass : { (): void; staticMethod: () => void; staticProperty: number; }
 >module.exports : any
 >module : any

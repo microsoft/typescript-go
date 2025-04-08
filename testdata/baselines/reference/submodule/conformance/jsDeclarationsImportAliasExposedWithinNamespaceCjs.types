@@ -48,9 +48,6 @@ function testFn(input) {
 }
 
 module.exports = {testFn, testFnTypes};
->{testFn, testFnTypes} : { testFn: (input: any) => number; testFnTypes: {}; }
->testFn : (input: any) => number
->testFnTypes : {}
 >module.exports = {testFn, testFnTypes} : { testFn: (input: any) => number; testFnTypes: {}; }
 >module.exports : any
 >module : any
@@ -83,11 +80,9 @@ const myTypes = {
 /** @typedef {myTypes.typeB|Function} myTypes.typeC */
 
 exports.myTypes = myTypes;
->myTypes : {}
->myTypes : {}
 >exports.myTypes = myTypes : {}
->exports.myTypes : {}
->exports : typeof import("file")
->myTypes : {}
+>exports.myTypes : any
+>exports : any
+>myTypes : any
 >myTypes : {}
 

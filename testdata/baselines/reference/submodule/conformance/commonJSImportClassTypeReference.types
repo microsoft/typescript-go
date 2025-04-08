@@ -32,11 +32,9 @@ class K {
     }
 }
 exports.K = K;
->K : typeof K
->K : typeof K
 >exports.K = K : typeof K
->exports.K : typeof K
->exports : typeof import("mod1")
->K : typeof K
+>exports.K : any
+>exports : any
+>K : any
 >K : typeof K
 

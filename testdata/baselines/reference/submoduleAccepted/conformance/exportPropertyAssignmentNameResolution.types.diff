@@ -1,11 +1,8 @@
 --- old.exportPropertyAssignmentNameResolution.types
 +++ new.exportPropertyAssignmentNameResolution.types
-@@= skipped -1, +1 lines =@@
- 
+@@= skipped -2, +2 lines =@@
  === bug24492.js ===
  module.exports.D = class { }
-+>D : any
-+>class { } : typeof D
  >module.exports.D = class { } : typeof D
 ->module.exports.D : typeof D
 ->module.exports : typeof module.exports

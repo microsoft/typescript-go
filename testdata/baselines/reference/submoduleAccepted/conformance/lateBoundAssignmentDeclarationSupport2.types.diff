@@ -55,8 +55,6 @@
  >"ok" : "ok"
  
  module.exports.S = _sym;
-+>S : any
-+>_sym : unique symbol
  >module.exports.S = _sym : unique symbol
 ->module.exports.S : unique symbol
 ->module.exports : typeof module.exports

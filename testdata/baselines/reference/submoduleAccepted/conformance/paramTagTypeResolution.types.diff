@@ -38,12 +38,6 @@
 ->k(x) : void
 ->k : (t: T) => void
 ->x : T
-+>function (x, k) { return k(x) } : (x: any, k: any) => any
-+>x : any
-+>k : any
-+>k(x) : any
-+>k : any
-+>x : any
 +>module.exports = function (x, k) { return k(x) } : (x: any, k: any) => any
 +>module.exports : any
 +>module : any

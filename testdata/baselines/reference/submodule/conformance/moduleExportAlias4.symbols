@@ -9,9 +9,7 @@ var wat = require('./bug24024')
 
 module.exports = class C {}
 >C : Symbol(C, Decl(bug24024.js, 2, 16))
->C : Symbol(C, Decl(bug24024.js, 2, 16))
 
 module.exports.D = class D { }
->D : Symbol(D, Decl(bug24024.js, 3, 18))
 >D : Symbol(D, Decl(bug24024.js, 3, 18))
 

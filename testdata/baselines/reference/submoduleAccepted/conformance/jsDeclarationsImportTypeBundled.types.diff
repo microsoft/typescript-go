@@ -11,7 +11,6 @@
  >12 : 12
  
  module.exports = x;
-+>x : { x: number; }
  >module.exports = x : { x: number; }
 ->module.exports : { x: number; }
 ->module : { exports: { x: number; }; }
@@ -38,7 +37,6 @@
 ->module : { exports: import("folder/mod1").Item[]; }
 ->exports : import("folder/mod1").Item[]
 ->items : import("folder/mod1").Item[]
-+>items : { x: number; }[]
 +>module.exports = items : { x: number; }[]
 +>module.exports : any
 +>module : any

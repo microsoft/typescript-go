@@ -43,14 +43,12 @@
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
- >{ Rectangle } : { Rectangle: typeof Rectangle; }
- >Rectangle : typeof Rectangle
 +>module.exports = { Rectangle } : { Rectangle: typeof Rectangle; }
 +>module.exports : any
 +>module : any
 +>exports : any
-+>{ Rectangle } : { Rectangle: typeof Rectangle; }
-+>Rectangle : typeof Rectangle
+ >{ Rectangle } : { Rectangle: typeof Rectangle; }
+ >Rectangle : typeof Rectangle
  
  === index.js ===
  const {Rectangle} = require('./rectangle');
@@ -60,7 +58,7 @@
  >require : any
  >'./rectangle' : "./rectangle"
  
-@@= skipped -24, +26 lines =@@
+@@= skipped -24, +24 lines =@@
           */
          this.objects = [];
  >this.objects = [] : undefined[]
@@ -98,12 +96,10 @@
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
- >{ Render } : { Render: typeof Render; }
- >Render : typeof Render
 +>module.exports = { Render } : { Render: typeof Render; }
 +>module.exports : any
 +>module : any
 +>exports : any
-+>{ Render } : { Render: typeof Render; }
-+>Render : typeof Render
+ >{ Render } : { Render: typeof Render; }
+ >Render : typeof Render
  

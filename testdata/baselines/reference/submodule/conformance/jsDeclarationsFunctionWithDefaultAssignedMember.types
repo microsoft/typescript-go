@@ -19,7 +19,6 @@ foo.default = foo;
 >foo : { (): void; foo: ???; default: ???; }
 
 module.exports = foo;
->foo : { (): void; foo: ???; default: ???; }
 >module.exports = foo : { (): void; foo: ???; default: ???; }
 >module.exports : any
 >module : any

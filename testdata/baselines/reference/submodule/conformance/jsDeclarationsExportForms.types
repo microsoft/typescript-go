@@ -54,8 +54,6 @@ const ns = require("./cls");
 >"./cls" : "./cls"
 
 module.exports = { ns };
->{ ns } : { ns: typeof import("cls"); }
->ns : typeof import("cls")
 >module.exports = { ns } : { ns: typeof import("cls"); }
 >module.exports : any
 >module : any
@@ -71,7 +69,6 @@ const ns = require("./cls");
 >"./cls" : "./cls"
 
 module.exports = ns;
->ns : typeof import("cls")
 >module.exports = ns : typeof import("cls")
 >module.exports : any
 >module : any
@@ -86,8 +83,6 @@ const ns = require("./cls");
 >"./cls" : "./cls"
 
 module.exports.ns = ns;
->ns : any
->ns : typeof import("cls")
 >module.exports.ns = ns : typeof import("cls")
 >module.exports.ns : any
 >module.exports : any
@@ -104,8 +99,6 @@ const ns = require("./cls");
 >"./cls" : "./cls"
 
 module.exports.names = ns;
->names : any
->ns : typeof import("cls")
 >module.exports.names = ns : typeof import("cls")
 >module.exports.names : any
 >module.exports : any

@@ -10,7 +10,6 @@ const errors = require("./errors");
 module.exports = {
     errors
 >errors : Symbol(errors, Decl(index.js, 3, 18))
->errors : Symbol(errors, Decl(index.js, 3, 18))
 
 };
 === utils/errors.js ===
@@ -29,7 +28,6 @@ class FancyError extends Error {
 
 module.exports = {
     FancyError
->FancyError : Symbol(FancyError, Decl(errors.js, 6, 18))
 >FancyError : Symbol(FancyError, Decl(errors.js, 6, 18))
 
 };

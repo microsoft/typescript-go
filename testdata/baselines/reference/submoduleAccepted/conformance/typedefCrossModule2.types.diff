@@ -30,17 +30,16 @@
  >Baz : typeof Baz
  
  === mod1.js ===
-@@= skipped -29, +29 lines =@@
- 
+@@= skipped -30, +30 lines =@@
  /** @typedef {number} Bar */
  exports.Bar = class { }
-+>Bar : typeof Bar
-+>class { } : typeof Bar
  >exports.Bar = class { } : typeof Bar
- >exports.Bar : typeof Bar
+->exports.Bar : typeof Bar
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
-+>exports : typeof import("mod1")
- >Bar : typeof Bar
+->Bar : typeof Bar
++>exports.Bar : any
++>exports : any
++>Bar : any
  >class { } : typeof Bar
  
  /** @typedef {number} Baz */
@@ -49,27 +48,23 @@
 ->module.exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
 ->module : { exports: { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }; }
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
++>module.exports = {    Baz: class { }} : { Baz: typeof Baz; }
++>module.exports : any
++>module : any
++>exports : any
  >{    Baz: class { }} : { Baz: typeof Baz; }
  
      Baz: class { }
- >Baz : typeof Baz
- >class { } : typeof Baz
-+>Baz : typeof Baz
-+>class { } : typeof Baz
- }
- 
- // ok
 @@= skipped -28, +28 lines =@@
- 
  /** @typedef {number} Quid */
  exports.Quid = 2;
-+>Quid : 2
-+>2 : 2
  >exports.Quid = 2 : 2
- >exports.Quid : 2
+->exports.Quid : 2
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
-+>exports : typeof import("mod1")
- >Quid : 2
+->Quid : 2
++>exports.Quid : any
++>exports : any
++>Quid : any
  >2 : 2
  
  /** @typedef {number} Quack */
@@ -78,12 +73,10 @@
 ->module.exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
 ->module : { exports: { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }; }
 ->exports : { Bar: typeof Bar; Baz: typeof Baz; Quid: 2; Quack?: undefined; } | { Bar: typeof Bar; Baz?: undefined; Quid: 2; Quack: number; }
++>module.exports = {    Quack: 2} : { Quack: number; }
++>module.exports : any
++>module : any
++>exports : any
  >{    Quack: 2} : { Quack: number; }
  
      Quack: 2
- >Quack : number
- >2 : 2
-+>Quack : number
-+>2 : 2
- }
- 

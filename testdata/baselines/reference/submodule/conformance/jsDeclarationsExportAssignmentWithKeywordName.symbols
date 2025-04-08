@@ -17,6 +17,5 @@ module.exports = {
     },
     x
 >x : Symbol(x, Decl(index.js, 5, 6))
->x : Symbol(x, Decl(index.js, 5, 6))
 
 };

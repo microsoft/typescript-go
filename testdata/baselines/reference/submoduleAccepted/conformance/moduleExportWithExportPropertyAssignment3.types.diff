@@ -62,12 +62,9 @@
  
  === requires.d.ts ===
  declare var module: { exports: any };
-@@= skipped -39, +39 lines =@@
- === mod1.js ===
+@@= skipped -40, +40 lines =@@
  /// <reference path='./requires.d.ts' />
  module.exports.bothBefore = 'string'
-+>bothBefore : any
-+>'string' : "string"
  >module.exports.bothBefore = 'string' : "string"
 ->module.exports.bothBefore : number | "string"
 ->module.exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }
@@ -86,19 +83,16 @@
 ->module.exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }
 ->module : { exports: { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }; }
 ->exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }
++>module.exports = {    justExport: 1,    bothBefore: 2,    bothAfter: 3,} : { justExport: number; bothBefore: number; bothAfter: number; }
++>module.exports : any
++>module : { exports: any; }
++>exports : any
  >{    justExport: 1,    bothBefore: 2,    bothAfter: 3,} : { justExport: number; bothBefore: number; bothAfter: number; }
  
      justExport: 1,
-@@= skipped -26, +24 lines =@@
-     bothAfter: 3,
- >bothAfter : number
- >3 : 3
-+>bothAfter : number
-+>3 : 3
+@@= skipped -28, +28 lines =@@
  }
  module.exports.bothAfter = 'string'
-+>bothAfter : any
-+>'string' : "string"
  >module.exports.bothAfter = 'string' : "string"
 ->module.exports.bothAfter : number | "string"
 ->module.exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }
@@ -113,8 +107,6 @@
  >'string' : "string"
  
  module.exports.justProperty = 'string'
-+>justProperty : any
-+>'string' : "string"
  >module.exports.justProperty = 'string' : "string"
 ->module.exports.justProperty : "string"
 ->module.exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }

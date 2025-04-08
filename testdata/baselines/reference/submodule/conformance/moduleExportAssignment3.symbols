@@ -12,7 +12,6 @@ mod() // should be callable from here too
 === mod.js ===
 module.exports = function x() { }
 >x : Symbol(x, Decl(mod.js, 0, 16))
->x : Symbol(x, Decl(mod.js, 0, 16))
 
 module.exports() // should be callable
 

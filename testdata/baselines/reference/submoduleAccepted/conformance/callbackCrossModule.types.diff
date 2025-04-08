@@ -9,7 +9,6 @@
 ->module : { exports: typeof C; }
 ->exports : typeof C
 ->C : typeof C
-+>C : () => void
 +>module.exports = C : () => void
 +>module.exports : any
 +>module : any
@@ -28,7 +27,7 @@
  >p : any
  >1 : 1
  }
-@@= skipped -20, +21 lines =@@
+@@= skipped -20, +20 lines =@@
  === use.js ===
  /** @param {import('./mod1').Con} k */
  function f(k) {

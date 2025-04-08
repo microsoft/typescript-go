@@ -34,5 +34,4 @@ module.exports[_str] = "ok";
 
 module.exports.S = _sym;
 >_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport2.js, 1, 5))
->_sym : Symbol(_sym, Decl(lateBoundAssignmentDeclarationSupport2.js, 1, 5))
 
