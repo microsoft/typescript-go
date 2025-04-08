@@ -1,10 +1,6 @@
 --- old.jsxFactoryQualifiedName.js
 +++ new.jsxFactoryQualifiedName.js
-@@= skipped -67, +67 lines =@@
- function toCamelCase(text) {
-     return text[0].toLowerCase() + text.substring(1);
- }
--//# sourceMappingURL=Element.js.map
+@@= skipped -71, +71 lines =@@
  //// [test.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
@@ -20,4 +16,3 @@
          ];
      }
  }
--//# sourceMappingURL=test.js.map

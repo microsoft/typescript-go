@@ -17,7 +17,7 @@ func TestSourceMapGenerator_Empty(t *testing.T) {
 		SourceRoot:     "/",
 		Sources:        []string{},
 		Mappings:       "",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }
@@ -26,7 +26,7 @@ func TestSourceMapGenerator_Empty_Serialized(t *testing.T) {
 	t.Parallel()
 	gen := NewGenerator("main.js", "/", "/", tspath.ComparePathsOptions{})
 	actual := gen.String()
-	expected := `{"version":3,"file":"main.js","sourceRoot":"/","sources":[],"mappings":""}`
+	expected := `{"version":3,"file":"main.js","sourceRoot":"/","sources":[],"names":[],"mappings":""}`
 	assert.Equal(t, actual, expected)
 }
 
@@ -42,7 +42,7 @@ func TestSourceMapGenerator_AddSource(t *testing.T) {
 		SourceRoot:     "/",
 		Sources:        []string{"main.ts"},
 		Mappings:       "",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }
@@ -61,7 +61,7 @@ func TestSourceMapGenerator_SetSourceContent(t *testing.T) {
 		SourceRoot:     "/",
 		Sources:        []string{"main.ts"},
 		Mappings:       "",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: []*string{&sourceContent},
 	})
 }
@@ -81,7 +81,7 @@ func TestSourceMapGenerator_SetSourceContent_ForSecondSourceOnly(t *testing.T) {
 		SourceRoot:     "/",
 		Sources:        []string{"skipped.ts", "main.ts"},
 		Mappings:       "",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: []*string{nil, &sourceContent},
 	})
 }
@@ -101,7 +101,7 @@ func TestSourceMapGenerator_SetSourceContent_ForSecondSourceOnly_Serialized(t *t
 	sourceContent := "foo"
 	assert.NilError(t, gen.SetSourceContent(sourceIndex, sourceContent))
 	actual := gen.String()
-	expected := `{"version":3,"file":"main.js","sourceRoot":"/","sources":["skipped.ts","main.ts"],"mappings":"","sourcesContent":[null,"foo"]}`
+	expected := `{"version":3,"file":"main.js","sourceRoot":"/","sources":["skipped.ts","main.ts"],"names":[],"mappings":"","sourcesContent":[null,"foo"]}`
 	assert.Equal(t, actual, expected)
 }
 
@@ -133,7 +133,7 @@ func TestSourceMapGenerator_AddGeneratedMapping(t *testing.T) {
 		SourceRoot:     "/",
 		Sources:        []string{},
 		Mappings:       "A",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }
@@ -149,7 +149,7 @@ func TestSourceMapGenerator_AddGeneratedMapping_OnSecondLineOnly(t *testing.T) {
 		SourceRoot:     "/",
 		Sources:        []string{},
 		Mappings:       ";A",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }
@@ -166,7 +166,7 @@ func TestSourceMapGenerator_AddSourceMapping(t *testing.T) {
 		SourceRoot:     "/",
 		Sources:        []string{"main.ts"},
 		Mappings:       "AAAA",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }
@@ -184,7 +184,7 @@ func TestSourceMapGenerator_AddSourceMapping_NextGeneratedCharacter(t *testing.T
 		SourceRoot:     "/",
 		Sources:        []string{"main.ts"},
 		Mappings:       "AAAA,CAAA",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }
@@ -202,7 +202,7 @@ func TestSourceMapGenerator_AddSourceMapping_NextGeneratedAndSourceCharacter(t *
 		SourceRoot:     "/",
 		Sources:        []string{"main.ts"},
 		Mappings:       "AAAA,CAAC",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }
@@ -220,7 +220,7 @@ func TestSourceMapGenerator_AddSourceMapping_NextGeneratedLine(t *testing.T) {
 		SourceRoot:     "/",
 		Sources:        []string{"main.ts"},
 		Mappings:       "AAAA;AAAA",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }
@@ -238,7 +238,7 @@ func TestSourceMapGenerator_AddSourceMapping_PreviousSourceCharacter(t *testing.
 		SourceRoot:     "/",
 		Sources:        []string{"main.ts"},
 		Mappings:       "AAAC,CAAD",
-		Names:          nil,
+		Names:          []string{},
 		SourcesContent: nil,
 	})
 }

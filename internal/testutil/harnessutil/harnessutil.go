@@ -721,6 +721,20 @@ func (c *CompilationResult) GetOutput(path string, kind string /*"js" | "dts" | 
 	return nil
 }
 
+func (c *CompilationResult) GetSourceMapRecord() string {
+	if c.Result != nil && len(c.Result.SourceMaps) > 0 {
+		return getSourceMapRecord(
+			c.Result.SourceMaps,
+			c.Program,
+			core.Filter(slices.Collect(c.Js.Values()), func(d *TestFile) bool {
+				return !tspath.FileExtensionIs(d.UnitName, tspath.ExtensionJson)
+			}),
+			slices.Collect(c.Dts.Values()),
+		)
+	}
+	return ""
+}
+
 func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {
 	programOptions := compiler.ProgramOptions{
 		RootFiles:      rootFiles,

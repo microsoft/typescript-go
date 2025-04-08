@@ -28,6 +28,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type PrinterOptions struct {
@@ -786,6 +787,23 @@ func (p *Printer) shouldEmitOnNewLine(node *ast.Node, format ListFormat) bool {
 	return format&LFPreferNewLine != 0
 }
 
+func (p *Printer) shouldEmitSourceMaps(node *ast.Node) bool {
+	return !p.sourceMapsDisabled &&
+		p.sourceMapSource != nil &&
+		!ast.IsSourceFile(node) &&
+		!ast.IsInJsonFile(node)
+}
+
+func (p *Printer) shouldEmitTokenSourceMaps(token ast.Kind, pos int, contextNode *ast.Node, flags tokenEmitFlags) bool {
+	// We don't emit source positions for most tokens as it tends to be quite noisy, however
+	// we need to emit source positions for open and close braces so that tools like istanbul
+	// can map branches for code coverage. However, we still omit brace source positions when
+	// the output is a declaration file.
+	return flags&tefNoSourceMaps == 0 &&
+		p.shouldEmitSourceMaps(contextNode) &&
+		!p.Options.OmitBraceSourceMapPositions && (token == ast.KindOpenBraceToken || token == ast.KindCloseBraceToken)
+}
+
 func (p *Printer) shouldEmitLeadingComments(node *ast.Node) bool {
 	return p.emitContext.EmitFlags(node)&EFNoLeadingComments == 0
 }
@@ -893,35 +911,47 @@ func (p *Printer) emitTokenEx(token ast.Kind, pos int, writeKind WriteKind, cont
 }
 
 func (p *Printer) emitKeywordNode(node *ast.TokenNode) {
+	p.emitKeywordNodeEx(node, tefNone)
+}
+
+func (p *Printer) emitKeywordNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 	if node == nil {
 		return
 	}
 
-	state := p.enterTokenNode(node)
+	state := p.enterTokenNode(node, flags)
 	p.writeTokenText(node.Kind, WriteKindKeyword, node.Pos())
 	p.exitTokenNode(node, state)
 }
 
 func (p *Printer) emitPunctuationNode(node *ast.TokenNode) {
+	p.emitPunctuationNodeEx(node, tefNone)
+}
+
+func (p *Printer) emitPunctuationNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 	if node == nil {
 		return
 	}
 
-	state := p.enterTokenNode(node)
+	state := p.enterTokenNode(node, flags)
 	p.writeTokenText(node.Kind, WriteKindPunctuation, node.Pos())
 	p.exitTokenNode(node, state)
 }
 
 func (p *Printer) emitTokenNode(node *ast.TokenNode) {
+	p.emitTokenNodeEx(node, tefNone)
+}
+
+func (p *Printer) emitTokenNodeEx(node *ast.TokenNode, flags tokenEmitFlags) {
 	if node == nil {
 		return
 	}
 
 	switch {
 	case ast.IsKeywordKind(node.Kind):
-		p.emitKeywordNode(node)
+		p.emitKeywordNodeEx(node, flags)
 	case ast.IsPunctuationKind(node.Kind):
-		p.emitPunctuationNode(node)
+		p.emitPunctuationNodeEx(node, flags)
 	default:
 		panic(fmt.Sprintf("unexpected TokenNode: %v", node.Kind))
 	}
@@ -2359,6 +2389,7 @@ func (p *Printer) emitPropertyAccessExpression(node *ast.PropertyAccessExpressio
 	if token == nil {
 		token = p.emitContext.Factory.NewToken(ast.KindDotToken)
 		token.Loc = core.NewTextRange(node.Expression.End(), node.Name().Pos())
+		p.emitContext.AddEmitFlags(token, EFNoSourceMap)
 	}
 	linesBeforeDot := p.getLinesBetweenNodes(node.AsNode(), node.Expression, token)
 	p.writeLineRepeat(linesBeforeDot)
@@ -2708,7 +2739,7 @@ func (p *Printer) emitBinaryExpression(node *ast.BinaryExpression) {
 	linesBeforeOperator := p.getLinesBetweenNodes(node.AsNode(), node.Left, node.OperatorToken)
 	linesAfterOperator := p.getLinesBetweenNodes(node.AsNode(), node.OperatorToken, node.Right)
 	p.writeLinesAndIndent(linesBeforeOperator, node.OperatorToken.Kind != ast.KindCommaToken /*writeSpaceIfNotIndenting*/)
-	p.emitTokenNode(node.OperatorToken)
+	p.emitTokenNodeEx(node.OperatorToken, tefNoSourceMaps)
 	p.writeLinesAndIndent(linesAfterOperator, true /*writeSpaceIfNotIndenting*/) // Binary operators should have a space before the comment starts
 	p.emitExpression(node.Right, rightPrec)
 	p.decreaseIndentIf(linesAfterOperator > 0)
@@ -4671,6 +4702,7 @@ func (p *Printer) setSourceFile(sourceFile *ast.SourceFile) {
 			p.uniqueHelperNames = make(map[string]*ast.IdentifierNode)
 		}
 		p.externalHelpersModuleName = p.emitContext.GetExternalHelpersModuleName(sourceFile)
+		p.setSourceMapSource(sourceFile)
 	}
 
 	// !!!
@@ -4680,6 +4712,15 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	savedCurrentSourceFile := p.currentSourceFile
 	savedWriter := p.writer
 	savedUniqueHelperNames := p.uniqueHelperNames
+	savedSourceMapsDisabled := p.sourceMapsDisabled
+	savedSourceMapGenerator := p.sourceMapGenerator
+	savedSourceMapSource := p.sourceMapSource
+	savedSourceMapSourceIndex := p.sourceMapSourceIndex
+
+	p.sourceMapsDisabled = sourceMapGenerator == nil
+	p.sourceMapGenerator = sourceMapGenerator
+	p.sourceMapSource = nil
+	p.sourceMapSourceIndex = -1
 
 	p.setSourceFile(sourceFile)
 	p.writer = writer
@@ -4863,6 +4904,10 @@ func (p *Printer) Write(node *ast.Node, sourceFile *ast.SourceFile, writer EmitT
 	p.currentSourceFile = savedCurrentSourceFile
 	p.writer = savedWriter
 	p.uniqueHelperNames = savedUniqueHelperNames
+	p.sourceMapsDisabled = savedSourceMapsDisabled
+	p.sourceMapGenerator = savedSourceMapGenerator
+	p.sourceMapSource = savedSourceMapSource
+	p.sourceMapSourceIndex = savedSourceMapSourceIndex
 }
 
 //
@@ -5271,17 +5316,116 @@ func (p *Printer) isTripleSlashComment(comment ast.CommentRange) bool {
 // Source Maps
 //
 
-func (p *Printer) emitPos(pos int) {
-	// !!!
+func (p *Printer) setSourceMapSource(source sourcemap.Source) {
+	if p.sourceMapsDisabled {
+		return
+	}
+
+	p.sourceMapSource = source
+	if p.mostRecentSourceMapSource == source {
+		p.sourceMapSourceIndex = p.mostRecentSourceMapSourceIndex
+		return
+	}
+
+	p.sourceMapSourceIsJson = tspath.FileExtensionIs(source.FileName(), tspath.ExtensionJson)
+	if p.sourceMapSourceIsJson {
+		return
+	}
+
+	p.sourceMapSourceIndex = p.sourceMapGenerator.AddSource(source.FileName())
+	if p.Options.InlineSources {
+		if err := p.sourceMapGenerator.SetSourceContent(p.sourceMapSourceIndex, source.Text()); err != nil {
+			panic(err)
+		}
+	}
+
+	p.mostRecentSourceMapSource = source
+	p.mostRecentSourceMapSourceIndex = p.sourceMapSourceIndex
 }
 
-func (p *Printer) emitSourcePos(pos int) {
-	// !!!
+func (p *Printer) emitPos(pos int) {
+	if p.sourceMapsDisabled || p.sourceMapSource == nil || p.sourceMapGenerator == nil || p.sourceMapSourceIsJson || ast.PositionIsSynthesized(pos) {
+		return
+	}
+
+	sourceLine, sourceCharacter := scanner.GetLineAndCharacterOfPosition(p.sourceMapSource, pos)
+	if err := p.sourceMapGenerator.AddSourceMapping(
+		p.writer.GetLine(),
+		p.writer.GetColumn(),
+		p.sourceMapSourceIndex,
+		sourceLine,
+		sourceCharacter,
+	); err != nil {
+		panic(err)
+	}
 }
+
+// TODO: Support emitting nameIndex for source maps
+////func (p *Printer) emitPosName(pos int, name string) {
+////	if p.sourceMapsDisabled || p.sourceMapSource == nil || p.sourceMapGenerator == nil || p.sourceMapSourceIsJson || ast.PositionIsSynthesized(pos) {
+////		return
+////	}
+////
+////	sourceLine, sourceCharacter := scanner.GetLineAndCharacterOfPosition(p.sourceMapSource, pos)
+////	nameIndex := p.sourceMapGenerator.AddName(name)
+////	if err := p.sourceMapGenerator.AddNamedSourceMapping(
+////		p.writer.GetLine(),
+////		p.writer.GetColumn(),
+////		p.sourceMapSourceIndex,
+////		sourceLine,
+////		sourceCharacter,
+////		nameIndex,
+////	); err != nil {
+////		panic(err)
+////	}
+////}
+
+func (p *Printer) emitSourcePos(source sourcemap.Source, pos int) {
+	if source != p.sourceMapSource {
+		savedSourceMapSource := p.sourceMapSource
+		savedSourceMapSourceIndex := p.sourceMapSourceIndex
+		p.setSourceMapSource(source)
+		p.emitPos(pos)
+		p.sourceMapSource = savedSourceMapSource
+		p.sourceMapSourceIndex = savedSourceMapSourceIndex
+	} else {
+		p.emitPos(pos)
+	}
+}
+
+// TODO: Support emitting nameIndex for source maps
+////func (p *Printer) emitSourcePosName(source sourcemap.Source, pos int, name string) {
+////	if source != p.sourceMapSource {
+////		savedSourceMapSource := p.sourceMapSource
+////		savedSourceMapSourceIndex := p.sourceMapSourceIndex
+////		p.setSourceMapSource(source)
+////		p.emitPosName(pos, name)
+////		p.sourceMapSource = savedSourceMapSource
+////		p.sourceMapSourceIndex = savedSourceMapSourceIndex
+////	} else {
+////		p.emitPosName(pos, name)
+////	}
+////}
 
 func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
-	return nil
-	// if !p.shouldEmitSourceMaps(node) {
+	if !p.shouldEmitSourceMaps(node) {
+		return nil
+	}
+
+	emitFlags := p.emitContext.EmitFlags(node)
+	loc := p.emitContext.SourceMapRange(node)
+
+	if !ast.IsNotEmittedStatement(node) &&
+		emitFlags&EFNoLeadingSourceMap == 0 &&
+		!ast.PositionIsSynthesized(loc.Pos()) {
+		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos())) // !!! support SourceMapRange from Strada?
+	}
+
+	if emitFlags&EFNoNestedSourceMaps != 0 {
+		p.sourceMapsDisabled = true
+	}
+
+	return &sourceMapState{emitFlags, loc, false}
 }
 
 func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceMapState) {
@@ -5289,8 +5433,56 @@ func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceM
 		return
 	}
 
+	emitFlags := previousState.emitFlags
+	loc := previousState.sourceMapRange
+
+	if emitFlags&EFNoNestedSourceMaps != 0 {
+		p.sourceMapsDisabled = false
+	}
+
+	if !ast.IsNotEmittedStatement(node) &&
+		emitFlags&EFNoTrailingSourceMap == 0 &&
+		!ast.PositionIsSynthesized(loc.End()) {
+		p.emitSourcePos(p.sourceMapSource, loc.End()) // !!! support SourceMapRange from Strada?
+	}
 }
 
+func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode *ast.Node, flags tokenEmitFlags) *sourceMapState {
+	if !p.shouldEmitTokenSourceMaps(token, pos, contextNode, flags) {
+		return nil
+	}
+
+	emitFlags := p.emitContext.EmitFlags(contextNode)
+	loc, hasLoc := p.emitContext.TokenSourceMapRange(contextNode, token)
+	if emitFlags&EFNoTokenLeadingSourceMaps == 0 {
+		if hasLoc {
+			pos = loc.Pos()
+		}
+		if pos >= 0 {
+			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
+		}
+	}
+
+	return &sourceMapState{emitFlags, loc, hasLoc}
+}
+
+func (p *Printer) emitSourceMapsAfterToken(token ast.Kind, pos int, contextNode *ast.Node, previousState *sourceMapState) {
+	if previousState == nil {
+		return
+	}
+
+	emitFlags := previousState.emitFlags
+	loc := previousState.sourceMapRange
+	hasLoc := previousState.hasTokenSourceMapRange
+	if emitFlags&EFNoTokenTrailingSourceMaps == 0 {
+		if hasLoc {
+			pos = loc.End()
+		}
+		if pos >= 0 {
+			p.emitSourcePos(p.sourceMapSource, pos) // !!! support SourceMapRange from Strada?
+		}
+	}
+}
 
 //
 // Name Generation
@@ -5463,15 +5655,19 @@ func (p *Printer) exitNode(node *ast.Node, previousState printerState) {
 	}
 }
 
-func (p *Printer) enterTokenNode(node *ast.Node) printerState {
+func (p *Printer) enterTokenNode(node *ast.Node, flags tokenEmitFlags) printerState {
 	state := printerState{}
 
 	if p.OnBeforeEmitToken != nil {
 		p.OnBeforeEmitToken(node)
 	}
 
-	state.commentState = p.emitCommentsBeforeNode(node)
-	state.sourceMapState = p.emitSourceMapsBeforeNode(node)
+	if flags&tefNoComments == 0 {
+		state.commentState = p.emitCommentsBeforeNode(node)
+	}
+	if flags&tefNoSourceMaps == 0 {
+		state.sourceMapState = p.emitSourceMapsBeforeNode(node)
+	}
 	return state
 }
 
@@ -5497,10 +5693,12 @@ const (
 func (p *Printer) enterToken(token ast.Kind, pos int, contextNode *ast.Node, flags tokenEmitFlags) (printerState, int) {
 	state := printerState{}
 	state.commentState, pos = p.emitCommentsBeforeToken(token, pos, contextNode, flags)
+	state.sourceMapState = p.emitSourceMapsBeforeToken(token, pos, contextNode, flags)
 	return state, pos
 }
 
 func (p *Printer) exitToken(token ast.Kind, pos int, contextNode *ast.Node, previousState printerState) {
+	p.emitSourceMapsAfterToken(token, pos, contextNode, previousState.sourceMapState)
 	p.emitCommentsAfterToken(token, pos, contextNode, previousState.commentState)
 }
 

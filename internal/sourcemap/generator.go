@@ -53,9 +53,9 @@ type Generator struct {
 type RawSourceMap struct {
 	Version        int       `json:"version"`
 	File           string    `json:"file"`
-	SourceRoot     string    `json:"sourceRoot,omitempty"`
+	SourceRoot     string    `json:"sourceRoot"`
 	Sources        []string  `json:"sources"`
-	Names          []string  `json:"names,omitempty"`
+	Names          []string  `json:"names"`
 	Mappings       string    `json:"mappings"`
 	SourcesContent []*string `json:"sourcesContent,omitempty"`
 }
@@ -318,12 +318,16 @@ func (gen *Generator) RawSourceMap() *RawSourceMap {
 	if sources == nil {
 		sources = []string{}
 	}
+	names := slices.Clone(gen.names)
+	if names == nil {
+		names = []string{}
+	}
 	return &RawSourceMap{
 		Version:        3,
 		File:           gen.file,
 		SourceRoot:     gen.sourceRoot,
 		Sources:        sources,
-		Names:          slices.Clone(gen.names),
+		Names:          names,
 		Mappings:       gen.mappings.String(),
 		SourcesContent: slices.Clone(gen.sourcesContent),
 	}
