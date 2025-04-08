@@ -799,7 +799,7 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 			}
 			symbol := b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsValueModule, ast.SymbolFlagsValueModuleExcludes)
 			if pattern.StarIndex >= 0 {
-				b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
+				b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, &ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
 			}
 		}
 	} else {
@@ -1113,7 +1113,7 @@ func (b *Binder) bindBlockScopedDeclaration(node *ast.Node, symbolFlags ast.Symb
 	case ast.KindModuleDeclaration:
 		b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	case ast.KindSourceFile:
-		if ast.IsExternalOrCommonJsModule(b.container.AsSourceFile()) {
+		if ast.IsExternalOrCommonJSModule(b.container.AsSourceFile()) {
 			b.declareModuleMember(node, symbolFlags, symbolExcludes)
 			break
 		}
@@ -1156,7 +1156,7 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 		}
 	}
 	if ast.IsSourceFile(container) {
-		local := container.AsSourceFile().JsGlobalAugmentations[name]
+		local := container.AsSourceFile().JSGlobalAugmentations[name]
 		if local != nil {
 			return local
 		}

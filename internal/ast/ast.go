@@ -225,7 +225,11 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 }
 
 func (n *Node) Symbol() *Symbol {
-	return n.DeclarationData().Symbol
+	data := n.DeclarationData()
+	if data != nil {
+		return data.Symbol
+	}
+	return nil
 }
 
 func (n *Node) LocalSymbol() *Symbol {
@@ -273,7 +277,7 @@ func (n *Node) Text() string {
 	case KindTemplateTail:
 		return n.AsTemplateTail().Text
 	case KindJsxNamespacedName:
-		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().Name().Text()
+		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().name.Text()
 	case KindRegularExpressionLiteral:
 		return n.AsRegularExpressionLiteral().Text
 	}
@@ -348,6 +352,10 @@ func (n *Node) Expression() *Node {
 		return n.AsExportAssignment().Expression
 	case KindDecorator:
 		return n.AsDecorator().Expression
+	case KindJsxExpression:
+		return n.AsJsxExpression().Expression
+	case KindJsxSpreadAttribute:
+		return n.AsJsxSpreadAttribute().Expression
 	}
 	panic("Unhandled case in Node.Expression")
 }
@@ -708,6 +716,26 @@ func (n *Node) Label() *Node {
 		return n.AsContinueStatement().Label
 	}
 	panic("Unhandled case in Node.Label: " + n.Kind.String())
+}
+
+func (n *Node) Attributes() *Node {
+	switch n.Kind {
+	case KindJsxOpeningElement:
+		return n.AsJsxOpeningElement().Attributes
+	case KindJsxSelfClosingElement:
+		return n.AsJsxSelfClosingElement().Attributes
+	}
+	panic("Unhandled case in Node.Attributes: " + n.Kind.String())
+}
+
+func (n *Node) Children() *NodeList {
+	switch n.Kind {
+	case KindJsxElement:
+		return n.AsJsxElement().Children
+	case KindJsxFragment:
+		return n.AsJsxFragment().Children
+	}
+	panic("Unhandled case in Node.Children: " + n.Kind.String())
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -7920,6 +7948,10 @@ func (node *JsxElement) computeSubtreeFacts() SubtreeFacts {
 		SubtreeContainsJsx
 }
 
+func IsJsxElement(node *Node) bool {
+	return node.Kind == KindJsxElement
+}
+
 // JsxAttributes
 type JsxAttributes struct {
 	ExpressionBase
@@ -8275,6 +8307,10 @@ func (node *JsxSpreadAttribute) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsJsx
 }
 
+func IsJsxSpreadAttribute(node *Node) bool {
+	return node.Kind == KindJsxSpreadAttribute
+}
+
 // JsxClosingElement
 
 type JsxClosingElement struct {
@@ -8353,6 +8389,10 @@ func (node *JsxExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsJsx
 }
 
+func IsJsxExpression(node *Node) bool {
+	return node.Kind == KindJsxExpression
+}
+
 // JsxText
 
 type JsxText struct {
@@ -8375,6 +8415,10 @@ func (node *JsxText) Clone(f *NodeFactory) *Node {
 
 func (node *JsxText) computeSubtreeFacts() SubtreeFacts {
 	return SubtreeContainsJsx
+}
+
+func IsJsxText(node *Node) bool {
+	return node.Kind == KindJsxText
 }
 
 // SyntaxList
@@ -9498,35 +9542,35 @@ func (node *JSDocTypedefTag) Clone(f *NodeFactory) *Node {
 type JSDocTypeLiteral struct {
 	TypeNodeBase
 	DeclarationBase
-	JsDocPropertyTags []*Node
+	JSDocPropertyTags []*Node
 	IsArrayType       bool
 }
 
-func (f *NodeFactory) NewJSDocTypeLiteral(jsDocPropertyTags []*Node, isArrayType bool) *Node {
+func (f *NodeFactory) NewJSDocTypeLiteral(jsdocPropertyTags []*Node, isArrayType bool) *Node {
 	data := &JSDocTypeLiteral{}
-	data.JsDocPropertyTags = jsDocPropertyTags
+	data.JSDocPropertyTags = jsdocPropertyTags
 	data.IsArrayType = isArrayType
 	return f.newNode(KindJSDocTypeLiteral, data)
 }
 
-func (f *NodeFactory) UpdateJSDocTypeLiteral(node *JSDocTypeLiteral, jsDocPropertyTags []*Node, isArrayType bool) *Node {
-	if !core.Same(jsDocPropertyTags, node.JsDocPropertyTags) || isArrayType != node.IsArrayType {
-		return updateNode(f.NewJSDocTypeLiteral(jsDocPropertyTags, isArrayType), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateJSDocTypeLiteral(node *JSDocTypeLiteral, jsdocPropertyTags []*Node, isArrayType bool) *Node {
+	if !core.Same(jsdocPropertyTags, node.JSDocPropertyTags) || isArrayType != node.IsArrayType {
+		return updateNode(f.NewJSDocTypeLiteral(jsdocPropertyTags, isArrayType), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *JSDocTypeLiteral) ForEachChild(v Visitor) bool {
-	return visitNodes(v, node.JsDocPropertyTags)
+	return visitNodes(v, node.JSDocPropertyTags)
 }
 
 func (node *JSDocTypeLiteral) VisitEachChild(v *NodeVisitor) *Node {
-	jsdocPropertyTags := core.SameMap(node.JsDocPropertyTags, func(n *Node) *Node { return v.visitNode(n) })
+	jsdocPropertyTags := core.SameMap(node.JSDocPropertyTags, func(n *Node) *Node { return v.visitNode(n) })
 	return v.Factory.UpdateJSDocTypeLiteral(node, jsdocPropertyTags, node.IsArrayType)
 }
 
 func (node *JSDocTypeLiteral) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTypeLiteral(node.JsDocPropertyTags, node.IsArrayType), node.AsNode(), f.hooks)
+	return cloneNode(f.NewJSDocTypeLiteral(node.JSDocPropertyTags, node.IsArrayType), node.AsNode(), f.hooks)
 }
 
 // JSDocSignature
@@ -9626,6 +9670,11 @@ type SourceFileMetaData struct {
 	ImpliedNodeFormat core.ResolutionMode
 }
 
+type CheckJsDirective struct {
+	Enabled bool
+	Range   CommentRange
+}
+
 type SourceFile struct {
 	NodeBase
 	DeclarationBase
@@ -9660,8 +9709,8 @@ type SourceFile struct {
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
+	CheckJsDirective            *CheckJsDirective
 	NodeCount                   int
-	TextLength                  int
 	TextCount                   int
 
 	// Fields set by binder
@@ -9673,7 +9722,7 @@ type SourceFile struct {
 	EndFlowNode               *FlowNode
 	SymbolCount               int
 	ClassifiableNames         core.Set[string]
-	PatternAmbientModules     []PatternAmbientModule
+	PatternAmbientModules     []*PatternAmbientModule
 
 	// Fields set by LineMap
 
@@ -9691,9 +9740,9 @@ type SourceFile struct {
 
 	// !!!
 
-	CommonJsModuleIndicator *Node
+	CommonJSModuleIndicator *Node
 	ExternalModuleIndicator *Node
-	JsGlobalAugmentations   SymbolTable
+	JSGlobalAugmentations   SymbolTable
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Path, statements *NodeList) *Node {
@@ -9775,9 +9824,9 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.ReferencedFiles = other.ReferencedFiles
 	node.TypeReferenceDirectives = other.TypeReferenceDirectives
 	node.LibReferenceDirectives = other.LibReferenceDirectives
-	node.CommonJsModuleIndicator = other.CommonJsModuleIndicator
+	node.CommonJSModuleIndicator = other.CommonJSModuleIndicator
 	node.ExternalModuleIndicator = other.ExternalModuleIndicator
-	node.JsGlobalAugmentations = other.JsGlobalAugmentations
+	node.JSGlobalAugmentations = other.JSGlobalAugmentations
 	node.Flags |= other.Flags
 }
 
@@ -9863,15 +9912,15 @@ func IsSourceFile(node *Node) bool {
 
 type CommentRange struct {
 	core.TextRange
-	HasTrailingNewLine bool
 	Kind               Kind
+	HasTrailingNewLine bool
 }
 
 func (f *NodeFactory) NewCommentRange(kind Kind, pos int, end int, hasTrailingNewLine bool) CommentRange {
 	return CommentRange{
 		TextRange:          core.NewTextRange(pos, end),
-		HasTrailingNewLine: hasTrailingNewLine,
 		Kind:               kind,
+		HasTrailingNewLine: hasTrailingNewLine,
 	}
 }
 
@@ -9889,9 +9938,9 @@ type PragmaArgument struct {
 }
 
 type Pragma struct {
-	Name      string
-	Args      map[string]PragmaArgument
-	ArgsRange CommentRange
+	CommentRange
+	Name string
+	Args map[string]PragmaArgument
 }
 
 type PragmaKindFlags = uint8
