@@ -580,6 +580,7 @@ type EmitResult struct {
 type SourceMapEmitResult struct {
 	InputSourceFileNames []string // Input source file (which one can use on program to get the file), 1:1 mapping with the sourceMap.sources list
 	SourceMap            *sourcemap.RawSourceMap
+	GeneratedFile        string
 }
 
 func (p *Program) Emit(options EmitOptions) *EmitResult {

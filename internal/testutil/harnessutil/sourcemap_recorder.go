@@ -7,12 +7,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type writerAggregator struct {
@@ -354,44 +351,4 @@ func (sw *recordedSpanWriter) writeRecordedSpans() {
 
 		w.sourceMapRecorder.WriteLine("---")
 	}
-}
-
-func getSourceMapRecord(sourceMapDataList []*compiler.SourceMapEmitResult, program *compiler.Program, jsFiles []*TestFile, declarationFiles []*TestFile) string {
-	var sourceMapRecorder writerAggregator
-	for i, sourceMapData := range sourceMapDataList {
-		var prevSourceFile *ast.SourceFile
-		var currentFile *TestFile
-		if tspath.IsDeclarationFileName(sourceMapData.SourceMap.File) {
-			if len(sourceMapDataList) > len(jsFiles) {
-				currentFile = declarationFiles[i>>1] // When both kinds of source map are present, they alternate js/dts
-			} else {
-				currentFile = declarationFiles[i]
-			}
-		} else {
-			if len(sourceMapDataList) > len(jsFiles) {
-				currentFile = jsFiles[i>>1]
-			} else {
-				currentFile = jsFiles[i]
-			}
-		}
-
-		sourceMapSpanWriter := newSourceMapSpanWriter(&sourceMapRecorder, sourceMapData.SourceMap, currentFile)
-		mapper := sourcemap.DecodeMappings(sourceMapData.SourceMap.Mappings)
-		for decodedSourceMapping := range mapper.Values() {
-			var currentSourceFile *ast.SourceFile
-			if decodedSourceMapping.IsSourceMapping() {
-				currentSourceFile = program.GetSourceFile(sourceMapData.InputSourceFileNames[decodedSourceMapping.SourceIndex])
-			}
-			if currentSourceFile != prevSourceFile {
-				if currentSourceFile != nil {
-					sourceMapSpanWriter.recordNewSourceFileSpan(decodedSourceMapping, currentSourceFile.Text())
-				}
-				prevSourceFile = currentSourceFile
-			} else {
-				sourceMapSpanWriter.recordSourceMapSpan(decodedSourceMapping)
-			}
-		}
-		sourceMapSpanWriter.close()
-	}
-	return sourceMapRecorder.String()
 }

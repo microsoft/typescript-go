@@ -22,6 +22,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -741,17 +742,40 @@ func (c *CompilationResult) GetOutput(path string, kind string /*"js" | "dts" | 
 }
 
 func (c *CompilationResult) GetSourceMapRecord() string {
-	if c.Result != nil && len(c.Result.SourceMaps) > 0 {
-		return getSourceMapRecord(
-			c.Result.SourceMaps,
-			c.Program,
-			core.Filter(slices.Collect(c.JS.Values()), func(d *TestFile) bool {
-				return !tspath.FileExtensionIs(d.UnitName, tspath.ExtensionJson)
-			}),
-			slices.Collect(c.DTS.Values()),
-		)
+	if c.Result == nil || len(c.Result.SourceMaps) == 0 {
+		return ""
 	}
-	return ""
+
+	var sourceMapRecorder writerAggregator
+	for _, sourceMapData := range c.Result.SourceMaps {
+		var prevSourceFile *ast.SourceFile
+		var currentFile *TestFile
+
+		if tspath.IsDeclarationFileName(sourceMapData.GeneratedFile) {
+			currentFile = c.DTS.GetOrZero(sourceMapData.GeneratedFile)
+		} else {
+			currentFile = c.JS.GetOrZero(sourceMapData.GeneratedFile)
+		}
+
+		sourceMapSpanWriter := newSourceMapSpanWriter(&sourceMapRecorder, sourceMapData.SourceMap, currentFile)
+		mapper := sourcemap.DecodeMappings(sourceMapData.SourceMap.Mappings)
+		for decodedSourceMapping := range mapper.Values() {
+			var currentSourceFile *ast.SourceFile
+			if decodedSourceMapping.IsSourceMapping() {
+				currentSourceFile = c.Program.GetSourceFile(sourceMapData.InputSourceFileNames[decodedSourceMapping.SourceIndex])
+			}
+			if currentSourceFile != prevSourceFile {
+				if currentSourceFile != nil {
+					sourceMapSpanWriter.recordNewSourceFileSpan(decodedSourceMapping, currentSourceFile.Text())
+				}
+				prevSourceFile = currentSourceFile
+			} else {
+				sourceMapSpanWriter.recordSourceMapSpan(decodedSourceMapping)
+			}
+		}
+		sourceMapSpanWriter.close()
+	}
+	return sourceMapRecorder.String()
 }
 
 func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {

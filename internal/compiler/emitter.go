@@ -174,6 +174,7 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 			e.sourceMapDataList = append(e.sourceMapDataList, &SourceMapEmitResult{
 				InputSourceFileNames: sourceMapGenerator.Sources(),
 				SourceMap:            sourceMapGenerator.RawSourceMap(),
+				GeneratedFile:        jsFilePath,
 			})
 		}
 
