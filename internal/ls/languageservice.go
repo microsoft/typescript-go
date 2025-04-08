@@ -17,7 +17,8 @@ type LanguageService struct {
 
 func NewLanguageService(host Host) *LanguageService {
 	return &LanguageService{
-		host: host,
+		host:       host,
+		converters: NewConverters(host.GetPositionEncoding(), host.GetScriptInfo),
 	}
 }
 

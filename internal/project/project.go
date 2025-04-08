@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -164,6 +165,11 @@ func (p *Project) GetDefaultLibraryPath() string {
 // GetScriptInfo implements ls.Host.
 func (p *Project) GetScriptInfo(fileName string) ls.ScriptInfo {
 	return p.projectService.GetScriptInfo(fileName)
+}
+
+// GetPositionEncoding implements ls.Host.
+func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
+	return p.projectService.options.PositionEncoding
 }
 
 func (p *Project) Name() string {

@@ -259,6 +259,7 @@ func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 	s.projectService = project.NewService(s, project.ServiceOptions{
 		DefaultLibraryPath: s.defaultLibraryPath,
 		Logger:             s.logger,
+		PositionEncoding:   s.positionEncoding,
 	})
 
 	s.converters = ls.NewConverters(s.positionEncoding, func(fileName string) ls.ScriptInfo {
