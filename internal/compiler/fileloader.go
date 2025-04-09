@@ -215,6 +215,10 @@ func (t *parseTask) start(loader *fileLoader) {
 
 	loader.wg.Queue(func() {
 		file := loader.parseSourceFile(t.normalizedFilePath)
+		t.file = file
+		loader.wg.Queue(func() {
+			t.metadata = loader.loadSourceFileMetaData(file.Path())
+		})
 
 		// !!! if noResolve, skip all of this
 		t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports)+len(file.ModuleAugmentations))
@@ -246,9 +250,8 @@ func (t *parseTask) start(loader *fileLoader) {
 			t.addSubTask(imp, false)
 		}
 
-		t.file = file
-		t.metadata = loader.loadSourceFileMetaData(file.Path())
 		t.resolutionsInFile = resolutionsInFile
+
 		loader.startTasks(t.subTasks)
 	})
 }
