@@ -5,7 +5,6 @@ import (
 	"iter"
 	"slices"
 	"strings"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -25,13 +24,11 @@ type fileLoader struct {
 	wg                  core.WorkGroup
 	supportedExtensions []string
 
-	rootTasks []*parseTask
+	tasksByFileName collections.SyncMap[string, *parseTask]
+	rootTasks       []*parseTask
 
 	resolvedModules     collections.SyncMap[tspath.Path, module.ModeAwareCache[*module.ResolvedModule]]
 	sourceFileMetaDatas collections.SyncMap[tspath.Path, *ast.SourceFileMetaData]
-
-	tasksByFileNameMu sync.Mutex
-	tasksByFileName   map[string]*parseTask
 }
 
 type processedFiles struct {
@@ -54,7 +51,6 @@ func processAllProgramFiles(
 		programOptions:     programOptions,
 		compilerOptions:    compilerOptions,
 		resolver:           resolver,
-		tasksByFileName:    make(map[string]*parseTask),
 		defaultLibraryPath: tspath.GetNormalizedAbsolutePath(host.DefaultLibraryPath(), host.GetCurrentDirectory()),
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
@@ -119,14 +115,12 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 
 func (p *fileLoader) startTasks(tasks []*parseTask) {
 	if len(tasks) > 0 {
-		p.tasksByFileNameMu.Lock()
-		defer p.tasksByFileNameMu.Unlock()
 		for i, task := range tasks {
-			// dedup tasks to ensure correct file order, regardless of which task would be started first
-			if existingTask, ok := p.tasksByFileName[task.normalizedFilePath]; ok {
-				tasks[i] = existingTask
+			task, loaded := p.tasksByFileName.LoadOrStore(task.normalizedFilePath, task)
+			if loaded {
+				// dedup tasks to ensure correct file order, regardless of which task would be started first
+				tasks[i] = task
 			} else {
-				p.tasksByFileName[task.normalizedFilePath] = task
 				task.start(p)
 			}
 		}
@@ -135,26 +129,27 @@ func (p *fileLoader) startTasks(tasks []*parseTask) {
 
 func (p *fileLoader) collectTasks(tasks []*parseTask) iter.Seq[*parseTask] {
 	return func(yield func(*parseTask) bool) {
-		p.collectTasksWorker(tasks, yield)
+		p.collectTasksWorker(tasks, core.Set[*parseTask]{}, yield)
 	}
 }
 
-func (p *fileLoader) collectTasksWorker(tasks []*parseTask, yield func(*parseTask) bool) bool {
+func (p *fileLoader) collectTasksWorker(tasks []*parseTask, seen core.Set[*parseTask], yield func(*parseTask) bool) bool {
 	for _, task := range tasks {
-		if _, ok := p.tasksByFileName[task.normalizedFilePath]; ok {
-			// ensure we only walk each task once
-			delete(p.tasksByFileName, task.normalizedFilePath)
+		// ensure we only walk each task once
+		if seen.Has(task) {
+			continue
+		}
+		seen.Add(task)
 
-			if len(task.subTasks) > 0 {
-				if !p.collectTasksWorker(task.subTasks, yield) {
-					return false
-				}
+		if len(task.subTasks) > 0 {
+			if !p.collectTasksWorker(task.subTasks, seen, yield) {
+				return false
 			}
+		}
 
-			if task.file != nil {
-				if !yield(task) {
-					return false
-				}
+		if task.file != nil {
+			if !yield(task) {
+				return false
 			}
 		}
 	}
