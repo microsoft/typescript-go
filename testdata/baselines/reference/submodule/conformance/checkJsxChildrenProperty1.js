@@ -27,9 +27,11 @@ let k2 =
 //// [file.jsx]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
 function Comp(p) {
     return <div>{p.b}</div>;
 }
+// OK
 let k = <Comp a={10} b="hi" children="lol"/>;
 let k1 = <Comp a={10} b="hi">
         hi hi hi!

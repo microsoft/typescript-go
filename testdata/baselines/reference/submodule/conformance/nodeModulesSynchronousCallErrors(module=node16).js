@@ -41,9 +41,13 @@ export async function h() {
     f();
 }
 //// [index.js]
-import { h } from "../index.js";
-export async function f() {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.f = f;
+// cjs format file
+const index_js_1 = require("../index.js");
+async function f() {
     const mod3 = await import("../index.js");
     const mod4 = await import("./index.js");
-    h();
+    (0, index_js_1.h)();
 }

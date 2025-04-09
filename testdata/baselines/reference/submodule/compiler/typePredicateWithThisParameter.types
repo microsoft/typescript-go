@@ -4,14 +4,10 @@
 // Repro from #15310
 
 interface Foo {
->Foo : Foo
-
     foo: string;
 >foo : string
 }
 interface Bar {
->Bar : Bar
-
     bar: string;
 >bar : string
 }
@@ -27,7 +23,7 @@ function isFoo1(object: {}): object is Foo {
 }
 
 function isFoo2(this: void, object: {}): object is Foo {
->isFoo2 : (object: {}) => object is Foo
+>isFoo2 : (this: void, object: {}) => object is Foo
 >this : void
 >object : {}
 
@@ -55,7 +51,7 @@ if (isFoo1(test)) {
 
 if (isFoo2(test)) {
 >isFoo2(test) : boolean
->isFoo2 : (object: {}) => object is Foo
+>isFoo2 : (this: void, object: {}) => object is Foo
 >test : Bar | Foo
 
     test.foo = 'hi';

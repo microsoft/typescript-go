@@ -22,10 +22,15 @@ for await (const y of []) {}
 }
 
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+// cjs format file
 const x = await 1;
-export { x };
+exports.x = x;
 for await (const y of []) { }
 //// [index.js]
+// esm format file
 const x = await 1;
 export { x };
 for await (const y of []) { }

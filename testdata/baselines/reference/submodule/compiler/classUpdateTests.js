@@ -116,6 +116,9 @@ class R {
 }
 
 //// [classUpdateTests.js]
+//
+// test codegen for instance properties
+//
 class A {
     p1 = 0;
     p2 = 0;
@@ -135,54 +138,60 @@ class C {
         this.p2 = p2;
     }
 }
+//
+// test requirements for super calls
+//
 class D {
 }
 class E extends D {
     p1 = 0;
 }
 class F extends E {
-    constructor() { }
+    constructor() { } // ERROR - super call required
 }
 class G extends D {
     p1 = 0;
-    constructor() { super(); }
+    constructor() { super(); } // NO ERROR
 }
 class H {
-    constructor() { super(); }
+    constructor() { super(); } // ERROR - no super call allowed
 }
 class I extends Object {
-    constructor() { super(); }
+    constructor() { super(); } // ERROR - no super call allowed
 }
 class J extends G {
     p1;
     constructor(p1) {
+        super(); // NO ERROR
         this.p1 = p1;
-        super();
     }
 }
 class K extends G {
     p1;
     constructor(p1) {
-        this.p1 = p1;
         var i = 0;
         super();
+        this.p1 = p1;
     }
 }
 class L extends G {
     p1;
     constructor(p1) {
+        super(); // NO ERROR
         this.p1 = p1;
-        super();
     }
 }
 class M extends G {
     p1;
     constructor(p1) {
-        this.p1 = p1;
         var i = 0;
         super();
+        this.p1 = p1;
     }
 }
+//
+// test this reference in field initializers
+//
 class N {
     p1 = 0;
     p2 = this.p1;
@@ -190,25 +199,28 @@ class N {
         this.p2 = 0;
     }
 }
+//
+// test error on property declarations within class constructors
+//
 class O {
     constructor() {
     }
-    p1 = 0;
+    p1 = 0; // ERROR
 }
 class P {
     constructor() {
     }
-    p1 = 0;
+    p1 = 0; // ERROR
 }
 class Q {
     constructor() {
     }
     this;
-    p1 = 0;
+    p1 = 0; // ERROR
 }
 class R {
     constructor() {
     }
     this;
-    p1 = 0;
+    p1 = 0; // ERROR
 }

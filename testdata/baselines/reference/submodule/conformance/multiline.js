@@ -58,13 +58,20 @@ let x = (
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.texts = void 0;
 exports.texts = [];
+/**
+ @ts-ignore */
 exports.texts.push(100);
+/**
+ @ts-expect-error */
 exports.texts.push(100);
+/**
+ @ts-expect-error */
 exports.texts.push("100");
 //// [b.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MyComponent = MyComponent;
+const React = require("react");
 function MyComponent(props) {
     return <div />;
 }

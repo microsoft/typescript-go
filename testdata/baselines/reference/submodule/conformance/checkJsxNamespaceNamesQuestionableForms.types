@@ -2,11 +2,7 @@
 
 === checkJsxNamespaceNamesQuestionableForms.tsx ===
 declare namespace JSX {
->JSX : any
-
     interface IntrinsicElements {
->IntrinsicElements : IntrinsicElements
-
         'this:b': any;
 >'this:b' : any
 
@@ -33,7 +29,7 @@ declare namespace JSX {
 ><b:c.x></b:c : any
 >b : any
 >c : any
->x : any
+>x : true
 >b : any
 >c : any
 >x> : boolean

@@ -80,6 +80,17 @@ func PositionIsSynthesized(pos int) bool {
 	return pos < 0
 }
 
+func FindLastVisibleNode(nodes []*Node) *Node {
+	fromEnd := 1
+	for fromEnd <= len(nodes) && nodes[len(nodes)-fromEnd].Flags&NodeFlagsReparsed != 0 {
+		fromEnd++
+	}
+	if fromEnd <= len(nodes) {
+		return nodes[len(nodes)-fromEnd]
+	}
+	return nil
+}
+
 func NodeKindIs(node *Node, kinds ...Kind) bool {
 	return slices.Contains(kinds, node.Kind)
 }
@@ -616,6 +627,10 @@ func IsJsxChild(node *Node) bool {
 	return false
 }
 
+func IsJsxAttributeLike(node *Node) bool {
+	return IsJsxAttribute(node) || IsJsxSpreadAttribute(node)
+}
+
 func isDeclarationStatementKind(kind Kind) bool {
 	switch kind {
 	case KindFunctionDeclaration,
@@ -623,6 +638,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindClassDeclaration,
 		KindInterfaceDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindEnumDeclaration,
 		KindModuleDeclaration,
 		KindImportDeclaration,
@@ -1444,17 +1460,17 @@ func IsExternalModule(file *SourceFile) bool {
 	return file.ExternalModuleIndicator != nil
 }
 
-func IsExternalOrCommonJsModule(file *SourceFile) bool {
-	return file.ExternalModuleIndicator != nil || file.CommonJsModuleIndicator != nil
+func IsExternalOrCommonJSModule(file *SourceFile) bool {
+	return file.ExternalModuleIndicator != nil || file.CommonJSModuleIndicator != nil
 }
 
-// TODO: Should we deprecate `IsExternalOrCommonJsModule` in favor of this function?
+// TODO: Should we deprecate `IsExternalOrCommonJSModule` in favor of this function?
 func IsEffectiveExternalModule(node *SourceFile, compilerOptions *core.CompilerOptions) bool {
-	return IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJsModuleIndicator != nil)
+	return IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJSModuleIndicator != nil)
 }
 
 func IsEffectiveExternalModuleWorker(node *SourceFile, moduleKind core.ModuleKind) bool {
-	return IsExternalModule(node) || (isCommonJSContainingModuleKind(moduleKind) && node.CommonJsModuleIndicator != nil)
+	return IsExternalModule(node) || (isCommonJSContainingModuleKind(moduleKind) && node.CommonJSModuleIndicator != nil)
 }
 
 func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
@@ -1476,7 +1492,7 @@ func IsExportNamespaceAsDefaultDeclaration(node *Node) bool {
 }
 
 func IsGlobalScopeAugmentation(node *Node) bool {
-	return node.Flags&NodeFlagsGlobalAugmentation != 0
+	return IsModuleDeclaration(node) && node.AsModuleDeclaration().Keyword == KindGlobalKeyword
 }
 
 func IsModuleAugmentationExternal(node *Node) bool {
@@ -1659,6 +1675,10 @@ func IsJsonSourceFile(file *SourceFile) bool {
 	return file.ScriptKind == core.ScriptKindJSON
 }
 
+func IsInJsonFile(node *Node) bool {
+	return node.Flags&NodeFlagsJsonFile != 0
+}
+
 func GetExternalModuleName(node *Node) *Expression {
 	switch node.Kind {
 	case KindImportDeclaration:
@@ -1814,6 +1834,8 @@ func IsPartOfTypeNode(node *Node) bool {
 		KindBooleanKeyword, KindSymbolKeyword, KindObjectKeyword, KindUndefinedKeyword, KindNullKeyword,
 		KindNeverKeyword:
 		return true
+	case KindVoidKeyword:
+		return node.Parent.Kind != KindVoidExpression
 	case KindExpressionWithTypeArguments:
 		return isPartOfTypeExpressionWithTypeArguments(node)
 	case KindTypeParameter:
@@ -1835,6 +1857,13 @@ func IsPartOfTypeNode(node *Node) bool {
 
 func isPartOfTypeNodeInParent(node *Node) bool {
 	parent := node.Parent
+	if parent.Kind == KindTypeQuery {
+		return false
+	}
+	if parent.Kind == KindImportType {
+		return !parent.AsImportTypeNode().IsTypeOf
+	}
+
 	// Do not recursively call isPartOfTypeNode on the parent. In the example:
 	//
 	//     let a: A.B.C;
@@ -1845,10 +1874,6 @@ func isPartOfTypeNodeInParent(node *Node) bool {
 		return true
 	}
 	switch parent.Kind {
-	case KindTypeQuery:
-		return false
-	case KindImportType:
-		return !parent.AsImportTypeNode().IsTypeOf
 	case KindExpressionWithTypeArguments:
 		return isPartOfTypeExpressionWithTypeArguments(parent)
 	case KindTypeParameter:
@@ -2013,6 +2038,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 	case KindTypeParameter,
 		KindInterfaceDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindTypeLiteral:
 		return SemanticMeaningType
 	case KindEnumMember, KindClassDeclaration:
@@ -2140,7 +2166,7 @@ func getModuleInstanceStateCached(node *Node, ancestors []*Node, visited map[Nod
 func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	// A module is uninstantiated if it contains only
 	switch node.Kind {
-	case KindInterfaceDeclaration, KindTypeAliasDeclaration:
+	case KindInterfaceDeclaration, KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return ModuleInstanceStateNonInstantiated
 	case KindEnumDeclaration:
 		if IsEnumConst(node) {
@@ -2187,10 +2213,6 @@ func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[Nod
 		return state
 	case KindModuleDeclaration:
 		return getModuleInstanceState(node, ancestors, visited)
-	case KindIdentifier:
-		if node.Flags&NodeFlagsIdentifierIsInJSDocNamespace != 0 {
-			return ModuleInstanceStateNonInstantiated
-		}
 	}
 	return ModuleInstanceStateInstantiated
 }
@@ -2278,12 +2300,12 @@ func IsConstTypeReference(node *Node) bool {
 }
 
 func IsGlobalSourceFile(node *Node) bool {
-	return node.Kind == KindSourceFile && !IsExternalOrCommonJsModule(node.AsSourceFile())
+	return node.Kind == KindSourceFile && !IsExternalOrCommonJSModule(node.AsSourceFile())
 }
 
-func IsParameterLikeOrReturnTag(node *Node) bool {
+func IsParameterLike(node *Node) bool {
 	switch node.Kind {
-	case KindParameter, KindTypeParameter, KindJSDocParameterTag, KindJSDocReturnTag:
+	case KindParameter, KindTypeParameter:
 		return true
 	}
 	return false
@@ -2354,27 +2376,43 @@ func IsDefaultImport(node *Node /*ImportDeclaration | ImportEqualsDeclaration | 
 	return importClause != nil && importClause.AsImportClause().name != nil
 }
 
-func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	result := GetImpliedNodeFormatForEmitWorker(sourceFile, options)
+func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.ModuleKind {
+	impliedNodeFormat := core.ResolutionModeNone
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDmts, tspath.ExtensionMts, tspath.ExtensionMjs}) {
+		impliedNodeFormat = core.ResolutionModeESM
+	} else if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs}) {
+		impliedNodeFormat = core.ResolutionModeCommonJS
+	} else if packageJsonType != "" && tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
+		impliedNodeFormat = core.IfElse(packageJsonType == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
+	}
+
+	return impliedNodeFormat
+}
+
+func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
+	result := GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), options, sourceFileMetaData)
 	if result != core.ModuleKindNone {
 		return result
 	}
 	return options.GetEmitModuleKind()
 }
 
-func GetImpliedNodeFormatForEmitWorker(sourceFile *SourceFile, options *core.CompilerOptions) core.ResolutionMode {
+func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
 	moduleKind := options.GetEmitModuleKind()
 	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
-		return sourceFile.ImpliedNodeFormat
+		if sourceFileMetaData == nil {
+			return core.ModuleKindNone
+		}
+		return sourceFileMetaData.ImpliedNodeFormat
 	}
-	if sourceFile.ImpliedNodeFormat == core.ModuleKindCommonJS &&
-		( /*sourceFile.packageJsonScope.contents.packageJsonContent.type == "commonjs" ||*/ // !!!
-		tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
+	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
+		(sourceFileMetaData.PackageJsonType == "commonjs" ||
+			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
-	if sourceFile.ImpliedNodeFormat == core.ModuleKindESNext &&
-		( /*sourceFile.packageJsonScope?.contents.packageJsonContent.type === "module" ||*/ // !!!
-		tspath.FileExtensionIsOneOf(sourceFile.fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
+	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
+		(sourceFileMetaData.PackageJsonType == "module" ||
+			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
 		return core.ModuleKindESNext
 	}
 	return core.ModuleKindNone
@@ -2439,9 +2477,9 @@ func GetNodeAtPosition(file *SourceFile, position int, isJavaScriptFile bool) *N
 	for {
 		var child *Node
 		if isJavaScriptFile {
-			for _, jsDoc := range current.JSDoc(file) {
-				if nodeContainsPosition(jsDoc, position) {
-					child = jsDoc
+			for _, jsdoc := range current.JSDoc(file) {
+				if nodeContainsPosition(jsdoc, position) {
+					child = jsdoc
 					break
 				}
 			}
@@ -2500,7 +2538,7 @@ func ForEachDynamicImportOrRequireCall(
 	cb func(node *Node, argument *Expression) bool,
 ) bool {
 	isJavaScriptFile := IsInJSFile(file.AsNode())
-	lastIndex, size := findImportOrRequire(file.Text, 0)
+	lastIndex, size := findImportOrRequire(file.Text(), 0)
 	for lastIndex >= 0 {
 		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
 		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
@@ -2525,7 +2563,7 @@ func ForEachDynamicImportOrRequireCall(
 		}
 		// skip past import/require
 		lastIndex += size
-		lastIndex, size = findImportOrRequire(file.Text, lastIndex)
+		lastIndex, size = findImportOrRequire(file.Text(), lastIndex)
 	}
 	return false
 }
@@ -2542,4 +2580,8 @@ func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 		return false
 	}
 	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
+}
+
+func IsUnterminatedLiteral(node *Node) bool {
+	return node.LiteralLikeData().TokenFlags&TokenFlagsUnterminated != 0
 }

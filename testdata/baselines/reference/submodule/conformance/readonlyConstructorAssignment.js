@@ -42,6 +42,7 @@ class E extends D {
 
 
 //// [readonlyConstructorAssignment.js]
+// Tests that readonly parameter properties behave like regular readonly properties
 class A {
     x;
     constructor(x) {
@@ -52,14 +53,17 @@ class A {
 class B extends A {
     constructor(x) {
         super(x);
+        // Fails, x is readonly
         this.x = 1;
     }
 }
 class C extends A {
     x;
+    // This is the usual behavior of readonly properties:
+    // if one is redeclared in a base class, then it can be assigned to.
     constructor(x) {
-        this.x = x;
         super(x);
+        this.x = x;
         this.x = 1;
     }
 }
@@ -70,11 +74,12 @@ class D {
         this.x = 0;
     }
 }
+// Fails, can't redeclare readonly property
 class E extends D {
     x;
     constructor(x) {
-        this.x = x;
         super(x);
+        this.x = x;
         this.x = 1;
     }
 }

@@ -2,25 +2,16 @@
 
 === react.d.ts ===
 declare module JSX {
->JSX : any
-
 	interface Element { }
->Element : Element
-
 	interface IntrinsicElements {
->IntrinsicElements : IntrinsicElements
 	}
 	interface ElementAttributesProperty {
->ElementAttributesProperty : ElementAttributesProperty
-
 		props;
 >props : any
 	}
 }
 
 interface Props {  
->Props : Props
-
   foo: string;
 >foo : string
 }
@@ -39,13 +30,13 @@ export class MyComponent {
 }
 
 <MyComponent foo="bar" />; // ok  
-><MyComponent foo="bar" /> : any
+><MyComponent foo="bar" /> : Element
 >MyComponent : typeof MyComponent
->foo : any
+>foo : string
 
 <MyComponent foo={0} />; // should be an error
-><MyComponent foo={0} /> : any
+><MyComponent foo={0} /> : Element
 >MyComponent : typeof MyComponent
->foo : any
+>foo : number
 >0 : 0
 

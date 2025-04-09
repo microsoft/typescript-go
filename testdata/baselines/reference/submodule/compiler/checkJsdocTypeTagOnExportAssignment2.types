@@ -4,8 +4,6 @@
 
 === a.ts ===
 export interface Foo {
->Foo : Foo
-
     a: number;
 >a : number
 
@@ -16,14 +14,15 @@ export interface Foo {
 === b.js ===
 /** @type {import("./a").Foo} */
 export default { c: false };
+>{ c: false } : Foo
 >{ c: false } : { c: boolean; }
 >c : boolean
 >false : false
 
 === c.js ===
 import b from "./b";
->b : { c: boolean; }
+>b : Foo
 
 b;
->b : { c: boolean; }
+>b : Foo
 

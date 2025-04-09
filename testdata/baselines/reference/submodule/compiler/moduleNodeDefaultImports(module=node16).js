@@ -34,7 +34,9 @@ self.default.default();
 self.def.default();
 
 //// [mod.cjs]
-export default fun;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = fun;
 //// [b.mjs]
 import a from "./mod.cjs";
 import { default as b } from "./mod.cjs";
@@ -47,12 +49,14 @@ b === c;
 c === d;
 d === self.default;
 self.default === self.def;
+// should all fail
 a();
 b();
 c();
 d();
 self.default();
 self.def();
+// should all work
 a.default();
 b.default();
 c.default();

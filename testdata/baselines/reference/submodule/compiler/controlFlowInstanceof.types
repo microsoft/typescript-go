@@ -212,8 +212,6 @@ function foo(x: A | undefined) {
 // Y is assignable to X, but not a subtype of X
 
 interface X {
->X : X
-
     x?: string;
 >x : string | undefined
 }
@@ -249,14 +247,14 @@ function goo(x: X) {
 // Repro from #27282
 
 declare const x: (() => void)|null;
->x : () => void | null
+>x : (() => void) | null
 
 declare const ctor: Function;
 >ctor : Function
 
 if (x instanceof ctor) {
 >x instanceof ctor : boolean
->x : () => void | null
+>x : (() => void) | null
 >ctor : Function
 
     x();
@@ -278,17 +276,17 @@ function AtTop(val) { this.val = val }
 
 /** @type {*} */
 var v = 1;
->v : number
+>v : any
 >1 : 1
 
 if (v instanceof AtTop) {
 >v instanceof AtTop : boolean
->v : number
+>v : any
 >AtTop : (val: any) => void
 
     v.val
 >v.val : any
->v : number
+>v : {}
 >val : any
 }
 

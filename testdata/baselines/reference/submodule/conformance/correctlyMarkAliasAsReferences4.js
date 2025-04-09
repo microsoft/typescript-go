@@ -12,6 +12,8 @@ let buttonProps : {[attributeName: string]: ''}
 let k = <button {...buttonProps} className={cx('class1', { class2: true })} />;
 
 //// [0.js]
+///<reference path="declaration.d.ts" />
 import * as cx from 'classnames';
+import * as React from "react";
 let buttonProps;
 let k = <button {...buttonProps} className={cx('class1', { class2: true })}/>;

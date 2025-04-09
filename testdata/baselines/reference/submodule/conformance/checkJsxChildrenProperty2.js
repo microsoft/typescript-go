@@ -58,9 +58,11 @@ let k5 =
 //// [file.jsx]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
 function Comp(p) {
     return <div>{p.b}</div>;
 }
+// Error: missing children
 let k = <Comp a={10} b="hi"/>;
 let k0 = <Comp a={10} b="hi" children="Random">
         hi hi hi!
@@ -71,6 +73,7 @@ let o = {
 let k1 = <Comp a={10} b="hi" {...o}>
         hi hi hi!
     </Comp>;
+// Error: incorrect type
 let k2 = <Comp a={10} b="hi">
         <div> My Div </div>
         {(name) => <div> My name {name} </div>}

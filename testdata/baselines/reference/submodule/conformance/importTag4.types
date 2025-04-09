@@ -2,8 +2,6 @@
 
 === /types.ts ===
 export interface Foo {
->Foo : Foo
-
     a: number;
 >a : number
 }
@@ -21,6 +19,6 @@ export interface Foo {
  * @param { Foo } foo
  */
 function f(foo) {}
->f : (foo: any) => void
->foo : any
+>f : (foo: Foo) => void
+>foo : Foo
 

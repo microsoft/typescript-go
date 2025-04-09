@@ -20,7 +20,6 @@
  var p3 = ([, a]) => { };
 ->p3 : ([, a]: [any, any]) => void
 ->([, a]) => { } : ([, a]: [any, any]) => void
--> : undefined
 +>p3 : (__0: [any, any]) => void
 +>([, a]) => { } : (__0: [any, any]) => void
  >a : any
@@ -28,7 +27,6 @@
  var p4 = ([, ...a]) => { };
 ->p4 : ([, ...a]: [any?, ...any[]]) => void
 ->([, ...a]) => { } : ([, ...a]: [any?, ...any[]]) => void
--> : undefined
 +>p4 : (__0: [any?, ...any[]]) => void
 +>([, ...a]) => { } : (__0: [any?, ...any[]]) => void
  >a : any[]
@@ -72,12 +70,12 @@
  >a : any
  >b : number
  >1 : 1
-@@= skipped -55, +53 lines =@@
+@@= skipped -53, +53 lines =@@
  >1 : 1
  
  var p10 = ([{ value, done }]) => { };
-->p10 : ([{ value, done }]: [{ value: any; done: any; }]) => void
-->([{ value, done }]) => { } : ([{ value, done }]: [{ value: any; done: any; }]) => void
+->p10 : ([{ value, done }]: [{ done: any; value: any; }]) => void
+->([{ value, done }]) => { } : ([{ value, done }]: [{ done: any; value: any; }]) => void
 +>p10 : (__0: [{ done: any; value: any; }]) => void
 +>([{ value, done }]) => { } : (__0: [{ done: any; value: any; }]) => void
  >value : any

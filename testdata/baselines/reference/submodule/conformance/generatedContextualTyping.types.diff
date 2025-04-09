@@ -1,24 +1,6 @@
 --- old.generatedContextualTyping.types
 +++ new.generatedContextualTyping.types
-@@= skipped -0, +0 lines =@@
- //// [tests/cases/conformance/expressions/contextualTyping/generatedContextualTyping.ts] ////
- 
--=== Performance Stats ===
--Type Count: 1,000
--
- === generatedContextualTyping.ts ===
- class Base { private p; }
- >Base : Base
-@@= skipped -18, +15 lines =@@
- >n : any
- 
- interface Genric<T> { func(n: T[]); }
-+>Genric : Genric<T>
-+>T : T
- >func : (n: T[]) => any
- >n : T[]
- 
-@@= skipped -1038, +1040 lines =@@
+@@= skipped -1053, +1053 lines =@@
  >d2 : Derived2
  
  function x124(parm: { (): Base[]; } = () => [d1, d2]) { }
@@ -232,38 +214,7 @@
  >n : Base[]
  >{ n: [d1, d2] } : { n: (Derived1 | Derived2)[]; }
  >n : (Derived1 | Derived2)[]
-@@= skipped -54, +54 lines =@@
- >d2 : Derived2
- 
- var x252: { (): Base[]; }[] = [() => [d1, d2]];
-->x252 : (() => Base[])[]
-->[() => [d1, d2]] : (() => (Derived1 | Derived2)[])[]
-+>x252 : () => Base[][]
-+>[() => [d1, d2]] : () => (Derived1 | Derived2)[][]
- >() => [d1, d2] : () => (Derived1 | Derived2)[]
- >[d1, d2] : (Derived1 | Derived2)[]
- >d1 : Derived1
- >d2 : Derived2
- 
- var x253: { (): Base[]; }[] = [function() { return [d1, d2] }];
-->x253 : (() => Base[])[]
-->[function() { return [d1, d2] }] : (() => (Derived1 | Derived2)[])[]
-+>x253 : () => Base[][]
-+>[function() { return [d1, d2] }] : () => (Derived1 | Derived2)[][]
- >function() { return [d1, d2] } : () => (Derived1 | Derived2)[]
- >[d1, d2] : (Derived1 | Derived2)[]
- >d1 : Derived1
- >d2 : Derived2
- 
- var x254: { (): Base[]; }[] = [function named() { return [d1, d2] }];
-->x254 : (() => Base[])[]
-->[function named() { return [d1, d2] }] : (() => (Derived1 | Derived2)[])[]
-+>x254 : () => Base[][]
-+>[function named() { return [d1, d2] }] : () => (Derived1 | Derived2)[][]
- >function named() { return [d1, d2] } : () => (Derived1 | Derived2)[]
- >named : () => (Derived1 | Derived2)[]
- >[d1, d2] : (Derived1 | Derived2)[]
-@@= skipped -758, +758 lines =@@
+@@= skipped -812, +812 lines =@@
  >d2 : Derived2
  
  function x324(n: { (): Base[]; }) { }; x324(() => [d1, d2]);

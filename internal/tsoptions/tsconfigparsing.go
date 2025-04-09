@@ -304,8 +304,8 @@ func convertJsonOptionOfListType(
 ) ([]any, []*ast.Diagnostic) {
 	var expression *ast.Node
 	var errors []*ast.Diagnostic
-	if _, ok := values.([]any); ok {
-		mappedValues := core.MapIndex(values.([]any), func(v any, index int) any {
+	if values, ok := values.([]any); ok {
+		mappedValues := core.MapIndex(values, func(v any, index int) any {
 			if valueExpression != nil {
 				expression = valueExpression.AsArrayLiteralExpression().Elements.Nodes[index]
 			}
@@ -545,6 +545,8 @@ func convertArrayLiteralExpressionToJson(
 	}
 	// Filter out invalid values
 	if len(elements) == 0 {
+		// Always return an empty array, even if elements is nil.
+		// The parser will produce nil slices instead of allocating empty ones.
 		return []any{}, nil
 	}
 	var errors []*ast.Diagnostic
@@ -909,26 +911,28 @@ func parseConfig(
 				}
 				if propertyName == "include" || propertyName == "exclude" || propertyName == "files" {
 					if rawMap, ok := extendsRaw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
-						value := core.Map(rawMap.GetOrZero(propertyName).([]any), func(path any) any {
-							if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
-								return path.(string)
-							} else {
-								if relativeDifference == "" {
-									t := tspath.ComparePathsOptions{
-										UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-										CurrentDirectory:          host.GetCurrentDirectory(),
+						if slice, _ := rawMap.GetOrZero(propertyName).([]any); slice != nil {
+							value := core.Map(slice, func(path any) any {
+								if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
+									return path.(string)
+								} else {
+									if relativeDifference == "" {
+										t := tspath.ComparePathsOptions{
+											UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+											CurrentDirectory:          host.GetCurrentDirectory(),
+										}
+										relativeDifference = tspath.ConvertToRelativePath(basePath, t)
 									}
-									relativeDifference = tspath.ConvertToRelativePath(basePath, t)
+									return tspath.CombinePaths(relativeDifference, path.(string))
 								}
-								return tspath.CombinePaths(relativeDifference, path.(string))
+							})
+							if propertyName == "include" {
+								result.include = value
+							} else if propertyName == "exclude" {
+								result.exclude = value
+							} else if propertyName == "files" {
+								result.files = value
 							}
-						})
-						if propertyName == "include" {
-							result.include = value
-						} else if propertyName == "exclude" {
-							result.exclude = value
-						} else if propertyName == "files" {
-							result.files = value
 						}
 					}
 				}
@@ -1028,7 +1032,7 @@ func parseJsonConfigFileContentWorker(
 	}
 	getPropFromRaw := func(prop string, validateElement func(value any) bool, elementTypeName string) propOfRaw {
 		value, exists := rawConfig.Get(prop)
-		if exists {
+		if exists && value != nil {
 			if reflect.TypeOf(value).Kind() == reflect.Slice {
 				result := rawConfig.GetOrZero(prop)
 				if _, ok := result.([]any); ok {
@@ -1062,7 +1066,7 @@ func parseJsonConfigFileContentWorker(
 				}
 				diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
 				nodeValue := forEachTsConfigPropArray(sourceFile.SourceFile, "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
-				errors = append(errors, ast.NewDiagnostic(sourceFile.SourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.SourceFile.Text, nodeValue.Pos()), nodeValue.End()), diagnosticMessage, fileName))
+				errors = append(errors, ast.NewDiagnostic(sourceFile.SourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.SourceFile.Text(), nodeValue.Pos()), nodeValue.End()), diagnosticMessage, fileName))
 			} else {
 				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_files_list_in_config_file_0_is_empty, configFileName))
 			}
@@ -1075,7 +1079,7 @@ func parseJsonConfigFileContentWorker(
 		outDir := parsedConfig.options.OutDir
 		declarationDir := parsedConfig.options.DeclarationDir
 		if outDir != "" || declarationDir != "" {
-			values := []any{}
+			var values []any
 			if outDir != "" {
 				values = append(values, outDir)
 			}
@@ -1418,8 +1422,7 @@ func removeWildcardFilesWithLowerPriorityExtension(file string, wildcardFiles co
 // basePath is the base path for any relative file specifications.
 // options is the Compiler options.
 // host is the host used to resolve files and directories.
-// extraFileExtensions optionaly file extra file extension information from host
-
+// extraFileExtensions optionally file extra file extension information from host
 func getFileNamesFromConfigSpecs(
 	configFileSpecs configFileSpecs,
 	basePath string, // considering this is the current directory
@@ -1515,16 +1518,16 @@ func getFileNamesFromConfigSpecs(
 }
 
 func GetSupportedExtensions(options *core.CompilerOptions, extraFileExtensions []fileExtensionInfo) [][]string {
-	needJsExtensions := options.GetAllowJs()
+	needJSExtensions := options.GetAllowJS()
 	if len(extraFileExtensions) == 0 {
-		if needJsExtensions {
+		if needJSExtensions {
 			return tspath.AllSupportedExtensions
 		} else {
 			return tspath.SupportedTSExtensions
 		}
 	}
 	var builtins [][]string
-	if needJsExtensions {
+	if needJSExtensions {
 		builtins = tspath.AllSupportedExtensions
 	} else {
 		builtins = tspath.SupportedTSExtensions
@@ -1532,7 +1535,7 @@ func GetSupportedExtensions(options *core.CompilerOptions, extraFileExtensions [
 	flatBuiltins := core.Flatten(builtins)
 	var result [][]string
 	for _, x := range extraFileExtensions {
-		if x.scriptKind == core.ScriptKindDeferred || (needJsExtensions && (x.scriptKind == core.ScriptKindJS || x.scriptKind == core.ScriptKindJSX)) && !slices.Contains(flatBuiltins, x.extension) {
+		if x.scriptKind == core.ScriptKindDeferred || (needJSExtensions && (x.scriptKind == core.ScriptKindJS || x.scriptKind == core.ScriptKindJSX)) && !slices.Contains(flatBuiltins, x.extension) {
 			result = append(result, []string{x.extension})
 		}
 	}
