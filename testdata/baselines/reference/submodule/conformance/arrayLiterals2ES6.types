@@ -13,8 +13,6 @@
 var a0 = [, , 2, 3, 4]
 >a0 : number[]
 >[, , 2, 3, 4] : number[]
-> : undefined
-> : undefined
 >2 : 2
 >3 : 3
 >4 : 4
@@ -28,9 +26,6 @@ var a1 = ["hello", "world"]
 var a2 = [, , , ...a0, "hello"];
 >a2 : (string | number)[]
 >[, , , ...a0, "hello"] : (string | number)[]
-> : undefined
-> : undefined
-> : undefined
 >...a0 : number
 >a0 : number[]
 >"hello" : "hello"
@@ -38,14 +33,12 @@ var a2 = [, , , ...a0, "hello"];
 var a3 = [, , ...a0]
 >a3 : number[]
 >[, , ...a0] : number[]
-> : undefined
-> : undefined
 >...a0 : number
 >a0 : number[]
 
 var a4 = [() => 1, ];
->a4 : () => number[]
->[() => 1, ] : () => number[]
+>a4 : (() => number)[]
+>[() => 1, ] : (() => number)[]
 >() => 1 : () => number
 >1 : 1
 
@@ -54,7 +47,6 @@ var a5 = [...a0, , ]
 >[...a0, , ] : number[]
 >...a0 : number
 >a0 : number[]
-> : undefined
 
 // Each element expression in a non-empty array literal is processed as follows:
 //    - If the array literal contains no spread elements, and if the array literal is contextually typed (section 4.19)
@@ -130,11 +122,7 @@ var temp2: [number[], string[]] = [[1, 2, 3], ["hello", "string"]];
 >"string" : "string"
 
 interface myArray extends Array<Number> { }
->myArray : myArray
-
 interface myArray2 extends Array<Number|String> { }
->myArray2 : myArray2
-
 var d0 = [1, true, ...temp, ];  // has type (string|number|boolean)[]
 >d0 : (string | number | boolean)[]
 >[1, true, ...temp, ] : (string | number | boolean)[]
@@ -182,10 +170,10 @@ var d6 = [...a3];
 >a3 : number[]
 
 var d7 = [...a4];
->d7 : () => number[]
->[...a4] : () => number[]
+>d7 : (() => number)[]
+>[...a4] : (() => number)[]
 >...a4 : () => number
->a4 : () => number[]
+>a4 : (() => number)[]
 
 var d8: number[][] = [[...temp1]]
 >d8 : number[][]

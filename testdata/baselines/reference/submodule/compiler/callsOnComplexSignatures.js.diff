@@ -1,20 +1,16 @@
 --- old.callsOnComplexSignatures.js
 +++ new.callsOnComplexSignatures.js
-@@= skipped -107, +107 lines =@@
- 
- //// [callsOnComplexSignatures.js]
- "use strict";
--var __importDefault = (this && this.__importDefault) || function (mod) {
--    return (mod && mod.__esModule) ? mod : { "default": mod };
--};
+@@= skipped -112, +112 lines =@@
+ };
  Object.defineProperty(exports, "__esModule", { value: true });
--/// <reference path="react16.d.ts" />
+ /// <reference path="react16.d.ts" />
 -var react_1 = __importDefault(require("react"));
--// Simple calls from real usecases
++const react_1 = __importDefault(require("react"));
+ // Simple calls from real usecases
  function test1() {
      function test(t) {
 -        var z = t.getValue("bar"); // Should be fine
-+        const z = t.getValue("bar");
++        const z = t.getValue("bar"); // Should be fine
      }
  }
  function test2() {
@@ -36,27 +32,23 @@
  }
  function test4(arg1, arg2, arg3, arg4, arg5, arg6) {
      arg1();
-@@= skipped -43, +35 lines =@@
-     arg6({ x: 0, y: 0 }, { x: 0, y: 0 });
-     arg6({ x: 0, y: 0 }, { x: 0, y: 0 }, { y: 0 });
- }
--// JSX Tag names
+@@= skipped -42, +40 lines =@@
  function test5() {
--    // Pair of non-like intrinsics
+     // Pair of non-like intrinsics
      function render(url) {
 -        var Tag = url ? 'a' : 'button';
 -        return react_1.default.createElement(Tag, null, "test");
 +        const Tag = url ? 'a' : 'button';
 +        return <Tag>test</Tag>;
      }
--    // Union of all intrinsics and components of `any`
+     // Union of all intrinsics and components of `any`
      function App(props) {
 -        var Comp = props.component;
 -        return (react_1.default.createElement(Comp, null));
 +        const Comp = props.component;
 +        return (<Comp />);
      }
--    // custom components with non-subset props
+     // custom components with non-subset props
      function render2() {
          var C = null;
 -        var a = react_1.default.createElement(C, { p: true });

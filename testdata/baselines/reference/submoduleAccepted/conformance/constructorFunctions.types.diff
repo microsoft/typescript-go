@@ -186,17 +186,13 @@
 +>C6 : () => void
  
    this.functions = [x => x, x => x + 1, x => x - 1]
-->this.functions = [x => x, x => x + 1, x => x - 1] : ((x: any) => any)[]
-+>this.functions = [x => x, x => x + 1, x => x - 1] : (x: any) => any[]
+ >this.functions = [x => x, x => x + 1, x => x - 1] : ((x: any) => any)[]
  >this.functions : any
 ->this : this
 +>this : any
  >functions : any
-->[x => x, x => x + 1, x => x - 1] : ((x: any) => any)[]
-+>[x => x, x => x + 1, x => x - 1] : (x: any) => any[]
+ >[x => x, x => x + 1, x => x - 1] : ((x: any) => any)[]
  >x => x : (x: any) => any
- >x : any
- >x : any
 @@= skipped -30, +30 lines =@@
  };
  
@@ -215,9 +211,8 @@
   */
  function C7(num) {}
 ->C7 : typeof C7
-->num : number
-+>C7 : (num: any) => void
-+>num : any
++>C7 : (num: number) => void
+ >num : number
  
  var c7_v1 = new C7();
 ->c7_v1 : C7
@@ -225,5 +220,5 @@
 ->C7 : typeof C7
 +>c7_v1 : any
 +>new C7() : any
-+>C7 : (num: any) => void
++>C7 : (num: number) => void
  

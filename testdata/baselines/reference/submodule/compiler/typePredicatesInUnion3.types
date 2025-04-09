@@ -89,7 +89,6 @@ function f4(x: unknown, p: P1 | P2 | F3) {
 
 type HasAttribute<T> = T & { attribute: number };
 >HasAttribute : HasAttribute<T>
->T : T
 >attribute : number
 
 class Type1 {
@@ -122,7 +121,6 @@ class Type2 {
 
 function assertType<T>(_val: T) {
 >assertType : <T>(_val: T) => void
->T : T
 >_val : T
 }
 
@@ -131,9 +129,9 @@ declare const val: Type1 | Type2;
 
 if (val.predicate()) {
 >val.predicate() : boolean
->val.predicate : () => this is HasAttribute<Type1> | () => boolean
+>val.predicate : (() => this is HasAttribute<Type1>) | (() => boolean)
 >val : Type1 | Type2
->predicate : () => this is HasAttribute<Type1> | () => boolean
+>predicate : (() => this is HasAttribute<Type1>) | (() => boolean)
 
     assertType<number>(val.attribute);  // Error
 >assertType<number>(val.attribute) : void

@@ -3,9 +3,7 @@
 === instantiationExpressionErrors.ts ===
 declare let f: { <T>(): T, g<U>(): U };
 >f : { <T>(): T; g: <U>() => U; }
->T : T
 >g : <U>() => U
->U : U
 
 // Type arguments in member expressions
 
@@ -107,15 +105,14 @@ const b4 = f<number>?.<number>();  // Error, expected no type arguments
 // Instantiation expression and binary operators
 
 declare let g: (<T>(x: T) => T) | undefined;
->g : <T>(x: T) => T | undefined
->T : T
+>g : (<T>(x: T) => T) | undefined
 >x : T
 
 const c1 = g<string> || ((x: string) => x);
 >c1 : (x: string) => string
 >g<string> || ((x: string) => x) : (x: string) => string
->g<string> : (x: string) => string | undefined
->g : <T>(x: T) => T | undefined
+>g<string> : ((x: string) => string) | undefined
+>g : (<T>(x: T) => T) | undefined
 >((x: string) => x) : (x: string) => string
 >(x: string) => x : (x: string) => string
 >x : string
@@ -124,18 +121,18 @@ const c1 = g<string> || ((x: string) => x);
 const c2 = g<string> ?? ((x: string) => x);
 >c2 : (x: string) => string
 >g<string> ?? ((x: string) => x) : (x: string) => string
->g<string> : (x: string) => string | undefined
->g : <T>(x: T) => T | undefined
+>g<string> : ((x: string) => string) | undefined
+>g : (<T>(x: T) => T) | undefined
 >((x: string) => x) : (x: string) => string
 >(x: string) => x : (x: string) => string
 >x : string
 >x : string
 
 const c3 = g<string> && ((x: string) => x);
->c3 : (x: string) => string | undefined
->g<string> && ((x: string) => x) : (x: string) => string | undefined
->g<string> : (x: string) => string | undefined
->g : <T>(x: T) => T | undefined
+>c3 : ((x: string) => string) | undefined
+>g<string> && ((x: string) => x) : ((x: string) => string) | undefined
+>g<string> : ((x: string) => string) | undefined
+>g : (<T>(x: T) => T) | undefined
 >((x: string) => x) : (x: string) => string
 >(x: string) => x : (x: string) => string
 >x : string
@@ -226,7 +223,6 @@ const x6 = f<true>
 >true : true
 
 interface I {}
->I : I
 
 let x10 = f<true>
 >x10 : { (): true; g: <U>() => U; }

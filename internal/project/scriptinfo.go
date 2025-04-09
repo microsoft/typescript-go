@@ -9,6 +9,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
+var _ ls.ScriptInfo = (*ScriptInfo)(nil)
+
 type ScriptInfo struct {
 	fileName   string
 	path       tspath.Path
@@ -17,7 +19,7 @@ type ScriptInfo struct {
 	scriptKind core.ScriptKind
 	text       string
 	version    int
-	lineMap    []core.TextPos
+	lineMap    *ls.LineMap
 
 	isOpen                bool
 	pendingReloadFromDisk bool
@@ -47,9 +49,9 @@ func (s *ScriptInfo) Path() tspath.Path {
 	return s.path
 }
 
-func (s *ScriptInfo) LineMap() []core.TextPos {
+func (s *ScriptInfo) LineMap() *ls.LineMap {
 	if s.lineMap == nil {
-		s.lineMap = core.ComputeLineStarts(s.text)
+		s.lineMap = ls.ComputeLineStarts(s.text)
 	}
 	return s.lineMap
 }

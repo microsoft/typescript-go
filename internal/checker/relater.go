@@ -462,8 +462,8 @@ func (c *Checker) elaborateError(node *ast.Node, source *Type, target *Type, rel
 		return c.elaborateArrayLiteral(node, source, target, relation, diagnosticOutput)
 	case ast.KindArrowFunction:
 		return c.elaborateArrowFunction(node, source, target, relation, diagnosticOutput)
-		// case ast.KindJsxAttributes:
-		// 	return c.elaborateJsxComponents(node.AsJsxAttributes(), source, target, relation, containingMessageChain, errorOutputContainer)
+	case ast.KindJsxAttributes:
+		return c.elaborateJsxComponents(node, source, target, relation, diagnosticOutput)
 	}
 	return false
 }
@@ -1411,7 +1411,7 @@ func (c *Checker) getTypeParameterModifiers(tp *Type) ast.ModifierFlags {
 	var flags ast.ModifierFlags
 	if tp.symbol != nil {
 		for _, d := range tp.symbol.Declarations {
-			flags |= getEffectiveModifierFlags(d)
+			flags |= d.ModifierFlags()
 		}
 	}
 	return flags & (ast.ModifierFlagsIn | ast.ModifierFlagsOut | ast.ModifierFlagsConst)
@@ -1927,54 +1927,56 @@ func (c *Checker) getTupleElementLabel(elementInfo TupleElementInfo, restSymbol 
 }
 
 func (c *Checker) getTupleElementLabelFromBindingElement(node *ast.Node, index int, elementFlags ElementFlags) string {
-	switch node.Name().Kind {
-	case ast.KindIdentifier:
-		name := node.Name().Text()
-		if hasDotDotDotToken(node) {
+	if node.Name() != nil {
+		switch node.Name().Kind {
+		case ast.KindIdentifier:
+			name := node.Name().Text()
+			if hasDotDotDotToken(node) {
+				// given
+				//   (...[x, y, ...z]: [number, number, ...number[]]) => ...
+				// this produces
+				//   (x: number, y: number, ...z: number[]) => ...
+				// which preserves rest elements of 'z'
+
+				// given
+				//   (...[x, y, ...z]: [number, number, ...[...number[], number]]) => ...
+				// this produces
+				//   (x: number, y: number, ...z: number[], z_1: number) => ...
+				// which preserves rest elements of z but gives distinct numbers to fixed elements of 'z'
+				if elementFlags&ElementFlagsVariable != 0 {
+					return name
+				}
+				return name + "_" + strconv.Itoa(index)
+			}
 			// given
-			//   (...[x, y, ...z]: [number, number, ...number[]]) => ...
+			//   (...[x]: [number]) => ...
 			// this produces
-			//   (x: number, y: number, ...z: number[]) => ...
-			// which preserves rest elements of 'z'
+			//   (x: number) => ...
+			// which preserves fixed elements of 'x'
 
 			// given
-			//   (...[x, y, ...z]: [number, number, ...[...number[], number]]) => ...
+			//   (...[x]: ...number[]) => ...
 			// this produces
-			//   (x: number, y: number, ...z: number[], z_1: number) => ...
-			// which preserves rest elements of z but gives distinct numbers to fixed elements of 'z'
-			if elementFlags&ElementFlagsVariable != 0 {
+			//   (x_0: number) => ...
+			// which which numbers fixed elements of 'x' whose tuple element type is variable
+			if elementFlags&ElementFlagsFixed != 0 {
 				return name
 			}
-			return name + "_" + strconv.Itoa(index)
-		}
-		// given
-		//   (...[x]: [number]) => ...
-		// this produces
-		//   (x: number) => ...
-		// which preserves fixed elements of 'x'
-
-		// given
-		//   (...[x]: ...number[]) => ...
-		// this produces
-		//   (x_0: number) => ...
-		// which which numbers fixed elements of 'x' whose tuple element type is variable
-		if elementFlags&ElementFlagsFixed != 0 {
-			return name
-		}
-		return name + "_n"
-	case ast.KindArrayBindingPattern:
-		if hasDotDotDotToken(node) {
-			elements := node.Name().AsBindingPattern().Elements.Nodes
-			lastElement := core.LastOrNil(elements)
-			lastElementIsBindingElementRest := lastElement != nil && ast.IsBindingElement(lastElement) && hasDotDotDotToken(lastElement)
-			elementCount := len(elements) - core.IfElse(lastElementIsBindingElementRest, 1, 0)
-			if index < elementCount {
-				element := elements[index]
-				if ast.IsBindingElement(element) {
-					return c.getTupleElementLabelFromBindingElement(element, index, elementFlags)
+			return name + "_n"
+		case ast.KindArrayBindingPattern:
+			if hasDotDotDotToken(node) {
+				elements := node.Name().AsBindingPattern().Elements.Nodes
+				lastElement := core.LastOrNil(elements)
+				lastElementIsBindingElementRest := lastElement != nil && ast.IsBindingElement(lastElement) && hasDotDotDotToken(lastElement)
+				elementCount := len(elements) - core.IfElse(lastElementIsBindingElementRest, 1, 0)
+				if index < elementCount {
+					element := elements[index]
+					if ast.IsBindingElement(element) {
+						return c.getTupleElementLabelFromBindingElement(element, index, elementFlags)
+					}
+				} else if lastElementIsBindingElementRest {
+					return c.getTupleElementLabelFromBindingElement(lastElement, index-elementCount, elementFlags)
 				}
-			} else if lastElementIsBindingElementRest {
-				return c.getTupleElementLabelFromBindingElement(lastElement, index-elementCount, elementFlags)
 			}
 		}
 	}
@@ -2692,27 +2694,20 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 						panic("No errorNode in hasExcessProperties")
 					}
 					if ast.IsJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.Parent) {
-						// !!!
-						// // JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
-						// // However, using an object-literal error message will be very confusing to the users so we give different a message.
-						// if prop.valueDeclaration && isJsxAttribute(prop.valueDeclaration) && ast.GetSourceFileOfNode(errorNode) == ast.GetSourceFileOfNode(prop.valueDeclaration.name) {
-						// 	// Note that extraneous children (as in `<NoChild>extra</NoChild>`) don't pass this check,
-						// 	// since `children` is a Kind.PropertySignature instead of a Kind.JsxAttribute.
-						// 	errorNode = prop.valueDeclaration.name
-						// }
-						// propName := c.symbolToString(prop)
-						// suggestionSymbol := c.getSuggestedSymbolForNonexistentJSXAttribute(propName, errorTarget)
-						// var suggestion *string
-						// if suggestionSymbol {
-						// 	suggestion = c.symbolToString(suggestionSymbol)
-						// } else {
-						// 	suggestion = nil
-						// }
-						// if suggestion {
-						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, c.TypeToString(errorTarget), suggestion)
-						// } else {
-						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1, propName, c.TypeToString(errorTarget))
-						// }
+						// JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
+						// However, using an object-literal error message will be very confusing to the users so we give different a message.
+						if prop.ValueDeclaration != nil && ast.IsJsxAttribute(prop.ValueDeclaration) && ast.GetSourceFileOfNode(r.errorNode) == ast.GetSourceFileOfNode(prop.ValueDeclaration.Name()) {
+							// Note that extraneous children (as in `<NoChild>extra</NoChild>`) don't pass this check,
+							// since `children` is a Kind.PropertySignature instead of a Kind.JsxAttribute.
+							r.errorNode = prop.ValueDeclaration.Name()
+						}
+						propName := r.c.symbolToString(prop)
+						suggestionSymbol := r.c.getSuggestedSymbolForNonexistentJSXAttribute(propName, errorTarget)
+						if suggestionSymbol != nil {
+							r.reportError(diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, r.c.TypeToString(errorTarget), r.c.symbolToString(suggestionSymbol))
+						} else {
+							r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, propName, r.c.TypeToString(errorTarget))
+						}
 					} else {
 						// use the property's value declaration if the property is assigned inside the literal itself
 						var objectLiteralDeclaration *ast.Node
@@ -3860,7 +3855,7 @@ func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, varia
 			var related Ternary
 			if varianceFlags&VarianceFlagsUnmeasurable != 0 {
 				// Even an `Unmeasurable` variance works out without a structural check if the source and target are _identical_.
-				// We can't simply assume invariance, because `Unmeasurable` marks nonlinear relations, for example, a relation tained by
+				// We can't simply assume invariance, because `Unmeasurable` marks nonlinear relations, for example, a relation tainted by
 				// the `-?` modifier in a mapped type (where, no matter how the inputs are related, the outputs still might not be)
 				if r.relation == r.c.identityRelation {
 					related = r.isRelatedTo(s, t, RecursionFlagsBoth, false /*reportErrors*/)
@@ -3874,7 +3869,7 @@ func (r *Relater) typeArgumentsRelatedTo(sources []*Type, targets []*Type, varia
 			} else if variance == VarianceFlagsBivariant {
 				// In the bivariant case we first compare contravariantly without reporting
 				// errors. Then, if that doesn't succeed, we compare covariantly with error
-				// reporting. Thus, error elaboration will be based on the the covariant check,
+				// reporting. Thus, error elaboration will be based on the covariant check,
 				// which is generally easier to reason about.
 				related = r.isRelatedTo(t, s, RecursionFlagsBoth, false /*reportErrors*/)
 				if related == TernaryFalse {
@@ -4435,8 +4430,8 @@ func (r *Relater) constructorVisibilitiesAreCompatible(sourceSignature *Signatur
 	if sourceSignature.declaration == nil || targetSignature.declaration == nil {
 		return true
 	}
-	sourceAccessibility := getEffectiveModifierFlags(sourceSignature.declaration) & ast.ModifierFlagsNonPublicAccessibilityModifier
-	targetAccessibility := getEffectiveModifierFlags(targetSignature.declaration) & ast.ModifierFlagsNonPublicAccessibilityModifier
+	sourceAccessibility := sourceSignature.declaration.ModifierFlags() & ast.ModifierFlagsNonPublicAccessibilityModifier
+	targetAccessibility := targetSignature.declaration.ModifierFlags() & ast.ModifierFlagsNonPublicAccessibilityModifier
 	// A public, protected and private signature is assignable to a private signature.
 	if targetAccessibility == ast.ModifierFlagsPrivate {
 		return true
@@ -4636,14 +4631,12 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 	case source.symbol != nil && source.flags&TypeFlagsObject != 0 && r.c.globalObjectType == source:
 		r.reportError(diagnostics.The_Object_type_is_assignable_to_very_few_other_types_Did_you_mean_to_use_the_any_type_instead)
 	case source.objectFlags&ObjectFlagsJsxAttributes != 0 && target.flags&TypeFlagsIntersection != 0:
-		// !!!
-		// targetTypes := target.Types()
-		// intrinsicAttributes := c.getJsxType(JsxNames.IntrinsicAttributes, errorNode)
-		// intrinsicClassAttributes := c.getJsxType(JsxNames.IntrinsicClassAttributes, errorNode)
-		// if !c.isErrorType(intrinsicAttributes) && !c.isErrorType(intrinsicClassAttributes) && (contains(targetTypes, intrinsicAttributes) || contains(targetTypes, intrinsicClassAttributes)) {
-		// 	// do not report top error
-		// 	return
-		// }
+		targetTypes := target.Types()
+		intrinsicAttributes := r.c.getJsxType(JsxNames.IntrinsicAttributes, r.errorNode)
+		intrinsicClassAttributes := r.c.getJsxType(JsxNames.IntrinsicClassAttributes, r.errorNode)
+		if !r.c.isErrorType(intrinsicAttributes) && !r.c.isErrorType(intrinsicClassAttributes) && (slices.Contains(targetTypes, intrinsicAttributes) || slices.Contains(targetTypes, intrinsicClassAttributes)) {
+			return
+		}
 	case originalTarget.flags&TypeFlagsIntersection != 0 && originalTarget.objectFlags&ObjectFlagsIsNeverIntersection != 0:
 		message := diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents
 		prop := core.Find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), r.c.isDiscriminantWithNeverType)
@@ -4697,11 +4690,21 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 		}
 	}
 	if message == nil {
-		if r.relation == r.c.comparableRelation {
+		switch {
+		case r.relation == r.c.comparableRelation:
 			message = diagnostics.Type_0_is_not_comparable_to_type_1
-		} else if sourceType == targetType {
+		case sourceType == targetType:
 			message = diagnostics.Type_0_is_not_assignable_to_type_1_Two_different_types_with_this_name_exist_but_they_are_unrelated
-		} else {
+		case r.c.exactOptionalPropertyTypes && len(r.c.getExactOptionalUnassignableProperties(source, target)) != 0:
+			message = diagnostics.Type_0_is_not_assignable_to_type_1_with_exactOptionalPropertyTypes_Colon_true_Consider_adding_undefined_to_the_types_of_the_target_s_properties
+		default:
+			if source.flags&TypeFlagsStringLiteral != 0 && target.flags&TypeFlagsUnion != 0 {
+				suggestedType := r.c.getSuggestedTypeForNonexistentStringLiteralType(source, target)
+				if suggestedType != nil {
+					r.reportError(diagnostics.Type_0_is_not_assignable_to_type_1_Did_you_mean_2, generalizedSourceType, targetType, r.c.TypeToString(suggestedType))
+					return
+				}
+			}
 			message = diagnostics.Type_0_is_not_assignable_to_type_1
 		}
 	}

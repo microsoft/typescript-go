@@ -2,7 +2,6 @@
 
 === typeGuardsWithInstanceOf.ts ===
 interface I { global: string; }
->I : I
 >global : string
 
 var result!: I;
@@ -26,22 +25,18 @@ if (!(result instanceof RegExp)) {
 } else if (!result.global) {
 >!result.global : boolean
 >result.global : any
->result : I & RegExp
+>result : never
 >global : any
 }
 
 // Repro from #31155
 
 interface OnChanges {
->OnChanges : OnChanges
-
     onChanges(changes: Record<string, unknown>): void
 >onChanges : (changes: Record<string, unknown>) => void
 >changes : Record<string, unknown>
 }
 interface Validator {
->Validator : Validator
-
     validate(): null | Record<string, unknown>;
 >validate : () => Record<string, unknown> | null
 }

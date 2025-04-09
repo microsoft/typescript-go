@@ -29,5 +29,7 @@
 -    get Count(): number;
 -    set Count(value: number);
 +    set Count(value) {
++        //
 +    }
  }
++//# sourceMappingURL=properties.js.map

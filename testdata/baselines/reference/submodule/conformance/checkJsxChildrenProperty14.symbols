@@ -15,22 +15,24 @@ interface Prop {
 
     children: JSX.Element | JSX.Element[];
 >children : Symbol(children, Decl(file.tsx, 4, 14))
->JSX : Symbol(JSX)
->Element : Symbol(Element)
->JSX : Symbol(JSX)
->Element : Symbol(Element)
+>JSX : Symbol(JSX, Decl(react.d.ts, 2353, 1))
+>Element : Symbol(Element, Decl(react.d.ts, 2356, 27))
+>JSX : Symbol(JSX, Decl(react.d.ts, 2353, 1))
+>Element : Symbol(Element, Decl(react.d.ts, 2356, 27))
 }
 
 class Button extends React.Component<any, any> {
 >Button : Symbol(Button, Decl(file.tsx, 6, 1))
->React.Component : Symbol(unknown)
+>React.Component : Symbol(Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
 >React : Symbol(React, Decl(file.tsx, 0, 0))
->Component : Symbol(unknown)
+>Component : Symbol(Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
 
     render() {
 >render : Symbol(render, Decl(file.tsx, 8, 48))
 
         return (<div>My Button</div>)
+>div : Symbol(div, Decl(react.d.ts, 2400, 45))
+>div : Symbol(div, Decl(react.d.ts, 2400, 45))
     }
 }
 
@@ -39,6 +41,8 @@ function AnotherButton(p: any) {
 >p : Symbol(p, Decl(file.tsx, 14, 23))
 
     return <h1>Just Another Button</h1>;
+>h1 : Symbol(h1, Decl(react.d.ts, 2410, 47))
+>h1 : Symbol(h1, Decl(react.d.ts, 2410, 47))
 }
 
 function Comp(p: Prop) {
@@ -47,9 +51,11 @@ function Comp(p: Prop) {
 >Prop : Symbol(Prop, Decl(file.tsx, 0, 32))
 
     return <div>{p.b}</div>;
+>div : Symbol(div, Decl(react.d.ts, 2400, 45))
 >p.b : Symbol(b, Decl(file.tsx, 3, 14))
 >p : Symbol(p, Decl(file.tsx, 18, 14))
 >b : Symbol(b, Decl(file.tsx, 3, 14))
+>div : Symbol(div, Decl(react.d.ts, 2400, 45))
 }
 
 // OK
@@ -91,8 +97,8 @@ interface SingleChildProp {
 
     children: JSX.Element;
 >children : Symbol(children, Decl(file.tsx, 29, 14))
->JSX : Symbol(JSX)
->Element : Symbol(Element)
+>JSX : Symbol(JSX, Decl(react.d.ts, 2353, 1))
+>Element : Symbol(Element, Decl(react.d.ts, 2356, 27))
 }
 
 function SingleChildComp(p: SingleChildProp) {
@@ -101,9 +107,11 @@ function SingleChildComp(p: SingleChildProp) {
 >SingleChildProp : Symbol(SingleChildProp, Decl(file.tsx, 25, 69))
 
     return <div>{p.b}</div>;
+>div : Symbol(div, Decl(react.d.ts, 2400, 45))
 >p.b : Symbol(b, Decl(file.tsx, 28, 14))
 >p : Symbol(p, Decl(file.tsx, 33, 25))
 >b : Symbol(b, Decl(file.tsx, 28, 14))
+>div : Symbol(div, Decl(react.d.ts, 2400, 45))
 }
 
 // OK

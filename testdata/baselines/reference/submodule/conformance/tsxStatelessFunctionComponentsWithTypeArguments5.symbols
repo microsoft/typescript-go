@@ -9,8 +9,8 @@ declare function Component<U>(l: U): JSX.Element;
 >U : Symbol(U, Decl(file.tsx, 2, 27))
 >l : Symbol(l, Decl(file.tsx, 2, 30))
 >U : Symbol(U, Decl(file.tsx, 2, 27))
->JSX : Symbol(JSX)
->Element : Symbol(Element)
+>JSX : Symbol(JSX, Decl(react.d.ts, 2353, 1))
+>Element : Symbol(Element, Decl(react.d.ts, 2356, 27))
 
 function createComponent<T extends { prop: number }>(arg: T) {
 >createComponent : Symbol(createComponent, Decl(file.tsx, 2, 49))
@@ -37,8 +37,8 @@ declare function ComponentSpecific<U>(l: { prop: U }): JSX.Element;
 >l : Symbol(l, Decl(file.tsx, 8, 38))
 >prop : Symbol(prop, Decl(file.tsx, 8, 42))
 >U : Symbol(U, Decl(file.tsx, 8, 35))
->JSX : Symbol(JSX)
->Element : Symbol(Element)
+>JSX : Symbol(JSX, Decl(react.d.ts, 2353, 1))
+>Element : Symbol(Element, Decl(react.d.ts, 2356, 27))
 
 declare function ComponentSpecific1<U>(l: { prop: U, "ignore-prop": number }): JSX.Element;
 >ComponentSpecific1 : Symbol(ComponentSpecific1, Decl(file.tsx, 8, 67))
@@ -47,8 +47,8 @@ declare function ComponentSpecific1<U>(l: { prop: U, "ignore-prop": number }): J
 >prop : Symbol(prop, Decl(file.tsx, 9, 43))
 >U : Symbol(U, Decl(file.tsx, 9, 36))
 >"ignore-prop" : Symbol("ignore-prop", Decl(file.tsx, 9, 52))
->JSX : Symbol(JSX)
->Element : Symbol(Element)
+>JSX : Symbol(JSX, Decl(react.d.ts, 2353, 1))
+>Element : Symbol(Element, Decl(react.d.ts, 2356, 27))
 
 function Bar<T extends { prop: number }>(arg: T) {
 >Bar : Symbol(Bar, Decl(file.tsx, 9, 91))
@@ -61,13 +61,13 @@ function Bar<T extends { prop: number }>(arg: T) {
 >a1 : Symbol(a1, Decl(file.tsx, 12, 7))
 >ComponentSpecific : Symbol(ComponentSpecific, Decl(file.tsx, 6, 1))
 >arg : Symbol(arg, Decl(file.tsx, 11, 41))
->ignore-prop : Symbol(ignore-prop, Decl(file.tsx, 12, 40))
+>ignore-prop : Symbol("ignore-prop", Decl(file.tsx, 12, 40))
 
     let a2 = <ComponentSpecific1 {...arg} ignore-prop={10} />;  // U is number
 >a2 : Symbol(a2, Decl(file.tsx, 13, 7))
 >ComponentSpecific1 : Symbol(ComponentSpecific1, Decl(file.tsx, 8, 67))
 >arg : Symbol(arg, Decl(file.tsx, 11, 41))
->ignore-prop : Symbol(ignore-prop, Decl(file.tsx, 13, 41))
+>ignore-prop : Symbol("ignore-prop", Decl(file.tsx, 13, 41))
 
     let a3 = <ComponentSpecific {...arg} prop="hello" />;   // U is "hello"
 >a3 : Symbol(a3, Decl(file.tsx, 14, 7))

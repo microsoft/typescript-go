@@ -2,7 +2,6 @@
 
 === contextuallyTypeAsyncFunctionReturnType.ts ===
 interface Obj { key: "value"; }
->Obj : Obj
 >key : "value"
 
 async function fn1(): Promise<Obj> {
@@ -83,8 +82,6 @@ type AsyncFunc = (this: Context) => PromiseLike<any>;
 >this : Context
 
 interface TestFunction {
->TestFunction : TestFunction
-
   (fn: Func): void;
 >fn : Func
 
@@ -104,8 +101,6 @@ declare const test: TestFunction;
 >test : TestFunction
 
 interface ProcessTreeNode {
->ProcessTreeNode : ProcessTreeNode
-
   pid: number;
 >pid : number
 
@@ -174,8 +169,6 @@ test("windows-process-tree", async () => {
 });
 
 interface ILocalExtension {
->ILocalExtension : ILocalExtension
-
   isApplicationScoped: boolean;
 >isApplicationScoped : boolean
 
@@ -210,9 +203,9 @@ async function copyExtensions(
     await Promise.all(
 >await Promise.all(      fromExtensions        .filter((e) => !e.isApplicationScoped)        .map(async (e) => [e, await scanMetadata(e)])    ) : [ILocalExtension, Metadata][]
 >Promise.all(      fromExtensions        .filter((e) => !e.isApplicationScoped)        .map(async (e) => [e, await scanMetadata(e)])    ) : Promise<[ILocalExtension, Metadata][]>
->Promise.all : { <T>(values: Iterable<T | PromiseLike<T>, any, any>): Promise<Awaited<T>[]>; <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }>; }
+>Promise.all : { <T>(values: Iterable<T | PromiseLike<T>, any, any>): Promise<Awaited<T>[]>; <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]>; }>; }
 >Promise : PromiseConstructor
->all : { <T>(values: Iterable<T | PromiseLike<T>, any, any>): Promise<Awaited<T>[]>; <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]> }>; }
+>all : { <T>(values: Iterable<T | PromiseLike<T>, any, any>): Promise<Awaited<T>[]>; <T extends readonly unknown[] | []>(values: T): Promise<{ -readonly [P in keyof T]: Awaited<T[P]>; }>; }
 
       fromExtensions
 >fromExtensions        .filter((e) => !e.isApplicationScoped)        .map(async (e) => [e, await scanMetadata(e)]) : Promise<[ILocalExtension, Metadata]>[]

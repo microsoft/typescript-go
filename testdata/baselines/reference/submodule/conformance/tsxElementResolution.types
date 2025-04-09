@@ -2,11 +2,7 @@
 
 === tsxElementResolution.tsx ===
 declare namespace JSX {
->JSX : any
-
 	interface IntrinsicElements {
->IntrinsicElements : IntrinsicElements
-
 		foundFirst: { x: string };
 >foundFirst : { x: string; }
 >x : string
@@ -37,7 +33,7 @@ var a = <foundFirst  x="hello" />;
 >a : any
 ><foundFirst  x="hello" /> : any
 >foundFirst : typeof foundFirst
->x : any
+>x : string
 
 var b = <string_named />;
 >b : any

@@ -26,9 +26,12 @@ let x2 = <Yadda bar="hello" data-yadda={42}/>;  // Error
 //// [ignoredJsxAttributes.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/// <reference path="react16.d.ts" />
+// Repro from #44797
+const React = require("react");
 let props = {
     foo: "",
-    "data-yadda": 42,
+    "data-yadda": 42, // Error
 };
 let x1 = <Yadda foo="hello" data-yadda={42}/>;
-let x2 = <Yadda bar="hello" data-yadda={42}/>;
+let x2 = <Yadda bar="hello" data-yadda={42}/>; // Error

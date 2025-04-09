@@ -34,8 +34,11 @@ var sas;
                     case 1:
                         break;
                     case 2:
+                        //line comment 1
+                        //line comment 2
                         break;
                     case 3:
+                        //a comment
                         break;
                 }
             }
@@ -43,3 +46,4 @@ var sas;
         tools.Test = Test;
     })(tools = sas.tools || (sas.tools = {}));
 })(sas || (sas = {}));
+//# sourceMappingURL=sourceMap-Comments.js.map

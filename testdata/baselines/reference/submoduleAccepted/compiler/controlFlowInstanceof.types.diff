@@ -1,32 +1,6 @@
 --- old.controlFlowInstanceof.types
 +++ new.controlFlowInstanceof.types
-@@= skipped -211, +211 lines =@@
- // Y is assignable to X, but not a subtype of X
- 
- interface X {
-+>X : X
-+
-     x?: string;
- >x : string | undefined
- }
-@@= skipped -35, +37 lines =@@
- // Repro from #27282
- 
- declare const x: (() => void)|null;
-->x : (() => void) | null
-+>x : () => void | null
- 
- declare const ctor: Function;
- >ctor : Function
- 
- if (x instanceof ctor) {
- >x instanceof ctor : boolean
-->x : (() => void) | null
-+>x : () => void | null
- >ctor : Function
- 
-     x();
-@@= skipped -19, +19 lines =@@
+@@= skipped -265, +265 lines =@@
  === uglify.js ===
  /** @constructor */
  function AtTop(val) { this.val = val }
@@ -40,23 +14,17 @@
  >val : any
  >val : any
  
- /** @type {*} */
- var v = 1;
-->v : any
-+>v : number
- >1 : 1
- 
+@@= skipped -16, +16 lines =@@
  if (v instanceof AtTop) {
  >v instanceof AtTop : boolean
-->v : any
+ >v : any
 ->AtTop : typeof AtTop
-+>v : number
 +>AtTop : (val: any) => void
  
      v.val
  >v.val : any
 ->v : AtTop
-+>v : number
++>v : {}
  >val : any
  }
  

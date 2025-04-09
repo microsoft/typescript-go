@@ -13,18 +13,11 @@ const v = { test: { smth: 5 } };
 
 type Field<A extends string, R> = { [K in A]: R }
 >Field : Field<A, R>
->A : A
->R : R
->K : K
 
 const f = <A extends string, B extends string, R>(x: { [K in A]: Field<B, R> }): R => ({} as any);
->f : <A extends string, B extends string, R>(x: { [K in A]: Field<B, R> }) => R
-><A extends string, B extends string, R>(x: { [K in A]: Field<B, R> }): R => ({} as any) : <A extends string, B extends string, R>(x: { [K in A]: Field<B, R> }) => R
->A : A
->B : B
->R : R
->x : { [K in A]: Field<B, R> }
->K : K
+>f : <A extends string, B extends string, R>(x: { [K in A]: Field<B, R>; }) => R
+><A extends string, B extends string, R>(x: { [K in A]: Field<B, R> }): R => ({} as any) : <A extends string, B extends string, R>(x: { [K in A]: Field<B, R>; }) => R
+>x : { [K in A]: Field<B, R>; }
 >({} as any) : any
 >{} as any : any
 >{} : {}
@@ -32,15 +25,12 @@ const f = <A extends string, B extends string, R>(x: { [K in A]: Field<B, R> }):
 const r1 = f(v);
 >r1 : number
 >f(v) : number
->f : <A extends string, B extends string, R>(x: { [K in A]: Field<B, R> }) => R
+>f : <A extends string, B extends string, R>(x: { [K in A]: Field<B, R>; }) => R
 >v : { test: { smth: number; }; }
 
 const g = <A extends string, B extends string, R>(x: Field<A, Field<B, R>>): R => ({} as any);
 >g : <A extends string, B extends string, R>(x: Field<A, Field<B, R>>) => R
 ><A extends string, B extends string, R>(x: Field<A, Field<B, R>>): R => ({} as any) : <A extends string, B extends string, R>(x: Field<A, Field<B, R>>) => R
->A : A
->B : B
->R : R
 >x : Field<A, Field<B, R>>
 >({} as any) : any
 >{} as any : any

@@ -71,8 +71,8 @@
 +class D extends C {
 +    z;
 +    constructor(z) {
-+        this.z = z;
 +        super(this.z);
++        this.z = z;
      }
 -    return E;
 -}(C));
@@ -82,12 +82,12 @@
 -        var _this = _super.call(this, "hello", _this.z) || this;
 -        _this.z = z;
 -        return _this;
-+}
++} // too few params
 +class E extends C {
 +    z;
 +    constructor(z) {
-+        this.z = z;
 +        super(0, this.z);
++        this.z = z;
      }
 -    return F;
 -}(C)); // first param type
@@ -95,10 +95,10 @@
 +class F extends C {
 +    z;
 +    constructor(z) {
-+        this.z = z;
 +        super("hello", this.z);
++        this.z = z;
 +    }
-+}
++} // first param type
  function f() {
      if (x < 10) {
          x = 11;

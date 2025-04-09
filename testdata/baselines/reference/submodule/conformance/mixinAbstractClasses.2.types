@@ -2,15 +2,12 @@
 
 === mixinAbstractClasses.2.ts ===
 interface Mixin {
->Mixin : Mixin
-
     mixinMethod(): void;
 >mixinMethod : () => void
 }
 
 function Mixin<TBaseClass extends abstract new (...args: any) => any>(baseClass: TBaseClass): TBaseClass & (abstract new (...args: any) => Mixin) {
->Mixin : <TBaseClass extends new (...args: any) => any>(baseClass: TBaseClass) => TBaseClass & new (...args: any) => Mixin
->TBaseClass : TBaseClass
+>Mixin : <TBaseClass extends new (...args: any) => any>(baseClass: TBaseClass) => TBaseClass & (new (...args: any) => Mixin)
 >args : any
 >baseClass : TBaseClass
 >args : any
@@ -36,9 +33,9 @@ abstract class AbstractBase {
 }
 
 const MixedBase = Mixin(AbstractBase);
->MixedBase : typeof AbstractBase & new (...args: any) => Mixin
->Mixin(AbstractBase) : typeof AbstractBase & new (...args: any) => Mixin
->Mixin : <TBaseClass extends new (...args: any) => any>(baseClass: TBaseClass) => TBaseClass & new (...args: any) => Mixin
+>MixedBase : typeof AbstractBase & (new (...args: any) => Mixin)
+>Mixin(AbstractBase) : typeof AbstractBase & (new (...args: any) => Mixin)
+>Mixin : <TBaseClass extends new (...args: any) => any>(baseClass: TBaseClass) => TBaseClass & (new (...args: any) => Mixin)
 >AbstractBase : typeof AbstractBase
 
 // error expected: Non-abstract class 'DerivedFromAbstract' does not implement inherited abstract member 'abstractBaseMethod' from class 'AbstractBase & Mixin'.
@@ -50,5 +47,5 @@ class DerivedFromAbstract extends MixedBase {
 // error expected: Cannot create an instance of an abstract class.
 new MixedBase();
 >new MixedBase() : any
->MixedBase : typeof AbstractBase & new (...args: any) => Mixin
+>MixedBase : typeof AbstractBase & (new (...args: any) => Mixin)
 

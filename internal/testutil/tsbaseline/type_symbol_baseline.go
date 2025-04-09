@@ -61,10 +61,23 @@ func DoTypeAndSymbolBaseline(
 			var sb strings.Builder
 			sb.Grow(len(s))
 
+			perfStats := false
 			for line := range strings.SplitSeq(s, "\n") {
 				if isTypeBaselineNodeReuseLine(line) {
 					continue
 				}
+
+				if !perfStats && strings.HasPrefix(line, "=== Performance Stats ===") {
+					perfStats = true
+					continue
+				} else if perfStats {
+					if strings.HasPrefix(line, "=== ") {
+						perfStats = false
+					} else {
+						continue
+					}
+				}
+
 				sb.WriteString(line)
 				sb.WriteString("\n")
 			}
@@ -303,6 +316,9 @@ func forEachASTNode(node *ast.Node) []*ast.Node {
 	for len(work) > 0 {
 		elem := work[len(work)-1]
 		work = work[:len(work)-1]
+		if elem.Flags&ast.NodeFlagsReparsed != 0 && elem.Kind != ast.KindTypeAssertionExpression {
+			continue
+		}
 		result = append(result, elem)
 		elem.ForEachChild(addChild)
 		slices.Reverse(resChildren)
@@ -313,7 +329,7 @@ func forEachASTNode(node *ast.Node) []*ast.Node {
 }
 
 func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk bool) *typeWriterResult {
-	actualPos := scanner.SkipTrivia(walker.currentSourceFile.Text, node.Pos())
+	actualPos := scanner.SkipTrivia(walker.currentSourceFile.Text(), node.Pos())
 	line, _ := scanner.GetLineAndCharacterOfPosition(walker.currentSourceFile, actualPos)
 	sourceText := scanner.GetSourceTextOfNodeFromSourceFile(walker.currentSourceFile, node, false /*includeTrivia*/)
 	fileChecker := walker.getTypeCheckerForCurrentFile()
@@ -323,8 +339,12 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		// Exception for `T` in `type T = something` because that may evaluate to some interesting type.
 		if ast.IsPartOfTypeNode(node) ||
 			ast.IsIdentifier(node) &&
-				(ast.GetMeaningFromDeclaration(node)&ast.SemanticMeaningValue) == 0 &&
-				!(ast.IsTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
+				(ast.GetMeaningFromDeclaration(node.Parent)&ast.SemanticMeaningValue) == 0 &&
+				!(ast.IsTypeOrJSTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
+			return nil
+		}
+
+		if ast.IsOmittedExpression(node) {
 			return nil
 		}
 
@@ -343,7 +363,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 			!ast.IsBindingElement(node.Parent) &&
 			!ast.IsPropertyAccessOrQualifiedName(node.Parent) &&
 			!ast.IsLabelName(node) &&
-			!(ast.IsModuleDeclaration(node.Parent) && ast.IsGlobalScopeAugmentation(node.Parent)) &&
+			!ast.IsGlobalScopeAugmentation(node.Parent) &&
 			!ast.IsMetaProperty(node.Parent) &&
 			!isImportStatementName(node) &&
 			!isExportStatementName(node) &&

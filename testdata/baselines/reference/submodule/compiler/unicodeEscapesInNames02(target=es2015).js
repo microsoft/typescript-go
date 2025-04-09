@@ -31,6 +31,7 @@ import { _𐊧 as \uD800\uDEA7 } from "./extendedEscapesForAstralsInVarsAndClass
 
 
 //// [extendedEscapesForAstralsInVarsAndClasses.js]
+// U+102A7 CARIAN LETTER A2
 var 𐊧;
 var \u{102A7};
 if (Math.random()) {
@@ -50,5 +51,7 @@ class Foo {
 }
 export var _𐊧 = new Foo().\u{102A7} + new Foo().methodA();
 _\u{102A7} += "!";
+//# sourceMappingURL=extendedEscapesForAstralsInVarsAndClasses.js.map
 //// [astralAsSurrogatePair.js]
 export {};
+//# sourceMappingURL=astralAsSurrogatePair.js.map

@@ -6,8 +6,6 @@ export type LionRequestInit = import('../types/types.js').LionRequestInit;
 
 === node_modules/@lion/ajax/dist-types/types/types.d.ts ===
 export interface LionRequestInit {
->LionRequestInit : LionRequestInit
-
     body?: null | Object;
 >body : Object | null | undefined
 } 
@@ -23,8 +21,8 @@ export class NewAjax {
      * @param {LionRequestInit} [init]
      */
     case5_unexpectedlyResolvesPathToNodeModules(init) {}
->case5_unexpectedlyResolvesPathToNodeModules : (init: any) => void
->init : any
+>case5_unexpectedlyResolvesPathToNodeModules : (init?: LionRequestInit | undefined) => void
+>init : LionRequestInit | undefined
 }
 
 /**

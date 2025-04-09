@@ -21,9 +21,6 @@ class C2 {
 }
 
 interface Foo<T> {
->Foo : Foo<T>
->T : T
-
     x: T;
 >x : T
 
@@ -61,7 +58,7 @@ class C3 {
 >h : Foo<this>
 
     i: Foo<this | (() => this)>;
->i : Foo<this | () => this>
+>i : Foo<this | (() => this)>
 
     j: (x: any) => x is this;
 >j : (x: any) => x is this

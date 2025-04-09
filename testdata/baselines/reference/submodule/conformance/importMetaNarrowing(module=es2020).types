@@ -3,8 +3,7 @@
 === importMetaNarrowing.ts ===
 declare global { interface ImportMeta {foo?: () => void} };
 >global : typeof global
->ImportMeta : ImportMeta
->foo : () => void | undefined
+>foo : (() => void) | undefined
 
 if (import.meta.foo) {
 >import.meta.foo : any

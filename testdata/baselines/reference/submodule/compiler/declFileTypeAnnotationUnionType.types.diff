@@ -1,22 +1,6 @@
 --- old.declFileTypeAnnotationUnionType.types
 +++ new.declFileTypeAnnotationUnionType.types
-@@= skipped -17, +17 lines =@@
-     }
-     export class g<T> {
- >g : g<T>
-+>T : T
- 
-         private r: string;
- >r : string
-@@= skipped -7, +8 lines =@@
- }
- class g<T> {
- >g : g<T>
-+>T : T
- 
-     private s: string;
- >s : string
-@@= skipped -7, +8 lines =@@
+@@= skipped -31, +31 lines =@@
  
  // Just the name
  var k: c | m.c = new c() || new m.c();
@@ -51,12 +35,12 @@
 +>c : typeof c
  
  var x: g<string> | m.g<number> |  (() => c) = new g<string>() ||  new m.g<number>() || (() => new c());
-->x : g<string> | m.g<number> | (() => c)
-+>x : g<number> | g<string> | () => c
+->x : m.g<number> | g<string> | (() => c)
++>x : g<number> | g<string> | (() => c)
  >m : any
-->new g<string>() ||  new m.g<number>() || (() => new c()) : g<string> | m.g<number> | (() => c)
-->new g<string>() ||  new m.g<number>() : g<string> | m.g<number>
-+>new g<string>() ||  new m.g<number>() || (() => new c()) : g<number> | g<string> | () => c
+->new g<string>() ||  new m.g<number>() || (() => new c()) : m.g<number> | g<string> | (() => c)
+->new g<string>() ||  new m.g<number>() : m.g<number> | g<string>
++>new g<string>() ||  new m.g<number>() || (() => new c()) : g<number> | g<string> | (() => c)
 +>new g<string>() ||  new m.g<number>() : g<number> | g<string>
  >new g<string>() : g<string>
  >g : typeof g
@@ -73,11 +57,11 @@
  >c : typeof c
  
  var y = new g<string>() || new m.g<number>() || (() => new c());
-->y : g<string> | m.g<number> | (() => c)
-->new g<string>() || new m.g<number>() || (() => new c()) : g<string> | m.g<number> | (() => c)
-->new g<string>() || new m.g<number>() : g<string> | m.g<number>
-+>y : g<number> | g<string> | () => c
-+>new g<string>() || new m.g<number>() || (() => new c()) : g<number> | g<string> | () => c
+->y : m.g<number> | g<string> | (() => c)
+->new g<string>() || new m.g<number>() || (() => new c()) : m.g<number> | g<string> | (() => c)
+->new g<string>() || new m.g<number>() : m.g<number> | g<string>
++>y : g<number> | g<string> | (() => c)
++>new g<string>() || new m.g<number>() || (() => new c()) : g<number> | g<string> | (() => c)
 +>new g<string>() || new m.g<number>() : g<number> | g<string>
  >new g<string>() : g<string>
  >g : typeof g

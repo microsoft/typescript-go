@@ -2,23 +2,14 @@
 
 === react.d.ts ===
 declare module JSX {
->JSX : any
-
 	interface Element { }
->Element : Element
-
 	interface IntrinsicElements {
->IntrinsicElements : IntrinsicElements
 	}
 	interface ElementAttributesProperty {
->ElementAttributesProperty : ElementAttributesProperty
-
 		props;
 >props : any
 	}
 	interface IntrinsicAttributes {
->IntrinsicAttributes : IntrinsicAttributes
-
 		ref?: string;
 >ref : string
 	}
@@ -42,9 +33,9 @@ class MyComponent {
 
 // Should be an OK
 var x = <MyComponent bar='world' />;
->x : any
-><MyComponent bar='world' /> : any
+>x : Element
+><MyComponent bar='world' /> : Element
 >MyComponent : typeof MyComponent
->bar : any
+>bar : string
 
 

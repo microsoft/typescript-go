@@ -37,13 +37,18 @@ let i = <InferParamComponent values={[1, 2, 3, 4]} selectHandler={(val: string) 
 //// [file.jsx]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
+// Error
 function Bar(arg) {
     let a1 = <ComponentSpecific1 {...arg} ignore-prop={10}/>;
 }
+// Error
 function Baz(arg) {
     let a0 = <ComponentSpecific1 {...arg}/>;
 }
+// Error
 function createLink(func) {
     let o = <Link func={func}/>;
 }
+// Error
 let i = <InferParamComponent values={[1, 2, 3, 4]} selectHandler={(val) => { }}/>;

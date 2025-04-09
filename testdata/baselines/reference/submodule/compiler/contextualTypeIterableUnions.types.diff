@@ -1,11 +1,7 @@
 --- old.contextualTypeIterableUnions.types
 +++ new.contextualTypeIterableUnions.types
-@@= skipped -2, +2 lines =@@
- === contextualTypeIterableUnions.ts ===
- declare class DMap<K, V>  {
+@@= skipped -4, +4 lines =@@
  >DMap : DMap<K, V>
-+>K : K
-+>V : V
  
    constructor(iterable: Iterable<[K, V]> | undefined);
 ->iterable : Iterable<[K, V]> | undefined
@@ -13,7 +9,7 @@
  }
  new DMap([["1", 2]]);
  >new DMap([["1", 2]]) : DMap<string, number>
-@@= skipped -13, +15 lines =@@
+@@= skipped -11, +11 lines =@@
  >2 : 2
  
  const i1: Iterable<{ a: true }> | undefined = [{ a: true }];
@@ -35,7 +31,7 @@
  >false : false
  
  const i3: Iterable<number> | 1[] = [2];
-->i3 : Iterable<number> | 1[]
+->i3 : 1[] | Iterable<number>
 +>i3 : 1[] | Iterable<number, any, any>
  >[2] : 2[]
  >2 : 2

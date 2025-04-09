@@ -1,44 +1,15 @@
 --- old.discriminateWithOptionalProperty2(exactoptionalpropertytypes=false).types
 +++ new.discriminateWithOptionalProperty2(exactoptionalpropertytypes=false).types
-@@= skipped -4, +4 lines =@@
- 
- type PromiseOrValue<T> = Promise<T> | T;
+@@= skipped -6, +6 lines =@@
  >PromiseOrValue : PromiseOrValue<T>
-+>T : T
  
  function mapAsyncIterable<T, U, R = undefined>(
 ->mapAsyncIterable : <T, U, R = undefined>(iterable: AsyncGenerator<T, R, undefined> | AsyncIterable<T, R, undefined>, callback: (value: T) => PromiseOrValue<U>) => AsyncGenerator<U, R, void>
 +>mapAsyncIterable : <T, U, R>(iterable: AsyncGenerator<T, R, undefined> | AsyncIterable<T, R, undefined>, callback: (value: T) => PromiseOrValue<U>) => AsyncGenerator<U, R, void>
-+>T : T
-+>U : U
-+>R : R
  
    iterable: AsyncGenerator<T, R, undefined> | AsyncIterable<T, R, undefined>,
  >iterable : AsyncGenerator<T, R, undefined> | AsyncIterable<T, R, undefined>
-@@= skipped -15, +19 lines =@@
-   const iterator = iterable[Symbol.asyncIterator]();
- >iterator : AsyncIterator<T, R, undefined>
- >iterable[Symbol.asyncIterator]() : AsyncIterator<T, R, undefined>
-->iterable[Symbol.asyncIterator] : (() => AsyncGenerator<T, R, undefined>) | (() => AsyncIterator<T, R, undefined>)
-+>iterable[Symbol.asyncIterator] : () => AsyncGenerator<T, R, undefined> | () => AsyncIterator<T, R, undefined>
- >iterable : AsyncGenerator<T, R, undefined> | AsyncIterable<T, R, undefined>
- >Symbol.asyncIterator : unique symbol
- >Symbol : SymbolConstructor
-@@= skipped -40, +40 lines =@@
- 
-       if (typeof iterator.return === "function") {
- >typeof iterator.return === "function" : boolean
-->typeof iterator.return : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->iterator.return : ((value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>>) | undefined
-+>typeof iterator.return : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
-+>iterator.return : (value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>> | undefined
- >iterator : AsyncIterator<T, R, undefined>
-->return : ((value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>>) | undefined
-+>return : (value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>> | undefined
- >"function" : "function"
- 
-         try {
-@@= skipped -23, +23 lines =@@
+@@= skipped -76, +76 lines =@@
    }
  
    return {
@@ -59,35 +30,7 @@
  
      },
      async return(value: R): Promise<IteratorResult<U, R>> {
-@@= skipped -12, +12 lines =@@
-       return typeof iterator.return === "function"
- >typeof iterator.return === "function"        ? mapResult(await iterator.return(value))        : { value: undefined as any, done: true } : Promise<IteratorResult<U, R>> | { value: any; done: true; }
- >typeof iterator.return === "function" : boolean
-->typeof iterator.return : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->iterator.return : ((value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>>) | undefined
-+>typeof iterator.return : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
-+>iterator.return : (value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>> | undefined
- >iterator : AsyncIterator<T, R, undefined>
-->return : ((value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>>) | undefined
-+>return : (value?: R | PromiseLike<R> | undefined) => Promise<IteratorResult<T, R>> | undefined
- >"function" : "function"
- 
-         ? mapResult(await iterator.return(value))
-@@= skipped -31, +31 lines =@@
- 
-       if (typeof iterator.throw === "function") {
- >typeof iterator.throw === "function" : boolean
-->typeof iterator.throw : "string" | "number" | "bigint" | "boolean" | "symbol" | "undefined" | "object" | "function"
-->iterator.throw : ((e?: any) => Promise<IteratorResult<T, R>>) | undefined
-+>typeof iterator.throw : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
-+>iterator.throw : (e?: any) => Promise<IteratorResult<T, R>> | undefined
- >iterator : AsyncIterator<T, R, undefined>
-->throw : ((e?: any) => Promise<IteratorResult<T, R>>) | undefined
-+>throw : (e?: any) => Promise<IteratorResult<T, R>> | undefined
- >"function" : "function"
- 
-         return mapResult(await iterator.throw(error));
-@@= skipped -56, +56 lines =@@
+@@= skipped -99, +99 lines =@@
  >3 : 3
  
  const iterable = {

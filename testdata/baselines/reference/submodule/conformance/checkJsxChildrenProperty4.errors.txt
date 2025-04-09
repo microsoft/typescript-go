@@ -1,30 +1,12 @@
-error TS2318: Cannot find global type 'Array'.
-error TS2318: Cannot find global type 'Function'.
-error TS2318: Cannot find global type 'IArguments'.
-error TS2318: Cannot find global type 'RegExp'.
-error TS2318: Cannot find global type 'String'.
-error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-file.tsx(1,24): error TS2307: Cannot find module 'react' or its corresponding type declarations.
-file.tsx(8,32): error TS2503: Cannot find namespace 'JSX'.
-file.tsx(13,21): error TS2339: Property 'state' does not exist on type 'FetchUser'.
-file.tsx(14,20): error TS2339: Property 'props' does not exist on type 'FetchUser'.
-file.tsx(14,40): error TS2339: Property 'state' does not exist on type 'FetchUser'.
+file.tsx(24,28): error TS2551: Property 'NAme' does not exist on type 'IUser'. Did you mean 'Name'?
+file.tsx(32,10): error TS2322: Type '{ children: (((user: any) => Element) | ((user: any) => Element))[]; }' is not assignable to type 'IFetchUserProps'.
+  Types of property 'children' are incompatible.
+    Type '(((user: any) => Element) | ((user: any) => Element))[]' is not assignable to type '(user: IUser) => Element'.
+      Type '(((user: any) => Element) | ((user: any) => Element))[]' provides no match for the signature '(user: IUser): Element'.
 
 
-!!! error TS2318: Cannot find global type 'Array'.
-!!! error TS2318: Cannot find global type 'Function'.
-!!! error TS2318: Cannot find global type 'IArguments'.
-!!! error TS2318: Cannot find global type 'RegExp'.
-!!! error TS2318: Cannot find global type 'String'.
-!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-==== file.tsx (5 errors) ====
+==== file.tsx (2 errors) ====
     import React = require('react');
-                           ~~~~~~~
-!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
     
     interface IUser {
         Name: string;
@@ -32,20 +14,12 @@ file.tsx(14,40): error TS2339: Property 'state' does not exist on type 'FetchUse
     
     interface IFetchUserProps {
         children: (user: IUser) => JSX.Element;
-                                   ~~~
-!!! error TS2503: Cannot find namespace 'JSX'.
     }
     
     class FetchUser extends React.Component<IFetchUserProps, any> {
         render() {
             return this.state
-                        ~~~~~
-!!! error TS2339: Property 'state' does not exist on type 'FetchUser'.
                 ? this.props.children(this.state.result)
-                       ~~~~~
-!!! error TS2339: Property 'props' does not exist on type 'FetchUser'.
-                                           ~~~~~
-!!! error TS2339: Property 'state' does not exist on type 'FetchUser'.
                 : null;
         }
     }
@@ -56,6 +30,9 @@ file.tsx(14,40): error TS2339: Property 'state' does not exist on type 'FetchUse
             <FetchUser>
                 { user => (
                     <h1>{ user.NAme }</h1>
+                               ~~~~
+!!! error TS2551: Property 'NAme' does not exist on type 'IUser'. Did you mean 'Name'?
+!!! related TS2728 file.tsx:4:5: 'Name' is declared here.
                 ) }
             </FetchUser>
         );
@@ -64,6 +41,11 @@ file.tsx(14,40): error TS2339: Property 'state' does not exist on type 'FetchUse
     function UserName1() {
         return (
             <FetchUser>
+             ~~~~~~~~~
+!!! error TS2322: Type '{ children: (((user: any) => Element) | ((user: any) => Element))[]; }' is not assignable to type 'IFetchUserProps'.
+!!! error TS2322:   Types of property 'children' are incompatible.
+!!! error TS2322:     Type '(((user: any) => Element) | ((user: any) => Element))[]' is not assignable to type '(user: IUser) => Element'.
+!!! error TS2322:       Type '(((user: any) => Element) | ((user: any) => Element))[]' provides no match for the signature '(user: IUser): Element'.
     
     
                 

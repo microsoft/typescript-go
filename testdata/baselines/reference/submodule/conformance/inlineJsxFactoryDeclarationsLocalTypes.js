@@ -91,6 +91,8 @@ const _brokenTree2 = <DOMSFC x={1} y={2}>{tree}{tree}</DOMSFC>
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.tree = exports.MyClass = exports.MySFC = void 0;
+/** @jsx predom */
+const renderer2_1 = require("./renderer2");
 const MySFC = (props) => <p>{props.x} + {props.y} = {props.x + props.y}{...this.props.children}</p>;
 exports.MySFC = MySFC;
 class MyClass {
@@ -112,9 +114,11 @@ exports.default = <h></h>;
 //// [index.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+/** @jsx dom */
+const renderer_1 = require("./renderer");
 const component_1 = require("./component");
 let elem = component_1.default;
-elem = <h></h>;
+elem = <h></h>; // Expect assignability error here
 const DOMSFC = (props) => <p>{props.x} + {props.y} = {props.x + props.y}{props.children}</p>;
 class DOMClass {
     props;
@@ -126,6 +130,9 @@ class DOMClass {
         return <p>{this.props.x} + {this.props.y} = {this.props.x + this.props.y}{...this.props.children}</p>;
     }
 }
+// Should work, everything is a DOM element
 const _tree = <DOMSFC x={1} y={2}><DOMClass x={3} y={4}/><DOMClass x={5} y={6}/></DOMSFC>;
+// Should fail, no dom elements
 const _brokenTree = <component_1.MySFC x={1} y={2}><component_1.MyClass x={3} y={4}/><component_1.MyClass x={5} y={6}/></MySFC>;
+// Should fail, nondom isn't allowed as children of dom
 const _brokenTree2 = <DOMSFC x={1} y={2}>{component_1.tree}{component_1.tree}</DOMSFC>;

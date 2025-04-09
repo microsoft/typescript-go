@@ -41,12 +41,12 @@ type Program struct {
 	currentDirectory             string
 	configFileParsingDiagnostics []*ast.Diagnostic
 
-	resolver        *module.Resolver
-	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
+	resolver *module.Resolver
 
 	comparePathsOptions tspath.ComparePathsOptions
 
-	files       []*ast.SourceFile
+	processedFiles
+
 	filesByPath map[tspath.Path]*ast.SourceFile
 
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
@@ -67,8 +67,6 @@ type Program struct {
 	// List of present unsupported extensions
 	unsupportedExtensions []string
 }
-
-var extensions = []string{".ts", ".tsx"}
 
 func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
@@ -152,7 +150,7 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
-	p.files, p.resolvedModules = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
+	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
@@ -160,8 +158,8 @@ func NewProgram(options ProgramOptions) *Program {
 
 	for _, file := range p.files {
 		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
-			p.unsupportedExtensions = append(p.unsupportedExtensions, extension)
+		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
+			p.unsupportedExtensions = core.AppendIfUnique(p.unsupportedExtensions, extension)
 		}
 	}
 
@@ -214,9 +212,13 @@ func (p *Program) CheckSourceFiles() {
 func (p *Program) createCheckers() {
 	p.checkersOnce.Do(func() {
 		p.checkers = make([]*checker.Checker, core.IfElse(p.programOptions.SingleThreaded, 1, 4))
+		wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 		for i := range p.checkers {
-			p.checkers[i] = checker.NewChecker(p)
+			wg.Queue(func() {
+				p.checkers[i] = checker.NewChecker(p)
+			})
 		}
+		wg.RunAndWait()
 		p.checkersByFile = make(map[*ast.SourceFile]*checker.Checker)
 		for i, file := range p.files {
 			p.checkersByFile[file] = p.checkers[i%len(p.checkers)]
@@ -231,6 +233,11 @@ func (p *Program) GetTypeChecker() *checker.Checker {
 	// to obtain types through multiple API calls and we want to ensure that those types are created
 	// by the same checker so they can interoperate.
 	return p.checkers[0]
+}
+
+func (p *Program) GetTypeCheckers() []*checker.Checker {
+	p.createCheckers()
+	return p.checkers
 }
 
 // Return a checker for the given file. We may have multiple checkers in concurrent scenarios and this
@@ -305,10 +312,19 @@ func (p *Program) getSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*
 }
 
 func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	// TODO: restore this; tsgo's main depends on this function binding all files for timing.
+	// if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+	// 	return nil
+	// }
+
 	return sourceFile.BindDiagnostics()
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+		return nil
+	}
+
 	var fileChecker *checker.Checker
 	if sourceFile != nil {
 		fileChecker = p.GetTypeCheckerForFile(sourceFile)
@@ -347,7 +363,7 @@ func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*a
 				break
 			}
 			// Stop searching backwards when we encounter a line that isn't blank or a comment.
-			if !isCommentOrBlankLine(sourceFile.Text, int(lineStarts[line])) {
+			if !isCommentOrBlankLine(sourceFile.Text(), int(lineStarts[line])) {
 				break
 			}
 		}
@@ -400,10 +416,45 @@ func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound b
 	return SortAndDeduplicateDiagnostics(result)
 }
 
+func (p *Program) LineCount() int {
+	var count int
+	for _, file := range p.files {
+		count += len(file.LineMap())
+	}
+	return count
+}
+
+func (p *Program) IdentifierCount() int {
+	var count int
+	for _, file := range p.files {
+		count += file.IdentifierCount
+	}
+	return count
+}
+
+func (p *Program) SymbolCount() int {
+	var count int
+	for _, file := range p.files {
+		count += file.SymbolCount
+	}
+	for _, checker := range p.checkers {
+		count += int(checker.SymbolCount)
+	}
+	return count
+}
+
 func (p *Program) TypeCount() int {
 	var count int
 	for _, checker := range p.checkers {
 		count += int(checker.TypeCount)
+	}
+	return count
+}
+
+func (p *Program) InstantiationCount() int {
+	var count int
+	for _, checker := range p.checkers {
+		count += int(checker.TotalInstantiationCount)
 	}
 	return count
 }
@@ -416,16 +467,20 @@ func (p *Program) PrintSourceFileWithTypes() {
 	}
 }
 
+func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
+	return p.sourceFileMetaDatas[path]
+}
+
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
 	return p.GetEmitModuleFormatOfFileWorker(sourceFile, p.compilerOptions)
 }
 
 func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options)
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions)
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) CommonSourceDirectory() string {
@@ -520,12 +575,13 @@ type EmitResult struct {
 	EmitSkipped  bool
 	Diagnostics  []*ast.Diagnostic      // Contains declaration emit diagnostics
 	EmittedFiles []string               // Array of files the compiler wrote to disk
-	sourceMaps   []*sourceMapEmitResult // Array of sourceMapData if compiler emitted sourcemaps
+	SourceMaps   []*SourceMapEmitResult // Array of sourceMapData if compiler emitted sourcemaps
 }
 
-type sourceMapEmitResult struct {
-	inputSourceFileNames []string // Input source file (which one can use on program to get the file), 1:1 mapping with the sourceMap.sources list
-	sourceMap            *sourcemap.RawSourceMap
+type SourceMapEmitResult struct {
+	InputSourceFileNames []string // Input source file (which one can use on program to get the file), 1:1 mapping with the sourceMap.sources list
+	SourceMap            *sourcemap.RawSourceMap
+	GeneratedFile        string
 }
 
 func (p *Program) Emit(options EmitOptions) *EmitResult {
@@ -582,7 +638,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 			result.EmittedFiles = append(result.EmittedFiles, emitter.emittedFilesList...)
 		}
 		if emitter.sourceMapDataList != nil {
-			result.sourceMaps = append(result.sourceMaps, emitter.sourceMapDataList...)
+			result.SourceMaps = append(result.SourceMaps, emitter.sourceMapDataList...)
 		}
 	}
 	return result

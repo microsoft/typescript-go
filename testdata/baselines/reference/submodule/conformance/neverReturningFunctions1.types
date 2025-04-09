@@ -449,8 +449,8 @@ function f43() {
 >Error : ErrorConstructor
 
     const f = [fail];
->f : () => never[]
->[fail] : () => never[]
+>f : (() => never)[]
+>[fail] : (() => never)[]
 >fail : () => never
 
     fail();  // No effect (missing type annotation)
@@ -460,19 +460,16 @@ function f43() {
     f[0]();  // No effect (not a dotted name)
 >f[0]() : never
 >f[0] : () => never
->f : () => never[]
+>f : (() => never)[]
 >0 : 0
 
     f;
->f : () => never[]
+>f : (() => never)[]
 }
 
 // Repro from #33582
 
 export interface Component<T extends object = any> {
->Component : Component<T>
->T : T
-
 	attrName?: string;
 >attrName : string | undefined
 
@@ -514,7 +511,7 @@ export interface Component<T extends object = any> {
 >remove : () => void
 
 	tick?(time: number, timeDelta: number): void;
->tick : (time: number, timeDelta: number) => void | undefined
+>tick : ((time: number, timeDelta: number) => void) | undefined
 >time : number
 >timeDelta : number
 
@@ -523,7 +520,7 @@ export interface Component<T extends object = any> {
 >oldData : T
 
 	updateSchema?(): void;
->updateSchema : () => void | undefined
+>updateSchema : (() => void) | undefined
 
 	extendSchema(update: unknown): void;
 >extendSchema : (update: unknown) => void
@@ -534,9 +531,6 @@ export interface Component<T extends object = any> {
 }
 
 export interface ComponentConstructor<T extends object> {
->ComponentConstructor : ComponentConstructor<T>
->T : T
-
 	new (el: unknown, attrValue: string, id: string): T & Component;
 >el : unknown
 >attrValue : string
@@ -562,7 +556,6 @@ export interface ComponentConstructor<T extends object> {
 
 declare function registerComponent<T extends object>(
 >registerComponent : <T extends object>(name: string, component: ComponentDefinition<T>) => ComponentConstructor<T>
->T : T
 
     name: string,
 >name : string
@@ -574,7 +567,6 @@ declare function registerComponent<T extends object>(
 
 export type ComponentDefinition<T extends object = object> = T & Partial<Component> & ThisType<T & Component>;
 >ComponentDefinition : ComponentDefinition<T>
->T : T
 
 const Component = registerComponent('test-component', {
 >Component : ComponentConstructor<{ schema: { myProperty: { default: never[]; parse: () => boolean[]; }; string: { type: string; }; num: number; }; init: () => void; update: () => void; tick: () => void; remove: () => void; pause: () => void; play: () => void; multiply: (f: number) => number; }>
@@ -719,8 +711,6 @@ class SuperThrowable extends MyThrowable {
 // Repro from #40346
 
 interface Services {
->Services : Services
-
     panic(message: string): never;
 >panic : (message: string) => never
 >message : string

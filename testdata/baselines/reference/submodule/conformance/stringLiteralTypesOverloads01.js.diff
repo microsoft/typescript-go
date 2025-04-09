@@ -1,11 +1,6 @@
 --- old.stringLiteralTypesOverloads01.js
 +++ new.stringLiteralTypesOverloads01.js
-@@= skipped -64, +64 lines =@@
-     if (x === "boolean") {
-         return false;
-     }
--    // Should be unreachable.
-     throw "Invalid value";
+@@= skipped -69, +69 lines =@@
  }
  var Consts1;
  (function (Consts1) {
@@ -63,9 +58,9 @@
 -declare const string: "string";
 -declare const number: "number";
 -declare const boolean: "boolean";
--declare const stringOrNumber: "string" | "number";
--declare const stringOrBoolean: "string" | "boolean";
--declare const booleanOrNumber: "number" | "boolean";
--declare const stringOrBooleanOrNumber: "string" | "number" | "boolean";
+-declare const stringOrNumber: "number" | "string";
+-declare const stringOrBoolean: "boolean" | "string";
+-declare const booleanOrNumber: "boolean" | "number";
+-declare const stringOrBooleanOrNumber: "boolean" | "number" | "string";
 -declare namespace Consts2 {
 -}

@@ -2,14 +2,10 @@
 
 === /types.ts ===
 export interface A {
->A : A
-
     a: number;
 >a : number
 }
 export interface B {
->B : B
-
     a: number;
 >a : number
 }
@@ -26,7 +22,7 @@ export interface B {
  * @param { types.B } b
  */
 function f(a, b) {}
->f : (a: any, b: any) => void
->a : any
->b : any
+>f : (a: A, b: B) => void
+>a : A
+>b : B
 

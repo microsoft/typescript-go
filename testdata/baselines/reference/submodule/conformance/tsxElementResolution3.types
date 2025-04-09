@@ -2,14 +2,8 @@
 
 === file.tsx ===
 declare module JSX {
->JSX : any
-
 	interface Element { }
->Element : Element
-
 	interface IntrinsicElements {
->IntrinsicElements : IntrinsicElements
-
 	    [x: string]: { n: string; };
 >x : string
 >n : string
@@ -18,13 +12,13 @@ declare module JSX {
 
 // OK
 <div n='x' />;
-><div n='x' /> : any
+><div n='x' /> : Element
 >div : any
->n : any
+>n : string
 
 // Error
 <span w='err' />;
-><span w='err' /> : any
+><span w='err' /> : Element
 >span : any
->w : any
+>w : string
 

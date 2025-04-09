@@ -868,7 +868,7 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 				}
 			}
 		}
-		// For each constituent t in the current type, if t and and c are directly related, pick the most
+		// For each constituent t in the current type, if t and c are directly related, pick the most
 		// specific of the two. When t and c are related in both directions, we prefer c for type predicates
 		// because that is the asserted type, but t for `instanceof` because generics aren't reflected in
 		// prototype object types.
@@ -1713,7 +1713,7 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 	if declaration == nil {
 		return "", false
 	}
-	t := c.tryGetTypeFromEffectiveTypeNode(declaration)
+	t := c.tryGetTypeFromTypeNode(declaration)
 	if t != nil {
 		if name, ok := tryGetNameFromType(t); ok {
 			return name, true
@@ -1785,7 +1785,7 @@ func (c *Checker) isConstantReference(node *ast.Node) bool {
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		// The resolvedSymbol property is initialized by checkPropertyAccess or checkElementAccess before we get here.
 		if c.isConstantReference(node.Expression()) {
-			symbol := c.typeNodeLinks.Get(node).resolvedSymbol
+			symbol := c.getResolvedSymbolOrNil(node)
 			if symbol != nil {
 				return c.isReadonlySymbol(symbol)
 			}
@@ -2686,6 +2686,7 @@ func (c *Checker) markNodeAssignmentsWorker(node *ast.Node) bool {
 		return false
 	case ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration,
 		ast.KindEnumDeclaration:
 		return false
 	}

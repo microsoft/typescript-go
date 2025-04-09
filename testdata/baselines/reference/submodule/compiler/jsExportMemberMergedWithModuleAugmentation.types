@@ -6,7 +6,7 @@ class Abcde {
 
   /** @type {string} */
   x;
->x : any
+>x : string
 }
 
 module.exports = {
@@ -29,7 +29,6 @@ declare module "./test" {
 >"./test" : any
 
   interface Abcde { b: string }
->Abcde : Abcde
 >b : string
 }
 

@@ -1,15 +1,15 @@
 --- old.jsxElementTypeLiteralWithGeneric.js
 +++ new.jsxElementTypeLiteralWithGeneric.js
-@@= skipped -26, +26 lines =@@
- //// [jsxElementTypeLiteralWithGeneric.js]
+@@= skipped -27, +27 lines =@@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
--/// <reference path="react16.d.ts" />
+ /// <reference path="react16.d.ts" />
 -var React = require("react");
--// should be fine - `ElementType` accepts `div`
++const React = require("react");
+ // should be fine - `ElementType` accepts `div`
 -var a = React.createElement("div", null);
--// Should be an error.
--// `ruhroh` is in neither `IntrinsicElements` nor `ElementType`
--var c = React.createElement("ruhroh", null);
 +let a = <div />;
+ // Should be an error.
+ // `ruhroh` is in neither `IntrinsicElements` nor `ElementType`
+-var c = React.createElement("ruhroh", null);
 +let c = <ruhroh />;

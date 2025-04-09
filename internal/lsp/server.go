@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"slices"
 	"strings"
 	"time"
 
@@ -58,10 +59,11 @@ type Server struct {
 	defaultLibraryPath string
 
 	initializeParams *lsproto.InitializeParams
+	positionEncoding lsproto.PositionEncodingKind
 
 	logger         *project.Logger
 	projectService *project.Service
-	converters     *converters
+	converters     *ls.Converters
 }
 
 // FS implements project.ProjectServiceHost.
@@ -211,12 +213,21 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
+
+	s.positionEncoding = lsproto.PositionEncodingKindUTF16
+	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {
+		if slices.Contains(*genCapabilities.PositionEncodings, lsproto.PositionEncodingKindUTF8) {
+			s.positionEncoding = lsproto.PositionEncodingKindUTF8
+		}
+	}
+
 	return s.sendResult(req.ID, &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
 			Version: ptrTo(core.Version),
 		},
 		Capabilities: lsproto.ServerCapabilities{
+			PositionEncoding: ptrTo(s.positionEncoding),
 			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrTextDocumentSyncKind{
 				TextDocumentSyncOptions: &lsproto.TextDocumentSyncOptions{
 					OpenClose: ptrTo(true),
@@ -248,20 +259,25 @@ func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 	s.projectService = project.NewService(s, project.ServiceOptions{
 		DefaultLibraryPath: s.defaultLibraryPath,
 		Logger:             s.logger,
+		PositionEncoding:   s.positionEncoding,
 	})
-	s.converters = &converters{projectService: s.projectService}
+
+	s.converters = ls.NewConverters(s.positionEncoding, func(fileName string) ls.ScriptInfo {
+		return s.projectService.GetScriptInfo(fileName)
+	})
+
 	return nil
 }
 
 func (s *Server) handleDidOpen(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
-	s.projectService.OpenFile(documentUriToFileName(params.TextDocument.Uri), params.TextDocument.Text, languageKindToScriptKind(params.TextDocument.LanguageId), "")
+	s.projectService.OpenFile(ls.DocumentURIToFileName(params.TextDocument.Uri), params.TextDocument.Text, ls.LanguageKindToScriptKind(params.TextDocument.LanguageId), "")
 	return nil
 }
 
 func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidChangeTextDocumentParams)
-	scriptInfo := s.projectService.GetScriptInfo(documentUriToFileName(params.TextDocument.Uri))
+	scriptInfo := s.projectService.GetScriptInfo(ls.DocumentURIToFileName(params.TextDocument.Uri))
 	if scriptInfo == nil {
 		return s.sendError(req.ID, lsproto.ErrRequestFailed)
 	}
@@ -269,7 +285,7 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 	changes := make([]ls.TextChange, len(params.ContentChanges))
 	for i, change := range params.ContentChanges {
 		if partialChange := change.TextDocumentContentChangePartial; partialChange != nil {
-			if textChange, err := s.converters.fromLspTextChange(partialChange, scriptInfo.FileName()); err != nil {
+			if textChange, err := s.converters.FromLSPTextChange(partialChange, scriptInfo.FileName()); err != nil {
 				return s.sendError(req.ID, err)
 			} else {
 				changes[i] = textChange
@@ -284,19 +300,19 @@ func (s *Server) handleDidChange(req *lsproto.RequestMessage) error {
 		}
 	}
 
-	s.projectService.ChangeFile(documentUriToFileName(params.TextDocument.Uri), changes)
+	s.projectService.ChangeFile(ls.DocumentURIToFileName(params.TextDocument.Uri), changes)
 	return nil
 }
 
 func (s *Server) handleDidSave(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidSaveTextDocumentParams)
-	s.projectService.MarkFileSaved(documentUriToFileName(params.TextDocument.Uri), *params.Text)
+	s.projectService.MarkFileSaved(ls.DocumentURIToFileName(params.TextDocument.Uri), *params.Text)
 	return nil
 }
 
 func (s *Server) handleDidClose(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidCloseTextDocumentParams)
-	s.projectService.CloseFile(documentUriToFileName(params.TextDocument.Uri))
+	s.projectService.CloseFile(ls.DocumentURIToFileName(params.TextDocument.Uri))
 	return nil
 }
 
@@ -306,7 +322,7 @@ func (s *Server) handleDocumentDiagnostic(req *lsproto.RequestMessage) error {
 	diagnostics := project.LanguageService().GetDocumentDiagnostics(file.FileName())
 	lspDiagnostics := make([]lsproto.Diagnostic, len(diagnostics))
 	for i, diag := range diagnostics {
-		if lspDiagnostic, err := s.converters.toLspDiagnostic(diag); err != nil {
+		if lspDiagnostic, err := s.converters.ToLSPDiagnostic(diag); err != nil {
 			return s.sendError(req.ID, err)
 		} else {
 			lspDiagnostics[i] = lspDiagnostic
@@ -325,7 +341,7 @@ func (s *Server) handleDocumentDiagnostic(req *lsproto.RequestMessage) error {
 func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.HoverParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
-	pos, err := s.converters.lineAndCharacterToPosition(params.Position, file.FileName())
+	pos, err := s.converters.LineAndCharacterToPositionForFile(params.Position, file.FileName())
 	if err != nil {
 		return s.sendError(req.ID, err)
 	}
@@ -344,7 +360,7 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DefinitionParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
-	pos, err := s.converters.lineAndCharacterToPosition(params.Position, file.FileName())
+	pos, err := s.converters.LineAndCharacterToPositionForFile(params.Position, file.FileName())
 	if err != nil {
 		return s.sendError(req.ID, err)
 	}
@@ -352,7 +368,7 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 	locations := project.LanguageService().ProvideDefinitions(file.FileName(), pos)
 	lspLocations := make([]lsproto.Location, len(locations))
 	for i, loc := range locations {
-		if lspLocation, err := s.converters.toLspLocation(loc); err != nil {
+		if lspLocation, err := s.converters.ToLSPLocation(loc); err != nil {
 			return s.sendError(req.ID, err)
 		} else {
 			lspLocations[i] = lspLocation
@@ -363,16 +379,12 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 }
 
 func (s *Server) getFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {
-	fileName := documentUriToFileName(uri)
+	fileName := ls.DocumentURIToFileName(uri)
 	return s.projectService.EnsureDefaultProjectForFile(fileName)
 }
 
 func (s *Server) Log(msg ...any) {
 	fmt.Fprintln(s.stderr, msg...)
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }
 
 func codeFence(lang string, code string) string {
@@ -396,4 +408,8 @@ func codeFence(lang string, code string) string {
 		result.WriteByte('`')
 	}
 	return result.String()
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }

@@ -2,17 +2,12 @@
 
 === destructuringInitializerContextualTypeFromContext.ts ===
 interface SFC<P = {}> {
->SFC : SFC<P>
->P : P
-
     (props: P & { children?: any }): any | null;
 >props : P & { children?: any; }
 >children : any
 }
 
 interface Props {
->Props : Props
-
     name: "Apollo" | "Artemis" | "Dionysus" | "Persephone";
 >name : "Apollo" | "Artemis" | "Dionysus" | "Persephone"
 }
@@ -56,9 +51,9 @@ const Child: SFC<Props> = ({
 >`name: ${name} props: ${JSON.stringify(props)}` : string
 >name : "Apollo" | "Artemis" | "Dionysus" | "Persephone"
 >JSON.stringify(props) : string
->JSON.stringify : { (value: any, replacer?: (key: string, value: any) => any | undefined, space?: string | number | undefined): string; (value: any, replacer?: (string | number)[] | null | undefined, space?: string | number | undefined): string; }
+>JSON.stringify : { (value: any, replacer?: ((this: any, key: string, value: any) => any) | undefined, space?: string | number | undefined): string; (value: any, replacer?: (string | number)[] | null | undefined, space?: string | number | undefined): string; }
 >JSON : JSON
->stringify : { (value: any, replacer?: (key: string, value: any) => any | undefined, space?: string | number | undefined): string; (value: any, replacer?: (string | number)[] | null | undefined, space?: string | number | undefined): string; }
+>stringify : { (value: any, replacer?: ((this: any, key: string, value: any) => any) | undefined, space?: string | number | undefined): string; (value: any, replacer?: (string | number)[] | null | undefined, space?: string | number | undefined): string; }
 >props : {}
 
 // Repro from #29189

@@ -1,34 +1,34 @@
-error TS2318: Cannot find global type 'Array'.
-error TS2318: Cannot find global type 'Function'.
-error TS2318: Cannot find global type 'IArguments'.
-error TS2318: Cannot find global type 'RegExp'.
-error TS2318: Cannot find global type 'String'.
-error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-file.tsx(1,24): error TS2307: Cannot find module 'react' or its corresponding type declarations.
-file.tsx(6,24): error TS2503: Cannot find namespace 'JSX'.
+file.tsx(14,10): error TS2741: Property 'children' is missing in type '{ a: number; b: string; }' but required in type 'Prop'.
+file.tsx(17,11): error TS2710: 'children' are specified twice. The attribute named 'children' will be overwritten.
+file.tsx(31,6): error TS2322: Type '{ a: number; b: string; children: (Element | ((name: string) => Element))[]; }' is not assignable to type 'Prop'.
+  Types of property 'children' are incompatible.
+    Type '(Element | ((name: string) => Element))[]' is not assignable to type 'string | Element'.
+      Type '(Element | ((name: string) => Element))[]' is not assignable to type 'Element'.
+        Type '(Element | ((name: string) => Element))[]' is missing the following properties from type 'ReactElement<any>': type, props
+file.tsx(37,6): error TS2322: Type '{ a: number; b: string; children: (number | Element)[]; }' is not assignable to type 'Prop'.
+  Types of property 'children' are incompatible.
+    Type '(number | Element)[]' is not assignable to type 'string | Element'.
+      Type '(number | Element)[]' is not assignable to type 'Element'.
+        Type '(number | Element)[]' is missing the following properties from type 'ReactElement<any>': type, props
+file.tsx(43,6): error TS2322: Type '{ a: number; b: string; children: (string | Element)[]; }' is not assignable to type 'Prop'.
+  Types of property 'children' are incompatible.
+    Type '(string | Element)[]' is not assignable to type 'string | Element'.
+      Type '(string | Element)[]' is not assignable to type 'Element'.
+        Type '(string | Element)[]' is missing the following properties from type 'ReactElement<any>': type, props
+file.tsx(49,6): error TS2322: Type '{ a: number; b: string; children: Element[]; }' is not assignable to type 'Prop'.
+  Types of property 'children' are incompatible.
+    Type 'Element[]' is not assignable to type 'string | Element'.
+      Type 'Element[]' is not assignable to type 'Element'.
+        Type 'Element[]' is missing the following properties from type 'ReactElement<any>': type, props
 
 
-!!! error TS2318: Cannot find global type 'Array'.
-!!! error TS2318: Cannot find global type 'Function'.
-!!! error TS2318: Cannot find global type 'IArguments'.
-!!! error TS2318: Cannot find global type 'RegExp'.
-!!! error TS2318: Cannot find global type 'String'.
-!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-==== file.tsx (2 errors) ====
+==== file.tsx (6 errors) ====
     import React = require('react');
-                           ~~~~~~~
-!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
     
     interface Prop {
         a: number,
         b: string,
         children: string | JSX.Element
-                           ~~~
-!!! error TS2503: Cannot find namespace 'JSX'.
     }
     
     function Comp(p: Prop) {
@@ -37,9 +37,14 @@ file.tsx(6,24): error TS2503: Cannot find namespace 'JSX'.
     
     // Error: missing children
     let k = <Comp a={10} b="hi" />;
+             ~~~~
+!!! error TS2741: Property 'children' is missing in type '{ a: number; b: string; }' but required in type 'Prop'.
+!!! related TS2728 file.tsx:6:5: 'children' is declared here.
     
     let k0 =
         <Comp a={10} b="hi" children="Random" >
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2710: 'children' are specified twice. The attribute named 'children' will be overwritten.
             hi hi hi!
         </Comp>;
     
@@ -54,24 +59,48 @@ file.tsx(6,24): error TS2503: Cannot find namespace 'JSX'.
     // Error: incorrect type
     let k2 =
         <Comp a={10} b="hi">
+         ~~~~
+!!! error TS2322: Type '{ a: number; b: string; children: (Element | ((name: string) => Element))[]; }' is not assignable to type 'Prop'.
+!!! error TS2322:   Types of property 'children' are incompatible.
+!!! error TS2322:     Type '(Element | ((name: string) => Element))[]' is not assignable to type 'string | Element'.
+!!! error TS2322:       Type '(Element | ((name: string) => Element))[]' is not assignable to type 'Element'.
+!!! error TS2322:         Type '(Element | ((name: string) => Element))[]' is missing the following properties from type 'ReactElement<any>': type, props
             <div> My Div </div>
             {(name: string) => <div> My name {name} </div>}
         </Comp>;
     
     let k3 =
         <Comp a={10} b="hi">
+         ~~~~
+!!! error TS2322: Type '{ a: number; b: string; children: (number | Element)[]; }' is not assignable to type 'Prop'.
+!!! error TS2322:   Types of property 'children' are incompatible.
+!!! error TS2322:     Type '(number | Element)[]' is not assignable to type 'string | Element'.
+!!! error TS2322:       Type '(number | Element)[]' is not assignable to type 'Element'.
+!!! error TS2322:         Type '(number | Element)[]' is missing the following properties from type 'ReactElement<any>': type, props
             <div> My Div </div>
             {1000000}
         </Comp>;
     
     let k4 =
         <Comp a={10} b="hi" >
+         ~~~~
+!!! error TS2322: Type '{ a: number; b: string; children: (string | Element)[]; }' is not assignable to type 'Prop'.
+!!! error TS2322:   Types of property 'children' are incompatible.
+!!! error TS2322:     Type '(string | Element)[]' is not assignable to type 'string | Element'.
+!!! error TS2322:       Type '(string | Element)[]' is not assignable to type 'Element'.
+!!! error TS2322:         Type '(string | Element)[]' is missing the following properties from type 'ReactElement<any>': type, props
             <div> My Div </div>
             hi hi hi!
         </Comp>;
     
     let k5 =
         <Comp a={10} b="hi" >
+         ~~~~
+!!! error TS2322: Type '{ a: number; b: string; children: Element[]; }' is not assignable to type 'Prop'.
+!!! error TS2322:   Types of property 'children' are incompatible.
+!!! error TS2322:     Type 'Element[]' is not assignable to type 'string | Element'.
+!!! error TS2322:       Type 'Element[]' is not assignable to type 'Element'.
+!!! error TS2322:         Type 'Element[]' is missing the following properties from type 'ReactElement<any>': type, props
             <div> My Div </div>
             <div> My Div </div>
         </Comp>;

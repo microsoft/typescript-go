@@ -35,6 +35,7 @@ import React = require('react');
 //// [file.jsx]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
 <div>
     // Not Comment
 </div>;
@@ -45,10 +46,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 </div>;
 <div>
     // Not Comment
-    {"Hi"}
+    {
+    //Comment just Fine
+    "Hi"}
     // Another not Comment
 </div>;
 <div>
     /* Not Comment */
-    {"Hi"}
+    {
+    //Comment just Fine
+    "Hi"}
 </div>;
