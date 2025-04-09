@@ -30,10 +30,14 @@ function f(greatest, wrap) {
 >wrap : Symbol(wrap, Decl(use.js, 12, 20))
 
     greatest.day
+>greatest.day : Symbol(day, Decl(ex.d.ts, 0, 24))
 >greatest : Symbol(greatest, Decl(use.js, 12, 11))
+>day : Symbol(day, Decl(ex.d.ts, 0, 24))
 
     wrap.n
+>wrap.n : Symbol(n, Decl(ex.d.ts, 1, 21))
 >wrap : Symbol(wrap, Decl(use.js, 12, 20))
+>n : Symbol(n, Decl(ex.d.ts, 1, 21))
 }
 
 === ex.d.ts ===

@@ -1,3 +1,5 @@
+mod1.js(3,23): error TS2395: Individual declarations in merged declaration 'Foo' must be all exported or all local.
+mod1.js(4,7): error TS2395: Individual declarations in merged declaration 'Foo' must be all exported or all local.
 mod1.js(7,1): error TS2304: Cannot find name 'exports'.
 mod1.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod1.js(10,1): error TS2300: Duplicate identifier 'export='.
@@ -15,11 +17,15 @@ mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
     var bb;
     var bbb = new mod.Baz();
     
-==== mod1.js (7 errors) ====
+==== mod1.js (9 errors) ====
     // error
     
     /** @typedef {number} Foo */
+                          ~~~
+!!! error TS2395: Individual declarations in merged declaration 'Foo' must be all exported or all local.
     class Foo { } // should error
+          ~~~
+!!! error TS2395: Individual declarations in merged declaration 'Foo' must be all exported or all local.
     
     /** @typedef {number} Bar */
     exports.Bar = class { }

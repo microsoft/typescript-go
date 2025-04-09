@@ -161,7 +161,7 @@ func NewProgram(options ProgramOptions) *Program {
 
 	for _, file := range p.files {
 		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
+		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
 			p.unsupportedExtensions = core.AppendIfUnique(p.unsupportedExtensions, extension)
 		}
 	}
@@ -215,9 +215,13 @@ func (p *Program) CheckSourceFiles() {
 func (p *Program) createCheckers() {
 	p.checkersOnce.Do(func() {
 		p.checkers = make([]*checker.Checker, core.IfElse(p.programOptions.SingleThreaded, 1, 4))
+		wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 		for i := range p.checkers {
-			p.checkers[i] = checker.NewChecker(p)
+			wg.Queue(func() {
+				p.checkers[i] = checker.NewChecker(p)
+			})
 		}
+		wg.RunAndWait()
 		p.checkersByFile = make(map[*ast.SourceFile]*checker.Checker)
 		for i, file := range p.files {
 			p.checkersByFile[file] = p.checkers[i%len(p.checkers)]
@@ -311,10 +315,19 @@ func (p *Program) getSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*
 }
 
 func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	// TODO: restore this; tsgo's main depends on this function binding all files for timing.
+	// if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+	// 	return nil
+	// }
+
 	return sourceFile.BindDiagnostics()
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+		return nil
+	}
+
 	var fileChecker *checker.Checker
 	if sourceFile != nil {
 		fileChecker = p.GetTypeCheckerForFile(sourceFile)

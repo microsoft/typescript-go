@@ -3,15 +3,15 @@
 === usage.js ===
 const { Thing, useThing, cbThing } = require("./index");
 >Thing : Readonly<{ a: "thing"; b: "chill"; }>
->useThing : (x: any) => void
->cbThing : (x: any) => void
+>useThing : (x: Thing) => void
+>cbThing : (x: (x: Thing) => void) => void
 >require("./index") : typeof import("index")
 >require : any
 >"./index" : "./index"
 
 useThing(Thing.a);
 >useThing(Thing.a) : void
->useThing : (x: any) => void
+>useThing : (x: Thing) => void
 >Thing.a : "thing"
 >Thing : Readonly<{ a: "thing"; b: "chill"; }>
 >a : "thing"
@@ -24,14 +24,14 @@ useThing(Thing.a);
 
 cbThing(type => {
 >cbThing(type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };}) : void
->cbThing : (x: any) => void
->type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };} : (type: any) => void
->type : any
+>cbThing : (x: (x: Thing) => void) => void
+>type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };} : (type: Thing) => void
+>type : Thing
 
     /** @type {LogEntry} */
     const logEntry = {
->logEntry : { time: number; type: any; }
->{        time: Date.now(),        type,    } : { time: number; type: any; }
+>logEntry : LogEntry
+>{        time: Date.now(),        type,    } : { time: number; type: Thing; }
 
         time: Date.now(),
 >time : number
@@ -41,7 +41,7 @@ cbThing(type => {
 >now : () => number
 
         type,
->type : any
+>type : Thing
 
     };
 });
@@ -77,27 +77,27 @@ exports.Thing = Thing;
  * @param {Thing} x
  */
 function useThing(x) {}
->useThing : (x: any) => void
->x : any
+>useThing : (x: Thing) => void
+>x : Thing
 
 exports.useThing = useThing;
->exports.useThing = useThing : (x: any) => void
+>exports.useThing = useThing : (x: Thing) => void
 >exports.useThing : any
 >exports : any
 >useThing : any
->useThing : (x: any) => void
+>useThing : (x: Thing) => void
 
 /**
  * @param {(x: Thing) => void} x
  */
 function cbThing(x) {}
->cbThing : (x: any) => void
->x : any
+>cbThing : (x: (x: Thing) => void) => void
+>x : (x: Thing) => void
 
 exports.cbThing = cbThing;
->exports.cbThing = cbThing : (x: any) => void
+>exports.cbThing = cbThing : (x: (x: Thing) => void) => void
 >exports.cbThing : any
 >exports : any
 >cbThing : any
->cbThing : (x: any) => void
+>cbThing : (x: (x: Thing) => void) => void
 

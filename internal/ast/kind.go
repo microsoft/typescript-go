@@ -378,7 +378,8 @@ const (
 	// Synthesized list
 	KindSyntaxList
 	// Synthesized JS nodes
-	KindJSExportAssignment // TODO: KindCommonJSExportAssignment?
+	KindJSTypeAliasDeclaration
+	KindJSExportAssignment
 	KindCommonJSExport
 	// Transformation nodes
 	KindNotEmittedStatement

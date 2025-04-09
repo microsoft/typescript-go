@@ -316,25 +316,11 @@
 +>exports : any
  >"setonlyAccessor" : "setonlyAccessor"
 ->{    /** @param {string} str */    set(str) {        this.rwAccessors = Number(str)     }} : { set(str: string): void; }
-+>{    /** @param {string} str */    set(str) {        this.rwAccessors = Number(str)     }} : { set: (str: any) => void; }
++>{    /** @param {string} str */    set(str) {        this.rwAccessors = Number(str)     }} : { set: (str: string) => void; }
  
      /** @param {string} str */
      set(str) {
-->set : (str: string) => void
-->str : string
-+>set : (str: any) => void
-+>str : any
- 
-         this.rwAccessors = Number(str) 
- >this.rwAccessors = Number(str) : number
-@@= skipped -44, +44 lines =@@
- >rwAccessors : any
- >Number(str) : number
- >Number : NumberConstructor
-->str : string
-+>str : any
-     }
- });
+@@= skipped -50, +50 lines =@@
  
  === mod2.js ===
  Object.defineProperty(module.exports, "thing", { value: "yes", writable: true });
@@ -352,7 +338,7 @@
  >"thing" : "thing"
  >{ value: "yes", writable: true } : { value: string; writable: true; }
  >value : string
-@@= skipped -21, +21 lines =@@
+@@= skipped -15, +15 lines =@@
  >true : true
  
  Object.defineProperty(module.exports, "readonlyProp", { value: "Smith", writable: false });
@@ -425,34 +411,16 @@
 +>exports : any
  >"setonlyAccessor" : "setonlyAccessor"
 ->{    /** @param {string} str */    set(str) {        this.rwAccessors = Number(str)     }} : { set(str: string): void; }
-+>{    /** @param {string} str */    set(str) {        this.rwAccessors = Number(str)     }} : { set: (str: any) => void; }
++>{    /** @param {string} str */    set(str) {        this.rwAccessors = Number(str)     }} : { set: (str: string) => void; }
  
      /** @param {string} str */
      set(str) {
-->set : (str: string) => void
-->str : string
-+>set : (str: any) => void
-+>str : any
- 
-         this.rwAccessors = Number(str) 
- >this.rwAccessors = Number(str) : number
-@@= skipped -50, +50 lines =@@
- >rwAccessors : any
- >Number(str) : number
- >Number : NumberConstructor
-->str : string
-+>str : any
-     }
- });
- 
-@@= skipped -9, +9 lines =@@
-  * @type {number}
+@@= skipped -60, +60 lines =@@
   */
  const q = require("./mod1").thing;
-->q : number
+ >q : number
 ->require("./mod1").thing : number
 ->require("./mod1") : typeof import("mod1")
-+>q : any
 +>require("./mod1").thing : any
 +>require("./mod1") : any
  >require : any
@@ -464,10 +432,9 @@
   * @type {string}
   */
  const u = require("./mod2").thing;
-->u : string
+ >u : string
 ->require("./mod2").thing : string
 ->require("./mod2") : typeof import("mod2")
-+>u : any
 +>require("./mod2").thing : any
 +>require("./mod2") : any
  >require : any

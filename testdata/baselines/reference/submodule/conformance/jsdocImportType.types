@@ -5,11 +5,11 @@
 /** @typedef {import("./mod1")} C
  * @type {C} */
 var c;
->c : any
+>c : Chunk
 
 c.chunk;
 >c.chunk : any
->c : any
+>c : Chunk
 >chunk : any
 
 const D = require("./mod1");
@@ -20,11 +20,11 @@ const D = require("./mod1");
 
 /** @type {D} */
 var d;
->d : any
+>d : Chunk
 
 d.chunk;
 >d.chunk : any
->d : any
+>d : Chunk
 >chunk : any
 
 === types.d.ts ===

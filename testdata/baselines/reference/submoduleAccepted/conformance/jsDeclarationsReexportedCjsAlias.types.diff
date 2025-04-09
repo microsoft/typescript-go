@@ -5,7 +5,7 @@
  >SomeClass : any
  >Another : typeof SomeClass
 ->require('./lib') : typeof import("lib")
-+>require('./lib') : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
++>require('./lib') : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
  >require : any
  >'./lib' : "./lib"
  
@@ -21,26 +21,7 @@
  >{    SomeClass,    Another} : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
  
      SomeClass,
-@@= skipped -22, +22 lines =@@
-  * @param {string} a
-  */
- function bar(a) {
-->bar : (a: string) => string
-->a : string
-+>bar : (a: any) => any
-+>a : any
- 
-     return a + a;
-->a + a : string
-->a : string
-->a : string
-+>a + a : any
-+>a : any
-+>a : any
- }
- 
- class SomeClass {
-@@= skipped -21, +21 lines =@@
+@@= skipped -43, +43 lines =@@
  }
  
  module.exports = {
@@ -48,16 +29,10 @@
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-->{    bar,    SomeClass} : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
-+>module.exports = {    bar,    SomeClass} : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
++>module.exports = {    bar,    SomeClass} : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
 +>module.exports : any
 +>module : any
 +>exports : any
-+>{    bar,    SomeClass} : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
+ >{    bar,    SomeClass} : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
  
      bar,
-->bar : (a: string) => string
-+>bar : (a: any) => any
- 
-     SomeClass
- >SomeClass : typeof SomeClass

@@ -85,24 +85,24 @@ exports.B = B
 >B : () => void
 
 A.prototype = B.prototype = {
->A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
+>A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
 >A.prototype : any
 >A : () => void
 >prototype : any
->B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
+>B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
 >B.prototype : any
 >B : () => void
 >prototype : any
->{    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
+>{    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
 
     /** @param {number} n */
     m(n) {
->m : (n: any) => any
->n : any
+>m : (n: number) => number
+>n : number
 
         return n + 1
->n + 1 : any
->n : any
+>n + 1 : number
+>n : number
 >1 : 1
     }
 }

@@ -400,7 +400,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "abstract")
 				} else if flags&ast.ModifierFlagsAsync != 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "async")
-				} else if ast.IsClassLike(node.Parent) {
+				} else if ast.IsClassLike(node.Parent) && !ast.IsJSTypeAliasDeclaration(node) {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_class_elements_of_this_kind, "export")
 				} else if node.Kind == ast.KindParameter {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_parameter, "export")
@@ -605,7 +605,8 @@ func (c *Checker) findFirstIllegalModifier(node *ast.Node) *ast.Node {
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
 		ast.KindParameter,
-		ast.KindTypeParameter:
+		ast.KindTypeParameter,
+		ast.KindJSTypeAliasDeclaration:
 		return nil
 	case ast.KindClassStaticBlockDeclaration,
 		ast.KindPropertyAssignment,
@@ -1150,21 +1151,14 @@ func (c *Checker) checkGrammarObjectLiteralExpression(node *ast.ObjectLiteralExp
 	return false
 }
 
-func (c *Checker) checkGrammarJsxElement(node *ast.Node, jsxCommon struct {
-	tagName       *ast.JsxTagNameExpression
-	typeArguments *ast.NodeList
-	attributes    *ast.JsxAttributesNode
-},
-) bool {
-	c.checkGrammarJsxName(jsxCommon.tagName)
-	c.checkGrammarTypeArguments(node, jsxCommon.typeArguments)
+func (c *Checker) checkGrammarJsxElement(node *ast.Node) bool {
+	c.checkGrammarJsxName(node.TagName())
+	c.checkGrammarTypeArguments(node, node.TypeArgumentList())
 	var seen core.Set[string]
-
-	for _, attrNode := range jsxCommon.attributes.AsJsxAttributes().Properties.Nodes {
+	for _, attrNode := range node.Attributes().AsJsxAttributes().Properties.Nodes {
 		if attrNode.Kind == ast.KindJsxSpreadAttribute {
 			continue
 		}
-
 		attr := attrNode.AsJsxAttribute()
 		name := attr.Name()
 		initializer := attr.Initializer
@@ -1174,7 +1168,6 @@ func (c *Checker) checkGrammarJsxElement(node *ast.Node, jsxCommon struct {
 		} else {
 			return c.grammarErrorOnNode(name, diagnostics.JSX_elements_cannot_have_multiple_attributes_with_the_same_name)
 		}
-
 		if initializer != nil && initializer.Kind == ast.KindJsxExpression && initializer.Expression() == nil {
 			return c.grammarErrorOnNode(initializer, diagnostics.JSX_attributes_must_only_be_assigned_a_non_empty_expression)
 		}
@@ -1404,7 +1397,7 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 				return c.grammarErrorOnNode((parent.AsVariableDeclaration()).Name(), diagnostics.A_variable_whose_type_is_a_unique_symbol_type_must_be_const)
 			}
 		case ast.KindPropertyDeclaration:
-			if !ast.IsStatic(parent) || !hasEffectiveReadonlyModifier(parent) {
+			if !ast.IsStatic(parent) || !hasReadonlyModifier(parent) {
 				return c.grammarErrorOnNode((parent.AsPropertyDeclaration()).Name(), diagnostics.A_property_of_a_class_whose_type_is_a_unique_symbol_type_must_be_both_static_and_readonly)
 			}
 		case ast.KindPropertySignature:
@@ -1857,16 +1850,6 @@ func (c *Checker) checkGrammarMetaProperty(node *ast.MetaProperty) bool {
 }
 
 func (c *Checker) checkGrammarConstructorTypeParameters(node *ast.ConstructorDeclaration) bool {
-	// !!!
-	// var jsdocTypeParameters []*ast.TypeParameterDeclaration
-	// if ast.IsInJSFile(node.AsNode()) {
-	// 	jsdocTypeParameters = getJSDocTypeParameterDeclarations(node)
-	// } else {
-	// 	jsdocTypeParameters = nil
-	// }
-	// if range_ == nil {
-	// 	range_ = core.FirstOrNil(jsdocTypeParameters)
-	// }
 	range_ := node.TypeParameters
 	if range_ != nil {
 		var pos int

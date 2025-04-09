@@ -1,5 +1,7 @@
 index.js(7,1): error TS2304: Cannot find name 'exports'.
+index.js(10,12): error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
 index.js(14,1): error TS2304: Cannot find name 'exports'.
+index.js(17,16): error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
 index.js(21,1): error TS2304: Cannot find name 'exports'.
 
 
@@ -22,7 +24,7 @@ index.js(21,1): error TS2304: Cannot find name 'exports'.
         };
     });
     
-==== index.js (3 errors) ====
+==== index.js (5 errors) ====
     /** @enum {string} */
     const Thing = Object.freeze({
         a: "thing",
@@ -35,6 +37,8 @@ index.js(21,1): error TS2304: Cannot find name 'exports'.
     
     /**
      * @param {Thing} x
+               ~~~~~
+!!! error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
      */
     function useThing(x) {}
     
@@ -44,6 +48,8 @@ index.js(21,1): error TS2304: Cannot find name 'exports'.
     
     /**
      * @param {(x: Thing) => void} x
+                   ~~~~~
+!!! error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
      */
     function cbThing(x) {}
     

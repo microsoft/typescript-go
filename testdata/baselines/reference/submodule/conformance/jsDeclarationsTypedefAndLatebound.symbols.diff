@@ -5,12 +5,14 @@
  
  stringSet.addAll(stringSet);
 ->stringSet.addAll : Symbol(LazySet.addAll, Decl(LazySet.js, 4, 15))
++>stringSet.addAll : Symbol(addAll, Decl(LazySet.js, 4, 15))
  >stringSet : Symbol(stringSet, Decl(index.js, 3, 5))
 ->addAll : Symbol(LazySet.addAll, Decl(LazySet.js, 4, 15))
++>addAll : Symbol(addAll, Decl(LazySet.js, 4, 15))
  >stringSet : Symbol(stringSet, Decl(index.js, 3, 5))
  
  
-@@= skipped -18, +16 lines =@@
+@@= skipped -18, +18 lines =@@
       * @param {LazySet} iterable
       */
      addAll(iterable) {}

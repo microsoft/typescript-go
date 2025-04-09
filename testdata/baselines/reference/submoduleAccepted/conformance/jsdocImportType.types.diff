@@ -5,14 +5,14 @@
   * @type {C} */
  var c;
 ->c : D
-+>c : any
++>c : Chunk
  
  c.chunk;
 ->c.chunk : number
 ->c : D
 ->chunk : number
 +>c.chunk : any
-+>c : any
++>c : Chunk
 +>chunk : any
  
  const D = require("./mod1");
@@ -26,14 +26,14 @@
  /** @type {D} */
  var d;
 ->d : D
-+>d : any
++>d : Chunk
  
  d.chunk;
 ->d.chunk : number
 ->d : D
 ->chunk : number
 +>d.chunk : any
-+>d : any
++>d : Chunk
 +>chunk : any
  
  === types.d.ts ===

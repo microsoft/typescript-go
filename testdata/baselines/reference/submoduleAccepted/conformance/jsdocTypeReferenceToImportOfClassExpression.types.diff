@@ -24,16 +24,16 @@
     */
    constructor(compiler) {
 ->compiler : import("MC")
-+>compiler : any
++>compiler : MC
  
      this.compiler = compiler;
 ->this.compiler = compiler : import("MC")
-+>this.compiler = compiler : any
++>this.compiler = compiler : MC
  >this.compiler : any
  >this : this
  >compiler : any
 ->compiler : import("MC")
-+>compiler : any
++>compiler : MC
    }
  }
  

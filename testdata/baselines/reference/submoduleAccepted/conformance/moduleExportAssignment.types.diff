@@ -29,14 +29,8 @@
  
  === npmlog.js ===
  class EE {
-@@= skipped -21, +21 lines =@@
- 
-     /** @param {string} s */
-     on(s) { }
-->on : (s: string) => void
-->s : string
-+>on : (s: any) => void
-+>s : any
+@@= skipped -25, +25 lines =@@
+ >s : string
  }
  var npmlog = module.exports = new EE()
 ->npmlog : { on(s: string): void; x: number; y: 2; }
@@ -54,12 +48,10 @@
  
  npmlog.on('hi') // both references should see EE.on
  >npmlog.on('hi') : void
-->npmlog.on : (s: string) => void
+ >npmlog.on : (s: string) => void
 ->npmlog : { on(s: string): void; x: number; y: 2; }
-->on : (s: string) => void
-+>npmlog.on : (s: any) => void
 +>npmlog : EE
-+>on : (s: any) => void
+ >on : (s: string) => void
  >'hi' : "hi"
  
  module.exports.on('hi') // here too

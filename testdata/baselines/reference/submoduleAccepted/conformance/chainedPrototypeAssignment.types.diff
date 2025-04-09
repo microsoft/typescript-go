@@ -127,28 +127,15 @@
 ->B : typeof B
 ->prototype : { m(n: number): number; }
 ->{    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
-+>A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
++>A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
 +>A.prototype : any
 +>A : () => void
 +>prototype : any
-+>B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
++>B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
 +>B.prototype : any
 +>B : () => void
 +>prototype : any
-+>{    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: any) => any; }
++>{    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
  
      /** @param {number} n */
      m(n) {
-->m : (n: number) => number
-->n : number
-+>m : (n: any) => any
-+>n : any
- 
-         return n + 1
-->n + 1 : number
-->n : number
-+>n + 1 : any
-+>n : any
- >1 : 1
-     }
- }

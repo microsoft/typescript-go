@@ -1,27 +1,20 @@
 --- old.commonJSImportClassTypeReference.types
 +++ new.commonJSImportClassTypeReference.types
-@@= skipped -8, +8 lines =@@
- 
- /** @param {K} k */
- function f(k) {
-->f : (k: K) => void
-->k : K
-+>f : (k: any) => void
-+>k : any
+@@= skipped -12, +12 lines =@@
+ >k : K
  
      k.values()
 ->k.values() : K
 ->k.values : () => K
-->k : K
-->values : () => K
 +>k.values() : any
 +>k.values : any
-+>k : any
+ >k : K
+->values : () => K
 +>values : any
  }
  
  === mod1.js ===
-@@= skipped -24, +24 lines =@@
+@@= skipped -20, +20 lines =@@
  }
  exports.K = K;
  >exports.K = K : typeof K

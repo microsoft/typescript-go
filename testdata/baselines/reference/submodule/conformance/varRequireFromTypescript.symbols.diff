@@ -25,22 +25,19 @@
  
  
  // types work
-@@= skipped -26, +26 lines =@@
- >wrap : Symbol(wrap, Decl(use.js, 12, 20))
- 
-     greatest.day
-->greatest.day : Symbol(day, Decl(ex.d.ts, 0, 24))
- >greatest : Symbol(greatest, Decl(use.js, 12, 11))
-->day : Symbol(day, Decl(ex.d.ts, 0, 24))
+@@= skipped -31, +31 lines =@@
+ >day : Symbol(day, Decl(ex.d.ts, 0, 24))
  
      wrap.n
 ->wrap.n : Symbol(ex.Crunch.n, Decl(ex.d.ts, 1, 21))
++>wrap.n : Symbol(n, Decl(ex.d.ts, 1, 21))
  >wrap : Symbol(wrap, Decl(use.js, 12, 20))
 ->n : Symbol(ex.Crunch.n, Decl(ex.d.ts, 1, 21))
++>n : Symbol(n, Decl(ex.d.ts, 1, 21))
  }
  
  === ex.d.ts ===
-@@= skipped -19, +15 lines =@@
+@@= skipped -14, +14 lines =@@
  >Crunch : Symbol(Crunch, Decl(ex.d.ts, 0, 33))
  
      n: number

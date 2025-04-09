@@ -1,50 +1,28 @@
 --- old.jsEnumTagOnObjectFrozen.types
 +++ new.jsEnumTagOnObjectFrozen.types
-@@= skipped -2, +2 lines =@@
- === usage.js ===
- const { Thing, useThing, cbThing } = require("./index");
- >Thing : Readonly<{ a: "thing"; b: "chill"; }>
-->useThing : (x: Thing) => void
-->cbThing : (x: (x: Thing) => void) => void
-+>useThing : (x: any) => void
-+>cbThing : (x: any) => void
- >require("./index") : typeof import("index")
- >require : any
- >"./index" : "./index"
- 
- useThing(Thing.a);
- >useThing(Thing.a) : void
-->useThing : (x: Thing) => void
-+>useThing : (x: any) => void
- >Thing.a : "thing"
- >Thing : Readonly<{ a: "thing"; b: "chill"; }>
- >a : "thing"
-@@= skipped -21, +21 lines =@@
- 
+@@= skipped -24, +24 lines =@@
  cbThing(type => {
  >cbThing(type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };}) : void
-->cbThing : (x: (x: Thing) => void) => void
+ >cbThing : (x: (x: Thing) => void) => void
 ->type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };} : (type: string) => void
 ->type : string
-+>cbThing : (x: any) => void
-+>type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };} : (type: any) => void
-+>type : any
++>type => {    /** @type {LogEntry} */    const logEntry = {        time: Date.now(),        type,    };} : (type: Thing) => void
++>type : Thing
  
      /** @type {LogEntry} */
      const logEntry = {
-->logEntry : LogEntry
+ >logEntry : LogEntry
 ->{        time: Date.now(),        type,    } : { time: number; type: string; }
-+>logEntry : { time: number; type: any; }
-+>{        time: Date.now(),        type,    } : { time: number; type: any; }
++>{        time: Date.now(),        type,    } : { time: number; type: Thing; }
  
          time: Date.now(),
  >time : number
-@@= skipped -17, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  >now : () => number
  
          type,
 ->type : string
-+>type : any
++>type : Thing
  
      };
  });
@@ -76,41 +54,31 @@
   * @param {Thing} x
   */
  function useThing(x) {}
-->useThing : (x: Thing) => void
+ >useThing : (x: Thing) => void
 ->x : string
-+>useThing : (x: any) => void
-+>x : any
++>x : Thing
  
  exports.useThing = useThing;
-->exports.useThing = useThing : (x: Thing) => void
+ >exports.useThing = useThing : (x: Thing) => void
 ->exports.useThing : (x: Thing) => void
 ->exports : typeof import("index")
-->useThing : (x: Thing) => void
-->useThing : (x: Thing) => void
-+>exports.useThing = useThing : (x: any) => void
 +>exports.useThing : any
 +>exports : any
 +>useThing : any
-+>useThing : (x: any) => void
+ >useThing : (x: Thing) => void
+->useThing : (x: Thing) => void
  
  /**
   * @param {(x: Thing) => void} x
-  */
- function cbThing(x) {}
-->cbThing : (x: (x: Thing) => void) => void
-->x : (x: Thing) => void
-+>cbThing : (x: any) => void
-+>x : any
+@@= skipped -28, +28 lines =@@
  
  exports.cbThing = cbThing;
-->exports.cbThing = cbThing : (x: (x: Thing) => void) => void
+ >exports.cbThing = cbThing : (x: (x: Thing) => void) => void
 ->exports.cbThing : (x: (x: Thing) => void) => void
 ->exports : typeof import("index")
-->cbThing : (x: (x: Thing) => void) => void
-->cbThing : (x: (x: Thing) => void) => void
-+>exports.cbThing = cbThing : (x: any) => void
 +>exports.cbThing : any
 +>exports : any
 +>cbThing : any
-+>cbThing : (x: any) => void
+ >cbThing : (x: (x: Thing) => void) => void
+->cbThing : (x: (x: Thing) => void) => void
  

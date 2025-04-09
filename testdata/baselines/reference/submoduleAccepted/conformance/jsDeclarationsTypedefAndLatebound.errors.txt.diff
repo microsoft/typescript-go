@@ -4,6 +4,7 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +LazySet.js(13,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++LazySet.js(13,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
 +
 +==== index.js (0 errors) ====
@@ -14,7 +15,7 @@
 +    stringSet.addAll(stringSet);
 +    
 +    
-+==== LazySet.js (1 errors) ====
++==== LazySet.js (2 errors) ====
 +    // Comment out this JSDoc, and note that the errors index.js go away.
 +    /**
 +     * @typedef {Object} SomeObject
@@ -30,4 +31,6 @@
 +    module.exports = LazySet;
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++    ~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +    

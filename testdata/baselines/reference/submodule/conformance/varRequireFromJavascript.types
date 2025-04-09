@@ -27,12 +27,12 @@ crunch.n
  * @param {ex.Crunch} wrap
  */
 function f(wrap) {
->f : (wrap: any) => void
->wrap : any
+>f : (wrap: Crunch) => void
+>wrap : Crunch
 
     wrap.n
 >wrap.n : any
->wrap : any
+>wrap : Crunch
 >n : any
 }
 
@@ -42,14 +42,14 @@ export class Crunch {
 
     /** @param {number} n */
     constructor(n) {
->n : any
+>n : number
 
         this.n = n
->this.n = n : any
+>this.n = n : number
 >this.n : any
 >this : this
 >n : any
->n : any
+>n : number
     }
     m() {
 >m : () => any

@@ -1,5 +1,5 @@
 /user.js(2,7): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
-/user.js(6,7): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
+/user.js(5,7): error TS2741: Property 'b' is missing in type '{ a: number; }' but required in type '{ b: number; }'.
 /user.js(8,21): error TS2307: Cannot find module './js.js' or its corresponding type declarations.
 /user.js(9,7): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
 /user.js(12,21): error TS2307: Cannot find module './js.js' or its corresponding type declarations.
@@ -13,9 +13,10 @@
     
     /** @type {{ b: number }} */
     const json1 = require("./json.json"); // No error (bad)
+          ~~~~~
+!!! error TS2741: Property 'b' is missing in type '{ a: number; }' but required in type '{ b: number; }'.
+!!! related TS2728 /user.js:4:14: 'b' is declared here.
     json1.b; // No error (OK since that's the type annotation)
-          ~
-!!! error TS2339: Property 'b' does not exist on type '{ a: number; }'.
     
     const js0 = require("./js.js");
                         ~~~~~~~~~

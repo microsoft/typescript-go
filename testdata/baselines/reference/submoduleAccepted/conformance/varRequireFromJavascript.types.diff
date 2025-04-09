@@ -41,34 +41,21 @@
  function f(wrap) {
 ->f : (wrap: ex.Crunch) => void
 ->wrap : ex.Crunch
-+>f : (wrap: any) => void
-+>wrap : any
++>f : (wrap: Crunch) => void
++>wrap : Crunch
  
      wrap.n
 ->wrap.n : number
 ->wrap : ex.Crunch
 ->n : number
 +>wrap.n : any
-+>wrap : any
++>wrap : Crunch
 +>n : any
  }
  
  === ex.js ===
-@@= skipped -15, +15 lines =@@
- 
-     /** @param {number} n */
-     constructor(n) {
-->n : number
-+>n : any
- 
-         this.n = n
-->this.n = n : number
-+>this.n = n : any
- >this.n : any
- >this : this
- >n : any
-->n : number
-+>n : any
+@@= skipped -25, +25 lines =@@
+ >n : number
      }
      m() {
 ->m : () => number

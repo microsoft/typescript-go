@@ -12,7 +12,9 @@ const stringSet = undefined;
 >undefined : Symbol(undefined)
 
 stringSet.addAll(stringSet);
+>stringSet.addAll : Symbol(addAll, Decl(LazySet.js, 4, 15))
 >stringSet : Symbol(stringSet, Decl(index.js, 3, 5))
+>addAll : Symbol(addAll, Decl(LazySet.js, 4, 15))
 >stringSet : Symbol(stringSet, Decl(index.js, 3, 5))
 
 

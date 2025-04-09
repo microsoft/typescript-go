@@ -1,9 +1,12 @@
 MC.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+MC.js(6,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+MW.js(1,15): error TS1340: Module './MC' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./MC')'?
 MW.js(8,10): error TS2339: Property 'compiler' does not exist on type 'MW'.
 MW.js(12,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+MW.js(12,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 
 
-==== MC.js (1 errors) ====
+==== MC.js (2 errors) ====
     const MW = require("./MW");
     
     /** @typedef {number} Meyerhauser */
@@ -12,13 +15,21 @@ MW.js(12,1): error TS2580: Cannot find name 'module'. Do you need to install typ
     module.exports = function MC() {
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         /** @type {any} */
+    ~~~~~~~~~~~~~~~~~~~~~~
         var x = {}
+    ~~~~~~~~~~~~~~
         return new MW(x);
+    ~~~~~~~~~~~~~~~~~~~~~
     };
+    ~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     
-==== MW.js (2 errors) ====
+==== MW.js (4 errors) ====
     /** @typedef {import("./MC")} MC */
+                  ~~~~~~~~~~~~~~
+!!! error TS1340: Module './MC' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./MC')'?
     
     class MW {
       /**
@@ -34,4 +45,6 @@ MW.js(12,1): error TS2580: Cannot find name 'module'. Do you need to install typ
     module.exports = MW;
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+    ~~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     

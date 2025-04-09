@@ -103,7 +103,8 @@ Object.defineProperty(exports, "thing", obj);
  */
 let str = /** @type {string} */("other");
 >str : string
->("other") : "other"
+>("other") : string
+>"other" : string
 >"other" : "other"
 
 Object.defineProperty(exports, str, { value: 42, writable: true });

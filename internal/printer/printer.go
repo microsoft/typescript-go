@@ -807,6 +807,7 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		ast.KindGetAccessor,
 		ast.KindSetAccessor,
 		ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration,
 		ast.KindFunctionType,
 		ast.KindConstructorType,
 		ast.KindCallSignature,
@@ -1721,6 +1722,10 @@ func (p *Printer) emitClassElement(node *ast.ClassElement) {
 		p.emitIndexSignature(node.AsIndexSignatureDeclaration())
 	case ast.KindSemicolonClassElement:
 		p.emitSemicolonClassElement(node.AsSemicolonClassElement())
+	case ast.KindNotEmittedStatement:
+		p.emitNotEmittedStatement(node.AsNotEmittedStatement())
+	case ast.KindJSTypeAliasDeclaration:
+		p.emitTypeAliasDeclaration(node.AsTypeAliasDeclaration())
 	default:
 		panic(fmt.Sprintf("unexpected ClassElement: %v", node.Kind))
 	}
@@ -1772,6 +1777,38 @@ func (p *Printer) emitObjectLiteralElement(node *ast.ObjectLiteralElement) {
 
 func (p *Printer) emitKeywordTypeNode(node *ast.KeywordTypeNode) {
 	p.emitKeywordNode(node.AsNode())
+}
+
+func (p *Printer) emitJSDocAllType(node *ast.Node) {
+	p.emitKeywordNode(node)
+}
+
+func (p *Printer) emitJSDocNonNullableType(node *ast.JSDocNonNullableType, precedence ast.TypePrecedence) {
+	state := p.enterNode(node.AsNode())
+	p.writePunctuation("!")
+	p.emitTypeNode(node.Type, ast.TypePrecedenceNonArray)
+	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitJSDocNullableType(node *ast.JSDocNullableType, precedence ast.TypePrecedence) {
+	state := p.enterNode(node.AsNode())
+	p.writePunctuation("?")
+	p.emitTypeNode(node.Type, ast.TypePrecedenceNonArray)
+	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitJSDocOptionalType(node *ast.JSDocOptionalType, precedence ast.TypePrecedence) {
+	state := p.enterNode(node.AsNode())
+	p.emitTypeNode(node.Type, ast.TypePrecedenceJSDoc)
+	p.writePunctuation("=")
+	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitJSDocVariadicType(node *ast.JSDocVariadicType, precedence ast.TypePrecedence) {
+	state := p.enterNode(node.AsNode())
+	p.writePunctuation("...")
+	p.emitTypeNode(node.Type, ast.TypePrecedenceJSDoc)
+	p.exitNode(node.AsNode(), state)
 }
 
 func (p *Printer) emitTypePredicateParameterName(node *ast.TypePredicateParameterName) {
@@ -2252,12 +2289,16 @@ func (p *Printer) emitTypeNode(node *ast.TypeNode, precedence ast.TypePrecedence
 	case ast.KindExpressionWithTypeArguments:
 		// !!! Should this actually be considered a type?
 		p.emitExpressionWithTypeArguments(node.AsExpressionWithTypeArguments())
-
-	case ast.KindJSDocAllType,
-		ast.KindJSDocNullableType,
-		ast.KindJSDocNonNullableType,
-		ast.KindJSDocOptionalType,
-		ast.KindJSDocVariadicType:
+	case ast.KindJSDocAllType:
+		p.emitJSDocAllType(node)
+	case ast.KindJSDocNonNullableType:
+		p.emitJSDocNonNullableType(node.AsJSDocNonNullableType(), precedence)
+	case ast.KindJSDocNullableType: // =T|null
+		p.emitJSDocNullableType(node.AsJSDocNullableType(), precedence)
+	case ast.KindJSDocOptionalType: // T|undefined
+		p.emitJSDocOptionalType(node.AsJSDocOptionalType(), precedence)
+	case ast.KindJSDocVariadicType: // =T[]
+		p.emitJSDocVariadicType(node.AsJSDocVariadicType(), precedence)
 		// TODO
 		panic("not implemented")
 
@@ -3883,7 +3924,7 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitClassDeclaration(node.AsClassDeclaration())
 	case ast.KindInterfaceDeclaration:
 		p.emitInterfaceDeclaration(node.AsInterfaceDeclaration())
-	case ast.KindTypeAliasDeclaration:
+	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		p.emitTypeAliasDeclaration(node.AsTypeAliasDeclaration())
 	case ast.KindEnumDeclaration:
 		p.emitEnumDeclaration(node.AsEnumDeclaration())
@@ -4505,7 +4546,7 @@ func (p *Printer) hasTrailingComma(parentNode *ast.Node, children *ast.NodeList)
 		case parentNode.ParameterList():
 			originalList = originalParent.ParameterList()
 		}
-	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		switch children {
 		case parentNode.TypeParameterList():
 			originalList = originalParent.TypeParameterList()

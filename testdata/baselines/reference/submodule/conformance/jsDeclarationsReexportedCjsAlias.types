@@ -5,7 +5,7 @@ const { SomeClass, SomeClass: Another } = require('./lib');
 >SomeClass : typeof SomeClass
 >SomeClass : any
 >Another : typeof SomeClass
->require('./lib') : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
+>require('./lib') : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
 >require : any
 >'./lib' : "./lib"
 
@@ -27,13 +27,13 @@ module.exports = {
  * @param {string} a
  */
 function bar(a) {
->bar : (a: any) => any
->a : any
+>bar : (a: string) => string
+>a : string
 
     return a + a;
->a + a : any
->a : any
->a : any
+>a + a : string
+>a : string
+>a : string
 }
 
 class SomeClass {
@@ -48,14 +48,14 @@ class SomeClass {
 }
 
 module.exports = {
->module.exports = {    bar,    SomeClass} : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
+>module.exports = {    bar,    SomeClass} : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
 >module.exports : any
 >module : any
 >exports : any
->{    bar,    SomeClass} : { bar: (a: any) => any; SomeClass: typeof SomeClass; }
+>{    bar,    SomeClass} : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
 
     bar,
->bar : (a: any) => any
+>bar : (a: string) => string
 
     SomeClass
 >SomeClass : typeof SomeClass

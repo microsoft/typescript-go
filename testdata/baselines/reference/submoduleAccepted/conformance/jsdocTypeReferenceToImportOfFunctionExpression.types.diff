@@ -19,18 +19,6 @@
  
      /** @type {any} */
      var x = {}
-->x : any
-+>x : {}
- >{} : {}
- 
-     return new MW(x);
- >new MW(x) : MW
- >MW : typeof MW
-->x : any
-+>x : {}
- 
- };
- 
 @@= skipped -29, +29 lines =@@
     * @param {MC} compiler the compiler
     */

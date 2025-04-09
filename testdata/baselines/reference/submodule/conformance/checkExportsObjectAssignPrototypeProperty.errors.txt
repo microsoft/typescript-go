@@ -1,4 +1,3 @@
-mod1.js(5,17): error TS7006: Parameter 'name' implicitly has an 'any' type.
 mod1.js(6,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 mod1.js(21,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 validator.ts(5,12): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
@@ -32,14 +31,12 @@ validator.ts(5,12): error TS7009: 'new' expression, whose target lacks a constru
     m1.setonlyAccessor = 0;
     
     
-==== mod1.js (3 errors) ====
+==== mod1.js (2 errors) ====
     /**
      * @constructor
      * @param {string} name
      */
     function Person(name) {
-                    ~~~~
-!!! error TS7006: Parameter 'name' implicitly has an 'any' type.
         this.name = name;
         ~~~~
 !!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.

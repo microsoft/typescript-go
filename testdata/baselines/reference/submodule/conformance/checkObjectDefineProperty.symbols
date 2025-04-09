@@ -110,7 +110,9 @@ Object.defineProperty(x, "zipStr", {
 function takeName(named) { return named.name; }
 >takeName : Symbol(takeName, Decl(index.js, 11, 3))
 >named : Symbol(named, Decl(index.js, 16, 18))
+>named.name : Symbol(name, Decl(index.js, 14, 12))
 >named : Symbol(named, Decl(index.js, 16, 18))
+>name : Symbol(name, Decl(index.js, 14, 12))
 
 takeName(x);
 >takeName : Symbol(takeName, Decl(index.js, 11, 3))

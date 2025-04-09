@@ -152,13 +152,7 @@
  >Number : Symbol(Number, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >str : Symbol(str, Decl(index.js, 8, 8))
      }
-@@= skipped -12, +11 lines =@@
- function takeName(named) { return named.name; }
- >takeName : Symbol(takeName, Decl(index.js, 11, 3))
- >named : Symbol(named, Decl(index.js, 16, 18))
-->named.name : Symbol(name, Decl(index.js, 14, 12))
- >named : Symbol(named, Decl(index.js, 16, 18))
-->name : Symbol(name, Decl(index.js, 14, 12))
+@@= skipped -18, +17 lines =@@
  
  takeName(x);
  >takeName : Symbol(takeName, Decl(index.js, 11, 3))
@@ -198,7 +192,7 @@
  
  const expected = /** @type {{name: string, readonly middleInit: string, readonly lastName: string, zip: number, readonly houseNumber: number, zipStr: string}} */(/** @type {*} */(null));
  >expected : Symbol(expected, Decl(index.js, 32, 5))
-@@= skipped -55, +49 lines =@@
+@@= skipped -49, +45 lines =@@
  >expected : Symbol(expected, Decl(index.js, 32, 5))
  
  module.exports = x;

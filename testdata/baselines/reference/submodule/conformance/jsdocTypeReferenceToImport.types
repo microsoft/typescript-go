@@ -24,30 +24,30 @@ var c = new C()
 >C : typeof C
 
 c.start
->c.start : number
+>c.start : any
 >c : C
->start : number
+>start : any
 
 c.end
->c.end : number
+>c.end : any
 >c : C
->end : number
+>end : any
 
 /** @type {D} c */
 var d = new D()
->d : C
+>d : D
 >new D() : C
 >D : typeof C
 
 d.start
->d.start : number
->d : C
->start : number
+>d.start : any
+>d : D
+>start : any
 
 d.end
->d.end : number
->d : C
->end : number
+>d.end : any
+>d : D
+>end : any
 
 === ex.d.ts ===
 export class C {

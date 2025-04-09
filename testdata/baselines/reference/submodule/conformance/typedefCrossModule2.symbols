@@ -25,7 +25,7 @@ var bbb = new mod.Baz();
 
 /** @typedef {number} Foo */
 class Foo { } // should error
->Foo : Symbol(Foo, Decl(mod1.js, 0, 0))
+>Foo : Symbol(Foo, Decl(mod1.js, 2, 4), Decl(mod1.js, 0, 0))
 
 /** @typedef {number} Bar */
 exports.Bar = class { }
@@ -40,7 +40,7 @@ module.exports = {
 
 /** @typedef {number} Qux */
 var Qux = 2;
->Qux : Symbol(Qux, Decl(mod1.js, 16, 3))
+>Qux : Symbol(Qux, Decl(mod1.js, 15, 4), Decl(mod1.js, 16, 3))
 
 /** @typedef {number} Quid */
 exports.Quid = 2;
