@@ -16,24 +16,22 @@ import (
 )
 
 type fileLoader struct {
-	host            CompilerHost
-	programOptions  ProgramOptions
-	compilerOptions *core.CompilerOptions
+	host                CompilerHost
+	programOptions      ProgramOptions
+	compilerOptions     *core.CompilerOptions
+	resolver            *module.Resolver
+	defaultLibraryPath  string
+	comparePathsOptions tspath.ComparePathsOptions
+	wg                  core.WorkGroup
+	supportedExtensions []string
 
-	resolver        *module.Resolver
-	resolvedModules collections.SyncMap[tspath.Path, module.ModeAwareCache[*module.ResolvedModule]]
+	rootTasks []*parseTask
 
-	sourceFileMetaDatasMutex sync.RWMutex
-	sourceFileMetaDatas      map[tspath.Path]*ast.SourceFileMetaData
+	resolvedModules     collections.SyncMap[tspath.Path, module.ModeAwareCache[*module.ResolvedModule]]
+	sourceFileMetaDatas collections.SyncMap[tspath.Path, *ast.SourceFileMetaData]
 
-	mu                      sync.Mutex
-	wg                      core.WorkGroup
-	tasksByFileName         map[string]*parseTask
-	currentNodeModulesDepth int
-	defaultLibraryPath      string
-	comparePathsOptions     tspath.ComparePathsOptions
-	rootTasks               []*parseTask
-	supportedExtensions     []string
+	tasksByFileNameMu sync.Mutex
+	tasksByFileName   map[string]*parseTask
 }
 
 type processedFiles struct {
@@ -88,7 +86,7 @@ func processAllProgramFiles(
 	return processedFiles{
 		files:               append(libFiles, files...),
 		resolvedModules:     loader.resolvedModules.ToMap(),
-		sourceFileMetaDatas: loader.sourceFileMetaDatas,
+		sourceFileMetaDatas: loader.sourceFileMetaDatas.ToMap(),
 	}
 }
 
@@ -121,8 +119,8 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 
 func (p *fileLoader) startTasks(tasks []*parseTask) {
 	if len(tasks) > 0 {
-		p.mu.Lock()
-		defer p.mu.Unlock()
+		p.tasksByFileNameMu.Lock()
+		defer p.tasksByFileNameMu.Unlock()
 		for i, task := range tasks {
 			// dedup tasks to ensure correct file order, regardless of which task would be started first
 			if existingTask, ok := p.tasksByFileName[task.normalizedFilePath]; ok {
@@ -235,9 +233,7 @@ func (t *parseTask) start(loader *fileLoader) {
 }
 
 func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) {
-	p.sourceFileMetaDatasMutex.RLock()
-	_, ok := p.sourceFileMetaDatas[path]
-	p.sourceFileMetaDatasMutex.RUnlock()
+	_, ok := p.sourceFileMetaDatas.Load(path)
 	if ok {
 		return
 	}
@@ -249,12 +245,7 @@ func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) {
 		ImpliedNodeFormat: impliedNodeFormat,
 	}
 
-	p.sourceFileMetaDatasMutex.Lock()
-	defer p.sourceFileMetaDatasMutex.Unlock()
-	if p.sourceFileMetaDatas == nil {
-		p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
-	}
-	p.sourceFileMetaDatas[path] = metadata
+	p.sourceFileMetaDatas.Store(path, metadata)
 }
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
