@@ -911,6 +911,13 @@ const (
 	FindAncestorQuit
 )
 
+func ToFindAncestorResult(b bool) FindAncestorResult {
+	if b {
+		return FindAncestorTrue
+	}
+	return FindAncestorFalse
+}
+
 // Walks up the parents of a node to find the ancestor that matches the callback
 func FindAncestorOrQuit(node *Node, callback func(*Node) FindAncestorResult) *Node {
 	for node != nil {
@@ -2642,4 +2649,58 @@ func getNonAugmentationDeclaration(symbol *Symbol) *Node {
 
 func IsExternalModuleAugmentation(node *Node) bool {
 	return IsAmbientModule(node) && IsModuleAugmentationExternal(node)
+}
+
+func GetClassLikeDeclarationOfSymbol(symbol *Symbol) *Node {
+	return core.Find(symbol.Declarations, IsClassLike)
+}
+
+func GetLanguageVariant(scriptKind core.ScriptKind) core.LanguageVariant {
+	switch scriptKind {
+	case core.ScriptKindTSX, core.ScriptKindJSX, core.ScriptKindJS, core.ScriptKindJSON:
+		// .tsx and .jsx files are treated as jsx language variant.
+		return core.LanguageVariantJSX
+	}
+	return core.LanguageVariantStandard
+}
+
+// !!! Shared?
+func IsCallLikeExpression(node *Node) bool {
+	switch node.Kind {
+	case KindJsxOpeningElement, KindJsxSelfClosingElement, KindCallExpression, KindNewExpression,
+		KindTaggedTemplateExpression, KindDecorator:
+		return true
+	}
+	return false
+}
+
+// !!! Shared?
+func IsCallLikeOrFunctionLikeExpression(node *Node) bool {
+	return IsCallLikeExpression(node) || IsFunctionExpressionOrArrowFunction(node)
+}
+
+func NodeHasKind(node *Node, kind Kind) bool {
+	if node == nil {
+		return false
+	}
+	return node.Kind == kind
+}
+
+func IsContextualKeyword(token Kind) bool {
+	return KindFirstContextualKeyword <= token && token <= KindLastContextualKeyword
+}
+
+func IsThisInTypeQuery(node *Node) bool {
+	if !IsThisIdentifier(node) {
+		return false
+	}
+	for IsQualifiedName(node.Parent) && node.Parent.AsQualifiedName().Left == node {
+		node = node.Parent
+	}
+	return node.Parent.Kind == KindTypeQuery
+}
+
+// Gets whether a bound `VariableDeclaration` or `VariableDeclarationList` is part of a `let` declaration.
+func IsLet(node *Node) bool {
+	return GetCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsLet
 }

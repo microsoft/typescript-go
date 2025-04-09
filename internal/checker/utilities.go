@@ -908,20 +908,6 @@ func compareTypeMappers(m1, m2 *TypeMapper) int {
 	return 0
 }
 
-func getClassLikeDeclarationOfSymbol(symbol *ast.Symbol) *ast.Node {
-	return core.Find(symbol.Declarations, ast.IsClassLike)
-}
-
-func isThisInTypeQuery(node *ast.Node) bool {
-	if !ast.IsThisIdentifier(node) {
-		return false
-	}
-	for ast.IsQualifiedName(node.Parent) && node.Parent.AsQualifiedName().Left == node {
-		node = node.Parent
-	}
-	return node.Parent.Kind == ast.KindTypeQuery
-}
-
 func getDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
 	return getDeclarationModifierFlagsFromSymbolEx(s, false /*isWrite*/)
 }
@@ -1199,7 +1185,7 @@ func isVariableDeclarationInVariableStatement(node *ast.Node) bool {
 	return ast.IsVariableDeclarationList(node.Parent) && ast.IsVariableStatement(node.Parent.Parent)
 }
 
-func isKnownSymbol(symbol *ast.Symbol) bool {
+func IsKnownSymbol(symbol *ast.Symbol) bool {
 	return isLateBoundName(symbol.Name)
 }
 
@@ -1243,15 +1229,6 @@ func getContainingClassExcludingClassDecorators(node *ast.Node) *ast.ClassLikeDe
 
 func isThisTypeParameter(t *Type) bool {
 	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
-}
-
-func isCallLikeExpression(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement, ast.KindCallExpression, ast.KindNewExpression,
-		ast.KindTaggedTemplateExpression, ast.KindDecorator:
-		return true
-	}
-	return false
 }
 
 func isCallOrNewExpression(node *ast.Node) bool {
@@ -2130,7 +2107,7 @@ func symbolsToArray(symbols ast.SymbolTable) []*ast.Symbol {
 }
 
 // See comment on `declareModuleMember` in `binder.go`.
-func getCombinedLocalAndExportSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {
+func GetCombinedLocalAndExportSymbolFlags(symbol *ast.Symbol) ast.SymbolFlags {
 	if symbol.ExportSymbol != nil {
 		return symbol.Flags | symbol.ExportSymbol.Flags
 	}

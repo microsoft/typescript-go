@@ -525,11 +525,11 @@ func Identity[T any](t T) T {
 	return t
 }
 
-func AddToSeen[K comparable, V any](seen map[K]V, key K, value V) bool {
-	if _, ok := seen[key]; ok {
+func AddIfAbsent[K comparable](seen Set[K], key K) bool {
+	if seen.Has(key) {
 		return false
 	}
-	seen[key] = value
+	seen.Add(key)
 	return true
 }
 

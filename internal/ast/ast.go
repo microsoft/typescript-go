@@ -1621,6 +1621,7 @@ type (
 	CatchClauseNode                 = Node
 	CaseBlockNode                   = Node
 	CaseOrDefaultClauseNode         = Node
+	CaseClauseNode                  = Node
 	VariableDeclarationNode         = Node
 	VariableDeclarationListNode     = Node
 	BindingElementNode              = Node
@@ -7897,6 +7898,10 @@ func (node *JsxElement) computeSubtreeFacts() SubtreeFacts {
 		SubtreeContainsJsx
 }
 
+func IsJsxElement(node *Node) bool {
+	return node.Kind == KindJsxElement
+}
+
 // JsxAttributes
 type JsxAttributes struct {
 	ExpressionBase
@@ -8126,6 +8131,10 @@ func (node *JsxFragment) computeSubtreeFacts() SubtreeFacts {
 		SubtreeContainsJsx
 }
 
+func IsJsxFragment(node *Node) bool {
+	return node.Kind == KindJsxFragment
+}
+
 /// The opening element of a <>...</> JsxFragment
 
 type JsxOpeningFragment struct {
@@ -8328,6 +8337,10 @@ func (node *JsxExpression) Clone(f *NodeFactory) *Node {
 
 func (node *JsxExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsJsx
+}
+
+func IsJsxExpression(node *Node) bool {
+	return node.Kind == KindJsxExpression
 }
 
 // JsxText

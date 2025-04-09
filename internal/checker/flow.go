@@ -566,8 +566,8 @@ func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.No
 		return c.getAdjustedTypeWithFacts(t, facts)
 	}
 	if assumeTrue {
-		if !doubleEquals && (t.flags&TypeFlagsUnknown != 0 || someType(t, c.isEmptyAnonymousObjectType)) {
-			if valueType.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.isEmptyAnonymousObjectType(valueType) {
+		if !doubleEquals && (t.flags&TypeFlagsUnknown != 0 || someType(t, c.IsEmptyAnonymousObjectType)) {
+			if valueType.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.IsEmptyAnonymousObjectType(valueType) {
 				return valueType
 			}
 			if valueType.flags&TypeFlagsObject != 0 {
@@ -812,7 +812,7 @@ func (c *Checker) narrowTypeByInstanceof(f *FlowState, t *Type, expr *ast.Binary
 	instanceType := c.mapType(rightType, c.getInstanceType)
 	// Don't narrow from `any` if the target type is exactly `Object` or `Function`, and narrow
 	// in the false branch only if the target is a non-empty object type.
-	if IsTypeAny(t) && (instanceType == c.globalObjectType || instanceType == c.globalFunctionType) || !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.isEmptyAnonymousObjectType(instanceType)) {
+	if IsTypeAny(t) && (instanceType == c.globalObjectType || instanceType == c.globalFunctionType) || !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.IsEmptyAnonymousObjectType(instanceType)) {
 		return t
 	}
 	return c.getNarrowedType(t, instanceType, assumeTrue, true /*checkDerived*/)
@@ -1563,7 +1563,7 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 	case ast.KindMetaProperty:
 		return ast.IsMetaProperty(target) && source.AsMetaProperty().KeywordToken == target.AsMetaProperty().KeywordToken && source.Name().Text() == target.Name().Text()
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
-		if isThisInTypeQuery(source) {
+		if ast.IsThisInTypeQuery(source) {
 			return target.Kind == ast.KindThisKeyword
 		}
 		return ast.IsIdentifier(target) && c.getResolvedSymbol(source) == c.getResolvedSymbol(target) ||
@@ -1619,7 +1619,7 @@ func (c *Checker) getFlowReferenceKey(f *FlowState) string {
 func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindIdentifier:
-		if !isThisInTypeQuery(node) {
+		if !ast.IsThisInTypeQuery(node) {
 			symbol := c.getResolvedSymbol(node)
 			if symbol == c.unknownSymbol {
 				return false
@@ -1778,7 +1778,7 @@ func (c *Checker) isConstantReference(node *ast.Node) bool {
 	case ast.KindThisKeyword:
 		return true
 	case ast.KindIdentifier:
-		if !isThisInTypeQuery(node) {
+		if !ast.IsThisInTypeQuery(node) {
 			symbol := c.getResolvedSymbol(node)
 			return c.isConstantVariable(symbol) || c.isParameterOrMutableLocalVariable(symbol) && !c.isSymbolAssigned(symbol) || symbol.ValueDeclaration != nil && ast.IsFunctionExpression(symbol.ValueDeclaration)
 		}

@@ -247,6 +247,7 @@ func visitEachChildAndJSDoc(node *ast.Node, sourceFile *ast.SourceFile, visitor 
 	node.VisitEachChild(visitor)
 }
 
+// !!! Shared (placeholder)
 // Finds the rightmost token satisfying `token.end <= position`,
 func FindPrecedingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
 	var next *ast.Node
@@ -373,4 +374,14 @@ func FindPrecedingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
 		left = current.Pos()
 		next = nil
 	}
+}
+
+// !!!
+func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *ast.Node) *ast.Node {
+	return FindPrecedingToken(sourceFile, position)
+}
+
+// !!!
+func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFile) *ast.Node {
+	return nil
 }

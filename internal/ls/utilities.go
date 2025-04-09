@@ -1,9 +1,14 @@
 package ls
 
 import (
+	"strings"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 // !!! Shared (placeholder)
@@ -13,8 +18,7 @@ func isInString(file *ast.SourceFile, position int, previousToken *ast.Node) boo
 	}
 
 	if previousToken != nil && isStringTextContainingNode(previousToken) {
-		// start := previousToken.
-		// !!! HERE
+
 	}
 
 	return false
@@ -72,6 +76,10 @@ func getLastChild(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
 }
 
 func getLastToken(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
+	if node == nil {
+		return nil
+	}
+
 	assertHasRealPosition(node)
 
 	lastChild := getLastChild(node, sourceFile)
@@ -124,4 +132,136 @@ func isInRightSideOfInternalImportEqualsDeclaration(node *ast.Node) bool {
 	}
 
 	return ast.IsInternalModuleImportEqualsDeclaration(node.Parent) && node.Parent.AsImportEqualsDeclaration().ModuleReference == node
+}
+
+func createLspRangeFromNode(node *ast.Node, file *ast.SourceFile) *lsproto.Range {
+	return createLspRangeFromBounds(node.Pos(), node.End(), file)
+}
+
+func createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {
+	// !!! needs converters access
+	return nil
+}
+
+func quote(file *ast.SourceFile, preferences *UserPreferences, text string) string {
+	// Editors can pass in undefined or empty string - we want to infer the preference in those cases.
+	quotePreference := getQuotePreference(file, preferences)
+	quoted, _ := core.StringifyJson(text, "" /*prefix*/, "" /*indent*/)
+	if quotePreference == quotePreferenceSingle {
+		strings.ReplaceAll(strings.ReplaceAll(core.StripQuotes(quoted), "'", `\'`), `\"`, `"`)
+	}
+	return quoted
+}
+
+type quotePreference int
+
+const (
+	quotePreferenceSingle quotePreference = iota
+	quotePreferenceDouble
+)
+
+func getQuotePreference(file *ast.SourceFile, preferences *UserPreferences) quotePreference {
+	// !!!
+	return quotePreferenceDouble
+}
+
+func positionIsASICandidate(pos int, context *ast.Node, file *ast.SourceFile) bool {
+	contextAncestor := ast.FindAncestorOrQuit(context, func(ancestor *ast.Node) ast.FindAncestorResult {
+		if ancestor.End() != pos {
+			return ast.FindAncestorQuit
+		}
+
+		return ast.ToFindAncestorResult(syntaxMayBeASICandidate(ancestor.Kind))
+	})
+
+	return contextAncestor != nil && nodeIsASICandidate(contextAncestor, file)
+}
+
+func syntaxMayBeASICandidate(kind ast.Kind) bool {
+	return syntaxRequiresTrailingCommaOrSemicolonOrASI(kind) ||
+		syntaxRequiresTrailingFunctionBlockOrSemicolonOrASI(kind) ||
+		syntaxRequiresTrailingModuleBlockOrSemicolonOrASI(kind) ||
+		syntaxRequiresTrailingSemicolonOrASI(kind)
+}
+
+func syntaxRequiresTrailingCommaOrSemicolonOrASI(kind ast.Kind) bool {
+	return kind == ast.KindCallSignature ||
+		kind == ast.KindConstructSignature ||
+		kind == ast.KindIndexSignature ||
+		kind == ast.KindPropertySignature ||
+		kind == ast.KindMethodSignature
+}
+
+func syntaxRequiresTrailingFunctionBlockOrSemicolonOrASI(kind ast.Kind) bool {
+	return kind == ast.KindFunctionDeclaration ||
+		kind == ast.KindConstructor ||
+		kind == ast.KindMethodDeclaration ||
+		kind == ast.KindGetAccessor ||
+		kind == ast.KindSetAccessor
+}
+
+func syntaxRequiresTrailingModuleBlockOrSemicolonOrASI(kind ast.Kind) bool {
+	return kind == ast.KindModuleDeclaration
+}
+
+func syntaxRequiresTrailingSemicolonOrASI(kind ast.Kind) bool {
+	return kind == ast.KindVariableStatement ||
+		kind == ast.KindExpressionStatement ||
+		kind == ast.KindDoStatement ||
+		kind == ast.KindContinueStatement ||
+		kind == ast.KindBreakStatement ||
+		kind == ast.KindReturnStatement ||
+		kind == ast.KindThrowStatement ||
+		kind == ast.KindDebuggerStatement ||
+		kind == ast.KindPropertyDeclaration ||
+		kind == ast.KindTypeAliasDeclaration ||
+		kind == ast.KindImportDeclaration ||
+		kind == ast.KindImportEqualsDeclaration ||
+		kind == ast.KindExportDeclaration ||
+		kind == ast.KindNamespaceExportDeclaration ||
+		kind == ast.KindExportAssignment
+}
+
+func nodeIsASICandidate(node *ast.Node, file *ast.SourceFile) bool {
+	lastToken := getLastToken(node, file)
+	if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
+		return false
+	}
+
+	if syntaxRequiresTrailingCommaOrSemicolonOrASI(node.Kind) {
+		if lastToken != nil && lastToken.Kind == ast.KindCommaToken {
+			return false
+		}
+	} else if syntaxRequiresTrailingModuleBlockOrSemicolonOrASI(node.Kind) {
+		lastChild := getLastChild(node, file)
+		if lastChild != nil && ast.IsModuleBlock(lastChild) {
+			return false
+		}
+	} else if syntaxRequiresTrailingFunctionBlockOrSemicolonOrASI(node.Kind) {
+		lastChild := getLastChild(node, file)
+		if lastChild != nil && ast.IsFunctionBlock(lastChild) {
+			return false
+		}
+	} else if !syntaxRequiresTrailingSemicolonOrASI(node.Kind) {
+		return false
+	}
+
+	// See comment in parser's `parseDoStatement`
+	if node.Kind == ast.KindDoStatement {
+		return true
+	}
+
+	topNode := ast.FindAncestor(node, func(ancestor *ast.Node) bool { return ancestor.Parent == nil })
+	nextToken := astnav.FindNextToken(node, topNode, file)
+	if nextToken == nil || nextToken.Kind == ast.KindCloseBraceToken {
+		return true
+	}
+
+	startLine, _ := scanner.GetLineAndCharacterOfPosition(file, node.End())
+	endLine, _ := scanner.GetLineAndCharacterOfPosition(file, getStartOfNode(nextToken, file))
+	return startLine != endLine
+}
+
+func isNonContextualKeyword(token ast.Kind) bool {
+	return ast.IsKeywordKind(token) && !ast.IsContextualKeyword(token)
 }

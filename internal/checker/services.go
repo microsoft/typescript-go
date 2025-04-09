@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 )
 
 func (c *Checker) GetSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags) []*ast.Symbol {
@@ -23,7 +24,7 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 	// Copy the given symbol into symbol tables if the symbol has the given meaning
 	// and it doesn't already exists in the symbol table.
 	copySymbol := func(symbol *ast.Symbol, meaning ast.SymbolFlags) {
-		if getCombinedLocalAndExportSymbolFlags(symbol)&meaning != 0 {
+		if GetCombinedLocalAndExportSymbolFlags(symbol)&meaning != 0 {
 			id := symbol.Name
 			// We will copy all symbol regardless of its reserved name because
 			// symbolsToArray will check whether the key is a reserved name and
@@ -190,6 +191,14 @@ func (c *Checker) IsUnknownSymbol(symbol *ast.Symbol) bool {
 	return symbol == c.unknownSymbol
 }
 
+func (c *Checker) IsUndefinedSymbol(symbol *ast.Symbol) bool {
+	return symbol == c.undefinedSymbol
+}
+
+func (c *Checker) IsArgumentsSymbol(symbol *ast.Symbol) bool {
+	return symbol == c.argumentsSymbol
+}
+
 // Originally from services.ts
 func (c *Checker) GetNonOptionalType(t *Type) *Type {
 	return c.removeOptionalTypeMarker(t)
@@ -235,8 +244,32 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 	return c.getNamedMembers(propsByName)
 }
 
-func (c *Checker) IsUnion(t *Type) bool {
+func IsUnion(t *Type) bool {
 	return t.flags&TypeFlagsUnion != 0
+}
+
+func IsStringLiteral(t *Type) bool {
+	return t.flags&TypeFlagsStringLiteral != 0
+}
+
+func IsNumberLiteral(t *Type) bool {
+	return t.flags&TypeFlagsNumberLiteral != 0
+}
+
+func IsBigIntLiteral(t *Type) bool {
+	return t.flags&TypeFlagsBigIntLiteral != 0
+}
+
+func IsEnumLiteral(t *Type) bool {
+	return t.flags&TypeFlagsEnumLiteral != 0
+}
+
+func IsBooleanLike(t *Type) bool {
+	return t.flags&TypeFlagsBooleanLike != 0
+}
+
+func IsStringLike(t *Type) bool {
+	return t.flags&TypeFlagsStringLike != 0
 }
 
 func (c *Checker) TryGetMemberInModuleExportsAndProperties(memberName string, moduleSymbol *ast.Symbol) *ast.Symbol {
@@ -268,4 +301,123 @@ func (c *Checker) shouldTreatPropertiesOfExternalModuleAsExports(resolvedExterna
 		// `isArrayOrTupleLikeType` is too expensive to use in this auto-imports hot path.
 		c.isArrayType(resolvedExternalModuleType) ||
 		isTupleType(resolvedExternalModuleType)
+}
+
+func (c *Checker) GetContextualType(node *ast.Expression, contextFlags ContextFlags) *Type {
+	if contextFlags&ContextFlagsCompletions != 0 {
+		return runWithInferenceBlockedFromSourceNode(c, node, func() *Type { return c.getContextualType(node, contextFlags) })
+	}
+	return c.getContextualType(node, contextFlags)
+}
+
+func runWithInferenceBlockedFromSourceNode[T any](c *Checker, node *ast.Node, fn func() T) T {
+	containingCall := ast.FindAncestor(node, ast.IsCallLikeExpression)
+	if containingCall != nil {
+		toMarkSkip := node
+		for {
+			c.skipDirectInferenceNodes.Add(toMarkSkip)
+			toMarkSkip = toMarkSkip.Parent
+			if toMarkSkip == nil || toMarkSkip == containingCall {
+				break
+			}
+		}
+	}
+
+	c.isInferencePartiallyBlocked = true
+	result := runWithoutResolvedSignatureCaching(c, node, fn)
+	c.isInferencePartiallyBlocked = false
+
+	c.skipDirectInferenceNodes.Clear()
+	return result
+}
+
+// !!! Shared, made generic
+func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
+	ancestorNode := ast.FindAncestor(node, func(n *ast.Node) bool {
+		return ast.IsCallLikeOrFunctionLikeExpression(n)
+	})
+	if ancestorNode != nil {
+		cachedResolvedSignatures := make(map[*SignatureLinks]*Signature)
+		cachedTypes := make(map[*ValueSymbolLinks]*Type)
+		for ancestorNode != nil {
+			signatureLinks := c.signatureLinks.Get(ancestorNode)
+			cachedResolvedSignatures[signatureLinks] = signatureLinks.resolvedSignature
+			signatureLinks.resolvedSignature = nil
+			if ast.IsFunctionExpressionOrArrowFunction(ancestorNode) {
+				symbolLinks := c.valueSymbolLinks.Get(c.getSymbolOfDeclaration(ancestorNode))
+				resolvedType := symbolLinks.resolvedType
+				cachedTypes[symbolLinks] = resolvedType
+				symbolLinks.resolvedType = nil
+			}
+			ancestorNode = ast.FindAncestor(ancestorNode.Parent, ast.IsCallLikeOrFunctionLikeExpression)
+		}
+		result := fn()
+		for signatureLinks, resolvedSignature := range cachedResolvedSignatures {
+			signatureLinks.resolvedSignature = resolvedSignature
+		}
+		for symbolLinks, resolvedType := range cachedTypes {
+			symbolLinks.resolvedType = resolvedType
+		}
+		return result
+	}
+	return fn()
+}
+
+func (c *Checker) GetRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
+	roots := c.getImmediateRootSymbols(symbol)
+	if roots != nil {
+		var result []*ast.Symbol
+		for _, root := range roots {
+			result = append(result, c.GetRootSymbols(root)...)
+		}
+	}
+	return []*ast.Symbol{symbol}
+}
+
+func (c *Checker) getImmediateRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
+	if symbol.CheckFlags&ast.CheckFlagsSynthetic != 0 {
+		return core.MapNonNil(
+			c.valueSymbolLinks.Get(symbol).containingType.Types(),
+			func(t *Type) *ast.Symbol {
+				return c.getPropertyOfType(t, symbol.Name)
+			})
+	} else if symbol.Flags&ast.SymbolFlagsTransient != 0 {
+		if c.spreadLinks.Has(symbol) {
+			leftSpread := c.spreadLinks.Get(symbol).leftSpread
+			rightSpread := c.spreadLinks.Get(symbol).rightSpread
+			if leftSpread != nil {
+				return []*ast.Symbol{leftSpread, rightSpread}
+			}
+		}
+		if c.mappedSymbolLinks.Has(symbol) {
+			syntheticOrigin := c.mappedSymbolLinks.Get(symbol).syntheticOrigin
+			if syntheticOrigin != nil {
+				return []*ast.Symbol{syntheticOrigin}
+			}
+		}
+		target := c.tryGetTarget(symbol)
+		if target != nil {
+			return []*ast.Symbol{target}
+		}
+		return nil
+	}
+
+	return nil
+}
+
+func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
+	var target *ast.Symbol
+	next := symbol
+	for {
+		if c.valueSymbolLinks.Has(next) {
+			next = c.valueSymbolLinks.Get(next).target
+		} else if c.exportTypeLinks.Has(next) {
+			next = c.exportTypeLinks.Get(next).target
+		}
+		if next == nil {
+			break
+		}
+		target = next
+	}
+	return target
 }

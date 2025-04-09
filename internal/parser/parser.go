@@ -191,7 +191,7 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	p.sourceText = sourceText
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
-	p.languageVariant = getLanguageVariant(p.scriptKind)
+	p.languageVariant = ast.GetLanguageVariant(p.scriptKind)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile

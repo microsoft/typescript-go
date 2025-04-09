@@ -534,6 +534,14 @@ type Type struct {
 	data        TypeData // Type specific data
 }
 
+func (t *Type) Id() TypeId {
+	return t.id
+}
+
+func (t *Type) Flags() TypeFlags {
+	return t.flags
+}
+
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
@@ -624,6 +632,10 @@ func (t *Type) TargetTupleType() *TupleType {
 	return t.AsTypeReference().target.AsTupleType()
 }
 
+func (t *Type) Symbol() *ast.Symbol {
+	return t.symbol
+}
+
 // TypeData
 
 type TypeData interface {
@@ -666,6 +678,10 @@ type LiteralType struct {
 	value       any   // string | jsnum.Number | bool | PseudoBigInt | nil (computed enum)
 	freshType   *Type // Fresh version of type
 	regularType *Type // Regular version of type
+}
+
+func (t *LiteralType) Value() any {
+	return t.value
 }
 
 // UniqueESSymbolTypeData

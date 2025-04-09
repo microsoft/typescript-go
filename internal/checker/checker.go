@@ -817,6 +817,7 @@ type Checker struct {
 	markNodeAssignments                        func(*ast.Node) bool
 	emitResolver                               *emitResolver
 	emitResolverOnce                           sync.Once
+	skipDirectInferenceNodes                   core.Set[*ast.Node]
 }
 
 func NewChecker(program Program) *Checker {
@@ -1147,7 +1148,7 @@ func (c *Checker) getGlobalSymbol(name string, meaning ast.SymbolFlags, diagnost
 
 func (c *Checker) initializeClosures() {
 	c.isPrimitiveOrObjectOrEmptyType = func(t *Type) bool {
-		return t.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.isEmptyAnonymousObjectType(t)
+		return t.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.IsEmptyAnonymousObjectType(t)
 	}
 	c.containsMissingType = func(t *Type) bool {
 		return t == c.missingType || t.flags&TypeFlagsUnion != 0 && t.Types()[0] == c.missingType
@@ -4100,7 +4101,7 @@ func (c *Checker) checkBaseTypeAccessibility(t *Type, node *ast.Node) {
 	if len(signatures) != 0 {
 		declaration := signatures[0].declaration
 		if declaration != nil && hasEffectiveModifier(declaration, ast.ModifierFlagsPrivate) {
-			typeClassDeclaration := getClassLikeDeclarationOfSymbol(t.symbol)
+			typeClassDeclaration := ast.GetClassLikeDeclarationOfSymbol(t.symbol)
 			if !c.isNodeWithinClass(node, typeClassDeclaration) {
 				c.error(node, diagnostics.Cannot_extend_a_class_0_Class_constructor_is_marked_as_private, c.getFullyQualifiedName(t.symbol, nil))
 			}
@@ -4193,7 +4194,7 @@ basePropertyCheck:
 				// It is an error to inherit an abstract member without implementing it or being declared abstract.
 				// If there is no declaration for the derived class (as in the case of class expressions),
 				// then the class cannot be declared abstract.
-				derivedClassDecl := getClassLikeDeclarationOfSymbol(t.symbol)
+				derivedClassDecl := ast.GetClassLikeDeclarationOfSymbol(t.symbol)
 				if derivedClassDecl == nil || !ast.HasSyntacticModifier(derivedClassDecl, ast.ModifierFlagsAbstract) {
 					// Searches other base types for a declaration that would satisfy the inherited abstract member.
 					// (The class may have more than one base type via declaration merging with an interface with the
@@ -4254,7 +4255,7 @@ basePropertyCheck:
 					if uninitialized != nil && derived.Flags&ast.SymbolFlagsTransient == 0 && baseDeclarationFlags&ast.ModifierFlagsAbstract == 0 && derivedDeclarationFlags&ast.ModifierFlagsAbstract == 0 && !core.Some(derived.Declarations, func(d *ast.Node) bool {
 						return d.Flags&ast.NodeFlagsAmbient != 0
 					}) {
-						constructor := ast.FindConstructorDeclaration(getClassLikeDeclarationOfSymbol(t.symbol))
+						constructor := ast.FindConstructorDeclaration(ast.GetClassLikeDeclarationOfSymbol(t.symbol))
 						propName := uninitialized.Name()
 						if isExclamationToken(uninitialized.AsPropertyDeclaration().PostfixToken) || constructor == nil || !ast.IsIdentifier(propName) || !c.strictNullChecks || !c.isPropertyInitializedInConstructor(propName, t, constructor) {
 							errorMessage := diagnostics.Property_0_will_overwrite_the_base_property_in_1_If_this_is_intentional_add_an_initializer_Otherwise_add_a_declare_modifier_or_remove_the_redundant_declaration
@@ -8102,7 +8103,7 @@ func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Si
 			return c.resolveErrorCall(node)
 		}
 		if expressionType.symbol != nil {
-			valueDecl := getClassLikeDeclarationOfSymbol(expressionType.symbol)
+			valueDecl := ast.GetClassLikeDeclarationOfSymbol(expressionType.symbol)
 			if valueDecl != nil && hasEffectiveModifier(valueDecl, ast.ModifierFlagsAbstract) {
 				c.error(node, diagnostics.Cannot_create_an_instance_of_an_abstract_class)
 				return c.resolveErrorCall(node)
@@ -8141,7 +8142,7 @@ func (c *Checker) isConstructorAccessible(node *ast.Node, signature *Signature) 
 	if modifiers == 0 || !ast.IsConstructorDeclaration(declaration) {
 		return true
 	}
-	declaringClassDeclaration := getClassLikeDeclarationOfSymbol(declaration.Parent.Symbol())
+	declaringClassDeclaration := ast.GetClassLikeDeclarationOfSymbol(declaration.Parent.Symbol())
 	declaringClass := c.getDeclaredTypeOfSymbol(declaration.Parent.Symbol())
 	// A private or protected constructor can only be instantiated within its own class (or a subclass, for protected)
 	if !c.isNodeWithinClass(node, declaringClassDeclaration) {
@@ -10389,7 +10390,7 @@ func (c *Checker) checkJsxAttributes(node *ast.Node, checkMode CheckMode) *Type 
 }
 
 func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
-	if isThisInTypeQuery(node) {
+	if ast.IsThisInTypeQuery(node) {
 		return c.checkThisExpression(node)
 	}
 	symbol := c.getResolvedSymbol(node)
@@ -10694,7 +10695,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 		if c.compilerOptions.NoPropertyAccessFromIndexSignature == core.TSTrue && ast.IsPropertyAccessExpression(node) {
 			c.error(right, diagnostics.Property_0_comes_from_an_index_signature_so_it_must_be_accessed_with_0, right.Text())
 		}
-		if indexInfo.declaration != nil && c.isDeprecatedDeclaration(indexInfo.declaration) {
+		if indexInfo.declaration != nil && c.IsDeprecatedDeclaration(indexInfo.declaration) {
 			c.addDeprecatedSuggestion(right, []*ast.Node{indexInfo.declaration}, right.Text())
 		}
 	} else {
@@ -11010,11 +11011,11 @@ func (c *Checker) isUncalledFunctionReference(node *ast.Node, symbol *ast.Symbol
 		if parent == nil {
 			parent = node.Parent
 		}
-		if isCallLikeExpression(parent) {
+		if ast.IsCallLikeExpression(parent) {
 			return isCallOrNewExpression(parent) && ast.IsIdentifier(node) && c.hasMatchingArgument(parent, node)
 		}
 		return core.Every(symbol.Declarations, func(d *ast.Node) bool {
-			return !ast.IsFunctionLike(d) || c.isDeprecatedDeclaration(d)
+			return !ast.IsFunctionLike(d) || c.IsDeprecatedDeclaration(d)
 		})
 	}
 	return true
@@ -11146,7 +11147,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *ast.Node, isSup
 	if flags&ast.ModifierFlagsAbstract != 0 && c.symbolHasNonMethodDeclaration(prop) && (isThisProperty(location) ||
 		isThisInitializedObjectBindingExpression(location) ||
 		ast.IsObjectBindingPattern(location.Parent) && isThisInitializedDeclaration(location.Parent.Parent)) {
-		declaringClassDeclaration := getClassLikeDeclarationOfSymbol(c.getParentOfSymbol(prop))
+		declaringClassDeclaration := ast.GetClassLikeDeclarationOfSymbol(c.getParentOfSymbol(prop))
 		if declaringClassDeclaration != nil && c.isNodeUsedDuringClassInitialization(location) {
 			if errorNode != nil {
 				c.error(errorNode, diagnostics.Abstract_property_0_in_class_1_cannot_be_accessed_in_the_constructor, c.symbolToString(prop), declaringClassDeclaration.Name().Text())
@@ -11161,7 +11162,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *ast.Node, isSup
 	// Property is known to be private or protected at this point
 	// Private property is accessible if the property is within the declaring class
 	if flags&ast.ModifierFlagsPrivate != 0 {
-		declaringClassDeclaration := getClassLikeDeclarationOfSymbol(c.getParentOfSymbol(prop))
+		declaringClassDeclaration := ast.GetClassLikeDeclarationOfSymbol(c.getParentOfSymbol(prop))
 		if !c.isNodeWithinClass(location, declaringClassDeclaration) {
 			if errorNode != nil {
 				c.error(errorNode, diagnostics.Property_0_is_private_and_only_accessible_within_class_1, c.symbolToString(prop), c.TypeToString(c.getDeclaringClass(prop)))
@@ -12358,7 +12359,7 @@ func (c *Checker) checkInExpression(left *ast.Expression, right *ast.Expression,
 
 func (c *Checker) hasEmptyObjectIntersection(t *Type) bool {
 	return someType(t, func(t *Type) bool {
-		return t == c.unknownEmptyObjectType || t.flags&TypeFlagsIntersection != 0 && c.isEmptyAnonymousObjectType(c.getBaseConstraintOrType(t))
+		return t == c.unknownEmptyObjectType || t.flags&TypeFlagsIntersection != 0 && c.IsEmptyAnonymousObjectType(c.getBaseConstraintOrType(t))
 	})
 }
 
@@ -13169,7 +13170,7 @@ func (c *Checker) addErrorOrSuggestion(isError bool, diagnostic *ast.Diagnostic)
 	}
 }
 
-func (c *Checker) isDeprecatedDeclaration(declaration *ast.Node) bool {
+func (c *Checker) IsDeprecatedDeclaration(declaration *ast.Node) bool {
 	return c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsDeprecated != 0
 }
 
@@ -13194,12 +13195,12 @@ func (c *Checker) isDeprecatedSymbol(symbol *ast.Symbol) bool {
 	parentSymbol := c.getParentOfSymbol(symbol)
 	if parentSymbol != nil && len(symbol.Declarations) > 1 {
 		if parentSymbol.Flags&ast.SymbolFlagsInterface != 0 {
-			return core.Some(symbol.Declarations, c.isDeprecatedDeclaration)
+			return core.Some(symbol.Declarations, c.IsDeprecatedDeclaration)
 		} else {
-			return core.Every(symbol.Declarations, c.isDeprecatedDeclaration)
+			return core.Every(symbol.Declarations, c.IsDeprecatedDeclaration)
 		}
 	}
-	return symbol.ValueDeclaration != nil && c.isDeprecatedDeclaration(symbol.ValueDeclaration) || len(symbol.Declarations) != 0 && core.Every(symbol.Declarations, c.isDeprecatedDeclaration)
+	return symbol.ValueDeclaration != nil && c.IsDeprecatedDeclaration(symbol.ValueDeclaration) || len(symbol.Declarations) != 0 && core.Every(symbol.Declarations, c.IsDeprecatedDeclaration)
 }
 
 func (c *Checker) hasParseDiagnostics(sourceFile *ast.SourceFile) bool {
@@ -17676,7 +17677,7 @@ func (c *Checker) resolveBaseTypesOfClass(t *Type) {
 }
 
 func getBaseTypeNodeOfClass(t *Type) *ast.Node {
-	decl := getClassLikeDeclarationOfSymbol(t.symbol)
+	decl := ast.GetClassLikeDeclarationOfSymbol(t.symbol)
 	if decl != nil {
 		return ast.GetExtendsHeritageClauseElement(decl)
 	}
@@ -18147,7 +18148,7 @@ func (c *Checker) getObjectLiteralIndexInfo(isReadonly bool, properties []*ast.S
 }
 
 func (c *Checker) isSymbolWithSymbolName(symbol *ast.Symbol) bool {
-	if isKnownSymbol(symbol) {
+	if IsKnownSymbol(symbol) {
 		return true
 	}
 	if len(symbol.Declarations) != 0 {
@@ -19217,7 +19218,7 @@ func isThislessTypeParameter(node *ast.Node) bool {
 func (c *Checker) getDefaultConstructSignatures(classType *Type) []*Signature {
 	baseConstructorType := c.getBaseConstructorTypeOfClass(classType)
 	baseSignatures := c.getSignaturesOfType(baseConstructorType, SignatureKindConstruct)
-	declaration := getClassLikeDeclarationOfSymbol(classType.symbol)
+	declaration := ast.GetClassLikeDeclarationOfSymbol(classType.symbol)
 	isAbstract := declaration != nil && ast.HasSyntacticModifier(declaration, ast.ModifierFlagsAbstract)
 	if len(baseSignatures) == 0 {
 		flags := core.IfElse(isAbstract, SignatureFlagsConstruct|SignatureFlagsAbstract, SignatureFlagsConstruct)
@@ -24423,7 +24424,7 @@ func (c *Checker) addTypeToIntersection(typeSet *orderedSet[*Type], includes Typ
 	if flags&TypeFlagsIntersection != 0 {
 		return c.addTypesToIntersection(typeSet, includes, t.Types())
 	}
-	if c.isEmptyAnonymousObjectType(t) {
+	if c.IsEmptyAnonymousObjectType(t) {
 		if includes&TypeFlagsIncludesEmptyObject == 0 {
 			includes |= TypeFlagsIncludesEmptyObject
 			typeSet.add(t)
@@ -24465,7 +24466,7 @@ func (c *Checker) removeRedundantSupertypes(types []*Type, includes TypeFlags) [
 			t.flags&TypeFlagsBigInt != 0 && includes&TypeFlagsBigIntLiteral != 0 ||
 			t.flags&TypeFlagsESSymbol != 0 && includes&TypeFlagsUniqueESSymbol != 0 ||
 			t.flags&TypeFlagsVoid != 0 && includes&TypeFlagsUndefined != 0 ||
-			c.isEmptyAnonymousObjectType(t) && includes&TypeFlagsDefinitelyNonNullable != 0
+			c.IsEmptyAnonymousObjectType(t) && includes&TypeFlagsDefinitelyNonNullable != 0
 		if remove {
 			types = slices.Delete(types, i, i+1)
 		}
@@ -24631,7 +24632,7 @@ func (c *Checker) filterTypes(types []*Type, predicate func(*Type) bool) {
 	}
 }
 
-func (c *Checker) isEmptyAnonymousObjectType(t *Type) bool {
+func (c *Checker) IsEmptyAnonymousObjectType(t *Type) bool {
 	return t.objectFlags&ObjectFlagsAnonymous != 0 && (t.objectFlags&ObjectFlagsMembersResolved != 0 && c.isEmptyResolvedType(t.AsStructuredType()) ||
 		t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsTypeLiteral != 0 && len(c.getMembersOfSymbol(t.symbol)) == 0)
 }
@@ -24876,7 +24877,7 @@ func (c *Checker) getLiteralTypeFromProperty(prop *ast.Symbol, include TypeFlags
 				if name != nil {
 					t = c.getLiteralTypeFromPropertyName(name)
 				}
-				if t == nil && !isKnownSymbol(prop) {
+				if t == nil && !IsKnownSymbol(prop) {
 					t = c.getStringLiteralType(ast.SymbolName(prop))
 				}
 			}
@@ -24953,7 +24954,7 @@ func (c *Checker) shouldDeferIndexType(t *Type, indexFlags IndexFlags) bool {
 		c.isGenericTupleType(t) ||
 		c.isGenericMappedType(t) && (!c.hasDistributiveNameType(t) || c.getMappedTypeNameTypeKind(t) == MappedTypeNameTypeKindRemapping) ||
 		t.flags&TypeFlagsUnion != 0 && indexFlags&IndexFlagsNoReducibleCheck == 0 && c.isGenericReducibleType(t) ||
-		t.flags&TypeFlagsIntersection != 0 && c.maybeTypeOfKind(t, TypeFlagsInstantiable) && core.Some(t.Types(), c.isEmptyAnonymousObjectType)
+		t.flags&TypeFlagsIntersection != 0 && c.maybeTypeOfKind(t, TypeFlagsInstantiable) && core.Some(t.Types(), c.IsEmptyAnonymousObjectType)
 }
 
 // Ordinarily we reduce a keyof M, where M is a mapped type { [P in K as N<P>]: X }, to simply N<K>. This however presumes
@@ -25528,7 +25529,7 @@ func (c *Checker) isNoInferTargetType(t *Type) bool {
 	// examine all object type members.
 	return t.flags&TypeFlagsUnionOrIntersection != 0 && core.Some(t.AsUnionOrIntersectionType().types, c.isNoInferTargetType) ||
 		t.flags&TypeFlagsSubstitution != 0 && !c.isNoInferType(t) && c.isNoInferTargetType(t.AsSubstitutionType().baseType) ||
-		t.flags&TypeFlagsObject != 0 && !c.isEmptyAnonymousObjectType(t) ||
+		t.flags&TypeFlagsObject != 0 && !c.IsEmptyAnonymousObjectType(t) ||
 		t.flags&(TypeFlagsInstantiable & ^TypeFlagsSubstitution) != 0 && !c.isPatternLiteralType(t)
 }
 
@@ -25932,7 +25933,7 @@ func (c *Checker) isUnknownLikeUnionType(t *Type) bool {
 		if t.objectFlags&ObjectFlagsIsUnknownLikeUnionComputed == 0 {
 			t.objectFlags |= ObjectFlagsIsUnknownLikeUnionComputed
 			types := t.Types()
-			if len(types) >= 3 && types[0].flags&TypeFlagsUndefined != 0 && types[1].flags&TypeFlagsNull != 0 && core.Some(types, c.isEmptyAnonymousObjectType) {
+			if len(types) >= 3 && types[0].flags&TypeFlagsUndefined != 0 && types[1].flags&TypeFlagsNull != 0 && core.Some(types, c.IsEmptyAnonymousObjectType) {
 				t.objectFlags |= ObjectFlagsIsUnknownLikeUnion
 			}
 		}
@@ -26147,7 +26148,7 @@ func (c *Checker) shouldNormalizeIntersection(t *Type) bool {
 	hasNullableOrEmpty := false
 	for _, t := range t.Types() {
 		hasInstantiable = hasInstantiable || t.flags&TypeFlagsInstantiable != 0
-		hasNullableOrEmpty = hasNullableOrEmpty || t.flags&TypeFlagsNullable != 0 || c.isEmptyAnonymousObjectType(t)
+		hasNullableOrEmpty = hasNullableOrEmpty || t.flags&TypeFlagsNullable != 0 || c.IsEmptyAnonymousObjectType(t)
 		if hasInstantiable && hasNullableOrEmpty {
 			return true
 		}
@@ -26406,7 +26407,7 @@ func isInternalModuleImportEqualsDeclaration(node *ast.Node) bool {
 
 func (c *Checker) markIdentifierAliasReferenced(location *ast.IdentifierNode) {
 	symbol := c.getResolvedSymbol(location)
-	if symbol != nil && symbol != c.argumentsSymbol && symbol != c.unknownSymbol && !isThisInTypeQuery(location) {
+	if symbol != nil && symbol != c.argumentsSymbol && symbol != c.unknownSymbol && !ast.IsThisInTypeQuery(location) {
 		c.markAliasReferenced(symbol, location)
 	}
 }
@@ -29321,7 +29322,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 
 	switch node.Kind {
 	case ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindPropertyAccessExpression, ast.KindQualifiedName:
-		if !isThisInTypeQuery(node) {
+		if !ast.IsThisInTypeQuery(node) {
 			return c.getSymbolOfNameOrPropertyAccessExpression(node)
 		}
 		fallthrough
