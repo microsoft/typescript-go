@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -19,9 +20,8 @@ type fileLoader struct {
 	programOptions  ProgramOptions
 	compilerOptions *core.CompilerOptions
 
-	resolver             *module.Resolver
-	resolvedModulesMutex sync.Mutex
-	resolvedModules      map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
+	resolver        *module.Resolver
+	resolvedModules collections.SyncMap[tspath.Path, module.ModeAwareCache[*module.ResolvedModule]]
 
 	sourceFileMetaDatasMutex sync.RWMutex
 	sourceFileMetaDatas      map[tspath.Path]*ast.SourceFileMetaData
@@ -36,6 +36,12 @@ type fileLoader struct {
 	supportedExtensions     []string
 }
 
+type processedFiles struct {
+	files               []*ast.SourceFile
+	resolvedModules     map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
+	sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData
+}
+
 func processAllProgramFiles(
 	host CompilerHost,
 	programOptions ProgramOptions,
@@ -43,7 +49,7 @@ func processAllProgramFiles(
 	resolver *module.Resolver,
 	rootFiles []string,
 	libs []string,
-) (files []*ast.SourceFile, resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData) {
+) processedFiles {
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
 	loader := fileLoader{
 		host:               host,
@@ -79,7 +85,11 @@ func processAllProgramFiles(
 	}
 	loader.sortLibs(libFiles)
 
-	return append(libFiles, files...), loader.resolvedModules, loader.sourceFileMetaDatas
+	return processedFiles{
+		files:               append(libFiles, files...),
+		resolvedModules:     loader.resolvedModules.ToMap(),
+		sourceFileMetaDatas: loader.sourceFileMetaDatas,
+	}
 }
 
 func (p *fileLoader) addRootTasks(files []string, isLib bool) {
@@ -277,12 +287,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 
 		resolutionsInFile := make(module.ModeAwareCache[*module.ResolvedModule], len(resolutions))
 
-		p.resolvedModulesMutex.Lock()
-		defer p.resolvedModulesMutex.Unlock()
-		if p.resolvedModules == nil {
-			p.resolvedModules = make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule])
-		}
-		p.resolvedModules[file.Path()] = resolutionsInFile
+		p.resolvedModules.Store(file.Path(), resolutionsInFile)
 
 		for i, resolution := range resolutions {
 			resolvedFileName := resolution.ResolvedFileName
