@@ -14502,7 +14502,7 @@ func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *as
 	}
 	text := right.AsIdentifier().Text
 	symbol := c.getMergedSymbol(c.getSymbol(c.getExportsOfSymbol(namespace), text, meaning))
-	if symbol != nil && namespace.Flags&ast.SymbolFlagsAlias != 0 {
+	if symbol == nil && namespace.Flags&ast.SymbolFlagsAlias != 0 {
 		// `namespace` can be resolved further if there was a symbol merge with a re-export
 		symbol = c.getMergedSymbol(c.getSymbol(c.getExportsOfSymbol(c.resolveAlias(namespace)), text, meaning))
 	}
