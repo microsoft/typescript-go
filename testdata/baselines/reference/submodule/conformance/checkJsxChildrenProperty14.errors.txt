@@ -1,38 +1,16 @@
-error TS2318: Cannot find global type 'Array'.
-error TS2318: Cannot find global type 'Boolean'.
-error TS2318: Cannot find global type 'Function'.
-error TS2318: Cannot find global type 'IArguments'.
-error TS2318: Cannot find global type 'Number'.
-error TS2318: Cannot find global type 'Object'.
-error TS2318: Cannot find global type 'RegExp'.
-error TS2318: Cannot find global type 'String'.
-file.tsx(1,24): error TS2307: Cannot find module 'react' or its corresponding type declarations.
-file.tsx(6,15): error TS2503: Cannot find namespace 'JSX'.
-file.tsx(6,29): error TS2503: Cannot find namespace 'JSX'.
-file.tsx(31,15): error TS2503: Cannot find namespace 'JSX'.
+file.tsx(42,11): error TS2322: Type '{ a: number; b: string; children: Element[]; }' is not assignable to type 'SingleChildProp'.
+  Types of property 'children' are incompatible.
+    Type 'Element[]' is not assignable to type 'Element'.
+      Type 'Element[]' is missing the following properties from type 'ReactElement<any>': type, props
 
 
-!!! error TS2318: Cannot find global type 'Array'.
-!!! error TS2318: Cannot find global type 'Boolean'.
-!!! error TS2318: Cannot find global type 'Function'.
-!!! error TS2318: Cannot find global type 'IArguments'.
-!!! error TS2318: Cannot find global type 'Number'.
-!!! error TS2318: Cannot find global type 'Object'.
-!!! error TS2318: Cannot find global type 'RegExp'.
-!!! error TS2318: Cannot find global type 'String'.
-==== file.tsx (4 errors) ====
+==== file.tsx (1 errors) ====
     import React = require('react');
-                           ~~~~~~~
-!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
     
     interface Prop {
         a: number,
         b: string,
         children: JSX.Element | JSX.Element[];
-                  ~~~
-!!! error TS2503: Cannot find namespace 'JSX'.
-                                ~~~
-!!! error TS2503: Cannot find namespace 'JSX'.
     }
     
     class Button extends React.Component<any, any> {
@@ -58,8 +36,6 @@ file.tsx(31,15): error TS2503: Cannot find namespace 'JSX'.
         a: number,
         b: string,
         children: JSX.Element;
-                  ~~~
-!!! error TS2503: Cannot find namespace 'JSX'.
     }
     
     function SingleChildComp(p: SingleChildProp) {
@@ -71,3 +47,8 @@ file.tsx(31,15): error TS2503: Cannot find namespace 'JSX'.
     
     // Error
     let k5 = <SingleChildComp a={10} b="hi"><></><Button /><AnotherButton /></SingleChildComp>;
+              ~~~~~~~~~~~~~~~
+!!! error TS2322: Type '{ a: number; b: string; children: Element[]; }' is not assignable to type 'SingleChildProp'.
+!!! error TS2322:   Types of property 'children' are incompatible.
+!!! error TS2322:     Type 'Element[]' is not assignable to type 'Element'.
+!!! error TS2322:       Type 'Element[]' is missing the following properties from type 'ReactElement<any>': type, props

@@ -14,6 +14,8 @@ const TabbedShowLayout = ({
 }) => {
     return (
         <div />
+>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
+
     );
 };
 
@@ -24,7 +26,9 @@ TabbedShowLayout.propTypes = {
 
     version: PropTypes.number,
 >version : Symbol(version, Decl(jsDeclarationsReactComponents1.jsx, 11, 30))
+>PropTypes.number : Symbol(number, Decl(react16.d.ts, 64, 16))
 >PropTypes : Symbol(PropTypes, Decl(jsDeclarationsReactComponents1.jsx, 2, 6))
+>number : Symbol(number, Decl(react16.d.ts, 64, 16))
 
 };
 
@@ -54,18 +58,21 @@ const TabbedShowLayout = () => {
 
     return (
         <div className="" key="">
+>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
 >className : Symbol(className, Decl(jsDeclarationsReactComponents2.jsx, 6, 12))
 >key : Symbol(key, Decl(jsDeclarationsReactComponents2.jsx, 6, 25))
 
             ok
         </div>
+>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
+
     );
 };
 
 TabbedShowLayout.defaultProps = {
->TabbedShowLayout.defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents2.jsx, 10, 2))
+>TabbedShowLayout.defaultProps : Symbol(defaultProps, Decl(react16.d.ts, 410, 46))
 >TabbedShowLayout : Symbol(TabbedShowLayout, Decl(jsDeclarationsReactComponents2.jsx, 4, 5))
->defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents2.jsx, 10, 2))
+>defaultProps : Symbol(defaultProps, Decl(react16.d.ts, 410, 46))
 
     tabs: "default value"
 >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents2.jsx, 12, 33))
@@ -87,18 +94,21 @@ const TabbedShowLayout = () => {
 
     return (
         <div className="" key="">
+>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
 >className : Symbol(className, Decl(jsDeclarationsReactComponents3.jsx, 6, 12))
 >key : Symbol(key, Decl(jsDeclarationsReactComponents3.jsx, 6, 25))
 
             ok
         </div>
+>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
+
     );
 };
 
 TabbedShowLayout.defaultProps = {
->TabbedShowLayout.defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents3.jsx, 10, 2))
+>TabbedShowLayout.defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents3.jsx, 2, 11))
 >TabbedShowLayout : Symbol(TabbedShowLayout, Decl(jsDeclarationsReactComponents3.jsx, 4, 5))
->defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents3.jsx, 10, 2))
+>defaultProps : Symbol(defaultProps, Decl(jsDeclarationsReactComponents3.jsx, 2, 11))
 
     tabs: "default value"
 >tabs : Symbol(tabs, Decl(jsDeclarationsReactComponents3.jsx, 12, 33))
@@ -118,12 +128,15 @@ const TabbedShowLayout = (/** @type {{className: string}}*/prop) => {
 
     return (
         <div className={prop.className} key="">
+>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
 >className : Symbol(className, Decl(jsDeclarationsReactComponents4.jsx, 3, 12))
 >prop : Symbol(prop, Decl(jsDeclarationsReactComponents4.jsx, 1, 26))
 >key : Symbol(key, Decl(jsDeclarationsReactComponents4.jsx, 3, 39))
 
             ok
         </div>
+>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
+
     );
 };
 
@@ -152,6 +165,7 @@ function Tree({ allowDropOnRoot }) {
 >allowDropOnRoot : Symbol(allowDropOnRoot, Decl(jsDeclarationsReactComponents5.jsx, 3, 15))
 
   return <div />
+>div : Symbol(div, Decl(react16.d.ts, 2546, 114))
 }
 
 Tree.propTypes = {
@@ -161,7 +175,9 @@ Tree.propTypes = {
 
     classes: PropTypes.object,
 >classes : Symbol(classes, Decl(jsDeclarationsReactComponents5.jsx, 7, 18))
+>PropTypes.object : Symbol(object, Decl(react16.d.ts, 65, 16))
 >PropTypes : Symbol(PropTypes, Decl(jsDeclarationsReactComponents5.jsx, 1, 6))
+>object : Symbol(object, Decl(react16.d.ts, 65, 16))
 
 };
 

@@ -3,8 +3,8 @@
 === jsxFragmentFactoryNoUnusedLocals.tsx ===
 /// <reference path="react16.d.ts" />
 import { Fragment, createElement } from "react"
->Fragment : any
->createElement : any
+>Fragment : ComponentType<{}>
+>createElement : { (type: "input", props?: InputHTMLAttributes<HTMLInputElement> & ClassAttributes<HTMLInputElement>, ...children: ReactNode[]): DetailedReactHTMLElement<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>; <P extends HTMLAttributes<T>, T extends HTMLElement>(type: keyof ReactHTML, props?: ClassAttributes<T> & P, ...children: ReactNode[]): DetailedReactHTMLElement<P, T>; <P extends SVGAttributes<T>, T extends SVGElement>(type: keyof ReactSVG, props?: ClassAttributes<T> & P, ...children: ReactNode[]): ReactSVGElement; <P extends DOMAttributes<T>, T extends Element>(type: string, props?: ClassAttributes<T> & P, ...children: ReactNode[]): DOMElement<P, T>; <P>(type: SFC<P>, props?: Attributes & P, ...children: ReactNode[]): SFCElement<P>; <P>(type: ClassType<P, ClassicComponent<P, any>, ClassicComponentClass<P>>, props?: ClassAttributes<ClassicComponent<P, any>> & P, ...children: ReactNode[]): CElement<P, ClassicComponent<P, any>>; <P, T extends Component<P, any, any>, C extends ComponentClass<P, any>>(type: ClassType<P, T, C>, props?: ClassAttributes<T> & P, ...children: ReactNode[]): CElement<P, T>; <P>(type: string | ComponentClass<P, any> | SFC<P>, props?: Attributes & P, ...children: ReactNode[]): ReactElement<P>; (type: "input", props?: InputHTMLAttributes<HTMLInputElement> & ClassAttributes<HTMLInputElement>, ...children: ReactNode[]): DetailedReactHTMLElement<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>; <P extends HTMLAttributes<T>, T extends HTMLElement>(type: keyof ReactHTML, props?: ClassAttributes<T> & P, ...children: ReactNode[]): DetailedReactHTMLElement<P, T>; <P extends SVGAttributes<T>, T extends SVGElement>(type: keyof ReactSVG, props?: ClassAttributes<T> & P, ...children: ReactNode[]): ReactSVGElement; <P extends DOMAttributes<T>, T extends Element>(type: string, props?: ClassAttributes<T> & P, ...children: ReactNode[]): DOMElement<P, T>; <P>(type: SFC<P>, props?: Attributes & P, ...children: ReactNode[]): SFCElement<P>; <P>(type: ClassType<P, ClassicComponent<P, any>, ClassicComponentClass<P>>, props?: ClassAttributes<ClassicComponent<P, any>> & P, ...children: ReactNode[]): CElement<P, ClassicComponent<P, any>>; <P, T extends Component<P, any, any>, C extends ComponentClass<P, any>>(type: ClassType<P, T, C>, props?: ClassAttributes<T> & P, ...children: ReactNode[]): CElement<P, T>; <P>(type: string | ComponentClass<P, any> | SFC<P>, props?: Attributes & P, ...children: ReactNode[]): ReactElement<P>; }
 
 type CounterProps = {
 >CounterProps : CounterProps
@@ -14,7 +14,7 @@ type CounterProps = {
 }
 
 export function Counter({ count = 0 }: CounterProps) {
->Counter : (__0: CounterProps) => any
+>Counter : (__0: CounterProps) => Element
 >count : number
 >0 : 0
 
@@ -24,18 +24,18 @@ export function Counter({ count = 0 }: CounterProps) {
 >null as any : any
 
     return <>
-><>        <p>{cnt}</p>        <button onClick={() => setCnt((prev) => prev + 1)} type="button">Update</button>    </> : any
+><>        <p>{cnt}</p>        <button onClick={() => setCnt((prev) => prev + 1)} type="button">Update</button>    </> : Element
 
         <p>{cnt}</p>
-><p>{cnt}</p> : any
+><p>{cnt}</p> : Element
 >p : any
 >cnt : any
 >p : any
 
         <button onClick={() => setCnt((prev) => prev + 1)} type="button">Update</button>
-><button onClick={() => setCnt((prev) => prev + 1)} type="button">Update</button> : any
+><button onClick={() => setCnt((prev) => prev + 1)} type="button">Update</button> : Element
 >button : any
->onClick : any
+>onClick : () => any
 >() => setCnt((prev) => prev + 1) : () => any
 >setCnt((prev) => prev + 1) : any
 >setCnt : any
@@ -44,7 +44,7 @@ export function Counter({ count = 0 }: CounterProps) {
 >prev + 1 : any
 >prev : any
 >1 : 1
->type : any
+>type : string
 >button : any
 
     </>

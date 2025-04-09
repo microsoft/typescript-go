@@ -2,7 +2,7 @@
 
 === file.tsx ===
 import React = require('react');
->React : any
+>React : typeof __React
 
 const decorator = function <T>(Component: React.StatelessComponent<T>): React.StatelessComponent<T> {
 >decorator : <T>(Component: StatelessComponent<T>) => StatelessComponent<T>
@@ -12,11 +12,11 @@ const decorator = function <T>(Component: React.StatelessComponent<T>): React.St
 >React : any
 
     return (props) => <Component {...props}></Component>
->(props) => <Component {...props}></Component> : (props: any) => any
->props : any
-><Component {...props}></Component> : any
+>(props) => <Component {...props}></Component> : (props: T & { children?: ReactNode; }) => Element
+>props : T & { children?: ReactNode; }
+><Component {...props}></Component> : Element
 >Component : StatelessComponent<T>
->props : any
+>props : T & { children?: ReactNode; }
 >Component : StatelessComponent<T>
 
 };
@@ -30,12 +30,12 @@ const decorator2 = function <T extends { x: number }>(Component: React.Stateless
 >React : any
 
     return (props) => <Component {...props} x={2} ></Component>
->(props) => <Component {...props} x={2} ></Component> : (props: any) => any
->props : any
-><Component {...props} x={2} ></Component> : any
+>(props) => <Component {...props} x={2} ></Component> : (props: T & { children?: ReactNode; }) => Element
+>props : T & { children?: ReactNode; }
+><Component {...props} x={2} ></Component> : Element
 >Component : StatelessComponent<T>
->props : any
->x : any
+>props : T & { children?: ReactNode; }
+>x : number
 >2 : 2
 >Component : StatelessComponent<T>
 
@@ -51,13 +51,13 @@ const decorator3 = function <T extends { x: number }, U extends { x: number } >(
 >React : any
 
     return (props) => <Component x={2} {...props} ></Component>
->(props) => <Component x={2} {...props} ></Component> : (props: any) => any
->props : any
-><Component x={2} {...props} ></Component> : any
+>(props) => <Component x={2} {...props} ></Component> : (props: T & { children?: ReactNode; }) => Element
+>props : T & { children?: ReactNode; }
+><Component x={2} {...props} ></Component> : Element
 >Component : StatelessComponent<T>
->x : any
+>x : number
 >2 : 2
->props : any
+>props : T & { children?: ReactNode; }
 >Component : StatelessComponent<T>
 
 };

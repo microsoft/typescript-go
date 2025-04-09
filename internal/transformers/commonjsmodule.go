@@ -136,12 +136,10 @@ func (tx *CommonJSModuleTransformer) visit(node *ast.Node) *ast.Node {
 
 // Visits source elements that are not top-level or top-level nested statements without ancestor tracking.
 func (tx *CommonJSModuleTransformer) visitNoStack(node *ast.Node, resultIsDiscarded bool) *ast.Node {
-	// !!!
-	////// This visitor does not need to descend into the tree if there is no dynamic import, destructuring assignment, or update expression
-	////// as export/import statements are only transformed at the top level of a file.
-	////if (!(node.transformFlags & (TransformFlags.ContainsDynamicImport | TransformFlags.ContainsDestructuringAssignment | TransformFlags.ContainsUpdateExpressionForIdentifier)) && !importsAndRequiresToRewriteOrShim?.length) {
-	////	return node;
-	////}
+	// This visitor does not need to descend into the tree if there are no dynamic imports or identifiers in the subtree
+	if !ast.IsSourceFile(node) && node.SubtreeFacts()&(ast.SubtreeContainsDynamicImport|ast.SubtreeContainsIdentifier) == 0 {
+		return node
+	}
 
 	switch node.Kind {
 	case ast.KindSourceFile:
@@ -229,7 +227,7 @@ func (tx *CommonJSModuleTransformer) visitAssignmentPatternNoStack(node *ast.Nod
 func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	if node.IsDeclarationFile ||
 		!(ast.IsEffectiveExternalModule(node, tx.compilerOptions) ||
-			containsDynamicImport(tx.emitContext, node) ||
+			node.SubtreeFacts()&ast.SubtreeContainsDynamicImport != 0 ||
 			ast.IsJsonSourceFile(node) && tx.compilerOptions.HasJsonModuleEmitEnabled() && len(tx.compilerOptions.OutFile) > 0) {
 		return node.AsNode()
 	}
@@ -244,7 +242,7 @@ func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 
 func (tx *CommonJSModuleTransformer) shouldEmitUnderscoreUnderscoreESModule() bool {
 	if tspath.FileExtensionIsOneOf(tx.currentSourceFile.FileName(), tspath.SupportedJSExtensionsFlat) &&
-		tx.currentSourceFile.CommonJsModuleIndicator != nil &&
+		tx.currentSourceFile.CommonJSModuleIndicator != nil &&
 		(tx.currentSourceFile.ExternalModuleIndicator == nil /*|| tx.currentSourceFile.ExternalModuleIndicator == true*/) { // !!!
 		return false
 	}
@@ -326,10 +324,12 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 						ast.NodeFlagsNone,
 					)
 				} else {
+					name := nextId.Clone(tx.factory)
+					tx.emitContext.SetEmitFlags(name, printer.EFNoSourceMap) // TODO: Strada emits comments here, but shouldn't
 					left = tx.factory.NewPropertyAccessExpression(
 						tx.factory.NewIdentifier("exports"),
 						nil, /*questionDotToken*/
-						nextId.Clone(tx.factory),
+						name,
 						ast.NodeFlagsNone,
 					)
 				}
@@ -1711,7 +1711,7 @@ func (tx *CommonJSModuleTransformer) visitImportCallExpression(node *ast.CallExp
 func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast.Expression) *ast.Expression {
 	// import(x)
 	// emit as
-	// Promise.resolve(`${x}`).then((s) => require(s)) /*CommonJs Require*/
+	// Promise.resolve(`${x}`).then((s) => require(s)) /*CommonJS Require*/
 	// We have to wrap require in then callback so that require is done in asynchronously
 	// if we simply do require in resolve callback in Promise constructor. We will execute the loading immediately
 	// If the arg is not inlineable, we have to evaluate and ToString() it in the current scope
@@ -1944,10 +1944,12 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 						ast.NodeFlagsNone,
 					)
 				} else {
+					referenceName := name.Clone(tx.factory)
+					tx.emitContext.AddEmitFlags(referenceName, printer.EFNoSourceMap|printer.EFNoComments)
 					reference = tx.factory.NewPropertyAccessExpression(
 						target,
 						nil, /*questionDotToken*/
-						name.Clone(tx.factory),
+						referenceName,
 						ast.NodeFlagsNone,
 					)
 				}

@@ -320,10 +320,13 @@ type NodeLinks struct {
 	hasReportedStatementInAmbientContext bool           // Cache boolean if we report statements in ambient context
 }
 
+type SymbolNodeLinks struct {
+	resolvedSymbol *ast.Symbol // Resolved symbol associated with node
+}
+
 type TypeNodeLinks struct {
-	resolvedType        *Type       // Cached type of type node
-	resolvedSymbol      *ast.Symbol // Cached name resolution result
-	outerTypeParameters []*Type     // Outer type parameters of anonymous object type
+	resolvedType        *Type   // Resolved type associated with node
+	outerTypeParameters []*Type // Outer type parameters of anonymous object type
 }
 
 // Links for enum members
@@ -341,9 +344,13 @@ type AssertionLinks struct {
 // SourceFile links
 
 type SourceFileLinks struct {
-	typeChecked          bool
-	deferredNodes        collections.OrderedSet[*ast.Node]
-	identifierCheckNodes []*ast.Node
+	typeChecked               bool
+	deferredNodes             collections.OrderedSet[*ast.Node]
+	identifierCheckNodes      []*ast.Node
+	localJsxNamespace         string
+	localJsxFragmentNamespace string
+	localJsxFactory           *ast.EntityName
+	localJsxFragmentFactory   *ast.EntityName
 }
 
 // Signature specific links

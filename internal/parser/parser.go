@@ -1,8 +1,6 @@
 package parser
 
 import (
-	"fmt"
-	"regexp"
 	"strings"
 	"sync"
 
@@ -66,6 +64,7 @@ type Parser struct {
 	parsingContexts             ParsingContexts
 	statementHasAwaitIdentifier bool
 	hasDeprecatedTag            bool
+	hasParseError               bool
 
 	identifiers             map[string]string
 	identifierCount         int
@@ -76,6 +75,7 @@ type Parser struct {
 	jsdocCommentsSpace      []string
 	jsdocCommentRangesSpace []ast.CommentRange
 	jsdocTagCommentsSpace   []string
+	reparseList             []*ast.Node
 }
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
@@ -179,6 +179,15 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 	return result
 }
 
+func ParseIsolatedEntityName(text string, languageVersion core.ScriptTarget) *ast.EntityName {
+	p := getParser()
+	defer putParser(p)
+	p.initializeState("", "", text, languageVersion, core.ScriptKindJS, scanner.JSDocParsingModeParseAll)
+	p.nextToken()
+	entityName := p.parseEntityName(true, nil)
+	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
+}
+
 func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode) {
 	if p.scanner == nil {
 		p.scanner = scanner.NewScanner()
@@ -199,6 +208,7 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	default:
 		p.contextFlags = ast.NodeFlagsNone
 	}
+	p.hasParseError = false
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetScriptTarget(p.languageVersion)
@@ -221,12 +231,13 @@ func (p *Parser) parseErrorAtCurrentToken(message *diagnostics.Message, args ...
 
 func (p *Parser) parseErrorAtRange(loc core.TextRange, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	// Don't report another error if it would just be at the same location as the last error
-	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Loc().Pos() != loc.Pos() {
-		result := ast.NewDiagnostic(nil, loc, message, args...)
+	var result *ast.Diagnostic
+	if len(p.diagnostics) == 0 || p.diagnostics[len(p.diagnostics)-1].Pos() != loc.Pos() {
+		result = ast.NewDiagnostic(nil, loc, message, args...)
 		p.diagnostics = append(p.diagnostics, result)
-		return result
 	}
-	return nil
+	p.hasParseError = true
+	return result
 }
 
 type ParserState struct {
@@ -234,6 +245,7 @@ type ParserState struct {
 	contextFlags                ast.NodeFlags
 	diagnosticsLen              int
 	statementHasAwaitIdentifier bool
+	hasParseError               bool
 }
 
 func (p *Parser) mark() ParserState {
@@ -242,6 +254,7 @@ func (p *Parser) mark() ParserState {
 		contextFlags:                p.contextFlags,
 		diagnosticsLen:              len(p.diagnostics),
 		statementHasAwaitIdentifier: p.statementHasAwaitIdentifier,
+		hasParseError:               p.hasParseError,
 	}
 }
 
@@ -250,6 +263,8 @@ func (p *Parser) rewind(state ParserState) {
 	p.token = p.scanner.Token()
 	p.contextFlags = state.contextFlags
 	p.diagnostics = p.diagnostics[0:state.diagnosticsLen]
+	p.statementHasAwaitIdentifier = state.statementHasAwaitIdentifier
+	p.hasParseError = state.hasParseError
 }
 
 func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
@@ -260,6 +275,16 @@ func (p *Parser) lookAhead(callback func(p *Parser) bool) bool {
 }
 
 func (p *Parser) nextToken() ast.Kind {
+	// if the keyword had an escape
+	if isKeyword(p.token) && (p.scanner.HasUnicodeEscape() || p.scanner.HasExtendedUnicodeEscape()) {
+		// issue a parse error for the escape
+		p.parseErrorAtCurrentToken(diagnostics.Keywords_cannot_contain_escape_characters)
+	}
+	p.token = p.scanner.Scan()
+	return p.token
+}
+
+func (p *Parser) nextTokenWithoutCheck() ast.Kind {
 	p.token = p.scanner.Scan()
 	return p.token
 }
@@ -435,7 +460,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		}
 	}
 
-	return p.factory.NewSourceFile(sourceFile.Text, sourceFile.FileName(), sourceFile.Path(), p.newNodeList(sourceFile.Statements.Loc, statements))
+	return p.factory.NewSourceFile(sourceFile.Text(), sourceFile.FileName(), sourceFile.Path(), p.newNodeList(sourceFile.Statements.Loc, statements))
 }
 
 func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) *ast.NodeList {
@@ -445,7 +470,12 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 	list := make([]*ast.Node, 0, 16)
 	for i := 0; !p.isListTerminator(kind); i++ {
 		if p.isListElement(kind, false /*inErrorRecovery*/) {
-			list = append(list, parseElement(p, i))
+			elt := parseElement(p, i)
+			if len(p.reparseList) > 0 {
+				list = append(list, p.reparseList...)
+				p.reparseList = nil
+			}
+			list = append(list, elt)
 			continue
 		}
 		if p.abortParsingListOrMoveToNextToken(kind) {
@@ -2091,7 +2121,7 @@ func (p *Parser) parseImportDeclarationOrImportEqualsDeclaration(pos int, hasJSD
 		p.statementHasAwaitIdentifier = saveHasAwaitIdentifier // Import= declaration is always parsed in an Await context, no need to reparse
 		return importEquals
 	}
-	importClause := p.tryParseImportClause(identifier, afterImportPos, isTypeOnly, false /*skipJsDocLeadingAsterisks*/)
+	importClause := p.tryParseImportClause(identifier, afterImportPos, isTypeOnly, false /*skipJSDocLeadingAsterisks*/)
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier // import clause is always parsed in an Await context
 	moduleSpecifier := p.parseModuleSpecifier()
 	attributes := p.tryParseImportAttributes()
@@ -2158,19 +2188,19 @@ func (p *Parser) parseModuleSpecifier() *ast.Expression {
 	return p.parseExpression()
 }
 
-func (p *Parser) tryParseImportClause(identifier *ast.Node, pos int, isTypeOnly bool, skipJsDocLeadingAsterisks bool) *ast.Node {
+func (p *Parser) tryParseImportClause(identifier *ast.Node, pos int, isTypeOnly bool, skipJSDocLeadingAsterisks bool) *ast.Node {
 	// ImportDeclaration:
 	//  import ImportClause from ModuleSpecifier ;
 	//  import ModuleSpecifier;
 	if identifier != nil || p.token == ast.KindAsteriskToken || p.token == ast.KindOpenBraceToken {
-		importClause := p.parseImportClause(identifier, pos, isTypeOnly, skipJsDocLeadingAsterisks)
+		importClause := p.parseImportClause(identifier, pos, isTypeOnly, skipJSDocLeadingAsterisks)
 		p.parseExpected(ast.KindFromKeyword)
 		return importClause
 	}
 	return nil
 }
 
-func (p *Parser) parseImportClause(identifier *ast.Node, pos int, isTypeOnly bool, skipJsDocLeadingAsterisks bool) *ast.Node {
+func (p *Parser) parseImportClause(identifier *ast.Node, pos int, isTypeOnly bool, skipJSDocLeadingAsterisks bool) *ast.Node {
 	// ImportClause:
 	//  ImportedDefaultBinding
 	//  NameSpaceImport
@@ -2182,16 +2212,16 @@ func (p *Parser) parseImportClause(identifier *ast.Node, pos int, isTypeOnly boo
 	var namedBindings *ast.Node
 	saveHasAwaitIdentifier := p.statementHasAwaitIdentifier
 	if identifier == nil || p.parseOptional(ast.KindCommaToken) {
-		if skipJsDocLeadingAsterisks {
-			p.scanner.SetSkipJsDocLeadingAsterisks(true)
+		if skipJSDocLeadingAsterisks {
+			p.scanner.SetSkipJSDocLeadingAsterisks(true)
 		}
 		if p.token == ast.KindAsteriskToken {
 			namedBindings = p.parseNamespaceImport()
 		} else {
 			namedBindings = p.parseNamedImports()
 		}
-		if skipJsDocLeadingAsterisks {
-			p.scanner.SetSkipJsDocLeadingAsterisks(false)
+		if skipJSDocLeadingAsterisks {
+			p.scanner.SetSkipJSDocLeadingAsterisks(false)
 		}
 	}
 	result := p.factory.NewImportClause(isTypeOnly, identifier, namedBindings)
@@ -2699,12 +2729,12 @@ func (p *Parser) parseJSDocNullableType() *ast.Node {
 }
 
 func (p *Parser) parseJSDocType() *ast.TypeNode {
-	p.scanner.SetSkipJsDocLeadingAsterisks(true)
+	p.scanner.SetSkipJSDocLeadingAsterisks(true)
 	pos := p.nodePos()
 
 	hasDotDotDot := p.parseOptional(ast.KindDotDotDotToken)
 	t := p.parseTypeOrTypePredicate()
-	p.scanner.SetSkipJsDocLeadingAsterisks(false)
+	p.scanner.SetSkipJSDocLeadingAsterisks(false)
 	if hasDotDotDot {
 		t = p.factory.NewJSDocVariadicType(t)
 		p.finishNode(t, pos)
@@ -5723,6 +5753,7 @@ func (p *Parser) parseLiteralExpression(intern bool) *ast.Node {
 		result.AsBigIntLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsNumericLiteralFlags
 	case ast.KindRegularExpressionLiteral:
 		result = p.factory.NewRegularExpressionLiteral(text)
+		result.AsRegularExpressionLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsRegularExpressionLiteralFlags
 	case ast.KindNoSubstitutionTemplateLiteral:
 		result = p.factory.NewNoSubstitutionTemplateLiteral(text)
 		result.AsNoSubstitutionTemplateLiteral().TokenFlags |= tokenFlags & ast.TokenFlagsTemplateLiteralLikeFlags
@@ -5781,7 +5812,7 @@ func (p *Parser) createIdentifierWithDiagnostic(isIdentifier bool, diagnosticMes
 			pos = p.nodePos()
 		}
 		text := p.scanner.TokenValue()
-		p.nextToken()
+		p.nextTokenWithoutCheck()
 		result := p.newIdentifier(p.internIdentifier(text))
 		p.finishNode(result, pos)
 		return result
@@ -5835,6 +5866,10 @@ func (p *Parser) finishNode(node *ast.Node, pos int) {
 func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 	node.Loc = core.NewTextRange(pos, end)
 	node.Flags |= p.contextFlags
+	if p.hasParseError {
+		node.Flags |= ast.NodeFlagsThisNodeHasError
+		p.hasParseError = false
+	}
 }
 
 func (p *Parser) nextTokenIsSlash() bool {
@@ -6374,123 +6409,152 @@ func getCommentPragmas(f *ast.NodeFactory, sourceText string) (pragmas []ast.Pra
 		comment := sourceText[commentRange.Pos():commentRange.End()]
 		pragmas = append(pragmas, extractPragmas(commentRange, comment)...)
 	}
-
 	return pragmas
 }
 
-var ReferencePragmaSpec = &ast.PragmaSpecification{
-	Args: []ast.PragmaArgumentSpecification{
-		{Name: "types", Optional: false, CaptureSpan: true},
-		{Name: "lib", Optional: false, CaptureSpan: true},
-		{Name: "path", Optional: false, CaptureSpan: true},
-		{Name: "no-default-lib", Optional: false, CaptureSpan: true},
-		{Name: "resolution-mode", Optional: false, CaptureSpan: true},
-		{Name: "preserve", Optional: false, CaptureSpan: true},
-	},
-	Kind: ast.PragmaKindTripleSlashXML,
-}
-
-func getCommentPragmaSpec(name string) (*ast.PragmaSpecification, bool) {
-	switch name {
-	case "reference":
-		return ReferencePragmaSpec, true
-	default:
-		return nil, false
-	}
-}
-
-type NamedArgRegEx struct {
-	regex *regexp.Regexp
-	once  sync.Once
-}
-
-var namedArgRegExCache sync.Map
-
-func getNamedArgRegEx(name string) *regexp.Regexp {
-	value, _ := namedArgRegExCache.LoadOrStore(name, &NamedArgRegEx{})
-	namedArgRegex := value.(*NamedArgRegEx)
-	namedArgRegex.once.Do(func() {
-		namedArgRegex.regex = regexp.MustCompile(fmt.Sprintf(`(?im)(\s%s\s*=\s*)(?:(?:'([^']*)')|(?:"([^"]*)"))`, name))
-	})
-	return namedArgRegex.regex
-}
-
-var (
-	tripleSlashXMLCommentStartRegEx = regexp.MustCompile(`(?m)^\/\/\/\s*<(\S+)\s.*?\/>`)
-	singleLinePragmaRegEx           = regexp.MustCompile(`(?m)^\/\/\/?\s*@([^\s:]+)((?:[^\S\r\n]|:).*)?$`)
-)
-
 func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
-	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
-		matches := tripleSlashXMLCommentStartRegEx.FindStringSubmatch(text)
-		if len(matches) < 2 {
-			return nil
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia && match(text, 0, "//") {
+		pos := 2
+		tripleSlash := match(text, pos, "/")
+		if tripleSlash {
+			pos++
 		}
-
-		name := strings.ToLower(matches[1])
-		pragmaSpec, ok := getCommentPragmaSpec(name)
-		if !(ok && pragmaSpec.IsTripleSlash()) {
-			return nil
-		}
-
-		pragma := ast.Pragma{
-			Name:      name,
-			Args:      make(map[string]ast.PragmaArgument),
-			ArgsRange: commentRange,
-		}
-		if len(pragmaSpec.Args) > 0 {
-			for _, argSpec := range pragmaSpec.Args {
-				argMatcher := getNamedArgRegEx(argSpec.Name)
-				argMatchIndicies := argMatcher.FindStringSubmatchIndex(text)
-				argMatches := argMatcher.FindStringSubmatch(text)
-				if len(argMatches) < 2 {
-					continue
-				}
-				var value string
-				if argMatches[2] != "" {
-					value = argMatches[2]
-				} else if len(argMatches) > 3 {
-					value = argMatches[3]
-				}
-				if argSpec.CaptureSpan {
-					startPos := commentRange.Pos() + argMatchIndicies[0] + len(argMatches[1]) + 1
-
-					newArg := ast.PragmaArgument{
-						Name:      argSpec.Name,
-						Value:     value,
-						TextRange: core.NewTextRange(startPos, startPos+len(value)),
-					}
-
-					pragma.Args[argSpec.Name] = newArg
-				} else {
-					newArg := ast.PragmaArgument{
-						Value: value,
-					}
-
-					pragma.Args[argSpec.Name] = newArg
-				}
+		pos = skipBlanks(text, pos)
+		if tripleSlash && match(text, pos, "<") {
+			tagName := extractName(text, pos+1)
+			if tagName != "reference" {
+				return nil
 			}
+			pos += 10
+			args := make(map[string]ast.PragmaArgument)
+			for {
+				pos = skipBlanks(text, pos)
+				if match(text, pos, "/>") {
+					break
+				}
+				argName := extractName(text, pos)
+				if argName == "" {
+					return nil
+				}
+				pos = skipBlanks(text, pos+len(argName))
+				if !match(text, pos, "=") {
+					return nil
+				}
+				pos = skipBlanks(text, pos+1)
+				value, ok := extractQuotedString(text, pos)
+				if !ok {
+					return nil
+				}
+				args[argName] = ast.PragmaArgument{
+					Name:      argName,
+					Value:     value,
+					TextRange: core.NewTextRange(commentRange.Pos()+pos+1, commentRange.Pos()+pos+1+len(value)),
+				}
+				pos += len(value) + 2
+			}
+			return []ast.Pragma{{
+				CommentRange: commentRange,
+				Name:         "reference",
+				Args:         args,
+			}}
 		}
-		return []ast.Pragma{pragma}
+		if match(text, pos, "@") {
+			pos++
+			pragmaName := extractName(text, pos)
+			if !(pragmaName == "ts-check" || pragmaName == "ts-nocheck") {
+				return nil
+			}
+			return []ast.Pragma{{
+				CommentRange: commentRange,
+				Name:         pragmaName,
+			}}
+		}
+	}
+	if commentRange.Kind == ast.KindMultiLineCommentTrivia {
+		pos := 2
+		var pragmas []ast.Pragma
+		for {
+			if pos = skipTo(text, pos, "@"); pos < 0 {
+				break
+			}
+			pragmaName := extractName(text, pos+1)
+			if !(pragmaName == "jsx" || pragmaName == "jsxfrag" || pragmaName == "jsximportsource" || pragmaName == "jsxruntime") {
+				break
+			}
+			start := skipBlanks(text, pos+len(pragmaName)+1)
+			pos = skipNonBlanks(text, start)
+			args := make(map[string]ast.PragmaArgument, 1)
+			args["factory"] = ast.PragmaArgument{
+				Name:      "factory",
+				Value:     text[start:pos],
+				TextRange: core.NewTextRange(commentRange.Pos()+start, commentRange.Pos()+pos),
+			}
+			pragmas = append(pragmas, ast.Pragma{
+				CommentRange: commentRange,
+				Name:         pragmaName,
+				Args:         args,
+			})
+		}
+		return pragmas
 	}
 	return nil
+}
 
-	// const singleLine = range.kind === SyntaxKind.SingleLineCommentTrivia && singleLinePragmaRegEx.exec(text);
-	// if (singleLine) {
-	//     return addPragmaForMatch(pragmas, range, PragmaKindFlags.SingleLine, singleLine);
-	// }
+func match(text string, pos int, s string) bool {
+	return strings.HasPrefix(text[pos:], s)
+}
 
-	// if (range.kind === SyntaxKind.MultiLineCommentTrivia) {
-	//     const multiLinePragmaRegEx = /@(\S+)(\s+(?:\S.*)?)?$/gm; // Defined inline since it uses the "g" flag, which keeps a persistent index (for iterating)
-	//     let multiLineMatch: RegExpExecArray | null; // eslint-disable-line no-restricted-syntax
-	//     while (multiLineMatch = multiLinePragmaRegEx.exec(text)) {
-	//         addPragmaForMatch(pragmas, range, PragmaKindFlags.MultiLine, multiLineMatch);
-	//     }
-	// }
+func skipBlanks(text string, pos int) int {
+	for pos < len(text) && (text[pos] == ' ' || text[pos] == '\t') {
+		pos++
+	}
+	return pos
+}
+
+func skipNonBlanks(text string, pos int) int {
+	for pos < len(text) && (text[pos] != ' ' && text[pos] != '\t' && text[pos] != '\r' && text[pos] != '\n') {
+		pos++
+	}
+	return pos
+}
+
+func skipTo(text string, pos int, s string) int {
+	i := strings.Index(text[pos:], s)
+	if i < 0 {
+		return -1
+	}
+	return pos + i
+}
+
+func extractName(text string, pos int) string {
+	start := pos
+	for pos < len(text) && (text[pos] >= 'A' && text[pos] <= 'Z' || text[pos] >= 'a' && text[pos] <= 'z' || text[pos] == '-') {
+		pos++
+	}
+	return strings.ToLower(text[start:pos])
+}
+
+func extractQuotedString(text string, pos int) (string, bool) {
+	if pos == len(text) {
+		return "", false
+	}
+	quote := text[pos]
+	if quote != '\'' && quote != '"' {
+		return "", false
+	}
+	pos++
+	start := pos
+	for pos < len(text) && text[pos] != quote {
+		pos++
+	}
+	if pos == len(text) {
+		return "", false
+	}
+	return text[start:pos], true
 }
 
 func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic func(*ast.Diagnostic)*/) {
-	// context.CheckJsDirective = nil
+	context.CheckJsDirective = nil
 	context.ReferencedFiles = nil
 	context.TypeReferenceDirectives = nil
 	context.LibReferenceDirectives = nil
@@ -6534,9 +6598,21 @@ func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic fu
 			} else {
 				// reportDiagnostic(argMap.Pos, argMap.End-argMap.Pos, "Invalid reference directive syntax")
 			}
+		case "ts-check", "ts-nocheck":
+			// _last_ of either nocheck or check in a file is the "winner"
+			for _, directive := range context.Pragmas {
+				if context.CheckJsDirective == nil || directive.TextRange.Pos() > context.CheckJsDirective.Range.Pos() {
+					context.CheckJsDirective = &ast.CheckJsDirective{
+						Enabled: directive.Name == "ts-check",
+						Range:   directive.CommentRange,
+					}
+				}
+			}
 
+		case "jsx", "jsxfrag", "jsximportsource", "jsxruntime":
+			// !!!
 		default:
-			panic("Unhandled pragma kind")
+			panic("Unhandled pragma kind: " + pragma.Name)
 		}
 	}
 }

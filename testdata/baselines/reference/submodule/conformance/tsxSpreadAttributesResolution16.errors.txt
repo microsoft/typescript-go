@@ -1,26 +1,8 @@
-error TS2318: Cannot find global type 'Array'.
-error TS2318: Cannot find global type 'Boolean'.
-error TS2318: Cannot find global type 'Function'.
-error TS2318: Cannot find global type 'IArguments'.
-error TS2318: Cannot find global type 'Number'.
-error TS2318: Cannot find global type 'Object'.
-error TS2318: Cannot find global type 'RegExp'.
-error TS2318: Cannot find global type 'String'.
-file.tsx(1,24): error TS2307: Cannot find module 'react' or its corresponding type declarations.
+file.tsx(11,10): error TS2741: Property 'AnotherProperty1' is missing in type '{ property1: string; property2: number; }' but required in type 'AnotherComponentProps'.
 
 
-!!! error TS2318: Cannot find global type 'Array'.
-!!! error TS2318: Cannot find global type 'Boolean'.
-!!! error TS2318: Cannot find global type 'Function'.
-!!! error TS2318: Cannot find global type 'IArguments'.
-!!! error TS2318: Cannot find global type 'Number'.
-!!! error TS2318: Cannot find global type 'Object'.
-!!! error TS2318: Cannot find global type 'RegExp'.
-!!! error TS2318: Cannot find global type 'String'.
 ==== file.tsx (1 errors) ====
     import React = require('react');
-                           ~~~~~~~
-!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
     
     interface ComponentProps {
         property1: string;
@@ -31,6 +13,9 @@ file.tsx(1,24): error TS2307: Cannot find module 'react' or its corresponding ty
         return (
             // Error: missing property
             <AnotherComponent {...props} />
+             ~~~~~~~~~~~~~~~~
+!!! error TS2741: Property 'AnotherProperty1' is missing in type '{ property1: string; property2: number; }' but required in type 'AnotherComponentProps'.
+!!! related TS2728 file.tsx:17:5: 'AnotherProperty1' is declared here.
         );
     }
     

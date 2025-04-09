@@ -2,7 +2,7 @@
 
 === file.tsx ===
 import React = require('react');
->React : any
+>React : typeof __React
 
 interface ButtonProp {
     a: number,
@@ -17,12 +17,12 @@ interface ButtonProp {
 
 class Button extends React.Component<ButtonProp, any> {
 >Button : Button
->React.Component : any
->React : any
->Component : any
+>React.Component : Component<ButtonProp, any>
+>React : typeof __React
+>Component : typeof Component
 
     render() {
->render : () => any
+>render : () => Element
 
 		let condition: boolean;
 >condition : boolean
@@ -31,23 +31,23 @@ class Button extends React.Component<ButtonProp, any> {
 >condition : boolean
 
         	return <InnerButton {...this.props} />
-><InnerButton {...this.props} /> : any
+><InnerButton {...this.props} /> : Element
 >InnerButton : typeof InnerButton
->this.props : any
+>this.props : ButtonProp & { children?: ReactNode; }
 >this : this
->props : any
+>props : ButtonProp & { children?: ReactNode; }
 		}
 		else {
 			return (<InnerButton {...this.props} >
->(<InnerButton {...this.props} >				<div>Hello World</div>				</InnerButton>) : any
-><InnerButton {...this.props} >				<div>Hello World</div>				</InnerButton> : any
+>(<InnerButton {...this.props} >				<div>Hello World</div>				</InnerButton>) : Element
+><InnerButton {...this.props} >				<div>Hello World</div>				</InnerButton> : Element
 >InnerButton : typeof InnerButton
->this.props : any
+>this.props : ButtonProp & { children?: ReactNode; }
 >this : this
->props : any
+>props : ButtonProp & { children?: ReactNode; }
 
 				<div>Hello World</div>
-><div>Hello World</div> : any
+><div>Hello World</div> : Element
 >div : any
 >div : any
 
@@ -64,16 +64,16 @@ interface InnerButtonProp {
 
 class InnerButton extends React.Component<InnerButtonProp, any> {
 >InnerButton : InnerButton
->React.Component : any
->React : any
->Component : any
+>React.Component : Component<InnerButtonProp, any>
+>React : typeof __React
+>Component : typeof Component
 
 	render() {
->render : () => any
+>render : () => Element
 
 		return (<button>Hello</button>);
->(<button>Hello</button>) : any
-><button>Hello</button> : any
+>(<button>Hello</button>) : Element
+><button>Hello</button> : Element
 >button : any
 >button : any
 	}
