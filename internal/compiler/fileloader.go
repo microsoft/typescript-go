@@ -27,8 +27,8 @@ type fileLoader struct {
 	tasksByFileName collections.SyncMap[string, *parseTask]
 	rootTasks       []*parseTask
 
-	resolvedModules     collections.SyncMap[tspath.Path, module.ModeAwareCache[*module.ResolvedModule]]
-	sourceFileMetaDatas collections.SyncMap[tspath.Path, *ast.SourceFileMetaData]
+	// fileCount    atomic.Int32
+	// libFileCount atomic.Int32
 }
 
 type processedFiles struct {
@@ -69,6 +69,10 @@ func processAllProgramFiles(
 
 	loader.wg.RunAndWait()
 
+	size := loader.tasksByFileName.Size()
+	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], size)
+	sourceFileMetaDatas := make(map[tspath.Path]*ast.SourceFileMetaData, size)
+
 	files, libFiles := []*ast.SourceFile{}, []*ast.SourceFile{}
 	for task := range loader.collectTasks(loader.rootTasks) {
 		if task.isLib {
@@ -76,13 +80,15 @@ func processAllProgramFiles(
 		} else {
 			files = append(files, task.file)
 		}
+		resolvedModules[task.file.Path()] = task.resolutionsInFile
+		sourceFileMetaDatas[task.file.Path()] = task.metadata
 	}
 	loader.sortLibs(libFiles)
 
 	return processedFiles{
 		files:               append(libFiles, files...),
-		resolvedModules:     loader.resolvedModules.ToMap(),
-		sourceFileMetaDatas: loader.sourceFileMetaDatas.ToMap(),
+		resolvedModules:     resolvedModules,
+		sourceFileMetaDatas: sourceFileMetaDatas,
 	}
 }
 
@@ -187,6 +193,9 @@ type parseTask struct {
 	file               *ast.SourceFile
 	isLib              bool
 	subTasks           []*parseTask
+
+	metadata          *ast.SourceFileMetaData
+	resolutionsInFile module.ModeAwareCache[*module.ResolvedModule]
 }
 
 func (t *parseTask) start(loader *fileLoader) {
@@ -218,35 +227,30 @@ func (t *parseTask) start(loader *fileLoader) {
 			}
 		}
 
-		for _, imp := range loader.resolveImportsAndModuleAugmentations(file) {
+		importsAndAugmentations, resolutionsInFile := loader.resolveImportsAndModuleAugmentations(file)
+		for _, imp := range importsAndAugmentations {
 			t.addSubTask(imp, false)
 		}
 
 		t.file = file
+		t.metadata = loader.loadSourceFileMetaData(file.Path())
+		t.resolutionsInFile = resolutionsInFile
 		loader.startTasks(t.subTasks)
 	})
 }
 
-func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) {
-	_, ok := p.sourceFileMetaDatas.Load(path)
-	if ok {
-		return
-	}
-
+func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
 	packageJsonType := p.resolver.GetPackageJsonTypeIfApplicable(string(path))
 	impliedNodeFormat := ast.GetImpliedNodeFormatForFile(string(path), packageJsonType)
-	metadata := &ast.SourceFileMetaData{
+	return &ast.SourceFileMetaData{
 		PackageJsonType:   packageJsonType,
 		ImpliedNodeFormat: impliedNodeFormat,
 	}
-
-	p.sourceFileMetaDatas.Store(path, metadata)
 }
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
-	p.loadSourceFileMetaData(path)
 	return sourceFile
 }
 
@@ -265,15 +269,13 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 	return tspath.NormalizePath(referencedFileName)
 }
 
-func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) []string {
-	toParse := make([]string, 0, len(file.Imports))
+func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) ([]string, module.ModeAwareCache[*module.ResolvedModule]) {
 	if len(file.Imports) > 0 || len(file.ModuleAugmentations) > 0 {
+		toParse := make([]string, 0, len(file.Imports))
 		moduleNames := getModuleNames(file)
 		resolutions := p.resolveModuleNames(moduleNames, file)
 
 		resolutionsInFile := make(module.ModeAwareCache[*module.ResolvedModule], len(resolutions))
-
-		p.resolvedModules.Store(file.Path(), resolutionsInFile)
 
 		for i, resolution := range resolutions {
 			resolvedFileName := resolution.ResolvedFileName
@@ -306,8 +308,10 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 				toParse = append(toParse, resolvedFileName)
 			}
 		}
+
+		return toParse, resolutionsInFile
 	}
-	return toParse
+	return nil, nil
 }
 
 func (p *fileLoader) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile) []*module.ResolvedModule {
