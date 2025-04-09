@@ -276,6 +276,11 @@ func (p *projectServiceHost) NewLine() string {
 	return "\n"
 }
 
+// Client implements project.ProjectServiceHost.
+func (p *projectServiceHost) Client() project.Client {
+	return nil
+}
+
 func (p *projectServiceHost) replaceFS(files map[string]string) {
 	p.fs = bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 }
