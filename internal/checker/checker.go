@@ -15198,16 +15198,26 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	if symbol == c.requireSymbol {
 		return c.anyType
 	}
-	// !!! Handle SymbolFlagsModuleExports
+	if symbol.Flags&ast.SymbolFlagsModuleExports != 0 && symbol.ValueDeclaration != nil {
+		fileSymbol := c.getSymbolOfDeclaration(ast.GetSourceFileOfNode(symbol.ValueDeclaration).AsNode())
+		result := c.newSymbol(fileSymbol.Flags, "exports")
+		result.Parent = symbol
+		result.Declarations = fileSymbol.Declarations
+		result.ValueDeclaration = fileSymbol.ValueDeclaration
+		result.Members = maps.Clone(fileSymbol.Members)
+		result.Exports = maps.Clone(fileSymbol.Exports)
+		members := make(ast.SymbolTable, 1)
+		members["exports"] = result
+		return c.newAnonymousType(symbol, members, nil, nil, nil)
+	}
 	// Debug.assertIsDefined(symbol.valueDeclaration)
 	declaration := symbol.ValueDeclaration
-	// !!! Handle export default expressions
 	if ast.IsSourceFile(declaration) && ast.IsJsonSourceFile(declaration.AsSourceFile()) {
 		statements := declaration.AsSourceFile().Statements.Nodes
 		if len(statements) == 0 {
 			return c.emptyObjectType
 		}
-		return c.getWidenedType(c.getWidenedLiteralType(c.checkExpression(statements[0].AsExpressionStatement().Expression)))
+		return c.getWidenedType(c.getWidenedLiteralType(c.checkExpression(statements[0].Expression())))
 	}
 	// Handle variable, parameter or property
 	if !c.pushTypeResolution(symbol, TypeSystemPropertyNameType) {
@@ -17993,8 +18003,9 @@ func (c *Checker) addInheritedMembers(symbols ast.SymbolTable, baseSymbols []*as
 func (c *Checker) resolveDeclaredMembers(t *Type) *InterfaceType {
 	d := t.AsInterfaceType()
 	if !d.declaredMembersResolved {
+		members := c.getMembersOfSymbol(t.symbol)
 		d.declaredMembersResolved = true
-		d.declaredMembers = c.getMembersOfSymbol(t.symbol)
+		d.declaredMembers = members
 		d.declaredCallSignatures = c.getSignaturesOfSymbol(d.declaredMembers[ast.InternalSymbolNameCall])
 		d.declaredConstructSignatures = c.getSignaturesOfSymbol(d.declaredMembers[ast.InternalSymbolNameNew])
 		d.declaredIndexInfos = c.getIndexInfosOfSymbol(t.symbol)
