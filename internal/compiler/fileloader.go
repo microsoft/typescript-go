@@ -116,12 +116,12 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 func (p *fileLoader) startTasks(tasks []*parseTask) {
 	if len(tasks) > 0 {
 		for i, task := range tasks {
-			task, loaded := p.tasksByFileName.LoadOrStore(task.normalizedFilePath, task)
+			loadedTask, loaded := p.tasksByFileName.LoadOrStore(task.normalizedFilePath, task)
 			if loaded {
 				// dedup tasks to ensure correct file order, regardless of which task would be started first
-				tasks[i] = task
+				tasks[i] = loadedTask
 			} else {
-				task.start(p)
+				loadedTask.start(p)
 			}
 		}
 	}
