@@ -5,6 +5,7 @@ import (
 	"iter"
 	"slices"
 	"strings"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -27,8 +28,8 @@ type fileLoader struct {
 	tasksByFileName collections.SyncMap[string, *parseTask]
 	rootTasks       []*parseTask
 
-	// fileCount    atomic.Int32
-	// libFileCount atomic.Int32
+	totalFileCount atomic.Int32
+	libFileCount   atomic.Int32
 }
 
 type processedFiles struct {
@@ -69,24 +70,32 @@ func processAllProgramFiles(
 
 	loader.wg.RunAndWait()
 
-	size := loader.tasksByFileName.Size()
-	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], size)
-	sourceFileMetaDatas := make(map[tspath.Path]*ast.SourceFileMetaData, size)
+	totalFileCount := int(loader.totalFileCount.Load())
+	libFileCount := int(loader.libFileCount.Load())
 
-	files, libFiles := []*ast.SourceFile{}, []*ast.SourceFile{}
+	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
+	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
+
+	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount)
+	sourceFileMetaDatas := make(map[tspath.Path]*ast.SourceFileMetaData, totalFileCount)
+
 	for task := range loader.collectTasks(loader.rootTasks) {
+		file := task.file
 		if task.isLib {
-			libFiles = append(libFiles, task.file)
+			libFiles = append(libFiles, file)
 		} else {
-			files = append(files, task.file)
+			files = append(files, file)
 		}
-		resolvedModules[task.file.Path()] = task.resolutionsInFile
-		sourceFileMetaDatas[task.file.Path()] = task.metadata
+		path := file.Path()
+		resolvedModules[path] = task.resolutionsInFile
+		sourceFileMetaDatas[path] = task.metadata
 	}
 	loader.sortLibs(libFiles)
 
+	allFiles := append(libFiles, files...)
+
 	return processedFiles{
-		files:               append(libFiles, files...),
+		files:               allFiles,
 		resolvedModules:     resolvedModules,
 		sourceFileMetaDatas: sourceFileMetaDatas,
 	}
@@ -199,6 +208,11 @@ type parseTask struct {
 }
 
 func (t *parseTask) start(loader *fileLoader) {
+	loader.totalFileCount.Add(1)
+	if t.isLib {
+		loader.libFileCount.Add(1)
+	}
+
 	loader.wg.Queue(func() {
 		file := loader.parseSourceFile(t.normalizedFilePath)
 
