@@ -2,61 +2,59 @@
 
 === file.tsx ===
 import React = require('react');
->React : any
+>React : typeof __React
 
 interface ComponentProps {
->ComponentProps : ComponentProps
-
     AnyComponent: React.StatelessComponent<any> | React.ComponentClass<any>;
->AnyComponent : any
+>AnyComponent : ComponentClass<any> | StatelessComponent<any>
 >React : any
 >React : any
 }
 
 class MyComponent extends React.Component<ComponentProps, {}> {
 >MyComponent : MyComponent
->React.Component : any
->React : any
->Component : any
+>React.Component : Component<ComponentProps, {}>
+>React : typeof __React
+>Component : typeof Component
 
     render() {
->render : () => any
+>render : () => Element
 
         const { AnyComponent } = this.props;
->AnyComponent : any
->this.props : any
+>AnyComponent : ComponentClass<any> | StatelessComponent<any>
+>this.props : ComponentProps & { children?: ReactNode; }
 >this : this
->props : any
+>props : ComponentProps & { children?: ReactNode; }
 
         return (<AnyComponent />);
->(<AnyComponent />) : any
-><AnyComponent /> : any
->AnyComponent : any
+>(<AnyComponent />) : Element
+><AnyComponent /> : Element
+>AnyComponent : ComponentClass<any> | StatelessComponent<any>
     }
 }
 
 // Stateless Component As Props
 <MyComponent AnyComponent={() => <button>test</button>}/>
-><MyComponent AnyComponent={() => <button>test</button>}/> : any
+><MyComponent AnyComponent={() => <button>test</button>}/> : Element
 >MyComponent : typeof MyComponent
->AnyComponent : any
->() => <button>test</button> : () => any
-><button>test</button> : any
+>AnyComponent : () => Element
+>() => <button>test</button> : () => Element
+><button>test</button> : Element
 >button : any
 >button : any
 
 // Component Class as Props
 class MyButtonComponent extends React.Component<{},{}> {
 >MyButtonComponent : MyButtonComponent
->React.Component : any
->React : any
->Component : any
+>React.Component : Component<{}, {}>
+>React : typeof __React
+>Component : typeof Component
 }
 
 <MyComponent AnyComponent={MyButtonComponent} />
-><MyComponent AnyComponent={MyButtonComponent} /> : any
+><MyComponent AnyComponent={MyButtonComponent} /> : Element
 >MyComponent : typeof MyComponent
->AnyComponent : any
+>AnyComponent : typeof MyButtonComponent
 >MyButtonComponent : typeof MyButtonComponent
 
 

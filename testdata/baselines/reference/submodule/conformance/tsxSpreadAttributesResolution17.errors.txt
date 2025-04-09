@@ -1,22 +1,7 @@
-error TS2318: Cannot find global type 'Array'.
-error TS2318: Cannot find global type 'Function'.
-error TS2318: Cannot find global type 'IArguments'.
-error TS2318: Cannot find global type 'RegExp'.
-error TS2318: Cannot find global type 'String'.
-error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-error TS2552: Cannot find name 'Object'. Did you mean 'object'?
+file.tsx(18,21): error TS2607: JSX element class does not support attributes because it does not have a 'props' property.
 
 
-!!! error TS2318: Cannot find global type 'Array'.
-!!! error TS2318: Cannot find global type 'Function'.
-!!! error TS2318: Cannot find global type 'IArguments'.
-!!! error TS2318: Cannot find global type 'RegExp'.
-!!! error TS2318: Cannot find global type 'String'.
-!!! error TS2552: Cannot find name 'Boolean'. Did you mean 'boolean'?
-!!! error TS2552: Cannot find name 'Number'. Did you mean 'number'?
-!!! error TS2552: Cannot find name 'Object'. Did you mean 'object'?
-==== file.tsx (0 errors) ====
+==== file.tsx (1 errors) ====
     declare global {
         namespace JSX {
             interface Element {}
@@ -35,4 +20,6 @@ error TS2552: Cannot find name 'Object'. Did you mean 'object'?
     
     // OK
     let unionedSpread = <Empty {...obj} />;
+                        ~~~~~~~~~~~~~~~~~~
+!!! error TS2607: JSX element class does not support attributes because it does not have a 'props' property.
     

@@ -170,7 +170,6 @@ function isNonNullVar(x: number | null) {
 
 function isNonNullGeneric<T>(x: T) {
 >isNonNullGeneric : <T>(x: T) => x is T & ({} | undefined)
->T : T
 >x : T
 
   return x !== null;
@@ -263,9 +262,9 @@ const result = myArray
 >obj => JSON.parse(obj.data) : (obj: MyObj) => any
 >obj : MyObj
 >JSON.parse(obj.data) : any
->JSON.parse : (text: string, reviver?: (key: string, value: any) => any | undefined) => any
+>JSON.parse : (text: string, reviver?: ((this: any, key: string, value: any) => any) | undefined) => any
 >JSON : JSON
->parse : (text: string, reviver?: (key: string, value: any) => any | undefined) => any
+>parse : (text: string, reviver?: ((this: any, key: string, value: any) => any) | undefined) => any
 >obj.data : string | undefined
 >obj : MyObj
 >data : string | undefined
@@ -342,9 +341,9 @@ const result2 = myArray
 >obj => JSON.parse(obj.data) : (obj: MyObj) => any
 >obj : MyObj
 >JSON.parse(obj.data) : any
->JSON.parse : (text: string, reviver?: (key: string, value: any) => any | undefined) => any
+>JSON.parse : (text: string, reviver?: ((this: any, key: string, value: any) => any) | undefined) => any
 >JSON : JSON
->parse : (text: string, reviver?: (key: string, value: any) => any | undefined) => any
+>parse : (text: string, reviver?: ((this: any, key: string, value: any) => any) | undefined) => any
 >obj.data : string | undefined
 >obj : MyObj
 >data : string | undefined
@@ -700,8 +699,6 @@ const numOrBoolean = (x: number | boolean) => typeof x === 'number' || x;
 
 // inferred guards in methods
 interface NumberInferrer {
->NumberInferrer : NumberInferrer
-
   isNumber(x: number | string): x is number;
 >isNumber : (x: string | number) => x is number
 >x : string | number
@@ -929,7 +926,7 @@ if (assertAndPredicate(snd)) {
 }
 
 function isNumberWithThis(this: Date, x: number | string) {
->isNumberWithThis : (x: string | number) => x is number
+>isNumberWithThis : (this: Date, x: string | number) => x is number
 >this : Date
 >x : string | number
 
@@ -952,8 +949,8 @@ function narrowFromAny(x: any) {
 }
 
 const noInferenceFromRest = (...f: ["a" | "b"]) => f[0] === "a";
->noInferenceFromRest : (...f: ["a" | "b"]) => boolean
->(...f: ["a" | "b"]) => f[0] === "a" : (...f: ["a" | "b"]) => boolean
+>noInferenceFromRest : (f_0: "a" | "b") => boolean
+>(...f: ["a" | "b"]) => f[0] === "a" : (f_0: "a" | "b") => boolean
 >f : ["a" | "b"]
 >f[0] === "a" : boolean
 >f[0] : "a" | "b"
@@ -962,8 +959,8 @@ const noInferenceFromRest = (...f: ["a" | "b"]) => f[0] === "a";
 >"a" : "a"
 
 const noInferenceFromImpossibleRest = (...f: []) => typeof f === "undefined";
->noInferenceFromImpossibleRest : (...f: []) => boolean
->(...f: []) => typeof f === "undefined" : (...f: []) => boolean
+>noInferenceFromImpossibleRest : () => boolean
+>(...f: []) => typeof f === "undefined" : () => boolean
 >f : []
 >typeof f === "undefined" : boolean
 >typeof f : "bigint" | "boolean" | "function" | "number" | "object" | "string" | "symbol" | "undefined"
@@ -971,7 +968,7 @@ const noInferenceFromImpossibleRest = (...f: []) => typeof f === "undefined";
 >"undefined" : "undefined"
 
 function inferWithRest(x: string | null, ...f: ["a", "b"]) {
->inferWithRest : (x: string | null, ...f: ["a", "b"]) => x is string
+>inferWithRest : (x: string | null, f_0: "a", f_1: "b") => x is string
 >x : string | null
 >f : ["a", "b"]
 
@@ -998,6 +995,7 @@ const foobarPred = (fb: typeof foobar) => fb.type === "foo";
 >foobarPred : (fb: { type: "foo"; foo: number; } | { type: "bar"; bar: string; }) => fb is { type: "foo"; foo: number; }
 >(fb: typeof foobar) => fb.type === "foo" : (fb: { type: "foo"; foo: number; } | { type: "bar"; bar: string; }) => fb is { type: "foo"; foo: number; }
 >fb : { type: "foo"; foo: number; } | { type: "bar"; bar: string; }
+>foobar : { type: "foo"; foo: number; } | { type: "bar"; bar: string; }
 >fb.type === "foo" : boolean
 >fb.type : "bar" | "foo"
 >fb : { type: "foo"; foo: number; } | { type: "bar"; bar: string; }

@@ -6,14 +6,16 @@ import React = require('react');
 
 class BigGreeter extends React.Component<{ }, {}> {
 >BigGreeter : Symbol(BigGreeter, Decl(file.tsx, 0, 32))
->React.Component : Symbol(unknown)
+>React.Component : Symbol(Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
 >React : Symbol(React, Decl(file.tsx, 0, 0))
->Component : Symbol(unknown)
+>Component : Symbol(Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
 
     render() {
 >render : Symbol(render, Decl(file.tsx, 2, 51))
 
         return <div>Default hi</div>;
+>div : Symbol(div, Decl(react.d.ts, 2400, 45))
+>div : Symbol(div, Decl(react.d.ts, 2400, 45))
     }
     greeting: string;
 >greeting : Symbol(greeting, Decl(file.tsx, 5, 5))
@@ -36,5 +38,5 @@ let b = <BigGreeter ref={(input) => { this.textInput = input; }} />
 let c = <BigGreeter data-extra="hi" />
 >c : Symbol(c, Decl(file.tsx, 14, 3))
 >BigGreeter : Symbol(BigGreeter, Decl(file.tsx, 0, 32))
->data-extra : Symbol(data-extra, Decl(file.tsx, 14, 19))
+>data-extra : Symbol("data-extra", Decl(file.tsx, 14, 19))
 

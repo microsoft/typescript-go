@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -33,12 +32,7 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 }
 
 func IsIntrinsicJsxName(name string) bool {
-	if len(name) == 0 {
-		return false
-	}
-
-	ch := name[0]
-	return (ch >= 'a' && ch <= 'z') || strings.ContainsRune(name, '-')
+	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
 }
 
 func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
@@ -89,20 +83,16 @@ func hasDecorators(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsDecorator)
 }
 
-func getEffectiveModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return node.ModifierFlags() // !!! Handle JSDoc
+func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
+	return node.ModifierFlags() & flags
 }
 
-func getSelectedEffectiveModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
-	return getEffectiveModifierFlags(node) & flags
+func hasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
+	return node.ModifierFlags()&flags != 0
 }
 
-func hasEffectiveModifier(node *ast.Node, flags ast.ModifierFlags) bool {
-	return getEffectiveModifierFlags(node)&flags != 0
-}
-
-func hasEffectiveReadonlyModifier(node *ast.Node) bool {
-	return hasEffectiveModifier(node, ast.ModifierFlagsReadonly)
+func hasReadonlyModifier(node *ast.Node) bool {
+	return hasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isBindingElementOfBareOrAccessedRequire(node *ast.Node) bool {
@@ -371,7 +361,7 @@ func isShorthandPropertyNameUseSite(useSite *ast.Node) bool {
 
 func isTypeDeclaration(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindTypeParameter, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindEnumDeclaration:
+	case ast.KindTypeParameter, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindEnumDeclaration:
 		return true
 	case ast.KindImportClause:
 		return node.AsImportClause().IsTypeOnly
@@ -391,14 +381,13 @@ func canHaveSymbol(node *ast.Node) bool {
 		ast.KindConstructSignature, ast.KindElementAccessExpression, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindExportAssignment,
 		ast.KindExportDeclaration, ast.KindExportSpecifier, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindFunctionType,
 		ast.KindGetAccessor, ast.KindIdentifier, ast.KindImportClause, ast.KindImportEqualsDeclaration, ast.KindImportSpecifier,
-		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocCallbackTag,
-		ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag, ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindJSDocTypeLiteral,
+		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocSignature, ast.KindJSDocTypeLiteral,
 		ast.KindJsxAttribute, ast.KindJsxAttributes, ast.KindJsxSpreadAttribute, ast.KindMappedType, ast.KindMethodDeclaration,
 		ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindNamedTupleMember, ast.KindNamespaceExport, ast.KindNamespaceExportDeclaration,
 		ast.KindNamespaceImport, ast.KindNewExpression, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindObjectLiteralExpression,
 		ast.KindParameter, ast.KindPropertyAccessExpression, ast.KindPropertyAssignment, ast.KindPropertyDeclaration, ast.KindPropertySignature,
 		ast.KindSetAccessor, ast.KindShorthandPropertyAssignment, ast.KindSourceFile, ast.KindSpreadAssignment, ast.KindStringLiteral,
-		ast.KindTypeAliasDeclaration, ast.KindTypeLiteral, ast.KindTypeParameter, ast.KindVariableDeclaration:
+		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindTypeLiteral, ast.KindTypeParameter, ast.KindVariableDeclaration:
 		return true
 	}
 	return false
@@ -409,10 +398,10 @@ func canHaveLocals(node *ast.Node) bool {
 	case ast.KindArrowFunction, ast.KindBlock, ast.KindCallSignature, ast.KindCaseBlock, ast.KindCatchClause,
 		ast.KindClassStaticBlockDeclaration, ast.KindConditionalType, ast.KindConstructor, ast.KindConstructorType,
 		ast.KindConstructSignature, ast.KindForStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindFunctionDeclaration,
-		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindGetAccessor, ast.KindIndexSignature, ast.KindJSDocCallbackTag,
-		ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindMappedType,
+		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindGetAccessor, ast.KindIndexSignature,
+		ast.KindJSDocSignature, ast.KindMappedType,
 		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindSetAccessor, ast.KindSourceFile,
-		ast.KindTypeAliasDeclaration:
+		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		return true
 	}
 	return false
@@ -443,6 +432,9 @@ func entityNameToString(name *ast.Node) string {
 	case ast.KindThisKeyword:
 		return "this"
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
+		if ast.NodeIsSynthesized(name) {
+			return name.Text()
+		}
 		return scanner.GetTextOfNode(name)
 	case ast.KindQualifiedName:
 		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
@@ -501,7 +493,7 @@ func getSourceFileOfModule(module *ast.Symbol) *ast.SourceFile {
 
 func getNonAugmentationDeclaration(symbol *ast.Symbol) *ast.Node {
 	return core.Find(symbol.Declarations, func(d *ast.Node) bool {
-		return !isExternalModuleAugmentation(d) && !(ast.IsModuleDeclaration(d) && ast.IsGlobalScopeAugmentation(d))
+		return !isExternalModuleAugmentation(d) && !ast.IsGlobalScopeAugmentation(d)
 	})
 }
 
@@ -524,12 +516,8 @@ func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
 	return moduleSymbol.Exports[ast.InternalSymbolNameExportEquals] != nil
 }
 
-func parsePseudoBigInt(stringValue string) string {
-	return stringValue // !!!
-}
-
 func isTypeAlias(node *ast.Node) bool {
-	return ast.IsTypeAliasDeclaration(node)
+	return ast.IsTypeOrJSTypeAliasDeclaration(node)
 }
 
 func hasOnlyExpressionInitializer(node *ast.Node) bool {
@@ -600,7 +588,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (hasEffectiveModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (hasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -659,9 +647,11 @@ func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
 	if n2 == nil {
 		return -1
 	}
-	f1 := c.fileIndexMap[ast.GetSourceFileOfNode(n1)]
-	f2 := c.fileIndexMap[ast.GetSourceFileOfNode(n2)]
-	if f1 != f2 {
+	s1 := ast.GetSourceFileOfNode(n1)
+	s2 := ast.GetSourceFileOfNode(n2)
+	if s1 != s2 {
+		f1 := c.fileIndexMap[s1]
+		f2 := c.fileIndexMap[s2]
 		// Order by index of file in the containing program
 		return f1 - f2
 	}
@@ -669,7 +659,7 @@ func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
 	return n1.Pos() - n2.Pos()
 }
 
-func compareTypes(t1, t2 *Type) int {
+func CompareTypes(t1, t2 *Type) int {
 	if t1 == t2 {
 		return 0
 	}
@@ -754,7 +744,7 @@ func compareTypes(t1, t2 *Type) int {
 		} else if o2 == nil {
 			return -1
 		} else {
-			if c := compareTypes(o1, o2); c != 0 {
+			if c := CompareTypes(o1, o2); c != 0 {
 				return c
 			}
 		}
@@ -792,17 +782,17 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsIndex != 0:
-		if c := compareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
+		if c := CompareTypes(t1.AsIndexType().target, t2.AsIndexType().target); c != 0 {
 			return c
 		}
 		if c := int(t1.AsIndexType().flags) - int(t2.AsIndexType().flags); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsIndexedAccess != 0:
-		if c := compareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().objectType, t2.AsIndexedAccessType().objectType); c != 0 {
 			return c
 		}
-		if c := compareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
+		if c := CompareTypes(t1.AsIndexedAccessType().indexType, t2.AsIndexedAccessType().indexType); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsConditional != 0:
@@ -813,10 +803,10 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsSubstitution != 0:
-		if c := compareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
+		if c := CompareTypes(t1.AsSubstitutionType().baseType, t2.AsSubstitutionType().baseType); c != 0 {
 			return c
 		}
-		if c := compareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
+		if c := CompareTypes(t1.AsSubstitutionType().constraint, t2.AsSubstitutionType().constraint); c != 0 {
 			return c
 		}
 	case t1.flags&TypeFlagsTemplateLiteral != 0:
@@ -827,7 +817,7 @@ func compareTypes(t1, t2 *Type) int {
 			return c
 		}
 	case t1.flags&TypeFlagsStringMapping != 0:
-		if c := compareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
+		if c := CompareTypes(t1.AsStringMappingType().target, t2.AsStringMappingType().target); c != 0 {
 			return c
 		}
 	}
@@ -919,7 +909,7 @@ func compareTypeLists(s1, s2 []*Type) int {
 		return len(s1) - len(s2)
 	}
 	for i, t1 := range s1 {
-		if c := compareTypes(t1, s2[i]); c != 0 {
+		if c := CompareTypes(t1, s2[i]); c != 0 {
 			return c
 		}
 	}
@@ -945,10 +935,10 @@ func compareTypeMappers(m1, m2 *TypeMapper) int {
 	case TypeMapperKindSimple:
 		m1 := m1.data.(*SimpleTypeMapper)
 		m2 := m2.data.(*SimpleTypeMapper)
-		if c := compareTypes(m1.source, m2.source); c != 0 {
+		if c := CompareTypes(m1.source, m2.source); c != 0 {
 			return c
 		}
-		return compareTypes(m1.target, m2.target)
+		return CompareTypes(m1.target, m2.target)
 	case TypeMapperKindArray:
 		m1 := m1.data.(*ArrayTypeMapper)
 		m2 := m2.data.(*ArrayTypeMapper)
@@ -1219,7 +1209,29 @@ func isValidNumberString(s string, roundTripOnly bool) bool {
 }
 
 func isValidBigIntString(s string, roundTripOnly bool) bool {
-	return false // !!!
+	if s == "" {
+		return false
+	}
+	scanner := scanner.NewScanner()
+	scanner.SetSkipTrivia(false)
+	success := true
+	scanner.SetOnError(func(diagnostic *diagnostics.Message, start, length int, args ...any) {
+		success = false
+	})
+	scanner.SetText(s + "n")
+	result := scanner.Scan()
+	negative := result == ast.KindMinusToken
+	if negative {
+		result = scanner.Scan()
+	}
+	flags := scanner.TokenFlags()
+	// validate that
+	// * scanning proceeded without error
+	// * a bigint can be scanned, and that when it is scanned, it is
+	// * the full length of the input string (so the scanner is one character beyond the augmented input length)
+	// * it does not contain a numeric separator (the `BigInt` constructor does not accept a numeric separator in its input)
+	return success && result == ast.KindBigIntLiteral && scanner.TokenEnd() == len(s)+1 && flags&ast.TokenFlagsContainsSeparator == 0 &&
+		(!roundTripOnly || s == pseudoBigIntToString(jsnum.NewPseudoBigInt(jsnum.ParsePseudoBigInt(scanner.TokenValue()), negative)))
 }
 
 func isValidESSymbolDeclaration(node *ast.Node) bool {
@@ -1227,9 +1239,9 @@ func isValidESSymbolDeclaration(node *ast.Node) bool {
 		return ast.IsVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
 	}
 	if ast.IsPropertyDeclaration(node) {
-		return hasEffectiveReadonlyModifier(node) && ast.HasStaticModifier(node)
+		return hasReadonlyModifier(node) && ast.HasStaticModifier(node)
 	}
-	return ast.IsPropertySignatureDeclaration(node) && hasEffectiveReadonlyModifier(node)
+	return ast.IsPropertySignatureDeclaration(node) && hasReadonlyModifier(node)
 }
 
 func isVariableDeclarationInVariableStatement(node *ast.Node) bool {
@@ -1427,7 +1439,7 @@ func (c *Checker) isMutableLocalVariableDeclaration(declaration *ast.Node) bool 
 
 func isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
+		return ast.IsInterfaceDeclaration(n) || ast.IsTypeOrJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
 	}) != nil
 }
 
@@ -1651,7 +1663,7 @@ func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
 	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
 }
 
-func getTypeParameterFromJsDoc(node *ast.Node) *ast.Node {
+func getTypeParameterFromJSDoc(node *ast.Node) *ast.Node {
 	name := node.Name().Text()
 	typeParameters := node.Parent.Parent.Parent.TypeParameters()
 	return core.Find(typeParameters, func(p *ast.Node) bool { return p.Name().Text() == name })
@@ -1761,44 +1773,42 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func skipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
 	return options.NoCheck.IsTrue() ||
-		options.SkipLibCheck.IsTrue() && tspath.IsDeclarationFileName(sourceFile.FileName()) ||
+		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
 		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
 
 func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
-	// !!!
-	// if (!!sourceFile.checkJsDirective && sourceFile.checkJsDirective.enabled === false) return false;
+	if sourceFile.CheckJsDirective != nil && !sourceFile.CheckJsDirective.Enabled {
+		return false
+	}
 
 	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
 		return true
 	}
 
-	isJs := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
-	isCheckJs := isJs && isCheckJsEnabledForFile(sourceFile, options)
-	isPlainJs := isPlainJsFile(sourceFile, options.CheckJs)
+	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isCheckJS := isJS && isCheckJSEnabledForFile(sourceFile, options)
+	isPlainJS := isPlainJSFile(sourceFile, options.CheckJs)
 
 	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
 	// - external: files that are added by plugins
-	return isPlainJs || isCheckJs || sourceFile.ScriptKind == core.ScriptKindDeferred
+	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
 }
 
-func isCheckJsEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
-	// !!!
-	// if sourceFile.CheckJsDirective != nil {
-	// 	return sourceFile.CheckJsDirective.Enabled
-	// }
+func isCheckJSEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
+	if sourceFile.CheckJsDirective != nil {
+		return sourceFile.CheckJsDirective.Enabled
+	}
 	return compilerOptions.CheckJs == core.TSTrue
 }
 
-func isPlainJsFile(file *ast.SourceFile, checkJs core.Tristate) bool {
-	// !!!
-	// return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
-	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && checkJs == core.TSUnknown
+func isPlainJSFile(file *ast.SourceFile, checkJs core.Tristate) bool {
+	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {
@@ -1841,7 +1851,9 @@ func isModuleExportsAccessExpression(node *ast.Node) bool {
 func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {
 	pos := node.Pos()
 	if node.Modifiers() != nil {
-		pos = core.LastOrNil(node.Modifiers().Nodes).End()
+		if last := ast.FindLastVisibleNode(node.Modifiers().Nodes); last != nil {
+			pos = last.Pos()
+		}
 	}
 	return scanner.GetRangeOfTokenAtPosition(ast.GetSourceFileOfNode(node), pos)
 }
@@ -1866,11 +1878,45 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		"AsyncIterator": {
 			{lib: "es2015", props: []string{}},
 		},
+		"ArrayBuffer": {
+			{lib: "es2024", props: []string{
+				"maxByteLength",
+				"resizable",
+				"resize",
+				"detached",
+				"transfer",
+				"transferToFixedLength",
+			}},
+		},
 		"Atomics": {
-			{lib: "es2017", props: []string{}},
+			{lib: "es2017", props: []string{
+				"add",
+				"and",
+				"compareExchange",
+				"exchange",
+				"isLockFree",
+				"load",
+				"or",
+				"store",
+				"sub",
+				"wait",
+				"notify",
+				"xor",
+			}},
+			{lib: "es2024", props: []string{
+				"waitAsync",
+			}},
 		},
 		"SharedArrayBuffer": {
-			{lib: "es2017", props: []string{}},
+			{lib: "es2017", props: []string{
+				"byteLength",
+				"slice",
+			}},
+			{lib: "es2024", props: []string{
+				"growable",
+				"maxByteLength",
+				"grow",
+			}},
 		},
 		"AsyncIterable": {
 			{lib: "es2018", props: []string{}},
@@ -1887,6 +1933,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		"RegExp": {
 			{lib: "es2015", props: []string{"flags", "sticky", "unicode"}},
 			{lib: "es2018", props: []string{"dotAll"}},
+			{lib: "es2024", props: []string{"unicodeSets"}},
 		},
 		"Reflect": {
 			{lib: "es2015", props: []string{"apply", "construct", "defineProperty", "deleteProperty", "get", "getOwnPropertyDescriptor", "getPrototypeOf", "has", "isExtensible", "ownKeys", "preventExtensions", "set", "setPrototypeOf"}},
@@ -1900,6 +1947,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2017", props: []string{"values", "entries", "getOwnPropertyDescriptors"}},
 			{lib: "es2019", props: []string{"fromEntries"}},
 			{lib: "es2022", props: []string{"hasOwn"}},
+			{lib: "es2024", props: []string{"groupBy"}},
 		},
 		"NumberConstructor": {
 			{lib: "es2015", props: []string{"isFinite", "isInteger", "isNaN", "isSafeInteger", "parseFloat", "parseInt"}},
@@ -1910,13 +1958,26 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		"Map": {
 			{lib: "es2015", props: []string{"entries", "keys", "values"}},
 		},
+		"MapConstructor": {
+			{lib: "es2024", props: []string{"groupBy"}},
+		},
 		"Set": {
 			{lib: "es2015", props: []string{"entries", "keys", "values"}},
+			{lib: "esnext", props: []string{
+				"union",
+				"intersection",
+				"difference",
+				"symmetricDifference",
+				"isSubsetOf",
+				"isSupersetOf",
+				"isDisjointFrom",
+			}},
 		},
 		"PromiseConstructor": {
 			{lib: "es2015", props: []string{"all", "race", "reject", "resolve"}},
 			{lib: "es2020", props: []string{"allSettled"}},
 			{lib: "es2021", props: []string{"any"}},
+			{lib: "es2024", props: []string{"withResolvers"}},
 		},
 		"Symbol": {
 			{lib: "es2015", props: []string{"for", "keyFor"}},
@@ -1935,7 +1996,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 			{lib: "es2020", props: []string{"matchAll"}},
 			{lib: "es2021", props: []string{"replaceAll"}},
 			{lib: "es2022", props: []string{"at"}},
-			{lib: "esnext", props: []string{"isWellFormed", "toWellFormed"}},
+			{lib: "es2024", props: []string{"isWellFormed", "toWellFormed"}},
 		},
 		"StringConstructor": {
 			{lib: "es2015", props: []string{"fromCodePoint", "raw"}},
@@ -1961,6 +2022,11 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 		},
 		"SymbolConstructor": {
 			{lib: "es2020", props: []string{"matchAll"}},
+			{lib: "esnext", props: []string{
+				"metadata",
+				"dispose",
+				"asyncDispose",
+			}},
 		},
 		"DataView": {
 			{lib: "es2020", props: []string{"setBigInt64", "setBigUint64", "getBigInt64", "getBigUint64"}},
@@ -2024,7 +2090,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 })
 
 func rangeOfTypeParameters(sourceFile *ast.SourceFile, typeParameters *ast.NodeList) core.TextRange {
-	return core.NewTextRange(typeParameters.Pos()-1, min(len(sourceFile.Text), scanner.SkipTrivia(sourceFile.Text, typeParameters.End())+1))
+	return core.NewTextRange(typeParameters.Pos()-1, min(len(sourceFile.Text()), scanner.SkipTrivia(sourceFile.Text(), typeParameters.End())+1))
 }
 
 func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {

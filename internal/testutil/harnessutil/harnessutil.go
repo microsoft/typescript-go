@@ -2,6 +2,7 @@ package harnessutil
 
 import (
 	"fmt"
+	"io/fs"
 	"maps"
 	"os"
 	"path/filepath"
@@ -21,12 +22,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
+
+// Posix-style path to additional test libraries
+const testLibFolder = "/.lib"
 
 type TestFile struct {
 	UnitName string
@@ -125,13 +130,20 @@ func CompileFilesEx(
 	// 	programFileNames = append(programFileNames, tspath.CombinePaths(builtFolder, harnessOptions.includeBuiltFile))
 	// }
 
-	// !!! This won't work until we have the actual lib files
-	// // Files from tests\lib that are requested by "@libFiles"
-	// if len(harnessOptions.libFiles) > 0 {
-	// 	for _, libFile := range harnessOptions.libFiles {
-	// 		programFileNames = append(programFileNames, tspath.CombinePaths(testLibFolder, libFile))
-	// 	}
-	// }
+	// Performance optimization; avoid copying in the /.lib folder if the test doesn't need it.
+	includeLibDir := core.Some(inputFiles, func(file *TestFile) bool { return strings.Contains(file.Content, testLibFolder+"/") })
+
+	// Files from testdata\lib that are requested by "@libFiles"
+	if len(harnessOptions.LibFiles) > 0 {
+		for _, libFile := range harnessOptions.LibFiles {
+			if libFile == "lib.d.ts" && compilerOptions.NoLib != core.TSTrue {
+				// We used to override lib with a custom lib.d.ts for some reason. Skip this unless it becomes necessary.
+				continue
+			}
+			programFileNames = append(programFileNames, tspath.CombinePaths(testLibFolder, libFile))
+			includeLibDir = true
+		}
+	}
 
 	// !!!
 	// ts.assign(options, ts.convertToOptionsWithAbsolutePaths(options, path => ts.getNormalizedAbsolutePath(path, currentDirectory)));
@@ -180,6 +192,10 @@ func CompileFilesEx(
 		testfs[srcFileName] = vfstest.Symlink(targetFileName)
 	}
 
+	if includeLibDir {
+		maps.Copy(testfs, testLibFolderMap())
+	}
+
 	fs := vfstest.FromMap(testfs, harnessOptions.UseCaseSensitiveFileNames)
 	fs = bundled.WrapFS(fs)
 	fs = NewOutputRecorderFS(fs)
@@ -195,6 +211,31 @@ func CompileFilesEx(
 	}
 	return result
 }
+
+var testLibFolderMap = sync.OnceValue(func() map[string]any {
+	testfs := make(map[string]any)
+	libfs := os.DirFS(filepath.Join(repo.TypeScriptSubmodulePath, "tests", "lib"))
+	err := fs.WalkDir(libfs, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() {
+			return nil
+		}
+		content, err := fs.ReadFile(libfs, path)
+		if err != nil {
+			return err
+		}
+		testfs[testLibFolder+"/"+path] = &fstest.MapFile{
+			Data: content,
+		}
+		return nil
+	})
+	if err != nil {
+		panic(fmt.Sprintf("Failed to read lib dir: %v", err))
+	}
+	return testfs
+})
 
 func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions) {
 	for name, value := range testConfig {
@@ -389,18 +430,18 @@ type cachedCompilerHost struct {
 	options *core.CompilerOptions
 }
 
-var sourceFileCache sync.Map
+var sourceFileCache collections.SyncMap[sourceFileCacheKey, *ast.SourceFile]
+
+type sourceFileCacheKey struct {
+	core.SourceFileAffectingCompilerOptions
+	fileName        string
+	path            tspath.Path
+	languageVersion core.ScriptTarget
+	text            string
+}
 
 func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
-
-	type sourceFileCacheKey struct {
-		core.SourceFileAffectingCompilerOptions
-		fileName        string
-		path            tspath.Path
-		languageVersion core.ScriptTarget
-		text            string
-	}
 
 	key := sourceFileCacheKey{
 		SourceFileAffectingCompilerOptions: h.options.SourceFileAffecting(),
@@ -411,7 +452,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 	}
 
 	if cached, ok := sourceFileCache.Load(key); ok {
-		return cached.(*ast.SourceFile)
+		return cached
 	}
 
 	// !!! dedupe with compiler.compilerHost
@@ -424,7 +465,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
-	return result.(*ast.SourceFile)
+	return result
 }
 
 func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) program.CompilerHost {
@@ -511,8 +552,8 @@ type CompilationResult struct {
 	Program          *program.Program
 	Options          *core.CompilerOptions
 	HarnessOptions   *HarnessOptions
-	Js               collections.OrderedMap[string, *TestFile]
-	Dts              collections.OrderedMap[string, *TestFile]
+	JS               collections.OrderedMap[string, *TestFile]
+	DTS              collections.OrderedMap[string, *TestFile]
 	Maps             collections.OrderedMap[string, *TestFile]
 	Symlinks         map[string]string
 	Repeat           func(TestConfiguration) *CompilationResult
@@ -523,8 +564,8 @@ type CompilationResult struct {
 
 type CompilationOutput struct {
 	Inputs []*TestFile
-	Js     *TestFile
-	Dts    *TestFile
+	JS     *TestFile
+	DTS    *TestFile
 	Map    *TestFile
 }
 
@@ -568,28 +609,28 @@ func newCompilationResult(
 		} else {
 			// using the order from the inputs, populate the outputs
 			for _, sourceFile := range program.GetSourceFiles() {
-				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text}
+				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text()}
 				c.inputs = append(c.inputs, input)
 				if !tspath.IsDeclarationFileName(sourceFile.FileName()) {
 					extname := core.GetOutputExtension(sourceFile.FileName(), options.Jsx)
 					outputs := &CompilationOutput{
 						Inputs: []*TestFile{input},
-						Js:     js.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname)),
-						Dts:    dts.GetOrZero(c.getOutputPath(sourceFile.FileName(), tspath.GetDeclarationEmitExtensionForPath(sourceFile.FileName()))),
+						JS:     js.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname)),
+						DTS:    dts.GetOrZero(c.getOutputPath(sourceFile.FileName(), tspath.GetDeclarationEmitExtensionForPath(sourceFile.FileName()))),
 						Map:    maps.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname+".map")),
 					}
 					c.inputsAndOutputs.Set(sourceFile.FileName(), outputs)
-					if outputs.Js != nil {
-						c.inputsAndOutputs.Set(outputs.Js.UnitName, outputs)
-						c.Js.Set(outputs.Js.UnitName, outputs.Js)
-						js.Delete(outputs.Js.UnitName)
-						c.outputs = append(c.outputs, outputs.Js)
+					if outputs.JS != nil {
+						c.inputsAndOutputs.Set(outputs.JS.UnitName, outputs)
+						c.JS.Set(outputs.JS.UnitName, outputs.JS)
+						js.Delete(outputs.JS.UnitName)
+						c.outputs = append(c.outputs, outputs.JS)
 					}
-					if outputs.Dts != nil {
-						c.inputsAndOutputs.Set(outputs.Dts.UnitName, outputs)
-						c.Dts.Set(outputs.Dts.UnitName, outputs.Dts)
-						dts.Delete(outputs.Dts.UnitName)
-						c.outputs = append(c.outputs, outputs.Dts)
+					if outputs.DTS != nil {
+						c.inputsAndOutputs.Set(outputs.DTS.UnitName, outputs)
+						c.DTS.Set(outputs.DTS.UnitName, outputs.DTS)
+						dts.Delete(outputs.DTS.UnitName)
+						c.outputs = append(c.outputs, outputs.DTS)
 					}
 					if outputs.Map != nil {
 						c.inputsAndOutputs.Set(outputs.Map.UnitName, outputs)
@@ -603,10 +644,10 @@ func newCompilationResult(
 
 		// add any unhandled outputs, ordered by unit name
 		for _, document := range slices.SortedFunc(js.Values(), compareTestFiles) {
-			c.Js.Set(document.UnitName, document)
+			c.JS.Set(document.UnitName, document)
 		}
 		for _, document := range slices.SortedFunc(dts.Values(), compareTestFiles) {
-			c.Dts.Set(document.UnitName, document)
+			c.DTS.Set(document.UnitName, document)
 		}
 		for _, document := range slices.SortedFunc(maps.Values(), compareTestFiles) {
 			c.Maps.Set(document.UnitName, document)
@@ -654,10 +695,10 @@ func (r *CompilationResult) FS() vfs.FS {
 
 func (r *CompilationResult) GetNumberOfJSFiles(includeJson bool) int {
 	if includeJson {
-		return r.Js.Size()
+		return r.JS.Size()
 	}
 	count := 0
-	for file := range r.Js.Values() {
+	for file := range r.JS.Values() {
 		if !tspath.FileExtensionIs(file.UnitName, tspath.ExtensionJson) {
 			count++
 		}
@@ -690,14 +731,51 @@ func (c *CompilationResult) GetOutput(path string, kind string /*"js" | "dts" | 
 	if outputs != nil {
 		switch kind {
 		case "js":
-			return outputs.Js
+			return outputs.JS
 		case "dts":
-			return outputs.Dts
+			return outputs.DTS
 		case "map":
 			return outputs.Map
 		}
 	}
 	return nil
+}
+
+func (c *CompilationResult) GetSourceMapRecord() string {
+	if c.Result == nil || len(c.Result.SourceMaps) == 0 {
+		return ""
+	}
+
+	var sourceMapRecorder writerAggregator
+	for _, sourceMapData := range c.Result.SourceMaps {
+		var prevSourceFile *ast.SourceFile
+		var currentFile *TestFile
+
+		if tspath.IsDeclarationFileName(sourceMapData.GeneratedFile) {
+			currentFile = c.DTS.GetOrZero(sourceMapData.GeneratedFile)
+		} else {
+			currentFile = c.JS.GetOrZero(sourceMapData.GeneratedFile)
+		}
+
+		sourceMapSpanWriter := newSourceMapSpanWriter(&sourceMapRecorder, sourceMapData.SourceMap, currentFile)
+		mapper := sourcemap.DecodeMappings(sourceMapData.SourceMap.Mappings)
+		for decodedSourceMapping := range mapper.Values() {
+			var currentSourceFile *ast.SourceFile
+			if decodedSourceMapping.IsSourceMapping() {
+				currentSourceFile = c.Program.GetSourceFile(sourceMapData.InputSourceFileNames[decodedSourceMapping.SourceIndex])
+			}
+			if currentSourceFile != prevSourceFile {
+				if currentSourceFile != nil {
+					sourceMapSpanWriter.recordNewSourceFileSpan(decodedSourceMapping, currentSourceFile.Text())
+				}
+				prevSourceFile = currentSourceFile
+			} else {
+				sourceMapSpanWriter.recordSourceMapSpan(decodedSourceMapping)
+			}
+		}
+		sourceMapSpanWriter.close()
+	}
+	return sourceMapRecorder.String()
 }
 
 func createProgram(host program.CompilerHost, options *core.CompilerOptions, rootFiles []string) *program.Program {
@@ -762,7 +840,7 @@ func getFileBasedTestConfigurationDescription(config TestConfiguration) string {
 func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, varyByOptions map[string]struct{}) []*NamedTestConfiguration {
 	var optionEntries [][]string // Each element slice has the option name as the first element, and the values as the rest
 	variationCount := 1
-	nonVariyingOptions := make(map[string]string)
+	nonVaryingOptions := make(map[string]string)
 	for option, value := range settings {
 		if _, ok := varyByOptions[option]; ok {
 			entries := splitOptionValues(t, value, option)
@@ -773,11 +851,11 @@ func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, va
 				}
 				optionEntries = append(optionEntries, append([]string{option}, entries...))
 			} else if len(entries) == 1 {
-				nonVariyingOptions[option] = entries[0]
+				nonVaryingOptions[option] = entries[0]
 			}
 		} else {
 			// Variation is not supported for the option
-			nonVariyingOptions[option] = value
+			nonVaryingOptions[option] = value
 		}
 	}
 
@@ -787,14 +865,12 @@ func GetFileBasedTestConfigurations(t *testing.T, settings map[string]string, va
 		varyingConfigurations := computeFileBasedTestConfigurationVariations(variationCount, optionEntries)
 		for _, varyingConfig := range varyingConfigurations {
 			description := getFileBasedTestConfigurationDescription(varyingConfig)
-			for key, value := range nonVariyingOptions {
-				varyingConfig[key] = value
-			}
+			maps.Copy(varyingConfig, nonVaryingOptions)
 			configurations = append(configurations, &NamedTestConfiguration{description, varyingConfig})
 		}
-	} else if len(nonVariyingOptions) > 0 {
+	} else if len(nonVaryingOptions) > 0 {
 		// Only non-varying options
-		configurations = append(configurations, &NamedTestConfiguration{"", nonVariyingOptions})
+		configurations = append(configurations, &NamedTestConfiguration{"", nonVaryingOptions})
 	}
 	return configurations
 }

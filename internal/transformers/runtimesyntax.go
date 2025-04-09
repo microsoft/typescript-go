@@ -61,7 +61,7 @@ func (tx *RuntimeSyntaxTransformer) pushScope(node *ast.Node) (savedCurrentScope
 	case ast.KindCaseBlock, ast.KindModuleBlock, ast.KindBlock:
 		tx.currentScope = node
 		tx.currentScopeFirstDeclarationsOfName = nil
-	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindEnumDeclaration, ast.KindModuleDeclaration, ast.KindVariableDeclaration:
+	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindEnumDeclaration, ast.KindModuleDeclaration, ast.KindVariableStatement:
 		tx.recordDeclarationInScope(node)
 	}
 	return savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName
@@ -78,8 +78,15 @@ func (tx *RuntimeSyntaxTransformer) popScope(savedCurrentScope *ast.Node, savedC
 
 // Visits each node in the AST
 func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
-	savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName := tx.pushScope(node)
 	grandparentNode := tx.pushNode(node)
+	defer tx.popNode(grandparentNode)
+
+	savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName := tx.pushScope(node)
+	defer tx.popScope(savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName)
+
+	if node.SubtreeFacts()&ast.SubtreeContainsTypeScript == 0 && (tx.currentNamespace == nil && tx.currentEnum == nil || node.SubtreeFacts()&ast.SubtreeContainsIdentifier == 0) {
+		return node
+	}
 
 	switch node.Kind {
 	// TypeScript parameter property modifiers are elided
@@ -88,7 +95,7 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindProtectedKeyword,
 		ast.KindReadonlyKeyword,
 		ast.KindOverrideKeyword:
-		return nil
+		node = nil
 	case ast.KindEnumDeclaration:
 		node = tx.visitEnumDeclaration(node.AsEnumDeclaration())
 	case ast.KindModuleDeclaration:
@@ -112,22 +119,38 @@ func (tx *RuntimeSyntaxTransformer) visit(node *ast.Node) *ast.Node {
 	default:
 		node = tx.visitor.VisitEachChild(node)
 	}
-
-	tx.popNode(grandparentNode)
-	tx.popScope(savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName)
 	return node
 }
 
 // Records that a declaration was emitted in the current scope, if it was the first declaration for the provided symbol.
 func (tx *RuntimeSyntaxTransformer) recordDeclarationInScope(node *ast.Node) {
-	name := node.Name()
-	if name != nil && ast.IsIdentifier(name) {
-		if tx.currentScopeFirstDeclarationsOfName == nil {
-			tx.currentScopeFirstDeclarationsOfName = make(map[string]*ast.Node)
+	switch node.Kind {
+	case ast.KindVariableStatement:
+		tx.recordDeclarationInScope(node.AsVariableStatement().DeclarationList)
+		return
+	case ast.KindVariableDeclarationList:
+		for _, decl := range node.AsVariableDeclarationList().Declarations.Nodes {
+			tx.recordDeclarationInScope(decl)
 		}
-		text := name.Text()
-		if _, found := tx.currentScopeFirstDeclarationsOfName[text]; !found {
-			tx.currentScopeFirstDeclarationsOfName[text] = node
+		return
+	case ast.KindArrayBindingPattern, ast.KindObjectBindingPattern:
+		for _, element := range node.AsBindingPattern().Elements.Nodes {
+			tx.recordDeclarationInScope(element)
+		}
+		return
+	}
+	name := node.Name()
+	if name != nil {
+		if ast.IsIdentifier(name) {
+			if tx.currentScopeFirstDeclarationsOfName == nil {
+				tx.currentScopeFirstDeclarationsOfName = make(map[string]*ast.Node)
+			}
+			text := name.Text()
+			if _, found := tx.currentScopeFirstDeclarationsOfName[text]; !found {
+				tx.currentScopeFirstDeclarationsOfName[text] = node
+			}
+		} else if ast.IsBindingPattern(name) {
+			tx.recordDeclarationInScope(name)
 		}
 	}
 }
@@ -145,7 +168,7 @@ func (tx *RuntimeSyntaxTransformer) isFirstDeclarationInScope(node *ast.Node) bo
 }
 
 func (tx *RuntimeSyntaxTransformer) isExportOfNamespace(node *ast.Node) bool {
-	return tx.currentNamespace != nil && (node.ModifierFlags()&ast.ModifierFlagsExport != 0 || node.Flags&ast.NodeFlagsNestedNamespace != 0)
+	return tx.currentNamespace != nil && node.ModifierFlags()&ast.ModifierFlagsExport != 0
 }
 
 func (tx *RuntimeSyntaxTransformer) isExportOfExternalModule(node *ast.Node) bool {
@@ -184,12 +207,16 @@ func (tx *RuntimeSyntaxTransformer) getEnumQualifiedReference(enum *ast.EnumDecl
 
 // Gets an expression like `E.A` that references an enum member.
 func (tx *RuntimeSyntaxTransformer) getEnumQualifiedProperty(enum *ast.EnumDeclaration, member *ast.EnumMember) *ast.Expression {
-	return tx.getNamespaceQualifiedProperty(tx.getNamespaceContainerName(enum.AsNode()), member.Name())
+	prop := tx.getNamespaceQualifiedProperty(tx.getNamespaceContainerName(enum.AsNode()), member.Name().Clone(tx.factory))
+	tx.emitContext.AddEmitFlags(prop, printer.EFNoComments|printer.EFNoNestedComments|printer.EFNoSourceMap|printer.EFNoNestedSourceMaps)
+	return prop
 }
 
 // Gets an expression like `E["A"]` that references an enum member.
 func (tx *RuntimeSyntaxTransformer) getEnumQualifiedElement(enum *ast.EnumDeclaration, member *ast.EnumMember) *ast.Expression {
-	return tx.getNamespaceQualifiedElement(tx.getNamespaceContainerName(enum.AsNode()), tx.getExpressionForPropertyName(member))
+	prop := tx.getNamespaceQualifiedElement(tx.getNamespaceContainerName(enum.AsNode()), tx.getExpressionForPropertyName(member))
+	tx.emitContext.AddEmitFlags(prop, printer.EFNoComments|printer.EFNoNestedComments|printer.EFNoSourceMap|printer.EFNoNestedSourceMaps)
+	return prop
 }
 
 // Gets an expression used to refer to a namespace or enum from within the body of its declaration.
@@ -826,7 +853,6 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 		return tx.emitContext.VisitFunctionBody(body.AsNode(), tx.visitor)
 	}
 
-	grandparentOfConstructor := tx.pushNode(constructor)
 	grandparentOfBody := tx.pushNode(body.AsNode())
 	savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName := tx.pushScope(body.AsNode())
 
@@ -892,7 +918,6 @@ func (tx *RuntimeSyntaxTransformer) visitConstructorBody(body *ast.Block, constr
 
 	tx.popScope(savedCurrentScope, savedCurrentScopeFirstDeclarationsOfName)
 	tx.popNode(grandparentOfBody)
-	tx.popNode(grandparentOfConstructor)
 	updated := tx.factory.NewBlock(statementList /*multiline*/, true)
 	tx.emitContext.SetOriginal(updated, body.AsNode())
 	updated.Loc = body.Loc

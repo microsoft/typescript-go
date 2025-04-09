@@ -25,12 +25,17 @@ function qat(str: string, num: number): void {
 function foo(str, num) {
     return;
 }
+/**
+ * some sort of block quote
+ */
 function bar(str, num) {
     return;
 }
+// some sort of comment
 function baz(str, num) {
     return;
 }
 function qat(str, num) {
     return;
 }
+//# sourceMappingURL=sourceMap-Comments2.js.map

@@ -5,13 +5,11 @@
 
 function foo<T>(x: T): T { return x }
 >foo : <T>(x: T) => T
->T : T
 >x : T
 >x : T
 
 class Bar<T> { constructor(public x: T) { } }
 >Bar : Bar<T>
->T : T
 >x : T
 
 // Errors expected on all of the following
@@ -33,8 +31,8 @@ const HuhFoo = foo<string?>;
 > : any
 
 const NopeFoo = foo<?string>;
->NopeFoo : (x: any) => any
->foo<?string> : (x: any) => any
+>NopeFoo : (x: string | null) => string | null
+>foo<?string> : (x: string | null) => string | null
 >foo : <T>(x: T) => T
 
 const ComeOnFoo = foo<?string?>;
@@ -53,18 +51,22 @@ const ComeOnFoo = foo<?string?>;
 
 type TWhatFoo = typeof foo<?>;
 >TWhatFoo : (x: any) => any
+>foo : <T>(x: T) => T
 
 type THuhFoo = typeof foo<string?>;
 >THuhFoo : (x: string) => string
+>foo : <T>(x: T) => T
 >> : boolean
 > : any
 > : any
 
 type TNopeFoo = typeof foo<?string>;
->TNopeFoo : (x: any) => any
+>TNopeFoo : (x: string | null) => string | null
+>foo : <T>(x: T) => T
 
 type TComeOnFoo = typeof foo<?string?>;
->TComeOnFoo : (x: any) => any
+>TComeOnFoo : (x: string | null) => string | null
+>foo : <T>(x: T) => T
 >> : boolean
 > : any
 > : any
@@ -86,8 +88,8 @@ const HuhBar = Bar<string?>;
 > : any
 
 const NopeBar = Bar<?string>;
->NopeBar : { new (x: any): Bar<any>; prototype: Bar<any>; }
->Bar<?string> : { new (x: any): Bar<any>; prototype: Bar<any>; }
+>NopeBar : { new (x: string | null): Bar<string | null>; prototype: Bar<any>; }
+>Bar<?string> : { new (x: string | null): Bar<string | null>; prototype: Bar<any>; }
 >Bar : typeof Bar
 
 const ComeOnBar = Bar<?string?>;
@@ -106,18 +108,22 @@ const ComeOnBar = Bar<?string?>;
 
 type TWhatBar = typeof Bar<?>;
 >TWhatBar : { new (x: any): Bar<any>; prototype: Bar<any>; }
+>Bar : typeof Bar
 
 type THuhBar = typeof Bar<string?>;
 >THuhBar : { new (x: string): Bar<string>; prototype: Bar<any>; }
+>Bar : typeof Bar
 >> : boolean
 > : any
 > : any
 
 type TNopeBar = typeof Bar<?string>;
->TNopeBar : { new (x: any): Bar<any>; prototype: Bar<any>; }
+>TNopeBar : { new (x: string | null): Bar<string | null>; prototype: Bar<any>; }
+>Bar : typeof Bar
 
 type TComeOnBar = typeof Bar<?string?>;
->TComeOnBar : { new (x: any): Bar<any>; prototype: Bar<any>; }
+>TComeOnBar : { new (x: string | null): Bar<string | null>; prototype: Bar<any>; }
+>Bar : typeof Bar
 >> : boolean
 > : any
 > : any

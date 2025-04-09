@@ -4,10 +4,9 @@
  class Base {
  }
  class Sub extends Base {
--    // @ts-ignore
 +    p;
+     // @ts-ignore
      constructor(p) {
-+        this.p = p;
          console.log('hi');
          super();
 -        Object.defineProperty(this, "p", {
@@ -22,15 +21,15 @@
 -            writable: true,
 -            value: 0
 -        });
++        this.p = p;
      }
 +    field = 0;
  }
  class Test extends Base {
--    // @ts-ignore
 +    p;
 +    prop;
+     // @ts-ignore
      constructor(p) {
-+        this.p = p;
          1;
          super();
 -        Object.defineProperty(this, "p", {
@@ -45,6 +44,7 @@
 -            writable: true,
 -            value: void 0
 -        });
++        this.p = p;
          this.prop = 1;
      }
  }

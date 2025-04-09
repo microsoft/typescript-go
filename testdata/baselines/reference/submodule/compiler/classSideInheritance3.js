@@ -30,8 +30,8 @@ class A {
 class B extends A {
     data;
     constructor(x, data) {
-        this.data = data;
         super(x);
+        this.data = data;
     }
 }
 class C extends A {
@@ -39,6 +39,6 @@ class C extends A {
         super(x);
     }
 }
-var r1 = B;
-var r2 = B;
-var r3 = C;
+var r1 = B; // error
+var r2 = B; // error
+var r3 = C; // ok

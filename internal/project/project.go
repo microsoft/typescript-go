@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/program"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -159,6 +160,16 @@ func (p *Project) Trace(msg string) {
 // GetDefaultLibraryPath implements ls.Host.
 func (p *Project) GetDefaultLibraryPath() string {
 	return p.projectService.options.DefaultLibraryPath
+}
+
+// GetScriptInfo implements ls.Host.
+func (p *Project) GetScriptInfo(fileName string) ls.ScriptInfo {
+	return p.projectService.GetScriptInfo(fileName)
+}
+
+// GetPositionEncoding implements ls.Host.
+func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
+	return p.projectService.options.PositionEncoding
 }
 
 func (p *Project) Name() string {
@@ -344,7 +355,7 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 			for _, sourceFile := range sourceFiles {
 				builder.WriteString("\t\t" + sourceFile.FileName())
 				if writeFileVersionAndText {
-					builder.WriteString(fmt.Sprintf(" %d %s", sourceFile.Version, sourceFile.Text))
+					builder.WriteString(fmt.Sprintf(" %d %s", sourceFile.Version, sourceFile.Text()))
 				}
 				builder.WriteRune('\n')
 			}

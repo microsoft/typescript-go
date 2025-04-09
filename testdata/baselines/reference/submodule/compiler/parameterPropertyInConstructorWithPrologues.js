@@ -85,6 +85,7 @@ class Foo9 extends C {
 
 
 //// [parameterPropertyInConstructorWithPrologues.js]
+// https://github.com/microsoft/TypeScript/issues/48671
 class C {
 }
 class Foo1 {
@@ -158,8 +159,8 @@ class Foo7 extends C {
     constructor(member) {
         "ngInject1";
         "ngInject1";
-        this.member = member;
         super();
+        this.member = member;
         console.log("hi");
     }
 }
@@ -168,8 +169,8 @@ class Foo8 extends C {
     constructor(member) {
         "ngInject1";
         "ngInject1";
-        this.member = member;
         super();
+        this.member = member;
         this.m();
         console.log("hi");
     }

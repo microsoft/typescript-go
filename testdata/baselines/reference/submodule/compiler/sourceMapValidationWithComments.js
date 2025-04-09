@@ -26,6 +26,7 @@ class DebugClass {
 //// [sourceMapValidationWithComments.js]
 class DebugClass {
     static debugFunc() {
+        // Start Debugger Test Code
         var i = 0;
         i++;
         i++;
@@ -36,6 +37,8 @@ class DebugClass {
         i++;
         i++;
         i++;
+        // End Debugger Test Code
         return true;
     }
 }
+//# sourceMappingURL=sourceMapValidationWithComments.js.map

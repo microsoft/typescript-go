@@ -3,15 +3,14 @@
 === returnTypePredicateIsInstantiateInContextOfTarget.tsx ===
 /// <reference path="react16.d.ts" />
 import * as React from "react";
->React : any
+>React : typeof React
 
 class TestComponent extends React.Component<{ isAny: <T>(obj: any) => obj is T }> {
 >TestComponent : TestComponent
->React.Component : any
->React : any
->Component : any
+>React.Component : Component<{ isAny: <T>(obj: any) => obj is T; }, {}, any>
+>React : typeof React
+>Component : typeof Component
 >isAny : <T>(obj: any) => obj is T
->T : T
 >obj : any
 
     static defaultProps = {
@@ -28,7 +27,6 @@ class TestComponent extends React.Component<{ isAny: <T>(obj: any) => obj is T }
     // Type guard is defined as a static class property
     static isAny<T>(obj: any): obj is T {
 >isAny : <T>(obj: any) => obj is T
->T : T
 >obj : any
 
         return true;
@@ -37,8 +35,8 @@ class TestComponent extends React.Component<{ isAny: <T>(obj: any) => obj is T }
 }
 
 const TestRender = () => <TestComponent />;
->TestRender : () => any
->() => <TestComponent /> : () => any
-><TestComponent /> : any
+>TestRender : () => Element
+>() => <TestComponent /> : () => Element
+><TestComponent /> : Element
 >TestComponent : typeof TestComponent
 

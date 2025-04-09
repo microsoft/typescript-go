@@ -39,13 +39,12 @@
 +class Derived extends Base {
 +    p;
 +    constructor(p) {
-+        this.p = p;
 +        super(p);
-+        this.p;
++        this.p = p;
++        this.p; // OK
      }
 -    return Derived;
 -}(Base));
 +}
  var d;
--d.p; // public, OK
-+d.p;
+ d.p; // public, OK

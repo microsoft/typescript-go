@@ -5,17 +5,11 @@ module ts {
 >ts : typeof ts
 
     interface Map<T> {
->Map : Map<T>
->T : T
-
         [index: string]: T;
 >index : string
     }
 
     interface Equals<T> {
->Equals : Equals<T>
->T : T
-
         equals(other: T): boolean;
 >equals : (other: T) => boolean
 >other : T
@@ -455,16 +449,15 @@ module ts {
 
     function getProperty<T>(map: Map<T>, key: string): T {
 >getProperty : <T>(map: Map<T>, key: string) => T
->T : T
 >map : Map<T>
 >key : string
 
         if (!hasOwnProperty.call(map, key)) return undefined;
 >!hasOwnProperty.call(map, key) : boolean
 >hasOwnProperty.call(map, key) : any
->hasOwnProperty.call : (thisArg: any, ...argArray: any[]) => any
+>hasOwnProperty.call : (this: Function, thisArg: any, ...argArray: any[]) => any
 >hasOwnProperty : (v: PropertyKey) => boolean
->call : (thisArg: any, ...argArray: any[]) => any
+>call : (this: Function, thisArg: any, ...argArray: any[]) => any
 >map : Map<T>
 >key : string
 >undefined : undefined
@@ -477,22 +470,20 @@ module ts {
 
     function hasProperty<T>(map: Map<T>, key: string): boolean {
 >hasProperty : <T>(map: Map<T>, key: string) => boolean
->T : T
 >map : Map<T>
 >key : string
 
         return hasOwnProperty.call(map, key);
 >hasOwnProperty.call(map, key) : any
->hasOwnProperty.call : (thisArg: any, ...argArray: any[]) => any
+>hasOwnProperty.call : (this: Function, thisArg: any, ...argArray: any[]) => any
 >hasOwnProperty : (v: PropertyKey) => boolean
->call : (thisArg: any, ...argArray: any[]) => any
+>call : (this: Function, thisArg: any, ...argArray: any[]) => any
 >map : Map<T>
 >key : string
     }
 
     function arrayContains<T extends Equals<T>>(a: T[], item: T): boolean {
 >arrayContains : <T extends Equals<T>>(a: T[], item: T) => boolean
->T : T
 >a : T[]
 >item : T
 
@@ -527,7 +518,6 @@ module ts {
 
     function arrayEquals<T extends Equals<T>>(a: T[], b: T[]): boolean {
 >arrayEquals : <T extends Equals<T>>(a: T[], b: T[]) => boolean
->T : T
 >a : T[]
 >b : T[]
 
@@ -573,7 +563,6 @@ module ts {
 
     function setEquals<T extends Equals<T>>(a: T[], b: T[]): boolean {
 >setEquals : <T extends Equals<T>>(a: T[], b: T[]) => boolean
->T : T
 >a : T[]
 >b : T[]
 

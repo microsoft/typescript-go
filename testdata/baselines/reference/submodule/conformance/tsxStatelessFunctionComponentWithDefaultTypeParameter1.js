@@ -18,8 +18,10 @@ let i1 = <MyComponent values="Hello"/>;
 //// [file.jsx]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const React = require("react");
 function MyComponent(attr) {
     return <div>attr.values</div>;
 }
-let i = <MyComponent values/>;
+// OK
+let i = <MyComponent values/>; // We infer type arguments here
 let i1 = <MyComponent values="Hello"/>;

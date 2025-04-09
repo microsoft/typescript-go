@@ -2,24 +2,16 @@
 
 === errorsWithInvokablesInUnions01.ts ===
 interface ConstructableA {
->ConstructableA : ConstructableA
-
   new(): { somePropA: any };
 >somePropA : any
 }
 
 interface IDirectiveLinkFn<TScope> {
->IDirectiveLinkFn : IDirectiveLinkFn<TScope>
->TScope : TScope
-
     (scope: TScope): void;
 >scope : TScope
 }
 
 interface IDirectivePrePost<TScope> {
->IDirectivePrePost : IDirectivePrePost<TScope>
->TScope : TScope
-
     pre?: IDirectiveLinkFn<TScope>;
 >pre : IDirectiveLinkFn<TScope>
 
@@ -28,12 +20,12 @@ interface IDirectivePrePost<TScope> {
 }
 
 export let blah: IDirectiveLinkFn<number> | ConstructableA | IDirectivePrePost<number> = (x: string) => {}
->blah : ConstructableA | IDirectiveLinkFn<number> | IDirectivePrePost<number>
+>blah : ConstructableA | (IDirectiveLinkFn<number>) | IDirectivePrePost<number>
 >(x: string) => {} : (x: string) => void
 >x : string
 
 export let ctor: IDirectiveLinkFn<number> | ConstructableA | IDirectivePrePost<number> = class {
->ctor : ConstructableA | IDirectiveLinkFn<number> | IDirectivePrePost<number>
+>ctor : ConstructableA | (IDirectiveLinkFn<number>) | IDirectivePrePost<number>
 >class {    someUnaccountedProp: any;} : typeof ctor
 
     someUnaccountedProp: any;

@@ -2,15 +2,12 @@
 
 === narrowByInstanceof.ts ===
 interface A { a: string }
->A : A
 >a : string
 
 interface B { b: string }
->B : B
 >b : string
 
 interface C { c: string }
->C : C
 >c : string
 
 type AA = {
@@ -186,9 +183,9 @@ function test(o: Person | Car) {
 
         o.sayHi();
 >o.sayHi() : void
->o.sayHi : () => void | () => void
+>o.sayHi : (() => void) | (() => void)
 >o : Car | Person
->sayHi : () => void | () => void
+>sayHi : (() => void) | (() => void)
     }
 }
 

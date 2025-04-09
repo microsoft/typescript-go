@@ -2,13 +2,8 @@
 
 === file.tsx ===
 declare module JSX {
->JSX : any
-
 	interface Element { }
->Element : Element
-
 	interface IntrinsicElements { }
->IntrinsicElements : IntrinsicElements
 }
 
 // Error
@@ -17,7 +12,7 @@ var Div = 3;
 >3 : 3
 
 <Div />;
-><Div /> : any
+><Div /> : Element
 >Div : number
 
 // OK
@@ -25,7 +20,7 @@ function Fact(): any { return null; }
 >Fact : () => any
 
 <Fact />
-><Fact /> : any
+><Fact /> : Element
 >Fact : () => any
 
 // Error
@@ -34,12 +29,10 @@ function Fnum(): number{ return 42; }
 >42 : 42
 
 <Fnum />
-><Fnum /> : any
+><Fnum /> : Element
 >Fnum : () => number
 
 interface Obj1 {
->Obj1 : Obj1
-
 	new(): {};
 	(): number;
 }
@@ -47,28 +40,25 @@ var Obj1: Obj1;
 >Obj1 : Obj1
 
 <Obj1 />; // OK, prefer construct signatures
-><Obj1 /> : any
+><Obj1 /> : Element
 >Obj1 : Obj1
 
 interface Obj2 {
->Obj2 : Obj2
-
 	(): number;
 }
 var Obj2: Obj2;
 >Obj2 : Obj2
 
 <Obj2 />; // Error
-><Obj2 /> : any
+><Obj2 /> : Element
 >Obj2 : Obj2
 
 interface Obj3 {
->Obj3 : Obj3
 }
 var Obj3: Obj3;
 >Obj3 : Obj3
 
 <Obj3 />; // Error
-><Obj3 /> : any
+><Obj3 /> : Element
 >Obj3 : Obj3
 

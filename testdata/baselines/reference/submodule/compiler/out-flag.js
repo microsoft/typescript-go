@@ -20,10 +20,15 @@ class MyClass
 
 
 //// [out-flag.js]
+//// @outFile: bin\
+// my class comments
 class MyClass {
+    // my function comments
     Count() {
         return 42;
     }
     SetCount(value) {
+        //
     }
 }
+//# sourceMappingURL=out-flag.js.map

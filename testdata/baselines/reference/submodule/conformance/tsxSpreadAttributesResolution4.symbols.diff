@@ -15,10 +15,10 @@
  class Poisoned extends React.Component<PoisonedProp, {}> {
  >Poisoned : Symbol(Poisoned, Decl(file.tsx, 5, 1))
 ->React.Component : Symbol(React.Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
-+>React.Component : Symbol(unknown)
++>React.Component : Symbol(Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
  >React : Symbol(React, Decl(file.tsx, 0, 0))
 ->Component : Symbol(React.Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
-+>Component : Symbol(unknown)
++>Component : Symbol(Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
  >PoisonedProp : Symbol(PoisonedProp, Decl(file.tsx, 0, 32))
  
      render() {
@@ -28,18 +28,20 @@
          return <div>Hello</div>;
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(react.d.ts, 2400, 45))
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(react.d.ts, 2400, 45))
++>div : Symbol(div, Decl(react.d.ts, 2400, 45))
++>div : Symbol(div, Decl(react.d.ts, 2400, 45))
      }
  }
  
-@@= skipped -42, +40 lines =@@
+@@= skipped -42, +42 lines =@@
  
  class EmptyProp extends React.Component<{}, {}> {
  >EmptyProp : Symbol(EmptyProp, Decl(file.tsx, 19, 30))
 ->React.Component : Symbol(React.Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
-+>React.Component : Symbol(unknown)
++>React.Component : Symbol(Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
  >React : Symbol(React, Decl(file.tsx, 0, 0))
 ->Component : Symbol(React.Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
-+>Component : Symbol(unknown)
++>Component : Symbol(Component, Decl(react.d.ts, 158, 55), Decl(react.d.ts, 161, 66))
  
      render() {
 ->render : Symbol(EmptyProp.render, Decl(file.tsx, 21, 49))
@@ -48,6 +50,17 @@
          return <div>Default hi</div>;
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(react.d.ts, 2400, 45))
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(react.d.ts, 2400, 45))
++>div : Symbol(div, Decl(react.d.ts, 2400, 45))
++>div : Symbol(div, Decl(react.d.ts, 2400, 45))
      }
  }
  
+@@= skipped -36, +36 lines =@@
+ let e4 = <EmptyProp data-prop />
+ >e4 : Symbol(e4, Decl(file.tsx, 32, 3))
+ >EmptyProp : Symbol(EmptyProp, Decl(file.tsx, 19, 30))
+->data-prop : Symbol(data-prop, Decl(file.tsx, 32, 19))
++>data-prop : Symbol("data-prop", Decl(file.tsx, 32, 19))
+ 
+ let e5 = <EmptyProp {...{ "data-prop": true}} />
+ >e5 : Symbol(e5, Decl(file.tsx, 33, 3))

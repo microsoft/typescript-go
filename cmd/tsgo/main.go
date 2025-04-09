@@ -120,15 +120,19 @@ func parseArgs() *cliOptions {
 }
 
 func main() {
+	os.Exit(runMain())
+}
+
+func runMain() int {
 	// TypeScript uses ANSI escape sequences which cmd.exe won't parse without enabling virtual terminal processing.
 	enableVirtualTerminalProcessing()
 
 	if args := os.Args[1:]; len(args) > 0 {
 		switch args[0] {
 		case "tsc":
-			os.Exit(int(execute.CommandLine(newSystem(), nil, args[1:])))
+			return int(execute.CommandLine(newSystem(), nil, args[1:]))
 		case "lsp":
-			os.Exit(runLSP(args[1:]))
+			return runLSP(args[1:])
 		}
 	}
 	opts := parseArgs()
@@ -143,7 +147,7 @@ func main() {
 	currentDirectory, err := os.Getwd()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
-		os.Exit(1)
+		return 1
 	}
 
 	fs := bundled.WrapFS(osvfs.FS())
@@ -154,7 +158,7 @@ func main() {
 		configFileName = tspath.CombinePaths(configFileName, "tsconfig.json")
 		if !fs.FileExists(configFileName) {
 			fmt.Fprintf(os.Stderr, "Error: The file %v does not exist.\n", configFileName)
-			os.Exit(1)
+			return 1
 		}
 	}
 
@@ -178,7 +182,7 @@ func main() {
 
 	if compilerOptions.ListFilesOnly.IsTrue() {
 		listFiles(prog)
-		os.Exit(0)
+		return 0
 	}
 
 	if compilerOptions.ShowConfig.IsTrue() {
@@ -186,9 +190,9 @@ func main() {
 		enc.SetIndent("", "    ")
 		if err := enc.Encode(compilerOptions); err != nil {
 			fmt.Fprintf(os.Stderr, "Error encoding JSON: %v\n", err)
-			os.Exit(1)
+			return 1
 		}
-		os.Exit(0)
+		return 0
 	}
 
 	var bindTime, checkTime time.Duration
@@ -196,7 +200,7 @@ func main() {
 	diagnostics := prog.GetConfigFileParsingDiagnostics()
 	if len(diagnostics) != 0 {
 		printDiagnostics(diagnostics, host, compilerOptions)
-		os.Exit(1)
+		return 1
 	}
 
 	diagnostics = prog.GetSyntacticDiagnostics(nil)
@@ -233,8 +237,12 @@ func main() {
 	runtime.GC()
 	runtime.ReadMemStats(&memStats)
 
-	if !opts.devel.quiet && len(diagnostics) != 0 {
-		printDiagnostics(program.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+	exitCode := 0
+	if len(diagnostics) != 0 {
+		if !opts.devel.quiet {
+			printDiagnostics(program.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+		}
+		exitCode = 1
 	}
 
 	if exts := prog.UnsupportedExtensions(); len(exts) != 0 {
@@ -248,7 +256,13 @@ func main() {
 	var stats table
 
 	stats.add("Files", len(prog.SourceFiles()))
+	stats.add("Lines", prog.LineCount())
+	stats.add("Identifiers", prog.IdentifierCount())
+	stats.add("Symbols", prog.SymbolCount())
 	stats.add("Types", prog.TypeCount())
+	stats.add("Instantiations", prog.InstantiationCount())
+	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 	stats.add("Parse time", parseTime)
 	if bindTime != 0 {
 		stats.add("Bind time", bindTime)
@@ -260,10 +274,10 @@ func main() {
 		stats.add("Emit time", emitTime)
 	}
 	stats.add("Total time", totalTime)
-	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
-	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
 
 	stats.print()
+
+	return exitCode
 }
 
 type tableRow struct {
@@ -297,6 +311,14 @@ func (t *table) print() {
 
 func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3fs", d.Seconds())
+}
+
+func identifierCount(p *program.Program) int {
+	count := 0
+	for _, file := range p.SourceFiles() {
+		count += file.IdentifierCount
+	}
+	return count
 }
 
 func listFiles(p *program.Program) {

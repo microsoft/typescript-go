@@ -322,12 +322,16 @@ func (s *Scanner) ResetPos(pos int) {
 	s.tokenStart = pos
 }
 
-func (scanner *Scanner) SetSkipJsDocLeadingAsterisks(skip bool) {
+func (scanner *Scanner) SetSkipJSDocLeadingAsterisks(skip bool) {
 	if skip {
 		scanner.skipJSDocLeadingAsterisks += 1
 	} else {
 		scanner.skipJSDocLeadingAsterisks += -1
 	}
+}
+
+func (scanner *Scanner) SetSkipTrivia(skip bool) {
+	scanner.skipTrivia = skip
 }
 
 func (s *Scanner) HasUnicodeEscape() bool {
@@ -385,6 +389,9 @@ func (s *Scanner) errorAt(diagnostic *diagnostics.Message, pos int, length int, 
 	}
 }
 
+// NOTE: even though this returns a rune, it only decodes the current byte.
+// It must be checked against utf8.RuneSelf to verify that a call to charAndSize
+// is not needed.
 func (s *Scanner) char() rune {
 	if s.pos < len(s.text) {
 		return rune(s.text[s.pos])
@@ -392,6 +399,7 @@ func (s *Scanner) char() rune {
 	return -1
 }
 
+// NOTE: this returns a rune, but only decodes the byte at the offset.
 func (s *Scanner) charAt(offset int) rune {
 	if s.pos+offset < len(s.text) {
 		return rune(s.text[s.pos+offset])
@@ -439,14 +447,33 @@ func (s *Scanner) Scan() ast.Kind {
 	for {
 		s.tokenStart = s.pos
 		ch := s.char()
+
 		switch ch {
 		case '\t', '\v', '\f', ' ':
 			s.pos++
-			continue
+			if s.skipTrivia {
+				continue
+			}
+			for {
+				ch, size := s.charAndSize()
+				if !stringutil.IsWhiteSpaceSingleLine(ch) {
+					break
+				}
+				s.pos += size
+			}
+			s.token = ast.KindWhitespaceTrivia
 		case '\n', '\r':
 			s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
-			s.pos++
-			continue
+			if s.skipTrivia {
+				s.pos++
+				continue
+			}
+			if ch == '\r' && s.charAt(1) == '\n' {
+				s.pos += 2
+			} else {
+				s.pos++
+			}
+			s.token = ast.KindNewLineTrivia
 		case '!':
 			if s.charAt(1) == '=' {
 				if s.charAt(2) == '=' {
@@ -514,9 +541,8 @@ func (s *Scanner) Scan() ast.Kind {
 					(s.tokenFlags&ast.TokenFlagsPrecedingLineBreak) != 0 {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocLeadingAsterisks
 					continue
-				} else {
-					s.token = ast.KindAsteriskToken
 				}
+				s.token = ast.KindAsteriskToken
 			}
 		case '+':
 			if s.charAt(1) == '=' {
@@ -554,60 +580,72 @@ func (s *Scanner) Scan() ast.Kind {
 				s.token = ast.KindDotToken
 			}
 		case '/':
+			// Single-line comment
 			if s.charAt(1) == '/' {
 				s.pos += 2
+
 				for {
-					if ch := s.char(); ch <= 0x7F {
-						if ch < 0 || ch == '\r' || ch == '\n' {
-							break
-						}
-						s.pos++
-					} else {
-						ch, size := s.charAndSize()
-						if stringutil.IsLineBreak(ch) {
-							break
-						}
-						s.pos += size
+					ch1, size := s.charAndSize()
+					if size == 0 || stringutil.IsLineBreak(ch1) {
+						break
 					}
+					s.pos += size
 				}
+
 				s.processCommentDirective(s.tokenStart, s.pos, false)
-				continue
+
+				if s.skipTrivia {
+					continue
+				}
+				s.token = ast.KindSingleLineCommentTrivia
+				return s.token
 			}
+			// Multi-line comment
 			if s.charAt(1) == '*' {
 				s.pos += 2
-				lastline := s.tokenStart
 				isJSDoc := s.char() == '*' && s.charAt(1) != '/'
+
+				commentClosed := false
+				lastLineStart := s.tokenStart
 				for {
-					ch = s.char()
-					if ch <= 0x7F {
-						if ch < 0 {
-							s.error(diagnostics.Asterisk_Slash_expected)
-							break
-						}
-						if ch == '*' && s.charAt(1) == '/' {
-							s.pos += 2
-							break
-						}
-						s.pos++
-						if ch == '\r' || ch == '\n' {
-							lastline = s.pos
-							s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
-						}
-					} else {
-						commentCh, size := s.charAndSize()
-						s.pos += size
-						if stringutil.IsLineBreak(commentCh) {
-							lastline = s.pos
-							s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
-						}
+					ch1, size := s.charAndSize()
+					if size == 0 {
+						break
+					}
+
+					if ch1 == '*' && s.charAt(1) == '/' {
+						s.pos += 2
+						commentClosed = true
+						break
+					}
+
+					s.pos += size
+
+					if stringutil.IsLineBreak(ch1) {
+						lastLineStart = s.pos
+						s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
 					}
 				}
+
 				if isJSDoc && s.shouldParseJSDoc() {
 					s.tokenFlags |= ast.TokenFlagsPrecedingJSDocComment
 				}
 
-				s.processCommentDirective(lastline, s.pos, true)
-				continue
+				s.processCommentDirective(lastLineStart, s.pos, true)
+
+				if !commentClosed {
+					s.error(diagnostics.Asterisk_Slash_expected)
+				}
+
+				if s.skipTrivia {
+					continue
+				}
+
+				if !commentClosed {
+					s.tokenFlags |= ast.TokenFlagsUnterminated
+				}
+				s.token = ast.KindMultiLineCommentTrivia
+				return s.token
 			}
 			if s.charAt(1) == '=' {
 				s.pos += 2
@@ -850,7 +888,22 @@ func (s *Scanner) Scan() ast.Kind {
 			}
 			if stringutil.IsWhiteSpaceSingleLine(ch) {
 				s.pos += size
-				continue
+
+				// If we get here and it's not 0x0085 (nextLine), then we're handling non-ASCII whitespace.
+				// Handle skipTrivia like we do in the space case above.
+				if ch == 0x0085 || s.skipTrivia {
+					continue
+				}
+
+				for {
+					ch, size = s.charAndSize()
+					if !stringutil.IsWhiteSpaceSingleLine(ch) {
+						break
+					}
+					s.pos += size
+				}
+				s.token = ast.KindWhitespaceTrivia
+				return s.token
 			}
 			if stringutil.IsLineBreak(ch) {
 				s.tokenFlags |= ast.TokenFlagsPrecedingLineBreak
@@ -1343,7 +1396,7 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 				break
 			}
 		}
-		if ch <= 0x7F && ch != '\\' {
+		if ch < utf8.RuneSelf && ch != '\\' {
 			s.tokenValue = s.text[start:s.pos]
 			return true
 		}
@@ -1547,17 +1600,10 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		return "\""
 	case 'u':
 		// '\uDDDD' and '\U{DDDDDD}'
-		extended := s.char() == '{'
 		s.pos -= 2
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
-			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			return s.text[start:s.pos]
-		}
-		if extended {
-			s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
-		} else {
-			s.tokenFlags |= ast.TokenFlagsUnicodeEscape
 		}
 		return string(codePoint)
 	case 'x':
@@ -1601,11 +1647,14 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	var hexDigits string
 	if extended {
 		s.pos++
+		s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
 		hexDigits = s.scanHexDigits(1, true, false)
 	} else {
+		s.tokenFlags |= ast.TokenFlagsUnicodeEscape
 		hexDigits = s.scanHexDigits(4, false, false)
 	}
 	if hexDigits == "" {
+		s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 		if shouldEmitInvalidEscapeError {
 			s.error(diagnostics.Hexadecimal_digit_expected)
 		}
@@ -1614,12 +1663,14 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	hexValue, _ := strconv.ParseInt(hexDigits, 16, 32)
 	if extended {
 		if hexValue > 0x10FFFF {
+			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.errorAt(diagnostics.An_extended_Unicode_escape_value_must_be_between_0x0_and_0x10FFFF_inclusive, start+1, s.pos-start-1)
 			}
 			return -1
 		}
 		if s.char() != '}' {
+			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.error(diagnostics.Unterminated_Unicode_escape_sequence)
 			}
@@ -1634,9 +1685,11 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 // or '\u{XXXXXX}' and return code point value if valid Unicode escape is found. Otherwise return -1.
 func (s *Scanner) peekUnicodeEscape() rune {
 	if s.charAt(1) == 'u' {
-		start := s.pos
+		savePos := s.pos
+		saveTokenFlags := s.tokenFlags
 		codePoint := s.scanUnicodeEscape(false)
-		s.pos = start
+		s.pos = savePos
+		s.tokenFlags = saveTokenFlags
 		return codePoint
 	}
 	return -1
@@ -1863,9 +1916,11 @@ func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
 
 func (s *Scanner) scanBigIntSuffix() ast.Kind {
 	if s.char() == 'n' {
-		s.pos++
 		s.tokenValue += "n"
-		// !!! Convert all bigint tokens to their normalized decimal representation
+		if s.tokenFlags&ast.TokenFlagsBinaryOrOctalSpecifier != 0 {
+			s.tokenValue = jsnum.ParsePseudoBigInt(s.tokenValue) + "n"
+		}
+		s.pos++
 		return ast.KindBigIntLiteral
 	}
 	s.tokenValue = jsnum.FromString(s.tokenValue).String()
@@ -1907,11 +1962,11 @@ func isWordCharacter(ch rune) bool {
 }
 
 func isIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
-	return stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' || ch > 0x7F && isUnicodeIdentifierStart(ch, languageVersion)
+	return stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' || ch >= utf8.RuneSelf && isUnicodeIdentifierStart(ch, languageVersion)
 }
 
 func isIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
-	return isWordCharacter(ch) || ch == '$' || ch > 0x7F && isUnicodeIdentifierPart(ch, languageVersion)
+	return isWordCharacter(ch) || ch == '$' || ch >= utf8.RuneSelf && isUnicodeIdentifierPart(ch, languageVersion)
 }
 
 func isUnicodeIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
@@ -2174,7 +2229,7 @@ func scanShebangTrivia(text string, pos int) int {
 
 func GetScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s := NewScanner()
-	s.text = sourceFile.Text
+	s.text = sourceFile.Text()
 	s.pos = pos
 	s.languageVersion = sourceFile.LanguageVersion
 	s.languageVariant = sourceFile.LanguageVariant
@@ -2192,7 +2247,7 @@ func GetRangeOfTokenAtPosition(sourceFile *ast.SourceFile, pos int) core.TextRan
 	return core.NewTextRange(s.tokenStart, s.pos)
 }
 
-func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJsDoc bool) int {
+func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc bool) int {
 	// With nodes that have no width (i.e. 'Missing' nodes), we actually *don't*
 	// want to skip trivia because this will launch us forward to the next token.
 	if ast.NodeIsMissing(node) {
@@ -2201,15 +2256,15 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJsDoc 
 
 	if ast.IsJSDocNode(node) || node.Kind == ast.KindJsxText {
 		// JsxText cannot actually contain comments, even though the scanner will think it sees comments
-		return SkipTriviaEx(sourceFile.Text, node.Pos(), &SkipTriviaOptions{StopAtComments: true})
+		return SkipTriviaEx(sourceFile.Text(), node.Pos(), &SkipTriviaOptions{StopAtComments: true})
 	}
 
-	if includeJsDoc && len(node.JSDoc(sourceFile)) > 0 {
-		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJsDoc*/)
+	if includeJSDoc && len(node.JSDoc(sourceFile)) > 0 {
+		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJSDoc*/)
 	}
 
 	return SkipTriviaEx(
-		sourceFile.Text,
+		sourceFile.Text(),
 		node.Pos(),
 		&SkipTriviaOptions{InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0},
 	)
@@ -2232,21 +2287,21 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	return low - 1
 }
 
-func GetLineStarts(sourceFile *ast.SourceFile) []core.TextPos {
+func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 	return sourceFile.LineMap()
 }
 
-func GetLineAndCharacterOfPosition(sourceFile *ast.SourceFile, pos int) (line int, character int) {
+func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetLineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
-	character = utf8.RuneCountInString(sourceFile.Text[lineMap[line]:pos])
+	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
 	return
 }
 
 func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	pos := int(GetLineStarts(sourceFile)[line])
 	for {
-		ch, size := utf8.DecodeRuneInString(sourceFile.Text[pos:])
+		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
 			return pos
 		}

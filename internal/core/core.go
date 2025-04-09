@@ -48,7 +48,7 @@ func FilterIndex[T any](slice []T, f func(T, int, []T) bool) []T {
 }
 
 func Map[T, U any](slice []T, f func(T) U) []U {
-	if len(slice) == 0 {
+	if slice == nil {
 		return nil
 	}
 	result := make([]U, len(slice))
@@ -59,7 +59,7 @@ func Map[T, U any](slice []T, f func(T) U) []U {
 }
 
 func MapIndex[T, U any](slice []T, f func(T, int) U) []U {
-	if len(slice) == 0 {
+	if slice == nil {
 		return nil
 	}
 	result := make([]U, len(slice))
@@ -319,36 +319,37 @@ func ComputeLineStarts(text string) []TextPos {
 
 func ComputeLineStartsSeq(text string) iter.Seq[TextPos] {
 	return func(yield func(TextPos) bool) {
-		pos := 0
-		lineStart := 0
-		for pos < len(text) {
+		textLen := TextPos(len(text))
+		var pos TextPos
+		var lineStart TextPos
+		for pos < textLen {
 			b := text[pos]
-			if b < 0x7F {
+			if b < utf8.RuneSelf {
 				pos++
 				switch b {
 				case '\r':
-					if pos < len(text) && text[pos] == '\n' {
+					if pos < textLen && text[pos] == '\n' {
 						pos++
 					}
 					fallthrough
 				case '\n':
-					if !yield(TextPos(lineStart)) {
+					if !yield(lineStart) {
 						return
 					}
 					lineStart = pos
 				}
 			} else {
 				ch, size := utf8.DecodeRuneInString(text[pos:])
-				pos += size
+				pos += TextPos(size)
 				if stringutil.IsLineBreak(ch) {
-					if !yield(TextPos(lineStart)) {
+					if !yield(lineStart) {
 						return
 					}
 					lineStart = pos
 				}
 			}
 		}
-		yield(TextPos(lineStart))
+		yield(lineStart)
 	}
 }
 

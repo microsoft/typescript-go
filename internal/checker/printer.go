@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -22,6 +23,8 @@ func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
 			return ast.TypePrecedenceTypeOperator
 		case c.isArrayType(t):
 			return ast.TypePrecedencePostfix
+		case t.objectFlags&ObjectFlagsClassOrInterface == 0 && c.getSingleCallOrConstructSignature(t) != nil:
+			return ast.TypePrecedenceFunction
 		}
 	}
 	return ast.TypePrecedenceNonArray
@@ -36,6 +39,9 @@ func (c *Checker) symbolToString(s *ast.Symbol) string {
 		return s.Name
 	}
 	if s.ValueDeclaration != nil {
+		if ast.IsJsxAttribute(s.ValueDeclaration) {
+			return "\"" + s.Name + "\""
+		}
 		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
 		if name != nil {
 			return scanner.GetTextOfNode(name)
@@ -66,6 +72,9 @@ func (c *Checker) TypeToString(t *Type) string {
 
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
 	p := c.newPrinter(flags)
+	if flags&TypeFormatFlagsNoTypeReduction == 0 {
+		t = c.getReducedType(t)
+	}
 	p.printType(t)
 	return p.string()
 }
@@ -188,6 +197,13 @@ func (p *Printer) printTypeNoAlias(t *Type) {
 	case t.flags&TypeFlagsStringMapping != 0:
 		p.printStringMappingType(t)
 	case t.flags&TypeFlagsSubstitution != 0:
+		if p.c.isNoInferType(t) {
+			if noInferSymbol := p.c.getGlobalNoInferSymbolOrNil(); noInferSymbol != nil {
+				p.printQualifiedName(noInferSymbol)
+				p.printTypeArguments([]*Type{t.AsSubstitutionType().baseType})
+				break
+			}
+		}
 		p.printType(t.AsSubstitutionType().baseType)
 	}
 	p.depth--
@@ -226,7 +242,7 @@ func (p *Printer) printValue(value any) {
 
 func (p *Printer) printStringLiteral(s string) {
 	p.print("\"")
-	p.print(s)
+	p.print(printer.EscapeString(s, '"'))
 	p.print("\"")
 }
 
@@ -239,7 +255,7 @@ func (p *Printer) printBooleanLiteral(b bool) {
 }
 
 func (p *Printer) printBigIntLiteral(b jsnum.PseudoBigInt) {
-	p.print(b.String())
+	p.print(b.String() + "n")
 }
 
 func (p *Printer) printUniqueESSymbolType(t *Type) {
@@ -311,7 +327,7 @@ func (p *Printer) printTypeReference(t *Type) {
 func (p *Printer) printTypeArguments(typeArguments []*Type) {
 	if len(typeArguments) != 0 {
 		p.print("<")
-		tail := false
+		var tail bool
 		for _, t := range typeArguments {
 			if tail {
 				p.print(", ")
@@ -333,10 +349,13 @@ func (p *Printer) printArrayType(t *Type) {
 }
 
 func (p *Printer) printTupleType(t *Type) {
-	tail := false
+	if t.TargetTupleType().readonly {
+		p.print("readonly ")
+	}
 	p.print("[")
 	elementInfos := t.TargetTupleType().elementInfos
 	typeArguments := p.c.getTypeArguments(t)
+	var tail bool
 	for i, info := range elementInfos {
 		t := typeArguments[i]
 		if tail {
@@ -348,18 +367,20 @@ func (p *Printer) printTupleType(t *Type) {
 		if info.labeledDeclaration != nil {
 			p.print(info.labeledDeclaration.Name().Text())
 			if info.flags&ElementFlagsOptional != 0 {
-				p.print("?")
-			}
-			p.print(": ")
-			if info.flags&ElementFlagsRest != 0 {
-				p.printTypeEx(t, ast.TypePrecedencePostfix)
-				p.print("[]")
+				p.print("?: ")
+				p.printType(p.c.removeMissingType(t, true))
 			} else {
-				p.printType(t)
+				p.print(": ")
+				if info.flags&ElementFlagsRest != 0 {
+					p.printTypeEx(t, ast.TypePrecedencePostfix)
+					p.print("[]")
+				} else {
+					p.printType(t)
+				}
 			}
 		} else {
 			if info.flags&ElementFlagsOptional != 0 {
-				p.printTypeEx(t, ast.TypePrecedencePostfix)
+				p.printTypeEx(p.c.removeMissingType(t, true), ast.TypePrecedencePostfix)
 				p.print("?")
 			} else if info.flags&ElementFlagsRest != 0 {
 				p.printTypeEx(t, ast.TypePrecedencePostfix)
@@ -434,7 +455,7 @@ func (p *Printer) printAnonymousType(t *Type) {
 			p.print("?")
 		}
 		p.print(": ")
-		p.printType(p.c.getTypeOfSymbol(prop))
+		p.printType(p.c.getNonMissingTypeOfSymbol(prop))
 		p.print(";")
 		hasMembers = true
 	}
@@ -459,16 +480,26 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 	}
 	p.print("(")
 	var tail bool
-	for i, param := range sig.parameters {
+	if sig.thisParameter != nil {
+		p.print("this: ")
+		p.printType(p.c.getTypeOfSymbol(sig.thisParameter))
+		tail = true
+	}
+	expandedParameters := p.c.GetExpandedParameters(sig)
+	// If the expanded parameter list had a variadic in a non-trailing position, don't expand it
+	parameters := core.IfElse(core.Some(expandedParameters, func(s *ast.Symbol) bool {
+		return s != expandedParameters[len(expandedParameters)-1] && s.CheckFlags&ast.CheckFlagsRestParameter != 0
+	}), sig.parameters, expandedParameters)
+	for i, param := range parameters {
 		if tail {
 			p.print(", ")
 		}
-		if sig.flags&SignatureFlagsHasRestParameter != 0 && i == len(sig.parameters)-1 {
+		if param.ValueDeclaration != nil && isRestParameter(param.ValueDeclaration) || param.CheckFlags&ast.CheckFlagsRestParameter != 0 {
 			p.print("...")
 			p.printName(param)
 		} else {
 			p.printName(param)
-			if i >= int(sig.minArgumentCount) {
+			if i >= p.c.getMinArgumentCountEx(sig, MinArgumentCountFlagsVoidIsNonOptional) {
 				p.print("?")
 			}
 		}
@@ -607,7 +638,7 @@ func (p *Printer) printMappedType(t *Type) {
 	}
 	p.print(": ")
 	p.printType(p.c.getTemplateTypeFromMappedType(t))
-	p.print(" }")
+	p.print("; }")
 }
 
 func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
@@ -616,7 +647,7 @@ func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
 	var typesPrinted bool
 	lineStarts := scanner.GetLineStarts(sourceFile)
 	printLinesBefore := func(node *ast.Node) {
-		line := scanner.ComputeLineOfPosition(lineStarts, scanner.SkipTrivia(sourceFile.Text, node.Pos()))
+		line := scanner.ComputeLineOfPosition(lineStarts, scanner.SkipTrivia(sourceFile.Text(), node.Pos()))
 		var nextLineStart int
 		if line+1 < len(lineStarts) {
 			nextLineStart = int(lineStarts[line+1])
@@ -627,7 +658,7 @@ func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
 			if typesPrinted {
 				p.print("\n")
 			}
-			p.print(sourceFile.Text[pos:nextLineStart])
+			p.print(sourceFile.Text()[pos:nextLineStart])
 			pos = nextLineStart
 			typesPrinted = false
 		}
@@ -650,7 +681,7 @@ func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
 		return node.ForEachChild(visit)
 	}
 	visit(sourceFile.AsNode())
-	p.print(sourceFile.Text[pos:sourceFile.End()])
+	p.print(sourceFile.Text()[pos:sourceFile.End()])
 }
 
 func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {

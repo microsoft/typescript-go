@@ -3,7 +3,6 @@
 === bindingPatternCannotBeOnlyInferenceSource.ts ===
 declare function f<T>(): T;
 >f : <T>() => T
->T : T
 
 const {} = f();       // error (only in strictNullChecks)
 >f() : unknown
@@ -27,10 +26,8 @@ const [e1, e2] = f(); // error
 // Repro from #43605
 type Dispatch<A = { type: any; [extraProps: string]: any }> = { <T extends A>(action: T): T };
 >Dispatch : Dispatch<A>
->A : A
 >type : any
 >extraProps : string
->T : T
 >action : T
 
 type IFuncs = { readonly [key: string]: (...p: any) => void };
@@ -40,14 +37,10 @@ type IFuncs = { readonly [key: string]: (...p: any) => void };
 
 type IDestructuring<T extends IFuncs> = { readonly [key in keyof T]?: (...p: Parameters<T[key]>) => void };
 >IDestructuring : IDestructuring<T>
->T : T
->key : key
 >p : Parameters<T[key]>
 
 type Destructuring<T extends IFuncs, U extends IDestructuring<T>> = (dispatch: Dispatch<any>, funcs: T) => U;
 >Destructuring : Destructuring<T, U>
->T : T
->U : U
 >dispatch : Dispatch<any>
 >funcs : T
 
@@ -76,26 +69,26 @@ const funcs1 = {
 };
 type TFuncs1 = typeof funcs1;
 >TFuncs1 : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
+>funcs1 : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
 
 declare function useReduxDispatch1<T extends IDestructuring<TFuncs1>>(destructuring: Destructuring<TFuncs1, T>): T;
 >useReduxDispatch1 : <T extends IDestructuring<{ funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }>>(destructuring: Destructuring<{ funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }, T>) => T
->T : T
 >destructuring : Destructuring<{ funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }, T>
 
 const {} = useReduxDispatch1(
->useReduxDispatch1(    (d, f) => ({        funcA: (...p) => d(f.funcA(...p)), // p should be inferrable        funcB: (...p) => d(f.funcB(...p)),        funcC: (...p) => d(f.funcC(...p)),    })) : { funcA: (...p: [a: boolean]) => void; funcB: (...p: [b: string, bb: string]) => void; funcC: (...p: [c: number, cc: number, ccc: boolean]) => void; }
+>useReduxDispatch1(    (d, f) => ({        funcA: (...p) => d(f.funcA(...p)), // p should be inferrable        funcB: (...p) => d(f.funcB(...p)),        funcC: (...p) => d(f.funcC(...p)),    })) : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
 >useReduxDispatch1 : <T extends IDestructuring<{ funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }>>(destructuring: Destructuring<{ funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }, T>) => T
 
     (d, f) => ({
->(d, f) => ({        funcA: (...p) => d(f.funcA(...p)), // p should be inferrable        funcB: (...p) => d(f.funcB(...p)),        funcC: (...p) => d(f.funcC(...p)),    }) : (d: Dispatch<any>, f: { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }) => { funcA: (...p: [a: boolean]) => void; funcB: (...p: [b: string, bb: string]) => void; funcC: (...p: [c: number, cc: number, ccc: boolean]) => void; }
+>(d, f) => ({        funcA: (...p) => d(f.funcA(...p)), // p should be inferrable        funcB: (...p) => d(f.funcB(...p)),        funcC: (...p) => d(f.funcC(...p)),    }) : (d: Dispatch<any>, f: { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }) => { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
 >d : Dispatch<any>
 >f : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
->({        funcA: (...p) => d(f.funcA(...p)), // p should be inferrable        funcB: (...p) => d(f.funcB(...p)),        funcC: (...p) => d(f.funcC(...p)),    }) : { funcA: (...p: [a: boolean]) => void; funcB: (...p: [b: string, bb: string]) => void; funcC: (...p: [c: number, cc: number, ccc: boolean]) => void; }
->{        funcA: (...p) => d(f.funcA(...p)), // p should be inferrable        funcB: (...p) => d(f.funcB(...p)),        funcC: (...p) => d(f.funcC(...p)),    } : { funcA: (...p: [a: boolean]) => void; funcB: (...p: [b: string, bb: string]) => void; funcC: (...p: [c: number, cc: number, ccc: boolean]) => void; }
+>({        funcA: (...p) => d(f.funcA(...p)), // p should be inferrable        funcB: (...p) => d(f.funcB(...p)),        funcC: (...p) => d(f.funcC(...p)),    }) : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
+>{        funcA: (...p) => d(f.funcA(...p)), // p should be inferrable        funcB: (...p) => d(f.funcB(...p)),        funcC: (...p) => d(f.funcC(...p)),    } : { funcA: (a: boolean) => void; funcB: (b: string, bb: string) => void; funcC: (c: number, cc: number, ccc: boolean) => void; }
 
         funcA: (...p) => d(f.funcA(...p)), // p should be inferrable
->funcA : (...p: [a: boolean]) => void
->(...p) => d(f.funcA(...p)) : (...p: [a: boolean]) => void
+>funcA : (a: boolean) => void
+>(...p) => d(f.funcA(...p)) : (a: boolean) => void
 >p : [a: boolean]
 >d(f.funcA(...p)) : void
 >d : Dispatch<any>
@@ -107,8 +100,8 @@ const {} = useReduxDispatch1(
 >p : [a: boolean]
 
         funcB: (...p) => d(f.funcB(...p)),
->funcB : (...p: [b: string, bb: string]) => void
->(...p) => d(f.funcB(...p)) : (...p: [b: string, bb: string]) => void
+>funcB : (b: string, bb: string) => void
+>(...p) => d(f.funcB(...p)) : (b: string, bb: string) => void
 >p : [b: string, bb: string]
 >d(f.funcB(...p)) : void
 >d : Dispatch<any>
@@ -120,8 +113,8 @@ const {} = useReduxDispatch1(
 >p : [b: string, bb: string]
 
         funcC: (...p) => d(f.funcC(...p)),
->funcC : (...p: [c: number, cc: number, ccc: boolean]) => void
->(...p) => d(f.funcC(...p)) : (...p: [c: number, cc: number, ccc: boolean]) => void
+>funcC : (c: number, cc: number, ccc: boolean) => void
+>(...p) => d(f.funcC(...p)) : (c: number, cc: number, ccc: boolean) => void
 >p : [c: number, cc: number, ccc: boolean]
 >d(f.funcC(...p)) : void
 >d : Dispatch<any>
