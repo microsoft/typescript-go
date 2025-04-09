@@ -119,6 +119,11 @@ func (api *API) PositionEncoding() lsproto.PositionEncodingKind {
 	return lsproto.PositionEncodingKindUTF8
 }
 
+// Client implements ProjectHost.
+func (api *API) Client() project.Client {
+	return nil
+}
+
 func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, error) {
 	params, err := unmarshalPayload(method, payload)
 	if err != nil {

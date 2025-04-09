@@ -5,6 +5,8 @@ import (
 	"strings"
 	"sync"
 
+	"slices"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -41,6 +43,8 @@ type ProjectHost interface {
 	OnDiscoveredSymlink(info *ScriptInfo)
 	Log(s string)
 	PositionEncoding() lsproto.PositionEncodingKind
+
+	Client() Client
 }
 
 type Project struct {
@@ -56,7 +60,7 @@ type Project struct {
 	hasAddedOrRemovedFiles    bool
 	hasAddedOrRemovedSymlinks bool
 	deferredClose             bool
-	reloadConfig              bool
+	pendingConfigReload       bool
 
 	currentDirectory string
 	// Inferred projects only
@@ -70,6 +74,9 @@ type Project struct {
 	compilerOptions *core.CompilerOptions
 	languageService *ls.LanguageService
 	program         *compiler.Program
+
+	watchedGlobs []string
+	watcherID    WatcherHandle
 }
 
 func NewConfiguredProject(configFileName string, configFilePath tspath.Path, host ProjectHost) *Project {
@@ -205,6 +212,51 @@ func (p *Project) LanguageService() *ls.LanguageService {
 	return p.languageService
 }
 
+func (p *Project) getWatchGlobs() []string {
+	// !!!
+	if p.kind == KindConfigured {
+		return []string{
+			p.configFileName,
+		}
+	}
+	return nil
+}
+
+func (p *Project) updateWatchers() {
+	watchHost := p.host.Client()
+	if watchHost == nil {
+		return
+	}
+
+	globs := p.getWatchGlobs()
+	if !slices.Equal(p.watchedGlobs, globs) {
+		if p.watcherID != "" {
+			if err := watchHost.UnwatchFiles(p.watcherID); err != nil {
+				p.log(fmt.Sprintf("Failed to unwatch files: %v", err))
+			}
+		}
+
+		p.watchedGlobs = globs
+		if len(globs) > 0 {
+			watchers := make([]lsproto.FileSystemWatcher, len(globs))
+			kind := lsproto.WatchKindChange | lsproto.WatchKindDelete | lsproto.WatchKindCreate
+			for i, glob := range globs {
+				watchers[i] = lsproto.FileSystemWatcher{
+					GlobPattern: lsproto.GlobPattern{
+						Pattern: &glob,
+					},
+					Kind: &kind,
+				}
+			}
+			if watcherID, err := watchHost.WatchFiles(watchers); err != nil {
+				p.log(fmt.Sprintf("Failed to watch files: %v", err))
+			} else {
+				p.watcherID = watcherID
+			}
+		}
+	}
+}
+
 func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *ScriptInfo {
 	if scriptInfo := p.host.GetOrCreateScriptInfoForFile(fileName, p.toPath(fileName), scriptKind); scriptInfo != nil {
 		scriptInfo.attachToProject(p)
@@ -257,11 +309,11 @@ func (p *Project) updateGraph() bool {
 	hasAddedOrRemovedFiles := p.hasAddedOrRemovedFiles
 	p.initialLoadPending = false
 
-	if p.kind == KindConfigured && p.reloadConfig {
+	if p.kind == KindConfigured && p.pendingConfigReload {
 		if err := p.LoadConfig(); err != nil {
 			panic(fmt.Sprintf("failed to reload config: %v", err))
 		}
-		p.reloadConfig = false
+		p.pendingConfigReload = false
 	}
 
 	p.hasAddedOrRemovedFiles = false
@@ -283,6 +335,7 @@ func (p *Project) updateGraph() bool {
 		}
 	}
 
+	p.updateWatchers()
 	return true
 }
 
@@ -324,7 +377,7 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 		case KindInferred:
 			p.rootFileNames.Delete(info.path)
 		case KindConfigured:
-			p.reloadConfig = true
+			p.pendingConfigReload = true
 		}
 	}
 
