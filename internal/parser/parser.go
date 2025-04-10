@@ -345,7 +345,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
 	p.processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
+	result.ExternalModuleIndicator = isFileProbablyExternalModule(result) // !!!
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVersion = p.languageVersion
 	result.LanguageVariant = p.languageVariant
@@ -460,7 +460,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		}
 	}
 
-	return p.factory.NewSourceFile(sourceFile.Text, sourceFile.FileName(), sourceFile.Path(), p.newNodeList(sourceFile.Statements.Loc, statements))
+	return p.factory.NewSourceFile(sourceFile.Text(), sourceFile.FileName(), sourceFile.Path(), p.newNodeList(sourceFile.Statements.Loc, statements))
 }
 
 func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) *ast.NodeList {
