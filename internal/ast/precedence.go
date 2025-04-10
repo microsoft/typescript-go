@@ -413,9 +413,11 @@ const (
 	//       [~Extends] UnionType `extends` Type[+Extends] `?` Type[~Extends] `:` Type[~Extends]
 	//
 	TypePrecedenceConditional TypePrecedence = iota
-	// JSDoc optional and variadic precedence
-	// JSDocType:
-	//     [...] Type [=]
+
+	// JSDoc precedence (optional and variadic types)
+	//
+	//    JSDocType:
+	//      `...`? Type `=`?
 	TypePrecedenceJSDoc
 
 	// Function precedence

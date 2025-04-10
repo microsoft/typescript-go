@@ -2824,7 +2824,7 @@ func isEffectiveModuleDeclaration(node *ast.Node) bool {
 }
 
 func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
-	pos := scanner.SkipTrivia(sourceFile.Text, node.Pos())
+	pos := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
 	body := node.AsArrowFunction().Body
 	if body != nil && body.Kind == ast.KindBlock {
 		startLine, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, body.Pos())
@@ -2842,8 +2842,8 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	errorNode := node
 	switch node.Kind {
 	case ast.KindSourceFile:
-		pos := scanner.SkipTrivia(sourceFile.Text, 0)
-		if pos == len(sourceFile.Text) {
+		pos := scanner.SkipTrivia(sourceFile.Text(), 0)
+		if pos == len(sourceFile.Text()) {
 			return core.NewTextRange(0, 0)
 		}
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
@@ -2856,7 +2856,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	case ast.KindArrowFunction:
 		return getErrorRangeForArrowFunction(sourceFile, node)
 	case ast.KindCaseClause, ast.KindDefaultClause:
-		start := scanner.SkipTrivia(sourceFile.Text, node.Pos())
+		start := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
 		end := node.End()
 		statements := node.AsCaseOrDefaultClause().Statements.Nodes
 		if len(statements) != 0 {
@@ -2864,10 +2864,10 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		}
 		return core.NewTextRange(start, end)
 	case ast.KindReturnStatement, ast.KindYieldExpression:
-		pos := scanner.SkipTrivia(sourceFile.Text, node.Pos())
+		pos := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindSatisfiesExpression:
-		pos := scanner.SkipTrivia(sourceFile.Text, node.AsSatisfiesExpression().Expression.End())
+		pos := scanner.SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindConstructor:
 		scanner := scanner.GetScannerForSourceFile(sourceFile, node.Pos())
@@ -2878,7 +2878,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		return core.NewTextRange(start, scanner.TokenEnd())
 		// !!!
 		// case KindJSDocSatisfiesTag:
-		// 	pos := scanner.SkipTrivia(sourceFile.text, node.tagName.pos)
+		// 	pos := scanner.SkipTrivia(sourceFile.Text(), node.tagName.pos)
 		// 	return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	}
 	if errorNode == nil {
@@ -2888,7 +2888,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	}
 	pos := errorNode.Pos()
 	if !ast.NodeIsMissing(errorNode) {
-		pos = scanner.SkipTrivia(sourceFile.Text, pos)
+		pos = scanner.SkipTrivia(sourceFile.Text(), pos)
 	}
 	return core.NewTextRange(pos, errorNode.End())
 }

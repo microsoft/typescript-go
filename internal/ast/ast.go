@@ -9751,7 +9751,7 @@ type SourceFile struct {
 
 	// Fields set by NewSourceFile
 
-	Text       string
+	text       string
 	fileName   string
 	path       tspath.Path
 	Statements *NodeList // NodeList[*Statement]
@@ -9817,12 +9817,16 @@ func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Pa
 	}
 
 	data := &SourceFile{}
-	data.Text = text
+	data.text = text
 	data.fileName = fileName
 	data.path = path
 	data.Statements = statements
 	data.LanguageVersion = core.ScriptTargetLatest
 	return newNode(KindSourceFile, data, f.hooks)
+}
+
+func (node *SourceFile) Text() string {
+	return node.text
 }
 
 func (node *SourceFile) FileName() string {
@@ -9897,7 +9901,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 }
 
 func (node *SourceFile) Clone(f *NodeFactory) *Node {
-	updated := f.NewSourceFile(node.Text, node.FileName(), node.Path(), node.Statements)
+	updated := f.NewSourceFile(node.Text(), node.FileName(), node.Path(), node.Statements)
 	newFile := updated.AsSourceFile()
 	newFile.copyFrom(node)
 	return cloneNode(updated, node.AsNode(), f.hooks)
@@ -9909,7 +9913,7 @@ func (node *SourceFile) computeSubtreeFacts() SubtreeFacts {
 
 func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementList) *Node {
 	if statements != node.Statements {
-		updated := f.NewSourceFile(node.Text, node.fileName, node.path, statements).AsSourceFile()
+		updated := f.NewSourceFile(node.Text(), node.fileName, node.path, statements).AsSourceFile()
 		updated.copyFrom(node)
 		return updateNode(updated.AsNode(), node.AsNode(), f.hooks)
 	}
@@ -9925,7 +9929,7 @@ func (node *SourceFile) LineMap() []core.TextPos {
 		defer node.lineMapMu.Unlock()
 		lineMap = node.lineMap
 		if lineMap == nil {
-			lineMap = core.ComputeLineStarts(node.Text)
+			lineMap = core.ComputeLineStarts(node.Text())
 			node.lineMap = lineMap
 		}
 	}
@@ -9974,6 +9978,11 @@ func (node *SourceFile) GetOrCreateToken(
 
 func IsSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile
+}
+
+type SourceFileLike interface {
+	Text() string
+	LineMap() []core.TextPos
 }
 
 type CommentRange struct {
