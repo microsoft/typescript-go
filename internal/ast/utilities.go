@@ -2639,3 +2639,8 @@ func getPragmaArgument(pragma *Pragma, name string) string {
 	}
 	return ""
 }
+
+
+func IsJsxOpeningLikeElement(node *Node) bool {
+	return IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node)
+}

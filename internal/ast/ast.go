@@ -8184,6 +8184,10 @@ func (node *JsxFragment) computeSubtreeFacts() SubtreeFacts {
 		SubtreeContainsJsx
 }
 
+func IsJsxFragment(node *Node) bool {
+	return node.Kind == KindJsxFragment
+}
+
 /// The opening element of a <>...</> JsxFragment
 
 type JsxOpeningFragment struct {
@@ -9711,6 +9715,7 @@ type SourceFile struct {
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
 	CheckJsDirective            *CheckJsDirective
+	ExternalModuleIndicator     *Node
 
 	// Fields set by binder
 
@@ -9740,7 +9745,6 @@ type SourceFile struct {
 	// !!!
 
 	CommonJSModuleIndicator *Node
-	ExternalModuleIndicator *Node
 	JSGlobalAugmentations   SymbolTable
 }
 

@@ -345,7 +345,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
 	processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-	result.ExternalModuleIndicator = isFileProbablyExternalModule(result) // !!!
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVersion = p.languageVersion
 	result.LanguageVariant = p.languageVariant
@@ -354,8 +353,75 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.Identifiers = p.identifiers
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
+	result.ExternalModuleIndicator = p.getExternalModuleIndicator(result, &core.SourceFileAffectingCompilerOptions{}) // TODO(jakebailey)
 	p.jsdocCache = nil
 	p.identifiers = nil
+}
+
+func (p *Parser) getExternalModuleIndicator(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) *ast.Node {
+	// All detection kinds start by checking this.
+	if node := isFileProbablyExternalModule(file); node != nil {
+		return node
+	}
+
+	switch options.EmitModuleDetectionKind {
+	case core.ModuleDetectionKindForce:
+		// All non-declaration files are modules, declaration files still do the usual isFileProbablyExternalModule
+		if !file.IsDeclarationFile {
+			return file.AsNode()
+		}
+		return nil
+	case core.ModuleDetectionKindLegacy:
+		// Files are modules if they have imports, exports, or import.meta
+		return nil
+	case core.ModuleDetectionKindAuto:
+		// If module is nodenext or node16, all esm format files are modules
+		// If jsx is react-jsx or react-jsxdev then jsx tags force module-ness
+		// otherwise, the presence of import or export statments (or import.meta) implies module-ness
+		if options.JsxEmit == core.JsxEmitReactJSX || options.JsxEmit == core.JsxEmitReactJSXDev {
+			if node := isFileModuleFromUsingJSXTag(file); node != nil {
+				return node
+			}
+		}
+		return isFileForcedToBeModuleByFormat(file, options)
+	default:
+		panic("Unhandled case in getExternalModuleIndicator")
+	}
+}
+
+func isFileModuleFromUsingJSXTag(file *ast.SourceFile) *ast.Node {
+	if file.IsDeclarationFile {
+		return nil
+	}
+	return walkTreeForJSXTags(file.AsNode())
+}
+
+func walkTreeForJSXTags(node *ast.Node) *ast.Node {
+	var found *ast.Node
+
+	var visitor func(n *ast.Node) bool
+	visitor = func(n *ast.Node) bool {
+		if found != nil {
+			return true
+		}
+		if node.SubtreeFacts()&ast.SubtreeContainsJsx == 0 {
+			return true
+		}
+		if ast.IsJsxOpeningElement(node) || ast.IsJsxFragment(node) {
+			found = node
+			return true
+		}
+		return node.ForEachChild(visitor)
+	}
+	visitor(node)
+
+	return found
+}
+
+func isFileForcedToBeModuleByFormat(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) *ast.Node {
+	panic("TODO")
+
+	// GetImpliedNodeFormatForEmitWorker but we need the metadata????
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {

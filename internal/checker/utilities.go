@@ -1406,10 +1406,6 @@ func reverseAccessKind(a AccessKind) AccessKind {
 	panic("Unhandled case in reverseAccessKind")
 }
 
-func isJsxOpeningLikeElement(node *ast.Node) bool {
-	return ast.IsJsxOpeningElement(node) || ast.IsJsxSelfClosingElement(node)
-}
-
 // Deprecated in favor of `ast.IsObjectLiteralElement`
 func isObjectLiteralElementLike(node *ast.Node) bool {
 	return ast.IsObjectLiteralElement(node)
@@ -1532,7 +1528,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return isCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
+	return isCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || ast.IsJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {

@@ -8330,7 +8330,7 @@ type CallState struct {
 func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidatesOutArray *[]*Signature, checkMode CheckMode, callChainFlags SignatureFlags, headMessage *diagnostics.Message) *Signature {
 	isTaggedTemplate := node.Kind == ast.KindTaggedTemplateExpression
 	isDecorator := node.Kind == ast.KindDecorator
-	isJsxOpeningOrSelfClosingElement := isJsxOpeningLikeElement(node)
+	isJsxOpeningOrSelfClosingElement := ast.IsJsxOpeningLikeElement(node)
 	isInstanceof := node.Kind == ast.KindBinaryExpression
 	reportErrors := !c.isInferencePartiallyBlocked && candidatesOutArray == nil
 	var s CallState
@@ -8636,7 +8636,7 @@ func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *S
 		argCount = c.getDecoratorArgumentCount(node, signature)
 	case ast.IsBinaryExpression(node):
 		argCount = 1
-	case isJsxOpeningLikeElement(node):
+	case ast.IsJsxOpeningLikeElement(node):
 		callIsIncomplete = node.Attributes().End() == node.End()
 		if callIsIncomplete {
 			return true
@@ -8756,7 +8756,7 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 }
 
 func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signature *Signature, relation *Relation, checkMode CheckMode, reportErrors bool, inferenceContext *InferenceContext, diagnosticOutput *[]*ast.Diagnostic) bool {
-	if isJsxOpeningLikeElement(node) {
+	if ast.IsJsxOpeningLikeElement(node) {
 		return c.checkApplicableSignatureForJsxOpeningLikeElement(node, signature, relation, checkMode, reportErrors, diagnosticOutput)
 	}
 	thisType := c.getThisTypeOfSignature(signature)
@@ -8897,7 +8897,7 @@ func (c *Checker) getEffectiveCheckNode(argument *ast.Node) *ast.Node {
 }
 
 func (c *Checker) inferTypeArguments(node *ast.Node, signature *Signature, args []*ast.Node, checkMode CheckMode, context *InferenceContext) []*Type {
-	if isJsxOpeningLikeElement(node) {
+	if ast.IsJsxOpeningLikeElement(node) {
 		return c.inferJsxTypeArguments(node, signature, checkMode, context)
 	}
 	// If a contextual type is available, infer from that type to the return type of the call expression. For
@@ -26310,7 +26310,7 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 			c.markExportAssignmentAliasReferenced(location)
 			return
 		}
-		if isJsxOpeningLikeElement(location) || ast.IsJsxOpeningFragment(location) {
+		if ast.IsJsxOpeningLikeElement(location) || ast.IsJsxOpeningFragment(location) {
 			c.markJsxAliasReferenced(location)
 			return
 		}
@@ -26475,7 +26475,7 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 	jsxFactoryRefErr := core.IfElse(c.compilerOptions.Jsx == core.JsxEmitReact, diagnostics.This_JSX_tag_requires_0_to_be_in_scope_but_it_could_not_be_found, nil)
 	jsxFactoryNamespace := c.getJsxNamespace(node)
 	jsxFactoryLocation := node
-	if isJsxOpeningLikeElement(node) {
+	if ast.IsJsxOpeningLikeElement(node) {
 		jsxFactoryLocation = node.TagName()
 	}
 	// allow null as jsxFragmentFactory
@@ -27520,7 +27520,7 @@ func (c *Checker) getContextualTypeForArgumentAtIndex(callTarget *ast.Node, argI
 	} else {
 		signature = c.getResolvedSignature(callTarget, nil, CheckModeNormal)
 	}
-	if isJsxOpeningLikeElement(callTarget) && argIndex == 0 {
+	if ast.IsJsxOpeningLikeElement(callTarget) && argIndex == 0 {
 		return c.getEffectiveFirstArgumentForJsxSignature(signature, callTarget)
 	}
 	restIndex := len(signature.parameters) - 1
@@ -27741,7 +27741,7 @@ func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 	case ast.IsBinaryExpression(node):
 		// Handles instanceof operator
 		return []*ast.Node{node.AsBinaryExpression().Left}
-	case isJsxOpeningLikeElement(node):
+	case ast.IsJsxOpeningLikeElement(node):
 		if len(node.Attributes().AsJsxAttributes().Properties.Nodes) != 0 || (ast.IsJsxOpeningElement(node) && len(node.Parent.Children().Nodes) != 0) {
 			return []*ast.Node{node.Attributes()}
 		}
