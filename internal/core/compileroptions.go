@@ -180,6 +180,18 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 	}
 }
 
+func (options *CompilerOptions) GetEmitModuleDetectionKind() ModuleDetectionKind {
+	if options.ModuleDetection != ModuleDetectionKindNone {
+		return options.ModuleDetection
+	}
+	switch options.GetEmitModuleKind() {
+	case ModuleKindNode16, ModuleKindNodeNext:
+		return ModuleDetectionKindForce
+	default:
+		return ModuleDetectionKindAuto
+	}
+}
+
 func (options *CompilerOptions) GetESModuleInterop() bool {
 	if options.ESModuleInterop != TSUnknown {
 		return options.ESModuleInterop == TSTrue
@@ -325,7 +337,9 @@ type SourceFileAffectingCompilerOptions struct {
 	AllowUnreachableCode       Tristate
 	AllowUnusedLabels          Tristate
 	BindInStrictMode           bool
+	EmitModuleDetectionKind    ModuleDetectionKind
 	EmitScriptTarget           ScriptTarget
+	JsxEmit                    JsxEmit
 	NoFallthroughCasesInSwitch Tristate
 	ShouldPreserveConstEnums   bool
 }
@@ -335,7 +349,9 @@ func (options *CompilerOptions) SourceFileAffecting() *SourceFileAffectingCompil
 		AllowUnreachableCode:       options.AllowUnreachableCode,
 		AllowUnusedLabels:          options.AllowUnusedLabels,
 		BindInStrictMode:           options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
+		EmitModuleDetectionKind:    options.GetEmitModuleDetectionKind(),
 		EmitScriptTarget:           options.GetEmitScriptTarget(),
+		JsxEmit:                    options.Jsx,
 		NoFallthroughCasesInSwitch: options.NoFallthroughCasesInSwitch,
 		ShouldPreserveConstEnums:   options.ShouldPreserveConstEnums(),
 	}

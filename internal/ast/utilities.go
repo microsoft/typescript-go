@@ -2657,6 +2657,11 @@ func GetPragmaArgument(pragma *Pragma, name string) string {
 	return ""
 }
 
+
+func IsJsxOpeningLikeElement(node *Node) bool {
+	return IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node)
+}
+
 // Of the form: `const x = require("x")` or `const { x } = require("x")` or with `var` or `let`
 // The variable must not be exported and must not have a type annotation, even a jsdoc one.
 // The initializer must be a call to `require` with a string literal or a string literal-like argument.
