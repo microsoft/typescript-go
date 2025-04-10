@@ -1,4 +1,5 @@
 file.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+file.js(4,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 index.js(3,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 subfolder/file.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
@@ -19,13 +20,15 @@ subfolder/file.js(3,1): error TS2580: Cannot find name 'module'. Do you need to 
     export = a;
     ~~~~~~~~~~~
 !!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
-==== file.js (1 errors) ====
+==== file.js (2 errors) ====
     // esm format file
     import "fs";
     const a = {};
     module.exports = a;
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 ==== package.json (0 errors) ====
     {
         "name": "package",

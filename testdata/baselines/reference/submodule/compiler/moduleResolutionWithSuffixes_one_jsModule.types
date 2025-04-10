@@ -2,7 +2,7 @@
 
 === /index.ts ===
 import { ios } from "./foo.js";
->ios : any
+>ios : () => void
 
 === /foo.ios.js ===
 "use strict";

@@ -1,24 +1,19 @@
 --- old.typedefCrossModule.types
 +++ new.typedefCrossModule.types
-@@= skipped -10, +10 lines =@@
- /** @typedef {{ type: "b", y: 1 }} B */
+@@= skipped -11, +11 lines =@@
  /** @typedef {A | B} Both */
  module.exports = C
-->module.exports = C : typeof C
+ >module.exports = C : typeof C
 ->module.exports : typeof C
 ->module : { exports: typeof C; }
 ->exports : typeof C
-->C : typeof C
-+>module.exports = C : () => void
 +>module.exports : any
 +>module : { exports: any; }
 +>exports : any
-+>C : () => void
+ >C : typeof C
  
  function C() {
-->C : typeof C
-+>C : () => void
- 
+@@= skipped -11, +11 lines =@@
      this.p = 1
  >this.p = 1 : 1
  >this.p : any
@@ -27,7 +22,7 @@
  >p : any
  >1 : 1
  }
-@@= skipped -24, +24 lines =@@
+@@= skipped -12, +12 lines =@@
  /** @typedef {A | B} Both */
  
  export function C() {

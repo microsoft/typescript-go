@@ -645,6 +645,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindImportEqualsDeclaration,
 		KindExportDeclaration,
 		KindExportAssignment,
+		KindJSExportAssignment,
 		KindNamespaceExportDeclaration:
 		return true
 	}
@@ -1282,7 +1283,7 @@ func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
 }
 
 func GetElementOrPropertyAccessName(node *Node) string {
-	name := getElementOrPropertyAccessArgumentExpressionOrName(node)
+	name := GetElementOrPropertyAccessArgumentExpressionOrName(node)
 	if name == nil {
 		return ""
 	}
@@ -1329,10 +1330,10 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	switch declaration.Kind {
 	case KindBinaryExpression:
 		if IsFunctionPropertyAssignment(declaration) {
-			return getElementOrPropertyAccessArgumentExpressionOrName(declaration.AsBinaryExpression().Left)
+			return GetElementOrPropertyAccessArgumentExpressionOrName(declaration.AsBinaryExpression().Left)
 		}
 		return nil
-	case KindExportAssignment:
+	case KindExportAssignment, KindJSExportAssignment:
 		expr := declaration.AsExportAssignment().Expression
 		if IsIdentifier(expr) {
 			return expr
@@ -1390,22 +1391,6 @@ func IsFunctionPropertyAssignment(node *Node) bool {
 		}
 	}
 	return false
-}
-
-// Does not handle signed numeric names like `a[+0]` - handling those would require handling prefix unary expressions
-// throughout late binding handling as well, which is awkward (but ultimately probably doable if there is demand)
-func getElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
-	switch node.Kind {
-	case KindPropertyAccessExpression:
-		return node.Name()
-	case KindElementAccessExpression:
-		arg := SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
-		if IsStringOrNumericLiteralLike(arg) {
-			return arg
-		}
-		return node
-	}
-	panic("Unhandled case in getElementOrPropertyAccessArgumentExpressionOrName")
 }
 
 /**
@@ -1471,10 +1456,6 @@ func IsExternalOrCommonJSModule(file *SourceFile) bool {
 // TODO: Should we deprecate `IsExternalOrCommonJSModule` in favor of this function?
 func IsEffectiveExternalModule(node *SourceFile, compilerOptions *core.CompilerOptions) bool {
 	return IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJSModuleIndicator != nil)
-}
-
-func IsEffectiveExternalModuleWorker(node *SourceFile, moduleKind core.ModuleKind) bool {
-	return IsExternalModule(node) || (isCommonJSContainingModuleKind(moduleKind) && node.CommonJSModuleIndicator != nil)
 }
 
 func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
@@ -1646,20 +1627,7 @@ func IsEnumConst(node *Node) bool {
 }
 
 func ExportAssignmentIsAlias(node *Node) bool {
-	return isAliasableExpression(getExportAssignmentExpression(node))
-}
-
-func getExportAssignmentExpression(node *Node) *Node {
-	switch node.Kind {
-	case KindExportAssignment:
-		return node.AsExportAssignment().Expression
-	case KindBinaryExpression:
-		return node.AsBinaryExpression().Right
-	}
-	panic("Unhandled case in getExportAssignmentExpression")
-}
-
-func isAliasableExpression(e *Node) bool {
+	e := node.AsExportAssignment().Expression
 	return IsEntityNameExpression(e) || IsClassExpression(e)
 }
 
@@ -2063,6 +2031,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 		KindImportEqualsDeclaration,
 		KindImportDeclaration,
 		KindExportAssignment,
+		KindJSExportAssignment,
 		KindExportDeclaration:
 		return SemanticMeaningAll
 
@@ -2451,6 +2420,8 @@ func IsNonLocalAlias(symbol *Symbol, excludes SymbolFlags) bool {
 // An alias symbol is created by one of the following declarations:
 //
 //	import <symbol> = ...
+//	const <symbol> = ... (JS only)
+//	const { <symbol>, ... } = ... (JS only)
 //	import <symbol> from ...
 //	import * as <symbol> from ...
 //	import { x as <symbol> } from ...
@@ -2458,6 +2429,7 @@ func IsNonLocalAlias(symbol *Symbol, excludes SymbolFlags) bool {
 //	export * as ns <symbol> from ...
 //	export = <EntityNameExpression>
 //	export default <EntityNameExpression>
+//	module.exports = <EntityNameExpression> (JS only)
 func IsAliasSymbolDeclaration(node *Node) bool {
 	switch node.Kind {
 	case KindImportEqualsDeclaration, KindNamespaceExportDeclaration, KindNamespaceImport, KindNamespaceExport,
@@ -2465,8 +2437,12 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 		return true
 	case KindImportClause:
 		return node.AsImportClause().Name() != nil
-	case KindExportAssignment:
+	case KindExportAssignment, KindJSExportAssignment:
 		return ExportAssignmentIsAlias(node)
+	case KindVariableDeclaration:
+		return IsVariableDeclarationInitializedToRequire(node)
+	case KindBindingElement:
+		return IsVariableDeclarationInitializedToRequire(node.Parent.Parent)
 	}
 	return false
 }
@@ -2638,4 +2614,14 @@ func getPragmaArgument(pragma *Pragma, name string) string {
 		}
 	}
 	return ""
+}
+
+func IsVariableDeclarationInitializedToRequire(node *Node) bool {
+	return node.Kind == KindVariableDeclaration &&
+		node.AsVariableDeclaration().Initializer != nil &&
+		IsRequireCall(node.AsVariableDeclaration().Initializer, true /*requireStringLiteralLikeArgument*/)
+}
+
+func IsBindingElementOfRequire(node *Node) bool {
+	return IsBindingElement(node) && IsVariableDeclarationInitializedToRequire(node.Parent.Parent)
 }

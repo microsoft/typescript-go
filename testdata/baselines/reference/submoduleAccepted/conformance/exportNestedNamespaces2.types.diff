@@ -14,15 +14,12 @@
  
  === first.js ===
  exports = require('./mod')
-->exports = require('./mod') : typeof import("mod")
+ >exports = require('./mod') : typeof import("mod")
 ->exports : typeof import("first")
-->require('./mod') : typeof import("mod")
-+>exports = require('./mod') : any
 +>exports : any
-+>require('./mod') : any
+ >require('./mod') : typeof import("mod")
  >require : any
  >'./mod' : "./mod"
- 
 @@= skipped -17, +17 lines =@@
  >exports.formatters.j = function (v) {    return v} : (v: any) => any
  >exports.formatters.j : any
@@ -32,20 +29,16 @@
  >formatters : any
  >j : any
  >function (v) {    return v} : (v: any) => any
-@@= skipped -11, +11 lines =@@
- }
+@@= skipped -12, +12 lines =@@
  === second.js ===
  exports = require('./mod')
-->exports = require('./mod') : typeof import("mod")
+ >exports = require('./mod') : typeof import("mod")
 ->exports : typeof import("second")
-->require('./mod') : typeof import("mod")
-+>exports = require('./mod') : any
 +>exports : any
-+>require('./mod') : any
+ >require('./mod') : typeof import("mod")
  >require : any
  >'./mod' : "./mod"
- 
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
  >exports.formatters.o = function (v) {    return v} : (v: any) => any
  >exports.formatters.o : any
  >exports.formatters : any
@@ -59,28 +52,22 @@
  === use.js ===
  import * as debug from './mod'
 ->debug : typeof debug
-+>debug : any
++>debug : typeof import("mod")
  
  debug.formatters.j
  >debug.formatters.j : any
-->debug.formatters : {}
+ >debug.formatters : {}
 ->debug : typeof debug
-->formatters : {}
-+>debug.formatters : any
-+>debug : any
-+>formatters : any
++>debug : typeof import("mod")
+ >formatters : {}
  >j : any
  
- var one = debug.formatters.o(1)
- >one : any
+@@= skipped -14, +14 lines =@@
  >debug.formatters.o(1) : any
  >debug.formatters.o : any
-->debug.formatters : {}
+ >debug.formatters : {}
 ->debug : typeof debug
-->formatters : {}
-+>debug.formatters : any
-+>debug : any
-+>formatters : any
++>debug : typeof import("mod")
+ >formatters : {}
  >o : any
  >1 : 1
- 

@@ -1,15 +1,6 @@
 --- old.moduleResolutionWithSuffixes_one_jsModule.types
 +++ new.moduleResolutionWithSuffixes_one_jsModule.types
-@@= skipped -1, +1 lines =@@
- 
- === /index.ts ===
- import { ios } from "./foo.js";
-->ios : () => void
-+>ios : any
- 
- === /foo.ios.js ===
- "use strict";
-@@= skipped -8, +8 lines =@@
+@@= skipped -9, +9 lines =@@
  
  exports.__esModule = true;
  >exports.__esModule = true : true

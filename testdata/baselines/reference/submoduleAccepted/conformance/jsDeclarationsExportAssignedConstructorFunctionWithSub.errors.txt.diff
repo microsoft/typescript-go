@@ -4,13 +4,14 @@
 -jsDeclarationsExportAssignedConstructorFunctionWithSub.js(4,1): error TS9005: Declaration emit for this file requires using private name 'Sub'. An explicit type annotation may unblock declaration emit.
 -jsDeclarationsExportAssignedConstructorFunctionWithSub.js(4,1): error TS9005: Declaration emit for this file requires using private name 'exports'. An explicit type annotation may unblock declaration emit.
 +jsDeclarationsExportAssignedConstructorFunctionWithSub.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++jsDeclarationsExportAssignedConstructorFunctionWithSub.js(4,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +jsDeclarationsExportAssignedConstructorFunctionWithSub.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +jsDeclarationsExportAssignedConstructorFunctionWithSub.js(8,25): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +jsDeclarationsExportAssignedConstructorFunctionWithSub.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
  
  
 -==== jsDeclarationsExportAssignedConstructorFunctionWithSub.js (2 errors) ====
-+==== jsDeclarationsExportAssignedConstructorFunctionWithSub.js (4 errors) ====
++==== jsDeclarationsExportAssignedConstructorFunctionWithSub.js (5 errors) ====
      /**
       * @param {number} p
       */
@@ -20,8 +21,12 @@
 -    ~~~~~~
 -!!! error TS9005: Declaration emit for this file requires using private name 'exports'. An explicit type annotation may unblock declaration emit.
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          this.t = 12 + p;
++    ~~~~~~~~~~~~~~~~~~~~
      }
++    ~
++!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
      module.exports.Sub = function() {
 +    ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

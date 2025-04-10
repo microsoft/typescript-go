@@ -1,8 +1,9 @@
 axios.js(9,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+axios.js(9,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 axios.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== axios.js (2 errors) ====
+==== axios.js (3 errors) ====
     class Axios {
         constructor() {
         }
@@ -14,6 +15,8 @@ axios.js(10,1): error TS2580: Cannot find name 'module'. Do you need to install 
     module.exports = axios;
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+    ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     module.exports.default = axios;
     ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

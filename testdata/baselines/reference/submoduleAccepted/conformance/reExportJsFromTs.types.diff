@@ -13,14 +13,3 @@
  >{  str: 'x',} : { str: string; }
  
    str: 'x',
-@@= skipped -13, +13 lines =@@
- 
- === /src/constants.ts ===
- import * as tsConstants from "../lib/constants";
-->tsConstants : { str: string; }
-+>tsConstants : any
- 
- export { tsConstants };
-->tsConstants : { str: string; }
-+>tsConstants : any
- 

@@ -14,5 +14,5 @@ module.exports = alias;
 
 === /b.js ===
 import a from "./a";
->a : any
+>a : {}
 

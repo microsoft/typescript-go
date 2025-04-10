@@ -27,8 +27,10 @@
  >this : Symbol(Wrap, Decl(usage.js, 0, 0))
 ->connItem : Symbol(Wrap.connItem, Decl(usage.js, 8, 20))
 ->c.item : Symbol(Conn.item, Decl(conn.js, 5, 20))
++>c.item : Symbol(item, Decl(conn.js, 5, 20))
  >c : Symbol(c, Decl(usage.js, 8, 16))
 ->item : Symbol(Conn.item, Decl(conn.js, 5, 20))
++>item : Symbol(item, Decl(conn.js, 5, 20))
  
          /** @type {import("./conn").Whatever} */
          this.another = "";

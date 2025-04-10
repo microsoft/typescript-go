@@ -17,12 +17,7 @@
  };
  
  === a.js ===
- const { A } = require("./a-ext");
- >A : Symbol(A, Decl(a.js, 0, 7))
- >require : Symbol(require, Decl(node.d.ts, 0, 0))
-->"./a-ext" : Symbol("a-ext", Decl(a-ext.js, 0, 0))
- 
- /** @param {A} p */
+@@= skipped -21, +15 lines =@@
  function a(p) { p.x; }
  >a : Symbol(a, Decl(a.js, 0, 33))
  >p : Symbol(p, Decl(a.js, 3, 11))
@@ -45,13 +40,7 @@
      }
  };
  
-@@= skipped -43, +30 lines =@@
- const { B } = require("./b-ext");
- >B : Symbol(B, Decl(b.js, 0, 7))
- >require : Symbol(require, Decl(node.d.ts, 0, 0))
-->"./b-ext" : Symbol("b-ext", Decl(b-ext.js, 0, 0))
- 
- /** @param {B} p */
+@@= skipped -28, +22 lines =@@
  function b(p) { p.x; }
  >b : Symbol(b, Decl(b.js, 0, 33))
  >p : Symbol(p, Decl(b.js, 3, 11))
@@ -70,12 +59,7 @@
  }
  
  === c.js ===
- const { C } = require("./c-ext");
- >C : Symbol(C, Decl(c.js, 0, 7))
- >require : Symbol(require, Decl(node.d.ts, 0, 0))
-->"./c-ext" : Symbol("c-ext", Decl(c-ext.js, 0, 0))
- 
- /** @param {C} p */
+@@= skipped -24, +19 lines =@@
  function c(p) { p.x; }
  >c : Symbol(c, Decl(c.js, 0, 33))
  >p : Symbol(p, Decl(c.js, 3, 11))
@@ -95,12 +79,7 @@
  };
  
  === d.js ===
- const { D } = require("./d-ext");
- >D : Symbol(D, Decl(d.js, 0, 7))
- >require : Symbol(require, Decl(node.d.ts, 0, 0))
-->"./d-ext" : Symbol("d-ext", Decl(d-ext.js, 0, 0))
- 
- /** @param {D} p */
+@@= skipped -25, +19 lines =@@
  function d(p) { p.x; }
  >d : Symbol(d, Decl(d.js, 0, 33))
  >p : Symbol(p, Decl(d.js, 3, 11))
@@ -110,7 +89,7 @@
  
  === e-ext.js ===
  export class E {
-@@= skipped -65, +49 lines =@@
+@@= skipped -10, +8 lines =@@
  
      constructor() {
          this.x = 1;
@@ -120,13 +99,7 @@
      }
  }
  
-@@= skipped -10, +8 lines =@@
- const { E } = require("./e-ext");
- >E : Symbol(E, Decl(e.js, 0, 7))
- >require : Symbol(require, Decl(node.d.ts, 0, 0))
-->"./e-ext" : Symbol("e-ext", Decl(e-ext.js, 0, 0))
- 
- /** @param {E} p */
+@@= skipped -16, +14 lines =@@
  function e(p) { p.x; }
  >e : Symbol(e, Decl(e.js, 0, 33))
  >p : Symbol(p, Decl(e.js, 3, 11))
@@ -173,7 +146,7 @@
  
  === h.js ===
  class H {
-@@= skipped -53, +39 lines =@@
+@@= skipped -47, +34 lines =@@
  
      constructor() {
          this.x = 1;

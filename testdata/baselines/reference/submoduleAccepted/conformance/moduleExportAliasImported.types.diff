@@ -13,24 +13,16 @@
  >1 : 1
  
  function alias() { }
-->alias : typeof alias
-+>alias : () => void
+@@= skipped -10, +10 lines =@@
  
  module.exports = alias
-->module.exports = alias : typeof alias
+ >module.exports = alias : typeof alias
 ->module.exports : typeof alias
 ->module : { exports: typeof alias; }
 ->exports : typeof alias
-->alias : typeof alias
-+>module.exports = alias : () => void
 +>module.exports : any
 +>module : any
 +>exports : any
-+>alias : () => void
+ >alias : typeof alias
  
  === importer.js ===
- import('./bug28014')
-->import('./bug28014') : Promise<{ (): void; version: 1; }>
-+>import('./bug28014') : Promise<any>
- >'./bug28014' : "./bug28014"
- 
