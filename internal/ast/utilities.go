@@ -638,6 +638,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindClassDeclaration,
 		KindInterfaceDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindEnumDeclaration,
 		KindModuleDeclaration,
 		KindImportDeclaration,
@@ -1194,6 +1195,10 @@ func WalkUpBindingElementsAndPatterns(binding *Node) *Node {
 	return node.Parent
 }
 
+func IsSourceFileJS(file *SourceFile) bool {
+	return file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX
+}
+
 func IsInJSFile(node *Node) bool {
 	return node != nil && node.Flags&NodeFlagsJavaScriptFile != 0
 }
@@ -1685,6 +1690,10 @@ func IsJsonSourceFile(file *SourceFile) bool {
 	return file.ScriptKind == core.ScriptKindJSON
 }
 
+func IsInJsonFile(node *Node) bool {
+	return node.Flags&NodeFlagsJsonFile != 0
+}
+
 func GetExternalModuleName(node *Node) *Expression {
 	switch node.Kind {
 	case KindImportDeclaration:
@@ -2044,6 +2053,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 	case KindTypeParameter,
 		KindInterfaceDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindTypeLiteral:
 		return SemanticMeaningType
 	case KindEnumMember, KindClassDeclaration:
@@ -2171,7 +2181,7 @@ func getModuleInstanceStateCached(node *Node, ancestors []*Node, visited map[Nod
 func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	// A module is uninstantiated if it contains only
 	switch node.Kind {
-	case KindInterfaceDeclaration, KindTypeAliasDeclaration:
+	case KindInterfaceDeclaration, KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return ModuleInstanceStateNonInstantiated
 	case KindEnumDeclaration:
 		if IsEnumConst(node) {
@@ -2308,9 +2318,9 @@ func IsGlobalSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile && !IsExternalOrCommonJSModule(node.AsSourceFile())
 }
 
-func IsParameterLikeOrReturnTag(node *Node) bool {
+func IsParameterLike(node *Node) bool {
 	switch node.Kind {
-	case KindParameter, KindTypeParameter, KindJSDocParameterTag, KindJSDocReturnTag:
+	case KindParameter, KindTypeParameter:
 		return true
 	}
 	return false
@@ -2543,7 +2553,7 @@ func ForEachDynamicImportOrRequireCall(
 	cb func(node *Node, argument *Expression) bool,
 ) bool {
 	isJavaScriptFile := IsInJSFile(file.AsNode())
-	lastIndex, size := findImportOrRequire(file.Text, 0)
+	lastIndex, size := findImportOrRequire(file.Text(), 0)
 	for lastIndex >= 0 {
 		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
 		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
@@ -2568,7 +2578,7 @@ func ForEachDynamicImportOrRequireCall(
 		}
 		// skip past import/require
 		lastIndex += size
-		lastIndex, size = findImportOrRequire(file.Text, lastIndex)
+		lastIndex, size = findImportOrRequire(file.Text(), lastIndex)
 	}
 	return false
 }
@@ -2589,4 +2599,54 @@ func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 
 func IsUnterminatedLiteral(node *Node) bool {
 	return node.LiteralLikeData().TokenFlags&TokenFlagsUnterminated != 0
+}
+
+func GetJSXImplicitImportBase(compilerOptions *core.CompilerOptions, file *SourceFile) string {
+	jsxImportSourcePragma := getPragmaFromSourceFile(file, "jsximportsource")
+	jsxRuntimePragma := getPragmaFromSourceFile(file, "jsxruntime")
+	if getPragmaArgument(jsxRuntimePragma, "factory") == "classic" {
+		return ""
+	}
+	if compilerOptions.Jsx == core.JsxEmitReactJSX ||
+		compilerOptions.Jsx == core.JsxEmitReactJSXDev ||
+		compilerOptions.JsxImportSource != "" ||
+		jsxImportSourcePragma != nil ||
+		getPragmaArgument(jsxRuntimePragma, "factory") == "automatic" {
+		result := getPragmaArgument(jsxImportSourcePragma, "factory")
+		if result == "" {
+			result = compilerOptions.JsxImportSource
+		}
+		if result == "" {
+			result = "react"
+		}
+		return result
+	}
+	return ""
+}
+
+func GetJSXRuntimeImport(base string, options *core.CompilerOptions) string {
+	if base == "" {
+		return base
+	}
+	return base + "/" + core.IfElse(options.Jsx == core.JsxEmitReactJSXDev, "jsx-dev-runtime", "jsx-runtime")
+}
+
+func getPragmaFromSourceFile(file *SourceFile, name string) *Pragma {
+	if file != nil {
+		for i := range file.Pragmas {
+			if file.Pragmas[i].Name == name {
+				return &file.Pragmas[i]
+			}
+		}
+	}
+	return nil
+}
+
+func getPragmaArgument(pragma *Pragma, name string) string {
+	if pragma != nil {
+		if arg, ok := pragma.Args[name]; ok {
+			return arg.Value
+		}
+	}
+	return ""
 }

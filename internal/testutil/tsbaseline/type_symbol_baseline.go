@@ -316,6 +316,9 @@ func forEachASTNode(node *ast.Node) []*ast.Node {
 	for len(work) > 0 {
 		elem := work[len(work)-1]
 		work = work[:len(work)-1]
+		if elem.Flags&ast.NodeFlagsReparsed != 0 && elem.Kind != ast.KindTypeAssertionExpression {
+			continue
+		}
 		result = append(result, elem)
 		elem.ForEachChild(addChild)
 		slices.Reverse(resChildren)
@@ -326,7 +329,7 @@ func forEachASTNode(node *ast.Node) []*ast.Node {
 }
 
 func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk bool) *typeWriterResult {
-	actualPos := scanner.SkipTrivia(walker.currentSourceFile.Text, node.Pos())
+	actualPos := scanner.SkipTrivia(walker.currentSourceFile.Text(), node.Pos())
 	line, _ := scanner.GetLineAndCharacterOfPosition(walker.currentSourceFile, actualPos)
 	sourceText := scanner.GetSourceTextOfNodeFromSourceFile(walker.currentSourceFile, node, false /*includeTrivia*/)
 	fileChecker := walker.getTypeCheckerForCurrentFile()
@@ -337,7 +340,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 		if ast.IsPartOfTypeNode(node) ||
 			ast.IsIdentifier(node) &&
 				(ast.GetMeaningFromDeclaration(node.Parent)&ast.SemanticMeaningValue) == 0 &&
-				!(ast.IsTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
+				!(ast.IsTypeOrJSTypeAliasDeclaration(node.Parent) && node == node.Parent.Name()) {
 			return nil
 		}
 

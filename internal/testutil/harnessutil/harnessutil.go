@@ -22,6 +22,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -429,21 +430,21 @@ type cachedCompilerHost struct {
 	options *core.CompilerOptions
 }
 
-var sourceFileCache sync.Map
+var sourceFileCache collections.SyncMap[sourceFileCacheKey, *ast.SourceFile]
+
+type sourceFileCacheKey struct {
+	core.SourceFileAffectingCompilerOptions
+	fileName        string
+	path            tspath.Path
+	languageVersion core.ScriptTarget
+	text            string
+}
 
 func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 
-	type sourceFileCacheKey struct {
-		core.SourceFileAffectingCompilerOptions
-		fileName        string
-		path            tspath.Path
-		languageVersion core.ScriptTarget
-		text            string
-	}
-
 	key := sourceFileCacheKey{
-		SourceFileAffectingCompilerOptions: h.options.SourceFileAffecting(),
+		SourceFileAffectingCompilerOptions: *h.options.SourceFileAffecting(),
 		fileName:                           fileName,
 		path:                               path,
 		languageVersion:                    languageVersion,
@@ -451,7 +452,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 	}
 
 	if cached, ok := sourceFileCache.Load(key); ok {
-		return cached.(*ast.SourceFile)
+		return cached
 	}
 
 	// !!! dedupe with compiler.compilerHost
@@ -464,7 +465,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
-	return result.(*ast.SourceFile)
+	return result
 }
 
 func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) compiler.CompilerHost {
@@ -608,7 +609,7 @@ func newCompilationResult(
 		} else {
 			// using the order from the inputs, populate the outputs
 			for _, sourceFile := range program.GetSourceFiles() {
-				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text}
+				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text()}
 				c.inputs = append(c.inputs, input)
 				if !tspath.IsDeclarationFileName(sourceFile.FileName()) {
 					extname := core.GetOutputExtension(sourceFile.FileName(), options.Jsx)
@@ -738,6 +739,43 @@ func (c *CompilationResult) GetOutput(path string, kind string /*"js" | "dts" | 
 		}
 	}
 	return nil
+}
+
+func (c *CompilationResult) GetSourceMapRecord() string {
+	if c.Result == nil || len(c.Result.SourceMaps) == 0 {
+		return ""
+	}
+
+	var sourceMapRecorder writerAggregator
+	for _, sourceMapData := range c.Result.SourceMaps {
+		var prevSourceFile *ast.SourceFile
+		var currentFile *TestFile
+
+		if tspath.IsDeclarationFileName(sourceMapData.GeneratedFile) {
+			currentFile = c.DTS.GetOrZero(sourceMapData.GeneratedFile)
+		} else {
+			currentFile = c.JS.GetOrZero(sourceMapData.GeneratedFile)
+		}
+
+		sourceMapSpanWriter := newSourceMapSpanWriter(&sourceMapRecorder, sourceMapData.SourceMap, currentFile)
+		mapper := sourcemap.DecodeMappings(sourceMapData.SourceMap.Mappings)
+		for decodedSourceMapping := range mapper.Values() {
+			var currentSourceFile *ast.SourceFile
+			if decodedSourceMapping.IsSourceMapping() {
+				currentSourceFile = c.Program.GetSourceFile(sourceMapData.InputSourceFileNames[decodedSourceMapping.SourceIndex])
+			}
+			if currentSourceFile != prevSourceFile {
+				if currentSourceFile != nil {
+					sourceMapSpanWriter.recordNewSourceFileSpan(decodedSourceMapping, currentSourceFile.Text())
+				}
+				prevSourceFile = currentSourceFile
+			} else {
+				sourceMapSpanWriter.recordSourceMapSpan(decodedSourceMapping)
+			}
+		}
+		sourceMapSpanWriter.close()
+	}
+	return sourceMapRecorder.String()
 }
 
 func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {

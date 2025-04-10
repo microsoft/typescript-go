@@ -222,7 +222,7 @@ const (
 func EncodeSourceFile(sourceFile *ast.SourceFile, id string) ([]byte, error) {
 	var parentIndex, nodeCount, prevIndex uint32
 	var extendedData []byte
-	strs := newStringTable(sourceFile.Text, sourceFile.TextCount)
+	strs := newStringTable(sourceFile.Text(), sourceFile.TextCount)
 	nodes := make([]byte, 0, (sourceFile.NodeCount+1)*NodeSize)
 
 	visitor := &ast.NodeVisitor{
@@ -336,7 +336,7 @@ func appendUint32s(buf []byte, values ...uint32) []byte {
 func getSourceFileData(sourceFile *ast.SourceFile, id string, strs *stringTable, extendedData *[]byte) uint32 {
 	t := NodeDataTypeExtendedData
 	extendedDataOffset := len(*extendedData)
-	textIndex := strs.add(sourceFile.Text, sourceFile.Kind, sourceFile.Pos(), sourceFile.End())
+	textIndex := strs.add(sourceFile.Text(), sourceFile.Kind, sourceFile.Pos(), sourceFile.End())
 	fileNameIndex := strs.add(sourceFile.FileName(), 0, 0, 0)
 	idIndex := strs.add(id, 0, 0, 0)
 	*extendedData = appendUint32s(*extendedData, textIndex, fileNameIndex, idIndex)
@@ -683,7 +683,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.Comment != nil) << 2)
 	case ast.KindJSDocTypedefTag:
 		n := node.AsJSDocTypedefTag()
-		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.FullName != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
+		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.Name() != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
 	case ast.KindJSDocSignature:
 		n := node.AsJSDocSignature()
 		return (boolToByte(n.TypeParameters() != nil) << 0) | (boolToByte(n.Parameters != nil) << 1) | (boolToByte(n.Type != nil) << 2)

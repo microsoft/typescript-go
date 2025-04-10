@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -18,7 +19,7 @@ type registryKey struct {
 
 func newRegistryKey(options *core.CompilerOptions, path tspath.Path, scriptKind core.ScriptKind) registryKey {
 	return registryKey{
-		SourceFileAffectingCompilerOptions: options.SourceFileAffecting(),
+		SourceFileAffectingCompilerOptions: *options.SourceFileAffecting(),
 		path:                               path,
 		scriptKind:                         scriptKind,
 	}
@@ -39,7 +40,7 @@ type DocumentRegistryHooks struct {
 type DocumentRegistry struct {
 	Options   tspath.ComparePathsOptions
 	Hooks     DocumentRegistryHooks
-	documents sync.Map
+	documents collections.SyncMap[registryKey, *registryEntry]
 }
 
 // AcquireDocument gets a SourceFile from the registry if it exists as the same version tracked
@@ -69,8 +70,7 @@ func (r *DocumentRegistry) ReleaseDocument(file *ast.SourceFile, compilerOptions
 }
 
 func (r *DocumentRegistry) releaseDocumentWithKey(key registryKey) {
-	if entryAny, ok := r.documents.Load(key); ok {
-		entry := entryAny.(*registryEntry)
+	if entry, ok := r.documents.Load(key); ok {
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
 		entry.refCount--
@@ -89,10 +89,9 @@ func (r *DocumentRegistry) getDocumentWorker(
 	key registryKey,
 ) *ast.SourceFile {
 	scriptTarget := core.IfElse(scriptInfo.scriptKind == core.ScriptKindJSON, core.ScriptTargetJSON, compilerOptions.GetEmitScriptTarget())
-	if entryAny, ok := r.documents.Load(key); ok {
+	if entry, ok := r.documents.Load(key); ok {
 		// We have an entry for this file. However, it may be for a different version of
 		// the script snapshot. If so, update it appropriately.
-		entry := entryAny.(*registryEntry)
 		if entry.sourceFile.Version != scriptInfo.version {
 			sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 			sourceFile.Version = scriptInfo.version
@@ -106,11 +105,10 @@ func (r *DocumentRegistry) getDocumentWorker(
 		// Have never seen this file with these settings. Create a new source file for it.
 		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfo.text, scriptTarget, scanner.JSDocParsingModeParseAll)
 		sourceFile.Version = scriptInfo.version
-		entryAny, _ := r.documents.LoadOrStore(key, &registryEntry{
+		entry, _ := r.documents.LoadOrStore(key, &registryEntry{
 			sourceFile: sourceFile,
 			refCount:   0,
 		})
-		entry := entryAny.(*registryEntry)
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
 		entry.refCount++
@@ -120,10 +118,5 @@ func (r *DocumentRegistry) getDocumentWorker(
 
 // size should only be used for testing.
 func (r *DocumentRegistry) size() int {
-	count := 0
-	r.documents.Range(func(_, _ any) bool {
-		count++
-		return true
-	})
-	return count
+	return r.documents.Size()
 }
