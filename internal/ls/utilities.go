@@ -265,3 +265,51 @@ func nodeIsASICandidate(node *ast.Node, file *ast.SourceFile) bool {
 func isNonContextualKeyword(token ast.Kind) bool {
 	return ast.IsKeywordKind(token) && !ast.IsContextualKeyword(token)
 }
+
+func probablyUsesSemicolons(file *ast.SourceFile) bool {
+	withSemicolon := 0
+	withoutSemicolon := 0
+	nStatementsToObserve := 5
+
+	var visit func(node *ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if syntaxRequiresTrailingSemicolonOrASI(node.Kind) {
+			lastToken := getLastToken(node, file)
+			if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
+				withSemicolon++
+			} else {
+				withoutSemicolon++
+			}
+		} else if syntaxRequiresTrailingCommaOrSemicolonOrASI(node.Kind) {
+			lastToken := getLastToken(node, file)
+			if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
+				withSemicolon++
+			} else if lastToken != nil && lastToken.Kind != ast.KindCommaToken {
+				lastTokenLine, _ := scanner.GetLineAndCharacterOfPosition(file, getStartOfNode(lastToken, file))
+				nextTokenLine, _ := scanner.GetLineAndCharacterOfPosition(file, scanner.GetRangeOfTokenAtPosition(file, lastToken.End()).Pos())
+				// Avoid counting missing semicolon in single-line objects:
+				// `function f(p: { x: string /*no semicolon here is insignificant*/ }) {`
+				if lastTokenLine != nextTokenLine {
+					withoutSemicolon++
+				}
+			}
+		}
+
+		if withSemicolon+withoutSemicolon >= nStatementsToObserve {
+			return true
+		}
+
+		return node.ForEachChild(visit)
+	}
+
+	file.ForEachChild(visit)
+
+	// One statement missing a semicolon isn't sufficient evidence to say the user
+	// doesn't want semicolons, because they may not even be done writing that statement.
+	if withSemicolon == 0 && withoutSemicolon <= 1 {
+		return true
+	}
+
+	// If even 2/5 places have a semicolon, the user probably wants semicolons
+	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
+}

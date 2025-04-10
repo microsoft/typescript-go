@@ -421,3 +421,7 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 	}
 	return target
 }
+
+func (c *Checker) GetExportSymbolOfSymbol(symbol *ast.Symbol) *ast.Symbol {
+	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol))
+}

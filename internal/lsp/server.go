@@ -381,9 +381,12 @@ func (s *Server) handleCompletion(req *lsproto.RequestMessage) error {
 		return s.sendError(req.ID, err)
 	}
 
-	list := project.LanguageService().ProvideCompletion(file.FileName(), pos, params.Context)
-	// !!! convert completion to `lsproto.CompletionList`
-	return s.sendResult(req.ID, nil) // !!!
+	list := project.LanguageService().ProvideCompletion(
+		file.FileName(),
+		pos,
+		params.Context,
+		s.initializeParams.Capabilities.TextDocument.Completion.CompletionItem)
+	return s.sendResult(req.ID, list)
 }
 
 func (s *Server) getFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {

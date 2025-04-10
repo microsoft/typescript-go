@@ -1644,6 +1644,7 @@ type (
 	JsxOpeningFragmentNode          = Node
 	JsxClosingFragmentNode          = Node
 	SourceFileNode                  = Node
+	PropertyAccessExpressionNode    = Node
 )
 
 type (
