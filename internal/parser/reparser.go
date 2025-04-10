@@ -22,7 +22,7 @@ const (
 	jsDeclarationKindProperty
 )
 
-func (p *Parser) withCommonJS(node *ast.Node) {
+func (p *Parser) reparseCommonJS(node *ast.Node) {
 	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX {
 		return
 	}
@@ -35,8 +35,6 @@ func (p *Parser) withCommonJS(node *ast.Node) {
 	switch kind {
 	case jsDeclarationKindModuleExports:
 		export = p.factory.NewJSExportAssignment(bin.Right)
-		export.Flags = ast.NodeFlagsReparsed
-		export.Loc = bin.Loc
 	case jsDeclarationKindExportsProperty:
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)
@@ -44,10 +42,10 @@ func (p *Parser) withCommonJS(node *ast.Node) {
 		nodes[0].Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
 		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left), bin.Right)
-		export.Flags = ast.NodeFlagsReparsed
-		export.Loc = bin.Loc
 	}
 	if export != nil {
+		export.Flags = ast.NodeFlagsReparsed
+		export.Loc = bin.Loc
 		p.reparseList = append(p.reparseList, export)
 		p.commonJSModuleIndicator = export
 	}

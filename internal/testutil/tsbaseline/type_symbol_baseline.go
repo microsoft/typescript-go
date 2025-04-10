@@ -202,9 +202,6 @@ func iterateBaseline(allFiles []*harnessutil.TestFile, fullWalker *typeWriterWal
 			if isSymbolBaseline && result.symbol == "" {
 				return baselines
 			}
-			if lastIndexWritten > result.line {
-				continue
-			}
 			if lastIndexWritten == -1 {
 				typeLines.WriteString(strings.Join(codeLines[:result.line+1], "\r\n"))
 				typeLines.WriteString("\r\n")
@@ -213,10 +210,8 @@ func iterateBaseline(allFiles []*harnessutil.TestFile, fullWalker *typeWriterWal
 					(bracketLineRegex.MatchString(codeLines[lastIndexWritten+1]) || strings.TrimSpace(codeLines[lastIndexWritten+1]) == "")) {
 					typeLines.WriteString("\r\n")
 				}
-				if lastIndexWritten < result.line {
-					typeLines.WriteString(strings.Join(codeLines[lastIndexWritten+1:result.line+1], "\r\n"))
-					typeLines.WriteString("\r\n")
-				}
+				typeLines.WriteString(strings.Join(codeLines[lastIndexWritten+1:result.line+1], "\r\n"))
+				typeLines.WriteString("\r\n")
 			}
 			lastIndexWritten = result.line
 			typeOrSymbolString := core.IfElse(isSymbolBaseline, result.symbol, result.typ)

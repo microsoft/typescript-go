@@ -1334,7 +1334,7 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 		}
 		return nil
 	case KindExportAssignment, KindJSExportAssignment:
-		expr := declaration.Expression()
+		expr := declaration.AsExportAssignment().Expression
 		if IsIdentifier(expr) {
 			return expr
 		}

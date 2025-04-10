@@ -96,7 +96,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		return nil
 
 	case ast.KindJSExportAssignment:
-		// JS synthetic commonjs are elided
+		// reparsed commonjs are elided
 		return nil
 	case ast.KindTypeAliasDeclaration,
 		ast.KindJSTypeAliasDeclaration,

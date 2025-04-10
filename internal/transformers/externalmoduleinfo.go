@@ -67,6 +67,7 @@ func (c *externalModuleInfoCollector) collect() *externalModuleInfo {
 				// import x = require("mod")
 				c.addExternalImport(node)
 			}
+
 		case ast.KindExportDeclaration:
 			n := node.AsExportDeclaration()
 			if n.ModuleSpecifier != nil {

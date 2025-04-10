@@ -1621,7 +1621,7 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
 	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
-		return // Synthetic nodes do not double-bind children
+		return // Reparsed nodes do not double-bind children, which are not reparsed
 	default:
 		b.bindEachChild(node)
 	}

@@ -1794,38 +1794,6 @@ func (p *Printer) emitKeywordTypeNode(node *ast.KeywordTypeNode) {
 	p.emitKeywordNode(node.AsNode())
 }
 
-func (p *Printer) emitJSDocAllType(node *ast.Node) {
-	p.emitKeywordNode(node)
-}
-
-func (p *Printer) emitJSDocNonNullableType(node *ast.JSDocNonNullableType) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("!")
-	p.emitTypeNode(node.Type, ast.TypePrecedenceNonArray)
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJSDocNullableType(node *ast.JSDocNullableType) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("?")
-	p.emitTypeNode(node.Type, ast.TypePrecedenceNonArray)
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJSDocOptionalType(node *ast.JSDocOptionalType) {
-	state := p.enterNode(node.AsNode())
-	p.emitTypeNode(node.Type, ast.TypePrecedenceJSDoc)
-	p.writePunctuation("=")
-	p.exitNode(node.AsNode(), state)
-}
-
-func (p *Printer) emitJSDocVariadicType(node *ast.JSDocVariadicType) {
-	state := p.enterNode(node.AsNode())
-	p.writePunctuation("...")
-	p.emitTypeNode(node.Type, ast.TypePrecedenceJSDoc)
-	p.exitNode(node.AsNode(), state)
-}
-
 func (p *Printer) emitTypePredicateParameterName(node *ast.TypePredicateParameterName) {
 	switch node.Kind {
 	case ast.KindIdentifier:
@@ -2365,6 +2333,38 @@ func (p *Printer) emitBindingElement(node *ast.BindingElement) {
 
 func (p *Printer) emitBindingElementNode(node *ast.BindingElementNode) {
 	p.emitBindingElement(node.AsBindingElement())
+}
+
+func (p *Printer) emitJSDocAllType(node *ast.Node) {
+	p.emitKeywordNode(node)
+}
+
+func (p *Printer) emitJSDocNonNullableType(node *ast.JSDocNonNullableType) {
+	state := p.enterNode(node.AsNode())
+	p.writePunctuation("!")
+	p.emitTypeNode(node.Type, ast.TypePrecedenceNonArray)
+	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitJSDocNullableType(node *ast.JSDocNullableType) {
+	state := p.enterNode(node.AsNode())
+	p.writePunctuation("?")
+	p.emitTypeNode(node.Type, ast.TypePrecedenceNonArray)
+	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitJSDocOptionalType(node *ast.JSDocOptionalType) {
+	state := p.enterNode(node.AsNode())
+	p.emitTypeNode(node.Type, ast.TypePrecedenceJSDoc)
+	p.writePunctuation("=")
+	p.exitNode(node.AsNode(), state)
+}
+
+func (p *Printer) emitJSDocVariadicType(node *ast.JSDocVariadicType) {
+	state := p.enterNode(node.AsNode())
+	p.writePunctuation("...")
+	p.emitTypeNode(node.Type, ast.TypePrecedenceJSDoc)
+	p.exitNode(node.AsNode(), state)
 }
 
 //
