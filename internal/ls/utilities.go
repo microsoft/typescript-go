@@ -313,3 +313,8 @@ func probablyUsesSemicolons(file *ast.SourceFile) bool {
 	// If even 2/5 places have a semicolon, the user probably wants semicolons
 	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
 }
+
+// !!! here
+func isTypeKeyword(kind ast.Kind) bool {
+	return false
+}

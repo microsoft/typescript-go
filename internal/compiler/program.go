@@ -41,15 +41,16 @@ type Program struct {
 	currentDirectory             string
 	configFileParsingDiagnostics []*ast.Diagnostic
 
-	resolver        *module.Resolver
-	resolvedModules map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
+	sourceAffectingCompilerOptionsOnce sync.Once
+	sourceAffectingCompilerOptions     *core.SourceFileAffectingCompilerOptions
+
+	resolver *module.Resolver
 
 	comparePathsOptions tspath.ComparePathsOptions
 
-	files       []*ast.SourceFile
-	filesByPath map[tspath.Path]*ast.SourceFile
+	processedFiles
 
-	sourceFileMetaDatas map[tspath.Path]*ast.SourceFileMetaData
+	filesByPath map[tspath.Path]*ast.SourceFile
 
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
@@ -75,7 +76,6 @@ func NewProgram(options ProgramOptions) *Program {
 	p.programOptions = options
 	p.compilerOptions = options.Options
 	p.configFileParsingDiagnostics = slices.Clip(options.ConfigFileParsingDiagnostics)
-	p.sourceFileMetaDatas = make(map[tspath.Path]*ast.SourceFileMetaData)
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
@@ -153,7 +153,7 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
-	p.files, p.resolvedModules, p.sourceFileMetaDatas = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
+	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
@@ -161,7 +161,7 @@ func NewProgram(options ProgramOptions) *Program {
 
 	for _, file := range p.files {
 		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if extension == tspath.ExtensionTsx || slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
+		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
 			p.unsupportedExtensions = core.AppendIfUnique(p.unsupportedExtensions, extension)
 		}
 	}
@@ -187,12 +187,19 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.configFileParsingDiagnostics)
 }
 
+func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingCompilerOptions {
+	p.sourceAffectingCompilerOptionsOnce.Do(func() {
+		p.sourceAffectingCompilerOptions = p.compilerOptions.SourceFileAffecting()
+	})
+	return p.sourceAffectingCompilerOptions
+}
+
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
-				binder.BindSourceFile(file, p.compilerOptions)
+				binder.BindSourceFile(file, p.getSourceAffectingCompilerOptions())
 			})
 		}
 	}
@@ -215,9 +222,13 @@ func (p *Program) CheckSourceFiles() {
 func (p *Program) createCheckers() {
 	p.checkersOnce.Do(func() {
 		p.checkers = make([]*checker.Checker, core.IfElse(p.programOptions.SingleThreaded, 1, 4))
+		wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 		for i := range p.checkers {
-			p.checkers[i] = checker.NewChecker(p)
+			wg.Queue(func() {
+				p.checkers[i] = checker.NewChecker(p)
+			})
 		}
+		wg.RunAndWait()
 		p.checkersByFile = make(map[*ast.SourceFile]*checker.Checker)
 		for i, file := range p.files {
 			p.checkersByFile[file] = p.checkers[i%len(p.checkers)]
@@ -262,17 +273,6 @@ func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *as
 	return p.filesByPath[path]
 }
 
-func getModuleNames(file *ast.SourceFile) []*ast.Node {
-	res := slices.Clone(file.Imports)
-	for _, imp := range file.ModuleAugmentations {
-		if imp.Kind == ast.KindStringLiteral {
-			res = append(res, imp)
-		}
-		// Do nothing if it's an Identifier; we don't need to do module resolution for `declare global`.
-	}
-	return res
-}
-
 func (p *Program) GetSyntacticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntacticDiagnosticsForFile)
 }
@@ -311,10 +311,19 @@ func (p *Program) getSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*
 }
 
 func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	// TODO: restore this; tsgo's main depends on this function binding all files for timing.
+	// if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+	// 	return nil
+	// }
+
 	return sourceFile.BindDiagnostics()
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+		return nil
+	}
+
 	var fileChecker *checker.Checker
 	if sourceFile != nil {
 		fileChecker = p.GetTypeCheckerForFile(sourceFile)
@@ -353,7 +362,7 @@ func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*a
 				break
 			}
 			// Stop searching backwards when we encounter a line that isn't blank or a comment.
-			if !isCommentOrBlankLine(sourceFile.Text, int(lineStarts[line])) {
+			if !isCommentOrBlankLine(sourceFile.Text(), int(lineStarts[line])) {
 				break
 			}
 		}
@@ -389,7 +398,7 @@ func SortAndDeduplicateDiagnostics(diagnostics []*ast.Diagnostic) []*ast.Diagnos
 func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, ensureChecked bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
 		if ensureBound {
-			binder.BindSourceFile(sourceFile, p.compilerOptions)
+			binder.BindSourceFile(sourceFile, p.getSourceAffectingCompilerOptions())
 		}
 		return SortAndDeduplicateDiagnostics(getDiagnostics(sourceFile))
 	}
@@ -565,12 +574,13 @@ type EmitResult struct {
 	EmitSkipped  bool
 	Diagnostics  []*ast.Diagnostic      // Contains declaration emit diagnostics
 	EmittedFiles []string               // Array of files the compiler wrote to disk
-	sourceMaps   []*sourceMapEmitResult // Array of sourceMapData if compiler emitted sourcemaps
+	SourceMaps   []*SourceMapEmitResult // Array of sourceMapData if compiler emitted sourcemaps
 }
 
-type sourceMapEmitResult struct {
-	inputSourceFileNames []string // Input source file (which one can use on program to get the file), 1:1 mapping with the sourceMap.sources list
-	sourceMap            *sourcemap.RawSourceMap
+type SourceMapEmitResult struct {
+	InputSourceFileNames []string // Input source file (which one can use on program to get the file), 1:1 mapping with the sourceMap.sources list
+	SourceMap            *sourcemap.RawSourceMap
+	GeneratedFile        string
 }
 
 func (p *Program) Emit(options EmitOptions) *EmitResult {
@@ -627,7 +637,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 			result.EmittedFiles = append(result.EmittedFiles, emitter.emittedFilesList...)
 		}
 		if emitter.sourceMapDataList != nil {
-			result.sourceMaps = append(result.sourceMaps, emitter.sourceMapDataList...)
+			result.SourceMaps = append(result.SourceMaps, emitter.sourceMapDataList...)
 		}
 	}
 	return result
@@ -669,4 +679,15 @@ type FileIncludeReason struct {
 // e.g. extensions that are not yet supported by the port.
 func (p *Program) UnsupportedExtensions() []string {
 	return p.unsupportedExtensions
+}
+
+func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
+	if result := p.jsxRuntimeImportSpecifiers[path]; result != nil {
+		return result.moduleReference, result.specifier
+	}
+	return "", nil
+}
+
+func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
+	return p.importHelpersImportSpecifiers[path]
 }

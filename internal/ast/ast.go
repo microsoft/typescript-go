@@ -209,7 +209,11 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 }
 
 func (n *Node) Symbol() *Symbol {
-	return n.DeclarationData().Symbol
+	data := n.DeclarationData()
+	if data != nil {
+		return data.Symbol
+	}
+	return nil
 }
 
 func (n *Node) LocalSymbol() *Symbol {
@@ -257,7 +261,7 @@ func (n *Node) Text() string {
 	case KindTemplateTail:
 		return n.AsTemplateTail().Text
 	case KindJsxNamespacedName:
-		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().Name().Text()
+		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().name.Text()
 	case KindRegularExpressionLiteral:
 		return n.AsRegularExpressionLiteral().Text
 	}
@@ -332,6 +336,10 @@ func (n *Node) Expression() *Node {
 		return n.AsExportAssignment().Expression
 	case KindDecorator:
 		return n.AsDecorator().Expression
+	case KindJsxExpression:
+		return n.AsJsxExpression().Expression
+	case KindJsxSpreadAttribute:
+		return n.AsJsxSpreadAttribute().Expression
 	}
 	panic("Unhandled case in Node.Expression")
 }
@@ -394,7 +402,7 @@ func (n *Node) TypeParameterList() *NodeList {
 		return n.AsClassExpression().TypeParameters
 	case KindInterfaceDeclaration:
 		return n.AsInterfaceDeclaration().TypeParameters
-	case KindTypeAliasDeclaration:
+	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return n.AsTypeAliasDeclaration().TypeParameters
 	default:
 		funcLike := n.FunctionLikeData()
@@ -428,7 +436,7 @@ func (n *Node) MemberList() *NodeList {
 	case KindMappedType:
 		return n.AsMappedTypeNode().Members
 	}
-	panic("Unhandled case in Node.MemberList")
+	panic("Unhandled case in Node.MemberList: " + n.Kind.String())
 }
 
 func (n *Node) Members() []*Node {
@@ -479,7 +487,7 @@ func (n *Node) Type() *Node {
 		return n.AsAsExpression().Type
 	case KindSatisfiesExpression:
 		return n.AsSatisfiesExpression().Type
-	case KindTypeAliasDeclaration:
+	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return n.AsTypeAliasDeclaration().Type
 	case KindNamedTupleMember:
 		return n.AsNamedTupleMember().Type
@@ -491,6 +499,8 @@ func (n *Node) Type() *Node {
 		return n.AsTemplateLiteralTypeSpan().Type
 	case KindJSDocTypeExpression:
 		return n.AsJSDocTypeExpression().Type
+	case KindJSDocPropertyTag:
+		return n.AsJSDocPropertyTag().TypeExpression
 	case KindJSDocNullableType:
 		return n.AsJSDocNullableType().Type
 	case KindJSDocNonNullableType:
@@ -505,7 +515,7 @@ func (n *Node) Type() *Node {
 			return funcLike.Type
 		}
 	}
-	panic("Unhandled case in Node.Type")
+	panic("Unhandled case in Node.Type: " + n.Kind.String())
 }
 
 func (n *Node) Initializer() *Node {
@@ -692,6 +702,26 @@ func (n *Node) Label() *Node {
 		return n.AsContinueStatement().Label
 	}
 	panic("Unhandled case in Node.Label: " + n.Kind.String())
+}
+
+func (n *Node) Attributes() *Node {
+	switch n.Kind {
+	case KindJsxOpeningElement:
+		return n.AsJsxOpeningElement().Attributes
+	case KindJsxSelfClosingElement:
+		return n.AsJsxSelfClosingElement().Attributes
+	}
+	panic("Unhandled case in Node.Attributes: " + n.Kind.String())
+}
+
+func (n *Node) Children() *NodeList {
+	switch n.Kind {
+	case KindJsxElement:
+		return n.AsJsxElement().Children
+	case KindJsxFragment:
+		return n.AsJsxFragment().Children
+	}
+	panic("Unhandled case in Node.Children: " + n.Kind.String())
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -3357,6 +3387,7 @@ type ClassLikeBase struct {
 	DeclarationBase
 	ExportableBase
 	ModifiersBase
+	LocalsContainerBase
 	compositeNodeBase
 	name            *IdentifierNode // IdentifierNode
 	TypeParameters  *NodeList       // NodeList[*TypeParameterDeclarationNode]. Optional
@@ -3594,13 +3625,17 @@ type TypeAliasDeclaration struct {
 	Type           *TypeNode       // TypeNode
 }
 
-func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
+func (f *NodeFactory) newTypeOrJSTypeAliasDeclaration(kind Kind, modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
 	data := &TypeAliasDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
 	data.Type = typeNode
-	return newNode(KindTypeAliasDeclaration, data, f.hooks)
+	return newNode(kind, data, f.hooks)
+}
+
+func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
+	return f.newTypeOrJSTypeAliasDeclaration(KindTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
 }
 
 func (f *NodeFactory) UpdateTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
@@ -3615,6 +3650,9 @@ func (node *TypeAliasDeclaration) ForEachChild(v Visitor) bool {
 }
 
 func (node *TypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
+	if node.Kind == KindJSTypeAliasDeclaration {
+		return v.Factory.UpdateJSTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
+	}
 	return v.Factory.UpdateTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
 }
 
@@ -3626,6 +3664,25 @@ func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.name }
 
 func IsTypeAliasDeclaration(node *Node) bool {
 	return node.Kind == KindTypeAliasDeclaration
+}
+
+func IsTypeOrJSTypeAliasDeclaration(node *Node) bool {
+	return node.Kind == KindTypeAliasDeclaration || node.Kind == KindJSTypeAliasDeclaration
+}
+
+func (f *NodeFactory) NewJSTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
+	return f.newTypeOrJSTypeAliasDeclaration(KindJSTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
+}
+
+func (f *NodeFactory) UpdateJSTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
+	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
+		return updateNode(f.NewJSTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func IsJSTypeAliasDeclaration(node *Node) bool {
+	return node.Kind == KindJSTypeAliasDeclaration
 }
 
 // EnumMember
@@ -8262,6 +8319,10 @@ func (node *JsxSpreadAttribute) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Expression) | SubtreeContainsJsx
 }
 
+func IsJsxSpreadAttribute(node *Node) bool {
+	return node.Kind == KindJsxSpreadAttribute
+}
+
 // JsxClosingElement
 
 type JsxClosingElement struct {
@@ -8365,6 +8426,10 @@ func (node *JsxText) Clone(f *NodeFactory) *Node {
 
 func (node *JsxText) computeSubtreeFacts() SubtreeFacts {
 	return SubtreeContainsJsx
+}
+
+func IsJsxText(node *Node) bool {
+	return node.Kind == KindJsxText
 }
 
 // SyntaxList
@@ -8557,6 +8622,7 @@ func (node *JSDocLinkCode) Name() *DeclarationName {
 
 type JSDocTypeExpression struct {
 	TypeNodeBase
+	Host *Node
 	Type *TypeNode
 }
 
@@ -8838,8 +8904,7 @@ func (node *JSDocTemplateTag) Clone(f *NodeFactory) *Node {
 
 func (node *JSDocTemplateTag) TypeParameters() *TypeParameterList { return node.typeParameters }
 
-// JSDocParameterTag
-
+// JSDocPropertyTag
 type JSDocPropertyTag struct {
 	JSDocTagBase
 	name           *EntityName
@@ -8891,6 +8956,7 @@ func (node *JSDocPropertyTag) Clone(f *NodeFactory) *Node {
 
 func (node *JSDocPropertyTag) Name() *EntityName { return node.name }
 
+// JSDocParameterTag
 type JSDocParameterTag struct {
 	JSDocTagBase
 	name           *EntityName
@@ -9446,20 +9512,20 @@ func (node *JSDocOverloadTag) Clone(f *NodeFactory) *Node {
 type JSDocTypedefTag struct {
 	JSDocTagBase
 	TypeExpression *Node
-	FullName       *Node
+	name           *IdentifierNode
 }
 
-func (f *NodeFactory) NewJSDocTypedefTag(tagName *IdentifierNode, typeExpression *Node, fullName *Node, comment *NodeList) *Node {
+func (f *NodeFactory) NewJSDocTypedefTag(tagName *IdentifierNode, typeExpression *Node, name *IdentifierNode, comment *NodeList) *Node {
 	data := &JSDocTypedefTag{}
 	data.TagName = tagName
 	data.TypeExpression = typeExpression
-	data.FullName = fullName
+	data.name = name
 	data.Comment = comment
 	return newNode(KindJSDocTypedefTag, data, f.hooks)
 }
 
-func (f *NodeFactory) UpdateJSDocTypedefTag(node *JSDocTypedefTag, tagName *IdentifierNode, typeExpression *Node, fullName *Node, comment *NodeList) *Node {
-	if tagName != node.TagName || typeExpression != node.TypeExpression || fullName != node.FullName || comment != node.Comment {
+func (f *NodeFactory) UpdateJSDocTypedefTag(node *JSDocTypedefTag, tagName *IdentifierNode, typeExpression *Node, fullName *IdentifierNode, comment *NodeList) *Node {
+	if tagName != node.TagName || typeExpression != node.TypeExpression || fullName != node.name || comment != node.Comment {
 		return updateNode(f.NewJSDocTypedefTag(tagName, typeExpression, fullName, comment), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -9467,52 +9533,54 @@ func (f *NodeFactory) UpdateJSDocTypedefTag(node *JSDocTypedefTag, tagName *Iden
 
 func (node *JSDocTypedefTag) ForEachChild(v Visitor) bool {
 	if node.TypeExpression != nil && node.TypeExpression.Kind == KindJSDocTypeLiteral {
-		return visit(v, node.TagName) || visit(v, node.FullName) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
+		return visit(v, node.TagName) || visit(v, node.name) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
 	}
-	return visit(v, node.TagName) || visit(v, node.TypeExpression) || visit(v, node.FullName) || visitNodeList(v, node.Comment)
+	return visit(v, node.TagName) || visit(v, node.TypeExpression) || visit(v, node.name) || visitNodeList(v, node.Comment)
 }
 
 func (node *JSDocTypedefTag) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocTypedefTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNode(node.FullName), v.visitNodes(node.Comment))
+	return v.Factory.UpdateJSDocTypedefTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNode(node.name), v.visitNodes(node.Comment))
 }
 
 func (node *JSDocTypedefTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTypedefTag(node.TagName, node.TypeExpression, node.FullName, node.Comment), node.AsNode(), f.hooks)
+	return cloneNode(f.NewJSDocTypedefTag(node.TagName, node.TypeExpression, node.name, node.Comment), node.AsNode(), f.hooks)
 }
+
+func (node *JSDocTypedefTag) Name() *DeclarationName { return node.name }
 
 // JSDocTypeLiteral
 type JSDocTypeLiteral struct {
 	TypeNodeBase
 	DeclarationBase
-	JsDocPropertyTags []*Node
+	JSDocPropertyTags []*Node
 	IsArrayType       bool
 }
 
-func (f *NodeFactory) NewJSDocTypeLiteral(jsDocPropertyTags []*Node, isArrayType bool) *Node {
+func (f *NodeFactory) NewJSDocTypeLiteral(jsdocPropertyTags []*Node, isArrayType bool) *Node {
 	data := &JSDocTypeLiteral{}
-	data.JsDocPropertyTags = jsDocPropertyTags
+	data.JSDocPropertyTags = jsdocPropertyTags
 	data.IsArrayType = isArrayType
 	return newNode(KindJSDocTypeLiteral, data, f.hooks)
 }
 
-func (f *NodeFactory) UpdateJSDocTypeLiteral(node *JSDocTypeLiteral, jsDocPropertyTags []*Node, isArrayType bool) *Node {
-	if !core.Same(jsDocPropertyTags, node.JsDocPropertyTags) || isArrayType != node.IsArrayType {
-		return updateNode(f.NewJSDocTypeLiteral(jsDocPropertyTags, isArrayType), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateJSDocTypeLiteral(node *JSDocTypeLiteral, jsdocPropertyTags []*Node, isArrayType bool) *Node {
+	if !core.Same(jsdocPropertyTags, node.JSDocPropertyTags) || isArrayType != node.IsArrayType {
+		return updateNode(f.NewJSDocTypeLiteral(jsdocPropertyTags, isArrayType), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *JSDocTypeLiteral) ForEachChild(v Visitor) bool {
-	return visitNodes(v, node.JsDocPropertyTags)
+	return visitNodes(v, node.JSDocPropertyTags)
 }
 
 func (node *JSDocTypeLiteral) VisitEachChild(v *NodeVisitor) *Node {
-	jsdocPropertyTags := core.SameMap(node.JsDocPropertyTags, func(n *Node) *Node { return v.visitNode(n) })
+	jsdocPropertyTags := core.SameMap(node.JSDocPropertyTags, func(n *Node) *Node { return v.visitNode(n) })
 	return v.Factory.UpdateJSDocTypeLiteral(node, jsdocPropertyTags, node.IsArrayType)
 }
 
 func (node *JSDocTypeLiteral) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTypeLiteral(node.JsDocPropertyTags, node.IsArrayType), node.AsNode(), f.hooks)
+	return cloneNode(f.NewJSDocTypeLiteral(node.JSDocPropertyTags, node.IsArrayType), node.AsNode(), f.hooks)
 }
 
 // JSDocSignature
@@ -9612,6 +9680,11 @@ type SourceFileMetaData struct {
 	ImpliedNodeFormat core.ResolutionMode
 }
 
+type CheckJsDirective struct {
+	Enabled bool
+	Range   CommentRange
+}
+
 type SourceFile struct {
 	NodeBase
 	DeclarationBase
@@ -9620,7 +9693,7 @@ type SourceFile struct {
 
 	// Fields set by NewSourceFile
 
-	Text       string
+	text       string
 	fileName   string
 	path       tspath.Path
 	Statements *NodeList // NodeList[*Statement]
@@ -9646,6 +9719,7 @@ type SourceFile struct {
 	ReferencedFiles             []*FileReference
 	TypeReferenceDirectives     []*FileReference
 	LibReferenceDirectives      []*FileReference
+	CheckJsDirective            *CheckJsDirective
 
 	// Fields set by binder
 
@@ -9656,7 +9730,7 @@ type SourceFile struct {
 	EndFlowNode               *FlowNode
 	SymbolCount               int
 	ClassifiableNames         core.Set[string]
-	PatternAmbientModules     []PatternAmbientModule
+	PatternAmbientModules     []*PatternAmbientModule
 
 	// Fields set by LineMap
 
@@ -9674,9 +9748,9 @@ type SourceFile struct {
 
 	// !!!
 
-	CommonJsModuleIndicator *Node
+	CommonJSModuleIndicator *Node
 	ExternalModuleIndicator *Node
-	JsGlobalAugmentations   SymbolTable
+	JSGlobalAugmentations   SymbolTable
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Path, statements *NodeList) *Node {
@@ -9685,12 +9759,16 @@ func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Pa
 	}
 
 	data := &SourceFile{}
-	data.Text = text
+	data.text = text
 	data.fileName = fileName
 	data.path = path
 	data.Statements = statements
 	data.LanguageVersion = core.ScriptTargetLatest
 	return newNode(KindSourceFile, data, f.hooks)
+}
+
+func (node *SourceFile) Text() string {
+	return node.text
 }
 
 func (node *SourceFile) FileName() string {
@@ -9758,14 +9836,14 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.ReferencedFiles = other.ReferencedFiles
 	node.TypeReferenceDirectives = other.TypeReferenceDirectives
 	node.LibReferenceDirectives = other.LibReferenceDirectives
-	node.CommonJsModuleIndicator = other.CommonJsModuleIndicator
+	node.CommonJSModuleIndicator = other.CommonJSModuleIndicator
 	node.ExternalModuleIndicator = other.ExternalModuleIndicator
-	node.JsGlobalAugmentations = other.JsGlobalAugmentations
+	node.JSGlobalAugmentations = other.JSGlobalAugmentations
 	node.Flags |= other.Flags
 }
 
 func (node *SourceFile) Clone(f *NodeFactory) *Node {
-	updated := f.NewSourceFile(node.Text, node.FileName(), node.Path(), node.Statements)
+	updated := f.NewSourceFile(node.Text(), node.FileName(), node.Path(), node.Statements)
 	newFile := updated.AsSourceFile()
 	newFile.copyFrom(node)
 	return cloneNode(updated, node.AsNode(), f.hooks)
@@ -9777,7 +9855,7 @@ func (node *SourceFile) computeSubtreeFacts() SubtreeFacts {
 
 func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementList) *Node {
 	if statements != node.Statements {
-		updated := f.NewSourceFile(node.Text, node.fileName, node.path, statements).AsSourceFile()
+		updated := f.NewSourceFile(node.Text(), node.fileName, node.path, statements).AsSourceFile()
 		updated.copyFrom(node)
 		return updateNode(updated.AsNode(), node.AsNode(), f.hooks)
 	}
@@ -9793,7 +9871,7 @@ func (node *SourceFile) LineMap() []core.TextPos {
 		defer node.lineMapMu.Unlock()
 		lineMap = node.lineMap
 		if lineMap == nil {
-			lineMap = core.ComputeLineStarts(node.Text)
+			lineMap = core.ComputeLineStarts(node.Text())
 			node.lineMap = lineMap
 		}
 	}
@@ -9844,17 +9922,22 @@ func IsSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile
 }
 
+type SourceFileLike interface {
+	Text() string
+	LineMap() []core.TextPos
+}
+
 type CommentRange struct {
 	core.TextRange
-	HasTrailingNewLine bool
 	Kind               Kind
+	HasTrailingNewLine bool
 }
 
 func (f *NodeFactory) NewCommentRange(kind Kind, pos int, end int, hasTrailingNewLine bool) CommentRange {
 	return CommentRange{
 		TextRange:          core.NewTextRange(pos, end),
-		HasTrailingNewLine: hasTrailingNewLine,
 		Kind:               kind,
+		HasTrailingNewLine: hasTrailingNewLine,
 	}
 }
 
@@ -9872,9 +9955,9 @@ type PragmaArgument struct {
 }
 
 type Pragma struct {
-	Name      string
-	Args      map[string]PragmaArgument
-	ArgsRange CommentRange
+	CommentRange
+	Name string
+	Args map[string]PragmaArgument
 }
 
 type PragmaKindFlags = uint8

@@ -16,7 +16,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func (l *LanguageService) ProvideCompletion(
@@ -308,7 +307,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 
 	// The decision to provide completion depends on the contextToken, which is determined through the previousToken.
 	// Note: 'previousToken' (and thus 'contextToken') can be undefined if we are the beginning of the file
-	isJSOnlyLocation := !insideJsDocTagTypeExpression && !insideJsDocImportTag && ast.IsSourceFileJs(file)
+	// isJSOnlyLocation := !insideJsDocTagTypeExpression && !insideJsDocImportTag && ast.IsSourceFileJs(file)
 	previousToken, contextToken := getRelevantTokens(position, file)
 
 	// Find the node where completion is requested on.
@@ -446,7 +445,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 	var symbols []*ast.Symbol
 	var symbolToOriginInfoMap map[ast.SymbolId]*symbolOriginInfo
 	var symbolToSortTextMap map[ast.SymbolId]sortText
-	var importSpecifierResolver any // !!! auto import
+	// var importSpecifierResolver any // !!! import
 	var seenPropertySymbols core.Set[ast.SymbolId]
 	isTypeOnlyLocation := insideJsDocTagTypeExpression || insideJsDocImportTag ||
 		importStatementCompletion != nil && ast.IsTypeOnlyImportOrExportDeclaration(location.Parent) ||
@@ -500,7 +499,6 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 				firstAccessibleSymbolId = ast.GetSymbolId(firstAccessibleSymbol)
 			}
 			if firstAccessibleSymbolId != 0 && core.AddIfAbsent(seenPropertySymbols, firstAccessibleSymbolId) {
-				index := len(symbols)
 				symbols = append(symbols, firstAccessibleSymbol)
 				moduleSymbol := firstAccessibleSymbol.Parent
 				if moduleSymbol == nil ||
@@ -508,15 +506,14 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 					typeChecker.TryGetMemberInModuleExportsAndProperties(firstAccessibleSymbol.Name, moduleSymbol) != firstAccessibleSymbol {
 					symbolToOriginInfoMap[ast.GetSymbolId(symbol)] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindSymbolMemberNoExport, insertQuestionDot)}
 				} else {
-					var fileName string
-					if tspath.IsExternalModuleNameRelative(core.StripQuotes(moduleSymbol.Name)) {
-						fileName = ast.GetSourceFileOfModule(moduleSymbol).FileName()
-					}
-					if importSpecifierResolver == nil { // !!! verify if this is right, depending on the type of importSpecifierResolver
-						// !!!
-						// importSpecifierResolver ||= codefix.createImportSpecifierResolver(sourceFile, program, host, preferences))
-					}
-					// !!!
+					// !!! imports
+					// var fileName string
+					// if tspath.IsExternalModuleNameRelative(core.StripQuotes(moduleSymbol.Name)) {
+					// 	fileName = ast.GetSourceFileOfModule(moduleSymbol).FileName()
+					// }
+					// if importSpecifierResolver == nil {
+					// importSpecifierResolver ||= codefix.createImportSpecifierResolver(sourceFile, program, host, preferences))
+					// }
 					// const { moduleSpecifier } = importSpecifier.getModuleSpecifierForBestExportInfo(
 					// 	[{
 					// 		exportKind: ExportKind.Named,
@@ -769,8 +766,8 @@ func completionInfoFromData(
 	symbols := data.symbols
 	isNewIdentifierLocation := data.isNewIdentifierLocation
 	contextToken := data.contextToken
-	literals := data.literals
-	typeChecker := program.GetTypeChecker()
+	// literals := data.literals // !!! undo
+	// typeChecker := program.GetTypeChecker() // !!! undo
 
 	// Verify if the file is JSX language variant
 	if ast.GetLanguageVariant(file.ScriptKind) == core.LanguageVariantJSX {
@@ -807,19 +804,22 @@ func completionInfoFromData(
 	if data.keywordFilters != KeywordCompletionFiltersNone {
 		keywordCompletions := getKeywordCompletions(
 			data.keywordFilters,
-			!data.insideJsDocTagTypeExpression && ast.IsSourceFileJs(sourceFile))
-		for _, keywordEntry := keywordCompletions {
-			if data.isTypeOnlyLocation && isTypeKeyword(scanner.StringToToken(keywordEntry.name)) ||
+			!data.insideJsDocTagTypeExpression && ast.IsSourceFileJs(file))
+		for _, keywordEntry := range keywordCompletions {
+			if data.isTypeOnlyLocation && isTypeKeyword(scanner.StringToToken(keywordEntry.Label)) ||
 				false { // !!! HERE HERE
 
 			}
-		}	
+		}
 	}
 
-	
 	// !!! exhaustive case completions
 
 	// !!! here
+	// !!! undo
+	if uniqueNames != nil && sortedEntries != nil {
+
+	}
 	return nil
 }
 
@@ -1134,7 +1134,7 @@ func createCompletionItem(
 				// Check if it is `import { ^here as name } from '...'``.
 				// We have to access the scanner here to check if it is `{ ^here as name }`` or `{ ^here, as, name }`.
 				scanner := scanner.NewScanner()
-				scanner.SetText(file.Text)
+				scanner.SetText(file.Text())
 				scanner.ResetPos(position)
 				if !(scanner.Scan() == ast.KindAsKeyword && scanner.Scan() == ast.KindIdentifier) {
 					insertText += " as " + generateIdentifierForArbitraryString(name, languageVersion)
@@ -1242,10 +1242,6 @@ func slicesPtrTo[T any](s []T) *[]T {
 		return nil
 	}
 	return &s
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }
 
 func ptrIsTrue(ptr *bool) bool {
@@ -1557,7 +1553,7 @@ func getDefaultCommitCharacters(isNewIdentifierLocation bool) *[]string {
 }
 
 func isCheckedFile(file *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
-	return !ast.IsSourceFileJs(file) || ast.IsCheckJsEnabledForFile(file, compilerOptions)
+	return !ast.IsSourceFileJs(file) || ast.IsCheckJSEnabledForFile(file, compilerOptions)
 }
 
 func isContextTokenValueLocation(contextToken *ast.Node) bool {
@@ -1670,7 +1666,7 @@ func getNullableSymbolOriginInfoKind(kind symbolOriginInfoKind, insertQuestionDo
 
 func isStaticProperty(symbol *ast.Symbol) bool {
 	return symbol.ValueDeclaration != nil &&
-		checker.GetEffectiveModifierFlags(symbol.ValueDeclaration)&ast.ModifierFlagsStatic != 0 &&
+		symbol.ValueDeclaration.ModifierFlags()&ast.ModifierFlagsStatic != 0 &&
 		ast.IsClassLike(symbol.ValueDeclaration.Parent)
 }
 
@@ -2044,7 +2040,6 @@ func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInser
 	return result
 }
 
-
 func getKeywordCompletions(keywordFilter KeywordCompletionFilters, filterOutTsOnlyKeywords bool) []*lsproto.CompletionItem {
 	if !filterOutTsOnlyKeywords {
 		return getTypescriptKeywordCompletions(keywordFilter)
@@ -2060,4 +2055,10 @@ func getKeywordCompletions(keywordFilter KeywordCompletionFilters, filterOutTsOn
 
 func getTypescriptKeywordCompletions(keywordFilter KeywordCompletionFilters) []*lsproto.CompletionItem {
 	// !!! cache keyword list per filter
+	// !!! here
+	return nil
+}
+
+func isTypeScriptOnlyKeyword(kind ast.Kind) bool {
+	return false // !!! here
 }
