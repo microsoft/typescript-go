@@ -237,11 +237,31 @@ func (s *Service) OnWatchedFilesChanged(changes []lsproto.FileEvent) error {
 		fileName := ls.DocumentURIToFileName(change.Uri)
 		path := s.toPath(fileName)
 		if project, ok := s.configuredProjects[path]; ok {
+			// tsconfig of project
 			if err := s.onConfigFileChanged(project, change.Type); err != nil {
 				return fmt.Errorf("error handling config file change: %w", err)
 			}
+		} else if _, ok := s.openFiles[path]; ok {
+			// open file
+			continue
+		} else if info := s.GetScriptInfoByPath(path); info != nil {
+			// closed existing file
+			if change.Type == lsproto.FileChangeTypeDeleted {
+				s.handleDeletedFile(info, true /*deferredDelete*/)
+			} else {
+				info.deferredDelete = false
+				info.delayReloadNonMixedContentFile()
+				// !!! s.delayUpdateProjectGraphs(info.containingProjects, false /*clearSourceMapperCache*/)
+				// !!! s.handleSourceMapProjects(info)
+			}
 		} else {
-			// !!!
+			// must be wildcard watcher?
+		}
+	}
+
+	for _, project := range s.configuredProjects {
+		if project.updateIfDirty() {
+			s.publishDiagnosticsForOpenFiles(project)
 		}
 	}
 	return nil
@@ -262,8 +282,6 @@ func (s *Service) onConfigFileChanged(project *Project, changeKind lsproto.FileC
 	if !project.deferredClose {
 		project.pendingConfigReload = true
 		project.markAsDirty()
-		project.updateIfDirty()
-		return s.publishDiagnosticsForOpenFiles(project)
 	}
 	return nil
 }
@@ -434,7 +452,7 @@ func (s *Service) getOrCreateScriptInfoWorker(fileName string, path tspath.Path,
 			}
 		}
 
-		info = NewScriptInfo(fileName, path, scriptKind)
+		info = NewScriptInfo(fileName, path, scriptKind, s.host.FS())
 		if fromDisk {
 			info.SetTextFromDisk(fileContent)
 		}
