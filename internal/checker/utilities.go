@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -33,12 +32,7 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 }
 
 func IsIntrinsicJsxName(name string) bool {
-	if len(name) == 0 {
-		return false
-	}
-
-	ch := name[0]
-	return (ch >= 'a' && ch <= 'z') || strings.ContainsRune(name, '-')
+	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
 }
 
 func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
@@ -89,20 +83,16 @@ func hasDecorators(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsDecorator)
 }
 
-func getEffectiveModifierFlags(node *ast.Node) ast.ModifierFlags {
-	return node.ModifierFlags() // !!! Handle JSDoc
+func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
+	return node.ModifierFlags() & flags
 }
 
-func getSelectedEffectiveModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
-	return getEffectiveModifierFlags(node) & flags
+func hasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
+	return node.ModifierFlags()&flags != 0
 }
 
-func hasEffectiveModifier(node *ast.Node, flags ast.ModifierFlags) bool {
-	return getEffectiveModifierFlags(node)&flags != 0
-}
-
-func hasEffectiveReadonlyModifier(node *ast.Node) bool {
-	return hasEffectiveModifier(node, ast.ModifierFlagsReadonly)
+func hasReadonlyModifier(node *ast.Node) bool {
+	return hasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isBindingElementOfBareOrAccessedRequire(node *ast.Node) bool {
@@ -371,7 +361,7 @@ func isShorthandPropertyNameUseSite(useSite *ast.Node) bool {
 
 func isTypeDeclaration(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindTypeParameter, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindEnumDeclaration:
+	case ast.KindTypeParameter, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindEnumDeclaration:
 		return true
 	case ast.KindImportClause:
 		return node.AsImportClause().IsTypeOnly
@@ -391,14 +381,13 @@ func canHaveSymbol(node *ast.Node) bool {
 		ast.KindConstructSignature, ast.KindElementAccessExpression, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindExportAssignment,
 		ast.KindExportDeclaration, ast.KindExportSpecifier, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindFunctionType,
 		ast.KindGetAccessor, ast.KindIdentifier, ast.KindImportClause, ast.KindImportEqualsDeclaration, ast.KindImportSpecifier,
-		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocCallbackTag,
-		ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag, ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindJSDocTypeLiteral,
+		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocSignature, ast.KindJSDocTypeLiteral,
 		ast.KindJsxAttribute, ast.KindJsxAttributes, ast.KindJsxSpreadAttribute, ast.KindMappedType, ast.KindMethodDeclaration,
 		ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindNamedTupleMember, ast.KindNamespaceExport, ast.KindNamespaceExportDeclaration,
 		ast.KindNamespaceImport, ast.KindNewExpression, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindObjectLiteralExpression,
 		ast.KindParameter, ast.KindPropertyAccessExpression, ast.KindPropertyAssignment, ast.KindPropertyDeclaration, ast.KindPropertySignature,
 		ast.KindSetAccessor, ast.KindShorthandPropertyAssignment, ast.KindSourceFile, ast.KindSpreadAssignment, ast.KindStringLiteral,
-		ast.KindTypeAliasDeclaration, ast.KindTypeLiteral, ast.KindTypeParameter, ast.KindVariableDeclaration:
+		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindTypeLiteral, ast.KindTypeParameter, ast.KindVariableDeclaration:
 		return true
 	}
 	return false
@@ -409,10 +398,10 @@ func canHaveLocals(node *ast.Node) bool {
 	case ast.KindArrowFunction, ast.KindBlock, ast.KindCallSignature, ast.KindCaseBlock, ast.KindCatchClause,
 		ast.KindClassStaticBlockDeclaration, ast.KindConditionalType, ast.KindConstructor, ast.KindConstructorType,
 		ast.KindConstructSignature, ast.KindForStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindFunctionDeclaration,
-		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindGetAccessor, ast.KindIndexSignature, ast.KindJSDocCallbackTag,
-		ast.KindJSDocSignature, ast.KindJSDocTypedefTag, ast.KindMappedType,
+		ast.KindFunctionExpression, ast.KindFunctionType, ast.KindGetAccessor, ast.KindIndexSignature,
+		ast.KindJSDocSignature, ast.KindMappedType,
 		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindSetAccessor, ast.KindSourceFile,
-		ast.KindTypeAliasDeclaration:
+		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		return true
 	}
 	return false
@@ -443,6 +432,9 @@ func entityNameToString(name *ast.Node) string {
 	case ast.KindThisKeyword:
 		return "this"
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
+		if ast.NodeIsSynthesized(name) {
+			return name.Text()
+		}
 		return scanner.GetTextOfNode(name)
 	case ast.KindQualifiedName:
 		return entityNameToString(name.AsQualifiedName().Left) + "." + entityNameToString(name.AsQualifiedName().Right)
@@ -525,7 +517,7 @@ func hasExportAssignmentSymbol(moduleSymbol *ast.Symbol) bool {
 }
 
 func isTypeAlias(node *ast.Node) bool {
-	return ast.IsTypeAliasDeclaration(node)
+	return ast.IsTypeOrJSTypeAliasDeclaration(node)
 }
 
 func hasOnlyExpressionInitializer(node *ast.Node) bool {
@@ -596,7 +588,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (hasEffectiveModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (hasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -655,9 +647,11 @@ func (c *Checker) compareNodes(n1, n2 *ast.Node) int {
 	if n2 == nil {
 		return -1
 	}
-	f1 := c.fileIndexMap[ast.GetSourceFileOfNode(n1)]
-	f2 := c.fileIndexMap[ast.GetSourceFileOfNode(n2)]
-	if f1 != f2 {
+	s1 := ast.GetSourceFileOfNode(n1)
+	s2 := ast.GetSourceFileOfNode(n2)
+	if s1 != s2 {
+		f1 := c.fileIndexMap[s1]
+		f2 := c.fileIndexMap[s2]
 		// Order by index of file in the containing program
 		return f1 - f2
 	}
@@ -1245,9 +1239,9 @@ func isValidESSymbolDeclaration(node *ast.Node) bool {
 		return ast.IsVarConst(node) && ast.IsIdentifier(node.AsVariableDeclaration().Name()) && isVariableDeclarationInVariableStatement(node)
 	}
 	if ast.IsPropertyDeclaration(node) {
-		return hasEffectiveReadonlyModifier(node) && ast.HasStaticModifier(node)
+		return hasReadonlyModifier(node) && ast.HasStaticModifier(node)
 	}
-	return ast.IsPropertySignatureDeclaration(node) && hasEffectiveReadonlyModifier(node)
+	return ast.IsPropertySignatureDeclaration(node) && hasReadonlyModifier(node)
 }
 
 func isVariableDeclarationInVariableStatement(node *ast.Node) bool {
@@ -1445,7 +1439,7 @@ func (c *Checker) isMutableLocalVariableDeclaration(declaration *ast.Node) bool 
 
 func isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsInterfaceDeclaration(n) || ast.IsTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
+		return ast.IsInterfaceDeclaration(n) || ast.IsTypeOrJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
 	}) != nil
 }
 
@@ -1669,7 +1663,7 @@ func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
 	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
 }
 
-func getTypeParameterFromJsDoc(node *ast.Node) *ast.Node {
+func getTypeParameterFromJSDoc(node *ast.Node) *ast.Node {
 	name := node.Name().Text()
 	typeParameters := node.Parent.Parent.Parent.TypeParameters()
 	return core.Find(typeParameters, func(p *ast.Node) bool { return p.Name().Text() == name })
@@ -1779,44 +1773,42 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func skipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
 	return options.NoCheck.IsTrue() ||
-		options.SkipLibCheck.IsTrue() && tspath.IsDeclarationFileName(sourceFile.FileName()) ||
+		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
 		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
 
 func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
-	// !!!
-	// if (!!sourceFile.checkJsDirective && sourceFile.checkJsDirective.enabled === false) return false;
+	if sourceFile.CheckJsDirective != nil && !sourceFile.CheckJsDirective.Enabled {
+		return false
+	}
 
 	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
 		return true
 	}
 
-	isJs := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
-	isCheckJs := isJs && isCheckJsEnabledForFile(sourceFile, options)
-	isPlainJs := isPlainJsFile(sourceFile, options.CheckJs)
+	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isCheckJS := isJS && isCheckJSEnabledForFile(sourceFile, options)
+	isPlainJS := isPlainJSFile(sourceFile, options.CheckJs)
 
 	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
 	// - external: files that are added by plugins
-	return isPlainJs || isCheckJs || sourceFile.ScriptKind == core.ScriptKindDeferred
+	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
 }
 
-func isCheckJsEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
-	// !!!
-	// if sourceFile.CheckJsDirective != nil {
-	// 	return sourceFile.CheckJsDirective.Enabled
-	// }
+func isCheckJSEnabledForFile(sourceFile *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
+	if sourceFile.CheckJsDirective != nil {
+		return sourceFile.CheckJsDirective.Enabled
+	}
 	return compilerOptions.CheckJs == core.TSTrue
 }
 
-func isPlainJsFile(file *ast.SourceFile, checkJs core.Tristate) bool {
-	// !!!
-	// return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
-	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && checkJs == core.TSUnknown
+func isPlainJSFile(file *ast.SourceFile, checkJs core.Tristate) bool {
+	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {
@@ -2098,7 +2090,7 @@ var getFeatureMap = sync.OnceValue(func() map[string][]FeatureMapEntry {
 })
 
 func rangeOfTypeParameters(sourceFile *ast.SourceFile, typeParameters *ast.NodeList) core.TextRange {
-	return core.NewTextRange(typeParameters.Pos()-1, min(len(sourceFile.Text), scanner.SkipTrivia(sourceFile.Text, typeParameters.End())+1))
+	return core.NewTextRange(typeParameters.Pos()-1, min(len(sourceFile.Text()), scanner.SkipTrivia(sourceFile.Text(), typeParameters.End())+1))
 }
 
 func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {

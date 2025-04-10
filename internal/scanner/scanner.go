@@ -322,7 +322,7 @@ func (s *Scanner) ResetPos(pos int) {
 	s.tokenStart = pos
 }
 
-func (scanner *Scanner) SetSkipJsDocLeadingAsterisks(skip bool) {
+func (scanner *Scanner) SetSkipJSDocLeadingAsterisks(skip bool) {
 	if skip {
 		scanner.skipJSDocLeadingAsterisks += 1
 	} else {
@@ -2229,7 +2229,7 @@ func scanShebangTrivia(text string, pos int) int {
 
 func GetScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s := NewScanner()
-	s.text = sourceFile.Text
+	s.text = sourceFile.Text()
 	s.pos = pos
 	s.languageVersion = sourceFile.LanguageVersion
 	s.languageVariant = sourceFile.LanguageVariant
@@ -2247,7 +2247,7 @@ func GetRangeOfTokenAtPosition(sourceFile *ast.SourceFile, pos int) core.TextRan
 	return core.NewTextRange(s.tokenStart, s.pos)
 }
 
-func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJsDoc bool) int {
+func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc bool) int {
 	// With nodes that have no width (i.e. 'Missing' nodes), we actually *don't*
 	// want to skip trivia because this will launch us forward to the next token.
 	if ast.NodeIsMissing(node) {
@@ -2256,15 +2256,15 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJsDoc 
 
 	if ast.IsJSDocNode(node) || node.Kind == ast.KindJsxText {
 		// JsxText cannot actually contain comments, even though the scanner will think it sees comments
-		return SkipTriviaEx(sourceFile.Text, node.Pos(), &SkipTriviaOptions{StopAtComments: true})
+		return SkipTriviaEx(sourceFile.Text(), node.Pos(), &SkipTriviaOptions{StopAtComments: true})
 	}
 
-	if includeJsDoc && len(node.JSDoc(sourceFile)) > 0 {
-		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJsDoc*/)
+	if includeJSDoc && len(node.JSDoc(sourceFile)) > 0 {
+		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJSDoc*/)
 	}
 
 	return SkipTriviaEx(
-		sourceFile.Text,
+		sourceFile.Text(),
 		node.Pos(),
 		&SkipTriviaOptions{InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0},
 	)
@@ -2287,21 +2287,21 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	return low - 1
 }
 
-func GetLineStarts(sourceFile *ast.SourceFile) []core.TextPos {
+func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 	return sourceFile.LineMap()
 }
 
-func GetLineAndCharacterOfPosition(sourceFile *ast.SourceFile, pos int) (line int, character int) {
+func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetLineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
-	character = utf8.RuneCountInString(sourceFile.Text[lineMap[line]:pos])
+	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
 	return
 }
 
 func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	pos := int(GetLineStarts(sourceFile)[line])
 	for {
-		ch, size := utf8.DecodeRuneInString(sourceFile.Text[pos:])
+		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
 			return pos
 		}
