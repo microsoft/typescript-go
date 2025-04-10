@@ -6413,7 +6413,7 @@ func getCommentPragmas(f *ast.NodeFactory, sourceText string) (pragmas []ast.Pra
 }
 
 func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
-	if commentRange.Kind == ast.KindSingleLineCommentTrivia && match(text, 0, "//") {
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
 		pos := 2
 		tripleSlash := match(text, pos, "/")
 		if tripleSlash {
@@ -6471,6 +6471,7 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 		}
 	}
 	if commentRange.Kind == ast.KindMultiLineCommentTrivia {
+		text = text[:len(text)-2]
 		pos := 2
 		var pragmas []ast.Pragma
 		for {
