@@ -356,7 +356,7 @@ func (api *API) getOrCreateScriptInfo(fileName string, path tspath.Path, scriptK
 	if !ok {
 		return nil
 	}
-	info = project.NewScriptInfo(fileName, path, scriptKind)
+	info = project.NewScriptInfo(fileName, path, scriptKind, api.host.FS())
 	info.SetTextFromDisk(content)
 	api.scriptInfosMu.Lock()
 	defer api.scriptInfosMu.Unlock()

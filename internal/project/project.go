@@ -19,6 +19,10 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -output=project_stringer_generated.go
+const (
+	fileGlobPattern          = "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
+	recursiveFileGlobPattern = "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
+)
 
 var projectNamer = &namer{}
 
@@ -62,7 +66,8 @@ type Project struct {
 	deferredClose             bool
 	pendingConfigReload       bool
 
-	currentDirectory string
+	comparePathsOptions tspath.ComparePathsOptions
+	currentDirectory    string
 	// Inferred projects only
 	rootPath tspath.Path
 
@@ -70,10 +75,11 @@ type Project struct {
 	configFilePath tspath.Path
 	// rootFileNames was a map from Path to { NormalizedPath, ScriptInfo? } in the original code.
 	// But the ProjectService owns script infos, so it's not clear why there was an extra pointer.
-	rootFileNames   *collections.OrderedMap[tspath.Path, string]
-	compilerOptions *core.CompilerOptions
-	languageService *ls.LanguageService
-	program         *compiler.Program
+	rootFileNames     *collections.OrderedMap[tspath.Path, string]
+	compilerOptions   *core.CompilerOptions
+	parsedCommandLine *tsoptions.ParsedCommandLine
+	languageService   *ls.LanguageService
+	program           *compiler.Program
 
 	watchedGlobs []string
 	watcherID    WatcherHandle
@@ -102,6 +108,10 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 		kind:             kind,
 		currentDirectory: currentDirectory,
 		rootFileNames:    &collections.OrderedMap[tspath.Path, string]{},
+	}
+	project.comparePathsOptions = tspath.ComparePathsOptions{
+		CurrentDirectory:          currentDirectory,
+		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 	}
 	project.languageService = ls.NewLanguageService(project)
 	project.markAsDirty()
@@ -213,25 +223,28 @@ func (p *Project) LanguageService() *ls.LanguageService {
 }
 
 func (p *Project) getWatchGlobs() []string {
-	// !!!
 	if p.kind == KindConfigured {
-		return []string{
-			p.configFileName,
+		wildcardDirectories := p.parsedCommandLine.WildcardDirectories()
+		result := make([]string, 0, len(wildcardDirectories)+1)
+		result = append(result, p.configFileName)
+		for dir, recursive := range wildcardDirectories {
+			result = append(result, fmt.Sprintf("%s/%s", dir, core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
 		}
+		return result
 	}
 	return nil
 }
 
 func (p *Project) updateWatchers() {
-	watchHost := p.host.Client()
-	if watchHost == nil {
+	client := p.host.Client()
+	if client == nil {
 		return
 	}
 
 	globs := p.getWatchGlobs()
 	if !slices.Equal(p.watchedGlobs, globs) {
 		if p.watcherID != "" {
-			if err := watchHost.UnwatchFiles(p.watcherID); err != nil {
+			if err := client.UnwatchFiles(p.watcherID); err != nil {
 				p.log(fmt.Sprintf("Failed to unwatch files: %v", err))
 			}
 		}
@@ -248,7 +261,7 @@ func (p *Project) updateWatchers() {
 					Kind: &kind,
 				}
 			}
-			if watcherID, err := watchHost.WatchFiles(watchers); err != nil {
+			if watcherID, err := client.WatchFiles(watchers); err != nil {
 				p.log(fmt.Sprintf("Failed to watch files: %v", err))
 			} else {
 				p.watcherID = watcherID
@@ -284,6 +297,7 @@ func (p *Project) markAsDirty() {
 	}
 }
 
+// updateIfDirty returns true if the project was updated.
 func (p *Project) updateIfDirty() bool {
 	// !!! p.invalidateResolutionsOfFailedLookupLocations()
 	return p.dirty && p.updateGraph()
@@ -437,6 +451,7 @@ func (p *Project) LoadConfig() error {
 			}, "    ", "  ")),
 		)
 
+		p.parsedCommandLine = parsedCommandLine
 		p.compilerOptions = parsedCommandLine.CompilerOptions()
 		p.setRootFiles(parsedCommandLine.FileNames())
 	} else {
