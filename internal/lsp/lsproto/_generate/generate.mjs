@@ -59,17 +59,19 @@ function writeLine(s) {
 }
 
 /**
- * @param {string | undefined} doc
- * @param {string | undefined} proposed,
- * @param {string | undefined} since,
- * @param {string | undefined} sinceTags,
- * @param {string | undefined} deprecated
+ * @param {{
+ * 		doc?: string,
+ * 		proposed?: boolean,
+ * 		since?: string,
+ * 		sinceTags?: string[],
+ * 		deprecated?: string
+ * }} data
  */
-function writeDocumentation(doc, proposed, since, sinceTags, deprecated) {
-    writeDescription(doc);
-    writeSince(since, sinceTags);
-    writeProposed(proposed);
-    writeDeprecation(deprecated, doc);
+function writeDocumentation(data) {
+    writeDescription(data.doc);
+    writeSince(data.since, data.sinceTags);
+    writeProposed(data.proposed);
+    writeDeprecation(data.deprecated, data.doc);
 }
 
 /**
@@ -143,22 +145,22 @@ function writeSinceLines(sinceLines) {
  * @param {string | undefined} doc
  */
 function writeDeprecation(deprecated, doc) {
-    const inlineDeprication = "is deprecated @since";
+    const inlineDeprecation = "is deprecated @since";
 
     if (deprecated) {
         writeLine("// ");
         write("// Deprecated: ");
         writeLine(deprecated);
     }
-    else if (doc?.includes(inlineDeprication)) {
+    else if (doc?.includes(inlineDeprecation)) {
         const lines = doc.split("\n");
-        const matchingLine = lines.find(x => x.includes(inlineDeprication));
+        const matchingLine = lines.find(x => x.includes(inlineDeprecation));
 
         if (matchingLine) {
-            const depricationMessage = matchingLine.split(" @since")[0];
+            const deprecationMessage = matchingLine.split(" @since")[0];
             writeLine("// ");
             write("// Deprecated: ");
-            writeLine(depricationMessage);
+            writeLine(deprecationMessage);
         }
     }
 }
@@ -372,7 +374,7 @@ writeLine("");
 writeLine("// Structures\n");
 
 for (const t of model.structures) {
-    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
+    writeDocumentation(t);
 
     writeLine("type " + t.name + " struct {");
 
@@ -394,7 +396,7 @@ for (const t of model.structures) {
     }
 
     for (const p of t.properties) {
-        writeDocumentation(p.documentation, p.proposed, p.since, p.sinceTags, p.deprecated);
+        writeDocumentation(p);
 
         write(titleCase(p.name) + " ");
 
@@ -419,7 +421,7 @@ for (const t of model.structures) {
 writeLine("// Enumerations\n");
 
 for (const t of model.enumerations) {
-    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
+    writeDocumentation(t);
 
     /** @type {string} */
     let underlyingType;
@@ -448,7 +450,7 @@ for (const t of model.enumerations) {
 
     writeLine("const (");
     for (const v of t.values) {
-        writeDocumentation(v.documentation, v.proposed, v.since, v.sinceTags, v.deprecated);
+        writeDocumentation(v);
 
         write(t.name);
         write(v.name);
@@ -475,7 +477,7 @@ for (const t of model.enumerations) {
 writeLine("// Type aliases\n");
 
 for (const t of model.typeAliases) {
-    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
+    writeDocumentation(t);
 
     if (t.name === "LSPAny") {
         writeLine("type LSPAny = any\n");
@@ -518,7 +520,7 @@ writeLine("}");
 writeLine("// Requests");
 writeLine("const (");
 for (const t of model.requests) {
-    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
+    writeDocumentation(t);
     writeLine("Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"');
 }
 writeLine(")\n");
@@ -526,7 +528,7 @@ writeLine(")\n");
 writeLine("// Notifications");
 writeLine("const (");
 for (const t of model.notifications) {
-    writeDocumentation(t.documentation, t.proposed, t.since, t.sinceTags, t.deprecated);
+    writeDocumentation(t);
     writeLine("Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"');
 }
 writeLine(")\n");
