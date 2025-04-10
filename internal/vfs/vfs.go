@@ -2,14 +2,15 @@ package vfs
 
 import (
 	"io/fs"
+
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 //go:generate go tool github.com/matryer/moq -fmt goimports -out vfsmock/mock_generated.go -pkg vfsmock . FS
 
 // FS is a file system abstraction.
 type FS interface {
-	// UseCaseSensitiveFileNames returns true if the file system is case-sensitive.
-	UseCaseSensitiveFileNames() bool
+	CaseSensitivity() tspath.CaseSensitivity
 
 	// FileExists returns true if the file exists.
 	FileExists(path string) bool

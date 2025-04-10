@@ -159,7 +159,7 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 	}
 
 	cwd := sys.GetCurrentDirectory()
-	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()), configFileText)
+	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, tspath.ToPath(configFileName, cwd, sys.FS().CaseSensitivity()), configFileText)
 	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
 	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
 	return tsoptions.ParseJsonSourceFileConfigFileContent(

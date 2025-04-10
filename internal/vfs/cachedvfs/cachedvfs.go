@@ -2,6 +2,7 @@ package cachedvfs
 
 import (
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
@@ -82,8 +83,8 @@ func (fsys *FS) Stat(path string) vfs.FileInfo {
 	return ret
 }
 
-func (fsys *FS) UseCaseSensitiveFileNames() bool {
-	return fsys.fs.UseCaseSensitiveFileNames()
+func (fsys *FS) CaseSensitivity() tspath.CaseSensitivity {
+	return fsys.fs.CaseSensitivity()
 }
 
 func (fsys *FS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {

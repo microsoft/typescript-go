@@ -221,7 +221,7 @@ func TestProgram(t *testing.T) {
 		t.Run(testCase.testName, func(t *testing.T) {
 			t.Parallel()
 			libPrefix := bundled.LibPath() + "/"
-			fs := vfstest.FromMap[any](nil, false /*useCaseSensitiveFileNames*/)
+			fs := vfstest.FromMap[any](nil, tspath.CaseInsensitive)
 			fs = bundled.WrapFS(fs)
 
 			for _, testFile := range testCase.files {
@@ -256,7 +256,7 @@ func BenchmarkNewProgram(b *testing.B) {
 
 	for _, testCase := range programTestCases {
 		b.Run(testCase.testName, func(b *testing.B) {
-			fs := vfstest.FromMap[any](nil, false /*useCaseSensitiveFileNames*/)
+			fs := vfstest.FromMap[any](nil, tspath.CaseInsensitive)
 			fs = bundled.WrapFS(fs)
 
 			for _, testFile := range testCase.files {

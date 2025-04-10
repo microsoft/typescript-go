@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
@@ -240,7 +241,7 @@ type projectServiceHost struct {
 }
 
 func newProjectServiceHost(files map[string]string) *projectServiceHost {
-	fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
+	fs := bundled.WrapFS(vfstest.FromMap(files, tspath.CaseInsensitive))
 	host := &projectServiceHost{
 		fs:                 fs,
 		defaultLibraryPath: bundled.LibPath(),
@@ -277,7 +278,7 @@ func (p *projectServiceHost) NewLine() string {
 }
 
 func (p *projectServiceHost) replaceFS(files map[string]string) {
-	p.fs = bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
+	p.fs = bundled.WrapFS(vfstest.FromMap(files, tspath.CaseInsensitive))
 }
 
 var _ project.ServiceHost = (*projectServiceHost)(nil)

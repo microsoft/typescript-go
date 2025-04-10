@@ -240,7 +240,7 @@ func getIncludeBasePath(absolute string) string {
 }
 
 // getBasePaths computes the unique non-wildcard base paths amongst the provided include patterns.
-func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool) []string {
+func getBasePaths(path string, includes []string, caseSensitivity tspath.CaseSensitivity) []string {
 	// Storage for our results in the form of literal paths (e.g. the paths as written by the user).
 	basePaths := []string{path}
 
@@ -261,7 +261,7 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 		}
 
 		// Sort the offsets array using either the literal or canonical path representations.
-		stringComparer := stringutil.GetStringComparer(!useCaseSensitiveFileNames)
+		stringComparer := stringutil.GetStringComparer(caseSensitivity == tspath.CaseInsensitive)
 		sort.SliceStable(includeBasePaths, func(i, j int) bool {
 			return stringComparer(includeBasePaths[i], includeBasePaths[j]) < 0
 		})
@@ -270,7 +270,7 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 		// subpath of an existing base path
 		for _, includeBasePath := range includeBasePaths {
 			if core.Every(basePaths, func(basepath string) bool {
-				return !tspath.ContainsPath(basepath, includeBasePath, tspath.ComparePathsOptions{CurrentDirectory: path, UseCaseSensitiveFileNames: !useCaseSensitiveFileNames})
+				return !tspath.ContainsPath(basepath, includeBasePath, tspath.ComparePathsOptions{CurrentDirectory: path, CaseSensitivity: caseSensitivity.Invert()})
 			}) {
 				basePaths = append(basePaths, includeBasePath)
 			}
@@ -282,7 +282,7 @@ func getBasePaths(path string, includes []string, useCaseSensitiveFileNames bool
 
 // getFileMatcherPatterns generates file matching patterns based on the provided path,
 // includes, excludes, and other parameters. path is the directory of the tsconfig.json file.
-func getFileMatcherPatterns(path string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string) FileMatcherPatterns {
+func getFileMatcherPatterns(path string, excludes []string, includes []string, caseSensitivity tspath.CaseSensitivity, currentDirectory string) FileMatcherPatterns {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 	absolutePath := tspath.CombinePaths(currentDirectory, path)
@@ -292,7 +292,7 @@ func getFileMatcherPatterns(path string, excludes []string, includes []string, u
 		includeFilePattern:      getRegularExpressionForWildcard(includes, absolutePath, "files"),
 		includeDirectoryPattern: getRegularExpressionForWildcard(includes, absolutePath, "directories"),
 		excludePattern:          getRegularExpressionForWildcard(excludes, absolutePath, "exclude"),
-		basePaths:               getBasePaths(path, includes, useCaseSensitiveFileNames),
+		basePaths:               getBasePaths(path, includes, caseSensitivity),
 	}
 }
 
@@ -306,9 +306,9 @@ var (
 	regexp2Cache   = make(map[regexp2CacheKey]*regexp2.Regexp)
 )
 
-func getRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp2.Regexp {
+func getRegexFromPattern(pattern string, caseSensitivity tspath.CaseSensitivity) *regexp2.Regexp {
 	flags := regexp2.ECMAScript
-	if !useCaseSensitiveFileNames {
+	if caseSensitivity == tspath.CaseInsensitive {
 		flags |= regexp2.IgnoreCase
 	}
 	opts := regexp2.RegexOptions(flags)
@@ -345,14 +345,14 @@ func getRegexFromPattern(pattern string, useCaseSensitiveFileNames bool) *regexp
 }
 
 type visitor struct {
-	includeFileRegexes        []*regexp2.Regexp
-	excludeRegex              *regexp2.Regexp
-	includeDirectoryRegex     *regexp2.Regexp
-	extensions                []string
-	useCaseSensitiveFileNames bool
-	host                      vfs.FS
-	visited                   core.Set[string]
-	results                   [][]string
+	includeFileRegexes    []*regexp2.Regexp
+	excludeRegex          *regexp2.Regexp
+	includeDirectoryRegex *regexp2.Regexp
+	extensions            []string
+	caseSensitivity       tspath.CaseSensitivity
+	host                  vfs.FS
+	visited               core.Set[string]
+	results               [][]string
 }
 
 func (v *visitor) visitDirectory(
@@ -360,7 +360,7 @@ func (v *visitor) visitDirectory(
 	absolutePath string,
 	depth *int,
 ) {
-	canonicalPath := tspath.GetCanonicalFileName(absolutePath, v.useCaseSensitiveFileNames)
+	canonicalPath := tspath.GetCanonicalFileName(absolutePath, v.caseSensitivity)
 	if v.visited.Has(canonicalPath) {
 		return
 	}
@@ -406,22 +406,22 @@ func (v *visitor) visitDirectory(
 }
 
 // path is the directory of the tsconfig.json
-func matchFiles(path string, extensions []string, excludes []string, includes []string, useCaseSensitiveFileNames bool, currentDirectory string, depth *int, host vfs.FS) []string {
+func matchFiles(path string, extensions []string, excludes []string, includes []string, caseSensitivity tspath.CaseSensitivity, currentDirectory string, depth *int, host vfs.FS) []string {
 	path = tspath.NormalizePath(path)
 	currentDirectory = tspath.NormalizePath(currentDirectory)
 
-	patterns := getFileMatcherPatterns(path, excludes, includes, useCaseSensitiveFileNames, currentDirectory)
+	patterns := getFileMatcherPatterns(path, excludes, includes, caseSensitivity, currentDirectory)
 	var includeFileRegexes []*regexp2.Regexp
 	if patterns.includeFilePatterns != nil {
-		includeFileRegexes = core.Map(patterns.includeFilePatterns, func(pattern string) *regexp2.Regexp { return getRegexFromPattern(pattern, useCaseSensitiveFileNames) })
+		includeFileRegexes = core.Map(patterns.includeFilePatterns, func(pattern string) *regexp2.Regexp { return getRegexFromPattern(pattern, caseSensitivity) })
 	}
 	var includeDirectoryRegex *regexp2.Regexp
 	if patterns.includeDirectoryPattern != "" {
-		includeDirectoryRegex = getRegexFromPattern(patterns.includeDirectoryPattern, useCaseSensitiveFileNames)
+		includeDirectoryRegex = getRegexFromPattern(patterns.includeDirectoryPattern, caseSensitivity)
 	}
 	var excludeRegex *regexp2.Regexp
 	if patterns.excludePattern != "" {
-		excludeRegex = getRegexFromPattern(patterns.excludePattern, useCaseSensitiveFileNames)
+		excludeRegex = getRegexFromPattern(patterns.excludePattern, caseSensitivity)
 	}
 
 	// Associate an array of results with each include regex. This keeps results in order of the "include" order.
@@ -437,13 +437,13 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 		results = [][]string{{}}
 	}
 	v := visitor{
-		useCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		host:                      host,
-		includeFileRegexes:        includeFileRegexes,
-		excludeRegex:              excludeRegex,
-		includeDirectoryRegex:     includeDirectoryRegex,
-		extensions:                extensions,
-		results:                   results,
+		caseSensitivity:       caseSensitivity,
+		host:                  host,
+		includeFileRegexes:    includeFileRegexes,
+		excludeRegex:          excludeRegex,
+		includeDirectoryRegex: includeDirectoryRegex,
+		extensions:            extensions,
+		results:               results,
 	}
 	for _, basePath := range patterns.basePaths {
 		v.visitDirectory(basePath, tspath.CombinePaths(currentDirectory, basePath), depth)
@@ -453,5 +453,5 @@ func matchFiles(path string, extensions []string, excludes []string, includes []
 }
 
 func readDirectory(host vfs.FS, currentDir string, path string, extensions []string, excludes []string, includes []string, depth *int) []string {
-	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
+	return matchFiles(path, extensions, excludes, includes, host.CaseSensitivity(), currentDir, depth, host)
 }

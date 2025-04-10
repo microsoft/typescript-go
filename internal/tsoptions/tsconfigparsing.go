@@ -818,7 +818,7 @@ func getExtendedConfig(
 	extendedConfigCache map[tspath.Path]*ExtendedConfigCacheEntry,
 	result *extendsResult,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
-	path := tspath.ToPath(extendedConfigPath, host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())
+	path := tspath.ToPath(extendedConfigPath, host.GetCurrentDirectory(), host.FS().CaseSensitivity())
 	var extendedResult *TsConfigSourceFile
 	var extendedConfig *parsedTsconfig
 	var errors []*ast.Diagnostic
@@ -918,8 +918,8 @@ func parseConfig(
 								} else {
 									if relativeDifference == "" {
 										t := tspath.ComparePathsOptions{
-											UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-											CurrentDirectory:          host.GetCurrentDirectory(),
+											CaseSensitivity:  host.FS().CaseSensitivity(),
+											CurrentDirectory: host.GetCurrentDirectory(),
 										}
 										relativeDifference = tspath.ConvertToRelativePath(basePath, t)
 									}
@@ -1432,7 +1432,7 @@ func getFileNamesFromConfigSpecs(
 ) []string {
 	extraFileExtensions = []fileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
-	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
+	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.CaseSensitivity()) }
 	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
 	// file map with a possibly case insensitive key. We use this map later when when including
 	// wildcard paths.
@@ -1469,7 +1469,7 @@ func getFileNamesFromConfigSpecs(
 					includeFilePatterns := core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
 					if includeFilePatterns != nil {
 						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
-							return getRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
+							return getRegexFromPattern(pattern, host.CaseSensitivity())
 						})
 					} else {
 						jsonOnlyIncludeRegexes = nil

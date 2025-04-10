@@ -19,7 +19,7 @@ func BenchmarkBind(b *testing.B) {
 			f.SkipIfNotExist(b)
 
 			fileName := tspath.GetNormalizedAbsolutePath(f.Path(), "/")
-			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
+			path := tspath.ToPath(fileName, "/", osvfs.FS().CaseSensitivity())
 			sourceText := f.ReadFile(b)
 
 			sourceFiles := make([]*ast.SourceFile, b.N)

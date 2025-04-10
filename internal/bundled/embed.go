@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
@@ -37,8 +38,8 @@ func wrapFS(fs vfs.FS) vfs.FS {
 	return &wrappedFS{fs: fs}
 }
 
-func (vfs *wrappedFS) UseCaseSensitiveFileNames() bool {
-	return vfs.fs.UseCaseSensitiveFileNames()
+func (vfs *wrappedFS) CaseSensitivity() tspath.CaseSensitivity {
+	return vfs.fs.CaseSensitivity()
 }
 
 func (vfs *wrappedFS) FileExists(path string) bool {

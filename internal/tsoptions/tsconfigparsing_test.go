@@ -141,8 +141,8 @@ func TestParseConfigFileTextToJson(t *testing.T) {
 				diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, errors, &diagnosticwriter.FormattingOptions{
 					NewLine: "\n",
 					ComparePathsOptions: tspath.ComparePathsOptions{
-						CurrentDirectory:          "/",
-						UseCaseSensitiveFileNames: true,
+						CurrentDirectory: "/",
+						CaseSensitivity:  tspath.CaseSensitive,
 					},
 				})
 				baselineContent.WriteString("\n")
@@ -554,7 +554,7 @@ func TestParseJsonConfigFileContent(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with json api.js", rec.noSubmoduleBaseline, rec.input, func(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 				configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
-				path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
+				path := tspath.ToPath(config.configFileName, basePath, host.FS().CaseSensitivity())
 				parsed, _ := tsoptions.ParseConfigFileTextToJson(configFileName, path, config.jsonText)
 				return tsoptions.ParseJsonConfigFileContent(
 					parsed,
@@ -579,7 +579,7 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 			t.Parallel()
 			baselineParseConfigWith(t, rec.title+" with jsonSourceFile api.js", rec.noSubmoduleBaseline, rec.input, func(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 				configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
-				path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
+				path := tspath.ToPath(config.configFileName, basePath, host.FS().CaseSensitivity())
 				parsed := parser.ParseJSONText(configFileName, path, config.jsonText)
 				tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
 					SourceFile: parsed,
@@ -636,8 +636,8 @@ func baselineParseConfigWith(t *testing.T, baselineFileName string, noSubmoduleB
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(&baselineContent, parsedConfigFileContent.Errors, &diagnosticwriter.FormattingOptions{
 			NewLine: "\r\n",
 			ComparePathsOptions: tspath.ComparePathsOptions{
-				CurrentDirectory:          basePath,
-				UseCaseSensitiveFileNames: true,
+				CurrentDirectory: basePath,
+				CaseSensitivity:  tspath.CaseSensitive,
 			},
 		})
 		baselineContent.WriteString("\n")
@@ -697,7 +697,7 @@ func TestParseSrcCompiler(t *testing.T) {
 
 	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(t, ok)
-	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
+	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.CaseSensitivity())
 	parsed := parser.ParseJSONText(tsconfigFileName, tsconfigPath, jsonText)
 
 	if len(parsed.Diagnostics()) > 0 {
@@ -763,8 +763,8 @@ func TestParseSrcCompiler(t *testing.T) {
 		}
 
 		relativePaths = append(relativePaths, tspath.ConvertToRelativePath(fileName, tspath.ComparePathsOptions{
-			CurrentDirectory:          compilerDir,
-			UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
+			CurrentDirectory: compilerDir,
+			CaseSensitivity:  fs.CaseSensitivity(),
 		}))
 	}
 
@@ -862,7 +862,7 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 
 	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(b, ok)
-	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
+	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.CaseSensitivity())
 	parsed := parser.ParseJSONText(tsconfigFileName, tsconfigPath, jsonText)
 
 	b.ReportAllocs()

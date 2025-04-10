@@ -124,7 +124,7 @@ func NewResolver(
 ) *Resolver {
 	return &Resolver{
 		host:            host,
-		caches:          newCaches(host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames(), options),
+		caches:          newCaches(host.GetCurrentDirectory(), host.FS().CaseSensitivity(), options),
 		compilerOptions: options,
 	}
 }
@@ -1028,8 +1028,8 @@ func (r *resolutionState) createResolvedTypeReferenceDirective(resolved *resolve
 func (r *resolutionState) getOriginalAndResolvedFileName(fileName string) (string, string) {
 	resolvedFileName := r.realPath(fileName)
 	comparePathsOptions := tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: r.resolver.host.FS().UseCaseSensitiveFileNames(),
-		CurrentDirectory:          r.resolver.host.GetCurrentDirectory(),
+		CaseSensitivity:  r.resolver.host.FS().CaseSensitivity(),
+		CurrentDirectory: r.resolver.host.GetCurrentDirectory(),
 	}
 	if tspath.ComparePaths(fileName, resolvedFileName, comparePathsOptions) == 0 {
 		// If the fileName and realpath are differing only in casing, prefer fileName
@@ -1345,7 +1345,7 @@ func (r *resolutionState) loadNodeModuleFromDirectoryWorker(ext extensions, cand
 		onlyRecordFailuresForPackageFile bool
 		versionPaths                     packagejson.VersionPaths
 	)
-	if packageInfo.Exists() && tspath.ComparePaths(candidate, packageInfo.PackageDirectory, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: r.resolver.host.FS().UseCaseSensitiveFileNames()}) == 0 {
+	if packageInfo.Exists() && tspath.ComparePaths(candidate, packageInfo.PackageDirectory, tspath.ComparePathsOptions{CaseSensitivity: r.resolver.host.FS().CaseSensitivity()}) == 0 {
 		if file, ok := r.getPackageFile(ext, packageInfo); ok {
 			packageFile = file
 			onlyRecordFailuresForPackageFile = !r.resolver.host.FS().DirectoryExists(tspath.GetDirectoryPath(file))

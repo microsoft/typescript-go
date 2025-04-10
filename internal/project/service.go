@@ -58,21 +58,21 @@ type Service struct {
 }
 
 func NewService(host ServiceHost, options ServiceOptions) *Service {
-	options.Logger.Info(fmt.Sprintf("currentDirectory:: %s useCaseSensitiveFileNames:: %t", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()))
+	options.Logger.Info(fmt.Sprintf("currentDirectory:: %s useCaseSensitiveFileNames:: %t", host.GetCurrentDirectory(), host.FS().CaseSensitivity() == tspath.CaseSensitive))
 	options.Logger.Info("libs Location:: " + options.DefaultLibraryPath)
 	return &Service{
 		host:    host,
 		options: options,
 		comparePathsOptions: tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
+			CaseSensitivity:  host.FS().CaseSensitivity(),
+			CurrentDirectory: host.GetCurrentDirectory(),
 		},
 
 		configuredProjects: make(map[tspath.Path]*Project),
 
 		documentRegistry: newDocumentRegistry(tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
+			CaseSensitivity:  host.FS().CaseSensitivity(),
+			CurrentDirectory: host.GetCurrentDirectory(),
 		}),
 		scriptInfos:                 make(map[tspath.Path]*ScriptInfo),
 		openFiles:                   make(map[tspath.Path]string),
@@ -522,7 +522,7 @@ func (s *Service) createInferredProject(currentDirectory string, projectRootPath
 }
 
 func (s *Service) toPath(fileName string) tspath.Path {
-	return tspath.ToPath(fileName, s.host.GetCurrentDirectory(), s.host.FS().UseCaseSensitiveFileNames())
+	return tspath.ToPath(fileName, s.host.GetCurrentDirectory(), s.host.FS().CaseSensitivity())
 }
 
 func (s *Service) loadConfiguredProject(project *Project) {

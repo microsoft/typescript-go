@@ -157,8 +157,8 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 			getSourceRoot(options),
 			e.getSourceMapDirectory(options, jsFilePath, sourceFile),
 			tspath.ComparePathsOptions{
-				UseCaseSensitiveFileNames: e.host.UseCaseSensitiveFileNames(),
-				CurrentDirectory:          e.host.GetCurrentDirectory(),
+				CaseSensitivity:  e.host.CaseSensitivity(),
+				CurrentDirectory: e.host.GetCurrentDirectory(),
 			},
 		)
 	}
@@ -219,12 +219,12 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 	return !data.SkippedDtsWrite
 }
 
-func getSourceFilePathInNewDir(fileName string, newDirPath string, currentDirectory string, commonSourceDirectory string, useCaseSensitiveFileNames bool) string {
+func getSourceFilePathInNewDir(fileName string, newDirPath string, currentDirectory string, commonSourceDirectory string, caseSensitivity tspath.CaseSensitivity) string {
 	sourceFilePath := tspath.GetNormalizedAbsolutePath(fileName, currentDirectory)
 	commonSourceDirectory = tspath.EnsureTrailingDirectorySeparator(commonSourceDirectory)
 	isSourceFileInCommonSourceDirectory := tspath.ContainsPath(commonSourceDirectory, sourceFilePath, tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		CurrentDirectory:          currentDirectory,
+		CaseSensitivity:  caseSensitivity,
+		CurrentDirectory: currentDirectory,
 	})
 	if isSourceFileInCommonSourceDirectory {
 		sourceFilePath = sourceFilePath[len(commonSourceDirectory):]
@@ -242,7 +242,7 @@ func getOwnEmitOutputFilePath(fileName string, host EmitHost, extension string) 
 			compilerOptions.OutDir,
 			currentDirectory,
 			host.CommonSourceDirectory(),
-			host.UseCaseSensitiveFileNames(),
+			host.CaseSensitivity(),
 		))
 	} else {
 		emitOutputFilePathWithoutExtension = tspath.RemoveFileExtension(fileName)
@@ -286,7 +286,7 @@ func (e *emitter) getSourceMapDirectory(mapOptions *core.CompilerOptions, filePa
 				sourceMapDir,
 				e.host.GetCurrentDirectory(),
 				e.host.CommonSourceDirectory(),
-				e.host.UseCaseSensitiveFileNames(),
+				e.host.CaseSensitivity(),
 			))
 		}
 		if tspath.GetRootLength(sourceMapDir) == 0 {
@@ -317,7 +317,7 @@ func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMa
 				sourceMapDir,
 				e.host.GetCurrentDirectory(),
 				e.host.CommonSourceDirectory(),
-				e.host.UseCaseSensitiveFileNames(),
+				e.host.CaseSensitivity(),
 			))
 		}
 		if tspath.GetRootLength(sourceMapDir) == 0 {
@@ -329,8 +329,8 @@ func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMa
 					tspath.CombinePaths(sourceMapDir, sourceMapFile),        // this is where user expects to see sourceMap
 					/*isAbsolutePathAnUrl*/ true,
 					tspath.ComparePathsOptions{
-						UseCaseSensitiveFileNames: e.host.UseCaseSensitiveFileNames(),
-						CurrentDirectory:          e.host.GetCurrentDirectory(),
+						CaseSensitivity:  e.host.CaseSensitivity(),
+						CurrentDirectory: e.host.GetCurrentDirectory(),
 					},
 				),
 			)
@@ -362,8 +362,8 @@ func getOutputPathsFor(sourceFile *ast.SourceFile, host EmitHost, forceDtsEmit b
 	// If json file emits to the same location skip writing it, if emitDeclarationOnly skip writing it
 	isJsonEmittedToSameLocation := isJsonFile &&
 		tspath.ComparePaths(sourceFile.FileName(), ownOutputFilePath, tspath.ComparePathsOptions{
-			CurrentDirectory:          host.GetCurrentDirectory(),
-			UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
+			CurrentDirectory: host.GetCurrentDirectory(),
+			CaseSensitivity:  host.CaseSensitivity(),
 		}) == 0
 	paths := &outputPaths{}
 	if options.EmitDeclarationOnly != core.TSTrue && !isJsonEmittedToSameLocation {

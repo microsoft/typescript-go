@@ -6,6 +6,7 @@ package vfsmock
 import (
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
@@ -19,6 +20,9 @@ var _ vfs.FS = &FSMock{}
 //
 //		// make and configure a mocked vfs.FS
 //		mockedFS := &FSMock{
+//			CaseSensitivityFunc: func() tspath.CaseSensitivity {
+//				panic("mock out the CaseSensitivity method")
+//			},
 //			DirectoryExistsFunc: func(path string) bool {
 //				panic("mock out the DirectoryExists method")
 //			},
@@ -40,9 +44,6 @@ var _ vfs.FS = &FSMock{}
 //			StatFunc: func(path string) vfs.FileInfo {
 //				panic("mock out the Stat method")
 //			},
-//			UseCaseSensitiveFileNamesFunc: func() bool {
-//				panic("mock out the UseCaseSensitiveFileNames method")
-//			},
 //			WalkDirFunc: func(root string, walkFn vfs.WalkDirFunc) error {
 //				panic("mock out the WalkDir method")
 //			},
@@ -56,6 +57,9 @@ var _ vfs.FS = &FSMock{}
 //
 //	}
 type FSMock struct {
+	// CaseSensitivityFunc mocks the CaseSensitivity method.
+	CaseSensitivityFunc func() tspath.CaseSensitivity
+
 	// DirectoryExistsFunc mocks the DirectoryExists method.
 	DirectoryExistsFunc func(path string) bool
 
@@ -77,9 +81,6 @@ type FSMock struct {
 	// StatFunc mocks the Stat method.
 	StatFunc func(path string) vfs.FileInfo
 
-	// UseCaseSensitiveFileNamesFunc mocks the UseCaseSensitiveFileNames method.
-	UseCaseSensitiveFileNamesFunc func() bool
-
 	// WalkDirFunc mocks the WalkDir method.
 	WalkDirFunc func(root string, walkFn vfs.WalkDirFunc) error
 
@@ -88,6 +89,9 @@ type FSMock struct {
 
 	// calls tracks calls to the methods.
 	calls struct {
+		// CaseSensitivity holds details about calls to the CaseSensitivity method.
+		CaseSensitivity []struct {
+		}
 		// DirectoryExists holds details about calls to the DirectoryExists method.
 		DirectoryExists []struct {
 			// Path is the path argument value.
@@ -123,9 +127,6 @@ type FSMock struct {
 			// Path is the path argument value.
 			Path string
 		}
-		// UseCaseSensitiveFileNames holds details about calls to the UseCaseSensitiveFileNames method.
-		UseCaseSensitiveFileNames []struct {
-		}
 		// WalkDir holds details about calls to the WalkDir method.
 		WalkDir []struct {
 			// Root is the root argument value.
@@ -143,16 +144,43 @@ type FSMock struct {
 			WriteByteOrderMark bool
 		}
 	}
-	lockDirectoryExists           sync.RWMutex
-	lockFileExists                sync.RWMutex
-	lockGetAccessibleEntries      sync.RWMutex
-	lockReadFile                  sync.RWMutex
-	lockRealpath                  sync.RWMutex
-	lockRemove                    sync.RWMutex
-	lockStat                      sync.RWMutex
-	lockUseCaseSensitiveFileNames sync.RWMutex
-	lockWalkDir                   sync.RWMutex
-	lockWriteFile                 sync.RWMutex
+	lockCaseSensitivity      sync.RWMutex
+	lockDirectoryExists      sync.RWMutex
+	lockFileExists           sync.RWMutex
+	lockGetAccessibleEntries sync.RWMutex
+	lockReadFile             sync.RWMutex
+	lockRealpath             sync.RWMutex
+	lockRemove               sync.RWMutex
+	lockStat                 sync.RWMutex
+	lockWalkDir              sync.RWMutex
+	lockWriteFile            sync.RWMutex
+}
+
+// CaseSensitivity calls CaseSensitivityFunc.
+func (mock *FSMock) CaseSensitivity() tspath.CaseSensitivity {
+	if mock.CaseSensitivityFunc == nil {
+		panic("FSMock.CaseSensitivityFunc: method is nil but FS.CaseSensitivity was just called")
+	}
+	callInfo := struct {
+	}{}
+	mock.lockCaseSensitivity.Lock()
+	mock.calls.CaseSensitivity = append(mock.calls.CaseSensitivity, callInfo)
+	mock.lockCaseSensitivity.Unlock()
+	return mock.CaseSensitivityFunc()
+}
+
+// CaseSensitivityCalls gets all the calls that were made to CaseSensitivity.
+// Check the length with:
+//
+//	len(mockedFS.CaseSensitivityCalls())
+func (mock *FSMock) CaseSensitivityCalls() []struct {
+} {
+	var calls []struct {
+	}
+	mock.lockCaseSensitivity.RLock()
+	calls = mock.calls.CaseSensitivity
+	mock.lockCaseSensitivity.RUnlock()
+	return calls
 }
 
 // DirectoryExists calls DirectoryExistsFunc.
@@ -376,33 +404,6 @@ func (mock *FSMock) StatCalls() []struct {
 	mock.lockStat.RLock()
 	calls = mock.calls.Stat
 	mock.lockStat.RUnlock()
-	return calls
-}
-
-// UseCaseSensitiveFileNames calls UseCaseSensitiveFileNamesFunc.
-func (mock *FSMock) UseCaseSensitiveFileNames() bool {
-	if mock.UseCaseSensitiveFileNamesFunc == nil {
-		panic("FSMock.UseCaseSensitiveFileNamesFunc: method is nil but FS.UseCaseSensitiveFileNames was just called")
-	}
-	callInfo := struct {
-	}{}
-	mock.lockUseCaseSensitiveFileNames.Lock()
-	mock.calls.UseCaseSensitiveFileNames = append(mock.calls.UseCaseSensitiveFileNames, callInfo)
-	mock.lockUseCaseSensitiveFileNames.Unlock()
-	return mock.UseCaseSensitiveFileNamesFunc()
-}
-
-// UseCaseSensitiveFileNamesCalls gets all the calls that were made to UseCaseSensitiveFileNames.
-// Check the length with:
-//
-//	len(mockedFS.UseCaseSensitiveFileNamesCalls())
-func (mock *FSMock) UseCaseSensitiveFileNamesCalls() []struct {
-} {
-	var calls []struct {
-	}
-	mock.lockUseCaseSensitiveFileNames.RLock()
-	calls = mock.calls.UseCaseSensitiveFileNames
-	mock.lockUseCaseSensitiveFileNames.RUnlock()
 	return calls
 }
 
