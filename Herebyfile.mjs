@@ -338,7 +338,7 @@ export const testAPI = task({
 
 export const testAll = task({
     name: "test:all",
-    dependencies: [buildAPITests],
+    dependencies: [tsgo, buildAPITests],
     run: async () => {
         // Prevent interleaving by running these directly instead of in parallel.
         await runTests();
