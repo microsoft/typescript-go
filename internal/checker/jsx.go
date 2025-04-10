@@ -377,10 +377,10 @@ func (c *Checker) resolveJsxOpeningLikeElement(node *ast.Node, candidatesOutArra
 		result := c.getIntrinsicAttributesTypeFromJsxOpeningLikeElement(node)
 		fakeSignature := c.createSignatureForJSXIntrinsic(node, result)
 		c.checkTypeAssignableToAndOptionallyElaborate(c.checkExpressionWithContextualType(node.Attributes(), c.getEffectiveFirstArgumentForJsxSignature(fakeSignature, node), nil /*inferenceContext*/, CheckModeNormal), result, node.TagName(), node.Attributes(), nil, nil)
-		typeArgumentList := node.TypeArgumentList()
-		if typeArgumentList != nil {
-			c.checkSourceElements(typeArgumentList.Nodes)
-			c.diagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), node.TypeArgumentList().Loc, diagnostics.Expected_0_type_arguments_but_got_1, 0, len(typeArgumentList.Nodes)))
+		typeArguments := node.TypeArguments()
+		if len(typeArguments) != 0 {
+			c.checkSourceElements(typeArguments)
+			c.diagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), node.TypeArgumentList().Loc, diagnostics.Expected_0_type_arguments_but_got_1, 0, len(typeArguments)))
 		}
 		return fakeSignature
 	}
