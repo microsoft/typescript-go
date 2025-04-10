@@ -182,7 +182,7 @@ func TestService(t *testing.T) {
 					"noLib": true,
 					"module": "nodenext",
 					"strict": true,
-					"noCheck" true // Added
+					"noCheck": true // Added
 				},
 			}`
 			filesCopy["/home/projects/TS/p2/src/index.ts"] = `import { x } from "../../p1/src/x";`
