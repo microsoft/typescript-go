@@ -22,14 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
       - uses: ./.github/actions/setup-go
         with:
           cache-name: build
 
-      - run: npm ci
-
-      - run: npx hereby build
+      - run: go test -c -o=/dev/null ./...
 
   extension:
     runs-on: ubuntu-latest
@@ -42,6 +39,9 @@ jobs:
       - run: npm run extension:build
 
   test:
+    needs:
+      - build
+
     strategy:
       fail-fast: false
       matrix:
@@ -129,6 +129,9 @@ jobs:
           path: testdata/baselines/local
 
   lint:
+    needs:
+      - build
+
     strategy:
       fail-fast: false
       matrix:
@@ -173,6 +176,9 @@ jobs:
       - run: npx hereby check:format
 
   generate:
+    needs:
+      - build
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -194,6 +200,9 @@ jobs:
       - run: git diff --staged --exit-code --stat
 
   tidy:
+    needs:
+      - build
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -205,6 +214,9 @@ jobs:
       - run: go -C ./_tools mod tidy -diff
 
   smoke:
+    needs:
+      - build
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
