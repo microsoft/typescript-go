@@ -60,7 +60,7 @@ function writeLine(s) {
 
 /**
  * @param {{
- * 		doc?: string,
+ * 		documentation?: string,
  * 		proposed?: boolean,
  * 		since?: string,
  * 		sinceTags?: string[],
@@ -68,10 +68,10 @@ function writeLine(s) {
  * }} data
  */
 function writeDocumentation(data) {
-    writeDescription(data.doc);
+    writeDescription(data.documentation);
     writeSince(data.since, data.sinceTags);
     writeProposed(data.proposed);
-    writeDeprecation(data.deprecated, data.doc);
+    writeDeprecation(data.deprecated, data.documentation);
 }
 
 /**
