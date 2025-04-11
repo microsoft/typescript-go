@@ -52,13 +52,13 @@ jobs:
       matrix:
         values:
           - os: ubuntu-latest
-            coverage: true
+            coverage: ${{ github.event_name != 'merge_group' }}
             skip: false
           - os: windows-latest
-            coverage: true
+            coverage: ${{ github.event_name != 'merge_group' }}
             skip: ${{ github.event_name == 'merge_group' }}
           - os: macos-latest
-            coverage: true
+            coverage: ${{ github.event_name != 'merge_group' }}
             skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'no submodules'
@@ -75,7 +75,7 @@ jobs:
           - os: ubuntu-latest
             name: 'concurrent test programs'
             concurrent-test-programs: true
-            coverage: true
+            coverage: ${{ github.event_name != 'merge_group' }}
             skip: ${{ github.event_name == 'merge_group' }}
         exclude:
           - values:
