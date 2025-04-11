@@ -62,7 +62,6 @@ jobs:
           - os: ubuntu-latest
             name: 'no submodules'
             no-submodules: true
-            skip: ${{ github.event_name == 'merge_group' }}
           - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=mariner-2.0']
             name: 'race mode'
             race: true
@@ -70,12 +69,10 @@ jobs:
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
-            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'concurrent test programs'
             concurrent-test-programs: true
             coverage: true
-            skip: ${{ github.event_name == 'merge_group' }}
         exclude:
           - values:
               skip: true
@@ -270,7 +267,6 @@ jobs:
       - run: go -C ./_tools run ./cmd/checkmodpaths $PWD
 
   baselines:
-    if: ${{ github.event_name != 'merge_group' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
