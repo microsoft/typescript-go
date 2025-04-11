@@ -133,7 +133,7 @@ jobs:
       - run: git add .
 
       - uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
-        if: ${{ always() && matrix.values.coverage }}
+        if: ${{ always() && matrix.values.coverage && github.event_name != 'merge_group' }}
         with:
           use_oidc: true
           name: ${{ matrix.values.name || matrix.values.os }}
