@@ -65,7 +65,6 @@ jobs:
           - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=mariner-2.0']
             name: 'race mode'
             race: true
-            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
