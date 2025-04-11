@@ -326,13 +326,16 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ always() }}
     needs:
+      - baselines
       - build
-      - test
-      - lint
+      - extension
       - format
       - generate
-      - tidy
+      - lint
+      - misc
       - smoke
+      - test
+      - tidy
 
     steps:
       - name: Check required jobs
