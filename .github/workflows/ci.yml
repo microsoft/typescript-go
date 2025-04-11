@@ -75,10 +75,10 @@ jobs:
             name: 'concurrent test programs'
             concurrent-test-programs: true
             coverage: true
-          exclude:
-            values:
-              skip-if-merge-queue:
-                - ${{ github.event_name != 'merge_group' }}
+        exclude:
+          values:
+            skip-if-merge-queue:
+              - ${{ github.event_name != 'merge_group' }}
 
     name: test (${{ matrix.values.name || matrix.values.os }})
 
