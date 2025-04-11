@@ -602,7 +602,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 	}
 	// We have to check that openingElement of the parent is the one we are visiting as this may not be true for selfClosingElement
 	if parent != nil && parent.AsJsxElement().OpeningElement == openingLikeElement && len(getSemanticJsxChildren(parent.AsJsxElement().Children.Nodes)) != 0 {
-		var childTypes []*Type = c.checkJsxChildren(parent, checkMode)
+		var childTypes = c.checkJsxChildren(parent, checkMode)
 		if !hasSpreadAnyType && jsxChildrenPropertyName != ast.InternalSymbolNameMissing && jsxChildrenPropertyName != "" {
 			// Error if there is a attribute named "children" explicitly specified and children element.
 			// This is because children element will overwrite the value from attributes.
