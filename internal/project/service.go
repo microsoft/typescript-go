@@ -255,7 +255,12 @@ func (s *Service) OnWatchedFilesChanged(changes []lsproto.FileEvent) error {
 				// !!! s.handleSourceMapProjects(info)
 			}
 		} else {
-			// must be wildcard watcher?
+			if change.Type != lsproto.FileChangeTypeCreated {
+				panic("unexpected file change type")
+			}
+			for _, project := range s.configuredProjects {
+				project.onWatchedFileCreated(fileName)
+			}
 		}
 	}
 
