@@ -25,7 +25,8 @@ func (l *LanguageService) ProvideCompletion(
 	fileName string,
 	position int,
 	context *lsproto.CompletionContext,
-	clientOptions *lsproto.CompletionClientCapabilities) *lsproto.CompletionList {
+	clientOptions *lsproto.CompletionClientCapabilities,
+) *lsproto.CompletionList {
 	program, file := l.getProgramAndFile(fileName)
 	node := astnav.GetTouchingPropertyName(file, position)
 	if node.Kind == ast.KindSourceFile {
@@ -1358,7 +1359,8 @@ func shouldIncludeSymbol(
 	closestSymbolDeclaration *ast.Declaration,
 	file *ast.SourceFile,
 	typeChecker *checker.Checker,
-	compilerOptions *core.CompilerOptions) bool {
+	compilerOptions *core.CompilerOptions,
+) bool {
 	allFlags := symbol.Flags
 	location := data.location
 	if !ast.IsSourceFile(location) {
@@ -2113,18 +2115,20 @@ func compareCompletionEntries(entryInSlice *lsproto.CompletionItem, entryToInser
 	return result
 }
 
-var keywordCompletionsCache = collections.SyncMap[KeywordCompletionFilters, []*lsproto.CompletionItem]{}
-var allKeywordCompletions = sync.OnceValue(func() []*lsproto.CompletionItem {
-	result := make([]*lsproto.CompletionItem, 0, ast.KindLastKeyword-ast.KindFirstKeyword+1)
-	for i := ast.KindFirstKeyword; i <= ast.KindLastKeyword; i++ {
-		result = append(result, &lsproto.CompletionItem{
-			Label:    scanner.TokenToString(i),
-			Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
-			SortText: ptrTo(string(sortTextGlobalsOrKeywords)),
-		})
-	}
-	return result
-})
+var (
+	keywordCompletionsCache = collections.SyncMap[KeywordCompletionFilters, []*lsproto.CompletionItem]{}
+	allKeywordCompletions   = sync.OnceValue(func() []*lsproto.CompletionItem {
+		result := make([]*lsproto.CompletionItem, 0, ast.KindLastKeyword-ast.KindFirstKeyword+1)
+		for i := ast.KindFirstKeyword; i <= ast.KindLastKeyword; i++ {
+			result = append(result, &lsproto.CompletionItem{
+				Label:    scanner.TokenToString(i),
+				Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
+				SortText: ptrTo(string(sortTextGlobalsOrKeywords)),
+			})
+		}
+		return result
+	})
+)
 
 func getKeywordCompletions(keywordFilter KeywordCompletionFilters, filterOutTsOnlyKeywords bool) []*lsproto.CompletionItem {
 	if !filterOutTsOnlyKeywords {

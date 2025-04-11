@@ -265,7 +265,7 @@ func FindPrecedingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
 			return 1
 		}
 		if node.End()+1 == position {
-			//prevSubtree = node
+			// prevSubtree = node
 			return 0
 		}
 		return 0
@@ -309,7 +309,7 @@ func FindPrecedingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
 		if nodeList != nil && len(nodeList.Nodes) > 0 && next == nil {
 			if nodeList.End() == position {
 				left = nodeList.End()
-				//prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
+				// prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
 			} else if nodeList.End() <= position {
 				left = nodeList.End()
 			} else if nodeList.Pos() <= position {

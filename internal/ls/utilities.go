@@ -19,7 +19,6 @@ func isInString(file *ast.SourceFile, position int, previousToken *ast.Node) boo
 	}
 
 	if previousToken != nil && isStringTextContainingNode(previousToken) {
-
 	}
 
 	return false

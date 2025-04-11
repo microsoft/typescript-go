@@ -29773,6 +29773,7 @@ func (c *Checker) GetAccessibleSymbolChain(
 	symbol *ast.Symbol,
 	enclosingDeclaration *ast.Node,
 	meaning ast.SymbolFlags,
-	useOnlyExternalAliasing bool) []*ast.Symbol {
+	useOnlyExternalAliasing bool,
+) []*ast.Symbol {
 	return nil
 }
