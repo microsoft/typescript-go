@@ -170,12 +170,12 @@ jobs:
           - values:
               skip: true
 
-    name: lint (${{ matrix.name || matrix.os }})
+    name: lint (${{ matrix.values.name || matrix.values.os }})
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.values.os }}
 
     env:
-      TSGO_HEREBY_NOEMBED: ${{ (matrix.noembed && 'true') || 'false' }}
+      TSGO_HEREBY_NOEMBED: ${{ (matrix.values.noembed && 'true') || 'false' }}
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -183,7 +183,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
         with:
-          cache-name: lint${{ (matrix.noembed && '-noembed') || ''}}
+          cache-name: lint${{ (matrix.values.noembed && '-noembed') || ''}}
 
       - run: npm ci
 
