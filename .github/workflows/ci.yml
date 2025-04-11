@@ -53,31 +53,33 @@ jobs:
         values:
           - os: ubuntu-latest
             coverage: true
+            skip: false
           - os: windows-latest
             coverage: true
-            skip-if-merge-queue: true
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: macos-latest
             coverage: true
-            skip-if-merge-queue: true
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'no submodules'
             no-submodules: true
-            skip-if-merge-queue: true
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=mariner-2.0']
             name: 'race mode'
             race: true
-            skip-if-merge-queue: true
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
-            skip-if-merge-queue: true
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'concurrent test programs'
             concurrent-test-programs: true
             coverage: true
+            skip: ${{ github.event_name == 'merge_group' }}
         exclude:
           - values:
-              skip-if-merge-queue: ${{ github.event_name == 'merge_group' }}
+              skip: true
 
     name: test (${{ matrix.values.name || matrix.values.os }})
 
