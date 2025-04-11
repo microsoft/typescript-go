@@ -77,7 +77,7 @@ jobs:
             coverage: true
         exclude:
           - values:
-              skip-if-merge-queue: ${{ github.event_name != 'merge_group' }}
+              skip-if-merge-queue: ${{ github.event_name == 'merge_group' }}
 
     name: test (${{ matrix.values.name || matrix.values.os }})
 
