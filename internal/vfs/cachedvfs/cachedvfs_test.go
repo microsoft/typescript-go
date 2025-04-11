@@ -3,6 +3,7 @@ package cachedvfs_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfsmock"
@@ -13,7 +14,7 @@ import (
 func createMockFS() *vfsmock.FSMock {
 	return vfsmock.Wrap(vfstest.FromMap(map[string]string{
 		"/some/path/file.txt": "hello world",
-	}, true))
+	}, tspath.CaseSensitive))
 }
 
 func TestDirectoryExists(t *testing.T) {
@@ -133,21 +134,21 @@ func TestReadFile(t *testing.T) {
 	assert.Equal(t, 3, len(underlying.ReadFileCalls()))
 }
 
-func TestUseCaseSensitiveFileNames(t *testing.T) {
+func TestCaseSensitivity(t *testing.T) {
 	t.Parallel()
 
-	underlying := createMockFS()
+	underlying := createMockFS()yet
 	cached := cachedvfs.From(underlying)
 
-	cached.UseCaseSensitiveFileNames()
-	assert.Equal(t, 1, len(underlying.UseCaseSensitiveFileNamesCalls()))
+	cached.CaseSensitivity()
+	assert.Equal(t, 1, len(underlying.CaseSensitivityCalls()))
 
-	cached.UseCaseSensitiveFileNames()
-	assert.Equal(t, 2, len(underlying.UseCaseSensitiveFileNamesCalls()))
+	cached.CaseSensitivity()
+	assert.Equal(t, 2, len(underlying.CaseSensitivityCalls()))
 
 	cached.ClearCache()
-	cached.UseCaseSensitiveFileNames()
-	assert.Equal(t, 3, len(underlying.UseCaseSensitiveFileNamesCalls()))
+	cached.CaseSensitivity()
+	assert.Equal(t, 3, len(underlying.CaseSensitivityCalls()))
 }
 
 func TestWalkDir(t *testing.T) {
