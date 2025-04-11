@@ -6612,7 +6612,6 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 					}
 				}
 			}
-
 		case "jsx", "jsxfrag", "jsximportsource", "jsxruntime":
 			// Nothing to do here
 		default:
