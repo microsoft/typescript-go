@@ -2768,3 +2768,12 @@ func IsThisInTypeQuery(node *Node) bool {
 func IsLet(node *Node) bool {
 	return GetCombinedNodeFlags(node)&NodeFlagsBlockScoped == NodeFlagsLet
 }
+
+func IsClassMemberModifier(token Kind) bool {
+	return IsParameterPropertyModifier(token) || token == KindStaticKeyword ||
+		token == KindOverrideKeyword || token == KindAccessorKeyword
+}
+
+func IsParameterPropertyModifier(kind Kind) bool {
+	return ModifierToFlag(kind)&ModifierFlagsParameterPropertyModifier != 0
+}

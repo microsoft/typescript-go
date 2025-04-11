@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -314,7 +315,80 @@ func probablyUsesSemicolons(file *ast.SourceFile) bool {
 	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
 }
 
-// !!! here
+var typeKeywords []ast.Kind = []ast.Kind{
+	ast.KindAnyKeyword,
+	ast.KindAssertsKeyword,
+	ast.KindBigIntKeyword,
+	ast.KindBooleanKeyword,
+	ast.KindFalseKeyword,
+	ast.KindInferKeyword,
+	ast.KindKeyOfKeyword,
+	ast.KindNeverKeyword,
+	ast.KindNullKeyword,
+	ast.KindNumberKeyword,
+	ast.KindObjectKeyword,
+	ast.KindReadonlyKeyword,
+	ast.KindStringKeyword,
+	ast.KindSymbolKeyword,
+	ast.KindTypeOfKeyword,
+	ast.KindTrueKeyword,
+	ast.KindVoidKeyword,
+	ast.KindUndefinedKeyword,
+	ast.KindUniqueKeyword,
+	ast.KindUnknownKeyword,
+}
+
 func isTypeKeyword(kind ast.Kind) bool {
-	return false
+	return slices.Contains(typeKeywords, kind)
+}
+
+// Returns a map of all names in the file to their positions.
+// !!! cache this
+func getNameTable(file *ast.SourceFile) map[string]int {
+	nameTable := make(map[string]int)
+	var walk func(node *ast.Node) bool
+
+	walk = func(node *ast.Node) bool {
+		if ast.IsIdentifier(node) && !isTagName(node) && node.Text() != "" ||
+			ast.IsStringOrNumericLiteralLike(node) && literalIsName(node) ||
+			ast.IsPrivateIdentifier(node) {
+			text := node.Text()
+			if _, ok := nameTable[text]; ok {
+				nameTable[text] = -1
+			} else {
+				nameTable[text] = node.Pos()
+			}
+		}
+
+		node.ForEachChild(walk)
+		jsdocNodes := node.JSDoc(file)
+		for _, jsdoc := range jsdocNodes {
+			jsdoc.ForEachChild(walk)
+		}
+		return false
+	}
+
+	file.ForEachChild(walk)
+	return nameTable
+}
+
+// We want to store any numbers/strings if they were a name that could be
+// related to a declaration.  So, if we have 'import x = require("something")'
+// then we want 'something' to be in the name table.  Similarly, if we have
+// "a['propname']" then we want to store "propname" in the name table.
+func literalIsName(node *ast.NumericOrStringLikeLiteral) bool {
+	return ast.IsDeclarationName(node) ||
+		node.Parent.Kind == ast.KindExternalModuleReference ||
+		isArgumentOfElementAccessExpression(node) ||
+		ast.IsLiteralComputedPropertyDeclarationName(node)
+}
+
+func isArgumentOfElementAccessExpression(node *ast.Node) bool {
+	return node != nil && node.Parent != nil &&
+		node.Parent.Kind == ast.KindElementAccessExpression &&
+		node.Parent.AsElementAccessExpression().ArgumentExpression == node
+}
+
+func isTagName(node *ast.Node) bool {
+	return node.Parent != nil && ast.IsJSDocTag(node.Parent) && node.Parent.TagName() == node
 }

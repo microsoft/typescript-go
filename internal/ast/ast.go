@@ -724,6 +724,18 @@ func (n *Node) Children() *NodeList {
 	panic("Unhandled case in Node.Children: " + n.Kind.String())
 }
 
+func (n *Node) ModuleSpecifier() *Expression {
+	switch n.Kind {
+	case KindImportDeclaration:
+		return n.AsImportDeclaration().ModuleSpecifier
+	case KindExportDeclaration:
+		return n.AsExportDeclaration().ModuleSpecifier
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().ModuleSpecifier
+	}
+	panic("Unhandled case in Node.ModuleSpecifier: " + n.Kind.String())
+}
+
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
 // `descendant` or one of its ancestors is not parented except when that node is a `SourceFile`.
 func (n *Node) Contains(descendant *Node) bool {
@@ -1633,6 +1645,7 @@ type (
 	StringLiteralLike           = Node // StringLiteral | NoSubstitutionTemplateLiteral
 	AnyValidImportOrReExport    = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
 	ValidImportTypeNode         = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
+	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
 )
 
 // Aliases for node singletons
@@ -9407,7 +9420,7 @@ func (node *JSDocThisTag) Clone(f *NodeFactory) *Node {
 type JSDocImportTag struct {
 	JSDocTagBase
 	ImportClause    *Declaration
-	ModuleSpecifier *Node
+	ModuleSpecifier *Expression
 	Attributes      *Node
 }
 

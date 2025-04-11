@@ -390,7 +390,7 @@ func (s *Server) handleCompletion(req *lsproto.RequestMessage) error {
 		file.FileName(),
 		pos,
 		params.Context,
-		s.initializeParams.Capabilities.TextDocument.Completion.CompletionItem)
+		s.initializeParams.Capabilities.TextDocument.Completion)
 	return s.sendResult(req.ID, list)
 }
 
