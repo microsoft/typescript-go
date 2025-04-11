@@ -10,696 +10,218 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (c *Checker) getTypePrecedence(t *Type) ast.TypePrecedence {
-	if t.alias == nil {
-		switch {
-		case t.flags&TypeFlagsConditional != 0:
-			return ast.TypePrecedenceConditional
-		case t.flags&TypeFlagsIntersection != 0:
-			return ast.TypePrecedenceIntersection
-		case t.flags&TypeFlagsUnion != 0 && t.flags&TypeFlagsBoolean == 0:
-			return ast.TypePrecedenceUnion
-		case t.flags&TypeFlagsIndex != 0 || isInferTypeParameter(t):
-			return ast.TypePrecedenceTypeOperator
-		case c.isArrayType(t):
-			return ast.TypePrecedencePostfix
-		case t.objectFlags&ObjectFlagsClassOrInterface == 0 && c.getSingleCallOrConstructSignature(t) != nil:
-			return ast.TypePrecedenceFunction
-		}
+// TODO: Memoize once per checker to retain threadsafety
+func createPrinterWithDefaults() *printer.Printer {
+	return printer.NewPrinter(printer.PrinterOptions{}, printer.PrintHandlers{}, nil)
+}
+
+func createPrinterWithRemoveComments() *printer.Printer {
+	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
+}
+
+func createPrinterWithRemoveCommentsOmitTrailingSemicolon() *printer.Printer {
+	// TODO: OmitTrailingSemicolon support
+	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
+}
+
+func createPrinterWithRemoveCommentsNeverAsciiEscape() *printer.Printer {
+	// TODO: NeverAsciiEscape support
+	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
+}
+
+func getTrailingSemicolonDeferringWriter(writer printer.EmitTextWriter) printer.EmitTextWriter {
+	// TODO: wrap arbitrary writer with writer that only commits semicolon writes on following write operations (is OmitTrailingSemicolon printer option redundant?)
+	return writer
+}
+
+func (c *Checker) TypeToString(type_ *Type) string {
+	return c.typeToStringEx(type_, nil, TypeFormatFlagsNone, nil)
+}
+
+func toNodeBuilderFlags(flags TypeFormatFlags) NodeBuilderFlags {
+	return NodeBuilderFlags(flags & TypeFormatFlagsNodeBuilderFlagsMask)
+}
+
+func (c *Checker) typeToStringEx(type_ *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
+	if writer == nil {
+		writer = printer.NewTextWriter("")
 	}
-	return ast.TypePrecedenceNonArray
+	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
+	combinedFlags := toNodeBuilderFlags(flags) | NodeBuilderFlagsIgnoreErrors
+	if noTruncation {
+		combinedFlags = combinedFlags | NodeBuilderFlagsNoTruncation
+	}
+	typeNode := c.nodeBuilder.typeToTypeNode(type_, enclosingDeclaration, combinedFlags, InternalNodeBuilderFlagsNone, nil)
+	if typeNode == nil {
+		panic("should always get typenode")
+	}
+	// The unresolved type gets a synthesized comment on `any` to hint to users that it's not a plain `any`.
+	// Otherwise, we always strip comments out.
+	var printer *printer.Printer
+	if type_ == c.unresolvedType {
+		printer = createPrinterWithDefaults()
+	} else {
+		printer = createPrinterWithRemoveComments()
+	}
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	}
+	printer.Write(typeNode /*sourceFile*/, sourceFile, writer, nil)
+	result := writer.String()
+
+	maxLength := defaultMaximumTruncationLength * 2
+	if noTruncation {
+		maxLength = noTruncationMaximumTruncationLength * 2
+	}
+	if maxLength > 0 && result != "" && len(result) >= maxLength {
+		return result[0:maxLength-len("...")] + "..."
+	}
+	return result
 }
 
 func (c *Checker) SymbolToString(s *ast.Symbol) string {
 	return c.symbolToString(s)
 }
 
-func (c *Checker) symbolToString(s *ast.Symbol) string {
-	if scanner.IsValidIdentifier(s.Name, c.languageVersion) {
-		return s.Name
+func (c *Checker) symbolToString(symbol *ast.Symbol) string {
+	return ""
+}
+
+// TODO: port SymbolFormatFlags
+func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, flags SymbolFormatFlags, kind *SignatureKind, writer printer.EmitTextWriter) string {
+	if writer == nil {
+		writer = printer.SingleLineStringWriter
 	}
-	if s.ValueDeclaration != nil {
-		if ast.IsJsxAttribute(s.ValueDeclaration) {
-			return "\"" + s.Name + "\""
+
+	nodeFlags := NodeBuilderFlagsIgnoreErrors
+	internalNodeFlags := InternalNodeBuilderFlagsNone
+	if flags&SymbolFormatFlagsUseOnlyExternalAliasing != 0 {
+		nodeFlags |= NodeBuilderFlagsUseOnlyExternalAliasing
+	}
+	if flags&SymbolFormatFlagsWriteTypeParametersOrArguments != 0 {
+		nodeFlags |= NodeBuilderFlagsWriteTypeParametersInQualifiedName
+	}
+	if flags&SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope != 0 {
+		nodeFlags |= NodeBuilderFlagsUseAliasDefinedOutsideCurrentScope
+	}
+	if flags&SymbolFormatFlagsDoNotIncludeSymbolChain != 0 {
+		internalNodeFlags |= InternalNodeBuilderFlagsDoNotIncludeSymbolChain
+	}
+	if flags&SymbolFormatFlagsWriteComputedProps != 0 {
+		internalNodeFlags |= InternalNodeBuilderFlagsWriteComputedProps
+	}
+
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
+	}
+	if writer == printer.SingleLineStringWriter {
+		// handle uses of the single-line writer during an ongoing write
+		existing := writer.String()
+		defer writer.Clear()
+		if existing != "" {
+			defer writer.WriteKeyword(existing)
 		}
-		name := ast.GetNameOfDeclaration(s.ValueDeclaration)
-		if name != nil {
-			return scanner.GetTextOfNode(name)
+	}
+	var printer_ *printer.Printer
+	if enclosingDeclaration != nil && enclosingDeclaration.Kind == ast.KindSourceFile {
+		printer_ = createPrinterWithRemoveCommentsNeverAsciiEscape()
+	} else {
+		printer_ = createPrinterWithRemoveComments()
+	}
+
+	var builder func(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags NodeBuilderFlags, internalFlags InternalNodeBuilderFlags, tracker SymbolTracker) *ast.Node
+	if flags&SymbolFormatFlagsAllowAnyNodeKind != 0 {
+		builder = c.nodeBuilder.symbolToNode
+	} else {
+		builder = c.nodeBuilder.symbolToEntityName
+	}
+	entity := builder(symbol, meaning, enclosingDeclaration, nodeFlags, internalNodeFlags, nil)         // TODO: GH#18217
+	printer_.Write(entity /*sourceFile*/, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil) // TODO: GH#18217
+	return writer.String()
+}
+
+func (c *Checker) signatureToString(signature *Signature) string {
+	return c.signatureToStringEx(signature, nil, TypeFormatFlagsNone, nil, nil)
+}
+
+func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, kind *SignatureKind, writer printer.EmitTextWriter) string {
+	var sigOutput ast.Kind
+	if flags&TypeFormatFlagsWriteArrowStyleSignature != 0 {
+		if kind != nil && *kind == SignatureKindConstruct {
+			sigOutput = ast.KindConstructorType
+		} else {
+			sigOutput = ast.KindFunctionType
+		}
+	} else {
+		if kind != nil && *kind == SignatureKindConstruct {
+			sigOutput = ast.KindConstructSignature
+		} else {
+			sigOutput = ast.KindCallSignature
 		}
 	}
-	if len(s.Name) == 0 || s.Name[0] != '\xFE' {
-		return s.Name // !!! Implement escaping
+	if writer == nil {
+		writer = printer.SingleLineStringWriter
 	}
-	switch s.Name {
-	case ast.InternalSymbolNameClass:
-		return "(Anonymous class)"
-	case ast.InternalSymbolNameFunction:
-		return "(Anonymous function)"
-	case ast.InternalSymbolNameType, ast.InternalSymbolNameObject:
-		return "(Anonymous type)"
-	case ast.InternalSymbolNameComputed:
-		return "(Computed name)"
+	combinedFlags := toNodeBuilderFlags(flags) | NodeBuilderFlagsIgnoreErrors | NodeBuilderFlagsWriteTypeParametersInQualifiedName
+	sig := c.nodeBuilder.signatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, InternalNodeBuilderFlagsNone, nil)
+	printer_ := createPrinterWithRemoveCommentsOmitTrailingSemicolon()
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
-	if len(s.Name) >= 2 && s.Name[1] == '@' {
-		return "(Unique symbol)"
+	if writer == printer.SingleLineStringWriter {
+		// handle uses of the single-line writer during an ongoing write
+		existing := writer.String()
+		defer writer.Clear()
+		if existing != "" {
+			defer writer.WriteKeyword(existing)
+		}
 	}
-	return "(Missing)"
+	printer_.Write(sig /*sourceFile*/, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil) // TODO: GH#18217
+	return writer.String()
 }
 
-func (c *Checker) TypeToString(t *Type) string {
-	return c.typeToStringEx(t, nil, TypeFormatFlagsNone)
+func (c *Checker) typePredicateToString(typePredicate *TypePredicate) string {
+	return c.typePredicateToStringEx(typePredicate, nil, TypeFormatFlagsUseAliasDefinedOutsideCurrentScope, nil)
 }
 
-func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	p := c.newPrinter(flags)
-	if flags&TypeFormatFlagsNoTypeReduction == 0 {
-		t = c.getReducedType(t)
+func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
+	if writer == nil {
+		writer = printer.SingleLineStringWriter
 	}
-	p.printType(t)
-	return p.string()
-}
-
-func (c *Checker) SourceFileWithTypes(sourceFile *ast.SourceFile) string {
-	p := c.newPrinter(TypeFormatFlagsInTypeAlias)
-	p.printSourceFileWithTypes(sourceFile)
-	return p.string()
-}
-
-func (c *Checker) signatureToString(s *Signature) string {
-	p := c.newPrinter(TypeFormatFlagsNone)
-	if s.flags&SignatureFlagsConstruct != 0 {
-		p.print("new ")
+	combinedFlags := toNodeBuilderFlags(flags) | NodeBuilderFlagsIgnoreErrors | NodeBuilderFlagsWriteTypeParametersInQualifiedName
+	predicate := c.nodeBuilder.typePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, InternalNodeBuilderFlagsNone, nil) // TODO: GH#18217
+	printer_ := createPrinterWithRemoveComments()
+	var sourceFile *ast.SourceFile
+	if enclosingDeclaration != nil {
+		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
-	p.printSignature(s, ": ")
-	return p.string()
-}
-
-func (c *Checker) typePredicateToString(t *TypePredicate) string {
-	p := c.newPrinter(TypeFormatFlagsNone)
-	p.printTypePredicate(t)
-	return p.string()
+	if writer == printer.SingleLineStringWriter {
+		// handle uses of the single-line writer during an ongoing write
+		existing := writer.String()
+		defer writer.Clear()
+		if existing != "" {
+			defer writer.WriteKeyword(existing)
+		}
+	}
+	printer_.Write(predicate /*sourceFile*/, sourceFile, writer, nil)
+	return writer.String()
 }
 
 func (c *Checker) valueToString(value any) string {
-	p := c.newPrinter(TypeFormatFlagsNone)
-	p.printValue(value)
-	return p.string()
-}
-
-type Printer struct {
-	c                *Checker
-	flags            TypeFormatFlags
-	sb               strings.Builder
-	printing         core.Set[*Type]
-	depth            int32
-	extendsTypeDepth int32
-}
-
-func (c *Checker) newPrinter(flags TypeFormatFlags) *Printer {
-	return &Printer{c: c, flags: flags}
-}
-
-func (p *Printer) string() string {
-	return p.sb.String()
-}
-
-func (p *Printer) print(s string) {
-	p.sb.WriteString(s)
-}
-
-func (p *Printer) printName(symbol *ast.Symbol) {
-	p.print(p.c.symbolToString(symbol))
-}
-
-func (p *Printer) printQualifiedName(symbol *ast.Symbol) {
-	if p.flags&TypeFormatFlagsUseFullyQualifiedType != 0 && symbol.Parent != nil {
-		p.printQualifiedName(symbol.Parent)
-		p.print(".")
-	}
-	if symbol.Flags&ast.SymbolFlagsModule != 0 && strings.HasPrefix(symbol.Name, "\"") {
-		p.print("import(")
-		p.print(symbol.Name)
-		p.print(")")
-		return
-	}
-	p.printName(symbol)
-}
-
-func (p *Printer) printTypeEx(t *Type, precedence ast.TypePrecedence) {
-	if p.c.getTypePrecedence(t) < precedence {
-		p.print("(")
-		p.printType(t)
-		p.print(")")
-	} else {
-		p.printType(t)
-	}
-}
-
-func (p *Printer) printType(t *Type) {
-	if p.sb.Len() > 1_000_000 {
-		p.print("...")
-		return
-	}
-
-	if t.alias != nil && (p.flags&TypeFormatFlagsInTypeAlias == 0 || p.depth > 0) {
-		p.printQualifiedName(t.alias.symbol)
-		p.printTypeArguments(t.alias.typeArguments)
-	} else {
-		p.printTypeNoAlias(t)
-	}
-}
-
-func (p *Printer) printTypeNoAlias(t *Type) {
-	p.depth++
-	switch {
-	case t.flags&TypeFlagsIntrinsic != 0:
-		p.print(t.AsIntrinsicType().intrinsicName)
-	case t.flags&(TypeFlagsLiteral|TypeFlagsEnum) != 0:
-		p.printLiteralType(t)
-	case t.flags&TypeFlagsUniqueESSymbol != 0:
-		p.printUniqueESSymbolType(t)
-	case t.flags&TypeFlagsUnion != 0:
-		p.printUnionType(t)
-	case t.flags&TypeFlagsIntersection != 0:
-		p.printIntersectionType(t)
-	case t.flags&TypeFlagsTypeParameter != 0:
-		p.printTypeParameter(t)
-	case t.flags&TypeFlagsObject != 0:
-		p.printRecursive(t, (*Printer).printObjectType)
-	case t.flags&TypeFlagsIndex != 0:
-		p.printRecursive(t, (*Printer).printIndexType)
-	case t.flags&TypeFlagsIndexedAccess != 0:
-		p.printRecursive(t, (*Printer).printIndexedAccessType)
-	case t.flags&TypeFlagsConditional != 0:
-		p.printRecursive(t, (*Printer).printConditionalType)
-	case t.flags&TypeFlagsTemplateLiteral != 0:
-		p.printTemplateLiteralType(t)
-	case t.flags&TypeFlagsStringMapping != 0:
-		p.printStringMappingType(t)
-	case t.flags&TypeFlagsSubstitution != 0:
-		if p.c.isNoInferType(t) {
-			if noInferSymbol := p.c.getGlobalNoInferSymbolOrNil(); noInferSymbol != nil {
-				p.printQualifiedName(noInferSymbol)
-				p.printTypeArguments([]*Type{t.AsSubstitutionType().baseType})
-				break
-			}
-		}
-		p.printType(t.AsSubstitutionType().baseType)
-	}
-	p.depth--
-}
-
-func (p *Printer) printRecursive(t *Type, f func(*Printer, *Type)) {
-	if !p.printing.Has(t) && p.depth < 10 {
-		p.printing.Add(t)
-		f(p, t)
-		p.printing.Delete(t)
-	} else {
-		p.print("???")
-	}
-}
-
-func (p *Printer) printLiteralType(t *Type) {
-	if t.flags&(TypeFlagsEnumLiteral|TypeFlagsEnum) != 0 {
-		p.printEnumLiteral(t)
-	} else {
-		p.printValue(t.AsLiteralType().value)
-	}
-}
-
-func (p *Printer) printValue(value any) {
 	switch value := value.(type) {
 	case string:
-		p.printStringLiteral(value)
+		return "\"" + printer.EscapeString(value, '"') + "\""
 	case jsnum.Number:
-		p.printNumberLiteral(value)
+		return value.String()
 	case bool:
-		p.printBooleanLiteral(value)
+		return core.IfElse(value, "true", "false")
 	case jsnum.PseudoBigInt:
-		p.printBigIntLiteral(value)
+		return value.String() + "n"
 	}
-}
-
-func (p *Printer) printStringLiteral(s string) {
-	p.print("\"")
-	p.print(printer.EscapeString(s, '"'))
-	p.print("\"")
-}
-
-func (p *Printer) printNumberLiteral(f jsnum.Number) {
-	p.print(f.String())
-}
-
-func (p *Printer) printBooleanLiteral(b bool) {
-	p.print(core.IfElse(b, "true", "false"))
-}
-
-func (p *Printer) printBigIntLiteral(b jsnum.PseudoBigInt) {
-	p.print(b.String() + "n")
-}
-
-func (p *Printer) printUniqueESSymbolType(t *Type) {
-	p.print("unique symbol")
-}
-
-func (p *Printer) printTemplateLiteralType(t *Type) {
-	texts := t.AsTemplateLiteralType().texts
-	types := t.AsTemplateLiteralType().types
-	p.print("`")
-	p.print(texts[0])
-	for i, t := range types {
-		p.print("${")
-		p.printType(t)
-		p.print("}")
-		p.print(texts[i+1])
-	}
-	p.print("`")
-}
-
-func (p *Printer) printStringMappingType(t *Type) {
-	p.printName(t.symbol)
-	p.print("<")
-	p.printType(t.AsStringMappingType().target)
-	p.print(">")
-}
-
-func (p *Printer) printEnumLiteral(t *Type) {
-	if parent := p.c.getParentOfSymbol(t.symbol); parent != nil {
-		p.printQualifiedName(parent)
-		if p.c.getDeclaredTypeOfSymbol(parent) != t {
-			p.print(".")
-			p.printName(t.symbol)
-		}
-		return
-	}
-	p.printQualifiedName(t.symbol)
-}
-
-func (p *Printer) printObjectType(t *Type) {
-	switch {
-	case t.objectFlags&ObjectFlagsReference != 0:
-		p.printParameterizedType(t)
-	case t.objectFlags&ObjectFlagsClassOrInterface != 0:
-		p.printQualifiedName(t.symbol)
-	case p.c.isGenericMappedType(t) || t.objectFlags&ObjectFlagsMapped != 0 && t.AsMappedType().containsError:
-		p.printMappedType(t)
-	default:
-		p.printAnonymousType(t)
-	}
-}
-
-func (p *Printer) printParameterizedType(t *Type) {
-	switch {
-	case p.c.isArrayType(t) && p.flags&TypeFormatFlagsWriteArrayAsGenericType == 0:
-		p.printArrayType(t)
-	case isTupleType(t):
-		p.printTupleType(t)
-	default:
-		p.printTypeReference(t)
-	}
-}
-
-func (p *Printer) printTypeReference(t *Type) {
-	p.printQualifiedName(t.symbol)
-	p.printTypeArguments(p.c.getTypeArguments(t)[:p.c.getTypeReferenceArity(t)])
-}
-
-func (p *Printer) printTypeArguments(typeArguments []*Type) {
-	if len(typeArguments) != 0 {
-		p.print("<")
-		var tail bool
-		for _, t := range typeArguments {
-			if tail {
-				p.print(", ")
-			}
-			p.printType(t)
-			tail = true
-		}
-		p.print(">")
-	}
-}
-
-func (p *Printer) printArrayType(t *Type) {
-	d := t.AsTypeReference()
-	if d.target != p.c.globalArrayType {
-		p.print("readonly ")
-	}
-	p.printTypeEx(p.c.getTypeArguments(t)[0], ast.TypePrecedencePostfix)
-	p.print("[]")
-}
-
-func (p *Printer) printTupleType(t *Type) {
-	if t.TargetTupleType().readonly {
-		p.print("readonly ")
-	}
-	p.print("[")
-	elementInfos := t.TargetTupleType().elementInfos
-	typeArguments := p.c.getTypeArguments(t)
-	var tail bool
-	for i, info := range elementInfos {
-		t := typeArguments[i]
-		if tail {
-			p.print(", ")
-		}
-		if info.flags&ElementFlagsVariable != 0 {
-			p.print("...")
-		}
-		if info.labeledDeclaration != nil {
-			p.print(info.labeledDeclaration.Name().Text())
-			if info.flags&ElementFlagsOptional != 0 {
-				p.print("?: ")
-				p.printType(p.c.removeMissingType(t, true))
-			} else {
-				p.print(": ")
-				if info.flags&ElementFlagsRest != 0 {
-					p.printTypeEx(t, ast.TypePrecedencePostfix)
-					p.print("[]")
-				} else {
-					p.printType(t)
-				}
-			}
-		} else {
-			if info.flags&ElementFlagsOptional != 0 {
-				p.printTypeEx(p.c.removeMissingType(t, true), ast.TypePrecedencePostfix)
-				p.print("?")
-			} else if info.flags&ElementFlagsRest != 0 {
-				p.printTypeEx(t, ast.TypePrecedencePostfix)
-				p.print("[]")
-			} else {
-				p.printType(t)
-			}
-		}
-		tail = true
-	}
-	p.print("]")
-}
-
-func (p *Printer) printAnonymousType(t *Type) {
-	if t.symbol != nil && len(t.symbol.Name) != 0 {
-		if t.symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 {
-			if t == p.c.getTypeOfSymbol(t.symbol) {
-				p.print("typeof ")
-				p.printQualifiedName(t.symbol)
-				return
-			}
-		}
-	}
-	props := p.c.getPropertiesOfObjectType(t)
-	callSignatures := p.c.getSignaturesOfType(t, SignatureKindCall)
-	constructSignatures := p.c.getSignaturesOfType(t, SignatureKindConstruct)
-	if len(props) == 0 {
-		if len(callSignatures) == 1 && len(constructSignatures) == 0 {
-			p.printSignature(callSignatures[0], " => ")
-			return
-		}
-		if len(callSignatures) == 0 && len(constructSignatures) == 1 {
-			p.print("new ")
-			p.printSignature(constructSignatures[0], " => ")
-			return
-		}
-	}
-	p.print("{")
-	hasMembers := false
-	for _, sig := range callSignatures {
-		p.print(" ")
-		p.printSignature(sig, ": ")
-		p.print(";")
-		hasMembers = true
-	}
-	for _, sig := range constructSignatures {
-		p.print(" new ")
-		p.printSignature(sig, ": ")
-		p.print(";")
-		hasMembers = true
-	}
-	for _, info := range p.c.getIndexInfosOfType(t) {
-		if info.isReadonly {
-			p.print(" readonly")
-		}
-		p.print(" [")
-		p.print(getNameFromIndexInfo(info))
-		p.print(": ")
-		p.printType(info.keyType)
-		p.print("]: ")
-		p.printType(info.valueType)
-		p.print(";")
-		hasMembers = true
-	}
-	for _, prop := range props {
-		if p.c.isReadonlySymbol(prop) {
-			p.print(" readonly")
-		}
-		p.print(" ")
-		p.printName(prop)
-		if prop.Flags&ast.SymbolFlagsOptional != 0 {
-			p.print("?")
-		}
-		p.print(": ")
-		p.printType(p.c.getNonMissingTypeOfSymbol(prop))
-		p.print(";")
-		hasMembers = true
-	}
-	if hasMembers {
-		p.print(" ")
-	}
-	p.print("}")
-}
-
-func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
-	if len(sig.typeParameters) != 0 {
-		p.print("<")
-		var tail bool
-		for _, tp := range sig.typeParameters {
-			if tail {
-				p.print(", ")
-			}
-			p.printTypeParameterAndConstraint(tp)
-			tail = true
-		}
-		p.print(">")
-	}
-	p.print("(")
-	var tail bool
-	if sig.thisParameter != nil {
-		p.print("this: ")
-		p.printType(p.c.getTypeOfSymbol(sig.thisParameter))
-		tail = true
-	}
-	expandedParameters := p.c.GetExpandedParameters(sig)
-	// If the expanded parameter list had a variadic in a non-trailing position, don't expand it
-	parameters := core.IfElse(core.Some(expandedParameters, func(s *ast.Symbol) bool {
-		return s != expandedParameters[len(expandedParameters)-1] && s.CheckFlags&ast.CheckFlagsRestParameter != 0
-	}), sig.parameters, expandedParameters)
-	for i, param := range parameters {
-		if tail {
-			p.print(", ")
-		}
-		if param.ValueDeclaration != nil && isRestParameter(param.ValueDeclaration) || param.CheckFlags&ast.CheckFlagsRestParameter != 0 {
-			p.print("...")
-			p.printName(param)
-		} else {
-			p.printName(param)
-			if i >= p.c.getMinArgumentCountEx(sig, MinArgumentCountFlagsVoidIsNonOptional) {
-				p.print("?")
-			}
-		}
-		p.print(": ")
-		p.printType(p.c.getTypeOfSymbol(param))
-		tail = true
-	}
-	p.print(")")
-	p.print(returnSeparator)
-	if pred := p.c.getTypePredicateOfSignature(sig); pred != nil {
-		p.printTypePredicate(pred)
-	} else {
-		p.printType(p.c.getReturnTypeOfSignature(sig))
-	}
-}
-
-func (p *Printer) printTypePredicate(pred *TypePredicate) {
-	if pred.kind == TypePredicateKindAssertsThis || pred.kind == TypePredicateKindAssertsIdentifier {
-		p.print("asserts ")
-	}
-	if pred.kind == TypePredicateKindThis || pred.kind == TypePredicateKindAssertsThis {
-		p.print("this")
-	} else {
-		p.print(pred.parameterName)
-	}
-	if pred.t != nil {
-		p.print(" is ")
-		p.printType(pred.t)
-	}
-}
-
-func (p *Printer) printTypeParameter(t *Type) {
-	switch {
-	case t.AsTypeParameter().isThisType:
-		p.print("this")
-	case p.extendsTypeDepth > 0 && isInferTypeParameter(t):
-		p.print("infer ")
-		p.printTypeParameterAndConstraint(t)
-	case t.symbol != nil:
-		p.printName(t.symbol)
-	default:
-		p.print("???")
-	}
-}
-
-func (p *Printer) printTypeParameterAndConstraint(t *Type) {
-	p.printName(t.symbol)
-	if constraint := p.c.getConstraintOfTypeParameter(t); constraint != nil {
-		p.print(" extends ")
-		p.printType(constraint)
-	}
-}
-
-func (p *Printer) printUnionType(t *Type) {
-	switch {
-	case t.flags&TypeFlagsBoolean != 0:
-		p.print("boolean")
-	case t.flags&TypeFlagsEnumLiteral != 0:
-		p.printQualifiedName(t.symbol)
-	default:
-		u := t.AsUnionType()
-		if u.origin != nil {
-			p.printType(u.origin)
-		} else {
-			var tail bool
-			for _, t := range p.c.formatUnionTypes(u.types) {
-				if tail {
-					p.print(" | ")
-				}
-				p.printTypeEx(t, ast.TypePrecedenceUnion)
-				tail = true
-			}
-		}
-	}
-}
-
-func (p *Printer) printIntersectionType(t *Type) {
-	var tail bool
-	for _, t := range t.AsIntersectionType().types {
-		if tail {
-			p.print(" & ")
-		}
-		p.printTypeEx(t, ast.TypePrecedenceIntersection)
-		tail = true
-	}
-}
-
-func (p *Printer) printIndexType(t *Type) {
-	p.print("keyof ")
-	p.printTypeEx(t.AsIndexType().target, ast.TypePrecedenceTypeOperator)
-}
-
-func (p *Printer) printIndexedAccessType(t *Type) {
-	p.printType(t.AsIndexedAccessType().objectType)
-	p.print("[")
-	p.printType(t.AsIndexedAccessType().indexType)
-	p.print("]")
-}
-
-func (p *Printer) printConditionalType(t *Type) {
-	p.printType(t.AsConditionalType().checkType)
-	p.print(" extends ")
-	p.extendsTypeDepth++
-	p.printType(t.AsConditionalType().extendsType)
-	p.extendsTypeDepth--
-	p.print(" ? ")
-	p.printType(p.c.getTrueTypeFromConditionalType(t))
-	p.print(" : ")
-	p.printType(p.c.getFalseTypeFromConditionalType(t))
-}
-
-func (p *Printer) printMappedType(t *Type) {
-	d := t.AsMappedType().declaration
-	p.print("{ ")
-	if d.ReadonlyToken != nil {
-		if d.ReadonlyToken.Kind != ast.KindReadonlyKeyword {
-			p.print(scanner.TokenToString(d.ReadonlyToken.Kind))
-		}
-		p.print("readonly ")
-	}
-	p.print("[")
-	p.printName(p.c.getTypeParameterFromMappedType(t).symbol)
-	p.print(" in ")
-	p.printType(p.c.getConstraintTypeFromMappedType(t))
-	nameType := p.c.getNameTypeFromMappedType(t)
-	if nameType != nil {
-		p.print(" as ")
-		p.printType(nameType)
-	}
-	p.print("]")
-	if d.QuestionToken != nil {
-		if d.QuestionToken.Kind != ast.KindQuestionToken {
-			p.print(scanner.TokenToString(d.QuestionToken.Kind))
-		}
-		p.print("?")
-	}
-	p.print(": ")
-	p.printType(p.c.getTemplateTypeFromMappedType(t))
-	p.print("; }")
-}
-
-func (p *Printer) printSourceFileWithTypes(sourceFile *ast.SourceFile) {
-	var pos int
-	var visit func(*ast.Node) bool
-	var typesPrinted bool
-	lineStarts := scanner.GetLineStarts(sourceFile)
-	printLinesBefore := func(node *ast.Node) {
-		line := scanner.ComputeLineOfPosition(lineStarts, scanner.SkipTrivia(sourceFile.Text(), node.Pos()))
-		var nextLineStart int
-		if line+1 < len(lineStarts) {
-			nextLineStart = int(lineStarts[line+1])
-		} else {
-			nextLineStart = sourceFile.Loc.End()
-		}
-		if pos < nextLineStart {
-			if typesPrinted {
-				p.print("\n")
-			}
-			p.print(sourceFile.Text()[pos:nextLineStart])
-			pos = nextLineStart
-			typesPrinted = false
-		}
-	}
-	visit = func(node *ast.Node) bool {
-		text, t, isDeclaration := p.c.getTextAndTypeOfNode(node)
-		if text != "" && !strings.Contains(text, "\n") {
-			printLinesBefore(node)
-			p.print(">")
-			p.print(text)
-			p.print(" : ")
-			p.printType(t)
-			if isDeclaration && t.flags&TypeFlagsEnumLiteral != 0 && t.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
-				p.print(" = ")
-				p.printValue(t.AsLiteralType().value)
-			}
-			p.print("\n")
-			typesPrinted = true
-		}
-		return node.ForEachChild(visit)
-	}
-	visit(sourceFile.AsNode())
-	p.print(sourceFile.Text()[pos:sourceFile.End()])
-}
-
-func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
-	if ast.IsDeclarationNode(node) {
-		symbol := node.Symbol()
-		if symbol != nil && !isReservedMemberName(symbol.Name) {
-			if symbol.Flags&ast.SymbolFlagsValue != 0 {
-				return c.symbolToString(symbol), c.getTypeOfSymbol(symbol), true
-			}
-			if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
-				return c.symbolToString(symbol), c.getDeclaredTypeOfTypeAlias(symbol), true
-			}
-		}
-	}
-	if ast.IsExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
-		return scanner.GetTextOfNode(node), c.getTypeOfExpression(node), false
-	}
-	return "", nil, false
+	panic("unhandled value type in valueToString")
 }
 
 func (c *Checker) formatUnionTypes(types []*Type) []*Type {
@@ -737,6 +259,65 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 	return result
 }
 
-func isInferTypeParameter(t *Type) bool {
-	return t.flags&TypeFlagsTypeParameter != 0 && t.symbol != nil && core.Some(t.symbol.Declarations, func(d *ast.Node) bool { return ast.IsInferTypeNode(d.Parent) })
+func (c *Checker) SourceFileWithTypes(sourceFile *ast.SourceFile) string {
+	writer := printer.NewTextWriter("\n")
+	var pos int
+	var visit func(*ast.Node) bool
+	var typesPrinted bool
+	lineStarts := scanner.GetLineStarts(sourceFile)
+	printLinesBefore := func(node *ast.Node) {
+		line := scanner.ComputeLineOfPosition(lineStarts, scanner.SkipTrivia(sourceFile.Text(), node.Pos()))
+		var nextLineStart int
+		if line+1 < len(lineStarts) {
+			nextLineStart = int(lineStarts[line+1])
+		} else {
+			nextLineStart = sourceFile.Loc.End()
+		}
+		if pos < nextLineStart {
+			if typesPrinted {
+				writer.WriteLine()
+			}
+			writer.Write(sourceFile.Text()[pos:nextLineStart])
+			pos = nextLineStart
+			typesPrinted = false
+		}
+	}
+	visit = func(node *ast.Node) bool {
+		text, t, isDeclaration := c.getTextAndTypeOfNode(node)
+		if text != "" && !strings.Contains(text, "\n") {
+			printLinesBefore(node)
+			writer.Write(">")
+			writer.Write(text)
+			writer.Write(" : ")
+			c.typeToStringEx(t, nil, TypeFormatFlagsNone, writer)
+			if isDeclaration && t.flags&TypeFlagsEnumLiteral != 0 && t.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
+				writer.Write(" = ")
+				writer.Write(c.valueToString(t.AsLiteralType().value))
+			}
+			writer.WriteLine()
+			typesPrinted = true
+		}
+		return node.ForEachChild(visit)
+	}
+	visit(sourceFile.AsNode())
+	writer.Write(sourceFile.Text()[pos:sourceFile.End()])
+	return writer.String()
+}
+
+func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
+	if ast.IsDeclarationNode(node) {
+		symbol := node.Symbol()
+		if symbol != nil && !isReservedMemberName(symbol.Name) {
+			if symbol.Flags&ast.SymbolFlagsValue != 0 {
+				return c.symbolToString(symbol), c.getTypeOfSymbol(symbol), true
+			}
+			if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
+				return c.symbolToString(symbol), c.getDeclaredTypeOfTypeAlias(symbol), true
+			}
+		}
+	}
+	if ast.IsExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
+		return scanner.GetTextOfNode(node), c.getTypeOfExpression(node), false
+	}
+	return "", nil, false
 }
