@@ -32,6 +32,7 @@ func (l *LanguageService) ProvideCompletion(
 	if node.Kind == ast.KindSourceFile {
 		return nil
 	}
+	// !!! get user preferences
 	return l.getCompletionsAtPosition(program, file, position, context, nil /*preferences*/, clientOptions) // !!! get preferences
 }
 
@@ -874,6 +875,7 @@ func completionInfoFromData(
 		}
 	}
 
+	// !!! port behavior of other strada fields of CompletionInfo that are non-LSP
 	return &lsproto.CompletionList{
 		IsIncomplete: data.hasUnresolvedAutoImports,
 		ItemDefaults: itemDefaults,
