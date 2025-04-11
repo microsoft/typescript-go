@@ -53,7 +53,6 @@ jobs:
         values:
           - os: ubuntu-latest
             coverage: true
-            skip: false
           - os: windows-latest
             coverage: true
             skip: ${{ github.event_name == 'merge_group' }}
@@ -154,18 +153,22 @@ jobs:
           path: testdata/baselines/local
 
   lint:
-    if: ${{ github.event_name != 'merge_group' }}
-
     strategy:
       fail-fast: false
       matrix:
-        include:
+        values:
           - os: ubuntu-latest
           - os: windows-latest
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: macos-latest
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
+            skip: ${{ github.event_name == 'merge_group' }}
+        exclude:
+          - values:
+              skip: true
 
     name: lint (${{ matrix.name || matrix.os }})
 
@@ -202,7 +205,6 @@ jobs:
       - run: npx hereby check:format
 
   generate:
-    if: ${{ github.event_name != 'merge_group' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -236,7 +238,6 @@ jobs:
       - run: go -C ./_tools mod tidy -diff
 
   smoke:
-    if: ${{ github.event_name != 'merge_group' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
