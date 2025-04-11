@@ -270,6 +270,15 @@ func (p *Project) updateWatchers() {
 	}
 }
 
+func (p *Project) onWatchedFileCreated(fileName string) {
+	if p.kind == KindConfigured {
+		if p.rootFileNames.Has(p.toPath(fileName)) || p.parsedCommandLine.MatchesFileName(fileName, p.comparePathsOptions) {
+			p.pendingConfigReload = true
+			p.markAsDirty()
+		}
+	}
+}
+
 func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *ScriptInfo {
 	if scriptInfo := p.host.GetOrCreateScriptInfoForFile(fileName, p.toPath(fileName), scriptKind); scriptInfo != nil {
 		scriptInfo.attachToProject(p)
@@ -467,16 +476,21 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 	newRootScriptInfos := make(map[tspath.Path]struct{}, len(rootFileNames))
 	for _, file := range rootFileNames {
 		scriptKind := p.getScriptKind(file)
-		scriptInfo := p.host.GetOrCreateScriptInfoForFile(file, p.toPath(file), scriptKind)
-		newRootScriptInfos[scriptInfo.path] = struct{}{}
-		if _, isRoot := p.rootFileNames.Get(scriptInfo.path); !isRoot {
+		path := p.toPath(file)
+		// !!! updateNonInferredProjectFiles uses a fileExists check, which I guess
+		// could be needed if a watcher fails?
+		scriptInfo := p.host.GetOrCreateScriptInfoForFile(file, path, scriptKind)
+		newRootScriptInfos[path] = struct{}{}
+		isAlreadyRoot := p.rootFileNames.Has(path)
+
+		if !isAlreadyRoot && scriptInfo != nil {
 			p.addRoot(scriptInfo)
 			if scriptInfo.isOpen {
 				// !!!
 				// s.removeRootOfInferredProjectIfNowPartOfOtherProject(scriptInfo)
 			}
-		} else {
-			p.rootFileNames.Set(scriptInfo.path, file)
+		} else if !isAlreadyRoot {
+			p.rootFileNames.Set(path, file)
 		}
 	}
 
