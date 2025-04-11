@@ -821,14 +821,14 @@ type DidChangeNotebookDocumentParams struct {
 	// The changes describe single state changes to the notebook document.
 	// So if there are two changes c1 (at array index 0) and c2 (at array
 	// index 1) for a notebook in state S then c1 moves the notebook from
-	// S to S' and c2 from S' to S”. So c1 is computed on the state S and
+	// S to S' and c2 from S' to S''. So c1 is computed on the state S and
 	// c2 is computed on the state S'.
 	//
 	// To mirror the content of a notebook using change events use the following approach:
-	//   - start with the same initial content
-	//   - apply the 'notebookDocument/didChange' notifications in the order you receive them.
-	//   - apply the `NotebookChangeEvent`s in a single notification in the order
-	//     you receive them.
+	// - start with the same initial content
+	// - apply the 'notebookDocument/didChange' notifications in the order you receive them.
+	// - apply the `NotebookChangeEvent`s in a single notification in the order
+	//   you receive them.
 	Change NotebookDocumentChangeEvent `json:"change"`
 }
 
@@ -1046,14 +1046,14 @@ type DidChangeTextDocumentParams struct {
 	// The actual content changes. The content changes describe single state changes
 	// to the document. So if there are two content changes c1 (at array index 0) and
 	// c2 (at array index 1) for a document in state S then c1 moves the document from
-	// S to S' and c2 from S' to S”. So c1 is computed on the state S and c2 is computed
+	// S to S' and c2 from S' to S''. So c1 is computed on the state S and c2 is computed
 	// on the state S'.
 	//
 	// To mirror the content of a document using change events use the following approach:
-	//   - start with the same initial content
-	//   - apply the 'textDocument/didChange' notifications in the order you receive them.
-	//   - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
-	//     you receive them.
+	// - start with the same initial content
+	// - apply the 'textDocument/didChange' notifications in the order you receive them.
+	// - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
+	//   you receive them.
 	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
 }
 
@@ -1485,6 +1485,7 @@ type SymbolInformation struct {
 
 	// Indicates if this symbol is deprecated.
 	//
+	//
 	// Deprecated: Use tags instead
 	Deprecated *bool `json:"deprecated,omitempty"`
 
@@ -1521,6 +1522,7 @@ type DocumentSymbol struct {
 	Tags *[]SymbolTag `json:"tags,omitempty"`
 
 	// Indicates if this symbol is deprecated.
+	//
 	//
 	// Deprecated: Use tags instead
 	Deprecated *bool `json:"deprecated,omitempty"`
@@ -2056,12 +2058,10 @@ type LocationLink struct {
 // character(s) then use an end position denoting the start of the next line.
 // For example:
 // ```ts
-//
-//	{
-//	    start: { line: 5, character: 23 }
-//	    end : { line 6, character : 0 }
-//	}
-//
+// {
+//     start: { line: 5, character: 23 }
+//     end : { line 6, character : 0 }
+// }
 // ```
 type Range struct {
 	// The range's start position.
@@ -2236,11 +2236,9 @@ type TextDocumentEdit struct {
 	// The edits to be applied.
 	//
 	// Since: 3.16.0 - support for AnnotatedTextEdit. This is guarded using a
-	//
 	// client capability.
 	//
 	// Since: 3.18.0 - support for SnippetTextEdit. This is guarded using a
-	//
 	// client capability.
 	Edits []TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
 }
@@ -2449,18 +2447,16 @@ type InlayHintLabelPart struct {
 //
 // Here is an example how such a string can be constructed using JavaScript / TypeScript:
 // ```ts
-//
-//	let markdown: MarkdownContent = {
-//	 kind: MarkupKind.Markdown,
-//	 value: [
-//	   '# Header',
-//	   'Some text',
-//	   '```typescript',
-//	   'someCode();',
-//	   '```'
-//	 ].join('\n')
-//	};
-//
+// let markdown: MarkdownContent = {
+//  kind: MarkupKind.Markdown,
+//  value: [
+//    '# Header',
+//    'Some text',
+//    '```typescript',
+//    'someCode();',
+//    '```'
+//  ].join('\n')
+// };
 // ```
 //
 // *Please Note* that clients might sanitize the return markdown. A client could decide to
@@ -2778,12 +2774,14 @@ type _InitializeParams struct {
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
 	//
+	//
 	// Deprecated: in favour of rootUri.
 	RootPath *Nullable[string] `json:"rootPath,omitempty"`
 
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
+	//
 	//
 	// Deprecated: in favour of workspaceFolders.
 	RootUri *DocumentUri `json:"rootUri"`
@@ -3176,13 +3174,13 @@ type CompletionItemApplyKinds struct {
 	// `completionList.itemDefaults.data` and the completion's own data
 	// using the following rules:
 	//
-	//   - If a completion's `data` field is not provided (or `null`), the
-	//     entire `data` field from `completionList.itemDefaults.data` will be
-	//     used as-is.
-	//   - If a completion's `data` field is provided, each field will
-	//     overwrite the field of the same name in
-	//     `completionList.itemDefaults.data` but no merging of nested fields
-	//     within that value will occur.
+	// - If a completion's `data` field is not provided (or `null`), the
+	//   entire `data` field from `completionList.itemDefaults.data` will be
+	//   used as-is.
+	// - If a completion's `data` field is provided, each field will
+	//   overwrite the field of the same name in
+	//   `completionList.itemDefaults.data` but no merging of nested fields
+	//   within that value will occur.
 	//
 	// Since: 3.18.0
 	Data *ApplyKind `json:"data,omitempty"`
@@ -3397,10 +3395,10 @@ type CodeActionOptions struct {
 	//
 	// Documentation from the provider should be shown in the code actions menu if either:
 	//
-	//   - Code actions of `kind` are requested by the editor. In this case, the editor will show the documentation that
-	//     most closely matches the requested code action kind. For example, if a provider has documentation for
-	//     both `Refactor` and `RefactorExtract`, when the user requests code actions for `RefactorExtract`,
-	//     the editor will use the documentation for `RefactorExtract` instead of the documentation for `Refactor`.
+	// - Code actions of `kind` are requested by the editor. In this case, the editor will show the documentation that
+	//   most closely matches the requested code action kind. For example, if a provider has documentation for
+	//   both `Refactor` and `RefactorExtract`, when the user requests code actions for `RefactorExtract`,
+	//   the editor will use the documentation for `RefactorExtract` instead of the documentation for `Refactor`.
 	//
 	// - Any code actions of `kind` are returned by the provider.
 	//
@@ -3850,6 +3848,7 @@ type TextDocumentContentChangePartial struct {
 	Range Range `json:"range"`
 
 	// The optional length of the range that got replaced.
+	//
 	//
 	// Deprecated: use range instead.
 	RangeLength *uint32 `json:"rangeLength,omitempty"`
@@ -4373,7 +4372,6 @@ type TextDocumentFilterLanguage struct {
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
 	//
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
-	//
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
 	Pattern *GlobPattern `json:"pattern,omitempty"`
@@ -4392,7 +4390,6 @@ type TextDocumentFilterScheme struct {
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
 	//
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
-	//
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
 	Pattern *GlobPattern `json:"pattern,omitempty"`
@@ -4411,7 +4408,6 @@ type TextDocumentFilterPattern struct {
 	// A glob pattern, like **​/*.{ts,js}. See TextDocumentFilter for examples.
 	//
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
-	//
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
 	Pattern GlobPattern `json:"pattern"`
@@ -6733,7 +6729,9 @@ type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefault
 //
 // @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
 //
-// The use of a string as a document filter is deprecated Since: 3.16.0.
+// Since: 3.16.0.
+//
+// Deprecated: The use of a string as a document filter is deprecated
 type DocumentSelector = []DocumentFilter
 
 type ProgressToken = IntegerOrString
@@ -7152,9 +7150,8 @@ const (
 	// resolves to such.
 	//
 	// Since: 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
-	//
-	//	need to advertise support for WorkspaceSymbols via the client capability
-	//	`workspace.symbol.resolveSupport`.
+	// need to advertise support for WorkspaceSymbols via the client capability
+	// `workspace.symbol.resolveSupport`.
 	MethodWorkspaceSymbol Method = "workspace/symbol"
 	// A request to resolve the range inside the workspace
 	// symbol's location.
