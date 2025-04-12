@@ -231,12 +231,12 @@ type SelectionRangeRegistrationOptions struct {
 
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
-	Token *ProgressToken `json:"token"`
+	Token *IntegerOrString `json:"token"`
 }
 
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
-	Token *ProgressToken `json:"token"`
+	Token *IntegerOrString `json:"token"`
 }
 
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -2006,7 +2006,7 @@ type CancelParams struct {
 
 type ProgressParams struct {
 	// The progress token provided by the client or server.
-	Token *ProgressToken `json:"token"`
+	Token *IntegerOrString `json:"token"`
 
 	// The progress data.
 	Value LSPAny `json:"value"`
@@ -2024,13 +2024,13 @@ type TextDocumentPositionParams struct {
 
 type WorkDoneProgressParams struct {
 	// An optional token that a server can use to report work done progress.
-	WorkDoneToken *ProgressToken `json:"workDoneToken,omitzero"`
+	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
 }
 
 type PartialResultParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
-	PartialResultToken *ProgressToken `json:"partialResultToken,omitzero"`
+	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
 }
 
 // Represents the connection of two locations. Provides additional metadata over normal locations,
@@ -6970,6 +6970,46 @@ func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) Unmarsha
 	return fmt.Errorf("cannot unmarshal %s into RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior", string(data))
 }
 
+type IntegerOrString struct {
+	Integer *int32
+	String  *string
+}
+
+func (o IntegerOrString) MarshalJSON() ([]byte, error) {
+	assertOnlyOne("more than one element of IntegerOrString is set", o.Integer != nil, o.String != nil)
+
+	if o.Integer != nil {
+		return json.Marshal(*o.Integer)
+	}
+	if o.String != nil {
+		return json.Marshal(*o.String)
+	}
+	return []byte("null"), nil
+}
+
+func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
+	*o = IntegerOrString{}
+	if string(data) == "null" {
+		return nil
+	}
+
+	{
+		var v int32
+		if err := json.Unmarshal(data, &v); err == nil {
+			o.Integer = &v
+			return nil
+		}
+	}
+	{
+		var v string
+		if err := json.Unmarshal(data, &v); err == nil {
+			o.String = &v
+			return nil
+		}
+	}
+	return fmt.Errorf("cannot unmarshal %s into IntegerOrString", string(data))
+}
+
 type WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport struct {
 	WorkspaceFullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
 	WorkspaceUnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
@@ -7663,46 +7703,6 @@ func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
 		}
 	}
 	return fmt.Errorf("cannot unmarshal %s into LocationOrLocationUriOnly", string(data))
-}
-
-type IntegerOrString struct {
-	Integer *int32
-	String  *string
-}
-
-func (o IntegerOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of IntegerOrString is set", o.Integer != nil, o.String != nil)
-
-	if o.Integer != nil {
-		return json.Marshal(*o.Integer)
-	}
-	if o.String != nil {
-		return json.Marshal(*o.String)
-	}
-	return []byte("null"), nil
-}
-
-func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
-	*o = IntegerOrString{}
-	if string(data) == "null" {
-		return nil
-	}
-
-	{
-		var v int32
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Integer = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String = &v
-			return nil
-		}
-	}
-	return fmt.Errorf("cannot unmarshal %s into IntegerOrString", string(data))
 }
 
 type BooleanOrEmptyObject struct {

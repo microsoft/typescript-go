@@ -439,15 +439,6 @@ function buildTypeSystem() {
 
     // First pass - process all type aliases to find union types
     for (const typeAlias of model.typeAliases) {
-        // Skip URI and DocumentUri as they are already defined in lsp.go
-        if (
-            typeAlias.name === "URI" ||
-            typeAlias.name === "DocumentUri" ||
-            typeAlias.name === "ProgressToken"
-        ) {
-            continue;
-        }
-
         if (typeAlias.type.kind === "or") {
             // This is a union type - store the alias mapping
             const resolvedType = resolveType(typeAlias.type);
@@ -457,15 +448,6 @@ function buildTypeSystem() {
 
     // Second pass - now process all type aliases with the union mappings in place
     for (const typeAlias of model.typeAliases) {
-        // Skip URI and DocumentUri as they are already defined in lsp.go
-        if (
-            typeAlias.name === "URI" ||
-            typeAlias.name === "DocumentUri" ||
-            typeAlias.name === "ProgressToken"
-        ) {
-            continue;
-        }
-
         const resolvedType = resolveType(typeAlias.type);
         registry.types.set(typeAlias.name, {
             name: resolvedType.name,
@@ -568,9 +550,15 @@ function generateCode() {
     // Keep track of generated types to avoid duplicates
     const generatedTypes = new Set();
 
+    // Types already defined in lsp.go that should be skipped during generation
+    const predefinedTypes = new Set([
+        "URI",
+        "DocumentUri",
+    ]);
+
     for (const structure of model.structures) {
-        // Skip URI and DocumentUri as they are already defined in lsp.go
-        if (structure.name === "URI" || structure.name === "DocumentUri") {
+        // Skip types already defined in lsp.go
+        if (predefinedTypes.has(structure.name)) {
             continue;
         }
 
@@ -688,30 +676,7 @@ function generateCode() {
         generatedTypes.add(enumeration.name);
     }
 
-    // Generate type aliases
-    writeLine("// Type aliases\n");
-
-    for (const typeAlias of model.typeAliases) {
-        // Skip URI and DocumentUri as they are already defined in lsp.go
-        if (typeAlias.name === "URI" || typeAlias.name === "DocumentUri") {
-            continue;
-        }
-
-        write(formatDocumentation(typeAlias.documentation));
-        write(formatDeprecation(typeAlias.deprecated));
-
-        if (typeAlias.name === "LSPAny") {
-            writeLine("type LSPAny any");
-            writeLine("");
-            continue;
-        }
-
-        const resolvedType = resolveType(typeAlias.type);
-        writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
-        writeLine("");
-
-        generatedTypes.add(typeAlias.name);
-    }
+    generateTypeAliases();
 
     generateUnionTypes();
 
@@ -974,5 +939,29 @@ function generateUnionTypes() {
         writeLine("");
 
         registry.generatedTypes.add(name);
+    }
+}
+
+/**
+ * Generate type aliases
+ */
+function generateTypeAliases() {
+    writeLine("// Type aliases\n");
+
+    for (const typeAlias of model.typeAliases) {
+        write(formatDocumentation(typeAlias.documentation));
+        write(formatDeprecation(typeAlias.deprecated));
+
+        if (typeAlias.name === "LSPAny") {
+            writeLine("type LSPAny any");
+            writeLine("");
+            continue;
+        }
+
+        const resolvedType = resolveType(typeAlias.type);
+        writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
+        writeLine("");
+
+        registry.generatedTypes.add(typeAlias.name);
     }
 }

@@ -5,9 +5,11 @@ import (
 	"fmt"
 )
 
-type DocumentUri string // !!!
+// DocumentUri is a string resource identifier
+type DocumentUri string
 
-type URI string // !!!
+// URI is a string resource identifier
+type URI string
 
 type Method string
 
