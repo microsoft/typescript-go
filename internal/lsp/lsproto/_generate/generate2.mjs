@@ -101,7 +101,7 @@ function resolveType(type) {
     switch (type.kind) {
         case "base":
             return mapBaseTypeToGo(type.name);
-            
+
         case "reference":
             // If it's a reference, we need to check if we know this type
             if (registry.types.has(type.name)) {
@@ -110,26 +110,26 @@ function resolveType(type) {
                     return refType;
                 }
             }
-            
+
             // By default, assume referenced types are structs that need pointers
             // This will be updated as we process all types
             const refType = { name: type.name, isStruct: true, needsPointer: true };
             registry.types.set(type.name, refType);
             return refType;
-            
+
         case "array": {
             const elementType = resolveType(type.element);
             // Arrays of structs should be arrays of pointers to structs
-            const arrayTypeName = elementType.needsPointer 
-                ? `[]*${elementType.name}` 
+            const arrayTypeName = elementType.needsPointer
+                ? `[]*${elementType.name}`
                 : `[]${elementType.name}`;
-            return { 
+            return {
                 name: arrayTypeName,
-                isStruct: false, 
-                needsPointer: false, 
+                isStruct: false,
+                needsPointer: false,
             };
         }
-        
+
         case "map": {
             const keyType = type.key.kind === "base"
                 ? mapBaseTypeToGo(type.key.name).name
@@ -336,7 +336,7 @@ function buildTypeSystem() {
 
     // Keep track of used enum identifiers across all enums to avoid conflicts
     const usedEnumIdentifiers = new Set();
-    
+
     // Process all enumerations first to make them available for struct fields
     for (const enumeration of model.enumerations) {
         // Register the enum type with its own name rather than the base type
@@ -348,7 +348,7 @@ function buildTypeSystem() {
 
         // Create a map for this enum's values (not an array)
         const enumValues = new Map();
-        
+
         // Process values for this enum
         for (const value of enumeration.values) {
             // Generate a unique identifier for this enum constant
@@ -374,7 +374,7 @@ function buildTypeSystem() {
             enumValues.set(String(value.value), {
                 identifier,
                 documentation: value.documentation,
-                deprecated: value.deprecated
+                deprecated: value.deprecated,
             });
         }
 
