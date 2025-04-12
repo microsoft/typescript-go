@@ -42,7 +42,7 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @property {Map<string, string>} literalTypes - Map from literal values to type names
  * @property {Map<string, {name: string, types: Type[]}[]>} unionTypes - Map of union type names to their component types
  * @property {Set<string>} generatedTypes - Set of types that have been generated
- * @property {Map<string, Map<string, string>>} enumValuesByType - Map of enum type names to their values
+ * @property {Map<string, Map<string, {identifier: string, documentation: string, deprecated: string}>>} enumValuesByType - Map of enum type names to their values
  */
 
 /**
@@ -101,7 +101,7 @@ function resolveType(type) {
     switch (type.kind) {
         case "base":
             return mapBaseTypeToGo(type.name);
-
+            
         case "reference":
             // If it's a reference, we need to check if we know this type
             if (registry.types.has(type.name)) {
@@ -110,26 +110,26 @@ function resolveType(type) {
                     return refType;
                 }
             }
-
+            
             // By default, assume referenced types are structs that need pointers
             // This will be updated as we process all types
             const refType = { name: type.name, isStruct: true, needsPointer: true };
             registry.types.set(type.name, refType);
             return refType;
-
+            
         case "array": {
             const elementType = resolveType(type.element);
             // Arrays of structs should be arrays of pointers to structs
-            const arrayTypeName = elementType.needsPointer
-                ? `[]*${elementType.name}`
+            const arrayTypeName = elementType.needsPointer 
+                ? `[]*${elementType.name}` 
                 : `[]${elementType.name}`;
-            return {
+            return { 
                 name: arrayTypeName,
-                isStruct: false,
-                needsPointer: false,
+                isStruct: false, 
+                needsPointer: false, 
             };
         }
-
+        
         case "map": {
             const keyType = type.key.kind === "base"
                 ? mapBaseTypeToGo(type.key.name).name
@@ -336,53 +336,19 @@ function buildTypeSystem() {
 
     // Keep track of used enum identifiers across all enums to avoid conflicts
     const usedEnumIdentifiers = new Set();
-
-    // Process all structures
-    for (const structure of model.structures) {
-        registry.types.set(structure.name, {
-            name: structure.name,
-            isStruct: true,
-            needsPointer: true,
-        });
-    }
-
-    // Process all type aliases
-    for (const typeAlias of model.typeAliases) {
-        const resolvedType = resolveType(typeAlias.type);
-        registry.types.set(typeAlias.name, {
-            name: resolvedType.name,
-            isStruct: resolvedType.isStruct,
-            needsPointer: resolvedType.needsPointer,
-        });
-    }
-
-    // Process all enumerations
+    
+    // Process all enumerations first to make them available for struct fields
     for (const enumeration of model.enumerations) {
-        let baseType;
-        switch (enumeration.type.name) {
-            case "string":
-                baseType = "string";
-                break;
-            case "integer":
-                baseType = "int32";
-                break;
-            case "uinteger":
-                baseType = "uint32";
-                break;
-            default:
-                baseType = "string";
-                break;
-        }
-
+        // Register the enum type with its own name rather than the base type
         registry.types.set(enumeration.name, {
-            name: baseType,
+            name: enumeration.name, // Use the enum type name, not the base type
             isStruct: false,
             needsPointer: false,
         });
 
-        // Fully processed entries for this enum
-        const enumEntries = [];
-
+        // Create a map for this enum's values (not an array)
+        const enumValues = new Map();
+        
         // Process values for this enum
         for (const value of enumeration.values) {
             // Generate a unique identifier for this enum constant
@@ -403,18 +369,36 @@ function buildTypeSystem() {
             // Mark this identifier as used
             usedEnumIdentifiers.add(identifier);
 
-            // Add to processed entries
-            enumEntries.push({
+            // Store the entry in the map with the value literal as the key
+            // and an object with all needed information as the value
+            enumValues.set(String(value.value), {
                 identifier,
-                value: value.value,
                 documentation: value.documentation,
-                deprecated: value.deprecated,
+                deprecated: value.deprecated
             });
         }
 
-        // Store processed entries
-        registry.enumValuesByType = registry.enumValuesByType || new Map();
-        registry.enumValuesByType.set(enumeration.name, enumEntries);
+        // Store the map of values for this enum
+        registry.enumValuesByType.set(enumeration.name, enumValues);
+    }
+
+    // Process all structures
+    for (const structure of model.structures) {
+        registry.types.set(structure.name, {
+            name: structure.name,
+            isStruct: true,
+            needsPointer: true,
+        });
+    }
+
+    // Process all type aliases
+    for (const typeAlias of model.typeAliases) {
+        const resolvedType = resolveType(typeAlias.type);
+        registry.types.set(typeAlias.name, {
+            name: resolvedType.name,
+            isStruct: resolvedType.isStruct,
+            needsPointer: resolvedType.needsPointer,
+        });
     }
 }
 
@@ -589,26 +573,26 @@ function generateCode() {
         writeLine(`type ${enumeration.name} ${baseType}`);
         writeLine("");
 
-        // Get the pre-processed enum entries array that avoids duplicates
-        const enumEntries = registry.enumValuesByType.get(enumeration.name);
-        if (!enumEntries || !enumEntries.length) {
+        // Get the pre-processed enum entries map that avoids duplicates
+        const enumValues = registry.enumValuesByType.get(enumeration.name);
+        if (!enumValues || !enumValues.size) {
             continue; // Skip if no entries (shouldn't happen)
         }
 
         writeLine("const (");
 
         // Process entries with unique identifiers
-        for (const entry of enumEntries) {
+        for (const [value, entry] of enumValues.entries()) {
             write(formatDocumentation(entry.documentation));
             write(formatDeprecation(entry.deprecated));
 
             let valueLiteral;
             // Handle string values
             if (enumeration.type.name === "string") {
-                valueLiteral = `"${String(entry.value).replace(/^"|"$/g, "")}"`;
+                valueLiteral = `"${String(value).replace(/^"|"$/g, "")}"`;
             }
             else {
-                valueLiteral = String(entry.value);
+                valueLiteral = String(value);
             }
 
             writeLine(`\t${entry.identifier} ${enumeration.name} = ${valueLiteral}`);

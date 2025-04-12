@@ -173,7 +173,7 @@ type FoldingRange struct {
 	// Describes the kind of the folding range such as 'comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
 	// See FoldingRangeKind for an enumeration of standardized kinds.
-	Kind *string `json:"kind,omitempty"`
+	Kind *FoldingRangeKind `json:"kind,omitempty"`
 
 	// The text that the client should show when the specified range is
 	// collapsed. If not defined or not supported by the client, a default
@@ -256,10 +256,10 @@ type CallHierarchyItem struct {
 	Name string `json:"name"`
 
 	// The kind of this item.
-	Kind uint32 `json:"kind"`
+	Kind SymbolKind `json:"kind"`
 
 	// Tags for this item.
-	Tags *[]uint32 `json:"tags,omitempty"`
+	Tags *[]SymbolTag `json:"tags,omitempty"`
 
 	// More detail for this item, e.g. the signature of a function.
 	Detail *string `json:"detail,omitempty"`
@@ -553,10 +553,10 @@ type Moniker struct {
 	Identifier string `json:"identifier"`
 
 	// The scope in which the moniker is unique
-	Unique string `json:"unique"`
+	Unique UniquenessLevel `json:"unique"`
 
 	// The moniker kind if known.
-	Kind *string `json:"kind,omitempty"`
+	Kind *MonikerKind `json:"kind,omitempty"`
 }
 
 type MonikerRegistrationOptions struct {
@@ -578,10 +578,10 @@ type TypeHierarchyItem struct {
 	Name string `json:"name"`
 
 	// The kind of this item.
-	Kind uint32 `json:"kind"`
+	Kind SymbolKind `json:"kind"`
 
 	// Tags for this item.
-	Tags *[]uint32 `json:"tags,omitempty"`
+	Tags *[]SymbolTag `json:"tags,omitempty"`
 
 	// More detail for this item, e.g. the signature of a function.
 	Detail *string `json:"detail,omitempty"`
@@ -691,7 +691,7 @@ type InlayHint struct {
 
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
-	Kind *uint32 `json:"kind,omitempty"`
+	Kind *InlayHintKind `json:"kind,omitempty"`
 
 	// Optional text edits that are performed when accepting this inlay hint.
 	//
@@ -1005,7 +1005,7 @@ type DidChangeConfigurationRegistrationOptions struct {
 // The parameters of a notification message.
 type ShowMessageParams struct {
 	// The message type. See MessageType
-	Type uint32 `json:"type"`
+	Type MessageType `json:"type"`
 
 	// The actual message.
 	Message string `json:"message"`
@@ -1013,7 +1013,7 @@ type ShowMessageParams struct {
 
 type ShowMessageRequestParams struct {
 	// The message type. See MessageType
-	Type uint32 `json:"type"`
+	Type MessageType `json:"type"`
 
 	// The actual message.
 	Message string `json:"message"`
@@ -1030,7 +1030,7 @@ type MessageActionItem struct {
 // The log message parameters.
 type LogMessageParams struct {
 	// The message type. See MessageType
-	Type uint32 `json:"type"`
+	Type MessageType `json:"type"`
 
 	// The actual message.
 	Message string `json:"message"`
@@ -1068,7 +1068,7 @@ type TextDocumentChangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 
 	// How documents are synced to the server.
-	SyncKind uint32 `json:"syncKind"`
+	SyncKind TextDocumentSyncKind `json:"syncKind"`
 }
 
 // The parameters sent in a close text document notification
@@ -1099,7 +1099,7 @@ type WillSaveTextDocumentParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The 'TextDocumentSaveReason'.
-	Reason uint32 `json:"reason"`
+	Reason TextDocumentSaveReason `json:"reason"`
 }
 
 // A text edit applicable to a text document.
@@ -1169,12 +1169,12 @@ type CompletionItem struct {
 
 	// The kind of this completion item. Based of the kind
 	// an icon is chosen by the editor.
-	Kind *uint32 `json:"kind,omitempty"`
+	Kind *CompletionItemKind `json:"kind,omitempty"`
 
 	// Tags for this completion item.
 	//
 	// Since: 3.15.0
-	Tags *[]uint32 `json:"tags,omitempty"`
+	Tags *[]CompletionItemTag `json:"tags,omitempty"`
 
 	// A human-readable string with additional information
 	// about this item, like type or symbol information.
@@ -1224,14 +1224,14 @@ type CompletionItem struct {
 	//
 	// Please note that the insertTextFormat doesn't apply to
 	// `additionalTextEdits`.
-	InsertTextFormat *uint32 `json:"insertTextFormat,omitempty"`
+	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitempty"`
 
 	// How whitespace and indentation is handled during completion
 	// item insertion. If not provided the clients default value depends on
 	// the `textDocument.completion.insertTextMode` client capability.
 	//
 	// Since: 3.16.0
-	InsertTextMode *uint32 `json:"insertTextMode,omitempty"`
+	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
 
 	// An edit which is applied to a document when selecting
 	// this completion. When an edit is provided the value of
@@ -1466,7 +1466,7 @@ type DocumentHighlight struct {
 	Range *Range `json:"range"`
 
 	// The highlight kind, default is text.
-	Kind *uint32 `json:"kind,omitempty"`
+	Kind *DocumentHighlightKind `json:"kind,omitempty"`
 }
 
 // Registration options for a DocumentHighlightRequest.
@@ -1520,12 +1520,12 @@ type DocumentSymbol struct {
 	Detail *string `json:"detail,omitempty"`
 
 	// The kind of this symbol.
-	Kind uint32 `json:"kind"`
+	Kind SymbolKind `json:"kind"`
 
 	// Tags for this document symbol.
 	//
 	// Since: 3.16.0
-	Tags *[]uint32 `json:"tags,omitempty"`
+	Tags *[]SymbolTag `json:"tags,omitempty"`
 
 	// Indicates if this symbol is deprecated.
 	//
@@ -1600,7 +1600,7 @@ type CodeAction struct {
 	// The kind of the code action.
 	//
 	// Used to filter code actions.
-	Kind *string `json:"kind,omitempty"`
+	Kind *CodeActionKind `json:"kind,omitempty"`
 
 	// The diagnostics that this code action resolves.
 	Diagnostics *[]*Diagnostic `json:"diagnostics,omitempty"`
@@ -1648,7 +1648,7 @@ type CodeAction struct {
 	// Tags for this code action.
 	//
 	// Since: 3.18.0 - proposed
-	Tags *[]uint32 `json:"tags,omitempty"`
+	Tags *[]CodeActionTag `json:"tags,omitempty"`
 }
 
 // Registration options for a CodeActionRequest.
@@ -1990,7 +1990,7 @@ type WorkDoneProgressEnd struct {
 }
 
 type SetTraceParams struct {
-	Value string `json:"value"`
+	Value TraceValue `json:"value"`
 }
 
 type LogTraceParams struct {
@@ -2470,7 +2470,7 @@ type InlayHintLabelPart struct {
 // remove HTML from the markdown to avoid script execution.
 type MarkupContent struct {
 	// The type of the Markup
-	Kind string `json:"kind"`
+	Kind MarkupKind `json:"kind"`
 
 	// The content itself
 	Value string `json:"value"`
@@ -2614,7 +2614,7 @@ type TextDocumentItem struct {
 	Uri DocumentUri `json:"uri"`
 
 	// The text document's language identifier.
-	LanguageId string `json:"languageId"`
+	LanguageId LanguageKind `json:"languageId"`
 
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
@@ -2684,7 +2684,7 @@ type NotebookDocumentIdentifier struct {
 // Proposed.
 type InlineCompletionContext struct {
 	// Describes how the inline completion was triggered.
-	TriggerKind uint32 `json:"triggerKind"`
+	TriggerKind InlineCompletionTriggerKind `json:"triggerKind"`
 
 	// Provides information about the currently selected item in the autocomplete widget if it is visible.
 	SelectedCompletionInfo *SelectedCompletionInfo `json:"selectedCompletionInfo,omitempty"`
@@ -2796,7 +2796,7 @@ type _InitializeParams struct {
 	InitializationOptions *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"initializationOptions,omitempty"`
 
 	// The initial trace setting. If omitted trace is disabled ('off').
-	Trace *string `json:"trace,omitempty"`
+	Trace *TraceValue `json:"trace,omitempty"`
 }
 
 type WorkspaceFoldersInitializeParams struct {
@@ -2822,7 +2822,7 @@ type ServerCapabilities struct {
 	// If omitted it defaults to 'utf-16'.
 	//
 	// Since: 3.17.0
-	PositionEncoding *string `json:"positionEncoding,omitempty"`
+	PositionEncoding *PositionEncodingKind `json:"positionEncoding,omitempty"`
 
 	// Defines how text documents are synced. Is either a detailed structure
 	// defining each notification or for backwards compatibility the
@@ -2989,7 +2989,7 @@ type FileEvent struct {
 	Uri DocumentUri `json:"uri"`
 
 	// The change type.
-	Type uint32 `json:"type"`
+	Type FileChangeType `json:"type"`
 }
 
 type FileSystemWatcher struct {
@@ -3001,7 +3001,7 @@ type FileSystemWatcher struct {
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
 	// which is 7.
-	Kind *uint32 `json:"kind,omitempty"`
+	Kind *WatchKind `json:"kind,omitempty"`
 }
 
 // Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
@@ -3013,7 +3013,7 @@ type Diagnostic struct {
 	// The diagnostic's severity. To avoid interpretation mismatches when a
 	// server is used with different clients it is highly recommended that servers
 	// always provide a severity value.
-	Severity *uint32 `json:"severity,omitempty"`
+	Severity *DiagnosticSeverity `json:"severity,omitempty"`
 
 	// The diagnostic's code, which usually appear in the user interface.
 	Code *IntegerOrString `json:"code,omitempty"`
@@ -3035,7 +3035,7 @@ type Diagnostic struct {
 	// Additional metadata about the diagnostic.
 	//
 	// Since: 3.15.0
-	Tags *[]uint32 `json:"tags,omitempty"`
+	Tags *[]DiagnosticTag `json:"tags,omitempty"`
 
 	// An array of related diagnostic information, e.g. when symbol-names within
 	// a scope collide all definitions can be marked via this property.
@@ -3051,7 +3051,7 @@ type Diagnostic struct {
 // Contains additional information about the context in which a completion request is triggered.
 type CompletionContext struct {
 	// How the completion was triggered.
-	TriggerKind uint32 `json:"triggerKind"`
+	TriggerKind CompletionTriggerKind `json:"triggerKind"`
 
 	// The trigger character (a single character) that has trigger code complete.
 	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
@@ -3114,12 +3114,12 @@ type CompletionItemDefaults struct {
 	// A default insert text format.
 	//
 	// Since: 3.17.0
-	InsertTextFormat *uint32 `json:"insertTextFormat,omitempty"`
+	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitempty"`
 
 	// A default insert text mode.
 	//
 	// Since: 3.17.0
-	InsertTextMode *uint32 `json:"insertTextMode,omitempty"`
+	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
 
 	// A default data value.
 	//
@@ -3160,7 +3160,7 @@ type CompletionItemApplyKinds struct {
 	// and the completion's own `commitCharacters`.
 	//
 	// Since: 3.18.0
-	CommitCharacters *uint32 `json:"commitCharacters,omitempty"`
+	CommitCharacters *ApplyKind `json:"commitCharacters,omitempty"`
 
 	// Specifies whether the `data` field on a completion will replace or
 	// be merged with data from `completionList.itemDefaults.data`.
@@ -3184,7 +3184,7 @@ type CompletionItemApplyKinds struct {
 	//   within that value will occur.
 	//
 	// Since: 3.18.0
-	Data *uint32 `json:"data,omitempty"`
+	Data *ApplyKind `json:"data,omitempty"`
 }
 
 // Completion options.
@@ -3232,7 +3232,7 @@ type HoverOptions struct {
 // Since: 3.15.0
 type SignatureHelpContext struct {
 	// Action that caused signature help to be triggered.
-	TriggerKind uint32 `json:"triggerKind"`
+	TriggerKind SignatureHelpTriggerKind `json:"triggerKind"`
 
 	// Character that caused signature help to be triggered.
 	//
@@ -3325,12 +3325,12 @@ type BaseSymbolInformation struct {
 	Name string `json:"name"`
 
 	// The kind of this symbol.
-	Kind uint32 `json:"kind"`
+	Kind SymbolKind `json:"kind"`
 
 	// Tags for this symbol.
 	//
 	// Since: 3.16.0
-	Tags *[]uint32 `json:"tags,omitempty"`
+	Tags *[]SymbolTag `json:"tags,omitempty"`
 
 	// The name of the symbol containing this symbol. This information is for
 	// user interface purposes (e.g. to render a qualifier in the user interface
@@ -3364,12 +3364,12 @@ type CodeActionContext struct {
 	//
 	// Actions not of this kind are filtered out by the client before being shown. So servers
 	// can omit computing them.
-	Only *[]string `json:"only,omitempty"`
+	Only *[]CodeActionKind `json:"only,omitempty"`
 
 	// The reason why code actions were requested.
 	//
 	// Since: 3.17.0
-	TriggerKind *uint32 `json:"triggerKind,omitempty"`
+	TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitempty"`
 }
 
 // Captures why the code action is currently disabled.
@@ -3390,7 +3390,7 @@ type CodeActionOptions struct {
 	//
 	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
 	// may list out every specific kind they provide.
-	CodeActionKinds *[]string `json:"codeActionKinds,omitempty"`
+	CodeActionKinds *[]CodeActionKind `json:"codeActionKinds,omitempty"`
 
 	// Static documentation for a class of code actions.
 	//
@@ -3647,7 +3647,7 @@ type FileOperationPattern struct {
 	// Whether to match files or folders with this pattern.
 	//
 	// Matches both if undefined.
-	Matches *string `json:"matches,omitempty"`
+	Matches *FileOperationPatternKind `json:"matches,omitempty"`
 
 	// Additional options used during matching.
 	Options *FileOperationPatternOptions `json:"options,omitempty"`
@@ -3690,7 +3690,7 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 // Since: 3.17.0
 type NotebookCell struct {
 	// The cell's kind
-	Kind uint32 `json:"kind"`
+	Kind NotebookCellKind `json:"kind"`
 
 	// The URI of the cell's text document
 	// content.
@@ -3800,7 +3800,7 @@ type TextDocumentSyncOptions struct {
 
 	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
 	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
-	Change *uint32 `json:"change,omitempty"`
+	Change *TextDocumentSyncKind `json:"change,omitempty"`
 
 	// If present will save notifications are sent to the server. If omitted the notification should not be
 	// sent.
@@ -3936,7 +3936,7 @@ type CodeActionKindDocumentation struct {
 	// If the kind is generic, such as `CodeActionKind.Refactor`, the documentation will be shown whenever any
 	// refactorings are returned. If the kind if more specific, such as `CodeActionKind.RefactorExtract`, the
 	// documentation will only be shown when extract refactoring code actions are returned.
-	Kind string `json:"kind"`
+	Kind CodeActionKind `json:"kind"`
 
 	// Command that is ued to display the documentation to the user.
 	//
@@ -4295,7 +4295,7 @@ type GeneralClientCapabilities struct {
 	// side.
 	//
 	// Since: 3.17.0
-	PositionEncodings *[]string `json:"positionEncodings,omitempty"`
+	PositionEncodings *[]PositionEncodingKind `json:"positionEncodings,omitempty"`
 }
 
 type WorkspaceFoldersServerCapabilities struct {
@@ -4468,13 +4468,13 @@ type WorkspaceEditClientCapabilities struct {
 	// support 'create', 'rename' and 'delete' files and folders.
 	//
 	// Since: 3.13.0
-	ResourceOperations *[]string `json:"resourceOperations,omitempty"`
+	ResourceOperations *[]ResourceOperationKind `json:"resourceOperations,omitempty"`
 
 	// The failure handling strategy of a client if applying the workspace edit
 	// fails.
 	//
 	// Since: 3.13.0
-	FailureHandling *string `json:"failureHandling,omitempty"`
+	FailureHandling *FailureHandlingKind `json:"failureHandling,omitempty"`
 
 	// Whether the client normalizes line endings to the client specific
 	// setting.
@@ -4711,7 +4711,7 @@ type CompletionClientCapabilities struct {
 	// text in either `insertText` or `textEdit`.
 	//
 	// Since: 3.17.0
-	InsertTextMode *uint32 `json:"insertTextMode,omitempty"`
+	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
 
 	// The client supports to send additional context information for a
 	// `textDocument/completion` request.
@@ -4730,7 +4730,7 @@ type HoverClientCapabilities struct {
 
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
-	ContentFormat *[]string `json:"contentFormat,omitempty"`
+	ContentFormat *[]MarkupKind `json:"contentFormat,omitempty"`
 }
 
 // Client Capabilities for a SignatureHelpRequest.
@@ -4965,7 +4965,7 @@ type RenameClientCapabilities struct {
 	// client.
 	//
 	// Since: 3.16.0
-	PrepareSupportDefaultBehavior *uint32 `json:"prepareSupportDefaultBehavior,omitempty"`
+	PrepareSupportDefaultBehavior *PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior,omitempty"`
 
 	// Whether the client honors the change annotations in
 	// text edits and resource operations returned via the
@@ -5055,7 +5055,7 @@ type SemanticTokensClientCapabilities struct {
 	TokenModifiers []string `json:"tokenModifiers"`
 
 	// The token formats the clients supports.
-	Formats []string `json:"formats"`
+	Formats []TokenFormat `json:"formats"`
 
 	// Whether the client supports tokens that can overlap each other.
 	OverlappingTokenSupport *bool `json:"overlappingTokenSupport,omitempty"`
@@ -5242,13 +5242,13 @@ type ClientSymbolKindOptions struct {
 	// If this property is not present the client only supports
 	// the symbol kinds from `File` to `Array` as defined in
 	// the initial version of the protocol.
-	ValueSet *[]uint32 `json:"valueSet,omitempty"`
+	ValueSet *[]SymbolKind `json:"valueSet,omitempty"`
 }
 
 // Since: 3.18.0
 type ClientSymbolTagOptions struct {
 	// The tags supported by the client.
-	ValueSet []uint32 `json:"valueSet"`
+	ValueSet []SymbolTag `json:"valueSet"`
 }
 
 // Since: 3.18.0
@@ -5273,7 +5273,7 @@ type ClientCompletionItemOptions struct {
 
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
-	DocumentationFormat *[]string `json:"documentationFormat,omitempty"`
+	DocumentationFormat *[]MarkupKind `json:"documentationFormat,omitempty"`
 
 	// Client supports the deprecated property on a completion item.
 	DeprecatedSupport *bool `json:"deprecatedSupport,omitempty"`
@@ -5326,7 +5326,7 @@ type ClientCompletionItemOptionsKind struct {
 	// If this property is not present the client only supports
 	// the completion items kinds from `Text` to `Reference` as defined in
 	// the initial version of the protocol.
-	ValueSet *[]uint32 `json:"valueSet,omitempty"`
+	ValueSet *[]CompletionItemKind `json:"valueSet,omitempty"`
 }
 
 // The client supports the following `CompletionList` specific
@@ -5362,7 +5362,7 @@ type CompletionListCapabilities struct {
 type ClientSignatureInformationOptions struct {
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
-	DocumentationFormat *[]string `json:"documentationFormat,omitempty"`
+	DocumentationFormat *[]MarkupKind `json:"documentationFormat,omitempty"`
 
 	// Client capabilities specific to parameter information.
 	ParameterInformation *ClientSignatureParameterInformationOptions `json:"parameterInformation,omitempty"`
@@ -5398,7 +5398,7 @@ type ClientCodeActionResolveOptions struct {
 // Since: 3.18.0 - proposed
 type CodeActionTagOptions struct {
 	// The tags supported by the client.
-	ValueSet []uint32 `json:"valueSet"`
+	ValueSet []CodeActionTag `json:"valueSet"`
 }
 
 // Since: 3.18.0
@@ -5413,7 +5413,7 @@ type ClientFoldingRangeKindOptions struct {
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
-	ValueSet *[]string `json:"valueSet,omitempty"`
+	ValueSet *[]FoldingRangeKind `json:"valueSet,omitempty"`
 }
 
 // Since: 3.18.0
@@ -5477,7 +5477,7 @@ type ClientShowMessageActionItemOptions struct {
 // Since: 3.18.0
 type CompletionItemTagOptions struct {
 	// The tags supported by the client.
-	ValueSet []uint32 `json:"valueSet"`
+	ValueSet []CompletionItemTag `json:"valueSet"`
 }
 
 // Since: 3.18.0
@@ -5488,7 +5488,7 @@ type ClientCompletionItemResolveOptions struct {
 
 // Since: 3.18.0
 type ClientCompletionItemInsertTextModeOptions struct {
-	ValueSet []uint32 `json:"valueSet"`
+	ValueSet []InsertTextMode `json:"valueSet"`
 }
 
 // Since: 3.18.0
@@ -5506,13 +5506,13 @@ type ClientCodeActionKindOptions struct {
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
-	ValueSet []string `json:"valueSet"`
+	ValueSet []CodeActionKind `json:"valueSet"`
 }
 
 // Since: 3.18.0
 type ClientDiagnosticsTagOptions struct {
 	// The tags supported by the client.
-	ValueSet []uint32 `json:"valueSet"`
+	ValueSet []DiagnosticTag `json:"valueSet"`
 }
 
 // Since: 3.18.0
@@ -6216,7 +6216,7 @@ const (
 	LanguageKindD LanguageKind = "d"
 	// Since: 3.18.0
 	// Proposed.
-	LanguageKindDelphi          LanguageKind = "pascal"
+	LanguageKindPascal          LanguageKind = "pascal"
 	LanguageKindDiff            LanguageKind = "diff"
 	LanguageKindDart            LanguageKind = "dart"
 	LanguageKindDockerfile      LanguageKind = "dockerfile"
@@ -6242,9 +6242,6 @@ const (
 	LanguageKindMarkdown        LanguageKind = "markdown"
 	LanguageKindObjectiveC      LanguageKind = "objective-c"
 	LanguageKindObjectiveCPP    LanguageKind = "objective-cpp"
-	// Since: 3.18.0
-	// Proposed.
-	LanguageKindPascal          LanguageKind = "pascal"
 	LanguageKindPerl            LanguageKind = "perl"
 	LanguageKindPerl6           LanguageKind = "perl6"
 	LanguageKindPHP             LanguageKind = "php"
@@ -8526,7 +8523,7 @@ func (o *NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) Un
 
 type TextDocumentSyncOptionsOrTextDocumentSyncKind struct {
 	TextDocumentSyncOptions *TextDocumentSyncOptions
-	TextDocumentSyncKind    *uint32
+	TextDocumentSyncKind    *TextDocumentSyncKind
 }
 
 func (o TextDocumentSyncOptionsOrTextDocumentSyncKind) MarshalJSON() ([]byte, error) {
@@ -8555,7 +8552,7 @@ func (o *TextDocumentSyncOptionsOrTextDocumentSyncKind) UnmarshalJSON(data []byt
 		}
 	}
 	{
-		var v uint32
+		var v TextDocumentSyncKind
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.TextDocumentSyncKind = &v
 			return nil

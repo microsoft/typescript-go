@@ -226,7 +226,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 			Name:    "typescript-go",
 			Version: ptrTo(core.Version),
 		},
-		Capabilities: lsproto.ServerCapabilities{
+		Capabilities: &lsproto.ServerCapabilities{
 			PositionEncoding: ptrTo(s.positionEncoding),
 			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrTextDocumentSyncKind{
 				TextDocumentSyncOptions: &lsproto.TextDocumentSyncOptions{
@@ -319,7 +319,7 @@ func (s *Server) handleDocumentDiagnostic(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DocumentDiagnosticParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
 	diagnostics := project.LanguageService().GetDocumentDiagnostics(file.FileName())
-	lspDiagnostics := make([]lsproto.Diagnostic, len(diagnostics))
+	lspDiagnostics := make([]*lsproto.Diagnostic, len(diagnostics))
 	for i, diag := range diagnostics {
 		if lspDiagnostic, err := s.converters.ToLSPDiagnostic(diag); err != nil {
 			return s.sendError(req.ID, err)
@@ -347,7 +347,7 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 
 	hoverText := project.LanguageService().ProvideHover(file.FileName(), pos)
 	return s.sendResult(req.ID, &lsproto.Hover{
-		Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+		Contents: &lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
 			MarkupContent: &lsproto.MarkupContent{
 				Kind:  lsproto.MarkupKindMarkdown,
 				Value: codeFence("ts", hoverText),
@@ -365,7 +365,7 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 	}
 
 	locations := project.LanguageService().ProvideDefinitions(file.FileName(), pos)
-	lspLocations := make([]lsproto.Location, len(locations))
+	lspLocations := make([]*lsproto.Location, len(locations))
 	for i, loc := range locations {
 		if lspLocation, err := s.converters.ToLSPLocation(loc); err != nil {
 			return s.sendError(req.ID, err)
