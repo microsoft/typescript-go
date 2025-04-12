@@ -43,6 +43,7 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @property {Map<string, {name: string, types: Type[]}[]>} unionTypes - Map of union type names to their component types
  * @property {Set<string>} generatedTypes - Set of types that have been generated
  * @property {Map<string, Map<string, {identifier: string, documentation: string, deprecated: string}>>} enumValuesByType - Map of enum type names to their values
+ * @property {Map<string, string>} unionTypeAliases - Map from union type name to alias name
  */
 
 /**
@@ -54,6 +55,7 @@ const registry = {
     unionTypes: new Map(),
     generatedTypes: new Set(),
     enumValuesByType: new Map(),
+    unionTypeAliases: new Map(), // Map from union type name to alias name
 };
 
 /**
@@ -287,7 +289,35 @@ function handleOrType(orType) {
         };
     }
 
-    // For multiple types, create a union type
+    // Check if all items are references - if so, we can use their names directly
+    const allReferences = types.every(type => type.kind === "reference");
+    if (allReferences) {
+        const memberNames = types.map(type => type.name);
+        const unionTypeName = memberNames.map(titleCase).join("Or");
+
+        if (!registry.unionTypes.has(unionTypeName)) {
+            registry.unionTypes.set(unionTypeName, []);
+        }
+
+        const union = registry.unionTypes.get(unionTypeName);
+        if (union) {
+            for (let i = 0; i < types.length; i++) {
+                const refType = resolveType(types[i]);
+                union.push({
+                    name: types[i].name,
+                    types: [types[i]],
+                });
+            }
+        }
+
+        return {
+            name: unionTypeName,
+            isStruct: true,
+            needsPointer: true,
+        };
+    }
+
+    // For mixed types, create a union type with more careful naming
     const memberNames = types.map(type => {
         if (type.kind === "reference") {
             return type.name;
@@ -327,7 +357,11 @@ function handleOrType(orType) {
     const union = registry.unionTypes.get(unionTypeName);
     if (union) {
         for (let i = 0; i < types.length; i++) {
-            union.push({ name: memberNames[i], types: [types[i]] });
+            const resolvedType = resolveType(types[i]);
+            union.push({
+                name: memberNames[i],
+                types: [types[i]],
+            });
         }
     }
 
@@ -403,8 +437,35 @@ function buildTypeSystem() {
         });
     }
 
-    // Process all type aliases
+    // First pass - process all type aliases to find union types
     for (const typeAlias of model.typeAliases) {
+        // Skip URI and DocumentUri as they are already defined in lsp.go
+        if (
+            typeAlias.name === "URI" ||
+            typeAlias.name === "DocumentUri" ||
+            typeAlias.name === "ProgressToken"
+        ) {
+            continue;
+        }
+
+        if (typeAlias.type.kind === "or") {
+            // This is a union type - store the alias mapping
+            const resolvedType = resolveType(typeAlias.type);
+            registry.unionTypeAliases.set(resolvedType.name, typeAlias.name);
+        }
+    }
+
+    // Second pass - now process all type aliases with the union mappings in place
+    for (const typeAlias of model.typeAliases) {
+        // Skip URI and DocumentUri as they are already defined in lsp.go
+        if (
+            typeAlias.name === "URI" ||
+            typeAlias.name === "DocumentUri" ||
+            typeAlias.name === "ProgressToken"
+        ) {
+            continue;
+        }
+
         const resolvedType = resolveType(typeAlias.type);
         registry.types.set(typeAlias.name, {
             name: resolvedType.name,
