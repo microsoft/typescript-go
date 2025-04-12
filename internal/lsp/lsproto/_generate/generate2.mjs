@@ -98,6 +98,18 @@ function mapBaseTypeToGo(baseType) {
  * @returns {GoType}
  */
 function resolveType(type) {
+    // Special case for the LSP "any" type structure, which would normally become a complex union
+    if (
+        type.kind === "or" && type.items.length >= 6 &&
+        type.items.some(item => item.kind === "reference" && item.name === "LSPObject") &&
+        type.items.some(item => item.kind === "reference" && item.name === "LSPArray") &&
+        type.items.some(item => item.kind === "base" && item.name === "string") &&
+        type.items.some(item => item.kind === "base" && item.name === "integer") &&
+        type.items.some(item => item.kind === "base" && item.name === "boolean")
+    ) {
+        return { name: "LSPAny", isStruct: false, needsPointer: false };
+    }
+
     switch (type.kind) {
         case "base":
             return mapBaseTypeToGo(type.name);
@@ -331,8 +343,8 @@ function handleOrType(orType) {
  */
 function buildTypeSystem() {
     // Register built-in types
-    registry.types.set("LSPAny", { name: "any", isStruct: false, needsPointer: false });
     registry.types.set("NullType", { name: "NullType", isStruct: true, needsPointer: true });
+    registry.types.set("LSPAny", { name: "any", isStruct: false, needsPointer: false });
 
     // Keep track of used enum identifiers across all enums to avoid conflicts
     const usedEnumIdentifiers = new Set();
@@ -628,7 +640,7 @@ function generateCode() {
         write(formatDeprecation(typeAlias.deprecated));
 
         if (typeAlias.name === "LSPAny") {
-            writeLine("type LSPAny = any");
+            writeLine("type LSPAny any");
             writeLine("");
             continue;
         }

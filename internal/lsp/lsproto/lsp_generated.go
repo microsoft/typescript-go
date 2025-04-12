@@ -276,7 +276,7 @@ type CallHierarchyItem struct {
 
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Call hierarchy options used during static or dynamic registration.
@@ -602,7 +602,7 @@ type TypeHierarchyItem struct {
 	// supertypes or subtypes requests. It could also be used to identify the
 	// type hierarchy in the server, helping improve the performance on
 	// resolving supertypes and subtypes.
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Type hierarchy options used during static or dynamic registration.
@@ -719,7 +719,7 @@ type InlayHint struct {
 
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Inlay hint options used during static or dynamic registration.
@@ -995,7 +995,7 @@ type InitializedParams struct {
 // The parameters of a change configuration notification.
 type DidChangeConfigurationParams struct {
 	// The actual changed settings
-	Settings *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"settings"`
+	Settings LSPAny `json:"settings"`
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
@@ -1288,7 +1288,7 @@ type CompletionItem struct {
 
 	// A data entry field that is preserved on a completion item between a
 	// CompletionRequest and a CompletionResolveRequest.
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Represents a collection of items to be presented
@@ -1586,7 +1586,7 @@ type Command struct {
 
 	// Arguments that the command handler should be
 	// invoked with.
-	Arguments *[]*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"arguments,omitempty"`
+	Arguments *[]LSPAny `json:"arguments,omitempty"`
 }
 
 // A code action represents a change that can be performed in code, e.g. to fix a problem or
@@ -1643,7 +1643,7 @@ type CodeAction struct {
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
 	//
 	// Since: 3.16.0
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 
 	// Tags for this code action.
 	//
@@ -1690,7 +1690,7 @@ type WorkspaceSymbol struct {
 
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Registration options for a WorkspaceSymbolRequest.
@@ -1721,7 +1721,7 @@ type CodeLens struct {
 
 	// A data entry field that is preserved on a code lens item between
 	// a CodeLensRequest and a CodeLensResolveRequest
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Registration options for a CodeLensRequest.
@@ -1759,7 +1759,7 @@ type DocumentLink struct {
 
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Registration options for a DocumentLinkRequest.
@@ -1883,7 +1883,7 @@ type ExecuteCommandParams struct {
 	Command string `json:"command"`
 
 	// Arguments that the command should be invoked with.
-	Arguments *[]*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"arguments,omitempty"`
+	Arguments *[]LSPAny `json:"arguments,omitempty"`
 }
 
 // Registration options for a ExecuteCommandRequest.
@@ -2009,7 +2009,7 @@ type ProgressParams struct {
 	Token *IntegerOrString `json:"token"`
 
 	// The progress data.
-	Value *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"value"`
+	Value LSPAny `json:"value"`
 }
 
 // A parameter literal used in requests to pass a text document and a position inside that
@@ -2601,7 +2601,7 @@ type NotebookDocument struct {
 	// document.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"metadata,omitempty"`
+	Metadata *map[string]LSPAny `json:"metadata,omitempty"`
 
 	// The cells of a notebook.
 	Cells []*NotebookCell `json:"cells"`
@@ -2664,7 +2664,7 @@ type NotebookDocumentChangeEvent struct {
 	// The changed meta data if any.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"metadata,omitempty"`
+	Metadata *map[string]LSPAny `json:"metadata,omitempty"`
 
 	// Changes to cells
 	Cells *NotebookDocumentCellChanges `json:"cells,omitempty"`
@@ -2735,7 +2735,7 @@ type Registration struct {
 	Method string `json:"method"`
 
 	// Options necessary for the registration.
-	RegisterOptions *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"registerOptions,omitempty"`
+	RegisterOptions *LSPAny `json:"registerOptions,omitempty"`
 }
 
 // General parameters to unregister a request or notification.
@@ -2793,7 +2793,7 @@ type _InitializeParams struct {
 	Capabilities *ClientCapabilities `json:"capabilities"`
 
 	// User provided initialization options.
-	InitializationOptions *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"initializationOptions,omitempty"`
+	InitializationOptions *LSPAny `json:"initializationOptions,omitempty"`
 
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace *TraceValue `json:"trace,omitempty"`
@@ -2954,7 +2954,7 @@ type ServerCapabilities struct {
 	Workspace *WorkspaceOptions `json:"workspace,omitempty"`
 
 	// Experimental server capabilities.
-	Experimental *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"experimental,omitempty"`
+	Experimental *LSPAny `json:"experimental,omitempty"`
 }
 
 // Information about the server
@@ -3045,7 +3045,7 @@ type Diagnostic struct {
 	// notification and `textDocument/codeAction` request.
 	//
 	// Since: 3.16.0
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Contains additional information about the context in which a completion request is triggered.
@@ -3124,7 +3124,7 @@ type CompletionItemDefaults struct {
 	// A default data value.
 	//
 	// Since: 3.17.0
-	Data *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"data,omitempty"`
+	Data *LSPAny `json:"data,omitempty"`
 }
 
 // Specifies how fields from a completion item should be combined with those
@@ -3699,7 +3699,7 @@ type NotebookCell struct {
 	// Additional metadata stored with the cell.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"metadata,omitempty"`
+	Metadata *map[string]LSPAny `json:"metadata,omitempty"`
 
 	// Additional execution summary information
 	// if supported by the client.
@@ -3790,7 +3790,7 @@ type ClientCapabilities struct {
 	General *GeneralClientCapabilities `json:"general,omitempty"`
 
 	// Experimental client capabilities.
-	Experimental *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean `json:"experimental,omitempty"`
+	Experimental *LSPAny `json:"experimental,omitempty"`
 }
 
 type TextDocumentSyncOptions struct {
@@ -6655,7 +6655,7 @@ type DefinitionLink = LocationLink
 
 // LSP arrays.
 // Since: 3.17.0
-type LSPArray = []*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean
+type LSPArray = []LSPAny
 
 // The LSP any type.
 // Please note that strictly speaking a property with the value `undefined`
@@ -6663,7 +6663,7 @@ type LSPArray = []*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBool
 // convenience it is allowed and assumed that all these properties are
 // optional as well.
 // Since: 3.17.0
-type LSPAny = any
+type LSPAny any
 
 // The declaration of a symbol representation as one or many locations.
 type Declaration = LocationOrLocations
@@ -6741,7 +6741,7 @@ type DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
 
 // LSP object definition.
 // Since: 3.17.0
-type LSPObject = map[string]*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean
+type LSPObject = map[string]LSPAny
 
 // The glob pattern. Either a string pattern or a relative pattern.
 //
@@ -6892,101 +6892,6 @@ func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
 		}
 	}
 	return fmt.Errorf("cannot unmarshal %s into LocationOrLocations", string(data))
-}
-
-type LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean struct {
-	LSPObject *map[string]*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean
-	LSPArray  *[]any
-	String    *string
-	Integer   *int32
-	Uinteger  *uint32
-	Decimal   *float64
-	Boolean   *bool
-}
-
-func (o LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean is set", o.LSPObject != nil, o.LSPArray != nil, o.String != nil, o.Integer != nil, o.Uinteger != nil, o.Decimal != nil, o.Boolean != nil)
-
-	if o.LSPObject != nil {
-		return json.Marshal(*o.LSPObject)
-	}
-	if o.LSPArray != nil {
-		return json.Marshal(*o.LSPArray)
-	}
-	if o.String != nil {
-		return json.Marshal(*o.String)
-	}
-	if o.Integer != nil {
-		return json.Marshal(*o.Integer)
-	}
-	if o.Uinteger != nil {
-		return json.Marshal(*o.Uinteger)
-	}
-	if o.Decimal != nil {
-		return json.Marshal(*o.Decimal)
-	}
-	if o.Boolean != nil {
-		return json.Marshal(*o.Boolean)
-	}
-	return []byte("null"), nil
-}
-
-func (o *LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean) UnmarshalJSON(data []byte) error {
-	*o = LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean{}
-	if string(data) == "null" {
-		return nil
-	}
-
-	{
-		var v map[string]*LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.LSPObject = &v
-			return nil
-		}
-	}
-	{
-		var v []any
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.LSPArray = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String = &v
-			return nil
-		}
-	}
-	{
-		var v int32
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Integer = &v
-			return nil
-		}
-	}
-	{
-		var v uint32
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Uinteger = &v
-			return nil
-		}
-	}
-	{
-		var v float64
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Decimal = &v
-			return nil
-		}
-	}
-	{
-		var v bool
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Boolean = &v
-			return nil
-		}
-	}
-	return fmt.Errorf("cannot unmarshal %s into LSPObjectOrLSPArrayOrStringOrIntegerOrUintegerOrDecimalOrBoolean", string(data))
 }
 
 type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
