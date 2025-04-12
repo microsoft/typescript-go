@@ -550,7 +550,7 @@ function generateCode() {
             const type = resolveType(prop.type);
             const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
 
-            writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitempty" : ""}"\``);
+            writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitzero" : ""}"\``);
             writeLine("");
         }
 
