@@ -832,34 +832,36 @@ function generateUnionTypes() {
 
         writeLine(`type ${name} struct {`);
 
-        // Track field names to avoid duplicates in the Go struct
-        const usedFieldNames = new Set();
+        // Use a Map to deduplicate by type name to ensure we don't include multiple fields with the same type
+        const uniqueTypeFields = new Map(); // Maps type name -> field name
 
         for (const member of members) {
             let memberType;
             if (member.types.length === 1) {
                 const type = resolveType(member.types[0]);
                 memberType = type.name;
+
+                // If this type name already exists in our map, skip it
+                if (!uniqueTypeFields.has(memberType)) {
+                    const fieldName = titleCase(member.name);
+                    uniqueTypeFields.set(memberType, fieldName);
+                    writeLine(`\t${fieldName} *${memberType}`);
+                }
             }
             else {
-                // This case shouldn't really happen with our current approach
+                // This shouldn't happen with our current approach, but handle it just in case
                 memberType = "any";
+                const fieldName = titleCase(member.name);
+                uniqueTypeFields.set(memberType, fieldName);
+                writeLine(`\t${fieldName} *${memberType}`);
             }
-
-            // Use a unique field name by adding index if needed
-            let fieldName = titleCase(member.name);
-            let counter = 1;
-
-            while (usedFieldNames.has(fieldName)) {
-                fieldName = `${titleCase(member.name)}${counter++}`;
-            }
-
-            usedFieldNames.add(fieldName);
-            writeLine(`\t${fieldName} *${memberType}`);
         }
 
         writeLine(`}`);
         writeLine("");
+
+        // Get the field names and types for marshal/unmarshal methods
+        const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({ fieldName, typeName }));
 
         // Marshal method
         writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
@@ -867,48 +869,19 @@ function generateUnionTypes() {
         // Create assertion to ensure only one field is set at a time
         write(`\tassertOnlyOne("more than one element of ${name} is set", `);
 
-        // Get field names again for the assertion
-        const fieldNames = [];
-        const seenFieldNames = new Set();
-
-        for (const member of members) {
-            let fieldName = titleCase(member.name);
-            let counter = 1;
-
-            while (seenFieldNames.has(fieldName)) {
-                fieldName = `${titleCase(member.name)}${counter++}`;
-            }
-
-            seenFieldNames.add(fieldName);
-            fieldNames.push(fieldName);
-        }
-
         // Write the assertion conditions
-        for (let i = 0; i < fieldNames.length; i++) {
+        for (let i = 0; i < fieldEntries.length; i++) {
             if (i > 0) write(", ");
-            write(`o.${fieldNames[i]} != nil`);
+            write(`o.${fieldEntries[i].fieldName} != nil`);
         }
         writeLine(`)`);
         writeLine("");
 
         // Write the marshal logic for each field
-        let fieldIndex = 0;
-        seenFieldNames.clear();
-
-        for (const member of members) {
-            let fieldName = titleCase(member.name);
-            let counter = 1;
-
-            while (seenFieldNames.has(fieldName)) {
-                fieldName = `${titleCase(member.name)}${counter++}`;
-            }
-
-            seenFieldNames.add(fieldName);
-
-            writeLine(`\tif o.${fieldName} != nil {`);
-            writeLine(`\t\treturn json.Marshal(*o.${fieldName})`);
+        for (const entry of fieldEntries) {
+            writeLine(`\tif o.${entry.fieldName} != nil {`);
+            writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
             writeLine(`\t}`);
-            fieldIndex++;
         }
 
         writeLine(`\treturn []byte("null"), nil`);
@@ -924,31 +897,12 @@ function generateUnionTypes() {
         writeLine("");
 
         // Write the unmarshal logic for each field
-        seenFieldNames.clear();
-
-        for (const member of members) {
-            let fieldName = titleCase(member.name);
-            let counter = 1;
-
-            while (seenFieldNames.has(fieldName)) {
-                fieldName = `${titleCase(member.name)}${counter++}`;
-            }
-
-            seenFieldNames.add(fieldName);
-
-            let memberType;
-            if (member.types.length === 1) {
-                const type = resolveType(member.types[0]);
-                memberType = type.name;
-            }
-            else {
-                memberType = "any";
-            }
-
+        for (let i = 0; i < fieldEntries.length; i++) {
+            const entry = fieldEntries[i];
             writeLine(`\t{`);
-            writeLine(`\t\tvar v ${memberType}`);
+            writeLine(`\t\tvar v ${entry.typeName}`);
             writeLine(`\t\tif err := json.Unmarshal(data, &v); err == nil {`);
-            writeLine(`\t\t\to.${fieldName} = &v`);
+            writeLine(`\t\t\to.${entry.fieldName} = &v`);
             writeLine(`\t\t\treturn nil`);
             writeLine(`\t\t}`);
             writeLine(`\t}`);

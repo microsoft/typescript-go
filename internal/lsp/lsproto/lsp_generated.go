@@ -6789,42 +6789,18 @@ type RegularExpressionEngineKind = string
 // Union types
 
 type LocationOrLocations struct {
-	Location   *Location
-	Locations  *[]*Location
-	Location1  *Location
-	Locations1 *[]*Location
-	Location2  *Location
-	Locations2 *[]*Location
-	Location3  *Location
-	Locations3 *[]*Location
+	Location  *Location
+	Locations *[]*Location
 }
 
 func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of LocationOrLocations is set", o.Location != nil, o.Locations != nil, o.Location1 != nil, o.Locations1 != nil, o.Location2 != nil, o.Locations2 != nil, o.Location3 != nil, o.Locations3 != nil)
+	assertOnlyOne("more than one element of LocationOrLocations is set", o.Location != nil, o.Locations != nil)
 
 	if o.Location != nil {
 		return json.Marshal(*o.Location)
 	}
 	if o.Locations != nil {
 		return json.Marshal(*o.Locations)
-	}
-	if o.Location1 != nil {
-		return json.Marshal(*o.Location1)
-	}
-	if o.Locations1 != nil {
-		return json.Marshal(*o.Locations1)
-	}
-	if o.Location2 != nil {
-		return json.Marshal(*o.Location2)
-	}
-	if o.Locations2 != nil {
-		return json.Marshal(*o.Locations2)
-	}
-	if o.Location3 != nil {
-		return json.Marshal(*o.Location3)
-	}
-	if o.Locations3 != nil {
-		return json.Marshal(*o.Locations3)
 	}
 	return []byte("null"), nil
 }
@@ -6849,62 +6825,17 @@ func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	{
-		var v Location
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Location1 = &v
-			return nil
-		}
-	}
-	{
-		var v []*Location
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Locations1 = &v
-			return nil
-		}
-	}
-	{
-		var v Location
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Location2 = &v
-			return nil
-		}
-	}
-	{
-		var v []*Location
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Locations2 = &v
-			return nil
-		}
-	}
-	{
-		var v Location
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Location3 = &v
-			return nil
-		}
-	}
-	{
-		var v []*Location
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Locations3 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into LocationOrLocations", string(data))
 }
 
 type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
-	InlineValueText                   *InlineValueText
-	InlineValueVariableLookup         *InlineValueVariableLookup
-	InlineValueEvaluatableExpression  *InlineValueEvaluatableExpression
-	InlineValueText1                  *InlineValueText
-	InlineValueVariableLookup1        *InlineValueVariableLookup
-	InlineValueEvaluatableExpression1 *InlineValueEvaluatableExpression
+	InlineValueText                  *InlineValueText
+	InlineValueVariableLookup        *InlineValueVariableLookup
+	InlineValueEvaluatableExpression *InlineValueEvaluatableExpression
 }
 
 func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil, o.InlineValueText1 != nil, o.InlineValueVariableLookup1 != nil, o.InlineValueEvaluatableExpression1 != nil)
+	assertOnlyOne("more than one element of InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression is set", o.InlineValueText != nil, o.InlineValueVariableLookup != nil, o.InlineValueEvaluatableExpression != nil)
 
 	if o.InlineValueText != nil {
 		return json.Marshal(*o.InlineValueText)
@@ -6914,15 +6845,6 @@ func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpres
 	}
 	if o.InlineValueEvaluatableExpression != nil {
 		return json.Marshal(*o.InlineValueEvaluatableExpression)
-	}
-	if o.InlineValueText1 != nil {
-		return json.Marshal(*o.InlineValueText1)
-	}
-	if o.InlineValueVariableLookup1 != nil {
-		return json.Marshal(*o.InlineValueVariableLookup1)
-	}
-	if o.InlineValueEvaluatableExpression1 != nil {
-		return json.Marshal(*o.InlineValueEvaluatableExpression1)
 	}
 	return []byte("null"), nil
 }
@@ -6954,51 +6876,22 @@ func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpre
 			return nil
 		}
 	}
-	{
-		var v InlineValueText
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.InlineValueText1 = &v
-			return nil
-		}
-	}
-	{
-		var v InlineValueVariableLookup
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.InlineValueVariableLookup1 = &v
-			return nil
-		}
-	}
-	{
-		var v InlineValueEvaluatableExpression
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.InlineValueEvaluatableExpression1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression", string(data))
 }
 
 type RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport struct {
-	RelatedFullDocumentDiagnosticReport       *RelatedFullDocumentDiagnosticReport
-	RelatedUnchangedDocumentDiagnosticReport  *RelatedUnchangedDocumentDiagnosticReport
-	RelatedFullDocumentDiagnosticReport1      *RelatedFullDocumentDiagnosticReport
-	RelatedUnchangedDocumentDiagnosticReport1 *RelatedUnchangedDocumentDiagnosticReport
+	RelatedFullDocumentDiagnosticReport      *RelatedFullDocumentDiagnosticReport
+	RelatedUnchangedDocumentDiagnosticReport *RelatedUnchangedDocumentDiagnosticReport
 }
 
 func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport is set", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil, o.RelatedFullDocumentDiagnosticReport1 != nil, o.RelatedUnchangedDocumentDiagnosticReport1 != nil)
+	assertOnlyOne("more than one element of RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport is set", o.RelatedFullDocumentDiagnosticReport != nil, o.RelatedUnchangedDocumentDiagnosticReport != nil)
 
 	if o.RelatedFullDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.RelatedFullDocumentDiagnosticReport)
 	}
 	if o.RelatedUnchangedDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport)
-	}
-	if o.RelatedFullDocumentDiagnosticReport1 != nil {
-		return json.Marshal(*o.RelatedFullDocumentDiagnosticReport1)
-	}
-	if o.RelatedUnchangedDocumentDiagnosticReport1 != nil {
-		return json.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport1)
 	}
 	return []byte("null"), nil
 }
@@ -7023,34 +6916,17 @@ func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnostic
 			return nil
 		}
 	}
-	{
-		var v RelatedFullDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.RelatedFullDocumentDiagnosticReport1 = &v
-			return nil
-		}
-	}
-	{
-		var v RelatedUnchangedDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.RelatedUnchangedDocumentDiagnosticReport1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport", string(data))
 }
 
 type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior struct {
-	Range                         *Range
-	PrepareRenamePlaceholder      *PrepareRenamePlaceholder
-	PrepareRenameDefaultBehavior  *PrepareRenameDefaultBehavior
-	Range1                        *Range
-	PrepareRenamePlaceholder1     *PrepareRenamePlaceholder
-	PrepareRenameDefaultBehavior1 *PrepareRenameDefaultBehavior
+	Range                        *Range
+	PrepareRenamePlaceholder     *PrepareRenamePlaceholder
+	PrepareRenameDefaultBehavior *PrepareRenameDefaultBehavior
 }
 
 func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil, o.Range1 != nil, o.PrepareRenamePlaceholder1 != nil, o.PrepareRenameDefaultBehavior1 != nil)
+	assertOnlyOne("more than one element of RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior is set", o.Range != nil, o.PrepareRenamePlaceholder != nil, o.PrepareRenameDefaultBehavior != nil)
 
 	if o.Range != nil {
 		return json.Marshal(*o.Range)
@@ -7060,15 +6936,6 @@ func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJS
 	}
 	if o.PrepareRenameDefaultBehavior != nil {
 		return json.Marshal(*o.PrepareRenameDefaultBehavior)
-	}
-	if o.Range1 != nil {
-		return json.Marshal(*o.Range1)
-	}
-	if o.PrepareRenamePlaceholder1 != nil {
-		return json.Marshal(*o.PrepareRenamePlaceholder1)
-	}
-	if o.PrepareRenameDefaultBehavior1 != nil {
-		return json.Marshal(*o.PrepareRenameDefaultBehavior1)
 	}
 	return []byte("null"), nil
 }
@@ -7100,67 +6967,22 @@ func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) Unmarsha
 			return nil
 		}
 	}
-	{
-		var v Range
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Range1 = &v
-			return nil
-		}
-	}
-	{
-		var v PrepareRenamePlaceholder
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.PrepareRenamePlaceholder1 = &v
-			return nil
-		}
-	}
-	{
-		var v PrepareRenameDefaultBehavior
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.PrepareRenameDefaultBehavior1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior", string(data))
 }
 
 type IntegerOrString struct {
-	Integer  *int32
-	String   *string
-	Integer1 *int32
-	String1  *string
-	Integer2 *int32
-	String2  *string
-	Integer3 *int32
-	String3  *string
+	Integer *int32
+	String  *string
 }
 
 func (o IntegerOrString) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of IntegerOrString is set", o.Integer != nil, o.String != nil, o.Integer1 != nil, o.String1 != nil, o.Integer2 != nil, o.String2 != nil, o.Integer3 != nil, o.String3 != nil)
+	assertOnlyOne("more than one element of IntegerOrString is set", o.Integer != nil, o.String != nil)
 
 	if o.Integer != nil {
 		return json.Marshal(*o.Integer)
 	}
 	if o.String != nil {
 		return json.Marshal(*o.String)
-	}
-	if o.Integer1 != nil {
-		return json.Marshal(*o.Integer1)
-	}
-	if o.String1 != nil {
-		return json.Marshal(*o.String1)
-	}
-	if o.Integer2 != nil {
-		return json.Marshal(*o.Integer2)
-	}
-	if o.String2 != nil {
-		return json.Marshal(*o.String2)
-	}
-	if o.Integer3 != nil {
-		return json.Marshal(*o.Integer3)
-	}
-	if o.String3 != nil {
-		return json.Marshal(*o.String3)
 	}
 	return []byte("null"), nil
 }
@@ -7185,72 +7007,22 @@ func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	{
-		var v int32
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Integer1 = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String1 = &v
-			return nil
-		}
-	}
-	{
-		var v int32
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Integer2 = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String2 = &v
-			return nil
-		}
-	}
-	{
-		var v int32
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Integer3 = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String3 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into IntegerOrString", string(data))
 }
 
 type WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport struct {
-	WorkspaceFullDocumentDiagnosticReport       *WorkspaceFullDocumentDiagnosticReport
-	WorkspaceUnchangedDocumentDiagnosticReport  *WorkspaceUnchangedDocumentDiagnosticReport
-	WorkspaceFullDocumentDiagnosticReport1      *WorkspaceFullDocumentDiagnosticReport
-	WorkspaceUnchangedDocumentDiagnosticReport1 *WorkspaceUnchangedDocumentDiagnosticReport
+	WorkspaceFullDocumentDiagnosticReport      *WorkspaceFullDocumentDiagnosticReport
+	WorkspaceUnchangedDocumentDiagnosticReport *WorkspaceUnchangedDocumentDiagnosticReport
 }
 
 func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport is set", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil, o.WorkspaceFullDocumentDiagnosticReport1 != nil, o.WorkspaceUnchangedDocumentDiagnosticReport1 != nil)
+	assertOnlyOne("more than one element of WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport is set", o.WorkspaceFullDocumentDiagnosticReport != nil, o.WorkspaceUnchangedDocumentDiagnosticReport != nil)
 
 	if o.WorkspaceFullDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.WorkspaceFullDocumentDiagnosticReport)
 	}
 	if o.WorkspaceUnchangedDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport)
-	}
-	if o.WorkspaceFullDocumentDiagnosticReport1 != nil {
-		return json.Marshal(*o.WorkspaceFullDocumentDiagnosticReport1)
-	}
-	if o.WorkspaceUnchangedDocumentDiagnosticReport1 != nil {
-		return json.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport1)
 	}
 	return []byte("null"), nil
 }
@@ -7275,44 +7047,22 @@ func (o *WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagno
 			return nil
 		}
 	}
-	{
-		var v WorkspaceFullDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.WorkspaceFullDocumentDiagnosticReport1 = &v
-			return nil
-		}
-	}
-	{
-		var v WorkspaceUnchangedDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.WorkspaceUnchangedDocumentDiagnosticReport1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport", string(data))
 }
 
 type TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument struct {
-	TextDocumentContentChangePartial        *TextDocumentContentChangePartial
-	TextDocumentContentChangeWholeDocument  *TextDocumentContentChangeWholeDocument
-	TextDocumentContentChangePartial1       *TextDocumentContentChangePartial
-	TextDocumentContentChangeWholeDocument1 *TextDocumentContentChangeWholeDocument
+	TextDocumentContentChangePartial       *TextDocumentContentChangePartial
+	TextDocumentContentChangeWholeDocument *TextDocumentContentChangeWholeDocument
 }
 
 func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument is set", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil, o.TextDocumentContentChangePartial1 != nil, o.TextDocumentContentChangeWholeDocument1 != nil)
+	assertOnlyOne("more than one element of TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument is set", o.TextDocumentContentChangePartial != nil, o.TextDocumentContentChangeWholeDocument != nil)
 
 	if o.TextDocumentContentChangePartial != nil {
 		return json.Marshal(*o.TextDocumentContentChangePartial)
 	}
 	if o.TextDocumentContentChangeWholeDocument != nil {
 		return json.Marshal(*o.TextDocumentContentChangeWholeDocument)
-	}
-	if o.TextDocumentContentChangePartial1 != nil {
-		return json.Marshal(*o.TextDocumentContentChangePartial1)
-	}
-	if o.TextDocumentContentChangeWholeDocument1 != nil {
-		return json.Marshal(*o.TextDocumentContentChangeWholeDocument1)
 	}
 	return []byte("null"), nil
 }
@@ -7337,44 +7087,22 @@ func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocumen
 			return nil
 		}
 	}
-	{
-		var v TextDocumentContentChangePartial
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.TextDocumentContentChangePartial1 = &v
-			return nil
-		}
-	}
-	{
-		var v TextDocumentContentChangeWholeDocument
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.TextDocumentContentChangeWholeDocument1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument", string(data))
 }
 
 type StringOrMarkedStringWithLanguage struct {
-	String                    *string
-	MarkedStringWithLanguage  *MarkedStringWithLanguage
-	String1                   *string
-	MarkedStringWithLanguage1 *MarkedStringWithLanguage
+	String                   *string
+	MarkedStringWithLanguage *MarkedStringWithLanguage
 }
 
 func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil, o.String1 != nil, o.MarkedStringWithLanguage1 != nil)
+	assertOnlyOne("more than one element of StringOrMarkedStringWithLanguage is set", o.String != nil, o.MarkedStringWithLanguage != nil)
 
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
 	if o.MarkedStringWithLanguage != nil {
 		return json.Marshal(*o.MarkedStringWithLanguage)
-	}
-	if o.String1 != nil {
-		return json.Marshal(*o.String1)
-	}
-	if o.MarkedStringWithLanguage1 != nil {
-		return json.Marshal(*o.MarkedStringWithLanguage1)
 	}
 	return []byte("null"), nil
 }
@@ -7399,44 +7127,22 @@ func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String1 = &v
-			return nil
-		}
-	}
-	{
-		var v MarkedStringWithLanguage
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.MarkedStringWithLanguage1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into StringOrMarkedStringWithLanguage", string(data))
 }
 
 type TextDocumentFilterOrNotebookCellTextDocumentFilter struct {
-	TextDocumentFilter              *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
-	NotebookCellTextDocumentFilter  *NotebookCellTextDocumentFilter
-	TextDocumentFilter1             *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
-	NotebookCellTextDocumentFilter1 *NotebookCellTextDocumentFilter
+	TextDocumentFilter             *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
+	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
 }
 
 func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentFilterOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilter != nil, o.NotebookCellTextDocumentFilter != nil, o.TextDocumentFilter1 != nil, o.NotebookCellTextDocumentFilter1 != nil)
+	assertOnlyOne("more than one element of TextDocumentFilterOrNotebookCellTextDocumentFilter is set", o.TextDocumentFilter != nil, o.NotebookCellTextDocumentFilter != nil)
 
 	if o.TextDocumentFilter != nil {
 		return json.Marshal(*o.TextDocumentFilter)
 	}
 	if o.NotebookCellTextDocumentFilter != nil {
 		return json.Marshal(*o.NotebookCellTextDocumentFilter)
-	}
-	if o.TextDocumentFilter1 != nil {
-		return json.Marshal(*o.TextDocumentFilter1)
-	}
-	if o.NotebookCellTextDocumentFilter1 != nil {
-		return json.Marshal(*o.NotebookCellTextDocumentFilter1)
 	}
 	return []byte("null"), nil
 }
@@ -7461,44 +7167,22 @@ func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data 
 			return nil
 		}
 	}
-	{
-		var v TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.TextDocumentFilter1 = &v
-			return nil
-		}
-	}
-	{
-		var v NotebookCellTextDocumentFilter
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.NotebookCellTextDocumentFilter1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into TextDocumentFilterOrNotebookCellTextDocumentFilter", string(data))
 }
 
 type PatternOrRelativePattern struct {
-	Pattern          *string
-	RelativePattern  *RelativePattern
-	Pattern1         *string
-	RelativePattern1 *RelativePattern
+	Pattern         *string
+	RelativePattern *RelativePattern
 }
 
 func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil, o.Pattern1 != nil, o.RelativePattern1 != nil)
+	assertOnlyOne("more than one element of PatternOrRelativePattern is set", o.Pattern != nil, o.RelativePattern != nil)
 
 	if o.Pattern != nil {
 		return json.Marshal(*o.Pattern)
 	}
 	if o.RelativePattern != nil {
 		return json.Marshal(*o.RelativePattern)
-	}
-	if o.Pattern1 != nil {
-		return json.Marshal(*o.Pattern1)
-	}
-	if o.RelativePattern1 != nil {
-		return json.Marshal(*o.RelativePattern1)
 	}
 	return []byte("null"), nil
 }
@@ -7523,34 +7207,17 @@ func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Pattern1 = &v
-			return nil
-		}
-	}
-	{
-		var v RelativePattern
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.RelativePattern1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into PatternOrRelativePattern", string(data))
 }
 
 type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern struct {
-	TextDocumentFilterLanguage  *TextDocumentFilterLanguage
-	TextDocumentFilterScheme    *TextDocumentFilterScheme
-	TextDocumentFilterPattern   *TextDocumentFilterPattern
-	TextDocumentFilterLanguage1 *TextDocumentFilterLanguage
-	TextDocumentFilterScheme1   *TextDocumentFilterScheme
-	TextDocumentFilterPattern1  *TextDocumentFilterPattern
+	TextDocumentFilterLanguage *TextDocumentFilterLanguage
+	TextDocumentFilterScheme   *TextDocumentFilterScheme
+	TextDocumentFilterPattern  *TextDocumentFilterPattern
 }
 
 func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil, o.TextDocumentFilterLanguage1 != nil, o.TextDocumentFilterScheme1 != nil, o.TextDocumentFilterPattern1 != nil)
+	assertOnlyOne("more than one element of TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern is set", o.TextDocumentFilterLanguage != nil, o.TextDocumentFilterScheme != nil, o.TextDocumentFilterPattern != nil)
 
 	if o.TextDocumentFilterLanguage != nil {
 		return json.Marshal(*o.TextDocumentFilterLanguage)
@@ -7560,15 +7227,6 @@ func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilter
 	}
 	if o.TextDocumentFilterPattern != nil {
 		return json.Marshal(*o.TextDocumentFilterPattern)
-	}
-	if o.TextDocumentFilterLanguage1 != nil {
-		return json.Marshal(*o.TextDocumentFilterLanguage1)
-	}
-	if o.TextDocumentFilterScheme1 != nil {
-		return json.Marshal(*o.TextDocumentFilterScheme1)
-	}
-	if o.TextDocumentFilterPattern1 != nil {
-		return json.Marshal(*o.TextDocumentFilterPattern1)
 	}
 	return []byte("null"), nil
 }
@@ -7600,41 +7258,17 @@ func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilte
 			return nil
 		}
 	}
-	{
-		var v TextDocumentFilterLanguage
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.TextDocumentFilterLanguage1 = &v
-			return nil
-		}
-	}
-	{
-		var v TextDocumentFilterScheme
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.TextDocumentFilterScheme1 = &v
-			return nil
-		}
-	}
-	{
-		var v TextDocumentFilterPattern
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.TextDocumentFilterPattern1 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern", string(data))
 }
 
 type NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern struct {
-	NotebookDocumentFilterNotebookType  *NotebookDocumentFilterNotebookType
-	NotebookDocumentFilterScheme        *NotebookDocumentFilterScheme
-	NotebookDocumentFilterPattern       *NotebookDocumentFilterPattern
-	NotebookDocumentFilterNotebookType1 *NotebookDocumentFilterNotebookType
-	NotebookDocumentFilterScheme1       *NotebookDocumentFilterScheme
-	NotebookDocumentFilterPattern1      *NotebookDocumentFilterPattern
+	NotebookDocumentFilterNotebookType *NotebookDocumentFilterNotebookType
+	NotebookDocumentFilterScheme       *NotebookDocumentFilterScheme
+	NotebookDocumentFilterPattern      *NotebookDocumentFilterPattern
 }
 
 func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil, o.NotebookDocumentFilterNotebookType1 != nil, o.NotebookDocumentFilterScheme1 != nil, o.NotebookDocumentFilterPattern1 != nil)
+	assertOnlyOne("more than one element of NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern is set", o.NotebookDocumentFilterNotebookType != nil, o.NotebookDocumentFilterScheme != nil, o.NotebookDocumentFilterPattern != nil)
 
 	if o.NotebookDocumentFilterNotebookType != nil {
 		return json.Marshal(*o.NotebookDocumentFilterNotebookType)
@@ -7644,15 +7278,6 @@ func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebo
 	}
 	if o.NotebookDocumentFilterPattern != nil {
 		return json.Marshal(*o.NotebookDocumentFilterPattern)
-	}
-	if o.NotebookDocumentFilterNotebookType1 != nil {
-		return json.Marshal(*o.NotebookDocumentFilterNotebookType1)
-	}
-	if o.NotebookDocumentFilterScheme1 != nil {
-		return json.Marshal(*o.NotebookDocumentFilterScheme1)
-	}
-	if o.NotebookDocumentFilterPattern1 != nil {
-		return json.Marshal(*o.NotebookDocumentFilterPattern1)
 	}
 	return []byte("null"), nil
 }
@@ -7681,27 +7306,6 @@ func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNoteb
 		var v NotebookDocumentFilterPattern
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.NotebookDocumentFilterPattern = &v
-			return nil
-		}
-	}
-	{
-		var v NotebookDocumentFilterNotebookType
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.NotebookDocumentFilterNotebookType1 = &v
-			return nil
-		}
-	}
-	{
-		var v NotebookDocumentFilterScheme
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.NotebookDocumentFilterScheme1 = &v
-			return nil
-		}
-	}
-	{
-		var v NotebookDocumentFilterPattern
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.NotebookDocumentFilterPattern1 = &v
 			return nil
 		}
 	}
@@ -7811,50 +7415,18 @@ func (o *StringOrInlayHintLabelParts) UnmarshalJSON(data []byte) error {
 }
 
 type StringOrMarkupContent struct {
-	String         *string
-	MarkupContent  *MarkupContent
-	String1        *string
-	MarkupContent1 *MarkupContent
-	String2        *string
-	MarkupContent2 *MarkupContent
-	String3        *string
-	MarkupContent3 *MarkupContent
-	String4        *string
-	MarkupContent4 *MarkupContent
+	String        *string
+	MarkupContent *MarkupContent
 }
 
 func (o StringOrMarkupContent) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrMarkupContent is set", o.String != nil, o.MarkupContent != nil, o.String1 != nil, o.MarkupContent1 != nil, o.String2 != nil, o.MarkupContent2 != nil, o.String3 != nil, o.MarkupContent3 != nil, o.String4 != nil, o.MarkupContent4 != nil)
+	assertOnlyOne("more than one element of StringOrMarkupContent is set", o.String != nil, o.MarkupContent != nil)
 
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
 	if o.MarkupContent != nil {
 		return json.Marshal(*o.MarkupContent)
-	}
-	if o.String1 != nil {
-		return json.Marshal(*o.String1)
-	}
-	if o.MarkupContent1 != nil {
-		return json.Marshal(*o.MarkupContent1)
-	}
-	if o.String2 != nil {
-		return json.Marshal(*o.String2)
-	}
-	if o.MarkupContent2 != nil {
-		return json.Marshal(*o.MarkupContent2)
-	}
-	if o.String3 != nil {
-		return json.Marshal(*o.String3)
-	}
-	if o.MarkupContent3 != nil {
-		return json.Marshal(*o.MarkupContent3)
-	}
-	if o.String4 != nil {
-		return json.Marshal(*o.String4)
-	}
-	if o.MarkupContent4 != nil {
-		return json.Marshal(*o.MarkupContent4)
 	}
 	return []byte("null"), nil
 }
@@ -7879,94 +7451,22 @@ func (o *StringOrMarkupContent) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String1 = &v
-			return nil
-		}
-	}
-	{
-		var v MarkupContent
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.MarkupContent1 = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String2 = &v
-			return nil
-		}
-	}
-	{
-		var v MarkupContent
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.MarkupContent2 = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String3 = &v
-			return nil
-		}
-	}
-	{
-		var v MarkupContent
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.MarkupContent3 = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String4 = &v
-			return nil
-		}
-	}
-	{
-		var v MarkupContent
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.MarkupContent4 = &v
-			return nil
-		}
-	}
 	return fmt.Errorf("cannot unmarshal %s into StringOrMarkupContent", string(data))
 }
 
 type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
-	FullDocumentDiagnosticReport       *FullDocumentDiagnosticReport
-	UnchangedDocumentDiagnosticReport  *UnchangedDocumentDiagnosticReport
-	FullDocumentDiagnosticReport1      *FullDocumentDiagnosticReport
-	UnchangedDocumentDiagnosticReport1 *UnchangedDocumentDiagnosticReport
-	FullDocumentDiagnosticReport2      *FullDocumentDiagnosticReport
-	UnchangedDocumentDiagnosticReport2 *UnchangedDocumentDiagnosticReport
+	FullDocumentDiagnosticReport      *FullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport *UnchangedDocumentDiagnosticReport
 }
 
 func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil, o.FullDocumentDiagnosticReport1 != nil, o.UnchangedDocumentDiagnosticReport1 != nil, o.FullDocumentDiagnosticReport2 != nil, o.UnchangedDocumentDiagnosticReport2 != nil)
+	assertOnlyOne("more than one element of FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport is set", o.FullDocumentDiagnosticReport != nil, o.UnchangedDocumentDiagnosticReport != nil)
 
 	if o.FullDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.FullDocumentDiagnosticReport)
 	}
 	if o.UnchangedDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.UnchangedDocumentDiagnosticReport)
-	}
-	if o.FullDocumentDiagnosticReport1 != nil {
-		return json.Marshal(*o.FullDocumentDiagnosticReport1)
-	}
-	if o.UnchangedDocumentDiagnosticReport1 != nil {
-		return json.Marshal(*o.UnchangedDocumentDiagnosticReport1)
-	}
-	if o.FullDocumentDiagnosticReport2 != nil {
-		return json.Marshal(*o.FullDocumentDiagnosticReport2)
-	}
-	if o.UnchangedDocumentDiagnosticReport2 != nil {
-		return json.Marshal(*o.UnchangedDocumentDiagnosticReport2)
 	}
 	return []byte("null"), nil
 }
@@ -7988,34 +7488,6 @@ func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Unmars
 		var v UnchangedDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.UnchangedDocumentDiagnosticReport = &v
-			return nil
-		}
-	}
-	{
-		var v FullDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.FullDocumentDiagnosticReport1 = &v
-			return nil
-		}
-	}
-	{
-		var v UnchangedDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.UnchangedDocumentDiagnosticReport1 = &v
-			return nil
-		}
-	}
-	{
-		var v FullDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.FullDocumentDiagnosticReport2 = &v
-			return nil
-		}
-	}
-	{
-		var v UnchangedDocumentDiagnosticReport
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.UnchangedDocumentDiagnosticReport2 = &v
 			return nil
 		}
 	}
@@ -8234,26 +7706,18 @@ func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
 }
 
 type BooleanOrEmptyObject struct {
-	Boolean      *bool
-	EmptyObject  *struct{}
-	Boolean1     *bool
-	EmptyObject1 *struct{}
+	Boolean     *bool
+	EmptyObject *struct{}
 }
 
 func (o BooleanOrEmptyObject) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of BooleanOrEmptyObject is set", o.Boolean != nil, o.EmptyObject != nil, o.Boolean1 != nil, o.EmptyObject1 != nil)
+	assertOnlyOne("more than one element of BooleanOrEmptyObject is set", o.Boolean != nil, o.EmptyObject != nil)
 
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
 	if o.EmptyObject != nil {
 		return json.Marshal(*o.EmptyObject)
-	}
-	if o.Boolean1 != nil {
-		return json.Marshal(*o.Boolean1)
-	}
-	if o.EmptyObject1 != nil {
-		return json.Marshal(*o.EmptyObject1)
 	}
 	return []byte("null"), nil
 }
@@ -8275,20 +7739,6 @@ func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
 		var v struct{}
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.EmptyObject = &v
-			return nil
-		}
-	}
-	{
-		var v bool
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.Boolean1 = &v
-			return nil
-		}
-	}
-	{
-		var v struct{}
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.EmptyObject1 = &v
 			return nil
 		}
 	}
@@ -9679,34 +9129,18 @@ func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 }
 
 type StringOrNotebookDocumentFilter struct {
-	String                  *string
-	NotebookDocumentFilter  *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
-	String1                 *string
-	NotebookDocumentFilter1 *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
-	String2                 *string
-	NotebookDocumentFilter2 *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
+	String                 *string
+	NotebookDocumentFilter *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
 }
 
 func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
-	assertOnlyOne("more than one element of StringOrNotebookDocumentFilter is set", o.String != nil, o.NotebookDocumentFilter != nil, o.String1 != nil, o.NotebookDocumentFilter1 != nil, o.String2 != nil, o.NotebookDocumentFilter2 != nil)
+	assertOnlyOne("more than one element of StringOrNotebookDocumentFilter is set", o.String != nil, o.NotebookDocumentFilter != nil)
 
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
 	if o.NotebookDocumentFilter != nil {
 		return json.Marshal(*o.NotebookDocumentFilter)
-	}
-	if o.String1 != nil {
-		return json.Marshal(*o.String1)
-	}
-	if o.NotebookDocumentFilter1 != nil {
-		return json.Marshal(*o.NotebookDocumentFilter1)
-	}
-	if o.String2 != nil {
-		return json.Marshal(*o.String2)
-	}
-	if o.NotebookDocumentFilter2 != nil {
-		return json.Marshal(*o.NotebookDocumentFilter2)
 	}
 	return []byte("null"), nil
 }
@@ -9728,34 +9162,6 @@ func (o *StringOrNotebookDocumentFilter) UnmarshalJSON(data []byte) error {
 		var v NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.NotebookDocumentFilter = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String1 = &v
-			return nil
-		}
-	}
-	{
-		var v NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.NotebookDocumentFilter1 = &v
-			return nil
-		}
-	}
-	{
-		var v string
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.String2 = &v
-			return nil
-		}
-	}
-	{
-		var v NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
-		if err := json.Unmarshal(data, &v); err == nil {
-			o.NotebookDocumentFilter2 = &v
 			return nil
 		}
 	}
