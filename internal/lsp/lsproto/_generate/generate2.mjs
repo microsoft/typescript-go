@@ -266,11 +266,11 @@ function handleOrType(orType) {
         const otherType = orType.items[1 - nullIndex];
         const resolvedType = resolveType(otherType);
 
-        // Make it a pointer type
+        // Use Nullable[T] instead of pointer for null union with one other type
         return {
-            name: resolvedType.name,
-            isStruct: resolvedType.isStruct,
-            needsPointer: true,
+            name: `Nullable[${resolvedType.name}]`,
+            isStruct: false,
+            needsPointer: false,
         };
     }
 

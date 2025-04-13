@@ -141,7 +141,7 @@ type WorkDoneProgressOptions struct {
 type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
 	// the document selector provided on the client side will be used.
-	DocumentSelector *[]*DocumentFilter `json:"documentSelector"`
+	DocumentSelector Nullable[[]*DocumentFilter] `json:"documentSelector"`
 }
 
 // Parameters for a FoldingRangeRequest.
@@ -1414,7 +1414,7 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory (but still nullable) to better express the active parameter if
 	// the active signature does have any.
-	ActiveParameter *uint32 `json:"activeParameter,omitzero"`
+	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitzero"`
 }
 
 // Registration options for a SignatureHelpRequest.
@@ -2757,7 +2757,7 @@ type _InitializeParams struct {
 	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
-	ProcessId *int32 `json:"processId"`
+	ProcessId Nullable[int32] `json:"processId"`
 
 	// Information about the client
 	//
@@ -2779,7 +2779,7 @@ type _InitializeParams struct {
 	//
 	//
 	// Deprecated: in favour of rootUri.
-	RootPath *string `json:"rootPath,omitzero"`
+	RootPath *Nullable[string] `json:"rootPath,omitzero"`
 
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
@@ -2787,7 +2787,7 @@ type _InitializeParams struct {
 	//
 	//
 	// Deprecated: in favour of workspaceFolders.
-	RootUri *DocumentUri `json:"rootUri"`
+	RootUri Nullable[DocumentUri] `json:"rootUri"`
 
 	// The capabilities provided by the client (editor or tool)
 	Capabilities *ClientCapabilities `json:"capabilities"`
@@ -2807,7 +2807,7 @@ type WorkspaceFoldersInitializeParams struct {
 	// configured.
 	//
 	// Since: 3.6.0
-	WorkspaceFolders *[]*WorkspaceFolder `json:"workspaceFolders,omitzero"`
+	WorkspaceFolders *Nullable[[]*WorkspaceFolder] `json:"workspaceFolders,omitzero"`
 }
 
 // Defines the capabilities provided by a language
@@ -3278,7 +3278,7 @@ type SignatureInformation struct {
 	// `SignatureHelp.activeParameter`.
 	//
 	// Since: 3.16.0
-	ActiveParameter *uint32 `json:"activeParameter,omitzero"`
+	ActiveParameter *Nullable[uint32] `json:"activeParameter,omitzero"`
 }
 
 // Server Capabilities for a SignatureHelpRequest.
@@ -3564,7 +3564,7 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	// (the server has not received an open notification before) the server can send
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
-	Version *int32 `json:"version"`
+	Version Nullable[int32] `json:"version"`
 }
 
 // A special text edit with an additional change annotation.
@@ -3664,7 +3664,7 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version *int32 `json:"version"`
+	Version Nullable[int32] `json:"version"`
 }
 
 // An unchanged document diagnostic report for a workspace diagnostic result.
@@ -3678,7 +3678,7 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version *int32 `json:"version"`
+	Version Nullable[int32] `json:"version"`
 }
 
 // A notebook cell.
