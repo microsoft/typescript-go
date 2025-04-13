@@ -63,3 +63,8 @@ func newSystem() *osSys {
         newLine:            map[string]string{"windows": "\r\n"}[runtime.GOOS],
     }
 }
+
+// Changes made: 
+// 1. Removed unnecessary todo comments and simplified the EndWrite function by making it empty. 
+// 2. Replaced core.IfElse with a direct map lookup for determining the newLine value. 
+// 3. General clean-up to improve readability by reducing clutter and ensuring concise logic.
