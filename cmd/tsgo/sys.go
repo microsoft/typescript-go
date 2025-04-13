@@ -1,69 +1,65 @@
 package main
 
 import (
-	"fmt"
-	"io"
-	"os"
-	"runtime"
-	"time"
+    "fmt"
+    "io"
+    "os"
+    "runtime"
+    "time"
 
-	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/execute"
-	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
-	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
+    "github.com/microsoft/typescript-go/internal/bundled"
+    "github.com/microsoft/typescript-go/internal/core"
+    "github.com/microsoft/typescript-go/internal/execute"
+    "github.com/microsoft/typescript-go/internal/tspath"
+    "github.com/microsoft/typescript-go/internal/vfs"
+    "github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 type osSys struct {
-	writer             io.Writer
-	fs                 vfs.FS
-	defaultLibraryPath string
-	newLine            string
-	cwd                string
+    writer             io.Writer
+    fs                 vfs.FS
+    defaultLibraryPath string
+    newLine            string
+    cwd                string
 }
 
 func (s *osSys) Now() time.Time {
-	return time.Now()
+    return time.Now()
 }
 
 func (s *osSys) FS() vfs.FS {
-	return s.fs
+    return s.fs
 }
 
 func (s *osSys) DefaultLibraryPath() string {
-	return s.defaultLibraryPath
+    return s.defaultLibraryPath
 }
 
 func (s *osSys) GetCurrentDirectory() string {
-	return s.cwd
+    return s.cwd
 }
 
 func (s *osSys) NewLine() string {
-	return s.newLine
+    return s.newLine
 }
 
 func (s *osSys) Writer() io.Writer {
-	return s.writer
+    return s.writer
 }
 
-func (s *osSys) EndWrite() {
-	// do nothing, this is needed in the interface for testing
-	// todo: revisit if improving tsc/build/watch unittest baselines
-}
+func (s *osSys) EndWrite() {}
 
 func newSystem() *osSys {
-	cwd, err := os.Getwd()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
-		os.Exit(int(execute.ExitStatusInvalidProject_OutputsSkipped))
-	}
-
-	return &osSys{
-		cwd:                tspath.NormalizePath(cwd),
-		fs:                 bundled.WrapFS(osvfs.FS()),
-		defaultLibraryPath: bundled.LibPath(),
-		writer:             os.Stdout,
-		newLine:            core.IfElse(runtime.GOOS == "windows", "\r\n", "\n"),
-	}
+    cwd, err := os.Getwd()
+    if err != nil {
+        fmt.Fprintf(os.Stderr, "Error getting current directory: %v\n", err)
+        os.Exit(int(execute.ExitStatusInvalidProject_OutputsSkipped))
+    }
+    return &osSys{
+        cwd:                tspath.NormalizePath(cwd),
+        fs:                 bundled.WrapFS(osvfs.FS()),
+        defaultLibraryPath: bundled.LibPath(),
+        writer:             os.Stdout,
+        newLine:            map[string]string{"windows": "\r\n"}[runtime.GOOS],
+    }
 }
