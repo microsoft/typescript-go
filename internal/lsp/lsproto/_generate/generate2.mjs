@@ -262,7 +262,11 @@ function handleOrType(orType) {
     const nullIndex = orType.items.findIndex(item => item.kind === "base" && item.name === "null");
 
     // If it's nullable and only has one other type
-    if (nullIndex !== -1 && orType.items.length === 2) {
+    if (nullIndex !== -1) {
+        if (orType.items.length !== 2) {
+            throw new Error("Expected exactly two items in OR type for null handling");
+        }
+
         const otherType = orType.items[1 - nullIndex];
         const resolvedType = resolveType(otherType);
 
