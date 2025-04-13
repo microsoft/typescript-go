@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 
-import assert from "node:assert";
 import cp from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -8,7 +7,7 @@ import url from "node:url";
 import which from "which";
 
 /**
- * @import { MetaModel, OrType, Type, BaseTypes, BaseType, ReferenceType, ArrayType, MapType } from "./metaModelSchema.mts"
+ * @import { MetaModel, OrType, Type, BaseTypes } from "./metaModelSchema.mts"
  */
 void 0;
 
@@ -285,11 +284,11 @@ function handleOrType(orType) {
 
     // If only one type remains after filtering null
     if (types.length === 1) {
-        const resolvedType = resolveType(types[0]);
+        const type = resolveType(types[0]);
         return {
-            name: resolvedType.name,
-            isStruct: resolvedType.isStruct,
-            needsPointer: nullIndex !== -1 ? true : resolvedType.needsPointer,
+            name: type.name,
+            isStruct: type.isStruct,
+            needsPointer: nullIndex !== -1 ? true : type.needsPointer,
         };
     }
 
@@ -306,7 +305,6 @@ function handleOrType(orType) {
         const union = typeInfo.unionTypes.get(unionTypeName);
         if (union) {
             for (let i = 0; i < types.length; i++) {
-                const refType = resolveType(types[i]);
                 union.push({
                     name: types[i].name,
                     types: [types[i]],
@@ -361,7 +359,6 @@ function handleOrType(orType) {
     const union = typeInfo.unionTypes.get(unionTypeName);
     if (union) {
         for (let i = 0; i < types.length; i++) {
-            const resolvedType = resolveType(types[i]);
             union.push({
                 name: memberNames[i],
                 types: [types[i]],
