@@ -65,6 +65,7 @@ func (s *Server) Run() error {
     fmt.Fprintln(s.Out, "Server running in directory:", s.Cwd)
     return nil
 }
+
 /*
 Optimizations:
 Use of filepath.Abs:
@@ -87,7 +88,6 @@ Removed unnecessary external dependencies:
 
 Focused solely on native Go libraries for portability and maintainability.
 
-Comentarios en el código:
 Explained the use of filepath.Abs and filepath.Join for better path handling.
 
 Highlighted enhancements in error handling for improved debugging.
