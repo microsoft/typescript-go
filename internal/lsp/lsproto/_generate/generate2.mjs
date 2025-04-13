@@ -550,18 +550,7 @@ function generateCode() {
     // Keep track of generated types to avoid duplicates
     const generatedTypes = new Set();
 
-    // Types already defined in lsp.go that should be skipped during generation
-    const predefinedTypes = new Set([
-        "URI",
-        "DocumentUri",
-    ]);
-
     for (const structure of model.structures) {
-        // Skip types already defined in lsp.go
-        if (predefinedTypes.has(structure.name)) {
-            continue;
-        }
-
         write(formatDocumentation(structure.documentation));
         write(formatDeprecation(structure.deprecated));
 
