@@ -37,7 +37,7 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  */
 
 /**
- * @typedef {Object} TypeRegistry
+ * @typedef {Object} TypeInfo
  * @property {Map<string, GoType>} types - Map of type names to types
  * @property {Map<string, string>} literalTypes - Map from literal values to type names
  * @property {Map<string, {name: string, types: Type[]}[]>} unionTypes - Map of union type names to their component types
@@ -47,9 +47,9 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  */
 
 /**
- * @type {TypeRegistry}
+ * @type {TypeInfo}
  */
-const registry = {
+const typeInfo = {
     types: new Map(),
     literalTypes: new Map(),
     unionTypes: new Map(),
@@ -118,8 +118,8 @@ function resolveType(type) {
 
         case "reference":
             // If it's a reference, we need to check if we know this type
-            if (registry.types.has(type.name)) {
-                const refType = registry.types.get(type.name);
+            if (typeInfo.types.has(type.name)) {
+                const refType = typeInfo.types.get(type.name);
                 if (refType !== undefined) {
                     return refType;
                 }
@@ -128,7 +128,7 @@ function resolveType(type) {
             // By default, assume referenced types are structs that need pointers
             // This will be updated as we process all types
             const refType = { name: type.name, isStruct: true, needsPointer: true };
-            registry.types.set(type.name, refType);
+            typeInfo.types.set(type.name, refType);
             return refType;
 
         case "array": {
@@ -178,11 +178,11 @@ function resolveType(type) {
                 }).join("And")
             }`;
 
-            if (!registry.unionTypes.has(typeName)) {
-                registry.unionTypes.set(typeName, []);
+            if (!typeInfo.unionTypes.has(typeName)) {
+                typeInfo.unionTypes.set(typeName, []);
             }
 
-            const union = registry.unionTypes.get(typeName);
+            const union = typeInfo.unionTypes.get(typeName);
             if (union) {
                 for (const item of type.items) {
                     union.push({ name: resolveType(item).name, types: [item] });
@@ -194,19 +194,19 @@ function resolveType(type) {
 
         case "stringLiteral": {
             const typeName = `StringLiteral${titleCase(type.value)}`;
-            registry.literalTypes.set(String(type.value), typeName);
+            typeInfo.literalTypes.set(String(type.value), typeName);
             return { name: typeName, isStruct: true, needsPointer: false };
         }
 
         case "integerLiteral": {
             const typeName = `IntegerLiteral${type.value}`;
-            registry.literalTypes.set(String(type.value), typeName);
+            typeInfo.literalTypes.set(String(type.value), typeName);
             return { name: typeName, isStruct: true, needsPointer: false };
         }
 
         case "booleanLiteral": {
             const typeName = `BooleanLiteral${type.value ? "True" : "False"}`;
-            registry.literalTypes.set(String(type.value), typeName);
+            typeInfo.literalTypes.set(String(type.value), typeName);
             return { name: typeName, isStruct: true, needsPointer: false };
         }
 
@@ -219,7 +219,7 @@ function resolveType(type) {
             // Handle literal structs (this is a simplification, may need enhancement)
             const literalTypeName = `AnonymousStruct${Math.floor(Math.random() * 10000)}`;
             const literalType = { name: literalTypeName, isStruct: true, needsPointer: true };
-            registry.types.set(literalTypeName, literalType);
+            typeInfo.types.set(literalTypeName, literalType);
             return literalType;
 
         case "or": {
@@ -238,7 +238,7 @@ function resolveType(type) {
             }`;
 
             const andType = { name: typeName, isStruct: true, needsPointer: true };
-            registry.types.set(typeName, andType);
+            typeInfo.types.set(typeName, andType);
             return andType;
         }
 
@@ -295,11 +295,11 @@ function handleOrType(orType) {
         const memberNames = types.map(type => type.name);
         const unionTypeName = memberNames.map(titleCase).join("Or");
 
-        if (!registry.unionTypes.has(unionTypeName)) {
-            registry.unionTypes.set(unionTypeName, []);
+        if (!typeInfo.unionTypes.has(unionTypeName)) {
+            typeInfo.unionTypes.set(unionTypeName, []);
         }
 
-        const union = registry.unionTypes.get(unionTypeName);
+        const union = typeInfo.unionTypes.get(unionTypeName);
         if (union) {
             for (let i = 0; i < types.length; i++) {
                 const refType = resolveType(types[i]);
@@ -350,11 +350,11 @@ function handleOrType(orType) {
 
     const unionTypeName = memberNames.map(titleCase).join("Or");
 
-    if (!registry.unionTypes.has(unionTypeName)) {
-        registry.unionTypes.set(unionTypeName, []);
+    if (!typeInfo.unionTypes.has(unionTypeName)) {
+        typeInfo.unionTypes.set(unionTypeName, []);
     }
 
-    const union = registry.unionTypes.get(unionTypeName);
+    const union = typeInfo.unionTypes.get(unionTypeName);
     if (union) {
         for (let i = 0; i < types.length; i++) {
             const resolvedType = resolveType(types[i]);
@@ -375,10 +375,10 @@ function handleOrType(orType) {
 /**
  * First pass: Resolve all type information
  */
-function buildTypeSystem() {
+function collectTypeDefinitions() {
     // Register built-in types
-    registry.types.set("NullType", { name: "NullType", isStruct: true, needsPointer: true });
-    registry.types.set("LSPAny", { name: "any", isStruct: false, needsPointer: false });
+    typeInfo.types.set("NullType", { name: "NullType", isStruct: true, needsPointer: true });
+    typeInfo.types.set("LSPAny", { name: "any", isStruct: false, needsPointer: false });
 
     // Keep track of used enum identifiers across all enums to avoid conflicts
     const usedEnumIdentifiers = new Set();
@@ -386,7 +386,7 @@ function buildTypeSystem() {
     // Process all enumerations first to make them available for struct fields
     for (const enumeration of model.enumerations) {
         // Register the enum type with its own name rather than the base type
-        registry.types.set(enumeration.name, {
+        typeInfo.types.set(enumeration.name, {
             name: enumeration.name, // Use the enum type name, not the base type
             isStruct: false,
             needsPointer: false,
@@ -425,12 +425,12 @@ function buildTypeSystem() {
         }
 
         // Store the map of values for this enum
-        registry.enumValuesByType.set(enumeration.name, enumValues);
+        typeInfo.enumValuesByType.set(enumeration.name, enumValues);
     }
 
     // Process all structures
     for (const structure of model.structures) {
-        registry.types.set(structure.name, {
+        typeInfo.types.set(structure.name, {
             name: structure.name,
             isStruct: true,
             needsPointer: true,
@@ -442,14 +442,14 @@ function buildTypeSystem() {
         if (typeAlias.type.kind === "or") {
             // This is a union type - store the alias mapping
             const resolvedType = resolveType(typeAlias.type);
-            registry.unionTypeAliases.set(resolvedType.name, typeAlias.name);
+            typeInfo.unionTypeAliases.set(resolvedType.name, typeAlias.name);
         }
     }
 
     // Second pass - now process all type aliases with the union mappings in place
     for (const typeAlias of model.typeAliases) {
         const resolvedType = resolveType(typeAlias.type);
-        registry.types.set(typeAlias.name, {
+        typeInfo.types.set(typeAlias.name, {
             name: resolvedType.name,
             isStruct: resolvedType.isStruct,
             needsPointer: resolvedType.needsPointer,
@@ -624,7 +624,7 @@ function generateCode() {
         writeLine("");
 
         // Get the pre-processed enum entries map that avoids duplicates
-        const enumValues = registry.enumValuesByType.get(enumeration.name);
+        const enumValues = typeInfo.enumValuesByType.get(enumeration.name);
         if (!enumValues || !enumValues.size) {
             continue; // Skip if no entries (shouldn't happen)
         }
@@ -672,7 +672,7 @@ function generateCode() {
     // Generate literal types
     writeLine("// Literal types\n");
 
-    for (const [value, name] of registry.literalTypes.entries()) {
+    for (const [value, name] of typeInfo.literalTypes.entries()) {
         // Skip if already generated
         if (generatedTypes.has(name)) {
             continue;
@@ -815,7 +815,7 @@ function generateCode() {
  */
 function main() {
     try {
-        buildTypeSystem();
+        collectTypeDefinitions();
         const generatedCode = generateCode();
         fs.writeFileSync(out, generatedCode);
 
@@ -839,9 +839,9 @@ main();
 function generateUnionTypes() {
     writeLine("// Union types\n");
 
-    for (const [name, members] of registry.unionTypes.entries()) {
+    for (const [name, members] of typeInfo.unionTypes.entries()) {
         // Skip if already generated
-        if (registry.generatedTypes.has(name)) {
+        if (typeInfo.generatedTypes.has(name)) {
             continue;
         }
 
@@ -927,7 +927,7 @@ function generateUnionTypes() {
         writeLine(`}`);
         writeLine("");
 
-        registry.generatedTypes.add(name);
+        typeInfo.generatedTypes.add(name);
     }
 }
 
@@ -951,6 +951,6 @@ function generateTypeAliases() {
         writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
         writeLine("");
 
-        registry.generatedTypes.add(typeAlias.name);
+        typeInfo.generatedTypes.add(typeAlias.name);
     }
 }
