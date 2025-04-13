@@ -36,3 +36,21 @@ func BinarySearchUniqueFunc[S ~[]E, E any](x S, cmp func(int, E) int) (int, bool
     // If no match is found, return the insertion point and failure status.
     return low, false
 }
+
+//
+//Early exit check:
+//
+//Added a comment to explain why the function returns immediately if the slice is empty (n == 0), improving performance by avoiding unnecessary processing.
+//
+// Optimized middle index calculation:
+//
+// Explained the use of a bit-shift operation (>> 1) to calculate the middle index, which is faster and avoids overflow compared to (low + high) / 2.
+//
+// Comparison logic:
+//
+// Added inline comments to describe what happens when the target is greater than, less than, or equal to the middle element.
+//
+// Return conditions:
+//
+// Explained why and when the function returns either the match index or the insertion point, enhancing clarity for maintainers.
+//
