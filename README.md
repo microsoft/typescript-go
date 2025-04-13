@@ -12,6 +12,14 @@ This repo uses [Go 1.24 or higher](https://go.dev/dl/), [Rust 1.85 or higher](ht
 For tests and code generation, this repo contains a git submodule to the main TypeScript repo pointing to the commit being ported.
 When cloning, you'll want to clone with submodules:
 
+## Important
+
+This is a fork of TypeScript-GO.
+
+This program has been optimized to make it cleaner. You can also see the commits of the modified files, or you can also view the [CHANGE.md](/CHANGE.md) file.
+
+Fork created by: [NopAngel](https://github.com/NopAngel) | Angel Nieto       REPOSITORY official: [Here](https://github.com/microsoft/typescript-go)
+
 ```sh
 git clone --recurse-submodules https://github.com/microsoft/typescript-go.git
 ```
