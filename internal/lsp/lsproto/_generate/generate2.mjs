@@ -539,8 +539,6 @@ function generateCode() {
     writeLine("// Meta model version " + model.metaData.version);
     writeLine("");
 
-    // Skip helper function for union types - already exists in lsp.go
-
     // Generate structures
     writeLine("// Structures\n");
 
@@ -665,38 +663,7 @@ function generateCode() {
     // Generate type aliases
     generateTypeAliases();
 
-    // Generate literal types
-    writeLine("// Literal types\n");
-
-    for (const [value, name] of typeInfo.literalTypes.entries()) {
-        // Skip if already generated
-        if (generatedTypes.has(name)) {
-            continue;
-        }
-
-        const jsonValue = JSON.stringify(value);
-
-        writeLine(`// ${name} is a literal type for ${jsonValue}`);
-        writeLine(`type ${name} struct{}`);
-        writeLine("");
-
-        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
-        writeLine(`\treturn []byte(${jsonValue}), nil`);
-        writeLine(`}`);
-        writeLine("");
-
-        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
-        writeLine(`\tif string(data) != ${jsonValue} {`);
-        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", string(data))`);
-        writeLine(`\t}`);
-        writeLine(`\treturn nil`);
-        writeLine(`}`);
-        writeLine("");
-
-        generatedTypes.add(name);
-    }
-
-    // Unmarshallers - moved before method declarations
+    // Generate unmarshallers
     writeLine("// Unmarshallers\n");
 
     // Note: The unmarshallerFor function already exists in lsp.go, so we don't generate it
@@ -773,11 +740,10 @@ function generateCode() {
     writeLine("}");
     writeLine("");
 
-    // Generate Methods for requests and notifications - moved after unmarshallers
+    // Generate Methods for requests and notifications
     writeLine("// Methods\n");
 
     // Method type exists in lsp.go, so skip declaring it
-
     writeLine("// Request Methods");
     writeLine("const (");
     for (const request of model.requests) {
@@ -808,8 +774,129 @@ function generateCode() {
     writeLine(")");
     writeLine("");
 
-    // Generate union types LAST as requested
-    generateUnionTypes();
+    // Generate union types
+    writeLine("// Union types\n");
+
+    for (const [name, members] of typeInfo.unionTypes.entries()) {
+        // Skip if already generated
+        if (typeInfo.generatedTypes.has(name)) {
+            continue;
+        }
+
+        writeLine(`type ${name} struct {`);
+
+        // Use a Map to deduplicate by type name to ensure we don't include multiple fields with the same type
+        const uniqueTypeFields = new Map(); // Maps type name -> field name
+
+        for (const member of members) {
+            let memberType;
+            if (member.types.length === 1) {
+                const type = resolveType(member.types[0]);
+                memberType = type.name;
+
+                // If this type name already exists in our map, skip it
+                if (!uniqueTypeFields.has(memberType)) {
+                    const fieldName = titleCase(member.name);
+                    uniqueTypeFields.set(memberType, fieldName);
+                    writeLine(`\t${fieldName} *${memberType}`);
+                }
+            }
+            else {
+                // This shouldn't happen with our current approach, but handle it just in case
+                memberType = "any";
+                const fieldName = titleCase(member.name);
+                uniqueTypeFields.set(memberType, fieldName);
+                writeLine(`\t${fieldName} *${memberType}`);
+            }
+        }
+
+        writeLine(`}`);
+        writeLine("");
+
+        // Get the field names and types for marshal/unmarshal methods
+        const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({ fieldName, typeName }));
+
+        // Marshal method
+        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
+
+        // Create assertion to ensure only one field is set at a time
+        write(`\tassertOnlyOne("more than one element of ${name} is set", `);
+
+        // Write the assertion conditions
+        for (let i = 0; i < fieldEntries.length; i++) {
+            if (i > 0) write(", ");
+            write(`o.${fieldEntries[i].fieldName} != nil`);
+        }
+        writeLine(`)`);
+        writeLine("");
+
+        // Write the marshal logic for each field
+        for (const entry of fieldEntries) {
+            writeLine(`\tif o.${entry.fieldName} != nil {`);
+            writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
+            writeLine(`\t}`);
+        }
+
+        // Use panic("unreachable") instead of returning null
+        writeLine(`\tpanic("unreachable")`);
+        writeLine(`}`);
+        writeLine("");
+
+        // Unmarshal method
+        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
+        writeLine(`\t*o = ${name}{}`);
+        // Remove the null check
+
+        // Write the unmarshal logic for each field - keep the block scopes
+        for (let i = 0; i < fieldEntries.length; i++) {
+            const entry = fieldEntries[i];
+            writeLine(`\t{`);
+            writeLine(`\t\tvar v ${entry.typeName}`);
+            writeLine(`\t\tif err := json.Unmarshal(data, &v); err == nil {`);
+            writeLine(`\t\t\to.${entry.fieldName} = &v`);
+            writeLine(`\t\t\treturn nil`);
+            writeLine(`\t\t}`);
+            writeLine(`\t}`);
+        }
+
+        // Match the error format from the original script
+        writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+        writeLine(`}`);
+        writeLine("");
+
+        typeInfo.generatedTypes.add(name);
+    }
+
+    // Generate literal types
+    writeLine("// Literal types\n");
+
+    for (const [value, name] of typeInfo.literalTypes.entries()) {
+        // Skip if already generated
+        if (generatedTypes.has(name)) {
+            continue;
+        }
+
+        const jsonValue = JSON.stringify(value);
+
+        writeLine(`// ${name} is a literal type for ${jsonValue}`);
+        writeLine(`type ${name} struct{}`);
+        writeLine("");
+
+        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
+        writeLine(`\treturn []byte(${jsonValue}), nil`);
+        writeLine(`}`);
+        writeLine("");
+
+        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
+        writeLine(`\tif string(data) != ${jsonValue} {`);
+        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", string(data))`);
+        writeLine(`\t}`);
+        writeLine(`\treturn nil`);
+        writeLine(`}`);
+        writeLine("");
+
+        generatedTypes.add(name);
+    }
 
     return parts.join("");
 }
