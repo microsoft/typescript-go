@@ -883,13 +883,13 @@ function generateCode() {
         writeLine("");
 
         writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
-        writeLine(`\treturn []byte(${jsonValue}), nil`);
+        writeLine(`\treturn []byte(\`${jsonValue}\`), nil`);
         writeLine(`}`);
         writeLine("");
 
         writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
-        writeLine(`\tif string(data) != ${jsonValue} {`);
-        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", string(data))`);
+        writeLine(`\tif string(data) != \`${jsonValue}\` {`);
+        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
         writeLine(`\t}`);
         writeLine(`\treturn nil`);
         writeLine(`}`);

@@ -9633,12 +9633,12 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byt
 type StringLiteralBegin struct{}
 
 func (o StringLiteralBegin) MarshalJSON() ([]byte, error) {
-	return []byte("begin"), nil
+	return []byte(`"begin"`), nil
 }
 
 func (o *StringLiteralBegin) UnmarshalJSON(data []byte) error {
-	if string(data) != "begin" {
-		return fmt.Errorf("invalid StringLiteralBegin: %s", string(data))
+	if string(data) != `"begin"` {
+		return fmt.Errorf("invalid StringLiteralBegin: %s", data)
 	}
 	return nil
 }
@@ -9647,12 +9647,12 @@ func (o *StringLiteralBegin) UnmarshalJSON(data []byte) error {
 type StringLiteralReport struct{}
 
 func (o StringLiteralReport) MarshalJSON() ([]byte, error) {
-	return []byte("report"), nil
+	return []byte(`"report"`), nil
 }
 
 func (o *StringLiteralReport) UnmarshalJSON(data []byte) error {
-	if string(data) != "report" {
-		return fmt.Errorf("invalid StringLiteralReport: %s", string(data))
+	if string(data) != `"report"` {
+		return fmt.Errorf("invalid StringLiteralReport: %s", data)
 	}
 	return nil
 }
@@ -9661,12 +9661,12 @@ func (o *StringLiteralReport) UnmarshalJSON(data []byte) error {
 type StringLiteralEnd struct{}
 
 func (o StringLiteralEnd) MarshalJSON() ([]byte, error) {
-	return []byte("end"), nil
+	return []byte(`"end"`), nil
 }
 
 func (o *StringLiteralEnd) UnmarshalJSON(data []byte) error {
-	if string(data) != "end" {
-		return fmt.Errorf("invalid StringLiteralEnd: %s", string(data))
+	if string(data) != `"end"` {
+		return fmt.Errorf("invalid StringLiteralEnd: %s", data)
 	}
 	return nil
 }
@@ -9675,12 +9675,12 @@ func (o *StringLiteralEnd) UnmarshalJSON(data []byte) error {
 type StringLiteralCreate struct{}
 
 func (o StringLiteralCreate) MarshalJSON() ([]byte, error) {
-	return []byte("create"), nil
+	return []byte(`"create"`), nil
 }
 
 func (o *StringLiteralCreate) UnmarshalJSON(data []byte) error {
-	if string(data) != "create" {
-		return fmt.Errorf("invalid StringLiteralCreate: %s", string(data))
+	if string(data) != `"create"` {
+		return fmt.Errorf("invalid StringLiteralCreate: %s", data)
 	}
 	return nil
 }
@@ -9689,12 +9689,12 @@ func (o *StringLiteralCreate) UnmarshalJSON(data []byte) error {
 type StringLiteralRename struct{}
 
 func (o StringLiteralRename) MarshalJSON() ([]byte, error) {
-	return []byte("rename"), nil
+	return []byte(`"rename"`), nil
 }
 
 func (o *StringLiteralRename) UnmarshalJSON(data []byte) error {
-	if string(data) != "rename" {
-		return fmt.Errorf("invalid StringLiteralRename: %s", string(data))
+	if string(data) != `"rename"` {
+		return fmt.Errorf("invalid StringLiteralRename: %s", data)
 	}
 	return nil
 }
@@ -9703,12 +9703,12 @@ func (o *StringLiteralRename) UnmarshalJSON(data []byte) error {
 type StringLiteralDelete struct{}
 
 func (o StringLiteralDelete) MarshalJSON() ([]byte, error) {
-	return []byte("delete"), nil
+	return []byte(`"delete"`), nil
 }
 
 func (o *StringLiteralDelete) UnmarshalJSON(data []byte) error {
-	if string(data) != "delete" {
-		return fmt.Errorf("invalid StringLiteralDelete: %s", string(data))
+	if string(data) != `"delete"` {
+		return fmt.Errorf("invalid StringLiteralDelete: %s", data)
 	}
 	return nil
 }
@@ -9717,12 +9717,12 @@ func (o *StringLiteralDelete) UnmarshalJSON(data []byte) error {
 type StringLiteralFull struct{}
 
 func (o StringLiteralFull) MarshalJSON() ([]byte, error) {
-	return []byte("full"), nil
+	return []byte(`"full"`), nil
 }
 
 func (o *StringLiteralFull) UnmarshalJSON(data []byte) error {
-	if string(data) != "full" {
-		return fmt.Errorf("invalid StringLiteralFull: %s", string(data))
+	if string(data) != `"full"` {
+		return fmt.Errorf("invalid StringLiteralFull: %s", data)
 	}
 	return nil
 }
@@ -9731,12 +9731,12 @@ func (o *StringLiteralFull) UnmarshalJSON(data []byte) error {
 type StringLiteralUnchanged struct{}
 
 func (o StringLiteralUnchanged) MarshalJSON() ([]byte, error) {
-	return []byte("unchanged"), nil
+	return []byte(`"unchanged"`), nil
 }
 
 func (o *StringLiteralUnchanged) UnmarshalJSON(data []byte) error {
-	if string(data) != "unchanged" {
-		return fmt.Errorf("invalid StringLiteralUnchanged: %s", string(data))
+	if string(data) != `"unchanged"` {
+		return fmt.Errorf("invalid StringLiteralUnchanged: %s", data)
 	}
 	return nil
 }
@@ -9745,12 +9745,12 @@ func (o *StringLiteralUnchanged) UnmarshalJSON(data []byte) error {
 type StringLiteralSnippet struct{}
 
 func (o StringLiteralSnippet) MarshalJSON() ([]byte, error) {
-	return []byte("snippet"), nil
+	return []byte(`"snippet"`), nil
 }
 
 func (o *StringLiteralSnippet) UnmarshalJSON(data []byte) error {
-	if string(data) != "snippet" {
-		return fmt.Errorf("invalid StringLiteralSnippet: %s", string(data))
+	if string(data) != `"snippet"` {
+		return fmt.Errorf("invalid StringLiteralSnippet: %s", data)
 	}
 	return nil
 }
