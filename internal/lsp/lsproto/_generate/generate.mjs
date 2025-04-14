@@ -290,13 +290,12 @@ function handleOrType(orType) {
         if (!typeInfo.unionTypes.has(unionTypeName)) {
             typeInfo.unionTypes.set(unionTypeName, []);
         }
-
         const union = typeInfo.unionTypes.get(unionTypeName);
         if (union) {
-            for (let i = 0; i < types.length; i++) {
+            for (const type of types) {
                 union.push({
-                    name: types[i].name,
-                    types: [types[i]],
+                    name: type.name,
+                    types: [type],
                 });
             }
         }
@@ -840,11 +839,9 @@ function generateCode() {
         // Unmarshal method
         writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
         writeLine(`\t*o = ${name}{}`);
-        // Remove the null check
 
         // Write the unmarshal logic for each field - keep the block scopes
-        for (let i = 0; i < fieldEntries.length; i++) {
-            const entry = fieldEntries[i];
+        for (const entry of fieldEntries) {
             writeLine(`\t{`);
             writeLine(`\t\tvar v ${entry.typeName}`);
             writeLine(`\t\tif err := json.Unmarshal(data, &v); err == nil {`);
