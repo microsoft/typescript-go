@@ -706,7 +706,7 @@ function generateCode() {
 
     // Client-to-server requests
     for (const request of model.requests) {
-        if (request.messageDirection !== "clientToServer" && request.messageDirection !== "both") {
+        if (request.messageDirection === "serverToClient") {
             continue;
         }
 
@@ -715,6 +715,8 @@ function generateCode() {
             .join("");
 
         if (!request.params) {
+            // For requests without params (like shutdown), use any type
+            writeLine(`\tMethod${methodName}: unmarshallerFor[any],`);
             continue;
         }
 
@@ -737,7 +739,7 @@ function generateCode() {
 
     // Client-to-server notifications
     for (const notification of model.notifications) {
-        if (notification.messageDirection !== "clientToServer" && notification.messageDirection !== "both") {
+        if (notification.messageDirection === "serverToClient") {
             continue;
         }
 
@@ -746,6 +748,8 @@ function generateCode() {
             .join("");
 
         if (!notification.params) {
+            // For notifications without params (like exit), use any type
+            writeLine(`\tMethod${methodName}: unmarshallerFor[any],`);
             continue;
         }
 
