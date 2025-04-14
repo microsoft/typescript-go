@@ -386,10 +386,13 @@ function collectTypeDefinitions() {
 
     // Process all structures
     for (const structure of model.structures) {
+        // Special case for value types
+        const needsPointer = structure.name !== "Position" && structure.name !== "Range" && structure.name !== "Location";
+
         typeInfo.types.set(structure.name, {
             name: structure.name,
             isStruct: true,
-            needsPointer: true,
+            needsPointer: needsPointer,
         });
     }
 

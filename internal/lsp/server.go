@@ -365,7 +365,7 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 	}
 
 	locations := project.LanguageService().ProvideDefinitions(file.FileName(), pos)
-	lspLocations := make([]*lsproto.Location, len(locations))
+	lspLocations := make([]lsproto.Location, len(locations))
 	for i, loc := range locations {
 		if lspLocation, err := s.converters.ToLSPLocation(loc); err != nil {
 			return s.sendError(req.ID, err)

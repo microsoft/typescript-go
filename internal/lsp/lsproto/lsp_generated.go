@@ -22,7 +22,7 @@ type ImplementationParams struct {
 type Location struct {
 	Uri DocumentUri `json:"uri"`
 
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 }
 
 type ImplementationRegistrationOptions struct {
@@ -76,7 +76,7 @@ type DocumentColorParams struct {
 // Represents a color range from a document.
 type ColorInformation struct {
 	// The range in the document where this color appears.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The actual color value for this color range.
 	Color *Color `json:"color"`
@@ -100,7 +100,7 @@ type ColorPresentationParams struct {
 	Color *Color `json:"color"`
 
 	// The range where the color would be inserted. Serves as a context.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 }
 
 type ColorPresentation struct {
@@ -196,14 +196,14 @@ type SelectionRangeParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The positions inside the text document.
-	Positions []*Position `json:"positions"`
+	Positions []Position `json:"positions"`
 }
 
 // A selection range represents a part of a selection hierarchy. A selection range
 // may have a parent selection range that contains it.
 type SelectionRange struct {
 	// The range of this selection range.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
 	Parent *SelectionRange `json:"parent,omitzero"`
@@ -254,11 +254,11 @@ type CallHierarchyItem struct {
 	Uri DocumentUri `json:"uri"`
 
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else, e.g. comments and code.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The range that should be selected and revealed when this symbol is being picked, e.g. the name of a function.
 	// Must be contained by the `range`.
-	SelectionRange *Range `json:"selectionRange"`
+	SelectionRange Range `json:"selectionRange"`
 
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
@@ -293,7 +293,7 @@ type CallHierarchyIncomingCall struct {
 
 	// The ranges at which the calls appear. This is relative to the caller
 	// denoted by `this.from`.
-	FromRanges []*Range `json:"fromRanges"`
+	FromRanges []Range `json:"fromRanges"`
 }
 
 // The parameter of a `callHierarchy/outgoingCalls` request.
@@ -316,7 +316,7 @@ type CallHierarchyOutgoingCall struct {
 	// The range at which this item is called. This is the range relative to the caller, e.g the item
 	// passed to `provideCallHierarchyOutgoingCalls`
 	// and not `this.to`.
-	FromRanges []*Range `json:"fromRanges"`
+	FromRanges []Range `json:"fromRanges"`
 }
 
 // Since: 3.16.0
@@ -387,7 +387,7 @@ type SemanticTokensRangeParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The range the semantic tokens are requested for.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 }
 
 // Params to show a resource in the UI.
@@ -434,7 +434,7 @@ type LinkedEditingRangeParams struct {
 type LinkedEditingRanges struct {
 	// A list of ranges that can be edited together. The ranges must have
 	// identical length and contain identical text content. The ranges cannot overlap.
-	Ranges []*Range `json:"ranges"`
+	Ranges []Range `json:"ranges"`
 
 	// An optional word pattern (regular expression) that describes valid contents for
 	// the given ranges. If no pattern is provided, the client configuration's word
@@ -577,12 +577,12 @@ type TypeHierarchyItem struct {
 
 	// The range enclosing this symbol not including leading/trailing whitespace
 	// but everything else, e.g. comments and code.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The range that should be selected and revealed when this symbol is being
 	// picked, e.g. the name of a function. Must be contained by the
 	// `range`.
-	SelectionRange *Range `json:"selectionRange"`
+	SelectionRange Range `json:"selectionRange"`
 
 	// A data entry field that is preserved between a type hierarchy prepare and
 	// supertypes or subtypes requests. It could also be used to identify the
@@ -630,7 +630,7 @@ type InlineValueParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The document range for which inline values should be computed.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// Additional information about the context in which inline values were
 	// requested.
@@ -656,7 +656,7 @@ type InlayHintParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The document range for which inlay hints should be computed.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 }
 
 // Inlay hint information.
@@ -667,7 +667,7 @@ type InlayHint struct {
 	//
 	// If multiple hints have the same position, they will be shown in the order
 	// they appear in the response.
-	Position *Position `json:"position"`
+	Position Position `json:"position"`
 
 	// The label of this hint. A human readable string or an array of
 	// InlayHintLabelPart label parts.
@@ -1092,7 +1092,7 @@ type WillSaveTextDocumentParams struct {
 type TextEdit struct {
 	// The range of the text document to be manipulated. To insert
 	// text into a document create a range where start === end.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The string to be inserted. For delete operations use an
 	// empty string.
@@ -1449,7 +1449,7 @@ type DocumentHighlightParams struct {
 // the background color of its range.
 type DocumentHighlight struct {
 	// The range this highlight applies to.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The highlight kind, default is text.
 	Kind *DocumentHighlightKind `json:"kind,omitzero"`
@@ -1490,7 +1490,7 @@ type SymbolInformation struct {
 	// The range doesn't have to denote a node range in the sense of an abstract
 	// syntax tree. It can therefore not be used to re-construct a hierarchy of
 	// the symbols.
-	Location *Location `json:"location"`
+	Location Location `json:"location"`
 }
 
 // Represents programming constructs like variables, classes, interfaces etc.
@@ -1522,11 +1522,11 @@ type DocumentSymbol struct {
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to determine if the clients cursor is
 	// inside the symbol to reveal in the symbol in the UI.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The range that should be selected and revealed when this symbol is being picked, e.g the name of a function.
 	// Must be contained by the `range`.
-	SelectionRange *Range `json:"selectionRange"`
+	SelectionRange Range `json:"selectionRange"`
 
 	// Children of this symbol, e.g. properties of a class.
 	Children *[]*DocumentSymbol `json:"children,omitzero"`
@@ -1547,7 +1547,7 @@ type CodeActionParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The range for which the command was invoked.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// Context carrying additional information.
 	Context *CodeActionContext `json:"context"`
@@ -1700,7 +1700,7 @@ type CodeLensParams struct {
 // reasons the creation of a code lens and resolving should be done in two stages.
 type CodeLens struct {
 	// The range in which this code lens is valid. Should only span a single line.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The command this code lens represents.
 	Command *Command `json:"command,omitzero"`
@@ -1729,7 +1729,7 @@ type DocumentLinkParams struct {
 // text document or a web site.
 type DocumentLink struct {
 	// The range this link applies to.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The uri this link points to. If missing a resolve request is sent later.
 	Target *URI `json:"target,omitzero"`
@@ -1779,7 +1779,7 @@ type DocumentRangeFormattingParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The range to format
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The format options
 	Options *FormattingOptions `json:"options"`
@@ -1802,7 +1802,7 @@ type DocumentRangesFormattingParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The ranges to format
-	Ranges []*Range `json:"ranges"`
+	Ranges []Range `json:"ranges"`
 
 	// The format options
 	Options *FormattingOptions `json:"options"`
@@ -1816,7 +1816,7 @@ type DocumentOnTypeFormattingParams struct {
 	// The position around which the on type formatting should happen.
 	// This is not necessarily the exact position where the character denoted
 	// by the property `ch` got typed.
-	Position *Position `json:"position"`
+	Position Position `json:"position"`
 
 	// The character that has been typed that triggered the formatting
 	// on type request. That is not necessarily the last character that
@@ -1842,7 +1842,7 @@ type RenameParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The position at which this request was sent.
-	Position *Position `json:"position"`
+	Position Position `json:"position"`
 
 	// The new name of the symbol. If the given name is not valid the
 	// request must return a ResponseError with an
@@ -2005,7 +2005,7 @@ type TextDocumentPositionParams struct {
 	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 
 	// The position inside the text document.
-	Position *Position `json:"position"`
+	Position Position `json:"position"`
 }
 
 type WorkDoneProgressParams struct {
@@ -2034,11 +2034,11 @@ type LocationLink struct {
 	// The full target range of this link. If the target for example is a symbol then target range is the
 	// range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to highlight the range in the editor.
-	TargetRange *Range `json:"targetRange"`
+	TargetRange Range `json:"targetRange"`
 
 	// The range that should be selected and revealed when this link is being followed, e.g the name of a function.
 	// Must be contained by the `targetRange`. See also `DocumentSymbol#range`
-	TargetSelectionRange *Range `json:"targetSelectionRange"`
+	TargetSelectionRange Range `json:"targetSelectionRange"`
 }
 
 // A range in a text document expressed as (zero-based) start and end positions.
@@ -2056,10 +2056,10 @@ type LocationLink struct {
 // ```
 type Range struct {
 	// The range's start position.
-	Start *Position `json:"start"`
+	Start Position `json:"start"`
 
 	// The range's end position.
-	End *Position `json:"end"`
+	End Position `json:"end"`
 }
 
 type ImplementationOptions struct {
@@ -2345,7 +2345,7 @@ type InlineValueContext struct {
 
 	// The document range where execution has stopped.
 	// Typically the end position of the range denotes the line where the inline values are shown.
-	StoppedLocation *Range `json:"stoppedLocation"`
+	StoppedLocation Range `json:"stoppedLocation"`
 }
 
 // Provide inline value as text.
@@ -2353,7 +2353,7 @@ type InlineValueContext struct {
 // Since: 3.17.0
 type InlineValueText struct {
 	// The document range for which the inline value applies.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The text of the inline value.
 	Text string `json:"text"`
@@ -2367,7 +2367,7 @@ type InlineValueText struct {
 type InlineValueVariableLookup struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the variable name from the underlying document.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// If specified the name of the variable to look up.
 	VariableName *string `json:"variableName,omitzero"`
@@ -2384,7 +2384,7 @@ type InlineValueVariableLookup struct {
 type InlineValueEvaluatableExpression struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the evaluatable expression from the underlying document.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// If specified the expression overrides the extracted expression.
 	Expression *string `json:"expression,omitzero"`
@@ -2994,7 +2994,7 @@ type FileSystemWatcher struct {
 // are only valid in the scope of a resource.
 type Diagnostic struct {
 	// The range at which the message applies
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The diagnostic's severity. To avoid interpretation mismatches when a
 	// server is used with different clients it is highly recommended that servers
@@ -3065,10 +3065,10 @@ type InsertReplaceEdit struct {
 	NewText string `json:"newText"`
 
 	// The range if the insert is requested
-	Insert *Range `json:"insert"`
+	Insert Range `json:"insert"`
 
 	// The range if the replace is requested.
-	Replace *Range `json:"replace"`
+	Replace Range `json:"replace"`
 }
 
 // In many cases the items of an actual completion result share the same
@@ -3497,7 +3497,7 @@ type RenameOptions struct {
 
 // Since: 3.18.0
 type PrepareRenamePlaceholder struct {
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	Placeholder string `json:"placeholder"`
 }
@@ -3569,7 +3569,7 @@ type AnnotatedTextEdit struct {
 // Proposed.
 type SnippetTextEdit struct {
 	// The range of the text document to be manipulated.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The snippet to be inserted.
 	Snippet *StringValue `json:"snippet"`
@@ -3736,7 +3736,7 @@ type NotebookDocumentCellChanges struct {
 // Proposed.
 type SelectedCompletionInfo struct {
 	// The range that will be replaced if this completion item is accepted.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The text the range will be replaced with if this completion is accepted.
 	Text string `json:"text"`
@@ -3825,7 +3825,7 @@ type WorkspaceOptions struct {
 // Since: 3.18.0
 type TextDocumentContentChangePartial struct {
 	// The range of the document that changed.
-	Range *Range `json:"range"`
+	Range Range `json:"range"`
 
 	// The optional length of the range that got replaced.
 	//
@@ -3856,7 +3856,7 @@ type CodeDescription struct {
 // a symbol in a scope.
 type DiagnosticRelatedInformation struct {
 	// The location of this related diagnostic information.
-	Location *Location `json:"location"`
+	Location Location `json:"location"`
 
 	// The message of this related diagnostic information.
 	Message string `json:"message"`
@@ -3866,9 +3866,9 @@ type DiagnosticRelatedInformation struct {
 //
 // Since: 3.18.0
 type EditRangeWithInsertReplace struct {
-	Insert *Range `json:"insert"`
+	Insert Range `json:"insert"`
 
-	Replace *Range `json:"replace"`
+	Replace Range `json:"replace"`
 }
 
 // Since: 3.18.0
@@ -7247,7 +7247,7 @@ const (
 
 type LocationOrLocations struct {
 	Location  *Location
-	Locations *[]*Location
+	Locations *[]Location
 }
 
 func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
@@ -7272,7 +7272,7 @@ func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
 		}
 	}
 	{
-		var v []*Location
+		var v []Location
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.Locations = &v
 			return nil
