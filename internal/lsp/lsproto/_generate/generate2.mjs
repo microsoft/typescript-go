@@ -740,11 +740,8 @@ function generateCode() {
     writeLine("}");
     writeLine("");
 
-    // Generate Methods for requests and notifications
-    writeLine("// Methods\n");
-
     // Method type exists in lsp.go, so skip declaring it
-    writeLine("// Request Methods");
+    writeLine("// Requests");
     writeLine("const (");
     for (const request of model.requests) {
         write(formatDocumentation(request.documentation));
@@ -759,7 +756,7 @@ function generateCode() {
     writeLine(")");
     writeLine("");
 
-    writeLine("// Notification Methods");
+    writeLine("// Notifications");
     writeLine("const (");
     for (const notification of model.notifications) {
         write(formatDocumentation(notification.documentation));

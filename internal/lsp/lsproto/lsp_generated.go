@@ -6852,9 +6852,7 @@ var unmarshallers = map[Method]func([]byte) (any, error){
 	MethodProgress:                            unmarshallerFor[ProgressParams],
 }
 
-// Methods
-
-// Request Methods
+// Requests
 const (
 	// A request to resolve the implementation locations of a symbol at a given text
 	// document position. The request's parameter is of type TextDocumentPositionParams
@@ -7151,7 +7149,7 @@ const (
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
 )
 
-// Notification Methods
+// Notifications
 const (
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
