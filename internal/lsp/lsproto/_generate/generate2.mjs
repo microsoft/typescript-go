@@ -177,26 +177,7 @@ function resolveType(type) {
                 return { name: "[2]uint32", isStruct: false, needsPointer: false };
             }
 
-            // For other tuples, create a custom type name
-            const typeName = `Tuple${
-                type.items.map(item => {
-                    const resolvedType = resolveType(item);
-                    return titleCase(resolvedType.name.replace(/[\[\]{}*]/g, ""));
-                }).join("And")
-            }`;
-
-            if (!typeInfo.unionTypes.has(typeName)) {
-                typeInfo.unionTypes.set(typeName, []);
-            }
-
-            const union = typeInfo.unionTypes.get(typeName);
-            if (union) {
-                for (const item of type.items) {
-                    union.push({ name: resolveType(item).name, types: [item] });
-                }
-            }
-
-            return { name: typeName, isStruct: true, needsPointer: true };
+            throw new Error("Unsupported tuple type: " + JSON.stringify(type));
         }
 
         case "stringLiteral": {
@@ -354,7 +335,7 @@ function handleOrType(orType) {
             return "Tuple";
         }
         else {
-            return `Type${Math.floor(Math.random() * 10000)}`;
+            throw new Error(`Unsupported type kind in union: ${type.kind}`);
         }
     });
 
@@ -920,103 +901,6 @@ function main() {
 }
 
 main();
-
-/**
- * Generate union types
- */
-function generateUnionTypes() {
-    writeLine("// Union types\n");
-
-    for (const [name, members] of typeInfo.unionTypes.entries()) {
-        // Skip if already generated
-        if (typeInfo.generatedTypes.has(name)) {
-            continue;
-        }
-
-        writeLine(`type ${name} struct {`);
-
-        // Use a Map to deduplicate by type name to ensure we don't include multiple fields with the same type
-        const uniqueTypeFields = new Map(); // Maps type name -> field name
-
-        for (const member of members) {
-            let memberType;
-            if (member.types.length === 1) {
-                const type = resolveType(member.types[0]);
-                memberType = type.name;
-
-                // If this type name already exists in our map, skip it
-                if (!uniqueTypeFields.has(memberType)) {
-                    const fieldName = titleCase(member.name);
-                    uniqueTypeFields.set(memberType, fieldName);
-                    writeLine(`\t${fieldName} *${memberType}`);
-                }
-            }
-            else {
-                // This shouldn't happen with our current approach, but handle it just in case
-                memberType = "any";
-                const fieldName = titleCase(member.name);
-                uniqueTypeFields.set(memberType, fieldName);
-                writeLine(`\t${fieldName} *${memberType}`);
-            }
-        }
-
-        writeLine(`}`);
-        writeLine("");
-
-        // Get the field names and types for marshal/unmarshal methods
-        const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({ fieldName, typeName }));
-
-        // Marshal method
-        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
-
-        // Create assertion to ensure only one field is set at a time
-        write(`\tassertOnlyOne("more than one element of ${name} is set", `);
-
-        // Write the assertion conditions
-        for (let i = 0; i < fieldEntries.length; i++) {
-            if (i > 0) write(", ");
-            write(`o.${fieldEntries[i].fieldName} != nil`);
-        }
-        writeLine(`)`);
-        writeLine("");
-
-        // Write the marshal logic for each field
-        for (const entry of fieldEntries) {
-            writeLine(`\tif o.${entry.fieldName} != nil {`);
-            writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
-            writeLine(`\t}`);
-        }
-
-        // Use panic("unreachable") instead of returning null
-        writeLine(`\tpanic("unreachable")`);
-        writeLine(`}`);
-        writeLine("");
-
-        // Unmarshal method
-        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
-        writeLine(`\t*o = ${name}{}`);
-        // Remove the null check
-
-        // Write the unmarshal logic for each field - keep the block scopes
-        for (let i = 0; i < fieldEntries.length; i++) {
-            const entry = fieldEntries[i];
-            writeLine(`\t{`);
-            writeLine(`\t\tvar v ${entry.typeName}`);
-            writeLine(`\t\tif err := json.Unmarshal(data, &v); err == nil {`);
-            writeLine(`\t\t\to.${entry.fieldName} = &v`);
-            writeLine(`\t\t\treturn nil`);
-            writeLine(`\t\t}`);
-            writeLine(`\t}`);
-        }
-
-        // Match the error format from the original script
-        writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
-        writeLine(`}`);
-        writeLine("");
-
-        typeInfo.generatedTypes.add(name);
-    }
-}
 
 /**
  * Generate type aliases

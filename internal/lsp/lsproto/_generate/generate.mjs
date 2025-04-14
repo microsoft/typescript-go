@@ -25,21 +25,6 @@ if (!fs.existsSync(metaModelPath)) {
 /** @type {MetaModel} */
 const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
-/**
- * @param {string | number} a
- * @param {string | number} b
- * @returns {number}
- */
-function compareValues(a, b) {
-    if (typeof a === "string" && typeof b === "string") {
-        return a < b ? -1 : a > b ? 1 : 0;
-    }
-    if (typeof a === "number" && typeof b === "number") {
-        return a - b;
-    }
-    throw new Error("Cannot compare values of different types");
-}
-
 /** @type {string[]} */
 let parts = [];
 
