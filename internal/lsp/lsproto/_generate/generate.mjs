@@ -208,27 +208,8 @@ function resolveType(type) {
             return handleOrType(type);
         }
 
-        case "and": {
-            // For AND types, we'll create a struct that embeds all component types
-            const typeName = `And${
-                type.items.map(item => {
-                    if (item.kind === "reference") {
-                        return item.name;
-                    }
-                    return "Anonymous";
-                }).join("")
-            }`;
-
-            const andType = { name: typeName, isStruct: true, needsPointer: true };
-            typeInfo.types.set(typeName, andType);
-            return andType;
-        }
-
-        default: { // @ts-ignore - Handling unknown type kinds
-            const unknownKind = String(type["kind"] || "unknown");
-            console.warn(`Unhandled type kind: ${unknownKind}`);
-            return { name: `ANY_${unknownKind}`, isStruct: false, needsPointer: false };
-        }
+        default:
+            throw new Error(`Unsupported type kind: ${type.kind}`);
     }
 }
 
