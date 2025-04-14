@@ -642,7 +642,24 @@ function generateCode() {
     }
 
     // Generate type aliases
-    generateTypeAliases();
+    writeLine("// Type aliases\n");
+
+    for (const typeAlias of model.typeAliases) {
+        write(formatDocumentation(typeAlias.documentation));
+        write(formatDeprecation(typeAlias.deprecated));
+
+        if (typeAlias.name === "LSPAny") {
+            writeLine("type LSPAny any");
+            writeLine("");
+            continue;
+        }
+
+        const resolvedType = resolveType(typeAlias.type);
+        writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
+        writeLine("");
+
+        typeInfo.generatedTypes.add(typeAlias.name);
+    }
 
     // Generate unmarshallers
     writeLine("// Unmarshallers\n");
@@ -901,27 +918,3 @@ function main() {
 }
 
 main();
-
-/**
- * Generate type aliases
- */
-function generateTypeAliases() {
-    writeLine("// Type aliases\n");
-
-    for (const typeAlias of model.typeAliases) {
-        write(formatDocumentation(typeAlias.documentation));
-        write(formatDeprecation(typeAlias.deprecated));
-
-        if (typeAlias.name === "LSPAny") {
-            writeLine("type LSPAny any");
-            writeLine("");
-            continue;
-        }
-
-        const resolvedType = resolveType(typeAlias.type);
-        writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
-        writeLine("");
-
-        typeInfo.generatedTypes.add(typeAlias.name);
-    }
-}
