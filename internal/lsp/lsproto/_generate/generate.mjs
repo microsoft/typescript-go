@@ -199,12 +199,10 @@ function resolveType(type) {
         }
 
         case "literal":
-            // Empty object literal
             if (type.value.properties.length === 0) {
                 return { name: "struct{}", isStruct: true, needsPointer: false };
             }
 
-            // Handle literal structs (this is a simplification, may need enhancement)
             const literalTypeName = `AnonymousStruct${Math.floor(Math.random() * 10000)}`;
             const literalType = { name: literalTypeName, isStruct: true, needsPointer: true };
             typeInfo.types.set(literalTypeName, literalType);
@@ -230,10 +228,7 @@ function resolveType(type) {
             return andType;
         }
 
-        default: {
-            // This is a safeguard for the TypeScript compiler, should not happen in practice
-            // Handle unknown type kind safely by using type assertion with the 'any' type
-            // @ts-ignore - We know this will have a kind property, but TypeScript thinks it's 'never'
+        default: { // @ts-ignore - Handling unknown type kinds
             const unknownKind = String(type["kind"] || "unknown");
             console.warn(`Unhandled type kind: ${unknownKind}`);
             return { name: `ANY_${unknownKind}`, isStruct: false, needsPointer: false };
@@ -373,9 +368,8 @@ function collectTypeDefinitions() {
 
     // Process all enumerations first to make them available for struct fields
     for (const enumeration of model.enumerations) {
-        // Register the enum type with its own name rather than the base type
         typeInfo.types.set(enumeration.name, {
-            name: enumeration.name, // Use the enum type name, not the base type
+            name: enumeration.name,
             isStruct: false,
             needsPointer: false,
         });
@@ -402,9 +396,6 @@ function collectTypeDefinitions() {
 
             // Mark this identifier as used
             usedEnumIdentifiers.add(identifier);
-
-            // Store the entry in the map with the value literal as the key
-            // and an object with all needed information as the value
             enumValues.set(String(value.value), {
                 identifier,
                 documentation: value.documentation,
@@ -529,9 +520,7 @@ function generateCode() {
         write(formatDocumentation(structure.documentation));
         write(formatDeprecation(structure.deprecated));
 
-        writeLine(`type ${structure.name} struct {`);
-
-        // First embed extended types
+        writeLine(`type ${structure.name} struct {`); // Embed extended types and mixins
         for (const e of structure.extends || []) {
             if (e.kind !== "reference") {
                 throw new Error(`Unexpected extends kind: ${e.kind}`);
@@ -539,7 +528,6 @@ function generateCode() {
             writeLine(`\t${e.name}`);
         }
 
-        // Then embed mixin types
         for (const m of structure.mixins || []) {
             if (m.kind !== "reference") {
                 throw new Error(`Unexpected mixin kind: ${m.kind}`);
@@ -683,7 +671,6 @@ function generateCode() {
             writeLine(`\tMethod${methodName}: unmarshallerFor[any],`);
             continue;
         }
-
         let typeName;
         if (Array.isArray(request.params)) {
             // This shouldn't typically happen in the LSP spec
@@ -697,7 +684,6 @@ function generateCode() {
             typeName = resolvedType.name;
         }
 
-        // Make sure to use the function properly
         writeLine(`\tMethod${methodName}: unmarshallerFor[${typeName}],`);
     }
 
@@ -716,7 +702,6 @@ function generateCode() {
             writeLine(`\tMethod${methodName}: unmarshallerFor[any],`);
             continue;
         }
-
         let typeName;
         if (Array.isArray(notification.params)) {
             // This shouldn't typically happen in the LSP spec
@@ -730,7 +715,6 @@ function generateCode() {
             typeName = resolvedType.name;
         }
 
-        // Make sure to use the function properly
         writeLine(`\tMethod${methodName}: unmarshallerFor[${typeName}],`);
     }
 
@@ -778,8 +762,6 @@ function generateCode() {
         }
 
         writeLine(`type ${name} struct {`);
-
-        // Use a Map to deduplicate by type name to ensure we don't include multiple fields with the same type
         const uniqueTypeFields = new Map(); // Maps type name -> field name
 
         for (const member of members) {
@@ -823,15 +805,12 @@ function generateCode() {
         }
         writeLine(`)`);
         writeLine("");
-
-        // Write the marshal logic for each field
         for (const entry of fieldEntries) {
             writeLine(`\tif o.${entry.fieldName} != nil {`);
             writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
             writeLine(`\t}`);
         }
 
-        // Use panic("unreachable") instead of returning null
         writeLine(`\tpanic("unreachable")`);
         writeLine(`}`);
         writeLine("");
@@ -840,7 +819,6 @@ function generateCode() {
         writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
         writeLine(`\t*o = ${name}{}`);
 
-        // Write the unmarshal logic for each field - keep the block scopes
         for (const entry of fieldEntries) {
             writeLine(`\t{`);
             writeLine(`\t\tvar v ${entry.typeName}`);
