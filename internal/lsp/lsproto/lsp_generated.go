@@ -855,6 +855,7 @@ type DidCloseNotebookDocumentParams struct {
 // A parameter literal used in inline completion requests.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type InlineCompletionParams struct {
 	TextDocumentPositionParams
@@ -868,6 +869,7 @@ type InlineCompletionParams struct {
 // Represents a collection of items to be presented in the editor.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type InlineCompletionList struct {
 	// The inline completion items
@@ -877,6 +879,7 @@ type InlineCompletionList struct {
 // An inline completion item represents a text snippet that is proposed inline to complete text that is being typed.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type InlineCompletionItem struct {
 	// The text to replace the range with. Must be set.
@@ -895,6 +898,7 @@ type InlineCompletionItem struct {
 // Inline completion options used during static or dynamic registration.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type InlineCompletionRegistrationOptions struct {
 	InlineCompletionOptions
@@ -905,6 +909,7 @@ type InlineCompletionRegistrationOptions struct {
 // Parameters for the `workspace/textDocumentContent` request.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type TextDocumentContentParams struct {
 	// The uri of the text document.
@@ -914,6 +919,7 @@ type TextDocumentContentParams struct {
 // Result of the `workspace/textDocumentContent` request.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type TextDocumentContentResult struct {
 	// The text content of the text document. Please note, that the content of
@@ -926,6 +932,7 @@ type TextDocumentContentResult struct {
 // Text document content provider registration options.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type TextDocumentContentRegistrationOptions struct {
 	TextDocumentContentOptions
@@ -935,6 +942,7 @@ type TextDocumentContentRegistrationOptions struct {
 // Parameters for the `workspace/textDocumentContent/refresh` request.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type TextDocumentContentRefreshParams struct {
 	// The uri of the text document to refresh.
@@ -1477,7 +1485,6 @@ type SymbolInformation struct {
 
 	// Indicates if this symbol is deprecated.
 	//
-	//
 	// Deprecated: Use tags instead
 	Deprecated *bool `json:"deprecated,omitzero"`
 
@@ -1514,7 +1521,6 @@ type DocumentSymbol struct {
 	Tags *[]SymbolTag `json:"tags,omitzero"`
 
 	// Indicates if this symbol is deprecated.
-	//
 	//
 	// Deprecated: Use tags instead
 	Deprecated *bool `json:"deprecated,omitzero"`
@@ -1564,6 +1570,7 @@ type Command struct {
 	// An optional tooltip.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	Tooltip *string `json:"tooltip,omitzero"`
 
@@ -1794,6 +1801,7 @@ type DocumentRangeFormattingRegistrationOptions struct {
 // The parameters of a DocumentRangesFormattingRequest.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type DocumentRangesFormattingParams struct {
 	WorkDoneProgressParams
@@ -1890,6 +1898,7 @@ type ApplyWorkspaceEditParams struct {
 	// Additional data about the edit.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	Metadata *WorkspaceEditMetadata `json:"metadata,omitzero"`
 }
@@ -2667,6 +2676,7 @@ type NotebookDocumentIdentifier struct {
 // Provides information about the context in which an inline completion was requested.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type InlineCompletionContext struct {
 	// Describes how the inline completion was triggered.
@@ -2685,6 +2695,7 @@ type InlineCompletionContext struct {
 // `${name:default value}`.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type StringValue struct {
 	// The kind of string value.
@@ -2697,6 +2708,7 @@ type StringValue struct {
 // Inline completion options used during static registration.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type InlineCompletionOptions struct {
 	WorkDoneProgressOptions
@@ -2705,6 +2717,7 @@ type InlineCompletionOptions struct {
 // Text document content provider options.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type TextDocumentContentOptions struct {
 	// The schemes for which the server provides content.
@@ -2763,14 +2776,12 @@ type _InitializeParams struct {
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
 	//
-	//
 	// Deprecated: in favour of rootUri.
 	RootPath *Nullable[string] `json:"rootPath,omitzero"`
 
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
-	//
 	//
 	// Deprecated: in favour of workspaceFolders.
 	RootUri Nullable[DocumentUri] `json:"rootUri"`
@@ -2933,6 +2944,7 @@ type ServerCapabilities struct {
 	// Inline completion options used during static registration.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	InlineCompletionProvider *BooleanOrInlineCompletionOptions `json:"inlineCompletionProvider,omitzero"`
 
@@ -2946,6 +2958,7 @@ type ServerCapabilities struct {
 // Information about the server
 //
 // Since: 3.15.0
+//
 // Since: 3.18.0 ServerInfo type name added.
 type ServerInfo struct {
 	// The name of the server as defined by the server.
@@ -3392,6 +3405,7 @@ type CodeActionOptions struct {
 	// At most one documentation entry should be shown per provider.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	Documentation *[]*CodeActionKindDocumentation `json:"documentation,omitzero"`
 
@@ -3472,6 +3486,7 @@ type DocumentRangeFormattingOptions struct {
 	// Whether the server supports formatting multiple ranges at once.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	RangesSupport *bool `json:"rangesSupport,omitzero"`
 }
@@ -3518,6 +3533,7 @@ type ExecuteCommandOptions struct {
 // Additional data about a workspace edit.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type WorkspaceEditMetadata struct {
 	// Signal to the editor that this edit is a refactoring.
@@ -3566,6 +3582,7 @@ type AnnotatedTextEdit struct {
 // An interactive text edit.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type SnippetTextEdit struct {
 	// The range of the text document to be manipulated.
@@ -3733,6 +3750,7 @@ type NotebookDocumentCellChanges struct {
 // Describes the currently selected completion item.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type SelectedCompletionInfo struct {
 	// The range that will be replaced if this completion item is accepted.
@@ -3745,6 +3763,7 @@ type SelectedCompletionInfo struct {
 // Information about the client
 //
 // Since: 3.15.0
+//
 // Since: 3.18.0 ClientInfo type name added.
 type ClientInfo struct {
 	// The name of the client as defined by the client.
@@ -3818,6 +3837,7 @@ type WorkspaceOptions struct {
 	// The server supports the `workspace/textDocumentContent` request.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	TextDocumentContent *TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions `json:"textDocumentContent,omitzero"`
 }
@@ -3828,7 +3848,6 @@ type TextDocumentContentChangePartial struct {
 	Range Range `json:"range"`
 
 	// The optional length of the range that got replaced.
-	//
 	//
 	// Deprecated: use range instead.
 	RangeLength *uint32 `json:"rangeLength,omitzero"`
@@ -3915,6 +3934,7 @@ type ParameterInformation struct {
 // Documentation for a class of code actions.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type CodeActionKindDocumentation struct {
 	// The kind of the code action being documented.
@@ -4065,12 +4085,14 @@ type WorkspaceClientCapabilities struct {
 	// Capabilities specific to the folding range requests scoped to the workspace.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	FoldingRange *FoldingRangeWorkspaceClientCapabilities `json:"foldingRange,omitzero"`
 
 	// Capabilities specific to the `workspace/textDocumentContent` request.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	TextDocumentContent *TextDocumentContentClientCapabilities `json:"textDocumentContent,omitzero"`
 }
@@ -4204,6 +4226,7 @@ type TextDocumentClientCapabilities struct {
 	// Client capabilities specific to inline completions.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	InlineCompletion *InlineCompletionClientCapabilities `json:"inlineCompletion,omitzero"`
 }
@@ -4480,12 +4503,14 @@ type WorkspaceEditClientCapabilities struct {
 	// Whether the client supports `WorkspaceEditMetadata` in `WorkspaceEdit`s.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	MetadataSupport *bool `json:"metadataSupport,omitzero"`
 
 	// Whether the client supports snippets as text edits.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	SnippetEditSupport *bool `json:"snippetEditSupport,omitzero"`
 }
@@ -4634,6 +4659,7 @@ type DiagnosticWorkspaceClientCapabilities struct {
 // Client workspace capabilities specific to folding ranges
 //
 // Since: 3.18.0
+//
 // Proposed.
 type FoldingRangeWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from the
@@ -4645,6 +4671,7 @@ type FoldingRangeWorkspaceClientCapabilities struct {
 	// change that requires such a calculation.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	RefreshSupport *bool `json:"refreshSupport,omitzero"`
 }
@@ -4652,6 +4679,7 @@ type FoldingRangeWorkspaceClientCapabilities struct {
 // Client capabilities for a text document content provider.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type TextDocumentContentClientCapabilities struct {
 	// Text document content provider supports dynamic registration.
@@ -4871,6 +4899,7 @@ type CodeActionClientCapabilities struct {
 	// code actions.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	DocumentationSupport *bool `json:"documentationSupport,omitzero"`
 
@@ -4925,6 +4954,7 @@ type DocumentRangeFormattingClientCapabilities struct {
 	// Whether the client supports formatting multiple ranges at once.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	RangesSupport *bool `json:"rangesSupport,omitzero"`
 }
@@ -5136,6 +5166,7 @@ type DiagnosticClientCapabilities struct {
 // Client capabilities specific to inline completions.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type InlineCompletionClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline completion providers.
@@ -5364,6 +5395,7 @@ type ClientSignatureInformationOptions struct {
 	// indicate that no parameter should be active.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	NoActiveParameterSupport *bool `json:"noActiveParameterSupport,omitzero"`
 }
@@ -5840,6 +5872,7 @@ const (
 	// A debug message.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	MessageTypeDebug MessageType = 5
 )
@@ -6079,6 +6112,7 @@ const (
 	// - ...
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	CodeActionKindRefactorMove CodeActionKind = "refactor.move"
 	// Base kind for refactoring rewrite actions: 'refactor.rewrite'
@@ -6184,6 +6218,7 @@ func (e *MarkupKind) UnmarshalJSON(data []byte) error {
 }
 
 // Predefined Language kinds
+//
 // Since: 3.18.0
 type LanguageKind string
 
@@ -6198,9 +6233,11 @@ const (
 	LanguageKindCSharp       LanguageKind = "csharp"
 	LanguageKindCSS          LanguageKind = "css"
 	// Since: 3.18.0
+	//
 	// Proposed.
 	LanguageKindD LanguageKind = "d"
 	// Since: 3.18.0
+	//
 	// Proposed.
 	LanguageKindPascal          LanguageKind = "pascal"
 	LanguageKindDiff            LanguageKind = "diff"
@@ -6266,6 +6303,7 @@ func (e *LanguageKind) UnmarshalJSON(data []byte) error {
 // Describes how an provider was triggered.
 //
 // Since: 3.18.0
+//
 // Proposed.
 type InlineCompletionTriggerKind uint32
 
@@ -6640,6 +6678,7 @@ type Definition = LocationOrLocations
 type DefinitionLink = LocationLink
 
 // LSP arrays.
+//
 // Since: 3.17.0
 type LSPArray = []LSPAny
 
@@ -6648,6 +6687,7 @@ type LSPArray = []LSPAny
 // can't be converted into JSON preserving the property name. However for
 // convenience it is allowed and assumed that all these properties are
 // optional as well.
+//
 // Since: 3.17.0
 type LSPAny any
 
@@ -6687,7 +6727,7 @@ type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefault
 //
 // @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
 //
-// The use of a string as a document filter is deprecated Since: 3.16.0.
+// The use of a string as a document filter is deprecated @since 3.16.0.
 type DocumentSelector = []*DocumentFilter
 
 type ProgressToken = IntegerOrString
@@ -6726,6 +6766,7 @@ type MarkedString = StringOrMarkedStringWithLanguage
 type DocumentFilter = TextDocumentFilterOrNotebookCellTextDocumentFilter
 
 // LSP object definition.
+//
 // Since: 3.17.0
 type LSPObject = map[string]LSPAny
 
@@ -6888,6 +6929,7 @@ const (
 	// that resolves to such.
 	MethodTextDocumentFoldingRange Method = "textDocument/foldingRange"
 	// Since: 3.18.0
+	//
 	// Proposed.
 	MethodWorkspaceFoldingRangeRefresh Method = "workspace/foldingRange/refresh"
 	// A request to resolve the type definition locations of a symbol at a given text
@@ -7010,18 +7052,21 @@ const (
 	// InlineCompletion[] or a Thenable that resolves to such.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	MethodTextDocumentInlineCompletion Method = "textDocument/inlineCompletion"
 	// The `workspace/textDocumentContent` request is sent from the client to the
 	// server to request the content of a text document.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	MethodWorkspaceTextDocumentContent Method = "workspace/textDocumentContent"
 	// The `workspace/textDocumentContent` request is sent from the server to the client to refresh
 	// the content of a specific text document.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	MethodWorkspaceTextDocumentContentRefresh Method = "workspace/textDocumentContent/refresh"
 	// The `client/registerCapability` request is sent from the server to the client to register a new capability
@@ -7104,7 +7149,6 @@ const (
 	// Since: 3.17.0 - support for WorkspaceSymbol in the returned data. Clients
 	//  need to advertise support for WorkspaceSymbols via the client capability
 	//  `workspace.symbol.resolveSupport`.
-	//
 	MethodWorkspaceSymbol Method = "workspace/symbol"
 	// A request to resolve the range inside the workspace
 	// symbol's location.
@@ -7132,6 +7176,7 @@ const (
 	// A request to format ranges in a document.
 	//
 	// Since: 3.18.0
+	//
 	// Proposed.
 	MethodTextDocumentRangesFormatting Method = "textDocument/rangesFormatting"
 	// A request to format a document on type.

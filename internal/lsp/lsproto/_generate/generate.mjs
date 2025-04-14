@@ -427,32 +427,33 @@ function collectTypeDefinitions() {
 function formatDocumentation(s) {
     if (!s) return "";
 
-    let formatted = s.split("\n")
-        .map(line => {
-            line = line.replace(/(\w ) +/g, "$1");
-            line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
-            line = line.replace(/@since (.*)/g, "Since: $1");
-            if (line.startsWith("@deprecated")) {
-                return null;
-            }
-            if (line.startsWith("@proposed")) {
-                return "// Proposed.";
-            }
-            return "// " + line;
-        })
-        .filter(Boolean)
-        .join("\n");
+    /** @type {string[]} */
+    let lines = [];
 
-    return formatted ? formatted + "\n" : "";
-}
+    for (let line of s.split("\n")) {
+        line = line.trimEnd();
+        line = line.replace(/(\w ) +/g, "$1");
+        line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
+        line = line.replace(/^@(since|proposed|deprecated)(.*)/, (_, tag, rest) => {
+            lines.push("");
+            return `${titleCase(tag)}${rest ? ":" + rest : "."}`;
+        });
+        lines.push(line);
+    }
 
-/**
- * @param {string | undefined} deprecated
- * @returns {string}
- */
-function formatDeprecation(deprecated) {
-    if (!deprecated) return "";
-    return "//\n// Deprecated: " + deprecated + "\n";
+    // filter out contiguous empty lines
+    while (true) {
+        const toRemove = lines.findIndex((line, index) => {
+            if (line) return false;
+            if (index === 0) return true;
+            if (index === lines.length - 1) return true;
+            return !(lines[index - 1] && lines[index + 1]);
+        });
+        if (toRemove === -1) break;
+        lines.splice(toRemove, 1);
+    }
+
+    return lines.length > 0 ? "// " + lines.join("\n// ") + "\n" : "";
 }
 
 /** @type {string[]} */
@@ -497,7 +498,6 @@ function generateCode() {
 
     for (const structure of model.structures) {
         write(formatDocumentation(structure.documentation));
-        write(formatDeprecation(structure.deprecated));
 
         writeLine(`type ${structure.name} struct {`); // Embed extended types and mixins
         for (const e of structure.extends || []) {
@@ -525,7 +525,6 @@ function generateCode() {
         // Then properties
         for (const prop of structure.properties) {
             write(formatDocumentation(prop.documentation));
-            write(formatDeprecation(prop.deprecated));
 
             const type = resolveType(prop.type);
             const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
@@ -545,7 +544,6 @@ function generateCode() {
 
     for (const enumeration of model.enumerations) {
         write(formatDocumentation(enumeration.documentation));
-        write(formatDeprecation(enumeration.deprecated));
 
         let baseType;
         switch (enumeration.type.name) {
@@ -576,7 +574,6 @@ function generateCode() {
         // Process entries with unique identifiers
         for (const [value, entry] of enumValues.entries()) {
             write(formatDocumentation(entry.documentation));
-            write(formatDeprecation(entry.deprecated));
 
             let valueLiteral;
             // Handle string values
@@ -612,7 +609,6 @@ function generateCode() {
 
     for (const typeAlias of model.typeAliases) {
         write(formatDocumentation(typeAlias.documentation));
-        write(formatDeprecation(typeAlias.deprecated));
 
         if (typeAlias.name === "LSPAny") {
             writeLine("type LSPAny any");
@@ -705,7 +701,6 @@ function generateCode() {
     writeLine("const (");
     for (const request of model.requests) {
         write(formatDocumentation(request.documentation));
-        write(formatDeprecation(request.deprecated));
 
         const methodName = request.method.split("/")
             .map(v => v === "$" ? "" : titleCase(v))
@@ -720,7 +715,6 @@ function generateCode() {
     writeLine("const (");
     for (const notification of model.notifications) {
         write(formatDocumentation(notification.documentation));
-        write(formatDeprecation(notification.deprecated));
 
         const methodName = notification.method.split("/")
             .map(v => v === "$" ? "" : titleCase(v))
