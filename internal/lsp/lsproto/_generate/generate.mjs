@@ -197,16 +197,12 @@ function resolveType(type) {
             typeInfo.literalTypes.set(String(type.value), typeName);
             return { name: typeName, isStruct: true, needsPointer: false };
         }
-
         case "literal":
             if (type.value.properties.length === 0) {
                 return { name: "struct{}", isStruct: true, needsPointer: false };
             }
 
-            const literalTypeName = `AnonymousStruct${Math.floor(Math.random() * 10000)}`;
-            const literalType = { name: literalTypeName, isStruct: true, needsPointer: true };
-            typeInfo.types.set(literalTypeName, literalType);
-            return literalType;
+            throw new Error("Unexpected non-empty literal object: " + JSON.stringify(type.value));
 
         case "or": {
             return handleOrType(type);
