@@ -31,6 +31,8 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @property {string} name - Name of the type in Go
  * @property {boolean} isStruct - Whether this type is a struct
  * @property {boolean} needsPointer - Whether this type should be used with a pointer
+ * @property {boolean} [isAlias] - Whether this type is an alias to another type
+ * @property {string} [aliasFor] - If this is an alias, the name of the target type
  * @property {string} [importPath] - Import path if needed
  * @property {string} [jsonUnmarshaling] - Custom JSON unmarshaling code if required
  */
@@ -118,6 +120,14 @@ function resolveType(type) {
             if (typeInfo.types.has(type.name)) {
                 const refType = typeInfo.types.get(type.name);
                 if (refType !== undefined) {
+                    // Important: If this is an alias type, preserve the alias name rather than resolving it
+                    if (refType.isAlias) {
+                        return {
+                            name: type.name, // Use the alias name (reference name)
+                            isStruct: refType.isStruct,
+                            needsPointer: refType.needsPointer,
+                        };
+                    }
                     return refType;
                 }
             }
@@ -435,22 +445,27 @@ function collectTypeDefinitions() {
         });
     }
 
-    // First pass - process all type aliases to find union types
+    // First pass - process all type aliases to capture union types
     for (const typeAlias of model.typeAliases) {
         if (typeAlias.type.kind === "or") {
-            // This is a union type - store the alias mapping
+            // This is a union type - resolve it but don't yet store the alias
             const resolvedType = resolveType(typeAlias.type);
             typeInfo.unionTypeAliases.set(resolvedType.name, typeAlias.name);
         }
     }
 
-    // Second pass - now process all type aliases with the union mappings in place
+    // Process all type aliases now (including non-union ones)
     for (const typeAlias of model.typeAliases) {
         const resolvedType = resolveType(typeAlias.type);
+
+        // Store the type with the alias name, but mark it as an alias
+        // This is critical for resolving references to this type
         typeInfo.types.set(typeAlias.name, {
-            name: resolvedType.name,
+            name: typeAlias.name, // Use the alias name, not the resolved type name
             isStruct: resolvedType.isStruct,
             needsPointer: resolvedType.needsPointer,
+            isAlias: true,
+            aliasFor: resolvedType.name,
         });
     }
 }

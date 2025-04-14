@@ -127,7 +127,7 @@ type WorkDoneProgressOptions struct {
 type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
 	// the document selector provided on the client side will be used.
-	DocumentSelector Nullable[[]*DocumentFilter] `json:"documentSelector"`
+	DocumentSelector Nullable[DocumentSelector] `json:"documentSelector"`
 }
 
 // Parameters for a FoldingRangeRequest.
@@ -217,12 +217,12 @@ type SelectionRangeRegistrationOptions struct {
 
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
-	Token *IntegerOrString `json:"token"`
+	Token *ProgressToken `json:"token"`
 }
 
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
-	Token *IntegerOrString `json:"token"`
+	Token *ProgressToken `json:"token"`
 }
 
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -491,7 +491,7 @@ type WorkspaceEdit struct {
 	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
 	//
 	// Since: 3.16.0
-	ChangeAnnotations *map[string]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
+	ChangeAnnotations *map[ChangeAnnotationIdentifier]*ChangeAnnotation `json:"changeAnnotations,omitzero"`
 }
 
 // The options to register for file operations.
@@ -776,14 +776,14 @@ type WorkspaceDiagnosticParams struct {
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReport struct {
-	Items []*WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport `json:"items"`
+	Items []*WorkspaceDocumentDiagnosticReport `json:"items"`
 }
 
 // A partial result for a workspace diagnostic report.
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
-	Items []*WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport `json:"items"`
+	Items []*WorkspaceDocumentDiagnosticReport `json:"items"`
 }
 
 // The params sent in an open notebook document notification.
@@ -1046,7 +1046,7 @@ type DidChangeTextDocumentParams struct {
 	// - apply the 'textDocument/didChange' notifications in the order you receive them.
 	// - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
 	//   you receive them.
-	ContentChanges []*TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument `json:"contentChanges"`
+	ContentChanges []*TextDocumentContentChangeEvent `json:"contentChanges"`
 }
 
 // Describe options to be used when registered for text document change events.
@@ -1992,7 +1992,7 @@ type CancelParams struct {
 
 type ProgressParams struct {
 	// The progress token provided by the client or server.
-	Token *IntegerOrString `json:"token"`
+	Token *ProgressToken `json:"token"`
 
 	// The progress data.
 	Value LSPAny `json:"value"`
@@ -2010,13 +2010,13 @@ type TextDocumentPositionParams struct {
 
 type WorkDoneProgressParams struct {
 	// An optional token that a server can use to report work done progress.
-	WorkDoneToken *IntegerOrString `json:"workDoneToken,omitzero"`
+	WorkDoneToken *ProgressToken `json:"workDoneToken,omitzero"`
 }
 
 type PartialResultParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
-	PartialResultToken *IntegerOrString `json:"partialResultToken,omitzero"`
+	PartialResultToken *ProgressToken `json:"partialResultToken,omitzero"`
 }
 
 // Represents the connection of two locations. Provides additional metadata over normal locations,
@@ -2587,7 +2587,7 @@ type NotebookDocument struct {
 	// document.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]LSPAny `json:"metadata,omitzero"`
+	Metadata *LSPObject `json:"metadata,omitzero"`
 
 	// The cells of a notebook.
 	Cells []*NotebookCell `json:"cells"`
@@ -2650,7 +2650,7 @@ type NotebookDocumentChangeEvent struct {
 	// The changed meta data if any.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]LSPAny `json:"metadata,omitzero"`
+	Metadata *LSPObject `json:"metadata,omitzero"`
 
 	// Changes to cells
 	Cells *NotebookDocumentCellChanges `json:"cells,omitzero"`
@@ -2982,7 +2982,7 @@ type FileSystemWatcher struct {
 	// The glob pattern to watch. See pattern for more detail.
 	//
 	// Since: 3.17.0 support for relative patterns.
-	GlobPattern *PatternOrRelativePattern `json:"globPattern"`
+	GlobPattern *GlobPattern `json:"globPattern"`
 
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
@@ -3560,7 +3560,7 @@ type AnnotatedTextEdit struct {
 	TextEdit
 
 	// The actual identifier of the change annotation
-	AnnotationId string `json:"annotationId"`
+	AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
 }
 
 // An interactive text edit.
@@ -3575,7 +3575,7 @@ type SnippetTextEdit struct {
 	Snippet *StringValue `json:"snippet"`
 
 	// The actual identifier of the snippet edit.
-	AnnotationId *string `json:"annotationId,omitzero"`
+	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitzero"`
 }
 
 // A generic resource operation.
@@ -3586,7 +3586,7 @@ type ResourceOperation struct {
 	// An optional annotation identifier describing the operation.
 	//
 	// Since: 3.16.0
-	AnnotationId *string `json:"annotationId,omitzero"`
+	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitzero"`
 }
 
 // Options to create a file.
@@ -3685,7 +3685,7 @@ type NotebookCell struct {
 	// Additional metadata stored with the cell.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *map[string]LSPAny `json:"metadata,omitzero"`
+	Metadata *LSPObject `json:"metadata,omitzero"`
 
 	// Additional execution summary information
 	// if supported by the client.
@@ -3992,7 +3992,7 @@ type NotebookDocumentCellChangeStructure struct {
 type NotebookDocumentCellContentChanges struct {
 	Document *VersionedTextDocumentIdentifier `json:"document"`
 
-	Changes []*TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument `json:"changes"`
+	Changes []*TextDocumentContentChangeEvent `json:"changes"`
 }
 
 // Workspace specific client capabilities.
@@ -4332,7 +4332,7 @@ type RelativePattern struct {
 	BaseUri *WorkspaceFolderOrURI `json:"baseUri"`
 
 	// The actual glob pattern;
-	Pattern string `json:"pattern"`
+	Pattern Pattern `json:"pattern"`
 }
 
 // A document filter where `language` is required field.
@@ -4350,7 +4350,7 @@ type TextDocumentFilterLanguage struct {
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
+	Pattern *GlobPattern `json:"pattern,omitzero"`
 }
 
 // A document filter where `scheme` is required field.
@@ -4368,7 +4368,7 @@ type TextDocumentFilterScheme struct {
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
+	Pattern *GlobPattern `json:"pattern,omitzero"`
 }
 
 // A document filter where `pattern` is required field.
@@ -4386,7 +4386,7 @@ type TextDocumentFilterPattern struct {
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *PatternOrRelativePattern `json:"pattern"`
+	Pattern *GlobPattern `json:"pattern"`
 }
 
 // A notebook document filter where `notebookType` is required field.
@@ -4400,7 +4400,7 @@ type NotebookDocumentFilterNotebookType struct {
 	Scheme *string `json:"scheme,omitzero"`
 
 	// A glob pattern.
-	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
+	Pattern *GlobPattern `json:"pattern,omitzero"`
 }
 
 // A notebook document filter where `scheme` is required field.
@@ -4414,7 +4414,7 @@ type NotebookDocumentFilterScheme struct {
 	Scheme string `json:"scheme"`
 
 	// A glob pattern.
-	Pattern *PatternOrRelativePattern `json:"pattern,omitzero"`
+	Pattern *GlobPattern `json:"pattern,omitzero"`
 }
 
 // A notebook document filter where `pattern` is required field.
@@ -4428,7 +4428,7 @@ type NotebookDocumentFilterPattern struct {
 	Scheme *string `json:"scheme,omitzero"`
 
 	// A glob pattern.
-	Pattern *PatternOrRelativePattern `json:"pattern"`
+	Pattern *GlobPattern `json:"pattern"`
 }
 
 // A change describing how to move a `NotebookCell`
@@ -5187,7 +5187,7 @@ type StaleRequestSupportOptions struct {
 // Since: 3.16.0
 type RegularExpressionsClientCapabilities struct {
 	// The engine's name.
-	Engine string `json:"engine"`
+	Engine RegularExpressionEngineKind `json:"engine"`
 
 	// The engine's version.
 	Version *string `json:"version,omitzero"`
@@ -6688,7 +6688,7 @@ type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefault
 // @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
 //
 // The use of a string as a document filter is deprecated Since: 3.16.0.
-type DocumentSelector = []*TextDocumentFilterOrNotebookCellTextDocumentFilter
+type DocumentSelector = []*DocumentFilter
 
 type ProgressToken = IntegerOrString
 
@@ -7117,7 +7117,7 @@ func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 }
 
 type TextDocumentFilterOrNotebookCellTextDocumentFilter struct {
-	TextDocumentFilter             *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
+	TextDocumentFilter             *TextDocumentFilter
 	NotebookCellTextDocumentFilter *NotebookCellTextDocumentFilter
 }
 
@@ -7140,7 +7140,7 @@ func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data 
 	}
 
 	{
-		var v TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern
+		var v TextDocumentFilter
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.TextDocumentFilter = &v
 			return nil
@@ -7157,7 +7157,7 @@ func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data 
 }
 
 type PatternOrRelativePattern struct {
-	Pattern         *string
+	Pattern         *Pattern
 	RelativePattern *RelativePattern
 }
 
@@ -7180,7 +7180,7 @@ func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
 	}
 
 	{
-		var v string
+		var v Pattern
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.Pattern = &v
 			return nil
@@ -7602,8 +7602,8 @@ func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 
 type MarkupContentOrMarkedStringOrMarkedStrings struct {
 	MarkupContent *MarkupContent
-	MarkedString  *StringOrMarkedStringWithLanguage
-	MarkedStrings *[]*StringOrMarkedStringWithLanguage
+	MarkedString  *MarkedString
+	MarkedStrings *[]*MarkedString
 }
 
 func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error) {
@@ -7635,14 +7635,14 @@ func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) 
 		}
 	}
 	{
-		var v StringOrMarkedStringWithLanguage
+		var v MarkedString
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.MarkedString = &v
 			return nil
 		}
 	}
 	{
-		var v []*StringOrMarkedStringWithLanguage
+		var v []*MarkedString
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.MarkedStrings = &v
 			return nil
@@ -9116,7 +9116,7 @@ func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 
 type StringOrNotebookDocumentFilter struct {
 	String                 *string
-	NotebookDocumentFilter *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
+	NotebookDocumentFilter *NotebookDocumentFilter
 }
 
 func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
@@ -9145,7 +9145,7 @@ func (o *StringOrNotebookDocumentFilter) UnmarshalJSON(data []byte) error {
 		}
 	}
 	{
-		var v NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern
+		var v NotebookDocumentFilter
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.NotebookDocumentFilter = &v
 			return nil
