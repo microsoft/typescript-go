@@ -662,9 +662,8 @@ function generateCode() {
         generatedTypes.add(enumeration.name);
     }
 
+    // Generate type aliases
     generateTypeAliases();
-
-    generateUnionTypes();
 
     // Generate literal types
     writeLine("// Literal types\n");
@@ -697,42 +696,7 @@ function generateCode() {
         generatedTypes.add(name);
     }
 
-    // Generate Methods for requests and notifications
-    writeLine("// Methods\n");
-
-    // Method type exists in lsp.go, so skip declaring it
-
-    writeLine("// Request Methods");
-    writeLine("const (");
-    for (const request of model.requests) {
-        write(formatDocumentation(request.documentation));
-        write(formatDeprecation(request.deprecated));
-
-        const methodName = request.method.split("/")
-            .map(v => v === "$" ? "" : titleCase(v))
-            .join("");
-
-        writeLine(`\tMethod${methodName} Method = "${request.method}"`);
-    }
-    writeLine(")");
-    writeLine("");
-
-    writeLine("// Notification Methods");
-    writeLine("const (");
-    for (const notification of model.notifications) {
-        write(formatDocumentation(notification.documentation));
-        write(formatDeprecation(notification.deprecated));
-
-        const methodName = notification.method.split("/")
-            .map(v => v === "$" ? "" : titleCase(v))
-            .join("");
-
-        writeLine(`\tMethod${methodName} Method = "${notification.method}"`);
-    }
-    writeLine(")");
-    writeLine("");
-
-    // Unmarshallers
+    // Unmarshallers - moved before method declarations
     writeLine("// Unmarshallers\n");
 
     // Note: The unmarshallerFor function already exists in lsp.go, so we don't generate it
@@ -803,6 +767,45 @@ function generateCode() {
     }
 
     writeLine("}");
+    writeLine("");
+
+    // Generate Methods for requests and notifications - moved after unmarshallers
+    writeLine("// Methods\n");
+
+    // Method type exists in lsp.go, so skip declaring it
+
+    writeLine("// Request Methods");
+    writeLine("const (");
+    for (const request of model.requests) {
+        write(formatDocumentation(request.documentation));
+        write(formatDeprecation(request.deprecated));
+
+        const methodName = request.method.split("/")
+            .map(v => v === "$" ? "" : titleCase(v))
+            .join("");
+
+        writeLine(`\tMethod${methodName} Method = "${request.method}"`);
+    }
+    writeLine(")");
+    writeLine("");
+
+    writeLine("// Notification Methods");
+    writeLine("const (");
+    for (const notification of model.notifications) {
+        write(formatDocumentation(notification.documentation));
+        write(formatDeprecation(notification.deprecated));
+
+        const methodName = notification.method.split("/")
+            .map(v => v === "$" ? "" : titleCase(v))
+            .join("");
+
+        writeLine(`\tMethod${methodName} Method = "${notification.method}"`);
+    }
+    writeLine(")");
+    writeLine("");
+
+    // Generate union types LAST as requested
+    generateUnionTypes();
 
     return parts.join("");
 }
