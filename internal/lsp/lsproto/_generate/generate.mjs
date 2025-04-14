@@ -384,15 +384,14 @@ function collectTypeDefinitions() {
         typeInfo.enumValuesByType.set(enumeration.name, enumValues);
     }
 
+    const valueTypes = new Set(["Position", "Range", "Location"]);
+
     // Process all structures
     for (const structure of model.structures) {
-        // Special case for value types
-        const needsPointer = structure.name !== "Position" && structure.name !== "Range" && structure.name !== "Location";
-
         typeInfo.types.set(structure.name, {
             name: structure.name,
             isStruct: true,
-            needsPointer: needsPointer,
+            needsPointer: !valueTypes.has(structure.name),
         });
     }
 
