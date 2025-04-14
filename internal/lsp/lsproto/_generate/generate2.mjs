@@ -899,19 +899,17 @@ function generateUnionTypes() {
             writeLine(`\t}`);
         }
 
-        writeLine(`\treturn []byte("null"), nil`);
+        // Use panic("unreachable") instead of returning null
+        writeLine(`\tpanic("unreachable")`);
         writeLine(`}`);
         writeLine("");
 
         // Unmarshal method
         writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
         writeLine(`\t*o = ${name}{}`);
-        writeLine(`\tif string(data) == "null" {`);
-        writeLine(`\t\treturn nil`);
-        writeLine(`\t}`);
-        writeLine("");
+        // Remove the null check
 
-        // Write the unmarshal logic for each field
+        // Write the unmarshal logic for each field - keep the block scopes
         for (let i = 0; i < fieldEntries.length; i++) {
             const entry = fieldEntries[i];
             writeLine(`\t{`);
@@ -923,7 +921,8 @@ function generateUnionTypes() {
             writeLine(`\t}`);
         }
 
-        writeLine(`\treturn fmt.Errorf("cannot unmarshal %s into ${name}", string(data))`);
+        // Match the error format from the original script
+        writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
         writeLine(`}`);
         writeLine("");
 

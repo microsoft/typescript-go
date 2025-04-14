@@ -7387,15 +7387,11 @@ func (o LocationOrLocations) MarshalJSON() ([]byte, error) {
 	if o.Locations != nil {
 		return json.Marshal(*o.Locations)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
 	*o = LocationOrLocations{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v Location
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7410,7 +7406,7 @@ func (o *LocationOrLocations) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into LocationOrLocations", string(data))
+	return fmt.Errorf("invalid LocationOrLocations: %s", data)
 }
 
 type InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression struct {
@@ -7431,15 +7427,11 @@ func (o InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpres
 	if o.InlineValueEvaluatableExpression != nil {
 		return json.Marshal(*o.InlineValueEvaluatableExpression)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
 	*o = InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v InlineValueText
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7461,7 +7453,7 @@ func (o *InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpre
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression", string(data))
+	return fmt.Errorf("invalid InlineValueTextOrInlineValueVariableLookupOrInlineValueEvaluatableExpression: %s", data)
 }
 
 type RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport struct {
@@ -7478,15 +7470,11 @@ func (o RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticR
 	if o.RelatedUnchangedDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.RelatedUnchangedDocumentDiagnosticReport)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v RelatedFullDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7501,7 +7489,7 @@ func (o *RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnostic
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport", string(data))
+	return fmt.Errorf("invalid RelatedFullDocumentDiagnosticReportOrRelatedUnchangedDocumentDiagnosticReport: %s", data)
 }
 
 type RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior struct {
@@ -7522,15 +7510,11 @@ func (o RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) MarshalJS
 	if o.PrepareRenameDefaultBehavior != nil {
 		return json.Marshal(*o.PrepareRenameDefaultBehavior)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) UnmarshalJSON(data []byte) error {
 	*o = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v Range
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7552,7 +7536,7 @@ func (o *RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior) Unmarsha
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior", string(data))
+	return fmt.Errorf("invalid RangeOrPrepareRenamePlaceholderOrPrepareRenameDefaultBehavior: %s", data)
 }
 
 type IntegerOrString struct {
@@ -7569,15 +7553,11 @@ func (o IntegerOrString) MarshalJSON() ([]byte, error) {
 	if o.String != nil {
 		return json.Marshal(*o.String)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
 	*o = IntegerOrString{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v int32
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7592,7 +7572,7 @@ func (o *IntegerOrString) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into IntegerOrString", string(data))
+	return fmt.Errorf("invalid IntegerOrString: %s", data)
 }
 
 type WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport struct {
@@ -7609,15 +7589,11 @@ func (o WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnos
 	if o.WorkspaceUnchangedDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.WorkspaceUnchangedDocumentDiagnosticReport)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v WorkspaceFullDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7632,7 +7608,7 @@ func (o *WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagno
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport", string(data))
+	return fmt.Errorf("invalid WorkspaceFullDocumentDiagnosticReportOrWorkspaceUnchangedDocumentDiagnosticReport: %s", data)
 }
 
 type TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument struct {
@@ -7649,15 +7625,11 @@ func (o TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument
 	if o.TextDocumentContentChangeWholeDocument != nil {
 		return json.Marshal(*o.TextDocumentContentChangeWholeDocument)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v TextDocumentContentChangePartial
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7672,7 +7644,7 @@ func (o *TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocumen
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument", string(data))
+	return fmt.Errorf("invalid TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument: %s", data)
 }
 
 type StringOrMarkedStringWithLanguage struct {
@@ -7689,15 +7661,11 @@ func (o StringOrMarkedStringWithLanguage) MarshalJSON() ([]byte, error) {
 	if o.MarkedStringWithLanguage != nil {
 		return json.Marshal(*o.MarkedStringWithLanguage)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 	*o = StringOrMarkedStringWithLanguage{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v string
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7712,7 +7680,7 @@ func (o *StringOrMarkedStringWithLanguage) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into StringOrMarkedStringWithLanguage", string(data))
+	return fmt.Errorf("invalid StringOrMarkedStringWithLanguage: %s", data)
 }
 
 type TextDocumentFilterOrNotebookCellTextDocumentFilter struct {
@@ -7729,15 +7697,11 @@ func (o TextDocumentFilterOrNotebookCellTextDocumentFilter) MarshalJSON() ([]byt
 	if o.NotebookCellTextDocumentFilter != nil {
 		return json.Marshal(*o.NotebookCellTextDocumentFilter)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentFilterOrNotebookCellTextDocumentFilter{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v TextDocumentFilter
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7752,7 +7716,7 @@ func (o *TextDocumentFilterOrNotebookCellTextDocumentFilter) UnmarshalJSON(data 
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into TextDocumentFilterOrNotebookCellTextDocumentFilter", string(data))
+	return fmt.Errorf("invalid TextDocumentFilterOrNotebookCellTextDocumentFilter: %s", data)
 }
 
 type PatternOrRelativePattern struct {
@@ -7769,15 +7733,11 @@ func (o PatternOrRelativePattern) MarshalJSON() ([]byte, error) {
 	if o.RelativePattern != nil {
 		return json.Marshal(*o.RelativePattern)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
 	*o = PatternOrRelativePattern{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v Pattern
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7792,7 +7752,7 @@ func (o *PatternOrRelativePattern) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into PatternOrRelativePattern", string(data))
+	return fmt.Errorf("invalid PatternOrRelativePattern: %s", data)
 }
 
 type TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern struct {
@@ -7813,15 +7773,11 @@ func (o TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilter
 	if o.TextDocumentFilterPattern != nil {
 		return json.Marshal(*o.TextDocumentFilterPattern)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v TextDocumentFilterLanguage
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7843,7 +7799,7 @@ func (o *TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilte
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern", string(data))
+	return fmt.Errorf("invalid TextDocumentFilterLanguageOrTextDocumentFilterSchemeOrTextDocumentFilterPattern: %s", data)
 }
 
 type NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern struct {
@@ -7864,15 +7820,11 @@ func (o NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebo
 	if o.NotebookDocumentFilterPattern != nil {
 		return json.Marshal(*o.NotebookDocumentFilterPattern)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v NotebookDocumentFilterNotebookType
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7894,7 +7846,7 @@ func (o *NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNoteb
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern", string(data))
+	return fmt.Errorf("invalid NotebookDocumentFilterNotebookTypeOrNotebookDocumentFilterSchemeOrNotebookDocumentFilterPattern: %s", data)
 }
 
 type TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile struct {
@@ -7919,15 +7871,11 @@ func (o TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) MarshalJSON() ([]b
 	if o.DeleteFile != nil {
 		return json.Marshal(*o.DeleteFile)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v TextDocumentEdit
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7956,7 +7904,7 @@ func (o *TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile) UnmarshalJSON(dat
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile", string(data))
+	return fmt.Errorf("invalid TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile: %s", data)
 }
 
 type StringOrInlayHintLabelParts struct {
@@ -7973,15 +7921,11 @@ func (o StringOrInlayHintLabelParts) MarshalJSON() ([]byte, error) {
 	if o.InlayHintLabelParts != nil {
 		return json.Marshal(*o.InlayHintLabelParts)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *StringOrInlayHintLabelParts) UnmarshalJSON(data []byte) error {
 	*o = StringOrInlayHintLabelParts{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v string
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -7996,7 +7940,7 @@ func (o *StringOrInlayHintLabelParts) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into StringOrInlayHintLabelParts", string(data))
+	return fmt.Errorf("invalid StringOrInlayHintLabelParts: %s", data)
 }
 
 type StringOrMarkupContent struct {
@@ -8013,15 +7957,11 @@ func (o StringOrMarkupContent) MarshalJSON() ([]byte, error) {
 	if o.MarkupContent != nil {
 		return json.Marshal(*o.MarkupContent)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *StringOrMarkupContent) UnmarshalJSON(data []byte) error {
 	*o = StringOrMarkupContent{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v string
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8036,7 +7976,7 @@ func (o *StringOrMarkupContent) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into StringOrMarkupContent", string(data))
+	return fmt.Errorf("invalid StringOrMarkupContent: %s", data)
 }
 
 type FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport struct {
@@ -8053,15 +7993,11 @@ func (o FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Marshal
 	if o.UnchangedDocumentDiagnosticReport != nil {
 		return json.Marshal(*o.UnchangedDocumentDiagnosticReport)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
 	*o = FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v FullDocumentDiagnosticReport
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8076,7 +8012,7 @@ func (o *FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport) Unmars
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport", string(data))
+	return fmt.Errorf("invalid FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport: %s", data)
 }
 
 type StringOrStringValue struct {
@@ -8093,15 +8029,11 @@ func (o StringOrStringValue) MarshalJSON() ([]byte, error) {
 	if o.StringValue != nil {
 		return json.Marshal(*o.StringValue)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
 	*o = StringOrStringValue{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v string
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8116,7 +8048,7 @@ func (o *StringOrStringValue) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into StringOrStringValue", string(data))
+	return fmt.Errorf("invalid StringOrStringValue: %s", data)
 }
 
 type StringOrStrings struct {
@@ -8133,15 +8065,11 @@ func (o StringOrStrings) MarshalJSON() ([]byte, error) {
 	if o.Strings != nil {
 		return json.Marshal(*o.Strings)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
 	*o = StringOrStrings{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v string
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8156,7 +8084,7 @@ func (o *StringOrStrings) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into StringOrStrings", string(data))
+	return fmt.Errorf("invalid StringOrStrings: %s", data)
 }
 
 type TextEditOrInsertReplaceEdit struct {
@@ -8173,15 +8101,11 @@ func (o TextEditOrInsertReplaceEdit) MarshalJSON() ([]byte, error) {
 	if o.InsertReplaceEdit != nil {
 		return json.Marshal(*o.InsertReplaceEdit)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 	*o = TextEditOrInsertReplaceEdit{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v TextEdit
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8196,7 +8120,7 @@ func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into TextEditOrInsertReplaceEdit", string(data))
+	return fmt.Errorf("invalid TextEditOrInsertReplaceEdit: %s", data)
 }
 
 type MarkupContentOrMarkedStringOrMarkedStrings struct {
@@ -8217,15 +8141,11 @@ func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error
 	if o.MarkedStrings != nil {
 		return json.Marshal(*o.MarkedStrings)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) error {
 	*o = MarkupContentOrMarkedStringOrMarkedStrings{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v MarkupContent
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8247,7 +8167,7 @@ func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) 
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into MarkupContentOrMarkedStringOrMarkedStrings", string(data))
+	return fmt.Errorf("invalid MarkupContentOrMarkedStringOrMarkedStrings: %s", data)
 }
 
 type LocationOrLocationUriOnly struct {
@@ -8264,15 +8184,11 @@ func (o LocationOrLocationUriOnly) MarshalJSON() ([]byte, error) {
 	if o.LocationUriOnly != nil {
 		return json.Marshal(*o.LocationUriOnly)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
 	*o = LocationOrLocationUriOnly{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v Location
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8287,7 +8203,7 @@ func (o *LocationOrLocationUriOnly) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into LocationOrLocationUriOnly", string(data))
+	return fmt.Errorf("invalid LocationOrLocationUriOnly: %s", data)
 }
 
 type BooleanOrEmptyObject struct {
@@ -8304,15 +8220,11 @@ func (o BooleanOrEmptyObject) MarshalJSON() ([]byte, error) {
 	if o.EmptyObject != nil {
 		return json.Marshal(*o.EmptyObject)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrEmptyObject{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8327,7 +8239,7 @@ func (o *BooleanOrEmptyObject) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrEmptyObject", string(data))
+	return fmt.Errorf("invalid BooleanOrEmptyObject: %s", data)
 }
 
 type BooleanOrSemanticTokensFullDelta struct {
@@ -8344,15 +8256,11 @@ func (o BooleanOrSemanticTokensFullDelta) MarshalJSON() ([]byte, error) {
 	if o.SemanticTokensFullDelta != nil {
 		return json.Marshal(*o.SemanticTokensFullDelta)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSemanticTokensFullDelta{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8367,7 +8275,7 @@ func (o *BooleanOrSemanticTokensFullDelta) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrSemanticTokensFullDelta", string(data))
+	return fmt.Errorf("invalid BooleanOrSemanticTokensFullDelta: %s", data)
 }
 
 type TextEditOrAnnotatedTextEditOrSnippetTextEdit struct {
@@ -8388,15 +8296,11 @@ func (o TextEditOrAnnotatedTextEditOrSnippetTextEdit) MarshalJSON() ([]byte, err
 	if o.SnippetTextEdit != nil {
 		return json.Marshal(*o.SnippetTextEdit)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte) error {
 	*o = TextEditOrAnnotatedTextEditOrSnippetTextEdit{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v TextEdit
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8418,7 +8322,7 @@ func (o *TextEditOrAnnotatedTextEditOrSnippetTextEdit) UnmarshalJSON(data []byte
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into TextEditOrAnnotatedTextEditOrSnippetTextEdit", string(data))
+	return fmt.Errorf("invalid TextEditOrAnnotatedTextEditOrSnippetTextEdit: %s", data)
 }
 
 type NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells struct {
@@ -8435,15 +8339,11 @@ func (o NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) Mar
 	if o.NotebookDocumentFilterWithCells != nil {
 		return json.Marshal(*o.NotebookDocumentFilterWithCells)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v NotebookDocumentFilterWithNotebook
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8458,7 +8358,7 @@ func (o *NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells) Un
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells", string(data))
+	return fmt.Errorf("invalid NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells: %s", data)
 }
 
 type TextDocumentSyncOptionsOrTextDocumentSyncKind struct {
@@ -8475,15 +8375,11 @@ func (o TextDocumentSyncOptionsOrTextDocumentSyncKind) MarshalJSON() ([]byte, er
 	if o.TextDocumentSyncKind != nil {
 		return json.Marshal(*o.TextDocumentSyncKind)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *TextDocumentSyncOptionsOrTextDocumentSyncKind) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentSyncOptionsOrTextDocumentSyncKind{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v TextDocumentSyncOptions
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8498,7 +8394,7 @@ func (o *TextDocumentSyncOptionsOrTextDocumentSyncKind) UnmarshalJSON(data []byt
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into TextDocumentSyncOptionsOrTextDocumentSyncKind", string(data))
+	return fmt.Errorf("invalid TextDocumentSyncOptionsOrTextDocumentSyncKind: %s", data)
 }
 
 type NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions struct {
@@ -8515,15 +8411,11 @@ func (o NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) Ma
 	if o.NotebookDocumentSyncRegistrationOptions != nil {
 		return json.Marshal(*o.NotebookDocumentSyncRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v NotebookDocumentSyncOptions
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8538,7 +8430,7 @@ func (o *NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions) U
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions", string(data))
+	return fmt.Errorf("invalid NotebookDocumentSyncOptionsOrNotebookDocumentSyncRegistrationOptions: %s", data)
 }
 
 type BooleanOrHoverOptions struct {
@@ -8555,15 +8447,11 @@ func (o BooleanOrHoverOptions) MarshalJSON() ([]byte, error) {
 	if o.HoverOptions != nil {
 		return json.Marshal(*o.HoverOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrHoverOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrHoverOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8578,7 +8466,7 @@ func (o *BooleanOrHoverOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrHoverOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrHoverOptions: %s", data)
 }
 
 type BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions struct {
@@ -8599,15 +8487,11 @@ func (o BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) MarshalJSON
 	if o.DeclarationRegistrationOptions != nil {
 		return json.Marshal(*o.DeclarationRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8629,7 +8513,7 @@ func (o *BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions) UnmarshalJ
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrDeclarationOptionsOrDeclarationRegistrationOptions: %s", data)
 }
 
 type BooleanOrDefinitionOptions struct {
@@ -8646,15 +8530,11 @@ func (o BooleanOrDefinitionOptions) MarshalJSON() ([]byte, error) {
 	if o.DefinitionOptions != nil {
 		return json.Marshal(*o.DefinitionOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrDefinitionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDefinitionOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8669,7 +8549,7 @@ func (o *BooleanOrDefinitionOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrDefinitionOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrDefinitionOptions: %s", data)
 }
 
 type BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions struct {
@@ -8690,15 +8570,11 @@ func (o BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Marsh
 	if o.TypeDefinitionRegistrationOptions != nil {
 		return json.Marshal(*o.TypeDefinitionRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8720,7 +8596,7 @@ func (o *BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions) Unma
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrTypeDefinitionOptionsOrTypeDefinitionRegistrationOptions: %s", data)
 }
 
 type BooleanOrImplementationOptionsOrImplementationRegistrationOptions struct {
@@ -8741,15 +8617,11 @@ func (o BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Marsh
 	if o.ImplementationRegistrationOptions != nil {
 		return json.Marshal(*o.ImplementationRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrImplementationOptionsOrImplementationRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8771,7 +8643,7 @@ func (o *BooleanOrImplementationOptionsOrImplementationRegistrationOptions) Unma
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrImplementationOptionsOrImplementationRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrImplementationOptionsOrImplementationRegistrationOptions: %s", data)
 }
 
 type BooleanOrReferenceOptions struct {
@@ -8788,15 +8660,11 @@ func (o BooleanOrReferenceOptions) MarshalJSON() ([]byte, error) {
 	if o.ReferenceOptions != nil {
 		return json.Marshal(*o.ReferenceOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrReferenceOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrReferenceOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8811,7 +8679,7 @@ func (o *BooleanOrReferenceOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrReferenceOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrReferenceOptions: %s", data)
 }
 
 type BooleanOrDocumentHighlightOptions struct {
@@ -8828,15 +8696,11 @@ func (o BooleanOrDocumentHighlightOptions) MarshalJSON() ([]byte, error) {
 	if o.DocumentHighlightOptions != nil {
 		return json.Marshal(*o.DocumentHighlightOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentHighlightOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8851,7 +8715,7 @@ func (o *BooleanOrDocumentHighlightOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrDocumentHighlightOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrDocumentHighlightOptions: %s", data)
 }
 
 type BooleanOrDocumentSymbolOptions struct {
@@ -8868,15 +8732,11 @@ func (o BooleanOrDocumentSymbolOptions) MarshalJSON() ([]byte, error) {
 	if o.DocumentSymbolOptions != nil {
 		return json.Marshal(*o.DocumentSymbolOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentSymbolOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8891,7 +8751,7 @@ func (o *BooleanOrDocumentSymbolOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrDocumentSymbolOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrDocumentSymbolOptions: %s", data)
 }
 
 type BooleanOrCodeActionOptions struct {
@@ -8908,15 +8768,11 @@ func (o BooleanOrCodeActionOptions) MarshalJSON() ([]byte, error) {
 	if o.CodeActionOptions != nil {
 		return json.Marshal(*o.CodeActionOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrCodeActionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrCodeActionOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8931,7 +8787,7 @@ func (o *BooleanOrCodeActionOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrCodeActionOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrCodeActionOptions: %s", data)
 }
 
 type BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions struct {
@@ -8952,15 +8808,11 @@ func (o BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Marshal
 	if o.DocumentColorRegistrationOptions != nil {
 		return json.Marshal(*o.DocumentColorRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -8982,7 +8834,7 @@ func (o *BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions) Unmars
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrDocumentColorOptionsOrDocumentColorRegistrationOptions: %s", data)
 }
 
 type BooleanOrWorkspaceSymbolOptions struct {
@@ -8999,15 +8851,11 @@ func (o BooleanOrWorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
 	if o.WorkspaceSymbolOptions != nil {
 		return json.Marshal(*o.WorkspaceSymbolOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrWorkspaceSymbolOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9022,7 +8870,7 @@ func (o *BooleanOrWorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrWorkspaceSymbolOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrWorkspaceSymbolOptions: %s", data)
 }
 
 type BooleanOrDocumentFormattingOptions struct {
@@ -9039,15 +8887,11 @@ func (o BooleanOrDocumentFormattingOptions) MarshalJSON() ([]byte, error) {
 	if o.DocumentFormattingOptions != nil {
 		return json.Marshal(*o.DocumentFormattingOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentFormattingOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9062,7 +8906,7 @@ func (o *BooleanOrDocumentFormattingOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrDocumentFormattingOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrDocumentFormattingOptions: %s", data)
 }
 
 type BooleanOrDocumentRangeFormattingOptions struct {
@@ -9079,15 +8923,11 @@ func (o BooleanOrDocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
 	if o.DocumentRangeFormattingOptions != nil {
 		return json.Marshal(*o.DocumentRangeFormattingOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrDocumentRangeFormattingOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9102,7 +8942,7 @@ func (o *BooleanOrDocumentRangeFormattingOptions) UnmarshalJSON(data []byte) err
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrDocumentRangeFormattingOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrDocumentRangeFormattingOptions: %s", data)
 }
 
 type BooleanOrRenameOptions struct {
@@ -9119,15 +8959,11 @@ func (o BooleanOrRenameOptions) MarshalJSON() ([]byte, error) {
 	if o.RenameOptions != nil {
 		return json.Marshal(*o.RenameOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrRenameOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrRenameOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9142,7 +8978,7 @@ func (o *BooleanOrRenameOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrRenameOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrRenameOptions: %s", data)
 }
 
 type BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions struct {
@@ -9163,15 +8999,11 @@ func (o BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) MarshalJS
 	if o.FoldingRangeRegistrationOptions != nil {
 		return json.Marshal(*o.FoldingRangeRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9193,7 +9025,7 @@ func (o *BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions) Unmarsha
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions: %s", data)
 }
 
 type BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions struct {
@@ -9214,15 +9046,11 @@ func (o BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Marsh
 	if o.SelectionRangeRegistrationOptions != nil {
 		return json.Marshal(*o.SelectionRangeRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9244,7 +9072,7 @@ func (o *BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions) Unma
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrSelectionRangeOptionsOrSelectionRangeRegistrationOptions: %s", data)
 }
 
 type BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions struct {
@@ -9265,15 +9093,11 @@ func (o BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Marshal
 	if o.CallHierarchyRegistrationOptions != nil {
 		return json.Marshal(*o.CallHierarchyRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9295,7 +9119,7 @@ func (o *BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions) Unmars
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrCallHierarchyOptionsOrCallHierarchyRegistrationOptions: %s", data)
 }
 
 type BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions struct {
@@ -9316,15 +9140,11 @@ func (o BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOption
 	if o.LinkedEditingRangeRegistrationOptions != nil {
 		return json.Marshal(*o.LinkedEditingRangeRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9346,7 +9166,7 @@ func (o *BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptio
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrLinkedEditingRangeOptionsOrLinkedEditingRangeRegistrationOptions: %s", data)
 }
 
 type SemanticTokensOptionsOrSemanticTokensRegistrationOptions struct {
@@ -9363,15 +9183,11 @@ func (o SemanticTokensOptionsOrSemanticTokensRegistrationOptions) MarshalJSON() 
 	if o.SemanticTokensRegistrationOptions != nil {
 		return json.Marshal(*o.SemanticTokensRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *SemanticTokensOptionsOrSemanticTokensRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = SemanticTokensOptionsOrSemanticTokensRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v SemanticTokensOptions
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9386,7 +9202,7 @@ func (o *SemanticTokensOptionsOrSemanticTokensRegistrationOptions) UnmarshalJSON
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into SemanticTokensOptionsOrSemanticTokensRegistrationOptions", string(data))
+	return fmt.Errorf("invalid SemanticTokensOptionsOrSemanticTokensRegistrationOptions: %s", data)
 }
 
 type BooleanOrMonikerOptionsOrMonikerRegistrationOptions struct {
@@ -9407,15 +9223,11 @@ func (o BooleanOrMonikerOptionsOrMonikerRegistrationOptions) MarshalJSON() ([]by
 	if o.MonikerRegistrationOptions != nil {
 		return json.Marshal(*o.MonikerRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrMonikerOptionsOrMonikerRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9437,7 +9249,7 @@ func (o *BooleanOrMonikerOptionsOrMonikerRegistrationOptions) UnmarshalJSON(data
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrMonikerOptionsOrMonikerRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrMonikerOptionsOrMonikerRegistrationOptions: %s", data)
 }
 
 type BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions struct {
@@ -9458,15 +9270,11 @@ func (o BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Marshal
 	if o.TypeHierarchyRegistrationOptions != nil {
 		return json.Marshal(*o.TypeHierarchyRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9488,7 +9296,7 @@ func (o *BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions) Unmars
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrTypeHierarchyOptionsOrTypeHierarchyRegistrationOptions: %s", data)
 }
 
 type BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions struct {
@@ -9509,15 +9317,11 @@ func (o BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) MarshalJSON
 	if o.InlineValueRegistrationOptions != nil {
 		return json.Marshal(*o.InlineValueRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9539,7 +9343,7 @@ func (o *BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions) UnmarshalJ
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrInlineValueOptionsOrInlineValueRegistrationOptions: %s", data)
 }
 
 type BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions struct {
@@ -9560,15 +9364,11 @@ func (o BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) MarshalJSON() (
 	if o.InlayHintRegistrationOptions != nil {
 		return json.Marshal(*o.InlayHintRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9590,7 +9390,7 @@ func (o *BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions) UnmarshalJSON(
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrInlayHintOptionsOrInlayHintRegistrationOptions: %s", data)
 }
 
 type DiagnosticOptionsOrDiagnosticRegistrationOptions struct {
@@ -9607,15 +9407,11 @@ func (o DiagnosticOptionsOrDiagnosticRegistrationOptions) MarshalJSON() ([]byte,
 	if o.DiagnosticRegistrationOptions != nil {
 		return json.Marshal(*o.DiagnosticRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *DiagnosticOptionsOrDiagnosticRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = DiagnosticOptionsOrDiagnosticRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v DiagnosticOptions
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9630,7 +9426,7 @@ func (o *DiagnosticOptionsOrDiagnosticRegistrationOptions) UnmarshalJSON(data []
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into DiagnosticOptionsOrDiagnosticRegistrationOptions", string(data))
+	return fmt.Errorf("invalid DiagnosticOptionsOrDiagnosticRegistrationOptions: %s", data)
 }
 
 type BooleanOrInlineCompletionOptions struct {
@@ -9647,15 +9443,11 @@ func (o BooleanOrInlineCompletionOptions) MarshalJSON() ([]byte, error) {
 	if o.InlineCompletionOptions != nil {
 		return json.Marshal(*o.InlineCompletionOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrInlineCompletionOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9670,7 +9462,7 @@ func (o *BooleanOrInlineCompletionOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrInlineCompletionOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrInlineCompletionOptions: %s", data)
 }
 
 type RangeOrEditRangeWithInsertReplace struct {
@@ -9687,15 +9479,11 @@ func (o RangeOrEditRangeWithInsertReplace) MarshalJSON() ([]byte, error) {
 	if o.EditRangeWithInsertReplace != nil {
 		return json.Marshal(*o.EditRangeWithInsertReplace)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 	*o = RangeOrEditRangeWithInsertReplace{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v Range
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9710,7 +9498,7 @@ func (o *RangeOrEditRangeWithInsertReplace) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into RangeOrEditRangeWithInsertReplace", string(data))
+	return fmt.Errorf("invalid RangeOrEditRangeWithInsertReplace: %s", data)
 }
 
 type StringOrNotebookDocumentFilter struct {
@@ -9727,15 +9515,11 @@ func (o StringOrNotebookDocumentFilter) MarshalJSON() ([]byte, error) {
 	if o.NotebookDocumentFilter != nil {
 		return json.Marshal(*o.NotebookDocumentFilter)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *StringOrNotebookDocumentFilter) UnmarshalJSON(data []byte) error {
 	*o = StringOrNotebookDocumentFilter{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v string
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9750,7 +9534,7 @@ func (o *StringOrNotebookDocumentFilter) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into StringOrNotebookDocumentFilter", string(data))
+	return fmt.Errorf("invalid StringOrNotebookDocumentFilter: %s", data)
 }
 
 type BooleanOrSaveOptions struct {
@@ -9767,15 +9551,11 @@ func (o BooleanOrSaveOptions) MarshalJSON() ([]byte, error) {
 	if o.SaveOptions != nil {
 		return json.Marshal(*o.SaveOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrSaveOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9790,7 +9570,7 @@ func (o *BooleanOrSaveOptions) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrSaveOptions", string(data))
+	return fmt.Errorf("invalid BooleanOrSaveOptions: %s", data)
 }
 
 type TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions struct {
@@ -9807,15 +9587,11 @@ func (o TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) Mars
 	if o.TextDocumentContentRegistrationOptions != nil {
 		return json.Marshal(*o.TextDocumentContentRegistrationOptions)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) UnmarshalJSON(data []byte) error {
 	*o = TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v TextDocumentContentOptions
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9830,7 +9606,7 @@ func (o *TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions) Unm
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions", string(data))
+	return fmt.Errorf("invalid TextDocumentContentOptionsOrTextDocumentContentRegistrationOptions: %s", data)
 }
 
 type StringOrTuple struct {
@@ -9847,15 +9623,11 @@ func (o StringOrTuple) MarshalJSON() ([]byte, error) {
 	if o.Tuple != nil {
 		return json.Marshal(*o.Tuple)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *StringOrTuple) UnmarshalJSON(data []byte) error {
 	*o = StringOrTuple{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v string
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9870,7 +9642,7 @@ func (o *StringOrTuple) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into StringOrTuple", string(data))
+	return fmt.Errorf("invalid StringOrTuple: %s", data)
 }
 
 type StringOrBoolean struct {
@@ -9887,15 +9659,11 @@ func (o StringOrBoolean) MarshalJSON() ([]byte, error) {
 	if o.Boolean != nil {
 		return json.Marshal(*o.Boolean)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *StringOrBoolean) UnmarshalJSON(data []byte) error {
 	*o = StringOrBoolean{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v string
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9910,7 +9678,7 @@ func (o *StringOrBoolean) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into StringOrBoolean", string(data))
+	return fmt.Errorf("invalid StringOrBoolean: %s", data)
 }
 
 type WorkspaceFolderOrURI struct {
@@ -9927,15 +9695,11 @@ func (o WorkspaceFolderOrURI) MarshalJSON() ([]byte, error) {
 	if o.URI != nil {
 		return json.Marshal(*o.URI)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *WorkspaceFolderOrURI) UnmarshalJSON(data []byte) error {
 	*o = WorkspaceFolderOrURI{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v WorkspaceFolder
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9950,7 +9714,7 @@ func (o *WorkspaceFolderOrURI) UnmarshalJSON(data []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into WorkspaceFolderOrURI", string(data))
+	return fmt.Errorf("invalid WorkspaceFolderOrURI: %s", data)
 }
 
 type BooleanOrClientSemanticTokensRequestFullDelta struct {
@@ -9967,15 +9731,11 @@ func (o BooleanOrClientSemanticTokensRequestFullDelta) MarshalJSON() ([]byte, er
 	if o.ClientSemanticTokensRequestFullDelta != nil {
 		return json.Marshal(*o.ClientSemanticTokensRequestFullDelta)
 	}
-	return []byte("null"), nil
+	panic("unreachable")
 }
 
 func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byte) error {
 	*o = BooleanOrClientSemanticTokensRequestFullDelta{}
-	if string(data) == "null" {
-		return nil
-	}
-
 	{
 		var v bool
 		if err := json.Unmarshal(data, &v); err == nil {
@@ -9990,5 +9750,5 @@ func (o *BooleanOrClientSemanticTokensRequestFullDelta) UnmarshalJSON(data []byt
 			return nil
 		}
 	}
-	return fmt.Errorf("cannot unmarshal %s into BooleanOrClientSemanticTokensRequestFullDelta", string(data))
+	return fmt.Errorf("invalid BooleanOrClientSemanticTokensRequestFullDelta: %s", data)
 }
