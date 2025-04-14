@@ -86,8 +86,6 @@ function mapBaseTypeToGo(baseType) {
             return { name: "float64", isStruct: false, needsPointer: false };
         case "RegExp":
             return { name: "string", isStruct: false, needsPointer: false }; // Using string for RegExp
-        case "null":
-            return { name: "NullType", isStruct: true, needsPointer: true }; // Special handling for null
         default:
             console.warn(`Unknown base type: ${baseType}`);
             return { name: `ANY_${baseType}`, isStruct: false, needsPointer: false };
@@ -378,7 +376,6 @@ function handleOrType(orType) {
  */
 function collectTypeDefinitions() {
     // Register built-in types
-    typeInfo.types.set("NullType", { name: "NullType", isStruct: true, needsPointer: true });
     typeInfo.types.set("LSPAny", { name: "any", isStruct: false, needsPointer: false });
 
     // Keep track of used enum identifiers across all enums to avoid conflicts
@@ -525,22 +522,6 @@ function generateCode() {
     writeLine(`)`);
     writeLine("");
     writeLine("// Meta model version " + model.metaData.version);
-    writeLine("");
-
-    // Write basic NullType for null values - skip assertOnlyOne which exists in lsp.go
-    writeLine("// NullType represents a JSON null value");
-    writeLine("type NullType struct{}");
-    writeLine("");
-    writeLine("func (n NullType) MarshalJSON() ([]byte, error) {");
-    writeLine('\treturn []byte("null"), nil');
-    writeLine("}");
-    writeLine("");
-    writeLine("func (n *NullType) UnmarshalJSON(data []byte) error {");
-    writeLine('\tif string(data) != "null" {');
-    writeLine('\t\treturn fmt.Errorf("invalid null value: %s", data)');
-    writeLine("\t}");
-    writeLine("\treturn nil");
-    writeLine("}");
     writeLine("");
 
     // Skip helper function for union types - already exists in lsp.go

@@ -9,20 +9,6 @@ import (
 
 // Meta model version 3.17.0
 
-// NullType represents a JSON null value
-type NullType struct{}
-
-func (n NullType) MarshalJSON() ([]byte, error) {
-	return []byte("null"), nil
-}
-
-func (n *NullType) UnmarshalJSON(data []byte) error {
-	if string(data) != "null" {
-		return fmt.Errorf("invalid null value: %s", data)
-	}
-	return nil
-}
-
 // Structures
 
 type ImplementationParams struct {
