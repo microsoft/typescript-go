@@ -237,19 +237,11 @@ function handleOrType(orType) {
         };
     }
 
-    // Filter out null if present
-    const types = nullIndex !== -1
-        ? orType.items.filter((_, i) => i !== nullIndex)
-        : orType.items;
+    const types = orType.items.filter((_, index) => index !== nullIndex);
 
     // If only one type remains after filtering null
     if (types.length === 1) {
-        const type = resolveType(types[0]);
-        return {
-            name: type.name,
-            isStruct: type.isStruct,
-            needsPointer: nullIndex !== -1 ? true : type.needsPointer,
-        };
+        return resolveType(types[0]);
     }
 
     const memberNames = types.map(type => {
