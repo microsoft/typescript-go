@@ -6239,7 +6239,7 @@ const (
 	// Since: 3.18.0
 	//
 	// Proposed.
-	LanguageKindPascal          LanguageKind = "pascal"
+	LanguageKindDelphi          LanguageKind = "pascal"
 	LanguageKindDiff            LanguageKind = "diff"
 	LanguageKindDart            LanguageKind = "dart"
 	LanguageKindDockerfile      LanguageKind = "dockerfile"
@@ -6265,6 +6265,10 @@ const (
 	LanguageKindMarkdown        LanguageKind = "markdown"
 	LanguageKindObjectiveC      LanguageKind = "objective-c"
 	LanguageKindObjectiveCPP    LanguageKind = "objective-cpp"
+	// Since: 3.18.0
+	//
+	// Proposed.
+	LanguageKindPascal          LanguageKind = "pascal"
 	LanguageKindPerl            LanguageKind = "perl"
 	LanguageKindPerl6           LanguageKind = "perl6"
 	LanguageKindPHP             LanguageKind = "php"

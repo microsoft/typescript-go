@@ -43,7 +43,7 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @property {Map<string, string>} literalTypes - Map from literal values to type names
  * @property {Map<string, {name: string, types: Type[]}[]>} unionTypes - Map of union type names to their component types
  * @property {Set<string>} generatedTypes - Set of types that have been generated
- * @property {Map<string, Map<string, {identifier: string, documentation: string, deprecated: string}>>} enumValuesByType - Map of enum type names to their values
+ * @property {Map<string, {value: string; identifier: string, documentation: string | undefined, deprecated: string| undefined}[]>} enumValuesByType - Map of enum type names to their values
  * @property {Map<string, string>} unionTypeAliases - Map from union type name to alias name
  */
 
@@ -323,8 +323,7 @@ function collectTypeDefinitions() {
             needsPointer: false,
         });
 
-        // Create a map for this enum's values (not an array)
-        const enumValues = new Map();
+        const enumValues = [];
 
         // Process values for this enum
         for (const value of enumeration.values) {
@@ -345,7 +344,8 @@ function collectTypeDefinitions() {
 
             // Mark this identifier as used
             usedEnumIdentifiers.add(identifier);
-            enumValues.set(String(value.value), {
+            enumValues.push({
+                value: String(value.value),
                 identifier,
                 documentation: value.documentation,
                 deprecated: value.deprecated,
@@ -548,23 +548,23 @@ function generateCode() {
 
         // Get the pre-processed enum entries map that avoids duplicates
         const enumValues = typeInfo.enumValuesByType.get(enumeration.name);
-        if (!enumValues || !enumValues.size) {
+        if (!enumValues || !enumValues.length) {
             continue; // Skip if no entries (shouldn't happen)
         }
 
         writeLine("const (");
 
         // Process entries with unique identifiers
-        for (const [value, entry] of enumValues.entries()) {
+        for (const entry of enumValues) {
             write(formatDocumentation(entry.documentation));
 
             let valueLiteral;
             // Handle string values
             if (enumeration.type.name === "string") {
-                valueLiteral = `"${String(value).replace(/^"|"$/g, "")}"`;
+                valueLiteral = `"${entry.value.replace(/^"|"$/g, "")}"`;
             }
             else {
-                valueLiteral = String(value);
+                valueLiteral = entry.value;
             }
 
             writeLine(`\t${entry.identifier} ${enumeration.name} = ${valueLiteral}`);
