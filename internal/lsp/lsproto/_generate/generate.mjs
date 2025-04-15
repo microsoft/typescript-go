@@ -253,33 +253,6 @@ function handleOrType(orType) {
         };
     }
 
-    // Check if all items are references - if so, we can use their names directly
-    const allReferences = types.every(type => type.kind === "reference");
-    if (allReferences) {
-        const memberNames = types.map(type => type.name);
-        const unionTypeName = memberNames.map(titleCase).join("Or");
-
-        if (!typeInfo.unionTypes.has(unionTypeName)) {
-            typeInfo.unionTypes.set(unionTypeName, []);
-        }
-        const union = typeInfo.unionTypes.get(unionTypeName);
-        if (union) {
-            for (const type of types) {
-                union.push({
-                    name: type.name,
-                    types: [type],
-                });
-            }
-        }
-
-        return {
-            name: unionTypeName,
-            isStruct: true,
-            needsPointer: false,
-        };
-    }
-
-    // For mixed types, create a union type with more careful naming
     const memberNames = types.map(type => {
         if (type.kind === "reference") {
             return type.name;
