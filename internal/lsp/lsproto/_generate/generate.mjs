@@ -211,16 +211,18 @@ function resolveType(type) {
  * @returns {GoType}
  */
 function handleOrType(orType) {
+    const types = orType.items;
+
     // Check for nullable types (OR with null)
-    const nullIndex = orType.items.findIndex(item => item.kind === "base" && item.name === "null");
+    const nullIndex = types.findIndex(item => item.kind === "base" && item.name === "null");
 
     // If it's nullable and only has one other type
     if (nullIndex !== -1) {
-        if (orType.items.length !== 2) {
+        if (types.length !== 2) {
             throw new Error("Expected exactly two items in OR type for null handling");
         }
 
-        const otherType = orType.items[1 - nullIndex];
+        const otherType = types[1 - nullIndex];
         const resolvedType = resolveType(otherType);
 
         // Use Nullable[T] instead of pointer for null union with one other type
@@ -229,8 +231,6 @@ function handleOrType(orType) {
             needsPointer: false,
         };
     }
-
-    const types = orType.items.filter((_, index) => index !== nullIndex);
 
     // If only one type remains after filtering null
     if (types.length === 1) {
