@@ -29,7 +29,6 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * Represents a type in our intermediate type system
  * @typedef {Object} GoType
  * @property {string} name - Name of the type in Go
- * @property {boolean} isStruct - Whether this type is a struct
  * @property {boolean} needsPointer - Whether this type should be used with a pointer
  * @property {boolean} [isAlias] - Whether this type is an alias to another type
  * @property {string} [aliasFor] - If this is an alias, the name of the target type
@@ -73,21 +72,21 @@ function titleCase(s) {
 function mapBaseTypeToGo(baseType) {
     switch (baseType) {
         case "integer":
-            return { name: "int32", isStruct: false, needsPointer: false };
+            return { name: "int32", needsPointer: false };
         case "uinteger":
-            return { name: "uint32", isStruct: false, needsPointer: false };
+            return { name: "uint32", needsPointer: false };
         case "string":
-            return { name: "string", isStruct: false, needsPointer: false };
+            return { name: "string", needsPointer: false };
         case "boolean":
-            return { name: "bool", isStruct: false, needsPointer: false };
+            return { name: "bool", needsPointer: false };
         case "URI":
-            return { name: "URI", isStruct: false, needsPointer: false };
+            return { name: "URI", needsPointer: false };
         case "DocumentUri":
-            return { name: "DocumentUri", isStruct: false, needsPointer: false };
+            return { name: "DocumentUri", needsPointer: false };
         case "decimal":
-            return { name: "float64", isStruct: false, needsPointer: false };
+            return { name: "float64", needsPointer: false };
         case "RegExp":
-            return { name: "string", isStruct: false, needsPointer: false }; // Using string for RegExp
+            return { name: "string", needsPointer: false }; // Using string for RegExp
         default:
             throw new Error(`Unsupported base type: ${baseType}`);
     }
@@ -107,7 +106,7 @@ function resolveType(type) {
         type.items.some(item => item.kind === "base" && item.name === "integer") &&
         type.items.some(item => item.kind === "base" && item.name === "boolean")
     ) {
-        return { name: "LSPAny", isStruct: false, needsPointer: false };
+        return { name: "LSPAny", needsPointer: false };
     }
 
     switch (type.kind) {
@@ -123,7 +122,6 @@ function resolveType(type) {
                     if (refType.isAlias) {
                         return {
                             name: type.name, // Use the alias name (reference name)
-                            isStruct: refType.isStruct,
                             needsPointer: refType.needsPointer,
                         };
                     }
@@ -133,7 +131,7 @@ function resolveType(type) {
 
             // By default, assume referenced types are structs that need pointers
             // This will be updated as we process all types
-            const refType = { name: type.name, isStruct: true, needsPointer: true };
+            const refType = { name: type.name, needsPointer: true };
             typeInfo.types.set(type.name, refType);
             return refType;
 
@@ -145,7 +143,6 @@ function resolveType(type) {
                 : `[]${elementType.name}`;
             return {
                 name: arrayTypeName,
-                isStruct: false,
                 needsPointer: false,
             };
         }
@@ -156,13 +153,10 @@ function resolveType(type) {
                 : resolveType(type.key).name;
 
             const valueType = resolveType(type.value);
-            const valueTypeName = valueType.needsPointer && valueType.isStruct
-                ? `*${valueType.name}`
-                : valueType.name;
+            const valueTypeName = valueType.needsPointer ? `*${valueType.name}` : valueType.name;
 
             return {
                 name: `map[${keyType}]${valueTypeName}`,
-                isStruct: false,
                 needsPointer: false,
             };
         }
@@ -173,7 +167,7 @@ function resolveType(type) {
                 type.items[0].kind === "base" && type.items[0].name === "uinteger" &&
                 type.items[1].kind === "base" && type.items[1].name === "uinteger"
             ) {
-                return { name: "[2]uint32", isStruct: false, needsPointer: false };
+                return { name: "[2]uint32", needsPointer: false };
             }
 
             throw new Error("Unsupported tuple type: " + JSON.stringify(type));
@@ -182,23 +176,23 @@ function resolveType(type) {
         case "stringLiteral": {
             const typeName = `StringLiteral${titleCase(type.value)}`;
             typeInfo.literalTypes.set(String(type.value), typeName);
-            return { name: typeName, isStruct: true, needsPointer: false };
+            return { name: typeName, needsPointer: false };
         }
 
         case "integerLiteral": {
             const typeName = `IntegerLiteral${type.value}`;
             typeInfo.literalTypes.set(String(type.value), typeName);
-            return { name: typeName, isStruct: true, needsPointer: false };
+            return { name: typeName, needsPointer: false };
         }
 
         case "booleanLiteral": {
             const typeName = `BooleanLiteral${type.value ? "True" : "False"}`;
             typeInfo.literalTypes.set(String(type.value), typeName);
-            return { name: typeName, isStruct: true, needsPointer: false };
+            return { name: typeName, needsPointer: false };
         }
         case "literal":
             if (type.value.properties.length === 0) {
-                return { name: "struct{}", isStruct: true, needsPointer: false };
+                return { name: "struct{}", needsPointer: false };
             }
 
             throw new Error("Unexpected non-empty literal object: " + JSON.stringify(type.value));
@@ -232,7 +226,6 @@ function handleOrType(orType) {
         // Use Nullable[T] instead of pointer for null union with one other type
         return {
             name: `Nullable[${resolvedType.name}]`,
-            isStruct: false,
             needsPointer: false,
         };
     }
@@ -292,7 +285,6 @@ function handleOrType(orType) {
 
     return {
         name: unionTypeName,
-        isStruct: true,
         needsPointer: false,
     };
 }
@@ -302,7 +294,7 @@ function handleOrType(orType) {
  */
 function collectTypeDefinitions() {
     // Register built-in types
-    typeInfo.types.set("LSPAny", { name: "any", isStruct: false, needsPointer: false });
+    typeInfo.types.set("LSPAny", { name: "any", needsPointer: false });
 
     // Keep track of used enum identifiers across all enums to avoid conflicts
     const usedEnumIdentifiers = new Set();
@@ -311,7 +303,6 @@ function collectTypeDefinitions() {
     for (const enumeration of model.enumerations) {
         typeInfo.types.set(enumeration.name, {
             name: enumeration.name,
-            isStruct: false,
             needsPointer: false,
         });
 
@@ -365,7 +356,6 @@ function collectTypeDefinitions() {
     for (const structure of model.structures) {
         typeInfo.types.set(structure.name, {
             name: structure.name,
-            isStruct: true,
             needsPointer: !valueTypes.has(structure.name),
         });
     }
@@ -387,7 +377,6 @@ function collectTypeDefinitions() {
         // This is critical for resolving references to this type
         typeInfo.types.set(typeAlias.name, {
             name: typeAlias.name, // Use the alias name, not the resolved type name
-            isStruct: resolvedType.isStruct,
             needsPointer: resolvedType.needsPointer,
             isAlias: true,
             aliasFor: resolvedType.name,
