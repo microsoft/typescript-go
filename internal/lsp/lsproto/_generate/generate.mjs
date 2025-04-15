@@ -512,7 +512,7 @@ function generateCode() {
             const type = resolveType(prop.type);
             const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
 
-            writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitzero" : ""}"\``);
+            writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitempty" : ""}"\``);
             writeLine("");
         }
 
@@ -776,12 +776,10 @@ function generateCode() {
         writeLine(`\t*o = ${name}{}`);
 
         for (const entry of fieldEntries) {
-            writeLine(`\t{`);
-            writeLine(`\t\tvar v ${entry.typeName}`);
-            writeLine(`\t\tif err := json.Unmarshal(data, &v); err == nil {`);
-            writeLine(`\t\t\to.${entry.fieldName} = &v`);
-            writeLine(`\t\t\treturn nil`);
-            writeLine(`\t\t}`);
+            writeLine(`\tvar v${entry.fieldName} ${entry.typeName}`);
+            writeLine(`\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+            writeLine(`\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+            writeLine(`\t\treturn nil`);
             writeLine(`\t}`);
         }
 
