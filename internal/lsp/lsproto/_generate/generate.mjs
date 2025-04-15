@@ -356,7 +356,14 @@ function collectTypeDefinitions() {
         typeInfo.enumValuesByType.set(enumeration.name, enumValues);
     }
 
-    const valueTypes = new Set(["Position", "Range", "Location"]);
+    const valueTypes = new Set([
+        "Position",
+        "Range",
+        "Location",
+        "Color",
+        "TextDocumentIdentifier",
+        "NotebookDocumentIdentifier",
+    ]);
 
     // Process all structures
     for (const structure of model.structures) {

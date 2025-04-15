@@ -70,7 +70,7 @@ type DocumentColorParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // Represents a color range from a document.
@@ -79,7 +79,7 @@ type ColorInformation struct {
 	Range Range `json:"range"`
 
 	// The actual color value for this color range.
-	Color *Color `json:"color"`
+	Color Color `json:"color"`
 }
 
 type DocumentColorRegistrationOptions struct {
@@ -94,10 +94,10 @@ type ColorPresentationParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The color to request presentations for.
-	Color *Color `json:"color"`
+	Color Color `json:"color"`
 
 	// The range where the color would be inserted. Serves as a context.
 	Range Range `json:"range"`
@@ -136,7 +136,7 @@ type FoldingRangeParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
@@ -193,7 +193,7 @@ type SelectionRangeParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The positions inside the text document.
 	Positions []Position `json:"positions"`
@@ -325,7 +325,7 @@ type SemanticTokensParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // Since: 3.16.0
@@ -358,7 +358,7 @@ type SemanticTokensDeltaParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The result id of a previous response. The result Id can either point to a full response
 	// or a delta response depending on what was received last.
@@ -384,7 +384,7 @@ type SemanticTokensRangeParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The range the semantic tokens are requested for.
 	Range Range `json:"range"`
@@ -627,7 +627,7 @@ type InlineValueParams struct {
 	WorkDoneProgressParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The document range for which inline values should be computed.
 	Range Range `json:"range"`
@@ -653,7 +653,7 @@ type InlayHintParams struct {
 	WorkDoneProgressParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The document range for which inlay hints should be computed.
 	Range Range `json:"range"`
@@ -725,7 +725,7 @@ type DocumentDiagnosticParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The additional identifier provided during registration.
 	Identifier *string `json:"identifier,omitzero"`
@@ -837,7 +837,7 @@ type DidChangeNotebookDocumentParams struct {
 // Since: 3.17.0
 type DidSaveNotebookDocumentParams struct {
 	// The notebook document that got saved.
-	NotebookDocument *NotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
 }
 
 // The params sent in a close notebook document notification.
@@ -845,11 +845,11 @@ type DidSaveNotebookDocumentParams struct {
 // Since: 3.17.0
 type DidCloseNotebookDocumentParams struct {
 	// The notebook document that got closed.
-	NotebookDocument *NotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
 
 	// The text documents that represent the content
 	// of a notebook cell that got closed.
-	CellTextDocuments []*TextDocumentIdentifier `json:"cellTextDocuments"`
+	CellTextDocuments []TextDocumentIdentifier `json:"cellTextDocuments"`
 }
 
 // A parameter literal used in inline completion requests.
@@ -1068,13 +1068,13 @@ type TextDocumentChangeRegistrationOptions struct {
 // The parameters sent in a close text document notification
 type DidCloseTextDocumentParams struct {
 	// The document that was closed.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // The parameters sent in a save text document notification
 type DidSaveTextDocumentParams struct {
 	// The document that was saved.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// Optional the content when saved. Depends on the includeText value
 	// when the save notification was requested.
@@ -1090,7 +1090,7 @@ type TextDocumentSaveRegistrationOptions struct {
 // The parameters sent in a will save text document notification.
 type WillSaveTextDocumentParams struct {
 	// The document that will be saved.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The 'TextDocumentSaveReason'.
 	Reason TextDocumentSaveReason `json:"reason"`
@@ -1475,7 +1475,7 @@ type DocumentSymbolParams struct {
 	PartialResultParams
 
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // Represents information about programming constructs like variables, classes,
@@ -1550,7 +1550,7 @@ type CodeActionParams struct {
 	PartialResultParams
 
 	// The document in which the command was invoked.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The range for which the command was invoked.
 	Range Range `json:"range"`
@@ -1697,7 +1697,7 @@ type CodeLensParams struct {
 	PartialResultParams
 
 	// The document to request code lens for.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // A code lens represents a command that should be shown along with
@@ -1729,7 +1729,7 @@ type DocumentLinkParams struct {
 	PartialResultParams
 
 	// The document to provide document links for.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
 // A document link is a range in a text document that links to an internal or external resource, like another
@@ -1766,7 +1766,7 @@ type DocumentFormattingParams struct {
 	WorkDoneProgressParams
 
 	// The document to format.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The format options.
 	Options *FormattingOptions `json:"options"`
@@ -1783,7 +1783,7 @@ type DocumentRangeFormattingParams struct {
 	WorkDoneProgressParams
 
 	// The document to format.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The range to format
 	Range Range `json:"range"`
@@ -1807,7 +1807,7 @@ type DocumentRangesFormattingParams struct {
 	WorkDoneProgressParams
 
 	// The document to format.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The ranges to format
 	Ranges []Range `json:"ranges"`
@@ -1819,7 +1819,7 @@ type DocumentRangesFormattingParams struct {
 // The parameters of a DocumentOnTypeFormattingRequest.
 type DocumentOnTypeFormattingParams struct {
 	// The document to format.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The position around which the on type formatting should happen.
 	// This is not necessarily the exact position where the character denoted
@@ -1847,7 +1847,7 @@ type RenameParams struct {
 	WorkDoneProgressParams
 
 	// The document to rename.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The position at which this request was sent.
 	Position Position `json:"position"`
@@ -2011,7 +2011,7 @@ type ProgressParams struct {
 // document.
 type TextDocumentPositionParams struct {
 	// The text document.
-	TextDocument *TextDocumentIdentifier `json:"textDocument"`
+	TextDocument TextDocumentIdentifier `json:"textDocument"`
 
 	// The position inside the text document.
 	Position Position `json:"position"`
@@ -4003,7 +4003,7 @@ type NotebookDocumentCellChangeStructure struct {
 	DidOpen *[]*TextDocumentItem `json:"didOpen,omitzero"`
 
 	// Additional closed cell text documents.
-	DidClose *[]*TextDocumentIdentifier `json:"didClose,omitzero"`
+	DidClose *[]TextDocumentIdentifier `json:"didClose,omitzero"`
 }
 
 // Content changes to a cell in a notebook document.
