@@ -40,7 +40,7 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @typedef {Object} TypeInfo
  * @property {Map<string, GoType>} types - Map of type names to types
  * @property {Map<string, string>} literalTypes - Map from literal values to type names
- * @property {Map<string, {name: string, types: Type[]}[]>} unionTypes - Map of union type names to their component types
+ * @property {Map<string, {name: string, type: Type}[]>} unionTypes - Map of union type names to their component types
  * @property {Set<string>} generatedTypes - Set of types that have been generated
  * @property {Map<string, {value: string; identifier: string, documentation: string | undefined, deprecated: string| undefined}[]>} enumValuesByType - Map of enum type names to their values
  * @property {Map<string, string>} unionTypeAliases - Map from union type name to alias name
@@ -268,20 +268,9 @@ function handleOrType(orType) {
     });
 
     const unionTypeName = memberNames.map(titleCase).join("Or");
+    const union = memberNames.map((name, i) => ({ name, type: types[i] }));
 
-    if (!typeInfo.unionTypes.has(unionTypeName)) {
-        typeInfo.unionTypes.set(unionTypeName, []);
-    }
-
-    const union = typeInfo.unionTypes.get(unionTypeName);
-    if (union) {
-        for (let i = 0; i < types.length; i++) {
-            union.push({
-                name: memberNames[i],
-                types: [types[i]],
-            });
-        }
-    }
+    typeInfo.unionTypes.set(unionTypeName, union);
 
     return {
         name: unionTypeName,
@@ -702,21 +691,11 @@ function generateCode() {
         const uniqueTypeFields = new Map(); // Maps type name -> field name
 
         for (const member of members) {
-            let memberType;
-            if (member.types.length === 1) {
-                const type = resolveType(member.types[0]);
-                memberType = type.name;
+            const type = resolveType(member.type);
+            const memberType = type.name;
 
-                // If this type name already exists in our map, skip it
-                if (!uniqueTypeFields.has(memberType)) {
-                    const fieldName = titleCase(member.name);
-                    uniqueTypeFields.set(memberType, fieldName);
-                    writeLine(`\t${fieldName} *${memberType}`);
-                }
-            }
-            else {
-                // This shouldn't happen with our current approach, but handle it just in case
-                memberType = "any";
+            // If this type name already exists in our map, skip it
+            if (!uniqueTypeFields.has(memberType)) {
                 const fieldName = titleCase(member.name);
                 uniqueTypeFields.set(memberType, fieldName);
                 writeLine(`\t${fieldName} *${memberType}`);
