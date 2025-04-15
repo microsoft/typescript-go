@@ -89,8 +89,7 @@ function mapBaseTypeToGo(baseType) {
         case "RegExp":
             return { name: "string", isStruct: false, needsPointer: false }; // Using string for RegExp
         default:
-            console.warn(`Unknown base type: ${baseType}`);
-            return { name: `ANY_${baseType}`, isStruct: false, needsPointer: false };
+            throw new Error(`Unsupported base type: ${baseType}`);
     }
 }
 
