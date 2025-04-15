@@ -347,7 +347,7 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 
 	hoverText := project.LanguageService().ProvideHover(file.FileName(), pos)
 	return s.sendResult(req.ID, &lsproto.Hover{
-		Contents: &lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
+		Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
 			MarkupContent: &lsproto.MarkupContent{
 				Kind:  lsproto.MarkupKindMarkdown,
 				Value: codeFence("ts", hoverText),

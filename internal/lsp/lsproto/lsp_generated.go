@@ -217,12 +217,12 @@ type SelectionRangeRegistrationOptions struct {
 
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
-	Token *ProgressToken `json:"token"`
+	Token ProgressToken `json:"token"`
 }
 
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
-	Token *ProgressToken `json:"token"`
+	Token ProgressToken `json:"token"`
 }
 
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -483,7 +483,7 @@ type WorkspaceEdit struct {
 	//
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
-	DocumentChanges *[]*TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitzero"`
+	DocumentChanges *[]TextDocumentEditOrCreateFileOrRenameFileOrDeleteFile `json:"documentChanges,omitzero"`
 
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
@@ -673,7 +673,7 @@ type InlayHint struct {
 	// InlayHintLabelPart label parts.
 	//
 	// *Note* that neither the string nor the label part can be empty.
-	Label *StringOrInlayHintLabelParts `json:"label"`
+	Label StringOrInlayHintLabelParts `json:"label"`
 
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
@@ -738,7 +738,7 @@ type DocumentDiagnosticParams struct {
 //
 // Since: 3.17.0
 type DocumentDiagnosticReportPartialResult struct {
-	RelatedDocuments map[DocumentUri]*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments"`
+	RelatedDocuments map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments"`
 }
 
 // Cancellation data returned from a diagnostic request.
@@ -776,14 +776,14 @@ type WorkspaceDiagnosticParams struct {
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReport struct {
-	Items []*WorkspaceDocumentDiagnosticReport `json:"items"`
+	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
 }
 
 // A partial result for a workspace diagnostic report.
 //
 // Since: 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
-	Items []*WorkspaceDocumentDiagnosticReport `json:"items"`
+	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
 }
 
 // The params sent in an open notebook document notification.
@@ -883,7 +883,7 @@ type InlineCompletionList struct {
 // Proposed.
 type InlineCompletionItem struct {
 	// The text to replace the range with. Must be set.
-	InsertText *StringOrStringValue `json:"insertText"`
+	InsertText StringOrStringValue `json:"insertText"`
 
 	// A text that is used to decide if this inline completion should be shown. When `falsy` the InlineCompletionItem.insertText is used.
 	FilterText *string `json:"filterText,omitzero"`
@@ -1054,7 +1054,7 @@ type DidChangeTextDocumentParams struct {
 	// - apply the 'textDocument/didChange' notifications in the order you receive them.
 	// - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
 	//   you receive them.
-	ContentChanges []*TextDocumentContentChangeEvent `json:"contentChanges"`
+	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
 }
 
 // Describe options to be used when registered for text document change events.
@@ -1349,7 +1349,7 @@ type HoverParams struct {
 // The result of a hover request.
 type Hover struct {
 	// The hover's content
-	Contents *MarkupContentOrMarkedStringOrMarkedStrings `json:"contents"`
+	Contents MarkupContentOrMarkedStringOrMarkedStrings `json:"contents"`
 
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
@@ -1679,7 +1679,7 @@ type WorkspaceSymbol struct {
 	// capability `workspace.symbol.resolveSupport`.
 	//
 	// See SymbolInformation#location for more details.
-	Location *LocationOrLocationUriOnly `json:"location"`
+	Location LocationOrLocationUriOnly `json:"location"`
 
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
@@ -1996,12 +1996,12 @@ type LogTraceParams struct {
 
 type CancelParams struct {
 	// The request id to cancel.
-	Id *IntegerOrString `json:"id"`
+	Id IntegerOrString `json:"id"`
 }
 
 type ProgressParams struct {
 	// The progress token provided by the client or server.
-	Token *ProgressToken `json:"token"`
+	Token ProgressToken `json:"token"`
 
 	// The progress data.
 	Value LSPAny `json:"value"`
@@ -2240,7 +2240,7 @@ type TextDocumentEdit struct {
 	//
 	// Since: 3.18.0 - support for SnippetTextEdit. This is guarded using a
 	// client capability.
-	Edits []*TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
+	Edits []TextEditOrAnnotatedTextEditOrSnippetTextEdit `json:"edits"`
 }
 
 // Create file operation.
@@ -2495,7 +2495,7 @@ type RelatedFullDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// Since: 3.17.0
-	RelatedDocuments *map[DocumentUri]*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
+	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
 }
 
 // An unchanged diagnostic report with a set of related documents.
@@ -2511,7 +2511,7 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	// a.cpp and result in errors in a header file b.hpp.
 	//
 	// Since: 3.17.0
-	RelatedDocuments *map[DocumentUri]*FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
+	RelatedDocuments *map[DocumentUri]FullDocumentDiagnosticReportOrUnchangedDocumentDiagnosticReport `json:"relatedDocuments,omitzero"`
 }
 
 // A diagnostic report with a full set of problems.
@@ -2634,7 +2634,7 @@ type TextDocumentItem struct {
 // Since: 3.17.0
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
-	NotebookSelector []*NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells `json:"notebookSelector"`
+	NotebookSelector []NotebookDocumentFilterWithNotebookOrNotebookDocumentFilterWithCells `json:"notebookSelector"`
 
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
@@ -2995,7 +2995,7 @@ type FileSystemWatcher struct {
 	// The glob pattern to watch. See pattern for more detail.
 	//
 	// Since: 3.17.0 support for relative patterns.
-	GlobPattern *GlobPattern `json:"globPattern"`
+	GlobPattern GlobPattern `json:"globPattern"`
 
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
@@ -3714,7 +3714,7 @@ type NotebookDocumentFilterWithNotebook struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook *StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook StringOrNotebookDocumentFilter `json:"notebook"`
 
 	// The cells of the matching notebook to be synced.
 	Cells *[]*NotebookCellLanguage `json:"cells,omitzero"`
@@ -3924,7 +3924,7 @@ type ParameterInformation struct {
 	//
 	// *Note*: a label of type string should be a substring of its containing signature label.
 	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
-	Label *StringOrTuple `json:"label"`
+	Label StringOrTuple `json:"label"`
 
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
@@ -3959,7 +3959,7 @@ type NotebookCellTextDocumentFilter struct {
 	// containing the notebook cell. If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook *StringOrNotebookDocumentFilter `json:"notebook"`
+	Notebook StringOrNotebookDocumentFilter `json:"notebook"`
 
 	// A language id like `python`.
 	//
@@ -4012,7 +4012,7 @@ type NotebookDocumentCellChangeStructure struct {
 type NotebookDocumentCellContentChanges struct {
 	Document *VersionedTextDocumentIdentifier `json:"document"`
 
-	Changes []*TextDocumentContentChangeEvent `json:"changes"`
+	Changes []TextDocumentContentChangeEvent `json:"changes"`
 }
 
 // Workspace specific client capabilities.
@@ -4352,7 +4352,7 @@ type FileOperationOptions struct {
 type RelativePattern struct {
 	// A workspace folder or a base URI to which this pattern will be matched
 	// against relatively.
-	BaseUri *WorkspaceFolderOrURI `json:"baseUri"`
+	BaseUri WorkspaceFolderOrURI `json:"baseUri"`
 
 	// The actual glob pattern;
 	Pattern Pattern `json:"pattern"`
@@ -4409,7 +4409,7 @@ type TextDocumentFilterPattern struct {
 	// Since: 3.18.0 - support for relative patterns. Whether clients support
 	// relative patterns depends on the client capability
 	// `textDocuments.filters.relativePatternSupport`.
-	Pattern *GlobPattern `json:"pattern"`
+	Pattern GlobPattern `json:"pattern"`
 }
 
 // A notebook document filter where `notebookType` is required field.
@@ -4451,7 +4451,7 @@ type NotebookDocumentFilterPattern struct {
 	Scheme *string `json:"scheme,omitzero"`
 
 	// A glob pattern.
-	Pattern *GlobPattern `json:"pattern"`
+	Pattern GlobPattern `json:"pattern"`
 }
 
 // A change describing how to move a `NotebookCell`
@@ -6728,7 +6728,7 @@ type PrepareRenameResult = RangeOrPrepareRenamePlaceholderOrPrepareRenameDefault
 // @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
 //
 // The use of a string as a document filter is deprecated @since 3.16.0.
-type DocumentSelector = []*DocumentFilter
+type DocumentSelector = []DocumentFilter
 
 type ProgressToken = IntegerOrString
 
@@ -8043,7 +8043,7 @@ func (o *TextEditOrInsertReplaceEdit) UnmarshalJSON(data []byte) error {
 type MarkupContentOrMarkedStringOrMarkedStrings struct {
 	MarkupContent *MarkupContent
 	MarkedString  *MarkedString
-	MarkedStrings *[]*MarkedString
+	MarkedStrings *[]MarkedString
 }
 
 func (o MarkupContentOrMarkedStringOrMarkedStrings) MarshalJSON() ([]byte, error) {
@@ -8078,7 +8078,7 @@ func (o *MarkupContentOrMarkedStringOrMarkedStrings) UnmarshalJSON(data []byte) 
 		}
 	}
 	{
-		var v []*MarkedString
+		var v []MarkedString
 		if err := json.Unmarshal(data, &v); err == nil {
 			o.MarkedStrings = &v
 			return nil

@@ -275,7 +275,7 @@ function handleOrType(orType) {
         return {
             name: unionTypeName,
             isStruct: true,
-            needsPointer: true,
+            needsPointer: false,
         };
     }
 
@@ -329,7 +329,7 @@ function handleOrType(orType) {
     return {
         name: unionTypeName,
         isStruct: true,
-        needsPointer: true,
+        needsPointer: false,
     };
 }
 
