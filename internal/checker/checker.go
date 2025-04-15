@@ -6598,7 +6598,7 @@ func (c *Checker) checkUnusedLocalsAndParameters(node *ast.Node) {
 					importClauses[importClause] = append(importClauses[importClause], declaration)
 				}
 			default:
-				if !ast.IsAmbientModule(declaration) {
+				if !ast.IsTypeParameterDeclaration(declaration) && !ast.IsAmbientModule(declaration) {
 					c.reportUnusedLocal(declaration, ast.SymbolName(local))
 				}
 			}
