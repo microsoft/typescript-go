@@ -363,6 +363,10 @@ function collectTypeDefinitions() {
         "Color",
         "TextDocumentIdentifier",
         "NotebookDocumentIdentifier",
+        "PreviousResultId",
+        "VersionedNotebookDocumentIdentifier",
+        "VersionedTextDocumentIdentifier",
+        "OptionalVersionedTextDocumentIdentifier",
     ]);
 
     // Process all structures

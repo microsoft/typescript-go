@@ -769,7 +769,7 @@ type WorkspaceDiagnosticParams struct {
 
 	// The currently known diagnostic reports with their
 	// previous result ids.
-	PreviousResultIds []*PreviousResultId `json:"previousResultIds"`
+	PreviousResultIds []PreviousResultId `json:"previousResultIds"`
 }
 
 // A workspace diagnostic report.
@@ -814,7 +814,7 @@ type DidChangeNotebookDocumentParams struct {
 	// to the version after all provided changes have been applied. If
 	// only the text document content of a cell changes the notebook version
 	// doesn't necessarily have to change.
-	NotebookDocument *VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
 
 	// The actual changes to the notebook document.
 	//
@@ -1041,7 +1041,7 @@ type DidChangeTextDocumentParams struct {
 	// The document that did change. The version number points
 	// to the version after all provided content changes have
 	// been applied.
-	TextDocument *VersionedTextDocumentIdentifier `json:"textDocument"`
+	TextDocument VersionedTextDocumentIdentifier `json:"textDocument"`
 
 	// The actual content changes. The content changes describe single state changes
 	// to the document. So if there are two content changes c1 (at array index 0) and
@@ -2231,7 +2231,7 @@ type FileCreate struct {
 // kind of ordering. However the edits must be non overlapping.
 type TextDocumentEdit struct {
 	// The text document to change.
-	TextDocument *OptionalVersionedTextDocumentIdentifier `json:"textDocument"`
+	TextDocument OptionalVersionedTextDocumentIdentifier `json:"textDocument"`
 
 	// The edits to be applied.
 	//
@@ -4010,7 +4010,7 @@ type NotebookDocumentCellChangeStructure struct {
 //
 // Since: 3.18.0
 type NotebookDocumentCellContentChanges struct {
-	Document *VersionedTextDocumentIdentifier `json:"document"`
+	Document VersionedTextDocumentIdentifier `json:"document"`
 
 	Changes []TextDocumentContentChangeEvent `json:"changes"`
 }
