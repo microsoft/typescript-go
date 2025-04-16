@@ -586,10 +586,6 @@ function generateCode() {
 
     // Client-to-server requests
     for (const request of model.requests) {
-        if (request.messageDirection === "serverToClient") {
-            continue;
-        }
-
         const methodName = request.method.split("/")
             .map(v => v === "$" ? "" : titleCase(v))
             .join("");
@@ -617,10 +613,6 @@ function generateCode() {
 
     // Client-to-server notifications
     for (const notification of model.notifications) {
-        if (notification.messageDirection === "serverToClient") {
-            continue;
-        }
-
         const methodName = notification.method.split("/")
             .map(v => v === "$" ? "" : titleCase(v))
             .join("");
