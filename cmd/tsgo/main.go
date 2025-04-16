@@ -133,6 +133,8 @@ func runMain() int {
 			return int(execute.CommandLine(newSystem(), nil, args[1:]))
 		case "lsp":
 			return runLSP(args[1:])
+		case "api":
+			return runAPI(args[1:])
 		}
 	}
 	opts := parseArgs()
@@ -167,7 +169,7 @@ func runMain() int {
 
 	currentDirectory = tspath.GetDirectoryPath(configFileName)
 	// !!! is the working directory actually the config path?
-	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
+	host := ts.NewCachedFSCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
 
 	parseStart := time.Now()
 	program := ts.NewProgram(ts.ProgramOptions{
