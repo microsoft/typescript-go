@@ -9919,7 +9919,7 @@ func (node *SourceFile) GetOrCreateToken(
 			panic(fmt.Sprintf("Token cache mismatch: %v != %v", token.Kind, kind))
 		}
 		if token.Parent != parent {
-			panic("Token cache mismatch: parent")
+			panic(fmt.Sprintf("Token cache mismatch: parent. Expected parent of kind %v, got %v", token.Parent.Kind, parent.Kind))
 		}
 		return token
 	}

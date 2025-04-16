@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/jstest"
 	"gotest.tools/v3/assert"
@@ -36,10 +37,11 @@ func TestGetTokenAtPosition(t *testing.T) {
 		baselineTokens(
 			t,
 			"GetTokenAtPosition",
-			func(fileText string, positions []int) []tokenInfo {
+			false, /*includeEOF*/
+			func(fileText string, positions []int) []*tokenInfo {
 				return tsGetTokensAtPositions(t, fileText, positions)
 			},
-			func(file *ast.SourceFile, pos int) tokenInfo {
+			func(file *ast.SourceFile, pos int) *tokenInfo {
 				return toTokenInfo(astnav.GetTokenAtPosition(file, pos))
 			},
 		)
@@ -65,16 +67,17 @@ func TestGetTouchingPropertyName(t *testing.T) {
 	baselineTokens(
 		t,
 		"GetTouchingPropertyName",
-		func(fileText string, positions []int) []tokenInfo {
+		false, /*includeEOF*/
+		func(fileText string, positions []int) []*tokenInfo {
 			return tsGetTouchingPropertyName(t, fileText, positions)
 		},
-		func(file *ast.SourceFile, pos int) tokenInfo {
+		func(file *ast.SourceFile, pos int) *tokenInfo {
 			return toTokenInfo(astnav.GetTouchingPropertyName(file, pos))
 		},
 	)
 }
 
-func baselineTokens(t *testing.T, testName string, getTSTokens func(fileText string, positions []int) []tokenInfo, getGoToken func(file *ast.SourceFile, pos int) tokenInfo) {
+func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens func(fileText string, positions []int) []*tokenInfo, getGoToken func(file *ast.SourceFile, pos int) *tokenInfo) {
 	for _, fileName := range testFiles {
 		t.Run(filepath.Base(fileName), func(t *testing.T) {
 			t.Parallel()
@@ -93,11 +96,12 @@ func baselineTokens(t *testing.T, testName string, getTSTokens func(fileText str
 			currentDiff := tokenDiff{}
 
 			for pos, tsToken := range tsTokens {
+				defer testutil.RecoverAndFail(t, fmt.Sprintf("pos: %d", pos))
 				goToken := getGoToken(file, pos)
 				diff := tokenDiff{goToken: goToken, tsToken: tsToken}
 
 				if currentDiff != diff {
-					if currentDiff.goToken != currentDiff.tsToken {
+					if currentDiff.goToken != currentDiff.tsToken { // !!! fix
 						writeRangeDiff(&output, file, currentDiff, currentRange)
 					}
 					currentDiff = diff
@@ -123,8 +127,8 @@ func baselineTokens(t *testing.T, testName string, getTSTokens func(fileText str
 }
 
 type tokenDiff struct {
-	goToken tokenInfo
-	tsToken tokenInfo
+	goToken *tokenInfo
+	tsToken *tokenInfo
 }
 
 type tokenInfo struct {
@@ -133,20 +137,23 @@ type tokenInfo struct {
 	End  int    `json:"end"`
 }
 
-func toTokenInfo(node *ast.Node) tokenInfo {
+func toTokenInfo(node *ast.Node) *tokenInfo {
+	if node == nil {
+		return nil
+	}
 	kind := strings.Replace(node.Kind.String(), "Kind", "", 1)
 	switch kind {
 	case "EndOfFile":
 		kind = "EndOfFileToken"
 	}
-	return tokenInfo{
+	return &tokenInfo{
 		Kind: kind,
 		Pos:  node.Pos(),
 		End:  node.End(),
 	}
 }
 
-func tsGetTokensAtPositions(t testing.TB, fileText string, positions []int) []tokenInfo {
+func tsGetTokensAtPositions(t testing.TB, fileText string, positions []int) []*tokenInfo {
 	dir := t.TempDir()
 	err := os.WriteFile(filepath.Join(dir, "file.ts"), []byte(fileText), 0o644)
 	assert.NilError(t, err)
@@ -178,12 +185,12 @@ func tsGetTokensAtPositions(t testing.TB, fileText string, positions []int) []to
 			});
 		};`
 
-	info, err := jstest.EvalNodeScriptWithTS[[]tokenInfo](t, script, dir, "")
+	info, err := jstest.EvalNodeScriptWithTS[[]*tokenInfo](t, script, dir, "")
 	assert.NilError(t, err)
 	return info
 }
 
-func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) []tokenInfo {
+func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) []*tokenInfo {
 	dir := t.TempDir()
 	err := os.WriteFile(filepath.Join(dir, "file.ts"), []byte(fileText), 0o644)
 	assert.NilError(t, err)
@@ -215,7 +222,7 @@ func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) [
 			});
 		};`
 
-	info, err := jstest.EvalNodeScriptWithTS[[]tokenInfo](t, script, dir, "")
+	info, err := jstest.EvalNodeScriptWithTS[[]*tokenInfo](t, script, dir, "")
 	assert.NilError(t, err)
 	return info
 }
@@ -291,4 +298,64 @@ func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDif
 			}
 		}
 	}
+}
+
+func TestFindPrecedingToken(t *testing.T) {
+	t.Parallel()
+	repo.SkipIfNoTypeScriptSubmodule(t)
+	jstest.SkipIfNoNodeJS(t)
+
+	t.Run("baseline", func(t *testing.T) {
+		t.Parallel()
+		baselineTokens(
+			t,
+			"FindPrecedingToken",
+			true, /*includeEOF*/
+			func(fileText string, positions []int) []*tokenInfo {
+				return tsFindPrecedingTokens(t, fileText, positions)
+			},
+			func(file *ast.SourceFile, pos int) *tokenInfo {
+				return toTokenInfo(astnav.FindPrecedingToken(file, pos))
+			},
+		)
+	})
+}
+
+func tsFindPrecedingTokens(t *testing.T, fileText string, positions []int) []*tokenInfo {
+	dir := t.TempDir()
+	err := os.WriteFile(filepath.Join(dir, "file.ts"), []byte(fileText), 0o644)
+	assert.NilError(t, err)
+
+	err = os.WriteFile(filepath.Join(dir, "positions.json"), []byte(core.Must(core.StringifyJson(positions, "", ""))), 0o644)
+	assert.NilError(t, err)
+
+	script := `
+		import fs from "fs";
+		export default (ts) => {
+			const positions = JSON.parse(fs.readFileSync("positions.json", "utf8"));
+			const fileText = fs.readFileSync("file.ts", "utf8");
+			const file = ts.createSourceFile(
+				"file.ts",
+				fileText,
+				{ languageVersion: ts.ScriptTarget.Latest, jsDocParsingMode: ts.JSDocParsingMode.ParseAll },
+				/*setParentNodes*/ true
+			);
+			return positions.map(position => {
+				let token = ts.findPrecedingToken(position, file);
+				if (token === undefined) {
+					return undefined;
+				}
+				if (token.kind === ts.SyntaxKind.SyntaxList) {
+					token = token.parent;
+				}
+				return {
+					kind: ts.Debug.formatSyntaxKind(token.kind),
+					pos: token.pos,
+					end: token.end,
+				};
+			});
+		};`
+	info, err := jstest.EvalNodeScriptWithTS[[]*tokenInfo](t, script, dir, "")
+	assert.NilError(t, err)
+	return info
 }
