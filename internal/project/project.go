@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"maps"
 	"strings"
 	"sync"
 
@@ -19,10 +20,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -output=project_stringer_generated.go
-const (
-	fileGlobPattern          = "*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
-	recursiveFileGlobPattern = "**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}"
-)
+const hr = "-----------------------------------------------"
 
 var projectNamer = &namer{}
 
@@ -81,8 +79,10 @@ type Project struct {
 	languageService   *ls.LanguageService
 	program           *compiler.Program
 
-	watchedGlobs []string
-	watcherID    WatcherHandle
+	// Watchers
+	rootFilesWatch          *watchedFiles[[]string]
+	failedLookupsWatch      *watchedFiles[map[tspath.Path]string]
+	affectingLocationsWatch *watchedFiles[map[tspath.Path]string]
 }
 
 func NewConfiguredProject(configFileName string, configFilePath tspath.Path, host ProjectHost) *Project {
@@ -90,6 +90,10 @@ func NewConfiguredProject(configFileName string, configFilePath tspath.Path, hos
 	project.configFileName = configFileName
 	project.configFilePath = configFilePath
 	project.initialLoadPending = true
+	client := host.Client()
+	if client != nil {
+		project.rootFilesWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, core.Identity)
+	}
 	return project
 }
 
@@ -112,6 +116,15 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 	project.comparePathsOptions = tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
 		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+	}
+	client := host.Client()
+	if client != nil {
+		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, func(data map[tspath.Path]string) []string {
+			return slices.Sorted(maps.Values(data))
+		})
+		project.affectingLocationsWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, func(data map[tspath.Path]string) []string {
+			return slices.Sorted(maps.Values(data))
+		})
 	}
 	project.languageService = ls.NewLanguageService(project)
 	project.markAsDirty()
@@ -222,7 +235,7 @@ func (p *Project) LanguageService() *ls.LanguageService {
 	return p.languageService
 }
 
-func (p *Project) getWatchGlobs() []string {
+func (p *Project) getRootFileWatchGlobs() []string {
 	if p.kind == KindConfigured {
 		wildcardDirectories := p.parsedCommandLine.WildcardDirectories()
 		result := make([]string, 0, len(wildcardDirectories)+1)
@@ -235,47 +248,77 @@ func (p *Project) getWatchGlobs() []string {
 	return nil
 }
 
+func (p *Project) getModuleResolutionWatchGlobs() (failedLookups map[tspath.Path]string, affectingLocaions map[tspath.Path]string) {
+	failedLookups = make(map[tspath.Path]string)
+	affectingLocaions = make(map[tspath.Path]string)
+	for _, resolvedModulesInFile := range p.program.GetResolvedModules() {
+		for _, resolvedModule := range resolvedModulesInFile {
+			for _, failedLookupLocation := range resolvedModule.FailedLookupLocations {
+				path := p.toPath(failedLookupLocation)
+				if _, ok := failedLookups[path]; !ok {
+					failedLookups[path] = failedLookupLocation
+				}
+			}
+			for _, affectingLocation := range resolvedModule.AffectingLocations {
+				path := p.toPath(affectingLocation)
+				if _, ok := affectingLocaions[path]; !ok {
+					affectingLocaions[path] = affectingLocation
+				}
+			}
+		}
+	}
+	return failedLookups, affectingLocaions
+}
+
 func (p *Project) updateWatchers() {
 	client := p.host.Client()
 	if client == nil {
 		return
 	}
 
-	globs := p.getWatchGlobs()
-	if !slices.Equal(p.watchedGlobs, globs) {
-		if p.watcherID != "" {
-			if err := client.UnwatchFiles(p.watcherID); err != nil {
-				p.log(fmt.Sprintf("Failed to unwatch files: %v", err))
-			}
-		}
+	rootFileGlobs := p.getRootFileWatchGlobs()
+	failedLookupGlobs, affectingLocationGlobs := p.getModuleResolutionWatchGlobs()
 
-		p.watchedGlobs = globs
-		if len(globs) > 0 {
-			watchers := make([]lsproto.FileSystemWatcher, len(globs))
-			kind := lsproto.WatchKindChange | lsproto.WatchKindDelete | lsproto.WatchKindCreate
-			for i, glob := range globs {
-				watchers[i] = lsproto.FileSystemWatcher{
-					GlobPattern: lsproto.GlobPattern{
-						Pattern: &glob,
-					},
-					Kind: &kind,
-				}
-			}
-			if watcherID, err := client.WatchFiles(watchers); err != nil {
-				p.log(fmt.Sprintf("Failed to watch files: %v", err))
-			} else {
-				p.watcherID = watcherID
-			}
-		}
+	if updated, err := p.rootFilesWatch.update(rootFileGlobs); err != nil {
+		p.log(fmt.Sprintf("Failed to update root file watch: %v", err))
+	} else if updated {
+		p.log("Root file watches updated:\n" + formatFileList(rootFileGlobs, "\t", hr))
+	}
+
+	if updated, err := p.failedLookupsWatch.update(failedLookupGlobs); err != nil {
+		p.log(fmt.Sprintf("Failed to update failed lookup watch: %v", err))
+	} else if updated {
+		p.log("Failed lookup watches updated:\n" + formatFileList(p.failedLookupsWatch.globs, "\t", hr))
+	}
+
+	if updated, err := p.affectingLocationsWatch.update(affectingLocationGlobs); err != nil {
+		p.log(fmt.Sprintf("Failed to update affecting location watch: %v", err))
+	} else if updated {
+		p.log("Affecting location watches updated:\n" + formatFileList(p.affectingLocationsWatch.globs, "\t", hr))
 	}
 }
 
-func (p *Project) onWatchedFileCreated(fileName string) {
+// onWatchEventForNilScriptInfo is fired for watch events that are not the
+// project tsconfig, and do not have a ScriptInfo for the associated file.
+// This could be a case of one of the following:
+//   - A file is being created that will be added to the project.
+//   - An affecting location was changed.
+//   - A file is being created that matches a watch glob, but is not actually
+//     part of the project, e.g., a .js file in a project without --allowJs.
+func (p *Project) onWatchEventForNilScriptInfo(fileName string) {
+	path := p.toPath(fileName)
 	if p.kind == KindConfigured {
-		if p.rootFileNames.Has(p.toPath(fileName)) || p.parsedCommandLine.MatchesFileName(fileName, p.comparePathsOptions) {
+		if p.rootFileNames.Has(path) || p.parsedCommandLine.MatchesFileName(fileName, p.comparePathsOptions) {
 			p.pendingConfigReload = true
 			p.markAsDirty()
+			return
 		}
+	}
+
+	if _, ok := p.failedLookupsWatch.data[path]; ok {
+		p.markAsDirty()
+	} else if _, ok := p.affectingLocationsWatch.data[path]; ok {
+		p.markAsDirty()
 	}
 }
 
@@ -533,7 +576,7 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 			// if writeFileExplanation {}
 		}
 	}
-	builder.WriteString("-----------------------------------------------")
+	builder.WriteString(hr)
 	return builder.String()
 }
 
@@ -547,4 +590,20 @@ func (p *Project) logf(format string, args ...interface{}) {
 
 func (p *Project) Close() {
 	// !!!
+}
+
+func formatFileList(files []string, linePrefix string, groupSuffix string) string {
+	var builder strings.Builder
+	length := len(groupSuffix)
+	for _, file := range files {
+		length += len(file) + len(linePrefix) + 1
+	}
+	builder.Grow(length)
+	for _, file := range files {
+		builder.WriteString(linePrefix)
+		builder.WriteString(file)
+		builder.WriteRune('\n')
+	}
+	builder.WriteString(groupSuffix)
+	return builder.String()
 }
