@@ -2586,6 +2586,18 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 	typeNode := p.parseNonArrayType()
 	for !p.hasPrecedingLineBreak() {
 		switch p.token {
+		case ast.KindExclamationToken:
+			p.nextToken()
+			typeNode = p.factory.NewJSDocNonNullableType(typeNode)
+			p.finishNode(typeNode, pos)
+		case ast.KindQuestionToken:
+			// If next token is start of a type we have a conditional type
+			if p.lookAhead((*Parser).nextIsStartOfType) {
+				return typeNode
+			}
+			p.nextToken()
+			typeNode = p.factory.NewJSDocNullableType(typeNode)
+			p.finishNode(typeNode, pos)
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
 			if p.isStartOfType(false /*isStartOfParameter*/) {
@@ -3551,11 +3563,11 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		return result
 	}
 	typeNode := p.parseType()
-	// If next token is start of a type we have a conditional type and not an optional type
-	if p.token == ast.KindQuestionToken && !p.lookAhead((*Parser).nextIsStartOfType) {
-		p.nextToken()
-		typeNode = p.factory.NewOptionalTypeNode(typeNode)
-		p.finishNode(typeNode, pos)
+	if ast.IsJSDocNullableType(typeNode) && typeNode.Pos() == typeNode.Type().Pos() {
+		node := p.factory.NewOptionalTypeNode(typeNode.Type())
+		node.Flags = typeNode.Flags
+		node.Loc = typeNode.Loc
+		return node
 	}
 	return typeNode
 }
