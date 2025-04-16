@@ -5011,12 +5011,11 @@ func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
 	case ast.KindVoidKeyword:
 		return p.parseVoidExpression()
 	case ast.KindLessThanToken:
-		// !!!
-		// // Just like in parseUpdateExpression, we need to avoid parsing type assertions when
-		// // in JSX and we see an expression like "+ <foo> bar".
-		// if (languageVariant == core.LanguageVariant.JSX) {
-		// 	return parseJsxElementOrSelfClosingElementOrFragment(/*inExpressionContext*/ true, /*topInvalidNodePosition*/ undefined, /*openingTag*/ undefined, /*mustBeUnary*/ true);
-		// }
+		// Just like in parseUpdateExpression, we need to avoid parsing type assertions when
+		// in JSX and we see an expression like "+ <foo> bar".
+		if p.languageVariant == core.LanguageVariantJSX {
+			return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, true /*mustBeUnary*/)
+		}
 		// // This is modified UnaryExpression grammar in TypeScript
 		// //  UnaryExpression (modified):
 		// //      < type > UnaryExpression
