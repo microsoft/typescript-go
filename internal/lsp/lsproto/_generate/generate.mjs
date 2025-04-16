@@ -591,8 +591,7 @@ function generateCode() {
             .join("");
 
         if (!request.params) {
-            // For requests without params (like shutdown), use any type
-            writeLine(`\tMethod${methodName}: unmarshallerFor[any],`);
+            writeLine(`\tMethod${methodName}: emptyUnmarshaller,`);
             continue;
         }
         let typeName;

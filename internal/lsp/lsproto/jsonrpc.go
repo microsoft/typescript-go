@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 )
 
 type JSONRPCVersion struct{}
@@ -73,15 +72,6 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 
 	r.ID = raw.ID
 	r.Method = raw.Method
-	if r.Method == MethodShutdown || r.Method == MethodExit {
-		// These methods have no params.
-		return nil
-	}
-
-	if strings.HasPrefix(string(r.Method), "@ts/") {
-		r.Params = raw.Params
-		return nil
-	}
 
 	var params any
 	var err error
@@ -112,4 +102,11 @@ type ResponseError struct {
 	Code    int32  `json:"code"`
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
+}
+
+func emptyUnmarshaller(data []byte) (any, error) {
+	if len(data) != 0 {
+		return nil, fmt.Errorf("%w: %s", ErrInvalidRequest, string(data))
+	}
+	return nil, nil
 }
