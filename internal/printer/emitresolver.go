@@ -3,7 +3,26 @@ package printer
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
+	"github.com/microsoft/typescript-go/internal/evaluator"
+	"github.com/microsoft/typescript-go/internal/nodebuilder"
 )
+
+type SymbolAccessibility int32
+
+const (
+	SymbolAccessibilityAccessible SymbolAccessibility = iota
+	SymbolAccessibilityNotAccessible
+	SymbolAccessibilityCannotBeNamed
+	SymbolAccessibilityNotResolved
+)
+
+type SymbolAccessibilityResult struct {
+	Accessibility        SymbolAccessibility
+	AliasesToMakeVisible []*ast.Node // aliases that need to have this symbol visible
+	ErrorSymbolName      string      // Optional - symbol name that results in error
+	ErrorNode            *ast.Node   // Optional - node that results in error
+	ErrorModuleName      string      // Optional - If the symbol is not visible from module, module's name
+}
 
 type EmitResolver interface {
 	binder.ReferenceResolver
@@ -12,4 +31,19 @@ type EmitResolver interface {
 	IsTopLevelValueImportEqualsWithEntityName(node *ast.Node) bool
 	MarkLinkedReferencesRecursively(file *ast.SourceFile)
 	GetExternalModuleFileFromDeclaration(node *ast.Node) *ast.SourceFile
+
+	// declaration emit checker functionality projections
+	IsSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasToMarkVisible bool) SymbolAccessibilityResult
+	IsEntityNameVisible(entityName *ast.Node, enclosingDeclaration *ast.Node) SymbolAccessibilityResult // previously SymbolVisibilityResult in strada - ErrorModuleName never set
+	IsExpandoFunctionDeclaration(node *ast.Node) bool
+	IsLiteralConstDeclaration(node *ast.Node) bool
+	RequiresAddingImplicitUndefined(node *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool
+	IsDeclarationVisible(node *ast.Node) bool
+	IsImportRequiredByAugmentation(decl *ast.ImportDeclaration) bool
+	IsImplementationOfOverload(node *ast.SignatureDeclaration) bool
+	GetEnumMemberValue(node *ast.Node) evaluator.Result
+
+	// Node construction for declaration emit
+	CreateTypeOfDeclaration(emitContext *EmitContext, declaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	CreateReturnTypeOfSignatureDeclaration(emitContext *EmitContext, signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 }

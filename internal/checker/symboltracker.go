@@ -1,33 +1,17 @@
 package checker
 
-import "github.com/microsoft/typescript-go/internal/ast"
-
-// TODO: previously all symboltracker methods were optional, but now they're required.
-type SymbolTracker interface {
-	GetModuleSpecifierGenerationHost() any // !!!
-
-	TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool
-	ReportInaccessibleThisError()
-	ReportPrivateInBaseOfClassExpression(propertyName string)
-	ReportInaccessibleUniqueSymbolError()
-	ReportCyclicStructureError()
-	ReportLikelyUnsafeImportRequiredError(specifier string)
-	ReportTruncationError()
-	ReportNonlocalAugmentation(containingFile *ast.SourceFile, parentSymbol *ast.Symbol, augmentingSymbol *ast.Symbol)
-	ReportNonSerializableProperty(propertyName string)
-
-	ReportInferenceFallback(node *ast.Node)
-	PushErrorFallbackNode(node *ast.Node)
-	PopErrorFallbackNode()
-}
+import (
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/nodebuilder"
+)
 
 type SymbolTrackerImpl struct {
 	context            NodeBuilderContext
-	inner              SymbolTracker
+	inner              nodebuilder.SymbolTracker
 	DisableTrackSymbol bool
 }
 
-func NewSymbolTrackerImpl(context NodeBuilderContext, tracker SymbolTracker) *SymbolTrackerImpl {
+func NewSymbolTrackerImpl(context NodeBuilderContext, tracker nodebuilder.SymbolTracker) *SymbolTrackerImpl {
 	// TODO: unwrap `tracker` before setting `inner`
 	return &SymbolTrackerImpl{context, tracker, false}
 }

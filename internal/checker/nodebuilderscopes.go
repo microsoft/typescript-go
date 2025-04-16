@@ -3,6 +3,7 @@ package checker
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/nodebuilder"
 )
 
 func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
@@ -203,7 +204,7 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 			})
 		}
 
-		if b.ctx.flags&NodeBuilderFlagsGenerateNamesForShadowedTypeParams != 0 && typeParameters != nil && core.Some(*typeParameters, func(p *Type) bool { return p != nil }) {
+		if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 && typeParameters != nil && core.Some(*typeParameters, func(p *Type) bool { return p != nil }) {
 			cleanupTypeParams = pushFakeScope("typeParams", func(add func(name string, symbol *ast.Symbol)) {
 				if typeParameters == nil {
 					return

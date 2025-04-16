@@ -465,11 +465,6 @@ func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func getExternalModuleImportEqualsDeclarationExpression(node *ast.Node) *ast.Node {
-	// Debug.assert(isExternalModuleImportEqualsDeclaration(node))
-	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
-}
-
 func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
 	parent := node.Parent
 	switch parent.Kind {
@@ -2156,4 +2151,14 @@ func allDeclarationsInSameSourceFile(symbol *ast.Symbol) bool {
 		}
 	}
 	return true
+}
+
+func containsNonMissingUndefinedType(c *Checker, t *Type) bool {
+	var candidate *Type
+	if t.flags&TypeFlagsUnion != 0 {
+		candidate = t.AsUnionType().types[0]
+	} else {
+		candidate = t
+	}
+	return candidate.flags&TypeFlagsUndefined != 0 && candidate != c.missingType
 }

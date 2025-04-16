@@ -3023,12 +3023,12 @@ func (c *Checker) checkTemplateLiteralType(node *ast.Node) {
 func (c *Checker) checkImportType(node *ast.Node) {
 	c.checkSourceElement(node.AsImportTypeNode().Argument)
 	if attributes := node.AsImportTypeNode().Attributes; attributes != nil {
-		c.getResolutionModeOverride(attributes.AsImportAttributes(), true /*reportErrors*/)
+		c.GetResolutionModeOverride(attributes.AsImportAttributes(), true /*reportErrors*/)
 	}
 	c.checkTypeReferenceOrImport(node)
 }
 
-func (c *Checker) getResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
+func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
 	if len(node.Attributes.Nodes) != 1 {
 		if reportErrors {
 			c.grammarErrorOnNode(node.AsNode(), core.IfElse(node.Token == ast.KindWithKeyword,
@@ -3194,17 +3194,17 @@ func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
 		// deviations, we XOR someOverloadFlags with allOverloadFlags
 		someButNotAllOverloadFlags := someOverloadFlags ^ allOverloadFlags
 		if someButNotAllOverloadFlags != 0 {
-			canonicalFlags := c.getEffectiveDeclarationFlags(getCanonicalOverload(overloads, implementation), flagsToCheck)
+			canonicalFlags := c.GetEffectiveDeclarationFlags(getCanonicalOverload(overloads, implementation), flagsToCheck)
 			groups := make(map[*ast.SourceFile][]*ast.Node)
 			for _, overload := range overloads {
 				sourceFile := ast.GetSourceFileOfNode(overload)
 				groups[sourceFile] = append(groups[sourceFile], overload)
 			}
 			for _, overloadsInFile := range groups {
-				canonicalFlagsForFile := c.getEffectiveDeclarationFlags(getCanonicalOverload(overloadsInFile, implementation), flagsToCheck)
+				canonicalFlagsForFile := c.GetEffectiveDeclarationFlags(getCanonicalOverload(overloadsInFile, implementation), flagsToCheck)
 				for _, overload := range overloadsInFile {
-					deviation := c.getEffectiveDeclarationFlags(overload, flagsToCheck) ^ canonicalFlags
-					deviationInFile := c.getEffectiveDeclarationFlags(overload, flagsToCheck) ^ canonicalFlagsForFile
+					deviation := c.GetEffectiveDeclarationFlags(overload, flagsToCheck) ^ canonicalFlags
+					deviationInFile := c.GetEffectiveDeclarationFlags(overload, flagsToCheck) ^ canonicalFlagsForFile
 					switch {
 					case deviationInFile&ast.ModifierFlagsExport != 0:
 						// Overloads in different files need not all have export modifiers. This is ok:
@@ -3314,7 +3314,7 @@ func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
 		}
 		if ast.IsFunctionDeclaration(node) || ast.IsMethodDeclaration(node) || ast.IsMethodSignatureDeclaration(node) || ast.IsConstructorDeclaration(node) {
 			functionDeclarations = append(functionDeclarations, node)
-			currentNodeFlags := c.getEffectiveDeclarationFlags(node, flagsToCheck)
+			currentNodeFlags := c.GetEffectiveDeclarationFlags(node, flagsToCheck)
 			someNodeFlags |= currentNodeFlags
 			allNodeFlags &= currentNodeFlags
 			someHaveQuestionToken = someHaveQuestionToken || isOptionalDeclaration(node)
@@ -3393,7 +3393,7 @@ func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
 	}
 }
 
-func (c *Checker) getEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
+func (c *Checker) GetEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
 	flags := c.getCombinedModifierFlagsCached(n)
 	// children of classes (even ambient classes) should not be marked as ambient or export
 	// because those flags have no useful semantics there.
@@ -5005,7 +5005,7 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 		c.checkTypeAssignableTo(c.getTypeFromImportAttributes(node), c.getNullableType(importAttributesType, TypeFlagsUndefined), node, nil)
 	}
 	isTypeOnly := isTypeOnlyImportOrExportDeclaration(declaration)
-	override := c.getResolutionModeOverride(node.AsImportAttributes(), isTypeOnly)
+	override := c.GetResolutionModeOverride(node.AsImportAttributes(), isTypeOnly)
 	isImportAttributes := node.AsImportAttributes().Token == ast.KindWithKeyword
 	if isTypeOnly && override != core.ResolutionModeNone {
 		return // Other grammar checks do not apply to type-only imports with resolution mode assertions
@@ -6385,7 +6385,7 @@ func (c *Checker) checkExportsOnMergedDeclarations(node *ast.Node) {
 	defaultExportedDeclarationSpaces := DeclarationSpacesNone
 	for _, d := range symbol.Declarations {
 		declarationSpaces := c.getDeclarationSpaces(d)
-		effectiveDeclarationFlags := c.getEffectiveDeclarationFlags(d, ast.ModifierFlagsExport|ast.ModifierFlagsDefault)
+		effectiveDeclarationFlags := c.GetEffectiveDeclarationFlags(d, ast.ModifierFlagsExport|ast.ModifierFlagsDefault)
 		if effectiveDeclarationFlags&ast.ModifierFlagsExport != 0 {
 			if effectiveDeclarationFlags&ast.ModifierFlagsDefault != 0 {
 				defaultExportedDeclarationSpaces |= declarationSpaces
@@ -13562,7 +13562,7 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node, dontResolve
 	if ast.IsVariableDeclaration(node) || node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference {
 		moduleReference := getExternalModuleRequireArgument(node)
 		if moduleReference == nil {
-			moduleReference = getExternalModuleImportEqualsDeclarationExpression(node)
+			moduleReference = ast.GetExternalModuleImportEqualsDeclarationExpression(node)
 		}
 		immediate := c.resolveExternalModuleName(node, moduleReference, false /*ignoreErrors*/)
 		resolved := c.resolveExternalModuleSymbol(immediate, false /*dontResolveAlias*/)
@@ -29359,7 +29359,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		// 1). import x = require("./mo/*gotToDefinitionHere*/d")
 		// 2). External module name in an import declaration
 		// 4). type A = import("./f/*gotToDefinitionHere*/oo")
-		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && getExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
+		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && ast.GetExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
 			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindExportDeclaration) && parent.AsImportDeclaration().ModuleSpecifier == node) ||
 			(ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(grandParent) && grandParent.AsImportTypeNode().Argument == parent) {
 			return c.resolveExternalModuleName(node, node, ignoreErrors)

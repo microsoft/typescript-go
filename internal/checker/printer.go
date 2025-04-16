@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -38,8 +39,8 @@ func (c *Checker) TypeToString(type_ *Type) string {
 	return c.typeToStringEx(type_, nil, TypeFormatFlagsNone, nil)
 }
 
-func toNodeBuilderFlags(flags TypeFormatFlags) NodeBuilderFlags {
-	return NodeBuilderFlags(flags & TypeFormatFlagsNodeBuilderFlagsMask)
+func toNodeBuilderFlags(flags TypeFormatFlags) nodebuilder.Flags {
+	return nodebuilder.Flags(flags & TypeFormatFlagsNodeBuilderFlagsMask)
 }
 
 func (c *Checker) typeToStringEx(type_ *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
@@ -47,11 +48,11 @@ func (c *Checker) typeToStringEx(type_ *Type, enclosingDeclaration *ast.Node, fl
 		writer = printer.NewTextWriter("")
 	}
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
-	combinedFlags := toNodeBuilderFlags(flags) | NodeBuilderFlagsIgnoreErrors
+	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors
 	if noTruncation {
-		combinedFlags = combinedFlags | NodeBuilderFlagsNoTruncation
+		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
 	}
-	typeNode := c.nodeBuilder.typeToTypeNode(type_, enclosingDeclaration, combinedFlags, InternalNodeBuilderFlagsNone, nil)
+	typeNode := c.nodeBuilder.typeToTypeNode(type_, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	if typeNode == nil {
 		panic("should always get typenode")
 	}
@@ -94,22 +95,22 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 		writer = printer.SingleLineStringWriter
 	}
 
-	nodeFlags := NodeBuilderFlagsIgnoreErrors
-	internalNodeFlags := InternalNodeBuilderFlagsNone
+	nodeFlags := nodebuilder.FlagsIgnoreErrors
+	internalNodeFlags := nodebuilder.InternalFlagsNone
 	if flags&SymbolFormatFlagsUseOnlyExternalAliasing != 0 {
-		nodeFlags |= NodeBuilderFlagsUseOnlyExternalAliasing
+		nodeFlags |= nodebuilder.FlagsUseOnlyExternalAliasing
 	}
 	if flags&SymbolFormatFlagsWriteTypeParametersOrArguments != 0 {
-		nodeFlags |= NodeBuilderFlagsWriteTypeParametersInQualifiedName
+		nodeFlags |= nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	}
 	if flags&SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope != 0 {
-		nodeFlags |= NodeBuilderFlagsUseAliasDefinedOutsideCurrentScope
+		nodeFlags |= nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
 	}
 	if flags&SymbolFormatFlagsDoNotIncludeSymbolChain != 0 {
-		internalNodeFlags |= InternalNodeBuilderFlagsDoNotIncludeSymbolChain
+		internalNodeFlags |= nodebuilder.InternalFlagsDoNotIncludeSymbolChain
 	}
 	if flags&SymbolFormatFlagsWriteComputedProps != 0 {
-		internalNodeFlags |= InternalNodeBuilderFlagsWriteComputedProps
+		internalNodeFlags |= nodebuilder.InternalFlagsWriteComputedProps
 	}
 
 	var sourceFile *ast.SourceFile
@@ -131,7 +132,7 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 		printer_ = createPrinterWithRemoveComments()
 	}
 
-	var builder func(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags NodeBuilderFlags, internalFlags InternalNodeBuilderFlags, tracker SymbolTracker) *ast.Node
+	var builder func(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 	if flags&SymbolFormatFlagsAllowAnyNodeKind != 0 {
 		builder = c.nodeBuilder.symbolToNode
 	} else {
@@ -164,8 +165,8 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 	if writer == nil {
 		writer = printer.SingleLineStringWriter
 	}
-	combinedFlags := toNodeBuilderFlags(flags) | NodeBuilderFlagsIgnoreErrors | NodeBuilderFlagsWriteTypeParametersInQualifiedName
-	sig := c.nodeBuilder.signatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, InternalNodeBuilderFlagsNone, nil)
+	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
+	sig := c.nodeBuilder.signatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	printer_ := createPrinterWithRemoveCommentsOmitTrailingSemicolon()
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
@@ -191,8 +192,8 @@ func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosin
 	if writer == nil {
 		writer = printer.SingleLineStringWriter
 	}
-	combinedFlags := toNodeBuilderFlags(flags) | NodeBuilderFlagsIgnoreErrors | NodeBuilderFlagsWriteTypeParametersInQualifiedName
-	predicate := c.nodeBuilder.typePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, InternalNodeBuilderFlagsNone, nil) // TODO: GH#18217
+	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
+	predicate := c.nodeBuilder.typePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil) // TODO: GH#18217
 	printer_ := createPrinterWithRemoveComments()
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {

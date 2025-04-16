@@ -1,22 +1,9 @@
 package checker
 
-import "github.com/microsoft/typescript-go/internal/ast"
-
-type SymbolAccessibility int32
-
-const (
-	SymbolAccessibilityAccessible SymbolAccessibility = iota
-	SymbolAccessibilityNotAccessible
-	SymbolAccessibilityCannotBeNamed
-	SymbolAccessibilityNotResolved
+import (
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/printer"
 )
-
-type SymbolAccessibilityResult struct {
-	accessibility        SymbolAccessibility
-	aliasesToMakeVisible []*ast.Node // aliases that need to have this symbol visible
-	errorSymbolName      string      // Optional symbol name that results in error
-	errorNode            *ast.Node   // optional node that results in error
-}
 
 func (ch *Checker) IsTypeSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
 	return false // !!!
@@ -35,11 +22,11 @@ func (ch *Checker) IsValueSymbolAccessible(symbol *ast.Symbol, enclosingDeclarat
  * @param shouldComputeAliasToMakeVisible a boolean value to indicate whether to return aliases to be mark visible in case the symbol is accessible
  */
 
-func (c *Checker) IsSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasesToMakeVisible bool) SymbolAccessibilityResult {
+func (c *Checker) IsSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasesToMakeVisible bool) printer.SymbolAccessibilityResult {
 	return c.isSymbolAccessibleWorker(symbol, enclosingDeclaration, meaning, shouldComputeAliasesToMakeVisible, true /*allowModules*/)
 }
 
-func (c *Checker) isSymbolAccessibleWorker(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasesToMakeVisible bool, allowModules bool) SymbolAccessibilityResult {
+func (c *Checker) isSymbolAccessibleWorker(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasesToMakeVisible bool, allowModules bool) printer.SymbolAccessibilityResult {
 	// if symbol != nil && enclosingDeclaration != nil {
 	// 	result := c.isAnySymbolAccessible([]*ast.Symbol{symbol}, enclosingDeclaration, symbol, meaning, shouldComputeAliasesToMakeVisible, allowModules)
 	// 	if result != nil {
@@ -72,5 +59,5 @@ func (c *Checker) isSymbolAccessibleWorker(symbol *ast.Symbol, enclosingDeclarat
 	// return SymbolAccessibilityResult{
 	// 	accessibility: SymbolAccessibilityAccessible,
 	// }
-	return SymbolAccessibilityResult{} // !!!
+	return printer.SymbolAccessibilityResult{} // !!!
 }

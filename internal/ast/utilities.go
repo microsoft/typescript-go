@@ -2639,3 +2639,58 @@ func getPragmaArgument(pragma *Pragma, name string) string {
 	}
 	return ""
 }
+
+func GetExternalModuleImportEqualsDeclarationExpression(node *Node) *Node {
+	// Debug.assert(isExternalModuleImportEqualsDeclaration(node))
+	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
+}
+
+func CreateModifiersFromModifierFlags(flags ModifierFlags, createModifier func(kind Kind) *Node) []*Node {
+	var result []*Node
+	if flags&ModifierFlagsExport != 0 {
+		result = append(result, createModifier(KindExportKeyword))
+	}
+	if flags&ModifierFlagsAmbient != 0 {
+		result = append(result, createModifier(KindDeclareKeyword))
+	}
+	if flags&ModifierFlagsDefault != 0 {
+		result = append(result, createModifier(KindDefaultKeyword))
+	}
+	if flags&ModifierFlagsConst != 0 {
+		result = append(result, createModifier(KindConstKeyword))
+	}
+	if flags&ModifierFlagsPublic != 0 {
+		result = append(result, createModifier(KindPublicKeyword))
+	}
+	if flags&ModifierFlagsPrivate != 0 {
+		result = append(result, createModifier(KindPrivateKeyword))
+	}
+	if flags&ModifierFlagsProtected != 0 {
+		result = append(result, createModifier(KindProtectedKeyword))
+	}
+	if flags&ModifierFlagsAbstract != 0 {
+		result = append(result, createModifier(KindAbstractKeyword))
+	}
+	if flags&ModifierFlagsStatic != 0 {
+		result = append(result, createModifier(KindStaticKeyword))
+	}
+	if flags&ModifierFlagsOverride != 0 {
+		result = append(result, createModifier(KindOverrideKeyword))
+	}
+	if flags&ModifierFlagsReadonly != 0 {
+		result = append(result, createModifier(KindReadonlyKeyword))
+	}
+	if flags&ModifierFlagsAccessor != 0 {
+		result = append(result, createModifier(KindAccessorKeyword))
+	}
+	if flags&ModifierFlagsAsync != 0 {
+		result = append(result, createModifier(KindAsyncKeyword))
+	}
+	if flags&ModifierFlagsIn != 0 {
+		result = append(result, createModifier(KindInKeyword))
+	}
+	if flags&ModifierFlagsOut != 0 {
+		result = append(result, createModifier(KindOutKeyword))
+	}
+	return result
+}
