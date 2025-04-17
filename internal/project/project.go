@@ -279,10 +279,12 @@ func (p *Project) updateWatchers() {
 	rootFileGlobs := p.getRootFileWatchGlobs()
 	failedLookupGlobs, affectingLocationGlobs := p.getModuleResolutionWatchGlobs()
 
-	if updated, err := p.rootFilesWatch.update(rootFileGlobs); err != nil {
-		p.log(fmt.Sprintf("Failed to update root file watch: %v", err))
-	} else if updated {
-		p.log("Root file watches updated:\n" + formatFileList(rootFileGlobs, "\t", hr))
+	if rootFileGlobs != nil {
+		if updated, err := p.rootFilesWatch.update(rootFileGlobs); err != nil {
+			p.log(fmt.Sprintf("Failed to update root file watch: %v", err))
+		} else if updated {
+			p.log("Root file watches updated:\n" + formatFileList(rootFileGlobs, "\t", hr))
+		}
 	}
 
 	if updated, err := p.failedLookupsWatch.update(failedLookupGlobs); err != nil {
