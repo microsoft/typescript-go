@@ -206,13 +206,7 @@ function handleOrType(orType) {
             type.kind === "array" &&
             (type.element.kind === "reference" || type.element.kind === "base")
         ) {
-            return `${
-                titleCase(
-                    type.element.kind === "reference"
-                        ? type.element.name
-                        : type.element.name,
-                )
-            }s`;
+            return `${titleCase(type.element.name)}s`;
         }
         else if (type.kind === "literal" && type.value.properties.length === 0) {
             return "EmptyObject";
