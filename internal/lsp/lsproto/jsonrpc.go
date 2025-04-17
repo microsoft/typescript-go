@@ -73,17 +73,8 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 	r.ID = raw.ID
 	r.Method = raw.Method
 
-	var params any
 	var err error
-
-	if unmarshalParams, ok := unmarshallers[raw.Method]; ok {
-		params, err = unmarshalParams(raw.Params)
-	} else {
-		// Fall back to default; it's probably an unknown message and we will probably not handle it.
-		err = json.Unmarshal(raw.Params, &params)
-	}
-	r.Params = params
-
+	r.Params, err = unmarshalParams(raw.Method, raw.Params)
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
 	}

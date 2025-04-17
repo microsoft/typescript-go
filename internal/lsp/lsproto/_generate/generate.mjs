@@ -576,13 +576,10 @@ function generateCode() {
         typeInfo.generatedTypes.add(typeAlias.name);
     }
 
-    // Generate unmarshallers
-    writeLine("// Unmarshallers\n");
-
-    // Note: The unmarshallerFor function already exists in lsp.go, so we don't generate it
-
-    // The unmarshallers map is expected by jsonrpc.go
-    writeLine("var unmarshallers = map[Method]func([]byte) (any, error){");
+    // Generate unmarshalParams function
+    writeLine("// unmarshalParams maps LSP methods to their parameter unmarshalling functions.");
+    writeLine("func unmarshalParams(method Method, data []byte) (any, error) {");
+    writeLine("\tswitch method {");
 
     // Client-to-server requests
     for (const request of model.requests) {
@@ -591,7 +588,8 @@ function generateCode() {
             .join("");
 
         if (!request.params) {
-            writeLine(`\tMethod${methodName}: emptyUnmarshaller,`);
+            writeLine(`\tcase Method${methodName}:`);
+            writeLine(`\t\treturn emptyUnmarshaller(data)`);
             continue;
         }
         let typeName;
@@ -607,7 +605,8 @@ function generateCode() {
             typeName = resolvedType.name;
         }
 
-        writeLine(`\tMethod${methodName}: unmarshallerFor[${typeName}],`);
+        writeLine(`\tcase Method${methodName}:`);
+        writeLine(`\t\treturn unmarshallerFor[${typeName}](data)`);
     }
 
     // Client-to-server notifications
@@ -617,8 +616,8 @@ function generateCode() {
             .join("");
 
         if (!notification.params) {
-            // For notifications without params (like exit), use any type
-            writeLine(`\tMethod${methodName}: unmarshallerFor[any],`);
+            writeLine(`\tcase Method${methodName}:`);
+            writeLine(`\t\treturn emptyUnmarshaller(data)`);
             continue;
         }
         let typeName;
@@ -634,9 +633,15 @@ function generateCode() {
             typeName = resolvedType.name;
         }
 
-        writeLine(`\tMethod${methodName}: unmarshallerFor[${typeName}],`);
+        writeLine(`\tcase Method${methodName}:`);
+        writeLine(`\t\treturn unmarshallerFor[${typeName}](data)`);
     }
 
+    writeLine("\tdefault:");
+    writeLine(`\t\tvar v any`);
+    writeLine(`\t\terr := json.Unmarshal(data, &v)`);
+    writeLine(`\t\treturn v, err`);
+    writeLine("\t}");
     writeLine("}");
     writeLine("");
 

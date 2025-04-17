@@ -40,7 +40,7 @@ func (n *Nullable[T]) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &n.Value)
 }
 
-func unmarshallerFor[T any](data []byte) (any, error) {
+func unmarshallerFor[T any](data []byte) (*T, error) {
 	var v T
 	if err := json.Unmarshal(data, &v); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal %T: %w", (*T)(nil), err)
