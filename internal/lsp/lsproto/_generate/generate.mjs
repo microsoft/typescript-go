@@ -37,7 +37,6 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @property {Map<string, GoType>} types - Map of type names to types
  * @property {Map<string, string>} literalTypes - Map from literal values to type names
  * @property {Map<string, {name: string, type: Type}[]>} unionTypes - Map of union type names to their component types
- * @property {Map<string, {value: string; identifier: string, documentation: string | undefined, deprecated: string| undefined}[]>} enumValuesByType - Map of enum type names to their values
  */
 
 /**
@@ -47,7 +46,6 @@ const typeInfo = {
     types: new Map(),
     literalTypes: new Map(),
     unionTypes: new Map(),
-    enumValuesByType: new Map(),
 };
 
 /**
@@ -234,16 +232,6 @@ function collectTypeDefinitions() {
             name: enumeration.name,
             needsPointer: false,
         });
-
-        const enumValues = enumeration.values.map(value => ({
-            value: String(value.value),
-            identifier: `${enumeration.name}${value.name}`,
-            documentation: value.documentation,
-            deprecated: value.deprecated,
-        }));
-
-        // Store the map of values for this enum
-        typeInfo.enumValuesByType.set(enumeration.name, enumValues);
     }
 
     const valueTypes = new Set([
@@ -426,10 +414,13 @@ function generateCode() {
         writeLine("");
 
         // Get the pre-processed enum entries map that avoids duplicates
-        const enumValues = typeInfo.enumValuesByType.get(enumeration.name);
-        if (!enumValues || !enumValues.length) {
-            continue; // Skip if no entries (shouldn't happen)
-        }
+
+        const enumValues = enumeration.values.map(value => ({
+            value: String(value.value),
+            identifier: `${enumeration.name}${value.name}`,
+            documentation: value.documentation,
+            deprecated: value.deprecated,
+        }));
 
         writeLine("const (");
 
