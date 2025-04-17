@@ -41,7 +41,6 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @property {Map<string, GoType>} types - Map of type names to types
  * @property {Map<string, string>} literalTypes - Map from literal values to type names
  * @property {Map<string, {name: string, type: Type}[]>} unionTypes - Map of union type names to their component types
- * @property {Set<string>} generatedTypes - Set of types that have been generated
  * @property {Map<string, {value: string; identifier: string, documentation: string | undefined, deprecated: string| undefined}[]>} enumValuesByType - Map of enum type names to their values
  */
 
@@ -52,7 +51,6 @@ const typeInfo = {
     types: new Map(),
     literalTypes: new Map(),
     unionTypes: new Map(),
-    generatedTypes: new Set(),
     enumValuesByType: new Map(),
 };
 
@@ -540,8 +538,6 @@ function generateCode() {
         const resolvedType = typeAlias.name === "LSPAny" ? { name: "any", needsPointer: false } : resolveType(typeAlias.type);
         writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
         writeLine("");
-
-        typeInfo.generatedTypes.add(typeAlias.name);
     }
 
     // Generate unmarshalParams function
@@ -610,11 +606,6 @@ function generateCode() {
     writeLine("// Union types\n");
 
     for (const [name, members] of typeInfo.unionTypes.entries()) {
-        // Skip if already generated
-        if (typeInfo.generatedTypes.has(name)) {
-            continue;
-        }
-
         writeLine(`type ${name} struct {`);
         const uniqueTypeFields = new Map(); // Maps type name -> field name
 
@@ -675,8 +666,6 @@ function generateCode() {
         writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
         writeLine(`}`);
         writeLine("");
-
-        typeInfo.generatedTypes.add(name);
     }
 
     // Generate literal types
