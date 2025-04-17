@@ -334,6 +334,13 @@ function writeLine(s = "") {
 }
 
 /**
+ * @param {string} name
+ */
+function methodNameIdentifier(name) {
+    return name.split("/").map(v => v === "$" ? "" : titleCase(v)).join("");
+}
+
+/**
  * Generate the Go code
  */
 function generateCode() {
@@ -352,9 +359,6 @@ function generateCode() {
 
     // Generate structures
     writeLine("// Structures\n");
-
-    // Keep track of generated types to avoid duplicates
-    const generatedTypes = new Set();
 
     for (const structure of model.structures) {
         write(formatDocumentation(structure.documentation));
@@ -395,8 +399,6 @@ function generateCode() {
 
         writeLine("}");
         writeLine("");
-
-        generatedTypes.add(structure.name);
     }
 
     // Generate enumerations
@@ -417,7 +419,7 @@ function generateCode() {
                 baseType = "uint32";
                 break;
             default:
-                baseType = "string";
+                throw new Error(`Unsupported enum type: ${enumeration.type.name}`);
         }
 
         writeLine(`type ${enumeration.name} ${baseType}`);
@@ -460,8 +462,6 @@ function generateCode() {
         writeLine(`\treturn nil`);
         writeLine(`}`);
         writeLine("");
-
-        generatedTypes.add(enumeration.name);
     }
 
     // Generate type aliases
@@ -482,9 +482,7 @@ function generateCode() {
 
     // Requests and notifications
     for (const request of (/** @type {Pick<Request, "method" | "params">[]} */ (model.requests)).concat(model.notifications)) {
-        const methodName = request.method.split("/")
-            .map(v => v === "$" ? "" : titleCase(v))
-            .join("");
+        const methodName = methodNameIdentifier(request.method);
 
         if (!request.params) {
             writeLine(`\tcase Method${methodName}:`);
@@ -514,9 +512,7 @@ function generateCode() {
     for (const request of model.requests) {
         write(formatDocumentation(request.documentation));
 
-        const methodName = request.method.split("/")
-            .map(v => v === "$" ? "" : titleCase(v))
-            .join("");
+        const methodName = methodNameIdentifier(request.method);
 
         writeLine(`\tMethod${methodName} Method = "${request.method}"`);
     }
@@ -528,9 +524,7 @@ function generateCode() {
     for (const notification of model.notifications) {
         write(formatDocumentation(notification.documentation));
 
-        const methodName = notification.method.split("/")
-            .map(v => v === "$" ? "" : titleCase(v))
-            .join("");
+        const methodName = methodNameIdentifier(notification.method);
 
         writeLine(`\tMethod${methodName} Method = "${notification.method}"`);
     }
@@ -607,11 +601,6 @@ function generateCode() {
     writeLine("// Literal types\n");
 
     for (const [value, name] of typeInfo.literalTypes.entries()) {
-        // Skip if already generated
-        if (generatedTypes.has(name)) {
-            continue;
-        }
-
         const jsonValue = JSON.stringify(value);
 
         writeLine(`// ${name} is a literal type for ${jsonValue}`);
@@ -630,8 +619,6 @@ function generateCode() {
         writeLine(`\treturn nil`);
         writeLine(`}`);
         writeLine("");
-
-        generatedTypes.add(name);
     }
 
     return parts.join("");
