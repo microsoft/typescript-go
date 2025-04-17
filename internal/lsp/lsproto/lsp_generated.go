@@ -6693,7 +6693,7 @@ type LSPArray = []LSPAny
 // optional as well.
 //
 // Since: 3.17.0
-type LSPAny any
+type LSPAny = any
 
 // The declaration of a symbol representation as one or many locations.
 type Declaration = LocationOrLocations

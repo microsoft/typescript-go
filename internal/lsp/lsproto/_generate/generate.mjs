@@ -7,7 +7,7 @@ import url from "node:url";
 import which from "which";
 
 /**
- * @import { MetaModel, OrType, Type, BaseTypes } from "./metaModelSchema.mts"
+ * @import { MetaModel, OrType, Type, BaseTypes, Request } from "./metaModelSchema.mts"
  */
 void 0;
 
@@ -95,18 +95,6 @@ function mapBaseTypeToGo(baseType) {
  * @returns {GoType}
  */
 function resolveType(type) {
-    // Special case for the LSP "any" type structure, which would normally become a complex union
-    if (
-        type.kind === "or" && type.items.length >= 6 &&
-        type.items.some(item => item.kind === "reference" && item.name === "LSPObject") &&
-        type.items.some(item => item.kind === "reference" && item.name === "LSPArray") &&
-        type.items.some(item => item.kind === "base" && item.name === "string") &&
-        type.items.some(item => item.kind === "base" && item.name === "integer") &&
-        type.items.some(item => item.kind === "base" && item.name === "boolean")
-    ) {
-        return { name: "LSPAny", needsPointer: false };
-    }
-
     switch (type.kind) {
         case "base":
             return mapBaseTypeToGo(type.name);
@@ -217,7 +205,7 @@ function handleOrType(orType) {
     // If it's nullable and only has one other type
     if (nullIndex !== -1) {
         if (types.length !== 2) {
-            throw new Error("Expected exactly two items in OR type for null handling");
+            throw new Error("Expected exactly two items in OR type for null handling: " + JSON.stringify(types));
         }
 
         const otherType = types[1 - nullIndex];
@@ -280,9 +268,6 @@ function handleOrType(orType) {
  * First pass: Resolve all type information
  */
 function collectTypeDefinitions() {
-    // Register built-in types
-    typeInfo.types.set("LSPAny", { name: "any", needsPointer: false });
-
     // Keep track of used enum identifiers across all enums to avoid conflicts
     const usedEnumIdentifiers = new Set();
 
@@ -349,7 +334,7 @@ function collectTypeDefinitions() {
 
     // Process all type aliases
     for (const typeAlias of model.typeAliases) {
-        const resolvedType = resolveType(typeAlias.type);
+        const resolvedType = typeAlias.name === "LSPAny" ? { name: "any", needsPointer: false } : resolveType(typeAlias.type);
 
         // Store the type with the alias name, but mark it as an alias
         // This is critical for resolving references to this type
@@ -552,13 +537,7 @@ function generateCode() {
     for (const typeAlias of model.typeAliases) {
         write(formatDocumentation(typeAlias.documentation));
 
-        if (typeAlias.name === "LSPAny") {
-            writeLine("type LSPAny any");
-            writeLine("");
-            continue;
-        }
-
-        const resolvedType = resolveType(typeAlias.type);
+        const resolvedType = typeAlias.name === "LSPAny" ? { name: "any", needsPointer: false } : resolveType(typeAlias.type);
         writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
         writeLine("");
 
@@ -570,8 +549,8 @@ function generateCode() {
     writeLine("func unmarshalParams(method Method, data []byte) (any, error) {");
     writeLine("\tswitch method {");
 
-    // Client-to-server requests
-    for (const request of model.requests) {
+    // Requests and notifications
+    for (const request of (/** @type {Pick<Request, "method" | "params">[]} */ (model.requests)).concat(model.notifications)) {
         const methodName = request.method.split("/")
             .map(v => v === "$" ? "" : titleCase(v))
             .join("");
@@ -581,49 +560,13 @@ function generateCode() {
             writeLine(`\t\treturn emptyUnmarshaller(data)`);
             continue;
         }
-        let typeName;
         if (Array.isArray(request.params)) {
-            // This shouldn't typically happen in the LSP spec
-            typeName = "any";
-        }
-        else if (request.params.kind === "reference") {
-            typeName = request.params.name;
-        }
-        else {
-            const resolvedType = resolveType(request.params);
-            typeName = resolvedType.name;
+            throw new Error("Unexpected array type for request params: " + JSON.stringify(request.params));
         }
 
+        const resolvedType = resolveType(request.params);
         writeLine(`\tcase Method${methodName}:`);
-        writeLine(`\t\treturn unmarshallerFor[${typeName}](data)`);
-    }
-
-    // Client-to-server notifications
-    for (const notification of model.notifications) {
-        const methodName = notification.method.split("/")
-            .map(v => v === "$" ? "" : titleCase(v))
-            .join("");
-
-        if (!notification.params) {
-            writeLine(`\tcase Method${methodName}:`);
-            writeLine(`\t\treturn emptyUnmarshaller(data)`);
-            continue;
-        }
-        let typeName;
-        if (Array.isArray(notification.params)) {
-            // This shouldn't typically happen in the LSP spec
-            typeName = "any";
-        }
-        else if (notification.params.kind === "reference") {
-            typeName = notification.params.name;
-        }
-        else {
-            const resolvedType = resolveType(notification.params);
-            typeName = resolvedType.name;
-        }
-
-        writeLine(`\tcase Method${methodName}:`);
-        writeLine(`\t\treturn unmarshallerFor[${typeName}](data)`);
+        writeLine(`\t\treturn unmarshallerFor[${resolvedType.name}](data)`);
     }
 
     writeLine("\tdefault:");
