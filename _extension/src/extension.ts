@@ -179,7 +179,7 @@ async function showQuickPickMenu(): Promise<void> {
         else if (selected.label.includes("Show TS Server Log")) {
             await vscode.commands.executeCommand("typescript-go.output.focus");
         }
-        else if (selected.label.includes("Show LSP Trace")) {
+        else if (selected.label.includes("Show LSP Messages")) {
             await vscode.commands.executeCommand("typescript-go.lsp-trace.focus");
         }
         else if (selected.label.includes("Disable TypeScript Go")) {
