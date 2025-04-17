@@ -223,7 +223,7 @@ func TestService(t *testing.T) {
 
 		t.Run("change open file", func(t *testing.T) {
 			t.Parallel()
-			service, host := setup(files)
+			service, host := projecttestutil.Setup(files)
 			service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
@@ -231,7 +231,7 @@ func TestService(t *testing.T) {
 
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
-			host.replaceFS(filesCopy)
+			host.ReplaceFS(filesCopy)
 			service.OnWatchedFilesChanged([]lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
@@ -244,14 +244,14 @@ func TestService(t *testing.T) {
 
 		t.Run("change closed program file", func(t *testing.T) {
 			t.Parallel()
-			service, host := setup(files)
+			service, host := projecttestutil.Setup(files)
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			programBefore := project.GetProgram()
 
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
-			host.replaceFS(filesCopy)
+			host.ReplaceFS(filesCopy)
 			service.OnWatchedFilesChanged([]lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
@@ -277,7 +277,7 @@ func TestService(t *testing.T) {
 					let y: number = x;`,
 			}
 
-			service, host := setup(files)
+			service, host := projecttestutil.Setup(files)
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			program := project.GetProgram()
@@ -290,7 +290,7 @@ func TestService(t *testing.T) {
 					"strict": true
 				}
 			}`
-			host.replaceFS(filesCopy)
+			host.ReplaceFS(filesCopy)
 			service.OnWatchedFilesChanged([]lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
@@ -314,7 +314,7 @@ func TestService(t *testing.T) {
 				"/home/projects/TS/p1/src/x.ts":     `export declare const x: number | undefined;`,
 				"/home/projects/TS/p1/src/index.ts": `import { x } from "./x";`,
 			}
-			service, host := setup(files)
+			service, host := projecttestutil.Setup(files)
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			program := project.GetProgram()
@@ -322,7 +322,7 @@ func TestService(t *testing.T) {
 
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/x.ts")
-			host.replaceFS(filesCopy)
+			host.ReplaceFS(filesCopy)
 			service.OnWatchedFilesChanged([]lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeDeleted,
@@ -347,7 +347,7 @@ func TestService(t *testing.T) {
 				"/home/projects/TS/p1/src/index.ts": `let x = 2;`,
 				"/home/projects/TS/p1/src/x.ts":     `let y = x;`,
 			}
-			service, host := setup(files)
+			service, host := projecttestutil.Setup(files)
 			service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/x.ts")
 			program := project.GetProgram()
@@ -355,7 +355,7 @@ func TestService(t *testing.T) {
 
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/index.ts")
-			host.replaceFS(filesCopy)
+			host.ReplaceFS(filesCopy)
 			service.OnWatchedFilesChanged([]lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeDeleted,
@@ -378,7 +378,7 @@ func TestService(t *testing.T) {
 				}`,
 				"/home/projects/TS/p1/src/index.ts": `import { y } from "./y";`,
 			}
-			service, host := setup(files)
+			service, host := projecttestutil.Setup(files)
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			program := project.GetProgram()
@@ -389,7 +389,7 @@ func TestService(t *testing.T) {
 			// Add the missing file
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/y.ts"] = `export const y = 1;`
-			host.replaceFS(filesCopy)
+			host.ReplaceFS(filesCopy)
 			service.OnWatchedFilesChanged([]lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
@@ -414,7 +414,7 @@ func TestService(t *testing.T) {
 				}`,
 				"/home/projects/TS/p1/src/index.ts": `import { z } from "./z";`,
 			}
-			service, host := setup(files)
+			service, host := projecttestutil.Setup(files)
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			program := project.GetProgram()
@@ -425,7 +425,7 @@ func TestService(t *testing.T) {
 			// Add a new file through wildcard inclusion
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/z.ts"] = `export const z = 1;`
-			host.replaceFS(filesCopy)
+			host.ReplaceFS(filesCopy)
 			service.OnWatchedFilesChanged([]lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
