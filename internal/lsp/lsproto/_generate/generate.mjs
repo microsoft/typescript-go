@@ -7,7 +7,7 @@ import url from "node:url";
 import which from "which";
 
 /**
- * @import { MetaModel, OrType, Type, BaseTypes, Request } from "./metaModelSchema.mts"
+ * @import { MetaModel, OrType, Type, Request } from "./metaModelSchema.mts"
  */
 void 0;
 
@@ -62,66 +62,43 @@ function titleCase(s) {
 }
 
 /**
- * @param {BaseTypes} baseType
- * @returns {GoType}
- */
-function mapBaseTypeToGo(baseType) {
-    switch (baseType) {
-        case "integer":
-            return { name: "int32", needsPointer: false };
-        case "uinteger":
-            return { name: "uint32", needsPointer: false };
-        case "string":
-            return { name: "string", needsPointer: false };
-        case "boolean":
-            return { name: "bool", needsPointer: false };
-        case "URI":
-            return { name: "URI", needsPointer: false };
-        case "DocumentUri":
-            return { name: "DocumentUri", needsPointer: false };
-        case "decimal":
-            return { name: "float64", needsPointer: false };
-        case "RegExp":
-            return { name: "string", needsPointer: false }; // Using string for RegExp
-        default:
-            throw new Error(`Unsupported base type: ${baseType}`);
-    }
-}
-
-/**
  * @param {Type} type
  * @returns {GoType}
  */
 function resolveType(type) {
     switch (type.kind) {
         case "base":
-            return mapBaseTypeToGo(type.name);
-
-        case "reference":
-            // If it's a reference, we need to check if we know this type
-            if (typeInfo.types.has(type.name)) {
-                const refType = typeInfo.types.get(type.name);
-                if (refType !== undefined) {
-                    // Important: If this is an alias type, preserve the alias name rather than resolving it
-                    if (refType.isAlias) {
-                        return {
-                            name: type.name, // Use the alias name (reference name)
-                            needsPointer: refType.needsPointer,
-                        };
-                    }
-                    return refType;
-                }
+            switch (type.name) {
+                case "integer":
+                    return { name: "int32", needsPointer: false };
+                case "uinteger":
+                    return { name: "uint32", needsPointer: false };
+                case "string":
+                    return { name: "string", needsPointer: false };
+                case "boolean":
+                    return { name: "bool", needsPointer: false };
+                case "URI":
+                    return { name: "URI", needsPointer: false };
+                case "DocumentUri":
+                    return { name: "DocumentUri", needsPointer: false };
+                case "decimal":
+                    return { name: "float64", needsPointer: false };
+                case "RegExp":
+                    return { name: "string", needsPointer: false }; // Using string for RegExp
+                default:
+                    throw new Error(`Unsupported base type: ${type.name}`);
             }
 
-            // By default, assume referenced types are structs that need pointers
-            // This will be updated as we process all types
-            const refType = { name: type.name, needsPointer: true };
-            typeInfo.types.set(type.name, refType);
+        case "reference":
+            let refType = typeInfo.types.get(type.name);
+            if (!refType) {
+                refType = { name: type.name, needsPointer: true };
+                typeInfo.types.set(type.name, refType);
+            }
             return refType;
 
         case "array": {
             const elementType = resolveType(type.element);
-            // Arrays of structs should be arrays of pointers to structs
             const arrayTypeName = elementType.needsPointer
                 ? `[]*${elementType.name}`
                 : `[]${elementType.name}`;
@@ -132,15 +109,12 @@ function resolveType(type) {
         }
 
         case "map": {
-            const keyType = type.key.kind === "base"
-                ? mapBaseTypeToGo(type.key.name).name
-                : resolveType(type.key).name;
-
+            const keyType = resolveType(type.key);
             const valueType = resolveType(type.value);
             const valueTypeName = valueType.needsPointer ? `*${valueType.name}` : valueType.name;
 
             return {
-                name: `map[${keyType}]${valueTypeName}`,
+                name: `map[${keyType.name}]${valueTypeName}`,
                 needsPointer: false,
             };
         }
