@@ -259,10 +259,8 @@ function collectTypeDefinitions() {
     for (const typeAlias of model.typeAliases) {
         const resolvedType = typeAlias.name === "LSPAny" ? { name: "any", needsPointer: false } : resolveType(typeAlias.type);
 
-        // Store the type with the alias name, but mark it as an alias
-        // This is critical for resolving references to this type
         typeInfo.types.set(typeAlias.name, {
-            name: typeAlias.name, // Use the alias name, not the resolved type name
+            name: typeAlias.name,
             needsPointer: resolvedType.needsPointer,
         });
     }
