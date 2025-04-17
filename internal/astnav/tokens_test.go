@@ -101,8 +101,8 @@ func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens 
 				diff := tokenDiff{goToken: goToken, tsToken: tsToken}
 
 				if currentDiff != diff {
-					if currentDiff.goToken != currentDiff.tsToken { // !!! fix
-						writeRangeDiff(&output, file, currentDiff, currentRange)
+					if !tokensEqual(currentDiff) {
+						writeRangeDiff(&output, file, currentDiff, currentRange, pos)
 					}
 					currentDiff = diff
 					currentRange = core.NewTextRange(pos, pos)
@@ -110,8 +110,8 @@ func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens 
 				currentRange = currentRange.WithEnd(pos)
 			}
 
-			if currentDiff.goToken != currentDiff.tsToken {
-				writeRangeDiff(&output, file, currentDiff, currentRange)
+			if !tokensEqual(currentDiff) {
+				writeRangeDiff(&output, file, currentDiff, currentRange, len(tsTokens)-1)
 			}
 
 			baseline.Run(
@@ -151,6 +151,13 @@ func toTokenInfo(node *ast.Node) *tokenInfo {
 		Pos:  node.Pos(),
 		End:  node.End(),
 	}
+}
+
+func tokensEqual(diff tokenDiff) bool {
+	if diff.goToken == nil || diff.tsToken == nil {
+		return diff.goToken == diff.tsToken
+	}
+	return *diff.goToken == *diff.tsToken
 }
 
 func tsGetTokensAtPositions(t testing.TB, fileText string, positions []int) []*tokenInfo {
@@ -227,12 +234,26 @@ func tsGetTouchingPropertyName(t testing.TB, fileText string, positions []int) [
 	return info
 }
 
-func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDiff, rng core.TextRange) {
+func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDiff, rng core.TextRange, position int) {
 	lines := file.LineMap()
-	tsStartLine, _ := core.PositionToLineAndCharacter(diff.tsToken.Pos, lines)
-	tsEndLine, _ := core.PositionToLineAndCharacter(diff.tsToken.End, lines)
-	goStartLine, _ := core.PositionToLineAndCharacter(diff.goToken.Pos, lines)
-	goEndLine, _ := core.PositionToLineAndCharacter(diff.goToken.End, lines)
+
+	tsTokenPos := position
+	goTokenPos := position
+	tsTokenEnd := position
+	goTokenEnd := position
+	if diff.tsToken != nil {
+		tsTokenPos = diff.tsToken.Pos
+		tsTokenEnd = diff.tsToken.End
+	}
+	if diff.goToken != nil {
+		goTokenPos = diff.goToken.Pos
+		goTokenEnd = diff.goToken.End
+	}
+	tsStartLine, _ := core.PositionToLineAndCharacter(tsTokenPos, lines)
+	tsEndLine, _ := core.PositionToLineAndCharacter(tsTokenEnd, lines)
+	goStartLine, _ := core.PositionToLineAndCharacter(goTokenPos, lines)
+	goEndLine, _ := core.PositionToLineAndCharacter(goTokenEnd, lines)
+
 	contextLines := 2
 	startLine := min(tsStartLine, goStartLine)
 	endLine := max(tsEndLine, goEndLine)
@@ -260,8 +281,16 @@ func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDif
 	}
 
 	output.WriteString(fmt.Sprintf("〚Positions: [%d, %d]〛\n", rng.Pos(), rng.End()))
-	output.WriteString(fmt.Sprintf("【TS: %s [%d, %d)】\n", diff.tsToken.Kind, diff.tsToken.Pos, diff.tsToken.End))
-	output.WriteString(fmt.Sprintf("《Go: %s [%d, %d)》\n", diff.goToken.Kind, diff.goToken.Pos, diff.goToken.End))
+	if diff.tsToken != nil {
+		output.WriteString(fmt.Sprintf("【TS: %s [%d, %d)】\n", diff.tsToken.Kind, tsTokenPos, tsTokenEnd))
+	} else {
+		output.WriteString("【TS: nil】\n")
+	}
+	if diff.goToken != nil {
+		output.WriteString(fmt.Sprintf("《Go: %s [%d, %d)》\n", diff.goToken.Kind, goTokenPos, goTokenEnd))
+	} else {
+		output.WriteString("《Go: nil》\n")
+	}
 	for line := contextStart; line <= contextEnd; line++ {
 		if truncate, skipTo := shouldTruncate(line); truncate {
 			output.WriteString(fmt.Sprintf("%s │........ %d lines omitted ........\n", strings.Repeat(" ", digits), skipTo-line+1))
@@ -276,17 +305,17 @@ func writeRangeDiff(output *strings.Builder, file *ast.SourceFile, diff tokenDif
 			if pos == rng.End()+1 {
 				output.WriteString("〛")
 			}
-			if pos == diff.tsToken.End {
+			if diff.tsToken != nil && pos == tsTokenEnd {
 				output.WriteString("】")
 			}
-			if pos == diff.goToken.End {
+			if diff.goToken != nil && pos == goTokenEnd {
 				output.WriteString("》")
 			}
 
-			if pos == diff.goToken.Pos {
+			if diff.goToken != nil && pos == goTokenPos {
 				output.WriteString("《")
 			}
-			if pos == diff.tsToken.Pos {
+			if diff.tsToken != nil && pos == tsTokenPos {
 				output.WriteString("【")
 			}
 			if pos == rng.Pos() {
