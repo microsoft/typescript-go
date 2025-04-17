@@ -94,10 +94,3 @@ type ResponseError struct {
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
 }
-
-func emptyUnmarshaller(data []byte) (any, error) {
-	if len(data) != 0 {
-		return nil, fmt.Errorf("%w: %s", ErrInvalidRequest, string(data))
-	}
-	return nil, nil
-}

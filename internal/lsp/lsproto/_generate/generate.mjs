@@ -82,6 +82,11 @@ function resolveType(type) {
             }
 
         case "reference":
+            const typeAliasOverride = typeAliasOverrides.get(type.name);
+            if (typeAliasOverride) {
+                return typeAliasOverride;
+            }
+
             let refType = typeInfo.types.get(type.name);
             if (!refType) {
                 refType = { name: type.name, needsPointer: true };
@@ -222,6 +227,12 @@ function handleOrType(orType) {
     };
 }
 
+const typeAliasOverrides = new Map([
+    ["LSPAny", { name: "any", needsPointer: false }],
+    ["LSPArray", { name: "[]any", needsPointer: false }],
+    ["LSPObject", { name: "map[string]any", needsPointer: false }],
+]);
+
 /**
  * First pass: Resolve all type information
  */
@@ -257,8 +268,11 @@ function collectTypeDefinitions() {
 
     // Process all type aliases
     for (const typeAlias of model.typeAliases) {
-        const resolvedType = typeAlias.name === "LSPAny" ? { name: "any", needsPointer: false } : resolveType(typeAlias.type);
+        if (typeAliasOverrides.has(typeAlias.name)) {
+            continue;
+        }
 
+        const resolvedType = resolveType(typeAlias.type);
         typeInfo.types.set(typeAlias.name, {
             name: typeAlias.name,
             needsPointer: resolvedType.needsPointer,
@@ -457,9 +471,13 @@ function generateCode() {
     writeLine("// Type aliases\n");
 
     for (const typeAlias of model.typeAliases) {
+        if (typeAliasOverrides.has(typeAlias.name)) {
+            continue;
+        }
+
         write(formatDocumentation(typeAlias.documentation));
 
-        const resolvedType = typeAlias.name === "LSPAny" ? { name: "any", needsPointer: false } : resolveType(typeAlias.type);
+        const resolvedType = resolveType(typeAlias.type);
         writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
         writeLine("");
     }
@@ -475,7 +493,7 @@ function generateCode() {
 
         if (!request.params) {
             writeLine(`\tcase Method${methodName}:`);
-            writeLine(`\t\treturn emptyUnmarshaller(data)`);
+            writeLine(`\t\treturn unmarshalEmpty(data)`);
             continue;
         }
         if (Array.isArray(request.params)) {
@@ -483,14 +501,18 @@ function generateCode() {
         }
 
         const resolvedType = resolveType(request.params);
+
         writeLine(`\tcase Method${methodName}:`);
-        writeLine(`\t\treturn unmarshallerFor[${resolvedType.name}](data)`);
+        if (resolvedType.name === "any") {
+            writeLine(`\t\treturn unmarshalAny(data)`);
+        }
+        else {
+            writeLine(`\t\treturn unmarshalPtrTo[${resolvedType.name}](data)`);
+        }
     }
 
     writeLine("\tdefault:");
-    writeLine(`\t\tvar v any`);
-    writeLine(`\t\terr := json.Unmarshal(data, &v)`);
-    writeLine(`\t\treturn v, err`);
+    writeLine(`\t\treturn unmarshalAny(data)`);
     writeLine("\t}");
     writeLine("}");
     writeLine("");
