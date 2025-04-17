@@ -30,10 +30,6 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @typedef {Object} GoType
  * @property {string} name - Name of the type in Go
  * @property {boolean} needsPointer - Whether this type should be used with a pointer
- * @property {boolean} [isAlias] - Whether this type is an alias to another type
- * @property {string} [aliasFor] - If this is an alias, the name of the target type
- * @property {string} [importPath] - Import path if needed
- * @property {string} [jsonUnmarshaling] - Custom JSON unmarshaling code if required
  */
 
 /**
@@ -219,7 +215,7 @@ function handleOrType(orType) {
         }
     });
 
-    const unionTypeName = memberNames.map(titleCase).join("Or");
+    const unionTypeName = memberNames.join("Or");
     const union = memberNames.map((name, i) => ({ name, type: types[i] }));
 
     typeInfo.unionTypes.set(unionTypeName, union);
@@ -234,9 +230,6 @@ function handleOrType(orType) {
  * First pass: Resolve all type information
  */
 function collectTypeDefinitions() {
-    // Keep track of used enum identifiers across all enums to avoid conflicts
-    const usedEnumIdentifiers = new Set();
-
     // Process all enumerations first to make them available for struct fields
     for (const enumeration of model.enumerations) {
         typeInfo.types.set(enumeration.name, {
@@ -244,34 +237,12 @@ function collectTypeDefinitions() {
             needsPointer: false,
         });
 
-        const enumValues = [];
-
-        // Process values for this enum
-        for (const value of enumeration.values) {
-            // Generate a unique identifier for this enum constant
-            let identifier = `${enumeration.name}${value.name}`;
-
-            // If this identifier is already used, create a more unique one
-            if (usedEnumIdentifiers.has(identifier)) {
-                // Try with underscores
-                identifier = `${enumeration.name}_${value.name}`;
-
-                // If still not unique, add a numeric suffix
-                let counter = 1;
-                while (usedEnumIdentifiers.has(identifier)) {
-                    identifier = `${enumeration.name}_${value.name}_${counter++}`;
-                }
-            }
-
-            // Mark this identifier as used
-            usedEnumIdentifiers.add(identifier);
-            enumValues.push({
-                value: String(value.value),
-                identifier,
-                documentation: value.documentation,
-                deprecated: value.deprecated,
-            });
-        }
+        const enumValues = enumeration.values.map(value => ({
+            value: String(value.value),
+            identifier: `${enumeration.name}${value.name}`,
+            documentation: value.documentation,
+            deprecated: value.deprecated,
+        }));
 
         // Store the map of values for this enum
         typeInfo.enumValuesByType.set(enumeration.name, enumValues);
@@ -307,8 +278,6 @@ function collectTypeDefinitions() {
         typeInfo.types.set(typeAlias.name, {
             name: typeAlias.name, // Use the alias name, not the resolved type name
             needsPointer: resolvedType.needsPointer,
-            isAlias: true,
-            aliasFor: resolvedType.name,
         });
     }
 }
