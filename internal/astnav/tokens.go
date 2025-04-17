@@ -413,7 +413,7 @@ func isJSDocSingleCommentNodeList(parent *ast.Node, nodeList *ast.NodeList) bool
 }
 
 // Looks for rightmost valid token in the range [startPos, endPos).
-// If position is >= 0, looks for rightmost valid token that preceeds or touches that position.
+// If position is >= 0, looks for rightmost valid token that precedes or touches that position.
 func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingNode *ast.Node, position int, excludeJSDoc bool) *ast.Node {
 	if position == -1 {
 		position = containingNode.End()
