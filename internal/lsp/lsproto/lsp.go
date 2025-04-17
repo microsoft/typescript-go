@@ -58,7 +58,7 @@ func unmarshalAny(data []byte) (any, error) {
 
 func unmarshalEmpty(data []byte) (any, error) {
 	if len(data) != 0 {
-		return nil, fmt.Errorf("%w: %s", ErrInvalidRequest, string(data))
+		return nil, fmt.Errorf("expected empty, got: %s", string(data))
 	}
 	return nil, nil
 }
