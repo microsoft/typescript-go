@@ -79,8 +79,6 @@ function resolveType(type) {
                     return { name: "DocumentUri", needsPointer: false };
                 case "decimal":
                     return { name: "float64", needsPointer: false };
-                case "RegExp":
-                    return { name: "string", needsPointer: false }; // Using string for RegExp
                 default:
                     throw new Error(`Unsupported base type: ${type.name}`);
             }
