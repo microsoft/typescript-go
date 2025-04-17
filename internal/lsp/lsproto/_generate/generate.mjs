@@ -43,7 +43,6 @@ const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
  * @property {Map<string, {name: string, type: Type}[]>} unionTypes - Map of union type names to their component types
  * @property {Set<string>} generatedTypes - Set of types that have been generated
  * @property {Map<string, {value: string; identifier: string, documentation: string | undefined, deprecated: string| undefined}[]>} enumValuesByType - Map of enum type names to their values
- * @property {Map<string, string>} unionTypeAliases - Map from union type name to alias name
  */
 
 /**
@@ -55,7 +54,6 @@ const typeInfo = {
     unionTypes: new Map(),
     generatedTypes: new Set(),
     enumValuesByType: new Map(),
-    unionTypeAliases: new Map(), // Map from union type name to alias name
 };
 
 /**
@@ -349,16 +347,7 @@ function collectTypeDefinitions() {
         });
     }
 
-    // First pass - process all type aliases to capture union types
-    for (const typeAlias of model.typeAliases) {
-        if (typeAlias.type.kind === "or") {
-            // This is a union type - resolve it but don't yet store the alias
-            const resolvedType = resolveType(typeAlias.type);
-            typeInfo.unionTypeAliases.set(resolvedType.name, typeAlias.name);
-        }
-    }
-
-    // Process all type aliases now (including non-union ones)
+    // Process all type aliases
     for (const typeAlias of model.typeAliases) {
         const resolvedType = resolveType(typeAlias.type);
 
