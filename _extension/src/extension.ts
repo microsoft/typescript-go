@@ -176,7 +176,7 @@ async function showQuickPickMenu(): Promise<void> {
         if (selected.label.includes("Restart Server")) {
             await vscode.commands.executeCommand("typescript-go.restart");
         }
-        else if (selected.label.includes("Show Output Log")) {
+        else if (selected.label.includes("Show TS Server Log")) {
             await vscode.commands.executeCommand("typescript-go.output.focus");
         }
         else if (selected.label.includes("Show LSP Trace")) {
