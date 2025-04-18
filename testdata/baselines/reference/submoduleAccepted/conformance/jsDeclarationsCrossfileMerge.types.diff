@@ -16,14 +16,16 @@
 ->module.exports : typeof m.default
 ->module : { exports: typeof m.default; }
 ->exports : typeof m.default
-+>module.exports = m.default : { (): void; memberName: "thing"; }
+->m.default : { (): void; memberName: "thing"; }
+->m : typeof m
+->default : { (): void; memberName: "thing"; }
++>module.exports = m.default : () => void
 +>module.exports : any
 +>module : any
 +>exports : any
- >m.default : { (): void; memberName: "thing"; }
-->m : typeof m
++>m.default : () => void
 +>m : typeof import("exporter")
- >default : { (): void; memberName: "thing"; }
++>default : () => void
  
  module.exports.memberName = "thing";
  >module.exports.memberName = "thing" : "thing"
@@ -40,3 +42,11 @@
  >"thing" : "thing"
  
  === exporter.js ===
+ function validate() {}
+->validate : typeof validate
++>validate : () => void
+ 
+ export default validate;
+->validate : typeof validate
++>validate : () => void
+ 

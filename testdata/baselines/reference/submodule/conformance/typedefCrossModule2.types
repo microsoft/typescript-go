@@ -9,11 +9,11 @@ var mod = require('./mod1.js');
 
 /** @type {import("./mod1.js").Baz} */
 var b;
->b : number
+>b : any
 
 /** @type {mod.Baz} */
 var bb;
->bb : number
+>bb : Baz
 
 var bbb = new mod.Baz();
 >bbb : Baz

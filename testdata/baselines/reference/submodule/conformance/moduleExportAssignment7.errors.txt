@@ -3,6 +3,7 @@ index.ts(3,24): error TS2694: Namespace '"mod".export=' has no exported member '
 index.ts(4,24): error TS2694: Namespace '"mod".export=' has no exported member 'foo'.
 index.ts(5,24): error TS2694: Namespace '"mod".export=' has no exported member 'qux'.
 index.ts(6,24): error TS2694: Namespace '"mod".export=' has no exported member 'baz'.
+index.ts(7,24): error TS2694: Namespace '"mod".export=' has no exported member 'buz'.
 index.ts(8,24): error TS2694: Namespace '"mod".export=' has no exported member 'literal'.
 index.ts(19,31): error TS2694: Namespace '"mod".export=' has no exported member 'buz'.
 main.js(2,28): error TS2694: Namespace '"mod".export=' has no exported member 'Thing'.
@@ -10,6 +11,7 @@ main.js(3,28): error TS2694: Namespace '"mod".export=' has no exported member 'A
 main.js(4,28): error TS2694: Namespace '"mod".export=' has no exported member 'foo'.
 main.js(5,28): error TS2694: Namespace '"mod".export=' has no exported member 'qux'.
 main.js(6,28): error TS2694: Namespace '"mod".export=' has no exported member 'baz'.
+main.js(7,28): error TS2694: Namespace '"mod".export=' has no exported member 'buz'.
 main.js(8,28): error TS2694: Namespace '"mod".export=' has no exported member 'literal'.
 main.js(20,35): error TS2694: Namespace '"mod".export=' has no exported member 'buz'.
 mod.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -41,7 +43,7 @@ mod.js(6,1): error TS2309: An export assignment cannot be used in a module with 
     }
     ~
 !!! error TS2309: An export assignment cannot be used in a module with other exported elements.
-==== main.js (7 errors) ====
+==== main.js (8 errors) ====
     /**
      * @param {import("./mod").Thing} a
                                ~~~~~
@@ -59,6 +61,8 @@ mod.js(6,1): error TS2309: An export assignment cannot be used in a module with 
                                ~~~
 !!! error TS2694: Namespace '"mod".export=' has no exported member 'baz'.
      * @param {import("./mod").buz} f
+                               ~~~
+!!! error TS2694: Namespace '"mod".export=' has no exported member 'buz'.
      * @param {import("./mod").literal} g
                                ~~~~~~~
 !!! error TS2694: Namespace '"mod".export=' has no exported member 'literal'.
@@ -82,7 +86,7 @@ mod.js(6,1): error TS2309: An export assignment cannot be used in a module with 
         return a.length + b.length + c() + d() + e() + f() + g.length
     }
     
-==== index.ts (7 errors) ====
+==== index.ts (8 errors) ====
     function types(
         a: import('./mod').Thing,
                            ~~~~~
@@ -100,6 +104,8 @@ mod.js(6,1): error TS2309: An export assignment cannot be used in a module with 
                            ~~~
 !!! error TS2694: Namespace '"mod".export=' has no exported member 'baz'.
         f: import('./mod').buz,
+                           ~~~
+!!! error TS2694: Namespace '"mod".export=' has no exported member 'buz'.
         g: import('./mod').literal,
                            ~~~~~~~
 !!! error TS2694: Namespace '"mod".export=' has no exported member 'literal'.

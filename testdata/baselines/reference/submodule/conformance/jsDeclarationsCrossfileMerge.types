@@ -8,13 +8,13 @@ const m = require("./exporter");
 >"./exporter" : "./exporter"
 
 module.exports = m.default;
->module.exports = m.default : { (): void; memberName: "thing"; }
+>module.exports = m.default : () => void
 >module.exports : any
 >module : any
 >exports : any
->m.default : { (): void; memberName: "thing"; }
+>m.default : () => void
 >m : typeof import("exporter")
->default : { (): void; memberName: "thing"; }
+>default : () => void
 
 module.exports.memberName = "thing";
 >module.exports.memberName = "thing" : "thing"
@@ -27,8 +27,8 @@ module.exports.memberName = "thing";
 
 === exporter.js ===
 function validate() {}
->validate : typeof validate
+>validate : () => void
 
 export default validate;
->validate : typeof validate
+>validate : () => void
 

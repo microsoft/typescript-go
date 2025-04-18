@@ -14288,37 +14288,7 @@ func (c *Checker) resolveExternalModuleSymbol(moduleSymbol *ast.Symbol, dontReso
 }
 
 func (c *Checker) getCommonJSExportEquals(exported *ast.Symbol, moduleSymbol *ast.Symbol) *ast.Symbol {
-	if exported == nil || exported == c.unknownSymbol || exported == moduleSymbol || len(moduleSymbol.Exports) == 1 || exported.Flags&ast.SymbolFlagsAlias != 0 {
-		return exported
-	}
-	links := c.moduleSymbolLinks.Get(exported)
-	if links.cjsExportMerged != nil {
-		return links.cjsExportMerged
-	}
-	var merged *ast.Symbol
-	if exported.Flags&ast.SymbolFlagsTransient != 0 {
-		merged = exported
-	} else {
-		merged = c.cloneSymbol(exported)
-	}
-	merged.Flags |= ast.SymbolFlagsValueModule
-	mergedExports := ast.GetExports(merged)
-	for name, s := range moduleSymbol.Exports {
-		if name != ast.InternalSymbolNameExportEquals {
-			if existing, ok := mergedExports[name]; ok {
-				s = c.mergeSymbol(existing, s /*unidirectional*/, false)
-			}
-			mergedExports[name] = s
-		}
-	}
-	if merged == exported {
-		// We just mutated a symbol, reset any cached links we may have already set
-		// (Notably required to make late bound members appear)
-		c.moduleSymbolLinks.Get(merged).resolvedExports = nil
-	}
-	c.moduleSymbolLinks.Get(merged).cjsExportMerged = merged
-	links.cjsExportMerged = merged
-	return links.cjsExportMerged
+	return exported
 }
 
 // An external module with an 'export =' declaration may be referenced as an ES6 module provided the 'export ='
@@ -14692,31 +14662,7 @@ func (c *Checker) getResolvedMembersOrExportsOfSymbol(symbol *ast.Symbol, resolu
 				}
 			}
 		}
-		resolved := c.combineSymbolTables(earlySymbols, lateSymbols)
-		if symbol.Flags&ast.SymbolFlagsTransient != 0 && len(symbol.Declarations) != 0 {
-			moduleLinks := c.moduleSymbolLinks.Get(symbol)
-			if moduleLinks.cjsExportMerged != nil {
-				for _, decl := range symbol.Declarations {
-					original := c.membersAndExportsLinks.Get(decl.Symbol())[resolutionKind]
-					if resolved == nil {
-						resolved = original
-						continue
-					}
-					if original == nil {
-						continue
-					}
-					for name, s := range original {
-						existing := resolved[name]
-						if existing == nil {
-							resolved[name] = s
-						} else if existing != s {
-							resolved[name] = c.mergeSymbol(existing, s, false)
-						}
-					}
-				}
-			}
-		}
-		links[resolutionKind] = resolved
+		links[resolutionKind] = c.combineSymbolTables(earlySymbols, lateSymbols)
 	}
 	return links[resolutionKind]
 }
