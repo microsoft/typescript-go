@@ -6,24 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 )
 
-func isPreservedDeclarationStatement(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindFunctionDeclaration,
-		ast.KindModuleDeclaration,
-		ast.KindImportEqualsDeclaration,
-		ast.KindInterfaceDeclaration,
-		ast.KindClassDeclaration,
-		ast.KindTypeAliasDeclaration,
-		ast.KindEnumDeclaration,
-		ast.KindVariableStatement,
-		ast.KindImportDeclaration,
-		ast.KindExportDeclaration,
-		ast.KindExportAssignment:
-		return true
-	}
-	return false
-}
-
 func needsScopeMarker(result *ast.Node) bool {
 	return !ast.IsAnyImportOrReExport(result) && !ast.IsExportAssignment(result) && !ast.HasSyntacticModifier(result, ast.ModifierFlagsExport) && !ast.IsAmbientModule(result)
 }
@@ -147,11 +129,7 @@ func isAlwaysType(node *ast.Node) bool {
 	return false
 }
 
-func maskModifierFlags(host DeclarationEmitHost, node *ast.Node) ast.ModifierFlags {
-	return maskModifierFlagsEx(host, node, ast.ModifierFlagsAll^ast.ModifierFlagsPublic, ast.ModifierFlagsNone)
-}
-
-func maskModifierFlagsEx(host DeclarationEmitHost, node *ast.Node, modifierMask ast.ModifierFlags, modifierAdditions ast.ModifierFlags) ast.ModifierFlags {
+func maskModifierFlags(host DeclarationEmitHost, node *ast.Node, modifierMask ast.ModifierFlags, modifierAdditions ast.ModifierFlags) ast.ModifierFlags {
 	flags := host.GetEffectiveDeclarationFlags(node, modifierMask) | modifierAdditions
 	if flags&ast.ModifierFlagsDefault != 0 && (flags&ast.ModifierFlagsExport == 0) {
 		// A non-exported default is a nonsequitor - we usually try to remove all export modifiers
@@ -172,7 +150,28 @@ func unwrapParenthesizedExpression(o *ast.Node) *ast.Node {
 }
 
 func isPrimitiveLiteralValue(node *ast.Node, includeBigInt bool) bool {
-	return false // !!!
+	// !!! Debug.type<PrimitiveLiteral>(node);
+	switch node.Kind {
+	case ast.KindTrueKeyword,
+		ast.KindFalseKeyword,
+		ast.KindNumericLiteral,
+		ast.KindStringLiteral,
+		ast.KindNoSubstitutionTemplateLiteral:
+		return true
+	case ast.KindBigIntLiteral:
+		return includeBigInt
+	case ast.KindPrefixUnaryExpression:
+		if node.AsPrefixUnaryExpression().Operator == ast.KindMinusToken {
+			return ast.IsNumericLiteral(node.AsPrefixUnaryExpression().Operand) || (includeBigInt && ast.IsBigIntLiteral(node.AsPrefixUnaryExpression().Operand))
+		}
+		if node.AsPrefixUnaryExpression().Operator == ast.KindPlusToken {
+			return ast.IsNumericLiteral(node.AsPrefixUnaryExpression().Operand)
+		}
+		return false
+	default:
+		// !!! assertType<never>(node);
+		return false
+	}
 }
 
 func isPrivateMethodTypeParameter(host DeclarationEmitHost, node *ast.TypeParameterDeclaration) bool {

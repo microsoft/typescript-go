@@ -37,13 +37,11 @@ type DeclarationEmitHost interface {
 
 type DeclarationTransformer struct {
 	transformers.Transformer
-	host            DeclarationEmitHost
-	compilerOptions *core.CompilerOptions
-	diagnostics     []*ast.Diagnostic
-	tracker         *SymbolTrackerImpl
-	state           *SymbolTrackerSharedState
-	resolver        printer.EmitResolver
-
+	host                DeclarationEmitHost
+	compilerOptions     *core.CompilerOptions
+	tracker             *SymbolTrackerImpl
+	state               *SymbolTrackerSharedState
+	resolver            printer.EmitResolver
 	declarationFilePath string
 	declarationMapPath  string
 
@@ -61,16 +59,24 @@ type DeclarationTransformer struct {
 }
 
 func NewDeclarationTransformer(host DeclarationEmitHost, resolver printer.EmitResolver, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
-	shared := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), resolver: resolver}
-	tracker := NewSymbolTracker(resolver, shared)
+	state := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), resolver: resolver}
+	tracker := NewSymbolTracker(resolver, state)
 	// TODO: Use new host GetOutputPathsFor method instead of passing in entrypoint paths (which will also better support bundled emit)
-	tx := &DeclarationTransformer{compilerOptions: compilerOptions, tracker: tracker, state: shared, declarationFilePath: declarationFilePath, declarationMapPath: declarationMapPath, host: host}
+	tx := &DeclarationTransformer{
+		host:                host,
+		compilerOptions:     compilerOptions,
+		tracker:             tracker,
+		state:               state,
+		resolver:            resolver,
+		declarationFilePath: declarationFilePath,
+		declarationMapPath:  declarationMapPath,
+	}
 	tx.NewTransformer(tx.visit, context)
 	return tx
 }
 
 func (tx *DeclarationTransformer) GetDiagnostics() []*ast.Diagnostic {
-	return tx.diagnostics
+	return tx.state.diagnostics
 }
 
 const declarationEmitNodeBuilderFlags = nodebuilder.FlagsMultilineObjectLiterals |
@@ -462,11 +468,30 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 		result = tx.Visitor().VisitEachChild(input)
 	}
 
+	if result != nil && canProdiceDiagnostic && ast.HasDynamicName(input) {
+		tx.checkName(input)
+	}
+
 	tx.enclosingDeclaration = previousEnclosingDeclaration
 	tx.state.getSymbolAccessibilityDiagnostic = oldDiag
 	tx.state.errorNameNode = oldName
 	tx.suppressNewDiagnosticContexts = oldWithinObjectLiteralType
 	return result
+}
+
+func (tx *DeclarationTransformer) checkName(node *ast.Node) {
+	oldDiag := tx.state.getSymbolAccessibilityDiagnostic
+	if !tx.suppressNewDiagnosticContexts {
+		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNodeName(node)
+	}
+	tx.state.errorNameNode = node.Name()
+	// !!! Debug.assert(hasDynamicName(node as NamedDeclaration)); // Should only be called with dynamic names
+	entityName := node.Name().AsComputedPropertyName().Expression
+	tx.checkEntityNameVisibility(entityName, tx.enclosingDeclaration)
+	if !tx.suppressNewDiagnosticContexts {
+		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
+	}
+	tx.state.errorNameNode = nil
 }
 
 func (tx *DeclarationTransformer) transformHeritageClause(clause *ast.HeritageClause) *ast.Node {
@@ -1377,7 +1402,11 @@ func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierL
 	newFlags := tx.ensureModifierFlags(node)
 	if currentFlags == newFlags {
 		// Elide decorators
-		return tx.Factory().NewModifierList(core.Filter(node.Modifiers().Nodes, ast.IsModifier))
+		mods := node.Modifiers()
+		if mods == nil {
+			return mods
+		}
+		return tx.Factory().NewModifierList(core.Filter(mods.Nodes, ast.IsModifier))
 	}
 	result := ast.CreateModifiersFromModifierFlags(newFlags, tx.Factory().NewModifier)
 	if len(result) == 0 {
@@ -1397,7 +1426,7 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 		mask ^= ast.ModifierFlagsAmbient
 		additions = ast.ModifierFlagsNone
 	}
-	return maskModifierFlagsEx(tx.host, node, mask, additions)
+	return maskModifierFlags(tx.host, node, mask, additions)
 }
 
 func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.TypeParameterList) *ast.TypeParameterList {
@@ -1424,7 +1453,7 @@ func (tx *DeclarationTransformer) updateParamListEx(node *ast.Node, params *ast.
 
 // Elide "public" modifier, as it is the default
 func (tx *DeclarationTransformer) maskModifiers(node *ast.Node, mask ast.ModifierFlags, additions ast.ModifierFlags) *ast.ModifierList {
-	list := ast.CreateModifiersFromModifierFlags(maskModifierFlagsEx(tx.host, node, mask, additions), tx.Factory().NewModifier)
+	list := ast.CreateModifiersFromModifierFlags(maskModifierFlags(tx.host, node, mask, additions), tx.Factory().NewModifier)
 	return tx.Factory().NewModifierList(list)
 }
 
