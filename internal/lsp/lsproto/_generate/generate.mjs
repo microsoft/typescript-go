@@ -7,7 +7,7 @@ import url from "node:url";
 import which from "which";
 
 /**
- * @import { MetaModel, OrType, Type, Request } from "./metaModelSchema.mts"
+ * @import { MetaModel, OrType, Type, Request, Notification } from "./metaModelSchema.mts"
  */
 void 0;
 
@@ -482,13 +482,15 @@ function generateCode() {
         writeLine("");
     }
 
+    /** @type {(Request | Notification)[]} */
+    const requestsAndNotifications = [...model.requests, ...model.notifications];
+
     // Generate unmarshalParams function
-    writeLine("// unmarshalParams maps LSP methods to their parameter unmarshalling functions.");
     writeLine("func unmarshalParams(method Method, data []byte) (any, error) {");
     writeLine("\tswitch method {");
 
     // Requests and notifications
-    for (const request of (/** @type {Pick<Request, "method" | "params">[]} */ (model.requests)).concat(model.notifications)) {
+    for (const request of requestsAndNotifications) {
         const methodName = methodNameIdentifier(request.method);
 
         if (!request.params) {
@@ -517,27 +519,14 @@ function generateCode() {
     writeLine("}");
     writeLine("");
 
-    // Method type exists in lsp.go, so skip declaring it
-    writeLine("// Requests");
+    writeLine("// Methods");
     writeLine("const (");
-    for (const request of model.requests) {
+    for (const request of requestsAndNotifications) {
         write(formatDocumentation(request.documentation));
 
         const methodName = methodNameIdentifier(request.method);
 
         writeLine(`\tMethod${methodName} Method = "${request.method}"`);
-    }
-    writeLine(")");
-    writeLine("");
-
-    writeLine("// Notifications");
-    writeLine("const (");
-    for (const notification of model.notifications) {
-        write(formatDocumentation(notification.documentation));
-
-        const methodName = methodNameIdentifier(notification.method);
-
-        writeLine(`\tMethod${methodName} Method = "${notification.method}"`);
     }
     writeLine(")");
     writeLine("");

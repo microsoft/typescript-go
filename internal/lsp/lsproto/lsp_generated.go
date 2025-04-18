@@ -6996,7 +6996,7 @@ func unmarshalParams(method Method, data []byte) (any, error) {
 	}
 }
 
-// Requests
+// Methods
 const (
 	// A request to resolve the implementation locations of a symbol at a given text
 	// document position. The request's parameter is of type TextDocumentPositionParams
@@ -7295,10 +7295,6 @@ const (
 	MethodWorkspaceExecuteCommand Method = "workspace/executeCommand"
 	// A request sent from the server to the client to modified certain resources.
 	MethodWorkspaceApplyEdit Method = "workspace/applyEdit"
-)
-
-// Notifications
-const (
 	// The `workspace/didChangeWorkspaceFolders` notification is sent from the client to the server when the workspace
 	// folder configuration changes.
 	MethodWorkspaceDidChangeWorkspaceFolders Method = "workspace/didChangeWorkspaceFolders"
