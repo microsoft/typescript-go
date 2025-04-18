@@ -343,15 +343,17 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool) {
 	result.CommentDirectives = p.scanner.CommentDirectives()
 	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
-	processPragmasIntoFields(result)
+	p.processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-	result.ExternalModuleIndicator = isFileProbablyExternalModule(result)
+	result.ExternalModuleIndicator = isFileProbablyExternalModule(result) // !!!
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVersion = p.languageVersion
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
+	result.NodeCount = p.factory.NodeCount()
+	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
 	p.jsdocCache = nil
@@ -2586,6 +2588,18 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 	typeNode := p.parseNonArrayType()
 	for !p.hasPrecedingLineBreak() {
 		switch p.token {
+		case ast.KindExclamationToken:
+			p.nextToken()
+			typeNode = p.factory.NewJSDocNonNullableType(typeNode)
+			p.finishNode(typeNode, pos)
+		case ast.KindQuestionToken:
+			// If next token is start of a type we have a conditional type
+			if p.lookAhead((*Parser).nextIsStartOfType) {
+				return typeNode
+			}
+			p.nextToken()
+			typeNode = p.factory.NewJSDocNullableType(typeNode)
+			p.finishNode(typeNode, pos)
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
 			if p.isStartOfType(false /*isStartOfParameter*/) {
@@ -3551,11 +3565,11 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		return result
 	}
 	typeNode := p.parseType()
-	// If next token is start of a type we have a conditional type and not an optional type
-	if p.token == ast.KindQuestionToken && !p.lookAhead((*Parser).nextIsStartOfType) {
-		p.nextToken()
-		typeNode = p.factory.NewOptionalTypeNode(typeNode)
-		p.finishNode(typeNode, pos)
+	if ast.IsJSDocNullableType(typeNode) && typeNode.Pos() == typeNode.Type().Pos() {
+		node := p.factory.NewOptionalTypeNode(typeNode.Type())
+		node.Flags = typeNode.Flags
+		node.Loc = typeNode.Loc
+		return node
 	}
 	return typeNode
 }
@@ -4999,12 +5013,11 @@ func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
 	case ast.KindVoidKeyword:
 		return p.parseVoidExpression()
 	case ast.KindLessThanToken:
-		// !!!
-		// // Just like in parseUpdateExpression, we need to avoid parsing type assertions when
-		// // in JSX and we see an expression like "+ <foo> bar".
-		// if (languageVariant == core.LanguageVariant.JSX) {
-		// 	return parseJsxElementOrSelfClosingElementOrFragment(/*inExpressionContext*/ true, /*topInvalidNodePosition*/ undefined, /*openingTag*/ undefined, /*mustBeUnary*/ true);
-		// }
+		// Just like in parseUpdateExpression, we need to avoid parsing type assertions when
+		// in JSX and we see an expression like "+ <foo> bar".
+		if p.languageVariant == core.LanguageVariantJSX {
+			return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, true /*mustBeUnary*/)
+		}
 		// // This is modified UnaryExpression grammar in TypeScript
 		// //  UnaryExpression (modified):
 		// //      < type > UnaryExpression
@@ -6413,7 +6426,7 @@ func getCommentPragmas(f *ast.NodeFactory, sourceText string) (pragmas []ast.Pra
 }
 
 func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
-	if commentRange.Kind == ast.KindSingleLineCommentTrivia && match(text, 0, "//") {
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
 		pos := 2
 		tripleSlash := match(text, pos, "/")
 		if tripleSlash {
@@ -6434,16 +6447,16 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 				}
 				argName := extractName(text, pos)
 				if argName == "" {
-					return nil
+					break
 				}
 				pos = skipBlanks(text, pos+len(argName))
 				if !match(text, pos, "=") {
-					return nil
+					break
 				}
 				pos = skipBlanks(text, pos+1)
 				value, ok := extractQuotedString(text, pos)
 				if !ok {
-					return nil
+					break
 				}
 				args[argName] = ast.PragmaArgument{
 					Name:      argName,
@@ -6471,6 +6484,7 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 		}
 	}
 	if commentRange.Kind == ast.KindMultiLineCommentTrivia {
+		text = text[:len(text)-2]
 		pos := 2
 		var pragmas []ast.Pragma
 		for {
@@ -6483,6 +6497,9 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 			}
 			start := skipBlanks(text, pos+len(pragmaName)+1)
 			pos = skipNonBlanks(text, start)
+			if pos == start {
+				break
+			}
 			args := make(map[string]ast.PragmaArgument, 1)
 			args["factory"] = ast.PragmaArgument{
 				Name:      "factory",
@@ -6553,7 +6570,7 @@ func extractQuotedString(text string, pos int) (string, bool) {
 	return text[start:pos], true
 }
 
-func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic func(*ast.Diagnostic)*/) {
+func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 	context.CheckJsDirective = nil
 	context.ReferencedFiles = nil
 	context.TypeReferenceDirectives = nil
@@ -6569,10 +6586,10 @@ func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic fu
 			resolutionMode, resolutionModeOk := pragma.Args["resolution-mode"]
 			preserve, preserveOk := pragma.Args["preserve"]
 			noDefaultLib, noDefaultLibOk := pragma.Args["no-default-lib"]
-
-			if noDefaultLibOk && noDefaultLib.Value == "true" {
+			switch {
+			case noDefaultLibOk && noDefaultLib.Value == "true":
 				context.HasNoDefaultLib = true
-			} else if typesOk {
+			case typesOk:
 				var parsed core.ResolutionMode
 				if resolutionModeOk {
 					parsed = parseResolutionMode(resolutionMode.Value, types.Pos(), types.End() /*, reportDiagnostic*/)
@@ -6583,20 +6600,20 @@ func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic fu
 					ResolutionMode: parsed,
 					Preserve:       preserveOk && preserve.Value == "true",
 				})
-			} else if libOk {
+			case libOk:
 				context.LibReferenceDirectives = append(context.LibReferenceDirectives, &ast.FileReference{
 					TextRange: types.TextRange,
 					FileName:  lib.Value,
 					Preserve:  preserveOk && preserve.Value == "true",
 				})
-			} else if pathOk {
+			case pathOk:
 				context.ReferencedFiles = append(context.ReferencedFiles, &ast.FileReference{
 					TextRange: types.TextRange,
 					FileName:  path.Value,
 					Preserve:  preserveOk && preserve.Value == "true",
 				})
-			} else {
-				// reportDiagnostic(argMap.Pos, argMap.End-argMap.Pos, "Invalid reference directive syntax")
+			default:
+				p.parseErrorAtRange(pragma.TextRange, diagnostics.Invalid_reference_directive_syntax)
 			}
 		case "ts-check", "ts-nocheck":
 			// _last_ of either nocheck or check in a file is the "winner"
@@ -6608,9 +6625,8 @@ func processPragmasIntoFields(context *ast.SourceFile /* !!! reportDiagnostic fu
 					}
 				}
 			}
-
 		case "jsx", "jsxfrag", "jsximportsource", "jsxruntime":
-			// !!!
+			// Nothing to do here
 		default:
 			panic("Unhandled pragma kind: " + pragma.Name)
 		}

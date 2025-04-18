@@ -40,7 +40,7 @@ const (
 
 type Binder struct {
 	file                    *ast.SourceFile
-	options                 *core.CompilerOptions
+	options                 *core.SourceFileAffectingCompilerOptions
 	languageVersion         core.ScriptTarget
 	bindFunc                func(*ast.Node) bool
 	unreachableFlow         *ast.FlowNode
@@ -86,7 +86,7 @@ type ActiveLabel struct {
 func (label *ActiveLabel) BreakTarget() *ast.FlowNode    { return label.breakTarget }
 func (label *ActiveLabel) ContinueTarget() *ast.FlowNode { return label.continueTarget }
 
-func BindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
+func BindSourceFile(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) {
 	// This is constructed this way to make the compiler "out-line" the function,
 	// avoiding most work in the common case where the file has already been bound.
 	if !file.IsBound() {
@@ -111,14 +111,14 @@ func putBinder(b *Binder) {
 	binderPool.Put(b)
 }
 
-func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
+func bindSourceFile(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) {
 	file.BindOnce(func() {
 		b := getBinder()
 		defer putBinder(b)
 		b.file = file
 		b.options = options
-		b.languageVersion = options.GetEmitScriptTarget()
-		b.inStrictMode = (options.AlwaysStrict.IsTrue() || options.Strict.IsTrue()) && !file.IsDeclarationFile || ast.IsExternalModule(file)
+		b.languageVersion = options.EmitScriptTarget
+		b.inStrictMode = options.BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.reportedUnreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
@@ -324,7 +324,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			}
 			return GetSymbolNameForPrivateIdentifier(containingClass.Symbol(), name.Text())
 		}
-		if ast.IsPropertyNameLiteral(name) {
+		if ast.IsPropertyNameLiteral(name) || ast.IsJsxNamespacedName(name) {
 			return name.Text()
 		}
 		if ast.IsComputedPropertyName(name) {
@@ -339,9 +339,6 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			}
 			panic("Only computed properties with literal names have declaration names")
 		}
-		// if isJsxNamespacedName(name) {
-		// 	return getEscapedTextOfJsxNamespacedName(name)
-		// }
 		return ast.InternalSymbolNameMissing
 	}
 	switch node.Kind {
@@ -1331,7 +1328,7 @@ func (b *Binder) checkStrictModeWithStatement(node *ast.Node) {
 
 func (b *Binder) checkStrictModeLabeledStatement(node *ast.Node) {
 	// Grammar checking for labeledStatement
-	if b.inStrictMode && b.options.Target >= core.ScriptTargetES2015 {
+	if b.inStrictMode && b.options.EmitScriptTarget >= core.ScriptTargetES2015 {
 		data := node.AsLabeledStatement()
 		if ast.IsDeclarationStatement(data.Statement) || ast.IsVariableStatement(data.Statement) {
 			b.errorOnFirstToken(data.Label, diagnostics.A_label_is_not_allowed_here)
@@ -1665,7 +1662,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 
 func (b *Binder) shouldReportErrorOnModuleDeclaration(node *ast.Node) bool {
 	instanceState := ast.GetModuleInstanceState(node)
-	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums())
+	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums)
 }
 
 func (b *Binder) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
@@ -2421,8 +2418,8 @@ func (b *Binder) bindInitializer(node *ast.Node) {
 	b.currentFlow = b.finishFlowLabel(exitFlow)
 }
 
-func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.CompilerOptions) bool {
-	return node.Kind == ast.KindEnumDeclaration && (!ast.IsEnumConst(node) || options.ShouldPreserveConstEnums())
+func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.SourceFileAffectingCompilerOptions) bool {
+	return node.Kind == ast.KindEnumDeclaration && (!ast.IsEnumConst(node) || options.ShouldPreserveConstEnums)
 }
 
 func setFlowNode(node *ast.Node, flowNode *ast.FlowNode) {
@@ -2746,11 +2743,11 @@ func isFunctionSymbol(symbol *ast.Symbol) bool {
 	return false
 }
 
-func unreachableCodeIsError(options *core.CompilerOptions) bool {
+func unreachableCodeIsError(options *core.SourceFileAffectingCompilerOptions) bool {
 	return options.AllowUnreachableCode == core.TSFalse
 }
 
-func unusedLabelIsError(options *core.CompilerOptions) bool {
+func unusedLabelIsError(options *core.SourceFileAffectingCompilerOptions) bool {
 	return options.AllowUnusedLabels == core.TSFalse
 }
 

@@ -525,6 +525,8 @@ type Program interface {
 	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
 	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
 	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
+	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
+	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 }
 
 type Host interface{}
@@ -2206,6 +2208,8 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkGrammarStatementInAmbientContext(node)
 	case ast.KindMissingDeclaration:
 		c.checkMissingDeclaration(node)
+	case ast.KindJSDocNonNullableType, ast.KindJSDocNullableType, ast.KindJSDocAllType, ast.KindJSDocTypeLiteral:
+		c.checkJSDocType(node)
 	}
 }
 
@@ -2322,6 +2326,30 @@ func (c *Checker) resolveJSDocMemberName(name *ast.Node, location *ast.Node) *as
 		}
 	}
 	return nil
+}
+
+func (c *Checker) checkJSDocType(node *ast.Node) {
+	c.checkJSDocTypeIsInJsFile(node)
+	node.ForEachChild(c.checkSourceElement)
+}
+
+func (c *Checker) checkJSDocTypeIsInJsFile(node *ast.Node) {
+	if !ast.IsInJSFile(node) {
+		if ast.IsJSDocNonNullableType(node) || ast.IsJSDocNullableType(node) {
+			token := core.IfElse(ast.IsJSDocNonNullableType(node), "!", "?")
+			postfix := node.Pos() == node.Type().Pos()
+			message := core.IfElse(postfix,
+				diagnostics.X_0_at_the_end_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1,
+				diagnostics.X_0_at_the_start_of_a_type_is_not_valid_TypeScript_syntax_Did_you_mean_to_write_1)
+			t := c.getTypeFromTypeNode(node.Type())
+			if ast.IsJSDocNullableType(node) && t != c.neverType && t != c.voidType {
+				t = c.getNullableType(t, core.IfElse(postfix, TypeFlagsUndefined, TypeFlagsNullable))
+			}
+			c.grammarErrorOnNode(node, message, token, c.TypeToString(t))
+		} else {
+			c.grammarErrorOnNode(node, diagnostics.JSDoc_types_can_only_be_used_inside_documentation_comments)
+		}
+	}
 }
 
 func (c *Checker) checkTypeParameter(node *ast.Node) {
@@ -6596,7 +6624,7 @@ func (c *Checker) checkUnusedLocalsAndParameters(node *ast.Node) {
 					importClauses[importClause] = append(importClauses[importClause], declaration)
 				}
 			default:
-				if !ast.IsAmbientModule(declaration) {
+				if !ast.IsTypeParameterDeclaration(declaration) && !ast.IsAmbientModule(declaration) {
 					c.reportUnusedLocal(declaration, ast.SymbolName(local))
 				}
 			}
@@ -14502,7 +14530,7 @@ func (c *Checker) resolveQualifiedName(name *ast.Node, left *ast.Node, right *as
 	}
 	text := right.AsIdentifier().Text
 	symbol := c.getMergedSymbol(c.getSymbol(c.getExportsOfSymbol(namespace), text, meaning))
-	if symbol != nil && namespace.Flags&ast.SymbolFlagsAlias != 0 {
+	if symbol == nil && namespace.Flags&ast.SymbolFlagsAlias != 0 {
 		// `namespace` can be resolved further if there was a symbol merge with a re-export
 		symbol = c.getMergedSymbol(c.getSymbol(c.getExportsOfSymbol(c.resolveAlias(namespace)), text, meaning))
 	}
@@ -15198,16 +15226,26 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 	if symbol == c.requireSymbol {
 		return c.anyType
 	}
-	// !!! Handle SymbolFlagsModuleExports
+	if symbol.Flags&ast.SymbolFlagsModuleExports != 0 && symbol.ValueDeclaration != nil {
+		fileSymbol := c.getSymbolOfDeclaration(ast.GetSourceFileOfNode(symbol.ValueDeclaration).AsNode())
+		result := c.newSymbol(fileSymbol.Flags, "exports")
+		result.Parent = symbol
+		result.Declarations = fileSymbol.Declarations
+		result.ValueDeclaration = fileSymbol.ValueDeclaration
+		result.Members = maps.Clone(fileSymbol.Members)
+		result.Exports = maps.Clone(fileSymbol.Exports)
+		members := make(ast.SymbolTable, 1)
+		members["exports"] = result
+		return c.newAnonymousType(symbol, members, nil, nil, nil)
+	}
 	// Debug.assertIsDefined(symbol.valueDeclaration)
 	declaration := symbol.ValueDeclaration
-	// !!! Handle export default expressions
 	if ast.IsSourceFile(declaration) && ast.IsJsonSourceFile(declaration.AsSourceFile()) {
 		statements := declaration.AsSourceFile().Statements.Nodes
 		if len(statements) == 0 {
 			return c.emptyObjectType
 		}
-		return c.getWidenedType(c.getWidenedLiteralType(c.checkExpression(statements[0].AsExpressionStatement().Expression)))
+		return c.getWidenedType(c.getWidenedLiteralType(c.checkExpression(statements[0].Expression())))
 	}
 	// Handle variable, parameter or property
 	if !c.pushTypeResolution(symbol, TypeSystemPropertyNameType) {
@@ -17993,8 +18031,9 @@ func (c *Checker) addInheritedMembers(symbols ast.SymbolTable, baseSymbols []*as
 func (c *Checker) resolveDeclaredMembers(t *Type) *InterfaceType {
 	d := t.AsInterfaceType()
 	if !d.declaredMembersResolved {
+		members := c.getMembersOfSymbol(t.symbol)
 		d.declaredMembersResolved = true
-		d.declaredMembers = c.getMembersOfSymbol(t.symbol)
+		d.declaredMembers = members
 		d.declaredCallSignatures = c.getSignaturesOfSymbol(d.declaredMembers[ast.InternalSymbolNameCall])
 		d.declaredConstructSignatures = c.getSignaturesOfSymbol(d.declaredMembers[ast.InternalSymbolNameNew])
 		d.declaredIndexInfos = c.getIndexInfosOfSymbol(t.symbol)
@@ -20639,7 +20678,7 @@ func (c *Checker) getObjectTypeInstantiation(t *Type, m *TypeMapper, alias *Type
 		newAlias = c.instantiateTypeAlias(t.alias, m)
 	}
 	data := target.AsObjectType()
-	key := getTypeInstantiationKey(typeArguments, alias, t.objectFlags&ObjectFlagsSingleSignatureType != 0)
+	key := getTypeInstantiationKey(typeArguments, newAlias, t.objectFlags&ObjectFlagsSingleSignatureType != 0)
 	if data.instantiations == nil {
 		data.instantiations = make(map[string]*Type)
 		data.instantiations[getTypeInstantiationKey(typeParameters, target.alias, false)] = target

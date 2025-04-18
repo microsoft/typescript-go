@@ -103,7 +103,7 @@ func (c *Checker) checkJsxFragment(node *ast.Node) *Type {
 	// by default, jsx:'react' will use jsxFactory = React.createElement and jsxFragmentFactory = React.Fragment
 	// if jsxFactory compiler option is provided, ensure jsxFragmentFactory compiler option or @jsxFrag pragma is provided too
 	nodeSourceFile := ast.GetSourceFileOfNode(node)
-	if c.compilerOptions.GetJSXTransformEnabled() && (c.compilerOptions.JsxFactory != "" || getPragmaFromSourceFile(nodeSourceFile, "jsx") != nil) && c.compilerOptions.JsxFragmentFactory == "" && getPragmaFromSourceFile(nodeSourceFile, "jsxfrag") == nil {
+	if c.compilerOptions.GetJSXTransformEnabled() && (c.compilerOptions.JsxFactory != "" || ast.GetPragmaFromSourceFile(nodeSourceFile, "jsx") != nil) && c.compilerOptions.JsxFragmentFactory == "" && ast.GetPragmaFromSourceFile(nodeSourceFile, "jsxfrag") == nil {
 		message := core.IfElse(c.compilerOptions.JsxFactory != "",
 			diagnostics.The_jsxFragmentFactory_compiler_option_must_be_provided_to_use_JSX_fragments_with_the_jsxFactory_compiler_option,
 			diagnostics.An_jsxFrag_pragma_is_required_when_using_an_jsx_pragma_with_JSX_fragments)
@@ -377,10 +377,10 @@ func (c *Checker) resolveJsxOpeningLikeElement(node *ast.Node, candidatesOutArra
 		result := c.getIntrinsicAttributesTypeFromJsxOpeningLikeElement(node)
 		fakeSignature := c.createSignatureForJSXIntrinsic(node, result)
 		c.checkTypeAssignableToAndOptionallyElaborate(c.checkExpressionWithContextualType(node.Attributes(), c.getEffectiveFirstArgumentForJsxSignature(fakeSignature, node), nil /*inferenceContext*/, CheckModeNormal), result, node.TagName(), node.Attributes(), nil, nil)
-		typeArgumentList := node.TypeArgumentList()
-		if typeArgumentList != nil {
-			c.checkSourceElements(typeArgumentList.Nodes)
-			c.diagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), node.TypeArgumentList().Loc, diagnostics.Expected_0_type_arguments_but_got_1, 0, len(typeArgumentList.Nodes)))
+		typeArguments := node.TypeArguments()
+		if len(typeArguments) != 0 {
+			c.checkSourceElements(typeArguments)
+			c.diagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), node.TypeArgumentList().Loc, diagnostics.Expected_0_type_arguments_but_got_1, 0, len(typeArguments)))
 		}
 		return fakeSignature
 	}
@@ -1134,7 +1134,7 @@ func (c *Checker) getJsxNamespace(location *ast.Node) string {
 				if links.localJsxFragmentNamespace != "" {
 					return links.localJsxFragmentNamespace
 				}
-				jsxFragmentPragma := getPragmaFromSourceFile(file, "jsxfrag")
+				jsxFragmentPragma := ast.GetPragmaFromSourceFile(file, "jsxfrag")
 				if jsxFragmentPragma != nil {
 					links.localJsxFragmentFactory = c.parseIsolatedEntityName(jsxFragmentPragma.Args["factory"].Value)
 					if links.localJsxFragmentFactory != nil {
@@ -1179,7 +1179,7 @@ func (c *Checker) getLocalJsxNamespace(file *ast.SourceFile) string {
 	if links.localJsxNamespace != "" {
 		return links.localJsxNamespace
 	}
-	jsxPragma := getPragmaFromSourceFile(file, "jsx")
+	jsxPragma := ast.GetPragmaFromSourceFile(file, "jsx")
 	if jsxPragma != nil {
 		links.localJsxFactory = c.parseIsolatedEntityName(jsxPragma.Args["factory"].Value)
 		if links.localJsxFactory != nil {
@@ -1208,7 +1208,7 @@ func (c *Checker) getJsxFragmentFactoryEntity(location *ast.Node) *ast.EntityNam
 			if links.localJsxFragmentFactory != nil {
 				return links.localJsxFragmentFactory
 			}
-			jsxFragPragma := getPragmaFromSourceFile(file, "jsxfrag")
+			jsxFragPragma := ast.GetPragmaFromSourceFile(file, "jsxfrag")
 			if jsxFragPragma != nil {
 				links.localJsxFragmentFactory = c.parseIsolatedEntityName(jsxFragPragma.Args["factory"].Value)
 				return links.localJsxFragmentFactory
@@ -1246,13 +1246,12 @@ func (c *Checker) getJsxNamespaceContainerForImplicitImport(location *ast.Node) 
 	if links != nil && links.jsxImplicitImportContainer != nil {
 		return core.IfElse(links.jsxImplicitImportContainer == c.unknownSymbol, nil, links.jsxImplicitImportContainer)
 	}
-	runtimeImportSpecifier := getJSXRuntimeImport(getJSXImplicitImportBase(c.compilerOptions, file), c.compilerOptions)
-	if runtimeImportSpecifier == "" {
+	moduleReference, specifier := c.getJSXRuntimeImportSpecifier(file)
+	if moduleReference == "" {
 		return nil
 	}
 	errorMessage := diagnostics.This_JSX_tag_requires_the_module_path_0_to_exist_but_none_could_be_found_Make_sure_you_have_types_for_the_appropriate_package_installed
-	specifier := c.getJSXRuntimeImportSpecifier(file, runtimeImportSpecifier)
-	mod := c.resolveExternalModule(core.OrElse(specifier, location), runtimeImportSpecifier, errorMessage, location, false)
+	mod := c.resolveExternalModule(core.OrElse(specifier, location), moduleReference, errorMessage, location, false)
 	var result *ast.Symbol
 	if mod != nil && mod != c.unknownSymbol {
 		result = c.getMergedSymbol(c.resolveSymbol(mod))
@@ -1263,63 +1262,6 @@ func (c *Checker) getJsxNamespaceContainerForImplicitImport(location *ast.Node) 
 	return result
 }
 
-func (c *Checker) getJSXRuntimeImportSpecifier(file *ast.SourceFile, specifierText string) *ast.Node {
-	// Synthesized JSX import is either first or after tslib
-	jsxImportIndex := core.IfElse(c.compilerOptions.ImportHelpers.IsTrue(), 1, 0)
-	if jsxImportIndex >= len(file.Imports) {
-		return nil
-	}
-	specifier := file.Imports[jsxImportIndex]
-	// Debug.assert(nodeIsSynthesized(specifier) && specifier.Text == specifierText, __TEMPLATE__("Expected sourceFile.imports[", jsxImportIndex, "] to be the synthesized JSX runtime import"))
-	return specifier
-}
-
-func getJSXImplicitImportBase(compilerOptions *core.CompilerOptions, file *ast.SourceFile) string {
-	jsxImportSourcePragma := getPragmaFromSourceFile(file, "jsximportsource")
-	jsxRuntimePragma := getPragmaFromSourceFile(file, "jsxruntime")
-	if getPragmaArgument(jsxRuntimePragma, "factory") == "classic" {
-		return ""
-	}
-	if compilerOptions.Jsx == core.JsxEmitReactJSX ||
-		compilerOptions.Jsx == core.JsxEmitReactJSXDev ||
-		compilerOptions.JsxImportSource != "" ||
-		jsxImportSourcePragma != nil ||
-		getPragmaArgument(jsxRuntimePragma, "factory") == "automatic" {
-		result := getPragmaArgument(jsxImportSourcePragma, "factory")
-		if result == "" {
-			result = compilerOptions.JsxImportSource
-		}
-		if result == "" {
-			result = "react"
-		}
-		return result
-	}
-	return ""
-}
-
-func getJSXRuntimeImport(base string, options *core.CompilerOptions) string {
-	if base == "" {
-		return base
-	}
-	return base + "/" + core.IfElse(options.Jsx == core.JsxEmitReactJSXDev, "jsx-dev-runtime", "jsx-runtime")
-}
-
-func getPragmaFromSourceFile(file *ast.SourceFile, name string) *ast.Pragma {
-	if file != nil {
-		for i := range file.Pragmas {
-			if file.Pragmas[i].Name == name {
-				return &file.Pragmas[i]
-			}
-		}
-	}
-	return nil
-}
-
-func getPragmaArgument(pragma *ast.Pragma, name string) string {
-	if pragma != nil {
-		if arg, ok := pragma.Args[name]; ok {
-			return arg.Value
-		}
-	}
-	return ""
+func (c *Checker) getJSXRuntimeImportSpecifier(file *ast.SourceFile) (moduleReference string, specifier *ast.Node) {
+	return c.program.GetJSXRuntimeImportSpecifier(file.Path())
 }

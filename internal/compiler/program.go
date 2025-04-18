@@ -41,6 +41,9 @@ type Program struct {
 	currentDirectory             string
 	configFileParsingDiagnostics []*ast.Diagnostic
 
+	sourceAffectingCompilerOptionsOnce sync.Once
+	sourceAffectingCompilerOptions     *core.SourceFileAffectingCompilerOptions
+
 	resolver *module.Resolver
 
 	comparePathsOptions tspath.ComparePathsOptions
@@ -184,12 +187,19 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.configFileParsingDiagnostics)
 }
 
+func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingCompilerOptions {
+	p.sourceAffectingCompilerOptionsOnce.Do(func() {
+		p.sourceAffectingCompilerOptions = p.compilerOptions.SourceFileAffecting()
+	})
+	return p.sourceAffectingCompilerOptions
+}
+
 func (p *Program) BindSourceFiles() {
 	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
-				binder.BindSourceFile(file, p.compilerOptions)
+				binder.BindSourceFile(file, p.getSourceAffectingCompilerOptions())
 			})
 		}
 	}
@@ -258,20 +268,13 @@ func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string
 	return nil
 }
 
+func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
+	return p.resolvedModules
+}
+
 func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
 	path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	return p.filesByPath[path]
-}
-
-func getModuleNames(file *ast.SourceFile) []*ast.Node {
-	res := slices.Clone(file.Imports)
-	for _, imp := range file.ModuleAugmentations {
-		if imp.Kind == ast.KindStringLiteral {
-			res = append(res, imp)
-		}
-		// Do nothing if it's an Identifier; we don't need to do module resolution for `declare global`.
-	}
-	return res
 }
 
 func (p *Program) GetSyntacticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -399,7 +402,7 @@ func SortAndDeduplicateDiagnostics(diagnostics []*ast.Diagnostic) []*ast.Diagnos
 func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, ensureChecked bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
 		if ensureBound {
-			binder.BindSourceFile(sourceFile, p.compilerOptions)
+			binder.BindSourceFile(sourceFile, p.getSourceAffectingCompilerOptions())
 		}
 		return SortAndDeduplicateDiagnostics(getDiagnostics(sourceFile))
 	}
@@ -680,4 +683,15 @@ type FileIncludeReason struct {
 // e.g. extensions that are not yet supported by the port.
 func (p *Program) UnsupportedExtensions() []string {
 	return p.unsupportedExtensions
+}
+
+func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
+	if result := p.jsxRuntimeImportSpecifiers[path]; result != nil {
+		return result.moduleReference, result.specifier
+	}
+	return "", nil
+}
+
+func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
+	return p.importHelpersImportSpecifiers[path]
 }
