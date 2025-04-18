@@ -86,10 +86,10 @@ func (c *Checker) SymbolToString(s *ast.Symbol) string {
 }
 
 func (c *Checker) symbolToString(symbol *ast.Symbol) string {
-	return c.symbolToStringEx(symbol, nil, ast.SymbolFlagsAll, SymbolFormatFlagsNone, nil, nil)
+	return c.symbolToStringEx(symbol, nil, ast.SymbolFlagsAll, SymbolFormatFlagsAllowAnyNodeKind, nil)
 }
 
-func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, flags SymbolFormatFlags, kind *SignatureKind, writer printer.EmitTextWriter) string {
+func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, flags SymbolFormatFlags, writer printer.EmitTextWriter) string {
 	if writer == nil {
 		writer = printer.SingleLineStringWriter
 	}

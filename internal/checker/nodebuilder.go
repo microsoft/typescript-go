@@ -336,7 +336,25 @@ func (b *NodeBuilder) getResolvedTypeWithoutAbstractConstructSignatures(t *Struc
 }
 
 func (b *NodeBuilder) symbolToNode(symbol *ast.Symbol, meaning ast.SymbolFlags) *ast.Node {
-	panic("unimplemented") // !!!
+	if b.ctx.internalFlags&nodebuilder.InternalFlagsWriteComputedProps != 0 {
+		if symbol.ValueDeclaration != nil {
+			name := ast.GetNameOfDeclaration(symbol.ValueDeclaration)
+			if name != nil && ast.IsComputedPropertyName(name) {
+				return name
+			}
+			if b.ch.valueSymbolLinks.Has(symbol) {
+				nameType := b.ch.valueSymbolLinks.Get(symbol).nameType
+				if nameType != nil && nameType.flags&(TypeFlagsEnumLiteral|TypeFlagsUniqueESSymbol) != 0 {
+					oldEnclosing := b.ctx.enclosingDeclaration
+					b.ctx.enclosingDeclaration = nameType.symbol.ValueDeclaration
+					result := b.f.NewComputedPropertyName(b.symbolToExpression(nameType.symbol, meaning))
+					b.ctx.enclosingDeclaration = oldEnclosing
+					return result
+				}
+			}
+		}
+	}
+	return b.symbolToExpression(symbol, meaning)
 }
 
 func (b *NodeBuilder) symbolToName(symbol *ast.Symbol, meaning ast.SymbolFlags, expectsIdentifier bool) *ast.Node {
@@ -352,6 +370,7 @@ func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags,
 }
 
 func (b *NodeBuilder) symbolToExpression(symbol *ast.Symbol, mask ast.SymbolFlags) *ast.Expression {
+	// chain := b.lookupSymbolChain(symbol, meaning)
 	panic("unimplemented") // !!!
 }
 

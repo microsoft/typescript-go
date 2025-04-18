@@ -639,6 +639,7 @@ type Checker struct {
 	indexSymbolLinks                           core.LinkStore[*ast.Symbol, IndexSymbolLinks]
 	ReverseMappedSymbolLinks                   core.LinkStore[*ast.Symbol, ReverseMappedSymbolLinks]
 	markedAssignmentSymbolLinks                core.LinkStore[*ast.Symbol, MarkedAssignmentSymbolLinks]
+	symbolContainerLinks                       core.LinkStore[*ast.Symbol, ContainingSymbolLinks]
 	sourceFileLinks                            core.LinkStore[*ast.SourceFile, SourceFileLinks]
 	patternForType                             map[*Type]*ast.Node
 	contextFreeTypes                           map[*ast.Node]*Type
@@ -29765,7 +29766,7 @@ func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
 	return c.getTypeOfNode(node)
 }
 
-func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver {
+func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *emitResolver {
 	c.emitResolverOnce.Do(func() {
 		c.emitResolver = &emitResolver{checker: c}
 	})
