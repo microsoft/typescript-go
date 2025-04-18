@@ -247,10 +247,8 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 			DefinitionProvider: &lsproto.BooleanOrDefinitionOptions{
 				Boolean: ptrTo(true),
 			},
-			DiagnosticProvider: &lsproto.DiagnosticOptionsOrDiagnosticRegistrationOptions{
-				DiagnosticOptions: &lsproto.DiagnosticOptions{
-					InterFileDependencies: true,
-				},
+			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
+				TriggerCharacters: &[]string{"(", ","},
 			},
 		},
 	})
@@ -357,17 +355,27 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 func (s *Server) handleSignatureHelp(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.SignatureHelpParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
-	pos, err := s.converters.lineAndCharacterToPosition(params.Position, file.FileName())
+	pos, err := s.converters.lineAndCharacterToPositionForFile(params.Position, file.FileName())
 	if err != nil {
 		return s.sendError(req.ID, err)
 	}
 	var triggerReason *ls.SignatureHelpTriggerReason
 	if params.Context != nil {
 		if params.Context.TriggerKind == 1 {
+			var triggerCharacter *string = new(string)
+			if params.Context.TriggerCharacter != nil {
+				if *params.Context.TriggerCharacter == "(" {
+					*triggerCharacter = "("
+				} else if *params.Context.TriggerCharacter == "," {
+					*triggerCharacter = ","
+				} else if *params.Context.TriggerCharacter == "<" {
+					*triggerCharacter = "<"
+				}
+			}
 			triggerReason = &ls.SignatureHelpTriggerReason{
 				Invoked: &ls.SignatureHelpInvokedReason{
 					Kind:             "invoked",
-					TriggerCharacter: params.Context.TriggerCharacter,
+					TriggerCharacter: triggerCharacter,
 				},
 			}
 		} else if params.Context.TriggerKind == 2 {

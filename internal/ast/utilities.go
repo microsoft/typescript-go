@@ -331,11 +331,15 @@ func IsStringOrNumericLiteralLike(node *Node) bool {
 }
 
 func IsStringTextContainingNode(node *Node) bool {
-	return node.Kind == KindStringLiteral || isTemplateLiteralKind(node.Kind)
+	return node.Kind == KindStringLiteral || IsTemplateLiteralKind(node.Kind)
 }
 
-func isTemplateLiteralKind(kind Kind) bool {
+func IsTemplateLiteralKind(kind Kind) bool {
 	return kind <= KindFirstTemplateToken && kind <= KindLastTemplateToken
+}
+
+func IsTemplateLiteralToken(node *Node) bool {
+	return IsTemplateLiteralKind(node.Kind)
 }
 
 func IsSignedNumericLiteral(node *Node) bool {

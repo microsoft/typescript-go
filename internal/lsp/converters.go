@@ -253,6 +253,9 @@ func (c *converters) positionToLineAndCharacter(scriptInfo *project.ScriptInfo, 
 }
 
 func toLspSignatureHelp(signatureHelpResult *ls.SignatureHelpItems) *lsproto.SignatureHelp {
+	if signatureHelpResult == nil {
+		return nil
+	}
 	signatureHelp := &lsproto.SignatureHelp{
 		Signatures:      make([]lsproto.SignatureInformation, len(signatureHelpResult.Signatures)),
 		ActiveSignature: ptrTo(uint32(signatureHelpResult.ActiveSignature)),
@@ -270,12 +273,17 @@ func toLspSignatureHelp(signatureHelpResult *ls.SignatureHelpItems) *lsproto.Sig
 				}
 			}
 		}
-
+		var activeParameter *lsproto.Nullable[uint32]
+		if signature.ActiveParameter == -1 {
+			activeParameter = nil
+		} else {
+			activeParameter = ptrTo(lsproto.ToNullable(uint32(signature.ActiveParameter)))
+		}
 		signatureHelp.Signatures[i] = lsproto.SignatureInformation{
 			Label:           signature.Label,
 			Documentation:   nil, //tbd
 			Parameters:      parameters,
-			ActiveParameter: ptrTo(lsproto.ToNullable(uint32(signature.ActiveParameter))),
+			ActiveParameter: activeParameter,
 		}
 	}
 	return signatureHelp

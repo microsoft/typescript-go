@@ -276,7 +276,7 @@ func (c *Checker) isEmptyArrayAssignment(node *ast.Node) bool {
 func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
 	signature := c.getEffectsSignature(flow.Node)
 	if signature != nil {
-		predicate := c.getTypePredicateOfSignature(signature)
+		predicate := c.GetTypePredicateOfSignature(signature)
 		if predicate != nil && (predicate.kind == TypePredicateKindAssertsThis || predicate.kind == TypePredicateKindAssertsIdentifier) {
 			flowType := c.getTypeAtFlowNode(f, flow.Antecedent)
 			t := c.finalizeEvolvingArrayType(flowType.t)
@@ -294,7 +294,7 @@ func (c *Checker) getTypeAtFlowCall(f *FlowState, flow *ast.FlowNode) FlowType {
 			}
 			return c.newFlowType(narrowedType, flowType.incomplete)
 		}
-		if c.getReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
+		if c.GetReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
 			return FlowType{t: c.unreachableNeverType}
 		}
 	}
@@ -435,7 +435,7 @@ func (c *Checker) narrowTypeByCallExpression(f *FlowState, t *Type, callExpressi
 		if assumeTrue || !isCallChain(callExpression) {
 			signature := c.getEffectsSignature(callExpression)
 			if signature != nil {
-				predicate = c.getTypePredicateOfSignature(signature)
+				predicate = c.GetTypePredicateOfSignature(signature)
 			}
 		}
 		if predicate != nil && (predicate.kind == TypePredicateKindThis || predicate.kind == TypePredicateKindIdentifier) {
@@ -801,7 +801,7 @@ func (c *Checker) narrowTypeByInstanceof(f *FlowState, t *Type, expr *ast.Binary
 	// participate in `instanceof`, as per Step 2 of https://tc39.es/ecma262/#sec-instanceofoperator.
 	var predicate *TypePredicate
 	if signature := c.getEffectsSignature(expr.AsNode()); signature != nil {
-		predicate = c.getTypePredicateOfSignature(signature)
+		predicate = c.GetTypePredicateOfSignature(signature)
 	}
 	if predicate != nil && predicate.kind == TypePredicateKindIdentifier && predicate.parameterIndex == 0 {
 		return c.getNarrowedType(t, predicate.t, assumeTrue, true /*checkDerived*/)
@@ -943,7 +943,7 @@ func (c *Checker) getInstanceType(constructorType *Type) *Type {
 	constructSignatures := c.GetSignaturesOfType(constructorType, SignatureKindConstruct)
 	if len(constructSignatures) != 0 {
 		return c.getUnionType(core.Map(constructSignatures, func(signature *Signature) *Type {
-			return c.getReturnTypeOfSignature(c.getErasedSignature(signature))
+			return c.GetReturnTypeOfSignature(c.getErasedSignature(signature))
 		}))
 	}
 	// We use the empty object type to indicate we don't know the type of objects created by
@@ -2161,7 +2161,7 @@ func (c *Checker) isDeclarationWithExplicitTypeAnnotation(node *ast.Node) bool {
 }
 
 func (c *Checker) hasTypePredicateOrNeverReturnType(sig *Signature) bool {
-	return c.getTypePredicateOfSignature(sig) != nil || sig.declaration != nil && core.OrElse(c.getReturnTypeFromAnnotation(sig.declaration), c.unknownType).flags&TypeFlagsNever != 0
+	return c.GetTypePredicateOfSignature(sig) != nil || sig.declaration != nil && core.OrElse(c.getReturnTypeFromAnnotation(sig.declaration), c.unknownType).flags&TypeFlagsNever != 0
 }
 
 func (c *Checker) getExplicitThisType(node *ast.Node) *Type {
@@ -2486,14 +2486,14 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 		case flags&ast.FlowFlagsCall != 0:
 			signature := c.getEffectsSignature(flow.Node)
 			if signature != nil {
-				predicate := c.getTypePredicateOfSignature(signature)
+				predicate := c.GetTypePredicateOfSignature(signature)
 				if predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
 					predicateArgument := flow.Node.Arguments()[predicate.parameterIndex]
 					if predicateArgument != nil && c.isFalseExpression(predicateArgument) {
 						return false
 					}
 				}
-				if c.getReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
+				if c.GetReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
 					return false
 				}
 			}

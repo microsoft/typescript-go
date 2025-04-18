@@ -36,8 +36,9 @@ func (c *Checker) runWithoutResolvedSignatureCaching(node *ast.Node, fn func() *
 	return fn()
 }
 
-func (c *Checker) getResolvedSignatureWorker(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
+func (c *Checker) getResolvedSignatureWorker(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode, argumentCount int) *Signature {
 	parsedNode := printer.NewEmitContext().ParseNode(node)
+	c.apparentArgumentCount = &argumentCount
 	var res *Signature = nil
 	if parsedNode != nil {
 		res = c.getResolvedSignature(parsedNode, candidatesOutArray, checkMode)
@@ -45,8 +46,8 @@ func (c *Checker) getResolvedSignatureWorker(node *ast.Node, candidatesOutArray 
 	return res
 }
 
-func (c *Checker) GetResolvedSignatureForSignatureHelp(node *ast.Node, candidatesOutArray *[]*Signature) *Signature {
+func (c *Checker) GetResolvedSignatureForSignatureHelp(node *ast.Node, candidatesOutArray *[]*Signature, argumentCount int) *Signature {
 	return c.runWithoutResolvedSignatureCaching(node, func() *Signature {
-		return c.getResolvedSignatureWorker(node, candidatesOutArray, CheckModeIsForSignatureHelp)
+		return c.getResolvedSignatureWorker(node, candidatesOutArray, CheckModeIsForSignatureHelp, argumentCount)
 	})
 }

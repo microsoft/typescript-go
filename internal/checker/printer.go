@@ -91,7 +91,7 @@ func (c *Checker) signatureToString(s *Signature) string {
 	return p.string()
 }
 
-func (c *Checker) typePredicateToString(t *TypePredicate) string {
+func (c *Checker) TypePredicateToString(t *TypePredicate) string {
 	p := c.newPrinter(TypeFormatFlagsNone)
 	p.printTypePredicate(t)
 	return p.string()
@@ -309,7 +309,7 @@ func (p *Printer) printParameterizedType(t *Type) {
 	switch {
 	case p.c.isArrayType(t) && p.flags&TypeFormatFlagsWriteArrayAsGenericType == 0:
 		p.printArrayType(t)
-	case isTupleType(t):
+	case IsTupleType(t):
 		p.printTupleType(t)
 	default:
 		p.printTypeReference(t)
@@ -506,10 +506,10 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 	}
 	p.print(")")
 	p.print(returnSeparator)
-	if pred := p.c.getTypePredicateOfSignature(sig); pred != nil {
+	if pred := p.c.GetTypePredicateOfSignature(sig); pred != nil {
 		p.printTypePredicate(pred)
 	} else {
-		p.printType(p.c.getReturnTypeOfSignature(sig))
+		p.printType(p.c.GetReturnTypeOfSignature(sig))
 	}
 }
 

@@ -256,130 +256,130 @@ func FindTokenOnLeftOfPosition(sourceFile *ast.SourceFile, position int) *ast.No
 }
 
 // Finds the rightmost token satisfying `token.end <= position`,
-func FindPrecedingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
-	var next *ast.Node
-	current := sourceFile.AsNode()
-	left := 0
+// func FindPrecedingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
+// 	var next *ast.Node
+// 	current := sourceFile.AsNode()
+// 	left := 0
 
-	testNode := func(node *ast.Node) int {
-		if node.Pos() == position {
-			return 1
-		}
-		if node.End() < position {
-			return -1
-		}
-		if getPosition(node, sourceFile, false) > position || node.Pos() == position+1 {
-			return 1
-		}
-		if node.End()+1 == position {
-			//prevSubtree = node
-			return 0
-		}
-		return 0
-	}
+// 	testNode := func(node *ast.Node) int {
+// 		if node.Pos() == position {
+// 			return 1
+// 		}
+// 		if node.End() < position {
+// 			return -1
+// 		}
+// 		if getPosition(node, sourceFile, false) > position || node.Pos() == position+1 {
+// 			return 1
+// 		}
+// 		if node.End()+1 == position {
+// 			//prevSubtree = node
+// 			return 0
+// 		}
+// 		return 0
+// 	}
 
-	visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
-		// We can't abort visiting children, so once a match is found, we set `next`
-		// and do nothing on subsequent visits.
-		if node != nil && next == nil {
-			switch testNode(node) {
-			case -1:
-				if !ast.IsJSDocKind(node.Kind) {
-					// We can't move the left boundary into or beyond JSDoc,
-					// because we may end up returning the token after this JSDoc,
-					// constructing it with the scanner, and we need to include
-					// all its leading trivia in its position.
-					left = node.End()
-				}
-			case 0:
-				next = node
-			}
-		}
-		return node
-	}
+// 	visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
+// 		// We can't abort visiting children, so once a match is found, we set `next`
+// 		// and do nothing on subsequent visits.
+// 		if node != nil && next == nil {
+// 			switch testNode(node) {
+// 			case -1:
+// 				if !ast.IsJSDocKind(node.Kind) {
+// 					// We can't move the left boundary into or beyond JSDoc,
+// 					// because we may end up returning the token after this JSDoc,
+// 					// constructing it with the scanner, and we need to include
+// 					// all its leading trivia in its position.
+// 					left = node.End()
+// 				}
+// 			case 0:
+// 				next = node
+// 			}
+// 		}
+// 		return node
+// 	}
 
-	visitNodes := func(nodes []*ast.Node) {
-		index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
-			cmp := testNode(node)
-			if cmp < 0 {
-				left = node.End()
-			}
-			return cmp
-		})
+// 	visitNodes := func(nodes []*ast.Node) {
+// 		index, match := core.BinarySearchUniqueFunc(nodes, position, func(middle int, node *ast.Node) int {
+// 			cmp := testNode(node)
+// 			if cmp < 0 {
+// 				left = node.End()
+// 			}
+// 			return cmp
+// 		})
 
-		if match {
-			next = nodes[index]
-		}
-	}
+// 		if match {
+// 			next = nodes[index]
+// 		}
+// 	}
 
-	visitNodeList := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
-		if nodeList != nil && len(nodeList.Nodes) > 0 && next == nil {
-			if nodeList.End() == position {
-				left = nodeList.End()
-				//prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
-			} else if nodeList.End() <= position {
-				left = nodeList.End()
-			} else if nodeList.Pos() <= position {
-				visitNodes(nodeList.Nodes)
-			}
-		}
-		return nodeList
-	}
+// 	visitNodeList := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
+// 		if nodeList != nil && len(nodeList.Nodes) > 0 && next == nil {
+// 			if nodeList.End() == position {
+// 				left = nodeList.End()
+// 				//prevSubtree = nodeList.Nodes[len(nodeList.Nodes)-1]
+// 			} else if nodeList.End() <= position {
+// 				left = nodeList.End()
+// 			} else if nodeList.Pos() <= position {
+// 				visitNodes(nodeList.Nodes)
+// 			}
+// 		}
+// 		return nodeList
+// 	}
 
-	nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-		VisitNode:  visitNode,
-		VisitToken: visitNode,
-		VisitNodes: visitNodeList,
-		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-			if modifiers != nil {
-				visitNodeList(&modifiers.NodeList, visitor)
-			}
-			return modifiers
-		},
-	})
+// 	nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
+// 		VisitNode:  visitNode,
+// 		VisitToken: visitNode,
+// 		VisitNodes: visitNodeList,
+// 		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+// 			if modifiers != nil {
+// 				visitNodeList(&modifiers.NodeList, visitor)
+// 			}
+// 			return modifiers
+// 		},
+// 	})
 
-	for {
-		visitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
+// 	for {
+// 		visitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
 
-		// No node was found that contains the target position, so we've gone as deep as
-		// we can in the AST. We've either found a token, or we need to run the scanner
-		// to construct one that isn't stored in the AST.
-		if next == nil {
-			if ast.IsTokenKind(current.Kind) || ast.IsJSDocCommentContainingNode(current) {
-				return current
-			}
-			scanner := scanner.GetScannerForSourceFile(sourceFile, left)
-			for left < current.End() {
-				token := scanner.Token()
-				tokenFullStart := scanner.TokenFullStart()
-				tokenStart := scanner.TokenStart()
-				tokenEnd := scanner.TokenEnd()
-				if tokenStart <= position && (position < tokenEnd) {
-					if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
-						if ast.IsJSDocKind(current.Kind) {
-							return current
-						}
-						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
-					}
-					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
-				}
-				if tokenStart <= position && (tokenEnd == position || tokenEnd == position-1) {
-					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
-				}
-				// if includePrecedingTokenAtEndPosition != nil && tokenEnd == position {
-				// 	prevToken := sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
-				// 	if includePrecedingTokenAtEndPosition(prevToken) {
-				// 		return prevToken
-				// 	}
-				// }
-				left = tokenEnd
-				scanner.Scan()
-			}
-			return current
-		}
-		current = next
-		left = current.Pos()
-		next = nil
-	}
+// 		// No node was found that contains the target position, so we've gone as deep as
+// 		// we can in the AST. We've either found a token, or we need to run the scanner
+// 		// to construct one that isn't stored in the AST.
+// 		if next == nil {
+// 			if ast.IsTokenKind(current.Kind) || ast.IsJSDocCommentContainingNode(current) {
+// 				return current
+// 			}
+// 			scanner := scanner.GetScannerForSourceFile(sourceFile, left)
+// 			for left < current.End() {
+// 				token := scanner.Token()
+// 				tokenFullStart := scanner.TokenFullStart()
+// 				tokenStart := scanner.TokenStart()
+// 				tokenEnd := scanner.TokenEnd()
+// 				if tokenStart <= position && (position < tokenEnd) {
+// 					if token == ast.KindIdentifier || !ast.IsTokenKind(token) {
+// 						if ast.IsJSDocKind(current.Kind) {
+// 							return current
+// 						}
+// 						panic(fmt.Sprintf("did not expect %s to have %s in its trivia", current.Kind.String(), token.String()))
+// 					}
+// 					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
+// 				}
+// 				if tokenStart <= position && (tokenEnd == position || tokenEnd == position-1) {
+// 					return sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
+// 				}
+// 				// if includePrecedingTokenAtEndPosition != nil && tokenEnd == position {
+// 				// 	prevToken := sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current)
+// 				// 	if includePrecedingTokenAtEndPosition(prevToken) {
+// 				// 		return prevToken
+// 				// 	}
+// 				// }
+// 				left = tokenEnd
+// 				scanner.Scan()
+// 			}
+// 			return current
+// 		}
+// 		current = next
+// 		left = current.Pos()
+// 		next = nil
+// 	}
 
-}
+// }

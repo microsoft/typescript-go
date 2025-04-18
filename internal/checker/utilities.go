@@ -1412,7 +1412,7 @@ func reverseAccessKind(a AccessKind) AccessKind {
 	panic("Unhandled case in reverseAccessKind")
 }
 
-func isJsxOpeningLikeElement(node *ast.Node) bool {
+func IsJsxOpeningLikeElement(node *ast.Node) bool {
 	return ast.IsJsxOpeningElement(node) || ast.IsJsxSelfClosingElement(node)
 }
 
@@ -1502,7 +1502,7 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 	return node.Name()
 }
 
-func indexOfNode(nodes []*ast.Node, node *ast.Node) int {
+func IndexOfNode(nodes []*ast.Node, node *ast.Node) int {
 	index, ok := slices.BinarySearchFunc(nodes, node, compareNodePositions)
 	if ok {
 		return index
@@ -1538,7 +1538,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return IsCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
+	return IsCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || IsJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {

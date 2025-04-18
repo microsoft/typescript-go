@@ -1,9 +1,13 @@
 package ls
 
 import (
+	"strings"
+
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Node) bool {
@@ -58,6 +62,67 @@ func removeOptionality(t *checker.Type, isOptionalExpression bool, isOptionalCha
 		return c.GetNonOptionalType(t)
 	}
 	return t
+}
+
+// nodeTests.ts
+func isNoSubstitutionTemplateLiteral(node *ast.Node) bool {
+	return node.Kind == ast.KindNoSubstitutionTemplateLiteral
+}
+
+func isTaggedTemplateExpression(node *ast.Node) bool {
+	return node.Kind == ast.KindTaggedTemplateExpression
+}
+
+func isInsideTemplateLiteral(node *ast.Node, position int, sourceFile *ast.SourceFile) bool {
+	return ast.IsTemplateLiteralKind(node.Kind) && (scanner.GetTokenPosOfNode(node, sourceFile, false) < position && position < node.End() || (ast.IsUnterminatedLiteral(node) && position == node.End()))
+}
+
+// Pseudo-literals
+func isTemplateHead(node *ast.Node) bool {
+	return node.Kind == ast.KindTemplateHead
+}
+
+func isTemplateTail(node *ast.Node) bool {
+	return node.Kind == ast.KindTemplateTail
+}
+
+//
+
+func findPrecedingMatchingToken(token *ast.Node, matchingTokenKind ast.Kind, sourceFile *ast.SourceFile) *ast.Node {
+	closeTokenText := scanner.TokenToString(token.Kind)
+	matchingTokenText := scanner.TokenToString(matchingTokenKind)
+	tokenFullStart := token.Loc.Pos()
+	// Text-scan based fast path - can be bamboozled by comments and other trivia, but often provides
+	// a good, fast approximation without too much extra work in the cases where it fails.
+	bestGuessIndex := strings.LastIndex(sourceFile.Text, matchingTokenText)
+	if bestGuessIndex == -1 {
+		return nil // if the token text doesn't appear in the file, there can't be a match - super fast bail
+	}
+	// we can only use the textual result directly if we didn't have to count any close tokens within the range
+	if strings.LastIndex(sourceFile.Text, closeTokenText) < bestGuessIndex {
+		nodeAtGuess := astnav.FindPrecedingToken(sourceFile, bestGuessIndex+1)
+		if nodeAtGuess != nil && nodeAtGuess.Kind == matchingTokenKind {
+			return nodeAtGuess
+		}
+	}
+	tokenKind := token.Kind
+	remainingMatchingTokens := 0
+	for true {
+		preceding := astnav.FindPrecedingToken(sourceFile, tokenFullStart)
+		if preceding == nil {
+			return nil
+		}
+		token = preceding
+		if token.Kind == matchingTokenKind {
+			if remainingMatchingTokens == 0 {
+				return token
+			}
+			remainingMatchingTokens--
+		} else if token.Kind == tokenKind {
+			remainingMatchingTokens++
+		}
+	}
+	return nil
 }
 
 // Display-part writer helpers
