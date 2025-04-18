@@ -14279,17 +14279,13 @@ func (c *Checker) tryFindAmbientModule(moduleName string, withAugmentations bool
 func (c *Checker) resolveExternalModuleSymbol(moduleSymbol *ast.Symbol, dontResolveAlias bool) *ast.Symbol {
 	if moduleSymbol != nil {
 		exportEquals := c.resolveSymbolEx(moduleSymbol.Exports[ast.InternalSymbolNameExportEquals], dontResolveAlias)
-		exported := c.getMergedSymbol(c.getCommonJSExportEquals(c.getMergedSymbol(exportEquals), c.getMergedSymbol(moduleSymbol)))
-		if exported != nil {
-			return exported
+		if exportEquals != nil {
+			return c.getMergedSymbol(exportEquals)
 		}
 	}
 	return moduleSymbol
 }
 
-func (c *Checker) getCommonJSExportEquals(exported *ast.Symbol, moduleSymbol *ast.Symbol) *ast.Symbol {
-	return exported
-}
 
 // An external module with an 'export =' declaration may be referenced as an ES6 module provided the 'export ='
 // references a symbol that is at least declared as a module or a variable. The target of the 'export =' may
