@@ -152,8 +152,7 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 				if expandedParams == nil {
 					return
 				}
-				for pIndex := 0; pIndex < len(*expandedParams); pIndex++ {
-					param := (*expandedParams)[pIndex]
+				for pIndex, param := range *expandedParams {
 					originalParam := (*originalParameters)[pIndex]
 					if originalParameters != nil && originalParam != param {
 						// Can't reference parameters that come from an expansion

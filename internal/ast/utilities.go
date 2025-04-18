@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"fmt"
 	"slices"
 	"strings"
 	"sync"
@@ -1530,14 +1531,14 @@ func GetImplementsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgume
 }
 
 func getHeritageElements(node *Node, kind Kind) []*Node {
-	clause := getHeritageClause(node, kind)
+	clause := GetHeritageClause(node, kind)
 	if clause != nil {
 		return clause.AsHeritageClause().Types.Nodes
 	}
 	return nil
 }
 
-func getHeritageClause(node *Node, kind Kind) *Node {
+func GetHeritageClause(node *Node, kind Kind) *Node {
 	clauses := getHeritageClauses(node)
 	if clauses != nil {
 		for _, clause := range clauses.Nodes {
@@ -2693,4 +2694,259 @@ func CreateModifiersFromModifierFlags(flags ModifierFlags, createModifier func(k
 		result = append(result, createModifier(KindOutKeyword))
 	}
 	return result
+}
+
+func GetThisParameter(signature *Node) *Node {
+	// callback tags do not currently support this parameters
+	if len(signature.Parameters()) != 0 {
+		thisParameter := signature.Parameters()[0]
+		if IsThisParameter(thisParameter) {
+			return thisParameter
+		}
+	}
+	return nil
+}
+
+func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierList) *Node {
+	switch node.Kind {
+	case KindTypeParameter:
+		return factory.UpdateTypeParameterDeclaration(
+			node.AsTypeParameter(),
+			modifierArray,
+			node.Name(),
+			node.AsTypeParameter().Constraint,
+			node.AsTypeParameter().DefaultType,
+		)
+	case KindParameter:
+		return factory.UpdateParameterDeclaration(
+			node.AsParameterDeclaration(),
+			modifierArray,
+			node.AsParameterDeclaration().DotDotDotToken,
+			node.Name(),
+			node.AsParameterDeclaration().QuestionToken,
+			node.Type(),
+			node.Initializer(),
+		)
+	case KindConstructorType:
+		return factory.UpdateConstructorTypeNode(
+			node.AsConstructorTypeNode(),
+			modifierArray,
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+		)
+	case KindPropertySignature:
+		return factory.UpdatePropertySignatureDeclaration(
+			node.AsPropertySignatureDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.AsPropertySignatureDeclaration().PostfixToken,
+			node.Type(),
+			node.Initializer(),
+		)
+	case KindPropertyDeclaration:
+		return factory.UpdatePropertyDeclaration(
+			node.AsPropertyDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.AsPropertyDeclaration().PostfixToken,
+			node.Type(),
+			node.Initializer(),
+		)
+	case KindMethodSignature:
+		return factory.UpdateMethodSignatureDeclaration(
+			node.AsMethodSignatureDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.AsMethodSignatureDeclaration().PostfixToken,
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+		)
+	case KindMethodDeclaration:
+		return factory.UpdateMethodDeclaration(
+			node.AsMethodDeclaration(),
+			modifierArray,
+			node.AsMethodDeclaration().AsteriskToken,
+			node.Name(),
+			node.AsMethodDeclaration().PostfixToken,
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+			node.Body(),
+		)
+	case KindConstructor:
+		return factory.UpdateConstructorDeclaration(
+			node.AsConstructorDeclaration(),
+			modifierArray,
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+			node.Body(),
+		)
+	case KindGetAccessor:
+		return factory.UpdateGetAccessorDeclaration(
+			node.AsGetAccessorDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+			node.Body(),
+		)
+	case KindSetAccessor:
+		return factory.UpdateSetAccessorDeclaration(
+			node.AsSetAccessorDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+			node.Body(),
+		)
+	case KindIndexSignature:
+		return factory.UpdateIndexSignatureDeclaration(
+			node.AsIndexSignatureDeclaration(),
+			modifierArray,
+			node.ParameterList(),
+			node.Type(),
+		)
+	case KindFunctionExpression:
+		return factory.UpdateFunctionExpression(
+			node.AsFunctionExpression(),
+			modifierArray,
+			node.AsFunctionExpression().AsteriskToken,
+			node.Name(),
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+			node.Body(),
+		)
+	case KindArrowFunction:
+		return factory.UpdateArrowFunction(
+			node.AsArrowFunction(),
+			modifierArray,
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+			node.AsArrowFunction().EqualsGreaterThanToken,
+			node.Body(),
+		)
+	case KindClassExpression:
+		return factory.UpdateClassExpression(
+			node.AsClassExpression(),
+			modifierArray,
+			node.Name(),
+			node.TypeParameterList(),
+			node.AsClassExpression().HeritageClauses,
+			node.MemberList(),
+		)
+	case KindVariableStatement:
+		return factory.UpdateVariableStatement(
+			node.AsVariableStatement(),
+			modifierArray,
+			node.AsVariableStatement().DeclarationList,
+		)
+	case KindFunctionDeclaration:
+		return factory.UpdateFunctionDeclaration(
+			node.AsFunctionDeclaration(),
+			modifierArray,
+			node.AsFunctionDeclaration().AsteriskToken,
+			node.Name(),
+			node.TypeParameterList(),
+			node.ParameterList(),
+			node.Type(),
+			node.Body(),
+		)
+	case KindClassDeclaration:
+		return factory.UpdateClassDeclaration(
+			node.AsClassDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.TypeParameterList(),
+			node.AsClassDeclaration().HeritageClauses,
+			node.MemberList(),
+		)
+	case KindInterfaceDeclaration:
+		return factory.UpdateInterfaceDeclaration(
+			node.AsInterfaceDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.TypeParameterList(),
+			node.AsInterfaceDeclaration().HeritageClauses,
+			node.MemberList(),
+		)
+	case KindTypeAliasDeclaration:
+		return factory.UpdateTypeAliasDeclaration(
+			node.AsTypeAliasDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.TypeParameterList(),
+			node.Type(),
+		)
+	case KindEnumDeclaration:
+		return factory.UpdateEnumDeclaration(
+			node.AsEnumDeclaration(),
+			modifierArray,
+			node.Name(),
+			node.MemberList(),
+		)
+	case KindModuleDeclaration:
+		return factory.UpdateModuleDeclaration(
+			node.AsModuleDeclaration(),
+			modifierArray,
+			node.AsModuleDeclaration().Keyword,
+			node.Name(),
+			node.Body(),
+		)
+	case KindImportEqualsDeclaration:
+		return factory.UpdateImportEqualsDeclaration(
+			node.AsImportEqualsDeclaration(),
+			modifierArray,
+			node.IsTypeOnly(),
+			node.Name(),
+			node.AsImportEqualsDeclaration().ModuleReference,
+		)
+	case KindImportDeclaration:
+		return factory.UpdateImportDeclaration(
+			node.AsImportDeclaration(),
+			modifierArray,
+			node.AsImportDeclaration().ImportClause,
+			node.AsImportDeclaration().ModuleSpecifier,
+			node.AsImportDeclaration().Attributes,
+		)
+	case KindExportAssignment:
+		return factory.UpdateExportAssignment(
+			node.AsExportAssignment(),
+			modifierArray,
+			node.Expression(),
+		)
+	case KindExportDeclaration:
+		return factory.UpdateExportDeclaration(
+			node.AsExportDeclaration(),
+			modifierArray,
+			node.IsTypeOnly(),
+			node.AsExportDeclaration().ExportClause,
+			node.AsExportDeclaration().ModuleSpecifier,
+			node.AsExportDeclaration().Attributes,
+		)
+	}
+	panic(fmt.Sprintf("Node that does not have modifiers tried to have modifier replaced: %d", node.Kind))
+}
+
+func IsLateVisibilityPaintedStatement(node *Node) bool {
+	switch node.Kind {
+	case KindImportDeclaration,
+		KindImportEqualsDeclaration,
+		KindVariableStatement,
+		KindClassDeclaration,
+		KindFunctionDeclaration,
+		KindModuleDeclaration,
+		KindTypeAliasDeclaration,
+		KindInterfaceDeclaration,
+		KindEnumDeclaration:
+		return true
+	default:
+		return false
+	}
 }

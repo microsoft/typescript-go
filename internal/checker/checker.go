@@ -619,6 +619,7 @@ type Checker struct {
 	typeNodeLinks                              core.LinkStore[*ast.Node, TypeNodeLinks]
 	enumMemberLinks                            core.LinkStore[*ast.Node, EnumMemberLinks]
 	assertionLinks                             core.LinkStore[*ast.Node, AssertionLinks]
+	declarationLinks                           core.LinkStore[*ast.Node, DeclarationLinks] // TODO: Move into EmitResolver if `collectLinkedAliases` also can move
 	arrayLiteralLinks                          core.LinkStore[*ast.Node, ArrayLiteralLinks]
 	switchStatementLinks                       core.LinkStore[*ast.Node, SwitchStatementLinks]
 	jsxElementLinks                            core.LinkStore[*ast.Node, JsxElementLinks]
@@ -705,6 +706,7 @@ type Checker struct {
 	resolvingSignature                         *Signature
 	silentNeverSignature                       *Signature
 	enumNumberIndexInfo                        *IndexInfo
+	anyBaseTypeIndexInfo                       *IndexInfo
 	patternAmbientModules                      []*ast.PatternAmbientModule
 	patternAmbientModuleAugmentations          ast.SymbolTable
 	globalObjectType                           *Type
@@ -967,6 +969,7 @@ func NewChecker(program Program) *Checker {
 	c.resolvingSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.anyType, nil, 0)
 	c.silentNeverSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.silentNeverType, nil, 0)
 	c.enumNumberIndexInfo = &IndexInfo{keyType: c.numberType, valueType: c.stringType, isReadonly: true}
+	c.anyBaseTypeIndexInfo = &IndexInfo{keyType: c.stringType, valueType: c.anyType, isReadonly: false}
 	c.emptyStringType = c.getStringLiteralType("")
 	c.zeroType = c.getNumberLiteralType(0)
 	c.zeroBigIntType = c.getBigIntLiteralType(jsnum.PseudoBigInt{})
@@ -11297,7 +11300,7 @@ func (c *Checker) getEnclosingClassFromThisParameter(node *ast.Node) *Type {
 func getThisParameterFromNodeContext(node *ast.Node) *ast.Node {
 	thisContainer := ast.GetThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
 	if thisContainer != nil && ast.IsFunctionLike(thisContainer) {
-		return getThisParameter(thisContainer)
+		return ast.GetThisParameter(thisContainer)
 	}
 	return nil
 }
@@ -11411,7 +11414,7 @@ func (c *Checker) tryGetThisTypeAt(node *ast.Node) *Type {
 }
 
 func (c *Checker) tryGetThisTypeAtEx(node *ast.Node, includeGlobalThis bool, container *ast.Node) *Type {
-	if ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || getThisParameter(container) != nil) {
+	if ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || ast.GetThisParameter(container) != nil) {
 		thisType := c.getThisTypeOfDeclaration(container)
 		// Note: a parameter initializer should refer to class-this unless function-this is explicitly annotated.
 		// If this is a function in a JS file, it might be a class method.
@@ -12970,7 +12973,7 @@ func (c *Checker) getNarrowedTypeOfSymbol(symbol *ast.Symbol, location *ast.Node
 					restType := c.getReducedApparentType(c.instantiateType(c.getTypeOfSymbol(contextualSignature.parameters[0]), mapper))
 					if restType.flags&TypeFlagsUnion != 0 && everyType(restType, isTupleType) && !core.Some(fn.Parameters(), c.isSomeSymbolAssigned) {
 						narrowedType := c.getFlowTypeOfReferenceEx(fn, restType, restType, nil /*flowContainer*/, getFlowNodeOfNode(location))
-						index := slices.Index(fn.Parameters(), declaration) - (core.IfElse(getThisParameter(fn) != nil, 1, 0))
+						index := slices.Index(fn.Parameters(), declaration) - (core.IfElse(ast.GetThisParameter(fn) != nil, 1, 0))
 						return c.getIndexedAccessType(narrowedType, c.getNumberLiteralType(jsnum.Number(index)))
 					}
 				}
@@ -17539,7 +17542,7 @@ func (c *Checker) resolveObjectTypeMembers(t *Type, source *Type, typeParameters
 			if instantiatedBaseType != c.anyType {
 				inheritedIndexInfos = c.getIndexInfosOfType(instantiatedBaseType)
 			} else {
-				inheritedIndexInfos = []*IndexInfo{{keyType: c.stringType, valueType: c.anyType}}
+				inheritedIndexInfos = []*IndexInfo{c.anyBaseTypeIndexInfo}
 			}
 			indexInfos = core.Concatenate(indexInfos, core.Filter(inheritedIndexInfos, func(info *IndexInfo) bool {
 				return findIndexInfo(indexInfos, info.keyType) == nil
@@ -18298,7 +18301,7 @@ func (c *Checker) getAnnotatedAccessorThisParameter(accessor *ast.Node) *ast.Sym
 
 func (c *Checker) getAccessorThisParameter(accessor *ast.Node) *ast.Node {
 	if len(accessor.Parameters()) == core.IfElse(ast.IsGetAccessorDeclaration(accessor), 1, 2) {
-		return getThisParameter(accessor)
+		return ast.GetThisParameter(accessor)
 	}
 	return nil
 }
@@ -19031,7 +19034,7 @@ func (c *Checker) resolveAnonymousTypeMembers(t *Type) {
 			c.addInheritedMembers(members, c.getPropertiesOfType(baseConstructorType))
 			c.setStructuredTypeMembers(t, members, nil, nil, nil)
 		} else if baseConstructorType == c.anyType {
-			baseConstructorIndexInfo = &IndexInfo{keyType: c.stringType, valueType: c.anyType}
+			baseConstructorIndexInfo = c.anyBaseTypeIndexInfo
 		}
 	}
 	indexSymbol := members[ast.InternalSymbolNameIndex]
@@ -27233,7 +27236,7 @@ func (c *Checker) getContextuallyTypedParameterType(parameter *ast.Node) *Type {
 	}
 	contextualSignature := c.getContextualSignature(fn)
 	if contextualSignature != nil {
-		index := slices.Index(fn.Parameters(), parameter) - core.IfElse(getThisParameter(fn) != nil, 1, 0)
+		index := slices.Index(fn.Parameters(), parameter) - core.IfElse(ast.GetThisParameter(fn) != nil, 1, 0)
 		if hasDotDotDotToken(parameter) && core.LastOrNil(fn.Parameters()) == parameter {
 			return c.getRestTypeAtPosition(contextualSignature, index, false)
 		}
@@ -27868,10 +27871,10 @@ func (c *Checker) getLegacyDecoratorCallSignature(decorator *ast.Node) *Signatur
 			if !ast.IsConstructorDeclaration(node.Parent) && !(ast.IsMethodDeclaration(node.Parent) || ast.IsSetAccessorDeclaration(node.Parent) && ast.IsClassLike(node.Parent.Parent)) {
 				break
 			}
-			if getThisParameter(node.Parent) == node {
+			if ast.GetThisParameter(node.Parent) == node {
 				break
 			}
-			index := slices.Index(node.Parent.Parameters(), node) - core.IfElse(getThisParameter(node.Parent) != nil, 1, 0)
+			index := slices.Index(node.Parent.Parameters(), node) - core.IfElse(ast.GetThisParameter(node.Parent) != nil, 1, 0)
 			// Debug.assert(index >= 0)
 			// A parameter declaration decorator will have three arguments (see `ParameterDecorator` in
 			// core.d.ts).

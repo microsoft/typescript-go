@@ -2,6 +2,7 @@ package declarations
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
 
@@ -25,23 +26,6 @@ func isPreservedDeclarationStatement(node *ast.Node) bool {
 
 func needsScopeMarker(result *ast.Node) bool {
 	return !ast.IsAnyImportOrReExport(result) && !ast.IsExportAssignment(result) && !ast.HasSyntacticModifier(result, ast.ModifierFlagsExport) && !ast.IsAmbientModule(result)
-}
-
-func isLateVisibilityPaintedStatement(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindImportDeclaration,
-		ast.KindImportEqualsDeclaration,
-		ast.KindVariableStatement,
-		ast.KindClassDeclaration,
-		ast.KindFunctionDeclaration,
-		ast.KindModuleDeclaration,
-		ast.KindTypeAliasDeclaration,
-		ast.KindInterfaceDeclaration,
-		ast.KindEnumDeclaration:
-		return true
-	default:
-		return false
-	}
 }
 
 func canHaveLiteralInitializer(host DeclarationEmitHost, node *ast.Node) bool {
@@ -117,10 +101,10 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 	// The following should be doing their own visibility checks based on filtering their members
 	case ast.KindVariableDeclaration:
 		return !getBindingNameVisible(resolver, node)
-	case ast.KindImportEqualsDeclaration:
-	case ast.KindImportDeclaration:
-	case ast.KindExportDeclaration:
-	case ast.KindExportAssignment:
+	case ast.KindImportEqualsDeclaration,
+		ast.KindImportDeclaration,
+		ast.KindExportDeclaration,
+		ast.KindExportAssignment:
 		return false
 	case ast.KindClassStaticBlockDeclaration:
 		return true
@@ -178,4 +162,73 @@ func maskModifierFlagsEx(host DeclarationEmitHost, node *ast.Node, modifierMask 
 		flags ^= ast.ModifierFlagsAmbient // `declare` is never required alongside `default` (and would be an error if printed)
 	}
 	return flags
+}
+
+func unwrapParenthesizedExpression(o *ast.Node) *ast.Node {
+	for o.Kind == ast.KindParenthesizedExpression {
+		o = o.Expression()
+	}
+	return o
+}
+
+func isPrimitiveLiteralValue(node *ast.Node, includeBigInt bool) bool {
+	return false // !!!
+}
+
+func isPrivateMethodTypeParameter(host DeclarationEmitHost, node *ast.TypeParameterDeclaration) bool {
+	return node.AsNode().Parent.Kind == ast.KindMethodDeclaration && host.GetEffectiveDeclarationFlags(node.AsNode().Parent, ast.ModifierFlagsPrivate) != 0
+}
+
+// If the ExpandoFunctionDeclaration have multiple overloads, then we only need to emit properties for the last one.
+func shouldEmitFunctionProperties(input *ast.FunctionDeclaration) bool {
+	if input.Body != nil { // if it has an implementation, it must be the last one
+		return true
+	}
+
+	overloadSignatures := core.Filter(input.Symbol.Declarations, func(decl *ast.Node) bool {
+		return ast.IsFunctionDeclaration(decl)
+	})
+
+	return len(overloadSignatures) == 0 || overloadSignatures[len(overloadSignatures)-1] == input.AsNode()
+}
+
+func getFirstConstructorWithBody(node *ast.Node) *ast.Node {
+	for _, member := range node.Members() {
+		if ast.IsConstructorDeclaration(member) && ast.NodeIsPresent(member.Body()) {
+			return member
+		}
+	}
+	return nil
+}
+
+func getEffectiveBaseTypeNode(node *ast.Node) *ast.Node {
+	baseType := getClassExtendsHeritageElement(node)
+	// !!! TODO: JSDoc support
+	// if (baseType && isInJSFile(node)) {
+	//     // Prefer an @augments tag because it may have type parameters.
+	//     const tag = getJSDocAugmentsTag(node);
+	//     if (tag) {
+	//         return tag.class;
+	//     }
+	// }
+	return baseType
+}
+
+func getClassExtendsHeritageElement(node *ast.Node) *ast.Node {
+	heritageClause := ast.GetHeritageClause(node, ast.KindExtendsKeyword)
+	if heritageClause != nil && len(heritageClause.AsHeritageClause().Types.Nodes) > 0 {
+		return heritageClause.AsHeritageClause().Types.Nodes[0]
+	}
+	return nil
+}
+
+func isScopeMarker(node *ast.Node) bool {
+	return ast.IsExportAssignment(node) || ast.IsExportDeclaration(node)
+}
+
+func hasScopeMarker(statements *ast.StatementList) bool {
+	if statements == nil {
+		return false
+	}
+	return core.Some(statements.Nodes, isScopeMarker)
 }

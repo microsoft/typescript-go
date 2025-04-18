@@ -339,7 +339,7 @@ func (b *NodeBuilder) symbolToNode(symbol *ast.Symbol, meaning ast.SymbolFlags) 
 	panic("unimplemented") // !!!
 }
 
-func (b *NodeBuilder) symbolToName(symbol *ast.Symbol, meaning ast.SymbolFlags, false bool) *ast.Node {
+func (b *NodeBuilder) symbolToName(symbol *ast.Symbol, meaning ast.SymbolFlags, expectsIdentifier bool) *ast.Node {
 	panic("unimplemented") // !!!
 }
 
@@ -589,8 +589,7 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 			if len(names) > 0 {
 				duplicates := []int{}
 				uniqueNames := make(map[string]bool)
-				for i := 0; i < len(names); i++ {
-					name := names[i]
+				for i, name := range names {
 					_, ok := uniqueNames[name]
 					if ok {
 						duplicates = append(duplicates, i)
