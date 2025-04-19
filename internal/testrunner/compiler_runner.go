@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -334,7 +335,7 @@ var concurrentSkippedErrorBaselines = core.NewSetFromItems(
 
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("error", func(t *testing.T) {
-		if !testutil.TestProgramIsSingleThreaded() && concurrentSkippedErrorBaselines.Has(c.testName) {
+		if !compiler.MustParseConcurrency(testutil.TestConcurrency()).IsSingleThreaded() && concurrentSkippedErrorBaselines.Has(c.testName) {
 			t.Skip("Skipping error baseline in concurrent mode")
 		}
 

@@ -48,6 +48,20 @@ function parseEnvBoolean(name, defaultValue = false) {
     throw new Error(`Invalid value for ${name}: ${value}`);
 }
 
+/**
+ * @param {string} name
+ * @param {string} defaultValue
+ * @returns {string}
+ */
+function parseEnvString(name, defaultValue = "") {
+    name = "TSGO_HEREBY_" + name.toUpperCase();
+    const value = process.env[name];
+    if (!value) {
+        return defaultValue;
+    }
+    return value;
+}
+
 const { values: options } = parseArgs({
     args: process.argv.slice(2),
     options: {
@@ -57,7 +71,7 @@ const { values: options } = parseArgs({
 
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
         noembed: { type: "boolean", default: parseEnvBoolean("NOEMBED") },
-        concurrentTestPrograms: { type: "boolean", default: parseEnvBoolean("CONCURRENT_TEST_PROGRAMS") },
+        concurrency: { type: "string", default: parseEnvString("CONCURRENT_TEST_PROGRAMS") },
         coverage: { type: "boolean", default: parseEnvBoolean("COVERAGE") },
     },
     strict: false,
@@ -257,11 +271,12 @@ function goTestFlags(taskName) {
         ...goBuildTags(),
         ...(options.tests ? [`-run=${options.tests}`] : []),
         ...(options.coverage ? [`-coverprofile=${path.join(coverageDir, "coverage." + taskName + ".out")}`, "-coverpkg=./..."] : []),
+        ...(options.concurrency === "checker-per-file" ? ["-parallel=1"] : []),
     ];
 }
 
 const goTestEnv = {
-    ...(options.concurrentTestPrograms ? { TS_TEST_PROGRAM_SINGLE_THREADED: "false" } : {}),
+    ...(typeof options.concurrency === "string" ? { TSGO_TEST_CONCURRENCY: options.concurrency } : {}),
     // Go test caching takes a long time on Windows.
     // https://github.com/golang/go/issues/72992
     ...(process.platform === "win32" ? { GOFLAGS: "-count=1" } : {}),

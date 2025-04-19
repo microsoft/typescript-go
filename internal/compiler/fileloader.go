@@ -68,7 +68,7 @@ func processAllProgramFiles(
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		},
-		wg:                  core.NewWorkGroup(programOptions.SingleThreaded),
+		wg:                  core.NewWorkGroup(programOptions.Concurrency.IsSingleThreaded()),
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(libs)),
 		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
 	}

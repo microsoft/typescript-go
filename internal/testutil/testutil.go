@@ -3,7 +3,6 @@ package testutil
 import (
 	"os"
 	"runtime/debug"
-	"strconv"
 	"sync"
 	"testing"
 
@@ -34,16 +33,17 @@ func RecoverAndFail(t *testing.T, msg string) {
 	}
 }
 
-var testProgramIsSingleThreaded = sync.OnceValue(func() bool {
+var testConcurrency = sync.OnceValue(func() string {
 	// Leave Program in SingleThreaded mode unless explicitly configured or in race mode.
-	if v := os.Getenv("TS_TEST_PROGRAM_SINGLE_THREADED"); v != "" {
-		if b, err := strconv.ParseBool(v); err == nil {
-			return b
-		}
+	if v := os.Getenv("TSGO_TEST_CONCURRENCY"); v != "" {
+		return v
 	}
-	return !race.Enabled
+	if race.Enabled {
+		return "default"
+	}
+	return "single"
 })
 
-func TestProgramIsSingleThreaded() bool {
-	return testProgramIsSingleThreaded()
+func TestConcurrency() string {
+	return testConcurrency()
 }

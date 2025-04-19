@@ -24,7 +24,7 @@ type ProgramOptions struct {
 	RootFiles                    []string
 	Host                         CompilerHost
 	Options                      *core.CompilerOptions
-	SingleThreaded               bool
+	Concurrency                  Concurrency
 	ProjectReference             []core.ProjectReference
 	ConfigFileParsingDiagnostics []*ast.Diagnostic
 }
@@ -195,7 +195,7 @@ func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingC
 }
 
 func (p *Program) BindSourceFiles() {
-	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+	wg := core.NewWorkGroup(p.programOptions.Concurrency.IsSingleThreaded())
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
@@ -208,7 +208,7 @@ func (p *Program) BindSourceFiles() {
 
 func (p *Program) CheckSourceFiles() {
 	p.createCheckers()
-	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+	wg := core.NewWorkGroup(p.programOptions.Concurrency.IsSingleThreaded())
 	for index, checker := range p.checkers {
 		wg.Queue(func() {
 			for i := index; i < len(p.files); i += len(p.checkers) {
@@ -221,8 +221,8 @@ func (p *Program) CheckSourceFiles() {
 
 func (p *Program) createCheckers() {
 	p.checkersOnce.Do(func() {
-		p.checkers = make([]*checker.Checker, core.IfElse(p.programOptions.SingleThreaded, 1, 4))
-		wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+		p.checkers = make([]*checker.Checker, p.programOptions.Concurrency.Checkers(len(p.files)))
+		wg := core.NewWorkGroup(p.programOptions.Concurrency.IsSingleThreaded())
 		for i := range p.checkers {
 			wg.Queue(func() {
 				p.checkers[i] = checker.NewChecker(p)
@@ -598,7 +598,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 			return printer.NewTextWriter(host.Options().NewLine.GetNewLineCharacter())
 		},
 	}
-	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+	wg := core.NewWorkGroup(p.programOptions.Concurrency.IsSingleThreaded())
 	var emitters []*emitter
 	sourceFiles := getSourceFilesToEmit(host, options.TargetSourceFile, options.forceDtsEmit)
 

@@ -780,10 +780,10 @@ func (c *CompilationResult) GetSourceMapRecord() string {
 
 func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {
 	programOptions := compiler.ProgramOptions{
-		RootFiles:      rootFiles,
-		Host:           host,
-		Options:        options,
-		SingleThreaded: testutil.TestProgramIsSingleThreaded(),
+		RootFiles:   rootFiles,
+		Host:        host,
+		Options:     options,
+		Concurrency: compiler.MustParseConcurrency(testutil.TestConcurrency()),
 	}
 	program := compiler.NewProgram(programOptions)
 	return program
