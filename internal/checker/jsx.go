@@ -125,7 +125,7 @@ func (c *Checker) checkJsxOpeningLikeElementOrOpeningFragment(node *ast.Node) {
 	c.checkJsxPreconditions(node)
 	c.markJsxAliasReferenced(node)
 	if isNodeOpeningLikeElement {
-		sig := c.getResolvedSignature(node, nil, CheckModeNormal)
+		sig := c.GetResolvedSignature(node, nil, CheckModeNormal)
 		c.checkDeprecatedSignature(sig, node)
 		elementTypeConstraint := c.getJsxElementTypeTypeAt(node)
 		if elementTypeConstraint != nil {
