@@ -342,7 +342,7 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 		ast.KindSetAccessor,
 		ast.KindMethodDeclaration:
 		// if this method has a body and its parent is a class declaration, this is a valid target.
-		return node.BodyData() != nil && parent != nil && (ast.IsClassDeclaration(parent) || !useLegacyDecorators && ast.IsClassExpression(parent))
+		return node.Body() != nil && parent != nil && (ast.IsClassDeclaration(parent) || !useLegacyDecorators && ast.IsClassExpression(parent))
 	case ast.KindParameter:
 		// TODO(rbuckton): Parameter decorator support for ES decorators must wait until it is standardized
 		if !useLegacyDecorators {
