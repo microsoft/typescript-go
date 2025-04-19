@@ -6,8 +6,8 @@
  var wat = require('./bug24024')
 ->wat : typeof wat
 ->require('./bug24024') : typeof wat
-+>wat : any
-+>require('./bug24024') : any
++>wat : typeof C
++>require('./bug24024') : typeof C
  >require : any
  >'./bug24024' : "./bug24024"
  

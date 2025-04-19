@@ -19,14 +19,8 @@
  const test = (base) => {
 ->test : (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>
 ->(base) => {    return base;} : (base: InstanceType<BaseFactory["Base"]>) => InstanceType<BaseFactory["Base"]>
-->base : Base
-+>test : (base: any) => any
-+>(base) => {    return base;} : (base: any) => any
-+>base : any
++>test : (base: Base) => Base
++>(base) => {    return base;} : (base: Base) => Base
+ >base : Base
  
      return base;
-->base : Base
-+>base : any
- 
- };
- 

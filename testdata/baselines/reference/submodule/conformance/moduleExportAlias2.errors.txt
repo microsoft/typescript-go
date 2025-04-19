@@ -1,0 +1,24 @@
+index.js(4,13): error TS2351: This expression is not constructable.
+  Type 'typeof import("semver")' has no construct signatures.
+
+
+==== index.js (1 errors) ====
+    /// <reference path='node.d.ts' />
+    const C = require("./semver")
+    var two = C.f(1)
+    var c = new C
+                ~
+!!! error TS2351: This expression is not constructable.
+!!! error TS2351:   Type 'typeof import("semver")' has no construct signatures.
+    
+==== node.d.ts (0 errors) ====
+    declare function require(name: string): any;
+    declare var exports: any;
+    declare var module: { exports: any };
+==== semver.js (0 errors) ====
+    /// <reference path='node.d.ts' />
+    exports = module.exports = C
+    exports.f = n => n + 1
+    function C() {
+        this.p = 1
+    }

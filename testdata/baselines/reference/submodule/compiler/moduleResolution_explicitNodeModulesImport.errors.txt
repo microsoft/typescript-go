@@ -1,11 +1,11 @@
-/src/index.ts(1,19): error TS2307: Cannot find module '../node_modules/foo' or its corresponding type declarations.
+/node_modules/foo/index.js(1,1): error TS2304: Cannot find name 'exports'.
 
 
-==== /src/index.ts (1 errors) ====
+==== /src/index.ts (0 errors) ====
     import { x } from "../node_modules/foo";
-                      ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module '../node_modules/foo' or its corresponding type declarations.
     
-==== /node_modules/foo/index.js (0 errors) ====
+==== /node_modules/foo/index.js (1 errors) ====
     exports.x = 0;
+    ~~~~~~~
+!!! error TS2304: Cannot find name 'exports'.
     

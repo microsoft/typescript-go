@@ -11,11 +11,11 @@ module.exports.x = 1;
 >1 : 1
 
 module.exports = require("./y.js");
->module.exports = require("./y.js") : any
+>module.exports = require("./y.js") : typeof import("/y")
 >module.exports : any
 >module : any
 >exports : any
->require("./y.js") : any
+>require("./y.js") : typeof import("/y")
 >require : any
 >"./y.js" : "./y.js"
 

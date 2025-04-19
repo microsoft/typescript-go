@@ -6,6 +6,9 @@
 exports.formatters = {}
 === first.js ===
 exports = require('./mod')
+>require : Symbol(require)
+>'./mod' : Symbol("mod", Decl(mod.js, 0, 0))
+
 exports.formatters.j = function (v) {
 >v : Symbol(v, Decl(first.js, 1, 33))
 
@@ -14,6 +17,9 @@ exports.formatters.j = function (v) {
 }
 === second.js ===
 exports = require('./mod')
+>require : Symbol(require)
+>'./mod' : Symbol("mod", Decl(mod.js, 0, 0))
+
 exports.formatters.o = function (v) {
 >v : Symbol(v, Decl(second.js, 1, 33))
 
@@ -26,9 +32,13 @@ import * as debug from './mod'
 >debug : Symbol(debug, Decl(use.js, 0, 6))
 
 debug.formatters.j
+>debug.formatters : Symbol(formatters, Decl(mod.js, 0, 0))
 >debug : Symbol(debug, Decl(use.js, 0, 6))
+>formatters : Symbol(formatters, Decl(mod.js, 0, 0))
 
 var one = debug.formatters.o(1)
 >one : Symbol(one, Decl(use.js, 3, 3))
+>debug.formatters : Symbol(formatters, Decl(mod.js, 0, 0))
 >debug : Symbol(debug, Decl(use.js, 0, 6))
+>formatters : Symbol(formatters, Decl(mod.js, 0, 0))
 

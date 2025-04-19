@@ -16,8 +16,8 @@ module.exports = {
 
 === /src/constants.ts ===
 import * as tsConstants from "../lib/constants";
->tsConstants : any
+>tsConstants : { str: string; }
 
 export { tsConstants };
->tsConstants : any
+>tsConstants : { str: string; }
 

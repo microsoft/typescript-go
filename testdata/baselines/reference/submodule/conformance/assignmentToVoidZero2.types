@@ -78,11 +78,11 @@ c.p + c.q
 
 === importer.js ===
 import { j, k } from './assignmentToVoidZero2'
->j : any
->k : any
+>j : 1
+>k : undefined
 
 j + k
 >j + k : any
->j : any
->k : any
+>j : 1
+>k : undefined
 

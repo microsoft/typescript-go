@@ -3,8 +3,8 @@
 === bug24024.js ===
 // #24024
 var wat = require('./bug24024')
->wat : any
->require('./bug24024') : any
+>wat : typeof C
+>require('./bug24024') : typeof C
 >require : any
 >'./bug24024' : "./bug24024"
 
