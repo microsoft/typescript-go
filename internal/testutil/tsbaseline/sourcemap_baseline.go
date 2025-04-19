@@ -87,11 +87,10 @@ func createSourceMapPreviewLink(sourceMap *harnessutil.TestFile, result *harness
 		return ""
 	}
 
-	var sourceTDs []*harnessutil.TestFile
 	////if len(sourcemapJSON.Sources) == len(inputsAndOutputs.Inputs) {
 	////	sourceTDs = inputsAndOutputs.Inputs
 	////} else {
-	sourceTDs = core.Map(sourcemapJSON.Sources, func(s string) *harnessutil.TestFile {
+	sourceTDs := core.Map(sourcemapJSON.Sources, func(s string) *harnessutil.TestFile {
 		return core.Find(result.Inputs(), func(td *harnessutil.TestFile) bool {
 			return strings.HasSuffix(td.UnitName, s)
 		})
