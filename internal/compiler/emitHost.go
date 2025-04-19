@@ -3,6 +3,7 @@ package compiler
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/declarations"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -17,6 +18,7 @@ type WriteFileData struct {
 
 // NOTE: EmitHost operations must be thread-safe
 type EmitHost interface {
+	declarations.DeclarationEmitHost
 	Options() *core.CompilerOptions
 	SourceFiles() []*ast.SourceFile
 	UseCaseSensitiveFileNames() bool
@@ -33,6 +35,25 @@ var _ EmitHost = (*emitHost)(nil)
 // NOTE: emitHost operations must be thread-safe
 type emitHost struct {
 	program *Program
+}
+
+func (host *emitHost) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
+	ch := host.program.GetTypeCheckerForFile(ast.GetSourceFileOfNode(node))
+	return ch.GetEffectiveDeclarationFlags(node, flags)
+}
+
+func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool) declarations.OutputPaths {
+	// TODO: cache
+	return getOutputPathsFor(file, host, forceDtsPaths)
+}
+
+func (host *emitHost) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
+	ch := host.program.GetTypeCheckerForFile(ast.GetSourceFileOfNode(node))
+	return ch.GetResolutionModeOverride(node.AsImportAttributes(), false)
+}
+
+func (host *emitHost) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
+	return host.program.GetSourceFileFromReference(origin, ref)
 }
 
 func (host *emitHost) Options() *core.CompilerOptions { return host.program.Options() }

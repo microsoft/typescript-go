@@ -349,7 +349,7 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 			return false
 		}
 		// if the parameter's parent has a body and its grandparent is a class declaration, this is a valid target.
-		return parent != nil && parent.BodyData() != nil && (parent.BodyData()).Body != nil && (parent.Kind == ast.KindConstructor || parent.Kind == ast.KindMethodDeclaration || parent.Kind == ast.KindSetAccessor) && getThisParameter(parent) != node && grandparent != nil && grandparent.Kind == ast.KindClassDeclaration
+		return parent != nil && parent.BodyData() != nil && (parent.BodyData()).Body != nil && (parent.Kind == ast.KindConstructor || parent.Kind == ast.KindMethodDeclaration || parent.Kind == ast.KindSetAccessor) && ast.GetThisParameter(parent) != node && grandparent != nil && grandparent.Kind == ast.KindClassDeclaration
 	}
 
 	return false
@@ -463,11 +463,6 @@ func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 		return getLeftmostAccessExpression(node.AsVariableDeclaration().Initializer).AsCallExpression().Arguments.Nodes[0]
 	}
 	return nil
-}
-
-func getExternalModuleImportEqualsDeclarationExpression(node *ast.Node) *ast.Node {
-	// Debug.assert(isExternalModuleImportEqualsDeclaration(node))
-	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
 }
 
 func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
@@ -1254,17 +1249,6 @@ func isKnownSymbol(symbol *ast.Symbol) bool {
 
 func isLateBoundName(name string) bool {
 	return len(name) >= 2 && name[0] == '\xfe' && name[1] == '@'
-}
-
-func getThisParameter(signature *ast.Node) *ast.Node {
-	// callback tags do not currently support this parameters
-	if len(signature.Parameters()) != 0 {
-		thisParameter := signature.Parameters()[0]
-		if ast.IsThisParameter(thisParameter) {
-			return thisParameter
-		}
-	}
-	return nil
 }
 
 func isObjectOrArrayLiteralType(t *Type) bool {
@@ -2156,4 +2140,29 @@ func allDeclarationsInSameSourceFile(symbol *ast.Symbol) bool {
 		}
 	}
 	return true
+}
+
+func containsNonMissingUndefinedType(c *Checker, t *Type) bool {
+	var candidate *Type
+	if t.flags&TypeFlagsUnion != 0 {
+		candidate = t.AsUnionType().types[0]
+	} else {
+		candidate = t
+	}
+	return candidate.flags&TypeFlagsUndefined != 0 && candidate != c.missingType
+}
+
+func getAnyImportSyntax(node *ast.Node) *ast.Node {
+	switch node.Kind {
+	case ast.KindImportEqualsDeclaration:
+		return node
+	case ast.KindImportClause:
+		return node.Parent
+	case ast.KindNamespaceImport:
+		return node.Parent.Parent
+	case ast.KindImportSpecifier:
+		return node.Parent.Parent.Parent
+	default:
+		return nil
+	}
 }

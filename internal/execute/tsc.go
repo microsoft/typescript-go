@@ -216,10 +216,8 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 	if len(diagnostics) == 0 {
 		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(nil)...)
 	}
-	// TODO: declaration diagnostics
-	if len(diagnostics) == 0 && options.NoEmit == core.TSTrue && (options.Declaration.IsTrue() && options.Composite.IsTrue()) {
-		return nil, nil, ExitStatusNotImplemented
-		// addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
+	if len(diagnostics) == 0 && options.GetEmitDeclarations() {
+		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(nil)...)
 	}
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}

@@ -252,8 +252,7 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 }
 
 func (options *CompilerOptions) GetEmitDeclarations() bool {
-	// !!!
-	return false
+	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
 
 func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
