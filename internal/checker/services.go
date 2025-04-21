@@ -244,34 +244,6 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 	return c.getNamedMembers(propsByName)
 }
 
-func IsUnion(t *Type) bool {
-	return t.flags&TypeFlagsUnion != 0
-}
-
-func IsStringLiteral(t *Type) bool {
-	return t.flags&TypeFlagsStringLiteral != 0
-}
-
-func IsNumberLiteral(t *Type) bool {
-	return t.flags&TypeFlagsNumberLiteral != 0
-}
-
-func IsBigIntLiteral(t *Type) bool {
-	return t.flags&TypeFlagsBigIntLiteral != 0
-}
-
-func IsEnumLiteral(t *Type) bool {
-	return t.flags&TypeFlagsEnumLiteral != 0
-}
-
-func IsBooleanLike(t *Type) bool {
-	return t.flags&TypeFlagsBooleanLike != 0
-}
-
-func IsStringLike(t *Type) bool {
-	return t.flags&TypeFlagsStringLike != 0
-}
-
 func (c *Checker) TryGetMemberInModuleExportsAndProperties(memberName string, moduleSymbol *ast.Symbol) *ast.Symbol {
 	symbol := c.TryGetMemberInModuleExports(memberName, moduleSymbol)
 	if symbol != nil {

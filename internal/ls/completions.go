@@ -733,13 +733,13 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 	var literals []literalValue
 	if isLiteralExpected {
 		var types []*checker.Type
-		if contextualType != nil && checker.IsUnion(contextualType) {
+		if contextualType != nil && contextualType.IsUnion() {
 			types = contextualType.Types()
 		} else if contextualType != nil {
 			types = []*checker.Type{contextualType}
 		}
 		literals = core.MapNonNil(types, func(t *checker.Type) literalValue {
-			if isLiteral(t) && !checker.IsEnumLiteral(t) {
+			if isLiteral(t) && !t.IsEnumLiteral() {
 				return t.AsLiteralType().Value()
 			}
 			return nil
@@ -1192,10 +1192,10 @@ func (l *LanguageService) createCompletionItem(
 
 		// If is boolean like or undefined, don't return a snippet, we want to return just the completion.
 		if jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleAuto) &&
-			t.Flags()&checker.TypeFlagsBooleanLike == 0 &&
-			!(t.Flags()&checker.TypeFlagsUnion != 0 && core.Some(t.Types(), func(t *checker.Type) bool { return t.Flags()&checker.TypeFlagsBooleanLike != 0 })) {
-			if t.Flags()&checker.TypeFlagsStringLike != 0 ||
-				t.Flags()&checker.TypeFlagsUnion != 0 &&
+			!t.IsBooleanLike() &&
+			!(t.IsUnion() && core.Some(t.Types(), func(t *checker.Type) bool { return t.IsBooleanLike() })) {
+			if t.IsStringLike() ||
+				t.IsUnion() &&
 					core.Every(
 						t.Types(),
 						func(t *checker.Type) bool {
@@ -1733,7 +1733,7 @@ func nonAliasCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *chec
 // Gets all properties on a type, but if that type is a union of several types,
 // excludes array-like types or callable/constructable types.
 func getPropertiesForCompletion(t *checker.Type, typeChecker *checker.Checker) []*ast.Symbol {
-	if checker.IsUnion(t) {
+	if t.IsUnion() {
 		return core.CheckEachDefined(typeChecker.GetAllPossiblePropertiesOfTypes(t.Types()), "getAllPossiblePropertiesOfTypes() should all be defined.")
 	} else {
 		return core.CheckEachDefined(typeChecker.GetApparentProperties(t), "getApparentProperties() should all be defined.")
@@ -1843,7 +1843,8 @@ func getContextualTypeFromParent(node *ast.Expression, typeChecker *checker.Chec
 		return typeChecker.GetContextualType(parent, contextFlags)
 	case ast.KindBinaryExpression:
 		if isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
-			return typeChecker.GetTypeAtLocation(core.IfElse(node == parent.AsBinaryExpression().Right, parent.AsBinaryExpression().Left, parent.AsBinaryExpression().Right))
+			return typeChecker.GetTypeAtLocation(
+				core.IfElse(node == parent.AsBinaryExpression().Right, parent.AsBinaryExpression().Left, parent.AsBinaryExpression().Right))
 		}
 		return typeChecker.GetContextualType(node, contextFlags)
 	case ast.KindCaseClause:
@@ -1868,13 +1869,19 @@ func isEqualityOperatorKind(kind ast.Kind) bool {
 }
 
 func isLiteral(t *checker.Type) bool {
-	return checker.IsStringLiteral(t) || checker.IsNumberLiteral(t) || checker.IsBigIntLiteral(t)
+	return t.IsStringLiteral() || t.IsNumberLiteral() || t.IsBigIntLiteral()
 }
 
 func getRecommendedCompletion(previousToken *ast.Node, contextualType *checker.Type, typeChecker *checker.Checker) *ast.Symbol {
+	var types []*checker.Type
+	if contextualType.IsUnion() {
+		types = contextualType.Types()
+	} else {
+		types = []*checker.Type{contextualType}
+	}
 	// For a union, return the first one with a recommended completion.
 	return core.FirstNonNil(
-		core.IfElse(checker.IsUnion(contextualType), contextualType.Types(), []*checker.Type{contextualType}),
+		types,
 		func(t *checker.Type) *ast.Symbol {
 			symbol := t.Symbol()
 			// Don't make a recommended completion for an abstract class.
@@ -2002,7 +2009,7 @@ func quotePropertyName(file *ast.SourceFile, preferences *UserPreferences, name 
 // is not reduced by the checker as a special case used for supporting string literal completions
 // for string type.
 func isStringAndEmptyAnonymousObjectIntersection(typeChecker *checker.Checker, t *checker.Type) bool {
-	if t.Flags()&checker.TypeFlagsIntersection == 0 {
+	if !t.IsIntersection() {
 		return false
 	}
 
@@ -2012,7 +2019,7 @@ func isStringAndEmptyAnonymousObjectIntersection(typeChecker *checker.Checker, t
 }
 
 func areIntersectedTypesAvoidingStringReduction(typeChecker *checker.Checker, t1 *checker.Type, t2 *checker.Type) bool {
-	return t1.Flags()&checker.TypeFlagsString != 0 && typeChecker.IsEmptyAnonymousObjectType(t2)
+	return t1.IsString() && typeChecker.IsEmptyAnonymousObjectType(t2)
 }
 
 func escapeSnippetText(text string) string {

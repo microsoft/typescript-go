@@ -640,6 +640,42 @@ func (t *Type) Symbol() *ast.Symbol {
 	return t.symbol
 }
 
+func (t *Type) IsUnion() bool {
+	return t.flags&TypeFlagsUnion != 0
+}
+
+func (t *Type) IsString() bool {
+	return t.flags&TypeFlagsString != 0
+}
+
+func (t *Type) IsIntersection() bool {
+	return t.flags&TypeFlagsIntersection != 0
+}
+
+func (t *Type) IsStringLiteral() bool {
+	return t.flags&TypeFlagsStringLiteral != 0
+}
+
+func (t *Type) IsNumberLiteral() bool {
+	return t.flags&TypeFlagsNumberLiteral != 0
+}
+
+func (t *Type) IsBigIntLiteral() bool {
+	return t.flags&TypeFlagsBigIntLiteral != 0
+}
+
+func (t *Type) IsEnumLiteral() bool {
+	return t.flags&TypeFlagsEnumLiteral != 0
+}
+
+func (t *Type) IsBooleanLike() bool {
+	return t.flags&TypeFlagsBooleanLike != 0
+}
+
+func (t *Type) IsStringLike() bool {
+	return t.flags&TypeFlagsStringLike != 0
+}
+
 // TypeData
 
 type TypeData interface {
