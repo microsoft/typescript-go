@@ -1,7 +1,6 @@
 package ls
 
 import (
-	"slices"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -11,6 +10,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
+
+var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
 
 // !!!
 func isInString(file *ast.SourceFile, position int, previousToken *ast.Node) bool {
@@ -127,7 +128,7 @@ func quote(file *ast.SourceFile, preferences *UserPreferences, text string) stri
 	quotePreference := getQuotePreference(file, preferences)
 	quoted, _ := core.StringifyJson(text, "" /*prefix*/, "" /*indent*/)
 	if quotePreference == quotePreferenceSingle {
-		strings.ReplaceAll(strings.ReplaceAll(core.StripQuotes(quoted), "'", `\'`), `\"`, `"`)
+		quoteReplacer.Replace(core.StripQuotes(quoted))
 	}
 	return quoted
 }
@@ -297,7 +298,7 @@ func probablyUsesSemicolons(file *ast.SourceFile) bool {
 	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
 }
 
-var typeKeywords []ast.Kind = []ast.Kind{
+var typeKeywords *core.Set[ast.Kind] = core.NewSetFromItems(
 	ast.KindAnyKeyword,
 	ast.KindAssertsKeyword,
 	ast.KindBigIntKeyword,
@@ -318,10 +319,10 @@ var typeKeywords []ast.Kind = []ast.Kind{
 	ast.KindUndefinedKeyword,
 	ast.KindUniqueKeyword,
 	ast.KindUnknownKeyword,
-}
+)
 
 func isTypeKeyword(kind ast.Kind) bool {
-	return slices.Contains(typeKeywords, kind)
+	return typeKeywords.Has(kind)
 }
 
 // Returns a map of all names in the file to their positions.

@@ -683,7 +683,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 		}
 
 		if !isTypeLocation || checker.IsInTypeQuery(node) {
-			// GH#39946. Pulling on the type of a node inside of a function with a contextual `this` parameter can result in a circularity
+			// microsoft/TypeScript#39946. Pulling on the type of a node inside of a function with a contextual `this` parameter can result in a circularity
 			// if the `node` is part of the exprssion of a `yield` or `return`. This circularity doesn't exist at compile time because
 			// we will check (and cache) the type of `this` *before* checking the type of the node.
 			typeChecker.TryGetThisTypeAtEx(node, false /*includeGlobalThis*/, nil)
@@ -727,7 +727,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 		contextualType = getContextualType(previousToken, position, file, typeChecker)
 	}
 
-	// exclude literal suggestions after <input type="text" [||] /> (#51667) and after closing quote (#52675)
+	// exclude literal suggestions after <input type="text" [||] /> microsoft/TypeScript#51667) and after closing quote (microsoft/TypeScript#52675)
 	// for strings getStringLiteralCompletions handles completions
 	isLiteralExpected := !ast.IsStringLiteralLike(previousToken) && !isJsxIdentifierExpected
 	var literals []literalValue
@@ -939,7 +939,13 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		if originalSortText == "" {
 			originalSortText = SortTextLocationPriority
 		}
-		sortText := core.IfElse(isDeprecated(symbol, typeChecker), deprecateSortText(originalSortText), originalSortText)
+
+		var sortText sortText
+		if isDeprecated(symbol, typeChecker) {
+			sortText = deprecateSortText(originalSortText)
+		} else {
+			sortText = originalSortText
+		}
 		entry := l.createCompletionItem(
 			symbol,
 			sortText,
@@ -980,14 +986,14 @@ func completionNameForLiteral(
 	preferences *UserPreferences,
 	literal literalValue,
 ) string {
-	switch literal.(type) {
+	switch literal := literal.(type) {
 	case string:
-		return quote(file, preferences, literal.(string))
+		return quote(file, preferences, literal)
 	case jsnum.Number:
 		name, _ := core.StringifyJson(literal, "" /*prefix*/, "" /*suffix*/)
 		return name
 	case jsnum.PseudoBigInt:
-		return literal.(jsnum.PseudoBigInt).String() + "n"
+		return literal.String() + "n"
 	}
 	panic(fmt.Sprintf("Unhandled literal value: %v", literal))
 }
@@ -1045,7 +1051,7 @@ func (l *LanguageService) createCompletionItem(
 				name)
 		}
 	} else if data.propertyAccessToConvert != nil && (useBraces || insertQuestionDot) {
-		// We should only have needsConvertPropertyAccess if there's a property access to convert. But see #21790.
+		// We should only have needsConvertPropertyAccess if there's a property access to convert. But see microsoft/TypeScript#21790.
 		// Somehow there was a global with a non-identifier name. Hopefully someone will complain about getting a "foo bar" global completion and provide a repro.
 		if useBraces {
 			if needsConvertPropertyAccess {
@@ -1518,7 +1524,7 @@ func getCompletionEntryDisplayNameForSymbol(
 		}
 		return "", false
 	case CompletionKindObjectPropertyDeclaration:
-		// TODO: GH#18169
+		// TODO: microsoft/TypeScript#18169
 		escapedName, _ := core.StringifyJson(name, "", "")
 		return escapedName, false
 	case CompletionKindPropertyAccess, CompletionKindGlobal:

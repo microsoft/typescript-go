@@ -63,12 +63,12 @@ p.`,
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			run_test(t, testCase.content, testCase.position, testCase.expected)
+			runTest(t, testCase.content, testCase.position, testCase.expected)
 		})
 	}
 }
 
-func run_test(t *testing.T, content string, position int, expected *lsproto.CompletionList) {
+func runTest(t *testing.T, content string, position int, expected *lsproto.CompletionList) {
 	files := map[string]string{
 		"/index.ts": content,
 	}
