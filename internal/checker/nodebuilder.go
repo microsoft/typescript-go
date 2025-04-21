@@ -3,13 +3,16 @@ package checker
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type CompositeSymbolIdentity struct {
@@ -358,20 +361,471 @@ func (b *NodeBuilder) symbolToNode(symbol *ast.Symbol, meaning ast.SymbolFlags) 
 }
 
 func (b *NodeBuilder) symbolToName(symbol *ast.Symbol, meaning ast.SymbolFlags, expectsIdentifier bool) *ast.Node {
-	panic("unimplemented") // !!!
+	chain := b.lookupSymbolChain(symbol, meaning, false)
+	if expectsIdentifier && len(chain) != 1 && !b.ctx.encounteredError && (b.ctx.flags&nodebuilder.FlagsAllowQualifiedNameInPlaceOfIdentifier != 0) {
+		b.ctx.encounteredError = true
+	}
+	return b.createEntityNameFromSymbolChain(chain, len(chain)-1)
 }
 
+func (b *NodeBuilder) createEntityNameFromSymbolChain(chain []*ast.Symbol, index int) *ast.Node {
+	// !!! TODO: smuggle type arguments out
+	// typeParameterNodes := lookupTypeParameterNodes(chain, index, context);
+	symbol := chain[index]
+
+	if index == 0 {
+		b.ctx.flags |= nodebuilder.FlagsInInitialEntityName
+	}
+	symbolName := b.getNameOfSymbolAsWritten(symbol)
+	if index == 0 {
+		b.ctx.flags ^= nodebuilder.FlagsInInitialEntityName
+	}
+
+	identifier := b.f.NewIdentifier(symbolName)
+	b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
+	// !!! TODO: smuggle type arguments out
+	// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
+	// identifier.symbol = symbol;
+	// expression = identifier;
+	if index > 0 {
+		return b.f.NewQualifiedName(
+			b.createEntityNameFromSymbolChain(chain, index-1),
+			identifier,
+		)
+	}
+	return identifier
+}
+
+// TODO: Audit usages of symbolToEntityNameNode - they should probably all be symbolToName
 func (b *NodeBuilder) symbolToEntityNameNode(symbol *ast.Symbol) *ast.EntityName {
-	panic("unimplemented") // !!!
+	identifier := b.f.NewIdentifier(symbol.Name)
+	if symbol.Parent != nil {
+		return b.f.NewQualifiedName(b.symbolToEntityNameNode(symbol.Parent), identifier)
+	}
+	return identifier
 }
 
 func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags, typeArguments *ast.NodeList) *ast.TypeNode {
-	panic("unimplemented") // !!!
+	chain := b.lookupSymbolChain(symbol, mask, (b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope == 0)) // If we're using aliases outside the current scope, dont bother with the module
+	if len(chain) == 0 {
+		return nil // TODO: shouldn't be possible, `lookupSymbolChain` should always at least return the input symbol and issue an error
+	}
+	isTypeOf := mask == ast.SymbolFlagsType
+	if core.Some(chain[0].Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
+		// module is root, must use `ImportTypeNode`
+		var nonRootParts *ast.Node
+		if len(chain) > 1 {
+			nonRootParts = b.createAccessFromSymbolChain(chain, len(chain)-1, 1)
+			// !!!
+		}
+		typeParameterNodes := typeArguments                                                  /*|| lookupTypeParameterNodes(chain, 0, context);*/ // !!! TODO: type argument smuggling
+		contextFile := ast.GetSourceFileOfNode(b.e.MostOriginal(b.ctx.enclosingDeclaration)) // TODO: Just use b.ctx.enclosingFile ? Or is the delayed lookup important for context moves?
+		targetFile := getSourceFileOfModule(chain[0])
+		var specifier string
+		var attributes *ast.Node
+		if b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNode16 || b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNodeNext {
+			// An `import` type directed at an esm format file is only going to resolve in esm mode - set the esm mode assertion
+			if targetFile != nil && b.ch.program.GetEmitModuleFormatOfFile(targetFile) == core.ModuleKindESNext && b.ch.program.GetEmitModuleFormatOfFile(targetFile) != b.ch.program.GetEmitModuleFormatOfFile(contextFile) {
+				specifier = b.getSpecifierForModuleSymbol(chain[0], core.ModuleKindESNext)
+				attributes = b.f.NewImportAttributes(
+					ast.KindWithKeyword,
+					b.f.NewNodeList([]*ast.Node{b.f.NewImportAttribute(b.f.NewStringLiteral("resolution-mode"), b.f.NewStringLiteral("import"))}),
+					false,
+				)
+			}
+		}
+		if len(specifier) == 0 {
+			specifier = b.getSpecifierForModuleSymbol(chain[0], core.ResolutionModeNone)
+		}
+		if (b.ctx.flags&nodebuilder.FlagsAllowNodeModulesRelativePaths == 0) /* && b.ch.compilerOptions.GetModuleResolutionKind() != core.ModuleResolutionKindClassic */ && strings.Contains(specifier, "/node_modules/") {
+			oldSpecifier := specifier
+
+			if b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNode16 || b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNodeNext {
+				// We might be able to write a portable import type using a mode override; try specifier generation again, but with a different mode set
+				swappedMode := core.ModuleKindESNext
+				if b.ch.program.GetEmitModuleFormatOfFile(contextFile) == core.ModuleKindESNext {
+					swappedMode = core.ModuleKindCommonJS
+				}
+				specifier = b.getSpecifierForModuleSymbol(chain[0], swappedMode)
+
+				if strings.Contains(specifier, "/node_modules/") {
+					// Still unreachable :(
+					specifier = oldSpecifier
+				} else {
+					modeStr := "require"
+					if swappedMode == core.ModuleKindESNext {
+						modeStr = "import"
+					}
+					attributes = b.f.NewImportAttributes(
+						ast.KindWithKeyword,
+						b.f.NewNodeList([]*ast.Node{b.f.NewImportAttribute(b.f.NewStringLiteral("resolution-mode"), b.f.NewStringLiteral(modeStr))}),
+						false,
+					)
+				}
+			}
+
+			if attributes == nil {
+				// If ultimately we can only name the symbol with a reference that dives into a `node_modules` folder, we should error
+				// since declaration files with these kinds of references are liable to fail when published :(
+				b.ctx.encounteredError = true
+				b.ctx.tracker.ReportLikelyUnsafeImportRequiredError(oldSpecifier)
+			}
+		}
+
+		lit := b.f.NewLiteralTypeNode(b.f.NewStringLiteral(specifier))
+		b.ctx.approximateLength += len(specifier) + 10 // specifier + import("")
+		if nonRootParts == nil || ast.IsEntityName(nonRootParts) {
+			if nonRootParts != nil {
+				// !!! TODO: smuggle type arguments out
+				// const lastId = isIdentifier(nonRootParts) ? nonRootParts : nonRootParts.right;
+				// setIdentifierTypeArguments(lastId, /*typeArguments*/ undefined);
+			}
+			return b.f.NewImportTypeNode(isTypeOf, lit, attributes, nonRootParts, typeParameterNodes)
+		}
+
+		splitNode := getTopmostIndexedAccessType(nonRootParts.AsIndexedAccessTypeNode())
+		qualifier := splitNode.ObjectType.AsTypeReference().TypeName
+		return b.f.NewIndexedAccessTypeNode(
+			b.f.NewImportTypeNode(isTypeOf, lit, attributes, qualifier, typeParameterNodes),
+			splitNode.IndexType,
+		)
+
+	}
+
+	entityName := b.createAccessFromSymbolChain(chain, len(chain)-1, 0)
+	if ast.IsIndexedAccessTypeNode(entityName) {
+		return entityName // Indexed accesses can never be `typeof`
+	}
+	if isTypeOf {
+		return b.f.NewTypeQueryNode(entityName, nil)
+	}
+	// !!! TODO: smuggle type arguments out
+	// const lastId = isIdentifier(entityName) ? entityName : entityName.right;
+	// const lastTypeArgs = getIdentifierTypeArguments(lastId);
+	// setIdentifierTypeArguments(lastId, /*typeArguments*/ undefined);
+	return b.f.NewTypeReferenceNode(entityName, nil)
+}
+
+func getTopmostIndexedAccessType(node *ast.IndexedAccessTypeNode) *ast.IndexedAccessTypeNode {
+	if ast.IsIndexedAccessTypeNode(node.ObjectType) {
+		return getTopmostIndexedAccessType(node.ObjectType.AsIndexedAccessTypeNode())
+	}
+	return node
+}
+
+func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int, stopper int) *ast.Node {
+	// !!! TODO: smuggle type arguments out
+	// const typeParameterNodes = index === (chain.length - 1) ? overrideTypeArguments : lookupTypeParameterNodes(chain, index, context);
+	symbol := chain[index]
+	var parent *ast.Symbol
+	if index > 0 {
+		parent = chain[index-1]
+	}
+
+	var symbolName string
+	if index == 0 {
+		b.ctx.flags |= nodebuilder.FlagsInInitialEntityName
+		symbolName = b.getNameOfSymbolAsWritten(symbol)
+		b.ctx.approximateLength += len(symbolName) + 1
+		b.ctx.flags ^= nodebuilder.FlagsInInitialEntityName
+	} else {
+		// lookup a ref to symbol within parent to handle export aliases
+		if parent != nil {
+			exports := b.ch.getExportsOfSymbol(parent)
+			if exports != nil {
+				for name, ex := range exports {
+					if b.ch.getSymbolIfSameReference(ex, symbol) != nil && !isLateBoundName(name) && name != ast.InternalSymbolNameExportEquals {
+						symbolName = name
+						break
+					}
+				}
+			}
+		}
+	}
+
+	if len(symbolName) == 0 {
+		var name *ast.Node
+		for _, d := range symbol.Declarations {
+			name = ast.GetNameOfDeclaration(d)
+			if name != nil {
+				break
+			}
+		}
+		if name != nil && ast.IsComputedPropertyName(name) && ast.IsEntityName(name.AsComputedPropertyName().Expression) {
+			lhs := b.createAccessFromSymbolChain(chain, index-1, stopper)
+			if ast.IsEntityName(lhs) {
+				return b.f.NewIndexedAccessTypeNode(
+					b.f.NewParenthesizedTypeNode(b.f.NewTypeQueryNode(lhs, nil)),
+					b.f.NewTypeQueryNode(name.Expression(), nil),
+				)
+			}
+			return lhs
+		}
+	}
+	b.ctx.approximateLength += len(symbolName) + 1
+
+	if (b.ctx.flags&nodebuilder.FlagsForbidIndexedAccessSymbolReferences == 0) && parent != nil &&
+		b.ch.getMembersOfSymbol(parent) != nil && b.ch.getMembersOfSymbol(parent)[symbol.Name] != nil &&
+		b.ch.getSymbolIfSameReference(b.ch.getMembersOfSymbol(parent)[symbol.Name], symbol) != nil {
+		// Should use an indexed access
+		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper)
+		if ast.IsIndexedAccessTypeNode(lhs) {
+			return b.f.NewIndexedAccessTypeNode(
+				lhs,
+				b.f.NewLiteralTypeNode(b.f.NewStringLiteral(symbolName)),
+			)
+		}
+		return b.f.NewIndexedAccessTypeNode(
+			b.f.NewTypeReferenceNode(lhs /*!!! todo: type args*/, nil),
+			b.f.NewLiteralTypeNode(b.f.NewStringLiteral(symbolName)),
+		)
+	}
+
+	identifier := b.f.NewIdentifier(symbolName)
+	b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
+	// !!! TODO: smuggle type arguments out
+	// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
+	// identifier.symbol = symbol;
+
+	if index > stopper {
+		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper)
+		if !ast.IsEntityName(lhs) {
+			panic("Impossible construct - an export of an indexed access cannot be reachable")
+		}
+		return b.f.NewQualifiedName(lhs, identifier)
+	}
+
+	return identifier
 }
 
 func (b *NodeBuilder) symbolToExpression(symbol *ast.Symbol, mask ast.SymbolFlags) *ast.Expression {
-	// chain := b.lookupSymbolChain(symbol, meaning)
-	panic("unimplemented") // !!!
+	chain := b.lookupSymbolChain(symbol, mask, false)
+	return b.createExpressionFromSymbolChain(chain, len(chain)-1)
+}
+
+func (b *NodeBuilder) createExpressionFromSymbolChain(chain []*ast.Symbol, index int) *ast.Expression {
+	// !!! TODO: smuggle type arguments out
+	// typeParameterNodes := b.lookupTypeParameterNodes(chain, index)
+	symbol := chain[index]
+
+	if index == 0 {
+		b.ctx.flags |= nodebuilder.FlagsInInitialEntityName
+	}
+	symbolName := b.getNameOfSymbolAsWritten(symbol)
+	if index == 0 {
+		b.ctx.flags ^= nodebuilder.FlagsInInitialEntityName
+	}
+
+	if startsWithSingleOrDoubleQuote(symbolName) && core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
+		return b.f.NewStringLiteral(b.getSpecifierForModuleSymbol(symbol, core.ResolutionModeNone))
+	}
+
+	if index == 0 || canUsePropertyAccess(symbolName, b.ch.languageVersion) {
+		identifier := b.f.NewIdentifier(symbolName)
+		b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
+		// !!! TODO: smuggle type arguments out
+		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
+		// identifier.symbol = symbol;
+		if index > 0 {
+			b.f.NewPropertyAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, identifier, ast.NodeFlagsNone)
+		}
+		return identifier
+	}
+
+	if startsWithSquareBracket(symbolName) {
+		symbolName = symbolName[1 : len(symbolName)-1]
+	}
+
+	var expression *ast.Expression
+	if startsWithSingleOrDoubleQuote(symbolName) && symbol.Flags&ast.SymbolFlagsEnumMember == 0 {
+		expression = b.f.NewStringLiteral(unquoteString(symbolName))
+	} else if jsnum.FromString(symbolName).String() == symbolName {
+		// TODO: the follwing in strada would assert if the number is negative, but no such assertion exists here
+		// Moreover, what's even guaranteeing the name *isn't* -1 here anyway? Needs double-checking.
+		expression = b.f.NewNumericLiteral(symbolName)
+	}
+	if expression == nil {
+		expression = b.f.NewIdentifier(symbolName)
+		b.e.AddEmitFlags(expression, printer.EFNoAsciiEscaping)
+		// !!! TODO: smuggle type arguments out
+		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
+		// identifier.symbol = symbol;
+		// expression = identifier;
+	}
+	return b.f.NewElementAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, expression, ast.NodeFlagsNone)
+}
+
+func canUsePropertyAccess(name string, languageVersion core.ScriptTarget) bool {
+	if len(name) == 0 {
+		return false
+	}
+	// TODO: in strada, this only used `isIdentifierStart` on the first character, while this checks the whole string for validity
+	// - possible strada bug?
+	if strings.HasPrefix(name, "#") {
+		return len(name) > 1 && scanner.IsIdentifierText(name[1:], languageVersion)
+	}
+	return scanner.IsIdentifierText(name, languageVersion)
+}
+
+func unquoteString(str string) string {
+	// strconv.Unquote is insufficient as that only handles a single character inside single quotes, as those are character literals in go
+	inner := stripQuotes(str)
+	// In strada we do str.replace(/\\./g, s => s.substring(1)) - which is to say, replace all backslash-something with just something
+	// That's replicated here faithfully, but it seems wrong! This should probably be an actual unquote operation?
+	return strings.ReplaceAll(inner, "\\", "")
+}
+
+/**
+ * Strip off existed surrounding single quotes, double quotes, or backticks from a given string
+ *
+ * @return non-quoted string
+ *
+ * @internal
+ */
+func stripQuotes(name string) string {
+	length := len(name)
+	if length >= 2 && startsWithSingleOrDoubleQuote(name) && name[0] == name[length-1] { // TODO: in TS this also handles backtick quoted things
+		return name[1 : len(name)-1]
+	}
+	return name
+}
+
+func startsWithSingleOrDoubleQuote(str string) bool {
+	return strings.HasPrefix(str, "'") || strings.HasPrefix(str, "\"")
+}
+
+func startsWithSquareBracket(str string) bool {
+	return strings.HasPrefix(str, "[")
+}
+
+/**
+* Gets a human-readable name for a symbol.
+* Should *not* be used for the right-hand side of a `.` -- use `symbolName(symbol)` for that instead.
+*
+* Unlike `symbolName(symbol)`, this will include quotes if the name is from a string literal.
+* It will also use a representation of a number as written instead of a decimal form, e.g. `0o11` instead of `9`.
+ */
+func (b *NodeBuilder) getNameOfSymbolAsWritten(symbol *ast.Symbol) string {
+	return "" // !!!
+}
+
+func (b *NodeBuilder) lookupTypeParameterNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
+	return nil // !!! TODO: nested reference type parameter synthesis
+}
+
+// TODO: move `lookupSymbolChain` and co to `symbolaccessibility.go` (but getSpecifierForModuleSymbol uses much context which makes that hard?)
+func (b *NodeBuilder) lookupSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags, yieldModuleSymbol bool) []*ast.Symbol {
+	b.ctx.tracker.TrackSymbol(symbol, b.ctx.enclosingDeclaration, meaning)
+	return b.lookupSymbolChainWorker(symbol, meaning, yieldModuleSymbol)
+}
+
+func (b *NodeBuilder) lookupSymbolChainWorker(symbol *ast.Symbol, meaning ast.SymbolFlags, yieldModuleSymbol bool) []*ast.Symbol {
+	// Try to get qualified name if the symbol is not a type parameter and there is an enclosing declaration.
+	var chain []*ast.Symbol
+	isTypeParameter := symbol.Flags&ast.SymbolFlagsTypeParameter != 0
+	if !isTypeParameter && (b.ctx.enclosingDeclaration != nil || b.ctx.flags&nodebuilder.FlagsUseFullyQualifiedType != 0) && (b.ctx.internalFlags&nodebuilder.InternalFlagsDoNotIncludeSymbolChain == 0) {
+		res := b.getSymbolChain(symbol, meaning /*endOfChain*/, true, yieldModuleSymbol)
+		chain = res
+		// Debug.checkDefined(chain) // !!!
+		// Debug.assert(chain && chain.length > 0); // !!!
+	} else {
+		chain = append(chain, symbol)
+	}
+	return chain
+}
+
+type sortedSymbolNamePair struct {
+	sym  *ast.Symbol
+	name string
+}
+
+/** @param endOfChain Set to false for recursive calls; non-recursive calls should always output something. */
+func (b *NodeBuilder) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags, endOfChain bool, yieldModuleSymbol bool) []*ast.Symbol {
+	accessibleSymbolChain := b.ch.getAccessibleSymbolChain(symbol, b.ctx.enclosingDeclaration, meaning, b.ctx.flags&nodebuilder.FlagsUseOnlyExternalAliasing != 0)
+	qualifierMeaning := meaning
+	if len(accessibleSymbolChain) > 0 {
+		qualifierMeaning = getQualifiedLeftMeaning(meaning)
+	}
+	if len(accessibleSymbolChain) == 0 ||
+		b.ch.needsQualification(accessibleSymbolChain[0], b.ctx.enclosingDeclaration, qualifierMeaning) {
+		// Go up and add our parent.
+		root := symbol
+		if len(accessibleSymbolChain) > 0 {
+			root = accessibleSymbolChain[0]
+		}
+		parents := b.ch.getContainersOfSymbol(root, b.ctx.enclosingDeclaration, meaning)
+		if len(parents) > 0 {
+			parentSpecifiers := core.Map(parents, func(symbol *ast.Symbol) sortedSymbolNamePair {
+				if core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
+					return sortedSymbolNamePair{symbol, b.getSpecifierForModuleSymbol(symbol, core.ResolutionModeNone)}
+				}
+				return sortedSymbolNamePair{symbol, ""}
+			})
+			slices.SortStableFunc(parentSpecifiers, sortByBestName)
+			for _, pair := range parentSpecifiers {
+				parent := pair.sym
+				parentChain := b.getSymbolChain(parent, getQualifiedLeftMeaning(meaning), false, false)
+				if len(parentChain) > 0 {
+					if parent.Exports != nil {
+						exported, ok := parent.Exports[ast.InternalSymbolNameExportEquals]
+						if ok && b.ch.getSymbolIfSameReference(exported, symbol) != nil {
+							// parentChain root _is_ symbol - symbol is a module export=, so it kinda looks like it's own parent
+							// No need to lookup an alias for the symbol in itself
+							accessibleSymbolChain = parentChain
+						}
+					}
+					nextSyms := accessibleSymbolChain
+					if len(nextSyms) == 0 {
+						fallback := b.ch.getAliasForSymbolInContainer(parent, symbol)
+						if fallback == nil {
+							fallback = symbol
+						}
+						nextSyms = append(nextSyms, fallback)
+					}
+					accessibleSymbolChain = append(parentChain, nextSyms...)
+					break
+				}
+			}
+		}
+	}
+	if len(accessibleSymbolChain) > 0 {
+		return accessibleSymbolChain
+	}
+	if
+	// If this is the last part of outputting the symbol, always output. The cases apply only to parent symbols.
+	endOfChain ||
+		// If a parent symbol is an anonymous type, don't write it.
+		(symbol.Flags&(ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsObjectLiteral) == 0) {
+		// If a parent symbol is an external module, don't write it. (We prefer just `x` vs `"foo/bar".x`.)
+		if !endOfChain && !yieldModuleSymbol && !!core.Some(symbol.Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
+			return nil
+		}
+		return []*ast.Symbol{symbol}
+	}
+	return nil
+}
+
+func sortByBestName(a sortedSymbolNamePair, b sortedSymbolNamePair) int {
+	specifierA := a.name
+	specifierB := b.name
+	if len(specifierA) > 0 && len(specifierB) > 0 {
+		isBRelative := tspath.PathIsRelative(specifierB)
+		if tspath.PathIsRelative(specifierA) == isBRelative {
+			// Both relative or both non-relative, sort by number of parts
+			return modulespecifiers.CountPathComponents(specifierA) - modulespecifiers.CountPathComponents(specifierB)
+		}
+		if isBRelative {
+			// A is non-relative, B is relative: prefer A
+			return -1
+		}
+		// A is relative, B is non-relative: prefer B
+		return 1
+	}
+	return 0
+}
+
+func (b *NodeBuilder) getSpecifierForModuleSymbol(symbol *ast.Symbol, overrideImportMode core.ResolutionMode) string {
+	return "" // !!! !TODO!: specifier generation
 }
 
 func (b *NodeBuilder) typeParameterToDeclarationWithConstraint(typeParameter *Type, constraintNode *ast.TypeNode) *ast.TypeParameterDeclarationNode {
