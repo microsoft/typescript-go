@@ -6798,7 +6798,6 @@ type Pattern = string
 
 type RegularExpressionEngineKind = string
 
-// unmarshalParams maps LSP methods to their parameter unmarshalling functions.
 func unmarshalParams(method Method, data []byte) (any, error) {
 	switch method {
 	case MethodTextDocumentImplementation:
