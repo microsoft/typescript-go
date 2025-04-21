@@ -20,6 +20,7 @@ type testCase struct {
 }
 
 func TestCompletions(t *testing.T) {
+	t.Parallel()
 	testCases := []testCase{
 		{
 			name: "basicInterfaceMembers",

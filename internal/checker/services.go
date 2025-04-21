@@ -331,7 +331,6 @@ func runWithInferenceBlockedFromSourceNode[T any](c *Checker, node *ast.Node, fn
 	return result
 }
 
-// !!! Shared, made generic
 func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
 	ancestorNode := ast.FindAncestor(node, func(n *ast.Node) bool {
 		return ast.IsCallLikeOrFunctionLikeExpression(n)

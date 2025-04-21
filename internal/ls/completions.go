@@ -127,8 +127,6 @@ func sortBelow(original sortText) sortText {
 	return original + "1"
 }
 
-// !!! sort text transformations
-
 type symbolOriginInfoKind int
 
 const (
@@ -155,11 +153,6 @@ type symbolOriginInfo struct {
 	data              any
 }
 
-// type originData interface {
-// 	symbolName() string
-// }
-
-// !!! origin info
 func (s *symbolOriginInfo) symbolName() string {
 	switch s.data.(type) {
 	case *symbolOriginInfoExport:
@@ -1065,7 +1058,7 @@ func (l *LanguageService) createCompletionItem(
 		}
 
 		if insertQuestionDot || data.propertyAccessToConvert.AsPropertyAccessExpression().QuestionDotToken != nil {
-			insertText = fmt.Sprintf("?.%s", insertText)
+			insertText = "?." + insertText
 		}
 
 		dot := findChildOfKind(data.propertyAccessToConvert, ast.KindDotToken, file)
@@ -1213,7 +1206,7 @@ func (l *LanguageService) createCompletionItem(
 		}
 
 		if useBraces {
-			insertText = fmt.Sprintf("%s={$1}", escapeSnippetText(name))
+			insertText = escapeSnippetText(name) + "={$1}"
 			isSnippet = true
 		}
 	}
@@ -1837,8 +1830,6 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 	}
 }
 
-// TODO: this is also used by string completions originally, but passing a flag `ContextFlagsCompletions`.
-// What difference does it make?
 func getContextualTypeFromParent(node *ast.Expression, typeChecker *checker.Checker, contextFlags checker.ContextFlags) *checker.Type {
 	parent := ast.WalkUpParenthesizedExpressions(node.Parent)
 	switch parent.Kind {
@@ -2234,18 +2225,12 @@ func isFunctionLikeBodyKeyword(kind ast.Kind) bool {
 
 func isClassMemberCompletionKeyword(kind ast.Kind) bool {
 	switch kind {
-	case ast.KindAbstractKeyword, ast.KindAccessorKeyword:
-	case ast.KindConstructorKeyword:
-	case ast.KindGetKeyword:
-	case ast.KindSetKeyword:
-	case ast.KindAsyncKeyword:
-	case ast.KindDeclareKeyword:
-	case ast.KindOverrideKeyword:
+	case ast.KindAbstractKeyword, ast.KindAccessorKeyword, ast.KindConstructorKeyword, ast.KindGetKeyword,
+		ast.KindSetKeyword, ast.KindAsyncKeyword, ast.KindDeclareKeyword, ast.KindOverrideKeyword:
 		return true
 	default:
 		return ast.IsClassMemberModifier(kind)
 	}
-	panic("unreachable")
 }
 
 func isInterfaceOrTypeLiteralCompletionKeyword(kind ast.Kind) bool {
