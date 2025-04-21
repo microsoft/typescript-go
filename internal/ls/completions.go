@@ -881,12 +881,6 @@ func completionInfoFromData(
 
 	// !!! exhaustive case completions
 
-	// !!! revisit this when we decide what the protocol type should be
-	items := make([]lsproto.CompletionItem, len(sortedEntries))
-	for i, entry := range sortedEntries {
-		items[i] = *entry
-	}
-
 	var defaultCommitCharacters *[]string
 	if supportsDefaultCommitCharacters(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport) {
 		defaultCommitCharacters = &data.defaultCommitCharacters
@@ -903,7 +897,7 @@ func completionInfoFromData(
 	return &lsproto.CompletionList{
 		IsIncomplete: data.hasUnresolvedAutoImports,
 		ItemDefaults: itemDefaults,
-		Items:        items,
+		Items:        sortedEntries,
 	}
 }
 

@@ -98,8 +98,8 @@ func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens 
 				goToken := getGoToken(file, pos)
 				diff := tokenDiff{goToken: goToken, tsToken: tsToken}
 
-				if currentDiff != diff {
-					if !tokensEqual(currentDiff) {
+				if !diffEqual(currentDiff, diff) {
+					if !tokensEqual(currentDiff.goToken, currentDiff.tsToken) {
 						writeRangeDiff(&output, file, currentDiff, currentRange, pos)
 					}
 					currentDiff = diff
@@ -108,7 +108,7 @@ func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens 
 				currentRange = currentRange.WithEnd(pos)
 			}
 
-			if !tokensEqual(currentDiff) {
+			if !tokensEqual(currentDiff.goToken, currentDiff.tsToken) {
 				writeRangeDiff(&output, file, currentDiff, currentRange, len(tsTokens)-1)
 			}
 
@@ -151,11 +151,15 @@ func toTokenInfo(node *ast.Node) *tokenInfo {
 	}
 }
 
-func tokensEqual(diff tokenDiff) bool {
-	if diff.goToken == nil || diff.tsToken == nil {
-		return diff.goToken == diff.tsToken
+func diffEqual(a, b tokenDiff) bool {
+	return tokensEqual(a.goToken, b.goToken) && tokensEqual(a.tsToken, b.tsToken)
+}
+
+func tokensEqual(t1, t2 *tokenInfo) bool {
+	if t1 == nil || t2 == nil {
+		return t1 == t2
 	}
-	return *diff.goToken == *diff.tsToken
+	return *t1 == *t2
 }
 
 func tsGetTokensAtPositions(t testing.TB, fileText string, positions []int) []*tokenInfo {

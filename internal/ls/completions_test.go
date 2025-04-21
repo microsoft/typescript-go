@@ -36,7 +36,7 @@ p.`,
 				ItemDefaults: &lsproto.CompletionItemDefaults{
 					CommitCharacters: &defaultCommitCharacters,
 				},
-				Items: []lsproto.CompletionItem{
+				Items: []*lsproto.CompletionItem{
 					{
 						Label:            "x",
 						Kind:             ptrTo(lsproto.CompletionItemKindField),

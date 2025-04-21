@@ -67,6 +67,6 @@ func newProjectServiceHost(files map[string]string) *ProjectServiceHost {
 		fs:                 fs,
 		defaultLibraryPath: bundled.LibPath(),
 	}
-	host.logger = project.NewLogger([]io.Writer{&host.output}, project.LogLevelVerbose)
+	host.logger = project.NewLogger([]io.Writer{&host.output}, "", project.LogLevelVerbose)
 	return host
 }
