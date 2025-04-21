@@ -26,14 +26,10 @@ func (l *LanguageService) ProvideCompletion(
 	position int,
 	context *lsproto.CompletionContext,
 	clientOptions *lsproto.CompletionClientCapabilities,
+	preferences *UserPreferences,
 ) *lsproto.CompletionList {
 	program, file := l.getProgramAndFile(fileName)
-	node := astnav.GetTouchingPropertyName(file, position)
-	if node.Kind == ast.KindSourceFile {
-		return nil
-	}
-	// !!! get user preferences
-	return l.getCompletionsAtPosition(program, file, position, context, nil /*preferences*/, clientOptions) // !!! get preferences
+	return l.getCompletionsAtPosition(program, file, position, context, preferences, clientOptions)
 }
 
 // !!! figure out other kinds of completion data return
@@ -113,14 +109,14 @@ type sortText string
 
 const (
 	SortTextLocalDeclarationPriority         sortText = "10"
-	sortTextLocationPriority                 sortText = "11"
-	sortTextOptionalMember                   sortText = "12"
-	sortTextMemberDeclaredBySpreadAssignment sortText = "13"
-	sortTextSuggestedClassMembers            sortText = "14"
-	sortTextGlobalsOrKeywords                sortText = "15"
-	sortTextAutoImportSuggestions            sortText = "16"
-	sortTextClassMemberSnippets              sortText = "17"
-	sortTextJavascriptIdentifiers            sortText = "18"
+	SortTextLocationPriority                 sortText = "11"
+	SortTextOptionalMember                   sortText = "12"
+	SortTextMemberDeclaredBySpreadAssignment sortText = "13"
+	SortTextSuggestedClassMembers            sortText = "14"
+	SortTextGlobalsOrKeywords                sortText = "15"
+	SortTextAutoImportSuggestions            sortText = "16"
+	SortTextClassMemberSnippets              sortText = "17"
+	SortTextJavascriptIdentifiers            sortText = "18"
 )
 
 func deprecateSortText(original sortText) sortText {
@@ -254,9 +250,9 @@ func (l *LanguageService) getCompletionsAtPosition(
 		return nil
 	}
 
-	if *context.TriggerCharacter == " " {
+	if context.TriggerCharacter != nil && *context.TriggerCharacter == " " {
 		// `isValidTrigger` ensures we are at `import |`
-		if preferences.includeCompletionsForImportStatements {
+		if ptrIsTrue(preferences.includeCompletionsForImportStatements) {
 			// !!! isMemberCompletion
 			return &lsproto.CompletionList{
 				IsIncomplete: true,
@@ -677,7 +673,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 						insertQuestionDot := false
 						if typeChecker.IsNullableType(t) {
 							canCorrectToQuestionDot := isRightOfDot && !isRightOfQuestionDot &&
-								preferences.includeAutomaticOptionalChainCompletions
+								!ptrIsFalse(preferences.includeAutomaticOptionalChainCompletions)
 							if canCorrectToQuestionDot || isRightOfQuestionDot {
 								t = typeChecker.GetNonNullableType(t)
 								if canCorrectToQuestionDot {
@@ -687,7 +683,35 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 						}
 						addTypeProperties(t, node.Flags&ast.NodeFlagsAwaitContext != 0, insertQuestionDot)
 					}
+
+					return
 				}
+			}
+		}
+
+		if !isTypeLocation || checker.IsInTypeQuery(node) {
+			// GH#39946. Pulling on the type of a node inside of a function with a contextual `this` parameter can result in a circularity
+			// if the `node` is part of the exprssion of a `yield` or `return`. This circularity doesn't exist at compile time because
+			// we will check (and cache) the type of `this` *before* checking the type of the node.
+			typeChecker.TryGetThisTypeAtEx(node, false /*includeGlobalThis*/, nil)
+			t := typeChecker.GetNonOptionalType(typeChecker.GetTypeAtLocation(node))
+
+			if !isTypeLocation {
+				insertQuestionDot := false
+				if typeChecker.IsNullableType(t) {
+					canCorrectToQuestionDot := isRightOfDot && !isRightOfQuestionDot &&
+						!ptrIsFalse(preferences.includeAutomaticOptionalChainCompletions)
+
+					if canCorrectToQuestionDot || isRightOfQuestionDot {
+						t = typeChecker.GetNonNullableType(t)
+						if canCorrectToQuestionDot {
+							insertQuestionDot = true
+						}
+					}
+				}
+				addTypeProperties(t, node.Flags&ast.NodeFlagsAwaitContext != 0, insertQuestionDot)
+			} else {
+				addTypeProperties(typeChecker.GetNonNullableType(t), false /*insertAwait*/, false /*insertQuestionDot*/)
 			}
 		}
 	}
@@ -926,7 +950,7 @@ func getCompletionEntriesFromSymbols(
 
 		originalSortText := data.symbolToSortTextMap[ast.GetSymbolId(symbol)]
 		if originalSortText == "" {
-			originalSortText = sortTextLocationPriority
+			originalSortText = SortTextLocationPriority
 		}
 		sortText := core.IfElse(isDeprecated(symbol, typeChecker), deprecateSortText(originalSortText), originalSortText)
 		entry := createCompletionItem(
@@ -989,7 +1013,7 @@ func createCompletionItemForLiteral(
 	return &lsproto.CompletionItem{
 		Label:            completionNameForLiteral(file, preferences, literal),
 		Kind:             ptrTo(lsproto.CompletionItemKindConstant),
-		SortText:         ptrTo(string(sortTextLocationPriority)),
+		SortText:         ptrTo(string(SortTextLocationPriority)),
 		CommitCharacters: ptrTo([]string{}),
 	}
 }
@@ -1131,7 +1155,7 @@ func createCompletionItem(
 	// Completion should add a comma after "red" and provide completions for b
 	if data.completionKind == CompletionKindObjectPropertyDeclaration &&
 		contextToken != nil &&
-		!ast.NodeHasKind(astnav.FindPrecedingTokenEx(file, contextToken.Pos(), contextToken), ast.KindCommaToken) {
+		!ast.NodeHasKind(astnav.FindPrecedingTokenEx(file, contextToken.Pos(), contextToken, false /*excludeJSDoc*/), ast.KindCommaToken) {
 		if ast.IsMethodDeclaration(contextToken.Parent.Parent) ||
 			ast.IsGetAccessorDeclaration(contextToken.Parent.Parent) ||
 			ast.IsSetAccessorDeclaration(contextToken.Parent.Parent) ||
@@ -1144,7 +1168,7 @@ func createCompletionItem(
 		}
 	}
 
-	if preferences.includeCompletionsWithClassMemberSnippets &&
+	if ptrIsTrue(preferences.includeCompletionsWithClassMemberSnippets) &&
 		data.completionKind == CompletionKindMemberLike &&
 		isClassLikeMemberCompletion(symbol, data.location, file) {
 		// !!! class member completions
@@ -1165,13 +1189,13 @@ func createCompletionItem(
 	if data.isJsxIdentifierExpected &&
 		!data.isRightOfOpenTag &&
 		ptrIsTrue(clientOptions.CompletionItem.SnippetSupport) &&
-		preferences.jsxAttributeCompletionStyle != JsxAttributeCompletionStyleNone &&
+		!jsxAttributeCompletionStyleIs(preferences.jsxAttributeCompletionStyle, JsxAttributeCompletionStyleNone) &&
 		!(ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
-		useBraces := preferences.jsxAttributeCompletionStyle == JsxAttributeCompletionStyleBraces
+		useBraces := jsxAttributeCompletionStyleIs(preferences.jsxAttributeCompletionStyle, JsxAttributeCompletionStyleBraces)
 		t := typeChecker.GetTypeOfSymbolAtLocation(symbol, data.location)
 
 		// If is boolean like or undefined, don't return a snippet, we want to return just the completion.
-		if preferences.jsxAttributeCompletionStyle == JsxAttributeCompletionStyleAuto &&
+		if jsxAttributeCompletionStyleIs(preferences.jsxAttributeCompletionStyle, JsxAttributeCompletionStyleAuto) &&
 			t.Flags()&checker.TypeFlagsBooleanLike == 0 &&
 			!(t.Flags()&checker.TypeFlagsUnion != 0 && core.Some(t.Types(), func(t *checker.Type) bool { return t.Flags()&checker.TypeFlagsBooleanLike != 0 })) {
 			if t.Flags()&checker.TypeFlagsStringLike != 0 ||
@@ -1332,11 +1356,25 @@ func ptrIsTrue(ptr *bool) bool {
 	return *ptr
 }
 
+func ptrIsFalse(ptr *bool) bool {
+	if ptr == nil {
+		return false
+	}
+	return !*ptr
+}
+
 func boolToPtr(v bool) *bool {
 	if v {
 		return ptrTo(true)
 	}
 	return nil
+}
+
+func jsxAttributeCompletionStyleIs(preferenceStyle *JsxAttributeCompletionStyle, style JsxAttributeCompletionStyle) bool {
+	if preferenceStyle == nil {
+		return false
+	}
+	return *preferenceStyle == style
 }
 
 func getLineOfPosition(file *ast.SourceFile, pos int) int {
@@ -1423,9 +1461,9 @@ func shouldIncludeSymbol(
 		// Auto Imports are not available for scripts so this conditional is always false.
 		if file.AsSourceFile().ExternalModuleIndicator != nil &&
 			compilerOptions.AllowUmdGlobalAccess != core.TSTrue &&
-			data.symbolToSortTextMap[ast.GetSymbolId(symbol)] == sortTextGlobalsOrKeywords &&
-			(data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == sortTextAutoImportSuggestions ||
-				data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == sortTextLocationPriority) {
+			data.symbolToSortTextMap[ast.GetSymbolId(symbol)] == SortTextGlobalsOrKeywords &&
+			(data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == SortTextAutoImportSuggestions ||
+				data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == SortTextLocationPriority) {
 			return false
 		}
 
@@ -1457,7 +1495,12 @@ func getCompletionEntryDisplayNameForSymbol(
 		return "", false
 	}
 
-	name := core.IfElse(originIncludesSymbolName(origin), origin.symbolName(), symbol.Name)
+	var name string
+	if originIncludesSymbolName(origin) {
+		name = origin.symbolName()
+	} else {
+		name = symbol.Name
+	}
 	if name == "" ||
 		// If the symbol is external module, don't show it in the completion list
 		// (i.e declare module "http" { const x; } | // <= request completion here, "http" should not be there)
@@ -2027,30 +2070,21 @@ func generateIdentifierForArbitraryString(text string, languageVersion core.Scri
 // Copied from vscode TS extension.
 func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind {
 	switch kind {
-	case ScriptElementKindPrimitiveType:
-	case ScriptElementKindKeyword:
+	case ScriptElementKindPrimitiveType, ScriptElementKindKeyword:
 		return lsproto.CompletionItemKindKeyword
-	case ScriptElementKindConstElement:
-	case ScriptElementKindLetElement:
-	case ScriptElementKindVariableElement:
-	case ScriptElementKindLocalVariableElement:
-	case ScriptElementKindAlias:
-	case ScriptElementKindParameterElement:
+	case ScriptElementKindConstElement, ScriptElementKindLetElement, ScriptElementKindVariableElement,
+		ScriptElementKindLocalVariableElement, ScriptElementKindAlias, ScriptElementKindParameterElement:
 		return lsproto.CompletionItemKindVariable
 
-	case ScriptElementKindMemberVariableElement:
-	case ScriptElementKindMemberGetAccessorElement:
-	case ScriptElementKindMemberSetAccessorElement:
+	case ScriptElementKindMemberVariableElement, ScriptElementKindMemberGetAccessorElement,
+		ScriptElementKindMemberSetAccessorElement:
 		return lsproto.CompletionItemKindField
 
-	case ScriptElementKindFunctionElement:
-	case ScriptElementKindLocalFunctionElement:
+	case ScriptElementKindFunctionElement, ScriptElementKindLocalFunctionElement:
 		return lsproto.CompletionItemKindFunction
 
-	case ScriptElementKindMemberFunctionElement:
-	case ScriptElementKindConstructSignatureElement:
-	case ScriptElementKindCallSignatureElement:
-	case ScriptElementKindIndexSignatureElement:
+	case ScriptElementKindMemberFunctionElement, ScriptElementKindConstructSignatureElement,
+		ScriptElementKindCallSignatureElement, ScriptElementKindIndexSignatureElement:
 		return lsproto.CompletionItemKindMethod
 
 	case ScriptElementKindEnumElement:
@@ -2059,12 +2093,10 @@ func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind
 	case ScriptElementKindEnumMemberElement:
 		return lsproto.CompletionItemKindEnumMember
 
-	case ScriptElementKindModuleElement:
-	case ScriptElementKindExternalModuleName:
+	case ScriptElementKindModuleElement, ScriptElementKindExternalModuleName:
 		return lsproto.CompletionItemKindModule
 
-	case ScriptElementKindClassElement:
-	case ScriptElementKindTypeElement:
+	case ScriptElementKindClassElement, ScriptElementKindTypeElement:
 		return lsproto.CompletionItemKindClass
 
 	case ScriptElementKindInterfaceElement:
@@ -2085,7 +2117,6 @@ func getCompletionsSymbolKind(kind ScriptElementKind) lsproto.CompletionItemKind
 	default:
 		return lsproto.CompletionItemKindProperty
 	}
-	panic("Unhandled script element kind: " + kind)
 }
 
 // Editors will use the `sortText` and then fall back to `name` for sorting, but leave ties in response order.
@@ -2125,7 +2156,7 @@ var (
 			result = append(result, &lsproto.CompletionItem{
 				Label:    scanner.TokenToString(i),
 				Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
-				SortText: ptrTo(string(sortTextGlobalsOrKeywords)),
+				SortText: ptrTo(string(SortTextGlobalsOrKeywords)),
 			})
 		}
 		return result
@@ -2255,7 +2286,7 @@ func getContextualKeywords(file *ast.SourceFile, contextToken *ast.Node, positio
 			entries = append(entries, &lsproto.CompletionItem{
 				Label:    scanner.TokenToString(ast.KindAssertKeyword),
 				Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
-				SortText: ptrTo(string(sortTextGlobalsOrKeywords)),
+				SortText: ptrTo(string(SortTextGlobalsOrKeywords)),
 			})
 		}
 	}
@@ -2282,7 +2313,7 @@ func getJSCompletionEntries(
 				&lsproto.CompletionItem{
 					Label:            name,
 					Kind:             ptrTo(lsproto.CompletionItemKindText),
-					SortText:         ptrTo(string(sortTextJavascriptIdentifiers)),
+					SortText:         ptrTo(string(SortTextJavascriptIdentifiers)),
 					CommitCharacters: ptrTo([]string{}),
 				},
 				compareCompletionEntries,

@@ -15,7 +15,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
-	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/jstest"
 	"gotest.tools/v3/assert"
@@ -96,7 +95,6 @@ func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens 
 			currentDiff := tokenDiff{}
 
 			for pos, tsToken := range tsTokens {
-				defer testutil.RecoverAndFail(t, fmt.Sprintf("pos: %d", pos))
 				goToken := getGoToken(file, pos)
 				diff := tokenDiff{goToken: goToken, tsToken: tsToken}
 

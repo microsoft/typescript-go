@@ -194,6 +194,8 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 		return s.handleHover(req)
 	case *lsproto.DefinitionParams:
 		return s.handleDefinition(req)
+	case *lsproto.CompletionParams:
+		return s.handleCompletion(req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -386,11 +388,13 @@ func (s *Server) handleCompletion(req *lsproto.RequestMessage) error {
 		return s.sendError(req.ID, err)
 	}
 
+	// !!! get user preferences
 	list := project.LanguageService().ProvideCompletion(
 		file.FileName(),
 		pos,
 		params.Context,
-		s.initializeParams.Capabilities.TextDocument.Completion)
+		s.initializeParams.Capabilities.TextDocument.Completion,
+		&ls.UserPreferences{})
 	return s.sendResult(req.ID, list)
 }
 

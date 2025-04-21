@@ -224,7 +224,7 @@ func isTypeReferenceIdentifier(node *ast.Node) bool {
 	return ast.IsTypeReferenceNode(node.Parent)
 }
 
-func isInTypeQuery(node *ast.Node) bool {
+func IsInTypeQuery(node *ast.Node) bool {
 	// TypeScript 1.0 spec (April 2014): 3.6.3
 	// A type query consists of the keyword typeof followed by an expression.
 	// The expression is restricted to a single identifier or a sequence of identifiers separated by periods

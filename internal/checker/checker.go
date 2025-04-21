@@ -1407,7 +1407,7 @@ func (c *Checker) checkAndReportErrorForInvalidInitializer(errorLocation *ast.No
 }
 
 func (c *Checker) checkAndReportErrorForMissingPrefix(errorLocation *ast.Node, name string) bool {
-	if !ast.IsIdentifier(errorLocation) || errorLocation.Text() != name || isTypeReferenceIdentifier(errorLocation) || isInTypeQuery(errorLocation) {
+	if !ast.IsIdentifier(errorLocation) || errorLocation.Text() != name || isTypeReferenceIdentifier(errorLocation) || IsInTypeQuery(errorLocation) {
 		return false
 	}
 	container := c.getThisContainer(errorLocation, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
@@ -1765,7 +1765,7 @@ func (c *Checker) isBlockScopedNameDeclaredBeforeUse(declaration *ast.Node, usag
 	useFile := ast.GetSourceFileOfNode(usage)
 	declContainer := ast.GetEnclosingBlockScopeContainer(declaration)
 	if declarationFile != useFile {
-		if (c.moduleKind != core.ModuleKindNone && (declarationFile.ExternalModuleIndicator != nil || useFile.ExternalModuleIndicator != nil)) || c.compilerOptions.OutFile == "" || isInTypeQuery(usage) || declaration.Flags&ast.NodeFlagsAmbient != 0 {
+		if (c.moduleKind != core.ModuleKindNone && (declarationFile.ExternalModuleIndicator != nil || useFile.ExternalModuleIndicator != nil)) || c.compilerOptions.OutFile == "" || IsInTypeQuery(usage) || declaration.Flags&ast.NodeFlagsAmbient != 0 {
 			// nodes are in different files and order cannot be determined
 			return true
 		}
@@ -1778,7 +1778,7 @@ func (c *Checker) isBlockScopedNameDeclaredBeforeUse(declaration *ast.Node, usag
 		return slices.Index(sourceFiles, declarationFile) <= slices.Index(sourceFiles, useFile)
 	}
 	// deferred usage in a type context is always OK regardless of the usage position:
-	if usage.Flags&ast.NodeFlagsJSDoc != 0 || isInTypeQuery(usage) || c.isInAmbientOrTypeNode(usage) {
+	if usage.Flags&ast.NodeFlagsJSDoc != 0 || IsInTypeQuery(usage) || c.isInAmbientOrTypeNode(usage) {
 		return true
 	}
 	if declaration.Pos() <= usage.Pos() && !(ast.IsPropertyDeclaration(declaration) && isThisProperty(usage.Parent) && declaration.Initializer() == nil && !isExclamationToken(declaration.AsPropertyDeclaration().PostfixToken)) {
@@ -10454,7 +10454,7 @@ func (c *Checker) checkIdentifier(node *ast.Node, checkMode CheckMode) *Type {
 		isSpreadDestructuringAssignmentTarget ||
 		isModuleExports ||
 		c.isSameScopedBindingElement(node, declaration) ||
-		t != c.autoType && t != c.autoArrayType && (!c.strictNullChecks || t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid) != 0 || isInTypeQuery(node) || c.isInAmbientOrTypeNode(node) || node.Parent.Kind == ast.KindExportSpecifier) ||
+		t != c.autoType && t != c.autoArrayType && (!c.strictNullChecks || t.flags&(TypeFlagsAnyOrUnknown|TypeFlagsVoid) != 0 || IsInTypeQuery(node) || c.isInAmbientOrTypeNode(node) || node.Parent.Kind == ast.KindExportSpecifier) ||
 		ast.IsNonNullExpression(node.Parent) ||
 		ast.IsVariableDeclaration(declaration) && declaration.AsVariableDeclaration().ExclamationToken != nil ||
 		declaration.Flags&ast.NodeFlagsAmbient != 0
@@ -11382,7 +11382,7 @@ func (c *Checker) checkThisExpression(node *ast.Node) *Type {
 			// do not return here so in case if lexical this is captured - it will be reflected in flags on NodeLinks
 		}
 	}
-	t := c.tryGetThisTypeAtEx(node, true /*includeGlobalThis*/, container)
+	t := c.TryGetThisTypeAtEx(node, true /*includeGlobalThis*/, container)
 	if c.noImplicitThis {
 		globalThisType := c.getTypeOfSymbol(c.globalThisSymbol)
 		if t == globalThisType && capturedByArrowFunction {
@@ -11405,10 +11405,13 @@ func (c *Checker) checkThisExpression(node *ast.Node) *Type {
 }
 
 func (c *Checker) tryGetThisTypeAt(node *ast.Node) *Type {
-	return c.tryGetThisTypeAtEx(node, true /*includeGlobalThis*/, c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/))
+	return c.TryGetThisTypeAtEx(node, true /*includeGlobalThis*/, nil /*container*/)
 }
 
-func (c *Checker) tryGetThisTypeAtEx(node *ast.Node, includeGlobalThis bool, container *ast.Node) *Type {
+func (c *Checker) TryGetThisTypeAtEx(node *ast.Node, includeGlobalThis bool, container *ast.Node) *Type {
+	if container == nil {
+		container = c.getThisContainer(node, false /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/)
+	}
 	if ast.IsFunctionLike(container) && (!c.isInParameterInitializerBeforeContainingFunction(node) || getThisParameter(container) != nil) {
 		thisType := c.getThisTypeOfDeclaration(container)
 		// Note: a parameter initializer should refer to class-this unless function-this is explicitly annotated.
@@ -26546,7 +26549,7 @@ func (c *Checker) markAliasReferenced(symbol *ast.Symbol, location *ast.Node) {
 	if !c.canCollectSymbolAliasAccessibilityData {
 		return
 	}
-	if ast.IsNonLocalAlias(symbol, ast.SymbolFlagsValue /*excludes*/) && !isInTypeQuery(location) {
+	if ast.IsNonLocalAlias(symbol, ast.SymbolFlagsValue /*excludes*/) && !IsInTypeQuery(location) {
 		target := c.resolveAlias(symbol)
 		if c.getSymbolFlagsEx(symbol, true /*excludeTypeOnlyMeanings*/, false /*excludeLocalMeanings*/)&(ast.SymbolFlagsValue|ast.SymbolFlagsExportValue) != 0 {
 			// An alias resolving to a const enum cannot be elided if (1) 'isolatedModules' is enabled

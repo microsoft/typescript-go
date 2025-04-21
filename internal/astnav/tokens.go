@@ -412,11 +412,6 @@ func isJSDocSingleCommentNodeList(parent *ast.Node, nodeList *ast.NodeList) bool
 	return parent.Kind == ast.KindJSDoc && nodeList == parent.AsJSDoc().Comment && nodeList != nil && len(nodeList.Nodes) == 1
 }
 
-// !!!
-func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFile) *ast.Node {
-	return nil
-}
-
 // Looks for rightmost valid token in the range [startPos, endPos).
 // If position is >= 0, looks for rightmost valid token that preceeds or touches that position.
 func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingNode *ast.Node, position int, excludeJSDoc bool) *ast.Node {
@@ -533,4 +528,9 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 	}
 
 	return find(containingNode)
+}
+
+// !!!
+func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFile) *ast.Node {
+	return nil
 }

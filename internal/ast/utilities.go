@@ -1962,6 +1962,7 @@ func TryGetTextOfPropertyName(name *Node) (string, bool) {
 	return "", false
 }
 
+// True if node is of a JSDoc kind that may contain comment text.
 func IsJSDocCommentContainingNode(node *Node) bool {
 	return node.Kind == KindJSDoc ||
 		node.Kind == KindJSDocText ||

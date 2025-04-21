@@ -6,31 +6,97 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"gotest.tools/v3/assert"
 )
 
-func TestCompletions(t *testing.T) {
-	files := map[string]string{
-		"index.ts": "",
-	}
-	ls := createLanguageService("/", files)
-	var context *lsproto.CompletionContext
-	var capabilities *lsproto.CompletionClientCapabilities
-	completionList := ls.ProvideCompletion("index.ts", 0, context, capabilities)
-	assert.Assert(t, completionList != nil)
+var defaultCommitCharacters = []string{".", ",", ";"}
+
+type testCase struct {
+	name     string
+	content  string
+	position int
+	expected *lsproto.CompletionList
 }
 
-func createLanguageService(cd string, files map[string]string) *ls.LanguageService {
-	// !!! TODO: replace with service_test.go's `setup`
-	projectServiceHost := newProjectServiceHost(files)
-	projectService := project.NewService(projectServiceHost, project.ServiceOptions{})
-	compilerOptions := &core.CompilerOptions{}
-	project := project.NewInferredProject(compilerOptions, cd, "/", projectService)
+func TestCompletions(t *testing.T) {
+	testCases := []testCase{
+		{
+			name: "basicInterfaceMembers",
+			content: `export {};
+interface Point {
+    x: number;
+    y: number;
+}
+declare const p: Point;
+p.`,
+			position: 87,
+			expected: &lsproto.CompletionList{
+				IsIncomplete: false,
+				ItemDefaults: &lsproto.CompletionItemDefaults{
+					CommitCharacters: &defaultCommitCharacters,
+				},
+				Items: []lsproto.CompletionItem{
+					{
+						Label:            "x",
+						Kind:             ptrTo(lsproto.CompletionItemKindField),
+						SortText:         ptrTo(string(ls.SortTextLocationPriority)),
+						InsertTextFormat: ptrTo(lsproto.InsertTextFormatPlainText),
+					},
+					{
+						Label:            "y",
+						Kind:             ptrTo(lsproto.CompletionItemKindField),
+						SortText:         ptrTo(string(ls.SortTextLocationPriority)),
+						InsertTextFormat: ptrTo(lsproto.InsertTextFormatPlainText),
+					},
+				},
+			},
+		},
+	}
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+			run_test(t, testCase.content, testCase.position, testCase.expected)
+		})
+	}
+}
+
+func run_test(t *testing.T, content string, position int, expected *lsproto.CompletionList) {
+	files := map[string]string{
+		"/index.ts": content,
+	}
+	languageService := createLanguageService("/index.ts", files)
+	context := &lsproto.CompletionContext{
+		TriggerKind: lsproto.CompletionTriggerKindInvoked,
+	}
+	capabilities := &lsproto.CompletionClientCapabilities{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport:          ptrTo(true),
+			CommitCharactersSupport: ptrTo(true),
+			PreselectSupport:        ptrTo(true),
+			LabelDetailsSupport:     ptrTo(true),
+		},
+		CompletionList: &lsproto.CompletionListCapabilities{
+			ItemDefaults: &[]string{"commitCharacters"},
+		},
+	}
+	preferences := &ls.UserPreferences{}
+	completionList := languageService.ProvideCompletion(
+		"/index.ts",
+		position,
+		context,
+		capabilities,
+		preferences)
+	assert.DeepEqual(t, completionList, expected)
+}
+
+func createLanguageService(fileName string, files map[string]string) *ls.LanguageService {
+	projectService, _ := projecttestutil.Setup(files)
+	projectService.OpenFile(fileName, files[fileName], core.ScriptKindTS, "")
+	project := projectService.Projects()[0]
 	return project.LanguageService()
 }
 
-func newProjectServiceHost(files map[string]string) project.ServiceHost {
-	// !!! TODO: import from service_test.go
-	return nil
+func ptrTo[T any](v T) *T {
+	return &v
 }
