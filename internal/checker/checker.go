@@ -5027,7 +5027,7 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 	if importAttributesType != c.emptyObjectType {
 		c.checkTypeAssignableTo(c.getTypeFromImportAttributes(node), c.getNullableType(importAttributesType, TypeFlagsUndefined), node, nil)
 	}
-	isTypeOnly := isTypeOnlyImportOrExportDeclaration(declaration)
+	isTypeOnly := isExclusivelyTypeOnlyImportOrExport(declaration)
 	override := c.getResolutionModeOverride(node.AsImportAttributes(), isTypeOnly)
 	isImportAttributes := node.AsImportAttributes().Token == ast.KindWithKeyword
 	if isTypeOnly && override != core.ResolutionModeNone {
@@ -5063,6 +5063,22 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 	if override != core.ResolutionModeNone {
 		c.grammarErrorOnNode(node, diagnostics.X_resolution_mode_can_only_be_set_for_type_only_imports)
 	}
+}
+
+func isExclusivelyTypeOnlyImportOrExport(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindExportDeclaration:
+		return node.AsExportDeclaration().IsTypeOnly
+	case ast.KindImportDeclaration:
+		if importClause := node.AsImportDeclaration().ImportClause; importClause != nil {
+			return importClause.AsImportClause().IsTypeOnly
+		}
+	case ast.KindJSDocImportTag:
+		if importClause := node.AsJSDocImportTag().ImportClause; importClause != nil {
+			return importClause.AsImportClause().IsTypeOnly
+		}
+	}
+	return false
 }
 
 func (c *Checker) getTypeFromImportAttributes(node *ast.Node) *Type {
