@@ -540,14 +540,6 @@ func Identity[T any](t T) T {
 	return t
 }
 
-func AddIfAbsent[K comparable](seen Set[K], key K) bool {
-	if seen.Has(key) {
-		return false
-	}
-	seen.Add(key)
-	return true
-}
-
 func CheckEachDefined[S any](s []*S, msg string) []*S {
 	for _, value := range s {
 		if value == nil {

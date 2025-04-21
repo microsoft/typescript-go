@@ -12,26 +12,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-// !!! Shared (placeholder)
+// !!!
 func isInString(file *ast.SourceFile, position int, previousToken *ast.Node) bool {
-	if previousToken == nil {
-		previousToken = astnav.FindPrecedingToken(file, position)
-	}
-
-	if previousToken != nil && isStringTextContainingNode(previousToken) {
-	}
-
 	return false
-}
-
-// !!! Shared (placeholder)
-func isStringTextContainingNode(node *ast.Node) bool {
-	return true
-}
-
-// !!! Shared (placeholder)
-func getStartOfNode(node *ast.Node, file *ast.SourceFile) int {
-	return node.Pos()
 }
 
 func tryGetImportFromModuleSpecifier(node *ast.StringLiteralLike) *ast.Node {
@@ -57,17 +40,10 @@ func tryGetImportFromModuleSpecifier(node *ast.StringLiteralLike) *ast.Node {
 	return nil
 }
 
-// !!! Shared (placeholder)
+// !!!
 func isInComment(file *ast.SourceFile, position int, tokenAtPosition *ast.Node) *ast.CommentRange {
 	return nil
 }
-
-// // Returns a non-nil comment range if the cursor at position in sourceFile is within a comment.
-// // tokenAtPosition: must equal `getTokenAtPosition(sourceFile, position)`
-// // predicate: additional predicate to test on the comment range.
-// func isInComment(file *ast.SourceFile, position int, tokenAtPosition *ast.Node) *ast.CommentRange {
-// 	return getRangeOfEnclosingComment(file, position, nil /*precedingToken*/, tokenAtPosition)
-// }
 
 // !!!
 // Replaces last(node.getChildren(sourceFile))
@@ -110,18 +86,18 @@ func findChildOfKind(node *ast.Node, kind ast.Kind, sourceFile *ast.SourceFile) 
 	return nil
 }
 
-// !!! Shared: placeholder
+// !!!
 type PossibleTypeArgumentInfo struct {
 	called         *ast.IdentifierNode
 	nTypeArguments int
 }
 
-// !!! Shared: placeholder
+// !!!
 func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile) *PossibleTypeArgumentInfo {
 	return nil
 }
 
-// !!! Shared: placeholder
+// !!!
 func getPossibleGenericSignatures(called *ast.Expression, typeArgumentCount int, checker *checker.Checker) []*checker.Signature {
 	return nil
 }
@@ -134,13 +110,16 @@ func isInRightSideOfInternalImportEqualsDeclaration(node *ast.Node) bool {
 	return ast.IsInternalModuleImportEqualsDeclaration(node.Parent) && node.Parent.AsImportEqualsDeclaration().ModuleReference == node
 }
 
-func createLspRangeFromNode(node *ast.Node, file *ast.SourceFile) *lsproto.Range {
-	return createLspRangeFromBounds(node.Pos(), node.End(), file)
+func (l *LanguageService) createLspRangeFromNode(node *ast.Node, file *ast.SourceFile) *lsproto.Range {
+	return l.createLspRangeFromBounds(node.Pos(), node.End(), file)
 }
 
-func createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {
-	// !!! needs converters access
-	return nil
+func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {
+	lspRange, err := l.converters.ToLSPRange(file.FileName(), core.NewTextRange(start, end))
+	if err != nil {
+		panic(err)
+	}
+	return &lspRange
 }
 
 func quote(file *ast.SourceFile, preferences *UserPreferences, text string) string {
@@ -160,8 +139,8 @@ const (
 	quotePreferenceDouble
 )
 
+// !!!
 func getQuotePreference(file *ast.SourceFile, preferences *UserPreferences) quotePreference {
-	// !!!
 	return quotePreferenceDouble
 }
 
@@ -258,7 +237,7 @@ func nodeIsASICandidate(node *ast.Node, file *ast.SourceFile) bool {
 	}
 
 	startLine, _ := scanner.GetLineAndCharacterOfPosition(file, node.End())
-	endLine, _ := scanner.GetLineAndCharacterOfPosition(file, getStartOfNode(nextToken, file))
+	endLine, _ := scanner.GetLineAndCharacterOfPosition(file, astnav.GetStartOfNode(nextToken, file, false /*includeJSDoc*/))
 	return startLine != endLine
 }
 
@@ -285,8 +264,12 @@ func probablyUsesSemicolons(file *ast.SourceFile) bool {
 			if lastToken != nil && lastToken.Kind == ast.KindSemicolonToken {
 				withSemicolon++
 			} else if lastToken != nil && lastToken.Kind != ast.KindCommaToken {
-				lastTokenLine, _ := scanner.GetLineAndCharacterOfPosition(file, getStartOfNode(lastToken, file))
-				nextTokenLine, _ := scanner.GetLineAndCharacterOfPosition(file, scanner.GetRangeOfTokenAtPosition(file, lastToken.End()).Pos())
+				lastTokenLine, _ := scanner.GetLineAndCharacterOfPosition(
+					file,
+					astnav.GetStartOfNode(lastToken, file, false /*includeJSDoc*/))
+				nextTokenLine, _ := scanner.GetLineAndCharacterOfPosition(
+					file,
+					scanner.GetRangeOfTokenAtPosition(file, lastToken.End()).Pos())
 				// Avoid counting missing semicolon in single-line objects:
 				// `function f(p: { x: string /*no semicolon here is insignificant*/ }) {`
 				if lastTokenLine != nextTokenLine {

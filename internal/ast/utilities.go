@@ -2661,10 +2661,9 @@ func GetPragmaArgument(pragma *Pragma, name string) string {
 }
 
 func IsCheckJSEnabledForFile(sourceFile *SourceFile, compilerOptions *core.CompilerOptions) bool {
-	// !!!
-	// if sourceFile.CheckJsDirective != nil {
-	// 	return sourceFile.CheckJsDirective.Enabled
-	// }
+	if sourceFile.CheckJsDirective != nil {
+		return sourceFile.CheckJsDirective.Enabled
+	}
 	return compilerOptions.CheckJs == core.TSTrue
 }
 
@@ -2673,10 +2672,6 @@ func GetLeftmostAccessExpression(expr *Node) *Node {
 		expr = expr.Expression()
 	}
 	return expr
-}
-
-func IsSourceFileJs(file *SourceFile) bool {
-	return IsInJSFile(file.AsNode())
 }
 
 func IsTypeOnlyImportDeclaration(node *Node) bool {
@@ -2741,7 +2736,6 @@ func GetLanguageVariant(scriptKind core.ScriptKind) core.LanguageVariant {
 	return core.LanguageVariantStandard
 }
 
-// !!! Shared?
 func IsCallLikeExpression(node *Node) bool {
 	switch node.Kind {
 	case KindJsxOpeningElement, KindJsxSelfClosingElement, KindCallExpression, KindNewExpression,
@@ -2751,7 +2745,6 @@ func IsCallLikeExpression(node *Node) bool {
 	return false
 }
 
-// !!! Shared?
 func IsCallLikeOrFunctionLikeExpression(node *Node) bool {
 	return IsCallLikeExpression(node) || IsFunctionExpressionOrArrowFunction(node)
 }

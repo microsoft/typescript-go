@@ -252,7 +252,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	if context.TriggerCharacter != nil && *context.TriggerCharacter == " " {
 		// `isValidTrigger` ensures we are at `import |`
-		if ptrIsTrue(preferences.includeCompletionsForImportStatements) {
+		if ptrIsTrue(preferences.IncludeCompletionsForImportStatements) {
 			// !!! isMemberCompletion
 			return &lsproto.CompletionList{
 				IsIncomplete: true,
@@ -280,7 +280,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	// switch completionData.Kind  // !!! other data cases
 	// !!! transform data into completion list
 
-	response := completionInfoFromData(
+	response := l.completionInfoFromData(
 		file,
 		program,
 		compilerOptions,
@@ -310,7 +310,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 
 	// The decision to provide completion depends on the contextToken, which is determined through the previousToken.
 	// Note: 'previousToken' (and thus 'contextToken') can be undefined if we are the beginning of the file
-	// isJSOnlyLocation := !insideJsDocTagTypeExpression && !insideJsDocImportTag && ast.IsSourceFileJs(file)
+	// isJSOnlyLocation := !insideJsDocTagTypeExpression && !insideJsDocImportTag && ast.IsSourceFileJS(file)
 	previousToken, contextToken := getRelevantTokens(position, file)
 
 	// Find the node where completion is requested on.
@@ -460,7 +460,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 
 	addSymbolOriginInfo := func(symbol *ast.Symbol, insertQuestionDot bool, insertAwait bool) {
 		symbolId := ast.GetSymbolId(symbol)
-		if insertAwait && core.AddIfAbsent(seenPropertySymbols, symbolId) {
+		if insertAwait && seenPropertySymbols.AddIfAbsent(symbolId) {
 			symbolToOriginInfoMap[symbolId] = &symbolOriginInfo{kind: getNullableSymbolOriginInfoKind(symbolOriginInfoKindPromise, insertQuestionDot)}
 		} else if insertQuestionDot {
 			symbolToOriginInfoMap[symbolId] = &symbolOriginInfo{kind: symbolOriginInfoKindNullable}
@@ -501,7 +501,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 			if firstAccessibleSymbol != nil {
 				firstAccessibleSymbolId = ast.GetSymbolId(firstAccessibleSymbol)
 			}
-			if firstAccessibleSymbolId != 0 && core.AddIfAbsent(seenPropertySymbols, firstAccessibleSymbolId) {
+			if firstAccessibleSymbolId != 0 && seenPropertySymbols.AddIfAbsent(firstAccessibleSymbolId) {
 				symbols = append(symbols, firstAccessibleSymbol)
 				moduleSymbol := firstAccessibleSymbol.Parent
 				if moduleSymbol == nil ||
@@ -673,7 +673,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 						insertQuestionDot := false
 						if typeChecker.IsNullableType(t) {
 							canCorrectToQuestionDot := isRightOfDot && !isRightOfQuestionDot &&
-								!ptrIsFalse(preferences.includeAutomaticOptionalChainCompletions)
+								!ptrIsFalse(preferences.IncludeAutomaticOptionalChainCompletions)
 							if canCorrectToQuestionDot || isRightOfQuestionDot {
 								t = typeChecker.GetNonNullableType(t)
 								if canCorrectToQuestionDot {
@@ -700,7 +700,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 				insertQuestionDot := false
 				if typeChecker.IsNullableType(t) {
 					canCorrectToQuestionDot := isRightOfDot && !isRightOfQuestionDot &&
-						!ptrIsFalse(preferences.includeAutomaticOptionalChainCompletions)
+						!ptrIsFalse(preferences.IncludeAutomaticOptionalChainCompletions)
 
 					if canCorrectToQuestionDot || isRightOfQuestionDot {
 						t = typeChecker.GetNonNullableType(t)
@@ -795,7 +795,7 @@ func getDefaultCommitCharacters(isNewIdentifierLocation bool) []string {
 	return slices.Clone(allCommitCharacters)
 }
 
-func completionInfoFromData(
+func (l *LanguageService) completionInfoFromData(
 	file *ast.SourceFile,
 	program *compiler.Program,
 	compilerOptions *core.CompilerOptions,
@@ -830,7 +830,7 @@ func completionInfoFromData(
 		return nil
 	}
 
-	uniqueNames, sortedEntries := getCompletionEntriesFromSymbols(
+	uniqueNames, sortedEntries := l.getCompletionEntriesFromSymbols(
 		data,
 		nil, /*replacementToken*/
 		position,
@@ -845,7 +845,7 @@ func completionInfoFromData(
 	if data.keywordFilters != KeywordCompletionFiltersNone {
 		keywordCompletions := getKeywordCompletions(
 			data.keywordFilters,
-			!data.insideJsDocTagTypeExpression && ast.IsSourceFileJs(file))
+			!data.insideJsDocTagTypeExpression && ast.IsSourceFileJS(file))
 		for _, keywordEntry := range keywordCompletions {
 			if data.isTypeOnlyLocation && isTypeKeyword(scanner.StringToToken(keywordEntry.Label)) ||
 				!data.isTypeOnlyLocation && isContextualKeywordInAutoImportableExpressionSpace(keywordEntry.Label) ||
@@ -901,7 +901,7 @@ func completionInfoFromData(
 	}
 }
 
-func getCompletionEntriesFromSymbols(
+func (l *LanguageService) getCompletionEntriesFromSymbols(
 	data *completionData,
 	replacementToken *ast.Node,
 	position int,
@@ -938,7 +938,7 @@ func getCompletionEntriesFromSymbols(
 		}
 
 		// When in a value location in a JS file, ignore symbols that definitely seem to be type-only.
-		if !data.isTypeOnlyLocation && ast.IsSourceFileJs(file) && symbolAppearsToBeTypeOnly(symbol, typeChecker) {
+		if !data.isTypeOnlyLocation && ast.IsSourceFileJS(file) && symbolAppearsToBeTypeOnly(symbol, typeChecker) {
 			continue
 		}
 
@@ -947,7 +947,7 @@ func getCompletionEntriesFromSymbols(
 			originalSortText = SortTextLocationPriority
 		}
 		sortText := core.IfElse(isDeprecated(symbol, typeChecker), deprecateSortText(originalSortText), originalSortText)
-		entry := createCompletionItem(
+		entry := l.createCompletionItem(
 			symbol,
 			sortText,
 			replacementToken,
@@ -1012,7 +1012,7 @@ func createCompletionItemForLiteral(
 	}
 }
 
-func createCompletionItem(
+func (l *LanguageService) createCompletionItem(
 	symbol *ast.Symbol,
 	sortText sortText,
 	replacementToken *ast.Node,
@@ -1031,7 +1031,7 @@ func createCompletionItem(
 	contextToken := data.contextToken
 	var insertText string
 	var filterText string
-	replacementSpan := getReplacementRangeForContextToken(file, replacementToken, position)
+	replacementSpan := l.getReplacementRangeForContextToken(file, replacementToken, position)
 	var isSnippet, hasAction bool
 	source := getSourceFromOrigin(origin)
 	var labelDetails *lsproto.CompletionItemLabelDetails
@@ -1084,7 +1084,7 @@ func createCompletionItem(
 		} else {
 			end = dot.End()
 		}
-		replacementSpan = createLspRangeFromBounds(getStartOfNode(dot, file), end, file)
+		replacementSpan = l.createLspRangeFromBounds(astnav.GetStartOfNode(dot, file, false /*includeJSDoc*/), end, file)
 	}
 
 	if data.jsxInitializer.isInitializer {
@@ -1093,7 +1093,7 @@ func createCompletionItem(
 		}
 		insertText = fmt.Sprintf("{%s}", insertText)
 		if data.jsxInitializer.initializer != nil {
-			replacementSpan = createLspRangeFromNode(data.jsxInitializer.initializer, file)
+			replacementSpan = l.createLspRangeFromNode(data.jsxInitializer.initializer, file)
 		}
 	}
 
@@ -1120,7 +1120,10 @@ func createCompletionItem(
 			data.propertyAccessToConvert.Parent,
 			data.propertyAccessToConvert.Expression(),
 		)
-		replacementSpan = createLspRangeFromBounds(getStartOfNode(wrapNode, file), data.propertyAccessToConvert.End(), file)
+		replacementSpan = l.createLspRangeFromBounds(
+			astnav.GetStartOfNode(wrapNode, file, false /*includeJSDoc*/),
+			data.propertyAccessToConvert.End(),
+			file)
 	}
 
 	if originIsResolvedExport(origin) {
@@ -1162,7 +1165,7 @@ func createCompletionItem(
 		}
 	}
 
-	if ptrIsTrue(preferences.includeCompletionsWithClassMemberSnippets) &&
+	if ptrIsTrue(preferences.IncludeCompletionsWithClassMemberSnippets) &&
 		data.completionKind == CompletionKindMemberLike &&
 		isClassLikeMemberCompletion(symbol, data.location, file) {
 		// !!! class member completions
@@ -1183,13 +1186,13 @@ func createCompletionItem(
 	if data.isJsxIdentifierExpected &&
 		!data.isRightOfOpenTag &&
 		ptrIsTrue(clientOptions.CompletionItem.SnippetSupport) &&
-		!jsxAttributeCompletionStyleIs(preferences.jsxAttributeCompletionStyle, JsxAttributeCompletionStyleNone) &&
+		!jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleNone) &&
 		!(ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
-		useBraces := jsxAttributeCompletionStyleIs(preferences.jsxAttributeCompletionStyle, JsxAttributeCompletionStyleBraces)
+		useBraces := jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleBraces)
 		t := typeChecker.GetTypeOfSymbolAtLocation(symbol, data.location)
 
 		// If is boolean like or undefined, don't return a snippet, we want to return just the completion.
-		if jsxAttributeCompletionStyleIs(preferences.jsxAttributeCompletionStyle, JsxAttributeCompletionStyleAuto) &&
+		if jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleAuto) &&
 			t.Flags()&checker.TypeFlagsBooleanLike == 0 &&
 			!(t.Flags()&checker.TypeFlagsUnion != 0 && core.Some(t.Types(), func(t *checker.Type) bool { return t.Flags()&checker.TypeFlagsBooleanLike != 0 })) {
 			if t.Flags()&checker.TypeFlagsStringLike != 0 ||
@@ -1628,7 +1631,7 @@ func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCha
 		// Only automatically bring up completions if this is an opening quote.
 		return contextToken != nil &&
 			isStringLiteralOrTemplate(contextToken) &&
-			position == getStartOfNode(contextToken, file)+1
+			position == astnav.GetStartOfNode(contextToken, file, false /*includeJSDoc*/)+1
 	case "#":
 		return contextToken != nil &&
 			ast.IsPrivateIdentifier(contextToken) &&
@@ -1667,7 +1670,7 @@ func binaryExpressionMayBeOpenTag(binaryExpression *ast.BinaryExpression) bool {
 }
 
 func isCheckedFile(file *ast.SourceFile, compilerOptions *core.CompilerOptions) bool {
-	return !ast.IsSourceFileJs(file) || ast.IsCheckJSEnabledForFile(file, compilerOptions)
+	return !ast.IsSourceFileJS(file) || ast.IsCheckJSEnabledForFile(file, compilerOptions)
 }
 
 func isContextTokenValueLocation(contextToken *ast.Node) bool {
@@ -1722,7 +1725,7 @@ func symbolCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *checke
 
 func nonAliasCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *checker.Checker, seenModules core.Set[ast.SymbolId]) bool {
 	return symbol.Flags&ast.SymbolFlagsType != 0 || typeChecker.IsUnknownSymbol(symbol) ||
-		symbol.Flags&ast.SymbolFlagsModule != 0 && core.AddIfAbsent(seenModules, ast.GetSymbolId(symbol)) &&
+		symbol.Flags&ast.SymbolFlagsModule != 0 && seenModules.AddIfAbsent(ast.GetSymbolId(symbol)) &&
 			core.Some(
 				typeChecker.GetExportsOfModule(symbol),
 				func(e *ast.Symbol) bool { return symbolCanBeReferencedAtTypeLocation(e, typeChecker, seenModules) })
@@ -1963,7 +1966,7 @@ func isDeprecated(symbol *ast.Symbol, typeChecker *checker.Checker) bool {
 	return len(declarations) > 0 && core.Every(declarations, func(decl *ast.Declaration) bool { return typeChecker.IsDeprecatedDeclaration(decl) })
 }
 
-func getReplacementRangeForContextToken(file *ast.SourceFile, contextToken *ast.Node, position int) *lsproto.Range {
+func (l *LanguageService) getReplacementRangeForContextToken(file *ast.SourceFile, contextToken *ast.Node, position int) *lsproto.Range {
 	if contextToken == nil {
 		return nil
 	}
@@ -1971,15 +1974,15 @@ func getReplacementRangeForContextToken(file *ast.SourceFile, contextToken *ast.
 	// !!! ensure range is single line
 	switch contextToken.Kind {
 	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
-		return createRangeFromStringLiteralLikeContent(file, contextToken, position)
+		return l.createRangeFromStringLiteralLikeContent(file, contextToken, position)
 	default:
-		return createLspRangeFromNode(contextToken, file)
+		return l.createLspRangeFromNode(contextToken, file)
 	}
 }
 
-func createRangeFromStringLiteralLikeContent(file *ast.SourceFile, node *ast.StringLiteralLike, position int) *lsproto.Range {
+func (l *LanguageService) createRangeFromStringLiteralLikeContent(file *ast.SourceFile, node *ast.StringLiteralLike, position int) *lsproto.Range {
 	replacementEnd := node.End() - 1
-	nodeStart := getStartOfNode(node, file)
+	nodeStart := astnav.GetStartOfNode(node, file, false /*includeJSDoc*/)
 	if ast.IsUnterminatedLiteral(node) {
 		// we return no replacement range only if unterminated string is empty
 		if nodeStart == replacementEnd {
@@ -1987,7 +1990,7 @@ func createRangeFromStringLiteralLikeContent(file *ast.SourceFile, node *ast.Str
 		}
 		replacementEnd = min(position, node.End())
 	}
-	return createLspRangeFromBounds(nodeStart+1, replacementEnd, file)
+	return l.createLspRangeFromBounds(nodeStart+1, replacementEnd, file)
 }
 
 func quotePropertyName(file *ast.SourceFile, preferences *UserPreferences, name string) string {
