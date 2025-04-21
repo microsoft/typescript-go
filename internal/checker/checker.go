@@ -13673,7 +13673,7 @@ func (c *Checker) checkAndReportErrorForResolvingImportAliasToTypeOnlySymbol(nod
 			diagnostics.X_0_was_imported_here)
 		// TODO: how to get name for export *?
 		name := "*"
-		if typeOnlyDeclaration.Kind == ast.KindImportDeclaration {
+		if !ast.IsExportDeclaration(typeOnlyDeclaration) {
 			name = getNameFromImportDeclaration(typeOnlyDeclaration).AsIdentifier().Text
 		}
 		c.error(decl.ModuleReference, message).AddRelatedInfo(createDiagnosticForNode(typeOnlyDeclaration, relatedMessage, name))
