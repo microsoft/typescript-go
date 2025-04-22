@@ -16,8 +16,7 @@ var defaultCommitCharacters = []string{".", ",", ";"}
 type testCase struct {
 	name     string
 	content  string
-	position int
-	expected *lsproto.CompletionList
+	expected map[string]*lsproto.CompletionList
 }
 
 func TestCompletions(t *testing.T) {
@@ -27,6 +26,12 @@ func TestCompletions(t *testing.T) {
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
+	itemDefaults := &lsproto.CompletionItemDefaults{
+		CommitCharacters: &defaultCommitCharacters,
+	}
+	insertTextFormatPlainText := ptrTo(lsproto.InsertTextFormatPlainText)
+	sortTextLocationPriority := ptrTo(string(ls.SortTextLocationPriority))
+	fieldKind := ptrTo(lsproto.CompletionItemKindField)
 	testCases := []testCase{
 		{
 			name: "basicInterfaceMembers",
@@ -36,25 +41,24 @@ interface Point {
     y: number;
 }
 declare const p: Point;
-p.`,
-			position: 87,
-			expected: &lsproto.CompletionList{
-				IsIncomplete: false,
-				ItemDefaults: &lsproto.CompletionItemDefaults{
-					CommitCharacters: &defaultCommitCharacters,
-				},
-				Items: []*lsproto.CompletionItem{
-					{
-						Label:            "x",
-						Kind:             ptrTo(lsproto.CompletionItemKindField),
-						SortText:         ptrTo(string(ls.SortTextLocationPriority)),
-						InsertTextFormat: ptrTo(lsproto.InsertTextFormatPlainText),
-					},
-					{
-						Label:            "y",
-						Kind:             ptrTo(lsproto.CompletionItemKindField),
-						SortText:         ptrTo(string(ls.SortTextLocationPriority)),
-						InsertTextFormat: ptrTo(lsproto.InsertTextFormatPlainText),
+p./*a*/`,
+			expected: map[string]*lsproto.CompletionList{
+				"a": {
+					IsIncomplete: false,
+					ItemDefaults: itemDefaults,
+					Items: []*lsproto.CompletionItem{
+						{
+							Label:            "x",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "y",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
 					},
 				},
 			},
@@ -63,19 +67,46 @@ p.`,
 			name: "objectLiteralType",
 			content: `export {};
 let x = { foo: 123 };
-x.`,
-			position: 35,
-			expected: &lsproto.CompletionList{
-				IsIncomplete: false,
-				ItemDefaults: &lsproto.CompletionItemDefaults{
-					CommitCharacters: &defaultCommitCharacters,
+x./*a*/`,
+			expected: map[string]*lsproto.CompletionList{
+				"a": {
+					IsIncomplete: false,
+					ItemDefaults: itemDefaults,
+					Items: []*lsproto.CompletionItem{
+						{
+							Label:            "foo",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: ptrTo(lsproto.InsertTextFormatPlainText),
+						},
+					},
 				},
-				Items: []*lsproto.CompletionItem{
-					{
-						Label:            "foo",
-						Kind:             ptrTo(lsproto.CompletionItemKindField),
-						SortText:         ptrTo(string(ls.SortTextLocationPriority)),
-						InsertTextFormat: ptrTo(lsproto.InsertTextFormatPlainText),
+			},
+		},
+		{
+			name: "basicClassMembers",
+			content: `
+class n {
+    constructor (public x: number, public y: number, private z: string) { }
+}
+var t = new n(0, 1, '');t./*a*/`,
+			expected: map[string]*lsproto.CompletionList{
+				"a": {
+					IsIncomplete: false,
+					ItemDefaults: itemDefaults,
+					Items: []*lsproto.CompletionItem{
+						{
+							Label:            "x",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "y",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
 					},
 				},
 			},
@@ -84,14 +115,15 @@ x.`,
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			runTest(t, testCase.content, testCase.position, testCase.expected)
+			runTest(t, testCase.content, testCase.expected)
 		})
 	}
 }
 
-func runTest(t *testing.T, content string, position int, expected *lsproto.CompletionList) {
+func runTest(t *testing.T, content string, expected map[string]*lsproto.CompletionList) {
+	testData := ls.ParseTestdata("/index.ts", content, "/index.ts")
 	files := map[string]string{
-		"/index.ts": content,
+		"/index.ts": testData.Files[0].Content,
 	}
 	languageService := createLanguageService("/index.ts", files)
 	context := &lsproto.CompletionContext{
@@ -109,13 +141,20 @@ func runTest(t *testing.T, content string, position int, expected *lsproto.Compl
 		},
 	}
 	preferences := &ls.UserPreferences{}
-	completionList := languageService.ProvideCompletion(
-		"/index.ts",
-		position,
-		context,
-		capabilities,
-		preferences)
-	assert.DeepEqual(t, completionList, expected)
+
+	for markerName, expectedResult := range expected {
+		marker, ok := testData.MarkerPositions[markerName]
+		if !ok {
+			t.Fatalf("No marker found for '%s'", markerName)
+		}
+		completionList := languageService.ProvideCompletion(
+			"/index.ts",
+			marker.Position,
+			context,
+			capabilities,
+			preferences)
+		assert.DeepEqual(t, completionList, expectedResult)
+	}
 }
 
 func createLanguageService(fileName string, files map[string]string) *ls.LanguageService {
