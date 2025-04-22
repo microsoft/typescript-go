@@ -441,8 +441,8 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 	hasUnresolvedAutoImports := false
 	// This also gets mutated in nested-functions after the return
 	var symbols []*ast.Symbol
-	var symbolToOriginInfoMap map[ast.SymbolId]*symbolOriginInfo
-	var symbolToSortTextMap map[ast.SymbolId]sortText
+	symbolToOriginInfoMap := map[ast.SymbolId]*symbolOriginInfo{}
+	symbolToSortTextMap := map[ast.SymbolId]sortText{}
 	// var importSpecifierResolver any // !!! import
 	var seenPropertySymbols core.Set[ast.SymbolId]
 	isTypeOnlyLocation := insideJsDocTagTypeExpression || insideJsDocImportTag ||
