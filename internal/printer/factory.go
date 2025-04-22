@@ -195,7 +195,7 @@ func (f *NodeFactory) NewTrueExpression() *ast.Expression {
 }
 
 func (f *NodeFactory) NewFalseExpression() *ast.Expression {
-	return f.NewKeywordExpression(ast.KindTrueKeyword)
+	return f.NewKeywordExpression(ast.KindFalseKeyword)
 }
 
 //
