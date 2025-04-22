@@ -94,12 +94,12 @@ func findPrecedingMatchingToken(token *ast.Node, matchingTokenKind ast.Kind, sou
 	tokenFullStart := token.Loc.Pos()
 	// Text-scan based fast path - can be bamboozled by comments and other trivia, but often provides
 	// a good, fast approximation without too much extra work in the cases where it fails.
-	bestGuessIndex := strings.LastIndex(sourceFile.Text, matchingTokenText)
+	bestGuessIndex := strings.LastIndex(sourceFile.Text(), matchingTokenText)
 	if bestGuessIndex == -1 {
 		return nil // if the token text doesn't appear in the file, there can't be a match - super fast bail
 	}
 	// we can only use the textual result directly if we didn't have to count any close tokens within the range
-	if strings.LastIndex(sourceFile.Text, closeTokenText) < bestGuessIndex {
+	if strings.LastIndex(sourceFile.Text(), closeTokenText) < bestGuessIndex {
 		nodeAtGuess := astnav.FindPrecedingToken(sourceFile, bestGuessIndex+1)
 		if nodeAtGuess != nil && nodeAtGuess.Kind == matchingTokenKind {
 			return nodeAtGuess

@@ -131,7 +131,7 @@ func (l *LanguageService) GetSignatureHelpItems(fileName string, position int, t
 	typeChecker := program.GetTypeChecker()
 
 	// Decide whether to show signature help
-	startingToken := astnav.FindTokenOnLeftOfPosition(sourceFile, position)
+	startingToken := astnav.FindPrecedingToken(sourceFile, position)
 	if startingToken == nil {
 		// We are at the beginning of the file
 		return nil
@@ -742,7 +742,7 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		//      export function MainButton(props: ButtonProps, context: any): JSX.Element { ... }
 		//      <MainButton /*signatureHelp*/
 		attributeSpanStart := parent.AsJsxOpeningElement().Attributes.Loc.Pos()
-		attributeSpanEnd := scanner.SkipTrivia(sourceFile.Text, parent.AsJsxOpeningElement().Attributes.End())
+		attributeSpanEnd := scanner.SkipTrivia(sourceFile.Text(), parent.AsJsxOpeningElement().Attributes.End())
 		return &argumentListInfo{
 			isTypeParameterList: false,
 			invocation:          &invocation{kind: invocationKindCall, callInvocation: callInvocation{kind: invocationKindCall, node: parent}},
@@ -945,7 +945,7 @@ func getApplicableSpanForArguments(argumentList *ast.NodeList, sourceFile *ast.S
 	// The applicable span is from the first bar to the second bar (inclusive,
 	// but not including parentheses)
 	applicableSpanStart := argumentList.Loc.Pos() //fullstart - .pos but getStart is getPosOfToken
-	applicableSpanEnd := scanner.SkipTrivia(sourceFile.Text, argumentList.End())
+	applicableSpanEnd := scanner.SkipTrivia(sourceFile.Text(), argumentList.End())
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd)
 }
 
@@ -1186,7 +1186,7 @@ func getApplicableRangeForTaggedTemplate(taggedTemplate *ast.TaggedTemplateExpre
 		templateSpans := template.AsTemplateExpression().TemplateSpans
 		lastSpan := templateSpans.Nodes[len(templateSpans.Nodes)-1]
 		if lastSpan.AsTemplateSpan().Literal.GetFullWidth() == 0 {
-			applicableSpanEnd = scanner.SkipTrivia(sourceFile.Text, applicableSpanEnd)
+			applicableSpanEnd = scanner.SkipTrivia(sourceFile.Text(), applicableSpanEnd)
 		}
 	}
 
@@ -1202,7 +1202,7 @@ type possibleTypeArgumentInfo struct {
 func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile) *possibleTypeArgumentInfo {
 	// This is a rare case, but one that saves on a _lot_ of work if true - if the source file has _no_ `<` character,
 	// then there obviously can't be any type arguments - no expensive brace-matching backwards scanning required
-	if strings.LastIndex(sourceFile.Text, "<") == -1 { // (sourceFile.text.lastIndexOf("<", tokenIn ? tokenIn.pos : sourceFile.text.length) === -1)
+	if strings.LastIndex(sourceFile.Text(), "<") == -1 { // (sourceFile.text.lastIndexOf("<", tokenIn ? tokenIn.pos : sourceFile.text.length) === -1)
 		return nil
 	}
 	var token *ast.Node

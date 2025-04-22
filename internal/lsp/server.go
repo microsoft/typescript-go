@@ -359,7 +359,7 @@ func (s *Server) handleHover(req *lsproto.RequestMessage) error {
 func (s *Server) handleSignatureHelp(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.SignatureHelpParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
-	pos, err := s.converters.lineAndCharacterToPositionForFile(params.Position, file.FileName())
+	pos, err := s.converters.LineAndCharacterToPositionForFile(params.Position, file.FileName())
 	if err != nil {
 		return s.sendError(req.ID, err)
 	}
@@ -422,7 +422,7 @@ func (s *Server) handleSignatureHelp(req *lsproto.RequestMessage) error {
 
 	}
 	signatureHelp := project.LanguageService().GetSignatureHelpItems(file.FileName(), pos, triggerReason)
-	toLspSignatureHelp := toLspSignatureHelp(signatureHelp)
+	toLspSignatureHelp := ls.ToLspSignatureHelp(signatureHelp)
 	return s.sendResult(req.ID, toLspSignatureHelp)
 }
 
