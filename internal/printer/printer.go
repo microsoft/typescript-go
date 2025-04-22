@@ -1092,7 +1092,7 @@ func (p *Printer) emitIdentifierNameNode(node *ast.IdentifierNode) {
 func (p *Printer) getUniqueHelperName(name string) *ast.IdentifierNode {
 	helperName := p.uniqueHelperNames[name]
 	if helperName == nil {
-		helperName := p.emitContext.NewUniqueName(name, AutoGenerateOptions{Flags: GeneratedIdentifierFlagsFileLevel | GeneratedIdentifierFlagsOptimistic})
+		helperName := p.emitContext.Factory.NewUniqueNameEx(name, AutoGenerateOptions{Flags: GeneratedIdentifierFlagsFileLevel | GeneratedIdentifierFlagsOptimistic})
 		p.generateName(helperName)
 		p.uniqueHelperNames[name] = helperName
 		return helperName
