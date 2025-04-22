@@ -1193,7 +1193,7 @@ func (l *LanguageService) createCompletionItem(
 		// If is boolean like or undefined, don't return a snippet, we want to return just the completion.
 		if jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleAuto) &&
 			!t.IsBooleanLike() &&
-			!(t.IsUnion() && core.Some(t.Types(), func(t *checker.Type) bool { return t.IsBooleanLike() })) {
+			!(t.IsUnion() && core.Some(t.Types(), (*checker.Type).IsBooleanLike)) {
 			if t.IsStringLike() ||
 				t.IsUnion() &&
 					core.Every(

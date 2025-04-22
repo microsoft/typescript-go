@@ -128,7 +128,7 @@ func quote(file *ast.SourceFile, preferences *UserPreferences, text string) stri
 	quotePreference := getQuotePreference(file, preferences)
 	quoted, _ := core.StringifyJson(text, "" /*prefix*/, "" /*indent*/)
 	if quotePreference == quotePreferenceSingle {
-		quoteReplacer.Replace(core.StripQuotes(quoted))
+		quoted = quoteReplacer.Replace(core.StripQuotes(quoted))
 	}
 	return quoted
 }
