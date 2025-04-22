@@ -2557,6 +2557,9 @@ func (b *NodeBuilder) visitAndTransformType(t *Type, transform func(t *Type) *as
 	addedLength := b.ctx.approximateLength - startLength
 	if !b.ctx.reportedDiagnostic && !b.ctx.encounteredError {
 		links := b.links.Get(b.ctx.enclosingDeclaration)
+		if links.serializedTypes == nil {
+			links.serializedTypes = make(map[CompositeTypeCacheIdentity]*SerializedTypeEntry)
+		}
 		links.serializedTypes[key] = &SerializedTypeEntry{
 			node:           result,
 			truncating:     b.ctx.truncating,
