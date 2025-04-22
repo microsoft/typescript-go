@@ -59,6 +59,27 @@ p.`,
 				},
 			},
 		},
+		{
+			name: "objectLiteralType",
+			content: `export {};
+let x = { foo: 123 };
+x.`,
+			position: 35,
+			expected: &lsproto.CompletionList{
+				IsIncomplete: false,
+				ItemDefaults: &lsproto.CompletionItemDefaults{
+					CommitCharacters: &defaultCommitCharacters,
+				},
+				Items: []*lsproto.CompletionItem{
+					{
+						Label:            "foo",
+						Kind:             ptrTo(lsproto.CompletionItemKindField),
+						SortText:         ptrTo(string(ls.SortTextLocationPriority)),
+						InsertTextFormat: ptrTo(lsproto.InsertTextFormatPlainText),
+					},
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {

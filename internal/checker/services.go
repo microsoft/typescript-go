@@ -384,6 +384,8 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 			next = c.valueSymbolLinks.Get(next).target
 		} else if c.exportTypeLinks.Has(next) {
 			next = c.exportTypeLinks.Get(next).target
+		} else {
+			next = nil
 		}
 		if next == nil {
 			break
