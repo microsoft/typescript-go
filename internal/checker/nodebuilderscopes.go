@@ -19,10 +19,10 @@ func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
 	// we write it out like that, rather than as
 	// export const x: <T>(x: T) => T
 	// export const y: <T_1>(x: T_1) => T_1
-	oldMustCreateTypeParameterSymbolList := context.mustCreateTypeParameterSymbolList
-	oldMustCreateTypeParametersNamesLookups := context.mustCreateTypeParametersNamesLookups
-	context.mustCreateTypeParameterSymbolList = true
-	context.mustCreateTypeParametersNamesLookups = true
+	oldMustCreateTypeParameterSymbolList := context.hasCreatedTypeParameterSymbolList
+	oldMustCreateTypeParametersNamesLookups := context.hasCreatedTypeParametersNamesLookups
+	context.hasCreatedTypeParameterSymbolList = false
+	context.hasCreatedTypeParametersNamesLookups = false
 	oldTypeParameterNames := context.typeParameterNames
 	oldTypeParameterNamesByText := context.typeParameterNamesByText
 	oldTypeParameterNamesByTextNextNameCount := context.typeParameterNamesByTextNextNameCount
@@ -32,8 +32,8 @@ func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
 		context.typeParameterNamesByText = oldTypeParameterNamesByText
 		context.typeParameterNamesByTextNextNameCount = oldTypeParameterNamesByTextNextNameCount
 		context.typeParameterSymbolList = oldTypeParameterSymbolList
-		context.mustCreateTypeParameterSymbolList = oldMustCreateTypeParameterSymbolList
-		context.mustCreateTypeParametersNamesLookups = oldMustCreateTypeParametersNamesLookups
+		context.hasCreatedTypeParameterSymbolList = oldMustCreateTypeParameterSymbolList
+		context.hasCreatedTypeParametersNamesLookups = oldMustCreateTypeParametersNamesLookups
 	}
 }
 

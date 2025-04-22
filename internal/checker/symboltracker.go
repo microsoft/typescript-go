@@ -6,23 +6,37 @@ import (
 )
 
 type SymbolTrackerImpl struct {
-	context            NodeBuilderContext
+	context            *NodeBuilderContext
 	inner              nodebuilder.SymbolTracker
 	DisableTrackSymbol bool
 }
 
-func NewSymbolTrackerImpl(context NodeBuilderContext, tracker nodebuilder.SymbolTracker) *SymbolTrackerImpl {
-	// TODO: unwrap `tracker` before setting `inner`
-	return &SymbolTrackerImpl{context, tracker, false}
+func NewSymbolTrackerImpl(context *NodeBuilderContext, tracker nodebuilder.SymbolTracker) *SymbolTrackerImpl {
+	var inner nodebuilder.SymbolTracker
+	if tracker != nil {
+		inner = tracker.GetInnerSymbolTracker()
+		if inner == nil {
+			inner = tracker
+		}
+	}
+
+	return &SymbolTrackerImpl{context, inner, false}
 }
 
 func (this *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() any {
+	if this.inner == nil {
+		return nil
+	}
 	return this.inner.GetModuleSpecifierGenerationHost()
+}
+
+func (this *SymbolTrackerImpl) GetInnerSymbolTracker() nodebuilder.SymbolTracker {
+	return this.inner
 }
 
 func (this *SymbolTrackerImpl) TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool {
 	if !this.DisableTrackSymbol {
-		if this.inner.TrackSymbol(symbol, enclosingDeclaration, meaning) {
+		if this.inner != nil && this.inner.TrackSymbol(symbol, enclosingDeclaration, meaning) {
 			this.onDiagnosticReported()
 			return true
 		}
@@ -36,41 +50,65 @@ func (this *SymbolTrackerImpl) TrackSymbol(symbol *ast.Symbol, enclosingDeclarat
 
 func (this *SymbolTrackerImpl) ReportInaccessibleThisError() {
 	this.onDiagnosticReported()
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportInaccessibleThisError()
 }
 
 func (this *SymbolTrackerImpl) ReportPrivateInBaseOfClassExpression(propertyName string) {
 	this.onDiagnosticReported()
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportPrivateInBaseOfClassExpression(propertyName)
 }
 
 func (this *SymbolTrackerImpl) ReportInaccessibleUniqueSymbolError() {
 	this.onDiagnosticReported()
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportInaccessibleUniqueSymbolError()
 }
 
 func (this *SymbolTrackerImpl) ReportCyclicStructureError() {
 	this.onDiagnosticReported()
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportCyclicStructureError()
 }
 
 func (this *SymbolTrackerImpl) ReportLikelyUnsafeImportRequiredError(specifier string) {
 	this.onDiagnosticReported()
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportLikelyUnsafeImportRequiredError(specifier)
 }
 
 func (this *SymbolTrackerImpl) ReportTruncationError() {
 	this.onDiagnosticReported()
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportTruncationError()
 }
 
 func (this *SymbolTrackerImpl) ReportNonlocalAugmentation(containingFile *ast.SourceFile, parentSymbol *ast.Symbol, augmentingSymbol *ast.Symbol) {
 	this.onDiagnosticReported()
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportNonlocalAugmentation(containingFile, parentSymbol, augmentingSymbol)
 }
 
 func (this *SymbolTrackerImpl) ReportNonSerializableProperty(propertyName string) {
 	this.onDiagnosticReported()
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportNonSerializableProperty(propertyName)
 }
 
@@ -79,13 +117,22 @@ func (this *SymbolTrackerImpl) onDiagnosticReported() {
 }
 
 func (this *SymbolTrackerImpl) ReportInferenceFallback(node *ast.Node) {
+	if this.inner == nil {
+		return
+	}
 	this.inner.ReportInferenceFallback(node)
 }
 
 func (this *SymbolTrackerImpl) PushErrorFallbackNode(node *ast.Node) {
+	if this.inner == nil {
+		return
+	}
 	this.inner.PushErrorFallbackNode(node)
 }
 
 func (this *SymbolTrackerImpl) PopErrorFallbackNode() {
+	if this.inner == nil {
+		return
+	}
 	this.inner.PopErrorFallbackNode()
 }

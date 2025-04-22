@@ -5,6 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -18,6 +19,10 @@ type SymbolTrackerImpl struct {
 // GetModuleSpecifierGenerationHost implements checker.SymbolTracker.
 func (s *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() any {
 	panic("unimplemented")
+}
+
+func (s *SymbolTrackerImpl) GetInnerSymbolTracker() nodebuilder.SymbolTracker {
+	return nil
 }
 
 // PopErrorFallbackNode implements checker.SymbolTracker.

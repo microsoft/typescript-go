@@ -6,6 +6,7 @@ import "github.com/microsoft/typescript-go/internal/ast"
 // TODO: previously all symboltracker methods were optional, but now they're required.
 type SymbolTracker interface {
 	GetModuleSpecifierGenerationHost() any // !!!
+	GetInnerSymbolTracker() SymbolTracker
 
 	TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool
 	ReportInaccessibleThisError()

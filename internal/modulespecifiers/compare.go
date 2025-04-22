@@ -1,6 +1,8 @@
 package modulespecifiers
 
-import "strings"
+import (
+	"strings"
+)
 
 func CountPathComponents(path string) int {
 	initial := 0

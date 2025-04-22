@@ -16,7 +16,7 @@ type NodeBuilderInterface interface {
 	signatureToSignatureDeclaration(signature *Signature, kind ast.Kind, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 	symbolToEntityName(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 	symbolToExpression(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	symbolToTypeParameterDeclarations(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	symbolToTypeParameterDeclarations(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node
 	symbolToParameterDeclaration(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 	typeParameterToDeclaration(parameter *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 	symbolTableToDeclarationStatements(symbolTable *ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node
@@ -46,6 +46,10 @@ func (b *NodeBuilderAPI) enterContext(enclosingDeclaration *ast.Node, flags node
 		trackedSymbols:       make([]*TrackedSymbolArgs, 0),
 		mapper:               nil,
 		reverseMappedStack:   make([]*ast.Symbol, 0),
+	}
+	if tracker == nil {
+		tracker = NewSymbolTrackerImpl(b.impl.ctx, nil)
+		b.impl.ctx.tracker = tracker
 	}
 	b.impl.initializeClosures() // recapture ctx
 	b.ctxStack = append(b.ctxStack, b.impl.ctx)
@@ -150,9 +154,9 @@ func (b NodeBuilderAPI) symbolToParameterDeclaration(symbol *ast.Symbol, enclosi
 }
 
 // symbolToTypeParameterDeclarations implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) symbolToTypeParameterDeclarations(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+func (b *NodeBuilderAPI) symbolToTypeParameterDeclarations(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
-	return b.exitContext(b.impl.symbolToTypeParameterDeclarations(symbol))
+	return b.exitContextSlice(b.impl.symbolToTypeParameterDeclarations(symbol))
 }
 
 // typeParameterToDeclaration implements NodeBuilderInterface.
