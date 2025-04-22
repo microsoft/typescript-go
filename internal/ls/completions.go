@@ -99,6 +99,8 @@ const (
 	CompletionKindString
 )
 
+var TriggerCharacters = []string{".", `"`, "'", "`", "/", "@", "<", "#", " "}
+
 // All commit characters, valid when `isNewIdentifierLocation` is false.
 var allCommitCharacters = []string{".", ",", ";"}
 

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"runtime/debug"
 	"slices"
 	"strings"
 	"time"
@@ -252,6 +253,10 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 					InterFileDependencies: true,
 				},
 			},
+			CompletionProvider: &lsproto.CompletionOptions{
+				TriggerCharacters: &ls.TriggerCharacters,
+				// !!! other options
+			},
 		},
 	})
 }
@@ -379,7 +384,7 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 	return s.sendResult(req.ID, &lsproto.Definition{Locations: &lspLocations})
 }
 
-func (s *Server) handleCompletion(req *lsproto.RequestMessage) error {
+func (s *Server) handleCompletion(req *lsproto.RequestMessage) (messageErr error) {
 	params := req.Params.(*lsproto.CompletionParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
 	pos, err := s.converters.LineAndCharacterToPositionForFile(params.Position, file.FileName())
@@ -387,6 +392,13 @@ func (s *Server) handleCompletion(req *lsproto.RequestMessage) error {
 		return s.sendError(req.ID, err)
 	}
 
+	// !!! remove this after completions is fully ported/tested
+	defer func() {
+		if r := recover(); r != nil {
+			stack := debug.Stack()
+			messageErr = s.sendError(req.ID, fmt.Errorf("panic obtaining completions: %v\n%s", r, string(stack)))
+		}
+	}()
 	// !!! get user preferences
 	list := project.LanguageService().ProvideCompletion(
 		file.FileName(),
