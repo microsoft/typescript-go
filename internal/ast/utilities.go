@@ -639,6 +639,10 @@ func IsJsxChild(node *Node) bool {
 	return false
 }
 
+func IsJsxAttributeLike(node *Node) bool {
+	return IsJsxAttribute(node) || IsJsxSpreadAttribute(node)
+}
+
 func isDeclarationStatementKind(kind Kind) bool {
 	switch kind {
 	case KindFunctionDeclaration,
@@ -646,6 +650,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindClassDeclaration,
 		KindInterfaceDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindEnumDeclaration,
 		KindModuleDeclaration,
 		KindImportDeclaration,
@@ -908,6 +913,17 @@ func SetParentInChildren(node *Node) {
 func FindAncestor(node *Node, callback func(*Node) bool) *Node {
 	for node != nil {
 		if callback(node) {
+			return node
+		}
+		node = node.Parent
+	}
+	return nil
+}
+
+// Walks up the parents of a node to find the ancestor that matches the kind
+func FindAncestorKind(node *Node, kind Kind) *Node {
+	for node != nil {
+		if node.Kind == kind {
 			return node
 		}
 		node = node.Parent
@@ -1195,6 +1211,10 @@ func WalkUpBindingElementsAndPatterns(binding *Node) *Node {
 	return node.Parent
 }
 
+func IsSourceFileJS(file *SourceFile) bool {
+	return file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX
+}
+
 func IsInJSFile(node *Node) bool {
 	return node != nil && node.Flags&NodeFlagsJavaScriptFile != 0
 }
@@ -1471,17 +1491,17 @@ func IsExternalModule(file *SourceFile) bool {
 	return file.ExternalModuleIndicator != nil
 }
 
-func IsExternalOrCommonJsModule(file *SourceFile) bool {
-	return file.ExternalModuleIndicator != nil || file.CommonJsModuleIndicator != nil
+func IsExternalOrCommonJSModule(file *SourceFile) bool {
+	return file.ExternalModuleIndicator != nil || file.CommonJSModuleIndicator != nil
 }
 
-// TODO: Should we deprecate `IsExternalOrCommonJsModule` in favor of this function?
+// TODO: Should we deprecate `IsExternalOrCommonJSModule` in favor of this function?
 func IsEffectiveExternalModule(node *SourceFile, compilerOptions *core.CompilerOptions) bool {
-	return IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJsModuleIndicator != nil)
+	return IsExternalModule(node) || (isCommonJSContainingModuleKind(compilerOptions.GetEmitModuleKind()) && node.CommonJSModuleIndicator != nil)
 }
 
 func IsEffectiveExternalModuleWorker(node *SourceFile, moduleKind core.ModuleKind) bool {
-	return IsExternalModule(node) || (isCommonJSContainingModuleKind(moduleKind) && node.CommonJsModuleIndicator != nil)
+	return IsExternalModule(node) || (isCommonJSContainingModuleKind(moduleKind) && node.CommonJSModuleIndicator != nil)
 }
 
 func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
@@ -1684,6 +1704,10 @@ func IsAnyImportSyntax(node *Node) bool {
 
 func IsJsonSourceFile(file *SourceFile) bool {
 	return file.ScriptKind == core.ScriptKindJSON
+}
+
+func IsInJsonFile(node *Node) bool {
+	return node.Flags&NodeFlagsJsonFile != 0
 }
 
 func GetExternalModuleName(node *Node) *Expression {
@@ -2045,6 +2069,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 	case KindTypeParameter,
 		KindInterfaceDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindTypeLiteral:
 		return SemanticMeaningType
 	case KindEnumMember, KindClassDeclaration:
@@ -2172,7 +2197,7 @@ func getModuleInstanceStateCached(node *Node, ancestors []*Node, visited map[Nod
 func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[NodeId]ModuleInstanceState) ModuleInstanceState {
 	// A module is uninstantiated if it contains only
 	switch node.Kind {
-	case KindInterfaceDeclaration, KindTypeAliasDeclaration:
+	case KindInterfaceDeclaration, KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return ModuleInstanceStateNonInstantiated
 	case KindEnumDeclaration:
 		if IsEnumConst(node) {
@@ -2306,12 +2331,12 @@ func IsConstTypeReference(node *Node) bool {
 }
 
 func IsGlobalSourceFile(node *Node) bool {
-	return node.Kind == KindSourceFile && !IsExternalOrCommonJsModule(node.AsSourceFile())
+	return node.Kind == KindSourceFile && !IsExternalOrCommonJSModule(node.AsSourceFile())
 }
 
-func IsParameterLikeOrReturnTag(node *Node) bool {
+func IsParameterLike(node *Node) bool {
 	switch node.Kind {
-	case KindParameter, KindTypeParameter, KindJSDocParameterTag, KindJSDocReturnTag:
+	case KindParameter, KindTypeParameter:
 		return true
 	}
 	return false
@@ -2483,9 +2508,9 @@ func GetNodeAtPosition(file *SourceFile, position int, isJavaScriptFile bool) *N
 	for {
 		var child *Node
 		if isJavaScriptFile {
-			for _, jsDoc := range current.JSDoc(file) {
-				if nodeContainsPosition(jsDoc, position) {
-					child = jsDoc
+			for _, jsdoc := range current.JSDoc(file) {
+				if nodeContainsPosition(jsdoc, position) {
+					child = jsdoc
 					break
 				}
 			}
@@ -2544,7 +2569,7 @@ func ForEachDynamicImportOrRequireCall(
 	cb func(node *Node, argument *Expression) bool,
 ) bool {
 	isJavaScriptFile := IsInJSFile(file.AsNode())
-	lastIndex, size := findImportOrRequire(file.Text, 0)
+	lastIndex, size := findImportOrRequire(file.Text(), 0)
 	for lastIndex >= 0 {
 		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
 		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
@@ -2569,7 +2594,7 @@ func ForEachDynamicImportOrRequireCall(
 		}
 		// skip past import/require
 		lastIndex += size
-		lastIndex, size = findImportOrRequire(file.Text, lastIndex)
+		lastIndex, size = findImportOrRequire(file.Text(), lastIndex)
 	}
 	return false
 }
@@ -2590,4 +2615,55 @@ func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 
 func IsUnterminatedLiteral(node *Node) bool {
 	return node.LiteralLikeData().TokenFlags&TokenFlagsUnterminated != 0
+}
+
+func GetJSXImplicitImportBase(compilerOptions *core.CompilerOptions, file *SourceFile) string {
+	jsxImportSourcePragma := GetPragmaFromSourceFile(file, "jsximportsource")
+	jsxRuntimePragma := GetPragmaFromSourceFile(file, "jsxruntime")
+	if GetPragmaArgument(jsxRuntimePragma, "factory") == "classic" {
+		return ""
+	}
+	if compilerOptions.Jsx == core.JsxEmitReactJSX ||
+		compilerOptions.Jsx == core.JsxEmitReactJSXDev ||
+		compilerOptions.JsxImportSource != "" ||
+		jsxImportSourcePragma != nil ||
+		GetPragmaArgument(jsxRuntimePragma, "factory") == "automatic" {
+		result := GetPragmaArgument(jsxImportSourcePragma, "factory")
+		if result == "" {
+			result = compilerOptions.JsxImportSource
+		}
+		if result == "" {
+			result = "react"
+		}
+		return result
+	}
+	return ""
+}
+
+func GetJSXRuntimeImport(base string, options *core.CompilerOptions) string {
+	if base == "" {
+		return base
+	}
+	return base + "/" + core.IfElse(options.Jsx == core.JsxEmitReactJSXDev, "jsx-dev-runtime", "jsx-runtime")
+}
+
+func GetPragmaFromSourceFile(file *SourceFile, name string) *Pragma {
+	var result *Pragma
+	if file != nil {
+		for i := range file.Pragmas {
+			if file.Pragmas[i].Name == name {
+				result = &file.Pragmas[i] // Last one wins
+			}
+		}
+	}
+	return result
+}
+
+func GetPragmaArgument(pragma *Pragma, name string) string {
+	if pragma != nil {
+		if arg, ok := pragma.Args[name]; ok {
+			return arg.Value
+		}
+	}
+	return ""
 }

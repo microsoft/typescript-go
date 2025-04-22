@@ -11,12 +11,14 @@ import (
 var _ compiler.CompilerHost = (*LanguageService)(nil)
 
 type LanguageService struct {
-	host Host
+	converters *Converters
+	host       Host
 }
 
 func NewLanguageService(host Host) *LanguageService {
 	return &LanguageService{
-		host: host,
+		host:       host,
+		converters: NewConverters(host.GetPositionEncoding(), host.GetScriptInfo),
 	}
 }
 
@@ -55,9 +57,14 @@ func (l *LanguageService) GetProgram() *compiler.Program {
 	return l.host.GetProgram()
 }
 
-func (l *LanguageService) getProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
+func (l *LanguageService) tryGetProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
 	program := l.GetProgram()
 	file := program.GetSourceFile(fileName)
+	return program, file
+}
+
+func (l *LanguageService) getProgramAndFile(fileName string) (*compiler.Program, *ast.SourceFile) {
+	program, file := l.tryGetProgramAndFile(fileName)
 	if file == nil {
 		panic("file not found")
 	}

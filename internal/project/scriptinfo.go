@@ -2,14 +2,14 @@ package project
 
 import (
 	"slices"
-	"strings"
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
+
+var _ ls.ScriptInfo = (*ScriptInfo)(nil)
 
 type ScriptInfo struct {
 	fileName   string
@@ -19,7 +19,7 @@ type ScriptInfo struct {
 	scriptKind core.ScriptKind
 	text       string
 	version    int
-	lineMap    *LineMap
+	lineMap    *ls.LineMap
 
 	isOpen                bool
 	pendingReloadFromDisk bool
@@ -29,7 +29,7 @@ type ScriptInfo struct {
 	containingProjects []*Project
 }
 
-func newScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
+func NewScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
 	isDynamic := isDynamicFileName(fileName)
 	realpath := core.IfElse(isDynamic, path, "")
 	return &ScriptInfo{
@@ -49,53 +49,11 @@ func (s *ScriptInfo) Path() tspath.Path {
 	return s.path
 }
 
-func (s *ScriptInfo) LineMapLSP() *LineMap {
+func (s *ScriptInfo) LineMap() *ls.LineMap {
 	if s.lineMap == nil {
-		s.lineMap = computeLineStartsLSP(s.text)
+		s.lineMap = ls.ComputeLineStarts(s.text)
 	}
 	return s.lineMap
-}
-
-type LineMap struct {
-	LineStarts []core.TextPos
-	AsciiOnly  bool // TODO(jakebailey): collect ascii-only info per line
-}
-
-func computeLineStartsLSP(text string) *LineMap {
-	// This is like core.ComputeLineStarts, but only considers "\n", "\r", and "\r\n" as line breaks,
-	// and reports when the text is ASCII-only.
-	lineStarts := make([]core.TextPos, 0, strings.Count(text, "\n")+1)
-	asciiOnly := true
-
-	textLen := core.TextPos(len(text))
-	var pos core.TextPos
-	var lineStart core.TextPos
-	for pos < textLen {
-		b := text[pos]
-		if b < utf8.RuneSelf {
-			pos++
-			switch b {
-			case '\r':
-				if pos < textLen && text[pos] == '\n' {
-					pos++
-				}
-				fallthrough
-			case '\n':
-				lineStarts = append(lineStarts, lineStart)
-				lineStart = pos
-			}
-		} else {
-			_, size := utf8.DecodeRuneInString(text[pos:])
-			pos += core.TextPos(size)
-			asciiOnly = false
-		}
-	}
-	lineStarts = append(lineStarts, lineStart)
-
-	return &LineMap{
-		LineStarts: lineStarts,
-		AsciiOnly:  asciiOnly,
-	}
 }
 
 func (s *ScriptInfo) Text() string {
@@ -112,7 +70,7 @@ func (s *ScriptInfo) open(newText string) {
 	}
 }
 
-func (s *ScriptInfo) setTextFromDisk(newText string) {
+func (s *ScriptInfo) SetTextFromDisk(newText string) {
 	if newText != s.text {
 		s.setText(newText)
 		s.matchesDiskText = true
@@ -188,7 +146,7 @@ func (s *ScriptInfo) ensureRealpath(fs vfs.FS) {
 		project := s.containingProjects[0]
 		s.realpath = project.toPath(realpath)
 		if s.realpath != s.path {
-			project.projectService.recordSymlink(s)
+			project.host.OnDiscoveredSymlink(s)
 		}
 	}
 }
@@ -225,65 +183,4 @@ func (s *ScriptInfo) delayReloadNonMixedContentFile() {
 	}
 	s.pendingReloadFromDisk = true
 	s.markContainingProjectsAsDirty()
-}
-
-func (s *ScriptInfo) getDefaultProject() *Project {
-	switch len(s.containingProjects) {
-	case 0:
-		panic("scriptInfo must be attached to a project before calling getDefaultProject")
-	case 1:
-		project := s.containingProjects[0]
-		if project.deferredClose || project.kind == KindAutoImportProvider || project.kind == KindAuxiliary {
-			panic("scriptInfo must be attached to a non-background project before calling getDefaultProject")
-		}
-		return project
-	default:
-		// If this file belongs to multiple projects, below is the order in which default project is used
-		// - first external project
-		// - for open script info, its default configured project during opening is default if info is part of it
-		// - first configured project of which script info is not a source of project reference redirect
-		// - first configured project
-		// - first inferred project
-		var firstConfiguredProject *Project
-		var firstInferredProject *Project
-		var firstNonSourceOfProjectReferenceRedirect *Project
-		var defaultConfiguredProject *Project
-
-		for index, project := range s.containingProjects {
-			if project.kind == KindConfigured {
-				if project.deferredClose {
-					continue
-				}
-				// !!! if !project.isSourceOfProjectReferenceRedirect(s.fileName) {
-				if defaultConfiguredProject == nil && index != len(s.containingProjects)-1 {
-					defaultConfiguredProject = project.projectService.findDefaultConfiguredProject(s)
-				}
-				if defaultConfiguredProject == project {
-					return project
-				}
-				if firstNonSourceOfProjectReferenceRedirect == nil {
-					firstNonSourceOfProjectReferenceRedirect = project
-				}
-				// }
-				if firstConfiguredProject == nil {
-					firstConfiguredProject = project
-				}
-			} else if firstInferredProject == nil && project.kind == KindInferred {
-				firstInferredProject = project
-			}
-		}
-		if defaultConfiguredProject != nil {
-			return defaultConfiguredProject
-		}
-		if firstNonSourceOfProjectReferenceRedirect != nil {
-			return firstNonSourceOfProjectReferenceRedirect
-		}
-		if firstConfiguredProject != nil {
-			return firstConfiguredProject
-		}
-		if firstInferredProject != nil {
-			return firstInferredProject
-		}
-		panic("no project found")
-	}
 }

@@ -35,7 +35,7 @@ func (p *fakeProgram) BindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
-				binder.BindSourceFile(file, p.compilerOptions)
+				binder.BindSourceFile(file, p.compilerOptions.SourceFileAffecting())
 			})
 		}
 	}
@@ -56,6 +56,14 @@ func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, modul
 
 func (p *fakeProgram) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
 	return nil
+}
+
+func (p *fakeProgram) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
+	return nil
+}
+
+func (p *fakeProgram) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
+	return "", nil
 }
 
 func TestImportElision(t *testing.T) {

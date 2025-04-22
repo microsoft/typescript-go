@@ -344,9 +344,13 @@ type AssertionLinks struct {
 // SourceFile links
 
 type SourceFileLinks struct {
-	typeChecked          bool
-	deferredNodes        collections.OrderedSet[*ast.Node]
-	identifierCheckNodes []*ast.Node
+	typeChecked               bool
+	deferredNodes             collections.OrderedSet[*ast.Node]
+	identifierCheckNodes      []*ast.Node
+	localJsxNamespace         string
+	localJsxFragmentNamespace string
+	localJsxFactory           *ast.EntityName
+	localJsxFragmentFactory   *ast.EntityName
 }
 
 // Signature specific links
@@ -532,6 +536,14 @@ type Type struct {
 	alias       *TypeAlias
 	checker     *Checker
 	data        TypeData // Type specific data
+}
+
+func (t *Type) Id() TypeId {
+	return t.id
+}
+
+func (t *Type) Flags() TypeFlags {
+	return t.flags
 }
 
 func (t *Type) Symbol() *ast.Symbol {

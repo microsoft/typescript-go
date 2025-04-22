@@ -88,8 +88,8 @@ func TestService(t *testing.T) {
 			service.ChangeFile("/home/projects/TS/p1/src/x.ts", []ls.TextChange{{TextRange: core.NewTextRange(17, 18), NewText: "2"}})
 			assert.Equal(t, info.Text(), "export const x = 2;")
 			assert.Equal(t, proj.CurrentProgram(), programBefore)
-			assert.Equal(t, programBefore.GetSourceFile("/home/projects/TS/p1/src/x.ts").Text, "export const x = 1;")
-			assert.Equal(t, proj.GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts").Text, "export const x = 2;")
+			assert.Equal(t, programBefore.GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "export const x = 1;")
+			assert.Equal(t, proj.GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "export const x = 2;")
 		})
 
 		t.Run("unchanged source files are reused", func(t *testing.T) {
@@ -141,7 +141,7 @@ func TestService(t *testing.T) {
 				service.OpenFile("/home/projects/TS/p1/src/x.ts", filesCopy["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 				assert.Equal(t, service.GetScriptInfo("/home/projects/TS/p1/src/x.ts").Text(), "")
 				assert.Check(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil)
-				assert.Equal(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts").Text, "")
+				assert.Equal(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "")
 			})
 		})
 
@@ -167,7 +167,7 @@ func TestService(t *testing.T) {
 				service.OpenFile("/home/projects/TS/p1/src/x.ts", filesCopy["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 				assert.Equal(t, service.GetScriptInfo("/home/projects/TS/p1/src/x.ts").Text(), "")
 				assert.Check(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil)
-				assert.Equal(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts").Text, "")
+				assert.Equal(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "")
 			})
 		})
 	})
@@ -179,8 +179,11 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p2/tsconfig.json"] = `{
 				"compilerOptions": {
-					"module": "nodenext"
-				}
+					"noLib": true,
+					"module": "nodenext",
+					"strict": true,
+					"noCheck": true // Added
+				},
 			}`
 			filesCopy["/home/projects/TS/p2/src/index.ts"] = `import { x } from "../../p1/src/x";`
 			service, _ := setup(filesCopy)
@@ -242,7 +245,7 @@ func newProjectServiceHost(files map[string]string) *projectServiceHost {
 		fs:                 fs,
 		defaultLibraryPath: bundled.LibPath(),
 	}
-	host.logger = project.NewLogger([]io.Writer{&host.output}, project.LogLevelVerbose)
+	host.logger = project.NewLogger([]io.Writer{&host.output}, "", project.LogLevelVerbose)
 	return host
 }
 

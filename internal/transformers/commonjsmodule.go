@@ -242,7 +242,7 @@ func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 
 func (tx *CommonJSModuleTransformer) shouldEmitUnderscoreUnderscoreESModule() bool {
 	if tspath.FileExtensionIsOneOf(tx.currentSourceFile.FileName(), tspath.SupportedJSExtensionsFlat) &&
-		tx.currentSourceFile.CommonJsModuleIndicator != nil &&
+		tx.currentSourceFile.CommonJSModuleIndicator != nil &&
 		(tx.currentSourceFile.ExternalModuleIndicator == nil /*|| tx.currentSourceFile.ExternalModuleIndicator == true*/) { // !!!
 		return false
 	}
@@ -324,10 +324,12 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 						ast.NodeFlagsNone,
 					)
 				} else {
+					name := nextId.Clone(tx.factory)
+					tx.emitContext.SetEmitFlags(name, printer.EFNoSourceMap) // TODO: Strada emits comments here, but shouldn't
 					left = tx.factory.NewPropertyAccessExpression(
 						tx.factory.NewIdentifier("exports"),
 						nil, /*questionDotToken*/
-						nextId.Clone(tx.factory),
+						name,
 						ast.NodeFlagsNone,
 					)
 				}
@@ -1709,7 +1711,7 @@ func (tx *CommonJSModuleTransformer) visitImportCallExpression(node *ast.CallExp
 func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast.Expression) *ast.Expression {
 	// import(x)
 	// emit as
-	// Promise.resolve(`${x}`).then((s) => require(s)) /*CommonJs Require*/
+	// Promise.resolve(`${x}`).then((s) => require(s)) /*CommonJS Require*/
 	// We have to wrap require in then callback so that require is done in asynchronously
 	// if we simply do require in resolve callback in Promise constructor. We will execute the loading immediately
 	// If the arg is not inlineable, we have to evaluate and ToString() it in the current scope
@@ -1942,10 +1944,12 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 						ast.NodeFlagsNone,
 					)
 				} else {
+					referenceName := name.Clone(tx.factory)
+					tx.emitContext.AddEmitFlags(referenceName, printer.EFNoSourceMap|printer.EFNoComments)
 					reference = tx.factory.NewPropertyAccessExpression(
 						target,
 						nil, /*questionDotToken*/
-						name.Clone(tx.factory),
+						referenceName,
 						ast.NodeFlagsNone,
 					)
 				}
