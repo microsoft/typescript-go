@@ -221,8 +221,12 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 	}
 
 	return func() {
-		(*cleanupParams)()
-		(*cleanupTypeParams)()
+		if cleanupParams != nil {
+			(*cleanupParams)()
+		}
+		if cleanupTypeParams != nil {
+			(*cleanupTypeParams)()
+		}
 		cleanupContext()
 		b.ctx.enclosingDeclaration = oldEnclosingDecl
 		b.ctx.mapper = oldMapper

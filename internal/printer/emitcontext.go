@@ -633,6 +633,10 @@ func (c *EmitContext) NewRewriteRelativeImportExtensionsHelper(firstArgument *as
 //
 // NOTE: This is the equivalent to `setOriginalNode` in Strada.
 func (c *EmitContext) SetOriginal(node *ast.Node, original *ast.Node) {
+	c.SetOriginalEx(node, original, false)
+}
+
+func (c *EmitContext) SetOriginalEx(node *ast.Node, original *ast.Node, allowOverwrite bool) {
 	if original == nil {
 		panic("Original cannot be nil.")
 	}
@@ -647,8 +651,10 @@ func (c *EmitContext) SetOriginal(node *ast.Node, original *ast.Node) {
 		if emitNode := c.emitNodes.TryGet(original); emitNode != nil {
 			c.emitNodes.Get(node).copyFrom(emitNode)
 		}
-	} else if existing != original {
+	} else if !allowOverwrite && existing != original {
 		panic("Original node already set.")
+	} else if allowOverwrite {
+		c.original[node] = original
 	}
 }
 

@@ -1130,7 +1130,7 @@ func (b *NodeBuilder) setTextRange(range_ *ast.Node, location *ast.Node) *ast.No
 		original = b.e.Original(original)
 	}
 	if original == nil {
-		b.e.SetOriginal(range_, location)
+		b.e.SetOriginalEx(range_, location, true)
 	}
 
 	// only set positions if range comes from the same file since copying text across files isn't supported by the emitter
@@ -1813,6 +1813,27 @@ func (b *NodeBuilder) indexInfoToIndexSignatureDeclarationHelper(indexInfo *Inde
  */
 func (b *NodeBuilder) serializeTypeForDeclaration(declaration *ast.Declaration, t *Type, symbol *ast.Symbol) *ast.Node {
 	// !!! node reuse logic
+	if symbol == nil {
+		symbol = b.ch.getSymbolOfDeclaration(declaration)
+	}
+	if t == nil {
+		t = b.ctx.enclosingSymbolTypes[ast.GetSymbolId(symbol)]
+		if t == nil {
+			if symbol.Flags&ast.SymbolFlagsAccessor != 0 && declaration.Kind == ast.KindSetAccessor {
+				t = b.ch.instantiateType(b.ch.getWriteTypeOfSymbol(symbol), b.ctx.mapper)
+			} else if symbol != nil && (symbol.Flags&(ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsSignature) == 0) {
+				t = b.ch.instantiateType(b.ch.getWidenedLiteralType(b.ch.getTypeOfSymbol(symbol)), b.ctx.mapper)
+			} else {
+				t = b.ch.errorType
+			}
+		}
+		// !!! TODO: JSDoc, getEmitResolver call is unfortunate layering for the helper - hoist it into checker
+		addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver(nil, true).RequiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
+		if addUndefinedForParameter {
+			t = b.ch.getOptionalType(t, false)
+		}
+	}
+
 	restoreFlags := b.saveRestoreFlags()
 	if t.flags&TypeFlagsUniqueESSymbol != 0 && t.symbol == symbol && (b.ctx.enclosingDeclaration == nil || core.Some(symbol.Declarations, func(d *ast.Declaration) bool {
 		return ast.GetSourceFileOfNode(d) == b.ctx.enclosingFile
@@ -2620,7 +2641,7 @@ func (b *NodeBuilder) typeToTypeNode(t *Type) *ast.TypeNode {
 		// 	return e.AddSyntheticLeadingComment(b.f.NewKeywordTypeNode(ast.KindAnyKeyword), ast.KindMultiLineCommentTrivia, "unresolved")
 		// }
 		b.ctx.approximateLength += 3
-		return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(core.IfElse(t == b.ch.intrinsicMarkerType, ast.KindIntrinsicKeyword, ast.KindAnyKeyword)))
+		return b.f.NewKeywordTypeNode(core.IfElse(t == b.ch.intrinsicMarkerType, ast.KindIntrinsicKeyword, ast.KindAnyKeyword))
 	}
 	if t.flags&TypeFlagsUnknown != 0 {
 		return b.f.NewKeywordTypeNode(ast.KindUnknownKeyword)

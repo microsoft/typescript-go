@@ -61,6 +61,13 @@ func (r *emitResolver) GetEnumMemberValue(node *ast.Node) evaluator.Result {
 }
 
 func (r *emitResolver) IsDeclarationVisible(node *ast.Node) bool {
+	// Only lock on external API func to prevent deadlocks
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.isDeclarationVisible(node)
+}
+
+func (r *emitResolver) isDeclarationVisible(node *ast.Node) bool {
 	// node = r.emitContext.ParseNode(node)
 	if !ast.IsParseTreeNode(node) {
 		return false
@@ -68,9 +75,6 @@ func (r *emitResolver) IsDeclarationVisible(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
 
 	links := r.checker.declarationLinks.Get(node)
 	if links.isVisible == core.TSUnknown {
@@ -92,7 +96,7 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		// First parent is comment node, second is hosting declaration or token; we only care about those tokens or declarations whose parent is a source file
 		return node.Parent != nil && node.Parent.Parent != nil && node.Parent.Parent.Parent != nil && ast.IsSourceFile(node.Parent.Parent.Parent)
 	case ast.KindBindingElement:
-		return r.IsDeclarationVisible(node.Parent.Parent)
+		return r.isDeclarationVisible(node.Parent.Parent)
 	case ast.KindVariableDeclaration,
 		ast.KindModuleDeclaration,
 		ast.KindClassDeclaration,
@@ -120,7 +124,7 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 			return ast.IsGlobalSourceFile(parent)
 		}
 		// Exported members/ambient module elements (exception import declaration) are visible if parent is visible
-		return r.IsDeclarationVisible(parent)
+		return r.isDeclarationVisible(parent)
 
 	case ast.KindPropertyDeclaration,
 		ast.KindPropertySignature,
@@ -133,7 +137,7 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 			return false
 		}
 		// Public properties/methods are visible if its parents are visible, so:
-		return r.IsDeclarationVisible(node.Parent)
+		return r.isDeclarationVisible(node.Parent)
 
 	case ast.KindConstructor,
 		ast.KindConstructSignature,
@@ -151,7 +155,7 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		ast.KindIntersectionType,
 		ast.KindParenthesizedType,
 		ast.KindNamedTupleMember:
-		return r.IsDeclarationVisible(node.Parent)
+		return r.isDeclarationVisible(node.Parent)
 
 	// Default binding, import specifier and namespace import is visible
 	// only on demand so by default it is not visible
@@ -261,7 +265,10 @@ func (r *emitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 			r.checkerMu.Lock()
 			defer r.checkerMu.Unlock()
 			r.checker.declarationLinks.Get(declaration).isVisible = core.TSTrue
-			aliasesToMakeVisibleSet[ast.GetNodeId(declaration)] = declaration
+			if aliasesToMakeVisibleSet == nil {
+				aliasesToMakeVisibleSet = make(map[ast.NodeId]*ast.Node)
+			}
+			aliasesToMakeVisibleSet[ast.GetNodeId(declaration)] = aliasingStatement
 		}
 	} else {
 		addVisibleAlias = noopAddVisibleAlias

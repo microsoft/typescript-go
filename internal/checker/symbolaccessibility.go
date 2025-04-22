@@ -172,6 +172,9 @@ func (ch *Checker) getAlternativeContainingModules(symbol *ast.Symbol, enclosing
 	containingFile := ast.GetSourceFileOfNode(enclosingDeclaration)
 	id := ast.GetNodeId(containingFile.AsNode())
 	links := ch.symbolContainerLinks.Get(symbol)
+	if links.extendedContainersByFile == nil {
+		links.extendedContainersByFile = make(map[ast.NodeId][]*ast.Symbol)
+	}
 	existing, ok := links.extendedContainersByFile[id]
 	if ok && existing != nil {
 		return existing
@@ -231,6 +234,9 @@ func (ch *Checker) getVariableDeclarationOfObjectLiteral(symbol *ast.Symbol, mea
 		return nil
 	}
 	firstDecl := symbol.Declarations[0]
+	if firstDecl.Parent == nil {
+		return nil
+	}
 	if !ast.IsVariableDeclaration(firstDecl.Parent) {
 		return nil
 	}
@@ -379,6 +385,9 @@ func (ch *Checker) getAccessibleSymbolChainEx(ctx accessibleSymbolChainContext) 
 	})
 	links := ch.symbolContainerLinks.Get(ctx.symbol)
 	linkKey := accessibleChainCacheKey{ctx.useOnlyExternalAliasing, firstRelevantLocation, ctx.meaning}
+	if links.accessibleChainCache == nil {
+		links.accessibleChainCache = make(map[accessibleChainCacheKey][]*ast.Symbol)
+	}
 	existing, ok := links.accessibleChainCache[linkKey]
 	if ok {
 		return existing

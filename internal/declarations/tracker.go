@@ -18,7 +18,7 @@ type SymbolTrackerImpl struct {
 
 // GetModuleSpecifierGenerationHost implements checker.SymbolTracker.
 func (s *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() any {
-	panic("unimplemented")
+	return nil // !!!
 }
 
 func (s *SymbolTrackerImpl) GetInnerSymbolTracker() nodebuilder.SymbolTracker {
