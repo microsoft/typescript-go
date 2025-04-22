@@ -416,7 +416,7 @@ func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags,
 	if len(chain) == 0 {
 		return nil // TODO: shouldn't be possible, `lookupSymbolChain` should always at least return the input symbol and issue an error
 	}
-	isTypeOf := mask == ast.SymbolFlagsType
+	isTypeOf := mask == ast.SymbolFlagsValue
 	if core.Some(chain[0].Declarations, hasNonGlobalAugmentationExternalModuleSymbol) {
 		// module is root, must use `ImportTypeNode`
 		var nonRootParts *ast.Node
