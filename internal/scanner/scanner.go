@@ -931,6 +931,10 @@ func (s *Scanner) processCommentDirective(start int, end int, multiline bool) {
 	} else {
 		// Skip opening //
 		pos += 2
+		// Skip another / if present
+		for pos < end && s.text[pos] == '/' {
+			pos++
+		}
 	}
 	// Skip whitespace
 	for pos < end && (s.text[pos] == ' ' || s.text[pos] == '\t') {
