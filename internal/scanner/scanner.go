@@ -2341,11 +2341,11 @@ func ComputePositionOfLineAndCharacter(lineStarts []core.TextPos, line int, char
 	return res
 }
 
-func GetLeadingCommentRanges(f ast.NodeFactoryCoercible, text string, pos int) iter.Seq[ast.CommentRange] {
+func GetLeadingCommentRanges(f *ast.NodeFactory, text string, pos int) iter.Seq[ast.CommentRange] {
 	return iterateCommentRanges(f, text, pos, false)
 }
 
-func GetTrailingCommentRanges(f ast.NodeFactoryCoercible, text string, pos int) iter.Seq[ast.CommentRange] {
+func GetTrailingCommentRanges(f *ast.NodeFactory, text string, pos int) iter.Seq[ast.CommentRange] {
 	return iterateCommentRanges(f, text, pos, true)
 }
 
@@ -2355,8 +2355,7 @@ Single-line comment ranges include the leading double-slash characters but not t
 line break. Multi-line comment ranges include the leading slash-asterisk and trailing
 asterisk-slash characters.
 */
-func iterateCommentRanges(fc ast.NodeFactoryCoercible, text string, pos int, trailing bool) iter.Seq[ast.CommentRange] {
-	f := fc.AsNodeFactory()
+func iterateCommentRanges(f *ast.NodeFactory, text string, pos int, trailing bool) iter.Seq[ast.CommentRange] {
 	return func(yield func(ast.CommentRange) bool) {
 		var pendingPos int
 		var pendingEnd int
