@@ -2,14 +2,20 @@ package printer
 
 import (
 	"strings"
+	"sync"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
-// TODO: Definitely not threadsafe - make one per checker instead of one global one (threadlocal storage would be neat)
-var SingleLineStringWriter EmitTextWriter = &singleLineStringWriter{}
+var SingleLineStringWriterPool sync.Pool = sync.Pool{
+	New: func() any {
+		return &singleLineStringWriter{}
+	},
+}
+
+var _ EmitTextWriter = &singleLineStringWriter{}
 
 type singleLineStringWriter struct {
 	builder     strings.Builder

@@ -262,8 +262,7 @@ func (r *emitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 	if shouldComputeAliasToMakeVisible {
 		addVisibleAlias = func(declaration *ast.Node, aliasingStatement *ast.Node) {
 			// Only lock as we edit links, so the IsDeclarationVisible calls don't trip over the lock
-			r.checkerMu.Lock()
-			defer r.checkerMu.Unlock()
+			// TODO: does this need to lock? but multiple already-locking resolver entrypoints reach here...
 			r.checker.declarationLinks.Get(declaration).isVisible = core.TSTrue
 			if aliasesToMakeVisibleSet == nil {
 				aliasesToMakeVisibleSet = make(map[ast.NodeId]*ast.Node)
@@ -279,25 +278,25 @@ func (r *emitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 			continue
 		}
 
-		if !r.IsDeclarationVisible(declaration) {
+		if !r.isDeclarationVisible(declaration) {
 			// Mark the unexported alias as visible if its parent is visible
 			// because these kind of aliases can be used to name types in declaration file
 			anyImportSyntax := getAnyImportSyntax(declaration)
 			if anyImportSyntax != nil &&
 				!ast.HasSyntacticModifier(anyImportSyntax, ast.ModifierFlagsExport) && // import clause without export
-				r.IsDeclarationVisible(anyImportSyntax.Parent) {
+				r.isDeclarationVisible(anyImportSyntax.Parent) {
 				addVisibleAlias(declaration, anyImportSyntax)
 				continue
 			}
 			if ast.IsVariableDeclaration(declaration) && ast.IsVariableStatement(declaration.Parent.Parent) &&
 				!ast.HasSyntacticModifier(declaration.Parent.Parent, ast.ModifierFlagsExport) && // unexported variable statement
-				r.IsDeclarationVisible(declaration.Parent.Parent.Parent) {
+				r.isDeclarationVisible(declaration.Parent.Parent.Parent) {
 				addVisibleAlias(declaration, declaration.Parent.Parent)
 				continue
 			}
 			if ast.IsLateVisibilityPaintedStatement(declaration) && // unexported top-level statement
 				!ast.HasSyntacticModifier(declaration, ast.ModifierFlagsExport) &&
-				r.IsDeclarationVisible(declaration.Parent) {
+				r.isDeclarationVisible(declaration.Parent) {
 				addVisibleAlias(declaration, declaration)
 				continue
 			}
@@ -307,7 +306,7 @@ func (r *emitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 					declaration.Parent.Parent.Parent.Parent != nil && ast.IsVariableStatement(declaration.Parent.Parent.Parent.Parent) &&
 					!ast.HasSyntacticModifier(declaration.Parent.Parent.Parent.Parent, ast.ModifierFlagsExport) &&
 					declaration.Parent.Parent.Parent.Parent.Parent != nil && // check if the thing containing the variable statement is visible (ie, the file)
-					r.IsDeclarationVisible(declaration.Parent.Parent.Parent.Parent.Parent) {
+					r.isDeclarationVisible(declaration.Parent.Parent.Parent.Parent.Parent) {
 					addVisibleAlias(declaration, declaration.Parent.Parent.Parent.Parent)
 					continue
 				}
@@ -316,7 +315,7 @@ func (r *emitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 					if ast.HasSyntacticModifier(variableStatement, ast.ModifierFlagsExport) {
 						continue // no alias to add, already exported
 					}
-					if !r.IsDeclarationVisible(variableStatement.Parent) {
+					if !r.isDeclarationVisible(variableStatement.Parent) {
 						return nil // not visible
 					}
 					addVisibleAlias(declaration, variableStatement)
@@ -762,8 +761,8 @@ func (r *emitResolver) CreateTypeOfDeclaration(emitContext *printer.EmitContext,
 func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext, node *ast.Node, tracker nodebuilder.SymbolTracker) *ast.Node {
 	node = emitContext.ParseNode(node)
 	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
 	type_ := r.checker.getTypeOfSymbol(r.checker.getSymbolOfDeclaration(node))
+	r.checkerMu.Unlock()
 	if type_ == nil {
 		return nil // TODO: How!? Maybe this should be a panic. All symbols should have a type.
 	}
@@ -824,8 +823,6 @@ func (r *emitResolver) CreateTypeOfExpression(emitContext *printer.EmitContext, 
 		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
 
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
 	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.serializeTypeForExpression(expression, enclosingDeclaration, flags|nodebuilder.FlagsMultilineObjectLiterals, internalFlags, tracker)
 }
@@ -833,7 +830,6 @@ func (r *emitResolver) CreateTypeOfExpression(emitContext *printer.EmitContext, 
 func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitContext, container *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
 	container = emitContext.ParseNode(container)
 	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
 
 	sym := container.Symbol()
 	staticInfos := r.checker.getIndexInfosOfType(r.checker.getTypeOfSymbol(sym))
@@ -843,6 +839,7 @@ func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 		siblingSymbols := slices.Collect(maps.Values(r.checker.getMembersOfSymbol(sym)))
 		instanceInfos = r.checker.getIndexInfosOfIndexSymbol(instanceIndexSymbol, siblingSymbols)
 	}
+	r.checkerMu.Unlock()
 
 	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
 

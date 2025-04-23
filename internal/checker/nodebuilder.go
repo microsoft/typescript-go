@@ -422,7 +422,6 @@ func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags,
 		var nonRootParts *ast.Node
 		if len(chain) > 1 {
 			nonRootParts = b.createAccessFromSymbolChain(chain, len(chain)-1, 1)
-			// !!!
 		}
 		typeParameterNodes := typeArguments                                                  /*|| lookupTypeParameterNodes(chain, 0, context);*/ // !!! TODO: type argument smuggling
 		contextFile := ast.GetSourceFileOfNode(b.e.MostOriginal(b.ctx.enclosingDeclaration)) // TODO: Just use b.ctx.enclosingFile ? Or is the delayed lookup important for context moves?
@@ -431,7 +430,7 @@ func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags,
 		var attributes *ast.Node
 		if b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNode16 || b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNodeNext {
 			// An `import` type directed at an esm format file is only going to resolve in esm mode - set the esm mode assertion
-			if targetFile != nil && b.ch.program.GetEmitModuleFormatOfFile(targetFile) == core.ModuleKindESNext && b.ch.program.GetEmitModuleFormatOfFile(targetFile) != b.ch.program.GetEmitModuleFormatOfFile(contextFile) {
+			if targetFile != nil && contextFile != nil && b.ch.program.GetEmitModuleFormatOfFile(targetFile) == core.ModuleKindESNext && b.ch.program.GetEmitModuleFormatOfFile(targetFile) != b.ch.program.GetEmitModuleFormatOfFile(contextFile) {
 				specifier = b.getSpecifierForModuleSymbol(chain[0], core.ModuleKindESNext)
 				attributes = b.f.NewImportAttributes(
 					ast.KindWithKeyword,
@@ -1334,7 +1333,7 @@ func (b *NodeBuilder) typePredicateToTypePredicateNode(predicate *TypePredicate)
 		parameterName = b.f.NewIdentifier(predicate.parameterName)
 		b.e.AddEmitFlags(parameterName, printer.EFNoAsciiEscaping)
 	} else {
-		parameterName = b.f.NewKeywordExpression(ast.KindThisKeyword)
+		parameterName = b.f.NewThisTypeNode()
 	}
 	var typeNode *ast.Node
 	if predicate.t != nil {
@@ -1448,7 +1447,9 @@ func (b *NodeBuilder) symbolTableToDeclarationStatements(symbolTable *ast.Symbol
 }
 
 func (b *NodeBuilder) serializeTypeForExpression(expr *ast.Node) *ast.Node {
-	panic("unimplemented") // !!!
+	// !!! TODO: shim, add node reuse
+	type_ := b.ch.instantiateType(b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(expr)), b.ctx.mapper)
+	return b.typeToTypeNodeClosure(type_)
 }
 
 func (b *NodeBuilder) serializeInferredReturnTypeForSignature(signature *Signature, returnType *Type) *ast.Node {
@@ -1643,7 +1644,7 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 		restSymbol := sig.parameters[restIndex]
 		restType := c.getTypeOfSymbol(restSymbol)
 		getUniqAssociatedNamesFromTupleType := func(t *Type, restSymbol *ast.Symbol) []string {
-			names := core.MapIndex(t.AsTupleType().elementInfos, func(info TupleElementInfo, i int) string {
+			names := core.MapIndex(t.Target().AsTupleType().elementInfos, func(info TupleElementInfo, i int) string {
 				return c.getTupleElementLabel(info, restSymbol, i)
 			})
 			if len(names) > 0 {
@@ -1694,7 +1695,7 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 				// 	name = c.getParameterNameAtPosition(sig, restIndex+i, restType)
 				// }
 				name := associatedNames[i]
-				flags := restType.AsTupleType().elementInfos[i].flags
+				flags := restType.Target().AsTupleType().elementInfos[i].flags
 				var checkFlags ast.CheckFlags
 				switch {
 				case flags&ElementFlagsVariable != 0:
@@ -1974,7 +1975,13 @@ func (b *NodeBuilder) getPropertyNameNodeForSymbolFromNameType(symbol *ast.Symbo
 		return nil
 	}
 	if nameType.flags&TypeFlagsStringOrNumberLiteral != 0 {
-		name := nameType.AsLiteralType().value.(string)
+		var name string
+		switch nameType.AsLiteralType().value.(type) {
+		case jsnum.Number:
+			name = nameType.AsLiteralType().value.(jsnum.Number).String()
+		case string:
+			name = nameType.AsLiteralType().value.(string)
+		}
 		if !scanner.IsIdentifierText(name, b.ch.compilerOptions.GetEmitScriptTarget()) && (stringNamed || !isNumericLiteralName(name)) {
 			// !!! TODO: set singleQuote
 			return b.f.NewStringLiteral(name)
@@ -2104,10 +2111,10 @@ func (b *NodeBuilder) addPropertyToElementList(propertySymbol *ast.Symbol, typeE
 func (b *NodeBuilder) createTypeNodesFromResolvedType(resolvedType *StructuredType) *ast.NodeList {
 	if b.checkTruncationLength() {
 		if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
-			panic("NotEmittedTypeElement not implemented") // !!!
-			// elem := b.f.NewNotEmittedTypeElement()
+			elem := b.f.NewNotEmittedTypeElement()
+			// TODO: attach synthetic comment
 			// b.e.addSyntheticTrailingComment(elem, ast.KindMultiLineCommentTrivia, "elided")
-			// return b.f.NewNodeList([]*ast.TypeElement{elem})
+			return b.f.NewNodeList([]*ast.TypeElement{elem})
 		}
 		return b.f.NewNodeList([]*ast.Node{b.f.NewPropertySignatureDeclaration(nil, b.f.NewIdentifier("..."), nil, nil, nil)})
 	}
@@ -2413,8 +2420,12 @@ func (b *NodeBuilder) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 			return b.f.NewTypeOperatorNode(ast.KindReadonlyKeyword, arrayType)
 		}
 	} else if t.Target().objectFlags&ObjectFlagsTuple != 0 {
-		typeArguments = core.SameMapIndex(typeArguments, func(t *Type, i int) *Type {
-			return b.ch.removeMissingType(t, t.Target().AsTupleType().elementInfos[i].flags&ElementFlagsOptional != 0)
+		typeArguments = core.SameMapIndex(typeArguments, func(arg *Type, i int) *Type {
+			isOptional := false
+			if i < len(t.Target().AsTupleType().elementInfos) {
+				isOptional = t.Target().AsTupleType().elementInfos[i].flags&ElementFlagsOptional != 0
+			}
+			return b.ch.removeMissingType(arg, isOptional)
 		})
 		if len(typeArguments) > 0 {
 			arity := b.ch.getTypeReferenceArity(t)
@@ -2500,7 +2511,7 @@ func (b *NodeBuilder) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 				// `AsyncIterable`, and `AsyncIterableIterator` to provide backwards-compatible .d.ts emit due
 				// to each now having three type parameters instead of only one.
 				if b.ch.isReferenceToType(t, b.ch.getGlobalIterableType()) || b.ch.isReferenceToType(t, b.ch.getGlobalIterableIteratorType()) || b.ch.isReferenceToType(t, b.ch.getGlobalAsyncIterableType()) || b.ch.isReferenceToType(t, b.ch.getGlobalAsyncIterableIteratorType()) {
-					if t.AsInterfaceType().node == nil || !ast.IsTypeReferenceNode(t.AsInterfaceType().node) || t.AsInterfaceType().node.TypeArguments() == nil || len(t.AsInterfaceType().node.TypeArguments()) < typeParameterCount {
+					if t.AsTypeReference().node == nil || !ast.IsTypeReferenceNode(t.AsTypeReference().node) || t.AsTypeReference().node.TypeArguments() == nil || len(t.AsTypeReference().node.TypeArguments()) < typeParameterCount {
 						for typeParameterCount > 0 {
 							typeArgument := typeArguments[typeParameterCount-1]
 							typeParameter := t.Target().AsInterfaceType().TypeParameters()[typeParameterCount-1]
@@ -2699,8 +2710,13 @@ func (b *NodeBuilder) typeToTypeNode(t *Type) *ast.TypeNode {
 		return b.f.NewLiteralTypeNode(b.f.NewBigIntLiteral(pseudoBigIntToString(getBigIntLiteralValue(t))))
 	}
 	if t.flags&TypeFlagsBooleanLiteral != 0 {
-		b.ctx.approximateLength += len(t.AsIntrinsicType().intrinsicName)
-		return b.f.NewLiteralTypeNode(core.IfElse(t.AsIntrinsicType().intrinsicName == "true", b.f.NewKeywordExpression(ast.KindTrueKeyword), b.f.NewKeywordExpression(ast.KindFalseKeyword)))
+		if t.AsLiteralType().value.(bool) {
+			b.ctx.approximateLength += 4
+			return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindTrueKeyword))
+		} else {
+			b.ctx.approximateLength += 5
+			return b.f.NewLiteralTypeNode(b.f.NewKeywordExpression(ast.KindFalseKeyword))
+		}
 	}
 	if t.flags&TypeFlagsUniqueESSymbol != 0 {
 		if b.ctx.flags&nodebuilder.FlagsAllowUniqueESSymbolType == 0 {

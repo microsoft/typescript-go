@@ -643,6 +643,8 @@ func (t *Type) Target() *Type {
 		return t.AsIndexType().target
 	case t.flags&TypeFlagsStringMapping != 0:
 		return t.AsStringMappingType().target
+	case t.flags&TypeFlagsObject != 0 && t.objectFlags&ObjectFlagsMapped != 0:
+		return t.AsMappedType().target
 	}
 	panic("Unhandled case in Type.Target")
 }

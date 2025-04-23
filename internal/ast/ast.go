@@ -1338,6 +1338,10 @@ func (n *Node) AsNotEmittedStatement() *NotEmittedStatement {
 	return n.data.(*NotEmittedStatement)
 }
 
+func (n *Node) AsNotEmittedTypeElement() *NotEmittedTypeElement {
+	return n.data.(*NotEmittedTypeElement)
+}
+
 func (n *Node) AsJSDoc() *JSDoc {
 	return n.data.(*JSDoc)
 }
@@ -3913,6 +3917,28 @@ func (node *NotEmittedStatement) Clone(f *NodeFactory) *Node {
 
 func IsNotEmittedStatement(node *Node) bool {
 	return node.Kind == KindNotEmittedStatement
+}
+
+// NotEmittedStatement
+
+// Represents a type element that is elided as part of a transformation to emit comments on a
+// not-emitted node.
+type NotEmittedTypeElement struct {
+	NodeBase
+	TypeElementBase
+}
+
+func (f *NodeFactory) NewNotEmittedTypeElement() *Node {
+	data := &NotEmittedTypeElement{}
+	return newNode(KindNotEmittedTypeElement, data, f.hooks)
+}
+
+func (node *NotEmittedTypeElement) Clone(f *NodeFactory) *Node {
+	return cloneNode(f.NewNotEmittedTypeElement(), node.AsNode(), f.hooks)
+}
+
+func IsNotEmittedTypeElement(node *Node) bool {
+	return node.Kind == KindNotEmittedTypeElement
 }
 
 // ImportEqualsDeclaration

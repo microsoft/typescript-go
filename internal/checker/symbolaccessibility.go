@@ -132,7 +132,11 @@ func (ch *Checker) getWithAlternativeContainers(container *ast.Symbol, symbol *a
 		container.Flags&leftMeaning != 0 &&
 		len(ch.getAccessibleSymbolChain(container, enclosingDeclaration, ast.SymbolFlagsNamespace /*useOnlyExternalAliasing*/, false)) > 0 {
 		// This order expresses a preference for the real container if it is in scope
-		return append(append(append([]*ast.Symbol{container}, additionalContainers...), reexportContainers...), objectLiteralContainer)
+		res := append(append([]*ast.Symbol{container}, additionalContainers...), reexportContainers...)
+		if objectLiteralContainer != nil {
+			res = append(res, objectLiteralContainer)
+		}
+		return res
 	}
 	// we potentially have a symbol which is a member of the instance side of something - look for a variable in scope with the container's type
 	// which may be acting like a namespace (eg, `Symbol` acts like a namespace when looking up `Symbol.toStringTag`)
@@ -288,23 +292,34 @@ func (ch *Checker) getContainersOfSymbol(symbol *ast.Symbol, enclosingDeclaratio
 		if !ast.IsAmbientModule(d) && d.Parent != nil {
 			// direct children of a module
 			if hasNonGlobalAugmentationExternalModuleSymbol(d.Parent) {
-				candidates = append(candidates, ch.getSymbolOfDeclaration(d.Parent))
+				sym := ch.getSymbolOfDeclaration(d.Parent)
+				if sym != nil {
+					candidates = append(candidates, sym)
+				}
 				continue
 			}
 			// export ='d member of an ambient module
 			if ast.IsModuleBlock(d.Parent) && d.Parent.Parent != nil && ch.resolveExternalModuleSymbol(ch.getSymbolOfDeclaration(d.Parent.Parent), false) == symbol {
-				candidates = append(candidates, ch.getSymbolOfDeclaration(d.Parent.Parent))
+				sym := ch.getSymbolOfDeclaration(d.Parent.Parent)
+				if sym != nil {
+					candidates = append(candidates, sym)
+				}
 				continue
 			}
 		}
 		if ast.IsClassExpression(d) && ast.IsBinaryExpression(d.Parent) && d.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken && ast.IsAccessExpression(d.Parent.AsBinaryExpression().Left) && ast.IsEntityNameExpression(d.Parent.AsBinaryExpression().Left.Expression()) {
 			if isModuleExportsAccessExpression(d.Parent.AsBinaryExpression().Left) || ast.IsExportsIdentifier(d.Parent.AsBinaryExpression().Left.Expression()) {
-				candidates = append(candidates, ch.getSymbolOfDeclaration(ast.GetSourceFileOfNode(d).AsNode()))
+				sym := ch.getSymbolOfDeclaration(ast.GetSourceFileOfNode(d).AsNode())
+				if sym != nil {
+					candidates = append(candidates, sym)
+				}
 				continue
 			}
 			ch.checkExpressionCached(d.Parent.AsBinaryExpression().Left.Expression())
 			sym := ch.symbolNodeLinks.Get(d.Parent.AsBinaryExpression().Left.Expression()).resolvedSymbol
-			candidates = append(candidates, sym)
+			if sym != nil {
+				candidates = append(candidates, sym)
+			}
 			continue
 		}
 	}
@@ -641,6 +656,9 @@ func (ch *Checker) someSymbolTableInScope(
 			// TODO: Should this filtered table be cached in some way?
 			for key, memberSymbol := range sym.Members {
 				if memberSymbol.Flags&(ast.SymbolFlagsType & ^ast.SymbolFlagsAssignment) != 0 {
+					if table == nil {
+						table = make(ast.SymbolTable)
+					}
 					table[key] = memberSymbol
 				}
 			}

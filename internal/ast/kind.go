@@ -384,6 +384,7 @@ const (
 	KindPartiallyEmittedExpression
 	KindCommaListExpression
 	KindSyntheticReferenceExpression
+	KindNotEmittedTypeElement
 	// Enum value count
 	KindCount
 	// Markers

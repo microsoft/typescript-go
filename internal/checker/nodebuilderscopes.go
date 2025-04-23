@@ -103,8 +103,9 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 			var locals ast.SymbolTable
 			if existingFakeScope != nil {
 				locals = existingFakeScope.Locals()
-			} else {
-				locals = createSymbolTable([]*ast.Symbol{})
+			}
+			if locals == nil {
+				locals = make(ast.SymbolTable)
 			}
 			newLocals := []string{}
 			oldLocals := []localsRecord{}
@@ -153,7 +154,10 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 					return
 				}
 				for pIndex, param := range *expandedParams {
-					originalParam := (*originalParameters)[pIndex]
+					var originalParam *ast.Symbol
+					if pIndex < len(*originalParameters) {
+						originalParam = (*originalParameters)[pIndex]
+					}
 					if originalParameters != nil && originalParam != param {
 						// Can't reference parameters that come from an expansion
 						add(param.Name, b.ch.unknownSymbol)

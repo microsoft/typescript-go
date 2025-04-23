@@ -98,6 +98,11 @@ func getBindingNameVisible(resolver printer.EmitResolver, elem *ast.Node) bool {
 	if ast.IsOmittedExpression(elem) {
 		return false
 	}
+	// TODO: parseArrayBindingElement _never_ parses out an OmittedExpression anymore, instead producing a nameless binding element
+	// Audit if OmittedExpression should be removed
+	if elem.Name() == nil {
+		return false
+	}
 	if ast.IsBindingPattern(elem.Name()) {
 		// If any child binding pattern element has been marked visible (usually by collect linked aliases), then this is visible
 		for _, elem := range elem.Name().AsBindingPattern().Elements.Nodes {

@@ -38,7 +38,11 @@ type emitHost struct {
 }
 
 func (host *emitHost) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
+	// TODO: EmitContext().ParseNode(node) - can only find a checker for parse nodes!
 	ch := host.program.GetTypeCheckerForFile(ast.GetSourceFileOfNode(node))
+	if ch == nil {
+		return ast.ModifierFlagsNone // TODO: Should this be a panic?
+	}
 	return ch.GetEffectiveDeclarationFlags(node, flags)
 }
 

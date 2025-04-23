@@ -91,6 +91,9 @@ const declarationEmitInternalNodeBuilderFlags = nodebuilder.InternalFlagsAllowUn
 
 // functions as both `visitDeclarationStatements` and `transformRoot`, utilitzing SyntaxList nodes
 func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
+	if node == nil {
+		return nil
+	}
 	// !!! TODO: Bundle support?
 	switch node.Kind {
 	case ast.KindSourceFile:
@@ -414,6 +417,8 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	var result *ast.Node
 
 	switch input.Kind {
+	case ast.KindMappedType:
+		result = tx.transformMappedTypeNode(input.AsMappedTypeNode())
 	case ast.KindHeritageClause:
 		result = tx.transformHeritageClause(input.AsHeritageClause())
 	case ast.KindMethodSignature:
@@ -492,6 +497,25 @@ func (tx *DeclarationTransformer) checkName(node *ast.Node) {
 		tx.state.getSymbolAccessibilityDiagnostic = oldDiag
 	}
 	tx.state.errorNameNode = nil
+}
+
+func (tx *DeclarationTransformer) transformMappedTypeNode(input *ast.MappedTypeNode) *ast.Node {
+	// handle missing template type nodes, since the printer does not
+	var typeNode *ast.Node
+	if input.Type == nil {
+		typeNode = tx.Factory().NewKeywordTypeNode(ast.KindAnyKeyword)
+	} else {
+		typeNode = tx.Visitor().Visit(input.Type)
+	}
+	return tx.Factory().UpdateMappedTypeNode(
+		input,
+		input.ReadonlyToken,
+		tx.Visitor().Visit(input.TypeParameter),
+		tx.Visitor().Visit(input.NameType),
+		input.QuestionToken,
+		typeNode,
+		nil,
+	)
 }
 
 func (tx *DeclarationTransformer) transformHeritageClause(clause *ast.HeritageClause) *ast.Node {
@@ -699,12 +723,13 @@ func (tx *DeclarationTransformer) transformSetAccessorDeclaration(input *ast.Set
 	if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
 	}
+
 	return tx.Factory().UpdateSetAccessorDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
 		nil, // accessors shouldn't have type params
-		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(input.AsNode(), ast.ModifierFlagsPrivate) != 0),
+		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0),
 		nil,
 		nil,
 	)
@@ -719,7 +744,7 @@ func (tx *DeclarationTransformer) transformGetAccesorDeclaration(input *ast.GetA
 		tx.ensureModifiers(input.AsNode()),
 		input.Name(),
 		nil, // accessors shouldn't have type params
-		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(input.AsNode(), ast.ModifierFlagsPrivate) != 0),
+		tx.updateAccessorParamList(input.AsNode(), tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0),
 		tx.ensureType(input.AsNode(), false),
 		nil,
 	)
@@ -800,7 +825,7 @@ func (tx *DeclarationTransformer) omitPrivateMethodType(input *ast.Node) *ast.No
 }
 
 func (tx *DeclarationTransformer) transformMethodSignatureDeclaration(input *ast.MethodSignatureDeclaration) *ast.Node {
-	if tx.host.GetEffectiveDeclarationFlags(input.AsNode(), ast.ModifierFlagsPrivate) != 0 {
+	if tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0 {
 		return tx.omitPrivateMethodType(input.AsNode())
 	} else if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
@@ -818,7 +843,7 @@ func (tx *DeclarationTransformer) transformMethodSignatureDeclaration(input *ast
 }
 
 func (tx *DeclarationTransformer) transformMethodDeclaration(input *ast.MethodDeclaration) *ast.Node {
-	if tx.host.GetEffectiveDeclarationFlags(input.AsNode(), ast.ModifierFlagsPrivate) != 0 {
+	if tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsPrivate) != 0 {
 		return tx.omitPrivateMethodType(input.AsNode())
 	} else if ast.IsPrivateIdentifier(input.Name()) {
 		return nil
@@ -939,7 +964,7 @@ func (tx *DeclarationTransformer) removeAllComments(node *ast.Node) {
 }
 
 func (tx *DeclarationTransformer) ensureType(node *ast.Node, ignorePrivate bool) *ast.Node {
-	if !ignorePrivate && tx.host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate) != 0 {
+	if !ignorePrivate && tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsPrivate) != 0 {
 		// Private nodes emit no types (except private parameter properties, whose parameter types are actually visible)
 		return nil
 	}
@@ -1148,24 +1173,36 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 			body,
 		)
 	}
-	// trigger visit. ignore result (is deferred, so is just inner unless elided)
-	tx.Visitor().Visit(inner)
-	// eagerly transform nested namespaces (the nesting doesn't need any elision or painting done)
-	original := tx.EmitContext().MostOriginal(inner)
-	id := ast.GetNodeId(original)
-	body, _ := tx.lateStatementReplacementMap[id]
-	delete(tx.lateStatementReplacementMap, id)
+	if inner != nil {
+		// trigger visit. ignore result (is deferred, so is just inner unless elided)
+		tx.Visitor().Visit(inner)
+		// eagerly transform nested namespaces (the nesting doesn't need any elision or painting done)
+		original := tx.EmitContext().MostOriginal(inner)
+		id := ast.GetNodeId(original)
+		body, _ := tx.lateStatementReplacementMap[id]
+		delete(tx.lateStatementReplacementMap, id)
+		return tx.Factory().UpdateModuleDeclaration(
+			input,
+			mods,
+			input.Keyword,
+			input.Name(),
+			body,
+		)
+	}
 	return tx.Factory().UpdateModuleDeclaration(
 		input,
 		mods,
 		input.Keyword,
 		input.Name(),
-		body,
+		nil,
 	)
 }
 
 func (tx *DeclarationTransformer) stripExportModifiers(statement *ast.Node) *ast.Node {
-	if ast.IsImportEqualsDeclaration(statement) || tx.host.GetEffectiveDeclarationFlags(statement, ast.ModifierFlagsDefault) != 0 || !ast.CanHaveModifiers(statement) {
+	if statement == nil {
+		return nil
+	}
+	if ast.IsImportEqualsDeclaration(statement) || tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(statement), ast.ModifierFlagsDefault) != 0 || !ast.CanHaveModifiers(statement) {
 		// `export import` statements should remain as-is, as imports are _not_ implicitly exported in an ambient namespace
 		// Likewise, `export default` classes and the like and just be `default`, so we preserve their `export` modifiers, too
 		return statement
@@ -1281,12 +1318,12 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 			tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})),
 		)
 		newHeritageClause := tx.Factory().UpdateHeritageClause(
-			extendsClause.AsHeritageClause(),
+			extendsClause.Parent.AsHeritageClause(),
 			tx.Factory().NewNodeList([]*ast.Node{
 				tx.Factory().UpdateExpressionWithTypeArguments(
-					extendsClause.AsHeritageClause().Types.Nodes[0].AsExpressionWithTypeArguments(),
+					extendsClause.AsExpressionWithTypeArguments(),
 					newId,
-					tx.Visitor().VisitNodes(extendsClause.AsHeritageClause().Types.Nodes[0].AsExpressionWithTypeArguments().TypeArguments),
+					tx.Visitor().VisitNodes(extendsClause.AsExpressionWithTypeArguments().TypeArguments),
 				),
 			}),
 		)
@@ -1398,7 +1435,7 @@ func (tx *DeclarationTransformer) transformEnumDeclaration(input *ast.EnumDeclar
 }
 
 func (tx *DeclarationTransformer) ensureModifiers(node *ast.Node) *ast.ModifierList {
-	currentFlags := tx.host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsAll)
+	currentFlags := tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsAll)
 	newFlags := tx.ensureModifierFlags(node)
 	if currentFlags == newFlags {
 		// Elide decorators
@@ -1430,7 +1467,7 @@ func (tx *DeclarationTransformer) ensureModifierFlags(node *ast.Node) ast.Modifi
 }
 
 func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.TypeParameterList) *ast.TypeParameterList {
-	if tx.host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate) != 0 {
+	if tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsPrivate) != 0 {
 		return nil
 	}
 	return tx.Visitor().VisitNodes(params)
@@ -1441,7 +1478,7 @@ func (tx *DeclarationTransformer) updateParamList(node *ast.Node, params *ast.Pa
 }
 
 func (tx *DeclarationTransformer) updateParamListEx(node *ast.Node, params *ast.ParameterList, modifierMask ast.ModifierFlags) *ast.ParameterList {
-	if tx.host.GetEffectiveDeclarationFlags(node, ast.ModifierFlagsPrivate) != 0 || len(params.Nodes) == 0 {
+	if tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsPrivate) != 0 || len(params.Nodes) == 0 {
 		return tx.Factory().NewNodeList([]*ast.Node{})
 	}
 	results := make([]*ast.Node, len(params.Nodes))
@@ -1507,6 +1544,10 @@ func (tx *DeclarationTransformer) filterBindingPatternInitializers(node *ast.Nod
 			}
 			if elem.PropertyName() != nil && ast.IsComputedPropertyName(elem.PropertyName()) && ast.IsEntityNameExpression(elem.PropertyName().Expression()) {
 				tx.checkEntityNameVisibility(elem.PropertyName().Expression(), tx.enclosingDeclaration)
+			}
+			if elem.Name() == nil {
+				elements = append(elements, elem)
+				continue
 			}
 
 			elements = append(elements, tx.Factory().UpdateBindingElement(

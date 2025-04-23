@@ -91,7 +91,7 @@ func (c *Checker) symbolToString(symbol *ast.Symbol) string {
 
 func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, flags SymbolFormatFlags, writer printer.EmitTextWriter) string {
 	if writer == nil {
-		writer = printer.SingleLineStringWriter
+		writer = printer.SingleLineStringWriterPool.Get().(printer.EmitTextWriter)
 	}
 
 	nodeFlags := nodebuilder.FlagsIgnoreErrors
@@ -116,7 +116,7 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
-	if writer == printer.SingleLineStringWriter {
+	if writer == printer.SingleLineStringWriterPool.Get().(printer.EmitTextWriter) {
 		// handle uses of the single-line writer during an ongoing write
 		existing := writer.String()
 		defer writer.Clear()
@@ -162,7 +162,7 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 		}
 	}
 	if writer == nil {
-		writer = printer.SingleLineStringWriter
+		writer = printer.SingleLineStringWriterPool.Get().(printer.EmitTextWriter)
 	}
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	sig := c.nodeBuilder.signatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
@@ -171,7 +171,7 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
-	if writer == printer.SingleLineStringWriter {
+	if writer == printer.SingleLineStringWriterPool.Get().(printer.EmitTextWriter) {
 		// handle uses of the single-line writer during an ongoing write
 		existing := writer.String()
 		defer writer.Clear()
@@ -189,7 +189,7 @@ func (c *Checker) typePredicateToString(typePredicate *TypePredicate) string {
 
 func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
 	if writer == nil {
-		writer = printer.SingleLineStringWriter
+		writer = printer.SingleLineStringWriterPool.Get().(printer.EmitTextWriter)
 	}
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	predicate := c.nodeBuilder.typePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil) // TODO: GH#18217
@@ -198,7 +198,7 @@ func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosin
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
 	}
-	if writer == printer.SingleLineStringWriter {
+	if writer == printer.SingleLineStringWriterPool.Get().(printer.EmitTextWriter) {
 		// handle uses of the single-line writer during an ongoing write
 		existing := writer.String()
 		defer writer.Clear()
