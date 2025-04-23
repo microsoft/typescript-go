@@ -1375,11 +1375,13 @@ func (c *Checker) createNameResolverForSuggestion() *binder.NameResolver {
 		GetRequiresScopeChangeCache: c.getRequiresScopeChangeCache,
 	}
 }
+
 func (c *Checker) getModuleSymbol(sourceFile *ast.Node) *ast.Symbol {
 	result := c.newSymbol(ast.SymbolFlagsModuleExports|ast.SymbolFlagsFunctionScopedVariable, ast.InternalSymbolNameModuleExports)
 	result.ValueDeclaration = sourceFile
 	return result
 }
+
 func (c *Checker) symbolReferenced(symbol *ast.Symbol, meaning ast.SymbolFlags) {
 	c.symbolReferenceLinks.Get(symbol).referenceKinds |= meaning
 }
@@ -25404,14 +25406,14 @@ func (c *Checker) isAssignmentToReadonlyEntity(expr *ast.Node, symbol *ast.Symbo
 	if ast.IsAccessExpression(expr) {
 		node := ast.SkipParentheses(expr.Expression())
 		if ast.IsIdentifier(node) {
-			symbol := c.getResolvedSymbol(node)
+			expressionSymbol := c.getResolvedSymbol(node)
 			// CommonJS module.exports is never readonly
-			if symbol.Flags&ast.SymbolFlagsModuleExports != 0 {
+			if expressionSymbol.Flags&ast.SymbolFlagsModuleExports != 0 {
 				return false
 			}
 			// references through namespace import should be readonly
-			if symbol.Flags&ast.SymbolFlagsAlias != 0 {
-				declaration := c.getDeclarationOfAliasSymbol(symbol)
+			if expressionSymbol.Flags&ast.SymbolFlagsAlias != 0 {
+				declaration := c.getDeclarationOfAliasSymbol(expressionSymbol)
 				return declaration != nil && ast.IsNamespaceImport(declaration)
 			}
 		}
@@ -27548,7 +27550,7 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 	binary := node.Parent.AsBinaryExpression()
 	switch binary.OperatorToken.Kind {
 	case ast.KindEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindBarBarEqualsToken, ast.KindQuestionQuestionEqualsToken:
-		// In an assignment expression, the right operand is contextually typed by the type of the left operand 
+		// In an assignment expression, the right operand is contextually typed by the type of the left operand
 		// unless it's an assignment declaration.
 		if node == binary.Right && !c.isReferenceToModuleExports(binary.Left) && (binary.Symbol == nil || c.canGetContextualTypeForAssignmentDeclaration(binary.Left)) {
 			return c.getContextualTypeFromAssignmentTarget(binary.Left)
@@ -27571,21 +27573,23 @@ func (c *Checker) getContextualTypeForBinaryOperand(node *ast.Node, contextFlags
 	}
 	return nil
 }
+
 func (c *Checker) canGetContextualTypeForAssignmentDeclaration(node *ast.Node) bool {
-        // Node is the left operand of an assignment declaration (a binary expression with a symbol assigned by the
-        // binder) of the form 'F.id = expr' or 'F[xxx] = expr'. If 'F' is declared as a variable with a type annotation,
-        // we can obtain a contextual type from the annotated type without triggering a circularity. Otherwise, the
-        // assignment declaration has no contextual type.
-        symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(node.Expression()))
-        return symbol.ValueDeclaration != nil && ast.IsVariableDeclaration(symbol.ValueDeclaration) && symbol.ValueDeclaration.Type() != nil
+	// Node is the left operand of an assignment declaration (a binary expression with a symbol assigned by the
+	// binder) of the form 'F.id = expr' or 'F[xxx] = expr'. If 'F' is declared as a variable with a type annotation,
+	// we can obtain a contextual type from the annotated type without triggering a circularity. Otherwise, the
+	// assignment declaration has no contextual type.
+	symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(node.Expression()))
+	return symbol.ValueDeclaration != nil && ast.IsVariableDeclaration(symbol.ValueDeclaration) && symbol.ValueDeclaration.Type() != nil
 }
+
 func (c *Checker) isReferenceToModuleExports(node *ast.Node) bool {
 	if ast.IsAccessExpression(node) {
 		expr := node.Expression()
 		if ast.IsIdentifier(expr) {
 			// Node is the left operand of an assignment expression of the form 'module.exports = expr'.
 			symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(expr))
-			return symbol.Flags&ast.SymbolFlagsModuleExports != 0 
+			return symbol.Flags&ast.SymbolFlagsModuleExports != 0
 		}
 	}
 	return false
