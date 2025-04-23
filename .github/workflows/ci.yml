@@ -31,6 +31,13 @@ jobs:
         with:
           cache-name: build
 
+      # Avoid duplicate PR annotations.
+      - run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
+
       - run: npm ci
 
       - run: npx hereby build
