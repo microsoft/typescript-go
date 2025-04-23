@@ -8,8 +8,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -1419,7 +1419,7 @@ func (c *Checker) getDiscriminantPropertyAccess(f *FlowState, expr *ast.Node, co
 func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast.Node) *ast.Node {
 	switch {
 	case ast.IsBindingPattern(f.reference) || ast.IsFunctionExpressionOrArrowFunction(f.reference) || ast.IsObjectLiteralMethod(f.reference):
-		// When the reference is a binding pattern or function or arrow expression, we are narrowing a pesudo-reference in
+		// When the reference is a binding pattern or function or arrow expression, we are narrowing a pseudo-reference in
 		// getNarrowedTypeOfSymbol. An identifier for a destructuring variable declared in the same binding pattern or
 		// parameter declared in the same parameter list is a candidate.
 		if ast.IsIdentifier(expr) {
