@@ -540,7 +540,7 @@ func (n *Node) Type() *Node {
 			return funcLike.Type
 		}
 	}
-	panic("Unhandled case in Node.Type:" + n.Kind.String())
+	panic("Unhandled case in Node.Type: " + n.Kind.String())
 }
 
 func (n *Node) Initializer() *Node {

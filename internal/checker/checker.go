@@ -6327,7 +6327,7 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 				}
 			}
 		}
-		if c.compilerOptions.VerbatimModuleSyntax.IsTrue() && !ast.IsImportEqualsDeclaration(node) && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
+		if c.compilerOptions.VerbatimModuleSyntax.IsTrue() && !ast.IsImportEqualsDeclaration(node) && !ast.IsVariableDeclarationInitializedToRequire(node) && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
 			c.error(node, diagnostics.ESM_syntax_is_not_allowed_in_a_CommonJS_module_when_verbatimModuleSyntax_is_enabled)
 		} else if c.moduleKind == core.ModuleKindPreserve && !ast.IsImportEqualsDeclaration(node) && !ast.IsVariableDeclaration(node) && c.program.GetEmitModuleFormatOfFile(ast.GetSourceFileOfNode(node)) == core.ModuleKindCommonJS {
 			// In `--module preserve`, ESM input syntax emits ESM output syntax, but there will be times
