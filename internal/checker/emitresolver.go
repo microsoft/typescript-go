@@ -744,7 +744,7 @@ func (r *emitResolver) CreateReturnTypeOfSignatureDeclaration(emitContext *print
 		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
 	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
-	return requestNodeBuilder.serializeReturnTypeForSignature(original, enclosingDeclaration, flags, internalFlags, tracker)
+	return requestNodeBuilder.SerializeReturnTypeForSignature(original, enclosingDeclaration, flags, internalFlags, tracker)
 }
 
 func (r *emitResolver) CreateTypeOfDeclaration(emitContext *printer.EmitContext, declaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
@@ -755,7 +755,7 @@ func (r *emitResolver) CreateTypeOfDeclaration(emitContext *printer.EmitContext,
 	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
 	// // Get type of the symbol if this is the valid symbol otherwise get type at location
 	symbol := r.checker.getSymbolOfDeclaration(declaration)
-	return requestNodeBuilder.serializeTypeForDeclaration(declaration, symbol, enclosingDeclaration, flags|nodebuilder.FlagsMultilineObjectLiterals, internalFlags, tracker)
+	return requestNodeBuilder.SerializeTypeForDeclaration(declaration, symbol, enclosingDeclaration, flags|nodebuilder.FlagsMultilineObjectLiterals, internalFlags, tracker)
 }
 
 func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext, node *ast.Node, tracker nodebuilder.SymbolTracker) *ast.Node {
@@ -770,7 +770,7 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 	var enumResult *ast.Node
 	if type_.flags&TypeFlagsEnumLike != 0 {
 		requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
-		enumResult = requestNodeBuilder.symbolToExpression(type_.symbol, ast.SymbolFlagsValue, node, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, tracker)
+		enumResult = requestNodeBuilder.SymbolToExpression(type_.symbol, ast.SymbolFlagsValue, node, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, tracker)
 		// What about regularTrueType/regularFalseType - since those aren't fresh, we never make initializers from them
 		// TODO: handle those if this function is ever used for more than initializers in declaration emit
 	} else if type_ == r.checker.trueType {
@@ -824,7 +824,7 @@ func (r *emitResolver) CreateTypeOfExpression(emitContext *printer.EmitContext, 
 	}
 
 	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
-	return requestNodeBuilder.serializeTypeForExpression(expression, enclosingDeclaration, flags|nodebuilder.FlagsMultilineObjectLiterals, internalFlags, tracker)
+	return requestNodeBuilder.SerializeTypeForExpression(expression, enclosingDeclaration, flags|nodebuilder.FlagsMultilineObjectLiterals, internalFlags, tracker)
 }
 
 func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitContext, container *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
@@ -862,7 +862,7 @@ func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 			// if info.components {
 			// !!! TODO: Complete late-bound index info support - getObjectLiteralIndexInfo does not yet add late bound components to index signatures
 			// }
-			node := requestNodeBuilder.indexInfoToIndexSignatureDeclaration(info, enclosingDeclaration, flags, internalFlags, tracker)
+			node := requestNodeBuilder.IndexInfoToIndexSignatureDeclaration(info, enclosingDeclaration, flags, internalFlags, tracker)
 			if node != nil && isStatic {
 				mods := node.Modifiers()
 				mods = emitContext.Factory.NewModifierList(append([]*ast.Node{emitContext.Factory.NewModifier(ast.KindStaticKeyword)}, mods.Nodes...))

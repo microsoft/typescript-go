@@ -7,25 +7,32 @@ import (
 )
 
 type NodeBuilderInterface interface {
-	typeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	typePredicateToTypePredicateNode(predicate *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	serializeTypeForDeclaration(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	serializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	serializeTypeForExpression(expr *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	indexInfoToIndexSignatureDeclaration(info *IndexInfo, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	signatureToSignatureDeclaration(signature *Signature, kind ast.Kind, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	symbolToEntityName(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	symbolToExpression(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	symbolToTypeParameterDeclarations(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node
-	symbolToParameterDeclaration(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	typeParameterToDeclaration(parameter *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
-	symbolTableToDeclarationStatements(symbolTable *ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node
-	symbolToNode(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	EmitContext() *printer.EmitContext
+
+	TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	TypePredicateToTypePredicateNode(predicate *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	SerializeTypeForDeclaration(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	SerializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	SerializeTypeForExpression(expr *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	IndexInfoToIndexSignatureDeclaration(info *IndexInfo, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	SignatureToSignatureDeclaration(signature *Signature, kind ast.Kind, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	SymbolToEntityName(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	SymbolToExpression(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	SymbolToTypeParameterDeclarations(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node
+	SymbolToParameterDeclaration(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	TypeParameterToDeclaration(parameter *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
+	SymbolTableToDeclarationStatements(symbolTable *ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node
+	SymbolToNode(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 }
 
 type NodeBuilderAPI struct {
 	ctxStack []*NodeBuilderContext
 	impl     *NodeBuilder
+}
+
+// EmitContext implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) EmitContext() *printer.EmitContext {
+	return b.impl.e
 }
 
 func (b *NodeBuilderAPI) enterContext(enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) {
@@ -89,14 +96,14 @@ func (b *NodeBuilderAPI) exitContextCheck() {
 	}
 }
 
-// indexInfoToIndexSignatureDeclaration implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) indexInfoToIndexSignatureDeclaration(info *IndexInfo, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// IndexInfoToIndexSignatureDeclaration implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) IndexInfoToIndexSignatureDeclaration(info *IndexInfo, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.indexInfoToIndexSignatureDeclarationHelper(info, nil))
 }
 
-// serializeReturnTypeForSignature implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) serializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// SerializeReturnTypeForSignature implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SerializeReturnTypeForSignature(signatureDeclaration *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	signature := b.impl.ch.getSignatureFromDeclaration(signatureDeclaration)
 	symbol := b.impl.ch.getSymbolOfDeclaration(signatureDeclaration)
@@ -107,74 +114,74 @@ func (b *NodeBuilderAPI) serializeReturnTypeForSignature(signatureDeclaration *a
 	return b.exitContext(b.impl.serializeInferredReturnTypeForSignature(signature, returnType))
 }
 
-// serializeTypeForDeclaration implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) serializeTypeForDeclaration(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// SerializeTypeForDeclaration implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SerializeTypeForDeclaration(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.serializeTypeForDeclaration(declaration, nil, symbol))
 }
 
-// serializeTypeForExpression implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) serializeTypeForExpression(expr *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// SerializeTypeForExpression implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SerializeTypeForExpression(expr *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.serializeTypeForExpression(expr))
 }
 
-// signatureToSignatureDeclaration implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) signatureToSignatureDeclaration(signature *Signature, kind ast.Kind, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// SignatureToSignatureDeclaration implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SignatureToSignatureDeclaration(signature *Signature, kind ast.Kind, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.signatureToSignatureDeclarationHelper(signature, kind, nil))
 }
 
-// symbolTableToDeclarationStatements implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) symbolTableToDeclarationStatements(symbolTable *ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
+// SymbolTableToDeclarationStatements implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SymbolTableToDeclarationStatements(symbolTable *ast.SymbolTable, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContextSlice(b.impl.symbolTableToDeclarationStatements(symbolTable))
 }
 
-// symbolToEntityName implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) symbolToEntityName(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// SymbolToEntityName implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SymbolToEntityName(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.symbolToName(symbol, meaning, false))
 }
 
-// symbolToExpression implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) symbolToExpression(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// SymbolToExpression implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SymbolToExpression(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.symbolToExpression(symbol, meaning))
 }
 
-// symbolToNode implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) symbolToNode(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// SymbolToNode implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SymbolToNode(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.symbolToNode(symbol, meaning))
 }
 
-// symbolToParameterDeclaration implements NodeBuilderInterface.
-func (b NodeBuilderAPI) symbolToParameterDeclaration(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// SymbolToParameterDeclaration implements NodeBuilderInterface.
+func (b NodeBuilderAPI) SymbolToParameterDeclaration(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.symbolToParameterDeclaration(symbol, false))
 }
 
-// symbolToTypeParameterDeclarations implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) symbolToTypeParameterDeclarations(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
+// SymbolToTypeParameterDeclarations implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) SymbolToTypeParameterDeclarations(symbol *ast.Symbol, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContextSlice(b.impl.symbolToTypeParameterDeclarations(symbol))
 }
 
-// typeParameterToDeclaration implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) typeParameterToDeclaration(parameter *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// TypeParameterToDeclaration implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) TypeParameterToDeclaration(parameter *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.typeParameterToDeclaration(parameter))
 }
 
-// typePredicateToTypePredicateNode implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) typePredicateToTypePredicateNode(predicate *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// TypePredicateToTypePredicateNode implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) TypePredicateToTypePredicateNode(predicate *TypePredicate, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.typePredicateToTypePredicateNode(predicate))
 }
 
-// typeToTypeNode implements NodeBuilderInterface.
-func (b *NodeBuilderAPI) typeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
+// TypeToTypeNode implements NodeBuilderInterface.
+func (b *NodeBuilderAPI) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {
 	b.enterContext(enclosingDeclaration, flags, internalFlags, tracker)
 	return b.exitContext(b.impl.typeToTypeNode(typ))
 }
@@ -184,4 +191,8 @@ func (b *NodeBuilderAPI) typeToTypeNode(typ *Type, enclosingDeclaration *ast.Nod
 func NewNodeBuilderAPI(ch *Checker, e *printer.EmitContext) *NodeBuilderAPI {
 	impl := NewNodeBuilder(ch, e)
 	return &NodeBuilderAPI{impl: &impl, ctxStack: make([]*NodeBuilderContext, 0, 1)}
+}
+
+func (c *Checker) GetDiagnosticNodeBuilder() NodeBuilderInterface {
+	return c.nodeBuilder
 }

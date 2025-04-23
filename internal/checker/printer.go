@@ -52,7 +52,7 @@ func (c *Checker) typeToStringEx(type_ *Type, enclosingDeclaration *ast.Node, fl
 	if noTruncation {
 		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
 	}
-	typeNode := c.nodeBuilder.typeToTypeNode(type_, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
+	typeNode := c.nodeBuilder.TypeToTypeNode(type_, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	if typeNode == nil {
 		panic("should always get typenode")
 	}
@@ -133,9 +133,9 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 
 	var builder func(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 	if flags&SymbolFormatFlagsAllowAnyNodeKind != 0 {
-		builder = c.nodeBuilder.symbolToNode
+		builder = c.nodeBuilder.SymbolToNode
 	} else {
-		builder = c.nodeBuilder.symbolToEntityName
+		builder = c.nodeBuilder.SymbolToEntityName
 	}
 	entity := builder(symbol, meaning, enclosingDeclaration, nodeFlags, internalNodeFlags, nil)         // TODO: GH#18217
 	printer_.Write(entity /*sourceFile*/, sourceFile, getTrailingSemicolonDeferringWriter(writer), nil) // TODO: GH#18217
@@ -165,7 +165,7 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 		writer = printer.SingleLineStringWriterPool.Get().(printer.EmitTextWriter)
 	}
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
-	sig := c.nodeBuilder.signatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
+	sig := c.nodeBuilder.SignatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	printer_ := createPrinterWithRemoveCommentsOmitTrailingSemicolon(c.diagnosticConstructionContext)
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
@@ -192,7 +192,7 @@ func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosin
 		writer = printer.SingleLineStringWriterPool.Get().(printer.EmitTextWriter)
 	}
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
-	predicate := c.nodeBuilder.typePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil) // TODO: GH#18217
+	predicate := c.nodeBuilder.TypePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil) // TODO: GH#18217
 	printer_ := createPrinterWithRemoveComments(c.diagnosticConstructionContext)
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
