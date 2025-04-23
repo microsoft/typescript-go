@@ -572,6 +572,7 @@ func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int
 			}
 			return lhs
 		}
+		symbolName = b.getNameOfSymbolAsWritten(symbol)
 	}
 	b.ctx.approximateLength += len(symbolName) + 1
 

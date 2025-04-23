@@ -466,10 +466,10 @@ func (ch *Checker) trySymbolTable(
 			// If `!useOnlyExternalAliasing`, we can use any type of alias to get the name
 			(!ctx.useOnlyExternalAliasing || core.Some(symbolFromSymbolTable.Declarations, ast.IsExternalModuleImportEqualsDeclaration)) &&
 			// If we're looking up a local name to reference directly, omit namespace reexports, otherwise when we're trawling through an export list to make a dotted name, we can keep it
-			(!isLocalNameLookup || core.Some(symbolFromSymbolTable.Declarations, isNamespaceReexportDeclaration)) &&
+			(isLocalNameLookup && !core.Some(symbolFromSymbolTable.Declarations, isNamespaceReexportDeclaration) || !isLocalNameLookup) &&
 			// While exports are generally considered to be in scope, export-specifier declared symbols are _not_
 			// See similar comment in `resolveName` for details
-			(ignoreQualification || getDeclarationsOfKind(symbolFromSymbolTable, ast.KindExportSpecifier) == nil) {
+			(ignoreQualification || len(getDeclarationsOfKind(symbolFromSymbolTable, ast.KindExportSpecifier)) == 0) {
 			resolvedImportedSymbol := ch.resolveAlias(symbolFromSymbolTable)
 			candidate := ch.getCandidateListForSymbol(ctx, symbolFromSymbolTable, resolvedImportedSymbol, ignoreQualification)
 			if len(candidate) > 0 {
