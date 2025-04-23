@@ -32,7 +32,8 @@ jobs:
           cache-name: build
 
       # Avoid duplicate PR annotations.
-      - run: |
+      - name: Disable PR annotations
+        run: |
           echo "::remove-matcher owner=eslint-compact::"
           echo "::remove-matcher owner=eslint-stylish::"
           echo "::remove-matcher owner=tsc::"
@@ -116,6 +117,7 @@ jobs:
 
       # Avoid duplicate PR annotations.
       - if: ${{ ! matrix.config.main }}
+        name: Disable PR annotations
         run: |
           echo "::remove-matcher owner=eslint-compact::"
           echo "::remove-matcher owner=eslint-stylish::"
@@ -201,6 +203,7 @@ jobs:
 
       # Avoid duplicate PR annotations.
       - if: ${{ ! matrix.config.main }}
+        name: Disable PR annotations
         run: |
           echo "::remove-matcher owner=eslint-compact::"
           echo "::remove-matcher owner=eslint-stylish::"
@@ -272,7 +275,8 @@ jobs:
           cache-name: smoke
 
       # Avoid duplicate PR annotations.
-      - run: |
+      - name: Disable PR annotations
+        run: |
           echo "::remove-matcher owner=eslint-compact::"
           echo "::remove-matcher owner=eslint-stylish::"
           echo "::remove-matcher owner=tsc::"
