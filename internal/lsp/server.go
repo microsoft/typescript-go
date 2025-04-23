@@ -396,7 +396,8 @@ func (s *Server) handleCompletion(req *lsproto.RequestMessage) (messageErr error
 	defer func() {
 		if r := recover(); r != nil {
 			stack := debug.Stack()
-			messageErr = s.sendError(req.ID, fmt.Errorf("panic obtaining completions: %v\n%s", r, string(stack)))
+			fmt.Printf("panic obtaining completions: %v\n%s", r, string(stack))
+			messageErr = s.sendResult(req.ID, &lsproto.CompletionList{})
 		}
 	}()
 	// !!! get user preferences
