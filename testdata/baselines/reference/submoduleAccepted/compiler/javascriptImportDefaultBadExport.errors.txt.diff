@@ -1,21 +1,18 @@
 --- old.javascriptImportDefaultBadExport.errors.txt
 +++ new.javascriptImportDefaultBadExport.errors.txt
-@@= skipped -0, +0 lines =@@
+@@= skipped -0, +-1 lines =@@
 -/b.js(1,8): error TS1259: Module '"/a"' can only be default-imported using the 'esModuleInterop' flag
-+/a.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
- 
- 
+-
+-
 -==== /a.js (0 errors) ====
-+==== /a.js (1 errors) ====
-     const alias = {};
-     module.exports = alias;
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-     
+-    const alias = {};
+-    module.exports = alias;
+-    
 -==== /b.js (1 errors) ====
-+==== /b.js (0 errors) ====
-     import a from "./a";
+-    import a from "./a";
 -           ~
 -!!! error TS1259: Module '"/a"' can only be default-imported using the 'esModuleInterop' flag
 -!!! related TS2594 /a.js:2:1: This module is declared with 'export =', and can only be used with a default import when using the 'esModuleInterop' flag.
-     
+-    
+@@= skipped --1, +1 lines =@@
++<no content>

@@ -20,12 +20,12 @@
  module.exports = {
 ->module.exports : Symbol(module.exports, Decl(mod.js, 0, 0))
 ->module : Symbol(export=, Decl(mod.js, 3, 27))
-->exports : Symbol(export=, Decl(mod.js, 3, 27))
--
-     Thing,
- >Thing : Symbol(Thing, Decl(mod.js, 5, 18))
++>module.exports : Symbol(export=, Decl(mod.js, 3, 27))
++>module : Symbol(module.exports)
+ >exports : Symbol(export=, Decl(mod.js, 3, 27))
  
-@@= skipped -44, +40 lines =@@
+     Thing,
+@@= skipped -44, +44 lines =@@
  >g : Symbol(g, Decl(main.js, 9, 34))
  
      return a.x + b.y + c() + d() + e() + f() + g.length

@@ -43,14 +43,16 @@ declare function require(name: string): any;
 === mod1.js ===
 /// <reference path='./requires.d.ts' />
 module.exports.bothBefore = 'string'
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports.bothBefore : Symbol(bothBefore, Decl(mod1.js, 3, 18))
+>module.exports : Symbol(export=, Decl(mod1.js, 1, 36))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod1.js, 1, 36))
+>bothBefore : Symbol(bothBefore, Decl(mod1.js, 3, 18))
 
 module.exports = {
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports : Symbol(export=, Decl(mod1.js, 1, 36))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod1.js, 1, 36))
 
     justExport: 1,
 >justExport : Symbol(justExport, Decl(mod1.js, 2, 18))
@@ -62,12 +64,14 @@ module.exports = {
 >bothAfter : Symbol(bothAfter, Decl(mod1.js, 4, 18))
 }
 module.exports.bothAfter = 'string'
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports.bothAfter : Symbol(bothAfter, Decl(mod1.js, 4, 18))
+>module.exports : Symbol(export=, Decl(mod1.js, 1, 36))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod1.js, 1, 36))
+>bothAfter : Symbol(bothAfter, Decl(mod1.js, 4, 18))
 
 module.exports.justProperty = 'string'
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports : Symbol(export=, Decl(mod1.js, 1, 36))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod1.js, 1, 36))
 

@@ -45,8 +45,8 @@ class Chunk {
     }
 }
 module.exports = Chunk;
->module.exports : Symbol(exports, Decl(types.d.ts, 2, 21))
->module : Symbol(module, Decl(types.d.ts, 2, 11))
->exports : Symbol(exports, Decl(types.d.ts, 2, 21))
+>module.exports : Symbol(Chunk, Decl(mod1.js, 0, 0))
+>module : Symbol(module.exports)
+>exports : Symbol(Chunk, Decl(mod1.js, 0, 0))
 >Chunk : Symbol(Chunk, Decl(mod1.js, 0, 0))
 

@@ -19,12 +19,9 @@
  === mod.js ===
  module.exports = {
  >module.exports = {    x: {        y: "value"    }} : { x: { y: string; }; }
-->module.exports : { x: { y: string; }; }
+ >module.exports : { x: { y: string; }; }
 ->module : { exports: { x: { y: string; }; }; }
-->exports : { x: { y: string; }; }
-+>module.exports : any
-+>module : any
-+>exports : any
++>module : { export=: { x: { y: string; }; }; }
+ >exports : { x: { y: string; }; }
  >{    x: {        y: "value"    }} : { x: { y: string; }; }
  
-     x: {

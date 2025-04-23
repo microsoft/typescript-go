@@ -11,9 +11,9 @@ const { SomeClass, SomeClass: Another } = require('./lib');
 
 module.exports = {
 >module.exports = {    SomeClass,    Another} : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
+>module : { export=: { SomeClass: typeof SomeClass; Another: typeof SomeClass; }; }
+>exports : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
 >{    SomeClass,    Another} : { SomeClass: typeof SomeClass; Another: typeof SomeClass; }
 
     SomeClass,
@@ -49,9 +49,9 @@ class SomeClass {
 
 module.exports = {
 >module.exports = {    bar,    SomeClass} : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
+>module : { export=: { bar: (a: string) => string; SomeClass: typeof SomeClass; }; }
+>exports : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
 >{    bar,    SomeClass} : { bar: (a: string) => string; SomeClass: typeof SomeClass; }
 
     bar,

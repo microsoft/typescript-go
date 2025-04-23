@@ -2,8 +2,6 @@ index.js(1,29): error TS2497: This module can only be referenced with ECMAScript
 index.js(9,14): error TS2339: Property 'objects' does not exist on type 'Render'.
 index.js(14,18): error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
 index.js(18,14): error TS2339: Property 'objects' does not exist on type 'Render'.
-index.js(23,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-rectangle.js(7,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 test.js(1,26): error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
 test.js(5,31): error TS2339: Property 'objects' does not exist on type 'Render'.
 
@@ -18,7 +16,7 @@ test.js(5,31): error TS2339: Property 'objects' does not exist on type 'Render'.
     console.log("Objects", render.objects);
                                   ~~~~~~~
 !!! error TS2339: Property 'objects' does not exist on type 'Render'.
-==== rectangle.js (1 errors) ====
+==== rectangle.js (0 errors) ====
     class Rectangle {
         constructor() {
             console.log("I'm a rectangle!");
@@ -26,9 +24,7 @@ test.js(5,31): error TS2339: Property 'objects' does not exist on type 'Render'.
     }
     
     module.exports = { Rectangle };
-    ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-==== index.js (5 errors) ====
+==== index.js (4 errors) ====
     const {Rectangle} = require('./rectangle');
                                 ~~~~~~~~~~~~~
 !!! error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
@@ -60,5 +56,3 @@ test.js(5,31): error TS2339: Property 'objects' does not exist on type 'Render'.
     }
     
     module.exports = { Render };
-    ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

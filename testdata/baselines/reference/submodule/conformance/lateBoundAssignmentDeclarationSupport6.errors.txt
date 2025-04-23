@@ -1,6 +1,4 @@
 lateBoundAssignmentDeclarationSupport6.js(10,15): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
-lateBoundAssignmentDeclarationSupport6.js(13,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-lateBoundAssignmentDeclarationSupport6.js(14,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 usage.js(2,15): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
@@ -12,7 +10,7 @@ usage.js(2,15): error TS7009: 'new' expression, whose target lacks a construct s
     const y = inst["my-fake-sym"];
     const z = inst[x.S];
     
-==== lateBoundAssignmentDeclarationSupport6.js (3 errors) ====
+==== lateBoundAssignmentDeclarationSupport6.js (1 errors) ====
     // currently unsupported
     const _sym = Symbol();
     const _str = "my-fake-sym";
@@ -28,8 +26,4 @@ usage.js(2,15): error TS7009: 'new' expression, whose target lacks a construct s
     const _y = inst[_str];
     const _z = inst[_sym];
     module.exports.F = F;
-    ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
     module.exports.S = _sym;
-    ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

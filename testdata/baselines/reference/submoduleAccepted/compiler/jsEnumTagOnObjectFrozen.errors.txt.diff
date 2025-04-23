@@ -3,11 +3,8 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+index.js(7,1): error TS2304: Cannot find name 'exports'.
 +index.js(10,12): error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
-+index.js(14,1): error TS2304: Cannot find name 'exports'.
 +index.js(17,16): error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
-+index.js(21,1): error TS2304: Cannot find name 'exports'.
 +
 +
 +==== usage.js (0 errors) ====
@@ -29,7 +26,7 @@
 +        };
 +    });
 +    
-+==== index.js (5 errors) ====
++==== index.js (2 errors) ====
 +    /** @enum {string} */
 +    const Thing = Object.freeze({
 +        a: "thing",
@@ -37,8 +34,6 @@
 +    });
 +    
 +    exports.Thing = Thing;
-+    ~~~~~~~
-+!!! error TS2304: Cannot find name 'exports'.
 +    
 +    /**
 +     * @param {Thing} x
@@ -48,8 +43,6 @@
 +    function useThing(x) {}
 +    
 +    exports.useThing = useThing;
-+    ~~~~~~~
-+!!! error TS2304: Cannot find name 'exports'.
 +    
 +    /**
 +     * @param {(x: Thing) => void} x
@@ -59,6 +52,4 @@
 +    function cbThing(x) {}
 +    
 +    exports.cbThing = cbThing;
-+    ~~~~~~~
-+!!! error TS2304: Cannot find name 'exports'.
 +    

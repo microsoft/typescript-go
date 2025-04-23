@@ -41,9 +41,9 @@ const allRules = {
 
 module.exports = {
 >module.exports = {  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
+>module : { export=: { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }; }
+>exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
 >{  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
 
   plugins: {
@@ -83,9 +83,9 @@ function config(...configs) { }
 
 module.exports = { config };
 >module.exports = { config } : { config: (...configs: any[]) => void; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { config: (...configs: any[]) => void; }
+>module : { export=: { config: (...configs: any[]) => void; }; }
+>exports : { config: (...configs: any[]) => void; }
 >{ config } : { config: (...configs: any[]) => void; }
 >config : (...configs: any[]) => void
 

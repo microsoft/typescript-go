@@ -5,15 +5,13 @@
 @@= skipped --1, +1 lines =@@
 +index.js(1,47): error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
 +index.js(3,37): error TS2694: Namespace '"module".export=' has no exported member 'TaskGroup'.
-+index.js(21,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(21,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +module.js(11,38): error TS2304: Cannot find name 'P'.
 +module.js(24,12): error TS2315: Type 'Object' is not generic.
-+module.js(27,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +module.js(27,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
 +
-+==== index.js (4 errors) ====
++==== index.js (3 errors) ====
 +    const {taskGroups, taskNameToGroup} = require('./module.js');
 +                                                  ~~~~~~~~~~~~~
 +!!! error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
@@ -39,11 +37,9 @@
 +    }
 +    
 +    module.exports = MainThreadTasks;
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
-+==== module.js (4 errors) ====
++==== module.js (3 errors) ====
 +    /** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
 +    
 +    /**
@@ -75,8 +71,6 @@
 +    const taskNameToGroup = {};
 +    
 +    module.exports = {
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    ~~~~~~~~~~~~~~~~~~
 +        taskGroups,
 +    ~~~~~~~~~~~~~~~

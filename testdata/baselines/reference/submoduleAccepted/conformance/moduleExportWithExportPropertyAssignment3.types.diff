@@ -71,11 +71,11 @@
 ->module : { exports: { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }; }
 ->exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }
 ->bothBefore : number | "string"
-+>module.exports.bothBefore : any
-+>module.exports : any
-+>module : { exports: any; }
-+>exports : any
-+>bothBefore : any
++>module.exports.bothBefore : number
++>module.exports : { justExport: number; bothBefore: number; bothAfter: number; }
++>module : { export=: { justExport: number; bothBefore: number; bothAfter: number; }; }
++>exports : { justExport: number; bothBefore: number; bothAfter: number; }
++>bothBefore : number
  >'string' : "string"
  
  module.exports = {
@@ -84,9 +84,9 @@
 ->module : { exports: { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }; }
 ->exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }
 +>module.exports = {    justExport: 1,    bothBefore: 2,    bothAfter: 3,} : { justExport: number; bothBefore: number; bothAfter: number; }
-+>module.exports : any
-+>module : { exports: any; }
-+>exports : any
++>module.exports : { justExport: number; bothBefore: number; bothAfter: number; }
++>module : { export=: { justExport: number; bothBefore: number; bothAfter: number; }; }
++>exports : { justExport: number; bothBefore: number; bothAfter: number; }
  >{    justExport: 1,    bothBefore: 2,    bothAfter: 3,} : { justExport: number; bothBefore: number; bothAfter: number; }
  
      justExport: 1,
@@ -99,11 +99,11 @@
 ->module : { exports: { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }; }
 ->exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }
 ->bothAfter : number | "string"
-+>module.exports.bothAfter : any
-+>module.exports : any
-+>module : { exports: any; }
-+>exports : any
-+>bothAfter : any
++>module.exports.bothAfter : number
++>module.exports : { justExport: number; bothBefore: number; bothAfter: number; }
++>module : { export=: { justExport: number; bothBefore: number; bothAfter: number; }; }
++>exports : { justExport: number; bothBefore: number; bothAfter: number; }
++>bothAfter : number
  >'string' : "string"
  
  module.exports.justProperty = 'string'
@@ -114,9 +114,9 @@
 ->exports : { justExport: number; bothBefore: number | "string"; bothAfter: number | "string"; justProperty: "string"; }
 ->justProperty : "string"
 +>module.exports.justProperty : any
-+>module.exports : any
-+>module : { exports: any; }
-+>exports : any
++>module.exports : { justExport: number; bothBefore: number; bothAfter: number; }
++>module : { export=: { justExport: number; bothBefore: number; bothAfter: number; }; }
++>exports : { justExport: number; bothBefore: number; bothAfter: number; }
 +>justProperty : any
  >'string' : "string"
  

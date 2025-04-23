@@ -1,20 +1,16 @@
-lib.js(14,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 main.js(1,51): error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
-main.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== main.js (2 errors) ====
+==== main.js (1 errors) ====
     const { SomeClass, SomeClass: Another } = require('./lib');
                                                       ~~~~~~~
 !!! error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
     
     module.exports = {
-    ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
         SomeClass,
         Another
     }
-==== lib.js (1 errors) ====
+==== lib.js (0 errors) ====
     /**
      * @param {string} a
      */
@@ -29,8 +25,6 @@ main.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install ty
     }
     
     module.exports = {
-    ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
         bar,
         SomeClass
     }

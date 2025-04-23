@@ -55,8 +55,8 @@ class Chunk {
 }
 module.exports = Chunk;
 >module.exports = Chunk : typeof Chunk
->module.exports : any
->module : { exports: any; }
->exports : any
+>module.exports : typeof Chunk
+>module : { Chunk: typeof Chunk; }
+>exports : typeof Chunk
 >Chunk : typeof Chunk
 

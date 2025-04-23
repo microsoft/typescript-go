@@ -38,7 +38,9 @@ declare var module: any;
 === minimatch.js ===
 /// <reference path='./types.d.ts'/>
 module.exports = minimatch
->module : Symbol(module, Decl(types.d.ts, 1, 11))
+>module.exports : Symbol(minimatch, Decl(minimatch.js, 6, 1))
+>module : Symbol(module.exports)
+>exports : Symbol(minimatch, Decl(minimatch.js, 6, 1))
 >minimatch : Symbol(minimatch, Decl(minimatch.js, 6, 1))
 
 minimatch.M = M

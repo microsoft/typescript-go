@@ -11,9 +11,9 @@ const MW = require("./MW");
 
 module.exports = class MC {
 >module.exports = class MC {  watch() {    return new MW(this);  }} : typeof MC
->module.exports : any
->module : any
->exports : any
+>module.exports : typeof MC
+>module : { MC: typeof MC; }
+>exports : typeof MC
 >class MC {  watch() {    return new MW(this);  }} : typeof MC
 >MC : typeof MC
 
@@ -50,8 +50,8 @@ class MW {
 
 module.exports = MW;
 >module.exports = MW : typeof MW
->module.exports : any
->module : any
->exports : any
+>module.exports : typeof MW
+>module : { MW: typeof MW; }
+>exports : typeof MW
 >MW : typeof MW
 

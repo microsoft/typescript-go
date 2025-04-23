@@ -6,12 +6,11 @@
  exports.A = function () {
 ->exports.A = function () {    this.x = 1;} : typeof A
 ->exports.A : typeof A
-->exports : typeof import("a-ext")
-->A : typeof A
-->function () {    this.x = 1;} : typeof A
 +>exports.A = function () {    this.x = 1;} : () => void
 +>exports.A : any
-+>exports : any
+ >exports : typeof import("a-ext")
+->A : typeof A
+->function () {    this.x = 1;} : typeof A
 +>A : any
 +>function () {    this.x = 1;} : () => void
  
@@ -28,7 +27,7 @@
  === a.js ===
  const { A } = require("./a-ext");
 ->A : typeof A
-+>A : () => void
++>A : any
  >require("./a-ext") : typeof import("a-ext")
  >require : (id: string) => any
  >"./a-ext" : "./a-ext"
@@ -44,16 +43,6 @@
  
  === b-ext.js ===
  exports.B = class {
- >exports.B = class {    constructor() {        this.x = 1;    }} : typeof B
-->exports.B : typeof B
-->exports : typeof import("b-ext")
-->B : typeof B
-+>exports.B : any
-+>exports : any
-+>B : any
- >class {    constructor() {        this.x = 1;    }} : typeof B
- 
-     constructor() {
 @@= skipped -33, +33 lines =@@
  function b(p) { p.x; }
  >b : (p: B) => void

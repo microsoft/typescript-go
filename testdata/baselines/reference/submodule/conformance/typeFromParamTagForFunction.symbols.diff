@@ -1,13 +1,12 @@
 --- old.typeFromParamTagForFunction.symbols
 +++ new.typeFromParamTagForFunction.symbols
-@@= skipped -10, +10 lines =@@
- 
+@@= skipped -11, +11 lines =@@
  === a-ext.js ===
  exports.A = function () {
-->exports.A : Symbol(A, Decl(a-ext.js, 0, 0))
+ >exports.A : Symbol(A, Decl(a-ext.js, 0, 0))
 ->exports : Symbol(A, Decl(a-ext.js, 0, 0))
-->A : Symbol(A, Decl(a-ext.js, 0, 0))
-+>exports : Symbol(exports, Decl(node.d.ts, 1, 24))
++>exports : Symbol("a-ext", Decl(a-ext.js, 0, 0))
+ >A : Symbol(A, Decl(a-ext.js, 0, 0))
  
      this.x = 1;
 ->this.x : Symbol(A.x, Decl(a-ext.js, 0, 25))
@@ -17,7 +16,7 @@
  };
  
  === a.js ===
-@@= skipped -21, +15 lines =@@
+@@= skipped -20, +16 lines =@@
  function a(p) { p.x; }
  >a : Symbol(a, Decl(a.js, 0, 33))
  >p : Symbol(p, Decl(a.js, 3, 11))
@@ -27,10 +26,10 @@
  
  === b-ext.js ===
  exports.B = class {
-->exports.B : Symbol(B, Decl(b-ext.js, 0, 0))
+ >exports.B : Symbol(B, Decl(b-ext.js, 0, 0))
 ->exports : Symbol(B, Decl(b-ext.js, 0, 0))
-->B : Symbol(B, Decl(b-ext.js, 0, 0))
-+>exports : Symbol(exports, Decl(node.d.ts, 1, 24))
++>exports : Symbol("b-ext", Decl(b-ext.js, 0, 0))
+ >B : Symbol(B, Decl(b-ext.js, 0, 0))
  
      constructor() {
          this.x = 1;
@@ -40,7 +39,7 @@
      }
  };
  
-@@= skipped -28, +22 lines =@@
+@@= skipped -28, +24 lines =@@
  function b(p) { p.x; }
  >b : Symbol(b, Decl(b.js, 0, 33))
  >p : Symbol(p, Decl(b.js, 3, 11))

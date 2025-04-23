@@ -23,9 +23,9 @@
 ->exports : typeof Timer
 ->Timer : typeof Timer
 +>module.exports = Timer : (timeout: number) => void
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : (timeout: number) => void
++>module : { Timer: (timeout: number) => void; }
++>exports : (timeout: number) => void
 +>Timer : (timeout: number) => void
  
  === hook.js ===
@@ -53,9 +53,9 @@
 ->exports : typeof Hook
 ->Hook : typeof Hook
 +>module.exports = Hook : (handle: HookHandler) => void
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : (handle: HookHandler) => void
++>module : { Hook: (handle: HookHandler) => void; }
++>exports : (handle: HookHandler) => void
 +>Hook : (handle: HookHandler) => void
  
  === context.js ===
@@ -137,8 +137,8 @@
 ->exports : { (input: Input): Context; new (input: Input): Context; prototype: { construct(input: Input, handle?: HookHandler | undefined): State; }; }
 ->Context : typeof Context
 +>module.exports = Context : { (input: Input): any; prototype: { construct: (input: Input, handle?: any) => State; }; }
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : { (input: Input): any; prototype: { construct: (input: Input, handle?: any) => State; }; }
++>module : { Context: { (input: Input): any; prototype: { construct: (input: Input, handle?: any) => State; }; }; }
++>exports : { (input: Input): any; prototype: { construct: (input: Input, handle?: any) => State; }; }
 +>Context : { (input: Input): any; prototype: { construct: (input: Input, handle?: any) => State; }; }
  

@@ -1,17 +1,23 @@
 --- old.modulePreserve4.types
 +++ new.modulePreserve4.types
-@@= skipped -42, +42 lines =@@
- === /g.js ===
- exports.default = 0;
- >exports.default = 0 : 0
-->exports.default : 0
-->exports : typeof import("/g")
-->default : 0
-+>exports.default : any
-+>exports : any
-+>default : any
+@@= skipped -6, +6 lines =@@
+ 
+ module.exports.y = 0; // Error
+ >module.exports.y = 0 : 0
+->module.exports.y : any
+->module.exports : any
+->module : any
+->exports : any
+->y : any
++>module.exports.y : 0
++>module.exports : typeof import("/a")
++>module : { "/a": typeof import("/a"); }
++>exports : typeof import("/a")
++>y : 0
  >0 : 0
  
+ === /b.ts ===
+@@= skipped -44, +44 lines =@@
  === /main1.ts ===
  import { x, y } from "./a"; // No y
  >x : 0
@@ -24,7 +30,7 @@
  
  const a2 = require("./a"); // Error in TS
  >a2 : any
-@@= skipped -20, +20 lines =@@
+@@= skipped -12, +12 lines =@@
  >"./a" : "./a"
  
  const a3 = await import("./a"); // { x: 0 }
@@ -224,15 +230,3 @@
  >require : any
  >"./g" : "./g"
  
- === /main4.cjs ===
- exports.x = require("./g");
- >exports.x = require("./g") : typeof import("/g")
-->exports.x : typeof import("/g")
-->exports : typeof import("/main4")
-->x : typeof import("/g")
-+>exports.x : any
-+>exports : any
-+>x : any
- >require("./g") : typeof import("/g")
- >require : any
- >"./g" : "./g"

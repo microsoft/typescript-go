@@ -7,15 +7,12 @@
 +=== test.js ===
  module.exports = {
  >module.exports = {   message: ""} : { message: string; }
-->module.exports : { message: string; }
+ >module.exports : { message: string; }
 ->module : { exports: { message: string; }; }
-->exports : { message: string; }
-+>module.exports : any
-+>module : any
-+>exports : any
++>module : { export=: { message: string; }; }
+ >exports : { message: string; }
  >{   message: ""} : { message: string; }
  
-    message: ""
 @@= skipped -12, +12 lines =@@
  >"" : ""
  }

@@ -29,10 +29,10 @@ const chalk = {
 };
 module.exports.chalk = chalk
 >module.exports.chalk = chalk : { grey: {}; }
->module.exports.chalk : any
->module.exports : any
->module : any
->exports : any
->chalk : any
+>module.exports.chalk : { grey: {}; }
+>module.exports : typeof import("mod1")
+>module : { "mod1": typeof import("mod1"); }
+>exports : typeof import("mod1")
+>chalk : { grey: {}; }
 >chalk : { grey: {}; }
 

@@ -29,9 +29,14 @@ class Foo { } // should error
 
 /** @typedef {number} Bar */
 exports.Bar = class { }
+>exports : Symbol("mod1", Decl(mod1.js, 0, 0))
 
 /** @typedef {number} Baz */
 module.exports = {
+>module.exports : Symbol(export=, Decl(mod1.js, 6, 23))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod1.js, 6, 23))
+
     Baz: class { }
 >Baz : Symbol(Baz, Decl(mod1.js, 9, 18))
 }
@@ -44,9 +49,14 @@ var Qux = 2;
 
 /** @typedef {number} Quid */
 exports.Quid = 2;
+>exports : Symbol("mod1", Decl(mod1.js, 0, 0))
 
 /** @typedef {number} Quack */
 module.exports = {
+>module.exports : Symbol(export=, Decl(mod1.js, 6, 23))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod1.js, 6, 23))
+
     Quack: 2
 >Quack : Symbol(Quack, Decl(mod1.js, 22, 18))
 }

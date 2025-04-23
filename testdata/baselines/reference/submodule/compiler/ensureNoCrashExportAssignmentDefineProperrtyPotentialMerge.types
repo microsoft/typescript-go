@@ -9,9 +9,9 @@ const _item = require("./namespacer");
 
 module.exports = 12;
 >module.exports = 12 : 12
->module.exports : any
->module : any
->exports : any
+>module.exports : 12
+>module : { export=: 12; }
+>exports : 12
 >12 : 12
 
 Object.defineProperty(module, "exports", { value: "oh no" });
@@ -40,9 +40,9 @@ A.bar = class Q {}
 
 module.exports = A;
 >module.exports = A : {}
->module.exports : any
->module : any
->exports : any
+>module.exports : {}
+>module : { readonly A: {}; }
+>exports : {}
 >A : {}
 
 === namespacer.js ===
@@ -74,8 +74,8 @@ Object.defineProperty(B, "NS", { value: "why though", writable: true });
 
 module.exports = B;
 >module.exports = B : {}
->module.exports : any
->module : any
->exports : any
+>module.exports : {}
+>module : { readonly B: {}; }
+>exports : {}
 >B : {}
 

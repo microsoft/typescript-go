@@ -56,14 +56,13 @@
  exports.K = NS.K;
 ->exports.K = NS.K : typeof K
 ->exports.K : typeof K
-->exports : typeof import("mod1")
++>exports.K = NS.K : any
++>exports.K : any
+ >exports : typeof import("mod1")
 ->K : typeof K
 ->NS.K : typeof K
 ->NS : typeof NS
 ->K : typeof K
-+>exports.K = NS.K : any
-+>exports.K : any
-+>exports : any
 +>K : any
 +>NS.K : any
 +>NS : {}

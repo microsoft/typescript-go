@@ -11,9 +11,9 @@
 ->function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : typeof MC
 ->MC : typeof MC
 +>module.exports = function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => MW
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : () => MW
++>module : { export=: () => MW; }
++>exports : () => MW
 +>function MC() {    /** @type {any} */    var x = {}    return new MW(x);} : () => MW
 +>MC : () => MW
  
@@ -39,11 +39,9 @@
  
  module.exports = MW;
  >module.exports = MW : typeof MW
-->module.exports : typeof MW
+ >module.exports : typeof MW
 ->module : { exports: typeof MW; }
-->exports : typeof MW
-+>module.exports : any
-+>module : any
-+>exports : any
++>module : { MW: typeof MW; }
+ >exports : typeof MW
  >MW : typeof MW
  

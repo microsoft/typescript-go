@@ -9,6 +9,10 @@ const { SomeClass, SomeClass: Another } = require('./lib');
 >'./lib' : Symbol("lib", Decl(lib.js, 0, 0))
 
 module.exports = {
+>module.exports : Symbol(export=, Decl(main.js, 0, 59))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(main.js, 0, 59))
+
     SomeClass,
 >SomeClass : Symbol(SomeClass, Decl(main.js, 2, 18))
 
@@ -39,6 +43,10 @@ class SomeClass {
 }
 
 module.exports = {
+>module.exports : Symbol(export=, Decl(lib.js, 11, 1))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(lib.js, 11, 1))
+
     bar,
 >bar : Symbol(bar, Decl(lib.js, 13, 18))
 

@@ -109,24 +109,22 @@
 ->F : typeof F
 ->F : typeof F
 +>module.exports.F = F : () => void
-+>module.exports.F : any
-+>module.exports : any
-+>module : any
-+>exports : any
-+>F : any
++>module.exports.F : () => void
++>module.exports : typeof import("lateBoundAssignmentDeclarationSupport6")
++>module : { "lateBoundAssignmentDeclarationSupport6": typeof import("lateBoundAssignmentDeclarationSupport6"); }
++>exports : typeof import("lateBoundAssignmentDeclarationSupport6")
++>F : () => void
 +>F : () => void
  
  module.exports.S = _sym;
  >module.exports.S = _sym : unique symbol
-->module.exports.S : unique symbol
+ >module.exports.S : unique symbol
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-->S : unique symbol
-+>module.exports.S : any
-+>module.exports : any
-+>module : any
-+>exports : any
-+>S : any
++>module.exports : typeof import("lateBoundAssignmentDeclarationSupport6")
++>module : { "lateBoundAssignmentDeclarationSupport6": typeof import("lateBoundAssignmentDeclarationSupport6"); }
++>exports : typeof import("lateBoundAssignmentDeclarationSupport6")
+ >S : unique symbol
  >_sym : unique symbol
  

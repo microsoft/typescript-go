@@ -44,9 +44,9 @@ class Rectangle {
 
 module.exports = { Rectangle };
 >module.exports = { Rectangle } : { Rectangle: typeof Rectangle; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { Rectangle: typeof Rectangle; }
+>module : { export=: { Rectangle: typeof Rectangle; }; }
+>exports : { Rectangle: typeof Rectangle; }
 >{ Rectangle } : { Rectangle: typeof Rectangle; }
 >Rectangle : typeof Rectangle
 
@@ -101,9 +101,9 @@ class Render {
 
 module.exports = { Render };
 >module.exports = { Render } : { Render: typeof Render; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { Render: typeof Render; }
+>module : { export=: { Render: typeof Render; }; }
+>exports : { Render: typeof Render; }
 >{ Render } : { Render: typeof Render; }
 >Render : typeof Render
 

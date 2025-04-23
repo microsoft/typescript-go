@@ -55,9 +55,9 @@ const ns = require("./cls");
 
 module.exports = { ns };
 >module.exports = { ns } : { ns: typeof import("cls"); }
->module.exports : any
->module : any
->exports : any
+>module.exports : { ns: typeof import("cls"); }
+>module : { export=: { ns: typeof import("cls"); }; }
+>exports : { ns: typeof import("cls"); }
 >{ ns } : { ns: typeof import("cls"); }
 >ns : typeof import("cls")
 
@@ -70,9 +70,9 @@ const ns = require("./cls");
 
 module.exports = ns;
 >module.exports = ns : typeof import("cls")
->module.exports : any
->module : any
->exports : any
+>module.exports : typeof import("cls")
+>module : { "cls": typeof import("cls"); }
+>exports : typeof import("cls")
 >ns : typeof import("cls")
 
 === cjs3.js ===
@@ -84,11 +84,11 @@ const ns = require("./cls");
 
 module.exports.ns = ns;
 >module.exports.ns = ns : typeof import("cls")
->module.exports.ns : any
->module.exports : any
->module : any
->exports : any
->ns : any
+>module.exports.ns : typeof import("cls")
+>module.exports : typeof import("cjs3")
+>module : { "cjs3": typeof import("cjs3"); }
+>exports : typeof import("cjs3")
+>ns : typeof import("cls")
 >ns : typeof import("cls")
 
 === cjs4.js ===
@@ -100,11 +100,11 @@ const ns = require("./cls");
 
 module.exports.names = ns;
 >module.exports.names = ns : typeof import("cls")
->module.exports.names : any
->module.exports : any
->module : any
->exports : any
->names : any
+>module.exports.names : typeof import("cls")
+>module.exports : typeof import("cjs4")
+>module : { "cjs4": typeof import("cjs4"); }
+>exports : typeof import("cjs4")
+>names : typeof import("cls")
 >ns : typeof import("cls")
 
 === includeAll.js ===

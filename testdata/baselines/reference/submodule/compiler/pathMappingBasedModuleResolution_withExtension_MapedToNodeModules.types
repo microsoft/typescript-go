@@ -7,9 +7,9 @@ import foobar from "foo/bar/foobar.js";
 === /node_modules/foo/bar/foobar.js ===
 module.exports = { a: 10 };
 >module.exports = { a: 10 } : { a: number; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { a: number; }
+>module : { export=: { a: number; }; }
+>exports : { a: number; }
 >{ a: 10 } : { a: number; }
 >a : number
 >10 : 10

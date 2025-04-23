@@ -43,9 +43,11 @@ declare function require(name: string): any;
 === mod1.js ===
 /// <reference path='./requires.d.ts' />
 module.exports.bothBefore = 'string'
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports.bothBefore : Symbol(bothBefore, Decl(mod1.js, 2, 16))
+>module.exports : Symbol(A, Decl(mod1.js, 5, 18))
+>module : Symbol(module.exports)
+>exports : Symbol(A, Decl(mod1.js, 5, 18))
+>bothBefore : Symbol(bothBefore, Decl(mod1.js, 2, 16))
 
 A.justExport = 4
 >A.justExport : Symbol(justExport, Decl(mod1.js, 1, 36))
@@ -63,9 +65,9 @@ A.bothAfter = 3
 >bothAfter : Symbol(bothAfter, Decl(mod1.js, 3, 16))
 
 module.exports = A
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports : Symbol(A, Decl(mod1.js, 5, 18))
+>module : Symbol(module.exports)
+>exports : Symbol(A, Decl(mod1.js, 5, 18))
 >A : Symbol(A, Decl(mod1.js, 5, 18))
 
 function A() {
@@ -74,12 +76,14 @@ function A() {
     this.p = 1
 }
 module.exports.bothAfter = 'string'
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports.bothAfter : Symbol(bothAfter, Decl(mod1.js, 3, 16))
+>module.exports : Symbol(A, Decl(mod1.js, 5, 18))
+>module : Symbol(module.exports)
+>exports : Symbol(A, Decl(mod1.js, 5, 18))
+>bothAfter : Symbol(bothAfter, Decl(mod1.js, 3, 16))
 
 module.exports.justProperty = 'string'
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports : Symbol(A, Decl(mod1.js, 5, 18))
+>module : Symbol(module.exports)
+>exports : Symbol(A, Decl(mod1.js, 5, 18))
 

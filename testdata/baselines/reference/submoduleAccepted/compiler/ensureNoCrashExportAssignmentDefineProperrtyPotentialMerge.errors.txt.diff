@@ -3,34 +3,28 @@
 @@= skipped -0, +0 lines =@@
 -namespacer.js(2,1): error TS2323: Cannot redeclare exported variable 'NS'.
 -namespacer.js(3,1): error TS2323: Cannot redeclare exported variable 'NS'.
-+index.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(3,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +namespacer.js(2,3): error TS2339: Property 'NS' does not exist on type '{}'.
-+namespacer.js(4,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +namespacey.js(2,3): error TS2339: Property 'bar' does not exist on type '{}'.
-+namespacey.js(3,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
  
  
 -==== index.js (0 errors) ====
-+==== index.js (2 errors) ====
++==== index.js (1 errors) ====
      const _item = require("./namespacer");
      module.exports = 12;
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
      Object.defineProperty(module, "exports", { value: "oh no" });
 +                          ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
      
 -==== namespacey.js (0 errors) ====
-+==== namespacey.js (2 errors) ====
++==== namespacey.js (1 errors) ====
      const A = {}
      A.bar = class Q {}
 +      ~~~
 +!!! error TS2339: Property 'bar' does not exist on type '{}'.
      module.exports = A;
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
- ==== namespacer.js (2 errors) ====
+-==== namespacer.js (2 errors) ====
++==== namespacer.js (1 errors) ====
      const B = {}
      B.NS = require("./namespacey");
 -    ~~~~
@@ -41,6 +35,4 @@
 -    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS2323: Cannot redeclare exported variable 'NS'.
      module.exports = B;
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
      

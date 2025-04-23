@@ -20,9 +20,9 @@
 ->m : typeof m
 ->default : { (): void; memberName: "thing"; }
 +>module.exports = m.default : () => void
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : () => void
++>module : { validate: () => void; }
++>exports : () => void
 +>m.default : () => void
 +>m : typeof import("exporter")
 +>default : () => void
@@ -35,9 +35,9 @@
 ->exports : typeof m.default
 ->memberName : "thing"
 +>module.exports.memberName : any
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : () => void
++>module : { validate: () => void; }
++>exports : () => void
 +>memberName : any
  >"thing" : "thing"
  

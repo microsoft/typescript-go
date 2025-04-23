@@ -33,6 +33,10 @@ const allRules = {
 }
 
 module.exports = {
+>module.exports : Symbol(export=, Decl(eslint-plugin-react.js, 6, 1))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(eslint-plugin-react.js, 6, 1))
+
   plugins: {
 >plugins : Symbol(plugins, Decl(eslint-plugin-react.js, 8, 18))
 
@@ -67,5 +71,8 @@ function config(...configs) { }
 >configs : Symbol(configs, Decl(typescript-eslint.js, 11, 16))
 
 module.exports = { config };
+>module.exports : Symbol(export=, Decl(typescript-eslint.js, 11, 31))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(typescript-eslint.js, 11, 31))
 >config : Symbol(config, Decl(typescript-eslint.js, 13, 18))
 

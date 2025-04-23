@@ -4,7 +4,6 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +main.js(2,13): error TS2749: 'K' refers to a value, but is being used as a type here. Did you mean 'typeof K'?
-+mod1.js(6,1): error TS2304: Cannot find name 'exports'.
 +
 +
 +==== main.js (1 errors) ====
@@ -16,13 +15,11 @@
 +        k.values()
 +    }
 +    
-+==== mod1.js (1 errors) ====
++==== mod1.js (0 errors) ====
 +    class K {
 +        values() {
 +            return new K()
 +        }
 +    }
 +    exports.K = K;
-+    ~~~~~~~
-+!!! error TS2304: Cannot find name 'exports'.
 +    

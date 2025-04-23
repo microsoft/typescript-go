@@ -26,8 +26,8 @@ u.noError()
 === node_modules/untyped/index.js ===
 module.exports = {}
 >module.exports = {} : {}
->module.exports : any
->module : any
->exports : any
+>module.exports : {}
+>module : { export=: {}; }
+>exports : {}
 >{} : {}
 

@@ -17,9 +17,9 @@
 ->module : typeof module
 ->exports : number
 +>module.exports = 12 : 12
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : 12
++>module : { export=: 12; }
++>exports : 12
  >12 : 12
  
  Object.defineProperty(module, "exports", { value: "oh no" });
@@ -59,9 +59,9 @@
 ->exports : typeof A
 ->A : typeof A
 +>module.exports = A : {}
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : {}
++>module : { readonly A: {}; }
++>exports : {}
 +>A : {}
  
  === namespacer.js ===
@@ -105,8 +105,8 @@
 ->exports : typeof B
 ->B : typeof B
 +>module.exports = B : {}
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : {}
++>module : { readonly B: {}; }
++>exports : {}
 +>B : {}
  

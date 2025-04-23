@@ -9,9 +9,9 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 +>module.exports = {    thing} : { thing: number; }
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : { thing: number; }
++>module : { export=: { thing: number; }; }
++>exports : { thing: number; }
  >{    thing} : { thing: number; }
  
      thing

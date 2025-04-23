@@ -12,6 +12,9 @@
 ->module : Symbol(export=, Decl(index.js, 0, 32))
 ->exports : Symbol(export=, Decl(index.js, 0, 32))
 ->m.default : Symbol(m.default, Decl(exporter.js, 0, 22))
++>module.exports : Symbol(validate, Decl(exporter.js, 0, 0))
++>module : Symbol(module.exports)
++>exports : Symbol(validate, Decl(exporter.js, 0, 0))
 +>m.default : Symbol(default, Decl(exporter.js, 0, 22))
  >m : Symbol(m, Decl(index.js, 0, 5))
 ->default : Symbol(m.default, Decl(exporter.js, 0, 22))
@@ -23,6 +26,9 @@
 ->module : Symbol(module, Decl(index.js, 0, 32))
 ->exports : Symbol(module.exports, Decl(index.js, 0, 0))
 ->memberName : Symbol(memberName, Decl(index.js, 2, 27))
++>module.exports : Symbol(validate, Decl(exporter.js, 0, 0))
++>module : Symbol(module.exports)
++>exports : Symbol(validate, Decl(exporter.js, 0, 0))
  
  === exporter.js ===
  function validate() {}

@@ -1,15 +1,17 @@
 --- old.exportPropertyAssignmentNameResolution.symbols
 +++ new.exportPropertyAssignmentNameResolution.symbols
-@@= skipped -1, +1 lines =@@
- 
+@@= skipped -2, +2 lines =@@
  === bug24492.js ===
  module.exports.D = class { }
-->module.exports.D : Symbol(D, Decl(bug24492.js, 0, 0))
+ >module.exports.D : Symbol(D, Decl(bug24492.js, 0, 0))
 ->module.exports : Symbol(D, Decl(bug24492.js, 0, 0))
 ->module : Symbol(module, Decl(bug24492.js, 0, 0))
 ->exports : Symbol(module.exports, Decl(bug24492.js, 0, 0))
-+new D()
++>module.exports : Symbol("bug24492", Decl(bug24492.js, 0, 0))
++>module : Symbol(module.exports)
++>exports : Symbol("bug24492", Decl(bug24492.js, 0, 0))
  >D : Symbol(D, Decl(bug24492.js, 0, 0))
  
--new D()
--
+ new D()
++>D : Symbol(D, Decl(bug24492.js, 0, 0))
+ 

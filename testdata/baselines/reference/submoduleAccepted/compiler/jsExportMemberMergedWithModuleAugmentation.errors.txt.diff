@@ -5,19 +5,10 @@
 +/index.ts(1,23): error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
 +/index.ts(3,16): error TS2671: Cannot augment module './test' because it resolves to a non-module entity.
 +/index.ts(11,10): error TS2749: 'Abcde' refers to a value, but is being used as a type here. Did you mean 'typeof Abcde'?
-+/test.js(6,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
  
  
--==== /test.js (0 errors) ====
-+==== /test.js (1 errors) ====
-     class Abcde {
-       /** @type {string} */
-       x;
-     }
-     
-     module.exports = {
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+ ==== /test.js (0 errors) ====
+@@= skipped -10, +12 lines =@@
        Abcde
      };
      
@@ -33,7 +24,7 @@
        interface Abcde { b: string }
      }
      
-@@= skipped -22, +31 lines =@@
+@@= skipped -12, +16 lines =@@
      // Bug: the type meaning from /test.js does not
      // propagate through the object literal export.
      const x: Abcde = { b: "" };

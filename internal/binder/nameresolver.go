@@ -13,6 +13,7 @@ type NameResolver struct {
 	Globals                          ast.SymbolTable
 	ArgumentsSymbol                  *ast.Symbol
 	RequireSymbol                    *ast.Symbol
+	GetModuleSymbol                  func(sourceFile *ast.Node) *ast.Symbol
 	Lookup                           func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
 	SymbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
 	SetRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
@@ -304,6 +305,24 @@ loop:
 		}
 	}
 	if result == nil {
+		// TODO: Move this to the next == nil block, or move the other up here.
+		if lastLocation != nil &&
+			lastLocation.Kind == ast.KindSourceFile &&
+			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
+			name == "exports" &&
+			meaning&lastLocation.Symbol().Flags != 0 {
+			return lastLocation.Symbol()
+		}
+		if lastLocation != nil &&
+			r.GetModuleSymbol != nil &&
+			lastLocation.Kind == ast.KindSourceFile &&
+			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
+			name == "module" &&
+			originalLocation.Parent != nil &&
+			ast.IsModuleExportsAccessExpression(originalLocation.Parent) &&
+			meaning&lastLocation.Symbol().Flags != 0 {
+			return r.GetModuleSymbol(lastLocation)
+		}
 		if !excludeGlobals {
 			result = r.lookup(r.Globals, name, meaning|ast.SymbolFlagsGlobalLookup)
 		}

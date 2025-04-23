@@ -54,19 +54,19 @@ F[_str] = "ok";
 
 module.exports.F = F;
 >module.exports.F = F : { (): void; F[_sym]: string; F[_str]: string; }
->module.exports.F : any
->module.exports : any
->module : any
->exports : any
->F : any
+>module.exports.F : { (): void; F[_sym]: string; F[_str]: string; }
+>module.exports : typeof import("lateBoundAssignmentDeclarationSupport7")
+>module : { "lateBoundAssignmentDeclarationSupport7": typeof import("lateBoundAssignmentDeclarationSupport7"); }
+>exports : typeof import("lateBoundAssignmentDeclarationSupport7")
+>F : { (): void; F[_sym]: string; F[_str]: string; }
 >F : { (): void; F[_sym]: string; F[_str]: string; }
 
 module.exports.S = _sym;
 >module.exports.S = _sym : unique symbol
->module.exports.S : any
->module.exports : any
->module : any
->exports : any
->S : any
+>module.exports.S : unique symbol
+>module.exports : typeof import("lateBoundAssignmentDeclarationSupport7")
+>module : { "lateBoundAssignmentDeclarationSupport7": typeof import("lateBoundAssignmentDeclarationSupport7"); }
+>exports : typeof import("lateBoundAssignmentDeclarationSupport7")
+>S : unique symbol
 >_sym : unique symbol
 

@@ -18,9 +18,9 @@ const thing = new Something();
 
 module.exports = {
 >module.exports = {    thing} : { thing: Something; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { thing: Something; }
+>module : { export=: { thing: Something; }; }
+>exports : { thing: Something; }
 >{    thing} : { thing: Something; }
 
     thing

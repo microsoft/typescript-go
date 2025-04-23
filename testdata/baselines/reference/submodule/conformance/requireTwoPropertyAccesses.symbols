@@ -18,6 +18,10 @@ console.log(value)
 
 === mod.js ===
 module.exports = {
+>module.exports : Symbol(export=, Decl(mod.js, 0, 0))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod.js, 0, 0))
+
     x: {
 >x : Symbol(x, Decl(mod.js, 0, 18))
 

@@ -59,19 +59,19 @@
 ->b : Symbol(B.b, Decl(mod.js, 4, 22))
  }
  exports.A = A
-->exports.A : Symbol(A, Decl(mod.js, 6, 1))
+ >exports.A : Symbol(A, Decl(mod.js, 6, 1))
 ->exports : Symbol(A, Decl(mod.js, 6, 1))
-->A : Symbol(A, Decl(mod.js, 6, 1))
++>exports : Symbol("mod", Decl(mod.js, 0, 0))
+ >A : Symbol(A, Decl(mod.js, 6, 1))
 ->A : Symbol(A, Decl(mod.js, 1, 3), Decl(mod.js, 8, 13))
-+>exports : Symbol(exports, Decl(types.d.ts, 1, 11))
 +>A : Symbol(A, Decl(mod.js, 1, 3))
  
  exports.B = B
-->exports.B : Symbol(B, Decl(mod.js, 7, 13))
+ >exports.B : Symbol(B, Decl(mod.js, 7, 13))
 ->exports : Symbol(B, Decl(mod.js, 7, 13))
-->B : Symbol(B, Decl(mod.js, 7, 13))
++>exports : Symbol("mod", Decl(mod.js, 0, 0))
+ >B : Symbol(B, Decl(mod.js, 7, 13))
 ->B : Symbol(B, Decl(mod.js, 4, 3), Decl(mod.js, 9, 13))
-+>exports : Symbol(exports, Decl(types.d.ts, 1, 11))
 +>B : Symbol(B, Decl(mod.js, 4, 3))
  
  A.prototype = B.prototype = {

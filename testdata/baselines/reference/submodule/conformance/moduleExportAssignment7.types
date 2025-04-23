@@ -22,9 +22,9 @@ function bar() { return 4 }
 /** @typedef {() => number} buz */
 module.exports = {
 >module.exports = {    Thing,    AnotherThing,    foo,    qux: bar,    baz() { return 5 },    literal: "",} : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz: () => number; literal: string; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz: () => number; literal: string; }
+>module : { export=: { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz: () => number; literal: string; }; }
+>exports : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz: () => number; literal: string; }
 >{    Thing,    AnotherThing,    foo,    qux: bar,    baz() { return 5 },    literal: "",} : { Thing: typeof Thing; AnotherThing: typeof AnotherThing; foo: () => number; qux: () => number; baz: () => number; literal: string; }
 
     Thing,

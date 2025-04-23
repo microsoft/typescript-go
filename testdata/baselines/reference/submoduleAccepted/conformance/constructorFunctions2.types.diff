@@ -95,8 +95,8 @@
 ->exports : typeof A
 ->A : typeof A
 +>module.exports = A : () => void
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : () => void
++>module : { A: () => void; }
++>exports : () => void
 +>A : () => void
  

@@ -19,9 +19,9 @@ class Conn {
 
 module.exports = Conn;
 >module.exports = Conn : typeof Conn
->module.exports : any
->module : any
->exports : any
+>module.exports : typeof Conn
+>module : { Conn: typeof Conn; }
+>exports : typeof Conn
 >Conn : typeof Conn
 
 === usage.js ===
@@ -59,9 +59,9 @@ class Wrap {
 
 module.exports = {
 >module.exports = {    Wrap} : { Wrap: typeof Wrap; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { Wrap: typeof Wrap; }
+>module : { export=: { Wrap: typeof Wrap; }; }
+>exports : { Wrap: typeof Wrap; }
 >{    Wrap} : { Wrap: typeof Wrap; }
 
     Wrap

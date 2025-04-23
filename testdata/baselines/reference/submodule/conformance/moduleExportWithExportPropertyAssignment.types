@@ -31,18 +31,18 @@ declare function require(name: string): any;
 /// <reference path='./requires.d.ts' />
 module.exports = function () { }
 >module.exports = function () { } : () => void
->module.exports : any
->module : { exports: any; }
->exports : any
+>module.exports : () => void
+>module : { export=: () => void; }
+>exports : () => void
 >function () { } : () => void
 
 /** @param {number} a */
 module.exports.f = function (a) { }
 >module.exports.f = function (a) { } : (a: any) => void
 >module.exports.f : any
->module.exports : any
->module : { exports: any; }
->exports : any
+>module.exports : () => void
+>module : { export=: () => void; }
+>exports : () => void
 >f : any
 >function (a) { } : (a: any) => void
 >a : any

@@ -25,14 +25,14 @@ declare function require(name: string): any;
 === mod1.js ===
 /// <reference path='./requires.d.ts' />
 module.exports = function () { }
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports : Symbol(export=, Decl(mod1.js, 0, 0))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod1.js, 0, 0))
 
 /** @param {number} a */
 module.exports.f = function (a) { }
->module.exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
->module : Symbol(module, Decl(requires.d.ts, 0, 11))
->exports : Symbol(exports, Decl(requires.d.ts, 0, 21))
+>module.exports : Symbol(export=, Decl(mod1.js, 0, 0))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(mod1.js, 0, 0))
 >a : Symbol(a, Decl(mod1.js, 3, 29))
 

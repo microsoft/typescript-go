@@ -10,9 +10,9 @@ class Alias {
 }
 module.exports = Alias;
 >module.exports = Alias : typeof Alias
->module.exports : any
->module : any
->exports : any
+>module.exports : typeof Alias
+>module : { Alias: typeof Alias; }
+>exports : typeof Alias
 >Alias : typeof Alias
 
 === main.js ===

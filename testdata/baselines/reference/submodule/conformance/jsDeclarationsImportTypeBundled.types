@@ -15,9 +15,9 @@ const x = {x: 12};
 
 module.exports = x;
 >module.exports = x : { x: number; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { x: number; }
+>module : { readonly x: { x: number; }; }
+>exports : { x: number; }
 >x : { x: number; }
 
 === index.js ===
@@ -31,8 +31,8 @@ const items = [{x: 12}];
 
 module.exports = items;
 >module.exports = items : { x: number; }[]
->module.exports : any
->module : any
->exports : any
+>module.exports : { x: number; }[]
+>module : { readonly items: { x: number; }[]; }
+>exports : { x: number; }[]
 >items : { x: number; }[]
 

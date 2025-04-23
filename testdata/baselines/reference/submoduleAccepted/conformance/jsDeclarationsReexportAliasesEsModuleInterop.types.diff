@@ -1,15 +1,12 @@
 --- old.jsDeclarationsReexportAliasesEsModuleInterop.types
 +++ new.jsDeclarationsReexportAliasesEsModuleInterop.types
-@@= skipped -5, +5 lines =@@
- 
+@@= skipped -6, +6 lines =@@
  module.exports = Foo;
  >module.exports = Foo : typeof Foo
-->module.exports : typeof Foo
+ >module.exports : typeof Foo
 ->module : { exports: typeof Foo; }
-->exports : typeof Foo
-+>module.exports : any
-+>module : any
-+>exports : any
++>module : { Foo: typeof Foo; }
+ >exports : typeof Foo
  >Foo : typeof Foo
  
  === usage.js ===

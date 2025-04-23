@@ -49,9 +49,9 @@ function testFn(input) {
 
 module.exports = {testFn, testFnTypes};
 >module.exports = {testFn, testFnTypes} : { testFn: (input: input) => number; testFnTypes: any; }
->module.exports : any
->module : any
->exports : any
+>module.exports : { testFn: (input: input) => number; testFnTypes: any; }
+>module : { export=: { testFn: (input: input) => number; testFnTypes: any; }; }
+>exports : { testFn: (input: input) => number; testFnTypes: any; }
 >{testFn, testFnTypes} : { testFn: (input: input) => number; testFnTypes: any; }
 >testFn : (input: input) => number
 >testFnTypes : any
@@ -82,7 +82,7 @@ const myTypes = {
 exports.myTypes = myTypes;
 >exports.myTypes = myTypes : any
 >exports.myTypes : any
->exports : any
+>exports : typeof import("file")
 >myTypes : any
 >myTypes : any
 

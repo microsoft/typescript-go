@@ -55,32 +55,14 @@ func getAssignmentDeclarationKind(bin *ast.BinaryExpression) jsDeclarationKind {
 	if bin.OperatorToken.Kind != ast.KindEqualsToken || !ast.IsAccessExpression(bin.Left) {
 		return jsDeclarationKindNone
 	}
-	if isModuleExportsAccessExpression(bin.Left) {
+	if ast.IsModuleExportsAccessExpression(bin.Left) {
 		return jsDeclarationKindModuleExports
 	} else if ast.IsAccessExpression(bin.Left) &&
-		(isModuleExportsAccessExpression(bin.Left.Expression()) || isExport(bin.Left.Expression())) &&
+		(ast.IsModuleExportsAccessExpression(bin.Left.Expression()) || ast.IsExportsIdentifier(bin.Left.Expression())) &&
 
 		(ast.IsIdentifier(ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left)) || ast.IsStringLiteralLike(ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left))) {
 		return jsDeclarationKindExportsProperty
 	}
 	// !!! module.exports property, this.property, expando.property
 	return jsDeclarationKindNone
-}
-
-func isExport(node *ast.Node) bool {
-	return ast.IsIdentifier(node) && node.AsIdentifier().Text == "exports"
-}
-
-func isModuleExportsAccessExpression(node *ast.Node) bool {
-	return (ast.IsPropertyAccessExpression(node) || isLiteralLikeElementAccess(node)) &&
-		isModuleIdentifier(node.Expression()) &&
-		ast.GetElementOrPropertyAccessName(node) == "exports"
-}
-
-func isModuleIdentifier(node *ast.Node) bool {
-	return ast.IsIdentifier(node) && node.AsIdentifier().Text == "module"
-}
-
-func isLiteralLikeElementAccess(node *ast.Node) bool {
-	return node.Kind == ast.KindElementAccessExpression && ast.IsStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
 }

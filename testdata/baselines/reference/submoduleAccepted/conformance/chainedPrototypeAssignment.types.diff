@@ -96,25 +96,23 @@
  exports.A = A
 ->exports.A = A : typeof A
 ->exports.A : typeof A
-->exports : typeof import("mod")
-->A : typeof A
-->A : typeof A
 +>exports.A = A : () => void
-+>exports.A : any
-+>exports : any
-+>A : any
++>exports.A : () => void
+ >exports : typeof import("mod")
+->A : typeof A
+->A : typeof A
++>A : () => void
 +>A : () => void
  
  exports.B = B
 ->exports.B = B : typeof B
 ->exports.B : typeof B
-->exports : typeof import("mod")
-->B : typeof B
-->B : typeof B
 +>exports.B = B : () => void
-+>exports.B : any
-+>exports : any
-+>B : any
++>exports.B : () => void
+ >exports : typeof import("mod")
+->B : typeof B
+->B : typeof B
++>B : () => void
 +>B : () => void
  
  A.prototype = B.prototype = {

@@ -6,5 +6,8 @@
  
 +=== /node_modules/foo/bar/foobar.js ===
 +module.exports = { a: 10 };
++>module.exports : Symbol(export=, Decl(foobar.js, 0, 0))
++>module : Symbol(module.exports)
++>exports : Symbol(export=, Decl(foobar.js, 0, 0))
 +>a : Symbol(a, Decl(foobar.js, 0, 18))
 +

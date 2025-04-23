@@ -3,9 +3,7 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+eslint-plugin-react.js(9,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +typescript-eslint.js(12,17): error TS7019: Rest parameter 'configs' implicitly has an 'any[]' type.
-+typescript-eslint.js(14,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +typescript-eslint.js(14,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
 +
@@ -15,7 +13,7 @@
 +    
 +    tseslint.config(eslintReact)
 +    
-+==== eslint-plugin-react.js (1 errors) ====
++==== eslint-plugin-react.js (0 errors) ====
 +    const deprecatedRules = {
 +      "jsx-sort-default-props": true
 +    }
@@ -25,8 +23,6 @@
 +    }
 +    
 +    module.exports = {
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +      plugins: {
 +        react: {
 +          deprecatedRules,
@@ -35,7 +31,7 @@
 +      },
 +    };
 +    
-+==== typescript-eslint.js (3 errors) ====
++==== typescript-eslint.js (2 errors) ====
 +    /**
 +     * @typedef {{ rules: Record<string, boolean> }} Plugin
 +     */
@@ -52,8 +48,6 @@
 +!!! error TS7019: Rest parameter 'configs' implicitly has an 'any[]' type.
 +    
 +    module.exports = { config };
-+    ~~~~~~
-+!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +    

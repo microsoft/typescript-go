@@ -2637,3 +2637,13 @@ func IsVariableDeclarationInitializedToRequire(node *Node) bool {
 func IsBindingElementOfRequire(node *Node) bool {
 	return IsBindingElement(node) && IsVariableDeclarationInitializedToRequire(node.Parent.Parent)
 }
+
+func IsModuleExportsAccessExpression(node *Node) bool {
+	return (IsPropertyAccessExpression(node) || IsLiteralLikeElementAccess(node)) &&
+		IsModuleIdentifier(node.Expression()) &&
+		GetElementOrPropertyAccessName(node) == "exports"
+}
+
+func IsLiteralLikeElementAccess(node *Node) bool {
+	return node.Kind == KindElementAccessExpression && IsStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
+}
