@@ -76,7 +76,7 @@ type NodeBuilderContext struct {
 	typeParameterNames                    map[TypeId]*ast.Identifier
 	typeParameterNamesByText              map[string]struct{}
 	typeParameterNamesByTextNextNameCount map[string]int
-	typeParameterSymbolList               map[int]struct{}
+	typeParameterSymbolList               map[ast.SymbolId]struct{}
 }
 
 type NodeBuilder struct {
@@ -375,8 +375,7 @@ func (b *NodeBuilder) symbolToName(symbol *ast.Symbol, meaning ast.SymbolFlags, 
 }
 
 func (b *NodeBuilder) createEntityNameFromSymbolChain(chain []*ast.Symbol, index int) *ast.Node {
-	// !!! TODO: smuggle type arguments out
-	// typeParameterNodes := lookupTypeParameterNodes(chain, index, context);
+	// typeParameterNodes := b.lookupTypeParameterNodes(chain, index)
 	symbol := chain[index]
 
 	if index == 0 {
@@ -421,9 +420,12 @@ func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags,
 		// module is root, must use `ImportTypeNode`
 		var nonRootParts *ast.Node
 		if len(chain) > 1 {
-			nonRootParts = b.createAccessFromSymbolChain(chain, len(chain)-1, 1)
+			nonRootParts = b.createAccessFromSymbolChain(chain, len(chain)-1, 1, typeArguments)
 		}
-		typeParameterNodes := typeArguments                                                  /*|| lookupTypeParameterNodes(chain, 0, context);*/ // !!! TODO: type argument smuggling
+		typeParameterNodes := typeArguments
+		if typeParameterNodes == nil {
+			typeParameterNodes = b.lookupTypeParameterNodes(chain, 0)
+		}
 		contextFile := ast.GetSourceFileOfNode(b.e.MostOriginal(b.ctx.enclosingDeclaration)) // TODO: Just use b.ctx.enclosingFile ? Or is the delayed lookup important for context moves?
 		targetFile := getSourceFileOfModule(chain[0])
 		var specifier string
@@ -497,7 +499,7 @@ func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags,
 
 	}
 
-	entityName := b.createAccessFromSymbolChain(chain, len(chain)-1, 0)
+	entityName := b.createAccessFromSymbolChain(chain, len(chain)-1, 0, typeArguments)
 	if ast.IsIndexedAccessTypeNode(entityName) {
 		return entityName // Indexed accesses can never be `typeof`
 	}
@@ -505,10 +507,11 @@ func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags,
 		return b.f.NewTypeQueryNode(entityName, nil)
 	}
 	// !!! TODO: smuggle type arguments out
+	// Move type arguments from last identifier on chain to type reference
 	// const lastId = isIdentifier(entityName) ? entityName : entityName.right;
 	// const lastTypeArgs = getIdentifierTypeArguments(lastId);
 	// setIdentifierTypeArguments(lastId, /*typeArguments*/ undefined);
-	return b.f.NewTypeReferenceNode(entityName, nil)
+	return b.f.NewTypeReferenceNode(entityName, typeArguments)
 }
 
 func getTopmostIndexedAccessType(node *ast.IndexedAccessTypeNode) *ast.IndexedAccessTypeNode {
@@ -518,9 +521,12 @@ func getTopmostIndexedAccessType(node *ast.IndexedAccessTypeNode) *ast.IndexedAc
 	return node
 }
 
-func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int, stopper int) *ast.Node {
+func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int, stopper int, overrideTypeArguments *ast.NodeList) *ast.Node {
 	// !!! TODO: smuggle type arguments out
-	// const typeParameterNodes = index === (chain.length - 1) ? overrideTypeArguments : lookupTypeParameterNodes(chain, index, context);
+	typeParameterNodes := overrideTypeArguments
+	if index != (len(chain) - 1) {
+		typeParameterNodes = b.lookupTypeParameterNodes(chain, index)
+	}
 	symbol := chain[index]
 	var parent *ast.Symbol
 	if index > 0 {
@@ -557,7 +563,7 @@ func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int
 			}
 		}
 		if name != nil && ast.IsComputedPropertyName(name) && ast.IsEntityName(name.AsComputedPropertyName().Expression) {
-			lhs := b.createAccessFromSymbolChain(chain, index-1, stopper)
+			lhs := b.createAccessFromSymbolChain(chain, index-1, stopper, overrideTypeArguments)
 			if ast.IsEntityName(lhs) {
 				return b.f.NewIndexedAccessTypeNode(
 					b.f.NewParenthesizedTypeNode(b.f.NewTypeQueryNode(lhs, nil)),
@@ -573,7 +579,7 @@ func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int
 		b.ch.getMembersOfSymbol(parent) != nil && b.ch.getMembersOfSymbol(parent)[symbol.Name] != nil &&
 		b.ch.getSymbolIfSameReference(b.ch.getMembersOfSymbol(parent)[symbol.Name], symbol) != nil {
 		// Should use an indexed access
-		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper)
+		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper, overrideTypeArguments)
 		if ast.IsIndexedAccessTypeNode(lhs) {
 			return b.f.NewIndexedAccessTypeNode(
 				lhs,
@@ -581,7 +587,7 @@ func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int
 			)
 		}
 		return b.f.NewIndexedAccessTypeNode(
-			b.f.NewTypeReferenceNode(lhs /*!!! todo: type args*/, nil),
+			b.f.NewTypeReferenceNode(lhs, typeParameterNodes),
 			b.f.NewLiteralTypeNode(b.f.NewStringLiteral(symbolName)),
 		)
 	}
@@ -593,7 +599,7 @@ func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int
 	// identifier.symbol = symbol;
 
 	if index > stopper {
-		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper)
+		lhs := b.createAccessFromSymbolChain(chain, index-1, stopper, overrideTypeArguments)
 		if !ast.IsEntityName(lhs) {
 			panic("Impossible construct - an export of an indexed access cannot be reachable")
 		}
@@ -609,7 +615,6 @@ func (b *NodeBuilder) symbolToExpression(symbol *ast.Symbol, mask ast.SymbolFlag
 }
 
 func (b *NodeBuilder) createExpressionFromSymbolChain(chain []*ast.Symbol, index int) *ast.Expression {
-	// !!! TODO: smuggle type arguments out
 	// typeParameterNodes := b.lookupTypeParameterNodes(chain, index)
 	symbol := chain[index]
 
@@ -801,8 +806,54 @@ func (b *NodeBuilder) getNameOfSymbolAsWritten(symbol *ast.Symbol) string {
 	return symbol.Name
 }
 
+// The full set of type parameters for a generic class or interface type consists of its outer type parameters plus
+// its locally declared type parameters.
+func (b *NodeBuilder) getTypeParametersOfClassOrInterface(symbol *ast.Symbol) []*Type {
+	result := make([]*Type, 0)
+	result = append(result, b.ch.getOuterTypeParametersOfClassOrInterface(symbol)...)
+	result = append(result, b.ch.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)...)
+	return result
+}
+
 func (b *NodeBuilder) lookupTypeParameterNodes(chain []*ast.Symbol, index int) *ast.TypeParameterList {
-	return nil // !!! TODO: nested reference type parameter synthesis
+	// Debug.assert(chain && 0 <= index && index < chain.length); // !!!
+	symbol := chain[index]
+	symbolId := ast.GetSymbolId(symbol)
+	if !b.ctx.hasCreatedTypeParameterSymbolList {
+		b.ctx.hasCreatedTypeParameterSymbolList = true
+		b.ctx.typeParameterSymbolList = make(map[ast.SymbolId]struct{})
+	}
+	_, ok := b.ctx.typeParameterSymbolList[symbolId]
+	if ok {
+		return nil
+	}
+	b.ctx.typeParameterSymbolList[symbolId] = struct{}{}
+
+	if b.ctx.flags&nodebuilder.FlagsWriteTypeParametersInQualifiedName != 0 && index < (len(chain)-1) {
+		parentSymbol := symbol
+		nextSymbol := chain[index+1]
+
+		if nextSymbol.CheckFlags&ast.CheckFlagsInstantiated != 0 {
+			targetSymbol := parentSymbol
+			if parentSymbol.Flags&ast.SymbolFlagsAlias != 0 {
+				targetSymbol = b.ch.resolveAlias(parentSymbol)
+			}
+			params := b.getTypeParametersOfClassOrInterface(targetSymbol)
+			targetMapper := b.ch.valueSymbolLinks.Get(nextSymbol).mapper
+			if targetMapper != nil {
+				params = core.Map(params, targetMapper.Map)
+			}
+			return b.mapToTypeNodes(params)
+		} else {
+			typeParameterNodes := b.typeParametersToTypeParameterDeclarations(symbol)
+			if len(typeParameterNodes) > 0 {
+				return b.f.NewNodeList(typeParameterNodes)
+			}
+			return nil
+		}
+	}
+
+	return nil
 }
 
 // TODO: move `lookupSymbolChain` and co to `symbolaccessibility.go` (but getSpecifierForModuleSymbol uses much context which makes that hard?)
@@ -2203,7 +2254,7 @@ func (b *NodeBuilder) createTypeNodeFromObjectType(t *Type) *ast.TypeNode {
 	abstractSignatures := core.Filter(ctorSigs, func(signature *Signature) bool {
 		return signature.flags&SignatureFlagsAbstract != 0
 	})
-	if len(callSigs) > 0 {
+	if len(abstractSignatures) > 0 {
 		types := core.Map(abstractSignatures, func(s *Signature) *Type {
 			return b.ch.getOrCreateTypeFromSignature(s, nil)
 		})

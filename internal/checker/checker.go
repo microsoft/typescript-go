@@ -824,6 +824,7 @@ type Checker struct {
 	markNodeAssignments                        func(*ast.Node) bool
 	emitResolver                               *emitResolver
 	emitResolverOnce                           sync.Once
+	diagnosticConstructionContext              *printer.EmitContext
 	nodeBuilder                                NodeBuilderInterface
 	_jsxNamespace                              string
 	_jsxFactoryEntity                          *ast.Node
@@ -1032,8 +1033,8 @@ func NewChecker(program Program) *Checker {
 	c.getGlobalClassAccessorDecoratorTargetType = c.getGlobalTypeResolver("ClassAccessorDecoratorTarget", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassAccessorDecoratorResultType = c.getGlobalTypeResolver("ClassAccessorDecoratorResult", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassFieldDecoratorContextType = c.getGlobalTypeResolver("ClassFieldDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
-	diagnosticConstructionContext := printer.NewEmitContext()
-	c.nodeBuilder = NewNodeBuilderAPI(c, diagnosticConstructionContext)
+	c.diagnosticConstructionContext = printer.NewEmitContext()
+	c.nodeBuilder = NewNodeBuilderAPI(c, c.diagnosticConstructionContext)
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()

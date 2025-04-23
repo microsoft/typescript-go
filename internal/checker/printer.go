@@ -12,22 +12,22 @@ import (
 )
 
 // TODO: Memoize once per checker to retain threadsafety
-func createPrinterWithDefaults() *printer.Printer {
-	return printer.NewPrinter(printer.PrinterOptions{}, printer.PrintHandlers{}, nil)
+func createPrinterWithDefaults(emitContext *printer.EmitContext) *printer.Printer {
+	return printer.NewPrinter(printer.PrinterOptions{}, printer.PrintHandlers{}, emitContext)
 }
 
-func createPrinterWithRemoveComments() *printer.Printer {
-	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
+func createPrinterWithRemoveComments(emitContext *printer.EmitContext) *printer.Printer {
+	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
 }
 
-func createPrinterWithRemoveCommentsOmitTrailingSemicolon() *printer.Printer {
+func createPrinterWithRemoveCommentsOmitTrailingSemicolon(emitContext *printer.EmitContext) *printer.Printer {
 	// TODO: OmitTrailingSemicolon support
-	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
+	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
 }
 
-func createPrinterWithRemoveCommentsNeverAsciiEscape() *printer.Printer {
+func createPrinterWithRemoveCommentsNeverAsciiEscape(emitContext *printer.EmitContext) *printer.Printer {
 	// TODO: NeverAsciiEscape support
-	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, nil)
+	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
 }
 
 func getTrailingSemicolonDeferringWriter(writer printer.EmitTextWriter) printer.EmitTextWriter {
@@ -60,9 +60,9 @@ func (c *Checker) typeToStringEx(type_ *Type, enclosingDeclaration *ast.Node, fl
 	// Otherwise, we always strip comments out.
 	var printer *printer.Printer
 	if type_ == c.unresolvedType {
-		printer = createPrinterWithDefaults()
+		printer = createPrinterWithDefaults(c.diagnosticConstructionContext)
 	} else {
-		printer = createPrinterWithRemoveComments()
+		printer = createPrinterWithRemoveComments(c.diagnosticConstructionContext)
 	}
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
@@ -126,9 +126,9 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 	}
 	var printer_ *printer.Printer
 	if enclosingDeclaration != nil && enclosingDeclaration.Kind == ast.KindSourceFile {
-		printer_ = createPrinterWithRemoveCommentsNeverAsciiEscape()
+		printer_ = createPrinterWithRemoveCommentsNeverAsciiEscape(c.diagnosticConstructionContext)
 	} else {
-		printer_ = createPrinterWithRemoveComments()
+		printer_ = createPrinterWithRemoveComments(c.diagnosticConstructionContext)
 	}
 
 	var builder func(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
@@ -166,7 +166,7 @@ func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration
 	}
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	sig := c.nodeBuilder.signatureToSignatureDeclaration(signature, sigOutput, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
-	printer_ := createPrinterWithRemoveCommentsOmitTrailingSemicolon()
+	printer_ := createPrinterWithRemoveCommentsOmitTrailingSemicolon(c.diagnosticConstructionContext)
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
@@ -193,7 +193,7 @@ func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosin
 	}
 	combinedFlags := toNodeBuilderFlags(flags) | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsWriteTypeParametersInQualifiedName
 	predicate := c.nodeBuilder.typePredicateToTypePredicateNode(typePredicate, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil) // TODO: GH#18217
-	printer_ := createPrinterWithRemoveComments()
+	printer_ := createPrinterWithRemoveComments(c.diagnosticConstructionContext)
 	var sourceFile *ast.SourceFile
 	if enclosingDeclaration != nil {
 		sourceFile = ast.GetSourceFileOfNode(enclosingDeclaration)
