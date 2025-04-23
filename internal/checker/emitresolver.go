@@ -768,7 +768,7 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 	}
 
 	var enumResult *ast.Node
-	if type_.flags&TypeFlagsEnum != 0 {
+	if type_.flags&TypeFlagsEnumLike != 0 {
 		requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
 		enumResult = requestNodeBuilder.symbolToExpression(type_.symbol, ast.SymbolFlagsValue, node, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, tracker)
 		// What about regularTrueType/regularFalseType - since those aren't fresh, we never make initializers from them

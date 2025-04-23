@@ -637,7 +637,7 @@ func (b *NodeBuilder) createExpressionFromSymbolChain(chain []*ast.Symbol, index
 		// if (typeParameterNodes) setIdentifierTypeArguments(identifier, factory.createNodeArray<TypeNode | TypeParameterDeclaration>(typeParameterNodes));
 		// identifier.symbol = symbol;
 		if index > 0 {
-			b.f.NewPropertyAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, identifier, ast.NodeFlagsNone)
+			return b.f.NewPropertyAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, identifier, ast.NodeFlagsNone)
 		}
 		return identifier
 	}
@@ -764,26 +764,23 @@ func (b *NodeBuilder) getNameOfSymbolAsWritten(symbol *ast.Symbol) string {
 		return "default"
 	}
 	if len(symbol.Declarations) > 0 {
-		declaration := core.FirstNonNil(symbol.Declarations, ast.GetNameOfDeclaration) // Try using a declaration with a name, first
-		if declaration != nil {
-			name := ast.GetNameOfDeclaration(declaration)
-			if name != nil {
-				// !!! TODO: JS Object.defineProperty declarations
-				// if ast.IsCallExpression(declaration) && ast.IsBindableObjectDefinePropertyCall(declaration) {
-				// 	return symbol.Name
-				// }
-				if ast.IsComputedPropertyName(name) && symbol.CheckFlags&ast.CheckFlagsLate == 0 {
-					if b.ch.valueSymbolLinks.Has(symbol) && b.ch.valueSymbolLinks.Get(symbol).nameType != nil && b.ch.valueSymbolLinks.Get(symbol).nameType.flags&TypeFlagsStringOrNumberLiteral != 0 {
-						result := b.getNameOfSymbolFromNameType(symbol)
-						if len(result) > 0 {
-							return result
-						}
+		name := core.FirstNonNil(symbol.Declarations, ast.GetNameOfDeclaration) // Try using a declaration with a name, first
+		if name != nil {
+			// !!! TODO: JS Object.defineProperty declarations
+			// if ast.IsCallExpression(declaration) && ast.IsBindableObjectDefinePropertyCall(declaration) {
+			// 	return symbol.Name
+			// }
+			if ast.IsComputedPropertyName(name) && symbol.CheckFlags&ast.CheckFlagsLate == 0 {
+				if b.ch.valueSymbolLinks.Has(symbol) && b.ch.valueSymbolLinks.Get(symbol).nameType != nil && b.ch.valueSymbolLinks.Get(symbol).nameType.flags&TypeFlagsStringOrNumberLiteral != 0 {
+					result := b.getNameOfSymbolFromNameType(symbol)
+					if len(result) > 0 {
+						return result
 					}
 				}
-				return scanner.DeclarationNameToString(name)
 			}
+			return scanner.DeclarationNameToString(name)
 		}
-		declaration = symbol.Declarations[0] // Declaration may be nameless, but we'll try anyway
+		declaration := symbol.Declarations[0] // Declaration may be nameless, but we'll try anyway
 		if declaration.Parent != nil && declaration.Parent.Kind == ast.KindVariableDeclaration {
 			return scanner.DeclarationNameToString(declaration.Parent.AsVariableDeclaration().Name())
 		}
