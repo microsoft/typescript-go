@@ -626,9 +626,9 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				links.resolvedType = c.createArrayType(c.getUnionType(childTypes))
 			}
 			// Fake up a property declaration for the children
-			// childrenPropSymbol.ValueDeclaration = c.factory.NewPropertySignatureDeclaration(nil, jsxChildrenPropertyName, nil /*postfixToken*/, nil /*type*/, nil /*initializer*/)
-			// setParent(childrenPropSymbol.ValueDeclaration, attributes)
-			// childrenPropSymbol.ValueDeclaration.Symbol = childrenPropSymbol
+			childrenPropSymbol.ValueDeclaration = c.factory.NewPropertySignatureDeclaration(nil, c.factory.NewIdentifier(jsxChildrenPropertyName), nil /*postfixToken*/, nil /*type*/, nil /*initializer*/)
+			childrenPropSymbol.ValueDeclaration.Parent = attributes
+			childrenPropSymbol.ValueDeclaration.AsPropertySignatureDeclaration().Symbol = childrenPropSymbol
 			childPropMap := make(ast.SymbolTable)
 			childPropMap[jsxChildrenPropertyName] = childrenPropSymbol
 			spread = c.getSpreadType(spread, c.newAnonymousType(attributes.Symbol(), childPropMap, nil, nil, nil), attributes.Symbol(), objectFlags, false /*readonly*/)
