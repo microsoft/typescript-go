@@ -20,7 +20,7 @@ func isClassNamedEvaluationHelperBlock(emitContext *printer.EmitContext, node *a
 	statement := node.AsClassStaticBlockDeclaration().Body.AsBlock().Statements.Nodes[0]
 	if ast.IsExpressionStatement(statement) {
 		expression := statement.AsExpressionStatement().Expression
-		if emitContext.IsCallToHelper(expression, "___setFunctionName") {
+		if emitContext.IsCallToHelper(expression, "__setFunctionName") {
 			arguments := expression.AsCallExpression().Arguments
 			return len(arguments.Nodes) >= 2 &&
 				arguments.Nodes[1] == emitContext.AssignedName(node.AsNode())
