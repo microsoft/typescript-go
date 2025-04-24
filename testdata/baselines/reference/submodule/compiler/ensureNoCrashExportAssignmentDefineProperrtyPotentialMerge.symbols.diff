@@ -51,8 +51,8 @@
 ->B.NS : Symbol(B.NS, Decl(namespacer.js, 0, 12), Decl(namespacer.js, 1, 31))
 ->B : Symbol(B, Decl(namespacer.js, 0, 5), Decl(namespacer.js, 0, 12), Decl(namespacer.js, 2, 22))
 ->NS : Symbol(B.NS, Decl(namespacer.js, 0, 12), Decl(namespacer.js, 1, 31))
+->require : Symbol(require)
 +>B : Symbol(B, Decl(namespacer.js, 0, 5))
- >require : Symbol(require)
  >"./namespacey" : Symbol("namespacey", Decl(namespacey.js, 0, 0))
  
  Object.defineProperty(B, "NS", { value: "why though", writable: true });

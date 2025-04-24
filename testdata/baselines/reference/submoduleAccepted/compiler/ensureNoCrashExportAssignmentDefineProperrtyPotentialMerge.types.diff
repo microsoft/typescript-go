@@ -76,11 +76,11 @@
 ->B : typeof B
 ->NS : string | typeof A
 ->require("./namespacey") : typeof A
-+>B.NS = require("./namespacey") : {}
++>B.NS = require("./namespacey") : any
 +>B.NS : any
 +>B : {}
 +>NS : any
-+>require("./namespacey") : {}
++>require("./namespacey") : any
  >require : any
  >"./namespacey" : "./namespacey"
  

@@ -2450,10 +2450,8 @@ func IsAliasSymbolDeclaration(node *Node) bool {
 		return node.AsImportClause().Name() != nil
 	case KindExportAssignment, KindJSExportAssignment:
 		return ExportAssignmentIsAlias(node)
-	case KindVariableDeclaration:
+	case KindVariableDeclaration, KindBindingElement:
 		return IsVariableDeclarationInitializedToRequire(node)
-	case KindBindingElement:
-		return IsVariableDeclarationInitializedToRequire(node.Parent.Parent)
 	}
 	return false
 }
@@ -2532,7 +2530,7 @@ func ForEachDynamicImportOrRequireCall(
 	lastIndex, size := findImportOrRequire(file.Text(), 0)
 	for lastIndex >= 0 {
 		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
-		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
+		if isJavaScriptFile && IsRequireCall(node) {
 			if cb(node, node.Arguments()[0]) {
 				return true
 			}
@@ -2559,7 +2557,8 @@ func ForEachDynamicImportOrRequireCall(
 	return false
 }
 
-func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
+// IsVariableDeclarationInitializedToRequire should be used wherever parent pointers are set
+func IsRequireCall(node *Node) bool {
 	if !IsCallExpression(node) {
 		return false
 	}
@@ -2570,7 +2569,7 @@ func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 	if len(call.Arguments.Nodes) != 1 {
 		return false
 	}
-	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
+	return IsStringLiteralLike(call.Arguments.Nodes[0])
 }
 
 func IsUnterminatedLiteral(node *Node) bool {
@@ -2628,14 +2627,24 @@ func GetPragmaArgument(pragma *Pragma, name string) string {
 	return ""
 }
 
+// Of the form: `const x = require("x")` or `const { x } = require("x")` or with `var` or `let`
+// The variable must not be exported and must not have a type annotation, even a jsdoc one.
+// The initializer must be a call to `require` with a string literal or a string literal-like argument.
 func IsVariableDeclarationInitializedToRequire(node *Node) bool {
-	return node.Kind == KindVariableDeclaration &&
+	if !IsInJSFile(node) {
+		return false
+	}
+	if node.Kind == KindBindingElement {
+		node = node.Parent.Parent
+	}
+	if node.Kind != KindVariableDeclaration {
+		return false
+	}
+	
+	return node.Parent.Parent.ModifierFlags()&ModifierFlagsExport == 0 &&
 		node.AsVariableDeclaration().Initializer != nil &&
-		IsRequireCall(node.AsVariableDeclaration().Initializer, true /*requireStringLiteralLikeArgument*/)
-}
-
-func IsBindingElementOfRequire(node *Node) bool {
-	return IsBindingElement(node) && IsVariableDeclarationInitializedToRequire(node.Parent.Parent)
+		node.Type() == nil &&
+		IsRequireCall(node.AsVariableDeclaration().Initializer)
 }
 
 func IsModuleExportsAccessExpression(node *Node) bool {

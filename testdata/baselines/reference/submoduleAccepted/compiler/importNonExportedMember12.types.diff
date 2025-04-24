@@ -18,8 +18,8 @@
  export const A = require("foo");
 ->A : number
 ->require("foo") : number
-+>A : 1
-+>require("foo") : 1
++>A : any
++>require("foo") : any
  >require : any
  >"foo" : "foo"
  

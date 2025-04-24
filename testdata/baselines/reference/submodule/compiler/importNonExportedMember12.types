@@ -10,8 +10,8 @@ module.exports = 1;
 
 === /a.js ===
 export const A = require("foo");
->A : 1
->require("foo") : 1
+>A : any
+>require("foo") : any
 >require : any
 >"foo" : "foo"
 

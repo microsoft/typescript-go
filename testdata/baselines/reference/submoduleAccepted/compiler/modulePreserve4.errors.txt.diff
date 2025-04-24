@@ -29,6 +29,7 @@
 +/main3.cjs(12,8): error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
 +/main3.cjs(14,8): error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
 +/main3.cjs(17,8): error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
++/main4.cjs(1,13): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
  
  
 -==== /a.js (1 errors) ====
@@ -40,7 +41,7 @@
      
  ==== /b.ts (0 errors) ====
      export default 0;
-@@= skipped -46, +39 lines =@@
+@@= skipped -46, +40 lines =@@
  ==== /g.js (0 errors) ====
      exports.default = 0;
      
@@ -138,4 +139,11 @@
 +!!! error TS1286: ESM syntax is not allowed in a CommonJS module when 'verbatimModuleSyntax' is enabled.
      const g2 = require("./g"); // { default: 0 }
      
- ==== /main4.cjs (0 errors) ====
+-==== /main4.cjs (0 errors) ====
++==== /main4.cjs (1 errors) ====
+     exports.x = require("./g");
++                ~~~~~~~
++!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+     
+ ==== /dummy.ts (0 errors) ====
+     export {}; // Silly test harness

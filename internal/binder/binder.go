@@ -940,7 +940,7 @@ func (b *Binder) bindCallExpression(node *ast.Node) {
 	if ast.IsInJSFile(node) &&
 		b.file.ExternalModuleIndicator == nil &&
 		b.file.CommonJSModuleIndicator == nil &&
-		ast.IsRequireCall(node, false /*requireStringLiteralLikeArgument*/) {
+		ast.IsVariableDeclarationInitializedToRequire(node.Parent) {
 		b.file.CommonJSModuleIndicator = node
 		b.bindSourceFileAsExternalModule()
 	}
@@ -1057,15 +1057,8 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 		b.checkStrictModeEvalOrArguments(node, node.Name())
 	}
 	if name := node.Name(); name != nil && !ast.IsBindingPattern(name) {
-		possibleVariableDecl := node
-		if node.Kind != ast.KindVariableDeclaration {
-			possibleVariableDecl = node.Parent.Parent
-		}
 		switch {
-		case ast.IsInJSFile(node) &&
-			ast.IsVariableDeclarationInitializedToRequire(possibleVariableDecl) &&
-			node.Type() == nil &&
-			node.ModifierFlags()&ast.ModifierFlagsExport == 0:
+		case ast.IsVariableDeclarationInitializedToRequire(node):
 			b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 		case ast.IsBlockOrCatchScoped(node):
 			b.bindBlockScopedDeclaration(node, ast.SymbolFlagsBlockScopedVariable, ast.SymbolFlagsBlockScopedVariableExcludes)

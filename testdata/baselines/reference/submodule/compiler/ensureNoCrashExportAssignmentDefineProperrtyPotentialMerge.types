@@ -51,11 +51,11 @@ const B = {}
 >{} : {}
 
 B.NS = require("./namespacey");
->B.NS = require("./namespacey") : {}
+>B.NS = require("./namespacey") : any
 >B.NS : any
 >B : {}
 >NS : any
->require("./namespacey") : {}
+>require("./namespacey") : any
 >require : any
 >"./namespacey" : "./namespacey"
 
