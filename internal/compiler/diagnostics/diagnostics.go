@@ -54,3 +54,15 @@ func (m *Message) Format(args ...any) string {
 	}
 	return text
 }
+
+func FormatMessage(m *Message, args ...any) *Message {
+	return &Message{
+		code:                         m.code,
+		category:                     m.category,
+		key:                          m.key,
+		text:                         stringutil.Format(m.text, args),
+		reportsUnnecessary:           m.reportsUnnecessary,
+		elidedInCompatibilityPyramid: m.elidedInCompatibilityPyramid,
+		reportsDeprecated:            m.reportsDeprecated,
+	}
+}

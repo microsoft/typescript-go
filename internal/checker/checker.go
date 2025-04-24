@@ -1256,7 +1256,7 @@ func (c *Checker) initializeChecker() {
 		c.autoArrayType = c.newAnonymousType(nil, nil, nil, nil, nil)
 	}
 	c.globalReadonlyArrayType = c.getGlobalType("ReadonlyArray", 1 /*arity*/, false /*reportErrors*/)
-	if c.globalReadonlyArrayType == nil {
+	if c.globalReadonlyArrayType == c.emptyGenericType {
 		c.globalReadonlyArrayType = c.globalArrayType
 	}
 	c.anyReadonlyArrayType = c.createTypeFromGenericGlobalType(c.globalReadonlyArrayType, []*Type{c.anyType})
