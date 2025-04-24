@@ -164,6 +164,7 @@ func (tx *DeclarationTransformer) visitSourceFile(node *ast.SourceFile) *ast.Nod
 	tx.rawLibReferenceDirectives = make([]*ast.FileReference, 0)
 	tx.state.currentSourceFile = node
 	tx.collectFileReferences(node)
+	tx.resolver.PrecalculateDeclarationEmitVisibility(node)
 	updated := tx.transformSourceFile(node)
 	tx.state.currentSourceFile = nil
 	return updated
@@ -251,8 +252,12 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 		original := tx.EmitContext().MostOriginal(statement)
 		id := ast.GetNodeId(original)
 		replacement, ok := tx.lateStatementReplacementMap[id]
-		if !ok || replacement == nil {
-			continue // not replaced, elide
+		if !ok {
+			results = append(results, statement)
+			continue // not replaced
+		}
+		if replacement == nil {
+			continue // deleted
 		}
 		if replacement.Kind == ast.KindSyntaxList {
 			if !tx.needsScopeFixMarker || !tx.resultHasExternalModuleIndicator {
@@ -912,8 +917,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		// Remove coments from the export declaration and copy them onto the synthetic _default declaration
 		tx.preserveJsDoc(statement, input)
 		tx.removeAllComments(assignment)
-		tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
-		return nil
+		return tx.Factory().NewSyntaxList([]*ast.Node{statement, assignment})
 	default:
 		result := tx.transformTopLevelDeclaration(input)
 		// Don't actually transform yet; just leave as original node - will be elided/swapped by late pass

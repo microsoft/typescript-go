@@ -16,11 +16,23 @@ import (
 
 var _ printer.EmitResolver = &emitResolver{}
 
+// Links for declarations
+
+type DeclarationLinks struct {
+	isVisible core.Tristate // if declaration is depended upon by exported declarations
+}
+
+type DeclarationFileLinks struct {
+	aliasesMarked bool // if file has had alias visibility marked
+}
+
 type emitResolver struct {
 	checker                 *Checker
 	checkerMu               sync.Mutex
 	isValueAliasDeclaration func(node *ast.Node) bool
 	referenceResolver       binder.ReferenceResolver
+	declarationLinks        core.LinkStore[*ast.Node, DeclarationLinks]
+	declarationFileLinks    core.LinkStore[*ast.Node, DeclarationFileLinks]
 }
 
 func (r *emitResolver) IsOptionalParameter(node *ast.Node) bool {
@@ -76,7 +88,7 @@ func (r *emitResolver) isDeclarationVisible(node *ast.Node) bool {
 		return false
 	}
 
-	links := r.checker.declarationLinks.Get(node)
+	links := r.declarationLinks.Get(node)
 	if links.isVisible == core.TSUnknown {
 		if r.determineIfDeclarationIsVisible(node) {
 			links.isVisible = core.TSTrue
@@ -181,6 +193,64 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 	}
 }
 
+func (r *emitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFile) {
+	if r.declarationFileLinks.Get(file.AsNode()).aliasesMarked {
+		return
+	}
+	r.declarationFileLinks.Get(file.AsNode()).aliasesMarked = true
+	// TODO: Does this even *have* to be an upfront walk? If it's not possible for a
+	// import a = a.b.c statement to chain into exposing a statement in a sibling scope,
+	// it could at least be pushed into scope entry -  then it wouldn't need to be recursive.
+	file.AsNode().ForEachChild(r.aliasMarkingVisitor)
+}
+
+func (r *emitResolver) aliasMarkingVisitor(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindExportAssignment:
+		if node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
+			r.markLinkedAliases(node.Expression())
+		}
+	case ast.KindExportSpecifier:
+		r.markLinkedAliases(node.PropertyNameOrName())
+	}
+	return node.ForEachChild(r.aliasMarkingVisitor)
+}
+
+// Sets the isVisible link on statements the Identifier or ExportName node points at
+// Follows chains of import d = a.b.c
+func (r *emitResolver) markLinkedAliases(node *ast.Node) {
+	var exportSymbol *ast.Symbol
+	if node.Kind != ast.KindStringLiteral && node.Parent != nil && node.Parent.Kind == ast.KindExportAssignment {
+		exportSymbol = r.checker.resolveName(node, node.AsIdentifier().Text, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
+	} else if node.Parent.Kind == ast.KindExportSpecifier {
+		exportSymbol = r.checker.getTargetOfExportSpecifier(node.Parent, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, false)
+	}
+
+	visited := make(map[ast.SymbolId]struct{}, 2) // guard against circular imports
+	for exportSymbol != nil {
+		_, seen := visited[ast.GetSymbolId(exportSymbol)]
+		if seen {
+			break
+		}
+		visited[ast.GetSymbolId(exportSymbol)] = struct{}{}
+
+		var nextSymbol *ast.Symbol
+		for _, declaration := range exportSymbol.Declarations {
+			r.declarationLinks.Get(declaration).isVisible = core.TSTrue
+
+			if ast.IsInternalModuleImportEqualsDeclaration(declaration) {
+				// Add the referenced top container visible
+				internalModuleReference := declaration.AsImportEqualsDeclaration().ModuleReference
+				firstIdentifier := ast.GetFirstIdentifier(internalModuleReference)
+				importSymbol := r.checker.resolveName(declaration, firstIdentifier.AsIdentifier().Text, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias /*nameNotFoundMessage*/, nil /*isUse*/, false, false)
+				nextSymbol = importSymbol
+			}
+		}
+
+		exportSymbol = nextSymbol
+	}
+}
+
 func getMeaningOfEntityNameReference(entityName *ast.Node) ast.SymbolFlags {
 	// get symbol of the first identifier of the entityName
 	if entityName.Parent.Kind == ast.KindTypeQuery ||
@@ -261,9 +331,7 @@ func (r *emitResolver) hasVisibleDeclarations(symbol *ast.Symbol, shouldComputeA
 	var addVisibleAlias func(declaration *ast.Node, aliasingStatement *ast.Node)
 	if shouldComputeAliasToMakeVisible {
 		addVisibleAlias = func(declaration *ast.Node, aliasingStatement *ast.Node) {
-			// Only lock as we edit links, so the IsDeclarationVisible calls don't trip over the lock
-			// TODO: does this need to lock? but multiple already-locking resolver entrypoints reach here...
-			r.checker.declarationLinks.Get(declaration).isVisible = core.TSTrue
+			r.declarationLinks.Get(declaration).isVisible = core.TSTrue
 			if aliasesToMakeVisibleSet == nil {
 				aliasesToMakeVisibleSet = make(map[ast.NodeId]*ast.Node)
 			}

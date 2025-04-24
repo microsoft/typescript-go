@@ -384,12 +384,6 @@ type AssertionLinks struct {
 	exprType *Type // Assertion expression type
 }
 
-// Links for declarations
-
-type DeclarationLinks struct {
-	isVisible core.Tristate // if declaration is depended upon by exported declarations
-}
-
 // SourceFile links
 
 type SourceFileLinks struct {

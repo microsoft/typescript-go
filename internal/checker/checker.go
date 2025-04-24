@@ -619,7 +619,6 @@ type Checker struct {
 	typeNodeLinks                              core.LinkStore[*ast.Node, TypeNodeLinks]
 	enumMemberLinks                            core.LinkStore[*ast.Node, EnumMemberLinks]
 	assertionLinks                             core.LinkStore[*ast.Node, AssertionLinks]
-	declarationLinks                           core.LinkStore[*ast.Node, DeclarationLinks] // TODO: Move into EmitResolver if `collectLinkedAliases` also can move
 	arrayLiteralLinks                          core.LinkStore[*ast.Node, ArrayLiteralLinks]
 	switchStatementLinks                       core.LinkStore[*ast.Node, SwitchStatementLinks]
 	jsxElementLinks                            core.LinkStore[*ast.Node, JsxElementLinks]
@@ -5147,9 +5146,7 @@ func (c *Checker) checkExportSpecifier(node *ast.Node) {
 	hasModuleSpecifier := node.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil
 	c.checkModuleExportName(node.AsExportSpecifier().PropertyName, hasModuleSpecifier)
 	c.checkModuleExportName(node.Name(), true /*allowStringLiteral*/)
-	if c.compilerOptions.GetEmitDeclarations() {
-		c.collectLinkedAliases(node.PropertyNameOrName(), true /*setVisibility*/)
-	}
+
 	if !hasModuleSpecifier {
 		exportedName := node.PropertyNameOrName()
 		if exportedName.Kind == ast.KindStringLiteral {
@@ -5237,9 +5234,7 @@ func (c *Checker) checkExportAssignment(node *ast.Node) {
 			c.checkExpressionCached(id)
 			// doesn't resolve, check as expression to mark as error
 		}
-		if c.compilerOptions.GetEmitDeclarations() {
-			c.collectLinkedAliases(id, true /*setVisibility*/)
-		}
+
 	} else {
 		c.checkExpressionCached(node.Expression())
 	}
@@ -5314,10 +5309,6 @@ func (c *Checker) hasExportedMembers(moduleSymbol *ast.Symbol) bool {
 
 func isNotOverload(node *ast.Node) bool {
 	return !ast.IsFunctionDeclaration(node) && !ast.IsMethodDeclaration(node) || node.Body() != nil
-}
-
-func (c *Checker) collectLinkedAliases(node *ast.Node, setVisibility bool) {
-	// !!! Implement if declaration emit needs it
 }
 
 func (c *Checker) checkMissingDeclaration(node *ast.Node) {
