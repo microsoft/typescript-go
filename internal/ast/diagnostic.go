@@ -61,15 +61,8 @@ func (d *Diagnostic) AddRelatedInfo(relatedInformation *Diagnostic) *Diagnostic 
 }
 
 func (d *Diagnostic) Clone() *Diagnostic {
-	return &Diagnostic{
-		file:               d.file,
-		loc:                d.loc,
-		code:               d.code,
-		category:           d.category,
-		message:            d.message,
-		messageChain:       d.messageChain,
-		relatedInformation: d.relatedInformation,
-	}
+	result := *d
+	return &result
 }
 
 func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
