@@ -2652,7 +2652,7 @@ func IsVariableDeclarationInitializedToRequire(node *Node) bool {
 	if node.Kind != KindVariableDeclaration {
 		return false
 	}
-	
+
 	return node.Parent.Parent.ModifierFlags()&ModifierFlagsExport == 0 &&
 		node.AsVariableDeclaration().Initializer != nil &&
 		node.Type() == nil &&
