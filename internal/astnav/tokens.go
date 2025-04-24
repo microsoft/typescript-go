@@ -134,7 +134,7 @@ func getTokenAtPosition(
 	})
 
 	for {
-		visitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
+		VisitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
 		// If prevSubtree was set on the last iteration, it ends at the target position.
 		// Check if the rightmost token of prevSubtree should be returned based on the
 		// `includePrecedingTokenAtEndPosition` callback.
@@ -234,7 +234,7 @@ func findRightmostNode(node *ast.Node) *ast.Node {
 	}
 }
 
-func visitEachChildAndJSDoc(node *ast.Node, sourceFile *ast.SourceFile, visitor *ast.NodeVisitor) {
+func VisitEachChildAndJSDoc(node *ast.Node, sourceFile *ast.SourceFile, visitor *ast.NodeVisitor) {
 	if node.Flags&ast.NodeFlagsHasJSDoc != 0 {
 		for _, jsdoc := range node.JSDoc(sourceFile) {
 			if visitor.Hooks.VisitNode != nil {
@@ -336,7 +336,7 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 				return modifiers
 			},
 		})
-		visitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
+		VisitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
 
 		if foundChild != nil {
 			// Note that the span of a node's tokens is [getStartOfNode(node, ...), node.end).
@@ -493,7 +493,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 				return modifiers
 			},
 		})
-		visitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
+		VisitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
 
 		// Three cases:
 		// 1. The answer is a token of `rightmostValidNode`.

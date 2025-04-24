@@ -26,12 +26,43 @@ func TestCompletions(t *testing.T) {
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
+
 	itemDefaults := &lsproto.CompletionItemDefaults{
 		CommitCharacters: &defaultCommitCharacters,
 	}
 	insertTextFormatPlainText := ptrTo(lsproto.InsertTextFormatPlainText)
 	sortTextLocationPriority := ptrTo(string(ls.SortTextLocationPriority))
+	sortTextLocalDeclarationPriority := ptrTo(string(ls.SortTextLocalDeclarationPriority))
+	sortTextDeprecatedLocationPriority := ptrTo(string(ls.DeprecateSortText(ls.SortTextLocationPriority)))
 	fieldKind := ptrTo(lsproto.CompletionItemKindField)
+	methodKind := ptrTo(lsproto.CompletionItemKindMethod)
+	functionKind := ptrTo(lsproto.CompletionItemKindFunction)
+	variableKind := ptrTo(lsproto.CompletionItemKindVariable)
+
+	stringMembers := []*lsproto.CompletionItem{
+		{Label: "charAt", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "charCodeAt", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "concat", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "indexOf", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "lastIndexOf", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "length", Kind: fieldKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "localeCompare", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "match", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "replace", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "search", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "slice", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "split", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "substring", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "toLocaleLowerCase", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "toLocaleUpperCase", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "toLowerCase", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "toString", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "toUpperCase", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "trim", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "valueOf", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+		{Label: "substr", Kind: methodKind, SortText: sortTextDeprecatedLocationPriority, InsertTextFormat: insertTextFormatPlainText},
+	}
+
 	testCases := []testCase{
 		{
 			name: "basicInterfaceMembers",
@@ -106,6 +137,216 @@ var t = new n(0, 1, '');t./*a*/`,
 							Kind:             fieldKind,
 							SortText:         sortTextLocationPriority,
 							InsertTextFormat: insertTextFormatPlainText,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "cloduleAsBaseClass",
+			content: `
+class A {
+    constructor(x: number) { }
+    foo() { }
+    static bar() { }
+}
+
+module A {
+    export var x = 1;
+    export function baz() { }
+}
+
+class D extends A {
+    constructor() {
+        super(1);
+    }
+    foo2() { }
+    static bar2() { }
+}
+
+D./*a*/`,
+			expected: map[string]*lsproto.CompletionList{
+				"a": {
+					IsIncomplete: false,
+					ItemDefaults: itemDefaults,
+					Items: []*lsproto.CompletionItem{ // !!! `funcionMembersPlus`
+						{
+							Label:            "bar",
+							Kind:             methodKind,
+							SortText:         sortTextLocalDeclarationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "bar2",
+							Kind:             methodKind,
+							SortText:         sortTextLocalDeclarationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "apply",
+							Kind:             methodKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "arguments",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "baz",
+							Kind:             functionKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "bind",
+							Kind:             methodKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "call",
+							Kind:             methodKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "caller",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "length",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "prototype",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "toString",
+							Kind:             methodKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "x",
+							Kind:             variableKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "forwardReference",
+			content: `function f() {
+    var x = new t();
+    x./*a*/
+}
+class t {
+    public n: number;
+}`,
+			expected: map[string]*lsproto.CompletionList{
+				"a": {
+					IsIncomplete: false,
+					ItemDefaults: itemDefaults,
+					Items: []*lsproto.CompletionItem{
+						{
+							Label:            "n",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "lambdaThisMembers",
+			content: `class Foo {
+    a: number;
+    b() {
+        var x = () => {
+            this./**/;
+        }
+    }
+}`,
+			expected: map[string]*lsproto.CompletionList{
+				"": {
+					IsIncomplete: false,
+					ItemDefaults: itemDefaults,
+					Items: []*lsproto.CompletionItem{
+						{
+							Label:            "a",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+						{
+							Label:            "b",
+							Kind:             methodKind,
+							SortText:         sortTextLocationPriority,
+							InsertTextFormat: insertTextFormatPlainText,
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "memberCompletionInForEach1",
+			content: `var x: string[] = [];
+x.forEach(function (y) { y./*1*/`,
+			expected: map[string]*lsproto.CompletionList{
+				"1": {
+					IsIncomplete: false,
+					ItemDefaults: itemDefaults,
+					Items:        stringMembers,
+				},
+			},
+		},
+		{
+			name: "completionsTuple",
+			content: `declare const x: [number, number];
+x./**/;`,
+			expected: map[string]*lsproto.CompletionList{
+				"": {
+					IsIncomplete: false,
+					ItemDefaults: itemDefaults,
+					Items: []*lsproto.CompletionItem{
+						{
+							Label:            "0",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertText:       ptrTo("[0]"),
+							InsertTextFormat: insertTextFormatPlainText,
+							TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+								TextEdit: &lsproto.TextEdit{
+									NewText: "[0]",
+									Range:   lsproto.Range{},
+								},
+							},
+						},
+						{
+							Label:            "1",
+							Kind:             fieldKind,
+							SortText:         sortTextLocationPriority,
+							InsertText:       ptrTo("[1]"),
+							InsertTextFormat: insertTextFormatPlainText,
+							TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+								TextEdit: &lsproto.TextEdit{
+									NewText: "[1]",
+									Range:   lsproto.Range{},
+								},
+							},
 						},
 					},
 				},

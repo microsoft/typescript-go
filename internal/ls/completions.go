@@ -121,7 +121,7 @@ const (
 	SortTextJavascriptIdentifiers            sortText = "18"
 )
 
-func deprecateSortText(original sortText) sortText {
+func DeprecateSortText(original sortText) sortText {
 	return "z" + original
 }
 
@@ -944,7 +944,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 
 		var sortText sortText
 		if isDeprecated(symbol, typeChecker) {
-			sortText = deprecateSortText(originalSortText)
+			sortText = DeprecateSortText(originalSortText)
 		} else {
 			sortText = originalSortText
 		}
@@ -1028,6 +1028,7 @@ func (l *LanguageService) createCompletionItem(
 	compilerOptions *core.CompilerOptions,
 	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
+	isMemberCompletion bool,
 ) *lsproto.CompletionItem {
 	contextToken := data.contextToken
 	var insertText string
@@ -1262,10 +1263,14 @@ func (l *LanguageService) createCompletionItem(
 		// Otherwise use the completion list default.
 	}
 
+	if filterText == "" {
+		filterText = getFilterText(file, position, insertText, name, isMemberCompletion)
+	}
+
 	kindModifiers := getSymbolModifiers(typeChecker, symbol)
 	var tags *[]lsproto.CompletionItemTag
 	var detail *string
-	// Copied from vscode ts extension.
+	// Copied from vscode ts extension: `MyCompletionItem.constructor`.
 	if kindModifiers.Has(ScriptElementKindModifierOptional) {
 		if insertText == "" {
 			insertText = name
@@ -1338,6 +1343,96 @@ func supportsDefaultCommitCharacters(clientOptions *lsproto.CompletionClientCapa
 func isRecommendedCompletionMatch(localSymbol *ast.Symbol, recommendedCompletion *ast.Symbol, typeChecker *checker.Checker) bool {
 	return localSymbol == recommendedCompletion ||
 		localSymbol.Flags&ast.SymbolFlagsExportValue != 0 && typeChecker.GetExportSymbolOfSymbol(localSymbol) == recommendedCompletion
+}
+
+// Ported from vscode's `USUAL_WORD_SEPARATORS`.
+var wordSeparators = core.NewSetFromItems(
+	'`', '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', '{', ']', '}', '\\', '|',
+	';', ':', '\'', '"', ',', '.', '<', '>', '/', '?',
+)
+
+// Finds the range of the word that ends at the given position.
+// e.g. for "abc def.ghi|jkl", the word range is "ghi" and the word start is 'g'.
+func getWordRange(sourceFile *ast.SourceFile, position int) (wordRange core.TextRange, wordStart rune) {
+	// !!! Port other case of vscode's `DEFAULT_WORD_REGEXP` that covers words that start like numbers, e.g. -123.456abcd.
+	text := sourceFile.Text()[:position]
+	totalSize := 0
+	var firstRune rune
+	for r, size := utf8.DecodeLastRuneInString(text); size != 0; r, size = utf8.DecodeLastRuneInString(text[:len(text)-size]) {
+		if wordSeparators.Has(r) || unicode.IsSpace(r) {
+			break
+		}
+		totalSize += size
+		firstRune = r
+	}
+	// If word starts with `@`, disregard this first character.
+	if firstRune == '@' {
+		totalSize -= 1
+		firstRune, _ = utf8.DecodeRuneInString(text[len(text)-totalSize:])
+	}
+	return core.NewTextRange(position-totalSize, position), firstRune
+}
+
+// Ported from vscode ts extension: `getFilterText`.
+func getFilterText(file *ast.SourceFile, position int, insertText string, label string, isMemberCompletion bool, isSnippet bool) string {
+	wordRange, wordStart := getWordRange(file, position)
+	// Private field completion.
+	if strings.HasPrefix(label, "#") {
+		// !!! document theses cases
+		if insertText != "" {
+			if strings.HasPrefix(insertText, "this.#") {
+				if wordStart == '#' {
+					return insertText
+				} else {
+					return strings.TrimPrefix(insertText, "this.#")
+				}
+			}
+		} else {
+			if wordStart == '#' {
+				return ""
+			} else {
+				return strings.TrimPrefix(label, "#")
+			}
+		}
+	}
+
+	// For `this.` completions, generally don't set the filter text since we don't want them to be overly prioritized. microsoft/vscode#74164
+	if strings.HasPrefix(insertText, "this.") {
+		return ""
+	}
+
+	// Handle the case:
+	// ```
+	// const xyz = { 'ab c': 1 };
+	// xyz.ab|
+	// ```
+	// In which case we want to insert a bracket accessor but should use `.abc` as the filter text instead of
+	// the bracketed insert text.
+	if strings.HasPrefix(insertText, "[") {
+		if strings.HasPrefix(insertText, `['`) && strings.HasSuffix(insertText, `']`) {
+			return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `']`), `['`)
+		}
+		if strings.HasPrefix(insertText, `["`) && strings.HasSuffix(insertText, `"]`) {
+			return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `"]`), `["`)
+		}
+		return insertText
+	}
+
+	// !!! isMemberCompletion case: port, possibly join with above
+	if isMemberCompletion && !isSnippet {
+		text := strings.TrimSpace(file.Text()[:position]) // !!! only trim suffix space
+		if strings.HasSuffix(text, "?.") {
+			// !!! HERE
+		} else if strings.HasSuffix(text, ".") {
+			// !!! HERE
+		} else {
+			return ""
+		}
+		// !!! continue setting filter text
+	}
+
+	// In all other cases, fall back to using the insertText.
+	return insertText
 }
 
 func strPtrTo(v string) *string {
