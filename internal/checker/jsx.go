@@ -294,18 +294,6 @@ func (c *Checker) elaborateJsxComponents(node *ast.Node, source *Type, target *T
 		}
 	}
 	if ast.IsJsxOpeningElement(node.Parent) && ast.IsJsxElement(node.Parent.Parent) {
-		var invalidTextDiagnostic *diagnostics.Message
-		getInvalidTextualChildDiagnostic := func() *diagnostics.Message {
-			if invalidTextDiagnostic == nil {
-				tagNameText := scanner.GetTextOfNode(node.Parent.TagName())
-				childPropName := c.getJsxElementChildrenPropertyName(c.getJsxNamespaceAt(node))
-				childrenPropName := core.IfElse(childPropName == ast.InternalSymbolNameMissing, "children", childPropName)
-				childrenTargetType := c.getIndexedAccessType(target, c.getStringLiteralType(childrenPropName))
-				diagnostic := diagnostics.X_0_components_don_t_accept_text_as_child_elements_Text_in_JSX_has_the_type_string_but_the_expected_type_of_1_is_2
-				invalidTextDiagnostic = diagnostics.FormatMessage(diagnostic, tagNameText, childrenPropName, c.TypeToString(childrenTargetType))
-			}
-			return invalidTextDiagnostic
-		}
 		containingElement := node.Parent.Parent // Containing JSXElement
 		childrenPropName := c.getJsxElementChildrenPropertyName(c.getJsxNamespaceAt(node))
 		if childrenPropName == ast.InternalSymbolNameMissing {
@@ -328,6 +316,15 @@ func (c *Checker) elaborateJsxComponents(node *ast.Node, source *Type, target *T
 		} else {
 			arrayLikeTargetParts = c.filterType(childrenTargetType, c.isArrayOrTupleLikeType)
 			nonArrayLikeTargetParts = c.filterType(childrenTargetType, func(t *Type) bool { return !c.isArrayOrTupleLikeType(t) })
+		}
+		var invalidTextDiagnostic *diagnostics.Message
+		getInvalidTextualChildDiagnostic := func() *diagnostics.Message {
+			if invalidTextDiagnostic == nil {
+				tagNameText := scanner.GetTextOfNode(node.Parent.TagName())
+				diagnostic := diagnostics.X_0_components_don_t_accept_text_as_child_elements_Text_in_JSX_has_the_type_string_but_the_expected_type_of_1_is_2
+				invalidTextDiagnostic = diagnostics.FormatMessage(diagnostic, tagNameText, childrenPropName, c.TypeToString(childrenTargetType))
+			}
+			return invalidTextDiagnostic
 		}
 		if moreThanOneRealChildren {
 			if arrayLikeTargetParts != c.neverType {
