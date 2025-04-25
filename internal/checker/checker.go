@@ -1308,7 +1308,7 @@ func (c *Checker) mergeModuleAugmentation(moduleName *ast.Node) {
 			}) {
 				merged := c.mergeSymbol(moduleAugmentation.Symbol, mainModule, true /*unidirectional*/)
 				// moduleName will be a StringLiteral since this is not `declare global`.
-				ast.GetSymbolTable(&c.patternAmbientModuleAugmentations)[moduleName.Text()] = merged
+				c.patternAmbientModuleAugmentations.GetOrInit()[moduleName.Text()] = merged
 			} else {
 				if mainModule.Exports[ast.InternalSymbolNameExportStar] != nil && len(moduleAugmentation.Symbol.Exports) != 0 {
 					// We may need to merge the module augmentation's exports into the target symbols of the resolved exports
@@ -13310,10 +13310,10 @@ func (c *Checker) mergeSymbol(target *ast.Symbol, source *ast.Symbol, unidirecti
 		}
 		target.Declarations = append(target.Declarations, source.Declarations...)
 		if source.Members != nil {
-			c.mergeSymbolTable(ast.GetSymbolTable(&target.Members), source.Members, unidirectional, nil)
+			c.mergeSymbolTable(target.Members.GetOrInit(), source.Members, unidirectional, nil)
 		}
 		if source.Exports != nil {
-			c.mergeSymbolTable(ast.GetSymbolTable(&target.Exports), source.Exports, unidirectional, target)
+			c.mergeSymbolTable(target.Exports.GetOrInit(), source.Exports, unidirectional, target)
 		}
 		if !unidirectional {
 			c.recordMergedSymbol(target, source)
@@ -14337,7 +14337,7 @@ func (c *Checker) getCommonJSExportEquals(exported *ast.Symbol, moduleSymbol *as
 		merged = c.cloneSymbol(exported)
 	}
 	merged.Flags |= ast.SymbolFlagsValueModule
-	mergedExports := ast.GetExports(merged)
+	mergedExports := merged.Exports.GetOrInit()
 	for name, s := range moduleSymbol.Exports {
 		if name != ast.InternalSymbolNameExportEquals {
 			if existing, ok := mergedExports[name]; ok {
@@ -19816,9 +19816,9 @@ func (c *Checker) getPropertyOfUnionOrIntersectionType(t *Type, name string, ski
 func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string, skipObjectFunctionPropertyAugment bool) *ast.Symbol {
 	var cache ast.SymbolTable
 	if skipObjectFunctionPropertyAugment {
-		cache = ast.GetSymbolTable(&t.AsUnionOrIntersectionType().propertyCacheWithoutFunctionPropertyAugment)
+		cache = t.AsUnionOrIntersectionType().propertyCacheWithoutFunctionPropertyAugment.GetOrInit()
 	} else {
-		cache = ast.GetSymbolTable(&t.AsUnionOrIntersectionType().propertyCache)
+		cache = t.AsUnionOrIntersectionType().propertyCache.GetOrInit()
 	}
 	if prop := cache[name]; prop != nil {
 		return prop
@@ -19828,7 +19828,7 @@ func (c *Checker) getUnionOrIntersectionProperty(t *Type, name string, skipObjec
 		cache[name] = prop
 		// Propagate an entry from the non-augmented cache to the augmented cache unless the property is partial.
 		if skipObjectFunctionPropertyAugment && prop.CheckFlags&ast.CheckFlagsPartial == 0 {
-			augmentedCache := ast.GetSymbolTable(&t.AsUnionOrIntersectionType().propertyCache)
+			augmentedCache := t.AsUnionOrIntersectionType().propertyCache.GetOrInit()
 			if augmentedCache[name] == nil {
 				augmentedCache[name] = prop
 			}
