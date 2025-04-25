@@ -9,7 +9,7 @@ var mod = require('./mod1.js');
 
 /** @type {import("./mod1.js").Baz} */
 var b;
->b : any
+>b : number
 
 /** @type {mod.Baz} */
 var bb;

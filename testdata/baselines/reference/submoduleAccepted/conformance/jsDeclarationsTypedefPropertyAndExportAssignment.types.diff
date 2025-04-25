@@ -18,7 +18,7 @@
       */
      constructor(x, y){}
 ->x : import("module").TaskGroup
-+>x : any
++>x : TaskGroup
  >y : TaskNode
  }
  

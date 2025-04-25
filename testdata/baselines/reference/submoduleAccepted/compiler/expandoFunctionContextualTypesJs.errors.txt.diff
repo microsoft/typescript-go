@@ -4,13 +4,12 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +input.js(5,48): error TS2304: Cannot find name 'P'.
-+input.js(48,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +input.js(52,17): error TS2322: Type '{ color: string; }' is not assignable to type '{ color: "blue" | "red"; }'.
 +  Types of property 'color' are incompatible.
 +    Type 'string' is not assignable to type '"blue" | "red"'.
 +
 +
-+==== input.js (3 errors) ====
++==== input.js (2 errors) ====
 +    /** @typedef {{ color: "red" | "blue" }} MyComponentProps */
 +    
 +    /**
@@ -61,12 +60,8 @@
 +     * @type {MyComponentProps}
 +     */
 +    module.exports = {
-+    ~~~~~~~~~~~~~~~~~~
 +        color: "red"
-+    ~~~~~~~~~~~~~~~~
 +    }
-+    ~
-+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +    
 +    expectLiteral({ props: module.exports });
 +                    ~~~~~

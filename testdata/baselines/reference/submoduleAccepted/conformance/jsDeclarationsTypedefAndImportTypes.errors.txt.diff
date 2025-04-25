@@ -3,13 +3,11 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+conn.js(11,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +usage.js(10,14): error TS2339: Property 'connItem' does not exist on type 'Wrap'.
 +usage.js(12,14): error TS2339: Property 'another' does not exist on type 'Wrap'.
-+usage.js(16,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
 +
-+==== conn.js (1 errors) ====
++==== conn.js (0 errors) ====
 +    /**
 +     * @typedef {string | number} Whatever
 +     */
@@ -21,10 +19,8 @@
 +    }
 +    
 +    module.exports = Conn;
-+    ~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +    
-+==== usage.js (3 errors) ====
++==== usage.js (2 errors) ====
 +    /**
 +     * @typedef {import("./conn")} Conn
 +     */
@@ -45,10 +41,6 @@
 +    }
 +    
 +    module.exports = {
-+    ~~~~~~~~~~~~~~~~~~
 +        Wrap
-+    ~~~~~~~~
 +    };
-+    ~
-+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +    
