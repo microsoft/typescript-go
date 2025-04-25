@@ -1,0 +1,11 @@
+--- old.contextualExpressionTypecheckingDoesntBlowStack.types
++++ new.contextualExpressionTypecheckingDoesntBlowStack.types
+@@= skipped -7, +7 lines =@@
+ }
+ 
+ export default class Operation {
+->Operation : Operation
++>Operation : default
+ 
+     validateParameters(parameterValues: any) : IValidationError[] | null {
+ >validateParameters : (parameterValues: any) => IValidationError[] | null

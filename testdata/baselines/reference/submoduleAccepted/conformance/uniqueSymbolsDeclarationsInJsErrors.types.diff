@@ -1,0 +1,11 @@
+--- old.uniqueSymbolsDeclarationsInJsErrors.types
++++ new.uniqueSymbolsDeclarationsInJsErrors.types
+@@= skipped -14, +14 lines =@@
+      * @readonly
+      */
+     static readonlyType;
+->readonlyType : unique symbol
++>readonlyType : symbol
+ 
+     /**
+      * @type {unique symbol}

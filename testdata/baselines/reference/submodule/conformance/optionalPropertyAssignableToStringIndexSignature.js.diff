@@ -1,0 +1,18 @@
+--- old.optionalPropertyAssignableToStringIndexSignature.js
++++ new.optionalPropertyAssignableToStringIndexSignature.js
+@@= skipped -21, +21 lines =@@
+ 
+ 
+ //// [optionalPropertyAssignableToStringIndexSignature.js]
+-"use strict";
+ stringDictionary = optionalProperties; // ok
+ stringDictionary = undefinedProperties; // error
+ probablyArray = numberLiteralKeys; // error
+-var dict = optionalUndefined; // error
++let dict = optionalUndefined; // error
+ function f() {
+-    var optional = undefined;
+-    var dict = optional; // ok
++    let optional = undefined;
++    let dict = optional; // ok
+ }

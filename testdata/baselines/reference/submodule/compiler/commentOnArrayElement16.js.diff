@@ -1,0 +1,11 @@
+--- old.commentOnArrayElement16.js
++++ new.commentOnArrayElement16.js
+@@= skipped -9, +9 lines =@@
+ 
+ 
+ //// [commentOnArrayElement16.js]
+-var array = [
++const array = [
+     // comment start
+     1,
+     2,

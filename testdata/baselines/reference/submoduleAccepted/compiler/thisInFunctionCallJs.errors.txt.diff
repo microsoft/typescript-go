@@ -1,0 +1,68 @@
+--- old.thisInFunctionCallJs.errors.txt
++++ new.thisInFunctionCallJs.errors.txt
+@@= skipped -0, +0 lines =@@
++/a.js(4,14): error TS2339: Property 'data' does not exist on type 'Test'.
++/a.js(8,14): error TS2339: Property 'data' does not exist on type 'Test'.
+ /a.js(9,26): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
++/a.js(14,14): error TS2339: Property 'data' does not exist on type 'Test'.
+ /a.js(15,31): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
++/a.js(20,14): error TS2339: Property 'data' does not exist on type 'Test'.
++/a.js(23,31): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
++/a.js(28,14): error TS2339: Property 'data' does not exist on type 'Test'.
++/a.js(31,26): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+ 
+ 
+-==== /a.js (2 errors) ====
++==== /a.js (9 errors) ====
+     class Test {
+         constructor() {
+             /** @type {number[]} */
+             this.data = [1, 2, 3];
++                 ~~~~
++!!! error TS2339: Property 'data' does not exist on type 'Test'.
+         }
+     
+         finderRaw() {
+             this.data.find(function (d) {
++                 ~~~~
++!!! error TS2339: Property 'data' does not exist on type 'Test'.
+                 return d === this.data.length
+                              ~~~~
+ !!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+@@= skipped -19, +30 lines =@@
+     
+         forEacherRaw() {
+             this.data.forEach(function (d) {
++                 ~~~~
++!!! error TS2339: Property 'data' does not exist on type 'Test'.
+                 console.log(d === this.data.length)
+                                   ~~~~
+ !!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+@@= skipped -9, +11 lines =@@
+     
+         forEacher() {
+             this.data.forEach(
++                 ~~~~
++!!! error TS2339: Property 'data' does not exist on type 'Test'.
+             /** @this {Test} */
+             function (d) {
+                 console.log(d === this.data.length)
++                                  ~~~~
++!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
++!!! related TS2738 /a.js:22:9: An outer value of 'this' is shadowed by this container.
+             }, this)
+         }
+     
+         finder() {
+             this.data.find(
++                 ~~~~
++!!! error TS2339: Property 'data' does not exist on type 'Test'.
+             /** @this {Test} */
+             function (d) {
+                 return d === this.data.length
++                             ~~~~
++!!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
++!!! related TS2738 /a.js:30:9: An outer value of 'this' is shadowed by this container.
+             }, this)
+         }
+     }

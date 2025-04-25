@@ -1,0 +1,108 @@
+--- old.exportNestedNamespaces.types
++++ new.exportNestedNamespaces.types
+@@= skipped -1, +1 lines =@@
+ 
+ === mod.js ===
+ exports.n = {};
+->exports.n = {} : typeof n
+->exports.n : typeof n
++>exports.n = {} : {}
++>exports.n : any
+ >exports : typeof import("mod")
+->n : typeof n
++>n : any
+ >{} : {}
+ 
+ exports.n.K = function () {
+->exports.n.K = function () {    this.x = 10;} : typeof K
+->exports.n.K : typeof K
+->exports.n : typeof n
++>exports.n.K = function () {    this.x = 10;} : () => void
++>exports.n.K : any
++>exports.n : any
+ >exports : typeof import("mod")
+->n : typeof n
+->K : typeof K
+->function () {    this.x = 10;} : typeof K
++>n : any
++>K : any
++>function () {    this.x = 10;} : () => void
+ 
+     this.x = 10;
+ >this.x = 10 : 10
+ >this.x : any
+->this : this
++>this : any
+ >x : any
+ >10 : 10
+ }
+@@= skipped -41, +41 lines =@@
+ 
+ === use.js ===
+ import * as s from './mod'
+->s : typeof s
++>s : typeof import("mod")
+ 
+ var k = new s.n.K()
+->k : K
+->new s.n.K() : K
+->s.n.K : typeof K
+->s.n : typeof s.n
+->s : typeof s
+->n : typeof s.n
+->K : typeof K
++>k : any
++>new s.n.K() : any
++>s.n.K : any
++>s.n : any
++>s : typeof import("mod")
++>n : any
++>K : any
+ 
+ k.x
+->k.x : number
+->k : K
+->x : number
++>k.x : any
++>k : any
++>x : any
+ 
+ var classic = new s.Classic()
+->classic : s.Classic
+->new s.Classic() : s.Classic
+->s.Classic : typeof s.Classic
+->s : typeof s
+->Classic : typeof s.Classic
++>classic : Classic
++>new s.Classic() : Classic
++>s.Classic : typeof Classic
++>s : typeof import("mod")
++>Classic : typeof Classic
+ 
+ 
+ /** @param {s.n.K} c
+     @param {s.Classic} classic */
+ function f(c, classic) {
+->f : (c: K, classic: s.Classic) => void
++>f : (c: K, classic: Classic) => void
+ >c : K
+->classic : s.Classic
++>classic : Classic
+ 
+     c.x
+->c.x : number
++>c.x : any
+ >c : K
+->x : number
++>x : any
+ 
+     classic.p
+->classic.p : number
+->classic : s.Classic
+->p : number
++>classic.p : any
++>classic : Classic
++>p : any
+ }
+ 
+ 

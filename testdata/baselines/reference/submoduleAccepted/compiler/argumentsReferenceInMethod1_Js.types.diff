@@ -1,0 +1,24 @@
+--- old.argumentsReferenceInMethod1_Js.types
++++ new.argumentsReferenceInMethod1_Js.types
+@@= skipped -8, +8 lines =@@
+ 	 */
+ 	m(foo = {}) {
+ >m : (foo?: object) => void
+->foo : any
++>foo : object
+ >{} : {}
+ 
+ 		/**
+ 		 * @type object
+ 		 */
+ 		this.arguments = foo;
+->this.arguments = foo : any
++>this.arguments = foo : object
+ >this.arguments : any
+ >this : this
+ >arguments : any
+->foo : any
++>foo : object
+ 	}
+ }
+ 

@@ -1,0 +1,19 @@
+//// [tests/cases/conformance/salsa/moduleExportAliasUnknown.ts] ////
+
+=== bug27025.js ===
+module.exports = window.nonprop;
+>module.exports = window.nonprop : any
+>module.exports : any
+>module : { unknown: any; }
+>exports : any
+>window.nonprop : any
+>window : Window & typeof globalThis
+>nonprop : any
+
+exports.foo = bar;
+>exports.foo = bar : any
+>exports.foo : any
+>exports : typeof import("bug27025")
+>foo : any
+>bar : any
+

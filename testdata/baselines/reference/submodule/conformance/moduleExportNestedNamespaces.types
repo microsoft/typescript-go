@@ -1,0 +1,94 @@
+//// [tests/cases/conformance/salsa/moduleExportNestedNamespaces.ts] ////
+
+=== mod.js ===
+module.exports.n = {};
+>module.exports.n = {} : {}
+>module.exports.n : any
+>module.exports : typeof import("mod")
+>module : { "mod": typeof import("mod"); }
+>exports : typeof import("mod")
+>n : any
+>{} : {}
+
+module.exports.n.K = function C() {
+>module.exports.n.K = function C() {    this.x = 10;} : () => void
+>module.exports.n.K : any
+>module.exports.n : any
+>module.exports : typeof import("mod")
+>module : { "mod": typeof import("mod"); }
+>exports : typeof import("mod")
+>n : any
+>K : any
+>function C() {    this.x = 10;} : () => void
+>C : () => void
+
+    this.x = 10;
+>this.x = 10 : 10
+>this.x : any
+>this : any
+>x : any
+>10 : 10
+}
+module.exports.Classic = class {
+>module.exports.Classic = class {    constructor() {        this.p = 1    }} : typeof Classic
+>module.exports.Classic : typeof Classic
+>module.exports : typeof import("mod")
+>module : { "mod": typeof import("mod"); }
+>exports : typeof import("mod")
+>Classic : typeof Classic
+>class {    constructor() {        this.p = 1    }} : typeof Classic
+
+    constructor() {
+        this.p = 1
+>this.p = 1 : 1
+>this.p : any
+>this : this
+>p : any
+>1 : 1
+    }
+}
+
+=== use.js ===
+import * as s from './mod'
+>s : typeof import("mod")
+
+var k = new s.n.K()
+>k : any
+>new s.n.K() : any
+>s.n.K : any
+>s.n : any
+>s : typeof import("mod")
+>n : any
+>K : any
+
+k.x
+>k.x : any
+>k : any
+>x : any
+
+var classic = new s.Classic()
+>classic : Classic
+>new s.Classic() : Classic
+>s.Classic : typeof Classic
+>s : typeof import("mod")
+>Classic : typeof Classic
+
+
+/** @param {s.n.K} c
+    @param {s.Classic} classic */
+function f(c, classic) {
+>f : (c: K, classic: Classic) => void
+>c : K
+>classic : Classic
+
+    c.x
+>c.x : any
+>c : K
+>x : any
+
+    classic.p
+>classic.p : any
+>classic : Classic
+>p : any
+}
+

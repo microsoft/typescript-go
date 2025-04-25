@@ -1,0 +1,11 @@
+--- old.giant.types
++++ new.giant.types
+@@= skipped -842, +842 lines =@@
+ >pa2 : any
+ }
+ export module eM {
+->eM : typeof import("giant").eM
++>eM : typeof eM
+ 
+     var V;
+ >V : any

@@ -1,0 +1,17 @@
+--- old.resolutionModeTripleSlash2.js
++++ new.resolutionModeTripleSlash2.js
+@@= skipped -31, +31 lines =@@
+     return SCRIPT;
+ }
+ 
+-
+-
+-//// [app.d.ts]
+-declare function foo(): any;
++//// [app.js]
++/// <reference types="foo" resolution-mode="require" />
++MODULE; // error
++SCRIPT; // ok
++function foo() {
++    return SCRIPT;
++}

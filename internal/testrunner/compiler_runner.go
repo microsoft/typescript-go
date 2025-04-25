@@ -86,13 +86,12 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	r.cleanUpLocal(t)
 	files := r.EnumerateTestFiles()
 	skippedTests := map[string]string{
-		"jsDeclarationsReexportedCjsAlias.ts": "debug",
-		// "mappedTypeRecursiveInference.ts":         "Skipped until we have type printer with truncation limit.",
-		// "jsFileCompilationWithoutJsExtensions.ts": "Skipped until we have proper allowJS support (and errors when not enabled.)",
-		// "fileReferencesWithNoExtensions.ts":       "Skipped until we support adding missing extensions in subtasks in fileloader.go",
-		// "typeOnlyMerge2.ts":                       "Needs investigation",
-		// "typeOnlyMerge3.ts":                       "Needs investigation",
-		// "filesEmittingIntoSameOutput.ts":          "Output order nondeterministic due to collision on filename during parallel emit.",
+		"mappedTypeRecursiveInference.ts":         "Skipped until we have type printer with truncation limit.",
+		"jsFileCompilationWithoutJsExtensions.ts": "Skipped until we have proper allowJS support (and errors when not enabled.)",
+		"fileReferencesWithNoExtensions.ts":       "Skipped until we support adding missing extensions in subtasks in fileloader.go",
+		"typeOnlyMerge2.ts":                       "Needs investigation",
+		"typeOnlyMerge3.ts":                       "Needs investigation",
+		"filesEmittingIntoSameOutput.ts":          "Output order nondeterministic due to collision on filename during parallel emit.",
 	}
 	deprecatedTests := []string{
 		// Test deprecated `importsNotUsedAsValue`
@@ -103,14 +102,14 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 		"importsNotUsedAsValues_error.ts",
 	}
 	for _, filename := range files {
-		if _, ok := skippedTests[tspath.GetBaseFileName(filename)]; ok {
-			// t.Run(tspath.GetBaseFileName(filename), func(t *testing.T) { t.Skip(msg) })
-			r.runTest(t, filename)
+		if msg, ok := skippedTests[tspath.GetBaseFileName(filename)]; ok {
+			t.Run(tspath.GetBaseFileName(filename), func(t *testing.T) { t.Skip(msg) })
+			continue
 		}
 		if slices.Contains(deprecatedTests, tspath.GetBaseFileName(filename)) {
 			continue
 		}
-		continue
+		r.runTest(t, filename)
 	}
 }
 

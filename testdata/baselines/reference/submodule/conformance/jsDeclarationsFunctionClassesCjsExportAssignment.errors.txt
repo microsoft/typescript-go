@@ -1,0 +1,93 @@
+context.js(4,14): error TS1340: Module './timer' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./timer')'?
+context.js(5,14): error TS1340: Module './hook' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./hook')'?
+context.js(6,31): error TS2694: Namespace 'Hook' has no exported member 'HookHandler'.
+context.js(34,14): error TS2350: Only a void function can be called with the 'new' keyword.
+context.js(48,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+hook.js(2,20): error TS1340: Module './context' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./context')'?
+hook.js(10,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+
+
+==== timer.js (0 errors) ====
+    /**
+     * @param {number} timeout
+     */
+    function Timer(timeout) {
+        this.timeout = timeout;
+    }
+    module.exports = Timer;
+==== hook.js (2 errors) ====
+    /**
+     * @typedef {(arg: import("./context")) => void} HookHandler
+                       ~~~~~~~~~~~~~~~~~~~
+!!! error TS1340: Module './context' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./context')'?
+     */
+    /**
+     * @param {HookHandler} handle
+     */
+    function Hook(handle) {
+        this.handle = handle;
+    }
+    module.exports = Hook;
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+    
+==== context.js (5 errors) ====
+    /**
+     * Imports
+     *
+     * @typedef {import("./timer")} Timer
+                 ~~~~~~~~~~~~~~~~~
+!!! error TS1340: Module './timer' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./timer')'?
+     * @typedef {import("./hook")} Hook
+                 ~~~~~~~~~~~~~~~~
+!!! error TS1340: Module './hook' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./hook')'?
+     * @typedef {import("./hook").HookHandler} HookHandler
+                                  ~~~~~~~~~~~
+!!! error TS2694: Namespace 'Hook' has no exported member 'HookHandler'.
+     */
+    
+    /**
+     * Input type definition
+     *
+     * @typedef {Object} Input
+     * @prop {Timer} timer
+     * @prop {Hook} hook
+     */
+     
+    /**
+     * State type definition
+     *
+     * @typedef {Object} State
+     * @prop {Timer} timer
+     * @prop {Hook} hook
+     */
+    
+    /**
+     * New `Context`
+     *
+     * @class
+     * @param {Input} input
+     */
+    
+    function Context(input) {
+        if (!(this instanceof Context)) {
+          return new Context(input)
+                 ~~~~~~~~~~~~~~~~~~
+!!! error TS2350: Only a void function can be called with the 'new' keyword.
+        }
+        this.state = this.construct(input);
+    }
+    Context.prototype = {
+        /**
+         * @param {Input} input
+         * @param {HookHandler=} handle
+         * @returns {State}
+         */
+        construct(input, handle = () => void 0) {
+            return input;
+        }
+    }
+    module.exports = Context;
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+    

@@ -1,0 +1,16 @@
+--- old.privacyCheckAnonymousFunctionParameter.js
++++ new.privacyCheckAnonymousFunctionParameter.js
+@@= skipped -29, +29 lines =@@
+     }
+     Query.fromDoWhile = fromDoWhile;
+     function fromOrderBy() {
+-        return fromDoWhile(function (test) {
++        return fromDoWhile(test => {
+             return true;
+         });
+     }
+ })(Query || (Query = {}));
+-
+-
+-//// [privacyCheckAnonymousFunctionParameter.d.ts]
+-export declare var x: number;

@@ -1,0 +1,18 @@
+bug24754.js(4,1): error TS2631: Cannot assign to '"bug24754"' because it is a namespace.
+bug24754.js(4,11): error TS2741: Property 'version' is missing in type '{ (): void; WebpackOptionsDefaulter: number; }' but required in type 'typeof import("bug24754")'.
+
+
+==== bug24754.js (2 errors) ====
+    // #24754
+    const webpack = function (){
+    }
+    exports = module.exports = webpack;
+    ~~~~~~~
+!!! error TS2631: Cannot assign to '"bug24754"' because it is a namespace.
+              ~~~~~~~~~~~~~~
+!!! error TS2741: Property 'version' is missing in type '{ (): void; WebpackOptionsDefaulter: number; }' but required in type 'typeof import("bug24754")'.
+!!! related TS2728 bug24754.js:5:1: 'version' is declared here.
+    exports.version = 1001;
+    
+    webpack.WebpackOptionsDefaulter = 1111;
+    

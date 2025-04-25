@@ -1,0 +1,25 @@
+/index.ts(1,19): error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
+/index.ts(3,16): error TS2671: Cannot augment module './test' because it resolves to a non-module entity.
+/index.ts(7,3): error TS2339: Property 'toFixed' does not exist on type 'string'.
+
+
+==== /test.js (0 errors) ====
+    module.exports = {
+      a: "ok"
+    };
+    
+==== /index.ts (3 errors) ====
+    import { a } from "./test";
+                      ~~~~~~~~
+!!! error TS2497: This module can only be referenced with ECMAScript imports/exports by turning on the 'esModuleInterop' flag and referencing its default export.
+    
+    declare module "./test" {
+                   ~~~~~~~~
+!!! error TS2671: Cannot augment module './test' because it resolves to a non-module entity.
+      export const a: number;
+    }
+    
+    a.toFixed();
+      ~~~~~~~
+!!! error TS2339: Property 'toFixed' does not exist on type 'string'.
+    

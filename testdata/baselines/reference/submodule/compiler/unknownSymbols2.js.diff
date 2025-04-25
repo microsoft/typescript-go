@@ -1,0 +1,18 @@
+--- old.unknownSymbols2.js
++++ new.unknownSymbols2.js
+@@= skipped -51, +51 lines =@@
+         default:
+             break;
+     }
+-    var a = function () { return asdf; };
+-    var b = function (asdf) { return qwerty; };
+-    var N;
++    var a = () => asdf;
++    var b = (asdf) => { return qwerty; };
++    let N;
+     (function (N) {
+         var x = 1;
+     })(N || (N = {}));
++    var c = N;
++    var d = asdf;
+ })(M || (M = {}));

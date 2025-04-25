@@ -1,0 +1,29 @@
+--- old.widenedTypes.js
++++ new.widenedTypes.js
+@@= skipped -25, +25 lines =@@
+ var obj: { [x: string]: string; } = { x: 3, y: null }; // assignable because null is widened, and therefore BCT is any
+ 
+ //// [widenedTypes.js]
+-null instanceof (function () { });
++null instanceof (() => { });
+ ({}) instanceof null; // Ok because null is a subtype of function
+ null in {};
+ "" in null;
+@@= skipped -16, +16 lines =@@
+ // Highlights the difference between array literals and object literals
+ var arr = [3, null]; // not assignable because null is not widened. BCT is {}
+ var obj = { x: 3, y: null }; // assignable because null is widened, and therefore BCT is any
+-
+-
+-//// [widenedTypes.d.ts]
+-declare var t: number[];
+-declare var x: typeof undefined;
+-declare var y: any;
+-declare var u: number[];
+-declare var ob: {
+-    x: typeof undefined;
+-};
+-declare var arr: string[];
+-declare var obj: {
+-    [x: string]: string;
+-};

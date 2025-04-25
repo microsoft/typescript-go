@@ -1,0 +1,25 @@
+//// [tests/cases/conformance/salsa/typeFromPropertyAssignment37.ts] ////
+
+=== use.js ===
+const util = require('./mod')
+>util : Symbol(util, Decl(use.js, 0, 5))
+>require : Symbol(require)
+
+function n() {
+>n : Symbol(n, Decl(use.js, 0, 29))
+
+    util.existy // no error
+>util : Symbol(util, Decl(use.js, 0, 5))
+}
+util.existy // no error
+>util : Symbol(util, Decl(use.js, 0, 5))
+
+=== mod.js ===
+const util = exports = module.exports = {}
+>util : Symbol(util, Decl(mod.js, 0, 5))
+
+if (!!false) {
+    util.existy = function () { }
+>util : Symbol(util, Decl(mod.js, 0, 5))
+}
+

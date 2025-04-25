@@ -1,0 +1,14 @@
+--- old.nodeModulesPackageImports(module=nodenext).js
++++ new.nodeModulesPackageImports(module=nodenext).js
+@@= skipped -85, +85 lines =@@
+ cjs;
+ mjs;
+ type;
+-
+-
+-//// [index.d.mts]
+-export {};
+-//// [index.d.cts]
+-export {};
+-//// [index.d.ts]
+-export {};

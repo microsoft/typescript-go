@@ -1,0 +1,27 @@
+--- old.discriminatedUnionTypes2.js
++++ new.discriminatedUnionTypes2.js
+@@= skipped -146, +146 lines =@@
+ 
+ 
+ //// [discriminatedUnionTypes2.js]
+-"use strict";
+ function f10(x) {
+     if (x.kind === false) {
+         x.a;
+@@= skipped -44, +43 lines =@@
+ f15({ error: new Error("boom") });
+ function f20(carrier) {
+     if (carrier.error === null) {
+-        var error = carrier.error;
+-        var data = carrier.data;
++        const error = carrier.error;
++        const data = carrier.data;
+     }
+     else {
+-        var error = carrier.error;
+-        var data = carrier.data;
++        const error = carrier.error;
++        const data = carrier.data;
+     }
+ }
+ function f30(foo) {

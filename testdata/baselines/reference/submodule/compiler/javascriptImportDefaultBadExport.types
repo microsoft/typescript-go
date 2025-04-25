@@ -1,0 +1,18 @@
+//// [tests/cases/compiler/javascriptImportDefaultBadExport.ts] ////
+
+=== /a.js ===
+const alias = {};
+>alias : {}
+>{} : {}
+
+module.exports = alias;
+>module.exports = alias : {}
+>module.exports : {}
+>module : { readonly alias: {}; }
+>exports : {}
+>alias : {}
+
+=== /b.js ===
+import a from "./a";
+>a : {}
+
