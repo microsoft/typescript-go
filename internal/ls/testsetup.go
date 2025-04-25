@@ -35,7 +35,7 @@ type TestData struct {
 	Ranges markerRange
 }
 
-func ParseTestdata(basePath string, contents string, fileName string) TestData {
+func ParseTestData(basePath string, contents string, fileName string) TestData {
 	// List of all the subfiles we've parsed out
 	files := []TestFileInfo{}
 
