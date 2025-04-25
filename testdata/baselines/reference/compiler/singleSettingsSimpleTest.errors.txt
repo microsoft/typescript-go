@@ -1,8 +1,0 @@
-singleSettingsSimpleTest.ts(2,7): error TS2322: Type 'undefined' is not assignable to type 'string'.
-
-
-==== singleSettingsSimpleTest.ts (1 errors) ====
-    export {};
-    const x: string = undefined;
-          ~
-!!! error TS2322: Type 'undefined' is not assignable to type 'string'.
