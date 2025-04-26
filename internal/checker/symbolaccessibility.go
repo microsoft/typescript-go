@@ -184,9 +184,9 @@ func (ch *Checker) getAlternativeContainingModules(symbol *ast.Symbol, enclosing
 		return existing
 	}
 	var results []*ast.Symbol
-	if len(containingFile.Imports) > 0 {
+	if len(containingFile.Imports()) > 0 {
 		// Try to make an import using an import already in the enclosing file, if possible
-		for _, importRef := range containingFile.Imports {
+		for _, importRef := range containingFile.Imports() {
 			if ast.NodeIsSynthesized(importRef) {
 				// Synthetic names can't be resolved by `resolveExternalModuleName` - they'll cause a debug assert if they error
 				continue

@@ -898,6 +898,11 @@ func SetParentInChildren(node *Node) {
 	fn(node)
 }
 
+// This should never be called outside the parser
+func SetImportsOfSourceFile(node *SourceFile, imports []*LiteralLikeNode) {
+	node.imports = imports
+}
+
 // Walks up the parents of a node to find the ancestor that matches the callback
 func FindAncestor(node *Node, callback func(*Node) bool) *Node {
 	for node != nil {
@@ -2949,4 +2954,22 @@ func IsLateVisibilityPaintedStatement(node *Node) bool {
 	default:
 		return false
 	}
+}
+
+func IsExternalModuleAugmentation(node *Node) bool {
+	return IsAmbientModule(node) && IsModuleAugmentationExternal(node)
+}
+
+func GetSourceFileOfModule(module *Symbol) *SourceFile {
+	declaration := module.ValueDeclaration
+	if declaration == nil {
+		declaration = getNonAugmentationDeclaration(module)
+	}
+	return GetSourceFileOfNode(declaration)
+}
+
+func getNonAugmentationDeclaration(symbol *Symbol) *Node {
+	return core.Find(symbol.Declarations, func(d *Node) bool {
+		return !IsExternalModuleAugmentation(d) && !IsGlobalScopeAugmentation(d)
+	})
 }

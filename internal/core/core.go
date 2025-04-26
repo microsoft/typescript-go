@@ -524,3 +524,13 @@ func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
 func Identity[T any](t T) T {
 	return t
 }
+
+func GetPathsBasePath(options *CompilerOptions, currentDirectory string) string {
+	if options.Paths.Size() == 0 {
+		return ""
+	}
+	if options.PathsBasePath != "" {
+		return options.PathsBasePath
+	}
+	return currentDirectory
+}

@@ -1,11 +1,14 @@
 // Exports interfaces and types defining the node builder - concrete implmentations are on top of the checker, but these types and interfaces are used by the emit resolver in the printer
 package nodebuilder
 
-import "github.com/microsoft/typescript-go/internal/ast"
+import (
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+)
 
 // TODO: previously all symboltracker methods were optional, but now they're required.
 type SymbolTracker interface {
-	GetModuleSpecifierGenerationHost() any // !!!
+	GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost
 	GetInnerSymbolTracker() SymbolTracker
 
 	TrackSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool

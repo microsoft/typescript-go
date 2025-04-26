@@ -5,6 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -17,7 +18,7 @@ type SymbolTrackerImpl struct {
 }
 
 // GetModuleSpecifierGenerationHost implements checker.SymbolTracker.
-func (s *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() any {
+func (s *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost {
 	return nil // !!!
 }
 

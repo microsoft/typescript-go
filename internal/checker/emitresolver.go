@@ -126,7 +126,7 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 			// falls through
 		}
 		// external module augmentation is always visible
-		if isExternalModuleAugmentation(node) {
+		if ast.IsExternalModuleAugmentation(node) {
 			return true
 		}
 		parent := ast.GetDeclarationContainer(node)

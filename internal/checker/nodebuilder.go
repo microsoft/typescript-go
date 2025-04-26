@@ -427,7 +427,7 @@ func (b *NodeBuilder) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFlags,
 			typeParameterNodes = b.lookupTypeParameterNodes(chain, 0)
 		}
 		contextFile := ast.GetSourceFileOfNode(b.e.MostOriginal(b.ctx.enclosingDeclaration)) // TODO: Just use b.ctx.enclosingFile ? Or is the delayed lookup important for context moves?
-		targetFile := getSourceFileOfModule(chain[0])
+		targetFile := ast.GetSourceFileOfModule(chain[0])
 		var specifier string
 		var attributes *ast.Node
 		if b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNode16 || b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNodeNext {
@@ -1070,7 +1070,7 @@ func (b *NodeBuilder) getSpecifierForModuleSymbol(symbol *ast.Symbol, overrideIm
 		if isAmbientModuleSymbolName(symbol.Name) {
 			return stripQuotes(symbol.Name)
 		}
-		return ast.GetSourceFileOfNode(getNonAugmentationDeclaration(symbol)).FileName()
+		return ast.GetSourceFileOfModule(symbol).FileName()
 	}
 
 	enclosingDeclaration := b.e.MostOriginal(b.ctx.enclosingDeclaration)
@@ -1079,11 +1079,11 @@ func (b *NodeBuilder) getSpecifierForModuleSymbol(symbol *ast.Symbol, overrideIm
 		originalModuleSpecifier = tryGetModuleSpecifierFromDeclaration(enclosingDeclaration)
 	}
 	contextFile := b.ctx.enclosingFile
-	resolutionMode := core.ResolutionModeNone
-	if overrideImportMode != core.ResolutionModeNone || originalModuleSpecifier != nil {
+	resolutionMode := overrideImportMode
+	if resolutionMode == core.ResolutionModeNone && originalModuleSpecifier != nil {
 		// !!! import resolution mode support
 		//resolutionMode = b.ch.host.GetModeForUsageLocation(contextFile, originalModuleSpecifier)
-	} else if contextFile != nil {
+	} else if resolutionMode == core.ResolutionModeNone && contextFile != nil {
 		// !!! import resolution mode support
 		//resolutionMode = b.ch.host.GetDefaultResolutionModeForFile(contextFile)
 	}
@@ -1103,27 +1103,32 @@ func (b *NodeBuilder) getSpecifierForModuleSymbol(symbol *ast.Symbol, overrideIm
 	// specifier preference
 	host := b.ctx.tracker.GetModuleSpecifierGenerationHost()
 	specifierCompilerOptions := b.ch.compilerOptions
+	specifierPref := modulespecifiers.ImportModuleSpecifierPreferenceProjectRelative
+	endingPref := modulespecifiers.ImportModuleSpecifierEndingPreferenceNone
+	if resolutionMode == core.ResolutionModeESM {
+		endingPref = modulespecifiers.ImportModuleSpecifierEndingPreferenceJs
+	}
 	if isBundle {
 		// !!! relies on option cloning and specifier host implementation
 		// specifierCompilerOptions = &core.CompilerOptions{BaseUrl: host.GetCommonSourceDirectory()}
 		// TODO: merge with b.ch.compilerOptions
+		specifierPref = modulespecifiers.ImportModuleSpecifierPreferenceNonRelative
+		endingPref = modulespecifiers.ImportModuleSpecifierEndingPreferenceMinimal
 	}
+
 	allSpecifiers := modulespecifiers.GetModuleSpecifiers(
 		symbol,
 		b.ch,
 		specifierCompilerOptions,
 		contextFile,
 		host,
-		nil,
-		nil,
-		// !!! pass options when unstubbed
-		// {
-		// 	importModuleSpecifierPreference: isBundle ? "non-relative" : "project-relative",
-		// 	importModuleSpecifierEnding: isBundle ? "minimal"
-		// 		: resolutionMode === ModuleKind.ESNext ? "js"
-		// 		: undefined,
-		// },
-		// { overrideImportMode },
+		modulespecifiers.UserPreferences{
+			ImportModuleSpecifierPreference:       specifierPref,
+			ImportModuleSpecifierEndingPreference: endingPref,
+		},
+		modulespecifiers.ModuleSpecifierOptions{
+			OverrideImportMode: overrideImportMode,
+		},
 	)
 	specifier := allSpecifiers[0]
 	links.specifierCache[cacheKey] = specifier

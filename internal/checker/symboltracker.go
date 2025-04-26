@@ -2,6 +2,7 @@ package checker
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 )
 
@@ -23,7 +24,7 @@ func NewSymbolTrackerImpl(context *NodeBuilderContext, tracker nodebuilder.Symbo
 	return &SymbolTrackerImpl{context, inner, false}
 }
 
-func (this *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() any {
+func (this *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost {
 	if this.inner == nil {
 		return nil
 	}

@@ -4805,7 +4805,7 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 		}
 	}
 	if isAmbientExternalModule {
-		if isExternalModuleAugmentation(node) {
+		if ast.IsExternalModuleAugmentation(node) {
 			// body of the augmentation should be checked for consistency only if augmentation was applied to its target (either global scope or module)
 			// otherwise we'll be swamped in cascading errors.
 			// We can detect if augmentation was applied using following rules:
@@ -13896,7 +13896,7 @@ func (c *Checker) isOnlyImportableAsDefault(usage *ast.Node, resolvedModule *ast
 			}
 			var targetFile *ast.SourceFile
 			if resolvedModule != nil {
-				targetFile = getSourceFileOfModule(resolvedModule)
+				targetFile = ast.GetSourceFileOfModule(resolvedModule)
 			}
 			return targetFile != nil && (ast.IsJsonSourceFile(targetFile) || tspath.GetDeclarationFileExtension(targetFile.FileName()) == ".d.json.ts")
 		}
@@ -29771,4 +29771,8 @@ func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *e
 		c.checkSourceFile(file)
 	}
 	return c.emitResolver
+}
+
+func (c *Checker) GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
+	return c.resolveAlias(symbol)
 }

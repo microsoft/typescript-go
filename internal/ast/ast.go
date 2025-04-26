@@ -9727,7 +9727,7 @@ type SourceFile struct {
 	UsesUriStyleNodeCoreModules core.Tristate
 	Identifiers                 map[string]string
 	IdentifierCount             int
-	Imports                     []*LiteralLikeNode // []LiteralLikeNode
+	imports                     []*LiteralLikeNode // []LiteralLikeNode
 	ModuleAugmentations         []*ModuleName      // []ModuleName
 	AmbientModuleNames          []string
 	CommentDirectives           []CommentDirective
@@ -9796,6 +9796,14 @@ func (node *SourceFile) Path() tspath.Path {
 	return node.path
 }
 
+func (node *SourceFile) OriginalFileName() string {
+	return node.FileName() // !!! redirect source files
+}
+
+func (node *SourceFile) Imports() []*LiteralLikeNode {
+	return node.imports
+}
+
 func (node *SourceFile) Diagnostics() []*Diagnostic {
 	return node.diagnostics
 }
@@ -9836,6 +9844,10 @@ func (node *SourceFile) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateSourceFile(node, v.visitTopLevelStatements(node.Statements))
 }
 
+func (node *SourceFile) IsJS() bool {
+	return IsSourceFileJS(node)
+}
+
 func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
 	node.LanguageVersion = other.LanguageVersion
@@ -9845,7 +9857,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.HasNoDefaultLib = other.HasNoDefaultLib
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules
 	node.Identifiers = other.Identifiers
-	node.Imports = other.Imports
+	node.imports = other.imports
 	node.ModuleAugmentations = other.ModuleAugmentations
 	node.AmbientModuleNames = other.AmbientModuleNames
 	node.CommentDirectives = other.CommentDirectives

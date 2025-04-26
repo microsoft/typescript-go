@@ -1051,7 +1051,7 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
 	} else {
 		return continueSearching()
 	}
-	baseDirectory := getPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
+	baseDirectory := core.GetPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
 	pathPatterns := r.resolver.getParsedPatternsForPaths()
 	return r.tryLoadModuleUsingPaths(
 		r.extensions,
@@ -1706,16 +1706,6 @@ func moveToNextDirectorySeparatorIfAvailable(path string, prevSeparatorIndex int
 		return prevSeparatorIndex
 	}
 	return nextSeparatorIndex + offset
-}
-
-func getPathsBasePath(options *core.CompilerOptions, currentDirectory string) string {
-	if options.Paths.Size() == 0 {
-		return ""
-	}
-	if options.PathsBasePath != "" {
-		return options.PathsBasePath
-	}
-	return currentDirectory
 }
 
 type parsedPatterns struct {

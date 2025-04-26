@@ -260,12 +260,35 @@ func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
 	return false
 }
 
+func (options *CompilerOptions) GetAllowImportingTsExtensions() bool {
+	return options.AllowImportingTsExtensions == TSTrue || options.RewriteRelativeImportExtensions == TSTrue
+}
+
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 	switch options.GetEmitModuleKind() {
 	case ModuleKindNone, ModuleKindSystem, ModuleKindUMD:
 		return false
 	}
 	return true
+}
+
+func moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution ModuleResolutionKind) bool {
+	return moduleResolution >= ModuleResolutionKindNode16 && moduleResolution <= ModuleResolutionKindNodeNext || moduleResolution == ModuleResolutionKindBundler
+}
+
+func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
+	moduleResolution := options.GetModuleResolutionKind()
+	if !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
+		return false
+	}
+	if options.ResolvePackageJsonExports != TSUnknown {
+		return options.ResolvePackageJsonExports == TSTrue
+	}
+	switch moduleResolution {
+	case ModuleResolutionKindNode16, ModuleResolutionKindNodeNext, ModuleResolutionKindBundler:
+		return true
+	}
+	return false
 }
 
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which

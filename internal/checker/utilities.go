@@ -478,26 +478,8 @@ func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
 	return false
 }
 
-func getSourceFileOfModule(module *ast.Symbol) *ast.SourceFile {
-	declaration := module.ValueDeclaration
-	if declaration == nil {
-		declaration = getNonAugmentationDeclaration(module)
-	}
-	return ast.GetSourceFileOfNode(declaration)
-}
-
-func getNonAugmentationDeclaration(symbol *ast.Symbol) *ast.Node {
-	return core.Find(symbol.Declarations, func(d *ast.Node) bool {
-		return !isExternalModuleAugmentation(d) && !ast.IsGlobalScopeAugmentation(d)
-	})
-}
-
-func isExternalModuleAugmentation(node *ast.Node) bool {
-	return ast.IsAmbientModule(node) && ast.IsModuleAugmentationExternal(node)
-}
-
 func isTopLevelInExternalModuleAugmentation(node *ast.Node) bool {
-	return node != nil && node.Parent != nil && ast.IsModuleBlock(node.Parent) && isExternalModuleAugmentation(node.Parent.Parent)
+	return node != nil && node.Parent != nil && ast.IsModuleBlock(node.Parent) && ast.IsExternalModuleAugmentation(node.Parent.Parent)
 }
 
 func isSyntacticDefault(node *ast.Node) bool {
