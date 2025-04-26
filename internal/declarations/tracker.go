@@ -14,12 +14,13 @@ import (
 type SymbolTrackerImpl struct {
 	resolver      printer.EmitResolver
 	state         *SymbolTrackerSharedState
+	host          DeclarationEmitHost
 	fallbackStack []*ast.Node
 }
 
 // GetModuleSpecifierGenerationHost implements checker.SymbolTracker.
 func (s *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost {
-	return nil // !!!
+	return s.host
 }
 
 func (s *SymbolTrackerImpl) GetInnerSymbolTracker() nodebuilder.SymbolTracker {
@@ -217,7 +218,7 @@ func (s *SymbolTrackerSharedState) addDiagnostic(diag *ast.Diagnostic) {
 	s.diagnostics = append(s.diagnostics, diag)
 }
 
-func NewSymbolTracker(resolver printer.EmitResolver, state *SymbolTrackerSharedState) *SymbolTrackerImpl {
-	tracker := &SymbolTrackerImpl{resolver: resolver, state: state}
+func NewSymbolTracker(host DeclarationEmitHost, resolver printer.EmitResolver, state *SymbolTrackerSharedState) *SymbolTrackerImpl {
+	tracker := &SymbolTrackerImpl{host: host, resolver: resolver, state: state}
 	return tracker
 }

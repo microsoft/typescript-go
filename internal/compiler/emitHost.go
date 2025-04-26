@@ -4,6 +4,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/declarations"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -35,6 +36,46 @@ var _ EmitHost = (*emitHost)(nil)
 // NOTE: emitHost operations must be thread-safe
 type emitHost struct {
 	program *Program
+}
+
+func (host *emitHost) FileExists(path string) bool {
+	return host.program.host.FS().FileExists(path)
+}
+
+func (host *emitHost) GetGlobalTypingsCacheLocation() string {
+	return "" // !!! see src/tsserver/nodeServer.ts for strada's node-specific implementation
+}
+
+func (host *emitHost) GetModuleSpecifierCache() modulespecifiers.ModuleSpecifierCache {
+	return nil /// !!! see src/server/moduleSpecifierCache.ts for strada's services implementation
+}
+
+func (host *emitHost) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
+	scoped := host.program.resolver.GetPackageScopeForPath(dirname)
+	if scoped != nil && scoped.Exists() {
+		return scoped.PackageDirectory
+	}
+	return ""
+}
+
+func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+	scoped := host.program.resolver.GetPackageScopeForPath(pkgJsonPath)
+	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == tspath.GetDirectoryPath(pkgJsonPath) {
+		return scoped
+	}
+	return nil
+}
+
+func (host *emitHost) GetProjectReferenceRedirect(path string) string {
+	return "" // !!! TODO: project references support
+}
+
+func (host *emitHost) GetRedirectTargets(path tspath.Path) []string {
+	return nil // !!! TODO: project references support
+}
+
+func (host *emitHost) IsSourceOfProjectReferenceRedirect(path string) bool {
+	return false // !!! TODO: project references support
 }
 
 func (host *emitHost) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {

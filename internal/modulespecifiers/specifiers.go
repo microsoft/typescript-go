@@ -869,7 +869,7 @@ func tryDirectoryWithPackageJson(
 		conditions := module.GetConditions(options, importMode)
 
 		var fromExports string
-		if packageJsonContent.Fields.Exports.Type != packagejson.JSONValueTypeNotPresent {
+		if packageJsonContent != nil && packageJsonContent.Fields.Exports.Type != packagejson.JSONValueTypeNotPresent {
 			fromExports = tryGetModuleNameFromExports(
 				options,
 				host,
@@ -886,7 +886,7 @@ func tryDirectoryWithPackageJson(
 				verbatimFromExports: true,
 			}
 		}
-		if packageJsonContent.Fields.Exports.Type != packagejson.JSONValueTypeNotPresent {
+		if packageJsonContent != nil && packageJsonContent.Fields.Exports.Type != packagejson.JSONValueTypeNotPresent {
 			return pkgJsonDirAttemptResult{
 				moduleFileToTry:  pathObj.Path,
 				blockedByExports: true,

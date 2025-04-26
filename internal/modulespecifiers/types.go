@@ -77,7 +77,7 @@ type ModuleSpecifierCache interface {
 
 type PackageJsonInfo interface {
 	GetDirectory() string
-	GetContents() packagejson.PackageJson
+	GetContents() *packagejson.PackageJson
 }
 
 type ModuleSpecifierGenerationHost interface {

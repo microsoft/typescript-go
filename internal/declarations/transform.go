@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -26,6 +27,7 @@ type OutputPaths interface {
 
 // Used to be passed in the TransformationContext, which is now just an EmitContext
 type DeclarationEmitHost interface {
+	modulespecifiers.ModuleSpecifierGenerationHost
 	GetCurrentDirectory() string
 	UseCaseSensitiveFileNames() bool
 	GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile
@@ -60,7 +62,7 @@ type DeclarationTransformer struct {
 
 func NewDeclarationTransformer(host DeclarationEmitHost, resolver printer.EmitResolver, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
 	state := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), resolver: resolver}
-	tracker := NewSymbolTracker(resolver, state)
+	tracker := NewSymbolTracker(host, resolver, state)
 	// TODO: Use new host GetOutputPathsFor method instead of passing in entrypoint paths (which will also better support bundled emit)
 	tx := &DeclarationTransformer{
 		host:                host,
