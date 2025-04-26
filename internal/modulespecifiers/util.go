@@ -7,7 +7,11 @@ import (
 
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler/module"
+	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -126,12 +130,12 @@ func tryGetAnyFileFromPath(host ModuleSpecifierGenerationHost, path string) bool
 			AllowJs: core.TSTrue,
 		},
 		[]tsoptions.FileExtensionInfo{
-			tsoptions.FileExtensionInfo{
+			{
 				Extension:      "node",
 				IsMixedContent: false,
 				ScriptKind:     core.ScriptKindExternal,
 			},
-			tsoptions.FileExtensionInfo{
+			{
 				Extension:      "json",
 				IsMixedContent: false,
 				ScriptKind:     core.ScriptKindJSON,
@@ -175,11 +179,6 @@ func getRelativePathIfInSameVolume(path string, directoryPath string, useCaseSen
 	return relativePath
 }
 
-func getNearestAncestorDirectoryWithPackageJson(host ModuleSpecifierGenerationHost, dir string) string {
-	// no fallback impl, required on host
-	return host.GetNearestAncestorDirectoryWithPackageJson(dir)
-}
-
 func packageJsonPathsAreEqual(a string, b string, options tspath.ComparePathsOptions) bool {
 	if a == b {
 		return true
@@ -197,4 +196,130 @@ func prefersTsExtension(allowedEndings []ModuleSpecifierEnding) bool {
 		return tsPriority < jsPriority
 	}
 	return false
+}
+
+var typeScriptVersion = semver.MustParse(core.Version) // TODO: unify with clone inside module resolver?
+
+func isApplicableVersionedTypesKey(conditions []string, key string) bool {
+	if !slices.Contains(conditions, "types") {
+		return false // only apply versioned types conditions if the types condition is applied
+	}
+	if !strings.HasPrefix(key, "types@") {
+		return false
+	}
+	range_, ok := semver.TryParseVersionRange(key[len("types@"):])
+	if !ok {
+		return false
+	}
+	return range_.Test(&typeScriptVersion)
+}
+
+func replaceFirstStar(s string, replacement string) string {
+	return strings.Replace(s, "*", replacement, 1)
+}
+
+func hasPrefix(s string, prefix string, caseSensitive bool) bool {
+	if caseSensitive {
+		return strings.HasPrefix(s, prefix)
+	}
+	if len(prefix) > len(s) {
+		return false
+	}
+	return strings.EqualFold(s[0:len(prefix)], prefix)
+}
+
+func hasSuffix(s string, suffix string, caseSensitive bool) bool {
+	if caseSensitive {
+		return strings.HasSuffix(s, suffix)
+	}
+	if len(suffix) > len(s) {
+		return false
+	}
+	return strings.EqualFold(s[len(s)-len(suffix):], suffix)
+}
+
+type NodeModulePathParts struct {
+	TopLevelNodeModulesIndex int
+	TopLevelPackageNameIndex int
+	PackageRootIndex         int
+	FileNameIndex            int
+}
+
+type nodeModulesPathParseState uint8
+
+const (
+	nodeModulesPathParseStateBeforeNodeModules nodeModulesPathParseState = iota
+	nodeModulesPathParseStateNodeModules
+	nodeModulesPathParseStateScope
+	nodeModulesPathParseStatePackageContent
+)
+
+func getNodeModulePathParts(fullPath string) *NodeModulePathParts {
+	// If fullPath can't be valid module file within node_modules, returns undefined.
+	// Example of expected pattern: /base/path/node_modules/[@scope/otherpackage/@otherscope/node_modules/]package/[subdirectory/]file.js
+	// Returns indices:                       ^            ^                                                      ^             ^
+
+	topLevelNodeModulesIndex := 0
+	topLevelPackageNameIndex := 0
+	packageRootIndex := 0
+	fileNameIndex := 0
+
+	partStart := 0
+	partEnd := 0
+	state := nodeModulesPathParseStateBeforeNodeModules
+
+	for partEnd >= 0 {
+		partStart = partEnd
+		partEnd = strings.Index(fullPath[partStart+1:], "/") + partStart
+		switch state {
+		case nodeModulesPathParseStateBeforeNodeModules:
+			if strings.Index(fullPath[partStart:], "/node_modules/") == 0 {
+				topLevelNodeModulesIndex = partStart
+				topLevelPackageNameIndex = partEnd
+				state = nodeModulesPathParseStateNodeModules
+			}
+		case nodeModulesPathParseStateNodeModules, nodeModulesPathParseStateScope:
+			if state == nodeModulesPathParseStateNodeModules && fullPath[partStart+1] == '@' {
+				state = nodeModulesPathParseStateScope
+			} else {
+				packageRootIndex = partEnd
+				state = nodeModulesPathParseStatePackageContent
+			}
+		case nodeModulesPathParseStatePackageContent:
+			if strings.Index(fullPath[partStart:], "/node_modules/") == 0 {
+				state = nodeModulesPathParseStateNodeModules
+			} else {
+				state = nodeModulesPathParseStatePackageContent
+			}
+		}
+	}
+
+	fileNameIndex = partStart
+
+	if state > nodeModulesPathParseStateNodeModules {
+		return &NodeModulePathParts{
+			TopLevelNodeModulesIndex: topLevelNodeModulesIndex,
+			TopLevelPackageNameIndex: topLevelPackageNameIndex,
+			PackageRootIndex:         packageRootIndex,
+			FileNameIndex:            fileNameIndex,
+		}
+	}
+	return nil
+}
+
+func getPackageNameFromTypesPackageName(mangledName string) string {
+	withoutAtTypePrefix := strings.TrimPrefix(mangledName, "@types/")
+	if withoutAtTypePrefix != mangledName {
+		return module.UnmangleScopedPackageName(withoutAtTypePrefix)
+	}
+	return mangledName
+}
+
+func allKeysStartWithDot(obj *collections.OrderedMap[string, packagejson.ExportsOrImports]) bool {
+	for k := range obj.Keys() {
+		if !strings.HasPrefix(k, ".") {
+			return false
+		}
+	}
+	return true
 }

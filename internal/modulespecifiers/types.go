@@ -2,6 +2,7 @@ package modulespecifiers
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -74,11 +75,17 @@ type ModuleSpecifierCache interface {
 	Count() int
 }
 
+type PackageJsonInfo interface {
+	GetDirectory() string
+	GetContents() packagejson.PackageJson
+}
+
 type ModuleSpecifierGenerationHost interface {
 	GetModuleSpecifierCache() ModuleSpecifierCache
 	// GetModuleResolutionCache() any // !!! TODO: adapt new resolution cache model
 	// GetSymlinkCache() any // !!! TODO: adapt new resolution cache model
 	// GetFileIncludeReasons() any // !!! TODO: adapt new resolution cache model
+	GetGlobalTypingsCacheLocation() string
 	UseCaseSensitiveFileNames() bool
 	GetCurrentDirectory() string
 
@@ -89,6 +96,7 @@ type ModuleSpecifierGenerationHost interface {
 	FileExists(path string) bool
 
 	GetNearestAncestorDirectoryWithPackageJson(dirname string) string
+	GetPackageJsonInfo(pkgJsonPath string) PackageJsonInfo
 }
 
 type ImportModuleSpecifierPreference string
@@ -137,4 +145,12 @@ const (
 	ModuleSpecifierEndingIndex
 	ModuleSpecifierEndingJsExtension
 	ModuleSpecifierEndingTsExtension
+)
+
+type MatchingMode uint8
+
+const (
+	MatchingModeExact MatchingMode = iota
+	MatchingModeDirectory
+	MatchingModePattern
 )

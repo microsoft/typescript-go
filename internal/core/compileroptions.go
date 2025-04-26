@@ -291,6 +291,22 @@ func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
 	return false
 }
 
+// TODO: strada bug? Identical to GetResolvePackageJsonImports
+func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
+	moduleResolution := options.GetModuleResolutionKind()
+	if !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
+		return false
+	}
+	if options.ResolvePackageJsonExports != TSUnknown {
+		return options.ResolvePackageJsonExports == TSTrue
+	}
+	switch moduleResolution {
+	case ModuleResolutionKindNode16, ModuleResolutionKindNodeNext, ModuleResolutionKindBundler:
+		return true
+	}
+	return false
+}
+
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
 // affect the parse and bind of a source file.
 type SourceFileAffectingCompilerOptions struct {
