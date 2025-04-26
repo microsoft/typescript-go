@@ -534,3 +534,12 @@ func GetPathsBasePath(options *CompilerOptions, currentDirectory string) string 
 	}
 	return currentDirectory
 }
+
+func IndexAfter(s string, pattern string, startIndex int) int {
+	matched := strings.Index(s[startIndex:], pattern)
+	if matched == -1 {
+		return -1
+	} else {
+		return matched + startIndex
+	}
+}

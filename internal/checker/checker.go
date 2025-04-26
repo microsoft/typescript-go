@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -529,7 +530,9 @@ type Program interface {
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 }
 
-type Host interface{}
+type Host interface {
+	modulespecifiers.ModuleSpecifierGenerationHost
+}
 
 // Checker
 
@@ -829,13 +832,13 @@ type Checker struct {
 	_jsxFactoryEntity                          *ast.Node
 }
 
-func NewChecker(program Program) *Checker {
+func NewChecker(program Program, host Host) *Checker {
 	program.BindSourceFiles()
 
 	c := &Checker{}
 	c.id = nextCheckerID.Add(1)
 	c.program = program
-	// c.host = program.host
+	c.host = host
 	c.compilerOptions = program.Options()
 	c.files = program.SourceFiles()
 	c.fileIndexMap = createFileIndexMap(c.files)

@@ -269,7 +269,7 @@ func (p *Program) createCheckers() {
 		wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 		for i := range p.checkers {
 			wg.Queue(func() {
-				p.checkers[i] = checker.NewChecker(p)
+				p.checkers[i] = checker.NewChecker(p, &emitHost{program: p})
 			})
 		}
 		wg.RunAndWait()

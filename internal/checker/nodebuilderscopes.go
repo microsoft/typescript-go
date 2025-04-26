@@ -184,22 +184,23 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 						}
 
 						bindElementWorker := func(e *ast.BindingElement) {
-							if ast.IsBindingPattern(e.Name()) {
+							if e.Name() != nil && ast.IsBindingPattern(e.Name()) {
 								(*bindPattern)(e.Name().AsBindingPattern())
 								return
 							}
 							symbol := b.ch.getSymbolOfDeclaration(e.AsNode())
-							add(symbol.Name, symbol)
+							if symbol != nil { // omitted expressions are now parsed as nameless binding patterns and also have no symbol
+								add(symbol.Name, symbol)
+							}
 						}
 						bindElement = &bindElementWorker
 						bindPattern = &bindPatternWorker
 
-						if ast.IsParameter(d) && ast.IsBindingPattern(d.Name()) {
+						if ast.IsParameter(d) && d.Name() != nil && ast.IsBindingPattern(d.Name()) {
 							(*bindPattern)(d.Name().AsBindingPattern())
 							return true
 						}
 						return false
-
 					}) {
 						add(param.Name, param)
 					}

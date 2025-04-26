@@ -792,7 +792,7 @@ func tryGetModuleNameAsNodeModule(
 				moduleFileName = moduleFileToTry
 			}
 			// try with next level of directory
-			packageRootIndex = strings.Index(pathObj.Path[packageRootIndex+1:], "/") + packageRootIndex
+			packageRootIndex = core.IndexAfter(pathObj.Path, "/", packageRootIndex+1)
 			if packageRootIndex == -1 {
 				moduleSpecifier = processEnding(moduleFileName, allowedEndings, options, host)
 				break
@@ -839,7 +839,11 @@ func tryDirectoryWithPackageJson(
 	options *core.CompilerOptions,
 	allowedEndings []ModuleSpecifierEnding,
 ) pkgJsonDirAttemptResult {
-	packageRootPath := pathObj.Path[0:parts.PackageRootIndex]
+	rootIdx := parts.PackageRootIndex
+	if rootIdx == -1 {
+		rootIdx = len(pathObj.Path) // TODO: possible strada bug? -1 in js slice removes characters from the end, in go it panics - js behavior seems unwanted here?
+	}
+	packageRootPath := pathObj.Path[0:rootIdx]
 	packageJsonPath := tspath.CombinePaths(packageRootPath, "package.json")
 	moduleFileToTry := pathObj.Path
 	maybeBlockedByTypesVersions := false
@@ -858,7 +862,10 @@ func tryDirectoryWithPackageJson(
 	// 	importMode =  getDefaultResolutionModeForFile(importingSourceFile, host, options);
 	// }
 
-	packageJsonContent := packageJson.GetContents()
+	var packageJsonContent *packagejson.PackageJson
+	if packageJson != nil {
+		packageJsonContent = packageJson.GetContents()
+	}
 
 	if options.GetResolvePackageJsonImports() {
 		// The package name that we found in node_modules could be different from the package
@@ -895,7 +902,7 @@ func tryDirectoryWithPackageJson(
 	}
 
 	var versionPaths packagejson.VersionPaths
-	if packageJsonContent.TypesVersions.Type == packagejson.JSONValueTypeObject {
+	if packageJsonContent != nil && packageJsonContent.TypesVersions.Type == packagejson.JSONValueTypeObject {
 		versionPaths = packageJsonContent.GetVersionPaths(nil)
 	}
 	if versionPaths.GetPaths() != nil {
@@ -916,12 +923,14 @@ func tryDirectoryWithPackageJson(
 	}
 	// If the file is the main module, it can be imported by the package name
 	mainFileRelative := "index.js"
-	if packageJsonContent.Typings.Valid {
-		mainFileRelative = packageJsonContent.Typings.Value
-	} else if packageJsonContent.Types.Valid {
-		mainFileRelative = packageJsonContent.Types.Value
-	} else if packageJsonContent.Main.Valid {
-		mainFileRelative = packageJsonContent.Main.Value
+	if packageJsonContent != nil {
+		if packageJsonContent.Typings.Valid {
+			mainFileRelative = packageJsonContent.Typings.Value
+		} else if packageJsonContent.Types.Valid {
+			mainFileRelative = packageJsonContent.Types.Value
+		} else if packageJsonContent.Main.Valid {
+			mainFileRelative = packageJsonContent.Main.Value
+		}
 	}
 
 	if len(mainFileRelative) > 0 && !(maybeBlockedByTypesVersions && module.MatchPatternOrExact(module.TryParsePatterns(versionPaths.GetPaths()), mainFileRelative) != core.Pattern{}) {
@@ -939,7 +948,7 @@ func tryDirectoryWithPackageJson(
 		if tspath.ComparePaths(tspath.RemoveFileExtension(string(mainExportFile)), tspath.RemoveFileExtension(moduleFileToTry), compareOpt) == 0 {
 			// ^ An arbitrary removal of file extension for this comparison is almost certainly wrong
 			return pkgJsonDirAttemptResult{packageRootPath: packageRootPath, moduleFileToTry: moduleFileToTry}
-		} else if packageJsonContent.Type.Value != "module" &&
+		} else if packageJsonContent == nil || packageJsonContent.Type.Value != "module" &&
 			!tspath.FileExtensionIsOneOf(moduleFileToTry, tspath.ExtensionsNotSupportingExtensionlessResolution) &&
 			hasPrefix(moduleFileToTry, string(mainExportFile), host.UseCaseSensitiveFileNames()) &&
 			tspath.ComparePaths(tspath.GetDirectoryPath(moduleFileToTry), tspath.RemoveTrailingDirectorySeparator(string(mainExportFile)), compareOpt) == 0 &&

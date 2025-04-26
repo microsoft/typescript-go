@@ -27,6 +27,7 @@ type NodeBuilderInterface interface {
 
 type NodeBuilderAPI struct {
 	ctxStack []*NodeBuilderContext
+	host     Host
 	impl     *NodeBuilder
 }
 
@@ -57,7 +58,7 @@ func (b *NodeBuilderAPI) enterContext(enclosingDeclaration *ast.Node, flags node
 		remappedSymbolReferences: make(map[ast.SymbolId]*ast.Symbol),
 	}
 	if tracker == nil {
-		tracker = NewSymbolTrackerImpl(b.impl.ctx, nil)
+		tracker = NewSymbolTrackerImpl(b.impl.ctx, nil, b.host)
 		b.impl.ctx.tracker = tracker
 	}
 	b.impl.initializeClosures() // recapture ctx
@@ -190,7 +191,7 @@ func (b *NodeBuilderAPI) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Nod
 
 func NewNodeBuilderAPI(ch *Checker, e *printer.EmitContext) *NodeBuilderAPI {
 	impl := NewNodeBuilder(ch, e)
-	return &NodeBuilderAPI{impl: &impl, ctxStack: make([]*NodeBuilderContext, 0, 1)}
+	return &NodeBuilderAPI{impl: &impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.host}
 }
 
 func (c *Checker) GetDiagnosticNodeBuilder() NodeBuilderInterface {

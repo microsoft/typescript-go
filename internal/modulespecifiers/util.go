@@ -145,7 +145,7 @@ func tryGetAnyFileFromPath(host ModuleSpecifierGenerationHost, path string) bool
 	for _, exts := range extGroups {
 		for _, e := range exts {
 			fullPath := path + e
-			if host.FileExists(fullPath) {
+			if host.FileExists(string(tspath.GetNormalizedAbsolutePath(fullPath, host.GetCurrentDirectory()))) {
 				return true
 			}
 		}
@@ -270,7 +270,7 @@ func getNodeModulePathParts(fullPath string) *NodeModulePathParts {
 
 	for partEnd >= 0 {
 		partStart = partEnd
-		partEnd = strings.Index(fullPath[partStart+1:], "/") + partStart
+		partEnd = core.IndexAfter(fullPath, "/", partStart+1)
 		switch state {
 		case nodeModulesPathParseStateBeforeNodeModules:
 			if strings.Index(fullPath[partStart:], "/node_modules/") == 0 {

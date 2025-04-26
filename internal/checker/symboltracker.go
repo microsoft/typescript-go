@@ -10,9 +10,10 @@ type SymbolTrackerImpl struct {
 	context            *NodeBuilderContext
 	inner              nodebuilder.SymbolTracker
 	DisableTrackSymbol bool
+	tchost             Host
 }
 
-func NewSymbolTrackerImpl(context *NodeBuilderContext, tracker nodebuilder.SymbolTracker) *SymbolTrackerImpl {
+func NewSymbolTrackerImpl(context *NodeBuilderContext, tracker nodebuilder.SymbolTracker, tchost Host) *SymbolTrackerImpl {
 	var inner nodebuilder.SymbolTracker
 	if tracker != nil {
 		inner = tracker.GetInnerSymbolTracker()
@@ -21,12 +22,12 @@ func NewSymbolTrackerImpl(context *NodeBuilderContext, tracker nodebuilder.Symbo
 		}
 	}
 
-	return &SymbolTrackerImpl{context, inner, false}
+	return &SymbolTrackerImpl{context, inner, false, tchost}
 }
 
 func (this *SymbolTrackerImpl) GetModuleSpecifierGenerationHost() modulespecifiers.ModuleSpecifierGenerationHost {
 	if this.inner == nil {
-		return nil
+		return this.tchost
 	}
 	return this.inner.GetModuleSpecifierGenerationHost()
 }

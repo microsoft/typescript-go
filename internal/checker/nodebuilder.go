@@ -101,8 +101,10 @@ type NodeBuilder struct {
 	ctx *NodeBuilderContext
 }
 
-const defaultMaximumTruncationLength = 160
-const noTruncationMaximumTruncationLength = 1_000_000
+const (
+	defaultMaximumTruncationLength      = 160
+	noTruncationMaximumTruncationLength = 1_000_000
+)
 
 // Node builder utility functions
 
@@ -992,7 +994,7 @@ func canHaveModuleSpecifier(node *ast.Node) bool {
 
 func tryGetModuleSpecifierFromDeclaration(node *ast.Node) *ast.Node {
 	res := tryGetModuleSpecifierFromDeclarationWorker(node)
-	if !ast.IsStringLiteral(res) {
+	if res == nil || !ast.IsStringLiteral(res) {
 		return nil
 	}
 	return res
@@ -1021,7 +1023,7 @@ func tryGetModuleSpecifierFromDeclarationWorker(node *ast.Node) *ast.Node {
 		}
 		return ref.AsExternalModuleReference().Expression
 	case ast.KindImportClause:
-		if ast.IsImportDeclaration(node.Parent.Parent) {
+		if ast.IsImportDeclaration(node.Parent) {
 			return node.Parent.AsImportDeclaration().ModuleSpecifier
 		}
 		return node.Parent.AsJSDocImportTag().ModuleSpecifier
@@ -1082,10 +1084,10 @@ func (b *NodeBuilder) getSpecifierForModuleSymbol(symbol *ast.Symbol, overrideIm
 	resolutionMode := overrideImportMode
 	if resolutionMode == core.ResolutionModeNone && originalModuleSpecifier != nil {
 		// !!! import resolution mode support
-		//resolutionMode = b.ch.host.GetModeForUsageLocation(contextFile, originalModuleSpecifier)
+		// resolutionMode = b.ch.host.GetModeForUsageLocation(contextFile, originalModuleSpecifier)
 	} else if resolutionMode == core.ResolutionModeNone && contextFile != nil {
 		// !!! import resolution mode support
-		//resolutionMode = b.ch.host.GetDefaultResolutionModeForFile(contextFile)
+		// resolutionMode = b.ch.host.GetDefaultResolutionModeForFile(contextFile)
 	}
 	cacheKey := module.ModeAwareCacheKey{Name: string(contextFile.Path()), Mode: resolutionMode}
 	links := b.symbolLinks.Get(symbol)
@@ -1780,7 +1782,6 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 		}
 	}
 	return [][]*ast.Symbol{sig.parameters}
-
 }
 
 func (b *NodeBuilder) tryGetThisParameterDeclaration(signature *Signature) *ast.Node {
@@ -2370,7 +2371,6 @@ func (b *NodeBuilder) createAnonymousTypeNode(t *Type) *ast.TypeNode {
 		// Anonymous types without a symbol are never circular.
 		return b.createTypeNodeFromObjectTypeClosure(t)
 	}
-
 }
 
 func (b *NodeBuilder) getTypeFromTypeNode(node *ast.TypeNode, noMappedTypes bool) *Type {
@@ -2679,7 +2679,6 @@ func (b *NodeBuilder) visitAndTransformType(t *Type, transform func(t *Type) *as
 }
 
 func (b *NodeBuilder) typeToTypeNode(t *Type) *ast.TypeNode {
-
 	inTypeAlias := b.ctx.flags & nodebuilder.FlagsInTypeAlias
 	b.ctx.flags &^= nodebuilder.FlagsInTypeAlias
 
