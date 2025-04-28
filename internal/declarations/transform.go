@@ -530,6 +530,9 @@ func (tx *DeclarationTransformer) transformHeritageClause(clause *ast.HeritageCl
 		return ast.IsEntityNameExpression(t.AsExpressionWithTypeArguments().Expression) ||
 			(clause.Token == ast.KindExtendsKeyword && t.Expression().Kind == ast.KindNullKeyword)
 	})
+	if len(retainedClauses) == 0 {
+		return nil // elide empty clause
+	}
 	if len(retainedClauses) == len(clause.Types.Nodes) {
 		return tx.Visitor().VisitEachChild(clause.AsNode())
 	}
@@ -764,16 +767,16 @@ func (tx *DeclarationTransformer) updateAccessorParamList(input *ast.Node, isPri
 	if !isPrivate {
 		thisParam := ast.GetThisParameter(input)
 		if thisParam != nil {
-			newParams = append(newParams, tx.ensureParameter(thisParam.AsParameterDeclaration(), defaultModifierFlagsMask))
+			newParams = append(newParams, tx.ensureParameter(thisParam.AsParameterDeclaration()))
 		}
 	}
 	if ast.IsSetAccessorDeclaration(input) {
 		var valueParam *ast.Node
 		if !isPrivate {
 			if len(newParams) == 1 && len(input.AsSetAccessorDeclaration().Parameters.Nodes) >= 2 {
-				valueParam = tx.ensureParameter(input.AsSetAccessorDeclaration().Parameters.Nodes[1].AsParameterDeclaration(), defaultModifierFlagsMask)
+				valueParam = tx.ensureParameter(input.AsSetAccessorDeclaration().Parameters.Nodes[1].AsParameterDeclaration())
 			} else if len(newParams) == 0 && len(input.AsSetAccessorDeclaration().Parameters.Nodes) >= 1 {
-				valueParam = tx.ensureParameter(input.AsSetAccessorDeclaration().Parameters.Nodes[0].AsParameterDeclaration(), defaultModifierFlagsMask)
+				valueParam = tx.ensureParameter(input.AsSetAccessorDeclaration().Parameters.Nodes[0].AsParameterDeclaration())
 			}
 		}
 		if valueParam == nil {
@@ -802,7 +805,7 @@ func (tx *DeclarationTransformer) transformConstructorDeclaration(input *ast.Con
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		nil, // no type params
-		tx.updateParamListEx(input.AsNode(), input.Parameters, ast.ModifierFlagsNone),
+		tx.updateParamList(input.AsNode(), input.Parameters),
 		nil, // no return type
 		nil,
 	)
@@ -812,7 +815,7 @@ func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *
 	return tx.Factory().UpdateConstructSignatureDeclaration(
 		input,
 		tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
-		tx.updateParamListEx(input.AsNode(), input.Parameters, ast.ModifierFlagsNone),
+		tx.updateParamList(input.AsNode(), input.Parameters),
 		nil, // no return type
 	)
 }
@@ -1485,27 +1488,17 @@ func (tx *DeclarationTransformer) ensureTypeParams(node *ast.Node, params *ast.T
 }
 
 func (tx *DeclarationTransformer) updateParamList(node *ast.Node, params *ast.ParameterList) *ast.ParameterList {
-	return tx.updateParamListEx(node, params, ast.ModifierFlagsAll^ast.ModifierFlagsPublic)
-}
-
-func (tx *DeclarationTransformer) updateParamListEx(node *ast.Node, params *ast.ParameterList, modifierMask ast.ModifierFlags) *ast.ParameterList {
 	if tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(node), ast.ModifierFlagsPrivate) != 0 || len(params.Nodes) == 0 {
 		return tx.Factory().NewNodeList([]*ast.Node{})
 	}
 	results := make([]*ast.Node, len(params.Nodes))
 	for i, p := range params.Nodes {
-		results[i] = tx.ensureParameter(p.AsParameterDeclaration(), modifierMask)
+		results[i] = tx.ensureParameter(p.AsParameterDeclaration())
 	}
 	return tx.Factory().NewNodeList(results)
 }
 
-// Elide "public" modifier, as it is the default
-func (tx *DeclarationTransformer) maskModifiers(node *ast.Node, mask ast.ModifierFlags, additions ast.ModifierFlags) *ast.ModifierList {
-	list := ast.CreateModifiersFromModifierFlags(maskModifierFlags(tx.host, node, mask, additions), tx.Factory().NewModifier)
-	return tx.Factory().NewModifierList(list)
-}
-
-func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration, modifierMask ast.ModifierFlags) *ast.Node {
+func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration) *ast.Node {
 	oldDiag := tx.state.getSymbolAccessibilityDiagnostic
 	if !tx.suppressNewDiagnosticContexts {
 		tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(p.AsNode())
@@ -1520,7 +1513,7 @@ func (tx *DeclarationTransformer) ensureParameter(p *ast.ParameterDeclaration, m
 	}
 	result := tx.Factory().UpdateParameterDeclaration(
 		p,
-		tx.maskModifiers(p.AsNode(), modifierMask, ast.ModifierFlagsNone),
+		nil,
 		p.DotDotDotToken,
 		tx.filterBindingPatternInitializers(p.Name()),
 		questionToken,
