@@ -150,21 +150,15 @@ func runMain() int {
 	if opts.devel.version {
 		// Get build info to extract the commit SHA
 		buildInfo, _ := debug.ReadBuildInfo()
-		fmt.Print("tsgo ")
-		// Try to extract the commit SHA from the build info
-		var commitSha string
+		version := core.Version
 		for _, setting := range buildInfo.Settings {
 			if setting.Key == "vcs.revision" {
-				commitSha = setting.Value
+				version += "-" + setting.Value
 				break
 			}
 		}
 
-		if commitSha != "" {
-			fmt.Printf("commit %s\n", commitSha)
-		} else {
-			fmt.Println("version unknown")
-		}
+		fmt.Println(diagnostics.Version_0.Format(version))
 		return 0
 	}
 
