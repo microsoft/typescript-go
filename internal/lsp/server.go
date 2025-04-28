@@ -44,8 +44,10 @@ func NewServer(opts *ServerOptions) *Server {
 	}
 }
 
-var _ project.ServiceHost = (*Server)(nil)
-var _ project.Client = (*Server)(nil)
+var (
+	_ project.ServiceHost = (*Server)(nil)
+	_ project.Client      = (*Server)(nil)
+)
 
 type Server struct {
 	r *lsproto.BaseReader
