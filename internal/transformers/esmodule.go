@@ -39,6 +39,8 @@ func (tx *ESModuleTransformer) visit(node *ast.Node) *ast.Node {
 		node = tx.visitSourceFile(node.AsSourceFile())
 	case ast.KindImportDeclaration:
 		node = tx.visitImportDeclaration(node.AsImportDeclaration())
+	case ast.KindJSImportDeclaration:
+		node = nil
 	case ast.KindImportEqualsDeclaration:
 		node = tx.visitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
 	case ast.KindExportAssignment:

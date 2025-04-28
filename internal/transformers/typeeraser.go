@@ -255,7 +255,7 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		}
 		return tx.visitor.VisitEachChild(node)
 
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		n := node.AsImportDeclaration()
 		if n.ImportClause == nil {
 			// Do not elide a side-effect only import declaration.

@@ -3953,7 +3953,7 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitNamespaceExportDeclaration(node.AsNamespaceExportDeclaration())
 	case ast.KindImportEqualsDeclaration:
 		p.emitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		p.emitImportDeclaration(node.AsImportDeclaration())
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		p.emitExportAssignment(node.AsExportAssignment())
@@ -5605,7 +5605,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		p.generateAllNames(node.AsBindingPattern().Elements)
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		p.generateNames(node.AsImportDeclaration().ImportClause)
 	case ast.KindImportClause:
 		p.generateNameIfNeeded(node.AsImportClause().Name())

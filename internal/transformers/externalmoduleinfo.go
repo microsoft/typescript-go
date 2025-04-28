@@ -47,11 +47,12 @@ func (c *externalModuleInfoCollector) collect() *externalModuleInfo {
 	hasImportDefault := false
 	for _, node := range c.sourceFile.Statements.Nodes {
 		switch node.Kind {
-		case ast.KindImportDeclaration:
+		case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 			// import "mod"
 			// import x from "mod"
 			// import * as x from "mod"
 			// import { x, y } from "mod"
+			// @import versions of above
 			n := node.AsImportDeclaration()
 			c.addExternalImport(node)
 			if !hasImportStar && getImportNeedsImportStarHelper(n) {

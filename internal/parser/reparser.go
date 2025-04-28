@@ -79,7 +79,6 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 		for _, tag := range j.AsJSDoc().Tags.Nodes {
 			switch tag.Kind {
 			case ast.KindJSDocTypedefTag:
-				// !!! Don't mark typedefs as exported if they are not in a module
 				typeExpression := tag.AsJSDocTypedefTag().TypeExpression
 				if typeExpression == nil {
 					break
@@ -115,7 +114,16 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				typeAlias.Loc = core.NewTextRange(tag.Pos(), tag.End())
 				typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				p.reparseList = append(p.reparseList, typeAlias)
-				// !!! @overload and other unattached tags (@callback, @import et al) support goes here
+			case ast.KindJSDocImportTag:
+				importTag := tag.AsJSDocImportTag()
+				importClause := importTag.ImportClause.Clone(&p.factory)
+				importClause.Flags |= ast.NodeFlagsReparsed
+				importClause.AsImportClause().IsTypeOnly = true
+				importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
+				importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
+				importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				p.reparseList = append(p.reparseList, importDeclaration)
+				// !!! @overload and other unattached tags (@callback et al) support goes here
 			}
 			if !isLast {
 				continue

@@ -368,6 +368,7 @@ func (tx *ESNextTransformer) transformUsingDeclarations(statementsIn []*ast.Stat
 
 		switch node.Kind {
 		case ast.KindImportDeclaration,
+			ast.KindJSImportDeclaration,
 			ast.KindImportEqualsDeclaration,
 			ast.KindExportDeclaration,
 			ast.KindFunctionDeclaration:

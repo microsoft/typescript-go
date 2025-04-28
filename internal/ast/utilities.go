@@ -646,6 +646,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindEnumDeclaration,
 		KindModuleDeclaration,
 		KindImportDeclaration,
+		KindJSImportDeclaration,
 		KindImportEqualsDeclaration,
 		KindExportDeclaration,
 		KindExportAssignment,
@@ -1036,7 +1037,7 @@ func CanHaveIllegalDecorators(node *Node) bool {
 		KindMissingDeclaration, KindVariableStatement,
 		KindInterfaceDeclaration, KindTypeAliasDeclaration,
 		KindEnumDeclaration, KindModuleDeclaration,
-		KindImportEqualsDeclaration, KindImportDeclaration,
+		KindImportEqualsDeclaration, KindImportDeclaration, KindJSImportDeclaration,
 		KindNamespaceExportDeclaration, KindExportDeclaration,
 		KindExportAssignment:
 		return true
@@ -1081,6 +1082,7 @@ func CanHaveModifiers(node *Node) bool {
 		KindModuleDeclaration,
 		KindImportEqualsDeclaration,
 		KindImportDeclaration,
+		KindJSImportDeclaration,
 		KindExportAssignment,
 		KindExportDeclaration:
 		return true
@@ -1662,7 +1664,7 @@ func IsAnyImportOrReExport(node *Node) bool {
 }
 
 func IsAnyImportSyntax(node *Node) bool {
-	return NodeKindIs(node, KindImportDeclaration, KindImportEqualsDeclaration)
+	return NodeKindIs(node, KindImportDeclaration, KindJSImportDeclaration, KindImportEqualsDeclaration)
 }
 
 func IsJsonSourceFile(file *SourceFile) bool {
@@ -1675,7 +1677,7 @@ func IsInJsonFile(node *Node) bool {
 
 func GetExternalModuleName(node *Node) *Expression {
 	switch node.Kind {
-	case KindImportDeclaration:
+	case KindImportDeclaration, KindJSImportDeclaration:
 		return node.AsImportDeclaration().ModuleSpecifier
 	case KindExportDeclaration:
 		return node.AsExportDeclaration().ModuleSpecifier
@@ -1701,7 +1703,7 @@ func GetExternalModuleName(node *Node) *Expression {
 
 func GetImportAttributes(node *Node) *Node {
 	switch node.Kind {
-	case KindImportDeclaration:
+	case KindImportDeclaration, KindJSImportDeclaration:
 		return node.AsImportDeclaration().Attributes
 	case KindExportDeclaration:
 		return node.AsExportDeclaration().Attributes
@@ -2053,6 +2055,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 		KindImportSpecifier,
 		KindImportEqualsDeclaration,
 		KindImportDeclaration,
+		KindJSImportDeclaration,
 		KindExportAssignment,
 		KindJSExportAssignment,
 		KindExportDeclaration:
@@ -2168,7 +2171,7 @@ func getModuleInstanceStateWorker(node *Node, ancestors []*Node, visited map[Nod
 		if IsEnumConst(node) {
 			return ModuleInstanceStateConstEnumOnly
 		}
-	case KindImportDeclaration, KindImportEqualsDeclaration:
+	case KindImportDeclaration, KindJSImportDeclaration, KindImportEqualsDeclaration:
 		if !HasSyntacticModifier(node, ModifierFlagsExport) {
 			return ModuleInstanceStateNonInstantiated
 		}
@@ -2339,7 +2342,7 @@ func GetFirstIdentifier(node *Node) *Node {
 
 func GetNamespaceDeclarationNode(node *Node) *Node {
 	switch node.Kind {
-	case KindImportDeclaration:
+	case KindImportDeclaration, KindJSImportDeclaration:
 		importClause := node.AsImportDeclaration().ImportClause
 		if importClause != nil && importClause.AsImportClause().NamedBindings != nil && IsNamespaceImport(importClause.AsImportClause().NamedBindings) {
 			return importClause.AsImportClause().NamedBindings
@@ -2364,7 +2367,7 @@ func ModuleExportNameIsDefault(node *Node) bool {
 func IsDefaultImport(node *Node /*ImportDeclaration | ImportEqualsDeclaration | ExportDeclaration | JSDocImportTag*/) bool {
 	var importClause *Node
 	switch node.Kind {
-	case KindImportDeclaration:
+	case KindImportDeclaration, KindJSImportDeclaration:
 		importClause = node.AsImportDeclaration().ImportClause
 	case KindJSDocImportTag:
 		importClause = node.AsJSDocImportTag().ImportClause

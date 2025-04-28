@@ -751,7 +751,7 @@ func (n *Node) Children() *NodeList {
 
 func (n *Node) ModuleSpecifier() *Expression {
 	switch n.Kind {
-	case KindImportDeclaration:
+	case KindImportDeclaration, KindJSImportDeclaration:
 		return n.AsImportDeclaration().ModuleSpecifier
 	case KindExportDeclaration:
 		return n.AsExportDeclaration().ModuleSpecifier
@@ -4036,13 +4036,21 @@ type ImportDeclaration struct {
 	Attributes      *ImportAttributesNode // ImportAttributesNode. Optional
 }
 
-func (f *NodeFactory) NewImportDeclaration(modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+func (f *NodeFactory) newImportOrJSImportDeclaration(kind Kind, modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
 	data := &ImportDeclaration{}
 	data.modifiers = modifiers
 	data.ImportClause = importClause
 	data.ModuleSpecifier = moduleSpecifier
 	data.Attributes = attributes
-	return f.newNode(KindImportDeclaration, data)
+	return f.newNode(kind, data)
+}
+
+func (f *NodeFactory) NewImportDeclaration(modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+	return f.newImportOrJSImportDeclaration(KindImportDeclaration, modifiers, importClause, moduleSpecifier, attributes)
+}
+
+func (f *NodeFactory) NewJSImportDeclaration(modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+	return f.newImportOrJSImportDeclaration(KindJSImportDeclaration, modifiers, importClause, moduleSpecifier, attributes)
 }
 
 func (f *NodeFactory) UpdateImportDeclaration(node *ImportDeclaration, modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
