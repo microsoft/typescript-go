@@ -244,7 +244,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]lsproto.FileEvent{
+			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
@@ -264,7 +264,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]lsproto.FileEvent{
+			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
@@ -303,7 +303,7 @@ func TestService(t *testing.T) {
 				}
 			}`
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]lsproto.FileEvent{
+			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/tsconfig.json",
@@ -335,7 +335,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/x.ts")
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]lsproto.FileEvent{
+			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeDeleted,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
@@ -368,7 +368,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/index.ts")
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]lsproto.FileEvent{
+			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeDeleted,
 					Uri:  "file:///home/projects/TS/p1/src/index.ts",
@@ -402,7 +402,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/y.ts"] = `export const y = 1;`
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]lsproto.FileEvent{
+			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
 					Uri:  "file:///home/projects/TS/p1/src/y.ts",
@@ -438,7 +438,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/z.ts"] = `export const z = 1;`
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]lsproto.FileEvent{
+			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
 					Uri:  "file:///home/projects/TS/p1/src/z.ts",

@@ -107,14 +107,14 @@ func (s *Server) Client() project.Client {
 }
 
 // WatchFiles implements project.Client.
-func (s *Server) WatchFiles(watchers []lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
+func (s *Server) WatchFiles(watchers []*lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
 	watcherId := fmt.Sprintf("watcher-%d", s.watcherID)
 	if err := s.sendRequest(lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
-		Registrations: []lsproto.Registration{
+		Registrations: []*lsproto.Registration{
 			{
 				Id:     watcherId,
 				Method: string(lsproto.MethodWorkspaceDidChangeWatchedFiles),
-				RegisterOptions: ptrTo(lsproto.LSPAny(lsproto.DidChangeWatchedFilesRegistrationOptions{
+				RegisterOptions: ptrTo(any(lsproto.DidChangeWatchedFilesRegistrationOptions{
 					Watchers: watchers,
 				})),
 			},
@@ -133,7 +133,7 @@ func (s *Server) WatchFiles(watchers []lsproto.FileSystemWatcher) (project.Watch
 func (s *Server) UnwatchFiles(handle project.WatcherHandle) error {
 	if _, ok := s.watchers[handle]; ok {
 		if err := s.sendRequest(lsproto.MethodClientUnregisterCapability, &lsproto.UnregistrationParams{
-			Unregisterations: []lsproto.Unregistration{
+			Unregisterations: []*lsproto.Unregistration{
 				{
 					Id:     string(handle),
 					Method: string(lsproto.MethodWorkspaceDidChangeWatchedFiles),
