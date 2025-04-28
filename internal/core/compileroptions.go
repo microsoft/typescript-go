@@ -256,8 +256,7 @@ func (options *CompilerOptions) GetEmitDeclarations() bool {
 }
 
 func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
-	// !!!
-	return false
+	return options.DeclarationMap == TSTrue && options.GetEmitDeclarations()
 }
 
 func (options *CompilerOptions) GetAllowImportingTsExtensions() bool {
