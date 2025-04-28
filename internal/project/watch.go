@@ -43,9 +43,9 @@ func (w *watchedFiles[T]) update(newData T) (updated bool, err error) {
 		}
 	}
 
-	watchers := make([]lsproto.FileSystemWatcher, 0, len(newGlobs))
+	watchers := make([]*lsproto.FileSystemWatcher, 0, len(newGlobs))
 	for _, glob := range newGlobs {
-		watchers = append(watchers, lsproto.FileSystemWatcher{
+		watchers = append(watchers, &lsproto.FileSystemWatcher{
 			GlobPattern: lsproto.PatternOrRelativePattern{
 				Pattern: &glob,
 			},

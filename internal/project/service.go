@@ -232,7 +232,7 @@ func (s *Service) SourceFileCount() int {
 	return s.documentRegistry.size()
 }
 
-func (s *Service) OnWatchedFilesChanged(changes []lsproto.FileEvent) error {
+func (s *Service) OnWatchedFilesChanged(changes []*lsproto.FileEvent) error {
 	for _, change := range changes {
 		fileName := ls.DocumentURIToFileName(change.Uri)
 		path := s.toPath(fileName)
@@ -298,7 +298,7 @@ func (s *Service) publishDiagnosticsForOpenFiles(project *Project) error {
 		info := s.GetScriptInfoByPath(path)
 		if slices.Contains(info.containingProjects, project) {
 			diagnostics := project.LanguageService().GetDocumentDiagnostics(info.fileName)
-			lspDiagnostics := make([]lsproto.Diagnostic, len(diagnostics))
+			lspDiagnostics := make([]*lsproto.Diagnostic, len(diagnostics))
 			for i, diagnostic := range diagnostics {
 				if diag, err := s.converters.ToLSPDiagnostic(diagnostic); err != nil {
 					return fmt.Errorf("error converting diagnostic: %w", err)
