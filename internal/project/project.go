@@ -3,10 +3,9 @@ package project
 import (
 	"fmt"
 	"maps"
+	"slices"
 	"strings"
 	"sync"
-
-	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
