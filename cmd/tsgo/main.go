@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"slices"
 	"strconv"
 	"strings"
@@ -66,6 +67,7 @@ type cliOptions struct {
 		singleThreaded bool
 		printTypes     bool
 		pprofDir       string
+		version        bool
 	}
 }
 
@@ -109,6 +111,7 @@ func parseArgs() *cliOptions {
 	flag.BoolVar(&opts.devel.singleThreaded, "singleThreaded", false, "Run in single threaded mode.")
 	flag.BoolVar(&opts.devel.printTypes, "printTypes", false, "Print types defined in 'main.ts'.")
 	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
+	flag.BoolVar(&opts.devel.version, "version", false, "Print the version number (or commit sha for dev builds).")
 	flag.Parse()
 
 	if len(flag.Args()) > 0 {
@@ -142,6 +145,27 @@ func runMain() int {
 	if opts.devel.pprofDir != "" {
 		profileSession := pprof.BeginProfiling(opts.devel.pprofDir, os.Stdout)
 		defer profileSession.Stop()
+	}
+
+	if opts.devel.version {
+		// Get build info to extract the commit SHA
+		buildInfo, _ := debug.ReadBuildInfo()
+		fmt.Print("tsgo ")
+		// Try to extract the commit SHA from the build info
+		var commitSha string
+		for _, setting := range buildInfo.Settings {
+			if setting.Key == "vcs.revision" {
+				commitSha = setting.Value
+				break
+			}
+		}
+
+		if commitSha != "" {
+			fmt.Printf("commit %s\n", commitSha)
+		} else {
+			fmt.Println("version unknown")
+		}
+		return 0
 	}
 
 	startTime := time.Now()
