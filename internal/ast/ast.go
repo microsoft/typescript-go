@@ -781,6 +781,20 @@ func (n *Node) ModuleSpecifier() *Expression {
 	panic("Unhandled case in Node.ModuleSpecifier: " + n.Kind.String())
 }
 
+func (n *Node) Statement() *Statement {
+	switch n.Kind {
+	case KindDoStatement:
+		return n.AsDoStatement().Statement
+	case KindWhileStatement:
+		return n.AsWhileStatement().Statement
+	case KindForStatement:
+		return n.AsForStatement().Statement
+	case KindForInStatement, KindForOfStatement:
+		return n.AsForInOrOfStatement().Statement
+	}
+	panic("Unhandled case in Node.Statement: " + n.Kind.String())
+}
+
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
 // `descendant` or one of its ancestors is not parented except when that node is a `SourceFile`.
 func (n *Node) Contains(descendant *Node) bool {
@@ -1695,6 +1709,8 @@ type (
 	AnyValidImportOrReExport    = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
 	ValidImportTypeNode         = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
 	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
+	TypeOnlyImportDeclaration   = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
+	ObjectLiteralLike           = Node // ObjectLiteralExpression | ObjectBindingPattern
 )
 
 // Aliases for node singletons
@@ -1737,6 +1753,7 @@ type (
 	JsxClosingFragmentNode          = Node
 	SourceFileNode                  = Node
 	PropertyAccessExpressionNode    = Node
+	TypeLiteral                     = Node
 )
 
 type (
@@ -6941,6 +6958,10 @@ func (node *IntersectionTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *IntersectionTypeNode) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewIntersectionTypeNode(node.Types), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsIntersectionTypeNode(node *Node) bool {
+	return node.Kind == KindIntersectionType
 }
 
 // ConditionalTypeNode

@@ -131,7 +131,7 @@ func (c *Checker) isValidPropertyAccess(node *ast.Node, propertyName string) boo
 	case ast.KindQualifiedName:
 		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getWidenedType(c.checkExpression(node.AsQualifiedName().Left)))
 	case ast.KindImportType:
-		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getTypeFromTypeNode(node))
+		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.GetTypeFromTypeNode(node))
 	}
 	panic("Unexpected node kind in isValidPropertyAccess: " + node.Kind.String())
 }
@@ -397,4 +397,33 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 
 func (c *Checker) GetExportSymbolOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol))
+}
+
+func (c *Checker) GetTypeArgumentConstraint(node *ast.Node) *Type {
+	if !ast.IsTypeNode(node) {
+		return nil
+	}
+	return c.getTypeArgumentConstraint(node)
+}
+
+func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
+	typeReferenceNode := core.IfElse(ast.IsTypeReferenceType(node.Parent), node.Parent, nil)
+	if typeReferenceNode == nil {
+		return nil
+	}
+	typeParameters := c.getTypeParametersForTypeReferenceOrImport(typeReferenceNode)
+	if len(typeParameters) == 0 {
+		return nil
+	}
+
+	typeParamIndex := core.FindIndex(typeReferenceNode.TypeArguments(), func(n *ast.Node) bool {
+		return n == node
+	})
+	constraint := c.getConstraintOfTypeParameter(typeParameters[typeParamIndex])
+	if constraint != nil {
+		return c.instantiateType(
+			constraint,
+			newTypeMapper(typeParameters, c.getEffectiveTypeArguments(typeReferenceNode, typeParameters)))
+	}
+	return nil
 }
