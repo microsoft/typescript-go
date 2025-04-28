@@ -1144,6 +1144,11 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 	oldNeedsDeclare := tx.needsDeclare
 	tx.needsDeclare = false
 	inner := input.Body
+	keyword := input.Keyword
+	if input.Name() == nil || !ast.IsStringLiteral(input.Name()) {
+		keyword = ast.KindNamespaceKeyword
+	}
+
 	if inner != nil && inner.Kind == ast.KindModuleBlock {
 		oldNeedsScopeFix := tx.needsScopeFixMarker
 		oldHasScopeFix := tx.resultHasScopeMarker
@@ -1174,7 +1179,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 		return tx.Factory().UpdateModuleDeclaration(
 			input,
 			mods,
-			input.Keyword,
+			keyword,
 			input.Name(),
 			body,
 		)
@@ -1190,7 +1195,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 		return tx.Factory().UpdateModuleDeclaration(
 			input,
 			mods,
-			input.Keyword,
+			keyword,
 			input.Name(),
 			body,
 		)
@@ -1198,7 +1203,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 	return tx.Factory().UpdateModuleDeclaration(
 		input,
 		mods,
-		input.Keyword,
+		keyword,
 		input.Name(),
 		nil,
 	)

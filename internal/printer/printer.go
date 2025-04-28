@@ -3583,12 +3583,10 @@ func (p *Printer) emitModuleBlock(node *ast.ModuleBlock) {
 	state := p.enterNode(node.AsNode())
 	p.generateNames(node.AsNode())
 	p.emitToken(ast.KindOpenBraceToken, node.Pos(), WriteKindPunctuation, node.AsNode())
-	p.increaseIndent()
 	format := core.IfElse(p.isEmptyBlock(node.AsNode(), node.Statements) || p.shouldEmitOnSingleLine(node.AsNode()),
 		LFSingleLineBlockStatements,
 		LFMultiLineBlockStatements)
 	p.emitList((*Printer).emitStatement, node.AsNode(), node.Statements, format)
-	p.decreaseIndent()
 	p.emitTokenEx(ast.KindCloseBraceToken, node.Statements.End(), WriteKindPunctuation, node.AsNode(), core.IfElse(format&LFMultiLine != 0, tefIndentLeadingComments, tefNone))
 	p.exitNode(node.AsNode(), state)
 }
