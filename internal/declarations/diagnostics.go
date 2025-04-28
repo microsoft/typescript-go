@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/printer"
 )
 
@@ -280,7 +280,6 @@ func getAccessorDeclarationTypeVisibilityDiagnosticMessage(node *ast.Node, symbo
 				diagnostics.Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_name_1_from_private_module_2,
 				diagnostics.Return_type_of_public_static_getter_0_from_exported_class_has_or_is_using_private_name_1,
 			)
-
 		} else {
 			return selectDiagnosticBasedOnModuleName(
 				symbolAccessibilityResult,

@@ -6,9 +6,9 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/module"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -110,7 +110,7 @@ const (
 
 // You probably don't mean to use this - use `NewNodeBuilderAPI` instead
 func NewNodeBuilder(ch *Checker, e *printer.EmitContext) NodeBuilder {
-	result := NodeBuilder{f: e.Factory, ch: ch, e: e, typeToTypeNodeClosure: nil, typeReferenceToTypeNodeClosure: nil, conditionalTypeToTypeNodeClosure: nil, ctx: nil}
+	result := NodeBuilder{f: e.Factory.AsNodeFactory(), ch: ch, e: e, typeToTypeNodeClosure: nil, typeReferenceToTypeNodeClosure: nil, conditionalTypeToTypeNodeClosure: nil, ctx: nil}
 	result.initializeClosures()
 	return result
 }
@@ -1004,7 +1004,7 @@ func tryGetModuleSpecifierFromDeclarationWorker(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindVariableDeclaration, ast.KindBindingElement:
 		requireCall := ast.FindAncestor(node.Initializer(), func(node *ast.Node) bool {
-			return ast.IsRequireCall(node /*requireStringLiteralLikeArgument*/, true)
+			return ast.IsRequireCall(node)
 		})
 		if requireCall == nil {
 			return nil

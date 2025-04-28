@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"runtime/debug"
 	"slices"
 	"strings"
 	"time"
@@ -194,6 +195,8 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 		return s.handleHover(req)
 	case *lsproto.DefinitionParams:
 		return s.handleDefinition(req)
+	case *lsproto.CompletionParams:
+		return s.handleCompletion(req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -226,7 +229,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 			Name:    "typescript-go",
 			Version: ptrTo(core.Version),
 		},
-		Capabilities: lsproto.ServerCapabilities{
+		Capabilities: &lsproto.ServerCapabilities{
 			PositionEncoding: ptrTo(s.positionEncoding),
 			TextDocumentSync: &lsproto.TextDocumentSyncOptionsOrTextDocumentSyncKind{
 				TextDocumentSyncOptions: &lsproto.TextDocumentSyncOptions{
@@ -250,16 +253,19 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 					InterFileDependencies: true,
 				},
 			},
+			CompletionProvider: &lsproto.CompletionOptions{
+				TriggerCharacters: &ls.TriggerCharacters,
+				// !!! other options
+			},
 		},
 	})
 }
 
 func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
-	s.logger = project.NewLogger([]io.Writer{s.stderr}, project.LogLevelVerbose)
+	s.logger = project.NewLogger([]io.Writer{s.stderr}, "" /*file*/, project.LogLevelVerbose)
 	s.projectService = project.NewService(s, project.ServiceOptions{
-		DefaultLibraryPath: s.defaultLibraryPath,
-		Logger:             s.logger,
-		PositionEncoding:   s.positionEncoding,
+		Logger:           s.logger,
+		PositionEncoding: s.positionEncoding,
 	})
 
 	s.converters = ls.NewConverters(s.positionEncoding, func(fileName string) ls.ScriptInfo {
@@ -320,7 +326,7 @@ func (s *Server) handleDocumentDiagnostic(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DocumentDiagnosticParams)
 	file, project := s.getFileAndProject(params.TextDocument.Uri)
 	diagnostics := project.LanguageService().GetDocumentDiagnostics(file.FileName())
-	lspDiagnostics := make([]lsproto.Diagnostic, len(diagnostics))
+	lspDiagnostics := make([]*lsproto.Diagnostic, len(diagnostics))
 	for i, diag := range diagnostics {
 		if lspDiagnostic, err := s.converters.ToLSPDiagnostic(diag); err != nil {
 			return s.sendError(req.ID, err)
@@ -376,6 +382,32 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 	}
 
 	return s.sendResult(req.ID, &lsproto.Definition{Locations: &lspLocations})
+}
+
+func (s *Server) handleCompletion(req *lsproto.RequestMessage) (messageErr error) {
+	params := req.Params.(*lsproto.CompletionParams)
+	file, project := s.getFileAndProject(params.TextDocument.Uri)
+	pos, err := s.converters.LineAndCharacterToPositionForFile(params.Position, file.FileName())
+	if err != nil {
+		return s.sendError(req.ID, err)
+	}
+
+	// !!! remove this after completions is fully ported/tested
+	defer func() {
+		if r := recover(); r != nil {
+			stack := debug.Stack()
+			s.Log("panic obtaining completions:", r, string(stack))
+			messageErr = s.sendResult(req.ID, &lsproto.CompletionList{})
+		}
+	}()
+	// !!! get user preferences
+	list := project.LanguageService().ProvideCompletion(
+		file.FileName(),
+		pos,
+		params.Context,
+		s.initializeParams.Capabilities.TextDocument.Completion,
+		&ls.UserPreferences{})
+	return s.sendResult(req.ID, list)
 }
 
 func (s *Server) getFileAndProject(uri lsproto.DocumentUri) (*project.ScriptInfo, *project.Project) {

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"runtime"
+	"runtime/debug"
 	"slices"
 	"strconv"
 	"strings"
@@ -14,9 +15,9 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
-	ts "github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/pprof"
@@ -59,6 +60,7 @@ type cliOptions struct {
 		listFiles     tristateFlag
 		listFilesOnly tristateFlag
 		showConfig    tristateFlag
+		version       bool
 	}
 
 	devel struct {
@@ -103,6 +105,7 @@ func parseArgs() *cliOptions {
 	flag.Var(&opts.tsc.listFiles, "listFiles", diagnostics.Print_all_of_the_files_read_during_the_compilation.Format())
 	flag.Var(&opts.tsc.listFilesOnly, "listFilesOnly", diagnostics.Print_names_of_files_that_are_part_of_the_compilation_and_then_stop_processing.Format())
 	flag.Var(&opts.tsc.showConfig, "showConfig", diagnostics.Print_the_final_configuration_instead_of_building.Format())
+	flag.BoolVar(&opts.tsc.version, "version", false, diagnostics.Print_the_compiler_s_version.Format())
 
 	flag.BoolVar(&opts.devel.quiet, "q", false, "Do not print diagnostics.")
 	flag.BoolVar(&opts.devel.quiet, "quiet", false, "Do not print diagnostics.")
@@ -133,6 +136,8 @@ func runMain() int {
 			return int(execute.CommandLine(newSystem(), nil, args[1:]))
 		case "lsp":
 			return runLSP(args[1:])
+		case "api":
+			return runAPI(args[1:])
 		}
 	}
 	opts := parseArgs()
@@ -140,6 +145,21 @@ func runMain() int {
 	if opts.devel.pprofDir != "" {
 		profileSession := pprof.BeginProfiling(opts.devel.pprofDir, os.Stdout)
 		defer profileSession.Stop()
+	}
+
+	if opts.tsc.version {
+		// Get build info to extract the commit SHA
+		buildInfo, _ := debug.ReadBuildInfo()
+		version := core.Version
+		for _, setting := range buildInfo.Settings {
+			if setting.Key == "vcs.revision" {
+				version += "-" + setting.Value
+				break
+			}
+		}
+
+		fmt.Println(diagnostics.Version_0.Format(version))
+		return 0
 	}
 
 	startTime := time.Now()
@@ -167,10 +187,10 @@ func runMain() int {
 
 	currentDirectory = tspath.GetDirectoryPath(configFileName)
 	// !!! is the working directory actually the config path?
-	host := ts.NewCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
+	host := compiler.NewCachedFSCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
 
 	parseStart := time.Now()
-	program := ts.NewProgram(ts.ProgramOptions{
+	program := compiler.NewProgram(compiler.ProgramOptions{
 		ConfigFileName: configFileName,
 		Options:        compilerOptions,
 		SingleThreaded: opts.devel.singleThreaded,
@@ -224,7 +244,7 @@ func runMain() int {
 	var emitTime time.Duration
 	if compilerOptions.NoEmit.IsFalseOrUnknown() {
 		emitStart := time.Now()
-		result := program.Emit(ts.EmitOptions{})
+		result := program.Emit(compiler.EmitOptions{})
 		diagnostics = append(diagnostics, result.Diagnostics...)
 		emitTime = time.Since(emitStart)
 	}
@@ -240,7 +260,7 @@ func runMain() int {
 	exitCode := 0
 	if len(diagnostics) != 0 {
 		if !opts.devel.quiet {
-			printDiagnostics(ts.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
+			printDiagnostics(compiler.SortAndDeduplicateDiagnostics(diagnostics), host, compilerOptions)
 		}
 		exitCode = 1
 	}
@@ -313,7 +333,7 @@ func formatDuration(d time.Duration) string {
 	return fmt.Sprintf("%.3fs", d.Seconds())
 }
 
-func identifierCount(p *ts.Program) int {
+func identifierCount(p *compiler.Program) int {
 	count := 0
 	for _, file := range p.SourceFiles() {
 		count += file.IdentifierCount
@@ -321,13 +341,13 @@ func identifierCount(p *ts.Program) int {
 	return count
 }
 
-func listFiles(p *ts.Program) {
+func listFiles(p *compiler.Program) {
 	for _, file := range p.SourceFiles() {
 		fmt.Println(file.FileName())
 	}
 }
 
-func getFormatOpts(host ts.CompilerHost) *diagnosticwriter.FormattingOptions {
+func getFormatOpts(host compiler.CompilerHost) *diagnosticwriter.FormattingOptions {
 	return &diagnosticwriter.FormattingOptions{
 		NewLine: host.NewLine(),
 		ComparePathsOptions: tspath.ComparePathsOptions{
@@ -337,7 +357,7 @@ func getFormatOpts(host ts.CompilerHost) *diagnosticwriter.FormattingOptions {
 	}
 }
 
-func printDiagnostics(diagnostics []*ast.Diagnostic, host ts.CompilerHost, compilerOptions *core.CompilerOptions) {
+func printDiagnostics(diagnostics []*ast.Diagnostic, host compiler.CompilerHost, compilerOptions *core.CompilerOptions) {
 	formatOpts := getFormatOpts(host)
 	if compilerOptions.Pretty.IsTrueOrUnknown() {
 		diagnosticwriter.FormatDiagnosticsWithColorAndContext(os.Stdout, diagnostics, formatOpts)

@@ -1,4 +1,5 @@
-import assert from "node:assert";
+#!/usr/bin/env node
+
 import cp from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -6,7 +7,7 @@ import url from "node:url";
 import which from "which";
 
 /**
- * @import { MetaModel, OrType, Type } from "./metaModelSchema.mts"
+ * @import { MetaModel, OrType, Type, Request, Notification } from "./metaModelSchema.mts"
  */
 void 0;
 
@@ -14,7 +15,6 @@ const __filename = url.fileURLToPath(new URL(import.meta.url));
 const __dirname = path.dirname(__filename);
 
 const out = path.resolve(__dirname, "../lsp_generated.go");
-
 const metaModelPath = path.resolve(__dirname, "metaModel.json");
 
 if (!fs.existsSync(metaModelPath)) {
@@ -26,71 +26,27 @@ if (!fs.existsSync(metaModelPath)) {
 const model = JSON.parse(fs.readFileSync(metaModelPath, "utf-8"));
 
 /**
- * @param {string | number} a
- * @param {string | number} b
- * @returns {number}
+ * Represents a type in our intermediate type system
+ * @typedef {Object} GoType
+ * @property {string} name - Name of the type in Go
+ * @property {boolean} needsPointer - Whether this type should be used with a pointer
  */
-function compareValues(a, b) {
-    if (typeof a === "string" && typeof b === "string") {
-        return a < b ? -1 : a > b ? 1 : 0;
-    }
-    if (typeof a === "number" && typeof b === "number") {
-        return a - b;
-    }
-    throw new Error("Cannot compare values of different types");
-}
-
-/** @type {string[]} */
-let parts = [];
 
 /**
- * @param {string} s
+ * @typedef {Object} TypeInfo
+ * @property {Map<string, GoType>} types - Map of type names to types
+ * @property {Map<string, string>} literalTypes - Map from literal values to type names
+ * @property {Map<string, {name: string, type: Type}[]>} unionTypes - Map of union type names to their component types
  */
-function write(s) {
-    parts.push(s);
-}
 
 /**
- * @param {string} s
+ * @type {TypeInfo}
  */
-function writeLine(s) {
-    write(s);
-    write("\n");
-}
-
-/**
- * @param {string | undefined} doc
- */
-function writeDocumentation(doc) {
-    if (doc) {
-        const lines = doc.split("\n");
-        for (let line of lines) {
-            line = line.replace(/(\w ) +/g, "$1");
-            line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
-            line = line.replace(/@since (.*)/g, "Since: $1\n//");
-            if (line.startsWith("@deprecated")) {
-                continue;
-            }
-            if (line.startsWith("@proposed")) {
-                line = "Proposed.\n//";
-            }
-
-            write("// ");
-            writeLine(line);
-        }
-    }
-}
-
-/**
- * @param {string | undefined} deprecated
- */
-function writeDeprecation(deprecated) {
-    if (deprecated) {
-        writeLine("//");
-        write("// Deprecated: ");
-        writeLine(deprecated);
-    }
-}
+const typeInfo = {
+    types: new Map(),
+    literalTypes: new Map(),
+    unionTypes: new Map(),
+};
 
 /**
  * @param {string} s
@@ -100,450 +56,593 @@ function titleCase(s) {
 }
 
 /**
- * @typedef {{ type: Type; name: string; }} UnionMember
+ * @param {Type} type
+ * @returns {GoType}
  */
-void 0;
-
-/**
- * Map from literal value to type name.
- * @type {Map<string | number | boolean, string>}
- */
-const literalTypes = new Map();
-
-/** @type {Map<string, UnionMember[]>} */
-const unionTypes = new Map();
-
-/**
- * @param {OrType} t
- * @param {boolean} wasOptional
- * @returns {boolean}
- */
-function writeOr(t, wasOptional = false) {
-    let nullable = false;
-    let omitEmpty = true;
-    const types = t.items.filter(item => {
-        if (item.kind === "base" && item.name === "null") {
-            nullable = true;
-            return false;
-        }
-        return true;
-    });
-    if (nullable) {
-        if (wasOptional) {
-            write("Nullable[");
-        }
-        else {
-            write("*");
-            omitEmpty = false;
-        }
-    }
-    if (types.length === 1) {
-        writeTypeElement(types[0]);
-    }
-    else {
-        /** @type {UnionMember[]} */
-        const members = [];
-        for (const t of types) {
-            let name;
-            if (t.kind === "reference") {
-                name = t.name;
-            }
-            else if (t.kind === "base") {
-                name = t.name;
-            }
-            else if (t.kind === "array" && (t.element.kind === "reference" || t.element.kind === "base")) {
-                name = titleCase(t.element.name) + "s";
-            }
-            else if (t.kind === "tuple") {
-                assert(t.items.length === 2);
-                assert(t.items[0].kind === "base" && t.items[0].name === "uinteger");
-                assert(t.items[1].kind === "base" && t.items[1].name === "uinteger");
-                name = "UintegerPair";
-            }
-            else if (t.kind === "or") {
-                throw new Error("Nested or types are not supported");
-            }
-            else if (t.kind === "literal") {
-                assert(t.value.properties.length === 0);
-                name = "EmptyObject";
-            }
-            else {
-                name = "_TODO_or_" + t.kind + "_";
-            }
-            members.push({ type: t, name });
-        }
-
-        const name = members.map(m => titleCase(m.name)).join("Or");
-        unionTypes.set(name, members);
-        write(name);
-    }
-    if (nullable && wasOptional) {
-        write("]");
-    }
-    return omitEmpty;
-}
-
-/**
- * @param {Type} t
- * @param {boolean} wasOptional
- * @returns {boolean}
- */
-function writeTypeElement(t, wasOptional = false) {
-    switch (t.kind) {
-        case "reference":
-            write(t.name);
-            break;
+function resolveType(type) {
+    switch (type.kind) {
         case "base":
-            switch (t.name) {
+            switch (type.name) {
                 case "integer":
-                    write("int32");
-                    break;
+                    return { name: "int32", needsPointer: false };
                 case "uinteger":
-                    write("uint32");
-                    break;
+                    return { name: "uint32", needsPointer: false };
                 case "string":
-                    write("string");
-                    break;
+                    return { name: "string", needsPointer: false };
                 case "boolean":
-                    write("bool");
-                    break;
+                    return { name: "bool", needsPointer: false };
                 case "URI":
-                    write("URI");
-                    break;
+                    return { name: "URI", needsPointer: false };
                 case "DocumentUri":
-                    write("DocumentUri");
-                    break;
+                    return { name: "DocumentUri", needsPointer: false };
                 case "decimal":
-                    write("float64");
-                    break;
+                    return { name: "float64", needsPointer: false };
                 default:
-                    write("TODO_base_" + t.name);
-                    break;
+                    throw new Error(`Unsupported base type: ${type.name}`);
             }
-            break;
-        case "array":
-            write("[]");
-            writeTypeElement(t.element);
-            break;
+
+        case "reference":
+            const typeAliasOverride = typeAliasOverrides.get(type.name);
+            if (typeAliasOverride) {
+                return typeAliasOverride;
+            }
+
+            let refType = typeInfo.types.get(type.name);
+            if (!refType) {
+                refType = { name: type.name, needsPointer: true };
+                typeInfo.types.set(type.name, refType);
+            }
+            return refType;
+
+        case "array": {
+            const elementType = resolveType(type.element);
+            const arrayTypeName = elementType.needsPointer
+                ? `[]*${elementType.name}`
+                : `[]${elementType.name}`;
+            return {
+                name: arrayTypeName,
+                needsPointer: false,
+            };
+        }
+
+        case "map": {
+            const keyType = resolveType(type.key);
+            const valueType = resolveType(type.value);
+            const valueTypeName = valueType.needsPointer ? `*${valueType.name}` : valueType.name;
+
+            return {
+                name: `map[${keyType.name}]${valueTypeName}`,
+                needsPointer: false,
+            };
+        }
+
+        case "tuple": {
+            if (
+                type.items.length === 2 &&
+                type.items[0].kind === "base" && type.items[0].name === "uinteger" &&
+                type.items[1].kind === "base" && type.items[1].name === "uinteger"
+            ) {
+                return { name: "[2]uint32", needsPointer: false };
+            }
+
+            throw new Error("Unsupported tuple type: " + JSON.stringify(type));
+        }
+
         case "stringLiteral": {
-            const typeName = `StringLiteral${titleCase(t.value)}`;
-            literalTypes.set(t.value, typeName);
-            write(typeName);
-            break;
+            const typeName = `StringLiteral${titleCase(type.value)}`;
+            typeInfo.literalTypes.set(String(type.value), typeName);
+            return { name: typeName, needsPointer: false };
         }
-        case "booleanLiteral": {
-            const typeName = `BooleanLiteral${t.value ? "True" : "False"}`;
-            literalTypes.set(t.value, typeName);
-            write(typeName);
-            break;
-        }
+
         case "integerLiteral": {
-            const typeName = `IntegerLiteral${t.value}`;
-            literalTypes.set(t.value, typeName);
-            write(typeName);
-            break;
+            const typeName = `IntegerLiteral${type.value}`;
+            typeInfo.literalTypes.set(String(type.value), typeName);
+            return { name: typeName, needsPointer: false };
+        }
+
+        case "booleanLiteral": {
+            const typeName = `BooleanLiteral${type.value ? "True" : "False"}`;
+            typeInfo.literalTypes.set(String(type.value), typeName);
+            return { name: typeName, needsPointer: false };
         }
         case "literal":
-            assert(t.value.properties.length === 0);
-            write("struct{}");
-            break;
-        case "tuple":
-            assert(t.items.length === 2);
-            assert(t.items[0].kind === "base" && t.items[0].name === "uinteger");
-            assert(t.items[1].kind === "base" && t.items[1].name === "uinteger");
-            write("[2]uint32");
-            break;
-        case "map":
-            write("map[");
-            write(t.key.name);
-            write("]");
-
-            const vt = t.value;
-            switch (vt.kind) {
-                case "reference":
-                    write(vt.name);
-                    break;
-                case "array":
-                    write("[]");
-                    writeTypeElement(vt.element);
-                    break;
-                case "or":
-                    writeOr(vt);
-                    break;
-                default:
-                    write("TODO_map_value_" + vt.kind);
-                    break;
+            if (type.value.properties.length === 0) {
+                return { name: "struct{}", needsPointer: false };
             }
-            break;
-        case "or":
-            return writeOr(t, wasOptional);
+
+            throw new Error("Unexpected non-empty literal object: " + JSON.stringify(type.value));
+
+        case "or": {
+            return handleOrType(type);
+        }
+
         default:
-            write("TODO_" + t.kind);
-            break;
+            throw new Error(`Unsupported type kind: ${type.kind}`);
     }
-    return wasOptional;
-}
-
-// Generation
-
-writeLine("// Code generated by generate.mjs; DO NOT EDIT.");
-writeLine("");
-writeLine("package lsproto");
-writeLine("");
-writeLine(`import (`);
-writeLine(`\t"encoding/json"`);
-writeLine(`\t"fmt"`);
-writeLine(`)`);
-writeLine("");
-writeLine("// Meta model version " + model.metaData.version);
-writeLine("");
-
-writeLine("// Structures\n");
-
-for (const t of model.structures) {
-    writeDocumentation(t.documentation);
-    writeDeprecation(t.deprecated);
-
-    writeLine("type " + t.name + " struct {");
-
-    for (const e of t.extends ?? []) {
-        if (e.kind !== "reference") {
-            throw new Error("Unexpected extends kind: " + e.kind);
-        }
-        writeLine(e.name);
-    }
-    for (const m of t.mixins ?? []) {
-        if (m.kind !== "reference") {
-            throw new Error("Unexpected mixin kind: " + m.kind);
-        }
-        writeLine(m.name);
-    }
-
-    if (t.extends || t.mixins) {
-        writeLine("");
-    }
-
-    for (const p of t.properties) {
-        writeDocumentation(p.documentation);
-        writeDeprecation(p.deprecated);
-
-        write(titleCase(p.name) + " ");
-
-        if (p.optional) {
-            write("*");
-        }
-
-        const omitEmpty = writeTypeElement(p.type, !!p.optional);
-        write(' `json:"');
-        write(p.name);
-        if (omitEmpty) {
-            write(",omitempty");
-        }
-        writeLine('"`');
-        writeLine("");
-    }
-
-    writeLine("}");
-    writeLine("");
-}
-
-writeLine("// Enumerations\n");
-
-for (const t of model.enumerations) {
-    writeDocumentation(t.documentation);
-    writeDeprecation(t.deprecated);
-
-    /** @type {string} */
-    let underlyingType;
-    switch (t.type.name) {
-        case "string":
-            underlyingType = "string";
-            break;
-        case "integer":
-            underlyingType = "int32";
-            break;
-        case "uinteger":
-            underlyingType = "uint32";
-            break;
-    }
-
-    writeLine("type " + t.name + " " + underlyingType);
-    writeLine("");
-
-    /**
-     * @param {string | number} v
-     * @returns {string}
-     */
-    function valueToLiteral(v) {
-        return typeof v === "string" ? '"' + v + '"' : `${v}`;
-    }
-
-    writeLine("const (");
-    for (const v of t.values) {
-        writeDocumentation(v.documentation);
-        writeDeprecation(v.deprecated);
-
-        write(t.name);
-        write(v.name);
-        write(" ");
-        write(t.name);
-        write(" = ");
-        writeLine(valueToLiteral(v.value));
-    }
-    writeLine(")");
-
-    writeLine("");
-
-    writeLine("func (e *" + t.name + ") UnmarshalJSON(data []byte) error {");
-    writeLine("var v " + underlyingType);
-    writeLine("if err := json.Unmarshal(data, &v); err != nil {");
-    writeLine("return err");
-    writeLine("}");
-    writeLine("*e = " + t.name + "(v)");
-    writeLine("return nil");
-    writeLine("}");
-    writeLine("");
-}
-
-writeLine("// Type aliases\n");
-
-for (const t of model.typeAliases) {
-    writeDocumentation(t.documentation);
-    writeDeprecation(t.deprecated);
-
-    if (t.name === "LSPAny") {
-        writeLine("type LSPAny = any\n");
-        continue;
-    }
-
-    write("type " + t.name + " = ");
-    writeTypeElement(t.type);
-    writeLine("");
-    writeLine("");
 }
 
 /**
- * @param {string} method
+ * @param {OrType} orType
+ * @returns {GoType}
+ */
+function handleOrType(orType) {
+    const types = orType.items;
+
+    // Check for nullable types (OR with null)
+    const nullIndex = types.findIndex(item => item.kind === "base" && item.name === "null");
+
+    // If it's nullable and only has one other type
+    if (nullIndex !== -1) {
+        if (types.length !== 2) {
+            throw new Error("Expected exactly two items in OR type for null handling: " + JSON.stringify(types));
+        }
+
+        const otherType = types[1 - nullIndex];
+        const resolvedType = resolveType(otherType);
+
+        // Use Nullable[T] instead of pointer for null union with one other type
+        return {
+            name: `Nullable[${resolvedType.name}]`,
+            needsPointer: false,
+        };
+    }
+
+    // If only one type remains after filtering null
+    if (types.length === 1) {
+        return resolveType(types[0]);
+    }
+
+    const memberNames = types.map(type => {
+        if (type.kind === "reference") {
+            return type.name;
+        }
+        else if (type.kind === "base") {
+            return titleCase(type.name);
+        }
+        else if (
+            type.kind === "array" &&
+            (type.element.kind === "reference" || type.element.kind === "base")
+        ) {
+            return `${titleCase(type.element.name)}s`;
+        }
+        else if (type.kind === "literal" && type.value.properties.length === 0) {
+            return "EmptyObject";
+        }
+        else if (type.kind === "tuple") {
+            return "Tuple";
+        }
+        else {
+            throw new Error(`Unsupported type kind in union: ${type.kind}`);
+        }
+    });
+
+    const unionTypeName = memberNames.join("Or");
+    const union = memberNames.map((name, i) => ({ name, type: types[i] }));
+
+    typeInfo.unionTypes.set(unionTypeName, union);
+
+    return {
+        name: unionTypeName,
+        needsPointer: false,
+    };
+}
+
+const typeAliasOverrides = new Map([
+    ["LSPAny", { name: "any", needsPointer: false }],
+    ["LSPArray", { name: "[]any", needsPointer: false }],
+    ["LSPObject", { name: "map[string]any", needsPointer: false }],
+]);
+
+/**
+ * First pass: Resolve all type information
+ */
+function collectTypeDefinitions() {
+    // Process all enumerations first to make them available for struct fields
+    for (const enumeration of model.enumerations) {
+        typeInfo.types.set(enumeration.name, {
+            name: enumeration.name,
+            needsPointer: false,
+        });
+    }
+
+    const valueTypes = new Set([
+        "Position",
+        "Range",
+        "Location",
+        "Color",
+        "TextDocumentIdentifier",
+        "NotebookDocumentIdentifier",
+        "PreviousResultId",
+        "VersionedNotebookDocumentIdentifier",
+        "VersionedTextDocumentIdentifier",
+        "OptionalVersionedTextDocumentIdentifier",
+    ]);
+
+    // Process all structures
+    for (const structure of model.structures) {
+        typeInfo.types.set(structure.name, {
+            name: structure.name,
+            needsPointer: !valueTypes.has(structure.name),
+        });
+    }
+
+    // Process all type aliases
+    for (const typeAlias of model.typeAliases) {
+        if (typeAliasOverrides.has(typeAlias.name)) {
+            continue;
+        }
+
+        const resolvedType = resolveType(typeAlias.type);
+        typeInfo.types.set(typeAlias.name, {
+            name: typeAlias.name,
+            needsPointer: resolvedType.needsPointer,
+        });
+    }
+}
+
+/**
+ * @param {string | undefined} s
  * @returns {string}
  */
-function methodNameToIdentifier(method) {
-    return method.split("/").map(v => v === "$" ? "" : titleCase(v)).join("");
-}
+function formatDocumentation(s) {
+    if (!s) return "";
 
-writeLine("// Unmarshallers\n");
+    /** @type {string[]} */
+    let lines = [];
 
-writeLine("var unmarshallers = map[Method]func([]byte) (any, error){");
-for (const t of [...model.requests, ...model.notifications]) {
-    if (t.messageDirection === "serverToClient") {
-        continue;
+    for (let line of s.split("\n")) {
+        line = line.trimEnd();
+        line = line.replace(/(\w ) +/g, "$1");
+        line = line.replace(/\{@link(?:code)?.*?([^} ]+)\}/g, "$1");
+        line = line.replace(/^@(since|proposed|deprecated)(.*)/, (_, tag, rest) => {
+            lines.push("");
+            return `${titleCase(tag)}${rest ? ":" + rest : "."}`;
+        });
+        lines.push(line);
     }
 
-    let name = "any";
-    if (t.params) {
-        assert(!Array.isArray(t.params));
-        assert(t.params.kind === "reference");
-        name = t.params.name;
+    // filter out contiguous empty lines
+    while (true) {
+        const toRemove = lines.findIndex((line, index) => {
+            if (line) return false;
+            if (index === 0) return true;
+            if (index === lines.length - 1) return true;
+            return !(lines[index - 1] && lines[index + 1]);
+        });
+        if (toRemove === -1) break;
+        lines.splice(toRemove, 1);
     }
 
-    writeLine(`Method${methodNameToIdentifier(t.method)}: unmarshallerFor[${name}],`);
+    return lines.length > 0 ? "// " + lines.join("\n// ") + "\n" : "";
 }
-writeLine("}");
 
-writeLine("// Requests");
-writeLine("const (");
-for (const t of model.requests) {
-    writeDocumentation(t.documentation);
-    writeDeprecation(t.deprecated);
-    writeLine("Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"');
+/**
+ * @param {string} name
+ */
+function methodNameIdentifier(name) {
+    return name.split("/").map(v => v === "$" ? "" : titleCase(v)).join("");
 }
-writeLine(")\n");
 
-writeLine("// Notifications");
-writeLine("const (");
-for (const t of model.notifications) {
-    writeDocumentation(t.documentation);
-    writeDeprecation(t.deprecated);
-    writeLine("Method" + methodNameToIdentifier(t.method) + ' Method = "' + t.method + '"');
-}
-writeLine(")\n");
+/**
+ * Generate the Go code
+ */
+function generateCode() {
+    /** @type {string[]} */
+    const parts = [];
 
-writeLine("// Union types\n");
+    /**
+     * @param {string} s
+     */
+    function write(s) {
+        parts.push(s);
+    }
 
-for (const [name, members] of unionTypes) {
-    writeLine("type " + name + " struct {");
+    /**
+     * @param {string} s
+     */
+    function writeLine(s = "") {
+        parts.push(s + "\n");
+    }
 
-    for (const member of members) {
-        write(titleCase(member.name) + " *");
-        writeTypeElement(member.type, false);
+    // File header
+    writeLine("// Code generated by generate.mjs; DO NOT EDIT.");
+    writeLine("");
+    writeLine("package lsproto");
+    writeLine("");
+    writeLine(`import (`);
+    writeLine(`\t"encoding/json"`);
+    writeLine(`\t"fmt"`);
+    writeLine(`)`);
+    writeLine("");
+    writeLine("// Meta model version " + model.metaData.version);
+    writeLine("");
+
+    // Generate structures
+    writeLine("// Structures\n");
+
+    for (const structure of model.structures) {
+        write(formatDocumentation(structure.documentation));
+
+        writeLine(`type ${structure.name} struct {`); // Embed extended types and mixins
+        for (const e of structure.extends || []) {
+            if (e.kind !== "reference") {
+                throw new Error(`Unexpected extends kind: ${e.kind}`);
+            }
+            writeLine(`\t${e.name}`);
+        }
+
+        for (const m of structure.mixins || []) {
+            if (m.kind !== "reference") {
+                throw new Error(`Unexpected mixin kind: ${m.kind}`);
+            }
+            writeLine(`\t${m.name}`);
+        }
+
+        // Insert a blank line after embeds if there were any
+        if (
+            (structure.extends && structure.extends.length > 0) ||
+            (structure.mixins && structure.mixins.length > 0)
+        ) {
+            writeLine("");
+        }
+
+        // Then properties
+        for (const prop of structure.properties) {
+            write(formatDocumentation(prop.documentation));
+
+            const type = resolveType(prop.type);
+            const goType = prop.optional || type.needsPointer ? `*${type.name}` : type.name;
+
+            writeLine(`\t${titleCase(prop.name)} ${goType} \`json:"${prop.name}${prop.optional ? ",omitempty" : ""}"\``);
+            writeLine("");
+        }
+
+        writeLine("}");
         writeLine("");
     }
 
+    // Generate enumerations
+    writeLine("// Enumerations\n");
+
+    for (const enumeration of model.enumerations) {
+        write(formatDocumentation(enumeration.documentation));
+
+        let baseType;
+        switch (enumeration.type.name) {
+            case "string":
+                baseType = "string";
+                break;
+            case "integer":
+                baseType = "int32";
+                break;
+            case "uinteger":
+                baseType = "uint32";
+                break;
+            default:
+                throw new Error(`Unsupported enum type: ${enumeration.type.name}`);
+        }
+
+        writeLine(`type ${enumeration.name} ${baseType}`);
+        writeLine("");
+
+        // Get the pre-processed enum entries map that avoids duplicates
+
+        const enumValues = enumeration.values.map(value => ({
+            value: String(value.value),
+            identifier: `${enumeration.name}${value.name}`,
+            documentation: value.documentation,
+            deprecated: value.deprecated,
+        }));
+
+        writeLine("const (");
+
+        // Process entries with unique identifiers
+        for (const entry of enumValues) {
+            write(formatDocumentation(entry.documentation));
+
+            let valueLiteral;
+            // Handle string values
+            if (enumeration.type.name === "string") {
+                valueLiteral = `"${entry.value.replace(/^"|"$/g, "")}"`;
+            }
+            else {
+                valueLiteral = entry.value;
+            }
+
+            writeLine(`\t${entry.identifier} ${enumeration.name} = ${valueLiteral}`);
+        }
+
+        writeLine(")");
+        writeLine("");
+
+        // Add custom JSON unmarshaling
+        writeLine(`func (e *${enumeration.name}) UnmarshalJSON(data []byte) error {`);
+        writeLine(`\tvar v ${baseType}`);
+        writeLine(`\tif err := json.Unmarshal(data, &v); err != nil {`);
+        writeLine(`\t\treturn err`);
+        writeLine(`\t}`);
+        writeLine(`\t*e = ${enumeration.name}(v)`);
+        writeLine(`\treturn nil`);
+        writeLine(`}`);
+        writeLine("");
+    }
+
+    // Generate type aliases
+    writeLine("// Type aliases\n");
+
+    for (const typeAlias of model.typeAliases) {
+        if (typeAliasOverrides.has(typeAlias.name)) {
+            continue;
+        }
+
+        write(formatDocumentation(typeAlias.documentation));
+
+        const resolvedType = resolveType(typeAlias.type);
+        writeLine(`type ${typeAlias.name} = ${resolvedType.name}`);
+        writeLine("");
+    }
+
+    /** @type {(Request | Notification)[]} */
+    const requestsAndNotifications = [...model.requests, ...model.notifications];
+
+    // Generate unmarshalParams function
+    writeLine("func unmarshalParams(method Method, data []byte) (any, error) {");
+    writeLine("\tswitch method {");
+
+    // Requests and notifications
+    for (const request of requestsAndNotifications) {
+        const methodName = methodNameIdentifier(request.method);
+
+        if (!request.params) {
+            writeLine(`\tcase Method${methodName}:`);
+            writeLine(`\t\treturn unmarshalEmpty(data)`);
+            continue;
+        }
+        if (Array.isArray(request.params)) {
+            throw new Error("Unexpected array type for request params: " + JSON.stringify(request.params));
+        }
+
+        const resolvedType = resolveType(request.params);
+
+        writeLine(`\tcase Method${methodName}:`);
+        if (resolvedType.name === "any") {
+            writeLine(`\t\treturn unmarshalAny(data)`);
+        }
+        else {
+            writeLine(`\t\treturn unmarshalPtrTo[${resolvedType.name}](data)`);
+        }
+    }
+
+    writeLine("\tdefault:");
+    writeLine(`\t\treturn unmarshalAny(data)`);
+    writeLine("\t}");
     writeLine("}");
     writeLine("");
 
-    writeLine("func (o " + name + ") MarshalJSON() ([]byte, error) {");
-    write(`assertOnlyOne("more than one element of ${name} is set", `);
-    for (let i = 0; i < members.length; i++) {
-        if (i > 0) {
-            write(", ");
-        }
-        write("o." + titleCase(members[i].name) + " != nil");
+    writeLine("// Methods");
+    writeLine("const (");
+    for (const request of requestsAndNotifications) {
+        write(formatDocumentation(request.documentation));
+
+        const methodName = methodNameIdentifier(request.method);
+
+        writeLine(`\tMethod${methodName} Method = "${request.method}"`);
     }
     writeLine(")");
-
-    for (const member of members) {
-        const name = titleCase(member.name);
-        writeLine("if o." + name + " != nil {");
-        writeLine("return json.Marshal(*o." + name + ")");
-        writeLine("}");
-    }
-    writeLine('panic("unreachable")');
-    writeLine("}");
     writeLine("");
 
-    // TODO: do this way more efficiently
-    // TODO: this doesn't work when union members overlap
-    writeLine("func (o *" + name + ") UnmarshalJSON(data []byte) error {");
-    writeLine("*o = " + name + "{}");
-    for (const member of members) {
-        const name = titleCase(member.name);
-        const local = "v" + name;
-        write("var " + local + " ");
-        writeTypeElement(member.type);
+    // Generate union types
+    writeLine("// Union types\n");
+
+    for (const [name, members] of typeInfo.unionTypes.entries()) {
+        writeLine(`type ${name} struct {`);
+        const uniqueTypeFields = new Map(); // Maps type name -> field name
+
+        for (const member of members) {
+            const type = resolveType(member.type);
+            const memberType = type.name;
+
+            // If this type name already exists in our map, skip it
+            if (!uniqueTypeFields.has(memberType)) {
+                const fieldName = titleCase(member.name);
+                uniqueTypeFields.set(memberType, fieldName);
+                writeLine(`\t${fieldName} *${memberType}`);
+            }
+        }
+
+        writeLine(`}`);
         writeLine("");
-        writeLine("if err := json.Unmarshal(data, &" + local + "); err == nil {");
-        writeLine("o." + name + " = &" + local);
-        writeLine("return nil");
-        writeLine("}");
+
+        // Get the field names and types for marshal/unmarshal methods
+        const fieldEntries = Array.from(uniqueTypeFields.entries()).map(([typeName, fieldName]) => ({ fieldName, typeName }));
+
+        // Marshal method
+        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
+
+        // Create assertion to ensure only one field is set at a time
+        write(`\tassertOnlyOne("more than one element of ${name} is set", `);
+
+        // Write the assertion conditions
+        for (let i = 0; i < fieldEntries.length; i++) {
+            if (i > 0) write(", ");
+            write(`o.${fieldEntries[i].fieldName} != nil`);
+        }
+        writeLine(`)`);
+        writeLine("");
+        for (const entry of fieldEntries) {
+            writeLine(`\tif o.${entry.fieldName} != nil {`);
+            writeLine(`\t\treturn json.Marshal(*o.${entry.fieldName})`);
+            writeLine(`\t}`);
+        }
+
+        writeLine(`\tpanic("unreachable")`);
+        writeLine(`}`);
+        writeLine("");
+
+        // Unmarshal method
+        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
+        writeLine(`\t*o = ${name}{}`);
+
+        for (const entry of fieldEntries) {
+            writeLine(`\tvar v${entry.fieldName} ${entry.typeName}`);
+            writeLine(`\tif err := json.Unmarshal(data, &v${entry.fieldName}); err == nil {`);
+            writeLine(`\t\to.${entry.fieldName} = &v${entry.fieldName}`);
+            writeLine(`\t\treturn nil`);
+            writeLine(`\t}`);
+        }
+
+        // Match the error format from the original script
+        writeLine(`\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+        writeLine(`}`);
+        writeLine("");
     }
-    writeLine(`return fmt.Errorf("invalid ${name}: %s", data)`);
-    writeLine("}");
+
+    // Generate literal types
+    writeLine("// Literal types\n");
+
+    for (const [value, name] of typeInfo.literalTypes.entries()) {
+        const jsonValue = JSON.stringify(value);
+
+        writeLine(`// ${name} is a literal type for ${jsonValue}`);
+        writeLine(`type ${name} struct{}`);
+        writeLine("");
+
+        writeLine(`func (o ${name}) MarshalJSON() ([]byte, error) {`);
+        writeLine(`\treturn []byte(\`${jsonValue}\`), nil`);
+        writeLine(`}`);
+        writeLine("");
+
+        writeLine(`func (o *${name}) UnmarshalJSON(data []byte) error {`);
+        writeLine(`\tif string(data) != \`${jsonValue}\` {`);
+        writeLine(`\t\treturn fmt.Errorf("invalid ${name}: %s", data)`);
+        writeLine(`\t}`);
+        writeLine(`\treturn nil`);
+        writeLine(`}`);
+        writeLine("");
+    }
+
+    return parts.join("");
 }
 
-writeLine("// Literal types\n");
+/**
+ * Main function
+ */
+function main() {
+    try {
+        collectTypeDefinitions();
+        const generatedCode = generateCode();
+        fs.writeFileSync(out, generatedCode);
 
-for (const [value, name] of literalTypes) {
-    const jsonValue = JSON.stringify(value);
+        // Format with gofmt
+        const gofmt = which.sync("gofmt");
+        cp.execFileSync(gofmt, ["-w", out]);
 
-    writeLine(`// ${name} is a literal type for ${jsonValue}`);
-    writeLine("type " + name + " struct{}");
-    writeLine("");
-
-    writeLine("func (o " + name + ") MarshalJSON() ([]byte, error) {");
-    writeLine("return []byte(`" + jsonValue + "`), nil");
-    writeLine("}");
-    writeLine("");
-
-    writeLine("func (o *" + name + ") UnmarshalJSON(data []byte) error {");
-    writeLine("if string(data) != `" + jsonValue + "` {");
-    writeLine(`return fmt.Errorf("invalid ${name}: %s", data)`);
-    writeLine("}");
-    writeLine("return nil");
-    writeLine("}");
-    writeLine("");
+        console.log(`Successfully generated ${out}`);
+    }
+    catch (error) {
+        console.error("Error generating code:", error);
+        process.exit(1);
+    }
 }
 
-fs.writeFileSync(out, parts.join(""));
-
-const gofmt = which.sync("gofmt");
-cp.execFileSync(gofmt, ["-w", out]);
+main();

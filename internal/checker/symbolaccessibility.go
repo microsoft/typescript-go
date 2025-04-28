@@ -373,8 +373,18 @@ func (ch *Checker) getAccessibleSymbolChain(
 	symbol *ast.Symbol,
 	enclosingDeclaration *ast.Node,
 	meaning ast.SymbolFlags,
-	useOnlyExternalAliasing bool) []*ast.Symbol {
+	useOnlyExternalAliasing bool,
+) []*ast.Symbol {
 	return ch.getAccessibleSymbolChainEx(accessibleSymbolChainContext{symbol, enclosingDeclaration, meaning, useOnlyExternalAliasing, make(map[ast.SymbolId]map[uintptr]struct{})})
+}
+
+func (ch *Checker) GetAccessibleSymbolChain(
+	symbol *ast.Symbol,
+	enclosingDeclaration *ast.Node,
+	meaning ast.SymbolFlags,
+	useOnlyExternalAliasing bool,
+) []*ast.Symbol {
+	return ch.getAccessibleSymbolChain(symbol, enclosingDeclaration, meaning, useOnlyExternalAliasing)
 }
 
 type accessibleSymbolChainContext struct {

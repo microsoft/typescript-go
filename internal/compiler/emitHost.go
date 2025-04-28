@@ -19,6 +19,7 @@ type WriteFileData struct {
 
 // NOTE: EmitHost operations must be thread-safe
 type EmitHost interface {
+	printer.EmitHost
 	declarations.DeclarationEmitHost
 	Options() *core.CompilerOptions
 	SourceFiles() []*ast.SourceFile
@@ -26,7 +27,6 @@ type EmitHost interface {
 	GetCurrentDirectory() string
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
-	WriteFile(fileName string, text string, writeByteOrderMark bool, relatedSourceFiles []*ast.SourceFile, data *WriteFileData) error
 	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver
 }
@@ -114,7 +114,7 @@ func (host *emitHost) IsEmitBlocked(file string) bool {
 	return false
 }
 
-func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool, _ []*ast.SourceFile, _ *WriteFileData) error {
+func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool, _ []*ast.SourceFile, _ *printer.WriteFileData) error {
 	return host.program.host.FS().WriteFile(fileName, text, writeByteOrderMark)
 }
 

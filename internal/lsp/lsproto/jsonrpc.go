@@ -43,6 +43,13 @@ func (id *ID) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &id.int)
 }
 
+func (id *ID) MustInt() int32 {
+	if id.str != "" {
+		panic("ID is not an integer")
+	}
+	return id.int
+}
+
 // TODO(jakebailey): NotificationMessage? Use RequestMessage without ID?
 
 type RequestMessage struct {
@@ -65,22 +72,9 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 
 	r.ID = raw.ID
 	r.Method = raw.Method
-	if r.Method == MethodShutdown || r.Method == MethodExit {
-		// These methods have no params.
-		return nil
-	}
 
-	var params any
 	var err error
-
-	if unmarshalParams, ok := unmarshallers[raw.Method]; ok {
-		params, err = unmarshalParams(raw.Params)
-	} else {
-		// Fall back to default; it's probably an unknown message and we will probably not handle it.
-		err = json.Unmarshal(raw.Params, &params)
-	}
-	r.Params = params
-
+	r.Params, err = unmarshalParams(raw.Method, raw.Params)
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
 	}

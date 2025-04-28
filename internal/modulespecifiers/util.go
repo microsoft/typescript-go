@@ -8,9 +8,9 @@ import (
 	"github.com/dlclark/regexp2"
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler/module"
-	"github.com/microsoft/typescript-go/internal/compiler/packagejson"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -145,7 +145,7 @@ func tryGetAnyFileFromPath(host ModuleSpecifierGenerationHost, path string) bool
 	for _, exts := range extGroups {
 		for _, e := range exts {
 			fullPath := path + e
-			if host.FileExists(string(tspath.GetNormalizedAbsolutePath(fullPath, host.GetCurrentDirectory()))) {
+			if host.FileExists(tspath.GetNormalizedAbsolutePath(fullPath, host.GetCurrentDirectory())) {
 				return true
 			}
 		}

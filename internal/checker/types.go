@@ -157,7 +157,6 @@ type AliasSymbolLinks struct {
 
 type ModuleSymbolLinks struct {
 	resolvedExports       ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
-	cjsExportMerged       *ast.Symbol          // Version of the symbol with all non export= exports merged with the export= target
 	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
 	exportsChecked        bool
 }
@@ -581,6 +580,14 @@ type Type struct {
 	data        TypeData // Type specific data
 }
 
+func (t *Type) Id() TypeId {
+	return t.id
+}
+
+func (t *Type) Flags() TypeFlags {
+	return t.flags
+}
+
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
@@ -673,6 +680,46 @@ func (t *Type) TargetTupleType() *TupleType {
 	return t.AsTypeReference().target.AsTupleType()
 }
 
+func (t *Type) Symbol() *ast.Symbol {
+	return t.symbol
+}
+
+func (t *Type) IsUnion() bool {
+	return t.flags&TypeFlagsUnion != 0
+}
+
+func (t *Type) IsString() bool {
+	return t.flags&TypeFlagsString != 0
+}
+
+func (t *Type) IsIntersection() bool {
+	return t.flags&TypeFlagsIntersection != 0
+}
+
+func (t *Type) IsStringLiteral() bool {
+	return t.flags&TypeFlagsStringLiteral != 0
+}
+
+func (t *Type) IsNumberLiteral() bool {
+	return t.flags&TypeFlagsNumberLiteral != 0
+}
+
+func (t *Type) IsBigIntLiteral() bool {
+	return t.flags&TypeFlagsBigIntLiteral != 0
+}
+
+func (t *Type) IsEnumLiteral() bool {
+	return t.flags&TypeFlagsEnumLiteral != 0
+}
+
+func (t *Type) IsBooleanLike() bool {
+	return t.flags&TypeFlagsBooleanLike != 0
+}
+
+func (t *Type) IsStringLike() bool {
+	return t.flags&TypeFlagsStringLike != 0
+}
+
 // TypeData
 
 type TypeData interface {
@@ -715,6 +762,10 @@ type LiteralType struct {
 	value       any   // string | jsnum.Number | bool | PseudoBigInt | nil (computed enum)
 	freshType   *Type // Fresh version of type
 	regularType *Type // Regular version of type
+}
+
+func (t *LiteralType) Value() any {
+	return t.value
 }
 
 // UniqueESSymbolTypeData

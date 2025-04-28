@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -188,7 +188,7 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 		combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
 		combinedStatements.Loc = statements.Loc // setTextRange
 		if ast.IsExternalModule(node) && (!tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker)) {
-			marker := createEmptyExports(tx.Factory())
+			marker := createEmptyExports(tx.Factory().AsNodeFactory())
 			newList := append(combinedStatements.Nodes, marker)
 			withMarker := tx.Factory().NewNodeList(newList)
 			withMarker.Loc = combinedStatements.Loc
@@ -896,7 +896,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			return input
 		}
 		// expression is non-identifier, create _default typed variable to reference
-		newId := tx.EmitContext().NewUniqueName("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
 			return &SymbolAccessibilityDiagnostic{
 				diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
@@ -1165,7 +1165,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 		// 3. Some things are exported, some are not, and there's no marker - add an empty marker
 		if !ast.IsGlobalScopeAugmentation(input.AsNode()) && !tx.resultHasScopeMarker && !hasScopeMarker(lateStatements) {
 			if tx.needsScopeFixMarker {
-				lateStatements = tx.Factory().NewNodeList(append(lateStatements.Nodes, createEmptyExports(tx.Factory())))
+				lateStatements = tx.Factory().NewNodeList(append(lateStatements.Nodes, createEmptyExports(tx.Factory().AsNodeFactory())))
 			} else {
 				lateStatements = tx.EmitContext().NewNodeVisitor(tx.stripExportModifiers).VisitNodes(lateStatements)
 			}
@@ -1225,7 +1225,7 @@ func (tx *DeclarationTransformer) stripExportModifiers(statement *ast.Node) *ast
 	}
 	newFlags := oldFlags & (ast.ModifierFlagsAll ^ ast.ModifierFlagsExport)
 	modifiers := ast.CreateModifiersFromModifierFlags(newFlags, tx.Factory().NewModifier)
-	return ast.ReplaceModifiers(tx.Factory(), statement, tx.Factory().NewModifierList(modifiers))
+	return ast.ReplaceModifiers(tx.Factory().AsNodeFactory(), statement, tx.Factory().NewModifierList(modifiers))
 }
 
 func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDeclaration) *ast.Node {
@@ -1305,7 +1305,7 @@ func (tx *DeclarationTransformer) transformClassDeclaration(input *ast.ClassDecl
 		if ast.NodeIsPresent(input.Name()) && ast.IsIdentifier(input.Name()) && len(input.Name().AsIdentifier().Text) > 0 {
 			oldId = input.Name().AsIdentifier().Text
 		}
-		newId := tx.EmitContext().NewUniqueName(oldId+"_base", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		newId := tx.Factory().NewUniqueNameEx(oldId+"_base", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
 		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
 			return &SymbolAccessibilityDiagnostic{
 				diagnosticMessage: diagnostics.X_extends_clause_of_exported_class_0_has_or_is_using_private_name_1,
