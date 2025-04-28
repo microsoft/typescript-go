@@ -60,6 +60,7 @@ type cliOptions struct {
 		listFiles     tristateFlag
 		listFilesOnly tristateFlag
 		showConfig    tristateFlag
+		version       bool
 	}
 
 	devel struct {
@@ -67,7 +68,6 @@ type cliOptions struct {
 		singleThreaded bool
 		printTypes     bool
 		pprofDir       string
-		version        bool
 	}
 }
 
@@ -105,13 +105,13 @@ func parseArgs() *cliOptions {
 	flag.Var(&opts.tsc.listFiles, "listFiles", diagnostics.Print_all_of_the_files_read_during_the_compilation.Format())
 	flag.Var(&opts.tsc.listFilesOnly, "listFilesOnly", diagnostics.Print_names_of_files_that_are_part_of_the_compilation_and_then_stop_processing.Format())
 	flag.Var(&opts.tsc.showConfig, "showConfig", diagnostics.Print_the_final_configuration_instead_of_building.Format())
+	flag.BoolVar(&opts.tsc.version, "version", false, diagnostics.Print_the_compiler_s_version.Format())
 
 	flag.BoolVar(&opts.devel.quiet, "q", false, "Do not print diagnostics.")
 	flag.BoolVar(&opts.devel.quiet, "quiet", false, "Do not print diagnostics.")
 	flag.BoolVar(&opts.devel.singleThreaded, "singleThreaded", false, "Run in single threaded mode.")
 	flag.BoolVar(&opts.devel.printTypes, "printTypes", false, "Print types defined in 'main.ts'.")
 	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
-	flag.BoolVar(&opts.devel.version, "version", false, "Print the version number (or commit sha for dev builds).")
 	flag.Parse()
 
 	if len(flag.Args()) > 0 {
@@ -147,7 +147,7 @@ func runMain() int {
 		defer profileSession.Stop()
 	}
 
-	if opts.devel.version {
+	if opts.tsc.version {
 		// Get build info to extract the commit SHA
 		buildInfo, _ := debug.ReadBuildInfo()
 		version := core.Version
