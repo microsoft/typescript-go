@@ -202,7 +202,7 @@ func (s *Server) read() (*lsproto.RequestMessage, error) {
 	req := &lsproto.RequestMessage{}
 	if err := json.Unmarshal(data, req); err != nil {
 		res := &lsproto.ResponseMessage{}
-		if err := json.Unmarshal(data, res); err == nil {
+		if err = json.Unmarshal(data, res); err == nil {
 			// !!! TODO: handle response
 			return nil, nil
 		}
@@ -425,8 +425,7 @@ func (s *Server) handleDidClose(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleDidChangeWatchedFiles(req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidChangeWatchedFilesParams)
-	s.projectService.OnWatchedFilesChanged(params.Changes)
-	return nil
+	return s.projectService.OnWatchedFilesChanged(params.Changes)
 }
 
 func (s *Server) handleDocumentDiagnostic(req *lsproto.RequestMessage) error {

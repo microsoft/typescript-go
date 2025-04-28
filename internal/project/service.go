@@ -263,7 +263,9 @@ func (s *Service) OnWatchedFilesChanged(changes []*lsproto.FileEvent) error {
 
 	for _, project := range s.configuredProjects {
 		if project.updateIfDirty() {
-			s.publishDiagnosticsForOpenFiles(project)
+			if err := s.publishDiagnosticsForOpenFiles(project); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
