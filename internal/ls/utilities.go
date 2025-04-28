@@ -82,6 +82,10 @@ func assertHasRealPosition(node *ast.Node) {
 	}
 }
 
+func hasChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.SourceFile) bool {
+	return findChildOfKind(containingNode, kind, sourceFile) != nil
+}
+
 func findChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.SourceFile) *ast.Node {
 	lastNodePos := containingNode.Pos()
 	scanner := scanner.GetScannerForSourceFile(sourceFile, lastNodePos)
@@ -424,4 +428,185 @@ func isArgumentOfElementAccessExpression(node *ast.Node) bool {
 
 func isTagName(node *ast.Node) bool {
 	return node.Parent != nil && ast.IsJSDocTag(node.Parent) && node.Parent.TagName() == node
+}
+
+// Assumes `candidate.pos <= position` holds.
+func positionBelongsToNode(candidate *ast.Node, position int, file *ast.SourceFile) bool {
+	if candidate.Pos() > position {
+		panic("Expected candidate.pos <= position")
+	}
+	return position < candidate.End() || !isCompletedNode(candidate, file)
+}
+
+func isCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
+	if n == nil || ast.NodeIsMissing(n) {
+		return false
+	}
+
+	switch n.Kind {
+	case ast.KindClassDeclaration,
+		ast.KindInterfaceDeclaration,
+		ast.KindEnumDeclaration,
+		ast.KindObjectLiteralExpression,
+		ast.KindObjectBindingPattern,
+		ast.KindTypeLiteral,
+		ast.KindBlock,
+		ast.KindModuleBlock,
+		ast.KindCaseBlock,
+		ast.KindNamedImports,
+		ast.KindNamedExports:
+		return nodeEndsWith(n, ast.KindCloseBraceToken, sourceFile)
+
+	case ast.KindCatchClause:
+		return isCompletedNode(n.AsCatchClause().Block, sourceFile)
+
+	case ast.KindNewExpression:
+		if n.AsNewExpression().Arguments == nil {
+			return true
+		}
+		fallthrough
+
+	case ast.KindCallExpression,
+		ast.KindParenthesizedExpression,
+		ast.KindParenthesizedType:
+		return nodeEndsWith(n, ast.KindCloseParenToken, sourceFile)
+
+	case ast.KindFunctionType,
+		ast.KindConstructorType:
+		return isCompletedNode(n.Type(), sourceFile)
+
+	case ast.KindConstructor,
+		ast.KindGetAccessor,
+		ast.KindSetAccessor,
+		ast.KindFunctionDeclaration,
+		ast.KindFunctionExpression,
+		ast.KindMethodDeclaration,
+		ast.KindMethodSignature,
+		ast.KindConstructSignature,
+		ast.KindCallSignature,
+		ast.KindArrowFunction:
+		if n.Body() != nil {
+			return isCompletedNode(n.Body(), sourceFile)
+		}
+		if n.Type() != nil {
+			return isCompletedNode(n.Type(), sourceFile)
+		}
+		// Even though type parameters can be unclosed, we can get away with
+		// having at least a closing paren.
+		return hasChildOfKind(n, ast.KindCloseParenToken, sourceFile)
+
+	case ast.KindModuleDeclaration:
+		return n.AsModuleDeclaration().Body != nil && isCompletedNode(n.AsModuleDeclaration().Body, sourceFile)
+
+	case ast.KindIfStatement:
+		if n.AsIfStatement().ElseStatement != nil {
+			return isCompletedNode(n.AsIfStatement().ElseStatement, sourceFile)
+		}
+		return isCompletedNode(n.AsIfStatement().ThenStatement, sourceFile)
+
+	case ast.KindExpressionStatement:
+		return isCompletedNode(n.AsExpressionStatement().Expression, sourceFile) ||
+			hasChildOfKind(n, ast.KindSemicolonToken, sourceFile)
+
+	case ast.KindArrayLiteralExpression,
+		ast.KindArrayBindingPattern,
+		ast.KindElementAccessExpression,
+		ast.KindComputedPropertyName,
+		ast.KindTupleType:
+		return nodeEndsWith(n, ast.KindCloseBracketToken, sourceFile)
+
+	case ast.KindIndexSignature:
+		if n.AsIndexSignatureDeclaration().Type != nil {
+			return isCompletedNode(n.AsIndexSignatureDeclaration().Type, sourceFile)
+		}
+		return hasChildOfKind(n, ast.KindCloseBracketToken, sourceFile)
+
+	case ast.KindCaseClause,
+		ast.KindDefaultClause:
+		// there is no such thing as terminator token for CaseClause/DefaultClause so for simplicity always consider them non-completed
+		return false
+
+	case ast.KindForStatement,
+		ast.KindForInStatement,
+		ast.KindForOfStatement,
+		ast.KindWhileStatement:
+		return isCompletedNode(n.Statement(), sourceFile)
+	case ast.KindDoStatement:
+		// rough approximation: if DoStatement has While keyword - then if node is completed is checking the presence of ')';
+		if hasChildOfKind(n, ast.KindWhileKeyword, sourceFile) {
+			return nodeEndsWith(n, ast.KindCloseParenToken, sourceFile)
+		}
+		return isCompletedNode(n.AsDoStatement().Statement, sourceFile)
+
+	case ast.KindTypeQuery:
+		return isCompletedNode(n.AsTypeQueryNode().ExprName, sourceFile)
+
+	case ast.KindTypeOfExpression,
+		ast.KindDeleteExpression,
+		ast.KindVoidExpression,
+		ast.KindYieldExpression,
+		ast.KindSpreadElement:
+		return isCompletedNode(n.Expression(), sourceFile)
+
+	case ast.KindTaggedTemplateExpression:
+		return isCompletedNode(n.AsTaggedTemplateExpression().Template, sourceFile)
+
+	case ast.KindTemplateExpression:
+		if n.AsTemplateExpression().TemplateSpans == nil {
+			return false
+		}
+		lastSpan := core.LastOrNil(n.AsTemplateExpression().TemplateSpans.Nodes)
+		return isCompletedNode(lastSpan, sourceFile)
+
+	case ast.KindTemplateSpan:
+		return ast.NodeIsPresent(n.AsTemplateSpan().Literal)
+
+	case ast.KindExportDeclaration,
+		ast.KindImportDeclaration:
+		return ast.NodeIsPresent(n.ModuleSpecifier())
+
+	case ast.KindPrefixUnaryExpression:
+		return isCompletedNode(n.AsPrefixUnaryExpression().Operand, sourceFile)
+
+	case ast.KindBinaryExpression:
+		return isCompletedNode(n.AsBinaryExpression().Right, sourceFile)
+
+	case ast.KindConditionalExpression:
+		return isCompletedNode(n.AsConditionalExpression().WhenFalse, sourceFile)
+
+	default:
+		return true
+	}
+}
+
+// Checks if node ends with 'expectedLastToken'.
+// If child at position 'length - 1' is 'SemicolonToken' it is skipped and 'expectedLastToken' is compared with child at position 'length - 2'.
+func nodeEndsWith(n *ast.Node, expectedLastToken ast.Kind, sourceFile *ast.SourceFile) bool {
+	var lastChildNode *ast.Node
+	ast.ForEachChildAndJSDoc(n, sourceFile, func(node *ast.Node) bool { // !!! This can be extracted into its own `findLastChildNode` function.
+		if node == nil || node.Flags&ast.NodeFlagsReparsed != 0 {
+			return false
+		}
+		lastChildNode = node
+		return false
+	})
+	if lastChildNode == nil {
+		return false
+	}
+	lastNodeAndTokens := []*ast.Node{lastChildNode}
+	scanner := scanner.GetScannerForSourceFile(sourceFile, lastChildNode.End())
+	for startPos := lastChildNode.End(); startPos < n.End(); {
+		tokenKind := scanner.Token()
+		tokenFullStart := scanner.TokenFullStart()
+		tokenEnd := scanner.TokenEnd()
+		token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, n)
+		lastNodeAndTokens = append(lastNodeAndTokens, token)
+	}
+	lastChild := lastNodeAndTokens[len(lastNodeAndTokens)-1]
+	if lastChild.Kind == expectedLastToken {
+		return true
+	} else if lastChild.Kind == ast.KindSemicolonToken && len(lastNodeAndTokens) > 1 {
+		return lastNodeAndTokens[len(lastNodeAndTokens)-2].Kind == expectedLastToken
+	}
+	return false
 }

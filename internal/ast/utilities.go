@@ -2801,3 +2801,7 @@ func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
 	}
 	return node.ForEachChild(v)
 }
+
+func IsTypeReferenceType(node *Node) bool {
+	return node.Kind == KindTypeReference || node.Kind == KindExpressionWithTypeArguments
+}

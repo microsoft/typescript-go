@@ -2055,7 +2055,7 @@ func (c *Checker) createTypePredicateFromTypePredicateNode(node *ast.Node, signa
 	predicateNode := node.AsTypePredicateNode()
 	var t *Type
 	if predicateNode.Type != nil {
-		t = c.getTypeFromTypeNode(predicateNode.Type)
+		t = c.GetTypeFromTypeNode(predicateNode.Type)
 	}
 	if ast.IsThisTypeNode(predicateNode.ParameterName) {
 		kind := core.IfElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)

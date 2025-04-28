@@ -219,7 +219,7 @@ func getNameFromImportDeclaration(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func isValidTypeOnlyAliasUseSite(useSite *ast.Node) bool {
+func IsValidTypeOnlyAliasUseSite(useSite *ast.Node) bool {
 	return useSite.Flags&ast.NodeFlagsAmbient != 0 ||
 		ast.IsPartOfTypeQuery(useSite) ||
 		isIdentifierInNonEmittingHeritageClause(useSite) ||
@@ -1012,10 +1012,6 @@ func getContainingFunction(node *ast.Node) *ast.Node {
 
 func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {
 	return ast.FindAncestor(node.Parent, ast.IsFunctionLikeOrClassStaticBlockDeclaration)
-}
-
-func isTypeReferenceType(node *ast.Node) bool {
-	return node.Kind == ast.KindTypeReference || node.Kind == ast.KindExpressionWithTypeArguments
 }
 
 func isNodeDescendantOf(node *ast.Node, ancestor *ast.Node) bool {

@@ -107,6 +107,8 @@ var allCommitCharacters = []string{".", ",", ";"}
 // Commit characters valid at expression positions where we could be inside a parameter list.
 var noCommaCommitCharacters = []string{".", ";"}
 
+var emptyCommitCharacters = []string{}
+
 type sortText string
 
 const (
@@ -200,6 +202,10 @@ func (s *symbolOriginInfo) asObjectLiteralMethod() *symbolOriginInfoObjectLitera
 	return s.data.(*symbolOriginInfoObjectLiteralMethod)
 }
 
+type symbolOriginInfoTypeOnlyAlias struct {
+	declaration *ast.TypeOnlyImportDeclaration
+}
+
 // Special values for `CompletionInfo['source']` used to disambiguate
 // completion items with the same `name`. (Each completion item must
 // have a unique name/source combination, because those two fields
@@ -231,6 +237,14 @@ const (
 type uniqueNamesMap = map[string]bool
 
 type literalValue any // string | jsnum.Number | PseudoBigInt
+
+type globalsSearch int
+
+const (
+	globalsSearchContinue globalsSearch = iota
+	globalsSearchSuccess
+	globalsSearchFail
+)
 
 func (l *LanguageService) getCompletionsAtPosition(
 	program *compiler.Program,
@@ -709,6 +723,195 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 				addTypeProperties(typeChecker.GetNonNullableType(t), false /*insertAwait*/, false /*insertQuestionDot*/)
 			}
 		}
+	}
+
+	// Aggregates relevant symbols for completion in object literals in type argument positions.
+	tryGetObjectTypeLiteralInTypeArgumentCompletionSymbols := func() globalsSearch {
+		typeLiteralNode := tryGetTypeLiteralNode(contextToken)
+		if typeLiteralNode == nil {
+			return globalsSearchContinue
+		}
+
+		intersectionTypeNode := core.IfElse(
+			ast.IsIntersectionTypeNode(typeLiteralNode.Parent),
+			typeLiteralNode.Parent,
+			nil)
+		containerTypeNode := core.IfElse(
+			intersectionTypeNode != nil,
+			intersectionTypeNode,
+			typeLiteralNode)
+
+		containerExpectedType := getConstraintOfTypeArgumentProperty(containerTypeNode, typeChecker)
+		if containerExpectedType == nil {
+			return globalsSearchContinue
+		}
+
+		containerActualType := typeChecker.GetTypeFromTypeNode(containerTypeNode)
+
+		members := getPropertiesForCompletion(containerExpectedType, typeChecker)
+		existingMembers := getPropertiesForCompletion(containerActualType, typeChecker)
+
+		existingMemberNames := core.Set[string]{}
+		for _, member := range existingMembers {
+			existingMemberNames.Add(member.Name)
+		}
+
+		symbols = append(
+			symbols,
+			core.Filter(members, func(member *ast.Symbol) bool { return !existingMemberNames.Has(member.Name) })...)
+
+		completionKind = CompletionKindObjectPropertyDeclaration
+		isNewIdentifierLocation = true
+
+		return globalsSearchSuccess
+	}
+
+	// Aggregates relevant symbols for completion in object literals and object binding patterns.
+	// Relevant symbols are stored in the captured 'symbols' variable.
+	tryGetObjectLikeCompletionSymbols := func() globalsSearch {
+		if contextToken != nil && contextToken.Kind == ast.KindDotDotDotToken {
+			return globalsSearchContinue
+		}
+		objectLikeContainer := tryGetObjectLikeCompletionContainer(contextToken, position, file)
+		if objectLikeContainer == nil {
+			return globalsSearchContinue
+		}
+
+		return globalsSearchContinue // !!!
+	}
+
+	getGlobalCompletions := func() globalsSearch {
+		if tryGetFunctionLikeBodyCompletionContainer(contextToken) != nil {
+			keywordFilters = KeywordCompletionFiltersFunctionLikeBodyKeywords
+		} else {
+			keywordFilters = KeywordCompletionFiltersAll
+		}
+		// Get all entities in the current scope.
+		completionKind = CompletionKindGlobal
+		isNewIdentifierLocation, defaultCommitCharacters = computeCommitCharactersAndIsNewIdentifier(contextToken, file, position)
+
+		if previousToken != contextToken {
+			if previousToken == nil {
+				panic("Expected 'contextToken' to be defined when different from 'previousToken'.")
+			}
+		}
+
+		// We need to find the node that will give us an appropriate scope to begin
+		// aggregating completion candidates. This is achieved in 'getScopeNode'
+		// by finding the first node that encompasses a position, accounting for whether a node
+		// is "complete" to decide whether a position belongs to the node.
+		//
+		// However, at the end of an identifier, we are interested in the scope of the identifier
+		// itself, but fall outside of the identifier. For instance:
+		//
+		//      xyz => x$
+		//
+		// the cursor is outside of both the 'x' and the arrow function 'xyz => x',
+		// so 'xyz' is not returned in our results.
+		//
+		// We define 'adjustedPosition' so that we may appropriately account for
+		// being at the end of an identifier. The intention is that if requesting completion
+		// at the end of an identifier, it should be effectively equivalent to requesting completion
+		// anywhere inside/at the beginning of the identifier. So in the previous case, the
+		// 'adjustedPosition' will work as if requesting completion in the following:
+		//
+		//      xyz => $x
+		//
+		// If previousToken !== contextToken, then
+		//   - 'contextToken' was adjusted to the token prior to 'previousToken'
+		//      because we were at the end of an identifier.
+		//   - 'previousToken' is defined.
+		var adjustedPosition int
+		if previousToken != contextToken {
+			adjustedPosition = astnav.GetStartOfNode(previousToken, file, false /*includeJSDoc*/)
+		} else {
+			adjustedPosition = position
+		}
+
+		scopeNode := getScopeNode(contextToken, adjustedPosition, file)
+		if scopeNode == nil {
+			scopeNode = file.AsNode()
+		}
+		isInSnippetScope = isSnippetScope(scopeNode)
+
+		symbolMeanings := core.IfElse(isTypeOnlyLocation, ast.SymbolFlagsNone, ast.SymbolFlagsValue) |
+			ast.SymbolFlagsType | ast.SymbolFlagsNamespace | ast.SymbolFlagsAlias
+		typeOnlyAliasNeedsPromotion := previousToken != nil && !checker.IsValidTypeOnlyAliasUseSite(previousToken)
+
+		symbols = append(symbols, typeChecker.GetSymbolsInScope(scopeNode, symbolMeanings)...)
+		core.CheckEachDefined(symbols, "getSymbolsInScope() should all be defined")
+		for _, symbol := range symbols {
+			symbolId := ast.GetSymbolId(symbol)
+			if !typeChecker.IsArgumentsSymbol(symbol) &&
+				!core.Some(symbol.Declarations, func(decl *ast.Declaration) bool {
+					return ast.GetSourceFileOfNode(decl) == file
+				}) {
+				symbolToSortTextMap[symbolId] = SortTextGlobalsOrKeywords
+			}
+			if typeOnlyAliasNeedsPromotion && symbol.Flags&ast.SymbolFlagsValue == 0 {
+				typeOnlyAliasDeclaration := core.Find(symbol.Declarations, ast.IsTypeOnlyImportDeclaration)
+				if typeOnlyAliasDeclaration != nil {
+					origin := &symbolOriginInfo{
+						kind: symbolOriginInfoKindTypeOnlyAlias,
+						data: &symbolOriginInfoTypeOnlyAlias{declaration: typeOnlyAliasDeclaration},
+					}
+					symbolToOriginInfoMap[symbolId] = origin
+				}
+			}
+		}
+
+		// Need to insert 'this.' before properties of `this` type, so only do that if `includeInsertTextCompletions`
+		if scopeNode.Kind != ast.KindSourceFile {
+			thisType := typeChecker.TryGetThisTypeAtEx(
+				scopeNode,
+				false, /*includeGlobalThis*/
+				core.IfElse(ast.IsClassLike(scopeNode.Parent), scopeNode, nil))
+			if thisType != nil && !isProbablyGlobalType(thisType, file, typeChecker) {
+				for _, symbol := range getPropertiesForCompletion(thisType, typeChecker) {
+					symbolId := ast.GetSymbolId(symbol)
+					symbols = append(symbols, symbol)
+					symbolToOriginInfoMap[symbolId] = &symbolOriginInfo{kind: symbolOriginInfoKindThisType}
+					symbolToSortTextMap[symbolId] = SortTextSuggestedClassMembers
+				}
+			}
+		}
+
+		// !!! auto imports
+		// collectAutoImports()
+
+		if isTypeOnlyLocation {
+			if contextToken != nil && ast.IsAssertionExpression(contextToken.Parent) {
+				keywordFilters = KeywordCompletionFiltersTypeAssertionKeywords
+			} else {
+				keywordFilters = KeywordCompletionFiltersTypeKeywords
+			}
+		}
+
+		return globalsSearchSuccess
+	}
+
+	tryGetGlobalSymbols := func() bool {
+		var result globalsSearch
+		globalSearchFuncs := []func() globalsSearch{
+			// !!!
+			tryGetObjectTypeLiteralInTypeArgumentCompletionSymbols,
+			// tryGetObjectLikeCompletionSymbols,
+			// tryGetImportCompletionSymbols,
+			// tryGetImportOrExportClauseCompletionSymbols,
+			// tryGetImportAttributesCompletionSymbols,
+			// tryGetLocalNamedExportCompletionSymbols,
+			// tryGetConstructorCompletion,
+			// tryGetClassLikeCompletionSymbols,
+			// tryGetJsxCompletionSymbols,
+			getGlobalCompletions,
+		}
+		for _, globalSearchFunc := range globalSearchFuncs {
+			result = globalSearchFunc()
+			if result != globalsSearchContinue {
+				break
+			}
+		}
+		return result == globalsSearchSuccess
 	}
 
 	if isRightOfDot || isRightOfQuestionDot {
@@ -2507,4 +2710,300 @@ func isMemberCompletionKind(kind CompletionKind) bool {
 	return kind == CompletionKindObjectPropertyDeclaration ||
 		kind == CompletionKindMemberLike ||
 		kind == CompletionKindPropertyAccess
+}
+
+func tryGetFunctionLikeBodyCompletionContainer(contextToken *ast.Node) *ast.Node {
+	if contextToken == nil {
+		return nil
+	}
+
+	var prev *ast.Node
+	container := ast.FindAncestorOrQuit(contextToken, func(node *ast.Node) ast.FindAncestorResult {
+		if ast.IsClassLike(node) {
+			return ast.FindAncestorQuit
+		}
+		if ast.IsFunctionLikeDeclaration(node) && prev == node.Body() {
+			return ast.FindAncestorTrue
+		}
+		prev = node
+		return ast.FindAncestorFalse
+	})
+	return container
+}
+
+func computeCommitCharactersAndIsNewIdentifier(
+	contextToken *ast.Node,
+	file *ast.SourceFile,
+	position int) (isNewIdentifierLocation bool, defaultCommitCharacters []string) {
+	if contextToken == nil {
+		return false, allCommitCharacters
+	}
+	containingNodeKind := contextToken.Parent.Kind
+	tokenKind := keywordForNode(contextToken)
+	// Previous token may have been a keyword that was converted to an identifier.
+	switch tokenKind {
+	case ast.KindCommaToken:
+		switch containingNodeKind {
+		// func( a, |
+		// new C(a, |
+		case ast.KindCallExpression, ast.KindNewExpression:
+			expression := contextToken.Parent.Expression()
+			// func\n(a, |
+			if getLineOfPosition(file, expression.End()) != getLineOfPosition(file, position) {
+				return true, noCommaCommitCharacters
+			}
+			return true, allCommitCharacters
+		// const x = (a, |
+		case ast.KindBinaryExpression:
+			return true, noCommaCommitCharacters
+		// constructor( a, | /* public, protected, private keywords are allowed here, so show completion */
+		// var x: (s: string, list|
+		// const obj = { x, |
+		case ast.KindConstructor, ast.KindFunctionType, ast.KindObjectLiteralExpression:
+			return true, emptyCommitCharacters
+		// [a, |
+		case ast.KindArrayLiteralExpression:
+			return true, allCommitCharacters
+		default:
+			return false, allCommitCharacters
+		}
+	case ast.KindOpenParenToken:
+		switch containingNodeKind {
+		// func( |
+		// new C(a|
+		case ast.KindCallExpression, ast.KindNewExpression:
+			expression := contextToken.Parent.Expression()
+			// func\n( |
+			if getLineOfPosition(file, expression.End()) != getLineOfPosition(file, position) {
+				return true, noCommaCommitCharacters
+			}
+			return true, allCommitCharacters
+		// const x = (a|
+		case ast.KindParenthesizedExpression:
+			return true, noCommaCommitCharacters
+		// constructor( |
+		// function F(pred: (a| /* this can become an arrow function, where 'a' is the argument */
+		case ast.KindConstructor, ast.KindParenthesizedType:
+			return true, emptyCommitCharacters
+		default:
+			return false, allCommitCharacters
+		}
+	case ast.KindOpenBracketToken:
+		switch containingNodeKind {
+		// [ |
+		// [ | : string ]
+		// [ | : string ]
+		// [ |    /* this can become an index signature */
+		case ast.KindArrayLiteralExpression, ast.KindIndexSignature, ast.KindTupleType, ast.KindComputedPropertyName:
+			return true, allCommitCharacters
+		default:
+			return false, allCommitCharacters
+		}
+	// module |
+	// namespace |
+	// import |
+	case ast.KindModuleKeyword, ast.KindNamespaceKeyword, ast.KindImportKeyword:
+		return true, emptyCommitCharacters
+	case ast.KindDotToken:
+		switch containingNodeKind {
+		// module A.|
+		case ast.KindModuleDeclaration:
+			return true, emptyCommitCharacters
+		default:
+			return false, allCommitCharacters
+		}
+	case ast.KindOpenBraceToken:
+		switch containingNodeKind {
+		// class A { |
+		// const obj = { |
+		case ast.KindClassDeclaration, ast.KindObjectLiteralExpression:
+			return true, emptyCommitCharacters
+		default:
+			return false, allCommitCharacters
+		}
+	case ast.KindEqualsToken:
+		switch containingNodeKind {
+		// const x = a|
+		// x = a|
+		case ast.KindVariableDeclaration, ast.KindBinaryExpression:
+			return true, allCommitCharacters
+		default:
+			return false, allCommitCharacters
+		}
+	case ast.KindTemplateHead:
+		// `aa ${|
+		return containingNodeKind == ast.KindTemplateExpression, allCommitCharacters
+	case ast.KindTemplateMiddle:
+		// `aa ${10} dd ${|
+		return containingNodeKind == ast.KindTemplateSpan, allCommitCharacters
+	case ast.KindAsyncKeyword:
+		// const obj = { async c|()
+		// const obj = { async c|
+		if containingNodeKind == ast.KindMethodDeclaration || containingNodeKind == ast.KindShorthandPropertyAssignment {
+			return true, emptyCommitCharacters
+		}
+		return false, allCommitCharacters
+	case ast.KindAsteriskToken:
+		// const obj = { * c|
+		if containingNodeKind == ast.KindMethodDeclaration {
+			return true, emptyCommitCharacters
+		}
+		return false, allCommitCharacters
+	}
+
+	if isClassMemberCompletionKeyword(tokenKind) {
+		return true, emptyCommitCharacters
+	}
+
+	return false, allCommitCharacters
+}
+
+func keywordForNode(node *ast.Node) ast.Kind {
+	if ast.IsIdentifier(node) {
+		return scanner.IdentifierToKeywordKind(node.AsIdentifier())
+	}
+	return node.Kind
+}
+
+// Finds the first node that "embraces" the position, so that one may
+// accurately aggregate locals from the closest containing scope.
+func getScopeNode(initialToken *ast.Node, position int, file *ast.SourceFile) *ast.Node {
+	scope := initialToken
+	for scope != nil && !positionBelongsToNode(scope, position, file) {
+		scope = scope.Parent
+	}
+	return scope
+}
+
+func isSnippetScope(scopeNode *ast.Node) bool {
+	switch scopeNode.Kind {
+	case ast.KindSourceFile,
+		ast.KindTemplateExpression,
+		ast.KindJsxExpression,
+		ast.KindBlock:
+		return true
+	default:
+		return ast.IsStatement(scopeNode)
+	}
+}
+
+// Determines if a type is exactly the same type resolved by the global 'self', 'global', or 'globalThis'.
+func isProbablyGlobalType(t *checker.Type, file *ast.SourceFile, typeChecker *checker.Checker) bool {
+	// The type of `self` and `window` is the same in lib.dom.d.ts, but `window` does not exist in
+	// lib.webworker.d.ts, so checking against `self` is also a check against `window` when it exists.
+	selfSymbol := typeChecker.GetGlobalSymbol("self", ast.SymbolFlagsValue, nil /*diagnostic*/)
+	if selfSymbol != nil && typeChecker.GetTypeOfSymbolAtLocation(selfSymbol, file.AsNode()) == t {
+		return true
+	}
+	globalSymbol := typeChecker.GetGlobalSymbol("global", ast.SymbolFlagsValue, nil /*diagnostic*/)
+	if globalSymbol != nil && typeChecker.GetTypeOfSymbolAtLocation(globalSymbol, file.AsNode()) == t {
+		return true
+	}
+	globalThisSymbol := typeChecker.GetGlobalSymbol("globalThis", ast.SymbolFlagsValue, nil /*diagnostic*/)
+	if globalThisSymbol != nil && typeChecker.GetTypeOfSymbolAtLocation(globalThisSymbol, file.AsNode()) == t {
+		return true
+	}
+	return false
+}
+
+func tryGetTypeLiteralNode(node *ast.Node) *ast.TypeLiteral {
+	if node == nil {
+		return nil
+	}
+
+	parent := node.Parent
+	switch node.Kind {
+	case ast.KindOpenBraceToken:
+		if ast.IsTypeLiteralNode(parent) {
+			return parent
+		}
+	case ast.KindSemicolonToken, ast.KindCommaToken, ast.KindIdentifier:
+		if parent.Kind == ast.KindPropertySignature && ast.IsTypeLiteralNode(parent.Parent) {
+			return parent.Parent
+		}
+	}
+
+	return nil
+}
+
+func getConstraintOfTypeArgumentProperty(node *ast.Node, typeChecker *checker.Checker) *checker.Type {
+	if node == nil {
+		return nil
+	}
+
+	if ast.IsTypeNode(node) && ast.IsTypeReferenceType(node.Parent) {
+		return typeChecker.GetTypeArgumentConstraint(node)
+	}
+
+	t := getConstraintOfTypeArgumentProperty(node.Parent, typeChecker)
+	if t == nil {
+		return nil
+	}
+
+	switch node.Kind {
+	case ast.KindPropertySignature:
+		return typeChecker.GetTypeOfPropertyOfContextualType(t, node.Symbol().Name)
+	case ast.KindIntersectionType, ast.KindTypeLiteral, ast.KindUnionType:
+		return t
+	}
+
+	return nil
+}
+
+func tryGetObjectLikeCompletionContainer(contextToken *ast.Node, position int, file *ast.SourceFile) *ast.ObjectLiteralLike {
+	if contextToken == nil {
+		return nil
+	}
+
+	parent := contextToken.Parent
+	switch contextToken.Kind {
+	// const x = { |
+	// const x = { a: 0, |
+	case ast.KindOpenBraceToken, ast.KindCommaToken:
+		if ast.IsObjectLiteralExpression(parent) || ast.IsObjectBindingPattern(parent) {
+			return parent
+		}
+	case ast.KindAsteriskToken:
+		if ast.IsMethodDeclaration(parent) && ast.IsObjectLiteralExpression(parent.Parent) {
+			return parent.Parent
+		}
+	case ast.KindAsyncKeyword:
+		if ast.IsObjectLiteralExpression(parent.Parent) {
+			return parent.Parent
+		}
+	case ast.KindIdentifier:
+		if contextToken.Text() == "async" && ast.IsShorthandPropertyAssignment(parent) {
+			return parent.Parent
+		} else {
+			if ast.IsObjectLiteralExpression(parent.Parent) &&
+				(ast.IsSpreadAssignment(parent) ||
+					ast.IsShorthandPropertyAssignment(parent) &&
+						getLineOfPosition(file, contextToken.End()) != getLineOfPosition(file, position)) {
+				return parent.Parent
+			}
+			ancestorNode := ast.FindAncestor(parent, ast.IsPropertyAssignment)
+			if ancestorNode != nil && getLastToken(ancestorNode, file) == contextToken && ast.IsObjectLiteralExpression(ancestorNode.Parent) {
+				return ancestorNode.Parent
+			}
+		}
+	default:
+		if parent.Parent != nil && parent.Parent.Parent != nil &&
+			(ast.IsMethodDeclaration(parent.Parent) ||
+				ast.IsGetAccessorDeclaration(parent.Parent) ||
+				ast.IsSetAccessorDeclaration(parent.Parent)) &&
+			ast.IsObjectLiteralExpression(parent.Parent.Parent) {
+			return parent.Parent.Parent
+		}
+		if ast.IsSpreadAssignment(parent) && ast.IsObjectLiteralExpression(parent.Parent) {
+			return parent.Parent
+		}
+		ancestorNode := ast.FindAncestor(parent, ast.IsPropertyAssignment)
+		if contextToken.Kind != ast.KindColonToken &&
+			ancestorNode != nil && getLastToken(ancestorNode, file) == contextToken &&
+			ast.IsObjectLiteralExpression(ancestorNode.Parent) {
+			return ancestorNode.Parent
+		}
+	}
+
+	return nil
 }

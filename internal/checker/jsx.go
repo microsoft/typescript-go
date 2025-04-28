@@ -211,7 +211,7 @@ func (c *Checker) getContextualTypeForJsxAttribute(attribute *ast.Node, contextF
 		if attributesType == nil || IsTypeAny(attributesType) {
 			return nil
 		}
-		return c.getTypeOfPropertyOfContextualType(attributesType, attribute.Name().Text())
+		return c.GetTypeOfPropertyOfContextualType(attributesType, attribute.Name().Text())
 	}
 	return c.getContextualType(attribute.Parent, contextFlags)
 }
@@ -238,7 +238,7 @@ func (c *Checker) getContextualTypeForChildJsxExpression(node *ast.Node, child *
 	}
 	realChildren := getSemanticJsxChildren(node.Children().Nodes)
 	childIndex := slices.Index(realChildren, child)
-	childFieldType := c.getTypeOfPropertyOfContextualType(attributesType, jsxChildrenPropertyName)
+	childFieldType := c.GetTypeOfPropertyOfContextualType(attributesType, jsxChildrenPropertyName)
 	if childFieldType == nil {
 		return nil
 	}
@@ -715,7 +715,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 			}
 			var childrenContextualType *Type
 			if contextualType := c.getApparentTypeOfContextualType(openingLikeElement.Attributes(), ContextFlagsNone); contextualType != nil {
-				childrenContextualType = c.getTypeOfPropertyOfContextualType(contextualType, jsxChildrenPropertyName)
+				childrenContextualType = c.GetTypeOfPropertyOfContextualType(contextualType, jsxChildrenPropertyName)
 			}
 			// If there are children in the body of JSX element, create dummy attribute "children" with the union of children types so that it will pass the attribute checking process
 			childrenPropSymbol := c.newSymbol(ast.SymbolFlagsProperty, jsxChildrenPropertyName)
@@ -1221,7 +1221,7 @@ func (c *Checker) getJsxNamespaceAt(location *ast.Node) *ast.Symbol {
 		}
 	}
 	// JSX global fallback
-	s := c.resolveSymbol(c.getGlobalSymbol(JsxNames.JSX, ast.SymbolFlagsNamespace, nil /*diagnostic*/))
+	s := c.resolveSymbol(c.GetGlobalSymbol(JsxNames.JSX, ast.SymbolFlagsNamespace, nil /*diagnostic*/))
 	if s == c.unknownSymbol {
 		return nil
 	}
