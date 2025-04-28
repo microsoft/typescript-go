@@ -1681,8 +1681,6 @@ func GetExternalModuleName(node *Node) *Expression {
 		return node.AsImportDeclaration().ModuleSpecifier
 	case KindExportDeclaration:
 		return node.AsExportDeclaration().ModuleSpecifier
-	case KindJSDocImportTag:
-		return node.AsJSDocImportTag().ModuleSpecifier
 	case KindImportEqualsDeclaration:
 		if node.AsImportEqualsDeclaration().ModuleReference.Kind == KindExternalModuleReference {
 			return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
@@ -2364,15 +2362,13 @@ func ModuleExportNameIsDefault(node *Node) bool {
 	return node.Text() == InternalSymbolNameDefault
 }
 
-func IsDefaultImport(node *Node /*ImportDeclaration | ImportEqualsDeclaration | ExportDeclaration | JSDocImportTag*/) bool {
-	var importClause *Node
+func IsDefaultImport(node *Node /*ImportDeclaration | ImportEqualsDeclaration | ExportDeclaration*/) bool {
 	switch node.Kind {
 	case KindImportDeclaration, KindJSImportDeclaration:
-		importClause = node.AsImportDeclaration().ImportClause
-	case KindJSDocImportTag:
-		importClause = node.AsJSDocImportTag().ImportClause
+		importClause := node.AsImportDeclaration().ImportClause
+		return importClause != nil && importClause.AsImportClause().name != nil
 	}
-	return importClause != nil && importClause.AsImportClause().name != nil
+	return false
 }
 
 func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.ModuleKind {
@@ -2556,13 +2552,6 @@ func ForEachDynamicImportOrRequireCall(
 		} else if includeTypeSpaceImports && IsLiteralImportTypeNode(node) {
 			if cb(node, node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal) {
 				return true
-			}
-		} else if includeTypeSpaceImports && node.Kind == KindJSDocImportTag {
-			moduleNameExpr := GetExternalModuleName(node)
-			if moduleNameExpr != nil && IsStringLiteral(moduleNameExpr) && moduleNameExpr.Text() != "" {
-				if cb(node, moduleNameExpr) {
-					return true
-				}
 			}
 		}
 		// skip past import/require

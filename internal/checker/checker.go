@@ -5080,14 +5080,8 @@ func isExclusivelyTypeOnlyImportOrExport(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindExportDeclaration:
 		return node.AsExportDeclaration().IsTypeOnly
-	case ast.KindJSImportDeclaration:
-		return true
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		if importClause := node.AsImportDeclaration().ImportClause; importClause != nil {
-			return importClause.AsImportClause().IsTypeOnly
-		}
-	case ast.KindJSDocImportTag:
-		if importClause := node.AsJSDocImportTag().ImportClause; importClause != nil {
 			return importClause.AsImportClause().IsTypeOnly
 		}
 	}
