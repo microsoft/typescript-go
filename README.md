@@ -48,7 +48,7 @@ This is mainly a testing entry point; for higher fidelity with regular `tsc`, ru
 * Run `hereby build` to build the LSP server
 * Run `hereby install-extension` to build and install the VS Code extension. (Use `--insiders` to target `code-insiders` instead of `code`.)
 * Copy the `"typescript-go.executablePath"` setting printed by `hereby install-extension` to your VS Code settings.
-* Select "TypeScript: Use TypeScript Go" from the VS Code command palette (or set `"typescript.useTsgo"` in your VS Code settings).
+* Select "TypeScript: Use TypeScript Go (Experimental)" from the VS Code command palette (or set `"typescript.experimental.useTsgo"` in your VS Code settings).
 
 Alternatively, to debug and run the VS Code extension without installing it globally:
 

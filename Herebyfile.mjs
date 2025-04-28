@@ -357,7 +357,7 @@ export const installExtension = task({
         await $({ cwd: path.join(__dirname, "_extension") })`${options.insiders ? "code-insiders" : "code"} --install-extension typescript-lsp.vsix`;
         console.log(pc.yellowBright("\nExtension installed. ") + "Add the following to your workspace or user settings.json:\n");
         console.log(pc.whiteBright(`    "typescript-go.executablePath": "${path.join(__dirname, "built", "local", process.platform === "win32" ? "tsgo.exe" : "tsgo")}"\n`));
-        console.log("Select 'TypeScript: Use TypeScript Go' in the command palette to enable the extension and disable built-in TypeScript support.\n");
+        console.log("Select 'TypeScript: Use TypeScript Go (Experimental)' in the command palette to enable the extension and disable built-in TypeScript support.\n");
     },
 });
 

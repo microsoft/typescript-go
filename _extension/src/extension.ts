@@ -17,7 +17,7 @@ const BUILTIN_TS_EXTENSION_ID = "vscode.typescript-language-features";
 
 export function activate(context: vscode.ExtensionContext) {
     const tsExtension = vscode.extensions.getExtension(BUILTIN_TS_EXTENSION_ID);
-    if (tsExtension?.isActive && !vscode.workspace.getConfiguration("typescript").get<boolean>("useTsgo")) {
+    if (tsExtension?.isActive && !vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo")) {
         return;
     }
 
@@ -185,7 +185,7 @@ async function showQuickPickMenu(): Promise<void> {
         else if (selected.label.includes("Disable TypeScript Go")) {
             // Fire and forget, because this command will restart the whole extension host
             // and awaiting it shows a weird cancellation error.
-            vscode.commands.executeCommand("typescript.disableTsgo");
+            vscode.commands.executeCommand("typescript.experimental.disableTsgo");
         }
     }
 }
