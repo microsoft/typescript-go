@@ -38,7 +38,7 @@ func (w *watchedFiles[T]) update(newData T) (updated bool, err error) {
 
 	w.globs = newGlobs
 	if w.watcherID != "" {
-		if err := w.client.UnwatchFiles(w.watcherID); err != nil {
+		if err = w.client.UnwatchFiles(w.watcherID); err != nil {
 			return false, err
 		}
 	}

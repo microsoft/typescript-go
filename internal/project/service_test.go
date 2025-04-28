@@ -19,7 +19,7 @@ func TestService(t *testing.T) {
 		t.Skip("bundled files are not embedded")
 	}
 
-	files := map[string]string{
+	defaultFiles := map[string]string{
 		"/home/projects/TS/p1/tsconfig.json": `{
 			"compilerOptions": {
 				"noLib": true,
@@ -37,9 +37,9 @@ func TestService(t *testing.T) {
 		t.Parallel()
 		t.Run("create configured project", func(t *testing.T) {
 			t.Parallel()
-			service, _ := projecttestutil.Setup(files)
+			service, _ := projecttestutil.Setup(defaultFiles)
 			assert.Equal(t, len(service.Projects()), 0)
-			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+			service.OpenFile("/home/projects/TS/p1/src/index.ts", defaultFiles["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			assert.Equal(t, len(service.Projects()), 1)
 			p := service.Projects()[0]
 			assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -50,8 +50,8 @@ func TestService(t *testing.T) {
 
 		t.Run("create inferred project", func(t *testing.T) {
 			t.Parallel()
-			service, _ := projecttestutil.Setup(files)
-			service.OpenFile("/home/projects/TS/p1/config.ts", files["/home/projects/TS/p1/config.ts"], core.ScriptKindTS, "")
+			service, _ := projecttestutil.Setup(defaultFiles)
+			service.OpenFile("/home/projects/TS/p1/config.ts", defaultFiles["/home/projects/TS/p1/config.ts"], core.ScriptKindTS, "")
 			// Find tsconfig, load, notice config.ts is not included, create inferred project
 			assert.Equal(t, len(service.Projects()), 2)
 			_, proj := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/config.ts")
@@ -60,8 +60,8 @@ func TestService(t *testing.T) {
 
 		t.Run("inferred project for in-memory files", func(t *testing.T) {
 			t.Parallel()
-			service, _ := projecttestutil.Setup(files)
-			service.OpenFile("/home/projects/TS/p1/config.ts", files["/home/projects/TS/p1/config.ts"], core.ScriptKindTS, "")
+			service, _ := projecttestutil.Setup(defaultFiles)
+			service.OpenFile("/home/projects/TS/p1/config.ts", defaultFiles["/home/projects/TS/p1/config.ts"], core.ScriptKindTS, "")
 			service.OpenFile("^/untitled/ts-nul-authority/Untitled-1", "x", core.ScriptKindTS, "")
 			service.OpenFile("^/untitled/ts-nul-authority/Untitled-2", "y", core.ScriptKindTS, "")
 			assert.Equal(t, len(service.Projects()), 2)
@@ -89,8 +89,8 @@ func TestService(t *testing.T) {
 		t.Parallel()
 		t.Run("update script info eagerly and program lazily", func(t *testing.T) {
 			t.Parallel()
-			service, _ := projecttestutil.Setup(files)
-			service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
+			service, _ := projecttestutil.Setup(defaultFiles)
+			service.OpenFile("/home/projects/TS/p1/src/x.ts", defaultFiles["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 			info, proj := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/x.ts")
 			programBefore := proj.GetProgram()
 			service.ChangeFile("/home/projects/TS/p1/src/x.ts", []ls.TextChange{{TextRange: core.NewTextRange(17, 18), NewText: "2"}})
@@ -102,8 +102,8 @@ func TestService(t *testing.T) {
 
 		t.Run("unchanged source files are reused", func(t *testing.T) {
 			t.Parallel()
-			service, _ := projecttestutil.Setup(files)
-			service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
+			service, _ := projecttestutil.Setup(defaultFiles)
+			service.OpenFile("/home/projects/TS/p1/src/x.ts", defaultFiles["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 			_, proj := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/x.ts")
 			programBefore := proj.GetProgram()
 			indexFileBefore := programBefore.GetSourceFile("/home/projects/TS/p1/src/index.ts")
@@ -113,10 +113,10 @@ func TestService(t *testing.T) {
 
 		t.Run("change can pull in new files", func(t *testing.T) {
 			t.Parallel()
-			filesCopy := maps.Clone(files)
-			filesCopy["/home/projects/TS/p1/y.ts"] = `export const y = 2;`
-			service, _ := projecttestutil.Setup(filesCopy)
-			service.OpenFile("/home/projects/TS/p1/src/index.ts", filesCopy["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+			files := maps.Clone(defaultFiles)
+			files["/home/projects/TS/p1/y.ts"] = `export const y = 2;`
+			service, _ := projecttestutil.Setup(files)
+			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			assert.Check(t, service.GetScriptInfo("/home/projects/TS/p1/y.ts") == nil)
 
 			service.ChangeFile("/home/projects/TS/p1/src/index.ts", []ls.TextChange{{TextRange: core.NewTextRange(0, 0), NewText: `import { y } from "../y";\n`}})
@@ -130,23 +130,23 @@ func TestService(t *testing.T) {
 			t.Parallel()
 			t.Run("delete a file, close it, recreate it", func(t *testing.T) {
 				t.Parallel()
-				service, host := projecttestutil.Setup(files)
-				service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
-				service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+				service, host := projecttestutil.Setup(defaultFiles)
+				service.OpenFile("/home/projects/TS/p1/src/x.ts", defaultFiles["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
+				service.OpenFile("/home/projects/TS/p1/src/index.ts", defaultFiles["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 				assert.Equal(t, service.SourceFileCount(), 2)
 
-				filesCopy := maps.Clone(files)
-				delete(filesCopy, "/home/projects/TS/p1/src/x.ts")
-				host.ReplaceFS(filesCopy)
+				files := maps.Clone(defaultFiles)
+				delete(files, "/home/projects/TS/p1/src/x.ts")
+				host.ReplaceFS(files)
 
 				service.CloseFile("/home/projects/TS/p1/src/x.ts")
 				assert.Check(t, service.GetScriptInfo("/home/projects/TS/p1/src/x.ts") == nil)
 				assert.Check(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
 				assert.Equal(t, service.SourceFileCount(), 1)
 
-				filesCopy["/home/projects/TS/p1/src/x.ts"] = ``
-				host.ReplaceFS(filesCopy)
-				service.OpenFile("/home/projects/TS/p1/src/x.ts", filesCopy["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
+				files["/home/projects/TS/p1/src/x.ts"] = ``
+				host.ReplaceFS(files)
+				service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 				assert.Equal(t, service.GetScriptInfo("/home/projects/TS/p1/src/x.ts").Text(), "")
 				assert.Check(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil)
 				assert.Equal(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "")
@@ -157,22 +157,22 @@ func TestService(t *testing.T) {
 			t.Parallel()
 			t.Run("delete a file, close it, recreate it", func(t *testing.T) {
 				t.Parallel()
-				filesCopy := maps.Clone(files)
-				delete(filesCopy, "/home/projects/TS/p1/tsconfig.json")
-				service, host := projecttestutil.Setup(filesCopy)
-				service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
-				service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+				files := maps.Clone(defaultFiles)
+				delete(files, "/home/projects/TS/p1/tsconfig.json")
+				service, host := projecttestutil.Setup(files)
+				service.OpenFile("/home/projects/TS/p1/src/x.ts", defaultFiles["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
+				service.OpenFile("/home/projects/TS/p1/src/index.ts", defaultFiles["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 
-				delete(filesCopy, "/home/projects/TS/p1/src/x.ts")
-				host.ReplaceFS(filesCopy)
+				delete(files, "/home/projects/TS/p1/src/x.ts")
+				host.ReplaceFS(files)
 
 				service.CloseFile("/home/projects/TS/p1/src/x.ts")
 				assert.Check(t, service.GetScriptInfo("/home/projects/TS/p1/src/x.ts") == nil)
 				assert.Check(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
 
-				filesCopy["/home/projects/TS/p1/src/x.ts"] = ``
-				host.ReplaceFS(filesCopy)
-				service.OpenFile("/home/projects/TS/p1/src/x.ts", filesCopy["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
+				files["/home/projects/TS/p1/src/x.ts"] = ``
+				host.ReplaceFS(files)
+				service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 				assert.Equal(t, service.GetScriptInfo("/home/projects/TS/p1/src/x.ts").Text(), "")
 				assert.Check(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts") != nil)
 				assert.Equal(t, service.Projects()[0].GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "")
@@ -184,8 +184,8 @@ func TestService(t *testing.T) {
 		t.Parallel()
 		t.Run("projects with similar options share source files", func(t *testing.T) {
 			t.Parallel()
-			filesCopy := maps.Clone(files)
-			filesCopy["/home/projects/TS/p2/tsconfig.json"] = `{
+			files := maps.Clone(defaultFiles)
+			files["/home/projects/TS/p2/tsconfig.json"] = `{
 				"compilerOptions": {
 					"noLib": true,
 					"module": "nodenext",
@@ -193,10 +193,10 @@ func TestService(t *testing.T) {
 					"noCheck": true // Added
 				},
 			}`
-			filesCopy["/home/projects/TS/p2/src/index.ts"] = `import { x } from "../../p1/src/x";`
-			service, _ := projecttestutil.Setup(filesCopy)
-			service.OpenFile("/home/projects/TS/p1/src/index.ts", filesCopy["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
-			service.OpenFile("/home/projects/TS/p2/src/index.ts", filesCopy["/home/projects/TS/p2/src/index.ts"], core.ScriptKindTS, "")
+			files["/home/projects/TS/p2/src/index.ts"] = `import { x } from "../../p1/src/x";`
+			service, _ := projecttestutil.Setup(files)
+			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+			service.OpenFile("/home/projects/TS/p2/src/index.ts", files["/home/projects/TS/p2/src/index.ts"], core.ScriptKindTS, "")
 			assert.Equal(t, len(service.Projects()), 2)
 			_, p1 := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			_, p2 := service.EnsureDefaultProjectForFile("/home/projects/TS/p2/src/index.ts")
@@ -209,17 +209,17 @@ func TestService(t *testing.T) {
 
 		t.Run("projects with different options do not share source files", func(t *testing.T) {
 			t.Parallel()
-			filesCopy := maps.Clone(files)
-			filesCopy["/home/projects/TS/p2/tsconfig.json"] = `{
+			files := maps.Clone(defaultFiles)
+			files["/home/projects/TS/p2/tsconfig.json"] = `{
 				"compilerOptions": {
 					"module": "nodenext",
 					"jsx": "react"
 				}
 			}`
-			filesCopy["/home/projects/TS/p2/src/index.ts"] = `import { x } from "../../p1/src/x";`
-			service, _ := projecttestutil.Setup(filesCopy)
-			service.OpenFile("/home/projects/TS/p1/src/index.ts", filesCopy["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
-			service.OpenFile("/home/projects/TS/p2/src/index.ts", filesCopy["/home/projects/TS/p2/src/index.ts"], core.ScriptKindTS, "")
+			files["/home/projects/TS/p2/src/index.ts"] = `import { x } from "../../p1/src/x";`
+			service, _ := projecttestutil.Setup(files)
+			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+			service.OpenFile("/home/projects/TS/p2/src/index.ts", files["/home/projects/TS/p2/src/index.ts"], core.ScriptKindTS, "")
 			assert.Equal(t, len(service.Projects()), 2)
 			_, p1 := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			_, p2 := service.EnsureDefaultProjectForFile("/home/projects/TS/p2/src/index.ts")
@@ -235,41 +235,41 @@ func TestService(t *testing.T) {
 
 		t.Run("change open file", func(t *testing.T) {
 			t.Parallel()
-			service, host := projecttestutil.Setup(files)
-			service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
-			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+			service, host := projecttestutil.Setup(defaultFiles)
+			service.OpenFile("/home/projects/TS/p1/src/x.ts", defaultFiles["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
+			service.OpenFile("/home/projects/TS/p1/src/index.ts", defaultFiles["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			programBefore := project.GetProgram()
 
-			filesCopy := maps.Clone(files)
-			filesCopy["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
-			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			files := maps.Clone(defaultFiles)
+			files["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
+			host.ReplaceFS(files)
+			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
 				},
-			})
+			}))
 
 			assert.Equal(t, programBefore, project.GetProgram())
 		})
 
 		t.Run("change closed program file", func(t *testing.T) {
 			t.Parallel()
-			service, host := projecttestutil.Setup(files)
-			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+			service, host := projecttestutil.Setup(defaultFiles)
+			service.OpenFile("/home/projects/TS/p1/src/index.ts", defaultFiles["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			programBefore := project.GetProgram()
 
-			filesCopy := maps.Clone(files)
-			filesCopy["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
-			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			files := maps.Clone(defaultFiles)
+			files["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
+			host.ReplaceFS(files)
+			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
 				},
-			})
+			}))
 
 			assert.Check(t, project.GetProgram() != programBefore)
 		})
@@ -303,12 +303,12 @@ func TestService(t *testing.T) {
 				}
 			}`
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/tsconfig.json",
 				},
-			})
+			}))
 
 			program = project.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
@@ -335,12 +335,12 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/x.ts")
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeDeleted,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
 				},
-			})
+			}))
 
 			program = project.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
@@ -368,12 +368,12 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/index.ts")
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeDeleted,
 					Uri:  "file:///home/projects/TS/p1/src/index.ts",
 				},
-			})
+			}))
 
 			program = project.GetProgram()
 			assert.Equal(t, len(program.GetSemanticDiagnostics(program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 1)
@@ -402,12 +402,12 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/y.ts"] = `export const y = 1;`
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
 					Uri:  "file:///home/projects/TS/p1/src/y.ts",
 				},
-			})
+			}))
 
 			// Error should be resolved
 			program = project.GetProgram()
@@ -438,12 +438,12 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/z.ts"] = `export const z = 1;`
 			host.ReplaceFS(filesCopy)
-			service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
 					Uri:  "file:///home/projects/TS/p1/src/z.ts",
 				},
-			})
+			}))
 
 			// Error should be resolved and the new file should be included in the program
 			program = project.GetProgram()
