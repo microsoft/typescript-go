@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -95,5 +96,5 @@ func OutputStats(stats *table, extendedDiagnostics string) error {
 		return nil
 	}
 
-	return fmt.Errorf("invalid value for --extendedDiagnostics. Use 'inline' or a path ending with '.json'")
+	return errors.New("invalid value for --extendedDiagnostics. Use 'inline' or a path ending with '.json'")
 }
