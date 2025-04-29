@@ -195,18 +195,25 @@ func (s *Server) RefreshDiagnostics() error {
 func (s *Server) Run() error {
 	go s.dispatchLoop()
 	go s.writeLoop()
-	return s.readLoop()
+	go s.readLoop()
+	err := <-s.fatalErrChan
+	return err
 }
 
-func (s *Server) readLoop() error {
+func (s *Server) readLoop() {
 	for {
 		msg, err := s.read()
 		if err != nil {
+			if errors.Is(err, io.EOF) {
+				s.fatalErrChan <- nil
+				return
+			}
 			if errors.Is(err, lsproto.ErrInvalidRequest) {
 				s.sendError(nil, err)
 				continue
 			}
-			return err
+			s.fatalErrChan <- err
+			return
 		}
 
 		if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
@@ -381,6 +388,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			s.sendResult(req.ID, nil)
 			return nil
 		case lsproto.MethodExit:
+			s.fatalErrChan <- nil
 			return nil
 		default:
 			s.Log("unknown method", req.Method)
