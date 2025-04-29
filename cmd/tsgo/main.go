@@ -6,6 +6,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 	"runtime/debug"
 	"slices"
@@ -64,10 +65,11 @@ type cliOptions struct {
 	}
 
 	devel struct {
-		quiet          bool
-		singleThreaded bool
-		printTypes     bool
-		pprofDir       string
+		quiet               bool
+		singleThreaded      bool
+		printTypes          bool
+		pprofDir            string
+		extendedDiagnostics string
 	}
 }
 
@@ -112,6 +114,7 @@ func parseArgs() *cliOptions {
 	flag.BoolVar(&opts.devel.singleThreaded, "singleThreaded", false, "Run in single threaded mode.")
 	flag.BoolVar(&opts.devel.printTypes, "printTypes", false, "Print types defined in 'main.ts'.")
 	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
+	flag.StringVar(&opts.devel.extendedDiagnostics, "extendedDiagnostics", "", "Output extended diagnostics. Use 'inline' for stdout or a '.json' file path to write to a file.")
 	flag.Parse()
 
 	if len(flag.Args()) > 0 {
@@ -295,7 +298,44 @@ func runMain() int {
 	}
 	stats.add("Total time", totalTime)
 
-	stats.print()
+	if opts.devel.extendedDiagnostics != "" {
+		jsonData := stats.toJSON()
+		if opts.devel.extendedDiagnostics == "inline" {
+			// Output to stdout
+			enc := json.NewEncoder(os.Stdout)
+			enc.SetIndent("", "  ")
+			if err := enc.Encode(jsonData); err != nil {
+				fmt.Fprintf(os.Stderr, "Error encoding stats to JSON: %v\n", err)
+			}
+		} else if strings.HasSuffix(opts.devel.extendedDiagnostics, ".json") {
+			// Ensure directory exists
+			dir := filepath.Dir(opts.devel.extendedDiagnostics)
+			if dir != "." {
+				if err := os.MkdirAll(dir, 0755); err != nil {
+					fmt.Fprintf(os.Stderr, "Error creating directory for stats JSON file: %v\n", err)
+					return exitCode
+				}
+			}
+
+			// Write to file
+			file, err := os.Create(opts.devel.extendedDiagnostics)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error creating stats JSON file: %v\n", err)
+				return exitCode
+			}
+			defer file.Close()
+
+			enc := json.NewEncoder(file)
+			enc.SetIndent("", "  ")
+			if err := enc.Encode(jsonData); err != nil {
+				fmt.Fprintf(os.Stderr, "Error writing stats to JSON file: %v\n", err)
+			}
+		} else {
+			fmt.Fprintf(os.Stderr, "Invalid value for --extendedDiagnostics. Use 'inline' or a path ending with '.json'\n")
+		}
+	} else {
+		stats.print()
+	}
 
 	return exitCode
 }
@@ -314,6 +354,14 @@ func (t *table) add(name string, value any) {
 		value = formatDuration(d)
 	}
 	t.rows = append(t.rows, tableRow{name, fmt.Sprint(value)})
+}
+
+func (t *table) toJSON() map[string]string {
+	result := make(map[string]string)
+	for _, row := range t.rows {
+		result[row.name] = row.value
+	}
+	return result
 }
 
 func (t *table) print() {
