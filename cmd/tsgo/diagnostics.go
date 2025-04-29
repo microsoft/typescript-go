@@ -9,14 +9,6 @@ import (
 	"time"
 )
 
-// max returns the larger of x or y
-func max(x, y int) int {
-	if x > y {
-		return x
-	}
-	return y
-}
-
 // tableRow represents a single row in the diagnostic table
 type tableRow struct {
 	name  string
