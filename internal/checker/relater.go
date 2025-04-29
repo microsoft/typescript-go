@@ -293,8 +293,8 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 	if entry := c.enumRelation[key]; entry != RelationComparisonResultNone && !(entry&RelationComparisonResultFailed != 0 && errorReporter != nil) {
 		return entry&RelationComparisonResultSucceeded != 0
 	}
-	targetEnumType := c.getTypeOfSymbol(targetSymbol)
-	for _, sourceProperty := range c.getPropertiesOfType(c.getTypeOfSymbol(sourceSymbol)) {
+	targetEnumType := c.GetTypeOfSymbol(targetSymbol)
+	for _, sourceProperty := range c.getPropertiesOfType(c.GetTypeOfSymbol(sourceSymbol)) {
 		if sourceProperty.Flags&ast.SymbolFlagsEnumMember != 0 {
 			targetProperty := c.getPropertyOfType(targetEnumType, sourceProperty.Name)
 			if targetProperty == nil || targetProperty.Flags&ast.SymbolFlagsEnumMember == 0 {
@@ -384,7 +384,7 @@ func (c *Checker) checkTypeRelatedToEx(
 		if headMessage != nil && errorNode != nil && result == TernaryFalse && source.symbol != nil && c.exportTypeLinks.Has(source.symbol) {
 			links := c.exportTypeLinks.Get(source.symbol)
 			if links.originatingImport != nil && !ast.IsImportCall(links.originatingImport) {
-				helpfulRetry := c.checkTypeRelatedTo(c.getTypeOfSymbol(links.target), target, relation /*errorNode*/, nil)
+				helpfulRetry := c.checkTypeRelatedTo(c.GetTypeOfSymbol(links.target), target, relation /*errorNode*/, nil)
 				if helpfulRetry {
 					// Likely an incorrect import. Issue a helpful diagnostic to produce a quickfix to change the import
 					r.relatedInfo = append(r.relatedInfo, createDiagnosticForNode(links.originatingImport, diagnostics.Type_originates_at_this_import_A_namespace_style_import_cannot_be_called_or_constructed_and_will_cause_a_failure_at_runtime_Consider_using_a_default_import_or_import_require_here_instead))
@@ -499,7 +499,7 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 		if ast.IsSpreadAssignment(prop) {
 			continue
 		}
-		nameType := c.getLiteralTypeFromProperty(c.getSymbolOfDeclaration(prop), TypeFlagsStringOrNumberLiteralOrUnique, false)
+		nameType := c.getLiteralTypeFromProperty(c.GetSymbolOfDeclaration(prop), TypeFlagsStringOrNumberLiteralOrUnique, false)
 		if nameType == nil || nameType.flags&TypeFlagsNever != 0 {
 			continue
 		}
@@ -986,9 +986,9 @@ func (c *Checker) getUnmatchedPropertiesWorker(source *Type, target *Type, requi
 				}
 				*propsOut = append(*propsOut, targetProp)
 			} else if matchDiscriminantProperties {
-				targetType := c.getTypeOfSymbol(targetProp)
+				targetType := c.GetTypeOfSymbol(targetProp)
 				if targetType.flags&TypeFlagsUnit != 0 {
-					sourceType := c.getTypeOfSymbol(sourceProp)
+					sourceType := c.GetTypeOfSymbol(sourceProp)
 					if !(sourceType.flags&TypeFlagsAny != 0 || c.getRegularTypeOfLiteralType(sourceType) == c.getRegularTypeOfLiteralType(targetType)) {
 						if propsOut == nil {
 							return targetProp
@@ -1039,7 +1039,7 @@ func (d *TypeDiscriminator) name(index int) string {
 }
 
 func (d *TypeDiscriminator) matches(index int, t *Type) bool {
-	propType := d.c.getTypeOfSymbol(d.props[index])
+	propType := d.c.GetTypeOfSymbol(d.props[index])
 	for _, s := range propType.Distributed() {
 		if d.isRelatedTo(s, t) != TernaryFalse {
 			return true
@@ -1080,7 +1080,7 @@ func (c *Checker) isDiscriminantProperty(t *Type, name string) bool {
 		if prop != nil && prop.CheckFlags&ast.CheckFlagsSyntheticProperty != 0 {
 			if prop.CheckFlags&ast.CheckFlagsIsDiscriminantComputed == 0 {
 				prop.CheckFlags |= ast.CheckFlagsIsDiscriminantComputed
-				if prop.CheckFlags&ast.CheckFlagsNonUniformAndLiteral == ast.CheckFlagsNonUniformAndLiteral && !c.isGenericType(c.getTypeOfSymbol(prop)) {
+				if prop.CheckFlags&ast.CheckFlagsNonUniformAndLiteral == ast.CheckFlagsNonUniformAndLiteral && !c.isGenericType(c.GetTypeOfSymbol(prop)) {
 					prop.CheckFlags |= ast.CheckFlagsIsDiscriminant
 				}
 			}
@@ -1150,7 +1150,7 @@ func (c *Checker) getKeyPropertyCandidateName(types []*Type) string {
 	for _, t := range types {
 		if t.flags&(TypeFlagsObject|TypeFlagsInstantiableNonPrimitive) != 0 {
 			for _, p := range c.getPropertiesOfType(t) {
-				if isUnitType(c.getTypeOfSymbol(p)) {
+				if isUnitType(c.GetTypeOfSymbol(p)) {
 					return p.Name
 				}
 			}
@@ -1670,7 +1670,7 @@ func (c *Checker) isTopSignature(s *Signature) bool {
 func (c *Checker) getParameterCount(signature *Signature) int {
 	length := len(signature.parameters)
 	if signatureHasRestParameter(signature) {
-		restType := c.getTypeOfSymbol(signature.parameters[length-1])
+		restType := c.GetTypeOfSymbol(signature.parameters[length-1])
 		if IsTupleType(restType) {
 			return length + restType.TargetTupleType().fixedLength - core.IfElse(restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0, 0, 1)
 		}
@@ -1688,7 +1688,7 @@ func (c *Checker) getMinArgumentCountEx(signature *Signature, flags MinArgumentC
 	if voidIsNonOptional != 0 || signature.resolvedMinArgumentCount == -1 {
 		minArgumentCount := -1
 		if signatureHasRestParameter(signature) {
-			restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
+			restType := c.GetTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
 			if IsTupleType(restType) {
 				firstOptionalIndex := core.FindIndex(restType.TargetTupleType().elementInfos, func(info TupleElementInfo) bool {
 					return info.flags&ElementFlagsRequired == 0
@@ -1725,7 +1725,7 @@ func (c *Checker) getMinArgumentCountEx(signature *Signature, flags MinArgumentC
 
 func (c *Checker) HasEffectiveRestParameter(signature *Signature) bool {
 	if signatureHasRestParameter(signature) {
-		restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
+		restType := c.GetTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
 		return !IsTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
 	}
 	return false
@@ -1748,7 +1748,7 @@ func (c *Checker) tryGetTypeAtPosition(signature *Signature, pos int) *Type {
 		// We want to return the value undefined for an out of bounds parameter position,
 		// so we need to check bounds here before calling getIndexedAccessType (which
 		// otherwise would return the type 'undefined').
-		restType := c.getTypeOfSymbol(signature.parameters[paramCount])
+		restType := c.GetTypeOfSymbol(signature.parameters[paramCount])
 		index := pos - paramCount
 		if !IsTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 || index < restType.TargetTupleType().fixedLength {
 			return c.getIndexedAccessType(restType, c.getNumberLiteralType(jsnum.Number(index)))
@@ -1808,7 +1808,7 @@ func (c *Checker) getNameableDeclarationAtPosition(signature *Signature, pos int
 	}
 	if signatureHasRestParameter(signature) {
 		restParameter := signature.parameters[paramCount]
-		restType := c.getTypeOfSymbol(restParameter)
+		restType := c.GetTypeOfSymbol(restParameter)
 		if IsTupleType(restType) {
 			elementInfos := restType.TargetTupleType().elementInfos
 			index := pos - paramCount
@@ -1838,7 +1838,7 @@ func (c *Checker) getNonArrayRestType(signature *Signature) *Type {
 
 func (c *Checker) getEffectiveRestType(signature *Signature) *Type {
 	if signatureHasRestParameter(signature) {
-		restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
+		restType := c.GetTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
 		if !IsTupleType(restType) {
 			if IsTypeAny(restType) {
 				return c.anyArrayType
@@ -1883,7 +1883,7 @@ func (c *Checker) getRestArrayTypeOfTupleType(t *Type) *Type {
 
 func (c *Checker) getThisTypeOfSignature(signature *Signature) *Type {
 	if signature.thisParameter != nil {
-		return c.getTypeOfSymbol(signature.thisParameter)
+		return c.GetTypeOfSymbol(signature.thisParameter)
 	}
 	return nil
 }
@@ -1902,7 +1902,7 @@ func (c *Checker) getParameterNameAtPosition(signature *Signature, pos int) stri
 		return signature.parameters[pos].Name
 	}
 	restParameter := signature.parameters[paramCount]
-	restType := c.getTypeOfSymbol(restParameter)
+	restType := c.GetTypeOfSymbol(restParameter)
 	if IsTupleType(restType) {
 		index := pos - paramCount
 		c.getTupleElementLabel(restType.TargetTupleType().elementInfos[index], restParameter, index)
@@ -2733,7 +2733,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 				}
 				return true
 			}
-			if checkTypes != nil && r.isRelatedTo(r.c.getTypeOfSymbol(prop), r.c.getTypeOfPropertyInTypes(checkTypes, prop.Name), RecursionFlagsBoth, reportErrors) == TernaryFalse {
+			if checkTypes != nil && r.isRelatedTo(r.c.GetTypeOfSymbol(prop), r.c.getTypeOfPropertyInTypes(checkTypes, prop.Name), RecursionFlagsBoth, reportErrors) == TernaryFalse {
 				if reportErrors {
 					r.reportError(diagnostics.Types_of_property_0_are_incompatible, r.c.symbolToString(prop))
 				}
@@ -2761,7 +2761,7 @@ func (c *Checker) getTypeOfPropertyInType(t *Type, name string) *Type {
 		prop = c.getPropertyOfObjectType(t, name)
 	}
 	if prop != nil {
-		return c.getTypeOfSymbol(prop)
+		return c.GetTypeOfSymbol(prop)
 	}
 	indexInfo := c.getApplicableIndexInfoForName(t, name)
 	if indexInfo != nil {
@@ -4154,7 +4154,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	if isObjectLiteralType(target) {
 		for _, sourceProp := range excludeProperties(r.c.getPropertiesOfType(source), excludedProperties) {
 			if r.c.getPropertyOfObjectType(target, sourceProp.Name) == nil {
-				sourceType := r.c.getTypeOfSymbol(sourceProp)
+				sourceType := r.c.GetTypeOfSymbol(sourceProp)
 				if sourceType.flags&TypeFlagsUndefined == 0 {
 					if reportErrors {
 						r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, r.c.symbolToString(sourceProp), r.c.TypeToString(target))

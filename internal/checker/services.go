@@ -17,7 +17,7 @@ func (c *Checker) runWithoutResolvedSignatureCaching(node *ast.Node, fn func() *
 			cachedResolvedSignatures[signatureLinks] = signatureLinks.resolvedSignature
 			signatureLinks.resolvedSignature = nil
 			if ast.IsFunctionExpressionOrArrowFunction(ancestorNode) {
-				symbolLinks := c.valueSymbolLinks.Get(c.getSymbolOfDeclaration(ancestorNode))
+				symbolLinks := c.valueSymbolLinks.Get(c.GetSymbolOfDeclaration(ancestorNode))
 				resolvedType := symbolLinks.resolvedType
 				cachedTypes[symbolLinks] = resolvedType
 				symbolLinks.resolvedType = nil

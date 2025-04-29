@@ -739,7 +739,7 @@ func (c *Checker) checkGrammarForUseStrictSimpleParameterList(node *ast.Node) bo
 		if useStrictDirective != nil {
 			nonSimpleParameters := core.Filter(node.Parameters(), func(n *ast.Node) bool {
 				parameter := n.AsParameterDeclaration()
-				return parameter.Initializer != nil || ast.IsBindingPattern(parameter.Name()) || isRestParameter(parameter.AsNode())
+				return parameter.Initializer != nil || ast.IsBindingPattern(parameter.Name()) || IsRestParameter(parameter.AsNode())
 			})
 			if len(nonSimpleParameters) != 0 {
 				for _, parameter := range nonSimpleParameters {

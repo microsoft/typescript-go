@@ -748,7 +748,7 @@ func (c *Checker) narrowTypeByConstructor(t *Type, operator ast.Kind, identifier
 		return t
 	}
 	// Get the type of the prototype, if it is undefined, or the global `Object` or `Function` types then do not narrow.
-	prototypeType := c.getTypeOfSymbol(prototypeProperty)
+	prototypeType := c.GetTypeOfSymbol(prototypeProperty)
 	var candidate *Type
 	if !IsTypeAny(prototypeType) {
 		candidate = prototypeType
@@ -963,7 +963,7 @@ func (c *Checker) narrowTypeByPrivateIdentifierInInExpression(f *FlowState, t *T
 	classSymbol := symbol.Parent
 	var targetType *Type
 	if ast.HasStaticModifier(symbol.ValueDeclaration) {
-		targetType = c.getTypeOfSymbol(classSymbol)
+		targetType = c.GetTypeOfSymbol(classSymbol)
 	} else {
 		targetType = c.getDeclaredTypeOfSymbol(classSymbol)
 	}
@@ -1567,7 +1567,7 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 			return target.Kind == ast.KindThisKeyword
 		}
 		return ast.IsIdentifier(target) && c.getResolvedSymbol(source) == c.getResolvedSymbol(target) ||
-			(ast.IsVariableDeclaration(target) || ast.IsBindingElement(target)) && c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(source)) == c.getSymbolOfDeclaration(target)
+			(ast.IsVariableDeclaration(target) || ast.IsBindingElement(target)) && c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(source)) == c.GetSymbolOfDeclaration(target)
 	case ast.KindThisKeyword:
 		return target.Kind == ast.KindThisKeyword
 	case ast.KindSuperKeyword:
@@ -2061,7 +2061,7 @@ func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
 	if c.allTypesAssignableToKind(t, TypeFlagsNonPrimitive) {
 		hasInstanceProperty := c.getPropertyOfType(t, hasInstancePropertyName)
 		if hasInstanceProperty != nil {
-			hasInstancePropertyType := c.getTypeOfSymbol(hasInstanceProperty)
+			hasInstancePropertyType := c.GetTypeOfSymbol(hasInstanceProperty)
 			if hasInstancePropertyType != nil && len(c.GetSignaturesOfType(hasInstancePropertyType, SignatureKindCall)) != 0 {
 				return hasInstancePropertyType
 			}
@@ -2073,7 +2073,7 @@ func (c *Checker) getSymbolHasInstanceMethodOfObjectType(t *Type) *Type {
 func (c *Checker) getPropertyNameForKnownSymbolName(symbolName string) string {
 	ctorType := c.getGlobalESSymbolConstructorSymbolOrNil()
 	if ctorType != nil {
-		uniqueType := c.getTypeOfPropertyOfType(c.getTypeOfSymbol(ctorType), symbolName)
+		uniqueType := c.getTypeOfPropertyOfType(c.GetTypeOfSymbol(ctorType), symbolName)
 		if uniqueType != nil && isTypeUsableAsPropertyName(uniqueType) {
 			return getPropertyNameFromType(uniqueType)
 		}
@@ -2121,19 +2121,19 @@ func (c *Checker) getTypeOfDottedName(node *ast.Node, diagnostic *ast.Diagnostic
 func (c *Checker) getExplicitTypeOfSymbol(symbol *ast.Symbol, diagnostic *ast.Diagnostic) *Type {
 	symbol = c.resolveSymbol(symbol)
 	if symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod|ast.SymbolFlagsClass|ast.SymbolFlagsValueModule) != 0 {
-		return c.getTypeOfSymbol(symbol)
+		return c.GetTypeOfSymbol(symbol)
 	}
 	if symbol.Flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty) != 0 {
 		if symbol.CheckFlags&ast.CheckFlagsMapped != 0 {
 			origin := c.mappedSymbolLinks.Get(symbol).syntheticOrigin
 			if origin != nil && c.getExplicitTypeOfSymbol(origin, diagnostic) != nil {
-				return c.getTypeOfSymbol(symbol)
+				return c.GetTypeOfSymbol(symbol)
 			}
 		}
 		declaration := symbol.ValueDeclaration
 		if declaration != nil {
 			if c.isDeclarationWithExplicitTypeAnnotation(declaration) {
-				return c.getTypeOfSymbol(symbol)
+				return c.GetTypeOfSymbol(symbol)
 			}
 			if ast.IsVariableDeclaration(declaration) && ast.IsForOfStatement(declaration.Parent.Parent) {
 				statement := declaration.Parent.Parent
@@ -2173,9 +2173,9 @@ func (c *Checker) getExplicitThisType(node *ast.Node) *Type {
 		}
 	}
 	if container.Parent != nil && ast.IsClassLike(container.Parent) {
-		symbol := c.getSymbolOfDeclaration(container.Parent)
+		symbol := c.GetSymbolOfDeclaration(container.Parent)
 		if ast.IsStatic(container) {
-			return c.getTypeOfSymbol(symbol)
+			return c.GetTypeOfSymbol(symbol)
 		} else {
 			return c.getDeclaredTypeOfSymbol(symbol).AsInterfaceType().thisType
 		}

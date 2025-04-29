@@ -374,7 +374,7 @@ func isTypeDeclaration(node *ast.Node) bool {
 	}
 }
 
-func canHaveSymbol(node *ast.Node) bool {
+func CanHaveSymbol(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindArrowFunction, ast.KindBinaryExpression, ast.KindBindingElement, ast.KindCallExpression, ast.KindCallSignature,
 		ast.KindClassDeclaration, ast.KindClassExpression, ast.KindClassStaticBlockDeclaration, ast.KindConstructor, ast.KindConstructorType,

@@ -760,7 +760,7 @@ func (c *Checker) inferFromProperties(n *InferenceState, source *Type, target *T
 	for _, targetProp := range properties {
 		sourceProp := c.getPropertyOfType(source, targetProp.Name)
 		if sourceProp != nil && !core.Some(sourceProp.Declarations, c.hasSkipDirectInferenceFlag) {
-			c.inferFromTypes(n, c.removeMissingType(c.getTypeOfSymbol(sourceProp), sourceProp.Flags&ast.SymbolFlagsOptional != 0), c.removeMissingType(c.getTypeOfSymbol(targetProp), targetProp.Flags&ast.SymbolFlagsOptional != 0))
+			c.inferFromTypes(n, c.removeMissingType(c.GetTypeOfSymbol(sourceProp), sourceProp.Flags&ast.SymbolFlagsOptional != 0), c.removeMissingType(c.GetTypeOfSymbol(targetProp), targetProp.Flags&ast.SymbolFlagsOptional != 0))
 		}
 	}
 }
@@ -850,7 +850,7 @@ func (c *Checker) inferFromIndexTypes(n *InferenceState, source *Type, target *T
 			var propTypes []*Type
 			for _, prop := range c.getPropertiesOfType(source) {
 				if c.isApplicableIndexType(c.getLiteralTypeFromProperty(prop, TypeFlagsStringOrNumberLiteralOrUnique, false), targetInfo.keyType) {
-					propType := c.getTypeOfSymbol(prop)
+					propType := c.GetTypeOfSymbol(prop)
 					if prop.Flags&ast.SymbolFlagsOptional != 0 {
 						propType = c.removeMissingOrUndefinedType(propType)
 					}
@@ -914,7 +914,7 @@ func (c *Checker) inferToMappedType(n *InferenceState, source *Type, target *Typ
 		}
 		// If no inferences can be made to K's constraint, infer from a union of the property types
 		// in the source to the template type X.
-		propTypes := core.Map(c.getPropertiesOfType(source), c.getTypeOfSymbol)
+		propTypes := core.Map(c.getPropertiesOfType(source), c.GetTypeOfSymbol)
 		indexTypes := core.Map(c.getIndexInfosOfType(source), func(info *IndexInfo) *Type {
 			if info != c.enumNumberIndexInfo {
 				return info.valueType
@@ -989,7 +989,7 @@ func (c *Checker) createReverseMappedType(source *Type, target *Type, constraint
 // arrow function, but is considered partially inferable because property 'a' has an inferable type.
 func (c *Checker) isPartiallyInferableType(t *Type) bool {
 	return t.objectFlags&ObjectFlagsNonInferrableType == 0 || isObjectLiteralType(t) && core.Some(c.getPropertiesOfType(t), func(prop *ast.Symbol) bool {
-		return c.isPartiallyInferableType(c.getTypeOfSymbol(prop))
+		return c.isPartiallyInferableType(c.GetTypeOfSymbol(prop))
 	}) || IsTupleType(t) && core.Some(c.getElementTypes(t), c.isPartiallyInferableType)
 }
 
@@ -1053,7 +1053,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 		inferredProp.Declarations = prop.Declarations
 		c.valueSymbolLinks.Get(inferredProp).nameType = c.valueSymbolLinks.Get(prop).nameType
 		links := c.ReverseMappedSymbolLinks.Get(inferredProp)
-		links.propertyType = c.getTypeOfSymbol(prop)
+		links.propertyType = c.GetTypeOfSymbol(prop)
 		constraintTarget := r.constraintType.AsIndexType().target
 		if constraintTarget.flags&TypeFlagsIndexedAccess != 0 && constraintTarget.AsIndexedAccessType().objectType.flags&TypeFlagsTypeParameter != 0 && constraintTarget.AsIndexedAccessType().indexType.flags&TypeFlagsTypeParameter != 0 {
 			// A reverse mapping of `{[K in keyof T[K_1]]: T[K_1]}` is the same as that of `{[K in keyof T]: T}`, since all we care about is

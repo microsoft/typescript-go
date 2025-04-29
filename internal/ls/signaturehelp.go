@@ -63,22 +63,6 @@ type jSDocTagInfo struct {
 	name string
 	text []symbolDisplayPart
 }
-
-// Represents a single signature to show in signature help.
-// The id is used for subsequent calls into the language service to ask questions about the
-// signature help item in the context of any documents that have been updated.  i.e. after
-// an edit has happened, while signature help is still active, the host can ask important
-// questions like 'what parameter is the user currently contained within?'.
-// type signatureHelpItem struct {
-// 	isVariadic            bool
-// 	prefixDisplayParts    []symbolDisplayPart
-// 	suffixDisplayParts    []symbolDisplayPart
-// 	separatorDisplayParts []symbolDisplayPart
-// 	parameters            []SignatureHelpParameter
-// 	documentation         []symbolDisplayPart
-// 	tags                  jSDocTagInfo
-// }
-
 type SignatureHelpTriggerReason struct {
 	Invoked        *SignatureHelpInvokedReason
 	CharacterTyped *SignatureHelpCharacterTypedReason
@@ -192,7 +176,7 @@ func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, sourceFi
 		nil)
 	var parameters []signatureHelpParameter = []signatureHelpParameter{}
 	for _, typeParam := range typeParameter {
-		parameters = append(parameters, createSignatureHelpParameterForTypeParameter(typeParam, sourceFile, c, printer))
+		parameters = append(parameters, createSignatureHelpParameterForTypeParameter(typeParam.Symbol(), sourceFile, c, printer))
 	}
 	return signatureHelpItem{
 		Label:         symbol.Name,
@@ -217,7 +201,10 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 		}
 	}
 
-	callTargetDisplayParts := []string{c.SymbolToString(callTargetSymbol)}
+	callTargetDisplayParts := []string{}
+	if callTargetSymbol != nil {
+		callTargetDisplayParts = append(callTargetDisplayParts, c.SymbolToString(callTargetSymbol))
+	}
 	var items [][]signatureHelpItem
 	for _, candidateSignature := range *candidates {
 		items = append(items, getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts, enclosingDeclaration, argumentInfo.argumentCount, sourceFile, c))
@@ -277,26 +264,18 @@ func getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool
 	} else {
 		infos = itemInfoForParameters(candidate, c, enclosingDeclaration, sourceFile)
 	}
-	var result []signatureHelpItem = []signatureHelpItem{}
-	for _, info := range infos {
-		parameterDisplayParts := []string{}
-		for _, param := range *info.parameters {
-			parameterDisplayParts = append(parameterDisplayParts, param.Label)
-		}
-		parameterDisplay := strings.Join(parameterDisplayParts, ", ")
-		prefixDisplayParts := callTargetSymbol
-		prefixDisplayParts = append(prefixDisplayParts, info.prefix...)
-		prefixDisplayParts = append(prefixDisplayParts, parameterDisplay)
 
-		suffixDisplayParts := info.suffix
-		suffixDisplayParts = append(suffixDisplayParts, returnTypeToDisplayParts(candidate, c))
-		displayParts := append(prefixDisplayParts, suffixDisplayParts...)
+	suffixDisplayParts := returnTypeToDisplayParts(candidate, c)
+
+	result := []signatureHelpItem{}
+	for _, info := range infos {
+		display := strings.Join(info.displayParts, "") + suffixDisplayParts
 		result = append(result, signatureHelpItem{
-			Label: strings.Join(displayParts, ""),
-			// Documentation: nil,
+			Label:           strings.Join(callTargetSymbol, "") + display,
+			Documentation:   nil,
 			Parameters:      info.parameters,
 			IsVariadic:      info.isVariadic,
-			ActiveParameter: -1, //how to set this?
+			ActiveParameter: activeArgumentIndex,
 		})
 	}
 	return result
@@ -314,6 +293,7 @@ func returnTypeToDisplayParts(candidateSignature *checker.Signature, c *checker.
 	}
 	return returnType
 }
+
 func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile) []*signatureHelpItemInfo {
 	printer := printer.NewPrinter(
 		printer.PrinterOptions{
@@ -328,29 +308,36 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 	} else {
 		typeParameters = candidateSignature.TypeParameters()
 	}
-	var parameters []signatureHelpParameter = []signatureHelpParameter{}
+	var getTypeParameters []signatureHelpParameter = []signatureHelpParameter{}
 	for _, typeParameter := range typeParameters {
-		parameters = append(parameters, createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, c, printer))
+		getTypeParameters = append(getTypeParameters, createSignatureHelpParameterForTypeParameter(typeParameter.Symbol(), sourceFile, c, printer))
 	}
-	var thisParameter []*ast.ParameterDeclaration = []*ast.ParameterDeclaration{}
+	var typeParameterDisplayParts = []string{}
+	for _, typeParameter := range getTypeParameters {
+		typeParameterDisplayParts = append(typeParameterDisplayParts, typeParameter.Label)
+	}
+	thisParameter := []signatureHelpParameter{} //tbd
 	if candidateSignature.ThisParameter() != nil {
-		thisParameter = []*ast.ParameterDeclaration{ast.GetDeclarationOfKind(candidateSignature.ThisParameter(), ast.KindParameter).AsParameterDeclaration()}
+		thisParameter = []signatureHelpParameter{createSignatureHelpParameterForParameter(candidateSignature.ThisParameter(), printer, sourceFile, c)}
 	}
-	paramList := c.GetExpandedParameters(candidateSignature)
+
+	// Creating display parts for parameters. For example, <T>(a: string, b: number)
+	lists := c.GetExpandedParameters(candidateSignature, false)
 
 	var result []*signatureHelpItemInfo
-	var params []*ast.ParameterDeclaration = thisParameter
-	for _, param := range paramList {
-		params = append(params, ast.GetDeclarationOfKind(param, ast.KindParameter).AsParameterDeclaration())
-		paramsText := make([]string, len(params))
-		for i, par := range params {
-			paramsText[i] = par.Text()
+	parameterLabels := []string{}
+	for _, parameterList := range lists {
+		parameters := thisParameter
+		for _, param := range parameterList {
+			parameter := createSignatureHelpParameterForTypeParameter(param, sourceFile, c, printer)
+			parameterLabels = append(parameterLabels, parameter.Label)
+			parameters = append(parameters, parameter)
 		}
+
 		result = append(result, &signatureHelpItemInfo{
-			isVariadic: false,
-			parameters: &parameters,
-			prefix:     []string{scanner.TokenToString(ast.KindLessThanToken)},
-			suffix:     append([]string{scanner.TokenToString(ast.KindGreaterThanToken)}, paramsText...),
+			isVariadic:   false,
+			parameters:   &getTypeParameters,
+			displayParts: []string{scanner.TokenToString(ast.KindLessThanToken), strings.Join(typeParameterDisplayParts, ","), scanner.TokenToString(ast.KindGreaterThanToken), scanner.TokenToString(ast.KindOpenParenToken), strings.Join(parameterLabels, ", "), scanner.TokenToString(ast.KindCloseParenToken)},
 		})
 	}
 	return result
@@ -364,25 +351,23 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 		printer.PrintHandlers{},
 		nil)
 
-	var typeParameterParts []string
+	var getTypeParameters []signatureHelpParameter = []signatureHelpParameter{}
 	if candidateSignature.TypeParameters() != nil && len(candidateSignature.TypeParameters()) != 0 {
-		var args []*ast.TypeParameterDeclaration
 		for _, typeParameter := range candidateSignature.TypeParameters() {
-			args = append(args, c.GetConstraintDeclaration(typeParameter).AsTypeParameter())
+			getTypeParameters = append(getTypeParameters, createSignatureHelpParameterForTypeParameter(typeParameter.Symbol(), sourceFile, c, printer))
 		}
-		typeParameterParts = make([]string, len(args))
-		for _, arg := range args {
-			typeParameterParts = append(typeParameterParts, arg.Text())
-		}
+	}
+	typeParameterDisplayParts := []string{}
+	for _, typeParameter := range getTypeParameters {
+		typeParameterDisplayParts = append(typeParameterDisplayParts, typeParameter.Label)
+	}
+	typeParameterParts := []string{}
+	if len(typeParameterDisplayParts) != 0 {
+		typeParameterParts = []string{scanner.TokenToString(ast.KindLessThanToken), strings.Join(typeParameterDisplayParts, ", "), scanner.TokenToString(ast.KindGreaterThanToken)}
 	}
 
-	lists := c.GetExpandedParameters(candidateSignature) //GetExpandedParameters in Strada returns [][]*ast.Symbol, but in Corsa it returns []*ast.Symbol.
-	var parameters []signatureHelpParameter = make([]signatureHelpParameter, len(lists))
-	for i, param := range lists {
-		if param != nil {
-			parameters[i] = createSignatureHelpParameterForParameter(param, printer, sourceFile)
-		}
-	}
+	// This part is only for parameters. For example, (a: string, b: number)
+	lists := c.GetExpandedParameters(candidateSignature, false)
 
 	isVariadic := func(parameterList []*ast.Symbol) bool {
 		if !c.HasEffectiveRestParameter(candidateSignature) {
@@ -393,18 +378,41 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 		}
 		return len(parameterList) != 0 && parameterList[len(parameterList)-1] != nil && (parameterList[len(parameterList)-1].CheckFlags&ast.CheckFlagsRestParameter != 0)
 	}
-	return []*signatureHelpItemInfo{
-		{
-			isVariadic: isVariadic(lists),
-			parameters: &parameters,
-			prefix:     append(typeParameterParts, scanner.TokenToString(ast.KindOpenParenToken)),
-			suffix:     []string{scanner.TokenToString(ast.KindCloseParenToken)},
-		},
+
+	var result []*signatureHelpItemInfo
+
+	for _, parameterList := range lists {
+		var parameters []signatureHelpParameter
+		parameterLabels := []string{}
+		for _, param := range parameterList {
+			parameter := createSignatureHelpParameterForParameter(param, printer, sourceFile, c)
+			parameterLabels = append(parameterLabels, parameter.Label)
+			parameters = append(parameters, parameter)
+		}
+
+		result = append(result, &signatureHelpItemInfo{
+			isVariadic:   isVariadic(parameterList),
+			parameters:   &parameters,
+			displayParts: append(typeParameterParts, scanner.TokenToString(ast.KindOpenParenToken), strings.Join(parameterLabels, ", "), scanner.TokenToString(ast.KindCloseParenToken)),
+		})
 	}
+
+	return result
 }
 
-func createSignatureHelpParameterForParameter(parameter *ast.Symbol, p *printer.Printer, sourceFile *ast.SourceFile) signatureHelpParameter {
-	display := p.Emit(ast.GetDeclarationOfKind(parameter, ast.KindParameter), sourceFile)
+func getEffectiveParameterDeclaration(symbol *ast.Symbol) *ast.Node {
+	parameterDeclaration := ast.GetDeclarationOfKind(symbol, ast.KindParameter)
+	if parameterDeclaration != nil {
+		return parameterDeclaration
+	}
+	if symbol.Flags&ast.SymbolFlagsTransient == 0 {
+		return ast.GetDeclarationOfKind(symbol, ast.KindJSDocParameterTag)
+	}
+	return nil
+}
+
+func createSignatureHelpParameterForParameter(parameter *ast.Symbol, p *printer.Printer, sourceFile *ast.SourceFile, c *checker.Checker) signatureHelpParameter {
+	display := p.Emit(tempSymbolToParameterDeclaration(parameter, c), sourceFile)
 	isOptional := parameter.CheckFlags&ast.CheckFlagsOptionalParameter != 0 //any extra checks needed?
 	isRest := parameter.CheckFlags&ast.CheckFlagsRestParameter != 0
 	return signatureHelpParameter{
@@ -412,24 +420,116 @@ func createSignatureHelpParameterForParameter(parameter *ast.Symbol, p *printer.
 		Documentation: nil,
 		isRest:        isRest,
 		isOptional:    isOptional,
-		//displayParts:  []string{display},
 	}
 }
 
-func createSignatureHelpParameterInformation(symbol []*ast.Symbol) []signatureHelpParameter {
-	var parameterInfo []signatureHelpParameter
-	for _, s := range symbol {
-		parameterInfo = append(parameterInfo, signatureHelpParameter{
-			Label:         s.Name,
-			Documentation: nil,
-		})
+func tempSymbolToParameterDeclaration(parameterSymbol *ast.Symbol, c *checker.Checker) *ast.Node {
+	factory := printer.NewEmitContext().Factory
+	parameterDeclaration := getEffectiveParameterDeclaration(parameterSymbol)
+	parameterType := c.GetTypeOfSymbol(parameterSymbol)
+	parameterTypeNode := createTypeNode(parameterType, parameterSymbol, parameterDeclaration, factory)
+	isRest := parameterDeclaration != nil && checker.IsRestParameter(parameterDeclaration) || parameterSymbol.CheckFlags&ast.CheckFlagsRestParameter != 0
+	var dotDotDotToken *ast.Node
+	if isRest {
+		dotDotDotToken = factory.NewToken(ast.KindDotDotDotToken)
 	}
-	return parameterInfo
+	var name *ast.Node
+	if parameterDeclaration == nil || parameterDeclaration.Name() == nil {
+		name = factory.NewIdentifier(parameterSymbol.Name)
+	} else {
+		name = factory.DeepCloneNode(parameterDeclaration.Name())
+	}
+	isOptional := parameterDeclaration != nil && parameterSymbol.CheckFlags&ast.CheckFlagsOptionalParameter != 0 // || c.GetEmitResolver(nil, true).IsOptionalParameter(parameterDeclaration)
+	var questionToken *ast.Node
+	if isOptional {
+		questionToken = factory.NewToken(ast.KindQuestionToken)
+	}
+
+	parameterNode := factory.NewParameterDeclaration(
+		nil,
+		dotDotDotToken,
+		name,
+		questionToken,
+		parameterTypeNode,
+		/*initializer*/ nil,
+	)
+	return parameterNode
 }
 
-func createSignatureHelpParameterForTypeParameter(typeParameter *checker.Type, sourceFile *ast.SourceFile, c *checker.Checker, p *printer.Printer) signatureHelpParameter {
-	param := c.GetConstraintDeclaration(typeParameter) //.AsTypeParameter()
-	display := p.Emit(param, sourceFile)
+func createTypeNode(t *checker.Type, symbol *ast.Symbol, parameterDeclaration *ast.Node, factory *ast.NodeFactory) *ast.Node {
+	if t == nil {
+		return factory.NewKeywordTypeNode(ast.KindAnyKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsString != 0 {
+		return factory.NewKeywordTypeNode(ast.KindStringKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsNumber != 0 {
+		return factory.NewKeywordTypeNode(ast.KindNumberKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsAny != 0 {
+		return factory.NewKeywordTypeNode(ast.KindAnyKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsUnknown != 0 {
+		return factory.NewKeywordTypeNode(ast.KindUnknownKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsBigInt != 0 {
+		return factory.NewKeywordTypeNode(ast.KindBigIntKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsBoolean != 0 {
+		return factory.NewKeywordTypeNode(ast.KindBooleanKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsVoid != 0 {
+		return factory.NewKeywordTypeNode(ast.KindVoidKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsUndefined != 0 {
+		return factory.NewKeywordTypeNode(ast.KindUndefinedKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsNull != 0 {
+		return factory.NewKeywordTypeNode(ast.KindNullKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsNever != 0 {
+		return factory.NewKeywordTypeNode(ast.KindNeverKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsESSymbol != 0 {
+		return factory.NewKeywordTypeNode(ast.KindSymbolKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsNonPrimitive != 0 {
+		return factory.NewKeywordTypeNode(ast.KindObjectKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsObject != 0 {
+		// parameterDeclaration.Kind = ast.KindTypeReference
+		// return parameterDeclaration
+		return factory.NewKeywordTypeNode(ast.KindObjectKeyword)
+	}
+	if t.Flags()&checker.TypeFlagsTypeParameter != 0 {
+		return factory.NewKeywordTypeNode(ast.KindTypeParameter)
+	}
+	if t.Flags()&checker.TypeFlagsUnion != 0 || t.Flags()&checker.TypeFlagsIntersection != 0 {
+		return factory.NewUnionTypeNode(nil) // come back
+	}
+	if t.Flags()&checker.TypeFlagsIndex != 0 {
+		return factory.NewKeywordTypeNode(ast.KindIndexSignature)
+	}
+	if t.Flags()&checker.TypeFlagsTemplateLiteral != 0 {
+		return factory.NewKeywordTypeNode(ast.KindTemplateLiteralType)
+	}
+	if t.Flags()&checker.TypeFlagsIndexedAccess != 0 {
+		return factory.NewKeywordTypeNode(ast.KindIndexedAccessType)
+	}
+	if t.Flags()&checker.TypeFlagsConditional != 0 {
+		return factory.NewKeywordTypeNode(ast.KindConditionalType)
+	}
+	return nil
+}
+
+func createSignatureHelpParameterForTypeParameter(parameter *ast.Symbol, sourceFile *ast.SourceFile, c *checker.Checker, p *printer.Printer) signatureHelpParameter {
+	parameterDeclaration := getEffectiveParameterDeclaration(parameter)
+	var display string
+	if parameterDeclaration == nil {
+		display = ast.SymbolName(parameter)
+	} else {
+		display = p.Emit(getEffectiveParameterDeclaration(parameter), sourceFile)
+	}
 	return signatureHelpParameter{
 		Label:         display,
 		Documentation: nil,
@@ -468,10 +568,9 @@ type signatureHelpItem struct {
 }
 
 type signatureHelpItemInfo struct { //later change the name to sigHelpDisplayParts
-	isVariadic bool
-	parameters *[]signatureHelpParameter
-	prefix     []string
-	suffix     []string
+	isVariadic   bool
+	parameters   *[]signatureHelpParameter
+	displayParts []string
 }
 
 // Represents a parameter of a callable-signature. A parameter can
@@ -483,13 +582,6 @@ type signatureHelpParameter struct {
 	isOptional    bool
 }
 
-// const defaultMaximumTruncationLength = 160;
-// func symbolToDisplayParts(symbol *ast.Symbol,c *checker.Checker) {
-// 	sym := c.SymbolToString(symbol)
-// 	absoluteMaximumLength := defaultMaximumTruncationLength * 10
-
-// //come back
-// }
 func getEnclosingDeclarationFromInvocation(invocation *invocation) *ast.Node {
 	if invocation.kind == invocationKindCall {
 		return invocation.callInvocation.node
@@ -499,26 +591,6 @@ func getEnclosingDeclarationFromInvocation(invocation *invocation) *ast.Node {
 		return invocation.contextualInvocation.node
 	}
 }
-
-// func createJSSignatureHelpItems(argumentInfo *argumentListInfo, p *compiler.Program, c *checker.Checker) *signatureHelpItems {
-// 	if argumentInfo.invocation.kind == invocationKinContextual {
-// 		return nil
-// 	}
-// 	// See if we can find some symbol with the call expression name that has call signatures.
-// 	expression := getExpressionFromInvocation(argumentInfo)
-// 	name := ""
-// 	if ast.IsPropertyAccessExpression(expression) {
-// 		name = expression.Name().Text()
-// 	}
-// 	if name != "" {
-// 		sourceFiles := p.GetSourceFiles()
-// 		for _, sourceFile := range sourceFiles {
-
-// 		}
-// 	}
-// 	return nil
-
-// }
 
 func getExpressionFromInvocation(argumentInfo *argumentListInfo) *ast.Node {
 	if argumentInfo.invocation.kind == invocationKindCall {
@@ -695,10 +767,12 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		// Find out if 'node' is an argument, a type argument, or neither
 		// const info = getArgumentOrParameterListInfo(node, position, sourceFile, checker);
 		list, argumentIndex, argumentCount, argumentSpan := getArgumentOrParameterListInfo(node, sourceFile, c)
-		if list == nil {
-			return nil
+		isTypeParameterList := false
+		if parent.TypeArgumentList() != nil {
+			if parent.TypeArgumentList().Pos() == list.Pos() {
+				isTypeParameterList = true
+			}
 		}
-		isTypeParameterList := parent.TypeArguments() != nil && parent.TypeArguments()[0].Pos() == list.Loc.Pos()
 		return &argumentListInfo{
 			isTypeParameterList: isTypeParameterList,
 			invocation:          &invocation{kind: invocationKindCall, callInvocation: callInvocation{kind: invocationKindCall, node: parent}},
@@ -798,8 +872,7 @@ func getArgumentIndexForTemplatePiece(spanIndex int, node *ast.Node, position in
 
 func getAdjustedNode(node *ast.Node) *ast.Node {
 	switch node.Kind {
-	case ast.KindOpenParenToken:
-	case ast.KindCommaToken:
+	case ast.KindOpenParenToken, ast.KindCommaToken:
 		return node
 	default:
 		ast.FindAncestor(node.Parent, func(n *ast.Node) bool {
@@ -905,37 +978,16 @@ func getArgumentIndexOrCount(arguments []*ast.Node, node *ast.Node, c *checker.C
 		argumentCount = argumentIndex + 1
 	}
 	return argumentCount
-
-	// argumentIndex := 0
-	// // eg. fn(,/**/ )
-	// if node.Kind == ast.KindCommaToken && len(arguments.Nodes) == 0 {
-	// 	argumentIndex++
-	// }
-	// for _, arg := range arguments.Nodes {
-	// 	if arg == node {
-	// 		return argumentIndex
-	// 	}
-	// 	if node.Kind == ast.KindCommaToken && node.End() <= arg.Pos() {
-	// 		return argumentIndex
-	// 	}
-	// 	if ast.IsSpreadElement(arg) {
-	// 		argumentIndex += getSpreadElementCount(arg.AsSpreadElement(), c)
-	// 		continue
-	// 	} else {
-	// 		argumentIndex++
-	// 	}
-	// }
-	// return argumentIndex
 }
 
 func getArgumentOrParameterListInfo(node *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) (*ast.NodeList, int, int, core.TextRange) {
 	arguments, argumentIndex := getArgumentOrParameterListAndIndex(node, sourceFile, c)
 	argumentCount := getArgumentCount(node, arguments, sourceFile, c)
-	argumentSpan := getApplicableSpanForArguments(arguments, sourceFile)
+	argumentSpan := getApplicableSpanForArguments(arguments, node, sourceFile)
 	return arguments, argumentIndex, argumentCount, argumentSpan
 }
 
-func getApplicableSpanForArguments(argumentList *ast.NodeList, sourceFile *ast.SourceFile) core.TextRange { //tbd
+func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, sourceFile *ast.SourceFile) core.TextRange { //tbd
 	// We use full start and skip trivia on the end because we want to include trivia on
 	// both sides. For example,
 	//
@@ -944,7 +996,13 @@ func getApplicableSpanForArguments(argumentList *ast.NodeList, sourceFile *ast.S
 	//
 	// The applicable span is from the first bar to the second bar (inclusive,
 	// but not including parentheses)
-	applicableSpanStart := argumentList.Loc.Pos() //fullstart - .pos but getStart is getPosOfToken
+	if argumentList == nil && node != nil {
+		// If the user has just opened a list, and there are no arguments.
+		// For example, foo(    )
+		//                  |  |
+		return core.NewTextRange(node.End(), scanner.SkipTrivia(sourceFile.Text(), node.End()))
+	}
+	applicableSpanStart := argumentList.Pos()
 	applicableSpanEnd := scanner.SkipTrivia(sourceFile.Text(), argumentList.End())
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd)
 }
@@ -953,8 +1011,9 @@ func getArgumentOrParameterListAndIndex(node *ast.Node, sourceFile *ast.SourceFi
 	if node.Kind == ast.KindLessThanToken || node.Kind == ast.KindOpenParenToken {
 		// Find the list that starts right *after* the < or ( token.
 		// If the user has just opened a list, consider this item 0.
-		return getChildListThatStartsWithOpenerToken(node.Parent, node, sourceFile), 0
-	} else { //tbd
+		list := getChildListThatStartsWithOpenerToken(node.Parent, node, sourceFile)
+		return list, 0
+	} else {
 		// findListItemInfo can return undefined if we are not in parent's argument list
 		// or type argument list. This includes cases where the cursor is:
 		//   - To the right of the closing parenthesis, non-substitution template, or template tail.
@@ -1002,18 +1061,23 @@ func tryGetParameterInfo(startingToken *ast.Node, sourceFile *ast.SourceFile, c 
 	if nonNullableContextualType == nil {
 		return nil
 	}
-	signatures := nonNullableContextualType.AsStructuredType().CallSignatures()
-	signature := signatures[len(signatures)-1]
+
 	symbol := nonNullableContextualType.Symbol()
 	if symbol == nil {
 		return nil
 	}
 
+	signatures := c.GetSignaturesOfType(nonNullableContextualType, checker.SignatureKindCall)
+	if signatures == nil || signatures[len(signatures)-1] == nil {
+		return nil
+	}
+	signature := signatures[len(signatures)-1]
+
 	contextualInvocation := contextualInvocation{
 		kind:      invocationKinContextual,
 		signature: signature,
 		node:      startingToken,
-		symbol:    nonNullableContextualType.Symbol(), //check
+		symbol:    chooseBetterSymbol(symbol),
 	}
 	return &argumentListInfo{
 		isTypeParameterList: false,
@@ -1024,17 +1088,22 @@ func tryGetParameterInfo(startingToken *ast.Node, sourceFile *ast.SourceFile, c 
 	}
 }
 
+func chooseBetterSymbol(s *ast.Symbol) *ast.Symbol {
+	if s.Name == ast.InternalSymbolNameType {
+		for _, d := range s.Declarations {
+			if ast.IsFunctionTypeNode(d) && checker.CanHaveSymbol(d.Parent) {
+				return d.Parent.Symbol()
+			}
+		}
+	}
+	return s
+}
 func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) *contextualSignatureLocationInfo {
 	parent := node.Parent
 	switch parent.Kind {
-	case ast.KindParenthesizedExpression:
-	case ast.KindMethodDeclaration:
-	case ast.KindFunctionDeclaration:
-	case ast.KindArrowFunction:
-		list, argumentIndex, argumentCount, argumentSpan := getArgumentOrParameterListInfo(node, sourceFile, c)
-		if list == nil {
-			return nil
-		}
+	case ast.KindParenthesizedExpression, ast.KindMethodDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
+		_, argumentIndex, argumentCount, argumentSpan := getArgumentOrParameterListInfo(node, sourceFile, c)
+
 		var contextualType *checker.Type
 		if ast.IsMethodDeclaration(parent) {
 			contextualType = c.GetContextualTypeForObjectLiteralElement(parent, checker.ContextFlagsNone)
@@ -1110,21 +1179,9 @@ func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sour
 	if nodeList == nil || nodeListParent == nil {
 		return nil
 	}
-	// var tokens []*ast.Node
-	// left := nodeList.Pos()
-	// scanner := scanner.GetScannerForSourceFile(sourceFile, left)
-	// for left < nodeList.End() {
-	// 	token := scanner.Token()
-	// 	tokenFullStart := scanner.TokenFullStart()
-	// 	tokenEnd := scanner.TokenEnd()
-	// 	tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, nodeListParent))
-	// 	left = tokenEnd
-	// 	scanner.Scan()
-	// }
 	left := nodeList.Pos()
 	nodeListIndex := 0
 	var tokens []*ast.Node
-	//scanner := scanner.GetScannerForSourceFile(sourceFile, left)
 	for left < nodeList.End() {
 		if len(nodeList.Nodes) > nodeListIndex && left == nodeList.Nodes[nodeListIndex].Pos() {
 			tokens = append(tokens, nodeList.Nodes[nodeListIndex])
@@ -1137,11 +1194,11 @@ func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sour
 			tokenEnd := scanner.TokenEnd()
 			tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, nodeListParent))
 			left = tokenEnd
-			//scanner.Scan()
 		}
 	}
 	return tokens
 }
+
 func containsNode(nodes []*ast.Node, node *ast.Node) bool {
 	for i := 0; i < len(nodes); i++ {
 		if nodes[i] == node {
