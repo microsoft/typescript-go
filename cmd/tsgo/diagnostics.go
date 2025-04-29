@@ -60,7 +60,6 @@ func formatDuration(d time.Duration) string {
 // OutputStats handles the output of diagnostic statistics based on the extendedDiagnostics option
 // Returns any error encountered during the output process
 func OutputStats(stats *table, extendedDiagnostics string) error {
-
 	if extendedDiagnostics == "" {
 		return nil
 	}
@@ -76,7 +75,7 @@ func OutputStats(stats *table, extendedDiagnostics string) error {
 		// Ensure directory exists
 		dir := filepath.Dir(extendedDiagnostics)
 		if dir != "." {
-			if err := os.MkdirAll(dir, 0755); err != nil {
+			if err := os.MkdirAll(dir, 0o755); err != nil {
 				return fmt.Errorf("error creating directory for stats JSON file: %w", err)
 			}
 		}
