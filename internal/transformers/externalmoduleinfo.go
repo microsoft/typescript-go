@@ -17,7 +17,7 @@ type externalModuleInfo struct {
 	exportedBindings             core.MultiMap[*ast.Declaration, *ast.ModuleExportName] // Maps local declarations to their associated export aliases
 	exportedNames                []*ast.ModuleExportName                                // all exported names in the module, both local and re-exported, excluding the names of locally exported function declarations
 	exportedFunctions            collections.OrderedSet[*ast.FunctionDeclarationNode]   // all of the top-level exported function declarations
-	exportEquals                 *ast.ExportAssignment                                  // an export= declaration if one was present
+	exportEquals                 *ast.ExportAssignment                                  // an export=/module.exports= declaration if one was present
 	hasExportStarsToExportValues bool                                                   // whether this module contains export*
 }
 
@@ -106,6 +106,11 @@ func (c *externalModuleInfoCollector) collect() *externalModuleInfo {
 				// export = x
 				c.output.exportEquals = n
 			}
+		case ast.KindJSExportAssignment:
+			if c.output.exportEquals == nil {
+				// module.exports = x
+				c.output.exportEquals = node.AsExportAssignment()
+			}
 
 		case ast.KindVariableStatement:
 			n := node.AsVariableStatement()
@@ -129,7 +134,7 @@ func (c *externalModuleInfoCollector) collect() *externalModuleInfo {
 					if !c.hasExportDefault {
 						name := n.Name()
 						if name == nil {
-							name = c.emitContext.NewGeneratedNameForNode(node, printer.AutoGenerateOptions{})
+							name = c.emitContext.Factory.NewGeneratedNameForNode(node)
 						}
 						c.addExportedBinding(node, name)
 						c.hasExportDefault = true
@@ -207,7 +212,7 @@ func (c *externalModuleInfoCollector) addExportedFunctionDeclaration(node *ast.F
 		// function x() { } + export { x as default };
 		if !c.hasExportDefault {
 			if name == nil {
-				name = c.emitContext.NewGeneratedNameForNode(node.AsNode(), printer.AutoGenerateOptions{})
+				name = c.emitContext.Factory.NewGeneratedNameForNode(node.AsNode())
 			}
 			c.addExportedBinding(node.AsNode(), name)
 			c.hasExportDefault = true
@@ -272,7 +277,7 @@ func createExternalHelpersImportDeclarationIfNeeded(emitContext *printer.EmitCon
 					if printer.IsFileLevelUniqueName(sourceFile, name, nil /*hasGlobalName*/) {
 						return emitContext.Factory.NewImportSpecifier(false /*isTypeOnly*/, nil /*propertyName*/, emitContext.Factory.NewIdentifier(name))
 					} else {
-						return emitContext.Factory.NewImportSpecifier(false /*isTypeOnly*/, emitContext.Factory.NewIdentifier(name), emitContext.NewUnscopedHelperName(name))
+						return emitContext.Factory.NewImportSpecifier(false /*isTypeOnly*/, emitContext.Factory.NewIdentifier(name), emitContext.Factory.NewUnscopedHelperName(name))
 					}
 				})
 				namedBindings := emitContext.Factory.NewNamedImports(emitContext.Factory.NewNodeList(importSpecifiers))
@@ -328,7 +333,7 @@ func getOrCreateExternalHelpersModuleNameIfNeeded(emitContext *printer.EmitConte
 			ast.GetEmitModuleFormatOfFileWorker(node, compilerOptions, sourceFileMetaData) < core.ModuleKindSystem
 
 	if create {
-		externalHelpersModuleName = emitContext.NewUniqueName(externalHelpersModuleNameText, printer.AutoGenerateOptions{})
+		externalHelpersModuleName = emitContext.Factory.NewUniqueName(externalHelpersModuleNameText)
 		emitContext.SetExternalHelpersModuleName(node, externalHelpersModuleName)
 	}
 
