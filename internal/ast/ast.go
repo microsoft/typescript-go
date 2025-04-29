@@ -83,6 +83,10 @@ type NodeFactoryHooks struct {
 	OnClone  func(node *Node, original *Node) // Hooks the cloning of a node.
 }
 
+type NodeFactoryCoercible interface {
+	AsNodeFactory() *NodeFactory
+}
+
 func NewNodeFactory(hooks NodeFactoryHooks) *NodeFactory {
 	return &NodeFactory{hooks: hooks}
 }
@@ -109,6 +113,10 @@ func (f *NodeFactory) NodeCount() int {
 
 func (f *NodeFactory) TextCount() int {
 	return f.textCount
+}
+
+func (f *NodeFactory) AsNodeFactory() *NodeFactory {
+	return f
 }
 
 func updateNode(updated *Node, original *Node, hooks NodeFactoryHooks) *Node {
@@ -155,8 +163,8 @@ func (list *NodeList) HasTrailingComma() bool {
 	return !PositionIsSynthesized(last.End()) && last.End() < list.End()
 }
 
-func (list *NodeList) Clone(f *NodeFactory) *NodeList {
-	result := f.NewNodeList(list.Nodes)
+func (list *NodeList) Clone(f NodeFactoryCoercible) *NodeList {
+	result := f.AsNodeFactory().NewNodeList(list.Nodes)
 	result.Loc = list.Loc
 	return result
 }
@@ -206,7 +214,7 @@ func (n *Node) Pos() int                                  { return n.Loc.Pos() }
 func (n *Node) End() int                                  { return n.Loc.End() }
 func (n *Node) GetFullWidth() int                         { return n.Loc.End() - n.Loc.Pos() }
 func (n *Node) ForEachChild(v Visitor) bool               { return n.data.ForEachChild(v) }
-func (n *Node) Clone(f *NodeFactory) *Node                { return n.data.Clone(f) }
+func (n *Node) Clone(f NodeFactoryCoercible) *Node        { return n.data.Clone(f) }
 func (n *Node) VisitEachChild(v *NodeVisitor) *Node       { return n.data.VisitEachChild(v) }
 func (n *Node) Name() *DeclarationName                    { return n.data.Name() }
 func (n *Node) Modifiers() *ModifierList                  { return n.data.Modifiers() }
@@ -350,7 +358,7 @@ func (n *Node) Expression() *Node {
 		return n.AsThrowStatement().Expression
 	case KindExternalModuleReference:
 		return n.AsExternalModuleReference().Expression
-	case KindExportAssignment:
+	case KindExportAssignment, KindJSExportAssignment:
 		return n.AsExportAssignment().Expression
 	case KindDecorator:
 		return n.AsDecorator().Expression
@@ -525,7 +533,7 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocNonNullableType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
-	case KindEnumMember, KindBindingElement, KindExportAssignment, KindBinaryExpression:
+	case KindEnumMember, KindBindingElement, KindExportAssignment, KindJSExportAssignment, KindBinaryExpression, KindCommonJSExport:
 		return nil
 	default:
 		funcLike := n.FunctionLikeData()
@@ -742,6 +750,18 @@ func (n *Node) Children() *NodeList {
 	panic("Unhandled case in Node.Children: " + n.Kind.String())
 }
 
+func (n *Node) ModuleSpecifier() *Expression {
+	switch n.Kind {
+	case KindImportDeclaration:
+		return n.AsImportDeclaration().ModuleSpecifier
+	case KindExportDeclaration:
+		return n.AsExportDeclaration().ModuleSpecifier
+	case KindJSDocImportTag:
+		return n.AsJSDocImportTag().ModuleSpecifier
+	}
+	panic("Unhandled case in Node.ModuleSpecifier: " + n.Kind.String())
+}
+
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
 // `descendant` or one of its ancestors is not parented except when that node is a `SourceFile`.
 func (n *Node) Contains(descendant *Node) bool {
@@ -886,6 +906,10 @@ func (n *Node) AsVariableDeclaration() *VariableDeclaration {
 
 func (n *Node) AsExportAssignment() *ExportAssignment {
 	return n.data.(*ExportAssignment)
+}
+
+func (n *Node) AsCommonJSExport() *CommonJSExport {
+	return n.data.(*CommonJSExport)
 }
 
 func (n *Node) AsObjectLiteralExpression() *ObjectLiteralExpression {
@@ -1538,7 +1562,7 @@ type nodeData interface {
 	AsNode() *Node
 	ForEachChild(v Visitor) bool
 	VisitEachChild(v *NodeVisitor) *Node
-	Clone(v *NodeFactory) *Node
+	Clone(v NodeFactoryCoercible) *Node
 	Name() *DeclarationName
 	Modifiers() *ModifierList
 	FlowNodeData() *FlowNodeBase
@@ -1565,7 +1589,7 @@ type NodeDefault struct {
 func (node *NodeDefault) AsNode() *Node                                     { return &node.Node }
 func (node *NodeDefault) ForEachChild(v Visitor) bool                       { return false }
 func (node *NodeDefault) VisitEachChild(v *NodeVisitor) *Node               { return node.AsNode() }
-func (node *NodeDefault) Clone(v *NodeFactory) *Node                        { return nil }
+func (node *NodeDefault) Clone(v NodeFactoryCoercible) *Node                { return nil }
 func (node *NodeDefault) Name() *DeclarationName                            { return nil }
 func (node *NodeDefault) Modifiers() *ModifierList                          { return nil }
 func (node *NodeDefault) FlowNodeData() *FlowNodeBase                       { return nil }
@@ -1582,7 +1606,7 @@ func (node *NodeDefault) SubtreeFacts() SubtreeFacts {
 }
 
 func (node *NodeDefault) subtreeFactsWorker(self nodeData) SubtreeFacts {
-	// To avoid excessive conditonal checks, the default implementation of subtreeFactsWorker directly invokes
+	// To avoid excessive conditional checks, the default implementation of subtreeFactsWorker directly invokes
 	// computeSubtreeFacts. More complex nodes should implement CompositeNodeBase, which overrides this
 	// method to cache the result. `self` is passed along to ensure we lookup `computeSubtreeFacts` on the
 	// correct type, as `CompositeNodeBase` does not, itself, inherit from `Node`.
@@ -1648,6 +1672,10 @@ type (
 	JSDocComment                = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
 	JSDocTag                    = Node // Node with JSDocTagBase
 	SignatureDeclaration        = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
+	StringLiteralLike           = Node // StringLiteral | NoSubstitutionTemplateLiteral
+	AnyValidImportOrReExport    = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
+	ValidImportTypeNode         = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
+	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
 )
 
 // Aliases for node singletons
@@ -1666,6 +1694,7 @@ type (
 	CatchClauseNode                 = Node
 	CaseBlockNode                   = Node
 	CaseOrDefaultClauseNode         = Node
+	CaseClauseNode                  = Node
 	VariableDeclarationNode         = Node
 	VariableDeclarationListNode     = Node
 	BindingElementNode              = Node
@@ -1688,6 +1717,7 @@ type (
 	JsxOpeningFragmentNode          = Node
 	JsxClosingFragmentNode          = Node
 	SourceFileNode                  = Node
+	PropertyAccessExpressionNode    = Node
 )
 
 type (
@@ -1864,8 +1894,8 @@ func (f *NodeFactory) NewToken(kind Kind) *Node {
 	return f.newNode(kind, f.tokenPool.New())
 }
 
-func (node *Token) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewToken(node.Kind), node.AsNode(), f.hooks)
+func (node *Token) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewToken(node.Kind), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *Token) computeSubtreeFacts() SubtreeFacts {
@@ -1924,8 +1954,8 @@ func (f *NodeFactory) NewIdentifier(text string) *Node {
 	return f.newNode(KindIdentifier, data)
 }
 
-func (node *Identifier) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewIdentifier(node.Text), node.AsNode(), f.hooks)
+func (node *Identifier) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewIdentifier(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *Identifier) SubtreeFacts() SubtreeFacts {
@@ -1950,8 +1980,8 @@ func (f *NodeFactory) NewPrivateIdentifier(text string) *Node {
 	return f.newNode(KindPrivateIdentifier, data)
 }
 
-func (node *PrivateIdentifier) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewPrivateIdentifier(node.Text), node.AsNode(), f.hooks)
+func (node *PrivateIdentifier) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPrivateIdentifier(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *PrivateIdentifier) computeSubtreeFacts() SubtreeFacts {
@@ -1994,8 +2024,8 @@ func (node *QualifiedName) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateQualifiedName(node, v.visitNode(node.Left), v.visitNode(node.Right))
 }
 
-func (node *QualifiedName) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewQualifiedName(node.Left, node.Right), node.AsNode(), f.hooks)
+func (node *QualifiedName) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewQualifiedName(node.Left, node.Right), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsQualifiedName(node *Node) bool {
@@ -2044,8 +2074,8 @@ func (node *TypeParameterDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypeParameterDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.Constraint), v.visitNode(node.DefaultType))
 }
 
-func (node *TypeParameterDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypeParameterDeclaration(node.Modifiers(), node.Name(), node.Constraint, node.DefaultType), node.AsNode(), f.hooks)
+func (node *TypeParameterDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypeParameterDeclaration(node.Modifiers(), node.Name(), node.Constraint, node.DefaultType), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TypeParameterDeclaration) Name() *DeclarationName {
@@ -2085,8 +2115,8 @@ func (node *ComputedPropertyName) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateComputedPropertyName(node, v.visitNode(node.Expression))
 }
 
-func (node *ComputedPropertyName) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewComputedPropertyName(node.Expression), node.AsNode(), f.hooks)
+func (node *ComputedPropertyName) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewComputedPropertyName(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ComputedPropertyName) computeSubtreeFacts() SubtreeFacts {
@@ -2132,8 +2162,8 @@ func (node *Decorator) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateDecorator(node, v.visitNode(node.Expression))
 }
 
-func (node *Decorator) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewDecorator(node.Expression), node.AsNode(), f.hooks)
+func (node *Decorator) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewDecorator(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *Decorator) computeSubtreeFacts() SubtreeFacts {
@@ -2163,8 +2193,8 @@ func (f *NodeFactory) NewEmptyStatement() *Node {
 	return f.newNode(KindEmptyStatement, &EmptyStatement{})
 }
 
-func (node *EmptyStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewEmptyStatement(), node.AsNode(), f.hooks)
+func (node *EmptyStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewEmptyStatement(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsEmptyStatement(node *Node) bool {
@@ -2204,8 +2234,8 @@ func (node *IfStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateIfStatement(node, v.visitNode(node.Expression), v.visitEmbeddedStatement(node.ThenStatement), v.visitEmbeddedStatement(node.ElseStatement))
 }
 
-func (node *IfStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewIfStatement(node.Expression, node.ThenStatement, node.ElseStatement), node.AsNode(), f.hooks)
+func (node *IfStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewIfStatement(node.Expression, node.ThenStatement, node.ElseStatement), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *IfStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2249,8 +2279,8 @@ func (node *DoStatement) ForEachChild(v Visitor) bool {
 	return visit(v, node.Statement) || visit(v, node.Expression)
 }
 
-func (node *DoStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewDoStatement(node.Statement, node.Expression), node.AsNode(), f.hooks)
+func (node *DoStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewDoStatement(node.Statement, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *DoStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2289,8 +2319,8 @@ func (node *WhileStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateWhileStatement(node, v.visitNode(node.Expression), v.visitIterationBody(node.Statement))
 }
 
-func (node *WhileStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewWhileStatement(node.Expression, node.Statement), node.AsNode(), f.hooks)
+func (node *WhileStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewWhileStatement(node.Expression, node.Statement), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *WhileStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2333,8 +2363,8 @@ func (node *ForStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateForStatement(node, v.visitNode(node.Initializer), v.visitNode(node.Condition), v.visitNode(node.Incrementor), v.visitIterationBody(node.Statement))
 }
 
-func (node *ForStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewForStatement(node.Initializer, node.Expression(), node.Incrementor, node.Statement), node.AsNode(), f.hooks)
+func (node *ForStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewForStatement(node.Initializer, node.Expression(), node.Incrementor, node.Statement), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ForStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2384,8 +2414,8 @@ func (node *ForInOrOfStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateForInOrOfStatement(node, v.visitToken(node.AwaitModifier), v.visitNode(node.Initializer), v.visitNode(node.Expression), v.visitIterationBody(node.Statement))
 }
 
-func (node *ForInOrOfStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewForInOrOfStatement(node.Kind, node.AwaitModifier, node.Initializer, node.Expression, node.Statement), node.AsNode(), f.hooks)
+func (node *ForInOrOfStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewForInOrOfStatement(node.Kind, node.AwaitModifier, node.Initializer, node.Expression, node.Statement), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ForInOrOfStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2435,8 +2465,8 @@ func (node *BreakStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateBreakStatement(node, v.visitNode(node.Label))
 }
 
-func (node *BreakStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewBreakStatement(node.Label), node.AsNode(), f.hooks)
+func (node *BreakStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewBreakStatement(node.Label), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // ContinueStatement
@@ -2467,8 +2497,8 @@ func (node *ContinueStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateContinueStatement(node, v.visitNode(node.Label))
 }
 
-func (node *ContinueStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewContinueStatement(node.Label), node.AsNode(), f.hooks)
+func (node *ContinueStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewContinueStatement(node.Label), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // ReturnStatement
@@ -2500,8 +2530,8 @@ func (node *ReturnStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateReturnStatement(node, v.visitNode(node.Expression))
 }
 
-func (node *ReturnStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewReturnStatement(node.Expression), node.AsNode(), f.hooks)
+func (node *ReturnStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewReturnStatement(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ReturnStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2543,8 +2573,8 @@ func (node *WithStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateWithStatement(node, v.visitNode(node.Expression), v.visitEmbeddedStatement(node.Statement))
 }
 
-func (node *WithStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewWithStatement(node.Expression, node.Statement), node.AsNode(), f.hooks)
+func (node *WithStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewWithStatement(node.Expression, node.Statement), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *WithStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2582,8 +2612,8 @@ func (node *SwitchStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateSwitchStatement(node, v.visitNode(node.Expression), v.visitNode(node.CaseBlock))
 }
 
-func (node *SwitchStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewSwitchStatement(node.Expression, node.CaseBlock), node.AsNode(), f.hooks)
+func (node *SwitchStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSwitchStatement(node.Expression, node.CaseBlock), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *SwitchStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2621,8 +2651,8 @@ func (node *CaseBlock) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateCaseBlock(node, v.visitNodes(node.Clauses))
 }
 
-func (node *CaseBlock) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewCaseBlock(node.Clauses), node.AsNode(), f.hooks)
+func (node *CaseBlock) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewCaseBlock(node.Clauses), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *CaseBlock) computeSubtreeFacts() SubtreeFacts {
@@ -2661,8 +2691,8 @@ func (node *CaseOrDefaultClause) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateCaseOrDefaultClause(node, v.visitNode(node.Expression), v.visitNodes(node.Statements))
 }
 
-func (node *CaseOrDefaultClause) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewCaseOrDefaultClause(node.Kind, node.Expression, node.Statements), node.AsNode(), f.hooks)
+func (node *CaseOrDefaultClause) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewCaseOrDefaultClause(node.Kind, node.Expression, node.Statements), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *CaseOrDefaultClause) computeSubtreeFacts() SubtreeFacts {
@@ -2706,8 +2736,8 @@ func (node *ThrowStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateThrowStatement(node, v.visitNode(node.Expression))
 }
 
-func (node *ThrowStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewThrowStatement(node.Expression), node.AsNode(), f.hooks)
+func (node *ThrowStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewThrowStatement(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ThrowStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2747,8 +2777,8 @@ func (node *TryStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTryStatement(node, v.visitNode(node.TryBlock), v.visitNode(node.CatchClause), v.visitNode(node.FinallyBlock))
 }
 
-func (node *TryStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTryStatement(node.TryBlock, node.CatchClause, node.FinallyBlock), node.AsNode(), f.hooks)
+func (node *TryStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTryStatement(node.TryBlock, node.CatchClause, node.FinallyBlock), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TryStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2793,8 +2823,8 @@ func (node *CatchClause) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateCatchClause(node, v.visitNode(node.VariableDeclaration), v.visitNode(node.Block))
 }
 
-func (node *CatchClause) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewCatchClause(node.VariableDeclaration, node.Block), node.AsNode(), f.hooks)
+func (node *CatchClause) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewCatchClause(node.VariableDeclaration, node.Block), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *CatchClause) computeSubtreeFacts() SubtreeFacts {
@@ -2820,8 +2850,8 @@ func (f *NodeFactory) NewDebuggerStatement() *Node {
 	return f.newNode(KindDebuggerStatement, &DebuggerStatement{})
 }
 
-func (node *DebuggerStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewDebuggerStatement(), node.AsNode(), f.hooks)
+func (node *DebuggerStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewDebuggerStatement(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // LabeledStatement
@@ -2854,8 +2884,8 @@ func (node *LabeledStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateLabeledStatement(node, v.visitNode(node.Label), v.visitEmbeddedStatement(node.Statement))
 }
 
-func (node *LabeledStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewLabeledStatement(node.Label, node.Statement), node.AsNode(), f.hooks)
+func (node *LabeledStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewLabeledStatement(node.Label, node.Statement), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *LabeledStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2894,8 +2924,8 @@ func (node *ExpressionStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateExpressionStatement(node, v.visitNode(node.Expression))
 }
 
-func (node *ExpressionStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewExpressionStatement(node.Expression), node.AsNode(), f.hooks)
+func (node *ExpressionStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewExpressionStatement(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ExpressionStatement) computeSubtreeFacts() SubtreeFacts {
@@ -2938,8 +2968,8 @@ func (node *Block) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateBlock(node, v.visitNodes(node.Statements))
 }
 
-func (node *Block) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewBlock(node.Statements, node.Multiline), node.AsNode(), f.hooks)
+func (node *Block) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewBlock(node.Statements, node.Multiline), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *Block) computeSubtreeFacts() SubtreeFacts {
@@ -2981,8 +3011,8 @@ func (node *VariableStatement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateVariableStatement(node, v.visitModifiers(node.modifiers), v.visitNode(node.DeclarationList))
 }
 
-func (node *VariableStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewVariableStatement(node.Modifiers(), node.DeclarationList), node.AsNode(), f.hooks)
+func (node *VariableStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewVariableStatement(node.Modifiers(), node.DeclarationList), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *VariableStatement) computeSubtreeFacts() SubtreeFacts {
@@ -3035,8 +3065,8 @@ func (node *VariableDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateVariableDeclaration(node, v.visitNode(node.name), v.visitToken(node.ExclamationToken), v.visitNode(node.Type), v.visitNode(node.Initializer))
 }
 
-func (node *VariableDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewVariableDeclaration(node.Name(), node.ExclamationToken, node.Type, node.Initializer), node.AsNode(), f.hooks)
+func (node *VariableDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewVariableDeclaration(node.Name(), node.ExclamationToken, node.Type, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *VariableDeclaration) Name() *DeclarationName {
@@ -3085,8 +3115,8 @@ func (node *VariableDeclarationList) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateVariableDeclarationList(node, v.visitNodes(node.Declarations))
 }
 
-func (node *VariableDeclarationList) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewVariableDeclarationList(node.Flags, node.Declarations), node.AsNode(), f.hooks)
+func (node *VariableDeclarationList) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewVariableDeclarationList(node.Flags, node.Declarations), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *VariableDeclarationList) computeSubtreeFacts() SubtreeFacts {
@@ -3131,8 +3161,8 @@ func (node *BindingPattern) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateBindingPattern(node, v.visitNodes(node.Elements))
 }
 
-func (node *BindingPattern) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewBindingPattern(node.Kind, node.Elements), node.AsNode(), f.hooks)
+func (node *BindingPattern) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewBindingPattern(node.Kind, node.Elements), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *BindingPattern) computeSubtreeFacts() SubtreeFacts {
@@ -3203,8 +3233,8 @@ func (node *ParameterDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateParameterDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.DotDotDotToken), v.visitNode(node.name), v.visitToken(node.QuestionToken), v.visitNode(node.Type), v.visitNode(node.Initializer))
 }
 
-func (node *ParameterDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewParameterDeclaration(node.Modifiers(), node.DotDotDotToken, node.Name(), node.QuestionToken, node.Type, node.Initializer), node.AsNode(), f.hooks)
+func (node *ParameterDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewParameterDeclaration(node.Modifiers(), node.DotDotDotToken, node.Name(), node.QuestionToken, node.Type, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ParameterDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -3269,8 +3299,8 @@ func (node *BindingElement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateBindingElement(node, v.visitToken(node.DotDotDotToken), v.visitNode(node.PropertyName), v.visitNode(node.name), v.visitNode(node.Initializer))
 }
 
-func (node *BindingElement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewBindingElement(node.DotDotDotToken, node.PropertyName, node.Name(), node.Initializer), node.AsNode(), f.hooks)
+func (node *BindingElement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewBindingElement(node.DotDotDotToken, node.PropertyName, node.Name(), node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *BindingElement) Name() *DeclarationName {
@@ -3317,8 +3347,8 @@ func (node *MissingDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateMissingDeclaration(node, v.visitModifiers(node.modifiers))
 }
 
-func (node *MissingDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewMissingDeclaration(node.Modifiers()), node.AsNode(), f.hooks)
+func (node *MissingDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewMissingDeclaration(node.Modifiers()), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // FunctionDeclaration
@@ -3362,8 +3392,8 @@ func (node *FunctionDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateFunctionDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
 }
 
-func (node *FunctionDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewFunctionDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.hooks)
+func (node *FunctionDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewFunctionDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *FunctionDeclaration) Name() *DeclarationName {
@@ -3466,8 +3496,8 @@ func (node *ClassDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateClassDeclaration(node, modifiers, name, typeParameters, heritageClauses, members)
 }
 
-func (node *ClassDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewClassDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.HeritageClauses, node.Members), node.AsNode(), f.hooks)
+func (node *ClassDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewClassDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.HeritageClauses, node.Members), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ClassDeclaration) propagateSubtreeFacts() SubtreeFacts {
@@ -3514,8 +3544,8 @@ func (node *ClassExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateClassExpression(node, modifiers, name, typeParameters, heritageClauses, members)
 }
 
-func (node *ClassExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewClassExpression(node.Modifiers(), node.Name(), node.TypeParameters, node.HeritageClauses, node.Members), node.AsNode(), f.hooks)
+func (node *ClassExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewClassExpression(node.Modifiers(), node.Name(), node.TypeParameters, node.HeritageClauses, node.Members), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ClassExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -3557,8 +3587,8 @@ func (node *HeritageClause) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateHeritageClause(node, v.visitNodes(node.Types))
 }
 
-func (node *HeritageClause) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewHeritageClause(node.Kind, node.Types), node.AsNode(), f.hooks)
+func (node *HeritageClause) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewHeritageClause(node.Kind, node.Types), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *HeritageClause) computeSubtreeFacts() SubtreeFacts {
@@ -3616,8 +3646,8 @@ func (node *InterfaceDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateInterfaceDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNodes(node.HeritageClauses), v.visitNodes(node.Members))
 }
 
-func (node *InterfaceDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewInterfaceDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.HeritageClauses, node.Members), node.AsNode(), f.hooks)
+func (node *InterfaceDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewInterfaceDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.HeritageClauses, node.Members), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *InterfaceDeclaration) Name() *DeclarationName { return node.name }
@@ -3671,8 +3701,8 @@ func (node *TypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
 }
 
-func (node *TypeAliasDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypeAliasDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.hooks)
+func (node *TypeAliasDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypeAliasDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.name }
@@ -3731,8 +3761,8 @@ func (node *EnumMember) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateEnumMember(node, v.visitNode(node.name), v.visitNode(node.Initializer))
 }
 
-func (node *EnumMember) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewEnumMember(node.Name(), node.Initializer), node.AsNode(), f.hooks)
+func (node *EnumMember) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewEnumMember(node.Name(), node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *EnumMember) Name() *DeclarationName {
@@ -3784,8 +3814,8 @@ func (node *EnumDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateEnumDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.Members))
 }
 
-func (node *EnumDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewEnumDeclaration(node.Modifiers(), node.Name(), node.Members), node.AsNode(), f.hooks)
+func (node *EnumDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewEnumDeclaration(node.Modifiers(), node.Name(), node.Members), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *EnumDeclaration) Name() *DeclarationName {
@@ -3836,8 +3866,8 @@ func (node *ModuleBlock) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateModuleBlock(node, v.visitNodes(node.Statements))
 }
 
-func (node *ModuleBlock) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewModuleBlock(node.Statements), node.AsNode(), f.hooks)
+func (node *ModuleBlock) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewModuleBlock(node.Statements), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ModuleBlock) computeSubtreeFacts() SubtreeFacts {
@@ -3887,8 +3917,8 @@ func (node *ModuleDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateModuleDeclaration(node, v.visitModifiers(node.modifiers), node.Keyword, v.visitNode(node.name), v.visitNode(node.Body))
 }
 
-func (node *ModuleDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewModuleDeclaration(node.Modifiers(), node.Keyword, node.Name(), node.Body), node.AsNode(), f.hooks)
+func (node *ModuleDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewModuleDeclaration(node.Modifiers(), node.Keyword, node.Name(), node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ModuleDeclaration) Name() *DeclarationName {
@@ -3927,8 +3957,8 @@ func (f *NodeFactory) NewNotEmittedStatement() *Node {
 	return newNode(KindNotEmittedStatement, data, f.hooks)
 }
 
-func (node *NotEmittedStatement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNotEmittedStatement(), node.AsNode(), f.hooks)
+func (node *NotEmittedStatement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNotEmittedStatement(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsNotEmittedStatement(node *Node) bool {
@@ -3974,8 +4004,8 @@ func (node *ImportEqualsDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateImportEqualsDeclaration(node, v.visitModifiers(node.modifiers), node.IsTypeOnly, v.visitNode(node.name), v.visitNode(node.ModuleReference))
 }
 
-func (node *ImportEqualsDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewImportEqualsDeclaration(node.Modifiers(), node.IsTypeOnly, node.Name(), node.ModuleReference), node.AsNode(), f.hooks)
+func (node *ImportEqualsDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewImportEqualsDeclaration(node.Modifiers(), node.IsTypeOnly, node.Name(), node.ModuleReference), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportEqualsDeclaration) Name() *DeclarationName {
@@ -4031,8 +4061,8 @@ func (node *ImportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateImportDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.ImportClause), v.visitNode(node.ModuleSpecifier), v.visitNode(node.Attributes))
 }
 
-func (node *ImportDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewImportDeclaration(node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.hooks)
+func (node *ImportDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewImportDeclaration(node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -4081,8 +4111,8 @@ func (node *ImportSpecifier) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateImportSpecifier(node, node.IsTypeOnly, v.visitNode(node.PropertyName), v.visitNode(node.name))
 }
 
-func (node *ImportSpecifier) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewImportSpecifier(node.IsTypeOnly, node.PropertyName, node.Name()), node.AsNode(), f.hooks)
+func (node *ImportSpecifier) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewImportSpecifier(node.IsTypeOnly, node.PropertyName, node.Name()), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportSpecifier) Name() *DeclarationName {
@@ -4130,8 +4160,8 @@ func (node *ExternalModuleReference) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateExternalModuleReference(node, v.visitNode(node.Expression))
 }
 
-func (node *ExternalModuleReference) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewExternalModuleReference(node.Expression), node.AsNode(), f.hooks)
+func (node *ExternalModuleReference) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewExternalModuleReference(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ExternalModuleReference) computeSubtreeFacts() SubtreeFacts {
@@ -4177,8 +4207,8 @@ func (node *ImportClause) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateImportClause(node, node.IsTypeOnly, v.visitNode(node.name), v.visitNode(node.NamedBindings))
 }
 
-func (node *ImportClause) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewImportClause(node.IsTypeOnly, node.Name(), node.NamedBindings), node.AsNode(), f.hooks)
+func (node *ImportClause) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewImportClause(node.IsTypeOnly, node.Name(), node.NamedBindings), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportClause) Name() *DeclarationName {
@@ -4228,8 +4258,8 @@ func (node *NamespaceImport) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateNamespaceImport(node, v.visitNode(node.name))
 }
 
-func (node *NamespaceImport) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNamespaceImport(node.Name()), node.AsNode(), f.hooks)
+func (node *NamespaceImport) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNamespaceImport(node.Name()), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *NamespaceImport) Name() *DeclarationName {
@@ -4273,8 +4303,8 @@ func (node *NamedImports) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateNamedImports(node, v.visitNodes(node.Elements))
 }
 
-func (node *NamedImports) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNamedImports(node.Elements), node.AsNode(), f.hooks)
+func (node *NamedImports) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNamedImports(node.Elements), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *NamedImports) computeSubtreeFacts() SubtreeFacts {
@@ -4289,6 +4319,7 @@ func IsNamedImports(node *Node) bool {
 
 // This is either an `export =` or an `export default` declaration.
 // Unless `isExportEquals` is set, this node was parsed as an `export default`.
+// If Kind is KindJSExportAssignment, it is a synthetic declaration for `module.exports =`.
 type ExportAssignment struct {
 	StatementBase
 	DeclarationBase
@@ -4298,17 +4329,25 @@ type ExportAssignment struct {
 	Expression     *Expression // Expression
 }
 
-func (f *NodeFactory) NewExportAssignment(modifiers *ModifierList, isExportEquals bool, expression *Expression) *Node {
+func (f *NodeFactory) newExportOrJSExportAssignment(kind Kind, modifiers *ModifierList, isExportEquals bool, expression *Expression) *Node {
 	data := &ExportAssignment{}
 	data.modifiers = modifiers
 	data.IsExportEquals = isExportEquals
 	data.Expression = expression
-	return f.newNode(KindExportAssignment, data)
+	return f.newNode(kind, data)
+}
+
+func (f *NodeFactory) NewExportAssignment(modifiers *ModifierList, isExportEquals bool, expression *Expression) *Node {
+	return f.newExportOrJSExportAssignment(KindExportAssignment, modifiers, isExportEquals, expression)
+}
+
+func (f *NodeFactory) NewJSExportAssignment(expression *Expression) *Node {
+	return f.newExportOrJSExportAssignment(KindJSExportAssignment, nil /*modifiers*/, true, expression)
 }
 
 func (f *NodeFactory) UpdateExportAssignment(node *ExportAssignment, modifiers *ModifierList, expression *Expression) *Node {
 	if modifiers != node.modifiers || expression != node.Expression {
-		return updateNode(f.NewExportAssignment(modifiers, node.IsExportEquals, expression), node.AsNode(), f.hooks)
+		return updateNode(f.newExportOrJSExportAssignment(node.Kind, modifiers, node.IsExportEquals, expression), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4321,8 +4360,8 @@ func (node *ExportAssignment) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateExportAssignment(node, v.visitModifiers(node.modifiers), v.visitNode(node.Expression))
 }
 
-func (node *ExportAssignment) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewExportAssignment(node.Modifiers(), node.IsExportEquals, node.Expression), node.AsNode(), f.hooks)
+func (node *ExportAssignment) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().newExportOrJSExportAssignment(node.Kind, node.Modifiers(), node.IsExportEquals, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
@@ -4331,6 +4370,60 @@ func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
 
 func IsExportAssignment(node *Node) bool {
 	return node.Kind == KindExportAssignment
+}
+
+func IsJSExportAssignment(node *Node) bool {
+	return node.Kind == KindJSExportAssignment
+}
+
+func IsAnyExportAssignment(node *Node) bool {
+	return node.Kind == KindExportAssignment || node.Kind == KindJSExportAssignment
+}
+
+// CommonJSExport
+
+type CommonJSExport struct {
+	StatementBase
+	DeclarationBase
+	ExportableBase
+	ModifiersBase
+	name        *IdentifierNode
+	Initializer *Expression
+}
+
+func (f *NodeFactory) NewCommonJSExport(modifiers *ModifierList, name *IdentifierNode, initializer *Expression) *Node {
+	data := &CommonJSExport{}
+	data.modifiers = modifiers
+	data.name = name
+	data.Initializer = initializer
+	return newNode(KindCommonJSExport, data, f.hooks)
+}
+
+func (f *NodeFactory) UpdateCommonJSExport(node *CommonJSExport, modifiers *ModifierList, name *IdentifierNode, initializer *Expression) *Node {
+	if modifiers != node.modifiers || initializer != node.Initializer || name != node.name {
+		return updateNode(f.NewCommonJSExport(node.modifiers, name, initializer), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *CommonJSExport) ForEachChild(v Visitor) bool {
+	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Initializer)
+}
+
+func (node *CommonJSExport) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateCommonJSExport(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.Initializer))
+}
+
+func (node *CommonJSExport) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewCommonJSExport(node.Modifiers(), node.name, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsCommonJSExport(node *Node) bool {
+	return node.Kind == KindCommonJSExport
+}
+
+func (node *CommonJSExport) Name() *DeclarationName {
+	return node.name
 }
 
 // NamespaceExportDeclaration
@@ -4365,8 +4458,8 @@ func (node *NamespaceExportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateNamespaceExportDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name))
 }
 
-func (node *NamespaceExportDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNamespaceExportDeclaration(node.Modifiers(), node.Name()), node.AsNode(), f.hooks)
+func (node *NamespaceExportDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNamespaceExportDeclaration(node.Modifiers(), node.Name()), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *NamespaceExportDeclaration) Name() *DeclarationName {
@@ -4415,8 +4508,8 @@ func (node *ExportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateExportDeclaration(node, v.visitModifiers(node.modifiers), node.IsTypeOnly, v.visitNode(node.ExportClause), v.visitNode(node.ModuleSpecifier), v.visitNode(node.Attributes))
 }
 
-func (node *ExportDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewExportDeclaration(node.Modifiers(), node.IsTypeOnly, node.ExportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.hooks)
+func (node *ExportDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewExportDeclaration(node.Modifiers(), node.IsTypeOnly, node.ExportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ExportDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -4460,8 +4553,8 @@ func (node *NamespaceExport) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateNamespaceExport(node, v.visitNode(node.name))
 }
 
-func (node *NamespaceExport) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNamespaceExport(node.Name()), node.AsNode(), f.hooks)
+func (node *NamespaceExport) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNamespaceExport(node.Name()), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *NamespaceExport) Name() *DeclarationName {
@@ -4505,8 +4598,8 @@ func (node *NamedExports) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateNamedExports(node, v.visitNodes(node.Elements))
 }
 
-func (node *NamedExports) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNamedExports(node.Elements), node.AsNode(), f.hooks)
+func (node *NamedExports) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNamedExports(node.Elements), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *NamedExports) computeSubtreeFacts() SubtreeFacts {
@@ -4552,8 +4645,8 @@ func (node *ExportSpecifier) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateExportSpecifier(node, node.IsTypeOnly, v.visitNode(node.PropertyName), v.visitNode(node.name))
 }
 
-func (node *ExportSpecifier) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewExportSpecifier(node.IsTypeOnly, node.PropertyName, node.Name()), node.AsNode(), f.hooks)
+func (node *ExportSpecifier) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewExportSpecifier(node.IsTypeOnly, node.PropertyName, node.Name()), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ExportSpecifier) Name() *DeclarationName {
@@ -4627,8 +4720,8 @@ func (node *CallSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateCallSignatureDeclaration(node, v.visitNodes(node.TypeParameters), v.visitNodes(node.Parameters), v.visitNode(node.Type))
 }
 
-func (node *CallSignatureDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewCallSignatureDeclaration(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.hooks)
+func (node *CallSignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewCallSignatureDeclaration(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsCallSignatureDeclaration(node *Node) bool {
@@ -4668,8 +4761,8 @@ func (node *ConstructSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node 
 	return v.Factory.UpdateConstructSignatureDeclaration(node, v.visitNodes(node.TypeParameters), v.visitNodes(node.Parameters), v.visitNode(node.Type))
 }
 
-func (node *ConstructSignatureDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewConstructSignatureDeclaration(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.hooks)
+func (node *ConstructSignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewConstructSignatureDeclaration(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsConstructSignatureDeclaration(node *Node) bool {
@@ -4713,8 +4806,8 @@ func (node *ConstructorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateConstructorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
 }
 
-func (node *ConstructorDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewConstructorDeclaration(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.hooks)
+func (node *ConstructorDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewConstructorDeclaration(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ConstructorDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -4803,8 +4896,8 @@ func (node *GetAccessorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateGetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
 }
 
-func (node *GetAccessorDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewGetAccessorDeclaration(node.modifiers, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.hooks)
+func (node *GetAccessorDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewGetAccessorDeclaration(node.modifiers, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsGetAccessorDeclaration(node *Node) bool {
@@ -4839,8 +4932,8 @@ func (node *SetAccessorDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateSetAccessorDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
 }
 
-func (node *SetAccessorDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewSetAccessorDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.hooks)
+func (node *SetAccessorDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSetAccessorDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsSetAccessorDeclaration(node *Node) bool {
@@ -4882,8 +4975,8 @@ func (node *IndexSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateIndexSignatureDeclaration(node, v.visitModifiers(node.modifiers), v.visitNodes(node.Parameters), v.visitNode(node.Type))
 }
 
-func (node *IndexSignatureDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewIndexSignatureDeclaration(node.Modifiers(), node.Parameters, node.Type), node.AsNode(), f.hooks)
+func (node *IndexSignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewIndexSignatureDeclaration(node.Modifiers(), node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsIndexSignatureDeclaration(node *Node) bool {
@@ -4927,8 +5020,8 @@ func (node *MethodSignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateMethodSignatureDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNodes(node.TypeParameters), v.visitNodes(node.Parameters), v.visitNode(node.Type))
 }
 
-func (node *MethodSignatureDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewMethodSignatureDeclaration(node.Modifiers(), node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.hooks)
+func (node *MethodSignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewMethodSignatureDeclaration(node.Modifiers(), node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsMethodSignatureDeclaration(node *Node) bool {
@@ -4976,8 +5069,8 @@ func (node *MethodDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateMethodDeclaration(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
 }
 
-func (node *MethodDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewMethodDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.hooks)
+func (node *MethodDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewMethodDeclaration(node.Modifiers(), node.AsteriskToken, node.Name(), node.PostfixToken, node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *MethodDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -5044,8 +5137,8 @@ func (node *PropertySignatureDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdatePropertySignatureDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNode(node.Type), v.visitNode(node.Initializer))
 }
 
-func (node *PropertySignatureDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewPropertySignatureDeclaration(node.Modifiers(), node.Name(), node.PostfixToken, node.Type, node.Initializer), node.AsNode(), f.hooks)
+func (node *PropertySignatureDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPropertySignatureDeclaration(node.Modifiers(), node.Name(), node.PostfixToken, node.Type, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsPropertySignatureDeclaration(node *Node) bool {
@@ -5088,8 +5181,8 @@ func (node *PropertyDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdatePropertyDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNode(node.Type), v.visitNode(node.Initializer))
 }
 
-func (node *PropertyDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewPropertyDeclaration(node.Modifiers(), node.Name(), node.PostfixToken, node.Type, node.Initializer), node.AsNode(), f.hooks)
+func (node *PropertyDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPropertyDeclaration(node.Modifiers(), node.Name(), node.PostfixToken, node.Type, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *PropertyDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -5122,8 +5215,8 @@ func (f *NodeFactory) NewSemicolonClassElement() *Node {
 	return f.newNode(KindSemicolonClassElement, &SemicolonClassElement{})
 }
 
-func (node *SemicolonClassElement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewSemicolonClassElement(), node.AsNode(), f.hooks)
+func (node *SemicolonClassElement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSemicolonClassElement(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // ClassStaticBlockDeclaration
@@ -5164,8 +5257,8 @@ func (node *ClassStaticBlockDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateClassStaticBlockDeclaration(node, modifiers, body)
 }
 
-func (node *ClassStaticBlockDeclaration) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewClassStaticBlockDeclaration(node.Modifiers(), node.Body), node.AsNode(), f.hooks)
+func (node *ClassStaticBlockDeclaration) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewClassStaticBlockDeclaration(node.Modifiers(), node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ClassStaticBlockDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -5194,8 +5287,8 @@ func (f *NodeFactory) NewOmittedExpression() *Node {
 	return f.newNode(KindOmittedExpression, &OmittedExpression{})
 }
 
-func (node *OmittedExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewOmittedExpression(), node.AsNode(), f.hooks)
+func (node *OmittedExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewOmittedExpression(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsOmittedExpression(node *Node) bool {
@@ -5213,8 +5306,8 @@ func (f *NodeFactory) NewKeywordExpression(kind Kind) *Node {
 	return f.newNode(kind, &KeywordExpression{})
 }
 
-func (node *KeywordExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewKeywordExpression(node.Kind), node.AsNode(), f.hooks)
+func (node *KeywordExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewKeywordExpression(node.Kind), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *KeywordExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5250,8 +5343,8 @@ func (f *NodeFactory) NewStringLiteral(text string) *Node {
 	return f.newNode(KindStringLiteral, data)
 }
 
-func (node *StringLiteral) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewStringLiteral(node.Text), node.AsNode(), f.hooks)
+func (node *StringLiteral) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewStringLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsStringLiteral(node *Node) bool {
@@ -5272,8 +5365,8 @@ func (f *NodeFactory) NewNumericLiteral(text string) *Node {
 	return f.newNode(KindNumericLiteral, data)
 }
 
-func (node *NumericLiteral) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNumericLiteral(node.Text), node.AsNode(), f.hooks)
+func (node *NumericLiteral) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNumericLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsNumericLiteral(node *Node) bool {
@@ -5294,8 +5387,8 @@ func (f *NodeFactory) NewBigIntLiteral(text string) *Node {
 	return f.newNode(KindBigIntLiteral, data)
 }
 
-func (node *BigIntLiteral) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewBigIntLiteral(node.Text), node.AsNode(), f.hooks)
+func (node *BigIntLiteral) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewBigIntLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *BigIntLiteral) computeSubtreeFacts() SubtreeFacts {
@@ -5320,8 +5413,8 @@ func (f *NodeFactory) NewRegularExpressionLiteral(text string) *Node {
 	return f.newNode(KindRegularExpressionLiteral, data)
 }
 
-func (node *RegularExpressionLiteral) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewRegularExpressionLiteral(node.Text), node.AsNode(), f.hooks)
+func (node *RegularExpressionLiteral) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // NoSubstitutionTemplateLiteral
@@ -5338,8 +5431,8 @@ func (f *NodeFactory) NewNoSubstitutionTemplateLiteral(text string) *Node {
 	return f.newNode(KindNoSubstitutionTemplateLiteral, data)
 }
 
-func (node *NoSubstitutionTemplateLiteral) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNoSubstitutionTemplateLiteral(node.Text), node.AsNode(), f.hooks)
+func (node *NoSubstitutionTemplateLiteral) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNoSubstitutionTemplateLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // BinaryExpression
@@ -5379,8 +5472,8 @@ func (node *BinaryExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateBinaryExpression(node, v.visitNode(node.Left), v.visitToken(node.OperatorToken), v.visitNode(node.Right))
 }
 
-func (node *BinaryExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewBinaryExpression(node.Left, node.OperatorToken, node.Right), node.AsNode(), f.hooks)
+func (node *BinaryExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewBinaryExpression(node.Left, node.OperatorToken, node.Right), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5424,8 +5517,8 @@ func (node *PrefixUnaryExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdatePrefixUnaryExpression(node, v.visitNode(node.Operand))
 }
 
-func (node *PrefixUnaryExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewPrefixUnaryExpression(node.Operator, node.Operand), node.AsNode(), f.hooks)
+func (node *PrefixUnaryExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPrefixUnaryExpression(node.Operator, node.Operand), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *PrefixUnaryExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5466,8 +5559,8 @@ func (node *PostfixUnaryExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdatePostfixUnaryExpression(node, v.visitNode(node.Operand))
 }
 
-func (node *PostfixUnaryExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewPostfixUnaryExpression(node.Operand, node.Operator), node.AsNode(), f.hooks)
+func (node *PostfixUnaryExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPostfixUnaryExpression(node.Operand, node.Operator), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *PostfixUnaryExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5504,8 +5597,8 @@ func (node *YieldExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateYieldExpression(node, v.visitToken(node.AsteriskToken), v.visitNode(node.Expression))
 }
 
-func (node *YieldExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewYieldExpression(node.AsteriskToken, node.Expression), node.AsNode(), f.hooks)
+func (node *YieldExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewYieldExpression(node.AsteriskToken, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *YieldExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5551,8 +5644,8 @@ func (node *ArrowFunction) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateArrowFunction(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitToken(node.EqualsGreaterThanToken), v.visitFunctionBody(node.Body))
 }
 
-func (node *ArrowFunction) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewArrowFunction(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.EqualsGreaterThanToken, node.Body), node.AsNode(), f.hooks)
+func (node *ArrowFunction) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewArrowFunction(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type, node.EqualsGreaterThanToken, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ArrowFunction) Name() *DeclarationName {
@@ -5617,8 +5710,8 @@ func (node *FunctionExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateFunctionExpression(node, v.visitModifiers(node.modifiers), v.visitToken(node.AsteriskToken), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitParameters(node.Parameters), v.visitNode(node.Type), v.visitFunctionBody(node.Body))
 }
 
-func (node *FunctionExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewFunctionExpression(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.hooks)
+func (node *FunctionExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewFunctionExpression(node.Modifiers(), node.AsteriskToken, node.Name(), node.TypeParameters, node.Parameters, node.Type, node.Body), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *FunctionExpression) Name() *DeclarationName {
@@ -5677,8 +5770,8 @@ func (node *AsExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateAsExpression(node, v.visitNode(node.Expression), v.visitNode(node.Type))
 }
 
-func (node *AsExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewAsExpression(node.Expression, node.Type), node.AsNode(), f.hooks)
+func (node *AsExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewAsExpression(node.Expression, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *AsExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5719,8 +5812,8 @@ func (node *SatisfiesExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateSatisfiesExpression(node, v.visitNode(node.Expression), v.visitNode(node.Type))
 }
 
-func (node *SatisfiesExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewSatisfiesExpression(node.Expression, node.Type), node.AsNode(), f.hooks)
+func (node *SatisfiesExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSatisfiesExpression(node.Expression, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *SatisfiesExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5773,8 +5866,8 @@ func (node *ConditionalExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateConditionalExpression(node, v.visitNode(node.Condition), v.visitToken(node.QuestionToken), v.visitNode(node.WhenTrue), v.visitToken(node.ColonToken), v.visitNode(node.WhenFalse))
 }
 
-func (node *ConditionalExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewConditionalExpression(node.Condition, node.QuestionToken, node.WhenTrue, node.ColonToken, node.WhenFalse), node.AsNode(), f.hooks)
+func (node *ConditionalExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewConditionalExpression(node.Condition, node.QuestionToken, node.WhenTrue, node.ColonToken, node.WhenFalse), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ConditionalExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5819,8 +5912,8 @@ func (node *PropertyAccessExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdatePropertyAccessExpression(node, v.visitNode(node.Expression), v.visitToken(node.QuestionDotToken), v.visitNode(node.name))
 }
 
-func (node *PropertyAccessExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewPropertyAccessExpression(node.Expression, node.QuestionDotToken, node.Name(), node.Flags), node.AsNode(), f.hooks)
+func (node *PropertyAccessExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPropertyAccessExpression(node.Expression, node.QuestionDotToken, node.Name(), node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *PropertyAccessExpression) Name() *DeclarationName { return node.name }
@@ -5875,8 +5968,8 @@ func (node *ElementAccessExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateElementAccessExpression(node, v.visitNode(node.Expression), v.visitToken(node.QuestionDotToken), v.visitNode(node.ArgumentExpression))
 }
 
-func (node *ElementAccessExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewElementAccessExpression(node.Expression, node.QuestionDotToken, node.ArgumentExpression, node.Flags), node.AsNode(), f.hooks)
+func (node *ElementAccessExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewElementAccessExpression(node.Expression, node.QuestionDotToken, node.ArgumentExpression, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ElementAccessExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5930,8 +6023,8 @@ func (node *CallExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateCallExpression(node, v.visitNode(node.Expression), v.visitToken(node.QuestionDotToken), v.visitNodes(node.TypeArguments), v.visitNodes(node.Arguments))
 }
 
-func (node *CallExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewCallExpression(node.Expression, node.QuestionDotToken, node.TypeArguments, node.Arguments, node.Flags), node.AsNode(), f.hooks)
+func (node *CallExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewCallExpression(node.Expression, node.QuestionDotToken, node.TypeArguments, node.Arguments, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *CallExpression) computeSubtreeFacts() SubtreeFacts {
@@ -5983,8 +6076,8 @@ func (node *NewExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateNewExpression(node, v.visitNode(node.Expression), v.visitNodes(node.TypeArguments), v.visitNodes(node.Arguments))
 }
 
-func (node *NewExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNewExpression(node.Expression, node.TypeArguments, node.Arguments), node.AsNode(), f.hooks)
+func (node *NewExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNewExpression(node.Expression, node.TypeArguments, node.Arguments), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *NewExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6033,8 +6126,8 @@ func (node *MetaProperty) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateMetaProperty(node, v.visitNode(node.name))
 }
 
-func (node *MetaProperty) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewMetaProperty(node.Kind, node.Name()), node.AsNode(), f.hooks)
+func (node *MetaProperty) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewMetaProperty(node.Kind, node.Name()), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *MetaProperty) Name() *DeclarationName {
@@ -6079,8 +6172,8 @@ func (node *NonNullExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateNonNullExpression(node, v.visitNode(node.Expression))
 }
 
-func (node *NonNullExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNonNullExpression(node.Expression, node.Flags), node.AsNode(), f.hooks)
+func (node *NonNullExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNonNullExpression(node.Expression, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *NonNullExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6119,8 +6212,8 @@ func (node *SpreadElement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateSpreadElement(node, v.visitNode(node.Expression))
 }
 
-func (node *SpreadElement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewSpreadElement(node.Expression), node.AsNode(), f.hooks)
+func (node *SpreadElement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSpreadElement(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *SpreadElement) computeSubtreeFacts() SubtreeFacts {
@@ -6162,8 +6255,8 @@ func (node *TemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTemplateExpression(node, v.visitNode(node.Head), v.visitNodes(node.TemplateSpans))
 }
 
-func (node *TemplateExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTemplateExpression(node.Head, node.TemplateSpans), node.AsNode(), f.hooks)
+func (node *TemplateExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTemplateExpression(node.Head, node.TemplateSpans), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TemplateExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6205,8 +6298,8 @@ func (node *TemplateSpan) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTemplateSpan(node, v.visitNode(node.Expression), v.visitNode(node.Literal))
 }
 
-func (node *TemplateSpan) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTemplateSpan(node.Expression, node.Literal), node.AsNode(), f.hooks)
+func (node *TemplateSpan) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTemplateSpan(node.Expression, node.Literal), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TemplateSpan) computeSubtreeFacts() SubtreeFacts {
@@ -6254,8 +6347,8 @@ func (node *TaggedTemplateExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTaggedTemplateExpression(node, v.visitNode(node.Tag), v.visitToken(node.QuestionDotToken), v.visitNodes(node.TypeArguments), v.visitNode(node.Template))
 }
 
-func (node *TaggedTemplateExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTaggedTemplateExpression(node.Tag, node.QuestionDotToken, node.TypeArguments, node.Template, node.Flags), node.AsNode(), f.hooks)
+func (node *TaggedTemplateExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTaggedTemplateExpression(node.Tag, node.QuestionDotToken, node.TypeArguments, node.Template, node.Flags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TaggedTemplateExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6297,8 +6390,8 @@ func (node *ParenthesizedExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateParenthesizedExpression(node, v.visitNode(node.Expression))
 }
 
-func (node *ParenthesizedExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewParenthesizedExpression(node.Expression), node.AsNode(), f.hooks)
+func (node *ParenthesizedExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewParenthesizedExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ParenthesizedExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6344,8 +6437,8 @@ func (node *ArrayLiteralExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateArrayLiteralExpression(node, v.visitNodes(node.Elements))
 }
 
-func (node *ArrayLiteralExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewArrayLiteralExpression(node.Elements, node.MultiLine), node.AsNode(), f.hooks)
+func (node *ArrayLiteralExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewArrayLiteralExpression(node.Elements, node.MultiLine), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ArrayLiteralExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6392,8 +6485,8 @@ func (node *ObjectLiteralExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateObjectLiteralExpression(node, v.visitNodes(node.Properties))
 }
 
-func (node *ObjectLiteralExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewObjectLiteralExpression(node.Properties, node.MultiLine), node.AsNode(), f.hooks)
+func (node *ObjectLiteralExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewObjectLiteralExpression(node.Properties, node.MultiLine), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ObjectLiteralExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6442,8 +6535,8 @@ func (node *SpreadAssignment) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateSpreadAssignment(node, v.visitNode(node.Expression))
 }
 
-func (node *SpreadAssignment) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewSpreadAssignment(node.Expression), node.AsNode(), f.hooks)
+func (node *SpreadAssignment) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSpreadAssignment(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *SpreadAssignment) computeSubtreeFacts() SubtreeFacts {
@@ -6488,8 +6581,8 @@ func (node *PropertyAssignment) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdatePropertyAssignment(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNode(node.Initializer))
 }
 
-func (node *PropertyAssignment) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewPropertyAssignment(node.Modifiers(), node.Name(), node.PostfixToken, node.Initializer), node.AsNode(), f.hooks)
+func (node *PropertyAssignment) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPropertyAssignment(node.Modifiers(), node.Name(), node.PostfixToken, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *PropertyAssignment) computeSubtreeFacts() SubtreeFacts {
@@ -6537,8 +6630,8 @@ func (node *ShorthandPropertyAssignment) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateShorthandPropertyAssignment(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitToken(node.EqualsToken), v.visitNode(node.ObjectAssignmentInitializer))
 }
 
-func (node *ShorthandPropertyAssignment) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewShorthandPropertyAssignment(node.Modifiers(), node.Name(), node.PostfixToken, node.EqualsToken, node.ObjectAssignmentInitializer), node.AsNode(), f.hooks)
+func (node *ShorthandPropertyAssignment) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewShorthandPropertyAssignment(node.Modifiers(), node.Name(), node.PostfixToken, node.EqualsToken, node.ObjectAssignmentInitializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ShorthandPropertyAssignment) computeSubtreeFacts() SubtreeFacts {
@@ -6579,8 +6672,8 @@ func (node *DeleteExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateDeleteExpression(node, v.visitNode(node.Expression))
 }
 
-func (node *DeleteExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewDeleteExpression(node.Expression), node.AsNode(), f.hooks)
+func (node *DeleteExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewDeleteExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *DeleteExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6615,8 +6708,8 @@ func (node *TypeOfExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypeOfExpression(node, v.visitNode(node.Expression))
 }
 
-func (node *TypeOfExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypeOfExpression(node.Expression), node.AsNode(), f.hooks)
+func (node *TypeOfExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypeOfExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TypeOfExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6655,8 +6748,8 @@ func (node *VoidExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateVoidExpression(node, v.visitNode(node.Expression))
 }
 
-func (node *VoidExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewVoidExpression(node.Expression), node.AsNode(), f.hooks)
+func (node *VoidExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewVoidExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *VoidExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6691,8 +6784,8 @@ func (node *AwaitExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateAwaitExpression(node, v.visitNode(node.Expression))
 }
 
-func (node *AwaitExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewAwaitExpression(node.Expression), node.AsNode(), f.hooks)
+func (node *AwaitExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewAwaitExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *AwaitExpression) computeSubtreeFacts() SubtreeFacts {
@@ -6733,8 +6826,8 @@ func (node *TypeAssertion) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypeAssertion(node, v.visitNode(node.Type), v.visitNode(node.Expression))
 }
 
-func (node *TypeAssertion) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypeAssertion(node.Type, node.Expression), node.AsNode(), f.hooks)
+func (node *TypeAssertion) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypeAssertion(node.Type, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TypeAssertion) computeSubtreeFacts() SubtreeFacts {
@@ -6762,8 +6855,8 @@ func (f *NodeFactory) NewKeywordTypeNode(kind Kind) *Node {
 	return f.newNode(kind, f.keywordTypeNodePool.New())
 }
 
-func (node *KeywordTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewKeywordTypeNode(node.Kind), node.AsNode(), f.hooks)
+func (node *KeywordTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewKeywordTypeNode(node.Kind), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // UnionOrIntersectionTypeBase
@@ -6800,8 +6893,8 @@ func (node *UnionTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateUnionTypeNode(node, v.visitNodes(node.Types))
 }
 
-func (node *UnionTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewUnionTypeNode(node.Types), node.AsNode(), f.hooks)
+func (node *UnionTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewUnionTypeNode(node.Types), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // IntersectionTypeNode
@@ -6827,8 +6920,8 @@ func (node *IntersectionTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateIntersectionTypeNode(node, v.visitNodes(node.Types))
 }
 
-func (node *IntersectionTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewIntersectionTypeNode(node.Types), node.AsNode(), f.hooks)
+func (node *IntersectionTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewIntersectionTypeNode(node.Types), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // ConditionalTypeNode
@@ -6866,8 +6959,8 @@ func (node *ConditionalTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateConditionalTypeNode(node, v.visitNode(node.CheckType), v.visitNode(node.ExtendsType), v.visitNode(node.TrueType), v.visitNode(node.FalseType))
 }
 
-func (node *ConditionalTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewConditionalTypeNode(node.CheckType, node.ExtendsType, node.TrueType, node.FalseType), node.AsNode(), f.hooks)
+func (node *ConditionalTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewConditionalTypeNode(node.CheckType, node.ExtendsType, node.TrueType, node.FalseType), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsConditionalTypeNode(node *Node) bool {
@@ -6904,8 +6997,8 @@ func (node *TypeOperatorNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypeOperatorNode(node, v.visitNode(node.Type))
 }
 
-func (node *TypeOperatorNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypeOperatorNode(node.Operator, node.Type), node.AsNode(), f.hooks)
+func (node *TypeOperatorNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypeOperatorNode(node.Operator, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTypeOperatorNode(node *Node) bool {
@@ -6940,8 +7033,8 @@ func (node *InferTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateInferTypeNode(node, v.visitNode(node.TypeParameter))
 }
 
-func (node *InferTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewInferTypeNode(node.TypeParameter), node.AsNode(), f.hooks)
+func (node *InferTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewInferTypeNode(node.TypeParameter), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsInferTypeNode(node *Node) bool {
@@ -6976,8 +7069,8 @@ func (node *ArrayTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateArrayTypeNode(node, v.visitNode(node.ElementType))
 }
 
-func (node *ArrayTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewArrayTypeNode(node.ElementType), node.AsNode(), f.hooks)
+func (node *ArrayTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewArrayTypeNode(node.ElementType), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // IndexedAccessTypeNode
@@ -7010,8 +7103,8 @@ func (node *IndexedAccessTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateIndexedAccessTypeNode(node, v.visitNode(node.ObjectType), v.visitNode(node.IndexType))
 }
 
-func (node *IndexedAccessTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewIndexedAccessTypeNode(node.ObjectType, node.IndexType), node.AsNode(), f.hooks)
+func (node *IndexedAccessTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewIndexedAccessTypeNode(node.ObjectType, node.IndexType), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsIndexedAccessTypeNode(node *Node) bool {
@@ -7048,8 +7141,8 @@ func (node *TypeReferenceNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypeReferenceNode(node, v.visitNode(node.TypeName), v.visitNodes(node.TypeArguments))
 }
 
-func (node *TypeReferenceNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypeReferenceNode(node.TypeName, node.TypeArguments), node.AsNode(), f.hooks)
+func (node *TypeReferenceNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypeReferenceNode(node.TypeName, node.TypeArguments), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTypeReferenceNode(node *Node) bool {
@@ -7087,8 +7180,8 @@ func (node *ExpressionWithTypeArguments) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateExpressionWithTypeArguments(node, v.visitNode(node.Expression), v.visitNodes(node.TypeArguments))
 }
 
-func (node *ExpressionWithTypeArguments) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewExpressionWithTypeArguments(node.Expression, node.TypeArguments), node.AsNode(), f.hooks)
+func (node *ExpressionWithTypeArguments) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewExpressionWithTypeArguments(node.Expression, node.TypeArguments), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ExpressionWithTypeArguments) computeSubtreeFacts() SubtreeFacts {
@@ -7128,8 +7221,8 @@ func (node *LiteralTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateLiteralTypeNode(node, v.visitNode(node.Literal))
 }
 
-func (node *LiteralTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewLiteralTypeNode(node.Literal), node.AsNode(), f.hooks)
+func (node *LiteralTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewLiteralTypeNode(node.Literal), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsLiteralTypeNode(node *Node) bool {
@@ -7146,8 +7239,8 @@ func (f *NodeFactory) NewThisTypeNode() *Node {
 	return f.newNode(KindThisType, &ThisTypeNode{})
 }
 
-func (node *ThisTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewThisTypeNode(), node.AsNode(), f.hooks)
+func (node *ThisTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewThisTypeNode(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsThisTypeNode(node *Node) bool {
@@ -7186,8 +7279,8 @@ func (node *TypePredicateNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypePredicateNode(node, v.visitNode(node.AssertsModifier), v.visitNode(node.ParameterName), v.visitNode(node.Type))
 }
 
-func (node *TypePredicateNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypePredicateNode(node.AssertsModifier, node.ParameterName, node.Type), node.AsNode(), f.hooks)
+func (node *TypePredicateNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypePredicateNode(node.AssertsModifier, node.ParameterName, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTypePredicateNode(node *Node) bool {
@@ -7230,8 +7323,8 @@ func (node *ImportTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateImportTypeNode(node, node.IsTypeOf, v.visitNode(node.Argument), v.visitNode(node.Attributes), v.visitNode(node.Qualifier), v.visitNodes(node.TypeArguments))
 }
 
-func (node *ImportTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewImportTypeNode(node.IsTypeOf, node.Argument, node.Attributes, node.Qualifier, node.TypeArguments), node.AsNode(), f.hooks)
+func (node *ImportTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewImportTypeNode(node.IsTypeOf, node.Argument, node.Attributes, node.Qualifier, node.TypeArguments), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsImportTypeNode(node *Node) bool {
@@ -7269,8 +7362,8 @@ func (node *ImportAttribute) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateImportAttribute(node, v.visitNode(node.name), v.visitNode(node.Value))
 }
 
-func (node *ImportAttribute) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewImportAttribute(node.Name(), node.Value), node.AsNode(), f.hooks)
+func (node *ImportAttribute) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewImportAttribute(node.Name(), node.Value), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportAttribute) computeSubtreeFacts() SubtreeFacts {
@@ -7315,8 +7408,8 @@ func (node *ImportAttributes) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateImportAttributes(node, v.visitNodes(node.Attributes))
 }
 
-func (node *ImportAttributes) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewImportAttributes(node.Token, node.Attributes, node.MultiLine), node.AsNode(), f.hooks)
+func (node *ImportAttributes) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewImportAttributes(node.Token, node.Attributes, node.MultiLine), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportAttributes) computeSubtreeFacts() SubtreeFacts {
@@ -7357,8 +7450,8 @@ func (node *TypeQueryNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypeQueryNode(node, v.visitNode(node.ExprName), v.visitNodes(node.TypeArguments))
 }
 
-func (node *TypeQueryNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypeQueryNode(node.ExprName, node.TypeArguments), node.AsNode(), f.hooks)
+func (node *TypeQueryNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypeQueryNode(node.ExprName, node.TypeArguments), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTypeQueryNode(node *Node) bool {
@@ -7406,8 +7499,8 @@ func (node *MappedTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateMappedTypeNode(node, v.visitToken(node.ReadonlyToken), v.visitNode(node.TypeParameter), v.visitNode(node.NameType), v.visitToken(node.QuestionToken), v.visitNode(node.Type), v.visitNodes(node.Members))
 }
 
-func (node *MappedTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewMappedTypeNode(node.ReadonlyToken, node.TypeParameter, node.NameType, node.QuestionToken, node.Type, node.Members), node.AsNode(), f.hooks)
+func (node *MappedTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewMappedTypeNode(node.ReadonlyToken, node.TypeParameter, node.NameType, node.QuestionToken, node.Type, node.Members), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsMappedTypeNode(node *Node) bool {
@@ -7443,8 +7536,8 @@ func (node *TypeLiteralNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTypeLiteralNode(node, v.visitNodes(node.Members))
 }
 
-func (node *TypeLiteralNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTypeLiteralNode(node.Members), node.AsNode(), f.hooks)
+func (node *TypeLiteralNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTypeLiteralNode(node.Members), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTypeLiteralNode(node *Node) bool {
@@ -7479,8 +7572,8 @@ func (node *TupleTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTupleTypeNode(node, v.visitNodes(node.Elements))
 }
 
-func (node *TupleTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTupleTypeNode(node.Elements), node.AsNode(), f.hooks)
+func (node *TupleTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTupleTypeNode(node.Elements), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTupleTypeNode(node *Node) bool {
@@ -7522,8 +7615,8 @@ func (node *NamedTupleMember) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateNamedTupleMember(node, v.visitToken(node.DotDotDotToken), v.visitNode(node.name), v.visitToken(node.QuestionToken), v.visitNode(node.Type))
 }
 
-func (node *NamedTupleMember) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewNamedTupleMember(node.DotDotDotToken, node.Name(), node.QuestionToken, node.Type), node.AsNode(), f.hooks)
+func (node *NamedTupleMember) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewNamedTupleMember(node.DotDotDotToken, node.Name(), node.QuestionToken, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *NamedTupleMember) Name() *DeclarationName {
@@ -7562,8 +7655,8 @@ func (node *OptionalTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateOptionalTypeNode(node, v.visitNode(node.Type))
 }
 
-func (node *OptionalTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewOptionalTypeNode(node.Type), node.AsNode(), f.hooks)
+func (node *OptionalTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewOptionalTypeNode(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsOptionalTypeNode(node *Node) bool {
@@ -7598,8 +7691,8 @@ func (node *RestTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateRestTypeNode(node, v.visitNode(node.Type))
 }
 
-func (node *RestTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewRestTypeNode(node.Type), node.AsNode(), f.hooks)
+func (node *RestTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewRestTypeNode(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsRestTypeNode(node *Node) bool {
@@ -7634,8 +7727,8 @@ func (node *ParenthesizedTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateParenthesizedTypeNode(node, v.visitNode(node.Type))
 }
 
-func (node *ParenthesizedTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewParenthesizedTypeNode(node.Type), node.AsNode(), f.hooks)
+func (node *ParenthesizedTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewParenthesizedTypeNode(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsParenthesizedTypeNode(node *Node) bool {
@@ -7680,8 +7773,8 @@ func (node *FunctionTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateFunctionTypeNode(node, v.visitNodes(node.TypeParameters), v.visitNodes(node.Parameters), v.visitNode(node.Type))
 }
 
-func (node *FunctionTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewFunctionTypeNode(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.hooks)
+func (node *FunctionTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewFunctionTypeNode(node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsFunctionTypeNode(node *Node) bool {
@@ -7714,8 +7807,8 @@ func (node *ConstructorTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateConstructorTypeNode(node, v.visitModifiers(node.modifiers), v.visitNodes(node.TypeParameters), v.visitNodes(node.Parameters), v.visitNode(node.Type))
 }
 
-func (node *ConstructorTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewConstructorTypeNode(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.hooks)
+func (node *ConstructorTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewConstructorTypeNode(node.Modifiers(), node.TypeParameters, node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsConstructorTypeNode(node *Node) bool {
@@ -7749,8 +7842,8 @@ func (f *NodeFactory) NewTemplateHead(text string, rawText string, templateFlags
 	return f.newNode(KindTemplateHead, data)
 }
 
-func (node *TemplateHead) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTemplateHead(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.hooks)
+func (node *TemplateHead) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTemplateHead(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // TemplateMiddle
@@ -7769,8 +7862,8 @@ func (f *NodeFactory) NewTemplateMiddle(text string, rawText string, templateFla
 	return f.newNode(KindTemplateMiddle, data)
 }
 
-func (node *TemplateMiddle) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTemplateMiddle(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.hooks)
+func (node *TemplateMiddle) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTemplateMiddle(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // TemplateTail
@@ -7789,8 +7882,8 @@ func (f *NodeFactory) NewTemplateTail(text string, rawText string, templateFlags
 	return f.newNode(KindTemplateTail, data)
 }
 
-func (node *TemplateTail) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTemplateTail(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.hooks)
+func (node *TemplateTail) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTemplateTail(node.Text, node.RawText, node.TemplateFlags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // TemplateLiteralTypeNode
@@ -7823,8 +7916,8 @@ func (node *TemplateLiteralTypeNode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTemplateLiteralTypeNode(node, v.visitNode(node.Head), v.visitNodes(node.TemplateSpans))
 }
 
-func (node *TemplateLiteralTypeNode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTemplateLiteralTypeNode(node.Head, node.TemplateSpans), node.AsNode(), f.hooks)
+func (node *TemplateLiteralTypeNode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTemplateLiteralTypeNode(node.Head, node.TemplateSpans), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // TemplateLiteralTypeSpan
@@ -7858,8 +7951,8 @@ func (node *TemplateLiteralTypeSpan) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateTemplateLiteralTypeSpan(node, v.visitNode(node.Type), v.visitNode(node.Literal))
 }
 
-func (node *TemplateLiteralTypeSpan) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewTemplateLiteralTypeSpan(node.Type, node.Literal), node.AsNode(), f.hooks)
+func (node *TemplateLiteralTypeSpan) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewTemplateLiteralTypeSpan(node.Type, node.Literal), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsTemplateLiteralTypeSpan(node *Node) bool {
@@ -7883,8 +7976,8 @@ func (f *NodeFactory) NewSyntheticExpression(t any, isSpread bool, tupleNameSour
 	return f.newNode(KindSyntheticExpression, data)
 }
 
-func (node *SyntheticExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewSyntheticExpression(node.Type, node.IsSpread, node.TupleNameSource), node.AsNode(), f.hooks)
+func (node *SyntheticExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSyntheticExpression(node.Type, node.IsSpread, node.TupleNameSource), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsSyntheticExpression(node *Node) bool {
@@ -7919,8 +8012,8 @@ func (node *PartiallyEmittedExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdatePartiallyEmittedExpression(node, v.visitNode(node.Expression))
 }
 
-func (node *PartiallyEmittedExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewPartiallyEmittedExpression(node.Expression), node.AsNode(), f.hooks)
+func (node *PartiallyEmittedExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewPartiallyEmittedExpression(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *PartiallyEmittedExpression) computeSubtreeFacts() SubtreeFacts {
@@ -7968,8 +8061,8 @@ func (node *JsxElement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxElement(node, v.visitNode(node.OpeningElement), v.visitNodes(node.Children), v.visitNode(node.ClosingElement))
 }
 
-func (node *JsxElement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxElement(node.OpeningElement, node.Children, node.ClosingElement), node.AsNode(), f.hooks)
+func (node *JsxElement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxElement(node.OpeningElement, node.Children, node.ClosingElement), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxElement) computeSubtreeFacts() SubtreeFacts {
@@ -8012,8 +8105,8 @@ func (node *JsxAttributes) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxAttributes(node, v.visitNodes(node.Properties))
 }
 
-func (node *JsxAttributes) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxAttributes(node.Properties), node.AsNode(), f.hooks)
+func (node *JsxAttributes) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxAttributes(node.Properties), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxAttributes) computeSubtreeFacts() SubtreeFacts {
@@ -8056,8 +8149,8 @@ func (node *JsxNamespacedName) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxNamespacedName(node, v.visitNode(node.name), v.visitNode(node.Namespace))
 }
 
-func (node *JsxNamespacedName) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxNamespacedName(node.Name(), node.Namespace), node.AsNode(), f.hooks)
+func (node *JsxNamespacedName) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxNamespacedName(node.Name(), node.Namespace), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxNamespacedName) Name() *DeclarationName {
@@ -8107,8 +8200,8 @@ func (node *JsxOpeningElement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxOpeningElement(node, v.visitNode(node.TagName), v.visitNodes(node.TypeArguments), v.visitNode(node.Attributes))
 }
 
-func (node *JsxOpeningElement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxOpeningElement(node.TagName, node.TypeArguments, node.Attributes), node.AsNode(), f.hooks)
+func (node *JsxOpeningElement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxOpeningElement(node.TagName, node.TypeArguments, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxOpeningElement) computeSubtreeFacts() SubtreeFacts {
@@ -8155,8 +8248,8 @@ func (node *JsxSelfClosingElement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxSelfClosingElement(node, v.visitNode(node.TagName), v.visitNodes(node.TypeArguments), v.visitNode(node.Attributes))
 }
 
-func (node *JsxSelfClosingElement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxSelfClosingElement(node.TagName, node.TypeArguments, node.Attributes), node.AsNode(), f.hooks)
+func (node *JsxSelfClosingElement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxSelfClosingElement(node.TagName, node.TypeArguments, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxSelfClosingElement) computeSubtreeFacts() SubtreeFacts {
@@ -8203,13 +8296,17 @@ func (node *JsxFragment) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxFragment(node, v.visitNode(node.OpeningFragment), v.visitNodes(node.Children), v.visitNode(node.ClosingFragment))
 }
 
-func (node *JsxFragment) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxFragment(node.OpeningFragment, node.Children, node.ClosingFragment), node.AsNode(), f.hooks)
+func (node *JsxFragment) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxFragment(node.OpeningFragment, node.Children, node.ClosingFragment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxFragment) computeSubtreeFacts() SubtreeFacts {
 	return propagateNodeListSubtreeFacts(node.Children, propagateSubtreeFacts) |
 		SubtreeContainsJsx
+}
+
+func IsJsxFragment(node *Node) bool {
+	return node.Kind == KindJsxFragment
 }
 
 /// The opening element of a <>...</> JsxFragment
@@ -8222,8 +8319,8 @@ func (f *NodeFactory) NewJsxOpeningFragment() *Node {
 	return f.newNode(KindJsxOpeningFragment, &JsxOpeningFragment{})
 }
 
-func (node *JsxOpeningFragment) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxOpeningFragment(), node.AsNode(), f.hooks)
+func (node *JsxOpeningFragment) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxOpeningFragment(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxOpeningFragment) computeSubtreeFacts() SubtreeFacts {
@@ -8244,8 +8341,8 @@ func (f *NodeFactory) NewJsxClosingFragment() *Node {
 	return f.newNode(KindJsxClosingFragment, &JsxClosingFragment{})
 }
 
-func (node *JsxClosingFragment) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxClosingFragment(), node.AsNode(), f.hooks)
+func (node *JsxClosingFragment) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxClosingFragment(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxClosingFragment) computeSubtreeFacts() SubtreeFacts {
@@ -8284,8 +8381,8 @@ func (node *JsxAttribute) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxAttribute(node, v.visitNode(node.name), v.visitNode(node.Initializer))
 }
 
-func (node *JsxAttribute) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxAttribute(node.Name(), node.Initializer), node.AsNode(), f.hooks)
+func (node *JsxAttribute) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxAttribute(node.Name(), node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxAttribute) Name() *JsxAttributeName {
@@ -8330,8 +8427,8 @@ func (node *JsxSpreadAttribute) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxSpreadAttribute(node, v.visitNode(node.Expression))
 }
 
-func (node *JsxSpreadAttribute) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxSpreadAttribute(node.Expression), node.AsNode(), f.hooks)
+func (node *JsxSpreadAttribute) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxSpreadAttribute(node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxSpreadAttribute) computeSubtreeFacts() SubtreeFacts {
@@ -8370,8 +8467,8 @@ func (node *JsxClosingElement) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxClosingElement(node, v.visitNode(node.TagName))
 }
 
-func (node *JsxClosingElement) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxClosingElement(node.TagName), node.AsNode(), f.hooks)
+func (node *JsxClosingElement) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxClosingElement(node.TagName), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxClosingElement) computeSubtreeFacts() SubtreeFacts {
@@ -8412,8 +8509,8 @@ func (node *JsxExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJsxExpression(node, v.visitToken(node.DotDotDotToken), v.visitNode(node.Expression))
 }
 
-func (node *JsxExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxExpression(node.DotDotDotToken, node.Expression), node.AsNode(), f.hooks)
+func (node *JsxExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxExpression(node.DotDotDotToken, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxExpression) computeSubtreeFacts() SubtreeFacts {
@@ -8440,8 +8537,8 @@ func (f *NodeFactory) NewJsxText(text string, containsOnlyTriviaWhiteSpace bool)
 	return f.newNode(KindJsxText, data)
 }
 
-func (node *JsxText) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJsxText(node.Text, node.ContainsOnlyTriviaWhiteSpaces), node.AsNode(), f.hooks)
+func (node *JsxText) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJsxText(node.Text, node.ContainsOnlyTriviaWhiteSpaces), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JsxText) computeSubtreeFacts() SubtreeFacts {
@@ -8469,8 +8566,8 @@ func (node *SyntaxList) ForEachChild(v Visitor) bool {
 	return visitNodes(v, node.Children)
 }
 
-func (node *SyntaxList) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewSyntaxList(node.Children), node.AsNode(), f.hooks)
+func (node *SyntaxList) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSyntaxList(node.Children), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 /// JSDoc ///
@@ -8503,8 +8600,8 @@ func (node *JSDoc) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDoc(node, v.visitNodes(node.Comment), v.visitNodes(node.Tags))
 }
 
-func (node *JSDoc) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDoc(node.Comment, node.Tags), node.AsNode(), f.hooks)
+func (node *JSDoc) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDoc(node.Comment, node.Tags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 type JSDocTagBase struct {
@@ -8530,8 +8627,8 @@ func (f *NodeFactory) NewJSDocText(text string) *Node {
 	return f.newNode(KindJSDocText, data)
 }
 
-func (node *JSDocText) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocText(node.Text), node.AsNode(), f.hooks)
+func (node *JSDocText) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocText(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 type JSDocLink struct {
@@ -8562,8 +8659,8 @@ func (node *JSDocLink) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocLink(node, v.visitNode(node.name), node.Text)
 }
 
-func (node *JSDocLink) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocLink(node.Name(), node.Text), node.AsNode(), f.hooks)
+func (node *JSDocLink) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocLink(node.Name(), node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocLink) Name() *DeclarationName {
@@ -8598,8 +8695,8 @@ func (node *JSDocLinkPlain) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocLinkPlain(node, v.visitNode(node.name), node.Text)
 }
 
-func (node *JSDocLinkPlain) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocLinkPlain(node.Name(), node.Text), node.AsNode(), f.hooks)
+func (node *JSDocLinkPlain) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocLinkPlain(node.Name(), node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocLinkPlain) Name() *DeclarationName {
@@ -8634,8 +8731,8 @@ func (node *JSDocLinkCode) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocLinkCode(node, v.visitNode(node.name), node.Text)
 }
 
-func (node *JSDocLinkCode) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocLinkCode(node.Name(), node.Text), node.AsNode(), f.hooks)
+func (node *JSDocLinkCode) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocLinkCode(node.Name(), node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocLinkCode) Name() *DeclarationName {
@@ -8671,8 +8768,8 @@ func (node *JSDocTypeExpression) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocTypeExpression(node, v.visitNode(node.Type))
 }
 
-func (node *JSDocTypeExpression) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTypeExpression(node.Type), node.AsNode(), f.hooks)
+func (node *JSDocTypeExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocTypeExpression(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocNonNullableType
@@ -8703,8 +8800,8 @@ func (node *JSDocNonNullableType) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocNonNullableType(node, v.visitNode(node.Type))
 }
 
-func (node *JSDocNonNullableType) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocNonNullableType(node.Type), node.AsNode(), f.hooks)
+func (node *JSDocNonNullableType) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocNonNullableType(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsJSDocNonNullableType(node *Node) bool {
@@ -8739,8 +8836,8 @@ func (node *JSDocNullableType) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocNullableType(node, v.visitNode(node.Type))
 }
 
-func (node *JSDocNullableType) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocNullableType(node.Type), node.AsNode(), f.hooks)
+func (node *JSDocNullableType) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocNullableType(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsJSDocNullableType(node *Node) bool {
@@ -8758,8 +8855,8 @@ func (f *NodeFactory) NewJSDocAllType() *Node {
 	return f.newNode(KindJSDocAllType, data)
 }
 
-func (node *JSDocAllType) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocAllType(), node.AsNode(), f.hooks)
+func (node *JSDocAllType) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocAllType(), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocVariadicType
@@ -8790,8 +8887,8 @@ func (node *JSDocVariadicType) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocVariadicType(node, v.visitNode(node.Type))
 }
 
-func (node *JSDocVariadicType) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocVariadicType(node.Type), node.AsNode(), f.hooks)
+func (node *JSDocVariadicType) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocVariadicType(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocOptionalType
@@ -8822,8 +8919,8 @@ func (node *JSDocOptionalType) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocOptionalType(node, v.visitNode(node.Type))
 }
 
-func (node *JSDocOptionalType) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocOptionalType(node.Type), node.AsNode(), f.hooks)
+func (node *JSDocOptionalType) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocOptionalType(node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocTypeTag
@@ -8856,8 +8953,8 @@ func (node *JSDocTypeTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocTypeTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocTypeTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTypeTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocTypeTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocTypeTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsJSDocTypeTag(node *Node) bool {
@@ -8891,8 +8988,8 @@ func (node *JSDocUnknownTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocUnknownTag(node, v.visitNode(node.TagName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocUnknownTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocUnknownTag(node.TagName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocUnknownTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocUnknownTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsJSDocUnknownTag(node *Node) bool {
@@ -8930,8 +9027,8 @@ func (node *JSDocTemplateTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocTemplateTag(node, v.visitNode(node.TagName), v.visitNode(node.Constraint), v.visitNodes(node.typeParameters), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocTemplateTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters(), node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocTemplateTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters(), node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocTemplateTag) TypeParameters() *TypeParameterList { return node.typeParameters }
@@ -8982,8 +9079,8 @@ func (node *JSDocPropertyTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocPropertyTag(node, tagName, name, node.IsBracketed, typeExpression, node.IsNameFirst, v.visitNodes(node.Comment))
 }
 
-func (node *JSDocPropertyTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocPropertyTag(node.TagName, node.Name(), node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocPropertyTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocPropertyTag(node.TagName, node.Name(), node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocPropertyTag) Name() *EntityName { return node.name }
@@ -9037,8 +9134,8 @@ func (node *JSDocParameterTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocParameterTag(node, tagName, name, node.IsBracketed, typeExpression, node.IsNameFirst, v.visitNodes(node.Comment))
 }
 
-func (node *JSDocParameterTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocParameterTag(node.TagName, node.Name(), node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocParameterTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocParameterTag(node.TagName, node.Name(), node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocParameterTag) Name() *EntityName { return node.name }
@@ -9072,8 +9169,8 @@ func (node *JSDocReturnTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocReturnTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocReturnTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocReturnTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocReturnTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocReturnTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsJSDocReturnTag(node *Node) bool {
@@ -9107,8 +9204,8 @@ func (node *JSDocPublicTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocPublicTag(node, v.visitNode(node.TagName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocPublicTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocPublicTag(node.TagName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocPublicTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocPublicTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocPrivateTag
@@ -9138,8 +9235,8 @@ func (node *JSDocPrivateTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocPrivateTag(node, v.visitNode(node.TagName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocPrivateTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocPrivateTag(node.TagName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocPrivateTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocPrivateTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocProtectedTag
@@ -9169,8 +9266,8 @@ func (node *JSDocProtectedTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocProtectedTag(node, v.visitNode(node.TagName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocProtectedTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocProtectedTag(node.TagName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocProtectedTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocProtectedTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocReadonlyTag
@@ -9200,8 +9297,8 @@ func (node *JSDocReadonlyTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocReadonlyTag(node, v.visitNode(node.TagName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocReadonlyTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocReadonlyTag(node.TagName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocReadonlyTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocReadonlyTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocOverrideTag
@@ -9231,8 +9328,8 @@ func (node *JSDocOverrideTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocOverrideTag(node, v.visitNode(node.TagName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocOverrideTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocOverrideTag(node.TagName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocOverrideTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocOverrideTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocDeprecatedTag
@@ -9262,8 +9359,8 @@ func (node *JSDocDeprecatedTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocDeprecatedTag(node, v.visitNode(node.TagName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocDeprecatedTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocDeprecatedTag(node.TagName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocDeprecatedTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocDeprecatedTag(node.TagName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func IsJSDocDeprecatedTag(node *Node) bool {
@@ -9299,8 +9396,8 @@ func (node *JSDocSeeTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocSeeTag(node, v.visitNode(node.TagName), v.visitNode(node.NameExpression), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocSeeTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocSeeTag(node.TagName, node.NameExpression, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocSeeTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocSeeTag(node.TagName, node.NameExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocImplementsTag
@@ -9332,8 +9429,8 @@ func (node *JSDocImplementsTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocImplementsTag(node, v.visitNode(node.TagName), v.visitNode(node.ClassName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocImplementsTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocImplementsTag(node.TagName, node.ClassName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocImplementsTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocImplementsTag(node.TagName, node.ClassName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocAugmentsTag
@@ -9365,8 +9462,8 @@ func (node *JSDocAugmentsTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocAugmentsTag(node, v.visitNode(node.TagName), v.visitNode(node.ClassName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocAugmentsTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocAugmentsTag(node.TagName, node.ClassName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocAugmentsTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocAugmentsTag(node.TagName, node.ClassName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocSatisfiesTag
@@ -9398,8 +9495,8 @@ func (node *JSDocSatisfiesTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocSatisfiesTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocSatisfiesTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocSatisfiesTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocSatisfiesTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocSatisfiesTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocThisTag
@@ -9431,15 +9528,15 @@ func (node *JSDocThisTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocThisTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocThisTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocThisTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocThisTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocThisTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocImportTag
 type JSDocImportTag struct {
 	JSDocTagBase
 	ImportClause    *Declaration
-	ModuleSpecifier *Node
+	ModuleSpecifier *Expression
 	Attributes      *Node
 }
 
@@ -9468,8 +9565,12 @@ func (node *JSDocImportTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocImportTag(node, v.visitNode(node.TagName), v.visitNode(node.ImportClause), v.visitNode(node.ModuleSpecifier), v.visitNode(node.Attributes), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocImportTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocImportTag(node.TagName, node.ImportClause, node.ModuleSpecifier, node.Attributes, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocImportTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocImportTag(node.TagName, node.ImportClause, node.ModuleSpecifier, node.Attributes, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocImportTag(node *Node) bool {
+	return node.Kind == KindJSDocImportTag
 }
 
 // JSDocCallbackTag
@@ -9503,8 +9604,8 @@ func (node *JSDocCallbackTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocCallbackTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNode(node.FullName), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocCallbackTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocCallbackTag(node.TagName, node.TypeExpression, node.FullName, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocCallbackTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocCallbackTag(node.TagName, node.TypeExpression, node.FullName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocOverloadTag
@@ -9536,8 +9637,8 @@ func (node *JSDocOverloadTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocOverloadTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocOverloadTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocOverloadTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocOverloadTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocOverloadTag(node.TagName, node.TypeExpression, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocTypedefTag
@@ -9574,8 +9675,8 @@ func (node *JSDocTypedefTag) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocTypedefTag(node, v.visitNode(node.TagName), v.visitNode(node.TypeExpression), v.visitNode(node.name), v.visitNodes(node.Comment))
 }
 
-func (node *JSDocTypedefTag) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTypedefTag(node.TagName, node.TypeExpression, node.name, node.Comment), node.AsNode(), f.hooks)
+func (node *JSDocTypedefTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocTypedefTag(node.TagName, node.TypeExpression, node.name, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocTypedefTag) Name() *DeclarationName { return node.name }
@@ -9611,8 +9712,8 @@ func (node *JSDocTypeLiteral) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocTypeLiteral(node, jsdocPropertyTags, node.IsArrayType)
 }
 
-func (node *JSDocTypeLiteral) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocTypeLiteral(node.JSDocPropertyTags, node.IsArrayType), node.AsNode(), f.hooks)
+func (node *JSDocTypeLiteral) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocTypeLiteral(node.JSDocPropertyTags, node.IsArrayType), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 // JSDocSignature
@@ -9646,8 +9747,8 @@ func (node *JSDocSignature) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocSignature(node, v.visitNodes(node.typeParameters), v.visitNodes(node.Parameters), v.visitNode(node.Type))
 }
 
-func (node *JSDocSignature) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocSignature(node.TypeParameters(), node.Parameters, node.Type), node.AsNode(), f.hooks)
+func (node *JSDocSignature) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocSignature(node.TypeParameters(), node.Parameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocSignature) TypeParameters() *TypeParameterList { return node.typeParameters }
@@ -9679,8 +9780,8 @@ func (node *JSDocNameReference) VisitEachChild(v *NodeVisitor) *Node {
 	return v.Factory.UpdateJSDocNameReference(node, v.visitNode(node.name))
 }
 
-func (node *JSDocNameReference) Clone(f *NodeFactory) *Node {
-	return cloneNode(f.NewJSDocNameReference(node.Name()), node.AsNode(), f.hooks)
+func (node *JSDocNameReference) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewJSDocNameReference(node.Name()), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocNameReference) Name() *EntityName { return node.name }
@@ -9876,11 +9977,11 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.Flags |= other.Flags
 }
 
-func (node *SourceFile) Clone(f *NodeFactory) *Node {
-	updated := f.NewSourceFile(node.Text(), node.FileName(), node.Path(), node.Statements)
+func (node *SourceFile) Clone(f NodeFactoryCoercible) *Node {
+	updated := f.AsNodeFactory().NewSourceFile(node.Text(), node.FileName(), node.Path(), node.Statements)
 	newFile := updated.AsSourceFile()
 	newFile.copyFrom(node)
-	return cloneNode(updated, node.AsNode(), f.hooks)
+	return cloneNode(updated, node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *SourceFile) computeSubtreeFacts() SubtreeFacts {
@@ -9940,7 +10041,7 @@ func (node *SourceFile) GetOrCreateToken(
 			panic(fmt.Sprintf("Token cache mismatch: %v != %v", token.Kind, kind))
 		}
 		if token.Parent != parent {
-			panic("Token cache mismatch: parent")
+			panic(fmt.Sprintf("Token cache mismatch: parent. Expected parent of kind %v, got %v", token.Parent.Kind, parent.Kind))
 		}
 		return token
 	}

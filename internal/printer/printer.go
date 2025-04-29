@@ -1092,7 +1092,7 @@ func (p *Printer) emitIdentifierNameNode(node *ast.IdentifierNode) {
 func (p *Printer) getUniqueHelperName(name string) *ast.IdentifierNode {
 	helperName := p.uniqueHelperNames[name]
 	if helperName == nil {
-		helperName := p.emitContext.NewUniqueName(name, AutoGenerateOptions{Flags: GeneratedIdentifierFlagsFileLevel | GeneratedIdentifierFlagsOptimistic})
+		helperName := p.emitContext.Factory.NewUniqueNameEx(name, AutoGenerateOptions{Flags: GeneratedIdentifierFlagsFileLevel | GeneratedIdentifierFlagsOptimistic})
 		p.generateName(helperName)
 		p.uniqueHelperNames[name] = helperName
 		return helperName
@@ -3740,6 +3740,24 @@ func (p *Printer) emitExportAssignment(node *ast.ExportAssignment) {
 	p.exitNode(node.AsNode(), state)
 }
 
+// export declare var <name> = <initialiser>;
+func (p *Printer) emitCommonJSExport(node *ast.CommonJSExport) {
+	state := p.enterNode(node.AsNode())
+	p.emitToken(ast.KindExportKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	p.writeSpace()
+	p.writeKeyword("var")
+	p.writeSpace()
+	if node.Name().Kind == ast.KindStringLiteral {
+		// TODO: This doesn't work for illegal names.
+		p.write(node.Name().AsStringLiteral().Text)
+	} else {
+		p.emitBindingName(node.Name())
+	}
+	p.emitInitializer(node.Initializer, node.Name().End(), node.AsNode())
+	p.writeTrailingSemicolon()
+	p.exitNode(node.AsNode(), state)
+}
+
 func (p *Printer) emitExportDeclaration(node *ast.ExportDeclaration) {
 	state := p.enterNode(node.AsNode())
 	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
@@ -3937,10 +3955,12 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
 	case ast.KindImportDeclaration:
 		p.emitImportDeclaration(node.AsImportDeclaration())
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		p.emitExportAssignment(node.AsExportAssignment())
 	case ast.KindExportDeclaration:
 		p.emitExportDeclaration(node.AsExportDeclaration())
+	case ast.KindCommonJSExport:
+		p.emitCommonJSExport(node.AsCommonJSExport())
 
 	default:
 		panic(fmt.Sprintf("unhandled statement: %v", node.Kind))
@@ -4319,22 +4339,6 @@ func (p *Printer) emitPrologueDirectives(statements *ast.StatementList) int {
 		}
 	}
 	return len(statements.Nodes)
-}
-
-func compareEmitHelpers(x *EmitHelper, y *EmitHelper) int {
-	if x == y {
-		return 0
-	}
-	if x.Priority == y.Priority {
-		return 0
-	}
-	if x.Priority == nil {
-		return 1
-	}
-	if y.Priority == nil {
-		return -1
-	}
-	return x.Priority.Value - y.Priority.Value
 }
 
 func (p *Printer) emitHelpers(node *ast.Node) bool {
@@ -5171,7 +5175,7 @@ func (p *Printer) emitLeadingComments(pos int, elided bool) bool {
 	}
 
 	var comments []ast.CommentRange
-	for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory, p.currentSourceFile.Text(), pos) {
+	for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pos) {
 		if p.shouldWriteComment(comment) && p.shouldEmitCommentIfTripleSlash(comment, tripleSlash) {
 			comments = append(comments, comment)
 		}
@@ -5210,7 +5214,7 @@ func (p *Printer) emitTrailingComments(pos int, commentSeparator commentSeparato
 	}
 
 	var comments []ast.CommentRange
-	for comment := range scanner.GetTrailingCommentRanges(p.emitContext.Factory, p.currentSourceFile.Text(), pos) {
+	for comment := range scanner.GetTrailingCommentRanges(p.emitContext.Factory.AsNodeFactory(), p.currentSourceFile.Text(), pos) {
 		if p.shouldWriteComment(comment) {
 			comments = append(comments, comment)
 		}
@@ -5245,7 +5249,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 		//
 		//      var x = 10;
 		if textRange.Pos() == 0 {
-			for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory, text, textRange.Pos()) {
+			for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, textRange.Pos()) {
 				if isPinnedComment(text, comment) {
 					leadingComments = append(leadingComments, comment)
 				}
@@ -5253,7 +5257,7 @@ func (p *Printer) emitDetachedComments(textRange core.TextRange) (result detache
 		}
 	} else {
 		// removeComments is false, just get detached as normal and bypass the process to filter comment
-		leadingComments = slices.Collect(scanner.GetLeadingCommentRanges(p.emitContext.Factory, text, textRange.Pos()))
+		leadingComments = slices.Collect(scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, textRange.Pos()))
 	}
 
 	if len(leadingComments) > 0 {
