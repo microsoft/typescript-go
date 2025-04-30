@@ -610,3 +610,17 @@ func nodeEndsWith(n *ast.Node, expectedLastToken ast.Kind, sourceFile *ast.Sourc
 	}
 	return false
 }
+
+// Returns the node in an `extends` or `implements` clause of a class or interface.
+func getAllSuperTypeNodes(node *ast.Node) []*ast.TypeNode {
+	if ast.IsInterfaceDeclaration(node) {
+		return ast.GetHeritageElements(node, ast.KindExtendsKeyword)
+	}
+	if ast.IsClassLike(node) {
+		return append(
+			[]*ast.Node{ast.GetClassExtendsHeritageElement(node)},
+			ast.GetImplementsTypeNodes(node)...,
+		)
+	}
+	return nil
+}

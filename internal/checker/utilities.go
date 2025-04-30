@@ -869,7 +869,7 @@ func compareTypeMappers(m1, m2 *TypeMapper) int {
 	return 0
 }
 
-func getDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
+func GetDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
 	return getDeclarationModifierFlagsFromSymbolEx(s, false /*isWrite*/)
 }
 
@@ -1068,7 +1068,7 @@ func isNumericLiteralName(name string) bool {
 	return jsnum.FromString(name).String() == name
 }
 
-func getPropertyNameForPropertyNameNode(name *ast.Node) string {
+func GetPropertyNameForPropertyNameNode(name *ast.Node) string {
 	switch name.Kind {
 	case ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral,
 		ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindJsxNamespacedName:
@@ -1326,15 +1326,6 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
 		return ast.IsInterfaceDeclaration(n) || ast.IsTypeOrJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
 	}) != nil
-}
-
-func isVariableLike(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindBindingElement, ast.KindEnumMember, ast.KindParameter, ast.KindPropertyAssignment, ast.KindPropertyDeclaration,
-		ast.KindPropertySignature, ast.KindShorthandPropertyAssignment, ast.KindVariableDeclaration:
-		return true
-	}
-	return false
 }
 
 func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
@@ -1958,7 +1949,7 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 	case ast.IsElementAccessExpression(expr):
 		baseStr := tryGetPropertyAccessOrIdentifierToString(expr.Expression())
 		if baseStr != "" && ast.IsPropertyName(expr.AsElementAccessExpression().ArgumentExpression) {
-			return baseStr + "." + getPropertyNameForPropertyNameNode(expr.AsElementAccessExpression().ArgumentExpression)
+			return baseStr + "." + GetPropertyNameForPropertyNameNode(expr.AsElementAccessExpression().ArgumentExpression)
 		}
 	case ast.IsIdentifier(expr):
 		return expr.Text()

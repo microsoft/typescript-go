@@ -1525,14 +1525,14 @@ func GetExtendsHeritageClauseElement(node *Node) *ExpressionWithTypeArgumentsNod
 }
 
 func GetExtendsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgumentsNode {
-	return getHeritageElements(node, KindExtendsKeyword)
+	return GetHeritageElements(node, KindExtendsKeyword)
 }
 
 func GetImplementsHeritageClauseElements(node *Node) []*ExpressionWithTypeArgumentsNode {
-	return getHeritageElements(node, KindImplementsKeyword)
+	return GetHeritageElements(node, KindImplementsKeyword)
 }
 
-func getHeritageElements(node *Node, kind Kind) []*Node {
+func GetHeritageElements(node *Node, kind Kind) []*Node {
 	clause := getHeritageClause(node, kind)
 	if clause != nil {
 		return clause.AsHeritageClause().Types.Nodes
@@ -2804,4 +2804,65 @@ func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
 
 func IsTypeReferenceType(node *Node) bool {
 	return node.Kind == KindTypeReference || node.Kind == KindExpressionWithTypeArguments
+}
+
+func IsVariableLike(node *Node) bool {
+	switch node.Kind {
+	case KindBindingElement, KindEnumMember, KindParameter, KindPropertyAssignment, KindPropertyDeclaration,
+		KindPropertySignature, KindShorthandPropertyAssignment, KindVariableDeclaration:
+		return true
+	}
+	return false
+}
+
+func HasInitializer(node *Node) bool {
+	switch node.Kind {
+	case KindVariableDeclaration, KindParameter, KindBindingElement, KindPropertyDeclaration,
+		KindPropertyAssignment, KindEnumMember, KindForStatement, KindForInStatement, KindForOfStatement,
+		KindJsxAttribute:
+		return node.Initializer() != nil
+	default:
+		return false
+	}
+}
+
+func GetTypeAnnotationNode(node *Node) *TypeNode {
+	switch node.Kind {
+	case KindVariableDeclaration, KindParameter, KindPropertySignature, KindPropertyDeclaration,
+		KindTypePredicate, KindParenthesizedType, KindTypeOperator, KindMappedType, KindTypeAssertionExpression,
+		KindAsExpression, KindSatisfiesExpression, KindTypeAliasDeclaration, KindJSTypeAliasDeclaration,
+		KindNamedTupleMember, KindOptionalType, KindRestType, KindTemplateLiteralTypeSpan, KindJSDocTypeExpression,
+		KindJSDocPropertyTag, KindJSDocNullableType, KindJSDocNonNullableType, KindJSDocOptionalType:
+		return node.Type()
+	default:
+		funcLike := node.FunctionLikeData()
+		if funcLike != nil {
+			return funcLike.Type
+		}
+		return nil
+	}
+}
+
+func IsObjectTypeDeclaration(node *Node) bool {
+	return IsClassLike(node) || IsInterfaceDeclaration(node) || IsTypeLiteralNode(node)
+}
+
+func IsClassOrTypeElement(node *Node) bool {
+	return IsClassElement(node) || IsTypeElement(node)
+}
+
+func GetClassExtendsHeritageElement(node *Node) *ExpressionWithTypeArgumentsNode {
+	heritageElements := GetHeritageElements(node, KindExtendsKeyword)
+	if len(heritageElements) > 0 {
+		return heritageElements[0]
+	}
+	return nil
+}
+
+func GetImplementsTypeNodes(node *Node) []*ExpressionWithTypeArgumentsNode {
+	return GetHeritageElements(node, KindImplementsKeyword)
+}
+
+func IsTypeKeywordToken(node *Node) bool {
+	return node.Kind == KindTypeKeyword
 }
