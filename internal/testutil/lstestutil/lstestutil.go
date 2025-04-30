@@ -1,4 +1,4 @@
-package ls
+package lstestutil
 
 import (
 	"fmt"
@@ -21,9 +21,9 @@ type Marker struct {
 }
 
 type TestData struct {
-	Files           []TestFileInfo
-	MarkerPositions map[string]Marker
-	//markers         []marker
+	Files           []*TestFileInfo
+	MarkerPositions map[string]*Marker
+	//markers         []*Marker
 	/**
 	 * Inserted in source files by surrounding desired text
 	 * in a range with `[|` and `|]`. For example,
@@ -37,7 +37,7 @@ type TestData struct {
 
 func ParseTestData(basePath string, contents string, fileName string) TestData {
 	// List of all the subfiles we've parsed out
-	files := []TestFileInfo{}
+	var files []*TestFileInfo
 
 	// Split up the input file by line
 	lines := strings.Split(contents, "\n")
@@ -57,11 +57,12 @@ func ParseTestData(basePath string, contents string, fileName string) TestData {
 	if currentFileContent == "" {
 		return TestData{}
 	}
-	markerPositions := make(map[string]Marker)
-	markers := []Marker{}
+	markerPositions := make(map[string]*Marker)
+	markers := []*Marker{}
 
-	// If we have multiple files, then parseFileContent needs to be called for each file. This will be achieved by creating a `nextFile()`` func that will call `parseFileContent()`` for each file.
-	testFileInfo := parseFileContent(currentFileContent, fileName, &markerPositions, &markers)
+	// If we have multiple files, then parseFileContent needs to be called for each file.
+	// This will be achieved by creating a `nextFile()` func that will call `parseFileContent()` for each file.
+	testFileInfo := parseFileContent(currentFileContent, fileName, markerPositions, &markers)
 	files = append(files, testFileInfo)
 
 	return TestData{
@@ -85,10 +86,11 @@ type TestFileInfo struct { // for FourSlashFile
 	Content string
 }
 
-func parseFileContent(content string, filename string, markerMap *map[string]Marker, markers *[]Marker) TestFileInfo {
-	// chompLeadingSpace needed?
+func parseFileContent(content string, filename string, markerMap map[string]*Marker, markers *[]*Marker) *TestFileInfo {
+	// !!! chompLeadingSpace
+	// !!! validate characters in markers
 	// Any slash-star comment with a character not in this string is not a marker.
-	const validMarkerChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$1234567890_"
+	// const validMarkerChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$1234567890_"
 
 	/// The file content (minus metacharacters) so far
 	output := ""
@@ -106,11 +108,11 @@ func parseFileContent(content string, filename string, markerMap *map[string]Mar
 	/// The latest position of the start of an unflushed plain text area
 	lastNormalCharPosition := 0
 
-	flush := func(lastSafeCharIndex *int) {
-		if lastSafeCharIndex != nil {
-			output = output + content[*&lastNormalCharPosition:*lastSafeCharIndex]
+	flush := func(lastSafeCharIndex int) {
+		if lastSafeCharIndex != -1 {
+			output = output + content[lastNormalCharPosition:lastSafeCharIndex]
 		} else {
-			output = output + content[*&lastNormalCharPosition:]
+			output = output + content[lastNormalCharPosition:]
 		}
 	}
 
@@ -132,7 +134,7 @@ func parseFileContent(content string, filename string, markerMap *map[string]Mar
 			markerNameText := strings.TrimSpace(content[openMarker.sourcePosition+2 : i-1])
 			recordMarker(filename, openMarker, markerNameText, markerMap, markers)
 
-			flush(&openMarker.sourcePosition)
+			flush(openMarker.sourcePosition)
 			lastNormalCharPosition = i + 1
 			difference += i + 1 - openMarker.sourcePosition
 
@@ -153,26 +155,32 @@ func parseFileContent(content string, filename string, markerMap *map[string]Mar
 	}
 
 	// Add the remaining text
-	flush(nil)
+	flush(-1)
 
-	return TestFileInfo{
+	return &TestFileInfo{
 		Content:  output,
 		Filename: filename,
 	}
 }
 
-func recordMarker(filename string, location locationInformation, name string, markerMap *map[string]Marker, markers *[]Marker) Marker {
+func recordMarker(
+	filename string,
+	location locationInformation,
+	name string,
+	markerMap map[string]*Marker,
+	markers *[]*Marker,
+) *Marker {
 	// Record the marker
-	marker := Marker{
+	marker := &Marker{
 		Filename: filename,
 		Position: location.position,
 		Name:     name,
 	}
 	// Verify markers for uniqueness
-	if _, ok := (*markerMap)[name]; ok {
+	if _, ok := markerMap[name]; ok {
 		fmt.Printf("Duplicate marker name: %s\n", name) // tbd print error msg
 	} else {
-		(*markerMap)[name] = marker
+		markerMap[name] = marker
 		(*markers) = append(*markers, marker)
 	}
 	return marker
