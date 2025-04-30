@@ -795,6 +795,43 @@ func (n *Node) Statement() *Statement {
 	panic("Unhandled case in Node.Statement: " + n.Kind.String())
 }
 
+func (n *Node) PropertyList() *NodeList {
+	switch n.Kind {
+	case KindObjectLiteralExpression:
+		return n.AsObjectLiteralExpression().Properties
+	case KindJsxAttribute:
+		return n.AsJsxAttributes().Properties
+	}
+	panic("Unhandled case in Node.PropertyList: " + n.Kind.String())
+}
+
+func (n *Node) Properties() []*Node {
+	list := n.PropertyList()
+	if list != nil {
+		return list.Nodes
+	}
+	return nil
+}
+
+func (n *Node) ElementList() *NodeList {
+	switch n.Kind {
+	case KindNamedImports:
+		return n.AsNamedImports().Elements
+	case KindNamedExports:
+		return n.AsNamedExports().Elements
+	}
+
+	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
+}
+
+func (n *Node) Elements() []*Node {
+	list := n.ElementList()
+	if list != nil {
+		return list.Nodes
+	}
+	return nil
+}
+
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
 // `descendant` or one of its ancestors is not parented except when that node is a `SourceFile`.
 func (n *Node) Contains(descendant *Node) bool {
@@ -1711,6 +1748,9 @@ type (
 	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
 	TypeOnlyImportDeclaration   = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
 	ObjectLiteralLike           = Node // ObjectLiteralExpression | ObjectBindingPattern
+	ObjectTypeDeclaration       = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
+	JsxOpeningLikeElement       = Node // JsxOpeningElement | JsxSelfClosingElement
+	NamedImportsOrExports       = Node // NamedImports | NamedExports
 )
 
 // Aliases for node singletons
@@ -1754,6 +1794,9 @@ type (
 	SourceFileNode                  = Node
 	PropertyAccessExpressionNode    = Node
 	TypeLiteral                     = Node
+	ObjectLiteralExpressionNode     = Node
+	ConstructorDeclarationNode      = Node
+	NamedExportsNode                = Node
 )
 
 type (

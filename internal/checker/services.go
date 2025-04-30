@@ -143,7 +143,7 @@ func (c *Checker) isValidPropertyAccessWithType(node *ast.Node, isSuper bool, pr
 	}
 
 	prop := c.getPropertyOfType(t, propertyName)
-	return prop != nil && c.isPropertyAccessible(node, isSuper, false /*isWrite*/, t, prop)
+	return prop != nil && c.IsPropertyAccessible(node, isSuper, false /*isWrite*/, t, prop)
 }
 
 // Checks if an existing property access is valid for completions purposes.
@@ -155,7 +155,7 @@ func (c *Checker) isValidPropertyAccessWithType(node *ast.Node, isSuper bool, pr
 // type: the type whose property we are checking.
 // property: the accessed property's symbol.
 func (c *Checker) IsValidPropertyAccessForCompletions(node *ast.Node, t *Type, property *ast.Symbol) bool {
-	return c.isPropertyAccessible(
+	return c.IsPropertyAccessible(
 		node,
 		node.Kind == ast.KindPropertyAccessExpression && node.Expression().Kind == ast.KindSuperKeyword,
 		false, /*isWrite*/
@@ -166,7 +166,7 @@ func (c *Checker) IsValidPropertyAccessForCompletions(node *ast.Node, t *Type, p
 }
 
 func (c *Checker) GetAllPossiblePropertiesOfTypes(types []*Type) []*ast.Symbol {
-	unionType := c.getUnionType(types)
+	unionType := c.GetUnionType(types)
 	if unionType.flags&TypeFlagsUnion == 0 {
 		return c.getAugmentedPropertiesOfType(unionType)
 	}
@@ -226,7 +226,7 @@ func (c *Checker) GetApparentProperties(t *Type) []*ast.Symbol {
 
 func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 	t = c.getApparentType(t)
-	propsByName := createSymbolTable(c.getPropertiesOfType(t))
+	propsByName := createSymbolTable(c.GetPropertiesOfType(t))
 	var functionType *Type
 	if len(c.getSignaturesOfType(t, SignatureKindCall)) > 0 {
 		functionType = c.globalCallableFunctionType
@@ -235,7 +235,7 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 	}
 
 	if functionType != nil {
-		for _, p := range c.getPropertiesOfType(functionType) {
+		for _, p := range c.GetPropertiesOfType(functionType) {
 			if _, ok := propsByName[p.Name]; !ok {
 				propsByName[p.Name] = p
 			}
@@ -426,4 +426,45 @@ func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
 			newTypeMapper(typeParameters, c.getEffectiveTypeArguments(typeReferenceNode, typeParameters)))
 	}
 	return nil
+}
+
+func (c *Checker) IsTypeInvalidDueToUnionDiscriminant(contextualType *Type, obj *ast.Node) bool {
+	properties := obj.Properties()
+	return core.Some(properties, func(property *ast.Node) bool {
+		var nameType *Type
+		propertyName := property.Name()
+		if propertyName != nil {
+			if ast.IsJsxNamespacedName(propertyName) {
+				nameType = c.getStringLiteralType(propertyName.Text())
+			} else {
+				nameType = c.getLiteralTypeFromPropertyName(propertyName)
+			}
+		}
+		var name string
+		if nameType != nil && isTypeUsableAsPropertyName(nameType) {
+			name = getPropertyNameFromType(nameType)
+		}
+		var expected *Type
+		if name != "" {
+			expected = c.getTypeOfPropertyOfType(contextualType, name)
+		}
+		return expected != nil && isLiteralType(expected) && !c.isTypeAssignableTo(c.getTypeOfNode(property), expected)
+	})
+}
+
+// Unlike `getExportsOfModule`, this includes properties of an `export =` value.
+func (c *Checker) GetExportsAndPropertiesOfModule(moduleSymbol *ast.Symbol) []*ast.Symbol {
+	exports := c.getExportsOfModuleAsArray(moduleSymbol)
+	exportEquals := c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
+	if exportEquals != moduleSymbol {
+		t := c.getTypeOfSymbol(exportEquals)
+		if c.shouldTreatPropertiesOfExternalModuleAsExports(t) {
+			exports = append(exports, c.GetPropertiesOfType(t)...)
+		}
+	}
+	return exports
+}
+
+func (c *Checker) getExportsOfModuleAsArray(moduleSymbol *ast.Symbol) []*ast.Symbol {
+	return symbolsToArray(c.getExportsOfModule(moduleSymbol))
 }
