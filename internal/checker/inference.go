@@ -760,7 +760,7 @@ func (c *Checker) inferFromProperties(n *InferenceState, source *Type, target *T
 	for _, targetProp := range properties {
 		sourceProp := c.getPropertyOfType(source, targetProp.Name)
 		if sourceProp != nil && !core.Some(sourceProp.Declarations, c.isSkipDirectInferenceNode) {
-			c.inferFromTypes(n, c.removeMissingType(c.getTypeOfSymbol(sourceProp), sourceProp.Flags&ast.SymbolFlagsOptional != 0), c.removeMissingType(c.getTypeOfSymbol(targetProp), targetProp.Flags&ast.SymbolFlagsOptional != 0))
+			c.inferFromTypes(n, c.removeMissingType(c.GetTypeOfSymbol(sourceProp), sourceProp.Flags&ast.SymbolFlagsOptional != 0), c.removeMissingType(c.GetTypeOfSymbol(targetProp), targetProp.Flags&ast.SymbolFlagsOptional != 0))
 		}
 	}
 }

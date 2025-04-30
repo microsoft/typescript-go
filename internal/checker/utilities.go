@@ -1188,7 +1188,7 @@ func getContainingClassExcludingClassDecorators(node *ast.Node) *ast.ClassLikeDe
 	return ast.GetContainingClass(node)
 }
 
-func isThisTypeParameter(t *Type) bool {
+func IsThisTypeParameter(t *Type) bool {
 	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
 }
 
@@ -1201,7 +1201,7 @@ func isCallLikeExpression(node *ast.Node) bool {
 	return false
 }
 
-func isCallOrNewExpression(node *ast.Node) bool {
+func IsCallOrNewExpression(node *ast.Node) bool {
 	return ast.IsCallExpression(node) || ast.IsNewExpression(node)
 }
 

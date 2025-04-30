@@ -545,13 +545,6 @@ func (t *Type) Flags() TypeFlags {
 	return t.flags
 }
 
-func (t *Type) Symbol() *ast.Symbol {
-	if t == nil {
-		return nil
-	}
-	return t.symbol
-}
-
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }

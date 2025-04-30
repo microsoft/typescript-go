@@ -424,7 +424,7 @@ func createSignatureHelpParameterForParameter(parameter *ast.Symbol, p *printer.
 }
 
 func tempSymbolToParameterDeclaration(parameterSymbol *ast.Symbol, c *checker.Checker) *ast.Node {
-	factory := printer.NewEmitContext().Factory
+	factory := printer.NewEmitContext().Factory.AsNodeFactory()
 	parameterDeclaration := getEffectiveParameterDeclaration(parameterSymbol)
 	parameterType := c.GetTypeOfSymbol(parameterSymbol)
 	parameterTypeNode := createTypeNode(parameterType, parameterSymbol, parameterDeclaration, factory)
@@ -501,9 +501,9 @@ func createTypeNode(t *checker.Type, symbol *ast.Symbol, parameterDeclaration *a
 		// return parameterDeclaration
 		return factory.NewKeywordTypeNode(ast.KindObjectKeyword)
 	}
-	if t.Flags()&checker.TypeFlagsTypeParameter != 0 {
-		return factory.NewKeywordTypeNode(ast.KindTypeParameter)
-	}
+	// if t.Flags()&checker.TypeFlagsTypeParameter != 0 {
+	// 	return factory.NewKeywordTypeNode(ast.KindTypeParameter)
+	// }
 	if t.Flags()&checker.TypeFlagsUnion != 0 || t.Flags()&checker.TypeFlagsIntersection != 0 {
 		return factory.NewUnionTypeNode(nil) // come back
 	}
@@ -519,6 +519,33 @@ func createTypeNode(t *checker.Type, symbol *ast.Symbol, parameterDeclaration *a
 	if t.Flags()&checker.TypeFlagsConditional != 0 {
 		return factory.NewKeywordTypeNode(ast.KindConditionalType)
 	}
+	if t.Flags()&checker.TypeFlagsStringLiteral != 0 {
+		return factory.NewLiteralTypeNode(factory.NewStringLiteral(t.AsLiteralType().Value().(string)))
+	}
+	if t.Flags()&checker.TypeFlagsNumberLiteral != 0 {
+		//!!! check for value < 0
+		return factory.NewLiteralTypeNode(factory.NewNumericLiteral(t.AsLiteralType().Value().(string)))
+	}
+	if t.Flags()&checker.TypeFlagsBigIntLiteral != 0 {
+		return factory.NewLiteralTypeNode(factory.NewBigIntLiteral(t.AsLiteralType().Value().(string)))
+	}
+	if t.Flags()&checker.TypeFlagsUniqueESSymbol != 0 {
+		return factory.NewTypeOperatorNode(ast.KindUniqueKeyword, factory.NewKeywordTypeNode(ast.KindSymbolKeyword))
+	}
+	if checker.IsThisTypeParameter(t) {
+		return factory.NewThisTypeNode()
+	}
+	if t.Flags()&checker.TypeFlagsTypeParameter != 0 {
+		return factory.NewInferTypeNode(factory.NewTypeParameterDeclaration(
+			nil,
+			factory.NewIdentifier(symbol.Name),
+			factory.NewTypeReferenceNode(parameterDeclaration.AsTypeParameter().Name(), parameterDeclaration.AsTypeParameter().TypeArgumentList()),
+			nil, /*defaultType*/
+		))
+	}
+	// if t.Flags()&checker.TypeFlagsBooleanLiteral != 0 { !!!
+	// 	//return factory.NewLiteralTypeNode(factory.NewIntr(t.AsLiteralType().Value().(bool)))
+	// }
 	return nil
 }
 
@@ -829,7 +856,7 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 		if typeArgInfo != nil {
 			called := typeArgInfo.called
 			nTypeArguments := typeArgInfo.nTypeArguments
-			invoc := typeArgsInvocation{kind: invocationKindTypeArgs, called: called}
+			invoc := typeArgsInvocation{kind: invocationKindTypeArgs, called: called.AsIdentifier()}
 			argumentRange := core.NewTextRange(called.Loc.Pos(), node.End())
 			return &argumentListInfo{
 				isTypeParameterList: true,
@@ -1248,106 +1275,4 @@ func getApplicableRangeForTaggedTemplate(taggedTemplate *ast.TaggedTemplateExpre
 	}
 
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd-applicableSpanStart)
-}
-
-type possibleTypeArgumentInfo struct {
-	called         *ast.Identifier
-	nTypeArguments int
-}
-
-// Get info for an expression like `f <` that may be the start of type arguments.
-func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile) *possibleTypeArgumentInfo {
-	// This is a rare case, but one that saves on a _lot_ of work if true - if the source file has _no_ `<` character,
-	// then there obviously can't be any type arguments - no expensive brace-matching backwards scanning required
-	if strings.LastIndex(sourceFile.Text(), "<") == -1 { // (sourceFile.text.lastIndexOf("<", tokenIn ? tokenIn.pos : sourceFile.text.length) === -1)
-		return nil
-	}
-	var token *ast.Node
-	// This function determines if the node could be type argument position
-	// Since during editing, when type argument list is not complete,
-	// the tree could be of any shape depending on the tokens parsed before current node,
-	// scanning of the previous identifier followed by "<" before current node would give us better result
-	// Note that we also balance out the already provided type arguments, arrays, object literals while doing so
-	remainingLessThanTokens := 0
-	nTypeArguments := 0
-	for token != nil {
-		switch token.Kind {
-		case ast.KindLessThanToken:
-			// Found the beginning of the generic argument expression
-			token := astnav.FindPrecedingToken(sourceFile, token.Loc.Pos())
-			if token != nil && token.Kind == ast.KindQuestionDotToken {
-				token = astnav.FindPrecedingToken(sourceFile, token.Loc.Pos())
-			}
-			if token == nil && ast.IsIdentifier(token) {
-				return nil
-			}
-			// if (!remainingLessThanTokens) {
-			// 	return isDeclarationName(token) ? undefined : { called: token, nTypeArguments };
-			// }
-			remainingLessThanTokens--
-			break
-		case ast.KindGreaterThanGreaterThanGreaterThanToken:
-			remainingLessThanTokens = +3
-			break
-		case ast.KindGreaterThanGreaterThanToken:
-			remainingLessThanTokens = +2
-			break
-		case ast.KindGreaterThanToken:
-			remainingLessThanTokens++
-			break
-		case ast.KindCloseBraceToken:
-			// This can be object type, skip until we find the matching open brace token
-			// Skip until the matching open brace token
-			token := findPrecedingMatchingToken(token, ast.KindOpenBraceToken, sourceFile)
-			if token == nil {
-				return nil
-			}
-			break
-		case ast.KindCloseParenToken:
-			// This can be object type, skip until we find the matching open brace token
-			// Skip until the matching open brace token
-			token := findPrecedingMatchingToken(token, ast.KindOpenParenToken, sourceFile)
-			if token == nil {
-				return nil
-			}
-			break
-		case ast.KindCloseBracketToken:
-			// This can be object type, skip until we find the matching open brace token
-			// Skip until the matching open brace token
-			token := findPrecedingMatchingToken(token, ast.KindOpenBracketToken, sourceFile)
-			if token == nil {
-				return nil
-			}
-			break
-
-		// Valid tokens in a type name. Skip.
-		case ast.KindCommaToken:
-			nTypeArguments++
-			break
-		case ast.KindEqualsGreaterThanToken:
-		case ast.KindIdentifier:
-		case ast.KindStringLiteral:
-		case ast.KindNumericLiteral:
-		case ast.KindBigIntLiteral:
-		case ast.KindTrueKeyword:
-		case ast.KindFalseKeyword:
-		case ast.KindTypeOfKeyword:
-		case ast.KindExtendsKeyword:
-		case ast.KindKeyOfKeyword:
-		case ast.KindDotToken:
-		case ast.KindBarToken:
-		case ast.KindQuestionToken:
-		case ast.KindColonToken:
-			break
-		default:
-			if ast.IsTypeNode(token) {
-				break
-			}
-
-			// Invalid token in type
-			return nil
-		}
-		token = astnav.FindPrecedingToken(sourceFile, token.Loc.Pos())
-	}
-	return nil
 }

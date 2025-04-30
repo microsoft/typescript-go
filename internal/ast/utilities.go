@@ -1122,10 +1122,6 @@ func IsFunctionExpressionOrArrowFunction(node *Node) bool {
 	return IsFunctionExpression(node) || IsArrowFunction(node)
 }
 
-func IsCallLikeOrFunctionLikeExpression(node *Node) bool {
-	return IsCallExpression(node) || IsFunctionExpressionOrArrowFunction(node)
-}
-
 // Warning: This has the same semantics as the forEach family of functions in that traversal terminates
 // in the event that 'visitor' returns true.
 func ForEachReturnStatement(body *Node, visitor func(stmt *Node) bool) bool {

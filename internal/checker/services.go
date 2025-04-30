@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/printer"
 )
 
 func (c *Checker) GetSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags) []*ast.Symbol {
@@ -69,9 +70,9 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 				}
 				fallthrough
 			case ast.KindModuleDeclaration:
-				copyLocallyVisibleExportSymbols(c.getSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsModuleMember)
+				copyLocallyVisibleExportSymbols(c.GetSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsModuleMember)
 			case ast.KindEnumDeclaration:
-				copySymbols(c.getSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsEnumMember)
+				copySymbols(c.GetSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsEnumMember)
 			case ast.KindClassExpression:
 				className := location.AsClassExpression().Name()
 				if className != nil {
@@ -86,7 +87,7 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 				// (type parameters of classDeclaration/classExpression and interface are in member property of the symbol.
 				// Note: that the memberFlags come from previous iteration.
 				if !isStaticSymbol {
-					copySymbols(c.getMembersOfSymbol(c.getSymbolOfDeclaration(location)), meaning&ast.SymbolFlagsType)
+					copySymbols(c.getMembersOfSymbol(c.GetSymbolOfDeclaration(location)), meaning&ast.SymbolFlagsType)
 				}
 			case ast.KindFunctionExpression:
 				funcName := location.Name()
@@ -213,11 +214,11 @@ func (c *Checker) GetNumberIndexType(t *Type) *Type {
 }
 
 func (c *Checker) GetCallSignatures(t *Type) []*Signature {
-	return c.getSignaturesOfType(t, SignatureKindCall)
+	return c.GetSignaturesOfType(t, SignatureKindCall)
 }
 
 func (c *Checker) GetConstructSignatures(t *Type) []*Signature {
-	return c.getSignaturesOfType(t, SignatureKindConstruct)
+	return c.GetSignaturesOfType(t, SignatureKindConstruct)
 }
 
 func (c *Checker) GetApparentProperties(t *Type) []*ast.Symbol {
@@ -228,9 +229,9 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 	t = c.getApparentType(t)
 	propsByName := createSymbolTable(c.getPropertiesOfType(t))
 	var functionType *Type
-	if len(c.getSignaturesOfType(t, SignatureKindCall)) > 0 {
+	if len(c.GetSignaturesOfType(t, SignatureKindCall)) > 0 {
 		functionType = c.globalCallableFunctionType
-	} else if len(c.getSignaturesOfType(t, SignatureKindConstruct)) > 0 {
+	} else if len(c.GetSignaturesOfType(t, SignatureKindConstruct)) > 0 {
 		functionType = c.globalNewableFunctionType
 	}
 
@@ -255,7 +256,7 @@ func (c *Checker) TryGetMemberInModuleExportsAndProperties(memberName string, mo
 		return nil
 	}
 
-	t := c.getTypeOfSymbol(exportEquals)
+	t := c.GetTypeOfSymbol(exportEquals)
 	if c.shouldTreatPropertiesOfExternalModuleAsExports(t) {
 		return c.getPropertyOfType(t, memberName)
 	}
@@ -272,7 +273,7 @@ func (c *Checker) shouldTreatPropertiesOfExternalModuleAsExports(resolvedExterna
 		resolvedExternalModuleType.objectFlags&ObjectFlagsClass != 0 ||
 		// `isArrayOrTupleLikeType` is too expensive to use in this auto-imports hot path.
 		c.isArrayType(resolvedExternalModuleType) ||
-		isTupleType(resolvedExternalModuleType)
+		IsTupleType(resolvedExternalModuleType)
 }
 
 func (c *Checker) GetContextualType(node *ast.Expression, contextFlags ContextFlags) *Type {
@@ -315,7 +316,7 @@ func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn fu
 			cachedResolvedSignatures[signatureLinks] = signatureLinks.resolvedSignature
 			signatureLinks.resolvedSignature = nil
 			if ast.IsFunctionExpressionOrArrowFunction(ancestorNode) {
-				symbolLinks := c.valueSymbolLinks.Get(c.getSymbolOfDeclaration(ancestorNode))
+				symbolLinks := c.valueSymbolLinks.Get(c.GetSymbolOfDeclaration(ancestorNode))
 				resolvedType := symbolLinks.resolvedType
 				cachedTypes[symbolLinks] = resolvedType
 				symbolLinks.resolvedType = nil
@@ -397,4 +398,51 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 
 func (c *Checker) GetExportSymbolOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol))
+}
+
+func (c *Checker) runWithoutResolvedSignatureCaching(node *ast.Node, fn func() *Signature) *Signature {
+	ancestorNode := ast.FindAncestor(node, func(n *ast.Node) bool {
+		return ast.IsCallLikeOrFunctionLikeExpression(n)
+	})
+	if ancestorNode != nil {
+		cachedResolvedSignatures := make(map[*SignatureLinks]*Signature)
+		cachedTypes := make(map[*ValueSymbolLinks]*Type)
+		for ancestorNode != nil {
+			signatureLinks := c.signatureLinks.Get(ancestorNode)
+			cachedResolvedSignatures[signatureLinks] = signatureLinks.resolvedSignature
+			signatureLinks.resolvedSignature = nil
+			if ast.IsFunctionExpressionOrArrowFunction(ancestorNode) {
+				symbolLinks := c.valueSymbolLinks.Get(c.GetSymbolOfDeclaration(ancestorNode))
+				resolvedType := symbolLinks.resolvedType
+				cachedTypes[symbolLinks] = resolvedType
+				symbolLinks.resolvedType = nil
+			}
+			ancestorNode = ast.FindAncestor(ancestorNode.Parent, ast.IsCallLikeOrFunctionLikeExpression)
+		}
+		result := fn()
+		for signatureLinks, resolvedSignature := range cachedResolvedSignatures {
+			signatureLinks.resolvedSignature = resolvedSignature
+		}
+		for symbolLinks, resolvedType := range cachedTypes {
+			symbolLinks.resolvedType = resolvedType
+		}
+		return result
+	}
+	return fn()
+}
+
+func (c *Checker) getResolvedSignatureWorker(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode, argumentCount int) *Signature {
+	parsedNode := printer.NewEmitContext().ParseNode(node)
+	c.apparentArgumentCount = &argumentCount
+	var res *Signature = nil
+	if parsedNode != nil {
+		res = c.getResolvedSignature(parsedNode, candidatesOutArray, checkMode)
+	}
+	return res
+}
+
+func (c *Checker) GetResolvedSignatureForSignatureHelp(node *ast.Node, candidatesOutArray *[]*Signature, argumentCount int) *Signature {
+	return c.runWithoutResolvedSignatureCaching(node, func() *Signature {
+		return c.getResolvedSignatureWorker(node, candidatesOutArray, CheckModeIsForSignatureHelp, argumentCount)
+	})
 }

@@ -5480,7 +5480,7 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 	}
 	// For a commonjs `const x = require`, validate the alias and exit
 	symbol := c.GetSymbolOfDeclaration(node)
-	if symbol.Flags&ast.SymbolFlagsAlias != 0 && (isVariableDeclarationInitializedToBareOrAccessedRequire(node) || isBindingElementOfBareOrAccessedRequire(node)) {
+	if symbol.Flags&ast.SymbolFlagsAlias != 0 && ast.IsVariableDeclarationInitializedToRequire(node) {
 		c.checkAliasSymbol(node)
 		return
 	}
@@ -6014,7 +6014,7 @@ func (c *Checker) getIterationTypesOfIterableSlow(t *Type, r *IterationTypesReso
 		}
 		if signatures := c.GetSignaturesOfType(methodType, SignatureKindCall); len(signatures) != 0 {
 			iteratorType := c.getIntersectionType(core.Map(signatures, c.GetReturnTypeOfSignature))
-			return c.getIterationTypesOfIteratorWorker(iteratorType, r, errorNode)
+			return c.getIterationTypesOfIteratorWorker(iteratorType, r, errorNode, diagnosticOutput)
 		}
 	}
 	return IterationTypes{}
@@ -7737,7 +7737,7 @@ func (c *Checker) checkElementAccessExpression(node *ast.Node, exprType *Type, c
 	} else {
 		accessFlags = AccessFlagsWriting |
 			core.IfElse(assignmentTargetKind == AssignmentKindCompound, AccessFlagsExpressionPosition, 0) |
-			core.IfElse(c.isGenericObjectType(objectType) && !isThisTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
+			core.IfElse(c.isGenericObjectType(objectType) && !IsThisTypeParameter(objectType), AccessFlagsNoIndexSignatures, 0)
 	}
 	indexedAccessType := core.OrElse(c.getIndexedAccessTypeOrUndefined(objectType, effectiveIndexType, accessFlags, node, nil), c.errorType)
 	return c.checkIndexedAccessIndexType(c.getFlowTypeOfAccessExpression(node, c.getResolvedSymbolOrNil(node), indexedAccessType, indexExpression, checkMode), node)
@@ -7901,7 +7901,7 @@ func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type
 	if ast.IsInJSFile(node) && c.isCommonJSRequire(node) {
 		return c.resolveExternalModuleTypeByLiteral(node.AsCallExpression().Arguments.Nodes[0])
 	}
-	returnType := c.getReturnTypeOfSignature(signature)
+	returnType := c.GetReturnTypeOfSignature(signature)
 	// Treat any call to the global 'Symbol' function that is part of a const variable or readonly property
 	// as a fresh unique symbol literal type.
 	if returnType.flags&TypeFlagsESSymbolLike != 0 && c.isSymbolOrSymbolForCall(node) {
@@ -10678,7 +10678,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 	var propType *Type
 	if prop == nil {
 		var indexInfo *IndexInfo
-		if !ast.IsPrivateIdentifier(right) && (assignmentKind == AssignmentKindNone || !c.isGenericObjectType(leftType) || isThisTypeParameter(leftType)) {
+		if !ast.IsPrivateIdentifier(right) && (assignmentKind == AssignmentKindNone || !c.isGenericObjectType(leftType) || IsThisTypeParameter(leftType)) {
 			indexInfo = c.getApplicableIndexInfoForName(apparentType, right.Text())
 		}
 		if indexInfo == nil {
@@ -10692,7 +10692,7 @@ func (c *Checker) checkPropertyAccessExpressionOrQualifiedName(node *ast.Node, l
 				return c.anyType
 			}
 			if right.Text() != "" && !c.checkAndReportErrorForExtendingInterface(node) {
-				c.reportNonexistentProperty(right, core.IfElse(isThisTypeParameter(leftType), apparentType, leftType))
+				c.reportNonexistentProperty(right, core.IfElse(IsThisTypeParameter(leftType), apparentType, leftType))
 			}
 			return c.errorType
 		}
@@ -13570,7 +13570,7 @@ func (c *Checker) GetSymbolOfDeclaration(node *ast.Node) *ast.Symbol {
 }
 
 // Get the merged symbol for a node. If you know the node is a `Declaration`, it is more type safe to
-// use use `getSymbolOfDeclaration` instead.
+// use use `GetSymbolOfDeclaration` instead.
 func (c *Checker) getSymbolOfNode(node *ast.Node) *ast.Symbol {
 	data := node.DeclarationData()
 	if data != nil && data.Symbol != nil {
@@ -17039,9 +17039,7 @@ func (c *Checker) getTypeOfAlias(symbol *ast.Symbol) *Type {
 		// This check is important because without it, a call to getTypeOfSymbol could end
 		// up recursively calling getTypeOfAlias, causing a stack overflow.
 		if links.resolvedType == nil {
-			if declaredType != nil {
-				links.resolvedType = declaredType
-			} else if c.getSymbolFlags(targetSymbol)&ast.SymbolFlagsValue != 0 {
+			if c.getSymbolFlags(targetSymbol)&ast.SymbolFlagsValue != 0 {
 				links.resolvedType = c.GetTypeOfSymbol(targetSymbol)
 			} else {
 				links.resolvedType = c.errorType
@@ -17093,19 +17091,18 @@ func (c *Checker) getNullableType(t *Type, flags TypeFlags) *Type {
 }
 
 func (c *Checker) GetNonNullableType(t *Type) *Type {
-func (c *Checker) GetNonNullableType(t *Type) *Type {
 	if c.strictNullChecks {
 		return c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
 	}
 	return t
 }
 
-func (c *Checker) isNullableType(t *Type) bool {
+func (c *Checker) IsNullableType(t *Type) bool {
 	return c.hasTypeFacts(t, TypeFactsIsUndefinedOrNull)
 }
 
 func (c *Checker) getNonNullableTypeIfNeeded(t *Type) *Type {
-	if c.isNullableType(t) {
+	if c.IsNullableType(t) {
 		return c.GetNonNullableType(t)
 	}
 	return t
@@ -27122,7 +27119,7 @@ func (c *Checker) getTypeOfPropertyOrIndexSignatureOfType(t *Type, name string) 
  * @param node the expression whose contextual type will be returned.
  * @returns the contextual type of an expression.
  */
-func (c *Checker) GetContextualType(node *ast.Node, contextFlags ContextFlags) *Type {
+func (c *Checker) getContextualType(node *ast.Node, contextFlags ContextFlags) *Type {
 	if node.Flags&ast.NodeFlagsInWithStatement != 0 {
 		// We cannot answer semantic questions within a with block, do not proceed any further
 		return nil
@@ -29311,7 +29308,7 @@ func (c *Checker) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
 // be used only by the language service and external tools. The semantics of the function are deliberately "fuzzy"
 // and aim to just return *some* symbol for the node. To obtain the symbol associated with a node for type checking
 // purposes, use appropriate function for the context, e.g. `getResolvedSymbol` for an expression identifier,
-// `getSymbolOfDeclaration` for a declaration, etc.
+// `GetSymbolOfDeclaration` for a declaration, etc.
 func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Symbol {
 	if ast.IsSourceFile(node) {
 		if ast.IsExternalOrCommonJSModule(node.AsSourceFile()) {
@@ -29650,7 +29647,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 	}
 
 	if isTypeDeclaration(node) {
-		// In this case, we call getSymbolOfDeclaration instead of getSymbolAtLocation because it is a declaration
+		// In this case, we call GetSymbolOfDeclaration instead of getSymbolAtLocation because it is a declaration
 		symbol := c.GetSymbolOfDeclaration(node)
 		return c.getDeclaredTypeOfSymbol(symbol)
 	}
@@ -29672,7 +29669,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 	}
 
 	if ast.IsDeclaration(node) {
-		// In this case, we call getSymbolOfDeclaration instead of getSymbolLAtocation because it is a declaration
+		// In this case, we call GetSymbolOfDeclaration instead of getSymbolLAtocation because it is a declaration
 		symbol := c.GetSymbolOfDeclaration(node)
 		if symbol != nil {
 			return c.GetTypeOfSymbol(symbol)
