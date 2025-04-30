@@ -1575,12 +1575,13 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 		if !ok {
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
-		completionList := languageService.ProvideCompletion(
-			mainFileName,
-			marker.Position,
+		completionList, err := languageService.ProvideCompletion(
+			ls.FileNameToDocumentURI(mainFileName),
+			marker.LSPosition,
 			context,
 			capabilities,
 			preferences)
+		assert.NilError(t, err)
 		if expectedResult.isIncludes {
 			assertIncludesItem(t, completionList, expectedResult.list)
 		} else {

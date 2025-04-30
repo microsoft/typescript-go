@@ -1,6 +1,7 @@
 package project
 
 import (
+	"context"
 	"fmt"
 	"maps"
 	"slices"
@@ -23,8 +24,6 @@ const hr = "-----------------------------------------------"
 
 var projectNamer = &namer{}
 
-var _ ls.Host = (*Project)(nil)
-
 type Kind int
 
 const (
@@ -33,6 +32,34 @@ const (
 	KindAutoImportProvider
 	KindAuxiliary
 )
+
+type snapshot struct {
+	project          *Project
+	positionEncoding lsproto.PositionEncodingKind
+	program          *compiler.Program
+}
+
+// GetLineMap implements ls.Host.
+func (s *snapshot) GetLineMap(fileName string) *ls.LineMap {
+	file := s.program.GetSourceFile(fileName)
+	scriptInfo := s.project.host.GetScriptInfoByPath(file.Path())
+	if file.Version == scriptInfo.Version() {
+		return scriptInfo.LineMap()
+	}
+	return ls.ComputeLineStarts(file.Text())
+}
+
+// GetPositionEncoding implements ls.Host.
+func (s *snapshot) GetPositionEncoding() lsproto.PositionEncodingKind {
+	return s.positionEncoding
+}
+
+// GetProgram implements ls.Host.
+func (s *snapshot) GetProgram() *compiler.Program {
+	return s.program
+}
+
+var _ ls.Host = (*snapshot)(nil)
 
 type PendingReload int
 
@@ -84,7 +111,6 @@ type Project struct {
 	rootFileNames     *collections.OrderedMap[tspath.Path, string]
 	compilerOptions   *core.CompilerOptions
 	parsedCommandLine *tsoptions.ParsedCommandLine
-	languageService   *ls.LanguageService
 	program           *compiler.Program
 
 	// Watchers
@@ -134,7 +160,6 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 			return slices.Sorted(maps.Values(data))
 		})
 	}
-	project.languageService = ls.NewLanguageService(project)
 	project.markAsDirty()
 	return project
 }
@@ -207,11 +232,6 @@ func (p *Project) GetDefaultLibraryPath() string {
 	return p.host.DefaultLibraryPath()
 }
 
-// GetScriptInfo implements ls.Host.
-func (p *Project) GetScriptInfo(fileName string) ls.ScriptInfo {
-	return p.host.GetScriptInfoByPath(p.toPath(fileName))
-}
-
 // GetPositionEncoding implements ls.Host.
 func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
 	return p.host.PositionEncoding()
@@ -233,8 +253,26 @@ func (p *Project) CurrentProgram() *compiler.Program {
 	return p.program
 }
 
+func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.LanguageService, func()) {
+	if core.GetRequestID(ctx) == "" {
+		panic("context must already have a request ID")
+	}
+	snapshot := &snapshot{
+		project:          p,
+		positionEncoding: p.host.PositionEncoding(),
+		program:          p.GetProgram(),
+	}
+	languageService := ls.NewLanguageService(ctx, snapshot)
+	return languageService, languageService.Dispose
+}
+
 func (p *Project) LanguageService() *ls.LanguageService {
-	return p.languageService
+	snapshot := &snapshot{
+		project:          p,
+		positionEncoding: p.host.PositionEncoding(),
+		program:          p.GetProgram(),
+	}
+	return ls.NewLanguageService(nil /*context*/, snapshot)
 }
 
 func (p *Project) getRootFileWatchGlobs() []string {
@@ -422,12 +460,15 @@ func (p *Project) updateProgram() {
 	rootFileNames := p.GetRootFileNames()
 	compilerOptions := p.GetCompilerOptions()
 
-	p.program = compiler.NewProgram(compiler.ProgramOptions{
-		RootFiles: rootFileNames,
-		Host:      p,
-		Options:   compilerOptions,
+	var program compiler.Program
+	program = *compiler.NewProgram(compiler.ProgramOptions{
+		RootFiles:   rootFileNames,
+		Host:        p,
+		Options:     compilerOptions,
+		CheckerPool: newCheckerPool(4, &program),
 	})
 
+	p.program = &program
 	p.program.BindSourceFiles()
 }
 

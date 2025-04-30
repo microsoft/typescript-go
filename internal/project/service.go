@@ -85,8 +85,8 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 		realpathToScriptInfos:       make(map[tspath.Path]map[*ScriptInfo]struct{}),
 	}
 
-	service.converters = ls.NewConverters(options.PositionEncoding, func(fileName string) ls.ScriptInfo {
-		return service.GetScriptInfo(fileName)
+	service.converters = ls.NewConverters(options.PositionEncoding, func(fileName string) *ls.LineMap {
+		return service.GetScriptInfo(fileName).LineMap()
 	})
 
 	return service
@@ -177,13 +177,30 @@ func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.
 	s.printProjects()
 }
 
-func (s *Service) ChangeFile(fileName string, changes []ls.TextChange) {
+func (s *Service) ChangeFile(document lsproto.VersionedTextDocumentIdentifier, changes []lsproto.TextDocumentContentChangeEvent) error {
+	fileName := ls.DocumentURIToFileName(document.Uri)
 	path := s.toPath(fileName)
-	info := s.GetScriptInfoByPath(path)
-	if info == nil {
-		panic("scriptInfo not found")
+	scriptInfo := s.GetScriptInfoByPath(path)
+	if scriptInfo == nil {
+		return fmt.Errorf("file %s not found", fileName)
 	}
-	s.applyChangesToFile(info, changes)
+
+	textChanges := make([]ls.TextChange, len(changes))
+	for i, change := range changes {
+		if partialChange := change.TextDocumentContentChangePartial; partialChange != nil {
+			textChanges[i] = s.converters.FromLSPTextChange(scriptInfo, partialChange)
+		} else if wholeChange := change.TextDocumentContentChangeWholeDocument; wholeChange != nil {
+			textChanges[i] = ls.TextChange{
+				TextRange: core.NewTextRange(0, len(scriptInfo.Text())),
+				NewText:   wholeChange.Text,
+			}
+		} else {
+			return fmt.Errorf("invalid change type")
+		}
+	}
+
+	s.applyChangesToFile(scriptInfo, textChanges)
+	return nil
 }
 
 func (s *Service) CloseFile(fileName string) {
@@ -206,6 +223,11 @@ func (s *Service) MarkFileSaved(fileName string, text string) {
 	if info := s.GetScriptInfoByPath(s.toPath(fileName)); info != nil {
 		info.SetTextFromDisk(text)
 	}
+}
+
+func (s *Service) EnsureDefaultProjectForURI(url lsproto.DocumentUri) *Project {
+	_, project := s.EnsureDefaultProjectForFile(ls.DocumentURIToFileName(url))
+	return project
 }
 
 func (s *Service) EnsureDefaultProjectForFile(fileName string) (*ScriptInfo, *Project) {

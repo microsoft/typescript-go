@@ -22,14 +22,21 @@ import (
 )
 
 func (l *LanguageService) ProvideCompletion(
-	fileName string,
-	position int,
+	documentURI lsproto.DocumentUri,
+	position lsproto.Position,
 	context *lsproto.CompletionContext,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
-) *lsproto.CompletionList {
-	program, file := l.getProgramAndFile(fileName)
-	return l.getCompletionsAtPosition(program, file, position, context, preferences, clientOptions)
+) (*lsproto.CompletionList, error) {
+	program, file := l.getProgramAndFile(documentURI)
+	return l.getCompletionsAtPosition(
+		program,
+		file,
+		int(l.converters.LineAndCharacterToPosition(file, position)),
+		context,
+		preferences,
+		clientOptions,
+	), nil
 }
 
 // *completionDataData | *completionDataKeyword
@@ -287,7 +294,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	// !!! label completions
 
-	data := getCompletionData(program, file, position, preferences)
+	data := getCompletionData(program, l.GetTypeChecker(file), file, position, preferences)
 	if data == nil {
 		return nil
 	}
@@ -313,8 +320,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	}
 }
 
-func getCompletionData(program *compiler.Program, file *ast.SourceFile, position int, preferences *UserPreferences) completionData {
-	typeChecker := program.GetTypeChecker()
+func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, file *ast.SourceFile, position int, preferences *UserPreferences) completionData {
 	inCheckedFile := isCheckedFile(file, program.GetCompilerOptions())
 
 	currentToken := astnav.GetTokenAtPosition(file, position)
@@ -1560,7 +1566,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 ) (uniqueNames core.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := probablyUsesSemicolons(file)
-	typeChecker := program.GetTypeChecker()
+	typeChecker := l.GetTypeChecker(file)
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
 	optionalReplacementSpan := getOptionalReplacementSpan(data.location, file)
 	// Tracks unique names.
@@ -1694,7 +1700,7 @@ func (l *LanguageService) createCompletionItem(
 	source := getSourceFromOrigin(origin)
 	var labelDetails *lsproto.CompletionItemLabelDetails
 
-	typeChecker := program.GetTypeChecker()
+	typeChecker := l.GetTypeChecker(file)
 	insertQuestionDot := originIsNullableMember(origin)
 	useBraces := originIsSymbolMember(origin) || needsConvertPropertyAccess
 	if originIsThisType(origin) {

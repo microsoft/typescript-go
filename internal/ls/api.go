@@ -15,7 +15,7 @@ var (
 )
 
 func (l *LanguageService) GetSymbolAtPosition(fileName string, position int) (*ast.Symbol, error) {
-	program, file := l.tryGetProgramAndFile(fileName)
+	_, file := l.tryGetProgramAndFile(fileName)
 	if file == nil {
 		return nil, fmt.Errorf("%w: %s", ErrNoSourceFile, fileName)
 	}
@@ -23,17 +23,16 @@ func (l *LanguageService) GetSymbolAtPosition(fileName string, position int) (*a
 	if node == nil {
 		return nil, fmt.Errorf("%w: %s:%d", ErrNoTokenAtPosition, fileName, position)
 	}
-	checker := program.GetTypeChecker()
+	checker := l.GetTypeChecker(file)
 	return checker.GetSymbolAtLocation(node), nil
 }
 
 func (l *LanguageService) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
-	program := l.GetProgram()
-	checker := program.GetTypeChecker()
+	checker := l.GetTypeChecker(ast.GetSourceFileOfNode(node))
 	return checker.GetSymbolAtLocation(node)
 }
 
 func (l *LanguageService) GetTypeOfSymbol(symbol *ast.Symbol) *checker.Type {
-	checker := l.GetProgram().GetTypeChecker()
+	checker := l.GetTypeChecker(nil /*file*/)
 	return checker.GetTypeOfSymbolAtLocation(symbol, nil)
 }

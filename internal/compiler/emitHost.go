@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"context"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -32,7 +34,8 @@ func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark
 }
 
 func (host *emitHost) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver {
-	checker := host.program.GetTypeCheckerForFile(file)
+	checker, done := host.program.GetTypeCheckerForFile(context.Background(), file)
+	defer done()
 	return checker.GetEmitResolver(file, skipDiagnostics)
 }
 

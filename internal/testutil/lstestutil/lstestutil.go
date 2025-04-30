@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
 type markerRange struct {
@@ -15,9 +16,10 @@ type markerRange struct {
 }
 
 type Marker struct {
-	Filename string
-	Position int
-	Name     string
+	Filename   string
+	Position   int
+	LSPosition lsproto.Position
+	Name       string
 }
 
 type TestData struct {
@@ -174,7 +176,11 @@ func recordMarker(
 	marker := &Marker{
 		Filename: filename,
 		Position: location.position,
-		Name:     name,
+		LSPosition: lsproto.Position{
+			Line:      uint32(location.sourceLine - 1),
+			Character: uint32(location.sourceColumn - 1),
+		},
+		Name: name,
 	}
 	// Verify markers for uniqueness
 	if _, ok := markerMap[name]; ok {

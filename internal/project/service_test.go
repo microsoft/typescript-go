@@ -7,7 +7,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
@@ -94,7 +93,31 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/x.ts", defaultFiles["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 			info, proj := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/x.ts")
 			programBefore := proj.GetProgram()
-			service.ChangeFile("/home/projects/TS/p1/src/x.ts", []ls.TextChange{{TextRange: core.NewTextRange(17, 18), NewText: "2"}})
+			service.ChangeFile(
+				lsproto.VersionedTextDocumentIdentifier{
+					TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
+						Uri: "file:///home/projects/TS/p1/src/x.ts",
+					},
+					Version: 1,
+				},
+				[]lsproto.TextDocumentContentChangeEvent{
+					lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
+						TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
+							Range: lsproto.Range{
+								Start: lsproto.Position{
+									Line:      0,
+									Character: 17,
+								},
+								End: lsproto.Position{
+									Line:      0,
+									Character: 18,
+								},
+							},
+							Text: "2",
+						}),
+					},
+				},
+			)
 			assert.Equal(t, info.Text(), "export const x = 2;")
 			assert.Equal(t, proj.CurrentProgram(), programBefore)
 			assert.Equal(t, programBefore.GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "export const x = 1;")
@@ -108,7 +131,31 @@ func TestService(t *testing.T) {
 			_, proj := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/x.ts")
 			programBefore := proj.GetProgram()
 			indexFileBefore := programBefore.GetSourceFile("/home/projects/TS/p1/src/index.ts")
-			service.ChangeFile("/home/projects/TS/p1/src/x.ts", nil)
+			service.ChangeFile(
+				lsproto.VersionedTextDocumentIdentifier{
+					TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
+						Uri: "file:///home/projects/TS/p1/src/x.ts",
+					},
+					Version: 1,
+				},
+				[]lsproto.TextDocumentContentChangeEvent{
+					lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
+						TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
+							Range: lsproto.Range{
+								Start: lsproto.Position{
+									Line:      0,
+									Character: 0,
+								},
+								End: lsproto.Position{
+									Line:      0,
+									Character: 0,
+								},
+							},
+							Text: ";",
+						}),
+					},
+				},
+			)
 			assert.Equal(t, proj.GetProgram().GetSourceFile("/home/projects/TS/p1/src/index.ts"), indexFileBefore)
 		})
 
@@ -120,7 +167,31 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			assert.Check(t, service.GetScriptInfo("/home/projects/TS/p1/y.ts") == nil)
 
-			service.ChangeFile("/home/projects/TS/p1/src/index.ts", []ls.TextChange{{TextRange: core.NewTextRange(0, 0), NewText: `import { y } from "../y";\n`}})
+			service.ChangeFile(
+				lsproto.VersionedTextDocumentIdentifier{
+					TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
+						Uri: "file:///home/projects/TS/p1/src/index.ts",
+					},
+					Version: 1,
+				},
+				[]lsproto.TextDocumentContentChangeEvent{
+					lsproto.TextDocumentContentChangePartialOrTextDocumentContentChangeWholeDocument{
+						TextDocumentContentChangePartial: ptrTo(lsproto.TextDocumentContentChangePartial{
+							Range: lsproto.Range{
+								Start: lsproto.Position{
+									Line:      0,
+									Character: 0,
+								},
+								End: lsproto.Position{
+									Line:      0,
+									Character: 0,
+								},
+							},
+							Text: `import { y } from "../y";\n`,
+						}),
+					},
+				},
+			)
 			service.EnsureDefaultProjectForFile("/home/projects/TS/p1/y.ts")
 		})
 	})

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 )
 
 type JSONRPCVersion struct{}
@@ -37,6 +38,13 @@ func NewID(rawValue IntegerOrString) *ID {
 
 func NewIDString(str string) *ID {
 	return &ID{str: str}
+}
+
+func (id *ID) String() string {
+	if id.str != "" {
+		return id.str
+	}
+	return strconv.Itoa(int(id.int))
 }
 
 func (id *ID) MarshalJSON() ([]byte, error) {
