@@ -143,6 +143,8 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	switch key {
 	case "allowJs":
 		allOptions.AllowJs = parseTristate(value)
+	case "allowImportingTsExtensions":
+		allOptions.AllowImportingTsExtensions = parseTristate(value)
 	case "allowSyntheticDefaultImports":
 		allOptions.AllowSyntheticDefaultImports = parseTristate(value)
 	case "allowNonTsExtensions":
@@ -309,6 +311,8 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.ResolvePackageJsonExports = parseTristate(value)
 	case "resolvePackageJsonImports":
 		allOptions.ResolvePackageJsonImports = parseTristate(value)
+	case "rewriteRelativeImportExtensions":
+		allOptions.RewriteRelativeImportExtensions = parseTristate(value)
 	case "reactNamespace":
 		allOptions.ReactNamespace = parseString(value)
 	case "rootDir":
