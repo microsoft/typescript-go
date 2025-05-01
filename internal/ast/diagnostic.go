@@ -5,8 +5,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
 // Diagnostic
@@ -58,6 +58,11 @@ func (d *Diagnostic) AddRelatedInfo(relatedInformation *Diagnostic) *Diagnostic 
 		d.relatedInformation = append(d.relatedInformation, relatedInformation)
 	}
 	return d
+}
+
+func (d *Diagnostic) Clone() *Diagnostic {
+	result := *d
+	return &result
 }
 
 func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
@@ -137,12 +142,16 @@ func getDiagnosticPath(d *Diagnostic) string {
 }
 
 func EqualDiagnostics(d1, d2 *Diagnostic) bool {
+	return EqualDiagnosticsNoRelatedInfo(d1, d2) &&
+		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), EqualDiagnostics)
+}
+
+func EqualDiagnosticsNoRelatedInfo(d1, d2 *Diagnostic) bool {
 	return getDiagnosticPath(d1) == getDiagnosticPath(d2) &&
 		d1.Loc() == d2.Loc() &&
 		d1.Code() == d2.Code() &&
 		d1.Message() == d2.Message() &&
-		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain) &&
-		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), EqualDiagnostics)
+		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain)
 }
 
 func equalMessageChain(c1, c2 *Diagnostic) bool {

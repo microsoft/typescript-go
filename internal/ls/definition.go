@@ -58,7 +58,7 @@ func getAncestorCallLikeExpression(node *ast.Node) *ast.Node {
 	})
 
 	callLike := target.Parent
-	if callLike != nil && checker.IsCallLikeExpression(callLike) && checker.GetInvokedExpression(callLike) == target {
+	if callLike != nil && ast.IsCallLikeExpression(callLike) && checker.GetInvokedExpression(callLike) == target {
 		return callLike
 	}
 

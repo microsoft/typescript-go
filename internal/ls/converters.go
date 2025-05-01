@@ -9,8 +9,8 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -88,10 +88,10 @@ func (c *Converters) FromLSPLocation(location lsproto.Location) (Location, error
 	}, nil
 }
 
-func (c *Converters) ToLSPDiagnostic(diagnostic *ast.Diagnostic) (lsproto.Diagnostic, error) {
+func (c *Converters) ToLSPDiagnostic(diagnostic *ast.Diagnostic) (*lsproto.Diagnostic, error) {
 	textRange, err := c.ToLSPRange(diagnostic.File().FileName(), diagnostic.Loc())
 	if err != nil {
-		return lsproto.Diagnostic{}, fmt.Errorf("error converting diagnostic range: %w", err)
+		return nil, fmt.Errorf("error converting diagnostic range: %w", err)
 	}
 
 	var severity lsproto.DiagnosticSeverity
@@ -106,13 +106,13 @@ func (c *Converters) ToLSPDiagnostic(diagnostic *ast.Diagnostic) (lsproto.Diagno
 		severity = lsproto.DiagnosticSeverityError
 	}
 
-	relatedInformation := make([]lsproto.DiagnosticRelatedInformation, 0, len(diagnostic.RelatedInformation()))
+	relatedInformation := make([]*lsproto.DiagnosticRelatedInformation, 0, len(diagnostic.RelatedInformation()))
 	for _, related := range diagnostic.RelatedInformation() {
 		relatedRange, err := c.ToLSPRange(related.File().FileName(), related.Loc())
 		if err != nil {
-			return lsproto.Diagnostic{}, fmt.Errorf("error converting related info range: %w", err)
+			return nil, fmt.Errorf("error converting related info range: %w", err)
 		}
-		relatedInformation = append(relatedInformation, lsproto.DiagnosticRelatedInformation{
+		relatedInformation = append(relatedInformation, &lsproto.DiagnosticRelatedInformation{
 			Location: lsproto.Location{
 				Uri:   FileNameToDocumentURI(related.File().FileName()),
 				Range: relatedRange,
@@ -121,7 +121,7 @@ func (c *Converters) ToLSPDiagnostic(diagnostic *ast.Diagnostic) (lsproto.Diagno
 		})
 	}
 
-	return lsproto.Diagnostic{
+	return &lsproto.Diagnostic{
 		Range: textRange,
 		Code: &lsproto.IntegerOrString{
 			Integer: ptrTo(diagnostic.Code()),
@@ -163,7 +163,7 @@ func DocumentURIToFileName(uri lsproto.DocumentUri) string {
 		if len(path) >= 4 {
 			if nextSlash := strings.IndexByte(path[1:], '/'); nextSlash != -1 {
 				if possibleDrive, _ := url.PathUnescape(path[1 : nextSlash+2]); strings.HasSuffix(possibleDrive, ":/") {
-					return possibleDrive + path[len(possibleDrive)+1:]
+					return possibleDrive + path[nextSlash+2:]
 				}
 			}
 		}

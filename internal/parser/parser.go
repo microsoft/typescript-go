@@ -5,8 +5,8 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -76,6 +76,7 @@ type Parser struct {
 	jsdocCommentRangesSpace []ast.CommentRange
 	jsdocTagCommentsSpace   []string
 	reparseList             []*ast.Node
+	commonJSModuleIndicator *ast.Node
 }
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
@@ -199,7 +200,7 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	p.sourceText = sourceText
 	p.languageVersion = languageVersion
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
-	p.languageVariant = getLanguageVariant(p.scriptKind)
+	p.languageVariant = ast.GetLanguageVariant(p.scriptKind)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
@@ -208,7 +209,6 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	default:
 		p.contextFlags = ast.NodeFlagsNone
 	}
-	p.hasParseError = false
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetScriptTarget(p.languageVersion)
@@ -334,8 +334,6 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 			p.finishSourceFile(result, isDeclarationFile)
 		}
 	}
-	p.jsdocCache = nil
-	p.possibleAwaitSpans = []int{}
 	collectExternalModuleReferences(result)
 	return result
 }
@@ -346,6 +344,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	p.processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.ExternalModuleIndicator = isFileProbablyExternalModule(result) // !!!
+	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVersion = p.languageVersion
 	result.LanguageVariant = p.languageVariant
@@ -356,8 +355,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
-	p.jsdocCache = nil
-	p.identifiers = nil
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
@@ -1400,6 +1397,7 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	result := p.factory.NewExpressionStatement(expression)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc && !hasParen)
+	p.reparseCommonJS(result)
 	return result
 }
 
@@ -1883,7 +1881,6 @@ func (p *Parser) parseErrorForMissingSemicolonAfter(node *ast.Node) {
 	if node.Kind == ast.KindIdentifier {
 		expressionText = node.AsIdentifier().Text
 	}
-	// !!! Also call isIdentifierText(expressionText, languageVersion)
 	if expressionText == "" {
 		p.parseErrorAtCurrentToken(diagnostics.X_0_expected, scanner.TokenToString(ast.KindSemicolonToken))
 		return
@@ -2588,6 +2585,18 @@ func (p *Parser) parsePostfixTypeOrHigher() *ast.Node {
 	typeNode := p.parseNonArrayType()
 	for !p.hasPrecedingLineBreak() {
 		switch p.token {
+		case ast.KindExclamationToken:
+			p.nextToken()
+			typeNode = p.factory.NewJSDocNonNullableType(typeNode)
+			p.finishNode(typeNode, pos)
+		case ast.KindQuestionToken:
+			// If next token is start of a type we have a conditional type
+			if p.lookAhead((*Parser).nextIsStartOfType) {
+				return typeNode
+			}
+			p.nextToken()
+			typeNode = p.factory.NewJSDocNullableType(typeNode)
+			p.finishNode(typeNode, pos)
 		case ast.KindOpenBracketToken:
 			p.parseExpected(ast.KindOpenBracketToken)
 			if p.isStartOfType(false /*isStartOfParameter*/) {
@@ -3553,11 +3562,11 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		return result
 	}
 	typeNode := p.parseType()
-	// If next token is start of a type we have a conditional type and not an optional type
-	if p.token == ast.KindQuestionToken && !p.lookAhead((*Parser).nextIsStartOfType) {
-		p.nextToken()
-		typeNode = p.factory.NewOptionalTypeNode(typeNode)
-		p.finishNode(typeNode, pos)
+	if ast.IsJSDocNullableType(typeNode) && typeNode.Pos() == typeNode.Type().Pos() {
+		node := p.factory.NewOptionalTypeNode(typeNode.Type())
+		node.Flags = typeNode.Flags
+		node.Loc = typeNode.Loc
+		return node
 	}
 	return typeNode
 }
@@ -5001,12 +5010,11 @@ func (p *Parser) parseSimpleUnaryExpression() *ast.Expression {
 	case ast.KindVoidKeyword:
 		return p.parseVoidExpression()
 	case ast.KindLessThanToken:
-		// !!!
-		// // Just like in parseUpdateExpression, we need to avoid parsing type assertions when
-		// // in JSX and we see an expression like "+ <foo> bar".
-		// if (languageVariant == core.LanguageVariant.JSX) {
-		// 	return parseJsxElementOrSelfClosingElementOrFragment(/*inExpressionContext*/ true, /*topInvalidNodePosition*/ undefined, /*openingTag*/ undefined, /*mustBeUnary*/ true);
-		// }
+		// Just like in parseUpdateExpression, we need to avoid parsing type assertions when
+		// in JSX and we see an expression like "+ <foo> bar".
+		if p.languageVariant == core.LanguageVariantJSX {
+			return p.parseJsxElementOrSelfClosingElementOrFragment(true /*inExpressionContext*/, -1 /*topInvalidNodePosition*/, nil /*openingTag*/, true /*mustBeUnary*/)
+		}
 		// // This is modified UnaryExpression grammar in TypeScript
 		// //  UnaryExpression (modified):
 		// //      < type > UnaryExpression
@@ -5920,7 +5928,7 @@ func (p *Parser) scanClassMemberStart() bool {
 		//      public foo() ...     // true
 		//      public @dec blah ... // true; we will then report an error later
 		//      export public ...    // true; we will then report an error later
-		if isClassMemberModifier(idToken) {
+		if ast.IsClassMemberModifier(idToken) {
 			return true
 		}
 		p.nextToken()
@@ -6331,14 +6339,6 @@ func (p *Parser) skipRangeTrivia(textRange core.TextRange) core.TextRange {
 	return core.NewTextRange(scanner.SkipTrivia(p.sourceText, textRange.Pos()), textRange.End())
 }
 
-func isClassMemberModifier(token ast.Kind) bool {
-	return isParameterPropertyModifier(token) || token == ast.KindStaticKeyword || token == ast.KindOverrideKeyword || token == ast.KindAccessorKeyword
-}
-
-func isParameterPropertyModifier(kind ast.Kind) bool {
-	return ast.ModifierToFlag(kind)&ast.ModifierFlagsParameterPropertyModifier != 0
-}
-
 func isKeyword(token ast.Kind) bool {
 	return ast.KindFirstKeyword <= token && token <= ast.KindLastKeyword
 }
@@ -6415,7 +6415,7 @@ func getCommentPragmas(f *ast.NodeFactory, sourceText string) (pragmas []ast.Pra
 }
 
 func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
-	if commentRange.Kind == ast.KindSingleLineCommentTrivia && match(text, 0, "//") {
+	if commentRange.Kind == ast.KindSingleLineCommentTrivia {
 		pos := 2
 		tripleSlash := match(text, pos, "/")
 		if tripleSlash {
@@ -6473,6 +6473,7 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 		}
 	}
 	if commentRange.Kind == ast.KindMultiLineCommentTrivia {
+		text = text[:len(text)-2]
 		pos := 2
 		var pragmas []ast.Pragma
 		for {
@@ -6613,7 +6614,6 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 					}
 				}
 			}
-
 		case "jsx", "jsxfrag", "jsximportsource", "jsxruntime":
 			// Nothing to do here
 		default:

@@ -17,8 +17,8 @@ func TestTempVariable1(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{})
-	name2 := ec.NewTempVariable(printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewTempVariable()
+	name2 := ec.Factory.NewTempVariable()
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -32,11 +32,11 @@ func TestTempVariable2(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{
+	name1 := ec.Factory.NewTempVariableEx(printer.AutoGenerateOptions{
 		Prefix: "A",
 		Suffix: "B",
 	})
-	name2 := ec.NewTempVariable(printer.AutoGenerateOptions{
+	name2 := ec.Factory.NewTempVariableEx(printer.AutoGenerateOptions{
 		Prefix: "A",
 		Suffix: "B",
 	})
@@ -53,7 +53,7 @@ func TestTempVariable3(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewTempVariable()
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -67,8 +67,8 @@ func TestTempVariableScoped(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{})
-	name2 := ec.NewTempVariable(printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewTempVariable()
+	name2 := ec.Factory.NewTempVariable()
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -84,8 +84,8 @@ func TestTempVariableScopedReserved(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewTempVariable(printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes})
-	name2 := ec.NewTempVariable(printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewTempVariableEx(printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsReservedInNestedScopes})
+	name2 := ec.Factory.NewTempVariable()
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -101,8 +101,8 @@ func TestLoopVariable1(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
-	name2 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewLoopVariable()
+	name2 := ec.Factory.NewLoopVariable()
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -116,11 +116,11 @@ func TestLoopVariable2(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewLoopVariable(printer.AutoGenerateOptions{
+	name1 := ec.Factory.NewLoopVariableEx(printer.AutoGenerateOptions{
 		Prefix: "A",
 		Suffix: "B",
 	})
-	name2 := ec.NewLoopVariable(printer.AutoGenerateOptions{
+	name2 := ec.Factory.NewLoopVariableEx(printer.AutoGenerateOptions{
 		Prefix: "A",
 		Suffix: "B",
 	})
@@ -137,7 +137,7 @@ func TestLoopVariable3(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewLoopVariable()
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -151,8 +151,8 @@ func TestLoopVariableScoped(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
-	name2 := ec.NewLoopVariable(printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewLoopVariable()
+	name2 := ec.Factory.NewLoopVariable()
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -168,8 +168,8 @@ func TestUniqueName1(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
-	name2 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewUniqueName("foo")
+	name2 := ec.Factory.NewUniqueName("foo")
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -183,7 +183,7 @@ func TestUniqueName2(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewUniqueName("foo")
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -198,14 +198,15 @@ func TestUniqueNameScoped(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
-	name2 := ec.NewUniqueName("foo", printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewUniqueName("foo")
+	name2 := ec.Factory.NewUniqueName("foo")
 
 	g := &printer.NameGenerator{Context: ec}
 	assert.Equal(t, "foo_1", g.GenerateName(name1))
 
 	g.PushScope(false)
-	assert.Equal(t, "foo_1", g.GenerateName(name2))
+	assert.Equal(t, "foo_2", g.GenerateName(name2)) // Matches Strada, but is incorrect
+	// assert.Equal(t, "foo_1", g.GenerateName(name2)) // TODO: Fix after Strada port is complete.
 	g.PopScope(false)
 }
 
@@ -213,8 +214,8 @@ func TestUniquePrivateName1(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
-	name2 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewUniquePrivateName("#foo")
+	name2 := ec.Factory.NewUniquePrivateName("#foo")
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -228,7 +229,7 @@ func TestUniquePrivateName2(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewUniquePrivateName("#foo")
 
 	g := &printer.NameGenerator{Context: ec}
 	text1 := g.GenerateName(name1)
@@ -242,8 +243,8 @@ func TestUniquePrivateNameScoped(t *testing.T) {
 	t.Parallel()
 
 	ec := printer.NewEmitContext()
-	name1 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
-	name2 := ec.NewUniquePrivateName("#foo", printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewUniquePrivateName("#foo")
+	name2 := ec.Factory.NewUniquePrivateName("#foo")
 
 	g := &printer.NameGenerator{Context: ec}
 	assert.Equal(t, "#foo_1", g.GenerateName(name1))
@@ -262,7 +263,7 @@ func TestGeneratedNameForIdentifier1(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0].Name()
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -279,7 +280,7 @@ func TestGeneratedNameForIdentifier2(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0].Name()
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{
+	name1 := ec.Factory.NewGeneratedNameForNodeEx(n, printer.AutoGenerateOptions{
 		Prefix: "a",
 		Suffix: "b",
 	})
@@ -299,11 +300,11 @@ func TestGeneratedNameForIdentifier3(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0].Name()
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{
+	name1 := ec.Factory.NewGeneratedNameForNodeEx(n, printer.AutoGenerateOptions{
 		Prefix: "a",
 		Suffix: "b",
 	})
-	name2 := ec.NewGeneratedNameForNode(name1, printer.AutoGenerateOptions{})
+	name2 := ec.Factory.NewGeneratedNameForNode(name1)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name2)
@@ -321,7 +322,7 @@ func TestGeneratedNameForNamespace1(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	ns1 := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(ns1)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -339,7 +340,7 @@ func TestGeneratedNameForNamespace2(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	ns1 := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(ns1)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -358,8 +359,8 @@ func TestGeneratedNameForNamespace3(t *testing.T) {
 
 	ns1 := file.Statements.Nodes[0].AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes[0]
 	ns2 := file.Statements.Nodes[1].AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
-	name2 := ec.NewGeneratedNameForNode(ns2, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(ns1)
+	name2 := ec.Factory.NewGeneratedNameForNode(ns2)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -380,8 +381,8 @@ func TestGeneratedNameForNamespace4(t *testing.T) {
 
 	ns1 := file.Statements.Nodes[0].AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes[0]
 	ns2 := file.Statements.Nodes[1].AsModuleDeclaration().Body.AsModuleBlock().Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
-	name2 := ec.NewGeneratedNameForNode(ns2, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(ns1)
+	name2 := ec.Factory.NewGeneratedNameForNode(ns2)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	g.PushScope(false)
@@ -393,7 +394,8 @@ func TestGeneratedNameForNamespace4(t *testing.T) {
 	g.PopScope(false)
 
 	assert.Equal(t, "foo_1", text1)
-	assert.Equal(t, "foo_1", text2)
+	assert.Equal(t, "foo_2", text2) // Matches Strada, but is incorrect
+	// assert.Equal(t, "foo_1", text2) // TODO: Fix after Strada port is complete.
 }
 
 func TestGeneratedNameForNodeCached(t *testing.T) {
@@ -405,8 +407,8 @@ func TestGeneratedNameForNodeCached(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	ns1 := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
-	name2 := ec.NewGeneratedNameForNode(ns1, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(ns1)
+	name2 := ec.Factory.NewGeneratedNameForNode(ns1)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -425,7 +427,7 @@ func TestGeneratedNameForImport(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -442,7 +444,7 @@ func TestGeneratedNameForExport(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -459,7 +461,7 @@ func TestGeneratedNameForFunctionDeclaration1(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -476,7 +478,7 @@ func TestGeneratedNameForFunctionDeclaration2(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -493,7 +495,7 @@ func TestGeneratedNameForClassDeclaration1(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -510,7 +512,7 @@ func TestGeneratedNameForClassDeclaration2(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -527,7 +529,7 @@ func TestGeneratedNameForExportAssignment(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -544,7 +546,7 @@ func TestGeneratedNameForClassExpression(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0].AsExpressionStatement().Expression.AsParenthesizedExpression().Expression
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -561,7 +563,7 @@ func TestGeneratedNameForMethod1(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0].AsClassDeclaration().Members.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -578,7 +580,7 @@ func TestGeneratedNameForMethod2(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0].AsClassDeclaration().Members.Nodes[0]
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -595,7 +597,7 @@ func TestGeneratedPrivateNameForMethod(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0].AsClassDeclaration().Members.Nodes[0]
-	name1 := ec.NewGeneratedPrivateNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedPrivateNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -612,7 +614,7 @@ func TestGeneratedNameForComputedPropertyName(t *testing.T) {
 	binder.BindSourceFile(file, defaultSourceFileAffectingOptions)
 
 	n := file.Statements.Nodes[0].AsClassDeclaration().Members.Nodes[0].Name()
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
@@ -632,7 +634,7 @@ func TestGeneratedNameForOther(t *testing.T) {
 		ec.Factory.NewNodeList([]*ast.Node{}),
 		false, /*multiLine*/
 	)
-	name1 := ec.NewGeneratedNameForNode(n, printer.AutoGenerateOptions{})
+	name1 := ec.Factory.NewGeneratedNameForNode(n)
 
 	g := &printer.NameGenerator{Context: ec, GetTextOfNode: (*ast.Node).Text}
 	text1 := g.GenerateName(name1)
