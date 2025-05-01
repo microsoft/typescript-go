@@ -2781,6 +2781,15 @@ func IsParameterPropertyModifier(kind Kind) bool {
 	return ModifierToFlag(kind)&ModifierFlagsParameterPropertyModifier != 0
 }
 
+func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
+	if node.Flags&NodeFlagsHasJSDoc != 0 {
+		if visitNodes(v, node.JSDoc(sourceFile)) {
+			return true
+		}
+	}
+	return node.ForEachChild(v)
+}
+
 func GetExternalModuleImportEqualsDeclarationExpression(node *Node) *Node {
 	// Debug.assert(isExternalModuleImportEqualsDeclaration(node))
 	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
