@@ -182,7 +182,7 @@ func getModuleSpecifierPreferences(
 	getAllowedEndingsInPreferredOrder := func(syntaxImpliedNodeFormat core.ResolutionMode) []ModuleSpecifierEnding {
 		preferredEnding := filePreferredEnding
 		// !!! TODO: resolution mode support
-		//impliedNodeFormat := getDefaultResolutionModeForFile(importingSourceFile, host, compilerOptions);
+		// impliedNodeFormat := getDefaultResolutionModeForFile(importingSourceFile, host, compilerOptions);
 		// if impliedNodeFormat != syntaxImpliedNodeFormat {
 		// 	preferredEnding = getPreferredEnding(
 		// 		prefs,
