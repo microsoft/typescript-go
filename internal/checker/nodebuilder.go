@@ -2,6 +2,7 @@ package checker
 
 import (
 	"fmt"
+	"maps"
 	"slices"
 	"strings"
 
@@ -546,10 +547,22 @@ func (b *NodeBuilder) createAccessFromSymbolChain(chain []*ast.Symbol, index int
 		if parent != nil {
 			exports := b.ch.getExportsOfSymbol(parent)
 			if exports != nil {
-				for name, ex := range exports {
-					if b.ch.getSymbolIfSameReference(ex, symbol) != nil && !isLateBoundName(name) && name != ast.InternalSymbolNameExportEquals {
-						symbolName = name
-						break
+				// avoid exhaustive iteration in the common case
+				res, ok := exports[symbol.Name]
+				if symbol.Name != ast.InternalSymbolNameExportEquals && !isLateBoundName(symbol.Name) && ok && res != nil && b.ch.getSymbolIfSameReference(res, symbol) != nil {
+					symbolName = symbol.Name
+				} else {
+					results := make(map[*ast.Symbol]string, 1)
+					for name, ex := range exports {
+						if b.ch.getSymbolIfSameReference(ex, symbol) != nil && !isLateBoundName(name) && name != ast.InternalSymbolNameExportEquals {
+							results[ex] = name
+							// break // must collect all results and sort them - exports are randomly iterated
+						}
+					}
+					resultSymbols := slices.Collect(maps.Keys(results))
+					if len(resultSymbols) > 0 {
+						b.ch.sortSymbols(resultSymbols)
+						symbolName = results[resultSymbols[0]]
 					}
 				}
 			}
@@ -904,7 +917,7 @@ func (b *NodeBuilder) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags
 				}
 				return sortedSymbolNamePair{symbol, ""}
 			})
-			slices.SortStableFunc(parentSpecifiers, sortByBestName)
+			slices.SortStableFunc(parentSpecifiers, b.sortByBestName)
 			for _, pair := range parentSpecifiers {
 				parent := pair.sym
 				parentChain := b.getSymbolChain(parent, getQualifiedLeftMeaning(meaning), false, false)
@@ -948,7 +961,7 @@ func (b *NodeBuilder) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags
 	return nil
 }
 
-func sortByBestName(a sortedSymbolNamePair, b sortedSymbolNamePair) int {
+func (b_ *NodeBuilder) sortByBestName(a sortedSymbolNamePair, b sortedSymbolNamePair) int {
 	specifierA := a.name
 	specifierB := b.name
 	if len(specifierA) > 0 && len(specifierB) > 0 {
@@ -964,7 +977,7 @@ func sortByBestName(a sortedSymbolNamePair, b sortedSymbolNamePair) int {
 		// A is relative, B is non-relative: prefer B
 		return 1
 	}
-	return 0
+	return b_.ch.compareSymbols(a.sym, b.sym) // must sort symbols for stable ordering
 }
 
 func isAmbientModuleSymbolName(s string) bool {

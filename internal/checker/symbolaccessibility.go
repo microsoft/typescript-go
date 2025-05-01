@@ -2,6 +2,7 @@ package checker
 
 import (
 	"reflect"
+	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -361,10 +362,15 @@ func (ch *Checker) getAliasForSymbolInContainer(container *ast.Symbol, symbol *a
 	if ok && quick != nil && ch.getSymbolIfSameReference(quick, symbol) != nil {
 		return quick
 	}
+	var candidates []*ast.Symbol
 	for _, exported := range exports {
 		if ch.getSymbolIfSameReference(exported, symbol) != nil {
-			return exported
+			candidates = append(candidates, exported)
 		}
+	}
+	if len(candidates) > 0 {
+		ch.sortSymbols(candidates) // _must_ sort exports for stable results - symbol table is randomly iterated
+		return candidates[0]
 	}
 	return nil
 }
@@ -468,7 +474,10 @@ func (ch *Checker) trySymbolTable(
 		return []*ast.Symbol{ctx.symbol}
 	}
 
+	var candidateChains [][]*ast.Symbol
+	// collect all possible chains to sort them and return the shortest/best
 	for _, symbolFromSymbolTable := range symbols {
+		// for every non-default, non-export= alias symbol in scope, check if it refers to or can chain to the target symbol
 		if symbolFromSymbolTable.Flags&ast.SymbolFlagsAlias != 0 &&
 			symbolFromSymbolTable.Name != ast.InternalSymbolNameExportEquals &&
 			symbolFromSymbolTable.Name != ast.InternalSymbolNameDefault &&
@@ -483,14 +492,20 @@ func (ch *Checker) trySymbolTable(
 			resolvedImportedSymbol := ch.resolveAlias(symbolFromSymbolTable)
 			candidate := ch.getCandidateListForSymbol(ctx, symbolFromSymbolTable, resolvedImportedSymbol, ignoreQualification)
 			if len(candidate) > 0 {
-				return candidate
+				candidateChains = append(candidateChains, candidate)
 			}
 		}
 		if symbolFromSymbolTable.Name == ctx.symbol.Name && symbolFromSymbolTable.ExportSymbol != nil {
 			if ch.isAccessible(ctx, ch.getMergedSymbol(symbolFromSymbolTable.ExportSymbol) /*resolvedAliasSymbol*/, nil, ignoreQualification) {
-				return []*ast.Symbol{ctx.symbol}
+				candidateChains = append(candidateChains, []*ast.Symbol{ctx.symbol})
 			}
 		}
+	}
+
+	if len(candidateChains) > 0 {
+		// pick first, shortest
+		slices.SortStableFunc(candidateChains, ch.compareSymbolChains)
+		return candidateChains[0]
 	}
 
 	// If there's no result and we're looking at the global symbol table, treat `globalThis` like an alias and try to lookup thru that
@@ -498,6 +513,23 @@ func (ch *Checker) trySymbolTable(
 		return ch.getCandidateListForSymbol(ctx, ch.globalThisSymbol, ch.globalThisSymbol, ignoreQualification)
 	}
 	return nil
+}
+
+func (ch *Checker) compareSymbolChainsWorker(a []*ast.Symbol, b []*ast.Symbol) int {
+	chainLen := len(a) - len(b)
+	if chainLen != 0 {
+		return chainLen
+	}
+
+	idx := 0
+	for idx < len(a) {
+		comparison := ch.compareSymbols(a[idx], b[idx])
+		if comparison != 0 {
+			return comparison
+		}
+		idx++
+	}
+	return 0
 }
 
 func isUMDExportSymbol(symbol *ast.Symbol) bool {
@@ -572,7 +604,7 @@ func (ch *Checker) canQualifySymbol(
 	// If the symbol is equivalent and doesn't need further qualification, this symbol is accessible
 	return !ch.needsQualification(symbolFromSymbolTable, ctx.enclosingDeclaration, meaning) ||
 		// If symbol needs qualification, make sure that parent is accessible, if it is then this symbol is accessible too
-		len(ch.getAccessibleSymbolChainEx(accessibleSymbolChainContext{ctx.symbol, ctx.enclosingDeclaration, getQualifiedLeftMeaning(meaning), ctx.useOnlyExternalAliasing, ctx.visitedSymbolTablesMap})) > 0
+		len(ch.getAccessibleSymbolChainEx(accessibleSymbolChainContext{symbolFromSymbolTable.Parent, ctx.enclosingDeclaration, getQualifiedLeftMeaning(meaning), ctx.useOnlyExternalAliasing, ctx.visitedSymbolTablesMap})) > 0
 }
 
 func (ch *Checker) needsQualification(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags) bool {
