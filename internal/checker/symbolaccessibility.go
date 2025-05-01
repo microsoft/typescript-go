@@ -294,7 +294,7 @@ func (ch *Checker) getContainersOfSymbol(symbol *ast.Symbol, enclosingDeclaratio
 			// direct children of a module
 			if hasNonGlobalAugmentationExternalModuleSymbol(d.Parent) {
 				sym := ch.getSymbolOfDeclaration(d.Parent)
-				if sym != nil {
+				if sym != nil && !slices.Contains(candidates, sym) {
 					candidates = append(candidates, sym)
 				}
 				continue
@@ -302,7 +302,7 @@ func (ch *Checker) getContainersOfSymbol(symbol *ast.Symbol, enclosingDeclaratio
 			// export ='d member of an ambient module
 			if ast.IsModuleBlock(d.Parent) && d.Parent.Parent != nil && ch.resolveExternalModuleSymbol(ch.getSymbolOfDeclaration(d.Parent.Parent), false) == symbol {
 				sym := ch.getSymbolOfDeclaration(d.Parent.Parent)
-				if sym != nil {
+				if sym != nil && !slices.Contains(candidates, sym) {
 					candidates = append(candidates, sym)
 				}
 				continue
@@ -311,14 +311,14 @@ func (ch *Checker) getContainersOfSymbol(symbol *ast.Symbol, enclosingDeclaratio
 		if ast.IsClassExpression(d) && ast.IsBinaryExpression(d.Parent) && d.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken && ast.IsAccessExpression(d.Parent.AsBinaryExpression().Left) && ast.IsEntityNameExpression(d.Parent.AsBinaryExpression().Left.Expression()) {
 			if isModuleExportsAccessExpression(d.Parent.AsBinaryExpression().Left) || ast.IsExportsIdentifier(d.Parent.AsBinaryExpression().Left.Expression()) {
 				sym := ch.getSymbolOfDeclaration(ast.GetSourceFileOfNode(d).AsNode())
-				if sym != nil {
+				if sym != nil && !slices.Contains(candidates, sym) {
 					candidates = append(candidates, sym)
 				}
 				continue
 			}
 			ch.checkExpressionCached(d.Parent.AsBinaryExpression().Left.Expression())
 			sym := ch.symbolNodeLinks.Get(d.Parent.AsBinaryExpression().Left.Expression()).resolvedSymbol
-			if sym != nil {
+			if sym != nil && !slices.Contains(candidates, sym) {
 				candidates = append(candidates, sym)
 			}
 			continue

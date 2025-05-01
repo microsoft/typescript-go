@@ -30,9 +30,141 @@ func createPrinterWithRemoveCommentsNeverAsciiEscape(emitContext *printer.EmitCo
 	return printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, emitContext)
 }
 
+type semicolonRemoverWriter struct {
+	hasPendingSemicolon bool
+	inner               printer.EmitTextWriter
+}
+
+func (s *semicolonRemoverWriter) commitSemicolon() {
+	if s.hasPendingSemicolon {
+		s.inner.WriteTrailingSemicolon(";")
+		s.hasPendingSemicolon = false
+	}
+}
+
+func (s *semicolonRemoverWriter) Clear() {
+	s.inner.Clear()
+}
+
+func (s *semicolonRemoverWriter) DecreaseIndent() {
+	s.commitSemicolon()
+	s.inner.DecreaseIndent()
+}
+
+func (s *semicolonRemoverWriter) GetColumn() int {
+	return s.inner.GetColumn()
+}
+
+func (s *semicolonRemoverWriter) GetIndent() int {
+	return s.inner.GetIndent()
+}
+
+func (s *semicolonRemoverWriter) GetLine() int {
+	return s.inner.GetLine()
+}
+
+func (s *semicolonRemoverWriter) GetTextPos() int {
+	return s.inner.GetTextPos()
+}
+
+func (s *semicolonRemoverWriter) HasTrailingComment() bool {
+	return s.inner.HasTrailingComment()
+}
+
+func (s *semicolonRemoverWriter) HasTrailingWhitespace() bool {
+	return s.inner.HasTrailingWhitespace()
+}
+
+func (s *semicolonRemoverWriter) IncreaseIndent() {
+	s.commitSemicolon()
+	s.inner.IncreaseIndent()
+}
+
+func (s *semicolonRemoverWriter) IsAtStartOfLine() bool {
+	return s.inner.IsAtStartOfLine()
+}
+
+func (s *semicolonRemoverWriter) RawWrite(s1 string) {
+	s.commitSemicolon()
+	s.inner.RawWrite(s1)
+}
+
+func (s *semicolonRemoverWriter) String() string {
+	s.commitSemicolon()
+	return s.inner.String()
+}
+
+func (s *semicolonRemoverWriter) Write(s1 string) {
+	s.commitSemicolon()
+	s.inner.Write(s1)
+}
+
+func (s *semicolonRemoverWriter) WriteComment(text string) {
+	s.commitSemicolon()
+	s.inner.WriteComment(text)
+}
+
+func (s *semicolonRemoverWriter) WriteKeyword(text string) {
+	s.commitSemicolon()
+	s.inner.WriteKeyword(text)
+}
+
+func (s *semicolonRemoverWriter) WriteLine() {
+	s.commitSemicolon()
+	s.inner.WriteLine()
+}
+
+func (s *semicolonRemoverWriter) WriteLineForce(force bool) {
+	s.commitSemicolon()
+	s.inner.WriteLineForce(force)
+}
+
+func (s *semicolonRemoverWriter) WriteLiteral(s1 string) {
+	s.commitSemicolon()
+	s.inner.WriteLiteral(s1)
+}
+
+func (s *semicolonRemoverWriter) WriteOperator(text string) {
+	s.commitSemicolon()
+	s.inner.WriteOperator(text)
+}
+
+func (s *semicolonRemoverWriter) WriteParameter(text string) {
+	s.commitSemicolon()
+	s.inner.WriteParameter(text)
+}
+
+func (s *semicolonRemoverWriter) WriteProperty(text string) {
+	s.commitSemicolon()
+	s.inner.WriteProperty(text)
+}
+
+func (s *semicolonRemoverWriter) WritePunctuation(text string) {
+	s.commitSemicolon()
+	s.inner.WritePunctuation(text)
+}
+
+func (s *semicolonRemoverWriter) WriteSpace(text string) {
+	s.commitSemicolon()
+	s.inner.WriteSpace(text)
+}
+
+func (s *semicolonRemoverWriter) WriteStringLiteral(text string) {
+	s.commitSemicolon()
+	s.inner.WriteStringLiteral(text)
+}
+
+func (s *semicolonRemoverWriter) WriteSymbol(text string, symbol *ast.Symbol) {
+	s.commitSemicolon()
+	s.inner.WriteSymbol(text, symbol)
+}
+
+func (s *semicolonRemoverWriter) WriteTrailingSemicolon(text string) {
+	s.hasPendingSemicolon = true
+}
+
 func getTrailingSemicolonDeferringWriter(writer printer.EmitTextWriter) printer.EmitTextWriter {
-	// TODO: wrap arbitrary writer with writer that only commits semicolon writes on following write operations (is OmitTrailingSemicolon printer option redundant?)
-	return writer
+	return &semicolonRemoverWriter{false, writer}
 }
 
 func (c *Checker) TypeToString(type_ *Type) string {
@@ -143,19 +275,20 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 }
 
 func (c *Checker) signatureToString(signature *Signature) string {
-	return c.signatureToStringEx(signature, nil, TypeFormatFlagsNone, nil, nil)
+	return c.signatureToStringEx(signature, nil, TypeFormatFlagsNone, nil)
 }
 
-func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, kind *SignatureKind, writer printer.EmitTextWriter) string {
+func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
+	isConstructor := signature.flags&SignatureFlagsConstruct != 0
 	var sigOutput ast.Kind
 	if flags&TypeFormatFlagsWriteArrowStyleSignature != 0 {
-		if kind != nil && *kind == SignatureKindConstruct {
+		if isConstructor {
 			sigOutput = ast.KindConstructorType
 		} else {
 			sigOutput = ast.KindFunctionType
 		}
 	} else {
-		if kind != nil && *kind == SignatureKindConstruct {
+		if isConstructor {
 			sigOutput = ast.KindConstructSignature
 		} else {
 			sigOutput = ast.KindCallSignature

@@ -1,6 +1,8 @@
 package checker
 
 import (
+	"maps"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -27,6 +29,10 @@ func cloneNodeBuilderContext(context *NodeBuilderContext) func() {
 	oldTypeParameterNamesByText := context.typeParameterNamesByText
 	oldTypeParameterNamesByTextNextNameCount := context.typeParameterNamesByTextNextNameCount
 	oldTypeParameterSymbolList := context.typeParameterSymbolList
+	context.typeParameterNames = maps.Clone(context.typeParameterNames)
+	context.typeParameterNamesByText = maps.Clone(context.typeParameterNamesByText)
+	context.typeParameterNamesByTextNextNameCount = maps.Clone(context.typeParameterNamesByTextNextNameCount)
+	context.typeParameterSymbolList = maps.Clone(context.typeParameterSymbolList)
 	return func() {
 		context.typeParameterNames = oldTypeParameterNames
 		context.typeParameterNamesByText = oldTypeParameterNamesByText

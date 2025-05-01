@@ -920,7 +920,7 @@ func (b *NodeBuilder) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags
 			slices.SortStableFunc(parentSpecifiers, b.sortByBestName)
 			for _, pair := range parentSpecifiers {
 				parent := pair.sym
-				parentChain := b.getSymbolChain(parent, getQualifiedLeftMeaning(meaning), false, false)
+				parentChain := b.getSymbolChain(parent, getQualifiedLeftMeaning(meaning), false, yieldModuleSymbol)
 				if len(parentChain) > 0 {
 					if parent.Exports != nil {
 						exported, ok := parent.Exports[ast.InternalSymbolNameExportEquals]
@@ -1303,6 +1303,9 @@ func (b *NodeBuilder) createMappedTypeNodeFromType(type_ *Type) *ast.TypeNode {
 		b.ch.getModifiersTypeFromMappedType(type_).flags&TypeFlagsUnknown == 0 &&
 		b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 &&
 		!(b.ch.getConstraintTypeFromMappedType(type_).flags&TypeFlagsTypeParameter != 0 && b.ch.getConstraintOfTypeParameter(b.ch.getConstraintTypeFromMappedType(type_)).flags&TypeFlagsIndex != 0)
+
+	cleanup := b.enterNewScope(mapped.declaration.AsNode(), nil, &[]*Type{b.ch.getTypeParameterFromMappedType(type_)}, nil, nil)
+	defer cleanup()
 
 	if b.ch.isMappedTypeWithKeyofConstraintDeclaration(type_) {
 		// We have a { [P in keyof T]: X }
@@ -2777,7 +2780,7 @@ func (b *NodeBuilder) typeToTypeNode(t *Type) *ast.TypeNode {
 	}
 	if t.flags&TypeFlagsBigIntLiteral != 0 {
 		b.ctx.approximateLength += len(pseudoBigIntToString(getBigIntLiteralValue(t))) + 1
-		return b.f.NewLiteralTypeNode(b.f.NewBigIntLiteral(pseudoBigIntToString(getBigIntLiteralValue(t))))
+		return b.f.NewLiteralTypeNode(b.f.NewBigIntLiteral(pseudoBigIntToString(getBigIntLiteralValue(t)) + "n"))
 	}
 	if t.flags&TypeFlagsBooleanLiteral != 0 {
 		if t.AsLiteralType().value.(bool) {

@@ -20460,7 +20460,10 @@ func (c *Checker) instantiateType(t *Type, m *TypeMapper) *Type {
 }
 
 func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAlias) *Type {
-	if t == nil || m == nil || !c.couldContainTypeVariables(t) {
+	// Check for type variables in the alias, so things like `type Brand<T> = number & {}` can potentially be copied with new alias type args, despite them being unreferenced.
+	// This is the behavior most people using aliases expect, and prevents the cache from leaking type parameters outside their scope of validity.
+	// tests/cases/compiler/declarationEmitArrowFunctionNoRenaming.ts contains an example of this, which previously only worked in strada via some input node reuse logic instead.
+	if t == nil || m == nil || !(c.couldContainTypeVariables(t) || (t.alias != nil && len(t.alias.typeArguments) > 0 && core.Some(t.alias.typeArguments, c.couldContainTypeVariables))) {
 		return t
 	}
 	if c.instantiationDepth == 100 || c.instantiationCount >= 5_000_000 {
