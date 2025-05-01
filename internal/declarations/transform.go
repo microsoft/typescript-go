@@ -106,11 +106,13 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindImportEqualsDeclaration,
 		ast.KindInterfaceDeclaration,
 		ast.KindClassDeclaration,
+		ast.KindJSTypeAliasDeclaration,
 		ast.KindTypeAliasDeclaration,
 		ast.KindEnumDeclaration,
 		ast.KindVariableStatement,
 		ast.KindImportDeclaration,
 		ast.KindExportDeclaration,
+		ast.KindJSExportAssignment,
 		ast.KindExportAssignment:
 		return tx.visitDeclarationStatements(node)
 	// statements we elide
@@ -133,8 +135,7 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindWithStatement,
 		ast.KindNotEmittedStatement,
 		ast.KindBlock,
-		ast.KindMissingDeclaration,
-		ast.KindJSTypeAliasDeclaration: // !!! TODO: Jsdoc support
+		ast.KindMissingDeclaration:
 		return nil
 	// parts of things, things we just visit children of
 	default:
@@ -180,20 +181,15 @@ func (tx *DeclarationTransformer) collectFileReferences(sourceFile *ast.SourceFi
 
 func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast.Node {
 	var combinedStatements *ast.StatementList
-	if ast.IsSourceFileJS(node) {
-		// !!! TODO: JS declaration emit support
-		combinedStatements = tx.Factory().NewNodeList([]*ast.Node{})
-	} else {
-		statements := tx.Visitor().VisitNodes(node.Statements)
-		combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
-		combinedStatements.Loc = statements.Loc // setTextRange
-		if ast.IsExternalModule(node) && (!tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker)) {
-			marker := createEmptyExports(tx.Factory().AsNodeFactory())
-			newList := append(combinedStatements.Nodes, marker)
-			withMarker := tx.Factory().NewNodeList(newList)
-			withMarker.Loc = combinedStatements.Loc
-			combinedStatements = withMarker
-		}
+	statements := tx.Visitor().VisitNodes(node.Statements)
+	combinedStatements = tx.transformAndReplaceLatePaintedStatements(statements)
+	combinedStatements.Loc = statements.Loc // setTextRange
+	if ast.IsExternalOrCommonJSModule(node) && (!tx.resultHasExternalModuleIndicator || (tx.needsScopeFixMarker && !tx.resultHasScopeMarker)) {
+		marker := createEmptyExports(tx.Factory().AsNodeFactory())
+		newList := append(combinedStatements.Nodes, marker)
+		withMarker := tx.Factory().NewNodeList(newList)
+		withMarker.Loc = combinedStatements.Loc
+		combinedStatements = withMarker
 	}
 	outputFilePath := tspath.GetDirectoryPath(tspath.NormalizeSlashes(tx.declarationFilePath))
 	result := tx.Factory().UpdateSourceFile(node, combinedStatements)
@@ -409,7 +405,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 
 	canProdiceDiagnostic := canProduceDiagnostics(input)
 	oldWithinObjectLiteralType := tx.suppressNewDiagnosticContexts
-	shouldEnterSuppressNewDiagnosticsContextContext := (input.Kind == ast.KindTypeLiteral || input.Kind == ast.KindMappedType) && input.Parent.Kind != ast.KindTypeAliasDeclaration
+	shouldEnterSuppressNewDiagnosticsContextContext := (input.Kind == ast.KindTypeLiteral || input.Kind == ast.KindMappedType) && !(input.Parent.Kind == ast.KindTypeAliasDeclaration || input.Parent.Kind == ast.KindJSTypeAliasDeclaration)
 
 	oldDiag := tx.state.getSymbolAccessibilityDiagnostic
 	if canProdiceDiagnostic && !tx.suppressNewDiagnosticContexts {
@@ -476,6 +472,22 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 				tx.EmitContext().AddEmitFlags(result, printer.EFSingleLine)
 			}
 		}
+	case ast.KindJSDocTypeExpression:
+		result = tx.transformJSDocTypeExpression(input.AsJSDocTypeExpression())
+	case ast.KindJSDocTypeLiteral:
+		result = tx.transformJSDocTypeLiteral(input.AsJSDocTypeLiteral())
+	case ast.KindJSDocPropertyTag:
+		result = tx.transformJSDocPropertyTag(input.AsJSDocPropertyTag())
+	case ast.KindJSDocAllType:
+		result = tx.transformJSDocAllType(input.AsJSDocAllType())
+	case ast.KindJSDocNullableType:
+		result = tx.transformJSDocNullableType(input.AsJSDocNullableType())
+	case ast.KindJSDocNonNullableType:
+		result = tx.transformJSDocNonNullableType(input.AsJSDocNonNullableType())
+	case ast.KindJSDocOptionalType:
+		result = tx.transformJSDocOptionalType(input.AsJSDocOptionalType())
+	case ast.KindJSDocVariadicType:
+		result = tx.transformJSDocVariadicType(input.AsJSDocVariadicType())
 	default:
 		result = tx.Visitor().VisitEachChild(input)
 	}
@@ -890,7 +902,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			tx.rewriteModuleSpecifier(input, input.AsExportDeclaration().ModuleSpecifier),
 			tx.tryGetResolutionModeOverride(input.AsExportDeclaration().Attributes),
 		)
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		if ast.IsSourceFile(input.Parent) {
 			tx.resultHasExternalModuleIndicator = true
 		}
@@ -1067,7 +1079,7 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 
 	var result *ast.Node
 	switch input.Kind {
-	case ast.KindTypeAliasDeclaration:
+	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		result = tx.transformTypeAliasDeclaration(input.AsTypeAliasDeclaration())
 	case ast.KindInterfaceDeclaration:
 		result = tx.transformInterfaceDeclaration(input.AsInterfaceDeclaration())
@@ -1690,4 +1702,61 @@ func (tx *DeclarationTransformer) transformImportDeclaration(decl *ast.ImportDec
 	}
 	// Nothing visible
 	return nil
+}
+
+func (tx *DeclarationTransformer) transformJSDocTypeExpression(input *ast.JSDocTypeExpression) *ast.Node {
+	return tx.Visitor().Visit(input.Type)
+}
+
+func (tx *DeclarationTransformer) transformJSDocTypeLiteral(input *ast.JSDocTypeLiteral) *ast.Node {
+	members, _ := tx.Visitor().VisitSlice(input.JSDocPropertyTags)
+	replacement := tx.Factory().NewTypeLiteralNode(tx.Factory().NewNodeList(members))
+	tx.EmitContext().SetOriginal(replacement, input.AsNode())
+	return replacement
+}
+
+func (tx *DeclarationTransformer) transformJSDocPropertyTag(input *ast.JSDocPropertyTag) *ast.Node {
+	replacement := tx.Factory().NewPropertySignatureDeclaration(
+		nil,
+		tx.Visitor().Visit(input.TagName),
+		nil,
+		tx.Visitor().Visit(input.TypeExpression),
+		nil,
+	)
+	tx.EmitContext().SetOriginal(replacement, input.AsNode())
+	return replacement
+}
+
+func (tx *DeclarationTransformer) transformJSDocAllType(input *ast.JSDocAllType) *ast.Node {
+	replacement := tx.Factory().NewKeywordTypeNode(ast.KindAnyKeyword)
+	tx.EmitContext().SetOriginal(replacement, input.AsNode())
+	return replacement
+}
+
+func (tx *DeclarationTransformer) transformJSDocNullableType(input *ast.JSDocNullableType) *ast.Node {
+	replacement := tx.Factory().NewUnionTypeNode(tx.Factory().NewNodeList([]*ast.Node{
+		tx.Visitor().Visit(input.Type),
+		tx.Factory().NewLiteralTypeNode(tx.Factory().NewKeywordExpression(ast.KindNullKeyword)),
+	}))
+	tx.EmitContext().SetOriginal(replacement, input.AsNode())
+	return replacement
+}
+
+func (tx *DeclarationTransformer) transformJSDocNonNullableType(input *ast.JSDocNonNullableType) *ast.Node {
+	return tx.Visitor().Visit(input.Type)
+}
+
+func (tx *DeclarationTransformer) transformJSDocVariadicType(input *ast.JSDocVariadicType) *ast.Node {
+	replacement := tx.Factory().NewArrayTypeNode(tx.Visitor().Visit(input.Type))
+	tx.EmitContext().SetOriginal(replacement, input.AsNode())
+	return replacement
+}
+
+func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOptionalType) *ast.Node {
+	replacement := tx.Factory().NewUnionTypeNode(tx.Factory().NewNodeList([]*ast.Node{
+		tx.Visitor().Visit(input.Type),
+		tx.Factory().NewKeywordTypeNode(ast.KindUndefinedKeyword),
+	}))
+	tx.EmitContext().SetOriginal(replacement, input.AsNode())
+	return replacement
 }

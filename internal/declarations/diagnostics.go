@@ -182,7 +182,7 @@ func createGetSymbolAccessibilityDiagnosticForNode(node *ast.Node) GetSymbolAcce
 		return wrapSimpleDiagnosticSelector(node, func(_ *ast.Node, _ printer.SymbolAccessibilityResult) *diagnostics.Message {
 			return diagnostics.Import_declaration_0_is_using_private_name_1
 		})
-	} else if ast.IsTypeAliasDeclaration(node) /*|| ast.IsJSDocTypeAlias(node)*/ { // !!! JSDoc support
+	} else if ast.IsTypeAliasDeclaration(node) || ast.IsJSTypeAliasDeclaration(node) {
 		// unique node selection behavior, inline closure
 		return func(symbolAccessibilityResult printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
 			diagnosticMessage := selectDiagnosticBasedOnModuleNameNoNameCheck(
@@ -190,20 +190,8 @@ func createGetSymbolAccessibilityDiagnosticForNode(node *ast.Node) GetSymbolAcce
 				diagnostics.Exported_type_alias_0_has_or_is_using_private_name_1_from_module_2,
 				diagnostics.Exported_type_alias_0_has_or_is_using_private_name_1,
 			)
-			var errorNode *ast.Node
-			// !!! JSDoc Support
-			////if ast.IsJSDocTypeAlias(node) {
-			////	errorNode = node.AsJSDocTypedefTag().TypeExpression
-			////} else {
-			errorNode = node.AsTypeAliasDeclaration().Type
-			////}
-			var typeName *ast.Node
-			// !!! JSDoc Support
-			////if ast.IsJSDocTypeAlias(node) {
-			////	errorNode = getNameOfDeclaration(node)
-			////} else {
-			typeName = node.Name()
-			////}
+			errorNode := node.AsTypeAliasDeclaration().Type
+			typeName := node.Name()
 			return &SymbolAccessibilityDiagnostic{
 				errorNode:         errorNode,
 				diagnosticMessage: diagnosticMessage,
@@ -454,7 +442,7 @@ func getTypeParameterConstraintVisibilityDiagnosticMessage(node *ast.Node, symbo
 	case ast.KindInferType:
 		return diagnostics.Extends_clause_for_inferred_type_0_has_or_is_using_private_name_1
 
-	case ast.KindTypeAliasDeclaration:
+	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		return diagnostics.Type_parameter_0_of_exported_type_alias_has_or_is_using_private_name_1
 
 	default:

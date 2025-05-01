@@ -39,6 +39,7 @@ func canProduceDiagnostics(node *ast.Node) bool {
 		ast.IsExpressionWithTypeArguments(node) ||
 		ast.IsImportEqualsDeclaration(node) ||
 		ast.IsTypeAliasDeclaration(node) ||
+		ast.IsJSTypeAliasDeclaration(node) ||
 		ast.IsConstructorDeclaration(node) ||
 		ast.IsIndexSignatureDeclaration(node) ||
 		ast.IsPropertyAccessExpression(node) ||
@@ -59,6 +60,7 @@ func hasInferredType(node *ast.Node) bool {
 		ast.KindBinaryExpression,
 		ast.KindVariableDeclaration,
 		ast.KindExportAssignment,
+		ast.KindJSExportAssignment,
 		ast.KindPropertyAssignment,
 		ast.KindShorthandPropertyAssignment,
 		ast.KindJSDocParameterTag,
@@ -78,6 +80,7 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 		ast.KindInterfaceDeclaration,
 		ast.KindClassDeclaration,
 		ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration,
 		ast.KindEnumDeclaration:
 		return !resolver.IsDeclarationVisible(node)
 	// The following should be doing their own visibility checks based on filtering their members
@@ -86,6 +89,7 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 	case ast.KindImportEqualsDeclaration,
 		ast.KindImportDeclaration,
 		ast.KindExportDeclaration,
+		ast.KindJSExportAssignment,
 		ast.KindExportAssignment:
 		return false
 	case ast.KindClassStaticBlockDeclaration:
@@ -119,6 +123,7 @@ func getBindingNameVisible(resolver printer.EmitResolver, elem *ast.Node) bool {
 func isEnclosingDeclaration(node *ast.Node) bool {
 	return ast.IsSourceFile(node) ||
 		ast.IsTypeAliasDeclaration(node) ||
+		ast.IsJSTypeAliasDeclaration(node) ||
 		ast.IsModuleDeclaration(node) ||
 		ast.IsClassDeclaration(node) ||
 		ast.IsInterfaceDeclaration(node) ||

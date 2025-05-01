@@ -3092,6 +3092,7 @@ func IsLateVisibilityPaintedStatement(node *Node) bool {
 		KindFunctionDeclaration,
 		KindModuleDeclaration,
 		KindTypeAliasDeclaration,
+		KindJSTypeAliasDeclaration,
 		KindInterfaceDeclaration,
 		KindEnumDeclaration:
 		return true

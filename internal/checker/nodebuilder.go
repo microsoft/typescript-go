@@ -928,6 +928,7 @@ func (b *NodeBuilder) getSymbolChain(symbol *ast.Symbol, meaning ast.SymbolFlags
 							// parentChain root _is_ symbol - symbol is a module export=, so it kinda looks like it's own parent
 							// No need to lookup an alias for the symbol in itself
 							accessibleSymbolChain = parentChain
+							break
 						}
 					}
 					nextSyms := accessibleSymbolChain

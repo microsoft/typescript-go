@@ -114,6 +114,7 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		ast.KindClassDeclaration,
 		ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration,
 		ast.KindFunctionDeclaration,
 		ast.KindEnumDeclaration,
 		ast.KindImportEqualsDeclaration:
@@ -185,7 +186,7 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 		return true
 
 	// Export assignments do not create name bindings outside the module
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		return false
 
 	default:
@@ -206,7 +207,7 @@ func (r *emitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFil
 
 func (r *emitResolver) aliasMarkingVisitor(node *ast.Node) bool {
 	switch node.Kind {
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		if node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
 			r.markLinkedAliases(node.Expression())
 		}
