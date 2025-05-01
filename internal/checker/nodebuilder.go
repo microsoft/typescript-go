@@ -2767,7 +2767,9 @@ func (b *NodeBuilder) typeToTypeNode(t *Type) *ast.TypeNode {
 	}
 	if t.flags&TypeFlagsStringLiteral != 0 {
 		b.ctx.approximateLength += len(t.AsLiteralType().value.(string)) + 2
-		return b.f.NewLiteralTypeNode(b.f.NewStringLiteral(t.AsLiteralType().value.(string) /*, b.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0*/))
+		lit := b.f.NewStringLiteral(t.AsLiteralType().value.(string) /*, b.flags&nodebuilder.FlagsUseSingleQuotesForStringLiteralType != 0*/)
+		b.e.AddEmitFlags(lit, printer.EFNoAsciiEscaping)
+		return b.f.NewLiteralTypeNode(lit)
 	}
 	if t.flags&TypeFlagsNumberLiteral != 0 {
 		value := t.AsLiteralType().value.(jsnum.Number)
