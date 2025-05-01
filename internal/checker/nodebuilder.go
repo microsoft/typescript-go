@@ -1293,7 +1293,7 @@ func (b *NodeBuilder) createMappedTypeNodeFromType(type_ *Type) *ast.TypeNode {
 	}
 	var questionToken *ast.Node
 	if mapped.declaration.QuestionToken != nil {
-		readonlyToken = b.f.NewToken(mapped.declaration.QuestionToken.Kind)
+		questionToken = b.f.NewToken(mapped.declaration.QuestionToken.Kind)
 	}
 	var appropriateConstraintTypeNode *ast.Node
 	var newTypeVariable *ast.Node
