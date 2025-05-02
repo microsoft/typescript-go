@@ -32,9 +32,10 @@ func (l *LanguageService) ProvideCompletion(
 	return l.getCompletionsAtPosition(program, file, position, context, preferences, clientOptions)
 }
 
-// !!! figure out other kinds of completion data return
-type completionData struct {
-	// !!!
+// *completionDataData | *completionDataKeyword
+type completionData = any
+
+type completionDataData struct {
 	symbols          []*ast.Symbol
 	completionKind   CompletionKind
 	isInSnippetScope bool
@@ -60,6 +61,11 @@ type completionData struct {
 	hasUnresolvedAutoImports  bool // !!!
 	// flags CompletionInfoFlags // !!!
 	defaultCommitCharacters []string
+}
+
+type completionDataKeyword struct {
+	keywordCompletions      []*lsproto.CompletionItem
+	isNewIdentifierLocation bool
 }
 
 type importStatementCompletionInfo struct {
@@ -285,28 +291,32 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	// !!! label completions
 
-	completionData := getCompletionData(program, file, position, preferences)
-	if completionData == nil {
+	data := getCompletionData(program, file, position, preferences)
+	if data == nil {
 		return nil
 	}
 
-	// switch completionData.Kind  // !!! other data cases
-	// !!! transform data into completion list
-
-	response := l.completionInfoFromData(
-		file,
-		program,
-		compilerOptions,
-		completionData,
-		preferences,
-		position,
-		clientOptions,
-	)
-	// !!! check if response is incomplete
-	return response
+	switch data := data.(type) {
+	case *completionDataData:
+		response := l.completionInfoFromData(
+			file,
+			program,
+			compilerOptions,
+			data,
+			preferences,
+			position,
+			clientOptions,
+		)
+		// !!! check if response is incomplete
+		return response
+	case *completionDataKeyword:
+		return specificKeywordCompletionInfo(clientOptions, data.keywordCompletions, data.isNewIdentifierLocation)
+	default:
+		panic("getCompletionData() returned unexpected type: " + fmt.Sprintf("%T", data))
+	}
 }
 
-func getCompletionData(program *compiler.Program, file *ast.SourceFile, position int, preferences *UserPreferences) *completionData {
+func getCompletionData(program *compiler.Program, file *ast.SourceFile, position int, preferences *UserPreferences) completionData {
 	typeChecker := program.GetTypeChecker()
 	inCheckedFile := isCheckedFile(file, program.GetCompilerOptions())
 
@@ -1385,7 +1395,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 		defaultCommitCharacters = getDefaultCommitCharacters(isNewIdentifierLocation)
 	}
 
-	return &completionData{
+	return &completionDataData{
 		symbols:                      symbols,
 		completionKind:               completionKind,
 		isInSnippetScope:             isInSnippetScope,
@@ -1415,8 +1425,11 @@ func keywordCompletionData(
 	keywordFilters KeywordCompletionFilters,
 	filterOutTSOnlyKeywords bool,
 	isNewIdentifierLocation bool,
-) *completionData {
-	return nil // !!!
+) *completionDataKeyword {
+	return &completionDataKeyword{
+		keywordCompletions:      getKeywordCompletions(keywordFilters, filterOutTSOnlyKeywords),
+		isNewIdentifierLocation: isNewIdentifierLocation,
+	}
 }
 
 func getDefaultCommitCharacters(isNewIdentifierLocation bool) []string {
@@ -1430,7 +1443,7 @@ func (l *LanguageService) completionInfoFromData(
 	file *ast.SourceFile,
 	program *compiler.Program,
 	compilerOptions *core.CompilerOptions,
-	data *completionData,
+	data *completionDataData,
 	preferences *UserPreferences,
 	position int,
 	clientOptions *lsproto.CompletionClientCapabilities,
@@ -1512,17 +1525,8 @@ func (l *LanguageService) completionInfoFromData(
 
 	// !!! exhaustive case completions
 
-	var defaultCommitCharacters *[]string
-	if supportsDefaultCommitCharacters(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport) {
-		defaultCommitCharacters = &data.defaultCommitCharacters
-	}
-
-	var itemDefaults *lsproto.CompletionItemDefaults
-	if defaultCommitCharacters != nil {
-		itemDefaults = &lsproto.CompletionItemDefaults{
-			CommitCharacters: defaultCommitCharacters,
-		}
-	}
+	itemDefaults :=
+		setCommitCharacters(clientOptions, sortedEntries, &data.defaultCommitCharacters)
 
 	// !!! port behavior of other strada fields of CompletionInfo that are non-LSP
 	return &lsproto.CompletionList{
@@ -1533,7 +1537,7 @@ func (l *LanguageService) completionInfoFromData(
 }
 
 func (l *LanguageService) getCompletionEntriesFromSymbols(
-	data *completionData,
+	data *completionDataData,
 	replacementToken *ast.Node,
 	position int,
 	file *ast.SourceFile,
@@ -1655,7 +1659,7 @@ func (l *LanguageService) createCompletionItem(
 	symbol *ast.Symbol,
 	sortText sortText,
 	replacementToken *ast.Node,
-	data *completionData,
+	data *completionDataData,
 	position int,
 	file *ast.SourceFile,
 	program *compiler.Program,
@@ -2202,7 +2206,7 @@ func symbolAppearsToBeTypeOnly(symbol *ast.Symbol, typeChecker *checker.Checker)
 
 func shouldIncludeSymbol(
 	symbol *ast.Symbol,
-	data *completionData,
+	data *completionDataData,
 	closestSymbolDeclaration *ast.Declaration,
 	file *ast.SourceFile,
 	typeChecker *checker.Checker,
@@ -2975,14 +2979,23 @@ var (
 	})
 )
 
+func cloneItems(items []*lsproto.CompletionItem) []*lsproto.CompletionItem {
+	result := make([]*lsproto.CompletionItem, len(items))
+	for i, item := range items {
+		itemClone := *item
+		result[i] = &itemClone
+	}
+	return result
+}
+
 func getKeywordCompletions(keywordFilter KeywordCompletionFilters, filterOutTsOnlyKeywords bool) []*lsproto.CompletionItem {
 	if !filterOutTsOnlyKeywords {
-		return getTypescriptKeywordCompletions(keywordFilter)
+		return cloneItems(getTypescriptKeywordCompletions(keywordFilter))
 	}
 
 	index := keywordFilter + KeywordCompletionFiltersLast + 1
 	if cached, ok := keywordCompletionsCache.Load(index); ok {
-		return cached
+		return cloneItems(cached)
 	}
 	result := core.Filter(
 		getTypescriptKeywordCompletions(keywordFilter),
@@ -2990,7 +3003,7 @@ func getKeywordCompletions(keywordFilter KeywordCompletionFilters, filterOutTsOn
 			return !isTypeScriptOnlyKeyword(scanner.StringToToken(ci.Label))
 		})
 	keywordCompletionsCache.Store(index, result)
-	return result
+	return cloneItems(result)
 }
 
 func getTypescriptKeywordCompletions(keywordFilter KeywordCompletionFilters) []*lsproto.CompletionItem {
@@ -3872,4 +3885,46 @@ func filterJsxAttributes(
 func isTypeKeywordTokenOrIdentifier(node *ast.Node) bool {
 	return ast.IsTypeKeywordToken(node) ||
 		ast.IsIdentifier(node) && scanner.IdentifierToKeywordKind(node.AsIdentifier()) == ast.KindTypeKeyword
+}
+
+// Returns the default commit characters for completion items, if that capability is supported.
+// Otherwise, if item commit characters are supported, sets the commit characters on each item.
+func setCommitCharacters(
+	clientOptions *lsproto.CompletionClientCapabilities,
+	items []*lsproto.CompletionItem,
+	defaultCommitCharacters *[]string,
+) *lsproto.CompletionItemDefaults {
+	var itemDefaults *lsproto.CompletionItemDefaults
+	supportsItemCommitCharacters := ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport)
+	if supportsDefaultCommitCharacters(clientOptions) && supportsItemCommitCharacters {
+		itemDefaults = &lsproto.CompletionItemDefaults{
+			CommitCharacters: defaultCommitCharacters,
+		}
+	} else if supportsItemCommitCharacters {
+		for _, item := range items {
+			if item.CommitCharacters == nil {
+				item.CommitCharacters = defaultCommitCharacters
+			}
+		}
+	}
+
+	return itemDefaults
+}
+
+func specificKeywordCompletionInfo(
+	clientOptions *lsproto.CompletionClientCapabilities,
+	items []*lsproto.CompletionItem,
+	isNewIdentifierLocation bool,
+) *lsproto.CompletionList {
+	defaultCommitCharacters := getDefaultCommitCharacters(isNewIdentifierLocation)
+	itemDefaults := setCommitCharacters(
+		clientOptions,
+		items,
+		&defaultCommitCharacters,
+	)
+	return &lsproto.CompletionList{
+		IsIncomplete: false,
+		ItemDefaults: itemDefaults,
+		Items:        items,
+	}
 }
