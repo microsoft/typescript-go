@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/api"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/project"
 )
 
 func runAPI(args []string) int {
@@ -20,7 +21,7 @@ func runAPI(args []string) int {
 	}
 
 	defaultLibraryPath := bundled.LibPath()
-
+	typingsLocation := project.GetGlobalTypingsCacheLocation()
 	s := api.NewServer(&api.ServerOptions{
 		In:                 os.Stdin,
 		Out:                os.Stdout,
@@ -28,6 +29,7 @@ func runAPI(args []string) int {
 		Cwd:                *cwd,
 		NewLine:            "\n",
 		DefaultLibraryPath: defaultLibraryPath,
+		TypingsLocation:    typingsLocation,
 	})
 
 	if err := s.Run(); err != nil && !errors.Is(err, io.EOF) {

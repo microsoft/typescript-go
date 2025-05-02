@@ -52,6 +52,7 @@ func ParseCommandLine(
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions: compilerOptions,
 			WatchOptions:    watchOptions,
+			TypeAcquisition: nil,
 			FileNames:       parser.fileNames,
 		},
 		ConfigFile:    nil,

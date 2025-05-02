@@ -2,6 +2,7 @@ package project
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 	"sync"
 
@@ -35,12 +36,25 @@ type ProjectHost interface {
 	tsoptions.ParseConfigHost
 	NewLine() string
 	DefaultLibraryPath() string
+	TypingsInstaller() *TypingsInstaller
 	DocumentRegistry() *DocumentRegistry
 	GetScriptInfoByPath(path tspath.Path) *ScriptInfo
 	GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo
 	OnDiscoveredSymlink(info *ScriptInfo)
 	Log(s string)
+	HasLevel(level LogLevel) bool
 	PositionEncoding() lsproto.PositionEncodingKind
+}
+
+type TypingsCacheInfo struct {
+	typeAcquisition   *core.TypeAcquisition
+	compilerOptions   *core.CompilerOptions
+	unresolvedImports []string
+}
+
+type TypingsCache struct {
+	Mu   sync.Mutex
+	Info *TypingsCacheInfo
 }
 
 type Project struct {
@@ -68,8 +82,12 @@ type Project struct {
 	// But the ProjectService owns script infos, so it's not clear why there was an extra pointer.
 	rootFileNames   *collections.OrderedMap[tspath.Path, string]
 	compilerOptions *core.CompilerOptions
+	typeAcquisition *core.TypeAcquisition
 	languageService *ls.LanguageService
 	program         *compiler.Program
+
+	typingsCache *TypingsCache
+	typingFiles  []string
 }
 
 func NewConfiguredProject(configFileName string, configFilePath tspath.Path, host ProjectHost) *Project {
@@ -128,12 +146,13 @@ func (p *Project) GetProjectVersion() int {
 
 // GetRootFileNames implements LanguageServiceHost.
 func (p *Project) GetRootFileNames() []string {
-	fileNames := make([]string, 0, p.rootFileNames.Size())
+	fileNames := make([]string, 0, p.rootFileNames.Size()+len(p.typingFiles))
 	for path, fileName := range p.rootFileNames.Entries() {
 		if p.host.GetScriptInfoByPath(path) != nil {
 			fileNames = append(fileNames, fileName)
 		}
 	}
+	fileNames = append(fileNames, p.typingFiles...)
 	return fileNames
 }
 
@@ -167,7 +186,7 @@ func (p *Project) NewLine() string {
 
 // Trace implements LanguageServiceHost.
 func (p *Project) Trace(msg string) {
-	p.log(msg)
+	p.Log(msg)
 }
 
 // GetDefaultLibraryPath implements ls.Host.
@@ -252,7 +271,7 @@ func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
 // as in `updateProjectIfDirty()`.
 func (p *Project) updateGraph() bool {
 	// !!!
-	p.log("Starting updateGraph: Project: " + p.name)
+	p.Log("Starting updateGraph: Project: " + p.name)
 	oldProgram := p.program
 	hasAddedOrRemovedFiles := p.hasAddedOrRemovedFiles
 	p.initialLoadPending = false
@@ -268,11 +287,11 @@ func (p *Project) updateGraph() bool {
 	p.hasAddedOrRemovedSymlinks = false
 	p.updateProgram()
 	p.dirty = false
-	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d", p.name, p.version))
+	p.Log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d", p.name, p.version))
 	if hasAddedOrRemovedFiles {
-		p.log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/))
+		p.Log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/))
 	} else if p.program != oldProgram {
-		p.log("Different program with same set of files")
+		p.Log("Different program with same set of files")
 	}
 
 	if p.program != oldProgram && oldProgram != nil {
@@ -283,20 +302,246 @@ func (p *Project) updateGraph() bool {
 		}
 	}
 
+	// const changedFiles: readonly Path[] = this.resolutionCache.finishRecordingFilesWithChangedResolutions() || emptyArray;
+
+	//     for (const file of changedFiles) {
+	//         // delete cached information for changed files
+	//         this.cachedUnresolvedImportsPerFile.delete(file);
+	//     }
+
+	//     // update builder only if language service is enabled
+	//     // otherwise tell it to drop its internal state
+	//     if (this.languageServiceEnabled && this.projectService.serverMode === LanguageServiceMode.Semantic && !this.isOrphan()) {
+	//         // 1. no changes in structure, no changes in unresolved imports - do nothing
+	//         // 2. no changes in structure, unresolved imports were changed - collect unresolved imports for all files
+	//         // (can reuse cached imports for files that were not changed)
+	//         // 3. new files were added/removed, but compilation settings stays the same - collect unresolved imports for all new/modified files
+	//         // (can reuse cached imports for files that were not changed)
+	//         // 4. compilation settings were changed in the way that might affect module resolution - drop all caches and collect all data from the scratch
+	//         if (hasNewProgram || changedFiles.length) {
+	//             this.lastCachedUnresolvedImportsList = getUnresolvedImports(this.program!, this.cachedUnresolvedImportsPerFile);
+	//         }
+
+	p.enqueueInstallTypingsForProject(hasAddedOrRemovedFiles)
+	//     }
+	//     else {
+	//         this.lastCachedUnresolvedImportsList = undefined;
+	//     }
+
 	return true
 }
 
 func (p *Project) updateProgram() {
 	rootFileNames := p.GetRootFileNames()
 	compilerOptions := p.GetCompilerOptions()
-
+	var typingsLocation string
+	if typeAcquisition := p.getTypeAcquisition(); typeAcquisition != nil && typeAcquisition.Enable.IsTrue() {
+		typingsLocation = p.host.TypingsInstaller().TypingsLocation
+	}
 	p.program = compiler.NewProgram(compiler.ProgramOptions{
-		RootFiles: rootFileNames,
-		Host:      p,
-		Options:   compilerOptions,
+		RootFiles:       rootFileNames,
+		Host:            p,
+		Options:         compilerOptions,
+		TypingsLocation: typingsLocation,
+		ProjectName:     p.name,
 	})
 
 	p.program.BindSourceFiles()
+}
+
+func (p *Project) getTypeAcquisition() *core.TypeAcquisition {
+	if p.kind == KindInferred && p.typeAcquisition == nil {
+		// change this to handle js files and enabling and disabling based on root files
+		p.typeAcquisition = &core.TypeAcquisition{
+			Enable: core.TSTrue,
+		}
+	}
+	return p.typeAcquisition
+}
+
+func (p *Project) enqueueInstallTypingsForProject(forceRefresh bool) {
+	typeAcquisition := p.getTypeAcquisition()
+	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
+		return
+	}
+
+	typingsInstaller := p.host.TypingsInstaller()
+	if typingsInstaller == nil {
+		return
+	}
+
+	unresolvedImports := getUnresolvedImports(p.program)
+	if forceRefresh ||
+		p.typingsCache == nil ||
+		// typeAcquisition, entry.typeAcquisition) ||
+		p.typingsCache.Info.compilerOptions.GetAllowJS() != p.compilerOptions.GetAllowJS() ||
+		!slices.Equal(p.typingsCache.Info.unresolvedImports, unresolvedImports) {
+		// Note: entry is now poisoned since it does not really contain typings for a given combination of compiler options\typings options.
+		// instead it acts as a placeholder to prevent issuing multiple requests
+		if p.typingsCache == nil {
+			p.typingsCache = &TypingsCache{}
+		}
+		p.typingsCache.Mu.Lock()
+		info := &TypingsCacheInfo{
+			typeAcquisition:   typeAcquisition,
+			compilerOptions:   p.compilerOptions,
+			unresolvedImports: unresolvedImports,
+		}
+		p.typingsCache.Info = info
+		p.typingsCache.Mu.Unlock()
+		// something has been changed, issue a request to update typings
+		typingsInstaller.EnqueueInstallTypingsRequest(p, info)
+	}
+}
+
+func getUnresolvedImports(p *compiler.Program) []string { //(program: Program, cachedUnresolvedImportsPerFile: Map<Path, readonly string[]>): SortedReadonlyArray<string> {
+	// tracing?.push(tracing.Phase.Session, "getUnresolvedImports", { count: sourceFiles.length });
+	sourceFiles := p.GetSourceFiles()
+	// const ambientModules = program.getTypeChecker().getAmbientModules().map(mod => stripQuotes(mod.getName()));
+	result := []string{}
+	for _, sourceFile := range sourceFiles {
+		unresolvedInFile := extractUnresolvedImportsFromSourceFile(p, sourceFile)
+		result = append(result, unresolvedInFile...)
+		// 	program,
+		// 	sourceFile,
+		// 	ambientModules,
+		// 	cachedUnresolvedImportsPerFile,
+		// ))
+	}
+	slices.Sort(result)
+	result = slices.Compact(result)
+	// tracing?.pop();
+	return result
+}
+
+func extractUnresolvedImportsFromSourceFile(p *compiler.Program, file *ast.SourceFile) []string {
+	//     program: Program,
+	//     file: SourceFile,
+	//     ambientModules: readonly string[],
+	//     cachedUnresolvedImportsPerFile: Map<Path, readonly string[]>,
+	// ): readonly string[] {
+	// return getOrUpdate(cachedUnresolvedImportsPerFile, file.path, () => {
+	unresolvedImports := []string{}
+	resolvedModules := p.GetResolvedModules()[file.Path()]
+	for cacheKey, resolution := range resolvedModules {
+		resolved := resolution.IsResolved()
+		if (!resolved || !tspath.ExtensionIsOneOf(resolution.Extension, tspath.SupportedTSExtensionsWithJsonFlat)) &&
+			!tspath.IsExternalModuleNameRelative(cacheKey.Name) {
+			//  !ambientModules.some(m => m === name)
+			unresolvedImports = append(unresolvedImports, cacheKey.Name)
+		}
+	}
+	return unresolvedImports
+}
+
+func (p *Project) UpdateTypingFiles(typingFiles []string) {
+	// const typingFiles = !typeAcquisition || !typeAcquisition.enable ? emptyArray : toSorted(newTypings);
+	slices.Sort(typingFiles)
+	if !slices.Equal(typingFiles, p.typingFiles) {
+		// 	// If typing files changed, then only schedule project update
+		p.typingFiles = typingFiles
+		p.markAsDirty()
+		// 	// Invalidate files with unresolved imports
+		// 	this.resolutionCache.setFilesWithInvalidatedNonRelativeUnresolvedImports(this.cachedUnresolvedImportsPerFile);
+		// 	this.projectService.delayUpdateProjectGraphAndEnsureProjectStructureForOpenFiles(this);
+	}
+}
+
+func (p *Project) WatchTypingLocations(files []string) {
+	// if (!files) {
+	// 	this.typingWatchers!.isInvoked = false;
+	// 	return;
+	// }
+
+	// if (!files.length) {
+	// 	// shut down existing watchers
+	// 	this.closeWatchingTypingLocations();
+	// 	return;
+	// }
+
+	// const toRemove = new Map(this.typingWatchers);
+	// if (!this.typingWatchers) this.typingWatchers = new Map();
+
+	// // handler should be invoked once for the entire set of files since it will trigger full rediscovery of typings
+	// this.typingWatchers.isInvoked = false;
+	// const createProjectWatcher = (path: string, typingsWatcherType: TypingWatcherType) => {
+	// 	const canonicalPath = this.toPath(path);
+	// 	toRemove.delete(canonicalPath);
+	// 	if (!this.typingWatchers!.has(canonicalPath)) {
+	// 		const watchType = typingsWatcherType === TypingWatcherType.FileWatcher ?
+	// 			WatchType.TypingInstallerLocationFile :
+	// 			WatchType.TypingInstallerLocationDirectory;
+	// 		this.typingWatchers!.set(
+	// 			canonicalPath,
+	// 			canWatchDirectoryOrFilePath(canonicalPath) ?
+	// 				typingsWatcherType === TypingWatcherType.FileWatcher ?
+	// 					this.projectService.watchFactory.watchFile(
+	// 						path,
+	// 						() =>
+	// 							!this.typingWatchers!.isInvoked ?
+	// 								this.onTypingInstallerWatchInvoke() :
+	// 								this.writeLog(`TypingWatchers already invoked`),
+	// 						PollingInterval.High,
+	// 						this.projectService.getWatchOptions(this),
+	// 						watchType,
+	// 						this,
+	// 					) :
+	// 					this.projectService.watchFactory.watchDirectory(
+	// 						path,
+	// 						f => {
+	// 							if (this.typingWatchers!.isInvoked) return this.writeLog(`TypingWatchers already invoked`);
+	// 							if (!fileExtensionIs(f, Extension.Json)) return this.writeLog(`Ignoring files that are not *.json`);
+	// 							if (comparePaths(f, combinePaths(this.projectService.typingsInstaller.globalTypingsCacheLocation!, "package.json"), !this.useCaseSensitiveFileNames())) return this.writeLog(`Ignoring package.json change at global typings location`);
+	// 							this.onTypingInstallerWatchInvoke();
+	// 						},
+	// 						WatchDirectoryFlags.Recursive,
+	// 						this.projectService.getWatchOptions(this),
+	// 						watchType,
+	// 						this,
+	// 					) :
+	// 				(this.writeLog(`Skipping watcher creation at ${path}:: ${getDetailWatchInfo(watchType, this)}`), noopFileWatcher),
+	// 		);
+	// 	}
+	// };
+
+	// // Create watches from list of files
+	// for (const file of files) {
+	// 	const basename = getBaseFileName(file);
+	// 	if (basename === "package.json" || basename === "bower.json") {
+	// 		// package.json or bower.json exists, watch the file to detect changes and update typings
+	// 		createProjectWatcher(file, TypingWatcherType.FileWatcher);
+	// 		continue;
+	// 	}
+
+	// 	// path in projectRoot, watch project root
+	// 	if (containsPath(this.currentDirectory, file, this.currentDirectory, !this.useCaseSensitiveFileNames())) {
+	// 		const subDirectory = file.indexOf(directorySeparator, this.currentDirectory.length + 1);
+	// 		if (subDirectory !== -1) {
+	// 			// Watch subDirectory
+	// 			createProjectWatcher(file.substr(0, subDirectory), TypingWatcherType.DirectoryWatcher);
+	// 		}
+	// 		else {
+	// 			// Watch the directory itself
+	// 			createProjectWatcher(file, TypingWatcherType.DirectoryWatcher);
+	// 		}
+	// 		continue;
+	// 	}
+
+	// 	// path in global cache, watch global cache
+	// 	if (containsPath(this.projectService.typingsInstaller.globalTypingsCacheLocation!, file, this.currentDirectory, !this.useCaseSensitiveFileNames())) {
+	// 		createProjectWatcher(this.projectService.typingsInstaller.globalTypingsCacheLocation!, TypingWatcherType.DirectoryWatcher);
+	// 		continue;
+	// 	}
+
+	// 	// watch node_modules or bower_components
+	// 	createProjectWatcher(file, TypingWatcherType.DirectoryWatcher);
+	// }
+
+	// // Remove unused watches
+	// toRemove.forEach((watch, path) => {
+	// 	watch.close();
+	// 	this.typingWatchers!.delete(path);
+	// });
 }
 
 func (p *Project) isOrphan() bool {
@@ -375,7 +620,7 @@ func (p *Project) LoadConfig() error {
 			nil, /*extendedConfigCache*/
 		)
 
-		p.logf("Config: %s : %s",
+		p.Logf("Config: %s : %s",
 			p.configFileName,
 			core.Must(core.StringifyJson(map[string]any{
 				"rootNames":         parsedCommandLine.FileNames(),
@@ -385,6 +630,7 @@ func (p *Project) LoadConfig() error {
 		)
 
 		p.compilerOptions = parsedCommandLine.CompilerOptions()
+		p.typeAcquisition = parsedCommandLine.TypeAcquisition()
 		p.setRootFiles(parsedCommandLine.FileNames())
 	} else {
 		p.compilerOptions = &core.CompilerOptions{}
@@ -429,6 +675,44 @@ func (p *Project) clearSourceMapperCache() {
 	// !!!
 }
 
+func (p *Project) GetFileNames(excludeFilesFromExternalLibraries bool, excludeConfigFiles bool) []string {
+	if p.program == nil {
+		return []string{}
+	}
+
+	// if (!this.languageServiceEnabled) {
+	//     // if language service is disabled assume that all files in program are root files + default library
+	//     let rootFiles = this.getRootFiles();
+	//     if (this.compilerOptions) {
+	//         const defaultLibrary = getDefaultLibFilePath(this.compilerOptions);
+	//         if (defaultLibrary) {
+	//             (rootFiles || (rootFiles = [])).push(asNormalizedPath(defaultLibrary));
+	//         }
+	//     }
+	//     return rootFiles;
+	// }
+	result := []string{}
+	sourceFiles := p.program.GetSourceFiles()
+	for _, sourceFile := range sourceFiles {
+		// if excludeFilesFromExternalLibraries && p.program.IsSourceFileFromExternalLibrary(sourceFile) {
+		//     continue;
+		// }
+		result = append(result, sourceFile.FileName())
+	}
+	// if (!excludeConfigFiles) {
+	//     const configFile = p.program.GetCompilerOptions().configFile;
+	//     if (configFile) {
+	//         result = append(result, configFile.fileName);
+	//         if (configFile.extendedSourceFiles) {
+	//             for (const f of configFile.extendedSourceFiles) {
+	//                 result.push(asNormalizedPath(f));
+	//             }
+	//         }
+	//     }
+	// }
+	return result
+}
+
 func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFileVersionAndText bool) string {
 	var builder strings.Builder
 	builder.WriteString(fmt.Sprintf("Project '%s' (%s)\n", p.name, p.kind.String()))
@@ -455,12 +739,16 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 	return builder.String()
 }
 
-func (p *Project) log(s string) {
+func (p *Project) HasLogLevel(level LogLevel) bool {
+	return p.host.HasLevel(level)
+}
+
+func (p *Project) Log(s string) {
 	p.host.Log(s)
 }
 
-func (p *Project) logf(format string, args ...interface{}) {
-	p.log(fmt.Sprintf(format, args...))
+func (p *Project) Logf(format string, args ...interface{}) {
+	p.Log(fmt.Sprintf(format, args...))
 }
 
 func (p *Project) Close() {
