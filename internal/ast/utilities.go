@@ -2866,3 +2866,12 @@ func GetImplementsTypeNodes(node *Node) []*ExpressionWithTypeArgumentsNode {
 func IsTypeKeywordToken(node *Node) bool {
 	return node.Kind == KindTypeKeyword
 }
+
+// If node is a single comment JSDoc, we do not visit the comment node list.
+func IsJSDocSingleCommentNodeList(parent *Node, nodeList *NodeList) bool {
+	return IsJSDocSingleCommentNode(parent) && nodeList == parent.AsJSDoc().Comment
+}
+
+func IsJSDocSingleCommentNode(node *Node) bool {
+	return node.Kind == KindJSDoc && node.AsJSDoc().Comment != nil && len(node.AsJSDoc().Comment.Nodes) == 1
+}

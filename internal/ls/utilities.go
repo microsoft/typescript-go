@@ -46,14 +46,37 @@ func isInComment(file *ast.SourceFile, position int, tokenAtPosition *ast.Node) 
 	return nil
 }
 
-// !!!
 // Replaces last(node.getChildren(sourceFile))
 func getLastChild(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
-	return nil
+	lastChildNode := getLastVisitedChild(node, sourceFile)
+	if ast.IsJSDocSingleCommentNode(node) {
+		return nil
+	}
+	var tokenStartPos int
+	if lastChildNode != nil {
+		tokenStartPos = lastChildNode.End()
+	} else {
+		tokenStartPos = node.Pos()
+	}
+	var lastToken *ast.Node
+	scanner := scanner.GetScannerForSourceFile(sourceFile, tokenStartPos)
+	for startPos := tokenStartPos; startPos < node.End(); {
+		tokenKind := scanner.Token()
+		tokenFullStart := scanner.TokenFullStart()
+		tokenEnd := scanner.TokenEnd()
+		lastToken = sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, node)
+		startPos = tokenEnd
+		scanner.Scan()
+	}
+	return core.IfElse(lastToken != nil, lastToken, lastChildNode)
 }
 
 func getLastToken(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
 	if node == nil {
+		return nil
+	}
+
+	if ast.IsTokenKind(node.Kind) || ast.IsIdentifier(node) {
 		return nil
 	}
 
@@ -71,9 +94,84 @@ func getLastToken(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
 	}
 }
 
-// !!!
+// Gets the last visited child of the given node.
+// NOTE: This doesn't include unvisited tokens; for this, use `getLastChild` or `getLastToken`.
+func getLastVisitedChild(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
+	var lastChild *ast.Node
+
+	visitNode := func(n *ast.Node, _ *ast.NodeVisitor) *ast.Node {
+		if !(n == nil || node.Flags&ast.NodeFlagsReparsed != 0) {
+			lastChild = n
+		}
+		return n
+	}
+	visitNodeList := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
+		if nodeList != nil && len(nodeList.Nodes) > 0 && !ast.IsJSDocSingleCommentNodeList(node, nodeList) {
+			for i := len(nodeList.Nodes) - 1; i >= 0; i-- {
+				if nodeList.Nodes[i].Flags&ast.NodeFlagsReparsed == 0 {
+					lastChild = nodeList.Nodes[i]
+					break
+				}
+			}
+		}
+		return nodeList
+	}
+
+	nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
+		VisitNode:  visitNode,
+		VisitToken: visitNode,
+		VisitNodes: visitNodeList,
+		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+			if modifiers != nil {
+				visitNodeList(&modifiers.NodeList, visitor)
+			}
+			return modifiers
+		},
+	})
+
+	astnav.VisitEachChildAndJSDoc(node, sourceFile, nodeVisitor)
+	return lastChild
+}
+
 func getFirstToken(node *ast.Node, sourceFile *ast.SourceFile) *ast.Node {
-	return nil
+	if ast.IsIdentifier(node) || ast.IsTokenKind(node.Kind) {
+		return nil
+	}
+	assertHasRealPosition(node)
+	var firstChild *ast.Node
+	node.ForEachChild(func(n *ast.Node) bool {
+		if n == nil || node.Flags&ast.NodeFlagsReparsed != 0 {
+			return false
+		}
+		firstChild = n
+		return true
+	})
+
+	var tokenEndPosition int
+	if firstChild != nil {
+		tokenEndPosition = firstChild.Pos()
+	} else {
+		tokenEndPosition = node.End()
+	}
+	scanner := scanner.GetScannerForSourceFile(sourceFile, node.Pos())
+	var firstToken *ast.Node
+	if node.Pos() < tokenEndPosition {
+		tokenKind := scanner.Token()
+		tokenFullStart := scanner.TokenFullStart()
+		tokenEnd := scanner.TokenEnd()
+		firstToken = sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, node)
+	}
+
+	if firstToken != nil {
+		return firstToken
+	}
+	if firstChild == nil {
+		return nil
+	}
+	if firstChild.Kind < ast.KindFirstNode {
+		return firstChild
+	}
+	return getFirstToken(firstChild, sourceFile)
 }
 
 func assertHasRealPosition(node *ast.Node) {
@@ -349,6 +447,9 @@ func probablyUsesSemicolons(file *ast.SourceFile) bool {
 	}
 
 	// If even 2/5 places have a semicolon, the user probably wants semicolons
+	if withoutSemicolon == 0 {
+		return true
+	}
 	return withSemicolon/withoutSemicolon > 1/nStatementsToObserve
 }
 
@@ -582,25 +683,27 @@ func isCompletedNode(n *ast.Node, sourceFile *ast.SourceFile) bool {
 // Checks if node ends with 'expectedLastToken'.
 // If child at position 'length - 1' is 'SemicolonToken' it is skipped and 'expectedLastToken' is compared with child at position 'length - 2'.
 func nodeEndsWith(n *ast.Node, expectedLastToken ast.Kind, sourceFile *ast.SourceFile) bool {
-	var lastChildNode *ast.Node
-	ast.ForEachChildAndJSDoc(n, sourceFile, func(node *ast.Node) bool { // !!! This can be extracted into its own `findLastChildNode` function.
-		if node == nil || node.Flags&ast.NodeFlagsReparsed != 0 {
-			return false
-		}
-		lastChildNode = node
-		return false
-	})
-	if lastChildNode == nil {
-		return false
+	lastChildNode := getLastVisitedChild(n, sourceFile)
+	var lastNodeAndTokens []*ast.Node
+	var tokenStartPos int
+	if lastChildNode != nil {
+		lastNodeAndTokens = []*ast.Node{lastChildNode}
+		tokenStartPos = lastChildNode.End()
+	} else {
+		tokenStartPos = n.Pos()
 	}
-	lastNodeAndTokens := []*ast.Node{lastChildNode}
-	scanner := scanner.GetScannerForSourceFile(sourceFile, lastChildNode.End())
-	for startPos := lastChildNode.End(); startPos < n.End(); {
+	scanner := scanner.GetScannerForSourceFile(sourceFile, tokenStartPos)
+	for startPos := tokenStartPos; startPos < n.End(); {
 		tokenKind := scanner.Token()
 		tokenFullStart := scanner.TokenFullStart()
 		tokenEnd := scanner.TokenEnd()
 		token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, n)
 		lastNodeAndTokens = append(lastNodeAndTokens, token)
+		tokenStartPos = tokenEnd
+		scanner.Scan()
+	}
+	if len(lastNodeAndTokens) == 0 {
+		return false
 	}
 	lastChild := lastNodeAndTokens[len(lastNodeAndTokens)-1]
 	if lastChild.Kind == expectedLastToken {
