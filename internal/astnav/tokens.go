@@ -134,7 +134,7 @@ func getTokenAtPosition(
 	})
 
 	for {
-		visitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
+		VisitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
 		// If prevSubtree was set on the last iteration, it ends at the target position.
 		// Check if the rightmost token of prevSubtree should be returned based on the
 		// `includePrecedingTokenAtEndPosition` callback.
@@ -234,7 +234,7 @@ func findRightmostNode(node *ast.Node) *ast.Node {
 	}
 }
 
-func visitEachChildAndJSDoc(node *ast.Node, sourceFile *ast.SourceFile, visitor *ast.NodeVisitor) {
+func VisitEachChildAndJSDoc(node *ast.Node, sourceFile *ast.SourceFile, visitor *ast.NodeVisitor) {
 	if node.Flags&ast.NodeFlagsHasJSDoc != 0 {
 		for _, jsdoc := range node.JSDoc(sourceFile) {
 			if visitor.Hooks.VisitNode != nil {
@@ -292,7 +292,7 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 			}
 			if nodeList != nil && len(nodeList.Nodes) > 0 {
 				nodes := nodeList.Nodes
-				if isJSDocSingleCommentNodeList(n, nodeList) {
+				if ast.IsJSDocSingleCommentNodeList(n, nodeList) {
 					return nodeList
 				}
 				index, match := core.BinarySearchUniqueFunc(nodes, func(middle int, _ *ast.Node) int {
@@ -336,7 +336,7 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 				return modifiers
 			},
 		})
-		visitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
+		VisitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
 
 		if foundChild != nil {
 			// Note that the span of a node's tokens is [getStartOfNode(node, ...), node.end).
@@ -407,11 +407,6 @@ func GetStartOfNode(node *ast.Node, file *ast.SourceFile, includeJSDoc bool) int
 	return scanner.GetTokenPosOfNode(node, file, includeJSDoc)
 }
 
-// If this is a single comment JSDoc, we do not visit the comment node.
-func isJSDocSingleCommentNodeList(parent *ast.Node, nodeList *ast.NodeList) bool {
-	return parent.Kind == ast.KindJSDoc && nodeList == parent.AsJSDoc().Comment && nodeList != nil && len(nodeList.Nodes) == 1
-}
-
 // Looks for rightmost valid token in the range [startPos, endPos).
 // If position is >= 0, looks for rightmost valid token that precedes or touches that position.
 func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingNode *ast.Node, position int, excludeJSDoc bool) *ast.Node {
@@ -452,7 +447,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 		}
 		visitNodes := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
 			if nodeList != nil && len(nodeList.Nodes) > 0 {
-				if isJSDocSingleCommentNodeList(n, nodeList) {
+				if ast.IsJSDocSingleCommentNodeList(n, nodeList) {
 					return nodeList
 				}
 				hasChildren = true
@@ -493,7 +488,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 				return modifiers
 			},
 		})
-		visitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
+		VisitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
 
 		// Three cases:
 		// 1. The answer is a token of `rightmostValidNode`.

@@ -272,12 +272,8 @@ func (l *LanguageService) getCompletionsAtPosition(
 	if context.TriggerCharacter != nil && *context.TriggerCharacter == " " {
 		// `isValidTrigger` ensures we are at `import |`
 		if ptrIsTrue(preferences.IncludeCompletionsForImportStatements) {
-			// !!! isMemberCompletion
 			return &lsproto.CompletionList{
 				IsIncomplete: true,
-				ItemDefaults: &lsproto.CompletionItemDefaults{ // !!! do we need this if no entries? also, check if client supports item defaults
-					CommitCharacters: ptrTo(getDefaultCommitCharacters(true /*isNewIdentifierLocation*/)),
-				},
 			}
 		}
 		return nil
@@ -311,6 +307,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 		return response
 	case *completionDataKeyword:
 		return specificKeywordCompletionInfo(clientOptions, data.keywordCompletions, data.isNewIdentifierLocation)
+	// !!! jsdoc completion data cases
 	default:
 		panic("getCompletionData() returned unexpected type: " + fmt.Sprintf("%T", data))
 	}
@@ -1525,8 +1522,7 @@ func (l *LanguageService) completionInfoFromData(
 
 	// !!! exhaustive case completions
 
-	itemDefaults :=
-		setCommitCharacters(clientOptions, sortedEntries, &data.defaultCommitCharacters)
+	itemDefaults := setCommitCharacters(clientOptions, sortedEntries, &data.defaultCommitCharacters)
 
 	// !!! port behavior of other strada fields of CompletionInfo that are non-LSP
 	return &lsproto.CompletionList{
@@ -3047,7 +3043,38 @@ func getTypescriptKeywordCompletions(keywordFilter KeywordCompletionFilters) []*
 }
 
 func isTypeScriptOnlyKeyword(kind ast.Kind) bool {
-	return false // !!! here
+	switch kind {
+	case ast.KindAbstractKeyword,
+		ast.KindAnyKeyword,
+		ast.KindBigIntKeyword,
+		ast.KindBooleanKeyword,
+		ast.KindDeclareKeyword,
+		ast.KindEnumKeyword,
+		ast.KindGlobalKeyword,
+		ast.KindImplementsKeyword,
+		ast.KindInferKeyword,
+		ast.KindInterfaceKeyword,
+		ast.KindIsKeyword,
+		ast.KindKeyOfKeyword,
+		ast.KindModuleKeyword,
+		ast.KindNamespaceKeyword,
+		ast.KindNeverKeyword,
+		ast.KindNumberKeyword,
+		ast.KindObjectKeyword,
+		ast.KindOverrideKeyword,
+		ast.KindPrivateKeyword,
+		ast.KindProtectedKeyword,
+		ast.KindPublicKeyword,
+		ast.KindReadonlyKeyword,
+		ast.KindStringKeyword,
+		ast.KindSymbolKeyword,
+		ast.KindTypeKeyword,
+		ast.KindUniqueKeyword,
+		ast.KindUnknownKeyword:
+		return true
+	default:
+		return false
+	}
 }
 
 func isFunctionLikeBodyKeyword(kind ast.Kind) bool {
