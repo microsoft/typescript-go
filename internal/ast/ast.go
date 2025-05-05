@@ -3682,7 +3682,7 @@ func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *Ide
 
 func (f *NodeFactory) UpdateTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
 	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
-		return updateNode(f.NewTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
+		return updateNode(f.newTypeOrJSTypeAliasDeclaration(node.Kind, modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -3692,14 +3692,11 @@ func (node *TypeAliasDeclaration) ForEachChild(v Visitor) bool {
 }
 
 func (node *TypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	if node.Kind == KindJSTypeAliasDeclaration {
-		return v.Factory.UpdateJSTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
-	}
 	return v.Factory.UpdateTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
 }
 
 func (node *TypeAliasDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewTypeAliasDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().newTypeOrJSTypeAliasDeclaration(node.Kind, node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.name }
@@ -3714,13 +3711,6 @@ func IsTypeOrJSTypeAliasDeclaration(node *Node) bool {
 
 func (f *NodeFactory) NewJSTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
 	return f.newTypeOrJSTypeAliasDeclaration(KindJSTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
-}
-
-func (f *NodeFactory) UpdateJSTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
-		return updateNode(f.NewJSTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
 }
 
 func IsJSTypeAliasDeclaration(node *Node) bool {
@@ -4053,7 +4043,7 @@ func (f *NodeFactory) NewJSImportDeclaration(modifiers *ModifierList, importClau
 
 func (f *NodeFactory) UpdateImportDeclaration(node *ImportDeclaration, modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
 	if modifiers != node.modifiers || importClause != node.ImportClause || moduleSpecifier != node.ModuleSpecifier || attributes != node.Attributes {
-		return updateNode(f.NewImportDeclaration(modifiers, importClause, moduleSpecifier, attributes), node.AsNode(), f.hooks)
+		return updateNode(f.newImportOrJSImportDeclaration(node.Kind, modifiers, importClause, moduleSpecifier, attributes), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4067,7 +4057,7 @@ func (node *ImportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *ImportDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewImportDeclaration(node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().newImportOrJSImportDeclaration(node.Kind, node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportDeclaration) computeSubtreeFacts() SubtreeFacts {

@@ -3953,7 +3953,7 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitNamespaceExportDeclaration(node.AsNamespaceExportDeclaration())
 	case ast.KindImportEqualsDeclaration:
 		p.emitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
-	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
+	case ast.KindImportDeclaration:
 		p.emitImportDeclaration(node.AsImportDeclaration())
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		p.emitExportAssignment(node.AsExportAssignment())

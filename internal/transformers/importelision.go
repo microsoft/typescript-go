@@ -28,7 +28,7 @@ func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		return tx.visitor.VisitEachChild(node)
-	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
+	case ast.KindImportDeclaration:
 		if !tx.isElisionBlocked(node) {
 			n := node.AsImportDeclaration()
 			// Do not elide a side-effect only import declaration.
@@ -71,7 +71,7 @@ func (tx *ImportElisionTransformer) visit(node *ast.Node) *ast.Node {
 			return nil
 		}
 		return node
-	case ast.KindExportAssignment, ast.KindJSExportAssignment:
+	case ast.KindExportAssignment:
 		if !tx.isElisionBlocked(node) && !tx.compilerOptions.VerbatimModuleSyntax.IsTrue() && !tx.isValueAliasDeclaration(node) {
 			// elide unused import
 			return nil
@@ -166,7 +166,7 @@ func (tx *ImportElisionTransformer) isElisionBlocked(node *ast.Node /*ImportDecl
 	}
 
 	switch node.Kind {
-	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
+	case ast.KindImportDeclaration:
 		n := node.AsImportDeclaration()
 		p := parsed.AsImportDeclaration()
 		if n.ImportClause != p.ImportClause {

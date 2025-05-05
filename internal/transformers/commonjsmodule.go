@@ -63,16 +63,12 @@ func (tx *CommonJSModuleTransformer) visitTopLevel(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindImportDeclaration:
 		node = tx.visitTopLevelImportDeclaration(node.AsImportDeclaration())
-	case ast.KindJSImportDeclaration:
-		node = nil
 	case ast.KindImportEqualsDeclaration:
 		node = tx.visitTopLevelImportEqualsDeclaration(node.AsImportEqualsDeclaration())
 	case ast.KindExportDeclaration:
 		node = tx.visitTopLevelExportDeclaration(node.AsExportDeclaration())
 	case ast.KindExportAssignment:
 		node = tx.visitTopLevelExportAssignment(node.AsExportAssignment())
-	case ast.KindJSExportAssignment:
-		node = nil
 	case ast.KindFunctionDeclaration:
 		node = tx.visitTopLevelFunctionDeclaration(node.AsFunctionDeclaration())
 	case ast.KindClassDeclaration:
