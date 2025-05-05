@@ -5,7 +5,6 @@
 @@= skipped --1, +1 lines =@@
 +context.js(4,14): error TS1340: Module './timer' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./timer')'?
 +context.js(5,14): error TS1340: Module './hook' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./hook')'?
-+context.js(6,31): error TS2694: Namespace 'Hook' has no exported member 'HookHandler'.
 +context.js(34,14): error TS2350: Only a void function can be called with the 'new' keyword.
 +hook.js(2,20): error TS1340: Module './context' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./context')'?
 +
@@ -32,7 +31,7 @@
 +    }
 +    module.exports = Hook;
 +    
-+==== context.js (4 errors) ====
++==== context.js (3 errors) ====
 +    /**
 +     * Imports
 +     *
@@ -43,8 +42,6 @@
 +                 ~~~~~~~~~~~~~~~~
 +!!! error TS1340: Module './hook' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./hook')'?
 +     * @typedef {import("./hook").HookHandler} HookHandler
-+                                  ~~~~~~~~~~~
-+!!! error TS2694: Namespace 'Hook' has no exported member 'HookHandler'.
 +     */
 +    
 +    /**
