@@ -2,7 +2,6 @@ package project
 
 import (
 	"fmt"
-	"slices"
 	"strings"
 	"sync"
 
@@ -135,10 +134,12 @@ func (s *Service) PositionEncoding() lsproto.PositionEncodingKind {
 
 // Client implements ProjectHost.
 func (s *Service) Client() Client {
-	if s.options.WatchEnabled {
-		return s.host.Client()
-	}
-	return nil
+	return s.host.Client()
+}
+
+// IsWatchEnabled implements ProjectHost.
+func (s *Service) IsWatchEnabled() bool {
+	return s.options.WatchEnabled
 }
 
 func (s *Service) Projects() []*Project {
@@ -261,13 +262,11 @@ func (s *Service) OnWatchedFilesChanged(changes []*lsproto.FileEvent) error {
 		}
 	}
 
-	for _, project := range s.configuredProjects {
-		if project.updateIfDirty() {
-			if err := s.publishDiagnosticsForOpenFiles(project); err != nil {
-				return err
-			}
-		}
+	client := s.host.Client()
+	if client != nil {
+		return client.RefreshDiagnostics()
 	}
+
 	return nil
 }
 
@@ -286,36 +285,6 @@ func (s *Service) onConfigFileChanged(project *Project, changeKind lsproto.FileC
 	if !project.deferredClose {
 		project.pendingConfigReload = true
 		project.markAsDirty()
-	}
-	return nil
-}
-
-func (s *Service) publishDiagnosticsForOpenFiles(project *Project) error {
-	client := s.host.Client()
-	if client == nil {
-		return nil
-	}
-
-	for path := range s.openFiles {
-		info := s.GetScriptInfoByPath(path)
-		if slices.Contains(info.containingProjects, project) {
-			diagnostics := project.LanguageService().GetDocumentDiagnostics(info.fileName)
-			lspDiagnostics := make([]*lsproto.Diagnostic, len(diagnostics))
-			for i, diagnostic := range diagnostics {
-				if diag, err := s.converters.ToLSPDiagnostic(diagnostic); err != nil {
-					return fmt.Errorf("error converting diagnostic: %w", err)
-				} else {
-					lspDiagnostics[i] = diag
-				}
-			}
-
-			if err := client.PublishDiagnostics(&lsproto.PublishDiagnosticsParams{
-				Uri:         ls.FileNameToDocumentURI(info.fileName),
-				Diagnostics: lspDiagnostics,
-			}); err != nil {
-				return fmt.Errorf("error publishing diagnostics: %w", err)
-			}
-		}
 	}
 	return nil
 }

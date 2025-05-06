@@ -45,6 +45,7 @@ type ProjectHost interface {
 	Log(s string)
 	PositionEncoding() lsproto.PositionEncodingKind
 
+	IsWatchEnabled() bool
 	Client() Client
 }
 
@@ -90,7 +91,7 @@ func NewConfiguredProject(configFileName string, configFilePath tspath.Path, hos
 	project.configFilePath = configFilePath
 	project.initialLoadPending = true
 	client := host.Client()
-	if client != nil {
+	if host.IsWatchEnabled() && client != nil {
 		project.rootFilesWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, core.Identity)
 	}
 	return project
@@ -117,7 +118,7 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 	}
 	client := host.Client()
-	if client != nil {
+	if host.IsWatchEnabled() && client != nil {
 		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, func(data map[tspath.Path]string) []string {
 			return slices.Sorted(maps.Values(data))
 		})
@@ -271,7 +272,7 @@ func (p *Project) getModuleResolutionWatchGlobs() (failedLookups map[tspath.Path
 
 func (p *Project) updateWatchers() {
 	client := p.host.Client()
-	if client == nil {
+	if !p.host.IsWatchEnabled() || client == nil {
 		return
 	}
 
