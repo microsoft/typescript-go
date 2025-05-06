@@ -10,7 +10,7 @@ type WatcherHandle string
 type Client interface {
 	WatchFiles(watchers []*lsproto.FileSystemWatcher) (WatcherHandle, error)
 	UnwatchFiles(handle WatcherHandle) error
-	PublishDiagnostics(params *lsproto.PublishDiagnosticsParams) error
+	RefreshDiagnostics() error
 }
 
 type ServiceHost interface {

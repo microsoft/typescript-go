@@ -151,9 +151,14 @@ func (s *Server) UnwatchFiles(handle project.WatcherHandle) error {
 	return fmt.Errorf("no file watcher exists with ID %s", handle)
 }
 
-// PublishDiagnostics implements project.Client.
-func (s *Server) PublishDiagnostics(params *lsproto.PublishDiagnosticsParams) error {
-	return s.sendNotification(lsproto.MethodTextDocumentPublishDiagnostics, params)
+// RefreshDiagnostics implements project.Client.
+func (s *Server) RefreshDiagnostics() error {
+	if ptrIsTrue(s.initializeParams.Capabilities.Workspace.Diagnostics.RefreshSupport) {
+		if err := s.sendRequest(lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
+			return fmt.Errorf("failed to refresh diagnostics: %w", err)
+		}
+	}
+	return nil
 }
 
 func (s *Server) Run() error {
@@ -550,4 +555,11 @@ func codeFence(lang string, code string) string {
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+func ptrIsTrue(v *bool) bool {
+	if v == nil {
+		return false
+	}
+	return *v
 }

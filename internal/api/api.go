@@ -124,6 +124,11 @@ func (api *API) Client() project.Client {
 	return nil
 }
 
+// IsWatchEnabled implements ProjectHost.
+func (api *API) IsWatchEnabled() bool {
+	return false
+}
+
 func (api *API) HandleRequest(id int, method string, payload []byte) ([]byte, error) {
 	params, err := unmarshalPayload(method, payload)
 	if err != nil {
