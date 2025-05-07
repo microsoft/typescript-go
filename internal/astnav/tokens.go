@@ -121,17 +121,7 @@ func getTokenAtPosition(
 		return nodeList
 	}
 
-	nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-		VisitNode:  visitNode,
-		VisitToken: visitNode,
-		VisitNodes: visitNodeList,
-		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-			if modifiers != nil {
-				visitNodeList(&modifiers.NodeList, visitor)
-			}
-			return modifiers
-		},
-	})
+	nodeVisitor := getNodeVisitor(visitNode, visitNodeList)
 
 	for {
 		VisitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
@@ -203,26 +193,15 @@ func findRightmostNode(node *ast.Node) *ast.Node {
 		}
 		return node
 	}
-	visitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-		VisitNode:  visitNode,
-		VisitToken: visitNode,
-		VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
-			if nodeList != nil {
-				if rightmost := ast.FindLastVisibleNode(nodeList.Nodes); rightmost != nil {
-					next = rightmost
-				}
+	visitNodes := func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
+		if nodeList != nil {
+			if rightmost := ast.FindLastVisibleNode(nodeList.Nodes); rightmost != nil {
+				next = rightmost
 			}
-			return nodeList
-		},
-		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-			if modifiers != nil {
-				if rightmost := ast.FindLastVisibleNode(modifiers.Nodes); rightmost != nil {
-					next = rightmost
-				}
-			}
-			return modifiers
-		},
-	})
+		}
+		return nodeList
+	}
+	visitor := getNodeVisitor(visitNode, visitNodes)
 
 	for {
 		current.VisitEachChild(visitor)
@@ -325,17 +304,7 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 			}
 			return nodeList
 		}
-		nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-			VisitNode:  visitNode,
-			VisitToken: visitNode,
-			VisitNodes: visitNodes,
-			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-				if modifiers != nil {
-					visitNodes(&modifiers.NodeList, visitor)
-				}
-				return modifiers
-			},
-		})
+		nodeVisitor := getNodeVisitor(visitNode, visitNodes)
 		VisitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
 
 		if foundChild != nil {
@@ -477,17 +446,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 			}
 			return nodeList
 		}
-		nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-			VisitNode:  visitNode,
-			VisitToken: visitNode,
-			VisitNodes: visitNodes,
-			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-				if modifiers != nil {
-					visitNodes(&modifiers.NodeList, visitor)
-				}
-				return modifiers
-			},
-		})
+		nodeVisitor := getNodeVisitor(visitNode, visitNodes)
 		VisitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
 
 		// Three cases:
@@ -559,7 +518,86 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 	return find(containingNode, endPos)
 }
 
-// !!!
 func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFile) *ast.Node {
-	return nil
+	var find func(n *ast.Node) *ast.Node
+	find = func(n *ast.Node) *ast.Node {
+		if ast.IsTokenKind(n.Kind) && n.Pos() == previousToken.End() {
+			// this is token that starts at the end of previous token - return it
+			return n
+		}
+		// Node that contains `previousToken` or occurs immediately after it.
+		var foundNode *ast.Node
+		visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
+			if node != nil && node.Flags&ast.NodeFlagsReparsed == 0 &&
+				node.Pos() <= previousToken.End() && node.End() > previousToken.End() {
+				foundNode = node
+			}
+			return node
+		}
+		visitNodes := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
+			if nodeList != nil && len(nodeList.Nodes) > 0 && foundNode == nil {
+				nodes := nodeList.Nodes
+				index, match := core.BinarySearchUniqueFunc(nodes, func(_ int, node *ast.Node) int {
+					if node.Flags&ast.NodeFlagsReparsed != 0 {
+						return comparisonLessThan
+					}
+					if node.Pos() > previousToken.End() {
+						return comparisonGreaterThan
+					}
+					if node.End() <= previousToken.Pos() {
+						return comparisonLessThan
+					}
+					return comparisonEqualTo
+				})
+				if match {
+					foundNode = nodes[index]
+				}
+			}
+			return nodeList
+		}
+		nodeVisitor := getNodeVisitor(visitNode, visitNodes)
+		VisitEachChildAndJSDoc(n, file, nodeVisitor)
+		// Cases:
+		// 1. no answer exists
+		// 2. answer is an unvisited token
+		// 3. answer is in the visited found node
+
+		// Case 3: look for the next token inside the found node.
+		if foundNode != nil {
+			return find(foundNode)
+		}
+		startPos := previousToken.End()
+		// Case 2: look for the next token directly.
+		if startPos >= n.Pos() && startPos < n.End() {
+			scanner := scanner.GetScannerForSourceFile(file, startPos)
+			token := scanner.Token()
+			tokenFullStart := scanner.TokenFullStart()
+			tokenStart := scanner.TokenStart()
+			tokenEnd := scanner.TokenEnd()
+			if tokenStart == previousToken.End() {
+				return file.GetOrCreateToken(token, tokenFullStart, tokenEnd, n)
+			}
+			panic(fmt.Sprintf("Expected to find next token at %d, got token %s at %d", previousToken.End(), token, tokenStart))
+		}
+		// Case 3: no answer.
+		return nil
+	}
+	return find(parent)
+}
+
+func getNodeVisitor(
+	visitNode func(*ast.Node, *ast.NodeVisitor) *ast.Node,
+	visitNodes func(*ast.NodeList, *ast.NodeVisitor) *ast.NodeList,
+) *ast.NodeVisitor {
+	return ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
+		VisitNode:  visitNode,
+		VisitToken: visitNode,
+		VisitNodes: visitNodes,
+		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+			if modifiers != nil {
+				visitNodes(&modifiers.NodeList, visitor)
+			}
+			return modifiers
+		},
+	})
 }
