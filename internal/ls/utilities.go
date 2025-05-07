@@ -699,7 +699,7 @@ func nodeEndsWith(n *ast.Node, expectedLastToken ast.Kind, sourceFile *ast.Sourc
 		tokenEnd := scanner.TokenEnd()
 		token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, n)
 		lastNodeAndTokens = append(lastNodeAndTokens, token)
-		tokenStartPos = tokenEnd
+		startPos = tokenEnd
 		scanner.Scan()
 	}
 	if len(lastNodeAndTokens) == 0 {
