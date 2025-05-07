@@ -524,7 +524,7 @@ type Program interface {
 	BindSourceFiles()
 	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
 	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
-	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
+	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *ast.SourceFile
 	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
@@ -5060,7 +5060,7 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 	if importAttributesType != c.emptyObjectType {
 		c.checkTypeAssignableTo(c.getTypeFromImportAttributes(node), c.getNullableType(importAttributesType, TypeFlagsUndefined), node, nil)
 	}
-	isTypeOnly := isExclusivelyTypeOnlyImportOrExport(declaration)
+	isTypeOnly := ast.IsExclusivelyTypeOnlyImportOrExport(declaration)
 	override := c.getResolutionModeOverride(node.AsImportAttributes(), isTypeOnly)
 	isImportAttributes := node.AsImportAttributes().Token == ast.KindWithKeyword
 	if isTypeOnly && override != core.ResolutionModeNone {
@@ -5096,18 +5096,6 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 	if override != core.ResolutionModeNone {
 		c.grammarErrorOnNode(node, diagnostics.X_resolution_mode_can_only_be_set_for_type_only_imports)
 	}
-}
-
-func isExclusivelyTypeOnlyImportOrExport(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindExportDeclaration:
-		return node.AsExportDeclaration().IsTypeOnly
-	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
-		if importClause := node.AsImportDeclaration().ImportClause; importClause != nil {
-			return importClause.AsImportClause().IsTypeOnly
-		}
-	}
-	return false
 }
 
 func (c *Checker) getTypeFromImportAttributes(node *ast.Node) *Type {
@@ -6378,6 +6366,7 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 			c.error(node, diagnostics.ESM_syntax_is_not_allowed_in_a_CommonJS_module_when_module_is_set_to_preserve)
 		}
 		// !!!
+
 		// if c.compilerOptions.VerbatimModuleSyntax.IsTrue() && !ast.IsTypeOnlyImportOrExportDeclaration(node) && node.Flags&ast.NodeFlagsAmbient == 0 && targetFlags&ast.SymbolFlagsConstEnum != 0 {
 		// 	constEnumDeclaration := target.ValueDeclaration
 		// 	redirect := host.getRedirectReferenceForResolutionFromSourceOfProject(ast.GetSourceFileOfNode(constEnumDeclaration).ResolvedPath)
@@ -14287,7 +14276,8 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		return ambientModule
 	}
 	// !!! The following only implements simple module resolution
-	sourceFile := c.program.GetResolvedModule(ast.GetSourceFileOfNode(location), moduleReference)
+	resolutionMode := c.compilerOptions.GetResolutionMode()
+	sourceFile := c.program.GetResolvedModule(ast.GetSourceFileOfNode(location), moduleReference, resolutionMode)
 	if sourceFile != nil {
 		// !!!
 		if sourceFile.Symbol != nil {

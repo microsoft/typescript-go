@@ -2733,6 +2733,22 @@ func IsTypeOnlyImportOrExportDeclaration(node *Node) bool {
 	return IsTypeOnlyImportDeclaration(node) || isTypeOnlyExportDeclaration(node)
 }
 
+func IsExclusivelyTypeOnlyImportOrExport(node *Node) bool {
+	switch node.Kind {
+	case KindExportDeclaration:
+		return node.AsExportDeclaration().IsTypeOnly
+	case KindImportDeclaration, KindJSImportDeclaration:
+		if importClause := node.AsImportDeclaration().ImportClause; importClause != nil {
+			return importClause.AsImportClause().IsTypeOnly
+		}
+	case KindJSDocImportTag:
+		if importClause := node.AsJSDocImportTag().ImportClause; importClause != nil {
+			return importClause.AsImportClause().IsTypeOnly
+		}
+	}
+	return false
+}
+
 func GetSourceFileOfModule(module *Symbol) *SourceFile {
 	declaration := module.ValueDeclaration
 	if declaration == nil {

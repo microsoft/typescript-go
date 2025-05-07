@@ -19,7 +19,7 @@ type fakeProgram struct {
 	files                       []*ast.SourceFile
 	getEmitModuleFormatOfFile   func(sourceFile *ast.SourceFile) core.ModuleKind
 	getImpliedNodeFormatForEmit func(sourceFile *ast.SourceFile) core.ModuleKind
-	getResolvedModule           func(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
+	getResolvedModule           func(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *ast.SourceFile
 }
 
 func (p *fakeProgram) Options() *core.CompilerOptions {
@@ -50,8 +50,8 @@ func (p *fakeProgram) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) co
 	return p.getImpliedNodeFormatForEmit(sourceFile)
 }
 
-func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
-	return p.getResolvedModule(currentSourceFile, moduleReference)
+func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *ast.SourceFile {
+	return p.getResolvedModule(currentSourceFile, moduleReference, mode)
 }
 
 func (p *fakeProgram) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
@@ -124,7 +124,7 @@ func TestImportElision(t *testing.T) {
 				getImpliedNodeFormatForEmit: func(sourceFile *ast.SourceFile) core.ModuleKind {
 					return core.ModuleKindESNext
 				},
-				getResolvedModule: func(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile {
+				getResolvedModule: func(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *ast.SourceFile {
 					if currentSourceFile == file && moduleReference == "other" {
 						return other
 					}
