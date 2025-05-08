@@ -20,6 +20,11 @@ CompilerOptions::
   "configFilePath": "/apath/jsconfig.json"
 }
 
+TypeAcquisition::
+{
+  "enable": true
+}
+
 FileNames::
 /apath/a.ts,/apath/b.ts
 Errors::

@@ -122,7 +122,7 @@ func parseOwnConfigOfJsonSourceFile(
 	configFileName string,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	compilerOptions := getDefaultCompilerOptions(configFileName)
-	var typeAcquisition *core.TypeAcquisition
+	typeAcquisition := getDefaultTypeAcquisition(configFileName)
 	// var watchOptions *compiler.WatchOptions
 	var extendedConfigPath any
 	var rootCompilerOptions []*ast.PropertyName
@@ -146,9 +146,6 @@ func parseOwnConfigOfJsonSourceFile(
 				case "compilerOptions":
 					parseDiagnostics = ParseCompilerOptions(option.Name, value, compilerOptions)
 				case "typeAcquisition":
-					if typeAcquisition == nil {
-						typeAcquisition = getDefaultTypeAcquisition(configFileName)
-					}
 					parseDiagnostics = ParseTypeAcquisition(option.Name, value, typeAcquisition)
 				}
 				propertySetErrors = append(propertySetErrors, parseDiagnostics...)
