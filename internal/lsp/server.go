@@ -40,7 +40,6 @@ func NewServer(opts *ServerOptions) *Server {
 		newLine:            opts.NewLine,
 		fs:                 opts.FS,
 		defaultLibraryPath: opts.DefaultLibraryPath,
-		watchers:           make(map[project.WatcherHandle]struct{}),
 	}
 }
 
@@ -67,9 +66,9 @@ type Server struct {
 	initializeParams *lsproto.InitializeParams
 	positionEncoding lsproto.PositionEncodingKind
 
-	watcheEnabled  bool
+	watchEnabled   bool
 	watcherID      int
-	watchers       map[project.WatcherHandle]struct{}
+	watchers       core.Set[project.WatcherHandle]
 	logger         *project.Logger
 	projectService *project.Service
 	converters     *ls.Converters
@@ -102,7 +101,7 @@ func (s *Server) Trace(msg string) {
 
 // Client implements project.ServiceHost.
 func (s *Server) Client() project.Client {
-	if !s.watcheEnabled {
+	if !s.watchEnabled {
 		return nil
 	}
 	return s
@@ -126,14 +125,14 @@ func (s *Server) WatchFiles(watchers []*lsproto.FileSystemWatcher) (project.Watc
 	}
 
 	handle := project.WatcherHandle(watcherId)
-	s.watchers[handle] = struct{}{}
+	s.watchers.Add(handle)
 	s.watcherID++
 	return handle, nil
 }
 
 // UnwatchFiles implements project.Client.
 func (s *Server) UnwatchFiles(handle project.WatcherHandle) error {
-	if _, ok := s.watchers[handle]; ok {
+	if s.watchers.Has(handle) {
 		if err := s.sendRequest(lsproto.MethodClientUnregisterCapability, &lsproto.UnregistrationParams{
 			Unregisterations: []*lsproto.Unregistration{
 				{
@@ -144,7 +143,7 @@ func (s *Server) UnwatchFiles(handle project.WatcherHandle) error {
 		}); err != nil {
 			return fmt.Errorf("failed to unregister file watcher: %w", err)
 		}
-		delete(s.watchers, handle)
+		s.watchers.Delete(handle)
 		return nil
 	}
 
@@ -364,13 +363,13 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 
 func (s *Server) handleInitialized(req *lsproto.RequestMessage) error {
 	if s.initializeParams.Capabilities.Workspace.DidChangeWatchedFiles != nil && *s.initializeParams.Capabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration {
-		s.watcheEnabled = true
+		s.watchEnabled = true
 	}
 
 	s.logger = project.NewLogger([]io.Writer{s.stderr}, "" /*file*/, project.LogLevelVerbose)
 	s.projectService = project.NewService(s, project.ServiceOptions{
 		Logger:           s.logger,
-		WatchEnabled:     s.watcheEnabled,
+		WatchEnabled:     s.watchEnabled,
 		PositionEncoding: s.positionEncoding,
 	})
 
