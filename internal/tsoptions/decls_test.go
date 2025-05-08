@@ -10,6 +10,8 @@ import (
 )
 
 func TestCompilerOptionsDeclaration(t *testing.T) {
+	t.Parallel()
+
 	decls := make(map[string]*tsoptions.CommandLineOption)
 
 	for _, decl := range tsoptions.OptionsDeclarations {
@@ -33,7 +35,7 @@ func TestCompilerOptionsDeclaration(t *testing.T) {
 	}
 
 	compilerOptionsType := reflect.TypeFor[core.CompilerOptions]()
-	for i := 0; i < compilerOptionsType.NumField(); i++ {
+	for i := range compilerOptionsType.NumField() {
 		field := compilerOptionsType.Field(i)
 		lowerName := strings.ToLower(field.Name)
 
