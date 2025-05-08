@@ -72,10 +72,9 @@ type RequestMessage struct {
 
 func NewRequestMessage(method Method, id *ID, params any) *RequestMessage {
 	return &RequestMessage{
-		JSONRPC: JSONRPCVersion{},
-		ID:      id,
-		Method:  method,
-		Params:  params,
+		ID:     id,
+		Method: method,
+		Params: params,
 	}
 }
 
