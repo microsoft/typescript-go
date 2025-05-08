@@ -1,8 +1,8 @@
 package tsoptions
 
 var typeAcquisitionDeclaration = &CommandLineOption{
-	Name: "typeAcquisition",
-	Kind: CommandLineOptionTypeObject,
+	Name:           "typeAcquisition",
+	Kind:           CommandLineOptionTypeObject,
 	ElementOptions: commandLineOptionsToMap(typeAcquisitionDecls),
 }
 
