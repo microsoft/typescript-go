@@ -26,6 +26,7 @@ type ServerOptions struct {
 	NewLine            core.NewLineKind
 	FS                 vfs.FS
 	DefaultLibraryPath string
+	TypingsLocation    string
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -40,6 +41,7 @@ func NewServer(opts *ServerOptions) *Server {
 		newLine:            opts.NewLine,
 		fs:                 opts.FS,
 		defaultLibraryPath: opts.DefaultLibraryPath,
+		typingsLocation:    opts.TypingsLocation,
 	}
 }
 
@@ -58,6 +60,7 @@ type Server struct {
 	newLine            core.NewLineKind
 	fs                 vfs.FS
 	defaultLibraryPath string
+	typingsLocation    string
 
 	initializeParams *lsproto.InitializeParams
 	positionEncoding lsproto.PositionEncodingKind
@@ -75,6 +78,11 @@ func (s *Server) FS() vfs.FS {
 // DefaultLibraryPath implements project.ProjectServiceHost.
 func (s *Server) DefaultLibraryPath() string {
 	return s.defaultLibraryPath
+}
+
+// TypingsLocation implements project.ProjectServiceHost.
+func (s *Server) TypingsLocation() string {
+	return s.typingsLocation
 }
 
 // GetCurrentDirectory implements project.ProjectServiceHost.

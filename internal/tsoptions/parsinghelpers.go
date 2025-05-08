@@ -133,6 +133,14 @@ func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnosti
 	return ParseWatchOptions(key, value, o.WatchOptions)
 }
 
+type typeAcquisitionsParser struct {
+	*core.TypeAcquisition
+}
+
+func (o *typeAcquisitionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
+	return ParseTypeAcquiisition(key, value, o.TypeAcquisition)
+}
+
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
 	if value == nil {
 		return nil
@@ -432,6 +440,26 @@ func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*
 		allOptions.ExcludeDir = parseStringArray(value)
 	case "excludeFiles":
 		allOptions.ExcludeFiles = parseStringArray(value)
+	}
+	return nil
+}
+
+func ParseTypeAcquiisition(key string, value any, allOptions *core.TypeAcquisition) []*ast.Diagnostic {
+	if value == nil {
+		return nil
+	}
+	if allOptions == nil {
+		return nil
+	}
+	switch key {
+	case "enable":
+		allOptions.Enable = parseTristate(value)
+	case "include":
+		allOptions.Include = parseStringArray(value)
+	case "exclude":
+		allOptions.Exclude = parseStringArray(value)
+	case "disableFilenameBasedTypeAcquisition":
+		allOptions.DisableFilenameBasedTypeAcquisition = parseTristate(value)
 	}
 	return nil
 }

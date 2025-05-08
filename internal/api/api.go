@@ -39,6 +39,8 @@ type API struct {
 	symbols   handleMap[ast.Symbol]
 	typesMu   sync.Mutex
 	types     handleMap[checker.Type]
+
+	typingsInstaller *project.TypingsInstaller
 }
 
 var _ project.ProjectHost = (*API)(nil)
@@ -70,6 +72,21 @@ func NewAPI(host APIHost, options APIOptions) *API {
 // DefaultLibraryPath implements ProjectHost.
 func (api *API) DefaultLibraryPath() string {
 	return api.host.DefaultLibraryPath()
+}
+
+// TypingsInstaller implements ProjectHost
+func (api *API) TypingsInstaller() *project.TypingsInstaller {
+	if api.typingsInstaller != nil {
+		return api.typingsInstaller
+	}
+
+	if typingsLocation := api.host.TypingsLocation(); typingsLocation != "" {
+		api.typingsInstaller = &project.TypingsInstaller{
+			TypingsLocation: typingsLocation,
+			ThrottleLimit:   5,
+		}
+	}
+	return api.typingsInstaller
 }
 
 // DocumentRegistry implements ProjectHost.
@@ -107,6 +124,11 @@ func (api *API) OnDiscoveredSymlink(info *project.ScriptInfo) {
 // Log implements ProjectHost.
 func (api *API) Log(s string) {
 	api.options.Logger.Info(s)
+}
+
+// Log implements ProjectHost.
+func (api *API) HasLevel(level project.LogLevel) bool {
+	return api.options.Logger.HasLevel(level)
 }
 
 // NewLine implements ProjectHost.

@@ -59,6 +59,7 @@ type ServerOptions struct {
 	Cwd                string
 	NewLine            string
 	DefaultLibraryPath string
+	TypingsLocation    string
 }
 
 var (
@@ -75,6 +76,7 @@ type Server struct {
 	newLine            string
 	fs                 vfs.FS
 	defaultLibraryPath string
+	typingsLocation    string
 
 	callbackMu       sync.Mutex
 	enabledCallbacks Callback
@@ -97,6 +99,7 @@ func NewServer(options *ServerOptions) *Server {
 		newLine:            options.NewLine,
 		fs:                 bundled.WrapFS(osvfs.FS()),
 		defaultLibraryPath: options.DefaultLibraryPath,
+		typingsLocation:    options.TypingsLocation,
 	}
 	logger := project.NewLogger([]io.Writer{options.Err}, "", project.LogLevelVerbose)
 	api := NewAPI(server, APIOptions{
@@ -125,6 +128,11 @@ func (s *Server) GetCurrentDirectory() string {
 // NewLine implements APIHost.
 func (s *Server) NewLine() string {
 	return s.newLine
+}
+
+// TypingsInstaller implements APIHost
+func (s *Server) TypingsLocation() string {
+	return s.typingsLocation
 }
 
 func (s *Server) Run() error {

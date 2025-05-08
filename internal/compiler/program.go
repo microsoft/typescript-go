@@ -27,6 +27,9 @@ type ProgramOptions struct {
 	SingleThreaded               bool
 	ProjectReference             []core.ProjectReference
 	ConfigFileParsingDiagnostics []*ast.Diagnostic
+
+	TypingsLocation string
+	ProjectName     string
 }
 
 type Program struct {
@@ -135,6 +138,8 @@ func NewProgram(options ProgramOptions) *Program {
 	}
 
 	p.resolver = module.NewResolver(p.host, p.compilerOptions)
+	p.resolver.TypingsLocation = p.programOptions.TypingsLocation
+	p.resolver.ProjectName = p.programOptions.ProjectName
 
 	var libs []string
 

@@ -381,11 +381,11 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
 			hasAllowedExtension := false
 			if p.compilerOptions.ResolveJsonModule.IsTrue() {
-				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat)
+				hasAllowedExtension = tspath.ExtensionIsOneOf(resolution.Extension, tspath.SupportedTSExtensionsWithJsonFlat)
 			} else if p.compilerOptions.AllowJs.IsTrue() {
-				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedJSExtensionsFlat) || tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsFlat)
+				hasAllowedExtension = tspath.ExtensionIsOneOf(resolution.Extension, tspath.SupportedJSExtensionsFlat) || tspath.ExtensionIsOneOf(resolution.Extension, tspath.SupportedTSExtensionsFlat)
 			} else {
-				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsFlat)
+				hasAllowedExtension = tspath.ExtensionIsOneOf(resolution.Extension, tspath.SupportedTSExtensionsFlat)
 			}
 			shouldAddFile := resolution.IsResolved() && hasAllowedExtension
 			// TODO(ercornel): !!!: other checks on whether or not to add the file

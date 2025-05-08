@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/pprof"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
@@ -39,6 +40,7 @@ func runLSP(args []string) int {
 
 	fs := bundled.WrapFS(osvfs.FS())
 	defaultLibraryPath := bundled.LibPath()
+	typingsLocation := project.GetGlobalTypingsCacheLocation()
 
 	s := lsp.NewServer(&lsp.ServerOptions{
 		In:                 os.Stdin,
@@ -47,6 +49,7 @@ func runLSP(args []string) int {
 		Cwd:                core.Must(os.Getwd()),
 		FS:                 fs,
 		DefaultLibraryPath: defaultLibraryPath,
+		TypingsLocation:    typingsLocation,
 	})
 
 	if err := s.Run(); err != nil && !errors.Is(err, io.EOF) {

@@ -56,11 +56,15 @@ type Service struct {
 	filenameToScriptInfoVersion map[tspath.Path]int
 	realpathToScriptInfosMu     sync.Mutex
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
+
+	typingsInstaller *TypingsInstaller
 }
 
 func NewService(host ServiceHost, options ServiceOptions) *Service {
 	options.Logger.Info(fmt.Sprintf("currentDirectory:: %s useCaseSensitiveFileNames:: %t", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()))
 	options.Logger.Info("libs Location:: " + host.DefaultLibraryPath())
+	options.Logger.Info("globalTypingsCacheLocation:: " + host.TypingsLocation())
+
 	return &Service{
 		host:    host,
 		options: options,
@@ -94,6 +98,10 @@ func (s *Service) Log(msg string) {
 	s.options.Logger.Info(msg)
 }
 
+func (s *Service) HasLevel(level LogLevel) bool {
+	return s.options.Logger.HasLevel(level)
+}
+
 // NewLine implements ProjectHost.
 func (s *Service) NewLine() string {
 	return s.host.NewLine()
@@ -102,6 +110,21 @@ func (s *Service) NewLine() string {
 // DefaultLibraryPath implements ProjectHost.
 func (s *Service) DefaultLibraryPath() string {
 	return s.host.DefaultLibraryPath()
+}
+
+// TypingsInstaller implements ProjectHost.
+func (s *Service) TypingsInstaller() *TypingsInstaller {
+	if s.typingsInstaller != nil {
+		return s.typingsInstaller
+	}
+
+	if typingsLocation := s.host.TypingsLocation(); typingsLocation != "" {
+		s.typingsInstaller = &TypingsInstaller{
+			TypingsLocation: typingsLocation,
+			ThrottleLimit:   5,
+		}
+	}
+	return s.typingsInstaller
 }
 
 // DocumentRegistry implements ProjectHost.

@@ -16,6 +16,7 @@ type ProjectServiceHost struct {
 	fs                 vfs.FS
 	mu                 sync.Mutex
 	defaultLibraryPath string
+	typingsLocation    string
 	output             strings.Builder
 	logger             *project.Logger
 }
@@ -23,6 +24,10 @@ type ProjectServiceHost struct {
 // DefaultLibraryPath implements project.ProjectServiceHost.
 func (p *ProjectServiceHost) DefaultLibraryPath() string {
 	return p.defaultLibraryPath
+}
+
+func (p *ProjectServiceHost) TypingsLocation() string {
+	return p.typingsLocation
 }
 
 // FS implements project.ProjectServiceHost.

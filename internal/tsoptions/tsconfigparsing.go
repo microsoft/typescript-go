@@ -37,6 +37,31 @@ var compilerOptionsDeclaration = &CommandLineOption{
 	ElementOptions: commandLineCompilerOptionsMap,
 }
 
+var typeAcquisitionDeclarations = &CommandLineOption{
+	Name: "typeAcquisition",
+	Kind: CommandLineOptionTypeObject,
+	ElementOptions: commandLineOptionsToMap([]*CommandLineOption{
+		{
+			Name:                    "enable",
+			Kind:                    CommandLineOptionTypeBoolean,
+			DefaultValueDescription: false,
+		},
+		{
+			Name: "include",
+			Kind: CommandLineOptionTypeList,
+		},
+		{
+			Name: "exclude",
+			Kind: CommandLineOptionTypeList,
+		},
+		{
+			Name:                    "disableFilenameBasedTypeAcquisition",
+			Kind:                    CommandLineOptionTypeBoolean,
+			DefaultValueDescription: false,
+		},
+	}),
+}
+
 var compileOnSaveCommandLineOption = &CommandLineOption{
 	Name:                    "compileOnSave",
 	Kind:                    CommandLineOptionTypeBoolean,
@@ -57,6 +82,7 @@ var tsconfigRootOptionsMap = &CommandLineOption{
 	Kind: CommandLineOptionTypeObject,
 	ElementOptions: commandLineOptionsToMap([]*CommandLineOption{
 		compilerOptionsDeclaration,
+		typeAcquisitionDeclarations,
 		extendsOptionDeclaration,
 		{
 			Name: "references",
@@ -108,7 +134,7 @@ type parsedTsconfig struct {
 	raw     any
 	options *core.CompilerOptions
 	// watchOptions    *compiler.WatchOptions
-	// typeAcquisition *compiler.TypeAcquisition
+	typeAcquisition *core.TypeAcquisition
 	// Note that the case of the config path has not yet been normalized, as no files have been imported into the project yet
 	extendedConfigPath any
 }
@@ -120,7 +146,7 @@ func parseOwnConfigOfJsonSourceFile(
 	configFileName string,
 ) (*parsedTsconfig, []*ast.Diagnostic) {
 	options := getDefaultCompilerOptions(configFileName)
-	// var typeAcquisition *compiler.TypeAcquisition
+	typeAcquisition := getDefaultTypeAcquisition(configFileName)
 	// var watchOptions *compiler.WatchOptions
 	var extendedConfigPath any
 	var rootCompilerOptions []*ast.PropertyName
@@ -139,8 +165,13 @@ func parseOwnConfigOfJsonSourceFile(
 		}
 		if parentOption != nil && parentOption.Name != "undefined" && value != nil {
 			if option != nil && option.Name != "" {
-				propertySetErrors = append(propertySetErrors, ParseCompilerOptions(option.Name, value, options)...)
+				if parentOption == compilerOptionsDeclaration {
+					propertySetErrors = append(propertySetErrors, ParseCompilerOptions(option.Name, value, options)...)
+				} else if parentOption == typeAcquisitionDeclarations {
+					propertySetErrors = append(propertySetErrors, ParseTypeAcquiisition(option.Name, value, typeAcquisition)...)
+				}
 			} else if keyText != "" {
+				// TODO:: Handle typeAcquisition!!
 				if parentOption.ElementOptions != nil {
 					// !!! TODO: support suggestion
 					propertySetErrors = append(propertySetErrors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, propertyAssignment.Name(), diagnostics.Unknown_compiler_option_0, keyText))
@@ -180,7 +211,7 @@ func parseOwnConfigOfJsonSourceFile(
 		raw:     json,
 		options: options,
 		// watchOptions:    watchOptions,
-		// typeAcquisition: typeAcquisition,
+		typeAcquisition:    typeAcquisition,
 		extendedConfigPath: extendedConfigPath,
 	}, errors
 }
@@ -497,7 +528,13 @@ func convertMapToOptions[O optionParser](options *collections.OrderedMap[string,
 	return result
 }
 
-func convertOptionsFromJson[O optionParser](optionsNameMap map[string]*CommandLineOption, jsonOptions any, basePath string, result O) (O, []*ast.Diagnostic) {
+func convertOptionsFromJson[O optionParser](
+	optionsNameMap map[string]*CommandLineOption,
+	jsonOptions any,
+	basePath string,
+	result O,
+	unknownOptionMessage *diagnostics.Message,
+) (O, []*ast.Diagnostic) {
 	if jsonOptions == nil {
 		return result, nil
 	}
@@ -511,7 +548,7 @@ func convertOptionsFromJson[O optionParser](optionsNameMap map[string]*CommandLi
 		opt, ok := optionsNameMap[key]
 		if !ok {
 			// !!! TODO?: support suggestion
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0, key))
+			errors = append(errors, ast.NewCompilerDiagnostic(unknownOptionMessage, key))
 			continue
 		}
 
@@ -758,13 +795,27 @@ func getDefaultCompilerOptions(configFileName string) *core.CompilerOptions {
 	return options
 }
 
+func getDefaultTypeAcquisition(configFileName string) *core.TypeAcquisition {
+	options := &core.TypeAcquisition{}
+	if configFileName != "" && tspath.GetBaseFileName(configFileName) == "jsconfig.json" {
+		options.Enable = core.TSTrue
+	}
+	return options
+}
+
 func convertCompilerOptionsFromJsonWorker(jsonOptions any, basePath string, configFileName string) (*core.CompilerOptions, []*ast.Diagnostic) {
 	options := getDefaultCompilerOptions(configFileName)
-	_, errors := convertOptionsFromJson(commandLineCompilerOptionsMap, jsonOptions, basePath, &compilerOptionsParser{options})
+	_, errors := convertOptionsFromJson(commandLineCompilerOptionsMap, jsonOptions, basePath, &compilerOptionsParser{options}, diagnostics.Unknown_compiler_option_0)
 	if configFileName != "" {
 		options.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
 	}
 	return options, errors
+}
+
+func convertTypeAcquisitionFromJsonWorker(jsonOptions any, basePath string, configFileName string) (*core.TypeAcquisition, []*ast.Diagnostic) {
+	typeAcquisition := getDefaultTypeAcquisition(configFileName)
+	_, errors := convertOptionsFromJson(commandLineCompilerOptionsMap, jsonOptions, basePath, &typeAcquisitionsParser{typeAcquisition}, diagnostics.Unknown_type_acquisition_option_0)
+	return typeAcquisition, errors
 }
 
 func parseOwnConfigOfJson(
@@ -779,6 +830,8 @@ func parseOwnConfigOfJson(
 	}
 	options, err := convertCompilerOptionsFromJsonWorker(json.GetOrZero("compilerOptions"), basePath, configFileName)
 	errors = append(errors, err...)
+	typeAcquisition, err := convertTypeAcquisitionFromJsonWorker(json.GetOrZero("typeAcquisition"), basePath, configFileName)
+	errors = append(errors, err...)
 	// typeAcquisition := convertTypeAcquisitionFromJsonWorker(json.typeAcquisition, basePath, errors, configFileName)
 	// watchOptions := convertWatchOptionsFromJsonWorker(json.watchOptions, basePath, errors)
 	// json.compileOnSave = convertCompileOnSaveOptionFromJson(json, basePath, errors)
@@ -790,6 +843,7 @@ func parseOwnConfigOfJson(
 	parsedConfig := &parsedTsconfig{
 		raw:                json,
 		options:            options,
+		typeAcquisition:    typeAcquisition,
 		extendedConfigPath: extendedConfigPath,
 	}
 	return parsedConfig, errors
@@ -1177,6 +1231,7 @@ func parseJsonConfigFileContentWorker(
 	return &ParsedCommandLine{
 		ParsedConfig: &core.ParsedOptions{
 			CompilerOptions:   parsedConfig.options,
+			TypeAcquisition:   parsedConfig.typeAcquisition,
 			FileNames:         getFileNames(basePathForFileNames),
 			ProjectReferences: getProjectReferences(basePathForFileNames),
 		},
@@ -1461,15 +1516,15 @@ func getFileNamesFromConfigSpecs(
 
 	var jsonOnlyIncludeRegexes []*regexp2.Regexp
 	if len(validatedIncludeSpecs) > 0 {
-		files := readDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
+		files := vfs.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeRegexes == nil {
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					includeFilePatterns := core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
+					includeFilePatterns := core.Map(vfs.GetRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
 					if includeFilePatterns != nil {
 						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
-							return getRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
+							return vfs.GetRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
 						})
 					} else {
 						jsonOnlyIncludeRegexes = nil
