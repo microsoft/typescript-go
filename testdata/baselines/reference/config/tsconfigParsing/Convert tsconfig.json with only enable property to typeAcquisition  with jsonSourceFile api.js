@@ -1,18 +1,16 @@
 Fs::
-//// [/apath/..c.ts]
+//// [/apath/a.ts]
 
 
-//// [/apath/.b.ts]
-
-
-//// [/apath/.git/a.ts]
-
-
-//// [/apath/test.ts]
+//// [/apath/b.ts]
 
 
 //// [/apath/tsconfig.json]
-{}
+{
+	"typeAcquisition": {
+		"enable": true,
+	},
+}
 
 
 configFileName:: tsconfig.json
@@ -22,9 +20,11 @@ CompilerOptions::
 }
 
 TypeAcquisition::
-{}
+{
+  "enable": true
+}
 
 FileNames::
-/apath/test.ts
+/apath/a.ts,/apath/b.ts
 Errors::
 

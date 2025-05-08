@@ -1,14 +1,8 @@
 Fs::
-//// [/apath/..c.ts]
+//// [/apath/a.ts]
 
 
-//// [/apath/.b.ts]
-
-
-//// [/apath/.git/a.ts]
-
-
-//// [/apath/test.ts]
+//// [/apath/b.ts]
 
 
 //// [/apath/tsconfig.json]
@@ -25,6 +19,6 @@ TypeAcquisition::
 {}
 
 FileNames::
-/apath/test.ts
+/apath/a.ts,/apath/b.ts
 Errors::
 
