@@ -1,11 +1,14 @@
 --- old.jsDeclarationsTypeReassignmentFromDeclaration.types
 +++ new.jsDeclarationsTypeReassignmentFromDeclaration.types
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
+ 
  module.exports = items;
  >module.exports = items : Item[]
- >module.exports : Item[]
+->module.exports : Item[]
 ->module : { exports: Item[]; }
-+>module : { readonly items: Item[]; }
- >exports : Item[]
+->exports : Item[]
++>module.exports : typeof import("index")
++>module : { "index": typeof import("index"); }
++>exports : typeof import("index")
  >items : Item[]
  

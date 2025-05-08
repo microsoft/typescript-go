@@ -32,9 +32,9 @@ class MainThreadTasks {
 
 module.exports = MainThreadTasks;
 >module.exports = MainThreadTasks : typeof MainThreadTasks
->module.exports : typeof MainThreadTasks
->module : { MainThreadTasks: typeof MainThreadTasks; }
->exports : typeof MainThreadTasks
+>module.exports : typeof import("index")
+>module : { "index": typeof import("index"); }
+>exports : typeof import("index")
 >MainThreadTasks : typeof MainThreadTasks
 
 === module.js ===

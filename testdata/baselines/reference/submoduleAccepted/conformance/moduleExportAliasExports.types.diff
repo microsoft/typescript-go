@@ -1,6 +1,19 @@
 --- old.moduleExportAliasExports.types
 +++ new.moduleExportAliasExports.types
-@@= skipped -23, +23 lines =@@
+@@= skipped -2, +2 lines =@@
+ === Eloquent.js ===
+ // bug #27365, crashes from github.com/marijnh/Eloquent-JavaScript
+ (function() {
+->(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports})() : void
+->(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : () => void
+->function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : () => void
++>(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports})() : any
++>(function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports}) : {}
++>function() {exports.bigOak = 1exports.everywhere = 2module.exports = exports} : {}
+ 
+ exports.bigOak = 1
+ >exports.bigOak = 1 : 1
+@@= skipped -21, +21 lines =@@
  module.exports = exports
  >module.exports = exports : typeof import("Eloquent")
  >module.exports : typeof import("Eloquent")

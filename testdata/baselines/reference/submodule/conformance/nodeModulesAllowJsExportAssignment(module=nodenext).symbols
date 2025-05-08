@@ -14,9 +14,9 @@ const a = {};
 >a : Symbol(a, Decl(file.js, 1, 5))
 
 module.exports = a;
->module.exports : Symbol(a, Decl(file.js, 1, 5))
+>module.exports : Symbol("subfolder/file", Decl(file.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol(a, Decl(file.js, 1, 5))
+>exports : Symbol("subfolder/file", Decl(file.js, 0, 0))
 >a : Symbol(a, Decl(file.js, 1, 5))
 
 === index.js ===
@@ -34,8 +34,8 @@ const a = {};
 >a : Symbol(a, Decl(file.js, 2, 5))
 
 module.exports = a;
->module.exports : Symbol(a, Decl(file.js, 2, 5))
+>module.exports : Symbol("file", Decl(file.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol(a, Decl(file.js, 2, 5))
+>exports : Symbol("file", Decl(file.js, 0, 0))
 >a : Symbol(a, Decl(file.js, 2, 5))
 

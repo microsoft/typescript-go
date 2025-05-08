@@ -7,9 +7,9 @@
  */
 module.exports = C
 >module.exports = C : () => void
->module.exports : () => void
->module : { C: () => void; }
->exports : () => void
+>module.exports : typeof import("mod1")
+>module : { "mod1": typeof import("mod1"); }
+>exports : typeof import("mod1")
 >C : () => void
 
 function C() {

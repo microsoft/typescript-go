@@ -7,10 +7,10 @@ import * as intermediate from './intermediate'
 const ghost: intermediate.Ghost = new intermediate.Ghost()
 >ghost : Ghost
 >intermediate : any
->new intermediate.Ghost() : any
->intermediate.Ghost : any
+>new intermediate.Ghost() : Ghost
+>intermediate.Ghost : typeof Ghost
 >intermediate : typeof import("intermediate")
->Ghost : any
+>Ghost : typeof Ghost
 
 === intermediate.ts ===
 

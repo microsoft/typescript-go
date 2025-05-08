@@ -15,11 +15,11 @@
  render.addRectangle();
 ->render.addRectangle() : import("rectangle").Rectangle
 ->render.addRectangle : () => import("rectangle").Rectangle
-+>render.addRectangle() : Rectangle
-+>render.addRectangle : () => Rectangle
++>render.addRectangle() : any
++>render.addRectangle : () => any
  >render : Render
 ->addRectangle : () => import("rectangle").Rectangle
-+>addRectangle : () => Rectangle
++>addRectangle : () => any
  
  console.log("Objects", render.objects);
  >console.log("Objects", render.objects) : void
@@ -70,7 +70,16 @@
  >[] : undefined[]
      }
      /**
-@@= skipped -19, +19 lines =@@
+@@= skipped -11, +11 lines =@@
+      * @returns {Rectangle} the rect
+      */
+     addRectangle() {
+->addRectangle : () => Rectangle
++>addRectangle : () => any
+ 
+         const obj = new Rectangle();
+ >obj : Rectangle
+@@= skipped -8, +8 lines =@@
  >Rectangle : typeof Rectangle
  
          this.objects.push(obj);

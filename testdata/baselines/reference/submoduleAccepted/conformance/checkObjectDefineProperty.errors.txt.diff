@@ -8,19 +8,19 @@
 +index.js(19,10): error TS2741: Property 'name' is missing in type '{}' but required in type '{ name: string; }'.
 +index.js(23,11): error TS2339: Property 'zip' does not exist on type '{}'.
 +index.js(28,11): error TS2339: Property 'houseNumber' does not exist on type '{}'.
-+validate.ts(3,3): error TS2339: Property 'name' does not exist on type '{}'.
-+validate.ts(4,3): error TS2339: Property 'middleInit' does not exist on type '{}'.
-+validate.ts(5,3): error TS2339: Property 'lastName' does not exist on type '{}'.
-+validate.ts(6,3): error TS2339: Property 'zip' does not exist on type '{}'.
-+validate.ts(7,3): error TS2339: Property 'houseNumber' does not exist on type '{}'.
-+validate.ts(8,3): error TS2339: Property 'zipStr' does not exist on type '{}'.
-+validate.ts(10,3): error TS2339: Property 'name' does not exist on type '{}'.
-+validate.ts(11,3): error TS2339: Property 'zip' does not exist on type '{}'.
-+validate.ts(12,3): error TS2339: Property 'zipStr' does not exist on type '{}'.
-+validate.ts(14,3): error TS2339: Property 'lastName' does not exist on type '{}'.
-+validate.ts(15,3): error TS2339: Property 'houseNumber' does not exist on type '{}'.
-+validate.ts(16,3): error TS2339: Property 'zipStr' does not exist on type '{}'.
-+validate.ts(17,3): error TS2339: Property 'middleInit' does not exist on type '{}'.
++validate.ts(3,3): error TS2339: Property 'name' does not exist on type 'typeof import("index")'.
++validate.ts(4,3): error TS2339: Property 'middleInit' does not exist on type 'typeof import("index")'.
++validate.ts(5,3): error TS2339: Property 'lastName' does not exist on type 'typeof import("index")'.
++validate.ts(6,3): error TS2339: Property 'zip' does not exist on type 'typeof import("index")'.
++validate.ts(7,3): error TS2339: Property 'houseNumber' does not exist on type 'typeof import("index")'.
++validate.ts(8,3): error TS2339: Property 'zipStr' does not exist on type 'typeof import("index")'.
++validate.ts(10,3): error TS2339: Property 'name' does not exist on type 'typeof import("index")'.
++validate.ts(11,3): error TS2339: Property 'zip' does not exist on type 'typeof import("index")'.
++validate.ts(12,3): error TS2339: Property 'zipStr' does not exist on type 'typeof import("index")'.
++validate.ts(14,3): error TS2339: Property 'lastName' does not exist on type 'typeof import("index")'.
++validate.ts(15,3): error TS2339: Property 'houseNumber' does not exist on type 'typeof import("index")'.
++validate.ts(16,3): error TS2339: Property 'zipStr' does not exist on type 'typeof import("index")'.
++validate.ts(17,3): error TS2339: Property 'middleInit' does not exist on type 'typeof import("index")'.
  
  
 -==== validate.ts (4 errors) ====
@@ -29,50 +29,50 @@
      import x = require("./");
      x.name;
 +      ~~~~
-+!!! error TS2339: Property 'name' does not exist on type '{}'.
++!!! error TS2339: Property 'name' does not exist on type 'typeof import("index")'.
      x.middleInit;
 +      ~~~~~~~~~~
-+!!! error TS2339: Property 'middleInit' does not exist on type '{}'.
++!!! error TS2339: Property 'middleInit' does not exist on type 'typeof import("index")'.
      x.lastName;
 +      ~~~~~~~~
-+!!! error TS2339: Property 'lastName' does not exist on type '{}'.
++!!! error TS2339: Property 'lastName' does not exist on type 'typeof import("index")'.
      x.zip;
 +      ~~~
-+!!! error TS2339: Property 'zip' does not exist on type '{}'.
++!!! error TS2339: Property 'zip' does not exist on type 'typeof import("index")'.
      x.houseNumber;
 +      ~~~~~~~~~~~
-+!!! error TS2339: Property 'houseNumber' does not exist on type '{}'.
++!!! error TS2339: Property 'houseNumber' does not exist on type 'typeof import("index")'.
      x.zipStr;
 +      ~~~~~~
-+!!! error TS2339: Property 'zipStr' does not exist on type '{}'.
++!!! error TS2339: Property 'zipStr' does not exist on type 'typeof import("index")'.
      
      x.name = "Another";
 +      ~~~~
-+!!! error TS2339: Property 'name' does not exist on type '{}'.
++!!! error TS2339: Property 'name' does not exist on type 'typeof import("index")'.
      x.zip = 98123;
 +      ~~~
-+!!! error TS2339: Property 'zip' does not exist on type '{}'.
++!!! error TS2339: Property 'zip' does not exist on type 'typeof import("index")'.
      x.zipStr = "OK";
 +      ~~~~~~
-+!!! error TS2339: Property 'zipStr' does not exist on type '{}'.
++!!! error TS2339: Property 'zipStr' does not exist on type 'typeof import("index")'.
      
      x.lastName = "should fail";
        ~~~~~~~~
 -!!! error TS2540: Cannot assign to 'lastName' because it is a read-only property.
-+!!! error TS2339: Property 'lastName' does not exist on type '{}'.
++!!! error TS2339: Property 'lastName' does not exist on type 'typeof import("index")'.
      x.houseNumber = 12; // should also fail
        ~~~~~~~~~~~
 -!!! error TS2540: Cannot assign to 'houseNumber' because it is a read-only property.
-+!!! error TS2339: Property 'houseNumber' does not exist on type '{}'.
++!!! error TS2339: Property 'houseNumber' does not exist on type 'typeof import("index")'.
      x.zipStr = 12; // should fail
 -    ~~~~~~~~
 -!!! error TS2322: Type 'number' is not assignable to type 'string'.
 +      ~~~~~~
-+!!! error TS2339: Property 'zipStr' does not exist on type '{}'.
++!!! error TS2339: Property 'zipStr' does not exist on type 'typeof import("index")'.
      x.middleInit = "R"; // should also fail
        ~~~~~~~~~~
 -!!! error TS2540: Cannot assign to 'middleInit' because it is a read-only property.
-+!!! error TS2339: Property 'middleInit' does not exist on type '{}'.
++!!! error TS2339: Property 'middleInit' does not exist on type 'typeof import("index")'.
      
 -==== index.js (0 errors) ====
 +==== index.js (3 errors) ====

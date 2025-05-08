@@ -6,8 +6,8 @@
  var mini = require('./minimatch')
 ->mini : typeof mini
 ->require('./minimatch') : typeof mini
-+>mini : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
-+>require('./minimatch') : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
++>mini : typeof import("minimatch")
++>require('./minimatch') : typeof import("minimatch")
  >require : any
  >'./minimatch' : "./minimatch"
  
@@ -18,7 +18,7 @@
 ->mini : typeof mini
 ->M : typeof M
 +>mini.M : { (): void; defaults: (def: any) => any; }
-+>mini : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
++>mini : typeof import("minimatch")
 +>M : { (): void; defaults: (def: any) => any; }
  >defaults : (def: any) => any
  
@@ -31,7 +31,7 @@
 +>m : any
 +>new mini.M() : any
 +>mini.M : { (): void; defaults: (def: any) => any; }
-+>mini : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
++>mini : typeof import("minimatch")
 +>M : { (): void; defaults: (def: any) => any; }
  
  m.m()
@@ -48,7 +48,7 @@
  >mini.filter() : void
  >mini.filter : () => void
 ->mini : typeof mini
-+>mini : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
++>mini : typeof import("minimatch")
  >filter : () => void
  
  === types.d.ts ===
@@ -62,9 +62,9 @@
 ->exports : typeof minimatch
 ->minimatch : typeof minimatch
 +>module.exports = minimatch : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
-+>module.exports : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
-+>module : { minimatch: { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }; }
-+>exports : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
++>module.exports : typeof import("minimatch")
++>module : { "minimatch": typeof import("minimatch"); }
++>exports : typeof import("minimatch")
 +>minimatch : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
  
  minimatch.M = M

@@ -20,8 +20,8 @@ const items = [];
 >items : Symbol(items, Decl(index.js, 1, 5))
 
 module.exports = items;
->module.exports : Symbol(items, Decl(index.js, 1, 5))
+>module.exports : Symbol("index", Decl(index.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol(items, Decl(index.js, 1, 5))
+>exports : Symbol("index", Decl(index.js, 0, 0))
 >items : Symbol(items, Decl(index.js, 1, 5))
 

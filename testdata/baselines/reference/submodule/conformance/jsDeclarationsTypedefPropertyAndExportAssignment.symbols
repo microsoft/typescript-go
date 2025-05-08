@@ -30,9 +30,9 @@ class MainThreadTasks {
 }
 
 module.exports = MainThreadTasks;
->module.exports : Symbol(MainThreadTasks, Decl(index.js, 0, 61))
+>module.exports : Symbol("index", Decl(index.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol(MainThreadTasks, Decl(index.js, 0, 61))
+>exports : Symbol("index", Decl(index.js, 0, 0))
 >MainThreadTasks : Symbol(MainThreadTasks, Decl(index.js, 0, 61))
 
 === module.js ===

@@ -1,4 +1,3 @@
-file.js(4,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 index.js(3,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 
 
@@ -16,13 +15,11 @@ index.js(3,1): error TS1203: Export assignment cannot be used when targeting ECM
     export = a;
     ~~~~~~~~~~~
 !!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
-==== file.js (1 errors) ====
+==== file.js (0 errors) ====
     // esm format file
     import "fs";
     const a = {};
     module.exports = a;
-    ~~~~~~~~~~~~~~~~~~
-!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 ==== package.json (0 errors) ====
     {
         "name": "package",

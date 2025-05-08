@@ -49,5 +49,6 @@ __exportStar(require("./b"), exports);
 //// [d.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-let _ = new A(); // Error
-let __ = new B(); // Error
+const c_1 = require("./c");
+let _ = new c_1.A(); // Error
+let __ = new c_1.B(); // Error

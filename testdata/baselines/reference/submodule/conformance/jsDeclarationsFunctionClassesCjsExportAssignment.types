@@ -17,9 +17,9 @@ function Timer(timeout) {
 }
 module.exports = Timer;
 >module.exports = Timer : (timeout: number) => void
->module.exports : (timeout: number) => void
->module : { Timer: (timeout: number) => void; }
->exports : (timeout: number) => void
+>module.exports : typeof import("timer")
+>module : { "timer": typeof import("timer"); }
+>exports : typeof import("timer")
 >Timer : (timeout: number) => void
 
 === hook.js ===
@@ -42,9 +42,9 @@ function Hook(handle) {
 }
 module.exports = Hook;
 >module.exports = Hook : (handle: HookHandler) => void
->module.exports : (handle: HookHandler) => void
->module : { Hook: (handle: HookHandler) => void; }
->exports : (handle: HookHandler) => void
+>module.exports : typeof import("hook")
+>module : { "hook": typeof import("hook"); }
+>exports : typeof import("hook")
 >Hook : (handle: HookHandler) => void
 
 === context.js ===
@@ -132,8 +132,8 @@ Context.prototype = {
 }
 module.exports = Context;
 >module.exports = Context : { (input: Input): any; prototype: { construct: (input: Input, handle?: HookHandler) => State; }; }
->module.exports : { (input: Input): any; prototype: { construct: (input: Input, handle?: HookHandler) => State; }; }
->module : { Context: { (input: Input): any; prototype: { construct: (input: Input, handle?: HookHandler) => State; }; }; }
->exports : { (input: Input): any; prototype: { construct: (input: Input, handle?: HookHandler) => State; }; }
+>module.exports : typeof import("context")
+>module : { "context": typeof import("context"); }
+>exports : typeof import("context")
 >Context : { (input: Input): any; prototype: { construct: (input: Input, handle?: HookHandler) => State; }; }
 

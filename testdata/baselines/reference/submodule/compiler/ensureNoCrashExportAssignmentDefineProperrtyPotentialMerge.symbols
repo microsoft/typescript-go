@@ -26,9 +26,9 @@ A.bar = class Q {}
 >Q : Symbol(Q, Decl(namespacey.js, 1, 7))
 
 module.exports = A;
->module.exports : Symbol(A, Decl(namespacey.js, 0, 5))
+>module.exports : Symbol("namespacey", Decl(namespacey.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol(A, Decl(namespacey.js, 0, 5))
+>exports : Symbol("namespacey", Decl(namespacey.js, 0, 0))
 >A : Symbol(A, Decl(namespacey.js, 0, 5))
 
 === namespacer.js ===
@@ -47,8 +47,8 @@ Object.defineProperty(B, "NS", { value: "why though", writable: true });
 >writable : Symbol(writable, Decl(namespacer.js, 2, 53))
 
 module.exports = B;
->module.exports : Symbol(B, Decl(namespacer.js, 0, 5))
+>module.exports : Symbol("namespacer", Decl(namespacer.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol(B, Decl(namespacer.js, 0, 5))
+>exports : Symbol("namespacer", Decl(namespacer.js, 0, 0))
 >B : Symbol(B, Decl(namespacer.js, 0, 5))
 

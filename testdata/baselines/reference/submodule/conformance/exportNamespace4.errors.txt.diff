@@ -1,0 +1,21 @@
+--- old.exportNamespace4.errors.txt
++++ new.exportNamespace4.errors.txt
+@@= skipped -0, +0 lines =@@
+-d.ts(2,1): error TS1362: 'A' cannot be used as a value because it was exported using 'export type'.
+ e.ts(2,1): error TS1362: 'ns' cannot be used as a value because it was exported using 'export type'.
+ 
+ 
+@@= skipped -10, +9 lines =@@
+ ==== c.ts (0 errors) ====
+     export type * as ns from './a';
+     
+-==== d.ts (1 errors) ====
++==== d.ts (0 errors) ====
+     import { A } from './b';
+     A;
+-    ~
+-!!! error TS1362: 'A' cannot be used as a value because it was exported using 'export type'.
+-!!! related TS1377 b.ts:1:1: 'A' was exported here.
+     
+ ==== e.ts (1 errors) ====
+     import { ns } from './c';

@@ -4,7 +4,7 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +a.js(3,12): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+a.js(4,5): error TS1231: An export assignment must be at the top level of a file or module declaration.
++a.js(4,5): error TS1233: An export declaration can only be used at the top level of a namespace or module.
 +
 +
 +==== a.js (2 errors) ====
@@ -15,6 +15,6 @@
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +        module.exports = fn;
 +        ~~~~~~
-+!!! error TS1231: An export assignment must be at the top level of a file or module declaration.
++!!! error TS1233: An export declaration can only be used at the top level of a namespace or module.
 +    }
 +    

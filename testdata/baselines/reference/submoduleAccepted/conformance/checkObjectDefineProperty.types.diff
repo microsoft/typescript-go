@@ -5,14 +5,14 @@
  // Validate in TS as simple validations would usually be interpreted as more special assignments
  import x = require("./");
 ->x : typeof x
-+>x : {}
++>x : typeof import("index")
  
  x.name;
 ->x.name : string
 ->x : typeof x
 ->name : string
 +>x.name : any
-+>x : {}
++>x : typeof import("index")
 +>name : any
  
  x.middleInit;
@@ -20,7 +20,7 @@
 ->x : typeof x
 ->middleInit : string
 +>x.middleInit : any
-+>x : {}
++>x : typeof import("index")
 +>middleInit : any
  
  x.lastName;
@@ -28,7 +28,7 @@
 ->x : typeof x
 ->lastName : string
 +>x.lastName : any
-+>x : {}
++>x : typeof import("index")
 +>lastName : any
  
  x.zip;
@@ -36,7 +36,7 @@
 ->x : typeof x
 ->zip : number
 +>x.zip : any
-+>x : {}
++>x : typeof import("index")
 +>zip : any
  
  x.houseNumber;
@@ -44,7 +44,7 @@
 ->x : typeof x
 ->houseNumber : number
 +>x.houseNumber : any
-+>x : {}
++>x : typeof import("index")
 +>houseNumber : any
  
  x.zipStr;
@@ -52,7 +52,7 @@
 ->x : typeof x
 ->zipStr : string
 +>x.zipStr : any
-+>x : {}
++>x : typeof import("index")
 +>zipStr : any
  
  x.name = "Another";
@@ -61,7 +61,7 @@
 ->x : typeof x
 ->name : string
 +>x.name : any
-+>x : {}
++>x : typeof import("index")
 +>name : any
  >"Another" : "Another"
  
@@ -71,7 +71,7 @@
 ->x : typeof x
 ->zip : number
 +>x.zip : any
-+>x : {}
++>x : typeof import("index")
 +>zip : any
  >98123 : 98123
  
@@ -81,7 +81,7 @@
 ->x : typeof x
 ->zipStr : string
 +>x.zipStr : any
-+>x : {}
++>x : typeof import("index")
 +>zipStr : any
  >"OK" : "OK"
  
@@ -89,7 +89,7 @@
  >x.lastName = "should fail" : "should fail"
  >x.lastName : any
 ->x : typeof x
-+>x : {}
++>x : typeof import("index")
  >lastName : any
  >"should fail" : "should fail"
  
@@ -97,7 +97,7 @@
  >x.houseNumber = 12 : 12
  >x.houseNumber : any
 ->x : typeof x
-+>x : {}
++>x : typeof import("index")
  >houseNumber : any
  >12 : 12
  
@@ -107,7 +107,7 @@
 ->x : typeof x
 ->zipStr : string
 +>x.zipStr : any
-+>x : {}
++>x : typeof import("index")
 +>zipStr : any
  >12 : 12
  
@@ -115,7 +115,7 @@
  >x.middleInit = "R" : "R"
  >x.middleInit : any
 ->x : typeof x
-+>x : {}
++>x : typeof import("index")
  >middleInit : any
  >"R" : "R"
  
@@ -302,8 +302,8 @@
 ->exports : typeof x
 ->x : typeof x
 +>module.exports = x : {}
-+>module.exports : {}
-+>module : { readonly x: {}; }
-+>exports : {}
++>module.exports : typeof import("index")
++>module : { "index": typeof import("index"); }
++>exports : typeof import("index")
 +>x : {}
  

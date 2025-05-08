@@ -9,16 +9,22 @@
  >require("./mod1") : typeof import("mod1")
  >require : any
  >"./mod1" : "./mod1"
-@@= skipped -11, +11 lines =@@
- >k : K
+ 
+ /** @param {K} k */
+ function f(k) {
+->f : (k: K) => void
+->k : K
++>f : (k: any) => void
++>k : any
  
      k.values()
 ->k.values() : K
 ->k.values : () => K
+->k : K
+->values : () => K
 +>k.values() : any
 +>k.values : any
- >k : K
-->values : () => K
++>k : any
 +>values : any
  }
  

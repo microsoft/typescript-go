@@ -22,9 +22,9 @@ BaseFactory.Base = Base;
 >Base : Symbol(Base, Decl(base.js, 0, 0))
 
 module.exports = BaseFactory;
->module.exports : Symbol(BaseFactory, Decl(base.js, 4, 5))
+>module.exports : Symbol("base", Decl(base.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol(BaseFactory, Decl(base.js, 4, 5))
+>exports : Symbol("base", Decl(base.js, 0, 0))
 >BaseFactory : Symbol(BaseFactory, Decl(base.js, 4, 5))
 
 === file.js ===

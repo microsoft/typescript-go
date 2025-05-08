@@ -70,9 +70,9 @@ const ns = require("./cls");
 
 module.exports = ns;
 >module.exports = ns : typeof import("cls")
->module.exports : typeof import("cls")
->module : { "cls": typeof import("cls"); }
->exports : typeof import("cls")
+>module.exports : typeof import("cjs2")
+>module : { "cjs2": typeof import("cjs2"); }
+>exports : typeof import("cjs2")
 >ns : typeof import("cls")
 
 === cjs3.js ===

@@ -3957,7 +3957,7 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitImportDeclaration(node.AsImportDeclaration())
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		p.emitExportAssignment(node.AsExportAssignment())
-	case ast.KindExportDeclaration:
+	case ast.KindExportDeclaration, ast.KindJSExportDeclaration:
 		p.emitExportDeclaration(node.AsExportDeclaration())
 	case ast.KindCommonJSExport:
 		p.emitCommonJSExport(node.AsCommonJSExport())

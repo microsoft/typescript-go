@@ -7,17 +7,17 @@ var axios = {}
 
 module.exports = axios // both assignments should be ok
 >module.exports = axios : {}
->module.exports : {}
->module : { axios: {}; }
->exports : {}
+>module.exports : typeof import("axios")
+>module : { "axios": typeof import("axios"); }
+>exports : typeof import("axios")
 >axios : {}
 
 module.exports.default = axios
 >module.exports.default = axios : {}
->module.exports.default : any
->module.exports : {}
->module : { axios: {}; }
->exports : {}
->default : any
+>module.exports.default : {}
+>module.exports : typeof import("axios")
+>module : { "axios": typeof import("axios"); }
+>exports : typeof import("axios")
+>default : {}
 >axios : {}
 

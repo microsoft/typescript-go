@@ -3,84 +3,84 @@
 === validate.ts ===
 // Validate in TS as simple validations would usually be interpreted as more special assignments
 import x = require("./");
->x : {}
+>x : typeof import("index")
 
 x.name;
 >x.name : any
->x : {}
+>x : typeof import("index")
 >name : any
 
 x.middleInit;
 >x.middleInit : any
->x : {}
+>x : typeof import("index")
 >middleInit : any
 
 x.lastName;
 >x.lastName : any
->x : {}
+>x : typeof import("index")
 >lastName : any
 
 x.zip;
 >x.zip : any
->x : {}
+>x : typeof import("index")
 >zip : any
 
 x.houseNumber;
 >x.houseNumber : any
->x : {}
+>x : typeof import("index")
 >houseNumber : any
 
 x.zipStr;
 >x.zipStr : any
->x : {}
+>x : typeof import("index")
 >zipStr : any
 
 x.name = "Another";
 >x.name = "Another" : "Another"
 >x.name : any
->x : {}
+>x : typeof import("index")
 >name : any
 >"Another" : "Another"
 
 x.zip = 98123;
 >x.zip = 98123 : 98123
 >x.zip : any
->x : {}
+>x : typeof import("index")
 >zip : any
 >98123 : 98123
 
 x.zipStr = "OK";
 >x.zipStr = "OK" : "OK"
 >x.zipStr : any
->x : {}
+>x : typeof import("index")
 >zipStr : any
 >"OK" : "OK"
 
 x.lastName = "should fail";
 >x.lastName = "should fail" : "should fail"
 >x.lastName : any
->x : {}
+>x : typeof import("index")
 >lastName : any
 >"should fail" : "should fail"
 
 x.houseNumber = 12; // should also fail
 >x.houseNumber = 12 : 12
 >x.houseNumber : any
->x : {}
+>x : typeof import("index")
 >houseNumber : any
 >12 : 12
 
 x.zipStr = 12; // should fail
 >x.zipStr = 12 : 12
 >x.zipStr : any
->x : {}
+>x : typeof import("index")
 >zipStr : any
 >12 : 12
 
 x.middleInit = "R"; // should also fail
 >x.middleInit = "R" : "R"
 >x.middleInit : any
->x : {}
+>x : typeof import("index")
 >middleInit : any
 >"R" : "R"
 
@@ -251,8 +251,8 @@ match(() => expected, (x = expected) => void 0);
 
 module.exports = x;
 >module.exports = x : {}
->module.exports : {}
->module : { readonly x: {}; }
->exports : {}
+>module.exports : typeof import("index")
+>module : { "index": typeof import("index"); }
+>exports : typeof import("index")
 >x : {}
 

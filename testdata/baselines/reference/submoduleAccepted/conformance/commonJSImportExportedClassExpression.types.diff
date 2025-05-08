@@ -1,15 +1,22 @@
 --- old.commonJSImportExportedClassExpression.types
 +++ new.commonJSImportExportedClassExpression.types
-@@= skipped -12, +12 lines =@@
- >k : K
+@@= skipped -8, +8 lines =@@
+ 
+ /** @param {K} k */
+ function f(k) {
+->f : (k: K) => void
+->k : K
++>f : (k: any) => void
++>k : any
  
      k.values()
 ->k.values() : void
 ->k.values : () => void
+->k : K
+->values : () => void
 +>k.values() : any
 +>k.values : any
- >k : K
-->values : () => void
++>k : any
 +>values : any
  }
  

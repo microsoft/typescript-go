@@ -5,7 +5,7 @@
  
  import Person = require("./mod1");
 ->Person : typeof Person
-+>Person : (name: string) => void
++>Person : typeof import("mod1")
  
  const m1 = new Person("Name")
 ->m1 : Person
@@ -13,7 +13,7 @@
 ->Person : typeof Person
 +>m1 : any
 +>new Person("Name") : any
-+>Person : (name: string) => void
++>Person : typeof import("mod1")
  >"Name" : "Name"
  
  m1.thing;
@@ -252,8 +252,8 @@
 ->exports : typeof Person
 ->Person : typeof Person
 +>module.exports = Person : (name: string) => void
-+>module.exports : (name: string) => void
-+>module : { Person: (name: string) => void; }
-+>exports : (name: string) => void
++>module.exports : typeof import("mod1")
++>module : { "mod1": typeof import("mod1"); }
++>exports : typeof import("mod1")
 +>Person : (name: string) => void
  

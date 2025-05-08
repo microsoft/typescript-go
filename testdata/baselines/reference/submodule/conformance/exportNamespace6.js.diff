@@ -28,5 +28,6 @@
  Object.defineProperty(exports, "__esModule", { value: true });
 -var _ = new A(); // Error
 -var __ = new B(); // Error
-+let _ = new A(); // Error
-+let __ = new B(); // Error
++const c_1 = require("./c");
++let _ = new c_1.A(); // Error
++let __ = new c_1.B(); // Error

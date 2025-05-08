@@ -17,9 +17,9 @@ const a = {};
 
 module.exports = a;
 >module.exports = a : {}
->module.exports : {}
->module : { readonly a: {}; }
->exports : {}
+>module.exports : typeof import("subfolder/file")
+>module : { "subfolder/file": typeof import("subfolder/file"); }
+>exports : typeof import("subfolder/file")
 >a : {}
 
 === index.js ===
@@ -40,8 +40,8 @@ const a = {};
 
 module.exports = a;
 >module.exports = a : {}
->module.exports : {}
->module : { readonly a: {}; }
->exports : {}
+>module.exports : typeof import("file")
+>module : { "file": typeof import("file"); }
+>exports : typeof import("file")
 >a : {}
 

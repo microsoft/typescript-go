@@ -1,4 +1,6 @@
-ExtendedClass.js(17,5): error TS1231: An export assignment must be at the top level of a file or module declaration.
+ExtendedClass.js(7,1): error TS2345: Argument of type '{}' is not assignable to parameter of type '(...modules: unknown[]) => unknown'.
+  Type '{}' provides no match for the signature '(...modules: unknown[]): unknown'.
+ExtendedClass.js(17,5): error TS1233: An export declaration can only be used at the top level of a namespace or module.
 ExtendedClass.js(17,12): error TS2339: Property 'exports' does not exist on type '{}'.
 ExtendedClass.js(18,19): error TS2339: Property 'exports' does not exist on type '{}'.
 
@@ -12,7 +14,7 @@ ExtendedClass.js(18,19): error TS2339: Property 'exports' does not exist on type
         }
         export = BaseClass;
     }
-==== ExtendedClass.js (3 errors) ====
+==== ExtendedClass.js (4 errors) ====
     define("lib/ExtendedClass", ["deps/BaseClass"], 
     /**
      * {typeof import("deps/BaseClass")}
@@ -20,6 +22,9 @@ ExtendedClass.js(18,19): error TS2339: Property 'exports' does not exist on type
      * @returns 
      */
     (BaseClass) => {    
+    ~~~~~~~~~~~~~~~~~~~~
+!!! error TS2345: Argument of type '{}' is not assignable to parameter of type '(...modules: unknown[]) => unknown'.
+!!! error TS2345:   Type '{}' provides no match for the signature '(...modules: unknown[]): unknown'.
         
         const ExtendedClass = BaseClass.extends({
             f: function() {
@@ -31,7 +36,7 @@ ExtendedClass.js(18,19): error TS2339: Property 'exports' does not exist on type
         const module = {};
         module.exports = ExtendedClass
         ~~~~~~
-!!! error TS1231: An export assignment must be at the top level of a file or module declaration.
+!!! error TS1233: An export declaration can only be used at the top level of a namespace or module.
                ~~~~~~~
 !!! error TS2339: Property 'exports' does not exist on type '{}'.
         return module.exports;
