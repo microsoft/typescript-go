@@ -18,7 +18,7 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 		return nil
 	}
 
-	symbols := createSymbolTable(nil)
+	symbols := make(ast.SymbolTable)
 	isStaticSymbol := false
 
 	// Copy the given symbol into symbol tables if the symbol has the given meaning
