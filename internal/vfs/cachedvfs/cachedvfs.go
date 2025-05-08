@@ -75,7 +75,7 @@ func (fsys *FS) Remove(path string) error {
 
 func (fsys *FS) Stat(path string) vfs.FileInfo {
 	if ret, ok := fsys.statCache.Load(path); ok {
-		return ret.(vfs.FileInfo)
+		return ret
 	}
 	ret := fsys.fs.Stat(path)
 	fsys.statCache.Store(path, ret)
