@@ -71,6 +71,50 @@ type Program struct {
 	unsupportedExtensions []string
 }
 
+/** This should have similar behavior to 'processSourceFile' without diagnostics or mutation. */
+func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
+	// TODO: The module loader in corsa is fairly different than strada, it should probably be able to expose this functionality at some point,
+	// rather than redoing the logic approximately here, since most of the related logic now lives in module.Resolver
+	// Still, without the failed lookup reporting that only the loader does, this isn't terribly complicated
+
+	fileName := tspath.ResolvePath(tspath.GetDirectoryPath(origin.FileName()), ref.FileName)
+	supportedExtensionsBase := tsoptions.GetSupportedExtensions(p.Options(), nil /*extraFileExtensions*/)
+	supportedExtensions := tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(p.Options(), supportedExtensionsBase)
+	allowNonTsExtensions := p.Options().AllowNonTsExtensions.IsTrue()
+	if tspath.HasExtension(fileName) {
+		if !allowNonTsExtensions {
+			canonicalFileName := tspath.GetCanonicalFileName(fileName, p.host.FS().UseCaseSensitiveFileNames())
+			supported := false
+			for _, group := range supportedExtensions {
+				if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
+					supported = true
+					break
+				}
+			}
+			if !supported {
+				return nil // unsupported extensions are forced to fail
+			}
+		}
+
+		return p.GetSourceFile(fileName)
+	}
+	if allowNonTsExtensions {
+		extensionless := p.GetSourceFile(fileName)
+		if extensionless != nil {
+			return extensionless
+		}
+	}
+
+	// Only try adding extensions from the first supported group (which should be .ts/.tsx/.d.ts)
+	for _, ext := range supportedExtensions[0] {
+		result := p.GetSourceFile(fileName + ext)
+		if result != nil {
+			return result
+		}
+	}
+	return nil
+}
+
 func NewProgram(options ProgramOptions) *Program {
 	p := &Program{}
 	p.programOptions = options
@@ -225,7 +269,7 @@ func (p *Program) createCheckers() {
 		wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
 		for i := range p.checkers {
 			wg.Queue(func() {
-				p.checkers[i] = checker.NewChecker(p)
+				p.checkers[i] = checker.NewChecker(p, &emitHost{program: p})
 			})
 		}
 		wg.RunAndWait()
@@ -296,6 +340,10 @@ func (p *Program) GetGlobalDiagnostics() []*ast.Diagnostic {
 		globalDiagnostics = append(globalDiagnostics, checker.GetGlobalDiagnostics()...)
 	}
 	return SortAndDeduplicateDiagnostics(globalDiagnostics)
+}
+
+func (p *Program) GetDeclarationDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, true /*ensureChecked*/, p.getDeclarationDiagnosticsForFile)
 }
 
 func (p *Program) GetOptionsDiagnostics() []*ast.Diagnostic {
@@ -382,6 +430,14 @@ func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*a
 		}
 	}
 	return filtered
+}
+
+func (p *Program) getDeclarationDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	if sourceFile.IsDeclarationFile {
+		return []*ast.Diagnostic{}
+	}
+	host := &emitHost{program: p}
+	return getDeclarationDiagnostics(host, host.GetEmitResolver(sourceFile, true), sourceFile)
 }
 
 func isCommentOrBlankLine(text string, pos int) bool {

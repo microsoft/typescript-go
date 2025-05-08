@@ -3,15 +3,102 @@ package compiler
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/declarations"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-var _ printer.EmitHost = (*emitHost)(nil)
+type WriteFileData struct {
+	SourceMapUrlPos int
+	// BuildInfo BuildInfo
+	Diagnostics      []*ast.Diagnostic
+	DiffersOnlyInMap bool
+	SkippedDtsWrite  bool
+}
+
+// NOTE: EmitHost operations must be thread-safe
+type EmitHost interface {
+	printer.EmitHost
+	declarations.DeclarationEmitHost
+	Options() *core.CompilerOptions
+	SourceFiles() []*ast.SourceFile
+	UseCaseSensitiveFileNames() bool
+	GetCurrentDirectory() string
+	CommonSourceDirectory() string
+	IsEmitBlocked(file string) bool
+	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
+	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver
+}
+
+var _ EmitHost = (*emitHost)(nil)
 
 // NOTE: emitHost operations must be thread-safe
 type emitHost struct {
 	program *Program
+}
+
+func (host *emitHost) FileExists(path string) bool {
+	return host.program.host.FS().FileExists(path)
+}
+
+func (host *emitHost) GetGlobalTypingsCacheLocation() string {
+	return "" // !!! see src/tsserver/nodeServer.ts for strada's node-specific implementation
+}
+
+func (host *emitHost) GetModuleSpecifierCache() modulespecifiers.ModuleSpecifierCache {
+	return nil /// !!! see src/server/moduleSpecifierCache.ts for strada's services implementation
+}
+
+func (host *emitHost) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
+	scoped := host.program.resolver.GetPackageScopeForPath(dirname)
+	if scoped != nil && scoped.Exists() {
+		return scoped.PackageDirectory
+	}
+	return ""
+}
+
+func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+	scoped := host.program.resolver.GetPackageScopeForPath(pkgJsonPath)
+	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == tspath.GetDirectoryPath(pkgJsonPath) {
+		return scoped
+	}
+	return nil
+}
+
+func (host *emitHost) GetProjectReferenceRedirect(path string) string {
+	return "" // !!! TODO: project references support
+}
+
+func (host *emitHost) GetRedirectTargets(path tspath.Path) []string {
+	return nil // !!! TODO: project references support
+}
+
+func (host *emitHost) IsSourceOfProjectReferenceRedirect(path string) bool {
+	return false // !!! TODO: project references support
+}
+
+func (host *emitHost) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
+	// TODO: EmitContext().ParseNode(node) - can only find a checker for parse nodes!
+	ch := host.program.GetTypeCheckerForFile(ast.GetSourceFileOfNode(node))
+	if ch == nil {
+		return ast.ModifierFlagsNone // TODO: Should this be a panic?
+	}
+	return ch.GetEffectiveDeclarationFlags(node, flags)
+}
+
+func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool) declarations.OutputPaths {
+	// TODO: cache
+	return getOutputPathsFor(file, host, forceDtsPaths)
+}
+
+func (host *emitHost) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
+	ch := host.program.GetTypeCheckerForFile(ast.GetSourceFileOfNode(node))
+	return ch.GetResolutionModeOverride(node.AsImportAttributes(), false)
+}
+
+func (host *emitHost) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
+	return host.program.GetSourceFileFromReference(origin, ref)
 }
 
 func (host *emitHost) Options() *core.CompilerOptions { return host.program.Options() }

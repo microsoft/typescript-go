@@ -88,6 +88,6 @@ func BenchmarkNewChecker(b *testing.B) {
 	b.ReportAllocs()
 
 	for b.Loop() {
-		checker.NewChecker(p)
+		checker.NewChecker(p, nil)
 	}
 }
