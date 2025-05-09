@@ -1,0 +1,21 @@
+--- old.scannerClass2.errors.txt
++++ new.scannerClass2.errors.txt
+@@= skipped -0, +0 lines =@@
+ scannerClass2.ts(1,43): error TS2304: Cannot find name 'ILogger'.
+ scannerClass2.ts(2,37): error TS2304: Cannot find name 'ILogger'.
+-scannerClass2.ts(3,18): error TS2339: Property '_information' does not exist on type 'LoggerAdapter'.
+ 
+ 
+-==== scannerClass2.ts (3 errors) ====
++==== scannerClass2.ts (2 errors) ====
+         export class LoggerAdapter implements ILogger {
+                                               ~~~~~~~
+ !!! error TS2304: Cannot find name 'ILogger'.
+@@= skipped -10, +9 lines =@@
+                                         ~~~~~~~
+ !!! error TS2304: Cannot find name 'ILogger'.
+                 this._information = this.logger.information();
+-                     ~~~~~~~~~~~~
+-!!! error TS2339: Property '_information' does not exist on type 'LoggerAdapter'.
+             }
+         }

@@ -29,7 +29,7 @@ class A {
 
         this["#foo"] = 3;     // Okay (type has index signature and "#foo" does not collide with private identifier #foo)
 >this["#foo"] = 3 : 3
->this["#foo"] : any
+>this["#foo"] : number
 >this : this
 >"#foo" : "#foo"
 >3 : 3

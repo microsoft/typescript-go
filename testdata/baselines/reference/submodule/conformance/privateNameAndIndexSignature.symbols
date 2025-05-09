@@ -24,6 +24,7 @@ class A {
 
         this["#foo"] = 3;     // Okay (type has index signature and "#foo" does not collide with private identifier #foo)
 >this : Symbol(A, Decl(privateNameAndIndexSignature.ts, 0, 0))
+>"#foo" : Symbol("#foo", Decl(privateNameAndIndexSignature.ts, 5, 19))
 
     }
 }

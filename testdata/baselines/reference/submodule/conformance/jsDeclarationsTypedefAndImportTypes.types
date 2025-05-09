@@ -40,9 +40,9 @@ class Wrap {
 
         this.connItem = c.item;
 >this.connItem = c.item : number
->this.connItem : any
+>this.connItem : number
 >this : this
->connItem : any
+>connItem : number
 >c.item : number
 >c : Conn
 >item : number
@@ -50,9 +50,9 @@ class Wrap {
         /** @type {import("./conn").Whatever} */
         this.another = "";
 >this.another = "" : ""
->this.another : any
+>this.another : string
 >this : this
->another : any
+>another : string
 >"" : ""
     }
 }

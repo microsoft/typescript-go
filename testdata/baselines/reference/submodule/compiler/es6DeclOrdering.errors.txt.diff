@@ -1,0 +1,30 @@
+--- old.es6DeclOrdering.errors.txt
++++ new.es6DeclOrdering.errors.txt
+@@= skipped -0, +-1 lines =@@
+-es6DeclOrdering.ts(6,20): error TS2339: Property '_store' does not exist on type 'Bar'.
+-es6DeclOrdering.ts(11,13): error TS2339: Property '_store' does not exist on type 'Bar'.
+-
+-
+-==== es6DeclOrdering.ts (2 errors) ====
+-    class Bar {
+-    
+-       //public bar() { }
+-    
+-       public foo() {
+-           return this._store.length;
+-                       ~~~~~~
+-!!! error TS2339: Property '_store' does not exist on type 'Bar'.
+-     
+-       }
+-    
+-       constructor(store: string) {
+-           this._store = store; // this is an error for some reason? Unresolved symbol store
+-                ~~~~~~
+-!!! error TS2339: Property '_store' does not exist on type 'Bar'.
+-     
+-       } 
+-    }
+-    
+-    
+@@= skipped --1, +1 lines =@@
++<no content>

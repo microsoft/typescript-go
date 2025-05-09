@@ -1,0 +1,14 @@
+--- old.staticVisibility.types
++++ new.staticVisibility.types
+@@= skipped -47, +47 lines =@@
+ 
+         this.p = 0; // should be error
+ >this.p = 0 : 0
+->this.p : any
++>this.p : number
+ >this : typeof C1
+->p : any
++>p : number
+ >0 : 0
+ 
+         C1.s = 1; // should be ok

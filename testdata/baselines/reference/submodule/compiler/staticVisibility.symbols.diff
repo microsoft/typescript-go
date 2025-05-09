@@ -38,7 +38,9 @@
  
          v = 1; // should be error
          this.p = 0; // should be error
++>this.p : Symbol(p, Decl(staticVisibility.ts, 16, 14))
  >this : Symbol(C1, Decl(staticVisibility.ts, 0, 0))
++>p : Symbol(p, Decl(staticVisibility.ts, 16, 14))
  
          C1.s = 1; // should be ok
 ->C1.s : Symbol(C1.s, Decl(staticVisibility.ts, 2, 11))
@@ -49,7 +51,7 @@
      }
  }
  
-@@= skipped -29, +29 lines =@@
+@@= skipped -29, +31 lines =@@
  >C2 : Symbol(C2, Decl(staticVisibility.ts, 20, 1))
   
  barback:string = "";

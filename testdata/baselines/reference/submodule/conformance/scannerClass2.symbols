@@ -9,7 +9,9 @@
 >ILogger : Symbol(ILogger)
 
             this._information = this.logger.information();
+>this._information : Symbol(_information, Decl(scannerClass2.ts, 1, 46))
 >this : Symbol(LoggerAdapter, Decl(scannerClass2.ts, 0, 0))
+>_information : Symbol(_information, Decl(scannerClass2.ts, 1, 46))
 >this.logger : Symbol(logger, Decl(scannerClass2.ts, 1, 21))
 >this : Symbol(LoggerAdapter, Decl(scannerClass2.ts, 0, 0))
 >logger : Symbol(logger, Decl(scannerClass2.ts, 1, 21))

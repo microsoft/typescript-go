@@ -7,10 +7,10 @@
 ->#method : Symbol(AA.#method, Decl(privateNameStaticMethodCallExpression.ts, 0, 10))
 ->this.x : Symbol(AA.x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
 +>#method : Symbol(#method, Decl(privateNameStaticMethodCallExpression.ts, 0, 10))
-+>this.x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
++>this.x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 1, 22), Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
  >this : Symbol(AA, Decl(privateNameStaticMethodCallExpression.ts, 0, 0))
 ->x : Symbol(AA.x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
-+>x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
++>x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 1, 22), Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
  
      static #method2(a, ...b) {};
 ->#method2 : Symbol(AA.#method2, Decl(privateNameStaticMethodCallExpression.ts, 1, 38))
@@ -20,7 +20,7 @@
  
      static x = 1;
 ->x : Symbol(AA.x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
-+>x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
++>x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 1, 22), Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
  
      test() {
 ->test : Symbol(AA.test, Decl(privateNameStaticMethodCallExpression.ts, 3, 17))

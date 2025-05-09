@@ -1,0 +1,14 @@
+--- old.staticVisibility2.types
++++ new.staticVisibility2.types
+@@= skipped -11, +11 lines =@@
+ 
+         this.sideLength = sideLength;
+ >this.sideLength = sideLength : number
+->this.sideLength : any
++>this.sideLength : number
+ >this : this
+->sideLength : any
+ >sideLength : number
++>sideLength : number
+     }
+ }

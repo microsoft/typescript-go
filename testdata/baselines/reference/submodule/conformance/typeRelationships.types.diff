@@ -1,0 +1,137 @@
+--- old.typeRelationships.types
++++ new.typeRelationships.types
+@@= skipped -90, +90 lines =@@
+ >this : this
+ 
+     self2 = this.self;
+->self2 : this
+->this.self : this
++>self2 : any
++>this.self : any
+ >this : this
+->self : this
++>self : any
+ 
+     self3 = this.foo();
+ >self3 : this
+@@= skipped -22, +22 lines =@@
+ 
+         this.self = this.self1;
+ >this.self = this.self1 : this
+->this.self : this
++>this.self : any
+ >this : this
+->self : this
++>self : any
+ >this.self1 : this
+ >this : this
+ >self1 : this
+ 
+         this.self = this.self2;
+->this.self = this.self2 : this
+->this.self : this
++>this.self = this.self2 : any
++>this.self : any
+ >this : this
+->self : this
+->this.self2 : this
++>self : any
++>this.self2 : any
+ >this : this
+->self2 : this
++>self2 : any
+ 
+         this.self = this.self3;
+ >this.self = this.self3 : this
+->this.self : this
++>this.self : any
+ >this : this
+->self : this
++>self : any
+ >this.self3 : this
+ >this : this
+ >self3 : this
+ 
+         this.self1 = this.self;
+->this.self1 = this.self : this
++>this.self1 = this.self : any
+ >this.self1 : this
+ >this : this
+ >self1 : this
+->this.self : this
++>this.self : any
+ >this : this
+->self : this
++>self : any
+ 
+         this.self2 = this.self;
+->this.self2 = this.self : this
+->this.self2 : this
++>this.self2 = this.self : any
++>this.self2 : any
+ >this : this
+->self2 : this
+->this.self : this
++>self2 : any
++>this.self : any
+ >this : this
+->self : this
++>self : any
+ 
+         this.self3 = this.self;
+->this.self3 = this.self : this
++>this.self3 = this.self : any
+ >this.self3 : this
+ >this : this
+ >self3 : this
+->this.self : this
++>this.self : any
+ >this : this
+->self : this
++>self : any
+ 
+         this.d = this.self;
+->this.d = this.self : this
++>this.d = this.self : any
+ >this.d : D
+ >this : this
+ >d : D
+->this.self : this
++>this.self : any
+ >this : this
+->self : this
++>self : any
+ 
+         this.d = this.c;  // Error
+->this.d = this.c : C
++>this.d = this.c : D
+ >this.d : D
+ >this : this
+ >d : D
+->this.c : C
++>this.c : D
+ >this : this
+->c : C
++>c : D
+ 
+         this.self = this.d;  // Error
+ >this.self = this.d : D
+->this.self : this
++>this.self : any
+ >this : this
+->self : this
++>self : any
+ >this.d : D
+ >this : this
+ >d : D
+ 
+         this.c = this.d;
+ >this.c = this.d : D
+->this.c : C
++>this.c : D
+ >this : this
+->c : C
++>c : D
+ >this.d : D
+ >this : this
+ >d : D

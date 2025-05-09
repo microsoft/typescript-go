@@ -73,11 +73,11 @@
 ->this.s = {            status: 'done',            m(n) { }        } : { status: "done"; m(n: number): void; }
 ->this.s : DoneStatus
 +>this.s = {            status: 'done',            m(n) { }        } : { status: string; m: (n: any) => void; }
-+>this.s : any
++>this.s : { status: string; m: (n: any) => void; } | { status: string; m: (n: any) => void; }
  >this : this
 ->s : DoneStatus
 ->{            status: 'done',            m(n) { }        } : { status: "done"; m(n: number): void; }
-+>s : any
++>s : { status: string; m: (n: any) => void; } | { status: string; m: (n: any) => void; }
 +>{            status: 'done',            m(n) { }        } : { status: string; m: (n: any) => void; }
  
              status: 'done',
@@ -100,11 +100,11 @@
 ->this.s = {            status: 'done',            m(n) { }        } : { status: "done"; m(n: number): void; }
 ->this.s : DoneStatus
 +>this.s = {            status: 'done',            m(n) { }        } : { status: string; m: (n: any) => void; }
-+>this.s : any
++>this.s : { status: string; m: (n: any) => void; } | { status: string; m: (n: any) => void; }
  >this : this
 ->s : DoneStatus
 ->{            status: 'done',            m(n) { }        } : { status: "done"; m(n: number): void; }
-+>s : any
++>s : { status: string; m: (n: any) => void; } | { status: string; m: (n: any) => void; }
 +>{            status: 'done',            m(n) { }        } : { status: string; m: (n: any) => void; }
  
              status: 'done',

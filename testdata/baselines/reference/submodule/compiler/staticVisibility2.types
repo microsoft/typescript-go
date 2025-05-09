@@ -12,9 +12,9 @@ class Square {
 
         this.sideLength = sideLength;
 >this.sideLength = sideLength : number
->this.sideLength : any
+>this.sideLength : number
 >this : this
->sideLength : any
+>sideLength : number
 >sideLength : number
     }
 }

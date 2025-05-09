@@ -9,7 +9,16 @@
  >a : Symbol(a, Decl(destructuringParameterProperties2.ts, 1, 44))
  >b : Symbol(b, Decl(destructuringParameterProperties2.ts, 1, 46))
  >c : Symbol(c, Decl(destructuringParameterProperties2.ts, 1, 49))
-@@= skipped -23, +23 lines =@@
+@@= skipped -16, +16 lines =@@
+ >undefined : Symbol(undefined)
+ 
+             this.a = a || k;
++>this.a : Symbol(a, Decl(destructuringParameterProperties2.ts, 2, 101))
+ >this : Symbol(C1, Decl(destructuringParameterProperties2.ts, 0, 0))
++>a : Symbol(a, Decl(destructuringParameterProperties2.ts, 2, 101))
+ >a : Symbol(a, Decl(destructuringParameterProperties2.ts, 1, 44))
+ >k : Symbol(k, Decl(destructuringParameterProperties2.ts, 1, 16))
+         }
      }
  
      public getA() {
@@ -17,7 +26,9 @@
 +>getA : Symbol(getA, Decl(destructuringParameterProperties2.ts, 5, 5))
  
          return this.a
++>this.a : Symbol(a, Decl(destructuringParameterProperties2.ts, 2, 101))
  >this : Symbol(C1, Decl(destructuringParameterProperties2.ts, 0, 0))
++>a : Symbol(a, Decl(destructuringParameterProperties2.ts, 2, 101))
      }
  
      public getB() {
@@ -34,7 +45,7 @@
  
          return this.c;
  >this : Symbol(C1, Decl(destructuringParameterProperties2.ts, 0, 0))
-@@= skipped -31, +31 lines =@@
+@@= skipped -38, +42 lines =@@
  >x_a : Symbol(x_a, Decl(destructuringParameterProperties2.ts, 21, 5))
  >x_b : Symbol(x_b, Decl(destructuringParameterProperties2.ts, 21, 9))
  >x_c : Symbol(x_c, Decl(destructuringParameterProperties2.ts, 21, 14))

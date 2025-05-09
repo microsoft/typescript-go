@@ -1322,9 +1322,9 @@ module TypeScript {
 
             this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any
@@ -1605,9 +1605,9 @@ module TypeScript {
 
                     this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any
@@ -1635,9 +1635,9 @@ module TypeScript {
 
                     this.type = typeFlow.stringType;
 >this.type = typeFlow.stringType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.stringType : any
 >typeFlow : TypeFlow
 >stringType : any
@@ -1665,9 +1665,9 @@ module TypeScript {
 
                     this.type = typeFlow.booleanType;
 >this.type = typeFlow.booleanType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.booleanType : any
 >typeFlow : TypeFlow
 >booleanType : any
@@ -1748,9 +1748,9 @@ module TypeScript {
 
                     this.type = this.castTerm.type;
 >this.type = this.castTerm.type : Type
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >this.castTerm.type : Type
 >this.castTerm : AST
 >this : this
@@ -1783,9 +1783,9 @@ module TypeScript {
 
                     this.type = typeFlow.checker.undefinedType;
 >this.type = typeFlow.checker.undefinedType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.checker.undefinedType : any
 >typeFlow.checker : any
 >typeFlow : TypeFlow
@@ -2658,9 +2658,9 @@ module TypeScript {
 
                     this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any
@@ -3376,9 +3376,9 @@ module TypeScript {
 
             this.type = typeFlow.doubleType;
 >this.type = typeFlow.doubleType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.doubleType : any
 >typeFlow : TypeFlow
 >doubleType : any
@@ -3549,9 +3549,9 @@ module TypeScript {
 
             this.type = typeFlow.regexType;
 >this.type = typeFlow.regexType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.regexType : any
 >typeFlow : TypeFlow
 >regexType : any
@@ -3677,9 +3677,9 @@ module TypeScript {
 
             this.type = typeFlow.stringType;
 >this.type = typeFlow.stringType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.stringType : any
 >typeFlow : TypeFlow
 >stringType : any
@@ -5795,9 +5795,9 @@ module TypeScript {
 
             this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any
@@ -9172,9 +9172,9 @@ module TypeScript {
 
             this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any
@@ -9466,9 +9466,9 @@ module TypeScript {
 
             this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any
@@ -9688,9 +9688,9 @@ module TypeScript {
 
             this.type = typeLink.type;
 >this.type = typeLink.type : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeLink.type : any
 >typeLink : any
 >type : any
@@ -9702,15 +9702,15 @@ module TypeScript {
 >term : AST
 
                 this.term.type = this.type;
->this.term.type = this.type : Type
+>this.term.type = this.type : any
 >this.term.type : Type
 >this.term : AST
 >this : this
 >term : AST
 >type : Type
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
             }
 
             typeFlow.inTypeRefTypeCheck = prevInTCTR;
@@ -9825,9 +9825,9 @@ module TypeScript {
 
             this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any
@@ -10224,9 +10224,9 @@ module TypeScript {
 
             this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any
@@ -10809,9 +10809,9 @@ module TypeScript {
             }
             this.type = typeFlow.voidType;
 >this.type = typeFlow.voidType : any
->this.type : Type
+>this.type : any
 >this : this
->type : Type
+>type : any
 >typeFlow.voidType : any
 >typeFlow : TypeFlow
 >voidType : any

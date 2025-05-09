@@ -18,3 +18,11 @@
  
      constructor(message: string) {
  >message : Symbol(message, Decl(privateNameAndIndexSignature.ts, 4, 16))
+@@= skipped -16, +16 lines =@@
+ 
+         this["#foo"] = 3;     // Okay (type has index signature and "#foo" does not collide with private identifier #foo)
+ >this : Symbol(A, Decl(privateNameAndIndexSignature.ts, 0, 0))
++>"#foo" : Symbol("#foo", Decl(privateNameAndIndexSignature.ts, 5, 19))
+ 
+     }
+ }

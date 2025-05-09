@@ -20,17 +20,6 @@
  >class {    constructor() {        /** @type {number} */        this.y = 12    }} : typeof Inner
  
      constructor() {
-         /** @type {number} */
-         this.y = 12
- >this.y = 12 : 12
-->this.y : number
-+>this.y : any
- >this : this
-->y : number
-+>y : any
- >12 : 12
-     }
- }
 @@= skipped -27, +27 lines =@@
  >local : Inner
  

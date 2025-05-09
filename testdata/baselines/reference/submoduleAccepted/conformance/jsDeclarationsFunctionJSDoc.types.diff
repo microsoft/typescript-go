@@ -1,0 +1,14 @@
+--- old.jsDeclarationsFunctionJSDoc.types
++++ new.jsDeclarationsFunctionJSDoc.types
+@@= skipped -30, +30 lines =@@
+          */
+         this.field = b;
+ >this.field = b : null
+->this.field : any
++>this.field : null
+ >this : this
+->field : any
++>field : null
+ >b : null
+     }
+ 

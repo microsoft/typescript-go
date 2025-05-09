@@ -484,15 +484,15 @@ module TypeScript {
 >super : Symbol(AST, Decl(parserRealSource11.ts, 9, 5))
 
             this.minChar = min;
->this.minChar : Symbol(minChar, Decl(parserRealSource11.ts, 6, 26))
+>this.minChar : Symbol(minChar, Decl(parserRealSource11.ts, 183, 34))
 >this : Symbol(IncompleteAST, Decl(parserRealSource11.ts, 179, 5))
->minChar : Symbol(minChar, Decl(parserRealSource11.ts, 6, 26))
+>minChar : Symbol(minChar, Decl(parserRealSource11.ts, 183, 34))
 >min : Symbol(min, Decl(parserRealSource11.ts, 182, 21))
 
             this.limChar = lim;
->this.limChar : Symbol(limChar, Decl(parserRealSource11.ts, 7, 36))
+>this.limChar : Symbol(limChar, Decl(parserRealSource11.ts, 185, 31))
 >this : Symbol(IncompleteAST, Decl(parserRealSource11.ts, 179, 5))
->limChar : Symbol(limChar, Decl(parserRealSource11.ts, 7, 36))
+>limChar : Symbol(limChar, Decl(parserRealSource11.ts, 185, 31))
 >lim : Symbol(lim, Decl(parserRealSource11.ts, 182, 33))
         }
     }
@@ -900,9 +900,9 @@ module TypeScript {
 >TypeFlow : Symbol(TypeFlow)
 
             this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 331, 46))
 >this : Symbol(Label, Decl(parserRealSource11.ts, 322, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 331, 46))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 331, 25))
 
             return this;
@@ -1084,9 +1084,9 @@ module TypeScript {
 >operand : Symbol(operand, Decl(parserRealSource11.ts, 362, 40))
 
                     this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >this : Symbol(UnaryExpression, Decl(parserRealSource11.ts, 356, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 374, 25))
 
                     return this;
@@ -1103,9 +1103,9 @@ module TypeScript {
 >operand : Symbol(operand, Decl(parserRealSource11.ts, 362, 40))
 
                     this.type = typeFlow.stringType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >this : Symbol(UnaryExpression, Decl(parserRealSource11.ts, 356, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 374, 25))
 
                     return this;
@@ -1122,9 +1122,9 @@ module TypeScript {
 >operand : Symbol(operand, Decl(parserRealSource11.ts, 362, 40))
 
                     this.type = typeFlow.booleanType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >this : Symbol(UnaryExpression, Decl(parserRealSource11.ts, 356, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 374, 25))
 
                     break;
@@ -1176,9 +1176,9 @@ module TypeScript {
 >type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
 
                     this.type = this.castTerm.type;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >this : Symbol(UnaryExpression, Decl(parserRealSource11.ts, 356, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >this.castTerm.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
 >this.castTerm : Symbol(castTerm, Decl(parserRealSource11.ts, 359, 39))
 >this : Symbol(UnaryExpression, Decl(parserRealSource11.ts, 356, 5))
@@ -1202,9 +1202,9 @@ module TypeScript {
 >operand : Symbol(operand, Decl(parserRealSource11.ts, 362, 40))
 
                     this.type = typeFlow.checker.undefinedType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >this : Symbol(UnaryExpression, Decl(parserRealSource11.ts, 356, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 401, 68), Decl(parserRealSource11.ts, 406, 68), Decl(parserRealSource11.ts, 411, 68), Decl(parserRealSource11.ts, 422, 93), Decl(parserRealSource11.ts, 430, 68))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 374, 25))
 
                     break;
@@ -1462,9 +1462,9 @@ module TypeScript {
 >nodeType : Symbol(nodeType, Decl(parserRealSource11.ts, 517, 21))
 
             this.minChar = this.target.minChar;
->this.minChar : Symbol(minChar, Decl(parserRealSource11.ts, 6, 26))
+>this.minChar : Symbol(minChar, Decl(parserRealSource11.ts, 520, 28))
 >this : Symbol(CallExpression, Decl(parserRealSource11.ts, 514, 5))
->minChar : Symbol(minChar, Decl(parserRealSource11.ts, 6, 26))
+>minChar : Symbol(minChar, Decl(parserRealSource11.ts, 520, 28))
 >this.target.minChar : Symbol(minChar, Decl(parserRealSource11.ts, 6, 26))
 >this.target : Symbol(target, Decl(parserRealSource11.ts, 517, 40))
 >this : Symbol(CallExpression, Decl(parserRealSource11.ts, 514, 5))
@@ -1663,9 +1663,9 @@ module TypeScript {
 
                 case NodeType.Member:
                     this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 594, 37))
 >this : Symbol(BinaryExpression, Decl(parserRealSource11.ts, 549, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 594, 37))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 556, 25))
 
                     return this;
@@ -2038,9 +2038,9 @@ module TypeScript {
 >TypeFlow : Symbol(TypeFlow)
 
             this.type = typeFlow.doubleType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 737, 46))
 >this : Symbol(NumberLiteral, Decl(parserRealSource11.ts, 728, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 737, 46))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 737, 25))
 
             return this;
@@ -2169,9 +2169,9 @@ module TypeScript {
 >TypeFlow : Symbol(TypeFlow)
 
             this.type = typeFlow.regexType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 780, 46))
 >this : Symbol(RegexLiteral, Decl(parserRealSource11.ts, 773, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 780, 46))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 780, 25))
 
             return this;
@@ -2258,9 +2258,9 @@ module TypeScript {
 >TypeFlow : Symbol(TypeFlow)
 
             this.type = typeFlow.stringType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 807, 46))
 >this : Symbol(StringLiteral, Decl(parserRealSource11.ts, 792, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 807, 46))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 807, 25))
 
             return this;
@@ -3891,9 +3891,9 @@ module TypeScript {
 >TypeFlow : Symbol(TypeFlow)
 
             this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 1305, 46))
 >this : Symbol(Statement, Decl(parserRealSource11.ts, 1291, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 1305, 46))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1305, 25))
 
             return this;
@@ -6108,9 +6108,9 @@ module TypeScript {
 >defaultCase : Symbol(defaultCase, Decl(parserRealSource11.ts, 1933, 33))
 
             this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 1974, 83))
 >this : Symbol(SwitchStatement, Decl(parserRealSource11.ts, 1930, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 1974, 83))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 1968, 25))
 
             return this;
@@ -6295,9 +6295,9 @@ module TypeScript {
 >body : Symbol(body, Decl(parserRealSource11.ts, 2009, 32))
 
             this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 2034, 42))
 >this : Symbol(CaseStatement, Decl(parserRealSource11.ts, 2006, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 2034, 42))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2032, 25))
 
             return this;
@@ -6440,9 +6440,9 @@ module TypeScript {
 >this : Symbol(TypeReference, Decl(parserRealSource11.ts, 2062, 5))
 
             this.type = typeLink.type;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 2083, 66))
 >this : Symbol(TypeReference, Decl(parserRealSource11.ts, 2062, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 2083, 66))
 >typeLink : Symbol(typeLink, Decl(parserRealSource11.ts, 2076, 15))
 
             // in error recovery cases, there may not be a term
@@ -6457,9 +6457,9 @@ module TypeScript {
 >this : Symbol(TypeReference, Decl(parserRealSource11.ts, 2062, 5))
 >term : Symbol(term, Decl(parserRealSource11.ts, 2065, 21))
 >type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 2083, 66))
 >this : Symbol(TypeReference, Decl(parserRealSource11.ts, 2062, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 2083, 66))
             }
 
             typeFlow.inTypeRefTypeCheck = prevInTCTR;
@@ -6542,9 +6542,9 @@ module TypeScript {
 >finallyNode : Symbol(finallyNode, Decl(parserRealSource11.ts, 2098, 41))
 
             this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 2113, 77))
 >this : Symbol(TryFinally, Decl(parserRealSource11.ts, 2095, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 2113, 77))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2111, 25))
 
             return this;
@@ -6781,9 +6781,9 @@ module TypeScript {
 >catchNode : Symbol(catchNode, Decl(parserRealSource11.ts, 2143, 41))
 
             this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 2186, 71))
 >this : Symbol(TryCatch, Decl(parserRealSource11.ts, 2140, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 2186, 71))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2184, 25))
 
             return this;
@@ -7144,9 +7144,9 @@ module TypeScript {
 >undefined : Symbol(undefined)
             }
             this.type = typeFlow.voidType;
->this.type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>this.type : Symbol(type, Decl(parserRealSource11.ts, 2290, 13))
 >this : Symbol(Catch, Decl(parserRealSource11.ts, 2218, 5))
->type : Symbol(type, Decl(parserRealSource11.ts, 11, 38))
+>type : Symbol(type, Decl(parserRealSource11.ts, 2290, 13))
 >typeFlow : Symbol(typeFlow, Decl(parserRealSource11.ts, 2258, 25))
 
             typeFlow.scope = prevScope;

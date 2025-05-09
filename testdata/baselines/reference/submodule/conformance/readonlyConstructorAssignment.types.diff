@@ -1,0 +1,14 @@
+--- old.readonlyConstructorAssignment.types
++++ new.readonlyConstructorAssignment.types
+@@= skipped -32, +32 lines =@@
+         // Fails, x is readonly
+         this.x = 1;
+ >this.x = 1 : 1
+->this.x : any
++>this.x : number
+ >this : this
+->x : any
++>x : number
+ >1 : 1
+     }
+ }

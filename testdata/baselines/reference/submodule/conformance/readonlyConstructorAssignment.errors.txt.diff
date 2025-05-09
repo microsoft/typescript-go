@@ -1,0 +1,22 @@
+--- old.readonlyConstructorAssignment.errors.txt
++++ new.readonlyConstructorAssignment.errors.txt
+@@= skipped -0, +0 lines =@@
+-readonlyConstructorAssignment.ts(13,14): error TS2540: Cannot assign to 'x' because it is a read-only property.
+ readonlyConstructorAssignment.ts(33,7): error TS2415: Class 'E' incorrectly extends base class 'D'.
+   Property 'x' is private in type 'D' but not in type 'E'.
+ 
+ 
+-==== readonlyConstructorAssignment.ts (2 errors) ====
++==== readonlyConstructorAssignment.ts (1 errors) ====
+     // Tests that readonly parameter properties behave like regular readonly properties
+     
+     class A {
+@@= skipped -16, +15 lines =@@
+             super(x);
+             // Fails, x is readonly
+             this.x = 1;
+-                 ~
+-!!! error TS2540: Cannot assign to 'x' because it is a read-only property.
+         }
+     }
+     

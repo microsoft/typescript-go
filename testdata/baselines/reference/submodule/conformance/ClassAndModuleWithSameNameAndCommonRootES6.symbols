@@ -13,22 +13,22 @@ module X.Y {
 >y : Symbol(y, Decl(class.ts, 2, 30))
 
             this.x = x;
->this.x : Symbol(x, Decl(class.ts, 5, 9))
+>this.x : Symbol(x, Decl(class.ts, 2, 43), Decl(class.ts, 5, 9))
 >this : Symbol(Point, Decl(class.ts, 0, 12), Decl(module.ts, 0, 12))
->x : Symbol(x, Decl(class.ts, 5, 9))
+>x : Symbol(x, Decl(class.ts, 2, 43), Decl(class.ts, 5, 9))
 >x : Symbol(x, Decl(class.ts, 2, 20))
 
             this.y = y;
->this.y : Symbol(y, Decl(class.ts, 6, 18))
+>this.y : Symbol(y, Decl(class.ts, 3, 23), Decl(class.ts, 6, 18))
 >this : Symbol(Point, Decl(class.ts, 0, 12), Decl(module.ts, 0, 12))
->y : Symbol(y, Decl(class.ts, 6, 18))
+>y : Symbol(y, Decl(class.ts, 3, 23), Decl(class.ts, 6, 18))
 >y : Symbol(y, Decl(class.ts, 2, 30))
         }
         x: number;
->x : Symbol(x, Decl(class.ts, 5, 9))
+>x : Symbol(x, Decl(class.ts, 2, 43), Decl(class.ts, 5, 9))
 
         y: number;
->y : Symbol(y, Decl(class.ts, 6, 18))
+>y : Symbol(y, Decl(class.ts, 3, 23), Decl(class.ts, 6, 18))
     }
 }
 

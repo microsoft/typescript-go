@@ -288,192 +288,192 @@
  
          this.PublicPublic = 0;
 ->this.PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>this.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>this.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  
          this.PublicProtected = 0;
 ->this.PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>this.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>this.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  
          this.PublicPrivate = 0;
 ->this.PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>this.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>this.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  
          this.ProtectedPublic = 0;
 ->this.ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>this.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>this.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  
          this.ProtectedProtected = 0;
 ->this.ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>this.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>this.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  
          this.ProtectedPrivate = 0;
 ->this.ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>this.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>this.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  
          this.PrivatePublic = 0;
 ->this.PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>this.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>this.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  
          this.PrivateProtected = 0;
 ->this.PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>this.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>this.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  
          this.PrivatePrivate = 0;
 ->this.PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>this.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>this.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  
          void this.PublicPublic;
 ->this.PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>this.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>this.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  
          void this.PublicProtected;
 ->this.PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>this.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>this.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  
          void this.PublicPrivate;
 ->this.PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>this.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>this.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  
          void this.ProtectedPublic;
 ->this.ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>this.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>this.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  
          void this.ProtectedProtected;
 ->this.ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>this.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>this.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  
          void this.ProtectedPrivate;
 ->this.ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>this.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>this.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  
          void this.PrivatePublic;
 ->this.PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>this.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>this.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  
          void this.PrivateProtected;
 ->this.PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>this.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>this.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  
          void this.PrivatePrivate;
 ->this.PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>this.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>this.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  
          this.PublicPublic += 0;
 ->this.PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>this.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>this.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  
          this.PublicProtected += 0;
 ->this.PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>this.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>this.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  
          this.PublicPrivate += 0;
 ->this.PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>this.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>this.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  
          this.ProtectedPublic += 0;
 ->this.ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>this.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>this.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  
          this.ProtectedProtected += 0;
 ->this.ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>this.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>this.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  
          this.ProtectedPrivate += 0;
 ->this.ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>this.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>this.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  
          this.PrivatePublic += 0;
 ->this.PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>this.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>this.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  
          this.PrivateProtected += 0;
 ->this.PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>this.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>this.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  
          this.PrivatePrivate += 0;
 ->this.PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>this.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>this.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  >this : Symbol(Derived, Decl(divergentAccessorsVisibility1.ts, 59, 1))
 ->PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
      }
  }
  
@@ -671,191 +671,191 @@
  
      deriv.PublicPublic = 0;
 ->deriv.PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>deriv.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>deriv.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  
      deriv.PublicProtected = 0;
 ->deriv.PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>deriv.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>deriv.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  
      deriv.PublicPrivate = 0;
 ->deriv.PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>deriv.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>deriv.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  
      deriv.ProtectedPublic = 0;
 ->deriv.ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>deriv.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>deriv.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  
      deriv.ProtectedProtected = 0;
 ->deriv.ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>deriv.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>deriv.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  
      deriv.ProtectedPrivate = 0;
 ->deriv.ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>deriv.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>deriv.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  
      deriv.PrivatePublic = 0;
 ->deriv.PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>deriv.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>deriv.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  
      deriv.PrivateProtected = 0;
 ->deriv.PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>deriv.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>deriv.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  
      deriv.PrivatePrivate = 0;
 ->deriv.PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>deriv.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>deriv.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  
      void deriv.PublicPublic;
 ->deriv.PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>deriv.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>deriv.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  
      void deriv.PublicProtected;
 ->deriv.PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>deriv.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>deriv.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  
      void deriv.PublicPrivate;
 ->deriv.PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>deriv.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>deriv.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  
      void deriv.ProtectedPublic;
 ->deriv.ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>deriv.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>deriv.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  
      void deriv.ProtectedProtected;
 ->deriv.ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>deriv.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>deriv.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  
      void deriv.ProtectedPrivate;
 ->deriv.ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>deriv.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>deriv.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  
      void deriv.PrivatePublic;
 ->deriv.PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>deriv.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>deriv.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  
      void deriv.PrivateProtected;
 ->deriv.PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>deriv.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>deriv.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  
      void deriv.PrivatePrivate;
 ->deriv.PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>deriv.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>deriv.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  
      deriv.PublicPublic += 0;
 ->deriv.PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>deriv.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>deriv.PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicPublic : Symbol(Base.PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
-+>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 0, 12), Decl(divergentAccessorsVisibility1.ts, 1, 36))
++>PublicPublic : Symbol(PublicPublic, Decl(divergentAccessorsVisibility1.ts, 62, 13))
  
      deriv.PublicProtected += 0;
 ->deriv.PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>deriv.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>deriv.PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicProtected : Symbol(Base.PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
-+>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 2, 35), Decl(divergentAccessorsVisibility1.ts, 4, 39))
++>PublicProtected : Symbol(PublicProtected, Decl(divergentAccessorsVisibility1.ts, 63, 30))
  
      deriv.PublicPrivate += 0;
 ->deriv.PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>deriv.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>deriv.PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PublicPrivate : Symbol(Base.PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
-+>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 5, 48), Decl(divergentAccessorsVisibility1.ts, 7, 37))
++>PublicPrivate : Symbol(PublicPrivate, Decl(divergentAccessorsVisibility1.ts, 64, 33))
  
      deriv.ProtectedPublic += 0;
 ->deriv.ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>deriv.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>deriv.ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedPublic : Symbol(Base.ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
-+>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 8, 44), Decl(divergentAccessorsVisibility1.ts, 10, 49))
++>ProtectedPublic : Symbol(ProtectedPublic, Decl(divergentAccessorsVisibility1.ts, 65, 31))
  
      deriv.ProtectedProtected += 0;
 ->deriv.ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>deriv.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>deriv.ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedProtected : Symbol(Base.ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
-+>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 11, 38), Decl(divergentAccessorsVisibility1.ts, 13, 52))
++>ProtectedProtected : Symbol(ProtectedProtected, Decl(divergentAccessorsVisibility1.ts, 66, 33))
  
      deriv.ProtectedPrivate += 0;
 ->deriv.ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>deriv.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>deriv.ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->ProtectedPrivate : Symbol(Base.ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
-+>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 14, 51), Decl(divergentAccessorsVisibility1.ts, 16, 50))
++>ProtectedPrivate : Symbol(ProtectedPrivate, Decl(divergentAccessorsVisibility1.ts, 67, 36))
  
      deriv.PrivatePublic += 0;
 ->deriv.PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>deriv.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>deriv.PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivatePublic : Symbol(Base.PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
-+>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 17, 47), Decl(divergentAccessorsVisibility1.ts, 19, 45))
++>PrivatePublic : Symbol(PrivatePublic, Decl(divergentAccessorsVisibility1.ts, 68, 34))
  
      deriv.PrivateProtected += 0;
 ->deriv.PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>deriv.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>deriv.PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivateProtected : Symbol(Base.PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
-+>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 20, 36), Decl(divergentAccessorsVisibility1.ts, 22, 48))
++>PrivateProtected : Symbol(PrivateProtected, Decl(divergentAccessorsVisibility1.ts, 69, 31))
  
      deriv.PrivatePrivate += 0;
 ->deriv.PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>deriv.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>deriv.PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  >deriv : Symbol(deriv, Decl(divergentAccessorsVisibility1.ts, 95, 25))
 ->PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
-+>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
++>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 70, 34))
  }
  

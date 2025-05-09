@@ -1,0 +1,28 @@
+thisPropertyAssignmentInherited.js(13,7): error TS7023: 'innerHTML' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+thisPropertyAssignmentInherited.js(14,25): error TS7022: 'textContent' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+
+
+==== thisPropertyAssignmentInherited.js (2 errors) ====
+    export class Element {
+      /**
+       * @returns {String}
+       */
+      get textContent() {
+        return  ''
+      }
+      set textContent(x) {}
+      cloneNode() { return this}
+    }
+    export class HTMLElement extends Element {}
+    export class TextElement extends HTMLElement {
+      get innerHTML() { return this.textContent; }
+          ~~~~~~~~~
+!!! error TS7023: 'innerHTML' implicitly has return type 'any' because it does not have a return type annotation and is referenced directly or indirectly in one of its return expressions.
+      set innerHTML(html) { this.textContent = html; }
+                            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS7022: 'textContent' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
+      toString() {
+      }
+    }
+    
+    

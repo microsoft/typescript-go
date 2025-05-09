@@ -9,3 +9,14 @@
  
  		/**
  		 * @type object
+ 		 */
+ 		this.foo = arguments;
+ >this.foo = arguments : IArguments
+->this.foo : any
++>this.foo : IArguments
+ >this : this
+->foo : any
++>foo : IArguments
+ >arguments : IArguments
+ 	}
+ }

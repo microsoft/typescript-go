@@ -13,8 +13,9 @@
  		 */
  		this["arguments"] = foo;
 ->this["arguments"] = foo : any
+->this["arguments"] : any
 +>this["arguments"] = foo : object
- >this["arguments"] : any
++>this["arguments"] : object
  >this : this
  >"arguments" : "arguments"
 ->foo : any

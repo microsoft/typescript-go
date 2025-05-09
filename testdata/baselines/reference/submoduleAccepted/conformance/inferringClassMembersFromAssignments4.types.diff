@@ -5,10 +5,10 @@
          this.p = 1
  >this.p = 1 : 1
 ->this.p : number | undefined
-+>this.p : any
++>this.p : number
  >this : this
 ->p : number | undefined
-+>p : any
++>p : number
  >1 : 1
      }
  }
@@ -17,10 +17,10 @@
          this.p = 1
  >this.p = 1 : 1
 ->this.p : number | undefined
-+>this.p : any
++>this.p : number
  >this : this
 ->p : number | undefined
-+>p : any
++>p : number
  >1 : 1
      }
  }

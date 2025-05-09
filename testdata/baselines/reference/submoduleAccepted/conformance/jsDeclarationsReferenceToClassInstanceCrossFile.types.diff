@@ -28,10 +28,10 @@
  >log : (...data: any[]) => void
  >"Objects" : "Objects"
 ->render.objects : import("rectangle").Rectangle[]
-+>render.objects : any
++>render.objects : any[]
  >render : Render
 ->objects : import("rectangle").Rectangle[]
-+>objects : any
++>objects : any[]
  
  === rectangle.js ===
  class Rectangle {
@@ -63,32 +63,30 @@
          this.objects = [];
  >this.objects = [] : undefined[]
 ->this.objects : Rectangle[]
-+>this.objects : any
++>this.objects : any[]
  >this : this
 ->objects : Rectangle[]
-+>objects : any
++>objects : any[]
  >[] : undefined[]
      }
      /**
-@@= skipped -19, +19 lines =@@
- >Rectangle : typeof Rectangle
+@@= skipped -20, +20 lines =@@
  
          this.objects.push(obj);
-->this.objects.push(obj) : number
+ >this.objects.push(obj) : number
 ->this.objects.push : (...items: Rectangle[]) => number
 ->this.objects : Rectangle[]
-+>this.objects.push(obj) : any
-+>this.objects.push : any
-+>this.objects : any
++>this.objects.push : (...items: any[]) => number
++>this.objects : any[]
  >this : this
 ->objects : Rectangle[]
 ->push : (...items: Rectangle[]) => number
-+>objects : any
-+>push : any
++>objects : any[]
++>push : (...items: any[]) => number
  >obj : Rectangle
  
          return obj;
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
  }
  
  module.exports = { Render };

@@ -16,7 +16,9 @@ class D extends C {
 
       v = 1;
       this.p = 1;
+>this.p : Symbol(p, Decl(scopeCheckExtendedClassInsideStaticMethod1.ts, 3, 12))
 >this : Symbol(D, Decl(scopeCheckExtendedClassInsideStaticMethod1.ts, 0, 42))
+>p : Symbol(p, Decl(scopeCheckExtendedClassInsideStaticMethod1.ts, 3, 12))
 
       s = 1;
    }

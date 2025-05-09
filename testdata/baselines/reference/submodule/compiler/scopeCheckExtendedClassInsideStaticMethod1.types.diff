@@ -1,0 +1,14 @@
+--- old.scopeCheckExtendedClassInsideStaticMethod1.types
++++ new.scopeCheckExtendedClassInsideStaticMethod1.types
+@@= skipped -20, +20 lines =@@
+ 
+       this.p = 1;
+ >this.p = 1 : 1
+->this.p : any
++>this.p : number
+ >this : typeof D
+->p : any
++>p : number
+ >1 : 1
+ 
+       s = 1;

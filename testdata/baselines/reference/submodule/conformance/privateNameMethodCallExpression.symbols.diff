@@ -7,10 +7,10 @@
 ->#method : Symbol(AA.#method, Decl(privateNameMethodCallExpression.ts, 0, 10))
 ->this.x : Symbol(AA.x, Decl(privateNameMethodCallExpression.ts, 2, 25))
 +>#method : Symbol(#method, Decl(privateNameMethodCallExpression.ts, 0, 10))
-+>this.x : Symbol(x, Decl(privateNameMethodCallExpression.ts, 2, 25))
++>this.x : Symbol(x, Decl(privateNameMethodCallExpression.ts, 1, 15), Decl(privateNameMethodCallExpression.ts, 2, 25))
  >this : Symbol(AA, Decl(privateNameMethodCallExpression.ts, 0, 0))
 ->x : Symbol(AA.x, Decl(privateNameMethodCallExpression.ts, 2, 25))
-+>x : Symbol(x, Decl(privateNameMethodCallExpression.ts, 2, 25))
++>x : Symbol(x, Decl(privateNameMethodCallExpression.ts, 1, 15), Decl(privateNameMethodCallExpression.ts, 2, 25))
  
      #method2(a, ...b) {};
 ->#method2 : Symbol(AA.#method2, Decl(privateNameMethodCallExpression.ts, 1, 31))
@@ -20,7 +20,7 @@
  
      x = 1;
 ->x : Symbol(AA.x, Decl(privateNameMethodCallExpression.ts, 2, 25))
-+>x : Symbol(x, Decl(privateNameMethodCallExpression.ts, 2, 25))
++>x : Symbol(x, Decl(privateNameMethodCallExpression.ts, 1, 15), Decl(privateNameMethodCallExpression.ts, 2, 25))
  
      test() {
 ->test : Symbol(AA.test, Decl(privateNameMethodCallExpression.ts, 3, 10))

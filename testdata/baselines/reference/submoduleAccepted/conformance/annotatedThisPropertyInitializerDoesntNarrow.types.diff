@@ -5,10 +5,10 @@
          this.assets = {};
  >this.assets = {} : {}
 ->this.assets : { [assetName: string]: number; }
-+>this.assets : any
++>this.assets : {}
  >this : this
 ->assets : { [assetName: string]: number; }
-+>assets : any
++>assets : {}
  >{} : {}
      }
      m() {
@@ -17,10 +17,10 @@
  >mappy(this.assets) : void
  >mappy : (map: { [s: string]: number; }) => void
 ->this.assets : { [assetName: string]: number; }
-+>this.assets : any
++>this.assets : {}
  >this : this
 ->assets : { [assetName: string]: number; }
-+>assets : any
++>assets : {}
      }
  }
  

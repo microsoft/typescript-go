@@ -7,15 +7,15 @@ class A
 {
     constructor() {
         this.foo: any;
->this.foo : any
+>this.foo : string
 >this : this
->foo : any
+>foo : string
 >any : any
 
         this.bar: any;
->this.bar : any
+>this.bar : string
 >this : this
->bar : any
+>bar : string
 >any : any
     }
 
@@ -25,16 +25,16 @@ class A
 
      this.foo = "foo";
 >this.foo = "foo" : "foo"
->this.foo : any
+>this.foo : string
 >this : this
->foo : any
+>foo : string
 >"foo" : "foo"
 
      this.bar = "bar";
 >this.bar = "bar" : "bar"
->this.bar : any
+>this.bar : string
 >this : this
->bar : any
+>bar : string
 >"bar" : "bar"
 
      [1, 2].forEach((p) => this.foo);
@@ -44,11 +44,11 @@ class A
 >1 : 1
 >2 : 2
 >forEach : (callbackfn: (value: number, index: number, array: number[]) => void, thisArg?: any) => void
->(p) => this.foo : (p: number) => any
+>(p) => this.foo : (p: number) => string
 >p : number
->this.foo : any
+>this.foo : string
 >this : this
->foo : any
+>foo : string
 
      [1, 2].forEach((p) => this.bar);
 >[1, 2].forEach((p) => this.bar) : void
@@ -57,11 +57,11 @@ class A
 >1 : 1
 >2 : 2
 >forEach : (callbackfn: (value: number, index: number, array: number[]) => void, thisArg?: any) => void
->(p) => this.bar : (p: number) => any
+>(p) => this.bar : (p: number) => string
 >p : number
->this.bar : any
+>this.bar : string
 >this : this
->bar : any
+>bar : string
 
   }
 

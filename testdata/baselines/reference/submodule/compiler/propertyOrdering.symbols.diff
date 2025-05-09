@@ -33,4 +33,20 @@
 +>foo : Symbol(foo, Decl(propertyOrdering.ts, 12, 11))
  
              return this._store.length;   // shouldn't be an error
++>this._store.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
++>this._store : Symbol(_store, Decl(propertyOrdering.ts, 18, 32))
  >this : Symbol(Bar, Decl(propertyOrdering.ts, 10, 1))
++>_store : Symbol(_store, Decl(propertyOrdering.ts, 18, 32))
++>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
+ 
+       }
+     constructor(store: string) {
+ >store : Symbol(store, Decl(propertyOrdering.ts, 18, 16))
+ 
+         this._store = store;
++>this._store : Symbol(_store, Decl(propertyOrdering.ts, 18, 32))
+ >this : Symbol(Bar, Decl(propertyOrdering.ts, 10, 1))
++>_store : Symbol(_store, Decl(propertyOrdering.ts, 18, 32))
+ >store : Symbol(store, Decl(propertyOrdering.ts, 18, 16))
+     }
+ }

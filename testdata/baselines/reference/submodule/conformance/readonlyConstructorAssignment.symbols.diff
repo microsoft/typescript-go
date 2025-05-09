@@ -21,10 +21,10 @@
          // Fails, x is readonly
          this.x = 1;
 ->this.x : Symbol(A.x, Decl(readonlyConstructorAssignment.ts, 3, 16))
-+>this.x : Symbol(x, Decl(readonlyConstructorAssignment.ts, 3, 16))
++>this.x : Symbol(x, Decl(readonlyConstructorAssignment.ts, 10, 17))
  >this : Symbol(B, Decl(readonlyConstructorAssignment.ts, 6, 1))
 ->x : Symbol(A.x, Decl(readonlyConstructorAssignment.ts, 3, 16))
-+>x : Symbol(x, Decl(readonlyConstructorAssignment.ts, 3, 16))
++>x : Symbol(x, Decl(readonlyConstructorAssignment.ts, 10, 17))
      }
  }
  

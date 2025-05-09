@@ -9,7 +9,16 @@
  >T : Symbol(T, Decl(destructuringParameterProperties4.ts, 0, 9))
  >a : Symbol(a, Decl(destructuringParameterProperties4.ts, 1, 41))
  >b : Symbol(b, Decl(destructuringParameterProperties4.ts, 1, 43))
-@@= skipped -27, +27 lines =@@
+@@= skipped -20, +20 lines =@@
+ >undefined : Symbol(undefined)
+ 
+             this.a = a || k;
++>this.a : Symbol(a, Decl(destructuringParameterProperties4.ts, 2, 101))
+ >this : Symbol(C1, Decl(destructuringParameterProperties4.ts, 0, 0))
++>a : Symbol(a, Decl(destructuringParameterProperties4.ts, 2, 101))
+ >a : Symbol(a, Decl(destructuringParameterProperties4.ts, 1, 41))
+ >k : Symbol(k, Decl(destructuringParameterProperties4.ts, 1, 16))
+         }
      }
  
      public getA() {
@@ -17,7 +26,9 @@
 +>getA : Symbol(getA, Decl(destructuringParameterProperties4.ts, 5, 5))
  
          return this.a
++>this.a : Symbol(a, Decl(destructuringParameterProperties4.ts, 2, 101))
  >this : Symbol(C1, Decl(destructuringParameterProperties4.ts, 0, 0))
++>a : Symbol(a, Decl(destructuringParameterProperties4.ts, 2, 101))
      }
  
      public getB() {
@@ -34,7 +45,7 @@
  
          return this.c;
  >this : Symbol(C1, Decl(destructuringParameterProperties4.ts, 0, 0))
-@@= skipped -26, +26 lines =@@
+@@= skipped -33, +37 lines =@@
  >C1 : Symbol(C1, Decl(destructuringParameterProperties4.ts, 0, 0))
  
      public doSomethingWithSuperProperties() {
@@ -42,4 +53,9 @@
 +>doSomethingWithSuperProperties : Symbol(doSomethingWithSuperProperties, Decl(destructuringParameterProperties4.ts, 20, 46))
  
          return `${this.a} ${this.b} ${this.c}`;
++>this.a : Symbol(a, Decl(destructuringParameterProperties4.ts, 2, 101))
  >this : Symbol(C2, Decl(destructuringParameterProperties4.ts, 18, 1))
++>a : Symbol(a, Decl(destructuringParameterProperties4.ts, 2, 101))
+ >this : Symbol(C2, Decl(destructuringParameterProperties4.ts, 18, 1))
+ >this : Symbol(C2, Decl(destructuringParameterProperties4.ts, 18, 1))
+     }

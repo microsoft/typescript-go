@@ -374,11 +374,11 @@
  
          this.p1 = super.c2_p1;
 ->this.p1 : Symbol(c3.p1, Decl(parserAstSpans1.ts, 111, 5))
-+>this.p1 : Symbol(p1, Decl(parserAstSpans1.ts, 111, 5))
++>this.p1 : Symbol(p1, Decl(parserAstSpans1.ts, 109, 18), Decl(parserAstSpans1.ts, 111, 5))
  >this : Symbol(c3, Decl(parserAstSpans1.ts, 106, 1))
 ->p1 : Symbol(c3.p1, Decl(parserAstSpans1.ts, 111, 5))
 ->super.c2_p1 : Symbol(c2.c2_p1, Decl(parserAstSpans1.ts, 71, 10))
-+>p1 : Symbol(p1, Decl(parserAstSpans1.ts, 111, 5))
++>p1 : Symbol(p1, Decl(parserAstSpans1.ts, 109, 18), Decl(parserAstSpans1.ts, 111, 5))
 +>super.c2_p1 : Symbol(c2_p1, Decl(parserAstSpans1.ts, 71, 10))
  >super : Symbol(c2, Decl(parserAstSpans1.ts, 69, 13))
 ->c2_p1 : Symbol(c2.c2_p1, Decl(parserAstSpans1.ts, 71, 10))
@@ -387,7 +387,7 @@
      /** c3 p1*/
      public p1: number;
 ->p1 : Symbol(c3.p1, Decl(parserAstSpans1.ts, 111, 5))
-+>p1 : Symbol(p1, Decl(parserAstSpans1.ts, 111, 5))
++>p1 : Symbol(p1, Decl(parserAstSpans1.ts, 109, 18), Decl(parserAstSpans1.ts, 111, 5))
  
      /** c3 f1*/
      public f1() {

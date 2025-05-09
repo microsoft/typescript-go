@@ -4,9 +4,7 @@ test.js(11,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 test.js(14,4): error TS2339: Property 'x' does not exist on type '{}'.
 test.js(16,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 test.js(18,4): error TS2339: Property 'x' does not exist on type '{}'.
-test.js(25,14): error TS2339: Property 's' does not exist on type 'Thing'.
 test.js(27,15): error TS7006: Parameter 'n' implicitly has an 'any' type.
-test.js(32,14): error TS2339: Property 's' does not exist on type 'Thing'.
 test.js(34,15): error TS7006: Parameter 'n' implicitly has an 'any' type.
 test.js(42,1): error TS7022: 'x' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer.
 test.js(44,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
@@ -18,7 +16,7 @@ test.js(61,17): error TS2339: Property 'x' does not exist on type 'Thing'.
 test.js(69,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
 
 
-==== test.js (17 errors) ====
+==== test.js (15 errors) ====
     /** @typedef {{
         status: 'done'
         m(n: number): void
@@ -54,8 +52,6 @@ test.js(69,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
         constructor() {
             /** @type {DoneStatus} */
             this.s = {
-                 ~
-!!! error TS2339: Property 's' does not exist on type 'Thing'.
                 status: 'done',
                 m(n) { }
                   ~
@@ -65,8 +61,6 @@ test.js(69,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
     
         fail() {
             this.s = {
-                 ~
-!!! error TS2339: Property 's' does not exist on type 'Thing'.
                 status: 'done',
                 m(n) { }
                   ~
