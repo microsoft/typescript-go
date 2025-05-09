@@ -64,7 +64,15 @@
  >class {    constructor() {        /** @type {number} */        this.y = 12;    }} : typeof Inner
  
      constructor() {
-@@= skipped -18, +18 lines =@@
+         /** @type {number} */
+         this.y = 12;
+->this.y = 12 : 12
++>this.y = 12 : number
+ >this.y : number
+ >this : this
+ >y : number
++>12 : number
+ >12 : 12
      }
  }
  var example = new Outer.app.Inner();

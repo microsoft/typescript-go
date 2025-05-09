@@ -117,6 +117,12 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				} else if parent.Kind == ast.KindParenthesizedExpression {
 					paren := parent.AsParenthesizedExpression()
 					paren.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), paren.Expression)
+				} else if parent.Kind == ast.KindExpressionStatement &&
+					parent.AsExpressionStatement().Expression.Kind == ast.KindBinaryExpression {
+					bin := parent.AsExpressionStatement().Expression.AsBinaryExpression()
+					if ast.GetAssignmentDeclarationKind(bin) != ast.JSDeclarationKindNone {
+						bin.Right = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), bin.Right)
+					}
 				}
 			case ast.KindJSDocTemplateTag:
 				if fun, ok := getFunctionLikeHost(parent); ok {

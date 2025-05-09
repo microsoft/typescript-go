@@ -9,3 +9,11 @@
  
  		/**
  		 * @type Function
+@@= skipped -11, +11 lines =@@
+ >this : this
+ >callee : Function
+ >arguments.callee : Function
++>arguments.callee : Function
+ >arguments : IArguments
+ >callee : Function
+ 	}

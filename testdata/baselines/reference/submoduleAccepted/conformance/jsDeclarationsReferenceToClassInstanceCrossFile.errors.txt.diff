@@ -3,6 +3,7 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
++index.js(7,19): error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
 +index.js(14,18): error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
 +
 +
@@ -20,7 +21,7 @@
 +    }
 +    
 +    module.exports = { Rectangle };
-+==== index.js (1 errors) ====
++==== index.js (2 errors) ====
 +    const {Rectangle} = require('./rectangle');
 +    
 +    class Render {
@@ -28,6 +29,8 @@
 +            /**
 +             * Object list
 +             * @type {Rectangle[]}
++                      ~~~~~~~~~
++!!! error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
 +             */
 +            this.objects = [];
 +        }

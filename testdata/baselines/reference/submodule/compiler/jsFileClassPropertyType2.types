@@ -7,10 +7,11 @@ class C {
     constructor() {
       /** @type {number[]}*/
       this.p = [];
->this.p = [] : undefined[]
->this.p : any[]
+>this.p = [] : number[]
+>this.p : number[]
 >this : this
->p : any[]
+>p : number[]
+>[] : number[]
 >[] : undefined[]
   }
 }
@@ -18,12 +19,12 @@ class C {
 === bar.ts ===
 (new C()).p.push("string");
 >(new C()).p.push("string") : number
->(new C()).p.push : (...items: any[]) => number
->(new C()).p : any[]
+>(new C()).p.push : (...items: number[]) => number
+>(new C()).p : number[]
 >(new C()) : C
 >new C() : C
 >C : typeof C
->p : any[]
->push : (...items: any[]) => number
+>p : number[]
+>push : (...items: number[]) => number
 >"string" : "string"
 

@@ -4,6 +4,7 @@
 -<no content>
 @@= skipped --1, +1 lines =@@
 +conn.js(11,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
++usage.js(11,37): error TS2694: Namespace 'Conn' has no exported member 'Whatever'.
 +usage.js(16,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
 +
@@ -22,7 +23,7 @@
 +    ~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +    
-+==== usage.js (1 errors) ====
++==== usage.js (2 errors) ====
 +    /**
 +     * @typedef {import("./conn")} Conn
 +     */
@@ -34,6 +35,8 @@
 +        constructor(c) {
 +            this.connItem = c.item;
 +            /** @type {import("./conn").Whatever} */
++                                        ~~~~~~~~
++!!! error TS2694: Namespace 'Conn' has no exported member 'Whatever'.
 +            this.another = "";
 +        }
 +    }
