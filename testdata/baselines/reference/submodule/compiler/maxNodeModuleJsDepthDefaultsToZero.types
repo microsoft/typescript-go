@@ -50,8 +50,8 @@ var y = { y: 'foo' };
 
 module.exports = y;
 >module.exports = y : { y: string; }
->module.exports : { y: string; }
->module : { y: { y: string; }; }
->exports : { y: string; }
+>module.exports : typeof import("/node_modules/shortid/index")
+>module : { "/node_modules/shortid/index": typeof import("/node_modules/shortid/index"); }
+>exports : typeof import("/node_modules/shortid/index")
 >y : { y: string; }
 

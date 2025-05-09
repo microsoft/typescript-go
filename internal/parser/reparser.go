@@ -34,7 +34,11 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 	var export *ast.Node
 	switch kind {
 	case jsDeclarationKindModuleExports:
-		export = p.factory.NewJSExportAssignment(bin.Right)
+		if bin.Right.Kind == ast.KindIdentifier {
+			export = p.factory.NewJSExportDeclaration(bin.Right)
+		} else {
+			export = p.factory.NewJSExportAssignment(bin.Right)
+		}
 	case jsDeclarationKindExportsProperty:
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)
@@ -79,7 +83,6 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 		for _, tag := range j.AsJSDoc().Tags.Nodes {
 			switch tag.Kind {
 			case ast.KindJSDocTypedefTag:
-				// !!! Don't mark typedefs as exported if they are not in a module
 				typeExpression := tag.AsJSDocTypedefTag().TypeExpression
 				if typeExpression == nil {
 					break

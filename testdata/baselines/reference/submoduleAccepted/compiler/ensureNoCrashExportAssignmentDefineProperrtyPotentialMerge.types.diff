@@ -6,8 +6,8 @@
  const _item = require("./namespacer");
 ->_item : typeof _item
 ->require("./namespacer") : typeof _item
-+>_item : {}
-+>require("./namespacer") : {}
++>_item : typeof import("namespacer")
++>require("./namespacer") : typeof import("namespacer")
  >require : any
  >"./namespacer" : "./namespacer"
  
@@ -59,9 +59,9 @@
 ->exports : typeof A
 ->A : typeof A
 +>module.exports = A : {}
-+>module.exports : {}
-+>module : { readonly A: {}; }
-+>exports : {}
++>module.exports : typeof import("namespacey")
++>module : { "namespacey": typeof import("namespacey"); }
++>exports : typeof import("namespacey")
 +>A : {}
  
  === namespacer.js ===
@@ -105,8 +105,8 @@
 ->exports : typeof B
 ->B : typeof B
 +>module.exports = B : {}
-+>module.exports : {}
-+>module : { readonly B: {}; }
-+>exports : {}
++>module.exports : typeof import("namespacer")
++>module : { "namespacer": typeof import("namespacer"); }
++>exports : typeof import("namespacer")
 +>B : {}
  

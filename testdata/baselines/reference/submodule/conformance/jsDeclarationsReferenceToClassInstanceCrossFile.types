@@ -13,10 +13,10 @@ let render = new Render();
 >Render : typeof Render
 
 render.addRectangle();
->render.addRectangle() : Rectangle
->render.addRectangle : () => Rectangle
+>render.addRectangle() : any
+>render.addRectangle : () => any
 >render : Render
->addRectangle : () => Rectangle
+>addRectangle : () => any
 
 console.log("Objects", render.objects);
 >console.log("Objects", render.objects) : void
@@ -78,7 +78,7 @@ class Render {
      * @returns {Rectangle} the rect
      */
     addRectangle() {
->addRectangle : () => Rectangle
+>addRectangle : () => any
 
         const obj = new Rectangle();
 >obj : Rectangle

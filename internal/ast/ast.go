@@ -773,7 +773,7 @@ func (n *Node) ModuleSpecifier() *Expression {
 	switch n.Kind {
 	case KindImportDeclaration:
 		return n.AsImportDeclaration().ModuleSpecifier
-	case KindExportDeclaration:
+	case KindExportDeclaration, KindJSExportDeclaration:
 		return n.AsExportDeclaration().ModuleSpecifier
 	case KindJSDocImportTag:
 		return n.AsJSDocImportTag().ModuleSpecifier
@@ -4502,19 +4502,27 @@ type ExportDeclaration struct {
 	Attributes      *ImportAttributesNode // ImportAttributesNode. Optional
 }
 
-func (f *NodeFactory) NewExportDeclaration(modifiers *ModifierList, isTypeOnly bool, exportClause *NamedExportBindings, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+func (f *NodeFactory) newExportOrJSExportDeclaration(kind Kind, modifiers *ModifierList, isTypeOnly bool, exportClause *NamedExportBindings, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
 	data := &ExportDeclaration{}
 	data.modifiers = modifiers
 	data.IsTypeOnly = isTypeOnly
 	data.ExportClause = exportClause
 	data.ModuleSpecifier = moduleSpecifier
 	data.Attributes = attributes
-	return f.newNode(KindExportDeclaration, data)
+	return f.newNode(kind, data)
+}
+
+func (f *NodeFactory) NewExportDeclaration(modifiers *ModifierList, isTypeOnly bool, exportClause *NamedExportBindings, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+	return f.newExportOrJSExportDeclaration(KindExportDeclaration, modifiers, isTypeOnly, exportClause, moduleSpecifier, attributes)
+}
+
+func (f *NodeFactory) NewJSExportDeclaration(moduleSpecifier *Expression) *Node {
+	return f.newExportOrJSExportDeclaration(KindJSExportDeclaration, nil /*modifiers*/, false /*isTypeOnly*/, nil /*exportClause*/, moduleSpecifier, nil /*attributes*/)
 }
 
 func (f *NodeFactory) UpdateExportDeclaration(node *ExportDeclaration, modifiers *ModifierList, isTypeOnly bool, exportClause *NamedExportBindings, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
 	if modifiers != node.modifiers || exportClause != node.ExportClause || moduleSpecifier != node.ModuleSpecifier || attributes != node.Attributes {
-		return updateNode(f.NewExportDeclaration(modifiers, isTypeOnly, exportClause, moduleSpecifier, attributes), node.AsNode(), f.hooks)
+		return updateNode(f.newExportOrJSExportDeclaration(node.Kind, modifiers, isTypeOnly, exportClause, moduleSpecifier, attributes), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4528,7 +4536,7 @@ func (node *ExportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *ExportDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewExportDeclaration(node.Modifiers(), node.IsTypeOnly, node.ExportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().newExportOrJSExportDeclaration(node.Kind, node.Modifiers(), node.IsTypeOnly, node.ExportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ExportDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -4541,6 +4549,10 @@ func (node *ExportDeclaration) computeSubtreeFacts() SubtreeFacts {
 
 func IsExportDeclaration(node *Node) bool {
 	return node.Kind == KindExportDeclaration
+}
+
+func IsJSExportDeclaration(node *Node) bool {
+	return node.Kind == KindJSExportDeclaration
 }
 
 // NamespaceExport

@@ -7,12 +7,12 @@ const alias = {};
 
 module.exports = alias;
 >module.exports = alias : {}
->module.exports : {}
->module : { readonly alias: {}; }
->exports : {}
+>module.exports : typeof import("/a")
+>module : { "/a": typeof import("/a"); }
+>exports : typeof import("/a")
 >alias : {}
 
 === /b.js ===
 import a from "./a";
->a : {}
+>a : typeof import("/a")
 

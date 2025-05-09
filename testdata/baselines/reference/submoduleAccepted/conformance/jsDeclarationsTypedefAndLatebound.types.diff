@@ -1,6 +1,17 @@
 --- old.jsDeclarationsTypedefAndLatebound.types
 +++ new.jsDeclarationsTypedefAndLatebound.types
-@@= skipped -32, +32 lines =@@
+@@= skipped -1, +1 lines =@@
+ 
+ === index.js ===
+ const LazySet = require("./LazySet");
+->LazySet : typeof LazySet
+->require("./LazySet") : typeof LazySet
++>LazySet : typeof import("LazySet")
++>require("./LazySet") : typeof import("LazySet")
+ >require : any
+ >"./LazySet" : "./LazySet"
+ 
+@@= skipped -31, +31 lines =@@
       */
      addAll(iterable) {}
  >addAll : (iterable: LazySet) => void
@@ -9,12 +20,15 @@
  
      [Symbol.iterator]() {}
  >[Symbol.iterator] : () => void
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
+ 
  module.exports = LazySet;
  >module.exports = LazySet : typeof LazySet
- >module.exports : typeof LazySet
+->module.exports : typeof LazySet
 ->module : { exports: typeof LazySet; }
-+>module : { LazySet: typeof LazySet; }
- >exports : typeof LazySet
+->exports : typeof LazySet
++>module.exports : typeof import("LazySet")
++>module : { "LazySet": typeof import("LazySet"); }
++>exports : typeof import("LazySet")
  >LazySet : typeof LazySet
  

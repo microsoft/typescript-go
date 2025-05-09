@@ -17,9 +17,9 @@ class Container {
 }
 
 module.exports = Container;
->module.exports : Symbol(Container, Decl(index.js, 0, 29))
+>module.exports : Symbol("index", Decl(index.js, 0, 0))
 >module : Symbol(module.exports)
->exports : Symbol(Container, Decl(index.js, 0, 29))
+>exports : Symbol("index", Decl(index.js, 0, 0))
 >Container : Symbol(Container, Decl(index.js, 0, 29))
 
 === obj.js ===

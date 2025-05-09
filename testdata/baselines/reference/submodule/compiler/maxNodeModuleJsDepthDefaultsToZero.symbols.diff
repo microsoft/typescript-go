@@ -33,8 +33,8 @@
 +>y : Symbol(y, Decl(index.js, 1, 9))
 +
 +module.exports = y;
-+>module.exports : Symbol(y, Decl(index.js, 1, 3))
++>module.exports : Symbol("/node_modules/shortid/index", Decl(index.js, 0, 0))
 +>module : Symbol(module.exports)
-+>exports : Symbol(y, Decl(index.js, 1, 3))
++>exports : Symbol("/node_modules/shortid/index", Decl(index.js, 0, 0))
 +>y : Symbol(y, Decl(index.js, 1, 3))
 +

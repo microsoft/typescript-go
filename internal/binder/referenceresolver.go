@@ -112,6 +112,8 @@ func (r *referenceResolver) isTypeOnlyAliasDeclaration(symbol *ast.Symbol) bool 
 			switch node.Kind {
 			case ast.KindImportEqualsDeclaration, ast.KindExportDeclaration:
 				return node.IsTypeOnly()
+			case ast.KindJSExportDeclaration:
+				return false
 			case ast.KindImportClause, ast.KindImportSpecifier, ast.KindExportSpecifier:
 				if node.IsTypeOnly() {
 					return true

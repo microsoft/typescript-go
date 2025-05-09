@@ -10,20 +10,20 @@ class Alias {
 }
 module.exports = Alias;
 >module.exports = Alias : typeof Alias
->module.exports : typeof Alias
->module : { Alias: typeof Alias; }
->exports : typeof Alias
+>module.exports : typeof import("mod1")
+>module : { "mod1": typeof import("mod1"); }
+>exports : typeof import("mod1")
 >Alias : typeof Alias
 
 === main.js ===
 import A from './mod1'
->A : typeof Alias
+>A : typeof import("mod1")
 
 A.prototype.foo = 0
 >A.prototype.foo = 0 : 0
 >A.prototype.foo : any
 >A.prototype : Alias
->A : typeof Alias
+>A : typeof import("mod1")
 >prototype : Alias
 >foo : any
 >0 : 0
@@ -32,7 +32,7 @@ A.prototype.func = function() { this._func = 0; }
 >A.prototype.func = function() { this._func = 0; } : () => void
 >A.prototype.func : any
 >A.prototype : Alias
->A : typeof Alias
+>A : typeof import("mod1")
 >prototype : Alias
 >func : any
 >function() { this._func = 0; } : () => void
@@ -48,7 +48,7 @@ Object.defineProperty(A.prototype, "def", { value: 0 });
 >Object : ObjectConstructor
 >defineProperty : <T>(o: T, p: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => T
 >A.prototype : Alias
->A : typeof Alias
+>A : typeof import("mod1")
 >prototype : Alias
 >"def" : "def"
 >{ value: 0 } : { value: number; }
@@ -58,25 +58,25 @@ Object.defineProperty(A.prototype, "def", { value: 0 });
 new A().bar
 >new A().bar : () => number
 >new A() : Alias
->A : typeof Alias
+>A : typeof import("mod1")
 >bar : () => number
 
 new A().foo
 >new A().foo : any
 >new A() : Alias
->A : typeof Alias
+>A : typeof import("mod1")
 >foo : any
 
 new A().func()
 >new A().func() : any
 >new A().func : any
 >new A() : Alias
->A : typeof Alias
+>A : typeof import("mod1")
 >func : any
 
 new A().def
 >new A().def : any
 >new A() : Alias
->A : typeof Alias
+>A : typeof import("mod1")
 >def : any
 

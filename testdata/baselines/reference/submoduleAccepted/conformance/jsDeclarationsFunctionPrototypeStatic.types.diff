@@ -10,9 +10,9 @@
 ->exports : typeof MyClass
 ->MyClass : typeof MyClass
 +>module.exports = MyClass : { (): void; staticMethod: () => void; staticProperty: number; }
-+>module.exports : { (): void; staticMethod: () => void; staticProperty: number; }
-+>module : { MyClass: { (): void; staticMethod: () => void; staticProperty: number; }; }
-+>exports : { (): void; staticMethod: () => void; staticProperty: number; }
++>module.exports : typeof import("source")
++>module : { "source": typeof import("source"); }
++>exports : typeof import("source")
 +>MyClass : { (): void; staticMethod: () => void; staticProperty: number; }
  
  function MyClass() {}

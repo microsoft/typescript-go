@@ -51,6 +51,6 @@
 -var __ = new c_1.B(); // Ok
 -var ___ = new c_1.C(); // Ok
 +const c_1 = require("./c");
-+let _ = new A(); // Error
++let _ = new c_1.A(); // Error
 +let __ = new c_1.B(); // Ok
 +let ___ = new c_1.C(); // Ok

@@ -49,8 +49,8 @@ exports.C = C;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const b_1 = require("./b");
-let _ = new A(); // Error
-let __ = new B(); // Error
+let _ = new b_1.A(); // Error
+let __ = new b_1.B(); // Error
 let ___ = new b_1.C(); // Ok
 //// [d.js]
 "use strict";
@@ -58,6 +58,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //// [e.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-let _ = new A(); // Error
-let __ = new B(); // Error
-let ___ = new C(); // Error
+const d_1 = require("./d");
+let _ = new d_1.A(); // Error
+let __ = new d_1.B(); // Error
+let ___ = new d_1.C(); // Error

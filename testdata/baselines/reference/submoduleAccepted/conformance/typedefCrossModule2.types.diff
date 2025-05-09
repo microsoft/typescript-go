@@ -11,10 +11,7 @@
  >require : any
  >'./mod1.js' : "./mod1.js"
  
- /** @type {import("./mod1.js").Baz} */
- var b;
-->b : number
-+>b : any
+@@= skipped -11, +11 lines =@@
  
  /** @type {mod.Baz} */
  var bb;
@@ -30,7 +27,7 @@
  >Baz : typeof Baz
  
  === mod1.js ===
-@@= skipped -30, +30 lines =@@
+@@= skipped -19, +19 lines =@@
  /** @typedef {number} Bar */
  exports.Bar = class { }
  >exports.Bar = class { } : typeof Bar

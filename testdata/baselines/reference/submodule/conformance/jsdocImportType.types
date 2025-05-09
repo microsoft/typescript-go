@@ -13,8 +13,8 @@ c.chunk;
 >chunk : any
 
 const D = require("./mod1");
->D : typeof Chunk
->require("./mod1") : typeof Chunk
+>D : typeof import("mod1")
+>require("./mod1") : typeof import("mod1")
 >require : (name: string) => any
 >"./mod1" : "./mod1"
 
@@ -55,8 +55,8 @@ class Chunk {
 }
 module.exports = Chunk;
 >module.exports = Chunk : typeof Chunk
->module.exports : typeof Chunk
->module : { Chunk: typeof Chunk; }
->exports : typeof Chunk
+>module.exports : typeof import("mod1")
+>module : { "mod1": typeof import("mod1"); }
+>exports : typeof import("mod1")
 >Chunk : typeof Chunk
 

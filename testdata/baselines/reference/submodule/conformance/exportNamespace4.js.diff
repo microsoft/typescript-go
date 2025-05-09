@@ -14,7 +14,14 @@
  exports.A = A;
  //// [b.js]
  "use strict";
-@@= skipped -20, +17 lines =@@
+@@= skipped -15, +12 lines =@@
+ //// [d.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-A;
++const b_1 = require("./b");
++b_1.A;
+ //// [e.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  ns.A;

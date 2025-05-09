@@ -2,8 +2,8 @@
 
 === MC.js ===
 const MW = require("./MW");
->MW : typeof MW
->require("./MW") : typeof MW
+>MW : typeof import("MW")
+>require("./MW") : typeof import("MW")
 >require : any
 >"./MW" : "./MW"
 
@@ -25,7 +25,7 @@ module.exports = function MC() {
 
     return new MW(x);
 >new MW(x) : MW
->MW : typeof MW
+>MW : typeof import("MW")
 >x : any
 
 };
@@ -53,8 +53,8 @@ class MW {
 
 module.exports = MW;
 >module.exports = MW : typeof MW
->module.exports : typeof MW
->module : { MW: typeof MW; }
->exports : typeof MW
+>module.exports : typeof import("MW")
+>module : { "MW": typeof import("MW"); }
+>exports : typeof import("MW")
 >MW : typeof MW
 

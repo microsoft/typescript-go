@@ -20,7 +20,7 @@
  /** @type {TestEnum} */
  const tist = TestEnum.ADD
 ->tist : string
-+>tist : TestEnum
++>tist : any
  >TestEnum.ADD : string
  >TestEnum : { ADD: string; REMOVE: string; }
  >ADD : string

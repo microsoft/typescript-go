@@ -1,18 +1,21 @@
 --- old.importAliasModuleExports.types
 +++ new.importAliasModuleExports.types
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+ }
  module.exports = Alias;
  >module.exports = Alias : typeof Alias
- >module.exports : typeof Alias
+->module.exports : typeof Alias
 ->module : { exports: typeof Alias; }
-+>module : { Alias: typeof Alias; }
- >exports : typeof Alias
+->exports : typeof Alias
++>module.exports : typeof import("mod1")
++>module : { "mod1": typeof import("mod1"); }
++>exports : typeof import("mod1")
  >Alias : typeof Alias
  
  === main.js ===
  import A from './mod1'
 ->A : typeof A
-+>A : typeof Alias
++>A : typeof import("mod1")
  
  A.prototype.foo = 0
  >A.prototype.foo = 0 : 0
@@ -21,7 +24,7 @@
 ->A : typeof A
 ->prototype : A
 +>A.prototype : Alias
-+>A : typeof Alias
++>A : typeof import("mod1")
 +>prototype : Alias
  >foo : any
  >0 : 0
@@ -33,7 +36,7 @@
 ->A : typeof A
 ->prototype : A
 +>A.prototype : Alias
-+>A : typeof Alias
++>A : typeof import("mod1")
 +>prototype : Alias
  >func : any
  >function() { this._func = 0; } : () => void
@@ -54,19 +57,19 @@
 ->A : typeof A
 ->prototype : A
 +>A.prototype : Alias
-+>A : typeof Alias
++>A : typeof import("mod1")
 +>prototype : Alias
  >"def" : "def"
  >{ value: 0 } : { value: number; }
  >value : number
-@@= skipped -46, +46 lines =@@
+@@= skipped -47, +47 lines =@@
  
  new A().bar
  >new A().bar : () => number
 ->new A() : A
 ->A : typeof A
 +>new A() : Alias
-+>A : typeof Alias
++>A : typeof import("mod1")
  >bar : () => number
  
  new A().foo
@@ -74,7 +77,7 @@
 ->new A() : A
 ->A : typeof A
 +>new A() : Alias
-+>A : typeof Alias
++>A : typeof import("mod1")
  >foo : any
  
  new A().func()
@@ -83,7 +86,7 @@
 ->new A() : A
 ->A : typeof A
 +>new A() : Alias
-+>A : typeof Alias
++>A : typeof import("mod1")
  >func : any
  
  new A().def
@@ -91,6 +94,6 @@
 ->new A() : A
 ->A : typeof A
 +>new A() : Alias
-+>A : typeof Alias
++>A : typeof import("mod1")
  >def : any
  

@@ -1,11 +1,14 @@
 --- old.binderUninitializedModuleExportsAssignment.types
 +++ new.binderUninitializedModuleExportsAssignment.types
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
+ 
  module.exports = loop2;
  >module.exports = loop2 : any
- >module.exports : any
+->module.exports : any
 ->module : { exports: any; }
-+>module : { loop2: any; }
- >exports : any
+->exports : any
++>module.exports : typeof import("loop")
++>module : { "loop": typeof import("loop"); }
++>exports : typeof import("loop")
  >loop2 : any
  
