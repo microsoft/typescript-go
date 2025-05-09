@@ -342,7 +342,7 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 			diags = append(diags, checker.GetDiagnosticsWithoutCheck(sourceFile)...)
 		}
 	}
-	if ctx != nil && ctx.Err() != nil {
+	if ctx.Err() != nil {
 		return nil
 	}
 	if len(sourceFile.CommentDirectives) == 0 {
