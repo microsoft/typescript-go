@@ -480,6 +480,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 				}
 				startPos = visitedNode.End()
 				scanner.ResetPos(startPos)
+				scanner.Scan()
 			}
 			// Trailing tokens after last visited node.
 			for startPos < min(endPos, position) {

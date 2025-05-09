@@ -799,7 +799,7 @@ func (n *Node) PropertyList() *NodeList {
 	switch n.Kind {
 	case KindObjectLiteralExpression:
 		return n.AsObjectLiteralExpression().Properties
-	case KindJsxAttribute:
+	case KindJsxAttributes:
 		return n.AsJsxAttributes().Properties
 	}
 	panic("Unhandled case in Node.PropertyList: " + n.Kind.String())

@@ -26,6 +26,7 @@ type testCase struct {
 type testCaseResult struct {
 	list       *lsproto.CompletionList
 	isIncludes bool
+	excludes   []string
 }
 
 const defaultMainFileName = "/index.ts"
@@ -1215,18 +1216,10 @@ class Foo {
 			},
 			expectedResult: map[string]*testCaseResult{
 				"1": {
-					list: &lsproto.CompletionList{
-						IsIncomplete: false,
-						ItemDefaults: itemDefaults,
-						Items:        []*lsproto.CompletionItem{},
-					},
+					list: nil, // !!! jsx
 				},
 				"2": {
-					list: &lsproto.CompletionList{
-						IsIncomplete: false,
-						ItemDefaults: itemDefaults,
-						Items:        []*lsproto.CompletionItem{},
-					},
+					list: nil, // !!! jsx
 				},
 			},
 		},
@@ -1720,6 +1713,50 @@ x./**/;`,
 				},
 			},
 		},
+		{
+			name: "completionsDotDotDotInObjectLiteral1",
+			files: map[string]string{
+				defaultMainFileName: `const foo = { b: 100 };
+const bar: {
+  a: number;
+  b: number;
+} = {
+  a: 42,
+  .../*1*/
+};`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "foo",
+								Kind:             variableKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									InsertReplaceEdit: &lsproto.InsertReplaceEdit{
+										NewText: "foo",
+										Insert: lsproto.Range{
+											Start: lsproto.Position{Line: 6, Character: 5},
+											End:   lsproto.Position{Line: 6, Character: 5},
+										},
+										Replace: lsproto.Range{
+											Start: lsproto.Position{Line: 6, Character: 5},
+											End:   lsproto.Position{Line: 6, Character: 5},
+										},
+									},
+								},
+							},
+						},
+					},
+					isIncludes: true,
+					excludes:   []string{"b"},
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
@@ -1778,6 +1815,13 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 			assertIncludesItem(t, completionList, expectedResult.list)
 		} else {
 			assert.DeepEqual(t, completionList, expectedResult.list)
+		}
+		for _, excludedLabel := range expectedResult.excludes {
+			for _, item := range completionList.Items {
+				if item.Label == excludedLabel {
+					t.Fatalf("Label %s should not be included in completion list", excludedLabel)
+				}
+			}
 		}
 	}
 }
