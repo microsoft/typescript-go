@@ -138,36 +138,46 @@ function isInstalled(tool) {
     return !!which.sync(tool, { nothrow: true });
 }
 
+const builtLocal = "./built/local";
+
 const libsDir = "./internal/bundled/libs";
 const libsRegexp = /(?:^|[\\/])internal[\\/]bundled[\\/]libs[\\/]/;
 
-async function generateLibs() {
-    await fs.promises.mkdir("./built/local", { recursive: true });
+/**
+ * @param {string} out
+ */
+async function generateLibs(out) {
+    await fs.promises.mkdir(out, { recursive: true });
 
     const libs = await fs.promises.readdir(libsDir);
 
     await Promise.all(libs.map(async lib => {
-        fs.promises.copyFile(`${libsDir}/${lib}`, `./built/local/${lib}`);
+        fs.promises.copyFile(path.join(libsDir, lib), path.join(out, lib));
     }));
 }
 
 export const lib = task({
     name: "lib",
-    run: generateLibs,
+    run: () => generateLibs(builtLocal),
 });
 
 /**
- * @param {string} packagePath
- * @param {AbortSignal} [abortSignal]
+ * @param {object} [opts]
+ * @param {string} [opts.out]
+ * @param {AbortSignal} [opts.abortSignal]
+ * @param {Record<string, string | undefined>} [opts.env]
+ * @param {string[]} [opts.extraFlags]
  */
-function buildExecutableToBuilt(packagePath, abortSignal) {
-    return $({ cancelSignal: abortSignal })`go build ${goBuildFlags} ${goBuildTags("noembed")} -o ./built/local/ ${packagePath}`;
+function buildTsgo(opts) {
+    opts ||= {};
+    const out = opts.out ?? "./built/local/";
+    return $({ cancelSignal: opts.abortSignal, env: opts.env })`go build ${goBuildFlags} ${opts.extraFlags ?? []} ${goBuildTags("noembed")} -o ${out} ./cmd/tsgo`;
 }
 
 export const tsgoBuild = task({
     name: "tsgo:build",
     run: async () => {
-        await buildExecutableToBuilt("./cmd/tsgo");
+        await buildTsgo();
     },
 });
 
@@ -213,12 +223,12 @@ export const buildWatch = task({
 
             if (libsChanged) {
                 console.log("Generating libs...");
-                await generateLibs();
+                await generateLibs(builtLocal);
             }
 
             if (goChanged) {
                 console.log("Building tsgo...");
-                await buildExecutableToBuilt("./cmd/tsgo", abortSignal);
+                await buildTsgo({ abortSignal });
             }
         }, {
             paths: ["cmd", "internal"],
@@ -687,3 +697,123 @@ export class Debouncer {
         }
     }
 }
+
+/**
+ * @param {string} goos
+ */
+function goosToNodePlatform(goos) {
+    switch (goos) {
+        case "darwin":
+            return "darwin";
+        case "linux":
+            return "linux";
+        case "windows":
+            return "win32";
+        default:
+            throw new Error(`Unsupported GOOS: ${goos}`);
+    }
+}
+
+/**
+ * @param {string} goarch
+ */
+function goarchToNodeArch(goarch) {
+    switch (goarch) {
+        case "amd64":
+            return "x64";
+        case "arm64":
+            return "arm64";
+        default:
+            throw new Error(`Unsupported GOARCH: ${goarch}`);
+    }
+}
+
+const getVersion = memoize(() => {
+    const f = fs.readFileSync("./internal/core/version.go", "utf8");
+    const match = f.match(/Version\s*=\s*"([^"]+)"/);
+    if (!match) {
+        throw new Error("Failed to extract version from version.go");
+    }
+    const version = match[1];
+    if (!version) {
+        throw new Error("Version is empty");
+    }
+    return version;
+});
+
+async function buildNativePreviewPackages() {
+    const npmOutputDir = "./built/npm";
+    fs.rmSync(npmOutputDir, { recursive: true, force: true });
+
+    const rootPackageName = "native-preview";
+
+    const packages = [
+        ["darwin", "arm64"],
+        ["darwin", "amd64"],
+        ["linux", "arm64"],
+        ["linux", "amd64"],
+        ["windows", "arm64"],
+        ["windows", "amd64"],
+    ].map(([goos, goarch]) => {
+        const nodePlatform = goosToNodePlatform(goos);
+        const nodeArch = goarchToNodeArch(goarch);
+        const dirName = `${rootPackageName}-${nodePlatform}-${nodeArch}`;
+        const packageName = `@typescript/${dirName}`;
+        return { goos, goarch, nodePlatform, nodeArch, dirName, packageName };
+    });
+
+    const inputDir = path.join(__dirname, "_packages", rootPackageName);
+
+    const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
+    inputPackageJson.version = getVersion();
+    delete inputPackageJson.private;
+
+    const mainPackage = {
+        ...inputPackageJson,
+        optionalDependencies: Object.fromEntries(packages.map(p => [p.packageName, getVersion()])),
+    };
+
+    const mainPackageDir = path.join(npmOutputDir, rootPackageName);
+
+    fs.mkdirSync(mainPackageDir, { recursive: true });
+
+    fs.writeFileSync(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
+    fs.copyFileSync("LICENSE", path.join(mainPackageDir, "LICENSE"));
+    fs.cpSync(path.join(inputDir, "bin"), path.join(mainPackageDir, "bin"), { recursive: true });
+
+    await Promise.all(packages.map(async ({ goos, goarch, nodePlatform, nodeArch, dirName, packageName }) => {
+        const dir = path.join(npmOutputDir, dirName);
+
+        const packageJson = {
+            ...inputPackageJson,
+            bin: undefined,
+            name: packageName,
+            os: [nodePlatform],
+            cpu: [nodeArch],
+            exports: {
+                "./package.json": "./package.json",
+            },
+        };
+
+        const out = path.join(dir, "lib");
+        fs.mkdirSync(out, { recursive: true });
+        fs.writeFileSync(path.join(dir, "package.json"), JSON.stringify(packageJson, undefined, 4));
+        fs.copyFileSync("LICENSE", path.join(dir, "LICENSE"));
+
+        await Promise.all([
+            generateLibs(out),
+            buildTsgo({
+                out,
+                env: { GOOS: goos, GOARCH: goarch, CGO_ENABLED: "0" },
+                extraFlags: ["-trimpath", "-ldflags=-s -w"],
+            }),
+        ]);
+    }));
+}
+
+export const buildNativePreview = task({
+    name: "build:native-preview",
+    run: async () => {
+        await buildNativePreviewPackages();
+    },
+});
