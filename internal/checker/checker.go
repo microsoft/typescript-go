@@ -579,6 +579,7 @@ type Checker struct {
 	templateLiteralTypes                       map[string]*Type
 	stringMappingTypes                         map[StringMappingKey]*Type
 	uniqueESSymbolTypes                        map[*ast.Symbol]*Type
+	constructorOfThisExpandos                  map[*ast.Symbol]*ast.Node
 	subtypeReductionCache                      map[string][]*Type
 	cachedTypes                                map[CachedTypeKey]*Type
 	cachedSignatures                           map[CachedSignatureKey]*Signature
@@ -863,6 +864,7 @@ func NewChecker(program Program) *Checker {
 	c.templateLiteralTypes = make(map[string]*Type)
 	c.stringMappingTypes = make(map[StringMappingKey]*Type)
 	c.uniqueESSymbolTypes = make(map[*ast.Symbol]*Type)
+	c.constructorOfThisExpandos = make(map[*ast.Symbol]*ast.Node)
 	c.subtypeReductionCache = make(map[string][]*Type)
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
@@ -10795,9 +10797,9 @@ func (c *Checker) getFlowTypeOfProperty(reference *ast.Node, prop *ast.Symbol) *
 func (c *Checker) getTypeOfPropertyInBaseClass(property *ast.Symbol) *Type {
 	classType := c.getDeclaringClass(property)
 	if classType != nil {
-		baseClassType := c.getBaseTypes(classType)[0]
-		if baseClassType != nil {
-			return c.getTypeOfPropertyOfType(baseClassType, property.Name)
+		baseClassTypes := c.getBaseTypes(classType)
+		if len(baseClassTypes) > 0 {
+			return c.getTypeOfPropertyOfType(baseClassTypes[0], property.Name)
 		}
 	}
 	return nil
@@ -16689,12 +16691,41 @@ func (c *Checker) getTypeOfPrototypeProperty(prototype *ast.Symbol) *Type {
 
 func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
 	var types []*Type
-	for _, declaration := range symbol.Declarations {
-		if ast.IsBinaryExpression(declaration) {
-			types = core.AppendIfUnique(types, c.checkExpressionForMutableLocation(declaration.AsBinaryExpression().Right, CheckModeNormal))
-		}
+	var t *Type
+	if ctor, ok := c.isConstructorDeclaredThisProperty(symbol); ok {
+		t = c.getFlowTypeInConstructor(symbol, ctor)
 	}
-	return c.getWidenedType(c.getUnionType(types))
+	if t == nil {
+		for _, declaration := range symbol.Declarations {
+			if ast.IsBinaryExpression(declaration) {
+				types = core.AppendIfUnique(types, c.checkExpressionForMutableLocation(declaration.AsBinaryExpression().Right, CheckModeNormal))
+			}
+		}
+		t = c.getWidenedType(c.getUnionType(types))
+	}
+	return t
+}
+
+func (c *Checker) isConstructorDeclaredThisProperty(symbol *ast.Symbol) (*ast.Node, bool) {
+	if symbol.ValueDeclaration == nil || !ast.IsBinaryExpression(symbol.ValueDeclaration) {
+		return nil, false
+	}
+	if ctor, ok := c.constructorOfThisExpandos[symbol]; ok {
+		return ctor, ok
+	}
+	ctor := c.getDeclaringConstructor(symbol)
+	result := ctor != nil &&
+		core.Every(symbol.Declarations, func(declaration *ast.Declaration) bool {
+			if !ast.IsBinaryExpression(declaration) {
+				return false
+			}
+			bin := declaration.AsBinaryExpression()
+			return ast.GetAssignmentDeclarationKind(bin) == ast.JSDeclarationKindThisProperty &&
+				(bin.Left.Kind != ast.KindElementAccessExpression || ast.IsStringOrNumericLiteralLike(bin.Left.AsElementAccessExpression().ArgumentExpression)) &&
+				bin.Right.Kind != ast.KindTypeAssertionExpression
+		})
+	c.constructorOfThisExpandos[symbol] = ctor
+	return ctor, result
 }
 
 func (c *Checker) widenTypeForVariableLikeDeclaration(t *Type, declaration *ast.Node, reportErrors bool) *Type {

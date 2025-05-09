@@ -35,9 +35,9 @@ class C1<T, U, V> {
 
             this.a = a || k;
 >this.a = a || k : T
->this.a : T
+>this.a : any
 >this : this
->a : T
+>a : any
 >a || k : T
 >a : T
 >k : T
@@ -45,12 +45,12 @@ class C1<T, U, V> {
     }
 
     public getA() {
->getA : () => T
+>getA : () => any
 
         return this.a
->this.a : T
+>this.a : any
 >this : this
->a : T
+>a : any
     }
 
     public getB() {
@@ -81,9 +81,9 @@ class C2 extends C1<number, string, boolean> {
 
         return `${this.a} ${this.b} ${this.c}`;
 >`${this.a} ${this.b} ${this.c}` : string
->this.a : number
+>this.a : any
 >this : this
->a : number
+>a : any
 >this.b : any
 >this : this
 >b : any

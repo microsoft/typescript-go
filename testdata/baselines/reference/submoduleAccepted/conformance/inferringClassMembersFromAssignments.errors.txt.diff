@@ -2,14 +2,13 @@
 +++ new.inferringClassMembersFromAssignments.errors.txt
 @@= skipped -0, +0 lines =@@
 -a.js(14,13): error TS7008: Member 'inMethodNullable' implicitly has an 'any' type.
--a.js(20,9): error TS2322: Type 'string' is not assignable to type 'number'.
--a.js(39,9): error TS2322: Type 'boolean' is not assignable to type 'number'.
+ a.js(20,9): error TS2322: Type 'string' is not assignable to type 'number'.
+ a.js(39,9): error TS2322: Type 'boolean' is not assignable to type 'number'.
 +b.ts(8,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'stringOrNumberOrUndefined' must be of type 'string | number | undefined', but here has type 'string | number'.
 +b.ts(9,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'stringOrNumberOrUndefined' must be of type 'string | number | undefined', but here has type 'string | number'.
 +b.ts(10,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'stringOrNumberOrUndefined' must be of type 'string | number | undefined', but here has type 'string | number'.
 +b.ts(11,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'stringOrNumberOrUndefined' must be of type 'string | number | undefined', but here has type 'string | number'.
 +b.ts(12,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'stringOrNumberOrUndefined' must be of type 'string | number | undefined', but here has type 'string | number'.
-+b.ts(17,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'number' must be of type 'number', but here has type 'string | number | boolean'.
 +b.ts(19,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'stringOrBooleanOrUndefined' must be of type 'string | boolean | undefined', but here has type 'string | boolean'.
 +b.ts(21,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'any' must be of type 'any', but here has type 'null | undefined'.
 +b.ts(24,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'stringOrNumberOrUndefined' must be of type 'string | number | undefined', but here has type 'string | number'.
@@ -20,11 +19,11 @@
  
  
 -==== a.js (3 errors) ====
-+==== a.js (0 errors) ====
++==== a.js (2 errors) ====
      class C {
          constructor() {
              if (Math.random()) {
-@@= skipped -17, +27 lines =@@
+@@= skipped -17, +28 lines =@@
              if (Math.random()) {
                  this.inMethod = 0;
                  this.inMethodNullable = null;
@@ -33,29 +32,12 @@
              }
              else {
                  this.inMethod = "string"
-                 this.inMethodNullable = undefined;
-             }
-             this.inMultiple = "string";
--            ~~~~~~~~~~~~~~~
--!!! error TS2322: Type 'string' is not assignable to type 'number'.
-             this.inMultipleMethods = "string";
-     
-             var action = () => {
-@@= skipped -29, +25 lines =@@
-                 this.inGetter = "string"
-             }
-             this.inMultiple = false;
--            ~~~~~~~~~~~~~~~
--!!! error TS2322: Type 'boolean' is not assignable to type 'number'.
-             this.inMultipleMethods = false;
-         }
-         set() {
-@@= skipped -63, +61 lines =@@
+@@= skipped -92, +90 lines =@@
          }
      }
      
 -==== b.ts (0 errors) ====
-+==== b.ts (13 errors) ====
++==== b.ts (12 errors) ====
      var c = new C();
      
      var stringOrNumber: string | number;
@@ -85,11 +67,8 @@
      
      var stringOrNumberOrBoolean: string | number | boolean;
      
-     var number: number;
+@@= skipped -11, +26 lines =@@
      var number = c.inMultiple;
-+        ~~~~~~
-+!!! error TS2403: Subsequent variable declarations must have the same type.  Variable 'number' must be of type 'number', but here has type 'string | number | boolean'.
-+!!! related TS6203 b.ts:16:5: 'number' was also declared here.
      var stringOrBooleanOrUndefined : string | boolean | undefined;
      var stringOrBooleanOrUndefined = c.inMultipleMethods;
 +        ~~~~~~~~~~~~~~~~~~~~~~~~~~

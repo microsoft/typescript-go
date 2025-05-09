@@ -28,9 +28,9 @@ class C {
         }
         this.inMultiple = 0;
 >this.inMultiple = 0 : 0
->this.inMultiple : string | number | boolean
+>this.inMultiple : number
 >this : this
->inMultiple : string | number | boolean
+>inMultiple : number
 >0 : 0
     }
     method() {
@@ -72,9 +72,9 @@ class C {
         }
         this.inMultiple = "string";
 >this.inMultiple = "string" : "string"
->this.inMultiple : string | number | boolean
+>this.inMultiple : number
 >this : this
->inMultiple : string | number | boolean
+>inMultiple : number
 >"string" : "string"
 
         this.inMultipleMethods = "string";
@@ -137,9 +137,9 @@ class C {
         }
         this.inMultiple = false;
 >this.inMultiple = false : false
->this.inMultiple : string | number | boolean
+>this.inMultiple : number
 >this : this
->inMultiple : string | number | boolean
+>inMultiple : number
 >false : false
 
         this.inMultipleMethods = false;
@@ -386,9 +386,9 @@ var number: number;
 
 var number = c.inMultiple;
 >number : number
->c.inMultiple : string | number | boolean
+>c.inMultiple : number
 >c : C
->inMultiple : string | number | boolean
+>inMultiple : number
 
 var stringOrBooleanOrUndefined : string | boolean | undefined;
 >stringOrBooleanOrUndefined : string | boolean | undefined

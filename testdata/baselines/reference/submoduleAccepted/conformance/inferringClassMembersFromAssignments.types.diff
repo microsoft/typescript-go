@@ -24,10 +24,10 @@
          this.inMultiple = 0;
  >this.inMultiple = 0 : 0
 ->this.inMultiple : any
-+>this.inMultiple : string | number | boolean
++>this.inMultiple : number
  >this : this
 ->inMultiple : any
-+>inMultiple : string | number | boolean
++>inMultiple : number
  >0 : 0
      }
      method() {
@@ -70,13 +70,7 @@
  >undefined : undefined
          }
          this.inMultiple = "string";
- >this.inMultiple = "string" : "string"
-->this.inMultiple : number
-+>this.inMultiple : string | number | boolean
- >this : this
-->inMultiple : number
-+>inMultiple : string | number | boolean
- >"string" : "string"
+@@= skipped -35, +35 lines =@@
  
          this.inMultipleMethods = "string";
  >this.inMultipleMethods = "string" : "string"
@@ -88,7 +82,7 @@
  >"string" : "string"
  
          var action = () => {
-@@= skipped -52, +52 lines =@@
+@@= skipped -17, +17 lines =@@
  
                  this.inNestedArrowFunction = 0;
  >this.inNestedArrowFunction = 0 : 0
@@ -132,13 +126,7 @@
  >"string" : "string"
          }
          this.inMultiple = false;
- >this.inMultiple = false : false
-->this.inMultiple : number
-+>this.inMultiple : string | number | boolean
- >this : this
-->inMultiple : number
-+>inMultiple : string | number | boolean
- >false : false
+@@= skipped -22, +22 lines =@@
  
          this.inMultipleMethods = false;
  >this.inMultipleMethods = false : false
@@ -150,7 +138,7 @@
  >false : false
      }
      set() {
-@@= skipped -38, +38 lines =@@
+@@= skipped -16, +16 lines =@@
  
              this.inSetter = 0;
  >this.inSetter = 0 : 0
@@ -348,18 +336,7 @@
  
  var stringOrNumberOrBoolean: string | number | boolean;
  >stringOrNumberOrBoolean : string | number | boolean
-@@= skipped -36, +36 lines =@@
- 
- var number = c.inMultiple;
- >number : number
-->c.inMultiple : number
-+>c.inMultiple : string | number | boolean
- >c : C
-->inMultiple : number
-+>inMultiple : string | number | boolean
- 
- var stringOrBooleanOrUndefined : string | boolean | undefined;
- >stringOrBooleanOrUndefined : string | boolean | undefined
+@@= skipped -45, +45 lines =@@
  
  var stringOrBooleanOrUndefined = c.inMultipleMethods;
  >stringOrBooleanOrUndefined : string | boolean | undefined
