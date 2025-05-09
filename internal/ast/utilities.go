@@ -2801,3 +2801,8 @@ func ForEachChildAndJSDoc(node *Node, sourceFile *SourceFile, v Visitor) bool {
 	}
 	return node.ForEachChild(v)
 }
+
+func IsRightSideOfPropertyAccess(node *Node) bool {
+	parent := node.Parent
+	return IsPropertyAccessExpression(parent) && parent.AsPropertyAccessExpression().Name() == node
+}
