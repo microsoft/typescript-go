@@ -97,15 +97,51 @@ type configFileSpecs struct {
 	validatedExcludeSpecs []string
 	isDefaultIncludeSpec  bool
 }
+
+func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
+	if len(c.validatedExcludeSpecs) == 0 {
+		return false
+	}
+	excludePattern := getRegularExpressionForWildcard(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, "exclude")
+	excludeRegex := getRegexFromPattern(excludePattern, comparePathsOptions.UseCaseSensitiveFileNames)
+	if match, err := excludeRegex.MatchString(fileName); err == nil && match {
+		return true
+	}
+	if !tspath.HasExtension(fileName) {
+		if match, err := excludeRegex.MatchString(tspath.EnsureTrailingDirectorySeparator(fileName)); err == nil && match {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
+	if len(c.validatedIncludeSpecs) == 0 {
+		return false
+	}
+	for _, spec := range c.validatedIncludeSpecs {
+		includePattern := getPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
+		if includePattern != "" {
+			includeRegex := getRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
+			if match, err := includeRegex.MatchString(fileName); err == nil && match {
+				return true
+			}
+		}
+	}
+	return false
+}
+
 type fileExtensionInfo struct {
 	extension      string
 	isMixedContent bool
 	scriptKind     core.ScriptKind
 }
+
 type ExtendedConfigCacheEntry struct {
 	extendedResult *TsConfigSourceFile
 	extendedConfig *parsedTsconfig
 }
+
 type parsedTsconfig struct {
 	raw     any
 	options *core.CompilerOptions
@@ -1209,6 +1245,11 @@ func parseJsonConfigFileContentWorker(
 		ConfigFile: sourceFile,
 		Raw:        parsedConfig.raw,
 		Errors:     errors,
+
+		comparePathsOptions: tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          basePathForFileNames,
+		},
 	}
 }
 
