@@ -3,6 +3,7 @@ package scanner
 import (
 	"fmt"
 	"iter"
+	"maps"
 	"strconv"
 	"strings"
 	"unicode"
@@ -2020,6 +2021,7 @@ func init() {
 	for text, key := range textToToken {
 		tokenToText[key] = text
 	}
+	maps.Copy(textToToken, textToKeyword)
 }
 
 func TokenToString(token ast.Kind) string {
