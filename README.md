@@ -45,13 +45,18 @@ This is mainly a testing entry point; for higher fidelity with regular `tsc`, ru
 
 ### Running LSP Prototype
 
-To try the prototype LSP experience:
+* Run `hereby build` to build the LSP server
+* Run `hereby install-extension` to build and install the VS Code extension. (Use `--insiders` to target `code-insiders` instead of `code`.)
+* Copy the `"typescript-go.executablePath"` setting printed by `hereby install-extension` to your VS Code settings.
+* Select "TypeScript: Use TypeScript Go (Experimental)" from the VS Code command palette (or set `"typescript.experimental.useTsgo"` in your VS Code settings).
+
+Alternatively, to debug and run the VS Code extension without installing it globally:
 
 * Run VS Code in the repo workspace (`code .`)
 * Copy `.vscode/launch.template.json` to `.vscode/launch.json`
 * <kbd>F5</kbd> (or `Debug: Start Debugging` from the command palette)
 
-This will launch a new VS Code instance which uses the Corsa LS as the backend. If correctly set up, you should see "typescript-go" as an option in the Output pane:
+This will launch a new VS Code instance which uses the Corsa LS as the backend. If correctly set up, you should see "tsgo" in the status bar when a TypeScript or JavaScript file is open:
 
 ![LSP Prototype Screenshot](.github/ls-screenshot.png)
 
@@ -86,7 +91,7 @@ Definitions:
 
 ## Other Notes
 
-Long-term, we expect this repo is that its contents will be merged into `microsoft/TypeScript`.
+Long-term, we expect that this repo and its contents will be merged into `microsoft/TypeScript`.
 As a result, the repo and issue tracker for typescript-go will eventually be closed, so treat discussions/issues accordingly.
 
 For a list of intentional changes with respect to TypeScript 5.7, see CHANGES.md.
