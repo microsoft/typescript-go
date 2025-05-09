@@ -65,10 +65,11 @@ type cliOptions struct {
 	}
 
 	devel struct {
-		quiet          bool
-		singleThreaded bool
-		printTypes     bool
-		pprofDir       string
+		quiet               bool
+		singleThreaded      bool
+		printTypes          bool
+		pprofDir            string
+		extendedDiagnostics string
 	}
 }
 
@@ -113,6 +114,7 @@ func parseArgs() *cliOptions {
 	flag.BoolVar(&opts.devel.singleThreaded, "singleThreaded", false, "Run in single threaded mode.")
 	flag.BoolVar(&opts.devel.printTypes, "printTypes", false, "Print types defined in 'main.ts'.")
 	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
+	flag.StringVar(&opts.devel.extendedDiagnostics, "extendedDiagnostics", "", "Output extended diagnostics. Use 'inline' for stdout text output or a '.json' file path to write to a file.")
 	flag.Parse()
 
 	if len(flag.Args()) > 0 {
@@ -296,42 +298,11 @@ func runMain() int {
 	}
 	stats.add("Total time", totalTime)
 
-	stats.print()
+	if err := OutputStats(&stats, opts.devel.extendedDiagnostics); err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+	}
 
 	return exitCode
-}
-
-type tableRow struct {
-	name  string
-	value string
-}
-
-type table struct {
-	rows []tableRow
-}
-
-func (t *table) add(name string, value any) {
-	if d, ok := value.(time.Duration); ok {
-		value = formatDuration(d)
-	}
-	t.rows = append(t.rows, tableRow{name, fmt.Sprint(value)})
-}
-
-func (t *table) print() {
-	nameWidth := 0
-	valueWidth := 0
-	for _, r := range t.rows {
-		nameWidth = max(nameWidth, len(r.name))
-		valueWidth = max(valueWidth, len(r.value))
-	}
-
-	for _, r := range t.rows {
-		fmt.Printf("%-*s %*s\n", nameWidth+1, r.name+":", valueWidth, r.value)
-	}
-}
-
-func formatDuration(d time.Duration) string {
-	return fmt.Sprintf("%.3fs", d.Seconds())
 }
 
 func identifierCount(p *compiler.Program) int {
