@@ -51,7 +51,7 @@ type completionDataData struct {
 	previousToken                *ast.Node
 	contextToken                 *ast.Node
 	jsxInitializer               jsxInitializer
-	insideJsDocTagTypeExpression bool
+	insideJSDocTagTypeExpression bool
 	isTypeOnlyLocation           bool
 	// In JSX tag name and attribute names, identifiers like "my-tag" or "aria-name" is valid identifier.
 	isJsxIdentifierExpected   bool
@@ -321,7 +321,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 
 	insideComment := isInComment(file, position, currentToken)
 
-	insideJsDocTagTypeExpression := false
+	insideJSDocTagTypeExpression := false
 	insideJsDocImportTag := false
 	isInSnippetScope := false
 	if insideComment != nil {
@@ -330,7 +330,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 
 	// The decision to provide completion depends on the contextToken, which is determined through the previousToken.
 	// Note: 'previousToken' (and thus 'contextToken') can be undefined if we are the beginning of the file
-	isJSOnlyLocation := !insideJsDocTagTypeExpression && !insideJsDocImportTag && ast.IsSourceFileJS(file)
+	isJSOnlyLocation := !insideJSDocTagTypeExpression && !insideJsDocImportTag && ast.IsSourceFileJS(file)
 	previousToken, contextToken := getRelevantTokens(position, file)
 
 	// Find the node where completion is requested on.
@@ -470,7 +470,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 	symbolToSortTextMap := map[ast.SymbolId]sortText{}
 	// var importSpecifierResolver any // !!! import
 	var seenPropertySymbols core.Set[ast.SymbolId]
-	isTypeOnlyLocation := insideJsDocTagTypeExpression || insideJsDocImportTag ||
+	isTypeOnlyLocation := insideJSDocTagTypeExpression || insideJsDocImportTag ||
 		importStatementCompletion != nil && ast.IsTypeOnlyImportOrExportDeclaration(location.Parent) ||
 		!isContextTokenValueLocation(contextToken) &&
 			(isPossiblyTypeArgumentPosition(contextToken, file, typeChecker) ||
@@ -672,7 +672,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 						} else if isRhsOfImportDeclaration {
 							// Any kind is allowed when dotting off namespace in internal import equals declaration
 							isValidAccess = isValidTypeAccess(exportedSymbol) || isValidValueAccess(exportedSymbol)
-						} else if isTypeLocation || insideJsDocTagTypeExpression {
+						} else if isTypeLocation || insideJSDocTagTypeExpression {
 							isValidAccess = isValidTypeAccess(exportedSymbol)
 						} else {
 							isValidAccess = isValidValueAccess(exportedSymbol)
@@ -683,7 +683,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 					}
 
 					// If the module is merged with a value, we must get the type of the class and add its properties (for inherited static methods).
-					if !isTypeLocation && !insideJsDocTagTypeExpression &&
+					if !isTypeLocation && !insideJSDocTagTypeExpression &&
 						core.Some(
 							symbol.Declarations,
 							func(decl *ast.Declaration) bool {
@@ -1013,7 +1013,11 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 			return globalsSearchContinue
 		}
 
-		existing := core.NewSetFromItems(core.Map(importAttributes.Elements(), (*ast.Node).Text)...)
+		var elements []*ast.Node
+		if importAttributes.AsImportAttributes().Attributes != nil {
+			elements = importAttributes.AsImportAttributes().Attributes.Nodes
+		}
+		existing := core.NewSetFromItems(core.Map(elements, (*ast.Node).Text)...)
 		uniques := core.Filter(
 			typeChecker.GetApparentProperties(typeChecker.GetTypeAtLocation(importAttributes)),
 			func(symbol *ast.Symbol) bool {
@@ -1407,7 +1411,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 		previousToken:                previousToken,
 		contextToken:                 contextToken,
 		jsxInitializer:               jsxInitializer,
-		insideJsDocTagTypeExpression: insideJsDocTagTypeExpression,
+		insideJSDocTagTypeExpression: insideJSDocTagTypeExpression,
 		isTypeOnlyLocation:           isTypeOnlyLocation,
 		isJsxIdentifierExpected:      isJsxIdentifierExpected,
 		isRightOfOpenTag:             isRightOfOpenTag,
@@ -1486,7 +1490,7 @@ func (l *LanguageService) completionInfoFromData(
 	if data.keywordFilters != KeywordCompletionFiltersNone {
 		keywordCompletions := getKeywordCompletions(
 			data.keywordFilters,
-			!data.insideJsDocTagTypeExpression && ast.IsSourceFileJS(file))
+			!data.insideJSDocTagTypeExpression && ast.IsSourceFileJS(file))
 		for _, keywordEntry := range keywordCompletions {
 			if data.isTypeOnlyLocation && isTypeKeyword(scanner.StringToToken(keywordEntry.Label)) ||
 				!data.isTypeOnlyLocation && isContextualKeywordInAutoImportableExpressionSpace(keywordEntry.Label) ||
@@ -2050,7 +2054,7 @@ func getWordRange(sourceFile *ast.SourceFile, position int) (wordRange *core.Tex
 	text := sourceFile.Text()[:position]
 	totalSize := 0
 	var firstRune rune
-	for r, size := utf8.DecodeLastRuneInString(text); size != 0; r, size = utf8.DecodeLastRuneInString(text[:len(text)-size]) {
+	for r, size := utf8.DecodeLastRuneInString(text); size != 0; r, size = utf8.DecodeLastRuneInString(text[:len(text)-totalSize]) {
 		if wordSeparators.Has(r) || unicode.IsSpace(r) {
 			break
 		}
@@ -3578,7 +3582,7 @@ func filterObjectMembersList(
 	typeChecker *checker.Checker,
 ) (filteredMembers []*ast.Symbol, spreadMemberNames *core.Set[string]) {
 	if len(existingMembers) == 0 {
-		return contextualMemberSymbols, nil
+		return contextualMemberSymbols, &core.Set[string]{}
 	}
 
 	membersDeclaredBySpreadAssignment := core.Set[string]{}

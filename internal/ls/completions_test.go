@@ -20,6 +20,7 @@ type testCase struct {
 	name           string
 	files          map[string]string
 	expectedResult map[string]*testCaseResult
+	mainFileName   string
 }
 
 type testCaseResult struct {
@@ -27,7 +28,7 @@ type testCaseResult struct {
 	isIncludes bool
 }
 
-const mainFileName = "/index.ts"
+const defaultMainFileName = "/index.ts"
 
 func TestCompletions(t *testing.T) {
 	t.Parallel()
@@ -44,11 +45,13 @@ func TestCompletions(t *testing.T) {
 	sortTextLocationPriority := ptrTo(string(ls.SortTextLocationPriority))
 	sortTextLocalDeclarationPriority := ptrTo(string(ls.SortTextLocalDeclarationPriority))
 	sortTextDeprecatedLocationPriority := ptrTo(string(ls.DeprecateSortText(ls.SortTextLocationPriority)))
+	sortTextGlobalsOrKeywords := ptrTo(string(ls.SortTextGlobalsOrKeywords))
 	fieldKind := ptrTo(lsproto.CompletionItemKindField)
 	methodKind := ptrTo(lsproto.CompletionItemKindMethod)
 	functionKind := ptrTo(lsproto.CompletionItemKindFunction)
 	variableKind := ptrTo(lsproto.CompletionItemKindVariable)
 	classKind := ptrTo(lsproto.CompletionItemKindClass)
+	keywordKind := ptrTo(lsproto.CompletionItemKindKeyword)
 
 	stringMembers := []*lsproto.CompletionItem{
 		{Label: "charAt", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
@@ -103,7 +106,7 @@ func TestCompletions(t *testing.T) {
 		{
 			name: "basicInterfaceMembers",
 			files: map[string]string{
-				mainFileName: `export {};
+				defaultMainFileName: `export {};
 interface Point {
     x: number;
     y: number;
@@ -167,7 +170,7 @@ p./*a*/`,
 			name: "basicInterfaceMembersOptional",
 			files: map[string]string{
 				"/tsconfig.json": `{ "compilerOptions": { "strict": true } }`,
-				mainFileName: `export {};
+				defaultMainFileName: `export {};
 interface Point {
     x: number;
     y: number;
@@ -223,7 +226,7 @@ p./*a*/`,
 		{
 			name: "objectLiteralType",
 			files: map[string]string{
-				mainFileName: `export {};
+				defaultMainFileName: `export {};
 let x = { foo: 123 };
 x./*a*/`,
 			},
@@ -261,7 +264,7 @@ x./*a*/`,
 		{
 			name: "basicClassMembers",
 			files: map[string]string{
-				mainFileName: `
+				defaultMainFileName: `
 class n {
     constructor (public x: number, public y: number, private z: string) { }
 }
@@ -321,7 +324,7 @@ var t = new n(0, 1, '');t./*a*/`,
 		{
 			name: "cloduleAsBaseClass",
 			files: map[string]string{
-				mainFileName: `
+				defaultMainFileName: `
 class A {
     constructor(x: number) { }
     foo() { }
@@ -597,7 +600,7 @@ D./*a*/`,
 		{
 			name: "lambdaThisMembers",
 			files: map[string]string{
-				mainFileName: `class Foo {
+				defaultMainFileName: `class Foo {
     a: number;
     b() {
         var x = () => {
@@ -660,7 +663,7 @@ D./*a*/`,
 		{
 			name: "memberCompletionInForEach1",
 			files: map[string]string{
-				mainFileName: `var x: string[] = [];
+				defaultMainFileName: `var x: string[] = [];
 x.forEach(function (y) { y./*1*/`,
 			},
 			expectedResult: map[string]*testCaseResult{
@@ -693,7 +696,7 @@ x.forEach(function (y) { y./*1*/`,
 		{
 			name: "completionsTuple",
 			files: map[string]string{
-				mainFileName: `declare const x: [number, number];
+				defaultMainFileName: `declare const x: [number, number];
 x./**/;`,
 			},
 			expectedResult: map[string]*testCaseResult{
@@ -761,7 +764,7 @@ x./**/;`,
 		{
 			name: "augmentedTypesClass3Fourslash",
 			files: map[string]string{
-				mainFileName: `class c5b { public foo() { } }
+				defaultMainFileName: `class c5b { public foo() { } }
 namespace c5b { export var y = 2; } // should be ok
 /*3*/`,
 			},
@@ -783,23 +786,470 @@ namespace c5b { export var y = 2; } // should be ok
 				},
 			},
 		},
+		{
+			name: "objectLiteralBindingInParameter",
+			files: map[string]string{
+				defaultMainFileName: `interface I { x1: number; x2: string }
+function f(cb: (ev: I) => any) { }
+f(({/*1*/}) => 0);
+
+[<I>null].reduce(({/*2*/}, b) => b);
+
+interface Foo {
+    m(x: { x1: number, x2: number }): void;
+    prop: I;
+}
+let x: Foo = {
+    m({ /*3*/ }) {
+    },
+    get prop(): I { return undefined; },
+    set prop({ /*4*/ }) {
+    }
+};`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "x1",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "x2",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"2": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "x1",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "x2",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"3": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "x1",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "x2",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "completionListInTypeLiteralInTypeParameter3",
+			files: map[string]string{
+				defaultMainFileName: `interface Foo {
+    one: string;
+    two: number;
+}
+
+interface Bar<T extends Foo> {
+    foo: T;
+}
+
+var foobar: Bar<{ one: string, /**/`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: &lsproto.CompletionItemDefaults{
+							CommitCharacters: &[]string{},
+						},
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "two",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "completionListInImportClause04",
+			files: map[string]string{
+				defaultMainFileName: `import {/*1*/} from './foo';`,
+				"/foo.d.ts": `declare class Foo {
+    static prop1(x: number): number;
+    static prop1(x: string): string;
+    static prop2(x: boolean): boolean;
+}
+export = Foo;`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "prop1",
+								Kind:             methodKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "prop2",
+								Kind:             methodKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "prototype",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:    "type",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "completionListForImportAttributes",
+			files: map[string]string{
+				defaultMainFileName: `declare global {
+    interface ImportAttributes {
+        type: "json",
+        "resolution-mode": "import"
+    }
+}
+const str = "hello";
+
+import * as t1 from "./a" with { /*1*/ };
+import * as t3 from "./a" with { type: "json", /*3*/ };
+import * as t4 from "./a" with { type: /*4*/ };`,
+				"/a.ts":          `export default {};`,
+				"/tsconfig.json": `{ "compilerOptions": { "module": "esnext", "target": "esnext" } }`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "resolution-mode",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "type",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "completionsInExport_invalid",
+			files: map[string]string{
+				defaultMainFileName: `function topLevel() {}
+if (!!true) {
+  const blockScoped = 0;
+  export { /**/ };
+}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "topLevel",
+								Kind:             functionKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:    "type",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "completionListAtIdentifierDefinitionLocations_parameters",
+			files: map[string]string{
+				defaultMainFileName: `var aa = 1;
+class bar5{ constructor(public /*constructorParameter1*/`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"constructorParameter1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: &lsproto.CompletionItemDefaults{
+							CommitCharacters: &[]string{},
+						},
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:    "override",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "private",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "protected",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "public",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "readonly",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "completionEntryForClassMembers_StaticWhenBaseTypeIsNotResolved",
+			files: map[string]string{
+				defaultMainFileName: `import React from 'react'
+class Slider extends React.Component {
+    static defau/**/ltProps = {
+        onMouseDown: () => { },
+        onMouseUp: () => { },
+        unit: 'px',
+    }
+    handleChange = () => 10;
+}`,
+				"/node_modules/@types/react/index.d.ts": `export = React;
+export as namespace React;
+declare namespace React {
+    function createElement(): any;
+    interface Component<P = {}, S = {}, SS = any> { }
+    class Component<P, S> {
+        static contextType?: any;
+        context: any;
+        constructor(props: Readonly<P>);
+        setState<K extends keyof S>(
+            state: ((prevState: Readonly<S>, props: Readonly<P>) => (Pick<S, K> | S | null)) | (Pick<S, K> | S | null),
+            callback?: () => void
+        ): void;
+    }
+}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: &lsproto.CompletionItemDefaults{
+							CommitCharacters: &[]string{},
+						},
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "contextType?",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								FilterText:       ptrTo("contextType"),
+								InsertText:       ptrTo("contextType"),
+								InsertTextFormat: insertTextFormatPlainText,
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									InsertReplaceEdit: &lsproto.InsertReplaceEdit{
+										NewText: "contextType",
+										Insert: lsproto.Range{
+											Start: lsproto.Position{Line: 2, Character: 11},
+											End:   lsproto.Position{Line: 2, Character: 16},
+										},
+										Replace: lsproto.Range{
+											Start: lsproto.Position{Line: 2, Character: 11},
+											End:   lsproto.Position{Line: 2, Character: 23},
+										},
+									},
+								},
+							},
+							{
+								Label:    "abstract",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "accessor",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "async",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "constructor",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "declare",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "get",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "override",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "private",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "protected",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "public",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "readonly",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "set",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+							{
+								Label:    "static",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name:         "completionsInJsxTag",
+			mainFileName: "/index.tsx",
+			files: map[string]string{
+				"/index.tsx": `declare namespace JSX {
+    interface Element {}
+    interface IntrinsicElements {
+        div: {
+            /** Doc */
+            foo: string
+            /** Label docs */
+            "aria-label": string
+        }
+    }
+}
+class Foo {
+    render() {
+        <div /*1*/ ></div>;
+        <div  /*2*/ />
+    }
+}`,
+				"/tsconfig.json": `{ "compilerOptions": { "jsx": "preserve" } }`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items:        []*lsproto.CompletionItem{},
+					},
+				},
+				"2": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items:        []*lsproto.CompletionItem{},
+					},
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			runTest(t, testCase.files, testCase.expectedResult)
+			runTest(t, testCase.files, testCase.expectedResult, testCase.mainFileName)
 		})
 	}
 }
 
-func runTest(t *testing.T, files map[string]string, expected map[string]*testCaseResult) {
+func runTest(t *testing.T, files map[string]string, expected map[string]*testCaseResult, mainFileName string) {
+	if mainFileName == "" {
+		mainFileName = defaultMainFileName
+	}
 	parsedFiles := make(map[string]string)
 	var markerPositions map[string]*lstestutil.Marker
 	for fileName, content := range files {
 		if fileName == mainFileName {
 			testData := lstestutil.ParseTestData("", content, fileName)
 			markerPositions = testData.MarkerPositions
-			parsedFiles[fileName] = testData.Files[0].Content // !!! Assumes no usage of @filename
+			parsedFiles[fileName] = testData.Files[0].Content // !!! Assumes no usage of @filename, markers only on main file
 		} else {
 			parsedFiles[fileName] = content
 		}
@@ -829,7 +1279,7 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
 		completionList := languageService.ProvideCompletion(
-			"/index.ts",
+			mainFileName,
 			marker.Position,
 			context,
 			capabilities,
