@@ -264,7 +264,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
-	previousToken, _ := getRelevantTokens(position, file)
+	_, previousToken := getRelevantTokens(position, file)
 	if context.TriggerCharacter != nil && !isInString(file, position, previousToken) && !isValidTrigger(file, *context.TriggerCharacter, previousToken, position) {
 		return nil
 	}
@@ -331,7 +331,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 	// The decision to provide completion depends on the contextToken, which is determined through the previousToken.
 	// Note: 'previousToken' (and thus 'contextToken') can be undefined if we are the beginning of the file
 	isJSOnlyLocation := !insideJSDocTagTypeExpression && !insideJsDocImportTag && ast.IsSourceFileJS(file)
-	previousToken, contextToken := getRelevantTokens(position, file)
+	contextToken, previousToken := getRelevantTokens(position, file)
 
 	// Find the node where completion is requested on.
 	// Also determine whether we are trying to complete with members of that node

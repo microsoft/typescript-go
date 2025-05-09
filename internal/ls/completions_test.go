@@ -1757,6 +1757,43 @@ const bar: {
 				},
 			},
 		},
+		{
+			name: "extendsKeywordCompletion2",
+			files: map[string]string{
+				defaultMainFileName: `function f1<T /*1*/>() {}
+function f2<T ext/*2*/>() {}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				// "1": {
+				// 	list: &lsproto.CompletionList{
+				// 		IsIncomplete: false,
+				// 		ItemDefaults: itemDefaults,
+				// 		Items: []*lsproto.CompletionItem{
+				// 			{
+				// 				Label:    "extends",
+				// 				Kind:     keywordKind,
+				// 				SortText: sortTextGlobalsOrKeywords,
+				// 			},
+				// 		},
+				// 	},
+				// 	isIncludes: true,
+				// },
+				"2": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:    "extends",
+								Kind:     keywordKind,
+								SortText: sortTextGlobalsOrKeywords,
+							},
+						},
+					},
+					isIncludes: true,
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
