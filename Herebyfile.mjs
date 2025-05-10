@@ -778,6 +778,7 @@ async function buildNativePreviewPackages() {
     fs.writeFileSync(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
     fs.copyFileSync("LICENSE", path.join(mainPackageDir, "LICENSE"));
     fs.cpSync(path.join(inputDir, "bin"), path.join(mainPackageDir, "bin"), { recursive: true });
+    fs.cpSync(path.join(inputDir, "lib"), path.join(mainPackageDir, "lib"), { recursive: true });
 
     await Promise.all(packages.map(async ({ goos, goarch, nodePlatform, nodeArch, dirName, packageName }) => {
         const dir = path.join(npmOutputDir, dirName);
@@ -785,6 +786,7 @@ async function buildNativePreviewPackages() {
         const packageJson = {
             ...inputPackageJson,
             bin: undefined,
+            imports: undefined,
             name: packageName,
             os: [nodePlatform],
             cpu: [nodeArch],

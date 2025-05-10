@@ -30,5 +30,8 @@
     },
     "exports": {
         "./package.json": "./package.json"
+    },
+    "imports": {
+        "#getExePath": "./lib/getExePath.js"
     }
 }
