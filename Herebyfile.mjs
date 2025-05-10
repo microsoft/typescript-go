@@ -745,8 +745,6 @@ async function buildNativePreviewPackages() {
     const npmOutputDir = "./built/npm";
     fs.rmSync(npmOutputDir, { recursive: true, force: true });
 
-    const rootPackageName = "native-preview";
-
     const packages = [
         ["darwin", "arm64"],
         ["darwin", "amd64"],
@@ -757,12 +755,12 @@ async function buildNativePreviewPackages() {
     ].map(([goos, goarch]) => {
         const nodePlatform = goosToNodePlatform(goos);
         const nodeArch = goarchToNodeArch(goarch);
-        const dirName = `${rootPackageName}-${nodePlatform}-${nodeArch}`;
+        const dirName = `native-preview-${nodePlatform}-${nodeArch}`;
         const packageName = `@typescript/${dirName}`;
         return { goos, goarch, nodePlatform, nodeArch, dirName, packageName };
     });
 
-    const inputDir = path.join(__dirname, "_packages", rootPackageName);
+    const inputDir = path.join(__dirname, "_packages", "native-preview");
 
     const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
     inputPackageJson.version = getVersion();
@@ -773,7 +771,7 @@ async function buildNativePreviewPackages() {
         optionalDependencies: Object.fromEntries(packages.map(p => [p.packageName, getVersion()])),
     };
 
-    const mainPackageDir = path.join(npmOutputDir, rootPackageName);
+    const mainPackageDir = path.join(npmOutputDir, "native-preview");
 
     fs.mkdirSync(mainPackageDir, { recursive: true });
 
@@ -799,6 +797,14 @@ async function buildNativePreviewPackages() {
         fs.mkdirSync(out, { recursive: true });
         fs.writeFileSync(path.join(dir, "package.json"), JSON.stringify(packageJson, undefined, 4));
         fs.copyFileSync("LICENSE", path.join(dir, "LICENSE"));
+
+        const readme = [
+            `# \`${packageName}\``,
+            "",
+            `This package provides ${nodePlatform}-${nodeArch} support for [@typescript/native-preview](https://www.npmjs.com/package/@typescript/native-preview).`,
+        ];
+
+        fs.writeFileSync(path.join(dir, "README.md"), readme.join("\n") + "\n");
 
         await Promise.all([
             generateLibs(out),
