@@ -760,7 +760,7 @@ async function buildNativePreviewPackages() {
         return { goos, goarch, nodePlatform, nodeArch, dirName, packageName };
     });
 
-    const inputDir = path.join(__dirname, "_packages", "native-preview");
+    const inputDir = "./_packages/native-preview";
 
     const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
     inputPackageJson.version = getVersion();
