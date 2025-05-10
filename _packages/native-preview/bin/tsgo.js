@@ -10,7 +10,7 @@ const normalizedDirname = __dirname.replace(/\\/g, "/");
 
 let exeDir;
 
-const expectedPackage = "native-preview" + process.platform + "-" + process.arch;
+const expectedPackage = "native-preview-" + process.platform + "-" + process.arch;
 
 if (normalizedDirname.endsWith("/_packages/native-preview/bin")) {
     // We're running directly from source in the repo.
