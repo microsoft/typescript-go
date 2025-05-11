@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"runtime"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -188,28 +190,53 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) ExitStatus {
 	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
 	// todo: cache, statistics, tracing
+	parseStart := time.Now()
 	program := compiler.NewProgramFromParsedCommandLine(config, host)
+	parseTime := time.Since(parseStart)
 
-	diagnostics, emitResult, exitStatus := compileAndEmit(sys, program, reportDiagnostic)
-	if exitStatus != ExitStatusSuccess {
+	result := compileAndEmit(sys, program, reportDiagnostic)
+	if result.status != ExitStatusSuccess {
 		// compile exited early
-		return exitStatus
+		return result.status
 	}
 
-	reportStatistics(sys, program)
+	result.parseTime = parseTime
+	result.totalTime = time.Since(parseStart)
+
+	if config.CompilerOptions().Diagnostics.IsTrue() || config.CompilerOptions().ExtendedDiagnostics.IsTrue() {
+		var memStats runtime.MemStats
+		// GC must be called twice to allow things to settle.
+		runtime.GC()
+		runtime.GC()
+		runtime.ReadMemStats(&memStats)
+
+		reportStatistics(sys, program, result, &memStats)
+	}
+
 	if cb != nil {
 		cb(program)
 	}
 
-	if emitResult.EmitSkipped && diagnostics != nil && len(diagnostics) > 0 {
+	if result.emitResult.EmitSkipped && len(result.diagnostics) > 0 {
 		return ExitStatusDiagnosticsPresent_OutputsSkipped
-	} else if len(diagnostics) > 0 {
+	} else if len(result.diagnostics) > 0 {
 		return ExitStatusDiagnosticsPresent_OutputsGenerated
 	}
 	return ExitStatusSuccess
 }
 
-func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) ([]*ast.Diagnostic, *compiler.EmitResult, ExitStatus) {
+type compileAndEmitResult struct {
+	diagnostics []*ast.Diagnostic
+	emitResult  *compiler.EmitResult
+	status      ExitStatus
+	parseTime   time.Duration
+	bindTime    time.Duration
+	checkTime   time.Duration
+	emitTime    time.Duration
+	totalTime   time.Duration
+}
+
+func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
 	// todo: check if third return needed after execute is fully implemented
 
 	options := program.Options()
@@ -218,6 +245,10 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 	// todo: early exit logic and append diagnostics
 	diagnostics := program.GetSyntacticDiagnostics(context.Background(), nil)
 	if len(diagnostics) == 0 {
+		bindStart := time.Now()
+		_ = program.GetBindDiagnostics(context.Background(), nil)
+		result.bindTime = time.Since(bindStart)
+
 		diagnostics = append(diagnostics, program.GetOptionsDiagnostics()...)
 		if options.ListFilesOnly.IsFalse() {
 			// program.GetBindDiagnostics(nil)
@@ -225,18 +256,23 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 		}
 	}
 	if len(diagnostics) == 0 {
+		checkStart := time.Now()
 		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(context.Background(), nil)...)
+		result.checkTime = time.Since(checkStart)
 	}
 	// TODO: declaration diagnostics
 	if len(diagnostics) == 0 && options.NoEmit == core.TSTrue && (options.Declaration.IsTrue() && options.Composite.IsTrue()) {
-		return nil, nil, ExitStatusNotImplemented
+		result.status = ExitStatusNotImplemented
+		return result
 		// addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
 	}
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !options.ListFilesOnly.IsTrue() {
 		// !!! Emit is not yet fully implemented, will not emit unless `outfile` specified
+		emitStart := time.Now()
 		emitResult = program.Emit(compiler.EmitOptions{})
+		result.emitTime = time.Since(emitStart)
 	}
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
@@ -255,7 +291,10 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 	}
 
 	createReportErrorSummary(sys, program.Options())(allDiagnostics)
-	return allDiagnostics, emitResult, ExitStatusSuccess
+	result.diagnostics = allDiagnostics
+	result.emitResult = emitResult
+	result.status = ExitStatusSuccess
+	return result
 }
 
 // func isBuildCommand(args []string) bool {
