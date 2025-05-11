@@ -107,10 +107,10 @@ func parseArgs() *cliOptions {
 	flag.Var(&opts.tsc.showConfig, "showConfig", diagnostics.Print_the_final_configuration_instead_of_building.Format())
 	flag.BoolVar(&opts.tsc.version, "version", false, diagnostics.Print_the_compiler_s_version.Format())
 
-	flag.BoolVar(&opts.devel.quiet, "q", false, "Do not print diagnostics.")
-	flag.BoolVar(&opts.devel.quiet, "quiet", false, "Do not print diagnostics.")
-	flag.BoolVar(&opts.devel.singleThreaded, "singleThreaded", false, "Run in single threaded mode.")
-	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
+	flag.BoolVar(&opts.devel.quiet, "q", false, diagnostics.Do_not_print_diagnostics.Format())
+	flag.BoolVar(&opts.devel.quiet, "quiet", false, diagnostics.Do_not_print_diagnostics.Format())
+	flag.BoolVar(&opts.devel.singleThreaded, "singleThreaded", false, diagnostics.Run_in_single_threaded_mode.Format())
+	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", diagnostics.Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory.Format())
 	flag.Parse()
 
 	if len(flag.Args()) > 0 {
