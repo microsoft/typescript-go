@@ -217,6 +217,7 @@ var optionsForCompiler = []*CommandLineOption{
 		Kind:        CommandLineOptionTypeBoolean,
 		Category:    diagnostics.Command_line_Options,
 		Description: diagnostics.Do_not_print_diagnostics,
+		ShortName:   "q",
 	},
 	{
 		Name:        "singleThreaded",
