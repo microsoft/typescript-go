@@ -2,9 +2,6 @@
 
 [Not sure what this is? Read the announcement post!](https://devblogs.microsoft.com/typescript/typescript-native-port/)
 
-This repo is very much under active development; as such there are no published artifacts at this time.
-Interested developers can clone and run locally to try out things as they become available.
-
 ## How to Build and Run
 
 This repo uses [Go 1.24 or higher](https://go.dev/dl/), [Rust 1.85 or higher](https://www.rust-lang.org/tools/install), [Node.js with npm](https://nodejs.org/), and [`hereby`](https://www.npmjs.com/package/hereby).
