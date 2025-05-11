@@ -775,6 +775,9 @@ export const buildNativePreview = task({
         inputPackageJson.version = getVersion();
         delete inputPackageJson.private;
 
+        const { stdout: gitHead } = await $pipe`git rev-parse HEAD`;
+        inputPackageJson.gitHead = gitHead;
+
         const mainPackage = {
             ...inputPackageJson,
             optionalDependencies: Object.fromEntries(packages.map(p => [p.packageName, getVersion()])),
