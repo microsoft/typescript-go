@@ -2,6 +2,7 @@ package execute
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -102,7 +103,8 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			return ExitStatusDiagnosticsPresent_OutputsGenerated, nil
 		}
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
-			return ExitStatusNotImplemented, nil
+			showConfig(sys, configParseResult.CompilerOptions())
+			return ExitStatusSuccess, nil
 		}
 		// updateReportDiagnostic
 		if isWatchSet(configParseResult.CompilerOptions()) {
@@ -118,7 +120,8 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		), nil
 	} else {
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
-			return ExitStatusNotImplemented, nil
+			showConfig(sys, compilerOptionsFromCommandLine)
+			return ExitStatusSuccess, nil
 		}
 		// todo update reportDiagnostic
 		if isWatchSet(compilerOptionsFromCommandLine) {
@@ -258,4 +261,11 @@ func isWatchSet(options *core.CompilerOptions) bool {
 
 func isIncrementalCompilation(options *core.CompilerOptions) bool {
 	return options.Incremental.IsTrue()
+}
+
+func showConfig(sys System, config *core.CompilerOptions) {
+	// !!!
+	enc := json.NewEncoder(sys.Writer())
+	enc.SetIndent("", "    ")
+	enc.Encode(config) //nolint:errcheck,errchkjson
 }
