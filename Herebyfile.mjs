@@ -784,11 +784,16 @@ export const buildNativePreview = task({
 
         fs.mkdirSync(mainPackageDir, { recursive: true });
 
+        await fs.promises.cp(inputDir, mainPackageDir, {
+            recursive: true,
+            filter: src => {
+                src = src.replace(/\\/g, "/");
+                return !src.endsWith("/node_modules") && !src.endsWith("/tsconfig.json");
+            },
+        });
+
         fs.writeFileSync(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
         fs.copyFileSync("LICENSE", path.join(mainPackageDir, "LICENSE"));
-        fs.copyFileSync(path.join(inputDir, "README.md"), path.join(mainPackageDir, "README.md"));
-        fs.cpSync(path.join(inputDir, "bin"), path.join(mainPackageDir, "bin"), { recursive: true });
-        fs.cpSync(path.join(inputDir, "lib"), path.join(mainPackageDir, "lib"), { recursive: true });
 
         await Promise.all(packages.map(async ({ os, arch, goos, goarch, dirName, packageName }) => {
             const dir = path.join(npmOutputDir, dirName);
