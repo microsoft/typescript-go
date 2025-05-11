@@ -240,7 +240,7 @@ export const buildWatch = task({
 export const cleanBuilt = task({
     name: "clean:built",
     hiddenFromTaskList: true,
-    run: () => fs.promises.rm("built", { recursive: true, force: true }),
+    run: () => rimraf("built"),
 });
 
 export const generate = task({
@@ -759,7 +759,7 @@ export const buildNativePreview = task({
     name: "build:native-preview",
     run: async () => {
         const npmOutputDir = "./built/npm";
-        await fs.promises.rm(npmOutputDir, { recursive: true, force: true });
+        await rimraf(npmOutputDir);
 
         const packages = supportedPlatforms.map(([os, arch]) => {
             const goos = nodeToGOOS(os);
@@ -844,7 +844,7 @@ export const buildNativePreviewExtensions = task({
         const outDir = path.join(__dirname, "built", "vsix");
         await fs.promises.mkdir(outDir, { recursive: true });
 
-        await fs.promises.rm("./_extension/lib", { recursive: true, force: true });
+        await rimraf("./_extension/lib");
 
         for (const [os, arch] of supportedPlatforms) {
             // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
@@ -856,7 +856,7 @@ export const buildNativePreviewExtensions = task({
                 await $({ cwd: path.join(__dirname, "_extension") })`vsce package --skip-license --no-dependencies --out ${outVsix} --target ${target}`;
             }
             finally {
-                await fs.promises.rm("./_extension/lib", { recursive: true, force: true });
+                await rimraf("./_extension/lib");
             }
         }
     },
