@@ -37,7 +37,7 @@ func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnos
 	}
 
 	formatOpts := getFormatOptsOfSys(sys)
-	if options.Pretty.IsFalseOrUnknown() {
+	if options.Pretty.IsFalse() {
 		return func(diagnostic *ast.Diagnostic) {
 			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, formatOpts)
 			sys.EndWrite()
