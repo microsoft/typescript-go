@@ -128,9 +128,6 @@ func main() {
 }
 
 func runMain() int {
-	// TypeScript uses ANSI escape sequences which cmd.exe won't parse without enabling virtual terminal processing.
-	enableVirtualTerminalProcessing()
-
 	if args := os.Args[1:]; len(args) > 0 {
 		switch args[0] {
 		case "tsc":
