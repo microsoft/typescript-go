@@ -698,36 +698,6 @@ export class Debouncer {
     }
 }
 
-/**
- * @param {string} goos
- */
-function goosToNodePlatform(goos) {
-    switch (goos) {
-        case "darwin":
-            return "darwin";
-        case "linux":
-            return "linux";
-        case "windows":
-            return "win32";
-        default:
-            throw new Error(`Unsupported GOOS: ${goos}`);
-    }
-}
-
-/**
- * @param {string} goarch
- */
-function goarchToNodeArch(goarch) {
-    switch (goarch) {
-        case "amd64":
-            return "x64";
-        case "arm64":
-            return "arm64";
-        default:
-            throw new Error(`Unsupported GOARCH: ${goarch}`);
-    }
-}
-
 const getVersion = memoize(() => {
     const f = fs.readFileSync("./internal/core/version.go", "utf8");
     const match = f.match(/Version\s*=\s*"([^"]+)"/);
@@ -741,23 +711,55 @@ const getVersion = memoize(() => {
     return version;
 });
 
+const supportedPlatforms = [
+    ["darwin", "arm64"],
+    ["darwin", "x64"],
+    ["linux", "arm64"],
+    ["linux", "x64"],
+    ["win32", "arm64"],
+    ["win32", "x64"],
+];
+
+/**
+ * @param {string} os
+ */
+function nodeToGOOS(os) {
+    switch (os) {
+        case "darwin":
+            return "darwin";
+        case "linux":
+            return "linux";
+        case "win32":
+            return "windows";
+        default:
+            throw new Error(`Unsupported OS: ${os}`);
+    }
+}
+
+/**
+ * @param {string} arch
+ */
+function nodeToGOARCH(arch) {
+    switch (arch) {
+        case "x64":
+            return "amd64";
+        case "arm64":
+            return "arm64";
+        default:
+            throw new Error(`Unsupported ARCH: ${arch}`);
+    }
+}
+
 async function buildNativePreviewPackages() {
     const npmOutputDir = "./built/npm";
     fs.rmSync(npmOutputDir, { recursive: true, force: true });
 
-    const packages = [
-        ["darwin", "arm64"],
-        ["darwin", "amd64"],
-        ["linux", "arm64"],
-        ["linux", "amd64"],
-        ["windows", "arm64"],
-        ["windows", "amd64"],
-    ].map(([goos, goarch]) => {
-        const nodePlatform = goosToNodePlatform(goos);
-        const nodeArch = goarchToNodeArch(goarch);
-        const dirName = `native-preview-${nodePlatform}-${nodeArch}`;
+    const packages = supportedPlatforms.map(([os, arch]) => {
+        const goos = nodeToGOOS(os);
+        const goarch = nodeToGOARCH(arch);
+        const dirName = `native-preview-${os}-${arch}`;
         const packageName = `@typescript/${dirName}`;
-        return { goos, goarch, nodePlatform, nodeArch, dirName, packageName };
+        return { os, arch, goos, goarch, dirName, packageName };
     });
 
     const inputDir = "./_packages/native-preview";
@@ -780,7 +782,7 @@ async function buildNativePreviewPackages() {
     fs.cpSync(path.join(inputDir, "bin"), path.join(mainPackageDir, "bin"), { recursive: true });
     fs.cpSync(path.join(inputDir, "lib"), path.join(mainPackageDir, "lib"), { recursive: true });
 
-    await Promise.all(packages.map(async ({ goos, goarch, nodePlatform, nodeArch, dirName, packageName }) => {
+    await Promise.all(packages.map(async ({ os, arch, goos, goarch, dirName, packageName }) => {
         const dir = path.join(npmOutputDir, dirName);
 
         const packageJson = {
@@ -788,8 +790,8 @@ async function buildNativePreviewPackages() {
             bin: undefined,
             imports: undefined,
             name: packageName,
-            os: [nodePlatform],
-            cpu: [nodeArch],
+            os: [os],
+            cpu: [arch],
             exports: {
                 "./package.json": "./package.json",
             },
@@ -803,7 +805,7 @@ async function buildNativePreviewPackages() {
         const readme = [
             `# \`${packageName}\``,
             "",
-            `This package provides ${nodePlatform}-${nodeArch} support for [@typescript/native-preview](https://www.npmjs.com/package/@typescript/native-preview).`,
+            `This package provides ${os}-${arch} support for [@typescript/native-preview](https://www.npmjs.com/package/@typescript/native-preview).`,
         ];
 
         fs.writeFileSync(path.join(dir, "README.md"), readme.join("\n") + "\n");
