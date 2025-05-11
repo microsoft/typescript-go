@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -26,7 +27,7 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 
 func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) (ExitStatus, *watcher) {
 	configFileName := ""
-	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions().Pretty)
+	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions())
 	// if commandLine.Options().Locale != nil
 
 	if len(commandLine.Errors) > 0 {
@@ -34,6 +35,12 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			reportDiagnostic(e)
 		}
 		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
+	}
+
+	if pprofDir := commandLine.CompilerOptions().PprofDir; pprofDir != "" {
+		// !!! stderr?
+		profileSession := pprof.BeginProfiling(pprofDir, sys.Writer())
+		defer profileSession.Stop()
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {

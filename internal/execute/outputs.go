@@ -27,9 +27,13 @@ func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
 
 type diagnosticReporter = func(*ast.Diagnostic)
 
-func createDiagnosticReporter(sys System, pretty core.Tristate) diagnosticReporter {
+func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnosticReporter {
+	if options.Quiet.IsTrue() {
+		return func(diagnostic *ast.Diagnostic) {}
+	}
+
 	formatOpts := getFormatOptsOfSys(sys)
-	if pretty.IsFalseOrUnknown() {
+	if options.Pretty.IsFalseOrUnknown() {
 		return func(diagnostic *ast.Diagnostic) {
 			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, formatOpts)
 			sys.EndWrite()

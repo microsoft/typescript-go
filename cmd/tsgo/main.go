@@ -185,11 +185,16 @@ func runMain() int {
 	// !!! is the working directory actually the config path?
 	host := compiler.NewCachedFSCompilerHost(compilerOptions, currentDirectory, fs, defaultLibraryPath)
 
+	var singleThreaded core.Tristate
+	if opts.devel.singleThreaded {
+		singleThreaded = core.TSTrue
+	}
+
 	parseStart := time.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
 		ConfigFileName: configFileName,
 		Options:        compilerOptions,
-		SingleThreaded: opts.devel.singleThreaded,
+		SingleThreaded: singleThreaded,
 		Host:           host,
 	})
 	parseTime := time.Since(parseStart)
