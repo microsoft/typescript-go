@@ -828,3 +828,30 @@ export const buildNativePreview = task({
         }));
     },
 });
+
+export const buildNativePreviewExtensions = task({
+    name: "build:native-preview-extensions",
+    dependencies: [buildNativePreview],
+    run: async () => {
+        await $({ cwd: path.join(__dirname, "_extension") })`npm run package`;
+
+        const outDir = path.join(__dirname, "built", "vsix");
+        fs.mkdirSync(outDir, { recursive: true });
+
+        fs.rmSync("./_extension/lib", { recursive: true, force: true });
+
+        for (const [os, arch] of supportedPlatforms) {
+            // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
+            const target = `${os}-${arch === "arm" ? "armhf" : arch}`;
+            const libDir = `./built/npm/native-preview-${os}-${arch}/lib`;
+            fs.cpSync(libDir, "./_extension/lib", { recursive: true });
+            try {
+                const outVsix = path.join(outDir, `typescript-lsp.${target}.vsix`);
+                await $({ cwd: path.join(__dirname, "_extension") })`vsce package --skip-license --no-dependencies --out ${outVsix} --target ${target}`;
+            }
+            finally {
+                fs.rmSync("./_extension/lib", { recursive: true, force: true });
+            }
+        }
+    },
+});

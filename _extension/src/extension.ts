@@ -15,7 +15,7 @@ let statusBarItem: vscode.StatusBarItem;
 
 const BUILTIN_TS_EXTENSION_ID = "vscode.typescript-language-features";
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     const tsExtension = vscode.extensions.getExtension(BUILTIN_TS_EXTENSION_ID);
     if (tsExtension?.isActive && !vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo")) {
         return;
@@ -29,9 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const config = vscode.workspace.getConfiguration("typescript-go");
 
-    const exe = config.get<string>("executablePath") || context.asAbsolutePath(
-        path.join("../", "built", "local", `tsgo${process.platform === "win32" ? ".exe" : ""}`),
-    );
+    const exe = await getExePath(context);
 
     output.appendLine(`Resolved to ${exe}`);
 
@@ -222,4 +220,23 @@ function getLanguageForUri(uri: vscode.Uri): string | undefined {
         default:
             return undefined;
     }
+}
+
+async function getExePath(context: vscode.ExtensionContext): Promise<string> {
+    const config = vscode.workspace.getConfiguration("typescript-go");
+    let exe = config.get<string>("executablePath");
+    if (exe) {
+        return exe;
+    }
+
+    const exeName = `tsgo${process.platform === "win32" ? ".exe" : ""}`;
+
+    exe = context.asAbsolutePath(path.join("../", "built", "local", exeName));
+    try {
+        await vscode.workspace.fs.stat(vscode.Uri.file(exe));
+        return exe;
+    }
+    catch {}
+
+    return context.asAbsolutePath(path.join("./lib", exeName));
 }
