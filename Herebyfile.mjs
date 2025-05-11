@@ -759,7 +759,7 @@ export const buildNativePreview = task({
     name: "build:native-preview",
     run: async () => {
         const npmOutputDir = "./built/npm";
-        fs.rmSync(npmOutputDir, { recursive: true, force: true });
+        await fs.promises.rm(npmOutputDir, { recursive: true, force: true });
 
         const packages = supportedPlatforms.map(([os, arch]) => {
             const goos = nodeToGOOS(os);
@@ -782,7 +782,7 @@ export const buildNativePreview = task({
 
         const mainPackageDir = path.join(npmOutputDir, "native-preview");
 
-        fs.mkdirSync(mainPackageDir, { recursive: true });
+        await fs.promises.mkdir(mainPackageDir, { recursive: true });
 
         await fs.promises.cp(inputDir, mainPackageDir, {
             recursive: true,
@@ -792,8 +792,8 @@ export const buildNativePreview = task({
             },
         });
 
-        fs.writeFileSync(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
-        fs.copyFileSync("LICENSE", path.join(mainPackageDir, "LICENSE"));
+        await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
+        await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
 
         await Promise.all(packages.map(async ({ os, arch, goos, goarch, dirName, packageName }) => {
             const dir = path.join(npmOutputDir, dirName);
@@ -811,9 +811,9 @@ export const buildNativePreview = task({
             };
 
             const out = path.join(dir, "lib");
-            fs.mkdirSync(out, { recursive: true });
-            fs.writeFileSync(path.join(dir, "package.json"), JSON.stringify(packageJson, undefined, 4));
-            fs.copyFileSync("LICENSE", path.join(dir, "LICENSE"));
+            await fs.promises.mkdir(out, { recursive: true });
+            await fs.promises.writeFile(path.join(dir, "package.json"), JSON.stringify(packageJson, undefined, 4));
+            await fs.promises.copyFile("LICENSE", path.join(dir, "LICENSE"));
 
             const readme = [
                 `# \`${packageName}\``,
@@ -821,7 +821,7 @@ export const buildNativePreview = task({
                 `This package provides ${os}-${arch} support for [@typescript/native-preview](https://www.npmjs.com/package/@typescript/native-preview).`,
             ];
 
-            fs.writeFileSync(path.join(dir, "README.md"), readme.join("\n") + "\n");
+            fs.promises.writeFile(path.join(dir, "README.md"), readme.join("\n") + "\n");
 
             await Promise.all([
                 generateLibs(out),
@@ -842,21 +842,21 @@ export const buildNativePreviewExtensions = task({
         await $({ cwd: path.join(__dirname, "_extension") })`npm run package`;
 
         const outDir = path.join(__dirname, "built", "vsix");
-        fs.mkdirSync(outDir, { recursive: true });
+        await fs.promises.mkdir(outDir, { recursive: true });
 
-        fs.rmSync("./_extension/lib", { recursive: true, force: true });
+        await fs.promises.rm("./_extension/lib", { recursive: true, force: true });
 
         for (const [os, arch] of supportedPlatforms) {
             // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
             const target = `${os}-${arch === "arm" ? "armhf" : arch}`;
             const libDir = `./built/npm/native-preview-${os}-${arch}/lib`;
-            fs.cpSync(libDir, "./_extension/lib", { recursive: true });
+            await fs.promises.cp(libDir, "./_extension/lib", { recursive: true });
             try {
                 const outVsix = path.join(outDir, `typescript-lsp.${target}.vsix`);
                 await $({ cwd: path.join(__dirname, "_extension") })`vsce package --skip-license --no-dependencies --out ${outVsix} --target ${target}`;
             }
             finally {
-                fs.rmSync("./_extension/lib", { recursive: true, force: true });
+                await fs.promises.rm("./_extension/lib", { recursive: true, force: true });
             }
         }
     },
