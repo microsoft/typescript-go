@@ -67,7 +67,6 @@ type cliOptions struct {
 	devel struct {
 		quiet          bool
 		singleThreaded bool
-		printTypes     bool
 		pprofDir       string
 	}
 }
@@ -111,7 +110,6 @@ func parseArgs() *cliOptions {
 	flag.BoolVar(&opts.devel.quiet, "q", false, "Do not print diagnostics.")
 	flag.BoolVar(&opts.devel.quiet, "quiet", false, "Do not print diagnostics.")
 	flag.BoolVar(&opts.devel.singleThreaded, "singleThreaded", false, "Run in single threaded mode.")
-	flag.BoolVar(&opts.devel.printTypes, "printTypes", false, "Print types defined in 'main.ts'.")
 	flag.StringVar(&opts.devel.pprofDir, "pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
 	flag.Parse()
 
@@ -223,19 +221,15 @@ func runMain() int {
 
 	diagnostics = program.GetSyntacticDiagnostics(context.Background(), nil)
 	if len(diagnostics) == 0 {
-		if opts.devel.printTypes {
-			program.PrintSourceFileWithTypes()
-		} else {
-			bindStart := time.Now()
-			_ = program.GetBindDiagnostics(context.Background(), nil)
-			bindTime = time.Since(bindStart)
+		bindStart := time.Now()
+		_ = program.GetBindDiagnostics(context.Background(), nil)
+		bindTime = time.Since(bindStart)
 
-			// !!! the checker already reads noCheck, but do it here just for stats printing for now
-			if compilerOptions.NoCheck.IsFalseOrUnknown() {
-				checkStart := time.Now()
-				diagnostics = slices.Concat(program.GetGlobalDiagnostics(), program.GetSemanticDiagnostics(context.Background(), nil))
-				checkTime = time.Since(checkStart)
-			}
+		// !!! the checker already reads noCheck, but do it here just for stats printing for now
+		if compilerOptions.NoCheck.IsFalseOrUnknown() {
+			checkStart := time.Now()
+			diagnostics = slices.Concat(program.GetGlobalDiagnostics(), program.GetSemanticDiagnostics(context.Background(), nil))
+			checkTime = time.Since(checkStart)
 		}
 	}
 

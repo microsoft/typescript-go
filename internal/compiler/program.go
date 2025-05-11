@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"context"
-	"fmt"
 	"slices"
 	"sync"
 
@@ -498,14 +497,6 @@ func (p *Program) InstantiationCount() int {
 		count += int(checker.TotalInstantiationCount)
 	}
 	return count
-}
-
-func (p *Program) PrintSourceFileWithTypes() {
-	for _, file := range p.files {
-		if tspath.GetBaseFileName(file.FileName()) == "main.ts" {
-			fmt.Print(p.GetTypeChecker().SourceFileWithTypes(file))
-		}
-	}
 }
 
 func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
