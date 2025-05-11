@@ -755,80 +755,76 @@ function nodeToGOARCH(arch) {
     }
 }
 
-async function buildNativePreviewPackages() {
-    const npmOutputDir = "./built/npm";
-    fs.rmSync(npmOutputDir, { recursive: true, force: true });
-
-    const packages = supportedPlatforms.map(([os, arch]) => {
-        const goos = nodeToGOOS(os);
-        const goarch = nodeToGOARCH(arch);
-        const dirName = `native-preview-${os}-${arch}`;
-        const packageName = `@typescript/${dirName}`;
-        return { os, arch, goos, goarch, dirName, packageName };
-    });
-
-    const inputDir = "./_packages/native-preview";
-
-    const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
-    inputPackageJson.version = getVersion();
-    delete inputPackageJson.private;
-
-    const mainPackage = {
-        ...inputPackageJson,
-        optionalDependencies: Object.fromEntries(packages.map(p => [p.packageName, getVersion()])),
-    };
-
-    const mainPackageDir = path.join(npmOutputDir, "native-preview");
-
-    fs.mkdirSync(mainPackageDir, { recursive: true });
-
-    fs.writeFileSync(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
-    fs.copyFileSync("LICENSE", path.join(mainPackageDir, "LICENSE"));
-    fs.cpSync(path.join(inputDir, "bin"), path.join(mainPackageDir, "bin"), { recursive: true });
-    fs.cpSync(path.join(inputDir, "lib"), path.join(mainPackageDir, "lib"), { recursive: true });
-
-    await Promise.all(packages.map(async ({ os, arch, goos, goarch, dirName, packageName }) => {
-        const dir = path.join(npmOutputDir, dirName);
-
-        const packageJson = {
-            ...inputPackageJson,
-            bin: undefined,
-            imports: undefined,
-            name: packageName,
-            os: [os],
-            cpu: [arch],
-            exports: {
-                "./package.json": "./package.json",
-            },
-        };
-
-        const out = path.join(dir, "lib");
-        fs.mkdirSync(out, { recursive: true });
-        fs.writeFileSync(path.join(dir, "package.json"), JSON.stringify(packageJson, undefined, 4));
-        fs.copyFileSync("LICENSE", path.join(dir, "LICENSE"));
-
-        const readme = [
-            `# \`${packageName}\``,
-            "",
-            `This package provides ${os}-${arch} support for [@typescript/native-preview](https://www.npmjs.com/package/@typescript/native-preview).`,
-        ];
-
-        fs.writeFileSync(path.join(dir, "README.md"), readme.join("\n") + "\n");
-
-        await Promise.all([
-            generateLibs(out),
-            buildTsgo({
-                out,
-                env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
-                extraFlags: ["-trimpath", "-ldflags=-s -w"],
-            }),
-        ]);
-    }));
-}
-
 export const buildNativePreview = task({
     name: "build:native-preview",
     run: async () => {
-        await buildNativePreviewPackages();
+        const npmOutputDir = "./built/npm";
+        fs.rmSync(npmOutputDir, { recursive: true, force: true });
+
+        const packages = supportedPlatforms.map(([os, arch]) => {
+            const goos = nodeToGOOS(os);
+            const goarch = nodeToGOARCH(arch);
+            const dirName = `native-preview-${os}-${arch}`;
+            const packageName = `@typescript/${dirName}`;
+            return { os, arch, goos, goarch, dirName, packageName };
+        });
+
+        const inputDir = "./_packages/native-preview";
+
+        const inputPackageJson = JSON.parse(fs.readFileSync(path.join(inputDir, "package.json"), "utf8"));
+        inputPackageJson.version = getVersion();
+        delete inputPackageJson.private;
+
+        const mainPackage = {
+            ...inputPackageJson,
+            optionalDependencies: Object.fromEntries(packages.map(p => [p.packageName, getVersion()])),
+        };
+
+        const mainPackageDir = path.join(npmOutputDir, "native-preview");
+
+        fs.mkdirSync(mainPackageDir, { recursive: true });
+
+        fs.writeFileSync(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
+        fs.copyFileSync("LICENSE", path.join(mainPackageDir, "LICENSE"));
+        fs.cpSync(path.join(inputDir, "bin"), path.join(mainPackageDir, "bin"), { recursive: true });
+        fs.cpSync(path.join(inputDir, "lib"), path.join(mainPackageDir, "lib"), { recursive: true });
+
+        await Promise.all(packages.map(async ({ os, arch, goos, goarch, dirName, packageName }) => {
+            const dir = path.join(npmOutputDir, dirName);
+
+            const packageJson = {
+                ...inputPackageJson,
+                bin: undefined,
+                imports: undefined,
+                name: packageName,
+                os: [os],
+                cpu: [arch],
+                exports: {
+                    "./package.json": "./package.json",
+                },
+            };
+
+            const out = path.join(dir, "lib");
+            fs.mkdirSync(out, { recursive: true });
+            fs.writeFileSync(path.join(dir, "package.json"), JSON.stringify(packageJson, undefined, 4));
+            fs.copyFileSync("LICENSE", path.join(dir, "LICENSE"));
+
+            const readme = [
+                `# \`${packageName}\``,
+                "",
+                `This package provides ${os}-${arch} support for [@typescript/native-preview](https://www.npmjs.com/package/@typescript/native-preview).`,
+            ];
+
+            fs.writeFileSync(path.join(dir, "README.md"), readme.join("\n") + "\n");
+
+            await Promise.all([
+                generateLibs(out),
+                buildTsgo({
+                    out,
+                    env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
+                    extraFlags: ["-trimpath", "-ldflags=-s -w"],
+                }),
+            ]);
+        }));
     },
 });
