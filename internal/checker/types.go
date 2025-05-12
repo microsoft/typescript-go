@@ -88,12 +88,12 @@ type SymbolReferenceLinks struct {
 // Links for value symbols
 
 type ValueSymbolLinks struct {
-	resolvedType                  *Type // Type of value symbol
-	writeType                     *Type
-	target                        *ast.Symbol
-	mapper                        *TypeMapper
-	nameType                      *Type
-	containingType                *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
+	resolvedType   *Type // Type of value symbol
+	writeType      *Type
+	target         *ast.Symbol
+	mapper         *TypeMapper
+	nameType       *Type
+	containingType *Type // Mapped type for mapped type property, containing union or intersection type for synthetic property
 }
 
 // Additional links for mapped symbols
@@ -152,9 +152,9 @@ type ExportTypeLinks struct {
 // Links for type aliases
 
 type TypeAliasLinks struct {
-	declaredType   *Type
-	typeParameters []*Type          // Type parameters of type alias (undefined if non-generic)
-	instantiations map[string]*Type // Instantiations of generic type alias (undefined if non-generic)
+	declaredType                  *Type
+	typeParameters                []*Type          // Type parameters of type alias (undefined if non-generic)
+	instantiations                map[string]*Type // Instantiations of generic type alias (undefined if non-generic)
 	isConstructorDeclaredProperty bool
 }
 
