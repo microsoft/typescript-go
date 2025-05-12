@@ -375,67 +375,14 @@ func (s *Server) handleSignatureHelp(req *lsproto.RequestMessage) error {
 	if err != nil {
 		return s.sendError(req.ID, err)
 	}
-	var triggerReason *ls.SignatureHelpTriggerReason
-	if params.Context != nil {
-		if params.Context.TriggerKind == 1 {
-			var triggerCharacter *string = new(string)
-			if params.Context.TriggerCharacter != nil {
-				if *params.Context.TriggerCharacter == "(" {
-					*triggerCharacter = "("
-				} else if *params.Context.TriggerCharacter == "," {
-					*triggerCharacter = ","
-				} else if *params.Context.TriggerCharacter == "<" {
-					*triggerCharacter = "<"
-				}
-			}
-			triggerReason = &ls.SignatureHelpTriggerReason{
-				Invoked: &ls.SignatureHelpInvokedReason{
-					Kind:             "invoked",
-					TriggerCharacter: triggerCharacter,
-				},
-			}
-		} else if params.Context.TriggerKind == 2 {
-			var triggerCharacter *ls.SignatureHelpTriggerCharacter = new(ls.SignatureHelpTriggerCharacter)
-			if params.Context.TriggerCharacter != nil {
-				if *params.Context.TriggerCharacter == "(" {
-					*triggerCharacter = ls.OpenParenTriggerCharacter
-				} else if *params.Context.TriggerCharacter == "," {
-					*triggerCharacter = ls.CommaTriggerCharacter
-				} else if *params.Context.TriggerCharacter == "<" {
-					*triggerCharacter = ls.LessThanTriggerCharacter
-				}
-			}
-			triggerReason = &ls.SignatureHelpTriggerReason{
-				CharacterTyped: &ls.SignatureHelpCharacterTypedReason{
-					Kind:             "characterTyped",
-					TriggerCharacter: triggerCharacter,
-				},
-			}
-		} else if params.Context.TriggerKind == 3 {
-			var triggerCharacter *ls.SignatureHelpRetriggerCharacter = new(ls.SignatureHelpRetriggerCharacter)
-			if params.Context.TriggerCharacter != nil {
-				if *params.Context.TriggerCharacter == "(" {
-					triggerCharacter.OpenParenTrigger = ls.OpenParenTriggerCharacter
-				} else if *params.Context.TriggerCharacter == "," {
-					triggerCharacter.CommaTrigger = ls.CommaTriggerCharacter
-				} else if *params.Context.TriggerCharacter == "<" {
-					triggerCharacter.LessThanTrigger = ls.LessThanTriggerCharacter
-				} else if *params.Context.TriggerCharacter == ")" {
-					triggerCharacter.CloseParenTrigger = ls.CloseParenTriggerCharacter
-				}
-			}
-			triggerReason = &ls.SignatureHelpTriggerReason{
-				Retriggered: &ls.SignatureHelpRetriggeredReason{
-					Kind:             "retrigger",
-					TriggerCharacter: triggerCharacter,
-				},
-			}
-		}
-
-	}
-	signatureHelp := project.LanguageService().GetSignatureHelpItems(file.FileName(), pos, triggerReason)
-	toLspSignatureHelp := ls.ToLspSignatureHelp(signatureHelp)
-	return s.sendResult(req.ID, toLspSignatureHelp)
+	signatureHelp := project.LanguageService().ProvideSignatureHelp(
+		file.FileName(),
+		pos,
+		params.Context,
+		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
+		&ls.UserPreferences{},
+	)
+	return s.sendResult(req.ID, signatureHelp)
 }
 
 func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {

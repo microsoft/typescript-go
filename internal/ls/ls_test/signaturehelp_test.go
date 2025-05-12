@@ -5,7 +5,9 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/parser"
+	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
@@ -14,32 +16,31 @@ import (
 )
 
 type verifySignatureHelpOptions struct {
-	//overloadsCount            int
-	docComment                string
-	text                      string
-	parameterName             string
-	parameterSpan             string
-	parameterDocComment       string
-	parameterCount            int
-	isVariadic                bool
-	triggerReason             ls.SignatureHelpTriggerReason
+	docComment     string
+	text           string
+	parameterSpan  string
+	parameterCount int
+	isVariadic     bool
+	//triggerReason             ls.SignatureHelpTriggerReason
 	overrideSelectedItemIndex int
 	//tags?: ReadonlyArray<JSDocTagInfo>;
 }
 
-func TestSignature(t *testing.T) {
+const mainFileName = "/usage.ts"
+
+func TestSignatureHelp(t *testing.T) {
 	t.Parallel()
 
 	testCases := []struct {
-		title  string
-		input  string
-		output map[string]verifySignatureHelpOptions
+		title    string
+		input    string
+		expected map[string]verifySignatureHelpOptions
 	}{
 		{
 			title: "SignatureHelpCallExpressions",
 			input: `function fnTest(str: string, num: number) { }
 fnTest(/*1*/'', /*2*/5);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {
 					text:           `fnTest(str: string, num: number): void`,
 					parameterCount: 2,
@@ -73,7 +74,7 @@ takesCb((n, s, b, /*contextualParameter4*/))
 type Cb = () => void;
 const cb: Cb = (/*contextualTypeAlias*/
 const cb2: () => void = (/*contextualFunctionType*/)`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"takesObj0": {
 					text:           "m(n: number, s: string): void",
 					parameterCount: 2,
@@ -142,7 +143,7 @@ const cb2: () => void = (/*contextualFunctionType*/)`,
 	return null;
 }
 anonymousFunctionTest(5, "")(/*anonymousFunction1*/1, /*anonymousFunction2*/"");`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"anonymousFunction1": {
 					text:           `(a: number, b: string): string`,
 					parameterCount: 2,
@@ -161,7 +162,7 @@ anonymousFunctionTest(5, "")(/*anonymousFunction1*/1, /*anonymousFunction2*/"");
 }
 
 Foo(/**/`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"": {
 					text:           "Foo(arg1: string, arg2: string): void",
 					parameterCount: 2,
@@ -175,7 +176,7 @@ Foo(/**/`,
 }
 
 Foo(/**/;`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"": {
 					text:           "Foo(arg1: string, arg2: string): void",
 					parameterCount: 2,
@@ -187,7 +188,7 @@ Foo(/**/;`,
 			title: "signatureHelpCallExpression",
 			input: `function fnTest(str: string, num: number) { }
 fnTest(/*1*/'', /*2*/5);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {
 					text:           `fnTest(str: string, num: number): void`,
 					parameterCount: 2,
@@ -204,7 +205,7 @@ fnTest(/*1*/'', /*2*/5);`,
 			title: "signatureHelpConstructExpression",
 			input: `class sampleCls { constructor(str: string, num: number) { } }
 var x = new sampleCls(/*1*/"", /*2*/5);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {
 					text:           "sampleCls(str: string, num: number): sampleCls",
 					parameterCount: 2,
@@ -231,7 +232,7 @@ class B3 extends B2 {
         super(/*indirectSuperCall*/3);
     }
 }`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"indirectSuperCall": {
 					text:           "B2(n: number): B2",
 					parameterCount: 1,
@@ -244,7 +245,7 @@ class B3 extends B2 {
 			input: `class clsOverload { constructor(); constructor(test: string); constructor(test?: string) { } }
 var x = new clsOverload(/*1*/);
 var y = new clsOverload(/*2*/'');`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {
 					text:           "clsOverload(): clsOverload",
 					parameterCount: 0,
@@ -256,27 +257,27 @@ var y = new clsOverload(/*2*/'');`,
 				},
 			},
 		},
-		// 		{
-		// 			title: "signatureHelpEmptyLists",
-		// 			input: `function Foo(arg1: string, arg2: string) {
-		// }
+		{
+			title: "signatureHelpEmptyLists",
+			input: `function Foo(arg1: string, arg2: string) {
+		}
 
-		// Foo(/*1*/);
-		// function Bar<T>(arg1: string, arg2: string) { }
-		// Bar</*2*/>();`,
-		// 			output: map[string]verifySignatureHelpOptions{
-		// 				"1": {
-		// 					text:           "Foo(arg1: string, arg2: string): void",
-		// 					parameterCount: 2,
-		// 					parameterSpan:  "arg1: string",
-		// 				},
-		// 				"2": {
-		// 					text:           "Bar<T>(arg1: string, arg2: string): void",
-		// 					parameterCount: -1,
-		// 					parameterSpan:  "T",
-		// 				},
-		// 			},
-		// 		},
+		Foo(/*1*/);
+		function Bar<T>(arg1: string, arg2: string) { }
+		Bar</*2*/>();`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {
+					text:           "Foo(arg1: string, arg2: string): void",
+					parameterCount: 2,
+					parameterSpan:  "arg1: string",
+				},
+				"2": {
+					text:           "Bar<T>(arg1: string, arg2: string): void",
+					parameterCount: 1,
+					parameterSpan:  "T",
+				},
+			},
+		},
 		{
 			title: "signatureHelpExpandedRestTuples",
 			input: `export function complex(item: string, another: string, ...rest: [] | [settings: object, errorHandler: (err: Error) => void] | [errorHandler: (err: Error) => void, ...mixins: object[]]) {
@@ -287,7 +288,7 @@ complex(/*1*/);
 complex("ok", "ok", /*2*/);
 complex("ok", "ok", e => void e, {}, /*3*/);`,
 
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {
 					text:           "complex(item: string, another: string): void",
 					parameterCount: 2,
@@ -317,7 +318,7 @@ complex("ok", "ok", e => void e, {}, /*3*/);`,
 complex(/*1*/);
 complex("ok", "ok", /*2*/);
 complex("ok", "ok", e => void e, {}, /*3*/);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {
 					text:           "complex(item: string, another: string): void",
 					parameterCount: 2,
@@ -348,7 +349,7 @@ foo(123/*1*/,)
 foo(""/*2*/, ""/*3*/)
 foo(123/*4*/, ""/*5*/, )
 foo(123/*6*/, ""/*7*/, ""/*8*/)`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {
 					text:                      "foo(args_0: string, args_1: string): void", // Different from Strada
 					parameterCount:            2,
@@ -427,7 +428,7 @@ j(/*7*/);
 g<number>(/*8*/);
 h<number>(/*9*/);
 j<number>(/*10*/);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "f(x: number, y: string): number", parameterCount: 2, parameterSpan: "x: number"},
 				"2": {text: "f(x: boolean, y: string): boolean", parameterCount: 2, parameterSpan: "x: boolean"},
 				// too few -- fill in rest with default
@@ -456,7 +457,7 @@ const o: Obj = {
     return {};
   }
 };`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "optionalMethod(current: any): any", parameterCount: 1, parameterSpan: "current: any"},
 			},
 		},
@@ -478,7 +479,7 @@ class C2 extends B2 {
        super(/*2*/ // sig help here?
    }
 }`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "B(): B", parameterCount: 0, parameterSpan: ""},
 				"2": {text: "B2(x: number): B2", parameterCount: 1, parameterSpan: "x: number"},
 			},
@@ -490,7 +491,7 @@ function functionOverload(test: string);
 function functionOverload(test?: string) { }
 functionOverload(/*functionOverload1*/);
 functionOverload(""/*functionOverload2*/);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"functionOverload1": {text: "functionOverload(): any", parameterCount: 0, parameterSpan: ""},
 				"functionOverload2": {text: "functionOverload(test: string): any", parameterCount: 1, parameterSpan: "test: string"},
 			},
@@ -500,7 +501,7 @@ functionOverload(""/*functionOverload2*/);`,
 			input: `function parameterFunction(callback: (a: number, b: string) => void) {
    callback(/*parameterFunction1*/5, /*parameterFunction2*/"");
 }`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"parameterFunction1": {text: "callback(a: number, b: string): void", parameterCount: 2, parameterSpan: "a: number"},
 				"parameterFunction2": {text: "callback(a: number, b: string): void", parameterCount: 2, parameterSpan: "b: string"},
 			},
@@ -510,7 +511,7 @@ functionOverload(""/*functionOverload2*/);`,
 			input: `class ImplicitConstructor {
 }
 var implicitConstructor = new ImplicitConstructor(/*1*/);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "ImplicitConstructor(): ImplicitConstructor", parameterCount: 0, parameterSpan: ""},
 			},
 		},
@@ -519,7 +520,7 @@ var implicitConstructor = new ImplicitConstructor(/*1*/);`,
 			input: `declare function forEach(f: () => void);
 forEach(/*1*/() => {
 });`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "forEach(f: object): any", parameterCount: 1, parameterSpan: "f: object"}, // Has object as return type
 			},
 		},
@@ -539,7 +540,7 @@ forEach(/*1*/() => {
    x.f2(5,/*incompleteCalls2*/
    x.f3(5,/*incompleteCalls3*/
 }`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"incompleteCalls1": {text: "f1(): void", parameterCount: 0, parameterSpan: ""},
 				"incompleteCalls2": {text: "f2(n: number): number", parameterCount: 1, parameterSpan: ""},
 				"incompleteCalls3": {text: "f3(n: number, s: string): string", parameterCount: 2, parameterSpan: "s: string"},
@@ -550,7 +551,7 @@ forEach(/*1*/() => {
 			input: `function foo<T>(x: number, callback: (x: T) => number) {
 }
 foo(/*1*/`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "foo(x: number, callback: object): void", parameterCount: 2, parameterSpan: "x: number"}, //returns object
 			},
 		},
@@ -558,7 +559,7 @@ foo(/*1*/`,
 			title: "signatureHelpInference",
 			input: `declare function f<T extends string>(a: T, b: T, c: T): void;
 f("x", /**/);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"": {text: `f(a: "x", b: "x", c: "x"): void`, parameterCount: 3, parameterSpan: `b: "x"`},
 			},
 		},
@@ -567,31 +568,31 @@ f("x", /**/);`,
 			input: `class base { constructor (public n: number, public y: string) { } }
 (new base(/*1*/
 (new base(0, /*2*/`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "base(n: number, y: string): base", parameterCount: 2, parameterSpan: "n: number"},
 				"2": {text: "base(n: number, y: string): base", parameterCount: 2, parameterSpan: "y: string"},
 			},
 		},
-		// 		{
-		// 			title: "signatureHelpLeadingRestTuple",
-		// 			input: `export function leading(...args: [...names: string[], allCaps: boolean]): void {
-		// }
+		{
+			title: "signatureHelpLeadingRestTuple",
+			input: `export function leading(...args: [...names: string[], allCaps: boolean]): void {
+}
 
-		// leading(/*1*/);
-		// leading("ok", /*2*/);
-		// leading("ok", "ok", /*3*/);`,
-		// 			output: map[string]verifySignatureHelpOptions{
-		// 				"1": {text: "leading(...names: string[], allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
-		// 				"2": {text: "leading(...names: string[], allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
-		// 				"3": {text: "leading(...names: string[], allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
-		// 			},
-		// 		},
+leading(/*1*/);
+leading("ok", /*2*/);
+leading("ok", "ok", /*3*/);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
+				"2": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
+				"3": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
+			},
+		},
 		{
 			title: "signatureHelpNoArguments",
 			input: `function foo(n: number): string {
 }
 foo(/**/`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"": {text: "foo(n: number): string", parameterCount: 1, parameterSpan: "n: number"},
 			},
 		},
@@ -599,7 +600,7 @@ foo(/**/`,
 			title: "signatureHelpObjectLiteral",
 			input: `var objectLiteral = { n: 5, s: "", f: (a: number, b: string) => "" };
 objectLiteral.f(/*objectLiteral1*/4, /*objectLiteral2*/"");`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"objectLiteral1": {text: "f(a: number, b: string): string", parameterCount: 2, parameterSpan: "a: number"},
 				"objectLiteral2": {text: "f(a: number, b: string): string", parameterCount: 2, parameterSpan: "b: string"},
 			},
@@ -612,7 +613,7 @@ declare function fn2(x: string);
 declare function fn2(x: string, y: number);
 fn('', fn2(/*1*/
 fn2('', fn2('',/*2*/`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "fn2(x: string): any", parameterCount: 1, parameterSpan: "x: string"},
 				"2": {text: "fn2(x: string, y: number): any", parameterCount: 2, parameterSpan: "y: number"},
 			},
@@ -628,7 +629,7 @@ function x1(a: any) {
 x1(''/*1*/);
 x1('hi'/*2*/);
 x1('bye'/*3*/);`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: `x1(z: string): any`, parameterCount: 1, parameterSpan: "z: string"},
 				"2": {text: `x1(x: "hi"): any`, parameterCount: 1, parameterSpan: `x: "hi"`},
 				"3": {text: `x1(y: "bye"): any`, parameterCount: 1, parameterSpan: `y: "bye"`},
@@ -640,25 +641,33 @@ x1('bye'/*3*/);`,
 declare function fn(x: string, y: number);
 fn(/*1*/
 fn('',/*2*/)`,
-			output: map[string]verifySignatureHelpOptions{
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "fn(x: string): any", parameterCount: 1, parameterSpan: "x: string"},
 				"2": {text: "fn(x: string, y: number): any", parameterCount: 2, parameterSpan: "y: number"},
 			},
 		},
-		// 		{
-		// 			title: "signatureHelpOnOverloadsDifferentArity",
-		// 			input: `declare function f(s: string);
-		// declare function f(n: number);
-		// declare function f(s: string, b: boolean);
-		// declare function f(n: number, b: boolean);
-
-		// f(1/*1*/
-		// f(, /*2*/`,
-		// 			output: map[string]verifySignatureHelpOptions{
-		// 				"1": {text: "f(n: number): any", parameterCount: 1, parameterSpan: "n: number"},
-		// 				"2": {text: "f(s: string, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean"},
-		// 			},
-		// 		},
+		{
+			title: "signatureHelpOnOverloadsDifferentArity1",
+			input: `declare function f(s: string);
+declare function f(n: number);
+declare function f(s: string, b: boolean);
+declare function f(n: number, b: boolean)
+f(1/*1*/`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "f(n: number): any", parameterCount: 1, parameterSpan: "n: number"},
+			},
+		},
+		{
+			title: "signatureHelpOnOverloadsDifferentArity1_1",
+			input: `declare function f(s: string);
+declare function f(n: number);
+declare function f(s: string, b: boolean);
+declare function f(n: number, b: boolean)
+f(1, /*1*/`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "f(n: number, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean"},
+			},
+		},
 		{
 			title: "signatureHelpOnOverloadsDifferentArity2",
 			input: `declare function f(s: string);
@@ -666,46 +675,398 @@ declare function f(n: number);
 declare function f(s: string, b: boolean);
 declare function f(n: number, b: boolean);
 
-f(1/*1*/ var
-f(1, /*2*/`,
-			output: map[string]verifySignatureHelpOptions{
+f(1/*1*/ var`,
+			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "f(n: number): any", parameterCount: 1, parameterSpan: "n: number"},
-				"2": {text: "f(s: string, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean"},
+			},
+		},
+		{
+			title: "signatureHelpOnOverloadsDifferentArity2_2",
+			input: `declare function f(s: string);
+declare function f(n: number);
+declare function f(s: string, b: boolean);
+declare function f(n: number, b: boolean);
+
+f(1, /*1*/var`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "f(n: number, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean"},
+			},
+		},
+		{
+			title: "signatureHelpOnOverloadsDifferentArity3_1",
+			input: `declare function f();
+declare function f(s: string);
+declare function f(s: string, b: boolean);
+declare function f(n: number, b: boolean);
+
+f(/*1*/`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "f(): any", parameterCount: 0, parameterSpan: ""},
+			},
+		},
+		{
+			title: "signatureHelpOnOverloadsDifferentArity3_2",
+			input: `declare function f();
+declare function f(s: string);
+declare function f(s: string, b: boolean);
+declare function f(n: number, b: boolean);
+
+f(x, /*1*/`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "f(s: string, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean"},
+			},
+		},
+		{
+			title: "signatureHelpOnSuperWhenMembersAreNotResolved",
+			input: `class A { }
+class B extends A { constructor(public x: string) { } }
+class C extends B {
+   constructor() {
+       super(/*1*/
+    }
+}`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "B(x: string): B", parameterCount: 1, parameterSpan: "x: string"},
+			},
+		},
+		{
+			title: "signatureHelpOnTypePredicates",
+			input: `function f1(a: any): a is number {}
+function f2<T>(a: any): a is T {}
+function f3(a: any, ...b): a is number {}
+f1(/*1*/)
+f2(/*2*/)
+f3(/*3*/)`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "f1(a: any): a is number", parameterCount: 1, parameterSpan: "a: any"},
+				"2": {text: "f2(a: any): a is unknown", parameterCount: 1, parameterSpan: "a: any"},
+				"3": {text: "f3(a: any, ...b: object): a is number", parameterCount: 2, parameterSpan: "a: any", isVariadic: true}, //returns object
+			},
+		},
+		{
+			title: "signatureHelpOptionalCall",
+			input: `function fnTest(str: string, num: number) { }
+fnTest?.(/*1*/);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "fnTest(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string"},
+			},
+		},
+		{
+			title: "signatureHelpOptionalCall2",
+			input: `declare const fnTest: undefined | ((str: string, num: number) => void);
+fnTest?.(/*1*/);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "fnTest(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string"},
+			},
+		},
+		{
+			title: "signatureHepSimpleConstructorCall",
+			input: `class ConstructorCall {
+   constructor(str: string, num: number) {
+   }
+}
+var x = new ConstructorCall(/*constructorCall1*/1,/*constructorCall2*/2);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"constructorCall1": {text: "ConstructorCall(str: string, num: number): ConstructorCall", parameterCount: 2, parameterSpan: "str: string"},
+				"constructorCall2": {text: "ConstructorCall(str: string, num: number): ConstructorCall", parameterCount: 2, parameterSpan: "num: number"},
+			},
+		},
+		{
+			title: "signatureHelpSimpleFunctionCall",
+			input: `function functionCall(str: string, num: number) {
+}
+functionCall(/*functionCall1*/);
+functionCall("", /*functionCall2*/1);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"functionCall1": {text: "functionCall(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string"},
+				"functionCall2": {text: "functionCall(str: string, num: number): void", parameterCount: 2, parameterSpan: "num: number"},
+			},
+		},
+		{
+			title: "signatureHelpSimpleSuperCall",
+			input: `class SuperCallBase {
+   constructor(b: boolean) {
+   }
+}
+class SuperCall extends SuperCallBase {
+   constructor() {
+       super(/*superCall*/);
+   }
+}`,
+			expected: map[string]verifySignatureHelpOptions{
+				"superCall": {text: "SuperCallBase(b: boolean): SuperCallBase", parameterCount: 1, parameterSpan: "b: boolean"},
+			},
+		},
+		{
+			title: "signatureHelpSuperConstructorOverload",
+			input: `class SuperOverloadBase {
+   constructor();
+   constructor(test: string);
+   constructor(test?: string) {
+   }
+}
+class SuperOverLoad1 extends SuperOverloadBase {
+   constructor() {
+       super(/*superOverload1*/);
+   }
+}
+class SuperOverLoad2 extends SuperOverloadBase {
+   constructor() {
+       super(""/*superOverload2*/);
+   }
+}`,
+			expected: map[string]verifySignatureHelpOptions{
+				"superOverload1": {text: "SuperOverloadBase(): SuperOverloadBase", parameterCount: 0, parameterSpan: ""},
+				"superOverload2": {text: "SuperOverloadBase(test: string): SuperOverloadBase", parameterCount: 1, parameterSpan: "test: string"},
+			},
+		},
+		{
+			title: "signatureHelpTrailingRestTuple",
+			input: `export function leading(allCaps: boolean, ...names: string[]): void {
+}
+
+leading(/*1*/);
+leading(false, /*2*/);
+leading(false, "ok", /*3*/);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
+				"2": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", isVariadic: true}, //returns object
+				"3": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", isVariadic: true}, //returns object
+			},
+		},
+		{
+			title: "signatureHelpWithInvalidArgumentList1",
+			input: `function foo(a) { }
+foo(hello my name /**/is`,
+			expected: map[string]verifySignatureHelpOptions{
+				"": {text: "foo(a: any): void", parameterCount: 1, parameterSpan: ""},
+			},
+		},
+		{
+			title: "signatureHelp_unionType",
+			input: `declare const a: (fn?: ((x: string) => string) | ((y: number) => number)) => void;
+declare const b: (x: string | number) => void;
+
+interface Callback {
+   (x: string): string;
+   (x: number): number;
+   (x: string | number): string | number;
+}
+declare function c(callback: Callback): void;
+
+a((/*1*/) => {
+   return undefined;
+});
+
+b(/*2*/);
+
+c((/*3*/) => {});`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "a(fn?: ((x: string) => string) | ((y: number) => number)): void", parameterCount: 1, parameterSpan: "fn?: ((x: string) => string) | ((y: number) => number)"},
+				"2": {text: "b(x: string | number): void", parameterCount: 1, parameterSpan: "x: string | number"},
+				"3": {text: "Callback(x: string | number): string | number", parameterCount: 1, parameterSpan: "x: string | number"}, //returns object
+			},
+		},
+		{
+			title: "signatureHelpAfterParameter",
+			input: `type Type = (a, b, c) => void
+const a: Type = (a/*1*/, b/*2*/) => {}
+const b: Type = function (a/*3*/, b/*4*/) {}
+const c: Type = ({ /*5*/a: { b/*6*/ }}/*7*/ = { }/*8*/, [b/*9*/]/*10*/, .../*11*/c/*12*/) => {}`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
+				"2":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any"},
+				"3":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
+				"4":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any"},
+				"5":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
+				"6":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
+				"7":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
+				"8":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
+				"9":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any"},
+				"10": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any"},
+				"11": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "c: any"},
+				"12": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "c: any"},
+			},
+		},
+		{
+			title: "signaturehelpCallExpressionTuples",
+			input: `function fnTest(str: string, num: number) { }
+declare function wrap<A extends any[], R>(fn: (...a: A) => R) : (...a: A) => R;
+var fnWrapped = wrap(fnTest);
+fnWrapped(/*1*/'', /*2*/5);
+function fnTestVariadic (str: string, ...num: number[]) { }
+var fnVariadicWrapped = wrap(fnTestVariadic);
+fnVariadicWrapped(/*3*/'', /*4*/5);
+function fnNoParams () { }
+var fnNoParamsWrapped = wrap(fnNoParams);
+fnNoParamsWrapped(/*5*/);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string"},
+				"2": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "num: number"},
+				"3": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "str: string", isVariadic: true},    //returns object
+				"4": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "...num: object", isVariadic: true}, //returns object
+				"5": {text: "fnNoParamsWrapped(): void", parameterCount: 0, parameterSpan: ""},
+			},
+		},
+		{
+			title: "signatureHelpConstructorCallParamProperties",
+			input: `class Circle {
+   constructor(private radius: number) {
+   }
+}
+var a = new Circle(/**/`,
+			expected: map[string]verifySignatureHelpOptions{
+				"": {text: "Circle(radius: number): Circle", parameterCount: 1, parameterSpan: "radius: number"},
+			},
+		},
+		{
+			title: "signatureHelpInRecursiveType",
+			input: `type Tail<T extends any[]> =
+	((...args: T) => any) extends ((head: any, ...tail: infer R) => any) ? R : never;
+
+type Reverse<List extends any[]> = _Reverse<List, []>;
+
+type _Reverse<Source extends any[], Result extends any[] = []> = {
+	1: Result,
+	0: _Reverse<Tail<Source>, 0>,
+}[Source extends [] ? 1 : 0];
+
+type Foo = Reverse<[0,/**/]>;`,
+			expected: map[string]verifySignatureHelpOptions{
+				"": {text: "Reverse<List extends any[]>", parameterCount: 1, parameterSpan: "List extends any[]"},
+			},
+		},
+		{
+			title: "signatureHelpRestArgs1",
+			input: `function fn(a: number, b: number, c: number) {}
+const a = [1, 2] as const;
+const b = [1] as const;
+
+fn(...a, /*1*/);
+fn(/*2*/, ...a);
+
+fn(...b, /*3*/);
+fn(/*4*/, ...b, /*5*/);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number"},
+				"2": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number"},
+				"3": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "b: number"},
+				"4": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number"},
+				"5": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number"},
+			},
+		},
+		{
+			title: "signatureHelpSkippedArgs1",
+			input: `function fn(a: number, b: number, c: number) {}
+fn(/*1*/, /*2*/, /*3*/, /*4*/, /*5*/);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number"},
+				"2": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "b: number"},
+				"3": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number"},
+				"4": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: ""},
+				"5": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: ""},
+			},
+		},
+		{
+			title: "signatureHelpTypeArguments",
+			input: `declare function f(a: number, b: string, c: boolean): void; // ignored, not generic
+declare function f<T extends number>(): void;
+declare function f<T, U>(): void;
+declare function f<T, U, V extends string>(): void;
+f</*f0*/;
+f<number, /*f1*/;
+f<number, string, /*f2*/;
+
+declare const C: {
+   new<T extends number>(): void;
+   new<T, U>(): void;
+   new<T, U, V extends string>(): void;
+};
+new C</*C0*/;
+new C<number, /*C1*/;
+new C<number, string, /*C2*/;`,
+			expected: map[string]verifySignatureHelpOptions{
+				"f0": {text: "f<T extends number>(): void", parameterCount: 1, parameterSpan: "T extends number"},
+				"f1": {text: "f<T, U>(): void", parameterCount: 2, parameterSpan: "U"},
+				"f2": {text: "f<T, U, V extends string>(): void", parameterCount: 3, parameterSpan: "V extends string"},
+				"C0": {text: "C<T extends number>(): void", parameterCount: 1, parameterSpan: "T extends number"},
+				"C1": {text: "C<T, U>(): void", parameterCount: 2, parameterSpan: "U"},
+				"C2": {text: "C<T, U, V extends string>(): void", parameterCount: 3, parameterSpan: "V extends string"},
+			},
+		},
+		{
+			title: "signatureHelpTypeArguments2",
+			input: `function f<T, U, V, W>(a: number, b: string, c: boolean): void { }
+f</*f0*/;
+f<number, /*f1*/;
+f<number, string, /*f2*/;
+f<number, string, boolean, /*f3*/;`,
+			expected: map[string]verifySignatureHelpOptions{
+				"f0": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "T"},
+				"f1": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "U"},
+				"f2": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "V"},
+				"f3": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "W"},
+			},
+		},
+		{
+			title: "signatureHelpTypeParametersNotVariadic",
+			input: `declare function f(a: any, ...b: any[]): any;
+f</*1*/>(1, 2);`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "f<>(a: any, ...b: object): any", parameterCount: 0, parameterSpan: ""}, //returns object
+			},
+		},
+		{
+			title: "signatureHelpWithUnknown",
+			input: `eval(\/*1*/`,
+			expected: map[string]verifySignatureHelpOptions{
+				"1": {text: "eval(x: string): any", parameterCount: 1, parameterSpan: "x: string"},
 			},
 		},
 	}
 
-	for _, rec := range testCases {
-		t.Run(rec.title, func(t *testing.T) {
+	for _, testCase := range testCases {
+		t.Run(testCase.title, func(t *testing.T) {
 			t.Parallel()
-			testData := parseTestdata("/file1.ts", rec.input, "/file1.ts")
-			service := createLanguageService(testData.files[0].filename, map[string]string{
-				testData.files[0].filename: testData.files[0].content,
-			})
-			file := parser.ParseSourceFile(testData.files[0].filename, tspath.Path(testData.files[0].filename), testData.files[0].content, core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
-
-			markerNumber := 0
-			for i, marker := range testData.markerPositions {
-				result := service.GetSignatureHelpItems(file.FileName(), marker.position, nil)
-				if result == nil {
-					t.Fatal("expected result to be non-nil")
-				}
-				if _, exists := testData.markerPositions[i]; !exists {
-					t.Fatal("marker not found in test data")
-				}
-				assert.Equal(t, rec.output[i].text, result.Signatures[result.ActiveSignature].Label)
-				if rec.output[i].parameterCount != -1 {
-					assert.Equal(t, rec.output[i].parameterCount, len(*result.Signatures[result.ActiveSignature].Parameters))
-				}
-
-				if len(*result.Signatures[result.ActiveSignature].Parameters) <= result.ActiveParameter || len(*result.Signatures[result.ActiveSignature].Parameters) == 0 {
-					assert.Equal(t, rec.output[i].parameterSpan, "")
-				} else {
-					assert.Equal(t, rec.output[i].parameterSpan, (*result.Signatures[result.ActiveSignature].Parameters)[result.ActiveParameter].Label)
-				}
-				markerNumber++
-			}
+			runTest(t, testCase.input, testCase.expected)
 		})
+
+	}
+}
+
+func runTest(t *testing.T, input string, expected map[string]verifySignatureHelpOptions) {
+	testData := lstestutil.ParseTestData("/file1.ts", input, "/file1.ts")
+	markerPositions := testData.MarkerPositions
+	service := createLanguageService(testData.Files[0].Filename, map[string]string{
+		testData.Files[0].Filename: testData.Files[0].Content,
+	})
+	file := parser.ParseSourceFile(testData.Files[0].Filename, tspath.Path(testData.Files[0].Filename), testData.Files[0].Content, core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
+	context := &lsproto.SignatureHelpContext{
+		TriggerKind:      lsproto.SignatureHelpTriggerKindInvoked,
+		TriggerCharacter: nil,
+	}
+	ptrTrue := ptrTo(true)
+	capabilities := &lsproto.SignatureHelpClientCapabilities{
+		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+			ActiveParameterSupport: ptrTrue,
+			ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+				LabelOffsetSupport: ptrTrue,
+			},
+		},
+	}
+	preferences := &ls.UserPreferences{}
+	for markerName, expectedResult := range expected {
+		marker, ok := markerPositions[markerName]
+		if !ok {
+			t.Fatalf("No marker found for '%s'", markerName)
+		}
+		result := service.ProvideSignatureHelp(file.FileName(), marker.Position, context, capabilities, preferences)
+		assert.Equal(t, expectedResult.text, result.Signatures[*result.ActiveSignature].Label)
+		if len(*result.Signatures[*result.ActiveSignature].Parameters) <= int(result.ActiveParameter.Value) || len(*result.Signatures[*result.ActiveSignature].Parameters) == 0 {
+			assert.Equal(t, expectedResult.parameterSpan, "")
+		} else {
+			assert.Equal(t, expectedResult.parameterSpan, *(*result.Signatures[*result.ActiveSignature].Parameters)[int(result.ActiveParameter.Value)].Label.String)
+		}
 	}
 }
 
@@ -714,4 +1075,8 @@ func createLanguageService(fileName string, files map[string]string) *ls.Languag
 	projectService.OpenFile(fileName, files[fileName], core.ScriptKindTS, "")
 	project := projectService.Projects()[0]
 	return project.LanguageService()
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }

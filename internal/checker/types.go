@@ -545,6 +545,10 @@ func (t *Type) Flags() TypeFlags {
 	return t.flags
 }
 
+func (t *Type) ObjectFlags() ObjectFlags {
+	return t.objectFlags
+}
+
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }

@@ -834,7 +834,7 @@ func (c *Checker) checkGrammarIndexSignatureParameters(node *ast.IndexSignatureD
 	if typeNode == nil {
 		return c.grammarErrorOnNode(parameter.Name(), diagnostics.An_index_signature_parameter_must_have_a_type_annotation)
 	}
-	t := c.getTypeFromTypeNode(typeNode)
+	t := c.GetTypeFromTypeNode(typeNode)
 	if someType(t, func(t *Type) bool {
 		return t.flags&TypeFlagsStringOrNumberLiteralOrUnique != 0
 	}) || c.isGenericType(t) {

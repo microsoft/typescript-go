@@ -143,13 +143,99 @@ type PossibleTypeArgumentInfo struct {
 	nTypeArguments int
 }
 
-// !!! signature help
+// Get info for an expression like `f <` that may be the start of type arguments.
 func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile) *PossibleTypeArgumentInfo {
-	return nil
-}
+	// This is a rare case, but one that saves on a _lot_ of work if true - if the source file has _no_ `<` character,
+	// then there obviously can't be any type arguments - no expensive brace-matching backwards scanning required
+	// searchPosition := len(sourceFile.Text())
+	// if tokenIn != nil {
+	// 	searchPosition = scanner.GetTokenPosOfNode(tokenIn, sourceFile, false /*includeJSDoc*/)
+	// }
+	if strings.LastIndex(sourceFile.Text(), "<") == -1 {
+		return nil
+	}
 
-// !!! signature help
-func getPossibleGenericSignatures(called *ast.Expression, typeArgumentCount int, checker *checker.Checker) []*checker.Signature {
+	token := tokenIn
+	// This function determines if the node could be type argument position
+	// Since during editing, when type argument list is not complete,
+	// the tree could be of any shape depending on the tokens parsed before current node,
+	// scanning of the previous identifier followed by "<" before current node would give us better result
+	// Note that we also balance out the already provided type arguments, arrays, object literals while doing so
+	remainingLessThanTokens := 0
+	nTypeArguments := 0
+	for token != nil {
+		switch token.Kind {
+		case ast.KindLessThanToken:
+			// Found the beginning of the generic argument expression
+			token := astnav.FindPrecedingToken(sourceFile, token.Pos())
+			if token != nil && token.Kind == ast.KindQuestionDotToken {
+				token = astnav.FindPrecedingToken(sourceFile, token.Pos())
+			}
+			if token == nil || !ast.IsIdentifier(token) {
+				return nil
+			}
+			if remainingLessThanTokens <= 0 {
+				if ast.IsDeclarationName(token) {
+					return nil
+				}
+				return &PossibleTypeArgumentInfo{
+					called:         token,
+					nTypeArguments: nTypeArguments,
+				}
+			}
+			remainingLessThanTokens--
+			break
+		case ast.KindGreaterThanGreaterThanGreaterThanToken:
+			remainingLessThanTokens = +3
+			break
+		case ast.KindGreaterThanGreaterThanToken:
+			remainingLessThanTokens = +2
+			break
+		case ast.KindGreaterThanToken:
+			remainingLessThanTokens++
+			break
+		case ast.KindCloseBraceToken:
+			// This can be object type, skip until we find the matching open brace token
+			// Skip until the matching open brace token
+			token = findPrecedingMatchingToken(token, ast.KindOpenBraceToken, sourceFile)
+			if token == nil {
+				return nil
+			}
+			break
+		case ast.KindCloseParenToken:
+			// This can be object type, skip until we find the matching open brace token
+			// Skip until the matching open brace token
+			token = findPrecedingMatchingToken(token, ast.KindOpenParenToken, sourceFile)
+			if token == nil {
+				return nil
+			}
+			break
+		case ast.KindCloseBracketToken:
+			// This can be object type, skip until we find the matching open brace token
+			// Skip until the matching open brace token
+			token = findPrecedingMatchingToken(token, ast.KindOpenBracketToken, sourceFile)
+			if token == nil {
+				return nil
+			}
+			break
+
+			// Valid tokens in a type name. Skip.
+		case ast.KindCommaToken:
+			nTypeArguments++
+			break
+		case ast.KindEqualsGreaterThanToken, ast.KindIdentifier, ast.KindStringLiteral, ast.KindNumericLiteral,
+			ast.KindBigIntLiteral, ast.KindTrueKeyword, ast.KindFalseKeyword, ast.KindTypeOfKeyword, ast.KindExtendsKeyword,
+			ast.KindKeyOfKeyword, ast.KindDotToken, ast.KindBarToken, ast.KindQuestionToken, ast.KindColonToken:
+			break
+		default:
+			if ast.IsTypeNode(token) {
+				break
+			}
+			// Invalid token in type
+			return nil
+		}
+		token = astnav.FindPrecedingToken(sourceFile, token.Pos())
+	}
 	return nil
 }
 
@@ -440,8 +526,8 @@ func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Nod
 		}
 
 		if position == end {
-			return true
-			//return !!(previousToken as LiteralExpression).isUnterminated; tbd
+			return ast.IsUnterminatedLiteral(previousToken)
+			//return !!(previousToken as LiteralExpression).isUnterminated;
 		}
 	}
 	return false
@@ -501,8 +587,6 @@ func isTemplateHead(node *ast.Node) bool {
 func isTemplateTail(node *ast.Node) bool {
 	return node.Kind == ast.KindTemplateTail
 }
-
-//
 
 func findPrecedingMatchingToken(token *ast.Node, matchingTokenKind ast.Kind, sourceFile *ast.SourceFile) *ast.Node {
 	closeTokenText := scanner.TokenToString(token.Kind)

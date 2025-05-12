@@ -1340,7 +1340,7 @@ func (c *Checker) getVariancesWorker(symbol *ast.Symbol, typeParameters []*Type)
 		links.variances = []VarianceFlags{}
 		variances := make([]VarianceFlags, len(typeParameters))
 		for i, tp := range typeParameters {
-			modifiers := c.getTypeParameterModifiers(tp)
+			modifiers := c.GetTypeParameterModifiers(tp)
 			var variance VarianceFlags
 			switch {
 			case modifiers&ast.ModifierFlagsOut != 0:
@@ -1407,7 +1407,7 @@ func (c *Checker) isMarkerType(t *Type) bool {
 	return c.markerTypes.Has(t)
 }
 
-func (c *Checker) getTypeParameterModifiers(tp *Type) ast.ModifierFlags {
+func (c *Checker) GetTypeParameterModifiers(tp *Type) ast.ModifierFlags {
 	var flags ast.ModifierFlags
 	if tp.symbol != nil {
 		for _, d := range tp.symbol.Declarations {
@@ -2055,7 +2055,7 @@ func (c *Checker) createTypePredicateFromTypePredicateNode(node *ast.Node, signa
 	predicateNode := node.AsTypePredicateNode()
 	var t *Type
 	if predicateNode.Type != nil {
-		t = c.getTypeFromTypeNode(predicateNode.Type)
+		t = c.GetTypeFromTypeNode(predicateNode.Type)
 	}
 	if ast.IsThisTypeNode(predicateNode.ParameterName) {
 		kind := core.IfElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
@@ -3361,14 +3361,14 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if r.relation == r.c.comparableRelation && source.flags&TypeFlagsTypeParameter != 0 {
 			// This is a carve-out in comparability to essentially forbid comparing a type parameter with another type parameter
 			// unless one extends the other. (Remember: comparability is mostly bidirectional!)
-			constraint := r.c.getConstraintOfTypeParameter(source)
+			constraint := r.c.GetConstraintOfTypeParameter(source)
 			if constraint != nil {
 				for constraint != nil && someType(constraint, func(c *Type) bool { return c.flags&TypeFlagsTypeParameter != 0 }) {
 					result = r.isRelatedTo(constraint, target, RecursionFlagsSource, false /*reportErrors*/)
 					if result != TernaryFalse {
 						return result
 					}
-					constraint = r.c.getConstraintOfTypeParameter(constraint)
+					constraint = r.c.GetConstraintOfTypeParameter(constraint)
 				}
 			}
 			return TernaryFalse

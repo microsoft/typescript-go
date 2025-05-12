@@ -132,7 +132,7 @@ func (c *Checker) isValidPropertyAccess(node *ast.Node, propertyName string) boo
 	case ast.KindQualifiedName:
 		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getWidenedType(c.checkExpression(node.AsQualifiedName().Left)))
 	case ast.KindImportType:
-		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getTypeFromTypeNode(node))
+		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.GetTypeFromTypeNode(node))
 	}
 	panic("Unexpected node kind in isValidPropertyAccess: " + node.Kind.String())
 }

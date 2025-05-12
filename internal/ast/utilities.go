@@ -339,7 +339,7 @@ func IsStringTextContainingNode(node *Node) bool {
 }
 
 func IsTemplateLiteralKind(kind Kind) bool {
-	return kind <= KindFirstTemplateToken && kind <= KindLastTemplateToken
+	return KindFirstTemplateToken <= kind && kind <= KindLastTemplateToken
 }
 
 func IsTemplateLiteralToken(node *Node) bool {

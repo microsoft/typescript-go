@@ -1272,7 +1272,7 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 					inferredCovariantType.flags&(TypeFlagsNever|TypeFlagsAny) == 0 &&
 						core.Some(inference.contraCandidates, func(t *Type) bool { return c.isTypeAssignableTo(inferredCovariantType, t) }) &&
 						core.Every(n.inferences, func(other *InferenceInfo) bool {
-							return other != inference && c.getConstraintOfTypeParameter(other.typeParameter) != inference.typeParameter ||
+							return other != inference && c.GetConstraintOfTypeParameter(other.typeParameter) != inference.typeParameter ||
 								core.Every(other.candidates, func(t *Type) bool { return c.isTypeAssignableTo(t, inferredCovariantType) })
 						}))
 				if preferCovariantType {
@@ -1291,7 +1291,7 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 				// succeeds, meaning there is no error for not having inference candidates. An
 				// inference error only occurs when there are *conflicting* candidates, i.e.
 				// candidates with no common supertype.
-				defaultType := c.getDefaultFromTypeParameter(inference.typeParameter)
+				defaultType := c.GetDefaultFromTypeParameter(inference.typeParameter)
 				if defaultType != nil {
 					// Instantiate the default type. Any forward reference to a type
 					// parameter should be instantiated to the empty object type.
@@ -1305,7 +1305,7 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 		if inference.inferredType == nil {
 			inference.inferredType = core.IfElse(n.flags&InferenceFlagsAnyDefault != 0, c.anyType, c.unknownType)
 		}
-		constraint := c.getConstraintOfTypeParameter(inference.typeParameter)
+		constraint := c.GetConstraintOfTypeParameter(inference.typeParameter)
 		if constraint != nil {
 			instantiatedConstraint := c.instantiateType(constraint, n.nonFixingMapper)
 			if inferredType != nil {
@@ -1396,7 +1396,7 @@ func (c *Checker) unionObjectAndArrayLiteralCandidates(candidates []*Type) []*Ty
 }
 
 func (c *Checker) hasPrimitiveConstraint(t *Type) bool {
-	constraint := c.getConstraintOfTypeParameter(t)
+	constraint := c.GetConstraintOfTypeParameter(t)
 	if constraint != nil {
 		if constraint.flags&TypeFlagsConditional != 0 {
 			constraint = c.getDefaultConstraintOfConditionalType(constraint)

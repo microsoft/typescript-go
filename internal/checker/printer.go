@@ -547,7 +547,7 @@ func (p *Printer) printTypeParameter(t *Type) {
 
 func (p *Printer) printTypeParameterAndConstraint(t *Type) {
 	p.printName(t.symbol)
-	if constraint := p.c.getConstraintOfTypeParameter(t); constraint != nil {
+	if constraint := p.c.GetConstraintOfTypeParameter(t); constraint != nil {
 		p.print(" extends ")
 		p.printType(constraint)
 	}
