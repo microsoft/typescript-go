@@ -499,7 +499,7 @@ func (c *Checker) elaborateObjectLiteral(node *ast.Node, source *Type, target *T
 		if ast.IsSpreadAssignment(prop) {
 			continue
 		}
-		nameType := c.getLiteralTypeFromProperty(c.GetSymbolOfDeclaration(prop), TypeFlagsStringOrNumberLiteralOrUnique, false)
+		nameType := c.getLiteralTypeFromProperty(c.getSymbolOfDeclaration(prop), TypeFlagsStringOrNumberLiteralOrUnique, false)
 		if nameType == nil || nameType.flags&TypeFlagsNever != 0 {
 			continue
 		}

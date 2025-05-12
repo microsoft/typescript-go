@@ -70,9 +70,9 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 				}
 				fallthrough
 			case ast.KindModuleDeclaration:
-				copyLocallyVisibleExportSymbols(c.GetSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsModuleMember)
+				copyLocallyVisibleExportSymbols(c.getSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsModuleMember)
 			case ast.KindEnumDeclaration:
-				copySymbols(c.GetSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsEnumMember)
+				copySymbols(c.getSymbolOfDeclaration(location).Exports, meaning&ast.SymbolFlagsEnumMember)
 			case ast.KindClassExpression:
 				className := location.AsClassExpression().Name()
 				if className != nil {
@@ -87,7 +87,7 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 				// (type parameters of classDeclaration/classExpression and interface are in member property of the symbol.
 				// Note: that the memberFlags come from previous iteration.
 				if !isStaticSymbol {
-					copySymbols(c.getMembersOfSymbol(c.GetSymbolOfDeclaration(location)), meaning&ast.SymbolFlagsType)
+					copySymbols(c.getMembersOfSymbol(c.getSymbolOfDeclaration(location)), meaning&ast.SymbolFlagsType)
 				}
 			case ast.KindFunctionExpression:
 				funcName := location.Name()
@@ -316,7 +316,7 @@ func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn fu
 			cachedResolvedSignatures[signatureLinks] = signatureLinks.resolvedSignature
 			signatureLinks.resolvedSignature = nil
 			if ast.IsFunctionExpressionOrArrowFunction(ancestorNode) {
-				symbolLinks := c.valueSymbolLinks.Get(c.GetSymbolOfDeclaration(ancestorNode))
+				symbolLinks := c.valueSymbolLinks.Get(c.getSymbolOfDeclaration(ancestorNode))
 				resolvedType := symbolLinks.resolvedType
 				cachedTypes[symbolLinks] = resolvedType
 				symbolLinks.resolvedType = nil
@@ -412,7 +412,7 @@ func (c *Checker) runWithoutResolvedSignatureCaching(node *ast.Node, fn func() *
 			cachedResolvedSignatures[signatureLinks] = signatureLinks.resolvedSignature
 			signatureLinks.resolvedSignature = nil
 			if ast.IsFunctionExpressionOrArrowFunction(ancestorNode) {
-				symbolLinks := c.valueSymbolLinks.Get(c.GetSymbolOfDeclaration(ancestorNode))
+				symbolLinks := c.valueSymbolLinks.Get(c.getSymbolOfDeclaration(ancestorNode))
 				resolvedType := symbolLinks.resolvedType
 				cachedTypes[symbolLinks] = resolvedType
 				symbolLinks.resolvedType = nil

@@ -32,7 +32,7 @@ func (r *emitResolver) IsReferencedAliasDeclaration(node *ast.Node) bool {
 	defer r.checkerMu.Unlock()
 
 	if ast.IsAliasSymbolDeclaration(node) {
-		if symbol := c.GetSymbolOfDeclaration(node); symbol != nil {
+		if symbol := c.getSymbolOfDeclaration(node); symbol != nil {
 			aliasLinks := c.aliasSymbolLinks.Get(symbol)
 			if aliasLinks.referenced {
 				return true
@@ -65,12 +65,12 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 
 	switch node.Kind {
 	case ast.KindImportEqualsDeclaration:
-		return r.isAliasResolvedToValue(c.GetSymbolOfDeclaration(node), false /*excludeTypeOnlyValues*/)
+		return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), false /*excludeTypeOnlyValues*/)
 	case ast.KindImportClause,
 		ast.KindNamespaceImport,
 		ast.KindImportSpecifier,
 		ast.KindExportSpecifier:
-		symbol := c.GetSymbolOfDeclaration(node)
+		symbol := c.getSymbolOfDeclaration(node)
 		return symbol != nil && r.isAliasResolvedToValue(symbol, true /*excludeTypeOnlyValues*/)
 	case ast.KindExportDeclaration:
 		exportClause := node.AsExportDeclaration().ExportClause
@@ -81,7 +81,7 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 			core.Some(exportClause.AsNamedExports().Elements.Nodes, r.isValueAliasDeclaration))
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		if node.AsExportAssignment().Expression != nil && node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
-			return r.isAliasResolvedToValue(c.GetSymbolOfDeclaration(node), true /*excludeTypeOnlyValues*/)
+			return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), true /*excludeTypeOnlyValues*/)
 		}
 		return true
 	}
@@ -95,7 +95,7 @@ func (r *emitResolver) isAliasResolvedToValue(symbol *ast.Symbol, excludeTypeOnl
 	}
 	if symbol.ValueDeclaration != nil {
 		if container := ast.GetSourceFileOfNode(symbol.ValueDeclaration); container != nil {
-			fileSymbol := c.GetSymbolOfDeclaration(container.AsNode())
+			fileSymbol := c.getSymbolOfDeclaration(container.AsNode())
 			// Ensures cjs export assignment is setup, since this symbol may point at, and merge with, the file itself.
 			// If we don't, the merge may not have yet occurred, and the flags check below will be missing flags that
 			// are added as a result of the merge.
@@ -129,7 +129,7 @@ func (r *emitResolver) IsTopLevelValueImportEqualsWithEntityName(node *ast.Node)
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
 
-	return r.isAliasResolvedToValue(c.GetSymbolOfDeclaration(node), false /*excludeTypeOnlyValues*/)
+	return r.isAliasResolvedToValue(c.getSymbolOfDeclaration(node), false /*excludeTypeOnlyValues*/)
 }
 
 func (r *emitResolver) MarkLinkedReferencesRecursively(file *ast.SourceFile) {
@@ -174,7 +174,7 @@ func (r *emitResolver) getReferenceResolver() binder.ReferenceResolver {
 			GetResolvedSymbol:                      r.checker.getResolvedSymbol,
 			GetMergedSymbol:                        r.checker.getMergedSymbol,
 			GetParentOfSymbol:                      r.checker.getParentOfSymbol,
-			GetSymbolOfDeclaration:                 r.checker.GetSymbolOfDeclaration,
+			GetSymbolOfDeclaration:                 r.checker.getSymbolOfDeclaration,
 			GetTypeOnlyAliasDeclaration:            r.checker.getTypeOnlyAliasDeclarationEx,
 			GetExportSymbolOfValueSymbolIfExported: r.checker.getExportSymbolOfValueSymbolIfExported,
 		})

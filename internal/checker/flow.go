@@ -1567,7 +1567,7 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 			return target.Kind == ast.KindThisKeyword
 		}
 		return ast.IsIdentifier(target) && c.getResolvedSymbol(source) == c.getResolvedSymbol(target) ||
-			(ast.IsVariableDeclaration(target) || ast.IsBindingElement(target)) && c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(source)) == c.GetSymbolOfDeclaration(target)
+			(ast.IsVariableDeclaration(target) || ast.IsBindingElement(target)) && c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(source)) == c.getSymbolOfDeclaration(target)
 	case ast.KindThisKeyword:
 		return target.Kind == ast.KindThisKeyword
 	case ast.KindSuperKeyword:
@@ -2173,7 +2173,7 @@ func (c *Checker) getExplicitThisType(node *ast.Node) *Type {
 		}
 	}
 	if container.Parent != nil && ast.IsClassLike(container.Parent) {
-		symbol := c.GetSymbolOfDeclaration(container.Parent)
+		symbol := c.getSymbolOfDeclaration(container.Parent)
 		if ast.IsStatic(container) {
 			return c.getTypeOfSymbol(symbol)
 		} else {

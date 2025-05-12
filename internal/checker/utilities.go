@@ -2085,7 +2085,7 @@ func (c *Checker) checkNotCanceled() {
 	}
 }
 
-// Temporary function for Signature Help. Will be deleted once the node builder is added.
+// Temporary functions for Signature Help. Will be deleted once the node builder is added.
 func TemporaryTypeParameterToDeclaration(parameterType *Type, enclosingDeclaration *ast.Node, c *Checker) *ast.Node {
 	emitContext := printer.NewEmitContext()
 	factory := emitContext.Factory.AsNodeFactory()
