@@ -397,7 +397,7 @@ func (p *Printer) printTupleType(t *Type) {
 func (p *Printer) printAnonymousType(t *Type) {
 	if t.symbol != nil && len(t.symbol.Name) != 0 {
 		if t.symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 {
-			if t == p.c.GetTypeOfSymbol(t.symbol) {
+			if t == p.c.getTypeOfSymbol(t.symbol) {
 				p.print("typeof ")
 				p.printQualifiedName(t.symbol)
 				return
@@ -482,7 +482,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 	var tail bool
 	if sig.thisParameter != nil {
 		p.print("this: ")
-		p.printType(p.c.GetTypeOfSymbol(sig.thisParameter))
+		p.printType(p.c.getTypeOfSymbol(sig.thisParameter))
 		tail = true
 	}
 	expandedParameters := p.c.GetExpandedParameters(sig, false)
@@ -494,7 +494,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 		if tail {
 			p.print(", ")
 		}
-		if param.ValueDeclaration != nil && IsRestParameter(param.ValueDeclaration) || param.CheckFlags&ast.CheckFlagsRestParameter != 0 {
+		if param.ValueDeclaration != nil && isRestParameter(param.ValueDeclaration) || param.CheckFlags&ast.CheckFlagsRestParameter != 0 {
 			p.print("...")
 			p.printName(param)
 		} else {
@@ -504,7 +504,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 			}
 		}
 		p.print(": ")
-		p.printType(p.c.GetTypeOfSymbol(param))
+		p.printType(p.c.getTypeOfSymbol(param))
 		tail = true
 	}
 	p.print(")")
@@ -547,7 +547,7 @@ func (p *Printer) printTypeParameter(t *Type) {
 
 func (p *Printer) printTypeParameterAndConstraint(t *Type) {
 	p.printName(t.symbol)
-	if constraint := p.c.GetConstraintOfTypeParameter(t); constraint != nil {
+	if constraint := p.c.getConstraintOfTypeParameter(t); constraint != nil {
 		p.print(" extends ")
 		p.printType(constraint)
 	}
@@ -689,7 +689,7 @@ func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
 		symbol := node.Symbol()
 		if symbol != nil && !isReservedMemberName(symbol.Name) {
 			if symbol.Flags&ast.SymbolFlagsValue != 0 {
-				return c.symbolToString(symbol), c.GetTypeOfSymbol(symbol), true
+				return c.symbolToString(symbol), c.getTypeOfSymbol(symbol), true
 			}
 			if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
 				return c.symbolToString(symbol), c.getDeclaredTypeOfTypeAlias(symbol), true

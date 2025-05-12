@@ -740,7 +740,7 @@ func (c *Checker) checkGrammarForUseStrictSimpleParameterList(node *ast.Node) bo
 		if useStrictDirective != nil {
 			nonSimpleParameters := core.Filter(node.Parameters(), func(n *ast.Node) bool {
 				parameter := n.AsParameterDeclaration()
-				return parameter.Initializer != nil || ast.IsBindingPattern(parameter.Name()) || IsRestParameter(parameter.AsNode())
+				return parameter.Initializer != nil || ast.IsBindingPattern(parameter.Name()) || isRestParameter(parameter.AsNode())
 			})
 			if len(nonSimpleParameters) != 0 {
 				for _, parameter := range nonSimpleParameters {
@@ -834,7 +834,7 @@ func (c *Checker) checkGrammarIndexSignatureParameters(node *ast.IndexSignatureD
 	if typeNode == nil {
 		return c.grammarErrorOnNode(parameter.Name(), diagnostics.An_index_signature_parameter_must_have_a_type_annotation)
 	}
-	t := c.GetTypeFromTypeNode(typeNode)
+	t := c.getTypeFromTypeNode(typeNode)
 	if someType(t, func(t *Type) bool {
 		return t.flags&TypeFlagsStringOrNumberLiteralOrUnique != 0
 	}) || c.isGenericType(t) {

@@ -760,7 +760,7 @@ func (c *Checker) inferFromProperties(n *InferenceState, source *Type, target *T
 	for _, targetProp := range properties {
 		sourceProp := c.getPropertyOfType(source, targetProp.Name)
 		if sourceProp != nil && !core.Some(sourceProp.Declarations, c.isSkipDirectInferenceNode) {
-			c.inferFromTypes(n, c.removeMissingType(c.GetTypeOfSymbol(sourceProp), sourceProp.Flags&ast.SymbolFlagsOptional != 0), c.removeMissingType(c.GetTypeOfSymbol(targetProp), targetProp.Flags&ast.SymbolFlagsOptional != 0))
+			c.inferFromTypes(n, c.removeMissingType(c.getTypeOfSymbol(sourceProp), sourceProp.Flags&ast.SymbolFlagsOptional != 0), c.removeMissingType(c.getTypeOfSymbol(targetProp), targetProp.Flags&ast.SymbolFlagsOptional != 0))
 		}
 	}
 }
@@ -850,7 +850,7 @@ func (c *Checker) inferFromIndexTypes(n *InferenceState, source *Type, target *T
 			var propTypes []*Type
 			for _, prop := range c.getPropertiesOfType(source) {
 				if c.isApplicableIndexType(c.getLiteralTypeFromProperty(prop, TypeFlagsStringOrNumberLiteralOrUnique, false), targetInfo.keyType) {
-					propType := c.GetTypeOfSymbol(prop)
+					propType := c.getTypeOfSymbol(prop)
 					if prop.Flags&ast.SymbolFlagsOptional != 0 {
 						propType = c.removeMissingOrUndefinedType(propType)
 					}
@@ -914,7 +914,7 @@ func (c *Checker) inferToMappedType(n *InferenceState, source *Type, target *Typ
 		}
 		// If no inferences can be made to K's constraint, infer from a union of the property types
 		// in the source to the template type X.
-		propTypes := core.Map(c.getPropertiesOfType(source), c.GetTypeOfSymbol)
+		propTypes := core.Map(c.getPropertiesOfType(source), c.getTypeOfSymbol)
 		indexTypes := core.Map(c.getIndexInfosOfType(source), func(info *IndexInfo) *Type {
 			if info != c.enumNumberIndexInfo {
 				return info.valueType
@@ -989,7 +989,7 @@ func (c *Checker) createReverseMappedType(source *Type, target *Type, constraint
 // arrow function, but is considered partially inferable because property 'a' has an inferable type.
 func (c *Checker) isPartiallyInferableType(t *Type) bool {
 	return t.objectFlags&ObjectFlagsNonInferrableType == 0 || isObjectLiteralType(t) && core.Some(c.getPropertiesOfType(t), func(prop *ast.Symbol) bool {
-		return c.isPartiallyInferableType(c.GetTypeOfSymbol(prop))
+		return c.isPartiallyInferableType(c.getTypeOfSymbol(prop))
 	}) || IsTupleType(t) && core.Some(c.getElementTypes(t), c.isPartiallyInferableType)
 }
 
@@ -1053,7 +1053,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 		inferredProp.Declarations = prop.Declarations
 		c.valueSymbolLinks.Get(inferredProp).nameType = c.valueSymbolLinks.Get(prop).nameType
 		links := c.ReverseMappedSymbolLinks.Get(inferredProp)
-		links.propertyType = c.GetTypeOfSymbol(prop)
+		links.propertyType = c.getTypeOfSymbol(prop)
 		constraintTarget := r.constraintType.AsIndexType().target
 		if constraintTarget.flags&TypeFlagsIndexedAccess != 0 && constraintTarget.AsIndexedAccessType().objectType.flags&TypeFlagsTypeParameter != 0 && constraintTarget.AsIndexedAccessType().indexType.flags&TypeFlagsTypeParameter != 0 {
 			// A reverse mapping of `{[K in keyof T[K_1]]: T[K_1]}` is the same as that of `{[K in keyof T]: T}`, since all we care about is
@@ -1272,7 +1272,7 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 					inferredCovariantType.flags&(TypeFlagsNever|TypeFlagsAny) == 0 &&
 						core.Some(inference.contraCandidates, func(t *Type) bool { return c.isTypeAssignableTo(inferredCovariantType, t) }) &&
 						core.Every(n.inferences, func(other *InferenceInfo) bool {
-							return other != inference && c.GetConstraintOfTypeParameter(other.typeParameter) != inference.typeParameter ||
+							return other != inference && c.getConstraintOfTypeParameter(other.typeParameter) != inference.typeParameter ||
 								core.Every(other.candidates, func(t *Type) bool { return c.isTypeAssignableTo(t, inferredCovariantType) })
 						}))
 				if preferCovariantType {
@@ -1291,7 +1291,7 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 				// succeeds, meaning there is no error for not having inference candidates. An
 				// inference error only occurs when there are *conflicting* candidates, i.e.
 				// candidates with no common supertype.
-				defaultType := c.GetDefaultFromTypeParameter(inference.typeParameter)
+				defaultType := c.getDefaultFromTypeParameter(inference.typeParameter)
 				if defaultType != nil {
 					// Instantiate the default type. Any forward reference to a type
 					// parameter should be instantiated to the empty object type.
@@ -1305,7 +1305,7 @@ func (c *Checker) getInferredType(n *InferenceContext, index int) *Type {
 		if inference.inferredType == nil {
 			inference.inferredType = core.IfElse(n.flags&InferenceFlagsAnyDefault != 0, c.anyType, c.unknownType)
 		}
-		constraint := c.GetConstraintOfTypeParameter(inference.typeParameter)
+		constraint := c.getConstraintOfTypeParameter(inference.typeParameter)
 		if constraint != nil {
 			instantiatedConstraint := c.instantiateType(constraint, n.nonFixingMapper)
 			if inferredType != nil {
@@ -1396,7 +1396,7 @@ func (c *Checker) unionObjectAndArrayLiteralCandidates(candidates []*Type) []*Ty
 }
 
 func (c *Checker) hasPrimitiveConstraint(t *Type) bool {
-	constraint := c.GetConstraintOfTypeParameter(t)
+	constraint := c.getConstraintOfTypeParameter(t)
 	if constraint != nil {
 		if constraint.flags&TypeFlagsConditional != 0 {
 			constraint = c.getDefaultConstraintOfConditionalType(constraint)

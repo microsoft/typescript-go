@@ -212,7 +212,6 @@ type Node struct {
 func (n *Node) AsNode() *Node                             { return n }
 func (n *Node) Pos() int                                  { return n.Loc.Pos() }
 func (n *Node) End() int                                  { return n.Loc.End() }
-func (n *Node) GetFullWidth() int                         { return n.Loc.End() - n.Loc.Pos() }
 func (n *Node) ForEachChild(v Visitor) bool               { return n.data.ForEachChild(v) }
 func (n *Node) Clone(f NodeFactoryCoercible) *Node        { return n.data.Clone(f) }
 func (n *Node) VisitEachChild(v *NodeVisitor) *Node       { return n.data.VisitEachChild(v) }

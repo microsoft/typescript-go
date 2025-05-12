@@ -539,7 +539,7 @@ func (c *Checker) checkApplicableSignatureForJsxOpeningLikeElement(node *ast.Nod
 			return true
 		}
 
-		factoryType := c.GetTypeOfSymbol(factorySymbol)
+		factoryType := c.getTypeOfSymbol(factorySymbol)
 		callSignatures := c.GetSignaturesOfType(factoryType, SignatureKindCall)
 		if len(callSignatures) == 0 {
 			return true
@@ -1034,7 +1034,7 @@ func (c *Checker) getIntrinsicAttributesTypeFromStringLiteralType(t *Type, locat
 		stringLiteralTypeName := getStringLiteralValue(t)
 		intrinsicProp := c.getPropertyOfType(intrinsicElementsType, stringLiteralTypeName)
 		if intrinsicProp != nil {
-			return c.GetTypeOfSymbol(intrinsicProp)
+			return c.getTypeOfSymbol(intrinsicProp)
 		}
 		indexSignatureType := c.getIndexTypeOfType(intrinsicElementsType, c.stringType)
 		if indexSignatureType != nil {
@@ -1085,7 +1085,7 @@ func (c *Checker) getIntrinsicAttributesTypeFromJsxOpeningLikeElement(node *ast.
 	}
 	symbol := c.getIntrinsicTagSymbol(node)
 	if links.jsxFlags&JsxFlagsIntrinsicNamedElement != 0 {
-		links.resolvedJsxElementAttributesType = core.OrElse(c.GetTypeOfSymbol(symbol), c.errorType)
+		links.resolvedJsxElementAttributesType = core.OrElse(c.getTypeOfSymbol(symbol), c.errorType)
 		return links.resolvedJsxElementAttributesType
 	}
 	if links.jsxFlags&JsxFlagsIntrinsicIndexedElement != 0 {

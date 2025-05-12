@@ -132,7 +132,7 @@ func (c *Checker) isValidPropertyAccess(node *ast.Node, propertyName string) boo
 	case ast.KindQualifiedName:
 		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getWidenedType(c.checkExpression(node.AsQualifiedName().Left)))
 	case ast.KindImportType:
-		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.GetTypeFromTypeNode(node))
+		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getTypeFromTypeNode(node))
 	}
 	panic("Unexpected node kind in isValidPropertyAccess: " + node.Kind.String())
 }
@@ -256,7 +256,7 @@ func (c *Checker) TryGetMemberInModuleExportsAndProperties(memberName string, mo
 		return nil
 	}
 
-	t := c.GetTypeOfSymbol(exportEquals)
+	t := c.getTypeOfSymbol(exportEquals)
 	if c.shouldTreatPropertiesOfExternalModuleAsExports(t) {
 		return c.getPropertyOfType(t, memberName)
 	}
