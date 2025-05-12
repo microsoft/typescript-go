@@ -149,17 +149,17 @@ func parseOwnConfigOfJsonSourceFile(
 					parseDiagnostics = ParseTypeAcquisition(option.Name, value, typeAcquisition)
 				}
 				propertySetErrors = append(propertySetErrors, parseDiagnostics...)
-			} else if keyText != ""  && extraKeyDiagnostics(parentOption.Name) != nil {
+			} else if keyText != "" && extraKeyDiagnostics(parentOption.Name) != nil {
 				unknownNameDiag := extraKeyDiagnostics(parentOption.Name)
 				if parentOption.ElementOptions != nil {
 					// !!! TODO: support suggestion
 					propertySetErrors = append(propertySetErrors, createUnknownOptionError(
 						keyText,
 						unknownNameDiag,
-						"" /*unknownOptionErrorText*/,
+						"", /*unknownOptionErrorText*/
 						propertyAssignment.Name(),
 						sourceFile,
-						nil /*alternateMode*/,
+						nil, /*alternateMode*/
 					))
 				} else {
 					// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
