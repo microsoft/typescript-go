@@ -385,6 +385,7 @@ func (p *Project) updateGraph() bool {
 	if p.kind == KindConfigured && p.pendingReload != PendingReloadNone {
 		switch p.pendingReload {
 		case PendingReloadFileNames:
+			p.parsedCommandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(p.parsedCommandLine, p.host.FS())
 			p.setRootFiles(p.parsedCommandLine.FileNames())
 		case PendingReloadFull:
 			if err := p.LoadConfig(); err != nil {

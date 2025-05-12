@@ -1246,6 +1246,7 @@ func parseJsonConfigFileContentWorker(
 		Raw:        parsedConfig.raw,
 		Errors:     errors,
 
+		extraFileExtensions: extraFileExtensions,
 		comparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          basePathForFileNames,

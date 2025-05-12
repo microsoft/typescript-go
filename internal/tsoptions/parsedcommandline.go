@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type ParsedCommandLine struct {
@@ -21,6 +22,7 @@ type ParsedCommandLine struct {
 	comparePathsOptions     tspath.ComparePathsOptions
 	wildcardDirectoriesOnce sync.Once
 	wildcardDirectories     map[string]bool
+	extraFileExtensions     []fileExtensionInfo
 }
 
 // WildcardDirectories returns the cached wildcard directories, initializing them if needed
@@ -101,4 +103,18 @@ func (p *ParsedCommandLine) MatchesFileName(fileName string, comparePathsOptions
 	}
 
 	return p.ConfigFile.configFileSpecs.matchesInclude(fileName, comparePathsOptions)
+}
+
+func ReloadFileNamesOfParsedCommandLine(p *ParsedCommandLine, fs vfs.FS) *ParsedCommandLine {
+	parsedConfig := *p.ParsedConfig
+	parsedConfig.FileNames = getFileNamesFromConfigSpecs(
+		*p.ConfigFile.configFileSpecs,
+		p.comparePathsOptions.CurrentDirectory,
+		p.CompilerOptions(),
+		fs,
+		p.extraFileExtensions,
+	)
+	parsedCommandLine := *p
+	parsedCommandLine.ParsedConfig = &parsedConfig
+	return &parsedCommandLine
 }
