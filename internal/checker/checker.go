@@ -16705,7 +16705,7 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 	kind, location := c.isConstructorDeclaredThisProperty(symbol)
 	if kind == thisAssignmentDeclarationTyped {
 		if location == nil {
-			panic("constructor should not be nil when this assignment is in a constructor.")
+			panic("location should not be nil when this assignment has a type.")
 		}
 		t = c.getTypeFromTypeNode(location)
 	} else if kind == thisAssignmentDeclarationConstructor {
