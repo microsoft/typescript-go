@@ -180,6 +180,17 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 	}
 }
 
+func (options *CompilerOptions) GetResolutionMode() ResolutionMode {
+	switch options.GetEmitModuleKind() {
+	case ModuleKindCommonJS:
+		return ResolutionModeCommonJS
+	case ModuleKindESNext:
+		return ResolutionModeESM
+	default:
+		return ResolutionModeNone
+	}
+}
+
 func (options *CompilerOptions) GetESModuleInterop() bool {
 	if options.ESModuleInterop != TSUnknown {
 		return options.ESModuleInterop == TSTrue
@@ -325,6 +336,10 @@ const (
 	// Emit as written
 	ModuleKindPreserve ModuleKind = 200
 )
+
+func (moduleKind ModuleKind) IsNonNodeESM() bool {
+	return moduleKind >= ModuleKindES2015 && moduleKind <= ModuleKindESNext
+}
 
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
 
