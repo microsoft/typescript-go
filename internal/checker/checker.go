@@ -1,6 +1,7 @@
 package checker
 
 import (
+	"context"
 	"fmt"
 	"iter"
 	"maps"
@@ -567,6 +568,7 @@ type Checker struct {
 	useUnknownInCatchVariables                 bool
 	exactOptionalPropertyTypes                 bool
 	canCollectSymbolAliasAccessibilityData     bool
+	wasCanceled                                bool
 	arrayVariances                             []VarianceFlags
 	globals                                    ast.SymbolTable
 	globalSymbols                              []*ast.Symbol
@@ -826,6 +828,7 @@ type Checker struct {
 	_jsxNamespace                              string
 	_jsxFactoryEntity                          *ast.Node
 	skipDirectInferenceNodes                   core.Set[*ast.Node]
+	ctx                                        context.Context
 }
 
 func NewChecker(program Program) *Checker {
@@ -2049,16 +2052,18 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 	return nil
 }
 
-func (c *Checker) CheckSourceFile(sourceFile *ast.SourceFile) {
+func (c *Checker) CheckSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
 	if SkipTypeChecking(sourceFile, c.compilerOptions) {
 		return
 	}
-	c.checkSourceFile(sourceFile)
+	c.checkSourceFile(ctx, sourceFile)
 }
 
-func (c *Checker) checkSourceFile(sourceFile *ast.SourceFile) {
+func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
+	c.checkNotCanceled()
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
+		c.ctx = ctx
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
 		c.renamedBindingElementsInTypes = nil
@@ -2069,19 +2074,27 @@ func (c *Checker) checkSourceFile(sourceFile *ast.SourceFile) {
 			c.checkExternalModuleExports(sourceFile.AsNode())
 			c.registerForUnusedIdentifiersCheck(sourceFile.AsNode())
 		}
-		// This relies on the results of other lazy diagnostics, so must be computed after them
-		if !sourceFile.IsDeclarationFile && (c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
-			c.checkUnusedIdentifiers(links.identifierCheckNodes)
+		if ctx.Err() == nil {
+			// This relies on the results of other lazy diagnostics, so must be computed after them
+			if !sourceFile.IsDeclarationFile && (c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
+				c.checkUnusedIdentifiers(links.identifierCheckNodes)
+			}
+			if !sourceFile.IsDeclarationFile {
+				c.checkUnusedRenamedBindingElements()
+			}
+		} else {
+			c.wasCanceled = true
 		}
-		if !sourceFile.IsDeclarationFile {
-			c.checkUnusedRenamedBindingElements()
-		}
+		c.ctx = nil
 		links.typeChecked = true
 	}
 }
 
 func (c *Checker) checkSourceElements(nodes []*ast.Node) {
 	for _, node := range nodes {
+		if c.isCanceled() {
+			break
+		}
 		c.checkSourceElement(node)
 	}
 }
@@ -2098,7 +2111,6 @@ func (c *Checker) checkSourceElement(node *ast.Node) bool {
 }
 
 func (c *Checker) checkSourceElementWorker(node *ast.Node) {
-	// !!! Cancellation
 	kind := node.Kind
 	if kind >= ast.KindFirstStatement && kind <= ast.KindLastStatement {
 		flowNode := node.FlowNodeData().FlowNode
@@ -2250,6 +2262,9 @@ func (c *Checker) checkNodeDeferred(node *ast.Node) {
 func (c *Checker) checkDeferredNodes(context *ast.SourceFile) {
 	links := c.sourceFileLinks.Get(context)
 	for node := range links.deferredNodes.Values() {
+		if c.isCanceled() {
+			break
+		}
 		c.checkDeferredNode(node)
 	}
 	links.deferredNodes.Clear()
@@ -2295,6 +2310,9 @@ func (c *Checker) checkJSDocNodes(sourceFile *ast.SourceFile) {
 	// set parent references in JSDoc nodes.
 	for location, jsdocs := range sourceFile.JSDocCache() {
 		for _, jsdoc := range jsdocs {
+			if c.isCanceled() {
+				return
+			}
 			c.checkJSDocComments(jsdoc, location)
 			tags := jsdoc.AsJSDoc().Tags
 			if tags != nil {
@@ -3514,10 +3532,10 @@ func (c *Checker) checkBlock(node *ast.Node) {
 	}
 	if ast.IsFunctionOrModuleBlock(node) {
 		saveFlowAnalysisDisabled := c.flowAnalysisDisabled
-		node.ForEachChild(c.checkSourceElement)
+		c.checkSourceElements(node.Statements())
 		c.flowAnalysisDisabled = saveFlowAnalysisDisabled
 	} else {
-		node.ForEachChild(c.checkSourceElement)
+		c.checkSourceElements(node.Statements())
 	}
 	if len(node.Locals()) != 0 {
 		c.registerForUnusedIdentifiersCheck(node)
@@ -13138,22 +13156,31 @@ func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostic
 	}
 }
 
-func (c *Checker) GetDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (c *Checker) GetDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	c.checkNotCanceled()
 	if sourceFile != nil {
-		c.CheckSourceFile(sourceFile)
+		c.CheckSourceFile(ctx, sourceFile)
+		if c.wasCanceled {
+			return nil
+		}
 		return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName())
 	}
 	for _, file := range c.files {
-		c.CheckSourceFile(file)
+		c.CheckSourceFile(ctx, file)
+		if c.wasCanceled {
+			return nil
+		}
 	}
 	return c.diagnostics.GetDiagnostics()
 }
 
 func (c *Checker) GetDiagnosticsWithoutCheck(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	c.checkNotCanceled()
 	return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName())
 }
 
 func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
+	c.checkNotCanceled()
 	return c.diagnostics.GetGlobalDiagnostics()
 }
 
@@ -29904,7 +29931,7 @@ func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) pr
 		// emitter questions of this resolver will return the right information.
 		c.emitResolver.checkerMu.Lock()
 		defer c.emitResolver.checkerMu.Unlock()
-		c.checkSourceFile(file)
+		c.checkSourceFile(context.Background(), file)
 	}
 	return c.emitResolver
 }
