@@ -1061,14 +1061,3 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 		}
 	}
 }
-
-// func createLanguageService(fileName string, files map[string]string) *ls.LanguageService {
-// 	projectService, _ := projecttestutil.Setup(files)
-// 	projectService.OpenFile(fileName, files[fileName], core.ScriptKindTS, "")
-// 	project := projectService.Projects()[0]
-// 	return project.LanguageService()
-// }
-
-// func ptrTo[T any](v T) *T {
-// 	return &v
-// }
