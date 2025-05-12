@@ -261,3 +261,7 @@ func (c *Converters) PositionToLineAndCharacter(scriptInfo ScriptInfo, position 
 		Character: uint32(character),
 	}
 }
+
+func ptrTo[T any](v T) *T {
+	return &v
+}

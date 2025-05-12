@@ -44,7 +44,14 @@ func (l *LanguageService) ProvideSignatureHelp(
 	return l.GetSignatureHelpItems(fileName, position, program, sourceFile, context, clientOptions, preferences)
 }
 
-func (l *LanguageService) GetSignatureHelpItems(fileName string, position int, program *compiler.Program, sourceFile *ast.SourceFile, context *lsproto.SignatureHelpContext, clientOptions *lsproto.SignatureHelpClientCapabilities, preferences *UserPreferences) *lsproto.SignatureHelp {
+func (l *LanguageService) GetSignatureHelpItems(
+	fileName string,
+	position int,
+	program *compiler.Program,
+	sourceFile *ast.SourceFile,
+	context *lsproto.SignatureHelpContext,
+	clientOptions *lsproto.SignatureHelpClientCapabilities,
+	preferences *UserPreferences) *lsproto.SignatureHelp {
 	typeChecker := program.GetTypeChecker()
 
 	// Decide whether to show signature help
@@ -55,14 +62,14 @@ func (l *LanguageService) GetSignatureHelpItems(fileName string, position int, p
 	}
 
 	// Only need to be careful if the user typed a character and signature help wasn't showing.
-	onlyUseSyntacticOwners := context.TriggerKind == 2 //&& triggerReason.CharacterTyped != nil //&&  == "characterTyped"
+	onlyUseSyntacticOwners := context.TriggerKind == 2
 
 	// Bail out quickly in the middle of a string or comment, don't provide signature help unless the user explicitly requested it.
 	if onlyUseSyntacticOwners && IsInString(sourceFile, position, startingToken) { // isInComment(sourceFile, position) needs formatting implemented
 		return nil
 	}
 
-	isManuallyInvoked := context.TriggerKind == 1 //triggerReason != nil && triggerReason.Invoked != nil //invoked.kind == "invoked"
+	isManuallyInvoked := context.TriggerKind == 1
 	argumentInfo := getContainingArgumentInfo(startingToken, sourceFile, program.GetTypeChecker(), isManuallyInvoked, position)
 	if argumentInfo == nil {
 		return nil
@@ -308,7 +315,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 		getTypeParameters = append(getTypeParameters, createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaration, c, printer))
 	}
 
-	thisParameter := []signatureHelpParameter{} //tbd
+	thisParameter := []signatureHelpParameter{}
 	if candidateSignature.ThisParameter() != nil {
 		thisParameter = []signatureHelpParameter{createSignatureHelpParameterForParameter(candidateSignature.ThisParameter(), printer, sourceFile, c)}
 	}
@@ -558,6 +565,7 @@ func containsPrecedingToken(startingToken *ast.Node, sourceFile *ast.SourceFile,
 	// return Debug.fail("Could not find preceding token");
 	return false
 }
+
 func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, checker *checker.Checker, isManuallyInvoked bool, position int) *argumentListInfo {
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
 		// If the node is not a subspan of its parent, this is a big problem.
@@ -1109,8 +1117,4 @@ func getApplicableRangeForTaggedTemplate(taggedTemplate *ast.TaggedTemplateExpre
 	}
 
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd-applicableSpanStart)
-}
-
-func ptrTo[T any](v T) *T {
-	return &v
 }
