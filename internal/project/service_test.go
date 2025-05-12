@@ -2,6 +2,7 @@ package project_test
 
 import (
 	"maps"
+	"slices"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -398,6 +399,28 @@ func TestService(t *testing.T) {
 			// Initially should have an error because y.ts is missing
 			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
+			// Missing location should be watched
+			assert.DeepEqual(t, host.ClientMock.WatchFilesCalls()[0].Watchers, []*lsproto.FileSystemWatcher{
+				{
+					Kind: ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete),
+					GlobPattern: lsproto.GlobPattern{
+						Pattern: ptrTo("/home/projects/TS/p1/tsconfig.json"),
+					},
+				},
+				{
+					Kind: ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete),
+					GlobPattern: lsproto.GlobPattern{
+						Pattern: ptrTo("/home/projects/TS/p1/src/index.ts"),
+					},
+				},
+				{
+					Kind: ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete),
+					GlobPattern: lsproto.GlobPattern{
+						Pattern: ptrTo("/home/projects/TS/p1/src/y.ts"),
+					},
+				},
+			})
+
 			// Add the missing file
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/y.ts"] = `export const y = 1;`
@@ -415,14 +438,14 @@ func TestService(t *testing.T) {
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/y.ts") != nil)
 		})
 
-		t.Run("create wildcard included file", func(t *testing.T) {
+		t.Run("create failed lookup location", func(t *testing.T) {
 			t.Parallel()
 			files := map[string]string{
 				"/home/projects/TS/p1/tsconfig.json": `{
 					"compilerOptions": {
 						"noLib": true
 					},
-					"include": ["src"]
+					"files": ["src/index.ts"]
 				}`,
 				"/home/projects/TS/p1/src/index.ts": `import { z } from "./z";`,
 			}
@@ -434,7 +457,12 @@ func TestService(t *testing.T) {
 			// Initially should have an error because z.ts is missing
 			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
-			// Add a new file through wildcard inclusion
+			// Missing location should be watched
+			assert.Check(t, slices.ContainsFunc(host.ClientMock.WatchFilesCalls()[1].Watchers, func(w *lsproto.FileSystemWatcher) bool {
+				return *w.GlobPattern.Pattern == "/home/projects/TS/p1/src/z.ts" && *w.Kind == lsproto.WatchKindCreate
+			}))
+
+			// Add a new file through failed lookup watch
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/z.ts"] = `export const z = 1;`
 			host.ReplaceFS(filesCopy)
@@ -450,5 +478,45 @@ func TestService(t *testing.T) {
 			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/z.ts") != nil)
 		})
+
+		t.Run("create wildcard included file", func(t *testing.T) {
+			t.Parallel()
+			files := map[string]string{
+				"/home/projects/TS/p1/tsconfig.json": `{
+					"compilerOptions": {
+						"noLib": true
+					},
+					"include": ["src"]
+				}`,
+				"/home/projects/TS/p1/src/index.ts": `a;`,
+			}
+			service, host := projecttestutil.Setup(files)
+			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
+			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
+			program := project.GetProgram()
+
+			// Initially should have an error because declaration for 'a' is missing
+			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+
+			// Add a new file through wildcard watch
+			filesCopy := maps.Clone(files)
+			filesCopy["/home/projects/TS/p1/src/a.ts"] = `const a = 1;`
+			host.ReplaceFS(filesCopy)
+			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+				{
+					Type: lsproto.FileChangeTypeCreated,
+					Uri:  "file:///home/projects/TS/p1/src/a.ts",
+				},
+			}))
+
+			// Error should be resolved and the new file should be included in the program
+			program = project.GetProgram()
+			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/a.ts") != nil)
+		})
 	})
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }
