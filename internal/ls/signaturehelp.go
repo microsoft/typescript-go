@@ -1122,10 +1122,6 @@ func getApplicableRangeForTaggedTemplate(taggedTemplate *ast.TaggedTemplateExpre
 	return core.NewTextRange(applicableSpanStart, applicableSpanEnd-applicableSpanStart)
 }
 
-func ptrTo[T any](v T) *T {
-	return &v
-}
-
 func temporaryTypeParameterToDeclaration(parameterType *checker.Type, enclosingDeclaration *ast.Node, c *checker.Checker) *ast.Node {
 	emitContext := printer.NewEmitContext()
 	factory := emitContext.Factory.AsNodeFactory()
@@ -1320,4 +1316,8 @@ func temporaryCreateTypeNode(t *checker.Type, symbol *ast.Symbol, parameterDecla
 		))
 	}
 	return nil
+}
+
+func ptrTo[T any](v T) *T {
+	return &v
 }

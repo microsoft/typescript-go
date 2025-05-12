@@ -1,18 +1,12 @@
-package ls
+package ls_test
 
 import (
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
-	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
-
-	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 type verifySignatureHelpOptions struct {
@@ -25,8 +19,6 @@ type verifySignatureHelpOptions struct {
 	overrideSelectedItemIndex int
 	//tags?: ReadonlyArray<JSDocTagInfo>;
 }
-
-const mainFileName = "/usage.ts"
 
 func TestSignatureHelp(t *testing.T) {
 	t.Parallel()
@@ -1028,19 +1020,19 @@ f</*1*/>(1, 2);`,
 	for _, testCase := range testCases {
 		t.Run(testCase.title, func(t *testing.T) {
 			t.Parallel()
-			runTest(t, testCase.input, testCase.expected)
+			runSignatureHelpTest(t, testCase.input, testCase.expected)
 		})
 
 	}
 }
 
-func runTest(t *testing.T, input string, expected map[string]verifySignatureHelpOptions) {
+func runSignatureHelpTest(t *testing.T, input string, expected map[string]verifySignatureHelpOptions) {
 	testData := lstestutil.ParseTestData("/file1.ts", input, "/file1.ts")
+	file := testData.Files[0].Filename
 	markerPositions := testData.MarkerPositions
 	service := createLanguageService(testData.Files[0].Filename, map[string]string{
 		testData.Files[0].Filename: testData.Files[0].Content,
 	})
-	file := parser.ParseSourceFile(testData.Files[0].Filename, tspath.Path(testData.Files[0].Filename), testData.Files[0].Content, core.ScriptTargetLatest, scanner.JSDocParsingModeParseAll)
 	context := &lsproto.SignatureHelpContext{
 		TriggerKind:      lsproto.SignatureHelpTriggerKindInvoked,
 		TriggerCharacter: nil,
@@ -1060,7 +1052,7 @@ func runTest(t *testing.T, input string, expected map[string]verifySignatureHelp
 		if !ok {
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
-		result := service.ProvideSignatureHelp(file.FileName(), marker.Position, context, capabilities, preferences)
+		result := service.ProvideSignatureHelp(file, marker.Position, context, capabilities, preferences)
 		assert.Equal(t, expectedResult.text, result.Signatures[*result.ActiveSignature].Label)
 		if len(*result.Signatures[*result.ActiveSignature].Parameters) <= int(result.ActiveParameter.Value) || len(*result.Signatures[*result.ActiveSignature].Parameters) == 0 {
 			assert.Equal(t, expectedResult.parameterSpan, "")
@@ -1070,13 +1062,13 @@ func runTest(t *testing.T, input string, expected map[string]verifySignatureHelp
 	}
 }
 
-func createLanguageService(fileName string, files map[string]string) *ls.LanguageService {
-	projectService, _ := projecttestutil.Setup(files)
-	projectService.OpenFile(fileName, files[fileName], core.ScriptKindTS, "")
-	project := projectService.Projects()[0]
-	return project.LanguageService()
-}
+// func createLanguageService(fileName string, files map[string]string) *ls.LanguageService {
+// 	projectService, _ := projecttestutil.Setup(files)
+// 	projectService.OpenFile(fileName, files[fileName], core.ScriptKindTS, "")
+// 	project := projectService.Projects()[0]
+// 	return project.LanguageService()
+// }
 
-func ptrTo[T any](v T) *T {
-	return &v
-}
+// func ptrTo[T any](v T) *T {
+// 	return &v
+// }
