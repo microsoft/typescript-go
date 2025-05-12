@@ -2133,7 +2133,7 @@ func getFilterText(
 func getDotAccessorContext(file *ast.SourceFile, position int) (acessorRange *core.TextRange, accessorText string) {
 	text := file.Text()[:position]
 	totalSize := 0
-	for r, size := utf8.DecodeLastRuneInString(text); size != 0; r, size = utf8.DecodeLastRuneInString(text[:len(text)-size]) {
+	for r, size := utf8.DecodeLastRuneInString(text); size != 0; r, size = utf8.DecodeLastRuneInString(text[:len(text)-totalSize]) {
 		if !unicode.IsSpace(r) {
 			break
 		}
@@ -3885,8 +3885,7 @@ func tryGetContainingJsxElement(contextToken *ast.Node, file *ast.SourceFile) *a
 
 // Filters out completion suggestions from 'symbols' according to existing JSX attributes.
 // @returns Symbols to be suggested in a JSX element, barring those whose attributes
-//
-//	do not occur at the current position and have not otherwise been typed.
+// do not occur at the current position and have not otherwise been typed.
 func filterJsxAttributes(
 	symbols []*ast.Symbol,
 	attributes []*ast.JsxAttributeLike,
