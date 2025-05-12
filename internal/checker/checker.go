@@ -579,7 +579,8 @@ type Checker struct {
 	templateLiteralTypes                       map[string]*Type
 	stringMappingTypes                         map[StringMappingKey]*Type
 	uniqueESSymbolTypes                        map[*ast.Symbol]*Type
-	constructorOfThisExpandos                  map[*ast.Symbol]*ast.Node
+	thisExpandoKinds                           map[*ast.Symbol]thisAssignmentDeclarationKind
+	thisExpandoLocations                       map[*ast.Symbol]*ast.Node
 	subtypeReductionCache                      map[string][]*Type
 	cachedTypes                                map[CachedTypeKey]*Type
 	cachedSignatures                           map[CachedSignatureKey]*Signature
@@ -864,7 +865,8 @@ func NewChecker(program Program) *Checker {
 	c.templateLiteralTypes = make(map[string]*Type)
 	c.stringMappingTypes = make(map[StringMappingKey]*Type)
 	c.uniqueESSymbolTypes = make(map[*ast.Symbol]*Type)
-	c.constructorOfThisExpandos = make(map[*ast.Symbol]*ast.Node)
+	c.thisExpandoKinds = make(map[*ast.Symbol]thisAssignmentDeclarationKind)
+	c.thisExpandoLocations = make(map[*ast.Symbol]*ast.Node)
 	c.subtypeReductionCache = make(map[string][]*Type)
 	c.cachedTypes = make(map[CachedTypeKey]*Type)
 	c.cachedSignatures = make(map[CachedSignatureKey]*Signature)
@@ -16689,30 +16691,43 @@ func (c *Checker) getTypeOfPrototypeProperty(prototype *ast.Symbol) *Type {
 	return classType
 }
 
+type thisAssignmentDeclarationKind int32
+
+const (
+	thisAssignmentDeclarationNone        thisAssignmentDeclarationKind = iota // not (all) this.property assignments
+	thisAssignmentDeclarationTyped                                            // typed; use the type annotation
+	thisAssignmentDeclarationConstructor                                      // at least one in the constructor; use control flow
+	thisAssignmentDeclarationMethod                                           // methods only; look in base first, and if not found, union all declaration types plus undefined
+)
+
 func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
-	var types []*Type
 	var t *Type
-	if ctor := c.isConstructorDeclaredThisProperty(symbol); ctor != nil {
-		t = c.getFlowTypeInConstructor(symbol, ctor)
+	kind, location := c.isConstructorDeclaredThisProperty(symbol)
+	if kind == thisAssignmentDeclarationTyped {
+		if location == nil {
+			panic("constructor should not be nil when this assignment is in a constructor.")
+		}
+		t = c.getTypeFromTypeNode(location)
+	} else if kind == thisAssignmentDeclarationConstructor {
+		if location == nil {
+			panic("constructor should not be nil when this assignment is in a constructor.")
+		}
+		t = c.getFlowTypeInConstructor(symbol, location)
+	} else if kind == thisAssignmentDeclarationMethod {
+		t = c.getTypeOfPropertyInBaseClass(symbol)
 	}
 	if t == nil {
-		nonConstructorDeclaredThis := true
+		var types []*Type
 		for _, declaration := range symbol.Declarations {
 			if ast.IsBinaryExpression(declaration) {
-				nonConstructorDeclaredThis = nonConstructorDeclaredThis && ast.GetAssignmentDeclarationKind(declaration.AsBinaryExpression()) == ast.JSDeclarationKindThisProperty
-				// TODO: if declaration.Type() != nil { nonConstructorDeclaredThis = false; t = c.getTypeOfTypeNode(declaration.Type()); break }
 				types = core.AppendIfUnique(types, c.checkExpressionForMutableLocation(declaration.AsBinaryExpression().Right, CheckModeNormal))
 			}
 		}
-		if nonConstructorDeclaredThis && len(types) > 0 {
-			if base := c.getTypeOfPropertyInBaseClass(symbol); base != nil {
-				t = base
-			} else if c.strictNullChecks {
+		if kind == thisAssignmentDeclarationMethod && len(types) > 0 {
+			if c.strictNullChecks {
 				types = core.AppendIfUnique(types, c.undefinedOrMissingType)
 			}
 		}
-	}
-	if t == nil {
 		t = c.getWidenedType(c.getUnionType(types))
 	}
 	// report an all-nullable or empty union as an implicit any in JS files
@@ -16727,29 +16742,50 @@ func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Ty
 // A property is considered a constructor declared property when all declaration sites are this.xxx assignments,
 // when no declaration sites have JSDoc type annotations, and when at least one declaration site is in the body of
 // a class constructor.
-func (c *Checker) isConstructorDeclaredThisProperty(symbol *ast.Symbol) *ast.Node {
+func (c *Checker) isConstructorDeclaredThisProperty(symbol *ast.Symbol) (thisAssignmentDeclarationKind, *ast.Node) {
 	if symbol.ValueDeclaration == nil || !ast.IsBinaryExpression(symbol.ValueDeclaration) {
-		return nil
+		return thisAssignmentDeclarationNone, nil
 	}
-	if ctor, ok := c.constructorOfThisExpandos[symbol]; ok {
-		return ctor
+	if kind, ok := c.thisExpandoKinds[symbol]; ok {
+		location, ok2 := c.thisExpandoLocations[symbol]
+		if !ok2 {
+			panic("ctor should be cached whenever this expando location is cached")
+		}
+		return kind, location
 	}
-	untypedConstructorDeclaredThis := core.Every(symbol.Declarations, func(declaration *ast.Declaration) bool {
+	allThis := true
+	var typeAnnotation *ast.Node
+	for _, declaration := range symbol.Declarations {
 		if !ast.IsBinaryExpression(declaration) {
-			return false
+			allThis = false
+			break
 		}
 		bin := declaration.AsBinaryExpression()
-		return ast.GetAssignmentDeclarationKind(bin) == ast.JSDeclarationKindThisProperty &&
-			(bin.Left.Kind != ast.KindElementAccessExpression || ast.IsStringOrNumericLiteralLike(bin.Left.AsElementAccessExpression().ArgumentExpression)) &&
-			// TODO: bin.Type() == nil
-			bin.Right.Kind != ast.KindTypeAssertionExpression
-	})
-	if untypedConstructorDeclaredThis {
-		c.constructorOfThisExpandos[symbol] = c.getDeclaringConstructor(symbol)
-	} else {
-		c.constructorOfThisExpandos[symbol] = nil
+		if ast.GetAssignmentDeclarationKind(bin) == ast.JSDeclarationKindThisProperty &&
+			(bin.Left.Kind != ast.KindElementAccessExpression || ast.IsStringOrNumericLiteralLike(bin.Left.AsElementAccessExpression().ArgumentExpression)) {
+			// TODO: if bin.Type() != nil, use bin.Type()
+			if bin.Right.Kind == ast.KindTypeAssertionExpression {
+				typeAnnotation = bin.Right.AsTypeAssertion().Type
+			}
+		} else {
+			allThis = false
+			break
+		}
 	}
-	return c.constructorOfThisExpandos[symbol]
+	var location *ast.Node
+	kind := thisAssignmentDeclarationNone
+	if allThis {
+		if typeAnnotation != nil {
+			location = typeAnnotation
+			kind = thisAssignmentDeclarationTyped
+		} else {
+			location = c.getDeclaringConstructor(symbol)
+			kind = core.IfElse(location == nil, thisAssignmentDeclarationMethod, thisAssignmentDeclarationConstructor)
+		}
+	}
+	c.thisExpandoKinds[symbol] = kind
+	c.thisExpandoLocations[symbol] = location
+	return kind, location
 }
 
 func (c *Checker) widenTypeForVariableLikeDeclaration(t *Type, declaration *ast.Node, reportErrors bool) *Type {

@@ -24,26 +24,26 @@
    get innerHTML() { return this.textContent; }
 ->innerHTML : string
 ->this.textContent : string
-+>innerHTML : any
-+>this.textContent : any
++>innerHTML : String
++>this.textContent : String
  >this : this
 ->textContent : string
-+>textContent : any
++>textContent : String
  
    set innerHTML(html) { this.textContent = html; }
 ->innerHTML : string
 ->html : string
 ->this.textContent = html : string
 ->this.textContent : string
-+>innerHTML : any
-+>html : any
-+>this.textContent = html : any
-+>this.textContent : any
++>innerHTML : String
++>html : String
++>this.textContent = html : String
++>this.textContent : String
  >this : this
 ->textContent : string
 ->html : string
-+>textContent : any
-+>html : any
++>textContent : String
++>html : String
  
    toString() {
  >toString : () => void

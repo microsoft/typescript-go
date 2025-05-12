@@ -30,19 +30,19 @@ export class TextElement extends HTMLElement {
 >HTMLElement : HTMLElement
 
   get innerHTML() { return this.textContent; }
->innerHTML : any
->this.textContent : any
+>innerHTML : String
+>this.textContent : String
 >this : this
->textContent : any
+>textContent : String
 
   set innerHTML(html) { this.textContent = html; }
->innerHTML : any
->html : any
->this.textContent = html : any
->this.textContent : any
+>innerHTML : String
+>html : String
+>this.textContent = html : String
+>this.textContent : String
 >this : this
->textContent : any
->html : any
+>textContent : String
+>html : String
 
   toString() {
 >toString : () => void
