@@ -64,6 +64,7 @@ func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic 
 	return p.Errors
 }
 
+// Porting reference: ProjectService.isMatchedByConfig
 func (p *ParsedCommandLine) MatchesFileName(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
 	path := tspath.ToPath(fileName, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
 	if slices.ContainsFunc(p.FileNames(), func(f string) bool {

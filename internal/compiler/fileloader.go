@@ -38,6 +38,7 @@ type fileLoader struct {
 
 type processedFiles struct {
 	files                         []*ast.SourceFile
+	missingFiles                  []string
 	resolvedModules               map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	sourceFileMetaDatas           map[tspath.Path]*ast.SourceFileMetaData
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
@@ -84,6 +85,7 @@ func processAllProgramFiles(
 	totalFileCount := int(loader.totalFileCount.Load())
 	libFileCount := int(loader.libFileCount.Load())
 
+	var missingFiles []string
 	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
@@ -94,6 +96,10 @@ func processAllProgramFiles(
 
 	for task := range loader.collectTasks(loader.rootTasks) {
 		file := task.file
+		if file == nil {
+			missingFiles = append(missingFiles, task.normalizedFilePath)
+			continue
+		}
 		if task.isLib {
 			libFiles = append(libFiles, file)
 		} else {
@@ -189,10 +195,8 @@ func (p *fileLoader) collectTasksWorker(tasks []*parseTask, seen core.Set[*parse
 			}
 		}
 
-		if task.file != nil {
-			if !yield(task) {
-				return false
-			}
+		if !yield(task) {
+			return false
 		}
 	}
 	return true
@@ -244,6 +248,10 @@ func (t *parseTask) start(loader *fileLoader) {
 
 	loader.wg.Queue(func() {
 		file := loader.parseSourceFile(t.normalizedFilePath)
+		if file == nil {
+			return
+		}
+
 		t.file = file
 		loader.wg.Queue(func() {
 			t.metadata = loader.loadSourceFileMetaData(file.Path())

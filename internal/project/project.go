@@ -158,13 +158,7 @@ func (p *Project) GetProjectVersion() int {
 
 // GetRootFileNames implements LanguageServiceHost.
 func (p *Project) GetRootFileNames() []string {
-	fileNames := make([]string, 0, p.rootFileNames.Size())
-	for path, fileName := range p.rootFileNames.Entries() {
-		if p.host.GetScriptInfoByPath(path) != nil {
-			fileNames = append(fileNames, fileName)
-		}
-	}
-	return fileNames
+	return slices.Collect(p.rootFileNames.Values())
 }
 
 // GetSourceFile implements LanguageServiceHost.
