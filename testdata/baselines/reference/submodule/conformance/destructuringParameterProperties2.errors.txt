@@ -1,12 +1,14 @@
 destructuringParameterProperties2.ts(2,36): error TS1187: A parameter property may not be declared using a binding pattern.
 destructuringParameterProperties2.ts(3,59): error TS2339: Property 'b' does not exist on type 'C1'.
 destructuringParameterProperties2.ts(3,83): error TS2339: Property 'c' does not exist on type 'C1'.
+destructuringParameterProperties2.ts(4,18): error TS2339: Property 'a' does not exist on type 'C1'.
+destructuringParameterProperties2.ts(9,21): error TS2339: Property 'a' does not exist on type 'C1'.
 destructuringParameterProperties2.ts(13,21): error TS2339: Property 'b' does not exist on type 'C1'.
 destructuringParameterProperties2.ts(17,21): error TS2339: Property 'c' does not exist on type 'C1'.
 destructuringParameterProperties2.ts(21,42): error TS2322: Type 'string' is not assignable to type 'boolean'.
 
 
-==== destructuringParameterProperties2.ts (6 errors) ====
+==== destructuringParameterProperties2.ts (8 errors) ====
     class C1 {
         constructor(private k: number, private [a, b, c]: [number, string, boolean]) {
                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -17,11 +19,15 @@ destructuringParameterProperties2.ts(21,42): error TS2322: Type 'string' is not 
                                                                                       ~
 !!! error TS2339: Property 'c' does not exist on type 'C1'.
                 this.a = a || k;
+                     ~
+!!! error TS2339: Property 'a' does not exist on type 'C1'.
             }
         }
     
         public getA() {
             return this.a
+                        ~
+!!! error TS2339: Property 'a' does not exist on type 'C1'.
         }
     
         public getB() {

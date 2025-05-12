@@ -31,9 +31,7 @@ module M {
 >c3 : Symbol(c3, Decl(statics.ts, 3, 57))
 
             this.g = (v:number) => C.f(this.x+C.y+v+this.c1+this.c2+C.pub);
->this.g : Symbol(g, Decl(statics.ts, 4, 44))
 >this : Symbol(C, Decl(statics.ts, 0, 10))
->g : Symbol(g, Decl(statics.ts, 4, 44))
 >v : Symbol(v, Decl(statics.ts, 5, 22))
 >C.f : Symbol(f, Decl(statics.ts, 10, 24))
 >C : Symbol(C, Decl(statics.ts, 0, 10))
@@ -116,9 +114,7 @@ module M {
 
         result+=(new C(5,10,20).g(C.y));
 >result : Symbol(result, Decl(statics.ts, 18, 11))
->new C(5,10,20).g : Symbol(g, Decl(statics.ts, 4, 44))
 >C : Symbol(C, Decl(statics.ts, 0, 10))
->g : Symbol(g, Decl(statics.ts, 4, 44))
 >C.y : Symbol(y, Decl(statics.ts, 9, 21))
 >C : Symbol(C, Decl(statics.ts, 0, 10))
 >y : Symbol(y, Decl(statics.ts, 9, 21))

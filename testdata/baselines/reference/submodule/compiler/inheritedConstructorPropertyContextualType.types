@@ -21,12 +21,12 @@ class Assignment extends Base<State> {
 >super : typeof Base
 
         this.state = { version: 2 }
->this.state = { version: 2 } : { version: number; }
->this.state : { version: number; }
+>this.state = { version: 2 } : { version: 2; }
+>this.state : State
 >this : this
->state : { version: number; }
->{ version: 2 } : { version: number; }
->version : number
+>state : State
+>{ version: 2 } : { version: 2; }
+>version : 2
 >2 : 2
     }
 }

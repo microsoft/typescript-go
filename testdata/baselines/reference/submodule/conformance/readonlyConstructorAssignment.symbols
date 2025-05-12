@@ -29,9 +29,9 @@ class B extends A {
 
         // Fails, x is readonly
         this.x = 1;
->this.x : Symbol(x, Decl(readonlyConstructorAssignment.ts, 10, 17))
+>this.x : Symbol(x, Decl(readonlyConstructorAssignment.ts, 3, 16))
 >this : Symbol(B, Decl(readonlyConstructorAssignment.ts, 6, 1))
->x : Symbol(x, Decl(readonlyConstructorAssignment.ts, 10, 17))
+>x : Symbol(x, Decl(readonlyConstructorAssignment.ts, 3, 16))
     }
 }
 

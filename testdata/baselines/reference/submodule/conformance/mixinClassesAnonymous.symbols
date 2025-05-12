@@ -154,9 +154,9 @@ class Thing3 extends Thing2 {
 
         super(10, 20, 30);
         this._tag = tag;
->this._tag : Symbol(_tag, Decl(mixinClassesAnonymous.ts, 49, 26))
+>this._tag : Symbol(_tag, Decl(mixinClassesAnonymous.ts, 20, 32))
 >this : Symbol(Thing3, Decl(mixinClassesAnonymous.ts, 45, 1))
->_tag : Symbol(_tag, Decl(mixinClassesAnonymous.ts, 49, 26))
+>_tag : Symbol(_tag, Decl(mixinClassesAnonymous.ts, 20, 32))
 >tag : Symbol(tag, Decl(mixinClassesAnonymous.ts, 48, 16))
     }
     test() {

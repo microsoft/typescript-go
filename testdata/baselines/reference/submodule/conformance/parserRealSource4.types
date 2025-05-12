@@ -44,7 +44,7 @@ module TypeScript {
             // initialize the 'constructor' field
             this["constructor"] = undefined;
 >this["constructor"] = undefined : undefined
->this["constructor"] : any
+>this["constructor"] : Function
 >this : this
 >"constructor" : "constructor"
 >undefined : undefined

@@ -14,12 +14,3 @@
  >C : Symbol(C, Decl(unknownSymbols1.ts, 8, 16))
  >asdf : Symbol(asdf)
  }
-@@= skipped -38, +38 lines =@@
- 
-     constructor() {
-         this.asdf = asdf;
-+>this.asdf : Symbol(asdf, Decl(unknownSymbols1.ts, 28, 19))
- >this : Symbol(C5, Decl(unknownSymbols1.ts, 25, 19))
-+>asdf : Symbol(asdf, Decl(unknownSymbols1.ts, 28, 19))
-     }
- }

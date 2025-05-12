@@ -43,7 +43,7 @@
              this["constructor"] = undefined;
  >this : Symbol(BlockIntrinsics, Decl(parserRealSource4.ts, 5, 19))
 ->"constructor" : Symbol(Object.constructor, Decl(lib.es5.d.ts, --, --))
-+>"constructor" : Symbol(constructor, Decl(parserRealSource4.ts, 16, 24))
++>"constructor" : Symbol(constructor, Decl(lib.es5.d.ts, --, --))
  >undefined : Symbol(undefined)
          }
      }

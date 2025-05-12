@@ -1,11 +1,13 @@
 destructuringParameterProperties3.ts(2,31): error TS1187: A parameter property may not be declared using a binding pattern.
 destructuringParameterProperties3.ts(3,59): error TS2339: Property 'b' does not exist on type 'C1<T, U, V>'.
 destructuringParameterProperties3.ts(3,83): error TS2339: Property 'c' does not exist on type 'C1<T, U, V>'.
+destructuringParameterProperties3.ts(4,18): error TS2339: Property 'a' does not exist on type 'C1<T, U, V>'.
+destructuringParameterProperties3.ts(9,21): error TS2339: Property 'a' does not exist on type 'C1<T, U, V>'.
 destructuringParameterProperties3.ts(13,21): error TS2339: Property 'b' does not exist on type 'C1<T, U, V>'.
 destructuringParameterProperties3.ts(17,21): error TS2339: Property 'c' does not exist on type 'C1<T, U, V>'.
 
 
-==== destructuringParameterProperties3.ts (5 errors) ====
+==== destructuringParameterProperties3.ts (7 errors) ====
     class C1<T, U, V> {
         constructor(private k: T, private [a, b, c]: [T,U,V]) {
                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -16,11 +18,15 @@ destructuringParameterProperties3.ts(17,21): error TS2339: Property 'c' does not
                                                                                       ~
 !!! error TS2339: Property 'c' does not exist on type 'C1<T, U, V>'.
                 this.a = a || k;
+                     ~
+!!! error TS2339: Property 'a' does not exist on type 'C1<T, U, V>'.
             }
         }
     
         public getA() {
             return this.a
+                        ~
+!!! error TS2339: Property 'a' does not exist on type 'C1<T, U, V>'.
         }
     
         public getB() {

@@ -58,9 +58,9 @@ class Thing {
         /** @type {DoneStatus} */
         this.s = {
 >this.s = {            status: 'done',            m(n) { }        } : { status: "done"; m: (n: number) => void; }
->this.s : { status: "done"; m: (n: number) => void; } | { status: string; m: (n: any) => void; }
+>this.s : { status: "done"; m: (n: number) => void; } | { status: string; m: (n: any) => void; } | undefined
 >this : this
->s : { status: "done"; m: (n: number) => void; } | { status: string; m: (n: any) => void; }
+>s : { status: "done"; m: (n: number) => void; } | { status: string; m: (n: any) => void; } | undefined
 >{            status: 'done',            m(n) { }        } : { status: "done"; m: (n: number) => void; }
 >{            status: 'done',            m(n) { }        } : { status: "done"; m: (n: number) => void; }
 
@@ -79,9 +79,9 @@ class Thing {
 
         this.s = {
 >this.s = {            status: 'done',            m(n) { }        } : { status: string; m: (n: any) => void; }
->this.s : { status: "done"; m: (n: number) => void; } | { status: string; m: (n: any) => void; }
+>this.s : { status: "done"; m: (n: number) => void; } | { status: string; m: (n: any) => void; } | undefined
 >this : this
->s : { status: "done"; m: (n: number) => void; } | { status: string; m: (n: any) => void; }
+>s : { status: "done"; m: (n: number) => void; } | { status: string; m: (n: any) => void; } | undefined
 >{            status: 'done',            m(n) { }        } : { status: string; m: (n: any) => void; }
 
             status: 'done',

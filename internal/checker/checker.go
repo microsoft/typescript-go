@@ -16692,40 +16692,64 @@ func (c *Checker) getTypeOfPrototypeProperty(prototype *ast.Symbol) *Type {
 func (c *Checker) getWidenedTypeForAssignmentDeclaration(symbol *ast.Symbol) *Type {
 	var types []*Type
 	var t *Type
-	if ctor, ok := c.isConstructorDeclaredThisProperty(symbol); ok {
+	if ctor := c.isConstructorDeclaredThisProperty(symbol); ctor != nil {
 		t = c.getFlowTypeInConstructor(symbol, ctor)
 	}
 	if t == nil {
+		nonConstructorDeclaredThis := true
 		for _, declaration := range symbol.Declarations {
 			if ast.IsBinaryExpression(declaration) {
+				nonConstructorDeclaredThis = nonConstructorDeclaredThis && ast.GetAssignmentDeclarationKind(declaration.AsBinaryExpression()) == ast.JSDeclarationKindThisProperty
+				// TODO: if declaration.Type() != nil { nonConstructorDeclaredThis = false; t = c.getTypeOfTypeNode(declaration.Type()); break }
 				types = core.AppendIfUnique(types, c.checkExpressionForMutableLocation(declaration.AsBinaryExpression().Right, CheckModeNormal))
 			}
 		}
+		if nonConstructorDeclaredThis && len(types) > 0 {
+			if base := c.getTypeOfPropertyInBaseClass(symbol); base != nil {
+				t = base
+			} else if c.strictNullChecks {
+				types = core.AppendIfUnique(types, c.undefinedOrMissingType)
+			}
+		}
+	}
+	if t == nil {
 		t = c.getWidenedType(c.getUnionType(types))
+	}
+	// report an all-nullable or empty union as an implicit any in JS files
+	if symbol.ValueDeclaration != nil && ast.IsInJSFile(symbol.ValueDeclaration) &&
+		c.filterType(t, func(c *Type) bool { return c.Flags() & ^TypeFlagsNullable != 0 }) == c.neverType {
+		c.reportImplicitAny(symbol.ValueDeclaration, c.anyType, WideningKindNormal)
+		return c.anyType
 	}
 	return t
 }
 
-func (c *Checker) isConstructorDeclaredThisProperty(symbol *ast.Symbol) (*ast.Node, bool) {
+// A property is considered a constructor declared property when all declaration sites are this.xxx assignments,
+// when no declaration sites have JSDoc type annotations, and when at least one declaration site is in the body of
+// a class constructor.
+func (c *Checker) isConstructorDeclaredThisProperty(symbol *ast.Symbol) *ast.Node {
 	if symbol.ValueDeclaration == nil || !ast.IsBinaryExpression(symbol.ValueDeclaration) {
-		return nil, false
+		return nil
 	}
 	if ctor, ok := c.constructorOfThisExpandos[symbol]; ok {
-		return ctor, ok
+		return ctor
 	}
-	ctor := c.getDeclaringConstructor(symbol)
-	result := ctor != nil &&
-		core.Every(symbol.Declarations, func(declaration *ast.Declaration) bool {
-			if !ast.IsBinaryExpression(declaration) {
-				return false
-			}
-			bin := declaration.AsBinaryExpression()
-			return ast.GetAssignmentDeclarationKind(bin) == ast.JSDeclarationKindThisProperty &&
-				(bin.Left.Kind != ast.KindElementAccessExpression || ast.IsStringOrNumericLiteralLike(bin.Left.AsElementAccessExpression().ArgumentExpression)) &&
-				bin.Right.Kind != ast.KindTypeAssertionExpression
-		})
-	c.constructorOfThisExpandos[symbol] = ctor
-	return ctor, result
+	untypedConstructorDeclaredThis := core.Every(symbol.Declarations, func(declaration *ast.Declaration) bool {
+		if !ast.IsBinaryExpression(declaration) {
+			return false
+		}
+		bin := declaration.AsBinaryExpression()
+		return ast.GetAssignmentDeclarationKind(bin) == ast.JSDeclarationKindThisProperty &&
+			(bin.Left.Kind != ast.KindElementAccessExpression || ast.IsStringOrNumericLiteralLike(bin.Left.AsElementAccessExpression().ArgumentExpression)) &&
+			// TODO: bin.Type() == nil
+			bin.Right.Kind != ast.KindTypeAssertionExpression
+	})
+	if untypedConstructorDeclaredThis {
+		c.constructorOfThisExpandos[symbol] = c.getDeclaringConstructor(symbol)
+	} else {
+		c.constructorOfThisExpandos[symbol] = nil
+	}
+	return c.constructorOfThisExpandos[symbol]
 }
 
 func (c *Checker) widenTypeForVariableLikeDeclaration(t *Type, declaration *ast.Node, reportErrors bool) *Type {

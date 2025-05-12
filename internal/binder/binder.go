@@ -1046,8 +1046,11 @@ func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
 }
 
 func (b *Binder) bindThisPropertyAssignment(node *ast.Node) {
-	expr := node.AsBinaryExpression()
-	if ast.IsPropertyAccessExpression(expr.Left) && ast.IsPrivateIdentifier(expr.Left.AsPropertyAccessExpression().Name()) {
+	if !ast.IsInJSFile(node) {
+		return
+	}
+	bin := node.AsBinaryExpression()
+	if ast.IsPropertyAccessExpression(bin.Left) && ast.IsPrivateIdentifier(bin.Left.AsPropertyAccessExpression().Name()) {
 		return
 	}
 	thisContainer := ast.GetThisContainer(node /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/, false)

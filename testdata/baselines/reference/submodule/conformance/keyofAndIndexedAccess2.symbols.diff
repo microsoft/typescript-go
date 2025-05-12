@@ -85,17 +85,3 @@
  }
  
  function get123<K extends keyof Type>(): Type[K] {
-@@= skipped -141, +141 lines =@@
- 
-   constructor() {
-     this.a = "b";
-+>this.a : Symbol(a, Decl(keyofAndIndexedAccess2.ts, 142, 17), Decl(keyofAndIndexedAccess2.ts, 143, 17))
- >this : Symbol(c, Decl(keyofAndIndexedAccess2.ts, 136, 1))
-+>a : Symbol(a, Decl(keyofAndIndexedAccess2.ts, 142, 17), Decl(keyofAndIndexedAccess2.ts, 143, 17))
- 
-     this["a"] = "b";
- >this : Symbol(c, Decl(keyofAndIndexedAccess2.ts, 136, 1))
-+>"a" : Symbol(a, Decl(keyofAndIndexedAccess2.ts, 142, 17), Decl(keyofAndIndexedAccess2.ts, 143, 17))
-   }
- }
- 

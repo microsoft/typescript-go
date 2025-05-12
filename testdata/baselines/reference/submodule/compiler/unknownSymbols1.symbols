@@ -69,8 +69,6 @@ class C5 {
 
     constructor() {
         this.asdf = asdf;
->this.asdf : Symbol(asdf, Decl(unknownSymbols1.ts, 28, 19))
 >this : Symbol(C5, Decl(unknownSymbols1.ts, 25, 19))
->asdf : Symbol(asdf, Decl(unknownSymbols1.ts, 28, 19))
     }
 }

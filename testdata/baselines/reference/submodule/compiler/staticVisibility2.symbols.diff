@@ -9,11 +9,3 @@
  
      constructor(sideLength: number) {
  >sideLength : Symbol(sideLength, Decl(staticVisibility2.ts, 2, 16))
- 
-         this.sideLength = sideLength;
-+>this.sideLength : Symbol(sideLength, Decl(staticVisibility2.ts, 2, 37))
- >this : Symbol(Square, Decl(staticVisibility2.ts, 0, 0))
-+>sideLength : Symbol(sideLength, Decl(staticVisibility2.ts, 2, 37))
- >sideLength : Symbol(sideLength, Decl(staticVisibility2.ts, 2, 16))
-     }
- }

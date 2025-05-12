@@ -6,9 +6,9 @@ class AA {
 
     static #method() { this.x = 10; };
 >#method : Symbol(#method, Decl(privateNameStaticMethodCallExpression.ts, 0, 10))
->this.x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 1, 22), Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
+>this.x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
 >this : Symbol(AA, Decl(privateNameStaticMethodCallExpression.ts, 0, 0))
->x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 1, 22), Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
+>x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
 
     static #method2(a, ...b) {};
 >#method2 : Symbol(#method2, Decl(privateNameStaticMethodCallExpression.ts, 1, 38))
@@ -16,7 +16,7 @@ class AA {
 >b : Symbol(b, Decl(privateNameStaticMethodCallExpression.ts, 2, 22))
 
     static x = 1;
->x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 1, 22), Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
+>x : Symbol(x, Decl(privateNameStaticMethodCallExpression.ts, 2, 32))
 
     test() {
 >test : Symbol(test, Decl(privateNameStaticMethodCallExpression.ts, 3, 17))

@@ -19,17 +19,17 @@
  
          this.x = "x";
 ->this.x : Symbol(Base.x, Decl(classExtendingClassLikeType.ts, 0, 22))
-+>this.x : Symbol(x, Decl(classExtendingClassLikeType.ts, 20, 28))
++>this.x : Symbol(x, Decl(classExtendingClassLikeType.ts, 0, 22))
  >this : Symbol(D1, Decl(classExtendingClassLikeType.ts, 16, 44))
 ->x : Symbol(Base.x, Decl(classExtendingClassLikeType.ts, 0, 22))
-+>x : Symbol(x, Decl(classExtendingClassLikeType.ts, 20, 28))
++>x : Symbol(x, Decl(classExtendingClassLikeType.ts, 0, 22))
  
          this.y = "y";
 ->this.y : Symbol(Base.y, Decl(classExtendingClassLikeType.ts, 1, 9))
-+>this.y : Symbol(y, Decl(classExtendingClassLikeType.ts, 21, 21))
++>this.y : Symbol(y, Decl(classExtendingClassLikeType.ts, 1, 9))
  >this : Symbol(D1, Decl(classExtendingClassLikeType.ts, 16, 44))
 ->y : Symbol(Base.y, Decl(classExtendingClassLikeType.ts, 1, 9))
-+>y : Symbol(y, Decl(classExtendingClassLikeType.ts, 21, 21))
++>y : Symbol(y, Decl(classExtendingClassLikeType.ts, 1, 9))
      }
  }
  
@@ -38,17 +38,17 @@
  
          this.x = 1;
 ->this.x : Symbol(Base.x, Decl(classExtendingClassLikeType.ts, 0, 22))
-+>this.x : Symbol(x, Decl(classExtendingClassLikeType.ts, 29, 22))
++>this.x : Symbol(x, Decl(classExtendingClassLikeType.ts, 0, 22))
  >this : Symbol(D2, Decl(classExtendingClassLikeType.ts, 24, 1))
 ->x : Symbol(Base.x, Decl(classExtendingClassLikeType.ts, 0, 22))
-+>x : Symbol(x, Decl(classExtendingClassLikeType.ts, 29, 22))
++>x : Symbol(x, Decl(classExtendingClassLikeType.ts, 0, 22))
  
          this.y = 2;
 ->this.y : Symbol(Base.y, Decl(classExtendingClassLikeType.ts, 1, 9))
-+>this.y : Symbol(y, Decl(classExtendingClassLikeType.ts, 30, 19))
++>this.y : Symbol(y, Decl(classExtendingClassLikeType.ts, 1, 9))
  >this : Symbol(D2, Decl(classExtendingClassLikeType.ts, 24, 1))
 ->y : Symbol(Base.y, Decl(classExtendingClassLikeType.ts, 1, 9))
-+>y : Symbol(y, Decl(classExtendingClassLikeType.ts, 30, 19))
++>y : Symbol(y, Decl(classExtendingClassLikeType.ts, 1, 9))
      }
  }
  
@@ -57,17 +57,17 @@
  
          this.x = "x";
 ->this.x : Symbol(Base.x, Decl(classExtendingClassLikeType.ts, 0, 22))
-+>this.x : Symbol(x, Decl(classExtendingClassLikeType.ts, 37, 25))
++>this.x : Symbol(x, Decl(classExtendingClassLikeType.ts, 0, 22))
  >this : Symbol(D3, Decl(classExtendingClassLikeType.ts, 33, 1))
 ->x : Symbol(Base.x, Decl(classExtendingClassLikeType.ts, 0, 22))
-+>x : Symbol(x, Decl(classExtendingClassLikeType.ts, 37, 25))
++>x : Symbol(x, Decl(classExtendingClassLikeType.ts, 0, 22))
  
          this.y = 2;
 ->this.y : Symbol(Base.y, Decl(classExtendingClassLikeType.ts, 1, 9))
-+>this.y : Symbol(y, Decl(classExtendingClassLikeType.ts, 38, 21))
++>this.y : Symbol(y, Decl(classExtendingClassLikeType.ts, 1, 9))
  >this : Symbol(D3, Decl(classExtendingClassLikeType.ts, 33, 1))
 ->y : Symbol(Base.y, Decl(classExtendingClassLikeType.ts, 1, 9))
-+>y : Symbol(y, Decl(classExtendingClassLikeType.ts, 38, 21))
++>y : Symbol(y, Decl(classExtendingClassLikeType.ts, 1, 9))
      }
  }
  

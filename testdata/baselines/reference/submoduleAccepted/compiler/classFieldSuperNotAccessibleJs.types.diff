@@ -21,31 +21,8 @@
  
          /** @type string */
          this['literalElementAccess'];
-@@= skipped -29, +29 lines =@@
- 
-         this.foo = 10
- >this.foo = 10 : 10
-->this.foo : number | undefined
-+>this.foo : number
- >this : this
-->foo : number | undefined
-+>foo : number
- >10 : 10
-     }
- }
-@@= skipped -20, +20 lines =@@
- >roots : string
-     }
-     get fooTests() {
-->fooTests : number | undefined
-+>fooTests : number
- 
-         return super.foo;
-->super.foo : number | undefined
-+>super.foo : number
- >super : YaddaBase
-->foo : number | undefined
-+>foo : number
+@@= skipped -57, +57 lines =@@
+ >foo : number | undefined
      }
      get justPropTests() {
 ->justPropTests : number

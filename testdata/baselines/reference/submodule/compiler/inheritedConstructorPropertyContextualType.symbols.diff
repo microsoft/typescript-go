@@ -22,10 +22,10 @@
  
          this.state = { version: 2 }
 ->this.state : Symbol(Base.state, Decl(inheritedConstructorPropertyContextualType.ts, 3, 23))
-+>this.state : Symbol(state, Decl(inheritedConstructorPropertyContextualType.ts, 8, 15))
++>this.state : Symbol(state, Decl(inheritedConstructorPropertyContextualType.ts, 3, 23))
  >this : Symbol(Assignment, Decl(inheritedConstructorPropertyContextualType.ts, 5, 1))
 ->state : Symbol(Base.state, Decl(inheritedConstructorPropertyContextualType.ts, 3, 23))
-+>state : Symbol(state, Decl(inheritedConstructorPropertyContextualType.ts, 8, 15))
++>state : Symbol(state, Decl(inheritedConstructorPropertyContextualType.ts, 3, 23))
  >version : Symbol(version, Decl(inheritedConstructorPropertyContextualType.ts, 9, 22))
      }
  }

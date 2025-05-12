@@ -9,16 +9,7 @@
  >T : Symbol(T, Decl(destructuringParameterProperties3.ts, 0, 9))
  >a : Symbol(a, Decl(destructuringParameterProperties3.ts, 1, 39))
  >b : Symbol(b, Decl(destructuringParameterProperties3.ts, 1, 41))
-@@= skipped -20, +20 lines =@@
- >undefined : Symbol(undefined)
- 
-             this.a = a || k;
-+>this.a : Symbol(a, Decl(destructuringParameterProperties3.ts, 2, 101))
- >this : Symbol(C1, Decl(destructuringParameterProperties3.ts, 0, 0))
-+>a : Symbol(a, Decl(destructuringParameterProperties3.ts, 2, 101))
- >a : Symbol(a, Decl(destructuringParameterProperties3.ts, 1, 39))
- >k : Symbol(k, Decl(destructuringParameterProperties3.ts, 1, 16))
-         }
+@@= skipped -27, +27 lines =@@
      }
  
      public getA() {
@@ -26,9 +17,7 @@
 +>getA : Symbol(getA, Decl(destructuringParameterProperties3.ts, 5, 5))
  
          return this.a
-+>this.a : Symbol(a, Decl(destructuringParameterProperties3.ts, 2, 101))
  >this : Symbol(C1, Decl(destructuringParameterProperties3.ts, 0, 0))
-+>a : Symbol(a, Decl(destructuringParameterProperties3.ts, 2, 101))
      }
  
      public getB() {
@@ -45,7 +34,7 @@
  
          return this.c;
  >this : Symbol(C1, Decl(destructuringParameterProperties3.ts, 0, 0))
-@@= skipped -37, +41 lines =@@
+@@= skipped -30, +30 lines =@@
  >x_a : Symbol(x_a, Decl(destructuringParameterProperties3.ts, 21, 5))
  >x_b : Symbol(x_b, Decl(destructuringParameterProperties3.ts, 21, 9))
  >x_c : Symbol(x_c, Decl(destructuringParameterProperties3.ts, 21, 14))

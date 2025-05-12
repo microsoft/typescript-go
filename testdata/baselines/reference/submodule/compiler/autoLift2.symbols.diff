@@ -1,18 +1,6 @@
 --- old.autoLift2.symbols
 +++ new.autoLift2.symbols
-@@= skipped -6, +6 lines =@@
- {
-     constructor() {
-         this.foo: any;
-+>this.foo : Symbol(foo, Decl(autoLift2.ts, 9, 9))
- >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
-+>foo : Symbol(foo, Decl(autoLift2.ts, 9, 9))
- 
-         this.bar: any;
-+>this.bar : Symbol(bar, Decl(autoLift2.ts, 11, 22))
- >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
-+>bar : Symbol(bar, Decl(autoLift2.ts, 11, 22))
-     }
+@@= skipped -14, +14 lines =@@
  
  
    baz() {
@@ -20,14 +8,9 @@
 +>baz : Symbol(baz, Decl(autoLift2.ts, 6, 5))
  
       this.foo = "foo";
-+>this.foo : Symbol(foo, Decl(autoLift2.ts, 9, 9))
  >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
-+>foo : Symbol(foo, Decl(autoLift2.ts, 9, 9))
- 
-      this.bar = "bar";
-+>this.bar : Symbol(bar, Decl(autoLift2.ts, 11, 22))
+@@= skipped -9, +9 lines =@@
  >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
-+>bar : Symbol(bar, Decl(autoLift2.ts, 11, 22))
  
       [1, 2].forEach((p) => this.foo);
 ->[1, 2].forEach : Symbol(Array.forEach, Decl(lib.es5.d.ts, --, --))
@@ -35,9 +18,7 @@
 +>[1, 2].forEach : Symbol(forEach, Decl(lib.es5.d.ts, --, --))
 +>forEach : Symbol(forEach, Decl(lib.es5.d.ts, --, --))
  >p : Symbol(p, Decl(autoLift2.ts, 15, 21))
-+>this.foo : Symbol(foo, Decl(autoLift2.ts, 9, 9))
  >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
-+>foo : Symbol(foo, Decl(autoLift2.ts, 9, 9))
  
       [1, 2].forEach((p) => this.bar);
 ->[1, 2].forEach : Symbol(Array.forEach, Decl(lib.es5.d.ts, --, --))
@@ -45,13 +26,9 @@
 +>[1, 2].forEach : Symbol(forEach, Decl(lib.es5.d.ts, --, --))
 +>forEach : Symbol(forEach, Decl(lib.es5.d.ts, --, --))
  >p : Symbol(p, Decl(autoLift2.ts, 17, 21))
-+>this.bar : Symbol(bar, Decl(autoLift2.ts, 11, 22))
  >this : Symbol(A, Decl(autoLift2.ts, 0, 0))
-+>bar : Symbol(bar, Decl(autoLift2.ts, 11, 22))
  
-   }
- 
-@@= skipped -39, +51 lines =@@
+@@= skipped -22, +22 lines =@@
  >A : Symbol(A, Decl(autoLift2.ts, 0, 0))
  
  a.baz();

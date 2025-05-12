@@ -109,10 +109,10 @@
 ->self2 : Symbol(D.self2, Decl(typeRelationships.ts, 22, 17))
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 +>self2 : Symbol(self2, Decl(typeRelationships.ts, 22, 17))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  
      self3 = this.foo();
 ->self3 : Symbol(D.self3, Decl(typeRelationships.ts, 23, 22))
@@ -134,11 +134,11 @@
  
          this.self = this.self1;
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 ->this.self1 : Symbol(D.self1, Decl(typeRelationships.ts, 21, 19))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
 +>this.self1 : Symbol(self1, Decl(typeRelationships.ts, 21, 19))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self1 : Symbol(D.self1, Decl(typeRelationships.ts, 21, 19))
@@ -146,11 +146,11 @@
  
          this.self = this.self2;
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 ->this.self2 : Symbol(D.self2, Decl(typeRelationships.ts, 22, 17))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
 +>this.self2 : Symbol(self2, Decl(typeRelationships.ts, 22, 17))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self2 : Symbol(D.self2, Decl(typeRelationships.ts, 22, 17))
@@ -158,11 +158,11 @@
  
          this.self = this.self3;
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 ->this.self3 : Symbol(D.self3, Decl(typeRelationships.ts, 23, 22))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
 +>this.self3 : Symbol(self3, Decl(typeRelationships.ts, 23, 22))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self3 : Symbol(D.self3, Decl(typeRelationships.ts, 23, 22))
@@ -175,10 +175,10 @@
 ->self1 : Symbol(D.self1, Decl(typeRelationships.ts, 21, 19))
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 +>self1 : Symbol(self1, Decl(typeRelationships.ts, 21, 19))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  
          this.self2 = this.self;
 ->this.self2 : Symbol(D.self2, Decl(typeRelationships.ts, 22, 17))
@@ -187,10 +187,10 @@
 ->self2 : Symbol(D.self2, Decl(typeRelationships.ts, 22, 17))
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 +>self2 : Symbol(self2, Decl(typeRelationships.ts, 22, 17))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  
          this.self3 = this.self;
 ->this.self3 : Symbol(D.self3, Decl(typeRelationships.ts, 23, 22))
@@ -199,10 +199,10 @@
 ->self3 : Symbol(D.self3, Decl(typeRelationships.ts, 23, 22))
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 +>self3 : Symbol(self3, Decl(typeRelationships.ts, 23, 22))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  
          this.d = this.self;
 ->this.d : Symbol(D.d, Decl(typeRelationships.ts, 24, 23))
@@ -211,10 +211,10 @@
 ->d : Symbol(D.d, Decl(typeRelationships.ts, 24, 23))
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 +>d : Symbol(d, Decl(typeRelationships.ts, 24, 23))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  
          this.d = this.c;  // Error
 ->this.d : Symbol(D.d, Decl(typeRelationships.ts, 24, 23))
@@ -223,18 +223,18 @@
 ->d : Symbol(D.d, Decl(typeRelationships.ts, 24, 23))
 ->this.c : Symbol(C.c, Decl(typeRelationships.ts, 1, 16))
 +>d : Symbol(d, Decl(typeRelationships.ts, 24, 23))
-+>this.c : Symbol(c, Decl(typeRelationships.ts, 35, 27))
++>this.c : Symbol(c, Decl(typeRelationships.ts, 1, 16))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->c : Symbol(C.c, Decl(typeRelationships.ts, 1, 16))
-+>c : Symbol(c, Decl(typeRelationships.ts, 35, 27))
++>c : Symbol(c, Decl(typeRelationships.ts, 1, 16))
  
          this.self = this.d;  // Error
 ->this.self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
-+>this.self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>this.self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->self : Symbol(C.self, Decl(typeRelationships.ts, 0, 9))
 ->this.d : Symbol(D.d, Decl(typeRelationships.ts, 24, 23))
-+>self : Symbol(self, Decl(typeRelationships.ts, 26, 11), Decl(typeRelationships.ts, 27, 31), Decl(typeRelationships.ts, 28, 31), Decl(typeRelationships.ts, 34, 24))
++>self : Symbol(self, Decl(typeRelationships.ts, 0, 9))
 +>this.d : Symbol(d, Decl(typeRelationships.ts, 24, 23))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->d : Symbol(D.d, Decl(typeRelationships.ts, 24, 23))
@@ -242,11 +242,11 @@
  
          this.c = this.d;
 ->this.c : Symbol(C.c, Decl(typeRelationships.ts, 1, 16))
-+>this.c : Symbol(c, Decl(typeRelationships.ts, 35, 27))
++>this.c : Symbol(c, Decl(typeRelationships.ts, 1, 16))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->c : Symbol(C.c, Decl(typeRelationships.ts, 1, 16))
 ->this.d : Symbol(D.d, Decl(typeRelationships.ts, 24, 23))
-+>c : Symbol(c, Decl(typeRelationships.ts, 35, 27))
++>c : Symbol(c, Decl(typeRelationships.ts, 1, 16))
 +>this.d : Symbol(d, Decl(typeRelationships.ts, 24, 23))
  >this : Symbol(D, Decl(typeRelationships.ts, 19, 1))
 ->d : Symbol(D.d, Decl(typeRelationships.ts, 24, 23))

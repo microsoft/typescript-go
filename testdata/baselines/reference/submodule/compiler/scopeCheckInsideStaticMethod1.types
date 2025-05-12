@@ -30,9 +30,9 @@ class C {
 
       this.p = 1; // ERR
 >this.p = 1 : 1
->this.p : number
+>this.p : any
 >this : typeof C
->p : number
+>p : any
 >1 : 1
    }
 }

@@ -28,9 +28,7 @@ class C1<T, U, V> {
 >undefined : Symbol(undefined)
 
             this.a = a || k;
->this.a : Symbol(a, Decl(destructuringParameterProperties3.ts, 2, 101))
 >this : Symbol(C1, Decl(destructuringParameterProperties3.ts, 0, 0))
->a : Symbol(a, Decl(destructuringParameterProperties3.ts, 2, 101))
 >a : Symbol(a, Decl(destructuringParameterProperties3.ts, 1, 39))
 >k : Symbol(k, Decl(destructuringParameterProperties3.ts, 1, 16))
         }
@@ -40,9 +38,7 @@ class C1<T, U, V> {
 >getA : Symbol(getA, Decl(destructuringParameterProperties3.ts, 5, 5))
 
         return this.a
->this.a : Symbol(a, Decl(destructuringParameterProperties3.ts, 2, 101))
 >this : Symbol(C1, Decl(destructuringParameterProperties3.ts, 0, 0))
->a : Symbol(a, Decl(destructuringParameterProperties3.ts, 2, 101))
     }
 
     public getB() {

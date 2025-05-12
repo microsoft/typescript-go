@@ -177,9 +177,9 @@ class Thing3 extends Thing2 {
 
         super(10, 20, 30);
         this._tag = tag;
->this._tag : Symbol(_tag, Decl(mixinClassesAnnotated.ts, 58, 26))
+>this._tag : Symbol(_tag, Decl(mixinClassesAnnotated.ts, 24, 18))
 >this : Symbol(Thing3, Decl(mixinClassesAnnotated.ts, 54, 1))
->_tag : Symbol(_tag, Decl(mixinClassesAnnotated.ts, 58, 26))
+>_tag : Symbol(_tag, Decl(mixinClassesAnnotated.ts, 24, 18))
 >tag : Symbol(tag, Decl(mixinClassesAnnotated.ts, 57, 16))
     }
     test() {
