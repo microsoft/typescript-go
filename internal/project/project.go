@@ -231,11 +231,14 @@ func (p *Project) LanguageService() *ls.LanguageService {
 
 func (p *Project) getRootFileWatchGlobs() []string {
 	if p.kind == KindConfigured {
-		wildcardDirectories := p.parsedCommandLine.WildcardDirectories()
-		result := make([]string, 0, len(wildcardDirectories)+1)
+		globs := p.parsedCommandLine.WildcardDirectories()
+		result := make([]string, 0, len(globs)+1)
 		result = append(result, p.configFileName)
-		for dir, recursive := range wildcardDirectories {
+		for dir, recursive := range globs {
 			result = append(result, fmt.Sprintf("%s/%s", dir, core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
+		}
+		for _, fileName := range p.parsedCommandLine.LiteralFileNames() {
+			result = append(result, fileName)
 		}
 		return result
 	}

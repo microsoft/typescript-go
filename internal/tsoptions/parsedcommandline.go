@@ -36,6 +36,14 @@ func (p *ParsedCommandLine) WildcardDirectories() map[string]bool {
 	return p.wildcardDirectories
 }
 
+// Normalized file names explicitly specified in `files`
+func (p *ParsedCommandLine) LiteralFileNames() []string {
+	if p.ConfigFile != nil {
+		return p.FileNames()[0:len(p.ConfigFile.configFileSpecs.validatedFilesSpec)]
+	}
+	return nil
+}
+
 func (p *ParsedCommandLine) SetParsedOptions(o *core.ParsedOptions) {
 	p.ParsedConfig = o
 }
@@ -48,6 +56,7 @@ func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions {
 	return p.ParsedConfig.CompilerOptions
 }
 
+// All file names matched by files, include, and exclude patterns
 func (p *ParsedCommandLine) FileNames() []string {
 	return p.ParsedConfig.FileNames
 }
