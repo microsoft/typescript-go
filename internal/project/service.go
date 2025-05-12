@@ -283,7 +283,7 @@ func (s *Service) onConfigFileChanged(project *Project, changeKind lsproto.FileC
 
 	s.delayUpdateProjectGraph(project)
 	if !project.deferredClose {
-		project.pendingConfigReload = true
+		project.pendingReload = PendingReloadFull
 		project.markAsDirty()
 	}
 	return nil

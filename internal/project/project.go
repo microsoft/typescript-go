@@ -34,6 +34,14 @@ const (
 	KindAuxiliary
 )
 
+type PendingReload int
+
+const (
+	PendingReloadNone PendingReload = iota
+	PendingReloadFileNames
+	PendingReloadFull
+)
+
 type ProjectHost interface {
 	tsoptions.ParseConfigHost
 	NewLine() string
@@ -62,7 +70,7 @@ type Project struct {
 	hasAddedOrRemovedFiles    bool
 	hasAddedOrRemovedSymlinks bool
 	deferredClose             bool
-	pendingConfigReload       bool
+	pendingReload             PendingReload
 
 	comparePathsOptions tspath.ComparePathsOptions
 	currentDirectory    string
@@ -308,7 +316,7 @@ func (p *Project) onWatchEventForNilScriptInfo(fileName string) {
 	path := p.toPath(fileName)
 	if p.kind == KindConfigured {
 		if p.rootFileNames.Has(path) || p.parsedCommandLine.MatchesFileName(fileName, p.comparePathsOptions) {
-			p.pendingConfigReload = true
+			p.pendingReload = PendingReloadFileNames
 			p.markAsDirty()
 			return
 		}
@@ -374,11 +382,16 @@ func (p *Project) updateGraph() bool {
 	hasAddedOrRemovedFiles := p.hasAddedOrRemovedFiles
 	p.initialLoadPending = false
 
-	if p.kind == KindConfigured && p.pendingConfigReload {
-		if err := p.LoadConfig(); err != nil {
-			panic(fmt.Sprintf("failed to reload config: %v", err))
+	if p.kind == KindConfigured && p.pendingReload != PendingReloadNone {
+		switch p.pendingReload {
+		case PendingReloadFileNames:
+			p.setRootFiles(p.parsedCommandLine.FileNames())
+		case PendingReloadFull:
+			if err := p.LoadConfig(); err != nil {
+				panic(fmt.Sprintf("failed to reload config: %v", err))
+			}
 		}
-		p.pendingConfigReload = false
+		p.pendingReload = PendingReloadNone
 	}
 
 	p.hasAddedOrRemovedFiles = false
@@ -442,7 +455,7 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 		case KindInferred:
 			p.rootFileNames.Delete(info.path)
 		case KindConfigured:
-			p.pendingConfigReload = true
+			p.pendingReload = PendingReloadFileNames
 		}
 	}
 
