@@ -11,7 +11,9 @@ import (
 // This implementation is based on what Node's fs.realpath.native does, via libuv: https://github.com/libuv/libuv/blob/ec5a4b54f7da7eeb01679005c615fee9633cdb3b/src/win/fs.c#L2937
 
 func realpath(path string) (string, error) {
-	f, err := os.Open(path)
+	// flag=3 here prevents OpenFile from requesting any access flags, which makes opening faster.
+	// Other platforms associate a meaning with this flag, so this is safe to use on Windows for this purpose.
+	f, err := os.OpenFile(path, 3, 0)
 	if err != nil {
 		return "", err
 	}
