@@ -3917,8 +3917,8 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",             /*filterText*/
 		SortTextLocationPriority,
 		ScriptElementKindClassElement,
-		nil, /*kindModifiers*/
-		nil, /*replacementSpan*/
+		&core.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
+		nil,                                    /*replacementSpan*/
 		&optionalReplacementSpan,
 		nil, /*commitCharacters*/
 		nil, /*labelDetails*/
