@@ -1751,6 +1751,7 @@ type (
 	ObjectTypeDeclaration       = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
 	JsxOpeningLikeElement       = Node // JsxOpeningElement | JsxSelfClosingElement
 	NamedImportsOrExports       = Node // NamedImports | NamedExports
+	BreakOrContinueStatement    = Node // BreakStatement | ContinueStatement
 )
 
 // Aliases for node singletons
