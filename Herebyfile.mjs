@@ -835,6 +835,8 @@ export const buildNativePreview = task({
                 }),
             ]);
         }));
+
+        // TODO: sign binaries
     },
 });
 
@@ -861,6 +863,8 @@ export const buildNativePreviewExtensions = task({
             finally {
                 await rimraf("./_extension/lib");
             }
+
+            // TODO: VSIX manifests
         }
     },
 });
