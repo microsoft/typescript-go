@@ -2875,3 +2875,15 @@ func IsJSDocSingleCommentNodeList(parent *Node, nodeList *NodeList) bool {
 func IsJSDocSingleCommentNode(node *Node) bool {
 	return node.Kind == KindJSDoc && node.AsJSDoc().Comment != nil && len(node.AsJSDoc().Comment.Nodes) == 1
 }
+
+func IsStringTextContainingNode(node *Node) bool {
+	return node.Kind == KindStringLiteral || IsTemplateLiteralKind(node.Kind)
+}
+
+func IsTemplateLiteralKind(kind Kind) bool {
+	return KindFirstTemplateToken <= kind && kind <= KindLastTemplateToken
+}
+
+func IsTemplateLiteralToken(node *Node) bool {
+	return IsTemplateLiteralKind(node.Kind)
+}
