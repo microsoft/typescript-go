@@ -1215,10 +1215,44 @@ class Foo {
 			},
 			expectedResult: map[string]*testCaseResult{
 				"1": {
-					list: nil, // !!! jsx
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "aria-label",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "foo",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
 				},
 				"2": {
-					list: nil, // !!! jsx
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "aria-label",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "foo",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
 				},
 			},
 		},

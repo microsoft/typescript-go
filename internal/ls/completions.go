@@ -1885,7 +1885,7 @@ func (l *LanguageService) createCompletionItem(
 	parentNamedImportOrExport := ast.FindAncestor(data.location, isNamedImportsOrExports)
 	if parentNamedImportOrExport != nil {
 		languageVersion := compilerOptions.GetEmitScriptTarget()
-		if !scanner.IsIdentifierText(name, languageVersion) {
+		if !scanner.IsIdentifierText(name, languageVersion, core.LanguageVariantStandard) {
 			insertText = quotePropertyName(file, preferences, name)
 
 			if parentNamedImportOrExport.Kind == ast.KindNamedImports {
@@ -2235,9 +2235,9 @@ func getCompletionEntryDisplayNameForSymbol(
 		return "", false
 	}
 
-	// !!! isIdentifierText should take in identifierVariant language variant
+	variant := core.IfElse(isJsxIdentifierExpected, core.LanguageVariantJSX, core.LanguageVariantStandard)
 	// name is a valid identifier or private identifier text
-	if scanner.IsIdentifierText(name, target) ||
+	if scanner.IsIdentifierText(name, target, variant) ||
 		symbol.ValueDeclaration != nil && ast.IsPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) {
 		return name, false
 	}
@@ -3068,7 +3068,7 @@ func getJSCompletionEntries(
 		if pos == position {
 			continue
 		}
-		if !uniqueNames.Has(name) && scanner.IsIdentifierText(name, target) {
+		if !uniqueNames.Has(name) && scanner.IsIdentifierText(name, target, core.LanguageVariantStandard) {
 			uniqueNames.Add(name)
 			sortedEntries = core.InsertSorted(
 				sortedEntries,
