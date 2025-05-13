@@ -27,6 +27,10 @@ type ParsedCommandLine struct {
 
 // WildcardDirectories returns the cached wildcard directories, initializing them if needed
 func (p *ParsedCommandLine) WildcardDirectories() map[string]bool {
+	if p.wildcardDirectories != nil {
+		return p.wildcardDirectories
+	}
+
 	p.wildcardDirectoriesOnce.Do(func() {
 		p.wildcardDirectories = getWildcardDirectories(
 			p.ConfigFile.configFileSpecs.validatedIncludeSpecs,
@@ -114,7 +118,15 @@ func ReloadFileNamesOfParsedCommandLine(p *ParsedCommandLine, fs vfs.FS) *Parsed
 		fs,
 		p.extraFileExtensions,
 	)
-	parsedCommandLine := *p
-	parsedCommandLine.ParsedConfig = &parsedConfig
+	parsedCommandLine := ParsedCommandLine{
+		ParsedConfig:        &parsedConfig,
+		ConfigFile:          p.ConfigFile,
+		Errors:              p.Errors,
+		Raw:                 p.Raw,
+		CompileOnSave:       p.CompileOnSave,
+		comparePathsOptions: p.comparePathsOptions,
+		wildcardDirectories: p.wildcardDirectories,
+		extraFileExtensions: p.extraFileExtensions,
+	}
 	return &parsedCommandLine
 }
