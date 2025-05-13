@@ -3875,7 +3875,8 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 	location *ast.Node,
 	file *ast.SourceFile,
 	position int,
-	clientOptions *lsproto.CompletionClientCapabilities) *lsproto.CompletionList {
+	clientOptions *lsproto.CompletionClientCapabilities,
+) *lsproto.CompletionList {
 	// We wanna walk up the tree till we find a JSX closing element.
 	jsxClosingElement := ast.FindAncestorOrQuit(location, func(node *ast.Node) ast.FindAncestorResult {
 		switch node.Kind {
@@ -3917,8 +3918,8 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",             /*filterText*/
 		SortTextLocationPriority,
 		ScriptElementKindClassElement,
-		nil, /*kindModifiers*/
-		nil, /*replacementSpan*/
+		&core.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
+		nil,                                    /*replacementSpan*/
 		&optionalReplacementSpan,
 		nil, /*commitCharacters*/
 		nil, /*labelDetails*/
