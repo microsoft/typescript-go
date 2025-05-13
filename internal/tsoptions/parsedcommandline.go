@@ -80,10 +80,10 @@ func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic 
 }
 
 // Porting reference: ProjectService.isMatchedByConfig
-func (p *ParsedCommandLine) MatchesFileName(fileName string, comparePathsOptions tspath.ComparePathsOptions) bool {
-	path := tspath.ToPath(fileName, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
+func (p *ParsedCommandLine) MatchesFileName(fileName string) bool {
+	path := tspath.ToPath(fileName, p.comparePathsOptions.CurrentDirectory, p.comparePathsOptions.UseCaseSensitiveFileNames)
 	if slices.ContainsFunc(p.FileNames(), func(f string) bool {
-		return path == tspath.ToPath(f, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
+		return path == tspath.ToPath(f, p.comparePathsOptions.CurrentDirectory, p.comparePathsOptions.UseCaseSensitiveFileNames)
 	}) {
 		return true
 	}
@@ -92,21 +92,35 @@ func (p *ParsedCommandLine) MatchesFileName(fileName string, comparePathsOptions
 		return false
 	}
 
-	if slices.ContainsFunc(p.ConfigFile.configFileSpecs.validatedFilesSpec, func(f string) bool {
-		return path == tspath.ToPath(f, comparePathsOptions.CurrentDirectory, comparePathsOptions.UseCaseSensitiveFileNames)
-	}) {
-		return true
-	}
-
 	if len(p.ConfigFile.configFileSpecs.validatedIncludeSpecs) == 0 {
 		return false
 	}
 
-	if p.ConfigFile.configFileSpecs.matchesExclude(fileName, comparePathsOptions) {
+	supportedExtensions := GetSupportedExtensionsWithJsonIfResolveJsonModule(
+		p.CompilerOptions(),
+		GetSupportedExtensions(p.CompilerOptions(), p.extraFileExtensions),
+	)
+
+	if !tspath.FileExtensionIsOneOf(fileName, core.Flatten(supportedExtensions)) {
 		return false
 	}
 
-	return p.ConfigFile.configFileSpecs.matchesInclude(fileName, comparePathsOptions)
+	if p.ConfigFile.configFileSpecs.matchesExclude(fileName, p.comparePathsOptions) {
+		return false
+	}
+
+	var allFileNames core.Set[tspath.Path]
+	for _, fileName := range p.FileNames() {
+		allFileNames.Add(tspath.ToPath(fileName, p.comparePathsOptions.CurrentDirectory, p.comparePathsOptions.UseCaseSensitiveFileNames))
+	}
+
+	if hasFileWithHigherPriorityExtension(string(path), supportedExtensions, func(fileName string) bool {
+		return allFileNames.Has(tspath.Path(fileName))
+	}) {
+		return false
+	}
+
+	return p.ConfigFile.configFileSpecs.matchesInclude(fileName, p.comparePathsOptions)
 }
 
 func ReloadFileNamesOfParsedCommandLine(p *ParsedCommandLine, fs vfs.FS) *ParsedCommandLine {

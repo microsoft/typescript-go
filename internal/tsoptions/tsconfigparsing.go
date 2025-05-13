@@ -1431,7 +1431,7 @@ func handleOptionConfigDirTemplateSubstitution(compilerOptions *core.CompilerOpt
 
 // hasFileWithHigherPriorityExtension determines whether a literal or wildcard file has already been included that has a higher extension priority.
 // file is the path to the file.
-func hasFileWithHigherPriorityExtension(file string, literalFiles collections.OrderedMap[string, string], wildcardFiles collections.OrderedMap[string, string], extensions [][]string, keyMapper func(value string) string) bool {
+func hasFileWithHigherPriorityExtension(file string, extensions [][]string, hasFile func(fileName string) bool) bool {
 	var extensionGroup []string
 	for _, group := range extensions {
 		if tspath.FileExtensionIsOneOf(file, group) {
@@ -1448,8 +1448,7 @@ func hasFileWithHigherPriorityExtension(file string, literalFiles collections.Or
 		if tspath.FileExtensionIs(file, ext) && (ext != tspath.ExtensionTs || !tspath.FileExtensionIs(file, tspath.ExtensionDts)) {
 			return false
 		}
-		higherPriorityPath := keyMapper(tspath.ChangeExtension(file, ext))
-		if literalFiles.Has(higherPriorityPath) || wildcardFiles.Has(higherPriorityPath) {
+		if hasFile(tspath.ChangeExtension(file, ext)) {
 			if ext == tspath.ExtensionDts && (tspath.FileExtensionIs(file, tspath.ExtensionJs) || tspath.FileExtensionIs(file, tspath.ExtensionJsx)) {
 				// LEGACY BEHAVIOR: An off-by-one bug somewhere in the extension priority system for wildcard module loading allowed declaration
 				// files to be loaded alongside their js(x) counterparts. We regard this as generally undesirable, but retain the behavior to
@@ -1558,7 +1557,10 @@ func getFileNamesFromConfigSpecs(
 			// This handles cases where we may encounter both <file>.ts and
 			// <file>.d.ts (or <file>.js if "allowJs" is enabled) in the same
 			// directory when they are compilation outputs.
-			if hasFileWithHigherPriorityExtension(file, literalFileMap, wildcardFileMap, supportedExtensions, keyMappper) {
+			if hasFileWithHigherPriorityExtension(file, supportedExtensions, func(fileName string) bool {
+				canonicalFileName := keyMappper(fileName)
+				return literalFileMap.Has(canonicalFileName) || wildcardFileMap.Has(canonicalFileName)
+			}) {
 				continue
 			}
 			// We may have included a wildcard path with a lower priority

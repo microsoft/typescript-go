@@ -315,7 +315,7 @@ func (p *Project) updateWatchers() {
 func (p *Project) onWatchEventForNilScriptInfo(fileName string) {
 	path := p.toPath(fileName)
 	if p.kind == KindConfigured {
-		if p.rootFileNames.Has(path) || p.parsedCommandLine.MatchesFileName(fileName, p.comparePathsOptions) {
+		if p.rootFileNames.Has(path) || p.parsedCommandLine.MatchesFileName(fileName) {
 			p.pendingReload = PendingReloadFileNames
 			p.markAsDirty()
 			return
