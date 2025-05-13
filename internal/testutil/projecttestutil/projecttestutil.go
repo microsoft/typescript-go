@@ -12,7 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
-//go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out clientmock.go ../../project Client
+//go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out clientmock_generated.go ../../project Client
 
 type ProjectServiceHost struct {
 	fs                 vfs.FS
