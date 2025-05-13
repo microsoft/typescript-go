@@ -17,7 +17,7 @@ func realpath(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer f.Close() //nolint:errcheck
+	defer f.Close()
 
 	// Works on directories too since https://go.dev/cl/405275.
 	h := windows.Handle(f.Fd())
