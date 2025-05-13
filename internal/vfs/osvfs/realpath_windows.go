@@ -19,7 +19,7 @@ func realpath(path string) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		defer windows.CloseHandle(h)
+		defer windows.CloseHandle(h) //nolint:errcheck
 	} else {
 		// For long paths, defer to os.Open to run the path through fixLongPath.
 		f, err := os.Open(path)
