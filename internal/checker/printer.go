@@ -1,6 +1,7 @@
 package checker
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -81,7 +82,8 @@ func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags 
 
 func (c *Checker) GetQuickInfoAtLocation(node *ast.Node) string {
 	symbol := c.GetSymbolAtLocation(node)
-	if symbol != nil && symbol.Flags&ast.SymbolFlagsAlias != 0 {
+	isAlias := symbol != nil && symbol.Flags&ast.SymbolFlagsAlias != 0
+	if isAlias {
 		symbol = c.resolveAlias(symbol)
 	}
 	if symbol == nil || symbol == c.unknownSymbol {
@@ -93,6 +95,9 @@ func (c *Checker) GetQuickInfoAtLocation(node *ast.Node) string {
 		flags &^= ast.SymbolFlagsValue
 	}
 	p := c.newPrinter(TypeFormatFlagsNone)
+	if isAlias {
+		p.print("(alias) ")
+	}
 	switch {
 	case flags&(ast.SymbolFlagsVariable|ast.SymbolFlagsProperty|ast.SymbolFlagsAccessor) != 0:
 		switch {
@@ -137,6 +142,10 @@ func (c *Checker) GetQuickInfoAtLocation(node *ast.Node) string {
 		for i, sig := range signatures {
 			if i != 0 {
 				p.print("\n")
+			}
+			if i == 3 && len(signatures) >= 5 {
+				p.print(fmt.Sprintf("// +%v more overloads", len(signatures)-3))
+				break
 			}
 			p.print(prefix)
 			p.printName(symbol)
