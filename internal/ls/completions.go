@@ -276,7 +276,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	_, previousToken := getRelevantTokens(position, file)
-	if context.TriggerCharacter != nil && !isInString(file, position, previousToken) && !isValidTrigger(file, *context.TriggerCharacter, previousToken, position) {
+	if context.TriggerCharacter != nil && !IsInString(file, position, previousToken) && !isValidTrigger(file, *context.TriggerCharacter, previousToken, position) {
 		return nil
 	}
 

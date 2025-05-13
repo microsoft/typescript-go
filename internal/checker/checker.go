@@ -2396,7 +2396,7 @@ func (c *Checker) checkTypeParameter(node *ast.Node) {
 	c.checkSourceElement(tpNode.DefaultType)
 	typeParameter := c.getDeclaredTypeOfTypeParameter(c.getSymbolOfDeclaration(node))
 	// Resolve base constraint to reveal circularity errors
-	c.getBaseConstraintOfType(typeParameter)
+	c.GetBaseConstraintOfType(typeParameter)
 	if c.getResolvedTypeParameterDefault(typeParameter) == c.circularConstraintType {
 		c.error(tpNode.DefaultType, diagnostics.Type_parameter_0_has_a_circular_default, c.TypeToString(typeParameter))
 	}
@@ -7593,7 +7593,7 @@ func (c *Checker) isTemplateLiteralContext(node *ast.Node) bool {
 }
 
 func (c *Checker) isTemplateLiteralContextualType(t *Type) bool {
-	return t.flags&(TypeFlagsStringLiteral|TypeFlagsTemplateLiteral) != 0 || t.flags&TypeFlagsInstantiableNonPrimitive != 0 && c.maybeTypeOfKind(core.OrElse(c.getBaseConstraintOfType(t), c.unknownType), TypeFlagsStringLike)
+	return t.flags&(TypeFlagsStringLiteral|TypeFlagsTemplateLiteral) != 0 || t.flags&TypeFlagsInstantiableNonPrimitive != 0 && c.maybeTypeOfKind(core.OrElse(c.GetBaseConstraintOfType(t), c.unknownType), TypeFlagsStringLike)
 }
 
 func (c *Checker) checkRegularExpressionLiteral(node *ast.Node) *Type {
@@ -10087,7 +10087,7 @@ func (c *Checker) getInstantiationExpressionType(exprType *Type, node *ast.Node)
 					return result
 				}
 			} else if t.flags&TypeFlagsInstantiableNonPrimitive != 0 {
-				constraint := c.getBaseConstraintOfType(t)
+				constraint := c.GetBaseConstraintOfType(t)
 				if constraint != nil {
 					instantiated := getInstantiatedTypePart(constraint)
 					if instantiated != constraint {
@@ -11245,7 +11245,7 @@ func (c *Checker) checkPropertyAccessibilityAtLocation(location *ast.Node, isSup
 		if containingType.AsTypeParameter().isThisType {
 			containingType = c.getConstraintOfTypeParameter(containingType)
 		} else {
-			containingType = c.getBaseConstraintOfType(containingType)
+			containingType = c.GetBaseConstraintOfType(containingType)
 		}
 	}
 	if containingType == nil || !c.hasBaseType(containingType, enclosingClass) {
@@ -15669,7 +15669,7 @@ func (c *Checker) isConstructorType(t *Type) bool {
 		return true
 	}
 	if t.flags&TypeFlagsTypeVariable != 0 {
-		constraint := c.getBaseConstraintOfType(t)
+		constraint := c.GetBaseConstraintOfType(t)
 		return constraint != nil && c.isMixinConstructorType(constraint)
 	}
 	return false
@@ -15707,7 +15707,7 @@ func (c *Checker) getConstraintOfType(t *Type) *Type {
 	case t.flags&TypeFlagsConditional != 0:
 		return c.getConstraintOfConditionalType(t)
 	}
-	return c.getBaseConstraintOfType(t)
+	return c.GetBaseConstraintOfType(t)
 }
 
 func (c *Checker) getConstraintOfTypeParameter(typeParameter *Type) *Type {
@@ -18063,7 +18063,7 @@ func (c *Checker) reportCircularBaseType(node *ast.Node, t *Type) {
 // A valid base type is `any`, an object type or intersection of object types.
 func (c *Checker) isValidBaseType(t *Type) bool {
 	if t.flags&TypeFlagsTypeParameter != 0 {
-		constraint := c.getBaseConstraintOfType(t)
+		constraint := c.GetBaseConstraintOfType(t)
 		if constraint != nil {
 			return c.isValidBaseType(constraint)
 		}
@@ -20190,7 +20190,7 @@ func (c *Checker) isMappedTypeGenericIndexedAccess(t *Type) bool {
 func (c *Checker) getApparentType(t *Type) *Type {
 	originalType := t
 	if t.flags&TypeFlagsInstantiable != 0 {
-		t = c.getBaseConstraintOfType(t)
+		t = c.GetBaseConstraintOfType(t)
 		if t == nil {
 			t = c.unknownType
 		}
@@ -20245,7 +20245,7 @@ func (c *Checker) getResolvedApparentTypeOfMappedType(t *Type) *Type {
 		if c.isGenericMappedType(modifiersType) {
 			baseConstraint = c.getApparentTypeOfMappedType(modifiersType)
 		} else {
-			baseConstraint = c.getBaseConstraintOfType(modifiersType)
+			baseConstraint = c.GetBaseConstraintOfType(modifiersType)
 		}
 		if baseConstraint != nil && everyType(baseConstraint, func(t *Type) bool { return c.isArrayOrTupleType(t) || c.isArrayOrTupleOrIntersection(t) }) {
 			return c.instantiateType(target, prependTypeMapping(typeVariable, baseConstraint, t.AsMappedType().mapper))
@@ -23826,7 +23826,7 @@ func (c *Checker) isLiteralOfContextualType(candidateType *Type, contextualType 
 			// If the contextual type is a type variable constrained to a primitive type, consider
 			// this a literal context for literals of that primitive type. For example, given a
 			// type parameter 'T extends string', infer string literal types for T.
-			constraint := c.getBaseConstraintOfType(contextualType)
+			constraint := c.GetBaseConstraintOfType(contextualType)
 			if constraint == nil {
 				constraint = c.unknownType
 			}
@@ -24191,7 +24191,7 @@ func (c *Checker) removeConstrainedTypeVariables(types []*Type) []*Type {
 		}
 		// If every constituent in the type variable's constraint is covered by an intersection of the type
 		// variable and that constituent, remove those intersections and substitute the type variable.
-		constraint := c.getBaseConstraintOfType(typeVariable)
+		constraint := c.GetBaseConstraintOfType(typeVariable)
 		if everyType(constraint, func(t *Type) bool { return containsType(primitives, t) }) {
 			i := len(types)
 			for i > 0 {
@@ -24414,7 +24414,7 @@ func (c *Checker) getIntersectionTypeEx(types []*Type, flags IntersectionFlags, 
 		if typeVariable.flags&TypeFlagsTypeVariable != 0 && (primitiveType.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 && !c.isGenericStringLikeType(primitiveType) ||
 			includes&TypeFlagsIncludesEmptyObject != 0) {
 			// We have an intersection T & P or P & T, where T is a type variable and P is a primitive type, the object type, or {}.
-			constraint := c.getBaseConstraintOfType(typeVariable)
+			constraint := c.GetBaseConstraintOfType(typeVariable)
 			// Check that T's constraint is similarly composed of primitive types, the object type, or {}.
 			if constraint != nil && everyType(constraint, c.isPrimitiveOrObjectOrEmptyType) {
 				// If T's constraint is a subtype of P, simply return T. For example, given `T extends "a" | "b"`,
@@ -25668,14 +25668,14 @@ func (c *Checker) getOrCreateSubstitutionType(baseType *Type, constraint *Type) 
 }
 
 func (c *Checker) getBaseConstraintOrType(t *Type) *Type {
-	constraint := c.getBaseConstraintOfType(t)
+	constraint := c.GetBaseConstraintOfType(t)
 	if constraint != nil {
 		return constraint
 	}
 	return t
 }
 
-func (c *Checker) getBaseConstraintOfType(t *Type) *Type {
+func (c *Checker) GetBaseConstraintOfType(t *Type) *Type {
 	if t.flags&(TypeFlagsInstantiableNonPrimitive|TypeFlagsUnionOrIntersection|TypeFlagsTemplateLiteral|TypeFlagsStringMapping) != 0 || c.isGenericTupleType(t) {
 		constraint := c.getResolvedBaseConstraint(t, nil)
 		if constraint != c.noConstraintType && constraint != c.circularConstraintType {
@@ -27185,7 +27185,7 @@ func (c *Checker) substituteIndexedMappedType(objectType *Type, index *Type) *Ty
 
 // Return true if an indexed access with the given object and index types could access an optional property.
 func (c *Checker) couldAccessOptionalProperty(objectType *Type, indexType *Type) bool {
-	indexConstraint := c.getBaseConstraintOfType(indexType)
+	indexConstraint := c.GetBaseConstraintOfType(indexType)
 	return indexConstraint != nil && core.Some(c.getPropertiesOfType(objectType), func(p *ast.Symbol) bool {
 		return p.Flags&ast.SymbolFlagsOptional != 0 && c.isTypeAssignableTo(c.getLiteralTypeFromProperty(p, TypeFlagsStringOrNumberLiteralOrUnique, false), indexConstraint)
 	})
@@ -28810,7 +28810,7 @@ func (c *Checker) hasTypeFacts(t *Type, mask TypeFacts) bool {
 
 func (c *Checker) getTypeFactsWorker(t *Type, callerOnlyNeeds TypeFacts) TypeFacts {
 	if t.flags&(TypeFlagsIntersection|TypeFlagsInstantiable) != 0 {
-		t = c.getBaseConstraintOfType(t)
+		t = c.GetBaseConstraintOfType(t)
 		if t == nil {
 			t = c.unknownType
 		}
@@ -29225,7 +29225,7 @@ func (c *Checker) isAwaitedTypeNeeded(t *Type) bool {
 	}
 	// We only need `Awaited<T>` if `T` contains possibly non-primitive types.
 	if c.isGenericObjectType(t) {
-		baseConstraint := c.getBaseConstraintOfType(t)
+		baseConstraint := c.GetBaseConstraintOfType(t)
 		// We only need `Awaited<T>` if `T` is a type variable that has no base constraint, or the base constraint of `T` is `any`, `unknown`, `{}`, `object`,
 		// or is promise-like.
 		if baseConstraint != nil {
@@ -29389,7 +29389,7 @@ func (c *Checker) getNonUndefinedType(t *Type) *Type {
 
 func (c *Checker) isGenericTypeWithUndefinedConstraint(t *Type) bool {
 	if t.flags&TypeFlagsInstantiable != 0 {
-		constraint := c.getBaseConstraintOfType(t)
+		constraint := c.GetBaseConstraintOfType(t)
 		if constraint != nil {
 			return c.maybeTypeOfKind(constraint, TypeFlagsUndefined)
 		}

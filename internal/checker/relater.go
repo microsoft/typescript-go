@@ -2837,7 +2837,7 @@ func (r *Relater) unionOrIntersectionRelatedTo(source *Type, target *Type, repor
 	if r.relation == r.c.comparableRelation && target.flags&TypeFlagsPrimitive != 0 {
 		constraints := core.SameMap(source.Types(), func(t *Type) *Type {
 			if t.flags&TypeFlagsInstantiable != 0 {
-				constraint := r.c.getBaseConstraintOfType(t)
+				constraint := r.c.GetBaseConstraintOfType(t)
 				if constraint != nil {
 					return constraint
 				}
@@ -3704,7 +3704,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		}
 	case source.flags&TypeFlagsTemplateLiteral != 0 && target.flags&TypeFlagsObject == 0:
 		if target.flags&TypeFlagsTemplateLiteral == 0 {
-			constraint := r.c.getBaseConstraintOfType(source)
+			constraint := r.c.GetBaseConstraintOfType(source)
 			if constraint != nil && constraint != source {
 				result = r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
 				if result != TernaryFalse {
@@ -3722,7 +3722,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 				return result
 			}
 		} else {
-			constraint := r.c.getBaseConstraintOfType(source)
+			constraint := r.c.GetBaseConstraintOfType(source)
 			if constraint != nil {
 				result = r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
 				if result != TernaryFalse {
@@ -4678,7 +4678,7 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 		targetFlags = target.flags
 	}
 	if targetFlags&TypeFlagsTypeParameter != 0 && target != r.c.markerSuperTypeForCheck && target != r.c.markerSubTypeForCheck {
-		constraint := r.c.getBaseConstraintOfType(target)
+		constraint := r.c.GetBaseConstraintOfType(target)
 		switch {
 		case constraint != nil && r.c.isTypeAssignableTo(generalizedSource, constraint):
 			r.reportError(diagnostics.X_0_is_assignable_to_the_constraint_of_type_1_but_1_could_be_instantiated_with_a_different_subtype_of_constraint_2, generalizedSourceType, targetType, r.c.TypeToString(constraint))
@@ -4880,7 +4880,7 @@ func (c *Checker) isTypeDerivedFrom(source *Type, target *Type) bool {
 			return c.isTypeDerivedFrom(t, target)
 		})
 	case source.flags&TypeFlagsInstantiableNonPrimitive != 0:
-		constraint := c.getBaseConstraintOfType(source)
+		constraint := c.GetBaseConstraintOfType(source)
 		if constraint == nil {
 			constraint = c.unknownType
 		}

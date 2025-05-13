@@ -520,7 +520,7 @@ func (c *Checker) inferToTemplateLiteralType(n *InferenceState, source *Type, ta
 			// allowed template literal placeholder types, infer from a literal type corresponding to the constraint.
 			if source.flags&TypeFlagsStringLiteral != 0 && target.flags&TypeFlagsTypeVariable != 0 {
 				if inferenceContext := getInferenceInfoForType(n, target); inferenceContext != nil {
-					if constraint := c.getBaseConstraintOfType(inferenceContext.typeParameter); constraint != nil && !IsTypeAny(constraint) {
+					if constraint := c.GetBaseConstraintOfType(inferenceContext.typeParameter); constraint != nil && !IsTypeAny(constraint) {
 						allTypeFlags := TypeFlagsNone
 						for _, t := range constraint.Distributed() {
 							allTypeFlags |= t.flags
@@ -702,7 +702,7 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 						// Middle of target is [...T, ...rest] and source is tuple type
 						// if T is constrained by a fixed-size tuple we might be able to use its arity to infer T
 						if info := getInferenceInfoForType(n, elementTypes[startLength]); info != nil {
-							constraint := c.getBaseConstraintOfType(info.typeParameter)
+							constraint := c.GetBaseConstraintOfType(info.typeParameter)
 							if constraint != nil && isTupleType(constraint) && constraint.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
 								impliedArity := constraint.TargetTupleType().fixedLength
 								c.inferFromTypes(n, c.sliceTupleType(source, startLength, sourceArity-(startLength+impliedArity)), elementTypes[startLength])
@@ -713,7 +713,7 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 						// Middle of target is [...rest, ...T] and source is tuple type
 						// if T is constrained by a fixed-size tuple we might be able to use its arity to infer T
 						if info := getInferenceInfoForType(n, elementTypes[startLength+1]); info != nil {
-							constraint := c.getBaseConstraintOfType(info.typeParameter)
+							constraint := c.GetBaseConstraintOfType(info.typeParameter)
 							if constraint != nil && isTupleType(constraint) && constraint.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
 								impliedArity := constraint.TargetTupleType().fixedLength
 								endIndex := sourceArity - getEndElementCount(target.TargetTupleType(), ElementFlagsFixed)

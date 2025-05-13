@@ -13,8 +13,23 @@ import (
 
 var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
 
-// !!!
-func isInString(file *ast.SourceFile, position int, previousToken *ast.Node) bool {
+func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Node) bool {
+	if previousToken != nil && ast.IsStringTextContainingNode(previousToken) {
+		start := astnav.GetStartOfNode(previousToken, sourceFile, false /*includeJSDoc*/)
+		end := previousToken.End()
+
+		// To be "in" one of these literals, the position has to be:
+		//   1. entirely within the token text.
+		//   2. at the end position of an unterminated token.
+		//   3. at the end of a regular expression (due to trailing flags like '/foo/g').
+		if start < position && position < end {
+			return true
+		}
+
+		if position == end {
+			return ast.IsUnterminatedLiteral(previousToken)
+		}
+	}
 	return false
 }
 
@@ -723,4 +738,14 @@ func getAllSuperTypeNodes(node *ast.Node) []*ast.TypeNode {
 		)
 	}
 	return nil
+}
+
+func skipConstraint(t *checker.Type, typeChecker *checker.Checker) *checker.Type {
+	if t.IsTypeParameter() {
+		c := typeChecker.GetBaseConstraintOfType(t)
+		if c != nil {
+			return c
+		}
+	}
+	return t
 }
