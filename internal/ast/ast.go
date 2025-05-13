@@ -3687,7 +3687,7 @@ type TypeAliasDeclaration struct {
 	Type           *TypeNode       // TypeNode
 }
 
-func (f *NodeFactory) newTypeOrJSTypeAliasDeclaration(kind Kind, modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
+func (f *NodeFactory) newTypeAliasOrJSTypeAliasDeclaration(kind Kind, modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
 	data := &TypeAliasDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
@@ -3697,12 +3697,12 @@ func (f *NodeFactory) newTypeOrJSTypeAliasDeclaration(kind Kind, modifiers *Modi
 }
 
 func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
-	return f.newTypeOrJSTypeAliasDeclaration(KindTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
+	return f.newTypeAliasOrJSTypeAliasDeclaration(KindTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
 }
 
 func (f *NodeFactory) UpdateTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
 	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
-		return updateNode(f.newTypeOrJSTypeAliasDeclaration(node.Kind, modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
+		return updateNode(f.newTypeAliasOrJSTypeAliasDeclaration(node.Kind, modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -3716,7 +3716,7 @@ func (node *TypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *TypeAliasDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().newTypeOrJSTypeAliasDeclaration(node.Kind, node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().newTypeAliasOrJSTypeAliasDeclaration(node.Kind, node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.name }
@@ -3730,7 +3730,7 @@ func IsTypeOrJSTypeAliasDeclaration(node *Node) bool {
 }
 
 func (f *NodeFactory) NewJSTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
-	return f.newTypeOrJSTypeAliasDeclaration(KindJSTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
+	return f.newTypeAliasOrJSTypeAliasDeclaration(KindJSTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
 }
 
 func IsJSTypeAliasDeclaration(node *Node) bool {
