@@ -12,7 +12,6 @@ import (
 
 func realpath(path string) (string, error) {
 	var h windows.Handle
-
 	if len(path) < 248 {
 		var err error
 		h, err = openMetadata(path)
