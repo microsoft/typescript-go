@@ -15167,9 +15167,6 @@ func (c *Checker) getWriteTypeOfSymbol(symbol *ast.Symbol) *Type {
 
 func (c *Checker) GetTypeOfSymbolAtLocation(symbol *ast.Symbol, location *ast.Node) *Type {
 	// !!!
-	if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
-		return c.getDeclaredTypeOfSymbol(symbol)
-	}
 	return c.getTypeOfSymbol(symbol)
 }
 
