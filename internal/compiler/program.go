@@ -1,7 +1,7 @@
 package compiler
 
 import (
-	"fmt"
+	"context"
 	"slices"
 	"sync"
 
@@ -24,7 +24,7 @@ type ProgramOptions struct {
 	RootFiles                    []string
 	Host                         CompilerHost
 	Options                      *core.CompilerOptions
-	SingleThreaded               bool
+	SingleThreaded               core.Tristate
 	ProjectReference             []core.ProjectReference
 	ConfigFileParsingDiagnostics []*ast.Diagnostic
 }
@@ -95,6 +95,7 @@ func NewProgram(options ProgramOptions) *Program {
 
 	p.configFileName = options.ConfigFileName
 	if p.configFileName != "" {
+		// !!! delete this code, require options
 		jsonText, ok := p.host.FS().ReadFile(p.configFileName)
 		if !ok {
 			panic("config file not found")
@@ -153,7 +154,7 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
-	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs)
+	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs, p.singleThreaded())
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
@@ -187,6 +188,10 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.configFileParsingDiagnostics)
 }
 
+func (p *Program) singleThreaded() bool {
+	return p.programOptions.SingleThreaded.DefaultIfUnknown(p.compilerOptions.SingleThreaded).IsTrue()
+}
+
 func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingCompilerOptions {
 	p.sourceAffectingCompilerOptionsOnce.Do(func() {
 		p.sourceAffectingCompilerOptions = p.compilerOptions.SourceFileAffecting()
@@ -195,7 +200,7 @@ func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingC
 }
 
 func (p *Program) BindSourceFiles() {
-	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+	wg := core.NewWorkGroup(p.singleThreaded())
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
@@ -206,13 +211,13 @@ func (p *Program) BindSourceFiles() {
 	wg.RunAndWait()
 }
 
-func (p *Program) CheckSourceFiles() {
+func (p *Program) CheckSourceFiles(ctx context.Context) {
 	p.createCheckers()
-	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+	wg := core.NewWorkGroup(p.singleThreaded())
 	for index, checker := range p.checkers {
 		wg.Queue(func() {
 			for i := index; i < len(p.files); i += len(p.checkers) {
-				checker.CheckSourceFile(p.files[i])
+				checker.CheckSourceFile(ctx, p.files[i])
 			}
 		})
 	}
@@ -221,8 +226,8 @@ func (p *Program) CheckSourceFiles() {
 
 func (p *Program) createCheckers() {
 	p.checkersOnce.Do(func() {
-		p.checkers = make([]*checker.Checker, core.IfElse(p.programOptions.SingleThreaded, 1, 4))
-		wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+		p.checkers = make([]*checker.Checker, core.IfElse(p.singleThreaded(), 1, 4))
+		wg := core.NewWorkGroup(p.singleThreaded())
 		for i := range p.checkers {
 			wg.Queue(func() {
 				p.checkers[i] = checker.NewChecker(p)
@@ -277,16 +282,16 @@ func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *as
 	return p.filesByPath[path]
 }
 
-func (p *Program) GetSyntacticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntacticDiagnosticsForFile)
+func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return p.getDiagnosticsHelper(ctx, sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntacticDiagnosticsForFile)
 }
 
-func (p *Program) GetBindDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, false /*ensureChecked*/, p.getBindDiagnosticsForFile)
+func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return p.getDiagnosticsHelper(ctx, sourceFile, true /*ensureBound*/, false /*ensureChecked*/, p.getBindDiagnosticsForFile)
 }
 
-func (p *Program) GetSemanticDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	return p.getDiagnosticsHelper(sourceFile, true /*ensureBound*/, true /*ensureChecked*/, p.getSemanticDiagnosticsForFile)
+func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	return p.getDiagnosticsHelper(ctx, sourceFile, true /*ensureBound*/, true /*ensureChecked*/, p.getSemanticDiagnosticsForFile)
 }
 
 func (p *Program) GetGlobalDiagnostics() []*ast.Diagnostic {
@@ -310,11 +315,11 @@ func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
 	return p.configFileParsingDiagnostics // TODO: actually call getDiagnosticsHelper on config path
 }
 
-func (p *Program) getSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (p *Program) getSyntacticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return sourceFile.Diagnostics()
 }
 
-func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (p *Program) getBindDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	// TODO: restore this; tsgo's main depends on this function binding all files for timing.
 	// if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
 	// 	return nil
@@ -323,25 +328,26 @@ func (p *Program) getBindDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.D
 	return sourceFile.BindDiagnostics()
 }
 
-func (p *Program) getSemanticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
 		return nil
 	}
-
 	var fileChecker *checker.Checker
 	if sourceFile != nil {
 		fileChecker = p.GetTypeCheckerForFile(sourceFile)
 	}
-
 	diags := slices.Clip(sourceFile.BindDiagnostics())
 	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
 	// These are deduplicated later.
 	for _, checker := range p.checkers {
 		if sourceFile == nil || checker == fileChecker {
-			diags = append(diags, checker.GetDiagnostics(sourceFile)...)
+			diags = append(diags, checker.GetDiagnostics(ctx, sourceFile)...)
 		} else {
 			diags = append(diags, checker.GetDiagnosticsWithoutCheck(sourceFile)...)
 		}
+	}
+	if ctx.Err() != nil {
+		return nil
 	}
 	if len(sourceFile.CommentDirectives) == 0 {
 		return diags
@@ -432,22 +438,25 @@ func compactAndMergeRelatedInfos(diagnostics []*ast.Diagnostic) []*ast.Diagnosti
 	return diagnostics[:j]
 }
 
-func (p *Program) getDiagnosticsHelper(sourceFile *ast.SourceFile, ensureBound bool, ensureChecked bool, getDiagnostics func(*ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
+func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.SourceFile, ensureBound bool, ensureChecked bool, getDiagnostics func(context.Context, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
 		if ensureBound {
 			binder.BindSourceFile(sourceFile, p.getSourceAffectingCompilerOptions())
 		}
-		return SortAndDeduplicateDiagnostics(getDiagnostics(sourceFile))
+		return SortAndDeduplicateDiagnostics(getDiagnostics(ctx, sourceFile))
 	}
 	if ensureBound {
 		p.BindSourceFiles()
 	}
 	if ensureChecked {
-		p.CheckSourceFiles()
+		p.CheckSourceFiles(ctx)
+		if ctx.Err() != nil {
+			return nil
+		}
 	}
 	var result []*ast.Diagnostic
 	for _, file := range p.files {
-		result = append(result, getDiagnostics(file)...)
+		result = append(result, getDiagnostics(ctx, file)...)
 	}
 	return SortAndDeduplicateDiagnostics(result)
 }
@@ -493,14 +502,6 @@ func (p *Program) InstantiationCount() int {
 		count += int(checker.TotalInstantiationCount)
 	}
 	return count
-}
-
-func (p *Program) PrintSourceFileWithTypes() {
-	for _, file := range p.files {
-		if tspath.GetBaseFileName(file.FileName()) == "main.ts" {
-			fmt.Print(p.GetTypeChecker().SourceFileWithTypes(file))
-		}
-	}
 }
 
 func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
@@ -631,7 +632,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 			return printer.NewTextWriter(host.Options().NewLine.GetNewLineCharacter())
 		},
 	}
-	wg := core.NewWorkGroup(p.programOptions.SingleThreaded)
+	wg := core.NewWorkGroup(p.singleThreaded())
 	var emitters []*emitter
 	sourceFiles := getSourceFilesToEmit(host, options.TargetSourceFile, options.forceDtsEmit)
 

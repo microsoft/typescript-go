@@ -40,8 +40,7 @@ Additional tasks are a work in progress.
 
 ### Running `tsgo`
 
-After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsc` (respects tsconfig, but also prints out perf stats).
-This is mainly a testing entry point; for higher fidelity with regular `tsc`, run `tsgo tsc [flags]`, which behaves more similarly to `tsc`.
+After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsc`.
 
 ### Running LSP Prototype
 
@@ -91,7 +90,7 @@ Definitions:
 
 ## Other Notes
 
-Long-term, we expect this repo is that its contents will be merged into `microsoft/TypeScript`.
+Long-term, we expect that this repo and its contents will be merged into `microsoft/TypeScript`.
 As a result, the repo and issue tracker for typescript-go will eventually be closed, so treat discussions/issues accordingly.
 
 For a list of intentional changes with respect to TypeScript 5.7, see CHANGES.md.
