@@ -1530,7 +1530,7 @@ func (l *LanguageService) completionInfoFromData(
 		sortedEntries = getJSCompletionEntries(
 			file,
 			position,
-			uniqueNames,
+			&uniqueNames,
 			compilerOptions.GetEmitScriptTarget(),
 			sortedEntries,
 		)
@@ -1557,7 +1557,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	preferences *UserPreferences,
 	compilerOptions *core.CompilerOptions,
 	clientOptions *lsproto.CompletionClientCapabilities,
-) (uniqueNames *core.Set[string], sortedEntries []*lsproto.CompletionItem) {
+) (uniqueNames core.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := probablyUsesSemicolons(file)
 	typeChecker := program.GetTypeChecker()
@@ -1635,7 +1635,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	for name := range maps.Keys(uniques) {
 		uniqueSet.Add(name)
 	}
-	return uniqueSet, sortedEntries
+	return *uniqueSet, sortedEntries
 }
 
 func completionNameForLiteral(
@@ -1929,7 +1929,7 @@ func (l *LanguageService) createCompletionItem(
 		filterText,
 		sortText,
 		elementKind,
-		&kindModifiers,
+		kindModifiers,
 		replacementSpan,
 		optionalReplacementSpan,
 		commitCharacters,
@@ -3492,9 +3492,9 @@ func filterObjectMembersList(
 	file *ast.SourceFile,
 	position int,
 	typeChecker *checker.Checker,
-) (filteredMembers []*ast.Symbol, spreadMemberNames *core.Set[string]) {
+) (filteredMembers []*ast.Symbol, spreadMemberNames core.Set[string]) {
 	if len(existingMembers) == 0 {
-		return contextualMemberSymbols, &core.Set[string]{}
+		return contextualMemberSymbols, core.Set[string]{}
 	}
 
 	membersDeclaredBySpreadAssignment := core.Set[string]{}
@@ -3544,7 +3544,7 @@ func filterObjectMembersList(
 		return !existingMemberNames.Has(m.Name)
 	})
 
-	return filteredSymbols, &membersDeclaredBySpreadAssignment
+	return filteredSymbols, membersDeclaredBySpreadAssignment
 }
 
 func isCurrentlyEditingNode(node *ast.Node, file *ast.SourceFile, position int) bool {
@@ -3918,8 +3918,8 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",             /*filterText*/
 		SortTextLocationPriority,
 		ScriptElementKindClassElement,
-		&core.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
-		nil,                                    /*replacementSpan*/
+		core.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
+		nil,                                   /*replacementSpan*/
 		&optionalReplacementSpan,
 		nil, /*commitCharacters*/
 		nil, /*labelDetails*/
@@ -3948,7 +3948,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	filterText string,
 	sortText sortText,
 	elementKind ScriptElementKind,
-	kindModifiers *core.Set[ScriptElementKindModifier],
+	kindModifiers core.Set[ScriptElementKindModifier],
 	replacementSpan *lsproto.Range,
 	optionalReplacementSpan *core.TextRange,
 	commitCharacters *[]string,
