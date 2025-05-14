@@ -64,7 +64,7 @@ const { values: options } = parseArgs({
         concurrentTestPrograms: { type: "boolean", default: parseEnvBoolean("CONCURRENT_TEST_PROGRAMS") },
         coverage: { type: "boolean", default: parseEnvBoolean("COVERAGE") },
     },
-    strict: false,
+    strict: true,
     allowPositionals: true,
     allowNegative: true,
 });
