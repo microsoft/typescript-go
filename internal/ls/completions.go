@@ -1268,7 +1268,7 @@ func getCompletionData(program *compiler.Program, file *ast.SourceFile, position
 
 		symbolMeanings := core.IfElse(isTypeOnlyLocation, ast.SymbolFlagsNone, ast.SymbolFlagsValue) |
 			ast.SymbolFlagsType | ast.SymbolFlagsNamespace | ast.SymbolFlagsAlias
-		typeOnlyAliasNeedsPromotion := previousToken != nil && !checker.IsValidTypeOnlyAliasUseSite(previousToken)
+		typeOnlyAliasNeedsPromotion := previousToken != nil && !ast.IsValidTypeOnlyAliasUseSite(previousToken)
 
 		symbols = append(symbols, typeChecker.GetSymbolsInScope(scopeNode, symbolMeanings)...)
 		core.CheckEachDefined(symbols, "getSymbolsInScope() should all be defined")
@@ -3817,7 +3817,7 @@ func filterClassMembersList(
 			continue
 		}
 
-		existingName := checker.GetPropertyNameForPropertyNameNode(member.Name())
+		existingName := ast.GetPropertyNameForPropertyNameNode(member.Name())
 		if existingName != "" {
 			existingMemberNames.Add(existingName)
 		}

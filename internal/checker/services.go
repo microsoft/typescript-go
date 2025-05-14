@@ -131,7 +131,7 @@ func (c *Checker) isValidPropertyAccess(node *ast.Node, propertyName string) boo
 	case ast.KindQualifiedName:
 		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getWidenedType(c.checkExpression(node.AsQualifiedName().Left)))
 	case ast.KindImportType:
-		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.GetTypeFromTypeNode(node))
+		return c.isValidPropertyAccessWithType(node, false /*isSuper*/, propertyName, c.getTypeFromTypeNode(node))
 	}
 	panic("Unexpected node kind in isValidPropertyAccess: " + node.Kind.String())
 }
@@ -143,7 +143,7 @@ func (c *Checker) isValidPropertyAccessWithType(node *ast.Node, isSuper bool, pr
 	}
 
 	prop := c.getPropertyOfType(t, propertyName)
-	return prop != nil && c.IsPropertyAccessible(node, isSuper, false /*isWrite*/, t, prop)
+	return prop != nil && c.isPropertyAccessible(node, isSuper, false /*isWrite*/, t, prop)
 }
 
 // Checks if an existing property access is valid for completions purposes.
@@ -155,7 +155,7 @@ func (c *Checker) isValidPropertyAccessWithType(node *ast.Node, isSuper bool, pr
 // type: the type whose property we are checking.
 // property: the accessed property's symbol.
 func (c *Checker) IsValidPropertyAccessForCompletions(node *ast.Node, t *Type, property *ast.Symbol) bool {
-	return c.IsPropertyAccessible(
+	return c.isPropertyAccessible(
 		node,
 		node.Kind == ast.KindPropertyAccessExpression && node.Expression().Kind == ast.KindSuperKeyword,
 		false, /*isWrite*/
@@ -166,7 +166,7 @@ func (c *Checker) IsValidPropertyAccessForCompletions(node *ast.Node, t *Type, p
 }
 
 func (c *Checker) GetAllPossiblePropertiesOfTypes(types []*Type) []*ast.Symbol {
-	unionType := c.GetUnionType(types)
+	unionType := c.getUnionType(types)
 	if unionType.flags&TypeFlagsUnion == 0 {
 		return c.getAugmentedPropertiesOfType(unionType)
 	}
@@ -226,7 +226,7 @@ func (c *Checker) GetApparentProperties(t *Type) []*ast.Symbol {
 
 func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 	t = c.getApparentType(t)
-	propsByName := createSymbolTable(c.GetPropertiesOfType(t))
+	propsByName := createSymbolTable(c.getPropertiesOfType(t))
 	var functionType *Type
 	if len(c.getSignaturesOfType(t, SignatureKindCall)) > 0 {
 		functionType = c.globalCallableFunctionType
@@ -235,7 +235,7 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 	}
 
 	if functionType != nil {
-		for _, p := range c.GetPropertiesOfType(functionType) {
+		for _, p := range c.getPropertiesOfType(functionType) {
 			if _, ok := propsByName[p.Name]; !ok {
 				propsByName[p.Name] = p
 			}
@@ -459,7 +459,7 @@ func (c *Checker) GetExportsAndPropertiesOfModule(moduleSymbol *ast.Symbol) []*a
 	if exportEquals != moduleSymbol {
 		t := c.getTypeOfSymbol(exportEquals)
 		if c.shouldTreatPropertiesOfExternalModuleAsExports(t) {
-			exports = append(exports, c.GetPropertiesOfType(t)...)
+			exports = append(exports, c.getPropertiesOfType(t)...)
 		}
 	}
 	return exports

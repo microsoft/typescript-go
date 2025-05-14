@@ -333,7 +333,7 @@ func (c *Checker) narrowTypeByAssertion(f *FlowState, t *Type, expr *ast.Node) *
 			return c.narrowTypeByAssertion(f, c.narrowTypeByAssertion(f, t, node.AsBinaryExpression().Left), node.AsBinaryExpression().Right)
 		}
 		if node.AsBinaryExpression().OperatorToken.Kind == ast.KindBarBarToken {
-			return c.GetUnionType([]*Type{c.narrowTypeByAssertion(f, t, node.AsBinaryExpression().Left), c.narrowTypeByAssertion(f, t, node.AsBinaryExpression().Right)})
+			return c.getUnionType([]*Type{c.narrowTypeByAssertion(f, t, node.AsBinaryExpression().Left), c.narrowTypeByAssertion(f, t, node.AsBinaryExpression().Right)})
 		}
 	}
 	return c.narrowType(f, t, node, true /*assumeTrue*/)
@@ -531,10 +531,10 @@ func (c *Checker) narrowTypeByBinaryExpression(f *FlowState, t *Type, expr *ast.
 		if assumeTrue {
 			return c.narrowType(f, c.narrowType(f, t, expr.Left, true /*assumeTrue*/), expr.Right, true /*assumeTrue*/)
 		}
-		return c.GetUnionType([]*Type{c.narrowType(f, t, expr.Left, false /*assumeTrue*/), c.narrowType(f, t, expr.Right, false /*assumeTrue*/)})
+		return c.getUnionType([]*Type{c.narrowType(f, t, expr.Left, false /*assumeTrue*/), c.narrowType(f, t, expr.Right, false /*assumeTrue*/)})
 	case ast.KindBarBarToken:
 		if assumeTrue {
-			return c.GetUnionType([]*Type{c.narrowType(f, t, expr.Left, true /*assumeTrue*/), c.narrowType(f, t, expr.Right, true /*assumeTrue*/)})
+			return c.getUnionType([]*Type{c.narrowType(f, t, expr.Left, true /*assumeTrue*/), c.narrowType(f, t, expr.Right, true /*assumeTrue*/)})
 		}
 		return c.narrowType(f, c.narrowType(f, t, expr.Left, false /*assumeTrue*/), expr.Right, false /*assumeTrue*/)
 	}
@@ -646,7 +646,7 @@ func (c *Checker) narrowTypeByTypeName(t *Type, typeName string) *Type {
 		if t.flags&TypeFlagsAny != 0 {
 			return t
 		}
-		return c.GetUnionType([]*Type{c.narrowTypeByTypeFacts(t, c.nonPrimitiveType, TypeFactsTypeofEQObject), c.narrowTypeByTypeFacts(t, c.nullType, TypeFactsEQNull)})
+		return c.getUnionType([]*Type{c.narrowTypeByTypeFacts(t, c.nonPrimitiveType, TypeFactsTypeofEQObject), c.narrowTypeByTypeFacts(t, c.nullType, TypeFactsEQNull)})
 	case "function":
 		if t.flags&TypeFlagsAny != 0 {
 			return t
@@ -942,7 +942,7 @@ func (c *Checker) getInstanceType(constructorType *Type) *Type {
 	}
 	constructSignatures := c.getSignaturesOfType(constructorType, SignatureKindConstruct)
 	if len(constructSignatures) != 0 {
-		return c.GetUnionType(core.Map(constructSignatures, func(signature *Signature) *Type {
+		return c.getUnionType(core.Map(constructSignatures, func(signature *Signature) *Type {
 			return c.getReturnTypeOfSignature(c.getErasedSignature(signature))
 		}))
 	}
@@ -1087,9 +1087,9 @@ func (c *Checker) narrowTypeBySwitchOnDiscriminant(t *Type, data *ast.FlowSwitch
 				return t
 			}
 		}
-		return c.GetUnionType(core.IfElse(groundClauseTypes == nil, clauseTypes, groundClauseTypes))
+		return c.getUnionType(core.IfElse(groundClauseTypes == nil, clauseTypes, groundClauseTypes))
 	}
-	discriminantType := c.GetUnionType(clauseTypes)
+	discriminantType := c.getUnionType(clauseTypes)
 	var caseType *Type
 	if discriminantType.flags&TypeFlagsNever != 0 {
 		caseType = c.neverType
@@ -1113,7 +1113,7 @@ func (c *Checker) narrowTypeBySwitchOnDiscriminant(t *Type, data *ast.FlowSwitch
 	if caseType.flags&TypeFlagsNever != 0 {
 		return defaultType
 	}
-	return c.GetUnionType([]*Type{caseType, defaultType})
+	return c.getUnionType([]*Type{caseType, defaultType})
 }
 
 func (c *Checker) narrowTypeBySwitchOnTypeOf(t *Type, data *ast.FlowSwitchClauseData) *Type {
@@ -1138,7 +1138,7 @@ func (c *Checker) narrowTypeBySwitchOnTypeOf(t *Type, data *ast.FlowSwitchClause
 	}
 	// In the non-default cause we create a union of the type narrowed by each of the listed cases.
 	clauseWitnesses := witnesses[clauseStart:clauseEnd]
-	return c.GetUnionType(core.Map(clauseWitnesses, func(text string) *Type {
+	return c.getUnionType(core.Map(clauseWitnesses, func(text string) *Type {
 		if text != "" {
 			return c.narrowTypeByTypeName(t, text)
 		}
@@ -1174,7 +1174,7 @@ func (c *Checker) narrowTypeBySwitchOnTrue(f *FlowState, t *Type, data *ast.Flow
 		return t
 	}
 	// Now, narrow based on the cases in this set.
-	return c.GetUnionType(core.Map(clauses[clauseStart:clauseEnd], func(clause *ast.Node) *Type {
+	return c.getUnionType(core.Map(clauses[clauseStart:clauseEnd], func(clause *ast.Node) *Type {
 		if clause.Kind == ast.KindCaseClause {
 			return c.narrowType(f, t, clause.Expression(), true /*assumeTrue*/)
 		}
@@ -1195,7 +1195,7 @@ func (c *Checker) narrowTypeBySwitchOnDiscriminantProperty(t *Type, access *ast.
 		accessedName, _ := c.getAccessedPropertyName(access)
 		if accessedName != "" && c.getKeyPropertyName(t) == accessedName {
 			clauseTypes := c.getSwitchClauseTypes(data.SwitchStatement)[data.ClauseStart:data.ClauseEnd]
-			candidate := c.GetUnionType(core.Map(clauseTypes, func(s *Type) *Type {
+			candidate := c.getUnionType(core.Map(clauseTypes, func(s *Type) *Type {
 				result := c.getConstituentTypeForKeyType(t, s)
 				if result != nil {
 					return result
@@ -1275,7 +1275,7 @@ func (c *Checker) getTypeAtFlowBranchLabel(f *FlowState, flow *ast.FlowNode, ant
 // finalize all evolving array types.
 func (c *Checker) getUnionOrEvolvingArrayType(f *FlowState, types []*Type, subtypeReduction UnionReduction) *Type {
 	if isEvolvingArrayTypeList(types) {
-		return c.getEvolvingArrayType(c.GetUnionType(core.Map(types, c.getElementTypeOfEvolvingArrayType)))
+		return c.getEvolvingArrayType(c.getUnionType(core.Map(types, c.getElementTypeOfEvolvingArrayType)))
 	}
 	result := c.recombineUnknownType(c.getUnionTypeEx(core.SameMap(types, c.finalizeEvolvingArrayType), subtypeReduction, nil, nil))
 	if result != f.declaredType && result.flags&f.declaredType.flags&TypeFlagsUnion != 0 && slices.Equal(result.AsUnionType().types, f.declaredType.AsUnionType().types) {
@@ -1516,7 +1516,7 @@ func (c *Checker) addEvolvingArrayElementType(evolvingArrayType *Type, node *ast
 	if c.isTypeSubsetOf(newElementType, elementType) {
 		return evolvingArrayType
 	}
-	return c.getEvolvingArrayType(c.GetUnionType([]*Type{elementType, newElementType}))
+	return c.getEvolvingArrayType(c.getUnionType([]*Type{elementType, newElementType}))
 }
 
 func (c *Checker) finalizeEvolvingArrayType(t *Type) *Type {
@@ -2290,7 +2290,7 @@ func (c *Checker) getTypeOfDestructuredArrayElement(t *Type, index int) *Type {
 
 func (c *Checker) includeUndefinedInIndexSignature(t *Type) *Type {
 	if c.compilerOptions.NoUncheckedIndexedAccess == core.TSTrue {
-		return c.GetUnionType([]*Type{t, c.missingType})
+		return c.getUnionType([]*Type{t, c.missingType})
 	}
 	return t
 }
@@ -2337,7 +2337,7 @@ func (c *Checker) isDestructuringAssignmentTarget(parent *ast.Node) bool {
 
 func (c *Checker) getTypeWithDefault(t *Type, defaultExpression *ast.Node) *Type {
 	if defaultExpression != nil {
-		return c.GetUnionType([]*Type{c.getNonUndefinedType(t), c.getTypeOfExpression(defaultExpression)})
+		return c.getUnionType([]*Type{c.getNonUndefinedType(t), c.getTypeOfExpression(defaultExpression)})
 	}
 	return t
 }

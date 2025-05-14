@@ -294,7 +294,7 @@ func (c *Checker) isEnumTypeRelatedTo(source *ast.Symbol, target *ast.Symbol, er
 		return entry&RelationComparisonResultSucceeded != 0
 	}
 	targetEnumType := c.getTypeOfSymbol(targetSymbol)
-	for _, sourceProperty := range c.GetPropertiesOfType(c.getTypeOfSymbol(sourceSymbol)) {
+	for _, sourceProperty := range c.getPropertiesOfType(c.getTypeOfSymbol(sourceSymbol)) {
 		if sourceProperty.Flags&ast.SymbolFlagsEnumMember != 0 {
 			targetProperty := c.getPropertyOfType(targetEnumType, sourceProperty.Name)
 			if targetProperty == nil || targetProperty.Flags&ast.SymbolFlagsEnumMember == 0 {
@@ -645,7 +645,7 @@ func (c *Checker) elaborateArrowFunction(node *ast.Node, source *Type, target *T
 	}
 	returnExpression := node.Body()
 	sourceReturn := c.getReturnTypeOfSignature(sourceSig)
-	targetReturn := c.GetUnionType(core.Map(targetSignatures, c.getReturnTypeOfSignature))
+	targetReturn := c.getUnionType(core.Map(targetSignatures, c.getReturnTypeOfSignature))
 	if c.checkTypeRelatedTo(sourceReturn, targetReturn, relation, nil /*errorNode*/) {
 		return false
 	}
@@ -687,7 +687,7 @@ func (c *Checker) isWeakType(t *Type) bool {
 }
 
 func (c *Checker) hasCommonProperties(source *Type, target *Type, isComparingJsxAttributes bool) bool {
-	for _, prop := range c.GetPropertiesOfType(source) {
+	for _, prop := range c.getPropertiesOfType(source) {
 		if c.isKnownProperty(target, prop.Name, isComparingJsxAttributes) {
 			return true
 		}
@@ -940,8 +940,8 @@ func (c *Checker) findMostOverlappyType(source *Type, unionTarget *Type) *Type {
 }
 
 func (c *Checker) findBestTypeForObjectLiteral(source *Type, unionTarget *Type) *Type {
-	if source.objectFlags&ObjectFlagsObjectLiteral != 0 && someType(unionTarget, c.IsArrayLikeType) {
-		return core.Find(unionTarget.Types(), func(t *Type) bool { return !c.IsArrayLikeType(t) })
+	if source.objectFlags&ObjectFlagsObjectLiteral != 0 && someType(unionTarget, c.isArrayLikeType) {
+		return core.Find(unionTarget.Types(), func(t *Type) bool { return !c.isArrayLikeType(t) })
 	}
 	return nil
 }
@@ -972,7 +972,7 @@ func (c *Checker) getUnmatchedProperties(source *Type, target *Type, requireOpti
 }
 
 func (c *Checker) getUnmatchedPropertiesWorker(source *Type, target *Type, requireOptionalProperties bool, matchDiscriminantProperties bool, propsOut *[]*ast.Symbol) *ast.Symbol {
-	properties := c.GetPropertiesOfType(target)
+	properties := c.getPropertiesOfType(target)
 	for _, targetProp := range properties {
 		// TODO: remove this when we support static private identifier fields and find other solutions to get privateNamesAndStaticFields test to pass
 		if isStaticPrivateIdentifierProperty(targetProp) {
@@ -1054,7 +1054,7 @@ func (c *Checker) findMatchingDiscriminantType(source *Type, target *Type, isRel
 		if match := c.getMatchingUnionConstituentForType(target, source); match != nil {
 			return match
 		}
-		discriminantProperties := c.findDiscriminantProperties(c.GetPropertiesOfType(source), target)
+		discriminantProperties := c.findDiscriminantProperties(c.getPropertiesOfType(source), target)
 		discriminator := &TypeDiscriminator{c: c, props: discriminantProperties, isRelatedTo: isRelatedTo}
 		discriminated := c.discriminateTypeByDiscriminableItems(target, discriminator)
 		if discriminated != target {
@@ -1149,7 +1149,7 @@ func isObjectOrInstantiableNonPrimitive(t *Type) bool {
 func (c *Checker) getKeyPropertyCandidateName(types []*Type) string {
 	for _, t := range types {
 		if t.flags&(TypeFlagsObject|TypeFlagsInstantiableNonPrimitive) != 0 {
-			for _, p := range c.GetPropertiesOfType(t) {
+			for _, p := range c.getPropertiesOfType(t) {
 				if isUnitType(c.getTypeOfSymbol(p)) {
 					return p.Name
 				}
@@ -1871,7 +1871,7 @@ func (c *Checker) getKnownKeysOfTupleType(t *Type) *Type {
 		keys[i] = c.getStringLiteralType(strconv.Itoa(i))
 	}
 	keys[fixedLength] = c.getIndexType(core.IfElse(t.TargetTupleType().readonly, c.globalReadonlyArrayType, c.globalArrayType))
-	return c.GetUnionType(keys)
+	return c.getUnionType(keys)
 }
 
 func (c *Checker) getRestArrayTypeOfTupleType(t *Type) *Type {
@@ -2055,7 +2055,7 @@ func (c *Checker) createTypePredicateFromTypePredicateNode(node *ast.Node, signa
 	predicateNode := node.AsTypePredicateNode()
 	var t *Type
 	if predicateNode.Type != nil {
-		t = c.GetTypeFromTypeNode(predicateNode.Type)
+		t = c.getTypeFromTypeNode(predicateNode.Type)
 	}
 	if ast.IsThisTypeNode(predicateNode.ParameterName) {
 		kind := core.IfElse(predicateNode.AssertsModifier != nil, TypePredicateKindAssertsThis, TypePredicateKindThis)
@@ -2627,7 +2627,7 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 		isPerformingCommonPropertyChecks := (r.relation != r.c.comparableRelation || isUnitType(source)) &&
 			intersectionState&IntersectionStateTarget == 0 &&
 			source.flags&(TypeFlagsPrimitive|TypeFlagsObject|TypeFlagsIntersection) != 0 && source != r.c.globalObjectType &&
-			target.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && r.c.isWeakType(target) && (len(r.c.GetPropertiesOfType(source)) > 0 || r.c.TypeHasCallOrConstructSignatures(source))
+			target.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && r.c.isWeakType(target) && (len(r.c.getPropertiesOfType(source)) > 0 || r.c.typeHasCallOrConstructSignatures(source))
 		isComparingJsxAttributes := source.objectFlags&ObjectFlagsJsxAttributes != 0
 		if isPerformingCommonPropertyChecks && !r.c.hasCommonProperties(source, target, isComparingJsxAttributes) {
 			if reportErrors {
@@ -2680,7 +2680,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 		}
 		checkTypes = reducedTarget.Distributed()
 	}
-	for _, prop := range r.c.GetPropertiesOfType(source) {
+	for _, prop := range r.c.getPropertiesOfType(source) {
 		if shouldCheckAsExcessProperty(prop, source.symbol) && !isIgnoredJsxProperty(source, prop) {
 			if !r.c.isKnownProperty(reducedTarget, prop.Name, isComparingJsxAttributes) {
 				if reportErrors {
@@ -2749,7 +2749,7 @@ func (c *Checker) getTypeOfPropertyInTypes(types []*Type, name string) *Type {
 	for _, t := range types {
 		propTypes = append(propTypes, c.getTypeOfPropertyInType(t, name))
 	}
-	return c.GetUnionType(propTypes)
+	return c.getUnionType(propTypes)
 }
 
 func (c *Checker) getTypeOfPropertyInType(t *Type, name string) *Type {
@@ -3459,7 +3459,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 					// missing from the `constraintType` which will otherwise be mapped in the object
 					mappedKeys := r.c.getApparentMappedTypeKeys(nameType, targetType)
 					// We still need to include the non-apparent (and thus still generic) keys in the target side of the comparison (in case they're in the source side)
-					targetKeys = r.c.GetUnionType([]*Type{mappedKeys, nameType})
+					targetKeys = r.c.getUnionType([]*Type{mappedKeys, nameType})
 				} else if nameType != nil {
 					targetKeys = nameType
 				} else {
@@ -3923,7 +3923,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	//
 	// NOTE: See ~/tests/cases/conformance/types/typeRelationships/assignmentCompatibility/assignmentCompatWithDiscriminatedUnion.ts
 	//       for examples.
-	sourceProperties := r.c.GetPropertiesOfType(source)
+	sourceProperties := r.c.getPropertiesOfType(source)
 	sourcePropertiesFiltered := r.c.findDiscriminantProperties(sourceProperties, target)
 	if len(sourcePropertiesFiltered) == 0 {
 		return TernaryFalse
@@ -4152,7 +4152,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 		return TernaryFalse
 	}
 	if isObjectLiteralType(target) {
-		for _, sourceProp := range excludeProperties(r.c.GetPropertiesOfType(source), excludedProperties) {
+		for _, sourceProp := range excludeProperties(r.c.getPropertiesOfType(source), excludedProperties) {
 			if r.c.getPropertyOfObjectType(target, sourceProp.Name) == nil {
 				sourceType := r.c.getTypeOfSymbol(sourceProp)
 				if sourceType.flags&TypeFlagsUndefined == 0 {
@@ -4166,7 +4166,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	}
 	// We only call this for union target types when we're attempting to do excess property checking - in those cases, we want to get _all possible props_
 	// from the target union, across all members
-	properties := r.c.GetPropertiesOfType(target)
+	properties := r.c.getPropertiesOfType(target)
 	numericNamesOnly := isTupleType(source) && isTupleType(target)
 	for _, targetProp := range excludeProperties(properties, excludedProperties) {
 		name := targetProp.Name
@@ -4185,8 +4185,8 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 }
 
 func (r *Relater) propertyRelatedTo(source *Type, target *Type, sourceProp *ast.Symbol, targetProp *ast.Symbol, getTypeOfSourceProperty func(sym *ast.Symbol) *Type, reportErrors bool, intersectionState IntersectionState, skipOptional bool) Ternary {
-	sourcePropFlags := GetDeclarationModifierFlagsFromSymbol(sourceProp)
-	targetPropFlags := GetDeclarationModifierFlagsFromSymbol(targetProp)
+	sourcePropFlags := getDeclarationModifierFlagsFromSymbol(sourceProp)
+	targetPropFlags := getDeclarationModifierFlagsFromSymbol(targetProp)
 	switch {
 	case sourcePropFlags&ast.ModifierFlagsPrivate != 0 || targetPropFlags&ast.ModifierFlagsPrivate != 0:
 		if sourceProp.ValueDeclaration != targetProp.ValueDeclaration {
@@ -4537,7 +4537,7 @@ func (c *Checker) isObjectTypeWithInferableIndex(t *Type) bool {
 		return core.Every(t.Types(), c.isObjectTypeWithInferableIndex)
 	}
 	return t.symbol != nil && t.symbol.Flags&(ast.SymbolFlagsObjectLiteral|ast.SymbolFlagsTypeLiteral|ast.SymbolFlagsEnum|ast.SymbolFlagsValueModule) != 0 &&
-		t.symbol.Flags&ast.SymbolFlagsClass == 0 && !c.TypeHasCallOrConstructSignatures(t) ||
+		t.symbol.Flags&ast.SymbolFlagsClass == 0 && !c.typeHasCallOrConstructSignatures(t) ||
 		t.objectFlags&ObjectFlagsObjectRestType != 0 ||
 		t.objectFlags&ObjectFlagsReverseMapped != 0 && c.isObjectTypeWithInferableIndex(t.AsReverseMappedType().source)
 }

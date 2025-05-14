@@ -177,7 +177,7 @@ func (c *Checker) checkJsxReturnAssignableToAppropriateBound(refKind JsxReferenc
 		if sfcReturnConstraint == nil || classConstraint == nil {
 			return
 		}
-		combined := c.GetUnionType([]*Type{sfcReturnConstraint, classConstraint})
+		combined := c.getUnionType([]*Type{sfcReturnConstraint, classConstraint})
 		c.checkTypeRelatedToEx(elemInstanceType, combined, c.assignableRelation, openingLikeElement.TagName(), diagnostics.Its_element_type_0_is_not_a_valid_JSX_element, &diags)
 	}
 	if len(diags) != 0 {
@@ -211,7 +211,7 @@ func (c *Checker) getContextualTypeForJsxAttribute(attribute *ast.Node, contextF
 		if attributesType == nil || IsTypeAny(attributesType) {
 			return nil
 		}
-		return c.GetTypeOfPropertyOfContextualType(attributesType, attribute.Name().Text())
+		return c.getTypeOfPropertyOfContextualType(attributesType, attribute.Name().Text())
 	}
 	return c.getContextualType(attribute.Parent, contextFlags)
 }
@@ -238,7 +238,7 @@ func (c *Checker) getContextualTypeForChildJsxExpression(node *ast.Node, child *
 	}
 	realChildren := getSemanticJsxChildren(node.Children().Nodes)
 	childIndex := slices.Index(realChildren, child)
-	childFieldType := c.GetTypeOfPropertyOfContextualType(attributesType, jsxChildrenPropertyName)
+	childFieldType := c.getTypeOfPropertyOfContextualType(attributesType, jsxChildrenPropertyName)
 	if childFieldType == nil {
 		return nil
 	}
@@ -246,7 +246,7 @@ func (c *Checker) getContextualTypeForChildJsxExpression(node *ast.Node, child *
 		return childFieldType
 	}
 	return c.mapTypeEx(childFieldType, func(t *Type) *Type {
-		if c.IsArrayLikeType(t) {
+		if c.isArrayLikeType(t) {
 			return c.getIndexedAccessType(t, c.getNumberLiteralType(jsnum.Number(childIndex)))
 		}
 		return t
@@ -267,7 +267,7 @@ func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, cont
 		initializer := p.Initializer()
 		return (initializer == nil || c.isPossiblyDiscriminantValue(initializer)) && c.isDiscriminantProperty(contextualType, symbol.Name)
 	})
-	discriminantMembers := core.Filter(c.GetPropertiesOfType(contextualType), func(s *ast.Symbol) bool {
+	discriminantMembers := core.Filter(c.getPropertiesOfType(contextualType), func(s *ast.Symbol) bool {
 		if s.Flags&ast.SymbolFlagsOptional == 0 || node.Symbol() == nil || len(node.Symbol().Members) == 0 {
 			return false
 		}
@@ -418,7 +418,7 @@ func (c *Checker) elaborateIterableOrArrayLikeTargetElementwise(iterator iter.Se
 		}
 		if targetIndexedPropType != nil && targetIndexedPropType.flags&TypeFlagsIndexedAccess == 0 {
 			if iterationType != nil {
-				targetPropType = c.GetUnionType([]*Type{iterationType, targetIndexedPropType})
+				targetPropType = c.getUnionType([]*Type{iterationType, targetIndexedPropType})
 			} else {
 				targetPropType = targetIndexedPropType
 			}
@@ -461,7 +461,7 @@ func (c *Checker) elaborateIterableOrArrayLikeTargetElementwise(iterator iter.Se
 }
 
 func (c *Checker) getSuggestedSymbolForNonexistentJSXAttribute(name string, containingType *Type) *ast.Symbol {
-	properties := c.GetPropertiesOfType(containingType)
+	properties := c.getPropertiesOfType(containingType)
 	var jsxSpecific *ast.Symbol
 	switch name {
 	case "for":
@@ -715,7 +715,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 			}
 			var childrenContextualType *Type
 			if contextualType := c.getApparentTypeOfContextualType(openingLikeElement.Attributes(), ContextFlagsNone); contextualType != nil {
-				childrenContextualType = c.GetTypeOfPropertyOfContextualType(contextualType, jsxChildrenPropertyName)
+				childrenContextualType = c.getTypeOfPropertyOfContextualType(contextualType, jsxChildrenPropertyName)
 			}
 			// If there are children in the body of JSX element, create dummy attribute "children" with the union of children types so that it will pass the attribute checking process
 			childrenPropSymbol := c.newSymbol(ast.SymbolFlagsProperty, jsxChildrenPropertyName)
@@ -726,7 +726,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 			case childrenContextualType != nil && someType(childrenContextualType, c.isTupleLikeType):
 				links.resolvedType = c.createTupleType(childTypes)
 			default:
-				links.resolvedType = c.createArrayType(c.GetUnionType(childTypes))
+				links.resolvedType = c.createArrayType(c.getUnionType(childTypes))
 			}
 			// Fake up a property declaration for the children
 			childrenPropSymbol.ValueDeclaration = c.factory.NewPropertySignatureDeclaration(nil, c.factory.NewIdentifier(jsxChildrenPropertyName), nil /*postfixToken*/, nil /*type*/, nil /*initializer*/)
@@ -989,7 +989,7 @@ func (c *Checker) getNameFromJsxElementAttributesContainer(nameOfAttribPropConta
 		jsxElementAttribPropInterfaceSym := c.getSymbol(jsxNamespace.Exports, nameOfAttribPropContainer, ast.SymbolFlagsType)
 		if jsxElementAttribPropInterfaceSym != nil {
 			jsxElementAttribPropInterfaceType := c.getDeclaredTypeOfSymbol(jsxElementAttribPropInterfaceSym)
-			propertiesOfJsxElementAttribPropInterface := c.GetPropertiesOfType(jsxElementAttribPropInterfaceType)
+			propertiesOfJsxElementAttribPropInterface := c.getPropertiesOfType(jsxElementAttribPropInterfaceType)
 			// Element Attributes has zero properties, so the element attributes type will be the class instance type
 			if len(propertiesOfJsxElementAttribPropInterface) == 0 {
 				return ""
@@ -1151,7 +1151,7 @@ func (c *Checker) getJsxStatelessElementTypeAt(location *ast.Node) *Type {
 	if jsxElementType == nil {
 		return nil
 	}
-	return c.GetUnionType([]*Type{jsxElementType, c.nullType})
+	return c.getUnionType([]*Type{jsxElementType, c.nullType})
 }
 
 func (c *Checker) getJsxElementClassTypeAt(location *ast.Node) *Type {
@@ -1221,7 +1221,7 @@ func (c *Checker) getJsxNamespaceAt(location *ast.Node) *ast.Symbol {
 		}
 	}
 	// JSX global fallback
-	s := c.resolveSymbol(c.GetGlobalSymbol(JsxNames.JSX, ast.SymbolFlagsNamespace, nil /*diagnostic*/))
+	s := c.resolveSymbol(c.getGlobalSymbol(JsxNames.JSX, ast.SymbolFlagsNamespace, nil /*diagnostic*/))
 	if s == c.unknownSymbol {
 		return nil
 	}

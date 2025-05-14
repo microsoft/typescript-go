@@ -219,38 +219,6 @@ func getNameFromImportDeclaration(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func IsValidTypeOnlyAliasUseSite(useSite *ast.Node) bool {
-	return useSite.Flags&ast.NodeFlagsAmbient != 0 ||
-		ast.IsPartOfTypeQuery(useSite) ||
-		isIdentifierInNonEmittingHeritageClause(useSite) ||
-		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
-		!(ast.IsExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
-}
-
-func isIdentifierInNonEmittingHeritageClause(node *ast.Node) bool {
-	if !ast.IsIdentifier(node) {
-		return false
-	}
-	parent := node.Parent
-	for ast.IsPropertyAccessExpression(parent) || ast.IsExpressionWithTypeArguments(parent) {
-		parent = parent.Parent
-	}
-	return ast.IsHeritageClause(parent) && (parent.AsHeritageClause().Token == ast.KindImplementsKeyword || ast.IsInterfaceDeclaration(parent.Parent))
-}
-
-func isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(node *ast.Node) bool {
-	for ast.NodeKindIs(node, ast.KindIdentifier, ast.KindPropertyAccessExpression) {
-		node = node.Parent
-	}
-	if node.Kind != ast.KindComputedPropertyName {
-		return false
-	}
-	if ast.HasSyntacticModifier(node.Parent, ast.ModifierFlagsAbstract) {
-		return true
-	}
-	return ast.NodeKindIs(node.Parent.Parent, ast.KindInterfaceDeclaration, ast.KindTypeLiteral)
-}
-
 func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
 	// private names cannot be used with decorators yet
 	if useLegacyDecorators && node.Name() != nil && ast.IsPrivateIdentifier(node.Name()) {
@@ -283,10 +251,6 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 	}
 
 	return false
-}
-
-func isShorthandPropertyNameUseSite(useSite *ast.Node) bool {
-	return ast.IsIdentifier(useSite) && ast.IsShorthandPropertyAssignment(useSite.Parent) && useSite.Parent.AsShorthandPropertyAssignment().Name() == useSite
 }
 
 func isTypeDeclaration(node *ast.Node) bool {
@@ -869,7 +833,7 @@ func compareTypeMappers(m1, m2 *TypeMapper) int {
 	return 0
 }
 
-func GetDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
+func getDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
 	return getDeclarationModifierFlagsFromSymbolEx(s, false /*isWrite*/)
 }
 
@@ -1066,28 +1030,6 @@ func isNumericLiteralName(name string) bool {
 	// This is desired behavior, because when indexing with them as numeric entities, you are indexing
 	// with the strings '"Infinity"', '"-Infinity"', and '"NaN"' respectively.
 	return jsnum.FromString(name).String() == name
-}
-
-func GetPropertyNameForPropertyNameNode(name *ast.Node) string {
-	switch name.Kind {
-	case ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral,
-		ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindJsxNamespacedName:
-		return name.Text()
-	case ast.KindComputedPropertyName:
-		nameExpression := name.AsComputedPropertyName().Expression
-		if ast.IsStringOrNumericLiteralLike(nameExpression) {
-			return nameExpression.Text()
-		}
-		if ast.IsSignedNumericLiteral(nameExpression) {
-			text := nameExpression.AsPrefixUnaryExpression().Operand.Text()
-			if nameExpression.AsPrefixUnaryExpression().Operator == ast.KindMinusToken {
-				text = "-" + text
-			}
-			return text
-		}
-		return ast.InternalSymbolNameMissing
-	}
-	panic("Unhandled case in getPropertyNameForPropertyNameNode")
 }
 
 func isThisProperty(node *ast.Node) bool {
@@ -1949,7 +1891,7 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 	case ast.IsElementAccessExpression(expr):
 		baseStr := tryGetPropertyAccessOrIdentifierToString(expr.Expression())
 		if baseStr != "" && ast.IsPropertyName(expr.AsElementAccessExpression().ArgumentExpression) {
-			return baseStr + "." + GetPropertyNameForPropertyNameNode(expr.AsElementAccessExpression().ArgumentExpression)
+			return baseStr + "." + ast.GetPropertyNameForPropertyNameNode(expr.AsElementAccessExpression().ArgumentExpression)
 		}
 	case ast.IsIdentifier(expr):
 		return expr.Text()

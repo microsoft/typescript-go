@@ -108,7 +108,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 		if len(targets) == 0 {
 			return
 		}
-		target = c.GetUnionType(targets)
+		target = c.getUnionType(targets)
 		if len(sources) == 0 {
 			// All source constituents have been matched and there is nothing further to infer from.
 			// However, simply making no inferences is undesirable because it could ultimately mean
@@ -118,7 +118,7 @@ func (c *Checker) inferFromTypes(n *InferenceState, source *Type, target *Type) 
 			c.inferWithPriority(n, source, target, InferencePriorityNakedTypeVariable)
 			return
 		}
-		source = c.GetUnionType(sources)
+		source = c.getUnionType(sources)
 	} else if target.flags&TypeFlagsIntersection != 0 && !core.Every(target.Types(), c.isNonGenericObjectType) {
 		// We reduce intersection types unless they're simple combinations of object types. For example,
 		// when inferring from 'string[] & { extra: any }' to 'string[] & T' we want to remove string[] and
@@ -436,7 +436,7 @@ func (c *Checker) inferToMultipleTypes(n *InferenceState, source *Type, targets 
 				}
 			}
 			if len(unmatched) != 0 {
-				c.inferFromTypes(n, c.GetUnionType(unmatched), nakedTypeVariable)
+				c.inferFromTypes(n, c.getUnionType(unmatched), nakedTypeVariable)
 				return
 			}
 		}
@@ -848,7 +848,7 @@ func (c *Checker) inferFromIndexTypes(n *InferenceState, source *Type, target *T
 	if c.isObjectTypeWithInferableIndex(source) {
 		for _, targetInfo := range indexInfos {
 			var propTypes []*Type
-			for _, prop := range c.GetPropertiesOfType(source) {
+			for _, prop := range c.getPropertiesOfType(source) {
 				if c.isApplicableIndexType(c.getLiteralTypeFromProperty(prop, TypeFlagsStringOrNumberLiteralOrUnique, false), targetInfo.keyType) {
 					propType := c.getTypeOfSymbol(prop)
 					if prop.Flags&ast.SymbolFlagsOptional != 0 {
@@ -863,7 +863,7 @@ func (c *Checker) inferFromIndexTypes(n *InferenceState, source *Type, target *T
 				}
 			}
 			if len(propTypes) != 0 {
-				c.inferWithPriority(n, c.GetUnionType(propTypes), targetInfo.valueType, priority)
+				c.inferWithPriority(n, c.getUnionType(propTypes), targetInfo.valueType, priority)
 			}
 		}
 	}
@@ -914,14 +914,14 @@ func (c *Checker) inferToMappedType(n *InferenceState, source *Type, target *Typ
 		}
 		// If no inferences can be made to K's constraint, infer from a union of the property types
 		// in the source to the template type X.
-		propTypes := core.Map(c.GetPropertiesOfType(source), c.getTypeOfSymbol)
+		propTypes := core.Map(c.getPropertiesOfType(source), c.getTypeOfSymbol)
 		indexTypes := core.Map(c.getIndexInfosOfType(source), func(info *IndexInfo) *Type {
 			if info != c.enumNumberIndexInfo {
 				return info.valueType
 			}
 			return c.neverType
 		})
-		c.inferFromTypes(n, c.GetUnionType(core.Concatenate(propTypes, indexTypes)), c.getTemplateTypeFromMappedType(target))
+		c.inferFromTypes(n, c.getUnionType(core.Concatenate(propTypes, indexTypes)), c.getTemplateTypeFromMappedType(target))
 		return true
 	}
 	return false
@@ -944,7 +944,7 @@ func (c *Checker) inferTypeForHomomorphicMappedType(source *Type, target *Type, 
 func (c *Checker) createReverseMappedType(source *Type, target *Type, constraint *Type) *Type {
 	// We consider a source type reverse mappable if it has a string index signature or if
 	// it has one or more properties and is of a partially inferable type.
-	if !(c.getIndexInfoOfType(source, c.stringType) != nil || len(c.GetPropertiesOfType(source)) != 0 && c.isPartiallyInferableType(source)) {
+	if !(c.getIndexInfoOfType(source, c.stringType) != nil || len(c.getPropertiesOfType(source)) != 0 && c.isPartiallyInferableType(source)) {
 		return nil
 	}
 	// For arrays and tuples we infer new arrays and tuples where the reverse mapping has been
@@ -988,7 +988,7 @@ func (c *Checker) createReverseMappedType(source *Type, target *Type, constraint
 // literal { a: 123, b: x => true } is marked non-inferable because it contains a context sensitive
 // arrow function, but is considered partially inferable because property 'a' has an inferable type.
 func (c *Checker) isPartiallyInferableType(t *Type) bool {
-	return t.objectFlags&ObjectFlagsNonInferrableType == 0 || isObjectLiteralType(t) && core.Some(c.GetPropertiesOfType(t), func(prop *ast.Symbol) bool {
+	return t.objectFlags&ObjectFlagsNonInferrableType == 0 || isObjectLiteralType(t) && core.Some(c.getPropertiesOfType(t), func(prop *ast.Symbol) bool {
 		return c.isPartiallyInferableType(c.getTypeOfSymbol(prop))
 	}) || isTupleType(t) && core.Some(c.getElementTypes(t), c.isPartiallyInferableType)
 }
@@ -1038,7 +1038,7 @@ func (c *Checker) resolveReverseMappedTypeMembers(t *Type) {
 	}
 	members := make(ast.SymbolTable)
 	limitedConstraint := c.getLimitedConstraint(t)
-	for _, prop := range c.GetPropertiesOfType(r.source) {
+	for _, prop := range c.getPropertiesOfType(r.source) {
 		// In case of a reverse mapped type with an intersection constraint, if we were able to
 		// extract the filtering type literals we skip those properties that are not assignable to them,
 		// because the extra properties wouldn't get through the application of the mapped type anyway
@@ -1459,7 +1459,7 @@ func (c *Checker) getCommonSupertype(types []*Type) *Type {
 	// right is a supertype.
 	var supertype *Type
 	if c.literalTypesWithSameBaseType(primaryTypes) {
-		supertype = c.GetUnionType(primaryTypes)
+		supertype = c.getUnionType(primaryTypes)
 	} else {
 		for _, t := range primaryTypes {
 			if supertype == nil || c.isTypeSubtypeOf(supertype, t) {

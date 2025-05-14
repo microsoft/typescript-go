@@ -2867,3 +2867,61 @@ func IsJSDocSingleCommentNodeList(parent *Node, nodeList *NodeList) bool {
 func IsJSDocSingleCommentNode(node *Node) bool {
 	return node.Kind == KindJSDoc && node.AsJSDoc().Comment != nil && len(node.AsJSDoc().Comment.Nodes) == 1
 }
+
+func IsValidTypeOnlyAliasUseSite(useSite *Node) bool {
+	return useSite.Flags&NodeFlagsAmbient != 0 ||
+		IsPartOfTypeQuery(useSite) ||
+		isIdentifierInNonEmittingHeritageClause(useSite) ||
+		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
+		!(IsExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
+}
+
+func isIdentifierInNonEmittingHeritageClause(node *Node) bool {
+	if !IsIdentifier(node) {
+		return false
+	}
+	parent := node.Parent
+	for IsPropertyAccessExpression(parent) || IsExpressionWithTypeArguments(parent) {
+		parent = parent.Parent
+	}
+	return IsHeritageClause(parent) && (parent.AsHeritageClause().Token == KindImplementsKeyword || IsInterfaceDeclaration(parent.Parent))
+}
+
+func isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(node *Node) bool {
+	for NodeKindIs(node, KindIdentifier, KindPropertyAccessExpression) {
+		node = node.Parent
+	}
+	if node.Kind != KindComputedPropertyName {
+		return false
+	}
+	if HasSyntacticModifier(node.Parent, ModifierFlagsAbstract) {
+		return true
+	}
+	return NodeKindIs(node.Parent.Parent, KindInterfaceDeclaration, KindTypeLiteral)
+}
+
+func isShorthandPropertyNameUseSite(useSite *Node) bool {
+	return IsIdentifier(useSite) && IsShorthandPropertyAssignment(useSite.Parent) && useSite.Parent.AsShorthandPropertyAssignment().Name() == useSite
+}
+
+func GetPropertyNameForPropertyNameNode(name *Node) string {
+	switch name.Kind {
+	case KindIdentifier, KindPrivateIdentifier, KindStringLiteral, KindNoSubstitutionTemplateLiteral,
+		KindNumericLiteral, KindBigIntLiteral, KindJsxNamespacedName:
+		return name.Text()
+	case KindComputedPropertyName:
+		nameExpression := name.AsComputedPropertyName().Expression
+		if IsStringOrNumericLiteralLike(nameExpression) {
+			return nameExpression.Text()
+		}
+		if IsSignedNumericLiteral(nameExpression) {
+			text := nameExpression.AsPrefixUnaryExpression().Operand.Text()
+			if nameExpression.AsPrefixUnaryExpression().Operator == KindMinusToken {
+				text = "-" + text
+			}
+			return text
+		}
+		return InternalSymbolNameMissing
+	}
+	panic("Unhandled case in getPropertyNameForPropertyNameNode")
+}
