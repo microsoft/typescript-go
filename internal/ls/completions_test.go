@@ -1363,7 +1363,19 @@ export function isAnyDirectorySeparator(charCode: number): boolean {
 								Kind:             variableKind,
 								SortText:         sortTextLocationPriority,
 								InsertTextFormat: insertTextFormatPlainText,
-								TextEdit:         &lsproto.TextEditOrInsertReplaceEdit{},
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									InsertReplaceEdit: &lsproto.InsertReplaceEdit{
+										NewText: "CharacterCodes",
+										Insert: lsproto.Range{
+											Start: lsproto.Position{Line: 27, Character: 0},
+											End:   lsproto.Position{Line: 27, Character: 1},
+										},
+										Replace: lsproto.Range{
+											Start: lsproto.Position{Line: 27, Character: 0},
+											End:   lsproto.Position{Line: 27, Character: 1},
+										},
+									},
+								},
 							},
 						},
 					},
