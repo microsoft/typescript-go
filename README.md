@@ -41,10 +41,7 @@ After running `hereby build`, you can run `built/local/tsgo`, which behaves most
 
 ### Running LSP Prototype
 
-* Run `hereby build` to build the LSP server
-* Run `hereby install-extension` to build and install the VS Code extension. (Use `--insiders` to target `code-insiders` instead of `code`.)
-* Copy the `"typescript-go.executablePath"` setting printed by `hereby install-extension` to your VS Code settings.
-* Select "TypeScript: Use TypeScript Go (Experimental)" from the VS Code command palette (or set `"typescript.experimental.useTsgo"` in your VS Code settings).
+A preview extension is [available on the VS Code marketplace](https://marketplace.visualstudio.com/items?itemName=TODO.TODO).
 
 Alternatively, to debug and run the VS Code extension without installing it globally:
 
