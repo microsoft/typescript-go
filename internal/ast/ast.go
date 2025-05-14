@@ -2084,7 +2084,7 @@ func (f *NodeFactory) UpdateTypeParameterDeclaration(node *TypeParameterDeclarat
 }
 
 func (node *TypeParameterDeclaration) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Constraint) || visit(v, node.DefaultType)
+	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Constraint) || visit(v, node.DefaultType) || visit(v, node.Expression)
 }
 
 func (node *TypeParameterDeclaration) VisitEachChild(v *NodeVisitor) *Node {
