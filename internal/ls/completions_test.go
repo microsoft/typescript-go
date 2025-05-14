@@ -1303,6 +1303,74 @@ function f2<T ext/*2*/>() {}`,
 				},
 			},
 		},
+		{
+			name: "paths.ts",
+			files: map[string]string{
+				defaultMainFileName: `import {
+    CharacterCodes,
+    compareStringsCaseInsensitive,
+    compareStringsCaseSensitive,
+    compareValues,
+    Comparison,
+    Debug,
+    endsWith,
+    equateStringsCaseInsensitive,
+    equateStringsCaseSensitive,
+    GetCanonicalFileName,
+    getDeclarationFileExtension,
+    getStringComparer,
+    identity,
+    lastOrUndefined,
+    Path,
+    some,
+    startsWith,
+} from "./_namespaces/ts.js";
+
+/**
+ * Internally, we represent paths as strings with '/' as the directory separator.
+ * When we make system calls (eg: LanguageServiceHost.getDirectory()),
+ * we expect the host to correctly handle paths in our specified format.
+ *
+ * @internal
+ */
+export const directorySeparator = "/";
+/** @internal */
+export const altDirectorySeparator = "\\";
+const urlSchemeSeparator = "://";
+const backslashRegExp = /\\/g;
+
+b/*a*/
+
+//// Path Tests
+
+/**
+ * Determines whether a charCode corresponds to '/' or '\'.
+ *
+ * @internal
+ */
+export function isAnyDirectorySeparator(charCode: number): boolean {
+    return charCode === CharacterCodes.slash || charCode === CharacterCodes.backslash;
+}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"a": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "CharacterCodes",
+								Kind:             variableKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+								TextEdit:         &lsproto.TextEditOrInsertReplaceEdit{},
+							},
+						},
+					},
+					isIncludes: true,
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
