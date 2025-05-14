@@ -55,7 +55,7 @@ const { values: options } = parseArgs({
         fix: { type: "boolean" },
         debug: { type: "boolean" },
 
-        setVersion: { type: "string" },
+        setPrerelease: { type: "string" },
 
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
         noembed: { type: "boolean", default: parseEnvBoolean("NOEMBED") },
@@ -688,19 +688,21 @@ export class Debouncer {
 }
 
 const getVersion = memoize(() => {
-    if (options.setVersion) {
-        return options.setVersion;
-    }
-
     const f = fs.readFileSync("./internal/core/version.go", "utf8");
-    const match = f.match(/var version\s*=\s*"([^"]+)"/);
+
+    const match = f.match(/var version\s*=\s*"(\d+\.\d+\.\d+)(-[^"]+)?"/);
     if (!match) {
         throw new Error("Failed to extract version from version.go");
     }
-    const version = match[1];
-    if (!version) {
-        throw new Error("Version is empty");
+
+    let version = match[1];
+    if (options.setPrerelease) {
+        version += `-${options.setPrerelease}`;
     }
+    else if (match[2]) {
+        version += match[2];
+    }
+
     return version;
 });
 
@@ -792,8 +794,8 @@ export const buildNativePreview = task({
         await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
 
         let ldflags = "-ldflags=-s -w";
-        if (options.setVersion) {
-            ldflags += ` -X github.com/microsoft/typescript-go/internal/core.version=${options.setVersion}`;
+        if (options.setPrerelease) {
+            ldflags += ` -X github.com/microsoft/typescript-go/internal/core.version=${getVersion()}`;
         }
         const extraFlags = ["-trimpath", ldflags];
 
