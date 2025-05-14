@@ -48,7 +48,8 @@ type ClientMock struct {
 	// calls tracks calls to the methods.
 	calls struct {
 		// RefreshDiagnostics holds details about calls to the RefreshDiagnostics method.
-		RefreshDiagnostics []struct{}
+		RefreshDiagnostics []struct {
+		}
 		// UnwatchFiles holds details about calls to the UnwatchFiles method.
 		UnwatchFiles []struct {
 			// Handle is the handle argument value.
@@ -67,12 +68,15 @@ type ClientMock struct {
 
 // RefreshDiagnostics calls RefreshDiagnosticsFunc.
 func (mock *ClientMock) RefreshDiagnostics() error {
-	callInfo := struct{}{}
+	callInfo := struct {
+	}{}
 	mock.lockRefreshDiagnostics.Lock()
 	mock.calls.RefreshDiagnostics = append(mock.calls.RefreshDiagnostics, callInfo)
 	mock.lockRefreshDiagnostics.Unlock()
 	if mock.RefreshDiagnosticsFunc == nil {
-		var errOut error
+		var (
+			errOut error
+		)
 		return errOut
 	}
 	return mock.RefreshDiagnosticsFunc()
@@ -82,8 +86,10 @@ func (mock *ClientMock) RefreshDiagnostics() error {
 // Check the length with:
 //
 //	len(mockedClient.RefreshDiagnosticsCalls())
-func (mock *ClientMock) RefreshDiagnosticsCalls() []struct{} {
-	var calls []struct{}
+func (mock *ClientMock) RefreshDiagnosticsCalls() []struct {
+} {
+	var calls []struct {
+	}
 	mock.lockRefreshDiagnostics.RLock()
 	calls = mock.calls.RefreshDiagnostics
 	mock.lockRefreshDiagnostics.RUnlock()
@@ -101,7 +107,9 @@ func (mock *ClientMock) UnwatchFiles(handle project.WatcherHandle) error {
 	mock.calls.UnwatchFiles = append(mock.calls.UnwatchFiles, callInfo)
 	mock.lockUnwatchFiles.Unlock()
 	if mock.UnwatchFilesFunc == nil {
-		var errOut error
+		var (
+			errOut error
+		)
 		return errOut
 	}
 	return mock.UnwatchFilesFunc(handle)
