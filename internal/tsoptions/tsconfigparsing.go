@@ -102,8 +102,8 @@ func (c *configFileSpecs) matchesExclude(fileName string, comparePathsOptions ts
 	if len(c.validatedExcludeSpecs) == 0 {
 		return false
 	}
-	excludePattern := getRegularExpressionForWildcard(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, "exclude")
-	excludeRegex := getRegexFromPattern(excludePattern, comparePathsOptions.UseCaseSensitiveFileNames)
+	excludePattern := vfs.GetRegularExpressionForWildcard(c.validatedExcludeSpecs, comparePathsOptions.CurrentDirectory, "exclude")
+	excludeRegex := vfs.GetRegexFromPattern(excludePattern, comparePathsOptions.UseCaseSensitiveFileNames)
 	if match, err := excludeRegex.MatchString(fileName); err == nil && match {
 		return true
 	}
@@ -120,9 +120,9 @@ func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions ts
 		return false
 	}
 	for _, spec := range c.validatedIncludeSpecs {
-		includePattern := getPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
+		includePattern := vfs.GetPatternFromSpec(spec, comparePathsOptions.CurrentDirectory, "files")
 		if includePattern != "" {
-			includeRegex := getRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
+			includeRegex := vfs.GetRegexFromPattern(includePattern, comparePathsOptions.UseCaseSensitiveFileNames)
 			if match, err := includeRegex.MatchString(fileName); err == nil && match {
 				return true
 			}
@@ -1528,15 +1528,15 @@ func getFileNamesFromConfigSpecs(
 
 	var jsonOnlyIncludeRegexes []*regexp2.Regexp
 	if len(validatedIncludeSpecs) > 0 {
-		files := readDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
+		files := vfs.ReadDirectory(host, basePath, basePath, core.Flatten(supportedExtensionsWithJsonIfResolveJsonModule), validatedExcludeSpecs, validatedIncludeSpecs, nil)
 		for _, file := range files {
 			if tspath.FileExtensionIs(file, tspath.ExtensionJson) {
 				if jsonOnlyIncludeRegexes == nil {
 					includes := core.Filter(validatedIncludeSpecs, func(include string) bool { return strings.HasSuffix(include, tspath.ExtensionJson) })
-					includeFilePatterns := core.Map(getRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
+					includeFilePatterns := core.Map(vfs.GetRegularExpressionsForWildcards(includes, basePath, "files"), func(pattern string) string { return fmt.Sprintf("^%s$", pattern) })
 					if includeFilePatterns != nil {
 						jsonOnlyIncludeRegexes = core.Map(includeFilePatterns, func(pattern string) *regexp2.Regexp {
-							return getRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
+							return vfs.GetRegexFromPattern(pattern, host.UseCaseSensitiveFileNames())
 						})
 					} else {
 						jsonOnlyIncludeRegexes = nil

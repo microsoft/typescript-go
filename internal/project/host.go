@@ -16,6 +16,7 @@ type Client interface {
 type ServiceHost interface {
 	FS() vfs.FS
 	DefaultLibraryPath() string
+	TypingsLocation() string
 	GetCurrentDirectory() string
 	NewLine() string
 

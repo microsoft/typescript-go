@@ -28,6 +28,7 @@ type assignProjectResult struct {
 }
 
 type ServiceOptions struct {
+	TypingsInstallerOptions
 	Logger           *Logger
 	PositionEncoding lsproto.PositionEncodingKind
 	WatchEnabled     bool
@@ -58,11 +59,14 @@ type Service struct {
 	filenameToScriptInfoVersion map[tspath.Path]int
 	realpathToScriptInfosMu     sync.Mutex
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
+
+	typingsInstaller *TypingsInstaller
 }
 
 func NewService(host ServiceHost, options ServiceOptions) *Service {
 	options.Logger.Info(fmt.Sprintf("currentDirectory:: %s useCaseSensitiveFileNames:: %t", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()))
 	options.Logger.Info("libs Location:: " + host.DefaultLibraryPath())
+	options.Logger.Info("globalTypingsCacheLocation:: " + host.TypingsLocation())
 	service := &Service{
 		host:    host,
 		options: options,
@@ -102,6 +106,10 @@ func (s *Service) Log(msg string) {
 	s.options.Logger.Info(msg)
 }
 
+func (s *Service) HasLevel(level LogLevel) bool {
+	return s.options.Logger.HasLevel(level)
+}
+
 // NewLine implements ProjectHost.
 func (s *Service) NewLine() string {
 	return s.host.NewLine()
@@ -110,6 +118,21 @@ func (s *Service) NewLine() string {
 // DefaultLibraryPath implements ProjectHost.
 func (s *Service) DefaultLibraryPath() string {
 	return s.host.DefaultLibraryPath()
+}
+
+// TypingsInstaller implements ProjectHost.
+func (s *Service) TypingsInstaller() *TypingsInstaller {
+	if s.typingsInstaller != nil {
+		return s.typingsInstaller
+	}
+
+	if typingsLocation := s.host.TypingsLocation(); typingsLocation != "" {
+		s.typingsInstaller = &TypingsInstaller{
+			TypingsLocation: typingsLocation,
+			options:         &s.options.TypingsInstallerOptions,
+		}
+	}
+	return s.typingsInstaller
 }
 
 // DocumentRegistry implements ProjectHost.
@@ -257,6 +280,9 @@ func (s *Service) OnWatchedFilesChanged(changes []*lsproto.FileEvent) error {
 			}
 		} else {
 			for _, project := range s.configuredProjects {
+				project.onWatchEventForNilScriptInfo(fileName)
+			}
+			for _, project := range s.inferredProjects {
 				project.onWatchEventForNilScriptInfo(fileName)
 			}
 		}
@@ -481,6 +507,10 @@ func (s *Service) getConfigFileNameForFile(info *ScriptInfo, findFromCacheOnly b
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
 		if s.configFileExists(tsconfigPath) {
 			return tsconfigPath, true
+		}
+		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
+		if s.configFileExists(jsconfigPath) {
+			return jsconfigPath, true
 		}
 		if strings.HasSuffix(directory, "/node_modules") {
 			return "", true
@@ -716,21 +746,21 @@ func (s *Service) printProjects() {
 		return
 	}
 
-	s.options.Logger.StartGroup()
+	var builder strings.Builder
 	for _, project := range s.configuredProjects {
-		s.Log(project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/))
+		project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/, builder)
 	}
 	for _, project := range s.inferredProjects {
-		s.Log(project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/))
+		project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/, builder)
 	}
 
-	s.Log("Open files: ")
+	builder.WriteString("Open files: ")
 	for path, projectRootPath := range s.openFiles {
 		info := s.GetScriptInfoByPath(path)
-		s.logf("\tFileName: %s ProjectRootPath: %s", info.fileName, projectRootPath)
-		s.Log("\t\tProjects: " + strings.Join(core.Map(info.containingProjects, func(project *Project) string { return project.name }), ", "))
+		builder.WriteString(fmt.Sprintf("\tFileName: %s ProjectRootPath: %s", info.fileName, projectRootPath))
+		builder.WriteString("\t\tProjects: " + strings.Join(core.Map(info.containingProjects, func(project *Project) string { return project.name }), ", "))
 	}
-	s.options.Logger.EndGroup()
+	s.Log(builder.String())
 }
 
 func (s *Service) logf(format string, args ...any) {
