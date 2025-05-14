@@ -5650,7 +5650,7 @@ func (c *Checker) checkDecorators(node *ast.Node) {
 
 func (c *Checker) checkDecorator(node *ast.Node) {
 	c.checkGrammarDecorator(node.AsDecorator())
-	signature := c.getResolvedSignature(node, nil, CheckModeNormal)
+	signature := c.GetResolvedSignature(node, nil, CheckModeNormal)
 	c.checkDeprecatedSignature(signature, node)
 	returnType := c.getReturnTypeOfSignature(signature)
 	if returnType.flags&TypeFlagsAny != 0 {
@@ -7892,7 +7892,7 @@ func (c *Checker) checkImportCallExpression(node *ast.Node) *Type {
  */
 func (c *Checker) checkCallExpression(node *ast.Node, checkMode CheckMode) *Type {
 	c.checkGrammarTypeArguments(node, node.TypeArgumentList())
-	signature := c.getResolvedSignature(node, nil /*candidatesOutArray*/, checkMode)
+	signature := c.GetResolvedSignature(node, nil /*candidatesOutArray*/, checkMode)
 	if signature == c.resolvingSignature {
 		// CheckMode.SkipGenericFunctions is enabled and this is a call to a generic function that
 		// returns a function type. We defer checking and return silentNeverType.
@@ -7939,7 +7939,7 @@ func (c *Checker) checkDeprecatedSignature(sig *Signature, node *ast.Node) {
 	}
 	if sig.declaration != nil && sig.declaration.Flags&ast.NodeFlagsDeprecated != 0 {
 		suggestionNode := c.getDeprecatedSuggestionNode(node)
-		name := tryGetPropertyAccessOrIdentifierToString(getInvokedExpression(node))
+		name := tryGetPropertyAccessOrIdentifierToString(GetInvokedExpression(node))
 		c.addDeprecatedSuggestionWithSignature(suggestionNode, sig.declaration, name, c.signatureToString(sig))
 	}
 }
@@ -7976,7 +7976,7 @@ func (c *Checker) isSymbolOrSymbolForCall(node *ast.Node) bool {
  *    the function will fill it up with appropriate candidate signatures
  * @return a signature of the call-like expression or undefined if one can't be found
  */
-func (c *Checker) getResolvedSignature(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
+func (c *Checker) GetResolvedSignature(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode) *Signature {
 	links := c.signatureLinks.Get(node)
 	// If getResolvedSignature has already been called, we will have cached the resolvedSignature.
 	// However, it is possible that either candidatesOutArray was not passed in the first time,
@@ -9596,7 +9596,7 @@ func (c *Checker) checkTaggedTemplateExpression(node *ast.Node) *Type {
 	if !c.checkGrammarTaggedTemplateChain(node.AsTaggedTemplateExpression()) {
 		c.checkGrammarTypeArguments(node, node.TypeArgumentList())
 	}
-	signature := c.getResolvedSignature(node, nil, CheckModeNormal)
+	signature := c.GetResolvedSignature(node, nil, CheckModeNormal)
 	c.checkDeprecatedSignature(signature, node)
 	return c.getReturnTypeOfSignature(signature)
 }
@@ -12339,7 +12339,7 @@ func (c *Checker) checkInstanceOfExpression(left *ast.Expression, right *ast.Exp
 	if !IsTypeAny(leftType) && c.allTypesAssignableToKind(leftType, TypeFlagsPrimitive) {
 		c.error(left, diagnostics.The_left_hand_side_of_an_instanceof_expression_must_be_of_type_any_an_object_type_or_a_type_parameter)
 	}
-	signature := c.getResolvedSignature(left.Parent, nil /*candidatesOutArray*/, checkMode)
+	signature := c.GetResolvedSignature(left.Parent, nil /*candidatesOutArray*/, checkMode)
 	if signature == c.resolvingSignature {
 		// CheckMode.SkipGenericFunctions is enabled and this is a call to a generic function that
 		// returns a function type. We defer checking and return silentNeverType.
@@ -27569,7 +27569,7 @@ func (c *Checker) getContextualTypeForArgumentAtIndex(callTarget *ast.Node, argI
 	if c.signatureLinks.Get(callTarget).resolvedSignature == c.resolvingSignature {
 		signature = c.resolvingSignature
 	} else {
-		signature = c.getResolvedSignature(callTarget, nil, CheckModeNormal)
+		signature = c.GetResolvedSignature(callTarget, nil, CheckModeNormal)
 	}
 	if isJsxOpeningLikeElement(callTarget) && argIndex == 0 {
 		return c.getEffectiveFirstArgumentForJsxSignature(signature, callTarget)
