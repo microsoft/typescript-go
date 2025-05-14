@@ -57,6 +57,8 @@ const { values: options } = parseArgs({
 
         insiders: { type: "boolean" },
 
+        setVersion: { type: "string" },
+
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
         noembed: { type: "boolean", default: parseEnvBoolean("NOEMBED") },
         concurrentTestPrograms: { type: "boolean", default: parseEnvBoolean("CONCURRENT_TEST_PROGRAMS") },
@@ -699,8 +701,12 @@ export class Debouncer {
 }
 
 const getVersion = memoize(() => {
+    if (options.setVersion) {
+        return options.setVersion;
+    }
+
     const f = fs.readFileSync("./internal/core/version.go", "utf8");
-    const match = f.match(/Version\s*=\s*"([^"]+)"/);
+    const match = f.match(/var version\s*=\s*"([^"]+)"/);
     if (!match) {
         throw new Error("Failed to extract version from version.go");
     }
@@ -798,6 +804,12 @@ export const buildNativePreview = task({
         await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
         await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
 
+        let ldflags = "-ldflags=-s -w";
+        if (options.setVersion) {
+            ldflags += ` -X github.com/microsoft/typescript-go/internal/core.version=${options.setVersion}`;
+        }
+        const extraFlags = ["-trimpath", ldflags];
+
         await Promise.all(packages.map(async ({ os, arch, goos, goarch, dirName, packageName }) => {
             const dir = path.join(npmOutputDir, dirName);
 
@@ -831,7 +843,7 @@ export const buildNativePreview = task({
                 buildTsgo({
                     out,
                     env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
-                    extraFlags: ["-trimpath", "-ldflags=-s -w"],
+                    extraFlags,
                 }),
             ]);
         }));
@@ -844,8 +856,6 @@ export const buildNativePreviewExtensions = task({
     name: "build:native-preview-extensions",
     dependencies: [buildNativePreview],
     run: async () => {
-        await $({ cwd: path.join(__dirname, "_extension") })`npm run package`;
-
         const outDir = path.join(__dirname, "built", "vsix");
         await fs.promises.mkdir(outDir, { recursive: true });
 
