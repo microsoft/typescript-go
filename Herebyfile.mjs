@@ -888,15 +888,13 @@ export const packNativePreviewPackagesOnlyTask = task({
 });
 
 async function buildNativePreviewExtensions() {
-    const outDir = path.resolve("./built/vsix");
-    await rimraf(outDir);
-    await fs.promises.mkdir(outDir, { recursive: true });
+    await rimraf(builtVsix);
+    await fs.promises.mkdir(builtVsix, { recursive: true });
 
     const extensionLibDir = path.join(extensionDir, "lib");
     await rimraf(extensionLibDir);
 
     const version = getVersion();
-    const isPrerelease = version.includes("-");
 
     for (const { npmDir, vscodeTarget, vsixPath, vsixManifestPath, vsixSignaturePath } of nativePreviewPlatforms()) {
         // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
@@ -904,7 +902,7 @@ async function buildNativePreviewExtensions() {
         await fs.promises.cp(libDir, extensionLibDir, { recursive: true });
 
         try {
-            await $({ cwd: extensionDir })`vsce package ${version} ${isPrerelease ? ["--pre-release"] : []} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
+            await $({ cwd: extensionDir })`vsce package ${version} --pre-release --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
         }
         finally {
             await rimraf(extensionLibDir);
