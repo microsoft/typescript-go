@@ -846,6 +846,7 @@ export const buildNativePreviewExtensions = task({
     dependencies: [buildNativePreview],
     run: async () => {
         const outDir = path.join(__dirname, "built", "vsix");
+        await rimraf(outDir);
         await fs.promises.mkdir(outDir, { recursive: true });
 
         await rimraf("./_extension/lib");
@@ -855,15 +856,17 @@ export const buildNativePreviewExtensions = task({
             const target = `${os}-${arch === "arm" ? "armhf" : arch}`;
             const libDir = `./built/npm/native-preview-${os}-${arch}/lib`;
             await fs.promises.cp(libDir, "./_extension/lib", { recursive: true });
+            const outVsix = path.join(outDir, `typescript-native-preview.${target}.vsix`);
+
             try {
-                const outVsix = path.join(outDir, `typescript-lsp.${target}.vsix`);
                 await $({ cwd: path.join(__dirname, "_extension") })`vsce package --skip-license --no-dependencies --out ${outVsix} --target ${target}`;
             }
             finally {
                 await rimraf("./_extension/lib");
             }
 
-            // TODO: VSIX manifests
+            const outManifest = outVsix + ".manifest";
+            await $({ cwd: path.join(__dirname, "_extension") })`vsce generate-manifest --packagePath ${outVsix} --out ${outManifest}`;
         }
     },
 });
