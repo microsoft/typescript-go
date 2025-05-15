@@ -218,26 +218,6 @@ func replaceFirstStar(s string, replacement string) string {
 	return strings.Replace(s, "*", replacement, 1)
 }
 
-func hasPrefix(s string, prefix string, caseSensitive bool) bool {
-	if caseSensitive {
-		return strings.HasPrefix(s, prefix)
-	}
-	if len(prefix) > len(s) {
-		return false
-	}
-	return strings.EqualFold(s[0:len(prefix)], prefix)
-}
-
-func hasSuffix(s string, suffix string, caseSensitive bool) bool {
-	if caseSensitive {
-		return strings.HasSuffix(s, suffix)
-	}
-	if len(suffix) > len(s) {
-		return false
-	}
-	return strings.EqualFold(s[len(s)-len(suffix):], suffix)
-}
-
 type NodeModulePathParts struct {
 	TopLevelNodeModulesIndex int
 	TopLevelPackageNameIndex int
