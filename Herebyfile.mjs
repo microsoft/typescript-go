@@ -867,6 +867,9 @@ export const buildNativePreviewExtensions = task({
 
             const outManifest = outVsix + ".manifest";
             await $({ cwd: path.join(__dirname, "_extension") })`vsce generate-manifest --packagePath ${outVsix} --out ${outManifest}`;
+
+            const outSignature = outVsix + ".signature.p7s";
+            await fs.promises.cp(outManifest, outSignature);
         }
 
         // TODO: sign VSIX files
