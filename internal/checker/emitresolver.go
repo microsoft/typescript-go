@@ -481,9 +481,9 @@ func (r *emitResolver) RequiresAddingImplicitUndefined(declaration *ast.Node, sy
 		if symbol == nil {
 			symbol = r.checker.getSymbolOfDeclaration(declaration)
 		}
-		type_ := r.checker.getTypeOfSymbol(symbol)
+		t := r.checker.getTypeOfSymbol(symbol)
 		r.checker.mappedSymbolLinks.Has(symbol)
-		return !!((symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, type_))
+		return !!((symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t))
 	case ast.KindParameter, ast.KindJSDocParameterTag:
 		return r.requiresAddingImplicitUndefined(declaration, enclosingDeclaration)
 	default:
@@ -503,11 +503,11 @@ func (r *emitResolver) declaredParameterTypeContainsUndefined(parameter *ast.Nod
 	}
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
-	type_ := r.checker.getTypeFromTypeNode(typeNode)
+	t := r.checker.getTypeFromTypeNode(typeNode)
 	// allow error type here to avoid confusing errors that the annotation has to contain undefined when it does in cases like this:
 	//
 	// export function fn(x?: Unresolved | undefined): void {}
-	return r.checker.isErrorType(type_) || r.checker.containsUndefinedType(type_)
+	return r.checker.isErrorType(t) || r.checker.containsUndefinedType(t)
 }
 
 func (r *emitResolver) isOptionalUninitializedParameterProperty(parameter *ast.Node) bool {
@@ -806,7 +806,7 @@ func (r *emitResolver) GetReferencedValueDeclarations(node *ast.IdentifierNode) 
 	return r.getReferenceResolver().GetReferencedValueDeclarations(node)
 }
 
-// TODO: the emit resolver being respoinsible for some amount of node construction is a very leaky abstraction,
+// TODO: the emit resolver being responsible for some amount of node construction is a very leaky abstraction,
 // and requires giving it access to a lot of context it's otherwise not required to have, which also further complicates the API
 // and likely reduces performance. There's probably some refactoring that could be done here to simplify this.
 
@@ -833,30 +833,30 @@ func (r *emitResolver) CreateTypeOfDeclaration(emitContext *printer.EmitContext,
 func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext, node *ast.Node, tracker nodebuilder.SymbolTracker) *ast.Node {
 	node = emitContext.ParseNode(node)
 	r.checkerMu.Lock()
-	type_ := r.checker.getTypeOfSymbol(r.checker.getSymbolOfDeclaration(node))
+	t := r.checker.getTypeOfSymbol(r.checker.getSymbolOfDeclaration(node))
 	r.checkerMu.Unlock()
-	if type_ == nil {
+	if t == nil {
 		return nil // TODO: How!? Maybe this should be a panic. All symbols should have a type.
 	}
 
 	var enumResult *ast.Node
-	if type_.flags&TypeFlagsEnumLike != 0 {
+	if t.flags&TypeFlagsEnumLike != 0 {
 		requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
-		enumResult = requestNodeBuilder.SymbolToExpression(type_.symbol, ast.SymbolFlagsValue, node, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, tracker)
+		enumResult = requestNodeBuilder.SymbolToExpression(t.symbol, ast.SymbolFlagsValue, node, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, tracker)
 		// What about regularTrueType/regularFalseType - since those aren't fresh, we never make initializers from them
 		// TODO: handle those if this function is ever used for more than initializers in declaration emit
-	} else if type_ == r.checker.trueType {
+	} else if t == r.checker.trueType {
 		enumResult = emitContext.Factory.NewKeywordExpression(ast.KindTrueKeyword)
-	} else if type_ == r.checker.falseType {
+	} else if t == r.checker.falseType {
 		enumResult = emitContext.Factory.NewKeywordExpression(ast.KindFalseKeyword)
 	}
 	if enumResult != nil {
 		return enumResult
 	}
-	if type_.flags&TypeFlagsLiteral == 0 {
+	if t.flags&TypeFlagsLiteral == 0 {
 		return nil // non-literal type
 	}
-	literalValue := type_.AsLiteralType().value
+	literalValue := t.AsLiteralType().value
 	switch literalValue.(type) {
 	case string:
 		return emitContext.Factory.NewStringLiteral(literalValue.(string))
@@ -886,7 +886,7 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 		}
 		return emitContext.Factory.NewKeywordExpression(ast.KindFalseKeyword)
 	}
-	return nil /// !!! TODO: panic? impossible?
+	panic("unhandled literal const value kind")
 }
 
 func (r *emitResolver) CreateTypeOfExpression(emitContext *printer.EmitContext, expression *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node {

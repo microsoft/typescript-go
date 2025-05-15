@@ -2,6 +2,7 @@ package checker
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
@@ -67,4 +68,8 @@ func (c *Checker) GetTypeOfSymbol(symbol *ast.Symbol) *Type {
 
 func (c *Checker) GetConstraintOfTypeParameter(typeParameter *Type) *Type {
 	return c.getConstraintOfTypeParameter(typeParameter)
+}
+
+func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
+	return c.getResolutionModeOverride(node, reportErrors)
 }

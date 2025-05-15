@@ -692,15 +692,15 @@ func (tx *DeclarationTransformer) recreateBindingElement(e *ast.BindingElement) 
 }
 
 func (tx *DeclarationTransformer) transformIndexSignatureDeclaration(input *ast.IndexSignatureDeclaration) *ast.Node {
-	type_ := tx.Visitor().Visit(input.Type)
-	if type_ == nil {
-		type_ = tx.Factory().NewKeywordTypeNode(ast.KindAnyKeyword)
+	t := tx.Visitor().Visit(input.Type)
+	if t == nil {
+		t = tx.Factory().NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
 	return tx.Factory().UpdateIndexSignatureDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
 		tx.updateParamList(input.AsNode(), input.Parameters),
-		type_,
+		t,
 	)
 }
 
@@ -793,16 +793,16 @@ func (tx *DeclarationTransformer) updateAccessorParamList(input *ast.Node, isPri
 		}
 		if valueParam == nil {
 			// TODO: strada bug - no type printed on set accessor missing arg as though private
-			var type_ *ast.Node
+			var t *ast.Node
 			if !isPrivate {
-				type_ = tx.Factory().NewKeywordExpression(ast.KindAnyKeyword)
+				t = tx.Factory().NewKeywordExpression(ast.KindAnyKeyword)
 			}
 			valueParam = tx.Factory().NewParameterDeclaration(
 				nil,
 				nil,
 				tx.Factory().NewIdentifier("value"),
 				nil,
-				type_,
+				t,
 				nil,
 			)
 		}

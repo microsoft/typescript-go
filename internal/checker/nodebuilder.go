@@ -695,25 +695,10 @@ func canUsePropertyAccess(name string, languageVersion core.ScriptTarget) bool {
 
 func unquoteString(str string) string {
 	// strconv.Unquote is insufficient as that only handles a single character inside single quotes, as those are character literals in go
-	inner := stripQuotes(str)
+	inner := core.StripQuotes(str)
 	// In strada we do str.replace(/\\./g, s => s.substring(1)) - which is to say, replace all backslash-something with just something
 	// That's replicated here faithfully, but it seems wrong! This should probably be an actual unquote operation?
 	return strings.ReplaceAll(inner, "\\", "")
-}
-
-/**
- * Strip off existed surrounding single quotes, double quotes, or backticks from a given string
- *
- * @return non-quoted string
- *
- * @internal
- */
-func stripQuotes(name string) string {
-	length := len(name)
-	if length >= 2 && startsWithSingleOrDoubleQuote(name) && name[0] == name[length-1] { // TODO: in TS this also handles backtick quoted things
-		return name[1 : len(name)-1]
-	}
-	return name
 }
 
 func startsWithSingleOrDoubleQuote(str string) bool {
@@ -1079,12 +1064,12 @@ func (b *NodeBuilder) getSpecifierForModuleSymbol(symbol *ast.Symbol, overrideIm
 
 	if file == nil {
 		if isAmbientModuleSymbolName(symbol.Name) {
-			return stripQuotes(symbol.Name)
+			return core.StripQuotes(symbol.Name)
 		}
 	}
 	if b.ctx.enclosingFile == nil || b.ctx.tracker.GetModuleSpecifierGenerationHost() == nil {
 		if isAmbientModuleSymbolName(symbol.Name) {
-			return stripQuotes(symbol.Name)
+			return core.StripQuotes(symbol.Name)
 		}
 		return ast.GetSourceFileOfModule(symbol).FileName()
 	}
@@ -1285,9 +1270,9 @@ func (b *NodeBuilder) isHomomorphicMappedTypeWithNonHomomorphicInstantiation(map
 	return mapped.target != nil && !b.isMappedTypeHomomorphic(mapped.AsType()) && b.isMappedTypeHomomorphic(mapped.target)
 }
 
-func (b *NodeBuilder) createMappedTypeNodeFromType(type_ *Type) *ast.TypeNode {
+func (b *NodeBuilder) createMappedTypeNodeFromType(t *Type) *ast.TypeNode {
 	// Debug.assert(!!(type.flags & TypeFlags.Object)); // !!!
-	mapped := type_.AsMappedType()
+	mapped := t.AsMappedType()
 	var readonlyToken *ast.Node
 	if mapped.declaration.ReadonlyToken != nil {
 		readonlyToken = b.f.NewToken(mapped.declaration.ReadonlyToken.Kind)
@@ -1300,15 +1285,15 @@ func (b *NodeBuilder) createMappedTypeNodeFromType(type_ *Type) *ast.TypeNode {
 	var newTypeVariable *ast.Node
 
 	// If the mapped type isn't `keyof` constraint-declared, _but_ still has modifiers preserved, and its naive instantiation won't preserve modifiers because its constraint isn't `keyof` constrained, we have work to do
-	needsModifierPreservingWrapper := !b.ch.isMappedTypeWithKeyofConstraintDeclaration(type_) &&
-		b.ch.getModifiersTypeFromMappedType(type_).flags&TypeFlagsUnknown == 0 &&
+	needsModifierPreservingWrapper := !b.ch.isMappedTypeWithKeyofConstraintDeclaration(t) &&
+		b.ch.getModifiersTypeFromMappedType(t).flags&TypeFlagsUnknown == 0 &&
 		b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 &&
-		!(b.ch.getConstraintTypeFromMappedType(type_).flags&TypeFlagsTypeParameter != 0 && b.ch.getConstraintOfTypeParameter(b.ch.getConstraintTypeFromMappedType(type_)).flags&TypeFlagsIndex != 0)
+		!(b.ch.getConstraintTypeFromMappedType(t).flags&TypeFlagsTypeParameter != 0 && b.ch.getConstraintOfTypeParameter(b.ch.getConstraintTypeFromMappedType(t)).flags&TypeFlagsIndex != 0)
 
-	cleanup := b.enterNewScope(mapped.declaration.AsNode(), nil, &[]*Type{b.ch.getTypeParameterFromMappedType(type_)}, nil, nil)
+	cleanup := b.enterNewScope(mapped.declaration.AsNode(), nil, []*Type{b.ch.getTypeParameterFromMappedType(t)}, nil, nil)
 	defer cleanup()
 
-	if b.ch.isMappedTypeWithKeyofConstraintDeclaration(type_) {
+	if b.ch.isMappedTypeWithKeyofConstraintDeclaration(t) {
 		// We have a { [P in keyof T]: X }
 		// We do this to ensure we retain the toplevel keyof-ness of the type which may be lost due to keyof distribution during `getConstraintTypeFromMappedType`
 		if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 && b.isHomomorphicMappedTypeWithNonHomomorphicInstantiation(mapped) {
@@ -1320,7 +1305,7 @@ func (b *NodeBuilder) createMappedTypeNodeFromType(type_ *Type) *ast.TypeNode {
 		}
 		indexTarget := newTypeVariable
 		if indexTarget == nil {
-			indexTarget = b.typeToTypeNodeClosure(b.ch.getModifiersTypeFromMappedType(type_))
+			indexTarget = b.typeToTypeNodeClosure(b.ch.getModifiersTypeFromMappedType(t))
 		}
 		appropriateConstraintTypeNode = b.f.NewTypeOperatorNode(ast.KindKeyOfKeyword, indexTarget)
 	} else if needsModifierPreservingWrapper {
@@ -1333,17 +1318,17 @@ func (b *NodeBuilder) createMappedTypeNodeFromType(type_ *Type) *ast.TypeNode {
 		// step 2: make that new type variable itself the constraint node, making the mapped type `{[K in T_1]: Template}`
 		appropriateConstraintTypeNode = newTypeVariable
 	} else {
-		appropriateConstraintTypeNode = b.typeToTypeNodeClosure(b.ch.getConstraintTypeFromMappedType(type_))
+		appropriateConstraintTypeNode = b.typeToTypeNodeClosure(b.ch.getConstraintTypeFromMappedType(t))
 	}
 
-	typeParameterNode := b.typeParameterToDeclarationWithConstraint(b.ch.getTypeParameterFromMappedType(type_), appropriateConstraintTypeNode)
+	typeParameterNode := b.typeParameterToDeclarationWithConstraint(b.ch.getTypeParameterFromMappedType(t), appropriateConstraintTypeNode)
 	var nameTypeNode *ast.Node
 	if mapped.declaration.NameType != nil {
-		nameTypeNode = b.typeToTypeNodeClosure(b.ch.getNameTypeFromMappedType(type_))
+		nameTypeNode = b.typeToTypeNodeClosure(b.ch.getNameTypeFromMappedType(t))
 	}
 	templateTypeNode := b.typeToTypeNodeClosure(b.ch.removeMissingType(
-		b.ch.getTemplateTypeFromMappedType(type_),
-		getMappedTypeModifiers(type_)&MappedTypeModifiersIncludeOptional != 0,
+		b.ch.getTemplateTypeFromMappedType(t),
+		getMappedTypeModifiers(t)&MappedTypeModifiersIncludeOptional != 0,
 	))
 	result := b.f.NewMappedTypeNode(
 		readonlyToken,
@@ -1375,7 +1360,7 @@ func (b *NodeBuilder) createMappedTypeNodeFromType(type_ *Type) *ast.TypeNode {
 		}
 
 		return b.f.NewConditionalTypeNode(
-			b.typeToTypeNodeClosure(b.ch.getModifiersTypeFromMappedType(type_)),
+			b.typeToTypeNodeClosure(b.ch.getModifiersTypeFromMappedType(t)),
 			b.f.NewInferTypeNode(b.f.NewTypeParameterDeclaration(nil, newTypeVariable.AsTypeReference().TypeName.Clone(b.f), originalConstraintNode, nil)),
 			result,
 			b.f.NewKeywordTypeNode(ast.KindNeverKeyword),
@@ -1386,8 +1371,8 @@ func (b *NodeBuilder) createMappedTypeNodeFromType(type_ *Type) *ast.TypeNode {
 		// constrained to a `keyof` type to preserve its modifier-preserving behavior. This is all basically because we preserve modifiers for a wider set of mapped types than
 		// just homomorphic ones.
 		return b.f.NewConditionalTypeNode(
-			b.typeToTypeNodeClosure(b.ch.getConstraintTypeFromMappedType(type_)),
-			b.f.NewInferTypeNode(b.f.NewTypeParameterDeclaration(nil, newTypeVariable.AsTypeReference().TypeName.Clone(b.f), b.f.NewTypeOperatorNode(ast.KindKeyOfKeyword, b.typeToTypeNodeClosure(b.ch.getModifiersTypeFromMappedType(type_))), nil)),
+			b.typeToTypeNodeClosure(b.ch.getConstraintTypeFromMappedType(t)),
+			b.f.NewInferTypeNode(b.f.NewTypeParameterDeclaration(nil, newTypeVariable.AsTypeReference().TypeName.Clone(b.f), b.f.NewTypeOperatorNode(ast.KindKeyOfKeyword, b.typeToTypeNodeClosure(b.ch.getModifiersTypeFromMappedType(t))), nil)),
 			result,
 			b.f.NewKeywordTypeNode(ast.KindNeverKeyword),
 		)
@@ -1419,17 +1404,17 @@ func (b *NodeBuilder) typePredicateToTypePredicateNode(predicate *TypePredicate)
 	)
 }
 
-func (b *NodeBuilder) typeToTypeNodeHelperWithPossibleReusableTypeNode(type_ *Type, typeNode *ast.TypeNode) *ast.TypeNode {
-	if type_ == nil {
+func (b *NodeBuilder) typeToTypeNodeHelperWithPossibleReusableTypeNode(t *Type, typeNode *ast.TypeNode) *ast.TypeNode {
+	if t == nil {
 		return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
-	if typeNode != nil && b.getTypeFromTypeNode(typeNode, false) == type_ {
+	if typeNode != nil && b.getTypeFromTypeNode(typeNode, false) == t {
 		reused := b.tryReuseExistingTypeNodeHelper(typeNode)
 		if reused != nil {
 			return reused
 		}
 	}
-	return b.typeToTypeNodeClosure(type_)
+	return b.typeToTypeNodeClosure(t)
 }
 
 func (b *NodeBuilder) typeParameterToDeclaration(parameter *Type) *ast.Node {
@@ -1521,8 +1506,8 @@ func (b *NodeBuilder) symbolTableToDeclarationStatements(symbolTable *ast.Symbol
 
 func (b *NodeBuilder) serializeTypeForExpression(expr *ast.Node) *ast.Node {
 	// !!! TODO: shim, add node reuse
-	type_ := b.ch.instantiateType(b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(expr)), b.ctx.mapper)
-	return b.typeToTypeNodeClosure(type_)
+	t := b.ch.instantiateType(b.ch.getWidenedType(b.ch.getRegularTypeOfExpression(expr)), b.ctx.mapper)
+	return b.typeToTypeNodeClosure(t)
 }
 
 func (b *NodeBuilder) serializeInferredReturnTypeForSignature(signature *Signature, returnType *Type) *ast.Node {
@@ -1577,7 +1562,7 @@ func (b *NodeBuilder) signatureToSignatureDeclarationHelper(signature *Signature
 	var typeArguments *[]*ast.Node
 
 	expandedParams := b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
-	cleanup := b.enterNewScope(signature.declaration, &expandedParams, &signature.typeParameters, &signature.parameters, signature.mapper)
+	cleanup := b.enterNewScope(signature.declaration, expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
 	b.ctx.approximateLength += 3
 	// Usually a signature contributes a few more characters than this, but 3 is the minimum
 

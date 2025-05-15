@@ -3,6 +3,7 @@ package checker
 import (
 	"reflect"
 	"slices"
+	"unsafe"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -381,7 +382,7 @@ func (ch *Checker) getAccessibleSymbolChain(
 	meaning ast.SymbolFlags,
 	useOnlyExternalAliasing bool,
 ) []*ast.Symbol {
-	return ch.getAccessibleSymbolChainEx(accessibleSymbolChainContext{symbol, enclosingDeclaration, meaning, useOnlyExternalAliasing, make(map[ast.SymbolId]map[uintptr]struct{})})
+	return ch.getAccessibleSymbolChainEx(accessibleSymbolChainContext{symbol, enclosingDeclaration, meaning, useOnlyExternalAliasing, make(map[ast.SymbolId]map[unsafe.Pointer]struct{})})
 }
 
 func (ch *Checker) GetAccessibleSymbolChain(
@@ -398,7 +399,7 @@ type accessibleSymbolChainContext struct {
 	enclosingDeclaration    *ast.Node
 	meaning                 ast.SymbolFlags
 	useOnlyExternalAliasing bool
-	visitedSymbolTablesMap  map[ast.SymbolId]map[uintptr]struct{}
+	visitedSymbolTablesMap  map[ast.SymbolId]map[unsafe.Pointer]struct{}
 }
 
 func (ch *Checker) getAccessibleSymbolChainEx(ctx accessibleSymbolChainContext) []*ast.Symbol {
@@ -445,11 +446,11 @@ func (ch *Checker) getAccessibleSymbolChainFromSymbolTable(ctx accessibleSymbolC
 	symId := ast.GetSymbolId(ctx.symbol)
 	visitedSymbolTables, ok := ctx.visitedSymbolTablesMap[symId]
 	if !ok {
-		visitedSymbolTables = make(map[uintptr]struct{})
+		visitedSymbolTables = make(map[unsafe.Pointer]struct{})
 		ctx.visitedSymbolTablesMap[symId] = visitedSymbolTables
 	}
 
-	id := reflect.ValueOf(t).Pointer() // TODO: Is this seriously the only way to check reference equality of maps?
+	id := reflect.ValueOf(t).UnsafePointer() // TODO: Is this seriously the only way to check reference equality of maps?
 	_, present := visitedSymbolTables[id]
 	if present {
 		return nil
@@ -509,7 +510,7 @@ func (ch *Checker) trySymbolTable(
 	}
 
 	// If there's no result and we're looking at the global symbol table, treat `globalThis` like an alias and try to lookup thru that
-	if reflect.ValueOf(ch.globals).Pointer() == reflect.ValueOf(symbols).Pointer() {
+	if reflect.ValueOf(ch.globals).UnsafePointer() == reflect.ValueOf(symbols).UnsafePointer() {
 		return ch.getCandidateListForSymbol(ctx, ch.globalThisSymbol, ch.globalThisSymbol, ignoreQualification)
 	}
 	return nil

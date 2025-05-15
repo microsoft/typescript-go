@@ -463,12 +463,8 @@ func getSourceFilesToEmit(host printer.EmitHost, targetSourceFile *ast.SourceFil
 	})
 }
 
-func isJsonSourceFile(file *ast.SourceFile) bool {
-	return file.ScriptKind == core.ScriptKindJSON
-}
-
 func isSourceFileNotJson(file *ast.SourceFile) bool {
-	return !isJsonSourceFile(file)
+	return !ast.IsJsonSourceFile(file)
 }
 
 func getDeclarationDiagnostics(host EmitHost, resolver printer.EmitResolver, file *ast.SourceFile) []*ast.Diagnostic {

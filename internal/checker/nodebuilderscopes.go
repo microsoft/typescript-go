@@ -48,7 +48,7 @@ type localsRecord struct {
 	oldSymbol *ast.Symbol
 }
 
-func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*ast.Symbol, typeParameters *[]*Type, originalParameters *[]*ast.Symbol, mapper *TypeMapper) func() {
+func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams []*ast.Symbol, typeParameters []*Type, originalParameters []*ast.Symbol, mapper *TypeMapper) func() {
 	cleanupContext := cloneNodeBuilderContext(b.ctx)
 	// For regular function/method declarations, the enclosing declaration will already be signature.declaration,
 	// so this is a no-op, but for arrow functions and function expressions, the enclosing declaration will be
@@ -62,8 +62,8 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 	// accessible to the current enclosing declaration, or gain access to symbols not accessible to the current
 	// enclosing declaration. To keep this chain accurate, insert a fake scope into the chain which makes the
 	// function's parameters visible.
-	var cleanupParams *func()
-	var cleanupTypeParams *func()
+	var cleanupParams func()
+	var cleanupTypeParams func()
 	oldEnclosingDecl := b.ctx.enclosingDeclaration
 	oldMapper := b.ctx.mapper
 	if mapper != nil {
@@ -86,7 +86,7 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 		// Note that we only check the most immediate enclosingDeclaration; the only place we
 		// could potentially add another fake scope into the chain is right here, so we don't
 		// traverse all ancestors.
-		pushFakeScope := func(kind string, addAll func(addSymbol func(name string, symbol *ast.Symbol))) *func() {
+		pushFakeScope := func(kind string, addAll func(addSymbol func(name string, symbol *ast.Symbol))) func() {
 			// We only ever need to look two declarations upward.
 			// Debug.assert(context.enclosingDeclaration) // !!!
 			var existingFakeScope *ast.Node
@@ -148,21 +148,21 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 						locals[s.name] = s.oldSymbol
 					}
 				}
-				return &undo
+				return undo
 			}
 		}
 
-		if expandedParams == nil || !core.Some(*expandedParams, func(p *ast.Symbol) bool { return p != nil }) {
+		if expandedParams == nil || !core.Some(expandedParams, func(p *ast.Symbol) bool { return p != nil }) {
 			cleanupParams = nil
 		} else {
 			cleanupParams = pushFakeScope("params", func(add func(name string, symbol *ast.Symbol)) {
 				if expandedParams == nil {
 					return
 				}
-				for pIndex, param := range *expandedParams {
+				for pIndex, param := range expandedParams {
 					var originalParam *ast.Symbol
-					if pIndex < len(*originalParameters) {
-						originalParam = (*originalParameters)[pIndex]
+					if pIndex < len(originalParameters) {
+						originalParam = (originalParameters)[pIndex]
 					}
 					if originalParameters != nil && originalParam != param {
 						// Can't reference parameters that come from an expansion
@@ -214,12 +214,12 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 			})
 		}
 
-		if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 && typeParameters != nil && core.Some(*typeParameters, func(p *Type) bool { return p != nil }) {
+		if b.ctx.flags&nodebuilder.FlagsGenerateNamesForShadowedTypeParams != 0 && typeParameters != nil && core.Some(typeParameters, func(p *Type) bool { return p != nil }) {
 			cleanupTypeParams = pushFakeScope("typeParams", func(add func(name string, symbol *ast.Symbol)) {
 				if typeParameters == nil {
 					return
 				}
-				for _, typeParam := range *typeParameters {
+				for _, typeParam := range typeParameters {
 					if typeParam == nil {
 						continue
 					}
@@ -233,10 +233,10 @@ func (b *NodeBuilder) enterNewScope(declaration *ast.Node, expandedParams *[]*as
 
 	return func() {
 		if cleanupParams != nil {
-			(*cleanupParams)()
+			cleanupParams()
 		}
 		if cleanupTypeParams != nil {
-			(*cleanupTypeParams)()
+			cleanupTypeParams()
 		}
 		cleanupContext()
 		b.ctx.enclosingDeclaration = oldEnclosingDecl

@@ -211,7 +211,7 @@ func getFirstConstructorWithBody(node *ast.Node) *ast.Node {
 }
 
 func getEffectiveBaseTypeNode(node *ast.Node) *ast.Node {
-	baseType := getClassExtendsHeritageElement(node)
+	baseType := ast.GetClassExtendsHeritageElement(node)
 	// !!! TODO: JSDoc support
 	// if (baseType && isInJSFile(node)) {
 	//     // Prefer an @augments tag because it may have type parameters.
@@ -221,14 +221,6 @@ func getEffectiveBaseTypeNode(node *ast.Node) *ast.Node {
 	//     }
 	// }
 	return baseType
-}
-
-func getClassExtendsHeritageElement(node *ast.Node) *ast.Node {
-	heritageClause := ast.GetHeritageClause(node, ast.KindExtendsKeyword)
-	if heritageClause != nil && len(heritageClause.AsHeritageClause().Types.Nodes) > 0 {
-		return heritageClause.AsHeritageClause().Types.Nodes[0]
-	}
-	return nil
 }
 
 func isScopeMarker(node *ast.Node) bool {

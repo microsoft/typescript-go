@@ -3095,12 +3095,12 @@ func (c *Checker) checkTemplateLiteralType(node *ast.Node) {
 func (c *Checker) checkImportType(node *ast.Node) {
 	c.checkSourceElement(node.AsImportTypeNode().Argument)
 	if attributes := node.AsImportTypeNode().Attributes; attributes != nil {
-		c.GetResolutionModeOverride(attributes.AsImportAttributes(), true /*reportErrors*/)
+		c.getResolutionModeOverride(attributes.AsImportAttributes(), true /*reportErrors*/)
 	}
 	c.checkTypeReferenceOrImport(node)
 }
 
-func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
+func (c *Checker) getResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
 	if len(node.Attributes.Nodes) != 1 {
 		if reportErrors {
 			c.grammarErrorOnNode(node.AsNode(), core.IfElse(node.Token == ast.KindWithKeyword,
@@ -5077,7 +5077,7 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 		c.checkTypeAssignableTo(c.getTypeFromImportAttributes(node), c.getNullableType(importAttributesType, TypeFlagsUndefined), node, nil)
 	}
 	isTypeOnly := isExclusivelyTypeOnlyImportOrExport(declaration)
-	override := c.GetResolutionModeOverride(node.AsImportAttributes(), isTypeOnly)
+	override := c.getResolutionModeOverride(node.AsImportAttributes(), isTypeOnly)
 	isImportAttributes := node.AsImportAttributes().Token == ast.KindWithKeyword
 	if isTypeOnly && override != core.ResolutionModeNone {
 		return // Other grammar checks do not apply to type-only imports with resolution mode assertions

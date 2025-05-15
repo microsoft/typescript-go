@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -703,7 +704,7 @@ func tryGetModuleNameAsNodeModule(
 	// if node_modules folder is in this folder or any of its parent folders, no need to keep it.
 	pathToTopLevelNodeModules := moduleSpecifier[0:parts.TopLevelNodeModulesIndex]
 
-	if !hasPrefix(info.SourceDirectory, pathToTopLevelNodeModules, caseSensitive) || len(globalTypingsCacheLocation) > 0 && hasPrefix(globalTypingsCacheLocation, pathToTopLevelNodeModules, caseSensitive) {
+	if !stringutil.HasPrefix(info.SourceDirectory, pathToTopLevelNodeModules, caseSensitive) || len(globalTypingsCacheLocation) > 0 && stringutil.HasPrefix(globalTypingsCacheLocation, pathToTopLevelNodeModules, caseSensitive) {
 		return ""
 	}
 
@@ -844,7 +845,7 @@ func tryDirectoryWithPackageJson(
 			return pkgJsonDirAttemptResult{packageRootPath: packageRootPath, moduleFileToTry: moduleFileToTry}
 		} else if packageJsonContent == nil || packageJsonContent.Type.Value != "module" &&
 			!tspath.FileExtensionIsOneOf(moduleFileToTry, tspath.ExtensionsNotSupportingExtensionlessResolution) &&
-			hasPrefix(moduleFileToTry, string(mainExportFile), host.UseCaseSensitiveFileNames()) &&
+			stringutil.HasPrefix(moduleFileToTry, string(mainExportFile), host.UseCaseSensitiveFileNames()) &&
 			tspath.ComparePaths(tspath.GetDirectoryPath(moduleFileToTry), tspath.RemoveTrailingDirectorySeparator(string(mainExportFile)), compareOpt) == 0 &&
 			tspath.RemoveFileExtension(tspath.GetBaseFileName(moduleFileToTry)) == "index" {
 			// if mainExportFile is a directory, which contains moduleFileToTry, we just try index file
@@ -1049,8 +1050,8 @@ func tryGetModuleNameFromPaths(
 				for _, c := range candidates {
 					value := c.value
 					if len(value) >= len(prefix)+len(suffix) &&
-						hasPrefix(value, prefix, caseSensitive) && // TODO: possible strada bug: these are not case-switched in strada
-						hasSuffix(value, suffix, caseSensitive) &&
+						stringutil.HasPrefix(value, prefix, caseSensitive) && // TODO: possible strada bug: these are not case-switched in strada
+						stringutil.HasSuffix(value, suffix, caseSensitive) &&
 						validateEnding(c, relativeToBaseUrl, compilerOptions, host) {
 						matchedStar := value[len(prefix) : len(value)-len(suffix)]
 						if !tspath.PathIsRelative(matchedStar) {
@@ -1156,13 +1157,13 @@ func tryGetModuleNameFromExportsOrImports(
 			trailingSlice := pathOrPattern[starPos+1:]
 			caseSensitive := host.UseCaseSensitiveFileNames()
 			var starReplacement string
-			if canTryTsExtension && hasPrefix(targetFilePath, leadingSlice, caseSensitive) && hasSuffix(targetFilePath, trailingSlice, caseSensitive) {
+			if canTryTsExtension && stringutil.HasPrefix(targetFilePath, leadingSlice, caseSensitive) && stringutil.HasSuffix(targetFilePath, trailingSlice, caseSensitive) {
 				starReplacement = targetFilePath[len(leadingSlice) : len(targetFilePath)-len(trailingSlice)]
 			}
-			if len(extensionSwappedTarget) > 0 && hasPrefix(extensionSwappedTarget, leadingSlice, caseSensitive) && hasSuffix(extensionSwappedTarget, trailingSlice, caseSensitive) {
+			if len(extensionSwappedTarget) > 0 && stringutil.HasPrefix(extensionSwappedTarget, leadingSlice, caseSensitive) && stringutil.HasSuffix(extensionSwappedTarget, trailingSlice, caseSensitive) {
 				starReplacement = extensionSwappedTarget[len(leadingSlice) : len(extensionSwappedTarget)-len(trailingSlice)]
 			}
-			if !canTryTsExtension && hasPrefix(targetFilePath, leadingSlice, caseSensitive) && hasSuffix(targetFilePath, trailingSlice, caseSensitive) {
+			if !canTryTsExtension && stringutil.HasPrefix(targetFilePath, leadingSlice, caseSensitive) && stringutil.HasSuffix(targetFilePath, trailingSlice, caseSensitive) {
 				starReplacement = targetFilePath[len(leadingSlice) : len(targetFilePath)-len(trailingSlice)]
 			}
 			if len(starReplacement) == 0 {

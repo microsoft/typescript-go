@@ -25,6 +25,8 @@ type NodeBuilderInterface interface {
 	SymbolToNode(symbol *ast.Symbol, meaning ast.SymbolFlags, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) *ast.Node
 }
 
+var _ NodeBuilderInterface = (*NodeBuilderAPI)(nil)
+
 type NodeBuilderAPI struct {
 	ctxStack []*NodeBuilderContext
 	host     Host
@@ -70,7 +72,7 @@ func (b *NodeBuilderAPI) popContext() {
 	if len(b.ctxStack) > 1 {
 		b.impl.ctx = b.ctxStack[len(b.ctxStack)-1]
 	}
-	b.ctxStack = b.ctxStack[0 : len(b.ctxStack)-1]
+	b.ctxStack = b.ctxStack[:len(b.ctxStack)-1]
 }
 
 func (b *NodeBuilderAPI) exitContext(result *ast.Node) *ast.Node {

@@ -1,8 +1,6 @@
 package checker
 
 import (
-	"strings"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
@@ -166,15 +164,15 @@ func getTrailingSemicolonDeferringWriter(writer printer.EmitTextWriter) printer.
 	return &semicolonRemoverWriter{false, writer}
 }
 
-func (c *Checker) TypeToString(type_ *Type) string {
-	return c.typeToStringEx(type_, nil, TypeFormatFlagsAllowUniqueESSymbolType|TypeFormatFlagsUseAliasDefinedOutsideCurrentScope, nil)
+func (c *Checker) TypeToString(t *Type) string {
+	return c.typeToStringEx(t, nil, TypeFormatFlagsAllowUniqueESSymbolType|TypeFormatFlagsUseAliasDefinedOutsideCurrentScope, nil)
 }
 
 func toNodeBuilderFlags(flags TypeFormatFlags) nodebuilder.Flags {
 	return nodebuilder.Flags(flags & TypeFormatFlagsNodeBuilderFlagsMask)
 }
 
-func (c *Checker) typeToStringEx(type_ *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
+func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
 	if writer == nil {
 		writer = printer.NewTextWriter("")
 	}
@@ -183,14 +181,14 @@ func (c *Checker) typeToStringEx(type_ *Type, enclosingDeclaration *ast.Node, fl
 	if noTruncation {
 		combinedFlags = combinedFlags | nodebuilder.FlagsNoTruncation
 	}
-	typeNode := c.nodeBuilder.TypeToTypeNode(type_, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
+	typeNode := c.nodeBuilder.TypeToTypeNode(t, enclosingDeclaration, combinedFlags, nodebuilder.InternalFlagsNone, nil)
 	if typeNode == nil {
 		panic("should always get typenode")
 	}
 	// The unresolved type gets a synthesized comment on `any` to hint to users that it's not a plain `any`.
 	// Otherwise, we always strip comments out.
 	var printer *printer.Printer
-	if type_ == c.unresolvedType {
+	if t == c.unresolvedType {
 		printer = createPrinterWithDefaults(c.diagnosticConstructionContext)
 	} else {
 		printer = createPrinterWithRemoveComments(c.diagnosticConstructionContext)
@@ -395,51 +393,6 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 		result = append(result, c.undefinedType)
 	}
 	return result
-}
-
-func (c *Checker) SourceFileWithTypes(sourceFile *ast.SourceFile) string {
-	writer := printer.NewTextWriter("\n")
-	var pos int
-	var visit func(*ast.Node) bool
-	var typesPrinted bool
-	lineStarts := scanner.GetLineStarts(sourceFile)
-	printLinesBefore := func(node *ast.Node) {
-		line := scanner.ComputeLineOfPosition(lineStarts, scanner.SkipTrivia(sourceFile.Text(), node.Pos()))
-		var nextLineStart int
-		if line+1 < len(lineStarts) {
-			nextLineStart = int(lineStarts[line+1])
-		} else {
-			nextLineStart = sourceFile.Loc.End()
-		}
-		if pos < nextLineStart {
-			if typesPrinted {
-				writer.WriteLine()
-			}
-			writer.Write(sourceFile.Text()[pos:nextLineStart])
-			pos = nextLineStart
-			typesPrinted = false
-		}
-	}
-	visit = func(node *ast.Node) bool {
-		text, t, isDeclaration := c.getTextAndTypeOfNode(node)
-		if text != "" && !strings.Contains(text, "\n") {
-			printLinesBefore(node)
-			writer.Write(">")
-			writer.Write(text)
-			writer.Write(" : ")
-			c.typeToStringEx(t, nil, TypeFormatFlagsNone, writer)
-			if isDeclaration && t.flags&TypeFlagsEnumLiteral != 0 && t.flags&(TypeFlagsStringLiteral|TypeFlagsNumberLiteral) != 0 {
-				writer.Write(" = ")
-				writer.Write(c.valueToString(t.AsLiteralType().value))
-			}
-			writer.WriteLine()
-			typesPrinted = true
-		}
-		return node.ForEachChild(visit)
-	}
-	visit(sourceFile.AsNode())
-	writer.Write(sourceFile.Text()[pos:sourceFile.End()])
-	return writer.String()
 }
 
 func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
