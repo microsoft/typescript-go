@@ -706,49 +706,72 @@ const getVersion = memoize(() => {
     return version;
 });
 
-const supportedPlatforms = [
-    ["win32", "x64"],
-    ["win32", "arm64"],
-    ["linux", "x64"],
-    ["linux", "arm"],
-    ["linux", "arm64"],
-    ["darwin", "x64"],
-    ["darwin", "arm64"],
-    // Alpine?
-    // Wasm?
-];
+const nativePreviewPlatforms = memoize(() => {
+    const supportedPlatforms = [
+        ["win32", "x64"],
+        ["win32", "arm64"],
+        ["linux", "x64"],
+        ["linux", "arm"],
+        ["linux", "arm64"],
+        ["darwin", "x64"],
+        ["darwin", "arm64"],
+        // Alpine?
+        // Wasm?
+    ];
 
-/**
- * @param {string} os
- */
-function nodeToGOOS(os) {
-    switch (os) {
-        case "darwin":
-            return "darwin";
-        case "linux":
-            return "linux";
-        case "win32":
-            return "windows";
-        default:
-            throw new Error(`Unsupported OS: ${os}`);
-    }
-}
+    return supportedPlatforms.map(([os, arch]) => {
+        const npmDirName = `native-preview-${os}-${arch}`;
+        const npmPackageName = `@typescript/${npmDirName}`;
+        const vscodeTarget = `${os}-${arch === "arm" ? "armhf" : arch}`;
+        const vsixName = `typescript-native-preview.${vscodeTarget}.vsix`;
+        const vsixManifestName = vsixName + ".manifest";
+        const vsixSignatureName = vsixName + ".signature.p7s";
+        return {
+            nodeOs: os,
+            nodeArch: arch,
+            goos: nodeToGOOS(os),
+            goarch: nodeToGOARCH(arch),
+            npmPackageName,
+            npmDirName,
+            vscodeTarget,
+            vsixName,
+            vsixManifestName,
+            vsixSignatureName,
+        };
+    });
 
-/**
- * @param {string} arch
- */
-function nodeToGOARCH(arch) {
-    switch (arch) {
-        case "x64":
-            return "amd64";
-        case "arm":
-            return "arm";
-        case "arm64":
-            return "arm64";
-        default:
-            throw new Error(`Unsupported ARCH: ${arch}`);
+    /**
+     * @param {string} os
+     */
+    function nodeToGOOS(os) {
+        switch (os) {
+            case "darwin":
+                return "darwin";
+            case "linux":
+                return "linux";
+            case "win32":
+                return "windows";
+            default:
+                throw new Error(`Unsupported OS: ${os}`);
+        }
     }
-}
+
+    /**
+     * @param {string} arch
+     */
+    function nodeToGOARCH(arch) {
+        switch (arch) {
+            case "x64":
+                return "amd64";
+            case "arm":
+                return "arm";
+            case "arm64":
+                return "arm64";
+            default:
+                throw new Error(`Unsupported ARCH: ${arch}`);
+        }
+    }
+});
 
 export const buildNativePreview = task({
     name: "build:native-preview",
@@ -756,13 +779,7 @@ export const buildNativePreview = task({
         const npmOutputDir = "./built/npm";
         await rimraf(npmOutputDir);
 
-        const packages = supportedPlatforms.map(([os, arch]) => {
-            const goos = nodeToGOOS(os);
-            const goarch = nodeToGOARCH(arch);
-            const dirName = `native-preview-${os}-${arch}`;
-            const packageName = `@typescript/${dirName}`;
-            return { os, arch, goos, goarch, dirName, packageName };
-        });
+        const platforms = nativePreviewPlatforms();
 
         const inputDir = "./_packages/native-preview";
 
@@ -775,7 +792,7 @@ export const buildNativePreview = task({
 
         const mainPackage = {
             ...inputPackageJson,
-            optionalDependencies: Object.fromEntries(packages.map(p => [p.packageName, getVersion()])),
+            optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
         };
 
         const mainPackageDir = path.join(npmOutputDir, "native-preview");
@@ -799,16 +816,16 @@ export const buildNativePreview = task({
         }
         const extraFlags = ["-trimpath", ldflags];
 
-        await Promise.all(packages.map(async ({ os, arch, goos, goarch, dirName, packageName }) => {
-            const dir = path.join(npmOutputDir, dirName);
+        await Promise.all(platforms.map(async ({ npmDirName, npmPackageName, nodeOs, nodeArch, goos, goarch }) => {
+            const dir = path.join(npmOutputDir, npmDirName);
 
             const packageJson = {
                 ...inputPackageJson,
                 bin: undefined,
                 imports: undefined,
-                name: packageName,
-                os: [os],
-                cpu: [arch],
+                name: npmPackageName,
+                os: [nodeOs],
+                cpu: [nodeArch],
                 exports: {
                     "./package.json": "./package.json",
                 },
@@ -820,9 +837,9 @@ export const buildNativePreview = task({
             await fs.promises.copyFile("LICENSE", path.join(dir, "LICENSE"));
 
             const readme = [
-                `# \`${packageName}\``,
+                `# \`${npmPackageName}\``,
                 "",
-                `This package provides ${os}-${arch} support for [@typescript/native-preview](https://www.npmjs.com/package/@typescript/native-preview).`,
+                `This package provides ${nodeOs}-${nodeArch} support for [${packageJson.name}](https://www.npmjs.com/package/${packageJson.name}).`,
             ];
 
             fs.promises.writeFile(path.join(dir, "README.md"), readme.join("\n") + "\n");
@@ -845,33 +862,34 @@ export const buildNativePreviewExtensions = task({
     name: "build:native-preview-extensions",
     dependencies: [buildNativePreview],
     run: async () => {
-        const outDir = path.join(__dirname, "built", "vsix");
+        const outDir = path.resolve("./built/vsix");
         await rimraf(outDir);
         await fs.promises.mkdir(outDir, { recursive: true });
 
-        await rimraf("./_extension/lib");
+        const extensionDir = "./_extension";
+        const extensionLibDir = path.join(extensionDir, "lib");
+        await rimraf(extensionLibDir);
 
         const version = getVersion();
         const isPrerelease = version.includes("-");
 
-        for (const [os, arch] of supportedPlatforms) {
+        for (const platform of nativePreviewPlatforms()) {
             // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
-            const target = `${os}-${arch === "arm" ? "armhf" : arch}`;
-            const libDir = `./built/npm/native-preview-${os}-${arch}/lib`;
-            await fs.promises.cp(libDir, "./_extension/lib", { recursive: true });
-            const outVsix = path.join(outDir, `typescript-native-preview.${target}.vsix`);
+            const libDir = `./built/npm/${platform.npmDirName}/lib`;
+            await fs.promises.cp(libDir, extensionLibDir, { recursive: true });
+            const outVsix = path.join(outDir, platform.vsixName);
 
             try {
-                await $({ cwd: path.join(__dirname, "_extension") })`vsce package ${version} ${isPrerelease ? ["--pre-release"] : []} --no-update-package-json --no-dependencies --out ${outVsix} --target ${target}`;
+                await $({ cwd: extensionDir })`vsce package ${version} ${isPrerelease ? ["--pre-release"] : []} --no-update-package-json --no-dependencies --out ${outVsix} --target ${platform.vscodeTarget}`;
             }
             finally {
-                await rimraf("./_extension/lib");
+                await rimraf(extensionLibDir);
             }
 
-            const outManifest = outVsix + ".manifest";
-            await $({ cwd: path.join(__dirname, "_extension") })`vsce generate-manifest --packagePath ${outVsix} --out ${outManifest}`;
+            const outManifest = path.join(outDir, platform.vsixManifestName);
+            await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${outVsix} --out ${outManifest}`;
 
-            const outSignature = outVsix + ".signature.p7s";
+            const outSignature = path.join(outDir, platform.vsixSignatureName);
             await fs.promises.cp(outManifest, outSignature);
         }
 
