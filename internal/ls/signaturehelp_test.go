@@ -3,6 +3,7 @@ package ls_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
@@ -21,6 +22,11 @@ type verifySignatureHelpOptions struct {
 
 func TestSignatureHelp(t *testing.T) {
 	t.Parallel()
+	if !bundled.Embedded {
+		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
+		// Just skip this for now.
+		t.Skip("bundled files are not embedded")
+	}
 
 	testCases := []struct {
 		title    string
