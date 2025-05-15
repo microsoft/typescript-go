@@ -15,10 +15,8 @@ type verifySignatureHelpOptions struct {
 	parameterSpan   string
 	parameterCount  int
 	activeParameter *lsproto.Nullable[uint32]
-	isVariadic      bool
-	//triggerReason             ls.SignatureHelpTriggerReason
-	overrideSelectedItemIndex int
-	//tags?: ReadonlyArray<JSDocTagInfo>;
+	// triggerReason             ls.SignatureHelpTriggerReason
+	// tags?: ReadonlyArray<JSDocTagInfo>;
 }
 
 func TestSignatureHelp(t *testing.T) {
@@ -314,21 +312,18 @@ complex("ok", "ok", e => void e, {}, /*3*/);`,
 					parameterCount:  2,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
 					parameterSpan:   "item: string",
-					isVariadic:      false,
 				},
 				"2": {
 					text:            "complex(item: string, another: string, settings: object, errorHandler: object): void", // returns object
 					parameterCount:  4,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 2},
 					parameterSpan:   "settings: object",
-					isVariadic:      false,
 				},
 				"3": {
 					text:            "complex(item: string, another: string, errorHandler: object, ...mixins: object): void", // returns object
 					parameterCount:  4,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 3},
 					parameterSpan:   "...mixins: object",
-					isVariadic:      true,
 				},
 			},
 		},
@@ -347,21 +342,18 @@ complex("ok", "ok", e => void e, {}, /*3*/);`,
 					parameterCount:  2,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
 					parameterSpan:   "item: string",
-					isVariadic:      false,
 				},
 				"2": {
 					text:            "complex(item: string, another: string, rest_0: object, rest_1: object): void", // Needs createSignatureHelpParameterForParameter
 					parameterCount:  4,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 2},
 					parameterSpan:   "rest_0: object",
-					isVariadic:      false,
 				},
 				"3": {
 					text:            "complex(item: string, another: string, rest_0: object, ...rest: object): void", // Needs createSignatureHelpParameterForParameter
 					parameterCount:  4,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 3},
 					parameterSpan:   "...rest: object",
-					isVariadic:      true,
 				},
 			},
 		},
@@ -377,68 +369,52 @@ foo(123/*4*/, ""/*5*/, )
 foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:                      "foo(args_0: string, args_1: string): void", // Different from Strada
-					parameterCount:            2,
-					activeParameter:           &lsproto.Nullable[uint32]{Value: 0},
-					parameterSpan:             "args_0: string",
-					isVariadic:                false,
-					overrideSelectedItemIndex: 0,
+					text:            "foo(args_0: string, args_1: string): void", // Different from Strada
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "args_0: string",
 				},
 				"2": {
-					text:                      "foo(args_0: string, args_1: string): void",
-					parameterCount:            2,
-					activeParameter:           &lsproto.Nullable[uint32]{Value: 0},
-					parameterSpan:             "args_0: string",
-					isVariadic:                false,
-					overrideSelectedItemIndex: 0,
+					text:            "foo(args_0: string, args_1: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "args_0: string",
 				},
 				"3": {
-					text:                      "foo(args_0: string, args_1: string): void",
-					parameterCount:            2,
-					activeParameter:           &lsproto.Nullable[uint32]{Value: 1},
-					parameterSpan:             "args_1: string",
-					isVariadic:                false,
-					overrideSelectedItemIndex: 0,
+					text:            "foo(args_0: string, args_1: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "args_1: string",
 				},
 				"4": {
-					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
-					parameterCount:            3,
-					activeParameter:           &lsproto.Nullable[uint32]{Value: 0},
-					parameterSpan:             "args_0: number",
-					isVariadic:                false,
-					overrideSelectedItemIndex: 1,
+					text:            "foo(args_0: number, args_1: string, args_2: string): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "args_0: number",
 				},
 				"5": {
-					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
-					parameterCount:            3,
-					activeParameter:           &lsproto.Nullable[uint32]{Value: 1},
-					parameterSpan:             "args_1: string",
-					isVariadic:                false,
-					overrideSelectedItemIndex: 1,
+					text:            "foo(args_0: number, args_1: string, args_2: string): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "args_1: string",
 				},
 				"6": {
-					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
-					parameterCount:            3,
-					activeParameter:           &lsproto.Nullable[uint32]{Value: 0},
-					parameterSpan:             "args_0: number",
-					isVariadic:                false,
-					overrideSelectedItemIndex: 1,
+					text:            "foo(args_0: number, args_1: string, args_2: string): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "args_0: number",
 				},
 				"7": {
-					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
-					parameterCount:            3,
-					activeParameter:           &lsproto.Nullable[uint32]{Value: 1},
-					parameterSpan:             "args_1: string",
-					isVariadic:                false,
-					overrideSelectedItemIndex: 1,
+					text:            "foo(args_0: number, args_1: string, args_2: string): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "args_1: string",
 				},
 				"8": {
-					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
-					parameterCount:            3,
-					activeParameter:           &lsproto.Nullable[uint32]{Value: 2},
-					parameterSpan:             "args_2: string",
-					isVariadic:                false,
-					overrideSelectedItemIndex: 1,
+					text:            "foo(args_0: number, args_1: string, args_2: string): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 2},
+					parameterSpan:   "args_2: string",
 				},
 			},
 		},
@@ -585,7 +561,7 @@ forEach(/*1*/() => {
 }
 foo(/*1*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "foo(x: number, callback: object): void", parameterCount: 2, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
+				"1": {text: "foo(x: number, callback: object): void", parameterCount: 2, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
 			},
 		},
 		{
@@ -615,9 +591,9 @@ leading(/*1*/);
 leading("ok", /*2*/);
 leading("ok", "ok", /*3*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
-				"2": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
-				"3": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"1": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"2": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"3": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -773,7 +749,7 @@ f3(/*3*/)`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "f1(a: any): a is number", parameterCount: 1, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				"2": {text: "f2(a: any): a is unknown", parameterCount: 1, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"3": {text: "f3(a: any, ...b: object): a is number", parameterCount: 2, parameterSpan: "a: any", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
+				"3": {text: "f3(a: any, ...b: object): a is number", parameterCount: 2, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
 			},
 		},
 		{
@@ -862,9 +838,9 @@ leading(/*1*/);
 leading(false, /*2*/);
 leading(false, "ok", /*3*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
-				"2": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, //returns object
-				"3": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, //returns object
+				"1": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
+				"2": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, // returns object
+				"3": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, // returns object
 			},
 		},
 		{
@@ -897,7 +873,7 @@ c((/*3*/) => {});`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "a(fn?: ((x: string) => string) | ((y: number) => number)): void", parameterCount: 1, parameterSpan: "fn?: ((x: string) => string) | ((y: number) => number)", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				"2": {text: "b(x: string | number): void", parameterCount: 1, parameterSpan: "x: string | number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"3": {text: "Callback(x: string | number): string | number", parameterCount: 1, parameterSpan: "x: string | number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
+				"3": {text: "Callback(x: string | number): string | number", parameterCount: 1, parameterSpan: "x: string | number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
 			},
 		},
 		{
@@ -936,8 +912,8 @@ fnNoParamsWrapped(/*5*/);`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				"2": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "num: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
-				"3": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "str: string", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 0}},    //returns object
-				"4": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "...num: object", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, //returns object
+				"3": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},    // returns object
+				"4": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "...num: object", activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, // returns object
 				"5": {text: "fnNoParamsWrapped(): void", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
@@ -1046,7 +1022,7 @@ f<number, string, boolean, /*f3*/;`,
 			input: `declare function f(a: any, ...b: any[]): any;
 f</*1*/>(1, 2);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f<>(a: any, ...b: object): any", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
+				"1": {text: "f<>(a: any, ...b: object): any", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
 			},
 		},
 		{
@@ -1063,12 +1039,11 @@ f</*1*/>(1, 2);`,
 			t.Parallel()
 			runSignatureHelpTest(t, testCase.input, testCase.expected)
 		})
-
 	}
 }
 
 func runSignatureHelpTest(t *testing.T, input string, expected map[string]verifySignatureHelpOptions) {
-	testData := lstestutil.ParseTestData("/file1.ts", input, "/file1.ts")
+	testData := lstestutil.ParseTestData("/mainFile.ts", input, "/mainFile.ts")
 	file := testData.Files[0].Filename
 	markerPositions := testData.MarkerPositions
 	service := createLanguageService(file, map[string]string{
@@ -1097,14 +1072,10 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 		result := service.ProvideSignatureHelp(file, marker.Position, context, capabilities, preferences)
 		assert.Equal(t, expectedResult.text, result.Signatures[*result.ActiveSignature].Label)
 		assert.Equal(t, expectedResult.parameterCount, len(*result.Signatures[*result.ActiveSignature].Parameters))
-		k := expectedResult.activeParameter
-		v := result.ActiveParameter
-		//z := int(v.Value)
-		assert.DeepEqual(t, k, v)
-		// if len(*result.Signatures[*result.ActiveSignature].Parameters) <= int(result.ActiveParameter.Value) || len(*result.Signatures[*result.ActiveSignature].Parameters) == 0 {
-		// 	assert.Equal(t, expectedResult.parameterSpan, "")
-		// } else {
-		// 	assert.Equal(t, expectedResult.parameterSpan, *(*result.Signatures[*result.ActiveSignature].Parameters)[int(result.ActiveParameter.Value)].Label.String)
-		// }
+		assert.DeepEqual(t, expectedResult.activeParameter, result.ActiveParameter)
+		// Checking the parameter span that will be highlighted in the editor
+		if expectedResult.activeParameter != nil && int(expectedResult.activeParameter.Value) < expectedResult.parameterCount {
+			assert.Equal(t, expectedResult.parameterSpan, *(*result.Signatures[*result.ActiveSignature].Parameters)[int(result.ActiveParameter.Value)].Label.String)
+		}
 	}
 }

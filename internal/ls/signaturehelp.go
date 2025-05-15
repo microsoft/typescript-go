@@ -51,7 +51,8 @@ func (l *LanguageService) GetSignatureHelpItems(
 	sourceFile *ast.SourceFile,
 	context *lsproto.SignatureHelpContext,
 	clientOptions *lsproto.SignatureHelpClientCapabilities,
-	preferences *UserPreferences) *lsproto.SignatureHelp {
+	preferences *UserPreferences,
+) *lsproto.SignatureHelp {
 	typeChecker := program.GetTypeChecker()
 
 	// Decide whether to show signature help
@@ -141,7 +142,7 @@ func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosin
 		parameters = append(parameters, createSignatureHelpParameterForTypeParameter(typeParam, sourceFile, enclosingDeclaration, c, printer))
 	}
 
-	//Creating display label
+	// Creating display label
 	typeParameterDisplayParts := []string{}
 	for _, typeParameter := range parameters {
 		typeParameterDisplayParts = append(typeParameterDisplayParts, *typeParameter.parameterInfo.Label.String)
@@ -183,12 +184,12 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 	}
 	var items [][]signatureInformation
 	for _, candidateSignature := range *candidates {
-		items = append(items, getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts, enclosingDeclaration, argumentInfo.argumentCount, sourceFile, c))
+		items = append(items, getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts, enclosingDeclaration, sourceFile, c))
 	}
 
 	selectedItemIndex := 0
 	itemSeen := 0
-	for i := 0; i < len(items); i++ {
+	for i := range items {
 		item := items[i]
 		if (*candidates)[i] == resolvedSignature {
 			selectedItemIndex = itemSeen
@@ -206,8 +207,8 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 		itemSeen = itemSeen + len(item)
 	}
 
-	//Debug.assert(selectedItemIndex !== -1)
-	var flattenedSignatures = []signatureInformation{}
+	// Debug.assert(selectedItemIndex !== -1)
+	flattenedSignatures := []signatureInformation{}
 	for _, item := range items {
 		flattenedSignatures = append(flattenedSignatures, item...)
 	}
@@ -259,7 +260,7 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 	return help
 }
 
-func getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol []string, enclosingDeclaration *ast.Node, activeArgumentIndex int, sourceFile *ast.SourceFile, c *checker.Checker) []signatureInformation {
+func getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol []string, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) []signatureInformation {
 	var infos []*signatureHelpItemInfo
 	if isTypeParameterList {
 		infos = itemInfoForTypeParameters(candidate, c, enclosingDeclaration, sourceFile)
@@ -314,7 +315,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 	}
 
 	// Creating display label
-	var typeParameterDisplayParts = []string{}
+	typeParameterDisplayParts := []string{}
 	for _, typeParameter := range getTypeParameters {
 		typeParameterDisplayParts = append(typeParameterDisplayParts, *typeParameter.parameterInfo.Label.String)
 	}
@@ -518,7 +519,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 			},
 		}
 	}
-	return nil //return Debug.assertNever(invocation);
+	return nil // return Debug.assertNever(invocation);
 }
 
 func isSyntacticOwner(startingToken *ast.Node, node *ast.Node, sourceFile *ast.SourceFile) bool { //!!! not tested
@@ -563,7 +564,7 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 	for n := node; !ast.IsSourceFile(n) && (isManuallyInvoked || !ast.IsBlock(n)); n = n.Parent {
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
-		//Debug.assert(rangeContainsRange(n.parent, n), "Not a subspan", () => `Child: ${Debug.formatSyntaxKind(n.kind)}, parent: ${Debug.formatSyntaxKind(n.parent.kind)}`);
+		// Debug.assert(rangeContainsRange(n.parent, n), "Not a subspan", () => `Child: ${Debug.formatSyntaxKind(n.kind)}, parent: ${Debug.formatSyntaxKind(n.parent.kind)}`);
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
 			return argumentInfo
@@ -837,7 +838,7 @@ func getArgumentOrParameterListInfo(node *ast.Node, sourceFile *ast.SourceFile, 
 	return arguments, argumentIndex, argumentCount, argumentSpan
 }
 
-func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, sourceFile *ast.SourceFile) core.TextRange { //tbd
+func getApplicableSpanForArguments(argumentList *ast.NodeList, node *ast.Node, sourceFile *ast.SourceFile) core.TextRange {
 	// We use full start and skip trivia on the end because we want to include trivia on
 	// both sides. For example,
 	//
@@ -984,10 +985,8 @@ func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFi
 	case ast.KindBinaryExpression:
 		highestBinary := getHighestBinary(parent.AsBinaryExpression())
 		contextualType := c.GetContextualType(highestBinary.AsNode(), checker.ContextFlagsNone)
-		var argumentIndex *int
-		if node.Kind == ast.KindOpenParenToken {
-			argumentIndex = ptrTo(0)
-		} else {
+		argumentIndex := ptrTo(0)
+		if node.Kind != ast.KindOpenParenToken {
 			argumentIndex = ptrTo(countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1)
 			argumentCount := countBinaryExpressionParameters(highestBinary)
 			if contextualType != nil {
@@ -1062,7 +1061,7 @@ func getTokenFromNodeList(nodeList *ast.NodeList, nodeListParent *ast.Node, sour
 }
 
 func containsNode(nodes []*ast.Node, node *ast.Node) bool {
-	for i := 0; i < len(nodes); i++ {
+	for i := range nodes {
 		if nodes[i] == node {
 			return true
 		}

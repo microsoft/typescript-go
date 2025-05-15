@@ -167,7 +167,7 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 		switch token.Kind {
 		case ast.KindLessThanToken:
 			// Found the beginning of the generic argument expression
-			token := astnav.FindPrecedingToken(sourceFile, token.Pos())
+			token = astnav.FindPrecedingToken(sourceFile, token.Pos())
 			if token != nil && token.Kind == ast.KindQuestionDotToken {
 				token = astnav.FindPrecedingToken(sourceFile, token.Pos())
 			}
