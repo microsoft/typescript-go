@@ -137,7 +137,7 @@ func (c *Checker) GetQuickInfoAtLocation(node *ast.Node) string {
 		}
 	case flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0:
 		t := c.getTypeOfSymbol(symbol)
-		signatures := c.getSignaturesOfType(t, SignatureKindCall)
+		signatures := c.GetSignaturesOfType(t, SignatureKindCall)
 		prefix := core.IfElse(symbol.Flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
 		for i, sig := range signatures {
 			if i != 0 {
