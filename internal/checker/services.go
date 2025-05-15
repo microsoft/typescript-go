@@ -399,6 +399,26 @@ func (c *Checker) GetExportSymbolOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol))
 }
 
+/**
+* Get symbols that represent parameter-property-declaration as parameter and as property declaration
+* @param parameter a parameterDeclaration node
+* @param parameterName a name of the parameter to get the symbols for.
+* @return a tuple of two symbols
+ */
+func (c *Checker) GetSymbolsOfParameterPropertyDeclaration(parameter *ast.Node /*ParameterPropertyDeclaration*/, parameterName string) (*ast.Symbol, *ast.Symbol) {
+	constructorDeclaration := parameter.Parent
+	classDeclaration := parameter.Parent.Parent
+
+	parameterSymbol := c.getSymbol(constructorDeclaration.Locals(), parameterName, ast.SymbolFlagsValue)
+	propertySymbol := c.getSymbol(c.getMembersOfSymbol(classDeclaration.Symbol()), parameterName, ast.SymbolFlagsValue)
+
+	if parameterSymbol != nil && propertySymbol != nil {
+		return parameterSymbol, propertySymbol
+	}
+
+	panic("There should exist two symbols, one as property declaration and one as parameter declaration")
+}
+
 func (c *Checker) GetTypeArgumentConstraint(node *ast.Node) *Type {
 	if !ast.IsTypeNode(node) {
 		return nil

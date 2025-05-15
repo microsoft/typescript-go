@@ -40,7 +40,7 @@ loop:
 			// (it refers to the constant type of the expression instead)
 			return nil
 		}
-		if isModuleOrEnumDeclaration(location) && lastLocation != nil && location.Name() == lastLocation {
+		if ast.IsModuleOrEnumDeclaration(location) && lastLocation != nil && location.Name() == lastLocation {
 			// If lastLocation is the name of a namespace or enum, skip the parent since it will have is own locals that could
 			// conflict.
 			lastLocation = location
@@ -446,10 +446,6 @@ func (r *NameResolver) argumentsSymbol() *ast.Symbol {
 		r.ArgumentsSymbol = &ast.Symbol{Name: "arguments", Flags: ast.SymbolFlagsProperty | ast.SymbolFlagsTransient}
 	}
 	return r.ArgumentsSymbol
-}
-
-func isModuleOrEnumDeclaration(node *ast.Node) bool {
-	return node.Kind == ast.KindModuleDeclaration || node.Kind == ast.KindEnumDeclaration
 }
 
 func getLocalSymbolForExportDefault(symbol *ast.Symbol) *ast.Symbol {

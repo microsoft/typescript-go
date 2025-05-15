@@ -5,12 +5,20 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
+func (c *Checker) GetStringType() *Type {
+	return c.stringType
+}
+
 func (c *Checker) GetUnionType(types []*Type) *Type {
 	return c.getUnionType(types)
 }
 
 func (c *Checker) GetGlobalSymbol(name string, meaning ast.SymbolFlags, diagnostic *diagnostics.Message) *ast.Symbol {
 	return c.getGlobalSymbol(name, meaning, diagnostic)
+}
+
+func (c *Checker) GetMergedSymbol(symbol *ast.Symbol) *ast.Symbol {
+	return c.getMergedSymbol(symbol)
 }
 
 func (c *Checker) GetTypeFromTypeNode(node *ast.Node) *Type {
@@ -23,6 +31,10 @@ func (c *Checker) IsArrayLikeType(t *Type) bool {
 
 func (c *Checker) GetPropertiesOfType(t *Type) []*ast.Symbol {
 	return c.getPropertiesOfType(t)
+}
+
+func (c *Checker) GetPropertyOfType(t *Type, name string) *ast.Symbol {
+	return c.getPropertyOfType(t, name)
 }
 
 func (c *Checker) TypeHasCallOrConstructSignatures(t *Type) bool {

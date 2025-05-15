@@ -88,12 +88,12 @@ func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.Modif
 	return node.ModifierFlags() & flags
 }
 
-func hasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
+func HasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
 	return node.ModifierFlags()&flags != 0
 }
 
 func hasReadonlyModifier(node *ast.Node) bool {
-	return hasModifier(node, ast.ModifierFlagsReadonly)
+	return HasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
@@ -176,7 +176,7 @@ func isConstTypeReference(node *ast.Node) bool {
 	return ast.IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && ast.IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
 }
 
-func getSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
+func GetSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
 	if !ast.IsVariableStatement(node) {
 		return nil
 	}
@@ -359,12 +359,12 @@ func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func getExternalModuleImportEqualsDeclarationExpression(node *ast.Node) *ast.Node {
+func GetExternalModuleImportEqualsDeclarationExpression(node *ast.Node) *ast.Node {
 	// Debug.assert(isExternalModuleImportEqualsDeclaration(node))
 	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
 }
 
-func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
+func IsRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
 	parent := node.Parent
 	switch parent.Kind {
 	case ast.KindQualifiedName:
@@ -464,7 +464,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (hasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -1007,6 +1007,23 @@ func getPropertyNameFromType(t *Type) string {
 	panic("Unhandled case in getPropertyNameFromType")
 }
 
+func GetEffectiveImplementsTypeNodes(node *ast.Node) []*ast.TypeNode {
+	// compiler utilities
+	if ast.IsInJSFile(node) {
+		// not implmented jsdoc
+		// return getJSDocImplementsTags(node).map(n => n.class);
+	} else if heritageClause := ast.GetHeritageClause(node, ast.KindImplementsKeyword); heritageClause != nil {
+		return heritageClause.AsHeritageClause().Types.Nodes
+	}
+	return nil
+}
+
+func GetEffectiveBaseTypeNode(node *ast.Node) *ast.TypeNode {
+	baseType := ast.GetExtendsHeritageClauseElement(node)
+	// !!! not implemented jsdoc cases
+	return baseType
+}
+
 func isNumericLiteralName(name string) bool {
 	// The intent of numeric names is that
 	//     - they are names with text in a numeric form, and that
@@ -1270,7 +1287,7 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 	}) != nil
 }
 
-func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
+func GetAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
 	for node != nil && node.Kind != kind {
 		node = node.Parent
 	}

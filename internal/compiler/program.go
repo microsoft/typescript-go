@@ -3,6 +3,7 @@ package compiler
 import (
 	"context"
 	"slices"
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -46,7 +47,9 @@ type Program struct {
 
 	resolver *module.Resolver
 
-	comparePathsOptions tspath.ComparePathsOptions
+	comparePathsOptions                            tspath.ComparePathsOptions
+	supportedExtensions                            [][]string
+	supportedExtensionsWithJsonIfResolveJsonModule []string
 
 	processedFiles
 
@@ -280,6 +283,15 @@ func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*mo
 func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
 	path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
 	return p.filesByPath[path]
+}
+
+func (p *Program) GetResolvedModuleFromModuleSpecifier(moduleSpecifier *ast.Node /*!!! stringliterallike*/, sourceFile *ast.SourceFile) *ast.SourceFile {
+	if sourceFile == nil {
+		if sourceFile = ast.GetSourceFileOfNode(moduleSpecifier); sourceFile == nil {
+			panic("`moduleSpecifier` must have a `SourceFile` ancestor. Use `program.getResolvedModule` instead to provide the containing file and resolution mode.")
+		}
+	}
+	return p.GetResolvedModule(sourceFile, moduleSpecifier.Text()) //, getModeForUsageLocation(sourceFile, moduleSpecifier))
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -692,6 +704,96 @@ func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 
 func (p *Program) GetSourceFiles() []*ast.SourceFile {
 	return p.files
+}
+
+func (p *Program) GetLibFileFromReference(ref *ast.FileReference) *ast.SourceFile {
+	path, ok := tsoptions.GetLibFileName(ref.FileName)
+	if !ok {
+		return nil
+	}
+	if sourceFile, ok := p.filesByPath[tspath.Path(path)]; ok {
+		return sourceFile
+	}
+	return nil
+}
+
+func (p *Program) GetResolvedTypeReferenceDirectiveFromTypeReferenceDirective(typeRef *ast.FileReference, sourceFile *ast.SourceFile) *module.ResolvedTypeReferenceDirective {
+	return p.resolver.ResolveTypeReferenceDirective(
+		typeRef.FileName,
+		sourceFile.FileName(),
+		p.getModeForTypeReferenceDirectiveInFile(typeRef, sourceFile),
+		nil,
+	)
+}
+
+func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, sourceFile *ast.SourceFile) core.ResolutionMode {
+	return ref.ResolutionMode
+	// TODO
+	// !!! || p.getDefaultResolutionModeForFile(sourceFile)
+}
+
+/** This should have similar behavior to 'processSourceFile' without diagnostics or mutation. */
+func (p *Program) GetSourceFileFromReference(referencingFile *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
+	return p.getSourceFileFromReferenceWorker(tspath.ResolveTripleslashReference(ref.FileName, referencingFile.FileName()), p.GetSourceFile, nil /*fail*/)
+}
+
+func (p *Program) getSourceFileFromReferenceWorker(
+	fileName string,
+	getSourceFile func(fileName string) *ast.SourceFile,
+	fail func(diagnostic *diagnostics.Message, argument ...string),
+	// reason *ReferencedFile, // !!! strada uses FileIncludeReason, but this function only performs extra work for ReferencedFiles
+) *ast.SourceFile {
+	if tspath.HasExtension(fileName) {
+		canonicalFileName := tspath.GetCanonicalFileName(fileName, p.host.FS().UseCaseSensitiveFileNames())
+		if !p.Options().AllowNonTsExtensions.IsTrue() {
+			if !core.FirstNonNil(p.supportedExtensionsWithJsonIfResolveJsonModule, func(extension string) bool {
+				return tspath.FileExtensionIs(canonicalFileName, extension)
+			}) {
+				if fail != nil {
+					if tspath.HasJSFileExtension(canonicalFileName) {
+						fail(diagnostics.File_0_is_a_JavaScript_file_Did_you_mean_to_enable_the_allowJs_option, fileName)
+					} else {
+						fail(diagnostics.File_0_has_an_unsupported_extension_The_only_supported_extensions_are_1, fileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
+					}
+				}
+				return nil
+			}
+		}
+
+		sourceFile := getSourceFile(fileName)
+		// todo: fail not use in inputs yet, so leaving this unimplemented for now
+		// if fail != nil {
+		// 	if sourceFile == nil {
+		// 		redirect := getProjectReferenceRedirect(fileName)
+		// 		if redirect {
+		// 			fail(diagnostics.Output_file_0_has_not_been_built_from_source_file_1, redirect, fileName)
+		// 		} else {
+		// 			fail(diagnostics.File_0_not_found, fileName)
+		// 		}
+		// 	} else if reason != nil && canonicalFileName == tspath.GetCanonicalFileName(p.GetSourceFileByPath(reason.File).FileName(), p.host.FS().UseCaseSensitiveFileNames()) {
+		// 		fail(diagnostics.A_file_cannot_have_a_reference_to_itself)
+		// 	}
+		// }
+		return sourceFile
+	} else {
+		if p.Options().AllowNonTsExtensions.IsTrue() {
+			if sourceFileNoExtension := getSourceFile(fileName); sourceFileNoExtension != nil {
+				return sourceFileNoExtension
+			}
+		}
+
+		if fail != nil && p.Options().AllowNonTsExtensions.IsTrue() {
+			fail(diagnostics.File_0_not_found, fileName)
+			return nil
+		}
+
+		// Only try adding extensions from the first supported group (which should be .ts/.tsx/.d.ts)
+		sourceFileWithAddedExtension := core.FirstNonNil(p.supportedExtensions[0], func(extension string) *ast.SourceFile { return getSourceFile(fileName + extension) })
+		if fail != nil && sourceFileWithAddedExtension == nil {
+			fail(diagnostics.Could_not_resolve_the_path_0_with_the_extensions_Colon_1, fileName, "'"+strings.Join(core.Flatten(p.supportedExtensions), "', '")+"'")
+		}
+		return sourceFileWithAddedExtension
+	}
 }
 
 type FileIncludeKind int

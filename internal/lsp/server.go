@@ -297,6 +297,8 @@ func (s *Server) handleMessage(req *lsproto.RequestMessage) error {
 		return s.handleDefinition(req)
 	case *lsproto.CompletionParams:
 		return s.handleCompletion(req)
+	case *lsproto.ReferenceParams:
+		return s.handleReferences(req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -492,6 +494,19 @@ func (s *Server) handleDefinition(req *lsproto.RequestMessage) error {
 	}
 
 	return s.sendResult(req.ID, &lsproto.Definition{Locations: &lspLocations})
+}
+
+func (s *Server) handleReferences(req *lsproto.RequestMessage) error {
+	// findAllReferences
+	params := req.Params.(*lsproto.ReferenceParams)
+	file, project := s.getFileAndProject(params.TextDocument.Uri)
+	pos, err := s.converters.LineAndCharacterToPositionForFile(params.Position, file.FileName())
+	if err != nil {
+		return s.sendError(req.ID, err)
+	}
+	locations := project.LanguageService().ProvideReferences(file.FileName(), pos, params.Context)
+
+	return s.sendResult(req.ID, locations)
 }
 
 func (s *Server) handleCompletion(req *lsproto.RequestMessage) (messageErr error) {
