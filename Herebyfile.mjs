@@ -706,6 +706,7 @@ const getVersion = memoize(() => {
     return version;
 });
 
+const extensionDir = path.resolve("./_extension");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
 
@@ -868,7 +869,6 @@ export const buildNativePreviewExtensions = task({
         await rimraf(outDir);
         await fs.promises.mkdir(outDir, { recursive: true });
 
-        const extensionDir = "./_extension";
         const extensionLibDir = path.join(extensionDir, "lib");
         await rimraf(extensionLibDir);
 
