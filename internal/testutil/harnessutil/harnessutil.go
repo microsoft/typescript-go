@@ -1,6 +1,7 @@
 package harnessutil
 
 import (
+	"context"
 	"fmt"
 	"io/fs"
 	"maps"
@@ -538,11 +539,11 @@ func compileFilesWithHost(
 	// ] : postErrors;
 	program := createProgram(host, options, rootFiles)
 	var diagnostics []*ast.Diagnostic
-	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(nil)...)
-	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(nil)...)
+	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(context.Background(), nil)...)
+	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(context.Background(), nil)...)
 	diagnostics = append(diagnostics, program.GetGlobalDiagnostics()...)
 	if options.GetEmitDeclarations() {
-		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(nil)...)
+		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(context.Background(), nil)...)
 	}
 	emitResult := program.Emit(compiler.EmitOptions{})
 
@@ -782,11 +783,16 @@ func (c *CompilationResult) GetSourceMapRecord() string {
 }
 
 func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {
+	var singleThreaded core.Tristate
+	if testutil.TestProgramIsSingleThreaded() {
+		singleThreaded = core.TSTrue
+	}
+
 	programOptions := compiler.ProgramOptions{
 		RootFiles:      rootFiles,
 		Host:           host,
 		Options:        options,
-		SingleThreaded: testutil.TestProgramIsSingleThreaded(),
+		SingleThreaded: singleThreaded,
 	}
 	program := compiler.NewProgram(programOptions)
 	return program

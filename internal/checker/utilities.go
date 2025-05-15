@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
@@ -219,38 +220,6 @@ func getNameFromImportDeclaration(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func isValidTypeOnlyAliasUseSite(useSite *ast.Node) bool {
-	return useSite.Flags&ast.NodeFlagsAmbient != 0 ||
-		ast.IsPartOfTypeQuery(useSite) ||
-		isIdentifierInNonEmittingHeritageClause(useSite) ||
-		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
-		!(ast.IsExpressionNode(useSite) || isShorthandPropertyNameUseSite(useSite))
-}
-
-func isIdentifierInNonEmittingHeritageClause(node *ast.Node) bool {
-	if !ast.IsIdentifier(node) {
-		return false
-	}
-	parent := node.Parent
-	for ast.IsPropertyAccessExpression(parent) || ast.IsExpressionWithTypeArguments(parent) {
-		parent = parent.Parent
-	}
-	return ast.IsHeritageClause(parent) && (parent.AsHeritageClause().Token == ast.KindImplementsKeyword || ast.IsInterfaceDeclaration(parent.Parent))
-}
-
-func isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(node *ast.Node) bool {
-	for ast.NodeKindIs(node, ast.KindIdentifier, ast.KindPropertyAccessExpression) {
-		node = node.Parent
-	}
-	if node.Kind != ast.KindComputedPropertyName {
-		return false
-	}
-	if ast.HasSyntacticModifier(node.Parent, ast.ModifierFlagsAbstract) {
-		return true
-	}
-	return ast.NodeKindIs(node.Parent.Parent, ast.KindInterfaceDeclaration, ast.KindTypeLiteral)
-}
-
 func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.Node, grandparent *ast.Node) bool {
 	// private names cannot be used with decorators yet
 	if useLegacyDecorators && node.Name() != nil && ast.IsPrivateIdentifier(node.Name()) {
@@ -283,25 +252,6 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 	}
 
 	return false
-}
-
-func isShorthandPropertyNameUseSite(useSite *ast.Node) bool {
-	return ast.IsIdentifier(useSite) && ast.IsShorthandPropertyAssignment(useSite.Parent) && useSite.Parent.AsShorthandPropertyAssignment().Name() == useSite
-}
-
-func isTypeDeclaration(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindTypeParameter, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindEnumDeclaration:
-		return true
-	case ast.KindImportClause:
-		return node.AsImportClause().IsTypeOnly
-	case ast.KindImportSpecifier:
-		return node.Parent.Parent.AsImportClause().IsTypeOnly
-	case ast.KindExportSpecifier:
-		return node.Parent.Parent.AsExportDeclaration().IsTypeOnly
-	default:
-		return false
-	}
 }
 
 func canHaveSymbol(node *ast.Node) bool {
@@ -1009,10 +959,6 @@ func getContainingFunctionOrClassStaticBlock(node *ast.Node) *ast.Node {
 	return ast.FindAncestor(node.Parent, ast.IsFunctionLikeOrClassStaticBlockDeclaration)
 }
 
-func isTypeReferenceType(node *ast.Node) bool {
-	return node.Kind == ast.KindTypeReference || node.Kind == ast.KindExpressionWithTypeArguments
-}
-
 func isNodeDescendantOf(node *ast.Node, ancestor *ast.Node) bool {
 	for node != nil {
 		if node == ancestor {
@@ -1065,28 +1011,6 @@ func isNumericLiteralName(name string) bool {
 	// This is desired behavior, because when indexing with them as numeric entities, you are indexing
 	// with the strings '"Infinity"', '"-Infinity"', and '"NaN"' respectively.
 	return jsnum.FromString(name).String() == name
-}
-
-func getPropertyNameForPropertyNameNode(name *ast.Node) string {
-	switch name.Kind {
-	case ast.KindIdentifier, ast.KindPrivateIdentifier, ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral,
-		ast.KindNumericLiteral, ast.KindBigIntLiteral, ast.KindJsxNamespacedName:
-		return name.Text()
-	case ast.KindComputedPropertyName:
-		nameExpression := name.AsComputedPropertyName().Expression
-		if ast.IsStringOrNumericLiteralLike(nameExpression) {
-			return nameExpression.Text()
-		}
-		if ast.IsSignedNumericLiteral(nameExpression) {
-			text := nameExpression.AsPrefixUnaryExpression().Operand.Text()
-			if nameExpression.AsPrefixUnaryExpression().Operator == ast.KindMinusToken {
-				text = "-" + text
-			}
-			return text
-		}
-		return ast.InternalSymbolNameMissing
-	}
-	panic("Unhandled case in getPropertyNameForPropertyNameNode")
 }
 
 func isThisProperty(node *ast.Node) bool {
@@ -1316,15 +1240,6 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 	}) != nil
 }
 
-func isVariableLike(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindBindingElement, ast.KindEnumMember, ast.KindParameter, ast.KindPropertyAssignment, ast.KindPropertyDeclaration,
-		ast.KindPropertySignature, ast.KindShorthandPropertyAssignment, ast.KindVariableDeclaration:
-		return true
-	}
-	return false
-}
-
 func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
 	for node != nil && node.Kind != kind {
 		node = node.Parent
@@ -1517,12 +1432,6 @@ func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
 	}
 
 	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
-}
-
-func isTypeDeclarationName(name *ast.Node) bool {
-	return name.Kind == ast.KindIdentifier &&
-		isTypeDeclaration(name.Parent) &&
-		ast.GetNameOfDeclaration(name.Parent) == name
 }
 
 func getIndexSymbolFromSymbolTable(symbolTable ast.SymbolTable) *ast.Symbol {
@@ -1946,7 +1855,7 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 	case ast.IsElementAccessExpression(expr):
 		baseStr := tryGetPropertyAccessOrIdentifierToString(expr.Expression())
 		if baseStr != "" && ast.IsPropertyName(expr.AsElementAccessExpression().ArgumentExpression) {
-			return baseStr + "." + getPropertyNameForPropertyNameNode(expr.AsElementAccessExpression().ArgumentExpression)
+			return baseStr + "." + ast.GetPropertyNameForPropertyNameNode(expr.AsElementAccessExpression().ArgumentExpression)
 		}
 	case ast.IsIdentifier(expr):
 		return expr.Text()
@@ -2071,4 +1980,28 @@ func SkipAlias(symbol *ast.Symbol, checker *Checker) *ast.Symbol {
 func IsExternalModuleSymbol(moduleSymbol *ast.Symbol) bool {
 	firstRune, _ := utf8.DecodeRuneInString(moduleSymbol.Name)
 	return moduleSymbol.Flags&ast.SymbolFlagsModule != 0 && firstRune == '"'
+}
+
+func (c *Checker) isCanceled() bool {
+	return c.ctx != nil && c.ctx.Err() != nil
+}
+
+func (c *Checker) checkNotCanceled() {
+	if c.wasCanceled {
+		panic("Checker was previously cancelled")
+	}
+}
+
+func ValueToString(value any) string {
+	switch value := value.(type) {
+	case string:
+		return "\"" + printer.EscapeString(value, '"') + "\""
+	case jsnum.Number:
+		return value.String()
+	case bool:
+		return core.IfElse(value, "true", "false")
+	case jsnum.PseudoBigInt:
+		return value.String() + "n"
+	}
+	panic("unhandled value type in valueToString")
 }

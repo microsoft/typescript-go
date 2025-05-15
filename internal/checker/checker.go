@@ -1,6 +1,7 @@
 package checker
 
 import (
+	"context"
 	"fmt"
 	"iter"
 	"maps"
@@ -571,6 +572,7 @@ type Checker struct {
 	useUnknownInCatchVariables                 bool
 	exactOptionalPropertyTypes                 bool
 	canCollectSymbolAliasAccessibilityData     bool
+	wasCanceled                                bool
 	arrayVariances                             []VarianceFlags
 	globals                                    ast.SymbolTable
 	globalSymbols                              []*ast.Symbol
@@ -832,6 +834,7 @@ type Checker struct {
 	_jsxNamespace                              string
 	_jsxFactoryEntity                          *ast.Node
 	skipDirectInferenceNodes                   core.Set[*ast.Node]
+	ctx                                        context.Context
 }
 
 func NewChecker(program Program, host Host) *Checker {
@@ -1131,6 +1134,14 @@ func (c *Checker) getGlobalTypeAliasSymbol(name string, arity int, reportErrors 
 	return symbol
 }
 
+func (c *Checker) GetTypeAliasTypeParameters(symbol *ast.Symbol) []*Type {
+	if symbol.Flags&ast.SymbolFlagsTypeAlias == 0 {
+		panic("Attempted to fetch type alias parameters for non-type-alias symbol")
+	}
+	c.getDeclaredTypeOfSymbol(symbol)
+	return c.typeAliasLinks.Get(symbol).typeParameters
+}
+
 func (c *Checker) getGlobalType(name string, arity int, reportErrors bool) *Type {
 	symbol := c.getGlobalSymbol(name, ast.SymbolFlagsType, core.IfElse(reportErrors, diagnostics.Cannot_find_global_type_0, nil))
 	if symbol != nil {
@@ -1345,7 +1356,7 @@ func (c *Checker) addUndefinedToGlobalsOrErrorOnRedeclaration() {
 	targetSymbol := c.globals[name]
 	if targetSymbol != nil {
 		for _, declaration := range targetSymbol.Declarations {
-			if !isTypeDeclaration(declaration) {
+			if !ast.IsTypeDeclaration(declaration) {
 				c.diagnostics.Add(createDiagnosticForNode(declaration, diagnostics.Declaration_name_conflicts_with_built_in_global_identifier_0, name))
 			}
 		}
@@ -1720,7 +1731,7 @@ func (c *Checker) onSuccessfullyResolvedSymbol(errorLocation *ast.Node, result *
 			c.error(errorLocation, diagnostics.Parameter_0_cannot_reference_identifier_1_declared_after_it, scanner.DeclarationNameToString(associatedDeclarationForContainingInitializerOrBindingName.Name()), scanner.DeclarationNameToString(errorLocation))
 		}
 	}
-	if errorLocation != nil && meaning&ast.SymbolFlagsValue != 0 && result.Flags&ast.SymbolFlagsAlias != 0 && result.Flags&ast.SymbolFlagsValue == 0 && !isValidTypeOnlyAliasUseSite(errorLocation) {
+	if errorLocation != nil && meaning&ast.SymbolFlagsValue != 0 && result.Flags&ast.SymbolFlagsAlias != 0 && result.Flags&ast.SymbolFlagsValue == 0 && !ast.IsValidTypeOnlyAliasUseSite(errorLocation) {
 		typeOnlyDeclaration := c.getTypeOnlyAliasDeclarationEx(result, ast.SymbolFlagsValue)
 		if typeOnlyDeclaration != nil {
 			message := core.IfElse(ast.NodeKindIs(typeOnlyDeclaration, ast.KindExportSpecifier, ast.KindExportDeclaration, ast.KindNamespaceExport),
@@ -2057,16 +2068,18 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 	return nil
 }
 
-func (c *Checker) CheckSourceFile(sourceFile *ast.SourceFile) {
+func (c *Checker) CheckSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
 	if SkipTypeChecking(sourceFile, c.compilerOptions) {
 		return
 	}
-	c.checkSourceFile(sourceFile)
+	c.checkSourceFile(ctx, sourceFile)
 }
 
-func (c *Checker) checkSourceFile(sourceFile *ast.SourceFile) {
+func (c *Checker) checkSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
+	c.checkNotCanceled()
 	links := c.sourceFileLinks.Get(sourceFile)
 	if !links.typeChecked {
+		c.ctx = ctx
 		// Grammar checking
 		c.checkGrammarSourceFile(sourceFile)
 		c.renamedBindingElementsInTypes = nil
@@ -2077,19 +2090,27 @@ func (c *Checker) checkSourceFile(sourceFile *ast.SourceFile) {
 			c.checkExternalModuleExports(sourceFile.AsNode())
 			c.registerForUnusedIdentifiersCheck(sourceFile.AsNode())
 		}
-		// This relies on the results of other lazy diagnostics, so must be computed after them
-		if !sourceFile.IsDeclarationFile && (c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
-			c.checkUnusedIdentifiers(links.identifierCheckNodes)
+		if ctx.Err() == nil {
+			// This relies on the results of other lazy diagnostics, so must be computed after them
+			if !sourceFile.IsDeclarationFile && (c.compilerOptions.NoUnusedLocals.IsTrue() || c.compilerOptions.NoUnusedParameters.IsTrue()) {
+				c.checkUnusedIdentifiers(links.identifierCheckNodes)
+			}
+			if !sourceFile.IsDeclarationFile {
+				c.checkUnusedRenamedBindingElements()
+			}
+		} else {
+			c.wasCanceled = true
 		}
-		if !sourceFile.IsDeclarationFile {
-			c.checkUnusedRenamedBindingElements()
-		}
+		c.ctx = nil
 		links.typeChecked = true
 	}
 }
 
 func (c *Checker) checkSourceElements(nodes []*ast.Node) {
 	for _, node := range nodes {
+		if c.isCanceled() {
+			break
+		}
 		c.checkSourceElement(node)
 	}
 }
@@ -2106,7 +2127,6 @@ func (c *Checker) checkSourceElement(node *ast.Node) bool {
 }
 
 func (c *Checker) checkSourceElementWorker(node *ast.Node) {
-	// !!! Cancellation
 	kind := node.Kind
 	if kind >= ast.KindFirstStatement && kind <= ast.KindLastStatement {
 		flowNode := node.FlowNodeData().FlowNode
@@ -2217,7 +2237,7 @@ func (c *Checker) checkSourceElementWorker(node *ast.Node) {
 		c.checkEnumMember(node)
 	case ast.KindModuleDeclaration:
 		c.checkModuleDeclaration(node)
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		c.checkImportDeclaration(node)
 	case ast.KindImportEqualsDeclaration:
 		c.checkImportEqualsDeclaration(node)
@@ -2258,6 +2278,9 @@ func (c *Checker) checkNodeDeferred(node *ast.Node) {
 func (c *Checker) checkDeferredNodes(context *ast.SourceFile) {
 	links := c.sourceFileLinks.Get(context)
 	for node := range links.deferredNodes.Values() {
+		if c.isCanceled() {
+			break
+		}
 		c.checkDeferredNode(node)
 	}
 	links.deferredNodes.Clear()
@@ -2303,6 +2326,9 @@ func (c *Checker) checkJSDocNodes(sourceFile *ast.SourceFile) {
 	// set parent references in JSDoc nodes.
 	for location, jsdocs := range sourceFile.JSDocCache() {
 		for _, jsdoc := range jsdocs {
+			if c.isCanceled() {
+				return
+			}
 			c.checkJSDocComments(jsdoc, location)
 			tags := jsdoc.AsJSDoc().Tags
 			if tags != nil {
@@ -2761,7 +2787,7 @@ func (c *Checker) checkTypeReferenceOrImport(node *ast.Node) {
 		}
 		symbol := c.getResolvedSymbolOrNil(node)
 		if symbol != nil {
-			if core.Some(symbol.Declarations, func(d *ast.Node) bool { return isTypeDeclaration(d) && d.Flags&ast.NodeFlagsDeprecated != 0 }) {
+			if core.Some(symbol.Declarations, func(d *ast.Node) bool { return ast.IsTypeDeclaration(d) && d.Flags&ast.NodeFlagsDeprecated != 0 }) {
 				c.addDeprecatedSuggestion(c.getDeprecatedSuggestionNode(node), symbol.Declarations, symbol.Name)
 			}
 		}
@@ -3522,10 +3548,10 @@ func (c *Checker) checkBlock(node *ast.Node) {
 	}
 	if ast.IsFunctionOrModuleBlock(node) {
 		saveFlowAnalysisDisabled := c.flowAnalysisDisabled
-		node.ForEachChild(c.checkSourceElement)
+		c.checkSourceElements(node.Statements())
 		c.flowAnalysisDisabled = saveFlowAnalysisDisabled
 	} else {
-		node.ForEachChild(c.checkSourceElement)
+		c.checkSourceElements(node.Statements())
 	}
 	if len(node.Locals()) != 0 {
 		c.registerForUnusedIdentifiersCheck(node)
@@ -4910,7 +4936,7 @@ func (c *Checker) checkModuleAugmentationElement(node *ast.Node) {
 			break
 		}
 		fallthrough
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		c.grammarErrorOnFirstToken(node, diagnostics.Imports_are_not_permitted_in_module_augmentations_Consider_moving_them_to_the_enclosing_external_module)
 	case ast.KindBindingElement, ast.KindVariableDeclaration:
 		name := node.Name()
@@ -5092,12 +5118,8 @@ func isExclusivelyTypeOnlyImportOrExport(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindExportDeclaration:
 		return node.AsExportDeclaration().IsTypeOnly
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		if importClause := node.AsImportDeclaration().ImportClause; importClause != nil {
-			return importClause.AsImportClause().IsTypeOnly
-		}
-	case ast.KindJSDocImportTag:
-		if importClause := node.AsJSDocImportTag().ImportClause; importClause != nil {
 			return importClause.AsImportClause().IsTypeOnly
 		}
 	}
@@ -5518,7 +5540,7 @@ func (c *Checker) checkVariableLikeDeclaration(node *ast.Node) {
 		}
 		if len(symbol.Declarations) > 1 {
 			if core.Some(symbol.Declarations, func(d *ast.Declaration) bool {
-				return d != node && isVariableLike(d) && !c.areDeclarationFlagsIdentical(d, node)
+				return d != node && ast.IsVariableLike(d) && !c.areDeclarationFlagsIdentical(d, node)
 			}) {
 				c.error(name, diagnostics.All_declarations_of_0_must_have_identical_modifiers, scanner.DeclarationNameToString(name))
 			}
@@ -6679,7 +6701,7 @@ func (c *Checker) checkUnusedLocalsAndParameters(node *ast.Node) {
 }
 
 func (c *Checker) reportUnusedLocal(node *ast.Node, name string) {
-	message := core.IfElse(isTypeDeclaration(node), diagnostics.X_0_is_declared_but_never_used, diagnostics.X_0_is_declared_but_its_value_is_never_read)
+	message := core.IfElse(ast.IsTypeDeclaration(node), diagnostics.X_0_is_declared_but_never_used, diagnostics.X_0_is_declared_but_its_value_is_never_read)
 	c.reportUnused(node, UnusedKindLocal, NewDiagnosticForNode(core.OrElse(node.Name(), node), message, name))
 }
 
@@ -13138,22 +13160,31 @@ func (c *Checker) getCannotFindNameDiagnosticForName(node *ast.Node) *diagnostic
 	}
 }
 
-func (c *Checker) GetDiagnostics(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+func (c *Checker) GetDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	c.checkNotCanceled()
 	if sourceFile != nil {
-		c.CheckSourceFile(sourceFile)
+		c.CheckSourceFile(ctx, sourceFile)
+		if c.wasCanceled {
+			return nil
+		}
 		return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName())
 	}
 	for _, file := range c.files {
-		c.CheckSourceFile(file)
+		c.CheckSourceFile(ctx, file)
+		if c.wasCanceled {
+			return nil
+		}
 	}
 	return c.diagnostics.GetDiagnostics()
 }
 
 func (c *Checker) GetDiagnosticsWithoutCheck(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	c.checkNotCanceled()
 	return c.diagnostics.GetDiagnosticsForFile(sourceFile.FileName())
 }
 
 func (c *Checker) GetGlobalDiagnostics() []*ast.Diagnostic {
+	c.checkNotCanceled()
 	return c.diagnostics.GetGlobalDiagnostics()
 }
 
@@ -14177,7 +14208,7 @@ func (c *Checker) getModuleSpecifierForImportOrExport(node *ast.Node) *ast.Node 
 
 func getModuleSpecifierFromNode(node *ast.Node) *ast.Node {
 	switch node.Kind {
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		return node.AsImportDeclaration().ModuleSpecifier
 	case ast.KindExportDeclaration:
 		return node.AsExportDeclaration().ModuleSpecifier
@@ -17129,7 +17160,7 @@ func (c *Checker) isVarConstLike(node *ast.Node) bool {
 }
 
 func (c *Checker) getEffectivePropertyNameForPropertyNameNode(node *ast.PropertyName) (string, bool) {
-	name := getPropertyNameForPropertyNameNode(node)
+	name := ast.GetPropertyNameForPropertyNameNode(node)
 	switch {
 	case name != ast.InternalSymbolNameMissing:
 		return name, true
@@ -21845,7 +21876,7 @@ func (c *Checker) getTypeFromTypeAliasReference(node *ast.Node, symbol *ast.Symb
 		var aliasTypeArguments []*Type
 		if newAliasSymbol != nil {
 			aliasTypeArguments = c.getTypeArgumentsForAliasSymbol(newAliasSymbol)
-		} else if isTypeReferenceType(node) {
+		} else if ast.IsTypeReferenceType(node) {
 			aliasSymbol := c.resolveTypeReferenceName(node, ast.SymbolFlagsAlias, true /*ignoreErrors*/)
 			// refers to an alias import/export/reexport - by making sure we use the target as an aliasSymbol,
 			// we ensure the exported symbol is used to refer to the type when it is reserialized later
@@ -24905,7 +24936,7 @@ func (c *Checker) getLiteralTypeFromPropertyName(name *ast.Node) *Type {
 	if ast.IsComputedPropertyName(name) {
 		return c.getRegularTypeOfLiteralType(c.checkComputedPropertyName(name))
 	}
-	propertyName := getPropertyNameForPropertyNameNode(name)
+	propertyName := ast.GetPropertyNameForPropertyNameNode(name)
 	if propertyName != ast.InternalSymbolNameMissing {
 		return c.getStringLiteralType(propertyName)
 	}
@@ -25492,7 +25523,7 @@ func (c *Checker) getPropertyNameFromIndex(indexType *Type, accessNode *ast.Node
 		return getPropertyNameFromType(indexType)
 	}
 	if accessNode != nil && ast.IsPropertyName(accessNode) {
-		return getPropertyNameForPropertyNameNode(accessNode)
+		return ast.GetPropertyNameForPropertyNameNode(accessNode)
 	}
 	return ast.InternalSymbolNameMissing
 }
@@ -29394,7 +29425,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		// 3). Require in Javascript
 		// 4). type A = import("./f/*gotToDefinitionHere*/oo")
 		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && ast.GetExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
-			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindExportDeclaration) && parent.AsImportDeclaration().ModuleSpecifier == node) ||
+			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindJSImportDeclaration || parent.Kind == ast.KindExportDeclaration) && parent.AsImportDeclaration().ModuleSpecifier == node) ||
 			ast.IsVariableDeclarationInitializedToRequire(grandParent) ||
 			(ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(grandParent) && grandParent.AsImportTypeNode().Argument == parent) {
 			return c.resolveExternalModuleName(node, node, ignoreErrors)
@@ -29640,13 +29671,13 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 		return c.errorType
 	}
 
-	if isTypeDeclaration(node) {
+	if ast.IsTypeDeclaration(node) {
 		// In this case, we call getSymbolOfDeclaration instead of getSymbolAtLocation because it is a declaration
 		symbol := c.getSymbolOfDeclaration(node)
 		return c.getDeclaredTypeOfSymbol(symbol)
 	}
 
-	if isTypeDeclarationName(node) {
+	if ast.IsTypeDeclarationName(node) {
 		symbol := c.getSymbolAtLocation(node, false /*ignoreErrors*/)
 		if symbol != nil {
 			return c.getDeclaredTypeOfSymbol(symbol)
@@ -29807,7 +29838,7 @@ func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *e
 		// emitter questions of this resolver will return the right information.
 		c.emitResolver.checkerMu.Lock()
 		defer c.emitResolver.checkerMu.Unlock()
-		c.checkSourceFile(file)
+		c.checkSourceFile(context.Background(), file)
 	}
 	return c.emitResolver
 }

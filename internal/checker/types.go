@@ -720,6 +720,10 @@ func (t *Type) IsStringLike() bool {
 	return t.flags&TypeFlagsStringLike != 0
 }
 
+func (t *Type) IsClass() bool {
+	return t.objectFlags&ObjectFlagsClass != 0
+}
+
 // TypeData
 
 type TypeData interface {
@@ -768,6 +772,10 @@ func (t *LiteralType) Value() any {
 	return t.value
 }
 
+func (t *LiteralType) String() string {
+	return ValueToString(t)
+}
+
 // UniqueESSymbolTypeData
 
 type UniqueESSymbolType struct {
@@ -805,6 +813,10 @@ func (t *StructuredType) CallSignatures() []*Signature {
 
 func (t *StructuredType) ConstructSignatures() []*Signature {
 	return slices.Clip(t.signatures[t.callSignatureCount:])
+}
+
+func (t *StructuredType) Properties() []*ast.Symbol {
+	return t.properties
 }
 
 // Except for tuple type references and reverse mapped types, all object types have an associated symbol.

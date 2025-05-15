@@ -5,7 +5,6 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -344,17 +343,23 @@ func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosin
 }
 
 func (c *Checker) valueToString(value any) string {
-	switch value := value.(type) {
-	case string:
-		return "\"" + printer.EscapeString(value, '"') + "\""
-	case jsnum.Number:
-		return value.String()
-	case bool:
-		return core.IfElse(value, "true", "false")
-	case jsnum.PseudoBigInt:
-		return value.String() + "n"
-	}
-	panic("unhandled value type in valueToString")
+	return ValueToString(value)
+}
+
+func (c *Checker) WriteSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, flags SymbolFormatFlags, writer printer.EmitTextWriter) string {
+	return c.symbolToStringEx(symbol, enclosingDeclaration, meaning, flags, writer)
+}
+
+func (c *Checker) WriteType(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
+	return c.typeToStringEx(t, enclosingDeclaration, flags, writer)
+}
+
+func (c *Checker) WriteSignature(s *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
+	return c.signatureToStringEx(s, enclosingDeclaration, flags, writer)
+}
+
+func (c *Checker) WriteTypePredicate(p *TypePredicate, enclosingDeclaration *ast.Node, flags TypeFormatFlags, writer printer.EmitTextWriter) string {
+	return c.typePredicateToStringEx(p, enclosingDeclaration, flags, writer)
 }
 
 func (c *Checker) formatUnionTypes(types []*Type) []*Type {
