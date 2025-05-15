@@ -2,6 +2,15 @@
 
 [Not sure what this is? Read the announcement post!](https://devblogs.microsoft.com/typescript/typescript-native-port/)
 
+## Preview
+
+A preview build is available on npm as `@typescript/native-preview`.
+
+```sh
+npm install @typescript/native-preview
+npx tsgo # Use this as you would tsc.
+```
+
 ## How to Build and Run
 
 This repo uses [Go 1.24 or higher](https://go.dev/dl/), [Rust 1.85 or higher](https://www.rust-lang.org/tools/install), [Node.js with npm](https://nodejs.org/), and [`hereby`](https://www.npmjs.com/package/hereby).
