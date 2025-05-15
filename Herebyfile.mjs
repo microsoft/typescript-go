@@ -851,6 +851,9 @@ export const buildNativePreviewExtensions = task({
 
         await rimraf("./_extension/lib");
 
+        const version = getVersion();
+        const isPrerelease = version.includes("-");
+
         for (const [os, arch] of supportedPlatforms) {
             // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
             const target = `${os}-${arch === "arm" ? "armhf" : arch}`;
@@ -859,7 +862,7 @@ export const buildNativePreviewExtensions = task({
             const outVsix = path.join(outDir, `typescript-native-preview.${target}.vsix`);
 
             try {
-                await $({ cwd: path.join(__dirname, "_extension") })`vsce package --skip-license --no-dependencies --out ${outVsix} --target ${target}`;
+                await $({ cwd: path.join(__dirname, "_extension") })`vsce package ${version} ${isPrerelease ? ["--pre-release"] : []} --no-update-package-json --no-dependencies --out ${outVsix} --target ${target}`;
             }
             finally {
                 await rimraf("./_extension/lib");

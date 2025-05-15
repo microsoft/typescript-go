@@ -65,7 +65,8 @@
     "main": "./dist/extension.js",
     "files": [
         "dist",
-        "lib"
+        "lib",
+        "LICENSE"
     ],
     "scripts": {
         "build": "tsc",
