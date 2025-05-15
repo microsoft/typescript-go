@@ -218,10 +218,10 @@ func (p *Program) CheckSourceFiles(ctx context.Context) {
 	wg := core.NewWorkGroup(p.singleThreaded())
 	checkers, done := p.checkerPool.GetAllCheckers(ctx)
 	defer done()
-	for index, checker := range checkers {
+	for _, checker := range checkers {
 		wg.Queue(func() {
-			for i := index; i < len(p.files); i += len(checkers) {
-				checker.CheckSourceFile(ctx, p.files[i])
+			for file := range p.checkerPool.Files(checker) {
+				checker.CheckSourceFile(ctx, file)
 			}
 		})
 	}
