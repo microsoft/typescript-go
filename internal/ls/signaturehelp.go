@@ -233,8 +233,6 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 	if argumentInfo.argumentIndex == nil {
 		if clientOptions.SignatureInformation.NoActiveParameterSupport != nil && *clientOptions.SignatureInformation.NoActiveParameterSupport {
 			activeParameter = nil
-		} else {
-			activeParameter = ptrTo(lsproto.ToNullable(uint32(0)))
 		}
 	} else {
 		activeParameter = ptrTo(lsproto.ToNullable(uint32(*argumentInfo.argumentIndex)))
@@ -253,12 +251,7 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 		if -1 < firstRest && firstRest < len(*activeSignature.Parameters)-1 {
 			// We don't have any code to get this correct; instead, don't highlight a current parameter AT ALL
 			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(*activeSignature.Parameters))))
-		} else {
-			if help.ActiveParameter != nil && *&help.ActiveParameter.Value > uint32(len(*activeSignature.Parameters)-1) {
-				help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(*activeSignature.Parameters) - 1)))
-			}
 		}
-
 		if help.ActiveParameter != nil && *&help.ActiveParameter.Value > uint32(len(*activeSignature.Parameters)-1) {
 			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(*activeSignature.Parameters) - 1)))
 		}
@@ -327,7 +320,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 	}
 
 	// Creating display parts for parameters. For example, <T>(a: string, b: number)
-	lists := c.GetExpandedParameters(candidateSignature, false)
+	lists := c.GetExpandedParameters(candidateSignature, ptrTo(false))
 
 	var result []*signatureHelpItemInfo
 	parameterLabels := []string{}
@@ -369,7 +362,7 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 	}
 
 	// Creating display parts for parameters. For example, (a: string, b: number)
-	lists := c.GetExpandedParameters(candidateSignature, false)
+	lists := c.GetExpandedParameters(candidateSignature, ptrTo(false))
 
 	isVariadic := func(parameterList []*ast.Symbol) bool {
 		if !c.HasEffectiveRestParameter(candidateSignature) {
@@ -784,10 +777,10 @@ func getArgumentIndexOrCount(arguments []*ast.Node, node *ast.Node, c *checker.C
 	skipComma := false
 	for _, arg := range arguments {
 		if node != nil && arg == node {
+			if argumentIndex == nil {
+				argumentIndex = ptrTo(0)
+			}
 			if !skipComma && arg.Kind == ast.KindCommaToken {
-				if argumentIndex == nil {
-					argumentIndex = ptrTo(0)
-				}
 				*argumentIndex++
 			}
 			return argumentIndex

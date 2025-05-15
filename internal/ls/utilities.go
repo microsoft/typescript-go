@@ -514,7 +514,7 @@ func isTagName(node *ast.Node) bool {
 
 func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Node) bool {
 	if previousToken != nil && ast.IsStringTextContainingNode(previousToken) {
-		start := previousToken.Pos()
+		start := astnav.GetStartOfNode(previousToken, sourceFile, false /*includeJSDoc*/)
 		end := previousToken.End()
 
 		// To be "in" one of these literals, the position has to be:
@@ -527,7 +527,6 @@ func IsInString(sourceFile *ast.SourceFile, position int, previousToken *ast.Nod
 
 		if position == end {
 			return ast.IsUnterminatedLiteral(previousToken)
-			//return !!(previousToken as LiteralExpression).isUnterminated;
 		}
 	}
 	return false

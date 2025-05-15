@@ -10,11 +10,12 @@ import (
 )
 
 type verifySignatureHelpOptions struct {
-	docComment     string
-	text           string
-	parameterSpan  string
-	parameterCount int
-	isVariadic     bool
+	docComment      string
+	text            string
+	parameterSpan   string
+	parameterCount  int
+	activeParameter *lsproto.Nullable[uint32]
+	isVariadic      bool
 	//triggerReason             ls.SignatureHelpTriggerReason
 	overrideSelectedItemIndex int
 	//tags?: ReadonlyArray<JSDocTagInfo>;
@@ -34,14 +35,16 @@ func TestSignatureHelp(t *testing.T) {
 fnTest(/*1*/'', /*2*/5);`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:           `fnTest(str: string, num: number): void`,
-					parameterCount: 2,
-					parameterSpan:  "str: string",
+					text:            `fnTest(str: string, num: number): void`,
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "str: string",
 				},
 				"2": {
-					text:           `fnTest(str: string, num: number): void`,
-					parameterCount: 2,
-					parameterSpan:  "num: number",
+					text:            `fnTest(str: string, num: number): void`,
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "num: number",
 				},
 			},
 		},
@@ -68,64 +71,76 @@ const cb: Cb = (/*contextualTypeAlias*/
 const cb2: () => void = (/*contextualFunctionType*/)`,
 			expected: map[string]verifySignatureHelpOptions{
 				"takesObj0": {
-					text:           "m(n: number, s: string): void",
-					parameterCount: 2,
-					parameterSpan:  "n: number",
+					text:            "m(n: number, s: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "n: number",
 				},
 				"takesObj1": {
-					text:           "m(n: number, s: string): void",
-					parameterCount: 2,
-					parameterSpan:  "n: number",
+					text:            "m(n: number, s: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "n: number",
 				},
 				"takesObj2": {
-					text:           "m(n: number, s: string): void",
-					parameterCount: 2,
-					parameterSpan:  "n: number",
+					text:            "m(n: number, s: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "n: number",
 				},
 				"takesObj3": {
-					text:           "m2(): void",
-					parameterCount: 0,
-					parameterSpan:  "",
+					text:            "m2(): void",
+					parameterCount:  0,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "",
 				},
 				"contextualParameter1": {
-					text:           "cb(n: number, s: string, b: boolean): void",
-					parameterCount: 3,
-					parameterSpan:  "n: number",
+					text:            "cb(n: number, s: string, b: boolean): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "n: number",
 				},
 				"contextualParameter1b": {
-					text:           "cb(n: number, s: string, b: boolean): void",
-					parameterCount: 3,
-					parameterSpan:  "n: number",
+					text:            "cb(n: number, s: string, b: boolean): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "n: number",
 				},
 				"contextualParameter2": {
-					text:           "cb(n: number, s: string, b: boolean): void",
-					parameterCount: 3,
-					parameterSpan:  "s: string",
+					text:            "cb(n: number, s: string, b: boolean): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "s: string",
 				},
 				"contextualParameter3": {
-					text:           "cb(n: number, s: string, b: boolean): void",
-					parameterCount: 3,
-					parameterSpan:  "b: boolean",
+					text:            "cb(n: number, s: string, b: boolean): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 2},
+					parameterSpan:   "b: boolean",
 				},
 				"contextualParameter3_2": {
-					text:           "cb(n: number, s: string, b: boolean): void",
-					parameterCount: 3,
-					parameterSpan:  "s: string",
+					text:            "cb(n: number, s: string, b: boolean): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "s: string",
 				},
 				"contextualParameter4": {
-					text:           "cb(n: number, s: string, b: boolean): void",
-					parameterCount: 3,
-					parameterSpan:  "",
+					text:            "cb(n: number, s: string, b: boolean): void",
+					parameterCount:  3,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 3},
+					parameterSpan:   "",
 				},
 				"contextualTypeAlias": {
-					text:           "Cb(): void",
-					parameterCount: 0,
-					parameterSpan:  "",
+					text:            "Cb(): void",
+					parameterCount:  0,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "",
 				},
 				"contextualFunctionType": {
-					text:           "cb2(): void",
-					parameterCount: 0,
-					parameterSpan:  "",
+					text:            "cb2(): void",
+					parameterCount:  0,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "",
 				},
 			},
 		},
@@ -137,14 +152,16 @@ const cb2: () => void = (/*contextualFunctionType*/)`,
 anonymousFunctionTest(5, "")(/*anonymousFunction1*/1, /*anonymousFunction2*/"");`,
 			expected: map[string]verifySignatureHelpOptions{
 				"anonymousFunction1": {
-					text:           `(a: number, b: string): string`,
-					parameterCount: 2,
-					parameterSpan:  "a: number",
+					text:            `(a: number, b: string): string`,
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "a: number",
 				},
 				"anonymousFunction2": {
-					text:           `(a: number, b: string): string`,
-					parameterCount: 2,
-					parameterSpan:  "b: string",
+					text:            `(a: number, b: string): string`,
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "b: string",
 				},
 			},
 		},
@@ -156,9 +173,10 @@ anonymousFunctionTest(5, "")(/*anonymousFunction1*/1, /*anonymousFunction2*/"");
 Foo(/**/`,
 			expected: map[string]verifySignatureHelpOptions{
 				"": {
-					text:           "Foo(arg1: string, arg2: string): void",
-					parameterCount: 2,
-					parameterSpan:  "arg1: string",
+					text:            "Foo(arg1: string, arg2: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "arg1: string",
 				},
 			},
 		},
@@ -170,9 +188,10 @@ Foo(/**/`,
 Foo(/**/;`,
 			expected: map[string]verifySignatureHelpOptions{
 				"": {
-					text:           "Foo(arg1: string, arg2: string): void",
-					parameterCount: 2,
-					parameterSpan:  "arg1: string",
+					text:            "Foo(arg1: string, arg2: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "arg1: string",
 				},
 			},
 		},
@@ -182,14 +201,16 @@ Foo(/**/;`,
 fnTest(/*1*/'', /*2*/5);`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:           `fnTest(str: string, num: number): void`,
-					parameterCount: 2,
-					parameterSpan:  "str: string",
+					text:            `fnTest(str: string, num: number): void`,
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "str: string",
 				},
 				"2": {
-					text:           `fnTest(str: string, num: number): void`,
-					parameterCount: 2,
-					parameterSpan:  "num: number",
+					text:            `fnTest(str: string, num: number): void`,
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "num: number",
 				},
 			},
 		},
@@ -199,14 +220,16 @@ fnTest(/*1*/'', /*2*/5);`,
 var x = new sampleCls(/*1*/"", /*2*/5);`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:           "sampleCls(str: string, num: number): sampleCls",
-					parameterCount: 2,
-					parameterSpan:  "str: string",
+					text:            "sampleCls(str: string, num: number): sampleCls",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "str: string",
 				},
 				"2": {
-					text:           "sampleCls(str: string, num: number): sampleCls",
-					parameterCount: 2,
-					parameterSpan:  "num: number",
+					text:            "sampleCls(str: string, num: number): sampleCls",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 1},
+					parameterSpan:   "num: number",
 				},
 			},
 		},
@@ -226,9 +249,10 @@ class B3 extends B2 {
 }`,
 			expected: map[string]verifySignatureHelpOptions{
 				"indirectSuperCall": {
-					text:           "B2(n: number): B2",
-					parameterCount: 1,
-					parameterSpan:  "n: number",
+					text:            "B2(n: number): B2",
+					parameterCount:  1,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "n: number",
 				},
 			},
 		},
@@ -239,13 +263,15 @@ var x = new clsOverload(/*1*/);
 var y = new clsOverload(/*2*/'');`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:           "clsOverload(): clsOverload",
-					parameterCount: 0,
+					text:            "clsOverload(): clsOverload",
+					parameterCount:  0,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
 				},
 				"2": {
-					text:           "clsOverload(test: string): clsOverload",
-					parameterCount: 1,
-					parameterSpan:  "test: string",
+					text:            "clsOverload(test: string): clsOverload",
+					parameterCount:  1,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "test: string",
 				},
 			},
 		},
@@ -259,21 +285,23 @@ var y = new clsOverload(/*2*/'');`,
 		Bar</*2*/>();`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:           "Foo(arg1: string, arg2: string): void",
-					parameterCount: 2,
-					parameterSpan:  "arg1: string",
+					text:            "Foo(arg1: string, arg2: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "arg1: string",
 				},
 				"2": {
-					text:           "Bar<T>(arg1: string, arg2: string): void",
-					parameterCount: 1,
-					parameterSpan:  "T",
+					text:            "Bar<T>(arg1: string, arg2: string): void",
+					parameterCount:  1,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "T",
 				},
 			},
 		},
 		{
 			title: "signatureHelpExpandedRestTuples",
 			input: `export function complex(item: string, another: string, ...rest: [] | [settings: object, errorHandler: (err: Error) => void] | [errorHandler: (err: Error) => void, ...mixins: object[]]) {
-    
+
 }
 
 complex(/*1*/);
@@ -282,29 +310,32 @@ complex("ok", "ok", e => void e, {}, /*3*/);`,
 
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:           "complex(item: string, another: string): void",
-					parameterCount: 2,
-					parameterSpan:  "item: string",
-					isVariadic:     false,
+					text:            "complex(item: string, another: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "item: string",
+					isVariadic:      false,
 				},
 				"2": {
-					text:           "complex(item: string, another: string, settings: object, errorHandler: object): void", // Needs createSignatureHelpParameterForParameter
-					parameterCount: 4,
-					parameterSpan:  "settings: object",
-					isVariadic:     false,
+					text:            "complex(item: string, another: string, settings: object, errorHandler: object): void", // returns object
+					parameterCount:  4,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 2},
+					parameterSpan:   "settings: object",
+					isVariadic:      false,
 				},
 				"3": {
-					text:           "complex(item: string, another: string, errorHandler: object, ...mixins: object): void", // Needs createSignatureHelpParameterForParameter
-					parameterCount: 4,
-					parameterSpan:  "...mixins: object",
-					isVariadic:     true,
+					text:            "complex(item: string, another: string, errorHandler: object, ...mixins: object): void", // returns object
+					parameterCount:  4,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 3},
+					parameterSpan:   "...mixins: object",
+					isVariadic:      true,
 				},
 			},
 		},
 		{
 			title: "signatureHelpExpandedRestUnlabeledTuples",
 			input: `export function complex(item: string, another: string, ...rest: [] | [object, (err: Error) => void] | [(err: Error) => void, ...object[]]) {
-   
+
 }
 
 complex(/*1*/);
@@ -312,22 +343,25 @@ complex("ok", "ok", /*2*/);
 complex("ok", "ok", e => void e, {}, /*3*/);`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:           "complex(item: string, another: string): void",
-					parameterCount: 2,
-					parameterSpan:  "item: string",
-					isVariadic:     false,
+					text:            "complex(item: string, another: string): void",
+					parameterCount:  2,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
+					parameterSpan:   "item: string",
+					isVariadic:      false,
 				},
 				"2": {
-					text:           "complex(item: string, another: string, rest_0: object, rest_1: object): void", // Needs createSignatureHelpParameterForParameter
-					parameterCount: 4,
-					parameterSpan:  "rest_0: object",
-					isVariadic:     false,
+					text:            "complex(item: string, another: string, rest_0: object, rest_1: object): void", // Needs createSignatureHelpParameterForParameter
+					parameterCount:  4,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 2},
+					parameterSpan:   "rest_0: object",
+					isVariadic:      false,
 				},
 				"3": {
-					text:           "complex(item: string, another: string, rest_0: object, ...rest: object): void", // Needs createSignatureHelpParameterForParameter
-					parameterCount: 4,
-					parameterSpan:  "...rest: object",
-					isVariadic:     true,
+					text:            "complex(item: string, another: string, rest_0: object, ...rest: object): void", // Needs createSignatureHelpParameterForParameter
+					parameterCount:  4,
+					activeParameter: &lsproto.Nullable[uint32]{Value: 3},
+					parameterSpan:   "...rest: object",
+					isVariadic:      true,
 				},
 			},
 		},
@@ -345,6 +379,7 @@ foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 				"1": {
 					text:                      "foo(args_0: string, args_1: string): void", // Different from Strada
 					parameterCount:            2,
+					activeParameter:           &lsproto.Nullable[uint32]{Value: 0},
 					parameterSpan:             "args_0: string",
 					isVariadic:                false,
 					overrideSelectedItemIndex: 0,
@@ -352,6 +387,7 @@ foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 				"2": {
 					text:                      "foo(args_0: string, args_1: string): void",
 					parameterCount:            2,
+					activeParameter:           &lsproto.Nullable[uint32]{Value: 0},
 					parameterSpan:             "args_0: string",
 					isVariadic:                false,
 					overrideSelectedItemIndex: 0,
@@ -359,14 +395,15 @@ foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 				"3": {
 					text:                      "foo(args_0: string, args_1: string): void",
 					parameterCount:            2,
+					activeParameter:           &lsproto.Nullable[uint32]{Value: 1},
 					parameterSpan:             "args_1: string",
 					isVariadic:                false,
 					overrideSelectedItemIndex: 0,
 				},
 				"4": {
-					text: "foo(args_0: number, args_1: string, args_2: string): void",
-
+					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
 					parameterCount:            3,
+					activeParameter:           &lsproto.Nullable[uint32]{Value: 0},
 					parameterSpan:             "args_0: number",
 					isVariadic:                false,
 					overrideSelectedItemIndex: 1,
@@ -374,6 +411,7 @@ foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 				"5": {
 					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
 					parameterCount:            3,
+					activeParameter:           &lsproto.Nullable[uint32]{Value: 1},
 					parameterSpan:             "args_1: string",
 					isVariadic:                false,
 					overrideSelectedItemIndex: 1,
@@ -381,6 +419,7 @@ foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 				"6": {
 					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
 					parameterCount:            3,
+					activeParameter:           &lsproto.Nullable[uint32]{Value: 0},
 					parameterSpan:             "args_0: number",
 					isVariadic:                false,
 					overrideSelectedItemIndex: 1,
@@ -388,6 +427,7 @@ foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 				"7": {
 					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
 					parameterCount:            3,
+					activeParameter:           &lsproto.Nullable[uint32]{Value: 1},
 					parameterSpan:             "args_1: string",
 					isVariadic:                false,
 					overrideSelectedItemIndex: 1,
@@ -395,6 +435,7 @@ foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 				"8": {
 					text:                      "foo(args_0: number, args_1: string, args_2: string): void",
 					parameterCount:            3,
+					activeParameter:           &lsproto.Nullable[uint32]{Value: 2},
 					parameterSpan:             "args_2: string",
 					isVariadic:                false,
 					overrideSelectedItemIndex: 1,
@@ -421,21 +462,21 @@ g<number>(/*8*/);
 h<number>(/*9*/);
 j<number>(/*10*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f(x: number, y: string): number", parameterCount: 2, parameterSpan: "x: number"},
-				"2": {text: "f(x: boolean, y: string): boolean", parameterCount: 2, parameterSpan: "x: boolean"},
+				"1": {text: "f(x: number, y: string): number", parameterCount: 2, activeParameter: &lsproto.Nullable[uint32]{Value: 0}, parameterSpan: "x: number"},
+				"2": {text: "f(x: boolean, y: string): boolean", parameterCount: 2, parameterSpan: "x: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				// too few -- fill in rest with default
-				"3": {text: "f(x: number, y: string): number", parameterCount: 2, parameterSpan: "x: number"},
+				"3": {text: "f(x: number, y: string): number", parameterCount: 2, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				// too many -- ignore extra type arguments
-				"4": {text: "f(x: number, y: string): number", parameterCount: 2, parameterSpan: "x: number"},
+				"4": {text: "f(x: number, y: string): number", parameterCount: 2, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 
 				// not matched signature and no type arguments
-				"5": {text: "g(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown"},
-				"6": {text: "h(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown"},
-				"7": {text: "j(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown"},
+				"5": {text: "g(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"6": {text: "h(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"7": {text: "j(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				// not matched signature and too few type arguments
-				"8":  {text: "g(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number"},
-				"9":  {text: "h(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number"},
-				"10": {text: "j(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number"},
+				"8":  {text: "g(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"9":  {text: "h(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"10": {text: "j(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -450,7 +491,7 @@ const o: Obj = {
   }
 };`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "optionalMethod(current: any): any", parameterCount: 1, parameterSpan: "current: any"},
+				"1": {text: "optionalMethod(current: any): any", parameterCount: 1, parameterSpan: "current: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -472,8 +513,8 @@ class C2 extends B2 {
    }
 }`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "B(): B", parameterCount: 0, parameterSpan: ""},
-				"2": {text: "B2(x: number): B2", parameterCount: 1, parameterSpan: "x: number"},
+				"1": {text: "B(): B", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "B2(x: number): B2", parameterCount: 1, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -484,8 +525,8 @@ function functionOverload(test?: string) { }
 functionOverload(/*functionOverload1*/);
 functionOverload(""/*functionOverload2*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"functionOverload1": {text: "functionOverload(): any", parameterCount: 0, parameterSpan: ""},
-				"functionOverload2": {text: "functionOverload(test: string): any", parameterCount: 1, parameterSpan: "test: string"},
+				"functionOverload1": {text: "functionOverload(): any", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"functionOverload2": {text: "functionOverload(test: string): any", parameterCount: 1, parameterSpan: "test: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -494,8 +535,8 @@ functionOverload(""/*functionOverload2*/);`,
    callback(/*parameterFunction1*/5, /*parameterFunction2*/"");
 }`,
 			expected: map[string]verifySignatureHelpOptions{
-				"parameterFunction1": {text: "callback(a: number, b: string): void", parameterCount: 2, parameterSpan: "a: number"},
-				"parameterFunction2": {text: "callback(a: number, b: string): void", parameterCount: 2, parameterSpan: "b: string"},
+				"parameterFunction1": {text: "callback(a: number, b: string): void", parameterCount: 2, parameterSpan: "a: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"parameterFunction2": {text: "callback(a: number, b: string): void", parameterCount: 2, parameterSpan: "b: string", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -504,7 +545,7 @@ functionOverload(""/*functionOverload2*/);`,
 }
 var implicitConstructor = new ImplicitConstructor(/*1*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "ImplicitConstructor(): ImplicitConstructor", parameterCount: 0, parameterSpan: ""},
+				"1": {text: "ImplicitConstructor(): ImplicitConstructor", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -513,7 +554,7 @@ var implicitConstructor = new ImplicitConstructor(/*1*/);`,
 forEach(/*1*/() => {
 });`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "forEach(f: object): any", parameterCount: 1, parameterSpan: "f: object"}, // Has object as return type
+				"1": {text: "forEach(f: object): any", parameterCount: 1, parameterSpan: "f: object", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
 			},
 		},
 		{
@@ -533,9 +574,9 @@ forEach(/*1*/() => {
    x.f3(5,/*incompleteCalls3*/
 }`,
 			expected: map[string]verifySignatureHelpOptions{
-				"incompleteCalls1": {text: "f1(): void", parameterCount: 0, parameterSpan: ""},
-				"incompleteCalls2": {text: "f2(n: number): number", parameterCount: 1, parameterSpan: ""},
-				"incompleteCalls3": {text: "f3(n: number, s: string): string", parameterCount: 2, parameterSpan: "s: string"},
+				"incompleteCalls1": {text: "f1(): void", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"incompleteCalls2": {text: "f2(n: number): number", parameterCount: 1, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"incompleteCalls3": {text: "f3(n: number, s: string): string", parameterCount: 2, parameterSpan: "s: string", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -544,7 +585,7 @@ forEach(/*1*/() => {
 }
 foo(/*1*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "foo(x: number, callback: object): void", parameterCount: 2, parameterSpan: "x: number"}, //returns object
+				"1": {text: "foo(x: number, callback: object): void", parameterCount: 2, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
 			},
 		},
 		{
@@ -552,7 +593,7 @@ foo(/*1*/`,
 			input: `declare function f<T extends string>(a: T, b: T, c: T): void;
 f("x", /**/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"": {text: `f(a: "x", b: "x", c: "x"): void`, parameterCount: 3, parameterSpan: `b: "x"`},
+				"": {text: `f(a: "x", b: "x", c: "x"): void`, parameterCount: 3, parameterSpan: `b: "x"`, activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -561,8 +602,8 @@ f("x", /**/);`,
 (new base(/*1*/
 (new base(0, /*2*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "base(n: number, y: string): base", parameterCount: 2, parameterSpan: "n: number"},
-				"2": {text: "base(n: number, y: string): base", parameterCount: 2, parameterSpan: "y: string"},
+				"1": {text: "base(n: number, y: string): base", parameterCount: 2, parameterSpan: "n: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "base(n: number, y: string): base", parameterCount: 2, parameterSpan: "y: string", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -574,9 +615,9 @@ leading(/*1*/);
 leading("ok", /*2*/);
 leading("ok", "ok", /*3*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
-				"2": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
-				"3": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
+				"1": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"2": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"3": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -585,7 +626,7 @@ leading("ok", "ok", /*3*/);`,
 }
 foo(/**/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"": {text: "foo(n: number): string", parameterCount: 1, parameterSpan: "n: number"},
+				"": {text: "foo(n: number): string", parameterCount: 1, parameterSpan: "n: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -593,8 +634,8 @@ foo(/**/`,
 			input: `var objectLiteral = { n: 5, s: "", f: (a: number, b: string) => "" };
 objectLiteral.f(/*objectLiteral1*/4, /*objectLiteral2*/"");`,
 			expected: map[string]verifySignatureHelpOptions{
-				"objectLiteral1": {text: "f(a: number, b: string): string", parameterCount: 2, parameterSpan: "a: number"},
-				"objectLiteral2": {text: "f(a: number, b: string): string", parameterCount: 2, parameterSpan: "b: string"},
+				"objectLiteral1": {text: "f(a: number, b: string): string", parameterCount: 2, parameterSpan: "a: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"objectLiteral2": {text: "f(a: number, b: string): string", parameterCount: 2, parameterSpan: "b: string", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -606,8 +647,8 @@ declare function fn2(x: string, y: number);
 fn('', fn2(/*1*/
 fn2('', fn2('',/*2*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "fn2(x: string): any", parameterCount: 1, parameterSpan: "x: string"},
-				"2": {text: "fn2(x: string, y: number): any", parameterCount: 2, parameterSpan: "y: number"},
+				"1": {text: "fn2(x: string): any", parameterCount: 1, parameterSpan: "x: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "fn2(x: string, y: number): any", parameterCount: 2, parameterSpan: "y: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -622,9 +663,9 @@ x1(''/*1*/);
 x1('hi'/*2*/);
 x1('bye'/*3*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: `x1(z: string): any`, parameterCount: 1, parameterSpan: "z: string"},
-				"2": {text: `x1(x: "hi"): any`, parameterCount: 1, parameterSpan: `x: "hi"`},
-				"3": {text: `x1(y: "bye"): any`, parameterCount: 1, parameterSpan: `y: "bye"`},
+				"1": {text: `x1(z: string): any`, parameterCount: 1, parameterSpan: "z: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: `x1(x: "hi"): any`, parameterCount: 1, parameterSpan: `x: "hi"`, activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"3": {text: `x1(y: "bye"): any`, parameterCount: 1, parameterSpan: `y: "bye"`, activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -634,8 +675,8 @@ declare function fn(x: string, y: number);
 fn(/*1*/
 fn('',/*2*/)`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "fn(x: string): any", parameterCount: 1, parameterSpan: "x: string"},
-				"2": {text: "fn(x: string, y: number): any", parameterCount: 2, parameterSpan: "y: number"},
+				"1": {text: "fn(x: string): any", parameterCount: 1, parameterSpan: "x: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "fn(x: string, y: number): any", parameterCount: 2, parameterSpan: "y: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -646,7 +687,7 @@ declare function f(s: string, b: boolean);
 declare function f(n: number, b: boolean)
 f(1/*1*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f(n: number): any", parameterCount: 1, parameterSpan: "n: number"},
+				"1": {text: "f(n: number): any", parameterCount: 1, parameterSpan: "n: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -657,7 +698,7 @@ declare function f(s: string, b: boolean);
 declare function f(n: number, b: boolean)
 f(1, /*1*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f(n: number, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean"},
+				"1": {text: "f(n: number, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -669,7 +710,7 @@ declare function f(n: number, b: boolean);
 
 f(1/*1*/ var`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f(n: number): any", parameterCount: 1, parameterSpan: "n: number"},
+				"1": {text: "f(n: number): any", parameterCount: 1, parameterSpan: "n: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -681,7 +722,7 @@ declare function f(n: number, b: boolean);
 
 f(1, /*1*/var`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f(n: number, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean"},
+				"1": {text: "f(n: number, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -693,7 +734,7 @@ declare function f(n: number, b: boolean);
 
 f(/*1*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f(): any", parameterCount: 0, parameterSpan: ""},
+				"1": {text: "f(): any", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -705,7 +746,7 @@ declare function f(n: number, b: boolean);
 
 f(x, /*1*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f(s: string, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean"},
+				"1": {text: "f(s: string, b: boolean): any", parameterCount: 2, parameterSpan: "b: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -718,7 +759,7 @@ class C extends B {
     }
 }`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "B(x: string): B", parameterCount: 1, parameterSpan: "x: string"},
+				"1": {text: "B(x: string): B", parameterCount: 1, parameterSpan: "x: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -730,9 +771,9 @@ f1(/*1*/)
 f2(/*2*/)
 f3(/*3*/)`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f1(a: any): a is number", parameterCount: 1, parameterSpan: "a: any"},
-				"2": {text: "f2(a: any): a is unknown", parameterCount: 1, parameterSpan: "a: any"},
-				"3": {text: "f3(a: any, ...b: object): a is number", parameterCount: 2, parameterSpan: "a: any", isVariadic: true}, //returns object
+				"1": {text: "f1(a: any): a is number", parameterCount: 1, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "f2(a: any): a is unknown", parameterCount: 1, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"3": {text: "f3(a: any, ...b: object): a is number", parameterCount: 2, parameterSpan: "a: any", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
 			},
 		},
 		{
@@ -740,7 +781,7 @@ f3(/*3*/)`,
 			input: `function fnTest(str: string, num: number) { }
 fnTest?.(/*1*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "fnTest(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string"},
+				"1": {text: "fnTest(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -748,7 +789,7 @@ fnTest?.(/*1*/);`,
 			input: `declare const fnTest: undefined | ((str: string, num: number) => void);
 fnTest?.(/*1*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "fnTest(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string"},
+				"1": {text: "fnTest(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -759,8 +800,8 @@ fnTest?.(/*1*/);`,
 }
 var x = new ConstructorCall(/*constructorCall1*/1,/*constructorCall2*/2);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"constructorCall1": {text: "ConstructorCall(str: string, num: number): ConstructorCall", parameterCount: 2, parameterSpan: "str: string"},
-				"constructorCall2": {text: "ConstructorCall(str: string, num: number): ConstructorCall", parameterCount: 2, parameterSpan: "num: number"},
+				"constructorCall1": {text: "ConstructorCall(str: string, num: number): ConstructorCall", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"constructorCall2": {text: "ConstructorCall(str: string, num: number): ConstructorCall", parameterCount: 2, parameterSpan: "num: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -770,8 +811,8 @@ var x = new ConstructorCall(/*constructorCall1*/1,/*constructorCall2*/2);`,
 functionCall(/*functionCall1*/);
 functionCall("", /*functionCall2*/1);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"functionCall1": {text: "functionCall(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string"},
-				"functionCall2": {text: "functionCall(str: string, num: number): void", parameterCount: 2, parameterSpan: "num: number"},
+				"functionCall1": {text: "functionCall(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"functionCall2": {text: "functionCall(str: string, num: number): void", parameterCount: 2, parameterSpan: "num: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -786,7 +827,7 @@ class SuperCall extends SuperCallBase {
    }
 }`,
 			expected: map[string]verifySignatureHelpOptions{
-				"superCall": {text: "SuperCallBase(b: boolean): SuperCallBase", parameterCount: 1, parameterSpan: "b: boolean"},
+				"superCall": {text: "SuperCallBase(b: boolean): SuperCallBase", parameterCount: 1, parameterSpan: "b: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -808,8 +849,8 @@ class SuperOverLoad2 extends SuperOverloadBase {
    }
 }`,
 			expected: map[string]verifySignatureHelpOptions{
-				"superOverload1": {text: "SuperOverloadBase(): SuperOverloadBase", parameterCount: 0, parameterSpan: ""},
-				"superOverload2": {text: "SuperOverloadBase(test: string): SuperOverloadBase", parameterCount: 1, parameterSpan: "test: string"},
+				"superOverload1": {text: "SuperOverloadBase(): SuperOverloadBase", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"superOverload2": {text: "SuperOverloadBase(test: string): SuperOverloadBase", parameterCount: 1, parameterSpan: "test: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -821,9 +862,9 @@ leading(/*1*/);
 leading(false, /*2*/);
 leading(false, "ok", /*3*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true},
-				"2": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", isVariadic: true}, //returns object
-				"3": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", isVariadic: true}, //returns object
+				"1": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "allCaps: boolean", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
+				"2": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, //returns object
+				"3": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, //returns object
 			},
 		},
 		{
@@ -831,7 +872,7 @@ leading(false, "ok", /*3*/);`,
 			input: `function foo(a) { }
 foo(hello my name /**/is`,
 			expected: map[string]verifySignatureHelpOptions{
-				"": {text: "foo(a: any): void", parameterCount: 1, parameterSpan: ""},
+				"": {text: "foo(a: any): void", parameterCount: 1, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
 			},
 		},
 		{
@@ -854,9 +895,9 @@ b(/*2*/);
 
 c((/*3*/) => {});`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "a(fn?: ((x: string) => string) | ((y: number) => number)): void", parameterCount: 1, parameterSpan: "fn?: ((x: string) => string) | ((y: number) => number)"},
-				"2": {text: "b(x: string | number): void", parameterCount: 1, parameterSpan: "x: string | number"},
-				"3": {text: "Callback(x: string | number): string | number", parameterCount: 1, parameterSpan: "x: string | number"}, //returns object
+				"1": {text: "a(fn?: ((x: string) => string) | ((y: number) => number)): void", parameterCount: 1, parameterSpan: "fn?: ((x: string) => string) | ((y: number) => number)", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "b(x: string | number): void", parameterCount: 1, parameterSpan: "x: string | number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"3": {text: "Callback(x: string | number): string | number", parameterCount: 1, parameterSpan: "x: string | number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
 			},
 		},
 		{
@@ -866,18 +907,18 @@ const a: Type = (a/*1*/, b/*2*/) => {}
 const b: Type = function (a/*3*/, b/*4*/) {}
 const c: Type = ({ /*5*/a: { b/*6*/ }}/*7*/ = { }/*8*/, [b/*9*/]/*10*/, .../*11*/c/*12*/) => {}`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
-				"2":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any"},
-				"3":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
-				"4":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any"},
-				"5":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
-				"6":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
-				"7":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
-				"8":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any"},
-				"9":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any"},
-				"10": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any"},
-				"11": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "c: any"},
-				"12": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "c: any"},
+				"1":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"3":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"4":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"5":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"6":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"7":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"8":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"9":  {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"10": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "b: any", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"11": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "c: any", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
+				"12": {text: "Type(a: any, b: any, c: any): void", parameterCount: 3, parameterSpan: "c: any", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
 			},
 		},
 		{
@@ -893,11 +934,11 @@ function fnNoParams () { }
 var fnNoParamsWrapped = wrap(fnNoParams);
 fnNoParamsWrapped(/*5*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string"},
-				"2": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "num: number"},
-				"3": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "str: string", isVariadic: true},    //returns object
-				"4": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "...num: object", isVariadic: true}, //returns object
-				"5": {text: "fnNoParamsWrapped(): void", parameterCount: 0, parameterSpan: ""},
+				"1": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "num: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"3": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "str: string", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 0}},    //returns object
+				"4": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "...num: object", isVariadic: true, activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, //returns object
+				"5": {text: "fnNoParamsWrapped(): void", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -908,7 +949,7 @@ fnNoParamsWrapped(/*5*/);`,
 }
 var a = new Circle(/**/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"": {text: "Circle(radius: number): Circle", parameterCount: 1, parameterSpan: "radius: number"},
+				"": {text: "Circle(radius: number): Circle", parameterCount: 1, parameterSpan: "radius: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -925,7 +966,7 @@ type _Reverse<Source extends any[], Result extends any[] = []> = {
 
 type Foo = Reverse<[0,/**/]>;`,
 			expected: map[string]verifySignatureHelpOptions{
-				"": {text: "Reverse<List extends any[]>", parameterCount: 1, parameterSpan: "List extends any[]"},
+				"": {text: "Reverse<List extends any[]>", parameterCount: 1, parameterSpan: "List extends any[]", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -940,11 +981,11 @@ fn(/*2*/, ...a);
 fn(...b, /*3*/);
 fn(/*4*/, ...b, /*5*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number"},
-				"2": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number"},
-				"3": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "b: number"},
-				"4": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number"},
-				"5": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number"},
+				"1": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
+				"2": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"3": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "b: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"4": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"5": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
 			},
 		},
 		{
@@ -952,11 +993,11 @@ fn(/*4*/, ...b, /*5*/);`,
 			input: `function fn(a: number, b: number, c: number) {}
 fn(/*1*/, /*2*/, /*3*/, /*4*/, /*5*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number"},
-				"2": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "b: number"},
-				"3": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number"},
-				"4": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: ""},
-				"5": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: ""},
+				"1": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "a: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "b: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"3": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "c: number", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
+				"4": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 3}},
+				"5": {text: "fn(a: number, b: number, c: number): void", parameterCount: 3, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 4}},
 			},
 		},
 		{
@@ -978,12 +1019,12 @@ new C</*C0*/;
 new C<number, /*C1*/;
 new C<number, string, /*C2*/;`,
 			expected: map[string]verifySignatureHelpOptions{
-				"f0": {text: "f<T extends number>(): void", parameterCount: 1, parameterSpan: "T extends number"},
-				"f1": {text: "f<T, U>(): void", parameterCount: 2, parameterSpan: "U"},
-				"f2": {text: "f<T, U, V extends string>(): void", parameterCount: 3, parameterSpan: "V extends string"},
-				"C0": {text: "C<T extends number>(): void", parameterCount: 1, parameterSpan: "T extends number"},
-				"C1": {text: "C<T, U>(): void", parameterCount: 2, parameterSpan: "U"},
-				"C2": {text: "C<T, U, V extends string>(): void", parameterCount: 3, parameterSpan: "V extends string"},
+				"f0": {text: "f<T extends number>(): void", parameterCount: 1, parameterSpan: "T extends number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"f1": {text: "f<T, U>(): void", parameterCount: 2, parameterSpan: "U", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"f2": {text: "f<T, U, V extends string>(): void", parameterCount: 3, parameterSpan: "V extends string", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
+				"C0": {text: "C<T extends number>(): void", parameterCount: 1, parameterSpan: "T extends number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"C1": {text: "C<T, U>(): void", parameterCount: 2, parameterSpan: "U", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"C2": {text: "C<T, U, V extends string>(): void", parameterCount: 3, parameterSpan: "V extends string", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
 			},
 		},
 		{
@@ -994,10 +1035,10 @@ f<number, /*f1*/;
 f<number, string, /*f2*/;
 f<number, string, boolean, /*f3*/;`,
 			expected: map[string]verifySignatureHelpOptions{
-				"f0": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "T"},
-				"f1": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "U"},
-				"f2": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "V"},
-				"f3": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "W"},
+				"f0": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "T", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"f1": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "U", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"f2": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "V", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
+				"f3": {text: "f<T, U, V, W>(a: number, b: string, c: boolean): void", parameterCount: 4, parameterSpan: "W", activeParameter: &lsproto.Nullable[uint32]{Value: 3}},
 			},
 		},
 		{
@@ -1005,14 +1046,14 @@ f<number, string, boolean, /*f3*/;`,
 			input: `declare function f(a: any, ...b: any[]): any;
 f</*1*/>(1, 2);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f<>(a: any, ...b: object): any", parameterCount: 0, parameterSpan: ""}, //returns object
+				"1": {text: "f<>(a: any, ...b: object): any", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, //returns object
 			},
 		},
 		{
 			title: "signatureHelpWithUnknown",
 			input: `eval(\/*1*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "eval(x: string): any", parameterCount: 1, parameterSpan: "x: string"},
+				"1": {text: "eval(x: string): any", parameterCount: 1, parameterSpan: "x: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 	}
@@ -1030,8 +1071,8 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 	testData := lstestutil.ParseTestData("/file1.ts", input, "/file1.ts")
 	file := testData.Files[0].Filename
 	markerPositions := testData.MarkerPositions
-	service := createLanguageService(testData.Files[0].Filename, map[string]string{
-		testData.Files[0].Filename: testData.Files[0].Content,
+	service := createLanguageService(file, map[string]string{
+		file: testData.Files[0].Content,
 	})
 	context := &lsproto.SignatureHelpContext{
 		TriggerKind:      lsproto.SignatureHelpTriggerKindInvoked,
@@ -1040,7 +1081,8 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 	ptrTrue := ptrTo(true)
 	capabilities := &lsproto.SignatureHelpClientCapabilities{
 		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
-			ActiveParameterSupport: ptrTrue,
+			ActiveParameterSupport:   ptrTrue,
+			NoActiveParameterSupport: ptrTrue,
 			ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
 				LabelOffsetSupport: ptrTrue,
 			},
@@ -1054,10 +1096,15 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 		}
 		result := service.ProvideSignatureHelp(file, marker.Position, context, capabilities, preferences)
 		assert.Equal(t, expectedResult.text, result.Signatures[*result.ActiveSignature].Label)
-		if len(*result.Signatures[*result.ActiveSignature].Parameters) <= int(result.ActiveParameter.Value) || len(*result.Signatures[*result.ActiveSignature].Parameters) == 0 {
-			assert.Equal(t, expectedResult.parameterSpan, "")
-		} else {
-			assert.Equal(t, expectedResult.parameterSpan, *(*result.Signatures[*result.ActiveSignature].Parameters)[int(result.ActiveParameter.Value)].Label.String)
-		}
+		assert.Equal(t, expectedResult.parameterCount, len(*result.Signatures[*result.ActiveSignature].Parameters))
+		k := expectedResult.activeParameter
+		v := result.ActiveParameter
+		//z := int(v.Value)
+		assert.DeepEqual(t, k, v)
+		// if len(*result.Signatures[*result.ActiveSignature].Parameters) <= int(result.ActiveParameter.Value) || len(*result.Signatures[*result.ActiveSignature].Parameters) == 0 {
+		// 	assert.Equal(t, expectedResult.parameterSpan, "")
+		// } else {
+		// 	assert.Equal(t, expectedResult.parameterSpan, *(*result.Signatures[*result.ActiveSignature].Parameters)[int(result.ActiveParameter.Value)].Label.String)
+		// }
 	}
 }

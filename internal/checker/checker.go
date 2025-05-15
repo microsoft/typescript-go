@@ -15269,13 +15269,7 @@ func (c *Checker) getTypeOfVariableOrParameterOrPropertyWorker(symbol *ast.Symbo
 		return c.anyType
 	}
 	if symbol.Flags&ast.SymbolFlagsModuleExports != 0 && symbol.ValueDeclaration != nil {
-		fileSymbol := c.getSymbolOfDeclaration(ast.GetSourceFileOfNode(symbol.ValueDeclaration).AsNode())
-		result := c.newSymbol(fileSymbol.Flags, "exports")
-		result.Parent = symbol
-		result.Declarations = fileSymbol.Declarations
-		result.ValueDeclaration = fileSymbol.ValueDeclaration
-		result.Members = maps.Clone(fileSymbol.Members)
-		result.Exports = maps.Clone(fileSymbol.Exports)
+		fileSymbol := c.resolveExternalModuleSymbol(symbol.ValueDeclaration.Symbol(), false /*dontResolveAlias*/)
 		members := make(ast.SymbolTable, 1)
 		members["exports"] = fileSymbol
 		return c.newAnonymousType(symbol, members, nil, nil, nil)
@@ -25881,16 +25875,16 @@ func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOn
 	c.symbolReferenceLinks.Get(target).referenceKinds |= ast.SymbolFlagsAll
 }
 
-func (c *Checker) GetExpandedParameters(signature *Signature, skipUnionExpanding bool) [][]*ast.Symbol {
+func (c *Checker) GetExpandedParameters(signature *Signature, skipUnionExpanding *bool) [][]*ast.Symbol {
 	if signatureHasRestParameter(signature) {
 		restIndex := len(signature.parameters) - 1
 		restSymbol := signature.parameters[restIndex]
 		restType := c.getTypeOfSymbol(restSymbol)
 		if IsTupleType(restType) {
 			return [][]*ast.Symbol{c.expandSignatureParametersWithTupleMembers(signature, restType.AsTypeReference(), restIndex, restSymbol)}
-		} else if !skipUnionExpanding && restType.flags&TypeFlagsUnion != 0 && core.Every(restType.Types(), IsTupleType) {
-			var result [][]*ast.Symbol
-			for _, t := range restType.Types() {
+		} else if skipUnionExpanding != nil && !*skipUnionExpanding && restType.flags&TypeFlagsUnion != 0 && core.Every(restType.AsUnionType().Types(), IsTupleType) {
+			result := [][]*ast.Symbol{}
+			for _, t := range restType.AsUnionType().Types() {
 				result = append(result, c.expandSignatureParametersWithTupleMembers(signature, t.AsTypeReference(), restIndex, restSymbol))
 			}
 			return result
