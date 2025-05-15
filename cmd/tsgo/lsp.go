@@ -62,31 +62,30 @@ func runLSP(args []string) int {
 func getGlobalTypingsCacheLocation() string {
 	switch runtime.GOOS {
 	case "windows":
-		{
-			basePath, err := os.UserCacheDir()
-			if err != nil {
-				if basePath, err = os.UserConfigDir(); err != nil {
-					if basePath, err = os.UserHomeDir(); err != nil {
-						if userProfile := os.Getenv("USERPROFILE"); userProfile != "" {
-							basePath = userProfile
-						} else if homeDrive, homePath := os.Getenv("HOMEDRIVE"), os.Getenv("HOMEPATH"); homeDrive != "" && homePath != "" {
-							basePath = homeDrive + homePath
-						} else {
-							basePath = os.TempDir()
-						}
-					}
-				}
-			}
-			return tspath.CombinePaths(tspath.CombinePaths(basePath, "Microsoft/TypeScript"), core.VersionMajorMinor)
-		}
+		return tspath.CombinePaths(tspath.CombinePaths(getWindowsCacheLocation(), "Microsoft/TypeScript"), core.VersionMajorMinor)
 	case "openbsd", "freebsd", "netbsd", "darwin", "linux", "android":
-		{
-			cacheLocation := getNonWindowsCacheLocation()
-			return tspath.CombinePaths(tspath.CombinePaths(cacheLocation, "typescript"), core.VersionMajorMinor)
-		}
+		return tspath.CombinePaths(tspath.CombinePaths(getNonWindowsCacheLocation(), "typescript"), core.VersionMajorMinor)
 	default:
 		panic("unsupported platform: " + runtime.GOOS)
 	}
+}
+
+func getWindowsCacheLocation() string {
+	basePath, err := os.UserCacheDir()
+	if err != nil {
+		if basePath, err = os.UserConfigDir(); err != nil {
+			if basePath, err = os.UserHomeDir(); err != nil {
+				if userProfile := os.Getenv("USERPROFILE"); userProfile != "" {
+					basePath = userProfile
+				} else if homeDrive, homePath := os.Getenv("HOMEDRIVE"), os.Getenv("HOMEPATH"); homeDrive != "" && homePath != "" {
+					basePath = homeDrive + homePath
+				} else {
+					basePath = os.TempDir()
+				}
+			}
+		}
+	}
+	return basePath
 }
 
 func getNonWindowsCacheLocation() string {

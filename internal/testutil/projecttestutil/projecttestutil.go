@@ -132,7 +132,7 @@ func (p *ProjectServiceHost) NpmInstall(cwd string, npmInstallArgs []string) ([]
 		packageName := atTypesPackageTs[7 : len(atTypesPackageTs)-len(project.TsVersionToUse)-1]
 		content, ok := p.testOptions.PackageToFile[packageName]
 		if !ok {
-			panic("content not provided for " + packageName)
+			return nil, fmt.Errorf("content not provided for %s", packageName)
 		}
 		err := p.FS().WriteFile(tspath.CombinePaths(cwd, "node_modules/@types/"+packageName+"/index.d.ts"), content, false)
 		if err != nil {
