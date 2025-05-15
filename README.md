@@ -11,6 +11,16 @@ npm install @typescript/native-preview
 npx tsgo # Use this as you would tsc.
 ```
 
+A preview VS Code extension is [available on the VS Code marketplace](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview).
+
+To use this, set this in your VS Code settings:
+
+```json
+{
+    "typescript.experimental.useTsgo": true
+}
+```
+
 ## How to Build and Run
 
 This repo uses [Go 1.24 or higher](https://go.dev/dl/), [Rust 1.85 or higher](https://www.rust-lang.org/tools/install), [Node.js with npm](https://nodejs.org/), and [`hereby`](https://www.npmjs.com/package/hereby).
@@ -50,9 +60,7 @@ After running `hereby build`, you can run `built/local/tsgo`, which behaves most
 
 ### Running LSP Prototype
 
-A preview extension is [available on the VS Code marketplace](https://marketplace.visualstudio.com/items?itemName=TODO.TODO).
-
-Alternatively, to debug and run the VS Code extension without installing it globally:
+To debug and run the VS Code extension without installing it globally:
 
 * Run VS Code in the repo workspace (`code .`)
 * Copy `.vscode/launch.template.json` to `.vscode/launch.json`
