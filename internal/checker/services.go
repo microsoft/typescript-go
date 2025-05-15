@@ -470,6 +470,19 @@ func (c *Checker) getExportsOfModuleAsArray(moduleSymbol *ast.Symbol) []*ast.Sym
 	return symbolsToArray(c.getExportsOfModule(moduleSymbol))
 }
 
+// Returns all the properties of the Jsx.IntrinsicElements interface.
+func (c *Checker) GetJsxIntrinsicTagNamesAt(location *ast.Node) []*ast.Symbol {
+	intrinsics := c.getJsxType(JsxNames.IntrinsicElements, location)
+	if intrinsics == nil {
+		return nil
+	}
+	return c.GetPropertiesOfType(intrinsics)
+}
+
+func (c *Checker) GetContextualTypeForJsxAttribute(attribute *ast.JsxAttributeLike) *Type {
+	return c.getContextualTypeForJsxAttribute(attribute, ContextFlagsNone)
+}
+
 func (c *Checker) runWithoutResolvedSignatureCaching(node *ast.Node, fn func() *Signature) *Signature {
 	ancestorNode := ast.FindAncestor(node, func(n *ast.Node) bool {
 		return ast.IsCallLikeOrFunctionLikeExpression(n)
