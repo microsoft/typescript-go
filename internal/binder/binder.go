@@ -1075,7 +1075,6 @@ func (b *Binder) bindThisPropertyAssignment(node *ast.Node) {
 		}
 	case ast.KindSourceFile, ast.KindModuleDeclaration:
 		// top-level this.property as assignment to globals is no longer supported
-		break
 	default:
 		panic("Unhandled case in bindThisPropertyAssignment: " + thisContainer.Kind.String())
 	}
