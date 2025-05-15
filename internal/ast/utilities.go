@@ -3210,6 +3210,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 func IsLateVisibilityPaintedStatement(node *Node) bool {
 	switch node.Kind {
 	case KindImportDeclaration,
+		KindJSImportDeclaration,
 		KindImportEqualsDeclaration,
 		KindVariableStatement,
 		KindClassDeclaration,

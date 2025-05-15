@@ -111,6 +111,7 @@ func (tx *DeclarationTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindEnumDeclaration,
 		ast.KindVariableStatement,
 		ast.KindImportDeclaration,
+		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
 		ast.KindJSExportAssignment,
 		ast.KindExportAssignment:
@@ -1050,8 +1051,14 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 	if input.Kind == ast.KindImportEqualsDeclaration {
 		return tx.transformImportEqualsDeclaration(input.AsImportEqualsDeclaration())
 	}
-	if input.Kind == ast.KindImportDeclaration {
-		return tx.transformImportDeclaration(input.AsImportDeclaration())
+	if input.Kind == ast.KindImportDeclaration || input.Kind == ast.KindJSImportDeclaration {
+		res := tx.transformImportDeclaration(input.AsImportDeclaration())
+		if res != nil && res.Kind != ast.KindImportDeclaration {
+			res := res.Clone(tx.Factory())
+			res.Kind = ast.KindImportDeclaration
+			return res
+		}
+		return res
 	}
 	if ast.IsDeclaration(input) && isDeclarationAndNotVisible(tx.EmitContext(), tx.resolver, input) {
 		return nil

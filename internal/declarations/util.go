@@ -88,6 +88,7 @@ func isDeclarationAndNotVisible(emitContext *printer.EmitContext, resolver print
 		return !getBindingNameVisible(resolver, node)
 	case ast.KindImportEqualsDeclaration,
 		ast.KindImportDeclaration,
+		ast.KindJSImportDeclaration,
 		ast.KindExportDeclaration,
 		ast.KindJSExportAssignment,
 		ast.KindExportAssignment:
