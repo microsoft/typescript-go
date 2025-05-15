@@ -706,6 +706,9 @@ const getVersion = memoize(() => {
     return version;
 });
 
+const builtNpm = path.resolve("./built/npm");
+const builtVsix = path.resolve("./built/vsix");
+
 const nativePreviewPlatforms = memoize(() => {
     const supportedPlatforms = [
         ["win32", "x64"],
@@ -721,22 +724,23 @@ const nativePreviewPlatforms = memoize(() => {
 
     return supportedPlatforms.map(([os, arch]) => {
         const npmDirName = `native-preview-${os}-${arch}`;
+        const npmDir = path.join(builtNpm, npmDirName);
         const npmPackageName = `@typescript/${npmDirName}`;
         const vscodeTarget = `${os}-${arch === "arm" ? "armhf" : arch}`;
-        const vsixName = `typescript-native-preview.${vscodeTarget}.vsix`;
-        const vsixManifestName = vsixName + ".manifest";
-        const vsixSignatureName = vsixName + ".signature.p7s";
+        const vsixPath = path.join(builtVsix, `typescript-native-preview.${vscodeTarget}.vsix`);
+        const vsixManifestPath = vsixPath + ".manifest";
+        const vsixSignaturePath = vsixPath + ".signature.p7s";
         return {
             nodeOs: os,
             nodeArch: arch,
             goos: nodeToGOOS(os),
             goarch: nodeToGOARCH(arch),
             npmPackageName,
-            npmDirName,
+            npmDir,
             vscodeTarget,
-            vsixName,
-            vsixManifestName,
-            vsixSignatureName,
+            vsixPath,
+            vsixManifestPath,
+            vsixSignaturePath,
         };
     });
 
@@ -816,9 +820,7 @@ export const buildNativePreview = task({
         }
         const extraFlags = ["-trimpath", ldflags];
 
-        await Promise.all(platforms.map(async ({ npmDirName, npmPackageName, nodeOs, nodeArch, goos, goarch }) => {
-            const dir = path.join(npmOutputDir, npmDirName);
-
+        await Promise.all(platforms.map(async ({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => {
             const packageJson = {
                 ...inputPackageJson,
                 bin: undefined,
@@ -831,10 +833,10 @@ export const buildNativePreview = task({
                 },
             };
 
-            const out = path.join(dir, "lib");
+            const out = path.join(npmDir, "lib");
             await fs.promises.mkdir(out, { recursive: true });
-            await fs.promises.writeFile(path.join(dir, "package.json"), JSON.stringify(packageJson, undefined, 4));
-            await fs.promises.copyFile("LICENSE", path.join(dir, "LICENSE"));
+            await fs.promises.writeFile(path.join(npmDir, "package.json"), JSON.stringify(packageJson, undefined, 4));
+            await fs.promises.copyFile("LICENSE", path.join(npmDir, "LICENSE"));
 
             const readme = [
                 `# \`${npmPackageName}\``,
@@ -842,7 +844,7 @@ export const buildNativePreview = task({
                 `This package provides ${nodeOs}-${nodeArch} support for [${packageJson.name}](https://www.npmjs.com/package/${packageJson.name}).`,
             ];
 
-            fs.promises.writeFile(path.join(dir, "README.md"), readme.join("\n") + "\n");
+            fs.promises.writeFile(path.join(npmDir, "README.md"), readme.join("\n") + "\n");
 
             await Promise.all([
                 generateLibs(out),
@@ -873,24 +875,20 @@ export const buildNativePreviewExtensions = task({
         const version = getVersion();
         const isPrerelease = version.includes("-");
 
-        for (const platform of nativePreviewPlatforms()) {
+        for (const { npmDir, vscodeTarget, vsixPath, vsixManifestPath, vsixSignaturePath } of nativePreviewPlatforms()) {
             // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
-            const libDir = `./built/npm/${platform.npmDirName}/lib`;
+            const libDir = path.join(npmDir, "lib");
             await fs.promises.cp(libDir, extensionLibDir, { recursive: true });
-            const outVsix = path.join(outDir, platform.vsixName);
 
             try {
-                await $({ cwd: extensionDir })`vsce package ${version} ${isPrerelease ? ["--pre-release"] : []} --no-update-package-json --no-dependencies --out ${outVsix} --target ${platform.vscodeTarget}`;
+                await $({ cwd: extensionDir })`vsce package ${version} ${isPrerelease ? ["--pre-release"] : []} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
             }
             finally {
                 await rimraf(extensionLibDir);
             }
 
-            const outManifest = path.join(outDir, platform.vsixManifestName);
-            await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${outVsix} --out ${outManifest}`;
-
-            const outSignature = path.join(outDir, platform.vsixSignatureName);
-            await fs.promises.cp(outManifest, outSignature);
+            await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
+            await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
         }
 
         // TODO: sign VSIX files
