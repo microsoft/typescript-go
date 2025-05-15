@@ -1,9 +1,9 @@
 {
-    "name": "typescript-lsp",
-    "displayName": "TypeScript (LSP)",
+    "name": "native-preview",
+    "displayName": "TypeScript (Native Preview)",
     "publisher": "TypeScriptTeam",
     "author": "Microsoft Corp.",
-    "description": "Test extension for typescript-go",
+    "description": "Native preview of the TypeScript language server for Visual Studio Code.",
     "private": true,
     "version": "0.0.0",
     "type": "commonjs",

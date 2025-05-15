@@ -6,7 +6,7 @@ import { glob } from "glob";
 import { task } from "hereby";
 import assert from "node:assert";
 import crypto from "node:crypto";
-import fs from "node:fs";
+import fs, { rm } from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import { parseArgs } from "node:util";
@@ -710,6 +710,11 @@ const extensionDir = path.resolve("./_extension");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
 
+const mainNativePreviewPackage = {
+    npmDir: path.join(builtNpm, "native-preview"),
+    npmTarball: path.join(builtNpm, "native-preview.tgz"),
+};
+
 const nativePreviewPlatforms = memoize(() => {
     const supportedPlatforms = [
         ["win32", "x64"],
@@ -726,6 +731,7 @@ const nativePreviewPlatforms = memoize(() => {
     return supportedPlatforms.map(([os, arch]) => {
         const npmDirName = `native-preview-${os}-${arch}`;
         const npmDir = path.join(builtNpm, npmDirName);
+        const npmTarball = `${npmDir}.tgz`;
         const npmPackageName = `@typescript/${npmDirName}`;
         const vscodeTarget = `${os}-${arch === "arm" ? "armhf" : arch}`;
         const vsixPath = path.join(builtVsix, `typescript-native-preview.${vscodeTarget}.vsix`);
@@ -738,6 +744,7 @@ const nativePreviewPlatforms = memoize(() => {
             goarch: nodeToGOARCH(arch),
             npmPackageName,
             npmDir,
+            npmTarball,
             vscodeTarget,
             vsixPath,
             vsixManifestPath,
@@ -778,11 +785,10 @@ const nativePreviewPlatforms = memoize(() => {
     }
 });
 
-export const buildNativePreview = task({
-    name: "build:native-preview",
+export const buildNativePreviewPackages = task({
+    name: "build:native-preview-packages",
     run: async () => {
-        const npmOutputDir = "./built/npm";
-        await rimraf(npmOutputDir);
+        await rimraf(builtNpm);
 
         const platforms = nativePreviewPlatforms();
 
@@ -800,7 +806,7 @@ export const buildNativePreview = task({
             optionalDependencies: Object.fromEntries(platforms.map(p => [p.npmPackageName, getVersion()])),
         };
 
-        const mainPackageDir = path.join(npmOutputDir, "native-preview");
+        const mainPackageDir = mainNativePreviewPackage.npmDir;
 
         await fs.promises.mkdir(mainPackageDir, { recursive: true });
 
@@ -861,36 +867,63 @@ export const buildNativePreview = task({
     },
 });
 
-export const buildNativePreviewExtensions = task({
-    name: "build:native-preview-extensions",
-    dependencies: [buildNativePreview],
-    run: async () => {
-        const outDir = path.resolve("./built/vsix");
-        await rimraf(outDir);
-        await fs.promises.mkdir(outDir, { recursive: true });
+async function packNativePreviewPackages() {
+    const platforms = nativePreviewPlatforms();
+    await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
+        const { stdout } = await $pipe`npm pack --json ${npmDir}`;
+        const filename = JSON.parse(stdout)[0].filename.replace("@", "").replace("/", "-");
+        await fs.promises.rename(filename, npmTarball);
+    }));
+}
 
-        const extensionLibDir = path.join(extensionDir, "lib");
-        await rimraf(extensionLibDir);
+export const packNativePreviewPackagesTask = task({
+    name: "pack:native-preview-packages",
+    dependencies: [buildNativePreviewPackages],
+    run: packNativePreviewPackages,
+});
 
-        const version = getVersion();
-        const isPrerelease = version.includes("-");
+export const packNativePreviewPackagesOnlyTask = task({
+    name: "pack:native-preview-packages-only",
+    run: packNativePreviewPackages,
+});
 
-        for (const { npmDir, vscodeTarget, vsixPath, vsixManifestPath, vsixSignaturePath } of nativePreviewPlatforms()) {
-            // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
-            const libDir = path.join(npmDir, "lib");
-            await fs.promises.cp(libDir, extensionLibDir, { recursive: true });
+async function buildNativePreviewExtensions() {
+    const outDir = path.resolve("./built/vsix");
+    await rimraf(outDir);
+    await fs.promises.mkdir(outDir, { recursive: true });
 
-            try {
-                await $({ cwd: extensionDir })`vsce package ${version} ${isPrerelease ? ["--pre-release"] : []} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
-            }
-            finally {
-                await rimraf(extensionLibDir);
-            }
+    const extensionLibDir = path.join(extensionDir, "lib");
+    await rimraf(extensionLibDir);
 
-            await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
-            await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
+    const version = getVersion();
+    const isPrerelease = version.includes("-");
+
+    for (const { npmDir, vscodeTarget, vsixPath, vsixManifestPath, vsixSignaturePath } of nativePreviewPlatforms()) {
+        // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
+        const libDir = path.join(npmDir, "lib");
+        await fs.promises.cp(libDir, extensionLibDir, { recursive: true });
+
+        try {
+            await $({ cwd: extensionDir })`vsce package ${version} ${isPrerelease ? ["--pre-release"] : []} --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
+        }
+        finally {
+            await rimraf(extensionLibDir);
         }
 
-        // TODO: sign VSIX files
-    },
+        await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
+        await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
+    }
+
+    // TODO: sign VSIX files
+}
+
+export const buildNativePreviewExtensionsTask = task({
+    name: "build:native-preview-extensions",
+    dependencies: [buildNativePreviewPackages],
+    run: buildNativePreviewExtensions,
+});
+
+export const buildNativePreviewExtensionsOnlyTask = task({
+    name: "build:native-preview-extensions-only",
+    run: buildNativePreviewExtensions,
 });
