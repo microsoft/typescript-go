@@ -22,74 +22,22 @@ func GetModuleSpecifiers(
 	userPreferences UserPreferences,
 	options ModuleSpecifierOptions,
 ) []string {
-	return GetModuleSpecifiersWithCacheInfo(
-		moduleSymbol,
-		checker,
-		compilerOptions,
-		importingSourceFile,
-		host,
-		userPreferences,
-		options,
-		false,
-	).moduleSpecifiers
-}
-
-type ModuleSpecifierResult struct {
-	kind                 ResultKind
-	moduleSpecifiers     []string
-	computedWithoutCache bool
-}
-
-func GetModuleSpecifiersWithCacheInfo(
-	moduleSymbol *ast.Symbol,
-	checker CheckerShape,
-	compilerOptions *core.CompilerOptions,
-	importingSourceFile SourceFileForSpecifierGeneration,
-	host ModuleSpecifierGenerationHost,
-	userPreferences UserPreferences,
-	options ModuleSpecifierOptions,
-	forAutoImport bool,
-) ModuleSpecifierResult {
 	ambient := tryGetModuleNameFromAmbientModule(moduleSymbol, checker)
 	if len(ambient) > 0 {
-		return ModuleSpecifierResult{
-			kind:                 ResultKindAmbient,
-			moduleSpecifiers:     []string{ambient},
-			computedWithoutCache: false,
-		}
+		return []string{ambient}
 	}
 
-	cacheResults := tryGetModuleSpecifiersFromCacheWorker(
-		moduleSymbol,
-		importingSourceFile,
+	moduleSourceFile := ast.GetSourceFileOfModule(moduleSymbol)
+	if moduleSourceFile == nil {
+		return nil
+	}
+	modulePaths := getAllModulePathsWorker(
+		getInfo(importingSourceFile.FileName(), host),
+		moduleSourceFile.OriginalFileName(),
 		host,
-		userPreferences,
-		options,
+		// compilerOptions,
+		// options,
 	)
-	if cacheResults == nil || cacheResults.moduleSourceFile == nil {
-		return ModuleSpecifierResult{
-			kind:                 ResultKindNone,
-			computedWithoutCache: false,
-		}
-	}
-	if len(cacheResults.moduleSpecifiers) > 0 {
-		return ModuleSpecifierResult{
-			kind:                 cacheResults.kind,
-			moduleSpecifiers:     cacheResults.moduleSpecifiers,
-			computedWithoutCache: false,
-		}
-	}
-
-	modulePaths := cacheResults.modulePaths
-	if len(modulePaths) == 0 {
-		modulePaths = getAllModulePathsWorker(
-			getInfo(importingSourceFile.FileName(), host),
-			cacheResults.moduleSourceFile.OriginalFileName(),
-			host,
-			// compilerOptions,
-			// options,
-		)
-	}
 
 	result := computeModuleSpecifiers(
 		modulePaths,
@@ -98,20 +46,8 @@ func GetModuleSpecifiersWithCacheInfo(
 		host,
 		userPreferences,
 		options,
-		forAutoImport,
+		/*forAutoImport*/ false,
 	)
-
-	if cacheResults.cache != nil {
-		cacheResults.cache.Set(
-			string(importingSourceFile.Path()),
-			string(cacheResults.moduleSourceFile.Path()),
-			userPreferences,
-			options,
-			result.kind,
-			modulePaths,
-			result.moduleSpecifiers,
-		)
-	}
 
 	return result
 }
@@ -164,48 +100,6 @@ func tryGetModuleNameFromAmbientModule(moduleSymbol *ast.Symbol, checker Checker
 		}
 	}
 	return ""
-}
-
-type cacheResult struct {
-	cache            ModuleSpecifierCache
-	kind             ResultKind
-	moduleSpecifiers []string
-	moduleSourceFile SourceFileForSpecifierGeneration
-	modulePaths      []ModulePath
-}
-
-func tryGetModuleSpecifiersFromCacheWorker(
-	moduleSymbol *ast.Symbol,
-	importingSourceFile SourceFileForSpecifierGeneration,
-	host ModuleSpecifierGenerationHost,
-	userPreferences UserPreferences,
-	options ModuleSpecifierOptions,
-) *cacheResult {
-	moduleSourceFile := ast.GetSourceFileOfModule(moduleSymbol)
-	if moduleSourceFile == nil {
-		return nil
-	}
-
-	cache := host.GetModuleSpecifierCache()
-	if cache == nil {
-		return &cacheResult{
-			moduleSourceFile: moduleSourceFile,
-		}
-	}
-	result := cache.Get(string(importingSourceFile.Path()), string(moduleSourceFile.Path()), userPreferences, options)
-	if result == nil {
-		return &cacheResult{
-			cache:            cache,
-			moduleSourceFile: moduleSourceFile,
-		}
-	}
-	return &cacheResult{
-		cache:            cache,
-		moduleSourceFile: moduleSourceFile,
-		kind:             result.Kind,
-		moduleSpecifiers: result.ModuleSpecifiers,
-		modulePaths:      result.ModulePaths,
-	}
 }
 
 type Info struct {
@@ -389,7 +283,7 @@ func computeModuleSpecifiers(
 	userPreferences UserPreferences,
 	options ModuleSpecifierOptions,
 	forAutoImport bool,
-) ModuleSpecifierResult {
+) []string {
 	info := getInfo(importingSourceFile.FileName(), host)
 	preferences := getModuleSpecifierPreferences(userPreferences, host, compilerOptions, importingSourceFile, "")
 
@@ -439,7 +333,7 @@ func computeModuleSpecifiers(
 			if modulePath.IsRedirect {
 				// If we got a specifier for a redirect, it was a bare package specifier (e.g. "@foo/bar",
 				// not "@foo/bar/path/to/file"). No other specifier will be this good, so stop looking.
-				return ModuleSpecifierResult{kind: ResultKindNodeModules, moduleSpecifiers: nodeModulesSpecifiers, computedWithoutCache: true}
+				return nodeModulesSpecifiers
 			}
 		}
 
@@ -483,15 +377,15 @@ func computeModuleSpecifiers(
 	}
 
 	if len(pathsSpecifiers) > 0 {
-		return ModuleSpecifierResult{kind: ResultKindPaths, moduleSpecifiers: pathsSpecifiers, computedWithoutCache: true}
+		return pathsSpecifiers
 	}
 	if len(redirectPathsSpecifiers) > 0 {
-		return ModuleSpecifierResult{kind: ResultKindRedirect, moduleSpecifiers: redirectPathsSpecifiers, computedWithoutCache: true}
+		return redirectPathsSpecifiers
 	}
 	if len(nodeModulesSpecifiers) > 0 {
-		return ModuleSpecifierResult{kind: ResultKindNodeModules, moduleSpecifiers: nodeModulesSpecifiers, computedWithoutCache: true}
+		return nodeModulesSpecifiers
 	}
-	return ModuleSpecifierResult{kind: ResultKindRelative, moduleSpecifiers: relativeSpecifiers, computedWithoutCache: true}
+	return relativeSpecifiers
 }
 
 func getLocalModuleSpecifier(
@@ -1157,7 +1051,7 @@ func tryGetModuleNameFromPaths(
 					if len(value) >= len(prefix)+len(suffix) &&
 						hasPrefix(value, prefix, caseSensitive) && // TODO: possible strada bug: these are not case-switched in strada
 						hasSuffix(value, suffix, caseSensitive) &&
-						validateEncoding(c, relativeToBaseUrl, compilerOptions, host) {
+						validateEnding(c, relativeToBaseUrl, compilerOptions, host) {
 						matchedStar := value[len(prefix) : len(value)-len(suffix)]
 						if !tspath.PathIsRelative(matchedStar) {
 							return replaceFirstStar(key, matchedStar)
@@ -1166,7 +1060,7 @@ func tryGetModuleNameFromPaths(
 				}
 			} else if core.Some(candidates, func(c specPair) bool { return c.ending != ModuleSpecifierEndingMinimal && pattern == c.value }) ||
 				core.Some(candidates, func(c specPair) bool {
-					return c.ending == ModuleSpecifierEndingMinimal && pattern == c.value && validateEncoding(c, relativeToBaseUrl, compilerOptions, host)
+					return c.ending == ModuleSpecifierEndingMinimal && pattern == c.value && validateEnding(c, relativeToBaseUrl, compilerOptions, host)
 				}) {
 				return key
 			}
@@ -1175,7 +1069,7 @@ func tryGetModuleNameFromPaths(
 	return ""
 }
 
-func validateEncoding(c specPair, relativeToBaseUrl string, compilerOptions *core.CompilerOptions, host ModuleSpecifierGenerationHost) bool {
+func validateEnding(c specPair, relativeToBaseUrl string, compilerOptions *core.CompilerOptions, host ModuleSpecifierGenerationHost) bool {
 	// Optimization: `removeExtensionAndIndexPostFix` can query the file system (a good bit) if `ending` is `Minimal`, the basename
 	// is 'index', and a `host` is provided. To avoid that until it's unavoidable, we ran the function with no `host` above. Only
 	// here, after we've checked that the minimal ending is indeed a match (via the length and prefix/suffix checks / `some` calls),

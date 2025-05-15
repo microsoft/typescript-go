@@ -37,51 +37,12 @@ type ModulePath struct {
 	IsRedirect      bool
 }
 
-type ResolvedModuleSpecifierInfo struct {
-	Kind                               ResultKind
-	ModulePaths                        []ModulePath
-	PackageName                        string
-	ModuleSpecifiers                   []string
-	IsBlockedByPackageJsonDependencies bool
-}
-
-type ModuleSpecifierCache interface {
-	Get(from string, to string, preferences UserPreferences, options ModuleSpecifierOptions) *ResolvedModuleSpecifierInfo
-	Set(
-		from string,
-		to string,
-		preferences UserPreferences,
-		options ModuleSpecifierOptions,
-		kind ResultKind,
-		modulePaths []ModulePath,
-		moduleSpecifiers []string,
-	)
-	SetBlockedByPackageJsonDependencies(
-		from string,
-		to string,
-		preferences UserPreferences,
-		options ModuleSpecifierOptions,
-		packageName string,
-		isBlockedByPackageJsonDependencies bool,
-	)
-	SetModulePaths(
-		from string,
-		to string,
-		preferences UserPreferences,
-		options ModuleSpecifierOptions,
-		modulePaths []ModulePath,
-	)
-	Clear()
-	Count() int
-}
-
 type PackageJsonInfo interface {
 	GetDirectory() string
 	GetContents() *packagejson.PackageJson
 }
 
 type ModuleSpecifierGenerationHost interface {
-	GetModuleSpecifierCache() ModuleSpecifierCache
 	// GetModuleResolutionCache() any // !!! TODO: adapt new resolution cache model
 	// GetSymlinkCache() any // !!! TODO: adapt new resolution cache model
 	// GetFileIncludeReasons() any // !!! TODO: adapt new resolution cache model

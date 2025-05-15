@@ -46,10 +46,6 @@ func (host *emitHost) GetGlobalTypingsCacheLocation() string {
 	return "" // !!! see src/tsserver/nodeServer.ts for strada's node-specific implementation
 }
 
-func (host *emitHost) GetModuleSpecifierCache() modulespecifiers.ModuleSpecifierCache {
-	return nil /// !!! see src/server/moduleSpecifierCache.ts for strada's services implementation
-}
-
 func (host *emitHost) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
 	scoped := host.program.resolver.GetPackageScopeForPath(dirname)
 	if scoped != nil && scoped.Exists() {
