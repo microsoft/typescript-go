@@ -313,7 +313,7 @@ func (p *Project) getModuleResolutionWatchGlobs() (failedLookups map[tspath.Path
 	return failedLookups, affectingLocaions
 }
 
-func (p *Project) updateWatchers() {
+func (p *Project) updateWatchers(ctx context.Context) {
 	client := p.host.Client()
 	if !p.host.IsWatchEnabled() || client == nil {
 		return
@@ -323,20 +323,20 @@ func (p *Project) updateWatchers() {
 	failedLookupGlobs, affectingLocationGlobs := p.getModuleResolutionWatchGlobs()
 
 	if rootFileGlobs != nil {
-		if updated, err := p.rootFilesWatch.update(rootFileGlobs); err != nil {
+		if updated, err := p.rootFilesWatch.update(ctx, rootFileGlobs); err != nil {
 			p.log(fmt.Sprintf("Failed to update root file watch: %v", err))
 		} else if updated {
 			p.log("Root file watches updated:\n" + formatFileList(rootFileGlobs, "\t", hr))
 		}
 	}
 
-	if updated, err := p.failedLookupsWatch.update(failedLookupGlobs); err != nil {
+	if updated, err := p.failedLookupsWatch.update(ctx, failedLookupGlobs); err != nil {
 		p.log(fmt.Sprintf("Failed to update failed lookup watch: %v", err))
 	} else if updated {
 		p.log("Failed lookup watches updated:\n" + formatFileList(p.failedLookupsWatch.globs, "\t", hr))
 	}
 
-	if updated, err := p.affectingLocationsWatch.update(affectingLocationGlobs); err != nil {
+	if updated, err := p.affectingLocationsWatch.update(ctx, affectingLocationGlobs); err != nil {
 		p.log(fmt.Sprintf("Failed to update affecting location watch: %v", err))
 	} else if updated {
 		p.log("Affecting location watches updated:\n" + formatFileList(p.affectingLocationsWatch.globs, "\t", hr))
@@ -452,7 +452,9 @@ func (p *Project) updateGraph() bool {
 		}
 	}
 
-	p.updateWatchers()
+	// TODO: this is currently always synchronously called by some kind of updating request,
+	// but in Strada we throttle, so at least sometimes this should be considered top-level?
+	p.updateWatchers(context.TODO())
 	return true
 }
 

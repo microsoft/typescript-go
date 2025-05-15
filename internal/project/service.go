@@ -1,6 +1,7 @@
 package project
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -255,7 +256,7 @@ func (s *Service) SourceFileCount() int {
 	return s.documentRegistry.size()
 }
 
-func (s *Service) OnWatchedFilesChanged(changes []*lsproto.FileEvent) error {
+func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.FileEvent) error {
 	for _, change := range changes {
 		fileName := ls.DocumentURIToFileName(change.Uri)
 		path := s.toPath(fileName)
@@ -286,7 +287,7 @@ func (s *Service) OnWatchedFilesChanged(changes []*lsproto.FileEvent) error {
 
 	client := s.host.Client()
 	if client != nil {
-		return client.RefreshDiagnostics()
+		return client.RefreshDiagnostics(ctx)
 	}
 
 	return nil

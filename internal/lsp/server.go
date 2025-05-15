@@ -6,15 +6,19 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"os/signal"
 	"runtime/debug"
 	"slices"
 	"sync"
+	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"golang.org/x/sync/errgroup"
 )
 
 type ServerOptions struct {
@@ -36,7 +40,6 @@ func NewServer(opts *ServerOptions) *Server {
 		r:                     lsproto.NewBaseReader(opts.In),
 		w:                     lsproto.NewBaseWriter(opts.Out),
 		stderr:                opts.Err,
-		fatalErrChan:          make(chan error, 1),
 		requestQueue:          make(chan *lsproto.RequestMessage, 100),
 		outgoingQueue:         make(chan *lsproto.Message, 100),
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
@@ -65,7 +68,6 @@ type Server struct {
 	stderr io.Writer
 
 	clientSeq               int32
-	fatalErrChan            chan error
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
 	pendingClientRequests   map[lsproto.ID]pendingClientRequest
@@ -122,9 +124,9 @@ func (s *Server) Client() project.Client {
 }
 
 // WatchFiles implements project.Client.
-func (s *Server) WatchFiles(watchers []*lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
+func (s *Server) WatchFiles(ctx context.Context, watchers []*lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
 	watcherId := fmt.Sprintf("watcher-%d", s.watcherID)
-	_, err := s.sendRequest(lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
+	_, err := s.sendRequest(ctx, lsproto.MethodClientRegisterCapability, &lsproto.RegistrationParams{
 		Registrations: []*lsproto.Registration{
 			{
 				Id:     watcherId,
@@ -147,9 +149,9 @@ func (s *Server) WatchFiles(watchers []*lsproto.FileSystemWatcher) (project.Watc
 }
 
 // UnwatchFiles implements project.Client.
-func (s *Server) UnwatchFiles(handle project.WatcherHandle) error {
+func (s *Server) UnwatchFiles(ctx context.Context, handle project.WatcherHandle) error {
 	if s.watchers.Has(handle) {
-		_, err := s.sendRequest(lsproto.MethodClientUnregisterCapability, &lsproto.UnregistrationParams{
+		_, err := s.sendRequest(ctx, lsproto.MethodClientUnregisterCapability, &lsproto.UnregistrationParams{
 			Unregisterations: []*lsproto.Unregistration{
 				{
 					Id:     string(handle),
@@ -170,9 +172,9 @@ func (s *Server) UnwatchFiles(handle project.WatcherHandle) error {
 }
 
 // RefreshDiagnostics implements project.Client.
-func (s *Server) RefreshDiagnostics() error {
+func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	if ptrIsTrue(s.initializeParams.Capabilities.Workspace.Diagnostics.RefreshSupport) {
-		if _, err := s.sendRequest(lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
+		if _, err := s.sendRequest(ctx, lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
 			return fmt.Errorf("failed to refresh diagnostics: %w", err)
 		}
 	}
@@ -180,27 +182,28 @@ func (s *Server) RefreshDiagnostics() error {
 }
 
 func (s *Server) Run() error {
-	go s.dispatchLoop()
-	go s.writeLoop()
-	go s.readLoop()
-	err := <-s.fatalErrChan
-	return err
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error { return s.dispatchLoop(ctx) })
+	g.Go(func() error { return s.writeLoop(ctx) })
+	g.Go(func() error { return s.readLoop(ctx) })
+	return g.Wait()
 }
 
-func (s *Server) readLoop() {
+func (s *Server) readLoop(ctx context.Context) error {
 	for {
 		msg, err := s.read()
 		if err != nil {
-			if errors.Is(err, io.EOF) {
-				s.fatalErrChan <- nil
-				return
+			if err == io.EOF {
+				return nil
 			}
 			if errors.Is(err, lsproto.ErrInvalidRequest) {
 				s.sendError(nil, err)
 				continue
 			}
-			s.fatalErrChan <- err
-			return
+			return err
 		}
 
 		if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
@@ -225,7 +228,7 @@ func (s *Server) readLoop() {
 		} else {
 			req := msg.AsRequest()
 			if req.Method == lsproto.MethodCancelRequest {
-				go s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
+				s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
 			} else {
 				s.requestQueue <- req
 			}
@@ -257,55 +260,67 @@ func (s *Server) read() (*lsproto.Message, error) {
 	return req, nil
 }
 
-func (s *Server) dispatchLoop() {
-	for req := range s.requestQueue {
-		ctx := context.Background()
-
-		if req.ID != nil {
-			var cancel context.CancelFunc
-			ctx, cancel = context.WithCancel(core.WithRequestID(ctx, req.ID.String()))
-			s.pendingClientRequestsMu.Lock()
-			s.pendingClientRequests[*req.ID] = pendingClientRequest{
-				req:    req,
-				cancel: cancel,
-			}
-			s.pendingClientRequestsMu.Unlock()
-		}
-
-		handle := func() {
-			if err := s.handleRequestOrNotification(ctx, req); err != nil {
-				s.fatalErrChan <- err
-			}
+func (s *Server) dispatchLoop(ctx context.Context) error {
+	ctx, lspExit := context.WithCancel(ctx)
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case req := <-s.requestQueue:
 			if req.ID != nil {
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithCancel(core.WithRequestID(ctx, req.ID.String()))
 				s.pendingClientRequestsMu.Lock()
-				delete(s.pendingClientRequests, *req.ID)
+				s.pendingClientRequests[*req.ID] = pendingClientRequest{
+					req:    req,
+					cancel: cancel,
+				}
 				s.pendingClientRequestsMu.Unlock()
 			}
-		}
 
-		if isBlockingMethod(req.Method) {
-			handle()
-		} else {
-			go handle()
+			handle := func() {
+				if err := s.handleRequestOrNotification(ctx, req); err != nil {
+					if err == io.EOF {
+						lspExit()
+					} else {
+						s.sendError(req.ID, err)
+					}
+				}
+
+				if req.ID != nil {
+					s.pendingClientRequestsMu.Lock()
+					delete(s.pendingClientRequests, *req.ID)
+					s.pendingClientRequestsMu.Unlock()
+				}
+			}
+
+			if isBlockingMethod(req.Method) {
+				handle()
+			} else {
+				go handle()
+			}
 		}
 	}
 }
 
-func (s *Server) writeLoop() {
-	for msg := range s.outgoingQueue {
-		data, err := json.Marshal(msg)
-		if err != nil {
-			s.fatalErrChan <- fmt.Errorf("failed to marshal message: %w", err)
-			continue
-		}
-		if err := s.w.Write(data); err != nil {
-			s.fatalErrChan <- fmt.Errorf("failed to write message: %w", err)
-			continue
+func (s *Server) writeLoop(ctx context.Context) error {
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case msg := <-s.outgoingQueue:
+			data, err := json.Marshal(msg)
+			if err != nil {
+				return fmt.Errorf("failed to marshal message: %w", err)
+			}
+			if err := s.w.Write(data); err != nil {
+				return fmt.Errorf("failed to write message: %w", err)
+			}
 		}
 	}
 }
 
-func (s *Server) sendRequest(method lsproto.Method, params any) (any, error) {
+func (s *Server) sendRequest(ctx context.Context, method lsproto.Method, params any) (any, error) {
 	s.clientSeq++
 	id := lsproto.NewIDString(fmt.Sprintf("ts%d", s.clientSeq))
 	req := lsproto.NewRequestMessage(method, id, params)
@@ -317,12 +332,21 @@ func (s *Server) sendRequest(method lsproto.Method, params any) (any, error) {
 
 	s.outgoingQueue <- req.Message()
 
-	// TODO: timeout?
-	resp := <-responseChan
-	if resp.Error != nil {
-		return nil, fmt.Errorf("request failed: %s", resp.Error.String())
+	select {
+	case <-ctx.Done():
+		s.pendingServerRequestsMu.Lock()
+		defer s.pendingServerRequestsMu.Unlock()
+		if respChan, ok := s.pendingServerRequests[*id]; ok {
+			close(respChan)
+			delete(s.pendingServerRequests, *id)
+		}
+		return nil, ctx.Err()
+	case resp := <-responseChan:
+		if resp.Error != nil {
+			return nil, fmt.Errorf("request failed: %s", resp.Error.String())
+		}
+		return resp.Result, nil
 	}
-	return resp.Result, nil
 }
 
 func (s *Server) sendResult(id *lsproto.ID, result any) {
@@ -358,25 +382,25 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		s.sendError(req.ID, lsproto.ErrInvalidRequest)
 		return nil
 	case *lsproto.InitializedParams:
-		s.handleInitialized(ctx, req)
+		return s.handleInitialized(ctx, req)
 	case *lsproto.DidOpenTextDocumentParams:
-		s.handleDidOpen(ctx, req)
+		return s.handleDidOpen(ctx, req)
 	case *lsproto.DidChangeTextDocumentParams:
-		s.handleDidChange(ctx, req)
+		return s.handleDidChange(ctx, req)
 	case *lsproto.DidSaveTextDocumentParams:
-		s.handleDidSave(ctx, req)
+		return s.handleDidSave(ctx, req)
 	case *lsproto.DidCloseTextDocumentParams:
-		s.handleDidClose(ctx, req)
+		return s.handleDidClose(ctx, req)
 	case *lsproto.DidChangeWatchedFilesParams:
-		s.handleDidChangeWatchedFiles(ctx, req)
+		return s.handleDidChangeWatchedFiles(ctx, req)
 	case *lsproto.DocumentDiagnosticParams:
-		s.handleDocumentDiagnostic(ctx, req)
+		return s.handleDocumentDiagnostic(ctx, req)
 	case *lsproto.HoverParams:
-		s.handleHover(ctx, req)
+		return s.handleHover(ctx, req)
 	case *lsproto.DefinitionParams:
-		s.handleDefinition(ctx, req)
+		return s.handleDefinition(ctx, req)
 	case *lsproto.CompletionParams:
-		s.handleCompletion(ctx, req)
+		return s.handleCompletion(ctx, req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -384,8 +408,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			s.sendResult(req.ID, nil)
 			return nil
 		case lsproto.MethodExit:
-			s.fatalErrChan <- nil
-			return nil
+			return io.EOF
 		default:
 			s.Log("unknown method", req.Method)
 			if req.ID != nil {
@@ -394,7 +417,6 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 			return nil
 		}
 	}
-	return nil
 }
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
@@ -484,7 +506,7 @@ func (s *Server) handleDidClose(ctx context.Context, req *lsproto.RequestMessage
 
 func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidChangeWatchedFilesParams)
-	return s.projectService.OnWatchedFilesChanged(params.Changes)
+	return s.projectService.OnWatchedFilesChanged(ctx, params.Changes)
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, req *lsproto.RequestMessage) error {

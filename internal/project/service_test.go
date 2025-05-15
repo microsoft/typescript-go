@@ -316,7 +316,7 @@ func TestService(t *testing.T) {
 			files := maps.Clone(defaultFiles)
 			files["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
 			host.ReplaceFS(files)
-			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
@@ -336,7 +336,7 @@ func TestService(t *testing.T) {
 			files := maps.Clone(defaultFiles)
 			files["/home/projects/TS/p1/src/x.ts"] = `export const x = 2;`
 			host.ReplaceFS(files)
-			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
@@ -375,7 +375,7 @@ func TestService(t *testing.T) {
 				}
 			}`
 			host.ReplaceFS(filesCopy)
-			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeChanged,
 					Uri:  "file:///home/projects/TS/p1/tsconfig.json",
@@ -407,7 +407,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/x.ts")
 			host.ReplaceFS(filesCopy)
-			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeDeleted,
 					Uri:  "file:///home/projects/TS/p1/src/x.ts",
@@ -440,7 +440,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/index.ts")
 			host.ReplaceFS(filesCopy)
-			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeDeleted,
 					Uri:  "file:///home/projects/TS/p1/src/index.ts",
@@ -496,7 +496,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/y.ts"] = `export const y = 1;`
 			host.ReplaceFS(filesCopy)
-			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
 					Uri:  "file:///home/projects/TS/p1/src/y.ts",
@@ -537,7 +537,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/z.ts"] = `export const z = 1;`
 			host.ReplaceFS(filesCopy)
-			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
 					Uri:  "file:///home/projects/TS/p1/src/z.ts",
@@ -573,7 +573,7 @@ func TestService(t *testing.T) {
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/src/a.ts"] = `const a = 1;`
 			host.ReplaceFS(filesCopy)
-			assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+			assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 				{
 					Type: lsproto.FileChangeTypeCreated,
 					Uri:  "file:///home/projects/TS/p1/src/a.ts",
