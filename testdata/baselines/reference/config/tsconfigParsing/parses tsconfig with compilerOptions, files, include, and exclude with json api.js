@@ -39,7 +39,7 @@ CompilerOptions::
   "jsx": 3,
   "module": 99,
   "moduleResolution": 100,
-  "moduleDetectionKind": 1,
+  "moduleDetection": 1,
   "noImplicitAny": true,
   "outDir": "/apath/dist",
   "paths": {
@@ -52,6 +52,9 @@ CompilerOptions::
   "configFilePath": "/apath/tsconfig.json",
   "pathsBasePath": "/apath"
 }
+
+TypeAcquisition::
+{}
 
 FileNames::
 /apath/src/index.ts,/apath/src/app.ts

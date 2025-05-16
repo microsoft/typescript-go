@@ -43,8 +43,6 @@ func (tx *ESModuleTransformer) visit(node *ast.Node) *ast.Node {
 		node = tx.visitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
 	case ast.KindExportAssignment:
 		node = tx.visitExportAssignment(node.AsExportAssignment())
-	case ast.KindJSExportAssignment:
-		node = nil
 	case ast.KindExportDeclaration:
 		node = tx.visitExportDeclaration(node.AsExportDeclaration())
 	case ast.KindCallExpression:
@@ -197,7 +195,7 @@ func (tx *ESModuleTransformer) visitExportDeclaration(node *ast.ExportDeclaratio
 	}
 
 	updatedModuleSpecifier := rewriteModuleSpecifier(tx.emitContext, node.ModuleSpecifier, tx.compilerOptions)
-	if tx.compilerOptions.ModuleKind > core.ModuleKindES2015 || node.ExportClause == nil || !ast.IsNamespaceExport(node.ExportClause) {
+	if tx.compilerOptions.Module > core.ModuleKindES2015 || node.ExportClause == nil || !ast.IsNamespaceExport(node.ExportClause) {
 		// Either ill-formed or don't need to be transformed.
 		return tx.factory.UpdateExportDeclaration(
 			node,

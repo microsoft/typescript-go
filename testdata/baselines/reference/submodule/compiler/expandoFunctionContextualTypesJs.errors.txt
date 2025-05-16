@@ -1,10 +1,7 @@
 input.js(5,48): error TS2304: Cannot find name 'P'.
-input.js(52,17): error TS2322: Type '{ color: string; }' is not assignable to type '{ color: "blue" | "red"; }'.
-  Types of property 'color' are incompatible.
-    Type 'string' is not assignable to type '"blue" | "red"'.
 
 
-==== input.js (2 errors) ====
+==== input.js (1 errors) ====
     /** @typedef {{ color: "red" | "blue" }} MyComponentProps */
     
     /**
@@ -59,9 +56,4 @@ input.js(52,17): error TS2322: Type '{ color: string; }' is not assignable to ty
     }
     
     expectLiteral({ props: module.exports });
-                    ~~~~~
-!!! error TS2322: Type '{ color: string; }' is not assignable to type '{ color: "blue" | "red"; }'.
-!!! error TS2322:   Types of property 'color' are incompatible.
-!!! error TS2322:     Type 'string' is not assignable to type '"blue" | "red"'.
-!!! related TS6500 input.js:32:14: The expected type comes from property 'props' which is declared here on type '{ props: { color: "blue" | "red"; }; }'
     

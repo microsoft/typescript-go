@@ -1,5 +1,4 @@
 MW.js(1,15): error TS1340: Module './MC' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./MC')'?
-MW.js(8,10): error TS2339: Property 'compiler' does not exist on type 'MW'.
 
 
 ==== MC.js (0 errors) ====
@@ -14,7 +13,7 @@ MW.js(8,10): error TS2339: Property 'compiler' does not exist on type 'MW'.
         return new MW(x);
     };
     
-==== MW.js (2 errors) ====
+==== MW.js (1 errors) ====
     /** @typedef {import("./MC")} MC */
                   ~~~~~~~~~~~~~~
 !!! error TS1340: Module './MC' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./MC')'?
@@ -25,8 +24,6 @@ MW.js(8,10): error TS2339: Property 'compiler' does not exist on type 'MW'.
        */
       constructor(compiler) {
         this.compiler = compiler;
-             ~~~~~~~~
-!!! error TS2339: Property 'compiler' does not exist on type 'MW'.
       }
     }
     
