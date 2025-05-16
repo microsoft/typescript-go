@@ -137,7 +137,6 @@ func (s *Server) WatchFiles(ctx context.Context, watchers []*lsproto.FileSystemW
 			},
 		},
 	})
-
 	if err != nil {
 		return "", fmt.Errorf("failed to register file watcher: %w", err)
 	}
@@ -159,7 +158,6 @@ func (s *Server) UnwatchFiles(ctx context.Context, handle project.WatcherHandle)
 				},
 			},
 		})
-
 		if err != nil {
 			return fmt.Errorf("failed to unregister file watcher: %w", err)
 		}
@@ -571,7 +569,6 @@ func (s *Server) handleCompletion(ctx context.Context, req *lsproto.RequestMessa
 		params.Context,
 		s.initializeParams.Capabilities.TextDocument.Completion,
 		&ls.UserPreferences{})
-
 	if err != nil {
 		return err
 	}
