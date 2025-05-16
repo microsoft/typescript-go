@@ -119,7 +119,7 @@ func (c *Checker) checkJsxAttributes(node *ast.Node, checkMode CheckMode) *Type 
 }
 
 func (c *Checker) checkJsxOpeningLikeElementOrOpeningFragment(node *ast.Node) {
-	isNodeOpeningLikeElement := IsJsxOpeningLikeElement(node)
+	isNodeOpeningLikeElement := isJsxOpeningLikeElement(node)
 	if isNodeOpeningLikeElement {
 		c.checkGrammarJsxElement(node)
 	}
@@ -142,7 +142,7 @@ func (c *Checker) checkJsxOpeningLikeElementOrOpeningFragment(node *ast.Node) {
 				c.diagnostics.Add(ast.NewDiagnosticChain(diags[0], diagnostics.X_0_cannot_be_used_as_a_JSX_component, scanner.GetTextOfNode(tagName)))
 			}
 		} else {
-			c.checkJsxReturnAssignableToAppropriateBound(c.getJsxReferenceKind(node), c.GetReturnTypeOfSignature(sig), node)
+			c.checkJsxReturnAssignableToAppropriateBound(c.getJsxReferenceKind(node), c.getReturnTypeOfSignature(sig), node)
 		}
 	}
 }
@@ -195,7 +195,7 @@ func (c *Checker) inferJsxTypeArguments(node *ast.Node, signature *Signature, ch
 func (c *Checker) getContextualTypeForJsxExpression(node *ast.Node, contextFlags ContextFlags) *Type {
 	switch {
 	case ast.IsJsxAttributeLike(node.Parent):
-		return c.GetContextualType(node, contextFlags)
+		return c.getContextualType(node, contextFlags)
 	case ast.IsJsxElement(node.Parent):
 		return c.getContextualTypeForChildJsxExpression(node.Parent, node, contextFlags)
 	}
@@ -213,7 +213,7 @@ func (c *Checker) getContextualTypeForJsxAttribute(attribute *ast.Node, contextF
 		}
 		return c.getTypeOfPropertyOfContextualType(attributesType, attribute.Name().Text())
 	}
-	return c.GetContextualType(attribute.Parent, contextFlags)
+	return c.getContextualType(attribute.Parent, contextFlags)
 }
 
 func (c *Checker) getContextualJsxElementAttributesType(node *ast.Node, contextFlags ContextFlags) *Type {
@@ -526,7 +526,7 @@ func (c *Checker) checkApplicableSignatureForJsxOpeningLikeElement(node *ast.Nod
 		if tagType == nil {
 			return true
 		}
-		tagCallSignatures := c.GetSignaturesOfType(tagType, SignatureKindCall)
+		tagCallSignatures := c.getSignaturesOfType(tagType, SignatureKindCall)
 		if len(tagCallSignatures) == 0 {
 			return true
 		}
@@ -540,7 +540,7 @@ func (c *Checker) checkApplicableSignatureForJsxOpeningLikeElement(node *ast.Nod
 		}
 
 		factoryType := c.getTypeOfSymbol(factorySymbol)
-		callSignatures := c.GetSignaturesOfType(factoryType, SignatureKindCall)
+		callSignatures := c.getSignaturesOfType(factoryType, SignatureKindCall)
 		if len(callSignatures) == 0 {
 			return true
 		}
@@ -549,13 +549,13 @@ func (c *Checker) checkApplicableSignatureForJsxOpeningLikeElement(node *ast.Nod
 		// Check that _some_ first parameter expects a FC-like thing, and that some overload of the SFC expects an acceptable number of arguments
 		for _, sig := range callSignatures {
 			firstparam := c.getTypeAtPosition(sig, 0)
-			signaturesOfParam := c.GetSignaturesOfType(firstparam, SignatureKindCall)
+			signaturesOfParam := c.getSignaturesOfType(firstparam, SignatureKindCall)
 			if len(signaturesOfParam) == 0 {
 				continue
 			}
 			for _, paramSig := range signaturesOfParam {
 				hasFirstParamSignatures = true
-				if c.HasEffectiveRestParameter(paramSig) {
+				if c.hasEffectiveRestParameter(paramSig) {
 					return true // some signature has a rest param, so function components can have an arbitrary number of arguments
 				}
 				paramCount := c.getParameterCount(paramSig)
@@ -613,7 +613,7 @@ func (c *Checker) checkApplicableSignatureForJsxOpeningLikeElement(node *ast.Nod
 // which also calls getSpreadType.
 func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeElement *ast.Node, checkMode CheckMode) *Type {
 	attributes := openingLikeElement.Attributes()
-	contextualType := c.GetContextualType(attributes, ContextFlagsNone)
+	contextualType := c.getContextualType(attributes, ContextFlagsNone)
 	var allAttributesTable ast.SymbolTable
 	if c.strictNullChecks {
 		allAttributesTable = make(ast.SymbolTable)
@@ -807,10 +807,10 @@ func (c *Checker) getUninstantiatedJsxSignaturesOfType(elementType *Type, caller
 	}
 	apparentElemType := c.getApparentType(elementType)
 	// Resolve the signatures, preferring constructor
-	signatures := c.GetSignaturesOfType(apparentElemType, SignatureKindConstruct)
+	signatures := c.getSignaturesOfType(apparentElemType, SignatureKindConstruct)
 	if len(signatures) == 0 {
 		// No construct signatures, try call signatures
-		signatures = c.GetSignaturesOfType(apparentElemType, SignatureKindCall)
+		signatures = c.getSignaturesOfType(apparentElemType, SignatureKindCall)
 	}
 	if len(signatures) == 0 && apparentElemType.flags&TypeFlagsUnion != 0 {
 		// If each member has some combination of new/call signatures; make a union signature list for those
@@ -846,7 +846,7 @@ func (c *Checker) getJsxPropsTypeFromClassType(sig *Signature, context *ast.Node
 	case ast.InternalSymbolNameMissing:
 		attributesType = c.getTypeOfFirstParameterOfSignatureWithFallback(sig, c.unknownType)
 	case "":
-		attributesType = c.GetReturnTypeOfSignature(sig)
+		attributesType = c.getReturnTypeOfSignature(sig)
 	default:
 		attributesType = c.getJsxPropsTypeForSignatureFromMember(sig, forcedLookupLocation)
 		if attributesType == nil && len(context.Attributes().AsJsxAttributes().Properties.Nodes) != 0 {
@@ -866,8 +866,8 @@ func (c *Checker) getJsxPropsTypeFromClassType(sig *Signature, context *ast.Node
 	apparentAttributesType := attributesType
 	intrinsicClassAttribs := c.getJsxType(JsxNames.IntrinsicClassAttributes, context)
 	if !c.isErrorType(intrinsicClassAttribs) {
-		typeParams := c.GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(intrinsicClassAttribs.symbol)
-		hostClassType := c.GetReturnTypeOfSignature(sig)
+		typeParams := c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(intrinsicClassAttribs.symbol)
+		hostClassType := c.getReturnTypeOfSignature(sig)
 		var libraryManagedAttributeType *Type
 		if typeParams != nil {
 			// apply JSX.IntrinsicClassElements<hostClassType, ...>
@@ -894,7 +894,7 @@ func (c *Checker) getJsxPropsTypeForSignatureFromMember(sig *Signature, forcedLo
 		// The default behavior of `getTypeOfFirstParameterOfSignatureWithFallback` when no `props` member name is defined is much more sane.
 		var results []*Type
 		for _, signature := range sig.composite.signatures {
-			instance := c.GetReturnTypeOfSignature(signature)
+			instance := c.getReturnTypeOfSignature(signature)
 			if IsTypeAny(instance) {
 				return instance
 			}
@@ -907,7 +907,7 @@ func (c *Checker) getJsxPropsTypeForSignatureFromMember(sig *Signature, forcedLo
 		return c.getIntersectionType(results)
 		// Same result for both union and intersection signatures
 	}
-	instanceType := c.GetReturnTypeOfSignature(sig)
+	instanceType := c.getReturnTypeOfSignature(sig)
 	if IsTypeAny(instanceType) {
 		return instanceType
 	}
@@ -1051,10 +1051,10 @@ func (c *Checker) getJsxReferenceKind(node *ast.Node) JsxReferenceKind {
 		return JsxReferenceKindMixed
 	}
 	tagType := c.getApparentType(c.checkExpression(node.TagName()))
-	if len(c.GetSignaturesOfType(tagType, SignatureKindConstruct)) != 0 {
+	if len(c.getSignaturesOfType(tagType, SignatureKindConstruct)) != 0 {
 		return JsxReferenceKindComponent
 	}
-	if len(c.GetSignaturesOfType(tagType, SignatureKindCall)) != 0 {
+	if len(c.getSignaturesOfType(tagType, SignatureKindCall)) != 0 {
 		return JsxReferenceKindFunction
 	}
 	return JsxReferenceKindMixed

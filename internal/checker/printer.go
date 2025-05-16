@@ -137,7 +137,7 @@ func (c *Checker) GetQuickInfoAtLocation(node *ast.Node) string {
 		}
 	case flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0:
 		t := c.getTypeOfSymbol(symbol)
-		signatures := c.GetSignaturesOfType(t, SignatureKindCall)
+		signatures := c.getSignaturesOfType(t, SignatureKindCall)
 		prefix := core.IfElse(symbol.Flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
 		for i, sig := range signatures {
 			if i != 0 {
@@ -190,7 +190,7 @@ func (c *Checker) signatureToString(s *Signature) string {
 	return p.string()
 }
 
-func (c *Checker) TypePredicateToString(t *TypePredicate) string {
+func (c *Checker) typePredicateToString(t *TypePredicate) string {
 	p := c.newPrinter(TypeFormatFlagsNone)
 	p.printTypePredicate(t)
 	return p.string()
@@ -408,7 +408,7 @@ func (p *Printer) printParameterizedType(t *Type) {
 	switch {
 	case p.c.isArrayType(t) && p.flags&TypeFormatFlagsWriteArrayAsGenericType == 0:
 		p.printArrayType(t)
-	case IsTupleType(t):
+	case isTupleType(t):
 		p.printTupleType(t)
 	default:
 		p.printTypeReference(t)
@@ -516,8 +516,8 @@ func (p *Printer) printAnonymousType(t *Type) {
 		}
 	}
 	props := p.c.getPropertiesOfObjectType(t)
-	callSignatures := p.c.GetSignaturesOfType(t, SignatureKindCall)
-	constructSignatures := p.c.GetSignaturesOfType(t, SignatureKindConstruct)
+	callSignatures := p.c.getSignaturesOfType(t, SignatureKindCall)
+	constructSignatures := p.c.getSignaturesOfType(t, SignatureKindConstruct)
 	if len(props) == 0 {
 		if len(callSignatures) == 1 && len(constructSignatures) == 0 {
 			p.printSignature(callSignatures[0], " => ")
@@ -586,7 +586,7 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 		tail = true
 	}
 	skipUnionExpanding := true
-	expandedParameters := p.c.GetExpandedParameters(sig, &skipUnionExpanding)[0]
+	expandedParameters := p.c.getExpandedParameters(sig, &skipUnionExpanding)[0]
 	// If the expanded parameter list had a variadic in a non-trailing position, don't expand it
 	parameters := core.IfElse(core.Some(expandedParameters, func(s *ast.Symbol) bool {
 		return s != expandedParameters[len(expandedParameters)-1] && s.CheckFlags&ast.CheckFlagsRestParameter != 0
@@ -610,10 +610,10 @@ func (p *Printer) printSignature(sig *Signature, returnSeparator string) {
 	}
 	p.print(")")
 	p.print(returnSeparator)
-	if pred := p.c.GetTypePredicateOfSignature(sig); pred != nil {
+	if pred := p.c.getTypePredicateOfSignature(sig); pred != nil {
 		p.printTypePredicate(pred)
 	} else {
-		p.printType(p.c.GetReturnTypeOfSignature(sig))
+		p.printType(p.c.getReturnTypeOfSignature(sig))
 	}
 }
 

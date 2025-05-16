@@ -2937,3 +2937,13 @@ func GetPropertyNameForPropertyNameNode(name *Node) string {
 	}
 	panic("Unhandled case in getPropertyNameForPropertyNameNode")
 }
+
+// !!!
+func HasQuestionToken(node *Node) bool {
+	switch node.Kind {
+	case KindParameter, KindMethodDeclaration, KindMethodSignature, KindShorthandPropertyAssignment,
+		KindPropertyAssignment, KindPropertyDeclaration, KindPropertySignature:
+		return node.AsParameterDeclaration().QuestionToken != nil
+	}
+	return false
+}

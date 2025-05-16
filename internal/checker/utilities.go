@@ -8,7 +8,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -270,7 +269,7 @@ func isTypeDeclaration(node *ast.Node) bool {
 	}
 }
 
-func CanHaveSymbol(node *ast.Node) bool {
+func canHaveSymbol(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindArrowFunction, ast.KindBinaryExpression, ast.KindBindingElement, ast.KindCallExpression, ast.KindCallSignature,
 		ast.KindClassDeclaration, ast.KindClassExpression, ast.KindClassStaticBlockDeclaration, ast.KindConstructor, ast.KindConstructorType,
@@ -1128,7 +1127,7 @@ func getContainingClassExcludingClassDecorators(node *ast.Node) *ast.ClassLikeDe
 	return ast.GetContainingClass(node)
 }
 
-func IsThisTypeParameter(t *Type) bool {
+func isThisTypeParameter(t *Type) bool {
 	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
 }
 
@@ -1141,7 +1140,7 @@ func isCallLikeExpression(node *ast.Node) bool {
 	return false
 }
 
-func IsCallOrNewExpression(node *ast.Node) bool {
+func isCallOrNewExpression(node *ast.Node) bool {
 	return ast.IsCallExpression(node) || ast.IsNewExpression(node)
 }
 
@@ -1244,7 +1243,7 @@ func reverseAccessKind(a AccessKind) AccessKind {
 	panic("Unhandled case in reverseAccessKind")
 }
 
-func IsJsxOpeningLikeElement(node *ast.Node) bool {
+func isJsxOpeningLikeElement(node *ast.Node) bool {
 	return ast.IsJsxOpeningElement(node) || ast.IsJsxSelfClosingElement(node)
 }
 
@@ -1325,7 +1324,7 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 	return node.Name()
 }
 
-func IndexOfNode(nodes []*ast.Node, node *ast.Node) int {
+func indexOfNode(nodes []*ast.Node, node *ast.Node) int {
 	index, ok := slices.BinarySearchFunc(nodes, node, compareNodePositions)
 	if ok {
 		return index
@@ -1361,7 +1360,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return IsCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || IsJsxOpeningLikeElement(node)
+	return isCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {
@@ -1912,7 +1911,7 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 	return ""
 }
 
-func GetInvokedExpression(node *ast.Node) *ast.Node {
+func getInvokedExpression(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindTaggedTemplateExpression:
 		return node.AsTaggedTemplateExpression().Tag
@@ -2109,7 +2108,7 @@ func TemporarySymbolToParameterDeclaration(parameterSymbol *ast.Symbol, c *Check
 	} else {
 		name = factory.DeepCloneNode(parameterDeclaration.Name())
 	}
-	isOptional := parameterDeclaration != nil && (astnav.HasQuestionToken(parameterDeclaration) || parameterSymbol.CheckFlags&ast.CheckFlagsOptionalParameter != 0)
+	isOptional := parameterDeclaration != nil && (ast.HasQuestionToken(parameterDeclaration) || parameterSymbol.CheckFlags&ast.CheckFlagsOptionalParameter != 0)
 	var questionToken *ast.Node
 	if isOptional {
 		questionToken = factory.NewToken(ast.KindQuestionToken)
@@ -2197,7 +2196,7 @@ func temporaryCreateTypeNode(t *Type, symbol *ast.Symbol, parameterDeclaration *
 	if t.Flags()&TypeFlagsUniqueESSymbol != 0 {
 		return factory.NewTypeOperatorNode(ast.KindUniqueKeyword, factory.NewKeywordTypeNode(ast.KindSymbolKeyword))
 	}
-	if IsThisTypeParameter(t) {
+	if isThisTypeParameter(t) {
 		return factory.NewThisTypeNode()
 	}
 	if t.Flags()&TypeFlagsTypeParameter != 0 {

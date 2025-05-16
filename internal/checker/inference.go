@@ -652,14 +652,14 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 		return
 	}
 	if c.isArrayOrTupleType(source) {
-		if IsTupleType(target) {
+		if isTupleType(target) {
 			sourceArity := c.getTypeReferenceArity(source)
 			targetArity := c.getTypeReferenceArity(target)
 			elementTypes := c.getTypeArguments(target)
 			elementInfos := target.TargetTupleType().elementInfos
 			// When source and target are tuple types with the same structure (fixed, variadic, and rest are matched
 			// to the same kind in each position), simply infer between the element types.
-			if IsTupleType(source) && c.isTupleTypeStructureMatching(source, target) {
+			if isTupleType(source) && c.isTupleTypeStructureMatching(source, target) {
 				for i := range targetArity {
 					c.inferFromTypes(n, c.getTypeArguments(source)[i], elementTypes[i])
 				}
@@ -667,7 +667,7 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 			}
 			startLength := 0
 			endLength := 0
-			if IsTupleType(source) {
+			if isTupleType(source) {
 				startLength = min(source.TargetTupleType().fixedLength, target.TargetTupleType().fixedLength)
 				if target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 {
 					endLength = min(getEndElementCount(source.TargetTupleType(), ElementFlagsFixed), getEndElementCount(target.TargetTupleType(), ElementFlagsFixed))
@@ -677,7 +677,7 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 			for i := range startLength {
 				c.inferFromTypes(n, c.getTypeArguments(source)[i], elementTypes[i])
 			}
-			if !IsTupleType(source) || sourceArity-startLength-endLength == 1 && source.TargetTupleType().elementInfos[startLength].flags&ElementFlagsRest != 0 {
+			if !isTupleType(source) || sourceArity-startLength-endLength == 1 && source.TargetTupleType().elementInfos[startLength].flags&ElementFlagsRest != 0 {
 				// Single rest element remains in source, infer from that to every element in target
 				restType := c.getTypeArguments(source)[startLength]
 				for i := startLength; i < targetArity-endLength; i++ {
@@ -703,7 +703,7 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 						// if T is constrained by a fixed-size tuple we might be able to use its arity to infer T
 						if info := getInferenceInfoForType(n, elementTypes[startLength]); info != nil {
 							constraint := c.getBaseConstraintOfType(info.typeParameter)
-							if constraint != nil && IsTupleType(constraint) && constraint.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
+							if constraint != nil && isTupleType(constraint) && constraint.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
 								impliedArity := constraint.TargetTupleType().fixedLength
 								c.inferFromTypes(n, c.sliceTupleType(source, startLength, sourceArity-(startLength+impliedArity)), elementTypes[startLength])
 								c.inferFromTypes(n, c.getElementTypeOfSliceOfTupleType(source, startLength+impliedArity, endLength, false, false), elementTypes[startLength+1])
@@ -714,7 +714,7 @@ func (c *Checker) inferFromObjectTypes(n *InferenceState, source *Type, target *
 						// if T is constrained by a fixed-size tuple we might be able to use its arity to infer T
 						if info := getInferenceInfoForType(n, elementTypes[startLength+1]); info != nil {
 							constraint := c.getBaseConstraintOfType(info.typeParameter)
-							if constraint != nil && IsTupleType(constraint) && constraint.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
+							if constraint != nil && isTupleType(constraint) && constraint.TargetTupleType().combinedFlags&ElementFlagsVariable == 0 {
 								impliedArity := constraint.TargetTupleType().fixedLength
 								endIndex := sourceArity - getEndElementCount(target.TargetTupleType(), ElementFlagsFixed)
 								startIndex := endIndex - impliedArity
@@ -766,12 +766,12 @@ func (c *Checker) inferFromProperties(n *InferenceState, source *Type, target *T
 }
 
 func (c *Checker) inferFromSignatures(n *InferenceState, source *Type, target *Type, kind SignatureKind) {
-	sourceSignatures := c.GetSignaturesOfType(source, kind)
+	sourceSignatures := c.getSignaturesOfType(source, kind)
 	sourceLen := len(sourceSignatures)
 	if sourceLen > 0 {
 		// We match source and target signatures from the bottom up, and if the source has fewer signatures
 		// than the target, we infer from the first source signature to the excess target signatures.
-		targetSignatures := c.GetSignaturesOfType(target, kind)
+		targetSignatures := c.getSignaturesOfType(target, kind)
 		targetLen := len(targetSignatures)
 		for i := range targetLen {
 			sourceIndex := max(sourceLen-targetLen+i, 0)
@@ -824,17 +824,17 @@ func (c *Checker) applyToParameterTypes(source *Signature, target *Signature, ca
 }
 
 func (c *Checker) applyToReturnTypes(source *Signature, target *Signature, callback func(s *Type, t *Type)) {
-	targetTypePredicate := c.GetTypePredicateOfSignature(target)
+	targetTypePredicate := c.getTypePredicateOfSignature(target)
 	if targetTypePredicate != nil {
-		sourceTypePredicate := c.GetTypePredicateOfSignature(source)
+		sourceTypePredicate := c.getTypePredicateOfSignature(source)
 		if sourceTypePredicate != nil && c.typePredicateKindsMatch(sourceTypePredicate, targetTypePredicate) && sourceTypePredicate.t != nil && targetTypePredicate.t != nil {
 			callback(sourceTypePredicate.t, targetTypePredicate.t)
 			return
 		}
 	}
-	targetReturnType := c.GetReturnTypeOfSignature(target)
+	targetReturnType := c.getReturnTypeOfSignature(target)
 	if c.couldContainTypeVariables(targetReturnType) {
-		callback(c.GetReturnTypeOfSignature(source), targetReturnType)
+		callback(c.getReturnTypeOfSignature(source), targetReturnType)
 	}
 }
 
@@ -956,7 +956,7 @@ func (c *Checker) createReverseMappedType(source *Type, target *Type, constraint
 		}
 		return c.createArrayTypeEx(elementType, c.isReadonlyArrayType(source))
 	}
-	if IsTupleType(source) {
+	if isTupleType(source) {
 		elementTypes := core.Map(c.getElementTypes(source), func(t *Type) *Type {
 			return c.inferReverseMappedType(t, target, constraint)
 		})
@@ -990,7 +990,7 @@ func (c *Checker) createReverseMappedType(source *Type, target *Type, constraint
 func (c *Checker) isPartiallyInferableType(t *Type) bool {
 	return t.objectFlags&ObjectFlagsNonInferrableType == 0 || isObjectLiteralType(t) && core.Some(c.getPropertiesOfType(t), func(prop *ast.Symbol) bool {
 		return c.isPartiallyInferableType(c.getTypeOfSymbol(prop))
-	}) || IsTupleType(t) && core.Some(c.getElementTypes(t), c.isPartiallyInferableType)
+	}) || isTupleType(t) && core.Some(c.getElementTypes(t), c.isPartiallyInferableType)
 }
 
 func (c *Checker) inferReverseMappedType(source *Type, target *Type, constraint *Type) *Type {
@@ -1115,7 +1115,7 @@ func (c *Checker) replaceIndexedAccess(instantiable *Type, t *Type, replacement 
 func (c *Checker) typesDefinitelyUnrelated(source *Type, target *Type) bool {
 	// Two tuple types with incompatible arities are definitely unrelated.
 	// Two object types that each have a property that is unmatched in the other are definitely unrelated.
-	if IsTupleType(source) && IsTupleType(target) {
+	if isTupleType(source) && isTupleType(target) {
 		return tupleTypesDefinitelyUnrelated(source, target)
 	}
 	return c.getUnmatchedProperty(source, target, false /*requireOptionalProperties*/, true /*matchDiscriminantProperties*/) != nil &&
@@ -1415,11 +1415,11 @@ func (c *Checker) isTypeParameterAtTopLevel(t *Type, tp *Type, depth int) bool {
 }
 
 func (c *Checker) isTypeParameterAtTopLevelInReturnType(signature *Signature, typeParameter *Type) bool {
-	typePredicate := c.GetTypePredicateOfSignature(signature)
+	typePredicate := c.getTypePredicateOfSignature(signature)
 	if typePredicate != nil {
 		return typePredicate.t != nil && c.isTypeParameterAtTopLevel(typePredicate.t, typeParameter, 0)
 	}
-	return c.isTypeParameterAtTopLevel(c.GetReturnTypeOfSignature(signature), typeParameter, 0)
+	return c.isTypeParameterAtTopLevel(c.getReturnTypeOfSignature(signature), typeParameter, 0)
 }
 
 func (c *Checker) getTypeFromInference(inference *InferenceInfo) *Type {
@@ -1523,7 +1523,7 @@ func (c *Checker) isSkipDirectInferenceNode(node *ast.Node) bool {
 
 // Returns `true` if `type` has the shape `[T[0]]` where `T` is `typeParameter`
 func (c *Checker) isTupleOfSelf(tp *Type, t *Type) bool {
-	return IsTupleType(t) && c.getTupleElementType(t, 0) == c.getIndexedAccessType(tp, c.getNumberLiteralType(0)) && c.getTypeOfPropertyOfType(t, "1") == nil
+	return isTupleType(t) && c.getTupleElementType(t, 0) == c.getIndexedAccessType(tp, c.getNumberLiteralType(0)) && c.getTypeOfPropertyOfType(t, "1") == nil
 }
 
 func newInferenceInfo(typeParameter *Type) *InferenceInfo {

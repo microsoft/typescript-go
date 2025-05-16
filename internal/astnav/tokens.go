@@ -602,13 +602,3 @@ func getNodeVisitor(
 		},
 	})
 }
-
-// !!!
-func HasQuestionToken(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindParameter, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindShorthandPropertyAssignment,
-		ast.KindPropertyAssignment, ast.KindPropertyDeclaration, ast.KindPropertySignature:
-		return node.AsParameterDeclaration().QuestionToken != nil
-	}
-	return false
-}

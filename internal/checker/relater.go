@@ -473,8 +473,8 @@ func (c *Checker) isOrHasGenericConditional(t *Type) bool {
 }
 
 func (c *Checker) elaborateDidYouMeanToCallOrConstruct(node *ast.Node, source *Type, target *Type, relation *Relation, kind SignatureKind, headMessage *diagnostics.Message, diagnosticOutput *[]*ast.Diagnostic) bool {
-	if core.Some(c.GetSignaturesOfType(source, kind), func(s *Signature) bool {
-		returnType := c.GetReturnTypeOfSignature(s)
+	if core.Some(c.getSignaturesOfType(source, kind), func(s *Signature) bool {
+		returnType := c.getReturnTypeOfSignature(s)
 		return returnType.flags&(TypeFlagsAny|TypeFlagsNever) == 0 && c.checkTypeRelatedTo(returnType, target, relation, nil /*errorNode*/)
 	}) {
 		var diags []*ast.Diagnostic
@@ -639,13 +639,13 @@ func (c *Checker) elaborateArrowFunction(node *ast.Node, source *Type, target *T
 	if sourceSig == nil {
 		return false
 	}
-	targetSignatures := c.GetSignaturesOfType(target, SignatureKindCall)
+	targetSignatures := c.getSignaturesOfType(target, SignatureKindCall)
 	if len(targetSignatures) == 0 {
 		return false
 	}
 	returnExpression := node.Body()
-	sourceReturn := c.GetReturnTypeOfSignature(sourceSig)
-	targetReturn := c.getUnionType(core.Map(targetSignatures, c.GetReturnTypeOfSignature))
+	sourceReturn := c.getReturnTypeOfSignature(sourceSig)
+	targetReturn := c.getUnionType(core.Map(targetSignatures, c.getReturnTypeOfSignature))
 	if c.checkTypeRelatedTo(sourceReturn, targetReturn, relation, nil /*errorNode*/) {
 		return false
 	}
@@ -842,7 +842,7 @@ func getRecursionIdentity(t *Type) RecursionId {
 			// exclude the static side of a class since it shares its symbol with the instance side.
 			return RecursionId{kind: RecursionIdKindSymbol, id: uint32(ast.GetSymbolId(t.symbol))}
 		}
-		if IsTupleType(t) {
+		if isTupleType(t) {
 			return RecursionId{kind: RecursionIdKindType, id: uint32(t.Target().id)}
 		}
 	}
@@ -904,8 +904,8 @@ func (c *Checker) findMatchingTypeReferenceOrTypeAliasReference(source *Type, un
 }
 
 func (c *Checker) findBestTypeForInvokable(source *Type, unionTarget *Type, kind SignatureKind) *Type {
-	if len(c.GetSignaturesOfType(source, kind)) != 0 {
-		return core.Find(unionTarget.Types(), func(t *Type) bool { return len(c.GetSignaturesOfType(t, kind)) != 0 })
+	if len(c.getSignaturesOfType(source, kind)) != 0 {
+		return core.Find(unionTarget.Types(), func(t *Type) bool { return len(c.getSignaturesOfType(t, kind)) != 0 })
 	}
 	return nil
 }
@@ -951,8 +951,8 @@ func (c *Checker) shouldReportUnmatchedPropertyError(source *Type, target *Type)
 	typeConstructSignatures := c.getSignaturesOfStructuredType(source, SignatureKindConstruct)
 	typeProperties := c.getPropertiesOfObjectType(source)
 	if (len(typeCallSignatures) != 0 || len(typeConstructSignatures) != 0) && len(typeProperties) == 0 {
-		if (len(c.GetSignaturesOfType(target, SignatureKindCall)) != 0 && len(typeCallSignatures) != 0) ||
-			len(c.GetSignaturesOfType(target, SignatureKindConstruct)) != 0 && len(typeConstructSignatures) != 0 {
+		if (len(c.getSignaturesOfType(target, SignatureKindCall)) != 0 && len(typeCallSignatures) != 0) ||
+			len(c.getSignaturesOfType(target, SignatureKindConstruct)) != 0 && len(typeConstructSignatures) != 0 {
 			// target has similar signature kinds to source, still focus on the unmatched property
 			return true
 		}
@@ -1444,9 +1444,9 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 	}
 	targetCount := c.getParameterCount(target)
 	var sourceHasMoreParameters bool
-	if !c.HasEffectiveRestParameter(target) {
+	if !c.hasEffectiveRestParameter(target) {
 		if checkMode&SignatureCheckModeStrictArity != 0 {
-			sourceHasMoreParameters = c.HasEffectiveRestParameter(source) || c.getParameterCount(source) > targetCount
+			sourceHasMoreParameters = c.hasEffectiveRestParameter(source) || c.getParameterCount(source) > targetCount
 		} else {
 			sourceHasMoreParameters = c.getMinArgumentCount(source) > targetCount
 		}
@@ -1538,7 +1538,7 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 			if checkMode&SignatureCheckModeCallback == 0 && !c.isInstantiatedGenericParameter(target, i) {
 				targetSig = c.getSingleCallSignature(c.GetNonNullableType(targetType))
 			}
-			callbacks := sourceSig != nil && targetSig != nil && c.GetTypePredicateOfSignature(sourceSig) == nil && c.GetTypePredicateOfSignature(targetSig) == nil &&
+			callbacks := sourceSig != nil && targetSig != nil && c.getTypePredicateOfSignature(sourceSig) == nil && c.getTypePredicateOfSignature(targetSig) == nil &&
 				c.getTypeFacts(sourceType, TypeFactsIsUndefinedOrNull) == c.getTypeFacts(targetType, TypeFactsIsUndefinedOrNull)
 			var related Ternary
 			if callbacks {
@@ -1573,9 +1573,9 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 		}
 		sourceReturnType := c.getNonCircularReturnTypeOfSignature(source)
 		// The following block preserves behavior forbidding boolean returning functions from being assignable to type guard returning functions
-		targetTypePredicate := c.GetTypePredicateOfSignature(target)
+		targetTypePredicate := c.getTypePredicateOfSignature(target)
 		if targetTypePredicate != nil {
-			sourceTypePredicate := c.GetTypePredicateOfSignature(source)
+			sourceTypePredicate := c.getTypePredicateOfSignature(source)
 			if sourceTypePredicate != nil {
 				result &= c.compareTypePredicateRelatedTo(sourceTypePredicate, targetTypePredicate, reportErrors, errorReporter, compareTypes)
 			} else if targetTypePredicate.kind == TypePredicateKindIdentifier || targetTypePredicate.kind == TypePredicateKindThis {
@@ -1620,7 +1620,7 @@ func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *T
 	if source.kind != target.kind {
 		if reportErrors {
 			errorReporter(diagnostics.A_this_based_type_guard_is_not_compatible_with_a_parameter_based_type_guard)
-			errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.TypePredicateToString(source), c.TypePredicateToString(target))
+			errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.typePredicateToString(source), c.typePredicateToString(target))
 		}
 		return TernaryFalse
 	}
@@ -1628,7 +1628,7 @@ func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *T
 		if source.parameterIndex != target.parameterIndex {
 			if reportErrors {
 				errorReporter(diagnostics.Parameter_0_is_not_in_the_same_position_as_parameter_1, source.parameterName, target.parameterName)
-				errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.TypePredicateToString(source), c.TypePredicateToString(target))
+				errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.typePredicateToString(source), c.typePredicateToString(target))
 			}
 			return TernaryFalse
 		}
@@ -1643,7 +1643,7 @@ func (c *Checker) compareTypePredicateRelatedTo(source *TypePredicate, target *T
 		related = TernaryFalse
 	}
 	if related == TernaryFalse && reportErrors {
-		errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.TypePredicateToString(source), c.TypePredicateToString(target))
+		errorReporter(diagnostics.Type_predicate_0_is_not_assignable_to_1, c.typePredicateToString(source), c.typePredicateToString(target))
 	}
 	return related
 }
@@ -1658,7 +1658,7 @@ func (c *Checker) isTopSignature(s *Signature) bool {
 		} else {
 			restType = paramType
 		}
-		return restType.flags&(TypeFlagsAny|TypeFlagsNever) != 0 && c.GetReturnTypeOfSignature(s).flags&TypeFlagsAnyOrUnknown != 0
+		return restType.flags&(TypeFlagsAny|TypeFlagsNever) != 0 && c.getReturnTypeOfSignature(s).flags&TypeFlagsAnyOrUnknown != 0
 	}
 	return false
 }
@@ -1671,7 +1671,7 @@ func (c *Checker) getParameterCount(signature *Signature) int {
 	length := len(signature.parameters)
 	if signatureHasRestParameter(signature) {
 		restType := c.getTypeOfSymbol(signature.parameters[length-1])
-		if IsTupleType(restType) {
+		if isTupleType(restType) {
 			return length + restType.TargetTupleType().fixedLength - core.IfElse(restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0, 0, 1)
 		}
 	}
@@ -1689,7 +1689,7 @@ func (c *Checker) getMinArgumentCountEx(signature *Signature, flags MinArgumentC
 		minArgumentCount := -1
 		if signatureHasRestParameter(signature) {
 			restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
-			if IsTupleType(restType) {
+			if isTupleType(restType) {
 				firstOptionalIndex := core.FindIndex(restType.TargetTupleType().elementInfos, func(info TupleElementInfo) bool {
 					return info.flags&ElementFlagsRequired == 0
 				})
@@ -1723,10 +1723,10 @@ func (c *Checker) getMinArgumentCountEx(signature *Signature, flags MinArgumentC
 	return int(signature.resolvedMinArgumentCount)
 }
 
-func (c *Checker) HasEffectiveRestParameter(signature *Signature) bool {
+func (c *Checker) hasEffectiveRestParameter(signature *Signature) bool {
 	if signatureHasRestParameter(signature) {
 		restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
-		return !IsTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
+		return !isTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
 	}
 	return false
 }
@@ -1750,7 +1750,7 @@ func (c *Checker) tryGetTypeAtPosition(signature *Signature, pos int) *Type {
 		// otherwise would return the type 'undefined').
 		restType := c.getTypeOfSymbol(signature.parameters[paramCount])
 		index := pos - paramCount
-		if !IsTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 || index < restType.TargetTupleType().fixedLength {
+		if !isTupleType(restType) || restType.TargetTupleType().combinedFlags&ElementFlagsVariable != 0 || index < restType.TargetTupleType().fixedLength {
 			return c.getIndexedAccessType(restType, c.getNumberLiteralType(jsnum.Number(index)))
 		}
 	}
@@ -1809,7 +1809,7 @@ func (c *Checker) getNameableDeclarationAtPosition(signature *Signature, pos int
 	if signatureHasRestParameter(signature) {
 		restParameter := signature.parameters[paramCount]
 		restType := c.getTypeOfSymbol(restParameter)
-		if IsTupleType(restType) {
+		if isTupleType(restType) {
 			elementInfos := restType.TargetTupleType().elementInfos
 			index := pos - paramCount
 			if index < len(elementInfos) {
@@ -1839,7 +1839,7 @@ func (c *Checker) getNonArrayRestType(signature *Signature) *Type {
 func (c *Checker) getEffectiveRestType(signature *Signature) *Type {
 	if signatureHasRestParameter(signature) {
 		restType := c.getTypeOfSymbol(signature.parameters[len(signature.parameters)-1])
-		if !IsTupleType(restType) {
+		if !isTupleType(restType) {
 			if IsTypeAny(restType) {
 				return c.anyArrayType
 			}
@@ -1903,7 +1903,7 @@ func (c *Checker) getParameterNameAtPosition(signature *Signature, pos int) stri
 	}
 	restParameter := signature.parameters[paramCount]
 	restType := c.getTypeOfSymbol(restParameter)
-	if IsTupleType(restType) {
+	if isTupleType(restType) {
 		index := pos - paramCount
 		c.getTupleElementLabel(restType.TargetTupleType().elementInfos[index], restParameter, index)
 	}
@@ -1983,11 +1983,11 @@ func (c *Checker) getTupleElementLabelFromBindingElement(node *ast.Node, index i
 	return "arg_" + strconv.Itoa(index)
 }
 
-func (c *Checker) GetTypePredicateOfSignature(sig *Signature) *TypePredicate {
+func (c *Checker) getTypePredicateOfSignature(sig *Signature) *TypePredicate {
 	if sig.resolvedTypePredicate == nil {
 		switch {
 		case sig.target != nil:
-			targetTypePredicate := c.GetTypePredicateOfSignature(sig.target)
+			targetTypePredicate := c.getTypePredicateOfSignature(sig.target)
 			if targetTypePredicate != nil {
 				sig.resolvedTypePredicate = c.instantiateTypePredicate(targetTypePredicate, sig.mapper)
 			}
@@ -2021,7 +2021,7 @@ func (c *Checker) getUnionOrIntersectionTypePredicate(signatures []*Signature, i
 	var last *TypePredicate
 	var types []*Type
 	for _, sig := range signatures {
-		pred := c.GetTypePredicateOfSignature(sig)
+		pred := c.getTypePredicateOfSignature(sig)
 		if pred != nil {
 			// Constituent type predicates must all have matching kinds. We don't create composite type predicates for assertions.
 			if pred.kind != TypePredicateKindThis && pred.kind != TypePredicateKindIdentifier || last != nil && !c.typePredicateKindsMatch(last, pred) {
@@ -2033,7 +2033,7 @@ func (c *Checker) getUnionOrIntersectionTypePredicate(signatures []*Signature, i
 			// In composite union signatures we permit and ignore signatures with a return type `false`.
 			var returnType *Type
 			if isUnion {
-				returnType = c.GetReturnTypeOfSignature(sig)
+				returnType = c.getReturnTypeOfSignature(sig)
 			}
 			if returnType != c.falseType && returnType != c.regularFalseType {
 				return nil
@@ -2183,12 +2183,12 @@ func (c *Checker) compareSignaturesIdentical(source *Signature, target *Signatur
 		result &= related
 	}
 	if !ignoreReturnTypes {
-		sourceTypePredicate := c.GetTypePredicateOfSignature(source)
-		targetTypePredicate := c.GetTypePredicateOfSignature(target)
+		sourceTypePredicate := c.getTypePredicateOfSignature(source)
+		targetTypePredicate := c.getTypePredicateOfSignature(target)
 		if sourceTypePredicate != nil || targetTypePredicate != nil {
 			result &= c.compareTypePredicatesIdentical(sourceTypePredicate, targetTypePredicate, compareTypes)
 		} else {
-			result &= compareTypes(c.GetReturnTypeOfSignature(source), c.GetReturnTypeOfSignature(target))
+			result &= compareTypes(c.getReturnTypeOfSignature(source), c.getReturnTypeOfSignature(target))
 		}
 	}
 	return result
@@ -2199,8 +2199,8 @@ func (c *Checker) isMatchingSignature(source *Signature, target *Signature, part
 	targetParameterCount := c.getParameterCount(target)
 	sourceMinArgumentCount := c.getMinArgumentCount(source)
 	targetMinArgumentCount := c.getMinArgumentCount(target)
-	sourceHasRestParameter := c.HasEffectiveRestParameter(source)
-	targetHasRestParameter := c.HasEffectiveRestParameter(target)
+	sourceHasRestParameter := c.hasEffectiveRestParameter(source)
+	targetHasRestParameter := c.hasEffectiveRestParameter(target)
 	// A source signature matches a target signature if the two signatures have the same number of required,
 	// optional, and rest parameters.
 	if sourceParameterCount == targetParameterCount && sourceMinArgumentCount == targetMinArgumentCount && sourceHasRestParameter == targetHasRestParameter {
@@ -2633,10 +2633,10 @@ func (r *Relater) isRelatedToEx(originalSource *Type, originalTarget *Type, recu
 			if reportErrors {
 				sourceString := r.c.TypeToString(core.IfElse(originalSource.alias != nil, originalSource, source))
 				targetString := r.c.TypeToString(core.IfElse(originalTarget.alias != nil, originalTarget, target))
-				calls := r.c.GetSignaturesOfType(source, SignatureKindCall)
-				constructs := r.c.GetSignaturesOfType(source, SignatureKindConstruct)
-				if len(calls) > 0 && r.isRelatedTo(r.c.GetReturnTypeOfSignature(calls[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse ||
-					len(constructs) > 0 && r.isRelatedTo(r.c.GetReturnTypeOfSignature(constructs[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse {
+				calls := r.c.getSignaturesOfType(source, SignatureKindCall)
+				constructs := r.c.getSignaturesOfType(source, SignatureKindConstruct)
+				if len(calls) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(calls[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse ||
+					len(constructs) > 0 && r.isRelatedTo(r.c.getReturnTypeOfSignature(constructs[0]), target, RecursionFlagsSource, false /*reportErrors*/) != TernaryFalse {
 					r.reportError(diagnostics.Value_of_type_0_has_no_properties_in_common_with_type_1_Did_you_mean_to_call_it, sourceString, targetString)
 				} else {
 					r.reportError(diagnostics.Type_0_has_no_properties_in_common_with_type_1, sourceString, targetString)
@@ -2693,7 +2693,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 					if r.errorNode == nil {
 						panic("No errorNode in hasExcessProperties")
 					}
-					if ast.IsJsxAttributes(r.errorNode) || IsJsxOpeningLikeElement(r.errorNode) || IsJsxOpeningLikeElement(r.errorNode.Parent) {
+					if ast.IsJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.Parent) {
 						// JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
 						// However, using an object-literal error message will be very confusing to the users so we give different a message.
 						if prop.ValueDeclaration != nil && ast.IsJsxAttribute(prop.ValueDeclaration) && ast.GetSourceFileOfNode(r.errorNode) == ast.GetSourceFileOfNode(prop.ValueDeclaration.Name()) {
@@ -3428,7 +3428,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 				return result
 			}
 		}
-		if IsTupleType(targetType) {
+		if isTupleType(targetType) {
 			// An index type can have a tuple type target when the tuple type contains variadic elements.
 			// Check if the source is related to the known keys of the tuple type.
 			result = r.isRelatedTo(source, r.c.getKnownKeysOfTupleType(targetType), RecursionFlagsTarget, reportErrors)
@@ -3751,7 +3751,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			return TernaryFalse
 		}
 		switch {
-		case source.objectFlags&ObjectFlagsReference != 0 && target.objectFlags&ObjectFlagsReference != 0 && source.Target() == target.Target() && !IsTupleType(source) && !r.c.isMarkerType(source) && !r.c.isMarkerType(target):
+		case source.objectFlags&ObjectFlagsReference != 0 && target.objectFlags&ObjectFlagsReference != 0 && source.Target() == target.Target() && !isTupleType(source) && !r.c.isMarkerType(source) && !r.c.isMarkerType(target):
 			// When strictNullChecks is disabled, the element type of the empty array literal is undefinedWideningType,
 			// and an empty array literal wouldn't be assignable to a `never[]` without this check.
 			if r.c.isEmptyArrayLiteralType(source) {
@@ -3778,7 +3778,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 			// By flags alone, we know that the `target` is a readonly array while the source is a normal array or tuple
 			// or `target` is an array and source is a tuple - in both cases the types cannot be identical, by construction
 			return TernaryFalse
-		case r.c.isGenericTupleType(source) && IsTupleType(target) && !r.c.isGenericTupleType(target):
+		case r.c.isGenericTupleType(source) && isTupleType(target) && !r.c.isGenericTupleType(target):
 			constraint := r.c.getBaseConstraintOrType(source)
 			if constraint != source {
 				return r.isRelatedTo(constraint, target, RecursionFlagsSource, reportErrors)
@@ -4002,7 +4002,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 			result &= r.signaturesRelatedTo(source, t, SignatureKindCall /*reportErrors*/, false, IntersectionStateNone)
 			if result != TernaryFalse {
 				result &= r.signaturesRelatedTo(source, t, SignatureKindConstruct /*reportErrors*/, false, IntersectionStateNone)
-				if result != TernaryFalse && !(IsTupleType(source) && IsTupleType(t)) {
+				if result != TernaryFalse && !(isTupleType(source) && isTupleType(t)) {
 					// Comparing numeric index types when both `source` and `type` are tuples is unnecessary as the
 					// element types should be sufficiently covered by `propertiesRelatedTo`. It also causes problems
 					// with index type assignability as the types for the excluded discriminants are still included
@@ -4023,22 +4023,22 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 		return r.propertiesIdenticalTo(source, target, excludedProperties)
 	}
 	result := TernaryTrue
-	if IsTupleType(target) {
+	if isTupleType(target) {
 		if r.c.isArrayOrTupleType(source) {
-			if !target.TargetTupleType().readonly && (r.c.isReadonlyArrayType(source) || IsTupleType(source) && source.TargetTupleType().readonly) {
+			if !target.TargetTupleType().readonly && (r.c.isReadonlyArrayType(source) || isTupleType(source) && source.TargetTupleType().readonly) {
 				return TernaryFalse
 			}
 			sourceArity := r.c.getTypeReferenceArity(source)
 			targetArity := r.c.getTypeReferenceArity(target)
 			var sourceRest bool
-			if IsTupleType(source) {
+			if isTupleType(source) {
 				sourceRest = source.TargetTupleType().combinedFlags&ElementFlagsRest != 0
 			} else {
 				sourceRest = true
 			}
 			targetHasRestElement := target.TargetTupleType().combinedFlags&ElementFlagsVariable != 0
 			var sourceMinLength int
-			if IsTupleType(source) {
+			if isTupleType(source) {
 				sourceMinLength = source.TargetTupleType().minLength
 			} else {
 				sourceMinLength = 0
@@ -4073,7 +4073,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			canExcludeDiscriminants := excludedProperties.Len() != 0
 			for sourcePosition := range sourceArity {
 				var sourceFlags ElementFlags
-				if IsTupleType(source) {
+				if isTupleType(source) {
 					sourceFlags = source.TargetTupleType().elementInfos[sourcePosition].flags
 				} else {
 					sourceFlags = ElementFlagsRest
@@ -4143,7 +4143,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 			return TernaryFalse
 		}
 	}
-	requireOptionalProperties := (r.relation == r.c.subtypeRelation || r.relation == r.c.strictSubtypeRelation) && !isObjectLiteralType(source) && !r.c.isEmptyArrayLiteralType(source) && !IsTupleType(source)
+	requireOptionalProperties := (r.relation == r.c.subtypeRelation || r.relation == r.c.strictSubtypeRelation) && !isObjectLiteralType(source) && !r.c.isEmptyArrayLiteralType(source) && !isTupleType(source)
 	unmatchedProperty := r.c.getUnmatchedProperty(source, target, requireOptionalProperties, false /*matchDiscriminantProperties*/)
 	if unmatchedProperty != nil {
 		if reportErrors && r.c.shouldReportUnmatchedPropertyError(source, target) {
@@ -4167,7 +4167,7 @@ func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors b
 	// We only call this for union target types when we're attempting to do excess property checking - in those cases, we want to get _all possible props_
 	// from the target union, across all members
 	properties := r.c.getPropertiesOfType(target)
-	numericNamesOnly := IsTupleType(source) && IsTupleType(target)
+	numericNamesOnly := isTupleType(source) && isTupleType(target)
 	for _, targetProp := range excludeProperties(properties, excludedProperties) {
 		name := targetProp.Name
 		if targetProp.Flags&ast.SymbolFlagsPrototype == 0 && (!numericNamesOnly || isNumericLiteralName(name) || name == "length") && (!optionalsOnly || targetProp.Flags&ast.SymbolFlagsOptional != 0) {
@@ -4299,7 +4299,7 @@ func (r *Relater) tryElaborateArrayLikeErrors(source *Type, target *Type, report
 	 * - If the source is a readonly array and the target is a mutable array or tuple, elaborate on mutability and skip property elaborations.
 	 * - If the source an array then skip property elaborations if the target is a tuple.
 	 */
-	if IsTupleType(source) {
+	if isTupleType(source) {
 		if source.TargetTupleType().readonly && r.c.isMutableArrayOrTuple(target) {
 			if reportErrors {
 				r.reportError(diagnostics.The_type_0_is_readonly_and_cannot_be_assigned_to_the_mutable_type_1, r.c.TypeToString(source), r.c.TypeToString(target))
@@ -4314,7 +4314,7 @@ func (r *Relater) tryElaborateArrayLikeErrors(source *Type, target *Type, report
 		}
 		return false
 	}
-	if IsTupleType(target) {
+	if isTupleType(target) {
 		return r.c.isArrayType(source)
 	}
 	return true
@@ -4360,8 +4360,8 @@ func (r *Relater) signaturesRelatedTo(source *Type, target *Type, kind Signature
 	if target == r.c.anyFunctionType || r.relation != r.c.strictSubtypeRelation && source == r.c.anyFunctionType {
 		return TernaryTrue
 	}
-	sourceSignatures := r.c.GetSignaturesOfType(source, kind)
-	targetSignatures := r.c.GetSignaturesOfType(target, kind)
+	sourceSignatures := r.c.getSignaturesOfType(source, kind)
+	targetSignatures := r.c.getSignaturesOfType(target, kind)
 	if kind == SignatureKindConstruct && len(sourceSignatures) != 0 && len(targetSignatures) != 0 {
 		sourceIsAbstract := sourceSignatures[0].flags&SignatureFlagsAbstract != 0
 		targetIsAbstract := targetSignatures[0].flags&SignatureFlagsAbstract != 0
@@ -4470,8 +4470,8 @@ func (r *Relater) signatureRelatedTo(source *Signature, target *Signature, erase
 }
 
 func (r *Relater) signaturesIdenticalTo(source *Type, target *Type, kind SignatureKind) Ternary {
-	sourceSignatures := r.c.GetSignaturesOfType(source, kind)
-	targetSignatures := r.c.GetSignaturesOfType(target, kind)
+	sourceSignatures := r.c.getSignaturesOfType(source, kind)
+	targetSignatures := r.c.getSignaturesOfType(target, kind)
 	if len(sourceSignatures) != len(targetSignatures) {
 		return TernaryFalse
 	}

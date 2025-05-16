@@ -214,11 +214,11 @@ func (c *Checker) GetNumberIndexType(t *Type) *Type {
 }
 
 func (c *Checker) GetCallSignatures(t *Type) []*Signature {
-	return c.GetSignaturesOfType(t, SignatureKindCall)
+	return c.getSignaturesOfType(t, SignatureKindCall)
 }
 
 func (c *Checker) GetConstructSignatures(t *Type) []*Signature {
-	return c.GetSignaturesOfType(t, SignatureKindConstruct)
+	return c.getSignaturesOfType(t, SignatureKindConstruct)
 }
 
 func (c *Checker) GetApparentProperties(t *Type) []*ast.Symbol {
@@ -229,9 +229,9 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 	t = c.getApparentType(t)
 	propsByName := createSymbolTable(c.getPropertiesOfType(t))
 	var functionType *Type
-	if len(c.GetSignaturesOfType(t, SignatureKindCall)) > 0 {
+	if len(c.getSignaturesOfType(t, SignatureKindCall)) > 0 {
 		functionType = c.globalCallableFunctionType
-	} else if len(c.GetSignaturesOfType(t, SignatureKindConstruct)) > 0 {
+	} else if len(c.getSignaturesOfType(t, SignatureKindConstruct)) > 0 {
 		functionType = c.globalNewableFunctionType
 	}
 
@@ -273,7 +273,7 @@ func (c *Checker) shouldTreatPropertiesOfExternalModuleAsExports(resolvedExterna
 		resolvedExternalModuleType.objectFlags&ObjectFlagsClass != 0 ||
 		// `isArrayOrTupleLikeType` is too expensive to use in this auto-imports hot path.
 		c.isArrayType(resolvedExternalModuleType) ||
-		IsTupleType(resolvedExternalModuleType)
+		isTupleType(resolvedExternalModuleType)
 }
 
 func (c *Checker) GetContextualType(node *ast.Expression, contextFlags ContextFlags) *Type {

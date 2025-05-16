@@ -867,7 +867,6 @@ func removeOptionality(t *checker.Type, isOptionalExpression bool, isOptionalCha
 	return t
 }
 
-// nodeTests.ts
 func isNoSubstitutionTemplateLiteral(node *ast.Node) bool {
 	return node.Kind == ast.KindNoSubstitutionTemplateLiteral
 }
