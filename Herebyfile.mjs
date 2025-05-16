@@ -13,6 +13,7 @@ import { parseArgs } from "node:util";
 import os from "os";
 import pLimit from "p-limit";
 import pc from "picocolors";
+import prettyMilliseconds from "pretty-ms";
 import which from "which";
 
 const __filename = url.fileURLToPath(new URL(import.meta.url));
@@ -58,6 +59,7 @@ const { values: options } = parseArgs({
         debug: { type: "boolean" },
 
         setPrerelease: { type: "string" },
+        sign: { type: "boolean" },
 
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
         noembed: { type: "boolean", default: parseEnvBoolean("NOEMBED") },
@@ -719,18 +721,18 @@ const mainNativePreviewPackage = {
 
 const nativePreviewPlatforms = memoize(() => {
     const supportedPlatforms = [
-        ["win32", "x64"],
-        ["win32", "arm64"],
-        ["linux", "x64"],
-        ["linux", "arm"],
-        ["linux", "arm64"],
-        ["darwin", "x64"],
-        ["darwin", "arm64"],
+        ["win32", "x64", "Microsoft400"],
+        ["win32", "arm64", "MicrosoftWin8WinBlue"],
+        ["linux", "x64", "LinuxSign"],
+        ["linux", "arm", "LinuxSign"],
+        ["linux", "arm64", "LinuxSign"],
+        ["darwin", "x64", "8023"], // aka MacDeveloperHarden
+        ["darwin", "arm64", "8023"],
         // Alpine?
         // Wasm?
     ];
 
-    return supportedPlatforms.map(([os, arch]) => {
+    return supportedPlatforms.map(([os, arch, cert]) => {
         const npmDirName = `native-preview-${os}-${arch}`;
         const npmDir = path.join(builtNpm, npmDirName);
         const npmTarball = `${npmDir}.tgz`;
@@ -752,6 +754,7 @@ const nativePreviewPlatforms = memoize(() => {
             vsixPath,
             vsixManifestPath,
             vsixSignaturePath,
+            cert,
         };
     });
 
@@ -788,9 +791,7 @@ const nativePreviewPlatforms = memoize(() => {
     }
 });
 
-const buildLimit = pLimit(os.availableParallelism());
-
-export const buildNativePreviewPackages = task({
+const buildNativePreviewPackages = task({
     name: "build:native-preview-packages",
     run: async () => {
         await rimraf(builtNpm);
@@ -832,6 +833,8 @@ export const buildNativePreviewPackages = task({
         }
         const extraFlags = ["-trimpath", ldflags];
 
+        const buildLimit = pLimit(os.availableParallelism());
+
         await Promise.all(platforms.map(async ({ npmDir, npmPackageName, nodeOs, nodeArch, goos, goarch }) => {
             const packageJson = {
                 ...inputPackageJson,
@@ -869,66 +872,135 @@ export const buildNativePreviewPackages = task({
                 ),
             ]);
         }));
-
-        // TODO: sign binaries
     },
 });
 
-async function packNativePreviewPackages() {
-    const platforms = nativePreviewPlatforms();
-    await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
-        const { stdout } = await $pipe`npm pack --json ${npmDir}`;
-        const filename = JSON.parse(stdout)[0].filename.replace("@", "").replace("/", "-");
-        await fs.promises.rename(filename, npmTarball);
-    }));
-}
+const signTempDirectory = process.env.AGENT_TEMPDIRECTORY || os.tmpdir();
 
-export const packNativePreviewPackagesTask = task({
-    name: "pack:native-preview-packages",
-    dependencies: [buildNativePreviewPackages],
-    run: packNativePreviewPackages,
-});
+let signCount = 0;
 
-export const packNativePreviewPackagesOnlyTask = task({
-    name: "pack:native-preview-packages-only",
-    run: packNativePreviewPackages,
-});
+/**
+ * @typedef {{
+ *   SignFileRecordList: {
+ *     SignFileList: { SrcPath: string; DstPath: string | null; }[];
+ *     Certs: string;
+ *   }[]
+ * }} DDSignFileList
+ *
+ * @param {DDSignFileList} filelist
+ */
+async function sign(filelist) {
+    const data = JSON.stringify(filelist, undefined, 4);
+    console.log("filelist:", data);
 
-async function buildNativePreviewExtensions() {
-    await rimraf(builtVsix);
-    await fs.promises.mkdir(builtVsix, { recursive: true });
-
-    const extensionLibDir = path.join(extensionDir, "lib");
-    await rimraf(extensionLibDir);
-
-    const version = getVersion();
-
-    for (const { npmDir, vscodeTarget, vsixPath, vsixManifestPath, vsixSignaturePath } of nativePreviewPlatforms()) {
-        // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
-        const libDir = path.join(npmDir, "lib");
-        await fs.promises.cp(libDir, extensionLibDir, { recursive: true });
-
-        try {
-            await $({ cwd: extensionDir })`vsce package ${version} --pre-release --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
-        }
-        finally {
-            await rimraf(extensionLibDir);
-        }
-
-        await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
-        await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
+    if (!process.env.MBSIGN_APPFOLDER) {
+        console.log(pc.yellow("Skipping signing because MBSIGN_APPFOLDER is not set"));
+        return;
     }
 
-    // TODO: sign VSIX files
+    const filelistPath = path.resolve(signTempDirectory, `${process.pid}-signing-filelist-${signCount++}.json`);
+    await fs.promises.writeFile(filelistPath, data);
+
+    try {
+        const dll = path.join(process.env.MBSIGN_APPFOLDER, "DDSignFiles.dll");
+        const filelistFlag = `/filelist:${filelistPath}`;
+        await $`dotnet ${dll} -- ${filelistFlag}`;
+    }
+    finally {
+        await fs.promises.unlink(filelistPath);
+    }
 }
 
-export const buildNativePreviewExtensionsTask = task({
-    name: "build:native-preview-extensions",
+const signNativePreviewPackages = task({
+    name: "sign:native-preview-packages",
     dependencies: [buildNativePreviewPackages],
-    run: buildNativePreviewExtensions,
+    run: async () => {
+        const platforms = nativePreviewPlatforms();
+
+        /** @type {DDSignFileList} */
+        let filelist = {
+            SignFileRecordList: [],
+        };
+
+        /** @type {Map<string, string[]>} */
+        const filelistByCert = new Map();
+
+        /** @type {string[]} */
+        const notarize = [];
+
+        for (const { npmDir, goos, cert } of platforms) {
+            if (goos === "darwin") {
+                // TODO: zip, notarize
+            }
+            // TODO: do something here
+        }
+    },
 });
 
-export const buildNativePreviewExtensionsOnlyTask = task({
-    name: "build:native-preview-extensions-only",
-    run: buildNativePreviewExtensions,
+const finishedNativePreviewPackages = options.sign ? signNativePreviewPackages : buildNativePreviewPackages;
+
+const packNativePreviewPackages = task({
+    name: "pack:native-preview-packages",
+    dependencies: [finishedNativePreviewPackages],
+    run: async () => {
+        const platforms = nativePreviewPlatforms();
+        await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
+            const { stdout } = await $pipe`npm pack --json ${npmDir}`;
+            const filename = JSON.parse(stdout)[0].filename.replace("@", "").replace("/", "-");
+            await fs.promises.rename(filename, npmTarball);
+        }));
+    },
+});
+
+const buildNativePreviewExtensions = task({
+    name: "build:native-preview-extensions",
+    dependencies: [signNativePreviewPackages],
+    run: async () => {
+        await rimraf(builtVsix);
+        await fs.promises.mkdir(builtVsix, { recursive: true });
+
+        const extensionLibDir = path.join(extensionDir, "lib");
+        await rimraf(extensionLibDir);
+
+        const version = getVersion();
+
+        for (const { npmDir, vscodeTarget, vsixPath, vsixManifestPath, vsixSignaturePath } of nativePreviewPlatforms()) {
+            // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#platformspecific-extensions
+            const libDir = path.join(npmDir, "lib");
+            await fs.promises.cp(libDir, extensionLibDir, { recursive: true });
+
+            try {
+                await $({ cwd: extensionDir })`vsce package ${version} --pre-release --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
+            }
+            finally {
+                await rimraf(extensionLibDir);
+            }
+
+            await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
+            await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
+        }
+    },
+});
+
+const signNativePreviewExtensions = task({
+    name: "sign:native-preview-extensions",
+    dependencies: [buildNativePreviewExtensions],
+    run: async () => {
+        const platforms = nativePreviewPlatforms();
+        await sign({
+            SignFileRecordList: [
+                {
+                    SignFileList: platforms.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
+                    Certs: "VSCodePublisher",
+                },
+            ],
+        });
+    },
+});
+
+const finishedNativePreviewExtensions = options.sign ? signNativePreviewExtensions : buildNativePreviewExtensions;
+
+export const nativePreview = task({
+    name: "native-preview",
+    dependencies: [packNativePreviewPackages, finishedNativePreviewExtensions],
 });
