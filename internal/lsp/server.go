@@ -194,7 +194,7 @@ func (s *Server) readLoop(ctx context.Context) error {
 	for {
 		msg, err := s.read()
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				return nil
 			}
 			if errors.Is(err, lsproto.ErrInvalidRequest) {
@@ -266,10 +266,10 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		case req := <-s.requestQueue:
-			ctx := ctx
+			requestCtx := ctx
 			if req.ID != nil {
 				var cancel context.CancelFunc
-				ctx, cancel = context.WithCancel(core.WithRequestID(ctx, req.ID.String()))
+				requestCtx, cancel = context.WithCancel(core.WithRequestID(requestCtx, req.ID.String()))
 				s.pendingClientRequestsMu.Lock()
 				s.pendingClientRequests[*req.ID] = pendingClientRequest{
 					req:    req,
@@ -279,8 +279,8 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 			}
 
 			handle := func() {
-				if err := s.handleRequestOrNotification(ctx, req); err != nil {
-					if err == io.EOF {
+				if err := s.handleRequestOrNotification(requestCtx, req); err != nil {
+					if errors.Is(err, io.EOF) {
 						lspExit()
 					} else {
 						s.sendError(req.ID, err)

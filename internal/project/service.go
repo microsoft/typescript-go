@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -196,7 +197,7 @@ func (s *Service) ChangeFile(document lsproto.VersionedTextDocumentIdentifier, c
 				NewText:   wholeChange.Text,
 			}
 		} else {
-			return fmt.Errorf("invalid change type")
+			return errors.New("invalid change type")
 		}
 	}
 

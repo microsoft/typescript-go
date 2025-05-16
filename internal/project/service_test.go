@@ -93,7 +93,7 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/x.ts", defaultFiles["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 			info, proj := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/x.ts")
 			programBefore := proj.GetProgram()
-			service.ChangeFile(
+			err := service.ChangeFile(
 				lsproto.VersionedTextDocumentIdentifier{
 					TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
 						Uri: "file:///home/projects/TS/p1/src/x.ts",
@@ -118,6 +118,7 @@ func TestService(t *testing.T) {
 					},
 				},
 			)
+			assert.NilError(t, err)
 			assert.Equal(t, info.Text(), "export const x = 2;")
 			assert.Equal(t, proj.CurrentProgram(), programBefore)
 			assert.Equal(t, programBefore.GetSourceFile("/home/projects/TS/p1/src/x.ts").Text(), "export const x = 1;")
@@ -131,7 +132,7 @@ func TestService(t *testing.T) {
 			_, proj := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/x.ts")
 			programBefore := proj.GetProgram()
 			indexFileBefore := programBefore.GetSourceFile("/home/projects/TS/p1/src/index.ts")
-			service.ChangeFile(
+			err := service.ChangeFile(
 				lsproto.VersionedTextDocumentIdentifier{
 					TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
 						Uri: "file:///home/projects/TS/p1/src/x.ts",
@@ -156,6 +157,7 @@ func TestService(t *testing.T) {
 					},
 				},
 			)
+			assert.NilError(t, err)
 			assert.Equal(t, proj.GetProgram().GetSourceFile("/home/projects/TS/p1/src/index.ts"), indexFileBefore)
 		})
 
@@ -167,7 +169,7 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			assert.Check(t, service.GetScriptInfo("/home/projects/TS/p1/y.ts") == nil)
 
-			service.ChangeFile(
+			err := service.ChangeFile(
 				lsproto.VersionedTextDocumentIdentifier{
 					TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
 						Uri: "file:///home/projects/TS/p1/src/index.ts",
@@ -192,6 +194,7 @@ func TestService(t *testing.T) {
 					},
 				},
 			)
+			assert.NilError(t, err)
 			service.EnsureDefaultProjectForFile("/home/projects/TS/p1/y.ts")
 		})
 	})
