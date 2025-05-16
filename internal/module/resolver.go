@@ -109,6 +109,8 @@ type Resolver struct {
 	caches
 	host            ResolutionHost
 	compilerOptions *core.CompilerOptions
+	TypingsLocation string
+	ProjectName     string
 	// reportDiagnostic: DiagnosticReporter
 }
 
@@ -229,6 +231,36 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 		}
 	}
 
+	return r.tryResolveFromTypingsLocation(moduleName, containingDirectory, result)
+}
+
+func (r *Resolver) tryResolveFromTypingsLocation(moduleName string, containingDirectory string, originalResult *ResolvedModule) *ResolvedModule {
+	if r.TypingsLocation == "" ||
+		tspath.IsExternalModuleNameRelative(moduleName) ||
+		(originalResult.ResolvedFileName != "" && tspath.ExtensionIsOneOf(originalResult.Extension, tspath.SupportedTSExtensionsWithJsonFlat)) {
+		return originalResult
+	}
+
+	state := newResolutionState(
+		moduleName,
+		containingDirectory,
+		false,               /*isTypeReferenceDirective*/
+		core.ModuleKindNone, // resolutionMode,
+		r.compilerOptions,
+		nil, // redirectedReference,
+		r,
+	)
+	if r.traceEnabled() {
+		r.host.Trace(diagnostics.Auto_discovery_for_typings_is_enabled_in_project_0_Running_extra_resolution_pass_for_module_1_using_cache_location_2.Format(r.ProjectName, moduleName, r.TypingsLocation))
+	}
+	globalResolved := state.loadModuleFromImmediateNodeModulesDirectory(extensionsDeclaration, r.TypingsLocation, false)
+	if globalResolved == nil {
+		return originalResult
+	}
+	result := state.createResolvedModule(globalResolved, true)
+	result.FailedLookupLocations = append(originalResult.FailedLookupLocations, result.FailedLookupLocations...)
+	result.AffectingLocations = append(originalResult.AffectingLocations, result.AffectingLocations...)
+	result.ResolutionDiagnostics = append(originalResult.ResolutionDiagnostics, result.ResolutionDiagnostics...)
 	return result
 }
 
