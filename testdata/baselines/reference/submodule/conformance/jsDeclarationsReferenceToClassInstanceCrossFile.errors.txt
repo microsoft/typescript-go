@@ -1,10 +1,9 @@
-test.js(1,18): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+index.js(7,19): error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
+index.js(14,18): error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
 
 
-==== test.js (1 errors) ====
+==== test.js (0 errors) ====
     const {Render} = require("./index");
-                     ~~~~~~~
-!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
     let render = new Render();
     
     render.addRectangle();
@@ -17,7 +16,7 @@ test.js(1,18): error TS2580: Cannot find name 'require'. Do you need to install 
     }
     
     module.exports = { Rectangle };
-==== index.js (0 errors) ====
+==== index.js (2 errors) ====
     const {Rectangle} = require('./rectangle');
     
     class Render {
@@ -25,6 +24,8 @@ test.js(1,18): error TS2580: Cannot find name 'require'. Do you need to install 
             /**
              * Object list
              * @type {Rectangle[]}
+                      ~~~~~~~~~
+!!! error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
              */
             this.objects = [];
         }
@@ -32,6 +33,8 @@ test.js(1,18): error TS2580: Cannot find name 'require'. Do you need to install 
          * Adds a rectangle
          * 
          * @returns {Rectangle} the rect
+                     ~~~~~~~~~
+!!! error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
          */
         addRectangle() {
             const obj = new Rectangle();

@@ -9,8 +9,8 @@ import (
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -163,7 +163,7 @@ func DocumentURIToFileName(uri lsproto.DocumentUri) string {
 		if len(path) >= 4 {
 			if nextSlash := strings.IndexByte(path[1:], '/'); nextSlash != -1 {
 				if possibleDrive, _ := url.PathUnescape(path[1 : nextSlash+2]); strings.HasSuffix(possibleDrive, ":/") {
-					return possibleDrive + path[len(possibleDrive)+1:]
+					return possibleDrive + path[nextSlash+2:]
 				}
 			}
 		}
@@ -239,8 +239,11 @@ func (c *Converters) PositionToLineAndCharacter(scriptInfo ScriptInfo, position 
 
 	lineMap := scriptInfo.LineMap()
 
-	line, _ := slices.BinarySearch(lineMap.LineStarts, position)
-	line = max(0, line-1)
+	line, isLineStart := slices.BinarySearch(lineMap.LineStarts, position)
+	if !isLineStart {
+		line--
+	}
+	line = max(0, line)
 
 	// The current line ranges from lineMap.LineStarts[line] (or 0) to lineMap.LineStarts[line+1] (or len(text)).
 

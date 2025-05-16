@@ -3,9 +3,9 @@
 === index.js ===
 module.exports = class Thing {
 >module.exports = class Thing {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof Thing
->module.exports : any
->module : any
->exports : any
+>module.exports : typeof Thing
+>module : { Thing: typeof Thing; }
+>exports : typeof Thing
 >class Thing {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof Thing
 >Thing : typeof Thing
 
@@ -17,9 +17,9 @@ module.exports = class Thing {
 
         this.t = 12 + p;
 >this.t = 12 + p : number
->this.t : any
+>this.t : number
 >this : this
->t : any
+>t : number
 >12 + p : number
 >12 : 12
 >p : number

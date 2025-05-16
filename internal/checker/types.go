@@ -126,7 +126,6 @@ type AliasSymbolLinks struct {
 
 type ModuleSymbolLinks struct {
 	resolvedExports       ast.SymbolTable      // Resolved exports of module or combined early- and late-bound static members of a class.
-	cjsExportMerged       *ast.Symbol          // Version of the symbol with all non export= exports merged with the export= target
 	typeOnlyExportStarMap map[string]*ast.Node // Set on a module symbol when some of its exports were resolved through a 'export type * from "mod"' declaration
 	exportsChecked        bool
 }
@@ -153,9 +152,10 @@ type ExportTypeLinks struct {
 // Links for type aliases
 
 type TypeAliasLinks struct {
-	declaredType   *Type
-	typeParameters []*Type          // Type parameters of type alias (undefined if non-generic)
-	instantiations map[string]*Type // Instantiations of generic type alias (undefined if non-generic)
+	declaredType                  *Type
+	typeParameters                []*Type          // Type parameters of type alias (undefined if non-generic)
+	instantiations                map[string]*Type // Instantiations of generic type alias (undefined if non-generic)
+	isConstructorDeclaredProperty bool
 }
 
 // Links for declared types (type parameters, class types, interface types, enums)
@@ -636,6 +636,50 @@ func (t *Type) TargetTupleType() *TupleType {
 	return t.AsTypeReference().target.AsTupleType()
 }
 
+func (t *Type) Symbol() *ast.Symbol {
+	return t.symbol
+}
+
+func (t *Type) IsUnion() bool {
+	return t.flags&TypeFlagsUnion != 0
+}
+
+func (t *Type) IsString() bool {
+	return t.flags&TypeFlagsString != 0
+}
+
+func (t *Type) IsIntersection() bool {
+	return t.flags&TypeFlagsIntersection != 0
+}
+
+func (t *Type) IsStringLiteral() bool {
+	return t.flags&TypeFlagsStringLiteral != 0
+}
+
+func (t *Type) IsNumberLiteral() bool {
+	return t.flags&TypeFlagsNumberLiteral != 0
+}
+
+func (t *Type) IsBigIntLiteral() bool {
+	return t.flags&TypeFlagsBigIntLiteral != 0
+}
+
+func (t *Type) IsEnumLiteral() bool {
+	return t.flags&TypeFlagsEnumLiteral != 0
+}
+
+func (t *Type) IsBooleanLike() bool {
+	return t.flags&TypeFlagsBooleanLike != 0
+}
+
+func (t *Type) IsStringLike() bool {
+	return t.flags&TypeFlagsStringLike != 0
+}
+
+func (t *Type) IsClass() bool {
+	return t.objectFlags&ObjectFlagsClass != 0
+}
+
 // TypeData
 
 type TypeData interface {
@@ -680,6 +724,10 @@ type LiteralType struct {
 	regularType *Type // Regular version of type
 }
 
+func (t *LiteralType) Value() any {
+	return t.value
+}
+
 // UniqueESSymbolTypeData
 
 type UniqueESSymbolType struct {
@@ -715,6 +763,10 @@ func (t *StructuredType) CallSignatures() []*Signature {
 
 func (t *StructuredType) ConstructSignatures() []*Signature {
 	return slices.Clip(t.signatures[t.callSignatureCount:])
+}
+
+func (t *StructuredType) Properties() []*ast.Symbol {
+	return t.properties
 }
 
 // Except for tuple type references and reverse mapped types, all object types have an associated symbol.

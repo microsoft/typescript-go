@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"strings"
 )
 
 type JSONRPCVersion struct{}
@@ -29,6 +28,10 @@ type ID struct {
 	int int32
 }
 
+func NewIDString(str string) *ID {
+	return &ID{str: str}
+}
+
 func (id *ID) MarshalJSON() ([]byte, error) {
 	if id.str != "" {
 		return json.Marshal(id.str)
@@ -44,6 +47,13 @@ func (id *ID) UnmarshalJSON(data []byte) error {
 	return json.Unmarshal(data, &id.int)
 }
 
+func (id *ID) TryInt() (int32, bool) {
+	if id == nil || id.str != "" {
+		return 0, false
+	}
+	return id.int, true
+}
+
 func (id *ID) MustInt() int32 {
 	if id.str != "" {
 		panic("ID is not an integer")
@@ -55,9 +65,17 @@ func (id *ID) MustInt() int32 {
 
 type RequestMessage struct {
 	JSONRPC JSONRPCVersion `json:"jsonrpc"`
-	ID      *ID            `json:"id"`
+	ID      *ID            `json:"id,omitempty"`
 	Method  Method         `json:"method"`
 	Params  any            `json:"params"`
+}
+
+func NewRequestMessage(method Method, id *ID, params any) *RequestMessage {
+	return &RequestMessage{
+		ID:     id,
+		Method: method,
+		Params: params,
+	}
 }
 
 func (r *RequestMessage) UnmarshalJSON(data []byte) error {
@@ -73,27 +91,9 @@ func (r *RequestMessage) UnmarshalJSON(data []byte) error {
 
 	r.ID = raw.ID
 	r.Method = raw.Method
-	if r.Method == MethodShutdown || r.Method == MethodExit {
-		// These methods have no params.
-		return nil
-	}
 
-	if strings.HasPrefix(string(r.Method), "@ts/") {
-		r.Params = raw.Params
-		return nil
-	}
-
-	var params any
 	var err error
-
-	if unmarshalParams, ok := unmarshallers[raw.Method]; ok {
-		params, err = unmarshalParams(raw.Params)
-	} else {
-		// Fall back to default; it's probably an unknown message and we will probably not handle it.
-		err = json.Unmarshal(raw.Params, &params)
-	}
-	r.Params = params
-
+	r.Params, err = unmarshalParams(raw.Method, raw.Params)
 	if err != nil {
 		return fmt.Errorf("%w: %w", ErrInvalidRequest, err)
 	}

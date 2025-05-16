@@ -121,20 +121,10 @@ func getTokenAtPosition(
 		return nodeList
 	}
 
-	nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-		VisitNode:  visitNode,
-		VisitToken: visitNode,
-		VisitNodes: visitNodeList,
-		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-			if modifiers != nil {
-				visitNodeList(&modifiers.NodeList, visitor)
-			}
-			return modifiers
-		},
-	})
+	nodeVisitor := getNodeVisitor(visitNode, visitNodeList)
 
 	for {
-		visitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
+		VisitEachChildAndJSDoc(current, sourceFile, nodeVisitor)
 		// If prevSubtree was set on the last iteration, it ends at the target position.
 		// Check if the rightmost token of prevSubtree should be returned based on the
 		// `includePrecedingTokenAtEndPosition` callback.
@@ -203,26 +193,15 @@ func findRightmostNode(node *ast.Node) *ast.Node {
 		}
 		return node
 	}
-	visitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-		VisitNode:  visitNode,
-		VisitToken: visitNode,
-		VisitNodes: func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
-			if nodeList != nil {
-				if rightmost := ast.FindLastVisibleNode(nodeList.Nodes); rightmost != nil {
-					next = rightmost
-				}
+	visitNodes := func(nodeList *ast.NodeList, visitor *ast.NodeVisitor) *ast.NodeList {
+		if nodeList != nil {
+			if rightmost := ast.FindLastVisibleNode(nodeList.Nodes); rightmost != nil {
+				next = rightmost
 			}
-			return nodeList
-		},
-		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-			if modifiers != nil {
-				if rightmost := ast.FindLastVisibleNode(modifiers.Nodes); rightmost != nil {
-					next = rightmost
-				}
-			}
-			return modifiers
-		},
-	})
+		}
+		return nodeList
+	}
+	visitor := getNodeVisitor(visitNode, visitNodes)
 
 	for {
 		current.VisitEachChild(visitor)
@@ -234,7 +213,7 @@ func findRightmostNode(node *ast.Node) *ast.Node {
 	}
 }
 
-func visitEachChildAndJSDoc(node *ast.Node, sourceFile *ast.SourceFile, visitor *ast.NodeVisitor) {
+func VisitEachChildAndJSDoc(node *ast.Node, sourceFile *ast.SourceFile, visitor *ast.NodeVisitor) {
 	if node.Flags&ast.NodeFlagsHasJSDoc != 0 {
 		for _, jsdoc := range node.JSDoc(sourceFile) {
 			if visitor.Hooks.VisitNode != nil {
@@ -292,7 +271,7 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 			}
 			if nodeList != nil && len(nodeList.Nodes) > 0 {
 				nodes := nodeList.Nodes
-				if isJSDocSingleCommentNodeList(n, nodeList) {
+				if ast.IsJSDocSingleCommentNodeList(n, nodeList) {
 					return nodeList
 				}
 				index, match := core.BinarySearchUniqueFunc(nodes, func(middle int, _ *ast.Node) int {
@@ -325,18 +304,8 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 			}
 			return nodeList
 		}
-		nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-			VisitNode:  visitNode,
-			VisitToken: visitNode,
-			VisitNodes: visitNodes,
-			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-				if modifiers != nil {
-					visitNodes(&modifiers.NodeList, visitor)
-				}
-				return modifiers
-			},
-		})
-		visitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
+		nodeVisitor := getNodeVisitor(visitNode, visitNodes)
+		VisitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
 
 		if foundChild != nil {
 			// Note that the span of a node's tokens is [getStartOfNode(node, ...), node.end).
@@ -344,7 +313,7 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 			// 1) `position` precedes `child`'s tokens or `child` has no tokens (ie: in a comment or whitespace preceding `child`):
 			// we need to find the last token in a previous child node or child tokens.
 			// 2) `position` is within the same span: we recurse on `child`.
-			start := getStartOfNode(foundChild, sourceFile, !excludeJSDoc /*includeJSDoc*/)
+			start := GetStartOfNode(foundChild, sourceFile, !excludeJSDoc /*includeJSDoc*/)
 			lookInPreviousChild := start >= position || // cursor in the leading trivia or preceding tokens
 				!isValidPrecedingNode(foundChild, sourceFile)
 			if lookInPreviousChild {
@@ -398,18 +367,13 @@ func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *a
 }
 
 func isValidPrecedingNode(node *ast.Node, sourceFile *ast.SourceFile) bool {
-	start := getStartOfNode(node, sourceFile, false /*includeJSDoc*/)
+	start := GetStartOfNode(node, sourceFile, false /*includeJSDoc*/)
 	width := node.End() - start
 	return !(ast.IsWhitespaceOnlyJsxText(node) || width == 0)
 }
 
-func getStartOfNode(node *ast.Node, file *ast.SourceFile, includeJSDoc bool) int {
+func GetStartOfNode(node *ast.Node, file *ast.SourceFile, includeJSDoc bool) int {
 	return scanner.GetTokenPosOfNode(node, file, includeJSDoc)
-}
-
-// If this is a single comment JSDoc, we do not visit the comment node.
-func isJSDocSingleCommentNodeList(parent *ast.Node, nodeList *ast.NodeList) bool {
-	return parent.Kind == ast.KindJSDoc && nodeList == parent.AsJSDoc().Comment && nodeList != nil && len(nodeList.Nodes) == 1
 }
 
 // Looks for rightmost valid token in the range [startPos, endPos).
@@ -418,8 +382,8 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 	if position == -1 {
 		position = containingNode.End()
 	}
-	var find func(n *ast.Node) *ast.Node
-	find = func(n *ast.Node) *ast.Node {
+	var find func(n *ast.Node, endPos int) *ast.Node
+	find = func(n *ast.Node, endPos int) *ast.Node {
 		if n == nil {
 			return nil
 		}
@@ -428,31 +392,31 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 		}
 
 		var rightmostValidNode *ast.Node
-		var rightmostVisitedNode *ast.Node
+		rightmostVisitedNodes := make([]*ast.Node, 0, 1) // Nodes after the last valid node.
 		hasChildren := false
-		test := func(node *ast.Node) bool {
-			if node.Flags&ast.NodeFlagsReparsed != 0 ||
-				node.End() > endPos || getStartOfNode(node, sourceFile, !excludeJSDoc /*includeJSDoc*/) >= position {
-				return false
-			}
-			rightmostVisitedNode = node
-			if isValidPrecedingNode(node, sourceFile) {
-				rightmostValidNode = node
-				return true
-			}
-			return false
+		shouldVisitNode := func(node *ast.Node) bool {
+			// Node is synthetic or out of the desired range: don't visit it.
+			return !(node.Flags&ast.NodeFlagsReparsed != 0 ||
+				node.End() > endPos || GetStartOfNode(node, sourceFile, !excludeJSDoc /*includeJSDoc*/) >= position)
 		}
 		visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
 			if node == nil {
 				return node
 			}
 			hasChildren = true
-			test(node)
+			if !shouldVisitNode(node) {
+				return node
+			}
+			rightmostVisitedNodes = append(rightmostVisitedNodes, node)
+			if isValidPrecedingNode(node, sourceFile) {
+				rightmostValidNode = node
+				rightmostVisitedNodes = rightmostVisitedNodes[:0]
+			}
 			return node
 		}
 		visitNodes := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
 			if nodeList != nil && len(nodeList.Nodes) > 0 {
-				if isJSDocSingleCommentNodeList(n, nodeList) {
+				if ast.IsJSDocSingleCommentNodeList(n, nodeList) {
 					return nodeList
 				}
 				hasChildren = true
@@ -462,42 +426,63 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 					}
 					return comparisonLessThan
 				})
+				validIndex := -1
 				for i := index - 1; i >= 0; i-- {
-					if test(nodeList.Nodes[i]) {
+					if !shouldVisitNode(nodeList.Nodes[i]) {
+						continue
+					}
+					if isValidPrecedingNode(nodeList.Nodes[i], sourceFile) {
+						validIndex = i
+						rightmostValidNode = nodeList.Nodes[i]
 						break
 					}
+				}
+				for i := validIndex + 1; i < index; i++ {
+					if !shouldVisitNode(nodeList.Nodes[i]) {
+						continue
+					}
+					rightmostVisitedNodes = append(rightmostVisitedNodes, nodeList.Nodes[i])
 				}
 			}
 			return nodeList
 		}
-		nodeVisitor := ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
-			VisitNode:  visitNode,
-			VisitToken: visitNode,
-			VisitNodes: visitNodes,
-			VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
-				if modifiers != nil {
-					visitNodes(&modifiers.NodeList, visitor)
-				}
-				return modifiers
-			},
-		})
-		visitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
+		nodeVisitor := getNodeVisitor(visitNode, visitNodes)
+		VisitEachChildAndJSDoc(n, sourceFile, nodeVisitor)
 
 		// Three cases:
 		// 1. The answer is a token of `rightmostValidNode`.
-		// 2. The answer is one of the unvisited tokens that occur after the last visited node.
+		// 2. The answer is one of the unvisited tokens that occur after the rightmost valid node.
 		// 3. The current node is a childless, token-less node. The answer is the current node.
 
-		// Case 2: Look at trailing tokens.
+		// Case 2: Look at unvisited trailing tokens that occur in between the rightmost visited nodes.
 		if !ast.IsJSDocCommentContainingNode(n) { // JSDoc nodes don't include trivia tokens as children.
 			var startPos int
-			if rightmostVisitedNode != nil {
-				startPos = rightmostVisitedNode.End()
+			if rightmostValidNode != nil {
+				startPos = rightmostValidNode.End()
 			} else {
 				startPos = n.Pos()
 			}
 			scanner := scanner.GetScannerForSourceFile(sourceFile, startPos)
 			var tokens []*ast.Node
+			for _, visitedNode := range rightmostVisitedNodes {
+				// Trailing tokens that occur before this node.
+				for startPos < min(visitedNode.Pos(), position) {
+					tokenStart := scanner.TokenStart()
+					if tokenStart >= position {
+						break
+					}
+					token := scanner.Token()
+					tokenFullStart := scanner.TokenFullStart()
+					tokenEnd := scanner.TokenEnd()
+					startPos = tokenEnd
+					tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, n))
+					scanner.Scan()
+				}
+				startPos = visitedNode.End()
+				scanner.ResetPos(startPos)
+				scanner.Scan()
+			}
+			// Trailing tokens after last visited node.
 			for startPos < min(endPos, position) {
 				tokenStart := scanner.TokenStart()
 				if tokenStart >= position {
@@ -510,6 +495,7 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 				tokens = append(tokens, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, n))
 				scanner.Scan()
 			}
+
 			lastToken := len(tokens) - 1
 			// Find preceding valid token.
 			for i := lastToken; i >= 0; i-- {
@@ -524,8 +510,95 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 			return n
 		}
 		// Case 1: recur on rightmostValidNode.
-		return find(rightmostValidNode)
+		if rightmostValidNode != nil {
+			endPos = rightmostValidNode.End()
+		}
+		return find(rightmostValidNode, endPos)
 	}
 
-	return find(containingNode)
+	return find(containingNode, endPos)
+}
+
+func FindNextToken(previousToken *ast.Node, parent *ast.Node, file *ast.SourceFile) *ast.Node {
+	var find func(n *ast.Node) *ast.Node
+	find = func(n *ast.Node) *ast.Node {
+		if ast.IsTokenKind(n.Kind) && n.Pos() == previousToken.End() {
+			// this is token that starts at the end of previous token - return it
+			return n
+		}
+		// Node that contains `previousToken` or occurs immediately after it.
+		var foundNode *ast.Node
+		visitNode := func(node *ast.Node, _ *ast.NodeVisitor) *ast.Node {
+			if node != nil && node.Flags&ast.NodeFlagsReparsed == 0 &&
+				node.Pos() <= previousToken.End() && node.End() > previousToken.End() {
+				foundNode = node
+			}
+			return node
+		}
+		visitNodes := func(nodeList *ast.NodeList, _ *ast.NodeVisitor) *ast.NodeList {
+			if nodeList != nil && len(nodeList.Nodes) > 0 && foundNode == nil {
+				nodes := nodeList.Nodes
+				index, match := core.BinarySearchUniqueFunc(nodes, func(_ int, node *ast.Node) int {
+					if node.Flags&ast.NodeFlagsReparsed != 0 {
+						return comparisonLessThan
+					}
+					if node.Pos() > previousToken.End() {
+						return comparisonGreaterThan
+					}
+					if node.End() <= previousToken.Pos() {
+						return comparisonLessThan
+					}
+					return comparisonEqualTo
+				})
+				if match {
+					foundNode = nodes[index]
+				}
+			}
+			return nodeList
+		}
+		nodeVisitor := getNodeVisitor(visitNode, visitNodes)
+		VisitEachChildAndJSDoc(n, file, nodeVisitor)
+		// Cases:
+		// 1. no answer exists
+		// 2. answer is an unvisited token
+		// 3. answer is in the visited found node
+
+		// Case 3: look for the next token inside the found node.
+		if foundNode != nil {
+			return find(foundNode)
+		}
+		startPos := previousToken.End()
+		// Case 2: look for the next token directly.
+		if startPos >= n.Pos() && startPos < n.End() {
+			scanner := scanner.GetScannerForSourceFile(file, startPos)
+			token := scanner.Token()
+			tokenFullStart := scanner.TokenFullStart()
+			tokenStart := scanner.TokenStart()
+			tokenEnd := scanner.TokenEnd()
+			if tokenStart == previousToken.End() {
+				return file.GetOrCreateToken(token, tokenFullStart, tokenEnd, n)
+			}
+			panic(fmt.Sprintf("Expected to find next token at %d, got token %s at %d", previousToken.End(), token, tokenStart))
+		}
+		// Case 3: no answer.
+		return nil
+	}
+	return find(parent)
+}
+
+func getNodeVisitor(
+	visitNode func(*ast.Node, *ast.NodeVisitor) *ast.Node,
+	visitNodes func(*ast.NodeList, *ast.NodeVisitor) *ast.NodeList,
+) *ast.NodeVisitor {
+	return ast.NewNodeVisitor(core.Identity, nil, ast.NodeVisitorHooks{
+		VisitNode:  visitNode,
+		VisitToken: visitNode,
+		VisitNodes: visitNodes,
+		VisitModifiers: func(modifiers *ast.ModifierList, visitor *ast.NodeVisitor) *ast.ModifierList {
+			if modifiers != nil {
+				visitNodes(&modifiers.NodeList, visitor)
+			}
+			return modifiers
+		},
+	})
 }
