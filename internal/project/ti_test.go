@@ -529,7 +529,7 @@ func TestTi(t *testing.T) {
 			`{ "dependencies": { "commander": "0.0.2" } }`,
 			false,
 		))
-		assert.NilError(t, service.OnWatchedFilesChanged([]*lsproto.FileEvent{
+		assert.NilError(t, service.OnWatchedFilesChanged(t.Context(), []*lsproto.FileEvent{
 			{
 				Type: lsproto.FileChangeTypeChanged,
 				Uri:  "file:///user/username/projects/project/package.json",

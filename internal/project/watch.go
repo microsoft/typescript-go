@@ -1,6 +1,7 @@
 package project
 
 import (
+	"context"
 	"fmt"
 	"slices"
 
@@ -32,15 +33,15 @@ func newWatchedFiles[T any](p *Project, watchKind lsproto.WatchKind, getGlobs fu
 	}
 }
 
-func (w *watchedFiles[T]) update(newData T) {
-	if updated, err := w.updateWorker(newData); err != nil {
+func (w *watchedFiles[T]) update(ctx context.Context, newData T) {
+	if updated, err := w.updateWorker(ctx, newData); err != nil {
 		w.p.Log(fmt.Sprintf("Failed to update %s watch: %v\n%s", w.watchType, err, formatFileList(w.globs, "\t", hr)))
 	} else if updated {
 		w.p.Logf("%s watches updated %s:\n%s", w.watchType, w.watcherID, formatFileList(w.globs, "\t", hr))
 	}
 }
 
-func (w *watchedFiles[T]) updateWorker(newData T) (updated bool, err error) {
+func (w *watchedFiles[T]) updateWorker(ctx context.Context, newData T) (updated bool, err error) {
 	newGlobs := w.getGlobs(newData)
 	w.data = newData
 	if slices.Equal(w.globs, newGlobs) {
@@ -49,7 +50,7 @@ func (w *watchedFiles[T]) updateWorker(newData T) (updated bool, err error) {
 
 	w.globs = newGlobs
 	if w.watcherID != "" {
-		if err = w.p.host.Client().UnwatchFiles(w.watcherID); err != nil {
+		if err = w.p.host.Client().UnwatchFiles(ctx, w.watcherID); err != nil {
 			return false, err
 		}
 	}
@@ -68,7 +69,7 @@ func (w *watchedFiles[T]) updateWorker(newData T) (updated bool, err error) {
 			Kind: &w.watchKind,
 		})
 	}
-	watcherID, err := w.p.host.Client().WatchFiles(watchers)
+	watcherID, err := w.p.host.Client().WatchFiles(ctx, watchers)
 	if err != nil {
 		return false, err
 	}

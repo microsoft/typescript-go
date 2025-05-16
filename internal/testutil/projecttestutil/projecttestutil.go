@@ -1,6 +1,7 @@
 package projecttestutil
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"slices"
@@ -8,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -217,4 +219,8 @@ func newProjectServiceHost(files map[string]string) *ProjectServiceHost {
 	}
 	host.logger = project.NewLogger([]io.Writer{&host.output}, "", project.LogLevelVerbose)
 	return host
+}
+
+func WithRequestID(ctx context.Context) context.Context {
+	return core.WithRequestID(ctx, "0")
 }
