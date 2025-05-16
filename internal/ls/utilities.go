@@ -1,12 +1,14 @@
 package ls
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -288,6 +290,14 @@ func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.Sou
 		panic(err)
 	}
 	return &lspRange
+}
+
+func (l *LanguageService) createLspPosition(position int, file *ast.SourceFile) lsproto.Position {
+	lspPos, err := l.converters.ToLSPPosition(file.FileName(), core.TextPos(position))
+	if err != nil {
+		panic(err)
+	}
+	return lspPos
 }
 
 func quote(file *ast.SourceFile, preferences *UserPreferences, text string) string {
@@ -751,4 +761,77 @@ func skipConstraint(t *checker.Type, typeChecker *checker.Checker) *checker.Type
 		}
 	}
 	return t
+}
+
+type caseClauseTrackerState struct {
+	existingStrings core.Set[string]
+	existingNumbers core.Set[jsnum.Number]
+	existingBigInts core.Set[jsnum.PseudoBigInt]
+}
+
+// string | jsnum.Number
+type trackerAddValue = any
+
+// string | jsnum.Number | jsnum.PseudoBigInt
+type trackerHasValue = any
+
+type caseClauseTracker interface {
+	addValue(value trackerAddValue)
+	hasValue(value trackerHasValue) bool
+}
+
+func (c *caseClauseTrackerState) addValue(value trackerAddValue) {
+	switch v := value.(type) {
+	case string:
+		c.existingStrings.Add(v)
+	case jsnum.Number:
+		c.existingNumbers.Add(v)
+	default:
+		panic(fmt.Sprintf("Unsupported type: %T", v))
+	}
+}
+
+func (c *caseClauseTrackerState) hasValue(value trackerHasValue) bool {
+	switch v := value.(type) {
+	case string:
+		return c.existingStrings.Has(v)
+	case jsnum.Number:
+		return c.existingNumbers.Has(v)
+	case jsnum.PseudoBigInt:
+		return c.existingBigInts.Has(v)
+	default:
+		panic(fmt.Sprintf("Unsupported type: %T", v))
+	}
+}
+
+func newCaseClauseTracker(typeChecker *checker.Checker, clauses []*ast.CaseOrDefaultClauseNode) caseClauseTracker {
+	c := &caseClauseTrackerState{
+		existingStrings: core.Set[string]{},
+		existingNumbers: core.Set[jsnum.Number]{},
+		existingBigInts: core.Set[jsnum.PseudoBigInt]{},
+	}
+	for _, clause := range clauses {
+		if !ast.IsDefaultClause(clause) {
+			expression := ast.SkipParentheses(clause.Expression())
+			if ast.IsLiteralExpression(expression) {
+				switch expression.Kind {
+				case ast.KindNoSubstitutionTemplateLiteral, ast.KindStringLiteral:
+					c.existingStrings.Add(expression.Text())
+				case ast.KindNumericLiteral:
+					c.existingNumbers.Add(jsnum.FromString(expression.Text()))
+				case ast.KindBigIntLiteral:
+					c.existingBigInts.Add(jsnum.ParseValidBigInt(expression.Text()))
+				}
+			} else {
+				symbol := typeChecker.GetSymbolAtLocation(clause.Expression())
+				if symbol != nil && symbol.ValueDeclaration != nil && ast.IsEnumMember(symbol.ValueDeclaration) {
+					enumValue := typeChecker.GetConstantValue(symbol.ValueDeclaration)
+					if enumValue != nil {
+						c.addValue(enumValue)
+					}
+				}
+			}
+		}
+	}
+	return c
 }

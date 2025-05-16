@@ -283,7 +283,18 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	// !!! see if incomplete completion list and continue or clean
 
-	// !!! string literal completions
+	stringCompletions := l.getStringLiteralCompletions(
+		file,
+		position,
+		previousToken,
+		compilerOptions,
+		program,
+		preferences,
+		clientOptions,
+	)
+	if stringCompletions != nil {
+		return stringCompletions
+	}
 
 	if previousToken != nil && ast.IsBreakOrContinueStatement(previousToken.Parent) &&
 		(previousToken.Kind == ast.KindBreakKeyword ||
@@ -1492,8 +1503,10 @@ func (l *LanguageService) completionInfoFromData(
 		return nil
 	}
 
+	optionalReplacementSpan := l.getOptionalReplacementSpan(data.location, file)
 	uniqueNames, sortedEntries := l.getCompletionEntriesFromSymbols(
 		data,
+		optionalReplacementSpan,
 		nil, /*replacementToken*/
 		position,
 		file,
@@ -1554,6 +1567,7 @@ func (l *LanguageService) completionInfoFromData(
 
 func (l *LanguageService) getCompletionEntriesFromSymbols(
 	data *completionDataData,
+	optionalReplacementSpan *lsproto.Range,
 	replacementToken *ast.Node,
 	position int,
 	file *ast.SourceFile,
@@ -1567,7 +1581,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	useSemicolons := probablyUsesSemicolons(file)
 	typeChecker := program.GetTypeChecker()
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
-	optionalReplacementSpan := getOptionalReplacementSpan(data.location, file)
 	// Tracks unique names.
 	// Value is set to false for global variables or completions from external module exports, because we can have multiple of those;
 	// true otherwise. Based on the order we add things we will always see locals first, then globals, then module exports.
@@ -1689,7 +1702,7 @@ func (l *LanguageService) createCompletionItem(
 	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	isMemberCompletion bool,
-	optionalReplacementSpan *core.TextRange,
+	optionalReplacementSpan *lsproto.Range,
 ) *lsproto.CompletionItem {
 	contextToken := data.contextToken
 	var insertText string
@@ -3090,12 +3103,11 @@ func getJSCompletionEntries(
 	return sortedEntries
 }
 
-func getOptionalReplacementSpan(location *ast.Node, file *ast.SourceFile) *core.TextRange {
+func (l *LanguageService) getOptionalReplacementSpan(location *ast.Node, file *ast.SourceFile) *lsproto.Range {
 	// StringLiteralLike locations are handled separately in stringCompletions.ts
 	if location != nil && location.Kind == ast.KindIdentifier {
 		start := astnav.GetStartOfNode(location, file, false /*includeJSDoc*/)
-		textRange := core.NewTextRange(start, location.End())
-		return &textRange
+		return l.createLspRangeFromBounds(start, location.End(), file)
 	}
 	return nil
 }
@@ -3914,7 +3926,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 	tagName := jsxClosingElement.Parent.AsJsxElement().OpeningElement.TagName()
 	closingTag := tagName.Text()
 	fullClosingTag := closingTag + core.IfElse(hasClosingAngleBracket, "", ">")
-	optionalReplacementSpan := core.NewTextRange(jsxClosingElement.TagName().Pos(), jsxClosingElement.TagName().End())
+	optionalReplacementSpan := l.createLspRangeFromNode(jsxClosingElement.TagName(), file)
 	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
 
 	item := l.createLSPCompletionItem(
@@ -3925,7 +3937,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		ScriptElementKindClassElement,
 		core.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
 		nil,                                   /*replacementSpan*/
-		&optionalReplacementSpan,
+		optionalReplacementSpan,
 		nil, /*commitCharacters*/
 		nil, /*labelDetails*/
 		file,
@@ -3955,7 +3967,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	elementKind ScriptElementKind,
 	kindModifiers core.Set[ScriptElementKindModifier],
 	replacementSpan *lsproto.Range,
-	optionalReplacementSpan *core.TextRange,
+	optionalReplacementSpan *lsproto.Range,
 	commitCharacters *[]string,
 	labelDetails *lsproto.CompletionItemLabelDetails,
 	file *ast.SourceFile,
@@ -3981,8 +3993,11 @@ func (l *LanguageService) createLSPCompletionItem(
 	} else {
 		// Ported from vscode ts extension.
 		if optionalReplacementSpan != nil && ptrIsTrue(clientOptions.CompletionItem.InsertReplaceSupport) {
-			insertRange := l.createLspRangeFromBounds(optionalReplacementSpan.Pos(), position, file)
-			replaceRange := l.createLspRangeFromBounds(optionalReplacementSpan.Pos(), optionalReplacementSpan.End(), file)
+			insertRange := &lsproto.Range{
+				Start: optionalReplacementSpan.Start,
+				End:   l.createLspPosition(position, file),
+			}
+			replaceRange := optionalReplacementSpan
 			textEdit = &lsproto.TextEditOrInsertReplaceEdit{
 				InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 					NewText: core.IfElse(insertText == "", name, insertText),

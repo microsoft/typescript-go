@@ -133,6 +133,14 @@ func (c *Converters) ToLSPDiagnostic(diagnostic *ast.Diagnostic) (*lsproto.Diagn
 	}, nil
 }
 
+func (c *Converters) ToLSPPosition(fileName string, position core.TextPos) (lsproto.Position, error) {
+	scriptInfo := c.getScriptInfo(fileName)
+	if scriptInfo == nil {
+		return lsproto.Position{}, fmt.Errorf("no script info found for %s", fileName)
+	}
+	return c.PositionToLineAndCharacter(scriptInfo, position), nil
+}
+
 func (c *Converters) LineAndCharacterToPositionForFile(lineAndCharacter lsproto.Position, fileName string) (int, error) {
 	scriptInfo := c.getScriptInfo(fileName)
 	if scriptInfo == nil {
