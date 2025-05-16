@@ -6,10 +6,12 @@ import { glob } from "glob";
 import { task } from "hereby";
 import assert from "node:assert";
 import crypto from "node:crypto";
-import fs, { rm } from "node:fs";
+import fs from "node:fs";
 import path from "node:path";
 import url from "node:url";
 import { parseArgs } from "node:util";
+import os from "os";
+import pLimit from "p-limit";
 import pc from "picocolors";
 import which from "which";
 
@@ -785,6 +787,8 @@ const nativePreviewPlatforms = memoize(() => {
     }
 });
 
+const buildLimit = pLimit(os.availableParallelism());
+
 export const buildNativePreviewPackages = task({
     name: "build:native-preview-packages",
     run: async () => {
@@ -855,11 +859,13 @@ export const buildNativePreviewPackages = task({
 
             await Promise.all([
                 generateLibs(out),
-                buildTsgo({
-                    out,
-                    env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
-                    extraFlags,
-                }),
+                buildLimit(() =>
+                    buildTsgo({
+                        out,
+                        env: { GOOS: goos, GOARCH: goarch, GOARM: "6", CGO_ENABLED: "0" },
+                        extraFlags,
+                    })
+                ),
             ]);
         }));
 

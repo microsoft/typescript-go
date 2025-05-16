@@ -11,6 +11,7 @@
         "execa": "^9.5.2",
         "glob": "^10.4.5",
         "hereby": "^1.10.0",
+        "p-limit": "^6.2.0",
         "picocolors": "^1.1.1",
         "typescript": "^5.8.3",
         "which": "^5.0.0"
