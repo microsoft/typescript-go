@@ -256,13 +256,15 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 }
 
 func (options *CompilerOptions) GetEmitDeclarations() bool {
-	// !!!
-	return false
+	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
 
 func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
-	// !!!
-	return false
+	return options.DeclarationMap == TSTrue && options.GetEmitDeclarations()
+}
+
+func (options *CompilerOptions) GetAllowImportingTsExtensions() bool {
+	return options.AllowImportingTsExtensions == TSTrue || options.RewriteRelativeImportExtensions == TSTrue
 }
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
@@ -271,6 +273,41 @@ func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 		return false
 	}
 	return true
+}
+
+func moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution ModuleResolutionKind) bool {
+	return moduleResolution >= ModuleResolutionKindNode16 && moduleResolution <= ModuleResolutionKindNodeNext || moduleResolution == ModuleResolutionKindBundler
+}
+
+func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
+	moduleResolution := options.GetModuleResolutionKind()
+	if !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
+		return false
+	}
+	if options.ResolvePackageJsonExports != TSUnknown {
+		return options.ResolvePackageJsonExports == TSTrue
+	}
+	switch moduleResolution {
+	case ModuleResolutionKindNode16, ModuleResolutionKindNodeNext, ModuleResolutionKindBundler:
+		return true
+	}
+	return false
+}
+
+// TODO: strada bug? Identical to GetResolvePackageJsonImports
+func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
+	moduleResolution := options.GetModuleResolutionKind()
+	if !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
+		return false
+	}
+	if options.ResolvePackageJsonExports != TSUnknown {
+		return options.ResolvePackageJsonExports == TSTrue
+	}
+	switch moduleResolution {
+	case ModuleResolutionKindNode16, ModuleResolutionKindNodeNext, ModuleResolutionKindBundler:
+		return true
+	}
+	return false
 }
 
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which

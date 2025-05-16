@@ -542,6 +542,9 @@ func compileFilesWithHost(
 	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(context.Background(), nil)...)
 	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(context.Background(), nil)...)
 	diagnostics = append(diagnostics, program.GetGlobalDiagnostics()...)
+	if options.GetEmitDeclarations() {
+		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(context.Background(), nil)...)
+	}
 	emitResult := program.Emit(compiler.EmitOptions{})
 
 	return newCompilationResult(options, program, emitResult, diagnostics, harnessOptions)
