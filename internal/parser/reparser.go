@@ -43,7 +43,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 		if tags == nil {
 			continue
 		}
-		for _, tag := range j.AsJSDoc().Tags.Nodes {
+		for _, tag := range tags.Nodes {
 			switch tag.Kind {
 			case ast.KindJSDocTypedefTag:
 				// !!! Don't mark typedefs as exported if they are not in a module
