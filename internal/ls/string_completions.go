@@ -3,12 +3,15 @@ package ls
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/printer"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type completionsFromTypes struct {
@@ -21,7 +24,17 @@ type completionsFromProperties struct {
 	hasIndexSignature bool
 }
 
-// !!!
+type completionsFromPaths = []*pathCompletion
+
+type pathCompletion struct {
+	name string
+	// ScriptElementKindScriptElement | ScriptElementKindDirectory | ScriptElementKindExternalModuleName
+	kind      ScriptElementKind
+	extension string
+	textRange *core.TextRange
+}
+
+// *completionsFromTypes | *completionsFromProperties | completionsFromPaths
 type stringLiteralCompletions = any
 
 func (l *LanguageService) getStringLiteralCompletions(
@@ -31,6 +44,7 @@ func (l *LanguageService) getStringLiteralCompletions(
 	compilerOptions *core.CompilerOptions,
 	program *compiler.Program,
 	preferences *UserPreferences,
+	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	// !!! reference comment
 	if IsInString(file, position, contextToken) {
@@ -43,9 +57,146 @@ func (l *LanguageService) getStringLiteralCompletions(
 			position,
 			program,
 			preferences)
-		// return l.convertStringLiteralCompletions(entries) // !!! HERE
+		return l.convertStringLiteralCompletions(
+			entries,
+			contextToken,
+			file,
+			position,
+			program,
+			compilerOptions,
+			preferences,
+			clientOptions,
+		)
 	}
 	return nil
+}
+
+func (l *LanguageService) convertStringLiteralCompletions(
+	completion stringLiteralCompletions,
+	contextToken *ast.StringLiteralLike,
+	file *ast.SourceFile,
+	position int,
+	program *compiler.Program,
+	options *core.CompilerOptions,
+	preferences *UserPreferences,
+	clientOptions *lsproto.CompletionClientCapabilities,
+) *lsproto.CompletionList {
+	if completion == nil {
+		return nil
+	}
+
+	optionalReplacementRange := l.createRangeFromStringLiteralLikeContent(file, contextToken, position)
+	switch completion := completion.(type) {
+	case completionsFromPaths:
+		return l.convertPathCompletions(completion, file, position, clientOptions)
+	case *completionsFromProperties:
+		data := &completionDataData{
+			symbols:                 completion.symbols,
+			completionKind:          CompletionKindString,
+			isNewIdentifierLocation: completion.hasIndexSignature,
+			location:                file.AsNode(),
+			contextToken:            contextToken,
+		}
+		_, items := l.getCompletionEntriesFromSymbols(
+			data,
+			optionalReplacementRange,
+			contextToken, /*replacementToken*/
+			position,
+			file,
+			program,
+			core.ScriptTargetESNext,
+			preferences,
+			options,
+			clientOptions,
+		)
+		defaultCommitCharacters := getDefaultCommitCharacters(completion.hasIndexSignature)
+		itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+		return &lsproto.CompletionList{
+			IsIncomplete: false,
+			ItemDefaults: itemDefaults,
+			Items:        items,
+		}
+	case *completionsFromTypes:
+		var quoteChar printer.QuoteChar
+		if contextToken.Kind == ast.KindNoSubstitutionTemplateLiteral {
+			quoteChar = printer.QuoteCharBacktick
+		} else if strings.HasPrefix(contextToken.Text(), "'") {
+			quoteChar = printer.QuoteCharSingleQuote
+		} else {
+			quoteChar = printer.QuoteCharDoubleQuote
+		}
+		items := core.Map(completion.types, func(t *checker.StringLiteralType) *lsproto.CompletionItem {
+			name := printer.EscapeString(t.AsLiteralType().Value().(string), quoteChar)
+			return l.createLSPCompletionItem(
+				name,
+				"", /*insertText*/
+				"", /*filterText*/
+				SortTextLocationPriority,
+				ScriptElementKindString,
+				core.Set[ScriptElementKindModifier]{},
+				l.getReplacementRangeForContextToken(file, contextToken, position),
+				nil, /*optionalReplacementSpan*/
+				nil, /*commitCharacters*/
+				nil, /*labelDetails*/
+				file,
+				position,
+				clientOptions,
+				false, /*isMemberCompletion*/
+				false, /*isSnippet*/
+				false, /*hasAction*/
+				false, /*preselect*/
+				"",    /*source*/
+			)
+		})
+		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
+		itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+		return &lsproto.CompletionList{
+			IsIncomplete: false,
+			ItemDefaults: itemDefaults,
+			Items:        items,
+		}
+	default:
+		panic(fmt.Sprintf("Unexpected completion type: %T", completion))
+	}
+}
+
+func (l *LanguageService) convertPathCompletions(
+	pathCompletions completionsFromPaths,
+	file *ast.SourceFile,
+	position int,
+	clientOptions *lsproto.CompletionClientCapabilities,
+) *lsproto.CompletionList {
+	isNewIdentifierLocation := true // The user may type in a path that doesn't yet exist, creating a "new identifier" with respect to the collection of identifiers the server is aware of.
+	defaultCommitCharacters := getDefaultCommitCharacters(isNewIdentifierLocation)
+	items := core.Map(pathCompletions, func(pathCompletion *pathCompletion) *lsproto.CompletionItem {
+		replacementSpan := l.createLspRangeFromBounds(pathCompletion.textRange.Pos(), pathCompletion.textRange.End(), file)
+		return l.createLSPCompletionItem(
+			pathCompletion.name,
+			"", /*insertText*/
+			"", /*filterText*/
+			SortTextLocationPriority,
+			pathCompletion.kind,
+			*core.NewSetFromItems(kindModifiersFromExtension(pathCompletion.extension)),
+			replacementSpan,
+			nil, /*optionalReplacementSpan*/
+			nil, /*commitCharacters*/
+			nil, /*labelDetails*/
+			file,
+			position,
+			clientOptions,
+			false, /*isMemberCompletion*/
+			false, /*isSnippet*/
+			false, /*hasAction*/
+			false, /*preselect*/
+			"",    /*source*/
+		)
+	})
+	itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+	return &lsproto.CompletionList{
+		IsIncomplete: false,
+		ItemDefaults: itemDefaults,
+		Items:        items,
+	}
 }
 
 func (l *LanguageService) getStringLiteralCompletionEntries(
@@ -104,7 +255,78 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			return stringLiteralCompletionsFromProperties(t, typeChecker)
 		}
 		return nil
-		// !!! HERE
+	case ast.KindCallExpression, ast.KindNewExpression, ast.KindJsxAttribute:
+		if !isRequireCallArgument(node) && !ast.IsImportCall(parent) {
+			// !!! signature help
+			// const argumentInfo = SignatureHelp.getArgumentInfoForCompletions(parent.kind === SyntaxKind.JsxAttribute ? parent.parent : node, position, sourceFile, typeChecker);
+			// // Get string literal completions from specialized signatures of the target
+			// // i.e. declare function f(a: 'A');
+			// // f("/*completion position*/")
+			// return argumentInfo && getStringLiteralCompletionsFromSignature(argumentInfo.invocation, node, argumentInfo, typeChecker) || fromContextualType(ContextFlags.None);
+			return nil
+		}
+		fallthrough // is `require("")` or `require(""` or `import("")`
+	case ast.KindImportDeclaration, ast.KindExportDeclaration, ast.KindExternalModuleReference, ast.KindJSDocImportTag:
+		// Get all known external module names or complete a path to a module
+		// i.e. import * as ns from "/*completion position*/";
+		//      var y = import("/*completion position*/");
+		//      import x = require("/*completion position*/");
+		//      var y = require("/*completion position*/");
+		//      export * from "/*completion position*/";
+		return getStringLiteralCompletionsFromModuleNames(file, node, program, preferences)
+	case ast.KindCaseClause:
+		tracker := newCaseClauseTracker(typeChecker, parent.Parent.AsCaseBlock().Clauses.Nodes)
+		contextualTypes := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
+		if contextualTypes == nil {
+			return nil
+		}
+		literals := core.Filter(contextualTypes.types, func(t *checker.StringLiteralType) bool {
+			return !tracker.hasValue(t.AsLiteralType().Value())
+		})
+		return &completionsFromTypes{
+			types:           literals,
+			isNewIdentifier: false,
+		}
+	case ast.KindImportSpecifier, ast.KindExportSpecifier:
+		// Complete string aliases in `import { "|" } from` and `export { "|" } from`
+		specifier := parent
+		if propertyName := specifier.PropertyName(); propertyName != nil && node != propertyName {
+			return nil // Don't complete in `export { "..." as "|" } from`
+		}
+		namedImportsOrExports := specifier.Parent
+		var moduleSpecifier *ast.Node
+		if namedImportsOrExports.Kind == ast.KindNamedImports {
+			moduleSpecifier = namedImportsOrExports.Parent.Parent
+		} else {
+			moduleSpecifier = namedImportsOrExports.Parent
+		}
+		if moduleSpecifier == nil {
+			return nil
+		}
+		moduleSpecifierSymbol := typeChecker.GetSymbolAtLocation(moduleSpecifier)
+		if moduleSpecifierSymbol == nil {
+			return nil
+		}
+		exports := typeChecker.GetExportsAndPropertiesOfModule(moduleSpecifierSymbol)
+		existing := core.NewSetFromItems(core.Map(namedImportsOrExports.Elements(), func(n *ast.Node) string {
+			if n.PropertyName() != nil {
+				return n.PropertyName().Text()
+			}
+			return n.Name().Text()
+		})...)
+		uniques := core.Filter(exports, func(e *ast.Symbol) bool {
+			return e.Name != ast.InternalSymbolNameDefault && !existing.Has(e.Name)
+		})
+		return &completionsFromProperties{
+			symbols:           uniques,
+			hasIndexSignature: false,
+		}
+	default:
+		result := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
+		if result != nil {
+			return result
+		}
+		return fromContextualType(checker.ContextFlagsNone, node, typeChecker)
 	}
 }
 
@@ -183,7 +405,8 @@ func fromUnionableLiteralType(grandparent *ast.Node, parent *ast.Node, position 
 
 func stringLiteralCompletionsForObjectLiteral(
 	typeChecker *checker.Checker,
-	objectLiteralExpression *ast.ObjectLiteralExpressionNode) *completionsFromProperties {
+	objectLiteralExpression *ast.ObjectLiteralExpressionNode,
+) *completionsFromProperties {
 	contextualType := typeChecker.GetContextualType(objectLiteralExpression, checker.ContextFlagsNone)
 	if contextualType == nil {
 		return nil
@@ -215,8 +438,9 @@ func getStringLiteralCompletionsFromModuleNames(
 	file *ast.SourceFile,
 	node *ast.LiteralExpression,
 	program *compiler.Program,
-	preferences *UserPreferences) stringLiteralCompletions {
-	// !!! here
+	preferences *UserPreferences,
+) stringLiteralCompletions {
+	// !!! needs `getModeForUsageLocationWorker`
 	return nil
 }
 
@@ -269,4 +493,48 @@ func getAlreadyUsedTypesInStringLiteralUnion(union *ast.UnionType, current *ast.
 
 func hasIndexSignature(t *checker.Type, typeChecker *checker.Checker) bool {
 	return typeChecker.GetStringIndexType(t) != nil || typeChecker.GetNumberIndexType(t) != nil
+}
+
+// Matches
+//
+//	require(""
+//	require("")
+func isRequireCallArgument(node *ast.Node) bool {
+	return ast.IsCallExpression(node.Parent) && len(node.Parent.Arguments()) > 0 && node.Parent.Arguments()[0] == node &&
+		ast.IsIdentifier(node.Parent.Expression()) && node.Parent.Expression().Text() == "require"
+}
+
+func kindModifiersFromExtension(extension string) ScriptElementKindModifier {
+	switch extension {
+	case tspath.ExtensionDts:
+		return ScriptElementKindModifierDts
+	case tspath.ExtensionJs:
+		return ScriptElementKindModifierJs
+	case tspath.ExtensionJson:
+		return ScriptElementKindModifierJson
+	case tspath.ExtensionJsx:
+		return ScriptElementKindModifierJsx
+	case tspath.ExtensionTs:
+		return ScriptElementKindModifierTs
+	case tspath.ExtensionTsx:
+		return ScriptElementKindModifierTsx
+	case tspath.ExtensionDmts:
+		return ScriptElementKindModifierDmts
+	case tspath.ExtensionMjs:
+		return ScriptElementKindModifierMjs
+	case tspath.ExtensionMts:
+		return ScriptElementKindModifierMts
+	case tspath.ExtensionDcts:
+		return ScriptElementKindModifierDcts
+	case tspath.ExtensionCjs:
+		return ScriptElementKindModifierCjs
+	case tspath.ExtensionCts:
+		return ScriptElementKindModifierCts
+	case tspath.ExtensionTsBuildInfo:
+		panic(fmt.Sprintf("Extension %v is unsupported.", tspath.ExtensionTsBuildInfo))
+	case "":
+		return ScriptElementKindModifierNone
+	default:
+		panic(fmt.Sprintf("Unexpected extension: %v", extension))
+	}
 }
