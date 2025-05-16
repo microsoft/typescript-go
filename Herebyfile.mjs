@@ -890,11 +890,16 @@ const buildNativePreviewPackages = task({
     },
 });
 
-const signTempDirectory = memoize(async () => {
+const getSignTempDir = memoize(async () => {
     const dir = path.resolve("./built/sign-tmp");
     await rimraf(dir);
     await fs.promises.mkdir(dir, { recursive: true });
     return dir;
+});
+
+const cleanSignTempDirectory = task({
+    name: "clean:sign-tmp",
+    run: () => rimraf("./built/sign-tmp"),
 });
 
 let signCount = 0;
@@ -944,7 +949,7 @@ async function sign(filelist) {
         return;
     }
 
-    const tmp = await signTempDirectory();
+    const tmp = await getSignTempDir();
     const filelistPath = path.resolve(tmp, `signing-filelist-${signCount++}.json`);
     await fs.promises.writeFile(filelistPath, data);
 
@@ -977,7 +982,7 @@ const signNativePreviewPackages = task({
             });
         }
 
-        const tmp = await signTempDirectory();
+        const tmp = await getSignTempDir();
 
         /** @type {DDSignFileList} */
         const filelist = {
@@ -1064,11 +1069,11 @@ const signNativePreviewPackages = task({
     },
 });
 
-const finishedNativePreviewPackages = options.sign ? signNativePreviewPackages : buildNativePreviewPackages;
+const finishedNativePreviewPackages = options.sign ? [signNativePreviewPackages] : [buildNativePreviewPackages, cleanSignTempDirectory];
 
 const packNativePreviewPackages = task({
     name: "pack:native-preview-packages",
-    dependencies: [finishedNativePreviewPackages],
+    dependencies: finishedNativePreviewPackages,
     run: async () => {
         const platforms = nativePreviewPlatforms();
         await Promise.all([mainNativePreviewPackage, ...platforms].map(async ({ npmDir, npmTarball }) => {
@@ -1081,7 +1086,7 @@ const packNativePreviewPackages = task({
 
 const buildNativePreviewExtensions = task({
     name: "build:native-preview-extensions",
-    dependencies: [signNativePreviewPackages],
+    dependencies: finishedNativePreviewPackages,
     run: async () => {
         await rimraf(builtVsix);
         await fs.promises.mkdir(builtVsix, { recursive: true });
@@ -1103,8 +1108,10 @@ const buildNativePreviewExtensions = task({
                 await rimraf(extensionLibDir);
             }
 
-            await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
-            await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
+            if (options.sign) {
+                await $({ cwd: extensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
+                await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
+            }
         }
     },
 });
@@ -1125,9 +1132,9 @@ const signNativePreviewExtensions = task({
     },
 });
 
-const finishedNativePreviewExtensions = options.sign ? signNativePreviewExtensions : buildNativePreviewExtensions;
+const finishedNativePreviewExtensions = options.sign ? [signNativePreviewExtensions] : [buildNativePreviewExtensions, cleanSignTempDirectory];
 
 export const nativePreview = task({
     name: "native-preview",
-    dependencies: [packNativePreviewPackages, finishedNativePreviewExtensions],
+    dependencies: [packNativePreviewPackages, ...finishedNativePreviewExtensions],
 });
