@@ -2486,10 +2486,8 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 		case flags&ast.FlowFlagsCall != 0:
 			if signature := c.getEffectsSignature(flow.Node); signature != nil {
 				if predicate := c.getTypePredicateOfSignature(signature); predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
-					if arguments := flow.Node.Arguments(); int(predicate.parameterIndex) < len(arguments) {
-						if predicateArgument := arguments[predicate.parameterIndex]; predicateArgument != nil && c.isFalseExpression(predicateArgument) {
-							return false
-						}
+					if arguments := flow.Node.Arguments(); int(predicate.parameterIndex) < len(arguments) && c.isFalseExpression(arguments[predicate.parameterIndex]) {
+						return false
 					}
 				}
 				if c.getReturnTypeOfSignature(signature).flags&TypeFlagsNever != 0 {
