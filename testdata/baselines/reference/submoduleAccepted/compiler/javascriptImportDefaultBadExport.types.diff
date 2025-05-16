@@ -1,19 +1,16 @@
 --- old.javascriptImportDefaultBadExport.types
 +++ new.javascriptImportDefaultBadExport.types
-@@= skipped -6, +6 lines =@@
- 
+@@= skipped -7, +7 lines =@@
  module.exports = alias;
  >module.exports = alias : {}
-->module.exports : {}
+ >module.exports : {}
 ->module : { exports: {}; }
-->exports : {}
-+>module.exports : typeof import("/a")
-+>module : { "/a": typeof import("/a"); }
-+>exports : typeof import("/a")
++>module : { readonly alias: {}; }
+ >exports : {}
  >alias : {}
  
  === /b.js ===
  import a from "./a";
 ->a : any
-+>a : typeof import("/a")
++>a : {}
  

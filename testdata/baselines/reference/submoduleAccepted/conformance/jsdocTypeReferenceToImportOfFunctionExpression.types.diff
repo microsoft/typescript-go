@@ -1,17 +1,6 @@
 --- old.jsdocTypeReferenceToImportOfFunctionExpression.types
 +++ new.jsdocTypeReferenceToImportOfFunctionExpression.types
-@@= skipped -1, +1 lines =@@
- 
- === MC.js ===
- const MW = require("./MW");
-->MW : typeof MW
-->require("./MW") : typeof MW
-+>MW : typeof import("MW")
-+>require("./MW") : typeof import("MW")
- >require : any
- >"./MW" : "./MW"
- 
-@@= skipped -9, +9 lines =@@
+@@= skipped -10, +10 lines =@@
  
  /** @class */
  module.exports = function MC() {
@@ -30,16 +19,7 @@
  
      /** @type {any} */
      var x = {}
-@@= skipped -14, +14 lines =@@
- 
-     return new MW(x);
- >new MW(x) : MW
-->MW : typeof MW
-+>MW : typeof import("MW")
- >x : any
- 
- };
-@@= skipped -15, +15 lines =@@
+@@= skipped -29, +29 lines =@@
     * @param {MC} compiler the compiler
     */
    constructor(compiler) {
@@ -59,11 +39,9 @@
  
  module.exports = MW;
  >module.exports = MW : typeof MW
-->module.exports : typeof MW
+ >module.exports : typeof MW
 ->module : { exports: typeof MW; }
-->exports : typeof MW
-+>module.exports : typeof import("MW")
-+>module : { "MW": typeof import("MW"); }
-+>exports : typeof import("MW")
++>module : { MW: typeof MW; }
+ >exports : typeof MW
  >MW : typeof MW
  

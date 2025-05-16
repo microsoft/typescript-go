@@ -6,8 +6,8 @@
  const A = require("./other");
 ->A : typeof A
 ->require("./other") : typeof A
-+>A : typeof import("other")
-+>require("./other") : typeof import("other")
++>A : () => void
++>require("./other") : () => void
  >require : (id: string) => any
  >"./other" : "./other"
  
@@ -20,7 +20,7 @@
 +>a : any
 +>new A().id : any
 +>new A() : any
-+>A : typeof import("other")
++>A : () => void
 +>id : any
  
  const B = function() { this.id = 1; }
@@ -95,8 +95,8 @@
 ->exports : typeof A
 ->A : typeof A
 +>module.exports = A : () => void
-+>module.exports : typeof import("other")
-+>module : { "other": typeof import("other"); }
-+>exports : typeof import("other")
++>module.exports : () => void
++>module : { A: () => void; }
++>exports : () => void
 +>A : () => void
  

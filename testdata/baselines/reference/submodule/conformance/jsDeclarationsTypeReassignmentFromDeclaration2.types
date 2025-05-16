@@ -10,9 +10,9 @@ const items = require("./some-mod")();
 
 module.exports = items;
 >module.exports = items : any
->module.exports : typeof import("index")
->module : { "index": typeof import("index"); }
->exports : typeof import("index")
+>module.exports : any
+>module : { readonly items: any; }
+>exports : any
 >items : any
 
 === some-mod.d.ts ===

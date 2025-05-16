@@ -3,8 +3,8 @@
 === use.js ===
 /// <reference path='./types.d.ts'/>
 var mini = require('./minimatch')
->mini : typeof import("minimatch")
->require('./minimatch') : typeof import("minimatch")
+>mini : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
+>require('./minimatch') : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 >require : any
 >'./minimatch' : "./minimatch"
 
@@ -12,7 +12,7 @@ mini.M.defaults()
 >mini.M.defaults() : any
 >mini.M.defaults : (def: any) => any
 >mini.M : { (): void; defaults: (def: any) => any; }
->mini : typeof import("minimatch")
+>mini : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 >M : { (): void; defaults: (def: any) => any; }
 >defaults : (def: any) => any
 
@@ -20,7 +20,7 @@ var m = new mini.M()
 >m : any
 >new mini.M() : any
 >mini.M : { (): void; defaults: (def: any) => any; }
->mini : typeof import("minimatch")
+>mini : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 >M : { (): void; defaults: (def: any) => any; }
 
 m.m()
@@ -32,7 +32,7 @@ m.m()
 mini.filter()
 >mini.filter() : void
 >mini.filter : () => void
->mini : typeof import("minimatch")
+>mini : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 >filter : () => void
 
 === types.d.ts ===
@@ -46,9 +46,9 @@ declare var module: any;
 /// <reference path='./types.d.ts'/>
 module.exports = minimatch
 >module.exports = minimatch : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
->module.exports : typeof import("minimatch")
->module : { "minimatch": typeof import("minimatch"); }
->exports : typeof import("minimatch")
+>module.exports : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
+>module : { minimatch: { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }; }
+>exports : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 >minimatch : { (): void; M: { (): void; defaults: (def: any) => any; }; filter: () => void; }
 
 minimatch.M = M

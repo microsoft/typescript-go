@@ -474,7 +474,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 	case ast.KindNamespaceExportDeclaration:
 		n := node.AsNamespaceExportDeclaration()
 		return (boolToByte(n.Modifiers() != nil) << 0) | (boolToByte(n.Name() != nil) << 1)
-	case ast.KindExportDeclaration, ast.KindJSExportDeclaration:
+	case ast.KindExportDeclaration:
 		n := node.AsExportDeclaration()
 		return (boolToByte(n.Modifiers() != nil) << 0) | (boolToByte(n.ExportClause != nil) << 1) | (boolToByte(n.ModuleSpecifier != nil) << 2) | (boolToByte(n.Attributes != nil) << 3)
 	case ast.KindExportSpecifier:
@@ -733,7 +733,7 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 	case ast.KindExportAssignment:
 		n := node.AsExportAssignment()
 		return uint32(boolToByte(n.IsExportEquals)) << 24
-	case ast.KindExportDeclaration, ast.KindJSExportDeclaration:
+	case ast.KindExportDeclaration:
 		n := node.AsExportDeclaration()
 		return uint32(boolToByte(n.IsTypeOnly)) << 24
 	case ast.KindBlock:

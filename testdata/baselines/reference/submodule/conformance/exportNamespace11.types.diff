@@ -11,14 +11,10 @@
 ->ghost : intermediate.Ghost
 +>ghost : Ghost
  >intermediate : any
-->new intermediate.Ghost() : any
-->intermediate.Ghost : any
+ >new intermediate.Ghost() : any
+ >intermediate.Ghost : any
 ->intermediate : typeof intermediate
-->Ghost : any
-+>new intermediate.Ghost() : Ghost
-+>intermediate.Ghost : typeof Ghost
 +>intermediate : typeof import("intermediate")
-+>Ghost : typeof Ghost
+ >Ghost : any
  
  === intermediate.ts ===
- 

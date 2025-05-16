@@ -61,6 +61,6 @@ __exportStar(require("./b"), exports); // Collision error
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const c_1 = require("./c");
-let _ = new c_1.A(); // Error
+let _ = new A(); // Error
 let __ = new c_1.B(); // Ok
 let ___ = new c_1.C(); // Ok

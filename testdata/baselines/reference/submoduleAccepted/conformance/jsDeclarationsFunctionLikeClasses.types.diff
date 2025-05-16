@@ -50,32 +50,21 @@
  
  /**
   * @param {Point} p
-  */
- export function magnitude(p) {
-->magnitude : (p: Point) => number
-->p : Point
-+>magnitude : (p: any) => number
-+>p : any
- 
-     return Math.sqrt(p.x ** 2 + p.y ** 2);
- >Math.sqrt(p.x ** 2 + p.y ** 2) : number
 @@= skipped -42, +42 lines =@@
  >sqrt : (x: number) => number
  >p.x ** 2 + p.y ** 2 : number
  >p.x ** 2 : number
 ->p.x : number
-->p : Point
-->x : number
 +>p.x : any
-+>p : any
+ >p : Point
+->x : number
 +>x : any
  >2 : 2
  >p.y ** 2 : number
 ->p.y : number
-->p : Point
-->y : number
 +>p.y : any
-+>p : any
+ >p : Point
+->y : number
 +>y : any
  >2 : 2
  }

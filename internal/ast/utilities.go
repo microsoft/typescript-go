@@ -648,7 +648,6 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindImportDeclaration,
 		KindImportEqualsDeclaration,
 		KindExportDeclaration,
-		KindJSExportDeclaration,
 		KindExportAssignment,
 		KindJSExportAssignment,
 		KindNamespaceExportDeclaration:
@@ -1678,7 +1677,7 @@ func GetExternalModuleName(node *Node) *Expression {
 	switch node.Kind {
 	case KindImportDeclaration:
 		return node.AsImportDeclaration().ModuleSpecifier
-	case KindExportDeclaration, KindJSExportDeclaration:
+	case KindExportDeclaration:
 		return node.AsExportDeclaration().ModuleSpecifier
 	case KindJSDocImportTag:
 		return node.AsJSDocImportTag().ModuleSpecifier
@@ -1704,7 +1703,7 @@ func GetImportAttributes(node *Node) *Node {
 	switch node.Kind {
 	case KindImportDeclaration:
 		return node.AsImportDeclaration().Attributes
-	case KindExportDeclaration, KindJSExportDeclaration:
+	case KindExportDeclaration:
 		return node.AsExportDeclaration().Attributes
 	}
 	panic("Unhandled case in getImportAttributes")
@@ -2056,8 +2055,7 @@ func GetMeaningFromDeclaration(node *Node) SemanticMeaning {
 		KindImportDeclaration,
 		KindExportAssignment,
 		KindJSExportAssignment,
-		KindExportDeclaration,
-		KindJSExportDeclaration:
+		KindExportDeclaration:
 		return SemanticMeaningAll
 
 	// An external module can be a Value
@@ -2348,7 +2346,7 @@ func GetNamespaceDeclarationNode(node *Node) *Node {
 		}
 	case KindImportEqualsDeclaration:
 		return node
-	case KindExportDeclaration, KindJSExportDeclaration:
+	case KindExportDeclaration:
 		exportClause := node.AsExportDeclaration().ExportClause
 		if exportClause != nil && IsNamespaceExport(exportClause) {
 			return exportClause

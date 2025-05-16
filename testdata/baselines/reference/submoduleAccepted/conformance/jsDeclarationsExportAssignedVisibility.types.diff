@@ -1,15 +1,12 @@
 --- old.jsDeclarationsExportAssignedVisibility.types
 +++ new.jsDeclarationsExportAssignedVisibility.types
-@@= skipped -22, +22 lines =@@
- 
+@@= skipped -23, +23 lines =@@
  module.exports = Container;
  >module.exports = Container : typeof Container
-->module.exports : typeof Container
+ >module.exports : typeof Container
 ->module : { exports: typeof Container; }
-->exports : typeof Container
-+>module.exports : typeof import("index")
-+>module : { "index": typeof import("index"); }
-+>exports : typeof import("index")
++>module : { Container: typeof Container; }
+ >exports : typeof Container
  >Container : typeof Container
  
  === obj.js ===

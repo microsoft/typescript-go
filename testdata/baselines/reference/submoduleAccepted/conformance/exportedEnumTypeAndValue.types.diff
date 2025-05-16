@@ -14,7 +14,7 @@
  /** @type {MyEnum} */
  const v = MyEnum.b;
 ->v : number
-+>v : any
++>v : MyEnum
  >MyEnum.b : number
  >MyEnum : { a: number; b: number; }
  >b : number

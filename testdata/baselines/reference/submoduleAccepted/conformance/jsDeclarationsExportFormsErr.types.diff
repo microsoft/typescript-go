@@ -23,9 +23,9 @@
 ->exports : any
 ->ns : typeof ns
 +>module.exports = ns : typeof import("cls")
-+>module.exports : typeof import("bin")
-+>module : { "bin": typeof import("bin"); }
-+>exports : typeof import("bin")
++>module.exports : typeof import("cls")
++>module : { "cls": typeof import("cls"); }
++>exports : typeof import("cls")
 +>ns : typeof import("cls")
  
  === globalNs.js ===

@@ -9,16 +9,12 @@
  
  console.log(c) // Fails as expected, import is still allowed though.
  >console.log(c) : void
-@@= skipped -14, +14 lines =@@
- >console.log : (...data: any[]) => void
+@@= skipped -15, +15 lines =@@
  >console : Console
  >log : (...data: any[]) => void
-->types.c : any
+ >types.c : any
 ->types : typeof types
-->c : any
-+>types.c : 10
 +>types : typeof import("types")
-+>c : 10
+ >c : any
  
  === types.ts ===
- 

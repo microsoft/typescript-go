@@ -1,4 +1,5 @@
 /c.ts(2,1): error TS2308: Module "./a" has already exported a member named 'B'. Consider explicitly re-exporting to resolve the ambiguity.
+/d.ts(2,16): error TS1362: 'A' cannot be used as a value because it was exported using 'export type'.
 
 
 ==== /a.ts (0 errors) ====
@@ -15,9 +16,12 @@
     ~~~~~~~~~~~~~~~~~~~~
 !!! error TS2308: Module "./a" has already exported a member named 'B'. Consider explicitly re-exporting to resolve the ambiguity.
     
-==== /d.ts (0 errors) ====
+==== /d.ts (1 errors) ====
     import { A, B, C } from "./c";
     let _: A = new A();   // Error
+                   ~
+!!! error TS1362: 'A' cannot be used as a value because it was exported using 'export type'.
+!!! related TS1377 /c.ts:1:1: 'A' was exported here.
     let __: B = new B();  // Ok
     let ___: C = new C(); // Ok
     

@@ -12,9 +12,9 @@ const x = {x: 12};
 >x : Symbol(x, Decl(mod1.js, 6, 11))
 
 module.exports = x;
->module.exports : Symbol("folder/mod1", Decl(mod1.js, 0, 0))
+>module.exports : Symbol(x, Decl(mod1.js, 6, 5))
 >module : Symbol(module.exports)
->exports : Symbol("folder/mod1", Decl(mod1.js, 0, 0))
+>exports : Symbol(x, Decl(mod1.js, 6, 5))
 >x : Symbol(x, Decl(mod1.js, 6, 5))
 
 === index.js ===
@@ -24,8 +24,8 @@ const items = [{x: 12}];
 >x : Symbol(x, Decl(index.js, 1, 16))
 
 module.exports = items;
->module.exports : Symbol("index", Decl(index.js, 0, 0))
+>module.exports : Symbol(items, Decl(index.js, 1, 5))
 >module : Symbol(module.exports)
->exports : Symbol("index", Decl(index.js, 0, 0))
+>exports : Symbol(items, Decl(index.js, 1, 5))
 >items : Symbol(items, Decl(index.js, 1, 5))
 

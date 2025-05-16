@@ -46,8 +46,8 @@ import {Point} from "./source";
  * @param {Point} p
  */
 export function magnitude(p) {
->magnitude : (p: any) => number
->p : any
+>magnitude : (p: Point) => number
+>p : Point
 
     return Math.sqrt(p.x ** 2 + p.y ** 2);
 >Math.sqrt(p.x ** 2 + p.y ** 2) : number
@@ -57,12 +57,12 @@ export function magnitude(p) {
 >p.x ** 2 + p.y ** 2 : number
 >p.x ** 2 : number
 >p.x : any
->p : any
+>p : Point
 >x : any
 >2 : 2
 >p.y ** 2 : number
 >p.y : any
->p : any
+>p : Point
 >y : any
 >2 : 2
 }

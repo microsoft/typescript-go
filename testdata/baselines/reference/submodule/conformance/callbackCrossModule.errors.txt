@@ -1,4 +1,4 @@
-use.js(1,30): error TS2694: Namespace '"mod1"' has no exported member 'Con'.
+use.js(1,30): error TS2694: Namespace 'C' has no exported member 'Con'.
 
 
 ==== mod1.js (0 errors) ====
@@ -14,7 +14,7 @@ use.js(1,30): error TS2694: Namespace '"mod1"' has no exported member 'Con'.
 ==== use.js (1 errors) ====
     /** @param {import('./mod1').Con} k */
                                  ~~~
-!!! error TS2694: Namespace '"mod1"' has no exported member 'Con'.
+!!! error TS2694: Namespace 'C' has no exported member 'Con'.
     function f(k) {
         if (1 === 2 - 1) {
             // I guess basic math works!

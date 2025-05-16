@@ -8,9 +8,7 @@ const ghost: intermediate.Ghost = new intermediate.Ghost()
 >ghost : Symbol(ghost, Decl(main.ts, 1, 5))
 >intermediate : Symbol(intermediate, Decl(main.ts, 0, 6))
 >Ghost : Symbol(Ghost, Decl(ghost.ts, 0, 0))
->intermediate.Ghost : Symbol(Ghost, Decl(ghost.ts, 0, 0))
 >intermediate : Symbol(intermediate, Decl(main.ts, 0, 6))
->Ghost : Symbol(Ghost, Decl(ghost.ts, 0, 0))
 
 === intermediate.ts ===
 

@@ -18,7 +18,7 @@ import { TestEnum } from "./mod1"
 
 /** @type {TestEnum} */
 const tist = TestEnum.ADD
->tist : any
+>tist : TestEnum
 >TestEnum.ADD : string
 >TestEnum : { ADD: string; REMOVE: string; }
 >ADD : string

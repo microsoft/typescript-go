@@ -2,8 +2,8 @@
 
 === cls.js ===
 const Bar = require("./bar");
->Bar : typeof import("bar")
->require("./bar") : typeof import("bar")
+>Bar : typeof Bar
+>require("./bar") : typeof Bar
 >require : any
 >"./bar" : "./bar"
 
@@ -26,18 +26,18 @@ class Foo extends Bar {}
 
 module.exports = Foo;
 >module.exports = Foo : typeof Foo
->module.exports : typeof import("cls")
->module : { "cls": typeof import("cls"); }
->exports : typeof import("cls")
+>module.exports : typeof Foo
+>module : { Foo: typeof Foo; }
+>exports : typeof Foo
 >Foo : typeof Foo
 
 module.exports.Strings = Strings;
 >module.exports.Strings = Strings : { a: string; b: string; }
->module.exports.Strings : { a: string; b: string; }
->module.exports : typeof import("cls")
->module : { "cls": typeof import("cls"); }
->exports : typeof import("cls")
->Strings : { a: string; b: string; }
+>module.exports.Strings : any
+>module.exports : typeof Foo
+>module : { Foo: typeof Foo; }
+>exports : typeof Foo
+>Strings : any
 >Strings : { a: string; b: string; }
 
 === bar.js ===
@@ -46,8 +46,8 @@ class Bar {}
 
 module.exports = Bar;
 >module.exports = Bar : typeof Bar
->module.exports : typeof import("bar")
->module : { "bar": typeof import("bar"); }
->exports : typeof import("bar")
+>module.exports : typeof Bar
+>module : { Bar: typeof Bar; }
+>exports : typeof Bar
 >Bar : typeof Bar
 

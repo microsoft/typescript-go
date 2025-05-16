@@ -34,11 +34,7 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 	var export *ast.Node
 	switch kind {
 	case jsDeclarationKindModuleExports:
-		if bin.Right.Kind == ast.KindIdentifier {
-			export = p.factory.NewJSExportDeclaration(bin.Right)
-		} else {
-			export = p.factory.NewJSExportAssignment(bin.Right)
-		}
+		export = p.factory.NewJSExportAssignment(bin.Right)
 	case jsDeclarationKindExportsProperty:
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)

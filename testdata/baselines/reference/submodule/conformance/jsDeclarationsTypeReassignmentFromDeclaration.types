@@ -19,8 +19,8 @@ const items = [];
 
 module.exports = items;
 >module.exports = items : Item[]
->module.exports : typeof import("index")
->module : { "index": typeof import("index"); }
->exports : typeof import("index")
+>module.exports : Item[]
+>module : { readonly items: Item[]; }
+>exports : Item[]
 >items : Item[]
 

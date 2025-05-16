@@ -185,8 +185,8 @@
 ->module.exports : Symbol(module.exports, Decl(mod1.js, 0, 0))
 ->module : Symbol(export=, Decl(mod1.js, 19, 3))
 ->exports : Symbol(export=, Decl(mod1.js, 19, 3))
-+>module.exports : Symbol("mod1", Decl(mod1.js, 0, 0))
++>module.exports : Symbol(Person, Decl(mod1.js, 0, 0))
 +>module : Symbol(module.exports)
-+>exports : Symbol("mod1", Decl(mod1.js, 0, 0))
++>exports : Symbol(Person, Decl(mod1.js, 0, 0))
  >Person : Symbol(Person, Decl(mod1.js, 0, 0))
  

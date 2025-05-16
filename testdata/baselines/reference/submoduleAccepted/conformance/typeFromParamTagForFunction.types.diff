@@ -31,35 +31,26 @@
  >require("./a-ext") : typeof import("a-ext")
  >require : (id: string) => any
  >"./a-ext" : "./a-ext"
- 
- /** @param {A} p */
+@@= skipped -9, +9 lines =@@
  function a(p) { p.x; }
-->a : (p: A) => void
-->p : A
+ >a : (p: A) => void
+ >p : A
 ->p.x : number
-->p : A
-->x : number
-+>a : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : A
+->x : number
 +>x : any
  
  === b-ext.js ===
  exports.B = class {
-@@= skipped -40, +40 lines =@@
- 
- /** @param {B} p */
+@@= skipped -33, +33 lines =@@
  function b(p) { p.x; }
-->b : (p: B) => void
-->p : B
+ >b : (p: B) => void
+ >p : B
 ->p.x : number
-->p : B
-->x : number
-+>b : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : B
+->x : number
 +>x : any
  
  === c-ext.js ===
@@ -83,18 +74,14 @@
  >require("./c-ext") : typeof import("c-ext")
  >require : (id: string) => any
  >"./c-ext" : "./c-ext"
- 
- /** @param {C} p */
+@@= skipped -27, +27 lines =@@
  function c(p) { p.x; }
-->c : (p: C) => void
-->p : C
+ >c : (p: C) => void
+ >p : C
 ->p.x : number
-->p : C
-->x : number
-+>c : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : C
+->x : number
 +>x : any
  
  === d-ext.js ===
@@ -112,7 +99,7 @@
  >x : any
  >1 : 1
  
-@@= skipped -49, +49 lines =@@
+@@= skipped -20, +20 lines =@@
  
  === d.js ===
  const { D } = require("./d-ext");
@@ -121,23 +108,19 @@
  >require("./d-ext") : typeof import("d-ext")
  >require : (id: string) => any
  >"./d-ext" : "./d-ext"
- 
- /** @param {D} p */
+@@= skipped -9, +9 lines =@@
  function d(p) { p.x; }
-->d : (p: D) => void
-->p : D
+ >d : (p: D) => void
+ >p : D
 ->p.x : number
-->p : D
-->x : number
-+>d : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : D
+->x : number
 +>x : any
  
  === e-ext.js ===
  export class E {
-@@= skipped -38, +38 lines =@@
+@@= skipped -29, +29 lines =@@
  function e(p) { p.x; }
  >e : (p: E) => void
  >p : E

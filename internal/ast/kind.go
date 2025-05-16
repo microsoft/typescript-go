@@ -380,7 +380,6 @@ const (
 	// Reparsed JS nodes
 	KindJSTypeAliasDeclaration
 	KindJSExportAssignment
-	KindJSExportDeclaration
 	KindCommonJSExport
 	// Transformation nodes
 	KindNotEmittedStatement

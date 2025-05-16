@@ -19,9 +19,9 @@ class Conn {
 
 module.exports = Conn;
 >module.exports = Conn : typeof Conn
->module.exports : typeof import("conn")
->module : { "conn": typeof import("conn"); }
->exports : typeof import("conn")
+>module.exports : typeof Conn
+>module : { Conn: typeof Conn; }
+>exports : typeof Conn
 >Conn : typeof Conn
 
 === usage.js ===

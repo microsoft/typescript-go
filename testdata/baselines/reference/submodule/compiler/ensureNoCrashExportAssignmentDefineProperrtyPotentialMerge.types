@@ -2,8 +2,8 @@
 
 === index.js ===
 const _item = require("./namespacer");
->_item : typeof import("namespacer")
->require("./namespacer") : typeof import("namespacer")
+>_item : {}
+>require("./namespacer") : {}
 >require : any
 >"./namespacer" : "./namespacer"
 
@@ -40,9 +40,9 @@ A.bar = class Q {}
 
 module.exports = A;
 >module.exports = A : {}
->module.exports : typeof import("namespacey")
->module : { "namespacey": typeof import("namespacey"); }
->exports : typeof import("namespacey")
+>module.exports : {}
+>module : { readonly A: {}; }
+>exports : {}
 >A : {}
 
 === namespacer.js ===
@@ -74,8 +74,8 @@ Object.defineProperty(B, "NS", { value: "why though", writable: true });
 
 module.exports = B;
 >module.exports = B : {}
->module.exports : typeof import("namespacer")
->module : { "namespacer": typeof import("namespacer"); }
->exports : typeof import("namespacer")
+>module.exports : {}
+>module : { readonly B: {}; }
+>exports : {}
 >B : {}
 

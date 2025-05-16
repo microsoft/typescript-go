@@ -19,9 +19,9 @@ console.log(types.c) // Expected an error here.
 >console.log : (...data: any[]) => void
 >console : Console
 >log : (...data: any[]) => void
->types.c : 10
+>types.c : any
 >types : typeof import("types")
->c : 10
+>c : any
 
 === types.ts ===
 

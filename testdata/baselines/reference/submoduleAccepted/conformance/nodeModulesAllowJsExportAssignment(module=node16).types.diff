@@ -1,19 +1,15 @@
 --- old.nodeModulesAllowJsExportAssignment(module=node16).types
 +++ new.nodeModulesAllowJsExportAssignment(module=node16).types
-@@= skipped -16, +16 lines =@@
- 
+@@= skipped -17, +17 lines =@@
  module.exports = a;
  >module.exports = a : {}
-->module.exports : {}
+ >module.exports : {}
 ->module : { exports: {}; }
-->exports : {}
-+>module.exports : typeof import("subfolder/file")
-+>module : { "subfolder/file": typeof import("subfolder/file"); }
-+>exports : typeof import("subfolder/file")
++>module : { readonly a: {}; }
+ >exports : {}
  >a : {}
  
- === index.js ===
-@@= skipped -22, +22 lines =@@
+@@= skipped -21, +21 lines =@@
  >{} : {}
  
  module.exports = a;
@@ -22,8 +18,8 @@
 ->module : any
 ->exports : any
 +>module.exports = a : {}
-+>module.exports : typeof import("file")
-+>module : { "file": typeof import("file"); }
-+>exports : typeof import("file")
++>module.exports : {}
++>module : { readonly a: {}; }
++>exports : {}
  >a : {}
  

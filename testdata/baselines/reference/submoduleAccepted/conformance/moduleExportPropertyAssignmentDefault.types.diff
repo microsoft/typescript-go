@@ -15,9 +15,9 @@
 ->exports : typeof axios
 ->axios : typeof axios
 +>module.exports = axios : {}
-+>module.exports : typeof import("axios")
-+>module : { "axios": typeof import("axios"); }
-+>exports : typeof import("axios")
++>module.exports : {}
++>module : { axios: {}; }
++>exports : {}
 +>axios : {}
  
  module.exports.default = axios
@@ -29,10 +29,10 @@
 ->default : typeof axios
 ->axios : typeof axios
 +>module.exports.default = axios : {}
-+>module.exports.default : {}
-+>module.exports : typeof import("axios")
-+>module : { "axios": typeof import("axios"); }
-+>exports : typeof import("axios")
-+>default : {}
++>module.exports.default : any
++>module.exports : {}
++>module : { axios: {}; }
++>exports : {}
++>default : any
 +>axios : {}
  

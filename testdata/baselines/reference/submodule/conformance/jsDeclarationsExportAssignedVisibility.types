@@ -23,9 +23,9 @@ class Container {
 
 module.exports = Container;
 >module.exports = Container : typeof Container
->module.exports : typeof import("index")
->module : { "index": typeof import("index"); }
->exports : typeof import("index")
+>module.exports : typeof Container
+>module : { Container: typeof Container; }
+>exports : typeof Container
 >Container : typeof Container
 
 === obj.js ===

@@ -376,7 +376,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 		return ast.InternalSymbolNameNew
 	case ast.KindIndexSignature:
 		return ast.InternalSymbolNameIndex
-	case ast.KindExportDeclaration, ast.KindJSExportDeclaration:
+	case ast.KindExportDeclaration:
 		return ast.InternalSymbolNameExportStar
 	case ast.KindSourceFile:
 		return ast.InternalSymbolNameExportEquals
@@ -728,7 +728,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindNamespaceExportDeclaration(node)
 	case ast.KindImportClause:
 		b.bindImportClause(node)
-	case ast.KindExportDeclaration, ast.KindJSExportDeclaration:
+	case ast.KindExportDeclaration:
 		b.bindExportDeclaration(node)
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		b.bindExportAssignment(node)

@@ -17,9 +17,7 @@ console.log(types.c) // Expected an error here.
 >console.log : Symbol(log, Decl(lib.dom.d.ts, --, --))
 >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
 >log : Symbol(log, Decl(lib.dom.d.ts, --, --))
->types.c : Symbol(c, Decl(values.ts, 0, 12))
 >types : Symbol(types, Decl(main.ts, 1, 6))
->c : Symbol(c, Decl(values.ts, 0, 12))
 
 === types.ts ===
 

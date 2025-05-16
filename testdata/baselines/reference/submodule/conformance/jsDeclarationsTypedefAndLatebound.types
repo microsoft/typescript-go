@@ -2,8 +2,8 @@
 
 === index.js ===
 const LazySet = require("./LazySet");
->LazySet : typeof import("LazySet")
->require("./LazySet") : typeof import("LazySet")
+>LazySet : typeof LazySet
+>require("./LazySet") : typeof LazySet
 >require : any
 >"./LazySet" : "./LazySet"
 
@@ -44,8 +44,8 @@ class LazySet {
 
 module.exports = LazySet;
 >module.exports = LazySet : typeof LazySet
->module.exports : typeof import("LazySet")
->module : { "LazySet": typeof import("LazySet"); }
->exports : typeof import("LazySet")
+>module.exports : typeof LazySet
+>module : { LazySet: typeof LazySet; }
+>exports : typeof LazySet
 >LazySet : typeof LazySet
 
