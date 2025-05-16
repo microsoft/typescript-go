@@ -49,6 +49,10 @@ func GetDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
 	return getDeclarationModifierFlagsFromSymbol(s)
 }
 
+func (c *Checker) WasCanceled() bool {
+	return c.wasCanceled
+}
+
 func (c *Checker) GetSignaturesOfType(t *Type, kind SignatureKind) []*Signature {
 	return c.getSignaturesOfType(t, kind)
 }

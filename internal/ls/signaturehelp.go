@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"context"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -34,18 +35,26 @@ type invocation struct {
 }
 
 func (l *LanguageService) ProvideSignatureHelp(
-	fileName string,
-	position int,
+	ctx context.Context,
+	documentURI lsproto.DocumentUri,
+	position lsproto.Position,
 	context *lsproto.SignatureHelpContext,
 	clientOptions *lsproto.SignatureHelpClientCapabilities,
 	preferences *UserPreferences,
 ) *lsproto.SignatureHelp {
-	program, sourceFile := l.getProgramAndFile(fileName)
-	return l.GetSignatureHelpItems(fileName, position, program, sourceFile, context, clientOptions, preferences)
+	program, sourceFile := l.getProgramAndFile(documentURI)
+	return l.GetSignatureHelpItems(
+		ctx,
+		int(l.converters.LineAndCharacterToPosition(sourceFile, position)),
+		program,
+		sourceFile,
+		context,
+		clientOptions,
+		preferences)
 }
 
 func (l *LanguageService) GetSignatureHelpItems(
-	fileName string,
+	ctx context.Context,
 	position int,
 	program *compiler.Program,
 	sourceFile *ast.SourceFile,
@@ -53,7 +62,8 @@ func (l *LanguageService) GetSignatureHelpItems(
 	clientOptions *lsproto.SignatureHelpClientCapabilities,
 	preferences *UserPreferences,
 ) *lsproto.SignatureHelp {
-	typeChecker := program.GetTypeChecker()
+	typeChecker, done := program.GetTypeCheckerForFile(ctx, sourceFile)
+	defer done()
 
 	// Decide whether to show signature help
 	startingToken := astnav.FindPrecedingToken(sourceFile, position)
@@ -71,7 +81,7 @@ func (l *LanguageService) GetSignatureHelpItems(
 	}
 
 	isManuallyInvoked := context.TriggerKind == 1
-	argumentInfo := getContainingArgumentInfo(startingToken, sourceFile, program.GetTypeChecker(), isManuallyInvoked, position)
+	argumentInfo := getContainingArgumentInfo(startingToken, sourceFile, typeChecker, isManuallyInvoked, position)
 	if argumentInfo == nil {
 		return nil
 	}

@@ -7,6 +7,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
+	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"gotest.tools/v3/assert"
 )
 
@@ -1052,9 +1053,11 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 	testData := lstestutil.ParseTestData("/mainFile.ts", input, "/mainFile.ts")
 	file := testData.Files[0].Filename
 	markerPositions := testData.MarkerPositions
-	service := createLanguageService(file, map[string]string{
+	ctx := projecttestutil.WithRequestID(t.Context())
+	languageService, done := createLanguageService(ctx, file, map[string]string{
 		file: testData.Files[0].Content,
 	})
+	defer done()
 	context := &lsproto.SignatureHelpContext{
 		TriggerKind:      lsproto.SignatureHelpTriggerKindInvoked,
 		TriggerCharacter: nil,
@@ -1075,7 +1078,7 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 		if !ok {
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
-		result := service.ProvideSignatureHelp(file, marker.Position, context, capabilities, preferences)
+		result := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), marker.LSPosition, context, capabilities, preferences)
 		assert.Equal(t, expectedResult.text, result.Signatures[*result.ActiveSignature].Label)
 		assert.Equal(t, expectedResult.parameterCount, len(*result.Signatures[*result.ActiveSignature].Parameters))
 		assert.DeepEqual(t, expectedResult.activeParameter, result.ActiveParameter)
