@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"context"
 	"fmt"
 	"maps"
 	"slices"
@@ -22,6 +23,7 @@ import (
 )
 
 func (l *LanguageService) ProvideCompletion(
+	ctx context.Context,
 	documentURI lsproto.DocumentUri,
 	position lsproto.Position,
 	context *lsproto.CompletionContext,
@@ -30,6 +32,7 @@ func (l *LanguageService) ProvideCompletion(
 ) (*lsproto.CompletionList, error) {
 	program, file := l.getProgramAndFile(documentURI)
 	return l.getCompletionsAtPosition(
+		ctx,
 		program,
 		file,
 		int(l.converters.LineAndCharacterToPosition(file, position)),
@@ -264,6 +267,7 @@ const (
 )
 
 func (l *LanguageService) getCompletionsAtPosition(
+	ctx context.Context,
 	program *compiler.Program,
 	file *ast.SourceFile,
 	position int,
@@ -294,7 +298,9 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	// !!! label completions
 
-	data := getCompletionData(program, l.GetTypeChecker(file), file, position, preferences)
+	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
+	data := getCompletionData(program, checker, file, position, preferences)
 	if data == nil {
 		return nil
 	}
@@ -302,6 +308,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	switch data := data.(type) {
 	case *completionDataData:
 		response := l.completionInfoFromData(
+			ctx,
 			file,
 			program,
 			compilerOptions,
@@ -1457,6 +1464,7 @@ func getDefaultCommitCharacters(isNewIdentifierLocation bool) []string {
 }
 
 func (l *LanguageService) completionInfoFromData(
+	ctx context.Context,
 	file *ast.SourceFile,
 	program *compiler.Program,
 	compilerOptions *core.CompilerOptions,
@@ -1494,6 +1502,7 @@ func (l *LanguageService) completionInfoFromData(
 	}
 
 	uniqueNames, sortedEntries := l.getCompletionEntriesFromSymbols(
+		ctx,
 		data,
 		nil, /*replacementToken*/
 		position,
@@ -1554,6 +1563,7 @@ func (l *LanguageService) completionInfoFromData(
 }
 
 func (l *LanguageService) getCompletionEntriesFromSymbols(
+	ctx context.Context,
 	data *completionDataData,
 	replacementToken *ast.Node,
 	position int,
@@ -1566,7 +1576,8 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 ) (uniqueNames core.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := probablyUsesSemicolons(file)
-	typeChecker := l.GetTypeChecker(file)
+	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
 	optionalReplacementSpan := getOptionalReplacementSpan(data.location, file)
 	// Tracks unique names.
@@ -1608,6 +1619,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			sortText = originalSortText
 		}
 		entry := l.createCompletionItem(
+			ctx,
 			symbol,
 			sortText,
 			replacementToken,
@@ -1675,6 +1687,7 @@ func createCompletionItemForLiteral(
 }
 
 func (l *LanguageService) createCompletionItem(
+	ctx context.Context,
 	symbol *ast.Symbol,
 	sortText sortText,
 	replacementToken *ast.Node,
@@ -1700,7 +1713,8 @@ func (l *LanguageService) createCompletionItem(
 	source := getSourceFromOrigin(origin)
 	var labelDetails *lsproto.CompletionItemLabelDetails
 
-	typeChecker := l.GetTypeChecker(file)
+	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
 	insertQuestionDot := originIsNullableMember(origin)
 	useBraces := originIsSymbolMember(origin) || needsConvertPropertyAccess
 	if originIsThisType(origin) {

@@ -11,7 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-type CheckerPool struct {
+type checkerPool struct {
 	maxCheckers int
 	program     *compiler.Program
 
@@ -24,10 +24,10 @@ type CheckerPool struct {
 	requestAssociations map[string]int
 }
 
-var _ compiler.CheckerPool = (*CheckerPool)(nil)
+var _ compiler.CheckerPool = (*checkerPool)(nil)
 
-func newCheckerPool(maxCheckers int, program *compiler.Program) *CheckerPool {
-	pool := &CheckerPool{
+func newCheckerPool(maxCheckers int, program *compiler.Program) *checkerPool {
+	pool := &checkerPool{
 		program:             program,
 		maxCheckers:         maxCheckers,
 		checkers:            make([]*checker.Checker, maxCheckers),
@@ -39,23 +39,14 @@ func newCheckerPool(maxCheckers int, program *compiler.Program) *CheckerPool {
 	return pool
 }
 
-func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+func (p *checkerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	requestID := core.GetRequestID(ctx)
 	if requestID != "" {
-		if index, ok := p.requestAssociations[requestID]; ok {
-			checker := p.checkers[index]
-			if checker != nil {
-				if inUse := p.inUse[checker]; !inUse {
-					p.inUse[checker] = true
-					return checker, p.createRelease(requestID, index, checker)
-				}
-				// Checker is in use, but by the same request - assume it's the
-				// same goroutine or is managing its own synchronization
-				return checker, noop
-			}
+		if checker, release := p.getRequestCheckerLocked(requestID); checker != nil {
+			return checker, release
 		}
 	}
 
@@ -81,29 +72,33 @@ func (p *CheckerPool) GetCheckerForFile(ctx context.Context, file *ast.SourceFil
 	return checker, p.createRelease(requestID, index, checker)
 }
 
-func (p *CheckerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {
+func (p *checkerPool) GetChecker(ctx context.Context) (*checker.Checker, func()) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	checker, index := p.getCheckerLocked(core.GetRequestID(ctx))
 	return checker, p.createRelease(core.GetRequestID(ctx), index, checker)
 }
 
-func (p *CheckerPool) Files(checker *checker.Checker) iter.Seq[*ast.SourceFile] {
+func (p *checkerPool) Files(checker *checker.Checker) iter.Seq[*ast.SourceFile] {
 	panic("unimplemented")
 }
 
-func (p *CheckerPool) GetAllCheckers(ctx context.Context) ([]*checker.Checker, func()) {
+func (p *checkerPool) GetAllCheckers(ctx context.Context) ([]*checker.Checker, func()) {
 	requestID := core.GetRequestID(ctx)
 	if requestID == "" {
 		panic("cannot call GetAllCheckers on a project.checkerPool without a request ID")
 	}
 
 	// A request can only access one checker
+	if c, release := p.getRequestCheckerLocked(requestID); c != nil {
+		return []*checker.Checker{c}, release
+	}
+
 	c, release := p.GetChecker(ctx)
 	return []*checker.Checker{c}, release
 }
 
-func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int) {
+func (p *checkerPool) getCheckerLocked(requestID string) (*checker.Checker, int) {
 	if checker, index := p.getImmediatelyAvailableChecker(); checker != nil {
 		p.inUse[checker] = true
 		if requestID != "" {
@@ -129,7 +124,23 @@ func (p *CheckerPool) getCheckerLocked(requestID string) (*checker.Checker, int)
 	return checker, index
 }
 
-func (p *CheckerPool) getImmediatelyAvailableChecker() (*checker.Checker, int) {
+func (p *checkerPool) getRequestCheckerLocked(requestID string) (*checker.Checker, func()) {
+	if index, ok := p.requestAssociations[requestID]; ok {
+		checker := p.checkers[index]
+		if checker != nil {
+			if inUse := p.inUse[checker]; !inUse {
+				p.inUse[checker] = true
+				return checker, p.createRelease(requestID, index, checker)
+			}
+			// Checker is in use, but by the same request - assume it's the
+			// same goroutine or is managing its own synchronization
+			return checker, noop
+		}
+	}
+	return nil, noop
+}
+
+func (p *checkerPool) getImmediatelyAvailableChecker() (*checker.Checker, int) {
 	for i, checker := range p.checkers {
 		if checker == nil {
 			continue
@@ -142,7 +153,7 @@ func (p *CheckerPool) getImmediatelyAvailableChecker() (*checker.Checker, int) {
 	return nil, -1
 }
 
-func (p *CheckerPool) waitForAvailableChecker() (*checker.Checker, int) {
+func (p *checkerPool) waitForAvailableChecker() (*checker.Checker, int) {
 	for {
 		p.cond.Wait()
 		checker, index := p.getImmediatelyAvailableChecker()
@@ -152,7 +163,7 @@ func (p *CheckerPool) waitForAvailableChecker() (*checker.Checker, int) {
 	}
 }
 
-func (p *CheckerPool) createRelease(requestId string, index int, checker *checker.Checker) func() {
+func (p *checkerPool) createRelease(requestId string, index int, checker *checker.Checker) func() {
 	return func() {
 		p.mu.Lock()
 		defer p.mu.Unlock()
@@ -169,7 +180,7 @@ func (p *CheckerPool) createRelease(requestId string, index int, checker *checke
 	}
 }
 
-func (p *CheckerPool) isFullLocked() bool {
+func (p *checkerPool) isFullLocked() bool {
 	for _, checker := range p.checkers {
 		if checker == nil {
 			return false
@@ -178,7 +189,7 @@ func (p *CheckerPool) isFullLocked() bool {
 	return true
 }
 
-func (p *CheckerPool) createCheckerLocked() (*checker.Checker, int) {
+func (p *checkerPool) createCheckerLocked() (*checker.Checker, int) {
 	for i, existing := range p.checkers {
 		if existing == nil {
 			checker := checker.NewChecker(p.program)
@@ -187,6 +198,19 @@ func (p *CheckerPool) createCheckerLocked() (*checker.Checker, int) {
 		}
 	}
 	panic("called createCheckerLocked when pool is full")
+}
+
+func (p *checkerPool) isRequestCheckerInUse(requestID string) bool {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	if index, ok := p.requestAssociations[requestID]; ok {
+		checker := p.checkers[index]
+		if checker != nil {
+			return p.inUse[checker]
+		}
+	}
+	return false
 }
 
 func noop() {}

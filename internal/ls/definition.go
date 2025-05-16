@@ -1,6 +1,8 @@
 package ls
 
 import (
+	"context"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -8,14 +10,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (l *LanguageService) ProvideDefinition(documentURI lsproto.DocumentUri, position lsproto.Position) (*lsproto.Definition, error) {
-	file := l.getSourceFile(documentURI)
+func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (*lsproto.Definition, error) {
+	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 	if node.Kind == ast.KindSourceFile {
 		return nil, nil
 	}
 
-	checker := l.GetTypeChecker(file)
+	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
 
 	if symbol := checker.GetSymbolAtLocation(node); symbol != nil {
 		if symbol.Flags&ast.SymbolFlagsAlias != 0 {

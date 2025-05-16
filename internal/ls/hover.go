@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"context"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -8,14 +9,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
-func (l *LanguageService) ProvideHover(documentURI lsproto.DocumentUri, position lsproto.Position) (*lsproto.Hover, error) {
-	file := l.getSourceFile(documentURI)
+func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (*lsproto.Hover, error) {
+	program, file := l.getProgramAndFile(documentURI)
 	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 	if node.Kind == ast.KindSourceFile {
 		// Avoid giving quickInfo for the sourceFile as a whole.
 		return nil, nil
 	}
-	result := l.GetTypeChecker(file).GetQuickInfoAtLocation(node)
+	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
+	result := checker.GetQuickInfoAtLocation(node)
 	if result != "" {
 		return &lsproto.Hover{
 			Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{

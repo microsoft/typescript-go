@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
@@ -88,6 +89,18 @@ type TestFileInfo struct { // for FourSlashFile
 	Content string
 }
 
+// FileName implements ls.Script.
+func (t *TestFileInfo) FileName() string {
+	return t.Filename
+}
+
+// Text implements ls.Script.
+func (t *TestFileInfo) Text() string {
+	return t.Content
+}
+
+var _ ls.Script = (*TestFileInfo)(nil)
+
 func parseFileContent(content string, filename string, markerMap map[string]*Marker, markers *[]*Marker) *TestFileInfo {
 	// !!! chompLeadingSpace
 	// !!! validate characters in markers
@@ -100,7 +113,7 @@ func parseFileContent(content string, filename string, markerMap map[string]*Mar
 	/// The total number of metacharacters removed from the file (so far)
 	difference := 0
 
-	/// Current position data
+	/// One-based current position data
 	line := 1
 	column := 1
 
@@ -127,7 +140,7 @@ func parseFileContent(content string, filename string, markerMap map[string]*Mar
 				position:       (i - 1) - difference,
 				sourcePosition: i - 1,
 				sourceLine:     line,
-				sourceColumn:   column,
+				sourceColumn:   column - 1,
 			}
 		}
 		if previousCharacter == '*' && currentCharacter == '/' {
@@ -159,10 +172,22 @@ func parseFileContent(content string, filename string, markerMap map[string]*Mar
 	// Add the remaining text
 	flush(-1)
 
-	return &TestFileInfo{
-		Content:  output,
+	// Set LS positions for markers
+	lineMap := ls.ComputeLineStarts(output)
+	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
+		return lineMap
+	})
+
+	testFileInfo := &TestFileInfo{
 		Filename: filename,
+		Content:  output,
 	}
+
+	for _, marker := range *markers {
+		marker.LSPosition = converters.PositionToLineAndCharacter(testFileInfo, core.TextPos(marker.Position))
+	}
+
+	return testFileInfo
 }
 
 func recordMarker(
@@ -176,11 +201,7 @@ func recordMarker(
 	marker := &Marker{
 		Filename: filename,
 		Position: location.position,
-		LSPosition: lsproto.Position{
-			Line:      uint32(location.sourceLine - 1),
-			Character: uint32(location.sourceColumn - 1),
-		},
-		Name: name,
+		Name:     name,
 	}
 	// Verify markers for uniqueness
 	if _, ok := markerMap[name]; ok {

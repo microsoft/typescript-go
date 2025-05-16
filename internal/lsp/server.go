@@ -262,11 +262,13 @@ func (s *Server) read() (*lsproto.Message, error) {
 
 func (s *Server) dispatchLoop(ctx context.Context) error {
 	ctx, lspExit := context.WithCancel(ctx)
+	defer lspExit()
 	for {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
 		case req := <-s.requestQueue:
+			ctx := ctx
 			if req.ID != nil {
 				var cancel context.CancelFunc
 				ctx, cancel = context.WithCancel(core.WithRequestID(ctx, req.ID.String()))
@@ -514,7 +516,7 @@ func (s *Server) handleDocumentDiagnostic(ctx context.Context, req *lsproto.Requ
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	diagnostics, err := languageService.GetDocumentDiagnostics(params.TextDocument.Uri)
+	diagnostics, err := languageService.GetDocumentDiagnostics(ctx, params.TextDocument.Uri)
 	if err != nil {
 		return err
 	}
@@ -527,7 +529,7 @@ func (s *Server) handleHover(ctx context.Context, req *lsproto.RequestMessage) e
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	hover, err := languageService.ProvideHover(params.TextDocument.Uri, params.Position)
+	hover, err := languageService.ProvideHover(ctx, params.TextDocument.Uri, params.Position)
 	if err != nil {
 		return err
 	}
@@ -540,7 +542,7 @@ func (s *Server) handleDefinition(ctx context.Context, req *lsproto.RequestMessa
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
-	definition, err := languageService.ProvideDefinition(params.TextDocument.Uri, params.Position)
+	definition, err := languageService.ProvideDefinition(ctx, params.TextDocument.Uri, params.Position)
 	if err != nil {
 		return err
 	}
@@ -563,6 +565,7 @@ func (s *Server) handleCompletion(ctx context.Context, req *lsproto.RequestMessa
 	}()
 	// !!! get user preferences
 	list, err := languageService.ProvideCompletion(
+		ctx,
 		params.TextDocument.Uri,
 		params.Position,
 		params.Context,

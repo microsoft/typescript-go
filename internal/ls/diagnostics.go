@@ -8,9 +8,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
 
-func (l *LanguageService) GetDocumentDiagnostics(documentURI lsproto.DocumentUri) (*lsproto.DocumentDiagnosticReport, error) {
+func (l *LanguageService) GetDocumentDiagnostics(ctx context.Context, documentURI lsproto.DocumentUri) (*lsproto.DocumentDiagnosticReport, error) {
 	program, file := l.getProgramAndFile(documentURI)
-	syntaxDiagnostics := program.GetSyntacticDiagnostics(context.Background(), file)
+	syntaxDiagnostics := program.GetSyntacticDiagnostics(ctx, file)
 	var lspDiagnostics []*lsproto.Diagnostic
 	if len(syntaxDiagnostics) != 0 {
 		lspDiagnostics = make([]*lsproto.Diagnostic, len(syntaxDiagnostics))
@@ -18,8 +18,9 @@ func (l *LanguageService) GetDocumentDiagnostics(documentURI lsproto.DocumentUri
 			lspDiagnostics[i] = toLSPDiagnostic(diag, l.converters)
 		}
 	} else {
-		checker := l.GetTypeChecker(file)
-		semanticDiagnostics := checker.GetDiagnostics(context.Background(), file)
+		checker, done := program.GetTypeCheckerForFile(ctx, file)
+		defer done()
+		semanticDiagnostics := checker.GetDiagnostics(ctx, file)
 		lspDiagnostics = make([]*lsproto.Diagnostic, len(semanticDiagnostics))
 		for i, diag := range semanticDiagnostics {
 			lspDiagnostics[i] = toLSPDiagnostic(diag, l.converters)

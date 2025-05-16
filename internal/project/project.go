@@ -112,6 +112,7 @@ type Project struct {
 	compilerOptions   *core.CompilerOptions
 	parsedCommandLine *tsoptions.ParsedCommandLine
 	program           *compiler.Program
+	checkerPool       *checkerPool
 
 	// Watchers
 	rootFilesWatch          *watchedFiles[[]string]
@@ -257,22 +258,20 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 	if core.GetRequestID(ctx) == "" {
 		panic("context must already have a request ID")
 	}
+	program := p.GetProgram()
+	checkerPool := p.checkerPool
 	snapshot := &snapshot{
 		project:          p,
 		positionEncoding: p.host.PositionEncoding(),
-		program:          p.GetProgram(),
+		program:          program,
 	}
 	languageService := ls.NewLanguageService(ctx, snapshot)
-	return languageService, languageService.Dispose
-}
-
-func (p *Project) LanguageService() *ls.LanguageService {
-	snapshot := &snapshot{
-		project:          p,
-		positionEncoding: p.host.PositionEncoding(),
-		program:          p.GetProgram(),
+	cleanup := func() {
+		if checkerPool.isRequestCheckerInUse(core.GetRequestID(ctx)) {
+			panic(fmt.Errorf("checker for request ID %s not returned to pool at end of request", core.GetRequestID(ctx)))
+		}
 	}
-	return ls.NewLanguageService(nil /*context*/, snapshot)
+	return languageService, cleanup
 }
 
 func (p *Project) getRootFileWatchGlobs() []string {
@@ -462,15 +461,16 @@ func (p *Project) updateProgram() {
 	rootFileNames := p.GetRootFileNames()
 	compilerOptions := p.GetCompilerOptions()
 
-	var program compiler.Program
-	program = *compiler.NewProgram(compiler.ProgramOptions{
-		RootFiles:   rootFileNames,
-		Host:        p,
-		Options:     compilerOptions,
-		CheckerPool: newCheckerPool(4, &program),
+	p.program = compiler.NewProgram(compiler.ProgramOptions{
+		RootFiles: rootFileNames,
+		Host:      p,
+		Options:   compilerOptions,
+		CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
+			p.checkerPool = newCheckerPool(4, program)
+			return p.checkerPool
+		},
 	})
 
-	p.program = &program
 	p.program.BindSourceFiles()
 }
 

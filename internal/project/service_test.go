@@ -365,7 +365,7 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			program := project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 
 			filesCopy := maps.Clone(files)
 			filesCopy["/home/projects/TS/p1/tsconfig.json"] = `{
@@ -383,7 +383,7 @@ func TestService(t *testing.T) {
 			}))
 
 			program = project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 		})
 
 		t.Run("delete explicitly included file", func(t *testing.T) {
@@ -402,7 +402,7 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			program := project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/x.ts")
@@ -415,7 +415,7 @@ func TestService(t *testing.T) {
 			}))
 
 			program = project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/x.ts") == nil)
 		})
 
@@ -435,7 +435,7 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"], core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/x.ts")
 			program := project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 0)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 0)
 
 			filesCopy := maps.Clone(files)
 			delete(filesCopy, "/home/projects/TS/p1/src/index.ts")
@@ -448,7 +448,7 @@ func TestService(t *testing.T) {
 			}))
 
 			program = project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 1)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/x.ts"))), 1)
 		})
 
 		t.Run("create explicitly included file", func(t *testing.T) {
@@ -468,7 +468,7 @@ func TestService(t *testing.T) {
 			program := project.GetProgram()
 
 			// Initially should have an error because y.ts is missing
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Missing location should be watched
 			assert.DeepEqual(t, host.ClientMock.WatchFilesCalls()[0].Watchers, []*lsproto.FileSystemWatcher{
@@ -505,7 +505,7 @@ func TestService(t *testing.T) {
 
 			// Error should be resolved
 			program = project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/y.ts") != nil)
 		})
 
@@ -526,7 +526,7 @@ func TestService(t *testing.T) {
 			program := project.GetProgram()
 
 			// Initially should have an error because z.ts is missing
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Missing location should be watched
 			assert.Check(t, slices.ContainsFunc(host.ClientMock.WatchFilesCalls()[1].Watchers, func(w *lsproto.FileSystemWatcher) bool {
@@ -546,7 +546,7 @@ func TestService(t *testing.T) {
 
 			// Error should be resolved and the new file should be included in the program
 			program = project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/z.ts") != nil)
 		})
 
@@ -567,7 +567,7 @@ func TestService(t *testing.T) {
 			program := project.GetProgram()
 
 			// Initially should have an error because declaration for 'a' is missing
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 1)
 
 			// Add a new file through wildcard watch
 			filesCopy := maps.Clone(files)
@@ -582,7 +582,7 @@ func TestService(t *testing.T) {
 
 			// Error should be resolved and the new file should be included in the program
 			program = project.GetProgram()
-			assert.Equal(t, len(program.GetSemanticDiagnostics(t.Context(), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
+			assert.Equal(t, len(program.GetSemanticDiagnostics(projecttestutil.WithRequestID(t.Context()), program.GetSourceFile("/home/projects/TS/p1/src/index.ts"))), 0)
 			assert.Check(t, program.GetSourceFile("/home/projects/TS/p1/src/a.ts") != nil)
 		})
 	})

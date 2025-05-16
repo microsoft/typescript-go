@@ -27,7 +27,7 @@ type ProgramOptions struct {
 	SingleThreaded               core.Tristate
 	ProjectReference             []core.ProjectReference
 	ConfigFileParsingDiagnostics []*ast.Diagnostic
-	CheckerPool                  CheckerPool
+	CreateCheckerPool            func(*Program) CheckerPool
 }
 
 type Program struct {
@@ -78,8 +78,9 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
-	p.checkerPool = options.CheckerPool
-	if p.checkerPool == nil {
+	if p.programOptions.CreateCheckerPool != nil {
+		p.checkerPool = p.programOptions.CreateCheckerPool(p)
+	} else {
 		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
 	}
 

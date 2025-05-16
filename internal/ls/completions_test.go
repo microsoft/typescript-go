@@ -1,6 +1,7 @@
 package ls_test
 
 import (
+	"context"
 	"slices"
 	"testing"
 
@@ -1551,7 +1552,9 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 			parsedFiles[fileName] = content
 		}
 	}
-	languageService := createLanguageService(mainFileName, parsedFiles)
+	ctx := projecttestutil.WithRequestID(t.Context())
+	languageService, done := createLanguageService(ctx, mainFileName, parsedFiles)
+	defer done()
 	context := &lsproto.CompletionContext{
 		TriggerKind: lsproto.CompletionTriggerKindInvoked,
 	}
@@ -1576,6 +1579,7 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
 		completionList, err := languageService.ProvideCompletion(
+			ctx,
 			ls.FileNameToDocumentURI(mainFileName),
 			marker.LSPosition,
 			context,
@@ -1611,11 +1615,11 @@ func assertIncludesItem(t *testing.T, actual *lsproto.CompletionList, expected *
 	return false
 }
 
-func createLanguageService(fileName string, files map[string]string) *ls.LanguageService {
+func createLanguageService(ctx context.Context, fileName string, files map[string]string) (*ls.LanguageService, func()) {
 	projectService, _ := projecttestutil.Setup(files)
 	projectService.OpenFile(fileName, files[fileName], core.ScriptKindTS, "")
 	project := projectService.Projects()[0]
-	return project.LanguageService()
+	return project.GetLanguageServiceForRequest(ctx)
 }
 
 func ptrTo[T any](v T) *T {
