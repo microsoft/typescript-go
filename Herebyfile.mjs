@@ -59,6 +59,9 @@ const { values: options } = parseArgs({
         fix: { type: "boolean" },
         debug: { type: "boolean" },
 
+        insiders: { type: "boolean" },
+
+        allPlatforms: { type: "boolean" },
         setPrerelease: { type: "string" },
         sign: { type: "boolean" },
 
@@ -71,6 +74,10 @@ const { values: options } = parseArgs({
     allowPositionals: true,
     allowNegative: true,
 });
+
+if (options.sign && !options.allPlatforms) {
+    throw new Error("Signing requires --allPlatforms");
+}
 
 const defaultGoBuildTags = [
     ...(options.noembed ? ["noembed"] : []),
@@ -731,7 +738,7 @@ void 0;
 
 const nativePreviewPlatforms = memoize(() => {
     /** @type {[OS, Arch, Cert][]} */
-    const supportedPlatforms = [
+    let supportedPlatforms = [
         ["win32", "x64", "Microsoft400"],
         ["win32", "arm64", "MicrosoftWin8WinBlue"],
         ["linux", "x64", "LinuxSign"],
@@ -742,6 +749,11 @@ const nativePreviewPlatforms = memoize(() => {
         // Alpine?
         // Wasm?
     ];
+
+    if (!options.allPlatforms) {
+        supportedPlatforms = supportedPlatforms.filter(([os, arch]) => os === process.platform && arch === process.arch);
+        assert.equal(supportedPlatforms.length, 1, "No supported platforms found");
+    }
 
     return supportedPlatforms.map(([os, arch, cert]) => {
         const npmDirName = `native-preview-${os}-${arch}`;
@@ -1040,31 +1052,34 @@ const signNativePreviewPackages = task({
         await sign(filelist);
 
         // All of the files have been signed in place / had signatures added.
-        // Now, notarize the Mac files.
 
-        /** @type {DDSignFileList} */
-        const notarizeFilelist = {
-            SignFileRecordList: [
-                {
-                    SignFileList: macZips.map(p => ({ SrcPath: p.signedZipPath, DstPath: p.notarizedZipPath })),
-                    Certs: "8020", // "MacNotarize" (friendly name not supported by the tooling)
-                },
-            ],
-        };
+        if (macZips.length) {
+            // Now, notarize the Mac files.
 
-        await sign(notarizeFilelist);
+            /** @type {DDSignFileList} */
+            const notarizeFilelist = {
+                SignFileRecordList: [
+                    {
+                        SignFileList: macZips.map(p => ({ SrcPath: p.signedZipPath, DstPath: p.notarizedZipPath })),
+                        Certs: "8020", // "MacNotarize" (friendly name not supported by the tooling)
+                    },
+                ],
+            };
 
-        // Finally, unzip the notarized files and move them back to their original locations.
+            await sign(notarizeFilelist);
 
-        for (const p of macZips) {
-            const zip = new AdmZip(p.notarizedZipPath);
-            zip.extractEntryTo(path.basename(p.path), path.dirname(p.path), false, true);
-        }
+            // Finally, unzip the notarized files and move them back to their original locations.
 
-        // chmod +x the unsipped files.
+            for (const p of macZips) {
+                const zip = new AdmZip(p.notarizedZipPath);
+                zip.extractEntryTo(path.basename(p.path), path.dirname(p.path), false, true);
+            }
 
-        for (const p of macZips) {
-            await fs.promises.chmod(p.path, 0o755);
+            // chmod +x the unsipped files.
+
+            for (const p of macZips) {
+                await fs.promises.chmod(p.path, 0o755);
+            }
         }
     },
 });
@@ -1137,4 +1152,22 @@ const finishedNativePreviewExtensions = options.sign ? [signNativePreviewExtensi
 export const nativePreview = task({
     name: "native-preview",
     dependencies: [packNativePreviewPackages, ...finishedNativePreviewExtensions],
+});
+
+export const installExtension = task({
+    name: "install-extension",
+    dependencies: finishedNativePreviewExtensions,
+    run: async () => {
+        const platforms = nativePreviewPlatforms();
+        const myPlatform = platforms.find(p => p.nodeOs === process.platform && p.nodeArch === process.arch);
+        if (!myPlatform) {
+            throw new Error(`No platform found for ${process.platform}-${process.arch}`);
+        }
+
+        await $`${options.insiders ? "code-insiders" : "code"} --install-extension ${myPlatform.vsixPath}`;
+        console.log(pc.yellowBright("\nExtension installed. ") + "To enable this extension, set:\n");
+        console.log(pc.whiteBright(`    "typescript.experimental.useTsgo": true\n`));
+        console.log("To configure the extension to use built/local instead of its bundled tsgo, set:\n");
+        console.log(pc.whiteBright(`    "typescript-go.executablePath": "${path.join(__dirname, "built", "local", process.platform === "win32" ? "tsgo.exe" : "tsgo")}"\n`));
+    },
 });
