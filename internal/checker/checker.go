@@ -25962,16 +25962,23 @@ func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOn
 	c.symbolReferenceLinks.Get(target).referenceKinds |= ast.SymbolFlagsAll
 }
 
-func (c *Checker) GetExpandedParameters(signature *Signature /* !!! skipUnionExpanding */) []*ast.Symbol {
+func (c *Checker) getExpandedParameters(signature *Signature, skipUnionExpanding *bool) [][]*ast.Symbol {
 	if signatureHasRestParameter(signature) {
 		restIndex := len(signature.parameters) - 1
 		restSymbol := signature.parameters[restIndex]
 		restType := c.getTypeOfSymbol(restSymbol)
 		if isTupleType(restType) {
-			return c.expandSignatureParametersWithTupleMembers(signature, restType.AsTypeReference(), restIndex, restSymbol)
+			return [][]*ast.Symbol{c.expandSignatureParametersWithTupleMembers(signature, restType.AsTypeReference(), restIndex, restSymbol)}
+		} else if skipUnionExpanding != nil && !*skipUnionExpanding && restType.flags&TypeFlagsUnion != 0 && core.Every(restType.AsUnionType().Types(), isTupleType) {
+			result := [][]*ast.Symbol{}
+			for _, t := range restType.AsUnionType().Types() {
+				result = append(result, c.expandSignatureParametersWithTupleMembers(signature, t.AsTypeReference(), restIndex, restSymbol))
+			}
+			return result
 		}
+
 	}
-	return signature.parameters
+	return [][]*ast.Symbol{signature.parameters}
 }
 
 func (c *Checker) expandSignatureParametersWithTupleMembers(signature *Signature, restType *TypeReference, restIndex int, restSymbol *ast.Symbol) []*ast.Symbol {
@@ -29422,7 +29429,7 @@ func (c *Checker) GetSymbolAtLocation(node *ast.Node) *ast.Symbol {
 // be used only by the language service and external tools. The semantics of the function are deliberately "fuzzy"
 // and aim to just return *some* symbol for the node. To obtain the symbol associated with a node for type checking
 // purposes, use appropriate function for the context, e.g. `getResolvedSymbol` for an expression identifier,
-// `getSymbolOfDeclaration` for a declaration, etc.
+// `GetSymbolOfDeclaration` for a declaration, etc.
 func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Symbol {
 	if ast.IsSourceFile(node) {
 		if ast.IsExternalOrCommonJSModule(node.AsSourceFile()) {
@@ -29761,7 +29768,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 	}
 
 	if isTypeDeclaration(node) {
-		// In this case, we call getSymbolOfDeclaration instead of getSymbolAtLocation because it is a declaration
+		// In this case, we call GetSymbolOfDeclaration instead of getSymbolAtLocation because it is a declaration
 		symbol := c.getSymbolOfDeclaration(node)
 		return c.getDeclaredTypeOfSymbol(symbol)
 	}
@@ -29783,7 +29790,7 @@ func (c *Checker) getTypeOfNode(node *ast.Node) *Type {
 	}
 
 	if ast.IsDeclaration(node) {
-		// In this case, we call getSymbolOfDeclaration instead of getSymbolLAtocation because it is a declaration
+		// In this case, we call GetSymbolOfDeclaration instead of getSymbolLAtocation because it is a declaration
 		symbol := c.getSymbolOfDeclaration(node)
 		if symbol != nil {
 			return c.getTypeOfSymbol(symbol)

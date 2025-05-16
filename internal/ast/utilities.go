@@ -334,6 +334,18 @@ func IsStringOrNumericLiteralLike(node *Node) bool {
 	return IsStringLiteralLike(node) || IsNumericLiteral(node)
 }
 
+func IsStringTextContainingNode(node *Node) bool {
+	return node.Kind == KindStringLiteral || IsTemplateLiteralKind(node.Kind)
+}
+
+func IsTemplateLiteralKind(kind Kind) bool {
+	return KindFirstTemplateToken <= kind && kind <= KindLastTemplateToken
+}
+
+func IsTemplateLiteralToken(node *Node) bool {
+	return IsTemplateLiteralKind(node.Kind)
+}
+
 func IsSignedNumericLiteral(node *Node) bool {
 	if node.Kind == KindPrefixUnaryExpression {
 		node := node.AsPrefixUnaryExpression()
@@ -2951,4 +2963,14 @@ func GetPropertyNameForPropertyNameNode(name *Node) string {
 		return InternalSymbolNameMissing
 	}
 	panic("Unhandled case in getPropertyNameForPropertyNameNode")
+}
+
+// !!!
+func HasQuestionToken(node *Node) bool {
+	switch node.Kind {
+	case KindParameter, KindMethodDeclaration, KindMethodSignature, KindShorthandPropertyAssignment,
+		KindPropertyAssignment, KindPropertyDeclaration, KindPropertySignature:
+		return node.AsParameterDeclaration().QuestionToken != nil
+	}
+	return false
 }
