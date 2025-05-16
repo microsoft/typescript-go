@@ -736,9 +736,10 @@ const nativePreviewPlatforms = memoize(() => {
         const npmTarball = `${npmDir}.tgz`;
         const npmPackageName = `@typescript/${npmDirName}`;
         const vscodeTarget = `${os}-${arch === "arm" ? "armhf" : arch}`;
-        const vsixPath = path.join(builtVsix, `typescript-native-preview.${vscodeTarget}.vsix`);
-        const vsixManifestPath = vsixPath + ".manifest";
-        const vsixSignaturePath = vsixPath + ".signature.p7s";
+        const vsixPrefix = path.join(builtVsix, `typescript-native-preview.${vscodeTarget}`);
+        const vsixPath = vsixPrefix + ".vsix";
+        const vsixManifestPath = vsixPrefix + ".manifest";
+        const vsixSignaturePath = vsixPrefix + ".signature.p7s";
         return {
             nodeOs: os,
             nodeArch: arch,
