@@ -1,5 +1,6 @@
 // @ts-check
 
+import AdmZip from "adm-zip";
 import chokidar from "chokidar";
 import { $ as _$ } from "execa";
 import { glob } from "glob";
@@ -713,21 +714,31 @@ const getVersion = memoize(() => {
 const extensionDir = path.resolve("./_extension");
 const builtNpm = path.resolve("./built/npm");
 const builtVsix = path.resolve("./built/vsix");
+const builtSignTmp = path.resolve("./built/sign-tmp");
 
 const mainNativePreviewPackage = {
     npmDir: path.join(builtNpm, "native-preview"),
     npmTarball: path.join(builtNpm, "native-preview.tgz"),
 };
 
+/**
+ * @typedef {"win32" | "linux" | "darwin"} OS
+ * @typedef {"x64" | "arm" | "arm64"} Arch
+ * @typedef {"Microsoft400" | "MicrosoftWin8WinBlue" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
+ * @typedef {`${OS}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
+ */
+void 0;
+
 const nativePreviewPlatforms = memoize(() => {
+    /** @type {[OS, Arch, Cert][]} */
     const supportedPlatforms = [
         ["win32", "x64", "Microsoft400"],
         ["win32", "arm64", "MicrosoftWin8WinBlue"],
         ["linux", "x64", "LinuxSign"],
         ["linux", "arm", "LinuxSign"],
         ["linux", "arm64", "LinuxSign"],
-        ["darwin", "x64", "8023"], // aka MacDeveloperHarden
-        ["darwin", "arm64", "8023"],
+        ["darwin", "x64", "MacDeveloperHarden"],
+        ["darwin", "arm64", "MacDeveloperHarden"],
         // Alpine?
         // Wasm?
     ];
@@ -737,6 +748,7 @@ const nativePreviewPlatforms = memoize(() => {
         const npmDir = path.join(builtNpm, npmDirName);
         const npmTarball = `${npmDir}.tgz`;
         const npmPackageName = `@typescript/${npmDirName}`;
+        /** @type {VSCodeTarget} */
         const vscodeTarget = `${os}-${arch === "arm" ? "armhf" : arch}`;
         const vsixPrefix = path.join(builtVsix, `typescript-native-preview.${vscodeTarget}`);
         const vsixPath = vsixPrefix + ".vsix";
@@ -748,6 +760,7 @@ const nativePreviewPlatforms = memoize(() => {
             goos: nodeToGOOS(os),
             goarch: nodeToGOARCH(arch),
             npmPackageName,
+            npmDirName,
             npmDir,
             npmTarball,
             vscodeTarget,
@@ -760,6 +773,7 @@ const nativePreviewPlatforms = memoize(() => {
 
     /**
      * @param {string} os
+     * @returns {"darwin" | "linux" | "windows"}
      */
     function nodeToGOOS(os) {
         switch (os) {
@@ -776,6 +790,7 @@ const nativePreviewPlatforms = memoize(() => {
 
     /**
      * @param {string} arch
+     * @returns {"amd64" | "arm" | "arm64"}
      */
     function nodeToGOARCH(arch) {
         switch (arch) {
@@ -875,7 +890,12 @@ const buildNativePreviewPackages = task({
     },
 });
 
-const signTempDirectory = process.env.AGENT_TEMPDIRECTORY || os.tmpdir();
+const signTempDirectory = memoize(async () => {
+    const dir = path.resolve("./built/sign-tmp");
+    await rimraf(dir);
+    await fs.promises.mkdir(dir, { recursive: true });
+    return dir;
+});
 
 let signCount = 0;
 
@@ -883,7 +903,7 @@ let signCount = 0;
  * @typedef {{
  *   SignFileRecordList: {
  *     SignFileList: { SrcPath: string; DstPath: string | null; }[];
- *     Certs: string;
+ *     Certs: Cert;
  *   }[]
  * }} DDSignFileList
  *
@@ -894,11 +914,38 @@ async function sign(filelist) {
     console.log("filelist:", data);
 
     if (!process.env.MBSIGN_APPFOLDER) {
-        console.log(pc.yellow("Skipping signing because MBSIGN_APPFOLDER is not set"));
+        console.log(pc.yellow("Faking signing because MBSIGN_APPFOLDER is not set."));
+
+        // Fake signing for testing.
+
+        for (const record of filelist.SignFileRecordList) {
+            for (const file of record.SignFileList) {
+                const src = file.SrcPath;
+                const dst = file.DstPath ?? src;
+
+                if (dst.endsWith(".sig")) {
+                    console.log(`Faking signature for ${src} -> ${dst}`);
+                    // No great way to fake a signature.
+                    await fs.promises.writeFile(dst, "fake signature");
+                }
+                else {
+                    if (src === dst) {
+                        console.log(`Faking signing ${src}`);
+                    }
+                    else {
+                        console.log(`Faking signing ${src} -> ${dst}`);
+                    }
+                    const contents = await fs.promises.readFile(src);
+                    await fs.promises.writeFile(dst, contents);
+                }
+            }
+        }
+
         return;
     }
 
-    const filelistPath = path.resolve(signTempDirectory, `${process.pid}-signing-filelist-${signCount++}.json`);
+    const tmp = await signTempDirectory();
+    const filelistPath = path.resolve(tmp, `signing-filelist-${signCount++}.json`);
     await fs.promises.writeFile(filelistPath, data);
 
     try {
@@ -917,22 +964,102 @@ const signNativePreviewPackages = task({
     run: async () => {
         const platforms = nativePreviewPlatforms();
 
+        /** @type {Map<Cert, { tmpName: string; path: string }[]>} */
+        const filelistByCert = new Map();
+        for (const { npmDir, nodeOs, cert, npmDirName } of platforms) {
+            let certFilelist = filelistByCert.get(cert);
+            if (!certFilelist) {
+                filelistByCert.set(cert, certFilelist = []);
+            }
+            certFilelist.push({
+                tmpName: npmDirName,
+                path: path.join(npmDir, "lib", nodeOs === "win32" ? "tsgo.exe" : "tsgo"),
+            });
+        }
+
+        const tmp = await signTempDirectory();
+
         /** @type {DDSignFileList} */
-        let filelist = {
+        const filelist = {
             SignFileRecordList: [],
         };
 
-        /** @type {Map<string, string[]>} */
-        const filelistByCert = new Map();
+        const macZips = [];
 
-        /** @type {string[]} */
-        const notarize = [];
+        // First, sign the files.
 
-        for (const { npmDir, goos, cert } of platforms) {
-            if (goos === "darwin") {
-                // TODO: zip, notarize
+        for (const [cert, filelistPaths] of filelistByCert) {
+            switch (cert) {
+                case "Microsoft400":
+                case "MicrosoftWin8WinBlue":
+                    filelist.SignFileRecordList.push({
+                        SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: null })),
+                        Certs: cert,
+                    });
+                    break;
+                case "LinuxSign":
+                    filelist.SignFileRecordList.push({
+                        SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: p.path + ".sig" })),
+                        Certs: cert,
+                    });
+                    break;
+                case "MacDeveloperHarden":
+                    // Mac signing requires putting files into zips and then signing those,
+                    // along with a notarization step.
+                    for (const p of filelistPaths) {
+                        const unsignedZipPath = path.join(tmp, `${p.tmpName}.unsigned.zip`);
+                        const signedZipPath = path.join(tmp, `${p.tmpName}.signed.zip`);
+                        const notarizedZipPath = path.join(tmp, `${p.tmpName}.notarized.zip`);
+
+                        const zip = new AdmZip();
+                        zip.addLocalFile(p.path);
+                        zip.writeZip(unsignedZipPath);
+
+                        macZips.push({
+                            path: p.path,
+                            unsignedZipPath,
+                            signedZipPath,
+                            notarizedZipPath,
+                        });
+                    }
+                    filelist.SignFileRecordList.push({
+                        SignFileList: macZips.map(p => ({ SrcPath: p.unsignedZipPath, DstPath: p.signedZipPath })),
+                        Certs: cert,
+                    });
+                    break;
+                default:
+                    throw new Error(`Unknown cert: ${cert}`);
             }
-            // TODO: do something here
+        }
+
+        await sign(filelist);
+
+        // All of the files have been signed in place / had signatures added.
+        // Now, notarize the Mac files.
+
+        /** @type {DDSignFileList} */
+        const notarizeFilelist = {
+            SignFileRecordList: [
+                {
+                    SignFileList: macZips.map(p => ({ SrcPath: p.signedZipPath, DstPath: p.notarizedZipPath })),
+                    Certs: "8020", // "MacNotarize" (friendly name not supported by the tooling)
+                },
+            ],
+        };
+
+        await sign(notarizeFilelist);
+
+        // Finally, unzip the notarized files and move them back to their original locations.
+
+        for (const p of macZips) {
+            const zip = new AdmZip(p.notarizedZipPath);
+            zip.extractEntryTo(path.basename(p.path), path.dirname(p.path), false, true);
+        }
+
+        // chmod +x the unsipped files.
+
+        for (const p of macZips) {
+            await fs.promises.chmod(p.path, 0o755);
         }
     },
 });
