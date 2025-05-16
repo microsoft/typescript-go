@@ -2,6 +2,7 @@ package project
 
 import (
 	"context"
+	"fmt"
 	"iter"
 	"sync"
 
@@ -22,17 +23,19 @@ type checkerPool struct {
 	inUse               map[*checker.Checker]bool
 	fileAssociations    map[*ast.SourceFile]int
 	requestAssociations map[string]int
+	log                 func(msg string)
 }
 
 var _ compiler.CheckerPool = (*checkerPool)(nil)
 
-func newCheckerPool(maxCheckers int, program *compiler.Program) *checkerPool {
+func newCheckerPool(maxCheckers int, program *compiler.Program, log func(msg string)) *checkerPool {
 	pool := &checkerPool{
 		program:             program,
 		maxCheckers:         maxCheckers,
 		checkers:            make([]*checker.Checker, maxCheckers),
 		inUse:               make(map[*checker.Checker]bool),
 		requestAssociations: make(map[string]int),
+		log:                 log,
 	}
 
 	pool.cond = sync.NewCond(&pool.mu)
@@ -154,6 +157,7 @@ func (p *checkerPool) getImmediatelyAvailableChecker() (*checker.Checker, int) {
 }
 
 func (p *checkerPool) waitForAvailableChecker() (*checker.Checker, int) {
+	p.log("checkerpool: Waiting for an available checker")
 	for {
 		p.cond.Wait()
 		checker, index := p.getImmediatelyAvailableChecker()
@@ -171,6 +175,7 @@ func (p *checkerPool) createRelease(requestId string, index int, checker *checke
 		delete(p.requestAssociations, requestId)
 		if checker.WasCanceled() {
 			// Canceled checkers must be disposed
+			p.log(fmt.Sprintf("checkerpool: Checker for request %s was canceled, disposing it", requestId))
 			p.checkers[index] = nil
 			delete(p.inUse, checker)
 		} else {
@@ -211,6 +216,18 @@ func (p *checkerPool) isRequestCheckerInUse(requestID string) bool {
 		}
 	}
 	return false
+}
+
+func (p *checkerPool) size() int {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	size := 0
+	for _, checker := range p.checkers {
+		if checker != nil {
+			size++
+		}
+	}
+	return size
 }
 
 func noop() {}

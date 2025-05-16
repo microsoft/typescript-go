@@ -84,13 +84,15 @@ type ProjectHost interface {
 	Client() Client
 }
 
+var _ compiler.CompilerHost = (*Project)(nil)
+
 type Project struct {
 	host ProjectHost
-	mu   sync.Mutex
 
 	name string
 	kind Kind
 
+	dirtyStateMu              sync.Mutex
 	initialLoadPending        bool
 	dirty                     bool
 	version                   int
@@ -111,6 +113,7 @@ type Project struct {
 	rootFileNames     *collections.OrderedMap[tspath.Path, string]
 	compilerOptions   *core.CompilerOptions
 	parsedCommandLine *tsoptions.ParsedCommandLine
+	programMu         sync.Mutex
 	program           *compiler.Program
 	checkerPool       *checkerPool
 
@@ -165,37 +168,30 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 	return project
 }
 
-// FS implements LanguageServiceHost.
+// FS implements compiler.CompilerHost.
 func (p *Project) FS() vfs.FS {
 	return p.host.FS()
 }
 
-// DefaultLibraryPath implements LanguageServiceHost.
+// DefaultLibraryPath implements compiler.CompilerHost.
 func (p *Project) DefaultLibraryPath() string {
 	return p.host.DefaultLibraryPath()
 }
 
-// GetCompilerOptions implements LanguageServiceHost.
-func (p *Project) GetCompilerOptions() *core.CompilerOptions {
-	return p.compilerOptions
-}
-
-// GetCurrentDirectory implements LanguageServiceHost.
+// GetCurrentDirectory implements compiler.CompilerHost.
 func (p *Project) GetCurrentDirectory() string {
 	return p.currentDirectory
 }
 
-// GetProjectVersion implements LanguageServiceHost.
-func (p *Project) GetProjectVersion() int {
-	return p.version
-}
-
-// GetRootFileNames implements LanguageServiceHost.
 func (p *Project) GetRootFileNames() []string {
 	return slices.Collect(p.rootFileNames.Values())
 }
 
-// GetSourceFile implements LanguageServiceHost.
+func (p *Project) GetCompilerOptions() *core.CompilerOptions {
+	return p.compilerOptions
+}
+
+// GetSourceFile implements compiler.CompilerHost.
 func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
@@ -207,35 +203,30 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
 			oldCompilerOptions = p.program.GetCompilerOptions()
 		}
-		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.GetCompilerOptions(), oldSourceFile, oldCompilerOptions)
+		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, oldSourceFile, oldCompilerOptions)
 	}
 	return nil
 }
 
-// GetProgram implements LanguageServiceHost. Updates the program if needed.
+// Updates the program if needed.
 func (p *Project) GetProgram() *compiler.Program {
 	p.updateIfDirty()
 	return p.program
 }
 
-// NewLine implements LanguageServiceHost.
+// NewLine implements compiler.CompilerHost.
 func (p *Project) NewLine() string {
 	return p.host.NewLine()
 }
 
-// Trace implements LanguageServiceHost.
+// Trace implements compiler.CompilerHost.
 func (p *Project) Trace(msg string) {
 	p.log(msg)
 }
 
-// GetDefaultLibraryPath implements ls.Host.
+// GetDefaultLibraryPath implements compiler.CompilerHost.
 func (p *Project) GetDefaultLibraryPath() string {
 	return p.host.DefaultLibraryPath()
-}
-
-// GetPositionEncoding implements ls.Host.
-func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
-	return p.host.PositionEncoding()
 }
 
 func (p *Project) Name() string {
@@ -385,8 +376,8 @@ func (p *Project) markFileAsDirty(path tspath.Path) {
 }
 
 func (p *Project) markAsDirty() {
-	p.mu.Lock()
-	defer p.mu.Unlock()
+	p.dirtyStateMu.Lock()
+	defer p.dirtyStateMu.Unlock()
 	if !p.dirty {
 		p.dirty = true
 		p.version++
@@ -400,8 +391,8 @@ func (p *Project) updateIfDirty() bool {
 }
 
 func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
+	p.dirtyStateMu.Lock()
+	defer p.dirtyStateMu.Unlock()
 	p.hasAddedOrRemovedFiles = true
 	if isSymlink {
 		p.hasAddedOrRemovedSymlinks = true
@@ -413,7 +404,12 @@ func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
 // opposite of the return value in Strada, which was frequently inverted,
 // as in `updateProjectIfDirty()`.
 func (p *Project) updateGraph() bool {
-	// !!!
+	p.programMu.Lock()
+	defer p.programMu.Unlock()
+	if !p.dirty {
+		return false
+	}
+
 	p.log("Starting updateGraph: Project: " + p.name)
 	oldProgram := p.program
 	hasAddedOrRemovedFiles := p.hasAddedOrRemovedFiles
@@ -459,14 +455,17 @@ func (p *Project) updateGraph() bool {
 
 func (p *Project) updateProgram() {
 	rootFileNames := p.GetRootFileNames()
-	compilerOptions := p.GetCompilerOptions()
+	compilerOptions := p.compilerOptions
 
+	if p.checkerPool != nil {
+		p.logf("Program %d used %d checker(s)", p.version, p.checkerPool.size())
+	}
 	p.program = compiler.NewProgram(compiler.ProgramOptions{
 		RootFiles: rootFileNames,
 		Host:      p,
 		Options:   compilerOptions,
 		CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-			p.checkerPool = newCheckerPool(4, program)
+			p.checkerPool = newCheckerPool(4, program, p.log)
 			return p.checkerPool
 		},
 	})
