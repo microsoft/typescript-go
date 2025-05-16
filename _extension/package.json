@@ -72,7 +72,6 @@
         "build": "tsc",
         "watch": "tsc --watch",
         "build:prod": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.js --minify",
-        "package": "vsce package --skip-license --no-dependencies --out typescript-lsp.vsix",
         "vscode:prepublish": "npm run build:prod"
     },
     "dependencies": {
