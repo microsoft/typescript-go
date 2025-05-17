@@ -1,9 +1,9 @@
 {
-    "name": "typescript-lsp",
-    "displayName": "TypeScript (LSP)",
-    "publisher": "typescript",
+    "name": "native-preview",
+    "displayName": "TypeScript (Native Preview)",
+    "publisher": "TypeScriptTeam",
     "author": "Microsoft Corp.",
-    "description": "Test extension for typescript-go",
+    "description": "Native preview of the TypeScript language server for Visual Studio Code.",
     "private": true,
     "version": "0.0.0",
     "type": "commonjs",
@@ -12,7 +12,7 @@
         "url": "https://github.com/microsoft/typescript-go"
     },
     "engines": {
-        "vscode": "^1.91.0"
+        "vscode": "^1.100.0"
     },
     "activationEvents": [
         "onLanguage:javascript",
@@ -64,21 +64,21 @@
     },
     "main": "./dist/extension.js",
     "files": [
-        "dist"
+        "dist",
+        "lib",
+        "LICENSE"
     ],
     "scripts": {
         "build": "tsc",
         "watch": "tsc --watch",
         "build:prod": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.js --minify",
-        "package": "vsce package --skip-license --no-dependencies --out typescript-lsp.vsix",
-        "install-extension": "code --install-extension typescript-lsp.vsix",
         "vscode:prepublish": "npm run build:prod"
     },
     "dependencies": {
         "vscode-languageclient": "^9.0.1"
     },
     "devDependencies": {
-        "@types/vscode": "^1.91.0",
+        "@types/vscode": "^1.100.0",
         "@vscode/vsce": "^3.3.2",
         "esbuild": "^0.25.2"
     }
