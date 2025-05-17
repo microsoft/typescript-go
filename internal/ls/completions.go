@@ -246,7 +246,8 @@ const (
 // true otherwise.
 type uniqueNamesMap = map[string]bool
 
-type literalValue any // string | jsnum.Number | PseudoBigInt
+// string | jsnum.Number | PseudoBigInt
+type literalValue any
 
 type globalsSearch int
 
@@ -1476,10 +1477,10 @@ func (l *LanguageService) completionInfoFromData(
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	keywordFilters := data.keywordFilters
-	symbols := data.symbols
 	isNewIdentifierLocation := data.isNewIdentifierLocation
 	contextToken := data.contextToken
 	literals := data.literals
+	typeChecker := program.GetTypeChecker()
 
 	// Verify if the file is JSX language variant
 	if ast.GetLanguageVariant(file.ScriptKind) == core.LanguageVariantJSX {
@@ -1495,11 +1496,23 @@ func (l *LanguageService) completionInfoFromData(
 	if caseClause != nil &&
 		(contextToken.Kind == ast.KindCaseKeyword ||
 			ast.IsNodeDescendantOf(contextToken, caseClause.Expression())) {
-		// !!! switch completions
+		tracker := newCaseClauseTracker(typeChecker, caseClause.Parent.AsCaseBlock().Clauses.Nodes)
+		literals = core.Filter(literals, func(literal literalValue) bool {
+			return !tracker.hasValue(literal)
+		})
+		data.symbols = core.Filter(data.symbols, func(symbol *ast.Symbol) bool {
+			if symbol.ValueDeclaration != nil && ast.IsEnumMember(symbol.ValueDeclaration) {
+				value := typeChecker.GetConstantValue(symbol.ValueDeclaration)
+				if value != nil && tracker.hasValue(value) {
+					return false
+				}
+			}
+			return true
+		})
 	}
 
 	isChecked := isCheckedFile(file, compilerOptions)
-	if isChecked && !isNewIdentifierLocation && len(symbols) == 0 && keywordFilters == KeywordCompletionFiltersNone {
+	if isChecked && !isNewIdentifierLocation && len(data.symbols) == 0 && keywordFilters == KeywordCompletionFiltersNone {
 		return nil
 	}
 
