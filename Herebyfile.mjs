@@ -730,7 +730,7 @@ const mainNativePreviewPackage = {
 /**
  * @typedef {"win32" | "linux" | "darwin"} OS
  * @typedef {"x64" | "arm" | "arm64"} Arch
- * @typedef {"Microsoft400" | "MicrosoftWin8WinBlue" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
+ * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
  * @typedef {`${OS}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
  */
 void 0;
@@ -739,7 +739,7 @@ const nativePreviewPlatforms = memoize(() => {
     /** @type {[OS, Arch, Cert][]} */
     let supportedPlatforms = [
         ["win32", "x64", "Microsoft400"],
-        ["win32", "arm64", "MicrosoftWin8WinBlue"],
+        ["win32", "arm64", "Microsoft400"],
         ["linux", "x64", "LinuxSign"],
         ["linux", "arm", "LinuxSign"],
         ["linux", "arm64", "LinuxSign"],
@@ -1007,7 +1007,6 @@ const signNativePreviewPackages = task({
         for (const [cert, filelistPaths] of filelistByCert) {
             switch (cert) {
                 case "Microsoft400":
-                case "MicrosoftWin8WinBlue":
                     filelist.SignFileRecordList.push({
                         SignFileList: filelistPaths.map(p => ({ SrcPath: p.path, DstPath: null })),
                         Certs: cert,
