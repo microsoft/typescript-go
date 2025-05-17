@@ -54,6 +54,9 @@ func TestCompletions(t *testing.T) {
 	variableKind := ptrTo(lsproto.CompletionItemKindVariable)
 	classKind := ptrTo(lsproto.CompletionItemKindClass)
 	keywordKind := ptrTo(lsproto.CompletionItemKindKeyword)
+	propertyKind := ptrTo(lsproto.CompletionItemKindProperty)
+	constantKind := ptrTo(lsproto.CompletionItemKindConstant)
+	enumMemberKind := ptrTo(lsproto.CompletionItemKindEnumMember)
 
 	stringMembers := []*lsproto.CompletionItem{
 		{Label: "charAt", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
@@ -1525,6 +1528,279 @@ function fn3() {
 							},
 						},
 					},
+				},
+			},
+		},
+		{
+			name: "completionListWithLabel",
+			files: map[string]string{
+				defaultMainFileName: `label: while (true) {
+   break /*1*/
+   continue /*2*/
+   testlabel: while (true) {
+       break /*3*/
+       continue /*4*/
+       break tes/*5*/
+       continue tes/*6*/
+   }
+   break /*7*/
+   break; /*8*/
+}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"2": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"7": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"3": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"4": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"5": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"6": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"8": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items:        []*lsproto.CompletionItem{},
+					},
+					isIncludes: true,
+					excludes:   []string{"label"},
+				},
+			},
+		},
+		{
+			name: "completionForStringLiteral",
+			files: map[string]string{
+				defaultMainFileName: `type Options = "Option 1" | "Option 2" | "Option 3";
+var x: Options = "/*1*/Option 3";`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "Option 1",
+								Kind:             constantKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									TextEdit: &lsproto.TextEdit{
+										NewText: "Option 1",
+										Range: lsproto.Range{
+											Start: lsproto.Position{Line: 1, Character: 18},
+											End:   lsproto.Position{Line: 1, Character: 26},
+										},
+									},
+								},
+							},
+							{
+								Label:            "Option 2",
+								Kind:             constantKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									TextEdit: &lsproto.TextEdit{
+										NewText: "Option 2",
+										Range: lsproto.Range{
+											Start: lsproto.Position{Line: 1, Character: 18},
+											End:   lsproto.Position{Line: 1, Character: 26},
+										},
+									},
+								},
+							},
+							{
+								Label:            "Option 3",
+								Kind:             constantKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									TextEdit: &lsproto.TextEdit{
+										NewText: "Option 3",
+										Range: lsproto.Range{
+											Start: lsproto.Position{Line: 1, Character: 18},
+											End:   lsproto.Position{Line: 1, Character: 26},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "switchCompletions",
+			files: map[string]string{
+				defaultMainFileName: `enum E { A, B }
+declare const e: E;
+switch (e) {
+    case E.A:
+        return 0;
+    case E./*1*/
+}
+declare const f: 1 | 2 | 3;
+switch (f) {
+    case 1:
+        return 1;
+    case /*2*/
+}
+declare const f2: 'foo' | 'bar' | 'baz';
+switch (f2) {
+    case 'bar':
+        return 1;
+    case '/*3*/'
+}
+// repro from #52874
+declare let x: "foo" | "bar";
+switch (x) {
+    case ('/*4*/')
+}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "B",
+								Kind:             enumMemberKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+								FilterText:       ptrTo(".B"),
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									InsertReplaceEdit: &lsproto.InsertReplaceEdit{
+										NewText: "B",
+										Insert: lsproto.Range{
+											Start: lsproto.Position{Line: 5, Character: 11},
+											End:   lsproto.Position{Line: 5, Character: 11},
+										},
+										Replace: lsproto.Range{
+											Start: lsproto.Position{Line: 5, Character: 11},
+											End:   lsproto.Position{Line: 5, Character: 11},
+										},
+									},
+								},
+							},
+						},
+					},
+					isIncludes: true,
+					excludes:   []string{"A"},
 				},
 			},
 		},
