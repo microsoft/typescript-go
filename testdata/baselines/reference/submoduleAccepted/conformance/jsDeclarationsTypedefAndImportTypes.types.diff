@@ -32,12 +32,12 @@
          this.another = "";
 ->this.another = "" : ""
 ->this.another : import("conn").Whatever
-+>this.another = "" : any
-+>this.another : any
++>this.another = "" : string | number
++>this.another : string | number
  >this : this
 ->another : import("conn").Whatever
-+>another : any
-+>"" : any
++>another : string | number
++>"" : string | number
  >"" : ""
      }
  }
