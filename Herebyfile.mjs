@@ -14,7 +14,6 @@ import { parseArgs } from "node:util";
 import os from "os";
 import pLimit from "p-limit";
 import pc from "picocolors";
-import prettyMilliseconds from "pretty-ms";
 import which from "which";
 
 const __filename = url.fileURLToPath(new URL(import.meta.url));
