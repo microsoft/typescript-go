@@ -24,8 +24,8 @@
         "build:watch": "hereby build:watch",
         "test": "hereby test",
         "api:build": "npm run -w @typescript/api build",
-        "extension:build": "npm run -w typescript-lsp build",
-        "extension:watch": "npm run -w typescript-lsp watch",
+        "extension:build": "npm run -w _extension build",
+        "extension:watch": "npm run -w _extension watch",
         "node": "node --no-warnings --conditions @typescript/source"
     },
     "workspaces": [
