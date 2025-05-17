@@ -902,7 +902,7 @@ const buildNativePreviewPackages = task({
 });
 
 const getSignTempDir = memoize(async () => {
-    const dir = path.resolve("./built/sign-tmp");
+    const dir = path.resolve(builtSignTmp);
     await rimraf(dir);
     await fs.promises.mkdir(dir, { recursive: true });
     return dir;
@@ -910,7 +910,7 @@ const getSignTempDir = memoize(async () => {
 
 const cleanSignTempDirectory = task({
     name: "clean:sign-tmp",
-    run: () => rimraf("./built/sign-tmp"),
+    run: () => rimraf(builtSignTmp),
 });
 
 let signCount = 0;
