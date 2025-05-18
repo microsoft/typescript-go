@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"context"
+	"maps"
 	"slices"
 	"sync"
 
@@ -78,11 +79,7 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
-	if p.programOptions.CreateCheckerPool != nil {
-		p.checkerPool = p.programOptions.CreateCheckerPool(p)
-	} else {
-		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
-	}
+	p.initCheckerPool()
 
 	// p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
 
@@ -172,6 +169,75 @@ func NewProgram(options ProgramOptions) *Program {
 	}
 
 	return p
+}
+
+func NewProgramWithChangedFile(old *Program, changedFilePath tspath.Path) *Program {
+	oldFile := old.filesByPath[changedFilePath]
+	newFile := old.host.GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
+	if !canReplaceFileInProgram(oldFile, newFile) {
+		return NewProgram(old.programOptions)
+	}
+	p := &Program{
+		host:                         old.host,
+		programOptions:               old.programOptions,
+		compilerOptions:              old.compilerOptions,
+		configFileName:               old.configFileName,
+		nodeModules:                  old.nodeModules,
+		currentDirectory:             old.currentDirectory,
+		configFileParsingDiagnostics: old.configFileParsingDiagnostics,
+		resolver:                     old.resolver,
+		comparePathsOptions:          old.comparePathsOptions,
+		processedFiles:               old.processedFiles,
+		filesByPath:                  old.filesByPath,
+		currentNodeModulesDepth:      old.currentNodeModulesDepth,
+		usesUriStyleNodeCoreModules:  old.usesUriStyleNodeCoreModules,
+		unsupportedExtensions:        old.unsupportedExtensions,
+	}
+	p.initCheckerPool()
+	index := core.FindIndex(p.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
+	p.files = slices.Clone(p.files)
+	p.files[index] = newFile
+	p.filesByPath = maps.Clone(p.filesByPath)
+	p.filesByPath[newFile.Path()] = newFile
+	return p
+}
+
+func (p *Program) initCheckerPool() {
+	if p.programOptions.CreateCheckerPool != nil {
+		p.checkerPool = p.programOptions.CreateCheckerPool(p)
+	} else {
+		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
+	}
+}
+
+func canReplaceFileInProgram(old *ast.SourceFile, new *ast.SourceFile) bool {
+	return old.FileName() == new.FileName() &&
+		old.Path() == new.Path() &&
+		old.LanguageVersion == new.LanguageVersion &&
+		old.LanguageVariant == new.LanguageVariant &&
+		old.ScriptKind == new.ScriptKind &&
+		old.IsDeclarationFile == new.IsDeclarationFile &&
+		old.HasNoDefaultLib == new.HasNoDefaultLib &&
+		old.UsesUriStyleNodeCoreModules == new.UsesUriStyleNodeCoreModules &&
+		slices.EqualFunc(old.Imports, new.Imports, compareImports) &&
+		slices.EqualFunc(old.ModuleAugmentations, new.ModuleAugmentations, compareModuleAugmentations) &&
+		slices.Equal(old.AmbientModuleNames, new.AmbientModuleNames) &&
+		slices.EqualFunc(old.ReferencedFiles, new.ReferencedFiles, compareFileReferences) &&
+		slices.EqualFunc(old.TypeReferenceDirectives, new.TypeReferenceDirectives, compareFileReferences) &&
+		slices.EqualFunc(old.LibReferenceDirectives, new.LibReferenceDirectives, compareFileReferences) &&
+		old.CheckJsDirective == new.CheckJsDirective
+}
+
+func compareImports(n1 *ast.Node, n2 *ast.Node) bool {
+	return n1.Kind == n2.Kind && (!ast.IsStringLiteral(n1) || n1.Text() == n2.Text())
+}
+
+func compareModuleAugmentations(n1 *ast.Node, n2 *ast.Node) bool {
+	return n1.Kind == n2.Kind && n1.Text() == n2.Text()
+}
+
+func compareFileReferences(f1 *ast.FileReference, f2 *ast.FileReference) bool {
+	return f1.FileName == f2.FileName && f1.ResolutionMode == f2.ResolutionMode && f1.Preserve == f2.Preserve
 }
 
 func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host CompilerHost) *Program {
