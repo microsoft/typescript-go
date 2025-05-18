@@ -210,22 +210,22 @@ func (p *Program) initCheckerPool() {
 	}
 }
 
-func canReplaceFileInProgram(old *ast.SourceFile, new *ast.SourceFile) bool {
-	return old.FileName() == new.FileName() &&
-		old.Path() == new.Path() &&
-		old.LanguageVersion == new.LanguageVersion &&
-		old.LanguageVariant == new.LanguageVariant &&
-		old.ScriptKind == new.ScriptKind &&
-		old.IsDeclarationFile == new.IsDeclarationFile &&
-		old.HasNoDefaultLib == new.HasNoDefaultLib &&
-		old.UsesUriStyleNodeCoreModules == new.UsesUriStyleNodeCoreModules &&
-		slices.EqualFunc(old.Imports, new.Imports, compareImports) &&
-		slices.EqualFunc(old.ModuleAugmentations, new.ModuleAugmentations, compareModuleAugmentations) &&
-		slices.Equal(old.AmbientModuleNames, new.AmbientModuleNames) &&
-		slices.EqualFunc(old.ReferencedFiles, new.ReferencedFiles, compareFileReferences) &&
-		slices.EqualFunc(old.TypeReferenceDirectives, new.TypeReferenceDirectives, compareFileReferences) &&
-		slices.EqualFunc(old.LibReferenceDirectives, new.LibReferenceDirectives, compareFileReferences) &&
-		old.CheckJsDirective == new.CheckJsDirective
+func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
+	return file1.FileName() == file2.FileName() &&
+		file1.Path() == file2.Path() &&
+		file1.LanguageVersion == file2.LanguageVersion &&
+		file1.LanguageVariant == file2.LanguageVariant &&
+		file1.ScriptKind == file2.ScriptKind &&
+		file1.IsDeclarationFile == file2.IsDeclarationFile &&
+		file1.HasNoDefaultLib == file2.HasNoDefaultLib &&
+		file1.UsesUriStyleNodeCoreModules == file2.UsesUriStyleNodeCoreModules &&
+		slices.EqualFunc(file1.Imports, file2.Imports, compareImports) &&
+		slices.EqualFunc(file1.ModuleAugmentations, file2.ModuleAugmentations, compareModuleAugmentations) &&
+		slices.Equal(file1.AmbientModuleNames, file2.AmbientModuleNames) &&
+		slices.EqualFunc(file1.ReferencedFiles, file2.ReferencedFiles, compareFileReferences) &&
+		slices.EqualFunc(file1.TypeReferenceDirectives, file2.TypeReferenceDirectives, compareFileReferences) &&
+		slices.EqualFunc(file1.LibReferenceDirectives, file2.LibReferenceDirectives, compareFileReferences) &&
+		file1.CheckJsDirective == file2.CheckJsDirective
 }
 
 func compareImports(n1 *ast.Node, n2 *ast.Node) bool {
