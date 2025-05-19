@@ -5,7 +5,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 // TODO: Memoize once per checker to retain threadsafety
@@ -393,22 +392,4 @@ func (c *Checker) formatUnionTypes(types []*Type) []*Type {
 		result = append(result, c.undefinedType)
 	}
 	return result
-}
-
-func (c *Checker) getTextAndTypeOfNode(node *ast.Node) (string, *Type, bool) {
-	if ast.IsDeclarationNode(node) {
-		symbol := node.Symbol()
-		if symbol != nil && !isReservedMemberName(symbol.Name) {
-			if symbol.Flags&ast.SymbolFlagsValue != 0 {
-				return c.symbolToString(symbol), c.getTypeOfSymbol(symbol), true
-			}
-			if symbol.Flags&ast.SymbolFlagsTypeAlias != 0 {
-				return c.symbolToString(symbol), c.getDeclaredTypeOfTypeAlias(symbol), true
-			}
-		}
-	}
-	if ast.IsExpressionNode(node) && !isRightSideOfQualifiedNameOrPropertyAccess(node) {
-		return scanner.GetTextOfNode(node), c.getTypeOfExpression(node), false
-	}
-	return "", nil, false
 }
