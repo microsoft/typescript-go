@@ -219,25 +219,29 @@ func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool 
 		file1.IsDeclarationFile == file2.IsDeclarationFile &&
 		file1.HasNoDefaultLib == file2.HasNoDefaultLib &&
 		file1.UsesUriStyleNodeCoreModules == file2.UsesUriStyleNodeCoreModules &&
-		slices.EqualFunc(file1.Imports, file2.Imports, compareImports) &&
-		slices.EqualFunc(file1.ModuleAugmentations, file2.ModuleAugmentations, compareModuleAugmentations) &&
+		slices.EqualFunc(file1.Imports, file2.Imports, equalModuleSpecifiers) &&
+		slices.EqualFunc(file1.ModuleAugmentations, file2.ModuleAugmentations, equalModuleAugmentationNames) &&
 		slices.Equal(file1.AmbientModuleNames, file2.AmbientModuleNames) &&
-		slices.EqualFunc(file1.ReferencedFiles, file2.ReferencedFiles, compareFileReferences) &&
-		slices.EqualFunc(file1.TypeReferenceDirectives, file2.TypeReferenceDirectives, compareFileReferences) &&
-		slices.EqualFunc(file1.LibReferenceDirectives, file2.LibReferenceDirectives, compareFileReferences) &&
-		file1.CheckJsDirective == file2.CheckJsDirective
+		slices.EqualFunc(file1.ReferencedFiles, file2.ReferencedFiles, equalFileReferences) &&
+		slices.EqualFunc(file1.TypeReferenceDirectives, file2.TypeReferenceDirectives, equalFileReferences) &&
+		slices.EqualFunc(file1.LibReferenceDirectives, file2.LibReferenceDirectives, equalFileReferences) &&
+		equalCheckJSDirectives(file1.CheckJsDirective, file2.CheckJsDirective)
 }
 
-func compareImports(n1 *ast.Node, n2 *ast.Node) bool {
+func equalModuleSpecifiers(n1 *ast.Node, n2 *ast.Node) bool {
 	return n1.Kind == n2.Kind && (!ast.IsStringLiteral(n1) || n1.Text() == n2.Text())
 }
 
-func compareModuleAugmentations(n1 *ast.Node, n2 *ast.Node) bool {
+func equalModuleAugmentationNames(n1 *ast.Node, n2 *ast.Node) bool {
 	return n1.Kind == n2.Kind && n1.Text() == n2.Text()
 }
 
-func compareFileReferences(f1 *ast.FileReference, f2 *ast.FileReference) bool {
+func equalFileReferences(f1 *ast.FileReference, f2 *ast.FileReference) bool {
 	return f1.FileName == f2.FileName && f1.ResolutionMode == f2.ResolutionMode && f1.Preserve == f2.Preserve
+}
+
+func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) bool {
+	return d1 == nil && d2 == nil || d1 != nil && d2 != nil && d1.Enabled == d2.Enabled
 }
 
 func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host CompilerHost) *Program {
