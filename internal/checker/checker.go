@@ -1045,7 +1045,7 @@ func NewChecker(program Program) *Checker {
 	c.getGlobalClassAccessorDecoratorResultType = c.getGlobalTypeResolver("ClassAccessorDecoratorResult", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassFieldDecoratorContextType = c.getGlobalTypeResolver("ClassFieldDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
 	c.diagnosticConstructionContext = printer.NewEmitContext()
-	c.nodeBuilder = NewNodeBuilderAPI(c, c.diagnosticConstructionContext)
+	c.nodeBuilder = NewNodeBuilder(c, c.diagnosticConstructionContext)
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()

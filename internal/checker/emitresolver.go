@@ -815,7 +815,7 @@ func (r *emitResolver) CreateReturnTypeOfSignatureDeclaration(emitContext *print
 	if original == nil {
 		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
-	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
+	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.SerializeReturnTypeForSignature(original, enclosingDeclaration, flags, internalFlags, tracker)
 }
 
@@ -824,7 +824,7 @@ func (r *emitResolver) CreateTypeOfDeclaration(emitContext *printer.EmitContext,
 	if original == nil {
 		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
-	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
+	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	// // Get type of the symbol if this is the valid symbol otherwise get type at location
 	symbol := r.checker.getSymbolOfDeclaration(declaration)
 	return requestNodeBuilder.SerializeTypeForDeclaration(declaration, symbol, enclosingDeclaration, flags|nodebuilder.FlagsMultilineObjectLiterals, internalFlags, tracker)
@@ -841,7 +841,7 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 
 	var enumResult *ast.Node
 	if t.flags&TypeFlagsEnumLike != 0 {
-		requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
+		requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 		enumResult = requestNodeBuilder.SymbolToExpression(t.symbol, ast.SymbolFlagsValue, node, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, tracker)
 		// What about regularTrueType/regularFalseType - since those aren't fresh, we never make initializers from them
 		// TODO: handle those if this function is ever used for more than initializers in declaration emit
@@ -895,7 +895,7 @@ func (r *emitResolver) CreateTypeOfExpression(emitContext *printer.EmitContext, 
 		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
 
-	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
+	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.SerializeTypeForExpression(expression, enclosingDeclaration, flags|nodebuilder.FlagsMultilineObjectLiterals, internalFlags, tracker)
 }
 
@@ -913,7 +913,7 @@ func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 	}
 	r.checkerMu.Unlock()
 
-	requestNodeBuilder := NewNodeBuilderAPI(r.checker, emitContext) // TODO: cache per-context
+	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 
 	var result []*ast.Node
 	for i, infoList := range [][]*IndexInfo{staticInfos, instanceInfos} {
