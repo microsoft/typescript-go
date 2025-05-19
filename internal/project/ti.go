@@ -492,6 +492,7 @@ type NpmDependecyEntry struct {
 }
 type NpmLock struct {
 	Dependencies map[string]NpmDependecyEntry `json:"dependencies"`
+	Packages     map[string]NpmDependecyEntry `json:"packages"`
 }
 
 func (ti *TypingsInstaller) processCacheLocation(p *Project) {
@@ -510,12 +511,15 @@ func (ti *TypingsInstaller) processCacheLocation(p *Project) {
 
 		// TODO:: Not next but Node10 in strada
 		resolver := module.NewResolver(p, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext})
-		if npmConfig.DevDependencies != nil && npmLock.Dependencies != nil {
+		if npmConfig.DevDependencies != nil && (npmLock.Packages != nil || npmLock.Dependencies != nil) {
 			for key := range npmConfig.DevDependencies {
-				npmLockValue, npmLockValueExists := npmLock.Dependencies[key]
+				npmLockValue, npmLockValueExists := npmLock.Packages["node_modules/"+key]
 				if !npmLockValueExists {
-					// if package in package.json but not package-lock.json, skip adding to cache so it is reinstalled on next use
-					continue
+					npmLockValue, npmLockValueExists = npmLock.Dependencies[key]
+					if !npmLockValueExists {
+						// if package in package.json but not package-lock.json, skip adding to cache so it is reinstalled on next use
+						continue
+					}
 				}
 				// key is @types/<package name>
 				packageName := tspath.GetBaseFileName(key)

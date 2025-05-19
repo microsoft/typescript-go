@@ -702,4 +702,98 @@ func TestTi(t *testing.T) {
 		program := p.GetProgram()
 		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const x = 10;")
 	})
+
+	t.Run("expired cache entry (inferred project, should install typings) lockfile3", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]string{
+			"/user/username/projects/project/app.js": "",
+			"/user/username/projects/project/package.json": `{
+				"name": "test",
+                "dependencies": {
+                    "jquery": "^3.1.0"
+                }
+			}`,
+			projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts": "export const x = 10;",
+			projecttestutil.TestTypingsLocation + "/package.json": `{
+				"dependencies": {
+                    "types-registry": "^0.1.317"
+                },
+                "devDependencies": {
+                    "@types/jquery": "^1.0.0"
+                }
+			}`,
+			projecttestutil.TestTypingsLocation + "/package-lock.json": `{
+				"packages": {
+                    "node_modules/@types/jquery": {
+                    	"version": "1.0.0"
+					}
+                }
+			}`,
+		}
+		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
+				PackageToFile: map[string]string{
+					"jquery": "export const y = 10",
+				},
+			},
+		})
+
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
+		// Order is determinate since second install will run only after completing first one
+		status := <-host.ServiceOptions.InstallStatus
+		assert.Equal(t, status, project.TypingsInstallerStatus{
+			RequestId: 1,
+			Project:   p,
+			Status:    "Success",
+		})
+		program := p.GetProgram()
+		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const y = 10")
+	})
+
+	t.Run("non-expired cache entry (inferred project, should not install typings) lockfile3", func(t *testing.T) {
+		t.Parallel()
+		files := map[string]string{
+			"/user/username/projects/project/app.js": "",
+			"/user/username/projects/project/package.json": `{
+				"name": "test",
+                "dependencies": {
+                    "jquery": "^3.1.0"
+                }
+			}`,
+			projecttestutil.TestTypingsLocation + "/node_modules/@types/jquery/index.d.ts": "export const x = 10;",
+			projecttestutil.TestTypingsLocation + "/package.json": `{
+				"dependencies": {
+                    "types-registry": "^0.1.317"
+                },
+                "devDependencies": {
+                    "@types/jquery": "^1.3.0"
+                }
+			}`,
+			projecttestutil.TestTypingsLocation + "/package-lock.json": `{
+				"packages": {
+                    "node_modules/@types/jquery": {
+                    	"version": "1.3.0"
+					}
+                }
+			}`,
+		}
+		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
+				TypesRegistry: []string{"jquery"},
+			},
+		})
+
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
+		// Order is determinate since second install will run only after completing first one
+		status := <-host.ServiceOptions.InstallStatus
+		assert.Equal(t, status, project.TypingsInstallerStatus{
+			RequestId: 1,
+			Project:   p,
+			Status:    "Skipped 0 typings",
+		})
+		program := p.GetProgram()
+		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const x = 10;")
+	})
 }
