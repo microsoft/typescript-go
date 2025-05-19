@@ -1,6 +1,8 @@
 package compiler
 
 import (
+	"context"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/declarations"
@@ -39,44 +41,37 @@ type emitHost struct {
 }
 
 func (host *emitHost) FileExists(path string) bool {
-	return host.program.host.FS().FileExists(path)
+	return host.program.FileExists(path)
 }
 
 func (host *emitHost) GetGlobalTypingsCacheLocation() string {
-	return "" // !!! see src/tsserver/nodeServer.ts for strada's node-specific implementation
+	return host.program.GetGlobalTypingsCacheLocation()
 }
 
 func (host *emitHost) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
-	scoped := host.program.resolver.GetPackageScopeForPath(dirname)
-	if scoped != nil && scoped.Exists() {
-		return scoped.PackageDirectory
-	}
-	return ""
+	return host.program.GetNearestAncestorDirectoryWithPackageJson(dirname)
 }
 
 func (host *emitHost) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
-	scoped := host.program.resolver.GetPackageScopeForPath(pkgJsonPath)
-	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == tspath.GetDirectoryPath(pkgJsonPath) {
-		return scoped
-	}
-	return nil
+	return host.program.GetPackageJsonInfo(pkgJsonPath)
 }
 
 func (host *emitHost) GetProjectReferenceRedirect(path string) string {
-	return "" // !!! TODO: project references support
+	return host.program.GetProjectReferenceRedirect(path)
 }
 
 func (host *emitHost) GetRedirectTargets(path tspath.Path) []string {
-	return nil // !!! TODO: project references support
+	return host.program.GetRedirectTargets(path)
 }
 
 func (host *emitHost) IsSourceOfProjectReferenceRedirect(path string) bool {
-	return false // !!! TODO: project references support
+	return host.program.IsSourceOfProjectReferenceRedirect(path)
 }
 
 func (host *emitHost) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
 	// TODO: EmitContext().ParseNode(node) - can only find a checker for parse nodes!
-	ch := host.program.GetTypeCheckerForFile(ast.GetSourceFileOfNode(node))
+	ch, done := host.program.GetTypeCheckerForFile(context.Background(), ast.GetSourceFileOfNode(node)) // TODO: ctx
+	defer done()
 	if ch == nil {
 		return ast.ModifierFlagsNone // TODO: Should this be a panic?
 	}
@@ -89,7 +84,8 @@ func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool
 }
 
 func (host *emitHost) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
-	ch := host.program.GetTypeCheckerForFile(ast.GetSourceFileOfNode(node))
+	ch, done := host.program.GetTypeCheckerForFile(context.Background(), ast.GetSourceFileOfNode(node)) // TODO: ctx
+	defer done()
 	return ch.GetResolutionModeOverride(node.AsImportAttributes(), false)
 }
 
@@ -115,7 +111,11 @@ func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark
 }
 
 func (host *emitHost) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver {
-	checker := host.program.GetTypeCheckerForFile(file)
+	// The context and done function don't matter in tsc, currently the only caller of this function.
+	// But if this ever gets used by LSP code, we'll need to thread the context properly and pass the
+	// done function to the caller to ensure resources are cleaned up at the end of the request.
+	checker, done := host.program.GetTypeCheckerForFile(context.TODO(), file)
+	defer done()
 	return checker.GetEmitResolver(file, skipDiagnostics)
 }
 

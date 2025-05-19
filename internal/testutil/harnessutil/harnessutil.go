@@ -537,13 +537,14 @@ func compileFilesWithHost(
 	//         ...ts.filter(longerErrors!, p => !ts.some(shorterErrors, p2 => ts.compareDiagnostics(p, p2) === ts.Comparison.EqualTo)),
 	//     ),
 	// ] : postErrors;
+	ctx := context.Background()
 	program := createProgram(host, options, rootFiles)
 	var diagnostics []*ast.Diagnostic
-	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(context.Background(), nil)...)
-	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(context.Background(), nil)...)
-	diagnostics = append(diagnostics, program.GetGlobalDiagnostics()...)
+	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
+	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
+	diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
 	if options.GetEmitDeclarations() {
-		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(context.Background(), nil)...)
+		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
 	}
 	emitResult := program.Emit(compiler.EmitOptions{})
 

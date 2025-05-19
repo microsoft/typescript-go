@@ -688,9 +688,9 @@ func canUsePropertyAccess(name string, languageVersion core.ScriptTarget) bool {
 	// TODO: in strada, this only used `isIdentifierStart` on the first character, while this checks the whole string for validity
 	// - possible strada bug?
 	if strings.HasPrefix(name, "#") {
-		return len(name) > 1 && scanner.IsIdentifierText(name[1:], languageVersion)
+		return len(name) > 1 && scanner.IsIdentifierText(name[1:], languageVersion, core.LanguageVariantStandard)
 	}
-	return scanner.IsIdentifierText(name, languageVersion)
+	return scanner.IsIdentifierText(name, languageVersion, core.LanguageVariantStandard)
 }
 
 func unquoteString(str string) string {
@@ -727,7 +727,7 @@ func (b *NodeBuilder) getNameOfSymbolFromNameType(symbol *ast.Symbol) string {
 			case jsnum.Number:
 				name = v.String()
 			}
-			if !scanner.IsIdentifierText(name, b.ch.compilerOptions.GetEmitScriptTarget()) && !isNumericLiteralName(name) {
+			if !scanner.IsIdentifierText(name, b.ch.compilerOptions.GetEmitScriptTarget(), core.LanguageVariantStandard) && !isNumericLiteralName(name) {
 				return b.ch.valueToString(nameType.AsLiteralType().value)
 			}
 			if isNumericLiteralName(name) && strings.HasPrefix(name, "-") {
@@ -1977,7 +1977,7 @@ func (b *NodeBuilder) trackComputedName(accessExpression *ast.Node, enclosingDec
 
 func (b *NodeBuilder) createPropertyNameNodeForIdentifierOrLiteral(name string, target core.ScriptTarget, _singleQuote bool, stringNamed bool, isMethod bool) *ast.Node {
 	isMethodNamedNew := isMethod && name == "new"
-	if !isMethodNamedNew && scanner.IsIdentifierText(name, target) {
+	if !isMethodNamedNew && scanner.IsIdentifierText(name, target, core.LanguageVariantStandard) {
 		return b.f.NewIdentifier(name)
 	}
 	if !stringNamed && !isMethodNamedNew && isNumericLiteralName(name) && jsnum.FromString(name) >= 0 {
@@ -2039,7 +2039,7 @@ func (b *NodeBuilder) getPropertyNameNodeForSymbolFromNameType(symbol *ast.Symbo
 		case string:
 			name = nameType.AsLiteralType().value.(string)
 		}
-		if !scanner.IsIdentifierText(name, b.ch.compilerOptions.GetEmitScriptTarget()) && (stringNamed || !isNumericLiteralName(name)) {
+		if !scanner.IsIdentifierText(name, b.ch.compilerOptions.GetEmitScriptTarget(), core.LanguageVariantStandard) && (stringNamed || !isNumericLiteralName(name)) {
 			// !!! TODO: set singleQuote
 			return b.f.NewStringLiteral(name)
 		}
@@ -2736,7 +2736,7 @@ func (b *NodeBuilder) typeToTypeNode(t *Type) *ast.TypeNode {
 				return parentName
 			}
 			memberName := ast.SymbolName(t.symbol)
-			if scanner.IsIdentifierText(memberName, core.ScriptTargetES5) {
+			if scanner.IsIdentifierText(memberName, core.ScriptTargetES5, core.LanguageVariantStandard) {
 				return b.appendReferenceToType(parentName /* as TypeReferenceNode | ImportTypeNode */, b.f.NewTypeReferenceNode(b.f.NewIdentifier(memberName), nil /*typeArguments*/))
 			}
 			if ast.IsImportTypeNode(parentName) {

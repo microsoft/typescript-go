@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -27,6 +28,7 @@ type ProgramOptions struct {
 	SingleThreaded               core.Tristate
 	ProjectReference             []core.ProjectReference
 	ConfigFileParsingDiagnostics []*ast.Diagnostic
+	CreateCheckerPool            func(*Program) CheckerPool
 }
 
 type Program struct {
@@ -35,9 +37,7 @@ type Program struct {
 	compilerOptions              *core.CompilerOptions
 	configFileName               string
 	nodeModules                  map[string]*ast.SourceFile
-	checkers                     []*checker.Checker
-	checkersOnce                 sync.Once
-	checkersByFile               map[*ast.SourceFile]*checker.Checker
+	checkerPool                  CheckerPool
 	currentDirectory             string
 	configFileParsingDiagnostics []*ast.Diagnostic
 
@@ -70,6 +70,61 @@ type Program struct {
 	// List of present unsupported extensions
 	unsupportedExtensions []string
 }
+
+// FileExists implements checker.Program.
+func (p *Program) FileExists(path string) bool {
+	return p.host.FS().FileExists(path)
+}
+
+// GetCurrentDirectory implements checker.Program.
+func (p *Program) GetCurrentDirectory() string {
+	return p.host.GetCurrentDirectory()
+}
+
+// GetGlobalTypingsCacheLocation implements checker.Program.
+func (p *Program) GetGlobalTypingsCacheLocation() string {
+	return "" // !!! see src/tsserver/nodeServer.ts for strada's node-specific implementation
+}
+
+// GetNearestAncestorDirectoryWithPackageJson implements checker.Program.
+func (p *Program) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
+	scoped := p.resolver.GetPackageScopeForPath(dirname)
+	if scoped != nil && scoped.Exists() {
+		return scoped.PackageDirectory
+	}
+	return ""
+}
+
+// GetPackageJsonInfo implements checker.Program.
+func (p *Program) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+	scoped := p.resolver.GetPackageScopeForPath(pkgJsonPath)
+	if scoped != nil && scoped.Exists() && scoped.PackageDirectory == tspath.GetDirectoryPath(pkgJsonPath) {
+		return scoped
+	}
+	return nil
+}
+
+// GetProjectReferenceRedirect implements checker.Program.
+func (p *Program) GetProjectReferenceRedirect(path string) string {
+	return "" // !!! TODO: project references support
+}
+
+// GetRedirectTargets implements checker.Program.
+func (p *Program) GetRedirectTargets(path tspath.Path) []string {
+	return nil // !!! TODO: project references support
+}
+
+// IsSourceOfProjectReferenceRedirect implements checker.Program.
+func (p *Program) IsSourceOfProjectReferenceRedirect(path string) bool {
+	return false // !!! TODO: project references support
+}
+
+// UseCaseSensitiveFileNames implements checker.Program.
+func (p *Program) UseCaseSensitiveFileNames() bool {
+	return p.host.FS().UseCaseSensitiveFileNames()
+}
+
+var _ checker.Program = (*Program)(nil)
 
 /** This should have similar behavior to 'processSourceFile' without diagnostics or mutation. */
 func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
@@ -122,6 +177,11 @@ func NewProgram(options ProgramOptions) *Program {
 	p.configFileParsingDiagnostics = slices.Clip(options.ConfigFileParsingDiagnostics)
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
+	}
+	if p.programOptions.CreateCheckerPool != nil {
+		p.checkerPool = p.programOptions.CreateCheckerPool(p)
+	} else {
+		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
 	}
 
 	// p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
@@ -256,56 +316,34 @@ func (p *Program) BindSourceFiles() {
 }
 
 func (p *Program) CheckSourceFiles(ctx context.Context) {
-	p.createCheckers()
 	wg := core.NewWorkGroup(p.singleThreaded())
-	for index, checker := range p.checkers {
+	checkers, done := p.checkerPool.GetAllCheckers(ctx)
+	defer done()
+	for _, checker := range checkers {
 		wg.Queue(func() {
-			for i := index; i < len(p.files); i += len(p.checkers) {
-				checker.CheckSourceFile(ctx, p.files[i])
+			for file := range p.checkerPool.Files(checker) {
+				checker.CheckSourceFile(ctx, file)
 			}
 		})
 	}
 	wg.RunAndWait()
 }
 
-func (p *Program) createCheckers() {
-	p.checkersOnce.Do(func() {
-		p.checkers = make([]*checker.Checker, core.IfElse(p.singleThreaded(), 1, 4))
-		wg := core.NewWorkGroup(p.singleThreaded())
-		for i := range p.checkers {
-			wg.Queue(func() {
-				p.checkers[i] = checker.NewChecker(p, &emitHost{program: p})
-			})
-		}
-		wg.RunAndWait()
-		p.checkersByFile = make(map[*ast.SourceFile]*checker.Checker)
-		for i, file := range p.files {
-			p.checkersByFile[file] = p.checkers[i%len(p.checkers)]
-		}
-	})
-}
-
 // Return the type checker associated with the program.
-func (p *Program) GetTypeChecker() *checker.Checker {
-	p.createCheckers()
-	// Just use the first (and possibly only) checker for checker requests. Such requests are likely
-	// to obtain types through multiple API calls and we want to ensure that those types are created
-	// by the same checker so they can interoperate.
-	return p.checkers[0]
+func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func()) {
+	return p.checkerPool.GetChecker(ctx)
 }
 
-func (p *Program) GetTypeCheckers() []*checker.Checker {
-	p.createCheckers()
-	return p.checkers
+func (p *Program) GetTypeCheckers(ctx context.Context) ([]*checker.Checker, func()) {
+	return p.checkerPool.GetAllCheckers(ctx)
 }
 
 // Return a checker for the given file. We may have multiple checkers in concurrent scenarios and this
 // method returns the checker that was tasked with checking the file. Note that it isn't possible to mix
 // types obtained from different checkers, so only non-type data (such as diagnostics or string
 // representations of types) should be obtained from checkers returned by this method.
-func (p *Program) GetTypeCheckerForFile(file *ast.SourceFile) *checker.Checker {
-	p.createCheckers()
-	return p.checkersByFile[file]
+func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
+	return p.checkerPool.GetCheckerForFile(ctx, file)
 }
 
 func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string) *ast.SourceFile {
@@ -338,12 +376,14 @@ func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.So
 	return p.getDiagnosticsHelper(ctx, sourceFile, true /*ensureBound*/, true /*ensureChecked*/, p.getSemanticDiagnosticsForFile)
 }
 
-func (p *Program) GetGlobalDiagnostics() []*ast.Diagnostic {
-	p.createCheckers()
+func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 	var globalDiagnostics []*ast.Diagnostic
-	for _, checker := range p.checkers {
+	checkers, done := p.checkerPool.GetAllCheckers(ctx)
+	defer done()
+	for _, checker := range checkers {
 		globalDiagnostics = append(globalDiagnostics, checker.GetGlobalDiagnostics()...)
 	}
+
 	return SortAndDeduplicateDiagnostics(globalDiagnostics)
 }
 
@@ -351,8 +391,8 @@ func (p *Program) GetDeclarationDiagnostics(ctx context.Context, sourceFile *ast
 	return p.getDiagnosticsHelper(ctx, sourceFile, true /*ensureBound*/, true /*ensureChecked*/, p.getDeclarationDiagnosticsForFile)
 }
 
-func (p *Program) GetOptionsDiagnostics() []*ast.Diagnostic {
-	return SortAndDeduplicateDiagnostics(append(p.GetGlobalDiagnostics(), p.getOptionsDiagnosticsOfConfigFile()...))
+func (p *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
+	return SortAndDeduplicateDiagnostics(append(p.GetGlobalDiagnostics(ctx), p.getOptionsDiagnosticsOfConfigFile()...))
 }
 
 func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
@@ -380,14 +420,20 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 	if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
 		return nil
 	}
+
 	var fileChecker *checker.Checker
+	var done func()
 	if sourceFile != nil {
-		fileChecker = p.GetTypeCheckerForFile(sourceFile)
+		fileChecker, done = p.checkerPool.GetCheckerForFile(ctx, sourceFile)
+		defer done()
 	}
 	diags := slices.Clip(sourceFile.BindDiagnostics())
+	checkers, closeCheckers := p.checkerPool.GetAllCheckers(ctx)
+	defer closeCheckers()
+
 	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
 	// These are deduplicated later.
-	for _, checker := range p.checkers {
+	for _, checker := range checkers {
 		if sourceFile == nil || checker == fileChecker {
 			diags = append(diags, checker.GetDiagnostics(ctx, sourceFile)...)
 		} else {
@@ -538,7 +584,9 @@ func (p *Program) SymbolCount() int {
 	for _, file := range p.files {
 		count += file.SymbolCount
 	}
-	for _, checker := range p.checkers {
+	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
+	defer done()
+	for _, checker := range checkers {
 		count += int(checker.SymbolCount)
 	}
 	return count
@@ -546,7 +594,9 @@ func (p *Program) SymbolCount() int {
 
 func (p *Program) TypeCount() int {
 	var count int
-	for _, checker := range p.checkers {
+	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
+	defer done()
+	for _, checker := range checkers {
 		count += int(checker.TypeCount)
 	}
 	return count
@@ -554,7 +604,9 @@ func (p *Program) TypeCount() int {
 
 func (p *Program) InstantiationCount() int {
 	var count int
-	for _, checker := range p.checkers {
+	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
+	defer done()
+	for _, checker := range checkers {
 		count += int(checker.TotalInstantiationCount)
 	}
 	return count

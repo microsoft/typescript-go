@@ -193,7 +193,7 @@ func (b *NodeBuilderAPI) TypeToTypeNode(typ *Type, enclosingDeclaration *ast.Nod
 
 func NewNodeBuilderAPI(ch *Checker, e *printer.EmitContext) *NodeBuilderAPI {
 	impl := NewNodeBuilder(ch, e)
-	return &NodeBuilderAPI{impl: &impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.host}
+	return &NodeBuilderAPI{impl: &impl, ctxStack: make([]*NodeBuilderContext, 0, 1), host: ch.program}
 }
 
 func (c *Checker) GetDiagnosticNodeBuilder() NodeBuilderInterface {

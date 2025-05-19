@@ -1,6 +1,7 @@
 package ls_test
 
 import (
+	"context"
 	"slices"
 	"testing"
 
@@ -1215,10 +1216,44 @@ class Foo {
 			},
 			expectedResult: map[string]*testCaseResult{
 				"1": {
-					list: nil, // !!! jsx
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "aria-label",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "foo",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
 				},
 				"2": {
-					list: nil, // !!! jsx
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "aria-label",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "foo",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
 				},
 			},
 		},
@@ -1383,6 +1418,116 @@ export function isAnyDirectorySeparator(charCode: number): boolean {
 				},
 			},
 		},
+		{
+			name: "jsxTagNameCompletionUnderElementUnclosed",
+			files: map[string]string{
+				"/index.tsx": `declare namespace JSX {
+    interface IntrinsicElements {
+        button: any;
+        div: any;
+    }
+}
+function fn() {
+    return <>
+        <butto/*1*/
+    </>;
+}
+function fn2() {
+    return <>
+        preceding junk <butto/*2*/
+    </>;
+}
+function fn3() {
+    return <>
+        <butto/*3*/ style=""
+    </>;
+}`,
+			},
+			mainFileName: "/index.tsx",
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "button",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+					isIncludes: true,
+				},
+				"2": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "button",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+					isIncludes: true,
+				},
+				"3": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "button",
+								Kind:             fieldKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+					isIncludes: true,
+				},
+			},
+		},
+		{
+			name: "tsxCompletionOnClosingTagWithoutJSX1",
+			files: map[string]string{
+				"/index.tsx": `var x1 = <div><//**/`,
+			},
+			mainFileName: "/index.tsx",
+			expectedResult: map[string]*testCaseResult{
+				"": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "div>",
+								Kind:             classKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									InsertReplaceEdit: &lsproto.InsertReplaceEdit{
+										NewText: "div>",
+										Insert: lsproto.Range{
+											Start: lsproto.Position{Line: 0, Character: 16},
+											End:   lsproto.Position{Line: 0, Character: 16},
+										},
+										Replace: lsproto.Range{
+											Start: lsproto.Position{Line: 0, Character: 16},
+											End:   lsproto.Position{Line: 0, Character: 16},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
@@ -1407,7 +1552,9 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 			parsedFiles[fileName] = content
 		}
 	}
-	languageService := createLanguageService(mainFileName, parsedFiles)
+	ctx := projecttestutil.WithRequestID(t.Context())
+	languageService, done := createLanguageService(ctx, mainFileName, parsedFiles)
+	defer done()
 	context := &lsproto.CompletionContext{
 		TriggerKind: lsproto.CompletionTriggerKindInvoked,
 	}
@@ -1431,12 +1578,14 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 		if !ok {
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
-		completionList := languageService.ProvideCompletion(
-			mainFileName,
-			marker.Position,
+		completionList, err := languageService.ProvideCompletion(
+			ctx,
+			ls.FileNameToDocumentURI(mainFileName),
+			marker.LSPosition,
 			context,
 			capabilities,
 			preferences)
+		assert.NilError(t, err)
 		if expectedResult.isIncludes {
 			assertIncludesItem(t, completionList, expectedResult.list)
 		} else {
@@ -1466,11 +1615,11 @@ func assertIncludesItem(t *testing.T, actual *lsproto.CompletionList, expected *
 	return false
 }
 
-func createLanguageService(fileName string, files map[string]string) *ls.LanguageService {
+func createLanguageService(ctx context.Context, fileName string, files map[string]string) (*ls.LanguageService, func()) {
 	projectService, _ := projecttestutil.Setup(files)
 	projectService.OpenFile(fileName, files[fileName], core.ScriptKindTS, "")
 	project := projectService.Projects()[0]
-	return project.LanguageService()
+	return project.GetLanguageServiceForRequest(ctx)
 }
 
 func ptrTo[T any](v T) *T {
