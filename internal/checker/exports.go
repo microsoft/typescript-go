@@ -77,3 +77,7 @@ func (c *Checker) GetConstraintOfTypeParameter(typeParameter *Type) *Type {
 func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
 	return c.getResolutionModeOverride(node, reportErrors)
 }
+
+func (c *Checker) GetEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
+	return c.getEffectiveDeclarationFlags(n, flagsToCheck)
+}

@@ -3269,17 +3269,17 @@ func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
 		// deviations, we XOR someOverloadFlags with allOverloadFlags
 		someButNotAllOverloadFlags := someOverloadFlags ^ allOverloadFlags
 		if someButNotAllOverloadFlags != 0 {
-			canonicalFlags := c.GetEffectiveDeclarationFlags(getCanonicalOverload(overloads, implementation), flagsToCheck)
+			canonicalFlags := c.getEffectiveDeclarationFlags(getCanonicalOverload(overloads, implementation), flagsToCheck)
 			groups := make(map[*ast.SourceFile][]*ast.Node)
 			for _, overload := range overloads {
 				sourceFile := ast.GetSourceFileOfNode(overload)
 				groups[sourceFile] = append(groups[sourceFile], overload)
 			}
 			for _, overloadsInFile := range groups {
-				canonicalFlagsForFile := c.GetEffectiveDeclarationFlags(getCanonicalOverload(overloadsInFile, implementation), flagsToCheck)
+				canonicalFlagsForFile := c.getEffectiveDeclarationFlags(getCanonicalOverload(overloadsInFile, implementation), flagsToCheck)
 				for _, overload := range overloadsInFile {
-					deviation := c.GetEffectiveDeclarationFlags(overload, flagsToCheck) ^ canonicalFlags
-					deviationInFile := c.GetEffectiveDeclarationFlags(overload, flagsToCheck) ^ canonicalFlagsForFile
+					deviation := c.getEffectiveDeclarationFlags(overload, flagsToCheck) ^ canonicalFlags
+					deviationInFile := c.getEffectiveDeclarationFlags(overload, flagsToCheck) ^ canonicalFlagsForFile
 					switch {
 					case deviationInFile&ast.ModifierFlagsExport != 0:
 						// Overloads in different files need not all have export modifiers. This is ok:
@@ -3389,7 +3389,7 @@ func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
 		}
 		if ast.IsFunctionDeclaration(node) || ast.IsMethodDeclaration(node) || ast.IsMethodSignatureDeclaration(node) || ast.IsConstructorDeclaration(node) {
 			functionDeclarations = append(functionDeclarations, node)
-			currentNodeFlags := c.GetEffectiveDeclarationFlags(node, flagsToCheck)
+			currentNodeFlags := c.getEffectiveDeclarationFlags(node, flagsToCheck)
 			someNodeFlags |= currentNodeFlags
 			allNodeFlags &= currentNodeFlags
 			someHaveQuestionToken = someHaveQuestionToken || isOptionalDeclaration(node)
@@ -3468,7 +3468,7 @@ func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
 	}
 }
 
-func (c *Checker) GetEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
+func (c *Checker) getEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
 	flags := c.getCombinedModifierFlagsCached(n)
 	// children of classes (even ambient classes) should not be marked as ambient or export
 	// because those flags have no useful semantics there.
@@ -6467,7 +6467,7 @@ func (c *Checker) checkExportsOnMergedDeclarations(node *ast.Node) {
 	defaultExportedDeclarationSpaces := DeclarationSpacesNone
 	for _, d := range symbol.Declarations {
 		declarationSpaces := c.getDeclarationSpaces(d)
-		effectiveDeclarationFlags := c.GetEffectiveDeclarationFlags(d, ast.ModifierFlagsExport|ast.ModifierFlagsDefault)
+		effectiveDeclarationFlags := c.getEffectiveDeclarationFlags(d, ast.ModifierFlagsExport|ast.ModifierFlagsDefault)
 		if effectiveDeclarationFlags&ast.ModifierFlagsExport != 0 {
 			if effectiveDeclarationFlags&ast.ModifierFlagsDefault != 0 {
 				defaultExportedDeclarationSpaces |= declarationSpaces

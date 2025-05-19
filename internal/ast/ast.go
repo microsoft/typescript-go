@@ -4036,7 +4036,7 @@ func IsNotEmittedStatement(node *Node) bool {
 	return node.Kind == KindNotEmittedStatement
 }
 
-// NotEmittedStatement
+// NotEmittedTypeElement
 
 // Represents a type element that is elided as part of a transformation to emit comments on a
 // not-emitted node.
