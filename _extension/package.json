@@ -15,6 +15,11 @@
     "engines": {
         "vscode": "^1.100.0"
     },
+    "capabilities": {
+        "untrustedWorkspaces": {
+            "supported": false
+        }
+    },
     "activationEvents": [
         "onLanguage:javascript",
         "onLanguage:javascriptreact",
