@@ -2974,3 +2974,55 @@ func HasQuestionToken(node *Node) bool {
 	}
 	return false
 }
+
+func IsJsxOpeningLikeElement(node *Node) bool {
+	return IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node)
+}
+
+func GetInvokedExpression(node *Node) *Node {
+	switch node.Kind {
+	case KindTaggedTemplateExpression:
+		return node.AsTaggedTemplateExpression().Tag
+	case KindJsxOpeningElement, KindJsxSelfClosingElement:
+		return node.TagName()
+	case KindBinaryExpression:
+		return node.AsBinaryExpression().Right
+	default:
+		return node.Expression()
+	}
+}
+
+func IsCallOrNewExpression(node *Node) bool {
+	return IsCallExpression(node) || IsNewExpression(node)
+}
+
+func CanHaveSymbol(node *Node) bool {
+	switch node.Kind {
+	case KindArrowFunction, KindBinaryExpression, KindBindingElement, KindCallExpression, KindCallSignature,
+		KindClassDeclaration, KindClassExpression, KindClassStaticBlockDeclaration, KindConstructor, KindConstructorType,
+		KindConstructSignature, KindElementAccessExpression, KindEnumDeclaration, KindEnumMember, KindExportAssignment, KindJSExportAssignment,
+		KindExportDeclaration, KindExportSpecifier, KindFunctionDeclaration, KindFunctionExpression, KindFunctionType,
+		KindGetAccessor, KindIdentifier, KindImportClause, KindImportEqualsDeclaration, KindImportSpecifier,
+		KindIndexSignature, KindInterfaceDeclaration, KindJSDocSignature, KindJSDocTypeLiteral,
+		KindJsxAttribute, KindJsxAttributes, KindJsxSpreadAttribute, KindMappedType, KindMethodDeclaration,
+		KindMethodSignature, KindModuleDeclaration, KindNamedTupleMember, KindNamespaceExport, KindNamespaceExportDeclaration,
+		KindNamespaceImport, KindNewExpression, KindNoSubstitutionTemplateLiteral, KindNumericLiteral, KindObjectLiteralExpression,
+		KindParameter, KindPropertyAccessExpression, KindPropertyAssignment, KindPropertyDeclaration, KindPropertySignature,
+		KindSetAccessor, KindShorthandPropertyAssignment, KindSourceFile, KindSpreadAssignment, KindStringLiteral,
+		KindTypeAliasDeclaration, KindJSTypeAliasDeclaration, KindTypeLiteral, KindTypeParameter, KindVariableDeclaration:
+		return true
+	}
+	return false
+}
+
+func IndexOfNode(nodes []*Node, node *Node) int {
+	index, ok := slices.BinarySearchFunc(nodes, node, compareNodePositions)
+	if ok {
+		return index
+	}
+	return -1
+}
+
+func compareNodePositions(n1, n2 *Node) int {
+	return n1.Pos() - n2.Pos()
+}

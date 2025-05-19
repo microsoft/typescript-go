@@ -304,10 +304,14 @@ func runWithInferenceBlockedFromSourceNode[T any](c *Checker, node *ast.Node, fn
 	return result
 }
 
-func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
-	ancestorNode := ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsCallLikeOrFunctionLikeExpression(n)
+func GetResolvedSignatureForSignatureHelp(node *ast.Node, candidatesOutArray *[]*Signature, argumentCount int, c *Checker) *Signature {
+	return runWithoutResolvedSignatureCaching(c, node, func() *Signature {
+		return c.getResolvedSignatureWorker(node, candidatesOutArray, CheckModeIsForSignatureHelp, argumentCount)
 	})
+}
+
+func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
+	ancestorNode := ast.FindAncestor(node, ast.IsCallLikeOrFunctionLikeExpression)
 	if ancestorNode != nil {
 		cachedResolvedSignatures := make(map[*SignatureLinks]*Signature)
 		cachedTypes := make(map[*ValueSymbolLinks]*Type)
@@ -483,37 +487,6 @@ func (c *Checker) GetContextualTypeForJsxAttribute(attribute *ast.JsxAttributeLi
 	return c.getContextualTypeForJsxAttribute(attribute, ContextFlagsNone)
 }
 
-func (c *Checker) runWithoutResolvedSignatureCaching(node *ast.Node, fn func() *Signature) *Signature {
-	ancestorNode := ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsCallLikeOrFunctionLikeExpression(n)
-	})
-	if ancestorNode != nil {
-		cachedResolvedSignatures := make(map[*SignatureLinks]*Signature)
-		cachedTypes := make(map[*ValueSymbolLinks]*Type)
-		for ancestorNode != nil {
-			signatureLinks := c.signatureLinks.Get(ancestorNode)
-			cachedResolvedSignatures[signatureLinks] = signatureLinks.resolvedSignature
-			signatureLinks.resolvedSignature = nil
-			if ast.IsFunctionExpressionOrArrowFunction(ancestorNode) {
-				symbolLinks := c.valueSymbolLinks.Get(c.getSymbolOfDeclaration(ancestorNode))
-				resolvedType := symbolLinks.resolvedType
-				cachedTypes[symbolLinks] = resolvedType
-				symbolLinks.resolvedType = nil
-			}
-			ancestorNode = ast.FindAncestor(ancestorNode.Parent, ast.IsCallLikeOrFunctionLikeExpression)
-		}
-		result := fn()
-		for signatureLinks, resolvedSignature := range cachedResolvedSignatures {
-			signatureLinks.resolvedSignature = resolvedSignature
-		}
-		for symbolLinks, resolvedType := range cachedTypes {
-			symbolLinks.resolvedType = resolvedType
-		}
-		return result
-	}
-	return fn()
-}
-
 func (c *Checker) getResolvedSignatureWorker(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode, argumentCount int) *Signature {
 	parsedNode := printer.NewEmitContext().ParseNode(node)
 	c.apparentArgumentCount = &argumentCount
@@ -522,10 +495,4 @@ func (c *Checker) getResolvedSignatureWorker(node *ast.Node, candidatesOutArray 
 		res = c.getResolvedSignature(parsedNode, candidatesOutArray, checkMode)
 	}
 	return res
-}
-
-func (c *Checker) GetResolvedSignatureForSignatureHelp(node *ast.Node, candidatesOutArray *[]*Signature, argumentCount int) *Signature {
-	return c.runWithoutResolvedSignatureCaching(node, func() *Signature {
-		return c.getResolvedSignatureWorker(node, candidatesOutArray, CheckModeIsForSignatureHelp, argumentCount)
-	})
 }

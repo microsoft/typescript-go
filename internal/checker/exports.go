@@ -69,24 +69,8 @@ func (c *Checker) GetReturnTypeOfSignature(sig *Signature) *Type {
 	return c.getReturnTypeOfSignature(sig)
 }
 
-func IsCallOrNewExpression(node *ast.Node) bool {
-	return isCallOrNewExpression(node)
-}
-
-func GetInvokedExpression(node *ast.Node) *ast.Node {
-	return getInvokedExpression(node)
-}
-
-func IsJsxOpeningLikeElement(node *ast.Node) bool {
-	return isJsxOpeningLikeElement(node)
-}
-
 func (c *Checker) HasEffectiveRestParameter(signature *Signature) bool {
 	return c.hasEffectiveRestParameter(signature)
-}
-
-func CanHaveSymbol(node *ast.Node) bool {
-	return canHaveSymbol(node)
 }
 
 func (c *Checker) GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol *ast.Symbol) []*Type {
@@ -101,10 +85,6 @@ func (c *Checker) TypePredicateToString(t *TypePredicate) string {
 	return c.typePredicateToString(t)
 }
 
-func (c *Checker) GetExpandedParameters(signature *Signature, skipUnionExpanding *bool) [][]*ast.Symbol {
+func (c *Checker) GetExpandedParameters(signature *Signature, skipUnionExpanding bool) [][]*ast.Symbol {
 	return c.getExpandedParameters(signature, skipUnionExpanding)
-}
-
-func IndexOfNode(nodes []*ast.Node, node *ast.Node) int {
-	return indexOfNode(nodes, node)
 }

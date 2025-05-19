@@ -1235,7 +1235,7 @@ func (c *Checker) inferFromIntraExpressionSites(n *InferenceContext) {
 		if ast.IsMethodDeclaration(site.node) {
 			contextualType = c.getContextualTypeForObjectLiteralMethod(site.node, ContextFlagsNoConstraints)
 		} else {
-			contextualType = c.GetContextualType(site.node, ContextFlagsNoConstraints)
+			contextualType = c.getContextualType(site.node, ContextFlagsNoConstraints)
 		}
 		if contextualType != nil {
 			c.inferTypes(n.inferences, site.t, contextualType, InferencePriorityNone, false)

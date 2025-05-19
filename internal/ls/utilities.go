@@ -250,19 +250,17 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 	// This is a rare case, but one that saves on a _lot_ of work if true - if the source file has _no_ `<` character,
 	// then there obviously can't be any type arguments - no expensive brace-matching backwards scanning required
 	// searchPosition := len(sourceFile.Text())
-	// if tokenIn != nil {
-	// 	searchPosition = scanner.GetTokenPosOfNode(tokenIn, sourceFile, false /*includeJSDoc*/)
-	// }
-	if strings.LastIndex(sourceFile.Text(), "<") == -1 {
+	if strings.LastIndexByte(sourceFile.Text(), '<') == -1 {
 		return nil
 	}
 
 	token := tokenIn
-	// This function determines if the node could be type argument position
-	// Since during editing, when type argument list is not complete,
-	// the tree could be of any shape depending on the tokens parsed before current node,
-	// scanning of the previous identifier followed by "<" before current node would give us better result
-	// Note that we also balance out the already provided type arguments, arrays, object literals while doing so
+	// This function determines if the node could be a type argument position
+	// When editing, it is common to have an incomplete type argument list (e.g. missing ">"),
+	// so the tree can have any shape depending on the tokens before the current node.
+	// Instead, scanning for an identifier followed by a "<" before current node
+	// will typically give us better results than inspecting the tree.
+	// Note that we also balance out the already provided type arguments, arrays, object literals while doing so.
 	remainingLessThanTokens := 0
 	nTypeArguments := 0
 	for token != nil {
@@ -276,7 +274,7 @@ func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile)
 			if token == nil || !ast.IsIdentifier(token) {
 				return nil
 			}
-			if remainingLessThanTokens <= 0 {
+			if remainingLessThanTokens == 0 {
 				if ast.IsDeclarationName(token) {
 					return nil
 				}
@@ -904,7 +902,7 @@ func findPrecedingMatchingToken(token *ast.Node, matchingTokenKind ast.Kind, sou
 	}
 	tokenKind := token.Kind
 	remainingMatchingTokens := 0
-	for true {
+	for {
 		preceding := astnav.FindPrecedingToken(sourceFile, tokenFullStart)
 		if preceding == nil {
 			return nil
@@ -919,5 +917,4 @@ func findPrecedingMatchingToken(token *ast.Node, matchingTokenKind ast.Kind, sou
 			remainingMatchingTokens++
 		}
 	}
-	return nil
 }

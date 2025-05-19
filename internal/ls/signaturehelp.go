@@ -73,7 +73,7 @@ func (l *LanguageService) GetSignatureHelpItems(
 	}
 
 	// Only need to be careful if the user typed a character and signature help wasn't showing.
-	onlyUseSyntacticOwners := context.TriggerKind == 2
+	onlyUseSyntacticOwners := context.TriggerKind == lsproto.SignatureHelpTriggerKindTriggerCharacter
 
 	// Bail out quickly in the middle of a string or comment, don't provide signature help unless the user explicitly requested it.
 	if onlyUseSyntacticOwners && IsInString(sourceFile, position, startingToken) { // isInComment(sourceFile, position) needs formatting implemented
@@ -331,7 +331,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 	}
 
 	// Creating display parts for parameters. For example, <T>(a: string, b: number)
-	lists := c.GetExpandedParameters(candidateSignature, ptrTo(false))
+	lists := c.GetExpandedParameters(candidateSignature, false)
 
 	var result []*signatureHelpItemInfo
 	parameterLabels := []string{}
@@ -373,7 +373,7 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 	}
 
 	// Creating display parts for parameters. For example, (a: string, b: number)
-	lists := c.GetExpandedParameters(candidateSignature, ptrTo(false))
+	lists := c.GetExpandedParameters(candidateSignature, false)
 
 	isVariadic := func(parameterList []*ast.Symbol) bool {
 		if !c.HasEffectiveRestParameter(candidateSignature) {
@@ -469,7 +469,7 @@ func getEnclosingDeclarationFromInvocation(invocation *invocation) *ast.Node {
 
 func getExpressionFromInvocation(argumentInfo *argumentListInfo) *ast.Node {
 	if argumentInfo.invocation.callInvocation != nil {
-		return checker.GetInvokedExpression(argumentInfo.invocation.callInvocation.node)
+		return ast.GetInvokedExpression(argumentInfo.invocation.callInvocation.node)
 	}
 	return argumentInfo.invocation.typeArgsInvocation.called.AsNode()
 }
@@ -490,7 +490,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 			return nil
 		}
 		candidates := &[]*checker.Signature{}
-		resolvedSignature := c.GetResolvedSignatureForSignatureHelp(info.invocation.callInvocation.node, candidates, info.argumentCount)
+		resolvedSignature := checker.GetResolvedSignatureForSignatureHelp(info.invocation.callInvocation.node, candidates, info.argumentCount, c)
 		return &CandidateOrTypeInfo{
 			candidateInfo: &candidateInfo{
 				candidates:        candidates,
@@ -533,7 +533,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 }
 
 func isSyntacticOwner(startingToken *ast.Node, node *ast.Node, sourceFile *ast.SourceFile) bool { //!!! not tested
-	if !checker.IsCallOrNewExpression(node) {
+	if !ast.IsCallOrNewExpression(node) {
 		return false
 	}
 	invocationChildren := getTokensFromNode(node, sourceFile)
@@ -542,6 +542,7 @@ func isSyntacticOwner(startingToken *ast.Node, node *ast.Node, sourceFile *ast.S
 		return containsNode(invocationChildren, startingToken)
 	case ast.KindCommaToken:
 		return containsNode(invocationChildren, startingToken)
+		// !!!
 		// const containingList = findContainingList(startingToken);
 		// return !!containingList && contains(invocationChildren, containingList);
 	case ast.KindLessThanToken:
@@ -604,7 +605,7 @@ type argumentListInfo struct {
 // in the argument of an invocation; returns undefined otherwise.
 func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFile *ast.SourceFile, c *checker.Checker) *argumentListInfo {
 	parent := node.Parent
-	if checker.IsCallOrNewExpression(parent) {
+	if ast.IsCallOrNewExpression(parent) {
 		// There are 3 cases to handle:
 		//   1. The token introduces a list, and should begin a signature help session
 		//   2. The token is either not associated with a list, or ends a list, so the session should end
@@ -660,11 +661,11 @@ func getImmediatelyContainingArgumentInfo(node *ast.Node, position int, sourceFi
 			return nil
 		}
 
-		spanIndex := checker.IndexOfNode(templateSpan.Parent.AsTemplateExpression().TemplateSpans.Nodes, templateSpan)
+		spanIndex := ast.IndexOfNode(templateSpan.Parent.AsTemplateExpression().TemplateSpans.Nodes, templateSpan)
 		argumentIndex := getArgumentIndexForTemplatePiece(spanIndex, templateSpan, position, sourceFile)
 
 		return getArgumentListInfoForTemplate(tagExpression.AsTaggedTemplateExpression(), argumentIndex, sourceFile)
-	} else if checker.IsJsxOpeningLikeElement(parent) {
+	} else if ast.IsJsxOpeningLikeElement(parent) {
 		// Provide a signature help for JSX opening element or JSX self-closing element.
 		// This is not guarantee that JSX tag-name is resolved into stateless function component. (that is done in "getSignatureHelpItems")
 		// i.e
@@ -963,7 +964,7 @@ func tryGetParameterInfo(startingToken *ast.Node, sourceFile *ast.SourceFile, c 
 func chooseBetterSymbol(s *ast.Symbol) *ast.Symbol {
 	if s.Name == ast.InternalSymbolNameType {
 		for _, d := range s.Declarations {
-			if ast.IsFunctionTypeNode(d) && checker.CanHaveSymbol(d.Parent) {
+			if ast.IsFunctionTypeNode(d) && ast.CanHaveSymbol(d.Parent) {
 				return d.Parent.Symbol()
 			}
 		}

@@ -1110,9 +1110,6 @@ type Signature struct {
 }
 
 func (s *Signature) TypeParameters() []*Type {
-	if len(s.typeParameters) == 0 {
-		return nil
-	}
 	return s.typeParameters
 }
 
@@ -1120,24 +1117,11 @@ func (s *Signature) Declaration() *ast.Node {
 	return s.declaration
 }
 
-func (s *Signature) Parameters() []*ast.Symbol {
-	if len(s.parameters) == 0 {
-		return nil
-	}
-	return s.parameters
-}
-
 func (s *Signature) Target() *Signature {
-	if s.target == nil {
-		return nil
-	}
 	return s.target
 }
 
 func (s *Signature) ThisParameter() *ast.Symbol {
-	if s.thisParameter == nil {
-		return nil
-	}
 	return s.thisParameter
 }
 
