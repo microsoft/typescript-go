@@ -1,11 +1,14 @@
 package runner
 
 import (
+	"flag"
 	"fmt"
+	"log"
 	"math/rand/v2"
 	"os"
 	"path/filepath"
 	"regexp"
+	"runtime/pprof"
 	"slices"
 	"strings"
 	"testing"
@@ -169,6 +172,8 @@ func (r *CompilerBaselineRunner) runTest(t *testing.T, filename string) {
 	}
 }
 
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+
 func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName string, test *compilerFileBasedTest, config *harnessutil.NamedTestConfiguration) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on compiling test "+test.filename)
@@ -176,6 +181,14 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyJavaScriptOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifySourceMapOutput(t, r.testSuitName, r.isSubmodule)
