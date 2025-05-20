@@ -1005,26 +1005,6 @@ type refSearch struct {
 // 	}
 // )
 
-type seenTracker[T comparable] struct {
-	m core.Set[T]
-}
-
-func (t *seenTracker[T]) mark(key T) bool {
-	if t.m.Has(key) {
-		return true
-	}
-	t.m.Add(key)
-	return false
-}
-
-func (t *seenTracker[T]) addToSeen(key T) bool {
-	if t.m.Has(key) {
-		return false
-	}
-	t.m.Add(key)
-	return true
-}
-
 type inheritKey struct {
 	symbol, parent ast.SymbolId
 }
@@ -1040,9 +1020,9 @@ type refState struct {
 	result        []*SymbolAndEntries
 
 	inheritsFromCache            map[inheritKey]bool
-	seenContainingTypeReferences seenTracker[*ast.Node] // node seen tracker
-	// seenReExportRHS              seenTracker[*ast.Node] // node seen tracker
-	// importTracker                ImportTracker
+	seenContainingTypeReferences *core.Set[*ast.Node] // node seen tracker
+	// seenReExportRHS           *core.Set[*ast.Node] // node seen tracker
+	// importTracker             ImportTracker
 	symbolIdToReferences    map[ast.SymbolId]*SymbolAndEntries
 	sourceFileToSeenSymbols map[ast.NodeId]*core.Set[ast.SymbolId]
 }
@@ -1057,8 +1037,8 @@ func newState(sourceFiles []*ast.SourceFile, sourceFilesSet *core.Set[string], n
 		options:                      options,
 		result:                       []*SymbolAndEntries{},
 		inheritsFromCache:            map[inheritKey]bool{},
-		seenContainingTypeReferences: seenTracker[*ast.Node]{},
-		// seenReExportRHS:              seenTracker[*ast.Node]{},
+		seenContainingTypeReferences: &core.Set[*ast.Node]{},
+		// seenReExportRHS:           &core.Set[*ast.Node]{},
 		symbolIdToReferences:    map[ast.SymbolId]*SymbolAndEntries{},
 		sourceFileToSeenSymbols: map[ast.NodeId]*core.Set[ast.SymbolId]{},
 	}
@@ -1158,7 +1138,7 @@ func (state *refState) addImplementationReferences(refNode *ast.Node, addRef fun
 	}
 
 	typeHavingNode := typeNode.Parent
-	if typeHavingNode.Type() == typeNode && state.seenContainingTypeReferences.mark(typeHavingNode) {
+	if typeHavingNode.Type() == typeNode && state.seenContainingTypeReferences.HasAndAdd(typeHavingNode) {
 		addIfImplementation := func(e *ast.Expression) {
 			if isImplementationExpression(e) {
 				addRef(e)

@@ -1558,14 +1558,14 @@ func getParentSymbolsOfPropertyAccess(location *ast.Node, symbol *ast.Symbol, ch
 *                                The value of previousIterationSymbol is undefined when the function is first called.
  */
 func getPropertySymbolsFromBaseTypes(symbol *ast.Symbol, propertyName string, checker *checker.Checker, cb func(base *ast.Symbol) *ast.Symbol) *ast.Symbol {
-	seen := seenTracker[*ast.Symbol]{}
+	seen := core.Set[*ast.Symbol]{}
 	var recur func(*ast.Symbol) *ast.Symbol
 	recur = func(symbol *ast.Symbol) *ast.Symbol {
 		// Use `addToSeen` to ensure we don't infinitely recurse in this situation:
 		//      interface C extends C {
 		//          /*findRef*/propName: string;
 		//      }
-		if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) == 0 || !seen.addToSeen(symbol) {
+		if symbol.Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) == 0 || !seen.AddIfAbsent(symbol) {
 			return nil
 		}
 
