@@ -30,8 +30,10 @@ type testCaseResult struct {
 	excludes   []string
 }
 
-const defaultMainFileName = "/index.ts"
-const defaultTsconfigFileName = "/tsconfig.json"
+const (
+	defaultMainFileName     = "/index.ts"
+	defaultTsconfigFileName = "/tsconfig.json"
+)
 
 func TestCompletions(t *testing.T) {
 	t.Parallel()
