@@ -70,7 +70,7 @@
     },
     "main": "./dist/extension.js",
     "files": [
-        "dist",
+        "dist/extension.bundle.js",
         "lib",
         "LICENSE",
         "logo.png"
@@ -78,7 +78,7 @@
     "scripts": {
         "build": "tsc",
         "watch": "tsc --watch",
-        "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.js --minify"
+        "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.bundle.js --minify"
     },
     "dependencies": {
         "vscode-languageclient": "^9.0.1"

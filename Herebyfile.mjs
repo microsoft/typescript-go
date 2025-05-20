@@ -1152,6 +1152,12 @@ export const packNativePreviewExtensions = task({
             await cpWithoutNodeModulesOrTsconfig(extensionDir, thisExtensionDir);
             await cpWithoutNodeModulesOrTsconfig(npmLibDir, extensionLibDir);
 
+            const packageJsonPath = path.join(thisExtensionDir, "package.json");
+            const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+            packageJson.version = version;
+            packageJson.main = "dist/extension.bundle.js";
+            fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
+
             await $({ cwd: thisExtensionDir })`vsce package ${version} --pre-release --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
 
             if (options.forRelease) {
