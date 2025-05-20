@@ -1112,7 +1112,7 @@ export const packNativePreviewPackages = task({
     },
 });
 
-export const buildNativePreviewExtensions = task({
+export const packNativePreviewExtensions = task({
     name: "native-preview:pack-extensions",
     hiddenFromTaskList: true,
     dependencies: options.forRelease ? undefined : [buildNativePreviewPackages, cleanSignTempDirectory],
@@ -1123,8 +1123,9 @@ export const buildNativePreviewExtensions = task({
         await $({ cwd: extensionDir })`npm run bundle`;
 
         const version = getVersion();
+        const platforms = nativePreviewPlatforms();
 
-        for (const { npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath } of nativePreviewPlatforms()) {
+        await Promise.all(platforms.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
             const npmLibDir = path.join(npmDir, "lib");
             const extensionLibDir = path.join(thisExtensionDir, "lib");
             await fs.promises.mkdir(extensionLibDir, { recursive: true });
@@ -1138,7 +1139,7 @@ export const buildNativePreviewExtensions = task({
                 await $({ cwd: thisExtensionDir })`vsce generate-manifest --packagePath ${vsixPath} --out ${vsixManifestPath}`;
                 await fs.promises.cp(vsixManifestPath, vsixSignaturePath);
             }
-        }
+        }));
     },
 });
 
@@ -1164,7 +1165,7 @@ export const signNativePreviewExtensions = task({
 
 export const nativePreview = task({
     name: "native-preview",
-    dependencies: options.forRelease ? undefined : [packNativePreviewPackages, buildNativePreviewExtensions],
+    dependencies: options.forRelease ? undefined : [packNativePreviewPackages, packNativePreviewExtensions],
     run: options.forRelease ? async () => {
         throw new Error("This task should not be run in release builds.");
     } : undefined,
@@ -1172,7 +1173,7 @@ export const nativePreview = task({
 
 export const installExtension = task({
     name: "install-extension",
-    dependencies: options.forRelease ? undefined : [buildNativePreviewExtensions],
+    dependencies: options.forRelease ? undefined : [packNativePreviewExtensions],
     run: async () => {
         if (options.forRelease) {
             throw new Error("This task should not be run in release builds.");
