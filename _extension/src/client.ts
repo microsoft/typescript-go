@@ -17,6 +17,7 @@ import { getLanguageForUri } from "./util";
 export class Client {
     private outputChannel: vscode.OutputChannel;
     private traceOutputChannel: vscode.OutputChannel;
+    private clientOptions: LanguageClientOptions;
     private client?: LanguageClient;
     private exe: ExeInfo | undefined;
     private onStartedCallbacks: Set<() => void> = new Set();
@@ -24,33 +25,7 @@ export class Client {
     constructor(outputChannel: vscode.OutputChannel, traceOutputChannel: vscode.OutputChannel) {
         this.outputChannel = outputChannel;
         this.traceOutputChannel = traceOutputChannel;
-    }
-
-    async initialize(context: vscode.ExtensionContext): Promise<void> {
-        const config = vscode.workspace.getConfiguration("typescript.native-preview");
-
-        this.exe = await getExe(context);
-
-        this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
-
-        // Get pprofDir
-        const pprofDir = config.get<string>("pprofDir");
-        const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
-
-        const serverOptions: ServerOptions = {
-            run: {
-                command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
-                transport: TransportKind.stdio,
-            },
-            debug: {
-                command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
-                transport: TransportKind.stdio,
-            },
-        };
-
-        const clientOptions: LanguageClientOptions = {
+        this.clientOptions = {
             documentSelector: [
                 ...jsTsLanguageModes.map(language => ({ scheme: "file", language })),
                 ...jsTsLanguageModes.map(language => ({ scheme: "untitled", language })),
@@ -104,16 +79,44 @@ export class Client {
                 },
             },
         };
+    }
+
+    async initialize(context: vscode.ExtensionContext): Promise<void> {
+        const exe = await getExe(context);
+        this.start(context, exe);
+    }
+
+    async start(context: vscode.ExtensionContext, exe: { path: string; version: string; }): Promise<void> {
+        this.exe = exe;
+        this.outputChannel.appendLine(`Resolved to ${this.exe.path}`);
+
+        // Get pprofDir
+        const config = vscode.workspace.getConfiguration("typescript.native-preview");
+        const pprofDir = config.get<string>("pprofDir");
+        const pprofArgs = pprofDir ? ["--pprofDir", pprofDir] : [];
+
+        const serverOptions: ServerOptions = {
+            run: {
+                command: this.exe.path,
+                args: ["--lsp", ...pprofArgs],
+                transport: TransportKind.stdio,
+            },
+            debug: {
+                command: this.exe.path,
+                args: ["--lsp", ...pprofArgs],
+                transport: TransportKind.stdio,
+            },
+        };
 
         this.client = new LanguageClient(
             "typescript.native-preview",
             "typescript.native-preview-lsp",
             serverOptions,
-            clientOptions,
+            this.clientOptions,
         );
 
         this.outputChannel.appendLine(`Starting language server...`);
-        this.client.start();
+        await this.client.start();
         vscode.commands.executeCommand("setContext", "typescript.native-preview.serverRunning", true);
         this.onStartedCallbacks.forEach(callback => callback());
         context.subscriptions.push(
@@ -142,10 +145,17 @@ export class Client {
         });
     }
 
-    restart(): Thenable<void> {
+    async restart(context: vscode.ExtensionContext): Promise<void> {
         if (!this.client) {
             return Promise.reject(new Error("Language client is not initialized"));
         }
+        const exe = await getExe(context);
+        if (exe.path !== this.exe?.path) {
+            this.outputChannel.appendLine(`Executable path changed from ${this.exe?.path} to ${exe.path}`);
+            this.outputChannel.appendLine(`Restarting language server with new executable...`);
+            return this.start(context, exe);
+        }
+
         this.outputChannel.appendLine(`Restarting language server...`);
         return this.client.restart();
     }

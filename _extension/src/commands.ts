@@ -4,16 +4,16 @@ import { Client } from "./client";
 export function registerCommands(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.OutputChannel, traceOutputChannel: vscode.OutputChannel): void {
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.enable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
-        updateUseTsgoSetting(context, true);
+        updateUseTsgoSetting(true);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.disable", () => {
         // Fire and forget, because this will restart the extension host and cause an error if we await
-        updateUseTsgoSetting(context, false);
+        updateUseTsgoSetting(false);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.restart", () => {
-        return client.restart();
+        return client.restart(context);
     }));
 
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.output.focus", () => {
@@ -33,16 +33,11 @@ export function registerCommands(context: vscode.ExtensionContext, client: Clien
 /**
  * Updates the TypeScript Native Preview setting and reloads extension host.
  */
-async function updateUseTsgoSetting(context: vscode.ExtensionContext, enable: boolean): Promise<void> {
+async function updateUseTsgoSetting(enable: boolean): Promise<void> {
     const tsConfig = vscode.workspace.getConfiguration("typescript");
     const currentValue = tsConfig.get<boolean>("experimental.useTsgo", false);
     if (currentValue === enable) {
         return;
-    }
-    if (!enable && context.extensionMode === vscode.ExtensionMode.Development) {
-        await vscode.window.showWarningMessage(
-            "TypeScript Native Preview is running in development mode, and will load even when 'typescript.experimental.useTsgo' is false.",
-        );
     }
 
     // Update the setting and restart the extension host (needed to change the state of the built-in TS extension)

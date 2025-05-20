@@ -11,15 +11,28 @@ export async function activate(context: vscode.ExtensionContext) {
     const client = new Client(output, traceOutput);
     registerCommands(context, client, output, traceOutput);
 
-    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async event => {
         if (event.affectsConfiguration("typescript.experimental.useTsgo")) {
-            vscode.commands.executeCommand("workbench.action.restartExtensionHost");
+            const selected = await vscode.window.showInformationMessage("TypeScript Native Preview setting has changed. Restart extensions to apply changes.", "Restart Extensions");
+            if (selected) {
+                vscode.commands.executeCommand("workbench.action.restartExtensionHost");
+            }
         }
     }));
 
-    if (context.extensionMode !== vscode.ExtensionMode.Development && !vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo")) {
-        output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
-        return;
+    const useTsgo = vscode.workspace.getConfiguration("typescript").get<boolean>("experimental.useTsgo");
+    if (!useTsgo) {
+        if (context.extensionMode === vscode.ExtensionMode.Development) {
+            if (useTsgo === false) {
+                vscode.window.showWarningMessage(
+                    'TypeScript Native Preview is running in development mode. Ignoring "typescript.experimental.useTsgo": false.',
+                );
+            }
+        }
+        else {
+            output.appendLine("TypeScript Native Preview is disabled. Select 'Enable TypeScript Native Preview (Experimental)' in the command palette to enable it.");
+            return;
+        }
     }
 
     await client.initialize(context);
