@@ -765,6 +765,15 @@ async function sign(filelist) {
                 const src = file.SrcPath;
                 const dst = file.DstPath ?? src;
 
+                if (!fs.existsSync(src)) {
+                    throw new Error(`Source file does not exist: ${src}`);
+                }
+
+                const dstDir = path.dirname(dst);
+                if (!fs.existsSync(dstDir)) {
+                    throw new Error(`Destination directory does not exist: ${dstDir}`);
+                }
+
                 if (dst.endsWith(".sig")) {
                     console.log(`Faking signature for ${src} -> ${dst}`);
                     // No great way to fake a signature.
