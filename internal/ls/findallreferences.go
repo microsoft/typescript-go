@@ -371,13 +371,10 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 
 // === functions on (*ls) ===
 
-func (l *LanguageService) ProvideReferences(
-	fileName string,
-	position int,
-	context *lsproto.ReferenceContext,
-) []*lsproto.Location {
-	// does findReferencedSymbols except only computes the conversions needed for reference locations
-	program, sourceFile := l.getProgramAndFile(fileName)
+func (l *LanguageService) ProvideReferences(params *lsproto.ReferenceParams) []*lsproto.Location {
+	// `findReferencedSymbols` except only computes the information needed to return reference locations
+	program, sourceFile := l.getProgramAndFile(params.TextDocument.Uri)
+	position := int(l.converters.LineAndCharacterToPosition(sourceFile, params.Position))
 
 	node := astnav.GetTouchingPropertyName(sourceFile, position)
 	options := refOptions{use: referenceUseReferences}
@@ -472,16 +469,19 @@ func (l *LanguageService) getReferencedSymbolsForNode(position int, node *ast.No
 	}
 
 	if node.Kind == ast.KindSourceFile {
-		// !!! not implemented
 		resolvedRef := getReferenceAtPosition(node.AsSourceFile(), position, program)
 		if resolvedRef.file == nil {
 			return nil
 		}
 
-		if moduleSymbol := program.GetTypeChecker().GetMergedSymbol(resolvedRef.file.Symbol); moduleSymbol != nil {
+		checker, done := program.GetTypeChecker(l.ctx)
+		defer done()
+
+		if moduleSymbol := checker.GetMergedSymbol(resolvedRef.file.Symbol); moduleSymbol != nil {
 			return getReferencedSymbolsForModule(program, moduleSymbol /*excludeImportTypeOfExportEquals*/, false, sourceFiles, sourceFilesSet)
 		}
 
+		// !!! not implemented
 		// fileIncludeReasons := program.getFileIncludeReasons();
 		// if (!fileIncludeReasons) {
 		// 	return nil
@@ -499,7 +499,9 @@ func (l *LanguageService) getReferencedSymbolsForNode(position int, node *ast.No
 		}
 	}
 
-	checker := program.GetTypeChecker()
+	checker, done := program.GetTypeChecker(l.ctx)
+	defer done()
+
 	// constructors should use the class symbol, detected by name, if present
 	symbol := checker.GetSymbolAtLocation(core.IfElse(node.Kind == ast.KindConstructor && node.Parent.Name() != nil, node.Parent.Name(), node))
 	// Could not find a symbol e.g. unknown identifier
@@ -558,7 +560,9 @@ func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(sy
 		return moduleReferences
 	}
 	// Continue to get references to 'export ='.
-	checker := program.GetTypeChecker()
+	checker, done := program.GetTypeChecker(l.ctx)
+	defer done()
+
 	symbol, _ = checker.ResolveAlias(exportEquals)
 	return l.mergeReferences(program, moduleReferences, getReferencedSymbolsForSymbol(symbol /*node*/, nil, sourceFiles, sourceFilesSet, checker /*, cancellationToken*/, options))
 }

@@ -2,17 +2,30 @@ package ls
 
 import (
 	"github.com/microsoft/typescript-go/internal/astnav"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
 )
 
-func (l *LanguageService) GetExpectedReferenceFromMarker(marker *lstestutil.Marker) *lsproto.Location {
+func (l *LanguageService) GetExpectedReferenceFromMarker(fileName string, pos int) *lsproto.Location {
 	// Temporary testing function--this function only works for markers that are on symbols/names.
 	// We won't need this once marker ranges are implemented, or once reference tests are baselined
-	_, sourceFile := l.getProgramAndFile(marker.Filename)
-	node := astnav.GetTouchingPropertyName(sourceFile, marker.Position)
+	_, sourceFile := l.tryGetProgramAndFile(fileName)
+	node := astnav.GetTouchingPropertyName(sourceFile, pos)
 	return &lsproto.Location{
-		Uri:   FileNameToDocumentURI(marker.Filename),
+		Uri:   FileNameToDocumentURI(fileName),
 		Range: *l.createLspRangeFromNode(node, sourceFile),
 	}
+}
+
+func (l *LanguageService) TestProvideReferences(fileName string, pos int) []*lsproto.Location {
+	_, sourceFile := l.tryGetProgramAndFile(fileName)
+	lsPos := l.converters.PositionToLineAndCharacter(sourceFile, core.TextPos(pos))
+	return l.ProvideReferences(&lsproto.ReferenceParams{
+		TextDocumentPositionParams: lsproto.TextDocumentPositionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: FileNameToDocumentURI(fileName),
+			},
+			Position: lsPos,
+		},
+	})
 }

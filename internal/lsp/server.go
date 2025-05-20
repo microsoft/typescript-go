@@ -402,7 +402,7 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 	case *lsproto.CompletionParams:
 		return s.handleCompletion(ctx, req)
 	case *lsproto.ReferenceParams:
-		return s.handleReferences(req)
+		return s.handleReferences(ctx, req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -553,17 +553,16 @@ func (s *Server) handleDefinition(ctx context.Context, req *lsproto.RequestMessa
 	return nil
 }
 
-func (s *Server) handleReferences(req *lsproto.RequestMessage) error {
+func (s *Server) handleReferences(ctx context.Context, req *lsproto.RequestMessage) error {
 	// findAllReferences
 	params := req.Params.(*lsproto.ReferenceParams)
-	file, project := s.getFileAndProject(params.TextDocument.Uri)
-	pos, err := s.converters.LineAndCharacterToPositionForFile(params.Position, file.FileName())
-	if err != nil {
-		return s.sendError(req.ID, err)
-	}
-	locations := project.LanguageService().ProvideReferences(file.FileName(), pos, params.Context)
+	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	defer done()
 
-	return s.sendResult(req.ID, locations)
+	locations := languageService.ProvideReferences(params)
+	s.sendResult(req.ID, locations)
+	return nil
 }
 
 func (s *Server) handleCompletion(ctx context.Context, req *lsproto.RequestMessage) error {

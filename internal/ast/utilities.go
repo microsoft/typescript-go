@@ -1416,7 +1416,7 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	switch declaration.Kind {
 	case KindBinaryExpression:
 		bin := declaration.AsBinaryExpression()
-		kind := GetAssignmentDeclarationKind(bin)
+		kind := GetJSDocAssignmentDeclarationKind(bin)
 		if kind == JSDeclarationKindProperty || kind == JSDeclarationKindThisProperty {
 			return GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left)
 		}
@@ -1481,7 +1481,7 @@ const (
 	JSDeclarationKindProperty
 )
 
-func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
+func GetJSDocAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
 	if bin.OperatorToken.Kind != KindEqualsToken || !IsAccessExpression(bin.Left) {
 		return JSDeclarationKindNone
 	}

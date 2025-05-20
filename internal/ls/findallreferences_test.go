@@ -7,37 +7,23 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
+	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"gotest.tools/v3/assert"
 )
 
 func runFindReferencesTest(t *testing.T, input string, expectedLocations map[string]*core.Set[string]) {
 	testData := lstestutil.ParseTestData("/testing", input, "/file1.ts")
-	file := testData.Files[0].Filename
 	markerPositions := testData.MarkerPositions
-	service := createLanguageService(testData.Files[0].Filename, map[string]string{
+	ctx := projecttestutil.WithRequestID(t.Context())
+	service, done := createLanguageService(ctx, testData.Files[0].Filename, map[string]string{
 		testData.Files[0].Filename: testData.Files[0].Content,
 	})
-	context := &lsproto.ReferenceContext{}
-	// ptrTrue := ptrTo(true)
-	// capabilities := &lsproto.SignatureHelpClientCapabilities{
-	// 	SignatureInformation: &lsproto.ClientSignatureInformationOptions{
-	// 		ActiveParameterSupport: ptrTrue,
-	// 		ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
-	// 			LabelOffsetSupport: ptrTrue,
-	// 		},
-	// 	},
-	// }
-	// input {
-	// expected map[marker][]marker: {name called at: expected ref locations}
-	// get locations of markers
-	// check if each returned reference (which is a location) is in the expected map locations
-	//}
-	// preferences := &ls.UserPreferences{}
-	// from expected locations,
-	// for each expected location, get the range of the marker. put into a set [start loc]{end loc}
+	defer done()
+
+	// for each marker location, calculate the expected ref location ahead of time so we don't have to re-calculate each location for every reference call
 	allExpectedLocations := map[lsproto.Location]string{}
 	for _, marker := range testData.MarkerPositions {
-		allExpectedLocations[*service.GetExpectedReferenceFromMarker(marker)] = marker.Name
+		allExpectedLocations[*service.GetExpectedReferenceFromMarker(marker.Filename, marker.Position)] = marker.Name
 	}
 
 	for requestMarkerName, expectedSet := range expectedLocations {
@@ -45,9 +31,10 @@ func runFindReferencesTest(t *testing.T, input string, expectedLocations map[str
 		if !ok {
 			t.Fatalf("No marker found for '%s'", requestMarkerName)
 		}
-		referencesResult := service.ProvideReferences(file, marker.Position, context)
 
+		referencesResult := service.TestProvideReferences(marker.Filename, marker.Position)
 		libReference := 0
+
 		for _, loc := range referencesResult {
 			if name, ok := allExpectedLocations[*loc]; ok {
 				// check if returned ref location is in this request's expected set
