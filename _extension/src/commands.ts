@@ -35,13 +35,15 @@ export function registerCommands(context: vscode.ExtensionContext, client: Clien
  */
 async function updateUseTsgoSetting(enable: boolean): Promise<void> {
     const tsConfig = vscode.workspace.getConfiguration("typescript");
-    const currentValue = tsConfig.get<boolean>("experimental.useTsgo", false);
-    if (currentValue === enable) {
-        return;
+    let target: vscode.ConfigurationTarget | undefined;
+    const useTsgo = tsConfig.inspect("experimental.useTsgo");
+    if (useTsgo) {
+        target = useTsgo.workspaceFolderValue !== undefined ? vscode.ConfigurationTarget.WorkspaceFolder :
+            useTsgo.workspaceValue !== undefined ? vscode.ConfigurationTarget.Workspace :
+            useTsgo.globalValue !== undefined ? vscode.ConfigurationTarget.Global : undefined;
     }
-
     // Update the setting and restart the extension host (needed to change the state of the built-in TS extension)
-    await tsConfig.update("experimental.useTsgo", enable);
+    await tsConfig.update("experimental.useTsgo", enable, target);
     await vscode.commands.executeCommand("workbench.action.restartExtensionHost");
 }
 
