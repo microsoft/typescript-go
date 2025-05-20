@@ -99,7 +99,7 @@ loop:
 				// name of that export default matches.
 				result = moduleExports[ast.InternalSymbolNameDefault]
 				if result != nil {
-					localSymbol := getLocalSymbolForExportDefault(result)
+					localSymbol := GetLocalSymbolForExportDefault(result)
 					if localSymbol != nil && result.Flags&meaning != 0 && localSymbol.Name == name {
 						break loop
 					}
@@ -448,7 +448,7 @@ func (r *NameResolver) argumentsSymbol() *ast.Symbol {
 	return r.ArgumentsSymbol
 }
 
-func getLocalSymbolForExportDefault(symbol *ast.Symbol) *ast.Symbol {
+func GetLocalSymbolForExportDefault(symbol *ast.Symbol) *ast.Symbol {
 	if !isExportDefaultSymbol(symbol) || len(symbol.Declarations) == 0 {
 		return nil
 	}

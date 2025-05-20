@@ -350,6 +350,9 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) error {
 			DefinitionProvider: &lsproto.BooleanOrDefinitionOptions{
 				Boolean: ptrTo(true),
 			},
+			ReferencesProvider: &lsproto.BooleanOrReferenceOptions{
+				Boolean: ptrTo(true),
+			},
 			DiagnosticProvider: &lsproto.DiagnosticOptionsOrDiagnosticRegistrationOptions{
 				DiagnosticOptions: &lsproto.DiagnosticOptions{
 					InterFileDependencies: true,

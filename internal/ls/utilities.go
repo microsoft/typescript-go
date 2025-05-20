@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"cmp"
 	"slices"
 	"strings"
 
@@ -11,6 +12,24 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
+
+// p.Compare(other) == cmp.Compare(p, other)
+func ComparePositions(p, other lsproto.Position) int {
+	if lineComp := cmp.Compare(p.Line, other.Line); lineComp != 0 {
+		return lineComp
+	}
+	return cmp.Compare(p.Line, other.Line)
+}
+
+// t.Compare(other) == cmp.Compare(t, other)
+//
+//	compares Range.Start and then Range.End
+func CompareRanges(t, other *lsproto.Range) int {
+	if startComp := ComparePositions(t.Start, other.Start); startComp != 0 {
+		return startComp
+	}
+	return ComparePositions(t.End, other.End)
+}
 
 var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
 
@@ -81,6 +100,17 @@ func isModuleSpecifierLike(node *ast.Node) bool {
 	return node.Parent.Kind == ast.KindExternalModuleReference ||
 		node.Parent.Kind == ast.KindImportDeclaration ||
 		node.Parent.Kind == ast.KindJSDocImportTag
+}
+
+func getNonModuleSymbolOfMergedModuleSymbol(symbol *ast.Symbol) *ast.Symbol {
+	if len(symbol.Declarations) == 0 || (symbol.Flags&(ast.SymbolFlagsModule|ast.SymbolFlagsTransient)) == 0 {
+		return nil
+	}
+
+	if decl := core.Find(symbol.Declarations, func(d *ast.Node) bool { return !ast.IsSourceFile(d) && !ast.IsModuleDeclaration(d) }); decl != nil {
+		return decl.Symbol()
+	}
+	return nil
 }
 
 func getLocalSymbolForExportSpecifier(referenceLocation *ast.Identifier, referenceSymbol *ast.Symbol, exportSpecifier *ast.ExportSpecifier, ch *checker.Checker) *ast.Symbol {
@@ -1577,8 +1607,10 @@ func getPropertySymbolsFromBaseTypes(symbol *ast.Symbol, propertyName string, ch
 				}
 				propertySymbol := checker.GetPropertyOfType(propertyType, propertyName)
 				// Visit the typeReference as well to see if it directly or indirectly uses that property
-				if r := core.FirstNonNil(checker.GetRootSymbols(propertySymbol), cb); r != nil {
-					return r
+				if propertySymbol != nil {
+					if r := core.FirstNonNil(checker.GetRootSymbols(propertySymbol), cb); r != nil {
+						return r
+					}
 				}
 				return recur(propertyType.Symbol())
 			})
