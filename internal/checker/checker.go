@@ -832,7 +832,7 @@ type Checker struct {
 	emitResolver                               *emitResolver
 	emitResolverOnce                           sync.Once
 	diagnosticConstructionContext              *printer.EmitContext
-	nodeBuilder                                NodeBuilderInterface
+	nodeBuilder                                *NodeBuilder
 	_jsxNamespace                              string
 	_jsxFactoryEntity                          *ast.Node
 	skipDirectInferenceNodes                   core.Set[*ast.Node]
