@@ -1208,6 +1208,6 @@ export const installExtension = task({
         console.log(pc.yellowBright("\nExtension installed. ") + "To enable this extension, set:\n");
         console.log(pc.whiteBright(`    "typescript.experimental.useTsgo": true\n`));
         console.log("To configure the extension to use built/local instead of its bundled tsgo, set:\n");
-        console.log(pc.whiteBright(`    "typescript-go.executablePath": "${path.join(__dirname, "built", "local", process.platform === "win32" ? "tsgo.exe" : "tsgo")}"\n`));
+        console.log(pc.whiteBright(`    "typescript.native-preview.tsdk": "${path.join(__dirname, "built", "local")}"\n`));
     },
 });
