@@ -44,7 +44,7 @@ export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo>
                 const packagePath = workspaceResolve(exe);
                 const packageJsonPath = vscode.Uri.joinPath(packagePath, "package.json");
                 const packageJson = JSON.parse(await vscode.workspace.fs.readFile(packageJsonPath).then(buffer => buffer.toString()));
-                const getExePath = (await import(path.join(packagePath.fsPath, "lib", "getExePath.js"))).default;
+                const getExePath = (await import(path.join(vscode.Uri.joinPath(packagePath, "lib", "getExePath.js").toString()))).default;
                 return { path: getExePath(), version: packageJson.version };
             }
             catch {}
