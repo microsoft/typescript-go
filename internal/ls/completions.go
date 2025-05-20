@@ -4108,11 +4108,10 @@ func (l *LanguageService) createLSPCompletionItem(
 		// !!! adjust label like vscode does
 	}
 
+	// Client assumes plain text by default.
 	var insertTextFormat *lsproto.InsertTextFormat
 	if isSnippet {
 		insertTextFormat = ptrTo(lsproto.InsertTextFormatSnippet)
-	} else {
-		insertTextFormat = ptrTo(lsproto.InsertTextFormatPlainText)
 	}
 
 	return &lsproto.CompletionItem{
