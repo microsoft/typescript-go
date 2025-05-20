@@ -1007,23 +1007,6 @@ func getPropertyNameFromType(t *Type) string {
 	panic("Unhandled case in getPropertyNameFromType")
 }
 
-func GetEffectiveImplementsTypeNodes(node *ast.Node) []*ast.TypeNode {
-	// compiler utilities
-	if ast.IsInJSFile(node) {
-		// not implmented jsdoc
-		// return getJSDocImplementsTags(node).map(n => n.class);
-	} else if heritageClause := ast.GetHeritageClause(node, ast.KindImplementsKeyword); heritageClause != nil {
-		return heritageClause.AsHeritageClause().Types.Nodes
-	}
-	return nil
-}
-
-func GetEffectiveBaseTypeNode(node *ast.Node) *ast.TypeNode {
-	baseType := ast.GetExtendsHeritageClauseElement(node)
-	// !!! not implemented jsdoc cases
-	return baseType
-}
-
 func isNumericLiteralName(name string) bool {
 	// The intent of numeric names is that
 	//     - they are names with text in a numeric form, and that

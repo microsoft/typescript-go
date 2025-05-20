@@ -14,21 +14,21 @@ import (
 )
 
 // p.Compare(other) == cmp.Compare(p, other)
-func ComparePositions(p, other lsproto.Position) int {
-	if lineComp := cmp.Compare(p.Line, other.Line); lineComp != 0 {
+func ComparePositions(pos, other lsproto.Position) int {
+	if lineComp := cmp.Compare(pos.Line, other.Line); lineComp != 0 {
 		return lineComp
 	}
-	return cmp.Compare(p.Line, other.Line)
+	return cmp.Compare(pos.Line, other.Line)
 }
 
 // t.Compare(other) == cmp.Compare(t, other)
 //
 //	compares Range.Start and then Range.End
-func CompareRanges(t, other *lsproto.Range) int {
-	if startComp := ComparePositions(t.Start, other.Start); startComp != 0 {
+func CompareRanges(lsRange, other *lsproto.Range) int {
+	if startComp := ComparePositions(lsRange.Start, other.Start); startComp != 0 {
 		return startComp
 	}
-	return ComparePositions(t.End, other.End)
+	return ComparePositions(lsRange.End, other.End)
 }
 
 var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
@@ -36,31 +36,6 @@ var quoteReplacer = strings.NewReplacer("'", `\'`, `\"`, `"`)
 // !!!
 func isInString(file *ast.SourceFile, position int, previousToken *ast.Node) bool {
 	return false
-}
-
-func skipPastExportOrImportSpecifierOrUnion(originalSymbol *ast.Symbol, node *ast.Node, checker *checker.Checker, useLocalSymbolForExportSpecifier bool) *ast.Symbol {
-	if node == nil {
-		return nil
-	}
-	parent := node.Parent
-	if parent.Kind == ast.KindExportSpecifier && useLocalSymbolForExportSpecifier {
-		return getLocalSymbolForExportSpecifier(node.AsIdentifier(), originalSymbol, parent.AsExportSpecifier(), checker)
-	}
-	// If the symbol is declared as part of a declaration like `{ type: "a" } | { type: "b" }`, use the property on the union type to get more references.
-	return core.FirstNonNil(originalSymbol.Declarations, func(decl *ast.Node) *ast.Symbol {
-		if decl.Parent == nil {
-			// Ignore UMD module and global merge
-			if originalSymbol.Flags&ast.SymbolFlagsTransient != 0 {
-				return nil
-			}
-			// Assertions for GH#21814. We should be handling SourceFile symbols in `getReferencedSymbolsForModule` instead of getting here.
-			panic(`Unexpected symbol at ${Debug.formatast.Kind(node.Kind)}: ${Debug.formatSymbol(symbol)}`)
-		}
-		if decl.Parent.Kind == ast.KindTypeLiteral && decl.Parent.Parent.Kind == ast.KindUnionType {
-			return checker.GetPropertyOfType(checker.GetTypeFromTypeNode(decl.Parent.Parent), originalSymbol.Name)
-		}
-		return nil
-	})
 }
 
 func tryGetImportFromModuleSpecifier(node *ast.StringLiteralLike) *ast.Node {
@@ -87,8 +62,6 @@ func tryGetImportFromModuleSpecifier(node *ast.StringLiteralLike) *ast.Node {
 }
 
 func isModuleSpecifierLike(node *ast.Node) bool {
-	// return node.Kind == ast.KindStringLiteral || node.Kind == ast.KindNoSubstitutionTemplateLiteral ||
-	// 	node.Kind == ast.KindTemplateHead || node.Kind == ast.KindTemplateMiddle || node.Kind == ast.KindTemplateTail
 	if !ast.IsStringLiteralLike(node) {
 		return false
 	}
@@ -1632,7 +1605,7 @@ func getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol *ast.Symb
 }
 
 func getSourceOfDefaultedAssignment(node *ast.Node) *ast.Node {
-	if node.Kind == ast.KindExpressionStatement && node.Expression().Kind == ast.KindBinaryExpression && ast.GetAssignmentDeclarationKind(node.Expression()) != ast.AssignmentDeclarationKindNone {
+	if node.Kind == ast.KindExpressionStatement && node.Expression().Kind == ast.KindBinaryExpression && ast.GetAssignmentDeclarationKind(node.Expression().AsBinaryExpression()) != ast.JSDeclarationKindNone {
 		binExprRight := node.Expression().AsBinaryExpression().Right
 		if binExprRight.Kind == ast.KindBinaryExpression {
 			binExprDefault := binExprRight.AsBinaryExpression()

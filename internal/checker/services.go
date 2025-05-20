@@ -400,6 +400,36 @@ func (c *Checker) GetExportSymbolOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol))
 }
 
+func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbol {
+	// node should be ExportSpecifier | Identifier
+	switch node.Kind {
+	case ast.KindExportSpecifier:
+		if node.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil {
+			return c.getExternalModuleMember(node.Parent.Parent, node, false /*dontResolveAlias*/)
+		}
+		name := node.AsExportSpecifier().PropertyName
+		if name == nil {
+			name = node.Name()
+		}
+		if name.Kind == ast.KindStringLiteral {
+			// Skip for invalid syntax like this: export { "x" }
+			return nil
+		}
+	case ast.KindIdentifier:
+		// do nothing (don't panic)
+	default:
+		panic("Unhandled case in getExportSpecifierLocalTargetSymbol, node should be ExportSpecifier | Identifier")
+	}
+	return c.resolveEntityName(node, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
+}
+
+func (c *Checker) GetShorthandAssignmentValueSymbol(location *ast.Node) *ast.Symbol {
+	if location != nil && location.Kind == ast.KindShorthandPropertyAssignment {
+		return c.resolveEntityName(location.Name(), ast.SymbolFlagsValue|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
+	}
+	return nil
+}
+
 /**
 * Get symbols that represent parameter-property-declaration as parameter and as property declaration
 * @param parameter a parameterDeclaration node

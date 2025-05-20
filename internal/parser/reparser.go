@@ -13,7 +13,7 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 		return
 	}
 	bin := node.AsExpressionStatement().Expression.AsBinaryExpression()
-	kind := ast.GetJSDocAssignmentDeclarationKind(bin)
+	kind := ast.GetAssignmentDeclarationKind(bin)
 	var export *ast.Node
 	switch kind {
 	case ast.JSDeclarationKindModuleExports:
@@ -136,7 +136,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				} else if parent.Kind == ast.KindExpressionStatement &&
 					parent.AsExpressionStatement().Expression.Kind == ast.KindBinaryExpression {
 					bin := parent.AsExpressionStatement().Expression.AsBinaryExpression()
-					if ast.GetJSDocAssignmentDeclarationKind(bin) != ast.JSDeclarationKindNone {
+					if ast.GetAssignmentDeclarationKind(bin) != ast.JSDeclarationKindNone {
 						bin.Right = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), bin.Right)
 					}
 				}

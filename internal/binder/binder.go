@@ -622,7 +622,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 			setFlowNode(node, b.currentFlow)
 		}
 	case ast.KindBinaryExpression:
-		switch ast.GetJSDocAssignmentDeclarationKind(node.AsBinaryExpression()) {
+		switch ast.GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
 		case ast.JSDeclarationKindProperty:
 			b.bindFunctionPropertyAssignment(node)
 		case ast.JSDeclarationKindThisProperty:

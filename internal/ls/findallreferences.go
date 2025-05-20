@@ -2,6 +2,7 @@ package ls
 
 import (
 	"cmp"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -151,7 +152,7 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 				core.IfElse(ast.IsAccessExpression(node.Parent) && node.Parent.Parent.Kind == ast.KindBinaryExpression && node.Parent.Parent.AsBinaryExpression().Left == node.Parent,
 					node.Parent.Parent,
 					nil))
-			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression) != ast.AssignmentDeclarationKindNone {
+			if binaryExpression != nil && ast.GetAssignmentDeclarationKind(binaryExpression.AsBinaryExpression()) != ast.JSDeclarationKindNone {
 				return getContextNode(binaryExpression)
 			}
 		}
@@ -291,6 +292,31 @@ func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
 
 func isForRenameWithPrefixAndSuffixText(options refOptions) bool {
 	return options.use == referenceUseRename && options.providePrefixAndSuffixTextForRename
+}
+
+func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, checker *checker.Checker, useLocalSymbolForExportSpecifier bool) *ast.Symbol {
+	if node == nil {
+		return nil
+	}
+	parent := node.Parent
+	if parent.Kind == ast.KindExportSpecifier && useLocalSymbolForExportSpecifier {
+		return getLocalSymbolForExportSpecifier(node.AsIdentifier(), symbol, parent.AsExportSpecifier(), checker)
+	}
+	// If the symbol is declared as part of a declaration like `{ type: "a" } | { type: "b" }`, use the property on the union type to get more references.
+	return core.FirstNonNil(symbol.Declarations, func(decl *ast.Node) *ast.Symbol {
+		if decl.Parent == nil {
+			// Ignore UMD module and global merge
+			if symbol.Flags&ast.SymbolFlagsTransient != 0 {
+				return nil
+			}
+			// Assertions for GH#21814. We should be handling SourceFile symbols in `getReferencedSymbolsForModule` instead of getting here.
+			panic(fmt.Sprintf("Unexpected symbol at %s: %s", node.Kind.String(), symbol.Name))
+		}
+		if decl.Parent.Kind == ast.KindTypeLiteral && decl.Parent.Parent.Kind == ast.KindUnionType {
+			return checker.GetPropertyOfType(checker.GetTypeFromTypeNode(decl.Parent.Parent), symbol.Name)
+		}
+		return nil
+	})
 }
 
 func getSymbolScope(symbol *ast.Symbol) *ast.Node {
@@ -646,16 +672,14 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 		return node.Kind == ast.KindIdentifier && node.Parent.Kind == ast.KindParameter && node.Parent.Name() == node
 	}
 
-	// !!! check fall throughs
 	switch searchSpaceNode.Kind {
-	case ast.KindMethodDeclaration, ast.KindMethodSignature:
-		if ast.IsObjectLiteralMethod(searchSpaceNode) {
+	case ast.KindMethodDeclaration, ast.KindMethodSignature,
+		ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor:
+		if (searchSpaceNode.Kind == ast.KindMethodDeclaration || searchSpaceNode.Kind == ast.KindMethodSignature) && ast.IsObjectLiteralMethod(searchSpaceNode) {
 			staticFlag &= searchSpaceNode.ModifierFlags()
 			searchSpaceNode = searchSpaceNode.Parent // re-assign to be the owning object literals
 			break
 		}
-		// falls through
-	case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor:
 		staticFlag &= searchSpaceNode.ModifierFlags()
 		searchSpaceNode = searchSpaceNode.Parent // re-assign to be the owning class
 		break
@@ -663,7 +687,6 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 		if ast.IsExternalModule(searchSpaceNode.AsSourceFile()) || isParameterName(thisOrSuperKeyword) {
 			return nil
 		}
-		// falls through
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
 		break
 	// Computed properties in classes are not handled here because references to this are illegal,

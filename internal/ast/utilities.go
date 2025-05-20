@@ -1416,7 +1416,7 @@ func GetNonAssignedNameOfDeclaration(declaration *Node) *Node {
 	switch declaration.Kind {
 	case KindBinaryExpression:
 		bin := declaration.AsBinaryExpression()
-		kind := GetJSDocAssignmentDeclarationKind(bin)
+		kind := GetAssignmentDeclarationKind(bin)
 		if kind == JSDeclarationKindProperty || kind == JSDeclarationKindThisProperty {
 			return GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left)
 		}
@@ -1479,9 +1479,22 @@ const (
 	JSDeclarationKindThisProperty
 	/// F.name = expr, F[name] = expr
 	JSDeclarationKindProperty
+
+	// PropertyAccessKinds
+	// F.prototype = { ... }
+	JSDeclarationKindPrototype
+	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
+	// Object.defineProperty(x, 'name', { get: Function, set: Function });
+	// Object.defineProperty(x, 'name', { get: Function });
+	// Object.defineProperty(x, 'name', { set: Function });
+	JSDeclarationKindObjectDefinePropertyValue
+	// Object.defineProperty(exports || module.exports, 'name', ...);
+	JSDeclarationKindObjectDefinePropertyExports
+	// Object.defineProperty(Foo.prototype, 'name', ...);
+	JSDeclarationKindObjectDefinePrototypeProperty
 )
 
-func GetJSDocAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
+func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
 	if bin.OperatorToken.Kind != KindEqualsToken || !IsAccessExpression(bin.Left) {
 		return JSDeclarationKindNone
 	}
@@ -1504,6 +1517,37 @@ func GetJSDocAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind 
 func hasJSBindableName(node *Node) bool {
 	name := GetElementOrPropertyAccessArgumentExpressionOrName(node)
 	return IsIdentifier(name) || IsStringLiteralLike(name)
+}
+
+func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) JSDeclarationKind {
+	if lhs.Expression().Kind == KindThisKeyword {
+		return JSDeclarationKindThisProperty
+	} else if IsModuleExportsAccessExpression(lhs) {
+		// module.exports = expr
+		return JSDeclarationKindModuleExports
+	} else if IsBindableStaticNameExpression(lhs.Expression() /*excludeThisKeyword*/, true) {
+		if IsPrototypeAccess(lhs.Expression()) {
+			// F.G....prototype.x = expr
+			return JSDeclarationKindPrototypeProperty
+		}
+
+		nextToLast := lhs
+		for nextToLast.Expression().Kind != KindIdentifier {
+			nextToLast = nextToLast.Expression()
+		}
+		idText := nextToLast.Expression().AsIdentifier().Text
+		if (idText == "exports" || idText == "module" && GetElementOrPropertyAccessName(nextToLast) == "exports") &&
+			// ExportsProperty does not support binding with computed names
+			IsBindableStaticAccessExpression(lhs, false) {
+			// exports.name = expr OR module.exports.name = expr OR exports["name"] = expr ...
+			return JSDeclarationKindExportsProperty
+		}
+		if IsBindableStaticNameExpression(lhs /*excludeThisKeyword*/, true) || (IsElementAccessExpression(lhs) && IsDynamicName(lhs)) {
+			// F.G...x = expr
+			return JSDeclarationKindProperty
+		}
+	}
+	return JSDeclarationKindNone
 }
 
 /**
@@ -2550,100 +2594,6 @@ func GetDeclarationContainer(node *Node) *Node {
 			return true
 		}
 	}).Parent
-}
-
-type AssignmentDeclarationKind = int32
-
-const (
-	AssignmentDeclarationKindNone = AssignmentDeclarationKind(iota)
-	/// exports.name = expr
-	/// module.exports.name = expr
-	AssignmentDeclarationKindExportsProperty
-	/// module.exports = expr
-	AssignmentDeclarationKindModuleExports
-	/// className.prototype.name = expr
-	AssignmentDeclarationKindPrototypeProperty
-	/// this.name = expr
-	AssignmentDeclarationKindThisProperty
-	// F.name = expr
-	AssignmentDeclarationKindProperty
-	// F.prototype = { ... }
-	AssignmentDeclarationKindPrototype
-	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
-	// Object.defineProperty(x, 'name', { get: Function, set: Function });
-	// Object.defineProperty(x, 'name', { get: Function });
-	// Object.defineProperty(x, 'name', { set: Function });
-	AssignmentDeclarationKindObjectDefinePropertyValue
-	// Object.defineProperty(exports || module.exports, 'name', ...);
-	AssignmentDeclarationKindObjectDefinePropertyExports
-	// Object.defineProperty(Foo.prototype, 'name', ...);
-	AssignmentDeclarationKindObjectDefinePrototypeProperty
-)
-
-// / Given a BinaryExpression, returns SpecialPropertyAssignmentKind for the various kinds of property
-// / assignments we treat as special in the binder
-func GetAssignmentDeclarationKind(expr *Expression /*BinaryExpression | CallExpression*/) AssignmentDeclarationKind {
-	var special AssignmentDeclarationKind
-	switch expr.Kind {
-	case KindCallExpression:
-		if !IsBindableObjectDefinePropertyCall(expr) {
-			special = AssignmentDeclarationKindNone
-		} else {
-			entityName := expr.Arguments()[0]
-			if IsExportsIdentifier(entityName) || IsModuleExportsAccessExpression(entityName) {
-				special = AssignmentDeclarationKindObjectDefinePropertyExports
-			} else if IsBindableStaticAccessExpression(entityName, false) && GetElementOrPropertyAccessName(entityName) == "prototype" {
-				special = AssignmentDeclarationKindObjectDefinePrototypeProperty
-			} else {
-				special = AssignmentDeclarationKindObjectDefinePropertyValue
-			}
-		}
-	default: // KindBinaryExpression
-		binExpr := expr.AsBinaryExpression()
-		if binExpr.OperatorToken.Kind != KindEqualsToken || !IsAccessExpression(binExpr.Left) || isVoidZero(GetRightMostAssignedExpression(expr)) {
-			special = AssignmentDeclarationKindNone
-		} else if IsBindableStaticNameExpression(binExpr.Left.Expression() /*excludeThisKeyword*/, true) &&
-			GetElementOrPropertyAccessName(binExpr.Left) == "prototype" &&
-			IsObjectLiteralExpression(GetInitializerOfBinaryExpression(binExpr)) {
-			// F.prototype = { ... }
-			special = AssignmentDeclarationKindPrototype
-		} else {
-			special = GetAssignmentDeclarationPropertyAccessKind(binExpr.Left)
-		}
-	}
-	return core.IfElse(special == AssignmentDeclarationKindProperty || IsInJSFile(expr), special, AssignmentDeclarationKindNone)
-}
-
-func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) AssignmentDeclarationKind {
-	if lhs.Expression().Kind == KindThisKeyword {
-		return AssignmentDeclarationKindThisProperty
-	} else if IsModuleExportsAccessExpression(lhs) {
-		// module.exports = expr
-		return AssignmentDeclarationKindModuleExports
-	} else if IsBindableStaticNameExpression(lhs.Expression() /*excludeThisKeyword*/, true) {
-		if IsPrototypeAccess(lhs.Expression()) {
-			// F.G....prototype.x = expr
-			return AssignmentDeclarationKindPrototypeProperty
-		}
-
-		nextToLast := lhs
-		for nextToLast.Expression().Kind != KindIdentifier {
-			nextToLast = nextToLast.Expression()
-		}
-		idText := nextToLast.Expression().AsIdentifier().Text
-		if (idText == "exports" || idText == "module" && GetElementOrPropertyAccessName(nextToLast) == "exports") &&
-			// ExportsProperty does not support binding with computed names
-			IsBindableStaticAccessExpression(lhs, false) {
-			// exports.name = expr OR module.exports.name = expr OR exports["name"] = expr ...
-			return AssignmentDeclarationKindExportsProperty
-		}
-		if IsBindableStaticNameExpression(lhs /*excludeThisKeyword*/, true) || (IsElementAccessExpression(lhs) && IsDynamicName(lhs)) {
-			// F.G...x = expr
-			return AssignmentDeclarationKindProperty
-		}
-	}
-
-	return AssignmentDeclarationKindNone
 }
 
 func IsPrototypeAccess(node *Node) bool {

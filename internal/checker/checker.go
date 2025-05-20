@@ -13588,36 +13588,6 @@ func (c *Checker) getExportSymbolOfValueSymbolIfExported(symbol *ast.Symbol) *as
 	return c.getMergedSymbol(symbol)
 }
 
-func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbol {
-	switch node.Kind {
-	case ast.KindExportSpecifier:
-		if node.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil {
-			return c.getExternalModuleMember(node.Parent.Parent, node, false /*dontResolveAlias*/)
-		}
-		name := node.AsExportSpecifier().PropertyName
-		if name == nil {
-			name = node.Name()
-		}
-		if name.Kind == ast.KindStringLiteral {
-			// Skip for invalid syntax like this: export { "x" }
-			return nil
-		}
-		// fall through
-	case ast.KindIdentifier:
-		// fall through
-	default:
-		panic("Unhandled case in getExportSpecifierLocalTargetSymbol")
-	}
-	return c.resolveEntityName(node, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
-}
-
-func (c *Checker) GetShorthandAssignmentValueSymbol(location *ast.Node) *ast.Symbol {
-	if location != nil && location.Kind == ast.KindShorthandPropertyAssignment {
-		return c.resolveEntityName(location.Name(), ast.SymbolFlagsValue|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
-	}
-	return nil
-}
-
 func (c *Checker) getSymbolOfDeclaration(node *ast.Node) *ast.Symbol {
 	symbol := node.Symbol()
 	if symbol != nil {
@@ -16814,7 +16784,7 @@ func (c *Checker) isConstructorDeclaredThisProperty(symbol *ast.Symbol) (thisAss
 			break
 		}
 		bin := declaration.AsBinaryExpression()
-		if ast.GetJSDocAssignmentDeclarationKind(bin) == ast.JSDeclarationKindThisProperty &&
+		if ast.GetAssignmentDeclarationKind(bin) == ast.JSDeclarationKindThisProperty &&
 			(bin.Left.Kind != ast.KindElementAccessExpression || ast.IsStringOrNumericLiteralLike(bin.Left.AsElementAccessExpression().ArgumentExpression)) {
 			// TODO: if bin.Type() != nil, use bin.Type()
 			if bin.Right.Kind == ast.KindTypeAssertionExpression {
