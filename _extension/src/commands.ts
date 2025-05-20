@@ -1,9 +1,5 @@
 import * as vscode from "vscode";
 import { Client } from "./client";
-import {
-    builtinTSExtensionId,
-    getBuiltinExePath,
-} from "./util";
 
 export function registerCommands(context: vscode.ExtensionContext, client: Client, outputChannel: vscode.OutputChannel, traceOutputChannel: vscode.OutputChannel): void {
     context.subscriptions.push(vscode.commands.registerCommand("typescript.native-preview.enable", () => {

@@ -3,7 +3,6 @@ import * as vscode from "vscode";
 import { Client } from "./client";
 import { registerCommands } from "./commands";
 import { setupStatusBar } from "./statusBar";
-import { builtinTSExtensionId } from "./util";
 import { setupVersionStatusItem } from "./versionStatusItem";
 
 export async function activate(context: vscode.ExtensionContext) {
