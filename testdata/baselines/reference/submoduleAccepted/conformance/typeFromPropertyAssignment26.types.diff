@@ -5,17 +5,16 @@
  === bug24730.js ===
  var UI = {}
 ->UI : typeof UI
-+>UI : {}
- >{} : {}
+->{} : {}
++>UI : { TreeElement: typeof TreeElement; context: TreeElement; }
++>{} : { TreeElement: typeof TreeElement; context: TreeElement; }
  
  UI.TreeElement = class {
  >UI.TreeElement = class {    constructor() {        this.treeOutline = 12    }} : typeof TreeElement
-->UI.TreeElement : typeof TreeElement
+ >UI.TreeElement : typeof TreeElement
 ->UI : typeof UI
-->TreeElement : typeof TreeElement
-+>UI.TreeElement : any
-+>UI : {}
-+>TreeElement : any
++>UI : { TreeElement: typeof TreeElement; context: TreeElement; }
+ >TreeElement : typeof TreeElement
  >class {    constructor() {        this.treeOutline = 12    }} : typeof TreeElement
  
      constructor() {
@@ -30,43 +29,22 @@
      }
  };
  UI.context = new UI.TreeElement()
-->UI.context = new UI.TreeElement() : TreeElement
-->UI.context : TreeElement
+ >UI.context = new UI.TreeElement() : TreeElement
+ >UI.context : TreeElement
 ->UI : typeof UI
-->context : TreeElement
-->new UI.TreeElement() : TreeElement
-->UI.TreeElement : typeof TreeElement
++>UI : { TreeElement: typeof TreeElement; context: TreeElement; }
+ >context : TreeElement
+ >new UI.TreeElement() : TreeElement
+ >UI.TreeElement : typeof TreeElement
 ->UI : typeof UI
-->TreeElement : typeof TreeElement
-+>UI.context = new UI.TreeElement() : any
-+>UI.context : any
-+>UI : {}
-+>context : any
-+>new UI.TreeElement() : any
-+>UI.TreeElement : any
-+>UI : {}
-+>TreeElement : any
++>UI : { TreeElement: typeof TreeElement; context: TreeElement; }
+ >TreeElement : typeof TreeElement
  
  class C extends UI.TreeElement {
  >C : C
-->UI.TreeElement : TreeElement
+ >UI.TreeElement : TreeElement
 ->UI : typeof UI
-->TreeElement : typeof TreeElement
-+>UI.TreeElement : any
-+>UI : {}
-+>TreeElement : any
++>UI : { TreeElement: typeof TreeElement; context: TreeElement; }
+ >TreeElement : typeof TreeElement
  
      onpopulate() {
- >onpopulate : () => void
-@@= skipped -46, +46 lines =@@
-         this.treeOutline.doesntExistEither()
- >this.treeOutline.doesntExistEither() : any
- >this.treeOutline.doesntExistEither : any
-->this.treeOutline : number
-+>this.treeOutline : any
- >this : this
-->treeOutline : number
-+>treeOutline : any
- >doesntExistEither : any
-     }
- };
