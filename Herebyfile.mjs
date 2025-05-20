@@ -51,7 +51,7 @@ function parseEnvBoolean(name, defaultValue = false) {
     throw new Error(`Invalid value for ${name}: ${value}`);
 }
 
-const { values: options } = parseArgs({
+const { values: rawOptions } = parseArgs({
     args: process.argv.slice(2),
     options: {
         tests: { type: "string", short: "t" },
@@ -68,10 +68,20 @@ const { values: options } = parseArgs({
         concurrentTestPrograms: { type: "boolean", default: parseEnvBoolean("CONCURRENT_TEST_PROGRAMS") },
         coverage: { type: "boolean", default: parseEnvBoolean("COVERAGE") },
     },
-    strict: true, // TODO: undo this in favor of type-level trick; strict prevents use of other hereby flags.
+    strict: false,
     allowPositionals: true,
     allowNegative: true,
 });
+
+// We can't use parseArgs' strict mode as it errors on hereby's --tasks flag.
+/**
+ * @typedef {{ [K in keyof T as {} extends Record<K, 1> ? never : K]: T[K] }} RemoveIndex<T>
+ * @template T
+ */
+/**
+ * @typedef {RemoveIndex<typeof rawOptions>} Options
+ */
+const options = /** @type {Options} */ (rawOptions);
 
 const defaultGoBuildTags = [
     ...(options.noembed ? ["noembed"] : []),
