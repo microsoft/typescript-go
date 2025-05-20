@@ -171,35 +171,37 @@ func NewProgram(options ProgramOptions) *Program {
 	return p
 }
 
-func NewProgramWithChangedFile(old *Program, changedFilePath tspath.Path) *Program {
-	oldFile := old.filesByPath[changedFilePath]
-	newFile := old.host.GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
+// Return an updated program for which it is known that only the file with the given path has changed.
+// In addition to a new program, return a boolean indicating whether the data of the old program was reused.
+func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
+	oldFile := p.filesByPath[changedFilePath]
+	newFile := p.host.GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
 	if !canReplaceFileInProgram(oldFile, newFile) {
-		return NewProgram(old.programOptions)
+		return NewProgram(p.programOptions), false
 	}
-	p := &Program{
-		host:                         old.host,
-		programOptions:               old.programOptions,
-		compilerOptions:              old.compilerOptions,
-		configFileName:               old.configFileName,
-		nodeModules:                  old.nodeModules,
-		currentDirectory:             old.currentDirectory,
-		configFileParsingDiagnostics: old.configFileParsingDiagnostics,
-		resolver:                     old.resolver,
-		comparePathsOptions:          old.comparePathsOptions,
-		processedFiles:               old.processedFiles,
-		filesByPath:                  old.filesByPath,
-		currentNodeModulesDepth:      old.currentNodeModulesDepth,
-		usesUriStyleNodeCoreModules:  old.usesUriStyleNodeCoreModules,
-		unsupportedExtensions:        old.unsupportedExtensions,
+	result := &Program{
+		host:                         p.host,
+		programOptions:               p.programOptions,
+		compilerOptions:              p.compilerOptions,
+		configFileName:               p.configFileName,
+		nodeModules:                  p.nodeModules,
+		currentDirectory:             p.currentDirectory,
+		configFileParsingDiagnostics: p.configFileParsingDiagnostics,
+		resolver:                     p.resolver,
+		comparePathsOptions:          p.comparePathsOptions,
+		processedFiles:               p.processedFiles,
+		filesByPath:                  p.filesByPath,
+		currentNodeModulesDepth:      p.currentNodeModulesDepth,
+		usesUriStyleNodeCoreModules:  p.usesUriStyleNodeCoreModules,
+		unsupportedExtensions:        p.unsupportedExtensions,
 	}
-	p.initCheckerPool()
-	index := core.FindIndex(p.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
-	p.files = slices.Clone(p.files)
-	p.files[index] = newFile
-	p.filesByPath = maps.Clone(p.filesByPath)
-	p.filesByPath[newFile.Path()] = newFile
-	return p
+	result.initCheckerPool()
+	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
+	result.files = slices.Clone(result.files)
+	result.files[index] = newFile
+	result.filesByPath = maps.Clone(result.filesByPath)
+	result.filesByPath[newFile.Path()] = newFile
+	return result, true
 }
 
 func (p *Program) initCheckerPool() {
