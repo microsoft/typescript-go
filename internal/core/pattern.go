@@ -23,6 +23,27 @@ func (p *Pattern) Matches(candidate string) bool {
 	if p.StarIndex == -1 {
 		return p.Text == candidate
 	}
+	
+	// Fix for the slice bounds out of range [1:0] panic
+	// Handle empty Text or StarIndex at the beginning or end
+	if len(p.Text) == 0 {
+		return true // Empty pattern matches anything
+	}
+	
+	if p.StarIndex == 0 {
+		// If StarIndex is at the beginning, we only need to check the suffix
+		if p.StarIndex+1 >= len(p.Text) {
+			return true // No suffix to check
+		}
+		return strings.HasSuffix(candidate, p.Text[p.StarIndex+1:])
+	}
+	
+	if p.StarIndex >= len(p.Text) {
+		// If StarIndex is at or beyond the end, we only need to check the prefix
+		return strings.HasPrefix(candidate, p.Text[:p.StarIndex])
+	}
+	
+	// Normal case - check both prefix and suffix
 	return len(candidate) >= p.StarIndex &&
 		strings.HasPrefix(candidate, p.Text[:p.StarIndex]) &&
 		strings.HasSuffix(candidate, p.Text[p.StarIndex+1:])
