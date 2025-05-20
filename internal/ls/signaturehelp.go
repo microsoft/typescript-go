@@ -356,7 +356,7 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 	printer := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, nil)
 
 	var getTypeParameters []signatureHelpParameter = []signatureHelpParameter{}
-	if candidateSignature.TypeParameters() != nil && len(candidateSignature.TypeParameters()) != 0 {
+	if len(candidateSignature.TypeParameters()) != 0 {
 		for _, typeParameter := range candidateSignature.TypeParameters() {
 			getTypeParameters = append(getTypeParameters, createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaratipn, c, printer))
 		}

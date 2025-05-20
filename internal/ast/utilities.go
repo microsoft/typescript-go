@@ -2965,12 +2965,22 @@ func GetPropertyNameForPropertyNameNode(name *Node) string {
 	panic("Unhandled case in getPropertyNameForPropertyNameNode")
 }
 
-// !!!
 func HasQuestionToken(node *Node) bool {
 	switch node.Kind {
-	case KindParameter, KindMethodDeclaration, KindMethodSignature, KindShorthandPropertyAssignment,
-		KindPropertyAssignment, KindPropertyDeclaration, KindPropertySignature:
+	case KindParameter:
 		return node.AsParameterDeclaration().QuestionToken != nil
+	case KindMethodDeclaration:
+		return IsQuestionToken(node.AsMethodDeclaration().PostfixToken)
+	case KindShorthandPropertyAssignment:
+		return IsQuestionToken(node.AsShorthandPropertyAssignment().PostfixToken)
+	case KindMethodSignature:
+		return IsQuestionToken(node.AsMethodSignatureDeclaration().PostfixToken)
+	case KindPropertySignature:
+		return IsQuestionToken(node.AsPropertySignatureDeclaration().PostfixToken)
+	case KindPropertyAssignment:
+		return IsQuestionToken(node.AsPropertyAssignment().PostfixToken)
+	case KindPropertyDeclaration:
+		return IsQuestionToken(node.AsPropertyDeclaration().PostfixToken)
 	}
 	return false
 }
