@@ -72,13 +72,13 @@
     "files": [
         "dist",
         "lib",
-        "LICENSE"
+        "LICENSE",
+        "logo.png"
     ],
     "scripts": {
         "build": "tsc",
         "watch": "tsc --watch",
-        "build:prod": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.js --minify",
-        "vscode:prepublish": "npm run build:prod"
+        "bundle": "esbuild src/extension.ts --bundle --external:vscode --platform=node --format=cjs --outfile=dist/extension.js --minify"
     },
     "dependencies": {
         "vscode-languageclient": "^9.0.1"
