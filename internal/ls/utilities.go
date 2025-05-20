@@ -249,7 +249,6 @@ type PossibleTypeArgumentInfo struct {
 func getPossibleTypeArgumentsInfo(tokenIn *ast.Node, sourceFile *ast.SourceFile) *PossibleTypeArgumentInfo {
 	// This is a rare case, but one that saves on a _lot_ of work if true - if the source file has _no_ `<` character,
 	// then there obviously can't be any type arguments - no expensive brace-matching backwards scanning required
-	// searchPosition := len(sourceFile.Text())
 	if strings.LastIndexByte(sourceFile.Text(), '<') == -1 {
 		return nil
 	}
