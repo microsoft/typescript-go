@@ -1301,7 +1301,7 @@ func GetElementOrPropertyAccessArgumentExpressionOrName(node *Node) *Node {
 		if IsStringOrNumericLiteralLike(arg) {
 			return arg
 		}
-		return node
+		return nil
 	}
 	panic("Unhandled case in GetElementOrPropertyAccessArgumentExpressionOrName")
 }

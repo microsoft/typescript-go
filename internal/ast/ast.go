@@ -289,13 +289,6 @@ func (n *Node) Text() string {
 		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().name.Text()
 	case KindRegularExpressionLiteral:
 		return n.AsRegularExpressionLiteral().Text
-	case KindElementAccessExpression:
-		arg := SkipParentheses(n.AsElementAccessExpression().ArgumentExpression)
-		if IsStringOrNumericLiteralLike(arg) {
-			return arg.Text()
-		}
-		// For non-literal arguments, we return an empty string as a safe fallback
-		return ""
 	}
 	panic(fmt.Sprintf("Unhandled case in Node.Text: %T", n.data))
 }
