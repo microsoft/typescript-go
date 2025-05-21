@@ -208,7 +208,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 
 // Updates the program if needed.
 func (p *Project) GetProgram() *compiler.Program {
-	p.updateIfDirty()
+	p.updateGraph()
 	return p.program
 }
 
@@ -391,19 +391,14 @@ func (p *Project) markAsDirty() {
 	}
 }
 
-// updateIfDirty returns true if the project was updated.
-func (p *Project) updateIfDirty() bool {
-	// !!! p.invalidateResolutionsOfFailedLookupLocations()
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	return p.dirty && p.updateGraph()
-}
-
 // updateGraph updates the set of files that contribute to the project.
 // Returns true if the set of files in has changed. NOTE: this is the
 // opposite of the return value in Strada, which was frequently inverted,
 // as in `updateProjectIfDirty()`.
 func (p *Project) updateGraph() bool {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	if !p.dirty {
 		return false
 	}

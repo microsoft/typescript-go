@@ -309,17 +309,17 @@ func (s *Service) onConfigFileChanged(project *Project, changeKind lsproto.FileC
 		project.pendingReload = PendingReloadFull
 		project.markAsDirty()
 	}
-	project.updateIfDirty()
+	project.updateGraph()
 	return nil
 }
 
 func (s *Service) ensureProjectStructureUpToDate() {
 	var hasChanges bool
 	for _, project := range s.configuredProjects {
-		hasChanges = project.updateIfDirty() || hasChanges
+		hasChanges = project.updateGraph() || hasChanges
 	}
 	for _, project := range s.inferredProjects {
-		hasChanges = project.updateIfDirty() || hasChanges
+		hasChanges = project.updateGraph() || hasChanges
 	}
 	if hasChanges {
 		s.ensureProjectForOpenFiles()
@@ -342,7 +342,7 @@ func (s *Service) ensureProjectForOpenFiles() {
 		}
 	}
 	for _, project := range s.inferredProjects {
-		project.updateIfDirty()
+		project.updateGraph()
 	}
 
 	s.Log("After ensureProjectForOpenFiles:")
@@ -570,7 +570,7 @@ func (s *Service) assignProjectToOpenedScriptInfo(info *ScriptInfo) assignProjec
 		// result.configFileErrors = project.getAllProjectErrors()
 	}
 	for _, project := range info.containingProjects {
-		project.updateIfDirty()
+		project.updateGraph()
 	}
 	if info.isOrphan() {
 		// !!!
