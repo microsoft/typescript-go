@@ -30,7 +30,10 @@ type testCaseResult struct {
 	excludes   []string
 }
 
-const defaultMainFileName = "/index.ts"
+const (
+	defaultMainFileName     = "/index.ts"
+	defaultTsconfigFileName = "/tsconfig.json"
+)
 
 func TestCompletions(t *testing.T) {
 	t.Parallel()
@@ -1880,6 +1883,7 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 		mainFileName = defaultMainFileName
 	}
 	parsedFiles := make(map[string]string)
+	parsedFiles[defaultTsconfigFileName] = `{}`
 	var markerPositions map[string]*lstestutil.Marker
 	for fileName, content := range files {
 		if fileName == mainFileName {
