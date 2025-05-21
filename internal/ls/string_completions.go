@@ -166,7 +166,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			Items:        items,
 		}
 	default:
-		panic(fmt.Sprintf("Unexpected completion type: %T", completion))
+		return nil
 	}
 }
 
