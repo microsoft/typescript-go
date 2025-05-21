@@ -47,14 +47,14 @@ export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo>
                 const getExePath = (await import(vscode.Uri.joinPath(packagePath, "lib", "getExePath.js").toString())).default;
                 return { path: getExePath(), version: packageJson.version };
             }
-            catch { }
+            catch {}
         }
         try {
             const exePath = workspaceResolve(path.join(exe, exeName));
             await vscode.workspace.fs.stat(exePath);
             return { path: exePath.fsPath, version: "(local)" };
         }
-        catch { }
+        catch {}
     }
 
     exe = context.asAbsolutePath(path.join("../", "built", "local", exeName));
@@ -62,7 +62,7 @@ export async function getExe(context: vscode.ExtensionContext): Promise<ExeInfo>
         await vscode.workspace.fs.stat(vscode.Uri.file(exe));
         return { path: exe, version: "(local)" };
     }
-    catch { }
+    catch {}
 
     return {
         path: getBuiltinExePath(context),
