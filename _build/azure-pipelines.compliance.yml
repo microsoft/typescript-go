@@ -39,6 +39,11 @@ extends:
                 fetchTags: false
                 submodules: false
 
+              - task: NodeTool@0
+                inputs:
+                  versionSpec: 20.x
+                displayName: 'Install Node'
+
               - bash: |
                   npm install -g `node -e 'console.log(JSON.parse(fs.readFileSync("package.json", "utf8")).packageManager)'`
                   npm --version
@@ -63,3 +68,4 @@ extends:
                 displayName: 'Check Go version'
 
               - bash: npx hereby build
+                displayName: 'Build'
