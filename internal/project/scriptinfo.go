@@ -122,7 +122,6 @@ func (s *ScriptInfo) attachToProject(project *Project) bool {
 		if project.compilerOptions.PreserveSymlinks != core.TSTrue {
 			s.ensureRealpath(project.FS())
 		}
-		project.onFileAddedOrRemoved(s.isSymlink())
 		return true
 	}
 	return false
@@ -130,11 +129,6 @@ func (s *ScriptInfo) attachToProject(project *Project) bool {
 
 func (s *ScriptInfo) isAttached(project *Project) bool {
 	return slices.Contains(s.containingProjects, project)
-}
-
-func (s *ScriptInfo) isSymlink() bool {
-	// !!!
-	return false
 }
 
 func (s *ScriptInfo) isOrphan() bool {
@@ -182,14 +176,12 @@ func (s *ScriptInfo) detachAllProjects() {
 		// 	p.getCachedDirectoryStructureHost().addOrDeleteFile(this.fileName, this.path, FileWatcherEventKind.Deleted);
 		// }
 		project.removeFile(s, false /*fileExists*/, false /*detachFromProject*/)
-		project.onFileAddedOrRemoved(s.isSymlink())
 	}
 	s.containingProjects = nil
 }
 
 func (s *ScriptInfo) detachFromProject(project *Project) {
 	if index := slices.Index(s.containingProjects, project); index != -1 {
-		s.containingProjects[index].onFileAddedOrRemoved(s.isSymlink())
 		s.containingProjects = slices.Delete(s.containingProjects, index, index+1)
 	}
 }
