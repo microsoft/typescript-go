@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -407,6 +408,7 @@ func (p *Project) updateGraph() bool {
 		return false
 	}
 
+	start := time.Now()
 	p.log("Starting updateGraph: Project: " + p.name)
 	var writeFileNames bool
 	oldProgram := p.program
@@ -428,7 +430,6 @@ func (p *Project) updateGraph() bool {
 	oldProgramReused := p.updateProgram()
 	p.dirty = false
 	p.dirtyFilePath = ""
-	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d", p.name, p.version))
 	if writeFileNames {
 		p.log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/))
 	} else if p.program != oldProgram {
@@ -446,6 +447,7 @@ func (p *Project) updateGraph() bool {
 		// but in Strada we throttle, so at least sometimes this should be considered top-level?
 		p.updateWatchers(context.TODO())
 	}
+	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d in %s", p.name, p.version, time.Since(start)))
 	return true
 }
 
