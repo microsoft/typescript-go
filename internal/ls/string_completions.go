@@ -25,8 +25,6 @@ type completionsFromProperties struct {
 	hasIndexSignature bool
 }
 
-type completionsFromPaths = []*pathCompletion
-
 type pathCompletion struct {
 	name string
 	// ScriptElementKindScriptElement | ScriptElementKindDirectory | ScriptElementKindExternalModuleName
@@ -35,8 +33,11 @@ type pathCompletion struct {
 	textRange *core.TextRange
 }
 
-// *completionsFromTypes | *completionsFromProperties | completionsFromPaths
-type stringLiteralCompletions = any
+type stringLiteralCompletions struct {
+	fromTypes      *completionsFromTypes
+	fromProperties *completionsFromProperties
+	fromPaths      []*pathCompletion
+}
 
 func (l *LanguageService) getStringLiteralCompletions(
 	ctx context.Context,
@@ -77,7 +78,7 @@ func (l *LanguageService) getStringLiteralCompletions(
 
 func (l *LanguageService) convertStringLiteralCompletions(
 	ctx context.Context,
-	completion stringLiteralCompletions,
+	completion *stringLiteralCompletions,
 	contextToken *ast.StringLiteralLike,
 	file *ast.SourceFile,
 	position int,
@@ -91,10 +92,12 @@ func (l *LanguageService) convertStringLiteralCompletions(
 	}
 
 	optionalReplacementRange := l.createRangeFromStringLiteralLikeContent(file, contextToken, position)
-	switch completion := completion.(type) {
-	case completionsFromPaths:
+	switch {
+	case completion.fromPaths != nil:
+		completion := completion.fromPaths
 		return l.convertPathCompletions(completion, file, position, clientOptions)
-	case *completionsFromProperties:
+	case completion.fromProperties != nil:
+		completion := completion.fromProperties
 		data := &completionDataData{
 			symbols:                 completion.symbols,
 			completionKind:          CompletionKindString,
@@ -122,7 +125,8 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			ItemDefaults: itemDefaults,
 			Items:        items,
 		}
-	case *completionsFromTypes:
+	case completion.fromTypes != nil:
+		completion := completion.fromTypes
 		var quoteChar printer.QuoteChar
 		if contextToken.Kind == ast.KindNoSubstitutionTemplateLiteral {
 			quoteChar = printer.QuoteCharBacktick
@@ -167,7 +171,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 }
 
 func (l *LanguageService) convertPathCompletions(
-	pathCompletions completionsFromPaths,
+	pathCompletions []*pathCompletion,
 	file *ast.SourceFile,
 	position int,
 	clientOptions *lsproto.CompletionClientCapabilities,
@@ -212,7 +216,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 	position int,
 	program *compiler.Program,
 	preferences *UserPreferences,
-) stringLiteralCompletions {
+) *stringLiteralCompletions {
 	typeChecker, done := program.GetTypeChecker(ctx)
 	done()
 	parent := walkUpParentheses(node.Parent)
@@ -242,13 +246,19 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			//      foo({
 			//          '/*completion position*/'
 			//      });
-			return stringLiteralCompletionsForObjectLiteral(typeChecker, parent.Parent)
+			return &stringLiteralCompletions{
+				fromProperties: stringLiteralCompletionsForObjectLiteral(typeChecker, parent.Parent),
+			}
 		}
 		result := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
 		if result != nil {
-			return result
+			return &stringLiteralCompletions{
+				fromTypes: result,
+			}
 		}
-		return fromContextualType(checker.ContextFlagsNone, node, typeChecker)
+		return &stringLiteralCompletions{
+			fromTypes: fromContextualType(checker.ContextFlagsNone, node, typeChecker),
+		}
 	case ast.KindElementAccessExpression:
 		expression := parent.Expression()
 		argumentExpression := parent.AsElementAccessExpression().ArgumentExpression
@@ -260,7 +270,9 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			// let a: A;
 			// a['/*completion position*/']
 			t := typeChecker.GetTypeAtLocation(expression)
-			return stringLiteralCompletionsFromProperties(t, typeChecker)
+			return &stringLiteralCompletions{
+				fromProperties: stringLiteralCompletionsFromProperties(t, typeChecker),
+			}
 		}
 		return nil
 	case ast.KindCallExpression, ast.KindNewExpression, ast.KindJsxAttribute:
@@ -291,9 +303,11 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		literals := core.Filter(contextualTypes.types, func(t *checker.StringLiteralType) bool {
 			return !tracker.hasValue(t.AsLiteralType().Value())
 		})
-		return &completionsFromTypes{
-			types:           literals,
-			isNewIdentifier: false,
+		return &stringLiteralCompletions{
+			fromTypes: &completionsFromTypes{
+				types:           literals,
+				isNewIdentifier: false,
+			},
 		}
 	case ast.KindImportSpecifier, ast.KindExportSpecifier:
 		// Complete string aliases in `import { "|" } from` and `export { "|" } from`
@@ -325,16 +339,22 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		uniques := core.Filter(exports, func(e *ast.Symbol) bool {
 			return e.Name != ast.InternalSymbolNameDefault && !existing.Has(e.Name)
 		})
-		return &completionsFromProperties{
-			symbols:           uniques,
-			hasIndexSignature: false,
+		return &stringLiteralCompletions{
+			fromProperties: &completionsFromProperties{
+				symbols:           uniques,
+				hasIndexSignature: false,
+			},
 		}
 	default:
 		result := fromContextualType(checker.ContextFlagsCompletions, node, typeChecker)
 		if result != nil {
-			return result
+			return &stringLiteralCompletions{
+				fromTypes: result,
+			}
 		}
-		return fromContextualType(checker.ContextFlagsNone, node, typeChecker)
+		return &stringLiteralCompletions{
+			fromTypes: fromContextualType(checker.ContextFlagsNone, node, typeChecker),
+		}
 	}
 }
 
@@ -351,15 +371,22 @@ func fromContextualType(contextFlags checker.ContextFlags, node *ast.Node, typeC
 	}
 }
 
-func fromUnionableLiteralType(grandparent *ast.Node, parent *ast.Node, position int, typeChecker *checker.Checker) stringLiteralCompletions {
+func fromUnionableLiteralType(
+	grandparent *ast.Node,
+	parent *ast.Node,
+	position int,
+	typeChecker *checker.Checker,
+) *stringLiteralCompletions {
 	switch grandparent.Kind {
 	case ast.KindExpressionWithTypeArguments, ast.KindTypeReference:
 		typeArgument := ast.FindAncestor(parent, func(n *ast.Node) bool { return n.Parent == grandparent })
 		if typeArgument != nil {
 			t := typeChecker.GetTypeArgumentConstraint(typeArgument)
-			return &completionsFromTypes{
-				types:           getStringLiteralTypes(t, nil, typeChecker),
-				isNewIdentifier: false,
+			return &stringLiteralCompletions{
+				fromTypes: &completionsFromTypes{
+					types:           getStringLiteralTypes(t, nil, typeChecker),
+					isNewIdentifier: false,
+				},
 			}
 		}
 		return nil
@@ -376,7 +403,9 @@ func fromUnionableLiteralType(grandparent *ast.Node, parent *ast.Node, position 
 			return nil
 		}
 		t := typeChecker.GetTypeFromTypeNode(objectType)
-		return stringLiteralCompletionsFromProperties(t, typeChecker)
+		return &stringLiteralCompletions{
+			fromProperties: stringLiteralCompletionsFromProperties(t, typeChecker),
+		}
 	case ast.KindUnionType:
 		result := fromUnionableLiteralType(
 			walkUpParentheses(grandparent.Parent),
@@ -387,24 +416,30 @@ func fromUnionableLiteralType(grandparent *ast.Node, parent *ast.Node, position 
 			return nil
 		}
 		alreadyUsedTypes := getAlreadyUsedTypesInStringLiteralUnion(grandparent, parent)
-		switch result := result.(type) {
-		case *completionsFromProperties:
-			return &completionsFromProperties{
-				symbols: core.Filter(
-					result.symbols,
-					func(s *ast.Symbol) bool { return !slices.Contains(alreadyUsedTypes, s.Name) },
-				),
-				hasIndexSignature: result.hasIndexSignature,
+		switch {
+		case result.fromProperties != nil:
+			result := result.fromProperties
+			return &stringLiteralCompletions{
+				fromProperties: &completionsFromProperties{
+					symbols: core.Filter(
+						result.symbols,
+						func(s *ast.Symbol) bool { return !slices.Contains(alreadyUsedTypes, s.Name) },
+					),
+					hasIndexSignature: result.hasIndexSignature,
+				},
 			}
-		case *completionsFromTypes:
-			return &completionsFromTypes{
-				types: core.Filter(result.types, func(t *checker.StringLiteralType) bool {
-					return !slices.Contains(alreadyUsedTypes, t.AsLiteralType().Value().(string))
-				}),
-				isNewIdentifier: false,
+		case result.fromTypes != nil:
+			result := result.fromTypes
+			return &stringLiteralCompletions{
+				fromTypes: &completionsFromTypes{
+					types: core.Filter(result.types, func(t *checker.StringLiteralType) bool {
+						return !slices.Contains(alreadyUsedTypes, t.AsLiteralType().Value().(string))
+					}),
+					isNewIdentifier: false,
+				},
 			}
 		default:
-			panic(fmt.Sprintf("Unexpected result type: %T", result))
+			return nil
 		}
 	default:
 		return nil
@@ -447,7 +482,7 @@ func getStringLiteralCompletionsFromModuleNames(
 	node *ast.LiteralExpression,
 	program *compiler.Program,
 	preferences *UserPreferences,
-) stringLiteralCompletions {
+) *stringLiteralCompletions {
 	// !!! needs `getModeForUsageLocationWorker`
 	return nil
 }
