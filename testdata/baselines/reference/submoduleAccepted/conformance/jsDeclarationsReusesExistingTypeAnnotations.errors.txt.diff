@@ -3,8 +3,8 @@
 @@= skipped -0, +-1 lines =@@
 -<no content>
 @@= skipped --1, +1 lines =@@
-+index.js(45,17): error TS1051: A 'set' accessor cannot have an optional parameter.
-+index.js(83,17): error TS1051: A 'set' accessor cannot have an optional parameter.
++index.js(45,12): error TS1051: A 'set' accessor cannot have an optional parameter.
++index.js(83,12): error TS1051: A 'set' accessor cannot have an optional parameter.
 +
 +
 +==== index.js (2 errors) ====
@@ -53,7 +53,7 @@
 +    
 +        /** @param {string=} value */
 +        set p1(value) {
-+                    
++               ~~~~~
 +!!! error TS1051: A 'set' accessor cannot have an optional parameter.
 +            this.p1 = value;
 +        }
@@ -93,7 +93,7 @@
 +    class С4 {
 +        /** @param {string=} value */
 +        set p1(value) {
-+                    
++               ~~~~~
 +!!! error TS1051: A 'set' accessor cannot have an optional parameter.
 +            this.p1 = value;
 +        }

@@ -71,7 +71,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 						if member.AsJSDocPropertyTag().IsBracketed ||
 							member.AsJSDocPropertyTag().TypeExpression != nil && member.AsJSDocPropertyTag().TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
 							questionToken = p.factory.NewToken(ast.KindQuestionToken)
-							questionToken.Loc = core.NewTextRange(member.Pos(), member.End())
+							questionToken.Loc = member.Loc
 							questionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
 						}
 						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), questionToken, member.Type(), nil /*initializer*/)
@@ -86,7 +86,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 					panic("typedef tag type expression should be a name reference or a type expression" + typeExpression.Kind.String())
 				}
 				typeAlias := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), typeParameters, t)
-				typeAlias.Loc = core.NewTextRange(tag.Pos(), tag.End())
+				typeAlias.Loc = tag.Loc
 				typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				p.reparseList = append(p.reparseList, typeAlias)
 			case ast.KindJSDocImportTag:
@@ -95,10 +95,68 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				importClause.Flags |= ast.NodeFlagsReparsed
 				importClause.AsImportClause().IsTypeOnly = true
 				importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
-				importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
+				importDeclaration.Loc = tag.Loc
 				importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				p.reparseList = append(p.reparseList, importDeclaration)
-				// !!! @overload and other unattached tags (@callback et al) support goes here
+			case ast.KindJSDocOverloadTag:
+				if fun, ok := getFunctionLikeHost(parent); ok {
+					jsSignature := tag.AsJSDocOverloadTag().TypeExpression.AsJSDocSignature()
+					typeParameters := p.gatherTypeParameters(j)
+
+					parameters := p.nodeSlicePool.NewSlice(0)
+					for _, param := range jsSignature.Parameters.Nodes {
+						jsparam := param.AsJSDocParameterTag()
+						var questionToken *ast.Node
+						if jsparam.IsBracketed || jsparam.TypeExpression != nil && jsparam.TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
+							questionToken = p.factory.NewToken(ast.KindQuestionToken)
+							questionToken.Loc = param.Loc
+							questionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
+						}
+
+						var parameterType *ast.Node
+						if jsparam.TypeExpression != nil {
+							parameterType = p.makeNewType(jsparam.TypeExpression, nil)
+						}
+						parameter := p.factory.NewParameterDeclaration(nil, nil, jsparam.Name(), questionToken, parameterType, nil)
+						parameter.Loc = jsparam.Loc
+						parameter.Flags = p.contextFlags | ast.NodeFlagsReparsed
+						if parameterType != nil {
+							parameterType.Parent = parameter
+							jsparam.TypeExpression.AsJSDocTypeExpression().Host = parameter
+						}
+						parameters = append(parameters, parameter)
+					}
+					parameterList := p.newNodeList(jsSignature.Parameters.Loc, parameters)
+
+					var returnType *ast.Node
+					if jsSignature.Type != nil {
+						returnType = p.makeNewType(jsSignature.Type.AsJSDocReturnTag().TypeExpression, nil)
+					}
+
+					var signature *ast.Node
+					switch fun.Kind {
+					case ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction:
+						signature = p.factory.NewFunctionDeclaration(nil, nil, fun.Name(), typeParameters, parameterList, returnType, nil)
+					case ast.KindMethodDeclaration, ast.KindMethodSignature:
+						signature = p.factory.NewMethodDeclaration(nil, nil, fun.Name(), nil, typeParameters, parameterList, returnType, nil)
+					case ast.KindConstructor:
+						signature = p.factory.NewConstructorDeclaration(nil, typeParameters, parameterList, returnType, nil)
+					default:
+						panic("Unexpected kind " + fun.Kind.String())
+					}
+					for _, p := range jsSignature.Parameters.Nodes {
+						if p.AsJSDocParameterTag().TypeExpression != nil && p.AsJSDocParameterTag().TypeExpression.Type() != nil {
+							p.AsJSDocParameterTag().TypeExpression.AsJSDocTypeExpression().Host = signature
+						}
+					}
+					if jsSignature.Type != nil && jsSignature.Type.AsJSDocReturnTag().TypeExpression != nil {
+						jsSignature.Type.AsJSDocReturnTag().TypeExpression.AsJSDocTypeExpression().Host = signature
+					}
+					signature.Loc = tag.AsJSDocOverloadTag().TagName.Loc
+					signature.Flags = p.contextFlags | ast.NodeFlagsReparsed
+					p.reparseList = append(p.reparseList, signature)
+				}
+				// !!! other unattached tags (@callback) support goes here
 			}
 			if !isLast {
 				continue
@@ -166,7 +224,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 								param.AsParameterDeclaration().Initializer == nil &&
 								(jsparam.IsBracketed || jsparam.TypeExpression != nil && jsparam.TypeExpression.Type().Kind == ast.KindJSDocOptionalType) {
 								param.AsParameterDeclaration().QuestionToken = p.factory.NewToken(ast.KindQuestionToken)
-								param.AsParameterDeclaration().QuestionToken.Loc = core.NewTextRange(param.End(), param.End())
+								param.AsParameterDeclaration().QuestionToken.Loc = param.Loc
 								param.AsParameterDeclaration().QuestionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
 							}
 						}
