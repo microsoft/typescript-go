@@ -912,7 +912,7 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 		}
 		return c.mapType(t, func(t *Type) *Type {
 			if c.maybeTypeOfKind(t, TypeFlagsInstantiable) {
-				constraint := c.GetBaseConstraintOfType(t)
+				constraint := c.getBaseConstraintOfType(t)
 				if constraint == nil || isRelated(n, constraint) {
 					return c.getIntersectionType([]*Type{t, n})
 				}

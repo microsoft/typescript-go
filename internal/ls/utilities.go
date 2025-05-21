@@ -748,7 +748,7 @@ func getAllSuperTypeNodes(node *ast.Node) []*ast.TypeNode {
 
 func skipConstraint(t *checker.Type, typeChecker *checker.Checker) *checker.Type {
 	if t.IsTypeParameter() {
-		c := typeChecker.GetBaseConstraintOfType(t)
+		c := typeChecker.getBaseConstraintOfType(t)
 		if c != nil {
 			return c
 		}
