@@ -219,20 +219,6 @@ func addRange(ranges []edit.Range, lastMode string, aIdx int, bIdx int, lastAIdx
 	}
 }
 
-func min(a int, b int) int {
-	if a <= b {
-		return a
-	}
-	return b
-}
-
-func max(a int, b int) int {
-	if a >= b {
-		return a
-	}
-	return b
-}
-
 func diffText(oldName string, newName string, expected string, actual string, w io.Writer) error {
 	// diff.Text uses the Meyers diff algorithm in quadratic space, which performs poorly on very large diffs
 	// So instead, we leverage an implementation of the historgram diff algorithm which handles long spans of additions much more quickly
