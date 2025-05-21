@@ -1940,6 +1940,54 @@ files = {
 				},
 			},
 		},
+		{
+			name: "completionListAtInvalidLocation",
+			files: map[string]string{
+				defaultMainFileName: `var v1 = '';
+" /*openString1*/
+var v2 = '';
+"/*openString2*/
+var v3 = '';
+" bar./*openString3*/
+var v4 = '';
+// bar./*inComment1*/
+var v6 = '';
+// /*inComment2*/
+var v7 = '';
+/* /*inComment3*/
+var v11 = '';
+  // /*inComment4*/
+var v12 = '';
+type htm/*inTypeAlias*/
+
+//  /*inComment5*/
+foo;
+var v10 = /reg/*inRegExp1*/ex/;`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"openString1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items:        []*lsproto.CompletionItem{},
+					},
+				},
+				"openString2": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items:        []*lsproto.CompletionItem{},
+					},
+				},
+				"openString3": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items:        []*lsproto.CompletionItem{},
+					},
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {

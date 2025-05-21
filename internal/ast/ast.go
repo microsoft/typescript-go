@@ -5495,6 +5495,10 @@ func (node *RegularExpressionLiteral) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsRegularExpressionLiteral(node *Node) bool {
+	return node.Kind == KindRegularExpressionLiteral
+}
+
 // NoSubstitutionTemplateLiteral
 
 type NoSubstitutionTemplateLiteral struct {

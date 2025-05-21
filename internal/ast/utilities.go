@@ -2964,3 +2964,17 @@ func IsTemplateLiteralKind(kind Kind) bool {
 func IsTemplateLiteralToken(node *Node) bool {
 	return IsTemplateLiteralKind(node.Kind)
 }
+
+func IsUnterminatedNode(node *Node) bool {
+	return IsLiteralKind(node.Kind) && IsUnterminatedLiteral(node)
+}
+
+// Gets a value indicating whether a class element is either a static or an instance property declaration with an initializer.
+func IsInitializedProperty(member *ClassElement) bool {
+	return member.Kind == KindPropertyDeclaration &&
+		member.Initializer() != nil
+}
+
+func IsJsxOpeningLikeElement(node *Node) bool {
+	return IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node)
+}
