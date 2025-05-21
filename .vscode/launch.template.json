@@ -37,7 +37,7 @@
             "program": "${workspaceFolder}/internal/testrunner",
             "args": [
                 "-test.cpuprofile",
-                "test.prof",
+                "${workspaceFolder}/test.prof",
                 "-test.run",
                 "TestSubmodule/${fileBasename}"
             ]
