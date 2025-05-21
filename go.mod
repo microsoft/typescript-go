@@ -14,6 +14,7 @@ require (
 
 require (
 	github.com/matryer/moq v0.5.3 // indirect
+	github.com/octavore/delta v0.6.1
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/tools v0.30.0 // indirect
 )
