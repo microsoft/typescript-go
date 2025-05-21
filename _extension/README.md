@@ -12,7 +12,7 @@ This extension provides a preview of the native implementation of the TypeScript
 
 You can enable this extension by modifying the following settings:
 
-```json
+```jsonc
 {
     // UI Setting:
     // TypeScript (Native Preview) > Use Tsgo
