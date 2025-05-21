@@ -1495,7 +1495,7 @@ func (l *LanguageService) completionInfoFromData(
 	isNewIdentifierLocation := data.isNewIdentifierLocation
 	contextToken := data.contextToken
 	literals := data.literals
-	typeChecker, done := program.GetTypeChecker(ctx)
+	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
 
 	// Verify if the file is JSX language variant
