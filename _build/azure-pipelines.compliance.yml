@@ -47,7 +47,7 @@ extends:
               # Do --ignore-scripts for now to avoid needing to install/build rust.
               - bash: npm ci --ignore-scripts
                 displayName: 'npm ci'
-              
+
               - bash: |
                   set -euo pipefail
                   version=$(grep -oP '^go \K[0-9]+\.[0-9]+' go.mod)
