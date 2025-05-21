@@ -110,7 +110,7 @@ func (s *ScriptInfo) setText(newText string) {
 
 func (s *ScriptInfo) markContainingProjectsAsDirty() {
 	for _, project := range s.containingProjects {
-		project.markFileAsDirty(s.path)
+		project.MarkFileAsDirty(s.path)
 	}
 }
 
@@ -175,7 +175,7 @@ func (s *ScriptInfo) detachAllProjects() {
 		// if (isConfiguredProject(p)) {
 		// 	p.getCachedDirectoryStructureHost().addOrDeleteFile(this.fileName, this.path, FileWatcherEventKind.Deleted);
 		// }
-		project.removeFile(s, false /*fileExists*/, false /*detachFromProject*/)
+		project.RemoveFile(s, false /*fileExists*/, false /*detachFromProject*/)
 	}
 	s.containingProjects = nil
 }

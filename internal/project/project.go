@@ -369,7 +369,7 @@ func (p *Project) getScriptKind(fileName string) core.ScriptKind {
 	return core.GetScriptKindFromFileName(fileName)
 }
 
-func (p *Project) markFileAsDirty(path tspath.Path) {
+func (p *Project) MarkFileAsDirty(path tspath.Path) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if !p.dirty {
@@ -384,6 +384,10 @@ func (p *Project) markFileAsDirty(path tspath.Path) {
 func (p *Project) markAsDirty() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	p.markAsDirtyLocked()
+}
+
+func (p *Project) markAsDirtyLocked() {
 	p.dirtyFilePath = ""
 	if !p.dirty {
 		p.dirty = true
@@ -490,6 +494,13 @@ func (p *Project) isRoot(info *ScriptInfo) bool {
 	return p.rootFileNames.Has(info.path)
 }
 
+func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.removeFile(info, fileExists, detachFromProject)
+	p.markAsDirtyLocked()
+}
+
 func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
 	if p.isRoot(info) {
 		switch p.kind {
@@ -511,7 +522,13 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 	if detachFromProject {
 		info.detachFromProject(p)
 	}
-	p.markAsDirty()
+}
+
+func (p *Project) AddRoot(info *ScriptInfo) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.addRoot(info)
+	p.markAsDirtyLocked()
 }
 
 func (p *Project) addRoot(info *ScriptInfo) {
@@ -525,7 +542,6 @@ func (p *Project) addRoot(info *ScriptInfo) {
 	}
 	p.rootFileNames.Set(info.path, info.fileName)
 	info.attachToProject(p)
-	p.markAsDirty()
 }
 
 func (p *Project) LoadConfig() error {

@@ -211,7 +211,7 @@ func (s *Service) CloseFile(fileName string) {
 		info.close(fileExists)
 		for _, project := range info.containingProjects {
 			if project.kind == KindInferred && project.isRoot(info) {
-				project.removeFile(info, fileExists, true /*detachFromProject*/)
+				project.RemoveFile(info, fileExists, true /*detachFromProject*/)
 			}
 		}
 		delete(s.openFiles, info.path)
@@ -598,7 +598,7 @@ func (s *Service) assignOrphanScriptInfoToInferredProject(info *ScriptInfo, proj
 		project = s.getOrCreateUnrootedInferredProject()
 	}
 
-	project.addRoot(info)
+	project.AddRoot(info)
 	project.updateGraph()
 	// !!! old code ensures that scriptInfo is only part of one project
 }
