@@ -3,7 +3,7 @@
     "displayName": "TypeScript (Native Preview)",
     "publisher": "TypeScriptTeam",
     "author": "Microsoft Corp.",
-    "description": "Native preview of the TypeScript language server for Visual Studio Code.",
+    "description": "Preview of the native TypeScript language server for Visual Studio Code.",
     "icon": "logo.png",
     "private": true,
     "version": "0.0.0",
