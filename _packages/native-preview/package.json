@@ -11,7 +11,8 @@
         "Microsoft",
         "compiler",
         "language",
-        "javascript"
+        "javascript",
+        "tsgo"
     ],
     "bugs": {
         "url": "https://github.com/microsoft/typescript-go/issues"
