@@ -4376,7 +4376,6 @@ func isSolelyIdentifierDefinitionLocation(
 		// If `contextToken !== previousToken`, this is `class C ex/**/`, `interface I ex/**/` or `<T ex/**/>`.
 		!((ast.IsClassLike(parent) || ast.IsInterfaceDeclaration(parent) || ast.IsTypeParameterDeclaration(parent)) &&
 			(contextToken != previousToken || position > previousToken.End()))
-
 }
 
 func isVariableDeclarationListButNotTypeArgument(node *ast.Node, file *ast.SourceFile, typeChecker *checker.Checker) bool {

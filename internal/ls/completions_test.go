@@ -1966,26 +1966,36 @@ var v10 = /reg/*inRegExp1*/ex/;`,
 			},
 			expectedResult: map[string]*testCaseResult{
 				"openString1": {
-					list: &lsproto.CompletionList{
-						IsIncomplete: false,
-						ItemDefaults: itemDefaults,
-						Items:        []*lsproto.CompletionItem{},
-					},
+					list: nil,
 				},
 				"openString2": {
-					list: &lsproto.CompletionList{
-						IsIncomplete: false,
-						ItemDefaults: itemDefaults,
-						Items:        []*lsproto.CompletionItem{},
-					},
+					list: nil,
 				},
 				"openString3": {
-					list: &lsproto.CompletionList{
-						IsIncomplete: false,
-						ItemDefaults: itemDefaults,
-						Items:        []*lsproto.CompletionItem{},
-					},
+					list: nil,
 				},
+				// !!! isInComment
+				// "inComment1": {
+				// 	list: nil,
+				// },
+				// "inComment2": {
+				// 	list: nil,
+				// },
+				// "inComment3": {
+				// 	list: nil,
+				// },
+				// "inComment4": {
+				// 	list: nil,
+				// },
+				// "inComment5": {
+				// 	list: nil,
+				// },
+				// "inTypeAlias": {
+				// 	list: nil,
+				// },
+				// "inRegExp1": {
+				// 	list: nil,
+				// },
 			},
 		},
 	}
