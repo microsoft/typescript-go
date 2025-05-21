@@ -30,7 +30,10 @@ type testCaseResult struct {
 	excludes   []string
 }
 
-const defaultMainFileName = "/index.ts"
+const (
+	defaultMainFileName     = "/index.ts"
+	defaultTsconfigFileName = "/tsconfig.json"
+)
 
 func TestCompletions(t *testing.T) {
 	t.Parallel()
@@ -54,6 +57,7 @@ func TestCompletions(t *testing.T) {
 	variableKind := ptrTo(lsproto.CompletionItemKindVariable)
 	classKind := ptrTo(lsproto.CompletionItemKindClass)
 	keywordKind := ptrTo(lsproto.CompletionItemKindKeyword)
+	propertyKind := ptrTo(lsproto.CompletionItemKindProperty)
 
 	stringMembers := []*lsproto.CompletionItem{
 		{Label: "charAt", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
@@ -1528,6 +1532,156 @@ function fn3() {
 				},
 			},
 		},
+		{
+			name: "completionListWithLabel",
+			files: map[string]string{
+				defaultMainFileName: `label: while (true) {
+   break /*1*/
+   continue /*2*/
+   testlabel: while (true) {
+       break /*3*/
+       continue /*4*/
+       break tes/*5*/
+       continue tes/*6*/
+   }
+   break /*7*/
+   break; /*8*/
+}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"2": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"7": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"3": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"4": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"5": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"6": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"8": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items:        []*lsproto.CompletionItem{},
+					},
+					isIncludes: true,
+					excludes:   []string{"label"},
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
@@ -1542,6 +1696,7 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 		mainFileName = defaultMainFileName
 	}
 	parsedFiles := make(map[string]string)
+	parsedFiles[defaultTsconfigFileName] = `{}`
 	var markerPositions map[string]*lstestutil.Marker
 	for fileName, content := range files {
 		if fileName == mainFileName {
