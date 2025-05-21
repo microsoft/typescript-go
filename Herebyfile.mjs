@@ -1130,6 +1130,16 @@ export const packNativePreviewPackages = task({
             const filename = JSON.parse(stdout)[0].filename.replace("@", "").replace("/", "-");
             await fs.promises.rename(filename, npmTarball);
         }));
+
+        // npm packages need to be published in reverse dep order, e.g. such that no package
+        // is published before its dependencies.
+        const publishOrder = [
+            ...platforms.map(p => p.npmTarball),
+            mainNativePreviewPackage.npmTarball,
+        ].map(p => path.basename(p));
+
+        const publishOrderPath = path.join(builtNpm, "publish-order.txt");
+        await fs.promises.writeFile(publishOrderPath, publishOrder.join("\n") + "\n");
     },
 });
 
