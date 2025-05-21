@@ -290,11 +290,7 @@ func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.Sou
 }
 
 func (l *LanguageService) createLspPosition(position int, file *ast.SourceFile) lsproto.Position {
-	lspPos, err := l.converters.ToLSPPosition(file.FileName(), core.TextPos(position))
-	if err != nil {
-		panic(err)
-	}
-	return lspPos
+	return l.converters.PositionToLineAndCharacter(file, core.TextPos(position))
 }
 
 func quote(file *ast.SourceFile, preferences *UserPreferences, text string) string {

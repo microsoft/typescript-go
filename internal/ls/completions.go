@@ -296,6 +296,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	// !!! see if incomplete completion list and continue or clean
 
 	stringCompletions := l.getStringLiteralCompletions(
+		ctx,
 		file,
 		position,
 		previousToken,
@@ -1489,7 +1490,8 @@ func (l *LanguageService) completionInfoFromData(
 	isNewIdentifierLocation := data.isNewIdentifierLocation
 	contextToken := data.contextToken
 	literals := data.literals
-	typeChecker := program.GetTypeChecker()
+	typeChecker, done := program.GetTypeChecker(ctx)
+	defer done()
 
 	// Verify if the file is JSX language variant
 	if ast.GetLanguageVariant(file.ScriptKind) == core.LanguageVariantJSX {

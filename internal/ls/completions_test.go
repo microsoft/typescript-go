@@ -1377,10 +1377,9 @@ export function isAnyDirectorySeparator(charCode: number): boolean {
 						ItemDefaults: itemDefaults,
 						Items: []*lsproto.CompletionItem{
 							{
-								Label:            "CharacterCodes",
-								Kind:             variableKind,
-								SortText:         sortTextLocationPriority,
-								InsertTextFormat: insertTextFormatPlainText,
+								Label:    "CharacterCodes",
+								Kind:     variableKind,
+								SortText: sortTextLocationPriority,
 								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 									InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 										NewText: "CharacterCodes",

@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"strings"
@@ -38,6 +39,7 @@ type pathCompletion struct {
 type stringLiteralCompletions = any
 
 func (l *LanguageService) getStringLiteralCompletions(
+	ctx context.Context,
 	file *ast.SourceFile,
 	position int,
 	contextToken *ast.Node,
@@ -52,12 +54,14 @@ func (l *LanguageService) getStringLiteralCompletions(
 			return nil
 		}
 		entries := l.getStringLiteralCompletionEntries(
+			ctx,
 			file,
 			contextToken,
 			position,
 			program,
 			preferences)
 		return l.convertStringLiteralCompletions(
+			ctx,
 			entries,
 			contextToken,
 			file,
@@ -72,6 +76,7 @@ func (l *LanguageService) getStringLiteralCompletions(
 }
 
 func (l *LanguageService) convertStringLiteralCompletions(
+	ctx context.Context,
 	completion stringLiteralCompletions,
 	contextToken *ast.StringLiteralLike,
 	file *ast.SourceFile,
@@ -98,6 +103,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			contextToken:            contextToken,
 		}
 		_, items := l.getCompletionEntriesFromSymbols(
+			ctx,
 			data,
 			optionalReplacementRange,
 			contextToken, /*replacementToken*/
@@ -200,13 +206,15 @@ func (l *LanguageService) convertPathCompletions(
 }
 
 func (l *LanguageService) getStringLiteralCompletionEntries(
+	ctx context.Context,
 	file *ast.SourceFile,
 	node *ast.StringLiteralLike,
 	position int,
 	program *compiler.Program,
 	preferences *UserPreferences,
 ) stringLiteralCompletions {
-	typeChecker := program.GetTypeChecker()
+	typeChecker, done := program.GetTypeChecker(ctx)
+	done()
 	parent := walkUpParentheses(node.Parent)
 	switch parent.Kind {
 	case ast.KindLiteralType:
