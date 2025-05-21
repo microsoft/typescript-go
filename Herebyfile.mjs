@@ -956,6 +956,7 @@ export const buildNativePreviewPackages = task({
 
         await fs.promises.writeFile(path.join(mainPackageDir, "package.json"), JSON.stringify(mainPackage, undefined, 4));
         await fs.promises.copyFile("LICENSE", path.join(mainPackageDir, "LICENSE"));
+        // No NOTICE.txt here; does not ship the binary or libs. If this changes, we should add it.
 
         let ldflags = "-ldflags=-s -w";
         if (options.setPrerelease) {
@@ -982,6 +983,7 @@ export const buildNativePreviewPackages = task({
             await fs.promises.mkdir(out, { recursive: true });
             await fs.promises.writeFile(path.join(npmDir, "package.json"), JSON.stringify(packageJson, undefined, 4));
             await fs.promises.copyFile("LICENSE", path.join(npmDir, "LICENSE"));
+            await fs.promises.copyFile("NOTICE.txt", path.join(npmDir, "NOTICE.txt"));
 
             const readme = [
                 `# \`${npmPackageName}\``,
@@ -1157,6 +1159,8 @@ export const packNativePreviewExtensions = task({
             packageJson.version = version;
             packageJson.main = "dist/extension.bundle.js";
             fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, undefined, 4));
+
+            await fs.promises.copyFile("NOTICE.txt", path.join(thisExtensionDir, "NOTICE.txt"));
 
             await $({ cwd: thisExtensionDir })`vsce package ${version} --pre-release --no-update-package-json --no-dependencies --out ${vsixPath} --target ${vscodeTarget}`;
 

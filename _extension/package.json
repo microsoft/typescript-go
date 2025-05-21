@@ -93,6 +93,7 @@
         "dist/extension.bundle.js",
         "lib",
         "LICENSE",
+        "NOTICE.txt",
         "logo.png"
     ],
     "scripts": {
