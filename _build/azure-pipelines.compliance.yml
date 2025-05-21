@@ -19,6 +19,11 @@ extends:
       os: linux
 
     sdl:
+      git:
+        submodules: false
+        fetchDepth: 1
+        fetchTags: false
+        retryCount: 3
       enableProductionSDL: true
       sourceAnalysisPool:
         name: TypeScript-AzurePipelines-EO
@@ -38,6 +43,7 @@ extends:
                 fetchDepth: 1
                 fetchTags: false
                 submodules: false
+                retryCountOnTaskFailure: 3
 
               - task: NodeTool@0
                 inputs:
