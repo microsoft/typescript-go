@@ -414,7 +414,7 @@ func (p *Project) updateGraph() bool {
 			p.parsedCommandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(p.parsedCommandLine, p.host.FS())
 			writeFileNames = p.setRootFiles(p.parsedCommandLine.FileNames())
 		case PendingReloadFull:
-			if err := p.LoadConfig(); err != nil {
+			if err := p.loadConfig(); err != nil {
 				panic(fmt.Sprintf("failed to reload config: %v", err))
 			}
 		}
@@ -529,6 +529,14 @@ func (p *Project) addRoot(info *ScriptInfo) {
 }
 
 func (p *Project) LoadConfig() error {
+	if err := p.loadConfig(); err != nil {
+		return err
+	}
+	p.markAsDirty()
+	return nil
+}
+
+func (p *Project) loadConfig() error {
 	if p.kind != KindConfigured {
 		panic("loadConfig called on non-configured project")
 	}
@@ -563,8 +571,6 @@ func (p *Project) LoadConfig() error {
 		p.compilerOptions = &core.CompilerOptions{}
 		return fmt.Errorf("could not read file %q", p.configFileName)
 	}
-
-	p.markAsDirty()
 	return nil
 }
 
