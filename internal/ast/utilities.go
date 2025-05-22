@@ -2404,7 +2404,7 @@ func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.Modul
 		impliedNodeFormat = core.ResolutionModeESM
 	} else if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCts, tspath.ExtensionCjs}) {
 		impliedNodeFormat = core.ResolutionModeCommonJS
-	} else if packageJsonType != "" && tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
+	} else if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDts, tspath.ExtensionTs, tspath.ExtensionTsx, tspath.ExtensionJs, tspath.ExtensionJsx}) {
 		impliedNodeFormat = core.IfElse(packageJsonType == "module", core.ResolutionModeESM, core.ResolutionModeCommonJS)
 	}
 
@@ -2967,4 +2967,57 @@ func GetPropertyNameForPropertyNameNode(name *Node) string {
 		return InternalSymbolNameMissing
 	}
 	panic("Unhandled case in getPropertyNameForPropertyNameNode")
+}
+
+func IsPartOfTypeOnlyImportOrExportDeclaration(node *Node) bool {
+	return FindAncestor(node, IsTypeOnlyImportOrExportDeclaration) != nil
+}
+
+func IsPartOfExclusivelyTypeOnlyImportOrExportDeclaration(node *Node) bool {
+	return FindAncestor(node, IsExclusivelyTypeOnlyImportOrExport) != nil
+}
+
+func IsEmittableImport(node *Node) bool {
+	switch node.Kind {
+	case KindImportDeclaration:
+		return node.AsImportDeclaration().ImportClause == nil || !node.AsImportDeclaration().ImportClause.IsTypeOnly()
+	case KindExportDeclaration:
+		return !node.AsExportDeclaration().IsTypeOnly
+	case KindImportEqualsDeclaration:
+		return !node.AsImportEqualsDeclaration().IsTypeOnly
+	case KindCallExpression:
+		return IsImportCall(node)
+	}
+	return false
+}
+
+func IsResolutionModeOverrideHost(node *Node) bool {
+	if node == nil {
+		return false
+	}
+	switch node.Kind {
+	case KindImportType, KindExportDeclaration, KindImportDeclaration, KindJSImportDeclaration:
+		return true
+	}
+	return false
+}
+
+func HasResolutionModeOverride(node *Node) bool {
+	if node == nil {
+		return false
+	}
+	var attributes *ImportAttributesNode
+	switch node.Kind {
+	case KindImportType:
+		attributes = node.AsImportTypeNode().Attributes
+	case KindImportDeclaration, KindJSImportDeclaration:
+		attributes = node.AsImportDeclaration().Attributes
+	case KindExportDeclaration:
+		attributes = node.AsExportDeclaration().Attributes
+	}
+	if attributes != nil {
+		_, ok := attributes.GetResolutionModeOverride()
+		return ok
+	}
+	return false
 }

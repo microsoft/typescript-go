@@ -180,15 +180,20 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 	}
 }
 
-func (options *CompilerOptions) GetResolutionMode() ResolutionMode {
-	switch options.GetEmitModuleKind() {
-	case ModuleKindCommonJS:
-		return ResolutionModeCommonJS
-	case ModuleKindESNext:
-		return ResolutionModeESM
-	default:
-		return ResolutionModeNone
-	}
+func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
+	return options.ResolvePackageJsonExports.IsTrueOrUnknown()
+}
+
+func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
+	return options.ResolvePackageJsonImports.IsTrueOrUnknown()
+}
+
+func (options *CompilerOptions) GetAllowImportingTsExtensions() bool {
+	return options.AllowImportingTsExtensions.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()
+}
+
+func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) bool {
+	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
 }
 
 func (options *CompilerOptions) GetESModuleInterop() bool {

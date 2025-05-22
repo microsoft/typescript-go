@@ -4152,6 +4152,10 @@ func IsImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration
 }
 
+func IsImportDeclarationOrJSImportDeclaration(node *Node) bool {
+	return node.Kind == KindImportDeclaration || node.Kind == KindJSImportDeclaration
+}
+
 // ImportSpecifier
 
 type ImportSpecifier struct {
@@ -9936,8 +9940,9 @@ type CommentDirective struct {
 // SourceFile
 
 type SourceFileMetaData struct {
-	PackageJsonType   string
-	ImpliedNodeFormat core.ResolutionMode
+	PackageJsonType      string
+	PackageJsonDirectory string
+	ImpliedNodeFormat    core.ResolutionMode
 }
 
 type CheckJsDirective struct {
