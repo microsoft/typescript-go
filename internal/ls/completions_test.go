@@ -1,6 +1,7 @@
 package ls_test
 
 import (
+	"context"
 	"slices"
 	"testing"
 
@@ -29,7 +30,10 @@ type testCaseResult struct {
 	excludes   []string
 }
 
-const defaultMainFileName = "/index.ts"
+const (
+	defaultMainFileName     = "/index.ts"
+	defaultTsconfigFileName = "/tsconfig.json"
+)
 
 func TestCompletions(t *testing.T) {
 	t.Parallel()
@@ -53,6 +57,7 @@ func TestCompletions(t *testing.T) {
 	variableKind := ptrTo(lsproto.CompletionItemKindVariable)
 	classKind := ptrTo(lsproto.CompletionItemKindClass)
 	keywordKind := ptrTo(lsproto.CompletionItemKindKeyword)
+	propertyKind := ptrTo(lsproto.CompletionItemKindProperty)
 
 	stringMembers := []*lsproto.CompletionItem{
 		{Label: "charAt", Kind: methodKind, SortText: sortTextLocationPriority, InsertTextFormat: insertTextFormatPlainText},
@@ -1527,6 +1532,156 @@ function fn3() {
 				},
 			},
 		},
+		{
+			name: "completionListWithLabel",
+			files: map[string]string{
+				defaultMainFileName: `label: while (true) {
+   break /*1*/
+   continue /*2*/
+   testlabel: while (true) {
+       break /*3*/
+       continue /*4*/
+       break tes/*5*/
+       continue tes/*6*/
+   }
+   break /*7*/
+   break; /*8*/
+}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"2": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"7": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"3": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"4": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"5": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"6": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:            "testlabel",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+							{
+								Label:            "label",
+								Kind:             propertyKind,
+								SortText:         sortTextLocationPriority,
+								InsertTextFormat: insertTextFormatPlainText,
+							},
+						},
+					},
+				},
+				"8": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items:        []*lsproto.CompletionItem{},
+					},
+					isIncludes: true,
+					excludes:   []string{"label"},
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
@@ -1541,6 +1696,7 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 		mainFileName = defaultMainFileName
 	}
 	parsedFiles := make(map[string]string)
+	parsedFiles[defaultTsconfigFileName] = `{}`
 	var markerPositions map[string]*lstestutil.Marker
 	for fileName, content := range files {
 		if fileName == mainFileName {
@@ -1551,7 +1707,9 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 			parsedFiles[fileName] = content
 		}
 	}
-	languageService := createLanguageService(mainFileName, parsedFiles)
+	ctx := projecttestutil.WithRequestID(t.Context())
+	languageService, done := createLanguageService(ctx, mainFileName, parsedFiles)
+	defer done()
 	context := &lsproto.CompletionContext{
 		TriggerKind: lsproto.CompletionTriggerKindInvoked,
 	}
@@ -1575,12 +1733,14 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 		if !ok {
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
-		completionList := languageService.ProvideCompletion(
-			mainFileName,
-			marker.Position,
+		completionList, err := languageService.ProvideCompletion(
+			ctx,
+			ls.FileNameToDocumentURI(mainFileName),
+			marker.LSPosition,
 			context,
 			capabilities,
 			preferences)
+		assert.NilError(t, err)
 		if expectedResult.isIncludes {
 			assertIncludesItem(t, completionList, expectedResult.list)
 		} else {
@@ -1610,11 +1770,11 @@ func assertIncludesItem(t *testing.T, actual *lsproto.CompletionList, expected *
 	return false
 }
 
-func createLanguageService(fileName string, files map[string]string) *ls.LanguageService {
+func createLanguageService(ctx context.Context, fileName string, files map[string]string) (*ls.LanguageService, func()) {
 	projectService, _ := projecttestutil.Setup(files)
 	projectService.OpenFile(fileName, files[fileName], core.ScriptKindTS, "")
 	project := projectService.Projects()[0]
-	return project.LanguageService()
+	return project.GetLanguageServiceForRequest(ctx)
 }
 
 func ptrTo[T any](v T) *T {

@@ -1,6 +1,7 @@
 package ls
 
 import (
+	"context"
 	"fmt"
 	"maps"
 	"slices"
@@ -22,14 +23,23 @@ import (
 )
 
 func (l *LanguageService) ProvideCompletion(
-	fileName string,
-	position int,
+	ctx context.Context,
+	documentURI lsproto.DocumentUri,
+	position lsproto.Position,
 	context *lsproto.CompletionContext,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
-) *lsproto.CompletionList {
-	program, file := l.getProgramAndFile(fileName)
-	return l.getCompletionsAtPosition(program, file, position, context, preferences, clientOptions)
+) (*lsproto.CompletionList, error) {
+	program, file := l.getProgramAndFile(documentURI)
+	return l.getCompletionsAtPosition(
+		ctx,
+		program,
+		file,
+		int(l.converters.LineAndCharacterToPosition(file, position)),
+		context,
+		preferences,
+		clientOptions,
+	), nil
 }
 
 // *completionDataData | *completionDataKeyword
@@ -257,6 +267,7 @@ const (
 )
 
 func (l *LanguageService) getCompletionsAtPosition(
+	ctx context.Context,
 	program *compiler.Program,
 	file *ast.SourceFile,
 	position int,
@@ -285,9 +296,16 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	// !!! string literal completions
 
-	// !!! label completions
+	if previousToken != nil && ast.IsBreakOrContinueStatement(previousToken.Parent) &&
+		(previousToken.Kind == ast.KindBreakKeyword ||
+			previousToken.Kind == ast.KindContinueKeyword ||
+			previousToken.Kind == ast.KindIdentifier) {
+		return l.getLabelCompletionsAtPosition(previousToken.Parent, clientOptions, file, position)
+	}
 
-	data := getCompletionData(program, file, position, preferences)
+	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
+	data := getCompletionData(program, checker, file, position, preferences)
 	if data == nil {
 		return nil
 	}
@@ -295,6 +313,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	switch data := data.(type) {
 	case *completionDataData:
 		response := l.completionInfoFromData(
+			ctx,
 			file,
 			program,
 			compilerOptions,
@@ -313,8 +332,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 	}
 }
 
-func getCompletionData(program *compiler.Program, file *ast.SourceFile, position int, preferences *UserPreferences) completionData {
-	typeChecker := program.GetTypeChecker()
+func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, file *ast.SourceFile, position int, preferences *UserPreferences) completionData {
 	inCheckedFile := isCheckedFile(file, program.GetCompilerOptions())
 
 	currentToken := astnav.GetTokenAtPosition(file, position)
@@ -1451,6 +1469,7 @@ func getDefaultCommitCharacters(isNewIdentifierLocation bool) []string {
 }
 
 func (l *LanguageService) completionInfoFromData(
+	ctx context.Context,
 	file *ast.SourceFile,
 	program *compiler.Program,
 	compilerOptions *core.CompilerOptions,
@@ -1488,6 +1507,7 @@ func (l *LanguageService) completionInfoFromData(
 	}
 
 	uniqueNames, sortedEntries := l.getCompletionEntriesFromSymbols(
+		ctx,
 		data,
 		nil, /*replacementToken*/
 		position,
@@ -1548,6 +1568,7 @@ func (l *LanguageService) completionInfoFromData(
 }
 
 func (l *LanguageService) getCompletionEntriesFromSymbols(
+	ctx context.Context,
 	data *completionDataData,
 	replacementToken *ast.Node,
 	position int,
@@ -1560,7 +1581,8 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 ) (uniqueNames core.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := probablyUsesSemicolons(file)
-	typeChecker := program.GetTypeChecker()
+	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
 	isMemberCompletion := isMemberCompletionKind(data.completionKind)
 	optionalReplacementSpan := getOptionalReplacementSpan(data.location, file)
 	// Tracks unique names.
@@ -1602,6 +1624,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			sortText = originalSortText
 		}
 		entry := l.createCompletionItem(
+			ctx,
 			symbol,
 			sortText,
 			replacementToken,
@@ -1669,6 +1692,7 @@ func createCompletionItemForLiteral(
 }
 
 func (l *LanguageService) createCompletionItem(
+	ctx context.Context,
 	symbol *ast.Symbol,
 	sortText sortText,
 	replacementToken *ast.Node,
@@ -1694,7 +1718,8 @@ func (l *LanguageService) createCompletionItem(
 	source := getSourceFromOrigin(origin)
 	var labelDetails *lsproto.CompletionItemLabelDetails
 
-	typeChecker := program.GetTypeChecker()
+	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
 	insertQuestionDot := originIsNullableMember(origin)
 	useBraces := originIsSymbolMember(origin) || needsConvertPropertyAccess
 	if originIsThisType(origin) {
@@ -4082,4 +4107,67 @@ func (l *LanguageService) createLSPCompletionItem(
 		CommitCharacters: commitCharacters,
 		Data:             nil, // !!! auto-imports
 	}
+}
+
+func (l *LanguageService) getLabelCompletionsAtPosition(
+	node *ast.BreakOrContinueStatement,
+	clientOptions *lsproto.CompletionClientCapabilities,
+	file *ast.SourceFile,
+	position int,
+) *lsproto.CompletionList {
+	items := l.getLabelStatementCompletions(node, clientOptions, file, position)
+	if len(items) == 0 {
+		return nil
+	}
+	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
+	itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+	return &lsproto.CompletionList{
+		IsIncomplete: false,
+		ItemDefaults: itemDefaults,
+		Items:        items,
+	}
+}
+
+func (l *LanguageService) getLabelStatementCompletions(
+	node *ast.BreakOrContinueStatement,
+	clientOptions *lsproto.CompletionClientCapabilities,
+	file *ast.SourceFile,
+	position int,
+) []*lsproto.CompletionItem {
+	var uniques core.Set[string]
+	var items []*lsproto.CompletionItem
+	current := node
+	for current != nil {
+		if ast.IsFunctionLike(current) {
+			break
+		}
+		if ast.IsLabeledStatement(current) {
+			name := current.Label().Text()
+			if !uniques.Has(name) {
+				uniques.Add(name)
+				items = append(items, l.createLSPCompletionItem(
+					name,
+					"", /*insertText*/
+					"", /*filterText*/
+					SortTextLocationPriority,
+					ScriptElementKindLabel,
+					core.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
+					nil,                                   /*replacementSpan*/
+					nil,                                   /*optionalReplacementSpan*/
+					nil,                                   /*commitCharacters*/
+					nil,                                   /*labelDetails*/
+					file,
+					position,
+					clientOptions,
+					false, /*isMemberCompletion*/
+					false, /*isSnippet*/
+					false, /*hasAction*/
+					false, /*preselect*/
+					"",    /*source*/
+				))
+			}
+		}
+		current = current.Parent
+	}
+	return items
 }
