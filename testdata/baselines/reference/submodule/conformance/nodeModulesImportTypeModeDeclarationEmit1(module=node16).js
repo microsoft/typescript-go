@@ -23,5 +23,8 @@ export const b = (null as any as import("pkg", { assert: {"resolution-mode": "im
 
 
 //// [index.js]
-export const a = null;
-export const b = null;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = exports.a = void 0;
+exports.a = null;
+exports.b = null;

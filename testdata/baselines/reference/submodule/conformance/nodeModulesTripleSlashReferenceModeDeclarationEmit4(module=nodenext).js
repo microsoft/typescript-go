@@ -24,5 +24,6 @@ declare global {
 export interface LocalInterface extends ImportInterface {}
 
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference types="pkg" resolution-mode="import" preserve="true" />
-export {};
