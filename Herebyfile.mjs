@@ -85,7 +85,6 @@ const options = /** @type {Options} */ (rawOptions);
 
 if (options.forRelease && !options.setPrerelease) {
     throw new Error("forRelease requires setPrerelease");
-    z;
 }
 
 const defaultGoBuildTags = [
