@@ -1160,6 +1160,8 @@ export const packNativePreviewExtensions = task({
 
         let version = "0.0.0";
         if (options.forRelease) {
+            // No real semver prerelease versioning.
+            // https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
             assert(options.setPrerelease, "forRelease is true but setPrerelease is not set");
             const prerelease = options.setPrerelease;
             assert(typeof prerelease === "string", "setPrerelease is not a string");
