@@ -558,16 +558,6 @@ func StripQuotes(name string) string {
 	return name
 }
 
-func GetPathsBasePath(options *CompilerOptions, currentDirectory string) string {
-	if options.Paths.Size() == 0 {
-		return ""
-	}
-	if options.PathsBasePath != "" {
-		return options.PathsBasePath
-	}
-	return currentDirectory
-}
-
 func IndexAfter(s string, pattern string, startIndex int) int {
 	matched := strings.Index(s[startIndex:], pattern)
 	if matched == -1 {

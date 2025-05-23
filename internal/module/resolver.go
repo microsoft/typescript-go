@@ -963,7 +963,7 @@ func (r *resolutionState) tryLoadModuleUsingPathsIfEligible() *resolved {
 	} else {
 		return continueSearching()
 	}
-	baseDirectory := core.GetPathsBasePath(r.compilerOptions, r.resolver.host.GetCurrentDirectory())
+	baseDirectory := r.compilerOptions.GetPathsBasePath(r.resolver.host.GetCurrentDirectory())
 	pathPatterns := r.resolver.getParsedPatternsForPaths()
 	return r.tryLoadModuleUsingPaths(
 		r.extensions,

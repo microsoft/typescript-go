@@ -426,7 +426,7 @@ func getLocalModuleSpecifier(
 		return relativePath
 	}
 
-	root := core.GetPathsBasePath(compilerOptions, host.GetCurrentDirectory())
+	root := compilerOptions.GetPathsBasePath(host.GetCurrentDirectory())
 	if len(root) == 0 {
 		root = compilerOptions.BaseUrl
 	}

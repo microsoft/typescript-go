@@ -309,6 +309,16 @@ func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
 	return false
 }
 
+func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string {
+	if options.Paths.Size() == 0 {
+		return ""
+	}
+	if options.PathsBasePath != "" {
+		return options.PathsBasePath
+	}
+	return currentDirectory
+}
+
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
 // affect the parse and bind of a source file.
 type SourceFileAffectingCompilerOptions struct {
