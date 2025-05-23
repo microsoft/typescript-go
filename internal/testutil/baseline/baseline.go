@@ -3,7 +3,6 @@ package baseline
 import (
 	"fmt"
 	"io"
-	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -14,10 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	delta "github.com/octavore/delta/lib"
-	"github.com/pkg/diff"
-	edit "github.com/pkg/diff/edit"
-	write "github.com/pkg/diff/write"
+	"github.com/peter-evans/patience"
 	"gotest.tools/v3/assert"
 )
 
@@ -112,14 +108,6 @@ type inputPair struct {
 	b []string
 }
 
-func (p *inputPair) WriteATo(w io.Writer, ai int) (int, error) {
-	return fmt.Fprint(w, p.a[ai])
-}
-
-func (p *inputPair) WriteBTo(w io.Writer, bi int) (int, error) {
-	return fmt.Fprint(w, p.b[bi])
-}
-
 var newlineRE = regexp.MustCompile("\r?\n")
 
 func inputPairFrom(a string, b string) *inputPair {
@@ -129,107 +117,18 @@ func inputPairFrom(a string, b string) *inputPair {
 	}
 }
 
-const maxContext = 3
-
-func intoEditScript(sln *delta.DiffSolution) edit.Script {
-	var ranges []edit.Range
-	aIdx := 0
-	bIdx := 0
-	lastAIdx := 0
-	lastBIdx := 0
-	lastMode := ""
-	// accumulate all the histogram clusters into edits
-	for i, line := range sln.Lines {
-		if i == 0 {
-			lastMode = line[2]
-		}
-		if lastMode != line[2] {
-			// span kind changed on this line - record span as range
-			ranges = addRange(ranges, lastMode, aIdx, bIdx, lastAIdx, lastBIdx, false)
-			lastMode = line[2]
-			lastAIdx = aIdx
-			lastBIdx = bIdx
-		}
-		switch line[2] {
-		case string(delta.LineFromA):
-			aIdx++
-		case string(delta.LineFromB):
-			bIdx++
-		case string(delta.LineFromBoth), string(delta.LineFromBothEdit):
-			aIdx++
-			bIdx++
-		}
-	}
-
-	ranges = addRange(ranges, lastMode, aIdx, bIdx, lastAIdx, lastBIdx, true)
-	return edit.NewScript(ranges...)
-}
-
-func addRange(ranges []edit.Range, lastMode string, aIdx int, bIdx int, lastAIdx int, lastBIdx int, eof bool) []edit.Range {
-	if lastMode == string(delta.LineFromBothEdit) {
-		// record as deleta A, add B
-		ranges = append(ranges, edit.Range{
-			LowA: lastAIdx, HighA: aIdx,
-			LowB: lastBIdx, HighB: lastBIdx,
-		})
-		return append(ranges, edit.Range{
-			LowA: aIdx, HighA: aIdx,
-			LowB: lastBIdx, HighB: bIdx,
-		})
-	} else if lastMode != string(delta.LineFromBoth) {
-		return append(ranges, edit.Range{
-			LowA: lastAIdx, HighA: aIdx,
-			LowB: lastBIdx, HighB: bIdx,
-		})
-	} else {
-		// Ranges in both files are skipped over outside a given number of context lines
-		// End of file - one span
-		if eof {
-			// skip EOF itself
-			aIdx--
-			bIdx--
-			return append(ranges, edit.Range{
-				LowA: lastAIdx, HighA: min(aIdx, lastAIdx+maxContext),
-				LowB: lastBIdx, HighB: min(bIdx, lastBIdx+maxContext),
-			})
-		}
-		// Start of file - one span
-		if lastAIdx == 0 {
-			return append(ranges, edit.Range{
-				LowA: max(lastAIdx, aIdx-maxContext), HighA: aIdx,
-				LowB: max(lastBIdx, bIdx-maxContext), HighB: bIdx,
-			})
-		}
-		// Between two other spans - check span length - less than 2x context limit? Yield one span without eliding any context
-		if aIdx-lastAIdx < (maxContext*2 + 1) {
-			return append(ranges, edit.Range{
-				LowA: lastAIdx, HighA: aIdx,
-				LowB: lastBIdx, HighB: bIdx,
-			})
-		}
-		// Two spans - one for the start, one for the end, middle elided
-		ranges = append(ranges, edit.Range{
-			LowA: lastAIdx, HighA: lastAIdx + maxContext,
-			LowB: lastBIdx, HighB: lastBIdx + maxContext,
-		})
-		return append(ranges, edit.Range{
-			LowA: aIdx - maxContext, HighA: aIdx,
-			LowB: bIdx - maxContext, HighB: bIdx,
-		})
-	}
-}
-
 func diffText(oldName string, newName string, expected string, actual string, w io.Writer) error {
-	// diff.Text uses the Meyers diff algorithm in quadratic space, which performs poorly on very large diffs
-	// So instead, we leverage an implementation of the historgram diff algorithm which handles long spans of additions much more quickly
-	// But only on tests with output length differences above a certain length (indicating many additions or deletions) so most
-	// baselines aren't impacted by the change in diff algorithm
-	if math.Abs(float64(strings.Count(expected, "\n")-strings.Count(actual, "\n"))) < 10000 {
-		return diff.Text(oldName, newName, expected, actual, w)
-	}
-	sln := delta.HistogramDiff(expected, actual)
-	sln.PostProcess()
-	return write.Unified(intoEditScript(sln), w, inputPairFrom(expected, actual), write.Names(oldName, newName))
+	pair := inputPairFrom(expected, actual)
+	lines := patience.Diff(pair.a, pair.b)
+	result := patience.UnifiedDiffTextWithOptions(lines, patience.UnifiedDiffOptions{
+		Precontext:  3,
+		Postcontext: 3,
+		SrcHeader:   oldName,
+		DstHeader:   newName,
+	})
+
+	_, err := w.Write([]byte(result))
+	return err
 }
 
 func getBaselineDiff(t *testing.T, actual string, expected string, fileName string, fixupOld func(string) string) string {
