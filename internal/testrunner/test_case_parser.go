@@ -24,9 +24,8 @@ type rawCompilerSettings map[string]string
 
 // All the necessary information to turn a multi file test into useful units for later compilation
 type testUnit struct {
-	content          string
-	name             string
-	originalFilePath string
+	content string
+	name    string
 }
 
 type testCaseContent struct {
@@ -45,77 +44,7 @@ var linkRegex = regexp.MustCompile(`(?m)^\/{2}\s*@link\s*:\s*([^\r\n]*)\s*->\s*(
 // Given a test file containing // @FileName directives,
 // return an array of named units of code to be added to an existing compiler instance.
 func makeUnitsFromTest(code string, fileName string) testCaseContent {
-	// List of all the subfiles we've parsed out
-	var testUnits []*testUnit
-
-	lines := lineDelimiter.Split(code, -1)
-
-	// Stuff related to the subfile we're parsing
-	var currentFileContent strings.Builder
-	var currentFileName string
-	currentDirectory := srcFolder
-	symlinks := make(map[string]string)
-
-	for _, line := range lines {
-		ok := parseSymlinkFromTest(line, symlinks)
-		if ok {
-			continue
-		}
-		if testMetaData := optionRegex.FindStringSubmatch(line); testMetaData != nil {
-			// Comment line, check for global/file @options and record them
-			metaDataName := strings.ToLower(testMetaData[1])
-			metaDataValue := strings.TrimSpace(testMetaData[2])
-			if metaDataName == "currentdirectory" {
-				currentDirectory = metaDataValue
-			}
-			if metaDataName != "filename" {
-				continue
-			}
-
-			// New metadata statement after having collected some code to go with the previous metadata
-			if currentFileName != "" {
-				// Store result file
-				newTestFile := &testUnit{
-					content:          currentFileContent.String(),
-					name:             currentFileName,
-					originalFilePath: fileName,
-				}
-				testUnits = append(testUnits, newTestFile)
-
-				// Reset local data
-				currentFileContent.Reset()
-				currentFileName = metaDataValue
-			} else {
-				// First metadata marker in the file
-				currentFileName = strings.TrimSpace(testMetaData[2])
-				if currentFileContent.Len() != 0 && scanner.SkipTrivia(currentFileContent.String(), 0) != currentFileContent.Len() {
-					panic("Non-comment test content appears before the first '// @Filename' directive")
-				}
-				currentFileContent.Reset()
-			}
-		} else {
-			// Subfile content line
-			// Append to the current subfile content, inserting a newline if needed
-			if currentFileContent.Len() != 0 {
-				// End-of-line
-				currentFileContent.WriteRune('\n')
-			}
-			currentFileContent.WriteString(line)
-		}
-	}
-
-	// normalize the fileName for the single file case
-	if len(testUnits) == 0 && len(currentFileName) == 0 {
-		currentFileName = tspath.GetBaseFileName(fileName)
-	}
-
-	// EOF, push whatever remains
-	newTestFile2 := &testUnit{
-		content:          currentFileContent.String(),
-		name:             currentFileName,
-		originalFilePath: fileName,
-	}
-	testUnits = append(testUnits, newTestFile2)
+	testUnits, symlinks, currentDirectory := ParseTestFilesAndSymlinks(code, fileName, srcFolder /*defaultCurrentDirectory*/)
 
 	// unit tests always list files explicitly
 	allFiles := make(map[string]string)
@@ -159,6 +88,82 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 		tsConfigFileUnitData: tsConfigFileUnitData,
 		symlinks:             symlinks,
 	}
+}
+
+// Given a test file containing // @FileName and // @symlink directives,
+// return an array of named units of code to be added to an existing compiler instance.
+func ParseTestFilesAndSymlinks(code string, fileName string, defaultCurrentDirectory string) ([]*testUnit, map[string]string, string) {
+	// List of all the subfiles we've parsed out
+	var testUnits []*testUnit
+
+	lines := lineDelimiter.Split(code, -1)
+
+	// Stuff related to the subfile we're parsing
+	var currentFileContent strings.Builder
+	var currentFileName string
+	currentDirectory := defaultCurrentDirectory
+	symlinks := make(map[string]string)
+
+	for _, line := range lines {
+		ok := parseSymlinkFromTest(line, symlinks)
+		if ok {
+			continue
+		}
+		if testMetaData := optionRegex.FindStringSubmatch(line); testMetaData != nil {
+			// Comment line, check for global/file @options and record them
+			metaDataName := strings.ToLower(testMetaData[1])
+			metaDataValue := strings.TrimSpace(testMetaData[2])
+			if metaDataName == "currentdirectory" {
+				currentDirectory = metaDataValue
+			}
+			if metaDataName != "filename" {
+				continue
+			}
+
+			// New metadata statement after having collected some code to go with the previous metadata
+			if currentFileName != "" {
+				// Store result file
+				newTestFile := &testUnit{
+					content: currentFileContent.String(),
+					name:    currentFileName,
+				}
+				testUnits = append(testUnits, newTestFile)
+
+				// Reset local data
+				currentFileContent.Reset()
+				currentFileName = metaDataValue
+			} else {
+				// First metadata marker in the file
+				currentFileName = strings.TrimSpace(testMetaData[2])
+				if currentFileContent.Len() != 0 && scanner.SkipTrivia(currentFileContent.String(), 0) != currentFileContent.Len() {
+					panic("Non-comment test content appears before the first '// @Filename' directive")
+				}
+				currentFileContent.Reset()
+			}
+		} else {
+			// Subfile content line
+			// Append to the current subfile content, inserting a newline if needed
+			if currentFileContent.Len() != 0 {
+				// End-of-line
+				currentFileContent.WriteRune('\n')
+			}
+			currentFileContent.WriteString(line)
+		}
+	}
+
+	// normalize the fileName for the single file case
+	if len(testUnits) == 0 && len(currentFileName) == 0 {
+		currentFileName = tspath.GetBaseFileName(fileName)
+	}
+
+	// EOF, push whatever remains
+	newTestFile2 := &testUnit{
+		content: currentFileContent.String(),
+		name:    currentFileName,
+	}
+	testUnits = append(testUnits, newTestFile2)
+
+	return testUnits, symlinks, currentDirectory
 }
 
 func extractCompilerSettings(content string) rawCompilerSettings {
