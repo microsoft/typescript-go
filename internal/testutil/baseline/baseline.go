@@ -104,11 +104,6 @@ func readFileOrNoContent(fileName string) string {
 	return string(content)
 }
 
-type inputPair struct {
-	a []string
-	b []string
-}
-
 func diffText(oldName string, newName string, expected string, actual string, w io.Writer) error {
 	lines := patience.Diff(stringutil.SplitLines(expected), stringutil.SplitLines(actual))
 	result := patience.UnifiedDiffTextWithOptions(lines, patience.UnifiedDiffOptions{
