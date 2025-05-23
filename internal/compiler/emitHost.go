@@ -6,7 +6,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/printer"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 var _ printer.EmitHost = (*emitHost)(nil)
@@ -42,6 +41,10 @@ func (host *emitHost) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool
 	return checker.GetEmitResolver(file, skipDiagnostics)
 }
 
-func (host *emitHost) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
-	return host.program.GetSourceFileMetaData(path)
+func (host *emitHost) GetSourceFileMetaData(sourceFile *ast.SourceFile) *ast.SourceFileMetaData {
+	return host.program.GetSourceFileMetaData(sourceFile)
+}
+
+func (host *emitHost) IsSourceFromProjectReference(file *ast.SourceFile) bool {
+	return host.program.IsSourceFromProjectReference(file)
 }

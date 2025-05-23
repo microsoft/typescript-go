@@ -9,12 +9,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type fakeSourceFileMetaDataProvider struct{}
 
-func (p *fakeSourceFileMetaDataProvider) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
+func (p *fakeSourceFileMetaDataProvider) GetSourceFileMetaData(file *ast.SourceFile) *ast.SourceFileMetaData {
 	return nil
 }
 

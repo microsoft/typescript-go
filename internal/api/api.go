@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -76,6 +77,11 @@ func (api *API) DefaultLibraryPath() string {
 // DocumentRegistry implements ProjectHost.
 func (api *API) DocumentRegistry() *project.DocumentRegistry {
 	return api.documentRegistry
+}
+
+func (api *API) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	commandLine, _ := compiler.GetParsedCommandLineOfConfigFile(fileName, path, api.host, nil)
+	return commandLine
 }
 
 // FS implements ProjectHost.

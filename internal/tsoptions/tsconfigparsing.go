@@ -520,7 +520,7 @@ func getExtendsConfigPath(
 
 type tsConfigOptions struct {
 	prop       map[string][]string
-	references []core.ProjectReference
+	references []*core.ProjectReference
 	notDefined string
 }
 
@@ -1211,8 +1211,8 @@ func parseJsonConfigFileContentWorker(
 		return fileNames
 	}
 
-	getProjectReferences := func(basePath string) []core.ProjectReference {
-		var projectReferences []core.ProjectReference = []core.ProjectReference{}
+	getProjectReferences := func(basePath string) []*core.ProjectReference {
+		var projectReferences []*core.ProjectReference = []*core.ProjectReference{}
 		newReferencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element) == orderedMapType }, "object")
 		if newReferencesOfRaw.sliceValue != nil {
 			for _, reference := range newReferencesOfRaw.sliceValue {
@@ -1222,7 +1222,7 @@ func parseJsonConfigFileContentWorker(
 							errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Compiler_option_0_requires_a_value_of_type_1, "reference.path", "string"))
 						}
 					} else {
-						projectReferences = append(projectReferences, core.ProjectReference{
+						projectReferences = append(projectReferences, &core.ProjectReference{
 							Path:         tspath.GetNormalizedAbsolutePath(ref.Path, basePath),
 							OriginalPath: ref.Path,
 							Circular:     ref.Circular,

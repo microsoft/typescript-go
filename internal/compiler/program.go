@@ -26,7 +26,8 @@ type ProgramOptions struct {
 	Host                         CompilerHost
 	Options                      *core.CompilerOptions
 	SingleThreaded               core.Tristate
-	ProjectReference             []core.ProjectReference
+	ProjectReferences            []*core.ProjectReference
+	UseSourceOfProjectReference  bool
 	ConfigFileParsingDiagnostics []*ast.Diagnostic
 	CreateCheckerPool            func(*Program) CheckerPool
 }
@@ -35,6 +36,7 @@ type Program struct {
 	host                         CompilerHost
 	programOptions               ProgramOptions
 	compilerOptions              *core.CompilerOptions
+	projectReferences            []*core.ProjectReference
 	configFileName               string
 	nodeModules                  map[string]*ast.SourceFile
 	checkerPool                  CheckerPool
@@ -49,8 +51,6 @@ type Program struct {
 	comparePathsOptions tspath.ComparePathsOptions
 
 	processedFiles
-
-	filesByPath map[tspath.Path]*ast.SourceFile
 
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
@@ -79,6 +79,7 @@ func NewProgram(options ProgramOptions) *Program {
 	if p.compilerOptions == nil {
 		p.compilerOptions = &core.CompilerOptions{}
 	}
+	p.projectReferences = options.ProjectReferences
 	p.initCheckerPool()
 
 	// p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
@@ -124,6 +125,7 @@ func NewProgram(options ProgramOptions) *Program {
 		)
 
 		p.compilerOptions = parseConfigFileContent.CompilerOptions()
+		p.projectReferences = parseConfigFileContent.ProjectReferences()
 
 		if len(parseConfigFileContent.Errors) > 0 {
 			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parseConfigFileContent.Errors...)
@@ -155,12 +157,7 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
-	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs, p.singleThreaded())
-	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
-	for _, file := range p.files {
-		p.filesByPath[file.Path()] = file
-	}
-
+	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs, p.projectReferences, p.singleThreaded())
 	for _, file := range p.files {
 		extension := tspath.TryGetExtensionFromPath(file.FileName())
 		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
@@ -183,6 +180,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 		host:                         p.host,
 		programOptions:               p.programOptions,
 		compilerOptions:              p.compilerOptions,
+		projectReferences:            p.projectReferences,
 		configFileName:               p.configFileName,
 		nodeModules:                  p.nodeModules,
 		currentDirectory:             p.currentDirectory,
@@ -190,7 +188,6 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 		resolver:                     p.resolver,
 		comparePathsOptions:          p.comparePathsOptions,
 		processedFiles:               p.processedFiles,
-		filesByPath:                  p.filesByPath,
 		currentNodeModulesDepth:      p.currentNodeModulesDepth,
 		usesUriStyleNodeCoreModules:  p.usesUriStyleNodeCoreModules,
 		unsupportedExtensions:        p.unsupportedExtensions,
@@ -201,6 +198,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	result.files[index] = newFile
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
+	/// !!! sheetal update the redirect location as well
 	return result, true
 }
 
@@ -248,9 +246,10 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 
 func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host CompilerHost) *Program {
 	programOptions := ProgramOptions{
-		RootFiles: config.FileNames(),
-		Options:   config.CompilerOptions(),
-		Host:      host,
+		RootFiles:         config.FileNames(),
+		Options:           config.CompilerOptions(),
+		ProjectReferences: config.ProjectReferences(),
+		Host:              host,
 		// todo: ProjectReferences
 		ConfigFileParsingDiagnostics: config.GetConfigFileParsingDiagnostics(),
 	}
@@ -319,7 +318,7 @@ func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFil
 }
 
 func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string) *ast.SourceFile {
-	if resolutions, ok := p.resolvedModules[file.Path()]; ok {
+	if resolutions, ok := p.resolvedModules[file]; ok {
 		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: core.ModuleKindCommonJS}]; ok {
 			return p.findSourceFile(resolved.ResolvedFileName, FileIncludeReason{FileIncludeKindImport, 0})
 		}
@@ -327,7 +326,7 @@ func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string
 	return nil
 }
 
-func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
+func (p *Program) GetResolvedModules() map[*ast.SourceFile]module.ModeAwareCache[*module.ResolvedModule] {
 	return p.resolvedModules
 }
 
@@ -385,7 +384,7 @@ func (p *Program) getBindDiagnosticsForFile(ctx context.Context, sourceFile *ast
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+	if checker.SkipTypeChecking(sourceFile, p.compilerOptions, p.IsSourceFromProjectReference) {
 		return nil
 	}
 
@@ -572,8 +571,8 @@ func (p *Program) InstantiationCount() int {
 	return count
 }
 
-func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
-	return p.sourceFileMetaDatas[path]
+func (p *Program) GetSourceFileMetaData(sourceFile *ast.SourceFile) *ast.SourceFileMetaData {
+	return p.sourceFileMetaDatas[sourceFile]
 }
 
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
@@ -581,25 +580,35 @@ func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.Mod
 }
 
 func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetSourceFileMetaData(sourceFile.Path()))
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetSourceFileMetaData(sourceFile))
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile))
+}
+
+func (p *Program) IsSourceFromProjectReference(file *ast.SourceFile) bool {
+	if !p.programOptions.UseSourceOfProjectReference {
+		return false
+	}
+	_, ok := p.sourceToOutput[file.Path()]
+	return ok
 }
 
 func (p *Program) CommonSourceDirectory() string {
 	p.commonSourceDirectoryOnce.Do(func() {
-		var files []string
-		host := &emitHost{program: p}
-		for _, file := range p.files {
-			if sourceFileMayBeEmitted(file, host, false /*forceDtsEmit*/) {
-				files = append(files, file.FileName())
-			}
-		}
-		p.commonSourceDirectory = getCommonSourceDirectory(
+		p.commonSourceDirectory = core.GetCommonSourceDirectory(
 			p.compilerOptions,
-			files,
+			func() []string {
+				host := &emitHost{program: p}
+				var files []string
+				for _, file := range p.files {
+					if sourceFileMayBeEmitted(file, host, false /*forceDtsEmit*/) {
+						files = append(files, file.FileName())
+					}
+				}
+				return files
+			},
 			p.host.GetCurrentDirectory(),
 			p.host.FS().UseCaseSensitiveFileNames(),
 		)
@@ -609,66 +618,6 @@ func (p *Program) CommonSourceDirectory() string {
 
 func (p *Program) GetCompilerOptions() *core.CompilerOptions {
 	return p.compilerOptions
-}
-
-func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
-	var commonPathComponents []string
-	for _, sourceFile := range fileNames {
-		// Each file contributes into common source file path
-		sourcePathComponents := tspath.GetNormalizedPathComponents(sourceFile, currentDirectory)
-
-		// The base file name is not part of the common directory path
-		sourcePathComponents = sourcePathComponents[:len(sourcePathComponents)-1]
-
-		if commonPathComponents == nil {
-			// first file
-			commonPathComponents = sourcePathComponents
-			continue
-		}
-
-		n := min(len(commonPathComponents), len(sourcePathComponents))
-		for i := range n {
-			if tspath.GetCanonicalFileName(commonPathComponents[i], useCaseSensitiveFileNames) != tspath.GetCanonicalFileName(sourcePathComponents[i], useCaseSensitiveFileNames) {
-				if i == 0 {
-					// Failed to find any common path component
-					return ""
-				}
-
-				// New common path found that is 0 -> i-1
-				commonPathComponents = commonPathComponents[:i]
-				break
-			}
-		}
-
-		// If the sourcePathComponents was shorter than the commonPathComponents, truncate to the sourcePathComponents
-		if len(sourcePathComponents) < len(commonPathComponents) {
-			commonPathComponents = commonPathComponents[:len(sourcePathComponents)]
-		}
-	}
-
-	if len(commonPathComponents) == 0 {
-		// Can happen when all input files are .d.ts files
-		return currentDirectory
-	}
-
-	return tspath.GetPathFromPathComponents(commonPathComponents)
-}
-
-func getCommonSourceDirectory(options *core.CompilerOptions, files []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
-	var commonSourceDirectory string
-	// !!! If a rootDir is specified use it as the commonSourceDirectory
-	// !!! Project compilations never infer their root from the input source paths
-
-	commonSourceDirectory = computeCommonSourceDirectoryOfFilenames(files, currentDirectory, useCaseSensitiveFileNames)
-
-	if len(commonSourceDirectory) > 0 {
-		// Make sure directory path ends with directory separator so this string can directly
-		// used to replace with "" to get the relative path of the source file and the relative path doesn't
-		// start with / making it rooted path
-		commonSourceDirectory = tspath.EnsureTrailingDirectorySeparator(commonSourceDirectory)
-	}
-
-	return commonSourceDirectory
 }
 
 type EmitOptions struct {
@@ -787,13 +736,13 @@ func (p *Program) UnsupportedExtensions() []string {
 	return p.unsupportedExtensions
 }
 
-func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
-	if result := p.jsxRuntimeImportSpecifiers[path]; result != nil {
+func (p *Program) GetJSXRuntimeImportSpecifier(file *ast.SourceFile) (moduleReference string, specifier *ast.Node) {
+	if result := p.jsxRuntimeImportSpecifiers[file]; result != nil {
 		return result.moduleReference, result.specifier
 	}
 	return "", nil
 }
 
-func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
-	return p.importHelpersImportSpecifiers[path]
+func (p *Program) GetImportHelpersImportSpecifier(file *ast.SourceFile) *ast.Node {
+	return p.importHelpersImportSpecifiers[file]
 }

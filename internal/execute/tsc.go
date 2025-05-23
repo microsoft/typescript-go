@@ -125,6 +125,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			cb,
 			configParseResult,
 			reportDiagnostic,
+			extendedConfigCache,
 		), nil
 	} else {
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
@@ -143,6 +144,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		cb,
 		commandLine,
 		reportDiagnostic,
+		nil,
 	), nil
 }
 
@@ -162,31 +164,20 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 
 // Reads the config file and reports errors. Exits if the config file cannot be found
 func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys System, extendedConfigCache map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry) (*tsoptions.ParsedCommandLine, []*ast.Diagnostic) {
-	errors := []*ast.Diagnostic{}
-	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, errors)
-	if len(errors) > 0 {
-		// these are unrecoverable errors--exit to report them as diagnostics
-		return nil, errors
-	}
-
 	cwd := sys.GetCurrentDirectory()
-	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()), configFileText)
-	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
-	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
-	return tsoptions.ParseJsonSourceFileConfigFileContent(
-		tsConfigSourceFile,
-		sys,
-		tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(configFileName), cwd),
-		options,
-		tspath.GetNormalizedAbsolutePath(configFileName, cwd),
-		nil,
-		nil,
-		extendedConfigCache,
-	), nil
+	fileName := tspath.GetNormalizedAbsolutePath(configFileName, cwd)
+	path := tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames())
+	return compiler.GetParsedCommandLineOfConfigFile(fileName, path, sys, extendedConfigCache)
 }
 
-func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) ExitStatus {
-	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
+func performCompilation(
+	sys System,
+	cb cbType,
+	config *tsoptions.ParsedCommandLine,
+	reportDiagnostic diagnosticReporter,
+	extendedConfigCache map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry,
+) ExitStatus {
+	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
 	// todo: cache, statistics, tracing
 	parseStart := time.Now()
 	program := compiler.NewProgramFromParsedCommandLine(config, host)

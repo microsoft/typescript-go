@@ -63,7 +63,7 @@ func newResolutionState(
 	isTypeReferenceDirective bool,
 	resolutionMode core.ResolutionMode,
 	compilerOptions *core.CompilerOptions,
-	redirectedReference *ResolvedProjectReference,
+	redirectedReference ResolvedProjectReference,
 	resolver *Resolver,
 ) *resolutionState {
 	state := &resolutionState{
@@ -74,7 +74,7 @@ func newResolutionState(
 	}
 
 	if redirectedReference != nil {
-		state.compilerOptions = redirectedReference.CommandLine.CompilerOptions
+		state.compilerOptions = redirectedReference.CompilerOptions()
 	}
 
 	if isTypeReferenceDirective {
@@ -153,12 +153,17 @@ func (r *Resolver) GetPackageJsonTypeIfApplicable(path string) string {
 	return packageJsonType
 }
 
-func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedTypeReferenceDirective {
+func (r *Resolver) ResolveTypeReferenceDirective(
+	typeReferenceDirectiveName string,
+	containingFile string,
+	resolutionMode core.ResolutionMode,
+	redirectedReference ResolvedProjectReference,
+) *ResolvedTypeReferenceDirective {
 	traceEnabled := r.traceEnabled()
 
 	compilerOptions := r.compilerOptions
 	if redirectedReference != nil {
-		compilerOptions = redirectedReference.CommandLine.CompilerOptions
+		compilerOptions = redirectedReference.CompilerOptions()
 	}
 
 	containingDirectory := tspath.GetDirectoryPath(containingFile)
@@ -167,7 +172,7 @@ func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName stri
 	if traceEnabled {
 		r.host.Trace(diagnostics.Resolving_type_reference_directive_0_containing_file_1_root_directory_2.Format(typeReferenceDirectiveName, containingFile, strings.Join(typeRoots, ",")))
 		if redirectedReference != nil {
-			r.host.Trace(diagnostics.Using_compiler_options_of_project_reference_redirect_0.Format(redirectedReference.SourceFile.FileName()))
+			r.host.Trace(diagnostics.Using_compiler_options_of_project_reference_redirect_0.Format(redirectedReference.ConfigName()))
 		}
 	}
 
@@ -180,18 +185,18 @@ func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName stri
 	return result
 }
 
-func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedModule {
+func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference ResolvedProjectReference) *ResolvedModule {
 	traceEnabled := r.traceEnabled()
 
 	compilerOptions := r.compilerOptions
 	if redirectedReference != nil {
-		compilerOptions = redirectedReference.CommandLine.CompilerOptions
+		compilerOptions = redirectedReference.CompilerOptions()
 	}
 
 	if traceEnabled {
 		r.host.Trace(diagnostics.Resolving_module_0_from_1.Format(moduleName, containingFile))
 		if redirectedReference != nil {
-			r.host.Trace(diagnostics.Using_compiler_options_of_project_reference_redirect_0.Format(redirectedReference.SourceFile.FileName()))
+			r.host.Trace(diagnostics.Using_compiler_options_of_project_reference_redirect_0.Format(redirectedReference.ConfigName()))
 		}
 	}
 	containingDirectory := tspath.GetDirectoryPath(containingFile)

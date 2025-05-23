@@ -7,9 +7,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -37,6 +39,11 @@ type ServiceOptions struct {
 
 var _ ProjectHost = (*Service)(nil)
 
+type ConfigFileCacheEntry struct {
+	commandLine *tsoptions.ParsedCommandLine
+	// Todo projects watching it and ref counting
+}
+
 type Service struct {
 	host                ServiceHost
 	options             ServiceOptions
@@ -60,6 +67,9 @@ type Service struct {
 	filenameToScriptInfoVersion map[tspath.Path]int
 	realpathToScriptInfosMu     sync.Mutex
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
+
+	configFileCache     map[tspath.Path]*ConfigFileCacheEntry
+	extendedConfigCache map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry
 }
 
 func NewService(host ServiceHost, options ServiceOptions) *Service {
@@ -117,6 +127,19 @@ func (s *Service) DefaultLibraryPath() string {
 // DocumentRegistry implements ProjectHost.
 func (s *Service) DocumentRegistry() *DocumentRegistry {
 	return s.documentRegistry
+}
+
+func (s *Service) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	if existing := s.configFileCache[path]; existing != nil {
+		return existing.commandLine
+	}
+
+	// Create parsed command line
+	commandLine, _ := compiler.GetParsedCommandLineOfConfigFile(fileName, path, s.host, s.extendedConfigCache)
+	s.configFileCache[path] = &ConfigFileCacheEntry{
+		commandLine: commandLine,
+	}
+	return commandLine
 }
 
 // FS implements ProjectHost.

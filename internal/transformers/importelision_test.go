@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
-	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type fakeProgram struct {
@@ -54,16 +53,20 @@ func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, modul
 	return p.getResolvedModule(currentSourceFile, moduleReference)
 }
 
-func (p *fakeProgram) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
+func (p *fakeProgram) GetSourceFileMetaData(sourceFile *ast.SourceFile) *ast.SourceFileMetaData {
 	return nil
 }
 
-func (p *fakeProgram) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
+func (p *fakeProgram) GetImportHelpersImportSpecifier(sourceFile *ast.SourceFile) *ast.Node {
 	return nil
 }
 
-func (p *fakeProgram) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
+func (p *fakeProgram) GetJSXRuntimeImportSpecifier(sourceFile *ast.SourceFile) (moduleReference string, specifier *ast.Node) {
 	return "", nil
+}
+
+func (p *fakeProgram) IsSourceFromProjectReference(sourceFile *ast.SourceFile) bool {
+	return false
 }
 
 func TestImportElision(t *testing.T) {

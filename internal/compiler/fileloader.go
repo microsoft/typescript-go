@@ -23,26 +23,41 @@ type fileLoader struct {
 	resolver            *module.Resolver
 	defaultLibraryPath  string
 	comparePathsOptions tspath.ComparePathsOptions
-	wg                  core.WorkGroup
 	supportedExtensions []string
 
-	tasksByFileName collections.SyncMap[string, *parseTask]
-	rootTasks       []*parseTask
+	parseWg              core.WorkGroup
+	parseTasksByFileName collections.SyncMap[string, *parseTask]
+	rootTasks            []*parseTask
 
 	totalFileCount atomic.Int32
 	libFileCount   atomic.Int32
 
 	factoryMu sync.Mutex
 	factory   ast.NodeFactory
+
+	projectReferenceParseWg             core.WorkGroup
+	projectReferenceParseTaskByFilename collections.SyncMap[string, *projectReferenceParseTask]
+
+	resolvedProjectReferences []*tsoptions.ParsedCommandLine
+	configToProjectReference  map[tspath.Path]*tsoptions.ParsedCommandLine
+	referencesInConfigFile    map[tspath.Path][]*tsoptions.ParsedCommandLine
+	sourceToOutput            map[tspath.Path]*tsoptions.OutputDtsAndProjectReference
+	outputDtsToSource         map[tspath.Path]*tsoptions.SourceAndProjectReference
 }
 
 type processedFiles struct {
 	files                         []*ast.SourceFile
+	filesByPath                   map[tspath.Path]*ast.SourceFile
+	resolvedProjectReferences     []*tsoptions.ParsedCommandLine
+	configToProjectReference      map[tspath.Path]*tsoptions.ParsedCommandLine
+	referencesInConfigFile        map[tspath.Path][]*tsoptions.ParsedCommandLine
+	sourceToOutput                map[tspath.Path]*tsoptions.OutputDtsAndProjectReference
+	outputDtsToSource             map[tspath.Path]*tsoptions.SourceAndProjectReference
 	missingFiles                  []string
-	resolvedModules               map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
-	sourceFileMetaDatas           map[tspath.Path]*ast.SourceFileMetaData
-	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
-	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
+	resolvedModules               map[*ast.SourceFile]module.ModeAwareCache[*module.ResolvedModule]
+	sourceFileMetaDatas           map[*ast.SourceFile]*ast.SourceFileMetaData
+	jsxRuntimeImportSpecifiers    map[*ast.SourceFile]*jsxRuntimeImportSpecifier
+	importHelpersImportSpecifiers map[*ast.SourceFile]*ast.Node
 }
 
 type jsxRuntimeImportSpecifier struct {
@@ -57,6 +72,7 @@ func processAllProgramFiles(
 	resolver *module.Resolver,
 	rootFiles []string,
 	libs []string,
+	projectReferences []*core.ProjectReference,
 	singleThreaded bool,
 ) processedFiles {
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
@@ -70,18 +86,22 @@ func processAllProgramFiles(
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		},
-		wg:                  core.NewWorkGroup(singleThreaded),
-		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(libs)),
-		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
+		parseWg:                 core.NewWorkGroup(singleThreaded),
+		rootTasks:               make([]*parseTask, 0, len(rootFiles)+len(libs)),
+		projectReferenceParseWg: core.NewWorkGroup(singleThreaded),
+		sourceToOutput:          map[tspath.Path]*tsoptions.OutputDtsAndProjectReference{},
+		outputDtsToSource:       map[tspath.Path]*tsoptions.SourceAndProjectReference{},
+		supportedExtensions:     core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
 	}
 
 	loader.addRootTasks(rootFiles, false)
 	loader.addRootTasks(libs, true)
 	loader.addAutomaticTypeDirectiveTasks()
+	loader.addProjectReferenceTasks(projectReferences, len(rootFiles) != 0)
 
-	loader.startTasks(loader.rootTasks)
+	loader.startParseTasks(loader.rootTasks)
 
-	loader.wg.RunAndWait()
+	loader.parseWg.RunAndWait()
 
 	totalFileCount := int(loader.totalFileCount.Load())
 	libFileCount := int(loader.libFileCount.Load())
@@ -90,15 +110,20 @@ func processAllProgramFiles(
 	files := make([]*ast.SourceFile, 0, totalFileCount-libFileCount)
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
-	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount)
-	sourceFileMetaDatas := make(map[tspath.Path]*ast.SourceFileMetaData, totalFileCount)
-	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
-	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
+	resolvedModules := make(map[*ast.SourceFile]module.ModeAwareCache[*module.ResolvedModule], totalFileCount)
+	sourceFileMetaDatas := make(map[*ast.SourceFile]*ast.SourceFileMetaData, totalFileCount)
+	var jsxRuntimeImportSpecifiers map[*ast.SourceFile]*jsxRuntimeImportSpecifier
+	var importHelpersImportSpecifiers map[*ast.SourceFile]*ast.Node
 
+	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
 	for task := range loader.collectTasks(loader.rootTasks) {
 		file := task.file
+		filesByPath[task.path] = file
+		if task.resolvedPath != "" {
+			filesByPath[task.resolvedPath] = file
+		}
 		if file == nil {
-			missingFiles = append(missingFiles, task.normalizedFilePath)
+			missingFiles = append(missingFiles, task.normalizedFileName)
 			continue
 		}
 		if task.isLib {
@@ -106,20 +131,19 @@ func processAllProgramFiles(
 		} else {
 			files = append(files, file)
 		}
-		path := file.Path()
-		resolvedModules[path] = task.resolutionsInFile
-		sourceFileMetaDatas[path] = task.metadata
+		resolvedModules[file] = task.resolutionsInFile
+		sourceFileMetaDatas[file] = task.metadata
 		if task.jsxRuntimeImportSpecifier != nil {
 			if jsxRuntimeImportSpecifiers == nil {
-				jsxRuntimeImportSpecifiers = make(map[tspath.Path]*jsxRuntimeImportSpecifier, totalFileCount)
+				jsxRuntimeImportSpecifiers = make(map[*ast.SourceFile]*jsxRuntimeImportSpecifier, totalFileCount)
 			}
-			jsxRuntimeImportSpecifiers[path] = task.jsxRuntimeImportSpecifier
+			jsxRuntimeImportSpecifiers[file] = task.jsxRuntimeImportSpecifier
 		}
 		if task.importHelpersImportSpecifier != nil {
 			if importHelpersImportSpecifiers == nil {
-				importHelpersImportSpecifiers = make(map[tspath.Path]*ast.Node, totalFileCount)
+				importHelpersImportSpecifiers = make(map[*ast.SourceFile]*ast.Node, totalFileCount)
 			}
-			importHelpersImportSpecifiers[path] = task.importHelpersImportSpecifier
+			importHelpersImportSpecifiers[file] = task.importHelpersImportSpecifier
 		}
 	}
 	loader.sortLibs(libFiles)
@@ -128,6 +152,13 @@ func processAllProgramFiles(
 
 	return processedFiles{
 		files:                         allFiles,
+		filesByPath:                   filesByPath,
+		resolvedProjectReferences:     loader.resolvedProjectReferences,
+		configToProjectReference:      loader.configToProjectReference,
+		referencesInConfigFile:        loader.referencesInConfigFile,
+		sourceToOutput:                loader.sourceToOutput,
+		outputDtsToSource:             loader.outputDtsToSource,
+		missingFiles:                  missingFiles,
 		resolvedModules:               resolvedModules,
 		sourceFileMetaDatas:           sourceFileMetaDatas,
 		jsxRuntimeImportSpecifiers:    jsxRuntimeImportSpecifiers,
@@ -139,7 +170,7 @@ func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	for _, fileName := range files {
 		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.host.GetCurrentDirectory())
 		if core.Tristate.IsTrue(p.compilerOptions.AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
-			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib})
+			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFileName: absPath, isLib: isLib})
 		}
 	}
 }
@@ -157,20 +188,172 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 	for _, name := range automaticTypeDirectiveNames {
 		resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, core.ModuleKindNodeNext, nil)
 		if resolved.IsResolved() {
-			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: resolved.ResolvedFileName, isLib: false})
+			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFileName: resolved.ResolvedFileName, isLib: false})
 		}
 	}
 }
 
-func (p *fileLoader) startTasks(tasks []*parseTask) {
+func (p *fileLoader) addProjectReferenceTasks(projectReferences []*core.ProjectReference, hasRootFiles bool) {
+	if len(projectReferences) == 0 {
+		return
+	}
+
+	rootTasks := p.createProjectReferenceParseTasks(projectReferences)
+	startTasksWorker(p, rootTasks, &p.projectReferenceParseTaskByFilename)
+
+	p.projectReferenceParseWg.RunAndWait()
+
+	p.resolvedProjectReferences = p.collectProjectReferences(rootTasks, core.Set[*projectReferenceParseTask]{})
+	if hasRootFiles {
+		for _, resolved := range p.resolvedProjectReferences {
+			if resolved == nil {
+				continue
+			}
+			outFile := resolved.CompilerOptions().OutFile
+			if p.programOptions.UseSourceOfProjectReference {
+				// Add source files if --out or if modulkeKind == None
+				// !!! check if ModuleKindNone is possible - right now it doesnt look like possible
+				if outFile != "" || resolved.CompilerOptions().GetEmitModuleKind() == core.ModuleKindNone {
+					for _, fileName := range resolved.FileNames() {
+						// Add root task for all the filenames
+						p.rootTasks = append(p.rootTasks, &parseTask{
+							normalizedFileName: fileName, isLib: false,
+						})
+					}
+				}
+			} else {
+				// Add dts files
+				if outFile != "" {
+					// Add root task for all the filenames
+					p.rootTasks = append(p.rootTasks, &parseTask{normalizedFileName: tspath.ChangeExtension(outFile, tspath.ExtensionDts), isLib: false})
+				} else if resolved.CompilerOptions().GetEmitModuleKind() == core.ModuleKindNone {
+					/// !!! sheetal check if modulekind none is possible
+					var commonSourceDirectory string
+					var commonSourceDirectoryOnce sync.Once
+					getCommonSourceDirectory := func() string {
+						commonSourceDirectoryOnce.Do(func() {
+							commonSourceDirectory = core.GetCommonSourceDirectoryOfConfig(resolved.ParsedConfig, p.comparePathsOptions.CurrentDirectory, p.comparePathsOptions.UseCaseSensitiveFileNames)
+						})
+						return commonSourceDirectory
+					}
+					for _, fileName := range resolved.ParsedConfig.FileNames {
+						if !tspath.IsDeclarationFileName(fileName) && !tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
+							p.rootTasks = append(p.rootTasks, &parseTask{
+								normalizedFileName: core.GetOutputDeclarationFileName(fileName, resolved.ParsedConfig, getCommonSourceDirectory, p.comparePathsOptions),
+								isLib:              false,
+							})
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+func (p *fileLoader) collectProjectReferences(
+	tasks []*projectReferenceParseTask,
+	seen core.Set[*projectReferenceParseTask],
+) []*tsoptions.ParsedCommandLine {
+	lenTasks := len(tasks)
+	if lenTasks == 0 {
+		return nil
+	}
+
+	result := make([]*tsoptions.ParsedCommandLine, lenTasks)
+	for i, task := range tasks {
+		result[i] = task.resolved
+		if seen.Has(task) {
+			continue
+		}
+		seen.Add(task)
+		p.configToProjectReference[task.path] = task.resolved
+		if task.resolved == nil {
+			continue
+		}
+		// !!! this is source file comparison
+		if p.compilerOptions.ConfigFilePath != task.resolved.ConfigName() {
+			for key, value := range task.resolved.SourceToOutput() {
+				p.sourceToOutput[key] = value
+			}
+			for key, value := range task.resolved.OutputDtsToSource() {
+				p.outputDtsToSource[key] = value
+			}
+		}
+		p.referencesInConfigFile[task.path] = p.collectProjectReferences(task.subTasks, seen)
+	}
+	return result
+}
+
+type projectReferenceParseTask struct {
+	configName string
+	path       tspath.Path
+	resolved   *tsoptions.ParsedCommandLine
+	subTasks   []*projectReferenceParseTask
+}
+
+func (t *projectReferenceParseTask) fileName() string {
+	return t.configName
+}
+
+func (t *projectReferenceParseTask) start(loader *fileLoader) {
+	loader.projectReferenceParseWg.Queue(func() {
+		t.path = tspath.ToPath(t.configName, loader.host.GetCurrentDirectory(), loader.host.FS().UseCaseSensitiveFileNames())
+		t.resolved = loader.host.GetResolvedProjectReference(t.configName, t.path)
+		if t.resolved == nil {
+			return
+		}
+		if t.resolved.SourceToOutput() == nil {
+			loader.projectReferenceParseWg.Queue(func() {
+				t.resolved.ParseInputOutputNames()
+			})
+		}
+		subReferences := t.resolved.ProjectReferences()
+		if len(subReferences) == 0 {
+			return
+		}
+		t.subTasks = loader.createProjectReferenceParseTasks(subReferences)
+		startTasksWorker(loader, t.subTasks, &loader.projectReferenceParseTaskByFilename)
+	})
+}
+
+func (p *fileLoader) createProjectReferenceParseTasks(projectReferences []*core.ProjectReference,
+) []*projectReferenceParseTask {
+	tasks := make([]*projectReferenceParseTask, 0, len(projectReferences))
+	for index, reference := range projectReferences {
+		configName := core.ResolveProjectReferencePath(reference)
+		tasks[index] = &projectReferenceParseTask{
+			configName: configName,
+		}
+	}
+	return tasks
+}
+
+func (p *fileLoader) startParseTasks(tasks []*parseTask) {
+	startTasksWorker(p, tasks, &p.parseTasksByFileName)
+}
+
+type loaderParseTask interface {
+	fileName() string
+	start(loader *fileLoader)
+}
+
+var _ loaderParseTask = (*parseTask)(nil)
+
+var _ loaderParseTask = (*projectReferenceParseTask)(nil)
+
+func startTasksWorker[K loaderParseTask](
+	loader *fileLoader,
+	tasks []K,
+	tasksByFileName *collections.SyncMap[string, K],
+) {
 	if len(tasks) > 0 {
 		for i, task := range tasks {
-			loadedTask, loaded := p.tasksByFileName.LoadOrStore(task.normalizedFilePath, task)
+			loadedTask, loaded := tasksByFileName.LoadOrStore(task.fileName(), task)
 			if loaded {
 				// dedup tasks to ensure correct file order, regardless of which task would be started first
 				tasks[i] = loadedTask
 			} else {
-				loadedTask.start(p)
+				loadedTask.start(loader)
 			}
 		}
 	}
@@ -230,15 +413,24 @@ func (p *fileLoader) getDefaultLibFilePriority(a *ast.SourceFile) int {
 }
 
 type parseTask struct {
-	normalizedFilePath string
-	file               *ast.SourceFile
-	isLib              bool
-	subTasks           []*parseTask
+	normalizedFileName string
+	resolvedFileName   string
+	path               tspath.Path
+	resolvedPath       tspath.Path
+
+	file *ast.SourceFile
+
+	isLib    bool
+	subTasks []*parseTask
 
 	metadata                     *ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
 	importHelpersImportSpecifier *ast.Node
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
+}
+
+func (t *parseTask) fileName() string {
+	return t.normalizedFileName
 }
 
 func (t *parseTask) start(loader *fileLoader) {
@@ -247,14 +439,14 @@ func (t *parseTask) start(loader *fileLoader) {
 		loader.libFileCount.Add(1)
 	}
 
-	loader.wg.Queue(func() {
-		file := loader.parseSourceFile(t.normalizedFilePath)
+	loader.parseWg.Queue(func() {
+		file, redirect := loader.parseSourceFile(t)
 		if file == nil {
 			return
 		}
 
 		t.file = file
-		loader.wg.Queue(func() {
+		loader.parseWg.Queue(func() {
 			t.metadata = loader.loadSourceFileMetaData(file.Path())
 		})
 
@@ -267,7 +459,7 @@ func (t *parseTask) start(loader *fileLoader) {
 		}
 
 		for _, ref := range file.TypeReferenceDirectives {
-			resolved := loader.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindCommonJS /* !!! */, nil)
+			resolved := loader.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), core.ModuleKindCommonJS /* !!! */, redirect)
 			if resolved.IsResolved() {
 				t.addSubTask(resolved.ResolvedFileName, false)
 			}
@@ -283,7 +475,7 @@ func (t *parseTask) start(loader *fileLoader) {
 			}
 		}
 
-		toParse, resolutionsInFile, importHelpersImportSpecifier, jsxRuntimeImportSpecifier := loader.resolveImportsAndModuleAugmentations(file)
+		toParse, resolutionsInFile, importHelpersImportSpecifier, jsxRuntimeImportSpecifier := loader.resolveImportsAndModuleAugmentations(file, redirect)
 		for _, imp := range toParse {
 			t.addSubTask(imp, false)
 		}
@@ -292,7 +484,7 @@ func (t *parseTask) start(loader *fileLoader) {
 		t.importHelpersImportSpecifier = importHelpersImportSpecifier
 		t.jsxRuntimeImportSpecifier = jsxRuntimeImportSpecifier
 
-		loader.startTasks(t.subTasks)
+		loader.startParseTasks(t.subTasks)
 	})
 }
 
@@ -305,15 +497,48 @@ func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) *ast.SourceFileMet
 	}
 }
 
-func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
-	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+func (p *fileLoader) parseSourceFile(t *parseTask) (*ast.SourceFile, *tsoptions.ParsedCommandLine) {
+	fileName := t.normalizedFileName
+	path := tspath.ToPath(t.normalizedFileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	t.path = path
+	var redirect *tsoptions.ParsedCommandLine
+
+	if p.programOptions.UseSourceOfProjectReference {
+		// Map to source file from project reference
+		source, ok := p.outputDtsToSource[path]
+		if ok {
+			if source.Source != "" {
+				fileName = source.Source
+				path = p.redirectParse(t, fileName)
+				redirect = source.Resolved
+			}
+		} else {
+			// !!! sheetal Try real path
+		}
+	} else {
+		// Map to dts file from project reference
+		output, ok := p.sourceToOutput[path]
+		if ok {
+			fileName = output.OutputDts
+			path = p.redirectParse(t, fileName)
+			redirect = output.Resolved
+		}
+	}
+
 	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
-	return sourceFile
+	return sourceFile, redirect
+}
+
+func (p *fileLoader) redirectParse(t *parseTask, fileName string) tspath.Path {
+	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	t.resolvedFileName = fileName
+	t.resolvedPath = path
+	return path
 }
 
 func (t *parseTask) addSubTask(fileName string, isLib bool) {
 	normalizedFilePath := tspath.NormalizePath(fileName)
-	t.subTasks = append(t.subTasks, &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib})
+	t.subTasks = append(t.subTasks, &parseTask{normalizedFileName: normalizedFilePath, isLib: isLib})
 }
 
 func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containingFile string) string {
@@ -328,7 +553,7 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 
 const externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
 
-func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) (
+func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, redirect *tsoptions.ParsedCommandLine) (
 	toParse []string,
 	resolutionsInFile module.ModeAwareCache[*module.ResolvedModule],
 	importHelpersImportSpecifier *ast.Node,
@@ -367,7 +592,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 	if len(moduleNames) != 0 {
 		toParse = make([]string, 0, len(moduleNames))
 
-		resolutions := p.resolveModuleNames(moduleNames, file)
+		resolutions := p.resolveModuleNames(moduleNames, file, redirect)
 
 		resolutionsInFile = make(module.ModeAwareCache[*module.ResolvedModule], len(resolutions))
 
@@ -409,7 +634,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile) 
 	return toParse, resolutionsInFile, importHelpersImportSpecifier, jsxRuntimeImportSpecifier_
 }
 
-func (p *fileLoader) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile) []*module.ResolvedModule {
+func (p *fileLoader) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile, redirect *tsoptions.ParsedCommandLine) []*module.ResolvedModule {
 	if len(entries) == 0 {
 		return nil
 	}
@@ -421,7 +646,7 @@ func (p *fileLoader) resolveModuleNames(entries []*ast.Node, file *ast.SourceFil
 		if moduleName == "" {
 			continue
 		}
-		resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), core.ModuleKindCommonJS /* !!! */, nil)
+		resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), core.ModuleKindCommonJS /* !!! */, redirect)
 		resolvedModules = append(resolvedModules, resolvedModule)
 	}
 

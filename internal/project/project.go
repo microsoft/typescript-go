@@ -75,6 +75,7 @@ type ProjectHost interface {
 	NewLine() string
 	DefaultLibraryPath() string
 	DocumentRegistry() *DocumentRegistry
+	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
 	GetScriptInfoByPath(path tspath.Path) *ScriptInfo
 	GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo
 	OnDiscoveredSymlink(info *ScriptInfo)
@@ -113,6 +114,7 @@ type Project struct {
 	rootFileNames     *collections.OrderedMap[tspath.Path, string]
 	compilerOptions   *core.CompilerOptions
 	parsedCommandLine *tsoptions.ParsedCommandLine
+	projectReferences []*core.ProjectReference
 	program           *compiler.Program
 	checkerPool       *checkerPool
 
@@ -205,6 +207,11 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, oldSourceFile, oldCompilerOptions)
 	}
 	return nil
+}
+
+// GetResolvedProjectReference implements compiler.CompilerHost.
+func (p *Project) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	return p.host.GetResolvedProjectReference(fileName, path)
 }
 
 // Updates the program if needed.
@@ -459,10 +466,12 @@ func (p *Project) updateProgram() bool {
 	if p.program == nil || p.dirtyFilePath == "" {
 		rootFileNames := p.GetRootFileNames()
 		compilerOptions := p.compilerOptions
+		projectReferences := p.projectReferences
 		p.program = compiler.NewProgram(compiler.ProgramOptions{
-			RootFiles: rootFileNames,
-			Host:      p,
-			Options:   compilerOptions,
+			RootFiles:         rootFileNames,
+			Host:              p,
+			Options:           compilerOptions,
+			ProjectReferences: projectReferences,
 			CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 				p.checkerPool = newCheckerPool(4, program, p.log)
 				return p.checkerPool
@@ -584,6 +593,7 @@ func (p *Project) loadConfig() error {
 
 		p.parsedCommandLine = parsedCommandLine
 		p.compilerOptions = parsedCommandLine.CompilerOptions()
+		p.projectReferences = parsedCommandLine.ProjectReferences()
 		p.setRootFiles(parsedCommandLine.FileNames())
 	} else {
 		p.compilerOptions = &core.CompilerOptions{}

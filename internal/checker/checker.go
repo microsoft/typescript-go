@@ -525,9 +525,10 @@ type Program interface {
 	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
 	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
 	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
-	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
-	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
-	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
+	GetSourceFileMetaData(sourceFile *ast.SourceFile) *ast.SourceFileMetaData
+	GetJSXRuntimeImportSpecifier(sourceFile *ast.SourceFile) (moduleReference string, specifier *ast.Node)
+	GetImportHelpersImportSpecifier(sourceFile *ast.SourceFile) *ast.Node
+	IsSourceFromProjectReference(file *ast.SourceFile) bool
 }
 
 type Host interface{}
@@ -2053,7 +2054,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 }
 
 func (c *Checker) CheckSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
-	if SkipTypeChecking(sourceFile, c.compilerOptions) {
+	if SkipTypeChecking(sourceFile, c.compilerOptions, c.program.IsSourceFromProjectReference) {
 		return
 	}
 	c.checkSourceFile(ctx, sourceFile)
@@ -10169,7 +10170,7 @@ func (c *Checker) checkNewTargetMetaProperty(node *ast.Node) *Type {
 
 func (c *Checker) checkImportMetaProperty(node *ast.Node) *Type {
 	if c.moduleKind == core.ModuleKindNode16 || c.moduleKind == core.ModuleKindNodeNext {
-		sourceFileMetaData := c.program.GetSourceFileMetaData(ast.GetSourceFileOfNode(node).Path())
+		sourceFileMetaData := c.program.GetSourceFileMetaData(ast.GetSourceFileOfNode(node))
 		if sourceFileMetaData == nil || sourceFileMetaData.ImpliedNodeFormat != core.ModuleKindESNext {
 			c.error(node, diagnostics.The_import_meta_meta_property_is_not_allowed_in_files_which_will_build_into_CommonJS_output)
 		}

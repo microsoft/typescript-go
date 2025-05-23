@@ -32,7 +32,7 @@ foo.bar;`
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"
-	host := compiler.NewCompilerHost(nil, cd, fs, bundled.LibPath())
+	host := compiler.NewCompilerHost(nil, cd, fs, bundled.LibPath(), nil)
 	opts := compiler.ProgramOptions{
 		Host:           host,
 		ConfigFileName: "/tsconfig.json",
@@ -63,7 +63,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
+	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath(), nil)
 	opts := compiler.ProgramOptions{
 		Host:           host,
 		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
@@ -79,7 +79,7 @@ func BenchmarkNewChecker(b *testing.B) {
 
 	rootPath := tspath.CombinePaths(tspath.NormalizeSlashes(repo.TypeScriptSubmodulePath), "src", "compiler")
 
-	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath())
+	host := compiler.NewCompilerHost(nil, rootPath, fs, bundled.LibPath(), nil)
 	opts := compiler.ProgramOptions{
 		Host:           host,
 		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
