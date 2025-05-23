@@ -10,14 +10,26 @@
 ->exports : typeof import("index")
 ->class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof import("index")
 +>module.exports = class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof exports
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : typeof exports
++>module : { exports: typeof exports; }
++>exports : typeof exports
 +>class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof exports
  
      /**
       * @param {number} p
-@@= skipped -24, +24 lines =@@
+@@= skipped -14, +14 lines =@@
+ 
+         this.t = 12 + p;
+ >this.t = 12 + p : number
+->this.t : any
++>this.t : number
+ >this : this
+->t : any
++>t : number
+ >12 + p : number
+ >12 : 12
+ >p : number
+@@= skipped -10, +10 lines =@@
  }
  module.exports.Sub = class {
  >module.exports.Sub = class {    constructor() {        this.instance = new module.exports(10);    }} : typeof Sub
@@ -27,27 +39,29 @@
 ->exports : typeof import("index")
 ->Sub : typeof Sub
 +>module.exports.Sub : any
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : typeof exports
++>module : { exports: typeof exports; }
++>exports : typeof exports
 +>Sub : any
  >class {    constructor() {        this.instance = new module.exports(10);    }} : typeof Sub
  
      constructor() {
          this.instance = new module.exports(10);
 ->this.instance = new module.exports(10) : import("index")
-+>this.instance = new module.exports(10) : any
- >this.instance : any
+->this.instance : any
++>this.instance = new module.exports(10) : exports
++>this.instance : exports
  >this : this
- >instance : any
+->instance : any
 ->new module.exports(10) : import("index")
 ->module.exports : typeof import("index")
 ->module : { exports: typeof import("index"); }
 ->exports : typeof import("index")
-+>new module.exports(10) : any
-+>module.exports : any
-+>module : any
-+>exports : any
++>instance : exports
++>new module.exports(10) : exports
++>module.exports : typeof exports
++>module : { exports: typeof exports; }
++>exports : typeof exports
  >10 : 10
      }
  }

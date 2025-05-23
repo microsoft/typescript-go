@@ -1,12 +1,17 @@
 package execute
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
+	"runtime"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -24,7 +29,7 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 
 func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) (ExitStatus, *watcher) {
 	configFileName := ""
-	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions().Pretty)
+	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions())
 	// if commandLine.Options().Locale != nil
 
 	if len(commandLine.Errors) > 0 {
@@ -32,6 +37,12 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			reportDiagnostic(e)
 		}
 		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
+	}
+
+	if pprofDir := commandLine.CompilerOptions().PprofDir; pprofDir != "" {
+		// !!! stderr?
+		profileSession := pprof.BeginProfiling(pprofDir, sys.Writer())
+		defer profileSession.Stop()
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
@@ -101,14 +112,14 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			return ExitStatusDiagnosticsPresent_OutputsGenerated, nil
 		}
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
-			return ExitStatusNotImplemented, nil
+			showConfig(sys, configParseResult.CompilerOptions())
+			return ExitStatusSuccess, nil
 		}
 		// updateReportDiagnostic
 		if isWatchSet(configParseResult.CompilerOptions()) {
 			return ExitStatusSuccess, createWatcher(sys, configParseResult, reportDiagnostic)
-		} else if isIncrementalCompilation(configParseResult.CompilerOptions()) {
-			return ExitStatusNotImplementedIncremental, nil
 		}
+		// !!! incremental
 		return performCompilation(
 			sys,
 			cb,
@@ -117,15 +128,15 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		), nil
 	} else {
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
-			return ExitStatusNotImplemented, nil
+			showConfig(sys, compilerOptionsFromCommandLine)
+			return ExitStatusSuccess, nil
 		}
 		// todo update reportDiagnostic
 		if isWatchSet(compilerOptionsFromCommandLine) {
 			// !!! reportWatchModeWithoutSysSupport
 			return ExitStatusSuccess, createWatcher(sys, commandLine, reportDiagnostic)
-		} else if isIncrementalCompilation(compilerOptionsFromCommandLine) {
-			return ExitStatusNotImplementedIncremental, nil
 		}
+		// !!! incremental
 	}
 	return performCompilation(
 		sys,
@@ -177,55 +188,90 @@ func getParsedCommandLineOfConfigFile(configFileName string, options *core.Compi
 func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) ExitStatus {
 	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
 	// todo: cache, statistics, tracing
+	parseStart := time.Now()
 	program := compiler.NewProgramFromParsedCommandLine(config, host)
+	parseTime := time.Since(parseStart)
 
-	diagnostics, emitResult, exitStatus := compileAndEmit(sys, program, reportDiagnostic)
-	if exitStatus != ExitStatusSuccess {
+	result := compileAndEmit(sys, program, reportDiagnostic)
+	if result.status != ExitStatusSuccess {
 		// compile exited early
-		return exitStatus
+		return result.status
 	}
 
-	reportStatistics(sys, program)
+	result.parseTime = parseTime
+	result.totalTime = time.Since(parseStart)
+
+	if config.CompilerOptions().Diagnostics.IsTrue() || config.CompilerOptions().ExtendedDiagnostics.IsTrue() {
+		var memStats runtime.MemStats
+		// GC must be called twice to allow things to settle.
+		runtime.GC()
+		runtime.GC()
+		runtime.ReadMemStats(&memStats)
+
+		reportStatistics(sys, program, result, &memStats)
+	}
+
 	if cb != nil {
 		cb(program)
 	}
 
-	if emitResult.EmitSkipped && diagnostics != nil && len(diagnostics) > 0 {
+	if result.emitResult.EmitSkipped && len(result.diagnostics) > 0 {
 		return ExitStatusDiagnosticsPresent_OutputsSkipped
-	} else if len(diagnostics) > 0 {
+	} else if len(result.diagnostics) > 0 {
 		return ExitStatusDiagnosticsPresent_OutputsGenerated
 	}
 	return ExitStatusSuccess
 }
 
-func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) ([]*ast.Diagnostic, *compiler.EmitResult, ExitStatus) {
+type compileAndEmitResult struct {
+	diagnostics []*ast.Diagnostic
+	emitResult  *compiler.EmitResult
+	status      ExitStatus
+	parseTime   time.Duration
+	bindTime    time.Duration
+	checkTime   time.Duration
+	emitTime    time.Duration
+	totalTime   time.Duration
+}
+
+func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
 	// todo: check if third return needed after execute is fully implemented
 
+	ctx := context.Background()
 	options := program.Options()
 	allDiagnostics := program.GetConfigFileParsingDiagnostics()
 
 	// todo: early exit logic and append diagnostics
-	diagnostics := program.GetSyntacticDiagnostics(nil)
+	diagnostics := program.GetSyntacticDiagnostics(ctx, nil)
 	if len(diagnostics) == 0 {
-		diagnostics = append(diagnostics, program.GetOptionsDiagnostics()...)
+		bindStart := time.Now()
+		_ = program.GetBindDiagnostics(ctx, nil)
+		result.bindTime = time.Since(bindStart)
+
+		diagnostics = append(diagnostics, program.GetOptionsDiagnostics(ctx)...)
 		if options.ListFilesOnly.IsFalse() {
 			// program.GetBindDiagnostics(nil)
-			diagnostics = append(diagnostics, program.GetGlobalDiagnostics()...)
+			diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
 		}
 	}
 	if len(diagnostics) == 0 {
-		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(nil)...)
+		checkStart := time.Now()
+		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
+		result.checkTime = time.Since(checkStart)
 	}
 	// TODO: declaration diagnostics
 	if len(diagnostics) == 0 && options.NoEmit == core.TSTrue && (options.Declaration.IsTrue() && options.Composite.IsTrue()) {
-		return nil, nil, ExitStatusNotImplemented
+		result.status = ExitStatusNotImplemented
+		return result
 		// addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
 	}
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !options.ListFilesOnly.IsTrue() {
 		// !!! Emit is not yet fully implemented, will not emit unless `outfile` specified
+		emitStart := time.Now()
 		emitResult = program.Emit(compiler.EmitOptions{})
+		result.emitTime = time.Since(emitStart)
 	}
 	diagnostics = append(diagnostics, emitResult.Diagnostics...)
 
@@ -244,7 +290,10 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 	}
 
 	createReportErrorSummary(sys, program.Options())(allDiagnostics)
-	return allDiagnostics, emitResult, ExitStatusSuccess
+	result.diagnostics = allDiagnostics
+	result.emitResult = emitResult
+	result.status = ExitStatusSuccess
+	return result
 }
 
 // func isBuildCommand(args []string) bool {
@@ -257,4 +306,11 @@ func isWatchSet(options *core.CompilerOptions) bool {
 
 func isIncrementalCompilation(options *core.CompilerOptions) bool {
 	return options.Incremental.IsTrue()
+}
+
+func showConfig(sys System, config *core.CompilerOptions) {
+	// !!!
+	enc := json.NewEncoder(sys.Writer())
+	enc.SetIndent("", "    ")
+	enc.Encode(config) //nolint:errcheck,errchkjson
 }

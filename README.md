@@ -2,8 +2,24 @@
 
 [Not sure what this is? Read the announcement post!](https://devblogs.microsoft.com/typescript/typescript-native-port/)
 
-This repo is very much under active development; as such there are no published artifacts at this time.
-Interested developers can clone and run locally to try out things as they become available.
+## Preview
+
+A preview build is available on npm as `@typescript/native-preview`.
+
+```sh
+npm install @typescript/native-preview
+npx tsgo # Use this as you would tsc.
+```
+
+A preview VS Code extension is [available on the VS Code marketplace](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.native-preview).
+
+To use this, set this in your VS Code settings:
+
+```json
+{
+    "typescript.experimental.useTsgo": true
+}
+```
 
 ## How to Build and Run
 
@@ -40,18 +56,17 @@ Additional tasks are a work in progress.
 
 ### Running `tsgo`
 
-After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsc` (respects tsconfig, but also prints out perf stats).
-This is mainly a testing entry point; for higher fidelity with regular `tsc`, run `tsgo tsc [flags]`, which behaves more similarly to `tsc`.
+After running `hereby build`, you can run `built/local/tsgo`, which behaves mostly the same as `tsc`.
 
 ### Running LSP Prototype
 
-To try the prototype LSP experience:
+To debug and run the VS Code extension without installing it globally:
 
 * Run VS Code in the repo workspace (`code .`)
 * Copy `.vscode/launch.template.json` to `.vscode/launch.json`
 * <kbd>F5</kbd> (or `Debug: Start Debugging` from the command palette)
 
-This will launch a new VS Code instance which uses the Corsa LS as the backend. If correctly set up, you should see "typescript-go" as an option in the Output pane:
+This will launch a new VS Code instance which uses the Corsa LS as the backend. If correctly set up, you should see "tsgo" in the status bar when a TypeScript or JavaScript file is open:
 
 ![LSP Prototype Screenshot](.github/ls-screenshot.png)
 
@@ -86,7 +101,7 @@ Definitions:
 
 ## Other Notes
 
-Long-term, we expect this repo is that its contents will be merged into `microsoft/TypeScript`.
+Long-term, we expect that this repo and its contents will be merged into `microsoft/TypeScript`.
 As a result, the repo and issue tracker for typescript-go will eventually be closed, so treat discussions/issues accordingly.
 
 For a list of intentional changes with respect to TypeScript 5.7, see CHANGES.md.

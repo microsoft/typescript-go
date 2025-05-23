@@ -39,7 +39,8 @@ foo.bar;`
 	}
 	p := compiler.NewProgram(opts)
 	p.BindSourceFiles()
-	c := p.GetTypeChecker()
+	c, done := p.GetTypeChecker(t.Context())
+	defer done()
 	file := p.GetSourceFile("/foo.ts")
 	interfaceId := file.Statements.Nodes[0].Name()
 	varId := file.Statements.Nodes[1].AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes[0].Name()
@@ -68,7 +69,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 		ConfigFileName: tspath.CombinePaths(rootPath, "tsconfig.json"),
 	}
 	p := compiler.NewProgram(opts)
-	p.CheckSourceFiles()
+	p.CheckSourceFiles(t.Context())
 }
 
 func BenchmarkNewChecker(b *testing.B) {

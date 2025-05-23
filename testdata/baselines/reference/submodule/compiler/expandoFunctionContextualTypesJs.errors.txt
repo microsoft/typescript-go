@@ -1,9 +1,8 @@
 input.js(5,48): error TS2304: Cannot find name 'P'.
-input.js(48,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-input.js(52,24): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+input.js(48,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 
 
-==== input.js (3 errors) ====
+==== input.js (2 errors) ====
     /** @typedef {{ color: "red" | "blue" }} MyComponentProps */
     
     /**
@@ -54,12 +53,12 @@ input.js(52,24): error TS2580: Cannot find name 'module'. Do you need to install
      * @type {MyComponentProps}
      */
     module.exports = {
-    ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+    ~~~~~~~~~~~~~~~~~~
         color: "red"
+    ~~~~~~~~~~~~~~~~
     }
+    ~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     
     expectLiteral({ props: module.exports });
-                           ~~~~~~
-!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
     

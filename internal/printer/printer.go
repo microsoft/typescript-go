@@ -3740,6 +3740,24 @@ func (p *Printer) emitExportAssignment(node *ast.ExportAssignment) {
 	p.exitNode(node.AsNode(), state)
 }
 
+// export declare var <name> = <initialiser>;
+func (p *Printer) emitCommonJSExport(node *ast.CommonJSExport) {
+	state := p.enterNode(node.AsNode())
+	p.emitToken(ast.KindExportKeyword, node.Pos(), WriteKindKeyword, node.AsNode())
+	p.writeSpace()
+	p.writeKeyword("var")
+	p.writeSpace()
+	if node.Name().Kind == ast.KindStringLiteral {
+		// TODO: This doesn't work for illegal names.
+		p.write(node.Name().AsStringLiteral().Text)
+	} else {
+		p.emitBindingName(node.Name())
+	}
+	p.emitInitializer(node.Initializer, node.Name().End(), node.AsNode())
+	p.writeTrailingSemicolon()
+	p.exitNode(node.AsNode(), state)
+}
+
 func (p *Printer) emitExportDeclaration(node *ast.ExportDeclaration) {
 	state := p.enterNode(node.AsNode())
 	p.emitModifierList(node.AsNode(), node.Modifiers(), false /*allowDecorators*/)
@@ -3937,10 +3955,12 @@ func (p *Printer) emitStatement(node *ast.Statement) {
 		p.emitImportEqualsDeclaration(node.AsImportEqualsDeclaration())
 	case ast.KindImportDeclaration:
 		p.emitImportDeclaration(node.AsImportDeclaration())
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		p.emitExportAssignment(node.AsExportAssignment())
 	case ast.KindExportDeclaration:
 		p.emitExportDeclaration(node.AsExportDeclaration())
+	case ast.KindCommonJSExport:
+		p.emitCommonJSExport(node.AsCommonJSExport())
 
 	default:
 		panic(fmt.Sprintf("unhandled statement: %v", node.Kind))
@@ -4319,22 +4339,6 @@ func (p *Printer) emitPrologueDirectives(statements *ast.StatementList) int {
 		}
 	}
 	return len(statements.Nodes)
-}
-
-func compareEmitHelpers(x *EmitHelper, y *EmitHelper) int {
-	if x == y {
-		return 0
-	}
-	if x.Priority == y.Priority {
-		return 0
-	}
-	if x.Priority == nil {
-		return 1
-	}
-	if y.Priority == nil {
-		return -1
-	}
-	return x.Priority.Value - y.Priority.Value
 }
 
 func (p *Printer) emitHelpers(node *ast.Node) bool {
@@ -5601,7 +5605,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		p.generateAllNames(node.AsBindingPattern().Elements)
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		p.generateNames(node.AsImportDeclaration().ImportClause)
 	case ast.KindImportClause:
 		p.generateNameIfNeeded(node.AsImportClause().Name())

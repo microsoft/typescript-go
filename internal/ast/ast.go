@@ -357,7 +357,7 @@ func (n *Node) Expression() *Node {
 		return n.AsThrowStatement().Expression
 	case KindExternalModuleReference:
 		return n.AsExternalModuleReference().Expression
-	case KindExportAssignment:
+	case KindExportAssignment, KindJSExportAssignment:
 		return n.AsExportAssignment().Expression
 	case KindDecorator:
 		return n.AsDecorator().Expression
@@ -472,6 +472,26 @@ func (n *Node) Members() []*Node {
 	return nil
 }
 
+func (n *Node) StatementList() *NodeList {
+	switch n.Kind {
+	case KindSourceFile:
+		return n.AsSourceFile().Statements
+	case KindBlock:
+		return n.AsBlock().Statements
+	case KindModuleBlock:
+		return n.AsModuleBlock().Statements
+	}
+	panic("Unhandled case in Node.StatementList: " + n.Kind.String())
+}
+
+func (n *Node) Statements() []*Node {
+	list := n.StatementList()
+	if list != nil {
+		return list.Nodes
+	}
+	return nil
+}
+
 func (n *Node) ModifierFlags() ModifierFlags {
 	modifiers := n.Modifiers()
 	if modifiers != nil {
@@ -532,7 +552,7 @@ func (n *Node) Type() *Node {
 		return n.AsJSDocNonNullableType().Type
 	case KindJSDocOptionalType:
 		return n.AsJSDocOptionalType().Type
-	case KindEnumMember, KindBindingElement, KindExportAssignment, KindBinaryExpression:
+	case KindEnumMember, KindBindingElement, KindExportAssignment, KindJSExportAssignment, KindBinaryExpression, KindCommonJSExport:
 		return nil
 	default:
 		funcLike := n.FunctionLikeData()
@@ -749,6 +769,67 @@ func (n *Node) Children() *NodeList {
 	panic("Unhandled case in Node.Children: " + n.Kind.String())
 }
 
+func (n *Node) ModuleSpecifier() *Expression {
+	switch n.Kind {
+	case KindImportDeclaration, KindJSImportDeclaration:
+		return n.AsImportDeclaration().ModuleSpecifier
+	case KindExportDeclaration:
+		return n.AsExportDeclaration().ModuleSpecifier
+	}
+	panic("Unhandled case in Node.ModuleSpecifier: " + n.Kind.String())
+}
+
+func (n *Node) Statement() *Statement {
+	switch n.Kind {
+	case KindDoStatement:
+		return n.AsDoStatement().Statement
+	case KindWhileStatement:
+		return n.AsWhileStatement().Statement
+	case KindForStatement:
+		return n.AsForStatement().Statement
+	case KindForInStatement, KindForOfStatement:
+		return n.AsForInOrOfStatement().Statement
+	}
+	panic("Unhandled case in Node.Statement: " + n.Kind.String())
+}
+
+func (n *Node) PropertyList() *NodeList {
+	switch n.Kind {
+	case KindObjectLiteralExpression:
+		return n.AsObjectLiteralExpression().Properties
+	case KindJsxAttributes:
+		return n.AsJsxAttributes().Properties
+	}
+	panic("Unhandled case in Node.PropertyList: " + n.Kind.String())
+}
+
+func (n *Node) Properties() []*Node {
+	list := n.PropertyList()
+	if list != nil {
+		return list.Nodes
+	}
+	return nil
+}
+
+func (n *Node) ElementList() *NodeList {
+	switch n.Kind {
+	case KindNamedImports:
+		return n.AsNamedImports().Elements
+	case KindNamedExports:
+		return n.AsNamedExports().Elements
+	}
+
+	panic("Unhandled case in Node.ElementList: " + n.Kind.String())
+}
+
+func (n *Node) Elements() []*Node {
+	list := n.ElementList()
+	if list != nil {
+		return list.Nodes
+	}
+	return nil
+}
+
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
 // `descendant` or one of its ancestors is not parented except when that node is a `SourceFile`.
 func (n *Node) Contains(descendant *Node) bool {
@@ -893,6 +974,10 @@ func (n *Node) AsVariableDeclaration() *VariableDeclaration {
 
 func (n *Node) AsExportAssignment() *ExportAssignment {
 	return n.data.(*ExportAssignment)
+}
+
+func (n *Node) AsCommonJSExport() *CommonJSExport {
+	return n.data.(*CommonJSExport)
 }
 
 func (n *Node) AsObjectLiteralExpression() *ObjectLiteralExpression {
@@ -1655,6 +1740,16 @@ type (
 	JSDocComment                = Node // JSDocText | JSDocLink | JSDocLinkCode | JSDocLinkPlain;
 	JSDocTag                    = Node // Node with JSDocTagBase
 	SignatureDeclaration        = Node // CallSignatureDeclaration | ConstructSignatureDeclaration | MethodSignature | IndexSignatureDeclaration | FunctionTypeNode | ConstructorTypeNode | FunctionDeclaration | MethodDeclaration | ConstructorDeclaration | AccessorDeclaration | FunctionExpression | ArrowFunction;
+	StringLiteralLike           = Node // StringLiteral | NoSubstitutionTemplateLiteral
+	AnyValidImportOrReExport    = Node // (ImportDeclaration | ExportDeclaration | JSDocImportTag) & { moduleSpecifier: StringLiteral } | ImportEqualsDeclaration & { moduleReference: ExternalModuleReference & { expression: StringLiteral }} | RequireOrImportCall | ValidImportTypeNode
+	ValidImportTypeNode         = Node // ImportTypeNode & { argument: LiteralTypeNode & { literal: StringLiteral } }
+	NumericOrStringLikeLiteral  = Node // StringLiteralLike | NumericLiteral
+	TypeOnlyImportDeclaration   = Node // ImportClause | ImportEqualsDeclaration | ImportSpecifier | NamespaceImport with isTypeOnly: true
+	ObjectLiteralLike           = Node // ObjectLiteralExpression | ObjectBindingPattern
+	ObjectTypeDeclaration       = Node // ClassLikeDeclaration | InterfaceDeclaration | TypeLiteralNode
+	JsxOpeningLikeElement       = Node // JsxOpeningElement | JsxSelfClosingElement
+	NamedImportsOrExports       = Node // NamedImports | NamedExports
+	BreakOrContinueStatement    = Node // BreakStatement | ContinueStatement
 )
 
 // Aliases for node singletons
@@ -1673,6 +1768,7 @@ type (
 	CatchClauseNode                 = Node
 	CaseBlockNode                   = Node
 	CaseOrDefaultClauseNode         = Node
+	CaseClauseNode                  = Node
 	VariableDeclarationNode         = Node
 	VariableDeclarationListNode     = Node
 	BindingElementNode              = Node
@@ -1695,6 +1791,11 @@ type (
 	JsxOpeningFragmentNode          = Node
 	JsxClosingFragmentNode          = Node
 	SourceFileNode                  = Node
+	PropertyAccessExpressionNode    = Node
+	TypeLiteral                     = Node
+	ObjectLiteralExpressionNode     = Node
+	ConstructorDeclarationNode      = Node
+	NamedExportsNode                = Node
 )
 
 type (
@@ -2023,8 +2124,8 @@ type TypeParameterDeclaration struct {
 	typeSyntaxBase
 	name        *IdentifierNode // IdentifierNode
 	Constraint  *TypeNode       // TypeNode. Optional
+	Expression  *Expression     // Expression. Optional, for error recovery purposes
 	DefaultType *TypeNode       // TypeNode. Optional
-	Expression  *Expression     // Expression. Optional, For error recovery purposes
 }
 
 func (f *NodeFactory) NewTypeParameterDeclaration(modifiers *ModifierList, name *IdentifierNode, constraint *TypeNode, defaultType *TypeNode) *Node {
@@ -2044,7 +2145,7 @@ func (f *NodeFactory) UpdateTypeParameterDeclaration(node *TypeParameterDeclarat
 }
 
 func (node *TypeParameterDeclaration) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Constraint) || visit(v, node.DefaultType)
+	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Constraint) || visit(v, node.Expression) || visit(v, node.DefaultType)
 }
 
 func (node *TypeParameterDeclaration) VisitEachChild(v *NodeVisitor) *Node {
@@ -3647,7 +3748,7 @@ type TypeAliasDeclaration struct {
 	Type           *TypeNode       // TypeNode
 }
 
-func (f *NodeFactory) newTypeOrJSTypeAliasDeclaration(kind Kind, modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
+func (f *NodeFactory) newTypeAliasOrJSTypeAliasDeclaration(kind Kind, modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
 	data := &TypeAliasDeclaration{}
 	data.modifiers = modifiers
 	data.name = name
@@ -3657,12 +3758,12 @@ func (f *NodeFactory) newTypeOrJSTypeAliasDeclaration(kind Kind, modifiers *Modi
 }
 
 func (f *NodeFactory) NewTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
-	return f.newTypeOrJSTypeAliasDeclaration(KindTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
+	return f.newTypeAliasOrJSTypeAliasDeclaration(KindTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
 }
 
 func (f *NodeFactory) UpdateTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
 	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
-		return updateNode(f.NewTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
+		return updateNode(f.newTypeAliasOrJSTypeAliasDeclaration(node.Kind, modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -3672,14 +3773,11 @@ func (node *TypeAliasDeclaration) ForEachChild(v Visitor) bool {
 }
 
 func (node *TypeAliasDeclaration) VisitEachChild(v *NodeVisitor) *Node {
-	if node.Kind == KindJSTypeAliasDeclaration {
-		return v.Factory.UpdateJSTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
-	}
 	return v.Factory.UpdateTypeAliasDeclaration(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNodes(node.TypeParameters), v.visitNode(node.Type))
 }
 
 func (node *TypeAliasDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewTypeAliasDeclaration(node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().newTypeAliasOrJSTypeAliasDeclaration(node.Kind, node.Modifiers(), node.Name(), node.TypeParameters, node.Type), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *TypeAliasDeclaration) Name() *DeclarationName { return node.name }
@@ -3693,14 +3791,7 @@ func IsTypeOrJSTypeAliasDeclaration(node *Node) bool {
 }
 
 func (f *NodeFactory) NewJSTypeAliasDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
-	return f.newTypeOrJSTypeAliasDeclaration(KindJSTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
-}
-
-func (f *NodeFactory) UpdateJSTypeAliasDeclaration(node *TypeAliasDeclaration, modifiers *ModifierList, name *IdentifierNode, typeParameters *TypeParameterList, typeNode *TypeNode) *Node {
-	if modifiers != node.modifiers || name != node.name || typeParameters != node.TypeParameters || typeNode != node.Type {
-		return updateNode(f.NewJSTypeAliasDeclaration(modifiers, name, typeParameters, typeNode), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
+	return f.newTypeAliasOrJSTypeAliasDeclaration(KindJSTypeAliasDeclaration, modifiers, name, typeParameters, typeNode)
 }
 
 func IsJSTypeAliasDeclaration(node *Node) bool {
@@ -4014,18 +4105,26 @@ type ImportDeclaration struct {
 	Attributes      *ImportAttributesNode // ImportAttributesNode. Optional
 }
 
-func (f *NodeFactory) NewImportDeclaration(modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+func (f *NodeFactory) newImportOrJSImportDeclaration(kind Kind, modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
 	data := &ImportDeclaration{}
 	data.modifiers = modifiers
 	data.ImportClause = importClause
 	data.ModuleSpecifier = moduleSpecifier
 	data.Attributes = attributes
-	return f.newNode(KindImportDeclaration, data)
+	return f.newNode(kind, data)
+}
+
+func (f *NodeFactory) NewImportDeclaration(modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+	return f.newImportOrJSImportDeclaration(KindImportDeclaration, modifiers, importClause, moduleSpecifier, attributes)
+}
+
+func (f *NodeFactory) NewJSImportDeclaration(modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
+	return f.newImportOrJSImportDeclaration(KindJSImportDeclaration, modifiers, importClause, moduleSpecifier, attributes)
 }
 
 func (f *NodeFactory) UpdateImportDeclaration(node *ImportDeclaration, modifiers *ModifierList, importClause *ImportClauseNode, moduleSpecifier *Expression, attributes *ImportAttributesNode) *Node {
 	if modifiers != node.modifiers || importClause != node.ImportClause || moduleSpecifier != node.ModuleSpecifier || attributes != node.Attributes {
-		return updateNode(f.NewImportDeclaration(modifiers, importClause, moduleSpecifier, attributes), node.AsNode(), f.hooks)
+		return updateNode(f.newImportOrJSImportDeclaration(node.Kind, modifiers, importClause, moduleSpecifier, attributes), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4039,7 +4138,7 @@ func (node *ImportDeclaration) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *ImportDeclaration) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewImportDeclaration(node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().newImportOrJSImportDeclaration(node.Kind, node.Modifiers(), node.ImportClause, node.ModuleSpecifier, node.Attributes), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ImportDeclaration) computeSubtreeFacts() SubtreeFacts {
@@ -4296,6 +4395,7 @@ func IsNamedImports(node *Node) bool {
 
 // This is either an `export =` or an `export default` declaration.
 // Unless `isExportEquals` is set, this node was parsed as an `export default`.
+// If Kind is KindJSExportAssignment, it is a synthetic declaration for `module.exports =`.
 type ExportAssignment struct {
 	StatementBase
 	DeclarationBase
@@ -4305,17 +4405,25 @@ type ExportAssignment struct {
 	Expression     *Expression // Expression
 }
 
-func (f *NodeFactory) NewExportAssignment(modifiers *ModifierList, isExportEquals bool, expression *Expression) *Node {
+func (f *NodeFactory) newExportOrJSExportAssignment(kind Kind, modifiers *ModifierList, isExportEquals bool, expression *Expression) *Node {
 	data := &ExportAssignment{}
 	data.modifiers = modifiers
 	data.IsExportEquals = isExportEquals
 	data.Expression = expression
-	return f.newNode(KindExportAssignment, data)
+	return f.newNode(kind, data)
+}
+
+func (f *NodeFactory) NewExportAssignment(modifiers *ModifierList, isExportEquals bool, expression *Expression) *Node {
+	return f.newExportOrJSExportAssignment(KindExportAssignment, modifiers, isExportEquals, expression)
+}
+
+func (f *NodeFactory) NewJSExportAssignment(expression *Expression) *Node {
+	return f.newExportOrJSExportAssignment(KindJSExportAssignment, nil /*modifiers*/, true, expression)
 }
 
 func (f *NodeFactory) UpdateExportAssignment(node *ExportAssignment, modifiers *ModifierList, expression *Expression) *Node {
 	if modifiers != node.modifiers || expression != node.Expression {
-		return updateNode(f.NewExportAssignment(modifiers, node.IsExportEquals, expression), node.AsNode(), f.hooks)
+		return updateNode(f.newExportOrJSExportAssignment(node.Kind, modifiers, node.IsExportEquals, expression), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
@@ -4329,7 +4437,7 @@ func (node *ExportAssignment) VisitEachChild(v *NodeVisitor) *Node {
 }
 
 func (node *ExportAssignment) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewExportAssignment(node.Modifiers(), node.IsExportEquals, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().newExportOrJSExportAssignment(node.Kind, node.Modifiers(), node.IsExportEquals, node.Expression), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
@@ -4338,6 +4446,60 @@ func (node *ExportAssignment) computeSubtreeFacts() SubtreeFacts {
 
 func IsExportAssignment(node *Node) bool {
 	return node.Kind == KindExportAssignment
+}
+
+func IsJSExportAssignment(node *Node) bool {
+	return node.Kind == KindJSExportAssignment
+}
+
+func IsAnyExportAssignment(node *Node) bool {
+	return node.Kind == KindExportAssignment || node.Kind == KindJSExportAssignment
+}
+
+// CommonJSExport
+
+type CommonJSExport struct {
+	StatementBase
+	DeclarationBase
+	ExportableBase
+	ModifiersBase
+	name        *IdentifierNode
+	Initializer *Expression
+}
+
+func (f *NodeFactory) NewCommonJSExport(modifiers *ModifierList, name *IdentifierNode, initializer *Expression) *Node {
+	data := &CommonJSExport{}
+	data.modifiers = modifiers
+	data.name = name
+	data.Initializer = initializer
+	return newNode(KindCommonJSExport, data, f.hooks)
+}
+
+func (f *NodeFactory) UpdateCommonJSExport(node *CommonJSExport, modifiers *ModifierList, name *IdentifierNode, initializer *Expression) *Node {
+	if modifiers != node.modifiers || initializer != node.Initializer || name != node.name {
+		return updateNode(f.NewCommonJSExport(node.modifiers, name, initializer), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *CommonJSExport) ForEachChild(v Visitor) bool {
+	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Initializer)
+}
+
+func (node *CommonJSExport) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateCommonJSExport(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitNode(node.Initializer))
+}
+
+func (node *CommonJSExport) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewCommonJSExport(node.Modifiers(), node.name, node.Initializer), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsCommonJSExport(node *Node) bool {
+	return node.Kind == KindCommonJSExport
+}
+
+func (node *CommonJSExport) Name() *DeclarationName {
+	return node.name
 }
 
 // NamespaceExportDeclaration
@@ -6838,6 +7000,10 @@ func (node *IntersectionTypeNode) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewIntersectionTypeNode(node.Types), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsIntersectionTypeNode(node *Node) bool {
+	return node.Kind == KindIntersectionType
+}
+
 // ConditionalTypeNode
 
 type ConditionalTypeNode struct {
@@ -8219,6 +8385,10 @@ func (node *JsxFragment) computeSubtreeFacts() SubtreeFacts {
 		SubtreeContainsJsx
 }
 
+func IsJsxFragment(node *Node) bool {
+	return node.Kind == KindJsxFragment
+}
+
 /// The opening element of a <>...</> JsxFragment
 
 type JsxOpeningFragment struct {
@@ -9446,7 +9616,7 @@ func (node *JSDocThisTag) Clone(f NodeFactoryCoercible) *Node {
 type JSDocImportTag struct {
 	JSDocTagBase
 	ImportClause    *Declaration
-	ModuleSpecifier *Node
+	ModuleSpecifier *Expression
 	Attributes      *Node
 }
 
@@ -9477,6 +9647,10 @@ func (node *JSDocImportTag) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocImportTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocImportTag(node.TagName, node.ImportClause, node.ModuleSpecifier, node.Attributes, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocImportTag(node *Node) bool {
+	return node.Kind == KindJSDocImportTag
 }
 
 // JSDocCallbackTag
@@ -9947,7 +10121,7 @@ func (node *SourceFile) GetOrCreateToken(
 			panic(fmt.Sprintf("Token cache mismatch: %v != %v", token.Kind, kind))
 		}
 		if token.Parent != parent {
-			panic("Token cache mismatch: parent")
+			panic(fmt.Sprintf("Token cache mismatch: parent. Expected parent of kind %v, got %v", token.Parent.Kind, parent.Kind))
 		}
 		return token
 	}

@@ -6,8 +6,8 @@
  var ex = require('./ex')
 ->ex : typeof ex
 ->require('./ex') : typeof ex
-+>ex : any
-+>require('./ex') : any
++>ex : typeof import("ex")
++>require('./ex') : typeof import("ex")
  >require : any
  >'./ex' : "./ex"
  
@@ -18,23 +18,20 @@
 ->ex.Crunch : typeof ex.Crunch
 ->ex : typeof ex
 ->Crunch : typeof ex.Crunch
-+>crunch : any
-+>new ex.Crunch(1) : any
-+>ex.Crunch : any
-+>ex : any
-+>Crunch : any
++>crunch : Crunch
++>new ex.Crunch(1) : Crunch
++>ex.Crunch : typeof Crunch
++>ex : typeof import("ex")
++>Crunch : typeof Crunch
  >1 : 1
  
  crunch.n
-->crunch.n : number
+ >crunch.n : number
 ->crunch : ex.Crunch
-->n : number
-+>crunch.n : any
-+>crunch : any
-+>n : any
++>crunch : Crunch
+ >n : number
  
  
- // types work
 @@= skipped -25, +25 lines =@@
   * @param {ex.Crunch} wrap
   */
@@ -45,35 +42,22 @@
 +>wrap : Crunch
  
      wrap.n
-->wrap.n : number
+ >wrap.n : number
 ->wrap : ex.Crunch
-->n : number
--}
--
--=== ex.js ===
--export class Crunch {
-->Crunch : Crunch
--
--    /** @param {number} n */
--    constructor(n) {
-->n : number
--
--        this.n = n
-->this.n = n : number
-->this.n : any
-->this : this
-+>wrap.n : any
 +>wrap : Crunch
- >n : any
-->n : number
--    }
--    m() {
-->m : () => number
--
--        return this.n
-->this.n : number
-->this : this
-->n : number
--    }
+ >n : number
  }
  
+@@= skipped -19, +19 lines =@@
+ 
+         this.n = n
+ >this.n = n : number
+->this.n : any
++>this.n : number
+ >this : this
+->n : any
+ >n : number
++>n : number
+     }
+     m() {
+ >m : () => number

@@ -75,6 +75,7 @@ func isIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		ast.KindThrowStatement,
 		ast.KindExpressionStatement,
 		ast.KindExportAssignment,
+		ast.KindJSExportAssignment,
 		ast.KindPropertyAccessExpression,
 		ast.KindTemplateSpan:
 		// only an `Expression()` child that can be `Identifier` would be an instance of `IdentifierReference`
@@ -390,4 +391,17 @@ func isSimpleCopiableExpression(expression *ast.Expression) bool {
 // any such locations
 func isSimpleInlineableExpression(expression *ast.Expression) bool {
 	return !ast.IsIdentifier(expression) && isSimpleCopiableExpression(expression)
+}
+
+func convertClassDeclarationToClassExpression(emitContext *printer.EmitContext, node *ast.ClassDeclaration) *ast.Expression {
+	updated := emitContext.Factory.NewClassExpression(
+		extractModifiers(emitContext, node.Modifiers(), ^ast.ModifierFlagsExportDefault),
+		node.Name(),
+		node.TypeParameters,
+		node.HeritageClauses,
+		node.Members,
+	)
+	emitContext.SetOriginal(updated, node.AsNode())
+	updated.Loc = node.Loc
+	return updated
 }
