@@ -557,3 +557,12 @@ func StripQuotes(name string) string {
 	}
 	return name
 }
+
+func IndexAfter(s string, pattern string, startIndex int) int {
+	matched := strings.Index(s[startIndex:], pattern)
+	if matched == -1 {
+		return -1
+	} else {
+		return matched + startIndex
+	}
+}

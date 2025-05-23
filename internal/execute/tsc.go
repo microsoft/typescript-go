@@ -270,11 +270,8 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
 		result.checkTime = time.Since(checkStart)
 	}
-	// TODO: declaration diagnostics
-	if len(diagnostics) == 0 && options.NoEmit == core.TSTrue && (options.Declaration.IsTrue() && options.Composite.IsTrue()) {
-		result.status = ExitStatusNotImplemented
-		return result
-		// addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
+	if len(diagnostics) == 0 && options.GetEmitDeclarations() {
+		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(context.Background(), nil)...)
 	}
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
