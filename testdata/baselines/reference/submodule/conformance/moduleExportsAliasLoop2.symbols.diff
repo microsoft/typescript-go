@@ -12,4 +12,3 @@
  >Foo : Symbol(Foo, Decl(x.js, 0, 5))
 ->min : Symbol(fn2, Decl(x.js, 0, 13))
 +>min : Symbol(min, Decl(x.js, 0, 13))
-

@@ -6,4 +6,3 @@
  import * as b from "./b";
 ->b : error
 +>b : any
-

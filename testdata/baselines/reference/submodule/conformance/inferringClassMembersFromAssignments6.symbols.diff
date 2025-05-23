@@ -62,4 +62,3 @@
 ->foo.m : Symbol(Foonly.m, Decl(inferringClassMembersFromAssignments6.js, 2, 14))
  >foo : Symbol(foo, Decl(inferringClassMembersFromAssignments6.js, 11, 5))
 ->m : Symbol(Foonly.m, Decl(inferringClassMembersFromAssignments6.js, 2, 14))
-

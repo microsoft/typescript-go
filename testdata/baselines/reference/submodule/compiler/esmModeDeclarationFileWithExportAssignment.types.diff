@@ -12,4 +12,3 @@
 ->example : any
 +>example() : 5
 +>example : () => 5
-

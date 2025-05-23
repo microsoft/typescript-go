@@ -35,4 +35,3 @@
  >d : Symbol(d, Decl(superWithGenericSpecialization.ts, 11, 3))
 ->y : Symbol(D.y, Decl(superWithGenericSpecialization.ts, 4, 30))
 +>y : Symbol(y, Decl(superWithGenericSpecialization.ts, 4, 30))
-

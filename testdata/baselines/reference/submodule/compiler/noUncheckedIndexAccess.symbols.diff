@@ -83,4 +83,3 @@
  >B : Symbol(B, Decl(noUncheckedIndexAccess.ts, 21, 3))
 ->x : Symbol(B.x, Decl(noUncheckedIndexAccess.ts, 22, 10))
 +>x : Symbol(x, Decl(noUncheckedIndexAccess.ts, 22, 10))
-

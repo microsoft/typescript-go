@@ -65,4 +65,3 @@
 ->toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
 +>someAnotherValue : Symbol(someAnotherValue, Decl(map.ts, 9, 11))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
-

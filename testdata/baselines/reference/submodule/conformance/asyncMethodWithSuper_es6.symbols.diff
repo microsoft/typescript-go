@@ -591,4 +591,3 @@
 ->"setter" : Symbol(Base.setter, Decl(asyncMethodWithSuper_es6.ts, 191, 29))
 +>"setter" : Symbol(setter, Decl(asyncMethodWithSuper_es6.ts, 191, 29))
  }
-

@@ -64,4 +64,3 @@
 ->get : (key: string) => number
 +>get : any
  >'hi' : "hi"
-

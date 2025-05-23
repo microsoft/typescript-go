@@ -14,4 +14,3 @@
 -export = a;
 ->a : number
 +>a : any
-

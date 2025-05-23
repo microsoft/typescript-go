@@ -22,4 +22,3 @@
 ->replace : Symbol(String.replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>"a/".replace : Symbol(replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>replace : Symbol(replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-

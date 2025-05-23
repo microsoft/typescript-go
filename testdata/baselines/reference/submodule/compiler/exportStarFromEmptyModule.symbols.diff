@@ -42,4 +42,3 @@
  >X : Symbol(X, Decl(exportStarFromEmptyModule_module4.ts, 0, 6))
 ->A : Symbol(X.A, Decl(exportStarFromEmptyModule_module3.ts, 1, 52))
 +>A : Symbol(A, Decl(exportStarFromEmptyModule_module3.ts, 1, 52))
-

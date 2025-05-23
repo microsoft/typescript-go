@@ -51,4 +51,3 @@
 ->exports : { (ast: any): any; funky: (declaration: any) => boolean; }
 ->funky : (declaration: any) => boolean
 ->funky : (declaration: any) => boolean
-

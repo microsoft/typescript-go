@@ -127,4 +127,3 @@
 ->foo14 : { (x: I<string, number>): any; (x: typeof b): any; }
 +>foo14 : { (x: I<string, number>): any; (x: { new: <T, U>(x: T, y: U) => C<T, U>; }): any; }
  >x : any
-

@@ -1,9 +1,10 @@
 --- old.es6ExportClause.js
 +++ new.es6ExportClause.js
-@@= skipped -29, +29 lines =@@
+@@= skipped -28, +28 lines =@@
+ export { c as c2 };
  export { m as instantiatedModule };
  export { x };
-
+-
 -
 -//// [server.d.ts]
 -declare class c {
@@ -21,4 +22,3 @@
 -export { i, m as instantiatedModule };
 -export { uninstantiated };
 -export { x };
--

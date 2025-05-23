@@ -14,4 +14,3 @@
  >ns : Symbol(ns, Decl(foo.mts, 1, 6))
 ->default : Symbol(d.default)
 ->a : Symbol(d.a, Decl(a.cts, 0, 12))
-

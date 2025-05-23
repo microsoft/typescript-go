@@ -7,4 +7,3 @@
 ->greet : Symbol(Greeter.greet, Decl(importAsBaseClass_0.ts, 0, 22))
 +>greet : Symbol(greet, Decl(importAsBaseClass_0.ts, 0, 22))
  }
-

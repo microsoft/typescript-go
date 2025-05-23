@@ -8,4 +8,3 @@
 ->default : typeof import("ConstEnum").MyConstEnum
 +>MyConstEnum : typeof MyConstEnum
 +>default : typeof MyConstEnum
-

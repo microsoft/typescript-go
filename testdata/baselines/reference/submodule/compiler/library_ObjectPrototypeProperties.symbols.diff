@@ -80,4 +80,3 @@
 ->propertyIsEnumerable : Symbol(Object.propertyIsEnumerable, Decl(lib.es5.d.ts, --, --))
 +>prototype : Symbol(prototype, Decl(lib.es5.d.ts, --, --))
 +>propertyIsEnumerable : Symbol(propertyIsEnumerable, Decl(lib.es5.d.ts, --, --))
-

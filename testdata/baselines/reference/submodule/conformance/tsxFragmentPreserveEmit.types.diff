@@ -64,4 +64,3 @@
  <>#</>; // # would cause scanning error if not in jsxtext
 -><>#</> : JSX.Element
 +><>#</> : Element
-

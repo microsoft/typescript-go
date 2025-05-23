@@ -11,4 +11,3 @@
 ->#b : Symbol(Foo.#b, Decl(classIndexer5.ts, 3, 16))
 +>#b : Symbol(#b, Decl(classIndexer5.ts, 3, 16))
  }
-

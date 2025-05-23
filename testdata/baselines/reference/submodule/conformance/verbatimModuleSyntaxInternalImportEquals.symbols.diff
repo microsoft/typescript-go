@@ -12,4 +12,3 @@
  >Foo : Symbol(Foo, Decl(verbatimModuleSyntaxInternalImportEquals.ts, 1, 24))
 ->T : Symbol(f3, Decl(verbatimModuleSyntaxInternalImportEquals.ts, 4, 25))
 +>T : Symbol(T, Decl(verbatimModuleSyntaxInternalImportEquals.ts, 4, 25))
-

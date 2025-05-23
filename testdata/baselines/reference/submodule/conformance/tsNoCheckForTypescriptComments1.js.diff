@@ -19,7 +19,7 @@
 +    q = 'lol'; // And so will this implements error
 +}
  exports.Bet = Bet;
-
+-
 -
 -//// [file.d.ts]
 -export declare const a: any;

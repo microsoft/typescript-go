@@ -115,4 +115,3 @@
 ->a : Symbol(a, Decl(a.js, 29, 3), Decl(a.js, 31, 6))
 ->second : Symbol(A.second, Decl(a.js, 17, 14))
 +>a : Symbol(a, Decl(a.js, 29, 3))
-

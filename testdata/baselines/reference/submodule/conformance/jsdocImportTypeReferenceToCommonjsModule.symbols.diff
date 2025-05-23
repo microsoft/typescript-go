@@ -8,4 +8,3 @@
  >a : Symbol(a, Decl(test.js, 1, 14))
 ->fix : Symbol(fix, Decl(ex.d.ts, 0, 21))
  }
-

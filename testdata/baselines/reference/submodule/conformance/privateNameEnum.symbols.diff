@@ -7,4 +7,3 @@
 ->#x : Symbol(E.#x, Decl(privateNameEnum.ts, 0, 8))
 +>#x : Symbol(#x, Decl(privateNameEnum.ts, 0, 8))
  }
-

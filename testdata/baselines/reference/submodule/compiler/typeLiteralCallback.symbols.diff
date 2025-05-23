@@ -55,4 +55,3 @@
 ->reject : Symbol(Foo.reject, Decl(typeLiteralCallback.ts, 0, 18))
 +>reject : Symbol(reject, Decl(typeLiteralCallback.ts, 0, 18))
  >arg : Symbol(arg, Decl(typeLiteralCallback.ts, 12, 11))
-

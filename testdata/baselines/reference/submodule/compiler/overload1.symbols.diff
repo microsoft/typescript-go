@@ -153,4 +153,3 @@
 ->g : Symbol(O.I.g, Decl(overload1.ts, 14, 27), Decl(overload1.ts, 15, 38), Decl(overload1.ts, 16, 27), Decl(overload1.ts, 17, 17))
 +>g : Symbol(g, Decl(overload1.ts, 14, 27), Decl(overload1.ts, 15, 38), Decl(overload1.ts, 16, 27), Decl(overload1.ts, 17, 17))
 
-

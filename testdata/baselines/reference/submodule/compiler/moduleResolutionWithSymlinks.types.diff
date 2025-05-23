@@ -40,4 +40,3 @@
 ->MyClass2 : typeof MyClass
 +>MyClass : any
 +>MyClass2 : any
-

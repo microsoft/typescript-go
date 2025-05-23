@@ -32,4 +32,3 @@
 ->g : (a?: (((((number | null) | null) | null) | null) | null) | undefined) => void
 +>g : (a?: number | null | undefined) => void
  >1 : 1
-

@@ -1,10 +1,10 @@
 --- old.circularReferenceInImport.js
 +++ new.circularReferenceInImport.js
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
+ function foo() {
      return new Object();
  }
-
+-
 -
 -//// [app.d.ts]
 -export declare function foo(): Object;
--

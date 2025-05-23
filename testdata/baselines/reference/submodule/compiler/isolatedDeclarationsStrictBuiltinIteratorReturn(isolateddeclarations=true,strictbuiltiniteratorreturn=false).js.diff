@@ -1,9 +1,10 @@
 --- old.isolatedDeclarationsStrictBuiltinIteratorReturn(isolateddeclarations=true,strictbuiltiniteratorreturn=false).js
 +++ new.isolatedDeclarationsStrictBuiltinIteratorReturn(isolateddeclarations=true,strictbuiltiniteratorreturn=false).js
-@@= skipped -64, +64 lines =@@
+@@= skipped -63, +63 lines =@@
+ const a12 = () => null;
  const a13 = () => null;
  const a14 = () => null;
-
+-
 -
 -//// [isolatedDeclarationsStrictBuiltinIteratorReturn.d.ts]
 -declare let x1: Iterable<number>;
@@ -48,4 +49,3 @@
 -declare const a12: () => IterableIterator<number, undefined, any>;
 -declare const a13: () => IterableIterator<number, BuiltinIteratorReturn>;
 -declare const a14: () => IterableIterator<number, BuiltinIteratorReturn, any>;
--

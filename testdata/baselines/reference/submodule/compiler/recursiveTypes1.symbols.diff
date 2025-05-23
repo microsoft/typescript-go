@@ -30,4 +30,3 @@
 ->s : Symbol(Customer.s, Decl(recursiveTypes1.ts, 9, 45))
 +>s : Symbol(s, Decl(recursiveTypes1.ts, 9, 45))
  }
-

@@ -79,4 +79,3 @@
 ->foo : Symbol(SubSub1.foo, Decl(super.ts, 20, 28))
 +>foo : Symbol(foo, Decl(super.ts, 20, 28))
 
-

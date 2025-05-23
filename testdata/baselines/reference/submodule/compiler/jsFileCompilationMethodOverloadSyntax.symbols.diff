@@ -7,4 +7,3 @@
 ->foo : Symbol(A.foo, Decl(a.js, 0, 9))
 +>foo : Symbol(foo, Decl(a.js, 0, 9))
  }
-

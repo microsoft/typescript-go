@@ -110,4 +110,3 @@
 ->somebody : () => void
 +>sayHello8 : (somebody: fn<T>) => void
 +>somebody : fn<T>
-

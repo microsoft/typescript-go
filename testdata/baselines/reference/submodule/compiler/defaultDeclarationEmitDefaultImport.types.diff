@@ -26,4 +26,3 @@
 +>instance : default
 +>getSomething() : default
 +>getSomething : () => default
-

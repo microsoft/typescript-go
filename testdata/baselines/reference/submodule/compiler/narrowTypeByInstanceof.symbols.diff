@@ -56,4 +56,3 @@
 ->range : Symbol(Match.range, Decl(narrowTypeByInstanceof.ts, 0, 17))
 +>range : Symbol(range, Decl(narrowTypeByInstanceof.ts, 0, 17))
  }
-

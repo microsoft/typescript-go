@@ -99,4 +99,3 @@
 +>module : { A: () => void; }
 +>exports : () => void
 +>A : () => void
-

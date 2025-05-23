@@ -18,4 +18,3 @@
 ->acc2 : model.Acc
 +>acc2 : Account2
  >model : any
-

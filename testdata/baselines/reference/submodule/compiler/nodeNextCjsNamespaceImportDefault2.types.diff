@@ -38,4 +38,3 @@
 +>ns : typeof import("src/a")
 +>default : "string"
 +>a : any
-

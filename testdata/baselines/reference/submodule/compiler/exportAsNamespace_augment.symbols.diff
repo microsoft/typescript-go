@@ -72,4 +72,3 @@
 +>a2.conflict : Symbol(conflict, Decl(a.d.ts, 2, 12))
 +>a2 : Symbol(a2, Decl(b.ts, 0, 6))
 +>conflict : Symbol(conflict, Decl(a.d.ts, 2, 12))
-

@@ -17,4 +17,3 @@
  import * as nameSpaceBinding2 from "./es6ImportNameSpaceImport_0"; // elide this
 ->nameSpaceBinding2 : typeof nameSpaceBinding
 +>nameSpaceBinding2 : typeof import("es6ImportNameSpaceImport_0")
-

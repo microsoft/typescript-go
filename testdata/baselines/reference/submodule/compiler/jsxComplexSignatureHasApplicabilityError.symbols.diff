@@ -1051,4 +1051,3 @@
 ->simpleValue : Symbol(ReactSelectProps.simpleValue, Decl(jsxComplexSignatureHasApplicabilityError.tsx, 600, 47))
 +>simpleValue : Symbol(simpleValue, Decl(jsxComplexSignatureHasApplicabilityError.tsx, 600, 47))
  }
-

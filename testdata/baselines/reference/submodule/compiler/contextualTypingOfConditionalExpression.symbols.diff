@@ -60,4 +60,3 @@
 +>b.foo : Symbol(foo, Decl(contextualTypingOfConditionalExpression.ts, 2, 9))
 +>b : Symbol(b, Decl(contextualTypingOfConditionalExpression.ts, 12, 48))
 +>foo : Symbol(foo, Decl(contextualTypingOfConditionalExpression.ts, 2, 9))
-

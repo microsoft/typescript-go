@@ -27,4 +27,3 @@
 -=== c:/file4.ts ===
 -export var y = 100;
 ->y : Symbol(y, Decl(file4.ts, 0, 10))
-

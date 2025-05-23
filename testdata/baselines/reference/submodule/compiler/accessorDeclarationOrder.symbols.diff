@@ -74,4 +74,3 @@
  >c2 : Symbol(c2, Decl(accessorDeclarationOrder.ts, 25, 5))
 ->name : Symbol(C2.name, Decl(accessorDeclarationOrder.ts, 13, 18), Decl(accessorDeclarationOrder.ts, 17, 5))
 +>name : Symbol(name, Decl(accessorDeclarationOrder.ts, 13, 18), Decl(accessorDeclarationOrder.ts, 17, 5))
-

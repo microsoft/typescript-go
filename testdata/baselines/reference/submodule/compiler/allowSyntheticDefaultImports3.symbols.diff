@@ -7,4 +7,3 @@
 ->member : Symbol(Foo.member, Decl(b.ts, 0, 18))
 +>member : Symbol(member, Decl(b.ts, 0, 18))
  }
-

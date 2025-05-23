@@ -10,4 +10,3 @@
 ->Foo : typeof M.Foo
 +>Foo : typeof Foo
  }
-

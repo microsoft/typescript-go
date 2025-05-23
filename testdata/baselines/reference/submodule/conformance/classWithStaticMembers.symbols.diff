@@ -84,4 +84,3 @@
  >r : Symbol(r, Decl(classWithStaticMembers.ts, 8, 3), Decl(classWithStaticMembers.ts, 16, 3))
 ->foo : Symbol(C.foo, Decl(classWithStaticMembers.ts, 4, 56))
 +>foo : Symbol(foo, Decl(classWithStaticMembers.ts, 4, 56))
-

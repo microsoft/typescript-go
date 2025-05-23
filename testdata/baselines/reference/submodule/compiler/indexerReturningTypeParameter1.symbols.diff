@@ -37,4 +37,3 @@
  >a2 : Symbol(a2, Decl(indexerReturningTypeParameter1.ts, 11, 3))
 ->groupBy : Symbol(c.groupBy, Decl(indexerReturningTypeParameter1.ts, 6, 9))
 +>groupBy : Symbol(groupBy, Decl(indexerReturningTypeParameter1.ts, 6, 9))
-

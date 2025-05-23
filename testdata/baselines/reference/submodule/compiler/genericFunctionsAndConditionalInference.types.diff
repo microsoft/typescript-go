@@ -56,4 +56,3 @@
 ->orphaned : <F extends Target>(at: Ops<F>) => Result<F, { lr: LR<F, string, number>; }>
 +>orphaned : <F extends keyof Targets<any>>(at: Ops<F>) => Result<F, { lr: LR<F, string, number>; }>
  >right : Ops<"right">
-

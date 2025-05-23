@@ -34,4 +34,3 @@
 ->foo : Symbol(Bar.foo, Decl(other.js, 4, 26))
 +>foo : Symbol(foo, Decl(other.js, 4, 26))
  }
-

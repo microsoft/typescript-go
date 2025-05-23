@@ -17,4 +17,3 @@
 ->text : Symbol('text\
 -', Decl(stringLiteralPropertyNameWithLineContinuation1.ts, 0, 9))
 +>text : Symbol(text, Decl(stringLiteralPropertyNameWithLineContinuation1.ts, 0, 9))
-

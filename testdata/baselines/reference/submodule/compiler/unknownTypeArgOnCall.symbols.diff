@@ -19,4 +19,3 @@
 ->clone : Symbol(Foo.clone, Decl(unknownTypeArgOnCall.ts, 0, 14))
 +>clone : Symbol(clone, Decl(unknownTypeArgOnCall.ts, 0, 14))
  >Uhhhh : Symbol(Uhhhh)
-

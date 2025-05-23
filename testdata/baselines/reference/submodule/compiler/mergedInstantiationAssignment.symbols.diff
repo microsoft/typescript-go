@@ -57,4 +57,3 @@
  >v3 : Symbol(v3, Decl(mergedInstantiationAssignment.ts, 22, 5))
 ->x : Symbol(NormalObject.x, Decl(mergedInstantiationAssignment.ts, 18, 20))
 +>x : Symbol(x, Decl(mergedInstantiationAssignment.ts, 18, 20))
-

@@ -6,4 +6,3 @@
      const enum H {}
 ->H : error
 +>H : any
-

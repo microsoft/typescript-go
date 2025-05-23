@@ -21,4 +21,3 @@
 ->b : typeof A.b
 +>b : typeof b
  >d : number
-

@@ -26,4 +26,3 @@
 ->foo : () => void
 +>foo : any
  }
-

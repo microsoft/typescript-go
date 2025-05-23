@@ -29,4 +29,3 @@
 -export = HelloNamespace;
 ->HelloNamespace : Symbol(HelloNamespace, Decl(helloNamespace.ts, 0, 0))
 +>HelloNamespace : Symbol(HelloNamespace, Decl(world.ts, 0, 50))
-

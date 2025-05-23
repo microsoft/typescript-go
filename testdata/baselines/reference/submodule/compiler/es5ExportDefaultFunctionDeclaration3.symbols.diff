@@ -26,4 +26,3 @@
 ->func : Symbol(func, Decl(es5ExportDefaultFunctionDeclaration3.ts, 0, 33))
 +>func : Symbol(default, Decl(es5ExportDefaultFunctionDeclaration3.ts, 0, 33))
 +>func : Symbol(default, Decl(es5ExportDefaultFunctionDeclaration3.ts, 0, 33))
-

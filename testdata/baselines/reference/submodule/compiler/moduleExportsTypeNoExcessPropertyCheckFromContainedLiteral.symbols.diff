@@ -38,4 +38,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(export=, Decl(typescript-eslint.js, 11, 31))
  >config : Symbol(config, Decl(typescript-eslint.js, 13, 18))
-

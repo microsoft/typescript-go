@@ -194,4 +194,3 @@
 ->sin : Symbol(Math.sin, Decl(lib.es5.d.ts, --, --))
 +>sin : Symbol(sin, Decl(lib.es5.d.ts, --, --))
  }
-

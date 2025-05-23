@@ -142,4 +142,3 @@
 ->u : Symbol(B.u, Decl(publicGetterProtectedSetterFromThisParameter.ts, 10, 32), Decl(publicGetterProtectedSetterFromThisParameter.ts, 12, 33))
 +>u : Symbol(u, Decl(publicGetterProtectedSetterFromThisParameter.ts, 10, 32), Decl(publicGetterProtectedSetterFromThisParameter.ts, 12, 33))
  }
-

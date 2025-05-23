@@ -32,4 +32,3 @@
 ->#bar : Symbol(Child.#bar, Decl(privateNamesConstructorChain-1.ts, 10, 17))
 +>#bar : Symbol(#bar, Decl(privateNamesConstructorChain-1.ts, 10, 17))
  }
-

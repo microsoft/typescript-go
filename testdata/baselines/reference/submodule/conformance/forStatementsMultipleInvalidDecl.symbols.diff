@@ -79,4 +79,3 @@
  >M : Symbol(M, Decl(forStatementsMultipleInvalidDecl.ts, 19, 44))
 ->A : Symbol(M.A, Decl(forStatementsMultipleInvalidDecl.ts, 21, 10))
 +>A : Symbol(A, Decl(forStatementsMultipleInvalidDecl.ts, 21, 10))
-

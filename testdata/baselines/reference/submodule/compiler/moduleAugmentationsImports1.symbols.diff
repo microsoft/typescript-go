@@ -97,4 +97,3 @@
 +>getCls : Symbol(getCls, Decl(d.ts, 16, 17))
 +>y : Symbol(y, Decl(c.d.ts, 1, 15))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
-

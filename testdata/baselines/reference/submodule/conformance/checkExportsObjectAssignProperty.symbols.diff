@@ -298,4 +298,3 @@
 ->require : Symbol(require)
 ->"./mod2" : Symbol("mod2", Decl(mod2.js, 0, 0))
 ->thing : Symbol(thing, Decl(mod2.js, 0, 0))
-

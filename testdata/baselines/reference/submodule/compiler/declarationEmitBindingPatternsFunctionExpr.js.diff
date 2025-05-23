@@ -1,9 +1,10 @@
 --- old.declarationEmitBindingPatternsFunctionExpr.js
 +++ new.declarationEmitBindingPatternsFunctionExpr.js
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
+ let value = "";
  // 2.Can change in meaning for typeof value if we remove alias
  const shadowedVariable = ({ value: alias }) => value;
-
+-
 -
 -//// [declarationEmitBindingPatternsFunctionExpr.d.ts]
 -type Named = {
@@ -17,4 +18,3 @@
 -declare const shadowedVariable: ({ value: alias }: {
 -    value: string;
 -}) => typeof value;
--

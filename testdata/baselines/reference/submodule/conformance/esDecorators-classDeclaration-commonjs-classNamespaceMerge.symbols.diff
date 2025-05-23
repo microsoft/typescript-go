@@ -18,4 +18,3 @@
  >Example : Symbol(Example, Decl(esDecorators-classDeclaration-commonjs-classNamespaceMerge.ts, 0, 22), Decl(esDecorators-classDeclaration-commonjs-classNamespaceMerge.ts, 5, 1))
 ->foo : Symbol(Example.foo, Decl(esDecorators-classDeclaration-commonjs-classNamespaceMerge.ts, 3, 22))
 +>foo : Symbol(foo, Decl(esDecorators-classDeclaration-commonjs-classNamespaceMerge.ts, 3, 22))
-

@@ -14,4 +14,3 @@
 ->#bar : Symbol(A.#bar, Decl(privateNamesAndDecorators.ts, 4, 13))
 +>#bar : Symbol(#bar, Decl(privateNamesAndDecorators.ts, 4, 13))
  }
-

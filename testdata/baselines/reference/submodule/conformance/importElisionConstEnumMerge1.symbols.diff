@@ -18,4 +18,3 @@
  >Enum : Symbol(Enum, Decl(index.ts, 0, 8))
 ->One : Symbol(Enum.One, Decl(enum.ts, 0, 24))
 +>One : Symbol(One, Decl(enum.ts, 0, 24))
-

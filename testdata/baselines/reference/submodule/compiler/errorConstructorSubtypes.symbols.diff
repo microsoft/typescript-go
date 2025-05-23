@@ -25,4 +25,3 @@
  >x : Symbol(x, Decl(errorConstructorSubtypes.ts, 5, 11))
 ->captureStackTrace : Symbol(ErrorConstructor.captureStackTrace, Decl(errorConstructorSubtypes.ts, 1, 28))
 +>captureStackTrace : Symbol(captureStackTrace, Decl(errorConstructorSubtypes.ts, 1, 28))
-

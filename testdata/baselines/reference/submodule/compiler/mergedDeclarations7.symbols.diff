@@ -45,4 +45,3 @@
  >passport : Symbol(passport, Decl(test.ts, 0, 6))
 ->use : Symbol(passport.Passport.use, Decl(passport.d.ts, 2, 28))
 +>use : Symbol(use, Decl(passport.d.ts, 2, 28))
-

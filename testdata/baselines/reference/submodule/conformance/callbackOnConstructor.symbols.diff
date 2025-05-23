@@ -16,4 +16,3 @@
 ->s.length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
  >s : Symbol(s, Decl(callbackOnConstructor.js, 12, 14))
 ->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
-

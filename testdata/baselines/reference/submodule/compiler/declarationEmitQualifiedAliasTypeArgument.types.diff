@@ -22,4 +22,3 @@
 +>fun2 : () => INode<Q>
 +>create<Q>() : () => INode<Q>
 +>create : <T>() => () => INode<T>
-

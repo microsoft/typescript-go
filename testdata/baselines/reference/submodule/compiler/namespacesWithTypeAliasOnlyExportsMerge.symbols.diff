@@ -88,4 +88,3 @@
 +>NS1 : Symbol(NS1, Decl(circularWithUses.ts, 6, 12))
 +>NS2 : Symbol(NS2, Decl(circularWithUses.ts, 3, 12))
 +>B : Symbol(B, Decl(circularWithUses.ts, 6, 17))
-

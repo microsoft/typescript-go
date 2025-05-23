@@ -7,4 +7,3 @@
 ->someData : Symbol(someClass.someData, Decl(aliasAssignments_moduleA.ts, 0, 24))
 +>someData : Symbol(someData, Decl(aliasAssignments_moduleA.ts, 0, 24))
  }
-

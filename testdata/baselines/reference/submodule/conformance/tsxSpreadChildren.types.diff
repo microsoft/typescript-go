@@ -54,4 +54,3 @@
 +><TodoList {...x}/> : Element
 +>TodoList : (__0: TodoListProps) => Element
  >x : TodoListProps
-

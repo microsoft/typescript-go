@@ -49,4 +49,3 @@
  >s5 : Symbol(s5, Decl(destructureTupleWithVariableElement.ts, 13, 14))
 ->toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
 +>toUpperCase : Symbol(toUpperCase, Decl(lib.es5.d.ts, --, --))
-

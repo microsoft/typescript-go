@@ -13,4 +13,3 @@
  >x : number
 ->defaultBinding : number
 +>defaultBinding : any
-

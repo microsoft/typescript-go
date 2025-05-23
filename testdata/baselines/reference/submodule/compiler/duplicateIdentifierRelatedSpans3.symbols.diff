@@ -31,4 +31,3 @@
 ->duplicate3 : Symbol(TopLevel.duplicate3, Decl(file2.ts, 2, 25))
 +>duplicate3 : Symbol(duplicate3, Decl(file2.ts, 2, 25))
  }
-

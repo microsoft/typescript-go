@@ -14,4 +14,3 @@
  >Bacon : typeof Bacon
 ->Bus : new <T>() => Bacon.Bus<T>
 +>Bus : new <T>() => Bus<T>
-

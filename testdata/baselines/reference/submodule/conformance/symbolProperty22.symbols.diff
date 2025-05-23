@@ -31,4 +31,3 @@
 +>s.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 +>s : Symbol(s, Decl(symbolProperty22.ts, 6, 31))
 +>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
-

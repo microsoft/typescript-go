@@ -1,9 +1,10 @@
 --- old.nodeModulesPackagePatternExports(module=node16).js
 +++ new.nodeModulesPackagePatternExports(module=node16).js
-@@= skipped -114, +114 lines =@@
+@@= skipped -113, +113 lines =@@
+ cjsi;
  mjsi;
  typei;
-
+-
 -
 -//// [index.d.ts]
 -export {};
@@ -11,4 +12,3 @@
 -export {};
 -//// [index.d.cts]
 -export {};
--

@@ -20,4 +20,3 @@
  >b : Symbol(b, Decl(callChain.ts, 6, 31))
 ->toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

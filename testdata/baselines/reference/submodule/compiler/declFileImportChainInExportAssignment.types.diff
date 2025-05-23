@@ -28,4 +28,3 @@
  export = b;
 ->b : typeof a
 +>b : typeof c
-

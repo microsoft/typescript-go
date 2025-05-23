@@ -147,4 +147,3 @@
  >Button : typeof Button
 ->Comp : (p: Prop) => JSX.Element
 +>Comp : (p: Prop) => Element
-

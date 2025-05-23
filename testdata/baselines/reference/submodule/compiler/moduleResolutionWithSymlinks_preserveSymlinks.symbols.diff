@@ -20,4 +20,3 @@
 -=== /app/node_modules/real/index.d.ts ===
 -export const real: string;
 ->real : Symbol(real, Decl(index.d.ts, 0, 12))
-

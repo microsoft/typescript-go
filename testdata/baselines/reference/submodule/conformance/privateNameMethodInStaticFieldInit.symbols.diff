@@ -26,4 +26,3 @@
  >C : Symbol(C, Decl(privateNameMethodInStaticFieldInit.ts, 0, 0))
 ->s : Symbol(C.s, Decl(privateNameMethodInStaticFieldInit.ts, 0, 9))
 +>s : Symbol(s, Decl(privateNameMethodInStaticFieldInit.ts, 0, 9))
-

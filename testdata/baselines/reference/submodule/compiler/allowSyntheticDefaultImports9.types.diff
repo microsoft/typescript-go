@@ -22,4 +22,3 @@
 ->Foo : typeof Foo
 +>Foo : typeof import("b")
  >foo : () => any
-

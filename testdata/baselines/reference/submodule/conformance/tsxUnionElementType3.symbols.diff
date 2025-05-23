@@ -84,4 +84,3 @@
  >PartRCComp : Symbol(PartRCComp, Decl(file.tsx, 28, 3))
 ->data-extra : Symbol(data-extra, Decl(file.tsx, 35, 19))
 +>data-extra : Symbol("data-extra", Decl(file.tsx, 35, 19))
-

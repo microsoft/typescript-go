@@ -149,4 +149,3 @@
  >T : Symbol(T, Decl(interfaceExtendsObjectIntersectionErrors.ts, 46, 14))
 ->x : Symbol(I31.x, Decl(interfaceExtendsObjectIntersectionErrors.ts, 46, 28))
 +>x : Symbol(x, Decl(interfaceExtendsObjectIntersectionErrors.ts, 46, 28))
-

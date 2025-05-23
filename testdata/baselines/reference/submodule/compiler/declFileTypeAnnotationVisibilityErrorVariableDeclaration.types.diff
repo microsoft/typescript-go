@@ -35,4 +35,3 @@
 ->public2 : typeof m2.public2
 +>public2 : typeof public2
  }
-

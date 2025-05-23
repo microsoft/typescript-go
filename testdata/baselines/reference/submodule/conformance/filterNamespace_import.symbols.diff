@@ -46,4 +46,3 @@
 +>nested : Symbol(nested, Decl(ns.ts, 3, 26))
 +>NestedClass : Symbol(NestedClass, Decl(ns.ts, 4, 27))
  >a : Symbol(a, Decl(a.ts, 5, 32))
-

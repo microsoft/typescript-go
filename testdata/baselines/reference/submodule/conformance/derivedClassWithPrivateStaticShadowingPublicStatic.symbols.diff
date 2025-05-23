@@ -109,4 +109,3 @@
  >Derived : Symbol(Derived, Decl(derivedClassWithPrivateStaticShadowingPublicStatic.ts, 8, 1))
 ->a : Symbol(Derived.a, Decl(derivedClassWithPrivateStaticShadowingPublicStatic.ts, 16, 5), Decl(derivedClassWithPrivateStaticShadowingPublicStatic.ts, 18, 40))
 +>a : Symbol(a, Decl(derivedClassWithPrivateStaticShadowingPublicStatic.ts, 16, 5), Decl(derivedClassWithPrivateStaticShadowingPublicStatic.ts, 18, 40))
-

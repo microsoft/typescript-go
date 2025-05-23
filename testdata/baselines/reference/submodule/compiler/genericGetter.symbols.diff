@@ -31,4 +31,3 @@
  >c : Symbol(c, Decl(genericGetter.ts, 7, 3))
 ->x : Symbol(C.x, Decl(genericGetter.ts, 1, 12))
 +>x : Symbol(x, Decl(genericGetter.ts, 1, 12))
-

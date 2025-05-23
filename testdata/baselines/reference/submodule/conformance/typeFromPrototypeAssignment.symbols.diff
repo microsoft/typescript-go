@@ -145,4 +145,3 @@
 ->mm.addon : Symbol(Multimap.addon, Decl(a.js, 24, 1))
  >mm : Symbol(mm, Decl(a.js, 33, 3))
 ->addon : Symbol(Multimap.addon, Decl(a.js, 24, 1))
-

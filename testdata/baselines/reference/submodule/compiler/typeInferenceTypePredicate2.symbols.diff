@@ -27,4 +27,3 @@
 +>thing.toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
 +>thing : Symbol(thing, Decl(typeInferenceTypePredicate2.ts, 2, 9))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

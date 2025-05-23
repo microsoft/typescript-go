@@ -33,4 +33,3 @@
 +>{ p: fn } : { p: { o: (a?: string[]) => void; }; }
 +>p : { o: (a?: string[]) => void; }
 +>fn : { o: (a?: string[]) => void; }
-

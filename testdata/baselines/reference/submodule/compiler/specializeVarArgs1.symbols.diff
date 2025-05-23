@@ -18,4 +18,3 @@
  >a : Symbol(a, Decl(specializeVarArgs1.ts, 18, 3))
 ->push : Symbol(ObservableArray.push, Decl(specializeVarArgs1.ts, 6, 1))
 +>push : Symbol(push, Decl(specializeVarArgs1.ts, 6, 1))
-

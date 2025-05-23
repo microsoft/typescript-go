@@ -22,4 +22,3 @@
 ->"prop" : Symbol(f["prop"], Decl(typeFromPropertyAssignment38.ts, 3, 25))
 +>f : Symbol(f, Decl(typeFromPropertyAssignment38.ts, 3, 5))
 +>"prop" : Symbol(prop, Decl(typeFromPropertyAssignment38.ts, 3, 25))
-

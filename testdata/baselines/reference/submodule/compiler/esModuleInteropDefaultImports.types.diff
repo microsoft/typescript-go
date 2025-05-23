@@ -180,4 +180,3 @@
 +>self : typeof import("b")
 +>def : typeof import("mod")
  >default : () => void
-

@@ -1,9 +1,10 @@
 --- old.declarationEmitPartialNodeReuseTypeReferences.js
 +++ new.declarationEmitPartialNodeReuseTypeReferences.js
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
+ //// [c.js]
  import { o } from "./a";
  export const g = o;
-
+-
 -
 -//// [a.d.ts]
 -export type SpecialString = string;
@@ -31,4 +32,3 @@
 -    bar: string;
 -    baz: import("./a").N.SpecialString;
 -};
--

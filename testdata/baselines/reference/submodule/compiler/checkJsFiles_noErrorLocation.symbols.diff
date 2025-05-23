@@ -30,4 +30,3 @@
  >i : Symbol(i, Decl(a.js, 17, 5))
 ->foo : Symbol(B.foo, Decl(a.js, 12, 12))
 +>foo : Symbol(foo, Decl(a.js, 12, 12))
-

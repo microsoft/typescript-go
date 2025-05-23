@@ -7,4 +7,3 @@
 ->foo : foo.Bar
 +>foo : Bar
  >foo : any
-

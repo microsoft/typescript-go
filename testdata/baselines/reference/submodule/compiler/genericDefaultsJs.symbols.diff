@@ -175,4 +175,3 @@
 ->C1_B2_v0.y : Symbol(C1.y, Decl(decls.d.ts, 6, 33))
  >C1_B2_v0 : Symbol(C1_B2_v0, Decl(main.js, 63, 5))
 ->y : Symbol(C1.y, Decl(decls.d.ts, 6, 33))
-

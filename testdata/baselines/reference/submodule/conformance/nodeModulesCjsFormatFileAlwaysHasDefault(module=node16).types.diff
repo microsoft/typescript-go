@@ -10,4 +10,3 @@
  mod;
 ->mod : typeof mod
 +>mod : any
-

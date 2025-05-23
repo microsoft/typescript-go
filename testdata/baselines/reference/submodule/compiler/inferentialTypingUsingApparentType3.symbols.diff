@@ -46,4 +46,3 @@
 ->fields : Symbol(ObjectField.fields, Decl(inferentialTypingUsingApparentType3.ts, 17, 16))
 +>fields : Symbol(fields, Decl(inferentialTypingUsingApparentType3.ts, 17, 16))
  >id : Symbol(id, Decl(inferentialTypingUsingApparentType3.ts, 20, 30))
-

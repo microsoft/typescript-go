@@ -14,4 +14,3 @@
 ->methodWithOptionalParameters : Symbol(C.methodWithOptionalParameters, Decl(test.js, 6, 16))
 +>methodWithOptionalParameters : Symbol(methodWithOptionalParameters, Decl(test.js, 6, 16))
  }
-

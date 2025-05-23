@@ -10,4 +10,3 @@
 -declare const a: number;
 ->a : number
 +>a : any
-

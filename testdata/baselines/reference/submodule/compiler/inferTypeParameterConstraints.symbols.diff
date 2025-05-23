@@ -27,4 +27,3 @@
  >m : Symbol(m, Decl(inferTypeParameterConstraints.ts, 35, 11))
 ->child : Symbol(Klass.child, Decl(inferTypeParameterConstraints.ts, 26, 37))
 +>child : Symbol(child, Decl(inferTypeParameterConstraints.ts, 26, 37))
-

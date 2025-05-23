@@ -109,4 +109,3 @@
 +>getStuff() : { func: () => void; klass: typeof klass; obj: { x: boolean; }; exportedDirectly: () => void; }
 +>getStuff : <T>() => { func: () => void; klass: typeof klass; obj: { x: boolean; }; exportedDirectly: () => void; }
  >exportedDirectly : () => void
-

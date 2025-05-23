@@ -7,4 +7,3 @@
 ->A.prototype : Symbol(A.b, Decl(index.js, 2, 7))
  >A : Symbol(A, Decl(index.js, 1, 3))
 ->b : Symbol(A.b, Decl(index.js, 2, 7))
-

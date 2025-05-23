@@ -74,4 +74,3 @@
 ->map4.__underscores__ : Symbol(Multimap4["__underscores__"], Decl(a.js, 15, 48))
  >map4 : Symbol(map4, Decl(a.js, 18, 5))
 ->__underscores__ : Symbol(Multimap4["__underscores__"], Decl(a.js, 15, 48))
-

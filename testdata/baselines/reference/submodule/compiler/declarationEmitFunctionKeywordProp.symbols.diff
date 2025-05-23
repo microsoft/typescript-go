@@ -54,4 +54,3 @@
 +>baz.normal : Symbol(normal, Decl(declarationEmitFunctionKeywordProp.ts, 8, 17))
 +>baz : Symbol(baz, Decl(declarationEmitFunctionKeywordProp.ts, 5, 19))
 +>normal : Symbol(normal, Decl(declarationEmitFunctionKeywordProp.ts, 8, 17))
-

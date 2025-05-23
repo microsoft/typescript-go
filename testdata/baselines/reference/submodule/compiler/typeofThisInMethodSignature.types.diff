@@ -20,4 +20,3 @@
 ->a : (x: typeof this.x) => void
 +>a : (x: number) => void
  >1 : 1
-

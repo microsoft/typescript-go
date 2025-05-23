@@ -16,4 +16,3 @@
 ->A : Symbol(Y, Decl(internalImportInstantiatedModuleNotReferencingInstance.ts, 0, 0))
 +>A : Symbol(A, Decl(internalImportInstantiatedModuleNotReferencingInstance.ts, 0, 0))
  }
-

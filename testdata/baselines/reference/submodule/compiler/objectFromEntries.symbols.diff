@@ -62,4 +62,3 @@
 ->fromEntries : Symbol(ObjectConstructor.fromEntries, Decl(lib.es2019.object.d.ts, --, --), Decl(lib.es2019.object.d.ts, --, --))
 +>fromEntries : Symbol(fromEntries, Decl(lib.es2019.object.d.ts, --, --), Decl(lib.es2019.object.d.ts, --, --))
  >frozenArray2 : Symbol(frozenArray2, Decl(objectFromEntries.ts, 7, 5))
-

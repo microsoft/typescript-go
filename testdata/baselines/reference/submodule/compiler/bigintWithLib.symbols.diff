@@ -219,4 +219,3 @@
 +>NumberFormat : Symbol(NumberFormat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2018.intl.d.ts, --, --), Decl(lib.es2020.bigint.d.ts, --, --))
 +>format : Symbol(format, Decl(lib.es5.d.ts, --, --), Decl(lib.es2020.bigint.d.ts, --, --))
  >bigintVal : Symbol(bigintVal, Decl(bigintWithLib.ts, 1, 3))
-

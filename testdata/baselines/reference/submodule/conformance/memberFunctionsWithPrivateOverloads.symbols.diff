@@ -203,4 +203,3 @@
  >D : Symbol(D, Decl(memberFunctionsWithPrivateOverloads.ts, 18, 1))
 ->bar : Symbol(D.bar, Decl(memberFunctionsWithPrivateOverloads.ts, 32, 43), Decl(memberFunctionsWithPrivateOverloads.ts, 34, 32), Decl(memberFunctionsWithPrivateOverloads.ts, 35, 34), Decl(memberFunctionsWithPrivateOverloads.ts, 36, 45))
 +>bar : Symbol(bar, Decl(memberFunctionsWithPrivateOverloads.ts, 32, 43), Decl(memberFunctionsWithPrivateOverloads.ts, 34, 32), Decl(memberFunctionsWithPrivateOverloads.ts, 35, 34), Decl(memberFunctionsWithPrivateOverloads.ts, 36, 45))
-

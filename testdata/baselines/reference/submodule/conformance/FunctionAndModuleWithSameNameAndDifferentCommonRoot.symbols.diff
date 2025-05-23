@@ -25,4 +25,3 @@
 ->Origin : Symbol(B.Point.Origin, Decl(module.ts, 2, 18))
 +>Point : Symbol(Point, Decl(module.ts, 0, 10))
 +>Origin : Symbol(Origin, Decl(module.ts, 2, 18))
-

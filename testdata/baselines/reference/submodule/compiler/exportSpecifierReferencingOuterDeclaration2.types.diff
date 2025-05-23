@@ -7,4 +7,3 @@
 ->foo : () => X.bar
 +>foo : () => bar
  >X : any
-

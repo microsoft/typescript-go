@@ -15,4 +15,3 @@
  } = obj;
 ->obj : { a?: string; b?: number; }
 +>obj : { a?: string | undefined; b?: number | undefined; }
-

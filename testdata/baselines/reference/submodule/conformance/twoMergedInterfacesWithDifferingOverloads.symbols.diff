@@ -141,4 +141,3 @@
  >d : Symbol(d, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 48, 3))
 ->foo : Symbol(D.foo, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 40, 9), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 44, 19))
 +>foo : Symbol(foo, Decl(twoMergedInterfacesWithDifferingOverloads.ts, 40, 9), Decl(twoMergedInterfacesWithDifferingOverloads.ts, 44, 19))
-

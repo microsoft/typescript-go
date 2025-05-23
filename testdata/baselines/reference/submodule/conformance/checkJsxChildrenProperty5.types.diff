@@ -100,4 +100,3 @@
      </Comp>;
 ->Comp : (p: Prop) => JSX.Element
 +>Comp : (p: Prop) => Element
-

@@ -107,4 +107,3 @@
 ->default : Symbol(a.default, Decl(mod.ts, 0, 29))
 +>def : Symbol(def, Decl(b.ts, 5, 8))
 +>default : Symbol(default, Decl(mod.ts, 0, 29))
-

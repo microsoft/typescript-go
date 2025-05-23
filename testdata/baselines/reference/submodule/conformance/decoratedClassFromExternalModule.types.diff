@@ -11,4 +11,3 @@
  import Decorated from 'decorated';
 ->Decorated : typeof Decorated
 +>Decorated : any
-

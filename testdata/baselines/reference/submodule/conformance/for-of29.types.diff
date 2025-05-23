@@ -19,4 +19,3 @@
  >v : any
 ->iterableWithOptionalIterator : { [Symbol.iterator]?(): Iterator<string>; }
 +>iterableWithOptionalIterator : { [Symbol.iterator]?: () => Iterator<string, any, any>; }
-

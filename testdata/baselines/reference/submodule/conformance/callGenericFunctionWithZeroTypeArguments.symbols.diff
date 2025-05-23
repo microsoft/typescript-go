@@ -77,4 +77,3 @@
  >i2 : Symbol(i2, Decl(callGenericFunctionWithZeroTypeArguments.ts, 34, 3))
 ->f : Symbol(I2.f, Decl(callGenericFunctionWithZeroTypeArguments.ts, 31, 17))
 +>f : Symbol(f, Decl(callGenericFunctionWithZeroTypeArguments.ts, 31, 17))
-

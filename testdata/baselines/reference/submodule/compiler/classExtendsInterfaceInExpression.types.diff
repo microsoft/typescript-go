@@ -16,4 +16,3 @@
 ->factory : (a: any) => { new (): Object; }
 +>factory : (a: any) => new () => Object
  >A : any
-

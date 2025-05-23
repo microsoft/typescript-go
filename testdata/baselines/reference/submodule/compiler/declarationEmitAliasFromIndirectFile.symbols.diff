@@ -26,4 +26,3 @@
  >fp : Symbol(fp, Decl(app.ts, 1, 5))
 ->l10ns : Symbol(FlatpickrFn.l10ns, Decl(instance.d.ts, 1, 30))
 +>l10ns : Symbol(l10ns, Decl(instance.d.ts, 1, 30))
-

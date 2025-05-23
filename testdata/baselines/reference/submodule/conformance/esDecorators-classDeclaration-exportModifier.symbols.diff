@@ -31,4 +31,3 @@
  >dec : Symbol(dec, Decl(global.js, 1, 3))
 ->C7 : Symbol(C7, Decl(file7.js, 0, 0))
 +>C7 : Symbol(default, Decl(file7.js, 0, 0))
-

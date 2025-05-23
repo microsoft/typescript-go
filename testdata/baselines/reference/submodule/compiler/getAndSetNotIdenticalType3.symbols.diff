@@ -61,4 +61,3 @@
 ->x : Symbol(C.x, Decl(getAndSetNotIdenticalType3.ts, 3, 20), Decl(getAndSetNotIdenticalType3.ts, 6, 5))
 +>x : Symbol(x, Decl(getAndSetNotIdenticalType3.ts, 3, 20), Decl(getAndSetNotIdenticalType3.ts, 6, 5))
  >r : Symbol(r, Decl(getAndSetNotIdenticalType3.ts, 13, 3))
-

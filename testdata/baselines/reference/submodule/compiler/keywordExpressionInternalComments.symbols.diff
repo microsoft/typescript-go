@@ -9,4 +9,3 @@
  >Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 ->toString : Symbol(Function.toString, Decl(lib.es5.d.ts, --, --))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

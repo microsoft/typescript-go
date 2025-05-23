@@ -61,4 +61,3 @@
  >M : Symbol(M, Decl(voidOperatorWithBooleanType.ts, 8, 1))
 ->n : Symbol(M.n, Decl(voidOperatorWithBooleanType.ts, 10, 14))
 +>n : Symbol(n, Decl(voidOperatorWithBooleanType.ts, 10, 14))
-

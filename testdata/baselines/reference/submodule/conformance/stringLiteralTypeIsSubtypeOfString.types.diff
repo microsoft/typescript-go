@@ -66,4 +66,3 @@
 ->f16 : { <T_1 extends String, U_1 extends T_1>(x: "a"): any; <T_1 extends String, U_1 extends T_1>(x: U_1): any; }
 +>f16 : { <T extends String, U extends T>(x: "a"): any; <T extends String, U extends T>(x: U): any; }
  >x : any
-

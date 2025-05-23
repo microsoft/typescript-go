@@ -21,4 +21,3 @@
  >a : Symbol(a, Decl(c.ts, 0, 6))
 ->o : Symbol(a.o, Decl(a.ts, 3, 12))
 +>o : Symbol(o, Decl(a.ts, 3, 12))
-

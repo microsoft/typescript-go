@@ -25,4 +25,3 @@
 +>import.meta : Symbol(ImportMeta, Decl(lib.es5.d.ts, --, --), Decl(lib.dom.d.ts, --, --))
 +>meta : Symbol(meta)
  }
-

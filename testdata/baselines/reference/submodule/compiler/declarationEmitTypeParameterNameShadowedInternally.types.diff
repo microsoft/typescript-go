@@ -28,4 +28,3 @@
 ->inner : <T_1>(y: T_1) => readonly [T, T_1]
 +>inner : <T>(y: T) => readonly [T, T]
  }
-

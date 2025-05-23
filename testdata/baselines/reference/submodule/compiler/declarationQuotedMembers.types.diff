@@ -12,4 +12,3 @@
 ->mapped : { "a-b-c": number; }
 +>example : { a-b-c: number; }
 +>mapped : { a-b-c: number; }
-

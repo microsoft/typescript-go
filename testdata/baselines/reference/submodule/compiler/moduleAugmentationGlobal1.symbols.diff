@@ -39,4 +39,3 @@
 ->x : Symbol(A.x, Decl(f1.ts, 0, 16))
 +>getA : Symbol(getA, Decl(f2.ts, 4, 24))
 +>x : Symbol(x, Decl(f1.ts, 0, 16))
-

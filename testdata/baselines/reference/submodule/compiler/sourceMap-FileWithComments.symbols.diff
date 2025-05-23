@@ -76,4 +76,3 @@
  >p : Symbol(p, Decl(sourceMap-FileWithComments.ts, 33, 3))
 ->getDist : Symbol(IPoint.getDist, Decl(sourceMap-FileWithComments.ts, 1, 18))
 +>getDist : Symbol(getDist, Decl(sourceMap-FileWithComments.ts, 1, 18))
-

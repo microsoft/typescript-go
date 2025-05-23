@@ -7,4 +7,3 @@
 ->type : Symbol(C.type, Decl(parserIsClassMemberStart.ts, 0, 9))
 +>type : Symbol(type, Decl(parserIsClassMemberStart.ts, 0, 9))
  }
-

@@ -14,4 +14,3 @@
  >X : Symbol(X, Decl(moduleAndInterfaceSharingName3.ts, 0, 0))
 ->Y : Symbol(X.Y, Decl(moduleAndInterfaceSharingName3.ts, 0, 10), Decl(moduleAndInterfaceSharingName3.ts, 3, 5))
 +>Y : Symbol(Y, Decl(moduleAndInterfaceSharingName3.ts, 0, 10), Decl(moduleAndInterfaceSharingName3.ts, 3, 5))
-

@@ -68,4 +68,3 @@
  >i : Symbol(i, Decl(interfaceExtendingClassWithProtecteds2.ts, 23, 3))
 ->y : Symbol(Baz.y, Decl(interfaceExtendingClassWithProtecteds2.ts, 15, 11))
 +>y : Symbol(y, Decl(interfaceExtendingClassWithProtecteds2.ts, 15, 11))
-

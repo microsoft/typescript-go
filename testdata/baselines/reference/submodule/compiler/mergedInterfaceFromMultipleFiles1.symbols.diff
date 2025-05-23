@@ -66,4 +66,3 @@
 ->a : Symbol(C.a, Decl(mergedInterfaceFromMultipleFiles1_0.ts, 2, 23))
 +>a : Symbol(a, Decl(mergedInterfaceFromMultipleFiles1_0.ts, 2, 23))
  }
-

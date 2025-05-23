@@ -83,4 +83,3 @@
  >c : Symbol(c, Decl(derivedGenericClassWithAny.ts, 35, 3))
 ->foo : Symbol(C.foo, Decl(derivedGenericClassWithAny.ts, 2, 31))
 +>foo : Symbol(foo, Decl(derivedGenericClassWithAny.ts, 2, 31))
-

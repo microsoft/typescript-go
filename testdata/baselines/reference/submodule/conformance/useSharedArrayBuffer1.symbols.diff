@@ -17,4 +17,3 @@
  >foge : Symbol(foge, Decl(useSharedArrayBuffer1.ts, 0, 3))
 ->byteLength : Symbol(SharedArrayBuffer.byteLength, Decl(lib.es2017.sharedmemory.d.ts, --, --))
 +>byteLength : Symbol(byteLength, Decl(lib.es2017.sharedmemory.d.ts, --, --))
-

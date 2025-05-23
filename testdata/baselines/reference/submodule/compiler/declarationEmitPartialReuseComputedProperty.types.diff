@@ -25,4 +25,3 @@
 ->o : () => { A: string; foo: string; 1: number; [-1]: number; }
 +>g : () => { A: string; foo: string; [poz]: number; [neg]: number; }
 +>o : () => { A: string; foo: string; [poz]: number; [neg]: number; }
-

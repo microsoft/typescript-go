@@ -169,4 +169,3 @@
 +><MainButton data-format /> : Element
 +>MainButton : { (buttonProps: ButtonProps): Element; (linkProps: LinkProps): Element; (hyphenProps: HyphenProps): Element; }
  >data-format : true
-

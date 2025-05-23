@@ -34,4 +34,3 @@
  >invalid3 : Symbol(invalid3, Decl(jsxNamespacePrefixIntrinsics.tsx, 16, 5))
 ->ns:invalid : Symbol(ns:invalid, Decl(jsxNamespacePrefixIntrinsics.tsx, 16, 28))
 +>ns:invalid : Symbol("ns:invalid", Decl(jsxNamespacePrefixIntrinsics.tsx, 16, 28))
-

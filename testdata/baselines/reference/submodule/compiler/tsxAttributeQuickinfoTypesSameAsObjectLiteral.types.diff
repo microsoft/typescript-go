@@ -35,4 +35,3 @@
 +><Foo foo="B" /> : Element
 +>Foo : (props: { foo: "A" | "B" | "C"; }) => Element
  >foo : "B"
-

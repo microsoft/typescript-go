@@ -6,4 +6,3 @@
  import { a } from "a";
 ->a : 0
 +>a : any
-

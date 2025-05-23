@@ -18,4 +18,3 @@
  >x : Symbol(x, Decl(emptyIndexer.ts, 9, 3))
 ->m : Symbol(I1.m, Decl(emptyIndexer.ts, 0, 14))
 +>m : Symbol(m, Decl(emptyIndexer.ts, 0, 14))
-

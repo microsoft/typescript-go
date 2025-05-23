@@ -18,4 +18,3 @@
  >Spec : Symbol(Spec, Decl(baseExpressionTypeParameters.ts, 9, 33))
 ->prop : Symbol(Base.prop, Decl(baseExpressionTypeParameters.ts, 3, 16))
 +>prop : Symbol(prop, Decl(baseExpressionTypeParameters.ts, 3, 16))
-

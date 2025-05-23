@@ -11,4 +11,3 @@
  >c3 : Symbol(c3, Decl(augmentedTypesClass4.ts, 1, 29))
 ->bar : Symbol(c3.bar, Decl(augmentedTypesClass4.ts, 2, 10))
 +>bar : Symbol(bar, Decl(augmentedTypesClass4.ts, 2, 10))
-

@@ -17,4 +17,3 @@
 ->c : typeof x.c
 +>m3 : typeof m3
 +>c : typeof c
-

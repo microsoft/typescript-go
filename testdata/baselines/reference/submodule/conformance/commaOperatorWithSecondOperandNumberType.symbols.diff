@@ -22,4 +22,3 @@
 ->trim : Symbol(String.trim, Decl(lib.es5.d.ts, --, --))
 +>trim : Symbol(trim, Decl(lib.es5.d.ts, --, --))
  >NUMBER : Symbol(NUMBER, Decl(commaOperatorWithSecondOperandNumberType.ts, 2, 3))
-

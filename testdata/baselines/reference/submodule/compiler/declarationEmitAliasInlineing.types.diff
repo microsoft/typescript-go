@@ -44,4 +44,3 @@
 ->fnExp : (v: import("aExp").O["prop"], p: Omit<import("aExp").O, "prop">, key: keyof import("aExp").O, p2: Omit<import("aExp").O, keyof import("aExp").I>) => void
 +>fExp : (v: string, p: Omit<O, "prop">, key: keyof O, p2: Omit<O, "prop">) => void
 +>fnExp : (v: string, p: Omit<O, "prop">, key: keyof O, p2: Omit<O, "prop">) => void
-

@@ -48,4 +48,3 @@
 ->foo : typeof M.foo
 +>foo : typeof foo
  >z : any
-

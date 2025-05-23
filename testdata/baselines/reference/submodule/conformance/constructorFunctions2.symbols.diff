@@ -54,4 +54,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(A, Decl(other.js, 0, 0))
  >A : Symbol(A, Decl(other.js, 0, 0))
-

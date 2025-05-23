@@ -33,4 +33,3 @@
 ->foo : Symbol(C.foo, Decl(wrappedAndRecursiveConstraints.ts, 3, 35))
 +>foo : Symbol(foo, Decl(wrappedAndRecursiveConstraints.ts, 3, 35))
  >y : Symbol(y, Decl(wrappedAndRecursiveConstraints.ts, 13, 3))
-

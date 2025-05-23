@@ -16,4 +16,3 @@
 ->methodWithOptionalParameters : (optional?: any) => void
 +>methodWithOptionalParameters : () => void
  }
-

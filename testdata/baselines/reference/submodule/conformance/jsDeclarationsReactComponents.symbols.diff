@@ -223,4 +223,3 @@
  export default Tree;
 ->Tree : Symbol(Tree, Decl(jsDeclarationsReactComponents5.jsx, 1, 35), Decl(jsDeclarationsReactComponents5.jsx, 5, 1), Decl(jsDeclarationsReactComponents5.jsx, 9, 2))
 +>Tree : Symbol(Tree, Decl(jsDeclarationsReactComponents5.jsx, 1, 35))
-

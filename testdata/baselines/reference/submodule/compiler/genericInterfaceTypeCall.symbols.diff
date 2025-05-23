@@ -55,4 +55,3 @@
 ->reject : Symbol(Foo.reject, Decl(genericInterfaceTypeCall.ts, 0, 18))
 +>reject : Symbol(reject, Decl(genericInterfaceTypeCall.ts, 0, 18))
  >arg : Symbol(arg, Decl(genericInterfaceTypeCall.ts, 12, 11))
-

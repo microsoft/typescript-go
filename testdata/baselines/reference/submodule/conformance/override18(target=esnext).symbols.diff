@@ -16,4 +16,3 @@
 ->foo : Symbol(B.foo, Decl(override18.ts, 4, 19))
 +>foo : Symbol(foo, Decl(override18.ts, 4, 19))
  }
-

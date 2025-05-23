@@ -48,4 +48,3 @@
  >G : Symbol(G, Decl(constEnumPropertyAccess2.ts, 0, 0))
 ->B : Symbol(G.B, Decl(constEnumPropertyAccess2.ts, 5, 10))
 +>B : Symbol(B, Decl(constEnumPropertyAccess2.ts, 5, 10))
-

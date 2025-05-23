@@ -40,4 +40,3 @@
 +>module : { readonly items: { x: number; }[]; }
 +>exports : { x: number; }[]
 +>items : { x: number; }[]
-

@@ -7,4 +7,3 @@
 ->C : Symbol(C, Decl(multipleExportDefault3.ts, 2, 2))
 +>C : Symbol(default, Decl(multipleExportDefault3.ts, 2, 2))
 
-

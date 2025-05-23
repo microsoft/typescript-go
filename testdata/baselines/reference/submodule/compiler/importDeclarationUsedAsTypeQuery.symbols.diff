@@ -7,4 +7,3 @@
 ->id : Symbol(B.id, Decl(importDeclarationUsedAsTypeQuery_require.ts, 0, 16))
 +>id : Symbol(id, Decl(importDeclarationUsedAsTypeQuery_require.ts, 0, 16))
  }
-

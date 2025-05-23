@@ -18,4 +18,3 @@
  export as namespace ModuleATypes;
 ->ModuleATypes : error
 +>ModuleATypes : any
-

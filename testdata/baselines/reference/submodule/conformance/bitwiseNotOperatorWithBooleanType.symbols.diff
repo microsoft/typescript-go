@@ -61,4 +61,3 @@
  >M : Symbol(M, Decl(bitwiseNotOperatorWithBooleanType.ts, 8, 1))
 ->n : Symbol(M.n, Decl(bitwiseNotOperatorWithBooleanType.ts, 10, 14))
 +>n : Symbol(n, Decl(bitwiseNotOperatorWithBooleanType.ts, 10, 14))
-

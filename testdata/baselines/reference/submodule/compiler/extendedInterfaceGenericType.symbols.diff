@@ -33,4 +33,3 @@
  >betaOfNumber : Symbol(betaOfNumber, Decl(extendedInterfaceGenericType.ts, 8, 3))
 ->takesArgOfT : Symbol(Alpha.takesArgOfT, Decl(extendedInterfaceGenericType.ts, 0, 20))
 +>takesArgOfT : Symbol(takesArgOfT, Decl(extendedInterfaceGenericType.ts, 0, 20))
-

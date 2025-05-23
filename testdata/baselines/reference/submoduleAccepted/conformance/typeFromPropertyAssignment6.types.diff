@@ -45,4 +45,3 @@
 +>x : (inner: Inner) => void
 +>inner : Inner
  }
-

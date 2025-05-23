@@ -16,4 +16,3 @@
 +>x.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 +>x : Symbol(x, Decl(genericArray1.ts, 12, 34))
 +>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
-

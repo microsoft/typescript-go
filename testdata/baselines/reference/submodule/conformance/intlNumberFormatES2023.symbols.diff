@@ -183,4 +183,3 @@
 ->format : Symbol(Intl.NumberFormat.format, Decl(lib.es5.d.ts, --, --), Decl(lib.es2020.bigint.d.ts, --, --), Decl(lib.es2023.intl.d.ts, --, --))
 +>NumberFormat : Symbol(NumberFormat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2018.intl.d.ts, --, --), Decl(lib.es2020.bigint.d.ts, --, --), Decl(lib.es2023.intl.d.ts, --, --))
 +>format : Symbol(format, Decl(lib.es5.d.ts, --, --), Decl(lib.es2020.bigint.d.ts, --, --), Decl(lib.es2023.intl.d.ts, --, --))
-

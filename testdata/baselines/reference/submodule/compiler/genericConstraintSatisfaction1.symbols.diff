@@ -19,4 +19,3 @@
 ->f : Symbol(I.f, Decl(genericConstraintSatisfaction1.ts, 0, 16))
 +>f : Symbol(f, Decl(genericConstraintSatisfaction1.ts, 0, 16))
  >s : Symbol(s, Decl(genericConstraintSatisfaction1.ts, 5, 5))
-

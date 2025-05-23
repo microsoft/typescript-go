@@ -79,4 +79,3 @@
 ->prototype : Symbol(Function.prototype, Decl(lib.es5.d.ts, --, --))
 ->begin : Symbol(lf.Transaction.begin, Decl(lovefield-ts.d.ts, 3, 56), Decl(lovefield.js, 0, 31))
  >scope : Symbol(scope, Decl(lovefield.js, 5, 42))
-

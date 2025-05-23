@@ -25,4 +25,3 @@
 ->__isNew : Symbol(ListItem.__isNew, Decl(genericWithIndexerOfTypeParameterType2.ts, 10, 46))
 +>__isNew : Symbol(__isNew, Decl(genericWithIndexerOfTypeParameterType2.ts, 10, 46))
  }
-

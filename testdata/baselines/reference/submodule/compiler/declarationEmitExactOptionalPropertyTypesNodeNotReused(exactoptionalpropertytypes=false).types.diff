@@ -17,4 +17,3 @@
  >foo() : (x: { foo?: string | undefined; baz?: undefined; } & { bar: number; }) => null
 ->foo : <A = {}>() => (x: Out & A) => null
 +>foo : <A>() => (x: { foo?: string | undefined; baz?: undefined; } & { bar: number; } & A) => null
-

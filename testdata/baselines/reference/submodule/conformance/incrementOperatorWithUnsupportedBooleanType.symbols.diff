@@ -132,4 +132,3 @@
  >M : Symbol(M, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 8, 1))
 ->n : Symbol(M.n, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 10, 14))
 +>n : Symbol(n, Decl(incrementOperatorWithUnsupportedBooleanType.ts, 10, 14))
-

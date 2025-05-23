@@ -19,4 +19,3 @@
 ->bind : Symbol(CallableFunction.bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>bind : Symbol(bind, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >blub : Symbol(blub, Decl(strictBindCallApply2.ts, 7, 20))
-

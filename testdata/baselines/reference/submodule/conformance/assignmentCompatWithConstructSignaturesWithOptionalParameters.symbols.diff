@@ -292,4 +292,3 @@
  >b : Symbol(b, Decl(assignmentCompatWithConstructSignaturesWithOptionalParameters.ts, 10, 3))
 ->a6 : Symbol(Base.a6, Decl(assignmentCompatWithConstructSignaturesWithOptionalParameters.ts, 7, 47))
 +>a6 : Symbol(a6, Decl(assignmentCompatWithConstructSignaturesWithOptionalParameters.ts, 7, 47))
-

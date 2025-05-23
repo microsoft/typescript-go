@@ -94,4 +94,3 @@
 +>foo : Symbol(foo, Decl(index.js, 11, 19))
 +>call : Symbol(call, Decl(lib.es5.d.ts, --, --))
  >obj : Symbol(obj, Decl(index.js, 20, 5))
-

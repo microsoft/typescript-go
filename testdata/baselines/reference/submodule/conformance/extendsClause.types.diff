@@ -45,4 +45,3 @@
 +>types.C : C
 +>types : typeof import("types")
 +>C : typeof C
-

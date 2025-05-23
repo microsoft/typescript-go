@@ -6,4 +6,3 @@
  import a from "a";
 ->a : "dir1/dir2/a.ts"
 +>a : any
-

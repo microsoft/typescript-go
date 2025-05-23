@@ -11,4 +11,3 @@
  >C4 : Symbol(C4, Decl(classExtendingNull.ts, 2, 32))
 ->x : Symbol(C4.x, Decl(classExtendingNull.ts, 3, 25))
 +>x : Symbol(x, Decl(classExtendingNull.ts, 3, 25))
-

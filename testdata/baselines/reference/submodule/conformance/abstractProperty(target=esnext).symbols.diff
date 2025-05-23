@@ -41,4 +41,3 @@
 ->x : Symbol(C.x, Decl(abstractProperty.ts, 11, 19))
 +>x : Symbol(x, Decl(abstractProperty.ts, 11, 19))
  }
-

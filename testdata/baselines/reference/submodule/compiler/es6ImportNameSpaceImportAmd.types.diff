@@ -20,4 +20,3 @@
  import * as nameSpaceBinding2 from "es6ImportNameSpaceImportAmd_0"; // elide this
 ->nameSpaceBinding2 : typeof nameSpaceBinding
 +>nameSpaceBinding2 : any
-

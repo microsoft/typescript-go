@@ -19,4 +19,3 @@
 ->D : Symbol(Foo.D, Decl(declarationEmitPrivateReadonlyLiterals.ts, 3, 35))
 +>D : Symbol(D, Decl(declarationEmitPrivateReadonlyLiterals.ts, 3, 35))
  }
-

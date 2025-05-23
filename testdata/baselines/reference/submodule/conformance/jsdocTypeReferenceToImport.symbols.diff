@@ -58,4 +58,3 @@
 ->end : Symbol(C.end, Decl(ex.d.ts, 1, 17))
 +>end : Symbol(end, Decl(ex.d.ts, 1, 17))
  }
-

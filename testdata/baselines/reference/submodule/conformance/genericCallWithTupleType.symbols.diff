@@ -117,4 +117,3 @@
  >i2 : Symbol(i2, Decl(genericCallWithTupleType.ts, 5, 3))
 ->tuple1 : Symbol(I.tuple1, Decl(genericCallWithTupleType.ts, 0, 19))
 +>tuple1 : Symbol(tuple1, Decl(genericCallWithTupleType.ts, 0, 19))
-

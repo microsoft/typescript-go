@@ -52,4 +52,3 @@
 -><Obj3 /> : JSX.Element
 +><Obj3 /> : Element
  >Obj3 : Obj3
-

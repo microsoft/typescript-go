@@ -18,4 +18,3 @@
  >x : Symbol(x, Decl(genericConstraint1.ts, 6, 3))
 ->bar2 : Symbol(C.bar2, Decl(genericConstraint1.ts, 0, 12))
 +>bar2 : Symbol(bar2, Decl(genericConstraint1.ts, 0, 12))
-

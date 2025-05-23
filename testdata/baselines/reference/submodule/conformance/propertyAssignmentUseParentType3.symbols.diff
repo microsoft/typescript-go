@@ -60,4 +60,3 @@
 +>foo4.x : Symbol(x, Decl(propertyAssignmentUseParentType3.ts, 19, 1))
 +>foo4 : Symbol(foo4, Decl(propertyAssignmentUseParentType3.ts, 15, 15))
 +>x : Symbol(x, Decl(propertyAssignmentUseParentType3.ts, 19, 1))
-

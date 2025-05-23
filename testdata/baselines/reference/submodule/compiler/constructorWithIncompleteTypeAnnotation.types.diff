@@ -28,4 +28,3 @@
 ->Program : typeof TypeScriptAllInOne.Program
 +>Program : typeof Program
  >Main : (...args: string[]) => void
-

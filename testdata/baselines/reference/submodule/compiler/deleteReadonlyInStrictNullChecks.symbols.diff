@@ -16,4 +16,3 @@
  >Foo : Symbol(Foo, Decl(deleteReadonlyInStrictNullChecks.ts, 0, 45))
 ->name : Symbol(Function.name, Decl(deleteReadonlyInStrictNullChecks.ts, 0, 20))
 +>name : Symbol(name, Decl(deleteReadonlyInStrictNullChecks.ts, 0, 20))
-

@@ -24,4 +24,3 @@
 ->foo : Symbol(A.foo, Decl(classStaticBlock9.ts, 4, 5))
 +>foo : Symbol(foo, Decl(classStaticBlock9.ts, 4, 5))
  }
-

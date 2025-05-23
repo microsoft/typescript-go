@@ -44,4 +44,3 @@
 ->x : Symbol(E.x, Decl(operatorAddNullUndefined.ts, 0, 8))
 +>x : Symbol(x, Decl(operatorAddNullUndefined.ts, 0, 8))
  >undefined : Symbol(undefined)
-

@@ -64,4 +64,3 @@
 ->Point : Symbol(M2.X.Point, Decl(nestedModules.ts, 13, 13), Decl(nestedModules.ts, 21, 18))
 +>X : Symbol(X, Decl(nestedModules.ts, 13, 10), Decl(nestedModules.ts, 19, 11))
 +>Point : Symbol(Point, Decl(nestedModules.ts, 13, 13), Decl(nestedModules.ts, 21, 18))
-

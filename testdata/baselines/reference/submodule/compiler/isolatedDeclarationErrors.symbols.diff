@@ -38,4 +38,3 @@
 +>errorOnMissingReturn.a : Symbol(a, Decl(isolatedDeclarationErrors.ts, 6, 37))
 +>errorOnMissingReturn : Symbol(errorOnMissingReturn, Decl(isolatedDeclarationErrors.ts, 6, 5))
 +>a : Symbol(a, Decl(isolatedDeclarationErrors.ts, 6, 37))
-

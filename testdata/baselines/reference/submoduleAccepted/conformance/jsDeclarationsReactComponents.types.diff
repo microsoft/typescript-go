@@ -243,4 +243,3 @@
  export default Tree;
 ->Tree : typeof Tree
 +>Tree : { (__0: { allowDropOnRoot: any; }): Element; propTypes: { classes: Requireable<object>; }; defaultProps: { classes: {}; parentSource: string; }; }
-

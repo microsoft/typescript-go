@@ -33,4 +33,3 @@
 -}
 +>x : Symbol(x, Decl(file3.ts, 0, 0))
 +>A : Symbol(A)
-

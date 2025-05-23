@@ -8,4 +8,3 @@
 ->indexOf : Symbol(String.indexOf, Decl(lib.es5.d.ts, --, --))
 +>`abc${0}abc`.indexOf : Symbol(indexOf, Decl(lib.es5.d.ts, --, --))
 +>indexOf : Symbol(indexOf, Decl(lib.es5.d.ts, --, --))
-

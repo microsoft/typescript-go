@@ -53,4 +53,3 @@
  >a : Symbol(a, Decl(classStaticBlock17.ts, 28, 5))
 ->getX : Symbol(A.getX, Decl(classStaticBlock17.ts, 7, 3))
 +>getX : Symbol(getX, Decl(classStaticBlock17.ts, 7, 3))
-

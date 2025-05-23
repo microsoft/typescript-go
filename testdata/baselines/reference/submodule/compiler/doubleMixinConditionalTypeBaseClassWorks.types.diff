@@ -43,4 +43,3 @@
 +>Mixin1(Object) : { new (...args: any[]): (Anonymous class)<ObjectConstructor>; prototype: (Anonymous class)<any>; } & ObjectConstructor
 +>Mixin1 : <C extends Constructor>(Base: C) => { new (...args: any[]): (Anonymous class)<C>; prototype: (Anonymous class)<any>; } & C
  >Object : ObjectConstructor
-

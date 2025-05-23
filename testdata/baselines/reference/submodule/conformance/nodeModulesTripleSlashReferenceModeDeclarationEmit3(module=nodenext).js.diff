@@ -1,12 +1,12 @@
 --- old.nodeModulesTripleSlashReferenceModeDeclarationEmit3(module=nodenext).js
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit3(module=nodenext).js
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
+ //// [index.js]
  /// <reference types="pkg" resolution-mode="require" preserve="true" />
  export {};
-
+-
 -
 -//// [index.d.ts]
 -/// <reference types="pkg" resolution-mode="require" preserve="true" />
 -export interface LocalInterface extends RequireInterface {
 -}
--

@@ -171,4 +171,3 @@
 ->fn : Symbol(SomeDerivedClass.fn, Decl(superPropertyAccessNoError.ts, 27, 5))
 +>returnThis : Symbol(returnThis, Decl(superPropertyAccessNoError.ts, 60, 5))
 +>fn : Symbol(fn, Decl(superPropertyAccessNoError.ts, 27, 5))
-

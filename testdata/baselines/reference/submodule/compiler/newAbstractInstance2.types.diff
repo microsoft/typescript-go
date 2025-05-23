@@ -11,4 +11,3 @@
  >new A() : any
 ->A : typeof A
 +>A : typeof default
-

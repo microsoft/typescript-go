@@ -57,4 +57,3 @@
  >differentName : Symbol(differentName, Decl(intersectionTypeReadonly.ts, 23, 3))
 ->value : Symbol(Base.value, Decl(intersectionTypeReadonly.ts, 0, 16))
 +>value : Symbol(value, Decl(intersectionTypeReadonly.ts, 0, 16))
-

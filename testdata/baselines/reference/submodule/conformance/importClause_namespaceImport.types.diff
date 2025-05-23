@@ -44,4 +44,3 @@
 +>d : { types: typeof import("/a"); }
 +>{ types } : { types: typeof import("/a"); }
 +>types : typeof import("/a")
-

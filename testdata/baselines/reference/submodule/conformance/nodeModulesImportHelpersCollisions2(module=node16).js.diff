@@ -1,9 +1,10 @@
 --- old.nodeModulesImportHelpersCollisions2(module=node16).js
 +++ new.nodeModulesImportHelpersCollisions2(module=node16).js
-@@= skipped -37, +37 lines =@@
+@@= skipped -36, +36 lines =@@
+ // esm format file
  export * from "fs";
  export * as fs from "fs";
-
+-
 -
 -//// [index.d.ts]
 -export * from "fs";
@@ -11,4 +12,3 @@
 -//// [index.d.ts]
 -export * from "fs";
 -export * as fs from "fs";
--

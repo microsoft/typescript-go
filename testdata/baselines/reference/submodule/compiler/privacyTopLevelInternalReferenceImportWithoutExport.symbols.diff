@@ -216,4 +216,3 @@
  >im_private_mu_public : Symbol(im_private_mu_public, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 80, 49))
 ->i : Symbol(im_private_mu_public.i, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 42, 29))
 +>i : Symbol(i, Decl(privacyTopLevelInternalReferenceImportWithoutExport.ts, 42, 29))
-

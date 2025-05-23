@@ -34,4 +34,3 @@
  >ec : Symbol(ec, Decl(externModuleClobber.ts, 9, 3))
 ->getPosition : Symbol(EM.EC.getPosition, Decl(externModuleClobber.ts, 3, 18))
 +>getPosition : Symbol(getPosition, Decl(externModuleClobber.ts, 3, 18))
-

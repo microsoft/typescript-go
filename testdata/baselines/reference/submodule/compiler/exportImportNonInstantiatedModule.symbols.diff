@@ -26,4 +26,3 @@
 +>A1 : Symbol(A1, Decl(exportImportNonInstantiatedModule.ts, 4, 10))
 +>I : Symbol(I, Decl(exportImportNonInstantiatedModule.ts, 0, 10))
  >x : Symbol(x, Decl(exportImportNonInstantiatedModule.ts, 9, 17))
-

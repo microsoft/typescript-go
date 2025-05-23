@@ -58,4 +58,3 @@
 ->log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 +>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
  >Bebra : Symbol(Bebra, Decl(constEnumNoObjectPrototypePropertyAccess.ts, 0, 0))
-

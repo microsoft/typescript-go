@@ -14,4 +14,3 @@
 +>thing : Bar
 +>f() : Bar
 +>f : () => Bar
-

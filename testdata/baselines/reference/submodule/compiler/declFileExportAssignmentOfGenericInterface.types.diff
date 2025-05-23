@@ -17,4 +17,3 @@
 -export = Foo;
 ->Foo : Foo<T>
 +>a : any
-

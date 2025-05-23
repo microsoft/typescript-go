@@ -1,9 +1,10 @@
 --- old.exportNamespaceDeclarationRetainsVisibility.js
 +++ new.exportNamespaceDeclarationRetainsVisibility.js
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
+ //// [exportNamespaceDeclarationRetainsVisibility.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-
+-
 -
 -//// [exportNamespaceDeclarationRetainsVisibility.d.ts]
 -declare namespace X {
@@ -17,4 +18,3 @@
 -    export {};
 -}
 -export = X;
--

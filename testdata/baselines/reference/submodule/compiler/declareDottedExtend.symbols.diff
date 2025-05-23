@@ -26,4 +26,3 @@
 ->C : Symbol(ab.C, Decl(declareDottedExtend.ts, 1, 1))
 +>B : Symbol(B, Decl(declareDottedExtend.ts, 0, 17))
 +>C : Symbol(C, Decl(declareDottedExtend.ts, 1, 1))
-

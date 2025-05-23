@@ -90,4 +90,3 @@
 ->A1C1 : Symbol(A1Alias1.A1C1, Decl(moduleAliasInterface.ts, 44, 28))
 +>A1C1 : Symbol(A1C1, Decl(moduleAliasInterface.ts, 44, 28))
  }
-

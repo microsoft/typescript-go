@@ -54,4 +54,3 @@
  >x : Symbol(x, Decl(objectTypeWithCallSignatureHidingMembersOfFunction.ts, 14, 3))
 ->arguments : Symbol(Function.arguments, Decl(lib.es5.d.ts, --, --))
 +>arguments : Symbol(arguments, Decl(lib.es5.d.ts, --, --))
-

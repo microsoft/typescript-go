@@ -1,9 +1,10 @@
 --- old.mixinAbstractClasses.2.js
 +++ new.mixinAbstractClasses.2.js
-@@= skipped -44, +44 lines =@@
+@@= skipped -43, +43 lines =@@
+ }
  // error expected: Cannot create an instance of an abstract class.
  new MixedBase();
-
+-
 -
 -//// [mixinAbstractClasses.2.d.ts]
 -interface Mixin {
@@ -16,4 +17,3 @@
 -declare const MixedBase: typeof AbstractBase & (abstract new (...args: any) => Mixin);
 -declare class DerivedFromAbstract extends MixedBase {
 -}
--

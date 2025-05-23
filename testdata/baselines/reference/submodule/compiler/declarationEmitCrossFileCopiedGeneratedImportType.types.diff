@@ -26,4 +26,3 @@
 +>d : { e: { f: (foo: Foo) => boolean; }; }
 +>{e} : { e: { f: (foo: Foo) => boolean; }; }
 +>e : { f: (foo: Foo) => boolean; }
-

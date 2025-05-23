@@ -59,4 +59,3 @@
  >bar : Symbol(bar, Decl(deepKeysIndexing.ts, 50, 5))
 ->workaround : Symbol(Bar.workaround, Decl(deepKeysIndexing.ts, 41, 32))
 +>workaround : Symbol(workaround, Decl(deepKeysIndexing.ts, 41, 32))
-

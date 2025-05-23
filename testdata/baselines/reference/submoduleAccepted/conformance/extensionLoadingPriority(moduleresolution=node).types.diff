@@ -6,4 +6,3 @@
  import dir from "./dir";
 ->dir : "dir/index.ts"
 +>dir : "dir.js"
-

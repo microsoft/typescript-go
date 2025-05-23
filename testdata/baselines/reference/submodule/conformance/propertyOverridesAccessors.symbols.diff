@@ -50,4 +50,3 @@
 ->p : Symbol(D.p, Decl(propertyOverridesAccessors.ts, 11, 19))
 +>p : Symbol(p, Decl(propertyOverridesAccessors.ts, 11, 19))
  }
-

@@ -261,4 +261,3 @@
  >Enum : Symbol(Enum, Decl(inferFromGenericFunctionReturnTypes3.ts, 179, 79))
 ->A : Symbol(Enum.A, Decl(inferFromGenericFunctionReturnTypes3.ts, 183, 11))
 +>A : Symbol(A, Decl(inferFromGenericFunctionReturnTypes3.ts, 183, 11))
-

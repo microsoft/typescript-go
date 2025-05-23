@@ -92,4 +92,3 @@
  >...itNum : number
 ->itNum : Iterable<number>
 +>itNum : Iterable<number, any, any>
-

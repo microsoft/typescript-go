@@ -53,4 +53,3 @@
 +>exports : { config: (...configs: any[]) => void; }
 +>{ config } : { config: (...configs: any[]) => void; }
 +>config : (...configs: any[]) => void
-

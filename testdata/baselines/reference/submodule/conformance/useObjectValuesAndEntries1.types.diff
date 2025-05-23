@@ -162,4 +162,3 @@
 ->values : { <T>(o: { [s: string]: T; } | ArrayLike<T>): T[]; (o: {}): any[]; }
 +>values : { <T>(o: ArrayLike<T> | { [s: string]: T; }): T[]; (o: {}): any[]; }
  >i : I
-

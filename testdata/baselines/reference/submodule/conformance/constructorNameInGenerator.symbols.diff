@@ -7,4 +7,3 @@
 ->constructor : Symbol(C2.constructor, Decl(constructorNameInGenerator.ts, 0, 10))
 +>constructor : Symbol(constructor, Decl(constructorNameInGenerator.ts, 0, 10))
  }
-

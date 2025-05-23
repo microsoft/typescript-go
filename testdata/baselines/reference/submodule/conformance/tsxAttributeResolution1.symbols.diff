@@ -97,4 +97,3 @@
 ->var : Symbol(JSX.IntrinsicElements.var, Decl(file.tsx, 4, 26))
 +>var : Symbol(var, Decl(file.tsx, 4, 26))
  >var : Symbol(var, Decl(file.tsx, 32, 4))
-

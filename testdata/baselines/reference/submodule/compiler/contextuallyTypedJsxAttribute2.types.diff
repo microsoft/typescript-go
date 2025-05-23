@@ -75,4 +75,3 @@
 +>onClick : (e: MouseEvent<HTMLButtonElement>) => void
 +>(e) => {} : (e: MouseEvent<HTMLButtonElement>) => void
 +>e : MouseEvent<HTMLButtonElement>
-

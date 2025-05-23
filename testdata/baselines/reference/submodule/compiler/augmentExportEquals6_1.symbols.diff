@@ -28,4 +28,3 @@
  >a : Symbol(a, Decl(file3.ts, 2, 3))
 ->a : Symbol(x.A.a, Decl(file2.ts, 5, 17))
 +>a : Symbol(a, Decl(file2.ts, 5, 17))
-

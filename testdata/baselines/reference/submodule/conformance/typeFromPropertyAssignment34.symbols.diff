@@ -29,4 +29,3 @@
 ->commands : Symbol(N.commands, Decl(file1.js, 0, 11), Decl(file2.js, 0, 2), Decl(file2.js, 1, 2))
 ->b : Symbol(N.commands.b, Decl(file2.js, 0, 19))
 +>N : Symbol(N, Decl(file1.js, 0, 3))
-

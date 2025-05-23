@@ -39,4 +39,3 @@
 ->K : Symbol(test.K, Decl(bug39167.js, 0, 14), Decl(bug39167.js, 4, 5))
 ->add : Symbol(add, Decl(bug39167.js, 4, 20))
 +>test : Symbol(test, Decl(bug39167.js, 0, 3))
-

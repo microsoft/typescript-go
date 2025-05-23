@@ -24,4 +24,3 @@
 ->bar : Symbol(C.bar, Decl(ambientClassMergesOverloadsWithInterface.ts, 5, 24))
 +>bar : Symbol(bar, Decl(ambientClassMergesOverloadsWithInterface.ts, 5, 24))
  }
-

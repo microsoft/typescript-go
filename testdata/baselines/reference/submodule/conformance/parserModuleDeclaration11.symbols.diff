@@ -15,4 +15,3 @@
  >string : Symbol(string, Decl(parserModuleDeclaration11.ts, 0, 0))
 ->X : Symbol(string.X, Decl(parserModuleDeclaration11.ts, 0, 23))
 +>X : Symbol(X, Decl(parserModuleDeclaration11.ts, 0, 23))
-

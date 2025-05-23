@@ -14,4 +14,3 @@
 ->args : Symbol(args, Decl(tslib.d.ts, --, --))
 +>__runInitializers : Symbol(__runInitializers, Decl(tslib.d.ts, 0, 58))
 +>args : Symbol(args, Decl(tslib.d.ts, 1, 42))
-

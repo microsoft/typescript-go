@@ -35,4 +35,3 @@
 ->b : Symbol(E.b, Decl(exponentiationOperatorWithUndefinedValueAndValidOperands.ts, 4, 6))
 +>b : Symbol(b, Decl(exponentiationOperatorWithUndefinedValueAndValidOperands.ts, 4, 6))
  >undefined : Symbol(undefined)
-

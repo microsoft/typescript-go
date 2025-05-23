@@ -16,4 +16,3 @@
 ->example : typeof example
 +>example : typeof import("example")
  >"default" : "default"
-

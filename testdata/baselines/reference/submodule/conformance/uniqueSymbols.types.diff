@@ -164,4 +164,3 @@
 ->obj : { method(p: typeof s): void; }
 +>obj : { method: (p: unique symbol) => void; }
  }
-

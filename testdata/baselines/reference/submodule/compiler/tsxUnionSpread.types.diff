@@ -33,4 +33,3 @@
 +><AnimalComponent {...props2} /> : any
 +>AnimalComponent : (info: AnimalInfo) => Element
  >props2 : CatInfo
-

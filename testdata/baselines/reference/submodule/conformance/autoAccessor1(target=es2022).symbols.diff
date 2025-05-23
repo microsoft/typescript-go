@@ -19,4 +19,3 @@
 ->d : Symbol(C1.d, Decl(autoAccessor1.ts, 3, 27))
 +>d : Symbol(d, Decl(autoAccessor1.ts, 3, 27))
  }
-

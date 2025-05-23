@@ -13,4 +13,3 @@
 ->bar : (x: { new (): Foo; }) => void
 +>bar : (x: new () => Foo) => void
  >Foo : typeof Foo
-

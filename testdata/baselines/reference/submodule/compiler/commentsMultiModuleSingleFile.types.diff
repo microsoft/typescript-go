@@ -20,4 +20,3 @@
  >multiM : typeof multiM
 ->c : typeof multiM.c
 +>c : typeof c
-

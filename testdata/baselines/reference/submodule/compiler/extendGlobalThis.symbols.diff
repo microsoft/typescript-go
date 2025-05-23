@@ -16,4 +16,3 @@
  >test : Symbol(test, Decl(extension.d.ts, 2, 11))
 ->split : Symbol(String.split, Decl(lib.es5.d.ts, --, --))
 +>split : Symbol(split, Decl(lib.es5.d.ts, --, --))
-

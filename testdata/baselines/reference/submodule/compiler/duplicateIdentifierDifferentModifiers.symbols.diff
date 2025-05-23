@@ -45,4 +45,3 @@
 ->y : Symbol(C.y, Decl(duplicateIdentifierDifferentModifiers.ts, 14, 9), Decl(duplicateIdentifierDifferentModifiers.ts, 18, 13))
 +>y : Symbol(y, Decl(duplicateIdentifierDifferentModifiers.ts, 14, 9), Decl(duplicateIdentifierDifferentModifiers.ts, 18, 13))
  }
-

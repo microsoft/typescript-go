@@ -87,4 +87,3 @@
  >Object : Symbol(Object, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 ->create : Symbol(ObjectConstructor.create, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>create : Symbol(create, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-

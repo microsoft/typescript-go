@@ -107,4 +107,3 @@
 ->c : Symbol(T7.c, Decl(enumConstantMemberWithTemplateLiteralsEmitDeclaration.ts, 36, 18))
 +>c : Symbol(c, Decl(enumConstantMemberWithTemplateLiteralsEmitDeclaration.ts, 36, 18))
  }
-

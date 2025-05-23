@@ -70,5 +70,4 @@
 -declare const g: (arg: WeakTypes) => WeakTypes;
 -declare const h: (arg: LiteralsOrWeakTypes) => LiteralsOrWeakTypes;
 -declare const i: (arg: WeakTypes) => WeakTypes;
--
 +<no content>

@@ -65,4 +65,3 @@
 +>a = b : Bar<string[]>
 +>a : Foo<string[]>
 +>b : Bar<string[]>
-

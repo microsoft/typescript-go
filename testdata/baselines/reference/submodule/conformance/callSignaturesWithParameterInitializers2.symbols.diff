@@ -58,4 +58,3 @@
  >b : Symbol(b, Decl(callSignaturesWithParameterInitializers2.ts, 18, 3))
 ->foo : Symbol(foo, Decl(callSignaturesWithParameterInitializers2.ts, 18, 9), Decl(callSignaturesWithParameterInitializers2.ts, 19, 15))
 +>foo : Symbol(foo, Decl(callSignaturesWithParameterInitializers2.ts, 19, 15))
-

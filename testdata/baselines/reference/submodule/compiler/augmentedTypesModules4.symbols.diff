@@ -46,4 +46,3 @@
  >I : Symbol(I, Decl(augmentedTypesModules4.ts, 20, 11))
 ->foo : Symbol(I.foo, Decl(augmentedTypesModules4.ts, 20, 32))
 +>foo : Symbol(foo, Decl(augmentedTypesModules4.ts, 20, 32))
-

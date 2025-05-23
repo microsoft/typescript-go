@@ -22,4 +22,3 @@
 ->find : Symbol(ReadonlyArray.find, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
 +>find : Symbol(find, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
  >isNumber : Symbol(isNumber, Decl(arrayFind.ts, 0, 0))
-

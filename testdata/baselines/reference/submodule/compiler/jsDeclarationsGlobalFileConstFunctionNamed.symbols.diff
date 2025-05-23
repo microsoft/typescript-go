@@ -65,4 +65,3 @@
 +>SelfReference.staticMember : Symbol(staticMember, Decl(file.js, 16, 1))
 +>SelfReference : Symbol(SelfReference, Decl(file.js, 13, 5))
 +>staticMember : Symbol(staticMember, Decl(file.js, 16, 1))
-

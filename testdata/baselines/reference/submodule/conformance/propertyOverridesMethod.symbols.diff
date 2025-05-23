@@ -15,4 +15,3 @@
 ->m : Symbol(B.m, Decl(propertyOverridesMethod.ts, 3, 19))
 +>m : Symbol(m, Decl(propertyOverridesMethod.ts, 3, 19))
  }
-

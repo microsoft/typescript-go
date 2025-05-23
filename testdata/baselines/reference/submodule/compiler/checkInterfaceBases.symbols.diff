@@ -24,4 +24,3 @@
 ->metaKey : Symbol(JQueryEventObjectTest.metaKey, Decl(jquery.d.ts, 2, 18))
 +>metaKey : Symbol(metaKey, Decl(jquery.d.ts, 2, 18))
  }
-

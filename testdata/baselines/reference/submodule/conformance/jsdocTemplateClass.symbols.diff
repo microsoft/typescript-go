@@ -45,4 +45,3 @@
  >g : Symbol(g, Decl(templateTagOnClasses.js, 23, 3))
 ->a : Symbol(Foo.a, Decl(templateTagOnClasses.js, 8, 21))
 +>a : Symbol(a, Decl(templateTagOnClasses.js, 8, 21))
-

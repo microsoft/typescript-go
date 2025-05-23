@@ -34,4 +34,3 @@
 -export = C;
 ->C : Symbol(C, Decl(externalModuleAssignToVar_core_require2.ts, 0, 0))
 +>bar : Symbol(bar, Decl(externalModuleAssignToVar_core_require.ts, 0, 16))
-

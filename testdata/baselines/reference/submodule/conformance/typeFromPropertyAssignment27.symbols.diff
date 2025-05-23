@@ -33,4 +33,3 @@
 ->c.q : Symbol(q, Decl(a.js, 2, 15))
  >c : Symbol(c, Decl(a.js, 4, 5))
 ->q : Symbol(q, Decl(a.js, 2, 15))
-

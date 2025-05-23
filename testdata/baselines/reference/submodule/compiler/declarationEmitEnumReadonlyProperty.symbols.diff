@@ -35,4 +35,3 @@
  >C : Symbol(C, Decl(declarationEmitEnumReadonlyProperty.ts, 3, 1))
 ->type : Symbol(C.type, Decl(declarationEmitEnumReadonlyProperty.ts, 5, 9))
 +>type : Symbol(type, Decl(declarationEmitEnumReadonlyProperty.ts, 5, 9))
-

@@ -99,4 +99,3 @@
  >M : Symbol(M, Decl(typeofOperatorWithNumberType.ts, 9, 1))
 ->n : Symbol(M.n, Decl(typeofOperatorWithNumberType.ts, 11, 14))
 +>n : Symbol(n, Decl(typeofOperatorWithNumberType.ts, 11, 14))
-

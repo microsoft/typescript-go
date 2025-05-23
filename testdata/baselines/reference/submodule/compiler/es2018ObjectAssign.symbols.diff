@@ -21,4 +21,3 @@
  >p : Symbol(p, Decl(es2018ObjectAssign.ts, 2, 13))
 ->finally : Symbol(Promise.finally, Decl(lib.es2018.promise.d.ts, --, --))
 +>finally : Symbol(finally, Decl(lib.es2018.promise.d.ts, --, --))
-

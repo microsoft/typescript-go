@@ -16,4 +16,3 @@
 ->x : Omit<import("node_modules/react-select/index").Whatever, "y"> & Partial<import("node_modules/react-select/index").Whatever> & Option
 +>CustomSelect2 : <Option>(x: Omit<Whatever, "y"> & Partial<Whatever> & Option) => void
 +>x : Omit<Whatever, "y"> & Partial<Whatever> & Option
-

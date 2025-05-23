@@ -823,4 +823,3 @@
  >E : Symbol(E, Decl(propertyNamesOfReservedWords.ts, 206, 14))
 ->as : Symbol(E.as, Decl(propertyNamesOfReservedWords.ts, 209, 13))
 +>as : Symbol(as, Decl(propertyNamesOfReservedWords.ts, 209, 13))
-

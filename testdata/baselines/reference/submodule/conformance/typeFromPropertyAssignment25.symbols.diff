@@ -73,4 +73,3 @@
  >i : Symbol(i, Decl(bug24703.js, 13, 3))
 ->i : Symbol(I.i, Decl(bug24703.js, 2, 19))
 
-

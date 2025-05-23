@@ -1,9 +1,10 @@
 --- old.importAssertion2(module=es2015).js
 +++ new.importAssertion2(module=es2015).js
-@@= skipped -26, +26 lines =@@
+@@= skipped -25, +25 lines =@@
+ //// [2.js]
  export { a, b } from './0' assert {};
  export { a as c, b as d } from './0' assert { a: "a", b: "b", c: "c" };
-
+-
 -
 -//// [0.d.ts]
 -export declare const a = 1;
@@ -16,4 +17,3 @@
 -//// [2.d.ts]
 -export { a, b } from './0';
 -export { a as c, b as d } from './0';
--

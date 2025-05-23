@@ -66,4 +66,3 @@
 ->z.y : Symbol(Inner.y, Decl(a.js, 1, 19))
  >z : Symbol(z, Decl(b.js, 3, 3))
 ->y : Symbol(Inner.y, Decl(a.js, 1, 19))
-

@@ -31,4 +31,3 @@
  >lazyArray : Symbol(lazyArray, Decl(genericWithIndexerOfTypeParameterType1.ts, 6, 3))
 ->array : Symbol(LazyArray.array, Decl(genericWithIndexerOfTypeParameterType1.ts, 1, 53))
 +>array : Symbol(array, Decl(genericWithIndexerOfTypeParameterType1.ts, 1, 53))
-

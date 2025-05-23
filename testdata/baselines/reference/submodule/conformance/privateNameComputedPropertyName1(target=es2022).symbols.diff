@@ -141,4 +141,3 @@
 ->test : Symbol(A.test, Decl(privateNameComputedPropertyName1.ts, 12, 5))
 +>test : Symbol(test, Decl(privateNameComputedPropertyName1.ts, 12, 5))
 
-

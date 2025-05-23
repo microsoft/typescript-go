@@ -18,4 +18,3 @@
  >v1 : Symbol(v1, Decl(genericClasses0.ts, 4, 3))
 ->x : Symbol(C.x, Decl(genericClasses0.ts, 0, 12))
 +>x : Symbol(x, Decl(genericClasses0.ts, 0, 12))
-

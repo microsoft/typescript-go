@@ -30,4 +30,3 @@
 ->foo : typeof foo
 +>foo : { (): void; bar: number; foo[_private]: string; }
  >_private : unique symbol
-

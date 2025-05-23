@@ -41,4 +41,3 @@
  >mod : Symbol(mod, Decl(idx.ts, 0, 6))
 ->b : Symbol(mod.B.b, Decl(mod.d.ts, 4, 36))
 +>b : Symbol(b, Decl(mod.d.ts, 4, 36))
-

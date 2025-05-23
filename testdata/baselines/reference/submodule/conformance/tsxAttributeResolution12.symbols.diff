@@ -85,4 +85,3 @@
 ->Test : Symbol(TestMod.Test, Decl(file.tsx, 19, 4))
 +>Test : Symbol(Test, Decl(file.tsx, 19, 4))
 
-

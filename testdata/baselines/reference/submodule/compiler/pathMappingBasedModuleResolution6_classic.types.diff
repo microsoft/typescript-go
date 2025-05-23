@@ -29,4 +29,3 @@
 -=== c:/root/generated/src/project/file3.ts ===
 -export {x} from "../file2";
  >x : number
-

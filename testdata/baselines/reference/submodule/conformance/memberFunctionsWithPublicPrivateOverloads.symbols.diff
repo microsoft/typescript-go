@@ -260,4 +260,3 @@
  >d : Symbol(d, Decl(memberFunctionsWithPublicPrivateOverloads.ts, 60, 3))
 ->foo : Symbol(D.foo, Decl(memberFunctionsWithPublicPrivateOverloads.ts, 29, 12), Decl(memberFunctionsWithPublicPrivateOverloads.ts, 30, 27), Decl(memberFunctionsWithPublicPrivateOverloads.ts, 31, 27))
 +>foo : Symbol(foo, Decl(memberFunctionsWithPublicPrivateOverloads.ts, 29, 12), Decl(memberFunctionsWithPublicPrivateOverloads.ts, 30, 27), Decl(memberFunctionsWithPublicPrivateOverloads.ts, 31, 27))
-

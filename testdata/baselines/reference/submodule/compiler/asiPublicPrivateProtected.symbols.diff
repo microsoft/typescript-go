@@ -81,4 +81,3 @@
 ->protected : Symbol(ClassWithThreeMembers.protected, Decl(asiPublicPrivateProtected.ts, 36, 11))
 +>protected : Symbol(protected, Decl(asiPublicPrivateProtected.ts, 36, 11))
  }
-

@@ -16,4 +16,3 @@
 ->B : typeof A.B
 +>B : typeof B
  >1 : 1
-

@@ -11,4 +11,3 @@
  import type from './a';
 ->type : typeof type
 +>type : typeof default
-

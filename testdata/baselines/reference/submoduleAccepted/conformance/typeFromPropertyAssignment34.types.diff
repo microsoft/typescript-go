@@ -47,4 +47,3 @@
 +>commands : any
 +>b : any
  >function () { } : () => void
-

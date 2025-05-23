@@ -50,4 +50,3 @@
  >T : Symbol(T, Decl(unusedTypeParameters9.ts, 9, 13), Decl(unusedTypeParameters9.ts, 10, 13), Decl(unusedTypeParameters9.ts, 11, 13), Decl(unusedTypeParameters9.ts, 12, 13), Decl(unusedTypeParameters9.ts, 13, 13))
 ->e : Symbol(C3.e, Decl(unusedTypeParameters9.ts, 13, 17))
 +>e : Symbol(e, Decl(unusedTypeParameters9.ts, 13, 17))
-

@@ -90,4 +90,3 @@
 ->foo14 : { (x: I): any; (x: typeof b): any; }
 +>foo14 : { (x: I): any; (x: { foo: E; }): any; }
  >x : any
-

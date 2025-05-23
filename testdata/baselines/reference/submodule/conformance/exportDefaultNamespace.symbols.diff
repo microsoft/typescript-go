@@ -17,4 +17,3 @@
 +>someFunc.someProp : Symbol(someProp, Decl(exportDefaultNamespace.ts, 2, 1))
 +>someFunc : Symbol(default, Decl(exportDefaultNamespace.ts, 0, 0))
 +>someProp : Symbol(someProp, Decl(exportDefaultNamespace.ts, 2, 1))
-

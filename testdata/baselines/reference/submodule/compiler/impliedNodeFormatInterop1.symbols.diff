@@ -18,4 +18,3 @@
  >hljs : Symbol(hljs, Decl(index.ts, 0, 6))
 ->highlight : Symbol(HighlightAPI.highlight, Decl(index.d.ts, 1, 33))
 +>highlight : Symbol(highlight, Decl(index.d.ts, 1, 33))
-

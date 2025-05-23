@@ -33,4 +33,3 @@
 ->source : Symbol(Foo.source, Decl(Foo.d.ts, 0, 26))
 +>source : Symbol(source, Decl(Foo.d.ts, 0, 26))
  }
-

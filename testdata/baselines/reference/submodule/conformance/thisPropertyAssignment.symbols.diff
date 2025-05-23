@@ -57,4 +57,3 @@
 ->f.b : Symbol(F["b"], Decl(a.js, 15, 16))
  >f : Symbol(f, Decl(a.js, 20, 5))
 ->b : Symbol(F["b"], Decl(a.js, 15, 16))
-

@@ -31,4 +31,3 @@
  >C2 : Symbol(C2, Decl(classSideInheritance1.ts, 5, 1))
 ->bar : Symbol(A.bar, Decl(classSideInheritance1.ts, 0, 9))
 +>bar : Symbol(bar, Decl(classSideInheritance1.ts, 0, 9))
-

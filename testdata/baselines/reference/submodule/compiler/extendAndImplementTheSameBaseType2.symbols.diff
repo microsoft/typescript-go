@@ -55,4 +55,3 @@
  >d : Symbol(d, Decl(extendAndImplementTheSameBaseType2.ts, 10, 3))
 ->bar : Symbol(C.bar, Decl(extendAndImplementTheSameBaseType2.ts, 1, 15))
 +>bar : Symbol(bar, Decl(extendAndImplementTheSameBaseType2.ts, 1, 15))
-

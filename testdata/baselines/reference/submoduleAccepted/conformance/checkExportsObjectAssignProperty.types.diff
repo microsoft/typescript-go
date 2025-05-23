@@ -441,4 +441,3 @@
  >"./mod2" : "./mod2"
 ->thing : string
 +>thing : any
-

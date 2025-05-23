@@ -122,4 +122,3 @@
  >performFoo2() : void
 ->performFoo2 : ({ bar }?: Foo) => void
 +>performFoo2 : (__0?: Foo) => void
-

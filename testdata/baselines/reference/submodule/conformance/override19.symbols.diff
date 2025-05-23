@@ -25,4 +25,3 @@
 ->doSomethang : Symbol(C.doSomethang, Decl(override19.ts, 14, 41))
 +>doSomethang : Symbol(doSomethang, Decl(override19.ts, 14, 41))
  }
-

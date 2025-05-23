@@ -275,4 +275,3 @@
 ->isDisjointFrom : Symbol(Set.isDisjointFrom, Decl(lib.esnext.collection.d.ts, --, --))
 +>isDisjointFrom : Symbol(isDisjointFrom, Decl(lib.esnext.collection.d.ts, --, --))
  >numberSetLike : Symbol(numberSetLike, Decl(setMethods.ts, 6, 3))
-

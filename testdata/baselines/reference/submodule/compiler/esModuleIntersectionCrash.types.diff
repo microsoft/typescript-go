@@ -31,4 +31,3 @@
 ->mod : { a: string; b: string; default: mod.A & mod.B; }
 +>mod : A & B
  >b : string
-

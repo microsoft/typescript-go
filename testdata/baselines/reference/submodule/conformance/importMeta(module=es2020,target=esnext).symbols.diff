@@ -138,4 +138,3 @@
 ->wellKnownProperty : Symbol(ImportMeta.wellKnownProperty, Decl(assignmentTargets.ts, 5, 24))
 +>meta : Symbol(meta)
 +>wellKnownProperty : Symbol(wellKnownProperty, Decl(assignmentTargets.ts, 5, 24))
-

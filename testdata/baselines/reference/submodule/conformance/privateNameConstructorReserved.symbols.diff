@@ -7,4 +7,3 @@
 ->#constructor : Symbol(A.#constructor, Decl(privateNameConstructorReserved.ts, 0, 9))
 +>#constructor : Symbol(#constructor, Decl(privateNameConstructorReserved.ts, 0, 9))
  }
-

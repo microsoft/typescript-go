@@ -29,4 +29,3 @@
  >Foo2 : typeof Foo2
 ->C : typeof Foo2.C
 +>C : typeof C
-

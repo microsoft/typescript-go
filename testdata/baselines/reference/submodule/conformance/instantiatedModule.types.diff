@@ -140,4 +140,3 @@
 ->Blue : M3.Color.Blue
 +>Color : typeof Color
 +>Blue : Color.Blue
-

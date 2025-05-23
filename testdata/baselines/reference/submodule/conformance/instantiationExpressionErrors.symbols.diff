@@ -91,4 +91,3 @@
 +>MyVer.v2 : Symbol(v2, Decl(instantiationExpressionErrors.ts, 100, 26))
 +>MyVer : Symbol(MyVer, Decl(instantiationExpressionErrors.ts, 96, 1))
 +>v2 : Symbol(v2, Decl(instantiationExpressionErrors.ts, 100, 26))
-

@@ -73,4 +73,3 @@
 +>a = b : { a: string; b: ???; }
 +>a : { a: string; b: ???; }
 +>b : { a: string; b: ???; }
-

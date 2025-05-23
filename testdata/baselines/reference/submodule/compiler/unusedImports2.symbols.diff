@@ -18,4 +18,3 @@
  >x : Symbol(x, Decl(file2.ts, 3, 3))
 ->handleChar : Symbol(Calculator.handleChar, Decl(file1.ts, 0, 25))
 +>handleChar : Symbol(handleChar, Decl(file1.ts, 0, 25))
-

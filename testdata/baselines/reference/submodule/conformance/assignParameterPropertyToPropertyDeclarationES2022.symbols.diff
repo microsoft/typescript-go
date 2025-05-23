@@ -227,4 +227,3 @@
 +>p1 : Symbol(p1, Decl(assignParameterPropertyToPropertyDeclarationES2022.ts, 42, 16))
 +>foo : Symbol(foo, Decl(assignParameterPropertyToPropertyDeclarationES2022.ts, 10, 16))
  }
-

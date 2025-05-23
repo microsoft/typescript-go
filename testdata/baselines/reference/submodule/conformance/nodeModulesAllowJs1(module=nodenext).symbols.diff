@@ -24,4 +24,3 @@
  export {x};
 ->x : Symbol(m2.x, Decl(index.mjs, 87, 8))
 +>x : Symbol(x, Decl(index.mjs, 87, 8))
-

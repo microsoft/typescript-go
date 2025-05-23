@@ -62,4 +62,3 @@
  >x : Symbol(x, Decl(contextualTypingOfGenericFunctionTypedArguments1.ts, 16, 32))
 ->toFixed : Symbol(Number.toFixed, Decl(lib.es5.d.ts, --, --))
 +>toFixed : Symbol(toFixed, Decl(lib.es5.d.ts, --, --))
-

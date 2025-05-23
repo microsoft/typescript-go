@@ -117,4 +117,3 @@
 ->#quux : Symbol(B.#quux, Decl(privateNamesIncompatibleModifiers.ts, 30, 18))
 +>#quux : Symbol(#quux, Decl(privateNamesIncompatibleModifiers.ts, 30, 18))
  }
-

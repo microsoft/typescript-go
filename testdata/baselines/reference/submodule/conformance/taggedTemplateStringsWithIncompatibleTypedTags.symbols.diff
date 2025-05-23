@@ -89,4 +89,3 @@
  >f : Symbol(f, Decl(taggedTemplateStringsWithIncompatibleTypedTags.ts, 9, 3))
 ->thisIsNotATag : Symbol(I.thisIsNotATag, Decl(taggedTemplateStringsWithIncompatibleTypedTags.ts, 4, 14))
 +>thisIsNotATag : Symbol(thisIsNotATag, Decl(taggedTemplateStringsWithIncompatibleTypedTags.ts, 4, 14))
-

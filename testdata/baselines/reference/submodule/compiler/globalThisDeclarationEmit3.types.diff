@@ -25,4 +25,3 @@
 ->variable : typeof mod
 +>mod : typeof globalThis
 +>variable : typeof globalThis
-

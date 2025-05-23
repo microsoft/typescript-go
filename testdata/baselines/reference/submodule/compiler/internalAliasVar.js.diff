@@ -1,9 +1,10 @@
 --- old.internalAliasVar.js
 +++ new.internalAliasVar.js
-@@= skipped -21, +21 lines =@@
+@@= skipped -20, +20 lines =@@
+     var b = a.x;
      c.bVal = b;
  })(c || (c = {}));
-
+-
 -
 -//// [internalAliasVar.d.ts]
 -declare namespace a {
@@ -12,4 +13,3 @@
 -declare namespace c {
 -    var bVal: number;
 -}
--

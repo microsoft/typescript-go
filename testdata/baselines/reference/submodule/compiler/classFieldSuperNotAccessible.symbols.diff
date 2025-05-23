@@ -30,4 +30,3 @@
  >T2 : Symbol(T2, Decl(classFieldSuperNotAccessible.ts, 2, 1))
 ->f : Symbol(T2.f, Decl(classFieldSuperNotAccessible.ts, 3, 20))
 +>f : Symbol(f, Decl(classFieldSuperNotAccessible.ts, 3, 20))
-

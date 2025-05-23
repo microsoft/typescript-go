@@ -37,4 +37,3 @@
  >c : Symbol(c, Decl(staticIndexSignature6.ts, 15, 5))
 ->foo : Symbol((Anonymous class).foo, Decl(staticIndexSignature6.ts, 3, 30))
 +>foo : Symbol(foo, Decl(staticIndexSignature6.ts, 3, 30))
-

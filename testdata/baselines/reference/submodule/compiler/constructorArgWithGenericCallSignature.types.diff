@@ -30,4 +30,3 @@
 ->func : Test.MyFunc
 +>MyClass : typeof MyClass
 +>func : MyFunc
-

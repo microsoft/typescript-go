@@ -36,4 +36,3 @@
  >x : Symbol(x, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 14, 5))
 ->method : Symbol(B.method, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 4, 25))
 +>method : Symbol(method, Decl(thisConditionalOnMethodReturnOfGenericInstance.ts, 4, 25))
-

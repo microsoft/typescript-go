@@ -14,4 +14,3 @@
 ->unionWithAbstractSignature : (abstract new (a: string) => string) | (new (a: string) => string)
 +>unionWithAbstractSignature : (new (a: string) => string) | (new (a: string) => string)
  >'hello' : "hello"
-

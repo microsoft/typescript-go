@@ -25,4 +25,3 @@
 ->React : typeof import("module")
 +>React : typeof React
  >createRef : () => any
-

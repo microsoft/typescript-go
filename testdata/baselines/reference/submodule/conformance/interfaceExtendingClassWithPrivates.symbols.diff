@@ -44,4 +44,3 @@
  >i : Symbol(i, Decl(interfaceExtendingClassWithPrivates.ts, 12, 3))
 ->x : Symbol(Foo.x, Decl(interfaceExtendingClassWithPrivates.ts, 0, 11))
 +>x : Symbol(x, Decl(interfaceExtendingClassWithPrivates.ts, 0, 11))
-

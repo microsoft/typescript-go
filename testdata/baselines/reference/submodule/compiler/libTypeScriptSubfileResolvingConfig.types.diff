@@ -17,4 +17,3 @@
 +>window.localStorage : Storage
 +>window : Window & typeof globalThis
 +>localStorage : Storage
-

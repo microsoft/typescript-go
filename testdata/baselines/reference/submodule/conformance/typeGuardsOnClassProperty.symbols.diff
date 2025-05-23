@@ -82,4 +82,3 @@
  >prop1 : Symbol(prop1, Decl(typeGuardsOnClassProperty.ts, 26, 3))
 ->toLocaleLowerCase : Symbol(String.toLocaleLowerCase, Decl(lib.es5.d.ts, --, --))
 +>toLocaleLowerCase : Symbol(toLocaleLowerCase, Decl(lib.es5.d.ts, --, --))
-

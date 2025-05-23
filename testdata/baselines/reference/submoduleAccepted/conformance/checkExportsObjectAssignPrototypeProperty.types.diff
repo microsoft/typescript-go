@@ -256,4 +256,3 @@
 +>module : { Person: (name: string) => void; }
 +>exports : (name: string) => void
 +>Person : (name: string) => void
-

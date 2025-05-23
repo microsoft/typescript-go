@@ -40,4 +40,3 @@
 +>ec.getPosition : () => Position
 +>ec : EC
 +>getPosition : () => Position
-

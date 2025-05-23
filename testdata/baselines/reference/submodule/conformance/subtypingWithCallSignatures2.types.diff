@@ -490,4 +490,3 @@
 ->foo18 : { (a: { (x: { (a: number): number; (a: string): string; }): any[]; (x: { (a: boolean): boolean; (a: Date): Date; }): any[]; }): typeof a; (a: any): any; }
 +>foo18 : { (a: { (x: { (a: number): number; (a: string): string; }): any[]; (x: { (a: boolean): boolean; (a: Date): Date; }): any[]; }): { (x: { (a: number): number; (a: string): string; }): any[]; (x: { (a: boolean): boolean; (a: Date): Date; }): any[]; }; (a: any): any; }
  >r18arg1 : <T>(x: (a: T) => T) => T[]
-

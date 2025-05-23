@@ -45,4 +45,3 @@
 ->C : { y(): number; }
 +>C : { y: () => number; }
  >y : () => number
-

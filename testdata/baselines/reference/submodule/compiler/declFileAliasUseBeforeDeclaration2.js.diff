@@ -1,9 +1,10 @@
 --- old.declFileAliasUseBeforeDeclaration2.js
 +++ new.declFileAliasUseBeforeDeclaration2.js
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
+ }
 
  //// [declFileAliasUseBeforeDeclaration2.js]
-
+-
 -
 -//// [declFileAliasUseBeforeDeclaration2.d.ts]
 -declare module "test" {
@@ -15,4 +16,3 @@
 -    }
 -    import E = A.C;
 -}
--

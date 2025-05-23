@@ -20,4 +20,3 @@
 ->prop : Symbol(Foo.prop, Decl(unionTypeParameterInference.ts, 2, 18))
 +>prop : Symbol(prop, Decl(unionTypeParameterInference.ts, 2, 18))
  }
-

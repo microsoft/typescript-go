@@ -44,4 +44,3 @@
 ->m3 : Symbol(B.m3, Decl(override12.ts, 19, 5))
 +>m3 : Symbol(m3, Decl(override12.ts, 19, 5))
  }
-

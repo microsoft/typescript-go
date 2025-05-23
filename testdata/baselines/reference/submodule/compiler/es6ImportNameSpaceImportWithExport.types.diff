@@ -20,4 +20,3 @@
  export import * as nameSpaceBinding2 from "server"; // Not referenced imports
 ->nameSpaceBinding2 : typeof nameSpaceBinding
 +>nameSpaceBinding2 : any
-

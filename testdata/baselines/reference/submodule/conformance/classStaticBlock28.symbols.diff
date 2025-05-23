@@ -10,4 +10,3 @@
 ->log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 +>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
  >foo : Symbol(foo, Decl(classStaticBlock28.ts, 0, 3))
-

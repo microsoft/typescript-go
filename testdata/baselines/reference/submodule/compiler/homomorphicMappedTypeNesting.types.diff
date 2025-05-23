@@ -7,4 +7,3 @@
 ->fnBad : <T extends Array<Box<string>>>(...args: T) => Test<Identity<UnboxArray<T>>>
 +>fnBad : <T extends Box<string>[]>(...args: T) => Identity<UnboxArray<T>>
  >args : T
-

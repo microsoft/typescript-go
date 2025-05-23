@@ -45,4 +45,3 @@
 +>mdast2.default : typeof import("/node_modules/mdast-util-to-string/index")
 +>mdast2 : { toString: () => string; default: typeof import("/node_modules/mdast-util-to-string/index"); }
 +>default : typeof import("/node_modules/mdast-util-to-string/index")
-

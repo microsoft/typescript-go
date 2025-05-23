@@ -93,4 +93,3 @@
 ->unregister : Symbol(FinalizationRegistry.unregister, Decl(lib.es2021.weakref.d.ts, --, --))
 +>unregister : Symbol(unregister, Decl(lib.es2021.weakref.d.ts, --, --))
  >s : Symbol(s, Decl(dissallowSymbolAsWeakType.ts, 0, 5))
-

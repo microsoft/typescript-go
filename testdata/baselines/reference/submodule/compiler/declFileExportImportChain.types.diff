@@ -44,4 +44,3 @@
 -=== declFileExportImportChain_c.ts ===
 -export import b1 = require("declFileExportImportChain_b1");
 ->b1 : typeof b1
-

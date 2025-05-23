@@ -18,4 +18,3 @@
  >a : Symbol(a, Decl(specialIntersectionsInMappedTypes.ts, 5, 5))
 ->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
 +>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
-

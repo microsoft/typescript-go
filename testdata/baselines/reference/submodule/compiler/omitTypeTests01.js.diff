@@ -1,9 +1,10 @@
 --- old.omitTypeTests01.js
 +++ new.omitTypeTests01.js
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
+ function getBazA(baz) {
      return baz.a;
  }
-
+-
 -
 -//// [omitTypeTests01.d.ts]
 -interface Foo {
@@ -16,4 +17,3 @@
 -export declare function getBarA(bar: Bar): string;
 -export declare function getBazA(baz: Baz): string;
 -export {};
--

@@ -35,4 +35,3 @@
 +>A : Symbol(A, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty12.ts, 0, 8))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
  }
-

@@ -113,4 +113,3 @@
 +>obj : { [x: string]: any; foo: string | undefined; bar: string | undefined; method1: (n1: any) => any; lol: string; arrowFunc: function; }
 +>arrowFunc : function
  >0 : 0
-

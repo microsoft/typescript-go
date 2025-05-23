@@ -7,4 +7,3 @@
 ->"-Infinity" : Symbol(A["-Infinity"], Decl(enumWithNegativeInfinityProperty.ts, 0, 8))
 +>"-Infinity" : Symbol("-Infinity", Decl(enumWithNegativeInfinityProperty.ts, 0, 8))
  }
-

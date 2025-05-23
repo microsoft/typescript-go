@@ -39,5 +39,4 @@
 -
 -//// [app.d.ts]
 -declare function foo(): any;
--
 +<no content>

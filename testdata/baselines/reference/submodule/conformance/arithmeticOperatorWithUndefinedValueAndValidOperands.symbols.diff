@@ -251,4 +251,3 @@
 ->b : Symbol(E.b, Decl(arithmeticOperatorWithUndefinedValueAndValidOperands.ts, 4, 6))
 +>b : Symbol(b, Decl(arithmeticOperatorWithUndefinedValueAndValidOperands.ts, 4, 6))
  >undefined : Symbol(undefined)
-

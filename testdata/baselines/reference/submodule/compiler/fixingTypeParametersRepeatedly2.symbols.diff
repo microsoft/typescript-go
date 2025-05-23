@@ -38,4 +38,3 @@
  >d : Symbol(d, Decl(fixingTypeParametersRepeatedly2.ts, 16, 25))
 ->toBase : Symbol(Derived.toBase, Decl(fixingTypeParametersRepeatedly2.ts, 3, 32))
 +>toBase : Symbol(toBase, Decl(fixingTypeParametersRepeatedly2.ts, 3, 32))
-

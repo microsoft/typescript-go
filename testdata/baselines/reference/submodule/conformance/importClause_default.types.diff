@@ -33,4 +33,3 @@
 +>b : { A: typeof default; }
 +>{ A } : { A: typeof default; }
 +>A : typeof default
-

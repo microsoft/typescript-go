@@ -6,4 +6,3 @@
  function* g1(): Iterable<string> { }
 ->g1 : () => Iterable<string>
 +>g1 : () => Iterable<string, any, any>
-

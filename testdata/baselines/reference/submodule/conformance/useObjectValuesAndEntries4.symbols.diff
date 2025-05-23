@@ -22,4 +22,3 @@
 ->entries : Symbol(ObjectConstructor.entries, Decl(lib.es2017.object.d.ts, --, --), Decl(lib.es2017.object.d.ts, --, --))
 +>entries : Symbol(entries, Decl(lib.es2017.object.d.ts, --, --), Decl(lib.es2017.object.d.ts, --, --))
  >o : Symbol(o, Decl(useObjectValuesAndEntries4.ts, 0, 3))
-

@@ -80,4 +80,3 @@
 ->tableColumns : Symbol(ConflictTarget.tableColumns, Decl(keyofInferenceLowerPriorityThanReturn.ts, 19, 36))
 +>tableColumns : Symbol(tableColumns, Decl(keyofInferenceLowerPriorityThanReturn.ts, 19, 36))
  }
-

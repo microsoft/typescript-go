@@ -11,4 +11,3 @@
 ->biz : Symbol(Foo.biz, Decl(parserModifierOnPropertySignature2.ts, 1, 10))
 +>biz : Symbol(biz, Decl(parserModifierOnPropertySignature2.ts, 1, 10))
  }
-

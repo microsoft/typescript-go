@@ -1,9 +1,10 @@
 --- old.privacyCheckExportAssignmentOnExportedGenericInterface1.js
 +++ new.privacyCheckExportAssignmentOnExportedGenericInterface1.js
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
+ "use strict";
  var Foo;
  module.exports = Foo;
-
+-
 -
 -//// [privacyCheckExportAssignmentOnExportedGenericInterface1.d.ts]
 -declare namespace Foo {
@@ -14,4 +15,3 @@
 -}
 -declare var Foo: new () => Foo.A<Foo<string>>;
 -export = Foo;
--

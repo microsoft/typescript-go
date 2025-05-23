@@ -40,4 +40,3 @@
 ->foo : ({ x: [a, b], y: { c, d, e } }: { x: [any, any]; y: { c: any; d: any; e: any; }; }) => void
 +>foo : (__0: { x: [any, any]; y: { c: any; d: any; e: any; }; }) => void
  >o : { x: (string | number)[]; y: { c: boolean; d: string; e: number; }; }
-

@@ -9,4 +9,3 @@
 +>set : (...args: [name: string] | [option: Record<string, unknown>] | [name: string, value: unknown]) => void
 +>args : [name: string] | [option: Record<string, unknown>] | [name: string, value: unknown]
  }
-

@@ -68,4 +68,3 @@
 +><Funk {...attrs2} /> : Element
 +>Funk : (_props: ComponentProps) => Element
  >attrs2 : { optionalBool: true; mandatoryFn: () => void; }
-

@@ -52,4 +52,3 @@
 ->b : Symbol(x.B.b, Decl(file2.ts, 7, 18))
 +>B : Symbol(B, Decl(file1.ts, 2, 21), Decl(file2.ts, 5, 29))
 +>b : Symbol(b, Decl(file2.ts, 7, 18))
-

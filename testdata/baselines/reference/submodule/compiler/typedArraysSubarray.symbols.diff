@@ -232,4 +232,3 @@
 ->subarray : Symbol(Float64Array.subarray, Decl(lib.es5.d.ts, --, --))
 +>subarray : Symbol(subarray, Decl(lib.es5.d.ts, --, --))
  }
-

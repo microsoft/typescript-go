@@ -49,4 +49,3 @@
  export default validate;
 ->validate : typeof validate
 +>validate : () => void
-

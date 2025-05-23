@@ -1,9 +1,10 @@
 --- old.nodeModulesDeclarationEmitWithPackageExports(module=node16).js
 +++ new.nodeModulesDeclarationEmitWithPackageExports(module=node16).js
-@@= skipped -159, +159 lines =@@
+@@= skipped -158, +158 lines =@@
+ export const d = cjsi;
  export const e = mjsi;
  export const f = typei;
-
+-
 -
 -//// [index.d.mts]
 -import * as cjs from "package/cjs";
@@ -44,4 +45,3 @@
 -export declare const d: typeof cjsi;
 -export declare const e: typeof mjsi;
 -export declare const f: typeof typei;
--

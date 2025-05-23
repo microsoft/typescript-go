@@ -42,4 +42,3 @@
 +>b : { foo: (x?: number) => void; }
 +>foo : (x?: number) => void
  >1 : 1
-

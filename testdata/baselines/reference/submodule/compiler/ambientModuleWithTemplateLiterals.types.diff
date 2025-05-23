@@ -23,4 +23,3 @@
  >Foo : typeof Foo
 ->e : Foo.Bar.c
 +>e : Bar.c
-

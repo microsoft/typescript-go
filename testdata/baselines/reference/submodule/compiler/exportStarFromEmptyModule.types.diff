@@ -31,4 +31,3 @@
 +>X : typeof import("exportStarFromEmptyModule_module3")
 +>A : typeof A
  >r : any
-

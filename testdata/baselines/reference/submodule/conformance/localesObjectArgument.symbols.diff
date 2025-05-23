@@ -447,4 +447,3 @@
 +>NumberFormat : Symbol(NumberFormat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2018.intl.d.ts, --, --), Decl(lib.es2020.bigint.d.ts, --, --))
 +>supportedLocalesOf : Symbol(supportedLocalesOf, Decl(lib.es5.d.ts, --, --), Decl(lib.es2020.intl.d.ts, --, --))
  >readonlyLocales : Symbol(readonlyLocales, Decl(localesObjectArgument.ts, 9, 5))
-

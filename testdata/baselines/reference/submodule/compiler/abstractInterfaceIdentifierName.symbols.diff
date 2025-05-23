@@ -7,4 +7,3 @@
 ->abstract : Symbol(abstract.abstract, Decl(abstractInterfaceIdentifierName.ts, 0, 20))
 +>abstract : Symbol(abstract, Decl(abstractInterfaceIdentifierName.ts, 0, 20))
  }
-

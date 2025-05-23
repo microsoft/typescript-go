@@ -318,4 +318,3 @@
 ->Main : Symbol(TypeScriptAllInOne.Program.Main, Decl(constructorWithIncompleteTypeAnnotation.ts, 14, 26))
 +>Program : Symbol(Program, Decl(constructorWithIncompleteTypeAnnotation.ts, 13, 27))
 +>Main : Symbol(Main, Decl(constructorWithIncompleteTypeAnnotation.ts, 14, 26))
-

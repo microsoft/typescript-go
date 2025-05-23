@@ -25,4 +25,3 @@
 ->m : Symbol(C.m, Decl(decoratorCallGeneric.ts, 8, 16))
 +>m : Symbol(m, Decl(decoratorCallGeneric.ts, 8, 16))
  }
-

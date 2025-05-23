@@ -12,4 +12,3 @@
  >Happy : Symbol(Happy, Decl(tsxUnionMemberChecksFilterDataProps.tsx, 3, 96))
 ->data-testid : Symbol(data-testid, Decl(tsxUnionMemberChecksFilterDataProps.tsx, 7, 31))
 +>data-testid : Symbol("data-testid", Decl(tsxUnionMemberChecksFilterDataProps.tsx, 7, 31))
-

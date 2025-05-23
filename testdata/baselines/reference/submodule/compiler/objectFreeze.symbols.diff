@@ -63,4 +63,3 @@
  >a : Symbol(a, Decl(objectFreeze.ts, 10, 25))
 ->toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

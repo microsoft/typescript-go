@@ -18,4 +18,3 @@
  import defaultBinding2 from "./server"; // elide this import since defaultBinding2 is not used
 ->defaultBinding2 : typeof defaultBinding
 +>defaultBinding2 : typeof c
-

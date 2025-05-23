@@ -19,4 +19,3 @@
 ->run : Symbol(IAction.run, Decl(arraySpreadInCall.ts, 27, 19))
 +>run : Symbol(run, Decl(arraySpreadInCall.ts, 27, 19))
 
-

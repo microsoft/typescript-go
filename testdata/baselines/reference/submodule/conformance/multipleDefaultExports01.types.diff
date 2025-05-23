@@ -26,4 +26,3 @@
  >Entity() : void
 ->Entity : typeof Entity
 +>Entity : typeof default
-

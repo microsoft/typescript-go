@@ -142,4 +142,3 @@
  >C : Symbol(C, Decl(declFileGenericType.ts, 0, 0))
 ->F6 : Symbol(C.F6, Decl(declFileGenericType.ts, 9, 47))
 +>F6 : Symbol(F6, Decl(declFileGenericType.ts, 9, 47))
-

@@ -59,4 +59,3 @@
 ->x1 : Symbol(C.x1, Decl(overloadOnConstNoAnyImplementation2.ts, 4, 9), Decl(overloadOnConstNoAnyImplementation2.ts, 5, 49))
 +>x1 : Symbol(x1, Decl(overloadOnConstNoAnyImplementation2.ts, 4, 9), Decl(overloadOnConstNoAnyImplementation2.ts, 5, 49))
  >x : Symbol(x, Decl(overloadOnConstNoAnyImplementation2.ts, 20, 9))
-

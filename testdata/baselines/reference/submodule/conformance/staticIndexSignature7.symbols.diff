@@ -16,4 +16,3 @@
 ->foo : Symbol(Y.foo, Decl(staticIndexSignature7.ts, 5, 35))
 +>foo : Symbol(foo, Decl(staticIndexSignature7.ts, 5, 35))
  }
-

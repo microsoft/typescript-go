@@ -7,4 +7,3 @@
 ->foo : Symbol(Promise.foo, Decl(moduleInTypePosition1_0.ts, 0, 22))
 +>foo : Symbol(foo, Decl(moduleInTypePosition1_0.ts, 0, 22))
  }
-

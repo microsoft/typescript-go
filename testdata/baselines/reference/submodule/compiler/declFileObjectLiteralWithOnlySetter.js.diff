@@ -1,9 +1,10 @@
 --- old.declFileObjectLiteralWithOnlySetter.js
 +++ new.declFileObjectLiteralWithOnlySetter.js
-@@= skipped -20, +20 lines =@@
+@@= skipped -19, +19 lines =@@
+ ;
  var /*3*/ point = makePoint(2);
  point. /*2*/x = 30;
-
+-
 -
 -//// [declFileObjectLiteralWithOnlySetter.d.ts]
 -declare function makePoint(x: number): {
@@ -14,4 +15,3 @@
 -    b: number;
 -    x: number;
 -};
--

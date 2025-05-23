@@ -7,4 +7,3 @@
 ->value : any
 +>value : number
  >data : number[] | null
-

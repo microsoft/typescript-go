@@ -42,4 +42,3 @@
 ->a : Symbol(C['a'], Decl(indexersInClassType.ts, 3, 12))
 +>a : Symbol(a, Decl(indexersInClassType.ts, 3, 12))
 
-

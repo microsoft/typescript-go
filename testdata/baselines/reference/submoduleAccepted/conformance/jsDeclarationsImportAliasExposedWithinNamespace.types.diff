@@ -64,4 +64,3 @@
 ->testFnTypes : { [x: string]: any; }
 +>testFn : (input: input) => number
 +>testFnTypes : any
-

@@ -39,4 +39,3 @@
 ->bar : Symbol(bar, Decl(expandoFunctionExpressionsWithDynamicNames2.ts, 13, 5), Decl(expandoFunctionExpressionsWithDynamicNames2.ts, 13, 26))
 +>bar : Symbol(bar, Decl(expandoFunctionExpressionsWithDynamicNames2.ts, 13, 5))
  >t : Symbol(t, Decl(expandoFunctionExpressionsWithDynamicNames2.ts, 12, 5))
-

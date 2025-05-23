@@ -13,4 +13,3 @@
  >...iter : number
 ->iter : Iterable<number>
 +>iter : Iterable<number, any, any>
-

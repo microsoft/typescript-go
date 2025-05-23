@@ -25,4 +25,3 @@
  >bb : Symbol(bb, Decl(requiredMappedTypeModifierTrumpsVariance.ts, 14, 5))
 ->a : Symbol(Foo.a, Decl(requiredMappedTypeModifierTrumpsVariance.ts, 10, 18))
 +>a : Symbol(a, Decl(requiredMappedTypeModifierTrumpsVariance.ts, 10, 18))
-

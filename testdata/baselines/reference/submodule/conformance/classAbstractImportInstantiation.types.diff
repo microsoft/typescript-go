@@ -14,4 +14,3 @@
  >new myA : any
 ->myA : typeof myA
 +>myA : typeof A
-

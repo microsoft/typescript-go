@@ -77,4 +77,3 @@
 ->F2 : Symbol(M.F2, Decl(forStatements.ts, 19, 5))
 +>F2 : Symbol(F2, Decl(forStatements.ts, 19, 5))
  >x : Symbol(x, Decl(forStatements.ts, 45, 42))
-

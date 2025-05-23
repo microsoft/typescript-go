@@ -41,4 +41,3 @@
 ->data : Symbol(Box.data, Decl(typeParameterLeak.ts, 2, 18), Decl(typeParameterLeak.ts, 2, 18))
 +>data : Symbol(data, Decl(typeParameterLeak.ts, 2, 18), Decl(typeParameterLeak.ts, 2, 18))
  }
-

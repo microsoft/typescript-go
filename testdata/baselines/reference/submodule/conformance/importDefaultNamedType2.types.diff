@@ -11,4 +11,3 @@
  import type from from './a';
 ->from : from
 +>from : default
-

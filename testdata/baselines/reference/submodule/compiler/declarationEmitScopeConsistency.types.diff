@@ -15,4 +15,3 @@
 ->f : (x: import("a").A) => import("a").A
 +>g : (x: A) => A
 +>f : (x: A) => A
-

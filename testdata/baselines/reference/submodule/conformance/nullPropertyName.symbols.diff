@@ -632,4 +632,3 @@
 +>foo.of : Symbol(of, Decl(nullPropertyName.ts, 80, 15))
 +>foo : Symbol(foo, Decl(nullPropertyName.ts, 0, 0))
 +>of : Symbol(of, Decl(nullPropertyName.ts, 80, 15))
-

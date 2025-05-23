@@ -67,4 +67,3 @@
  >test : Symbol(test, Decl(emitClassExpressionInDeclarationFile2.ts, 24, 5))
 ->tags : Symbol((Anonymous class).tags, Decl(emitClassExpressionInDeclarationFile2.ts, 17, 34))
 +>tags : Symbol(tags, Decl(emitClassExpressionInDeclarationFile2.ts, 17, 34))
-

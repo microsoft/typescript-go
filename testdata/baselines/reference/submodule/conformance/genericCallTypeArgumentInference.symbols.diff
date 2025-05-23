@@ -284,4 +284,3 @@
  >i : Symbol(i, Decl(genericCallTypeArgumentInference.ts, 82, 3))
 ->foo8 : Symbol(I.foo8, Decl(genericCallTypeArgumentInference.ts, 78, 24))
 +>foo8 : Symbol(foo8, Decl(genericCallTypeArgumentInference.ts, 78, 24))
-

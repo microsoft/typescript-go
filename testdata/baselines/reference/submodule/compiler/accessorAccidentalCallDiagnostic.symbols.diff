@@ -19,4 +19,3 @@
 ->property : Symbol(Test24554.property, Decl(accessorAccidentalCallDiagnostic.ts, 1, 17))
 +>property : Symbol(property, Decl(accessorAccidentalCallDiagnostic.ts, 1, 17))
  }
-

@@ -26,4 +26,3 @@
 ->"#baz" : Symbol(A["#baz"], Decl(privateNameCircularReference.ts, 2, 21))
 +>"#baz" : Symbol(["#baz"], Decl(privateNameCircularReference.ts, 2, 21))
  }
-

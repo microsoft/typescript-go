@@ -110,4 +110,3 @@
 ->def : Symbol(self.def, Decl(b.mts, 5, 8))
 ->default : Symbol(a.default, Decl(mod.cts, 0, 29))
 +>def : Symbol(def, Decl(b.mts, 5, 8))
-

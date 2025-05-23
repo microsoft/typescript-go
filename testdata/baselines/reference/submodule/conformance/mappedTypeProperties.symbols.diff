@@ -28,4 +28,3 @@
 ->[P in 'a' | 'b'] : Symbol(E[P in 'a' | 'b'], Decl(mappedTypeProperties.ts, 38, 17))
 +>[P in 'a' | 'b'] : Symbol([P in 'a' | 'b'], Decl(mappedTypeProperties.ts, 38, 17))
  }
-

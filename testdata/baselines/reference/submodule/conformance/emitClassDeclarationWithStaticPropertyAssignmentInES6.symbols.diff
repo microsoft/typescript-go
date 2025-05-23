@@ -19,4 +19,3 @@
 ->b : Symbol(D.b, Decl(emitClassDeclarationWithStaticPropertyAssignmentInES6.ts, 5, 14))
 +>b : Symbol(b, Decl(emitClassDeclarationWithStaticPropertyAssignmentInES6.ts, 5, 14))
  }
-

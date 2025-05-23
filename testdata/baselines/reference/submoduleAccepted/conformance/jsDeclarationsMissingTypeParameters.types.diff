@@ -32,4 +32,3 @@
  function w() { return null; }
 ->w : () => Promise<any> | null
 +>w : () => any
-

@@ -27,4 +27,3 @@
 ->length : Symbol(HTMLCollection.length, Decl(controlFlowBinaryOrExpression.ts, 14, 33))
 +>length : Symbol(length, Decl(controlFlowBinaryOrExpression.ts, 14, 33))
  }
-

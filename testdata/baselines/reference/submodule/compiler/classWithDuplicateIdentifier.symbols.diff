@@ -33,4 +33,3 @@
 ->c : Symbol(D.c, Decl(classWithDuplicateIdentifier.ts, 8, 9), Decl(classWithDuplicateIdentifier.ts, 9, 14))
 +>c : Symbol(c, Decl(classWithDuplicateIdentifier.ts, 8, 9), Decl(classWithDuplicateIdentifier.ts, 9, 14))
  }
-

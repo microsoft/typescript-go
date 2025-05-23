@@ -1566,4 +1566,3 @@
 ->reject : <T = never>(reason?: any) => Promise<T>
 +>reject : <T>(reason?: any) => Promise<T>
  >1 : 1
-

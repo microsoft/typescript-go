@@ -117,4 +117,3 @@
 ->"0.000000000000000000012" : Symbol(C["0.000000000000000000012"], Decl(propertiesAndIndexersForNumericNames.ts, 38, 56))
 +>"0.000000000000000000012" : Symbol("0.000000000000000000012", Decl(propertiesAndIndexersForNumericNames.ts, 38, 56))
  }
-

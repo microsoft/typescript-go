@@ -439,4 +439,3 @@
 +        return exporter.createExportedWidget4();
 +    }
 +}
-+

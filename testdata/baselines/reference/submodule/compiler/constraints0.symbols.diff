@@ -39,4 +39,3 @@
 ->a : Symbol(A.a, Decl(constraints0.ts, 0, 13))
 +>x : Symbol(x, Decl(constraints0.ts, 8, 26))
 +>a : Symbol(a, Decl(constraints0.ts, 0, 13))
-

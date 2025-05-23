@@ -50,4 +50,3 @@
 +><SFCComp x /> : Element
 +>SFCComp : ((prop: { x: number; }) => Element) | ((prop: { x: boolean; }) => Element)
  >x : true
-

@@ -93,4 +93,3 @@
 +>new A() : Alias
 +>A : typeof Alias
  >def : any
-

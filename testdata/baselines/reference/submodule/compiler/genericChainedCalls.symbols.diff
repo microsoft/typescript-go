@@ -90,4 +90,3 @@
 +>num.toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
 +>num : Symbol(num, Decl(genericChainedCalls.ts, 12, 17))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

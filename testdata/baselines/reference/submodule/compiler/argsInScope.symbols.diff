@@ -30,4 +30,3 @@
  >c : Symbol(c, Decl(argsInScope.ts, 8, 3))
 ->P : Symbol(C.P, Decl(argsInScope.ts, 0, 9))
 +>P : Symbol(P, Decl(argsInScope.ts, 0, 9))
-

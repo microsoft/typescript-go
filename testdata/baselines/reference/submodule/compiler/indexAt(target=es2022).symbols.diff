@@ -91,4 +91,3 @@
  >BigUint64Array : Symbol(BigUint64Array, Decl(lib.es2020.bigint.d.ts, --, --), Decl(lib.es2020.bigint.d.ts, --, --), Decl(lib.es2022.array.d.ts, --, --))
 ->at : Symbol(BigUint64Array.at, Decl(lib.es2022.array.d.ts, --, --))
 +>at : Symbol(at, Decl(lib.es2022.array.d.ts, --, --))
-

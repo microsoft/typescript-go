@@ -1,9 +1,10 @@
 --- old.namedTupleMembersErrors.js
 +++ new.namedTupleMembersErrors.js
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
+ //// [namedTupleMembersErrors.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-
+-
 -
 -//// [namedTupleMembersErrors.d.ts]
 -export type Segment1 = [length: number, number];
@@ -19,4 +20,3 @@
 -export type NonArrayRest = [first: string, ...rest: number];
 -export type RecusiveRestUnlabeled = [string, ...RecusiveRestUnlabeled];
 -export type RecusiveRest = [first: string, ...rest: RecusiveRest];
--

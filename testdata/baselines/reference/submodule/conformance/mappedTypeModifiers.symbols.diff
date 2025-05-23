@@ -48,4 +48,3 @@
 ->toFixed : Symbol(Number.toFixed, Decl(lib.es5.d.ts, --, --))
 +>toFixed : Symbol(toFixed, Decl(lib.es5.d.ts, --, --))
  }
-

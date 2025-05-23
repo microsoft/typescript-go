@@ -369,4 +369,3 @@
  >numberOrObject : Symbol(numberOrObject, Decl(getterSetterSubtypeAssignment.ts, 80, 5))
 ->x : Symbol(NumberOrObject.x, Decl(getterSetterSubtypeAssignment.ts, 60, 25), Decl(getterSetterSubtypeAssignment.ts, 61, 83))
 +>x : Symbol(x, Decl(getterSetterSubtypeAssignment.ts, 60, 25), Decl(getterSetterSubtypeAssignment.ts, 61, 83))
-

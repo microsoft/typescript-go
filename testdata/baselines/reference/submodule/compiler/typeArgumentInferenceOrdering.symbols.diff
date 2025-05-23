@@ -37,4 +37,3 @@
  >C : Symbol(C, Decl(typeArgumentInferenceOrdering.ts, 0, 0))
 ->x : Symbol(I.x, Decl(typeArgumentInferenceOrdering.ts, 4, 13))
 +>x : Symbol(x, Decl(typeArgumentInferenceOrdering.ts, 4, 13))
-

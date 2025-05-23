@@ -1,10 +1,10 @@
 --- old.ambientShorthand_declarationEmit.js
 +++ new.ambientShorthand_declarationEmit.js
-@@= skipped -5, +5 lines =@@
+@@= skipped -4, +4 lines =@@
+
 
  //// [ambientShorthand_declarationEmit.js]
-
+-
 -
 -//// [ambientShorthand_declarationEmit.d.ts]
 -declare module "foo";
--

@@ -6,4 +6,3 @@
  import * as a from "a";
 ->a : number
 +>a : any
-

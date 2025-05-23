@@ -1,6 +1,6 @@
 --- old.sourceMap-LineBreaks.types
 +++ new.sourceMap-LineBreaks.types
-@@= skipped -48, +48 lines =@@
+@@= skipped -49, +49 lines =@@
 
  var stringLiteralWithLineSeparator = "line 1\
  >stringLiteralWithLineSeparator : string
@@ -18,4 +18,3 @@
  >stringLiteralWithNextLine : string
 ->"line 1\line 2" : "line 1\u0085line 2"
 +>"line 1\line 2" : "line 1Â�line 2"
-

@@ -21,4 +21,3 @@
 +>children : (__0: { x: number; }) => void
 +>({ x }) => {} : (__0: { x: number; }) => void
  >x : number
-

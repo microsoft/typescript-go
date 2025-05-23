@@ -9,4 +9,3 @@
  >Foo : Symbol(Foo, Decl(constraintsUsedInPrototypeProperty.ts, 0, 0))
 ->prototype : Symbol(Foo.prototype)
 +>prototype : Symbol(prototype)
-

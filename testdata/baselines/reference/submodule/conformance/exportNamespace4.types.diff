@@ -14,4 +14,3 @@
 +>ns.A : typeof A
 +>ns : typeof import("a")
 +>A : typeof A
-

@@ -9,4 +9,3 @@
 +>v : { foo: () => any; }
 +>{ foo(); } : { foo: () => any; }
  >foo : () => any
-

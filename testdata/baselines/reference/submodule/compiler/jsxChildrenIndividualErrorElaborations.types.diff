@@ -192,4 +192,3 @@
  </Blah3>
 ->Blah3 : (props: PropsMixed) => JSX.Element
 +>Blah3 : (props: PropsMixed) => Element
-

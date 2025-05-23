@@ -47,4 +47,3 @@
 +><FooComponent foo="f"   /> : Element
 +>FooComponent : (props: { foo: "A" | "B" | "C"; }) => Element
  >foo : "f"
-

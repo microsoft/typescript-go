@@ -162,4 +162,3 @@
 ->T51 : typeof g3<U, any>
 +>T51 : new (b: U) => U
  >g3 : { <T extends string>(a: T): T; new <T extends number, Q>(b: T): T; }
-

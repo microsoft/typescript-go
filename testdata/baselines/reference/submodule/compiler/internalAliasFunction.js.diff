@@ -1,9 +1,10 @@
 --- old.internalAliasFunction.js
 +++ new.internalAliasFunction.js
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
+     c.bVal = b(10);
      c.bVal2 = b;
  })(c || (c = {}));
-
+-
 -
 -//// [internalAliasFunction.d.ts]
 -declare namespace a {
@@ -14,4 +15,3 @@
 -    var bVal: number;
 -    var bVal2: typeof b;
 -}
--

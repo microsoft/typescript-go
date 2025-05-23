@@ -24,4 +24,3 @@
 ->getFoo : Symbol(Foo.getFoo, Decl(contextualTypingOfLambdaWithMultipleSignatures.ts, 0, 15), Decl(contextualTypingOfLambdaWithMultipleSignatures.ts, 1, 28))
 +>getFoo : Symbol(getFoo, Decl(contextualTypingOfLambdaWithMultipleSignatures.ts, 0, 15), Decl(contextualTypingOfLambdaWithMultipleSignatures.ts, 1, 28))
  >bar : Symbol(bar, Decl(contextualTypingOfLambdaWithMultipleSignatures.ts, 6, 12))
-

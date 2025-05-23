@@ -42,4 +42,3 @@
  >a : Symbol(a, Decl(contextualTypeWithUnionTypeCallSignatures.ts, 35, 52))
 ->toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

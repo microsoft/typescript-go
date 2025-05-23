@@ -65,4 +65,3 @@
  >m : Symbol(m, Decl(noImplicitAnyStringIndexerOnObject.ts, 97, 13))
 ->prop : Symbol(I.prop, Decl(noImplicitAnyStringIndexerOnObject.ts, 94, 13))
 +>prop : Symbol(prop, Decl(noImplicitAnyStringIndexerOnObject.ts, 94, 13))
-

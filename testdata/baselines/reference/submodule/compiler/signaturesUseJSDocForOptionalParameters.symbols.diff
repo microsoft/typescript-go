@@ -42,4 +42,3 @@
 ->pInst.optionalParam : Symbol(MyClass.optionalParam, Decl(jsDocOptionality.js, 2, 1))
  >pInst : Symbol(pInst, Decl(jsDocOptionality.js, 11, 3))
 ->optionalParam : Symbol(MyClass.optionalParam, Decl(jsDocOptionality.js, 2, 1))
-

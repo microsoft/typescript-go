@@ -9,4 +9,3 @@
  >buffer : Symbol(buffer, Decl(resizableArrayBuffer.ts, 0, 5))
 ->resizable : Symbol(ArrayBuffer.resizable, Decl(lib.es2024.arraybuffer.d.ts, --, --))
 +>resizable : Symbol(resizable, Decl(lib.es2024.arraybuffer.d.ts, --, --))
-

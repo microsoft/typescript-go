@@ -69,4 +69,3 @@
 ->B : Symbol(E2.B, Decl(duplicateObjectLiteralProperty_computedName2.ts, 3, 9))
 +>B : Symbol(B, Decl(duplicateObjectLiteralProperty_computedName2.ts, 3, 9))
  }
-

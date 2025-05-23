@@ -40,4 +40,3 @@
 ->toExponential : Symbol(Number.toExponential, Decl(lib.es5.d.ts, --, --))
 +>value : Symbol(value, Decl(a.ts, 0, 28))
 +>toExponential : Symbol(toExponential, Decl(lib.es5.d.ts, --, --))
-

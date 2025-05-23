@@ -19,4 +19,3 @@
 ->inner : { (): void; [symb]: boolean; }
 +>inner : { (): void; inner[symb]: boolean; }
  }
-

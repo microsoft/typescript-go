@@ -59,4 +59,3 @@
 ->oneTwoOrThree : (x: 1n | 2n | 3n) => bigint
 +>oneTwoOrThree : (x: 1n | 3n | 2n) => bigint
  >3 : 3
-

@@ -79,4 +79,3 @@
  >lion : Symbol(lion, Decl(propertyOverridesAccessors3.ts, 21, 5))
 ->makeSound : Symbol(Animal.makeSound, Decl(propertyOverridesAccessors3.ts, 7, 5))
 +>makeSound : Symbol(makeSound, Decl(propertyOverridesAccessors3.ts, 7, 5))
-

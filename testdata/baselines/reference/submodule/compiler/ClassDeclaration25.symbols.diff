@@ -26,4 +26,3 @@
 ->next : Symbol(List.next, Decl(ClassDeclaration25.ts, 5, 14))
 +>next : Symbol(next, Decl(ClassDeclaration25.ts, 5, 14))
  }
-

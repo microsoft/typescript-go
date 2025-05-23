@@ -38,4 +38,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(LazySet, Decl(LazySet.js, 0, 0))
  >LazySet : Symbol(LazySet, Decl(LazySet.js, 0, 0))
-

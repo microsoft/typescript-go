@@ -1,9 +1,10 @@
 --- old.arbitraryModuleNamespaceIdentifiers_syntax.js
 +++ new.arbitraryModuleNamespaceIdentifiers_syntax.js
-@@= skipped -95, +95 lines =@@
+@@= skipped -94, +94 lines =@@
+ export {};
  //// [type-clause-type-as-as.js]
  export {};
-
+-
 -
 -//// [values-valid.d.ts]
 -export declare const foo = 123;
@@ -46,4 +47,3 @@
 -export {};
 -//// [type-clause-type-as-as.d.ts]
 -export {};
--

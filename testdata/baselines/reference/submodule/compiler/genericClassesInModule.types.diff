@@ -14,4 +14,3 @@
 ->B : typeof Foo.B
 +>B : typeof B
  >Foo : any
-

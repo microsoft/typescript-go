@@ -23,4 +23,3 @@
 +>flatMap : <U, This>(callback: (this: This, value: number, index: number, array: number[]) => U | readonly U[], thisArg?: This) => U[]
 +>(): ReadonlyArray<number> => [] : () => readonly number[]
  >[] : undefined[]
-

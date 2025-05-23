@@ -36,4 +36,3 @@
  >E : Symbol(E, Decl(invalidUndefinedValues.ts, 26, 6))
 ->A : Symbol(E.A, Decl(invalidUndefinedValues.ts, 28, 8))
 +>A : Symbol(A, Decl(invalidUndefinedValues.ts, 28, 8))
-

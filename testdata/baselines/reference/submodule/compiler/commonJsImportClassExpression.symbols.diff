@@ -16,4 +16,3 @@
 ->chunk : Symbol((Anonymous class).chunk, Decl(mod1.ts, 0, 16))
 +>chunk : Symbol(chunk, Decl(mod1.ts, 0, 16))
  }
-

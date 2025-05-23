@@ -21,4 +21,3 @@
  >Date : Symbol(Date, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.scripthost.d.ts, --, --))
 ->toUTCString : Symbol(Date.toUTCString, Decl(lib.es5.d.ts, --, --))
 +>toUTCString : Symbol(toUTCString, Decl(lib.es5.d.ts, --, --))
-

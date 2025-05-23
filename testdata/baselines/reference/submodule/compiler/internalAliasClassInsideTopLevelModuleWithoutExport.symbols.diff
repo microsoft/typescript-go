@@ -27,4 +27,3 @@
  >cProp : Symbol(cProp, Decl(internalAliasClassInsideTopLevelModuleWithoutExport.ts, 9, 10))
 ->foo : Symbol(xc.foo, Decl(internalAliasClassInsideTopLevelModuleWithoutExport.ts, 1, 20))
 +>foo : Symbol(foo, Decl(internalAliasClassInsideTopLevelModuleWithoutExport.ts, 1, 20))
-

@@ -38,4 +38,3 @@
  >M : Symbol(M, Decl(genericOfACloduleType1.ts, 0, 37))
 ->C : Symbol(M.C, Decl(genericOfACloduleType1.ts, 1, 10), Decl(genericOfACloduleType1.ts, 2, 32))
 +>C : Symbol(C, Decl(genericOfACloduleType1.ts, 1, 10), Decl(genericOfACloduleType1.ts, 2, 32))
-

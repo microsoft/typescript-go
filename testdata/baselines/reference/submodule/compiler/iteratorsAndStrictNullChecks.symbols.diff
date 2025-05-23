@@ -22,4 +22,3 @@
 ->push : Symbol(Array.push, Decl(lib.es5.d.ts, --, --))
 +>push : Symbol(push, Decl(lib.es5.d.ts, --, --))
  >ys : Symbol(ys, Decl(iteratorsAndStrictNullChecks.ts, 7, 5))
-

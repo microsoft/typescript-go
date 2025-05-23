@@ -154,4 +154,3 @@
  >y : Symbol(y, Decl(input.js, 31, 3))
 ->mistake : Symbol(Y.mistake, Decl(input.js, 20, 9), Decl(input.js, 29, 1))
 +>mistake : Symbol(mistake, Decl(input.js, 20, 9))
-

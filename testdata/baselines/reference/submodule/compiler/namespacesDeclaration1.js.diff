@@ -1,9 +1,10 @@
 --- old.namespacesDeclaration1.js
 +++ new.namespacesDeclaration1.js
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+ }
 
  //// [namespacesDeclaration1.js]
-
+-
 -
 -//// [namespacesDeclaration1.d.ts]
 -declare namespace M {
@@ -14,4 +15,3 @@
 -        }
 -    }
 -}
--

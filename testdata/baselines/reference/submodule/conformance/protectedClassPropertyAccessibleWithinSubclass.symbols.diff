@@ -104,4 +104,3 @@
 ->foo : Symbol(C.foo, Decl(protectedClassPropertyAccessibleWithinSubclass.ts, 14, 50))
 +>foo : Symbol(foo, Decl(protectedClassPropertyAccessibleWithinSubclass.ts, 14, 50))
  }
-

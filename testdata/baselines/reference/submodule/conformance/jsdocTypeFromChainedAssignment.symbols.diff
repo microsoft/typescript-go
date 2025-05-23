@@ -106,4 +106,3 @@
 ->a : Symbol(a, Decl(a.js, 13, 3), Decl(a.js, 17, 22))
 ->first : Symbol(A.first, Decl(a.js, 1, 14))
 +>a : Symbol(a, Decl(a.js, 13, 3))
-

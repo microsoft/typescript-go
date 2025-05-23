@@ -29,5 +29,4 @@
 -export declare const thing: import("url").Url;
 -//// [usage3.d.ts]
 -export declare const thing: import("url").Url;
--
 +<no content>

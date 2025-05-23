@@ -17,4 +17,3 @@
 +>foo : { greeting: string; default: number; }
 +>toExponential : any
  >2 : 2
-

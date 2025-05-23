@@ -82,4 +82,3 @@
 ->props : any
 +>props : object
  >{} : {}
-

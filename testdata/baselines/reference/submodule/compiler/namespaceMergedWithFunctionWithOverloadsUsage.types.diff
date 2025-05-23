@@ -35,4 +35,3 @@
  export = Foo;
 ->Foo : { (opts?: Foo.Whatever): void; (cb: Function, opts?: Foo.Whatever): void; }
 +>Foo : { (opts?: Whatever): void; (cb: Function, opts?: Whatever): void; }
-

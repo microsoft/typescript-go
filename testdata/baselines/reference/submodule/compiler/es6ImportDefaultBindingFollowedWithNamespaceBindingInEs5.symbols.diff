@@ -9,4 +9,3 @@
  >nameSpaceBinding : Symbol(nameSpaceBinding, Decl(es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_1.ts, 0, 22))
 ->a : Symbol(nameSpaceBinding.a, Decl(es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0.ts, 0, 10))
 +>a : Symbol(a, Decl(es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0.ts, 0, 10))
-

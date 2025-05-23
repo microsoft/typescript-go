@@ -32,4 +32,3 @@
  >i2 : Symbol(i2, Decl(optionalParamAssignmentCompat.ts, 7, 3))
 ->m1 : Symbol(I2.m1, Decl(optionalParamAssignmentCompat.ts, 4, 11))
 +>m1 : Symbol(m1, Decl(optionalParamAssignmentCompat.ts, 4, 11))
-

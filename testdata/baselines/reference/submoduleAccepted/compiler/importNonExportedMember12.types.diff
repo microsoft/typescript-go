@@ -27,4 +27,3 @@
  import { A } from "./a";
 ->A : number
 +>A : any
-

@@ -15,4 +15,3 @@
 ->args : Symbol(Foo3.args, Decl(varArgConstructorMemberParameter.ts, 9, 17))
 +>args : Symbol(args, Decl(varArgConstructorMemberParameter.ts, 9, 17))
  }
-

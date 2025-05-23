@@ -15,4 +15,3 @@
 ->includes : Symbol(String.includes, Decl(lib.es2015.core.d.ts, --, --))
 +>"abcde".includes : Symbol(includes, Decl(lib.es2015.core.d.ts, --, --))
 +>includes : Symbol(includes, Decl(lib.es2015.core.d.ts, --, --))
-

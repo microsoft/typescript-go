@@ -120,4 +120,3 @@
 ->M : typeof M
 +>M : { (): void; defaults: (def: any) => any; }
  }
-

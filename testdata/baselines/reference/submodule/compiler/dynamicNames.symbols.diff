@@ -294,4 +294,3 @@
 ->x : Symbol(RC.x, Decl(main.ts, 125, 39))
 +>x : Symbol(x, Decl(main.ts, 125, 39))
  }
-

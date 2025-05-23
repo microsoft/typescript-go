@@ -11,4 +11,3 @@
 -declare const a: number;
 ->a : Symbol(a, Decl(phaser.d.ts, 0, 13))
 +a;
-

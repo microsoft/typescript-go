@@ -27,4 +27,3 @@
  ns3;
 ->ns3 : typeof ns
 +>ns3 : typeof import("/a")
-

@@ -6,4 +6,3 @@
  export { default } from "./b";
 ->default : any
 +>default : typeof import("b")
-

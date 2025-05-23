@@ -6,4 +6,3 @@
  import _ from "lodash";
 ->_ : "webpack"
 +>_ : "index"
-

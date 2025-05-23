@@ -123,4 +123,3 @@
  >D2 : Symbol(D2, Decl(classExtendingClass.ts, 20, 1))
 ->other : Symbol(C2.other, Decl(classExtendingClass.ts, 18, 19))
 +>other : Symbol(other, Decl(classExtendingClass.ts, 18, 19))
-

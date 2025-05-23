@@ -34,4 +34,3 @@
  >ns : Symbol(ns, Decl(augment.ts, 0, 6))
 ->Foo : Symbol(ns.Foo, Decl(augment.ts, 2, 29))
 +>Foo : Symbol(Foo, Decl(augment.ts, 2, 29))
-

@@ -26,4 +26,3 @@
 ->createB : Symbol(A.B.createB, Decl(interMixingModulesInterfaces5.ts, 7, 21))
 +>B : Symbol(B, Decl(interMixingModulesInterfaces5.ts, 5, 5))
 +>createB : Symbol(createB, Decl(interMixingModulesInterfaces5.ts, 7, 21))
-

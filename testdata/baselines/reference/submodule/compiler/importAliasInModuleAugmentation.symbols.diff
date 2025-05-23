@@ -27,4 +27,3 @@
  >s : Symbol(s, Decl(importAliasInModuleAugmentation.ts, 15, 3))
 ->s : Symbol(x.s, Decl(importAliasInModuleAugmentation.ts, 4, 24))
 +>s : Symbol(s, Decl(importAliasInModuleAugmentation.ts, 4, 24))
-

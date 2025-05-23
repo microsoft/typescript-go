@@ -19,4 +19,3 @@
 ->foo : Symbol(Camera.foo, Decl(interfaceSubtyping.ts, 5, 5))
 +>foo : Symbol(foo, Decl(interfaceSubtyping.ts, 5, 5))
  }
-

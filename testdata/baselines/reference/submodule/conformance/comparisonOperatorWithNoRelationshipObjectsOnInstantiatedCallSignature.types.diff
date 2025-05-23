@@ -852,4 +852,3 @@
 ->a6 : { fn<T, U extends T>(x: T, y: U): T; }
 +>b6 : { fn: (x: Base, y: C) => Base; }
 +>a6 : { fn: <T, U extends T>(x: T, y: U) => T; }
-

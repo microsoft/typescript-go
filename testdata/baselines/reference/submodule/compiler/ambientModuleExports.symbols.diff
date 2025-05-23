@@ -51,4 +51,3 @@
  >Foo2 : Symbol(Foo2, Decl(ambientModuleExports.ts, 8, 20))
 ->C : Symbol(Foo2.C, Decl(ambientModuleExports.ts, 12, 25))
 +>C : Symbol(C, Decl(ambientModuleExports.ts, 12, 25))
-

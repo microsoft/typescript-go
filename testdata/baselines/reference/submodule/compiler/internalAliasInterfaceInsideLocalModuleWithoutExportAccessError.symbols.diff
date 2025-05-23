@@ -15,4 +15,3 @@
  >c : Symbol(c, Decl(internalAliasInterfaceInsideLocalModuleWithoutExportAccessError.ts, 3, 1))
 ->b : Symbol(c.b)
 +>b : Symbol(b)
-

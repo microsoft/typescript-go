@@ -40,4 +40,3 @@
 ->select : Symbol(Location.select, Decl(interfaceExtendsClass1.ts, 14, 16))
 +>select : Symbol(select, Decl(interfaceExtendsClass1.ts, 14, 16))
  }
-

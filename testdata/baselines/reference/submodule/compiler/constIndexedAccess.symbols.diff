@@ -99,4 +99,3 @@
  >numbersNotConst : Symbol(numbersNotConst, Decl(constIndexedAccess.ts, 19, 30))
 ->one : Symbol(numbersNotConst.one, Decl(constIndexedAccess.ts, 22, 9))
 +>one : Symbol(one, Decl(constIndexedAccess.ts, 22, 9))
-

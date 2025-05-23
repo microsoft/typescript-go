@@ -26,4 +26,3 @@
  >y : Required<Foo>
 ->foo : number
 +>foo : any
-

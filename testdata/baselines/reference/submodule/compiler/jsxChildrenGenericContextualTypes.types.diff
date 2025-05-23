@@ -155,4 +155,3 @@
  >12 : 12
 ->ElemLit : <T extends string>(p: LitProps<T>) => JSX.Element
 +>ElemLit : <T extends string>(p: LitProps<T>) => Element
-

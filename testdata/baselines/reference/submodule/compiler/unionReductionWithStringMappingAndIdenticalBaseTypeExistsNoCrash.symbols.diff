@@ -146,4 +146,3 @@
 ->div : Symbol(JSX.IntrinsicElements.div, Decl(index.d.ts, 66, 33))
 +>div : Symbol(div, Decl(index.d.ts, 66, 33))
  }
-

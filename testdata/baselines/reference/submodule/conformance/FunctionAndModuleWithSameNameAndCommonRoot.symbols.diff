@@ -69,4 +69,3 @@
 ->Origin : Symbol(B.Point.Origin, Decl(simple.ts, 7, 18))
 +>Point : Symbol(Point, Decl(simple.ts, 0, 10), Decl(simple.ts, 4, 5))
 +>Origin : Symbol(Origin, Decl(simple.ts, 7, 18))
-

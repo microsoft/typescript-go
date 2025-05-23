@@ -27,4 +27,3 @@
  >Symbol : Symbol(Symbol, Decl(lib.es5.d.ts, --, --), Decl(ES5SymbolProperty1.ts, 3, 3))
 ->foo : Symbol(SymbolConstructor.foo, Decl(ES5SymbolProperty1.ts, 0, 29))
 +>foo : Symbol(foo, Decl(ES5SymbolProperty1.ts, 0, 29))
-

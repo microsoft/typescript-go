@@ -31,4 +31,3 @@
  >prototype : NewAjax
 ->case6_unexpectedlyResolvesPathToNodeModules : (init?: LionRequestInit) => void
 +>case6_unexpectedlyResolvesPathToNodeModules : any
-

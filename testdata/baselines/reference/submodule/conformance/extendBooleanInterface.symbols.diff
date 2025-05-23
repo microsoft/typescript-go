@@ -42,4 +42,3 @@
  >x : Symbol(x, Decl(extendBooleanInterface.ts, 5, 3))
 ->'doOtherStuff' : Symbol(Boolean.doOtherStuff, Decl(extendBooleanInterface.ts, 1, 22))
 +>'doOtherStuff' : Symbol(doOtherStuff, Decl(extendBooleanInterface.ts, 1, 22))
-

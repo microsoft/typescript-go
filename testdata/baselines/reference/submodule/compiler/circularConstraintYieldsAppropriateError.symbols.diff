@@ -36,4 +36,3 @@
  >foo : Symbol(foo, Decl(circularConstraintYieldsAppropriateError.ts, 15, 5))
 ->bar : Symbol(BaseType.bar, Decl(circularConstraintYieldsAppropriateError.ts, 1, 19))
 ->test : Symbol(test, Decl(circularConstraintYieldsAppropriateError.ts, 10, 15))
-

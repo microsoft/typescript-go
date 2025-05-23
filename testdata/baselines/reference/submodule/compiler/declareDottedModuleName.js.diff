@@ -1,9 +1,10 @@
 --- old.declareDottedModuleName.js
 +++ new.declareDottedModuleName.js
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
+ }
 
  //// [declareDottedModuleName.js]
-
+-
 -
 -//// [declareDottedModuleName.d.ts]
 -declare namespace M {
@@ -13,4 +14,3 @@
 -}
 -declare namespace T.U {
 -}
--

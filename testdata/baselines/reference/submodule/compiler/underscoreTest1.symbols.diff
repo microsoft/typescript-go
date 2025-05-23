@@ -4874,4 +4874,3 @@
  >Underscore : Symbol(Underscore, Decl(underscoreTest1_underscore.ts, 28, 1))
 ->Static : Symbol(Underscore.Static, Decl(underscoreTest1_underscore.ts, 385, 5))
 +>Static : Symbol(Static, Decl(underscoreTest1_underscore.ts, 385, 5))
-

@@ -16,4 +16,3 @@
 ->f : <T extends unknown = unknown>(x: { [x: string]: T; }) => T
 +>f : <T extends unknown>(x: { [x: string]: T; }) => T
  >stooges : { name: string; age: number; }[]
-

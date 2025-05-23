@@ -1,9 +1,10 @@
 --- old.importAttributes3(module=esnext).js
 +++ new.importAttributes3(module=esnext).js
-@@= skipped -18, +18 lines =@@
+@@= skipped -17, +17 lines =@@
+ export {};
  //// [2.js]
  export {};
-
+-
 -
 -//// [0.d.ts]
 -export interface I {
@@ -13,4 +14,3 @@
 -export type { I } from './0';
 -//// [2.d.ts]
 -export {};
--

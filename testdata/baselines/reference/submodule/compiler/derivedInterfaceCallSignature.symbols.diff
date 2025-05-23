@@ -115,4 +115,3 @@
  >area : Symbol(area, Decl(derivedInterfaceCallSignature.ts, 25, 3))
 ->interpolate : Symbol(D3SvgArea.interpolate, Decl(derivedInterfaceCallSignature.ts, 18, 60))
 +>interpolate : Symbol(interpolate, Decl(derivedInterfaceCallSignature.ts, 18, 60))
-

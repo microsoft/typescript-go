@@ -11,4 +11,3 @@
 ->stringF : Symbol(Outer.stringF, Decl(staticMustPrecedePublic.ts, 1, 31))
 +>stringF : Symbol(stringF, Decl(staticMustPrecedePublic.ts, 1, 31))
  }
-

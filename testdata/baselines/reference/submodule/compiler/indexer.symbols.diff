@@ -18,4 +18,3 @@
  >jq : Symbol(jq, Decl(indexer.ts, 8, 3))
 ->id : Symbol(JQueryElement.id, Decl(indexer.ts, 0, 25))
 +>id : Symbol(id, Decl(indexer.ts, 0, 25))
-

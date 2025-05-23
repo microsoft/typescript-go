@@ -71,4 +71,3 @@
 ->duplicate8 : Symbol(TopLevel.duplicate8, Decl(file2.ts, 7, 25))
 +>duplicate8 : Symbol(duplicate8, Decl(file2.ts, 7, 25))
  }
-

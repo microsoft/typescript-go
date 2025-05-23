@@ -31,4 +31,3 @@
 ->bar2 : ([, , z, , ,]: [any, any, any, any?, any?]) => void
 +>bar2 : (__0: [any, any, any, any?, any?]) => void
  >z : any
-

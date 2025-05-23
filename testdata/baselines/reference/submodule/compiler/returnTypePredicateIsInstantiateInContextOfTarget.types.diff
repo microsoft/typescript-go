@@ -23,4 +23,3 @@
 +>() => <TestComponent /> : () => Element
 +><TestComponent /> : Element
  >TestComponent : typeof TestComponent
-

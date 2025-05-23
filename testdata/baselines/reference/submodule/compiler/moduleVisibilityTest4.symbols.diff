@@ -36,4 +36,3 @@
  >N : Symbol(N, Decl(moduleVisibilityTest4.ts, 2, 1))
 ->bar : Symbol(N.bar)
 +>bar : Symbol(bar)
-

@@ -15,4 +15,3 @@
 +>C.prototype : Symbol(prototype, Decl(bug27327.js, 1, 1))
 +>C : Symbol(C, Decl(bug27327.js, 0, 0))
 +>prototype : Symbol(prototype, Decl(bug27327.js, 1, 1))
-

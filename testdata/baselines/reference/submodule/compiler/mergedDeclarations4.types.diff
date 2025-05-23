@@ -18,4 +18,3 @@
 ->f : typeof M.f
 +>f : typeof f
  >hello : number
-

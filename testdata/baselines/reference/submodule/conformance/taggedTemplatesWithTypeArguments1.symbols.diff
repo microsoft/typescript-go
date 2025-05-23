@@ -138,4 +138,3 @@
  >returnedObjProp : Symbol(returnedObjProp, Decl(taggedTemplatesWithTypeArguments1.ts, 31, 66))
 ->z : Symbol(Stuff.z, Decl(taggedTemplatesWithTypeArguments1.ts, 4, 14))
 +>z : Symbol(z, Decl(taggedTemplatesWithTypeArguments1.ts, 4, 14))
-

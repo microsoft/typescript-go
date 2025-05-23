@@ -105,4 +105,3 @@
 +>Y : Symbol(Y, Decl(TwoInternalModulesThatMergeEachWithExportedInterfacesOfTheSameName.ts, 18, 9), Decl(TwoInternalModulesThatMergeEachWithExportedInterfacesOfTheSameName.ts, 24, 10))
 +>Z : Symbol(Z, Decl(TwoInternalModulesThatMergeEachWithExportedInterfacesOfTheSameName.ts, 18, 11), Decl(TwoInternalModulesThatMergeEachWithExportedInterfacesOfTheSameName.ts, 25, 20))
 +>Line : Symbol(Line, Decl(TwoInternalModulesThatMergeEachWithExportedInterfacesOfTheSameName.ts, 18, 14), Decl(TwoInternalModulesThatMergeEachWithExportedInterfacesOfTheSameName.ts, 25, 23))
-

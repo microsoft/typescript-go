@@ -63,4 +63,3 @@
  >0 : Symbol(0)
 ->toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
-

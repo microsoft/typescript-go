@@ -11,4 +11,3 @@
 ->new : Symbol(C.new, Decl(parser643728.ts, 1, 8))
 +>new : Symbol(new, Decl(parser643728.ts, 1, 8))
  }
-

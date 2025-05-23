@@ -16,4 +16,3 @@
 ->fill : <B extends typeof A>(f: B) => void
 +>fill : <B extends { '': number; }>(f: B) => void
  >32 : 32
-

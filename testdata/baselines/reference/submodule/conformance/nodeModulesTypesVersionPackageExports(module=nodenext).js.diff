@@ -1,9 +1,10 @@
 --- old.nodeModulesTypesVersionPackageExports(module=nodenext).js
 +++ new.nodeModulesTypesVersionPackageExports(module=nodenext).js
-@@= skipped -88, +88 lines =@@
+@@= skipped -87, +87 lines =@@
+ // cjs format file
  const mod = __importStar(require("inner"));
  mod.correctVersionApplied;
-
+-
 -
 -//// [index.d.ts]
 -export {};
@@ -11,4 +12,3 @@
 -export {};
 -//// [index.d.cts]
 -export {};
--

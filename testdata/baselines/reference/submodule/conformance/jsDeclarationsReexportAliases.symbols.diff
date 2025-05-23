@@ -21,4 +21,3 @@
 ->default : Symbol(Fooa, Decl(cls.js, 0, 0))
 +>default : Symbol(default, Decl(cls.js, 0, 0))
  >Foob : Symbol(Foob, Decl(usage.js, 4, 8))
-

@@ -33,4 +33,3 @@
  >testFn : Symbol(testFn, Decl(file2.js, 27, 8))
 ->testFnTypes : Symbol(testFnTypes, Decl(file2.js, 27, 15), Decl(file2.js, 11, 37))
 +>testFnTypes : Symbol(testFnTypes, Decl(file2.js, 11, 4), Decl(file2.js, 27, 15))
-

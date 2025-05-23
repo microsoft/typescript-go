@@ -55,4 +55,3 @@
 ->aaaa1 : Symbol(bbbb, Decl(server.ts, 12, 21))
 +>aaaa1 : Symbol(aaaa1, Decl(server.ts, 12, 21))
  >bbbb : Symbol(bbbb, Decl(client.ts, 25, 8))
-

@@ -109,4 +109,3 @@
 +>o : { name: Observable<string>; age: Observable<number>; }
 +>name : Observable<string>
  >d : any
-

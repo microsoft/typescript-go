@@ -42,4 +42,3 @@
  >s : Symbol(s, Decl(contextuallyTypingOrOperator.ts, 5, 39))
 ->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
 +>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
-

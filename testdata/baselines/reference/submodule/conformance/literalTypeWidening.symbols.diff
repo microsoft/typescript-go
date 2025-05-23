@@ -60,4 +60,3 @@
 ->A : Symbol(E.A, Decl(literalTypeWidening.ts, 140, 8))
 +>A : Symbol(A, Decl(literalTypeWidening.ts, 140, 8))
  >a : Symbol(a, Decl(literalTypeWidening.ts, 141, 5))
-

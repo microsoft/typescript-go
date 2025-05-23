@@ -214,4 +214,3 @@
 ->bar : Symbol(BarIncorrectlyWorks.bar, Decl(checkSuperCallBeforeThisAccess.ts, 77, 5))
 +>bar : Symbol(bar, Decl(checkSuperCallBeforeThisAccess.ts, 77, 5))
  }
-

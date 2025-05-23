@@ -13,4 +13,3 @@
 ->nameSpaceBinding : typeof nameSpaceBinding
 +>nameSpaceBinding : typeof import("server")
  >a : number
-

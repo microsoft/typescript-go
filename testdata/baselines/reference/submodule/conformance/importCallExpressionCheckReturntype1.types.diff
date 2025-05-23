@@ -36,4 +36,3 @@
 ->import("./defaultPath") : Promise<typeof defaultModule>
 +>import("./defaultPath") : Promise<typeof import("defaultPath")>
  >"./defaultPath" : "./defaultPath"
-

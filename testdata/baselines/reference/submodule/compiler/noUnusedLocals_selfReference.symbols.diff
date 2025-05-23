@@ -48,4 +48,3 @@
 ->m : Symbol(D.m, Decl(noUnusedLocals_selfReference.ts, 26, 9))
 +>m : Symbol(m, Decl(noUnusedLocals_selfReference.ts, 26, 9))
  >g : Symbol(g, Decl(noUnusedLocals_selfReference.ts, 22, 2))
-

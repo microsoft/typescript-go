@@ -28,4 +28,3 @@
 ->y : Symbol(B.y, Decl(nonExportedElementsOfMergedModules.ts, 10, 18))
 +>y : Symbol(y, Decl(nonExportedElementsOfMergedModules.ts, 10, 18))
  }
-

@@ -15,4 +15,3 @@
 ->f : <T>(x: T, y: globalThis.NoInfer<T>) => T
 +>g : <T>(x: T, y: NoInfer<T>) => T
 +>f : <T>(x: T, y: NoInfer<T>) => T
-

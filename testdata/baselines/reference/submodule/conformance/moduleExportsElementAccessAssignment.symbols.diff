@@ -99,4 +99,3 @@
 +>module : Symbol(module.exports)
 +>"exports" : Symbol("mod1", Decl(mod1.js, 0, 0))
 +>"d" : Symbol(d, Decl(mod1.js, 3, 33))
-

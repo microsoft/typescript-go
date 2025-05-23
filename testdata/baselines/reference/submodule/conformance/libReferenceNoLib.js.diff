@@ -1,9 +1,10 @@
 --- old.libReferenceNoLib.js
 +++ new.libReferenceNoLib.js
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
+ exports.elem = void 0;
  /// <reference lib="dom" />
  exports.elem = { field: 'a' };
-
+-
 -
 -//// [fakelib.d.ts]
 -interface Object {
@@ -27,4 +28,3 @@
 -    field: string;
 -}
 -export declare const elem: HTMLElement;
--

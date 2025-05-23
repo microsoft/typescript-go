@@ -1,9 +1,10 @@
 --- old.letDeclarations.js
 +++ new.letDeclarations.js
-@@= skipped -23, +23 lines =@@
+@@= skipped -22, +22 lines =@@
+ let l9 = 0, l10 = "", l11 = null;
  for (let l11 in {}) { }
  for (let l12 = 0; l12 < 9; l12++) { }
-
+-
 -
 -//// [letDeclarations.d.ts]
 -declare let l1: any;
@@ -12,4 +13,3 @@
 -declare let l7: boolean;
 -declare let l8: number;
 -declare let l9: number, l10: string, l11: any;
--

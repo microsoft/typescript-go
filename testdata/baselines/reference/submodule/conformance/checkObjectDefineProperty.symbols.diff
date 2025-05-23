@@ -204,4 +204,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(x, Decl(index.js, 0, 5))
 +>x : Symbol(x, Decl(index.js, 0, 5))
-

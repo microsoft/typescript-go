@@ -78,4 +78,3 @@
 +>module.exports : Symbol(export=, Decl(input.js, 42, 1))
 +>module : Symbol(module.exports)
 +>exports : Symbol(export=, Decl(input.js, 42, 1))
-

@@ -14,4 +14,3 @@
  type _3 = typeof import("./module.mts", { with: { "resolution-mode": "require" } });
 ->_3 : typeof import("module", { with: { "resolution-mode": "import" } })
 +>_3 : typeof import("module")
-

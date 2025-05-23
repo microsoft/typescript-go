@@ -25,4 +25,3 @@
 +>exports : typeof import("enumTagOnExports")
 +>b : any
  >{} : {}
-

@@ -18,4 +18,3 @@
  >a : Symbol(a, Decl(noImplicitAnyWithOverloads.ts, 8, 7))
 ->foo : Symbol(A.foo, Decl(noImplicitAnyWithOverloads.ts, 0, 13))
 +>foo : Symbol(foo, Decl(noImplicitAnyWithOverloads.ts, 0, 13))
-

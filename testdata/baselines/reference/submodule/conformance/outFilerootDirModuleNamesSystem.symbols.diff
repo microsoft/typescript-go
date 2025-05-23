@@ -20,4 +20,3 @@
  // https://github.com/microsoft/TypeScript/issues/37429
  import("./a");
 ->"./a" : Symbol("src/a", Decl(a.ts, 0, 0))
-

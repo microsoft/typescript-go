@@ -1,9 +1,10 @@
 --- old.declarationEmitMergedAliasWithConst.js
 +++ new.declarationEmitMergedAliasWithConst.js
-@@= skipped -19, +19 lines =@@
+@@= skipped -18, +18 lines =@@
+     Green: "Green",
      Blue: "Blue"
  };
-
+-
 -
 -//// [declarationEmitMergedAliasWithConst.d.ts]
 -export declare const Color: {
@@ -13,4 +14,3 @@
 -};
 -export type Color = typeof Color;
 -export type Colors = Color[keyof Color];
--

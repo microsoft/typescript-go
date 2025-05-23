@@ -84,4 +84,3 @@
 ->generator : Symbol(generator, Decl(tslib.d.ts, --, --))
 +>generator : Symbol(generator, Decl(tslib.d.ts, 5, 77))
  >Function : Symbol(Function, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-

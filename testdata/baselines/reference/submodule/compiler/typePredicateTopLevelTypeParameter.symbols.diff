@@ -21,4 +21,3 @@
 ->filter : Symbol(Array.filter, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>filter : Symbol(filter, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >isDefined : Symbol(isDefined, Decl(typePredicateTopLevelTypeParameter.ts, 7, 59))
-

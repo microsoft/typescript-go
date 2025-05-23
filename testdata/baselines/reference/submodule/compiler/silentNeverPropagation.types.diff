@@ -45,4 +45,3 @@
 ->breaks : ModuleWithState<{ a: number; } & MoreState> & ModuleWithState<{ a: number; }> & { foo(): true; }
 +>breaks : ModuleWithState<{ a: number; } & MoreState> & ModuleWithState<{ a: number; }> & { foo: () => true; }
  >foo : () => true
-

@@ -32,4 +32,3 @@
  >BigGreeter : Symbol(BigGreeter, Decl(file.tsx, 0, 32))
 ->data-extra : Symbol(data-extra, Decl(file.tsx, 14, 19))
 +>data-extra : Symbol("data-extra", Decl(file.tsx, 14, 19))
-

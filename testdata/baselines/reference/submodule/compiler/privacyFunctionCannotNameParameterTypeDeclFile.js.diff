@@ -538,4 +538,3 @@
 +}
 +function privateFunctionWithPrivateModuleParameterTypes1(param = exporter.createExportedWidget4()) {
 +}
-+

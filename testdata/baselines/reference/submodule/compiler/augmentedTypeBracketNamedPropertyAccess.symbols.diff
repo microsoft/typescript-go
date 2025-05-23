@@ -37,4 +37,3 @@
  >f : Symbol(f, Decl(augmentedTypeBracketNamedPropertyAccess.ts, 7, 3))
 ->'data' : Symbol(Object.data, Decl(augmentedTypeBracketNamedPropertyAccess.ts, 0, 18))
 +>'data' : Symbol(data, Decl(augmentedTypeBracketNamedPropertyAccess.ts, 0, 18))
-

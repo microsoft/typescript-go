@@ -9,4 +9,3 @@
 +>v : { foo: () => Generator<never, void, unknown>; }
 +>{ *foo() { } } : { foo: () => Generator<never, void, unknown>; }
  >foo : () => Generator<never, void, unknown>
-

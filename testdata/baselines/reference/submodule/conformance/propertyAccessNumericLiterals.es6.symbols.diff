@@ -32,4 +32,3 @@
 ->toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 +>1e0.toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

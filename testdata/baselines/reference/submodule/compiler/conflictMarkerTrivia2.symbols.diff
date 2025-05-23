@@ -16,4 +16,3 @@
 ->bar : Symbol(C.bar, Decl(conflictMarkerTrivia2.ts, 4, 3))
 +>bar : Symbol(bar, Decl(conflictMarkerTrivia2.ts, 4, 3))
  }
-

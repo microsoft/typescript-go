@@ -164,4 +164,3 @@
 ->F4 : Symbol(F4, Decl(global.js, 9, 3), Decl(global.js, 9, 25))
 ->staticProp : Symbol(F4.staticProp, Decl(global.js, 9, 25))
 +>F4 : Symbol(F4, Decl(global.js, 9, 3))
-

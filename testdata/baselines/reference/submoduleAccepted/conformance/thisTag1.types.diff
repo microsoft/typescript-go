@@ -45,4 +45,3 @@
 +>o : { f: (s: string) => number; n: number; }
 +>f : (s: string) => number
  >'hi' : "hi"
-

@@ -56,4 +56,3 @@
 +>x['hm'] : any
 +>x : { new (): number; apply: (a: any, b?: any) => void; call: (thisArg: number, ...argArray: number[]) => any; }
  >'hm' : "hm"
-

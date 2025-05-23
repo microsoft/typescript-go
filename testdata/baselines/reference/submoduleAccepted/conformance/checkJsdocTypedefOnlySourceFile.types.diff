@@ -7,4 +7,3 @@
 ->myString : exports.SomeName
 +>myString : SomeName
  >'str' : "str"
-

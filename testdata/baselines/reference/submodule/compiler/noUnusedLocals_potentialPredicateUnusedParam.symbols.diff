@@ -10,4 +10,3 @@
 ->random : Symbol(Math.random, Decl(lib.es5.d.ts, --, --))
 +>random : Symbol(random, Decl(lib.es5.d.ts, --, --))
  }
-

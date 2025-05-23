@@ -20,4 +20,3 @@
 ->x : Symbol(x, Decl(index.d.ts, 0, 16))
 +>$ : Symbol($, Decl(ref.d.ts, 0, 0))
 +>x : Symbol(x, Decl(ref.d.ts, 0, 13))
-

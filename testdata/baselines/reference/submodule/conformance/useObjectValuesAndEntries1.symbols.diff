@@ -150,4 +150,3 @@
 ->values : Symbol(ObjectConstructor.values, Decl(lib.es2017.object.d.ts, --, --), Decl(lib.es2017.object.d.ts, --, --))
 +>values : Symbol(values, Decl(lib.es2017.object.d.ts, --, --), Decl(lib.es2017.object.d.ts, --, --))
  >i : Symbol(i, Decl(useObjectValuesAndEntries1.ts, 27, 3))
-

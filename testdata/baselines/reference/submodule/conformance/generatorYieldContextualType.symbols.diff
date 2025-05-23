@@ -97,4 +97,3 @@
 ->Break : Symbol(StepResult.Break, Decl(generatorYieldContextualType.ts, 63, 14))
 +>Break : Symbol(Break, Decl(generatorYieldContextualType.ts, 63, 14))
  }
-

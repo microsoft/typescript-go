@@ -62,4 +62,3 @@
 ->a : Symbol(Foo.a, Decl(genericClasses2.ts, 0, 18))
 +>z : Symbol(z, Decl(genericClasses2.ts, 6, 18))
 +>a : Symbol(a, Decl(genericClasses2.ts, 0, 18))
-

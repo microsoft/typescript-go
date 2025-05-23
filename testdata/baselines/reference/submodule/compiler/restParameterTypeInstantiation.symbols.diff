@@ -24,4 +24,3 @@
  >g : Symbol(g, Decl(restParameterTypeInstantiation.ts, 11, 47))
 ->g : Symbol(TestGeneric.g, Decl(restParameterTypeInstantiation.ts, 3, 11))
 +>g : Symbol(g, Decl(restParameterTypeInstantiation.ts, 3, 11))
-

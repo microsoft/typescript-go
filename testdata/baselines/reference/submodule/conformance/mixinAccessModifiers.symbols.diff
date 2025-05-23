@@ -186,4 +186,3 @@
 ->protectedMethod : Symbol(ProtectedGeneric.protectedMethod, Decl(mixinAccessModifiers.ts, 108, 27), Decl(mixinAccessModifiers.ts, 108, 27))
 +>protectedMethod : Symbol(protectedMethod, Decl(mixinAccessModifiers.ts, 108, 27), Decl(mixinAccessModifiers.ts, 108, 27))
  }
-

@@ -37,4 +37,3 @@
 ->abstractBaseMethod : Symbol(DerivedFromAbstract2.abstractBaseMethod, Decl(mixinAbstractClassesReturnTypeInference.ts, 18, 57))
 +>abstractBaseMethod : Symbol(abstractBaseMethod, Decl(mixinAbstractClassesReturnTypeInference.ts, 18, 57))
  }
-

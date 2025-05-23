@@ -74,4 +74,3 @@
  >Foo : Symbol(Foo, Decl(ambientModuleWithTemplateLiterals.ts, 0, 0))
 ->e : Symbol(Foo.e, Decl(ambientModuleWithTemplateLiterals.ts, 12, 16))
 +>e : Symbol(e, Decl(ambientModuleWithTemplateLiterals.ts, 12, 16))
-

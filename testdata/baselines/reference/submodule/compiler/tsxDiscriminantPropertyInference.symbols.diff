@@ -41,4 +41,3 @@
  >n : Symbol(n, Decl(tsxDiscriminantPropertyInference.tsx, 29, 16))
 ->toFixed : Symbol(Number.toFixed, Decl(lib.es5.d.ts, --, --))
 +>toFixed : Symbol(toFixed, Decl(lib.es5.d.ts, --, --))
-

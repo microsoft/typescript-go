@@ -69,4 +69,3 @@
  >a : Symbol(a, Decl(mergedInterfacesWithInheritedPrivates.ts, 24, 3))
 ->x : Symbol(C.x, Decl(mergedInterfacesWithInheritedPrivates.ts, 0, 9))
 +>x : Symbol(x, Decl(mergedInterfacesWithInheritedPrivates.ts, 0, 9))
-

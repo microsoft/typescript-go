@@ -61,4 +61,3 @@
  >M : Symbol(M, Decl(negateOperatorWithAnyOtherType.ts, 18, 1))
 ->n : Symbol(M.n, Decl(negateOperatorWithAnyOtherType.ts, 20, 14))
 +>n : Symbol(n, Decl(negateOperatorWithAnyOtherType.ts, 20, 14))
-

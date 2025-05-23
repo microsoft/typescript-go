@@ -471,4 +471,3 @@
  >C : Symbol(C, Decl(a.js, 0, 0))
 ->inStaticNestedArrowFunction : Symbol(C.inStaticNestedArrowFunction, Decl(a.js, 66, 32), Decl(a.js, 69, 18))
 +>inStaticNestedArrowFunction : Symbol(inStaticNestedArrowFunction, Decl(a.js, 66, 32), Decl(a.js, 69, 18))
-

@@ -80,5 +80,4 @@
 -export declare function fnWithPartialAnnotationOnDefaultparam(x: ({} & {
 -    name: string;
 -}) | undefined, b: number): void;
--
 +<no content>

@@ -85,4 +85,3 @@
  >E2 : Symbol(E2, Decl(typeArgumentInferenceWithObjectLiteral.ts, 19, 13))
 ->X : Symbol(E2.X, Decl(typeArgumentInferenceWithObjectLiteral.ts, 20, 9))
 +>X : Symbol(X, Decl(typeArgumentInferenceWithObjectLiteral.ts, 20, 9))
-

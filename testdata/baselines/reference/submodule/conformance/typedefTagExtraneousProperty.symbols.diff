@@ -19,4 +19,3 @@
  y['hi'] = "yes"
 ->y : Symbol(y, Decl(typedefTagExtraneousProperty.js, 5, 3), Decl(typedefTagExtraneousProperty.js, 6, 1), Decl(typedefTagExtraneousProperty.js, 7, 57))
 +>y : Symbol(y, Decl(typedefTagExtraneousProperty.js, 5, 3))
-

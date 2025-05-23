@@ -108,4 +108,3 @@
  >Foo : Symbol(Foo, Decl(declarationEmitClassMemberWithComputedPropertyName.ts, 4, 27))
 ->p1 : Symbol(Foo.p1, Decl(declarationEmitClassMemberWithComputedPropertyName.ts, 30, 18))
 +>p1 : Symbol(p1, Decl(declarationEmitClassMemberWithComputedPropertyName.ts, 30, 18))
-

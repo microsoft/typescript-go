@@ -25,4 +25,3 @@
 ->x : Symbol(MyClass.x, Decl(accessorsOverrideProperty8.ts, 19, 28))
 +>x : Symbol(x, Decl(accessorsOverrideProperty8.ts, 19, 28))
 
-

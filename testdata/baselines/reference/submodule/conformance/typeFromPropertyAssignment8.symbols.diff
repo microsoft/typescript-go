@@ -80,4 +80,3 @@
 ->app : Symbol(min.app, Decl(b.js, 0, 27), Decl(b.js, 3, 4))
 ->Application : Symbol(min.app.Application, Decl(b.js, 1, 24))
 +>min : Symbol(min, Decl(b.js, 0, 3))
-

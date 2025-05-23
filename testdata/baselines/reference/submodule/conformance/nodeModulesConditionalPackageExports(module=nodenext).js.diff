@@ -1,9 +1,10 @@
 --- old.nodeModulesConditionalPackageExports(module=nodenext).js
 +++ new.nodeModulesConditionalPackageExports(module=nodenext).js
-@@= skipped -195, +195 lines =@@
+@@= skipped -194, +194 lines =@@
+ mjsi.mjsSource;
  typei.mjsSource;
  ts.mjsSource;
-
+-
 -
 -//// [index.d.mts]
 -export {};
@@ -11,4 +12,3 @@
 -export {};
 -//// [index.d.ts]
 -export {};
--

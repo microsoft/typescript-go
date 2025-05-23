@@ -36,4 +36,3 @@
  >StillEnum : Symbol(StillEnum, Decl(usages.ts, 2, 6))
 ->Foo : Symbol(MyConstEnum.Foo, Decl(ConstEnum.d.ts, 0, 31))
 +>Foo : Symbol(Foo, Decl(ConstEnum.d.ts, 0, 31))
-

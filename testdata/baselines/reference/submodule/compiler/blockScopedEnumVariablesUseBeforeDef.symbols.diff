@@ -52,4 +52,3 @@
 ->A : Symbol(AfterObject.A, Decl(blockScopedEnumVariablesUseBeforeDef.ts, 14, 24))
 +>A : Symbol(A, Decl(blockScopedEnumVariablesUseBeforeDef.ts, 14, 24))
  }
-

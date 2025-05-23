@@ -134,4 +134,3 @@
 ->tagName : Symbol(Element.tagName, Decl(lib.dom.d.ts, --, --))
 +>tagName : Symbol(tagName, Decl(lib.dom.d.ts, --, --))
  }
-

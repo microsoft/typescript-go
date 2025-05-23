@@ -110,4 +110,3 @@
  >color : Symbol(color, Decl(commentsdoNotEmitComments.ts, 85, 14))
 ->green : Symbol(color.green, Decl(commentsdoNotEmitComments.ts, 89, 23))
 +>green : Symbol(green, Decl(commentsdoNotEmitComments.ts, 89, 23))
-

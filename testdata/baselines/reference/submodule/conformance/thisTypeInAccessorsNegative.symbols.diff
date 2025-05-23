@@ -53,4 +53,3 @@
 ->n : Symbol(Foo.n, Decl(thisTypeInAccessorsNegative.ts, 0, 15))
 +>n : Symbol(n, Decl(thisTypeInAccessorsNegative.ts, 0, 15))
  }
-

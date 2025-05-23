@@ -55,4 +55,3 @@
  >X : unknown
 ->h : <T extends unknown = string>(x: { foo: T; }) => unknown
 +>h : <T extends unknown>(x: { foo: T; }) => unknown
-

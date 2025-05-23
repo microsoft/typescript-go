@@ -1,9 +1,10 @@
 --- old.arbitraryModuleNamespaceIdentifiers_module(module=esnext).js
 +++ new.arbitraryModuleNamespaceIdentifiers_module(module=esnext).js
-@@= skipped -53, +53 lines =@@
+@@= skipped -52, +52 lines =@@
+ const importTest = "expect error about someType";
  const reimportTest = "expect error about someType";
  const importStarTestA = "expect error about otherType";
-
+-
 -
 -//// [arbitraryModuleNamespaceIdentifiers_module.d.ts]
 -declare const someValue = "someValue";
@@ -15,4 +16,3 @@
 -export { type "<A>" as "<B>" } from "./arbitraryModuleNamespaceIdentifiers_module";
 -export type * as "<C>" from "./arbitraryModuleNamespaceIdentifiers_module";
 -export type otherType = "otherType";
--

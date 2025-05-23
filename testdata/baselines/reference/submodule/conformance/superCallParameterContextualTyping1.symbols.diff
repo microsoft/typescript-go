@@ -19,4 +19,3 @@
 ->toExponential : Symbol(Number.toExponential, Decl(lib.es5.d.ts, --, --))
 +>toExponential : Symbol(toExponential, Decl(lib.es5.d.ts, --, --))
  }
-

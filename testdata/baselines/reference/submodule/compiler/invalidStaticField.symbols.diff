@@ -13,4 +13,3 @@
 ->NOT_NULL : Symbol(B.NOT_NULL, Decl(invalidStaticField.ts, 1, 9))
 +>NOT_NULL : Symbol(NOT_NULL, Decl(invalidStaticField.ts, 1, 9))
  >B : Symbol(B, Decl(invalidStaticField.ts, 0, 36))
-

@@ -23,4 +23,3 @@
  >sala : Upp
 ->nested : string
 +>nested : any
-

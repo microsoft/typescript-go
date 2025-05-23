@@ -9,4 +9,3 @@
 +>a : T<{ a: string; }>
 +>theme : any
  >null as any : any
-

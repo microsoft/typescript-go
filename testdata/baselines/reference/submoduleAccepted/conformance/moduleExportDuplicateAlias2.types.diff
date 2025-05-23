@@ -55,4 +55,3 @@
 ->apply : () => void
 +>apply() : any
 +>apply : any
-

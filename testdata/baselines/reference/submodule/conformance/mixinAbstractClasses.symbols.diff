@@ -79,4 +79,3 @@
  >wasAbstract : Symbol(wasAbstract, Decl(mixinAbstractClasses.ts, 31, 5))
 ->mixinMethod : Symbol(Mixin.mixinMethod, Decl(mixinAbstractClasses.ts, 0, 17))
 +>mixinMethod : Symbol(mixinMethod, Decl(mixinAbstractClasses.ts, 0, 17))
-

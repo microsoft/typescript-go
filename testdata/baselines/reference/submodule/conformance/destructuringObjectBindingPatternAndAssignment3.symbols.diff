@@ -13,4 +13,3 @@
 ->"prop" : Symbol("prop", Decl(destructuringObjectBindingPatternAndAssignment3.ts, 6, 16))
 +> : Symbol(, Decl(destructuringObjectBindingPatternAndAssignment3.ts, 5, 5), Decl(destructuringObjectBindingPatternAndAssignment3.ts, 6, 5))
 +>"prop" : Symbol(prop, Decl(destructuringObjectBindingPatternAndAssignment3.ts, 6, 16))
-

@@ -74,4 +74,3 @@
  >x1 : number
 ->m : number
 +>m : any
-

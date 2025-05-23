@@ -48,4 +48,3 @@
  export { type };
 ->type : Symbol(cjs.type, Decl(index.d.cts, 6, 8))
 +>type : Symbol(type, Decl(index.d.cts, 6, 8))
-

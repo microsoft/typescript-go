@@ -34,4 +34,3 @@
  >C : Symbol(C, Decl(privateNameReadonly.ts, 0, 5))
 ->foo : Symbol(C.foo, Decl(privateNameReadonly.ts, 1, 13))
 +>foo : Symbol(foo, Decl(privateNameReadonly.ts, 1, 13))
-

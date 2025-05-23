@@ -30,4 +30,3 @@
  >ParentThing : Symbol(ParentThing, Decl(parent.ts, 0, 34), Decl(child1.ts, 2, 27))
 ->prototype : Symbol(ParentThing.prototype)
 +>prototype : Symbol(prototype)
-

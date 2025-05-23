@@ -18,4 +18,3 @@
  >arr : Symbol(arr, Decl(extendGenericArray2.ts, 6, 3))
 ->x : Symbol(IFoo.x, Decl(extendGenericArray2.ts, 0, 19))
 +>x : Symbol(x, Decl(extendGenericArray2.ts, 0, 19))
-

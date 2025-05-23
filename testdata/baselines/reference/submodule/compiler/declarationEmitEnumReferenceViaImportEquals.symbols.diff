@@ -49,4 +49,3 @@
  >Test : Symbol(Test, Decl(index.ts, 0, 8))
 ->print : Symbol(Test.print, Decl(test.ts, 4, 42))
 +>print : Symbol(print, Decl(test.ts, 4, 42))
-

@@ -36,4 +36,3 @@
 ->extends : Symbol(CtorConstructor.extends, Decl(ctor.d.ts, 4, 34))
 +>extends : Symbol(extends, Decl(ctor.d.ts, 4, 34))
  >foo : Symbol(foo, Decl(index.ts, 2, 36))
-

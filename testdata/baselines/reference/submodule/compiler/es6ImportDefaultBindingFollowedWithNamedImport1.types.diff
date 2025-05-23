@@ -65,4 +65,3 @@
  >x1 : number
 ->defaultBinding6 : number
 +>defaultBinding6 : any
-

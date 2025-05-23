@@ -30,4 +30,3 @@
  >foo1 : Symbol(foo1, Decl(2.ts, 1, 6))
 ->b : Symbol(foo.b, Decl(0.ts, 1, 12))
 +>b : Symbol(b, Decl(0.ts, 1, 12))
-

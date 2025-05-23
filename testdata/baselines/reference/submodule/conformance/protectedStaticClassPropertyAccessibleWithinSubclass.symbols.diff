@@ -184,4 +184,3 @@
  >Derived3 : Symbol(Derived3, Decl(protectedStaticClassPropertyAccessibleWithinSubclass.ts, 26, 1))
 ->x : Symbol(Derived3.x, Decl(protectedStaticClassPropertyAccessibleWithinSubclass.ts, 28, 33))
 +>x : Symbol(x, Decl(protectedStaticClassPropertyAccessibleWithinSubclass.ts, 28, 33))
-

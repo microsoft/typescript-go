@@ -50,4 +50,3 @@
  >req : Symbol(req, Decl(test.ts, 25, 9))
 ->'./test' : Symbol("test", Decl(test.ts, 0, 0))
  }
-

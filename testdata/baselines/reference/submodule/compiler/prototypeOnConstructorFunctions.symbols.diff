@@ -22,4 +22,3 @@
 ->prototype : Symbol(Function.prototype, Decl(lib.es5.d.ts, --, --))
 +>const : Symbol(const, Decl(prototypeOnConstructorFunctions.ts, 0, 14))
 +>prototype : Symbol(prototype, Decl(lib.es5.d.ts, --, --))
-

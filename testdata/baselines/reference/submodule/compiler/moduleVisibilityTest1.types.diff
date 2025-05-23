@@ -70,4 +70,3 @@
 ->c : M.C
 +>c : C
  >someMethodThatCallsAnOuterMethod : () => string
-

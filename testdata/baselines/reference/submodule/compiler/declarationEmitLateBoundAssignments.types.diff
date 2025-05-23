@@ -78,4 +78,3 @@
 ->foo : typeof foo
 +>foo : { (): void; bar: number; foo[_private]: string; strMemName: string; foo[dashStrMem]: string; foo[numMem]: string; }
  >dashStrMem : "dashed-str-mem"
-

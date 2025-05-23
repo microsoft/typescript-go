@@ -11,4 +11,3 @@
 ->x : Symbol(Bar.x, Decl(duplicateInterfaceMembers1.ts, 0, 15), Decl(duplicateInterfaceMembers1.ts, 1, 13))
 +>x : Symbol(x, Decl(duplicateInterfaceMembers1.ts, 0, 15), Decl(duplicateInterfaceMembers1.ts, 1, 13))
  }
-

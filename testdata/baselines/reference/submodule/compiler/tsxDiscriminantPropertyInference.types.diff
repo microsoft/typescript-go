@@ -87,4 +87,3 @@
  >n : number
 ->toFixed : (fractionDigits?: number) => string
 +>toFixed : (fractionDigits?: number | undefined) => string
-

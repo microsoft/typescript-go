@@ -49,4 +49,3 @@
 ->B : Symbol(E2.B, Decl(moduleCodeGenTest5.ts, 17, 9))
 +>B : Symbol(B, Decl(moduleCodeGenTest5.ts, 17, 9))
 
-

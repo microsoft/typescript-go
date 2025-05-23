@@ -111,4 +111,3 @@
  >i2 : Symbol(i2, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 41, 3))
 ->f : Symbol(I2.f, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 38, 20))
 +>f : Symbol(f, Decl(callGenericFunctionWithIncorrectNumberOfTypeArguments.ts, 38, 20))
-

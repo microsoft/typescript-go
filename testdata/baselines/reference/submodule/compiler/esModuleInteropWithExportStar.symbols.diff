@@ -7,4 +7,3 @@
 ->x : Symbol(fs.x, Decl(fs.d.ts, 0, 12))
 +>x : Symbol(x, Decl(fs.d.ts, 0, 12))
  >y : Symbol(y, Decl(mjts.ts, 6, 8))
-

@@ -226,4 +226,3 @@
 ->foo : Symbol(D17.foo, Decl(undefinedIsSubtypeOfEverything.ts, 117, 24))
 +>foo : Symbol(foo, Decl(undefinedIsSubtypeOfEverything.ts, 117, 24))
  }
-

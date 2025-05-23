@@ -22,4 +22,3 @@
 ->someUnaccountedProp : Symbol(ctor.someUnaccountedProp, Decl(errorsWithInvokablesInUnions01.ts, 15, 96))
 +>someUnaccountedProp : Symbol(someUnaccountedProp, Decl(errorsWithInvokablesInUnions01.ts, 15, 96))
  }
-

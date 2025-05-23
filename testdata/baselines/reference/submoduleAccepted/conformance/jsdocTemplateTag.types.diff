@@ -40,4 +40,3 @@
 +>animate : (keyframes: Keyframe[] | PropertyIndexedKeyframes, options?: number | KeyframeAnimationOptions) => Animation
 +>function(keyframes) {} : (keyframes: Keyframe[] | PropertyIndexedKeyframes) => void
 +>keyframes : Keyframe[] | PropertyIndexedKeyframes
-

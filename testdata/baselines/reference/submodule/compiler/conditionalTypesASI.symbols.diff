@@ -11,4 +11,3 @@
 ->extends : Symbol(JSONSchema4.extends, Decl(conditionalTypesASI.ts, 3, 12))
 +>extends : Symbol(extends, Decl(conditionalTypesASI.ts, 3, 12))
  }
-

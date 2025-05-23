@@ -40,4 +40,3 @@
  interface String {}
 ->String : Symbol(String, Decl(declarationEmitPreservesHasNoDefaultLibDirective.ts, 10, 19))
 +>String : Symbol(String, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(declarationEmitPreservesHasNoDefaultLibDirective.ts, 10, 19))
-

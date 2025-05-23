@@ -80,4 +80,3 @@
 ->fromEntries : { <T = any>(entries: Iterable<readonly [PropertyKey, T]>): { [k: string]: T; }; (entries: Iterable<readonly any[]>): any; }
 +>fromEntries : { <T>(entries: Iterable<readonly [PropertyKey, T], any, any>): { [k: string]: T; }; (entries: Iterable<readonly any[], any, any>): any; }
  >frozenArray2 : readonly [string, number][]
-

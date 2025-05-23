@@ -79,4 +79,3 @@
  >typeC : Symbol(typeC, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 26, 8))
 ->otherType : Symbol(valueZ.otherType, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 26, 83))
 +>otherType : Symbol(otherType, Decl(arbitraryModuleNamespaceIdentifiers_module.ts, 26, 83))
-

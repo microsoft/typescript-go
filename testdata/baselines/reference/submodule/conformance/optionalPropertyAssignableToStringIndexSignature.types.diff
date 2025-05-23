@@ -54,4 +54,3 @@
 ->optional : { k1?: T; }
 +>optional : { k1?: T | undefined; }
  }
-

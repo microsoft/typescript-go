@@ -284,4 +284,3 @@
 ->format : { (value: number): string; (value: number | bigint): string; (value: number | bigint | Intl.StringNumericLiteral): string; }
 +>format : { (value: number): string; (value: number | bigint): string; (value: number | bigint | StringNumericLiteral): string; }
  >'+Infinity' : "+Infinity"
-

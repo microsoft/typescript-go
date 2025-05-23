@@ -97,4 +97,3 @@
  >C : Symbol(C, Decl(classPropertyAsPrivate.ts, 0, 0))
 ->foo : Symbol(C.foo, Decl(classPropertyAsPrivate.ts, 8, 31))
 +>foo : Symbol(foo, Decl(classPropertyAsPrivate.ts, 8, 31))
-

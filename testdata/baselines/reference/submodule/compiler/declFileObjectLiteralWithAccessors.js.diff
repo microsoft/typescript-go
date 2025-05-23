@@ -1,9 +1,10 @@
 --- old.declFileObjectLiteralWithAccessors.js
 +++ new.declFileObjectLiteralWithAccessors.js
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
+ var /*4*/ point = makePoint(2);
  var /*2*/ x = point.x;
  point. /*3*/x = 30;
-
+-
 -
 -//// [declFileObjectLiteralWithAccessors.d.ts]
 -declare function makePoint(x: number): {
@@ -15,4 +16,3 @@
 -    x: number;
 -};
 -declare var /*2*/ x: number;
--

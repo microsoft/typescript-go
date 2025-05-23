@@ -61,4 +61,3 @@
 ->withinAs : (p: StartsWithA & EndsWithA) => void
 +>withinAs : (p: `a${string}` & `${string}a`) => void
  >"abavvvva" : "abavvvva"
-

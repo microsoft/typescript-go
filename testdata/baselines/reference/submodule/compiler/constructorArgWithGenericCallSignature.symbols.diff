@@ -23,4 +23,3 @@
 ->MyClass : Symbol(Test.MyClass, Decl(constructorArgWithGenericCallSignature.ts, 3, 5))
 +>MyClass : Symbol(MyClass, Decl(constructorArgWithGenericCallSignature.ts, 3, 5))
  >func : Symbol(func, Decl(constructorArgWithGenericCallSignature.ts, 10, 3))
-

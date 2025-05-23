@@ -19,4 +19,3 @@
 ->get : Symbol(MultiKeyMap.get, Decl(partiallyNamedTuples2.ts, 1, 63))
 +>get : Symbol(get, Decl(partiallyNamedTuples2.ts, 1, 63))
  >id1 : Symbol(id1, Decl(partiallyNamedTuples2.ts, 20, 5))
-

@@ -29,4 +29,3 @@
 ->create : { (o: object | null): any; (o: object | null, properties: PropertyDescriptorMap & ThisType<any>): any; }
 +>create : { (o: object): any; (o: object, properties: PropertyDescriptorMap & ThisType<any>): any; }
  }
-

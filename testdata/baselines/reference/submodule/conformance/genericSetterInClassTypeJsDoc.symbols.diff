@@ -48,4 +48,3 @@
  >Box : Symbol(Box, Decl(genericSetterInClassTypeJsDoc.js, 0, 0))
 ->value : Symbol(Box.value, Decl(genericSetterInClassTypeJsDoc.js, 9, 5), Decl(genericSetterInClassTypeJsDoc.js, 14, 5))
 +>value : Symbol(value, Decl(genericSetterInClassTypeJsDoc.js, 9, 5), Decl(genericSetterInClassTypeJsDoc.js, 14, 5))
-

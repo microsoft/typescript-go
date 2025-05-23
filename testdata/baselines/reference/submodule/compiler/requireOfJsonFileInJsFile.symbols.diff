@@ -39,4 +39,3 @@
 ->exports : Symbol(export=, Decl(js.js, 0, 0))
 ->a : Symbol(a, Decl(js.js, 0, 18))
 +>"a" : Symbol(a, Decl(json.json, 0, 1))
-

@@ -43,4 +43,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(Chunk, Decl(mod1.js, 0, 0))
  >Chunk : Symbol(Chunk, Decl(mod1.js, 0, 0))
-

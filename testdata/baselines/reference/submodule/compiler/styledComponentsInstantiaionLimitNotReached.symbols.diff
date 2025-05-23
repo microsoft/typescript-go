@@ -382,4 +382,3 @@
 ->ComponentPropsWithRef : Symbol(React.ComponentPropsWithRef, Decl(react16.d.ts, 2434, 25))
 +>ComponentPropsWithRef : Symbol(ComponentPropsWithRef, Decl(react16.d.ts, 2434, 25))
  >C : Symbol(C, Decl(styledComponentsInstantiaionLimitNotReached.ts, 191, 40))
-

@@ -21,4 +21,3 @@
 ->d : Symbol(a.d, Decl(a.js, 0, 13), Decl(b.js, 0, 2))
 ->prototype : Symbol(a.d.prototype, Decl(b.js, 0, 0))
 +>a : Symbol(a, Decl(a.js, 0, 5))
-

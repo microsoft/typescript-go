@@ -48,4 +48,3 @@
 ->baz : Symbol(A.baz, Decl(logicalAssignment3.ts, 0, 13))
 +>baz : Symbol(baz, Decl(logicalAssignment3.ts, 0, 13))
 
-

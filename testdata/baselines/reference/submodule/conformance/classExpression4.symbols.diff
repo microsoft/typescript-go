@@ -18,4 +18,3 @@
  >C : Symbol(C, Decl(classExpression4.ts, 0, 3))
 ->foo : Symbol(C.foo, Decl(classExpression4.ts, 0, 15))
 +>foo : Symbol(foo, Decl(classExpression4.ts, 0, 15))
-

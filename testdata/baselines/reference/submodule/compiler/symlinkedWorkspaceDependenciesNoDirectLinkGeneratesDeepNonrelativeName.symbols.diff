@@ -18,4 +18,3 @@
  >pkg : Symbol(pkg, Decl(index.ts, 0, 6))
 ->invoke : Symbol(pkg.invoke, Decl(index.d.ts, 0, 35))
 +>invoke : Symbol(invoke, Decl(index.d.ts, 0, 35))
-

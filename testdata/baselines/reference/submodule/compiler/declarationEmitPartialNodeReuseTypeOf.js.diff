@@ -1,9 +1,10 @@
 --- old.declarationEmitPartialNodeReuseTypeOf.js
 +++ new.declarationEmitPartialNodeReuseTypeOf.js
-@@= skipped -28, +28 lines =@@
+@@= skipped -27, +27 lines =@@
+ //// [c.js]
  import * as a from "./a";
  export const g = a.o;
-
+-
 -
 -//// [a.d.ts]
 -export declare const nImported = "nImported";
@@ -29,4 +30,3 @@
 -    bar: "private";
 -    baz: typeof a.nNotImported;
 -};
--

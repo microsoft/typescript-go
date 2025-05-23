@@ -131,4 +131,3 @@
 ->sso : { p: number; m(): void; g: number; }
 +>sso : { p: number; m: () => void; g: number; }
  >g : number
-

@@ -264,4 +264,3 @@
 +>aa : Element
 +><JustDefaultPropsWithSpecifiedGeneric /> : Element
  >JustDefaultPropsWithSpecifiedGeneric : typeof JustDefaultPropsWithSpecifiedGeneric
-

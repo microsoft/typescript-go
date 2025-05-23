@@ -1,9 +1,10 @@
 --- old.stringLiteralObjectLiteralDeclaration1.js
 +++ new.stringLiteralObjectLiteralDeclaration1.js
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
+ (function (m1) {
      m1.n = { 'foo bar': 4 };
  })(m1 || (m1 = {}));
-
+-
 -
 -//// [stringLiteralObjectLiteralDeclaration1.d.ts]
 -declare namespace m1 {
@@ -11,4 +12,3 @@
 -        'foo bar': number;
 -    };
 -}
--

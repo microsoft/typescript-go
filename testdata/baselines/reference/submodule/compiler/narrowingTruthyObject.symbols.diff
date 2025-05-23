@@ -92,4 +92,3 @@
 ->hasOwnProperty : Symbol(Object.hasOwnProperty, Decl(lib.es5.d.ts, --, --))
 +>hasOwnProperty : Symbol(hasOwnProperty, Decl(lib.es5.d.ts, --, --))
  }
-

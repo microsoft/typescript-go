@@ -51,4 +51,3 @@
 ->Abcde : Symbol(Abcde, Decl(index.ts, 0, 8))
 +>Abcde : Symbol(Abcde)
  >b : Symbol(b, Decl(index.ts, 10, 18))
-

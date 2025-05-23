@@ -1,9 +1,10 @@
 --- old.declarationEmitNamespaceMergedWithInterfaceNestedFunction.js
 +++ new.declarationEmitNamespaceMergedWithInterfaceNestedFunction.js
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
+     }
      Bar.biz = biz;
  })(Bar || (Bar = {}));
-
+-
 -
 -//// [declarationEmitNamespaceMergedWithInterfaceNestedFunction.d.ts]
 -export interface Foo {
@@ -16,4 +17,3 @@
 -    function biz(): number;
 -}
 -export {};
--

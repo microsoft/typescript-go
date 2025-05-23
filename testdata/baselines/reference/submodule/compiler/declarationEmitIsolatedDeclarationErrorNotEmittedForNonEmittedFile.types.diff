@@ -68,4 +68,3 @@
 ->trpc : { procedure: {}; middleware: <TNewParams extends Record<string, any>>(fn: import("node_modules/@trpc/server/middleware").MiddlewareFunction<{ _config: import("node_modules/@trpc/server/internals/config").RootConfig<{ errorShape: import("node_modules/@trpc/server/internals/utils").ErrorFormatterShape<never>; }>; }, TNewParams>) => import("node_modules/@trpc/server/middleware").MiddlewareBuilder<{ _config: import("node_modules/@trpc/server/internals/config").RootConfig<{ errorShape: import("node_modules/@trpc/server/internals/utils").ErrorFormatterShape<never>; }>; }, TNewParams>; router: {}; }
 +>trpc : { procedure: {}; middleware: <TNewParams extends Record<string, any>>(fn: MiddlewareFunction<{ _config: RootConfig<{ errorShape: ErrorFormatterShape<never>; }>; }, TNewParams>) => MiddlewareBuilder<{ _config: RootConfig<{ errorShape: ErrorFormatterShape<never>; }>; }, TNewParams>; router: {}; }
  >procedure : {}
-

@@ -28,4 +28,3 @@
 ->claw : Symbol(Enum.claw, Decl(disallowLineTerminatorBeforeArrow.ts, 65, 22))
 +>claw : Symbol(claw, Decl(disallowLineTerminatorBeforeArrow.ts, 65, 22))
  }
-

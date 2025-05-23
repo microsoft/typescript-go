@@ -39,4 +39,3 @@
  >Parent : Symbol(Parent, Decl(privateNamesConstructorChain-2.ts, 0, 0))
 ->accessChildProps : Symbol(Parent.accessChildProps, Decl(privateNamesConstructorChain-2.ts, 2, 20))
 +>accessChildProps : Symbol(accessChildProps, Decl(privateNamesConstructorChain-2.ts, 2, 20))
-

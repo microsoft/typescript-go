@@ -16,4 +16,3 @@
 ->myMethod : Symbol(C.myMethod, Decl(inheritanceGrandParentPrivateMemberCollisionWithPublicMember.ts, 6, 19))
 +>myMethod : Symbol(myMethod, Decl(inheritanceGrandParentPrivateMemberCollisionWithPublicMember.ts, 6, 19))
  }
-

@@ -122,4 +122,3 @@
 ->x : Symbol((Anonymous class).x, Decl(staticFieldWithInterfaceContext.ts, 24, 61))
 +>x : Symbol(x, Decl(staticFieldWithInterfaceContext.ts, 24, 61))
  >a : Symbol(a, Decl(staticFieldWithInterfaceContext.ts, 24, 74))
-

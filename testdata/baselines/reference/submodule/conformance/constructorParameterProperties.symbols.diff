@@ -90,4 +90,3 @@
  >d : Symbol(d, Decl(constructorParameterProperties.ts, 15, 3))
 ->z : Symbol(D.z, Decl(constructorParameterProperties.ts, 12, 35))
 +>z : Symbol(z, Decl(constructorParameterProperties.ts, 12, 35))
-

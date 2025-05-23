@@ -43,4 +43,3 @@
 ->copy : Symbol(A.copy, Decl(a.ts, 1, 7))
 +>copy : Symbol(copy, Decl(a.ts, 1, 7))
  >b : Symbol(b, Decl(main.ts, 4, 5))
-

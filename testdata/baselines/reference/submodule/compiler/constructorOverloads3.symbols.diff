@@ -18,4 +18,3 @@
  >f1 : Symbol(f1, Decl(constructorOverloads3.ts, 15, 3))
 ->bar1 : Symbol(Foo.bar1, Decl(constructorOverloads3.ts, 11, 36))
 +>bar1 : Symbol(bar1, Decl(constructorOverloads3.ts, 11, 36))
-

@@ -34,4 +34,3 @@
 +>bar : (p?: Foo | undefined) => void
 +>(p?: Foo) => {} : (p?: Foo | undefined) => void
 +>p : Foo | undefined
-

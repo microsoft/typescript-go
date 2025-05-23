@@ -42,4 +42,3 @@
 ->find : Symbol(_Array.find, Decl(recursiveConditionalTypes2.ts, 54, 21))
 +>find : Symbol(find, Decl(recursiveConditionalTypes2.ts, 54, 21))
  >_ : Symbol(_, Decl(recursiveConditionalTypes2.ts, 60, 8))
-

@@ -157,4 +157,3 @@
  >grandchild : Symbol(grandchild, Decl(mergedInheritedClassInterface.ts, 39, 3))
 ->method2 : Symbol(ChildNoBaseClass.method2, Decl(mergedInheritedClassInterface.ts, 23, 24))
 +>method2 : Symbol(method2, Decl(mergedInheritedClassInterface.ts, 23, 24))
-

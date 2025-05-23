@@ -262,10 +262,10 @@
  function privateFunctionWithPrivateModuleReturnTypes() {
      return exporter.createExportedWidget2();
  }
-@@= skipped -24, +21 lines =@@
+ function privateFunctionWithPrivateModuleReturnTypes1() {
      return exporter.createExportedWidget4();
  }
-
+-
 -
 -//// [privacyFunctionReturnTypeDeclFile_GlobalWidgets.d.ts]
 -declare module "GlobalWidgets" {

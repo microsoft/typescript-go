@@ -44,4 +44,3 @@
  >i : Symbol(i, Decl(interfaceExtendingClassWithProtecteds.ts, 12, 3))
 ->x : Symbol(Foo.x, Decl(interfaceExtendingClassWithProtecteds.ts, 0, 11))
 +>x : Symbol(x, Decl(interfaceExtendingClassWithProtecteds.ts, 0, 11))
-

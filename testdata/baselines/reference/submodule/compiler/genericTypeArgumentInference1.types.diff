@@ -73,4 +73,3 @@
 ->_ : Underscore.Static
 +>_ : Static
  >identity : <T>(value: T) => T
-

@@ -44,4 +44,3 @@
 +>foo : Symbol(foo, Decl(fluentClasses.ts, 0, 9))
 +>bar : Symbol(bar, Decl(fluentClasses.ts, 5, 19))
 +>baz : Symbol(baz, Decl(fluentClasses.ts, 10, 19))
-

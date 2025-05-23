@@ -62,4 +62,3 @@
 +>"foo".match : Symbol(match, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 +>match : Symbol(match, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 +>groups : Symbol(groups, Decl(lib.es2018.regexp.d.ts, --, --))
-

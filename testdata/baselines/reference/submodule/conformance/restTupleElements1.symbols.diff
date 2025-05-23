@@ -36,4 +36,3 @@
 +>x.charCodeAt : Symbol(charCodeAt, Decl(lib.es5.d.ts, --, --))
 +>x : Symbol(x, Decl(restTupleElements1.ts, 67, 29))
 +>charCodeAt : Symbol(charCodeAt, Decl(lib.es5.d.ts, --, --))
-

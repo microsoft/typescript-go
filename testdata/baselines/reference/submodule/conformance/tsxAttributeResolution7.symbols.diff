@@ -35,4 +35,3 @@
 ->data-bar : Symbol(data-bar, Decl(file.tsx, 13, 6))
 +>test1 : Symbol(test1, Decl(file.tsx, 2, 30))
 +>data-bar : Symbol("data-bar", Decl(file.tsx, 13, 6))
-

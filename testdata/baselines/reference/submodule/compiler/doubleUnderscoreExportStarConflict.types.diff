@@ -11,4 +11,3 @@
  export function __foo(): string | void {}
 ->__foo : () => string | void
 +>__foo : () => void | string
-

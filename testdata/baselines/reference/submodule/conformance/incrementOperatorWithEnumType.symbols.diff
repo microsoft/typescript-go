@@ -38,4 +38,3 @@
  >ENUM1 : Symbol(ENUM1, Decl(incrementOperatorWithEnumType.ts, 0, 0))
 ->B : Symbol(ENUM1.B, Decl(incrementOperatorWithEnumType.ts, 2, 15))
 +>B : Symbol(B, Decl(incrementOperatorWithEnumType.ts, 2, 15))
-

@@ -221,4 +221,3 @@
 +>c7_v1 : any
 +>new C7() : any
 +>C7 : (num: number) => void
-

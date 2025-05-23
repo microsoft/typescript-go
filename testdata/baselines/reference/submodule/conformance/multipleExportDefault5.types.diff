@@ -10,4 +10,3 @@
  export default class C {}
 ->C : bar
 +>C : default
-

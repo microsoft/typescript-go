@@ -21,4 +21,3 @@
 ->GetNumber : Symbol(SomeBase.GetNumber, Decl(staticMemberAccessOffDerivedType1.ts, 0, 16))
 +>GetNumber : Symbol(GetNumber, Decl(staticMemberAccessOffDerivedType1.ts, 0, 16))
  }
-

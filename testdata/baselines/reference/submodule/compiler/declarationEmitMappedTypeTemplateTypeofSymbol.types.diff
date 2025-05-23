@@ -47,4 +47,3 @@
 +>timestamp : { (Unique symbol): true; }
 +>now() : { (Unique symbol): true; }
 +>now : () => { (Unique symbol): true; }
-

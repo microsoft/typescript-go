@@ -10,4 +10,3 @@
 +>Thing : typeof Thing
 +>OtherThing : typeof OtherThing
 +>default : typeof OtherThing
-

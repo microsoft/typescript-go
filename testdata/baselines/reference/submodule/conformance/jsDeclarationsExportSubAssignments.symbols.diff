@@ -22,4 +22,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(Foo, Decl(cls.js, 3, 2))
  >Strings : Symbol(Strings, Decl(cls.js, 0, 5))
-

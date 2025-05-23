@@ -7,4 +7,3 @@
 ->x : Symbol(X.x, Decl(trailingCommasInGetter.ts, 0, 9))
 +>x : Symbol(x, Decl(trailingCommasInGetter.ts, 0, 9))
  }
-

@@ -29,4 +29,3 @@
 ->prototype : Symbol(NewAjax.prototype)
 ->case6_unexpectedlyResolvesPathToNodeModules : Symbol(NewAjax.case6_unexpectedlyResolvesPathToNodeModules, Decl(index.js, 9, 1))
 +>prototype : Symbol(prototype)
-

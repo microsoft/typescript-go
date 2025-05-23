@@ -18,4 +18,3 @@
 ->slice : Symbol(String.slice, Decl(lib.es5.d.ts, --, --))
 +>slice : Symbol(slice, Decl(lib.es5.d.ts, --, --))
  }
-

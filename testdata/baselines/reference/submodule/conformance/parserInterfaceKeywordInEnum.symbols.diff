@@ -7,4 +7,3 @@
 ->interface : Symbol(Bar.interface, Decl(parserInterfaceKeywordInEnum.ts, 0, 10))
 +>interface : Symbol(interface, Decl(parserInterfaceKeywordInEnum.ts, 0, 10))
  }
-

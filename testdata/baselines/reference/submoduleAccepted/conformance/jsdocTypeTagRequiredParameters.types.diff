@@ -42,4 +42,3 @@
  >h() : void
 ->h : (s: string) => void
 +>h : (s: any) => void
-

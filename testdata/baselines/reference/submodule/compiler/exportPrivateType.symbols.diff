@@ -45,4 +45,3 @@
 ->g : Symbol(foo.g, Decl(exportPrivateType.ts, 23, 14))
 +>g : Symbol(g, Decl(exportPrivateType.ts, 23, 14))
 
-

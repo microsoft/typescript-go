@@ -44,4 +44,3 @@
  >e : Symbol(e, Decl(derivedClassTransitivity3.ts, 16, 3))
 ->foo : Symbol(E.foo, Decl(derivedClassTransitivity3.ts, 10, 25))
 +>foo : Symbol(foo, Decl(derivedClassTransitivity3.ts, 10, 25))
-

@@ -613,4 +613,3 @@
 +>NumberFormat : NumberFormatConstructor
 +>supportedLocalesOf : { (locales: string | string[], options?: NumberFormatOptions): string[]; (locales: LocalesArgument, options?: NumberFormatOptions): string[]; }
  >readonlyLocales : readonly string[]
-

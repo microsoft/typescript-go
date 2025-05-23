@@ -40,4 +40,3 @@
  export = server;
 ->server : { (): server.connectExport; foo: Date; }
 +>server : { (): connectExport; foo: Date; }
-

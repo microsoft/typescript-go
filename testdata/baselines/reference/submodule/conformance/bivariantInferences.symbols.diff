@@ -19,4 +19,3 @@
 ->equalsShallow : Symbol(Array.equalsShallow, Decl(bivariantInferences.ts, 2, 20), Decl(bivariantInferences.ts, 2, 20), Decl(bivariantInferences.ts, 2, 20), Decl(bivariantInferences.ts, 2, 20))
 +>equalsShallow : Symbol(equalsShallow, Decl(bivariantInferences.ts, 2, 20), Decl(bivariantInferences.ts, 2, 20), Decl(bivariantInferences.ts, 2, 20), Decl(bivariantInferences.ts, 2, 20))
  >b : Symbol(b, Decl(bivariantInferences.ts, 7, 13))
-

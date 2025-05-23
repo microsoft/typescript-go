@@ -11,4 +11,3 @@
 ->"a" : Symbol("a", Decl(parserInExpression1.ts, 0, 20))
 +>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
 +>"a" : Symbol(a, Decl(parserInExpression1.ts, 0, 20))
-

@@ -27,4 +27,3 @@
 ->y : Symbol(Baz.y, Decl(implementsIncorrectlyNoAssertion.ts, 8, 14))
 +>y : Symbol(y, Decl(implementsIncorrectlyNoAssertion.ts, 8, 14))
  }
-

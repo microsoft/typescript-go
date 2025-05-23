@@ -26,4 +26,3 @@
  export declare type x = 1;
 ->x : Symbol(x, Decl(x.js, 0, 0), Decl(y.d.ts, 0, 0))
 +>x : Symbol(x, Decl(y.d.ts, 0, 0))
-

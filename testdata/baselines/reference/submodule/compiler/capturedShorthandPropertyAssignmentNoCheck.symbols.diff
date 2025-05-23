@@ -28,4 +28,3 @@
 ->log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 +>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
  >result : Symbol(result, Decl(capturedShorthandPropertyAssignmentNoCheck.ts, 4, 5))
-

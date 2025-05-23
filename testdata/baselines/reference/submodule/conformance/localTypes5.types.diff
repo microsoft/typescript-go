@@ -59,4 +59,3 @@
 +>x : Y<void, number, boolean, Date, string>
 +>foo<void>() : Y<void, number, boolean, Date, string>
 +>foo : <A>() => Y<A, number, boolean, Date, string>
-

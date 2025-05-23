@@ -9,4 +9,3 @@
  >orbitol : Symbol(orbitol, Decl(plainJSRedeclare.js, 0, 5))
 ->toExponential : Symbol(Number.toExponential, Decl(lib.es5.d.ts, --, --))
 +>toExponential : Symbol(toExponential, Decl(lib.es5.d.ts, --, --))
-

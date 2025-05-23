@@ -42,4 +42,3 @@
 +>foo : Symbol(foo, Decl(fluentInterfaces.ts, 0, 13))
 +>bar : Symbol(bar, Decl(fluentInterfaces.ts, 3, 23))
 +>baz : Symbol(baz, Decl(fluentInterfaces.ts, 6, 23))
-

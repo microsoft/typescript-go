@@ -11,4 +11,3 @@
  export = x;
 ->x : typeof x
 +>x : any
-

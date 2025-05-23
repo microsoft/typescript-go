@@ -24,4 +24,3 @@
  >B : Symbol(B, Decl(funduleExportedClassIsUsedBeforeDeclaration.ts, 2, 1), Decl(funduleExportedClassIsUsedBeforeDeclaration.ts, 3, 26))
 ->C : Symbol(B.C, Decl(funduleExportedClassIsUsedBeforeDeclaration.ts, 4, 18))
 +>C : Symbol(C, Decl(funduleExportedClassIsUsedBeforeDeclaration.ts, 4, 18))
-

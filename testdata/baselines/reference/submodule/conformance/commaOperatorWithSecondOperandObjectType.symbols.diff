@@ -31,4 +31,3 @@
 ->toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
  >CLASS : Symbol(CLASS, Decl(commaOperatorWithSecondOperandObjectType.ts, 4, 19))
-

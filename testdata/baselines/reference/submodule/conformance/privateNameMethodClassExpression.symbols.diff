@@ -57,4 +57,3 @@
 ->getInstance : Symbol(C.getInstance, Decl(privateNameMethodClassExpression.ts, 2, 28))
 +>getInstance : Symbol(getInstance, Decl(privateNameMethodClassExpression.ts, 2, 28))
 
-

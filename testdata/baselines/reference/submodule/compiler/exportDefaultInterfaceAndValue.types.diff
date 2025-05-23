@@ -6,4 +6,3 @@
  declare var x: A;
 ->x : A
 +>x : default
-

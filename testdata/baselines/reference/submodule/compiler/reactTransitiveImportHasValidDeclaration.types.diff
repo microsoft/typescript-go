@@ -55,4 +55,3 @@
  export default Form
 ->Form : import("node_modules/create-emotion-styled/index").StyledOtherComponent<{}, import("node_modules/react/index").DetailedHTMLProps<import("node_modules/react/index").HTMLAttributes<HTMLDivElement>, HTMLDivElement>, any>
 +>Form : StyledOtherComponent<{}, DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>, any>
-

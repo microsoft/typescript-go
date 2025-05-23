@@ -138,4 +138,3 @@
  export const cjsNonmain = true;
 ->cjsNonmain : Symbol(cjs.cjsNonmain, Decl(index.d.cts, 7, 12))
 +>cjsNonmain : Symbol(cjsNonmain, Decl(index.d.cts, 7, 12))
-

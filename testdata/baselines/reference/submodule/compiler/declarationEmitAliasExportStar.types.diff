@@ -15,4 +15,3 @@
 +>(param: things.ThingB) => null : (param: ThingB) => any
 +>param : ThingB
  >things : any
-

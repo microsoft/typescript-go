@@ -31,4 +31,3 @@
  >s : Symbol(s, Decl(contextuallyTypedSymbolNamedProperties.ts, 18, 56))
 ->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
 +>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
-

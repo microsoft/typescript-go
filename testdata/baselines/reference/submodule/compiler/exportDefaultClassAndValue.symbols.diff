@@ -6,4 +6,3 @@
  export default class Foo {}
 ->Foo : Symbol(foo, Decl(exportDefaultClassAndValue.ts, 0, 13), Decl(exportDefaultClassAndValue.ts, 1, 18))
 +>Foo : Symbol(default, Decl(exportDefaultClassAndValue.ts, 0, 13), Decl(exportDefaultClassAndValue.ts, 1, 18))
-

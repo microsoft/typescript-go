@@ -23,4 +23,3 @@
 ->BAR : Symbol(Foo.BAR, Decl(file2.ts, 0, 23))
 +>BAR : Symbol(BAR, Decl(file2.ts, 0, 23))
  }
-

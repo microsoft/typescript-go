@@ -24,4 +24,3 @@
 ->toStringTag : Symbol(SymbolConstructor.toStringTag, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 +>toStringTag : Symbol(toStringTag, Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
  >x : Symbol(x, Decl(symbolProperty28.ts, 2, 16))
-

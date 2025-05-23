@@ -16,4 +16,3 @@
  export import defaultBinding2 from "server"; // non referenced
 ->defaultBinding2 : number
 +>defaultBinding2 : any
-

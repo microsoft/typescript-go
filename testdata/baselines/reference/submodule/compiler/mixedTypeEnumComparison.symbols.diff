@@ -123,4 +123,3 @@
  >E2 : Symbol(E2, Decl(mixedTypeEnumComparison.ts, 27, 37))
 ->C1 : Symbol(E2.C1, Decl(mixedTypeEnumComparison.ts, 31, 14))
 +>C1 : Symbol(C1, Decl(mixedTypeEnumComparison.ts, 31, 14))
-

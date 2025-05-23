@@ -104,4 +104,3 @@
  >M : Symbol(M, Decl(decrementOperatorWithNumberType.ts, 6, 1))
 ->n : Symbol(M.n, Decl(decrementOperatorWithNumberType.ts, 8, 14))
 +>n : Symbol(n, Decl(decrementOperatorWithNumberType.ts, 8, 14))
-

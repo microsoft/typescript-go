@@ -220,4 +220,3 @@
  >m4 : Symbol(m4, Decl(importDecl_require4.ts, 0, 0))
 ->d : Symbol(m4.d, Decl(importDecl_require.ts, 0, 0))
 +>d : Symbol(d, Decl(importDecl_require.ts, 0, 0))
-

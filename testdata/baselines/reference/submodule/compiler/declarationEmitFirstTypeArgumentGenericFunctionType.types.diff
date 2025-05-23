@@ -55,4 +55,3 @@
  var prop4: Y<(<Tany>() => Tany), <Tany>() => Tany>; // parenthesized first type argument
 ->prop4 : Y<(<Tany>() => Tany), <Tany>() => Tany>
 +>prop4 : Y<<Tany>() => Tany, <Tany>() => Tany>
-

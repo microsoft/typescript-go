@@ -1,9 +1,10 @@
 --- old.importAttributes2(module=esnext).js
 +++ new.importAttributes2(module=esnext).js
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
+ //// [2.js]
  export { a, b } from './0' with {};
  export { a as c, b as d } from './0' with { a: "a", b: "b", c: "c" };
-
+-
 -
 -//// [0.d.ts]
 -export declare const a = 1;
@@ -16,4 +17,3 @@
 -//// [2.d.ts]
 -export { a, b } from './0';
 -export { a as c, b as d } from './0';
--

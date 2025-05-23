@@ -12,4 +12,3 @@
  <>eof   // Error
 -><>eof   // Error : JSX.Element
 +><>eof   // Error : Element
-

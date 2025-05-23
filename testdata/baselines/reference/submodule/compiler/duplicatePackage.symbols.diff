@@ -36,4 +36,3 @@
 ->x : Symbol(X.x, Decl(index.d.ts, 0, 24))
 +>x : Symbol(x, Decl(index.d.ts, 0, 24))
  }
-

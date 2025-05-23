@@ -58,4 +58,3 @@
  >'en-GB' : "en-GB"
 ->resolvedOptions : () => Intl.ResolvedNumberFormatOptions
 +>resolvedOptions : () => ResolvedNumberFormatOptions
-

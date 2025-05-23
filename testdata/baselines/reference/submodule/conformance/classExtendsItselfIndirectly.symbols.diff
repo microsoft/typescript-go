@@ -45,4 +45,3 @@
 ->baz : Symbol(E2.baz, Decl(classExtendsItselfIndirectly.ts, 10, 27))
 +>baz : Symbol(baz, Decl(classExtendsItselfIndirectly.ts, 10, 27))
  >T : Symbol(T, Decl(classExtendsItselfIndirectly.ts, 10, 9))
-

@@ -7,4 +7,3 @@
 ->C : import("multipleExportDefault3").default
 +>C : default
 
-

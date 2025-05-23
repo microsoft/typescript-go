@@ -71,4 +71,3 @@
  >isDisjointFrom : (other: ReadonlySetLike<unknown>) => boolean
 ->numberSetLike : { size: number; keys(): Generator<number, void, unknown>; has(x: any): boolean; }
 +>numberSetLike : { size: number; keys: () => Generator<number, void, unknown>; has: (x: any) => boolean; }
-

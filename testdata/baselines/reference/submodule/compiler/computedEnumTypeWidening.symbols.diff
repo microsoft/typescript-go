@@ -342,4 +342,3 @@
  >MyDeclaredEnum : Symbol(MyDeclaredEnum, Decl(computedEnumTypeWidening.ts, 70, 16))
 ->B : Symbol(MyDeclaredEnum.B, Decl(computedEnumTypeWidening.ts, 72, 32))
 +>B : Symbol(B, Decl(computedEnumTypeWidening.ts, 72, 32))
-

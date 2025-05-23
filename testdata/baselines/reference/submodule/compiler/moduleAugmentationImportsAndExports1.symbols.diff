@@ -47,4 +47,3 @@
 ->n : Symbol(B.n, Decl(f2.ts, 0, 16))
 +>foo : Symbol(foo, Decl(f3.ts, 5, 17))
 +>n : Symbol(n, Decl(f2.ts, 0, 16))
-

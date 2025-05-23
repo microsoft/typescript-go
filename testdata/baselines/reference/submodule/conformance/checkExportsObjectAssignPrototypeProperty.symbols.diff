@@ -189,4 +189,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(Person, Decl(mod1.js, 0, 0))
  >Person : Symbol(Person, Decl(mod1.js, 0, 0))
-

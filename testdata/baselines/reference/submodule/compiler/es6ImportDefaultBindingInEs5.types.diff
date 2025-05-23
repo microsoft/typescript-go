@@ -6,4 +6,3 @@
  import defaultBinding from "./es6ImportDefaultBindingInEs5_0";
 ->defaultBinding : any
 +>defaultBinding : number
-

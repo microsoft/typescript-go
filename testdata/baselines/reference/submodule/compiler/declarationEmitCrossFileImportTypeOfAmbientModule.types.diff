@@ -12,4 +12,3 @@
 ->item : typeof import("@namespace/component").Foo
 +>reeexported : typeof Foo
 +>item : typeof Foo
-

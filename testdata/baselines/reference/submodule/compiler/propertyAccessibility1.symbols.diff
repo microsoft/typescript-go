@@ -17,4 +17,3 @@
  >f : Symbol(f, Decl(propertyAccessibility1.ts, 3, 3))
 ->privProp : Symbol(Foo.privProp, Decl(propertyAccessibility1.ts, 0, 11))
 +>privProp : Symbol(privProp, Decl(propertyAccessibility1.ts, 0, 11))
-

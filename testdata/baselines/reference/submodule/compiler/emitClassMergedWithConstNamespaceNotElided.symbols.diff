@@ -39,4 +39,3 @@
  >Clone : Symbol(Clone, Decl(usage.ts, 0, 8))
 ->clone : Symbol(Clone.clone, Decl(enum.d.ts, 9, 20))
 +>clone : Symbol(clone, Decl(enum.d.ts, 9, 20))
-

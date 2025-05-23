@@ -32,4 +32,3 @@
 ->span : Symbol(JSX.IntrinsicElements.span, Decl(file.tsx, 3, 25))
 +>span : Symbol(span, Decl(file.tsx, 3, 25))
  >q : Symbol(q, Decl(file.tsx, 15, 5))
-

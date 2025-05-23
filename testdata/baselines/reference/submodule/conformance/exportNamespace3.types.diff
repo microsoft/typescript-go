@@ -22,4 +22,3 @@
 ->a : typeof a
 +>a : typeof import("b")
  >A : any
-

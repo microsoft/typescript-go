@@ -63,4 +63,3 @@
 ->bar : Symbol(EB.bar, Decl(override3.ts, 21, 18))
 +>bar : Symbol(bar, Decl(override3.ts, 21, 18))
  }
-

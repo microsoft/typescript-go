@@ -59,4 +59,3 @@
 ->register : Symbol(I1.register, Decl(varArgsOnConstructorTypes.ts, 15, 21), Decl(varArgsOnConstructorTypes.ts, 16, 53))
 +>register : Symbol(register, Decl(varArgsOnConstructorTypes.ts, 15, 21), Decl(varArgsOnConstructorTypes.ts, 16, 53))
  >B : Symbol(B, Decl(varArgsOnConstructorTypes.ts, 2, 1))
-

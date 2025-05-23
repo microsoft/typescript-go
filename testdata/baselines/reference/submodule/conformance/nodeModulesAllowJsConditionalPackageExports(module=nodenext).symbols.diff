@@ -149,4 +149,3 @@
  export const cjsSource = true;
 ->cjsSource : Symbol(cjs.cjsSource, Decl(index.d.cts, 9, 12))
 +>cjsSource : Symbol(cjsSource, Decl(index.d.cts, 9, 12))
-

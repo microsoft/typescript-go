@@ -53,4 +53,3 @@
  >m2 : Symbol(m2, Decl(collisionCodeGenModuleWithModuleReopening.ts, 11, 23), Decl(collisionCodeGenModuleWithModuleReopening.ts, 19, 23))
 ->m2 : Symbol(m2.m2, Decl(collisionCodeGenModuleWithModuleReopening.ts, 20, 11))
 +>m2 : Symbol(m2, Decl(collisionCodeGenModuleWithModuleReopening.ts, 20, 11))
-

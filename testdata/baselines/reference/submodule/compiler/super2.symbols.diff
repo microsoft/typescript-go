@@ -107,4 +107,3 @@
  >results2 : Symbol(results2, Decl(super2.ts, 47, 3))
 ->y : Symbol(SubSub6.y, Decl(super2.ts, 39, 28))
 +>y : Symbol(y, Decl(super2.ts, 39, 28))
-

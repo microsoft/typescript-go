@@ -84,4 +84,3 @@
 +>_.identity : Symbol(identity, Decl(genericTypeArgumentInference1.ts, 5, 77))
 +>_ : Symbol(_, Decl(genericTypeArgumentInference1.ts, 9, 11))
 +>identity : Symbol(identity, Decl(genericTypeArgumentInference1.ts, 5, 77))
-

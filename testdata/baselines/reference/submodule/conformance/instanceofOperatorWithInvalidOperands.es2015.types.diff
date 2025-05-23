@@ -29,4 +29,3 @@
  >x : any
 ->o6 : { [Symbol.hasInstance](value: unknown): number; }
 +>o6 : { [Symbol.hasInstance]: (value: unknown) => number; }
-

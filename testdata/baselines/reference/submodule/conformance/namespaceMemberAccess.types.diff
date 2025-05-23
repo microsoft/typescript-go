@@ -17,4 +17,3 @@
  >A : any
 ->types : typeof types
 +>types : typeof import("/a")
-

@@ -145,4 +145,3 @@
  >Color : Symbol(Color, Decl(for-inStatements.ts, 73, 22))
 ->Blue : Symbol(Color.Blue, Decl(for-inStatements.ts, 75, 17))
 +>Blue : Symbol(Blue, Decl(for-inStatements.ts, 75, 17))
-

@@ -24,4 +24,3 @@
  >actionB : Action<"ACTION_B", boolean>
 ->printFn : (action: typeof actionA | typeof actionB) => void
 +>printFn : (action: Action<"ACTION_A", string> | Action<"ACTION_B", boolean>) => void
-

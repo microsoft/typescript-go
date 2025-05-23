@@ -36,4 +36,3 @@
 ->new D().x : Symbol(A.x, Decl(a.d.ts, 0, 20))
  >D : Symbol(D, Decl(b.js, 5, 10))
 ->x : Symbol(A.x, Decl(a.d.ts, 0, 20))
-

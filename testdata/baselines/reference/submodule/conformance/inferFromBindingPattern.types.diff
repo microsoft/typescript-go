@@ -70,4 +70,3 @@
  >stringy() : string
 ->stringy : <T = string>(arg?: T) => T
 +>stringy : <T>(arg?: T | undefined) => T
-

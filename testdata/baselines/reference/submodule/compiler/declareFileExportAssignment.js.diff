@@ -1,9 +1,10 @@
 --- old.declareFileExportAssignment.js
 +++ new.declareFileExportAssignment.js
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
+ "use strict";
  var m2;
  module.exports = m2;
-
+-
 -
 -//// [declareFileExportAssignment.d.ts]
 -declare namespace m2 {
@@ -21,4 +22,3 @@
 -    test2(): m2.connectModule;
 -};
 -export = m2;
--

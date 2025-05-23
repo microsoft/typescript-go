@@ -24,4 +24,3 @@
  >f1() : new () => number
 ->f1 : () => { new (): number; }
 +>f1 : () => new () => number
-

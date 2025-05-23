@@ -38,4 +38,3 @@
  >d : Symbol(d, Decl(classConstructorParametersAccessibility3.ts, 11, 3))
 ->p : Symbol(Derived.p, Decl(classConstructorParametersAccessibility3.ts, 5, 16))
 +>p : Symbol(p, Decl(classConstructorParametersAccessibility3.ts, 5, 16))
-

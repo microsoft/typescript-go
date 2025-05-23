@@ -18,4 +18,3 @@
  >o : Symbol(o, Decl(voidParamAssignmentCompatibility.ts, 7, 13))
 ->method : Symbol(Obj.method, Decl(voidParamAssignmentCompatibility.ts, 3, 18))
 +>method : Symbol(method, Decl(voidParamAssignmentCompatibility.ts, 3, 18))
-

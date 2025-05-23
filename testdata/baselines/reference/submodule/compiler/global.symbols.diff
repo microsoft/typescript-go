@@ -10,4 +10,3 @@
 ->f : Symbol(M.f, Decl(global.ts, 0, 10))
 +>f : Symbol(f, Decl(global.ts, 0, 10))
 
-

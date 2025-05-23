@@ -20,4 +20,3 @@
 ->add : Symbol(List.add, Decl(typedGenericPrototypeMember.ts, 0, 15))
 +>prototype : Symbol(prototype)
 +>add : Symbol(add, Decl(typedGenericPrototypeMember.ts, 0, 15))
-

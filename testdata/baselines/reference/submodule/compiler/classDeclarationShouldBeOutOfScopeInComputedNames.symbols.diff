@@ -50,4 +50,3 @@
 ->p2 : Symbol(A.p2, Decl(classDeclarationShouldBeOutOfScopeInComputedNames.ts, 1, 34))
 +>p2 : Symbol(p2, Decl(classDeclarationShouldBeOutOfScopeInComputedNames.ts, 1, 34))
  }
-

@@ -18,4 +18,3 @@
 ->method : <T>(iterable: Iterable<T>) => T
 +>method : <T>(iterable: Iterable<T, any, any>) => T
  >"test" : "test"
-

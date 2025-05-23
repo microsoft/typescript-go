@@ -40,4 +40,3 @@
  >r : Symbol(r, Decl(genericPrototypeProperty.ts, 5, 3))
 ->foo : Symbol(C.foo, Decl(genericPrototypeProperty.ts, 1, 9))
 +>foo : Symbol(foo, Decl(genericPrototypeProperty.ts, 1, 9))
-

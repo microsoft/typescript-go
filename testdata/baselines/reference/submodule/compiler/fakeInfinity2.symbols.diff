@@ -22,4 +22,3 @@
  >X : Symbol(X, Decl(fakeInfinity2.ts, 3, 1))
 ->f : Symbol(X.f, Decl(fakeInfinity2.ts, 7, 19))
 +>f : Symbol(f, Decl(fakeInfinity2.ts, 7, 19))
-

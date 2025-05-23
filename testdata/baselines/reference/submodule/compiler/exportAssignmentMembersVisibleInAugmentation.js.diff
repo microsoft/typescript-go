@@ -1,9 +1,10 @@
 --- old.exportAssignmentMembersVisibleInAugmentation.js
 +++ new.exportAssignmentMembersVisibleInAugmentation.js
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
+ //// [b.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-
+-
 -
 -//// [a.d.ts]
 -declare module "foo" {
@@ -15,4 +16,3 @@
 -declare module "foo" {
 -    function g(): foo.T;
 -}
--

@@ -27,4 +27,3 @@
 ->formatRangeToParts : Symbol(Intl.DateTimeFormat.formatRangeToParts, Decl(lib.es2021.intl.d.ts, --, --))
 +>DateTimeFormat : Symbol(DateTimeFormat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(lib.es2017.intl.d.ts, --, --), Decl(lib.es2021.intl.d.ts, --, --))
 +>formatRangeToParts : Symbol(formatRangeToParts, Decl(lib.es2021.intl.d.ts, --, --))
-

@@ -41,4 +41,3 @@
 ->a : { foo: string; bar?: number; baz?(): string; }
 +>a : { foo: string; bar?: number; baz?: () => string; }
  >i : I
-

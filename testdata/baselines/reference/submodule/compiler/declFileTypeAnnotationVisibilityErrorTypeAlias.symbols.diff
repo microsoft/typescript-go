@@ -22,4 +22,3 @@
 ->public1 : Symbol(m3.public1, Decl(declFileTypeAnnotationVisibilityErrorTypeAlias.ts, 25, 15))
 +>public1 : Symbol(public1, Decl(declFileTypeAnnotationVisibilityErrorTypeAlias.ts, 25, 15))
  }
-

@@ -68,4 +68,3 @@
  >i : Symbol(i, Decl(multiExtendsSplitInterfaces2.ts, 16, 3))
 ->i2 : Symbol(I.i2, Decl(multiExtendsSplitInterfaces2.ts, 12, 23))
 +>i2 : Symbol(i2, Decl(multiExtendsSplitInterfaces2.ts, 12, 23))
-

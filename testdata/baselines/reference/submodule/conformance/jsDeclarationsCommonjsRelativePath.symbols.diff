@@ -28,4 +28,3 @@
 ->module : Symbol(module, Decl(thing.js, 1, 14))
 ->exports : Symbol(module.exports, Decl(thing.js, 0, 0))
 ->Thing : Symbol(Thing, Decl(thing.js, 2, 18))
-

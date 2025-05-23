@@ -16,4 +16,3 @@
 ->a : Symbol(A.a, Decl(file2.ts, 5, 17))
 +>a : Symbol(a, Decl(file2.ts, 5, 17))
  }
-

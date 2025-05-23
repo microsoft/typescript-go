@@ -349,4 +349,3 @@
  >i : Symbol(i, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 96, 3))
 ->foo8 : Symbol(I.foo8, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 92, 53))
 +>foo8 : Symbol(foo8, Decl(genericCallWithConstraintsTypeArgumentInference.ts, 92, 53))
-

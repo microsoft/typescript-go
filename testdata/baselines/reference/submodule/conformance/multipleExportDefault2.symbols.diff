@@ -7,4 +7,3 @@
 ->Foo : Symbol(Foo, Decl(multipleExportDefault2.ts, 2, 2))
 +>Foo : Symbol(default, Decl(multipleExportDefault2.ts, 2, 2))
 
-

@@ -47,4 +47,3 @@
 +>resolve : Symbol(resolve, Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --))
 +>then : Symbol(then, Decl(lib.es5.d.ts, --, --))
  >v : Symbol(v, Decl(implicitAnyGenericTypeInference.ts, 28, 23))
-

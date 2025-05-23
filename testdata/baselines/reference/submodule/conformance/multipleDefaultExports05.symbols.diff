@@ -14,4 +14,3 @@
  export default class CC1 {}
 ->CC1 : Symbol(CC1, Decl(multipleDefaultExports05.ts, 2, 27))
 +>CC1 : Symbol(default, Decl(multipleDefaultExports05.ts, 2, 27))
-

@@ -6,4 +6,3 @@
  >m3a : Symbol(m3a, Decl(augmentedTypesModules3.ts, 2, 12), Decl(augmentedTypesModules3.ts, 4, 25))
 ->foo : Symbol(m3a.foo, Decl(augmentedTypesModules3.ts, 5, 11))
 +>foo : Symbol(foo, Decl(augmentedTypesModules3.ts, 5, 11))
-

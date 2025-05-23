@@ -16,4 +16,3 @@
 ->sq : (n?: number) => number
 +>sq : (n?: number | undefined) => number
  >3 : 3
-

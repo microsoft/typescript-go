@@ -26,4 +26,3 @@
 +>y : RootProps
 +>bar() : RootProps
 +>bar : () => RootProps
-

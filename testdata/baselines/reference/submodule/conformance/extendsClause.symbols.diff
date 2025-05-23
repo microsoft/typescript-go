@@ -29,4 +29,3 @@
  >types : Symbol(types, Decl(index.ts, 0, 8))
 ->C : Symbol(types.C, Decl(types.ts, 0, 21))
 +>C : Symbol(C, Decl(types.ts, 0, 21))
-

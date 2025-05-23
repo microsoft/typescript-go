@@ -50,4 +50,3 @@
 +>module : { y: { y: string; }; }
 +>exports : { y: string; }
 +>y : { y: string; }
-

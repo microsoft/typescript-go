@@ -26,4 +26,3 @@
 ->p : Symbol(A.p, Decl(scopeCheckClassProperty.ts, 6, 9))
 +>p : Symbol(p, Decl(scopeCheckClassProperty.ts, 6, 9))
  }
-

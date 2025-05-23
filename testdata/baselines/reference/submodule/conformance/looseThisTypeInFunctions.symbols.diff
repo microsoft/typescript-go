@@ -185,4 +185,3 @@
 ->n : Symbol(I.n, Decl(looseThisTypeInFunctions.ts, 0, 13))
 +>n : Symbol(n, Decl(looseThisTypeInFunctions.ts, 0, 13))
  }
-

@@ -39,4 +39,3 @@
 ->data-prop : Symbol(data-prop, Decl(file.tsx, 20, 25))
 +>data-prop : Symbol("data-prop", Decl(file.tsx, 20, 25))
 
-

@@ -149,4 +149,3 @@
 ->n : Symbol(Contextual.n, Decl(thisTypeInAccessors.ts, 31, 18))
 +>n : Symbol(n, Decl(thisTypeInAccessors.ts, 31, 18))
  }
-

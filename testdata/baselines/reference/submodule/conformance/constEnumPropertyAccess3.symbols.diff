@@ -112,4 +112,3 @@
 ->toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 +>"E" : Symbol(E, Decl(constEnumPropertyAccess3.ts, 4, 17))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

@@ -57,4 +57,3 @@
 ->getClass : Symbol(D.getClass, Decl(privateNameStaticMethodClassExpression.ts, 2, 35))
 +>getClass : Symbol(getClass, Decl(privateNameStaticMethodClassExpression.ts, 2, 35))
 
-

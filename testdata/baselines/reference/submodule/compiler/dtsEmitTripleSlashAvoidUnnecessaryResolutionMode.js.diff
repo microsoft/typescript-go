@@ -29,5 +29,4 @@
 -//// [app.d.mts]
 -/// <reference types="node" preserve="true" />
 -export declare function drainStream(stream: NodeJS.ReadableStream): Promise<void>;
--
 +<no content>

@@ -123,4 +123,3 @@
 ->arguments : Symbol(StaticArgumentsFn.arguments, Decl(decl.d.ts, 51, 28))
 +>arguments : Symbol(arguments, Decl(decl.d.ts, 51, 28))
  }
-

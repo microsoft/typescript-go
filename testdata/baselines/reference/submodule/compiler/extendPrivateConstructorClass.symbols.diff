@@ -10,4 +10,3 @@
 ->XYZ : Symbol(abc.XYZ, Decl(extendPrivateConstructorClass.ts, 0, 23))
 +>XYZ : Symbol(XYZ, Decl(extendPrivateConstructorClass.ts, 0, 23))
  }
-

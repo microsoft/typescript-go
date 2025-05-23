@@ -53,4 +53,3 @@
 +>c.foo : Symbol(foo, Decl(typeParametersAvailableInNestedScope.ts, 6, 5))
 +>c : Symbol(c, Decl(typeParametersAvailableInNestedScope.ts, 17, 3))
 +>foo : Symbol(foo, Decl(typeParametersAvailableInNestedScope.ts, 6, 5))
-

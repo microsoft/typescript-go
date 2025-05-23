@@ -16,4 +16,3 @@
 ->foo4 : <T_1>(test: string) => any
 +>foo4 : <T>(test: string) => any
  >test : T
-

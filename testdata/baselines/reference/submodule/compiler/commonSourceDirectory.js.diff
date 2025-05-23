@@ -14,4 +14,3 @@
 -//// [/app/bin/index.d.ts]
 -/// <reference path="../../types/bar.d.ts" preserve="true" />
 -export {};
--

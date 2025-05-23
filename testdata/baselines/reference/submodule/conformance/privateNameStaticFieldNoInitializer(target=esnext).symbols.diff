@@ -15,4 +15,3 @@
 ->#x : Symbol(C2.#x, Decl(privateNameStaticFieldNoInitializer.ts, 4, 10))
 +>#x : Symbol(#x, Decl(privateNameStaticFieldNoInitializer.ts, 4, 10))
  }
-

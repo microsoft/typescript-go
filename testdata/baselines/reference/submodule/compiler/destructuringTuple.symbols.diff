@@ -31,4 +31,3 @@
 ->concat : Symbol(Array.concat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>concat : Symbol(concat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >e : Symbol(e, Decl(destructuringTuple.ts, 12, 48))
-

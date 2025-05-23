@@ -46,4 +46,3 @@
 ->args : Symbol(Installer.args, Decl(npm-install.js, 0, 23), Decl(npm-install.js, 5, 15))
 +>i : Symbol(i, Decl(npm-install.js, 10, 3))
 +>i : Symbol(i, Decl(npm-install.js, 10, 3))
-

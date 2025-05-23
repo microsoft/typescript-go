@@ -159,4 +159,3 @@
 ->flatMap : Symbol(IteratorObject.flatMap, Decl(lib.esnext.iterator.d.ts, --, --))
 +>flatMap : Symbol(flatMap, Decl(lib.esnext.iterator.d.ts, --, --))
  >g1 : Symbol(g1, Decl(builtinIterator.ts, 68, 13))
-

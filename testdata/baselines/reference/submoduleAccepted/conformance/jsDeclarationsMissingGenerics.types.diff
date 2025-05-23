@@ -17,4 +17,3 @@
 ->x : Promise<any>
 +>y : (x: any) => void
 +>x : any
-

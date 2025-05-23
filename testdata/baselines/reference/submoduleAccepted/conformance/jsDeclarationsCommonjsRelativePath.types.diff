@@ -45,4 +45,3 @@
 +>exports : { Thing: any; }
 +>{ Thing } : { Thing: any; }
 +>Thing : any
-

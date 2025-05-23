@@ -64,4 +64,3 @@
 ->next4 : Symbol(IAsyncEnumerator.next4, Decl(awaitUnionPromise.ts, 7, 29))
 +>next4 : Symbol(next4, Decl(awaitUnionPromise.ts, 7, 29))
  }
-

@@ -56,4 +56,3 @@
  >C : Symbol(C, Decl(noAsConstNameLookup.ts, 21, 1))
 ->f : Symbol(C.f, Decl(noAsConstNameLookup.ts, 23, 19))
 +>f : Symbol(f, Decl(noAsConstNameLookup.ts, 23, 19))
-

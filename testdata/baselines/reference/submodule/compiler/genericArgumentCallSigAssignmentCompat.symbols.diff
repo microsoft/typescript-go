@@ -55,4 +55,3 @@
 +>_.identity : Symbol(identity, Decl(genericArgumentCallSigAssignmentCompat.ts, 6, 83))
 +>_ : Symbol(_, Decl(genericArgumentCallSigAssignmentCompat.ts, 11, 11))
 +>identity : Symbol(identity, Decl(genericArgumentCallSigAssignmentCompat.ts, 6, 83))
-

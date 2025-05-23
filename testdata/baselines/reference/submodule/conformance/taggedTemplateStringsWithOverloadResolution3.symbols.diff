@@ -10,4 +10,3 @@
 ->substr : Symbol(String.substr, Decl(lib.es5.d.ts, --, --))
 +>substr : Symbol(substr, Decl(lib.es5.d.ts, --, --))
 
-

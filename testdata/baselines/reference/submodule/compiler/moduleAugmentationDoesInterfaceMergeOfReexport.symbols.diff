@@ -67,4 +67,3 @@
 ->self : Symbol(ns.Foo.self, Decl(augment.ts, 3, 26))
 +>self : Symbol(self, Decl(augment.ts, 3, 26))
 +>self : Symbol(self, Decl(augment.ts, 3, 26))
-

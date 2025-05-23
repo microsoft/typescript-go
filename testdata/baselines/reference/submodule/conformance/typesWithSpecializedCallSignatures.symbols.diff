@@ -94,4 +94,3 @@
  >c : Symbol(c, Decl(typesWithSpecializedCallSignatures.ts, 14, 3))
 ->foo : Symbol(C.foo, Decl(typesWithSpecializedCallSignatures.ts, 6, 9), Decl(typesWithSpecializedCallSignatures.ts, 7, 27), Decl(typesWithSpecializedCallSignatures.ts, 8, 28), Decl(typesWithSpecializedCallSignatures.ts, 9, 25))
 +>foo : Symbol(foo, Decl(typesWithSpecializedCallSignatures.ts, 6, 9), Decl(typesWithSpecializedCallSignatures.ts, 7, 27), Decl(typesWithSpecializedCallSignatures.ts, 8, 28), Decl(typesWithSpecializedCallSignatures.ts, 9, 25))
-

@@ -39,4 +39,3 @@
  >utils : Symbol(utils, Decl(genericFunctionsWithOptionalParameters1.ts, 4, 3))
 ->fold : Symbol(Utils.fold, Decl(genericFunctionsWithOptionalParameters1.ts, 0, 17))
 +>fold : Symbol(fold, Decl(genericFunctionsWithOptionalParameters1.ts, 0, 17))
-

@@ -11,10 +11,11 @@
  })(Foo || (exports.Foo = Foo = {}));
  var X;
  (function (X) {
-@@= skipped -12, +12 lines =@@
+@@= skipped -11, +11 lines =@@
+     X.f = f;
  })(X || (X = {}));
  exports.m = X.f();
-
+-
 -
 -//// [fakeInfinity2.d.ts]
 -export declare enum Foo {

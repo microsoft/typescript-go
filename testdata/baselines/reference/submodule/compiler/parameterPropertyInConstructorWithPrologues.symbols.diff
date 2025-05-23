@@ -168,4 +168,3 @@
 ->m : Symbol(Foo9.m, Decl(parameterPropertyInConstructorWithPrologues.ts, 77, 3))
 +>m : Symbol(m, Decl(parameterPropertyInConstructorWithPrologues.ts, 77, 3))
  }
-

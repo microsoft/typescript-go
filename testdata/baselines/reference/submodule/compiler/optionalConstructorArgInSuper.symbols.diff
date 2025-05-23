@@ -18,4 +18,3 @@
  >d2 : Symbol(d2, Decl(optionalConstructorArgInSuper.ts, 7, 3))
 ->foo : Symbol(Base.foo, Decl(optionalConstructorArgInSuper.ts, 1, 25))
 +>foo : Symbol(foo, Decl(optionalConstructorArgInSuper.ts, 1, 25))
-

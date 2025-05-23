@@ -39,4 +39,3 @@
 ->obj1 : { method(param: string | number): string | number; prop: string | number; }
 +>obj1 : { method: (param: string | number) => string | number; prop: string | number; }
  >prop : string
-

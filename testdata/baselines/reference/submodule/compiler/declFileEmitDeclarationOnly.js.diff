@@ -29,5 +29,4 @@
 -    constructor(name: string);
 -    hello(): void;
 -}
--
 +<no content>

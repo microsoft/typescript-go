@@ -9,4 +9,3 @@
  >M : typeof M
 ->A : typeof M.A
 +>A : typeof A
-

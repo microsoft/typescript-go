@@ -102,4 +102,3 @@
  >Bacon : Symbol(Bacon, Decl(recursiveTypeComparison2.ts, 0, 0))
 ->Bus : Symbol(Bacon.Bus, Decl(recursiveTypeComparison2.ts, 23, 5), Decl(recursiveTypeComparison2.ts, 26, 7))
 +>Bus : Symbol(Bus, Decl(recursiveTypeComparison2.ts, 23, 5), Decl(recursiveTypeComparison2.ts, 26, 7))
-

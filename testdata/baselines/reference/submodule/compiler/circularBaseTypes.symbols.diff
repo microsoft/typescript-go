@@ -7,4 +7,3 @@
 ->a : Symbol(Y.a, Decl(circularBaseTypes.ts, 13, 26))
 +>a : Symbol(a, Decl(circularBaseTypes.ts, 13, 26))
  }
-

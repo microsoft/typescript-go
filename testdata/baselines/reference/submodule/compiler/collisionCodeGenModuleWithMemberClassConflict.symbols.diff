@@ -29,4 +29,3 @@
  >m2 : Symbol(m2, Decl(collisionCodeGenModuleWithMemberClassConflict.ts, 4, 22))
 ->_m2 : Symbol(m2._m2, Decl(collisionCodeGenModuleWithMemberClassConflict.ts, 8, 5))
 +>_m2 : Symbol(_m2, Decl(collisionCodeGenModuleWithMemberClassConflict.ts, 8, 5))
-

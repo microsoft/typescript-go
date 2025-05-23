@@ -350,4 +350,3 @@
 +>supportedLocalesOf : (locales?: LocalesArgument, options?: { localeMatcher?: RelativeTimeFormatLocaleMatcher; }) => string[]
 +>localesArg : (string | Locale)[]
  >{} : {}
-

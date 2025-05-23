@@ -7,4 +7,3 @@
 ->public : Symbol(Logger.public, Decl(parser509546_1.ts, 0, 21))
 +>public : Symbol(public, Decl(parser509546_1.ts, 0, 21))
  }
-

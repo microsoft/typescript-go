@@ -18,4 +18,3 @@
  >ns : Symbol(ns, Decl(namespacesDeclaration2.ts, 5, 1))
 ->A : Symbol(ns.A)
 +>A : Symbol(A)
-

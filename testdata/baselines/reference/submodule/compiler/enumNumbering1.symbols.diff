@@ -35,4 +35,3 @@
 ->E : Symbol(Test.E, Decl(enumNumbering1.ts, 4, 11))
 +>E : Symbol(E, Decl(enumNumbering1.ts, 4, 11))
  }
-

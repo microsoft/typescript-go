@@ -25,4 +25,3 @@
 +>val.type : Symbol(type, Decl(lib.es2017.intl.d.ts, --, --))
 +>val : Symbol(val, Decl(formatToPartsFractionalSecond.ts, 0, 48))
 +>type : Symbol(type, Decl(lib.es2017.intl.d.ts, --, --))
-

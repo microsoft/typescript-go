@@ -46,4 +46,3 @@
 ->toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
 +>toUpperCase : Symbol(toUpperCase, Decl(lib.es5.d.ts, --, --))
  }
-

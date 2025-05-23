@@ -193,4 +193,3 @@
 ->toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 +>x : Symbol(x, Decl(constDeclarations-access3.ts, 1, 16))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

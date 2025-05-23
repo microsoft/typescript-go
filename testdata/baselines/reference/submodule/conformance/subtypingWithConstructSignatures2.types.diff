@@ -478,4 +478,3 @@
 ->foo18 : { (a: { new (x: { new (a: number): number; new (a: string): string; }): any[]; new (x: { new (a: boolean): boolean; new (a: Date): Date; }): any[]; }): typeof a; (a: any): any; }
 +>foo18 : { (a: { new (x: { new (a: number): number; new (a: string): string; }): any[]; new (x: { new (a: boolean): boolean; new (a: Date): Date; }): any[]; }): { new (x: { new (a: number): number; new (a: string): string; }): any[]; new (x: { new (a: boolean): boolean; new (a: Date): Date; }): any[]; }; (a: any): any; }
  >r18arg1 : new <T>(x: (a: T) => T) => T[]
-

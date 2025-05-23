@@ -7,4 +7,3 @@
 ->NaN : Symbol(A.NaN, Decl(enumWithNaNProperty.ts, 0, 8))
 +>NaN : Symbol(NaN, Decl(enumWithNaNProperty.ts, 0, 8))
  }
-

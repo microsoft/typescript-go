@@ -51,4 +51,3 @@
  >MyConstEnum : Symbol(MyConstEnum, Decl(Usage3.ts, 0, 8))
 ->Foo : Symbol(MyConstEnum.Foo, Decl(ConstEnum.ts, 0, 31))
 +>Foo : Symbol(Foo, Decl(ConstEnum.ts, 0, 31))
-

@@ -28,4 +28,3 @@
 +>Adapter : {}
 +>asyncMethod : any
  >function() {} : () => void
-

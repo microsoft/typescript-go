@@ -42,4 +42,3 @@
 ->log : Symbol(C.log, Decl(file2.ts, 5, 13))
 +>log : Symbol(log, Decl(file2.ts, 5, 13))
  >x : Symbol(x, Decl(file1.ts, 4, 16))
-

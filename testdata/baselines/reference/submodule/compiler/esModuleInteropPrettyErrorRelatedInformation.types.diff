@@ -15,4 +15,3 @@
  >invoke : (f: () => void) => void
 ->foo : { default: () => void; }
 +>foo : () => void
-

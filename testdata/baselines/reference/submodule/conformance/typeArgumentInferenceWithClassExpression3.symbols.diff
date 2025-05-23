@@ -20,4 +20,3 @@
 ->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
 +>prop : Symbol(prop, Decl(typeArgumentInferenceWithClassExpression3.ts, 4, 11))
 +>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
-

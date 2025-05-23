@@ -112,4 +112,3 @@
  >1 : 1
 ->Foo : (props: Props) => JSX.Element
 +>Foo : (props: Props) => Element
-

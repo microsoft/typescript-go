@@ -29,4 +29,3 @@
 ->public2 : Symbol(m2.public2, Decl(declFileTypeAnnotationVisibilityErrorVariableDeclaration.ts, 20, 15))
 +>public2 : Symbol(public2, Decl(declFileTypeAnnotationVisibilityErrorVariableDeclaration.ts, 20, 15))
  }
-

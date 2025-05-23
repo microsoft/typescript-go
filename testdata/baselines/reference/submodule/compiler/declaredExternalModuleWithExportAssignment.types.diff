@@ -16,4 +16,3 @@
 ->server : { (): connectExport; test1: connectModule; test2(): connectModule; }
 +>server : { (): connectExport; test1: connectModule; test2: () => connectModule; }
  }
-

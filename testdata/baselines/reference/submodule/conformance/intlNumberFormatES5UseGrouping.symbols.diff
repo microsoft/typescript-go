@@ -38,4 +38,3 @@
 ->resolvedOptions : Symbol(Intl.NumberFormat.resolvedOptions, Decl(lib.es5.d.ts, --, --))
 +>NumberFormat : Symbol(NumberFormat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>resolvedOptions : Symbol(resolvedOptions, Decl(lib.es5.d.ts, --, --))
-

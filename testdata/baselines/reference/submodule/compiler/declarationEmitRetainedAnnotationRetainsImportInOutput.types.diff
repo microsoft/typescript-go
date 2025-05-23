@@ -28,4 +28,3 @@
 +>E : typeof import("node_modules/whatever/index")
 +>something : <T>(cb: () => Whatever<T>) => Whatever<T>
 +>i : () => Whatever<E>
-

@@ -111,4 +111,3 @@
 +>$q.when : Symbol(when, Decl(tupleTypeInference.ts, 5, 47))
 +>$q : Symbol($q, Decl(tupleTypeInference.ts, 0, 11))
 +>when : Symbol(when, Decl(tupleTypeInference.ts, 5, 47))
-

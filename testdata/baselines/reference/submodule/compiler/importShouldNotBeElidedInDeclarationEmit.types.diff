@@ -14,4 +14,3 @@
 +>thing : Thing
 +>makeThing() : Thing
 +>makeThing : () => Thing
-

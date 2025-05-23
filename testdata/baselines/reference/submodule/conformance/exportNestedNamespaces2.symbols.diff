@@ -49,4 +49,3 @@
  >debug : Symbol(debug, Decl(use.js, 0, 6))
 ->formatters : Symbol(debug.formatters, Decl(mod.js, 0, 0))
 +>formatters : Symbol(formatters, Decl(mod.js, 0, 0))
-

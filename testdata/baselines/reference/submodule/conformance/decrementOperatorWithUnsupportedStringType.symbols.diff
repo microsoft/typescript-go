@@ -136,4 +136,3 @@
  >M : Symbol(M, Decl(decrementOperatorWithUnsupportedStringType.ts, 9, 1))
 ->n : Symbol(M.n, Decl(decrementOperatorWithUnsupportedStringType.ts, 11, 14))
 +>n : Symbol(n, Decl(decrementOperatorWithUnsupportedStringType.ts, 11, 14))
-

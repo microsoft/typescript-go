@@ -14,4 +14,3 @@
 -><MyClass /> : error
 +><MyClass /> : any
  >MyClass : typeof MyClass
-

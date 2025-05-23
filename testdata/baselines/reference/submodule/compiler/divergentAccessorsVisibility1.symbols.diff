@@ -858,4 +858,3 @@
 ->PrivatePrivate : Symbol(Base.PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
 +>PrivatePrivate : Symbol(PrivatePrivate, Decl(divergentAccessorsVisibility1.ts, 23, 49), Decl(divergentAccessorsVisibility1.ts, 25, 46))
  }
-

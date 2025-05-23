@@ -217,4 +217,3 @@
  >1000 : 1000
 ->TestingOptional : { (a: { y1?: string; y2?: number; }): JSX.Element; (a: { y1?: string; y2?: number; children: JSX.Element; }): JSX.Element; (a: { y1: boolean; y2?: number; y3: boolean; }): JSX.Element; }
 +>TestingOptional : { (a: { y1?: string; y2?: number; }): Element; (a: { y1?: string; y2?: number; children: Element; }): Element; (a: { y1: boolean; y2?: number; y3: boolean; }): Element; }
-

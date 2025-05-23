@@ -11,4 +11,3 @@
 ->m : Symbol(C.m, Decl(parsingClassRecoversWhenHittingUnexpectedSemicolon.ts, 1, 19))
 +>m : Symbol(m, Decl(parsingClassRecoversWhenHittingUnexpectedSemicolon.ts, 1, 19))
  }
-

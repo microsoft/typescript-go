@@ -9,4 +9,3 @@
  >f : Symbol(f, Decl(memberAccessOnConstructorType.ts, 0, 3))
 ->arguments : Symbol(Function.arguments, Decl(lib.es5.d.ts, --, --))
 +>arguments : Symbol(arguments, Decl(lib.es5.d.ts, --, --))
-

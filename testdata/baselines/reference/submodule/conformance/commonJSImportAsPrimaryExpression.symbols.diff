@@ -27,4 +27,3 @@
 ->s1 : Symbol(C1.s1, Decl(foo_0.ts, 1, 9))
 +>s1 : Symbol(s1, Decl(foo_0.ts, 1, 9))
  }
-

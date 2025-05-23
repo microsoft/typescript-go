@@ -35,4 +35,3 @@
 +>val : DateTimeFormatPart
 +>type : keyof DateTimeFormatPartTypesRegistry
  >'fractionalSecond' : "fractionalSecond"
-

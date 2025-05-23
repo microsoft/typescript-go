@@ -30,4 +30,3 @@
  interface RegExp {}
 ->RegExp : Symbol(RegExp, Decl(noDefaultLib.ts, 8, 21))
 +>RegExp : Symbol(RegExp, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --), Decl(noDefaultLib.ts, 8, 21))
-

@@ -31,4 +31,3 @@
  >b : Symbol(b, Decl(internalAliasEnumInsideTopLevelModuleWithoutExport.ts, 6, 1))
 ->Sunday : Symbol(b.Sunday, Decl(internalAliasEnumInsideTopLevelModuleWithoutExport.ts, 3, 17))
 +>Sunday : Symbol(Sunday, Decl(internalAliasEnumInsideTopLevelModuleWithoutExport.ts, 3, 17))
-

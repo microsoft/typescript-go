@@ -35,4 +35,3 @@
  >c : Symbol(c, Decl(genericTypeWithMultipleBases3.ts, 14, 3))
 ->bar : Symbol(IB.bar, Decl(genericTypeWithMultipleBases3.ts, 6, 17))
 +>bar : Symbol(bar, Decl(genericTypeWithMultipleBases3.ts, 6, 17))
-

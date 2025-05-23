@@ -41,4 +41,3 @@
 ->one : Symbol(InstanceOne.one, Decl(inKeywordAndIntersection.ts, 14, 23))
 +>one : Symbol(one, Decl(inKeywordAndIntersection.ts, 14, 23))
  }
-

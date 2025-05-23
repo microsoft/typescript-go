@@ -21,4 +21,3 @@
  >x : Symbol(x, Decl(fixingTypeParametersRepeatedly1.ts, 6, 16))
 ->toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
-

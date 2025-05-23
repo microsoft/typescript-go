@@ -20,4 +20,3 @@
 ->f : ns.Foo
 +>f : Foo
  >ns : any
-

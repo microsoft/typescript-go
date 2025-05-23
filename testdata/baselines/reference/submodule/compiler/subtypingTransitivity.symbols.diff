@@ -46,4 +46,3 @@
  >b : Symbol(b, Decl(subtypingTransitivity.ts, 11, 3))
 ->x : Symbol(B.x, Decl(subtypingTransitivity.ts, 0, 9))
 +>x : Symbol(x, Decl(subtypingTransitivity.ts, 0, 9))
-

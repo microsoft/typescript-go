@@ -40,4 +40,3 @@
  >str : Symbol(str, Decl(lambdaParameterWithTupleArgsHasCorrectAssignability.ts, 19, 26))
 ->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
 +>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
-

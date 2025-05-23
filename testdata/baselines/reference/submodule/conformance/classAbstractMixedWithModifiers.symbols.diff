@@ -47,4 +47,3 @@
 ->foo_g : Symbol(A.foo_g, Decl(classAbstractMixedWithModifiers.ts, 14, 27))
 +>foo_g : Symbol(foo_g, Decl(classAbstractMixedWithModifiers.ts, 14, 27))
  }
-

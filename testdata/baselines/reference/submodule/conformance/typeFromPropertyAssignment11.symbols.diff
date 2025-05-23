@@ -62,4 +62,3 @@
 ->inner.k : Symbol(Inner.k, Decl(module.js, 6, 21))
  >inner : Symbol(inner, Decl(module.js, 9, 3))
 ->k : Symbol(Inner.k, Decl(module.js, 6, 21))
-

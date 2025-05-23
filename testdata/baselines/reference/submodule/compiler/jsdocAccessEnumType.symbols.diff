@@ -18,4 +18,3 @@
  >E : Symbol(E, Decl(b.js, 0, 8))
 ->A : Symbol(E.A, Decl(a.ts, 0, 15))
 +>A : Symbol(A, Decl(a.ts, 0, 15))
-

@@ -9,4 +9,3 @@
  >Q : Symbol(Q, Decl(modFunctionCrash.ts, 0, 0))
 ->f : Symbol(Q.f, Decl(modFunctionCrash.ts, 0, 18))
 +>f : Symbol(f, Decl(modFunctionCrash.ts, 0, 18))
-

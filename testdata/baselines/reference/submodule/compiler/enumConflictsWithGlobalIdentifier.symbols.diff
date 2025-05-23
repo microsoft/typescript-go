@@ -17,4 +17,3 @@
  >Position : Symbol(Position, Decl(enumConflictsWithGlobalIdentifier.ts, 0, 0))
 ->IgnoreRulesSpecific : Symbol(Position.IgnoreRulesSpecific, Decl(enumConflictsWithGlobalIdentifier.ts, 0, 15))
 +>IgnoreRulesSpecific : Symbol(IgnoreRulesSpecific, Decl(enumConflictsWithGlobalIdentifier.ts, 0, 15))
-

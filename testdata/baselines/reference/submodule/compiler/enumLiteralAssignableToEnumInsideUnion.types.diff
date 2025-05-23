@@ -95,4 +95,3 @@
 ->A : Z.Foo.A
 +>Foo : typeof Foo
 +>A : Foo.A
-

@@ -63,4 +63,3 @@
  >f : Symbol(f, Decl(augment.ts, 11, 13))
 ->x : Symbol(ns.Root.Foo.x, Decl(file.ts, 2, 26))
 +>x : Symbol(x, Decl(file.ts, 2, 26))
-

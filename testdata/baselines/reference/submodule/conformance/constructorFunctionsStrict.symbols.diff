@@ -70,4 +70,3 @@
 ->j.x : Symbol(A.x, Decl(a.js, 15, 5))
  >j : Symbol(j, Decl(a.js, 19, 3))
 ->x : Symbol(A.x, Decl(a.js, 15, 5))
-

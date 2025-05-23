@@ -56,4 +56,3 @@
 ->bar : (t1: number) => { foo: <T2>(t2: T2) => any; bar: any; }
 +>bar : (t1: number) => { foo: <T2>(t2: T2) => ???; bar: ???; }
  >1 : 1
-

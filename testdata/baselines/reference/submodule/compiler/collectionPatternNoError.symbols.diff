@@ -68,4 +68,3 @@
 ->methodOnMessageList : Symbol(MessageList.methodOnMessageList, Decl(collectionPatternNoError.ts, 8, 58))
 +>methodOnMessageList : Symbol(methodOnMessageList, Decl(collectionPatternNoError.ts, 8, 58))
  }
-

@@ -165,4 +165,3 @@
  >I1 : Symbol(I1, Decl(interfaceDeclaration3.ts, 0, 0))
 ->item : Symbol(I2.item, Decl(interfaceDeclaration3.ts, 53, 25))
 +>item : Symbol(item, Decl(interfaceDeclaration3.ts, 53, 25))
-

@@ -15,4 +15,3 @@
 +>''.replace : Symbol(replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>replace : Symbol(replace, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >match : Symbol(match, Decl(noImplicitAnyInContextuallyTypesFunctionParamter.ts, 1, 23))
-

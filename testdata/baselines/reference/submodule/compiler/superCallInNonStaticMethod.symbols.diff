@@ -126,4 +126,3 @@
 ->instanceMethod : Symbol(Doing.instanceMethod, Decl(superCallInNonStaticMethod.ts, 0, 13))
 +>instanceMethod : Symbol(instanceMethod, Decl(superCallInNonStaticMethod.ts, 0, 13))
  }
-

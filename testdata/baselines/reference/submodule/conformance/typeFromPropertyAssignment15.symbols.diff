@@ -56,4 +56,3 @@
 ->inno.m : Symbol(Inner.m, Decl(a.js, 5, 5))
  >inno : Symbol(inno, Decl(a.js, 13, 3))
 ->m : Symbol(Inner.m, Decl(a.js, 5, 5))
-

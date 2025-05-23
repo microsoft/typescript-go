@@ -29,4 +29,3 @@
  >c : Symbol(c, Decl(dynamicImportWithNestedThis_es5.ts, 9, 5))
 ->dynamic : Symbol(C.dynamic, Decl(dynamicImportWithNestedThis_es5.ts, 2, 27))
 +>dynamic : Symbol(dynamic, Decl(dynamicImportWithNestedThis_es5.ts, 2, 27))
-

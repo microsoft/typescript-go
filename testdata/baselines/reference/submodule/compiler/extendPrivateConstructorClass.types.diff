@@ -10,4 +10,3 @@
 ->XYZ : typeof abc.XYZ
 +>XYZ : typeof XYZ
  }
-

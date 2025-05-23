@@ -11,4 +11,3 @@
  <span />;
 ->span : Symbol(JSX.IntrinsicElements.__index, Decl(file.tsx, 2, 30))
 +>span : Symbol((Missing), Decl(file.tsx, 2, 30))
-

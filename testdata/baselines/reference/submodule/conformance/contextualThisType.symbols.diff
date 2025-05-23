@@ -19,4 +19,3 @@
 ->a : Symbol(X.a, Decl(contextualThisType.ts, 0, 13))
 +>a : Symbol(a, Decl(contextualThisType.ts, 0, 13))
  >x : Symbol(x, Decl(contextualThisType.ts, 7, 3))
-

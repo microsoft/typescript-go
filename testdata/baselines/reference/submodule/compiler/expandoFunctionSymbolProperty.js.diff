@@ -1,9 +1,10 @@
 --- old.expandoFunctionSymbolProperty.js
 +++ new.expandoFunctionSymbolProperty.js
-@@= skipped -25, +25 lines =@@
+@@= skipped -24, +24 lines =@@
+     inner[symb] = true;
      return inner;
  }
-
+-
 -
 -//// [expandoFunctionSymbolProperty.d.ts]
 -declare const symb: unique symbol;
@@ -13,4 +14,3 @@
 -}
 -export declare function test(): TestSymb;
 -export {};
--

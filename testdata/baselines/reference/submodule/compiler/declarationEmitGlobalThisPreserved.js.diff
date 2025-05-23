@@ -173,5 +173,4 @@
 -    isNaN?: typeof globalThis.isNaN;
 -}
 -export type AsFunctionType = (isNaN: typeof globalThis.isNaN) => typeof globalThis.isNaN;
--
 +<no content>

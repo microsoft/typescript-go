@@ -39,4 +39,3 @@
  >value : Symbol(value, Decl(callChainInference.ts, 8, 13))
 ->foo : Symbol(Y.foo, Decl(callChainInference.ts, 2, 13))
 +>foo : Symbol(foo, Decl(callChainInference.ts, 2, 13))
-

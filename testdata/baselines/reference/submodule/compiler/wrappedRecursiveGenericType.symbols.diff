@@ -94,4 +94,3 @@
 +>b : Symbol(b, Decl(wrappedRecursiveGenericType.ts, 5, 16))
 +>a : Symbol(a, Decl(wrappedRecursiveGenericType.ts, 1, 16))
 +>val : Symbol(val, Decl(wrappedRecursiveGenericType.ts, 6, 15))
-

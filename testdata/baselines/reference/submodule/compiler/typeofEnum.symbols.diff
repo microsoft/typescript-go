@@ -22,4 +22,3 @@
  >e1 : Symbol(e1, Decl(typeofEnum.ts, 5, 3))
 ->e1 : Symbol(E.e1, Decl(typeofEnum.ts, 0, 8))
 +>e1 : Symbol(e1, Decl(typeofEnum.ts, 0, 8))
-

@@ -38,4 +38,3 @@
 ->foo : Symbol(Foo.foo, Decl(typePredicateWithThisParameter.ts, 2, 15))
 +>foo : Symbol(foo, Decl(typePredicateWithThisParameter.ts, 2, 15))
  }
-

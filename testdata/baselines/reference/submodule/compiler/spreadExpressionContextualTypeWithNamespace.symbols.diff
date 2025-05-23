@@ -95,4 +95,3 @@
  >getStuff : Symbol(getStuff, Decl(spreadExpressionContextualTypeWithNamespace_1.ts, 5, 23))
 ->exportedDirectly : Symbol(stuff.exportedDirectly, Decl(spreadExpressionContextualTypeWithNamespace_0.ts, 6, 28))
 +>exportedDirectly : Symbol(exportedDirectly, Decl(spreadExpressionContextualTypeWithNamespace_0.ts, 6, 28))
-

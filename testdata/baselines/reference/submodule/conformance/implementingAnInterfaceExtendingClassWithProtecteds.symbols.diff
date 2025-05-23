@@ -82,4 +82,3 @@
 ->y : Symbol(Bar8.y, Decl(implementingAnInterfaceExtendingClassWithProtecteds.ts, 37, 14))
 +>y : Symbol(y, Decl(implementingAnInterfaceExtendingClassWithProtecteds.ts, 37, 14))
  }
-

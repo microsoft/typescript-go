@@ -131,4 +131,3 @@
  import { type as as "invalid 4" } from "./type-clause-valid";
 -> : Symbol((Missing), Decl(type-clause-type-as-as.ts, 0, 8))
 +>"invalid 4" : Symbol(, Decl(type-clause-type-as-as.ts, 0, 8))
-

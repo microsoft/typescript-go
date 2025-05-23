@@ -31,4 +31,3 @@
 +>a : Element
 +><BackButton /> : Element
 +>BackButton : { (_props: Props): Element; defaultProps: { text: string; }; }
-

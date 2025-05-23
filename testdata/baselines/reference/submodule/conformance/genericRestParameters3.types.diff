@@ -61,4 +61,3 @@
 ->s1 : (...args: [x: string, ...rest: A | [number]]) => void
 +>s1 : (...args: [x: string, number] | [x: string, ...rest: A]) => void
  }
-

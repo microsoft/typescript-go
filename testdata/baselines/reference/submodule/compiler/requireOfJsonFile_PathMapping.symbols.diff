@@ -6,4 +6,3 @@
  { "a": 10 }
 ->"a" : Symbol("a", Decl(foobar.json, 0, 1))
 +>"a" : Symbol(a, Decl(foobar.json, 0, 1))
-

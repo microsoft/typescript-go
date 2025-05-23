@@ -39,4 +39,3 @@
  >y : Symbol(y, Decl(derivedTypeCallingBaseImplWithOptionalParams.ts, 11, 3))
 ->myMethod : Symbol(MyClass.myMethod, Decl(derivedTypeCallingBaseImplWithOptionalParams.ts, 3, 38))
 +>myMethod : Symbol(myMethod, Decl(derivedTypeCallingBaseImplWithOptionalParams.ts, 3, 38))
-

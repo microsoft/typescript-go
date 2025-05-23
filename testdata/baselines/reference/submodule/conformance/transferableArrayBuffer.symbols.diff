@@ -23,4 +23,3 @@
  >buffer2 : Symbol(buffer2, Decl(transferableArrayBuffer.ts, 1, 5))
 ->detached : Symbol(ArrayBuffer.detached, Decl(lib.es2024.arraybuffer.d.ts, --, --))
 +>detached : Symbol(detached, Decl(lib.es2024.arraybuffer.d.ts, --, --))
-

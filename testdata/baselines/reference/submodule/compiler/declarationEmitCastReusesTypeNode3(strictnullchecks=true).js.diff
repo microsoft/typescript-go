@@ -55,5 +55,4 @@
 -declare const _default: P;
 -export default _default;
 -export declare function fnWithPartialAnnotationOnDefaultparam(x: P | undefined, b: number): void;
--
 +<no content>

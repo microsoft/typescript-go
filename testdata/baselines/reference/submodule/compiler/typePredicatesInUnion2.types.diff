@@ -21,4 +21,3 @@
 ->f : (p: typeof isString | typeof isNumber) => void
 +>f : (p: ((x: any) => x is string) | ((x: any) => x is number)) => void
  >isNumber : (x: any) => x is number
-

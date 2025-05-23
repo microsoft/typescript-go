@@ -82,4 +82,3 @@
  >o4 : Symbol(o4, Decl(defs.d.ts, 9, 13))
 ->m : Symbol(I.m, Decl(defs.d.ts, 5, 16))
 +>m : Symbol(m, Decl(defs.d.ts, 5, 16))
-

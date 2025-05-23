@@ -37,4 +37,3 @@
 ->doThing : Symbol(Foo.doThing, Decl(a.ts, 0, 11))
 +>doThing : Symbol(doThing, Decl(a.ts, 0, 11))
  >a : Symbol(a, Decl(index.ts, 3, 19))
-

@@ -142,4 +142,3 @@
 +>baz2 : Symbol(baz2, Decl(m4.ts, 12, 19))
 +>x : Symbol(x, Decl(m3.ts, 1, 17))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
-

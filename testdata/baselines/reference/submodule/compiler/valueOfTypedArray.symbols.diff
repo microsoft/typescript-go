@@ -90,4 +90,3 @@
  >BigUint64Array : Symbol(BigUint64Array, Decl(lib.es2020.bigint.d.ts, --, --), Decl(lib.es2020.bigint.d.ts, --, --))
 ->valueOf : Symbol(BigUint64Array.valueOf, Decl(lib.es2020.bigint.d.ts, --, --))
 +>valueOf : Symbol(valueOf, Decl(lib.es2020.bigint.d.ts, --, --))
-

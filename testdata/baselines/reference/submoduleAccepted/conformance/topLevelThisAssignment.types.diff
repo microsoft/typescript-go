@@ -33,4 +33,3 @@
  a;
 ->a : number
 +>a : any
-

@@ -15,4 +15,3 @@
 ->m : Symbol(B.m, Decl(accessorsOverrideMethod.ts, 3, 19))
 +>m : Symbol(m, Decl(accessorsOverrideMethod.ts, 3, 19))
  }
-

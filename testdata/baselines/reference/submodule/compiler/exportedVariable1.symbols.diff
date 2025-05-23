@@ -11,4 +11,3 @@
  >name : Symbol(name, Decl(exportedVariable1.ts, 0, 18))
 ->toUpperCase : Symbol(String.toUpperCase, Decl(lib.es5.d.ts, --, --))
 +>toUpperCase : Symbol(toUpperCase, Decl(lib.es5.d.ts, --, --))
-

@@ -14,4 +14,3 @@
 +>c : CustomHtmlRepresentationThing
 +>func() : CustomHtmlRepresentationThing
 +>func : () => CustomHtmlRepresentationThing
-

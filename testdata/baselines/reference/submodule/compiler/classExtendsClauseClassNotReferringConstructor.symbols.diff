@@ -16,4 +16,3 @@
 ->b : Symbol(B.b, Decl(classExtendsClauseClassNotReferringConstructor.ts, 3, 23))
 +>b : Symbol(b, Decl(classExtendsClauseClassNotReferringConstructor.ts, 3, 23))
  }
-

@@ -7,4 +7,3 @@
 ->biz : Symbol(Foo.biz, Decl(parserModifierOnPropertySignature1.ts, 0, 14))
 +>biz : Symbol(biz, Decl(parserModifierOnPropertySignature1.ts, 0, 14))
  }
-

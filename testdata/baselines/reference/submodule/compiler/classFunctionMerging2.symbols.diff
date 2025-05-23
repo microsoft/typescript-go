@@ -32,4 +32,3 @@
  >b : Symbol(b, Decl(classFunctionMerging2.ts, 11, 3))
 ->a : Symbol(A.a, Decl(classFunctionMerging2.ts, 1, 27))
 +>a : Symbol(a, Decl(classFunctionMerging2.ts, 1, 27))
-

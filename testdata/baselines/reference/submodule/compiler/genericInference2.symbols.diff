@@ -79,4 +79,3 @@
  >name : Symbol(name, Decl(genericInference2.ts, 10, 13))
 ->r : Symbol(ko.Observable.r, Decl(genericInference2.ts, 5, 22))
 +>r : Symbol(r, Decl(genericInference2.ts, 5, 22))
-

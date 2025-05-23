@@ -1,12 +1,12 @@
 --- old.typeReferenceDirectives2.js
 +++ new.typeReferenceDirectives2.js
-@@= skipped -9, +9 lines =@@
+@@= skipped -8, +8 lines =@@
+ }
 
  //// [app.js]
-
+-
 -
 -//// [app.d.ts]
 -interface A {
 -    x: $;
 -}
--

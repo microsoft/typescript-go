@@ -24,4 +24,3 @@
  >s : string
 ->b : { prop: number; } | { prop: T27; }
 +>b : { prop: number; } | { prop: { prop: number; } | ???; }
-

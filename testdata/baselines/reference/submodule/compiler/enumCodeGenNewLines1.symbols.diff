@@ -15,4 +15,3 @@
 ->d : Symbol(foo.d, Decl(enumCodeGenNewLines1.ts, 2, 8))
 +>d : Symbol(d, Decl(enumCodeGenNewLines1.ts, 2, 8))
  }
-

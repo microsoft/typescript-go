@@ -41,4 +41,3 @@
  >D : typeof D
 ->x : number
 +>x : any
-

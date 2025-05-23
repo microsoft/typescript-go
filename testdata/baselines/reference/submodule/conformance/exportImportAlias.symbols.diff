@@ -163,4 +163,3 @@
 ->Point : Symbol(K.L.Point, Decl(exportImportAlias.ts, 51, 26))
 +>D : Symbol(D, Decl(exportImportAlias.ts, 59, 10))
 +>Point : Symbol(Point, Decl(exportImportAlias.ts, 51, 26))
-

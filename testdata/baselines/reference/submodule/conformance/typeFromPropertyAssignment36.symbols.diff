@@ -237,4 +237,3 @@
  >g : Symbol(g, Decl(typeFromPropertyAssignment36.ts, 58, 5))
 ->both : Symbol(g.both, Decl(typeFromPropertyAssignment36.ts, 65, 14), Decl(typeFromPropertyAssignment36.ts, 68, 6))
 +>both : Symbol(both, Decl(typeFromPropertyAssignment36.ts, 65, 14), Decl(typeFromPropertyAssignment36.ts, 68, 6))
-

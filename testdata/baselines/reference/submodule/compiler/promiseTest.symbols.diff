@@ -49,4 +49,3 @@
 ->data : Symbol(Promise.data, Decl(promiseTest.ts, 2, 51))
 +>data : Symbol(data, Decl(promiseTest.ts, 2, 51))
 
-

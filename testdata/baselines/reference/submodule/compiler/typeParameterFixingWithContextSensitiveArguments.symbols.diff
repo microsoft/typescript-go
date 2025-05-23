@@ -48,4 +48,3 @@
  >x : Symbol(x, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 8, 13))
 ->b : Symbol(B.b, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 2, 23))
 +>b : Symbol(b, Decl(typeParameterFixingWithContextSensitiveArguments.ts, 2, 23))
-

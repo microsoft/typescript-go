@@ -66,4 +66,3 @@
 ->"pale blue" : Symbol(NamedColors["pale blue"], Decl(propertyNamesWithStringLiteral.ts, 6, 19))
 +>namedColors : Symbol(namedColors, Decl(propertyNamesWithStringLiteral.ts, 10, 14))
 +>"pale blue" : Symbol("pale blue", Decl(propertyNamesWithStringLiteral.ts, 6, 19))
-

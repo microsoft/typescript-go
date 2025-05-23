@@ -18,4 +18,3 @@
 ->createB : () => A.B
 +>B : typeof B
 +>createB : () => B
-

@@ -64,4 +64,3 @@
  >x : Symbol(x, Decl(genericWithOpenTypeParameters1.ts, 9, 10))
 ->foo : Symbol(B.foo, Decl(genericWithOpenTypeParameters1.ts, 0, 12))
 +>foo : Symbol(foo, Decl(genericWithOpenTypeParameters1.ts, 0, 12))
-

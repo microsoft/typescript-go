@@ -58,4 +58,3 @@
 ->x : typeof x
 +>x : typeof foo
  >b : number
-

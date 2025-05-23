@@ -19,4 +19,3 @@
 ->member : Symbol(I.member, Decl(taggedTemplateStringsWithManyCallAndMemberExpressions.ts, 1, 55))
 +>member : Symbol(member, Decl(taggedTemplateStringsWithManyCallAndMemberExpressions.ts, 1, 55))
 
-

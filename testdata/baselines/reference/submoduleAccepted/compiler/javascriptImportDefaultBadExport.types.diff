@@ -13,4 +13,3 @@
  import a from "./a";
 ->a : any
 +>a : {}
-

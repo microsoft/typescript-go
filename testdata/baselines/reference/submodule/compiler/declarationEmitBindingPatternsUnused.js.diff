@@ -1,9 +1,10 @@
 --- old.declarationEmitBindingPatternsUnused.js
 +++ new.declarationEmitBindingPatternsUnused.js
-@@= skipped -203, +203 lines =@@
+@@= skipped -202, +202 lines =@@
+ let notReferencedCtorType;
  let referencedInSignartureReturnTypeCtorType;
  let referencedInSignartureParamTypeCtorType;
-
+-
 -
 -//// [declarationEmitBindingPatternsUnused.d.ts]
 -type Named = {
@@ -77,4 +78,3 @@
 -    mRerturnTypeNested({ name: alias }: Named): NonNullable<typeof alias>;
 -    mParameter({ name: alias }: Named, p: typeof alias): any;
 -}
--

@@ -81,4 +81,3 @@
 ->bar : Symbol(NonAmbientDerived.bar, Decl(overrideWithoutNoImplicitOverride1.ts, 41, 18))
 +>bar : Symbol(bar, Decl(overrideWithoutNoImplicitOverride1.ts, 41, 18))
  }
-

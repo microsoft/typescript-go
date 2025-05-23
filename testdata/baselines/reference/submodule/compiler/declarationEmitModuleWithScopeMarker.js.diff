@@ -1,9 +1,10 @@
 --- old.declarationEmitModuleWithScopeMarker.js
 +++ new.declarationEmitModuleWithScopeMarker.js
-@@= skipped -15, +15 lines =@@
+@@= skipped -14, +14 lines =@@
+
 
  //// [declarationEmitModuleWithScopeMarker.js]
-
+-
 -
 -//// [declarationEmitModuleWithScopeMarker.d.ts]
 -declare module "bar" {
@@ -13,4 +14,3 @@
 -    var after: typeof func;
 -    export {};
 -}
--

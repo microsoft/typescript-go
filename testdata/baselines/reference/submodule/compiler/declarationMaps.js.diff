@@ -1,9 +1,10 @@
 --- old.declarationMaps.js
 +++ new.declarationMaps.js
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
+ "use strict";
  var m2;
  module.exports = m2;
-
+-
 -
 -//// [declarationMaps.d.ts]
 -declare namespace m2 {

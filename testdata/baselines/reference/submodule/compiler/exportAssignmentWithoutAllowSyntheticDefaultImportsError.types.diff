@@ -6,4 +6,3 @@
  import bar from './bar';
 ->bar : any
 +>bar : () => void
-

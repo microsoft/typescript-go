@@ -113,4 +113,3 @@
  >c : Symbol(c, Decl(derivedClassWithAny.ts, 51, 3))
 ->foo : Symbol(C.foo, Decl(derivedClassWithAny.ts, 2, 33))
 +>foo : Symbol(foo, Decl(derivedClassWithAny.ts, 2, 33))
-

@@ -86,4 +86,3 @@
 +>obj : { bar: string | undefined; method1: (n1: any) => string; method2: function; arrowFunc: function; lol: any; }
 +>method2 : function
  >"0" : "0"
-

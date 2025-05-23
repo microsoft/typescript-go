@@ -11,4 +11,3 @@
  import {x} from "foo";
 ->x : number
 +>x : any
-

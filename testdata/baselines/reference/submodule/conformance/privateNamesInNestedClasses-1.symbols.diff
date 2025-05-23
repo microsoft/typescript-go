@@ -90,4 +90,3 @@
  >A : Symbol(A, Decl(privateNamesInNestedClasses-1.ts, 0, 0))
 ->method : Symbol(A.method, Decl(privateNamesInNestedClasses-1.ts, 2, 21))
 +>method : Symbol(method, Decl(privateNamesInNestedClasses-1.ts, 2, 21))
-

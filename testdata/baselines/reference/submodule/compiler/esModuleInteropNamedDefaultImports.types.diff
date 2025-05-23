@@ -49,4 +49,3 @@
 ->Foo3 : typeof Foo
 +>new Foo3() : default
 +>Foo3 : typeof default
-

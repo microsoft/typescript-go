@@ -14,4 +14,3 @@
 +>foo.default : any
 +>foo : () => void
 +>default : any
-

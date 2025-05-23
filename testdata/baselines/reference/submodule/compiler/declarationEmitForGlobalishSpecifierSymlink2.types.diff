@@ -24,4 +24,3 @@
 ->a : import("/cache/typescript-fsa/index").A
 +>a : A
 
-

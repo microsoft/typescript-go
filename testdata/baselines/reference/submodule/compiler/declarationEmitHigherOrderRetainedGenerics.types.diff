@@ -128,4 +128,3 @@
  >that : Kind<F, R2, O2, E2, B>
 ->SK : <A, B_1>(_: A, b: B_1) => B_1
 +>SK : <A, B>(_: A, b: B) => B
-

@@ -51,4 +51,3 @@
 ->Point : Symbol(K.L.Point, Decl(exportImportAndClodule.ts, 5, 26))
 +>D : Symbol(D, Decl(exportImportAndClodule.ts, 12, 10))
 +>Point : Symbol(Point, Decl(exportImportAndClodule.ts, 5, 26))
-

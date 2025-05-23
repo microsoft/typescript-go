@@ -39,4 +39,3 @@
 +><Elem2>text</Elem2> : Element
 +>Elem2 : ComponentType<{ opt?: number | undefined; }>
 +>Elem2 : ComponentType<{ opt?: number | undefined; }>
-

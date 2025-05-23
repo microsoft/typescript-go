@@ -67,4 +67,3 @@
 +>x.substr : Symbol(substr, Decl(lib.es5.d.ts, --, --))
 +>x : Symbol(x, Decl(typeGuardRedundancy.ts, 0, 3))
 +>substr : Symbol(substr, Decl(lib.es5.d.ts, --, --))
-

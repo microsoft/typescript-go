@@ -71,4 +71,3 @@
  >s : Symbol(s, Decl(genericClassExpressionInFunction.ts, 26, 3))
 ->genericVar : Symbol(A.genericVar, Decl(genericClassExpressionInFunction.ts, 0, 12))
 +>genericVar : Symbol(genericVar, Decl(genericClassExpressionInFunction.ts, 0, 12))
-

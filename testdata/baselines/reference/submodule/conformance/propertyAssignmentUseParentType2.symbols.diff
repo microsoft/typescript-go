@@ -36,4 +36,3 @@
 ->conflictingDuplicated : Symbol(conflictingDuplicated, Decl(propertyAssignmentUseParentType2.js, 10, 12), Decl(propertyAssignmentUseParentType2.js, 10, 47))
 +>conflictingDuplicated : Symbol(conflictingDuplicated, Decl(propertyAssignmentUseParentType2.js, 10, 12))
  >nuo : Symbol(nuo, Decl(propertyAssignmentUseParentType2.js, 9, 25))
-

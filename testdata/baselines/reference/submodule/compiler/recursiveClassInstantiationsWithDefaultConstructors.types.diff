@@ -13,4 +13,3 @@
  >TypeScript2 : typeof TypeScript2
 ->MemberNameArray : typeof TypeScript2.MemberNameArray
 +>MemberNameArray : typeof MemberNameArray
-

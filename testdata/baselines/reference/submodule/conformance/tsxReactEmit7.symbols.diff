@@ -78,4 +78,3 @@
  >xxxxx : Symbol(xxxxx, Decl(file.tsx, 17, 12))
 ->div : Symbol(JSX.IntrinsicElements.__index, Decl(file.tsx, 2, 30))
 +>div : Symbol((Missing), Decl(file.tsx, 2, 30))
-

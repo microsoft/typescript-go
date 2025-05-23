@@ -25,4 +25,3 @@
 ->obj : { m(x: any): void; p: (x: any) => void; }
 +>obj : { m: (x: any) => void; p: (x: any) => void; }
  >p : (x: any) => void
-

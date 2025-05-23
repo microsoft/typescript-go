@@ -42,4 +42,3 @@
  >x : Symbol(x, Decl(extendStringInterface.ts, 5, 3))
 ->'doOtherStuff' : Symbol(String.doOtherStuff, Decl(extendStringInterface.ts, 1, 22))
 +>'doOtherStuff' : Symbol(doOtherStuff, Decl(extendStringInterface.ts, 1, 22))
-

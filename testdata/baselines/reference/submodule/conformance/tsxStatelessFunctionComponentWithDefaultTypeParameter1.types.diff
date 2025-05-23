@@ -42,4 +42,3 @@
 +><MyComponent values="Hello"/> : Element
 +>MyComponent : <T>(attr: T) => Element
  >values : string
-

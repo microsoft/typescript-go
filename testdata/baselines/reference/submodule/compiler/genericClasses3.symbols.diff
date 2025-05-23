@@ -49,4 +49,3 @@
 ->b : Symbol(B.b, Decl(genericClasses3.ts, 1, 9))
 +>b : Symbol(b, Decl(genericClasses3.ts, 1, 9))
 
-

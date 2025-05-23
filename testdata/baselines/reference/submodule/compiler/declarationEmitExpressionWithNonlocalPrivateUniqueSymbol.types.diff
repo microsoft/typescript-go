@@ -12,4 +12,3 @@
 ->A : { readonly A: unique symbol; }
 +>A1 : AX
 +>A : AX
-

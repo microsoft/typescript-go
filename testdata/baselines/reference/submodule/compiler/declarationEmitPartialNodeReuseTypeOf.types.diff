@@ -51,4 +51,3 @@
 +>a.o : (p1: "nImported", p2: "nNotImported", p3: "private") => { foo: "nImported"; bar: "private"; baz: "nNotImported"; }
 +>a : typeof import("a")
 +>o : (p1: "nImported", p2: "nNotImported", p3: "private") => { foo: "nImported"; bar: "private"; baz: "nNotImported"; }
-

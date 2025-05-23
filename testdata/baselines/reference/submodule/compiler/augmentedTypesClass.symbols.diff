@@ -20,4 +20,3 @@
  >c4 : Symbol(c4, Decl(augmentedTypesClass.ts, 5, 29))
 ->One : Symbol(c4.One, Decl(augmentedTypesClass.ts, 6, 9))
 +>One : Symbol(One, Decl(augmentedTypesClass.ts, 6, 9))
-

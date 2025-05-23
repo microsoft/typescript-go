@@ -46,4 +46,3 @@
  >animalOrUndef : Symbol(animalOrUndef, Decl(assertionFunctionsCanNarrowByDiscriminant.ts, 19, 5))
 ->canMeow : Symbol(Cat.canMeow, Decl(assertionFunctionsCanNarrowByDiscriminant.ts, 1, 16))
 +>canMeow : Symbol(canMeow, Decl(assertionFunctionsCanNarrowByDiscriminant.ts, 1, 16))
-

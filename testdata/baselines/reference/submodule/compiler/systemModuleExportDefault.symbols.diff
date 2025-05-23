@@ -16,4 +16,3 @@
 ->C : Symbol(C, Decl(file4.ts, 0, 0))
 +>C : Symbol(default, Decl(file4.ts, 0, 0))
 
-

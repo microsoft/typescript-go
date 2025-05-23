@@ -1295,4 +1295,3 @@
 +>Promise.reject : Symbol(reject, Decl(lib.es2015.promise.d.ts, --, --))
 +>Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --))
 +>reject : Symbol(reject, Decl(lib.es2015.promise.d.ts, --, --))
-

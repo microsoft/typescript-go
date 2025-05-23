@@ -16,4 +16,3 @@
 ->break : Symbol(bigClass.break, Decl(es6ClassTest5.ts, 8, 17))
 +>break : Symbol(break, Decl(es6ClassTest5.ts, 8, 17))
  }
-

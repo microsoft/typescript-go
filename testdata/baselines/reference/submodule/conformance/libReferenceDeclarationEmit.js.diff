@@ -1,9 +1,10 @@
 --- old.libReferenceDeclarationEmit.js
 +++ new.libReferenceDeclarationEmit.js
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
+ //// [file2.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-
+-
 -
 -//// [file1.d.ts]
 -/// <reference lib="dom" preserve="true" />
@@ -11,4 +12,3 @@
 -//// [file2.d.ts]
 -/// <reference lib="dom" preserve="true" />
 -export {};
--

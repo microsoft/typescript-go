@@ -36,4 +36,3 @@
 +>G : Element
 +><Greet /> : Element
 +>Greet : (x: { name?: string | undefined; }) => null
-

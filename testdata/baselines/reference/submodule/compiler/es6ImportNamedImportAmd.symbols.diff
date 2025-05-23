@@ -48,4 +48,3 @@
  import { aaaa as bbbb } from "es6ImportNamedImportAmd_0";
 ->aaaa : Symbol(aaaa, Decl(es6ImportNamedImportAmd_0.ts, 7, 10))
  >bbbb : Symbol(bbbb, Decl(es6ImportNamedImportAmd_1.ts, 26, 8))
-

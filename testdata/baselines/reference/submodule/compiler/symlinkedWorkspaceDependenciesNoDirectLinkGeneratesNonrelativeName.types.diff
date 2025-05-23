@@ -18,4 +18,3 @@
 +>pkg.invoke : () => Foo
 +>pkg : typeof import("workspace/packageB/index")
 +>invoke : () => Foo
-

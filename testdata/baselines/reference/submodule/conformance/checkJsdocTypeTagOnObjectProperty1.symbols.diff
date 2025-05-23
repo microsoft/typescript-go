@@ -46,4 +46,3 @@
 ->obj : Symbol(obj, Decl(0.js, 2, 5), Decl(0.js, 17, 1), Decl(0.js, 19, 7), Decl(0.js, 21, 23))
 +>obj : Symbol(obj, Decl(0.js, 2, 5))
  >arrowFunc : Symbol(arrowFunc, Decl(0.js, 14, 20))
-

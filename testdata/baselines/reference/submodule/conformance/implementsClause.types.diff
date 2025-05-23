@@ -31,4 +31,3 @@
 ->nestedNamespace : typeof nestedNamespace
 +>nestedNamespace : typeof import("ns")
  >types : any
-

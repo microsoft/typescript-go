@@ -23,4 +23,3 @@
 +>test('hi') : "hi"
 +>test : <T1 extends T>(data: T1) => T1
  >'hi' : "hi"
-

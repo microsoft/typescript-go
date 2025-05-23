@@ -46,4 +46,3 @@
 ->test2 : Symbol(JSX.IntrinsicElements.test2, Decl(file.tsx, 3, 36))
 +>test2 : Symbol(test2, Decl(file.tsx, 3, 36))
  >n : Symbol(n, Decl(file.tsx, 16, 6))
-

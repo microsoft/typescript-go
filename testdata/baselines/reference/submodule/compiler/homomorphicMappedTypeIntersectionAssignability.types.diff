@@ -30,4 +30,3 @@
 ->a : { weak?: string; } & Readonly<TType> & { name: "ok"; }
 +>a : { weak?: string | undefined; } & Readonly<TType> & { name: "ok"; }
  }
-

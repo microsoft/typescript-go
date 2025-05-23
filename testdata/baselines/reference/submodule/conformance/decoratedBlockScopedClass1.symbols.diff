@@ -18,4 +18,3 @@
  >Foo : Symbol(Foo, Decl(a.ts, 2, 1))
 ->func : Symbol(Foo.func, Decl(a.ts, 5, 11))
 +>func : Symbol(func, Decl(a.ts, 5, 11))
-

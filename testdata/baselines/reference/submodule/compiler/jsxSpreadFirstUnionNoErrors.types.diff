@@ -72,4 +72,3 @@
 +><Info {...infoProps} /> : Element
 +>Info : (props: InfoProps) => Element
  >infoProps : InfoProps
-

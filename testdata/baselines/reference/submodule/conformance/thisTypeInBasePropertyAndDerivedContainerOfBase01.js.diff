@@ -1,9 +1,10 @@
 --- old.thisTypeInBasePropertyAndDerivedContainerOfBase01.js
 +++ new.thisTypeInBasePropertyAndDerivedContainerOfBase01.js
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
+ }
 
  //// [thisTypeInBasePropertyAndDerivedContainerOfBase01.js]
-
+-
 -
 -//// [thisTypeInBasePropertyAndDerivedContainerOfBase01.d.ts]
 -interface BoxOfFoo<T extends Foo> {
@@ -15,4 +16,3 @@
 -interface Bar extends Foo {
 -    other: BoxOfFoo<this>;
 -}
--

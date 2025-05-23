@@ -11,4 +11,3 @@
 ->#uninitialized : Symbol(A.#uninitialized, Decl(privateNameStaticFieldInitializer.ts, 1, 23))
 +>#uninitialized : Symbol(#uninitialized, Decl(privateNameStaticFieldInitializer.ts, 1, 23))
  }
-

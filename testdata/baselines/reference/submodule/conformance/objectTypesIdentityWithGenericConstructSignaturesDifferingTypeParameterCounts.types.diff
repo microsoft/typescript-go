@@ -127,4 +127,3 @@
 ->foo14 : { (x: I<string, Date, RegExp, boolean>): any; (x: typeof b): any; }
 +>foo14 : { (x: I<string, Date, RegExp, boolean>): any; (x: { new: <A, B, C, D, E, F>(x: A) => A; }): any; }
  >x : any
-

@@ -27,4 +27,3 @@
 +>function (a, b) { } : (a: any, b: any) => void
 +>a : any
 +>b : any
-

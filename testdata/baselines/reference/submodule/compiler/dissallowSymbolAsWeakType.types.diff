@@ -19,4 +19,3 @@
 ->unregister : (unregisterToken: WeakKey) => boolean
 +>unregister : (unregisterToken: object) => boolean
  >s : symbol
-

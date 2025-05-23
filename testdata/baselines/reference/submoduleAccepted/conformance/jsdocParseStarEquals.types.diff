@@ -20,4 +20,3 @@
 +>cbf : (f: any) => void
 +>f : any
  }
-

@@ -20,4 +20,3 @@
 +>ph : typeof import("node:ph")
 +>constants : typeof constants
  >NODE_PERFORMANCE_GC_FLAGS_ALL_AVAILABLE_GARBAGE : number
-

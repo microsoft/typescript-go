@@ -10,4 +10,3 @@
 ->raw : Symbol(StringConstructor.raw, Decl(lib.es2015.core.d.ts, --, --))
 +>raw : Symbol(raw, Decl(lib.es2015.core.d.ts, --, --))
  >raw : Symbol(raw, Decl(stringRawType.ts, 0, 12))
-

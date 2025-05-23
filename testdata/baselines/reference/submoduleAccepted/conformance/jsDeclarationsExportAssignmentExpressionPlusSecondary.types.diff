@@ -30,4 +30,3 @@
 +>exports : { thing: string; also: string; desc: { item: string; }; }
 +>Strings : any
  >Strings : { a: string; b: string; }
-

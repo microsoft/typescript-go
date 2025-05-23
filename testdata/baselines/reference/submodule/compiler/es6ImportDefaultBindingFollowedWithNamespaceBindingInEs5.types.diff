@@ -13,4 +13,3 @@
 ->nameSpaceBinding : typeof nameSpaceBinding
 +>nameSpaceBinding : typeof import("es6ImportDefaultBindingFollowedWithNamespaceBindingInEs5_0")
  >a : number
-

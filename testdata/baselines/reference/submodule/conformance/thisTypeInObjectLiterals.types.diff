@@ -85,4 +85,3 @@
  >impl : I
 ->mutuallyRecursive : { a: number; start(): number; passthrough(n: number): number; sub1(n: number): number; }
 +>mutuallyRecursive : { a: number; start: () => number; passthrough: (n: number) => number; sub1: (n: number) => number; }
-

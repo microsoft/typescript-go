@@ -14,4 +14,3 @@
 ->b : A.B<number>
 +>b : B<number>
  >foo : () => void
-

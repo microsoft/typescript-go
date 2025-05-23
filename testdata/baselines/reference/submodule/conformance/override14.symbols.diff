@@ -16,4 +16,3 @@
 ->property : Symbol(SubFoo.property, Decl(override14.ts, 4, 26))
 +>property : Symbol(property, Decl(override14.ts, 4, 26))
  }
-

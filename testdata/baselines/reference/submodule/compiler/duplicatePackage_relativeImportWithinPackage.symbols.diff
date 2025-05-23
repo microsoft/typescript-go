@@ -16,4 +16,3 @@
 ->x : Symbol(C.x, Decl(index.d.ts, 0, 16))
 +>x : Symbol(x, Decl(index.d.ts, 0, 16))
  }
-

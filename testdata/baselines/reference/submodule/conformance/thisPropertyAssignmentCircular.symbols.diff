@@ -63,4 +63,3 @@
 ->x : Symbol(C.x, Decl(thisPropertyAssignmentCircular.js, 13, 14), Decl(thisPropertyAssignmentCircular.js, 14, 15))
 ->toString : Symbol(Function.toString, Decl(lib.es5.d.ts, --, --))
  }
-

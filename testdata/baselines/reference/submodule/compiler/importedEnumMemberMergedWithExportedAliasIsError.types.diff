@@ -6,4 +6,3 @@
  export type EnumA = [string] | [string, number];
 ->EnumA : import("alias").EnumA
 +>EnumA : EnumA
-

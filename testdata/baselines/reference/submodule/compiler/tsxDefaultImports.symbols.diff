@@ -34,4 +34,3 @@
 ->one : Symbol(SomeEnum.one, Decl(a.ts, 0, 15))
 +>E : Symbol(E, Decl(a.ts, 3, 32))
 +>one : Symbol(one, Decl(a.ts, 0, 15))
-

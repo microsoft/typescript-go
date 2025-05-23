@@ -183,4 +183,3 @@
 ->foo14 : { (x: I<Number>): any; (x: typeof b): any; }
 +>foo14 : { (x: I<Number>): any; (x: { new: <T extends RegExp>(x: T) => string; }): any; }
  >x : any
-

@@ -131,4 +131,3 @@
 +>module.exports : { color: "blue" | "red"; }
 +>module : { export=: { color: "blue" | "red"; }; }
 +>exports : { color: "blue" | "red"; }
-

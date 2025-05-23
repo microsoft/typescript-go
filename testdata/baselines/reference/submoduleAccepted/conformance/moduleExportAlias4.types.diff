@@ -42,4 +42,3 @@
 +>D : any
 +>class D { } : typeof D
 +>D : typeof D
-

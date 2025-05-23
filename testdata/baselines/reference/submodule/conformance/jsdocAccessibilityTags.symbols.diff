@@ -222,4 +222,3 @@
 +>new D().pub2 : Symbol(pub2, Decl(jsdocAccessibilityTag.js, 37, 23))
 +>D : Symbol(D, Decl(jsdocAccessibilityTag.js, 51, 1))
 +>pub2 : Symbol(pub2, Decl(jsdocAccessibilityTag.js, 37, 23))
-

@@ -93,4 +93,3 @@
 +>cooked : Symbol(cooked, Decl(tslib.d.ts, 6, 45))
 +>raw : Symbol(raw, Decl(tslib.d.ts, 6, 62))
  >TemplateStringsArray : Symbol(TemplateStringsArray, Decl(lib.es5.d.ts, --, --))
-

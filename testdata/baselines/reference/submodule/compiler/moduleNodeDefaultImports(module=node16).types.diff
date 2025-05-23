@@ -194,4 +194,3 @@
 +>self : typeof import("b")
 +>def : () => void
 +>default : any
-

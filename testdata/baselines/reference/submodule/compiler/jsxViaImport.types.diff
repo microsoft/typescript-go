@@ -37,4 +37,3 @@
 ->base : React.Component<any, {}>
 +>base : Component<any, {}>
  }
-

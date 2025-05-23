@@ -47,4 +47,3 @@
  >a : Symbol(a, Decl(classAbstractUsingAbstractMethod1.ts, 12, 3))
 ->foo : Symbol(B.foo, Decl(classAbstractUsingAbstractMethod1.ts, 4, 19))
 +>foo : Symbol(foo, Decl(classAbstractUsingAbstractMethod1.ts, 4, 19))
-

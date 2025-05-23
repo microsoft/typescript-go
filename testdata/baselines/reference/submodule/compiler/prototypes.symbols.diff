@@ -21,4 +21,3 @@
  >f : Symbol(f, Decl(prototypes.ts, 1, 23))
 ->prototype : Symbol(Function.prototype, Decl(lib.es5.d.ts, --, --))
 +>prototype : Symbol(prototype, Decl(lib.es5.d.ts, --, --))
-

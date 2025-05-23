@@ -205,4 +205,3 @@
 ->foo : Symbol(I20.foo, Decl(anyAssignableToEveryType2.ts, 126, 20))
 +>foo : Symbol(foo, Decl(anyAssignableToEveryType2.ts, 126, 20))
  }
-

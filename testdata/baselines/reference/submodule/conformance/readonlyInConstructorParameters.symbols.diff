@@ -35,4 +35,3 @@
  >F : Symbol(F, Decl(readonlyInConstructorParameters.ts, 7, 1))
 ->x : Symbol(F.x, Decl(readonlyInConstructorParameters.ts, 10, 16))
 +>x : Symbol(x, Decl(readonlyInConstructorParameters.ts, 10, 16))
-

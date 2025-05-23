@@ -12,4 +12,3 @@
  >ambiModule : Symbol(ambiModule, Decl(semicolonsInModuleDeclarations.ts, 0, 0))
 ->i2 : Symbol(ambiModule.i2, Decl(semicolonsInModuleDeclarations.ts, 1, 27))
 +>i2 : Symbol(i2, Decl(semicolonsInModuleDeclarations.ts, 1, 27))
-

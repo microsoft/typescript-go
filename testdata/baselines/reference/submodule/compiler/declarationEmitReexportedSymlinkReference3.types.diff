@@ -31,4 +31,3 @@
  export {MetadataAccessor} from '@raymondfeng/pkg1';
 ->MetadataAccessor : typeof import("monorepo/pkg1/dist/types").MetadataAccessor
 +>MetadataAccessor : typeof MetadataAccessor
-

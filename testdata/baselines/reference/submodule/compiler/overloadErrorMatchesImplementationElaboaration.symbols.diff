@@ -24,4 +24,3 @@
  >ea : Symbol(ea, Decl(overloadErrorMatchesImplementationElaboaration.ts, 6, 3))
 ->publish : Symbol(EventAggregator.publish, Decl(overloadErrorMatchesImplementationElaboaration.ts, 1, 1), Decl(overloadErrorMatchesImplementationElaboaration.ts, 2, 45))
 +>publish : Symbol(publish, Decl(overloadErrorMatchesImplementationElaboaration.ts, 1, 1), Decl(overloadErrorMatchesImplementationElaboaration.ts, 2, 45))
-

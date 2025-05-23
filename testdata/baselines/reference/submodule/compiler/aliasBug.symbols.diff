@@ -46,4 +46,3 @@
 ->Provide : Symbol(provide.Provide, Decl(aliasBug.ts, 0, 12))
 +>Provide : Symbol(Provide, Decl(aliasBug.ts, 0, 12))
  }
-

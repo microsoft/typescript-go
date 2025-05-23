@@ -69,4 +69,3 @@
 ->f3 : Symbol(C.f3, Decl(classStaticBlock3.ts, 13, 5))
 +>f3 : Symbol(f3, Decl(classStaticBlock3.ts, 13, 5))
  }
-

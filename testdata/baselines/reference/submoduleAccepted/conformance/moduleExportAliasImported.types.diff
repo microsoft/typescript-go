@@ -33,4 +33,3 @@
 ->import('./bug28014') : Promise<{ (): void; version: 1; }>
 +>import('./bug28014') : Promise<() => void>
  >'./bug28014' : "./bug28014"
-

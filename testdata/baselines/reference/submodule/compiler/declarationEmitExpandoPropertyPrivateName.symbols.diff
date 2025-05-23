@@ -15,4 +15,3 @@
 +>q : Symbol(q, Decl(b.ts, 0, 22))
 +>val : Symbol(val, Decl(b.ts, 2, 22))
  >f : Symbol(f, Decl(b.ts, 0, 8))
-

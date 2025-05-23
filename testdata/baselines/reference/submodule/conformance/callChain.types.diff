@@ -37,4 +37,3 @@
  >b : ((...args: any[]) => number) | undefined
 ->toString : ((radix?: number) => string) | undefined
 +>toString : ((radix?: number | undefined) => string) | undefined
-

@@ -56,4 +56,3 @@
 ->pacakge : Symbol(bar.pacakge, Decl(strictModeReservedWord2.ts, 20, 12))
 +>pacakge : Symbol(pacakge, Decl(strictModeReservedWord2.ts, 20, 12))
  }
-

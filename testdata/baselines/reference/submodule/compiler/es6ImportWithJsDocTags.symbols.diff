@@ -23,4 +23,3 @@
 ->log : Symbol(Console.log, Decl(lib.dom.d.ts, --, --))
 +>log : Symbol(log, Decl(lib.dom.d.ts, --, --))
  >foo : Symbol(foo, Decl(b.js, 4, 8))
-

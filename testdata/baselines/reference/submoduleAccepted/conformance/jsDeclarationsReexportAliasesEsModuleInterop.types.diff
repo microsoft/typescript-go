@@ -29,4 +29,3 @@
 ->Foob : typeof Fooa
 +>default : typeof Foo
 +>Foob : typeof Foo
-

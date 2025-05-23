@@ -19,4 +19,3 @@
 ->ok.y : Symbol(Outer.y, Decl(typeFromPropertyAssignment40.js, 1, 19))
  >ok : Symbol(ok, Decl(typeFromPropertyAssignment40.js, 5, 3))
 ->y : Symbol(Outer.y, Decl(typeFromPropertyAssignment40.js, 1, 19))
-

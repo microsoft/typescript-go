@@ -119,4 +119,3 @@
 +>exports : { justExport: number; bothBefore: number; bothAfter: number; }
 +>justProperty : any
  >'string' : "string"
-

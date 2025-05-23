@@ -131,4 +131,3 @@
 +>z.getC : Symbol(getC, Decl(destructuringParameterProperties3.ts, 13, 5))
 +>z : Symbol(z, Decl(destructuringParameterProperties3.ts, 26, 3))
 +>getC : Symbol(getC, Decl(destructuringParameterProperties3.ts, 13, 5))
-

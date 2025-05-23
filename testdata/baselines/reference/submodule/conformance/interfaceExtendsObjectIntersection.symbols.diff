@@ -202,4 +202,3 @@
  >b : Symbol(b, Decl(interfaceExtendsObjectIntersection.ts, 52, 49))
 ->x : Symbol(C23.x, Decl(interfaceExtendsObjectIntersection.ts, 52, 66))
 +>x : Symbol(x, Decl(interfaceExtendsObjectIntersection.ts, 52, 66))
-

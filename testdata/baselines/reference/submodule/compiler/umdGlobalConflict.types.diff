@@ -19,4 +19,3 @@
 ->Alpha : typeof Alpha
 +>Alpha : typeof import("v1/index")
  >x : string
-

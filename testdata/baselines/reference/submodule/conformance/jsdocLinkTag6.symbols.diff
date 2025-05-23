@@ -16,4 +16,3 @@
 ->foo : Symbol(B.foo, Decl(a.ts, 3, 19))
 +>foo : Symbol(foo, Decl(a.ts, 3, 19))
  }
-

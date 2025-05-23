@@ -64,4 +64,3 @@
  >foo : Symbol(foo, Decl(optionalChainingInTypeAssertions.ts, 4, 5))
 ->"m" : Symbol(Foo.m, Decl(optionalChainingInTypeAssertions.ts, 0, 11))
 +>"m" : Symbol(m, Decl(optionalChainingInTypeAssertions.ts, 0, 11))
-

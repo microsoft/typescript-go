@@ -120,4 +120,3 @@
 +>module.exports : Symbol(A, Decl(mod1.js, 5, 18))
 +>module : Symbol(module.exports)
 +>exports : Symbol(A, Decl(mod1.js, 5, 18))
-

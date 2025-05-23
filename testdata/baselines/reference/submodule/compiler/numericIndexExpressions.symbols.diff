@@ -41,4 +41,3 @@
  >y : Symbol(y, Decl(numericIndexExpressions.ts, 12, 3))
 ->1 : Symbol(Strings1['1'], Decl(numericIndexExpressions.ts, 3, 20))
 +>1 : Symbol('1', Decl(numericIndexExpressions.ts, 3, 20))
-

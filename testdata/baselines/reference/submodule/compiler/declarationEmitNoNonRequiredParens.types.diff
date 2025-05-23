@@ -10,4 +10,3 @@
 +>bar : (Test)[]
 +>(null as TestType[Extract<keyof TestType, string>][]) : (Test)[]
 +>null as TestType[Extract<keyof TestType, string>][] : (Test)[]
-

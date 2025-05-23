@@ -7,4 +7,3 @@
 ->n : typeof n
 +>n : typeof import("file1")
 
-

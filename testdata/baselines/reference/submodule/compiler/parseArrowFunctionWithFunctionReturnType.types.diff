@@ -9,4 +9,3 @@
 +>fn : <T>() => () => T
 +><T>(): (() => T) => null as any : <T>() => () => T
  >null as any : any
-

@@ -18,4 +18,3 @@
 +>nameSpaceBinding.a : typeof a
 +>nameSpaceBinding : typeof import("server")
 +>a : typeof a
-

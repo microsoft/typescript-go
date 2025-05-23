@@ -31,4 +31,3 @@
  >E : E
 ->A : A<{ a: string; b: string; }>
 +>A : typeof A
-

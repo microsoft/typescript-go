@@ -19,4 +19,3 @@
 ->f : Symbol(I.f, Decl(assignToFn.ts, 1, 17))
 +>f : Symbol(f, Decl(assignToFn.ts, 1, 17))
  }
-

@@ -15,4 +15,3 @@
  >foo : Symbol(foo, Decl(typeArgumentInferenceWithClassExpression2.ts, 0, 0))
 ->prop : Symbol((Anonymous class).prop, Decl(typeArgumentInferenceWithClassExpression2.ts, 5, 11))
 +>prop : Symbol(prop, Decl(typeArgumentInferenceWithClassExpression2.ts, 5, 11))
-

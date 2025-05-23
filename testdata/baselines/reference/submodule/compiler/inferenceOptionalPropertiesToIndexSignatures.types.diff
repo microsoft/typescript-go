@@ -48,4 +48,3 @@
 ->join : (separator?: string) => string
 +>join : (separator?: string | undefined) => string
  >'&' : "&"
-

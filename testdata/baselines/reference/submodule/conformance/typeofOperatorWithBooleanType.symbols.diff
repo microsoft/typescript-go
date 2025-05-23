@@ -87,4 +87,3 @@
  >M : Symbol(M, Decl(typeofOperatorWithBooleanType.ts, 8, 1))
 ->n : Symbol(M.n, Decl(typeofOperatorWithBooleanType.ts, 10, 14))
 +>n : Symbol(n, Decl(typeofOperatorWithBooleanType.ts, 10, 14))
-

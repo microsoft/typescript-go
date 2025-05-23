@@ -125,4 +125,3 @@
  >d2 : Symbol(d2, Decl(overloadingOnConstants1.ts, 12, 3))
 ->createElement : Symbol(Document2.createElement, Decl(overloadingOnConstants1.ts, 5, 21), Decl(overloadingOnConstants1.ts, 6, 47), Decl(overloadingOnConstants1.ts, 7, 44), Decl(overloadingOnConstants1.ts, 8, 45))
 +>createElement : Symbol(createElement, Decl(overloadingOnConstants1.ts, 5, 21), Decl(overloadingOnConstants1.ts, 6, 47), Decl(overloadingOnConstants1.ts, 7, 44), Decl(overloadingOnConstants1.ts, 8, 45))
-

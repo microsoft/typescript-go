@@ -15,4 +15,3 @@
 ->Foo : (...args: any[]) => any
 +>Foo : () => any
  }
-

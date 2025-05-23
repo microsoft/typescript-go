@@ -54,4 +54,3 @@
 +>baz.normal : Symbol(normal, Decl(source.js, 8, 17))
 +>baz : Symbol(baz, Decl(source.js, 5, 19))
 +>normal : Symbol(normal, Decl(source.js, 8, 17))
-

@@ -29,4 +29,3 @@
 +>id("hello") : string | number
 +>id : (x: string | number) => string | number
  >"hello" : "hello"
-

@@ -44,4 +44,3 @@
 ->{ a: 0 } : { a: number; }
 ->a : number
  >0 : 0
-

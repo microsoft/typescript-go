@@ -1,9 +1,10 @@
 --- old.moduleOuterQualification.js
 +++ new.moduleOuterQualification.js
-@@= skipped -11, +11 lines =@@
+@@= skipped -10, +10 lines =@@
+
 
  //// [moduleOuterQualification.js]
-
+-
 -
 -//// [moduleOuterQualification.d.ts]
 -declare namespace outer {
@@ -14,4 +15,3 @@
 -        }
 -    }
 -}
--

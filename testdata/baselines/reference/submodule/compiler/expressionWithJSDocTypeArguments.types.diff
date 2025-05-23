@@ -46,4 +46,3 @@
 ->TComeOnBar : typeof Bar<(string | null) | null>
 +>TComeOnBar : { new (x: string | null): Bar<string | null>; prototype: Bar<any>; }
  >Bar : typeof Bar
-

@@ -15,4 +15,3 @@
  >f : (map: { [k: string]: number; }) => void
 ->foo : typeof foo
 +>foo : typeof import("foo")
-

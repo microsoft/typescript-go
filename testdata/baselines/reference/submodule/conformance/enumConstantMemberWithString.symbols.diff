@@ -83,4 +83,3 @@
 ->b : Symbol(T6.b, Decl(enumConstantMemberWithString.ts, 29, 12))
 +>b : Symbol(b, Decl(enumConstantMemberWithString.ts, 29, 12))
  }
-

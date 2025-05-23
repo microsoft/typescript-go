@@ -1,9 +1,10 @@
 --- old.declarationEmitLateBoundAssignments2.js
 +++ new.declarationEmitLateBoundAssignments2.js
-@@= skipped -117, +117 lines =@@
+@@= skipped -116, +116 lines =@@
+ arrow9["🤪"] = 0;
  export const arrow10 = () => { };
  arrow10[emoji] = 0;
-
+-
 -
 -//// [declarationEmitLateBoundAssignments2.d.ts]
 -export declare function decl(): void;
@@ -70,4 +71,3 @@
 -    (): void;
 -    "\uD83E\uDD37\u200D\u2642\uFE0F": number;
 -};
--

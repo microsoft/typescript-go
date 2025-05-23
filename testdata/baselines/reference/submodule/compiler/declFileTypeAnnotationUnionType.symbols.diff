@@ -81,4 +81,3 @@
 ->g : Symbol(m.g, Decl(declFileTypeAnnotationUnionType.ts, 6, 5))
 +>g : Symbol(g, Decl(declFileTypeAnnotationUnionType.ts, 6, 5))
  >c : Symbol(c, Decl(declFileTypeAnnotationUnionType.ts, 0, 0))
-

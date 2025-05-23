@@ -16,4 +16,3 @@
 ->foo : typeof foo
 +>foo : typeof import("0")
  >type : any
-

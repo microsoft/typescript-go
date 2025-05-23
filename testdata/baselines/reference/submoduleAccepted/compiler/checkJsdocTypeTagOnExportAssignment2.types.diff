@@ -17,4 +17,3 @@
  b;
 ->b : import("a").Foo
 +>b : Foo
-

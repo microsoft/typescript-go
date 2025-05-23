@@ -14,4 +14,3 @@
 +>A : Color
 +>styled() : Color
 +>styled : () => Color
-

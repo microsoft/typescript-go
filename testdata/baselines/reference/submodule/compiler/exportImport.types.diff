@@ -30,4 +30,3 @@
  export import w = require('./w1');
 ->w : typeof w
 +>w : typeof Widget1
-

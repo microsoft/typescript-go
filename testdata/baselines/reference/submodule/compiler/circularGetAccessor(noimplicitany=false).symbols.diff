@@ -12,4 +12,3 @@
 ->foo : Symbol(C.foo, Decl(circularGetAccessor.ts, 0, 17))
 +>foo : Symbol(foo, Decl(circularGetAccessor.ts, 0, 17))
  }
-

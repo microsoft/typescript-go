@@ -12,4 +12,3 @@
  >f<number>() : void
 ->f : <A, B = {}>(arg: number) => void
 +>f : <A, B>(arg: number) => void
-

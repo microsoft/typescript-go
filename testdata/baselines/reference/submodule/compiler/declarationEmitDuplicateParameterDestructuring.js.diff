@@ -20,5 +20,4 @@
 -}, { prop: b }: {
 -    prop: number;
 -}) => number;
--
 +<no content>

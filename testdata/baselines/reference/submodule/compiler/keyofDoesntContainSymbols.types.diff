@@ -62,4 +62,3 @@
  >ValuesOfObj : ValuesOfObj
 ->obj : { num: number; str: string; 0: 0; [sym]: symbol; }
 +>obj : { num: number; str: string; [num]: 0; [sym]: symbol; }
-

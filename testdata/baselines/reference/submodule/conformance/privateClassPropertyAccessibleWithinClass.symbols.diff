@@ -184,4 +184,3 @@
 ->foo : Symbol(C2.foo, Decl(privateClassPropertyAccessibleWithinClass.ts, 26, 6))
 +>foo : Symbol(foo, Decl(privateClassPropertyAccessibleWithinClass.ts, 26, 6))
  }
-

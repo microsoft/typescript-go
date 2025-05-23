@@ -137,4 +137,3 @@
 +>x : I
 +>g : { (n1: number, n2: number): number; (n: number): string; (a: A): C; (c: C): string; }
 
-

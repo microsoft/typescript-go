@@ -27,4 +27,3 @@
 ->f : typeof f
 +>f : () => number
 
-

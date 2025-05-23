@@ -10,4 +10,3 @@
 ->sort : Symbol(Array.sort, Decl(lib.es5.d.ts, --, --))
 +>sort : Symbol(sort, Decl(lib.es5.d.ts, --, --))
  >compare : Symbol(compare, Decl(reverseInferenceInContextualInstantiation.ts, 0, 0))
-

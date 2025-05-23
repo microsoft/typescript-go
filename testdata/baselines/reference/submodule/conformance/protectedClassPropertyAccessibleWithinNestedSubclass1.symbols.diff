@@ -325,4 +325,3 @@
  >d4 : Symbol(d4, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 107, 3))
 ->x : Symbol(Base.x, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 0, 12))
 +>x : Symbol(x, Decl(protectedClassPropertyAccessibleWithinNestedSubclass1.ts, 0, 12))
-

@@ -19,4 +19,3 @@
 +>a.default : typeof default
 +>a : typeof import("/a")
 +>default : typeof default
-

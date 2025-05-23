@@ -147,4 +147,3 @@
 ->A : Symbol(Z.Foo.A, Decl(enumLiteralAssignableToEnumInsideUnion.ts, 11, 21))
 +>Foo : Symbol(Foo, Decl(enumLiteralAssignableToEnumInsideUnion.ts, 10, 10))
 +>A : Symbol(A, Decl(enumLiteralAssignableToEnumInsideUnion.ts, 11, 21))
-

@@ -11,4 +11,3 @@
  >b : Symbol(b, Decl(a.tsx, 1, 5))
 ->a:b : Symbol(a:b, Decl(a.tsx, 1, 21))
 +>a:b : Symbol("a:b", Decl(a.tsx, 1, 21))
-

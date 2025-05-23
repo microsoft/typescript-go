@@ -32,4 +32,3 @@
  >Map : MapConstructor
 ->potentiallyNullIterable : Iterable<[string, number]> | null
 +>potentiallyNullIterable : Iterable<[string, number], any, any> | null
-

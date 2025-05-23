@@ -87,4 +87,3 @@
  >f : Symbol(f, Decl(constructorParameterProperties2.ts, 29, 3))
 ->y : Symbol(F.y, Decl(constructorParameterProperties2.ts, 24, 9), Decl(constructorParameterProperties2.ts, 26, 16))
 +>y : Symbol(y, Decl(constructorParameterProperties2.ts, 24, 9), Decl(constructorParameterProperties2.ts, 26, 16))
-

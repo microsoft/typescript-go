@@ -78,4 +78,3 @@
 +>types.A : typeof A
 +>types : typeof import("/a")
 +>A : typeof A
-

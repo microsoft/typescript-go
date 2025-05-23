@@ -68,4 +68,3 @@
 ->z : Symbol(C.z, Decl(useBeforeDeclaration_jsx.tsx, 11, 18))
 +>z : Symbol(z, Decl(useBeforeDeclaration_jsx.tsx, 11, 18))
  }
-

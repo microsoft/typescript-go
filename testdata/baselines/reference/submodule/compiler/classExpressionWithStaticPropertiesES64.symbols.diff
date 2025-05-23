@@ -6,4 +6,3 @@
  (class { static x = 0; });
 ->x : Symbol((Anonymous class).x, Decl(classExpressionWithStaticPropertiesES64.ts, 0, 8))
 +>x : Symbol(x, Decl(classExpressionWithStaticPropertiesES64.ts, 0, 8))
-

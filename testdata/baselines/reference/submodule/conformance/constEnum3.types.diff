@@ -22,4 +22,3 @@
 ->f2 : (f: TestTypeStr) => void
 +>f2 : (f: "bar" | "foo") => void
  >'bar' : "bar"
-

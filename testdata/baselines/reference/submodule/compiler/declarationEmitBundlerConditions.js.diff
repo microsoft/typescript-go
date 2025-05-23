@@ -41,5 +41,4 @@
 -export declare function makeC(): C;
 -//// [index.d.ts]
 -export declare const c: import("pkg").C;
--
 +<no content>

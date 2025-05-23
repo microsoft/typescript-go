@@ -1,9 +1,10 @@
 --- old.mutuallyRecursiveInterfaceDeclaration.js
 +++ new.mutuallyRecursiveInterfaceDeclaration.js
-@@= skipped -13, +13 lines =@@
+@@= skipped -12, +12 lines =@@
+ //// [mutuallyRecursiveInterfaceDeclaration.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-
+-
 -
 -//// [mutuallyRecursiveInterfaceDeclaration.d.ts]
 -interface A {
@@ -13,4 +14,3 @@
 -    a: A;
 -}
 -export { A, B };
--

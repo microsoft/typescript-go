@@ -79,4 +79,3 @@
  >n3 : Symbol(n3, Decl(genericReduce.ts, 10, 3))
 ->charAt : Symbol(String.charAt, Decl(lib.es5.d.ts, --, --))
 +>charAt : Symbol(charAt, Decl(lib.es5.d.ts, --, --))
-

@@ -1,9 +1,10 @@
 --- old.enumKeysQuotedAsObjectPropertiesInDeclarationEmit.js
 +++ new.enumKeysQuotedAsObjectPropertiesInDeclarationEmit.js
-@@= skipped -40, +40 lines =@@
+@@= skipped -39, +39 lines =@@
+     "3": MouseButton.XBUTTON1_BUTTON,
      "4": MouseButton.XBUTTON2_BUTTON,
  };
-
+-
 -
 -//// [enumKeysQuotedAsObjectPropertiesInDeclarationEmit.d.ts]
 -export declare enum MouseButton {
@@ -22,4 +23,3 @@
 -    "3": MouseButton;
 -    "4": MouseButton;
 -};
--

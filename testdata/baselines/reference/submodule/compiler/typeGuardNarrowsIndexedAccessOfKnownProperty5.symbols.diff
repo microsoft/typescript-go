@@ -28,4 +28,3 @@
 ->x : Symbol(Foo.x, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty5.ts, 12, 15))
 +>x : Symbol(x, Decl(typeGuardNarrowsIndexedAccessOfKnownProperty5.ts, 12, 15))
  }
-

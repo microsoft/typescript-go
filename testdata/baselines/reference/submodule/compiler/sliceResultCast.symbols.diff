@@ -9,4 +9,3 @@
  >x : Symbol(x, Decl(sliceResultCast.ts, 0, 11))
 ->slice : Symbol(Array.slice, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>slice : Symbol(slice, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-

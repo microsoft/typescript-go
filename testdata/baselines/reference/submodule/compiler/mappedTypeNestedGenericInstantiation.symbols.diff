@@ -30,4 +30,3 @@
  >square : Symbol(square, Decl(mappedTypeNestedGenericInstantiation.ts, 9, 5))
 ->value : Symbol(Chainable.value, Decl(mappedTypeNestedGenericInstantiation.ts, 2, 24))
 +>value : Symbol(value, Decl(mappedTypeNestedGenericInstantiation.ts, 2, 24))
-

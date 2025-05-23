@@ -15,4 +15,3 @@
 ->#c : Symbol(Foo.#c, Decl(a.js, 12, 11))
 +>#c : Symbol(#c, Decl(a.js, 12, 11))
  }
-

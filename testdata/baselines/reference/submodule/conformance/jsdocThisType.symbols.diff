@@ -39,4 +39,3 @@
      this.test();
 ->this : Symbol(Foo, Decl(types.d.ts, 0, 0))
  }
-

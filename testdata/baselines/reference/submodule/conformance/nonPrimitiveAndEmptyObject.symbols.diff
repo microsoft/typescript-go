@@ -26,4 +26,3 @@
  >fooProps : Symbol(fooProps, Decl(nonPrimitiveAndEmptyObject.ts, 11, 7))
 ->barProp : Symbol(BarProps.barProp, Decl(nonPrimitiveAndEmptyObject.ts, 2, 27))
 +>barProp : Symbol(barProp, Decl(nonPrimitiveAndEmptyObject.ts, 2, 27))
-

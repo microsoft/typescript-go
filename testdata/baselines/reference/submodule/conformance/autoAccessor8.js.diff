@@ -1,9 +1,10 @@
 --- old.autoAccessor8.js
 +++ new.autoAccessor8.js
-@@= skipped -32, +32 lines =@@
+@@= skipped -31, +31 lines =@@
+     }
      return C3;
  }
-
+-
 -
 -//// [autoAccessor8.d.ts]
 -declare class C1 {
@@ -20,4 +21,3 @@
 -    };
 -    b: any;
 -};
--

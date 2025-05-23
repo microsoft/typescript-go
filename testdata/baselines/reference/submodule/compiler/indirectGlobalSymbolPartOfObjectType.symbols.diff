@@ -9,4 +9,3 @@
  >Symbol : Symbol(Symbol, Decl(indirectGlobalSymbolPartOfObjectType.ts, 1, 5))
 ->iterator : Symbol(SymbolConstructor.iterator, Decl(lib.es2015.iterable.d.ts, --, --))
 +>iterator : Symbol(iterator, Decl(lib.es2015.iterable.d.ts, --, --))
-

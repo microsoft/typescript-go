@@ -41,4 +41,3 @@
 -	export = ReactRouter;
 ->ReactRouter : Symbol(ReactRouter, Decl(react.d.ts, 3, 1))
  }
-

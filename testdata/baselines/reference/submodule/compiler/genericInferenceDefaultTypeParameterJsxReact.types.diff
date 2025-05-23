@@ -35,4 +35,3 @@
 ->e : React.MouseEvent<HTMLSpanElement>
 +>e : MouseEvent<HTMLSpanElement>
  >preventDefault : () => void
-

@@ -15,4 +15,3 @@
 ->Bar : Symbol(Foo.Bar, Decl(publicMemberImplementedAsPrivateInDerivedClass.ts, 3, 26))
 +>Bar : Symbol(Bar, Decl(publicMemberImplementedAsPrivateInDerivedClass.ts, 3, 26))
  }
-

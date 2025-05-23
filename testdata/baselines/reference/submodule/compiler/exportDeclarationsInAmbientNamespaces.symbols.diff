@@ -10,4 +10,3 @@
 ->try : Symbol(Q.try, Decl(exportDeclarationsInAmbientNamespaces.ts, 2, 12))
 +>try : Symbol(try, Decl(exportDeclarationsInAmbientNamespaces.ts, 2, 12))
 
-

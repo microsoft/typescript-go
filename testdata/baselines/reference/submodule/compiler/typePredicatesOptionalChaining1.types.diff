@@ -28,4 +28,3 @@
 ->y : { z?: string; }
 +>y : { z?: string | undefined; }
  >z : string
-

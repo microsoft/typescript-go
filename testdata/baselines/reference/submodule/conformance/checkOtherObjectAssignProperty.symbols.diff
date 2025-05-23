@@ -130,4 +130,3 @@
 ->"bad3" : Symbol(bad3, Decl(mod1.js, 14, 77))
 +>defineProperty : Symbol(defineProperty, Decl(lib.es5.d.ts, --, --))
  >writable : Symbol(writable, Decl(mod1.js, 15, 40))
-

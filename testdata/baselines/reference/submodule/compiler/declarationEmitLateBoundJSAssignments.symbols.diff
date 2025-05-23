@@ -75,4 +75,3 @@
 ->foo : Symbol(foo, Decl(file.js, 0, 0), Decl(file.js, 0, 24), Decl(file.js, 2, 26), Decl(file.js, 4, 28), Decl(file.js, 6, 36) ... and 1 more)
 +>foo : Symbol(foo, Decl(file.js, 0, 0))
  >dashStrMem : Symbol(dashStrMem, Decl(file.js, 6, 5))
-

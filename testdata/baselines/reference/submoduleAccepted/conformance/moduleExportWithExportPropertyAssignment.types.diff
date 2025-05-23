@@ -60,4 +60,3 @@
 +>f : any
 +>function (a) { } : (a: any) => void
 +>a : any
-

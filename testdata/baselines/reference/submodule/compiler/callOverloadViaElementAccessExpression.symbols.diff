@@ -31,4 +31,3 @@
  >c : Symbol(c, Decl(callOverloadViaElementAccessExpression.ts, 8, 3))
 ->'foo' : Symbol(C.foo, Decl(callOverloadViaElementAccessExpression.ts, 0, 9), Decl(callOverloadViaElementAccessExpression.ts, 1, 27), Decl(callOverloadViaElementAccessExpression.ts, 2, 27))
 +>'foo' : Symbol(foo, Decl(callOverloadViaElementAccessExpression.ts, 0, 9), Decl(callOverloadViaElementAccessExpression.ts, 1, 27), Decl(callOverloadViaElementAccessExpression.ts, 2, 27))
-

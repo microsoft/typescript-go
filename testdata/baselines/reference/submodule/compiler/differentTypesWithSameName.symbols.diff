@@ -28,4 +28,3 @@
 ->doSomething : Symbol(m.doSomething, Decl(differentTypesWithSameName.ts, 3, 3))
 +>doSomething : Symbol(doSomething, Decl(differentTypesWithSameName.ts, 3, 3))
  >v : Symbol(v, Decl(differentTypesWithSameName.ts, 14, 3))
-

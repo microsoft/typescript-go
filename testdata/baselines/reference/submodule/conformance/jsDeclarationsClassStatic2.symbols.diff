@@ -31,4 +31,3 @@
  >Bar : Symbol(Bar, Decl(Bar.ts, 0, 31))
 ->foo : Symbol(Foo.foo, Decl(Foo.js, 3, 32))
 +>foo : Symbol(foo, Decl(Foo.js, 0, 12))
-

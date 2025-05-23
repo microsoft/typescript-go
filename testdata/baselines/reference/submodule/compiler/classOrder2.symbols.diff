@@ -33,4 +33,3 @@
 ->foo : Symbol(A.foo, Decl(classOrder2.ts, 0, 19))
 +>foo : Symbol(foo, Decl(classOrder2.ts, 0, 19))
 
-

@@ -42,4 +42,3 @@
  >obj : Symbol(obj, Decl(propertyOverridesAccessors2.ts, 9, 5))
 ->x : Symbol(Derived.x, Decl(propertyOverridesAccessors2.ts, 5, 28))
 +>x : Symbol(x, Decl(propertyOverridesAccessors2.ts, 5, 28))
-

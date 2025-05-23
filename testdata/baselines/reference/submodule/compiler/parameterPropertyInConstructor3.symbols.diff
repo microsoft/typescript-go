@@ -7,4 +7,3 @@
 ->constructor : Symbol(Foo.constructor, Decl(parameterPropertyInConstructor3.ts, 1, 14))
 +>constructor : Symbol(constructor, Decl(parameterPropertyInConstructor3.ts, 1, 14))
  }
-

@@ -632,4 +632,3 @@
 +>foo.of : Symbol(of, Decl(source.js, 80, 15))
 +>foo : Symbol(foo, Decl(source.js, 0, 0))
 +>of : Symbol(of, Decl(source.js, 80, 15))
-

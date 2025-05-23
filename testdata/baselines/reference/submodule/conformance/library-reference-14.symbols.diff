@@ -15,4 +15,3 @@
 ->$ : Symbol($, Decl(index.d.ts, 0, 11))
 ->foo : Symbol(foo, Decl(index.d.ts, 0, 16))
 -
-

@@ -1,9 +1,10 @@
 --- old.moduleAugmentationGlobal4.js
 +++ new.moduleAugmentationGlobal4.js
-@@= skipped -27, +27 lines =@@
+@@= skipped -26, +26 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
  require("./f1");
  require("./f2");
-
+-
 -
 -//// [f1.d.ts]
 -declare global {
@@ -22,4 +23,3 @@
 -//// [f3.d.ts]
 -import "./f1";
 -import "./f2";
--

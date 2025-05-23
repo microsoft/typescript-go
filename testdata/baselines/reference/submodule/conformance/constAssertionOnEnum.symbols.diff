@@ -74,4 +74,3 @@
 ->X : Symbol(Foo.X, Decl(more.ts, 0, 17))
 +>X : Symbol(X, Decl(more.ts, 0, 17))
  >const : Symbol(const)
-

@@ -486,4 +486,3 @@
 ->toJSON : Symbol(Date.toJSON, Decl(lib.es5.d.ts, --, --))
 +>prototype : Symbol(prototype, Decl(lib.es5.d.ts, --, --))
 +>toJSON : Symbol(toJSON, Decl(lib.es5.d.ts, --, --))
-

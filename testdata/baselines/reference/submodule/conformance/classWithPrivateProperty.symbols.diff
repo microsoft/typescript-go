@@ -102,4 +102,3 @@
  >C : Symbol(C, Decl(classWithPrivateProperty.ts, 0, 0))
 ->g : Symbol(C.g, Decl(classWithPrivateProperty.ts, 9, 36))
 +>g : Symbol(g, Decl(classWithPrivateProperty.ts, 9, 36))
-

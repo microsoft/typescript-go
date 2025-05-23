@@ -203,4 +203,3 @@
 +><AnotherButton /> : Element
 +>AnotherButton : (p: any) => Element
 +>SingleChildComp : (p: SingleChildProp) => Element
-

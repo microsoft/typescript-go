@@ -1,9 +1,10 @@
 --- old.nodeModulesImportResolutionNoCycle(module=node16).js
 +++ new.nodeModulesImportResolutionNoCycle(module=node16).js
-@@= skipped -60, +60 lines =@@
+@@= skipped -59, +59 lines =@@
+ // esm format file
  const type = __importStar(require("#type"));
  type;
-
+-
 -
 -//// [index.d.ts]
 -export {};
@@ -11,4 +12,3 @@
 -export {};
 -//// [index.d.cts]
 -export {};
--

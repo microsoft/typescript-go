@@ -32,4 +32,3 @@
 ->c : Symbol(m2.m3.c, Decl(internalAliasClassInsideLocalModuleWithExport.ts, 9, 22))
 +>m3 : Symbol(m3, Decl(internalAliasClassInsideLocalModuleWithExport.ts, 8, 18))
 +>c : Symbol(c, Decl(internalAliasClassInsideLocalModuleWithExport.ts, 9, 22))
-

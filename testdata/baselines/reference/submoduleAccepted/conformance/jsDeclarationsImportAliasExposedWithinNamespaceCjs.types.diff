@@ -85,4 +85,3 @@
 ->myTypes : { [x: string]: any; }
 +>myTypes : any
 +>myTypes : any
-

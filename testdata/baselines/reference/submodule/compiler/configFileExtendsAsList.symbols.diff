@@ -9,4 +9,3 @@
  >y : Symbol(y, Decl(index.ts, 1, 3))
 ->toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
-

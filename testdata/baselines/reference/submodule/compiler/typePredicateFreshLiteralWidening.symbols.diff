@@ -33,4 +33,3 @@
 ->filter : Symbol(Array.filter, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>filter : Symbol(filter, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
  >isNotNull : Symbol(isNotNull, Decl(typePredicateFreshLiteralWidening.ts, 13, 5))
-

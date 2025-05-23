@@ -18,4 +18,3 @@
 ->D : any
 +>new D() : D
 +>D : typeof D
-

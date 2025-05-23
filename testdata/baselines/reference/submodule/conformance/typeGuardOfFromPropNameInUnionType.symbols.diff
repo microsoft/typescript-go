@@ -310,4 +310,3 @@
 ->c : Symbol(Indexed.__index, Decl(typeGuardOfFromPropNameInUnionType.ts, 92, 19))
 +>c : Symbol((Missing), Decl(typeGuardOfFromPropNameInUnionType.ts, 92, 19))
  }
-

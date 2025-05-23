@@ -48,4 +48,3 @@
 -    classes?: Record<ClassKey, string>;
 ->classes : Record<ClassKey, string>
 -}
-

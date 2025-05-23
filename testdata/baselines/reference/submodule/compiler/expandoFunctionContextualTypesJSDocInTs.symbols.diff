@@ -16,4 +16,3 @@
 +>Foo.bar : Symbol(bar, Decl(expandoFunctionContextualTypesJSDocInTs.ts, 0, 25))
 +>Foo : Symbol(Foo, Decl(expandoFunctionContextualTypesJSDocInTs.ts, 0, 0))
 +>bar : Symbol(bar, Decl(expandoFunctionContextualTypesJSDocInTs.ts, 0, 25))
-

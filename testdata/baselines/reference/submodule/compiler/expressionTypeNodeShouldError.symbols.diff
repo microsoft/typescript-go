@@ -128,4 +128,3 @@
 ->item : Symbol(HTMLCollectionOf.item, Decl(lib.dom.d.ts, --, --))
 +>item : Symbol(item, Decl(lib.dom.d.ts, --, --))
 
-

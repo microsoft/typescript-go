@@ -102,4 +102,3 @@
 ->b : { x?: string | number; }
 +>b : { x?: string | number | undefined; }
  >a : { x: string | number; }
-

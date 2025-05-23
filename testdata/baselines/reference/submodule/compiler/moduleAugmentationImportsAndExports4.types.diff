@@ -64,4 +64,3 @@
 ->baz : () => N.Cls
 +>baz : () => Cls
  >b : number
-

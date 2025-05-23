@@ -21,4 +21,3 @@
 +>a.A : typeof A
 +>a : typeof import("a")
 +>A : typeof A
-

@@ -19,4 +19,3 @@
 ->x : Symbol(I.x, Decl(b.ts, 2, 32))
 +>x : Symbol(x, Decl(b.ts, 2, 32))
  }
-

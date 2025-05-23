@@ -273,4 +273,3 @@
 ->f : Symbol(Derived.f, Decl(optionalMethods.ts, 52, 10))
 +>f : Symbol(f, Decl(optionalMethods.ts, 52, 10))
  }
-

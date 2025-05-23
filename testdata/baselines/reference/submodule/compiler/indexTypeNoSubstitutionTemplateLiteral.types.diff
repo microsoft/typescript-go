@@ -20,4 +20,3 @@
 ->Foo : typeof Foo
 +>Foo : { (): void; b: () => void; }
 
-

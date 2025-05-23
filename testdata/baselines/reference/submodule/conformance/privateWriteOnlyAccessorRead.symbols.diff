@@ -137,4 +137,3 @@
  >Test : Symbol(Test, Decl(privateWriteOnlyAccessorRead.ts, 0, 0))
 ->m : Symbol(Test.m, Decl(privateWriteOnlyAccessorRead.ts, 4, 34))
 +>m : Symbol(m, Decl(privateWriteOnlyAccessorRead.ts, 4, 34))
-

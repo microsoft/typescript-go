@@ -30,4 +30,3 @@
  >C : Symbol(C, Decl(privateNameSetterNoGetter.ts, 0, 5))
 ->m : Symbol(C.m, Decl(privateNameSetterNoGetter.ts, 1, 16))
 +>m : Symbol(m, Decl(privateNameSetterNoGetter.ts, 1, 16))
-

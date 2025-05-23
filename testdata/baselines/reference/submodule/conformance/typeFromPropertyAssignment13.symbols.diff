@@ -70,4 +70,3 @@
 ->inner.k : Symbol(Outer.Inner.k, Decl(module.js, 7, 27))
  >inner : Symbol(inner, Decl(module.js, 10, 3))
 ->k : Symbol(Outer.Inner.k, Decl(module.js, 7, 27))
-

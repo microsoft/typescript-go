@@ -45,4 +45,3 @@
  >new MixedBase() : any
 ->MixedBase : typeof AbstractBase & (abstract new (...args: any) => Mixin)
 +>MixedBase : typeof AbstractBase & (new (...args: any) => Mixin)
-

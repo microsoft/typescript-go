@@ -68,4 +68,3 @@
  >i : Symbol(i, Decl(interfaceExtendingClassWithPrivates2.ts, 23, 3))
 ->y : Symbol(Baz.y, Decl(interfaceExtendingClassWithPrivates2.ts, 15, 11))
 +>y : Symbol(y, Decl(interfaceExtendingClassWithPrivates2.ts, 15, 11))
-

@@ -28,4 +28,3 @@
  >this : Symbol(this, Decl(decoratorOnFunctionParameter.ts, 5, 16))
 ->n : Symbol(C.n, Decl(decoratorOnFunctionParameter.ts, 2, 9))
 +>n : Symbol(n, Decl(decoratorOnFunctionParameter.ts, 2, 9))
-

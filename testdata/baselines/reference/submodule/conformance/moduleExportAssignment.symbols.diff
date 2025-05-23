@@ -79,4 +79,3 @@
 +>module.exports : Symbol("npmlog", Decl(npmlog.js, 0, 0))
 +>module : Symbol(module.exports)
 +>exports : Symbol("npmlog", Decl(npmlog.js, 0, 0))
-

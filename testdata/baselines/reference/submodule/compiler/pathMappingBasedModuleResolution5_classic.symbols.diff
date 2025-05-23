@@ -42,4 +42,3 @@
 -=== c:/file4.ts ===
 -export var z1 = 1;
 ->z1 : Symbol(z1, Decl(file4.ts, 0, 10))
-

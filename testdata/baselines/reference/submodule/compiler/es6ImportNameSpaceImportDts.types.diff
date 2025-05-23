@@ -22,4 +22,3 @@
  import * as nameSpaceBinding2 from "./server"; // unreferenced
 ->nameSpaceBinding2 : typeof nameSpaceBinding
 +>nameSpaceBinding2 : typeof import("server")
-

@@ -11,4 +11,3 @@
  export function f2() {}
 ->f2 : (this: any) => void
 +>f2 : () => void
-

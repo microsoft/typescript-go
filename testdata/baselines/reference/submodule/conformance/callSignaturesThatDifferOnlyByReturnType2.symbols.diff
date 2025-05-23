@@ -26,4 +26,3 @@
  >x : Symbol(x, Decl(callSignaturesThatDifferOnlyByReturnType2.ts, 9, 3))
 ->foo : Symbol(I.foo, Decl(callSignaturesThatDifferOnlyByReturnType2.ts, 3, 16))
 +>foo : Symbol(foo, Decl(callSignaturesThatDifferOnlyByReturnType2.ts, 3, 16))
-

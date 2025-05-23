@@ -80,4 +80,3 @@
  >f : Symbol(f, Decl(taggedTemplateStringsWithTypedTags.ts, 9, 3))
 ->thisIsNotATag : Symbol(I.thisIsNotATag, Decl(taggedTemplateStringsWithTypedTags.ts, 4, 14))
 +>thisIsNotATag : Symbol(thisIsNotATag, Decl(taggedTemplateStringsWithTypedTags.ts, 4, 14))
-

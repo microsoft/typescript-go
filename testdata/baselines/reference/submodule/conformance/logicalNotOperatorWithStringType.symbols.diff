@@ -71,4 +71,3 @@
  >M : Symbol(M, Decl(logicalNotOperatorWithStringType.ts, 9, 1))
 ->n : Symbol(M.n, Decl(logicalNotOperatorWithStringType.ts, 11, 14))
 +>n : Symbol(n, Decl(logicalNotOperatorWithStringType.ts, 11, 14))
-

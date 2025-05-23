@@ -64,4 +64,3 @@
 ->scope : lf.schema.Table[]
 +>function(scope) {} : (scope: any) => void
 +>scope : any
-

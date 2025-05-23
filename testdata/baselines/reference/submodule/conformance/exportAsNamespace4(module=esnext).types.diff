@@ -43,4 +43,3 @@
 ->foo1 : typeof foo
 +>foo1 : typeof import("0")
  >b : 2
-

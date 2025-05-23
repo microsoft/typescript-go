@@ -34,4 +34,3 @@
 ->exports.apply : Symbol(apply, Decl(moduleExportAliasDuplicateAlias.js, 0, 0), Decl(moduleExportAliasDuplicateAlias.js, 2, 15))
 ->exports : Symbol("moduleExportAliasDuplicateAlias", Decl(moduleExportAliasDuplicateAlias.js, 0, 0))
 ->apply : Symbol(apply, Decl(moduleExportAliasDuplicateAlias.js, 0, 0), Decl(moduleExportAliasDuplicateAlias.js, 2, 15))
-

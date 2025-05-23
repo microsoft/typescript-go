@@ -58,4 +58,3 @@
  >b : Symbol(b, Decl(superAccessCastedCall.ts, 18, 3))
 ->bar : Symbol(Bar.bar, Decl(superAccessCastedCall.ts, 10, 5))
 +>bar : Symbol(bar, Decl(superAccessCastedCall.ts, 10, 5))
-

@@ -18,4 +18,3 @@
  >q : Symbol(q, Decl(declarationEmitExpressionInExtends.ts, 11, 3))
 ->s : Symbol(Q.s, Decl(declarationEmitExpressionInExtends.ts, 4, 9))
 +>s : Symbol(s, Decl(declarationEmitExpressionInExtends.ts, 4, 9))
-

@@ -36,4 +36,3 @@
 -    interface A { a }
 ->a : any
 -}
-

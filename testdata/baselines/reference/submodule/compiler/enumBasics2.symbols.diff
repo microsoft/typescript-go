@@ -74,4 +74,3 @@
 ->a : Symbol(Foo.a, Decl(enumBasics2.ts, 0, 10))
 +>a : Symbol(a, Decl(enumBasics2.ts, 0, 10))
  }
-

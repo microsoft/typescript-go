@@ -25,4 +25,3 @@
 +>a : { test: <K extends keyof Bar>(a: K, b?: Bar[K] | null | undefined) => void; }
 +>test : <K extends keyof Bar>(a: K, b?: Bar[K] | null | undefined) => void
  >"bar" : "bar"
-

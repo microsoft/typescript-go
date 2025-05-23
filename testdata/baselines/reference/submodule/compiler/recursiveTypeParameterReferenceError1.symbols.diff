@@ -48,4 +48,3 @@
  >f2 : Symbol(f2, Decl(recursiveTypeParameterReferenceError1.ts, 14, 3))
 ->ofC4 : Symbol(Foo2.ofC4, Decl(recursiveTypeParameterReferenceError1.ts, 11, 19))
 +>ofC4 : Symbol(ofC4, Decl(recursiveTypeParameterReferenceError1.ts, 11, 19))
-

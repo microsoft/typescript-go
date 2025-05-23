@@ -11,4 +11,3 @@
  >key : Symbol(key, Decl(emitAccessExpressionOfCastedObjectLiteralExpressionInArrowFunctionES5.ts, 1, 41))
 ->x : Symbol(__index, Decl(emitAccessExpressionOfCastedObjectLiteralExpressionInArrowFunctionES5.ts, 1, 39))
 +>x : Symbol((Missing), Decl(emitAccessExpressionOfCastedObjectLiteralExpressionInArrowFunctionES5.ts, 1, 39))
-

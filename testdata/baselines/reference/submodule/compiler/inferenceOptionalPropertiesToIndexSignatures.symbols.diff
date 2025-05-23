@@ -37,4 +37,3 @@
  ).join('&');
 ->join : Symbol(Array.join, Decl(lib.es5.d.ts, --, --))
 +>join : Symbol(join, Decl(lib.es5.d.ts, --, --))
-

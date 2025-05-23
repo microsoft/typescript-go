@@ -34,4 +34,3 @@
 ->foo : error
 +>foo() : any
 +>foo : any
-

@@ -26,4 +26,3 @@
  >b : Symbol(b, Decl(genericCloduleInModule.ts, 10, 3))
 ->foo : Symbol(A.B.foo, Decl(genericCloduleInModule.ts, 1, 23))
 +>foo : Symbol(foo, Decl(genericCloduleInModule.ts, 1, 23))
-

@@ -9,4 +9,3 @@
  >a : Symbol(a, Decl(d.ts, 0, 8))
 ->A : Symbol(a.A, Decl(a.ts, 0, 0))
 +>A : Symbol(A, Decl(a.ts, 0, 0))
-

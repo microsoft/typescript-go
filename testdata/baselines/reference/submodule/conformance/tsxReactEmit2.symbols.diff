@@ -54,4 +54,3 @@
  >p2 : Symbol(p2, Decl(file.tsx, 8, 12))
 ->div : Symbol(JSX.IntrinsicElements.__index, Decl(file.tsx, 2, 30))
 +>div : Symbol((Missing), Decl(file.tsx, 2, 30))
-

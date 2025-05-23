@@ -27,4 +27,3 @@
 ->pvar : Symbol(Foo.pvar, Decl(privateVisibles.ts, 0, 11))
 +>pvar : Symbol(pvar, Decl(privateVisibles.ts, 0, 11))
  }
-

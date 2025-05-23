@@ -38,4 +38,3 @@
 ->HandlerResult : Symbol(lambdaTester.HandlerResult, Decl(index.d.ts, 2, 92))
 +>HandlerResult : Symbol(HandlerResult, Decl(index.d.ts, 2, 92))
  >Handler : Symbol(Handler, Decl(index.ts, 1, 8))
-

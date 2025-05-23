@@ -14,4 +14,3 @@
  >A : Symbol(A, Decl(a.d.ts, 0, 0))
 ->foo : Symbol(A.foo, Decl(a.d.ts, 0, 24))
 +>foo : Symbol(foo, Decl(a.d.ts, 0, 24))
-

@@ -16,4 +16,3 @@
 ->dearray : <T>(ara: ReadonlyArray<T>) => T
 +>dearray : <T>(ara: readonly T[]) => T
  >alt : LiteralType[]
-

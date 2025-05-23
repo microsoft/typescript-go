@@ -137,4 +137,3 @@
  >C : typeof C
 ->F6 : <T extends C.A<C.B>>(x: T) => T
 +>F6 : <T extends A<B>>(x: T) => T
-

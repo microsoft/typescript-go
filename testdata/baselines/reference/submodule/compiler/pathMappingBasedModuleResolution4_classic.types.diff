@@ -51,4 +51,3 @@
 -export var y = 100;
 ->y : number
 ->100 : 100
-

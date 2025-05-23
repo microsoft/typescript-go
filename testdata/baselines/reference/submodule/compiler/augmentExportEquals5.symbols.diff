@@ -100,4 +100,3 @@
  >x : Symbol(x, Decl(consumer.ts, 2, 3))
 ->id : Symbol(Request.id, Decl(augmentation.ts, 3, 23))
 +>id : Symbol(id, Decl(augmentation.ts, 3, 23))
-

@@ -57,4 +57,3 @@
 +>a : Foo
 +>copy : (other: Foo) => void
 +>b : Foo
-

@@ -1,9 +1,10 @@
 --- old.commentsEnums.js
 +++ new.commentsEnums.js
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
+ })(Colors || (Colors = {})); // trailing comment
  var x = Colors.Cornflower;
  x = Colors.FancyPink;
-
+-
 -
 -//// [commentsEnums.d.ts]
 -/** Enum of colors*/
@@ -14,4 +15,3 @@
 -    FancyPink = 1
 -}
 -declare var x: Colors;
--

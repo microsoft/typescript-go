@@ -42,4 +42,3 @@
  >M : Symbol(M, Decl(genericTypeReferenceWithoutTypeArgument2.ts, 22, 24))
 ->E : Symbol(M.E, Decl(genericTypeReferenceWithoutTypeArgument2.ts, 24, 10))
 +>E : Symbol(E, Decl(genericTypeReferenceWithoutTypeArgument2.ts, 24, 10))
-

@@ -16,4 +16,3 @@
  >M : Symbol(M, Decl(constructorOverloads4.ts, 0, 0))
 ->Function : Symbol(M.Function, Decl(constructorOverloads4.ts, 3, 5), Decl(constructorOverloads4.ts, 4, 50), Decl(constructorOverloads4.ts, 0, 18))
 +>Function : Symbol(Function, Decl(constructorOverloads4.ts, 3, 5), Decl(constructorOverloads4.ts, 4, 50), Decl(constructorOverloads4.ts, 0, 18))
-

@@ -86,4 +86,3 @@
 +>NumberFormat : Symbol(NumberFormat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>format : Symbol(format, Decl(lib.es5.d.ts, --, --))
  >bigintVal : Symbol(bigintVal, Decl(bigintWithoutLib.ts, 3, 3))
-

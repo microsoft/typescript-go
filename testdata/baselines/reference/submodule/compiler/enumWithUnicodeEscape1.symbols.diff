@@ -7,4 +7,3 @@
 ->'gold \u2730' : Symbol(E['gold \u2730'], Decl(enumWithUnicodeEscape1.ts, 0, 8))
 +>'gold \u2730' : Symbol('gold \u2730', Decl(enumWithUnicodeEscape1.ts, 0, 8))
  }
-

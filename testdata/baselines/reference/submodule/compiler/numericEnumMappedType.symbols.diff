@@ -90,4 +90,3 @@
 ->ONE : Symbol(E.ONE, Decl(numericEnumMappedType.ts, 33, 16))
 +>ONE : Symbol(ONE, Decl(numericEnumMappedType.ts, 33, 16))
  >e : Symbol(e, Decl(numericEnumMappedType.ts, 34, 5))
-

@@ -49,4 +49,3 @@
  >model : Symbol(model, Decl(index.ts, 8, 6))
 ->Acc : Symbol(model.Acc, Decl(account.ts, 6, 8))
 +>Acc : Symbol(Acc, Decl(account.ts, 6, 8))
-

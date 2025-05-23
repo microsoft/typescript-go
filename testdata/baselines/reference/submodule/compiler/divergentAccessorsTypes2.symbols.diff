@@ -38,4 +38,3 @@
  >s : Symbol(s, Decl(divergentAccessorsTypes2.ts, 6, 5))
 ->foo : Symbol(Test1.foo, Decl(divergentAccessorsTypes2.ts, 0, 16), Decl(divergentAccessorsTypes2.ts, 1, 39))
 +>foo : Symbol(foo, Decl(divergentAccessorsTypes2.ts, 0, 16), Decl(divergentAccessorsTypes2.ts, 1, 39))
-

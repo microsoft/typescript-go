@@ -18,4 +18,3 @@
  >E : Symbol(E, Decl(strictModeEnumMemberNameReserved.ts, 0, 13))
 ->static : Symbol(E.static, Decl(strictModeEnumMemberNameReserved.ts, 1, 8))
 +>static : Symbol(static, Decl(strictModeEnumMemberNameReserved.ts, 1, 8))
-

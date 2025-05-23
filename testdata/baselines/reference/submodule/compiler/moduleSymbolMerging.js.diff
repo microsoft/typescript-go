@@ -1,9 +1,10 @@
 --- old.moduleSymbolMerging.js
 +++ new.moduleSymbolMerging.js
-@@= skipped -24, +24 lines =@@
+@@= skipped -23, +23 lines =@@
+     function f() { return null; }
      B.f = f;
  })(B || (B = {}));
-
+-
 -
 -//// [A.d.ts]
 -declare namespace A {
@@ -16,4 +17,3 @@
 -declare namespace B {
 -    function f(): A.I;
 -}
--

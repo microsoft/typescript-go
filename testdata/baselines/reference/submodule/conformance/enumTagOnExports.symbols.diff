@@ -23,4 +23,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol("enumTagOnExports", Decl(enumTagOnExports.js, 0, 0))
 +>b : Symbol(b, Decl(enumTagOnExports.js, 1, 15))
-

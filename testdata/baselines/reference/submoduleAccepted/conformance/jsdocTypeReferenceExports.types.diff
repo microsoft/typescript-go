@@ -21,4 +21,3 @@
 ->x : typeof import("bug27342")
 +>x : exports
 
-

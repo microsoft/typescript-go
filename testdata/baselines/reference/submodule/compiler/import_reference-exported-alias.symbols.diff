@@ -44,4 +44,3 @@
 -
 -export = Mod;
 ->Mod : Symbol(Mod, Decl(file1.ts, 8, 1))
-

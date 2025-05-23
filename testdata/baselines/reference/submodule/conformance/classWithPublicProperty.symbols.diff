@@ -102,4 +102,3 @@
  >C : Symbol(C, Decl(classWithPublicProperty.ts, 0, 0))
 ->g : Symbol(C.g, Decl(classWithPublicProperty.ts, 7, 35))
 +>g : Symbol(g, Decl(classWithPublicProperty.ts, 7, 35))
-

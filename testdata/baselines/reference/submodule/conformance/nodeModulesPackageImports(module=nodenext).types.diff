@@ -78,4 +78,3 @@
  type;
 ->type : typeof type
 +>type : typeof import("index")
-

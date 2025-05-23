@@ -139,4 +139,3 @@
 +>b : any
 +>new B() : any
 +>B : () => void
-

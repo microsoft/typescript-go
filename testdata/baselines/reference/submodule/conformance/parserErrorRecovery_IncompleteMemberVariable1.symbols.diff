@@ -81,4 +81,3 @@
  >p : Symbol(p, Decl(parserErrorRecovery_IncompleteMemberVariable1.ts, 25, 3))
 ->getDist : Symbol(IPoint.getDist, Decl(parserErrorRecovery_IncompleteMemberVariable1.ts, 1, 18))
 +>getDist : Symbol(getDist, Decl(parserErrorRecovery_IncompleteMemberVariable1.ts, 1, 18))
-

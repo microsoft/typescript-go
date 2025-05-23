@@ -43,4 +43,3 @@
 +>exports : Symbol("file", Decl(file.js, 0, 0))
 +>myTypes : Symbol(myTypes, Decl(file.js, 9, 4), Decl(file.js, 7, 2))
 +>myTypes : Symbol(myTypes, Decl(file.js, 5, 5), Decl(file.js, 9, 4), Decl(file.js, 12, 3), Decl(file.js, 17, 4))
-

@@ -30,4 +30,3 @@
 ->toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
 +>getCountAsString : Symbol(getCountAsString, Decl(f2.ts, 4, 24))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
-

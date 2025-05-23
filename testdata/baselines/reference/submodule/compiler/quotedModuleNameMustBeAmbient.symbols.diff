@@ -10,4 +10,3 @@
  declare module 'M2' {}
 ->'M2' : Symbol("M2", Decl(quotedModuleNameMustBeAmbient.ts, 0, 13))
 +>'M2' : Symbol('M2', Decl(quotedModuleNameMustBeAmbient.ts, 0, 13))
-

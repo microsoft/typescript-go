@@ -23,4 +23,3 @@
 ->globalThis : Symbol(globalThis, Decl(globalThisPropertyAssignment.js, 3, 12))
 ->alpha : Symbol(alpha, Decl(globalThisPropertyAssignment.js, 3, 12))
 +>globalThis : Symbol(globalThis)
-

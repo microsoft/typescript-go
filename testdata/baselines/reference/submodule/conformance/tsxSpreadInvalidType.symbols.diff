@@ -19,4 +19,3 @@
 ->div : Symbol(JSX.IntrinsicElements.__index, Decl(a.tsx, 1, 40))
 +>div : Symbol((Missing), Decl(a.tsx, 1, 40))
  >c : Symbol(c, Decl(a.tsx, 6, 5))
-

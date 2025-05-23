@@ -14,4 +14,3 @@
 +>B : Symbol(B, Decl(genericClassesInModule.ts, 0, 12))
 +>Foo : Symbol(Foo, Decl(genericClassesInModule.ts, 0, 0))
 +>A : Symbol(A, Decl(genericClassesInModule.ts, 2, 24))
-

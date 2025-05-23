@@ -33,4 +33,3 @@
 ->bar : Symbol(A.__index, Decl(controlFlowStringIndex.ts, 1, 25))
 +>bar : Symbol((Missing), Decl(controlFlowStringIndex.ts, 1, 25))
  }
-

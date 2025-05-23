@@ -35,4 +35,3 @@
 ->import("./0") : Promise<typeof Zero>
 +>import("./0") : Promise<typeof import("0")>
  >"./0" : "./0"
-

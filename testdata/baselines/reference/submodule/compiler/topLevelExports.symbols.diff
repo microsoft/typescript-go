@@ -10,4 +10,3 @@
  >foo : Symbol(foo, Decl(topLevelExports.ts, 0, 10))
 ->toString : Symbol(Number.toString, Decl(lib.es5.d.ts, --, --))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
-

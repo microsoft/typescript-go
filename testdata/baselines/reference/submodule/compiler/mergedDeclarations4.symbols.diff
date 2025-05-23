@@ -40,4 +40,3 @@
 ->hello : Symbol(M.f.hello, Decl(mergedDeclarations4.ts, 9, 18))
 +>f : Symbol(f, Decl(mergedDeclarations4.ts, 0, 10), Decl(mergedDeclarations4.ts, 7, 10))
 +>hello : Symbol(hello, Decl(mergedDeclarations4.ts, 9, 18))
-

@@ -34,4 +34,3 @@
 ->d : Symbol(A.b.d, Decl(optionalChainWithInstantiationExpression1.ts, 1, 23))
 +>b : Symbol(b, Decl(optionalChainWithInstantiationExpression1.ts, 0, 21))
 +>d : Symbol(d, Decl(optionalChainWithInstantiationExpression1.ts, 1, 23))
-

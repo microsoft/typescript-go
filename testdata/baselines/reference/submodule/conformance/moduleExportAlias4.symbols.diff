@@ -24,4 +24,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(C, Decl(bug24024.js, 2, 16))
 +>D : Symbol(D, Decl(bug24024.js, 3, 18))
-

@@ -157,4 +157,3 @@
 ->z : Symbol(C.z, Decl(protectedInstanceMemberAccessibility.ts, 40, 19))
 +>z : Symbol(z, Decl(protectedInstanceMemberAccessibility.ts, 40, 19))
  }
-

@@ -16,4 +16,3 @@
 ->ns : typeof ns
 +>ns : typeof import("three")
  >Named : 0
-

@@ -50,4 +50,3 @@
 ->s1 : Symbol(C.s1, Decl(classStaticBlock4.ts, 0, 9))
 +>s1 : Symbol(s1, Decl(classStaticBlock4.ts, 0, 9))
  }
-

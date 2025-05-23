@@ -19,4 +19,3 @@
 ->x : Symbol(C.x, Decl(prototypeInstantiatedWithBaseConstraint.ts, 0, 12))
 +>prototype : Symbol(prototype)
 +>x : Symbol(x, Decl(prototypeInstantiatedWithBaseConstraint.ts, 0, 12))
-

@@ -42,4 +42,3 @@
 ->f : ns.Root.Foo
 +>f : Foo
  >x : number
-

@@ -131,4 +131,3 @@
 +><AnotherButton /> : Element
 +>AnotherButton : (p: any) => Element
 +>Comp : (p: Prop) => Element
-

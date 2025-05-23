@@ -28,4 +28,3 @@
 ->SomeClass : Symbol(SomeClass, Decl(file1.js, 0, 3), Decl(file2.js, 0, 0), Decl(file2.js, 0, 19))
 ->prop : Symbol(SomeClass.prop, Decl(file2.js, 0, 19))
 +>SomeClass : Symbol(SomeClass, Decl(file1.js, 0, 3))
-

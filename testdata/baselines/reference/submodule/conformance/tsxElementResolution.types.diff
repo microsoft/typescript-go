@@ -38,4 +38,3 @@
  >Dotted : typeof Dotted
 ->Name : typeof Dotted.Name
 +>Name : typeof Name
-

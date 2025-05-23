@@ -22,4 +22,3 @@
 ->obj : Symbol(obj, Decl(a.js, 0, 3), Decl(a.js, 0, 13))
 ->method : Symbol(obj.method, Decl(a.js, 0, 13))
 +>obj : Symbol(obj, Decl(a.js, 0, 3))
-

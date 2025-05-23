@@ -1,9 +1,10 @@
 --- old.importAttributes1(module=es2015).js
 +++ new.importAttributes1(module=es2015).js
-@@= skipped -60, +60 lines =@@
+@@= skipped -59, +59 lines =@@
+ const f = import();
  const g = import('./0', {}, {});
  const h = import('./0', { with: { type: "json" } });
-
+-
 -
 -//// [0.d.ts]
 -export declare const a = 1;
@@ -23,4 +24,3 @@
 -declare const f: Promise<any>;
 -declare const g: Promise<typeof import("./0")>;
 -declare const h: Promise<typeof import("./0")>;
--

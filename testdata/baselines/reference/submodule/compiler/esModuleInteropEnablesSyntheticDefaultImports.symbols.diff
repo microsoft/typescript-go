@@ -18,4 +18,3 @@
 ->member : Symbol(Foo.member, Decl(b.d.ts, 0, 18))
 +>member : Symbol(member, Decl(b.d.ts, 0, 18))
  }
-

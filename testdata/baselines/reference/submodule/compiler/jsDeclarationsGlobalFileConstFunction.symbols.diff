@@ -40,4 +40,3 @@
 +>SomeConstructor3.staticMember : Symbol(staticMember, Decl(file.js, 10, 2))
 +>SomeConstructor3 : Symbol(SomeConstructor3, Decl(file.js, 8, 5))
 +>staticMember : Symbol(staticMember, Decl(file.js, 10, 2))
-

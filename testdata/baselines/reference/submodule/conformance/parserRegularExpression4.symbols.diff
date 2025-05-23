@@ -21,4 +21,3 @@
 +>/(\\?|&)q=/.test : Symbol(test, Decl(lib.es5.d.ts, --, --))
 +>test : Symbol(test, Decl(lib.es5.d.ts, --, --))
  >encodeURIComponent : Symbol(encodeURIComponent, Decl(lib.es5.d.ts, --, --))
-

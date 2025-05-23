@@ -26,4 +26,3 @@
  declare const i17: Iterable<number, boolean>;
 ->i17 : Iterable<number, boolean>
 +>i17 : Iterable<number, boolean, any>
-

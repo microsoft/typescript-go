@@ -1,9 +1,10 @@
 --- old.enumConstantMemberWithStringEmitDeclaration.js
 +++ new.enumConstantMemberWithStringEmitDeclaration.js
-@@= skipped -56, +56 lines =@@
+@@= skipped -55, +55 lines =@@
+ (function (T5) {
      T5["a"] = "12";
  })(T5 || (T5 = {}));
-
+-
 -
 -//// [enumConstantMemberWithStringEmitDeclaration.d.ts]
 -declare enum T1 {
@@ -29,4 +30,3 @@
 -    a = "1",
 -    b = "12"
 -}
--

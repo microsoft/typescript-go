@@ -48,4 +48,3 @@
 ->c : Symbol(D.c, Decl(typeOfThisInStaticMembers7.ts, 5, 19))
 +>c : Symbol(c, Decl(typeOfThisInStaticMembers7.ts, 5, 19))
  }
-

@@ -14,4 +14,3 @@
  >b : typeof b
 ->c : typeof b.c
 +>c : typeof c
-

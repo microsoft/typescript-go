@@ -1,9 +1,10 @@
 --- old.internalAliasFunctionInsideLocalModuleWithExport.js
 +++ new.internalAliasFunctionInsideLocalModuleWithExport.js
-@@= skipped -31, +31 lines =@@
+@@= skipped -30, +30 lines =@@
+     c.bVal = c.b(10);
      c.bVal2 = c.b;
  })(c || (exports.c = c = {}));
-
+-
 -
 -//// [internalAliasFunctionInsideLocalModuleWithExport.d.ts]
 -export declare namespace a {
@@ -14,4 +15,3 @@
 -    var bVal: number;
 -    var bVal2: typeof b;
 -}
--

@@ -130,4 +130,3 @@
  >r : Iterator<number, any, any>
 ->next : (...[value]: [] | [any]) => IteratorResult<number, any>
 +>next : (...__0: [] | [any]) => IteratorResult<number, any>
-

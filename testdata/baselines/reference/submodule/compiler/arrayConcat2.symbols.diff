@@ -27,4 +27,3 @@
  >b : Symbol(b, Decl(arrayConcat2.ts, 5, 3))
 ->concat : Symbol(Array.concat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>concat : Symbol(concat, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
-

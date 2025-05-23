@@ -87,4 +87,3 @@
 +><SFC2AndEmptyComp x /> : Element
 +>SFC2AndEmptyComp : (prop: { x: boolean; }) => Element
  >x : true
-

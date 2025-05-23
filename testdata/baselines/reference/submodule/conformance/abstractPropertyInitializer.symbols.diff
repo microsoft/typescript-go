@@ -7,4 +7,3 @@
 ->prop : Symbol(C.prop, Decl(abstractPropertyInitializer.ts, 0, 18))
 +>prop : Symbol(prop, Decl(abstractPropertyInitializer.ts, 0, 18))
  }
-

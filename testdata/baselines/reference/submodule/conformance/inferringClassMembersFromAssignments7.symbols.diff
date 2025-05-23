@@ -56,4 +56,3 @@
 ->c.m : Symbol(C.m, Decl(inferringClassMembersFromAssignments7.js, 3, 18))
  >c : Symbol(c, Decl(inferringClassMembersFromAssignments7.js, 13, 5))
 ->m : Symbol(C.m, Decl(inferringClassMembersFromAssignments7.js, 3, 18))
-

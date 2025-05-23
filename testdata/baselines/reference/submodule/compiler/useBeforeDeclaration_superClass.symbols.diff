@@ -78,4 +78,3 @@
 ->x : Symbol(J.x, Decl(useBeforeDeclaration_superClass.ts, 24, 19))
 +>x : Symbol(x, Decl(useBeforeDeclaration_superClass.ts, 24, 19))
  }
-

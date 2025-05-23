@@ -113,4 +113,3 @@
 ->prop : Symbol(Bar.prop, Decl(initializerWithThisPropertyAccess.ts, 29, 11))
 +>prop : Symbol(prop, Decl(initializerWithThisPropertyAccess.ts, 29, 11))
  }
-

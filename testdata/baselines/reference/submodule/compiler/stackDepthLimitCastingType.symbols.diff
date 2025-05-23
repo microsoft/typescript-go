@@ -75,4 +75,3 @@
  >hoge : Symbol(hoge, Decl(index.ts, 4, 5))
 ->fetch : Symbol(Backbone.ModelWithCache.fetch, Decl(index.d.ts, 2, 44))
 +>fetch : Symbol(fetch, Decl(index.d.ts, 2, 44))
-

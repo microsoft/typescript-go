@@ -17,4 +17,3 @@
 ->x : V
 +>x => {} : (x: any) => void
 +>x : any
-

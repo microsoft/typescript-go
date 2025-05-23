@@ -21,4 +21,3 @@
  >c2 : Symbol(c2, Decl(typesWithPublicConstructor.ts, 14, 3))
 ->constructor : Symbol(Object.constructor, Decl(lib.es5.d.ts, --, --))
 +>constructor : Symbol(constructor, Decl(lib.es5.d.ts, --, --))
-

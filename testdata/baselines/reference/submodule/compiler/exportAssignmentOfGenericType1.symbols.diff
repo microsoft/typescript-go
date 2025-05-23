@@ -17,4 +17,3 @@
 ->foo : Symbol(T.foo, Decl(exportAssignmentOfGenericType1_0.ts, 1, 12))
 +>foo : Symbol(foo, Decl(exportAssignmentOfGenericType1_0.ts, 1, 12))
  >X : Symbol(X, Decl(exportAssignmentOfGenericType1_0.ts, 1, 8))
-

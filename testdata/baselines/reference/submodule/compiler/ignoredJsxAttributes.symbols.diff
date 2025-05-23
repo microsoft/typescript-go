@@ -31,4 +31,3 @@
  >bar : Symbol(bar, Decl(ignoredJsxAttributes.tsx, 19, 15))
 ->data-yadda : Symbol(data-yadda, Decl(ignoredJsxAttributes.tsx, 19, 27))
 +>data-yadda : Symbol("data-yadda", Decl(ignoredJsxAttributes.tsx, 19, 27))
-

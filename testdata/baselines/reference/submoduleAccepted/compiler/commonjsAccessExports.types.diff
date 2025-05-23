@@ -34,4 +34,3 @@
  >exports : typeof import("/a")
 ->Cls : typeof Cls
 +>Cls : any
-

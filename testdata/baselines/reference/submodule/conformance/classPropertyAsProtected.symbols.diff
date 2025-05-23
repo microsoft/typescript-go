@@ -97,4 +97,3 @@
  >C : Symbol(C, Decl(classPropertyAsProtected.ts, 0, 0))
 ->foo : Symbol(C.foo, Decl(classPropertyAsProtected.ts, 8, 33))
 +>foo : Symbol(foo, Decl(classPropertyAsProtected.ts, 8, 33))
-

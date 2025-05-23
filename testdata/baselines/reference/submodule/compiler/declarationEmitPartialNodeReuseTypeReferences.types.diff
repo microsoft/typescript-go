@@ -45,4 +45,3 @@
 ->o : (p1: SpecialString, p2: string, p3: import("a").N.SpecialString) => { foo: SpecialString; bar: string; baz: import("a").N.SpecialString; }
 +>g : (p1: string, p2: string, p3: string) => { foo: string; bar: string; baz: string; }
 +>o : (p1: string, p2: string, p3: string) => { foo: string; bar: string; baz: string; }
-

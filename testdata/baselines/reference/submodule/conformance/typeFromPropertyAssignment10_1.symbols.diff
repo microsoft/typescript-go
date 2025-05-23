@@ -149,4 +149,3 @@
 ->app : Symbol(Outer.app, Decl(module.js, 0, 24), Decl(someview.js, 0, 6), Decl(someview.js, 6, 6), Decl(someview.js, 15, 6), Decl(application.js, 0, 6))
 ->statische : Symbol(Outer.app.statische, Decl(someview.js, 13, 10))
 +>Outer : Symbol(Outer, Decl(module.js, 0, 3))
-

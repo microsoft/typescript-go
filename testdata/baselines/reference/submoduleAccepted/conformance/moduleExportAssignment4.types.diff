@@ -24,4 +24,3 @@
 ->exports : any
 +>exports : typeof import("async")
  >'default' : "default"
-

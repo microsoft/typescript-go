@@ -33,4 +33,3 @@
 +>new C() : any
 +>C : () => void
 +>x : any
-

@@ -144,4 +144,3 @@
  >c : Symbol(c, Decl(moduleVisibilityTest1.ts, 59, 3))
 ->someMethodThatCallsAnOuterMethod : Symbol(M.C.someMethodThatCallsAnOuterMethod, Decl(moduleVisibilityTest1.ts, 34, 31))
 +>someMethodThatCallsAnOuterMethod : Symbol(someMethodThatCallsAnOuterMethod, Decl(moduleVisibilityTest1.ts, 34, 31))
-

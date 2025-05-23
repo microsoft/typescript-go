@@ -69,4 +69,3 @@
 ->x : Symbol(C6.x, Decl(file6.ts, 1, 20))
 +>x : Symbol(x, Decl(file6.ts, 1, 20))
  }
-

@@ -18,4 +18,3 @@
  >f : Symbol(f, Decl(parserExportAsFunctionIdentifier.ts, 4, 3))
 ->export : Symbol(Foo.export, Decl(parserExportAsFunctionIdentifier.ts, 0, 15))
 +>export : Symbol(export, Decl(parserExportAsFunctionIdentifier.ts, 0, 15))
-

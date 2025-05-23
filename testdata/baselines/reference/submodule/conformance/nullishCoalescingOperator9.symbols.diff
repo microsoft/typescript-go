@@ -19,4 +19,3 @@
  >abc : Symbol(abc, Decl(nullishCoalescingOperator9.ts, 3, 15))
 ->toLowerCase : Symbol(String.toLowerCase, Decl(lib.es5.d.ts, --, --))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
-

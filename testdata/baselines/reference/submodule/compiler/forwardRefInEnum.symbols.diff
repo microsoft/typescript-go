@@ -41,4 +41,3 @@
 ->Z : Symbol(E1.Z, Decl(forwardRefInEnum.ts, 10, 9))
 +>Z : Symbol(Z, Decl(forwardRefInEnum.ts, 10, 9))
  }
-

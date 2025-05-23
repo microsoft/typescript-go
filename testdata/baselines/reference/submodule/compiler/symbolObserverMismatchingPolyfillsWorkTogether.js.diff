@@ -1,9 +1,10 @@
 --- old.symbolObserverMismatchingPolyfillsWorkTogether.js
 +++ new.symbolObserverMismatchingPolyfillsWorkTogether.js
-@@= skipped -16, +16 lines =@@
+@@= skipped -15, +15 lines =@@
+ const obj = {
      [Symbol.observer]: 0
  };
-
+-
 -
 -//// [symbolObserverMismatchingPolyfillsWorkTogether.d.ts]
 -interface SymbolConstructor {
@@ -15,4 +16,3 @@
 -declare const obj: {
 -    [Symbol.observer]: number;
 -};
--

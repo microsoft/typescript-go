@@ -21,4 +21,3 @@
  >e : Symbol(e, Decl(logicalAssignment11.ts, 6, 3))
 ->length : Symbol(String.length, Decl(lib.es5.d.ts, --, --))
 +>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
-

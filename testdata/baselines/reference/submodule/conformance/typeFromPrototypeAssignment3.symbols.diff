@@ -47,4 +47,3 @@
 ->map.get : Symbol(get, Decl(bug26885.js, 4, 23))
  >map : Symbol(map, Decl(bug26885.js, 15, 5))
 ->get : Symbol(get, Decl(bug26885.js, 4, 23))
-

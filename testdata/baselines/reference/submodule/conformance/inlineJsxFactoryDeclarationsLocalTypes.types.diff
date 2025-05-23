@@ -387,4 +387,3 @@
 +>tree : Element
 +>tree : Element
 +>DOMSFC : (props: { x: number; y: number; children?: Element[]; }) => Element
-

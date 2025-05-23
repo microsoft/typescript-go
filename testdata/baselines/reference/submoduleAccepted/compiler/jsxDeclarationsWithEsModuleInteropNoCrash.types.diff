@@ -67,4 +67,3 @@
  export default Foo;
 ->Foo : typeof Foo
 +>Foo : { (__0: { bar: any; }): Element; propTypes: { bar: Requireable<boolean>; }; defaultProps: { bar: boolean; }; }
-

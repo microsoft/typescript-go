@@ -35,4 +35,3 @@
 +>module : Symbol(module.exports)
 +>exports : Symbol(Bar, Decl(bar.js, 0, 0))
  >Bar : Symbol(Bar, Decl(bar.js, 0, 0))
-

@@ -20,4 +20,3 @@
 ->new C().x : Symbol(C.x, Decl(a.js, 0, 14), Decl(a.js, 0, 33))
  >C : Symbol(C, Decl(a.js, 0, 0))
 ->x : Symbol(C.x, Decl(a.js, 0, 14), Decl(a.js, 0, 33))
-

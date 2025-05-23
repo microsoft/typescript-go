@@ -38,4 +38,3 @@
 +>recursive() : (<T>(subkey: T) => (???) & { p: any; }) & { p: any; }
 +>recursive : () => (<T>(subkey: T) => (???) & { p: any; }) & { p: any; }
  >1 : 1
-

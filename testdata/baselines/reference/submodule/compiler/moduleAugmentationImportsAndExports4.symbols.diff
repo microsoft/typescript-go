@@ -107,4 +107,3 @@
 ->b : Symbol(N.Cls.b, Decl(f3.ts, 7, 26))
 +>baz : Symbol(baz, Decl(f3.ts, 15, 17))
 +>b : Symbol(b, Decl(f3.ts, 7, 26))
-

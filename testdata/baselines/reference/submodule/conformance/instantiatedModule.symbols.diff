@@ -197,4 +197,3 @@
 ->Blue : Symbol(M3.Color.Blue, Decl(instantiatedModule.ts, 45, 23))
 +>Color : Symbol(Color, Decl(instantiatedModule.ts, 44, 11))
 +>Blue : Symbol(Blue, Decl(instantiatedModule.ts, 45, 23))
-

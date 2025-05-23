@@ -10,4 +10,3 @@
  import { item as item3 } from "./node_modules/pkg" // _even if they're in a node_modules folder_
 +>item : Symbol(item, Decl(index.d.ts, 0, 12))
  >item3 : Symbol(item3, Decl(index.ts, 2, 8))
-

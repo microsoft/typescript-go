@@ -22,4 +22,3 @@
 ->"type" : Symbol("type", Decl(package.json, 2, 20))
 +>"type" : Symbol(type, Decl(package.json, 2, 20))
  }
-

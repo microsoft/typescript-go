@@ -48,4 +48,3 @@
  >i : Symbol(i, Decl(genericReversingTypeParameters.ts, 8, 3))
 ->get : Symbol(BiMap.get, Decl(genericReversingTypeParameters.ts, 1, 38))
 +>get : Symbol(get, Decl(genericReversingTypeParameters.ts, 1, 38))
-

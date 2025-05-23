@@ -30,4 +30,3 @@
 ->C : typeof ab.C
 +>B : typeof B
 +>C : typeof C
-

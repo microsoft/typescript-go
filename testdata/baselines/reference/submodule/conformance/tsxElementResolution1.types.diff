@@ -13,4 +13,3 @@
 -><span /> : JSX.Element
 +><span /> : Element
  >span : any
-

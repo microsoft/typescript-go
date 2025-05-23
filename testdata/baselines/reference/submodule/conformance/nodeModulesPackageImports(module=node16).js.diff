@@ -1,9 +1,10 @@
 --- old.nodeModulesPackageImports(module=node16).js
 +++ new.nodeModulesPackageImports(module=node16).js
-@@= skipped -86, +86 lines =@@
+@@= skipped -85, +85 lines =@@
+ cjs;
  mjs;
  type;
-
+-
 -
 -//// [index.d.mts]
 -export {};
@@ -11,4 +12,3 @@
 -export {};
 -//// [index.d.ts]
 -export {};
--

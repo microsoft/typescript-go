@@ -28,4 +28,3 @@
 ->math.add : Symbol(math.add, Decl(exportImportMultipleFiles_math.ts, 0, 0))
  >math : Symbol(math, Decl(exportImportMultipleFiles_library.ts, 0, 0))
 ->add : Symbol(math.add, Decl(exportImportMultipleFiles_math.ts, 0, 0))
-

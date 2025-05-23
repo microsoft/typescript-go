@@ -35,4 +35,3 @@
 ->'0' : Symbol(C236['0'], Decl(numericClassMembers1.ts, 11, 14))
 +>'0' : Symbol('0', Decl(numericClassMembers1.ts, 11, 14))
  }
-

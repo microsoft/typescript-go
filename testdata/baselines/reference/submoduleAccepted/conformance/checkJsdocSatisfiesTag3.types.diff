@@ -36,4 +36,3 @@
 +>{ f(x) { } } : { f: (x: any) => void; }
 +>f : (x: any) => void
 +>x : any
-

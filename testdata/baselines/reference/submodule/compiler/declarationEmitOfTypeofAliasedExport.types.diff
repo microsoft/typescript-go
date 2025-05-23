@@ -14,4 +14,3 @@
 +>a.D : typeof C
 +>a : typeof import("/a")
 +>D : typeof C
-

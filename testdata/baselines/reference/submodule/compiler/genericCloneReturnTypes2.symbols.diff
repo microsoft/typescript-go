@@ -79,4 +79,3 @@
  >a : Symbol(a, Decl(genericCloneReturnTypes2.ts, 11, 3))
 ->clone : Symbol(MyList.clone, Decl(genericCloneReturnTypes2.ts, 6, 5))
 +>clone : Symbol(clone, Decl(genericCloneReturnTypes2.ts, 6, 5))
-

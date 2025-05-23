@@ -64,4 +64,3 @@
  >x6() : void
 ->x6 : <T = string>() => void
 +>x6 : <T>() => void
-

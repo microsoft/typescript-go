@@ -54,4 +54,3 @@
  >m2 : typeof m2
 ->_m2 : typeof m2._m2
 +>_m2 : typeof _m2
-

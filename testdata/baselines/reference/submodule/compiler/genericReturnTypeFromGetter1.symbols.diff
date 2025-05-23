@@ -17,4 +17,3 @@
 ->_entityType : Symbol(DbSet._entityType, Decl(genericReturnTypeFromGetter1.ts, 3, 23))
 +>_entityType : Symbol(_entityType, Decl(genericReturnTypeFromGetter1.ts, 3, 23))
  }
-

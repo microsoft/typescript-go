@@ -28,4 +28,3 @@
  >m2 : Symbol(m2, Decl(internalAliasClassInsideLocalModuleWithoutExportAccessError.ts, 6, 1))
 ->m3 : Symbol(m2.m3, Decl(internalAliasClassInsideLocalModuleWithoutExportAccessError.ts, 8, 18))
 +>m3 : Symbol(m3, Decl(internalAliasClassInsideLocalModuleWithoutExportAccessError.ts, 8, 18))
-

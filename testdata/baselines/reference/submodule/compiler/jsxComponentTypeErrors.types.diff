@@ -110,4 +110,3 @@
 ->obj : { MemberFunctionComponent(): {}; MemberClassComponent: typeof MemberClassComponent; }
 +>obj : { MemberFunctionComponent: () => {}; MemberClassComponent: typeof MemberClassComponent; }
  >MemberClassComponent : typeof MemberClassComponent
-

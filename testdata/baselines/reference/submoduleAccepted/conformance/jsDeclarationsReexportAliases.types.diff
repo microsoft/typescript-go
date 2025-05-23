@@ -27,4 +27,3 @@
 ->Foob : typeof Fooa
 +>default : typeof default
 +>Foob : typeof default
-

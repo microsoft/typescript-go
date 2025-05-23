@@ -15,4 +15,3 @@
 +>x : Symbol(x, Decl(a.js, 2, 7))
 +>toLowerCase : Symbol(toLowerCase, Decl(lib.es5.d.ts, --, --))
  }
-

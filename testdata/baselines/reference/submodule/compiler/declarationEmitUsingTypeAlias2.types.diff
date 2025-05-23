@@ -35,4 +35,3 @@
 +>goodDeclaration<{}> : () => () => { shouldPrintResult: "N"; shouldPrintResult2: "N"; shouldLookupName: unique symbol; shouldReuseLocalName: unique symbol; reuseDepName: unique symbol; }
 +>goodDeclaration : <T>() => () => { shouldPrintResult: T extends Other ? "O" : "N"; shouldPrintResult2: T extends unique symbol ? Other : "N"; shouldLookupName: unique symbol; shouldReuseLocalName: unique symbol; reuseDepName: unique symbol; }
 
-
