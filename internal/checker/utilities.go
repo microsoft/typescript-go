@@ -1585,8 +1585,8 @@ func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core
 	}
 
 	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
-	isPlainJS := ast.IsPlainJSFile(sourceFile, options.CheckJs)
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, options)
+	isPlainJS := ast.IsPlainJSFile(sourceFile, options.CheckJs)
 
 	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
