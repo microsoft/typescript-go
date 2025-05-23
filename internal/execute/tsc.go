@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -21,7 +22,7 @@ type cbType = func(p any) any
 func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 	if len(commandLineArgs) > 0 {
 		// !!! build mode
-		switch commandLineArgs[0] {
+		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
 			fmt.Fprint(sys.Writer(), "Build mode is currently unsupported."+sys.NewLine())
 			sys.EndWrite()
