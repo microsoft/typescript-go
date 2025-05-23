@@ -389,15 +389,13 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 		return nil
 	}
 
-	diags := slices.Clip(sourceFile.BindDiagnostics())
-
 	var fileChecker *checker.Checker
 	var done func()
 	if sourceFile != nil {
 		fileChecker, done = p.checkerPool.GetCheckerForFile(ctx, sourceFile)
 		defer done()
 	}
-
+	diags := slices.Clip(sourceFile.BindDiagnostics())
 	checkers, closeCheckers := p.checkerPool.GetAllCheckers(ctx)
 	defer closeCheckers()
 
