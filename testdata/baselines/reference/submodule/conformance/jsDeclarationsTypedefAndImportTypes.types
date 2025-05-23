@@ -49,11 +49,11 @@ class Wrap {
 
         /** @type {import("./conn").Whatever} */
         this.another = "";
->this.another = "" : any
->this.another : any
+>this.another = "" : string | number
+>this.another : string | number
 >this : this
->another : any
->"" : any
+>another : string | number
+>"" : string | number
 >"" : ""
     }
 }
