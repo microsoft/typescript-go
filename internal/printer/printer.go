@@ -1497,8 +1497,9 @@ func canEmitSimpleArrowHead(parentNode *ast.Node, parameters *ast.ParameterList)
 	return parameter.Pos() == greatestEnd(parent.Pos(), parent.Modifiers()) && // may not have parsed tokens between modifiers/start of parent and parameter
 		parent.TypeParameters == nil && // parent may not have type parameters
 		parent.Type == nil && // parent may not have return type annotation
+		parent.Modifiers() == nil && // parent/children may not have decorators or modifiers
+		parameter.Modifiers() == nil &&
 		!parameters.HasTrailingComma() && // parameters may not have a trailing comma
-		parameter.Modifiers() == nil && // parameter may not have decorators or modifiers
 		parameter.DotDotDotToken == nil && // parameter may not be rest
 		parameter.QuestionToken == nil && // parameter may not be optional
 		parameter.Type == nil && // parameter may not have a type annotation
