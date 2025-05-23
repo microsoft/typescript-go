@@ -1869,6 +1869,77 @@ switch (x) {
 				},
 			},
 		},
+		{
+			name: "completionForQuotedPropertyInPropertyAssignment1",
+			files: map[string]string{
+				defaultMainFileName: `export interface Configfiles {
+  jspm: string;
+  'jspm:browser': string;
+}
+
+let files: Configfiles;
+files = {
+   /*0*/: '',
+   '/*1*/': ''
+}`,
+			},
+			expectedResult: map[string]*testCaseResult{
+				"0": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:    `"jspm:browser"`,
+								Kind:     fieldKind,
+								SortText: sortTextLocationPriority,
+							},
+							{
+								Label:    "jspm",
+								Kind:     fieldKind,
+								SortText: sortTextLocationPriority,
+							},
+						},
+					},
+				},
+				"1": {
+					list: &lsproto.CompletionList{
+						IsIncomplete: false,
+						ItemDefaults: itemDefaults,
+						Items: []*lsproto.CompletionItem{
+							{
+								Label:    "jspm",
+								Kind:     fieldKind,
+								SortText: sortTextLocationPriority,
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									TextEdit: &lsproto.TextEdit{
+										NewText: "jspm",
+										Range: lsproto.Range{
+											Start: lsproto.Position{Line: 8, Character: 4},
+											End:   lsproto.Position{Line: 8, Character: 4},
+										},
+									},
+								},
+							},
+							{
+								Label:    "jspm:browser",
+								Kind:     fieldKind,
+								SortText: sortTextLocationPriority,
+								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+									TextEdit: &lsproto.TextEdit{
+										NewText: "jspm:browser",
+										Range: lsproto.Range{
+											Start: lsproto.Position{Line: 8, Character: 4},
+											End:   lsproto.Position{Line: 8, Character: 4},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
 	}
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
