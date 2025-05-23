@@ -1311,6 +1311,11 @@ func GetElementOrPropertyAccessName(node *Node) string {
 	if name == nil {
 		return ""
 	}
+	// If we get back the original node and it's an ElementAccessExpression,
+	// it means it had a non-literal argument, so return empty string
+	if name == node && node.Kind == KindElementAccessExpression {
+		return ""
+	}
 	return name.Text()
 }
 
