@@ -235,7 +235,7 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 
 type mutableNode Node
 
-func (n *Node) AsMutable() *mutableNode                 { return (*mutableNode)(n) }
+func (n *Node) AsMutable() *mutableNode                     { return (*mutableNode)(n) }
 func (n *mutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
 
 func (n *Node) Symbol() *Symbol {
@@ -1638,7 +1638,7 @@ type nodeData interface {
 	Clone(v NodeFactoryCoercible) *Node
 	Name() *DeclarationName
 	Modifiers() *ModifierList
-	setModifiers(*ModifierList)
+	setModifiers(modifiers *ModifierList)
 	FlowNodeData() *FlowNodeBase
 	DeclarationData() *DeclarationBase
 	ExportableData() *ExportableBase
