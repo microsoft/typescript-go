@@ -284,8 +284,8 @@ func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
 	if !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
 		return false
 	}
-	if options.ResolvePackageJsonExports != TSUnknown {
-		return options.ResolvePackageJsonExports == TSTrue
+	if options.ResolvePackageJsonImports != TSUnknown {
+		return options.ResolvePackageJsonImports == TSTrue
 	}
 	switch moduleResolution {
 	case ModuleResolutionKindNode16, ModuleResolutionKindNodeNext, ModuleResolutionKindBundler:
@@ -294,7 +294,6 @@ func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
 	return false
 }
 
-// TODO: strada bug? Identical to GetResolvePackageJsonImports
 func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
 	moduleResolution := options.GetModuleResolutionKind()
 	if !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
