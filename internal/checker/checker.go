@@ -3382,7 +3382,7 @@ func (c *Checker) checkFunctionOrConstructorSymbol(symbol *ast.Symbol) {
 				} else {
 					duplicateFunctionDeclaration = true
 				}
-			} else if previousDeclaration != nil && previousDeclaration.Parent == node.Parent && previousDeclaration.End() != node.Pos() {
+			} else if previousDeclaration != nil && previousDeclaration.Parent == node.Parent && previousDeclaration.End() != node.Pos() && previousDeclaration.Flags&ast.NodeFlagsReparsed == 0 {
 				reportImplementationExpectedError(previousDeclaration)
 			}
 			if bodyIsPresent {
@@ -18332,7 +18332,8 @@ func (c *Checker) getSignaturesOfSymbol(symbol *ast.Symbol) []*Signature {
 		// precedes the implementation node (i.e. has the same parent and ends where the implementation starts).
 		if i > 0 && decl.Body() != nil {
 			previous := symbol.Declarations[i-1]
-			if decl.Parent == previous.Parent && decl.Kind == previous.Kind && decl.Pos() == previous.End() {
+			if decl.Parent == previous.Parent && decl.Kind == previous.Kind &&
+				(decl.Pos() == previous.End() || previous.Flags&ast.NodeFlagsReparsed != 0) {
 				continue
 			}
 		}
