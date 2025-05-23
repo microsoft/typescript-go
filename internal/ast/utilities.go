@@ -2695,6 +2695,10 @@ func IsCheckJSEnabledForFile(sourceFile *SourceFile, compilerOptions *core.Compi
 	return compilerOptions.CheckJs == core.TSTrue
 }
 
+func IsPlainJSFile(file *SourceFile, checkJs core.Tristate) bool {
+	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
+}
+
 func GetLeftmostAccessExpression(expr *Node) *Node {
 	for IsAccessExpression(expr) {
 		expr = expr.Expression()
