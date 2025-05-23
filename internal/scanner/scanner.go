@@ -327,6 +327,13 @@ func (s *Scanner) ResetPos(pos int) {
 	s.tokenStart = pos
 }
 
+func (s *Scanner) ResetTokenState(pos int) {
+	s.ResetPos(pos)
+	s.token = ast.KindUnknown
+	s.tokenValue = ""
+	s.tokenFlags = ast.TokenFlagsNone
+}
+
 func (scanner *Scanner) SetSkipJSDocLeadingAsterisks(skip bool) {
 	if skip {
 		scanner.skipJSDocLeadingAsterisks += 1

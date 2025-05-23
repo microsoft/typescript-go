@@ -3303,3 +3303,11 @@ func IsTypeDeclarationName(name *Node) bool {
 		IsTypeDeclaration(name.Parent) &&
 		GetNameOfDeclaration(name.Parent) == name
 }
+
+func IsTrivia(token Kind) bool {
+	return KindFirstTriviaToken <= token && token <= KindLastTriviaToken
+}
+
+func HasDecorators(node *Node) bool {
+	return HasSyntacticModifier(node, ModifierFlagsDecorator)
+}
