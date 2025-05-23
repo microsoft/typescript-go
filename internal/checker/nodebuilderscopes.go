@@ -172,8 +172,8 @@ func (b *nodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 							add(originalParam.Name, b.ch.unknownSymbol)
 						}
 					} else if !core.Some(param.Declarations, func(d *ast.Node) bool {
-						var bindElement *(func(e *ast.BindingElement))
-						var bindPattern *(func(e *ast.BindingPattern))
+						var bindElement func(e *ast.BindingElement)
+						var bindPattern func(e *ast.BindingPattern)
 
 						bindPatternWorker := func(p *ast.BindingPattern) {
 							for _, e := range p.Elements.Nodes {
@@ -181,7 +181,7 @@ func (b *nodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 								case ast.KindOmittedExpression:
 									return
 								case ast.KindBindingElement:
-									(*bindElement)(e.AsBindingElement())
+									bindElement(e.AsBindingElement())
 									return
 								default:
 									panic("Unhandled binding element kind")
@@ -191,7 +191,7 @@ func (b *nodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 
 						bindElementWorker := func(e *ast.BindingElement) {
 							if e.Name() != nil && ast.IsBindingPattern(e.Name()) {
-								(*bindPattern)(e.Name().AsBindingPattern())
+								bindPattern(e.Name().AsBindingPattern())
 								return
 							}
 							symbol := b.ch.getSymbolOfDeclaration(e.AsNode())
@@ -199,11 +199,11 @@ func (b *nodeBuilderImpl) enterNewScope(declaration *ast.Node, expandedParams []
 								add(symbol.Name, symbol)
 							}
 						}
-						bindElement = &bindElementWorker
-						bindPattern = &bindPatternWorker
+						bindElement = bindElementWorker
+						bindPattern = bindPatternWorker
 
 						if ast.IsParameter(d) && d.Name() != nil && ast.IsBindingPattern(d.Name()) {
-							(*bindPattern)(d.Name().AsBindingPattern())
+							bindPattern(d.Name().AsBindingPattern())
 							return true
 						}
 						return false
