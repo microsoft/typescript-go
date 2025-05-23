@@ -12,6 +12,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/peter-evans/patience"
 	"gotest.tools/v3/assert"
@@ -108,18 +109,8 @@ type inputPair struct {
 	b []string
 }
 
-var newlineRE = regexp.MustCompile("\r?\n")
-
-func inputPairFrom(a string, b string) *inputPair {
-	return &inputPair{
-		a: newlineRE.Split(a, -1),
-		b: newlineRE.Split(b, -1),
-	}
-}
-
 func diffText(oldName string, newName string, expected string, actual string, w io.Writer) error {
-	pair := inputPairFrom(expected, actual)
-	lines := patience.Diff(pair.a, pair.b)
+	lines := patience.Diff(stringutil.SplitLines(expected), stringutil.SplitLines(actual))
 	result := patience.UnifiedDiffTextWithOptions(lines, patience.UnifiedDiffOptions{
 		Precontext:  3,
 		Postcontext: 3,
