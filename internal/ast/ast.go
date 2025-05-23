@@ -233,6 +233,11 @@ func (n *Node) TemplateLiteralLikeData() *TemplateLiteralLikeBase {
 	return n.data.TemplateLiteralLikeData()
 }
 
+type mutableNode Node
+
+func (n *Node) AsMutable() *mutableNode                 { return (*mutableNode)(n) }
+func (n *mutableNode) SetModifiers(modifiers *ModifierList) { n.data.setModifiers(modifiers) }
+
 func (n *Node) Symbol() *Symbol {
 	data := n.DeclarationData()
 	if data != nil {
@@ -1633,6 +1638,7 @@ type nodeData interface {
 	Clone(v NodeFactoryCoercible) *Node
 	Name() *DeclarationName
 	Modifiers() *ModifierList
+	setModifiers(*ModifierList)
 	FlowNodeData() *FlowNodeBase
 	DeclarationData() *DeclarationBase
 	ExportableData() *ExportableBase
@@ -1660,6 +1666,7 @@ func (node *NodeDefault) VisitEachChild(v *NodeVisitor) *Node               { re
 func (node *NodeDefault) Clone(v NodeFactoryCoercible) *Node                { return nil }
 func (node *NodeDefault) Name() *DeclarationName                            { return nil }
 func (node *NodeDefault) Modifiers() *ModifierList                          { return nil }
+func (node *NodeDefault) setModifiers(*ModifierList)                        {}
 func (node *NodeDefault) FlowNodeData() *FlowNodeBase                       { return nil }
 func (node *NodeDefault) DeclarationData() *DeclarationBase                 { return nil }
 func (node *NodeDefault) ExportableData() *ExportableBase                   { return nil }
@@ -4759,9 +4766,10 @@ type NamedMemberBase struct {
 	PostfixToken *TokenNode    // TokenNode. Optional
 }
 
-func (node *NamedMemberBase) DeclarationData() *DeclarationBase { return &node.DeclarationBase }
-func (node *NamedMemberBase) Modifiers() *ModifierList          { return node.modifiers }
-func (node *NamedMemberBase) Name() *DeclarationName            { return node.name }
+func (node *NamedMemberBase) DeclarationData() *DeclarationBase    { return &node.DeclarationBase }
+func (node *NamedMemberBase) Modifiers() *ModifierList             { return node.modifiers }
+func (node *NamedMemberBase) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
+func (node *NamedMemberBase) Name() *DeclarationName               { return node.name }
 
 // CallSignatureDeclaration
 

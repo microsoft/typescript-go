@@ -6,15 +6,13 @@
 -a.js(17,5): error TS4121: This member cannot have a JSDoc comment with an '@override' tag because its containing class 'C' does not extend another class.
 -a.js(19,5): error TS4121: This member cannot have a JSDoc comment with an '@override' tag because its containing class 'C' does not extend another class.
 +a.js(7,5): error TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'B'.
-+a.js(9,5): error TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'B'.
++a.js(11,5): error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'B'.
++a.js(17,5): error TS4112: This member cannot have an 'override' modifier because its containing class 'C' does not extend another class.
++a.js(19,5): error TS4112: This member cannot have an 'override' modifier because its containing class 'C' does not extend another class.
  
  
--==== a.js (4 errors) ====
-+==== a.js (2 errors) ====
-     class B {
-         foo (v) {}
-         fooo (v) {}
-@@= skipped -12, +10 lines =@@
+ ==== a.js (4 errors) ====
+@@= skipped -12, +12 lines =@@
      class D extends B {
          foo (v) {}
          ~~~
@@ -22,22 +20,23 @@
 +!!! error TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'B'.
          /** @override */
          fooo (v) {}
-+        ~~~~
-+!!! error TS4114: This member must have an 'override' modifier because it overrides a member in the base class 'B'.
          /** @override */
          bar(v) {}
--        ~~~
+         ~~~
 -!!! error TS4122: This member cannot have a JSDoc comment with an '@override' tag because it is not declared in the base class 'B'.
++!!! error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'B'.
      }
      
      class C {
-         foo () {}
+@@= skipped -14, +14 lines =@@
          /** @override */
          fooo (v) {}
--        ~~~~
+         ~~~~
 -!!! error TS4121: This member cannot have a JSDoc comment with an '@override' tag because its containing class 'C' does not extend another class.
++!!! error TS4112: This member cannot have an 'override' modifier because its containing class 'C' does not extend another class.
          /** @override */
          bar(v) {}
--        ~~~
+         ~~~
 -!!! error TS4121: This member cannot have a JSDoc comment with an '@override' tag because its containing class 'C' does not extend another class.
++!!! error TS4112: This member cannot have an 'override' modifier because its containing class 'C' does not extend another class.
      }
