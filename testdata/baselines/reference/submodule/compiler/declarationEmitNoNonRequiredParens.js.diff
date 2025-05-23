@@ -1,10 +1,9 @@
 --- old.declarationEmitNoNonRequiredParens.js
 +++ new.declarationEmitNoNonRequiredParens.js
-@@= skipped -19, +19 lines =@@
-     Test[Test["C"] = 2] = "C";
+@@= skipped -20, +20 lines =@@
  })(Test || (exports.Test = Test = {}));
  exports.bar = null;
--
+
 -
 -//// [declarationEmitNoNonRequiredParens.d.ts]
 -export declare enum Test {
@@ -14,3 +13,4 @@
 -}
 -export type TestType = typeof Test;
 -export declare const bar: Test[];
+-

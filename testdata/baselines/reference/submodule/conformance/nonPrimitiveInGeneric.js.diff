@@ -1,10 +1,9 @@
 --- old.nonPrimitiveInGeneric.js
 +++ new.nonPrimitiveInGeneric.js
-@@= skipped -74, +74 lines =@@
- var y; // ok
+@@= skipped -75, +75 lines =@@
  var z; // ok
  var u; // ok
--
+
 -
 -//// [nonPrimitiveInGeneric.d.ts]
 -declare function generic<T>(t: T): void;
@@ -22,3 +21,4 @@
 -    foo: number;
 -}
 -declare var u: Proxy<Blah>;
+-

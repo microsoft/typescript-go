@@ -1,10 +1,9 @@
 --- old.declFileForInterfaceWithRestParams.js
 +++ new.declFileForInterfaceWithRestParams.js
-@@= skipped -7, +7 lines =@@
- }
- 
+@@= skipped -8, +8 lines =@@
+
  //// [declFileForInterfaceWithRestParams.js]
--
+
 -
 -//// [declFileForInterfaceWithRestParams.d.ts]
 -interface I {
@@ -12,3 +11,4 @@
 -    foo2(a: number, ...x: any[]): typeof x;
 -    foo3(b: string, ...x: string[]): typeof x;
 -}
+-

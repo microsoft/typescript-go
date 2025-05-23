@@ -1,10 +1,9 @@
 --- old.computedPropertyNamesDeclarationEmit6_ES6.js
 +++ new.computedPropertyNamesDeclarationEmit6_ES6.js
-@@= skipped -15, +15 lines =@@
-     [~1]: {},
+@@= skipped -16, +16 lines =@@
      [!1]: {}
  };
--
+
 -
 -//// [computedPropertyNamesDeclarationEmit6_ES6.d.ts]
 -declare var v: {
@@ -12,3 +11,4 @@
 -    [-1]: {};
 -    1: {};
 -};
+-

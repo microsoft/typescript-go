@@ -1,10 +1,9 @@
 --- old.nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js
 +++ new.nodeModulesDeclarationEmitWithPackageExports(module=nodenext).js
-@@= skipped -158, +158 lines =@@
- export const d = cjsi;
+@@= skipped -159, +159 lines =@@
  export const e = mjsi;
  export const f = typei;
--
+
 -
 -//// [index.d.mts]
 -import * as cjs from "package/cjs";
@@ -45,3 +44,4 @@
 -export declare const d: typeof cjsi;
 -export declare const e: typeof mjsi;
 -export declare const f: typeof typei;
+-

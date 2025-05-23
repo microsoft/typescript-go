@@ -1,10 +1,9 @@
 --- old.nodeNextCjsNamespaceImportDefault1.js
 +++ new.nodeNextCjsNamespaceImportDefault1.js
-@@= skipped -20, +20 lines =@@
- export { d, a, ns };
+@@= skipped -21, +21 lines =@@
  d.a;
  ns.default.a;
--
+
 -
 -//// [a.d.cts]
 -export declare const a: number;
@@ -12,3 +11,4 @@
 -import d, { a } from './a.cjs';
 -import * as ns from './a.cjs';
 -export { d, a, ns };
+-

@@ -1,10 +1,9 @@
 --- old.classNonUniqueSymbolMethodHasSymbolIndexer.js
 +++ new.classNonUniqueSymbolMethodHasSymbolIndexer.js
-@@= skipped -23, +23 lines =@@
-     [a]() { return 1; }
+@@= skipped -24, +24 lines =@@
      ;
  });
--
+
 -
 -//// [classNonUniqueSymbolMethodHasSymbolIndexer.d.ts]
 -export declare class A {
@@ -17,3 +16,4 @@
 -} & (new (...args: any[]) => {
 -    mixed: true;
 -});
+-

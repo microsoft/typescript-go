@@ -1,10 +1,9 @@
 --- old.nodeModulesImportResolutionIntoExport(module=node16).js
 +++ new.nodeModulesImportResolutionIntoExport(module=node16).js
-@@= skipped -59, +59 lines =@@
- // esm format file
+@@= skipped -60, +60 lines =@@
  import * as type from "#type";
  type;
--
+
 -
 -//// [index.d.cts]
 -export {};
@@ -12,3 +11,4 @@
 -export {};
 -//// [index.d.mts]
 -export {};
+-

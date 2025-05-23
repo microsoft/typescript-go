@@ -1,10 +1,9 @@
 --- old.fakeInfinity1.js
 +++ new.fakeInfinity1.js
-@@= skipped -34, +34 lines =@@
- a = 1e999;
+@@= skipped -35, +35 lines =@@
  a = 1e9999;
  exports.oops = 123456789123456789123456789123456789123456789123456789;
--
+
 -
 -//// [fakeInfinity1.d.ts]
 -export type PositiveInfinity = 1e999;
@@ -13,3 +12,4 @@
 -export type TypeOfNaN = typeof NaN;
 -export type Oops = 123456789123456789123456789123456789123456789123456789;
 -export declare const oops = 1.2345678912345678e+53;
+-

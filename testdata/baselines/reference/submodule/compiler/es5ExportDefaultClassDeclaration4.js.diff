@@ -1,10 +1,9 @@
 --- old.es5ExportDefaultClassDeclaration4.js
 +++ new.es5ExportDefaultClassDeclaration4.js
-@@= skipped -15, +15 lines =@@
- 
- 
+@@= skipped -16, +16 lines =@@
+
  //// [es5ExportDefaultClassDeclaration4.js]
--
+
 -
 -//// [es5ExportDefaultClassDeclaration4.d.ts]
 -declare module "foo" {
@@ -15,3 +14,4 @@
 -    var after: C;
 -    var t: typeof C;
 -}
+-

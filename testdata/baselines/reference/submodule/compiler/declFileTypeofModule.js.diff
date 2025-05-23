@@ -1,10 +1,9 @@
 --- old.declFileTypeofModule.js
 +++ new.declFileTypeofModule.js
-@@= skipped -24, +24 lines =@@
- })(m2 || (m2 = {}));
+@@= skipped -25, +25 lines =@@
  var m2_1 = m2;
  var m2_2;
--
+
 -
 -//// [declFileTypeofModule.d.ts]
 -declare namespace m1 {
@@ -17,3 +16,4 @@
 -}
 -declare var m2_1: typeof m2;
 -declare var m2_2: typeof m2;
+-

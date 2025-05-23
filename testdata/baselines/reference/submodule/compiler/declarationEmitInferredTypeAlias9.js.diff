@@ -1,10 +1,9 @@
 --- old.declarationEmitInferredTypeAlias9.js
 +++ new.declarationEmitInferredTypeAlias9.js
-@@= skipped -15, +15 lines =@@
- function returnSomeGlobalValue() {
+@@= skipped -16, +16 lines =@@
      return x;
  }
--
+
 -
 -//// [declarationEmitInferredTypeAlias9.d.ts]
 -type Foo<T> = T | {
@@ -12,3 +11,4 @@
 -};
 -export declare function returnSomeGlobalValue(): Foo<number[]>;
 -export {};
+-

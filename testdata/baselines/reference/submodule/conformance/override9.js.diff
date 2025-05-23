@@ -1,10 +1,9 @@
 --- old.override9.js
 +++ new.override9.js
-@@= skipped -14, +14 lines =@@
- 
- 
+@@= skipped -15, +15 lines =@@
+
  //// [override9.js]
--
+
 -
 -//// [override9.d.ts]
 -interface B {
@@ -17,3 +16,4 @@
 -    baz(): void;
 -    bazz(): void;
 -}
+-

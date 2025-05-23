@@ -1,10 +1,9 @@
 --- old.importAssertion1(module=esnext).js
 +++ new.importAssertion1(module=esnext).js
-@@= skipped -62, +62 lines =@@
- const f = import();
+@@= skipped -63, +63 lines =@@
  const g = import('./0', {}, {});
  const h = import('./0', { assert: { type: "json" } });
--
+
 -
 -//// [0.d.ts]
 -export declare const a = 1;
@@ -24,3 +23,4 @@
 -declare const f: Promise<any>;
 -declare const g: Promise<typeof import("./0")>;
 -declare const h: Promise<typeof import("./0")>;
+-

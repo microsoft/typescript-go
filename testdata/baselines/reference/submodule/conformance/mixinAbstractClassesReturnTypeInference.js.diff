@@ -1,10 +1,9 @@
 --- old.mixinAbstractClassesReturnTypeInference.js
 +++ new.mixinAbstractClassesReturnTypeInference.js
-@@= skipped -38, +38 lines =@@
- class DerivedFromAbstract2 extends Mixin2(AbstractBase) {
+@@= skipped -39, +39 lines =@@
      abstractBaseMethod() { }
  }
--
+
 -
 -//// [mixinAbstractClassesReturnTypeInference.d.ts]
 -interface Mixin1 {
@@ -28,3 +27,4 @@
 -declare class DerivedFromAbstract2 extends DerivedFromAbstract2_base {
 -    abstractBaseMethod(): void;
 -}
+-

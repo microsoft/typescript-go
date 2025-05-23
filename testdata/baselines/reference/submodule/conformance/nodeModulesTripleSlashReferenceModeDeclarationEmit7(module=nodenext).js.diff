@@ -1,10 +1,9 @@
 --- old.nodeModulesTripleSlashReferenceModeDeclarationEmit7(module=nodenext).js
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit7(module=nodenext).js
-@@= skipped -60, +60 lines =@@
- import obj1 from "./sub1/uses.js";
+@@= skipped -61, +61 lines =@@
  import obj2 from "./sub2/uses.js";
  export default [obj1, obj2.default];
--
+
 -
 -//// [uses.d.ts]
 -/// <reference types="pkg" preserve="true" />

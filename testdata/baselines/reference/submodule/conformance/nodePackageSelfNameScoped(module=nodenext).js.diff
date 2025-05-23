@@ -1,10 +1,9 @@
 --- old.nodePackageSelfNameScoped(module=nodenext).js
 +++ new.nodePackageSelfNameScoped(module=nodenext).js
-@@= skipped -56, +56 lines =@@
- // cjs format file
+@@= skipped -57, +57 lines =@@
  const self = __importStar(require("@scope/package"));
  self;
--
+
 -
 -//// [index.d.ts]
 -export {};
@@ -12,3 +11,4 @@
 -export {};
 -//// [index.d.cts]
 -export {};
+-

@@ -1,10 +1,9 @@
 --- old.declFileIndexSignatures.js
 +++ new.declFileIndexSignatures.js
-@@= skipped -37, +37 lines =@@
- "use strict";
+@@= skipped -38, +38 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  //// [declFileIndexSignatures_1.js]
--
+
 -
 -//// [declFileIndexSignatures_0.d.ts]
 -export interface IStringIndexSignature {
@@ -34,3 +33,4 @@
 -interface IGlobalIndexSignatureWithTypeParameter<T> {
 -    [a: string]: T;
 -}
+-

@@ -1,10 +1,9 @@
 --- old.usingDeclarationsDeclarationEmit.1.js
 +++ new.usingDeclarationsDeclarationEmit.1.js
-@@= skipped -12, +12 lines =@@
- export { r1 };
+@@= skipped -13, +13 lines =@@
  await using r2 = { async [Symbol.asyncDispose]() { } };
  export { r2 };
--
+
 -
 -//// [usingDeclarationsDeclarationEmit.1.d.ts]
 -declare const r1: {
@@ -15,3 +14,4 @@
 -    [Symbol.asyncDispose](): Promise<void>;
 -};
 -export { r2 };
+-

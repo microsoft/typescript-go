@@ -1,10 +1,9 @@
 --- old.nodePackageSelfName(module=node16).js
 +++ new.nodePackageSelfName(module=node16).js
-@@= skipped -56, +56 lines =@@
- // esm format file
+@@= skipped -57, +57 lines =@@
  const self = __importStar(require("package"));
  self;
--
+
 -
 -//// [index.d.ts]
 -export {};
@@ -12,3 +11,4 @@
 -export {};
 -//// [index.d.cts]
 -export {};
+-

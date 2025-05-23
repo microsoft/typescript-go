@@ -8,4 +8,4 @@
 ->foo : types.Foo
 +>f : (foo: Foo) => void
 +>foo : Foo
- 
+

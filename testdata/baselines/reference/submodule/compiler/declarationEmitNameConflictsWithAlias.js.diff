@@ -1,10 +1,9 @@
 --- old.declarationEmitNameConflictsWithAlias.js
 +++ new.declarationEmitNameConflictsWithAlias.js
-@@= skipped -14, +14 lines =@@
- var M;
+@@= skipped -15, +15 lines =@@
  (function (M) {
  })(M || (exports.M = M = {}));
--
+
 -
 -//// [declarationEmitNameConflictsWithAlias.d.ts]
 -export declare namespace C {
@@ -19,3 +18,4 @@
 -    }
 -    var w: v.I;
 -}
+-

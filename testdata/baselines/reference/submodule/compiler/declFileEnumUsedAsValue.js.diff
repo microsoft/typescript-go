@@ -1,10 +1,9 @@
 --- old.declFileEnumUsedAsValue.js
 +++ new.declFileEnumUsedAsValue.js
-@@= skipped -15, +15 lines =@@
-     e[e["c"] = 2] = "c";
+@@= skipped -16, +16 lines =@@
  })(e || (e = {}));
  var x = e;
--
+
 -
 -//// [declFileEnumUsedAsValue.d.ts]
 -declare enum e {
@@ -13,3 +12,4 @@
 -    c = 2
 -}
 -declare var x: typeof e;
+-

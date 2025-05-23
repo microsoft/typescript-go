@@ -8,4 +8,4 @@
 ->foo : Foo
 +>f : (foo: default) => void
 +>foo : default
- 
+

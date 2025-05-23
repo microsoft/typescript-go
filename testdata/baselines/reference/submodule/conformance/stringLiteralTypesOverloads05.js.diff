@@ -1,10 +1,9 @@
 --- old.stringLiteralTypesOverloads05.js
 +++ new.stringLiteralTypesOverloads05.js
-@@= skipped -17, +17 lines =@@
- function doThing(x, y) {
+@@= skipped -18, +18 lines =@@
      return undefined;
  }
--
+
 -
 -//// [stringLiteralTypesOverloads05.d.ts]
 -interface Animal {
@@ -22,3 +21,4 @@
 -declare function doThing(x: "dog"): Dog;
 -declare function doThing(x: "cat"): Cat;
 -declare function doThing(x: string): Animal;
+-

@@ -1,10 +1,9 @@
 --- old.constructorTypeWithTypeParameters.js
 +++ new.constructorTypeWithTypeParameters.js
-@@= skipped -10, +10 lines =@@
- 
+@@= skipped -11, +11 lines =@@
  //// [constructorTypeWithTypeParameters.js]
  var anotherVar;
--
+
 -
 -//// [constructorTypeWithTypeParameters.d.ts]
 -declare var X: {
@@ -14,3 +13,4 @@
 -    new (): number;
 -};
 -declare var anotherVar: new <T>() => number;
+-

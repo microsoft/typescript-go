@@ -1,13 +1,13 @@
 --- old.privacyCheckTypeOfFunction.js
 +++ new.privacyCheckTypeOfFunction.js
-@@= skipped -13, +13 lines =@@
- function foo() {
+@@= skipped -14, +14 lines =@@
  }
  exports.b = foo;
--
+
 -
 -//// [privacyCheckTypeOfFunction.d.ts]
 -declare function foo(): void;
 -export declare var x: typeof foo;
 -export declare var b: typeof foo;
 -export {};
+-

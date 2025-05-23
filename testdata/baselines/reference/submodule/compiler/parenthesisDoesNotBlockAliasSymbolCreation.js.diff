@@ -1,10 +1,9 @@
 --- old.parenthesisDoesNotBlockAliasSymbolCreation.js
 +++ new.parenthesisDoesNotBlockAliasSymbolCreation.js
-@@= skipped -26, +26 lines =@@
- exports.a2 = null;
+@@= skipped -27, +27 lines =@@
  exports.a3 = null;
  exports.a4 = null;
--
+
 -
 -//// [parenthesisDoesNotBlockAliasSymbolCreation.d.ts]
 -export type InvalidKeys<K extends string | number | symbol> = {
@@ -27,3 +26,4 @@
 -export declare const a4: {
 -    x: number;
 -} & InvalidKeys2<"a">;
+-

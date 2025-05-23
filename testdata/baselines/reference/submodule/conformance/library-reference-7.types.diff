@@ -7,10 +7,10 @@
 ->$ : { foo(): void; }
 +>$ : { foo: () => void; }
  >foo : () => void
- 
+
  === /src/node_modules/jquery/index.d.ts ===
  declare var $: { foo(): void };
 ->$ : { foo(): void; }
 +>$ : { foo: () => void; }
  >foo : () => void
- 
+

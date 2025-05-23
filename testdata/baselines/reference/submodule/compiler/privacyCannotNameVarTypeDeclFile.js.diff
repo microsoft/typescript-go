@@ -134,7 +134,7 @@
 +}
  var privateVarWithPrivateModulePropertyTypes = exporter.createExportedWidget2();
  var privateVarWithPrivateModulePropertyTypes1 = exporter.createExportedWidget4();
--
+
 -
 -//// [privacyCannotNameVarTypeDeclFile_GlobalWidgets.d.ts]
 -declare module "GlobalWidgets" {

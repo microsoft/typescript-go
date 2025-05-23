@@ -10,4 +10,4 @@
 ->B : typeof A.B
 +>B : typeof B
  >createB : () => number
- 
+

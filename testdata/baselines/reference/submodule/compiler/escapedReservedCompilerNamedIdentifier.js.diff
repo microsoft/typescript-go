@@ -1,10 +1,9 @@
 --- old.escapedReservedCompilerNamedIdentifier.js
 +++ new.escapedReservedCompilerNamedIdentifier.js
-@@= skipped -62, +62 lines =@@
-     _proto__: 0
+@@= skipped -63, +63 lines =@@
  };
  var b5 = o5["_proto__"];
--
+
 -
 -//// [escapedReservedCompilerNamedIdentifier.d.ts]
 -declare var __proto__: number;
@@ -34,3 +33,4 @@
 -    _proto__: number;
 -};
 -declare var b5: number;
+-

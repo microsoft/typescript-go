@@ -1,10 +1,9 @@
 --- old.reverseMappedTypeDeepDeclarationEmit.js
 +++ new.reverseMappedTypeDeepDeclarationEmit.js
-@@= skipped -50, +50 lines =@@
-         },
+@@= skipped -51, +51 lines =@@
      }
  });
--
+
 -
 -//// [reverseMappedTypeDeepDeclarationEmit.d.ts]
 -export type Validator<T> = NativeTypeValidator<T> | ObjectValidator<T>;
@@ -35,3 +34,4 @@
 -        };
 -    };
 -};
+-

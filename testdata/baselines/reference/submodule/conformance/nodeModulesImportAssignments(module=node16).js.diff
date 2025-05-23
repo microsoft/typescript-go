@@ -1,10 +1,9 @@
 --- old.nodeModulesImportAssignments(module=node16).js
 +++ new.nodeModulesImportAssignments(module=node16).js
-@@= skipped -54, +54 lines =@@
- fs.readFile;
+@@= skipped -55, +55 lines =@@
  const fs2 = __require_1("fs");
  export { fs2 };
--
+
 -
 -//// [index.d.ts]
 -export import fs2 = require("fs");
@@ -12,3 +11,4 @@
 -export import fs2 = require("fs");
 -//// [file.d.ts]
 -export import fs2 = require("fs");
+-

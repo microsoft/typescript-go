@@ -1,10 +1,9 @@
 --- old.nonPrimitiveInFunction.js
 +++ new.nonPrimitiveInFunction.js
-@@= skipped -35, +35 lines =@@
-     var ret = 123;
+@@= skipped -36, +36 lines =@@
      return ret; // expect error
  }
--
+
 -
 -//// [nonPrimitiveInFunction.d.ts]
 -declare function takeObject(o: object): void;
@@ -12,3 +11,4 @@
 -declare var nonPrimitive: object;
 -declare var primitive: boolean;
 -declare function returnError(): object;
+-

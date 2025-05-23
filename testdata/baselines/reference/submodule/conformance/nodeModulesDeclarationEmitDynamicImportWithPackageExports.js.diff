@@ -1,10 +1,9 @@
 --- old.nodeModulesDeclarationEmitDynamicImportWithPackageExports.js
 +++ new.nodeModulesDeclarationEmitDynamicImportWithPackageExports.js
-@@= skipped -112, +112 lines =@@
- // cjs format file, no TLA
+@@= skipped -113, +113 lines =@@
  exports.d = import("inner/cjs");
  exports.e = import("inner/mjs");
--
+
 -
 -//// [index.d.ts]
 -export {};
@@ -60,3 +59,4 @@
 -    default: typeof import("inner/cjs");
 -}>;
 -export declare const e: Promise<typeof import("inner/mjs", { with: { "resolution-mode": "import" } })>;
+-

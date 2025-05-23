@@ -1,10 +1,9 @@
 --- old.nodeModulesExportAssignments(module=nodenext).js
 +++ new.nodeModulesExportAssignments(module=nodenext).js
-@@= skipped -27, +27 lines =@@
- // esm format file
+@@= skipped -28, +28 lines =@@
  const a = {};
  export {};
--
+
 -
 -//// [index.d.ts]
 -declare const a: {};
@@ -12,3 +11,4 @@
 -//// [index.d.ts]
 -declare const a: {};
 -export = a;
+-

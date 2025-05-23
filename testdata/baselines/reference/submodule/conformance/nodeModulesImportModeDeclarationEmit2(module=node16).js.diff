@@ -1,10 +1,9 @@
 --- old.nodeModulesImportModeDeclarationEmit2(module=node16).js
 +++ new.nodeModulesImportModeDeclarationEmit2(module=node16).js
-@@= skipped -33, +33 lines =@@
- 
+@@= skipped -34, +34 lines =@@
  //// [index.js]
  export {};
--
+
 -
 -//// [index.d.ts]
 -import type { RequireInterface } from "pkg" assert { "resolution-mode": "require" };
@@ -17,3 +16,4 @@
 -}
 -export type { RequireInterface } from "pkg" assert { "resolution-mode": "require" };
 -export type { ImportInterface } from "pkg" assert { "resolution-mode": "import" };
+-

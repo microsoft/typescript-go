@@ -1,10 +1,9 @@
 --- old.isolatedDeclarationsLiterals.js
 +++ new.isolatedDeclarationsLiterals.js
-@@= skipped -120, +120 lines =@@
-     method() {
+@@= skipped -121, +121 lines =@@
      },
  };
--
+
 -
 -//// [file1.d.ts]
 -export declare const constObject: {
@@ -60,3 +59,4 @@
 -    /** A method */
 -    method(): void;
 -};
+-

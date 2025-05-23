@@ -8,4 +8,4 @@
 ->splice : Symbol(Array.splice, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>[].splice : Symbol(splice, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
 +>splice : Symbol(splice, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
- 
+

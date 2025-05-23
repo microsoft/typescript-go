@@ -1,13 +1,13 @@
 --- old.interfaceOnly.js
 +++ new.interfaceOnly.js
-@@= skipped -6, +6 lines =@@
- }
- 
+@@= skipped -7, +7 lines =@@
+
  //// [interfaceOnly.js]
--
+
 -
 -//// [interfaceOnly.d.ts]
 -interface foo {
 -    foo(): any;
 -    f2(f: () => void): any;
 -}
+-

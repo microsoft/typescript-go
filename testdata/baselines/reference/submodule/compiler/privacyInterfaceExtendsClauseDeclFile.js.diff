@@ -1,10 +1,9 @@
 --- old.privacyInterfaceExtendsClauseDeclFile.js
 +++ new.privacyInterfaceExtendsClauseDeclFile.js
-@@= skipped -96, +96 lines =@@
- "use strict";
+@@= skipped -97, +97 lines =@@
  Object.defineProperty(exports, "__esModule", { value: true });
  //// [privacyInterfaceExtendsClauseDeclFile_GlobalFile.js]
--
+
 -
 -//// [privacyInterfaceExtendsClauseDeclFile_externalModule.d.ts]
 -export declare namespace publicModule {
@@ -62,3 +61,4 @@
 -}
 -interface publicInterfaceImplementingPublicInterfaceInGlobal extends publicInterfaceInGlobal {
 -}
+-

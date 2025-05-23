@@ -6,4 +6,4 @@
  var s;
 ->s : number
 +>s : foo
- 
+

@@ -10,4 +10,4 @@
 ->toString : Symbol(Date.toString, Decl(lib.es5.d.ts, --, --))
 +>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
  }
- 
+

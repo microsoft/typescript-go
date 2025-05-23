@@ -1,10 +1,9 @@
 --- old.exportDefaultExpressionComments.js
 +++ new.exportDefaultExpressionComments.js
-@@= skipped -13, +13 lines =@@
-  * JSDoc Comments
+@@= skipped -14, +14 lines =@@
   */
  exports.default = null;
--
+
 -
 -//// [exportDefaultExpressionComments.d.ts]
 -/**
@@ -12,3 +11,4 @@
 - */
 -declare const _default: any;
 -export default _default;
+-

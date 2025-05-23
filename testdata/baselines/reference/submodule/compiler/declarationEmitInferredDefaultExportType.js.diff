@@ -1,10 +1,9 @@
 --- old.declarationEmitInferredDefaultExportType.js
 +++ new.declarationEmitInferredDefaultExportType.js
-@@= skipped -16, +16 lines =@@
-     bar: undefined,
+@@= skipped -17, +17 lines =@@
      baz: null
  };
--
+
 -
 -//// [declarationEmitInferredDefaultExportType.d.ts]
 -declare const _default: {
@@ -13,3 +12,4 @@
 -    baz: any;
 -};
 -export default _default;
+-

@@ -1,10 +1,9 @@
 --- old.nodeModulesTypesVersionPackageExports(module=node16).js
 +++ new.nodeModulesTypesVersionPackageExports(module=node16).js
-@@= skipped -87, +87 lines =@@
- // cjs format file
+@@= skipped -88, +88 lines =@@
  const mod = __importStar(require("inner"));
  mod.correctVersionApplied;
--
+
 -
 -//// [index.d.ts]
 -export {};
@@ -12,3 +11,4 @@
 -export {};
 -//// [index.d.cts]
 -export {};
+-

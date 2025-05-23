@@ -1,10 +1,9 @@
 --- old.nodeModulesImportResolutionNoCycle(module=nodenext).js
 +++ new.nodeModulesImportResolutionNoCycle(module=nodenext).js
-@@= skipped -59, +59 lines =@@
- // esm format file
+@@= skipped -60, +60 lines =@@
  const type = __importStar(require("#type"));
  type;
--
+
 -
 -//// [index.d.ts]
 -export {};
@@ -12,3 +11,4 @@
 -export {};
 -//// [index.d.cts]
 -export {};
+-

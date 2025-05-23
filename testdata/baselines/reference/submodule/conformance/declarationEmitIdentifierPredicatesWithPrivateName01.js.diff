@@ -1,10 +1,9 @@
 --- old.declarationEmitIdentifierPredicatesWithPrivateName01.js
 +++ new.declarationEmitIdentifierPredicatesWithPrivateName01.js
-@@= skipped -15, +15 lines =@@
- function f(x) {
+@@= skipped -16, +16 lines =@@
      return typeof x.a === "number";
  }
--
+
 -
 -//// [declarationEmitIdentifierPredicatesWithPrivateName01.d.ts]
 -interface I {
@@ -12,3 +11,4 @@
 -}
 -export declare function f(x: any): x is I;
 -export {};
+-

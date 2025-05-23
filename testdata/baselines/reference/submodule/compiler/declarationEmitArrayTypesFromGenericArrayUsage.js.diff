@@ -1,11 +1,11 @@
 --- old.declarationEmitArrayTypesFromGenericArrayUsage.js
 +++ new.declarationEmitArrayTypesFromGenericArrayUsage.js
-@@= skipped -4, +4 lines =@@
- 
- 
+@@= skipped -5, +5 lines =@@
+
  //// [declarationEmitArrayTypesFromGenericArrayUsage.js]
--
+
 -
 -//// [declarationEmitArrayTypesFromGenericArrayUsage.d.ts]
 -interface A extends Array<string> {
 -}
+-

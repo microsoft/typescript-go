@@ -1,10 +1,9 @@
 --- old.dynamicNames.js
 +++ new.dynamicNames.js
-@@= skipped -212, +212 lines =@@
- exports.o2 = exports.o1;
+@@= skipped -213, +213 lines =@@
  rI.x;
  rC.x;
--
+
 -
 -//// [module.d.ts]
 -export declare const c0 = "a";
@@ -41,3 +40,4 @@
 -export declare const o1_c5: string;
 -export declare const o1_s2: boolean;
 -export declare const o2: T0;
+-

@@ -1,10 +1,9 @@
 --- old.bigintWithLib.js
 +++ new.bigintWithLib.js
-@@= skipped -118, +118 lines =@@
- // Test Intl methods with new parameter type
+@@= skipped -119, +119 lines =@@
  new Intl.NumberFormat("fr").format(3000n);
  new Intl.NumberFormat("fr").format(bigintVal);
--
+
 -
 -//// [bigintWithLib.d.ts]
 -declare let bigintVal: bigint;
@@ -18,3 +17,4 @@
 -declare const x = -12n;
 -declare const y: 12n;
 -declare let z: bigint;
+-

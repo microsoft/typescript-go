@@ -1,10 +1,9 @@
 --- old.importAttributes3(module=es2015).js
 +++ new.importAttributes3(module=es2015).js
-@@= skipped -17, +17 lines =@@
- export {};
+@@= skipped -18, +18 lines =@@
  //// [2.js]
  export {};
--
+
 -
 -//// [0.d.ts]
 -export interface I {
@@ -14,3 +13,4 @@
 -export type { I } from './0';
 -//// [2.d.ts]
 -export {};
+-

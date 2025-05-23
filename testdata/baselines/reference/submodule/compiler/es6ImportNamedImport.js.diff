@@ -1,10 +1,9 @@
 --- old.es6ImportNamedImport.js
 +++ new.es6ImportNamedImport.js
-@@= skipped -75, +75 lines =@@
- var z111 = es6ImportNamedImport_0_8.z1;
+@@= skipped -76, +76 lines =@@
  const es6ImportNamedImport_0_9 = require("./es6ImportNamedImport_0");
  var z2 = es6ImportNamedImport_0_9.z2; // z2 shouldn't give redeclare error
--
+
 -
 -//// [es6ImportNamedImport_0.d.ts]
 -export declare var a: number;
@@ -17,3 +16,4 @@
 -export declare var aaaa: number;
 -//// [es6ImportNamedImport_1.d.ts]
 -export {};
+-

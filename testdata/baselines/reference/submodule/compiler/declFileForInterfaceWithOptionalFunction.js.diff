@@ -1,13 +1,13 @@
 --- old.declFileForInterfaceWithOptionalFunction.js
 +++ new.declFileForInterfaceWithOptionalFunction.js
-@@= skipped -6, +6 lines =@@
- }
- 
+@@= skipped -7, +7 lines =@@
+
  //// [declFileForInterfaceWithOptionalFunction.js]
--
+
 -
 -//// [declFileForInterfaceWithOptionalFunction.d.ts]
 -interface I {
 -    foo?(x?: any): any;
 -    foo2?(x?: number): number;
 -}
+-

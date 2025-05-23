@@ -1,10 +1,9 @@
 --- old.nodeModulesImportAttributesModeDeclarationEmit2(module=nodenext).js
 +++ new.nodeModulesImportAttributesModeDeclarationEmit2(module=nodenext).js
-@@= skipped -33, +33 lines =@@
- 
+@@= skipped -34, +34 lines =@@
  //// [index.js]
  export {};
--
+
 -
 -//// [index.d.ts]
 -import type { RequireInterface } from "pkg" with { "resolution-mode": "require" };
@@ -17,3 +16,4 @@
 -}
 -export type { RequireInterface } from "pkg" with { "resolution-mode": "require" };
 -export type { ImportInterface } from "pkg" with { "resolution-mode": "import" };
+-

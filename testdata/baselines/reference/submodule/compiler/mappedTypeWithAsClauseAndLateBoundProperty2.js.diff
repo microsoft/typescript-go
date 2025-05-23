@@ -1,10 +1,9 @@
 --- old.mappedTypeWithAsClauseAndLateBoundProperty2.js
 +++ new.mappedTypeWithAsClauseAndLateBoundProperty2.js
-@@= skipped -5, +5 lines =@@
- 
+@@= skipped -6, +6 lines =@@
  //// [mappedTypeWithAsClauseAndLateBoundProperty2.js]
  export const thing = null;
--
+
 -
 -//// [mappedTypeWithAsClauseAndLateBoundProperty2.d.ts]
 -export declare const thing: {
@@ -105,3 +104,4 @@
 -    flatMap: <U, This = undefined>(callback: (this: This, value: number, index: number, array: number[]) => U | readonly U[], thisArg?: This) => U[];
 -    flat: <A, D extends number = 1>(this: A, depth?: D) => FlatArray<A, D>[];
 -};
+-

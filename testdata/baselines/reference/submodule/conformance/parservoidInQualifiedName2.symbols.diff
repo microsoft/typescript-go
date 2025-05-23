@@ -6,4 +6,4 @@
  >x : Symbol(x)
 ->void : Symbol(x.void)
 +>void : Symbol(void)
- 
+

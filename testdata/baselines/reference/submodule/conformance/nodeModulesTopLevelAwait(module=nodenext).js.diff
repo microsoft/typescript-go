@@ -1,10 +1,9 @@
 --- old.nodeModulesTopLevelAwait(module=nodenext).js
 +++ new.nodeModulesTopLevelAwait(module=nodenext).js
-@@= skipped -33, +33 lines =@@
- const x = await 1;
+@@= skipped -34, +34 lines =@@
  export { x };
  for await (const y of []) { }
--
+
 -
 -//// [index.d.ts]
 -declare const x = 1;
@@ -12,3 +11,4 @@
 -//// [index.d.ts]
 -declare const x = 1;
 -export { x };
+-
