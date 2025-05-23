@@ -1423,17 +1423,18 @@ func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
 	if bin.OperatorToken.Kind != KindEqualsToken || !IsAccessExpression(bin.Left) {
 		return JSDeclarationKindNone
 	}
-	if IsModuleExportsAccessExpression(bin.Left) {
+	if IsInJSFile(bin.Left) && IsModuleExportsAccessExpression(bin.Left) {
 		return JSDeclarationKindModuleExports
-	} else if (IsModuleExportsAccessExpression(bin.Left.Expression()) || IsExportsIdentifier(bin.Left.Expression())) &&
+	} else if IsInJSFile(bin.Left) &&
+		(IsModuleExportsAccessExpression(bin.Left.Expression()) || IsExportsIdentifier(bin.Left.Expression())) &&
 		hasJSBindableName(bin.Left) {
 		return JSDeclarationKindExportsProperty
 	}
-	if bin.Left.Expression().Kind == KindThisKeyword {
+	if IsInJSFile(bin.Left) && bin.Left.Expression().Kind == KindThisKeyword {
 		return JSDeclarationKindThisProperty
 	}
-	if bin.Left.Kind == KindPropertyAccessExpression && IsIdentifier(bin.Left.Expression()) && hasJSBindableName(bin.Left) ||
-		bin.Left.Kind == KindElementAccessExpression && IsIdentifier(bin.Left.Expression()) {
+	if bin.Left.Kind == KindPropertyAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) && hasJSBindableName(bin.Left) ||
+		bin.Left.Kind == KindElementAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) {
 		return JSDeclarationKindProperty
 	}
 	return JSDeclarationKindNone
@@ -1471,13 +1472,33 @@ func IsDynamicName(name *Node) bool {
 }
 
 func IsEntityNameExpression(node *Node) bool {
-	return node.Kind == KindIdentifier || isPropertyAccessEntityNameExpression(node)
+	return IsEntityNameExpressionEx(node, false /*allowJS*/)
 }
 
-func isPropertyAccessEntityNameExpression(node *Node) bool {
+func IsEntityNameExpressionEx(node *Node, allowJS bool) bool {
+	if node.Kind == KindIdentifier || isPropertyAccessEntityNameExpression(node, allowJS) {
+		return true
+	}
+	if allowJS {
+		return node.Kind == KindThisKeyword || isElementAccessEntityNameExpression(node, allowJS)
+	}
+	return false
+}
+
+func isPropertyAccessEntityNameExpression(node *Node, allowJS bool) bool {
 	if node.Kind == KindPropertyAccessExpression {
 		expr := node.AsPropertyAccessExpression()
-		return expr.Name().Kind == KindIdentifier && IsEntityNameExpression(expr.Expression)
+		return expr.Name().Kind == KindIdentifier && IsEntityNameExpressionEx(expr.Expression, allowJS)
+	}
+	return false
+}
+
+func isElementAccessEntityNameExpression(node *Node, allowJS bool) bool {
+	if node.Kind == KindElementAccessExpression {
+		expr := node.AsElementAccessExpression()
+		if IsStringOrNumericLiteralLike(SkipParentheses(expr.ArgumentExpression)) {
+			return IsEntityNameExpressionEx(expr.Expression, allowJS)
+		}
 	}
 	return false
 }
