@@ -15,11 +15,11 @@
  }
 @@= skipped -14, +15 lines =@@
  >x : 6
- 
+
  function F() {
 ->F : typeof F
 +>F : () => void
- 
+
      /** @readonly */
      this.z = 1
  >this.z = 1 : 1

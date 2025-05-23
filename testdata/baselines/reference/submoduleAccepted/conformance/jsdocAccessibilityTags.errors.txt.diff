@@ -11,9 +11,11 @@
 -jsdocAccessibilityTag.js(60,25): error TS2445: Property 'prot2' is protected and only accessible within class 'C' and its subclasses.
 -jsdocAccessibilityTag.js(61,9): error TS2341: Property 'priv2' is private and only accessible within class 'C'.
 -jsdocAccessibilityTag.js(61,25): error TS2445: Property 'prot2' is protected and only accessible within class 'C' and its subclasses.
- 
- 
+-
+-
 -==== jsdocAccessibilityTag.js (10 errors) ====
++
++
 +==== jsdocAccessibilityTag.js (5 errors) ====
      class A {
          /**

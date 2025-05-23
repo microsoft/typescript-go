@@ -9,8 +9,8 @@
 +a.js(11,5): error TS4113: This member cannot have an 'override' modifier because it is not declared in the base class 'B'.
 +a.js(17,5): error TS4112: This member cannot have an 'override' modifier because its containing class 'C' does not extend another class.
 +a.js(19,5): error TS4112: This member cannot have an 'override' modifier because its containing class 'C' does not extend another class.
- 
- 
+
+
  ==== a.js (4 errors) ====
 @@= skipped -12, +12 lines =@@
      class D extends B {
