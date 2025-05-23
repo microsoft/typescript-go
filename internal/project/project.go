@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -92,14 +93,13 @@ type Project struct {
 	name string
 	kind Kind
 
-	dirtyStateMu              sync.Mutex
-	initialLoadPending        bool
-	dirty                     bool
-	version                   int
-	hasAddedOrRemovedFiles    bool
-	hasAddedOrRemovedSymlinks bool
-	deferredClose             bool
-	pendingReload             PendingReload
+	mu                 sync.Mutex
+	initialLoadPending bool
+	dirty              bool
+	version            int
+	deferredClose      bool
+	pendingReload      PendingReload
+	dirtyFilePath      tspath.Path
 
 	comparePathsOptions tspath.ComparePathsOptions
 	currentDirectory    string
@@ -113,7 +113,6 @@ type Project struct {
 	rootFileNames     *collections.OrderedMap[tspath.Path, string]
 	compilerOptions   *core.CompilerOptions
 	parsedCommandLine *tsoptions.ParsedCommandLine
-	programMu         sync.Mutex
 	program           *compiler.Program
 	checkerPool       *checkerPool
 
@@ -210,7 +209,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 
 // Updates the program if needed.
 func (p *Project) GetProgram() *compiler.Program {
-	p.updateIfDirty()
+	p.updateGraph()
 	return p.program
 }
 
@@ -371,31 +370,29 @@ func (p *Project) getScriptKind(fileName string) core.ScriptKind {
 	return core.GetScriptKindFromFileName(fileName)
 }
 
-func (p *Project) markFileAsDirty(path tspath.Path) {
-	p.markAsDirty()
-}
-
-func (p *Project) markAsDirty() {
-	p.dirtyStateMu.Lock()
-	defer p.dirtyStateMu.Unlock()
+func (p *Project) MarkFileAsDirty(path tspath.Path) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if !p.dirty {
 		p.dirty = true
+		p.dirtyFilePath = path
 		p.version++
+	} else if path != p.dirtyFilePath {
+		p.dirtyFilePath = ""
 	}
 }
 
-// updateIfDirty returns true if the project was updated.
-func (p *Project) updateIfDirty() bool {
-	// !!! p.invalidateResolutionsOfFailedLookupLocations()
-	return p.dirty && p.updateGraph()
+func (p *Project) markAsDirty() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.markAsDirtyLocked()
 }
 
-func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
-	p.dirtyStateMu.Lock()
-	defer p.dirtyStateMu.Unlock()
-	p.hasAddedOrRemovedFiles = true
-	if isSymlink {
-		p.hasAddedOrRemovedSymlinks = true
+func (p *Project) markAsDirtyLocked() {
+	p.dirtyFilePath = ""
+	if !p.dirty {
+		p.dirty = true
+		p.version++
 	}
 }
 
@@ -404,73 +401,80 @@ func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
 // opposite of the return value in Strada, which was frequently inverted,
 // as in `updateProjectIfDirty()`.
 func (p *Project) updateGraph() bool {
-	p.programMu.Lock()
-	defer p.programMu.Unlock()
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	if !p.dirty {
 		return false
 	}
 
+	start := time.Now()
 	p.log("Starting updateGraph: Project: " + p.name)
+	var writeFileNames bool
 	oldProgram := p.program
-	hasAddedOrRemovedFiles := p.hasAddedOrRemovedFiles
 	p.initialLoadPending = false
 
 	if p.kind == KindConfigured && p.pendingReload != PendingReloadNone {
 		switch p.pendingReload {
 		case PendingReloadFileNames:
 			p.parsedCommandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(p.parsedCommandLine, p.host.FS())
-			p.setRootFiles(p.parsedCommandLine.FileNames())
+			writeFileNames = p.setRootFiles(p.parsedCommandLine.FileNames())
 		case PendingReloadFull:
-			if err := p.LoadConfig(); err != nil {
+			if err := p.loadConfig(); err != nil {
 				panic(fmt.Sprintf("failed to reload config: %v", err))
 			}
 		}
 		p.pendingReload = PendingReloadNone
 	}
 
-	p.hasAddedOrRemovedFiles = false
-	p.hasAddedOrRemovedSymlinks = false
-	p.updateProgram()
+	oldProgramReused := p.updateProgram()
 	p.dirty = false
-	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d", p.name, p.version))
-	if hasAddedOrRemovedFiles {
+	p.dirtyFilePath = ""
+	if writeFileNames {
 		p.log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/))
 	} else if p.program != oldProgram {
-		p.log("Different program with same set of files")
+		p.log("Different program with same set of root files")
 	}
-
-	if p.program != oldProgram && oldProgram != nil {
-		for _, oldSourceFile := range oldProgram.GetSourceFiles() {
-			if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
-				p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
+	if !oldProgramReused {
+		if oldProgram != nil {
+			for _, oldSourceFile := range oldProgram.GetSourceFiles() {
+				if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
+					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
+				}
 			}
 		}
+		// TODO: this is currently always synchronously called by some kind of updating request,
+		// but in Strada we throttle, so at least sometimes this should be considered top-level?
+		p.updateWatchers(context.TODO())
 	}
-
-	// TODO: this is currently always synchronously called by some kind of updating request,
-	// but in Strada we throttle, so at least sometimes this should be considered top-level?
-	p.updateWatchers(context.TODO())
+	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d in %s", p.name, p.version, time.Since(start)))
 	return true
 }
 
-func (p *Project) updateProgram() {
-	rootFileNames := p.GetRootFileNames()
-	compilerOptions := p.compilerOptions
-
+func (p *Project) updateProgram() bool {
 	if p.checkerPool != nil {
 		p.logf("Program %d used %d checker(s)", p.version, p.checkerPool.size())
 	}
-	p.program = compiler.NewProgram(compiler.ProgramOptions{
-		RootFiles: rootFileNames,
-		Host:      p,
-		Options:   compilerOptions,
-		CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-			p.checkerPool = newCheckerPool(4, program, p.log)
-			return p.checkerPool
-		},
-	})
-
+	var oldProgramReused bool
+	if p.program == nil || p.dirtyFilePath == "" {
+		rootFileNames := p.GetRootFileNames()
+		compilerOptions := p.compilerOptions
+		p.program = compiler.NewProgram(compiler.ProgramOptions{
+			RootFiles: rootFileNames,
+			Host:      p,
+			Options:   compilerOptions,
+			CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
+				p.checkerPool = newCheckerPool(4, program, p.log)
+				return p.checkerPool
+			},
+		})
+	} else {
+		// The only change in the current program is the contents of the file named by p.dirtyFilePath.
+		// If possible, use data from the old program to create the new program.
+		p.program, oldProgramReused = p.program.UpdateProgram(p.dirtyFilePath)
+	}
 	p.program.BindSourceFiles()
+	return oldProgramReused
 }
 
 func (p *Project) isOrphan() bool {
@@ -490,6 +494,13 @@ func (p *Project) toPath(fileName string) tspath.Path {
 
 func (p *Project) isRoot(info *ScriptInfo) bool {
 	return p.rootFileNames.Has(info.path)
+}
+
+func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.removeFile(info, fileExists, detachFromProject)
+	p.markAsDirtyLocked()
 }
 
 func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
@@ -513,7 +524,13 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 	if detachFromProject {
 		info.detachFromProject(p)
 	}
-	p.markAsDirty()
+}
+
+func (p *Project) AddRoot(info *ScriptInfo) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.addRoot(info)
+	p.markAsDirtyLocked()
 }
 
 func (p *Project) addRoot(info *ScriptInfo) {
@@ -527,10 +544,17 @@ func (p *Project) addRoot(info *ScriptInfo) {
 	}
 	p.rootFileNames.Set(info.path, info.fileName)
 	info.attachToProject(p)
-	p.markAsDirty()
 }
 
 func (p *Project) LoadConfig() error {
+	if err := p.loadConfig(); err != nil {
+		return err
+	}
+	p.markAsDirty()
+	return nil
+}
+
+func (p *Project) loadConfig() error {
 	if p.kind != KindConfigured {
 		panic("loadConfig called on non-configured project")
 	}
@@ -565,12 +589,12 @@ func (p *Project) LoadConfig() error {
 		p.compilerOptions = &core.CompilerOptions{}
 		return fmt.Errorf("could not read file %q", p.configFileName)
 	}
-
-	p.markAsDirty()
 	return nil
 }
 
-func (p *Project) setRootFiles(rootFileNames []string) {
+// setRootFiles returns true if the set of root files has changed.
+func (p *Project) setRootFiles(rootFileNames []string) bool {
+	var hasChanged bool
 	newRootScriptInfos := make(map[tspath.Path]struct{}, len(rootFileNames))
 	for _, file := range rootFileNames {
 		scriptKind := p.getScriptKind(file)
@@ -580,6 +604,7 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 		scriptInfo := p.host.GetOrCreateScriptInfoForFile(file, path, scriptKind)
 		newRootScriptInfos[path] = struct{}{}
 		isAlreadyRoot := p.rootFileNames.Has(path)
+		hasChanged = hasChanged || !isAlreadyRoot
 
 		if !isAlreadyRoot && scriptInfo != nil {
 			p.addRoot(scriptInfo)
@@ -593,6 +618,7 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 	}
 
 	if p.rootFileNames.Size() > len(rootFileNames) {
+		hasChanged = true
 		for root := range p.rootFileNames.Keys() {
 			if _, ok := newRootScriptInfos[root]; !ok {
 				if info := p.host.GetScriptInfoByPath(root); info != nil {
@@ -603,6 +629,7 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 			}
 		}
 	}
+	return hasChanged
 }
 
 func (p *Project) clearSourceMapperCache() {

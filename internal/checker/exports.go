@@ -81,3 +81,7 @@ func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportEr
 func (c *Checker) GetEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
 	return c.getEffectiveDeclarationFlags(n, flagsToCheck)
 }
+
+func (c *Checker) GetBaseConstraintOfType(t *Type) *Type {
+	return c.getBaseConstraintOfType(t)
+}

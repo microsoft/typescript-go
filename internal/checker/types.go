@@ -725,6 +725,10 @@ func (t *Type) IsClass() bool {
 	return t.objectFlags&ObjectFlagsClass != 0
 }
 
+func (t *Type) IsTypeParameter() bool {
+	return t.flags&TypeFlagsTypeParameter != 0
+}
+
 // TypeData
 
 type TypeData interface {
@@ -1267,3 +1271,6 @@ var LanguageFeatureMinimumTarget = LanguageFeatureMinimumTargetMap{
 	ClassAndClassElementDecorators:    core.ScriptTargetESNext,
 	RegularExpressionFlagsUnicodeSets: core.ScriptTargetESNext,
 }
+
+// Aliases for types
+type StringLiteralType = Type

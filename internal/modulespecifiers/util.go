@@ -198,7 +198,7 @@ func prefersTsExtension(allowedEndings []ModuleSpecifierEnding) bool {
 	return false
 }
 
-var typeScriptVersion = semver.MustParse(core.Version) // TODO: unify with clone inside module resolver?
+var typeScriptVersion = semver.MustParse(core.Version()) // TODO: unify with clone inside module resolver?
 
 func isApplicableVersionedTypesKey(conditions []string, key string) bool {
 	if !slices.Contains(conditions, "types") {

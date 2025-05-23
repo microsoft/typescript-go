@@ -2941,6 +2941,18 @@ func GetPropertyNameForPropertyNameNode(name *Node) string {
 	panic("Unhandled case in getPropertyNameForPropertyNameNode")
 }
 
+func IsStringTextContainingNode(node *Node) bool {
+	return node.Kind == KindStringLiteral || IsTemplateLiteralKind(node.Kind)
+}
+
+func IsTemplateLiteralKind(kind Kind) bool {
+	return KindFirstTemplateToken <= kind && kind <= KindLastTemplateToken
+}
+
+func IsTemplateLiteralToken(node *Node) bool {
+	return IsTemplateLiteralKind(node.Kind)
+}
+
 func GetExternalModuleImportEqualsDeclarationExpression(node *Node) *Node {
 	// Debug.assert(isExternalModuleImportEqualsDeclaration(node))
 	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
