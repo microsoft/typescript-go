@@ -20,15 +20,15 @@ type PackageJson struct {
 
 func (p *PackageJson) GetVersionPaths(trace func(string)) VersionPaths {
 	p.once.Do(func() {
-		if p.Fields.TypesVersions.Type == JSONValueTypeNotPresent {
+		if p.TypesVersions.Type == JSONValueTypeNotPresent {
 			if trace != nil {
 				trace(diagnostics.X_package_json_does_not_have_a_0_field.Format("typesVersions"))
 			}
 			return
 		}
-		if p.Fields.TypesVersions.Type != JSONValueTypeObject {
+		if p.TypesVersions.Type != JSONValueTypeObject {
 			if trace != nil {
-				trace(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Format("typesVersions", "object", p.Fields.TypesVersions.Type.String()))
+				trace(diagnostics.Expected_type_of_0_field_in_package_json_to_be_1_got_2.Format("typesVersions", "object", p.TypesVersions.Type.String()))
 			}
 			return
 		}
