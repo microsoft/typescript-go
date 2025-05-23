@@ -27,7 +27,6 @@ type SymbolTracker interface {
 }
 
 // NOTE: If modifying this enum, must modify `TypeFormatFlags` too!
-// dprint-ignore
 type Flags int32
 
 const (
@@ -69,7 +68,6 @@ const (
 )
 
 /** @internal */
-// dprint-ignore
 
 type InternalFlags int32
 

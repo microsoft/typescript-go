@@ -80,7 +80,6 @@ const TypeFormatFlagsNodeBuilderFlagsMask = TypeFormatFlagsNoTruncation | TypeFo
 	TypeFormatFlagsUseTypeOfFunction | TypeFormatFlagsOmitParameterModifiers | TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | TypeFormatFlagsAllowUniqueESSymbolType | TypeFormatFlagsInTypeAlias |
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType | TypeFormatFlagsNoTypeReduction | TypeFormatFlagsOmitThisParameter
 
-// dprint-ignore
 type SymbolFormatFlags int32
 
 const (
@@ -492,7 +491,6 @@ type ObjectFlags uint32
 // Types included in TypeFlags.ObjectFlagsType have an objectFlags property. Some ObjectFlags
 // are specific to certain types and reuse the same bit position. Those ObjectFlags require a check
 // for a certain TypeFlags value to determine their meaning.
-// dprint-ignore
 const (
 	ObjectFlagsNone                                       ObjectFlags = 0
 	ObjectFlagsClass                                      ObjectFlags = 1 << 0  // Class
