@@ -180,6 +180,22 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 	}
 }
 
+func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
+	return options.ResolvePackageJsonExports.IsTrueOrUnknown()
+}
+
+func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
+	return options.ResolvePackageJsonImports.IsTrueOrUnknown()
+}
+
+func (options *CompilerOptions) GetAllowImportingTsExtensions() bool {
+	return options.AllowImportingTsExtensions.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()
+}
+
+func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) bool {
+	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
+}
+
 func (options *CompilerOptions) GetESModuleInterop() bool {
 	if options.ESModuleInterop != TSUnknown {
 		return options.ESModuleInterop == TSTrue
@@ -325,6 +341,10 @@ const (
 	// Emit as written
 	ModuleKindPreserve ModuleKind = 200
 )
+
+func (moduleKind ModuleKind) IsNonNodeESM() bool {
+	return moduleKind >= ModuleKindES2015 && moduleKind <= ModuleKindESNext
+}
 
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
 

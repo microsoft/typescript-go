@@ -305,7 +305,7 @@ export { UseQueryReturnType, useQuery } from './useQuery-CPqkvEsh.js';
 
 === src/index.mts ===
 import { useQuery } from '@tanstack/vue-query'
->useQuery : any
+>useQuery : <TQueryFnData, TError, TData, TQueryKey extends QueryKey>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>) => UseQueryReturnType<TData, TError>
 
 const baseUrl = 'https://api.publicapis.org/'
 >baseUrl : "https://api.publicapis.org/"
@@ -407,13 +407,13 @@ const entryKeys = {
 }
 
 export const useEntries = () => {
->useEntries : () => any
->() => {  return useQuery({    queryKey: entryKeys.list(),    queryFn: testApi.getEntries,    select: (data) => data.slice(0, 10)  })} : () => any
+>useEntries : () => UseQueryReturnType<IEntry[], Error>
+>() => {  return useQuery({    queryKey: entryKeys.list(),    queryFn: testApi.getEntries,    select: (data) => data.slice(0, 10)  })} : () => UseQueryReturnType<IEntry[], Error>
 
   return useQuery({
->useQuery({    queryKey: entryKeys.list(),    queryFn: testApi.getEntries,    select: (data) => data.slice(0, 10)  }) : any
->useQuery : any
->{    queryKey: entryKeys.list(),    queryFn: testApi.getEntries,    select: (data) => data.slice(0, 10)  } : { queryKey: readonly ["entries", "list"]; queryFn: () => Promise<IEntry[]>; select: (data: any) => any; }
+>useQuery({    queryKey: entryKeys.list(),    queryFn: testApi.getEntries,    select: (data) => data.slice(0, 10)  }) : UseQueryReturnType<IEntry[], Error>
+>useQuery : <TQueryFnData, TError, TData, TQueryKey extends QueryKey>(options: UndefinedInitialQueryOptions<TQueryFnData, TError, TData, TQueryKey>) => UseQueryReturnType<TData, TError>
+>{    queryKey: entryKeys.list(),    queryFn: testApi.getEntries,    select: (data) => data.slice(0, 10)  } : { queryKey: readonly ["entries", "list"]; queryFn: () => Promise<IEntry[]>; select: (data: IEntry[]) => IEntry[]; }
 
     queryKey: entryKeys.list(),
 >queryKey : readonly ["entries", "list"]
@@ -429,13 +429,13 @@ export const useEntries = () => {
 >getEntries : () => Promise<IEntry[]>
 
     select: (data) => data.slice(0, 10)
->select : (data: any) => any
->(data) => data.slice(0, 10) : (data: any) => any
->data : any
->data.slice(0, 10) : any
->data.slice : any
->data : any
->slice : any
+>select : (data: IEntry[]) => IEntry[]
+>(data) => data.slice(0, 10) : (data: IEntry[]) => IEntry[]
+>data : IEntry[]
+>data.slice(0, 10) : IEntry[]
+>data.slice : (start?: number | undefined, end?: number | undefined) => IEntry[]
+>data : IEntry[]
+>slice : (start?: number | undefined, end?: number | undefined) => IEntry[]
 >0 : 0
 >10 : 10
 

@@ -1,22 +1,9 @@
 --- old.nodeModulesTripleSlashReferenceModeDeclarationEmit6(module=nodenext).js
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit6(module=nodenext).js
-@@= skipped -28, +28 lines =@@
- export default (obj as typeof obj);
- 
- //// [uses.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
- /// <reference types="pkg" preserve="true" />
--exports.default = getInterR();
-+export default getInterR();
- //// [index.js]
--"use strict";
--var __importDefault = (this && this.__importDefault) || function (mod) {
--    return (mod && mod.__esModule) ? mod : { "default": mod };
--};
--Object.defineProperty(exports, "__esModule", { value: true });
--const uses_js_1 = __importDefault(require("./uses.js"));
--exports.default = uses_js_1.default;
+@@= skipped -40, +40 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ const uses_js_1 = __importDefault(require("./uses.js"));
+ exports.default = uses_js_1.default;
 -
 -
 -//// [uses.d.ts]
@@ -66,5 +53,3 @@
 -    declare const _default: RequireInterface;
 -    export default _default;
 -    
-+import obj from "./uses.js";
-+export default obj;

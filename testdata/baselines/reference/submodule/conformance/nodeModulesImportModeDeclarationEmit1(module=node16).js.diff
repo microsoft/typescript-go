@@ -1,11 +1,9 @@
 --- old.nodeModulesImportModeDeclarationEmit1(module=node16).js
 +++ new.nodeModulesImportModeDeclarationEmit1(module=node16).js
-@@= skipped -27, +27 lines =@@
- 
- 
+@@= skipped -29, +29 lines =@@
  //// [index.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -
 -
 -//// [index.d.ts]
@@ -19,4 +17,3 @@
 -}
 -export type { RequireInterface } from "pkg" assert { "resolution-mode": "require" };
 -export type { ImportInterface } from "pkg" assert { "resolution-mode": "import" };
-+export {};
