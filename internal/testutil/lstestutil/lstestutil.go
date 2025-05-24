@@ -1,14 +1,21 @@
 package lstestutil
 
 import (
-	"fmt"
 	"strings"
+	"testing"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	runner "github.com/microsoft/typescript-go/internal/testrunner"
 )
 
+// Inserted in source files by surrounding desired text
+// in a range with `[|` and `|]`. For example,
+//
+// [|text in range|]
+//
+// is a range with `text in range` "selected".
 type markerRange struct {
 	core.TextRange
 	filename string
@@ -26,54 +33,55 @@ type Marker struct {
 type TestData struct {
 	Files           []*TestFileInfo
 	MarkerPositions map[string]*Marker
-	//markers         []*Marker
-	/**
-	 * Inserted in source files by surrounding desired text
-	 * in a range with `[|` and `|]`. For example,
-	 *
-	 * [|text in range|]
-	 *
-	 * is a range with `text in range` "selected".
-	 */
-	Ranges markerRange
+	Symlinks        map[string]string
+	GlobalOptions   map[string]string
+	Ranges          []*markerRange
 }
 
-func ParseTestData(basePath string, contents string, fileName string) TestData {
+type testFileWithMarkers struct {
+	file    *TestFileInfo
+	markers []*Marker
+}
+
+func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 	// List of all the subfiles we've parsed out
 	var files []*TestFileInfo
 
-	// Split up the input file by line
-	lines := strings.Split(contents, "\n")
-	currentFileContent := ""
-
-	for _, line := range lines {
-		if len(line) > 0 && line[len(line)-1] == '\r' {
-			line = line[:len(line)-1]
-		}
-		if currentFileContent == "" {
-			currentFileContent = line
-		} else {
-			currentFileContent += "\n" + line
-		}
-	}
-
-	if currentFileContent == "" {
-		return TestData{}
-	}
 	markerPositions := make(map[string]*Marker)
-	markers := []*Marker{}
+	filesWithMarker, symlinks, _, globalOptions := runner.ParseTestFilesAndSymlinks(
+		contents,
+		fileName,
+		parseFileContent,
+	)
 
-	// If we have multiple files, then parseFileContent needs to be called for each file.
-	// This will be achieved by creating a `nextFile()` func that will call `parseFileContent()` for each file.
-	testFileInfo := parseFileContent(currentFileContent, fileName, markerPositions, &markers)
-	files = append(files, testFileInfo)
+	hasTSConfig := false
+	for _, file := range filesWithMarker {
+		files = append(files, file.file)
+		hasTSConfig = hasTSConfig || isConfigFile(file.file.Filename)
+		for _, marker := range file.markers {
+			if _, ok := markerPositions[marker.Name]; ok {
+				t.Fatalf("Duplicate marker name: %s", marker.Name)
+			}
+			markerPositions[marker.Name] = marker
+		}
+	}
+
+	if hasTSConfig && len(globalOptions) > 0 {
+		t.Fatalf("It is not allowed to use global options along with config files.")
+	}
 
 	return TestData{
 		Files:           files,
 		MarkerPositions: markerPositions,
-		// markers:         markers,
-		Ranges: markerRange{},
+		Symlinks:        symlinks,
+		GlobalOptions:   globalOptions,
+		Ranges:          nil,
 	}
+}
+
+func isConfigFile(filename string) bool {
+	filename = strings.ToLower(filename)
+	return strings.HasSuffix(filename, "tsconfig.json") || strings.HasSuffix(filename, "jsconfig.json")
 }
 
 type locationInformation struct {
@@ -83,10 +91,11 @@ type locationInformation struct {
 	sourceColumn   int
 }
 
-type TestFileInfo struct { // for FourSlashFile
+type TestFileInfo struct {
 	Filename string
 	// The contents of the file (with markers, etc stripped out)
 	Content string
+	emit    bool
 }
 
 // FileName implements ls.Script.
@@ -101,36 +110,41 @@ func (t *TestFileInfo) Text() string {
 
 var _ ls.Script = (*TestFileInfo)(nil)
 
-func parseFileContent(content string, filename string, markerMap map[string]*Marker, markers *[]*Marker) *TestFileInfo {
+const emitThisFileOption = "emitthisfile"
+
+func parseFileContent(content string, filename string, fileOptions map[string]string) *testFileWithMarkers {
 	// !!! chompLeadingSpace
 	// !!! validate characters in markers
 	// Any slash-star comment with a character not in this string is not a marker.
 	// const validMarkerChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$1234567890_"
 
-	/// The file content (minus metacharacters) so far
-	output := ""
+	// The file content (minus metacharacters) so far
+	var output strings.Builder
 
-	/// The total number of metacharacters removed from the file (so far)
+	var markers []*Marker
+
+	// The total number of metacharacters removed from the file (so far)
 	difference := 0
 
-	/// One-based current position data
+	// One-based current position data
 	line := 1
 	column := 1
 
-	/// The current marker (or maybe multi-line comment?) we're parsing, possibly
+	// The current marker (or maybe multi-line comment?) we're parsing, possibly
 	var openMarker locationInformation
 
-	/// The latest position of the start of an unflushed plain text area
+	// The latest position of the start of an unflushed plain text area
 	lastNormalCharPosition := 0
 
 	flush := func(lastSafeCharIndex int) {
 		if lastSafeCharIndex != -1 {
-			output = output + content[lastNormalCharPosition:lastSafeCharIndex]
+			output.WriteString(content[lastNormalCharPosition:lastSafeCharIndex])
 		} else {
-			output = output + content[lastNormalCharPosition:]
+			output.WriteString(content[lastNormalCharPosition:])
 		}
 	}
 
+	// !!! TODO: use utf-8 decoder
 	previousCharacter := content[0]
 	for i := 1; i < len(content); i++ {
 		currentCharacter := content[i]
@@ -147,7 +161,12 @@ func parseFileContent(content string, filename string, markerMap map[string]*Mar
 			// Record the marker
 			// start + 2 to ignore the */, -1 on the end to ignore the * (/ is next)
 			markerNameText := strings.TrimSpace(content[openMarker.sourcePosition+2 : i-1])
-			recordMarker(filename, openMarker, markerNameText, markerMap, markers)
+			marker := &Marker{
+				Filename: filename,
+				Position: openMarker.position,
+				Name:     markerNameText,
+			}
+			markers = append(markers, marker)
 
 			flush(openMarker.sourcePosition)
 			lastNormalCharPosition = i + 1
@@ -172,75 +191,27 @@ func parseFileContent(content string, filename string, markerMap map[string]*Mar
 	// Add the remaining text
 	flush(-1)
 
+	outputString := output.String()
 	// Set LS positions for markers
-	lineMap := ls.ComputeLineStarts(output)
+	lineMap := ls.ComputeLineStarts(outputString)
 	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(_ string) *ls.LineMap {
 		return lineMap
 	})
 
+	emit := fileOptions[emitThisFileOption] == "true"
+
 	testFileInfo := &TestFileInfo{
 		Filename: filename,
-		Content:  output,
+		Content:  outputString,
+		emit:     emit,
 	}
 
-	for _, marker := range *markers {
+	for _, marker := range markers {
 		marker.LSPosition = converters.PositionToLineAndCharacter(testFileInfo, core.TextPos(marker.Position))
 	}
 
-	return testFileInfo
-}
-
-func recordMarker(
-	filename string,
-	location locationInformation,
-	name string,
-	markerMap map[string]*Marker,
-	markers *[]*Marker,
-) *Marker {
-	// Record the marker
-	marker := &Marker{
-		Filename: filename,
-		Position: location.position,
-		Name:     name,
+	return &testFileWithMarkers{
+		file:    testFileInfo,
+		markers: markers,
 	}
-	// Verify markers for uniqueness
-	if _, ok := markerMap[name]; ok {
-		fmt.Printf("Duplicate marker name: %s\n", name) // tbd print error msg
-	} else {
-		markerMap[name] = marker
-		(*markers) = append(*markers, marker)
-	}
-	return marker
 }
-
-// type languageServiceHost struct {
-// 	program *compiler.Program
-// 	fs      vfs.FS
-// }
-
-// // GetLineMap implements ls.Host.
-// func (l *languageServiceHost) GetLineMap(fileName string) *ls.LineMap {
-// 	text, ok := l.fs.ReadFile(fileName)
-// 	if !ok {
-// 		panic("file not found")
-// 	}
-// 	return ls.ComputeLineStarts(text)
-// }
-
-// // GetPositionEncoding implements ls.Host.
-// func (l *languageServiceHost) GetPositionEncoding() lsproto.PositionEncodingKind {
-// 	return lsproto.PositionEncodingKindUTF8
-// }
-
-// // GetProgram implements ls.Host.
-// func (l *languageServiceHost) GetProgram() *compiler.Program {
-// 	return l.program
-// }
-
-// var _ ls.Host = (*languageServiceHost)(nil)
-
-// func NewLanguageService(
-// 	files map[string]string,
-// ) *ls.LanguageService {
-// 	fs := vfstest.FromMap(files, true /*useCaseSensitiveFileNames*/)
-// }

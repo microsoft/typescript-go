@@ -11,6 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
@@ -30,9 +31,14 @@ type FourslashTest struct {
 
 // !!! automatically get fileName from test somehow?
 func NewFourslash(t *testing.T, content string, fileName string) *FourslashTest {
-	testData := ParseTestData("", content, fileName)
+	rootDir := "/"
+	testfs := make(map[string]string)
+	testData := ParseTestData(t, content, fileName)
+	for _, file := range testData.Files {
+		filePath := tspath.GetNormalizedAbsolutePath(file.Filename, rootDir)
+		testfs[filePath] = file.Content
+	}
 	var in, out, err bytes.Buffer
-	var testfs map[string]string // !!! HERE
 	fs := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
 	server := lsp.NewServer(&lsp.ServerOptions{
 		In:  &in,
@@ -59,10 +65,11 @@ func NewFourslash(t *testing.T, content string, fileName string) *FourslashTest 
 
 	// !!! return cleanup function that closes the server
 	return &FourslashTest{
-		server: server,
-		in:     lsproto.NewBaseWriter(&in),
-		out:    lsproto.NewBaseReader(&out),
-		err:    &err,
+		server:   server,
+		in:       lsproto.NewBaseWriter(&in),
+		out:      lsproto.NewBaseReader(&out),
+		err:      &err,
+		testData: &testData,
 	}
 }
 

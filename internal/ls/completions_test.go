@@ -1700,7 +1700,7 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 	var markerPositions map[string]*lstestutil.Marker
 	for fileName, content := range files {
 		if fileName == mainFileName {
-			testData := lstestutil.ParseTestData("", content, fileName)
+			testData := lstestutil.ParseTestData(t, content, fileName)
 			markerPositions = testData.MarkerPositions
 			parsedFiles[fileName] = testData.Files[0].Content // !!! Assumes no usage of @filename, markers only on main file
 		} else {

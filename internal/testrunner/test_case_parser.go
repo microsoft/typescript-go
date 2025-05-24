@@ -41,10 +41,22 @@ var optionRegex = regexp.MustCompile(`(?m)^\/{2}\s*@(\w+)\s*:\s*([^\r\n]*)`)
 // Regex for parsing @link option
 var linkRegex = regexp.MustCompile(`(?m)^\/{2}\s*@link\s*:\s*([^\r\n]*)\s*->\s*([^\r\n]*)`)
 
+// File-specific directives used by fourslash tests
+var fourslashDirectives = []string{"emitthisfile"}
+
 // Given a test file containing // @FileName directives,
 // return an array of named units of code to be added to an existing compiler instance.
 func makeUnitsFromTest(code string, fileName string) testCaseContent {
-	testUnits, symlinks, currentDirectory := ParseTestFilesAndSymlinks(code, fileName, srcFolder /*defaultCurrentDirectory*/)
+	testUnits, symlinks, currentDirectory, _ := ParseTestFilesAndSymlinks(
+		code,
+		fileName,
+		func(filename string, content string, fileOptions map[string]string) *testUnit {
+			return &testUnit{content: content, name: filename}
+		},
+	)
+	if currentDirectory == "" {
+		currentDirectory = srcFolder
+	}
 
 	// unit tests always list files explicitly
 	allFiles := make(map[string]string)
@@ -90,19 +102,27 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	}
 }
 
+// !!! move this to a different package
 // Given a test file containing // @FileName and // @symlink directives,
-// return an array of named units of code to be added to an existing compiler instance.
-func ParseTestFilesAndSymlinks(code string, fileName string, defaultCurrentDirectory string) ([]*testUnit, map[string]string, string) {
+// return an array of named units of code to be added to an existing compiler instance,
+// along with a map of symlinks and the current directory.
+func ParseTestFilesAndSymlinks[T any](
+	code string,
+	fileName string,
+	parseFile func(filename string, content string, fileOptions map[string]string) T,
+) (units []T, symlinks map[string]string, currentDir string, globalOptions map[string]string) {
 	// List of all the subfiles we've parsed out
-	var testUnits []*testUnit
+	var testUnits []T
 
 	lines := lineDelimiter.Split(code, -1)
 
 	// Stuff related to the subfile we're parsing
 	var currentFileContent strings.Builder
 	var currentFileName string
-	currentDirectory := defaultCurrentDirectory
-	symlinks := make(map[string]string)
+	var currentDirectory string
+	currentFileOptions := make(map[string]string)
+	symlinks = make(map[string]string)
+	globalOptions = make(map[string]string)
 
 	for _, line := range lines {
 		ok := parseSymlinkFromTest(line, symlinks)
@@ -117,21 +137,29 @@ func ParseTestFilesAndSymlinks(code string, fileName string, defaultCurrentDirec
 				currentDirectory = metaDataValue
 			}
 			if metaDataName != "filename" {
+				if slices.Contains(fourslashDirectives, metaDataName) {
+					// File-specific option
+					currentFileOptions[metaDataName] = metaDataValue
+				} else {
+					// Global option
+					if _, ok := globalOptions[metaDataName]; ok {
+						panic("Duplicate global option: " + metaDataName)
+					}
+					globalOptions[metaDataName] = metaDataValue
+				}
 				continue
 			}
 
 			// New metadata statement after having collected some code to go with the previous metadata
 			if currentFileName != "" {
 				// Store result file
-				newTestFile := &testUnit{
-					content: currentFileContent.String(),
-					name:    currentFileName,
-				}
+				newTestFile := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
 				testUnits = append(testUnits, newTestFile)
 
 				// Reset local data
 				currentFileContent.Reset()
 				currentFileName = metaDataValue
+				currentFileOptions = make(map[string]string)
 			} else {
 				// First metadata marker in the file
 				currentFileName = strings.TrimSpace(testMetaData[2])
@@ -157,13 +185,10 @@ func ParseTestFilesAndSymlinks(code string, fileName string, defaultCurrentDirec
 	}
 
 	// EOF, push whatever remains
-	newTestFile2 := &testUnit{
-		content: currentFileContent.String(),
-		name:    currentFileName,
-	}
+	newTestFile2 := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
 	testUnits = append(testUnits, newTestFile2)
 
-	return testUnits, symlinks, currentDirectory
+	return testUnits, symlinks, currentDirectory, globalOptions
 }
 
 func extractCompilerSettings(content string) rawCompilerSettings {
