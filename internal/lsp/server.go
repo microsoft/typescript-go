@@ -434,7 +434,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 	s.sendResult(req.ID, &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
-			Version: ptrTo(core.Version),
+			Version: ptrTo(core.Version()),
 		},
 		Capabilities: &lsproto.ServerCapabilities{
 			PositionEncoding: ptrTo(s.positionEncoding),
