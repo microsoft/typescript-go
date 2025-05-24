@@ -25970,9 +25970,10 @@ func (c *Checker) getExpandedParameters(signature *Signature, skipUnionExpanding
 		if isTupleType(restType) {
 			return [][]*ast.Symbol{c.expandSignatureParametersWithTupleMembers(signature, restType.AsTypeReference(), restIndex, restSymbol)}
 		} else if !skipUnionExpanding && restType.flags&TypeFlagsUnion != 0 && core.Every(restType.AsUnionType().Types(), isTupleType) {
-			result := [][]*ast.Symbol{}
-			for _, t := range restType.AsUnionType().Types() {
-				result = append(result, c.expandSignatureParametersWithTupleMembers(signature, t.AsTypeReference(), restIndex, restSymbol))
+			types := restType.AsUnionType().Types()
+			result := make([][]*ast.Symbol, len(types))
+			for i, t := range types {
+				result[i] = c.expandSignatureParametersWithTupleMembers(signature, t.AsTypeReference(), restIndex, restSymbol)
 			}
 			return result
 		}

@@ -113,16 +113,17 @@ func createTypeHelpItems(symbol *ast.Symbol, argumentInfo *argumentListInfo, sou
 	item := getTypeHelpItem(symbol, typeParameters, getEnclosingDeclarationFromInvocation(argumentInfo.invocation), sourceFile, c)
 
 	// Converting signatureHelpParameter to *lsproto.ParameterInformation
-	var parameters []*lsproto.ParameterInformation
-	for _, param := range *item.Parameters {
-		parameters = append(parameters, param.parameterInfo)
+	parameters := make([]*lsproto.ParameterInformation, len(item.Parameters))
+	for i, param := range item.Parameters {
+		parameters[i] = param.parameterInfo
 	}
-	signatureInformation := []*lsproto.SignatureInformation{}
-	signatureInformation = append(signatureInformation, &lsproto.SignatureInformation{
-		Label:         item.Label,
-		Documentation: nil,
-		Parameters:    &parameters,
-	})
+	signatureInformation := []*lsproto.SignatureInformation{
+		{
+			Label:         item.Label,
+			Documentation: nil,
+			Parameters:    &parameters,
+		},
+	}
 
 	var activeParameter *lsproto.Nullable[uint32]
 	if argumentInfo.argumentIndex == nil {
@@ -144,31 +145,29 @@ func createTypeHelpItems(symbol *ast.Symbol, argumentInfo *argumentListInfo, sou
 func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) signatureInformation {
 	printer := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, nil)
 
-	var symbolString strings.Builder
-	symbolString.WriteString(c.SymbolToString(symbol))
-
-	var parameters []signatureHelpParameter = []signatureHelpParameter{}
-	for _, typeParam := range typeParameter {
-		parameters = append(parameters, createSignatureHelpParameterForTypeParameter(typeParam, sourceFile, enclosingDeclaration, c, printer))
+	parameters := make([]signatureHelpParameter, len(typeParameter))
+	for i, typeParam := range typeParameter {
+		parameters[i] = createSignatureHelpParameterForTypeParameter(typeParam, sourceFile, enclosingDeclaration, c, printer)
 	}
 
 	// Creating display label
-	typeParameterDisplayParts := []string{}
-	for _, typeParameter := range parameters {
-		typeParameterDisplayParts = append(typeParameterDisplayParts, *typeParameter.parameterInfo.Label.String)
+	var displayParts strings.Builder
+	displayParts.WriteString(c.SymbolToString(symbol))
+	if len(parameters) != 0 {
+		displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
+		for i, typeParameter := range parameters {
+			if i > 0 {
+				displayParts.WriteString(", ")
+			}
+			displayParts.WriteString(*typeParameter.parameterInfo.Label.String)
+		}
+		displayParts.WriteString(scanner.TokenToString(ast.KindGreaterThanToken))
 	}
-	typeParameterParts := []string{}
-	if len(typeParameterDisplayParts) != 0 {
-		typeParameterParts = []string{scanner.TokenToString(ast.KindLessThanToken), strings.Join(typeParameterDisplayParts, ", "), scanner.TokenToString(ast.KindGreaterThanToken)}
-	}
-	displayParts := []string{}
-	displayParts = append(displayParts, symbolString.String())
-	displayParts = append(displayParts, typeParameterParts...)
 
 	return signatureInformation{
-		Label:         strings.Join(displayParts, ""),
+		Label:         displayParts.String(),
 		Documentation: nil,
-		Parameters:    &parameters,
+		Parameters:    parameters,
 		IsVariadic:    false,
 	}
 }
@@ -188,13 +187,13 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 		}
 	}
 
-	callTargetDisplayParts := []string{}
+	var callTargetDisplayParts strings.Builder
 	if callTargetSymbol != nil {
-		callTargetDisplayParts = append(callTargetDisplayParts, c.SymbolToString(callTargetSymbol))
+		callTargetDisplayParts.WriteString(c.SymbolToString(callTargetSymbol))
 	}
-	var items [][]signatureInformation
-	for _, candidateSignature := range *candidates {
-		items = append(items, getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts, enclosingDeclaration, sourceFile, c))
+	items := make([][]signatureInformation, len(*candidates))
+	for i, candidateSignature := range *candidates {
+		items[i] = getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts.String(), enclosingDeclaration, sourceFile, c)
 	}
 
 	selectedItemIndex := 0
@@ -206,7 +205,7 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 			if len(item) > 1 {
 				count := 0
 				for _, j := range item {
-					if j.IsVariadic || len(*j.Parameters) >= argumentInfo.argumentCount {
+					if j.IsVariadic || len(j.Parameters) >= argumentInfo.argumentCount {
 						selectedItemIndex = itemSeen + count
 						break
 					}
@@ -227,17 +226,17 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 	}
 
 	// Converting []signatureInformation to []*lsproto.SignatureInformation
-	var signatureInformation []*lsproto.SignatureInformation
-	for _, item := range flattenedSignatures {
-		var parameters []*lsproto.ParameterInformation
-		for _, param := range *item.Parameters {
-			parameters = append(parameters, param.parameterInfo)
+	signatureInformation := make([]*lsproto.SignatureInformation, len(flattenedSignatures))
+	for i, item := range flattenedSignatures {
+		parameters := make([]*lsproto.ParameterInformation, len(item.Parameters))
+		for j, param := range item.Parameters {
+			parameters[j] = param.parameterInfo
 		}
-		signatureInformation = append(signatureInformation, &lsproto.SignatureInformation{
+		signatureInformation[i] = &lsproto.SignatureInformation{
 			Label:         item.Label,
 			Documentation: nil,
 			Parameters:    &parameters,
-		})
+		}
 	}
 
 	var activeParameter *lsproto.Nullable[uint32]
@@ -256,21 +255,21 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 
 	activeSignature := flattenedSignatures[selectedItemIndex]
 	if activeSignature.IsVariadic {
-		firstRest := core.FindIndex(*activeSignature.Parameters, func(p signatureHelpParameter) bool {
+		firstRest := core.FindIndex(activeSignature.Parameters, func(p signatureHelpParameter) bool {
 			return p.isRest
 		})
-		if -1 < firstRest && firstRest < len(*activeSignature.Parameters)-1 {
+		if -1 < firstRest && firstRest < len(activeSignature.Parameters)-1 {
 			// We don't have any code to get this correct; instead, don't highlight a current parameter AT ALL
-			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(*activeSignature.Parameters))))
+			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(activeSignature.Parameters))))
 		}
-		if help.ActiveParameter != nil && *&help.ActiveParameter.Value > uint32(len(*activeSignature.Parameters)-1) {
-			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(*activeSignature.Parameters) - 1)))
+		if help.ActiveParameter != nil && *&help.ActiveParameter.Value > uint32(len(activeSignature.Parameters)-1) {
+			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(activeSignature.Parameters) - 1)))
 		}
 	}
 	return help
 }
 
-func getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol []string, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) []signatureInformation {
+func getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool, callTargetSymbol string, enclosingDeclaration *ast.Node, sourceFile *ast.SourceFile, c *checker.Checker) []signatureInformation {
 	var infos []*signatureHelpItemInfo
 	if isTypeParameterList {
 		infos = itemInfoForTypeParameters(candidate, c, enclosingDeclaration, sourceFile)
@@ -280,15 +279,18 @@ func getSignatureHelpItem(candidate *checker.Signature, isTypeParameterList bool
 
 	suffixDisplayParts := returnTypeToDisplayParts(candidate, c)
 
-	result := []signatureInformation{}
-	for _, info := range infos {
-		display := strings.Join(info.displayParts, "") + suffixDisplayParts
-		result = append(result, signatureInformation{
-			Label:         strings.Join(callTargetSymbol, "") + display,
+	result := make([]signatureInformation, len(infos))
+	for i, info := range infos {
+		var display strings.Builder
+		display.WriteString(callTargetSymbol)
+		display.WriteString(info.displayParts)
+		display.WriteString(suffixDisplayParts)
+		result[i] = signatureInformation{
+			Label:         display.String(),
 			Documentation: nil,
 			Parameters:    info.parameters,
 			IsVariadic:    info.isVariadic,
-		})
+		}
 	}
 	return result
 }
@@ -314,9 +316,9 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 	} else {
 		typeParameters = candidateSignature.TypeParameters()
 	}
-	var getTypeParameters []signatureHelpParameter = []signatureHelpParameter{}
-	for _, typeParameter := range typeParameters {
-		getTypeParameters = append(getTypeParameters, createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaration, c, printer))
+	getTypeParameters := make([]signatureHelpParameter, len(typeParameters))
+	for i, typeParameter := range typeParameters {
+		getTypeParameters[i] = createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaration, c, printer)
 	}
 
 	thisParameter := []signatureHelpParameter{}
@@ -324,30 +326,43 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 		thisParameter = []signatureHelpParameter{createSignatureHelpParameterForParameter(candidateSignature.ThisParameter(), printer, sourceFile, c)}
 	}
 
-	// Creating display label
-	typeParameterDisplayParts := []string{}
-	for _, typeParameter := range getTypeParameters {
-		typeParameterDisplayParts = append(typeParameterDisplayParts, *typeParameter.parameterInfo.Label.String)
+	// Creating type parameter display label
+	var displayParts strings.Builder
+	displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
+	for i, typeParameter := range getTypeParameters {
+		if i > 0 {
+			displayParts.WriteString(", ")
+		}
+		displayParts.WriteString(*typeParameter.parameterInfo.Label.String)
+	}
+	displayParts.WriteString(scanner.TokenToString(ast.KindGreaterThanToken))
+
+	// Creating display label for parameters like, (a: string, b: number)
+	lists := c.GetExpandedParameters(candidateSignature, false)
+	if len(lists) != 0 {
+		displayParts.WriteString(scanner.TokenToString(ast.KindOpenParenToken))
 	}
 
-	// Creating display parts for parameters. For example, <T>(a: string, b: number)
-	lists := c.GetExpandedParameters(candidateSignature, false)
-
-	var result []*signatureHelpItemInfo
-	parameterLabels := []string{}
-	for _, parameterList := range lists {
+	result := make([]*signatureHelpItemInfo, len(lists))
+	for i, parameterList := range lists {
+		var displayParameters strings.Builder
+		displayParameters.WriteString(displayParts.String())
 		parameters := thisParameter
-		for _, param := range parameterList {
+		for j, param := range parameterList {
 			parameter := createSignatureHelpParameterForParameter(param, printer, sourceFile, c)
-			parameterLabels = append(parameterLabels, *parameter.parameterInfo.Label.String)
 			parameters = append(parameters, parameter)
+			if j > 0 {
+				displayParameters.WriteString(", ")
+			}
+			displayParameters.WriteString(*parameter.parameterInfo.Label.String)
 		}
+		displayParameters.WriteString(scanner.TokenToString(ast.KindCloseParenToken))
 
-		result = append(result, &signatureHelpItemInfo{
+		result[i] = &signatureHelpItemInfo{
 			isVariadic:   false,
-			parameters:   &getTypeParameters,
-			displayParts: []string{scanner.TokenToString(ast.KindLessThanToken), strings.Join(typeParameterDisplayParts, ", "), scanner.TokenToString(ast.KindGreaterThanToken), scanner.TokenToString(ast.KindOpenParenToken), strings.Join(parameterLabels, ", "), scanner.TokenToString(ast.KindCloseParenToken)},
-		})
+			parameters:   getTypeParameters,
+			displayParts: displayParameters.String(),
+		}
 	}
 	return result
 }
@@ -355,25 +370,28 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaratipn *ast.Node, sourceFile *ast.SourceFile) []*signatureHelpItemInfo {
 	printer := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, nil)
 
-	var getTypeParameters []signatureHelpParameter = []signatureHelpParameter{}
+	getTypeParameters := make([]signatureHelpParameter, len(candidateSignature.TypeParameters()))
 	if len(candidateSignature.TypeParameters()) != 0 {
-		for _, typeParameter := range candidateSignature.TypeParameters() {
-			getTypeParameters = append(getTypeParameters, createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaratipn, c, printer))
+		for i, typeParameter := range candidateSignature.TypeParameters() {
+			getTypeParameters[i] = createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaratipn, c, printer)
 		}
 	}
 
-	// Creating display label
-	typeParameterDisplayParts := []string{}
-	for _, typeParameter := range getTypeParameters {
-		typeParameterDisplayParts = append(typeParameterDisplayParts, *typeParameter.parameterInfo.Label.String)
-	}
-	typeParameterParts := []string{}
-	if len(typeParameterDisplayParts) != 0 {
-		typeParameterParts = []string{scanner.TokenToString(ast.KindLessThanToken), strings.Join(typeParameterDisplayParts, ", "), scanner.TokenToString(ast.KindGreaterThanToken)}
+	// Creating display label for type parameters like, <T, U>
+	var displayParts strings.Builder
+	if len(getTypeParameters) != 0 {
+		displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
+		for _, typeParameter := range getTypeParameters {
+			displayParts.WriteString(*typeParameter.parameterInfo.Label.String)
+		}
+		displayParts.WriteString(scanner.TokenToString(ast.KindGreaterThanToken))
 	}
 
 	// Creating display parts for parameters. For example, (a: string, b: number)
 	lists := c.GetExpandedParameters(candidateSignature, false)
+	if len(lists) != 0 {
+		displayParts.WriteString(scanner.TokenToString(ast.KindOpenParenToken))
+	}
 
 	isVariadic := func(parameterList []*ast.Symbol) bool {
 		if !c.HasEffectiveRestParameter(candidateSignature) {
@@ -385,21 +403,27 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 		return len(parameterList) != 0 && parameterList[len(parameterList)-1] != nil && (parameterList[len(parameterList)-1].CheckFlags&ast.CheckFlagsRestParameter != 0)
 	}
 
-	var result []*signatureHelpItemInfo
-	for _, parameterList := range lists {
-		var parameters []signatureHelpParameter
-		parameterLabels := []string{}
-		for _, param := range parameterList {
+	result := make([]*signatureHelpItemInfo, len(lists))
+	for i, parameterList := range lists {
+		parameters := make([]signatureHelpParameter, len(parameterList))
+		var displayParameters strings.Builder
+		displayParameters.WriteString(displayParts.String())
+		for j, param := range parameterList {
 			parameter := createSignatureHelpParameterForParameter(param, printer, sourceFile, c)
-			parameterLabels = append(parameterLabels, *parameter.parameterInfo.Label.String)
-			parameters = append(parameters, parameter)
+			parameters[j] = parameter
+			if j > 0 {
+				displayParameters.WriteString(", ")
+			}
+			displayParameters.WriteString(*parameter.parameterInfo.Label.String)
+		}
+		displayParameters.WriteString(scanner.TokenToString(ast.KindCloseParenToken))
+
+		result[i] = &signatureHelpItemInfo{
+			isVariadic:   isVariadic(parameterList),
+			parameters:   parameters,
+			displayParts: displayParameters.String(),
 		}
 
-		result = append(result, &signatureHelpItemInfo{
-			isVariadic:   isVariadic(parameterList),
-			parameters:   &parameters,
-			displayParts: append(typeParameterParts, scanner.TokenToString(ast.KindOpenParenToken), strings.Join(parameterLabels, ", "), scanner.TokenToString(ast.KindCloseParenToken)),
-		})
 	}
 	return result
 }
@@ -440,15 +464,15 @@ type signatureInformation struct {
 	// in the UI but can be omitted.
 	Documentation *string
 	// The Parameters of this signature.
-	Parameters *[]signatureHelpParameter
+	Parameters []signatureHelpParameter
 	// Needed only here, not in lsp
 	IsVariadic bool
 }
 
 type signatureHelpItemInfo struct {
 	isVariadic   bool
-	parameters   *[]signatureHelpParameter
-	displayParts []string
+	parameters   []signatureHelpParameter
+	displayParts string
 }
 
 type signatureHelpParameter struct {
@@ -532,7 +556,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 	return nil // return Debug.assertNever(invocation);
 }
 
-func isSyntacticOwner(startingToken *ast.Node, node *ast.Node, sourceFile *ast.SourceFile) bool { //!!! not tested
+func isSyntacticOwner(startingToken *ast.Node, node *ast.Node, sourceFile *ast.SourceFile) bool { // !!! not tested
 	if !ast.IsCallOrNewExpression(node) {
 		return false
 	}

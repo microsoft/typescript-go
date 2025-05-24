@@ -490,9 +490,10 @@ func (c *Checker) GetContextualTypeForJsxAttribute(attribute *ast.JsxAttributeLi
 func (c *Checker) getResolvedSignatureWorker(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode, argumentCount int) *Signature {
 	parsedNode := printer.NewEmitContext().ParseNode(node)
 	c.apparentArgumentCount = &argumentCount
-	var res *Signature = nil
+	var res *Signature
 	if parsedNode != nil {
 		res = c.getResolvedSignature(parsedNode, candidatesOutArray, checkMode)
 	}
+	c.apparentArgumentCount = nil
 	return res
 }

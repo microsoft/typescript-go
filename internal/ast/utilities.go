@@ -1961,7 +1961,10 @@ func IsComputedNonLiteralName(name *Node) bool {
 }
 
 func IsQuestionToken(node *Node) bool {
-	return node != nil && node.Kind == KindQuestionToken
+	if node == nil {
+		return false
+	}
+	return node.Kind == KindQuestionToken
 }
 
 func GetTextOfPropertyName(name *Node) string {
