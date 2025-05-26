@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"testing"
 
@@ -30,7 +31,7 @@ type FourslashTest struct {
 }
 
 // !!! automatically get fileName from test somehow?
-func NewFourslash(t *testing.T, content string, fileName string) *FourslashTest {
+func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string, fileName string) (*FourslashTest, func()) {
 	rootDir := "/"
 	testfs := make(map[string]string)
 	testData := ParseTestData(t, content, fileName)
@@ -38,11 +39,13 @@ func NewFourslash(t *testing.T, content string, fileName string) *FourslashTest 
 		filePath := tspath.GetNormalizedAbsolutePath(file.Filename, rootDir)
 		testfs[filePath] = file.Content
 	}
-	var in, out, err bytes.Buffer
+	inputReader, inputWriter := io.Pipe()
+	outputReader, outputWriter := io.Pipe()
+	var err bytes.Buffer
 	fs := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
 	server := lsp.NewServer(&lsp.ServerOptions{
-		In:  &in,
-		Out: &out,
+		In:  inputReader,
+		Out: outputWriter,
 		Err: &err,
 
 		Cwd:                "/",
@@ -54,23 +57,25 @@ func NewFourslash(t *testing.T, content string, fileName string) *FourslashTest 
 	// !!! panic recovery
 	go func() {
 		if err := server.Run(); err != nil && !errors.Is(err, io.EOF) {
-			// !!! do something with the error
-			// t.Fatalf("server.Run() failed: %v", err)
+			panic(fmt.Sprintf("server.Run() failed: %v", err))
 		}
 	}()
-	// !!! send initialize request to server
-	// !!! receive initialize response
-	// !!! receive file watching stuff?
-	// !!! global compiler options default extracted from tests
 
-	// !!! return cleanup function that closes the server
-	return &FourslashTest{
+	f := &FourslashTest{
 		server:   server,
-		in:       lsproto.NewBaseWriter(&in),
-		out:      lsproto.NewBaseReader(&out),
+		in:       lsproto.NewBaseWriter(inputWriter),
+		out:      lsproto.NewBaseReader(outputReader),
 		err:      &err,
 		testData: &testData,
 	}
+
+	f.initialize(t, capabilities)
+	// !!! global compiler options default extracted from tests
+
+	done := func() {
+		inputWriter.Close()
+	}
+	return f, done
 }
 
 func (f *FourslashTest) nextID() int32 {
@@ -79,12 +84,20 @@ func (f *FourslashTest) nextID() int32 {
 	return id
 }
 
-func (f *FourslashTest) VerifyCompletions(t *testing.T, marker string, expected any) {
-	// !!! completion arguments
-	params := &lsproto.CompletionParams{}
+func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
+	capabilities.General = &lsproto.GeneralClientCapabilities{
+		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
+	}
+	// !!! set capabilities inline once that's allowed by the lsp types
+	params := &lsproto.InitializeParams{}
+	params.Capabilities = capabilities
+	f.sendRequest(t, lsproto.MethodInitialize, params)
+}
+
+func (f *FourslashTest) sendRequest(t *testing.T, method lsproto.Method, params any) *lsproto.Message {
 	id := f.nextID()
 	req := lsproto.NewRequestMessage(
-		lsproto.MethodTextDocumentCompletion,
+		method,
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
@@ -99,6 +112,7 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, marker string, expected 
 
 	// !!! read error
 	// !!! filter out response
+	// !!! handle out of order responses etc
 	data, err = f.out.Read()
 	if err != nil {
 		t.Fatalf("failed to read response: %v", err)
@@ -109,6 +123,16 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, marker string, expected 
 		t.Fatalf("failed to unmarshal response: %v", err)
 	}
 
+	return res
+}
+
+func (f *FourslashTest) VerifyCompletions(t *testing.T, marker string, expected any) {
+	// !!! completion arguments
+	params := &lsproto.CompletionParams{}
+	res := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
+	if res == nil {
+		// !!! handle response etc
+	}
 	// !!! verify result
 	// !!! test failure should indicate which marker failed via some sort of prefix msg
 }
