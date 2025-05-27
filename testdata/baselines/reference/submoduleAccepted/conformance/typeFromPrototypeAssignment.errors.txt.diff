@@ -2,6 +2,9 @@
 +++ new.typeFromPrototypeAssignment.errors.txt
 @@= skipped -0, +0 lines =@@
 -a.js(27,20): error TS2339: Property 'addon' does not exist on type '{ set: () => void; get(): void; }'.
+-
+-
+-==== a.js (1 errors) ====
 +a.js(5,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 +a.js(6,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 +a.js(7,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
@@ -15,9 +18,8 @@
 +a.js(28,10): error TS2339: Property '_map' does not exist on type '{ set: () => void; get: () => void; }'.
 +a.js(31,10): error TS2339: Property 'addon' does not exist on type '{ set: () => void; get: () => void; }'.
 +a.js(34,10): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
- 
- 
--==== a.js (1 errors) ====
++
++
 +==== a.js (13 errors) ====
      // all references to _map, set, get, addon should be ok
      

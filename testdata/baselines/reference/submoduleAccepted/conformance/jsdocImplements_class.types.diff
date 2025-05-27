@@ -1,14 +1,14 @@
 --- old.jsdocImplements_class.types
 +++ new.jsdocImplements_class.types
 @@= skipped -35, +35 lines =@@
- 
- 
+
+
  var Ns = {};
 ->Ns : typeof Ns
 ->{} : {}
 +>Ns : { C1: typeof C1; C5: any; }
 +>{} : { C1: typeof C1; C5: any; }
- 
+
  /** @implements {A} */
  Ns.C1 = class {
  >Ns.C1 = class {    method() { return 11; }} : typeof C1
@@ -17,9 +17,9 @@
 +>Ns : { C1: typeof C1; C5: any; }
  >C1 : typeof C1
  >class {    method() { return 11; }} : typeof C1
- 
+
 @@= skipped -60, +60 lines =@@
- 
+
  /** @implements {A} */
  Ns.C5 = C5 || class {
 ->Ns.C5 = C5 || class {    method() {        return 15;    }} : typeof C5
@@ -35,5 +35,5 @@
 +>C5 || class {    method() {        return 15;    }} : any
 +>C5 : any
  >class {    method() {        return 15;    }} : typeof C5
- 
+
      method() {

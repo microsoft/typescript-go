@@ -4,8 +4,8 @@
 -jsElementAccessNoContextualTypeCrash.js(2,1): error TS2741: Property 'localize' is missing in type '{}' but required in type 'typeof Common'.
 +jsElementAccessNoContextualTypeCrash.js(2,1): error TS2322: Type '{ localize: (string: any) => any; } | {}' is not assignable to type '{ localize: (string: any) => any; }'.
 +  Property 'localize' is missing in type '{}' but required in type '{ localize: (string: any) => any; }'.
- 
- 
+
+
  ==== jsElementAccessNoContextualTypeCrash.js (1 errors) ====
      var Common = {};
      self['Common'] = self['Common'] || {};

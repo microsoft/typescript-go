@@ -8,7 +8,7 @@
 ->{} : {}
 +>ns : { Foo: typeof Foo; }
 +>{} : { Foo: typeof Foo; }
- 
+
  ns.Foo = class {}
  >ns.Foo = class {} : typeof Foo
  >ns.Foo : typeof Foo
@@ -16,7 +16,7 @@
 +>ns : { Foo: typeof Foo; }
  >Foo : typeof Foo
  >class {} : typeof Foo
- 
+
  module.exports = ns;
 ->module.exports = ns : typeof ns
 ->module.exports : typeof ns
@@ -28,5 +28,4 @@
 +>module : { readonly ns: { Foo: typeof Foo; }; }
 +>exports : { Foo: typeof Foo; }
 +>ns : { Foo: typeof Foo; }
- 
- 
+

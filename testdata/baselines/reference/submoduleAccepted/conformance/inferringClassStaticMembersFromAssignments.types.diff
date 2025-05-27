@@ -2,11 +2,11 @@
 +++ new.inferringClassStaticMembersFromAssignments.types
 @@= skipped -11, +11 lines =@@
  >0 : 0
- 
+
  export function F1() { }
 ->F1 : typeof F1
 +>F1 : { (): void; staticProp: number; }
- 
+
  F1.staticProp = 0;
  >F1.staticProp = 0 : 0
  >F1.staticProp : number
@@ -14,14 +14,14 @@
 +>F1 : { (): void; staticProp: number; }
  >staticProp : number
  >0 : 0
- 
+
 @@= skipped -43, +43 lines =@@
  >0 : 0
- 
+
  function F3() { }
 ->F3 : typeof F3
 +>F3 : { (): void; staticProp: number; }
- 
+
  F3.staticProp = 0;
  >F3.staticProp = 0 : 0
  >F3.staticProp : number
@@ -29,14 +29,14 @@
 +>F3 : { (): void; staticProp: number; }
  >staticProp : number
  >0 : 0
- 
+
 @@= skipped -33, +33 lines =@@
- 
+
  === b.ts ===
  import * as a from "./a";
 ->a : typeof a
 +>a : typeof import("a")
- 
+
  var n: number;
  >n : number
 @@= skipped -8, +8 lines =@@
@@ -50,7 +50,7 @@
 +>a : typeof import("a")
 +>C1 : typeof C1
  >staticProp : number
- 
+
  var n = a.C2.staticProp;
  >n : number
  >a.C2.staticProp : number
@@ -59,7 +59,7 @@
 +>a : typeof import("a")
  >C2 : typeof C2
  >staticProp : number
- 
+
  var n = a.F1.staticProp;
  >n : number
  >a.F1.staticProp : number
@@ -70,7 +70,7 @@
 +>a : typeof import("a")
 +>F1 : { (): void; staticProp: number; }
  >staticProp : number
- 
+
  var n = a.F2.staticProp;
  >n : number
  >a.F2.staticProp : number
@@ -79,7 +79,7 @@
 +>a : typeof import("a")
  >F2 : { (): void; staticProp: number; }
  >staticProp : number
- 
+
 @@= skipped -45, +45 lines =@@
  var n = F3.staticProp;
  >n : number
@@ -87,5 +87,5 @@
 ->F3 : typeof F3
 +>F3 : { (): void; staticProp: number; }
  >staticProp : number
- 
+
  var n = F4.staticProp;

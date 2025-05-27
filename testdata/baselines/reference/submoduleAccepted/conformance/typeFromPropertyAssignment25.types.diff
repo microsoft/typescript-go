@@ -1,14 +1,14 @@
 --- old.typeFromPropertyAssignment25.types
 +++ new.typeFromPropertyAssignment25.types
 @@= skipped -1, +1 lines =@@
- 
+
  === bug24703.js ===
  var Common = {};
 ->Common : typeof Common
 ->{} : {}
 +>Common : { I: typeof I; O: typeof O; }
 +>{} : { I: typeof I; O: typeof O; }
- 
+
  Common.I = class {
  >Common.I = class {    constructor() {        this.i = 1    }} : typeof I
  >Common.I : typeof I
@@ -16,7 +16,7 @@
 +>Common : { I: typeof I; O: typeof O; }
  >I : typeof I
  >class {    constructor() {        this.i = 1    }} : typeof I
- 
+
      constructor() {
          this.i = 1
  >this.i = 1 : 1
@@ -39,10 +39,10 @@
 ->Common : typeof Common
 +>Common : { I: typeof I; O: typeof O; }
  >I : typeof I
- 
+
      constructor() {
 @@= skipped -36, +36 lines =@@
- 
+
          this.o = 2
  >this.o = 2 : 2
 ->this.o : any
@@ -60,7 +60,7 @@
 ->Common : typeof Common
 +>Common : { I: typeof I; O: typeof O; }
  >O : typeof O
- 
+
  var i = new Common.I()
  >i : I
  >new Common.I() : I
@@ -68,5 +68,5 @@
 ->Common : typeof Common
 +>Common : { I: typeof I; O: typeof O; }
  >I : typeof I
- 
+
  o.i

@@ -1,14 +1,14 @@
 --- old.typeFromPropertyAssignment34.types
 +++ new.typeFromPropertyAssignment34.types
 @@= skipped -1, +1 lines =@@
- 
+
  === file1.js ===
  var N = {};
 ->N : typeof N
 ->{} : {}
 +>N : { commands: {}; }
 +>{} : { commands: {}; }
- 
+
  N.commands = {};
 ->N.commands = {} : typeof N.commands
 ->N.commands : typeof N.commands
@@ -19,7 +19,7 @@
 +>N : { commands: {}; }
 +>commands : {}
  >{} : {}
- 
+
  === file2.js ===
  N.commands.a = 111;
  >N.commands.a = 111 : 111
@@ -34,7 +34,7 @@
 +>commands : {}
 +>a : any
  >111 : 111
- 
+
  N.commands.b = function () { };
  >N.commands.b = function () { } : () => void
 ->N.commands.b : () => void
@@ -48,4 +48,3 @@
 +>commands : {}
 +>b : any
  >function () { } : () => void
- 

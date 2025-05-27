@@ -1,14 +1,14 @@
 --- old.jsObjectsMarkedAsOpenEnded.types
 +++ new.jsObjectsMarkedAsOpenEnded.types
 @@= skipped -1, +1 lines =@@
- 
+
  === a.js ===
  var variable = {};
 ->variable : typeof variable
 ->{} : {}
 +>variable : { a: number; }
 +>{} : { a: number; }
- 
+
  variable.a = 0;
  >variable.a = 0 : 0
  >variable.a : number
@@ -16,9 +16,9 @@
 +>variable : { a: number; }
  >a : number
  >0 : 0
- 
+
 @@= skipped -19, +19 lines =@@
- 
+
      constructor() {
          this.member = {};
 ->this.member = {} : {}
@@ -30,7 +30,7 @@
 ->{} : {}
 +>member : { a: number; }
 +>{} : { a: number; }
- 
+
          this.member.a = 0;
  >this.member.a = 0 : 0
 ->this.member.a : error
@@ -46,7 +46,7 @@
      }
  }
 @@= skipped -29, +29 lines =@@
- 
+
  obj.property.a = 0;
  >obj.property.a = 0 : 0
 ->obj.property.a : error
@@ -62,7 +62,7 @@
 +>variable : { a: number; }
  >a : number
  >1 : 1
- 
+
  (new C()).member.a = 1;
  >(new C()).member.a = 1 : 1
 ->(new C()).member.a : any
@@ -77,5 +77,5 @@
 +>member : { a: number; }
 +>a : number
  >1 : 1
- 
+
  (new C()).initializedMember.a = 1;

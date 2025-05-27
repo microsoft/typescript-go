@@ -5,8 +5,8 @@
 -other.js(10,5): error TS2339: Property 'wat' does not exist on type 'Two'.
 +other.js(2,11): error TS2503: Cannot find namespace 'Ns'.
 +other.js(7,11): error TS2503: Cannot find namespace 'Ns'.
- 
- 
+
+
  ==== prototypePropertyAssignmentMergeAcrossFiles2.js (0 errors) ====
 @@= skipped -15, +15 lines =@@
  ==== other.js (2 errors) ====

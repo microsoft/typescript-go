@@ -1,12 +1,12 @@
 --- old.typeFromPropertyAssignment26.symbols
 +++ new.typeFromPropertyAssignment26.symbols
 @@= skipped -1, +1 lines =@@
- 
+
  === bug24730.js ===
  var UI = {}
 ->UI : Symbol(UI, Decl(bug24730.js, 0, 3), Decl(bug24730.js, 0, 11), Decl(bug24730.js, 5, 2))
 +>UI : Symbol(UI, Decl(bug24730.js, 0, 3))
- 
+
  UI.TreeElement = class {
 ->UI.TreeElement : Symbol(UI.TreeElement, Decl(bug24730.js, 0, 11))
 ->UI : Symbol(UI, Decl(bug24730.js, 0, 3), Decl(bug24730.js, 0, 11), Decl(bug24730.js, 5, 2))
@@ -14,7 +14,7 @@
 +>UI.TreeElement : Symbol(TreeElement, Decl(bug24730.js, 0, 11))
 +>UI : Symbol(UI, Decl(bug24730.js, 0, 3))
 +>TreeElement : Symbol(TreeElement, Decl(bug24730.js, 0, 11))
- 
+
      constructor() {
          this.treeOutline = 12
 ->this.treeOutline : Symbol(TreeElement.treeOutline, Decl(bug24730.js, 2, 19))
@@ -37,7 +37,7 @@
 +>UI.TreeElement : Symbol(TreeElement, Decl(bug24730.js, 0, 11))
 +>UI : Symbol(UI, Decl(bug24730.js, 0, 3))
 +>TreeElement : Symbol(TreeElement, Decl(bug24730.js, 0, 11))
- 
+
  class C extends UI.TreeElement {
  >C : Symbol(C, Decl(bug24730.js, 6, 33))
 ->UI.TreeElement : Symbol(UI.TreeElement, Decl(bug24730.js, 0, 11))
@@ -46,14 +46,14 @@
 +>UI.TreeElement : Symbol(TreeElement, Decl(bug24730.js, 0, 11))
 +>UI : Symbol(UI, Decl(bug24730.js, 0, 3))
 +>TreeElement : Symbol(TreeElement, Decl(bug24730.js, 0, 11))
- 
+
      onpopulate() {
 ->onpopulate : Symbol(C.onpopulate, Decl(bug24730.js, 8, 32))
 +>onpopulate : Symbol(onpopulate, Decl(bug24730.js, 8, 32))
- 
+
          this.doesNotExist
  >this : Symbol(C, Decl(bug24730.js, 6, 33))
- 
+
          this.treeOutline.doesntExistEither()
 ->this.treeOutline : Symbol(TreeElement.treeOutline, Decl(bug24730.js, 2, 19))
 +>this.treeOutline : Symbol(treeOutline, Decl(bug24730.js, 2, 19))
@@ -62,4 +62,3 @@
 +>treeOutline : Symbol(treeOutline, Decl(bug24730.js, 2, 19))
      }
  };
- 

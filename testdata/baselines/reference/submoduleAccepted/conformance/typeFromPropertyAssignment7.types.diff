@@ -1,14 +1,14 @@
 --- old.typeFromPropertyAssignment7.types
 +++ new.typeFromPropertyAssignment7.types
 @@= skipped -1, +1 lines =@@
- 
+
  === a.js ===
  var obj = {};
 ->obj : typeof obj
 ->{} : {}
 +>obj : { method: (hunch: any) => boolean; }
 +>{} : { method: (hunch: any) => boolean; }
- 
+
  obj.method = function (hunch) {
  >obj.method = function (hunch) {    return true;} : (hunch: any) => boolean
  >obj.method : (hunch: any) => boolean
@@ -24,4 +24,3 @@
 ->obj : typeof obj
 +>obj : { method: (hunch: any) => boolean; }
  >method : (hunch: any) => boolean
- 

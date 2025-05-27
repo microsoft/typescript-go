@@ -2,7 +2,7 @@
 +++ new.commonJSImportNestedClassTypeReference.types
 @@= skipped -12, +12 lines =@@
  >k : K
- 
+
      k.values()
 ->k.values() : K
 ->k.values : () => K
@@ -12,14 +12,14 @@
 ->values : () => K
 +>values : any
  }
- 
+
  === mod1.js ===
  var NS = {}
 ->NS : typeof NS
 ->{} : {}
 +>NS : { K: typeof K; }
 +>{} : { K: typeof K; }
- 
+
  NS.K =class {
  >NS.K =class {    values() {        return new NS.K()    }} : typeof K
  >NS.K : typeof K
@@ -27,7 +27,7 @@
 +>NS : { K: typeof K; }
  >K : typeof K
  >class {    values() {        return new NS.K()    }} : typeof K
- 
+
 @@= skipped -24, +24 lines =@@
          return new NS.K()
  >new NS.K() : K
@@ -44,4 +44,3 @@
 ->NS : typeof NS
 +>NS : { K: typeof K; }
  >K : typeof K
- 

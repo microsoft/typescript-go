@@ -1,14 +1,14 @@
 --- old.jsElementAccessNoContextualTypeCrash.types
 +++ new.jsElementAccessNoContextualTypeCrash.types
 @@= skipped -1, +1 lines =@@
- 
+
  === jsElementAccessNoContextualTypeCrash.js ===
  var Common = {};
 ->Common : typeof Common
 ->{} : {}
 +>Common : { localize: (string: any) => any; }
 +>{} : { localize: (string: any) => any; }
- 
+
  self['Common'] = self['Common'] || {};
 ->self['Common'] = self['Common'] || {} : {}
 ->self['Common'] : typeof Common
@@ -39,9 +39,9 @@
 +>localize : (string: any) => any
 +>function (string) {    return string;} : (string: any) => any
 +>string : any
- 
+
      return string;
 ->string : string
 +>string : any
- 
+
  };

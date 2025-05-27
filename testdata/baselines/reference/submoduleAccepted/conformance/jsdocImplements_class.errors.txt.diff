@@ -1,6 +1,6 @@
 --- old.jsdocImplements_class.errors.txt
 +++ new.jsdocImplements_class.errors.txt
-@@= skipped -0, +-1 lines =@@
+@@= skipped -0, +0 lines =@@
 -/a.js(13,5): error TS2416: Property 'method' in type 'B2' is not assignable to the same property in base type 'A'.
 -  Type '() => string' is not assignable to type '() => number'.
 -    Type 'string' is not assignable to type 'number'.
@@ -69,5 +69,4 @@
 -        }
 -    }
 -    
-@@= skipped --1, +1 lines =@@
 +<no content>

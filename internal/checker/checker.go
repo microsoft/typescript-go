@@ -27769,10 +27769,13 @@ func (c *Checker) getContextualTypeForAssignmentDeclaration(binary *ast.BinaryEx
 	case ast.KindIdentifier:
 		symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(expr))
 		if symbol.ValueDeclaration != nil && ast.IsVariableDeclaration(symbol.ValueDeclaration) {
-			if t := symbol.ValueDeclaration.Type(); t != nil {
-				name := ast.GetElementOrPropertyAccessArgumentExpressionOrName(left)
-				if name != nil && (ast.IsIdentifier(name) || ast.IsStringLiteralLike(name)) {
-					return c.getTypeOfPropertyOfContextualType(c.getTypeFromTypeNode(t), name.Text())
+			if typeNode := symbol.ValueDeclaration.Type(); typeNode != nil {
+				if ast.IsPropertyAccessExpression(left) {
+					return c.getTypeOfPropertyOfContextualType(c.getTypeFromTypeNode(typeNode), left.Name().Text())
+				}
+				nameType := c.checkExpressionCached(left.AsElementAccessExpression().ArgumentExpression)
+				if isTypeUsableAsPropertyName(nameType) {
+					return c.getTypeOfPropertyOfContextualTypeEx(c.getTypeFromTypeNode(typeNode), getPropertyNameFromType(nameType), nameType)
 				}
 				return c.getTypeOfExpression(left)
 			}
