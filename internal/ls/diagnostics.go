@@ -18,10 +18,15 @@ func (l *LanguageService) GetDocumentDiagnostics(ctx context.Context, documentUR
 			lspDiagnostics = append(lspDiagnostics, toLSPDiagnostic(diag, l.converters))
 		}
 	} else {
-		// !!! suggestion diagnostics?
 		diagnostics := program.GetSemanticDiagnostics(ctx, file)
-		lspDiagnostics = make([]*lsproto.Diagnostic, 0, len(diagnostics))
+		suggestionDiagnostics := program.GetSuggestionDiagnostics(ctx, file)
+
+		lspDiagnostics = make([]*lsproto.Diagnostic, 0, len(diagnostics)+len(suggestionDiagnostics))
 		for _, diag := range diagnostics {
+			lspDiagnostics = append(lspDiagnostics, toLSPDiagnostic(diag, l.converters))
+		}
+		for _, diag := range suggestionDiagnostics {
+			// !!! user preference for suggestion diagnostics; keep only unnecessary/dprecated?
 			lspDiagnostics = append(lspDiagnostics, toLSPDiagnostic(diag, l.converters))
 		}
 	}
