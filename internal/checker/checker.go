@@ -3575,7 +3575,7 @@ func (c *Checker) checkTestingKnownTruthyType(condExpr *ast.Node, condType *Type
 	if ast.IsLogicalOrCoalescingBinaryExpression(condExpr) {
 		location = ast.SkipParentheses(condExpr.AsBinaryExpression().Right)
 	}
-	if isModuleExportsAccessExpression(location) {
+	if ast.IsModuleExportsAccessExpression(location) {
 		return
 	}
 	if ast.IsLogicalOrCoalescingBinaryExpression(location) {
@@ -27743,7 +27743,7 @@ func (c *Checker) canGetContextualTypeForAssignmentDeclaration(node *ast.Node) b
 				return false
 			}
 			// and now for one single case of object literal methods
-			name := ast.GetElementOrPropertyAccessArgumentExpressionOrName(left)
+			name := ast.GetElementOrPropertyAccessName(left)
 			if name == nil {
 				return false
 			} else {
