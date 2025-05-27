@@ -89,7 +89,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	capabilities.General = &lsproto.GeneralClientCapabilities{
 		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
 	}
-	// capabilities.Workspace = &lsproto.WorkspaceClientCapabilities{}
+	capabilities.Workspace = &lsproto.WorkspaceClientCapabilities{}
 	// !!! set capabilities inline once that's allowed by the lsp types
 	params := &lsproto.InitializeParams{}
 	params.Capabilities = capabilities

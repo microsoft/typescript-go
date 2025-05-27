@@ -48,7 +48,6 @@ func NewServer(opts *ServerOptions) *Server {
 		newLine:               opts.NewLine,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
-		panicInHandle:         make(chan error),
 	}
 }
 
@@ -89,8 +88,6 @@ type Server struct {
 	watchers       core.Set[project.WatcherHandle]
 	logger         *project.Logger
 	projectService *project.Service
-
-	panicInHandle chan error
 }
 
 // FS implements project.ServiceHost.
@@ -189,7 +186,7 @@ func (s *Server) Run() error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
-	g.Go(func() error { return s.readLoop(ctx) })
+	go func() error { return s.readLoop(ctx) }()
 	return g.Wait()
 }
 
@@ -287,6 +284,12 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 			}
 
 			handle := func() {
+				defer func() {
+					if r := recover(); r != nil {
+						// !!! send something back to client
+						lspExit()
+					}
+				}()
 				if err := s.handleRequestOrNotification(requestCtx, req); err != nil {
 					if errors.Is(err, io.EOF) {
 						lspExit()
@@ -305,15 +308,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 			if isBlockingMethod(req.Method) {
 				handle()
 			} else {
-				go func() {
-					defer func() {
-						if r := recover(); r != nil {
-							err := fmt.Errorf("panic handling non-blocking method %v:\n%v\n%s", req.Method, r, string(debug.Stack()))
-							s.panicInHandle <- err
-						}
-					}()
-					handle()
-				}()
+				go handle()
 			}
 		}
 	}

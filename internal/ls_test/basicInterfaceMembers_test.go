@@ -21,9 +21,4 @@ func TestBasicInterfaceMembers(t *testing.T) {
 	f, done := lstestutil.NewFourslash(t, cap, content, "basicInterfaceMembers.ts")
 	f.VerifyCompletions(t, "a", nil)
 	done()
-	// !!! roughly:
-	// !!! parse content into multiple files with markers and ranges etc
-	// !!! create an ls
-	// !!! call ls method
-	// !!! verify result
 }
