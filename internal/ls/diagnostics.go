@@ -19,17 +19,9 @@ func (l *LanguageService) GetDocumentDiagnostics(ctx context.Context, documentUR
 		}
 	} else {
 		// !!! suggestion diagnostics?
-		// !!! In Strada, we consolidate bind/check errors into semantic diagnostics rather than
-		// doing each individually; we should reconsider it.
-		bindDiagnostics := program.GetBindDiagnostics(ctx, file)
-		checker, done := program.GetTypeCheckerForFile(ctx, file)
-		defer done()
-		semanticDiagnostics := checker.GetDiagnostics(ctx, file)
-		lspDiagnostics = make([]*lsproto.Diagnostic, 0, len(bindDiagnostics)+len(semanticDiagnostics))
-		for _, diag := range bindDiagnostics {
-			lspDiagnostics = append(lspDiagnostics, toLSPDiagnostic(diag, l.converters))
-		}
-		for _, diag := range semanticDiagnostics {
+		diagnostics := program.GetSemanticDiagnostics(ctx, file)
+		lspDiagnostics = make([]*lsproto.Diagnostic, 0, len(diagnostics))
+		for _, diag := range diagnostics {
 			lspDiagnostics = append(lspDiagnostics, toLSPDiagnostic(diag, l.converters))
 		}
 	}
