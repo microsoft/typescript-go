@@ -1,7 +1,7 @@
 --- old.exportNestedNamespaces.types
 +++ new.exportNestedNamespaces.types
 @@= skipped -1, +1 lines =@@
- 
+
  === mod.js ===
  exports.n = {};
 ->exports.n = {} : typeof n
@@ -12,7 +12,7 @@
 ->n : typeof n
 +>n : any
  >{} : {}
- 
+
  exports.n.K = function () {
 ->exports.n.K = function () {    this.x = 10;} : typeof K
 ->exports.n.K : typeof K
@@ -27,7 +27,7 @@
 +>n : any
 +>K : any
 +>function () {    this.x = 10;} : () => void
- 
+
      this.x = 10;
  >this.x = 10 : 10
  >this.x : any
@@ -36,13 +36,24 @@
  >x : any
  >10 : 10
  }
-@@= skipped -41, +41 lines =@@
- 
+@@= skipped -32, +32 lines =@@
+     constructor() {
+         this.p = 1
+ >this.p = 1 : 1
+->this.p : any
++>this.p : number
+ >this : this
+->p : any
++>p : number
+ >1 : 1
+     }
+ }
+
  === use.js ===
  import * as s from './mod'
 ->s : typeof s
 +>s : typeof import("mod")
- 
+
  var k = new s.n.K()
 ->k : K
 ->new s.n.K() : K
@@ -58,7 +69,7 @@
 +>s : typeof import("mod")
 +>n : any
 +>K : any
- 
+
  k.x
 ->k.x : number
 ->k : K
@@ -66,7 +77,7 @@
 +>k.x : any
 +>k : any
 +>x : any
- 
+
  var classic = new s.Classic()
 ->classic : s.Classic
 ->new s.Classic() : s.Classic
@@ -78,8 +89,8 @@
 +>s.Classic : typeof Classic
 +>s : typeof import("mod")
 +>Classic : typeof Classic
- 
- 
+
+
  /** @param {s.n.K} c
      @param {s.Classic} classic */
  function f(c, classic) {
@@ -88,14 +99,14 @@
  >c : K
 ->classic : s.Classic
 +>classic : Classic
- 
+
      c.x
 ->c.x : number
 +>c.x : any
  >c : K
 ->x : number
 +>x : any
- 
+
      classic.p
 ->classic.p : number
 ->classic : s.Classic
@@ -104,5 +115,4 @@
 +>classic : Classic
 +>p : any
  }
- 
- 
+

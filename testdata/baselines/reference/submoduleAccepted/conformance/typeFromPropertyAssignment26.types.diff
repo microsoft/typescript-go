@@ -1,13 +1,13 @@
 --- old.typeFromPropertyAssignment26.types
 +++ new.typeFromPropertyAssignment26.types
 @@= skipped -1, +1 lines =@@
- 
+
  === bug24730.js ===
  var UI = {}
 ->UI : typeof UI
 +>UI : {}
  >{} : {}
- 
+
  UI.TreeElement = class {
  >UI.TreeElement = class {    constructor() {        this.treeOutline = 12    }} : typeof TreeElement
 ->UI.TreeElement : typeof TreeElement
@@ -17,9 +17,16 @@
 +>UI : {}
 +>TreeElement : any
  >class {    constructor() {        this.treeOutline = 12    }} : typeof TreeElement
- 
+
      constructor() {
-@@= skipped -20, +20 lines =@@
+         this.treeOutline = 12
+ >this.treeOutline = 12 : 12
+->this.treeOutline : any
++>this.treeOutline : number
+ >this : this
+->treeOutline : any
++>treeOutline : number
+ >12 : 12
      }
  };
  UI.context = new UI.TreeElement()
@@ -39,7 +46,7 @@
 +>UI.TreeElement : any
 +>UI : {}
 +>TreeElement : any
- 
+
  class C extends UI.TreeElement {
  >C : C
 ->UI.TreeElement : TreeElement
@@ -48,10 +55,10 @@
 +>UI.TreeElement : any
 +>UI : {}
 +>TreeElement : any
- 
+
      onpopulate() {
  >onpopulate : () => void
-@@= skipped -26, +26 lines =@@
+@@= skipped -46, +46 lines =@@
          this.treeOutline.doesntExistEither()
  >this.treeOutline.doesntExistEither() : any
  >this.treeOutline.doesntExistEither : any

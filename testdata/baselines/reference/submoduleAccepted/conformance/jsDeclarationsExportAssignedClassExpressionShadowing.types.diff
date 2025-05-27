@@ -16,10 +16,18 @@
 +>exports : typeof Q
 +>class Q {    constructor() {        this.x = new A();    }} : typeof Q
 +>Q : typeof Q
- 
+
      constructor() {
          this.x = new A();
-@@= skipped -19, +19 lines =@@
+ >this.x = new A() : A
+->this.x : any
++>this.x : A
+ >this : this
+->x : any
++>x : A
+ >new A() : A
+ >A : typeof A
+     }
  }
  module.exports.Another = Q;
  >module.exports.Another = Q : typeof Q
@@ -34,4 +42,3 @@
 +>exports : typeof Q
 +>Another : any
  >Q : typeof Q
- 

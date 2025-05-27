@@ -5,23 +5,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-type jsDeclarationKind int
-
-const (
-	jsDeclarationKindNone jsDeclarationKind = iota
-	/// module.exports = expr
-	jsDeclarationKindModuleExports
-	/// exports.name = expr
-	/// module.exports.name = expr
-	jsDeclarationKindExportsProperty
-	/// className.prototype.name = expr
-	jsDeclarationKindPrototypeProperty
-	/// this.name = expr
-	jsDeclarationKindThisProperty
-	// F.name = expr
-	jsDeclarationKindProperty
-)
-
 func (p *Parser) reparseCommonJS(node *ast.Node) {
 	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX {
 		return
@@ -30,18 +13,18 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 		return
 	}
 	bin := node.AsExpressionStatement().Expression.AsBinaryExpression()
-	kind := getAssignmentDeclarationKind(bin)
+	kind := ast.GetAssignmentDeclarationKind(bin)
 	var export *ast.Node
 	switch kind {
-	case jsDeclarationKindModuleExports:
+	case ast.JSDeclarationKindModuleExports:
 		export = p.factory.NewJSExportAssignment(bin.Right)
-	case jsDeclarationKindExportsProperty:
+	case ast.JSDeclarationKindExportsProperty:
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)
 		nodes[0].Flags = ast.NodeFlagsReparsed
 		nodes[0].Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left), bin.Right)
+		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessName(bin.Left), bin.Right)
 	}
 	if export != nil {
 		export.Flags = ast.NodeFlagsReparsed
@@ -49,22 +32,6 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 		p.reparseList = append(p.reparseList, export)
 		p.commonJSModuleIndicator = export
 	}
-}
-
-func getAssignmentDeclarationKind(bin *ast.BinaryExpression) jsDeclarationKind {
-	if bin.OperatorToken.Kind != ast.KindEqualsToken || !ast.IsAccessExpression(bin.Left) {
-		return jsDeclarationKindNone
-	}
-	if ast.IsModuleExportsAccessExpression(bin.Left) {
-		return jsDeclarationKindModuleExports
-	} else if ast.IsAccessExpression(bin.Left) &&
-		(ast.IsModuleExportsAccessExpression(bin.Left.Expression()) || ast.IsExportsIdentifier(bin.Left.Expression())) &&
-
-		(ast.IsIdentifier(ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left)) || ast.IsStringLiteralLike(ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left))) {
-		return jsDeclarationKindExportsProperty
-	}
-	// !!! module.exports property, this.property, expando.property
-	return jsDeclarationKindNone
 }
 
 // Hosted tags find a host and add their children to the correct location under the host.
@@ -76,7 +43,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 		if tags == nil {
 			continue
 		}
-		for _, tag := range j.AsJSDoc().Tags.Nodes {
+		for _, tag := range tags.Nodes {
 			switch tag.Kind {
 			case ast.KindJSDocTypedefTag:
 				// !!! Don't mark typedefs as exported if they are not in a module
@@ -100,7 +67,14 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				case ast.KindJSDocTypeLiteral:
 					members := p.nodeSlicePool.NewSlice(0)
 					for _, member := range typeExpression.AsJSDocTypeLiteral().JSDocPropertyTags {
-						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), nil /*postfixToken*/, member.Type(), nil /*initializer*/)
+						var questionToken *ast.TokenNode
+						if member.AsJSDocPropertyTag().IsBracketed ||
+							member.AsJSDocPropertyTag().TypeExpression != nil && member.AsJSDocPropertyTag().TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
+							questionToken = p.factory.NewToken(ast.KindQuestionToken)
+							questionToken.Loc = core.NewTextRange(member.Pos(), member.End())
+							questionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
+						}
+						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), questionToken, member.Type(), nil /*initializer*/)
 						prop.Loc = member.Loc
 						prop.Flags = p.contextFlags | ast.NodeFlagsReparsed
 						members = append(members, prop)
@@ -115,7 +89,16 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				typeAlias.Loc = core.NewTextRange(tag.Pos(), tag.End())
 				typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				p.reparseList = append(p.reparseList, typeAlias)
-				// !!! @overload and other unattached tags (@callback, @import et al) support goes here
+			case ast.KindJSDocImportTag:
+				importTag := tag.AsJSDocImportTag()
+				importClause := importTag.ImportClause.Clone(&p.factory)
+				importClause.Flags |= ast.NodeFlagsReparsed
+				importClause.AsImportClause().IsTypeOnly = true
+				importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
+				importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
+				importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				p.reparseList = append(p.reparseList, importDeclaration)
+				// !!! @overload and other unattached tags (@callback et al) support goes here
 			}
 			if !isLast {
 				continue
@@ -150,6 +133,12 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				} else if parent.Kind == ast.KindParenthesizedExpression {
 					paren := parent.AsParenthesizedExpression()
 					paren.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), paren.Expression)
+				} else if parent.Kind == ast.KindExpressionStatement &&
+					parent.AsExpressionStatement().Expression.Kind == ast.KindBinaryExpression {
+					bin := parent.AsExpressionStatement().Expression.AsBinaryExpression()
+					if ast.GetAssignmentDeclarationKind(bin) != ast.JSDeclarationKindNone {
+						bin.Right = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), bin.Right)
+					}
 				}
 			case ast.KindJSDocTemplateTag:
 				if fun, ok := getFunctionLikeHost(parent); ok {

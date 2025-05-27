@@ -197,11 +197,11 @@ func (p *Printer) getLiteralTextOfNode(node *ast.LiteralLikeNode, sourceFile *as
 
 			switch {
 			case flags&getLiteralTextFlagsJsxAttributeEscape != 0:
-				return "\"" + escapeJsxAttributeString(text, quoteCharDoubleQuote) + "\""
+				return "\"" + escapeJsxAttributeString(text, QuoteCharDoubleQuote) + "\""
 			case flags&getLiteralTextFlagsNeverAsciiEscape != 0 || p.emitContext.EmitFlags(node)&EFNoAsciiEscaping != 0:
-				return "\"" + EscapeString(text, quoteCharDoubleQuote) + "\""
+				return "\"" + EscapeString(text, QuoteCharDoubleQuote) + "\""
 			default:
-				return "\"" + escapeNonAsciiString(text, quoteCharDoubleQuote) + "\""
+				return "\"" + escapeNonAsciiString(text, QuoteCharDoubleQuote) + "\""
 			}
 		}
 	}
@@ -5605,7 +5605,7 @@ func (p *Printer) generateNames(node *ast.Node) {
 		}
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
 		p.generateAllNames(node.AsBindingPattern().Elements)
-	case ast.KindImportDeclaration:
+	case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 		p.generateNames(node.AsImportDeclaration().ImportClause)
 	case ast.KindImportClause:
 		p.generateNameIfNeeded(node.AsImportClause().Name())
