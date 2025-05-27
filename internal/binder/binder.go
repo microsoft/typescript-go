@@ -581,7 +581,11 @@ func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	node.Parent = b.parent
+	if node.Parent == nil {
+		node.Parent = b.parent
+	} else if node.Parent != b.parent {
+		panic("parent pointer already set, but doesn't match - collectModuleReferences probably out of sync with binder")
+	}
 	saveInStrictMode := b.inStrictMode
 	// Even though in the AST the jsdoc @typedef node belongs to the current node,
 	// its symbol might be in the same scope with the current node's symbol. Consider:

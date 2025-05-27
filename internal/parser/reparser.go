@@ -30,6 +30,7 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 		export.Flags = ast.NodeFlagsReparsed
 		export.Loc = bin.Loc
 		p.reparseList = append(p.reparseList, export)
+		p.setReparsed(node, export)
 		p.commonJSModuleIndicator = export
 	}
 }
@@ -63,7 +64,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				var t *ast.Node
 				switch typeExpression.Kind {
 				case ast.KindJSDocTypeExpression:
-					t = typeExpression.Type()
+					t = p.factory.DeepCloneNode(typeExpression.Type())
 				case ast.KindJSDocTypeLiteral:
 					members := p.nodeSlicePool.NewSlice(0)
 					for _, member := range typeExpression.AsJSDocTypeLiteral().JSDocPropertyTags {
@@ -74,7 +75,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 							questionToken.Loc = core.NewTextRange(member.Pos(), member.End())
 							questionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
 						}
-						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), questionToken, member.Type(), nil /*initializer*/)
+						prop := p.factory.NewPropertySignatureDeclaration(nil, p.factory.DeepCloneNode(member.Name()), questionToken, p.factory.DeepCloneNode(member.Type()), nil /*initializer*/)
 						prop.Loc = member.Loc
 						prop.Flags = p.contextFlags | ast.NodeFlagsReparsed
 						members = append(members, prop)
@@ -85,19 +86,30 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				default:
 					panic("typedef tag type expression should be a name reference or a type expression" + typeExpression.Kind.String())
 				}
-				typeAlias := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), typeParameters, t)
+				typeAlias := p.factory.NewJSTypeAliasDeclaration(modifiers, p.factory.DeepCloneNode(tag.AsJSDocTypedefTag().Name()), typeParameters, t)
 				typeAlias.Loc = core.NewTextRange(tag.Pos(), tag.End())
 				typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				ast.SetParentInChildren(typeAlias)
 				p.reparseList = append(p.reparseList, typeAlias)
+				p.setReparsed(tag, typeAlias)
 			case ast.KindJSDocImportTag:
 				importTag := tag.AsJSDocImportTag()
-				importClause := importTag.ImportClause.Clone(&p.factory)
+				importClause := p.factory.DeepCloneNode(importTag.ImportClause)
 				importClause.Flags |= ast.NodeFlagsReparsed
+				var modifiers *ast.ModifierList
+				if importTag.Modifiers() != nil {
+					modifiers := importTag.Modifiers().Clone(&p.factory)
+					for i, m := range modifiers.Nodes {
+						modifiers.Nodes[i] = p.factory.DeepCloneNode(m)
+						modifiers.Nodes[i].Flags |= ast.NodeFlagsReparsed
+					}
+				}
 				importClause.AsImportClause().IsTypeOnly = true
-				importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
+				importDeclaration := p.factory.NewJSImportDeclaration(modifiers, importClause, p.factory.DeepCloneNode(importTag.ModuleSpecifier), p.factory.DeepCloneNode(importTag.Attributes))
 				importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
 				importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				p.reparseList = append(p.reparseList, importDeclaration)
+				p.setReparsed(tag, importDeclaration)
 				// !!! @overload and other unattached tags (@callback et al) support goes here
 			}
 			if !isLast {
@@ -209,16 +221,15 @@ func (p *Parser) gatherTypeParameters(j *ast.Node) *ast.NodeList {
 			constraint := tag.AsJSDocTemplateTag().Constraint
 			for _, tp := range tag.AsJSDocTemplateTag().TypeParameters().Nodes {
 				typeParameter := tp.AsTypeParameter()
-				var reparse *ast.Node
-				if constraint == nil {
-					reparse = typeParameter.Clone(&p.factory)
-				} else {
-					clone := constraint.Type().Clone(&p.factory)
-					clone.Flags |= ast.NodeFlagsReparsed
-					reparse = p.factory.NewTypeParameterDeclaration(typeParameter.Modifiers(), typeParameter.Name(), clone, typeParameter.DefaultType)
-					reparse.Loc = typeParameter.Loc
+				reparse := p.factory.DeepCloneNode(tp)
+				reparse.Loc = typeParameter.Loc
+				if constraint != nil {
+					constraintClone := p.factory.DeepCloneNode(constraint.Type())
+					constraintClone.Flags |= ast.NodeFlagsReparsed
+					typeParameter.Constraint = constraintClone
 				}
 				reparse.Flags |= ast.NodeFlagsReparsed
+				p.setReparsed(tp, reparse)
 				typeParameters = append(typeParameters, reparse)
 			}
 		}
@@ -255,9 +266,13 @@ func getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
 }
 
 func (p *Parser) makeNewTypeAssertion(t *ast.TypeNode, e *ast.Node) *ast.Node {
-	assert := p.factory.NewTypeAssertion(t, e)
+	if t.Flags&ast.NodeFlagsReparsed == 0 {
+		panic("should only pass reparsed type nodes to makeNewTypeAssertion")
+	}
+	assert := p.factory.NewTypeAssertion(t, p.factory.DeepCloneNode(e))
 	assert.Flags = p.contextFlags | ast.NodeFlagsReparsed
 	assert.Loc = core.NewTextRange(e.Pos(), e.End())
+	p.setReparsed(e, assert)
 	return assert
 }
 
@@ -270,10 +285,18 @@ func (p *Parser) makeNewType(typeExpression *ast.TypeNode, host *ast.Node) *ast.
 	} else {
 		panic("JSDoc type expression already has a host: " + typeExpression.AsJSDocTypeExpression().Host.Kind.String())
 	}
-	t := typeExpression.Type().Clone(&p.factory)
+	t := p.factory.DeepCloneNode(typeExpression.Type())
 	t.Flags |= ast.NodeFlagsReparsed
 	if host != nil {
 		t.Parent = host
 	}
+	p.setReparsed(typeExpression.Type(), t)
 	return t
+}
+
+func (p *Parser) setReparsed(original *ast.Node, reparsed *ast.Node) {
+	if p.reparsedNodes == nil {
+		p.reparsedNodes = make(map[*ast.Node]*ast.Node)
+	}
+	p.reparsedNodes[original] = reparsed
 }

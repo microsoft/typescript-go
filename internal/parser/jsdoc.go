@@ -80,11 +80,6 @@ func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
 	}
 
 	result := p.factory.NewJSDocTypeExpression(t)
-	// normally parent references are set during binding. However, for clients that only need
-	// a syntax tree, and no semantic features, then the binding process is an unnecessary
-	// overhead.  This functions allows us to set all the parents, without all the expense of
-	// binding.
-	ast.SetParentInChildren(result)
 	p.finishNode(result, pos)
 	return result
 }
@@ -105,7 +100,6 @@ func (p *Parser) parseJSDocNameReference() *ast.Node {
 	}
 
 	result := p.factory.NewJSDocNameReference(entityName)
-	ast.SetParentInChildren(result)
 	p.finishNode(result, pos)
 	return result
 }
