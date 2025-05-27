@@ -48,6 +48,7 @@ func NewServer(opts *ServerOptions) *Server {
 		newLine:               opts.NewLine,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
+		panicInHandle:         make(chan error),
 	}
 }
 
@@ -88,6 +89,8 @@ type Server struct {
 	watchers       core.Set[project.WatcherHandle]
 	logger         *project.Logger
 	projectService *project.Service
+
+	panicInHandle chan error
 }
 
 // FS implements project.ServiceHost.
@@ -192,43 +195,48 @@ func (s *Server) Run() error {
 
 func (s *Server) readLoop(ctx context.Context) error {
 	for {
-		msg, err := s.read()
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				return nil
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+			msg, err := s.read()
+			if err != nil {
+				if errors.Is(err, io.EOF) {
+					return nil
+				}
+				if errors.Is(err, lsproto.ErrInvalidRequest) {
+					s.sendError(nil, err)
+					continue
+				}
+				return err
 			}
-			if errors.Is(err, lsproto.ErrInvalidRequest) {
-				s.sendError(nil, err)
+
+			if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
+				req := msg.AsRequest()
+				if req.Method == lsproto.MethodInitialize {
+					s.handleInitialize(req)
+				} else {
+					s.sendError(req.ID, lsproto.ErrServerNotInitialized)
+				}
 				continue
 			}
-			return err
-		}
 
-		if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
-			req := msg.AsRequest()
-			if req.Method == lsproto.MethodInitialize {
-				s.handleInitialize(req)
+			if msg.Kind == lsproto.MessageKindResponse {
+				resp := msg.AsResponse()
+				s.pendingServerRequestsMu.Lock()
+				if respChan, ok := s.pendingServerRequests[*resp.ID]; ok {
+					respChan <- resp
+					close(respChan)
+					delete(s.pendingServerRequests, *resp.ID)
+				}
+				s.pendingServerRequestsMu.Unlock()
 			} else {
-				s.sendError(req.ID, lsproto.ErrServerNotInitialized)
-			}
-			continue
-		}
-
-		if msg.Kind == lsproto.MessageKindResponse {
-			resp := msg.AsResponse()
-			s.pendingServerRequestsMu.Lock()
-			if respChan, ok := s.pendingServerRequests[*resp.ID]; ok {
-				respChan <- resp
-				close(respChan)
-				delete(s.pendingServerRequests, *resp.ID)
-			}
-			s.pendingServerRequestsMu.Unlock()
-		} else {
-			req := msg.AsRequest()
-			if req.Method == lsproto.MethodCancelRequest {
-				s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
-			} else {
-				s.requestQueue <- req
+				req := msg.AsRequest()
+				if req.Method == lsproto.MethodCancelRequest {
+					s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
+				} else {
+					s.requestQueue <- req
+				}
 			}
 		}
 	}
@@ -297,7 +305,15 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 			if isBlockingMethod(req.Method) {
 				handle()
 			} else {
-				go handle()
+				go func() {
+					defer func() {
+						if r := recover(); r != nil {
+							err := fmt.Errorf("panic handling non-blocking method %v:\n%v\n%s", req.Method, r, string(debug.Stack()))
+							s.panicInHandle <- err
+						}
+					}()
+					handle()
+				}()
 			}
 		}
 	}

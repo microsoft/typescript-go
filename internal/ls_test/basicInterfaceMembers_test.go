@@ -16,6 +16,7 @@ declare const p: Point;
 p./*a*/`
 
 func TestBasicInterfaceMembers(t *testing.T) {
+	t.Parallel()
 	cap := &lsproto.ClientCapabilities{}
 	f, done := lstestutil.NewFourslash(t, cap, content, "basicInterfaceMembers.ts")
 	f.VerifyCompletions(t, "a", nil)

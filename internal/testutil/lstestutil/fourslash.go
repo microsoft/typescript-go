@@ -1,11 +1,10 @@
 package lstestutil
 
 import (
-	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
+	"os"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -22,7 +21,6 @@ type FourslashTest struct {
 	server   *lsp.Server
 	in       *lsproto.BaseWriter
 	out      *lsproto.BaseReader
-	err      *bytes.Buffer
 	id       int32
 	testData *TestData
 	// !!! markers
@@ -41,36 +39,39 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	}
 	inputReader, inputWriter := io.Pipe()
 	outputReader, outputWriter := io.Pipe()
-	var err bytes.Buffer
 	fs := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
 	server := lsp.NewServer(&lsp.ServerOptions{
 		In:  inputReader,
 		Out: outputWriter,
-		Err: &err,
+		Err: os.Stderr,
 
 		Cwd:                "/",
-		NewLine:            core.NewLineKindLF, // TODO: verify
+		NewLine:            core.NewLineKindLF, // !!! verify
 		FS:                 bundled.WrapFS(fs),
 		DefaultLibraryPath: bundled.LibPath(),
 	})
 
-	// !!! panic recovery
 	go func() {
-		if err := server.Run(); err != nil && !errors.Is(err, io.EOF) {
-			panic(fmt.Sprintf("server.Run() failed: %v", err))
-		}
+		var err error
+		defer func() {
+			if r := recover(); r != nil {
+				err = fmt.Errorf("server panicked: %v", r)
+			}
+			inputReader.CloseWithError(err)
+			outputWriter.CloseWithError(err)
+		}()
+		err = server.Run()
 	}()
 
 	f := &FourslashTest{
 		server:   server,
 		in:       lsproto.NewBaseWriter(inputWriter),
 		out:      lsproto.NewBaseReader(outputReader),
-		err:      &err,
 		testData: &testData,
 	}
 
-	f.initialize(t, capabilities)
 	// !!! global compiler options default extracted from tests
+	f.initialize(t, capabilities)
 
 	done := func() {
 		inputWriter.Close()
@@ -88,10 +89,13 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	capabilities.General = &lsproto.GeneralClientCapabilities{
 		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
 	}
+	// capabilities.Workspace = &lsproto.WorkspaceClientCapabilities{}
 	// !!! set capabilities inline once that's allowed by the lsp types
 	params := &lsproto.InitializeParams{}
 	params.Capabilities = capabilities
+	// !!! check for errors?
 	f.sendRequest(t, lsproto.MethodInitialize, params)
+	f.sendNotification(t, lsproto.MethodInitialized, &lsproto.InitializedParams{})
 }
 
 func (f *FourslashTest) sendRequest(t *testing.T, method lsproto.Method, params any) *lsproto.Message {
@@ -101,19 +105,32 @@ func (f *FourslashTest) sendRequest(t *testing.T, method lsproto.Method, params 
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
-	data, err := json.Marshal(req)
+	f.writeMsg(t, req)
+	return f.readMsg(t)
+}
+
+func (f *FourslashTest) sendNotification(t *testing.T, method lsproto.Method, params any) {
+	notification := lsproto.NewNotificationMessage(
+		method,
+		params,
+	)
+	f.writeMsg(t, notification)
+}
+
+func (f *FourslashTest) writeMsg(t *testing.T, msg any) {
+	data, err := json.Marshal(msg)
 	if err != nil {
-		t.Fatalf("failed to marshal request: %v", err)
+		t.Fatalf("failed to marshal message: %v", err)
 	}
 	err = f.in.Write(data)
 	if err != nil {
-		t.Fatalf("failed to write request: %v", err)
+		t.Fatalf("failed to write message: %v", err)
 	}
+}
 
-	// !!! read error
-	// !!! filter out response
-	// !!! handle out of order responses etc
-	data, err = f.out.Read()
+func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
+	// !!! filter out response by id
+	data, err := f.out.Read()
 	if err != nil {
 		t.Fatalf("failed to read response: %v", err)
 	}
@@ -122,17 +139,33 @@ func (f *FourslashTest) sendRequest(t *testing.T, method lsproto.Method, params 
 	if err != nil {
 		t.Fatalf("failed to unmarshal response: %v", err)
 	}
-
 	return res
 }
 
-func (f *FourslashTest) VerifyCompletions(t *testing.T, marker string, expected any) {
-	// !!! completion arguments
-	params := &lsproto.CompletionParams{}
-	res := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
-	if res == nil {
-		// !!! handle response etc
+func (f *FourslashTest) VerifyCompletions(t *testing.T, markerName string, expected any) {
+	marker, ok := f.testData.MarkerPositions[markerName]
+	if !ok {
+		t.Fatalf("Marker %s not found", markerName)
 	}
-	// !!! verify result
-	// !!! test failure should indicate which marker failed via some sort of prefix msg
+	params := &lsproto.CompletionParams{
+		TextDocumentPositionParams: lsproto.TextDocumentPositionParams{
+			TextDocument: lsproto.TextDocumentIdentifier{
+				Uri: lsproto.DocumentUri(marker.Filename),
+			},
+			Position: marker.LSPosition,
+		},
+	}
+	resMsg := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
+	if resMsg == nil {
+		t.Fatalf("Nil response received for completion request at marker %s", markerName)
+	}
+	response := resMsg.AsResponse()
+	switch response.Result.(type) {
+	case *lsproto.CompletionList:
+		// !!! verify completion list
+		// !!! test failure should indicate which marker failed via some sort of prefix msg
+		return
+	default:
+		t.Fatalf("Unexpected response type for completion request at marker %s: %T", markerName, response.Result)
+	}
 }

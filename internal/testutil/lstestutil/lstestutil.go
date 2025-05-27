@@ -112,7 +112,7 @@ var _ ls.Script = (*TestFileInfo)(nil)
 
 const emitThisFileOption = "emitthisfile"
 
-func parseFileContent(content string, filename string, fileOptions map[string]string) *testFileWithMarkers {
+func parseFileContent(filename string, content string, fileOptions map[string]string) *testFileWithMarkers {
 	// !!! chompLeadingSpace
 	// !!! validate characters in markers
 	// Any slash-star comment with a character not in this string is not a marker.
