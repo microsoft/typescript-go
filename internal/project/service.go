@@ -234,7 +234,7 @@ func (s *Service) CloseFile(fileName string) {
 		info.close(fileExists)
 		for _, project := range info.containingProjects {
 			if project.kind == KindInferred && project.isRoot(info) {
-				project.removeFile(info, fileExists, true /*detachFromProject*/)
+				project.RemoveFile(info, fileExists, true /*detachFromProject*/)
 			}
 		}
 		delete(s.openFiles, info.path)
@@ -335,16 +335,17 @@ func (s *Service) onConfigFileChanged(project *Project, changeKind lsproto.FileC
 		project.pendingReload = PendingReloadFull
 		project.markAsDirty()
 	}
+	project.updateGraph()
 	return nil
 }
 
 func (s *Service) ensureProjectStructureUpToDate() {
 	var hasChanges bool
 	for _, project := range s.configuredProjects {
-		hasChanges = project.updateIfDirty() || hasChanges
+		hasChanges = project.updateGraph() || hasChanges
 	}
 	for _, project := range s.inferredProjects {
-		hasChanges = project.updateIfDirty() || hasChanges
+		hasChanges = project.updateGraph() || hasChanges
 	}
 	if hasChanges {
 		s.ensureProjectForOpenFiles()
@@ -367,7 +368,7 @@ func (s *Service) ensureProjectForOpenFiles() {
 		}
 	}
 	for _, project := range s.inferredProjects {
-		project.updateIfDirty()
+		project.updateGraph()
 	}
 
 	s.Log("After ensureProjectForOpenFiles:")
@@ -385,7 +386,6 @@ func (s *Service) handleDeletedFile(info *ScriptInfo, deferredDelete bool) {
 		panic("cannot delete an open file")
 	}
 
-	s.delayUpdateProjectGraphs(info.containingProjects, false /*clearSourceMapperCache*/)
 	// !!!
 	// s.handleSourceMapProjects(info)
 	info.detachAllProjects()
@@ -395,6 +395,7 @@ func (s *Service) handleDeletedFile(info *ScriptInfo, deferredDelete bool) {
 	} else {
 		s.deleteScriptInfo(info)
 	}
+	s.updateProjectGraphs(info.containingProjects, false /*clearSourceMapperCache*/)
 }
 
 func (s *Service) deleteScriptInfo(info *ScriptInfo) {
@@ -427,7 +428,7 @@ func (s *Service) OnDiscoveredSymlink(info *ScriptInfo) {
 	}
 }
 
-func (s *Service) delayUpdateProjectGraphs(projects []*Project, clearSourceMapperCache bool) {
+func (s *Service) updateProjectGraphs(projects []*Project, clearSourceMapperCache bool) {
 	for _, project := range projects {
 		if clearSourceMapperCache {
 			project.clearSourceMapperCache()
@@ -599,7 +600,7 @@ func (s *Service) assignProjectToOpenedScriptInfo(info *ScriptInfo) assignProjec
 		// result.configFileErrors = project.getAllProjectErrors()
 	}
 	for _, project := range info.containingProjects {
-		project.updateIfDirty()
+		project.updateGraph()
 	}
 	if info.isOrphan() {
 		// !!!
@@ -627,7 +628,7 @@ func (s *Service) assignOrphanScriptInfoToInferredProject(info *ScriptInfo, proj
 		project = s.getOrCreateUnrootedInferredProject()
 	}
 
-	project.addRoot(info)
+	project.AddRoot(info)
 	project.updateGraph()
 	// !!! old code ensures that scriptInfo is only part of one project
 }
@@ -733,9 +734,19 @@ func (s *Service) getDefaultProjectForScript(scriptInfo *ScriptInfo) *Project {
 }
 
 func (s *Service) createInferredProject(currentDirectory string, projectRootPath tspath.Path) *Project {
-	// !!!
 	compilerOptions := core.CompilerOptions{
-		AllowJs: core.TSTrue,
+		AllowJs:                    core.TSTrue,
+		Module:                     core.ModuleKindESNext,
+		ModuleResolution:           core.ModuleResolutionKindBundler,
+		Target:                     core.ScriptTargetES2022,
+		Jsx:                        core.JsxEmitReactJSX,
+		AllowImportingTsExtensions: core.TSTrue,
+		StrictNullChecks:           core.TSTrue,
+		StrictFunctionTypes:        core.TSTrue,
+		SourceMap:                  core.TSTrue,
+		ESModuleInterop:            core.TSTrue,
+		AllowNonTsExtensions:       core.TSTrue,
+		ResolveJsonModule:          core.TSTrue,
 	}
 	project := NewInferredProject(&compilerOptions, currentDirectory, projectRootPath, s)
 	s.inferredProjects = append(s.inferredProjects, project)

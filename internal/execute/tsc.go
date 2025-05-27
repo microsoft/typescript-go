@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -19,6 +20,16 @@ import (
 type cbType = func(p any) any
 
 func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
+	if len(commandLineArgs) > 0 {
+		// !!! build mode
+		switch strings.ToLower(commandLineArgs[0]) {
+		case "-b", "--b", "-build", "--build":
+			fmt.Fprint(sys.Writer(), "Build mode is currently unsupported."+sys.NewLine())
+			sys.EndWrite()
+			return ExitStatusNotImplemented
+		}
+	}
+
 	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
 	e, watcher := executeCommandLineWorker(sys, cb, parsedCommandLine)
 	if watcher == nil {
@@ -118,9 +129,8 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		// updateReportDiagnostic
 		if isWatchSet(configParseResult.CompilerOptions()) {
 			return ExitStatusSuccess, createWatcher(sys, configParseResult, reportDiagnostic)
-		} else if isIncrementalCompilation(configParseResult.CompilerOptions()) {
-			return ExitStatusNotImplementedIncremental, nil
 		}
+		// !!! incremental
 		return performCompilation(
 			sys,
 			cb,
@@ -136,9 +146,8 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		if isWatchSet(compilerOptionsFromCommandLine) {
 			// !!! reportWatchModeWithoutSysSupport
 			return ExitStatusSuccess, createWatcher(sys, commandLine, reportDiagnostic)
-		} else if isIncrementalCompilation(compilerOptionsFromCommandLine) {
-			return ExitStatusNotImplementedIncremental, nil
 		}
+		// !!! incremental
 	}
 	return performCompilation(
 		sys,

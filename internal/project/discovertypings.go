@@ -19,7 +19,7 @@ type CachedTyping struct {
 }
 
 func IsTypingUpToDate(cachedTyping *CachedTyping, availableTypingVersions map[string]string) bool {
-	useVersion, ok := availableTypingVersions["ts"+core.VersionMajorMinor]
+	useVersion, ok := availableTypingVersions["ts"+core.VersionMajorMinor()]
 	if !ok {
 		useVersion = availableTypingVersions["latest"]
 	}

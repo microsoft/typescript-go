@@ -1,10 +1,8 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"runtime"
 
@@ -53,7 +51,7 @@ func runLSP(args []string) int {
 		TypingsLocation:    typingsLocation,
 	})
 
-	if err := s.Run(); err != nil && !errors.Is(err, io.EOF) {
+	if err := s.Run(); err != nil {
 		return 1
 	}
 	return 0
@@ -62,9 +60,9 @@ func runLSP(args []string) int {
 func getGlobalTypingsCacheLocation() string {
 	switch runtime.GOOS {
 	case "windows":
-		return tspath.CombinePaths(tspath.CombinePaths(getWindowsCacheLocation(), "Microsoft/TypeScript"), core.VersionMajorMinor)
+		return tspath.CombinePaths(tspath.CombinePaths(getWindowsCacheLocation(), "Microsoft/TypeScript"), core.VersionMajorMinor())
 	case "openbsd", "freebsd", "netbsd", "darwin", "linux", "android":
-		return tspath.CombinePaths(tspath.CombinePaths(getNonWindowsCacheLocation(), "typescript"), core.VersionMajorMinor)
+		return tspath.CombinePaths(tspath.CombinePaths(getNonWindowsCacheLocation(), "typescript"), core.VersionMajorMinor())
 	default:
 		panic("unsupported platform: " + runtime.GOOS)
 	}

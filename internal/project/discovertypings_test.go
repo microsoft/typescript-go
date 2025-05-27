@@ -300,7 +300,7 @@ func TestDiscoverTypings(t *testing.T) {
 			Version:         semver.MustParse("1.0.0"),
 		})
 		config := maps.Clone(projecttestutil.TypesRegistryConfig())
-		delete(config, "ts"+core.VersionMajorMinor)
+		delete(config, "ts"+core.VersionMajorMinor())
 
 		cachedTypingPaths, newTypingNames, filesToWatch := project.DiscoverTypings(
 			fs,
@@ -347,7 +347,7 @@ func TestDiscoverTypings(t *testing.T) {
 			Version:         semver.MustParse("1.3.0-next.0"),
 		})
 		config := maps.Clone(projecttestutil.TypesRegistryConfig())
-		config["ts"+core.VersionMajorMinor] = "1.3.0-next.1"
+		config["ts"+core.VersionMajorMinor()] = "1.3.0-next.1"
 		cachedTypingPaths, newTypingNames, filesToWatch := project.DiscoverTypings(
 			fs,
 			func(s string) {

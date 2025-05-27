@@ -285,7 +285,7 @@ func (ti *TypingsInstaller) invokeRoutineToInstallTypings(
 
 					// packageName is guaranteed to exist in typesRegistry by filterTypings
 					distTags := ti.typesRegistry[packageName]
-					useVersion, ok := distTags["ts"+core.VersionMajorMinor]
+					useVersion, ok := distTags["ts"+core.VersionMajorMinor()]
 					if !ok {
 						useVersion = distTags["latest"]
 					}
@@ -364,7 +364,7 @@ func (ti *TypingsInstaller) installWorker(
 		var npmArgs []string
 		npmArgs = append(npmArgs, "install", "--ignore-scripts")
 		npmArgs = append(npmArgs, packageNames...)
-		npmArgs = append(npmArgs, "--save-dev", "--user-agent=\"typesInstaller/"+core.Version+"\"")
+		npmArgs = append(npmArgs, "--save-dev", "--user-agent=\"typesInstaller/"+core.Version()+"\"")
 		output, err := ti.options.NpmInstall(cwd, npmArgs)
 		if err != nil {
 			p.Logf("TI:: Output is: %s", output)
