@@ -20,7 +20,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("local module should not be picked up", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js":    `const c = require('./config');`,
 			"/user/username/projects/project/config.js": `export let x = 1`,
 			"/user/username/projects/project/jsconfig.json": `{
@@ -28,12 +28,12 @@ func TestTi(t *testing.T) {
 					"typeAcquisition": { "enable": true },
             	}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"config"},
 			},
 		})
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		assert.Equal(t, len(service.Projects()), 1)
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -49,7 +49,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("configured projects", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": ``,
 			"/user/username/projects/project/tsconfig.json": `{
 				"compilerOptions": { "allowJs": true },
@@ -62,14 +62,14 @@ func TestTi(t *testing.T) {
 				}
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"jquery": `declare const $: { x: number }`,
 				},
 			},
 		})
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		assert.Equal(t, len(service.Projects()), 1)
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -91,7 +91,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("inferred projects", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": ``,
 			"/user/username/projects/project/package.json": `{
 				"name": "test",
@@ -100,14 +100,14 @@ func TestTi(t *testing.T) {
 				}
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"jquery": `declare const $: { x: number }`,
 				},
 			},
 		})
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		assert.Equal(t, len(service.Projects()), 1)
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		assert.Equal(t, p.Kind(), project.KindInferred)
@@ -129,19 +129,19 @@ func TestTi(t *testing.T) {
 
 	t.Run("type acquisition with disableFilenameBasedTypeAcquisition:true", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/jquery.js": ``,
 			"/user/username/projects/project/tsconfig.json": `{
 				"compilerOptions": { "allowJs": true },
 				"typeAcquisition": { "enable": true, "disableFilenameBasedTypeAcquisition": true },
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"jquery"},
 			},
 		})
-		service.OpenFile("/user/username/projects/project/jquery.js", files["/user/username/projects/project/jquery.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/jquery.js", files["/user/username/projects/project/jquery.js"].(string), core.ScriptKindJS, "")
 		assert.Equal(t, len(service.Projects()), 1)
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/jquery.js")
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -157,19 +157,19 @@ func TestTi(t *testing.T) {
 	t.Run("deduplicate from local @types packages", func(t *testing.T) {
 		t.Skip("Todo - implement removing local @types from include list")
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js":                              "",
 			"/user/username/projects/project/node_modules/@types/node/index.d.ts": "declare var node;",
 			"/user/username/projects/project/jsconfig.json": `{
 				"typeAcquisition": { "include": ["node"] },
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"node"},
 			},
 		})
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		assert.Equal(t, len(service.Projects()), 1)
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -184,7 +184,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("Throttle - scheduled run install requests without reaching limit", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project1/app.js":     "",
 			"/user/username/projects/project1/file3.d.ts": "",
 			"/user/username/projects/project1/jsconfig.json": `{
@@ -196,7 +196,7 @@ func TestTi(t *testing.T) {
 				"typeAcquisition": { "include": ["grunt", "gulp", "commander"] },
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"commander": "declare const commander: { x: number }",
@@ -209,8 +209,8 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project1/app.js", files["/user/username/projects/project1/app.js"], core.ScriptKindJS, "")
-		service.OpenFile("/user/username/projects/project2/app.js", files["/user/username/projects/project2/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project1/app.js", files["/user/username/projects/project1/app.js"].(string), core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project2/app.js", files["/user/username/projects/project2/app.js"].(string), core.ScriptKindJS, "")
 		_, p1 := service.EnsureDefaultProjectForFile("/user/username/projects/project1/app.js")
 		_, p2 := service.EnsureDefaultProjectForFile("/user/username/projects/project2/app.js")
 		var installStatuses []project.TypingsInstallerStatus
@@ -230,7 +230,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("Throttle - scheduled run install requests reaching limit", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project1/app.js":     "",
 			"/user/username/projects/project1/file3.d.ts": "",
 			"/user/username/projects/project1/jsconfig.json": `{
@@ -242,7 +242,7 @@ func TestTi(t *testing.T) {
 				"typeAcquisition": { "include": ["grunt", "gulp", "commander"] },
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"commander": "declare const commander: { x: number }",
@@ -258,8 +258,8 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project1/app.js", files["/user/username/projects/project1/app.js"], core.ScriptKindJS, "")
-		service.OpenFile("/user/username/projects/project2/app.js", files["/user/username/projects/project2/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project1/app.js", files["/user/username/projects/project1/app.js"].(string), core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project2/app.js", files["/user/username/projects/project2/app.js"].(string), core.ScriptKindJS, "")
 		_, p1 := service.EnsureDefaultProjectForFile("/user/username/projects/project1/app.js")
 		_, p2 := service.EnsureDefaultProjectForFile("/user/username/projects/project2/app.js")
 		// Order is determinate since second install will run only after completing first one
@@ -280,7 +280,7 @@ func TestTi(t *testing.T) {
 	t.Run("discover from node_modules", func(t *testing.T) {
 		t.Skip("Skip for now - to add back when we skip external library files to lookup typings for")
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": "",
 			"/user/username/projects/project/package.json": `{
 			    "dependencies": {
@@ -294,7 +294,7 @@ func TestTi(t *testing.T) {
 			"/user/username/projects/project/node_modules/jquery/package.json":        `{ "name": "jquery" }`,
 			"/user/username/projects/project/node_modules/jquery/nested/package.json": `{ "name": "nested" }`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"nested", "commander"},
 				PackageToFile: map[string]string{
@@ -303,7 +303,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -318,7 +318,7 @@ func TestTi(t *testing.T) {
 	t.Run("discover from node_modules empty types", func(t *testing.T) {
 		t.Skip("Skip for now - to add back when we skip external library files to lookup typings for")
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": "",
 			"/user/username/projects/project/package.json": `{
 			    "dependencies": {
@@ -336,7 +336,7 @@ func TestTi(t *testing.T) {
 			"/user/username/projects/project/node_modules/jquery/package.json":        `{ "name": "jquery" }`,
 			"/user/username/projects/project/node_modules/jquery/nested/package.json": `{ "name": "nested" }`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"nested", "commander"},
 				PackageToFile: map[string]string{
@@ -345,7 +345,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -360,7 +360,7 @@ func TestTi(t *testing.T) {
 	t.Run("discover from node_modules explicit types", func(t *testing.T) {
 		t.Skip("Skip for now - to add back when we skip external library files to lookup typings for")
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": "",
 			"/user/username/projects/project/package.json": `{
 			    "dependencies": {
@@ -378,7 +378,7 @@ func TestTi(t *testing.T) {
 			"/user/username/projects/project/node_modules/jquery/package.json":        `{ "name": "jquery" }`,
 			"/user/username/projects/project/node_modules/jquery/nested/package.json": `{ "name": "nested" }`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"nested", "commander"},
 				PackageToFile: map[string]string{
@@ -387,7 +387,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -402,7 +402,7 @@ func TestTi(t *testing.T) {
 	t.Run("discover from node_modules empty types has import", func(t *testing.T) {
 		t.Skip("Skip for now - to add back when we skip external library files to lookup typings for")
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": `import "jquery";`,
 			"/user/username/projects/project/package.json": `{
 			    "dependencies": {
@@ -420,7 +420,7 @@ func TestTi(t *testing.T) {
 			"/user/username/projects/project/node_modules/jquery/package.json":        `{ "name": "jquery" }`,
 			"/user/username/projects/project/node_modules/jquery/nested/package.json": `{ "name": "nested" }`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"nested", "commander"},
 				PackageToFile: map[string]string{
@@ -429,7 +429,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -442,13 +442,13 @@ func TestTi(t *testing.T) {
 
 	t.Run("discover from bower_components", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js":                             ``,
 			"/user/username/projects/project/jsconfig.json":                      `{}`,
 			"/user/username/projects/project/bower_components/jquery/index.js":   "",
 			"/user/username/projects/project/bower_components/jquery/bower.json": `{ "name": "jquery" }`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"jquery": "declare const jquery: { x: number }",
@@ -456,7 +456,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -471,7 +471,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("discover from bower.json", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js":        ``,
 			"/user/username/projects/project/jsconfig.json": `{}`,
 			"/user/username/projects/project/bower.json": `{
@@ -480,7 +480,7 @@ func TestTi(t *testing.T) {
                 }
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"jquery": "declare const jquery: { x: number }",
@@ -488,7 +488,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -503,11 +503,11 @@ func TestTi(t *testing.T) {
 
 	t.Run("Malformed package.json should be watched", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js":       ``,
 			"/user/username/projects/project/package.json": `{ "dependencies": { "co } }`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"commander": "export let x: number",
@@ -515,7 +515,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -547,14 +547,14 @@ func TestTi(t *testing.T) {
 
 	t.Run("should install typings for unresolved imports", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": `
 				import * as fs from "fs";
                 import * as commander from "commander";
                 import * as component from "@ember/component";
 			`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"node":             "export let node: number",
@@ -564,7 +564,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -581,13 +581,13 @@ func TestTi(t *testing.T) {
 
 	t.Run("should redo resolution that resolved to '.js' file after typings are installed", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": `
                 import * as commander from "commander";
 			`,
 			"/user/username/projects/node_modules/commander/index.js": "module.exports = 0",
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"commander": "export let commander: number",
@@ -595,7 +595,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -611,7 +611,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("expired cache entry (inferred project, should install typings)", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": "",
 			"/user/username/projects/project/package.json": `{
 				"name": "test",
@@ -636,7 +636,7 @@ func TestTi(t *testing.T) {
                 }
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"jquery": "export const y = 10",
@@ -644,7 +644,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -659,7 +659,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("non-expired cache entry (inferred project, should not install typings)", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": "",
 			"/user/username/projects/project/package.json": `{
 				"name": "test",
@@ -684,13 +684,13 @@ func TestTi(t *testing.T) {
                 }
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"jquery"},
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -705,7 +705,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("expired cache entry (inferred project, should install typings) lockfile3", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": "",
 			"/user/username/projects/project/package.json": `{
 				"name": "test",
@@ -730,7 +730,7 @@ func TestTi(t *testing.T) {
                 }
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				PackageToFile: map[string]string{
 					"jquery": "export const y = 10",
@@ -738,7 +738,7 @@ func TestTi(t *testing.T) {
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus
@@ -753,7 +753,7 @@ func TestTi(t *testing.T) {
 
 	t.Run("non-expired cache entry (inferred project, should not install typings) lockfile3", func(t *testing.T) {
 		t.Parallel()
-		files := map[string]string{
+		files := map[string]any{
 			"/user/username/projects/project/app.js": "",
 			"/user/username/projects/project/package.json": `{
 				"name": "test",
@@ -778,13 +778,13 @@ func TestTi(t *testing.T) {
                 }
 			}`,
 		}
-		service, host := projecttestutil.Setup(files, projecttestutil.TestTypingsInstaller{
+		service, host := projecttestutil.Setup(files, &projecttestutil.TestTypingsInstaller{
 			TestTypingsInstallerOptions: projecttestutil.TestTypingsInstallerOptions{
 				TypesRegistry: []string{"jquery"},
 			},
 		})
 
-		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"], core.ScriptKindJS, "")
+		service.OpenFile("/user/username/projects/project/app.js", files["/user/username/projects/project/app.js"].(string), core.ScriptKindJS, "")
 		_, p := service.EnsureDefaultProjectForFile("/user/username/projects/project/app.js")
 		// Order is determinate since second install will run only after completing first one
 		status := <-host.ServiceOptions.InstallStatus

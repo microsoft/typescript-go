@@ -80,22 +80,20 @@ func (p *ProjectServiceHost) Client() project.Client {
 	return p.ClientMock
 }
 
-func (p *ProjectServiceHost) ReplaceFS(files map[string]string) {
+func (p *ProjectServiceHost) ReplaceFS(files map[string]any) {
 	p.fs = bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 }
 
 var _ project.ServiceHost = (*ProjectServiceHost)(nil)
 
-func Setup(files map[string]string, typingsInstaller ...TestTypingsInstaller) (*project.Service, *ProjectServiceHost) {
+func Setup(files map[string]any, testOptions *TestTypingsInstaller) (*project.Service, *ProjectServiceHost) {
 	host := newProjectServiceHost(files)
-	var options *TestTypingsInstaller
-	if typingsInstaller != nil {
-		options = &typingsInstaller[0]
-		host.testOptions = &options.TestTypingsInstallerOptions
+	if testOptions != nil {
+		host.testOptions = &testOptions.TestTypingsInstallerOptions
 	}
 	var throttleLimit int
-	if options != nil && options.ThrottleLimit != 0 {
-		throttleLimit = options.ThrottleLimit
+	if testOptions != nil && testOptions.ThrottleLimit != 0 {
+		throttleLimit = testOptions.ThrottleLimit
 	} else {
 		throttleLimit = 5
 	}
@@ -210,7 +208,7 @@ func appendTypesRegistryConfig(builder *strings.Builder, index int, entry string
 	builder.WriteString(fmt.Sprintf("\n    \"%s\": {%s\n    }", entry, TypesRegistryConfigText()))
 }
 
-func newProjectServiceHost(files map[string]string) *ProjectServiceHost {
+func newProjectServiceHost(files map[string]any) *ProjectServiceHost {
 	fs := bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 	host := &ProjectServiceHost{
 		fs:                 fs,
