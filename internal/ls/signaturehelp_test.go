@@ -1046,7 +1046,7 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 	file := testData.Files[0].Filename
 	markerPositions := testData.MarkerPositions
 	ctx := projecttestutil.WithRequestID(t.Context())
-	languageService, done := createLanguageService(ctx, file, map[string]string{
+	languageService, done := createLanguageService(ctx, file, map[string]any{
 		file: testData.Files[0].Content,
 	})
 	defer done()
