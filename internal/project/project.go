@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -156,12 +155,8 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 	}
 	client := host.Client()
 	if host.IsWatchEnabled() && client != nil {
-		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, func(data map[tspath.Path]string) []string {
-			return slices.Sorted(maps.Values(data))
-		})
-		project.affectingLocationsWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, func(data map[tspath.Path]string) []string {
-			return slices.Sorted(maps.Values(data))
-		})
+		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, getWatchGlobs)
+		project.affectingLocationsWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, getWatchGlobs)
 	}
 	project.markAsDirty()
 	return project

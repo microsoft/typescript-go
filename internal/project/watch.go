@@ -4,7 +4,9 @@ import (
 	"context"
 	"slices"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 const (
@@ -59,4 +61,21 @@ func (w *watchedFiles[T]) update(ctx context.Context, newData T) (updated bool, 
 	}
 	w.watcherID = watcherID
 	return true, nil
+}
+
+func getWatchGlobs(data map[tspath.Path]string) []string {
+	// TODO: this is still not enough
+
+	var dirSet core.Set[string]
+	for _, fileName := range data {
+		dirname := tspath.GetDirectoryPath(fileName)
+		dirSet.Add(dirname)
+	}
+
+	globs := make([]string, 0, dirSet.Len())
+	for dir := range dirSet.Keys() {
+		globs = append(globs, dir+"/"+fileGlobPattern)
+	}
+	slices.Sort(globs)
+	return globs
 }
