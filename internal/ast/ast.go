@@ -1666,7 +1666,7 @@ func (node *NodeDefault) VisitEachChild(v *NodeVisitor) *Node               { re
 func (node *NodeDefault) Clone(v NodeFactoryCoercible) *Node                { return nil }
 func (node *NodeDefault) Name() *DeclarationName                            { return nil }
 func (node *NodeDefault) Modifiers() *ModifierList                          { return nil }
-func (node *NodeDefault) setModifiers(*ModifierList)                        {}
+func (node *NodeDefault) setModifiers(modifiers *ModifierList)              {}
 func (node *NodeDefault) FlowNodeData() *FlowNodeBase                       { return nil }
 func (node *NodeDefault) DeclarationData() *DeclarationBase                 { return nil }
 func (node *NodeDefault) ExportableData() *ExportableBase                   { return nil }
