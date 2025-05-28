@@ -131,7 +131,7 @@ func (o *compilerOptionsParser) ParseOption(key string, value any) []*ast.Diagno
 }
 
 func (o *compilerOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
-	return diagnostics.Unknown_compiler_option_0
+	return extraKeyDiagnostics("compilerOptions")
 }
 
 type watchOptionsParser struct {
@@ -143,7 +143,7 @@ func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnosti
 }
 
 func (o *watchOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
-	return diagnostics.Unknown_watch_option_0
+	return extraKeyDiagnostics("watchOptions")
 }
 
 type typeAcquisitionParser struct {
@@ -155,7 +155,7 @@ func (o *typeAcquisitionParser) ParseOption(key string, value any) []*ast.Diagno
 }
 
 func (o *typeAcquisitionParser) UnknownOptionDiagnostic() *diagnostics.Message {
-	return diagnostics.Unknown_type_acquisition_option_0
+	return extraKeyDiagnostics("typeAcquisition")
 }
 
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
