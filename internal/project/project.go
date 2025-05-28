@@ -133,7 +133,7 @@ type Project struct {
 	deferredClose          bool
 	pendingReload          PendingReload
 	dirtyFilePath          tspath.Path
-	hasAddedorRemovedFiles bool
+	hasAddedorRemovedFiles atomic.Bool
 
 	comparePathsOptions tspath.ComparePathsOptions
 	currentDirectory    string
@@ -451,8 +451,9 @@ func (p *Project) markAsDirtyLocked() {
 	}
 }
 
+// Always called when p.mu lock was already acquired.
 func (p *Project) onFileAddedOrRemoved() {
-	p.hasAddedorRemovedFiles = true
+	p.hasAddedorRemovedFiles.Store(true)
 }
 
 // updateGraph updates the set of files that contribute to the project.
@@ -487,8 +488,8 @@ func (p *Project) updateGraph() bool {
 	}
 
 	oldProgramReused := p.updateProgram()
-	hasAddedOrRemovedFiles := p.hasAddedorRemovedFiles
-	p.hasAddedorRemovedFiles = false
+	hasAddedOrRemovedFiles := p.hasAddedorRemovedFiles.Load()
+	p.hasAddedorRemovedFiles.Store(false)
 	p.dirty = false
 	p.dirtyFilePath = ""
 	if writeFileNames {
