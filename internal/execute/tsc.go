@@ -204,7 +204,7 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	program := compiler.NewProgramFromParsedCommandLine(config, host)
 	parseTime := time.Since(parseStart)
 
-	result := compileAndEmit(sys, program, reportDiagnostic)
+	result := emitFilesAndReportErrors(sys, program, reportDiagnostic)
 	if result.status != ExitStatusSuccess {
 		// compile exited early
 		return result.status
@@ -246,7 +246,7 @@ type compileAndEmitResult struct {
 	totalTime   time.Duration
 }
 
-func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
+func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
 	// todo: check if third return needed after execute is fully implemented
 
 	ctx := context.Background()
