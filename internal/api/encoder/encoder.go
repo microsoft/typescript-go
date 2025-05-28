@@ -694,7 +694,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		n := node.AsClassDeclaration()
 		return (boolToByte(n.Modifiers() != nil) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.TypeParameters != nil) << 2) | (boolToByte(n.HeritageClauses != nil) << 3) | (boolToByte(n.Members != nil) << 4)
 	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-		n := node.AsJSDocParameterTag()
+		n := node.AsJSDocParameterOrPropertyTag()
 		if n.IsNameFirst {
 			return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.TypeExpression != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
 		}
@@ -740,7 +740,7 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 		n := node.AsObjectLiteralExpression()
 		return uint32(boolToByte(n.MultiLine)) << 24
 	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-		n := node.AsJSDocParameterTag()
+		n := node.AsJSDocParameterOrPropertyTag()
 		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
 	case ast.KindJsxText:
 		n := node.AsJsxText()

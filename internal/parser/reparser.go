@@ -67,7 +67,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				case ast.KindJSDocTypeLiteral:
 					members := p.nodeSlicePool.NewSlice(0)
 					for _, member := range typeExpression.AsJSDocTypeLiteral().JSDocPropertyTags {
-						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), p.makeQuestionIfOptional(member.AsJSDocParameterTag()), member.Type(), nil /*initializer*/)
+						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), p.makeQuestionIfOptional(member.AsJSDocParameterOrPropertyTag()), member.Type(), nil /*initializer*/)
 						prop.Loc = member.Loc
 						prop.Flags = p.contextFlags | ast.NodeFlagsReparsed
 						members = append(members, prop)
@@ -109,7 +109,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 
 					parameters := p.nodeSlicePool.NewSlice(0)
 					for _, param := range jsSignature.Parameters.Nodes {
-						jsparam := param.AsJSDocParameterTag()
+						jsparam := param.AsJSDocParameterOrPropertyTag()
 
 						var parameterType *ast.Node
 						if jsparam.TypeExpression != nil {
@@ -189,15 +189,14 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				}
 			case ast.KindJSDocParameterTag:
 				if fun, ok := getFunctionLikeHost(parent); ok {
-					jsparam := tag.AsJSDocParameterTag()
+					jsparam := tag.AsJSDocParameterOrPropertyTag()
 					if param, ok := findMatchingParameter(fun, jsparam); ok {
-						if param.Type() == nil {
-							param.AsParameterDeclaration().Type = p.makeNewType(jsparam.TypeExpression, param)
+						if param.Type == nil {
+							param.Type = p.makeNewType(jsparam.TypeExpression, param.AsNode())
 						}
-						if param.AsParameterDeclaration().QuestionToken == nil &&
-							param.AsParameterDeclaration().Initializer == nil {
+						if param.QuestionToken == nil && param.Initializer == nil {
 							if question := p.makeQuestionIfOptional(jsparam); question != nil {
-								param.AsParameterDeclaration().QuestionToken = question
+								param.QuestionToken = question
 							}
 						}
 					}
@@ -223,11 +222,11 @@ func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.N
 	return questionToken
 }
 
-func findMatchingParameter(fun *ast.Node, tag *ast.JSDocParameterTag) (*ast.Node, bool) {
+func findMatchingParameter(fun *ast.Node, tag *ast.JSDocParameterTag) (*ast.ParameterDeclaration, bool) {
 	for _, parameter := range fun.Parameters() {
 		if parameter.Name().Kind == ast.KindIdentifier && tag.Name().Kind == ast.KindIdentifier &&
 			parameter.Name().Text() == tag.Name().Text() {
-			return parameter, true
+			return parameter.AsParameterDeclaration(), true
 		}
 	}
 	return nil, false
