@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -250,54 +251,54 @@ func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diag
 
 	ctx := context.Background()
 	options := program.Options()
-	allDiagnostics := program.GetConfigFileParsingDiagnostics()
+	allDiagnostics := slices.Clip(program.GetConfigFileParsingDiagnostics())
+	configFileParsingDiagnosticsLength := len(allDiagnostics)
 
-	// todo: early exit logic and append diagnostics
-	diagnostics := program.GetSyntacticDiagnostics(ctx, nil)
-	if len(diagnostics) == 0 {
+	allDiagnostics = append(allDiagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
+
+	if len(allDiagnostics) == configFileParsingDiagnosticsLength {
+		// Options diagnostics include global diagnostics (even though we collect them separately),
+		// and global diagnostics create checkers, which then bind all of the files. Do this binding
+		// early so we can track the time.
 		bindStart := time.Now()
 		_ = program.GetBindDiagnostics(ctx, nil)
 		result.bindTime = time.Since(bindStart)
 
-		diagnostics = append(diagnostics, program.GetOptionsDiagnostics(ctx)...)
-		if options.ListFilesOnly.IsFalse() {
-			// program.GetBindDiagnostics(nil)
-			diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
+		allDiagnostics = append(allDiagnostics, program.GetOptionsDiagnostics(ctx)...)
+
+		if options.ListFilesOnly.IsFalseOrUnknown() {
+			allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
+
+			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
+				checkStart := time.Now()
+				allDiagnostics = append(allDiagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
+				result.checkTime = time.Since(checkStart)
+			}
+
+			// !!! GetDeclarationDiagnostics
+			// if options.NoEmit.IsTrue() && options.GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
+			// }
 		}
-	}
-	if len(diagnostics) == 0 {
-		checkStart := time.Now()
-		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
-		result.checkTime = time.Since(checkStart)
-	}
-	// TODO: declaration diagnostics
-	if len(diagnostics) == 0 && options.NoEmit == core.TSTrue && (options.Declaration.IsTrue() && options.Composite.IsTrue()) {
-		result.status = ExitStatusNotImplemented
-		return result
-		// addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
 	}
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !options.ListFilesOnly.IsTrue() {
-		// !!! Emit is not yet fully implemented, will not emit unless `outfile` specified
 		emitStart := time.Now()
 		emitResult = program.Emit(compiler.EmitOptions{})
 		result.emitTime = time.Since(emitStart)
 	}
-	diagnostics = append(diagnostics, emitResult.Diagnostics...)
+	allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)
 
-	allDiagnostics = append(allDiagnostics, diagnostics...)
 	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
 	for _, diagnostic := range allDiagnostics {
 		reportDiagnostic(diagnostic)
 	}
 
-	// !!! if (write)
 	if sys.Writer() != nil {
 		for _, file := range emitResult.EmittedFiles {
 			fmt.Fprint(sys.Writer(), "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, sys.GetCurrentDirectory()))
 		}
-		// todo: listFiles(program, sys.Writer())
+		listFiles(sys, program)
 	}
 
 	createReportErrorSummary(sys, program.Options())(allDiagnostics)
@@ -324,4 +325,14 @@ func showConfig(sys System, config *core.CompilerOptions) {
 	enc := json.NewEncoder(sys.Writer())
 	enc.SetIndent("", "    ")
 	enc.Encode(config) //nolint:errcheck,errchkjson
+}
+
+func listFiles(sys System, program *compiler.Program) {
+	options := program.Options()
+	// !!! explainFiles
+	if options.ListFiles.IsTrue() || options.ListFilesOnly.IsTrue() {
+		for _, file := range program.GetSourceFiles() {
+			fmt.Fprintf(sys.Writer(), "%s%s", file.FileName(), sys.NewLine())
+		}
+	}
 }
