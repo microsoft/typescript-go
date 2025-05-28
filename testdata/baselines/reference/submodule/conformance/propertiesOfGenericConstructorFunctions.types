@@ -8,7 +8,7 @@
  * @param {V} iv
  */
 function Multimap(ik, iv) {
->Multimap : <K extends string, V>(ik: string, iv: V) => void
+>Multimap : <K, V>(ik: string, iv: V) => void
 >ik : string
 >iv : V
 
@@ -38,7 +38,7 @@ function Multimap(ik, iv) {
 const map = new Multimap("a", 1);
 >map : Multimap<"a" | "b", number>
 >new Multimap("a", 1) : any
->Multimap : <K extends string, V>(ik: string, iv: V) => void
+>Multimap : <K, V>(ik: string, iv: V) => void
 >"a" : "a"
 >1 : 1
 
@@ -46,7 +46,7 @@ const map = new Multimap("a", 1);
 const map2 = new Multimap("m", 2);
 >map2 : any
 >new Multimap("m", 2) : any
->Multimap : <K extends string, V>(ik: string, iv: V) => void
+>Multimap : <K, V>(ik: string, iv: V) => void
 >"m" : "m"
 >2 : 2
 

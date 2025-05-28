@@ -83,7 +83,7 @@ var both2 = both1;
 
 /** @type {import('./mod3').Both} */
 var both3 = both2;
->both3 : { type: "a"; x: 1; } | { type: "b"; y: 1; }
+>both3 : Both
 >both2 : Both
 
 

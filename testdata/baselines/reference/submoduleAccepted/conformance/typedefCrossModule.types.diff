@@ -90,7 +90,7 @@
  var both3 = both2;
 ->both3 : import("mod3").Both
 ->both2 : import("mod2").A
-+>both3 : { type: "a"; x: 1; } | { type: "b"; y: 1; }
++>both3 : Both
 +>both2 : Both
 
 

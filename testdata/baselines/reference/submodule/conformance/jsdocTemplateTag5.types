@@ -8,7 +8,7 @@
  * @template V
  */
 function Multimap() {
->Multimap : { <K extends string, V>(): void; prototype: { get: (key: K) => V; }; }
+>Multimap : { <K, V>(): void; prototype: { get: (key: K) => V; }; }
 
     /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
     this._map = {};
@@ -24,7 +24,7 @@ function Multimap() {
 Multimap.prototype = {
 >Multimap.prototype = {    /**     * @param {K} key the key ok     * @returns {V} the value ok     */    get(key) {        return this._map[key + ''];    }} : { get: (key: K) => V; }
 >Multimap.prototype : { get: (key: K) => V; }
->Multimap : { <K extends string, V>(): void; prototype: { get: (key: K) => V; }; }
+>Multimap : { <K, V>(): void; prototype: { get: (key: K) => V; }; }
 >prototype : { get: (key: K) => V; }
 >{    /**     * @param {K} key the key ok     * @returns {V} the value ok     */    get(key) {        return this._map[key + ''];    }} : { get: (key: K) => V; }
 
@@ -54,8 +54,8 @@ Multimap.prototype = {
  * @template V
  */
 var Multimap2 = function() {
->Multimap2 : <K extends string, V>() => void
->function() {    /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */    this._map = {};} : <K extends string, V>() => void
+>Multimap2 : <K, V>() => void
+>function() {    /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */    this._map = {};} : <K, V>() => void
 
     /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
     this._map = {};
@@ -71,7 +71,7 @@ var Multimap2 = function() {
 Multimap2.prototype = {
 >Multimap2.prototype = {    /**     * @param {K} key the key ok     * @returns {V} the value ok     */    get: function(key) {        return this._map[key + ''];    }} : { get: (key: K) => V; }
 >Multimap2.prototype : any
->Multimap2 : <K extends string, V>() => void
+>Multimap2 : <K, V>() => void
 >prototype : any
 >{    /**     * @param {K} key the key ok     * @returns {V} the value ok     */    get: function(key) {        return this._map[key + ''];    }} : { get: (key: K) => V; }
 

@@ -14,7 +14,7 @@
  * @returns {[A, B]}
  */
 function foo(fns) {
->foo : <A, B extends Record<string, unknown>>(fns: Funcs<A, B>) => [A, B]
+>foo : <A, B>(fns: Funcs<A, B>) => [A, B]
 >fns : Funcs<A, B>
 
   return /** @type {any} */ (null);
@@ -25,7 +25,7 @@ function foo(fns) {
 const result = foo({
 >result : [string, { bar: string; }]
 >foo({  bar: {    fn:      /** @param {string} a */      (a) => {},    thing: "asd",  },}) : [string, { bar: string; }]
->foo : <A, B extends Record<string, unknown>>(fns: Funcs<A, B>) => [A, B]
+>foo : <A, B>(fns: Funcs<A, B>) => [A, B]
 >{  bar: {    fn:      /** @param {string} a */      (a) => {},    thing: "asd",  },} : { bar: { fn: (a: string) => void; thing: string; }; }
 
   bar: {

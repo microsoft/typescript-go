@@ -1,22 +1,20 @@
 --- old.exportDefaultWithJSDoc2.types
 +++ new.exportDefaultWithJSDoc2.types
-@@= skipped -6, +6 lines =@@
-  */
+@@= skipped -7, +7 lines =@@
 
  export default /** @type {NumberLike[]} */([ ]);
-->([ ]) : NumberLike[]
-+>([ ]) : (string | number)[]
-+>[ ] : (string | number)[]
+ >([ ]) : NumberLike[]
++>[ ] : NumberLike[]
  >[ ] : undefined[]
 
  === b.ts ===
  import A from './a'
 ->A : import("a").NumberLike[]
-+>A : (string | number)[]
++>A : NumberLike[]
 
  A[0]
 ->A[0] : import("a").NumberLike
 ->A : import("a").NumberLike[]
-+>A[0] : string | number
-+>A : (string | number)[]
++>A[0] : NumberLike
++>A : NumberLike[]
  >0 : 0
