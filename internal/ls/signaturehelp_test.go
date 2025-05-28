@@ -768,14 +768,6 @@ fnTest?.(/*1*/);`,
 			},
 		},
 		{
-			title: "signatureHelpOptionalCall2",
-			input: `declare const fnTest: undefined | ((str: string, num: number) => void);
-fnTest?.(/*1*/);`,
-			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "fnTest(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-			},
-		},
-		{
 			title: "signatureHepSimpleConstructorCall",
 			input: `class ConstructorCall {
    constructor(str: string, num: number) {

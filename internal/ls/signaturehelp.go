@@ -316,9 +316,9 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 	} else {
 		typeParameters = candidateSignature.TypeParameters()
 	}
-	getTypeParameters := make([]signatureHelpParameter, len(typeParameters))
+	signatureHelpTypeParameters := make([]signatureHelpParameter, len(typeParameters))
 	for i, typeParameter := range typeParameters {
-		getTypeParameters[i] = createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaration, c, printer)
+		signatureHelpTypeParameters[i] = createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaration, c, printer)
 	}
 
 	thisParameter := []signatureHelpParameter{}
@@ -329,7 +329,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 	// Creating type parameter display label
 	var displayParts strings.Builder
 	displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
-	for i, typeParameter := range getTypeParameters {
+	for i, typeParameter := range signatureHelpTypeParameters {
 		if i > 0 {
 			displayParts.WriteString(", ")
 		}
@@ -360,7 +360,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 
 		result[i] = &signatureHelpItemInfo{
 			isVariadic:   false,
-			parameters:   getTypeParameters,
+			parameters:   signatureHelpTypeParameters,
 			displayParts: displayParameters.String(),
 		}
 	}
@@ -370,18 +370,18 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Checker, enclosingDeclaratipn *ast.Node, sourceFile *ast.SourceFile) []*signatureHelpItemInfo {
 	printer := printer.NewPrinter(printer.PrinterOptions{NewLine: core.NewLineKindLF}, printer.PrintHandlers{}, nil)
 
-	getTypeParameters := make([]signatureHelpParameter, len(candidateSignature.TypeParameters()))
+	signatureHelpTypeParameters := make([]signatureHelpParameter, len(candidateSignature.TypeParameters()))
 	if len(candidateSignature.TypeParameters()) != 0 {
 		for i, typeParameter := range candidateSignature.TypeParameters() {
-			getTypeParameters[i] = createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaratipn, c, printer)
+			signatureHelpTypeParameters[i] = createSignatureHelpParameterForTypeParameter(typeParameter, sourceFile, enclosingDeclaratipn, c, printer)
 		}
 	}
 
 	// Creating display label for type parameters like, <T, U>
 	var displayParts strings.Builder
-	if len(getTypeParameters) != 0 {
+	if len(signatureHelpTypeParameters) != 0 {
 		displayParts.WriteString(scanner.TokenToString(ast.KindLessThanToken))
-		for _, typeParameter := range getTypeParameters {
+		for _, typeParameter := range signatureHelpTypeParameters {
 			displayParts.WriteString(*typeParameter.parameterInfo.Label.String)
 		}
 		displayParts.WriteString(scanner.TokenToString(ast.KindGreaterThanToken))
