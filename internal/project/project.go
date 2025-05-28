@@ -155,8 +155,9 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 	}
 	client := host.Client()
 	if host.IsWatchEnabled() && client != nil {
-		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, getWatchGlobs)
-		project.affectingLocationsWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, getWatchGlobs)
+		globMapper := createGlobMapper(host)
+		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, globMapper)
+		project.affectingLocationsWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, globMapper)
 	}
 	project.markAsDirty()
 	return project
