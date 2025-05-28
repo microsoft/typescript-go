@@ -30,7 +30,6 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 		export.Flags = ast.NodeFlagsReparsed
 		export.Loc = bin.Loc
 		p.reparseList = append(p.reparseList, export)
-		p.setReparsed(node, export)
 		p.commonJSModuleIndicator = export
 	}
 }
@@ -91,7 +90,6 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				ast.SetParentInChildren(typeAlias)
 				p.reparseList = append(p.reparseList, typeAlias)
-				p.setReparsed(tag, typeAlias)
 			case ast.KindJSDocImportTag:
 				importTag := tag.AsJSDocImportTag()
 				importClause := p.factory.DeepCloneNode(importTag.ImportClause)
@@ -109,7 +107,6 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
 				importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				p.reparseList = append(p.reparseList, importDeclaration)
-				p.setReparsed(tag, importDeclaration)
 				// !!! @overload and other unattached tags (@callback et al) support goes here
 			}
 			if !isLast {
@@ -229,7 +226,6 @@ func (p *Parser) gatherTypeParameters(j *ast.Node) *ast.NodeList {
 					reparse.AsTypeParameter().Constraint = constraintClone
 				}
 				reparse.Flags |= ast.NodeFlagsReparsed
-				p.setReparsed(tp, reparse)
 				typeParameters = append(typeParameters, reparse)
 			}
 		}
@@ -272,7 +268,6 @@ func (p *Parser) makeNewTypeAssertion(t *ast.TypeNode, e *ast.Node) *ast.Node {
 	assert := p.factory.NewTypeAssertion(t, p.factory.DeepCloneNode(e))
 	assert.Flags = p.contextFlags | ast.NodeFlagsReparsed
 	assert.Loc = core.NewTextRange(e.Pos(), e.End())
-	p.setReparsed(e, assert)
 	return assert
 }
 
@@ -282,13 +277,5 @@ func (p *Parser) makeNewType(typeExpression *ast.TypeNode) *ast.Node {
 	}
 	t := p.factory.DeepCloneNode(typeExpression.Type())
 	t.Flags |= ast.NodeFlagsReparsed
-	p.setReparsed(typeExpression.Type(), t)
 	return t
-}
-
-func (p *Parser) setReparsed(original *ast.Node, reparsed *ast.Node) {
-	if p.reparsedNodes == nil {
-		p.reparsedNodes = make(map[*ast.Node]*ast.Node)
-	}
-	p.reparsedNodes[original] = reparsed
 }

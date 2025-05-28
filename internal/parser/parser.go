@@ -76,7 +76,6 @@ type Parser struct {
 	jsdocCommentRangesSpace []ast.CommentRange
 	jsdocTagCommentsSpace   []string
 	reparseList             []*ast.Node
-	reparsedNodes           map[*ast.Node]*ast.Node
 	commonJSModuleIndicator *ast.Node
 }
 
@@ -355,7 +354,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.NodeCount = p.factory.NodeCount()
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
-	result.ReparsedNodes = p.reparsedNodes
 	result.SetJSDocCache(p.jsdocCache)
 }
 
