@@ -1,14 +1,11 @@
-file.js(4,14): error TS2536: Type 'K' cannot be used to index type 'T'.
 file.js(10,7): error TS2322: Type 'string' is not assignable to type 'number'.
 
 
-==== file.js (2 errors) ====
+==== file.js (1 errors) ====
     /**
      * @template T
      * @template {keyof T} K
      * @typedef {T[K]} Foo
-                 ~~~~
-!!! error TS2536: Type 'K' cannot be used to index type 'T'.
      */
     
     const x = { a: 1 };

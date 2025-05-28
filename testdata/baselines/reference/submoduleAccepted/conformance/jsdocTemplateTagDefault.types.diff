@@ -14,7 +14,7 @@
   */
  function f2(a, b) {}
 ->f2 : <T extends string | number = string, U>(a: T, b: U) => void
-+>f2 : <T, U>(a: T, b: U) => void
++>f2 : <T extends string | number, U>(a: T, b: U) => void
  >a : T
  >b : U
 

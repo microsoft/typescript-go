@@ -1,11 +1,7 @@
-a.js(14,10): error TS2339: Property 'a' does not exist on type 'T'.
-a.js(14,16): error TS2339: Property 'b' does not exist on type 'T'.
-a.js(14,29): error TS2339: Property 'a' does not exist on type 'U'.
-a.js(14,35): error TS2339: Property 'b' does not exist on type 'U'.
-a.js(14,49): error TS2339: Property 'c' does not exist on type 'V'.
+a.js(21,3): error TS2741: Property 'b' is missing in type '{ a: number; }' but required in type '{ a: number; b: string; }'.
 
 
-==== a.js (5 errors) ====
+==== a.js (1 errors) ====
     /**
      * @template {{ a: number, b: string }} T,U A Comment
      * @template {{ c: boolean }} V uh ... are comments even supported??
@@ -20,16 +16,6 @@ a.js(14,49): error TS2339: Property 'c' does not exist on type 'V'.
      */
     function f(t, u, v, w, x) {
         if(t.a + t.b.length > u.a - u.b.length && v.c) {
-             ~
-!!! error TS2339: Property 'a' does not exist on type 'T'.
-                   ~
-!!! error TS2339: Property 'b' does not exist on type 'T'.
-                                ~
-!!! error TS2339: Property 'a' does not exist on type 'U'.
-                                      ~
-!!! error TS2339: Property 'b' does not exist on type 'U'.
-                                                    ~
-!!! error TS2339: Property 'c' does not exist on type 'V'.
             return w;
         }
         return x;
@@ -37,6 +23,9 @@ a.js(14,49): error TS2339: Property 'c' does not exist on type 'V'.
     
     f({ a: 12, b: 'hi', c: null }, undefined, { c: false, d: 12, b: undefined }, 101, 'nope');
     f({ a: 12  }, undefined, undefined, 101, 'nope');
+      ~~~~~~~~~~
+!!! error TS2741: Property 'b' is missing in type '{ a: number; }' but required in type '{ a: number; b: string; }'.
+!!! related TS2728 a.js:2:28: 'b' is declared here.
     
     /**
      * @template {NoLongerAllowed}

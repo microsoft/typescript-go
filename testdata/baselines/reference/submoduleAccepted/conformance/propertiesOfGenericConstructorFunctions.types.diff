@@ -5,7 +5,7 @@
   */
  function Multimap(ik, iv) {
 ->Multimap : typeof Multimap
-+>Multimap : <K, V>(ik: string, iv: V) => void
++>Multimap : <K extends string, V>(ik: string, iv: V) => void
  >ik : string
  >iv : V
 
@@ -38,7 +38,7 @@
 ->new Multimap("a", 1) : Multimap<"a" | "b", number>
 ->Multimap : typeof Multimap
 +>new Multimap("a", 1) : any
-+>Multimap : <K, V>(ik: string, iv: V) => void
++>Multimap : <K extends string, V>(ik: string, iv: V) => void
  >"a" : "a"
  >1 : 1
 
@@ -49,7 +49,7 @@
 ->Multimap : typeof Multimap
 +>map2 : any
 +>new Multimap("m", 2) : any
-+>Multimap : <K, V>(ik: string, iv: V) => void
++>Multimap : <K extends string, V>(ik: string, iv: V) => void
  >"m" : "m"
  >2 : 2
 

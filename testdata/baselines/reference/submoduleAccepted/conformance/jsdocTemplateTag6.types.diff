@@ -173,7 +173,7 @@
   */
  function f6(...args) {
 ->f6 : <const T extends readonly unknown[]>(...args: T) => T
-+>f6 : <T>(...args: T) => T
++>f6 : <T extends readonly unknown[]>(...args: T) => T
  >args : T
 
      return args;
@@ -182,7 +182,7 @@
  >t15 : readonly [1, "b", { readonly a: 1; readonly b: "x"; }]
  >f6(1, 'b', { a: 1, b: 'x' }) : readonly [1, "b", { readonly a: 1; readonly b: "x"; }]
 ->f6 : <const T extends readonly unknown[]>(...args: T) => T
-+>f6 : <T>(...args: T) => T
++>f6 : <T extends readonly unknown[]>(...args: T) => T
  >1 : 1
  >'b' : "b"
  >{ a: 1, b: 'x' } : { a: 1; b: "x"; }

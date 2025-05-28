@@ -226,7 +226,7 @@ func (p *Parser) gatherTypeParameters(j *ast.Node) *ast.NodeList {
 				if constraint != nil {
 					constraintClone := p.factory.DeepCloneNode(constraint.Type())
 					constraintClone.Flags |= ast.NodeFlagsReparsed
-					typeParameter.Constraint = constraintClone
+					reparse.AsTypeParameter().Constraint = constraintClone
 				}
 				reparse.Flags |= ast.NodeFlagsReparsed
 				p.setReparsed(tp, reparse)
