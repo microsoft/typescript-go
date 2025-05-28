@@ -123,7 +123,7 @@ func TestTi(t *testing.T) {
 		assert.Equal(t, status, project.TypingsInstallerStatus{
 			RequestId: 2,
 			Project:   p,
-			Status:    "Skipped 0 typings",
+			Status:    "Skipped 1 typings",
 		})
 	})
 
@@ -522,7 +522,7 @@ func TestTi(t *testing.T) {
 		assert.Equal(t, status, project.TypingsInstallerStatus{
 			RequestId: 1,
 			Project:   p,
-			Status:    "Skipped 0 typings",
+			Status:    "Skipped 1 typings",
 		})
 		assert.NilError(t, host.FS().WriteFile(
 			"/user/username/projects/project/package.json",
@@ -697,7 +697,7 @@ func TestTi(t *testing.T) {
 		assert.Equal(t, status, project.TypingsInstallerStatus{
 			RequestId: 1,
 			Project:   p,
-			Status:    "Skipped 0 typings",
+			Status:    "Skipped 1 typings",
 		})
 		program := p.GetProgram()
 		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const x = 10;")
@@ -791,7 +791,7 @@ func TestTi(t *testing.T) {
 		assert.Equal(t, status, project.TypingsInstallerStatus{
 			RequestId: 1,
 			Project:   p,
-			Status:    "Skipped 0 typings",
+			Status:    "Skipped 1 typings",
 		})
 		program := p.GetProgram()
 		assert.Equal(t, program.GetSourceFile(projecttestutil.TestTypingsLocation+"/node_modules/@types/jquery/index.d.ts").Text(), "export const x = 10;")
