@@ -126,13 +126,14 @@ type Project struct {
 	name string
 	kind Kind
 
-	mu                 sync.Mutex
-	initialLoadPending bool
-	dirty              bool
-	version            int
-	deferredClose      bool
-	pendingReload      PendingReload
-	dirtyFilePath      tspath.Path
+	mu                     sync.Mutex
+	initialLoadPending     bool
+	dirty                  bool
+	version                int
+	deferredClose          bool
+	pendingReload          PendingReload
+	dirtyFilePath          tspath.Path
+	hasAddedorRemovedFiles bool
 
 	comparePathsOptions tspath.ComparePathsOptions
 	currentDirectory    string
@@ -450,6 +451,10 @@ func (p *Project) markAsDirtyLocked() {
 	}
 }
 
+func (p *Project) onFileAddedOrRemoved() {
+	p.hasAddedorRemovedFiles = true
+}
+
 // updateGraph updates the set of files that contribute to the project.
 // Returns true if the set of files in has changed. NOTE: this is the
 // opposite of the return value in Strada, which was frequently inverted,
@@ -482,6 +487,8 @@ func (p *Project) updateGraph() bool {
 	}
 
 	oldProgramReused := p.updateProgram()
+	hasAddedOrRemovedFiles := p.hasAddedorRemovedFiles
+	p.hasAddedorRemovedFiles = false
 	p.dirty = false
 	p.dirtyFilePath = ""
 	if writeFileNames {
@@ -497,7 +504,7 @@ func (p *Project) updateGraph() bool {
 				}
 			}
 		}
-		p.enqueueInstallTypingsForProject(oldProgram, false)
+		p.enqueueInstallTypingsForProject(oldProgram, hasAddedOrRemovedFiles)
 		// TODO: this is currently always synchronously called by some kind of updating request,
 		// but in Strada we throttle, so at least sometimes this should be considered top-level?
 		p.updateWatchers(context.TODO())
@@ -792,6 +799,7 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 			p.pendingReload = PendingReloadFileNames
 		}
 	}
+	p.onFileAddedOrRemoved()
 
 	// !!!
 	// if (fileExists) {
