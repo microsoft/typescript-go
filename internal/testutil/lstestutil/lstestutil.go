@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	runner "github.com/microsoft/typescript-go/internal/testrunner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 // Inserted in source files by surrounding desired text
@@ -113,6 +114,7 @@ var _ ls.Script = (*TestFileInfo)(nil)
 const emitThisFileOption = "emitthisfile"
 
 func parseFileContent(filename string, content string, fileOptions map[string]string) *testFileWithMarkers {
+	filename = tspath.GetNormalizedAbsolutePath(filename, "/")
 	// !!! chompLeadingSpace
 	// !!! validate characters in markers
 	// Any slash-star comment with a character not in this string is not a marker.
@@ -215,3 +217,9 @@ func parseFileContent(filename string, content string, fileOptions map[string]st
 		markers: markers,
 	}
 }
+
+func PtrTo[T any](v T) *T {
+	return &v
+}
+
+var DefaultCommitCharacters = []string{".", ",", ";"}

@@ -7,22 +7,30 @@ import (
 	"os"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
-// TODO: move this to a fourslash package
+// !!! move this to a fourslash package
 
 type FourslashTest struct {
-	server   *lsp.Server
-	in       *lsproto.BaseWriter
-	out      *lsproto.BaseReader
-	id       int32
+	server *lsp.Server
+	in     *lsproto.BaseWriter
+	out    *lsproto.BaseReader
+	id     int32
+
 	testData *TestData
+
+	currentCaretPosition lsproto.Position
+	currentFilename      string
+	lastKnownMarkerName  string
+	activeFilename       string
 	// !!! markers
 	// !!! ranges
 	// !!! files
@@ -75,6 +83,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	done := func() {
 		inputWriter.Close()
+		outputReader.Close()
 	}
 	return f, done
 }
@@ -89,7 +98,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	capabilities.General = &lsproto.GeneralClientCapabilities{
 		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
 	}
-	capabilities.Workspace = &lsproto.WorkspaceClientCapabilities{}
+	// !!! allow overriding of capabilities somehow, but use defaults if not set
 	// !!! set capabilities inline once that's allowed by the lsp types
 	params := &lsproto.InitializeParams{}
 	params.Capabilities = capabilities
@@ -142,30 +151,150 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	return res
 }
 
-func (f *FourslashTest) VerifyCompletions(t *testing.T, markerName string, expected any) {
+// !!! unsorted completions? only used in 47 tests
+type VerifyCompletionsResult struct {
+	Includes []*lsproto.CompletionItem
+	Excludes []string
+	Exact    *lsproto.CompletionList
+}
+
+// !!! user preferences param
+// !!! completion context param
+// !!! go to marker: use current marker if none specified
+func (f *FourslashTest) VerifyCompletions(t *testing.T, markerName string, expected VerifyCompletionsResult) {
+	f.GoToMarker(t, markerName)
+	f.verifyCompletionsWorker(t, expected)
+}
+
+func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
 	marker, ok := f.testData.MarkerPositions[markerName]
 	if !ok {
 		t.Fatalf("Marker %s not found", markerName)
 	}
+	f.ensureActiveFile(t, marker.Filename)
+	f.currentCaretPosition = marker.LSPosition
+	f.currentFilename = marker.Filename
+	f.lastKnownMarkerName = marker.Name
+}
+
+func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
+	if f.activeFilename != filename {
+		file := core.Find(f.testData.Files, func(f *TestFileInfo) bool {
+			return f.Filename == filename
+		})
+		if file == nil {
+			t.Fatalf("File %s not found in test data", filename)
+		}
+		f.openFile(t, file)
+	}
+}
+
+func (f *FourslashTest) openFile(t *testing.T, file *TestFileInfo) {
+	// !!! normalize file path?
+	f.activeFilename = file.Filename
+	f.sendNotification(t, lsproto.MethodTextDocumentDidOpen, &lsproto.DidOpenTextDocumentParams{
+		TextDocument: &lsproto.TextDocumentItem{
+			Uri:        ls.FileNameToDocumentURI(file.Filename),
+			LanguageId: getLanguageKind(file.Filename),
+			Text:       file.Content,
+		},
+	})
+}
+
+func getLanguageKind(filename string) lsproto.LanguageKind {
+	if tspath.FileExtensionIsOneOf(
+		filename,
+		[]string{tspath.ExtensionTs, tspath.ExtensionMts, tspath.ExtensionCts,
+			tspath.ExtensionDmts, tspath.ExtensionDcts, tspath.ExtensionDts}) {
+		return lsproto.LanguageKindTypeScript
+	}
+	if tspath.FileExtensionIsOneOf(filename, []string{tspath.ExtensionJs, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
+		return lsproto.LanguageKindJavaScript
+	}
+	if tspath.FileExtensionIs(filename, tspath.ExtensionJsx) {
+		return lsproto.LanguageKindJavaScriptReact
+	}
+	if tspath.FileExtensionIs(filename, tspath.ExtensionTsx) {
+		return lsproto.LanguageKindTypeScriptReact
+	}
+	if tspath.FileExtensionIs(filename, tspath.ExtensionJson) {
+		return lsproto.LanguageKindJSON
+	}
+	return lsproto.LanguageKindTypeScript // !!! should we error in this case?
+}
+
+func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected VerifyCompletionsResult) {
 	params := &lsproto.CompletionParams{
 		TextDocumentPositionParams: lsproto.TextDocumentPositionParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: lsproto.DocumentUri(marker.Filename),
+				Uri: ls.FileNameToDocumentURI(f.currentFilename),
 			},
-			Position: marker.LSPosition,
+			Position: f.currentCaretPosition,
 		},
+		Context: &lsproto.CompletionContext{},
 	}
 	resMsg := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
 	if resMsg == nil {
-		t.Fatalf("Nil response received for completion request at marker %s", markerName)
+		t.Fatalf("Nil response received for completion request at marker %s", f.lastKnownMarkerName)
 	}
-	response := resMsg.AsResponse()
-	switch response.Result.(type) {
-	case *lsproto.CompletionList:
-		// !!! verify completion list
-		// !!! test failure should indicate which marker failed via some sort of prefix msg
+	result := resMsg.AsResponse().Result
+	list := &lsproto.CompletionList{}
+	err := fromDataToLsp(result, list)
+	if err != nil {
+		t.Fatalf("Unexpected response for completion request at marker %s: %v", f.lastKnownMarkerName, result)
+	}
+	verifyCompletionsResult(t, f.lastKnownMarkerName, list, expected)
+}
+
+func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected VerifyCompletionsResult) {
+	prefix := fmt.Sprintf("At marker '%s': ", markerName)
+	if expected.Exact != nil {
+		if expected.Includes != nil {
+			t.Fatal(prefix + "Expected exact completion list but also specified 'includes'.")
+		}
+		if expected.Excludes != nil {
+			t.Fatal(prefix + "Expected exact completion list but also specified 'excludes'.")
+		}
+		assertDeepEqual(t, actual, expected.Exact, prefix+"Exact completion list mismatch")
 		return
-	default:
-		t.Fatalf("Unexpected response type for completion request at marker %s: %T", markerName, response.Result)
+	}
+	nameToActualItem := make(map[string]*lsproto.CompletionItem)
+	if actual != nil {
+		for _, item := range actual.Items {
+			nameToActualItem[item.Label] = item
+		}
+	}
+	if expected.Includes != nil {
+		for _, item := range expected.Includes {
+			actualItem, ok := nameToActualItem[item.Label]
+			if !ok {
+				t.Fatalf("%sLabel %s not found in actual items. Actual items: %v", prefix, item.Label, actual.Items)
+			}
+			assertDeepEqual(t, actualItem, item, prefix+"Includes completion item mismatch for label "+item.Label)
+		}
+	}
+	for _, exclude := range expected.Excludes {
+		if _, ok := nameToActualItem[exclude]; ok {
+			t.Fatalf("%sLabel %s should not be in actual items but was found. Actual items: %v", prefix, exclude, actual.Items)
+		}
+	}
+}
+
+// Converts from a generic JSON data structure to a specific LSP type.
+func fromDataToLsp(jsonData any, result any) error {
+	bytes, err := json.Marshal(jsonData)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bytes, result)
+}
+
+// !!! don't compare properties that are not set in the expected value
+func assertDeepEqual(t *testing.T, actual any, expected any, prefix string) {
+	t.Helper()
+
+	diff := cmp.Diff(actual, expected)
+	if diff != "" {
+		t.Fatalf("%s:\n%s", prefix, diff)
 	}
 }

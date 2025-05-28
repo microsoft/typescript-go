@@ -286,6 +286,8 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 			handle := func() {
 				defer func() {
 					if r := recover(); r != nil {
+						stack := debug.Stack()
+						s.Log("panic obtaining completions:", r, string(stack))
 						// !!! send something back to client
 						lspExit()
 					}
@@ -478,7 +480,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 }
 
 func (s *Server) handleInitialized(ctx context.Context, req *lsproto.RequestMessage) error {
-	if s.initializeParams.Capabilities.Workspace.DidChangeWatchedFiles != nil && *s.initializeParams.Capabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration {
+	if shouldEnableWatch(s.initializeParams) {
 		s.watchEnabled = true
 	}
 
@@ -578,7 +580,7 @@ func (s *Server) handleCompletion(ctx context.Context, req *lsproto.RequestMessa
 		params.TextDocument.Uri,
 		params.Position,
 		params.Context,
-		s.initializeParams.Capabilities.TextDocument.Completion,
+		getCompletionClientCapabilities(s.initializeParams),
 		&ls.UserPreferences{})
 	if err != nil {
 		return err
@@ -614,4 +616,19 @@ func ptrIsTrue(v *bool) bool {
 		return false
 	}
 	return *v
+}
+
+func shouldEnableWatch(params *lsproto.InitializeParams) bool {
+	if params == nil || params.Capabilities == nil || params.Capabilities.Workspace == nil {
+		return false
+	}
+	return params.Capabilities.Workspace.DidChangeWatchedFiles != nil &&
+		ptrIsTrue(params.Capabilities.Workspace.DidChangeWatchedFiles.DynamicRegistration)
+}
+
+func getCompletionClientCapabilities(params *lsproto.InitializeParams) *lsproto.CompletionClientCapabilities {
+	if params == nil || params.Capabilities == nil || params.Capabilities.TextDocument == nil {
+		return nil
+	}
+	return params.Capabilities.TextDocument.Completion
 }

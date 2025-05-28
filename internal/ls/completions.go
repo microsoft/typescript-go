@@ -31,12 +31,16 @@ func (l *LanguageService) ProvideCompletion(
 	preferences *UserPreferences,
 ) (*lsproto.CompletionList, error) {
 	program, file := l.getProgramAndFile(documentURI)
+	var triggerCharacter *string
+	if context != nil {
+		triggerCharacter = context.TriggerCharacter
+	}
 	return l.getCompletionsAtPosition(
 		ctx,
 		program,
 		file,
 		int(l.converters.LineAndCharacterToPosition(file, position)),
-		context,
+		triggerCharacter,
 		preferences,
 		clientOptions,
 	), nil
@@ -271,16 +275,16 @@ func (l *LanguageService) getCompletionsAtPosition(
 	program *compiler.Program,
 	file *ast.SourceFile,
 	position int,
-	context *lsproto.CompletionContext,
+	triggerCharacter *string,
 	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	_, previousToken := getRelevantTokens(position, file)
-	if context.TriggerCharacter != nil && !isInString(file, position, previousToken) && !isValidTrigger(file, *context.TriggerCharacter, previousToken, position) {
+	if triggerCharacter != nil && !isInString(file, position, previousToken) && !isValidTrigger(file, *triggerCharacter, previousToken, position) {
 		return nil
 	}
 
-	if context.TriggerCharacter != nil && *context.TriggerCharacter == " " {
+	if triggerCharacter != nil && *triggerCharacter == " " {
 		// `isValidTrigger` ensures we are at `import |`
 		if ptrIsTrue(preferences.IncludeCompletionsForImportStatements) {
 			return &lsproto.CompletionList{
@@ -1858,7 +1862,7 @@ func (l *LanguageService) createCompletionItem(
 		insertText = origin.asObjectLiteralMethod().insertText
 		isSnippet = origin.asObjectLiteralMethod().isSnippet
 		labelDetails = origin.asObjectLiteralMethod().labelDetails // !!! check if this can conflict with case above where we set label details
-		if !ptrIsTrue(clientOptions.CompletionItem.LabelDetailsSupport) {
+		if !clientSupportsItemLabelDetails(clientOptions) {
 			name = name + *origin.asObjectLiteralMethod().labelDetails.Detail
 			labelDetails = nil
 		}
@@ -1868,7 +1872,7 @@ func (l *LanguageService) createCompletionItem(
 
 	if data.isJsxIdentifierExpected &&
 		!data.isRightOfOpenTag &&
-		ptrIsTrue(clientOptions.CompletionItem.SnippetSupport) &&
+		clientSupportsItemSnippet(clientOptions) &&
 		!jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleNone) &&
 		!(ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
 		useBraces := jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleBraces)
@@ -1936,10 +1940,10 @@ func (l *LanguageService) createCompletionItem(
 
 	elementKind := getSymbolKind(typeChecker, symbol, data.location)
 	var commitCharacters *[]string
-	if ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport) {
+	if clientSupportsItemCommitCharacters(clientOptions) {
 		if elementKind == ScriptElementKindWarning || elementKind == ScriptElementKindString {
 			commitCharacters = &[]string{}
-		} else if !supportsDefaultCommitCharacters(clientOptions) {
+		} else if !clientSupportsDefaultCommitCharacters(clientOptions) {
 			commitCharacters = ptrTo(data.defaultCommitCharacters)
 		}
 		// Otherwise use the completion list default.
@@ -1968,11 +1972,6 @@ func (l *LanguageService) createCompletionItem(
 		preselect,
 		source,
 	)
-}
-
-func supportsDefaultCommitCharacters(clientOptions *lsproto.CompletionClientCapabilities) bool {
-	return clientOptions.CompletionList.ItemDefaults != nil &&
-		slices.Contains(*clientOptions.CompletionList.ItemDefaults, "commitCharacters")
 }
 
 func isRecommendedCompletionMatch(localSymbol *ast.Symbol, recommendedCompletion *ast.Symbol, typeChecker *checker.Checker) bool {
@@ -3862,8 +3861,8 @@ func setCommitCharacters(
 	defaultCommitCharacters *[]string,
 ) *lsproto.CompletionItemDefaults {
 	var itemDefaults *lsproto.CompletionItemDefaults
-	supportsItemCommitCharacters := ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport)
-	if supportsDefaultCommitCharacters(clientOptions) && supportsItemCommitCharacters {
+	supportsItemCommitCharacters := clientSupportsItemCommitCharacters(clientOptions)
+	if clientSupportsDefaultCommitCharacters(clientOptions) && supportsItemCommitCharacters {
 		itemDefaults = &lsproto.CompletionItemDefaults{
 			CommitCharacters: defaultCommitCharacters,
 		}
@@ -4000,7 +3999,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		}
 	} else {
 		// Ported from vscode ts extension.
-		if optionalReplacementSpan != nil && ptrIsTrue(clientOptions.CompletionItem.InsertReplaceSupport) {
+		if optionalReplacementSpan != nil && clientSupportsItemInsertReplace(clientOptions) {
 			insertRange := l.createLspRangeFromBounds(optionalReplacementSpan.Pos(), position, file)
 			replaceRange := l.createLspRangeFromBounds(optionalReplacementSpan.Pos(), optionalReplacementSpan.End(), file)
 			textEdit = &lsproto.TextEditOrInsertReplaceEdit{
@@ -4026,7 +4025,7 @@ func (l *LanguageService) createLSPCompletionItem(
 			filterText = accessorText + core.IfElse(insertText != "", insertText, name)
 			if textEdit == nil {
 				insertText = filterText
-				if wordRange != nil && ptrIsTrue(clientOptions.CompletionItem.InsertReplaceSupport) {
+				if wordRange != nil && clientSupportsItemInsertReplace(clientOptions) {
 					textEdit = &lsproto.TextEditOrInsertReplaceEdit{
 						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 							NewText: insertText,
@@ -4170,4 +4169,31 @@ func (l *LanguageService) getLabelStatementCompletions(
 		current = current.Parent
 	}
 	return items
+}
+
+func hasCompletionItem(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return clientOptions != nil && clientOptions.CompletionItem != nil
+}
+
+func clientSupportsItemLabelDetails(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.LabelDetailsSupport)
+}
+
+func clientSupportsItemSnippet(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.SnippetSupport)
+}
+
+func clientSupportsItemCommitCharacters(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport)
+}
+
+func clientSupportsItemInsertReplace(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.InsertReplaceSupport)
+}
+
+func clientSupportsDefaultCommitCharacters(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	if clientOptions == nil || clientOptions.CompletionList == nil || clientOptions.CompletionList.ItemDefaults == nil {
+		return false
+	}
+	return slices.Contains(*clientOptions.CompletionList.ItemDefaults, "commitCharacters")
 }
