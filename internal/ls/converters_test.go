@@ -32,6 +32,7 @@ func TestDocumentURIToFileName(t *testing.T) {
 		{"file:///c%3A/test%20with%20%2525/c%23code", "c:/test with %25/c#code"},
 
 		{"untitled:Untitled-1", "^/untitled/ts-nul-authority/Untitled-1"},
+		{"untitled:Untitled-1#fragment", "^/untitled/ts-nul-authority/Untitled-1#fragment"},
 		{"untitled:c:/Users/jrieken/Code/abc.txt", "^/untitled/ts-nul-authority/c:/Users/jrieken/Code/abc.txt"},
 		{"untitled:C:/Users/jrieken/Code/abc.txt", "^/untitled/ts-nul-authority/c:/Users/jrieken/Code/abc.txt"},
 	}
