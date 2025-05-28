@@ -10,9 +10,9 @@
 ->exports : typeof import("index")
 ->class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof import("index")
 +>module.exports = class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof exports
-+>module.exports : typeof exports
-+>module : { exports: typeof exports; }
-+>exports : typeof exports
++>module.exports : typeof (Anonymous class)
++>module : { (Anonymous class): typeof (Anonymous class); }
++>exports : typeof (Anonymous class)
 +>class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof exports
 
      /**

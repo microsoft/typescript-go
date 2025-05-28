@@ -3,14 +3,14 @@
 === bug24492.js ===
 module.exports.D = class { }
 >module.exports.D = class { } : typeof D
->module.exports.D : typeof D
+>module.exports.D : typeof (Anonymous class)
 >module.exports : typeof import("bug24492")
 >module : { "bug24492": typeof import("bug24492"); }
 >exports : typeof import("bug24492")
->D : typeof D
+>D : typeof (Anonymous class)
 >class { } : typeof D
 
 new D()
->new D() : D
->D : typeof D
+>new D() : (Anonymous class)
+>D : typeof (Anonymous class)
 

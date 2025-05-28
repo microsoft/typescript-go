@@ -17,14 +17,18 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 	var export *ast.Node
 	switch kind {
 	case ast.JSDeclarationKindModuleExports:
-		export = p.factory.NewJSExportAssignment(bin.Right)
+		export = p.factory.NewJSExportAssignment(p.factory.DeepCloneNode(bin.Right))
 	case ast.JSDeclarationKindExportsProperty:
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)
 		nodes[0].Flags = ast.NodeFlagsReparsed
 		nodes[0].Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessName(bin.Left), bin.Right)
+		export = p.factory.NewCommonJSExport(
+			p.newModifierList(bin.Loc, nodes),
+			p.factory.DeepCloneNode(ast.GetElementOrPropertyAccessName(bin.Left)),
+			p.factory.DeepCloneNode(bin.Right),
+		)
 	}
 	if export != nil {
 		export.Flags = ast.NodeFlagsReparsed

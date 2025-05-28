@@ -7,10 +7,10 @@
 ->exports.n = {} : typeof n
 ->exports.n : typeof n
 +>exports.n = {} : {}
-+>exports.n : any
++>exports.n : {}
  >exports : typeof import("mod")
 ->n : typeof n
-+>n : any
++>n : {}
  >{} : {}
 
  exports.n.K = function () {
@@ -19,12 +19,12 @@
 ->exports.n : typeof n
 +>exports.n.K = function () {    this.x = 10;} : () => void
 +>exports.n.K : any
-+>exports.n : any
++>exports.n : {}
  >exports : typeof import("mod")
 ->n : typeof n
 ->K : typeof K
 ->function () {    this.x = 10;} : typeof K
-+>n : any
++>n : {}
 +>K : any
 +>function () {    this.x = 10;} : () => void
 
@@ -36,7 +36,15 @@
  >x : any
  >10 : 10
  }
-@@= skipped -32, +32 lines =@@
+ exports.Classic = class {
+ >exports.Classic = class {    constructor() {        this.p = 1    }} : typeof Classic
+->exports.Classic : typeof Classic
++>exports.Classic : typeof (Anonymous class)
+ >exports : typeof import("mod")
+->Classic : typeof Classic
++>Classic : typeof (Anonymous class)
+ >class {    constructor() {        this.p = 1    }} : typeof Classic
+
      constructor() {
          this.p = 1
  >this.p = 1 : 1
@@ -65,9 +73,9 @@
 +>k : any
 +>new s.n.K() : any
 +>s.n.K : any
-+>s.n : any
++>s.n : {}
 +>s : typeof import("mod")
-+>n : any
++>n : {}
 +>K : any
 
  k.x
@@ -84,11 +92,11 @@
 ->s.Classic : typeof s.Classic
 ->s : typeof s
 ->Classic : typeof s.Classic
-+>classic : Classic
-+>new s.Classic() : Classic
-+>s.Classic : typeof Classic
++>classic : (Anonymous class)
++>new s.Classic() : (Anonymous class)
++>s.Classic : typeof (Anonymous class)
 +>s : typeof import("mod")
-+>Classic : typeof Classic
++>Classic : typeof (Anonymous class)
 
 
  /** @param {s.n.K} c

@@ -651,6 +651,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindExportDeclaration,
 		KindExportAssignment,
 		KindJSExportAssignment,
+		KindCommonJSExport,
 		KindNamespaceExportDeclaration:
 		return true
 	}
