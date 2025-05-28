@@ -247,8 +247,6 @@ type compileAndEmitResult struct {
 }
 
 func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
-	// todo: check if third return needed after execute is fully implemented
-
 	ctx := context.Background()
 	options := program.Options()
 	allDiagnostics := slices.Clip(program.GetConfigFileParsingDiagnostics())
