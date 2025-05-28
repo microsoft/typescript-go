@@ -304,10 +304,13 @@ func runWithInferenceBlockedFromSourceNode[T any](c *Checker, node *ast.Node, fn
 	return result
 }
 
-func GetResolvedSignatureForSignatureHelp(node *ast.Node, candidatesOutArray *[]*Signature, argumentCount int, c *Checker) *Signature {
+func GetResolvedSignatureForSignatureHelp(node *ast.Node, argumentCount int, c *Checker) (*Signature, []*Signature) {
+	var candidatesOutArray []*Signature
 	return runWithoutResolvedSignatureCaching(c, node, func() *Signature {
-		return c.getResolvedSignatureWorker(node, candidatesOutArray, CheckModeIsForSignatureHelp, argumentCount)
-	})
+		var res *Signature
+		res, candidatesOutArray = c.getResolvedSignatureWorker(node, CheckModeIsForSignatureHelp, argumentCount)
+		return res
+	}), candidatesOutArray
 }
 
 func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
@@ -516,13 +519,14 @@ func (c *Checker) GetConstantValue(node *ast.Node) any {
 	return nil
 }
 
-func (c *Checker) getResolvedSignatureWorker(node *ast.Node, candidatesOutArray *[]*Signature, checkMode CheckMode, argumentCount int) *Signature {
+func (c *Checker) getResolvedSignatureWorker(node *ast.Node, checkMode CheckMode, argumentCount int) (*Signature, []*Signature) {
 	parsedNode := printer.NewEmitContext().ParseNode(node)
 	c.apparentArgumentCount = &argumentCount
+	candidatesOutArray := &[]*Signature{}
 	var res *Signature
 	if parsedNode != nil {
 		res = c.getResolvedSignature(parsedNode, candidatesOutArray, checkMode)
 	}
 	c.apparentArgumentCount = nil
-	return res
+	return res, *candidatesOutArray
 }

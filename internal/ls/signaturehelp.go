@@ -172,7 +172,7 @@ func getTypeHelpItem(symbol *ast.Symbol, typeParameter []*checker.Type, enclosin
 	}
 }
 
-func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignature *checker.Signature, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker, useFullPrefix bool, clientOptions *lsproto.SignatureHelpClientCapabilities) *lsproto.SignatureHelp {
+func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature *checker.Signature, argumentInfo *argumentListInfo, sourceFile *ast.SourceFile, c *checker.Checker, useFullPrefix bool, clientOptions *lsproto.SignatureHelpClientCapabilities) *lsproto.SignatureHelp {
 	enclosingDeclaration := getEnclosingDeclarationFromInvocation(argumentInfo.invocation)
 	if enclosingDeclaration == nil {
 		return nil
@@ -191,8 +191,8 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 	if callTargetSymbol != nil {
 		callTargetDisplayParts.WriteString(c.SymbolToString(callTargetSymbol))
 	}
-	items := make([][]signatureInformation, len(*candidates))
-	for i, candidateSignature := range *candidates {
+	items := make([][]signatureInformation, len(candidates))
+	for i, candidateSignature := range candidates {
 		items[i] = getSignatureHelpItem(candidateSignature, argumentInfo.isTypeParameterList, callTargetDisplayParts.String(), enclosingDeclaration, sourceFile, c)
 	}
 
@@ -200,7 +200,7 @@ func createSignatureHelpItems(candidates *[]*checker.Signature, resolvedSignatur
 	itemSeen := 0
 	for i := range items {
 		item := items[i]
-		if (*candidates)[i] == resolvedSignature {
+		if (candidates)[i] == resolvedSignature {
 			selectedItemIndex = itemSeen
 			if len(item) > 1 {
 				count := 0
@@ -499,7 +499,7 @@ func getExpressionFromInvocation(argumentInfo *argumentListInfo) *ast.Node {
 }
 
 type candidateInfo struct {
-	candidates        *[]*checker.Signature
+	candidates        []*checker.Signature
 	resolvedSignature *checker.Signature
 }
 
@@ -513,8 +513,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 		if onlyUseSyntacticOwners && !isSyntacticOwner(startingToken, info.invocation.callInvocation.node, sourceFile) {
 			return nil
 		}
-		candidates := &[]*checker.Signature{}
-		resolvedSignature := checker.GetResolvedSignatureForSignatureHelp(info.invocation.callInvocation.node, candidates, info.argumentCount, c)
+		resolvedSignature, candidates := checker.GetResolvedSignatureForSignatureHelp(info.invocation.callInvocation.node, info.argumentCount, c)
 		return &CandidateOrTypeInfo{
 			candidateInfo: &candidateInfo{
 				candidates:        candidates,
@@ -535,7 +534,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 		if len(candidates) != 0 {
 			return &CandidateOrTypeInfo{
 				candidateInfo: &candidateInfo{
-					candidates:        &candidates,
+					candidates:        candidates,
 					resolvedSignature: candidates[0],
 				},
 			}
@@ -548,7 +547,7 @@ func getCandidateOrTypeInfo(info *argumentListInfo, c *checker.Checker, sourceFi
 	if info.invocation.contextualInvocation != nil {
 		return &CandidateOrTypeInfo{
 			candidateInfo: &candidateInfo{
-				candidates:        &[]*checker.Signature{info.invocation.contextualInvocation.signature},
+				candidates:        []*checker.Signature{info.invocation.contextualInvocation.signature},
 				resolvedSignature: info.invocation.contextualInvocation.signature,
 			},
 		}
