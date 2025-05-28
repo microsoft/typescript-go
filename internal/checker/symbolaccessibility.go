@@ -310,7 +310,7 @@ func (ch *Checker) getContainersOfSymbol(symbol *ast.Symbol, enclosingDeclaratio
 			}
 		}
 		if ast.IsClassExpression(d) && ast.IsBinaryExpression(d.Parent) && d.Parent.AsBinaryExpression().OperatorToken.Kind == ast.KindEqualsToken && ast.IsAccessExpression(d.Parent.AsBinaryExpression().Left) && ast.IsEntityNameExpression(d.Parent.AsBinaryExpression().Left.Expression()) {
-			if isModuleExportsAccessExpression(d.Parent.AsBinaryExpression().Left) || ast.IsExportsIdentifier(d.Parent.AsBinaryExpression().Left.Expression()) {
+			if ast.IsModuleExportsAccessExpression(d.Parent.AsBinaryExpression().Left) || ast.IsExportsIdentifier(d.Parent.AsBinaryExpression().Left.Expression()) {
 				sym := ch.getSymbolOfDeclaration(ast.GetSourceFileOfNode(d).AsNode())
 				if sym != nil && !slices.Contains(candidates, sym) {
 					candidates = append(candidates, sym)

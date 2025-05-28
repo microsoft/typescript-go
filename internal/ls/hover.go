@@ -98,7 +98,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 			}
 			c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
 			p.RawWrite(": ")
-			c.WriteType(c.GetTypeOfSymbol(symbol), file.AsNode(), typeFormatFlags, p)
+			c.WriteType(c.GetTypeOfSymbolAtLocation(symbol, node), file.AsNode(), typeFormatFlags, p)
 		case flags&ast.SymbolFlagsEnumMember != 0:
 			p.RawWrite("(enum member) ")
 			t := c.GetTypeOfSymbol(symbol)
