@@ -359,6 +359,11 @@ func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
 	return false
 }
 
+func isRightSideOfAccessExpression(node *ast.Node) bool {
+	return node.Parent != nil && (ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node ||
+		ast.IsElementAccessExpression(node.Parent) && node.Parent.AsElementAccessExpression().ArgumentExpression == node)
+}
+
 func isTopLevelInExternalModuleAugmentation(node *ast.Node) bool {
 	return node != nil && node.Parent != nil && ast.IsModuleBlock(node.Parent) && ast.IsExternalModuleAugmentation(node.Parent.Parent)
 }
@@ -1592,10 +1597,6 @@ func minAndMax[T any](slice []T, getValue func(value T) int) (int, int) {
 		}
 	}
 	return minValue, maxValue
-}
-
-func isModuleExportsAccessExpression(node *ast.Node) bool {
-	return ast.IsAccessExpression(node) && ast.IsModuleIdentifier(node.Expression()) && ast.GetElementOrPropertyAccessName(node) == "exports"
 }
 
 func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {
