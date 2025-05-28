@@ -266,7 +266,7 @@ func (p *Project) getRootFileWatchGlobs() []string {
 		result := make([]string, 0, len(globs)+1)
 		result = append(result, p.configFileName)
 		for dir, recursive := range globs {
-			result = append(result, fmt.Sprintf("%s/%s", dir, core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
+			result = append(result, fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
 		}
 		for _, fileName := range p.parsedCommandLine.LiteralFileNames() {
 			result = append(result, fileName)
