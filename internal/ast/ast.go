@@ -8825,7 +8825,6 @@ func (node *JSDocLinkCode) Name() *DeclarationName {
 
 type JSDocTypeExpression struct {
 	TypeNodeBase
-	Host *Node
 	Type *TypeNode
 }
 
