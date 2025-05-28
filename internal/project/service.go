@@ -335,7 +335,6 @@ func (s *Service) onConfigFileChanged(project *Project, changeKind lsproto.FileC
 		project.pendingReload = PendingReloadFull
 		project.markAsDirty()
 	}
-	project.updateGraph()
 	return nil
 }
 
