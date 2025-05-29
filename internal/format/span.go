@@ -121,7 +121,7 @@ func FormatSpan(ctx context.Context, span core.TextRange, file *ast.SourceFile, 
 			ctx,
 			span,
 			enclosingNode,
-			GetIndentationForNode(enclosingNode, span, file, &opts.EditorSettings),
+			GetIndentationForNode(enclosingNode, &span, file, opts),
 			getOwnOrInheritedDelta(enclosingNode, opts, file),
 			kind,
 			prepareRangeContainsErrorFunction(file.Diagnostics(), span),
@@ -348,6 +348,40 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	return w.edits
 }
 
+func (w *formatSpanWorker) getProcessNodeVisitor(node *ast.Node, indenter *dynamicIndenter, nodeStartLine int, undecoratedNodeStartLine int, childContextNode *ast.Node) *ast.NodeVisitor {
+	processChildNode := func(
+		child *ast.Node,
+		inheritedIndentation int,
+		parent *ast.Node,
+		parentDynamicIndentation *dynamicIndenter,
+		parentStartLine int,
+		undecoratedParentStartLine int,
+		isListItem bool,
+		isFirstListItem bool,
+	) {
+		// !!!
+	}
+
+	processChildNodes := func(
+		nodes *ast.NodeList,
+		parent *ast.Node,
+		parentStartLine int,
+		parentDynamicIndentation *dynamicIndenter,
+	) {
+		// !!!
+	}
+
+	return ast.NewNodeVisitor(func(child *ast.Node) *ast.Node {
+		processChildNode(child, -1, node, indenter, nodeStartLine, undecoratedNodeStartLine, false, false)
+		return node
+	}, &ast.NodeFactory{}, ast.NodeVisitorHooks{
+		VisitNodes: func(nodes *ast.NodeList, v *ast.NodeVisitor) *ast.NodeList {
+			processChildNodes(nodes, node, nodeStartLine, indenter)
+			return nodes
+		},
+	})
+}
+
 func (w *formatSpanWorker) processNode(node *ast.Node, contextNode *ast.Node, nodeStartLine int, undecoratedNodeStartLine int, indentation int, delta int) {
 	if !w.originalRange.Overlaps(withTokenStart(node, w.sourceFile)) {
 		return
@@ -371,8 +405,17 @@ func (w *formatSpanWorker) processNode(node *ast.Node, contextNode *ast.Node, no
 
 	// if there are any tokens that logically belong to node and interleave child nodes
 	// such tokens will be consumed in processChildNode for the child that follows them
-	// node.VisitEachChild(ast.NewNodeVisitor())
-	// !!!
+	v := w.getProcessNodeVisitor(node, nodeDynamicIndentation, nodeStartLine, undecoratedNodeStartLine, childContextNode)
+	node.VisitEachChild(v)
+
+	// proceed any tokens in the node that are located after child nodes
+	for w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
+		tokenInfo := w.formattingScanner.readTokenInfo(node)
+		if tokenInfo.token.Loc.End() > min(node.End(), w.originalRange.End()) {
+			break
+		}
+		w.consumeTokenAndAdvanceScanner(tokenInfo, node, nodeDynamicIndentation, node, false)
+	}
 }
 
 func (w *formatSpanWorker) processPair(currentItem *TextRangeWithKind, currentStartLine int, currentParent *ast.Node, previousItem *TextRangeWithKind, previousStartLine int, previousParent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) {
@@ -405,6 +448,11 @@ func (w *formatSpanWorker) insertIndentation(pos int, indentation int, lineAdded
 }
 
 func (w *formatSpanWorker) indentTriviaItems(trivia []*TextRangeWithKind, commentIndentation int, indentNextTokenOrTrivia bool, indentSingleLine func(item *TextRangeWithKind)) {
+	// !!!
+}
+
+func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo *tokenInfo, parent *ast.Node, dynamicIndenation *dynamicIndenter, container *ast.Node, isListEndToken bool) {
+	// assert(currentTokenInfo.token.Loc.ContainedBy(parent.Loc)) // !!!
 	// !!!
 }
 

@@ -34,26 +34,26 @@ type EditorSettings struct {
 
 type FormatCodeSettings struct {
 	EditorSettings
-	InsertSpaceAfterCommaDelimiter                              bool
-	InsertSpaceAfterSemicolonInForStatements                    bool
-	InsertSpaceBeforeAndAfterBinaryOperators                    bool
-	InsertSpaceAfterConstructor                                 bool
-	InsertSpaceAfterKeywordsInControlFlowStatements             bool
-	InsertSpaceAfterFunctionKeywordForAnonymousFunctions        bool
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis  bool
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets     bool
-	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces       bool
-	InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces          bool
-	InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces bool
-	InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces  bool
-	InsertSpaceAfterTypeAssertion                               bool
-	InsertSpaceBeforeFunctionParenthesis                        bool
-	PlaceOpenBraceOnNewLineForFunctions                         bool
-	PlaceOpenBraceOnNewLineForControlBlocks                     bool
-	InsertSpaceBeforeTypeAnnotation                             bool
-	IndentMultiLineObjectLiteralBeginningOnBlankLine            bool
+	InsertSpaceAfterCommaDelimiter                              core.Tristate
+	InsertSpaceAfterSemicolonInForStatements                    core.Tristate
+	InsertSpaceBeforeAndAfterBinaryOperators                    core.Tristate
+	InsertSpaceAfterConstructor                                 core.Tristate
+	InsertSpaceAfterKeywordsInControlFlowStatements             core.Tristate
+	InsertSpaceAfterFunctionKeywordForAnonymousFunctions        core.Tristate
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis  core.Tristate
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets     core.Tristate
+	InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces       core.Tristate
+	InsertSpaceAfterOpeningAndBeforeClosingEmptyBraces          core.Tristate
+	InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces core.Tristate
+	InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces  core.Tristate
+	InsertSpaceAfterTypeAssertion                               core.Tristate
+	InsertSpaceBeforeFunctionParenthesis                        core.Tristate
+	PlaceOpenBraceOnNewLineForFunctions                         core.Tristate
+	PlaceOpenBraceOnNewLineForControlBlocks                     core.Tristate
+	InsertSpaceBeforeTypeAnnotation                             core.Tristate
+	IndentMultiLineObjectLiteralBeginningOnBlankLine            core.Tristate
 	Semicolons                                                  SemicolonPreference
-	IndentSwitchCase                                            bool
+	IndentSwitchCase                                            core.Tristate
 }
 
 type formattingContext struct {
@@ -119,9 +119,7 @@ func (this *formattingContext) UpdateContext(cur *TextRangeWithKind, curParent *
 }
 
 func (this *formattingContext) rangeIsOnOneLine(node core.TextRange) core.Tristate {
-	startLine, _ := scanner.GetLineAndCharacterOfPosition(this.SourceFile, node.Pos())
-	endLine, _ := scanner.GetLineAndCharacterOfPosition(this.SourceFile, node.End())
-	if startLine == endLine {
+	if rangeIsOnOneLine(node, this.SourceFile) {
 		return core.TSTrue
 	}
 	return core.TSFalse
