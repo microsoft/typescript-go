@@ -13661,11 +13661,7 @@ func (c *Checker) getTargetOfImportEqualsDeclaration(node *ast.Node, dontResolve
 	if ast.IsVariableDeclaration(node) || node.AsImportEqualsDeclaration().ModuleReference.Kind == ast.KindExternalModuleReference {
 		moduleReference := getExternalModuleRequireArgument(node)
 		if moduleReference == nil {
-<<<<<<< HEAD
-			moduleReference = GetExternalModuleImportEqualsDeclarationExpression(node)
-=======
 			moduleReference = ast.GetExternalModuleImportEqualsDeclarationExpression(node)
->>>>>>> 360255e646e7e1e0b8930bff7f611fd67d04e9d8
 		}
 		immediate := c.resolveExternalModuleName(node, moduleReference, false /*ignoreErrors*/)
 		resolved := c.resolveExternalModuleSymbol(immediate, false /*dontResolveAlias*/)
@@ -15205,7 +15201,7 @@ func (c *Checker) GetTypeOfSymbolAtLocation(symbol *ast.Symbol, location *ast.No
 		// of the expression (which will reflect control flow analysis). If the expression indeed
 		// resolved to the given symbol, return the narrowed type.
 		if ast.IsIdentifier(location) || ast.IsPrivateIdentifier(location) {
-			if isRightSideOfQualifiedNameOrPropertyAccess(location) {
+			if IsRightSideOfQualifiedNameOrPropertyAccess(location) {
 				location = location.Parent
 			}
 			if ast.IsExpressionNode(location) && (!ast.IsAssignmentTarget(location) || isWriteAccess(location)) {
@@ -29585,11 +29581,7 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 		// 2). External module name in an import declaration
 		// 3). Require in Javascript
 		// 4). type A = import("./f/*gotToDefinitionHere*/oo")
-<<<<<<< HEAD
-		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && GetExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
-=======
 		if (ast.IsExternalModuleImportEqualsDeclaration(grandParent) && ast.GetExternalModuleImportEqualsDeclarationExpression(grandParent) == node) ||
->>>>>>> 360255e646e7e1e0b8930bff7f611fd67d04e9d8
 			((parent.Kind == ast.KindImportDeclaration || parent.Kind == ast.KindJSImportDeclaration || parent.Kind == ast.KindExportDeclaration) && parent.AsImportDeclaration().ModuleSpecifier == node) ||
 			ast.IsVariableDeclarationInitializedToRequire(grandParent) ||
 			(ast.IsLiteralTypeNode(parent) && ast.IsLiteralImportTypeNode(grandParent) && grandParent.AsImportTypeNode().Argument == parent) {

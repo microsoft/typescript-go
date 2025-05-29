@@ -958,10 +958,10 @@ func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference,
 }
 
 /** This should have similar behavior to 'processSourceFile' without diagnostics or mutation. */
-func (p *Program) GetSourceFileFromReference(referencingFile *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
-	return p.getSourceFileFromReferenceWorker(tspath.ResolveTripleslashReference(ref.FileName, referencingFile.FileName()), p.GetSourceFile, nil /*fail*/)
-}
-
+// func (p *Program) GetSourceFileFromReference(referencingFile *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
+// 	return p.getSourceFileFromReferenceWorker(tspath.ResolveTripleslashReference(ref.FileName, referencingFile.FileName()), p.GetSourceFile, nil /*fail*/)
+// }
+// !!! todo: check against new `getSourceFileFromReference`
 func (p *Program) getSourceFileFromReferenceWorker(
 	fileName string,
 	getSourceFile func(fileName string) *ast.SourceFile,

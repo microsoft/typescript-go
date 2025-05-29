@@ -6,13 +6,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
-<<<<<<< HEAD
 func (c *Checker) GetStringType() *Type {
 	return c.stringType
-=======
+}
+
 func (c *Checker) GetUnknownSymbol() *ast.Symbol {
 	return c.unknownSymbol
->>>>>>> 360255e646e7e1e0b8930bff7f611fd67d04e9d8
 }
 
 func (c *Checker) GetUnionType(types []*Type) *Type {

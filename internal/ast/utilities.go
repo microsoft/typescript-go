@@ -1540,7 +1540,7 @@ func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) JSDeclarationKind {
 			nextToLast = nextToLast.Expression()
 		}
 		idText := nextToLast.Expression().AsIdentifier().Text
-		if (idText == "exports" || idText == "module" && GetElementOrPropertyAccessName(nextToLast) == "exports") &&
+		if (idText == "exports" || idText == "module" && getElementOrPropertyAccessNameText(nextToLast) == "exports") &&
 			// ExportsProperty does not support binding with computed names
 			IsBindableStaticAccessExpression(lhs, false) {
 			// exports.name = expr OR module.exports.name = expr OR exports["name"] = expr ...
@@ -1552,6 +1552,13 @@ func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) JSDeclarationKind {
 		}
 	}
 	return JSDeclarationKindNone
+}
+
+func getElementOrPropertyAccessNameText(node *Node) string {
+	if name := GetElementOrPropertyAccessName(node); name != nil {
+		return name.Text()
+	}
+	return ""
 }
 
 /**
@@ -2601,7 +2608,7 @@ func GetDeclarationContainer(node *Node) *Node {
 }
 
 func IsPrototypeAccess(node *Node) bool {
-	return IsBindableStaticAccessExpression(node, false) && GetElementOrPropertyAccessName(node) == "prototype"
+	return IsBindableStaticAccessExpression(node, false) && getElementOrPropertyAccessNameText(node) == "prototype"
 }
 
 // Indicates that a symbol is an alias that does not merge with a local declaration.

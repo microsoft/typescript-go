@@ -345,16 +345,7 @@ func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 	return nil
 }
 
-<<<<<<< HEAD
-func GetExternalModuleImportEqualsDeclarationExpression(node *ast.Node) *ast.Node {
-	// Debug.assert(isExternalModuleImportEqualsDeclaration(node))
-	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
-}
-
 func IsRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
-=======
-func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
->>>>>>> 360255e646e7e1e0b8930bff7f611fd67d04e9d8
 	parent := node.Parent
 	switch parent.Kind {
 	case ast.KindQualifiedName:

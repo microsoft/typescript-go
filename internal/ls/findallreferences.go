@@ -14,6 +14,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+
+	"unicode/utf8"
+
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -144,9 +147,10 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 		return nil
 	}
 
-	if !ast.IsDeclaration(node.Parent) && node.Parent.Kind != ast.KindExportAssignment {
+	if !ast.IsDeclaration(node.Parent) && node.Parent.Kind != ast.KindExportAssignment && node.Parent.Kind != ast.KindJSExportAssignment {
 		// Special property assignment in javascript
 		if ast.IsInJSFile(node) {
+			// !!! jsdoc: check if branch still needed
 			binaryExpression := core.IfElse(node.Parent.Kind == ast.KindBinaryExpression,
 				node.Parent,
 				core.IfElse(ast.IsAccessExpression(node.Parent) && node.Parent.Parent.Kind == ast.KindBinaryExpression && node.Parent.Parent.AsBinaryExpression().Left == node.Parent,
@@ -187,6 +191,7 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 	if node.Parent.Name() == node || // node is name of declaration, use parent
 		node.Parent.Kind == ast.KindConstructor ||
 		node.Parent.Kind == ast.KindExportAssignment ||
+		node.Parent.Kind == ast.KindJSExportAssignment ||
 		// Property name of the import export specifier or binding pattern, use parent
 		((ast.IsImportOrExportSpecifier(node.Parent) || node.Parent.Kind == ast.KindBindingElement) && node.Parent.PropertyName() == node) ||
 		// Is default export
@@ -377,11 +382,6 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 		}
 
 		scope = container
-		if scope.Kind == ast.KindFunctionExpression {
-			for next := getNextJSDocCommentLocation(scope); next != nil; next = getNextJSDocCommentLocation(scope) {
-				scope = next
-			}
-		}
 	}
 
 	// If symbol.parent, this means we are in an export of an external module. (Otherwise we would have returned `undefined` above.)
@@ -580,7 +580,7 @@ func (l *LanguageService) getReferencedSymbolsForModuleIfDeclaredBySourceFile(sy
 		return nil
 	}
 	exportEquals := symbol.Exports[ast.InternalSymbolNameExportEquals]
-	// If !!exportEquals, we're about to add references to `import("mod")` anyway, so don't double-count them.
+	// If exportEquals != nil, we're about to add references to `import("mod")` anyway, so don't double-count them.
 	moduleReferences := getReferencedSymbolsForModule(program, symbol, exportEquals != nil, sourceFiles, sourceFilesSet)
 	if exportEquals == nil || !sourceFilesSet.Has(moduleSourceFileName) {
 		return moduleReferences
@@ -893,7 +893,7 @@ func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *c
 		return nil
 	}
 
-	if len(sourceFile.Imports) == 0 && len(sourceFile.ModuleAugmentations) == 0 {
+	if len(sourceFile.Imports()) == 0 && len(sourceFile.ModuleAugmentations) == 0 {
 		return nil
 	}
 
@@ -942,7 +942,7 @@ func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, s
 		// !!! not implemented
 		// state.searchForImportsOfExport(node, symbol, &ExportInfo{exportingModuleSymbol: symbol.Parent, exportKind: ExportKindDefault})
 	} else {
-		search := state.createSearch(node, symbol, comingFromUnknown /*comingFrom*/, "", state.populateSearchSymbolSet(symbol, node, options.use == referenceUseRename, !!options.providePrefixAndSuffixTextForRename, !!options.implementations))
+		search := state.createSearch(node, symbol, comingFromUnknown /*comingFrom*/, "", state.populateSearchSymbolSet(symbol, node, options.use == referenceUseRename, options.providePrefixAndSuffixTextForRename, options.implementations))
 		state.getReferencesInContainerOrFiles(symbol, search)
 	}
 
@@ -1059,7 +1059,15 @@ func (state *refState) createSearch(location *ast.Node, symbol *ast.Symbol, comi
 			symbolToSearchFor = symbol
 		}
 	}
-	text = core.StripQuotes(ast.SymbolName(symbolToSearchFor))
+	text = func() string {
+		var name string = ast.SymbolName(symbolToSearchFor)
+		firstChar, _ := utf8.DecodeRuneInString(name)
+		lastChar, _ := utf8.DecodeLastRuneInString(name)
+		if firstChar == lastChar && (firstChar == '\'' || firstChar == '"' || firstChar == '`') {
+			return name[1 : len(name)-1]
+		}
+		return name
+	}()
 	escapedText := text
 	if len(allSearchSymbols) == 0 {
 		allSearchSymbols = []*ast.Symbol{symbol}
@@ -1261,14 +1269,6 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 		return
 	}
 
-	// !!! not implemented
-	// if isJSDocPropertyLikeTag(parent) && parent.isNameFirst &&
-	// 	parent.TypeExpression && isJSDocTypeLiteral(parent.TypeExpression.Type()) &&
-	// 	parent.TypeExpression.Type().jsDocPropertyTags && length(parent.TypeExpression.Type().jsDocPropertyTags)  {
-	// 	getReferencesAtJSDocTypeLiteral(parent.TypeExpression.Type().jsDocPropertyTags, referenceLocation, search, state);
-	// 	return;
-	// }
-
 	relatedSymbol, relatedSymbolKind := state.getRelatedSymbol(search, referenceSymbol, referenceLocation)
 	if relatedSymbol == nil {
 		state.getReferenceForShorthandProperty(referenceSymbol, search)
@@ -1291,7 +1291,6 @@ func (state *refState) getReferencesAtLocation(sourceFile *ast.SourceFile, posit
 	// Use the parent symbol if the location is commonjs require syntax on javascript files only.
 	if ast.IsInJSFile(referenceLocation) && referenceLocation.Parent.Kind == ast.KindBindingElement &&
 		ast.IsVariableDeclarationInitializedToRequire(referenceLocation.Parent.Parent.Parent) {
-		// !!! when findAllReferences has been fully implemented, check if the behavior is the same since isVariableDeclarationInitializedToBareOrAccessedRequire has been removed
 		referenceSymbol = referenceLocation.Parent.Symbol()
 		// The parent will not have a symbol if it's an ObjectBindingPattern (when destructuring is used).  In
 		// this case, just skip it, since the bound identifiers are not an alias of the import.
@@ -1354,7 +1353,7 @@ func (state *refState) getRelatedSymbol(search *refSearch, referenceSymbol *ast.
 		referenceSymbol,
 		referenceLocation,
 		false, /*isForRenamePopulateSearchSymbolSet*/
-		state.options.use != referenceUseRename || !!state.options.providePrefixAndSuffixTextForRename, /*onlyIncludeBindingElementAtReferenceLocation*/
+		state.options.use != referenceUseRename || state.options.providePrefixAndSuffixTextForRename, /*onlyIncludeBindingElementAtReferenceLocation*/
 		func(sym *ast.Symbol, rootSymbol *ast.Symbol, baseSymbol *ast.Symbol, kind entryKind) (*ast.Symbol, entryKind) {
 			// check whether the symbol used to search itself is just the searched one.
 			if baseSymbol != nil {
@@ -1438,7 +1437,7 @@ func (state *refState) forEachRelatedSymbol(
 			panic("expected symbol.ValueDeclaration to be a parameter")
 		}
 		paramProp1, paramProp2 := state.checker.GetSymbolsOfParameterPropertyDeclaration(symbol.ValueDeclaration, symbol.Name)
-		// Debug.assert(paramProps.length == 2 && !!(paramProps[0].flags & SymbolFlags.FunctionScopedVariable) && !!(paramProps[1].flags & SymbolFlags.Property)); // is [parameter, property]
+		// Debug.assert(paramProps.length == 2 && (paramProps[0].flags & SymbolFlags.FunctionScopedVariable) && (paramProps[1].flags & SymbolFlags.Property)); // is [parameter, property]
 		if !(paramProp1.Flags&ast.SymbolFlagsFunctionScopedVariable != 0 && paramProp2.Flags&ast.SymbolFlagsProperty != 0) {
 			panic("Expected a parameter and a property")
 		}

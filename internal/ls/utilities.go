@@ -351,7 +351,7 @@ func isNameOfModuleDeclaration(node *ast.Node) bool {
 }
 
 func isExpressionOfExternalModuleImportEqualsDeclaration(node *ast.Node) bool {
-	return ast.IsExternalModuleImportEqualsDeclaration(node.Parent.Parent) && checker.GetExternalModuleImportEqualsDeclarationExpression(node.Parent.Parent) == node
+	return ast.IsExternalModuleImportEqualsDeclaration(node.Parent.Parent) && ast.GetExternalModuleImportEqualsDeclarationExpression(node.Parent.Parent) == node
 }
 
 func isNamespaceReference(node *ast.Node) bool {
