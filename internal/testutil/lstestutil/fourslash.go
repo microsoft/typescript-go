@@ -95,16 +95,42 @@ func (f *FourslashTest) nextID() int32 {
 }
 
 func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCapabilities) {
-	capabilities.General = &lsproto.GeneralClientCapabilities{
-		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
-	}
-	// !!! allow overriding of capabilities somehow, but use defaults if not set
-	// !!! set capabilities inline once that's allowed by the lsp types
 	params := &lsproto.InitializeParams{}
-	params.Capabilities = capabilities
+	params.Capabilities = getCapabilitiesWithDefaults(capabilities)
 	// !!! check for errors?
 	f.sendRequest(t, lsproto.MethodInitialize, params)
 	f.sendNotification(t, lsproto.MethodInitialized, &lsproto.InitializedParams{})
+}
+
+var ptrTrue = PtrTo(true)
+var defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
+	CompletionItem: &lsproto.ClientCompletionItemOptions{
+		SnippetSupport:          ptrTrue,
+		CommitCharactersSupport: ptrTrue,
+		PreselectSupport:        ptrTrue,
+		LabelDetailsSupport:     ptrTrue,
+		InsertReplaceSupport:    ptrTrue,
+	},
+	CompletionList: &lsproto.CompletionListCapabilities{
+		ItemDefaults: &[]string{"commitCharacters"},
+	},
+}
+
+func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
+	var capabilitiesWithDefaults lsproto.ClientCapabilities
+	if capabilities != nil {
+		capabilitiesWithDefaults = *capabilities
+	}
+	capabilitiesWithDefaults.General = &lsproto.GeneralClientCapabilities{
+		PositionEncodings: &[]lsproto.PositionEncodingKind{lsproto.PositionEncodingKindUTF8},
+	}
+	if capabilitiesWithDefaults.TextDocument == nil {
+		capabilitiesWithDefaults.TextDocument = &lsproto.TextDocumentClientCapabilities{}
+	}
+	if capabilitiesWithDefaults.TextDocument.Completion == nil {
+		capabilitiesWithDefaults.TextDocument.Completion = defaultCompletionCapabilities
+	}
+	return &capabilitiesWithDefaults
 }
 
 func (f *FourslashTest) sendRequest(t *testing.T, method lsproto.Method, params any) *lsproto.Message {

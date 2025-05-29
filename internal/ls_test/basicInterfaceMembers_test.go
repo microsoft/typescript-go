@@ -18,8 +18,7 @@ p./*a*/`
 
 func TestBasicInterfaceMembers(t *testing.T) {
 	t.Parallel()
-	cap := &lsproto.ClientCapabilities{}
-	f, done := lstestutil.NewFourslash(t, cap, content, "basicInterfaceMembers.ts")
+	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content, "basicInterfaceMembers.ts")
 	f.VerifyCompletions(t, "a", lstestutil.VerifyCompletionsResult{
 		Exact: &lsproto.CompletionList{
 			IsIncomplete: false,
@@ -28,11 +27,10 @@ func TestBasicInterfaceMembers(t *testing.T) {
 			},
 			Items: []*lsproto.CompletionItem{
 				{
-					Label:            "x",
-					Kind:             lstestutil.PtrTo(lsproto.CompletionItemKindField),
-					SortText:         lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
-					FilterText:       lstestutil.PtrTo(".x"),
-					InsertTextFormat: lstestutil.PtrTo(lsproto.InsertTextFormatPlainText),
+					Label:      "x",
+					Kind:       lstestutil.PtrTo(lsproto.CompletionItemKindField),
+					SortText:   lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
+					FilterText: lstestutil.PtrTo(".x"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 							NewText: "x",
@@ -48,11 +46,10 @@ func TestBasicInterfaceMembers(t *testing.T) {
 					},
 				},
 				{
-					Label:            "y",
-					Kind:             lstestutil.PtrTo(lsproto.CompletionItemKindField),
-					SortText:         lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
-					FilterText:       lstestutil.PtrTo(".y"),
-					InsertTextFormat: lstestutil.PtrTo(lsproto.InsertTextFormatPlainText),
+					Label:      "y",
+					Kind:       lstestutil.PtrTo(lsproto.CompletionItemKindField),
+					SortText:   lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
+					FilterText: lstestutil.PtrTo(".y"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 							NewText: "y",
