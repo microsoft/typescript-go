@@ -470,10 +470,10 @@ func readDirectory(host vfs.FS, currentDir string, path string, extensions []str
 	return matchFiles(path, extensions, excludes, includes, host.UseCaseSensitiveFileNames(), currentDir, depth, host)
 }
 
-// Reads the config file and reports errors. Exits if the config file cannot be found
+// Reads the config file and reports errors.
 func GetParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys ParseConfigHost, extendedConfigCache map[tspath.Path]*ExtendedConfigCacheEntry) (*ParsedCommandLine, []*ast.Diagnostic) {
 	errors := []*ast.Diagnostic{}
-	configFileText, errors := TryReadFile(configFileName, sys.FS().ReadFile, errors)
+	configFileText, errors := tryReadFile(configFileName, sys.FS().ReadFile, errors)
 	if len(errors) > 0 {
 		// these are unrecoverable errors--exit to report them as diagnostics
 		return nil, errors
