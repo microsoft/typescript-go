@@ -187,7 +187,7 @@ func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 }
 
 // GetSourceFile implements compiler.CompilerHost.
-func (p *Project) GetSourceFile(fileName string, path tspath.Path) *ast.SourceFile {
+func (p *Project) GetSourceFile(fileName string, path tspath.Path, metadata *ast.SourceFileMetaData) *ast.SourceFile {
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
 		var (
@@ -198,7 +198,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path) *ast.SourceFi
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
 			oldCompilerOptions = p.program.GetCompilerOptions()
 		}
-		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, oldSourceFile, oldCompilerOptions)
+		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, metadata, oldSourceFile, oldCompilerOptions)
 	}
 	return nil
 }

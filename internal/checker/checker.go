@@ -527,7 +527,6 @@ type Program interface {
 	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
 	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
 	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string) *ast.SourceFile
-	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 }
@@ -10180,7 +10179,7 @@ func (c *Checker) checkNewTargetMetaProperty(node *ast.Node) *Type {
 
 func (c *Checker) checkImportMetaProperty(node *ast.Node) *Type {
 	if c.moduleKind == core.ModuleKindNode16 || c.moduleKind == core.ModuleKindNodeNext {
-		sourceFileMetaData := c.program.GetSourceFileMetaData(ast.GetSourceFileOfNode(node).Path())
+		sourceFileMetaData := ast.GetSourceFileOfNode(node).Metadata
 		if sourceFileMetaData == nil || sourceFileMetaData.ImpliedNodeFormat != core.ModuleKindESNext {
 			c.error(node, diagnostics.The_import_meta_meta_property_is_not_allowed_in_files_which_will_build_into_CommonJS_output)
 		}

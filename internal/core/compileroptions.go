@@ -338,6 +338,7 @@ type SourceFileAffectingCompilerOptions struct {
 	AllowUnusedLabels          Tristate
 	BindInStrictMode           bool
 	EmitModuleDetectionKind    ModuleDetectionKind
+	EmitModuleKind             ModuleKind
 	EmitScriptTarget           ScriptTarget
 	JsxEmit                    JsxEmit
 	NoFallthroughCasesInSwitch Tristate
@@ -351,6 +352,7 @@ func (options *CompilerOptions) SourceFileAffecting() *SourceFileAffectingCompil
 		BindInStrictMode:           options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
 		EmitModuleDetectionKind:    options.GetEmitModuleDetectionKind(),
 		EmitScriptTarget:           options.GetEmitScriptTarget(),
+		EmitModuleKind:             options.GetEmitModuleKind(),
 		JsxEmit:                    options.Jsx,
 		NoFallthroughCasesInSwitch: options.NoFallthroughCasesInSwitch,
 		ShouldPreserveConstEnums:   options.ShouldPreserveConstEnums(),

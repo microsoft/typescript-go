@@ -439,18 +439,20 @@ var sourceFileCache collections.SyncMap[sourceFileCacheKey, *ast.SourceFile]
 
 type sourceFileCacheKey struct {
 	core.SourceFileAffectingCompilerOptions
+	ast.SourceFileMetaData
 	fileName        string
 	path            tspath.Path
 	languageVersion core.ScriptTarget
 	text            string
 }
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path) *ast.SourceFile {
+func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, metadata *ast.SourceFileMetaData) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 	sourceAffecting := h.options.SourceFileAffecting()
 
 	key := sourceFileCacheKey{
 		SourceFileAffectingCompilerOptions: *sourceAffecting,
+		SourceFileMetaData:                 *metadata,
 		fileName:                           fileName,
 		path:                               path,
 		text:                               text,
@@ -466,7 +468,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path) *a
 		sourceFile = parser.ParseJSONText(fileName, path, text)
 	} else {
 		// !!! JSDocParsingMode
-		sourceFile = parser.ParseSourceFile(fileName, path, text, sourceAffecting, scanner.JSDocParsingModeParseAll)
+		sourceFile = parser.ParseSourceFile(fileName, path, text, sourceAffecting, metadata, scanner.JSDocParsingModeParseAll)
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)

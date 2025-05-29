@@ -40,7 +40,6 @@ type processedFiles struct {
 	files                         []*ast.SourceFile
 	missingFiles                  []string
 	resolvedModules               map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
-	sourceFileMetaDatas           map[tspath.Path]*ast.SourceFileMetaData
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
 	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 }
@@ -91,7 +90,6 @@ func processAllProgramFiles(
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
 	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount)
-	sourceFileMetaDatas := make(map[tspath.Path]*ast.SourceFileMetaData, totalFileCount)
 	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 
@@ -108,7 +106,6 @@ func processAllProgramFiles(
 		}
 		path := file.Path()
 		resolvedModules[path] = task.resolutionsInFile
-		sourceFileMetaDatas[path] = task.metadata
 		if task.jsxRuntimeImportSpecifier != nil {
 			if jsxRuntimeImportSpecifiers == nil {
 				jsxRuntimeImportSpecifiers = make(map[tspath.Path]*jsxRuntimeImportSpecifier, totalFileCount)
@@ -129,7 +126,6 @@ func processAllProgramFiles(
 	return processedFiles{
 		files:                         allFiles,
 		resolvedModules:               resolvedModules,
-		sourceFileMetaDatas:           sourceFileMetaDatas,
 		jsxRuntimeImportSpecifiers:    jsxRuntimeImportSpecifiers,
 		importHelpersImportSpecifiers: importHelpersImportSpecifiers,
 	}
@@ -235,7 +231,6 @@ type parseTask struct {
 	isLib              bool
 	subTasks           []*parseTask
 
-	metadata                     *ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
 	importHelpersImportSpecifier *ast.Node
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
@@ -254,9 +249,6 @@ func (t *parseTask) start(loader *fileLoader) {
 		}
 
 		t.file = file
-		loader.wg.Queue(func() {
-			t.metadata = loader.loadSourceFileMetaData(file.Path())
-		})
 
 		// !!! if noResolve, skip all of this
 		t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports())+len(file.ModuleAugmentations))
@@ -307,7 +299,9 @@ func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) *ast.SourceFileMet
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-	sourceFile := p.host.GetSourceFile(fileName, path)
+	// TODO(jakebailey): we can do this concurently any time before parse
+	metadata := p.loadSourceFileMetaData(path)
+	sourceFile := p.host.GetSourceFile(fileName, path, metadata)
 	return sourceFile
 }
 

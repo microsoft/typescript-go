@@ -40,7 +40,7 @@ func BenchmarkParse(b *testing.B) {
 				b.Run(jsdoc.name, func(b *testing.B) {
 					jsdocMode := jsdoc.mode
 					for b.Loop() {
-						ParseSourceFile(fileName, path, sourceText, options, jsdocMode)
+						ParseSourceFile(fileName, path, sourceText, options, nil, jsdocMode)
 					}
 				})
 			}
@@ -137,6 +137,6 @@ func FuzzParser(f *testing.F) {
 			EmitScriptTarget: scriptTarget,
 		}
 
-		ParseSourceFile(fileName, path, sourceText, options, jsdocParsingMode)
+		ParseSourceFile(fileName, path, sourceText, options, nil, jsdocParsingMode)
 	})
 }

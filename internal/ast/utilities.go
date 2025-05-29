@@ -2410,17 +2410,17 @@ func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.Modul
 	return impliedNodeFormat
 }
 
-func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
-	result := GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), options, sourceFileMetaData)
+func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.CompilerOptions) core.ModuleKind {
+	result := GetImpliedNodeFormatForEmitWorker(sourceFile, options.GetEmitModuleKind())
 	if result != core.ModuleKindNone {
 		return result
 	}
 	return options.GetEmitModuleKind()
 }
 
-func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
-	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+func GetImpliedNodeFormatForEmitWorker(sourceFile *SourceFile, emitModuleKind core.ModuleKind) core.ModuleKind {
+	sourceFileMetaData := sourceFile.Metadata
+	if core.ModuleKindNode16 <= emitModuleKind && emitModuleKind <= core.ModuleKindNodeNext {
 		if sourceFileMetaData == nil {
 			return core.ModuleKindNone
 		}
@@ -2428,12 +2428,12 @@ func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOp
 	}
 	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
 		(sourceFileMetaData.PackageJsonType == "commonjs" ||
-			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
+			tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
 	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
 		(sourceFileMetaData.PackageJsonType == "module" ||
-			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
+			tspath.FileExtensionIsOneOf(sourceFile.FileName(), []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
 		return core.ModuleKindESNext
 	}
 	return core.ModuleKindNone
@@ -2656,7 +2656,6 @@ func GetPragmaArgument(pragma *Pragma, name string) string {
 	}
 	return ""
 }
-
 
 func IsJsxOpeningLikeElement(node *Node) bool {
 	return IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node)

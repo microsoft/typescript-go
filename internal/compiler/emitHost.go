@@ -29,7 +29,6 @@ type EmitHost interface {
 	GetCurrentDirectory() string
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
-	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver
 }
 
@@ -109,8 +108,4 @@ func (host *emitHost) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool
 	checker, done := host.program.GetTypeCheckerForFile(context.TODO(), file)
 	defer done()
 	return checker.GetEmitResolver(file, skipDiagnostics)
-}
-
-func (host *emitHost) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
-	return host.program.GetSourceFileMetaData(path)
 }

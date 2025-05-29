@@ -234,7 +234,7 @@ func NewProgram(options ProgramOptions) *Program {
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
 func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := p.host.GetSourceFile(oldFile.FileName(), changedFilePath)
+	newFile := p.host.GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.Metadata) // TODO(jakebailey): metadata could have changed
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(p.programOptions), false
 	}
@@ -286,7 +286,8 @@ func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool 
 		slices.EqualFunc(file1.ReferencedFiles, file2.ReferencedFiles, equalFileReferences) &&
 		slices.EqualFunc(file1.TypeReferenceDirectives, file2.TypeReferenceDirectives, equalFileReferences) &&
 		slices.EqualFunc(file1.LibReferenceDirectives, file2.LibReferenceDirectives, equalFileReferences) &&
-		equalCheckJSDirectives(file1.CheckJsDirective, file2.CheckJsDirective)
+		equalCheckJSDirectives(file1.CheckJsDirective, file2.CheckJsDirective) &&
+		equalMetaData(file1.Metadata, file2.Metadata)
 }
 
 func equalModuleSpecifiers(n1 *ast.Node, n2 *ast.Node) bool {
@@ -303,6 +304,10 @@ func equalFileReferences(f1 *ast.FileReference, f2 *ast.FileReference) bool {
 
 func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) bool {
 	return d1 == nil && d2 == nil || d1 != nil && d2 != nil && d1.Enabled == d2.Enabled
+}
+
+func equalMetaData(m1 *ast.SourceFileMetaData, m2 *ast.SourceFileMetaData) bool {
+	return m1 == nil && m2 == nil || m1 != nil && m2 != nil && *m1 == *m2
 }
 
 func NewProgramFromParsedCommandLine(config *tsoptions.ParsedCommandLine, host CompilerHost) *Program {
@@ -688,20 +693,19 @@ func (p *Program) InstantiationCount() int {
 	return count
 }
 
-func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
-	return p.sourceFileMetaDatas[path]
-}
-
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
+	// TODO(jakebailey): inline
 	return p.GetEmitModuleFormatOfFileWorker(sourceFile, p.compilerOptions)
 }
 
 func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetSourceFileMetaData(sourceFile.Path()))
+	// TODO(jakebailey): inline
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options)
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
+	// TODO(jakebailey): inline
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions.GetEmitModuleKind())
 }
 
 func (p *Program) CommonSourceDirectory() string {

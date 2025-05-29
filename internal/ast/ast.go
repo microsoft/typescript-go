@@ -9964,6 +9964,9 @@ type SourceFile struct {
 	CheckJsDirective            *CheckJsDirective
 	NodeCount                   int
 	TextCount                   int
+	CommonJSModuleIndicator     *Node
+	Metadata                    *SourceFileMetaData
+	ExternalModuleIndicator     *Node
 
 	// Fields set by binder
 
@@ -9992,9 +9995,7 @@ type SourceFile struct {
 
 	// !!!
 
-	CommonJSModuleIndicator *Node
-	ExternalModuleIndicator *Node
-	JSGlobalAugmentations   SymbolTable
+	JSGlobalAugmentations SymbolTable
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Path, statements *NodeList) *Node {
@@ -10092,6 +10093,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.ReferencedFiles = other.ReferencedFiles
 	node.TypeReferenceDirectives = other.TypeReferenceDirectives
 	node.LibReferenceDirectives = other.LibReferenceDirectives
+	node.Metadata = other.Metadata
 	node.CommonJSModuleIndicator = other.CommonJSModuleIndicator
 	node.ExternalModuleIndicator = other.ExternalModuleIndicator
 	node.JSGlobalAugmentations = other.JSGlobalAugmentations

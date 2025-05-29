@@ -13,13 +13,15 @@ import (
 
 type registryKey struct {
 	core.SourceFileAffectingCompilerOptions
+	ast.SourceFileMetaData
 	path       tspath.Path
 	scriptKind core.ScriptKind
 }
 
-func newRegistryKey(options *core.CompilerOptions, path tspath.Path, scriptKind core.ScriptKind) registryKey {
+func newRegistryKey(options *core.CompilerOptions, path tspath.Path, scriptKind core.ScriptKind, metadata *ast.SourceFileMetaData) registryKey {
 	return registryKey{
 		SourceFileAffectingCompilerOptions: *options.SourceFileAffecting(),
+		SourceFileMetaData:                 *metadata,
 		path:                               path,
 		scriptKind:                         scriptKind,
 	}
@@ -54,18 +56,18 @@ type DocumentRegistry struct {
 // LanguageService instance over time, as well as across multiple instances. Here, we still
 // reuse files across multiple LanguageServices, but we only reuse them across Program updates
 // when the files haven't changed.
-func (r *DocumentRegistry) AcquireDocument(scriptInfo *ScriptInfo, compilerOptions *core.CompilerOptions, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
-	key := newRegistryKey(compilerOptions, scriptInfo.path, scriptInfo.scriptKind)
-	document := r.getDocumentWorker(scriptInfo, compilerOptions, key)
+func (r *DocumentRegistry) AcquireDocument(scriptInfo *ScriptInfo, compilerOptions *core.CompilerOptions, metadata *ast.SourceFileMetaData, oldSourceFile *ast.SourceFile, oldCompilerOptions *core.CompilerOptions) *ast.SourceFile {
+	key := newRegistryKey(compilerOptions, scriptInfo.path, scriptInfo.scriptKind, metadata)
+	document := r.getDocumentWorker(scriptInfo, compilerOptions, metadata, key)
 	if oldSourceFile != nil && oldCompilerOptions != nil {
-		oldKey := newRegistryKey(oldCompilerOptions, scriptInfo.path, oldSourceFile.ScriptKind)
+		oldKey := newRegistryKey(oldCompilerOptions, scriptInfo.path, oldSourceFile.ScriptKind, oldSourceFile.Metadata)
 		r.releaseDocumentWithKey(oldKey)
 	}
 	return document
 }
 
 func (r *DocumentRegistry) ReleaseDocument(file *ast.SourceFile, compilerOptions *core.CompilerOptions) {
-	key := newRegistryKey(compilerOptions, file.Path(), file.ScriptKind)
+	key := newRegistryKey(compilerOptions, file.Path(), file.ScriptKind, file.Metadata)
 	r.releaseDocumentWithKey(key)
 }
 
@@ -86,6 +88,7 @@ func (r *DocumentRegistry) releaseDocumentWithKey(key registryKey) {
 func (r *DocumentRegistry) getDocumentWorker(
 	scriptInfo *ScriptInfo,
 	compilerOptions *core.CompilerOptions,
+	metadata *ast.SourceFileMetaData,
 	key registryKey,
 ) *ast.SourceFile {
 	scriptInfoVersion := scriptInfo.Version()
@@ -94,7 +97,7 @@ func (r *DocumentRegistry) getDocumentWorker(
 		// We have an entry for this file. However, it may be for a different version of
 		// the script snapshot. If so, update it appropriately.
 		if entry.sourceFile.Version != scriptInfoVersion {
-			sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, compilerOptions.SourceFileAffecting(), scanner.JSDocParsingModeParseAll)
+			sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, compilerOptions.SourceFileAffecting(), metadata, scanner.JSDocParsingModeParseAll)
 			sourceFile.Version = scriptInfoVersion
 			entry.mu.Lock()
 			defer entry.mu.Unlock()
@@ -104,7 +107,7 @@ func (r *DocumentRegistry) getDocumentWorker(
 		return entry.sourceFile
 	} else {
 		// Have never seen this file with these settings. Create a new source file for it.
-		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, compilerOptions.SourceFileAffecting(), scanner.JSDocParsingModeParseAll)
+		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, &key.SourceFileAffectingCompilerOptions, &key.SourceFileMetaData, scanner.JSDocParsingModeParseAll)
 		sourceFile.Version = scriptInfoVersion
 		entry, _ := r.documents.LoadOrStore(key, &registryEntry{
 			sourceFile: sourceFile,
