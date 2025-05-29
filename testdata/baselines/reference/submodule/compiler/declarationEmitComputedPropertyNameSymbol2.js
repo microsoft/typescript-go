@@ -19,7 +19,9 @@ declare namespace Foo {
     const sym: unique symbol;
 }
 export type Type = {
-    x?: {};
+    x?: {
+        [Foo.sym]: 0;
+    };
 };
 export {};
 //// [index.d.ts]

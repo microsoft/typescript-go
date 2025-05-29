@@ -220,12 +220,22 @@ export declare const c0 = "a";
 export declare const c1 = 1;
 export declare const s0: unique symbol;
 export interface T0 {
+    [c0]: number;
+    [c1]: string;
+    [s0]: boolean;
 }
 export declare class T1 implements T2 {
+    [c0]: number;
+    [c1]: string;
+    [s0]: boolean;
 }
 export declare class T2 extends T1 {
 }
-export declare type T3 = {};
+export declare type T3 = {
+    [c0]: number;
+    [c1]: string;
+    [s0]: boolean;
+};
 //// [main.d.ts]
 import { s0, T0 } from "./module";
 export declare const c4 = "a";

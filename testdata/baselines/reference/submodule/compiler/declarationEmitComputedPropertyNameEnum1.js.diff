@@ -1,15 +1,6 @@
 --- old.declarationEmitComputedPropertyNameEnum1.js
 +++ new.declarationEmitComputedPropertyNameEnum1.js
-@@= skipped -21, +21 lines =@@
-     B = "b"
- }
- export type Type = {
--    x?: {
--        [Enum.A]: 0;
--    };
-+    x?: {};
- };
- //// [index.d.ts]
+@@= skipped -29, +29 lines =@@
  export declare const foo: {
      x?: {
          a: 0;

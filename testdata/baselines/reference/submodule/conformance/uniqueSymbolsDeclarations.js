@@ -507,7 +507,10 @@ declare const s: unique symbol;
 declare namespace N {
     const s: unique symbol;
 }
-declare const o: {};
+declare const o: {
+    [s]: "a";
+    [N.s]: "b";
+};
 declare function f<T>(x: T): T;
 declare function g(x: typeof s): void;
 declare function g(x: typeof N.s): void;
@@ -543,6 +546,10 @@ declare class C0 {
     method5(p?: symbol): symbol;
 }
 declare class C1 {
+    static [s]: "a";
+    static [N.s]: "b";
+    [s]: "a";
+    [N.s]: "b";
 }
 // contextual types
 interface Context {

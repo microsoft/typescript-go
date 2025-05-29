@@ -71,6 +71,8 @@ export declare const enum TestEnum {
     Test2 = "12312312312"
 }
 export interface ITest {
+    [TestEnum.Test1]: string;
+    [TestEnum.Test2]: string;
 }
 export declare class A {
     getA(): ITest;

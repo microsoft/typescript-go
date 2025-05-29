@@ -22,7 +22,9 @@ export declare enum Enum {
     B = "b"
 }
 export type Type = {
-    x?: {};
+    x?: {
+        [Enum.A]: 0;
+    };
 };
 //// [index.d.ts]
 export declare const foo: {

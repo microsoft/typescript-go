@@ -15,4 +15,6 @@ class C {
 
 //// [symbolDeclarationEmit3.d.ts]
 declare class C {
+    [Symbol.toPrimitive](x: number): any;
+    [Symbol.toPrimitive](x: string): any;
 }

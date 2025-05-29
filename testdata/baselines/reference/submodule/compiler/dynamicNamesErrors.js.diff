@@ -12,28 +12,3 @@
      [y]() { return 0; }
      get [z]() { return 0; }
      set [w](value) { }
-@@= skipped -22, +24 lines =@@
- declare const z: unique symbol;
- declare const w: unique symbol;
- export interface InterfaceMemberVisibility {
--    [x]: number;
--    [y](): number;
- }
- export declare class ClassMemberVisibility {
--    static [x]: number;
--    static [y](): number;
--    static get [z](): number;
--    static set [w](value: number);
--    [x]: number;
--    [y](): number;
--    get [z](): number;
--    set [w](value: number);
- }
--export type ObjectTypeVisibility = {
--    [x]: number;
--    [y](): number;
--};
-+export type ObjectTypeVisibility = {};
- export declare const ObjectLiteralVisibility: {
-     [x]: number;
-     [y](): number;

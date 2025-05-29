@@ -34,6 +34,7 @@ exports.withContext = withContext;
 //// [context.d.ts]
 export declare const Key: unique symbol;
 export interface Context {
+    [Key]: string;
 }
 //// [index.d.ts]
 import { Context } from "./context";

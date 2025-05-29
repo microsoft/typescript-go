@@ -1,17 +1,12 @@
 --- old.declarationEmitComputedPropertyNameSymbol2.js
 +++ new.declarationEmitComputedPropertyNameSymbol2.js
-@@= skipped -18, +18 lines =@@
-     const sym: unique symbol;
- }
- export type Type = {
-+    x?: {};
-+};
-+export {};
+@@= skipped -23, +23 lines =@@
+     };
+ };
+ export {};
 +//// [index.d.ts]
 +export declare const foo: {
-     x?: {
-         [Foo.sym]: 0;
--    };
++    x?: {
++        [Foo.sym]: 0;
 +    } | undefined;
- };
--export {};
++};

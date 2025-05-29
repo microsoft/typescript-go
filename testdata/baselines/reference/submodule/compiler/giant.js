@@ -916,6 +916,20 @@ var eM;
 
 
 //// [giant.d.ts]
+/*
+    Prefixes
+    p -> public
+    r -> private
+    i -> import
+    e -> export
+    a -> ambient
+    t -> static
+    s -> set
+    g -> get
+
+    MAX DEPTH 3 LEVELS
+*/
+declare const p = "propName";
 export declare var eV: any;
 export declare function eF(): void;
 export declare class eC {
@@ -959,6 +973,8 @@ export interface eI {
     new (...p3: any[]);
     new (p4: string, p5?: string);
     new (p6: string, ...p7: any[]);
+    //Index Signature
+    [p]: any;
     [p1: string]: any;
     [p2: string, p3: number]: any;
     //Property Signature
@@ -1017,6 +1033,8 @@ export declare namespace eM {
         new (...p3: any[]);
         new (p4: string, p5?: string);
         new (p6: string, ...p7: any[]);
+        //Index Signature
+        [p]: any;
         [p1: string]: any;
         [p2: string, p3: number]: any;
         //Property Signature
@@ -1138,6 +1156,8 @@ export declare namespace eaM {
         new (...p3: any[]);
         new (p4: string, p5?: string);
         new (p6: string, ...p7: any[]);
+        //Index Signature
+        [p]: any;
         [p1: string]: any;
         [p2: string, p3: number]: any;
         //Property Signature
@@ -1203,6 +1223,8 @@ export declare namespace eaM {
         new (...p3: any[]);
         new (p4: string, p5?: string);
         new (p6: string, ...p7: any[]);
+        //Index Signature
+        [p]: any;
         [p1: string]: any;
         [p2: string, p3: number]: any;
         //Property Signature
@@ -1232,3 +1254,4 @@ export declare namespace eaM {
         namespace eM { }
     }
 }
+export {};

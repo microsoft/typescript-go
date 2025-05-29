@@ -366,6 +366,8 @@ declare class C11 {
 declare const a = "a";
 declare const b: unique symbol;
 declare class C12 {
+    [a]: number;
+    [b]: number;
     ['c']: number;
     constructor();
 }
@@ -374,5 +376,6 @@ declare enum E {
     B = "B"
 }
 declare class C13 {
+    [E.A]: number;
     constructor();
 }

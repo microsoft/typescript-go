@@ -10,19 +10,14 @@
          [Symbol.isConcatSpreadable]() {
              return undefined;
          }
-@@= skipped -13, +14 lines =@@
-
- //// [symbolDeclarationEmit12.d.ts]
- declare namespace M {
--    interface I {
--    }
--    export class C {
--        [Symbol.iterator]: I;
--        [Symbol.isConcatSpreadable](): I;
+@@= skipped -17, +18 lines =@@
+     }
+     export class C {
+         [Symbol.iterator]: I;
++        [Symbol.toPrimitive](x: I): void;
+         [Symbol.isConcatSpreadable](): I;
 -        get [Symbol.toPrimitive](): I;
--        set [Symbol.toPrimitive](x: I);
--    }
--    export {};
-+    class C {
-+    }
- }
++        get [Symbol.toPrimitive](): any;
+         set [Symbol.toPrimitive](x: I);
+     }
+     export {};

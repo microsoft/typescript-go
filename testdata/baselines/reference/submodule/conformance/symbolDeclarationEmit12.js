@@ -32,6 +32,14 @@ var M;
 
 //// [symbolDeclarationEmit12.d.ts]
 declare namespace M {
-    class C {
+    interface I {
     }
+    export class C {
+        [Symbol.iterator]: I;
+        [Symbol.toPrimitive](x: I): void;
+        [Symbol.isConcatSpreadable](): I;
+        get [Symbol.toPrimitive](): any;
+        set [Symbol.toPrimitive](x: I);
+    }
+    export {};
 }

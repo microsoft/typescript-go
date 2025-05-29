@@ -13,9 +13,7 @@ export const foo = { ...({} as Type) };
 
 //// [type.d.ts]
 export type Type = {
-    x?: {
-        [Enum.A]: 0;
-    };
+    x?: {};
 };
 //// [index.d.ts]
 export declare const foo: {

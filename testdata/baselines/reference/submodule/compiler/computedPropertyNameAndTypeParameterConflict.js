@@ -14,4 +14,5 @@ declare class Bar<O> {
 //// [computedPropertyNameAndTypeParameterConflict.d.ts]
 declare const O: unique symbol;
 declare class Bar<O> {
+    [O]: number;
 }

@@ -247,19 +247,3 @@
  declare function someValue(): any;
  declare class C11 {
      #private;
-@@= skipped -9, +10 lines =@@
- declare const a = "a";
- declare const b: unique symbol;
- declare class C12 {
--    [a]: number;
--    [b]: number;
-     ['c']: number;
-     constructor();
- }
-@@= skipped -10, +8 lines =@@
-     B = "B"
- }
- declare class C13 {
--    [E.A]: number;
-     constructor();
- }

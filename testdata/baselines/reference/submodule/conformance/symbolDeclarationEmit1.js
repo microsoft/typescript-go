@@ -13,4 +13,5 @@ class C {
 
 //// [symbolDeclarationEmit1.d.ts]
 declare class C {
+    [Symbol.toPrimitive]: number;
 }

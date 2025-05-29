@@ -16,17 +16,15 @@
  declare const sym: unique symbol;
  declare function gg3(x: {
      [key: string]: string;
- }, y: {
-     [key: symbol]: string;
--}, z: {
--    [sym]: number;
--}): void;
-+}, z: {}): void;
+@@= skipped -8, +9 lines =@@
+ }, z: {
+     [sym]: number;
+ }): void;
 +// Overlapping index signatures
  declare function gg1(x: {
      [key: `a${string}`]: string;
      [key: `${string}a`]: string;
-@@= skipped -22, +22 lines =@@
+@@= skipped -14, +15 lines =@@
      [key: `a${string}a`]: string;
  }
  declare function gg2(x: IX, y: IY): void;
@@ -120,10 +118,7 @@
  declare const directive: unique symbol;
  declare function foo<TArg, TRet, TDir>(options: {
      [x in string]: (arg: TArg) => TRet;
--} & {
--    [directive]?: TDir;
--}): void;
-+} & {}): void;
+@@= skipped -9, +10 lines =@@
  declare let case1: void;
  declare let case2: void;
  declare let case3: void;
@@ -155,7 +150,7 @@
  interface AA {
      a?: string;
      b?: number;
-@@= skipped -39, +40 lines =@@
+@@= skipped -30, +32 lines =@@
  };
  declare const obj2: {
      [key: string]: string;

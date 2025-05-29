@@ -44,6 +44,7 @@ exports.spread = {
 //// [bug.d.ts]
 export declare const SYMBOL: unique symbol;
 export interface Interface {
+    readonly [SYMBOL]: string; // remove readonly and @showEmit to see the expected error
 }
 export declare function createInstance(): Interface;
 //// [index.d.ts]

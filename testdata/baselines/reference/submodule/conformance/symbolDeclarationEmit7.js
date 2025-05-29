@@ -10,4 +10,6 @@ var obj;
 
 
 //// [symbolDeclarationEmit7.d.ts]
-declare var obj: {};
+declare var obj: {
+    [Symbol.isConcatSpreadable]: string;
+};

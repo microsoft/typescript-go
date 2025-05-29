@@ -48,9 +48,13 @@ exports.D = D;
 //// [a.d.ts]
 export declare const x: unique symbol;
 //// [b.d.ts]
+import { x } from "./a";
 export declare class C {
+    private [x];
 }
 //// [c.d.ts]
+import { x } from "./a";
 import { C } from "./b";
 export declare class D extends C {
+    private [x];
 }

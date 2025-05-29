@@ -10,4 +10,5 @@ interface I {
 
 //// [symbolDeclarationEmit6.d.ts]
 interface I {
+    [Symbol.isConcatSpreadable]: string;
 }

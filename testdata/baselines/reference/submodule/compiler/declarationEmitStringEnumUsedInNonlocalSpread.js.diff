@@ -82,13 +82,3 @@
 +}
  exports.B = B;
 
-
-@@= skipped -64, +37 lines =@@
-     Test2 = "12312312312"
- }
- export interface ITest {
--    [TestEnum.Test1]: string;
--    [TestEnum.Test2]: string;
- }
- export declare class A {
-     getA(): ITest;

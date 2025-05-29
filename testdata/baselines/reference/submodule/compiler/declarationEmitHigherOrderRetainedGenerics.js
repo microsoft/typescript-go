@@ -134,6 +134,7 @@ export declare namespace Types {
 }
 export declare const URI: unique symbol;
 export interface TypeClass<F extends TypeLambda> {
+    readonly [URI]?: F;
 }
 export interface Invariant<F extends TypeLambda> extends TypeClass<F> {
     readonly imap: {

@@ -1,9 +1,0 @@
---- old.symbolDeclarationEmit3.js
-+++ new.symbolDeclarationEmit3.js
-@@= skipped -14, +14 lines =@@
-
- //// [symbolDeclarationEmit3.d.ts]
- declare class C {
--    [Symbol.toPrimitive](x: number): any;
--    [Symbol.toPrimitive](x: string): any;
- }

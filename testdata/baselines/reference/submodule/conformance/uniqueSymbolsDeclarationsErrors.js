@@ -128,15 +128,29 @@ export declare function funcInferredReturnType(obj: {
     method(p: typeof s): void;
 };
 export interface InterfaceWithPrivateNamedProperties {
+    [s]: any;
 }
 export interface InterfaceWithPrivateNamedMethods {
+    [s](): any;
 }
-export type TypeLiteralWithPrivateNamedProperties = {};
-export type TypeLiteralWithPrivateNamedMethods = {};
+export type TypeLiteralWithPrivateNamedProperties = {
+    [s]: any;
+};
+export type TypeLiteralWithPrivateNamedMethods = {
+    [s](): any;
+};
 export declare class ClassWithPrivateNamedProperties {
+    [s]: any;
+    static [s]: any;
 }
 export declare class ClassWithPrivateNamedMethods {
+    [s](): void;
+    static [s](): void;
 }
 export declare class ClassWithPrivateNamedAccessors {
+    get [s](): any;
+    set [s](v: any);
+    static get [s](): any;
+    static set [s](v: any);
 }
 export {};

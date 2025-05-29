@@ -1,14 +1,6 @@
 --- old.declarationEmitHigherOrderRetainedGenerics.js
 +++ new.declarationEmitHigherOrderRetainedGenerics.js
-@@= skipped -133, +133 lines =@@
- }
- export declare const URI: unique symbol;
- export interface TypeClass<F extends TypeLambda> {
--    readonly [URI]?: F;
- }
- export interface Invariant<F extends TypeLambda> extends TypeClass<F> {
-     readonly imap: {
-@@= skipped -40, +39 lines =@@
+@@= skipped -173, +173 lines =@@
      <DataLast extends (...args: Array<any>) => any, DataFirst extends (...args: Array<any>) => any>(isDataFirst: (args: IArguments) => boolean, body: DataFirst): DataLast & DataFirst;
  };
  export declare const zipWith: <F extends TypeLambda>(F: SemiApplicative<F>) => {

@@ -1,28 +1,6 @@
 --- old.dynamicNames.js
 +++ new.dynamicNames.js
-@@= skipped -219, +219 lines =@@
- export declare const c1 = 1;
- export declare const s0: unique symbol;
- export interface T0 {
--    [c0]: number;
--    [c1]: string;
--    [s0]: boolean;
- }
- export declare class T1 implements T2 {
--    [c0]: number;
--    [c1]: string;
--    [s0]: boolean;
- }
- export declare class T2 extends T1 {
- }
--export declare type T3 = {
--    [c0]: number;
--    [c1]: string;
--    [s0]: boolean;
--};
-+export declare type T3 = {};
- //// [main.d.ts]
- import { s0, T0 } from "./module";
+@@= skipped -240, +240 lines =@@
  export declare const c4 = "a";
  export declare const c5 = 1;
  export declare const s2: typeof s0;

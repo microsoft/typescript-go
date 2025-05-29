@@ -494,7 +494,9 @@ declare function gg3(x: {
     [key: string]: string;
 }, y: {
     [key: symbol]: string;
-}, z: {}): void;
+}, z: {
+    [sym]: number;
+}): void;
 // Overlapping index signatures
 declare function gg1(x: {
     [key: `a${string}`]: string;
@@ -640,7 +642,9 @@ declare var obj: Record<symbol, number>;
 declare const directive: unique symbol;
 declare function foo<TArg, TRet, TDir>(options: {
     [x in string]: (arg: TArg) => TRet;
-} & {}): void;
+} & {
+    [directive]?: TDir;
+}): void;
 declare let case1: void;
 declare let case2: void;
 declare let case3: void;
