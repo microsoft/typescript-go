@@ -3,7 +3,6 @@ package project
 import (
 	"context"
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 	"sync"
@@ -200,18 +199,11 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 	}
 	client := host.Client()
 	if host.IsWatchEnabled() && client != nil {
-		project.failedLookupsWatch = newWatchedFiles(project, lsproto.WatchKindCreate, func(data map[tspath.Path]string) []string {
-			return slices.Sorted(maps.Values(data))
-		}, "failed lookup")
-		project.affectingLocationsWatch = newWatchedFiles(project, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, func(data map[tspath.Path]string) []string {
-			return slices.Sorted(maps.Values(data))
-		}, "affecting location")
-		project.typingsFilesWatch = newWatchedFiles(project, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, func(data map[tspath.Path]string) []string {
-			return slices.Sorted(maps.Values(data))
-		}, "typings installer files")
-		project.typingsDirectoryWatch = newWatchedFiles(project, lsproto.WatchKindCreate|lsproto.WatchKindDelete, func(data map[tspath.Path]string) []string {
-			return slices.Sorted(maps.Values(data))
-		}, "typings installer directories")
+		globMapper := createResolutionLookupGlobMapper(host)
+		project.failedLookupsWatch = newWatchedFiles(project, lsproto.WatchKindCreate, globMapper, "failed lookup")
+		project.affectingLocationsWatch = newWatchedFiles(project, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, globMapper, "affecting location")
+		project.typingsFilesWatch = newWatchedFiles(project, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, globMapperForTypingsInstaller, "typings installer files")
+		project.typingsDirectoryWatch = newWatchedFiles(project, lsproto.WatchKindCreate|lsproto.WatchKindDelete, globMapperForTypingsInstaller, "typings installer directories")
 	}
 	project.markAsDirty()
 	return project
@@ -320,7 +312,7 @@ func (p *Project) getRootFileWatchGlobs() []string {
 		result := make([]string, 0, len(globs)+1)
 		result = append(result, p.configFileName)
 		for dir, recursive := range globs {
-			result = append(result, fmt.Sprintf("%s/%s", dir, core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
+			result = append(result, fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
 		}
 		for _, fileName := range p.parsedCommandLine.LiteralFileNames() {
 			result = append(result, fileName)

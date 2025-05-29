@@ -131,10 +131,10 @@ func (c *configFileSpecs) matchesInclude(fileName string, comparePathsOptions ts
 	return false
 }
 
-type fileExtensionInfo struct {
-	extension      string
-	isMixedContent bool
-	scriptKind     core.ScriptKind
+type FileExtensionInfo struct {
+	Extension      string
+	IsMixedContent bool
+	ScriptKind     core.ScriptKind
 }
 
 type ExtendedConfigCacheEntry struct {
@@ -185,10 +185,18 @@ func parseOwnConfigOfJsonSourceFile(
 					parseDiagnostics = ParseTypeAcquisition(option.Name, value, typeAcquisition)
 				}
 				propertySetErrors = append(propertySetErrors, parseDiagnostics...)
-			} else if keyText != "" {
+			} else if keyText != "" && extraKeyDiagnostics(parentOption.Name) != nil {
+				unknownNameDiag := extraKeyDiagnostics(parentOption.Name)
 				if parentOption.ElementOptions != nil {
 					// !!! TODO: support suggestion
-					propertySetErrors = append(propertySetErrors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, propertyAssignment.Name(), diagnostics.Unknown_compiler_option_0, keyText))
+					propertySetErrors = append(propertySetErrors, createUnknownOptionError(
+						keyText,
+						unknownNameDiag,
+						"", /*unknownOptionErrorText*/
+						propertyAssignment.Name(),
+						sourceFile,
+						nil, /*alternateMode*/
+					))
 				} else {
 					// errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0_Did_you_mean_1, keyText, core.FindKey(parentOption.ElementOptions, keyText)))
 				}
@@ -556,7 +564,7 @@ func convertOptionsFromJson[O optionParser](optionsNameMap map[string]*CommandLi
 		opt, ok := optionsNameMap[key]
 		if !ok {
 			// !!! TODO?: support suggestion
-			errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.Unknown_compiler_option_0, key))
+			errors = append(errors, createUnknownOptionError(key, result.UnknownOptionDiagnostic(), "", nil, nil, nil))
 			continue
 		}
 
@@ -635,7 +643,7 @@ type resolverHost struct {
 
 func (r *resolverHost) Trace(msg string) {}
 
-func ParseJsonSourceFileConfigFileContent(sourceFile *TsConfigSourceFile, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[tspath.Path]*ExtendedConfigCacheEntry) *ParsedCommandLine {
+func ParseJsonSourceFileConfigFileContent(sourceFile *TsConfigSourceFile, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []FileExtensionInfo, extendedConfigCache map[tspath.Path]*ExtendedConfigCacheEntry) *ParsedCommandLine {
 	// tracing?.push(tracing.Phase.Parse, "parseJsonSourceFileConfigFileContent", { path: sourceFile.fileName });
 	result := parseJsonConfigFileContentWorker(nil /*json*/, sourceFile, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	// tracing?.pop();
@@ -774,7 +782,7 @@ func convertPropertyValueToJson(sourceFile *ast.SourceFile, valueExpression *ast
 // jsonNode: The contents of the config file to parse
 // host: Instance of ParseConfigHost used to enumerate files in folder.
 // basePath: A root directory to resolve relative path entries in the config file to. e.g. outDir
-func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []fileExtensionInfo, extendedConfigCache map[tspath.Path]*ExtendedConfigCacheEntry) *ParsedCommandLine {
+func ParseJsonConfigFileContent(json any, host ParseConfigHost, basePath string, existingOptions *core.CompilerOptions, configFileName string, resolutionStack []tspath.Path, extraFileExtensions []FileExtensionInfo, extendedConfigCache map[tspath.Path]*ExtendedConfigCacheEntry) *ParsedCommandLine {
 	result := parseJsonConfigFileContentWorker(parseJsonToStringKey(json), nil /*sourceFile*/, host, basePath, existingOptions, configFileName, resolutionStack, extraFileExtensions, extendedConfigCache)
 	return result
 }
@@ -1069,7 +1077,7 @@ func parseJsonConfigFileContentWorker(
 	existingOptions *core.CompilerOptions,
 	configFileName string,
 	resolutionStack []tspath.Path,
-	extraFileExtensions []fileExtensionInfo,
+	extraFileExtensions []FileExtensionInfo,
 	extendedConfigCache map[tspath.Path]*ExtendedConfigCacheEntry,
 ) *ParsedCommandLine {
 	// Debug.assert((json === undefined && sourceFile !== undefined) || (json !== undefined && sourceFile === undefined));
@@ -1495,9 +1503,9 @@ func getFileNamesFromConfigSpecs(
 	basePath string, // considering this is the current directory
 	options *core.CompilerOptions,
 	host vfs.FS,
-	extraFileExtensions []fileExtensionInfo,
+	extraFileExtensions []FileExtensionInfo,
 ) []string {
-	extraFileExtensions = []fileExtensionInfo{}
+	extraFileExtensions = []FileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
 	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
@@ -1587,7 +1595,7 @@ func getFileNamesFromConfigSpecs(
 	return files
 }
 
-func GetSupportedExtensions(compilerOptions *core.CompilerOptions, extraFileExtensions []fileExtensionInfo) [][]string {
+func GetSupportedExtensions(compilerOptions *core.CompilerOptions, extraFileExtensions []FileExtensionInfo) [][]string {
 	needJSExtensions := compilerOptions.GetAllowJS()
 	if len(extraFileExtensions) == 0 {
 		if needJSExtensions {
@@ -1605,8 +1613,8 @@ func GetSupportedExtensions(compilerOptions *core.CompilerOptions, extraFileExte
 	flatBuiltins := core.Flatten(builtins)
 	var result [][]string
 	for _, x := range extraFileExtensions {
-		if x.scriptKind == core.ScriptKindDeferred || (needJSExtensions && (x.scriptKind == core.ScriptKindJS || x.scriptKind == core.ScriptKindJSX)) && !slices.Contains(flatBuiltins, x.extension) {
-			result = append(result, []string{x.extension})
+		if x.ScriptKind == core.ScriptKindDeferred || (needJSExtensions && (x.ScriptKind == core.ScriptKindJS || x.ScriptKind == core.ScriptKindJSX)) && !slices.Contains(flatBuiltins, x.Extension) {
+			result = append(result, []string{x.Extension})
 		}
 	}
 	extensions := slices.Concat(builtins, result)
