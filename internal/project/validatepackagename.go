@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"unicode/utf8"
 )
 
 type NameValidationResult int
@@ -36,7 +37,7 @@ func validatePackageNameWorker(packageName string, supportScopedPackage bool) (r
 	if packageNameLen > maxPackageNameLength {
 		return NameTooLong, "", false
 	}
-	firstChar := rune(packageName[0])
+	firstChar, _ := utf8.DecodeRuneInString(packageName)
 	if firstChar == '.' {
 		return NameStartsWithDot, "", false
 	}

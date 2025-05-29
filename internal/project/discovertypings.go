@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"maps"
 	"slices"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -287,15 +288,14 @@ func removeMinAndVersionNumbers(fileName string) string {
 	// We used to use the regex /[.-]((min)|(\d+(\.\d+)*))$/ and would just .replace it twice.
 	// Unfortunately, that regex has O(n^2) performance because v8 doesn't match from the end of the string.
 	// Instead, we now essentially scan the filename (backwards) ourselves.
-
 	end := len(fileName)
-	for pos := end - 1; pos > 0; pos-- {
-		ch := rune(fileName[pos])
+	for pos := end; pos > 0; {
+		ch, size := utf8.DecodeLastRuneInString(fileName[0:pos])
 		if ch >= '0' && ch <= '9' {
 			// Match a \d+ segment
 			for {
-				pos--
-				ch = rune(fileName[pos])
+				pos -= size
+				ch, size = utf8.DecodeLastRuneInString(fileName[0:pos])
 				if pos <= 0 || ch < '0' || ch > '9' {
 					break
 				}
@@ -303,18 +303,18 @@ func removeMinAndVersionNumbers(fileName string) string {
 		} else if pos > 4 && (ch == 'n' || ch == 'N') {
 			// Looking for "min" or "min"
 			// Already matched the 'n'
-			pos--
-			ch = rune(fileName[pos])
+			pos -= size
+			ch, size = utf8.DecodeLastRuneInString(fileName[0:pos])
 			if ch != 'i' && ch != 'I' {
 				break
 			}
-			pos--
-			ch = rune(fileName[pos])
+			pos -= size
+			ch, size = utf8.DecodeLastRuneInString(fileName[0:pos])
 			if ch != 'm' && ch != 'M' {
 				break
 			}
-			pos--
-			ch = rune(fileName[pos])
+			pos -= size
+			ch, size = utf8.DecodeLastRuneInString(fileName[0:pos])
 		} else {
 			// This character is not part of either suffix pattern
 			break
@@ -323,12 +323,8 @@ func removeMinAndVersionNumbers(fileName string) string {
 		if ch != '-' && ch != '.' {
 			break
 		}
+		pos -= size
 		end = pos
-	}
-
-	// end might be fileName.length, in which case this should internally no-op
-	if end == len(fileName) {
-		return fileName
 	}
 	return fileName[0:end]
 }
