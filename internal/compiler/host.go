@@ -54,10 +54,6 @@ func (h *compilerHost) DefaultLibraryPath() string {
 	return h.defaultLibraryPath
 }
 
-func (h *compilerHost) SetOptions(options *core.CompilerOptions) {
-	h.options = options
-}
-
 func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
 }
@@ -77,6 +73,9 @@ func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path) *ast.Sou
 	text, _ := h.FS().ReadFile(fileName)
 	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(fileName, path, text)
+	}
+	if h.options == nil {
+		panic("GetSourceFile called without CompilerOptions set")
 	}
 	return parser.ParseSourceFile(fileName, path, text, h.options.SourceFileAffecting(), scanner.JSDocParsingModeParseForTypeErrors)
 }

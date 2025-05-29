@@ -288,6 +288,7 @@ func BenchmarkNewProgram(b *testing.B) {
 
 		parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile(tspath.CombinePaths(rootPath, "tsconfig.json"), &core.CompilerOptions{}, host, nil)
 		assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
+		host = NewCompilerHost(parsed.CompilerOptions(), rootPath, fs, bundled.LibPath())
 
 		opts := ProgramOptions{
 			Host:    host,
