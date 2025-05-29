@@ -54,3 +54,9 @@ const parser_1 = require("@babel/parser");
 function resolveParserPlugins() {
     return [(0, parser_1.createPlugin)()];
 }
+
+
+//// [index.d.ts]
+export {};
+//// [index.d.ts]
+export declare function resolveParserPlugins(): any;

@@ -1,8 +1,8 @@
 --- old.declInput.js
 +++ new.declInput.js
 @@= skipped -12, +12 lines =@@
- 
- 
+
+
  //// [declInput.js]
 -var bar = /** @class */ (function () {
 -    function bar() {
@@ -17,21 +17,11 @@
 -    };
 -    return bar;
 -}());
--
--
--//// [declInput.d.ts]
--interface bar {
 +class bar {
 +    f() { return ''; }
 +    g() { return { a: null, b: undefined, c: void 4 }; }
 +    h(x = 4, y = null, z = '') { x++; }
- }
--declare class bar {
--    f(): string;
--    g(): {
--        a: bar;
--        b: any;
--        c: any;
--    };
--    h(x?: number, y?: any, z?: string): void;
--}
++}
+
+
+ //// [declInput.d.ts]

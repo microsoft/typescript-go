@@ -2,7 +2,7 @@
 +++ new.keepImportsInDts2.js
 @@= skipped -5, +5 lines =@@
  import "./folder/test"
- 
+
  //// [test.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -15,12 +15,9 @@
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -});
--
--
--//// [test.d.ts]
--export {};
--//// [main.d.ts]
--import "./folder/test";
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
 +require("./folder/test");
+
+
+ //// [test.d.ts]

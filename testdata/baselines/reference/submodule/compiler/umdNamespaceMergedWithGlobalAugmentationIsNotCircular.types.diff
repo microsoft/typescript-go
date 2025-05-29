@@ -2,27 +2,26 @@
 +++ new.umdNamespaceMergedWithGlobalAugmentationIsNotCircular.types
 @@= skipped -4, +4 lines =@@
  >global : typeof global
- 
+
      const React: typeof import("./module");
 ->React : typeof import("module")
-+>React : typeof React
++>React : typeof import("./module.js")
  }
- 
+
  export { };
 @@= skipped -23, +23 lines =@@
  export { };
  React.createRef;
  >React.createRef : () => any
 ->React : typeof import("module")
-+>React : typeof React
++>React : typeof import("./module.js")
  >createRef : () => any
- 
+
  === emits.ts ===
 @@= skipped -13, +13 lines =@@
- 
+
  React.createRef;
  >React.createRef : () => any
 ->React : typeof import("module")
-+>React : typeof React
++>React : typeof import("./module.js")
  >createRef : () => any
- 

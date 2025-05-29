@@ -2,7 +2,7 @@
 +++ new.declarationEmitExpressionInExtends4.js
 @@= skipped -18, +18 lines =@@
  }
- 
+
  //// [declarationEmitExpressionInExtends4.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -25,9 +25,7 @@
 -        }
 -        return D;
 -    }());
-+    return class D {
-+    };
- }
+-}
 -var C = /** @class */ (function (_super) {
 -    __extends(C, _super);
 -    function C() {
@@ -49,22 +47,15 @@
 -    }
 -    return C3;
 -}(SomeUndefinedFunction));
--
--
--//// [declarationEmitExpressionInExtends4.d.ts]
--declare function getSomething(): {
--    new (): {};
--};
--declare const C_base: {
--    new (): {};
--};
--declare class C extends C_base<number, string> {
++    return class D {
++    };
++}
 +class C extends getSomething() {
- }
--declare const C2_base: any;
--declare class C2 extends C2_base<number, string> {
++}
 +class C2 extends SomeUndefinedFunction() {
- }
--declare class C3 extends SomeUndefinedFunction {
++}
 +class C3 extends SomeUndefinedFunction {
- }
++}
+
+
+ //// [declarationEmitExpressionInExtends4.d.ts]

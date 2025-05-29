@@ -1,8 +1,7 @@
 --- old.contextualTypedSpecialAssignment.errors.txt
 +++ new.contextualTypedSpecialAssignment.errors.txt
-@@= skipped -0, +-1 lines =@@
+@@= skipped -0, +0 lines =@@
 -<no content>
-@@= skipped --1, +1 lines =@@
 +test.js(9,4): error TS2339: Property 'x' does not exist on type '{}'.
 +test.js(14,4): error TS2339: Property 'x' does not exist on type '{}'.
 +test.js(16,7): error TS7006: Parameter 'n' implicitly has an 'any' type.
@@ -58,7 +57,7 @@
 +                status: 'done',
 +                ~~~~~~
 +!!! error TS2322: Type 'string' is not assignable to type '"done"'.
-+!!! related TS6500 test.js:2:5: The expected type comes from property 'status' which is declared here on type '{ status: "done"; m: (n: number) => void; }'
++!!! related TS6500 test.js:2:5: The expected type comes from property 'status' which is declared here on type '{ status: "done"; m(n: number): void; }'
 +                m(n) { }
 +                  ~
 +!!! error TS7006: Parameter 'n' implicitly has an 'any' type.

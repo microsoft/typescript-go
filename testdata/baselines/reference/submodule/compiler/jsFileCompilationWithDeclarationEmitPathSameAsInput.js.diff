@@ -2,7 +2,7 @@
 +++ new.jsFileCompilationWithDeclarationEmitPathSameAsInput.js
 @@= skipped -7, +7 lines =@@
  declare function isC(): boolean;
- 
+
  //// [a.js]
 -var c = /** @class */ (function () {
 -    function c() {
@@ -10,4 +10,9 @@
 -    return c;
 -}());
 +class c {
++}
++
++
++//// [a.d.ts]
++declare class c {
 +}

@@ -112,10 +112,6 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 	return symbolsToArray(symbols)
 }
 
-func (c *Checker) GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
-	return c.resolveAlias(symbol)
-}
-
 func (c *Checker) GetExportsOfModule(symbol *ast.Symbol) []*ast.Symbol {
 	return symbolsToArray(c.getExportsOfModule(symbol))
 }
@@ -341,6 +337,7 @@ func (c *Checker) GetRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 		for _, root := range roots {
 			result = append(result, c.GetRootSymbols(root)...)
 		}
+		return result
 	}
 	return []*ast.Symbol{symbol}
 }
@@ -480,4 +477,32 @@ func (c *Checker) GetJsxIntrinsicTagNamesAt(location *ast.Node) []*ast.Symbol {
 
 func (c *Checker) GetContextualTypeForJsxAttribute(attribute *ast.JsxAttributeLike) *Type {
 	return c.getContextualTypeForJsxAttribute(attribute, ContextFlagsNone)
+}
+
+func (c *Checker) GetConstantValue(node *ast.Node) any {
+	if node.Kind == ast.KindEnumMember {
+		return c.getEnumMemberValue(node).Value
+	}
+
+	if c.symbolNodeLinks.Get(node).resolvedSymbol == nil {
+		c.checkExpressionCached(node) // ensure cached resolved symbol is set
+	}
+	symbol := c.symbolNodeLinks.Get(node).resolvedSymbol
+	if symbol == nil && ast.IsEntityNameExpression(node) {
+		symbol = c.resolveEntityName(
+			node,
+			ast.SymbolFlagsValue,
+			true,  /*ignoreErrors*/
+			false, /*dontResolveAlias*/
+			nil /*location*/)
+	}
+	if symbol != nil && symbol.Flags&ast.SymbolFlagsEnumMember != 0 {
+		// inline property\index accesses only for const enums
+		member := symbol.ValueDeclaration
+		if ast.IsEnumConst(member.Parent) {
+			return c.getEnumMemberValue(member).Value
+		}
+	}
+
+	return nil
 }

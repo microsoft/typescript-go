@@ -272,13 +272,11 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 }
 
 func (options *CompilerOptions) GetEmitDeclarations() bool {
-	// !!!
-	return false
+	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
 
 func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
-	// !!!
-	return false
+	return options.DeclarationMap == TSTrue && options.GetEmitDeclarations()
 }
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
@@ -287,6 +285,16 @@ func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 		return false
 	}
 	return true
+}
+
+func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string {
+	if options.Paths.Size() == 0 {
+		return ""
+	}
+	if options.PathsBasePath != "" {
+		return options.PathsBasePath
+	}
+	return currentDirectory
 }
 
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which

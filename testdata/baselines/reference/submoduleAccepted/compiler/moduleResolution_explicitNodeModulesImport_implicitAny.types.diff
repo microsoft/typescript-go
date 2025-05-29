@@ -3,12 +3,12 @@
 @@= skipped -3, +3 lines =@@
  import { y } from "../node_modules/foo";
  >y : any
- 
+
 +=== /node_modules/foo/index.js ===
 +exports.x = 0;
 +>exports.x = 0 : 0
 +>exports.x : 0
-+>exports : typeof import("/node_modules/foo/index")
++>exports : typeof import("foo")
 +>x : 0
 +>0 : 0
 +

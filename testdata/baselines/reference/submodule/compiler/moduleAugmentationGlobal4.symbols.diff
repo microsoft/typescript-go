@@ -1,12 +1,7 @@
 --- old.moduleAugmentationGlobal4.symbols
 +++ new.moduleAugmentationGlobal4.symbols
-@@= skipped -1, +1 lines =@@
- 
- === f1.ts ===
- declare global {
-->global : Symbol(global, Decl(f1.ts, 0, 0))
-+>global : Symbol((Missing), Decl(f1.ts, 0, 0))
- 
+@@= skipped -5, +5 lines =@@
+
      interface Something {x}
  >Something : Symbol(Something, Decl(f1.ts, 0, 16), Decl(f2.ts, 0, 16))
 ->x : Symbol(Something.x, Decl(f1.ts, 1, 25))
@@ -14,10 +9,8 @@
  }
  export {};
  === f2.ts ===
- declare global {
-->global : Symbol(global, Decl(f2.ts, 0, 0))
-+>global : Symbol((Missing), Decl(f2.ts, 0, 0))
- 
+@@= skipped -9, +9 lines =@@
+
      interface Something {y}
  >Something : Symbol(Something, Decl(f1.ts, 0, 16), Decl(f2.ts, 0, 16))
 ->y : Symbol(Something.y, Decl(f2.ts, 1, 25))

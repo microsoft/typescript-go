@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
@@ -22,6 +23,42 @@ type fakeProgram struct {
 	getImpliedNodeFormatForEmit func(sourceFile *ast.SourceFile) core.ModuleKind
 	getResolvedModule           func(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
 	getSourceFile               func(FileName string) *ast.SourceFile
+}
+
+func (p *fakeProgram) FileExists(path string) bool {
+	return false
+}
+
+func (p *fakeProgram) GetCurrentDirectory() string {
+	return ""
+}
+
+func (p *fakeProgram) GetGlobalTypingsCacheLocation() string {
+	return ""
+}
+
+func (p *fakeProgram) GetNearestAncestorDirectoryWithPackageJson(dirname string) string {
+	return ""
+}
+
+func (p *fakeProgram) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.PackageJsonInfo {
+	return nil
+}
+
+func (p *fakeProgram) GetProjectReferenceRedirect(path string) string {
+	return ""
+}
+
+func (p *fakeProgram) GetRedirectTargets(path tspath.Path) []string {
+	return nil
+}
+
+func (p *fakeProgram) IsSourceOfProjectReferenceRedirect(path string) bool {
+	return false
+}
+
+func (p *fakeProgram) UseCaseSensitiveFileNames() bool {
+	return true
 }
 
 func (p *fakeProgram) Options() *core.CompilerOptions {
@@ -78,10 +115,6 @@ func (p *fakeProgram) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Nod
 
 func (p *fakeProgram) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node) {
 	return "", nil
-}
-
-func (p *fakeProgram) FileExists(fileName string) bool {
-	panic("unimplemented")
 }
 
 func (p *fakeProgram) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {

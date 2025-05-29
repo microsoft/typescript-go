@@ -3,19 +3,20 @@
 @@= skipped -26, +26 lines =@@
      "exports": "./index.ts"
  }
- 
+
 -//// [other.js]
 -export const x = null;
- //// [index.js]
+-//// [index.js]
 -// esm format file
 -export { x } from "./other.js";
--//// [index.js]
+ //// [index.js]
  export const a = (await import("inner")).x();
--
--
+
+
 -//// [other.d.ts]
 -export interface Thing {
 -}
 -export declare const x: () => Thing;
--//// [index.d.ts]
+ //// [index.d.ts]
 -export { x } from "./other.js";
++export declare const a: any;

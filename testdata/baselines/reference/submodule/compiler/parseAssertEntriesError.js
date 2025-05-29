@@ -40,3 +40,9 @@ exports.b = null;
 "import";
 ImportInterface;
 ;
+
+
+//// [index.d.ts]
+export type LocalInterface = import("pkg", { assert: {} });
+export declare const a: any;
+export declare const b: any;

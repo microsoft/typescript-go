@@ -1,7 +1,7 @@
 --- old.parseAssertEntriesError.symbols
 +++ new.parseAssertEntriesError.symbols
 @@= skipped -5, +5 lines =@@
- 
+
      & import("pkg", { assert: {1234, "resolution-mode": "require"} }).RequireInterface
      & import("pkg", { assert: {1234, "resolution-mode": "import"} }).ImportInterface;
 ->"pkg" : Symbol("/node_modules/pkg/import", Decl(import.d.ts, 0, 0))

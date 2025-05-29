@@ -1,8 +1,8 @@
 --- old.exportDeclarationInInternalModule.js
 +++ new.exportDeclarationInInternalModule.js
 @@= skipped -19, +19 lines =@@
- 
- 
+
+
  //// [exportDeclarationInInternalModule.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -57,20 +57,12 @@
 +    export * from Aaa; // this line causes the nullref
  })(Bbb || (Bbb = {}));
  var a;
--
--
--//// [exportDeclarationInInternalModule.d.ts]
--declare class Bbb {
--}
--declare class Aaa extends Bbb {
--}
--declare namespace Aaa {
--    class SomeType {
--    }
--}
--declare namespace Bbb {
--    export class SomeType {
--    }
+
+@@= skipped -58, +30 lines =@@
+ declare namespace Bbb {
+     export class SomeType {
+     }
 -    export * from Aaa;
--}
--declare var a: Bbb.SomeType;
++    export * from Aaa; // this line causes the nullref
+ }
+ declare var a: Bbb.SomeType;

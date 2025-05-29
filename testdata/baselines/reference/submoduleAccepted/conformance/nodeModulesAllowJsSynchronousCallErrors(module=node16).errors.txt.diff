@@ -9,9 +9,11 @@
 -subfolder/index.js(3,1): error TS8002: 'import ... =' can only be used in TypeScript files.
  subfolder/index.js(3,22): error TS1471: Module '../index.js' cannot be imported using this construct. The specifier only resolves to an ES module, which cannot be imported with 'require'. Use an ECMAScript import instead.
 -subfolder/index.js(5,1): error TS8002: 'import ... =' can only be used in TypeScript files.
- 
- 
+-
+-
 -==== subfolder/index.js (4 errors) ====
++
++
 +==== subfolder/index.js (2 errors) ====
      // cjs format file
      import {h} from "../index.js";

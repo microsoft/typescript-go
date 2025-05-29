@@ -2,11 +2,11 @@
 +++ new.nodeModulesTripleSlashReferenceModeDeclarationEmit7(module=nodenext).types
 @@= skipped -5, +5 lines =@@
  >obj1 : ImportInterface
- 
+
  import obj2 from "./sub2/uses.js"
 ->obj2 : typeof obj2
 +>obj2 : RequireInterface
- 
+
  export default [obj1, obj2.default] as const;
 ->[obj1, obj2.default] as const : readonly [ImportInterface, RequireInterface]
 ->[obj1, obj2.default] : readonly [ImportInterface, RequireInterface]
@@ -19,6 +19,6 @@
 +>obj2.default : any
 +>obj2 : RequireInterface
 +>default : any
- 
+
  === /node_modules/pkg/import.d.ts ===
  export {};

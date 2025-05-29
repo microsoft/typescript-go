@@ -1,0 +1,11 @@
+--- old.declarationEmitUsingTypeAlias1.js
++++ new.declarationEmitUsingTypeAlias1.js
+@@= skipped -38, +38 lines =@@
+     return thing.arg;
+ };
+ exports.bar = bar;
++
++
++//// [index.d.ts]
++export declare const foo: any;
++export declare const bar: any;

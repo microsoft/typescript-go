@@ -3,23 +3,24 @@
 @@= skipped -7, +7 lines =@@
  >Row() : void
  >Row : () => void
- 
+
 -=== ./a.d.ts ===
 +=== a.d.ts ===
  import '.'
  declare module '.' {
- >'.' : typeof import("index")
-@@= skipped -9, +9 lines =@@
+->'.' : typeof import("index")
++>'.' : typeof import("./index.js")
+
+   const Row: () => void;
  >Row : () => void
  }
- 
+
 -=== ./index.d.ts ===
 +=== index.d.ts ===
  export type {Row} from './common';
  >Row : any
- 
+
 -=== ./common.d.ts ===
 +=== common.d.ts ===
  export declare function Row(): void; 
  >Row : () => void
- 

@@ -1,18 +1,18 @@
 --- old.jsdocTypeReferenceToMergedClass.types
 +++ new.jsdocTypeReferenceToMergedClass.types
 @@= skipped -1, +1 lines =@@
- 
+
  === jsdocTypeReferenceToMergedClass.js ===
  var Workspace = {}
 ->Workspace : typeof Workspace
 +>Workspace : {}
  >{} : {}
- 
+
  /** @type {Workspace.Project} */
  var p;
 ->p : wp
-+>p : Project
- 
++>p : Workspace.Project
+
  p.isServiceProject()
 ->p.isServiceProject() : void
 ->p.isServiceProject : () => void
@@ -20,9 +20,9 @@
 ->isServiceProject : () => void
 +>p.isServiceProject() : any
 +>p.isServiceProject : any
-+>p : Project
++>p : Workspace.Project
 +>isServiceProject : any
- 
+
  Workspace.Project = function wp() { }
 ->Workspace.Project = function wp() { } : typeof wp
 ->Workspace.Project : typeof wp
@@ -36,22 +36,19 @@
 +>Project : any
 +>function wp() { } : () => void
 +>wp : () => void
- 
+
  Workspace.Project.prototype = {
-->Workspace.Project.prototype = {  isServiceProject() {}} : { isServiceProject(): void; }
+ >Workspace.Project.prototype = {  isServiceProject() {}} : { isServiceProject(): void; }
 ->Workspace.Project.prototype : { isServiceProject(): void; }
 ->Workspace.Project : typeof wp
 ->Workspace : typeof Workspace
 ->Project : typeof wp
 ->prototype : { isServiceProject(): void; }
-->{  isServiceProject() {}} : { isServiceProject(): void; }
-+>Workspace.Project.prototype = {  isServiceProject() {}} : { isServiceProject: () => void; }
 +>Workspace.Project.prototype : any
 +>Workspace.Project : any
 +>Workspace : {}
 +>Project : any
 +>prototype : any
-+>{  isServiceProject() {}} : { isServiceProject: () => void; }
- 
+ >{  isServiceProject() {}} : { isServiceProject(): void; }
+
    isServiceProject() {}
- >isServiceProject : () => void
