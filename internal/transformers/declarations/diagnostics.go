@@ -1,8 +1,6 @@
 package declarations
 
 import (
-	"fmt"
-
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/printer"
@@ -199,7 +197,7 @@ func createGetSymbolAccessibilityDiagnosticForNode(node *ast.Node) GetSymbolAcce
 			}
 		}
 	} else {
-		panic(fmt.Sprintf("Attempted to set a declaration diagnostic context for unhandled node kind: %d", node.Kind))
+		panic("Attempted to set a declaration diagnostic context for unhandled node kind: " + node.Kind.String())
 	}
 }
 
@@ -334,7 +332,7 @@ func getReturnTypeVisibilityDiagnosticMessage(node *ast.Node, symbolAccessibilit
 			diagnostics.Return_type_of_exported_function_has_or_is_using_private_name_0,
 		)
 	default:
-		panic(fmt.Sprintf("This is unknown kind for signature: %d", node.Kind))
+		panic("This is unknown kind for signature: " + node.Kind.String())
 	}
 }
 
@@ -411,7 +409,7 @@ func getParameterDeclarationTypeVisibilityDiagnosticMessage(node *ast.Node, symb
 			diagnostics.Parameter_0_of_accessor_has_or_is_using_private_name_1,
 		)
 	default:
-		panic(fmt.Sprintf("Unknown parent for parameter: %d", node.Parent.Kind))
+		panic("Unknown parent for parameter: " + node.Parent.Kind.String())
 	}
 }
 
@@ -446,7 +444,7 @@ func getTypeParameterConstraintVisibilityDiagnosticMessage(node *ast.Node, symbo
 		return diagnostics.Type_parameter_0_of_exported_type_alias_has_or_is_using_private_name_1
 
 	default:
-		panic(fmt.Sprintf("This is unknown parent for type parameter: %d", node.Parent.Kind))
+		panic("This is unknown parent for type parameter: " + node.Parent.Kind.String())
 	}
 }
 

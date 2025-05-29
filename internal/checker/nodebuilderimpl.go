@@ -1752,8 +1752,6 @@ func (c *Checker) getExpandedParameters(sig *Signature, skipUnionExpanding bool)
 					checkFlags = ast.CheckFlagsRestParameter
 				case flags&ElementFlagsOptional != 0:
 					checkFlags = ast.CheckFlagsOptionalParameter
-				default:
-					checkFlags = 0
 				}
 				symbol := c.newSymbolEx(ast.SymbolFlagsFunctionScopedVariable, name, checkFlags)
 				links := c.valueSymbolLinks.Get(symbol)
