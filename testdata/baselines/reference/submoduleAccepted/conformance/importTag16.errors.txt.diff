@@ -2,7 +2,6 @@
 +++ new.importTag16.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+b.js(1,13): error TS1363: A type-only import can specify a default import or named bindings, but not both.
 +b.js(5,12): error TS4078: Parameter 'b' of exported function has or is using private name 'I'.
 +
 +
@@ -10,10 +9,8 @@
 +    export default interface Foo {}
 +    export interface I {}
 +    
-+==== b.js (2 errors) ====
++==== b.js (1 errors) ====
 +    /** @import Foo, { I } from "./a" */
-+                ~~~~~~~~~~
-+!!! error TS1363: A type-only import can specify a default import or named bindings, but not both.
 +    
 +    /**
 +     * @param {Foo} a
