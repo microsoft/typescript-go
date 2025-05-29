@@ -14,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -663,7 +664,7 @@ func (b *nodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 
 	var expression *ast.Expression
 	if startsWithSingleOrDoubleQuote(symbolName) && symbol.Flags&ast.SymbolFlagsEnumMember == 0 {
-		expression = b.f.NewStringLiteral(unquoteString(symbolName))
+		expression = b.f.NewStringLiteral(stringutil.UnquoteString(symbolName))
 	} else if jsnum.FromString(symbolName).String() == symbolName {
 		// TODO: the follwing in strada would assert if the number is negative, but no such assertion exists here
 		// Moreover, what's even guaranteeing the name *isn't* -1 here anyway? Needs double-checking.
@@ -690,14 +691,6 @@ func canUsePropertyAccess(name string, languageVersion core.ScriptTarget) bool {
 		return len(name) > 1 && scanner.IsIdentifierText(name[1:], languageVersion, core.LanguageVariantStandard)
 	}
 	return scanner.IsIdentifierText(name, languageVersion, core.LanguageVariantStandard)
-}
-
-func unquoteString(str string) string {
-	// strconv.Unquote is insufficient as that only handles a single character inside single quotes, as those are character literals in go
-	inner := core.StripQuotes(str)
-	// In strada we do str.replace(/\\./g, s => s.substring(1)) - which is to say, replace all backslash-something with just something
-	// That's replicated here faithfully, but it seems wrong! This should probably be an actual unquote operation?
-	return strings.ReplaceAll(inner, "\\", "")
 }
 
 func startsWithSingleOrDoubleQuote(str string) bool {
@@ -1063,12 +1056,12 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 
 	if file == nil {
 		if isAmbientModuleSymbolName(symbol.Name) {
-			return core.StripQuotes(symbol.Name)
+			return stringutil.StripQuotes(symbol.Name)
 		}
 	}
 	if b.ctx.enclosingFile == nil || b.ctx.tracker.GetModuleSpecifierGenerationHost() == nil {
 		if isAmbientModuleSymbolName(symbol.Name) {
-			return core.StripQuotes(symbol.Name)
+			return stringutil.StripQuotes(symbol.Name)
 		}
 		return ast.GetSourceFileOfModule(symbol).FileName()
 	}
