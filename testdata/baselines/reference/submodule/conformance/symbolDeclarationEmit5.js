@@ -6,3 +6,8 @@ interface I {
 }
 
 //// [symbolDeclarationEmit5.js]
+
+
+//// [symbolDeclarationEmit5.d.ts]
+interface I {
+}

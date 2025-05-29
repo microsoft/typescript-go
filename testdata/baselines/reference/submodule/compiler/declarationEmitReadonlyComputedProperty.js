@@ -39,3 +39,14 @@ const bug_1 = require("./bug");
 exports.spread = {
     ...(0, bug_1.createInstance)(),
 };
+
+
+//// [bug.d.ts]
+export declare const SYMBOL: unique symbol;
+export interface Interface {
+}
+export declare function createInstance(): Interface;
+//// [index.d.ts]
+export declare const spread: {
+    [SYMBOL]: string;
+};

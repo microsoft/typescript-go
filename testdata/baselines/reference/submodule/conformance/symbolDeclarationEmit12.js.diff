@@ -10,14 +10,10 @@
          [Symbol.isConcatSpreadable]() {
              return undefined;
          }
-@@= skipped -9, +10 lines =@@
-     }
-     M.C = C;
- })(M || (M = {}));
--
--
--//// [symbolDeclarationEmit12.d.ts]
--declare namespace M {
+@@= skipped -13, +14 lines =@@
+
+ //// [symbolDeclarationEmit12.d.ts]
+ declare namespace M {
 -    interface I {
 -    }
 -    export class C {
@@ -27,4 +23,6 @@
 -        set [Symbol.toPrimitive](x: I);
 -    }
 -    export {};
--}
++    class C {
++    }
+ }

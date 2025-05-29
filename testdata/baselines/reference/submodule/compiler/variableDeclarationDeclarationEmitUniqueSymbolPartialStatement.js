@@ -16,3 +16,8 @@ class Foo {
     [key] = value;
 }
 exports.Foo = Foo;
+
+
+//// [variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.d.ts]
+export declare class Foo {
+}

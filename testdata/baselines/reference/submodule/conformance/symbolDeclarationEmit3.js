@@ -11,3 +11,8 @@ class C {
 class C {
     [Symbol.toPrimitive](x) { }
 }
+
+
+//// [symbolDeclarationEmit3.d.ts]
+declare class C {
+}

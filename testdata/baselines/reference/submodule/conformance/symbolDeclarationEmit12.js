@@ -28,3 +28,10 @@ var M;
     }
     M.C = C;
 })(M || (M = {}));
+
+
+//// [symbolDeclarationEmit12.d.ts]
+declare namespace M {
+    class C {
+    }
+}

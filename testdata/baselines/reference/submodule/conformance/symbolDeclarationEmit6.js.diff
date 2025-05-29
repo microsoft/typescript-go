@@ -1,12 +1,8 @@
 --- old.symbolDeclarationEmit6.js
 +++ new.symbolDeclarationEmit6.js
-@@= skipped -5, +5 lines =@@
- }
+@@= skipped -9, +9 lines =@@
 
- //// [symbolDeclarationEmit6.js]
--
--
--//// [symbolDeclarationEmit6.d.ts]
--interface I {
+ //// [symbolDeclarationEmit6.d.ts]
+ interface I {
 -    [Symbol.isConcatSpreadable]: string;
--}
+ }

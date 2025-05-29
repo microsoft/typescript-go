@@ -11,12 +11,12 @@
 +    static [Symbol.isConcatSpreadable]() { }
      static get [Symbol.toPrimitive]() { return ""; }
      static set [Symbol.toPrimitive](x) { }
--}
+ }
 -C[_a] = 0;
--
--
--//// [symbolDeclarationEmit11.d.ts]
--declare class C {
+
+
+ //// [symbolDeclarationEmit11.d.ts]
+ declare class C {
 -    static [Symbol.iterator]: number;
 -    static [Symbol.isConcatSpreadable](): void;
 -    static get [Symbol.toPrimitive](): string;

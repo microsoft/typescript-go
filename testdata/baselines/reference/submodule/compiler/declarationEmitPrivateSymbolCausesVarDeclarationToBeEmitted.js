@@ -18,3 +18,8 @@ class User {
 }
 exports.User = User;
 ;
+
+
+//// [declarationEmitPrivateSymbolCausesVarDeclarationToBeEmitted.d.ts]
+export declare class User {
+}

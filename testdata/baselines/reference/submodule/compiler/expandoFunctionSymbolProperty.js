@@ -25,3 +25,11 @@ export function test() {
     inner[symb] = true;
     return inner;
 }
+
+
+//// [expandoFunctionSymbolProperty.d.ts]
+interface TestSymb {
+    (): void;
+}
+export declare function test(): TestSymb;
+export {};

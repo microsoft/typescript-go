@@ -1,38 +1,18 @@
 --- old.declarationEmitComputedPropertyNameEnum1.js
 +++ new.declarationEmitComputedPropertyNameEnum1.js
-@@= skipped -0, +0 lines =@@
--//// [tests/cases/compiler/declarationEmitComputedPropertyNameEnum1.ts] ////
--
--//// [type.ts]
--export enum Enum {
--  A = "a",
--  B = "b"
--}
--
--export type Type = { x?: { [Enum.A]: 0 } };
--
--//// [index.ts]
--import { type Type } from "./type";
--
--export const foo = { ...({} as Type) };
--
--
--
--
--//// [type.d.ts]
--export declare enum Enum {
--    A = "a",
--    B = "b"
--}
--export type Type = {
+@@= skipped -21, +21 lines =@@
+     B = "b"
+ }
+ export type Type = {
 -    x?: {
 -        [Enum.A]: 0;
 -    };
--};
--//// [index.d.ts]
--export declare const foo: {
--    x?: {
--        a: 0;
++    x?: {};
+ };
+ //// [index.d.ts]
+ export declare const foo: {
+     x?: {
+         a: 0;
 -    };
--};
-+<no content>
++    } | undefined;
+ };

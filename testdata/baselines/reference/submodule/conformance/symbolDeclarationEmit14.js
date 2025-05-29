@@ -11,3 +11,8 @@ class C {
     get [Symbol.toPrimitive]() { return ""; }
     get [Symbol.toStringTag]() { return ""; }
 }
+
+
+//// [symbolDeclarationEmit14.d.ts]
+declare class C {
+}

@@ -15,3 +15,8 @@ class C {
     static get [Symbol.toPrimitive]() { return ""; }
     static set [Symbol.toPrimitive](x) { }
 }
+
+
+//// [symbolDeclarationEmit11.d.ts]
+declare class C {
+}

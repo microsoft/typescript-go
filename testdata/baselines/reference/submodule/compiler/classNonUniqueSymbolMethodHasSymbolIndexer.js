@@ -24,3 +24,44 @@ export const Mixer = Mix(class {
     [a]() { return 1; }
     ;
 });
+
+
+//// [classNonUniqueSymbolMethodHasSymbolIndexer.d.ts]
+declare const a: symbol;
+export declare class A {
+    [x: symbol]: () => number;
+    [a](): number;
+}
+export declare const Mixer: {
+    new (): {
+        [x: symbol]: () => number;
+    };
+} & (new (...args: any[]) => {
+    mixed: true;
+});
+export {};
+
+
+//// [DtsFileErrors]
+
+
+classNonUniqueSymbolMethodHasSymbolIndexer.d.ts(4,5): error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+
+
+==== classNonUniqueSymbolMethodHasSymbolIndexer.d.ts (1 errors) ====
+    declare const a: symbol;
+    export declare class A {
+        [x: symbol]: () => number;
+        [a](): number;
+        ~~~
+!!! error TS1165: A computed property name in an ambient context must refer to an expression whose type is a literal type or a 'unique symbol' type.
+    }
+    export declare const Mixer: {
+        new (): {
+            [x: symbol]: () => number;
+        };
+    } & (new (...args: any[]) => {
+        mixed: true;
+    });
+    export {};
+    
