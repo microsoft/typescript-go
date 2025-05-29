@@ -377,6 +377,11 @@ func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
 	return false
 }
 
+func isRightSideOfAccessExpression(node *ast.Node) bool {
+	return node.Parent != nil && (ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node ||
+		ast.IsElementAccessExpression(node.Parent) && node.Parent.AsElementAccessExpression().ArgumentExpression == node)
+}
+
 func isTopLevelInExternalModuleAugmentation(node *ast.Node) bool {
 	return node != nil && node.Parent != nil && ast.IsModuleBlock(node.Parent) && ast.IsExternalModuleAugmentation(node.Parent.Parent)
 }
@@ -1586,17 +1591,13 @@ func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core
 
 	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, options)
-	isPlainJS := isPlainJSFile(sourceFile, options.CheckJs)
+	isPlainJS := ast.IsPlainJSFile(sourceFile, options.CheckJs)
 
 	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
 	// - external: files that are added by plugins
 	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
-}
-
-func isPlainJSFile(file *ast.SourceFile, checkJs core.Tristate) bool {
-	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {
@@ -1630,10 +1631,6 @@ func minAndMax[T any](slice []T, getValue func(value T) int) (int, int) {
 		}
 	}
 	return minValue, maxValue
-}
-
-func isModuleExportsAccessExpression(node *ast.Node) bool {
-	return ast.IsAccessExpression(node) && ast.IsModuleIdentifier(node.Expression()) && ast.GetElementOrPropertyAccessName(node) == "exports"
 }
 
 func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {

@@ -187,7 +187,11 @@ func (s *Server) Run() error {
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
 	go func() error { return s.readLoop(ctx) }()
-	return g.Wait()
+
+	if err := g.Wait(); err != nil && !errors.Is(err, io.EOF) {
+		return err
+	}
+	return nil
 }
 
 func (s *Server) readLoop(ctx context.Context) error {
@@ -198,9 +202,6 @@ func (s *Server) readLoop(ctx context.Context) error {
 		default:
 			msg, err := s.read()
 			if err != nil {
-				if errors.Is(err, io.EOF) {
-					return nil
-				}
 				if errors.Is(err, lsproto.ErrInvalidRequest) {
 					s.sendError(nil, err)
 					continue
@@ -445,7 +446,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 	s.sendResult(req.ID, &lsproto.InitializeResult{
 		ServerInfo: &lsproto.ServerInfo{
 			Name:    "typescript-go",
-			Version: ptrTo(core.Version),
+			Version: ptrTo(core.Version()),
 		},
 		Capabilities: &lsproto.ServerCapabilities{
 			PositionEncoding: ptrTo(s.positionEncoding),
