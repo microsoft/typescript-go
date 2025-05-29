@@ -60,6 +60,8 @@ type Service struct {
 	filenameToScriptInfoVersion map[tspath.Path]int
 	realpathToScriptInfosMu     sync.Mutex
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
+
+	compilerOptionsForInferredProjects *core.CompilerOptions
 }
 
 func NewService(host ServiceHost, options ServiceOptions) *Service {
@@ -704,21 +706,24 @@ func (s *Service) getDefaultProjectForScript(scriptInfo *ScriptInfo) *Project {
 }
 
 func (s *Service) createInferredProject(currentDirectory string, projectRootPath tspath.Path) *Project {
-	compilerOptions := core.CompilerOptions{
-		AllowJs:                    core.TSTrue,
-		Module:                     core.ModuleKindESNext,
-		ModuleResolution:           core.ModuleResolutionKindBundler,
-		Target:                     core.ScriptTargetES2022,
-		Jsx:                        core.JsxEmitReactJSX,
-		AllowImportingTsExtensions: core.TSTrue,
-		StrictNullChecks:           core.TSTrue,
-		StrictFunctionTypes:        core.TSTrue,
-		SourceMap:                  core.TSTrue,
-		ESModuleInterop:            core.TSTrue,
-		AllowNonTsExtensions:       core.TSTrue,
-		ResolveJsonModule:          core.TSTrue,
+	compilerOptions := s.compilerOptionsForInferredProjects
+	if compilerOptions == nil {
+		compilerOptions = &core.CompilerOptions{
+			AllowJs:                    core.TSTrue,
+			Module:                     core.ModuleKindESNext,
+			ModuleResolution:           core.ModuleResolutionKindBundler,
+			Target:                     core.ScriptTargetES2022,
+			Jsx:                        core.JsxEmitReactJSX,
+			AllowImportingTsExtensions: core.TSTrue,
+			StrictNullChecks:           core.TSTrue,
+			StrictFunctionTypes:        core.TSTrue,
+			SourceMap:                  core.TSTrue,
+			ESModuleInterop:            core.TSTrue,
+			AllowNonTsExtensions:       core.TSTrue,
+			ResolveJsonModule:          core.TSTrue,
+		}
 	}
-	project := NewInferredProject(&compilerOptions, currentDirectory, projectRootPath, s)
+	project := NewInferredProject(compilerOptions, currentDirectory, projectRootPath, s)
 	s.inferredProjects = append(s.inferredProjects, project)
 	return project
 }
@@ -757,4 +762,14 @@ func (s *Service) printProjects() {
 
 func (s *Service) logf(format string, args ...any) {
 	s.Log(fmt.Sprintf(format, args...))
+}
+
+// !!! per root compiler options
+func (s *Service) SetCompilerOptionsForInferredProjects(compilerOptions *core.CompilerOptions) {
+	s.compilerOptionsForInferredProjects = compilerOptions
+
+	// !!! set compiler options for all inferred projects
+	// for _, project := range s.inferredProjects {
+	// 	project.SetCompilerOptions(compilerOptions)
+	// }
 }

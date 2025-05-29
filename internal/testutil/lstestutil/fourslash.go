@@ -107,8 +107,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		testData: &testData,
 	}
 
-	// !!! global compiler options default extracted from tests
 	f.initialize(t, capabilities)
+	// !!! global compiler options default extracted from tests
+	// 	!!! set skipDefaultLibCheck to true
+	// !!! open first file
 
 	done := func() {
 		inputWriter.Close()

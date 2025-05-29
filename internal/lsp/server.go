@@ -237,7 +237,7 @@ func (s *Server) Run() error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
-	go func() error { return s.readLoop(ctx) }()
+	go func() { _ = s.readLoop(ctx) }() // !!! do something with the error here?
 
 	if err := g.Wait(); err != nil && !errors.Is(err, io.EOF) {
 		return err
@@ -629,6 +629,10 @@ func (s *Server) handleCompletion(ctx context.Context, req *lsproto.RequestMessa
 
 func (s *Server) Log(msg ...any) {
 	fmt.Fprintln(s.stderr, msg...)
+}
+
+func (s *Server) SetCompilerOptionsForInferredProjects(options *core.CompilerOptions) {
+	s.projectService.SetCompilerOptionsForInferredProjects(options)
 }
 
 func isBlockingMethod(method lsproto.Method) bool {
