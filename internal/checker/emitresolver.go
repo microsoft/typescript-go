@@ -36,6 +36,8 @@ type emitResolver struct {
 }
 
 func (r *emitResolver) IsOptionalParameter(node *ast.Node) bool {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 	return r.isOptionalParameter(node)
 }
 
@@ -275,6 +277,8 @@ func getMeaningOfEntityNameReference(entityName *ast.Node) ast.SymbolFlags {
 }
 
 func (r *emitResolver) IsEntityNameVisible(entityName *ast.Node, enclosingDeclaration *ast.Node) printer.SymbolAccessibilityResult {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 	return r.isEntityNameVisible(entityName, enclosingDeclaration, true)
 }
 
@@ -287,19 +291,15 @@ func (r *emitResolver) isEntityNameVisible(entityName *ast.Node, enclosingDeclar
 	meaning := getMeaningOfEntityNameReference(entityName)
 	firstIdentifier := ast.GetFirstIdentifier(entityName)
 
-	r.checkerMu.Lock()
 	symbol := r.checker.resolveName(enclosingDeclaration, firstIdentifier.Text(), meaning, nil, false, false)
-	r.checkerMu.Unlock()
 
 	if symbol != nil && symbol.Flags&ast.SymbolFlagsTypeParameter != 0 && meaning&ast.SymbolFlagsType != 0 {
 		return printer.SymbolAccessibilityResult{Accessibility: printer.SymbolAccessibilityAccessible}
 	}
 
 	if symbol == nil && ast.IsThisIdentifier(firstIdentifier) {
-		r.checkerMu.Lock()
 		sym := r.checker.getSymbolOfDeclaration(r.checker.getThisContainer(firstIdentifier, false, false))
-		r.checkerMu.Unlock()
-		if r.IsSymbolAccessible(sym, enclosingDeclaration, meaning, false).Accessibility == printer.SymbolAccessibilityAccessible {
+		if r.isSymbolAccessible(sym, enclosingDeclaration, meaning, false).Accessibility == printer.SymbolAccessibilityAccessible {
 			return printer.SymbolAccessibilityResult{Accessibility: printer.SymbolAccessibilityAccessible}
 		}
 	}
@@ -501,8 +501,6 @@ func (r *emitResolver) declaredParameterTypeContainsUndefined(parameter *ast.Nod
 	if typeNode == nil {
 		return false
 	}
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
 	t := r.checker.getTypeFromTypeNode(typeNode)
 	// allow error type here to avoid confusing errors that the annotation has to contain undefined when it does in cases like this:
 	//
@@ -577,10 +575,16 @@ func (r *emitResolver) IsExpandoFunctionDeclaration(node *ast.Node) bool {
 	return false
 }
 
-func (r *emitResolver) IsSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasToMarkVisible bool) printer.SymbolAccessibilityResult {
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
+func (r *emitResolver) isSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasToMarkVisible bool) printer.SymbolAccessibilityResult {
 	return r.checker.IsSymbolAccessible(symbol, enclosingDeclaration, meaning, shouldComputeAliasToMarkVisible)
+}
+
+func (r *emitResolver) IsSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasToMarkVisible bool) printer.SymbolAccessibilityResult {
+	// TODO: Split into locking and non-locking API methods - only current usage is the symbol tracker, which is non-locking,
+	// as all tracker calls happen within a CreateX call below, which already holds a lock
+	// r.checkerMu.Lock()
+	// defer r.checkerMu.Unlock()
+	return r.isSymbolAccessible(symbol, enclosingDeclaration, meaning, shouldComputeAliasToMarkVisible)
 }
 
 func isConstEnumOrConstEnumOnlyModule(s *ast.Symbol) bool {
@@ -815,6 +819,9 @@ func (r *emitResolver) CreateReturnTypeOfSignatureDeclaration(emitContext *print
 	if original == nil {
 		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.SerializeReturnTypeForSignature(original, enclosingDeclaration, flags, internalFlags, tracker)
 }
@@ -824,6 +831,9 @@ func (r *emitResolver) CreateTypeOfDeclaration(emitContext *printer.EmitContext,
 	if original == nil {
 		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
+
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	// // Get type of the symbol if this is the valid symbol otherwise get type at location
 	symbol := r.checker.getSymbolOfDeclaration(declaration)
@@ -841,6 +851,8 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 
 	var enumResult *ast.Node
 	if t.flags&TypeFlagsEnumLike != 0 {
+		r.checkerMu.Lock()
+		defer r.checkerMu.Unlock()
 		requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 		enumResult = requestNodeBuilder.SymbolToExpression(t.symbol, ast.SymbolFlagsValue, node, nodebuilder.FlagsNone, nodebuilder.InternalFlagsNone, tracker)
 		// What about regularTrueType/regularFalseType - since those aren't fresh, we never make initializers from them
@@ -895,6 +907,8 @@ func (r *emitResolver) CreateTypeOfExpression(emitContext *printer.EmitContext, 
 		return emitContext.Factory.NewKeywordTypeNode(ast.KindAnyKeyword)
 	}
 
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 	return requestNodeBuilder.SerializeTypeForExpression(expression, enclosingDeclaration, flags|nodebuilder.FlagsMultilineObjectLiterals, internalFlags, tracker)
 }
@@ -902,6 +916,7 @@ func (r *emitResolver) CreateTypeOfExpression(emitContext *printer.EmitContext, 
 func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitContext, container *ast.Node, enclosingDeclaration *ast.Node, flags nodebuilder.Flags, internalFlags nodebuilder.InternalFlags, tracker nodebuilder.SymbolTracker) []*ast.Node {
 	container = emitContext.ParseNode(container)
 	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 
 	sym := container.Symbol()
 	staticInfos := r.checker.getIndexInfosOfType(r.checker.getTypeOfSymbol(sym))
@@ -911,7 +926,6 @@ func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 		siblingSymbols := slices.Collect(maps.Values(r.checker.getMembersOfSymbol(sym)))
 		instanceInfos = r.checker.getIndexInfosOfIndexSymbol(instanceIndexSymbol, siblingSymbols)
 	}
-	r.checkerMu.Unlock()
 
 	requestNodeBuilder := NewNodeBuilder(r.checker, emitContext) // TODO: cache per-context
 
