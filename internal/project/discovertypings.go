@@ -290,12 +290,12 @@ func removeMinAndVersionNumbers(fileName string) string {
 	// Instead, we now essentially scan the filename (backwards) ourselves.
 	end := len(fileName)
 	for pos := end; pos > 0; {
-		ch, size := utf8.DecodeLastRuneInString(fileName[0:pos])
+		ch, size := utf8.DecodeLastRuneInString(fileName[:pos])
 		if ch >= '0' && ch <= '9' {
 			// Match a \d+ segment
 			for {
 				pos -= size
-				ch, size = utf8.DecodeLastRuneInString(fileName[0:pos])
+				ch, size = utf8.DecodeLastRuneInString(fileName[:pos])
 				if pos <= 0 || ch < '0' || ch > '9' {
 					break
 				}
@@ -304,17 +304,17 @@ func removeMinAndVersionNumbers(fileName string) string {
 			// Looking for "min" or "min"
 			// Already matched the 'n'
 			pos -= size
-			ch, size = utf8.DecodeLastRuneInString(fileName[0:pos])
+			ch, size = utf8.DecodeLastRuneInString(fileName[:pos])
 			if ch != 'i' && ch != 'I' {
 				break
 			}
 			pos -= size
-			ch, size = utf8.DecodeLastRuneInString(fileName[0:pos])
+			ch, size = utf8.DecodeLastRuneInString(fileName[:pos])
 			if ch != 'm' && ch != 'M' {
 				break
 			}
 			pos -= size
-			ch, size = utf8.DecodeLastRuneInString(fileName[0:pos])
+			ch, size = utf8.DecodeLastRuneInString(fileName[:pos])
 		} else {
 			// This character is not part of either suffix pattern
 			break
