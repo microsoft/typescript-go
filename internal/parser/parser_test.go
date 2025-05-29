@@ -32,12 +32,15 @@ func BenchmarkParse(b *testing.B) {
 			fileName := tspath.GetNormalizedAbsolutePath(f.Path(), "/")
 			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
 			sourceText := f.ReadFile(b)
+			options := &core.SourceFileAffectingCompilerOptions{
+				EmitScriptTarget: core.ScriptTargetESNext,
+			}
 
 			for _, jsdoc := range jsdocModes {
 				b.Run(jsdoc.name, func(b *testing.B) {
 					jsdocMode := jsdoc.mode
 					for b.Loop() {
-						ParseSourceFile(fileName, path, sourceText, core.ScriptTargetESNext, jsdocMode)
+						ParseSourceFile(fileName, path, sourceText, options, jsdocMode)
 					}
 				})
 			}
