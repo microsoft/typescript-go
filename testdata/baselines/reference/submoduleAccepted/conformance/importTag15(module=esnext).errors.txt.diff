@@ -1,0 +1,24 @@
+--- old.importTag15(module=esnext).errors.txt
++++ new.importTag15(module=esnext).errors.txt
+@@= skipped -0, +0 lines =@@
+ 1.js(1,30): error TS2857: Import attributes cannot be used with type-only imports or exports.
+ 1.js(2,33): error TS2857: Import attributes cannot be used with type-only imports or exports.
++1.js(4,13): error TS4078: Parameter 'a' of exported function has or is using private name 'I'.
+
+
+ ==== 0.ts (0 errors) ====
+     export interface I { }
+     
+-==== 1.js (2 errors) ====
++==== 1.js (3 errors) ====
+     /** @import { I } from './0' with { type: "json" } */
+                                  ~~~~~~~~~~~~~~~~~~~~~
+ !!! error TS2857: Import attributes cannot be used with type-only imports or exports.
+@@= skipped -13, +14 lines =@@
+ !!! error TS2857: Import attributes cannot be used with type-only imports or exports.
+     
+     /** @param {I} a */
++                ~
++!!! error TS4078: Parameter 'a' of exported function has or is using private name 'I'.
+     function f(a) {}
+     

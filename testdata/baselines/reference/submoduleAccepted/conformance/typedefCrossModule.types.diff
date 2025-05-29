@@ -11,7 +11,7 @@
 ->C : typeof C
 +>module.exports = C : () => void
 +>module.exports : () => void
-+>module : { C: () => void; }
++>module : { C(): void; }
 +>exports : () => void
 +>C : () => void
 
@@ -48,11 +48,12 @@
  exports.C = function() {
 ->exports.C = function() {    this.p = 1} : typeof C
 ->exports.C : typeof C
-+>exports.C = function() {    this.p = 1} : () => void
-+>exports.C : any
- >exports : typeof import("mod3")
+->exports : typeof import("mod3")
 ->C : typeof C
 ->function() {    this.p = 1} : typeof C
++>exports.C = function() {    this.p = 1} : () => void
++>exports.C : any
++>exports : typeof import("./mod3")
 +>C : any
 +>function() {    this.p = 1} : () => void
 

@@ -13,7 +13,7 @@ declare var module: { exports: any};
 module.exports = C
 >module.exports = C : () => void
 >module.exports : () => void
->module : { C: () => void; }
+>module : { C(): void; }
 >exports : () => void
 >C : () => void
 
@@ -54,7 +54,7 @@ export function C() {
 exports.C = function() {
 >exports.C = function() {    this.p = 1} : () => void
 >exports.C : any
->exports : typeof import("mod3")
+>exports : typeof import("./mod3")
 >C : any
 >function() {    this.p = 1} : () => void
 
