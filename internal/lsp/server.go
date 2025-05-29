@@ -22,8 +22,8 @@ import (
 )
 
 type ServerOptions struct {
-	In  io.Reader
-	Out io.Writer
+	In  LSPReader
+	Out LSPWriter
 	Err io.Writer
 
 	Cwd                string
@@ -37,8 +37,8 @@ func NewServer(opts *ServerOptions) *Server {
 		panic("Cwd is required")
 	}
 	return &Server{
-		r:                     lsproto.NewBaseReader(opts.In),
-		w:                     lsproto.NewBaseWriter(opts.Out),
+		r:                     opts.In,
+		w:                     opts.Out,
 		stderr:                opts.Err,
 		requestQueue:          make(chan *lsproto.RequestMessage, 100),
 		outgoingQueue:         make(chan *lsproto.Message, 100),
@@ -61,9 +61,60 @@ type pendingClientRequest struct {
 	cancel context.CancelFunc
 }
 
-type Server struct {
+type LSPReader interface {
+	Read() (*lsproto.Message, error)
+}
+
+type LSPWriter interface {
+	Write(msg *lsproto.Message) error
+}
+
+type lspReader struct {
 	r *lsproto.BaseReader
+}
+
+type lspWriter struct {
 	w *lsproto.BaseWriter
+}
+
+func (r *lspReader) Read() (*lsproto.Message, error) {
+	data, err := r.r.Read()
+	if err != nil {
+		return nil, err
+	}
+
+	req := &lsproto.Message{}
+	if err := json.Unmarshal(data, req); err != nil {
+		return nil, fmt.Errorf("%w: %w", lsproto.ErrInvalidRequest, err)
+	}
+
+	return req, nil
+}
+
+func ToLSPReader(r io.Reader) LSPReader {
+	return &lspReader{r: lsproto.NewBaseReader(r)}
+}
+
+func (w *lspWriter) Write(msg *lsproto.Message) error {
+	data, err := json.Marshal(msg)
+	if err != nil {
+		return fmt.Errorf("failed to marshal message: %w", err)
+	}
+	return w.w.Write(data)
+}
+
+func ToLSPWriter(w io.Writer) LSPWriter {
+	return &lspWriter{w: lsproto.NewBaseWriter(w)}
+}
+
+var (
+	_ LSPReader = (*lspReader)(nil)
+	_ LSPWriter = (*lspWriter)(nil)
+)
+
+type Server struct {
+	r LSPReader
+	w LSPWriter
 
 	stderr io.Writer
 
@@ -251,17 +302,7 @@ func (s *Server) cancelRequest(rawID lsproto.IntegerOrString) {
 }
 
 func (s *Server) read() (*lsproto.Message, error) {
-	data, err := s.r.Read()
-	if err != nil {
-		return nil, err
-	}
-
-	req := &lsproto.Message{}
-	if err := json.Unmarshal(data, req); err != nil {
-		return nil, fmt.Errorf("%w: %w", lsproto.ErrInvalidRequest, err)
-	}
-
-	return req, nil
+	return s.r.Read()
 }
 
 func (s *Server) dispatchLoop(ctx context.Context) error {
@@ -323,11 +364,7 @@ func (s *Server) writeLoop(ctx context.Context) error {
 		case <-ctx.Done():
 			return ctx.Err()
 		case msg := <-s.outgoingQueue:
-			data, err := json.Marshal(msg)
-			if err != nil {
-				return fmt.Errorf("failed to marshal message: %w", err)
-			}
-			if err := s.w.Write(data); err != nil {
+			if err := s.w.Write(msg); err != nil {
 				return fmt.Errorf("failed to write message: %w", err)
 			}
 		}

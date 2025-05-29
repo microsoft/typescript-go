@@ -1,7 +1,6 @@
 package lstestutil
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -21,8 +20,8 @@ import (
 
 type FourslashTest struct {
 	server *lsp.Server
-	in     *lsproto.BaseWriter
-	out    *lsproto.BaseReader
+	in     *lspWriter
+	out    *lspReader
 	id     int32
 
 	testData *TestData
@@ -36,6 +35,41 @@ type FourslashTest struct {
 	// !!! files
 }
 
+type lspReader struct {
+	c <-chan *lsproto.Message
+}
+
+func (r *lspReader) Read() (*lsproto.Message, error) {
+	msg, ok := <-r.c
+	if !ok {
+		return nil, io.EOF
+	}
+	return msg, nil
+}
+
+type lspWriter struct {
+	c chan<- *lsproto.Message
+}
+
+func (w *lspWriter) Write(msg *lsproto.Message) error {
+	w.c <- msg
+	return nil
+}
+
+func (r *lspWriter) Close() {
+	close(r.c)
+}
+
+var (
+	_ lsp.LSPReader = (*lspReader)(nil)
+	_ lsp.LSPWriter = (*lspWriter)(nil)
+)
+
+func newLSPPipe() (*lspReader, *lspWriter) {
+	c := make(chan *lsproto.Message, 100)
+	return &lspReader{c: c}, &lspWriter{c: c}
+}
+
 // !!! automatically get fileName from test somehow?
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string, fileName string) (*FourslashTest, func()) {
 	rootDir := "/"
@@ -45,8 +79,8 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		filePath := tspath.GetNormalizedAbsolutePath(file.Filename, rootDir)
 		testfs[filePath] = file.Content
 	}
-	inputReader, inputWriter := io.Pipe()
-	outputReader, outputWriter := io.Pipe()
+	inputReader, inputWriter := newLSPPipe()
+	outputReader, outputWriter := newLSPPipe()
 	fs := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
 	server := lsp.NewServer(&lsp.ServerOptions{
 		In:  inputReader,
@@ -60,21 +94,16 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	})
 
 	go func() {
-		var err error
 		defer func() {
-			if r := recover(); r != nil {
-				err = fmt.Errorf("server panicked: %v", r)
-			}
-			inputReader.CloseWithError(err)
-			outputWriter.CloseWithError(err)
+			outputWriter.Close()
 		}()
-		err = server.Run()
+		_ = server.Run()
 	}()
 
 	f := &FourslashTest{
 		server:   server,
-		in:       lsproto.NewBaseWriter(inputWriter),
-		out:      lsproto.NewBaseReader(outputReader),
+		in:       inputWriter,
+		out:      outputReader,
 		testData: &testData,
 	}
 
@@ -83,7 +112,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	done := func() {
 		inputWriter.Close()
-		outputReader.Close()
 	}
 	return f, done
 }
@@ -140,7 +168,7 @@ func (f *FourslashTest) sendRequest(t *testing.T, method lsproto.Method, params 
 		lsproto.NewID(lsproto.IntegerOrString{Integer: &id}),
 		params,
 	)
-	f.writeMsg(t, req)
+	f.writeMsg(t, req.Message())
 	return f.readMsg(t)
 }
 
@@ -149,32 +177,22 @@ func (f *FourslashTest) sendNotification(t *testing.T, method lsproto.Method, pa
 		method,
 		params,
 	)
-	f.writeMsg(t, notification)
+	f.writeMsg(t, notification.Message())
 }
 
-func (f *FourslashTest) writeMsg(t *testing.T, msg any) {
-	data, err := json.Marshal(msg)
-	if err != nil {
-		t.Fatalf("failed to marshal message: %v", err)
-	}
-	err = f.in.Write(data)
-	if err != nil {
+func (f *FourslashTest) writeMsg(t *testing.T, msg *lsproto.Message) {
+	if err := f.in.Write(msg); err != nil {
 		t.Fatalf("failed to write message: %v", err)
 	}
 }
 
 func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
-	// !!! filter out response by id
-	data, err := f.out.Read()
+	// !!! filter out response by id etc
+	msg, err := f.out.Read()
 	if err != nil {
-		t.Fatalf("failed to read response: %v", err)
+		t.Fatalf("failed to read message: %v", err)
 	}
-	res := &lsproto.Message{}
-	err = json.Unmarshal(data, res)
-	if err != nil {
-		t.Fatalf("failed to unmarshal response: %v", err)
-	}
-	return res
+	return msg
 }
 
 // !!! unsorted completions? only used in 47 tests
@@ -264,12 +282,12 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected VerifyCom
 		t.Fatalf("Nil response received for completion request at marker %s", f.lastKnownMarkerName)
 	}
 	result := resMsg.AsResponse().Result
-	list := &lsproto.CompletionList{}
-	err := fromDataToLsp(result, list)
-	if err != nil {
-		t.Fatalf("Unexpected response for completion request at marker %s: %v", f.lastKnownMarkerName, result)
+	switch result := result.(type) {
+	case *lsproto.CompletionList:
+		verifyCompletionsResult(t, f.lastKnownMarkerName, result, expected)
+	default:
+		t.Fatalf("Unexpected response type for completion request at marker %s: %v", f.lastKnownMarkerName, result)
 	}
-	verifyCompletionsResult(t, f.lastKnownMarkerName, list, expected)
 }
 
 func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected VerifyCompletionsResult) {
@@ -304,15 +322,6 @@ func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.Co
 			t.Fatalf("%sLabel %s should not be in actual items but was found. Actual items: %v", prefix, exclude, actual.Items)
 		}
 	}
-}
-
-// Converts from a generic JSON data structure to a specific LSP type.
-func fromDataToLsp(jsonData any, result any) error {
-	bytes, err := json.Marshal(jsonData)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(bytes, result)
 }
 
 // !!! don't compare properties that are not set in the expected value
