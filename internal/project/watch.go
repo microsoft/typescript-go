@@ -2,9 +2,10 @@ package project
 
 import (
 	"context"
-	"maps"
+	"fmt"
 	"slices"
 	"strings"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -72,7 +73,14 @@ func createGlobMapper(host ProjectHost) func(data map[tspath.Path]string) []stri
 	isRootWatchable := canWatchDirectoryOrFile(rootPathComponents)
 
 	return func(data map[tspath.Path]string) []string {
-		var globSet core.Set[string]
+		start := time.Now()
+
+		type glob struct {
+			dir          string
+			nonRecursive bool
+		}
+
+		var globSet core.Set[glob]
 
 		for path, fileName := range data {
 			w := getDirectoryToWatchFailedLookupLocation(
@@ -88,15 +96,21 @@ func createGlobMapper(host ProjectHost) func(data map[tspath.Path]string) []stri
 			if w == nil {
 				continue
 			}
-			if w.nonRecursive {
-				globSet.Add(w.dir + "/" + fileGlobPattern)
-			} else {
-				globSet.Add(w.dir + "/" + recursiveFileGlobPattern)
-			}
+			globSet.Add(glob{dir: w.dir, nonRecursive: w.nonRecursive})
 		}
 
-		globs := slices.AppendSeq(make([]string, 0, globSet.Len()), maps.Keys(globSet.M))
+		globs := make([]string, 0, globSet.Len())
+		for g := range globSet.Keys() {
+			if g.nonRecursive {
+				globs = append(globs, g.dir+"/"+fileGlobPattern)
+			} else {
+				globs = append(globs, g.dir+"/"+recursiveFileGlobPattern)
+			}
+		}
 		slices.Sort(globs)
+
+		took := time.Since(start)
+		host.Log(fmt.Sprintf("createGlobMapper took %s to create %d globs for %d failed lookups", took, len(globs), len(data)))
 		return globs
 	}
 }
