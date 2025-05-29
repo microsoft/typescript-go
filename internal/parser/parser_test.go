@@ -133,6 +133,10 @@ func FuzzParser(f *testing.F) {
 			return
 		}
 
-		ParseSourceFile(fileName, path, sourceText, scriptTarget, jsdocParsingMode)
+		options := &core.SourceFileAffectingCompilerOptions{
+			EmitScriptTarget: scriptTarget,
+		}
+
+		ParseSourceFile(fileName, path, sourceText, options, jsdocParsingMode)
 	})
 }

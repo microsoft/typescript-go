@@ -189,6 +189,12 @@ func NewProgram(options ProgramOptions) *Program {
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
 	// performance.mark("beforeProgram");
 
+	// TODO(jakebailey): !!! override host's options
+	p.host = options.Host
+	if p.host == nil {
+		panic("host required")
+	}
+
 	p.resolver = module.NewResolver(p.host, p.compilerOptions)
 
 	var libs []string
@@ -228,7 +234,7 @@ func NewProgram(options ProgramOptions) *Program {
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
 func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := p.host.GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
+	newFile := p.host.GetSourceFile(oldFile.FileName(), changedFilePath)
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(p.programOptions), false
 	}

@@ -307,7 +307,7 @@ func (p *fileLoader) loadSourceFileMetaData(path tspath.Path) *ast.SourceFileMet
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-	sourceFile := p.host.GetSourceFile(fileName, path, p.compilerOptions.GetEmitScriptTarget())
+	sourceFile := p.host.GetSourceFile(fileName, path)
 	return sourceFile
 }
 

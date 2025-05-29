@@ -386,7 +386,7 @@ func (p *Parser) getExternalModuleIndicator(file *ast.SourceFile) *ast.Node {
 		}
 		return isFileForcedToBeModuleByFormat(file, p.options)
 	default:
-		panic("Unhandled case in getExternalModuleIndicator")
+		return nil
 	}
 }
 
@@ -420,7 +420,8 @@ func walkTreeForJSXTags(node *ast.Node) *ast.Node {
 }
 
 func isFileForcedToBeModuleByFormat(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) *ast.Node {
-	panic("TODO")
+	return nil
+	// panic("TODO")
 
 	// GetImpliedNodeFormatForEmitWorker but we need the metadata????
 }

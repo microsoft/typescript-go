@@ -187,7 +187,7 @@ func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 }
 
 // GetSourceFile implements compiler.CompilerHost.
-func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+func (p *Project) GetSourceFile(fileName string, path tspath.Path) *ast.SourceFile {
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
 		var (
