@@ -422,10 +422,17 @@ func walkTreeForJSXTags(node *ast.Node) *ast.Node {
 	return found
 }
 
+var isFileForcedToBeModuleByFormatExtensions = []string{tspath.ExtensionCjs, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionMts}
+
 func isFileForcedToBeModuleByFormat(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) *ast.Node {
-	// !!!
+	// Excludes declaration files - they still require an explicit `export {}` or the like
+	// for back compat purposes. The only non-declaration files _not_ forced to be a module are `.js` files
+	// that aren't esm-mode (meaning not in a `type: module` scope).
+	// !!! TODO: !file.IsDeclarationFile && (getImpliedNodeFormatForEmitWorker(file, options) === ModuleKind.ESNext || ...)
+	if !file.IsDeclarationFile && tspath.FileExtensionIsOneOf(file.FileName(), isFileForcedToBeModuleByFormatExtensions) {
+		return file.AsNode()
+	}
 	return nil
-	// GetImpliedNodeFormatForEmitWorker but we need the metadata????
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
