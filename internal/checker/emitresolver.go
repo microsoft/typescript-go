@@ -197,6 +197,8 @@ func (r *emitResolver) determineIfDeclarationIsVisible(node *ast.Node) bool {
 }
 
 func (r *emitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFile) {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 	if r.declarationFileLinks.Get(file.AsNode()).aliasesMarked {
 		return
 	}
