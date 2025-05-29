@@ -107,7 +107,7 @@ func (r *DocumentRegistry) getDocumentWorker(
 		return entry.sourceFile
 	} else {
 		// Have never seen this file with these settings. Create a new source file for it.
-		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, &key.SourceFileAffectingCompilerOptions, &key.SourceFileMetaData, scanner.JSDocParsingModeParseAll)
+		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, compilerOptions.SourceFileAffecting(), metadata, scanner.JSDocParsingModeParseAll)
 		sourceFile.Version = scriptInfoVersion
 		entry, _ := r.documents.LoadOrStore(key, &registryEntry{
 			sourceFile: sourceFile,
