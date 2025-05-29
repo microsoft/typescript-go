@@ -10,9 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-// TODO: Audit vs strada - most node.Pos calls here should actually be getTokenPosOfNode calls since they
-// correspond to getStart calls in strada, and the difference in positions is material to formatting
-
 type FormatRequestKind int
 
 const (
@@ -30,7 +27,7 @@ func findEnclosingNode(r core.TextRange, sourceFile *ast.SourceFile) *ast.Node {
 	find = func(n *ast.Node) *ast.Node {
 		var candidate *ast.Node
 		n.ForEachChild(func(c *ast.Node) bool {
-			if c.Loc.Contains(r.Pos()) && c.Loc.Contains(r.End()) {
+			if r.ContainedBy(withTokenStart(c, sourceFile)) {
 				candidate = c
 				return true
 			}
@@ -54,7 +51,8 @@ func findEnclosingNode(r core.TextRange, sourceFile *ast.SourceFile) *ast.Node {
  * and return its end as start position for the scanner.
  */
 func getScanStartPosition(enclosingNode *ast.Node, originalRange core.TextRange, sourceFile *ast.SourceFile) int {
-	start := enclosingNode.Pos()
+	adjusted := withTokenStart(enclosingNode, sourceFile)
+	start := adjusted.Pos()
 	if start == originalRange.Pos() && enclosingNode.End() == originalRange.End() {
 		return start
 	}
@@ -93,7 +91,7 @@ func getOwnOrInheritedDelta(n *ast.Node, options *FormatCodeSettings, sourceFile
 	previousLine := -1
 	var child *ast.Node
 	for n != nil {
-		line, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, n.Pos())
+		line, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, withTokenStart(n, sourceFile).Pos())
 		if previousLine != -1 && line != previousLine {
 			break
 		}
@@ -143,7 +141,7 @@ func prepareRangeContainsErrorFunction(errors []*ast.Diagnostic, originalRange c
 
 	// pick only errors that fall in range
 	sorted := core.Filter(errors, func(d *ast.Diagnostic) bool {
-		return originalRange.Contains(d.Pos()) || originalRange.Contains(d.End())
+		return originalRange.Overlaps(d.Loc())
 	})
 	if len(sorted) == 0 {
 		return rangeHasNoErrors
@@ -167,7 +165,7 @@ func prepareRangeContainsErrorFunction(errors []*ast.Diagnostic, originalRange c
 				return false
 			}
 
-			if r.Contains(err.Pos()) || r.Contains(err.End()) {
+			if r.Overlaps(err.Loc()) {
 				// specified range overlaps with error range
 				return true
 			}
@@ -252,8 +250,11 @@ func getNonDecoratorTokenPosOfNode(node *ast.Node, file *ast.SourceFile) int {
 	if ast.HasDecorators(node) {
 		lastDecorator = core.FindLast(node.Modifiers().Nodes, ast.IsDecorator)
 	}
+	if file == nil {
+		file = ast.GetSourceFileOfNode(node)
+	}
 	if lastDecorator == nil {
-		return node.Pos()
+		return withTokenStart(node, file).Pos()
 	}
 	return scanner.SkipTrivia(file.Text(), lastDecorator.End())
 }
@@ -267,7 +268,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	w.formattingScanner.advance()
 
 	if w.formattingScanner.isOnToken() {
-		startLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, w.enclosingNode.Pos())
+		startLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, withTokenStart(w.enclosingNode, w.sourceFile).Pos())
 		undecoratedStartLine := startLine
 		if ast.HasDecorators(w.enclosingNode) {
 			undecoratedStartLine, _ = scanner.GetLineAndCharacterOfPosition(w.sourceFile, getNonDecoratorTokenPosOfNode(w.enclosingNode, w.sourceFile))
@@ -348,7 +349,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 }
 
 func (w *formatSpanWorker) processNode(node *ast.Node, contextNode *ast.Node, nodeStartLine int, undecoratedNodeStartLine int, indentation int, delta int) {
-	if !(w.originalRange.Contains(node.Pos()) || w.originalRange.Contains(node.End())) {
+	if !w.originalRange.Overlaps(withTokenStart(node, w.sourceFile)) {
 		return
 	}
 

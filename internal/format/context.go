@@ -127,6 +127,15 @@ func (this *formattingContext) rangeIsOnOneLine(node core.TextRange) core.Trista
 	return core.TSFalse
 }
 
+func (this *formattingContext) nodeIsOnOneLine(node *ast.Node) core.Tristate {
+	return this.rangeIsOnOneLine(withTokenStart(node, this.SourceFile))
+}
+
+func withTokenStart(loc *ast.Node, file *ast.SourceFile) core.TextRange {
+	startPos := scanner.GetTokenPosOfNode(loc, file, false)
+	return core.NewTextRange(startPos, loc.End())
+}
+
 func (this *formattingContext) blockIsOnOneLine(node *ast.Node) core.Tristate {
 	// !!! in strada, this relies on token child manifesting - we just use the scanner here,
 	// so this will have a differing performance profile. Is this OK? Needs profiling to know.
@@ -135,10 +144,11 @@ func (this *formattingContext) blockIsOnOneLine(node *ast.Node) core.Tristate {
 	firstOpenBrace := -1
 	lastCloseBrace := -1
 	for this.scanner.TokenEnd() < end {
+		// tokenStart instead of tokenfullstart to skip trivia
 		if firstOpenBrace == -1 && this.scanner.Token() == ast.KindOpenBraceToken {
-			firstOpenBrace = this.scanner.TokenFullStart()
+			firstOpenBrace = this.scanner.TokenStart()
 		} else if this.scanner.Token() == ast.KindCloseBraceToken {
-			lastCloseBrace = this.scanner.TokenFullStart()
+			lastCloseBrace = this.scanner.TokenStart()
 		}
 		this.scanner.Scan()
 	}
@@ -150,14 +160,14 @@ func (this *formattingContext) blockIsOnOneLine(node *ast.Node) core.Tristate {
 
 func (this *formattingContext) ContextNodeAllOnSameLine() bool {
 	if this.contextNodeAllOnSameLine == core.TSUnknown {
-		this.contextNodeAllOnSameLine = this.rangeIsOnOneLine(this.contextNode.Loc)
+		this.contextNodeAllOnSameLine = this.nodeIsOnOneLine(this.contextNode)
 	}
 	return this.contextNodeAllOnSameLine == core.TSTrue
 }
 
 func (this *formattingContext) NextNodeAllOnSameLine() bool {
 	if this.nextNodeAllOnSameLine == core.TSUnknown {
-		this.nextNodeAllOnSameLine = this.rangeIsOnOneLine(this.nextTokenParent.Loc)
+		this.nextNodeAllOnSameLine = this.nodeIsOnOneLine(this.nextTokenParent)
 	}
 	return this.nextNodeAllOnSameLine == core.TSTrue
 }
