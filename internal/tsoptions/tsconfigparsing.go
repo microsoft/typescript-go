@@ -864,7 +864,7 @@ func parseOwnConfigOfJson(
 }
 
 func readJsonConfigFile(fileName string, path tspath.Path, readFile func(fileName string) (string, bool)) (*TsConfigSourceFile, []*ast.Diagnostic) {
-	text, diagnostic := TryReadFile(fileName, readFile, []*ast.Diagnostic{})
+	text, diagnostic := tryReadFile(fileName, readFile, []*ast.Diagnostic{})
 	if text != "" {
 		return &TsConfigSourceFile{
 			SourceFile: parser.ParseJSONText(fileName, path, text),
@@ -1632,4 +1632,29 @@ func GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions *core.Com
 		return tspath.SupportedTSExtensionsWithJson
 	}
 	return slices.Concat(supportedExtensions, [][]string{{tspath.ExtensionJson}})
+}
+
+// Reads the config file and reports errors.
+func GetParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys ParseConfigHost, extendedConfigCache map[tspath.Path]*ExtendedConfigCacheEntry) (*ParsedCommandLine, []*ast.Diagnostic) {
+	errors := []*ast.Diagnostic{}
+	configFileText, errors := tryReadFile(configFileName, sys.FS().ReadFile, errors)
+	if len(errors) > 0 {
+		// these are unrecoverable errors--exit to report them as diagnostics
+		return nil, errors
+	}
+
+	cwd := sys.GetCurrentDirectory()
+	tsConfigSourceFile := NewTsconfigSourceFileFromFilePath(configFileName, tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()), configFileText)
+	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
+	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
+	return ParseJsonSourceFileConfigFileContent(
+		tsConfigSourceFile,
+		sys,
+		tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(configFileName), cwd),
+		options,
+		tspath.GetNormalizedAbsolutePath(configFileName, cwd),
+		nil,
+		nil,
+		extendedConfigCache,
+	), nil
 }
