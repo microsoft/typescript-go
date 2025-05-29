@@ -20,11 +20,11 @@ const (
 
 func writeTypeParam(c *checker.Checker, tp *checker.Type, file *ast.SourceFile, p printer.EmitTextWriter) {
 	symbol := tp.Symbol()
-	c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
+	p.RawWrite(c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags))
 	cons := c.GetConstraintOfTypeParameter(tp)
 	if cons != nil {
 		p.RawWrite(" extends ")
-		c.WriteType(cons, file.AsNode(), typeFormatFlags, p)
+		p.RawWrite(c.WriteType(cons, file.AsNode(), typeFormatFlags))
 	}
 }
 
@@ -60,7 +60,7 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	if isAlias {
 		symbol = c.GetAliasedSymbol(symbol)
 	}
-	if symbol != nil && symbol == c.GetUnknownSymbol() {
+	if symbol != nil && symbol != c.GetUnknownSymbol() {
 		flags := symbol.Flags
 		if flags&ast.SymbolFlagsType != 0 && (ast.IsPartOfTypeNode(node) || ast.IsTypeDeclarationName(node)) {
 			// If the symbol has a type meaning and we're in a type context, remove value-only meanings
@@ -96,13 +96,13 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 					}
 				}
 			}
-			c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
+			p.RawWrite(c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags))
 			p.RawWrite(": ")
-			c.WriteType(c.GetTypeOfSymbolAtLocation(symbol, node), file.AsNode(), typeFormatFlags, p)
+			p.RawWrite(c.WriteType(c.GetTypeOfSymbolAtLocation(symbol, node), file.AsNode(), typeFormatFlags))
 		case flags&ast.SymbolFlagsEnumMember != 0:
 			p.RawWrite("(enum member) ")
 			t := c.GetTypeOfSymbol(symbol)
-			c.WriteType(t, file.AsNode(), typeFormatFlags, p)
+			p.RawWrite(c.WriteType(t, file.AsNode(), typeFormatFlags))
 			if t.Flags()&checker.TypeFlagsLiteral != 0 {
 				p.RawWrite(" = ")
 				p.WriteLiteral(t.AsLiteralType().String())
@@ -120,41 +120,41 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 					break
 				}
 				p.RawWrite(prefix)
-				c.WriteSignature(sig, file.AsNode(), typeFormatFlags, p)
+				p.RawWrite(c.WriteSignature(sig, file.AsNode(), typeFormatFlags))
 			}
 		case flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0:
 			p.RawWrite(core.IfElse(symbol.Flags&ast.SymbolFlagsClass != 0, "class ", "interface "))
-			c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
+			p.RawWrite(c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags))
 			params := c.GetDeclaredTypeOfSymbol(symbol).AsInterfaceType().LocalTypeParameters()
 			writeTypeParams(params, c, file, p)
 		case flags&ast.SymbolFlagsEnum != 0:
 			p.RawWrite("enum ")
-			c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
+			p.RawWrite(c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags))
 		case flags&ast.SymbolFlagsModule != 0:
 			p.RawWrite(core.IfElse(symbol.ValueDeclaration != nil && ast.IsSourceFile(symbol.ValueDeclaration), "module ", "namespace "))
-			c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
+			p.RawWrite(c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags))
 		case flags&ast.SymbolFlagsTypeParameter != 0:
 			p.RawWrite("(type parameter) ")
 			tp := c.GetDeclaredTypeOfSymbol(symbol)
-			c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
+			p.RawWrite(c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags))
 			cons := c.GetConstraintOfTypeParameter(tp)
 			if cons != nil {
 				p.RawWrite(" extends ")
-				c.WriteType(cons, file.AsNode(), typeFormatFlags, p)
+				p.RawWrite(c.WriteType(cons, file.AsNode(), typeFormatFlags))
 			}
 		case flags&ast.SymbolFlagsTypeAlias != 0:
 			p.RawWrite("type ")
-			c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
+			p.RawWrite(c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags))
 			writeTypeParams(c.GetTypeAliasTypeParameters(symbol), c, file, p)
 			if len(symbol.Declarations) != 0 {
 				p.RawWrite(" = ")
-				c.WriteType(c.GetDeclaredTypeOfSymbol(symbol), file.AsNode(), typeFormatFlags|checker.TypeFormatFlagsInTypeAlias, p)
+				p.RawWrite(c.WriteType(c.GetDeclaredTypeOfSymbol(symbol), file.AsNode(), typeFormatFlags|checker.TypeFormatFlagsInTypeAlias))
 			}
 		case flags&ast.SymbolFlagsAlias != 0:
 			p.RawWrite("import ")
-			c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags, p)
+			p.RawWrite(c.WriteSymbol(symbol, file.AsNode(), ast.SymbolFlagsNone, symbolFormatFlags))
 		default:
-			c.WriteType(c.GetTypeOfSymbol(symbol), file.AsNode(), typeFormatFlags, p)
+			p.RawWrite(c.WriteType(c.GetTypeOfSymbol(symbol), file.AsNode(), typeFormatFlags))
 		}
 		result = p.String()
 	}
