@@ -966,3 +966,17 @@ func (r *emitResolver) CreateLateBoundIndexSignatures(emitContext *printer.EmitC
 	}
 	return result
 }
+
+func (r *emitResolver) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
+	// node = emitContext.ParseNode(node)
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.GetEffectiveDeclarationFlags(node, flags)
+}
+
+func (r *emitResolver) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
+	// node = emitContext.ParseNode(node)
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.GetResolutionModeOverride(node.AsImportAttributes(), false)
+}

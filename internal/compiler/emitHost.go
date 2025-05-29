@@ -69,13 +69,7 @@ func (host *emitHost) IsSourceOfProjectReferenceRedirect(path string) bool {
 }
 
 func (host *emitHost) GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
-	// TODO: EmitContext().ParseNode(node) - can only find a checker for parse nodes!
-	ch, done := host.program.GetTypeCheckerForFile(context.Background(), ast.GetSourceFileOfNode(node)) // TODO: ctx
-	defer done()
-	if ch == nil {
-		return ast.ModifierFlagsNone // TODO: Should this be a panic?
-	}
-	return ch.GetEffectiveDeclarationFlags(node, flags)
+	return host.GetEmitResolver(ast.GetSourceFileOfNode(node), true).GetEffectiveDeclarationFlags(node, flags)
 }
 
 func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool) declarations.OutputPaths {
@@ -84,9 +78,7 @@ func (host *emitHost) GetOutputPathsFor(file *ast.SourceFile, forceDtsPaths bool
 }
 
 func (host *emitHost) GetResolutionModeOverride(node *ast.Node) core.ResolutionMode {
-	ch, done := host.program.GetTypeCheckerForFile(context.Background(), ast.GetSourceFileOfNode(node)) // TODO: ctx
-	defer done()
-	return ch.GetResolutionModeOverride(node.AsImportAttributes(), false)
+	return host.GetEmitResolver(ast.GetSourceFileOfNode(node), true).GetResolutionModeOverride(node)
 }
 
 func (host *emitHost) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.FileReference) *ast.SourceFile {
