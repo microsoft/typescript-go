@@ -3,6 +3,7 @@ package project
 import (
 	"encoding/json"
 	"fmt"
+	"maps"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -147,15 +148,6 @@ func getTypingNamesFromSourceFileNames(
 	}
 }
 
-func getManifestNamesFromDependencies(manifestNames []string, dependencies map[string]string) []string {
-	if dependencies != nil {
-		for dependency := range dependencies {
-			manifestNames = append(manifestNames, dependency)
-		}
-	}
-	return manifestNames
-}
-
 /**
  * Adds inferred typings from manifest/module pairs (think package.json + node_modules)
  *
@@ -185,10 +177,10 @@ func addTypingNamesAndGetFilesToWatch(
 		// var manifest map[string]any
 		err := json.Unmarshal([]byte(manifestContents), &manifest)
 		if err == nil {
-			manifestTypingNames = getManifestNamesFromDependencies(manifestTypingNames, manifest.Dependencies.Value)
-			manifestTypingNames = getManifestNamesFromDependencies(manifestTypingNames, manifest.DevDependencies.Value)
-			manifestTypingNames = getManifestNamesFromDependencies(manifestTypingNames, manifest.OptionalDependencies.Value)
-			manifestTypingNames = getManifestNamesFromDependencies(manifestTypingNames, manifest.PeerDependencies.Value)
+			manifestTypingNames = slices.AppendSeq(manifestTypingNames, maps.Keys(manifest.Dependencies.Value))
+			manifestTypingNames = slices.AppendSeq(manifestTypingNames, maps.Keys(manifest.DevDependencies.Value))
+			manifestTypingNames = slices.AppendSeq(manifestTypingNames, maps.Keys(manifest.OptionalDependencies.Value))
+			manifestTypingNames = slices.AppendSeq(manifestTypingNames, maps.Keys(manifest.PeerDependencies.Value))
 			addInferredTypings(fs, log, inferredTypings, manifestTypingNames, "Typing names in '"+manifestPath+"' dependencies")
 		}
 	}

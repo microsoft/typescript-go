@@ -58,8 +58,7 @@ type TypingsInstaller struct {
 	TypingsLocation string
 	options         *TypingsInstallerOptions
 
-	initialized   bool
-	initializedMu sync.Mutex
+	initOnce sync.Once
 
 	packageNameToTypingLocation collections.SyncMap[string, *CachedTyping]
 	missingTypingsSet           collections.SyncMap[string, bool]
@@ -275,7 +274,7 @@ func (ti *TypingsInstaller) invokeRoutineToInstallTypings(
 			if success {
 				p.Logf("TI:: Installed typings %v", packageNames)
 				var installedTypingFiles []string
-				resolver := module.NewResolver(p, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext})
+				resolver := module.NewResolver(p, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext}, "", "")
 				for _, packageName := range request.filteredTypings {
 					typingFile := ti.typingToFileName(resolver, packageName)
 					if typingFile == "" {
@@ -440,47 +439,42 @@ func (ti *TypingsInstaller) filterTypings(
 }
 
 func (ti *TypingsInstaller) init(p *Project) {
-	ti.initializedMu.Lock()
-	if ti.initialized {
-		ti.initializedMu.Unlock()
-		return
-	}
-	p.Log("TI:: Global cache location '" + ti.TypingsLocation + "'") //, safe file path '" + safeListPath + "', types map path '" + typesMapLocation + "`")
-	ti.processCacheLocation(p)
+	ti.initOnce.Do(func() {
+		p.Log("TI:: Global cache location '" + ti.TypingsLocation + "'") //, safe file path '" + safeListPath + "', types map path '" + typesMapLocation + "`")
+		ti.processCacheLocation(p)
 
-	//     // If the NPM path contains spaces and isn't wrapped in quotes, do so.
-	//     if (this.npmPath.includes(" ") && this.npmPath[0] !== `"`) {
-	//         this.npmPath = `"${this.npmPath}"`;
-	//     }
-	//     if (this.log.isEnabled()) {
-	//         this.log.writeLine(`Process id: ${process.pid}`);
-	//         this.log.writeLine(`NPM location: ${this.npmPath} (explicit '${ts.server.Arguments.NpmLocation}' ${npmLocation === undefined ? "not " : ""} provided)`);
-	//         this.log.writeLine(`validateDefaultNpmLocation: ${validateDefaultNpmLocation}`);
-	//     }
+		//     // If the NPM path contains spaces and isn't wrapped in quotes, do so.
+		//     if (this.npmPath.includes(" ") && this.npmPath[0] !== `"`) {
+		//         this.npmPath = `"${this.npmPath}"`;
+		//     }
+		//     if (this.log.isEnabled()) {
+		//         this.log.writeLine(`Process id: ${process.pid}`);
+		//         this.log.writeLine(`NPM location: ${this.npmPath} (explicit '${ts.server.Arguments.NpmLocation}' ${npmLocation === undefined ? "not " : ""} provided)`);
+		//         this.log.writeLine(`validateDefaultNpmLocation: ${validateDefaultNpmLocation}`);
+		//     }
 
-	ti.ensureTypingsLocationExists(p)
-	p.Log("TI:: Updating types-registry@latest npm package...")
-	if _, err := ti.options.NpmInstall(ti.TypingsLocation, []string{"install", "--ignore-scripts", "types-registry@latest"}); err == nil {
-		p.Log("TI:: Updated types-registry npm package")
-	} else {
-		p.Logf("TI:: Error updating types-registry package: %v", err)
-		//         // store error info to report it later when it is known that server is already listening to events from typings installer
-		//         this.delayedInitializationError = {
-		//             kind: "event::initializationFailed",
-		//             message: (e as Error).message,
-		//             stack: (e as Error).stack,
-		//         };
+		ti.ensureTypingsLocationExists(p)
+		p.Log("TI:: Updating types-registry@latest npm package...")
+		if _, err := ti.options.NpmInstall(ti.TypingsLocation, []string{"install", "--ignore-scripts", "types-registry@latest"}); err == nil {
+			p.Log("TI:: Updated types-registry npm package")
+		} else {
+			p.Logf("TI:: Error updating types-registry package: %v", err)
+			//         // store error info to report it later when it is known that server is already listening to events from typings installer
+			//         this.delayedInitializationError = {
+			//             kind: "event::initializationFailed",
+			//             message: (e as Error).message,
+			//             stack: (e as Error).stack,
+			//         };
 
-		// const body: protocol.TypesInstallerInitializationFailedEventBody = {
-		// 	message: response.message,
-		// };
-		// const eventName: protocol.TypesInstallerInitializationFailedEventName = "typesInstallerInitializationFailed";
-		// this.event(body, eventName);
-	}
+			// const body: protocol.TypesInstallerInitializationFailedEventBody = {
+			// 	message: response.message,
+			// };
+			// const eventName: protocol.TypesInstallerInitializationFailedEventName = "typesInstallerInitializationFailed";
+			// this.event(body, eventName);
+		}
 
-	ti.typesRegistry = ti.loadTypesRegistryFile(p)
-	ti.initialized = true
-	ti.initializedMu.Unlock()
+		ti.typesRegistry = ti.loadTypesRegistryFile(p)
+	})
 }
 
 type NpmConfig struct {
@@ -509,8 +503,8 @@ func (ti *TypingsInstaller) processCacheLocation(p *Project) {
 		p.Log("TI:: Loaded content of " + packageJson + ": " + npmConfigContents)
 		p.Log("TI:: Loaded content of " + packageLockJson + ": " + npmLockContents)
 
-		// TODO:: Not next but Node10 in strada
-		resolver := module.NewResolver(p, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext})
+		// !!! sheetal strada uses Node10
+		resolver := module.NewResolver(p, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext}, "", "")
 		if npmConfig.DevDependencies != nil && (npmLock.Packages != nil || npmLock.Dependencies != nil) {
 			for key := range npmConfig.DevDependencies {
 				npmLockValue, npmLockValueExists := npmLock.Packages["node_modules/"+key]

@@ -109,19 +109,23 @@ type Resolver struct {
 	caches
 	host            ResolutionHost
 	compilerOptions *core.CompilerOptions
-	TypingsLocation string
-	ProjectName     string
+	typingsLocation string
+	projectName     string
 	// reportDiagnostic: DiagnosticReporter
 }
 
 func NewResolver(
 	host ResolutionHost,
 	options *core.CompilerOptions,
+	typingsLocation string,
+	projectName string,
 ) *Resolver {
 	return &Resolver{
 		host:            host,
 		caches:          newCaches(host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames(), options),
 		compilerOptions: options,
+		typingsLocation: typingsLocation,
+		projectName:     projectName,
 	}
 }
 
@@ -235,7 +239,7 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 }
 
 func (r *Resolver) tryResolveFromTypingsLocation(moduleName string, containingDirectory string, originalResult *ResolvedModule) *ResolvedModule {
-	if r.TypingsLocation == "" ||
+	if r.typingsLocation == "" ||
 		tspath.IsExternalModuleNameRelative(moduleName) ||
 		(originalResult.ResolvedFileName != "" && tspath.ExtensionIsOneOf(originalResult.Extension, tspath.SupportedTSExtensionsWithJsonFlat)) {
 		return originalResult
@@ -251,9 +255,9 @@ func (r *Resolver) tryResolveFromTypingsLocation(moduleName string, containingDi
 		r,
 	)
 	if r.traceEnabled() {
-		r.host.Trace(diagnostics.Auto_discovery_for_typings_is_enabled_in_project_0_Running_extra_resolution_pass_for_module_1_using_cache_location_2.Format(r.ProjectName, moduleName, r.TypingsLocation))
+		r.host.Trace(diagnostics.Auto_discovery_for_typings_is_enabled_in_project_0_Running_extra_resolution_pass_for_module_1_using_cache_location_2.Format(r.projectName, moduleName, r.typingsLocation))
 	}
-	globalResolved := state.loadModuleFromImmediateNodeModulesDirectory(extensionsDeclaration, r.TypingsLocation, false)
+	globalResolved := state.loadModuleFromImmediateNodeModulesDirectory(extensionsDeclaration, r.typingsLocation, false)
 	if globalResolved == nil {
 		return originalResult
 	}
@@ -1750,7 +1754,7 @@ func extensionIsOk(extensions extensions, extension string) bool {
 }
 
 func ResolveConfig(moduleName string, containingFile string, host ResolutionHost) *ResolvedModule {
-	resolver := NewResolver(host, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext})
+	resolver := NewResolver(host, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext}, "", "")
 	return resolver.resolveConfig(moduleName, containingFile)
 }
 

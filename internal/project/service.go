@@ -769,10 +769,10 @@ func (s *Service) printProjects() {
 
 	var builder strings.Builder
 	for _, project := range s.configuredProjects {
-		project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/, builder)
+		project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/, &builder)
 	}
 	for _, project := range s.inferredProjects {
-		project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/, builder)
+		project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/, &builder)
 	}
 
 	builder.WriteString("Open files: ")

@@ -485,7 +485,7 @@ func (p *Project) updateGraph() bool {
 	p.dirty = false
 	p.dirtyFilePath = ""
 	if writeFileNames {
-		p.Log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/))
+		p.Log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/, &strings.Builder{}))
 	} else if p.program != oldProgram {
 		p.Log("Different program with same set of root files")
 	}
@@ -960,14 +960,7 @@ func (p *Project) GetFileNames(excludeFilesFromExternalLibraries bool, excludeCo
 	return result
 }
 
-func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFileVersionAndText bool, inputBuilder ...strings.Builder) string {
-	var builder *strings.Builder
-	if inputBuilder == nil {
-		builder = &strings.Builder{}
-	} else {
-		builder = &inputBuilder[0]
-	}
-	// var builder strings.Builder
+func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFileVersionAndText bool, builder *strings.Builder) string {
 	builder.WriteString(fmt.Sprintf("Project '%s' (%s)\n", p.name, p.kind.String()))
 	if p.initialLoadPending {
 		builder.WriteString("\tFiles (0) InitialLoadPending\n")

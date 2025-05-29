@@ -239,9 +239,7 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
-	p.resolver = module.NewResolver(p.host, p.compilerOptions)
-	p.resolver.TypingsLocation = p.programOptions.TypingsLocation
-	p.resolver.ProjectName = p.programOptions.ProjectName
+	p.resolver = module.NewResolver(p.host, p.compilerOptions, p.programOptions.TypingsLocation, p.programOptions.ProjectName)
 
 	var libs []string
 
