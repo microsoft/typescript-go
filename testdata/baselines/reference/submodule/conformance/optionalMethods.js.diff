@@ -1,8 +1,8 @@
 --- old.optionalMethods.js
 +++ new.optionalMethods.js
 @@= skipped -58, +58 lines =@@
- 
- 
+
+
  //// [optionalMethods.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -70,12 +70,7 @@
 -    var g2 = x.g ? x.g() : 0;
 -    var h1 = x.h && x.h();
 -    var h2 = x.h ? x.h() : 0;
-+    let f1 = x.f();
-+    let g1 = x.g && x.g();
-+    let g2 = x.g ? x.g() : 0;
-+    let h1 = x.h && x.h();
-+    let h2 = x.h ? x.h() : 0;
- }
+-}
 -var Base = /** @class */ (function () {
 -    function Base() {
 -    }
@@ -91,38 +86,38 @@
 -    Derived.prototype.f = function () { return 1; };
 -    return Derived;
 -}(Base));
--
--
--//// [optionalMethods.d.ts]
--interface Foo {
--    a: number;
--    b?: number;
--    f(): number;
--    g?(): number;
++    let f1 = x.f();
++    let g1 = x.g && x.g();
++    let g2 = x.g ? x.g() : 0;
++    let h1 = x.h && x.h();
++    let h2 = x.h ? x.h() : 0;
++}
 +class Base {
 +    a;
- }
--declare function test1(x: Foo): void;
--declare class Bar {
--    d?: number | undefined;
--    e: number;
--    a: number;
--    b?: number;
--    c?: number | undefined;
--    constructor(d?: number | undefined, e?: number);
--    f(): number;
--    g?(): number;
--    h?(): number;
++}
 +class Derived extends Base {
 +    a = 1;
 +    f() { return 1; }
++}
+
+
+ //// [optionalMethods.d.ts]
+@@= skipped -32, +24 lines =@@
  }
--declare function test2(x: Bar): void;
--declare class Base {
--    a?: number;
--    f?(): number;
--}
--declare class Derived extends Base {
--    a: number;
--    f(): number;
--}
+ declare function test1(x: Foo): void;
+ declare class Bar {
+-    d?: number | undefined;
+-    e: number;
++    d?: number;
++    e: number | undefined;
+     a: number;
+     b?: number;
+     c?: number | undefined;
+-    constructor(d?: number | undefined, e?: number);
++    constructor(d?: number, e?: number | undefined);
+     f(): number;
+-    g?(): number;
++    g?(): number; // Body of optional method can be omitted
+     h?(): number;
+ }
+ declare function test2(x: Bar): void;

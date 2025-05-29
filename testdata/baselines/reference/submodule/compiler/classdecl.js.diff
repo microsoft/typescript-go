@@ -2,7 +2,7 @@
 +++ new.classdecl.js
 @@= skipped -95, +95 lines =@@
  }
- 
+
  //// [classdecl.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -21,9 +21,7 @@
 -})();
 -var a = /** @class */ (function () {
 -    function a(ns) {
-+class a {
-+    constructor(ns) {
-     }
+-    }
 -    a.prototype.pgF = function () { };
 -    Object.defineProperty(a.prototype, "d", {
 -        get: function () {
@@ -51,6 +49,9 @@
 -        configurable: true
 -    });
 -    a.prototype.foo = function (ns) {
++class a {
++    constructor(ns) {
++    }
 +    pgF() { }
 +    pv;
 +    get d() {
@@ -153,71 +154,25 @@
 -    };
 -    return e;
 -}());
--
--
--//// [classdecl.d.ts]
--declare class a {
--    constructor(n: number);
--    constructor(s: string);
--    pgF(): void;
--    pv: any;
--    get d(): number;
--    set d(a: number);
--    static get p2(): {
--        x: number;
--        y: number;
--    };
--    private static d2;
--    private static get p3();
--    private pv3;
--    private foo;
 +class c extends m1.b {
- }
--declare class b extends a {
++}
 +class ib2 {
- }
--declare namespace m1 {
--    class b {
++}
 +class d {
 +    foo(ns) {
 +        return ns.toString();
-     }
--    interface ib {
--    }
- }
--declare namespace m2 {
--    namespace m3 {
--        class c extends b {
--        }
--        class ib2 implements m1.ib {
--        }
++    }
++}
 +class e {
 +    foo(ns) {
 +        return ns.toString();
-     }
- }
--declare class c extends m1.b {
--}
--declare class ib2 implements m1.ib {
--}
--declare class aAmbient {
--    constructor(n: number);
--    constructor(s: string);
--    pgF(): void;
--    pv: any;
--    d: number;
--    static p2: {
--        x: number;
--        y: number;
--    };
--    static d2(): any;
--    static p3: any;
--    private pv3;
--    private foo;
--}
--declare class d {
--    private foo;
--}
--declare class e {
--    private foo;
--}
++    }
++}
+
+
+ //// [classdecl.d.ts]
+ declare class a {
++    //constructor ();
+     constructor(n: number);
+     constructor(s: string);
+     pgF(): void;

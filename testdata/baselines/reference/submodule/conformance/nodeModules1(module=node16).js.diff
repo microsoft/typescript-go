@@ -14,45 +14,87 @@
  //// [index.cjs]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
-@@= skipped -321, +318 lines =@@
- // esm format file
- const x = 1;
+@@= skipped -324, +321 lines =@@
+
+
+ //// [index.d.ts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.cts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.mts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.ts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.cts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.mts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.ts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.mts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.cts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.cts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.ts]
+-declare const x = 1;
+-export { x };
+-//// [index.d.mts]
++// cjs format file
++declare const x = 1;
++export { x };
++//// [index.d.cts]
++// cjs format file
++declare const x = 1;
++export { x };
++//// [index.d.mts]
++// esm format file
++declare const x = 1;
++export { x };
++//// [index.d.ts]
++// cjs format file
++declare const x = 1;
++export { x };
++//// [index.d.cts]
++// cjs format file
++declare const x = 1;
++export { x };
++//// [index.d.mts]
++// esm format file
++declare const x = 1;
++export { x };
++//// [index.d.ts]
++// esm format file
++declare const x = 1;
++export { x };
++//// [index.d.mts]
++// esm format file
++declare const x = 1;
++export { x };
++//// [index.d.cts]
++// cjs format file
++declare const x = 1;
++export { x };
++//// [index.d.cts]
++// cjs format file
++declare const x = 1;
++export { x };
++//// [index.d.ts]
++// esm format file
++declare const x = 1;
++export { x };
++//// [index.d.mts]
++// esm format file
+ declare const x = 1;
  export { x };
--
--
--//// [index.d.ts]
--declare const x = 1;
--export { x };
--//// [index.d.cts]
--declare const x = 1;
--export { x };
--//// [index.d.mts]
--declare const x = 1;
--export { x };
--//// [index.d.ts]
--declare const x = 1;
--export { x };
--//// [index.d.cts]
--declare const x = 1;
--export { x };
--//// [index.d.mts]
--declare const x = 1;
--export { x };
--//// [index.d.ts]
--declare const x = 1;
--export { x };
--//// [index.d.mts]
--declare const x = 1;
--export { x };
--//// [index.d.cts]
--declare const x = 1;
--export { x };
--//// [index.d.cts]
--declare const x = 1;
--export { x };
--//// [index.d.ts]
--declare const x = 1;
--export { x };
--//// [index.d.mts]
--declare const x = 1;
--export { x };

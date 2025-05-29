@@ -1,7 +1,7 @@
 --- old.variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.js
 +++ new.variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.js
 @@= skipped -8, +8 lines =@@
- 
+
  //// [variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.js]
  "use strict";
 -var _a;
@@ -14,17 +14,12 @@
 -    }
 -    return Foo;
 -}());
--exports.Foo = Foo;
--_a = key;
--
--
--//// [variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.d.ts]
--declare const key: unique symbol;
--export declare class Foo {
--    [key]: number;
 +const key = Symbol(), value = 12;
 +class Foo {
 +    [key] = value;
- }
--export {};
-+exports.Foo = Foo;
++}
+ exports.Foo = Foo;
+-_a = key;
+
+
+ //// [variableDeclarationDeclarationEmitUniqueSymbolPartialStatement.d.ts]

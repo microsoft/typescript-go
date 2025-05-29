@@ -146,6 +146,10 @@ func CompileFilesEx(
 		}
 	}
 
+	if includeLibDir {
+		repo.SkipIfNoTypeScriptSubmodule(t)
+	}
+
 	// !!!
 	// ts.assign(options, ts.convertToOptionsWithAbsolutePaths(options, path => ts.getNormalizedAbsolutePath(path, currentDirectory)));
 	if compilerOptions.OutDir != "" {
@@ -543,6 +547,9 @@ func compileFilesWithHost(
 	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
 	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
 	diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
+	if options.GetEmitDeclarations() {
+		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
+	}
 	emitResult := program.Emit(compiler.EmitOptions{})
 
 	return newCompilationResult(options, program, emitResult, diagnostics, harnessOptions)

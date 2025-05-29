@@ -24,7 +24,7 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 		nodes[0].Flags = ast.NodeFlagsReparsed
 		nodes[0].Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessArgumentExpressionOrName(bin.Left), bin.Right)
+		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessName(bin.Left), bin.Right)
 	}
 	if export != nil {
 		export.Flags = ast.NodeFlagsReparsed
@@ -98,6 +98,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
 				importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
 				p.reparseList = append(p.reparseList, importDeclaration)
+				importTag.JSImportDeclaration = importDeclaration.AsImportDeclaration()
 				// !!! @overload and other unattached tags (@callback et al) support goes here
 			}
 			if !isLast {

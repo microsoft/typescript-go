@@ -1,8 +1,8 @@
 --- old.typeGuardFunctionOfFormThis.js
 +++ new.typeGuardFunctionOfFormThis.js
 @@= skipped -143, +143 lines =@@
- 
- 
+
+
  //// [typeGuardFunctionOfFormThis.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -38,12 +38,9 @@
 -    __extends(LeadGuard, _super);
 -    function LeadGuard() {
 -        return _super !== null && _super.apply(this, arguments) || this;
-     }
+-    }
 -    LeadGuard.prototype.lead = function () { };
-+}
-+class LeadGuard extends RoyalGuard {
-+    lead() { }
-     ;
+-    ;
 -    return LeadGuard;
 -}(RoyalGuard));
 -var FollowerGuard = /** @class */ (function (_super) {
@@ -52,13 +49,19 @@
 -        return _super !== null && _super.apply(this, arguments) || this;
 -    }
 -    FollowerGuard.prototype.follow = function () { };
-+}
-+class FollowerGuard extends RoyalGuard {
-+    follow() { }
-     ;
+-    ;
 -    return FollowerGuard;
 -}(RoyalGuard));
 -var a = new FollowerGuard();
++    }
++}
++class LeadGuard extends RoyalGuard {
++    lead() { }
++    ;
++}
++class FollowerGuard extends RoyalGuard {
++    follow() { }
++    ;
 +}
 +let a = new FollowerGuard();
  if (a.isLeader()) {
@@ -147,12 +150,9 @@
 -    function MimicGuard() {
 -    }
 -    MimicGuard.prototype.isLeader = function () { return this instanceof MimicLeader; };
-+class MimicGuard {
-+    isLeader() { return this instanceof MimicLeader; }
-     ;
+-    ;
 -    MimicGuard.prototype.isFollower = function () { return this instanceof MimicFollower; };
-+    isFollower() { return this instanceof MimicFollower; }
-     ;
+-    ;
 -    return MimicGuard;
 -}());
 -var MimicLeader = /** @class */ (function (_super) {
@@ -172,6 +172,11 @@
 -    return MimicFollower;
 -}(MimicGuard));
 -var mimic = new MimicGuard();
++class MimicGuard {
++    isLeader() { return this instanceof MimicLeader; }
++    ;
++    isFollower() { return this instanceof MimicFollower; }
++    ;
 +}
 +class MimicLeader extends MimicGuard {
 +    lead() { }
@@ -183,65 +188,22 @@
  a.isLeader = mimic.isLeader;
  a.isFollower = mimic.isFollower;
  if (mimic.isFollower()) {
-     mimic.follow();
-     mimic.isFollower = a.isFollower;
+@@= skipped -49, +36 lines =@@
+ interface GuardInterface extends RoyalGuard {
  }
--
--
--//// [typeGuardFunctionOfFormThis.d.ts]
--declare class RoyalGuard {
--    isLeader(): this is LeadGuard;
--    isFollower(): this is FollowerGuard;
--}
--declare class LeadGuard extends RoyalGuard {
--    lead(): void;
--}
--declare class FollowerGuard extends RoyalGuard {
--    follow(): void;
--}
--declare let a: RoyalGuard;
--interface GuardInterface extends RoyalGuard {
--}
--declare let b: GuardInterface;
--declare var holder2: {
--    a: RoyalGuard;
--};
--declare class ArrowGuard {
--    isElite: () => this is ArrowElite;
--    isMedic: () => this is ArrowMedic;
--}
--declare class ArrowElite extends ArrowGuard {
--    defend(): void;
--}
--declare class ArrowMedic extends ArrowGuard {
--    heal(): void;
--}
--declare let guard: ArrowGuard;
--interface Supplies {
--    spoiled: boolean;
--}
--interface Sundries {
--    broken: boolean;
--}
--interface Crate<T> {
--    contents: T;
--    volume: number;
--    isSupplies(): this is Crate<Supplies>;
--    isSundries(): this is Crate<Sundries>;
--}
--declare let crate: Crate<{}>;
--declare class MimicGuard {
--    isLeader(): this is MimicLeader;
--    isFollower(): this is MimicFollower;
--}
--declare class MimicLeader extends MimicGuard {
--    lead(): void;
--}
--declare class MimicFollower extends MimicGuard {
--    follow(): void;
--}
--declare let mimic: MimicGuard;
--interface MimicGuardInterface {
--    isLeader(): this is LeadGuard;
--    isFollower(): this is FollowerGuard;
--}
+ declare let b: GuardInterface;
++// if (((a.isLeader)())) {
++//     a.lead();
++// }
++// else if (((a).isFollower())) {
++//     a.follow();
++// }
++// if (((a["isLeader"])())) {
++//     a.lead();
++// }
++// else if (((a)["isFollower"]())) {
++//     a.follow();
++// }
+ declare var holder2: {
+     a: RoyalGuard;
+ };

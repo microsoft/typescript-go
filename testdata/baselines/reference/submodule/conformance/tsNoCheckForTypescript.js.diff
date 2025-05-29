@@ -1,7 +1,7 @@
 --- old.tsNoCheckForTypescript.js
 +++ new.tsNoCheckForTypescript.js
 @@= skipped -15, +15 lines =@@
- 
+
  //// [file.js]
  "use strict";
 -// @ts-nocheck
@@ -15,19 +15,23 @@
 -    }
 -    return Bet;
 -}());
--exports.Bet = Bet;
--
--
--//// [file.d.ts]
--export declare const a: any;
--export interface Aleph {
--    q: number;
 +class Bet {
 +    q = "lol"; // And so will this implements error
++}
+ exports.Bet = Bet;
+
+
+ //// [file.d.ts]
+-export declare const a: any;
++// @ts-nocheck
++export declare const a: any; // This is an error, ofc, `Operator '+' cannot be applied to types '1' and '{}'`, which will be suppressed by the `nocheck` comment
+ export interface Aleph {
+     q: number;
  }
--export declare class Bet implements Aleph {
+ export declare class Bet implements Aleph {
 -    q: string;
--}
++    q: string; // And so will this implements error
+ }
 -
 -
 -//// [DtsFileErrors]
@@ -49,4 +53,3 @@
 -!!! error TS2416:   Type 'string' is not assignable to type 'number'.
 -    }
 -    
-+exports.Bet = Bet;

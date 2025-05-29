@@ -2,7 +2,7 @@
 +++ new.declarationEmitReadonly.js
 @@= skipped -5, +5 lines =@@
  }
- 
+
  //// [declarationEmitReadonly.js]
 -var C = /** @class */ (function () {
 -    function C(x) {
@@ -13,10 +13,7 @@
      }
 -    return C;
 -}());
--
--
--//// [declarationEmitReadonly.d.ts]
--declare class C {
--    readonly x: number;
--    constructor(x: number);
- }
++}
+
+
+ //// [declarationEmitReadonly.d.ts]

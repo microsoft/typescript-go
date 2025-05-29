@@ -1,19 +1,20 @@
 --- old.functionExpressionNames.types
 +++ new.functionExpressionNames.types
 @@= skipped -1, +1 lines =@@
- 
+
  === b.js ===
  exports.E = function() {
 ->exports.E = function() {    this.e = 'exported'} : typeof E
 ->exports.E : typeof E
-+>exports.E = function() {    this.e = 'exported'} : () => void
-+>exports.E : any
- >exports : typeof import("b")
+->exports : typeof import("b")
 ->E : typeof E
 ->function() {    this.e = 'exported'} : typeof E
++>exports.E = function() {    this.e = 'exported'} : () => void
++>exports.E : any
++>exports : typeof import("./b")
 +>E : any
 +>function() {    this.e = 'exported'} : () => void
- 
+
      this.e = 'exported'
  >this.e = 'exported' : "exported"
  >this.e : any
@@ -26,25 +27,26 @@
 ->e : E
 ->new exports.E() : E
 ->exports.E : typeof E
+->exports : typeof import("b")
+->E : typeof E
 +>e : any
 +>new exports.E() : any
 +>exports.E : any
- >exports : typeof import("b")
-->E : typeof E
++>exports : typeof import("./b")
 +>E : any
- 
+
  var o = {
 ->o : { C: typeof C; }
 ->{    C: function () {        this.c = 'nested object'    }} : { C: typeof C; }
 +>o : { C: () => void; }
 +>{    C: function () {        this.c = 'nested object'    }} : { C: () => void; }
- 
+
      C: function () {
 ->C : typeof C
 ->function () {        this.c = 'nested object'    } : typeof C
 +>C : () => void
 +>function () {        this.c = 'nested object'    } : () => void
- 
+
          this.c = 'nested object'
  >this.c = 'nested object' : "nested object"
  >this.c : any
@@ -65,13 +67,13 @@
 +>o.C : () => void
 +>o : { C: () => void; }
 +>C : () => void
- 
+
  var V = function () {
 ->V : typeof V
 ->function () {    this.v = 'simple'} : typeof V
 +>V : () => void
 +>function () {    this.v = 'simple'} : () => void
- 
+
      this.v = 'simple'
  >this.v = 'simple' : "simple"
  >this.v : any
@@ -87,17 +89,17 @@
 +>v : any
 +>new V() : any
 +>V : () => void
- 
+
  var A;
  >A : any
- 
+
  A = function () {
 ->A = function () {    this.a = 'assignment'} : typeof A
 +>A = function () {    this.a = 'assignment'} : () => void
  >A : any
 ->function () {    this.a = 'assignment'} : typeof A
 +>function () {    this.a = 'assignment'} : () => void
- 
+
      this.a = 'assignment'
  >this.a = 'assignment' : "assignment"
  >this.a : any
@@ -113,14 +115,14 @@
 +>a : any
 +>new A() : any
 +>A : any
- 
+
  const {
      B = function() {
 ->B : typeof B
 ->function() {        this.b = 'binding pattern'    } : typeof B
 +>B : () => void
 +>function() {        this.b = 'binding pattern'    } : () => void
- 
+
          this.b = 'binding pattern'
  >this.b = 'binding pattern' : "binding pattern"
  >this.b : any
@@ -131,7 +133,7 @@
      }
 @@= skipped -97, +97 lines =@@
  >undefined : undefined
- 
+
  var b = new B();
 ->b : B
 ->new B() : B
@@ -139,4 +141,3 @@
 +>b : any
 +>new B() : any
 +>B : () => void
- 

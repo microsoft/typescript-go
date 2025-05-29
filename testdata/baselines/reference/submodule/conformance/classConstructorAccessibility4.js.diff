@@ -2,7 +2,7 @@
 +++ new.classConstructorAccessibility4.js
 @@= skipped -31, +31 lines =@@
  }
- 
+
  //// [classConstructorAccessibility4.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -77,18 +77,11 @@
 -    };
 -    return D;
 -}());
--
--
--//// [classConstructorAccessibility4.d.ts]
--declare class A {
--    private constructor();
--    method(): void;
 +        }
 +        class F extends D {
 +        }
 +    }
- }
--declare class D {
--    protected constructor();
--    method(): void;
--}
++}
+
+
+ //// [classConstructorAccessibility4.d.ts]

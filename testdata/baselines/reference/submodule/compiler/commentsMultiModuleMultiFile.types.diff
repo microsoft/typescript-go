@@ -1,26 +1,19 @@
 --- old.commentsMultiModuleMultiFile.types
 +++ new.commentsMultiModuleMultiFile.types
 @@= skipped -1, +1 lines =@@
- 
+
  === commentsMultiModuleMultiFile_1.ts ===
  import m = require('commentsMultiModuleMultiFile_0');
 ->m : typeof m
 +>m : any
- 
+
  /** this is multi module 3 comment*/
  export module multiM {
-@@= skipped -17, +17 lines =@@
-     }
- }
- new multiM.d();
-->new multiM.d() : multiM.d
-->multiM.d : typeof multiM.d
-+>new multiM.d() : d
-+>multiM.d : typeof d
+@@= skipped -21, +21 lines =@@
+ >multiM.d : typeof multiM.d
  >multiM : typeof multiM
-->d : typeof multiM.d
-+>d : typeof d
- 
+ >d : typeof multiM.d
+-
 -=== commentsMultiModuleMultiFile_0.ts ===
 -/** this is multi declare module*/
 -export module multiM {
@@ -57,4 +50,3 @@
 ->multiM.c : typeof multiM.c
 ->multiM : typeof multiM
 ->c : typeof multiM.c
--

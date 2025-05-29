@@ -2,11 +2,17 @@ package checker
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
+<<<<<<< HEAD
 func (c *Checker) GetStringType() *Type {
 	return c.stringType
+=======
+func (c *Checker) GetUnknownSymbol() *ast.Symbol {
+	return c.unknownSymbol
+>>>>>>> 360255e646e7e1e0b8930bff7f611fd67d04e9d8
 }
 
 func (c *Checker) GetUnionType(types []*Type) *Type {
@@ -63,4 +69,32 @@ func GetDeclarationModifierFlagsFromSymbol(s *ast.Symbol) ast.ModifierFlags {
 
 func (c *Checker) WasCanceled() bool {
 	return c.wasCanceled
+}
+
+func (c *Checker) GetSignaturesOfType(t *Type, kind SignatureKind) []*Signature {
+	return c.getSignaturesOfType(t, kind)
+}
+
+func (c *Checker) GetDeclaredTypeOfSymbol(symbol *ast.Symbol) *Type {
+	return c.getDeclaredTypeOfSymbol(symbol)
+}
+
+func (c *Checker) GetTypeOfSymbol(symbol *ast.Symbol) *Type {
+	return c.getTypeOfSymbol(symbol)
+}
+
+func (c *Checker) GetConstraintOfTypeParameter(typeParameter *Type) *Type {
+	return c.getConstraintOfTypeParameter(typeParameter)
+}
+
+func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
+	return c.getResolutionModeOverride(node, reportErrors)
+}
+
+func (c *Checker) GetEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
+	return c.getEffectiveDeclarationFlags(n, flagsToCheck)
+}
+
+func (c *Checker) GetBaseConstraintOfType(t *Type) *Type {
+	return c.getBaseConstraintOfType(t)
 }

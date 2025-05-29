@@ -1,7 +1,7 @@
 --- old.expandoFunctionBlockShadowing.js
 +++ new.expandoFunctionBlockShadowing.js
 @@= skipped -21, +21 lines =@@
- 
+
  //// [expandoFunctionBlockShadowing.js]
  "use strict";
 -// https://github.com/microsoft/TypeScript/issues/56538
@@ -30,11 +30,12 @@
 +    const topYcheck = aliasTopY;
 +    const blockYcheck = Y;
  }
--
--
--//// [expandoFunctionBlockShadowing.d.ts]
--export declare function X(): void;
--export declare function Y(): void;
+
+
+ //// [expandoFunctionBlockShadowing.d.ts]
++// https://github.com/microsoft/TypeScript/issues/56538
+ export declare function X(): void;
+ export declare function Y(): void;
 -export declare namespace Y {
 -    var test: string;
 -}

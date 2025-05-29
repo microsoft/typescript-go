@@ -1,7 +1,7 @@
 --- old.declarationEmitPromise.js
 +++ new.declarationEmitPromise.js
 @@= skipped -24, +24 lines =@@
- 
+
  //// [declarationEmitPromise.js]
  "use strict";
 -var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -47,11 +47,13 @@
 +    let rfunc = func; // <- This is the only difference
 +    return rfunc;
  }
--
--
--//// [declarationEmitPromise.d.ts]
--export declare class bluebird<T> {
--    static all: Array<bluebird<any>>;
--}
+
+
+@@= skipped -38, +26 lines =@@
+ export declare class bluebird<T> {
+     static all: Array<bluebird<any>>;
+ }
 -export declare function runSampleWorks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<(<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T)>;
 -export declare function runSampleBreaks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<(<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T)>;
++export declare function runSampleWorks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T>;
++export declare function runSampleBreaks<A, B, C, D, E>(a: bluebird<A>, b?: bluebird<B>, c?: bluebird<C>, d?: bluebird<D>, e?: bluebird<E>): Promise<<T>(f: (a: A, b?: B, c?: C, d?: D, e?: E) => T) => T>;

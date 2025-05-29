@@ -1,8 +1,16 @@
 --- old.moduleExportsTypeNoExcessPropertyCheckFromContainedLiteral.types
 +++ new.moduleExportsTypeNoExcessPropertyCheckFromContainedLiteral.types
-@@= skipped -7, +7 lines =@@
+@@= skipped -1, +1 lines =@@
+
+ === eslint.config.js ===
+ const eslintReact = require('./eslint-plugin-react.js');
+->eslintReact : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
+->require('./eslint-plugin-react.js') : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
++>eslintReact : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }; }
++>require('./eslint-plugin-react.js') : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }; }
+ >require : any
  >'./eslint-plugin-react.js' : "./eslint-plugin-react.js"
- 
+
  const tseslint = require('./typescript-eslint.js');
 ->tseslint : typeof tseslint
 ->require('./typescript-eslint.js') : typeof tseslint
@@ -10,28 +18,70 @@
 +>require('./typescript-eslint.js') : { config: (...configs: any[]) => void; }
  >require : any
  >'./typescript-eslint.js' : "./typescript-eslint.js"
- 
+
  tseslint.config(eslintReact)
  >tseslint.config(eslintReact) : void
 ->tseslint.config : (...configs: Config[]) => void
 ->tseslint : typeof tseslint
 ->config : (...configs: Config[]) => void
+->eslintReact : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
 +>tseslint.config : (...configs: any[]) => void
 +>tseslint : { config: (...configs: any[]) => void; }
 +>config : (...configs: any[]) => void
- >eslintReact : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
- 
++>eslintReact : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }; }
+
  === eslint-plugin-react.js ===
-@@= skipped -34, +34 lines =@@
+ const deprecatedRules = {
+@@= skipped -29, +29 lines =@@
+ }
+
+ const allRules = {
+->allRules : { 'no-unsafe': boolean; }
+->{  'no-unsafe': true} : { 'no-unsafe': boolean; }
++>allRules : { "no-unsafe": boolean; }
++>{  'no-unsafe': true} : { "no-unsafe": boolean; }
+
+   'no-unsafe': true
+ >'no-unsafe' : boolean
+@@= skipped -9, +9 lines =@@
+ }
+
  module.exports = {
- >module.exports = {  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
- >module.exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
+->module.exports = {  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
+->module.exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
 ->module : { exports: { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }; }
-+>module : { export=: { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }; }
- >exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
- >{  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
- 
-@@= skipped -36, +36 lines =@@
+->exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
+->{  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }; }
++>module.exports = {  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }; }
++>module.exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }; }
++>module : { "export=": { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }; }; }
++>exports : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }; }
++>{  plugins: {    react: {      deprecatedRules,      rules: allRules,    },  },} : { plugins: { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }; }
+
+   plugins: {
+->plugins : { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }
+->{    react: {      deprecatedRules,      rules: allRules,    },  } : { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }; }
++>plugins : { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }
++>{    react: {      deprecatedRules,      rules: allRules,    },  } : { react: { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }; }
+
+     react: {
+->react : { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }
+->{      deprecatedRules,      rules: allRules,    } : { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { 'no-unsafe': boolean; }; }
++>react : { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }
++>{      deprecatedRules,      rules: allRules,    } : { deprecatedRules: { "jsx-sort-default-props": boolean; }; rules: { "no-unsafe": boolean; }; }
+
+       deprecatedRules,
+ >deprecatedRules : { "jsx-sort-default-props": boolean; }
+
+       rules: allRules,
+->rules : { 'no-unsafe': boolean; }
+->allRules : { 'no-unsafe': boolean; }
++>rules : { "no-unsafe": boolean; }
++>allRules : { "no-unsafe": boolean; }
+
+     },
+   },
+@@= skipped -38, +38 lines =@@
   * @type {(...configs: Config[]) => void}
   */
  function config(...configs) { }
@@ -39,7 +89,7 @@
 ->configs : Config[]
 +>config : (...configs: any[]) => void
 +>configs : any[]
- 
+
  module.exports = { config };
 ->module.exports = { config } : typeof module.exports
 ->module.exports : typeof module.exports
@@ -49,8 +99,7 @@
 ->config : (...configs: Config[]) => void
 +>module.exports = { config } : { config: (...configs: any[]) => void; }
 +>module.exports : { config: (...configs: any[]) => void; }
-+>module : { export=: { config: (...configs: any[]) => void; }; }
++>module : { "export=": { config: (...configs: any[]) => void; }; }
 +>exports : { config: (...configs: any[]) => void; }
 +>{ config } : { config: (...configs: any[]) => void; }
 +>config : (...configs: any[]) => void
- 

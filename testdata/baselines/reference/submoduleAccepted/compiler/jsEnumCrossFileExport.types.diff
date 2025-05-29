@@ -1,13 +1,13 @@
 --- old.jsEnumCrossFileExport.types
 +++ new.jsEnumCrossFileExport.types
 @@= skipped -1, +1 lines =@@
- 
+
  === enumDef.js ===
  var Host = {};
 ->Host : typeof Host
 +>Host : {}
  >{} : {}
- 
+
  Host.UserMetrics = {};
 ->Host.UserMetrics = {} : typeof Host.UserMetrics
 ->Host.UserMetrics : typeof Host.UserMetrics
@@ -18,7 +18,7 @@
 +>Host : {}
 +>UserMetrics : any
  >{} : {}
- 
+
  /** @enum {number} */
  Host.UserMetrics.Action = {
  >Host.UserMetrics.Action = {    WindowDocked: 1,    WindowUndocked: 2,    ScriptsBreakpointSet: 3,    TimelineStarted: 4,} : { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }
@@ -33,7 +33,7 @@
 +>UserMetrics : any
 +>Action : any
  >{    WindowDocked: 1,    WindowUndocked: 2,    ScriptsBreakpointSet: 3,    TimelineStarted: 4,} : { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }
- 
+
      WindowDocked: 1,
 @@= skipped -45, +45 lines =@@
   */
@@ -50,7 +50,7 @@
 +>UserMetrics : any
 +>Blah : any
  >{    x: 12} : { x: number; }
- 
+
      x: 12
 @@= skipped -13, +13 lines =@@
  }
@@ -59,7 +59,7 @@
 ->Other : typeof Other
 +>Other : {}
  >{} : {}
- 
+
  Other.Cls = class {
  >Other.Cls = class {    /**     * @param {!Host.UserMetrics.Action} p     */    method(p) {}    usage() {        this.method(Host.UserMetrics.Action.WindowDocked);    }} : typeof Cls
 ->Other.Cls : typeof Cls
@@ -69,25 +69,21 @@
 +>Other : {}
 +>Cls : any
  >class {    /**     * @param {!Host.UserMetrics.Action} p     */    method(p) {}    usage() {        this.method(Host.UserMetrics.Action.WindowDocked);    }} : typeof Cls
- 
+
      /**
-      * @param {!Host.UserMetrics.Action} p
+@@= skipped -15, +15 lines =@@
       */
      method(p) {}
-->method : (p: Host.UserMetrics.Action) => void
+ >method : (p: Host.UserMetrics.Action) => void
 ->p : number
-+>method : (p: Action) => void
-+>p : Action
- 
++>p : Host.UserMetrics.Action
+
      usage() {
  >usage : () => void
- 
-         this.method(Host.UserMetrics.Action.WindowDocked);
- >this.method(Host.UserMetrics.Action.WindowDocked) : void
-->this.method : (p: Host.UserMetrics.Action) => void
-+>this.method : (p: Action) => void
+@@= skipped -10, +10 lines =@@
+ >this.method : (p: Host.UserMetrics.Action) => void
  >this : this
-->method : (p: Host.UserMetrics.Action) => void
+ >method : (p: Host.UserMetrics.Action) => void
 ->Host.UserMetrics.Action.WindowDocked : number
 ->Host.UserMetrics.Action : { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }
 ->Host.UserMetrics : typeof Host.UserMetrics
@@ -95,7 +91,6 @@
 ->UserMetrics : typeof Host.UserMetrics
 ->Action : { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }
 ->WindowDocked : number
-+>method : (p: Action) => void
 +>Host.UserMetrics.Action.WindowDocked : any
 +>Host.UserMetrics.Action : any
 +>Host.UserMetrics : any
@@ -105,20 +100,19 @@
 +>WindowDocked : any
      }
  }
- 
-@@= skipped -39, +39 lines =@@
+
+@@= skipped -14, +14 lines =@@
   * @type {Host.UserMetrics.Bargh}
   */
  var x = "ok";
 ->x : string
-+>x : Bargh
++>x : Host.UserMetrics.Bargh
  >"ok" : "ok"
- 
+
  /**
   * @type {Host.UserMetrics.Blah}
   */
  var y = "ok";
 ->y : string
-+>y : Blah
++>y : Host.UserMetrics.Blah
  >"ok" : "ok"
- 

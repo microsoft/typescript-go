@@ -3,10 +3,10 @@ package project
 import (
 	"context"
 	"fmt"
-	"maps"
 	"slices"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -92,15 +92,13 @@ type Project struct {
 	name string
 	kind Kind
 
-	dirtyStateMu              sync.Mutex
-	initialLoadPending        bool
-	dirty                     bool
-	version                   int
-	hasAddedOrRemovedFiles    bool
-	hasAddedOrRemovedSymlinks bool
-	deferredClose             bool
-	pendingReload             PendingReload
-	dirtyFilePath             tspath.Path
+	mu                 sync.Mutex
+	initialLoadPending bool
+	dirty              bool
+	version            int
+	deferredClose      bool
+	pendingReload      PendingReload
+	dirtyFilePath      tspath.Path
 
 	comparePathsOptions tspath.ComparePathsOptions
 	currentDirectory    string
@@ -114,7 +112,6 @@ type Project struct {
 	rootFileNames     *collections.OrderedMap[tspath.Path, string]
 	compilerOptions   *core.CompilerOptions
 	parsedCommandLine *tsoptions.ParsedCommandLine
-	programMu         sync.Mutex
 	program           *compiler.Program
 	checkerPool       *checkerPool
 
@@ -158,12 +155,9 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 	}
 	client := host.Client()
 	if host.IsWatchEnabled() && client != nil {
-		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, func(data map[tspath.Path]string) []string {
-			return slices.Sorted(maps.Values(data))
-		})
-		project.affectingLocationsWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, func(data map[tspath.Path]string) []string {
-			return slices.Sorted(maps.Values(data))
-		})
+		globMapper := createGlobMapper(host)
+		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, globMapper)
+		project.affectingLocationsWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, globMapper)
 	}
 	project.markAsDirty()
 	return project
@@ -211,7 +205,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 
 // Updates the program if needed.
 func (p *Project) GetProgram() *compiler.Program {
-	p.updateIfDirty()
+	p.updateGraph()
 	return p.program
 }
 
@@ -272,7 +266,7 @@ func (p *Project) getRootFileWatchGlobs() []string {
 		result := make([]string, 0, len(globs)+1)
 		result = append(result, p.configFileName)
 		for dir, recursive := range globs {
-			result = append(result, fmt.Sprintf("%s/%s", dir, core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
+			result = append(result, fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
 		}
 		for _, fileName := range p.parsedCommandLine.LiteralFileNames() {
 			result = append(result, fileName)
@@ -372,9 +366,9 @@ func (p *Project) getScriptKind(fileName string) core.ScriptKind {
 	return core.GetScriptKindFromFileName(fileName)
 }
 
-func (p *Project) markFileAsDirty(path tspath.Path) {
-	p.dirtyStateMu.Lock()
-	defer p.dirtyStateMu.Unlock()
+func (p *Project) MarkFileAsDirty(path tspath.Path) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if !p.dirty {
 		p.dirty = true
 		p.dirtyFilePath = path
@@ -385,27 +379,16 @@ func (p *Project) markFileAsDirty(path tspath.Path) {
 }
 
 func (p *Project) markAsDirty() {
-	p.dirtyStateMu.Lock()
-	defer p.dirtyStateMu.Unlock()
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.markAsDirtyLocked()
+}
+
+func (p *Project) markAsDirtyLocked() {
+	p.dirtyFilePath = ""
 	if !p.dirty {
 		p.dirty = true
-		p.dirtyFilePath = ""
 		p.version++
-	}
-}
-
-// updateIfDirty returns true if the project was updated.
-func (p *Project) updateIfDirty() bool {
-	// !!! p.invalidateResolutionsOfFailedLookupLocations()
-	return p.dirty && p.updateGraph()
-}
-
-func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
-	p.dirtyStateMu.Lock()
-	defer p.dirtyStateMu.Unlock()
-	p.hasAddedOrRemovedFiles = true
-	if isSymlink {
-		p.hasAddedOrRemovedSymlinks = true
 	}
 }
 
@@ -414,40 +397,39 @@ func (p *Project) onFileAddedOrRemoved(isSymlink bool) {
 // opposite of the return value in Strada, which was frequently inverted,
 // as in `updateProjectIfDirty()`.
 func (p *Project) updateGraph() bool {
-	p.programMu.Lock()
-	defer p.programMu.Unlock()
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	if !p.dirty {
 		return false
 	}
 
+	start := time.Now()
 	p.log("Starting updateGraph: Project: " + p.name)
+	var writeFileNames bool
 	oldProgram := p.program
-	hasAddedOrRemovedFiles := p.hasAddedOrRemovedFiles
 	p.initialLoadPending = false
 
 	if p.kind == KindConfigured && p.pendingReload != PendingReloadNone {
 		switch p.pendingReload {
 		case PendingReloadFileNames:
 			p.parsedCommandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(p.parsedCommandLine, p.host.FS())
-			p.setRootFiles(p.parsedCommandLine.FileNames())
+			writeFileNames = p.setRootFiles(p.parsedCommandLine.FileNames())
 		case PendingReloadFull:
-			if err := p.LoadConfig(); err != nil {
+			if err := p.loadConfig(); err != nil {
 				panic(fmt.Sprintf("failed to reload config: %v", err))
 			}
 		}
 		p.pendingReload = PendingReloadNone
 	}
 
-	p.hasAddedOrRemovedFiles = false
-	p.hasAddedOrRemovedSymlinks = false
 	oldProgramReused := p.updateProgram()
 	p.dirty = false
 	p.dirtyFilePath = ""
-	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d", p.name, p.version))
-	if hasAddedOrRemovedFiles {
+	if writeFileNames {
 		p.log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/))
 	} else if p.program != oldProgram {
-		p.log("Different program with same set of files")
+		p.log("Different program with same set of root files")
 	}
 	if !oldProgramReused {
 		if oldProgram != nil {
@@ -461,6 +443,7 @@ func (p *Project) updateGraph() bool {
 		// but in Strada we throttle, so at least sometimes this should be considered top-level?
 		p.updateWatchers(context.TODO())
 	}
+	p.log(fmt.Sprintf("Finishing updateGraph: Project: %s version: %d in %s", p.name, p.version, time.Since(start)))
 	return true
 }
 
@@ -509,6 +492,13 @@ func (p *Project) isRoot(info *ScriptInfo) bool {
 	return p.rootFileNames.Has(info.path)
 }
 
+func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.removeFile(info, fileExists, detachFromProject)
+	p.markAsDirtyLocked()
+}
+
 func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
 	if p.isRoot(info) {
 		switch p.kind {
@@ -530,7 +520,13 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 	if detachFromProject {
 		info.detachFromProject(p)
 	}
-	p.markAsDirty()
+}
+
+func (p *Project) AddRoot(info *ScriptInfo) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.addRoot(info)
+	p.markAsDirtyLocked()
 }
 
 func (p *Project) addRoot(info *ScriptInfo) {
@@ -544,10 +540,17 @@ func (p *Project) addRoot(info *ScriptInfo) {
 	}
 	p.rootFileNames.Set(info.path, info.fileName)
 	info.attachToProject(p)
-	p.markAsDirty()
 }
 
 func (p *Project) LoadConfig() error {
+	if err := p.loadConfig(); err != nil {
+		return err
+	}
+	p.markAsDirty()
+	return nil
+}
+
+func (p *Project) loadConfig() error {
 	if p.kind != KindConfigured {
 		panic("loadConfig called on non-configured project")
 	}
@@ -582,12 +585,12 @@ func (p *Project) LoadConfig() error {
 		p.compilerOptions = &core.CompilerOptions{}
 		return fmt.Errorf("could not read file %q", p.configFileName)
 	}
-
-	p.markAsDirty()
 	return nil
 }
 
-func (p *Project) setRootFiles(rootFileNames []string) {
+// setRootFiles returns true if the set of root files has changed.
+func (p *Project) setRootFiles(rootFileNames []string) bool {
+	var hasChanged bool
 	newRootScriptInfos := make(map[tspath.Path]struct{}, len(rootFileNames))
 	for _, file := range rootFileNames {
 		scriptKind := p.getScriptKind(file)
@@ -597,6 +600,7 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 		scriptInfo := p.host.GetOrCreateScriptInfoForFile(file, path, scriptKind)
 		newRootScriptInfos[path] = struct{}{}
 		isAlreadyRoot := p.rootFileNames.Has(path)
+		hasChanged = hasChanged || !isAlreadyRoot
 
 		if !isAlreadyRoot && scriptInfo != nil {
 			p.addRoot(scriptInfo)
@@ -610,6 +614,7 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 	}
 
 	if p.rootFileNames.Size() > len(rootFileNames) {
+		hasChanged = true
 		for root := range p.rootFileNames.Keys() {
 			if _, ok := newRootScriptInfos[root]; !ok {
 				if info := p.host.GetScriptInfoByPath(root); info != nil {
@@ -620,6 +625,7 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 			}
 		}
 	}
+	return hasChanged
 }
 
 func (p *Project) clearSourceMapperCache() {

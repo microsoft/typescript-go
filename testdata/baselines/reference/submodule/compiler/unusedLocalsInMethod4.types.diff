@@ -1,22 +1,7 @@
 --- old.unusedLocalsInMethod4.types
 +++ new.unusedLocalsInMethod4.types
-@@= skipped -245, +245 lines =@@
- }
- 
- function f4() {
-->f4 : () => { foo(): string; }
-+>f4 : () => { foo: () => string; }
- 
-     let x: number;  // should error
- >x : number
- 
-     return {
-->{        foo() {            return x.toString();        }    } : { foo(): string; }
-+>{        foo() {            return x.toString();        }    } : { foo: () => string; }
- 
-         foo() {
- >foo : () => string
- 
+@@= skipped -258, +258 lines =@@
+
              return x.toString();
  >x.toString() : string
 ->x.toString : (radix?: number) => string
@@ -27,8 +12,8 @@
          }
      };
  }
-@@= skipped -28, +28 lines =@@
- 
+@@= skipped -15, +15 lines =@@
+
      x.toString();
  >x.toString() : string
 ->x.toString : (radix?: number) => string
@@ -40,7 +25,7 @@
  export default {};
  >{} : {}
 @@= skipped -171, +171 lines =@@
- 
+
          enabledSubstitutions.toString();
  >enabledSubstitutions.toString() : string
 ->enabledSubstitutions.toString : (radix?: number) => string

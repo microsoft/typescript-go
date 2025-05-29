@@ -2,7 +2,7 @@
 +++ new.methodSignatureDeclarationEmit1.js
 @@= skipped -8, +8 lines =@@
  }
- 
+
  //// [methodSignatureDeclarationEmit1.js]
 -var C = /** @class */ (function () {
 -    function C() {
@@ -13,10 +13,7 @@
 -    };
 -    return C;
 -}());
--
--
--//// [methodSignatureDeclarationEmit1.d.ts]
--declare class C {
--    foo(n: number): void;
--    foo(s: string): void;
- }
++}
+
+
+ //// [methodSignatureDeclarationEmit1.d.ts]
