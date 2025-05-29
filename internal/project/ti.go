@@ -43,6 +43,7 @@ type TypingsInstallerStatus struct {
 }
 
 type TypingsInstallerOptions struct {
+	// !!! sheetal strada params to keep or not
 	// 	const typingSafeListLocation = ts.server.findArgument(ts.server.Arguments.TypingSafeListLocation);
 	// const typesMapLocation = ts.server.findArgument(ts.server.Arguments.TypesMapLocation);
 	// const npmLocation = ts.server.findArgument(ts.server.Arguments.NpmLocation);
@@ -85,7 +86,8 @@ func (ti *TypingsInstaller) IsKnownTypesPackageName(p *Project, name string) boo
 	return ok
 }
 
-const TsVersionToUse = "latest" // This is actually core.VersionMajorMinor
+// !!! sheetal currently we use latest instead of core.VersionMajorMinor()
+const TsVersionToUse = "latest"
 
 func (ti *TypingsInstaller) InstallPackage(p *Project, fileName string, packageName string) {
 	cwd, ok := tspath.ForEachAncestorDirectory(tspath.GetDirectoryPath(fileName), func(directory string) (string, bool) {
@@ -104,6 +106,7 @@ func (ti *TypingsInstaller) InstallPackage(p *Project, fileName string, packageN
 			packageNames []string,
 			success bool,
 		) {
+			// !!! sheetal events to send
 			// const message = success ?
 			//
 			//	`Package ${packageName} installed.` :
@@ -123,6 +126,7 @@ func (ti *TypingsInstaller) InstallPackage(p *Project, fileName string, packageN
 			//     this.event(response, "setTypings"); -- Used same event name - do we need it ?
 		})
 	} else {
+		// !!! sheetal events to send
 		// const response: PackageInstalledResponse = {
 		// 	kind: ActionPackageInstalled,
 		// 	projectName,
@@ -144,7 +148,7 @@ func (ti *TypingsInstaller) EnqueueInstallTypingsRequest(p *Project, typingsInfo
 		typingsInfo,
 		p.GetFileNames( /*excludeFilesFromExternalLibraries*/ true /*excludeConfigFiles*/, true),
 		p.GetCurrentDirectory(),
-	) //.concat(project.getExcludedFiles())
+	) //.concat(project.getExcludedFiles()) // !!! sheetal we dont have excluded files in project yet
 }
 
 func (ti *TypingsInstaller) discoverAndInstallTypings(p *Project, typingsInfo *TypingsInfo, fileNames []string, projectRootPath string) {
@@ -179,7 +183,7 @@ func (ti *TypingsInstaller) discoverAndInstallTypings(p *Project, typingsInfo *T
 		p.Log("TI:: No new typings were requested as a result of typings discovery")
 	}
 	p.UpdateTypingFiles(typingsInfo, cachedTypingPaths)
-	// DO we really need these events
+	// !!! sheetal events to send
 	// this.event(response, "setTypings");
 
 	if ti.options.InstallStatus != nil {
@@ -198,8 +202,7 @@ func (ti *TypingsInstaller) installTypings(
 	currentlyCachedTypings []string,
 	filteredTypings []string,
 ) {
-	// ti.ensureTypingsLocationExists(p)
-
+	// !!! sheetal events to send
 	// send progress event
 	// this.sendResponse({
 	// 	kind: EventBeginInstallTypes,
@@ -304,6 +307,7 @@ func (ti *TypingsInstaller) invokeRoutineToInstallTypings(
 				}
 			}
 
+			// !!! sheetal events to send
 			// const response: EndInstallTypes = {
 			// 	kind: EventEndInstallTypes,
 			// 	eventId: requestId,
@@ -443,6 +447,7 @@ func (ti *TypingsInstaller) init(p *Project) {
 		p.Log("TI:: Global cache location '" + ti.TypingsLocation + "'") //, safe file path '" + safeListPath + "', types map path '" + typesMapLocation + "`")
 		ti.processCacheLocation(p)
 
+		// !!! sheetal handle npm path here if we would support it
 		//     // If the NPM path contains spaces and isn't wrapped in quotes, do so.
 		//     if (this.npmPath.includes(" ") && this.npmPath[0] !== `"`) {
 		//         this.npmPath = `"${this.npmPath}"`;
@@ -459,6 +464,7 @@ func (ti *TypingsInstaller) init(p *Project) {
 			p.Log("TI:: Updated types-registry npm package")
 		} else {
 			p.Logf("TI:: Error updating types-registry package: %v", err)
+			// !!! sheetal events to send
 			//         // store error info to report it later when it is known that server is already listening to events from typings installer
 			//         this.delayedInitializationError = {
 			//             kind: "event::initializationFailed",

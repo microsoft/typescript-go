@@ -553,7 +553,7 @@ func (p *Project) allRootFilesAreJsOrDts() bool {
 }
 
 func (p *Project) getTypeAcquisition() *core.TypeAcquisition {
-	// TODO: Remove local @types from include list which was done in Strada
+	// !!! sheetal Remove local @types from include list which was done in Strada
 	if p.kind == KindInferred && p.typeAcquisition == nil {
 		var enable core.Tristate
 		if p.allRootFilesAreJsOrDts() {
@@ -574,7 +574,7 @@ func (p *Project) enqueueInstallTypingsForProject(oldProgram *compiler.Program, 
 
 	typeAcquisition := p.getTypeAcquisition()
 	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
-		// Should be probably done where we set typeAcquisition
+		// !!! sheetal Should be probably done where we set typeAcquisition
 		p.unresolvedImports = nil
 		p.unresolvedImportsPerFile = nil
 		p.typingFiles = nil
@@ -612,7 +612,7 @@ func (p *Project) extractUnresolvedImports(oldProgram *compiler.Program) []strin
 	sourceFiles := p.program.GetSourceFiles()
 	sourceFilesSet := core.NewSetWithSizeHint[*ast.SourceFile](len(sourceFiles))
 
-	// TODO:: remove ambient module names from unresolved imports
+	// !!! sheetal remove ambient module names from unresolved imports
 	// const ambientModules = program.getTypeChecker().getAmbientModules().map(mod => stripQuotes(mod.getName()));
 	for _, sourceFile := range sourceFiles {
 		if p.extractUnresolvedImportsFromSourceFile(sourceFile, oldProgram) {
@@ -929,6 +929,7 @@ func (p *Project) GetFileNames(excludeFilesFromExternalLibraries bool, excludeCo
 		return []string{}
 	}
 
+	// !!! sheetal incomplete code
 	// if (!this.languageServiceEnabled) {
 	//     // if language service is disabled assume that all files in program are root files + default library
 	//     let rootFiles = this.getRootFiles();

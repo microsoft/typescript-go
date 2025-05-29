@@ -233,7 +233,8 @@ func addTypingNamesAndGetFilesToWatch(
 
 			pathComponents := tspath.GetPathComponents(manifestPath, "")
 			lenPathComponents := len(pathComponents)
-			isScoped := rune(pathComponents[lenPathComponents-3][0]) == '@'
+			ch, _ := utf8.DecodeRuneInString(pathComponents[lenPathComponents-3])
+			isScoped := ch == '@'
 
 			if isScoped && tspath.ToFileNameLowerCase(pathComponents[lenPathComponents-4]) == modulesDirName || // `node_modules/@foo/bar`
 				!isScoped && tspath.ToFileNameLowerCase(pathComponents[lenPathComponents-3]) == modulesDirName { // `node_modules/foo`
