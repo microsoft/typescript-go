@@ -693,21 +693,6 @@ func (p *Program) InstantiationCount() int {
 	return count
 }
 
-func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
-	// TODO(jakebailey): inline
-	return p.GetEmitModuleFormatOfFileWorker(sourceFile, p.compilerOptions)
-}
-
-func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	// TODO(jakebailey): inline
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options)
-}
-
-func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	// TODO(jakebailey): inline
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile, p.compilerOptions.GetEmitModuleKind())
-}
-
 func (p *Program) CommonSourceDirectory() string {
 	p.commonSourceDirectoryOnce.Do(func() {
 		var files []string
