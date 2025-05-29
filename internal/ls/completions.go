@@ -2380,7 +2380,7 @@ func originIsPromise(origin *symbolOriginInfo) bool {
 
 func getSourceFromOrigin(origin *symbolOriginInfo) string {
 	if originIsExport(origin) {
-		return core.StripQuotes(origin.asExport().moduleSymbol.Name)
+		return stringutil.StripQuotes(origin.asExport().moduleSymbol.Name)
 	}
 
 	if originIsResolvedExport(origin) {
