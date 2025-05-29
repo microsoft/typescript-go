@@ -679,6 +679,8 @@ func (p *Project) extractUnresolvedImportsFromSourceFile(file *ast.SourceFile, o
 }
 
 func (p *Project) UpdateTypingFiles(typingsInfo *TypingsInfo, typingFiles []string) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if p.typingsInfo != typingsInfo {
 		return
 	}
@@ -696,7 +698,7 @@ func (p *Project) UpdateTypingFiles(typingsInfo *TypingsInfo, typingFiles []stri
 		// 	// Invalidate files with unresolved imports
 		// 	this.resolutionCache.setFilesWithInvalidatedNonRelativeUnresolvedImports(this.cachedUnresolvedImportsPerFile);
 
-		p.markAsDirty()
+		p.markAsDirtyLocked()
 		client := p.host.Client()
 		if client != nil {
 			err := client.RefreshDiagnostics(context.Background())
