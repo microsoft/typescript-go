@@ -3,7 +3,7 @@ package project
 import (
 	"fmt"
 	"net/url"
-	"regexp"
+	"strings"
 )
 
 type NameValidationResult int
@@ -28,8 +28,6 @@ func ValidatePackageName(packageName string) (result NameValidationResult, name 
 	return validatePackageNameWorker(packageName /*supportScopedPackage*/, true)
 }
 
-var packageNameRegexp = regexp.MustCompile("^@([^/]+)/([^/]+)$")
-
 func validatePackageNameWorker(packageName string, supportScopedPackage bool) (result NameValidationResult, name string, isScopeName bool) {
 	packageNameLen := len(packageName)
 	if packageNameLen == 0 {
@@ -48,17 +46,19 @@ func validatePackageNameWorker(packageName string, supportScopedPackage bool) (r
 	// check if name is scope package like: starts with @ and has one '/' in the middle
 	// scoped packages are not currently supported
 	if supportScopedPackage {
-		matches := packageNameRegexp.FindStringSubmatch(packageName)
-		if matches != nil {
-			scopeResult, _, _ := validatePackageNameWorker(matches[1] /*supportScopedPackage*/, false)
-			if scopeResult != NameOk {
-				return scopeResult, matches[1], true
+		if withoutScope, found := strings.CutPrefix(packageName, "@"); found {
+			scope, scopedPackageName, found := strings.Cut(withoutScope, "/")
+			if found && len(scope) > 0 && len(scopedPackageName) > 0 && strings.Index(scopedPackageName, "/") == -1 {
+				scopeResult, _, _ := validatePackageNameWorker(scope /*supportScopedPackage*/, false)
+				if scopeResult != NameOk {
+					return scopeResult, scope, true
+				}
+				packageResult, _, _ := validatePackageNameWorker(scopedPackageName /*supportScopedPackage*/, false)
+				if packageResult != NameOk {
+					return packageResult, scopedPackageName, false
+				}
+				return NameOk, "", false
 			}
-			packageResult, _, _ := validatePackageNameWorker(matches[2] /*supportScopedPackage*/, false)
-			if packageResult != NameOk {
-				return packageResult, matches[2], false
-			}
-			return NameOk, "", false
 		}
 	}
 	if url.QueryEscape(packageName) != packageName {
