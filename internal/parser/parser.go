@@ -397,11 +397,14 @@ func isFileModuleFromUsingJSXTag(file *ast.SourceFile) *ast.Node {
 	return walkTreeForJSXTags(file.AsNode())
 }
 
+// This is a somewhat unavoidable full tree walk to locate a JSX tag - `import.meta` requires the same,
+// but we avoid that walk (or parts of it) if at all possible using the `PossiblyContainsImportMeta` node flag.
+// Unfortunately, there's no `NodeFlag` space to do the same for JSX.
 func walkTreeForJSXTags(node *ast.Node) *ast.Node {
 	var found *ast.Node
 
-	var visitor func(n *ast.Node) bool
-	visitor = func(n *ast.Node) bool {
+	var visitor func(node *ast.Node) bool
+	visitor = func(node *ast.Node) bool {
 		if found != nil {
 			return true
 		}
@@ -420,9 +423,8 @@ func walkTreeForJSXTags(node *ast.Node) *ast.Node {
 }
 
 func isFileForcedToBeModuleByFormat(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) *ast.Node {
+	// !!!
 	return nil
-	// panic("TODO")
-
 	// GetImpliedNodeFormatForEmitWorker but we need the metadata????
 }
 

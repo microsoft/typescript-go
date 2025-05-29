@@ -8,3 +8,4 @@
  /// <reference types="pkg" />
 -Object.defineProperty(exports, "__esModule", { value: true });
  const a = { a: 0 };
++export {};
