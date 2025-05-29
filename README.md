@@ -84,7 +84,7 @@ This is still a work in progress and is not yet at full feature parity with Type
 | Type checking | done | Same errors, locations, and messages as TS5.8. Types printback in errors may display differently (in progress) |
 | JavaScript-specific inference and JS Doc | not ready | - |
 | JSX | done | - |
-| Declaration emit | not ready | Coming soon |
+| Declaration emit | done | Emit for JS files / JSDoc not yet supported. Some types may be formatted slightly differently |
 | Emit (JS output) | in progress | `target: esnext` well-supported, other targets may have gaps |
 | Watch mode | prototype | Watches files and rebuilds, but no incremental rechecking |
 | Build mode / project references | not ready | - |
