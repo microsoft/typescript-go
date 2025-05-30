@@ -515,12 +515,15 @@ func (p *Project) updateProgram() bool {
 	var oldProgramReused bool
 	if p.program == nil || p.dirtyFilePath == "" {
 		if p.programConfig == nil {
+			// Get from config file = config file root files + typings files
 			if p.parsedCommandLine != nil {
+				// There are no typing files so use the parsed command line as is
 				if len(p.typingFiles) == 0 {
 					p.programConfig = p.parsedCommandLine
 				} else {
+					// Update the fileNames
 					parsedConfig := *p.parsedCommandLine.ParsedConfig
-					parsedConfig.FileNames = p.GetRootFileNames()
+					parsedConfig.FileNames = append(p.parsedCommandLine.FileNames(), p.typingFiles...)
 					p.programConfig = &tsoptions.ParsedCommandLine{
 						ParsedConfig: &parsedConfig,
 						ConfigFile:   p.parsedCommandLine.ConfigFile,
