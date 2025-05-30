@@ -1,48 +1,48 @@
 package project
 
-type SafeListEntry struct {
-	Match   string
-	Exclude [][]any
-	Types   []string
-}
+// type safeListEntry struct {
+// 	match   string
+// 	exclude []any
+// 	types   string
+// }
 
-var typesMap = map[string]SafeListEntry{
-	"jquery": {
-		Match: `jquery(-(\\.?\\d+)+)?(\\.intellisense)?(\\.min)?\\.js$`,
-		Types: []string{"jquery"},
-	},
-	"WinJS": {
-		Match:   `^(.*\\/winjs-[.\\d]+)\\/js\\/base\\.js$`,
-		Exclude: [][]any{{"^", 1, "/.*"}},
-		Types:   []string{"winjs"},
-	},
-	"Kendo": {
-		Match:   `^(.*\\/kendo(-ui)?)\\/kendo\\.all(\\.min)?\\.js$`,
-		Exclude: [][]any{{"^", 1, "/.*"}},
-		Types:   []string{"kendo-ui"},
-	},
-	"Office Nuget": {
-		Match:   `^(.*\\/office\\/1)\\/excel-\\d+\\.debug\\.js$`,
-		Exclude: [][]any{{"^", 1, "/.*"}},
-		Types:   []string{"office"},
-	},
-	"References": {
-		Match:   `^(.*\\/_references\\.js)$`,
-		Exclude: [][]any{{"^", 1, "$"}},
-		Types:   []string{},
-	},
-	"Datatables.net": {
-		Match: `^.*\\/(jquery\\.)?dataTables(\\.all)?(\\.min)?\\.js$`,
-		Types: []string{"datatables.net"},
-	},
-	"Ace": {
-		Match:   `^(.*)\\/ace.js`,
-		Exclude: [][]any{{"^", 1, "/.*"}},
-		Types:   []string{"ace"},
-	},
-}
+// var typesMap = map[string]safeListEntry{
+// 	"jquery": {
+// 		match: `jquery(-(\\.?\\d+)+)?(\\.intellisense)?(\\.min)?\\.js$`,
+// 		types: "jquery",
+// 	},
+// 	"WinJS": {
+// 		match:   `^(.*\\/winjs-[.\\d]+)\\/js\\/base\\.js$`,
+// 		exclude: []any{"^", 1, "/.*"},
+// 		types:   "winjs",
+// 	},
+// 	"Kendo": {
+// 		match:   `^(.*\\/kendo(-ui)?)\\/kendo\\.all(\\.min)?\\.js$`,
+// 		exclude: []any{"^", 1, "/.*"},
+// 		types:   "kendo-ui",
+// 	},
+// 	"Office Nuget": {
+// 		match:   `^(.*\\/office\\/1)\\/excel-\\d+\\.debug\\.js$`,
+// 		exclude: []any{"^", 1, "/.*"},
+// 		types:   "office",
+// 	},
+// 	"References": {
+// 		match:   `^(.*\\/_references\\.js)$`,
+// 		exclude: []any{"^", 1, "$"},
+// 		types:   "",
+// 	},
+// 	"Datatables.net": {
+// 		match: `^.*\\/(jquery\\.)?dataTables(\\.all)?(\\.min)?\\.js$`,
+// 		types: "datatables.net",
+// 	},
+// 	"Ace": {
+// 		match:   `^(.*)\\/ace.js`,
+// 		exclude: []any{"^", 1, "/.*"},
+// 		types:   "ace",
+// 	},
+// }
 
-var safeList = map[string]string{
+var safeFileNameToTypeName = map[string]string{
 	"accounting":                 "accounting",
 	"ace.js":                     "ace",
 	"ag-grid":                    "ag-grid",

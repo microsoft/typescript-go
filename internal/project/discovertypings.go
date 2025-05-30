@@ -134,8 +134,8 @@ func getTypingNamesFromSourceFileNames(
 		hasJsxFile = hasJsxFile || tspath.FileExtensionIs(fileName, tspath.ExtensionJsx)
 		inferredTypingName := tspath.RemoveFileExtension(tspath.ToFileNameLowerCase(tspath.GetBaseFileName(fileName)))
 		cleanedTypingName := removeMinAndVersionNumbers(inferredTypingName)
-		if safeName, ok := safeList[cleanedTypingName]; ok {
-			fromFileNames = append(fromFileNames, safeName)
+		if typeName, ok := safeFileNameToTypeName[cleanedTypingName]; ok {
+			fromFileNames = append(fromFileNames, typeName)
 		}
 	}
 	if len(fromFileNames) > 0 {
