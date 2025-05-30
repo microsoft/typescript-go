@@ -37,6 +37,12 @@ func NewEmitContext() *EmitContext {
 	return c
 }
 
+func (c *EmitContext) Reset() {
+	*c = EmitContext{
+		Factory: c.Factory,
+	}
+}
+
 func (c *EmitContext) onCreate(node *ast.Node) {
 	node.Flags |= ast.NodeFlagsSynthesized
 }
