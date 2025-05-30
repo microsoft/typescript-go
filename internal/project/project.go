@@ -170,6 +170,7 @@ func NewConfiguredProject(configFileName string, configFilePath tspath.Path, hos
 	project.configFileName = configFileName
 	project.configFilePath = configFilePath
 	project.initialLoadPending = true
+	project.pendingReload = PendingReloadFull
 	client := host.Client()
 	if host.IsWatchEnabled() && client != nil {
 		project.rootFilesWatch = newWatchedFiles(project, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, core.Identity, "root files")
@@ -361,6 +362,16 @@ func (p *Project) updateWatchers(ctx context.Context) {
 	p.affectingLocationsWatch.update(ctx, affectingLocationGlobs)
 }
 
+func (p *Project) tryInvokeWildCardDirectories(fileName string, path tspath.Path) bool {
+	if p.kind == KindConfigured {
+		if p.rootFileNames.Has(path) || p.parsedCommandLine.MatchesFileName(fileName) {
+			p.SetPendingReload(PendingReloadFileNames)
+			return true
+		}
+	}
+	return false
+}
+
 // onWatchEventForNilScriptInfo is fired for watch events that are not the
 // project tsconfig, and do not have a ScriptInfo for the associated file.
 // This could be a case of one of the following:
@@ -370,14 +381,9 @@ func (p *Project) updateWatchers(ctx context.Context) {
 //     part of the project, e.g., a .js file in a project without --allowJs.
 func (p *Project) onWatchEventForNilScriptInfo(fileName string) {
 	path := p.toPath(fileName)
-	if p.kind == KindConfigured {
-		if p.rootFileNames.Has(path) || p.parsedCommandLine.MatchesFileName(fileName) {
-			p.pendingReload = PendingReloadFileNames
-			p.markAsDirty()
-			return
-		}
+	if p.tryInvokeWildCardDirectories(fileName, path) {
+		return
 	}
-
 	if _, ok := p.failedLookupsWatch.data[path]; ok {
 		p.markAsDirty()
 	} else if _, ok := p.affectingLocationsWatch.data[path]; ok {
@@ -429,6 +435,15 @@ func (p *Project) MarkFileAsDirty(path tspath.Path) {
 	}
 }
 
+func (p *Project) SetPendingReload(level PendingReload) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if level > p.pendingReload {
+		p.pendingReload = level
+	}
+	p.markAsDirtyLocked()
+}
+
 func (p *Project) markAsDirty() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -471,12 +486,12 @@ func (p *Project) updateGraph() bool {
 		case PendingReloadFileNames:
 			p.parsedCommandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(p.parsedCommandLine, p.host.FS())
 			writeFileNames = p.setRootFiles(p.parsedCommandLine.FileNames())
+			p.pendingReload = PendingReloadNone
 		case PendingReloadFull:
 			if err := p.loadConfig(); err != nil {
 				panic(fmt.Sprintf("failed to reload config: %v", err))
 			}
 		}
-		p.pendingReload = PendingReloadNone
 	}
 
 	oldProgramReused := p.updateProgram()
@@ -785,14 +800,9 @@ func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool, detachFromProjec
 }
 
 func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
-	if p.isRoot(info) {
-		switch p.kind {
-		case KindInferred:
-			p.rootFileNames.Delete(info.path)
-			p.typeAcquisition = nil
-		case KindConfigured:
-			p.pendingReload = PendingReloadFileNames
-		}
+	if p.isRoot(info) && p.kind == KindInferred {
+		p.rootFileNames.Delete(info.path)
+		p.typeAcquisition = nil
 	}
 	p.onFileAddedOrRemoved()
 
@@ -809,27 +819,21 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 	}
 }
 
-func (p *Project) AddRoot(info *ScriptInfo) {
+func (p *Project) AddInferredProjectRoot(info *ScriptInfo) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	p.addRoot(info)
-	p.markAsDirtyLocked()
-}
-
-func (p *Project) addRoot(info *ScriptInfo) {
+	if p.isRoot(info) {
+		panic("script info is already a root")
+	}
+	p.rootFileNames.Set(info.path, info.fileName)
+	p.typeAcquisition = nil
 	// !!!
 	// if p.kind == KindInferred {
 	// 	p.host.startWatchingConfigFilesForInferredProjectRoot(info.path);
 	//  // handle JS toggling
 	// }
-	if p.isRoot(info) {
-		panic("script info is already a root")
-	}
-	p.rootFileNames.Set(info.path, info.fileName)
-	if p.kind == KindInferred {
-		p.typeAcquisition = nil
-	}
 	info.attachToProject(p)
+	p.markAsDirtyLocked()
 }
 
 func (p *Project) LoadConfig() error {
@@ -845,6 +849,7 @@ func (p *Project) loadConfig() error {
 		panic("loadConfig called on non-configured project")
 	}
 
+	p.pendingReload = PendingReloadNone
 	if configFileContent, ok := p.host.FS().ReadFile(p.configFileName); ok {
 		configDir := tspath.GetDirectoryPath(p.configFileName)
 		tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(p.configFileName, p.configFilePath, configFileContent)
@@ -885,37 +890,30 @@ func (p *Project) setRootFiles(rootFileNames []string) bool {
 	var hasChanged bool
 	newRootScriptInfos := make(map[tspath.Path]struct{}, len(rootFileNames))
 	for _, file := range rootFileNames {
-		scriptKind := p.getScriptKind(file)
 		path := p.toPath(file)
 		// !!! updateNonInferredProjectFiles uses a fileExists check, which I guess
 		// could be needed if a watcher fails?
-		scriptInfo := p.host.GetOrCreateScriptInfoForFile(file, path, scriptKind)
 		newRootScriptInfos[path] = struct{}{}
 		isAlreadyRoot := p.rootFileNames.Has(path)
 		hasChanged = hasChanged || !isAlreadyRoot
-
-		if !isAlreadyRoot && scriptInfo != nil {
-			p.addRoot(scriptInfo)
-			if scriptInfo.isOpen {
-				// !!!
-				// s.removeRootOfInferredProjectIfNowPartOfOtherProject(scriptInfo)
-			}
-		} else if !isAlreadyRoot {
-			p.rootFileNames.Set(path, file)
-		}
+		p.rootFileNames.Set(path, file)
+		// if !isAlreadyRoot {
+		// 	if scriptInfo.isOpen {
+		// 		!!!s.removeRootOfInferredProjectIfNowPartOfOtherProject(scriptInfo)
+		// 	}
+		// }
 	}
 
 	if p.rootFileNames.Size() > len(rootFileNames) {
 		hasChanged = true
 		for root := range p.rootFileNames.Keys() {
 			if _, ok := newRootScriptInfos[root]; !ok {
-				if info := p.host.GetScriptInfoByPath(root); info != nil {
-					p.removeFile(info, true /*fileExists*/, true /*detachFromProject*/)
-				} else {
-					p.rootFileNames.Delete(root)
-				}
+				p.rootFileNames.Delete(root)
 			}
 		}
+	}
+	if hasChanged {
+		p.onFileAddedOrRemoved()
 	}
 	return hasChanged
 }
@@ -997,7 +995,45 @@ func (p *Project) Logf(format string, args ...interface{}) {
 }
 
 func (p *Project) Close() {
-	// !!!
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	if p.program != nil {
+		for _, sourceFile := range p.program.GetSourceFiles() {
+			p.host.DocumentRegistry().ReleaseDocument(sourceFile, p.program.GetCompilerOptions())
+			if scriptInfo := p.host.GetScriptInfoByPath(sourceFile.Path()); scriptInfo != nil {
+				scriptInfo.detachFromProject(p)
+			}
+		}
+		p.program = nil
+	} else if p.kind == KindInferred {
+		// Release root script infos for inferred projects.
+		for path := range p.rootFileNames.Keys() {
+			if info := p.host.GetScriptInfoByPath(path); info != nil {
+				info.detachFromProject(p)
+			}
+		}
+	}
+	p.rootFileNames.Clear()
+	p.parsedCommandLine = nil
+	p.checkerPool = nil
+	p.unresolvedImportsPerFile = nil
+	p.typingsInfo = nil
+	p.typingFiles = nil
+
+	// Clean up file watchers waiting for missing files
+	client := p.host.Client()
+	if p.host.IsWatchEnabled() && client != nil {
+		ctx := context.Background()
+		if p.rootFilesWatch != nil {
+			p.rootFilesWatch.update(ctx, nil)
+		}
+
+		p.failedLookupsWatch.update(ctx, nil)
+		p.affectingLocationsWatch.update(ctx, nil)
+		p.typingsFilesWatch.update(ctx, nil)
+		p.typingsDirectoryWatch.update(ctx, nil)
+	}
 }
 
 func formatFileList(files []string, linePrefix string, groupSuffix string) string {

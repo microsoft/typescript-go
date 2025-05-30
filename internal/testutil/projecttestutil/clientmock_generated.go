@@ -6,6 +6,7 @@ package projecttestutil
 import (
 	"context"
 	"sync"
+	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -158,12 +159,10 @@ func (mock *ClientMock) WatchFiles(ctx context.Context, watchers []*lsproto.File
 	}
 	mock.lockWatchFiles.Lock()
 	mock.calls.WatchFiles = append(mock.calls.WatchFiles, callInfo)
+	var watcherHandleOut project.WatcherHandle = project.WatcherHandle(fmt.Sprintf("%d", len(mock.calls.WatchFiles)))
 	mock.lockWatchFiles.Unlock()
 	if mock.WatchFilesFunc == nil {
-		var (
-			watcherHandleOut project.WatcherHandle
-			errOut           error
-		)
+		var errOut  error
 		return watcherHandleOut, errOut
 	}
 	return mock.WatchFilesFunc(ctx, watchers)
