@@ -21,7 +21,6 @@ type ScriptInfo struct {
 	version    int
 	lineMap    *ls.LineMap
 
-	isOpen                bool
 	pendingReloadFromDisk bool
 	matchesDiskText       bool
 	deferredDelete        bool
@@ -78,7 +77,6 @@ func (s *ScriptInfo) reloadIfNeeded() {
 }
 
 func (s *ScriptInfo) open(newText string) {
-	s.isOpen = true
 	s.pendingReloadFromDisk = false
 	if newText != s.text {
 		s.setText(newText)
@@ -95,7 +93,6 @@ func (s *ScriptInfo) SetTextFromDisk(newText string) {
 }
 
 func (s *ScriptInfo) close(fileExists bool) {
-	s.isOpen = false
 	if fileExists && !s.pendingReloadFromDisk && !s.matchesDiskText {
 		s.pendingReloadFromDisk = true
 		s.markContainingProjectsAsDirty()
@@ -193,4 +190,10 @@ func (s *ScriptInfo) delayReloadNonMixedContentFile() {
 	}
 	s.pendingReloadFromDisk = true
 	s.markContainingProjectsAsDirty()
+}
+
+func (s *ScriptInfo) containedByDeferredClosedProject() bool {
+	return slices.IndexFunc(s.containingProjects, func(project *Project) bool {
+		return project.deferredClose
+	}) != -1
 }
