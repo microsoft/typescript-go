@@ -171,6 +171,10 @@ func toNodeBuilderFlags(flags TypeFormatFlags) nodebuilder.Flags {
 	return nodebuilder.Flags(flags & TypeFormatFlagsNodeBuilderFlagsMask)
 }
 
+func (c *Checker) TypeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
+	return c.typeToStringEx(t, enclosingDeclaration, flags)
+}
+
 func (c *Checker) typeToStringEx(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
 	writer := printer.NewTextWriter("")
 	noTruncation := (c.compilerOptions.NoErrorTruncation == core.TSTrue) || (flags&TypeFormatFlagsNoTruncation != 0)
@@ -213,6 +217,10 @@ func (c *Checker) SymbolToString(s *ast.Symbol) string {
 
 func (c *Checker) symbolToString(symbol *ast.Symbol) string {
 	return c.symbolToStringEx(symbol, nil, ast.SymbolFlagsAll, SymbolFormatFlagsAllowAnyNodeKind)
+}
+
+func (c *Checker) SymbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, flags SymbolFormatFlags) string {
+	return c.symbolToStringEx(symbol, enclosingDeclaration, meaning, flags)
 }
 
 func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, flags SymbolFormatFlags) string {
@@ -261,6 +269,10 @@ func (c *Checker) symbolToStringEx(symbol *ast.Symbol, enclosingDeclaration *ast
 
 func (c *Checker) signatureToString(signature *Signature) string {
 	return c.signatureToStringEx(signature, nil, TypeFormatFlagsNone)
+}
+
+func (c *Checker) SignatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
+	return c.signatureToStringEx(signature, enclosingDeclaration, flags)
 }
 
 func (c *Checker) signatureToStringEx(signature *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
@@ -313,22 +325,6 @@ func (c *Checker) typePredicateToStringEx(typePredicate *TypePredicate, enclosin
 
 func (c *Checker) valueToString(value any) string {
 	return ValueToString(value)
-}
-
-func (c *Checker) WriteSymbol(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, flags SymbolFormatFlags) string {
-	return c.symbolToStringEx(symbol, enclosingDeclaration, meaning, flags)
-}
-
-func (c *Checker) WriteType(t *Type, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	return c.typeToStringEx(t, enclosingDeclaration, flags)
-}
-
-func (c *Checker) WriteSignature(s *Signature, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	return c.signatureToStringEx(s, enclosingDeclaration, flags)
-}
-
-func (c *Checker) WriteTypePredicate(p *TypePredicate, enclosingDeclaration *ast.Node, flags TypeFormatFlags) string {
-	return c.typePredicateToStringEx(p, enclosingDeclaration, flags)
 }
 
 func (c *Checker) formatUnionTypes(types []*Type) []*Type {
