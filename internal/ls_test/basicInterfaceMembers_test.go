@@ -5,27 +5,28 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
 )
 
-const content = `export {};
-interface Point {
-    x: number;
-    y: number;
-}
-declare const p: Point;
-p./*a*/`
-
 func TestBasicInterfaceMembers(t *testing.T) {
 	t.Parallel()
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
+	const content = `export {};
+	interface Point {
+		x: number;
+		y: number;
+	}
+	declare const p: Point;
+	p./*a*/`
 	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content, "basicInterfaceMembers.ts")
-	f.VerifyCompletions(t, "a", lstestutil.VerifyCompletionsResult{
-		Exact: &lsproto.CompletionList{
-			IsIncomplete: false,
-			ItemDefaults: &lsproto.CompletionItemDefaults{
-				CommitCharacters: &lstestutil.DefaultCommitCharacters,
-			},
-			Items: []*lsproto.CompletionItem{
+	f.VerifyCompletions(t, "a", &lstestutil.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &lstestutil.DefaultCommitCharacters,
+		},
+		Items: &lstestutil.VerifyCompletionsExpectedItems{
+			Exact: []*lsproto.CompletionItem{
 				{
 					Label:      "x",
 					Kind:       lstestutil.PtrTo(lsproto.CompletionItemKindField),

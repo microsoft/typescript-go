@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
+	"gotest.tools/v3/assert"
 )
 
 // !!! move this to a fourslash package
@@ -33,9 +34,6 @@ type FourslashTest struct {
 	currentFilename      string
 	lastKnownMarkerName  string
 	activeFilename       string
-	// !!! markers
-	// !!! ranges
-	// !!! files
 }
 
 type lspReader struct {
@@ -226,21 +224,6 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	return msg
 }
 
-// !!! unsorted completions? only used in 47 tests
-type VerifyCompletionsResult struct {
-	Includes []*lsproto.CompletionItem
-	Excludes []string
-	Exact    *lsproto.CompletionList
-}
-
-// !!! user preferences param
-// !!! completion context param
-// !!! go to marker: use current marker if none specified
-func (f *FourslashTest) VerifyCompletions(t *testing.T, markerName string, expected VerifyCompletionsResult) {
-	f.GoToMarker(t, markerName)
-	f.verifyCompletionsWorker(t, expected)
-}
-
 func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
 	marker, ok := f.testData.MarkerPositions[markerName]
 	if !ok {
@@ -250,6 +233,10 @@ func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
 	f.currentCaretPosition = marker.LSPosition
 	f.currentFilename = marker.Filename
 	f.lastKnownMarkerName = marker.Name
+}
+
+func (f *FourslashTest) Markers() []*Marker {
+	return f.testData.Markers
 }
 
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
@@ -265,7 +252,6 @@ func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
 }
 
 func (f *FourslashTest) openFile(t *testing.T, file *TestFileInfo) {
-	// !!! normalize file path?
 	f.activeFilename = file.Filename
 	f.sendNotification(t, lsproto.MethodTextDocumentDidOpen, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
@@ -300,7 +286,53 @@ func getLanguageKind(filename string) lsproto.LanguageKind {
 	return lsproto.LanguageKindTypeScript // !!! should we error in this case?
 }
 
-func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected VerifyCompletionsResult) {
+// !!! break up this file into smaller files?
+// !!! add constant items like `classElementKeywords`
+type VerifyCompletionsExpectedList struct {
+	IsIncomplete bool
+	ItemDefaults *lsproto.CompletionItemDefaults
+	Items        *VerifyCompletionsExpectedItems
+}
+
+// !!! have type for *lsproto.CompletionItem | string (label)
+// !!! unsorted completions? only used in 47 tests
+type VerifyCompletionsExpectedItems struct {
+	Includes []*lsproto.CompletionItem
+	Excludes []string
+	Exact    []*lsproto.CompletionItem
+}
+
+// string | *Marker | []string | []*Marker
+type MarkerInput = any
+
+// !!! user preferences param
+// !!! completion context param
+// !!! go to marker: use current marker if none specified/support nil marker input
+func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput, expected *VerifyCompletionsExpectedList) {
+	switch marker := markerInput.(type) {
+	case string:
+		f.verifyCompletionsAtMarker(t, marker, expected)
+	case *Marker:
+		f.verifyCompletionsAtMarker(t, marker.Name, expected)
+	case []string:
+		for _, markerName := range marker {
+			f.verifyCompletionsAtMarker(t, markerName, expected)
+		}
+	case []*Marker:
+		for _, marker := range marker {
+			f.verifyCompletionsAtMarker(t, marker.Name, expected)
+		}
+	default:
+		t.Fatalf("Invalid marker input type: %T. Expected string, *Marker, []string, or []*Marker.", markerInput)
+	}
+}
+
+func (f *FourslashTest) verifyCompletionsAtMarker(t *testing.T, markerName string, expected *VerifyCompletionsExpectedList) {
+	f.GoToMarker(t, markerName)
+	f.verifyCompletionsWorker(t, expected)
+}
+
+func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *VerifyCompletionsExpectedList) {
 	params := &lsproto.CompletionParams{
 		TextDocumentPositionParams: lsproto.TextDocumentPositionParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
@@ -323,8 +355,29 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected VerifyCom
 	}
 }
 
-func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected VerifyCompletionsResult) {
+func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected *VerifyCompletionsExpectedList) {
 	prefix := fmt.Sprintf("At marker '%s': ", markerName)
+	if actual == nil {
+		if expected != nil {
+			t.Fatal(prefix + "Expected completion list but got nil.")
+		}
+		return
+	} else if expected == nil {
+		// !!! cmp.Diff(actual, nil) should probably be a .String() call here and elswhere
+		t.Fatalf(prefix+"Expected nil completion list but got non-nil: %s", cmp.Diff(actual, nil))
+	}
+	assert.Equal(t, actual.IsIncomplete, expected.IsIncomplete, prefix+"IsIncomplete mismatch")
+	assertDeepEqual(t, actual.ItemDefaults, expected.ItemDefaults, prefix+"ItemDefaults mismatch")
+	verifyCompletionsItems(t, prefix, actual.Items, expected.Items)
+}
+
+func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected *VerifyCompletionsExpectedItems) {
+	if expected == nil {
+		if actual != nil {
+			t.Fatalf(prefix+"Expected nil completion items but got non-nil: %s", cmp.Diff(actual, nil))
+		}
+		return
+	}
 	if expected.Exact != nil {
 		if expected.Includes != nil {
 			t.Fatal(prefix + "Expected exact completion list but also specified 'includes'.")
@@ -337,7 +390,7 @@ func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.Co
 	}
 	nameToActualItem := make(map[string]*lsproto.CompletionItem)
 	if actual != nil {
-		for _, item := range actual.Items {
+		for _, item := range actual {
 			nameToActualItem[item.Label] = item
 		}
 	}
@@ -345,19 +398,18 @@ func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.Co
 		for _, item := range expected.Includes {
 			actualItem, ok := nameToActualItem[item.Label]
 			if !ok {
-				t.Fatalf("%sLabel %s not found in actual items. Actual items: %v", prefix, item.Label, actual.Items)
+				t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
 			}
 			assertDeepEqual(t, actualItem, item, prefix+"Includes completion item mismatch for label "+item.Label)
 		}
 	}
 	for _, exclude := range expected.Excludes {
 		if _, ok := nameToActualItem[exclude]; ok {
-			t.Fatalf("%sLabel %s should not be in actual items but was found. Actual items: %v", prefix, exclude, actual.Items)
+			t.Fatalf("%sLabel '%s' should not be in actual items but was found. Actual items: %s", prefix, exclude, cmp.Diff(actual, nil))
 		}
 	}
 }
 
-// !!! don't compare properties that are not set in the expected value
 func assertDeepEqual(t *testing.T, actual any, expected any, prefix string) {
 	t.Helper()
 

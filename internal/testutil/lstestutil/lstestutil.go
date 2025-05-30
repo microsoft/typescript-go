@@ -34,6 +34,7 @@ type Marker struct {
 type TestData struct {
 	Files           []*TestFileInfo
 	MarkerPositions map[string]*Marker
+	Markers         []*Marker
 	Symlinks        map[string]string
 	GlobalOptions   map[string]string
 	Ranges          []*markerRange
@@ -49,6 +50,7 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 	var files []*TestFileInfo
 
 	markerPositions := make(map[string]*Marker)
+	var markers []*Marker
 	filesWithMarker, symlinks, _, globalOptions := runner.ParseTestFilesAndSymlinks(
 		contents,
 		fileName,
@@ -59,6 +61,7 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 	for _, file := range filesWithMarker {
 		files = append(files, file.file)
 		hasTSConfig = hasTSConfig || isConfigFile(file.file.Filename)
+		markers = append(markers, file.markers...)
 		for _, marker := range file.markers {
 			if _, ok := markerPositions[marker.Name]; ok {
 				t.Fatalf("Duplicate marker name: %s", marker.Name)
@@ -74,6 +77,7 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 	return TestData{
 		Files:           files,
 		MarkerPositions: markerPositions,
+		Markers:         markers,
 		Symlinks:        symlinks,
 		GlobalOptions:   globalOptions,
 		Ranges:          nil,
@@ -115,7 +119,6 @@ const emitThisFileOption = "emitthisfile"
 
 func parseFileContent(filename string, content string, fileOptions map[string]string) *testFileWithMarkers {
 	filename = tspath.GetNormalizedAbsolutePath(filename, "/")
-	// !!! chompLeadingSpace
 	// !!! validate characters in markers
 	// Any slash-star comment with a character not in this string is not a marker.
 	// const validMarkerChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$1234567890_"
