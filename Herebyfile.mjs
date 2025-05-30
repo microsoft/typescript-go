@@ -75,11 +75,7 @@ const { values: rawOptions } = parseArgs({
 
 // We can't use parseArgs' strict mode as it errors on hereby's --tasks flag.
 /**
- * @typedef {{ [K in keyof T as {} extends Record<K, 1> ? never : K]: T[K] }} RemoveIndex<T>
- * @template T
- */
-/**
- * @typedef {RemoveIndex<typeof rawOptions>} Options
+ * @typedef {{ [K in keyof typeof rawOptions as {} extends Record<K, 1> ? never : K]: typeof rawOptions[K] }} Options
  */
 const options = /** @type {Options} */ (rawOptions);
 
@@ -1040,6 +1036,7 @@ export const signNativePreviewPackages = task({
             SignFileRecordList: [],
         };
 
+        /** @type {{ path: string; unsignedZipPath: string; signedZipPath: string; notarizedZipPath: string; }[]} */
         const macZips = [];
 
         // First, sign the files.
