@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
@@ -88,7 +89,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		Err: os.Stderr,
 
 		Cwd:                "/",
-		NewLine:            core.NewLineKindLF, // !!! verify
+		NewLine:            core.NewLineKindLF,
 		FS:                 bundled.WrapFS(fs),
 		DefaultLibraryPath: bundled.LibPath(),
 	})
@@ -107,10 +108,14 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		testData: &testData,
 	}
 
+	compilerOptions := &core.CompilerOptions{}
+	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions)
+	compilerOptions.SkipDefaultLibCheck = core.TSTrue
+	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
+	// !!! replace with a proper request *after initialize*
+	f.server.SetCompilerOptionsForInferredProjects(compilerOptions)
 	f.initialize(t, capabilities)
-	// !!! global compiler options default extracted from tests
-	// 	!!! set skipDefaultLibCheck to true
-	// !!! open first file
+	f.openFile(t, f.testData.Files[0])
 
 	done := func() {
 		inputWriter.Close()

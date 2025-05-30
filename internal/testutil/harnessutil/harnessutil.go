@@ -242,6 +242,23 @@ var testLibFolderMap = sync.OnceValue(func() map[string]any {
 	return testfs
 })
 
+func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions) {
+	for name, value := range testConfig {
+		if name == "typescriptversion" {
+			continue
+		}
+
+		commandLineOption := getCommandLineOption(name)
+		if commandLineOption != nil {
+			parsedValue := getOptionValue(t, commandLineOption, value)
+			errors := tsoptions.ParseCompilerOptions(commandLineOption.Name, parsedValue, compilerOptions)
+			if len(errors) > 0 {
+				t.Fatalf("Error parsing value '%s' for compiler option '%s'.", value, commandLineOption.Name)
+			}
+		}
+	}
+}
+
 func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions) {
 	for name, value := range testConfig {
 		if name == "typescriptversion" {

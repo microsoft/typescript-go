@@ -139,6 +139,9 @@ type Server struct {
 	watchers       core.Set[project.WatcherHandle]
 	logger         *project.Logger
 	projectService *project.Service
+
+	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
+	compilerOptionsForInferredProjects *core.CompilerOptions
 }
 
 // FS implements project.ServiceHost.
@@ -528,6 +531,10 @@ func (s *Server) handleInitialized(ctx context.Context, req *lsproto.RequestMess
 		WatchEnabled:     s.watchEnabled,
 		PositionEncoding: s.positionEncoding,
 	})
+	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
+	if s.compilerOptionsForInferredProjects != nil {
+		s.projectService.SetCompilerOptionsForInferredProjects(s.compilerOptionsForInferredProjects)
+	}
 
 	return nil
 }
@@ -631,8 +638,12 @@ func (s *Server) Log(msg ...any) {
 	fmt.Fprintln(s.stderr, msg...)
 }
 
+// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 func (s *Server) SetCompilerOptionsForInferredProjects(options *core.CompilerOptions) {
-	s.projectService.SetCompilerOptionsForInferredProjects(options)
+	s.compilerOptionsForInferredProjects = options
+	if s.projectService != nil {
+		s.projectService.SetCompilerOptionsForInferredProjects(options)
+	}
 }
 
 func isBlockingMethod(method lsproto.Method) bool {
