@@ -16,7 +16,7 @@ type CompilerHost interface {
 	GetCurrentDirectory() string
 	NewLine() string
 	Trace(msg string)
-	GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile
+	GetSourceFile(fileName string, path tspath.Path, metadata *ast.SourceFileMetaData) *ast.SourceFile
 }
 
 type FileInfo struct {
@@ -54,10 +54,6 @@ func (h *compilerHost) DefaultLibraryPath() string {
 	return h.defaultLibraryPath
 }
 
-func (h *compilerHost) SetOptions(options *core.CompilerOptions) {
-	h.options = options
-}
-
 func (h *compilerHost) GetCurrentDirectory() string {
 	return h.currentDirectory
 }
@@ -73,10 +69,13 @@ func (h *compilerHost) Trace(msg string) {
 	//!!! TODO: implement
 }
 
-func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, metadata *ast.SourceFileMetaData) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(fileName, path, text)
 	}
-	return parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseForTypeErrors)
+	if h.options == nil {
+		panic("GetSourceFile called without CompilerOptions set")
+	}
+	return parser.ParseSourceFile(fileName, path, text, h.options.SourceFileAffecting(), metadata, scanner.JSDocParsingModeParseForTypeErrors)
 }

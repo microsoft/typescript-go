@@ -65,8 +65,10 @@ func DoJSEmitBaseline(
 				file.UnitName,
 				tspath.Path(file.UnitName),
 				file.Content,
-				options.GetEmitScriptTarget(),
-				scanner.JSDocParsingModeParseAll)
+				options.SourceFileAffecting(),
+				nil, // TODO(jakebailey): what should this be?
+				scanner.JSDocParsingModeParseAll,
+			)
 			if len(fileParseResult.Diagnostics()) > 0 {
 				jsCode.WriteString(getErrorBaseline(t, []*harnessutil.TestFile{file}, fileParseResult.Diagnostics(), false /*pretty*/))
 				continue

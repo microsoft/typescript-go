@@ -12,26 +12,25 @@ import (
 
 type CommonJSModuleTransformer struct {
 	Transformer
-	topLevelVisitor            *ast.NodeVisitor // visits statements at top level of a module
-	topLevelNestedVisitor      *ast.NodeVisitor // visits nested statements at top level of a module
-	discardedValueVisitor      *ast.NodeVisitor // visits expressions whose values would be discarded at runtime
-	assignmentPatternVisitor   *ast.NodeVisitor // visits assignment patterns in a destructuring assignment
-	compilerOptions            *core.CompilerOptions
-	resolver                   binder.ReferenceResolver
-	sourceFileMetaDataProvider printer.SourceFileMetaDataProvider
-	moduleKind                 core.ModuleKind
-	languageVersion            core.ScriptTarget
-	currentSourceFile          *ast.SourceFile
-	currentModuleInfo          *externalModuleInfo
-	parentNode                 *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
-	currentNode                *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
+	topLevelVisitor          *ast.NodeVisitor // visits statements at top level of a module
+	topLevelNestedVisitor    *ast.NodeVisitor // visits nested statements at top level of a module
+	discardedValueVisitor    *ast.NodeVisitor // visits expressions whose values would be discarded at runtime
+	assignmentPatternVisitor *ast.NodeVisitor // visits assignment patterns in a destructuring assignment
+	compilerOptions          *core.CompilerOptions
+	resolver                 binder.ReferenceResolver
+	moduleKind               core.ModuleKind
+	languageVersion          core.ScriptTarget
+	currentSourceFile        *ast.SourceFile
+	currentModuleInfo        *externalModuleInfo
+	parentNode               *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
+	currentNode              *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
 }
 
-func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, sourceFileMetaDataProvider printer.SourceFileMetaDataProvider) *Transformer {
+func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver) *Transformer {
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, sourceFileMetaDataProvider: sourceFileMetaDataProvider}
+	tx := &CommonJSModuleTransformer{compilerOptions: compilerOptions, resolver: resolver}
 	tx.topLevelVisitor = emitContext.NewNodeVisitor(tx.visitTopLevel)
 	tx.topLevelNestedVisitor = emitContext.NewNodeVisitor(tx.visitTopLevelNested)
 	tx.discardedValueVisitor = emitContext.NewNodeVisitor(tx.visitDiscardedValue)
@@ -363,7 +362,7 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	result := tx.factory.UpdateSourceFile(node, statementList).AsSourceFile()
 	tx.emitContext.AddEmitHelper(result.AsNode(), tx.emitContext.ReadEmitHelpers()...)
 
-	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.emitContext, result, tx.compilerOptions, tx.sourceFileMetaDataProvider, false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
+	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.emitContext, result, tx.compilerOptions, false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
 	if externalHelpersImportDeclaration != nil {
 		prologue, rest := tx.factory.SplitStandardPrologue(result.Statements.Nodes)
 		custom, rest := tx.factory.SplitCustomPrologue(rest)
@@ -1671,7 +1670,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 
 func (tx *CommonJSModuleTransformer) shouldTransformImportCall() bool {
 	// !!! host.shouldTransformImportCall?
-	return shouldTransformImportCallWorker(tx.currentSourceFile, tx.compilerOptions, tx.sourceFileMetaDataProvider.GetSourceFileMetaData(tx.currentSourceFile.Path()))
+	return shouldTransformImportCallWorker(tx.currentSourceFile, tx.compilerOptions)
 }
 
 func (tx *CommonJSModuleTransformer) visitImportCallExpression(node *ast.CallExpression, rewriteOrShim bool) *ast.Node {
@@ -1989,10 +1988,10 @@ func (tx *CommonJSModuleTransformer) getExports(name *ast.IdentifierNode) []*ast
 	return nil
 }
 
-func shouldTransformImportCallWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions, sourceFileMetaData *ast.SourceFileMetaData) bool {
+func shouldTransformImportCallWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
 	moduleKind := options.GetEmitModuleKind()
 	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext || moduleKind == core.ModuleKindPreserve {
 		return false
 	}
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, sourceFileMetaData) < core.ModuleKindES2015
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options) < core.ModuleKindES2015
 }

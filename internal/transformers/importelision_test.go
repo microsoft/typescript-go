@@ -91,10 +91,6 @@ func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, modul
 	return p.getResolvedModule(currentSourceFile, moduleReference)
 }
 
-func (p *fakeProgram) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
-	return nil
-}
-
 func (p *fakeProgram) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 	return nil
 }
