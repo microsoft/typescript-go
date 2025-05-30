@@ -103,9 +103,12 @@ const goBuildFlags = [
 ];
 
 /**
- * @type {<T>(fn: () => T) => (() => T)}
+ * @param {() => T} fn
+ * @returns {() => T}
+ * @template T
  */
 function memoize(fn) {
+    /** @type {T} */
     let value;
     return () => {
         if (fn !== undefined) {
@@ -838,18 +841,18 @@ const mainNativePreviewPackage = {
  * @typedef {"win32" | "linux" | "darwin"} OS
  * @typedef {"x64" | "arm" | "arm64"} Arch
  * @typedef {"Microsoft400" | "LinuxSign" | "MacDeveloperHarden" | "8020" | "VSCodePublisher"} Cert
- * @typedef {`${OS}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
+ * @typedef {`${OS | "alpine"}-${Exclude<Arch, "arm"> | "armhf"}`} VSCodeTarget
  */
 void 0;
 
 const nativePreviewPlatforms = memoize(() => {
-    /** @type {[OS, Arch, Cert][]} */
+    /** @type {[os: OS, arch: Arch, cert: Cert, alpine?: boolean][]} */
     let supportedPlatforms = [
         ["win32", "x64", "Microsoft400"],
         ["win32", "arm64", "Microsoft400"],
-        ["linux", "x64", "LinuxSign"],
+        ["linux", "x64", "LinuxSign", true],
         ["linux", "arm", "LinuxSign"],
-        ["linux", "arm64", "LinuxSign"],
+        ["linux", "arm64", "LinuxSign", true],
         ["darwin", "x64", "MacDeveloperHarden"],
         ["darwin", "arm64", "MacDeveloperHarden"],
         // Alpine?
@@ -861,17 +864,32 @@ const nativePreviewPlatforms = memoize(() => {
         assert.equal(supportedPlatforms.length, 1, "No supported platforms found");
     }
 
-    return supportedPlatforms.map(([os, arch, cert]) => {
+    return supportedPlatforms.map(([os, arch, cert, alpine]) => {
         const npmDirName = `native-preview-${os}-${arch}`;
         const npmDir = path.join(builtNpm, npmDirName);
         const npmTarball = `${npmDir}.tgz`;
         const npmPackageName = `@typescript/${npmDirName}`;
-        /** @type {VSCodeTarget} */
-        const vscodeTarget = `${os}-${arch === "arm" ? "armhf" : arch}`;
-        const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
-        const vsixPath = extensionDir + ".vsix";
-        const vsixManifestPath = extensionDir + ".manifest";
-        const vsixSignaturePath = extensionDir + ".signature.p7s";
+
+        /** @type {VSCodeTarget[]} */
+        const vscodeTargets = [`${os}-${arch === "arm" ? "armhf" : arch}`];
+        if (alpine) {
+            vscodeTargets.push(`alpine-${arch === "arm" ? "armhf" : arch}`);
+        }
+
+        const extensions = vscodeTargets.map(vscodeTarget => {
+            const extensionDir = path.join(builtVsix, `typescript-native-preview-${vscodeTarget}`);
+            const vsixPath = extensionDir + ".vsix";
+            const vsixManifestPath = extensionDir + ".manifest";
+            const vsixSignaturePath = extensionDir + ".signature.p7s";
+            return {
+                vscodeTarget,
+                extensionDir,
+                vsixPath,
+                vsixManifestPath,
+                vsixSignaturePath,
+            };
+        });
+
         return {
             nodeOs: os,
             nodeArch: arch,
@@ -881,11 +899,7 @@ const nativePreviewPlatforms = memoize(() => {
             npmDirName,
             npmDir,
             npmTarball,
-            vscodeTarget,
-            extensionDir,
-            vsixPath,
-            vsixManifestPath,
-            vsixSignaturePath,
+            extensions,
             cert,
         };
     });
@@ -1172,8 +1186,9 @@ export const packNativePreviewExtensions = task({
         console.log("Version:", version);
 
         const platforms = nativePreviewPlatforms();
+        const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
 
-        await Promise.all(platforms.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
+        await Promise.all(extensions.map(async ({ npmDir, vscodeTarget, extensionDir: thisExtensionDir, vsixPath, vsixManifestPath, vsixSignaturePath }) => {
             const npmLibDir = path.join(npmDir, "lib");
             const extensionLibDir = path.join(thisExtensionDir, "lib");
             await fs.promises.mkdir(extensionLibDir, { recursive: true });
@@ -1208,10 +1223,12 @@ export const signNativePreviewExtensions = task({
         }
 
         const platforms = nativePreviewPlatforms();
+        const extensions = platforms.flatMap(({ npmDir, extensions }) => extensions.map(e => ({ npmDir, ...e })));
+
         await sign({
             SignFileRecordList: [
                 {
-                    SignFileList: platforms.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
+                    SignFileList: extensions.map(({ vsixSignaturePath }) => ({ SrcPath: vsixSignaturePath, DstPath: null })),
                     Certs: "VSCodePublisher",
                 },
             ],
@@ -1241,7 +1258,7 @@ export const installExtension = task({
             throw new Error(`No platform found for ${process.platform}-${process.arch}`);
         }
 
-        await $`${options.insiders ? "code-insiders" : "code"} --install-extension ${myPlatform.vsixPath}`;
+        await $`${options.insiders ? "code-insiders" : "code"} --install-extension ${myPlatform.extensions[0].vsixPath}`;
         console.log(pc.yellowBright("\nExtension installed. ") + "To enable this extension, set:\n");
         console.log(pc.whiteBright(`    "typescript.experimental.useTsgo": true\n`));
         console.log("To configure the extension to use built/local instead of its bundled tsgo, set:\n");
