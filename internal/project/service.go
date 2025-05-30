@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -60,6 +61,10 @@ type Service struct {
 	filenameToScriptInfoVersion map[tspath.Path]int
 	realpathToScriptInfosMu     sync.Mutex
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
+
+	compilerOptionsForInferredProjects *core.CompilerOptions
+	// enables tests to share a cache of parsed source files
+	getCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile
 }
 
 func NewService(host ServiceHost, options ServiceOptions) *Service {
@@ -521,7 +526,7 @@ func (s *Service) findConfiguredProjectByName(configFilePath tspath.Path, includ
 
 func (s *Service) createConfiguredProject(configFileName string, configFilePath tspath.Path) *Project {
 	// !!! config file existence cache stuff omitted
-	project := NewConfiguredProject(configFileName, configFilePath, s)
+	project := NewConfiguredProject(configFileName, configFilePath, s, s.getCachedSourceFile)
 	s.configuredProjects[configFilePath] = project
 	// !!!
 	// s.createConfigFileWatcherForParsedConfig(configFileName, configFilePath, project)
@@ -704,21 +709,24 @@ func (s *Service) getDefaultProjectForScript(scriptInfo *ScriptInfo) *Project {
 }
 
 func (s *Service) createInferredProject(currentDirectory string, projectRootPath tspath.Path) *Project {
-	compilerOptions := core.CompilerOptions{
-		AllowJs:                    core.TSTrue,
-		Module:                     core.ModuleKindESNext,
-		ModuleResolution:           core.ModuleResolutionKindBundler,
-		Target:                     core.ScriptTargetES2022,
-		Jsx:                        core.JsxEmitReactJSX,
-		AllowImportingTsExtensions: core.TSTrue,
-		StrictNullChecks:           core.TSTrue,
-		StrictFunctionTypes:        core.TSTrue,
-		SourceMap:                  core.TSTrue,
-		ESModuleInterop:            core.TSTrue,
-		AllowNonTsExtensions:       core.TSTrue,
-		ResolveJsonModule:          core.TSTrue,
+	compilerOptions := s.compilerOptionsForInferredProjects
+	if compilerOptions == nil {
+		compilerOptions = &core.CompilerOptions{
+			AllowJs:                    core.TSTrue,
+			Module:                     core.ModuleKindESNext,
+			ModuleResolution:           core.ModuleResolutionKindBundler,
+			Target:                     core.ScriptTargetES2022,
+			Jsx:                        core.JsxEmitReactJSX,
+			AllowImportingTsExtensions: core.TSTrue,
+			StrictNullChecks:           core.TSTrue,
+			StrictFunctionTypes:        core.TSTrue,
+			SourceMap:                  core.TSTrue,
+			ESModuleInterop:            core.TSTrue,
+			AllowNonTsExtensions:       core.TSTrue,
+			ResolveJsonModule:          core.TSTrue,
+		}
 	}
-	project := NewInferredProject(&compilerOptions, currentDirectory, projectRootPath, s)
+	project := NewInferredProject(compilerOptions, currentDirectory, projectRootPath, s, s.getCachedSourceFile)
 	s.inferredProjects = append(s.inferredProjects, project)
 	return project
 }
@@ -757,4 +765,14 @@ func (s *Service) printProjects() {
 
 func (s *Service) logf(format string, args ...any) {
 	s.Log(fmt.Sprintf(format, args...))
+}
+
+// !!! per root compiler options
+func (s *Service) SetCompilerOptionsForInferredProjects(compilerOptions *core.CompilerOptions) {
+	s.compilerOptionsForInferredProjects = compilerOptions
+
+	// !!! set compiler options for all inferred projects
+	// for _, project := range s.inferredProjects {
+	// 	project.SetCompilerOptions(compilerOptions)
+	// }
 }

@@ -39,8 +39,8 @@ func runLSP(args []string) int {
 	defaultLibraryPath := bundled.LibPath()
 
 	s := lsp.NewServer(&lsp.ServerOptions{
-		In:                 os.Stdin,
-		Out:                os.Stdout,
+		In:                 lsp.ToLSPReader(os.Stdin),
+		Out:                lsp.ToLSPWriter(os.Stdout),
 		Err:                os.Stderr,
 		Cwd:                core.Must(os.Getwd()),
 		FS:                 fs,
