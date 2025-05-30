@@ -103,9 +103,9 @@ const goBuildFlags = [
 ];
 
 /**
+ * @template T
  * @param {() => T} fn
  * @returns {() => T}
- * @template T
  */
 function memoize(fn) {
     /** @type {T} */
