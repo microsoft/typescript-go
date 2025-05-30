@@ -12,6 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -467,7 +468,7 @@ func getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, file *ast.So
 	}
 }
 
-func getDefaultResolutionModeForFile(file *ast.SourceFile, meta *ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
+func getDefaultResolutionModeForFile(file modulespecifiers.SourceFileForSpecifierGeneration, meta *ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
 	if importSyntaxAffectsModuleResolution(options) {
 		return ast.GetImpliedNodeFormatForEmitWorker(file.FileName(), options, meta)
 	} else {

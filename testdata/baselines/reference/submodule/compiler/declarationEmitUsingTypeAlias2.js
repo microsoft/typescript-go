@@ -43,21 +43,13 @@ export const bar = goodDeclaration<{}>;
 
 
 //// [index.js]
-<<<<<<< HEAD
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.bar = void 0;
 const some_dep_1 = require("some-dep");
 exports.bar = some_dep_1.goodDeclaration;
-||||||| 2303c3a6e
-import { goodDeclaration } from "some-dep";
-export const bar = goodDeclaration;
-=======
-import { goodDeclaration } from "some-dep";
-export const bar = goodDeclaration;
 
 
 //// [index.d.ts]
 import { shouldReuseLocalName } from "some-dep";
 export declare const bar: any;
->>>>>>> main

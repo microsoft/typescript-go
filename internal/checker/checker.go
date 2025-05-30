@@ -535,7 +535,6 @@ type Program interface {
 	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 	GetModeForUsageLocation(sourceFile *ast.SourceFile, location *ast.Node) core.ResolutionMode
-	GetDefaultResolutionModeForFile(sourceFile *ast.SourceFile) core.ResolutionMode
 }
 
 type Host interface {
@@ -5115,11 +5114,13 @@ func (c *Checker) checkImportAttributes(declaration *ast.Node) {
 			message = diagnostics.Import_assertions_are_only_supported_when_the_module_option_is_set_to_esnext_nodenext_or_preserve
 		}
 		c.grammarErrorOnNode(node, message)
+		return
 	}
 	if isTypeOnly {
 		c.grammarErrorOnNode(node, core.IfElse(isImportAttributes,
 			diagnostics.Import_attributes_cannot_be_used_with_type_only_imports_or_exports,
 			diagnostics.Import_assertions_cannot_be_used_with_type_only_imports_or_exports))
+		return
 	}
 	if override != core.ResolutionModeNone {
 		c.grammarErrorOnNode(node, diagnostics.X_resolution_mode_can_only_be_set_for_type_only_imports)
@@ -14315,7 +14316,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		mode             core.ResolutionMode
 	)
 
-	if ast.IsStringLiteralLike(location) || ast.IsModuleDeclaration(location.Parent) && location.Parent.AsModuleDeclaration().Name() == location {
+	if ast.IsStringLiteralLike(location) || location.Parent != nil && ast.IsModuleDeclaration(location.Parent) && location.Parent.AsModuleDeclaration().Name() == location {
 		contextSpecifier = location
 	} else if ast.IsModuleDeclaration(location) {
 		contextSpecifier = location.AsModuleDeclaration().Name()
@@ -14930,7 +14931,7 @@ func (c *Checker) getFullyQualifiedName(symbol *ast.Symbol, containingLocation *
 	if symbol.Parent != nil {
 		return c.getFullyQualifiedName(symbol.Parent, containingLocation) + "." + c.symbolToString(symbol)
 	}
-	return c.symbolToString(symbol) // !!!
+	return c.symbolToStringEx(symbol, containingLocation, ast.SymbolFlagsAll, SymbolFormatFlagsDoNotIncludeSymbolChain|SymbolFormatFlagsAllowAnyNodeKind, nil /*writer*/)
 }
 
 func (c *Checker) getExportsOfSymbol(symbol *ast.Symbol) ast.SymbolTable {

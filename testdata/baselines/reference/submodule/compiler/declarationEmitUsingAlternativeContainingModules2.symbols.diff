@@ -264,13 +264,7 @@
 +>data.slice : Symbol(slice, Decl(lib.es5.d.ts, --, --))
  >data : Symbol(data, Decl(index.mts, 32, 13))
 ->slice : Symbol(Array.slice, Decl(lib.es5.d.ts, --, --))
-<<<<<<< HEAD
 +>slice : Symbol(slice, Decl(lib.es5.d.ts, --, --))
- 
-||||||| 2303c3a6e
- 
-=======
 
->>>>>>> main
    })
  }

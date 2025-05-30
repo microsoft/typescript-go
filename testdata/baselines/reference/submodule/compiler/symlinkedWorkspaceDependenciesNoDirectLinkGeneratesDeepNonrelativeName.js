@@ -40,7 +40,6 @@ import * as pkg from "package-b";
 export const a = pkg.invoke();
 
 //// [index.js]
-<<<<<<< HEAD
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -69,14 +68,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.a = void 0;
 const pkg = __importStar(require("package-b"));
 exports.a = pkg.invoke();
-||||||| 2303c3a6e
-import * as pkg from "package-b";
-export const a = pkg.invoke();
-=======
-import * as pkg from "package-b";
-export const a = pkg.invoke();
 
 
 //// [index.d.ts]
-export declare const a: import("../packageA/foo.js").Foo;
->>>>>>> main
+export declare const a: import("../packageA/foo").Foo;

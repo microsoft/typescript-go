@@ -112,18 +112,11 @@ exports.RequireInterface
 exports.a = null;
 exports.b = null;
 //// [other5.js]
-<<<<<<< HEAD
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.b = exports.a = void 0;
 exports.a = null;
 exports.b = null;
-||||||| 2303c3a6e
-export const a = null;
-export const b = null;
-=======
-export const a = null;
-export const b = null;
 
 
 //// [index.d.ts]
@@ -155,4 +148,3 @@ export declare const b: any, Asserts2: any, ImportInterface: any;
 export type LocalInterface = import("pkg", { assert: {} }).RequireInterface & import("pkg", { assert: {} }).ImportInterface;
 export declare const a: any;
 export declare const b: any;
->>>>>>> main

@@ -19,7 +19,7 @@ type fakeProgram struct {
 	singleThreaded              bool
 	compilerOptions             *core.CompilerOptions
 	files                       []*ast.SourceFile
-	getEmitModuleFormatOfFile   func(sourceFile *ast.SourceFile) core.ModuleKind
+	getEmitModuleFormatOfFile   func(sourceFile modulespecifiers.SourceFileForSpecifierGeneration) core.ModuleKind
 	getImpliedNodeFormatForEmit func(sourceFile *ast.SourceFile) core.ModuleKind
 	getResolvedModule           func(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
 	getSourceFile               func(FileName string) *ast.SourceFile
@@ -89,7 +89,7 @@ func (p *fakeProgram) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) co
 	return p.getImpliedNodeFormatForEmit(sourceFile)
 }
 
-func (p *fakeProgram) GetDefaultResolutionModeForFile(sourceFile *ast.SourceFile) core.ResolutionMode {
+func (p *fakeProgram) GetDefaultResolutionModeForFile(sourceFile modulespecifiers.SourceFileForSpecifierGeneration) core.ResolutionMode {
 	return p.getEmitModuleFormatOfFile(sourceFile)
 }
 
@@ -173,7 +173,7 @@ func TestImportElision(t *testing.T) {
 				singleThreaded:  true,
 				compilerOptions: compilerOptions,
 				files:           files,
-				getEmitModuleFormatOfFile: func(sourceFile *ast.SourceFile) core.ModuleKind {
+				getEmitModuleFormatOfFile: func(sourceFile modulespecifiers.SourceFileForSpecifierGeneration) core.ModuleKind {
 					return core.ModuleKindESNext
 				},
 				getImpliedNodeFormatForEmit: func(sourceFile *ast.SourceFile) core.ModuleKind {

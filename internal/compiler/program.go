@@ -749,7 +749,7 @@ func (p *Program) GetModeForUsageLocation(sourceFile *ast.SourceFile, location *
 	return getModeForUsageLocation(sourceFile, p.sourceFileMetaDatas[sourceFile.Path()], location, p.compilerOptions)
 }
 
-func (p *Program) GetDefaultResolutionModeForFile(sourceFile *ast.SourceFile) core.ResolutionMode {
+func (p *Program) GetDefaultResolutionModeForFile(sourceFile modulespecifiers.SourceFileForSpecifierGeneration) core.ResolutionMode {
 	return getDefaultResolutionModeForFile(sourceFile, p.sourceFileMetaDatas[sourceFile.Path()], p.compilerOptions)
 }
 
