@@ -855,7 +855,6 @@ const nativePreviewPlatforms = memoize(() => {
         ["linux", "arm64", "LinuxSign", true],
         ["darwin", "x64", "MacDeveloperHarden"],
         ["darwin", "arm64", "MacDeveloperHarden"],
-        // Alpine?
         // Wasm?
     ];
 
