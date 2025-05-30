@@ -13,10 +13,12 @@ import (
 	"sync"
 	"syscall"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"golang.org/x/sync/errgroup"
 )
@@ -30,6 +32,8 @@ type ServerOptions struct {
 	NewLine            core.NewLineKind
 	FS                 vfs.FS
 	DefaultLibraryPath string
+
+	GetCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -48,6 +52,7 @@ func NewServer(opts *ServerOptions) *Server {
 		newLine:               opts.NewLine,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
+		getCachedSourceFile:   opts.GetCachedSourceFile,
 	}
 }
 
@@ -139,6 +144,9 @@ type Server struct {
 	watchers       core.Set[project.WatcherHandle]
 	logger         *project.Logger
 	projectService *project.Service
+
+	// enables tests to share a cache of parsed source files
+	getCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	compilerOptionsForInferredProjects *core.CompilerOptions

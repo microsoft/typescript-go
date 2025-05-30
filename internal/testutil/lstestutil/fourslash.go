@@ -7,7 +7,9 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp"
@@ -71,6 +73,8 @@ func newLSPPipe() (*lspReader, *lspWriter) {
 	return &lspReader{c: c}, &lspWriter{c: c}
 }
 
+var sourceFileCache collections.SyncMap[harnessutil.SourceFileCacheKey, *ast.SourceFile]
+
 // !!! automatically get fileName from test somehow?
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string, fileName string) (*FourslashTest, func()) {
 	rootDir := "/"
@@ -80,9 +84,28 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		filePath := tspath.GetNormalizedAbsolutePath(file.Filename, rootDir)
 		testfs[filePath] = file.Content
 	}
+
+	compilerOptions := &core.CompilerOptions{}
+	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions)
+	compilerOptions.SkipDefaultLibCheck = core.TSTrue
+
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
 	fs := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
+	getCachedSourceFile := func(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+		text, _ := fs.ReadFile(fileName)
+
+		key := harnessutil.GetSourceFileCacheKey(
+			*compilerOptions.SourceFileAffecting(),
+			fileName,
+			path,
+			languageVersion,
+			text,
+		)
+
+		cachedFile, _ := sourceFileCache.Load(key)
+		return cachedFile
+	}
 	server := lsp.NewServer(&lsp.ServerOptions{
 		In:  inputReader,
 		Out: outputWriter,
@@ -92,6 +115,8 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		NewLine:            core.NewLineKindLF,
 		FS:                 bundled.WrapFS(fs),
 		DefaultLibraryPath: bundled.LibPath(),
+
+		GetCachedSourceFile: getCachedSourceFile,
 	})
 
 	go func() {
@@ -108,9 +133,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		testData: &testData,
 	}
 
-	compilerOptions := &core.CompilerOptions{}
-	harnessutil.SetCompilerOptionsFromTestConfig(t, testData.GlobalOptions, compilerOptions)
-	compilerOptions.SkipDefaultLibCheck = core.TSTrue
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
 	f.server.SetCompilerOptionsForInferredProjects(compilerOptions)
@@ -137,19 +159,21 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 	f.sendNotification(t, lsproto.MethodInitialized, &lsproto.InitializedParams{})
 }
 
-var ptrTrue = PtrTo(true)
-var defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
-	CompletionItem: &lsproto.ClientCompletionItemOptions{
-		SnippetSupport:          ptrTrue,
-		CommitCharactersSupport: ptrTrue,
-		PreselectSupport:        ptrTrue,
-		LabelDetailsSupport:     ptrTrue,
-		InsertReplaceSupport:    ptrTrue,
-	},
-	CompletionList: &lsproto.CompletionListCapabilities{
-		ItemDefaults: &[]string{"commitCharacters"},
-	},
-}
+var (
+	ptrTrue                       = PtrTo(true)
+	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
+		CompletionItem: &lsproto.ClientCompletionItemOptions{
+			SnippetSupport:          ptrTrue,
+			CommitCharactersSupport: ptrTrue,
+			PreselectSupport:        ptrTrue,
+			LabelDetailsSupport:     ptrTrue,
+			InsertReplaceSupport:    ptrTrue,
+		},
+		CompletionList: &lsproto.CompletionListCapabilities{
+			ItemDefaults: &[]string{"commitCharacters"},
+		},
+	}
+)
 
 func getCapabilitiesWithDefaults(capabilities *lsproto.ClientCapabilities) *lsproto.ClientCapabilities {
 	var capabilitiesWithDefaults lsproto.ClientCapabilities
@@ -255,8 +279,10 @@ func (f *FourslashTest) openFile(t *testing.T, file *TestFileInfo) {
 func getLanguageKind(filename string) lsproto.LanguageKind {
 	if tspath.FileExtensionIsOneOf(
 		filename,
-		[]string{tspath.ExtensionTs, tspath.ExtensionMts, tspath.ExtensionCts,
-			tspath.ExtensionDmts, tspath.ExtensionDcts, tspath.ExtensionDts}) {
+		[]string{
+			tspath.ExtensionTs, tspath.ExtensionMts, tspath.ExtensionCts,
+			tspath.ExtensionDmts, tspath.ExtensionDcts, tspath.ExtensionDts,
+		}) {
 		return lsproto.LanguageKindTypeScript
 	}
 	if tspath.FileExtensionIsOneOf(filename, []string{tspath.ExtensionJs, tspath.ExtensionMjs, tspath.ExtensionCjs}) {

@@ -452,9 +452,9 @@ type cachedCompilerHost struct {
 	options *core.CompilerOptions
 }
 
-var sourceFileCache collections.SyncMap[sourceFileCacheKey, *ast.SourceFile]
+var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
 
-type sourceFileCacheKey struct {
+type SourceFileCacheKey struct {
 	core.SourceFileAffectingCompilerOptions
 	fileName        string
 	path            tspath.Path
@@ -462,10 +462,26 @@ type sourceFileCacheKey struct {
 	text            string
 }
 
+func GetSourceFileCacheKey(
+	options core.SourceFileAffectingCompilerOptions,
+	fileName string,
+	path tspath.Path,
+	languageVersion core.ScriptTarget,
+	text string,
+) SourceFileCacheKey {
+	return SourceFileCacheKey{
+		SourceFileAffectingCompilerOptions: options,
+		fileName:                           fileName,
+		path:                               path,
+		languageVersion:                    languageVersion,
+		text:                               text,
+	}
+}
+
 func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 
-	key := sourceFileCacheKey{
+	key := SourceFileCacheKey{
 		SourceFileAffectingCompilerOptions: *h.options.SourceFileAffecting(),
 		fileName:                           fileName,
 		path:                               path,
