@@ -1041,9 +1041,8 @@ func CanHaveSymbol(node *Node) bool {
 		KindClassDeclaration, KindClassExpression, KindClassStaticBlockDeclaration, KindConstructor, KindConstructorType,
 		KindConstructSignature, KindElementAccessExpression, KindEnumDeclaration, KindEnumMember, KindExportAssignment,
 		KindExportDeclaration, KindExportSpecifier, KindFunctionDeclaration, KindFunctionExpression, KindFunctionType,
-		KindGetAccessor, KindIdentifier, KindImportClause, KindImportEqualsDeclaration, KindImportSpecifier,
-		KindIndexSignature, KindInterfaceDeclaration, KindJSDocCallbackTag,
-		KindJSDocParameterTag, KindJSDocPropertyTag, KindJSDocSignature, KindJSDocTypedefTag, KindJSDocTypeLiteral,
+		KindGetAccessor, KindImportClause, KindImportEqualsDeclaration, KindImportSpecifier, KindIndexSignature,
+		KindInterfaceDeclaration, KindJSExportAssignment, KindJSTypeAliasDeclaration, KindCommonJSExport,
 		KindJsxAttribute, KindJsxAttributes, KindJsxSpreadAttribute, KindMappedType, KindMethodDeclaration,
 		KindMethodSignature, KindModuleDeclaration, KindNamedTupleMember, KindNamespaceExport, KindNamespaceExportDeclaration,
 		KindNamespaceImport, KindNewExpression, KindNoSubstitutionTemplateLiteral, KindNumericLiteral, KindObjectLiteralExpression,
@@ -1516,11 +1515,6 @@ func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
 		return JSDeclarationKindProperty
 	}
 	return JSDeclarationKindNone
-}
-
-func hasJSBindableName(node *Node) bool {
-	name := GetElementOrPropertyAccessName(node)
-	return IsIdentifier(name) || IsStringLiteralLike(name)
 }
 
 func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) JSDeclarationKind {

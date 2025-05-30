@@ -16,7 +16,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
-// p.Compare(other) == cmp.Compare(p, other)
+// Implements a cmp.Compare like function for two lsproto.Position
+// ComparePositions(pos, other) == cmp.Compare(pos, other)
 func ComparePositions(pos, other lsproto.Position) int {
 	if lineComp := cmp.Compare(pos.Line, other.Line); lineComp != 0 {
 		return lineComp
@@ -24,9 +25,10 @@ func ComparePositions(pos, other lsproto.Position) int {
 	return cmp.Compare(pos.Line, other.Line)
 }
 
-// t.Compare(other) == cmp.Compare(t, other)
+// Implements a cmp.Compare like function for two *lsproto.Range
+// CompareRanges(lsRange, other) == cmp.Compare(lsrange, other)
 //
-//	compares Range.Start and then Range.End
+//	Range.Start is compared before Range.End
 func CompareRanges(lsRange, other *lsproto.Range) int {
 	if startComp := ComparePositions(lsRange.Start, other.Start); startComp != 0 {
 		return startComp
@@ -90,7 +92,7 @@ func isModuleSpecifierLike(node *ast.Node) bool {
 
 	return node.Parent.Kind == ast.KindExternalModuleReference ||
 		node.Parent.Kind == ast.KindImportDeclaration ||
-		node.Parent.Kind == ast.KindJSDocImportTag
+		node.Parent.Kind == ast.KindJSImportDeclaration
 }
 
 func getNonModuleSymbolOfMergedModuleSymbol(symbol *ast.Symbol) *ast.Symbol {
@@ -569,36 +571,6 @@ func nodeIsASICandidate(node *ast.Node, file *ast.SourceFile) bool {
 	return startLine != endLine
 }
 
-func getNextJSDocCommentLocation(node *ast.Node) *ast.Node {
-	parent := node.Parent
-	if parent.Kind == ast.KindPropertyAssignment ||
-		parent.Kind == ast.KindExportAssignment ||
-		parent.Kind == ast.KindPropertyDeclaration ||
-		parent.Kind == ast.KindExpressionStatement && node.Kind == ast.KindPropertyAccessExpression ||
-		parent.Kind == ast.KindReturnStatement ||
-		getNestedModuleDeclaration(parent) != nil ||
-		ast.IsAssignmentExpression(node, false) {
-		return parent
-	}
-	if parent.Parent != nil {
-		// Try to recognize this pattern when node is initializer of variable declaration and JSDoc comments are on containing variable statement.
-		// /**
-		//   * @param {number} name
-		//   * @returns {number}
-		//   */
-		// var x = function(name) { return name.length; }
-		if checker.GetSingleVariableOfVariableStatement(parent.Parent) == node || ast.IsAssignmentExpression(parent, false) {
-			return parent.Parent
-		}
-		if parent.Parent.Parent != nil && (checker.GetSingleVariableOfVariableStatement(parent.Parent.Parent) != nil ||
-			getSingleInitializerOfVariableStatementOrPropertyDeclaration(parent.Parent.Parent) == node ||
-			getSourceOfDefaultedAssignment(parent.Parent.Parent) != nil) {
-			return parent.Parent.Parent
-		}
-	}
-	return nil
-}
-
 func isNonContextualKeyword(token ast.Kind) bool {
 	return ast.IsKeywordKind(token) && !ast.IsContextualKeyword(token)
 }
@@ -1039,23 +1011,14 @@ func getContainingNodeIfInHeritageClause(node *ast.Node) *ast.Node {
 }
 
 func getContainerNode(node *ast.Node) *ast.Node {
-	// if (isJSDocTypeAlias(node)) {
-	//     // This doesn't just apply to the node immediately under the comment, but to everything in its parent's scope.
-	//     // node.Parent = the JSDoc comment, node.Parent.Parent = the node having the comment.
-	//     // Then we get parent again in the loop.
-	//     node = node.Parent.Parent;
-	// }
-
-	for {
-		if node = node.Parent; node == nil {
-			return nil
-		}
-		switch node.Kind {
+	for parent := node.Parent; parent != nil; parent = parent.Parent {
+		switch parent.Kind {
 		case ast.KindSourceFile, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindFunctionDeclaration, ast.KindFunctionExpression,
 			ast.KindGetAccessor, ast.KindSetAccessor, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindEnumDeclaration, ast.KindModuleDeclaration:
-			return node
+			return parent
 		}
 	}
+	return nil
 }
 
 func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceFile) *ast.Node {
@@ -1418,10 +1381,6 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 	} else if isNamespaceReference(node) {
 		return ast.SemanticMeaningNamespace
 	} else if parent.Kind == ast.KindTypeParameter {
-		// todo jsdoc not implemented
-		// if !ast.IsJSDocTemplateTag(parent.Parent) {
-		// 	panic("should be handled by isDeclarationName")
-		// }
 		return ast.SemanticMeaningType
 	} else if parent.Kind == ast.KindLiteralType {
 		// This might be T["name"], which is actually referencing a property and not a type. So allow both meanings.
@@ -1433,23 +1392,13 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 
 func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 	switch node.Kind {
-	case ast.KindVariableDeclaration:
-		// if ast.IsInJSFile(node) { // !!! && ast.GetJSDocEnumTag(node) {
-		// 	return ast.SemanticMeaningAll
-		// }
+	case ast.KindVariableDeclaration, ast.KindCommonJSExport:
 		return ast.SemanticMeaningValue
 
 	case ast.KindParameter, ast.KindBindingElement, ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindCatchClause, ast.KindJsxAttribute:
 		return ast.SemanticMeaningValue
 
-	case ast.KindTypeParameter, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindTypeLiteral:
-		return ast.SemanticMeaningType
-
-	case ast.KindJSDocTypedefTag:
-		// If it has no name node, it shares the name with the value declaration below it.
-		if node.Name() == nil {
-			return ast.SemanticMeaningValue | ast.SemanticMeaningType
-		}
+	case ast.KindTypeParameter, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindTypeLiteral:
 		return ast.SemanticMeaningType
 
 	case ast.KindEnumMember, ast.KindClassDeclaration:
@@ -1464,7 +1413,7 @@ func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 			return ast.SemanticMeaningNamespace
 		}
 
-	case ast.KindEnumDeclaration, ast.KindNamedImports, ast.KindImportSpecifier, ast.KindImportEqualsDeclaration, ast.KindImportDeclaration, ast.KindExportAssignment, ast.KindExportDeclaration:
+	case ast.KindEnumDeclaration, ast.KindNamedImports, ast.KindImportSpecifier, ast.KindImportEqualsDeclaration, ast.KindImportDeclaration, ast.KindJSImportDeclaration, ast.KindExportAssignment, ast.KindExportDeclaration:
 		return ast.SemanticMeaningAll
 
 	// An external module can be a Value
@@ -1503,7 +1452,7 @@ func getIntersectingMeaningFromDeclarations(node *ast.Node, symbol *ast.Symbol, 
 
 	for meaning != lastIterationMeaning {
 		// The result is order-sensitive, for instance if initialMeaning == Namespace, and declarations = [class, instantiated module]
-		// we need to consider both as they initialMeaning intersects with the module in the namespace space, and the module
+		// we need to consider both as the initialMeaning intersects with the module in the namespace space, and the module
 		// intersects with the class in the value space.
 		// To achieve that we will keep iterating until the result stabilizes.
 
@@ -1513,25 +1462,6 @@ func getIntersectingMeaningFromDeclarations(node *ast.Node, symbol *ast.Symbol, 
 	}
 
 	return meaning
-}
-
-func getNestedModuleDeclaration(node *ast.Node) *ast.Node {
-	if ast.IsModuleDeclaration(node) && node.Body() != nil && node.Body().Kind == ast.KindModuleDeclaration {
-		return node.Body()
-	}
-	return nil
-}
-
-func getSingleInitializerOfVariableStatementOrPropertyDeclaration(node *ast.Node) *ast.Expression {
-	switch node.Kind {
-	case ast.KindVariableStatement:
-		if v := checker.GetSingleVariableOfVariableStatement(node); v != nil {
-			return v.Initializer()
-		}
-	case ast.KindPropertyDeclaration, ast.KindPropertyAssignment:
-		return node.Initializer()
-	}
-	return nil
 }
 
 // Returns the node in an `extends` or `implements` clause of a class or interface.
@@ -1559,26 +1489,27 @@ func getParentSymbolsOfPropertyAccess(location *ast.Node, symbol *ast.Symbol, ch
 		return nil
 	}
 
-	res := core.MapNonNil(
-		core.IfElse(lhsType.Flags() != 0, lhsType.Types(), core.IfElse(lhsType.Symbol() == symbol.Parent, nil, []*checker.Type{lhsType})),
-		func(t *checker.Type) *ast.Symbol {
-			return core.IfElse(t.Symbol() != nil && t.Symbol().Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0, t.Symbol(), nil)
-		},
-	)
-	if len(res) == 0 {
-		return nil
+	var possibleSymbols []*checker.Type
+	if lhsType.Flags() != 0 {
+		possibleSymbols = lhsType.Types()
+	} else if lhsType.Symbol() != symbol.Parent {
+		possibleSymbols = []*checker.Type{lhsType}
 	}
-	return res
+
+	return core.MapNonNil(possibleSymbols, func(t *checker.Type) *ast.Symbol {
+		if t.Symbol() != nil && t.Symbol().Flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0 {
+			return t.Symbol()
+		}
+		return nil
+	})
 }
 
-/**
-* Find symbol of the given property-name and add the symbol to the given result array
-* @param symbol a symbol to start searching for the given propertyName
-* @param propertyName a name of property to search for
-* @param result an array of symbol of found property symbols
-* @param previousIterationSymbolsCache a cache of symbol from previous iterations of calling this function to prevent infinite revisiting of the same symbol.
-*                                The value of previousIterationSymbol is undefined when the function is first called.
- */
+// Find symbol of the given property-name and add the symbol to the given result array
+// @param symbol a symbol to start searching for the given propertyName
+// @param propertyName a name of property to search for
+// @param cb a cache of symbol from previous iterations of calling this function to prevent infinite revisiting of the same symbol.
+//
+//	The value of previousIterationSymbol is undefined when the function is first called.
 func getPropertySymbolsFromBaseTypes(symbol *ast.Symbol, propertyName string, checker *checker.Checker, cb func(base *ast.Symbol) *ast.Symbol) *ast.Symbol {
 	seen := core.Set[*ast.Symbol]{}
 	var recur func(*ast.Symbol) *ast.Symbol
@@ -1622,20 +1553,6 @@ func getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol *ast.Symb
 	bindingElement := ast.GetDeclarationOfKind(symbol, ast.KindBindingElement)
 	if bindingElement != nil && isObjectBindingElementWithoutPropertyName(bindingElement) {
 		return getPropertySymbolFromBindingElement(checker, bindingElement)
-	}
-	return nil
-}
-
-func getSourceOfDefaultedAssignment(node *ast.Node) *ast.Node {
-	if node.Kind == ast.KindExpressionStatement && node.Expression().Kind == ast.KindBinaryExpression && ast.GetAssignmentDeclarationKind(node.Expression().AsBinaryExpression()) != ast.JSDeclarationKindNone {
-		binExprRight := node.Expression().AsBinaryExpression().Right
-		if binExprRight.Kind == ast.KindBinaryExpression {
-			binExprDefault := binExprRight.AsBinaryExpression()
-			switch binExprDefault.OperatorToken.Kind {
-			case ast.KindBarBarToken, ast.KindQuestionQuestionToken:
-				return binExprDefault.Right
-			}
-		}
 	}
 	return nil
 }

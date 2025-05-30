@@ -48,7 +48,7 @@ func (s *Set[T]) AddIfAbsent(key T) bool {
 	return true
 }
 
-// Returns true if the key is arleady in the set. Adds the key and returns false otherwise.
+// Returns true if the key is already in the set. Adds the key and returns false otherwise.
 //
 //	"marks" keys for in "seen" sets in services
 func (s *Set[T]) HasAndAdd(key T) bool {

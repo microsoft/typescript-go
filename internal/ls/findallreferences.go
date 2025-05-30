@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -14,8 +15,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
-
-	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -920,7 +919,7 @@ func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *c
 
 // -- Core algorithm for find all references --
 func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, sourceFiles []*ast.SourceFile, sourceFilesSet *core.Set[string], checker *checker.Checker, options refOptions) []*SymbolAndEntries {
-	/** Core find-all-references algorithm for a normal symbol. */
+	// Core find-all-references algorithm for a normal symbol.
 
 	symbol := core.Coalesce(skipPastExportOrImportSpecifierOrUnion(originalSymbol, node, checker /*useLocalSymbolForExportSpecifier*/, !isForRenameWithPrefixAndSuffixText(options)), originalSymbol)
 
@@ -970,26 +969,23 @@ const (
 	comingFromExport  comingFromType = 2
 )
 
-/**
-* Symbol that is currently being searched for.
-* This will be replaced if we find an alias for the symbol.
- */
+// Symbol that is currently being searched for.
+// This will be replaced if we find an alias for the symbol.
 type refSearch struct {
-	/** If coming from an export, we will not recursively search for the imported symbol (since that's where we came from). */
+	// If coming from an export, we will not recursively search for the imported symbol (since that's where we came from).
 	comingFrom comingFromType // import, export
 
 	symbol      *ast.Symbol
 	text        string
 	escapedText string
-	/** Only set if `options.implementations` is true. These are the symbols checked to get the implementations of a property access. */
+
+	// Only set if `options.implementations` is true. These are the symbols checked to get the implementations of a property access.
 	parents []*ast.Symbol
 
 	allSearchSymbols []*ast.Symbol
 
-	/**
-	* Whether a symbol is in the search set.
-	* Do not compare directly to `symbol` because there may be related symbols to search for. See `populateSearchSymbolSet`.
-	 */
+	// Whether a symbol is in the search set.
+	// Do not compare directly to `symbol` because there may be related symbols to search for. See `populateSearchSymbolSet`.
 	includes func(symbol *ast.Symbol) bool
 }
 
@@ -1044,7 +1040,7 @@ func newState(sourceFiles []*ast.SourceFile, sourceFilesSet *core.Set[string], n
 	}
 }
 
-/** @param allSearchSymbols set of additional symbols for use by `includes`. */
+// @param allSearchSymbols set of additional symbols for use by `includes`
 func (state *refState) createSearch(location *ast.Node, symbol *ast.Symbol, comingFrom comingFromType, text string, allSearchSymbols []*ast.Symbol) *refSearch {
 	// Note: if this is an external module symbol, the name doesn't include quotes.
 	// Note: getLocalSymbolForExportDefault handles `export default class C {}`, but not `export default C` or `export { C as default }`.
@@ -1193,11 +1189,9 @@ func (state *refState) getReferencesInSourceFile(sourceFile *ast.SourceFile, sea
 }
 
 func (state *refState) getReferencesInContainer(container *ast.Node, sourceFile *ast.SourceFile, search *refSearch, addReferencesHere bool) {
-	/**
-	 * Search within node "container" for references for a search value, where the search value is defined as a
-	 * tuple of(searchSymbol, searchText, searchLocation, and searchMeaning).
-	 * searchLocation: a node where the search value
-	 */
+	// Search within node "container" for references for a search value, where the search value is defined as a
+	//     tuple of (searchSymbol, searchText, searchLocation, and searchMeaning).
+	// searchLocation: a node where the search value
 	if !state.markSearchedSymbols(sourceFile, search.allSearchSymbols) {
 		return
 	}
@@ -1309,13 +1303,12 @@ func (state *refState) getReferenceForShorthandProperty(referenceSymbol *ast.Sym
 	}
 	shorthandValueSymbol := state.checker.GetShorthandAssignmentValueSymbol(referenceSymbol.ValueDeclaration)
 	name := ast.GetNameOfDeclaration(referenceSymbol.ValueDeclaration)
-	/*
-	 * Because in short-hand property assignment, an identifier which stored as name of the short-hand property assignment
-	 * has two meanings: property name and property value. Therefore when we do findAllReference at the position where
-	 * an identifier is declared, the language service should return the position of the variable declaration as well as
-	 * the position in short-hand property assignment excluding property accessing. However, if we do findAllReference at the
-	 * position of property accessing, the referenceEntry of such position will be handled in the first case.
-	 */
+
+	// Because in short-hand property assignment, an identifier which stored as name of the short-hand property assignment
+	// has two meanings: property name and property value. Therefore when we do findAllReference at the position where
+	// an identifier is declared, the language service should return the position of the variable declaration as well as
+	// the position in short-hand property assignment excluding property accessing. However, if we do findAllReference at the
+	// position of property accessing, the referenceEntry of such position will be handled in the first case.
 	if name != nil && search.includes(shorthandValueSymbol) {
 		state.addReference(name, shorthandValueSymbol, entryKindNone)
 	}
@@ -1484,7 +1477,7 @@ func (state *refState) forEachRelatedSymbol(
 	return nil, entryKindNone
 }
 
-/** Search for all occurrences of an identifier in a source file (and filter out the ones that match). */
+// Search for all occurrences of an identifier in a source file (and filter out the ones that match).
 func (state *refState) searchForName(sourceFile *ast.SourceFile, search *refSearch) {
 	if _, ok := getNameTable(sourceFile)[search.escapedText]; ok {
 		state.getReferencesInSourceFile(sourceFile, search, true /*addReferencesHere*/)
