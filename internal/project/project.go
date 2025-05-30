@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -output=project_stringer_generated.go
@@ -87,7 +88,7 @@ type ProjectHost interface {
 var _ compiler.CompilerHost = (*Project)(nil)
 
 type Project struct {
-	host ProjectHost
+	host *projectHostWithCachedFS
 
 	name string
 	kind Kind
@@ -141,9 +142,11 @@ func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory 
 }
 
 func NewProject(name string, kind Kind, currentDirectory string, host ProjectHost) *Project {
+	cachedHost := newProjectHostWithCachedFS(host)
+
 	host.Log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
 	project := &Project{
-		host:             host,
+		host:             cachedHost,
 		name:             name,
 		kind:             kind,
 		currentDirectory: currentDirectory,
@@ -151,16 +154,32 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 	}
 	project.comparePathsOptions = tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
-		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+		UseCaseSensitiveFileNames: project.host.FS().UseCaseSensitiveFileNames(),
 	}
-	client := host.Client()
-	if host.IsWatchEnabled() && client != nil {
-		globMapper := createGlobMapper(host)
+	client := project.host.Client()
+	if project.host.IsWatchEnabled() && client != nil {
+		globMapper := createGlobMapper(project.host)
 		project.failedLookupsWatch = newWatchedFiles(client, lsproto.WatchKindCreate, globMapper)
 		project.affectingLocationsWatch = newWatchedFiles(client, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, globMapper)
 	}
 	project.markAsDirty()
 	return project
+}
+
+type projectHostWithCachedFS struct {
+	ProjectHost
+	fs *cachedvfs.FS
+}
+
+func newProjectHostWithCachedFS(host ProjectHost) *projectHostWithCachedFS {
+	return &projectHostWithCachedFS{
+		ProjectHost: host,
+		fs:          cachedvfs.From(host.FS()),
+	}
+}
+
+func (p *projectHostWithCachedFS) FS() vfs.FS {
+	return p.fs
 }
 
 // FS implements compiler.CompilerHost.
@@ -406,6 +425,7 @@ func (p *Project) updateGraph() bool {
 
 	start := time.Now()
 	p.log("Starting updateGraph: Project: " + p.name)
+	p.host.fs.ClearCache()
 	var writeFileNames bool
 	oldProgram := p.program
 	p.initialLoadPending = false
