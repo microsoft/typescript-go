@@ -776,7 +776,7 @@ func (t *LiteralType) Value() any {
 }
 
 func (t *LiteralType) String() string {
-	return ValueToString(t)
+	return ValueToString(t.value)
 }
 
 // UniqueESSymbolTypeData
