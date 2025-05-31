@@ -221,10 +221,7 @@ func (tx *DeclarationTransformer) transformAndReplaceLatePaintedStatements(state
 	// In such a scenario, only Q and D are initially visible, but we don't consider imports as private names - instead we say they if they are referenced they must
 	// be recorded. So while checking D's visibility we mark C as visible, then we must check C which in turn marks B, completing the chain of
 	// dependent imports and allowing a valid declaration file output. Today, this dependent alias marking only happens for internal import aliases.
-	for true {
-		if len(tx.state.lateMarkedStatements) == 0 {
-			break
-		}
+	for len(tx.state.lateMarkedStatements) != 0 {
 
 		next := tx.state.lateMarkedStatements[0]
 		tx.state.lateMarkedStatements = tx.state.lateMarkedStatements[1:]
@@ -1212,7 +1209,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 		// eagerly transform nested namespaces (the nesting doesn't need any elision or painting done)
 		original := tx.EmitContext().MostOriginal(inner)
 		id := ast.GetNodeId(original)
-		body, _ := tx.lateStatementReplacementMap[id]
+		body := tx.lateStatementReplacementMap[id]
 		delete(tx.lateStatementReplacementMap, id)
 		return tx.Factory().UpdateModuleDeclaration(
 			input,
