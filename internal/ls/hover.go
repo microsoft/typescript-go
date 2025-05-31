@@ -177,46 +177,64 @@ func formatQuickInfoAndJSDoc(quickInfo string, declaration *ast.Node) string {
 	var b strings.Builder
 	b.Grow(32)
 	writeCode(&b, "ts", quickInfo)
-	if jsdoc := getJSDocOrTag(declaration); jsdoc != nil {
-		writeComments(&b, jsdoc.Comments())
-		if jsdoc.Kind == ast.KindJSDoc {
-			if tags := jsdoc.AsJSDoc().Tags; tags != nil {
-				for _, tag := range tags.Nodes {
-					b.WriteString("\n\n*@")
-					b.WriteString(tag.TagName().Text())
-					b.WriteString("*")
-					switch tag.Kind {
-					case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-						writeOptionalEntityName(&b, tag.Name())
-					case ast.KindJSDocAugmentsTag:
-						writeOptionalEntityName(&b, tag.AsJSDocAugmentsTag().ClassName)
-					case ast.KindJSDocSeeTag:
-						writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
-					case ast.KindJSDocTemplateTag:
-						for i, tp := range tag.TypeParameters() {
-							if i != 0 {
-								b.WriteString(",")
-							}
-							writeOptionalEntityName(&b, tp.Name())
+	if declaration != nil {
+		if jsdoc := getJSDocOrTag(declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
+			writeComments(&b, jsdoc.Comments())
+			if jsdoc.Kind == ast.KindJSDoc {
+				if tags := jsdoc.AsJSDoc().Tags; tags != nil {
+					for _, tag := range tags.Nodes {
+						if tag.Kind == ast.KindJSDocTypeTag {
+							continue
 						}
-					}
-					comments := tag.Comments()
-					if len(comments) != 0 {
-						if commentHasPrefix(comments, "```") {
-							b.WriteString("\n")
-						} else {
-							b.WriteString(" ")
-							if !commentHasPrefix(comments, "-") {
-								b.WriteString("— ")
+						b.WriteString("\n\n*@")
+						b.WriteString(tag.TagName().Text())
+						b.WriteString("*")
+						switch tag.Kind {
+						case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
+							writeOptionalEntityName(&b, tag.Name())
+						case ast.KindJSDocAugmentsTag:
+							writeOptionalEntityName(&b, tag.AsJSDocAugmentsTag().ClassName)
+						case ast.KindJSDocSeeTag:
+							writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
+						case ast.KindJSDocTemplateTag:
+							for i, tp := range tag.TypeParameters() {
+								if i != 0 {
+									b.WriteString(",")
+								}
+								writeOptionalEntityName(&b, tp.Name())
 							}
 						}
-						writeComments(&b, comments)
+						comments := tag.Comments()
+						if len(comments) != 0 {
+							if commentHasPrefix(comments, "```") {
+								b.WriteString("\n")
+							} else {
+								b.WriteString(" ")
+								if !commentHasPrefix(comments, "-") {
+									b.WriteString("— ")
+								}
+							}
+							writeComments(&b, comments)
+						}
 					}
 				}
 			}
 		}
 	}
 	return b.String()
+}
+
+func containsTypedefTag(jsdoc *ast.Node) bool {
+	if jsdoc.Kind == ast.KindJSDoc {
+		if tags := jsdoc.AsJSDoc().Tags; tags != nil {
+			for _, tag := range tags.Nodes {
+				if tag.Kind == ast.KindJSDocTypedefTag {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }
 
 func commentHasPrefix(comments []*ast.Node, prefix string) bool {
