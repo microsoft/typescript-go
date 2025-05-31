@@ -1822,12 +1822,12 @@ func (c *Checker) isBlockScopedNameDeclaredBeforeUse(declaration *ast.Node, usag
 		switch {
 		case declaration.Kind == ast.KindBindingElement:
 			// still might be illegal if declaration and usage are both binding elements (eg var [a = b, b = b] = [1, 2])
-			errorBindingElement := getAncestor(usage, ast.KindBindingElement)
+			errorBindingElement := GetAncestor(usage, ast.KindBindingElement)
 			if errorBindingElement != nil {
 				return ast.FindAncestor(errorBindingElement, ast.IsBindingElement) != ast.FindAncestor(declaration, ast.IsBindingElement) || declaration.Pos() < errorBindingElement.Pos()
 			}
 			// or it might be illegal if usage happens before parent variable is declared (eg var [a] = a)
-			return c.isBlockScopedNameDeclaredBeforeUse(getAncestor(declaration, ast.KindVariableDeclaration), usage)
+			return c.isBlockScopedNameDeclaredBeforeUse(GetAncestor(declaration, ast.KindVariableDeclaration), usage)
 		case declaration.Kind == ast.KindVariableDeclaration:
 			// still might be illegal if usage is in the initializer of the variable declaration (eg var a = a)
 			return !isImmediatelyUsedInInitializerOfBlockScopedVariable(declaration, usage, declContainer)
@@ -4185,7 +4185,7 @@ func (c *Checker) checkBaseTypeAccessibility(t *Type, node *ast.Node) {
 	signatures := c.getSignaturesOfType(t, SignatureKindConstruct)
 	if len(signatures) != 0 {
 		declaration := signatures[0].declaration
-		if declaration != nil && hasModifier(declaration, ast.ModifierFlagsPrivate) {
+		if declaration != nil && HasModifier(declaration, ast.ModifierFlagsPrivate) {
 			typeClassDeclaration := ast.GetClassLikeDeclarationOfSymbol(t.symbol)
 			if !c.isNodeWithinClass(node, typeClassDeclaration) {
 				c.error(node, diagnostics.Cannot_extend_a_class_0_Class_constructor_is_marked_as_private, c.getFullyQualifiedName(t.symbol, nil))
@@ -5625,7 +5625,7 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 		localDeclarationSymbol := c.resolveName(node, name.Text(), ast.SymbolFlagsVariable, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
 		if localDeclarationSymbol != nil && localDeclarationSymbol != symbol && localDeclarationSymbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 {
 			if c.getDeclarationNodeFlagsFromSymbol(localDeclarationSymbol)&ast.NodeFlagsBlockScoped != 0 {
-				varDeclList := getAncestor(localDeclarationSymbol.ValueDeclaration, ast.KindVariableDeclarationList)
+				varDeclList := GetAncestor(localDeclarationSymbol.ValueDeclaration, ast.KindVariableDeclarationList)
 				var container *ast.Node
 				if ast.IsVariableStatement(varDeclList.Parent) && varDeclList.Parent.Parent != nil {
 					container = varDeclList.Parent.Parent
@@ -6360,7 +6360,7 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 					name := node.PropertyNameOrName().Text()
 					c.addTypeOnlyDeclarationRelatedInfo(c.error(node, message, name), core.IfElse(isType, nil, typeOnlyAlias), name)
 				}
-				if isType && node.Kind == ast.KindImportEqualsDeclaration && hasModifier(node, ast.ModifierFlagsExport) {
+				if isType && node.Kind == ast.KindImportEqualsDeclaration && HasModifier(node, ast.ModifierFlagsExport) {
 					c.error(node, diagnostics.Cannot_use_export_import_on_a_type_or_type_only_namespace_when_0_is_enabled, c.getIsolatedModulesLikeFlagName())
 				}
 			case ast.KindExportSpecifier:
@@ -6646,7 +6646,7 @@ func (c *Checker) checkUnusedClassMembers(node *ast.Node) {
 				break // Already would have reported an error on the getter.
 			}
 			symbol := c.getSymbolOfDeclaration(member)
-			if !c.isReferenced(symbol) && (hasModifier(member, ast.ModifierFlagsPrivate) || member.Name() != nil && ast.IsPrivateIdentifier(member.Name())) && member.Flags&ast.NodeFlagsAmbient == 0 {
+			if !c.isReferenced(symbol) && (HasModifier(member, ast.ModifierFlagsPrivate) || member.Name() != nil && ast.IsPrivateIdentifier(member.Name())) && member.Flags&ast.NodeFlagsAmbient == 0 {
 				c.reportUnused(member, UnusedKindLocal, NewDiagnosticForNode(member.Name(), diagnostics.X_0_is_declared_but_its_value_is_never_read, c.symbolToString(symbol)))
 			}
 		case ast.KindConstructor:
@@ -8201,7 +8201,7 @@ func (c *Checker) resolveNewExpression(node *ast.Node, candidatesOutArray *[]*Si
 		}
 		if expressionType.symbol != nil {
 			valueDecl := ast.GetClassLikeDeclarationOfSymbol(expressionType.symbol)
-			if valueDecl != nil && hasModifier(valueDecl, ast.ModifierFlagsAbstract) {
+			if valueDecl != nil && HasModifier(valueDecl, ast.ModifierFlagsAbstract) {
 				c.error(node, diagnostics.Cannot_create_an_instance_of_an_abstract_class)
 				return c.resolveErrorCall(node)
 			}
@@ -13692,7 +13692,7 @@ func (c *Checker) getSymbolOfPartOfRightHandSideOfImportEquals(entityName *ast.N
 	//     import a = |b|; // Namespace
 	//     import a = |b.c|; // Value, type, namespace
 	//     import a = |b.c|.d; // Namespace
-	if entityName.Kind == ast.KindIdentifier && isRightSideOfQualifiedNameOrPropertyAccess(entityName) {
+	if entityName.Kind == ast.KindIdentifier && IsRightSideOfQualifiedNameOrPropertyAccess(entityName) {
 		entityName = entityName.Parent // QualifiedName
 	}
 	// Check for case 1 and 3 in the above example
@@ -15201,7 +15201,7 @@ func (c *Checker) GetTypeOfSymbolAtLocation(symbol *ast.Symbol, location *ast.No
 		// of the expression (which will reflect control flow analysis). If the expression indeed
 		// resolved to the given symbol, return the narrowed type.
 		if ast.IsIdentifier(location) || ast.IsPrivateIdentifier(location) {
-			if isRightSideOfQualifiedNameOrPropertyAccess(location) {
+			if IsRightSideOfQualifiedNameOrPropertyAccess(location) {
 				location = location.Parent
 			}
 			if ast.IsExpressionNode(location) && (!ast.IsAssignmentTarget(location) || isWriteAccess(location)) {
@@ -18237,7 +18237,7 @@ func (c *Checker) getIndexInfosOfIndexSymbol(indexSymbol *ast.Symbol, siblingSym
 					}
 					forEachType(c.getTypeFromTypeNode(typeNode), func(keyType *Type) {
 						if c.isValidIndexKeyType(keyType) && findIndexInfo(indexInfos, keyType) == nil {
-							indexInfo := c.newIndexInfo(keyType, valueType, hasModifier(declaration, ast.ModifierFlagsReadonly), declaration)
+							indexInfo := c.newIndexInfo(keyType, valueType, HasModifier(declaration, ast.ModifierFlagsReadonly), declaration)
 							indexInfos = append(indexInfos, indexInfo)
 						}
 					})
@@ -26000,7 +26000,7 @@ func (c *Checker) markPropertyAsReferenced(prop *ast.Symbol, nodeForCheckWriteOn
 	if prop.Flags&ast.SymbolFlagsClassMember == 0 || prop.ValueDeclaration == nil {
 		return
 	}
-	hasPrivateModifier := hasModifier(prop.ValueDeclaration, ast.ModifierFlagsPrivate)
+	hasPrivateModifier := HasModifier(prop.ValueDeclaration, ast.ModifierFlagsPrivate)
 	hasPrivateIdentifier := prop.ValueDeclaration.Name() != nil && ast.IsPrivateIdentifier(prop.ValueDeclaration.Name())
 	if !hasPrivateModifier && !hasPrivateIdentifier {
 		return
@@ -29666,7 +29666,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	} else if ast.IsEntityName(name) && isInRightSideOfImportOrExportAssignment(name) {
 		// Since we already checked for ExportAssignment, this really could only be an Import
-		importEqualsDeclaration := getAncestor(name, ast.KindImportEqualsDeclaration)
+		importEqualsDeclaration := GetAncestor(name, ast.KindImportEqualsDeclaration)
 		if importEqualsDeclaration == nil {
 			panic("ImportEqualsDeclaration should be defined")
 		}
@@ -29682,7 +29682,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	}
 
-	for isRightSideOfQualifiedNameOrPropertyAccess(name) {
+	for IsRightSideOfQualifiedNameOrPropertyAccess(name) {
 		name = name.Parent
 	}
 
@@ -29975,7 +29975,7 @@ func (c *Checker) getApplicableIndexSymbol(t *Type, keyType *Type) *ast.Symbol {
 }
 
 func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
-	if isRightSideOfQualifiedNameOrPropertyAccess(expr) {
+	if IsRightSideOfQualifiedNameOrPropertyAccess(expr) {
 		expr = expr.Parent
 	}
 	return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(expr))

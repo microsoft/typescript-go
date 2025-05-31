@@ -1035,6 +1035,25 @@ func IsStatic(node *Node) bool {
 	return IsClassElement(node) && HasStaticModifier(node) || IsClassStaticBlockDeclaration(node)
 }
 
+func CanHaveSymbol(node *Node) bool {
+	switch node.Kind {
+	case KindArrowFunction, KindBinaryExpression, KindBindingElement, KindCallExpression, KindCallSignature,
+		KindClassDeclaration, KindClassExpression, KindClassStaticBlockDeclaration, KindConstructor, KindConstructorType,
+		KindConstructSignature, KindElementAccessExpression, KindEnumDeclaration, KindEnumMember, KindExportAssignment,
+		KindExportDeclaration, KindExportSpecifier, KindFunctionDeclaration, KindFunctionExpression, KindFunctionType,
+		KindGetAccessor, KindImportClause, KindImportEqualsDeclaration, KindImportSpecifier, KindIndexSignature,
+		KindInterfaceDeclaration, KindJSExportAssignment, KindJSTypeAliasDeclaration, KindCommonJSExport,
+		KindJsxAttribute, KindJsxAttributes, KindJsxSpreadAttribute, KindMappedType, KindMethodDeclaration,
+		KindMethodSignature, KindModuleDeclaration, KindNamedTupleMember, KindNamespaceExport, KindNamespaceExportDeclaration,
+		KindNamespaceImport, KindNewExpression, KindNoSubstitutionTemplateLiteral, KindNumericLiteral, KindObjectLiteralExpression,
+		KindParameter, KindPropertyAccessExpression, KindPropertyAssignment, KindPropertyDeclaration, KindPropertySignature,
+		KindSetAccessor, KindShorthandPropertyAssignment, KindSourceFile, KindSpreadAssignment, KindStringLiteral,
+		KindTypeAliasDeclaration, KindTypeLiteral, KindTypeParameter, KindVariableDeclaration:
+		return true
+	}
+	return false
+}
+
 func CanHaveIllegalDecorators(node *Node) bool {
 	switch node.Kind {
 	case KindPropertyAssignment, KindShorthandPropertyAssignment,
@@ -1255,6 +1274,10 @@ func IsExternalModuleImportEqualsDeclaration(node *Node) bool {
 	return node.Kind == KindImportEqualsDeclaration && node.AsImportEqualsDeclaration().ModuleReference.Kind == KindExternalModuleReference
 }
 
+func IsModuleOrEnumDeclaration(node *Node) bool {
+	return node.Kind == KindModuleDeclaration || node.Kind == KindEnumDeclaration
+}
+
 func IsLiteralImportTypeNode(node *Node) bool {
 	return IsImportTypeNode(node) && IsLiteralTypeNode(node.AsImportTypeNode().Argument) && IsStringLiteral(node.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal)
 }
@@ -1296,6 +1319,37 @@ func IsThisParameter(node *Node) bool {
 	return IsParameter(node) && node.Name() != nil && IsThisIdentifier(node.Name())
 }
 
+func IsBindableObjectDefinePropertyCall(expr *Node) bool {
+	return len(expr.Arguments()) == 3 &&
+		IsPropertyAccessExpression(expr.Expression()) &&
+		IsIdentifier(expr.Expression().Expression()) &&
+		// IdText(expr.Expression().Expression()) == "Object" &&
+		// IdText(expr.Expression().Name()) == "defineProperty" &&
+		IsStringOrNumericLiteralLike(expr.Arguments()[1]) &&
+		IsBindableStaticNameExpression(expr.Arguments()[0] /*excludeThisKeyword*/, true)
+}
+
+func IsBindableStaticAccessExpression(node *Node, excludeThisKeyword bool) bool {
+	return IsPropertyAccessExpression(node) &&
+		(!excludeThisKeyword && node.Expression().Kind == KindThisKeyword || IsIdentifier(node.Name()) && IsBindableStaticNameExpression(node.Expression() /*excludeThisKeyword*/, true)) ||
+		IsBindableStaticElementAccessExpression(node, excludeThisKeyword)
+}
+
+func IsBindableStaticElementAccessExpression(node *Node, excludeThisKeyword bool) bool {
+	return IsLiteralLikeElementAccess(node) &&
+		((!excludeThisKeyword && node.Expression().Kind == KindThisKeyword) ||
+			IsEntityNameExpression(node.Expression()) ||
+			IsBindableStaticAccessExpression(node.Expression() /*excludeThisKeyword*/, true))
+}
+
+func IsLiteralLikeElementAccess(node *Node) bool {
+	return IsElementAccessExpression(node) && IsStringOrNumericLiteralLike(node.AsElementAccessExpression().ArgumentExpression)
+}
+
+func IsBindableStaticNameExpression(node *Node, excludeThisKeyword bool) bool {
+	return IsEntityNameExpression(node) || IsBindableStaticAccessExpression(node, excludeThisKeyword)
+}
+
 // Does not handle signed numeric names like `a[+0]` - handling those would require handling prefix unary expressions
 // throughout late binding handling as well, which is awkward (but ultimately probably doable if there is demand)
 func GetElementOrPropertyAccessName(node *Node) *Node {
@@ -1312,6 +1366,13 @@ func GetElementOrPropertyAccessName(node *Node) *Node {
 		return nil
 	}
 	panic("Unhandled case in GetElementOrPropertyAccessName")
+}
+
+func GetInitializerOfBinaryExpression(expr *BinaryExpression) *Expression {
+	for IsBinaryExpression(expr.Right) {
+		expr = expr.Right.AsBinaryExpression()
+	}
+	return expr.Right.Expression()
 }
 
 func IsExpressionWithTypeArgumentsInClassExtendsClause(node *Node) bool {
@@ -1421,6 +1482,19 @@ const (
 	JSDeclarationKindThisProperty
 	/// F.name = expr, F[name] = expr
 	JSDeclarationKindProperty
+
+	// PropertyAccessKinds
+	// F.prototype = { ... }
+	JSDeclarationKindPrototype
+	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
+	// Object.defineProperty(x, 'name', { get: Function, set: Function });
+	// Object.defineProperty(x, 'name', { get: Function });
+	// Object.defineProperty(x, 'name', { set: Function });
+	JSDeclarationKindObjectDefinePropertyValue
+	// Object.defineProperty(exports || module.exports, 'name', ...);
+	JSDeclarationKindObjectDefinePropertyExports
+	// Object.defineProperty(Foo.prototype, 'name', ...);
+	JSDeclarationKindObjectDefinePrototypeProperty
 )
 
 func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
@@ -1441,6 +1515,44 @@ func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
 		return JSDeclarationKindProperty
 	}
 	return JSDeclarationKindNone
+}
+
+func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) JSDeclarationKind {
+	if lhs.Expression().Kind == KindThisKeyword {
+		return JSDeclarationKindThisProperty
+	} else if IsModuleExportsAccessExpression(lhs) {
+		// module.exports = expr
+		return JSDeclarationKindModuleExports
+	} else if IsBindableStaticNameExpression(lhs.Expression() /*excludeThisKeyword*/, true) {
+		if IsPrototypeAccess(lhs.Expression()) {
+			// F.G....prototype.x = expr
+			return JSDeclarationKindPrototypeProperty
+		}
+
+		nextToLast := lhs
+		for nextToLast.Expression().Kind != KindIdentifier {
+			nextToLast = nextToLast.Expression()
+		}
+		idText := nextToLast.Expression().AsIdentifier().Text
+		if (idText == "exports" || idText == "module" && getElementOrPropertyAccessNameText(nextToLast) == "exports") &&
+			// ExportsProperty does not support binding with computed names
+			IsBindableStaticAccessExpression(lhs, false) {
+			// exports.name = expr OR module.exports.name = expr OR exports["name"] = expr ...
+			return JSDeclarationKindExportsProperty
+		}
+		if IsBindableStaticNameExpression(lhs /*excludeThisKeyword*/, true) || (IsElementAccessExpression(lhs) && IsDynamicName(lhs)) {
+			// F.G...x = expr
+			return JSDeclarationKindProperty
+		}
+	}
+	return JSDeclarationKindNone
+}
+
+func getElementOrPropertyAccessNameText(node *Node) string {
+	if name := GetElementOrPropertyAccessName(node); name != nil {
+		return name.Text()
+	}
+	return ""
 }
 
 /**
@@ -1657,6 +1769,40 @@ func GetThisContainer(node *Node, includeArrowFunctions bool, includeClassComput
 	}
 }
 
+func GetSuperContainer(node *Node, stopOnFunctions bool) *Node {
+	for {
+		node = node.Parent
+		if node == nil {
+			return nil
+		}
+		switch node.Kind {
+		case KindComputedPropertyName:
+			node = node.Parent
+			break
+		case KindFunctionDeclaration, KindFunctionExpression, KindArrowFunction:
+			if !stopOnFunctions {
+				continue
+			}
+			// falls through
+
+		case KindPropertyDeclaration, KindPropertySignature, KindMethodDeclaration, KindMethodSignature, KindConstructor, KindGetAccessor, KindSetAccessor, KindClassStaticBlockDeclaration:
+			return node
+		case KindDecorator:
+			// Decorators are always applied outside of the body of a class or method.
+			if node.Parent.Kind == KindParameter && IsClassElement(node.Parent.Parent) {
+				// If the decorator's parent is a Parameter, we resolve the this container from
+				// the grandparent class declaration.
+				node = node.Parent.Parent
+			} else if IsClassElement(node.Parent) {
+				// If the decorator's parent is a class element, we resolve the 'this' container
+				// from the parent class declaration.
+				node = node.Parent
+			}
+			break
+		}
+	}
+}
+
 func GetImmediatelyInvokedFunctionExpression(fn *Node) *Node {
 	if IsFunctionExpressionOrArrowFunction(fn) {
 		prev := fn
@@ -1765,13 +1911,13 @@ func IsExpressionNode(node *Node) bool {
 		for node.Parent.Kind == KindQualifiedName {
 			node = node.Parent
 		}
-		return IsTypeQueryNode(node.Parent) || isJSDocLinkLike(node.Parent) || isJSXTagName(node)
+		return IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || isJSXTagName(node)
 	case KindJSDocMemberName:
-		return IsTypeQueryNode(node.Parent) || isJSDocLinkLike(node.Parent) || isJSXTagName(node)
+		return IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || isJSXTagName(node)
 	case KindPrivateIdentifier:
 		return IsBinaryExpression(node.Parent) && node.Parent.AsBinaryExpression().Left == node && node.Parent.AsBinaryExpression().OperatorToken.Kind == KindInKeyword
 	case KindIdentifier:
-		if IsTypeQueryNode(node.Parent) || isJSDocLinkLike(node.Parent) || isJSXTagName(node) {
+		if IsTypeQueryNode(node.Parent) || IsJSDocLinkLike(node.Parent) || isJSXTagName(node) {
 			return true
 		}
 		fallthrough
@@ -1914,7 +2060,7 @@ func isPartOfTypeExpressionWithTypeArguments(node *Node) bool {
 	return IsHeritageClause(parent) && (!IsClassLike(parent.Parent) || parent.AsHeritageClause().Token == KindImplementsKeyword)
 }
 
-func isJSDocLinkLike(node *Node) bool {
+func IsJSDocLinkLike(node *Node) bool {
 	return NodeKindIs(node, KindJSDocLink, KindJSDocLinkCode, KindJSDocLinkPlain)
 }
 
@@ -1977,7 +2123,7 @@ func IsJSDocCommentContainingNode(node *Node) bool {
 		node.Kind == KindJSDocText ||
 		node.Kind == KindJSDocTypeLiteral ||
 		node.Kind == KindJSDocSignature ||
-		isJSDocLinkLike(node) ||
+		IsJSDocLinkLike(node) ||
 		IsJSDocTag(node)
 }
 
@@ -2453,6 +2599,10 @@ func GetDeclarationContainer(node *Node) *Node {
 			return true
 		}
 	}).Parent
+}
+
+func IsPrototypeAccess(node *Node) bool {
+	return IsBindableStaticAccessExpression(node, false) && getElementOrPropertyAccessNameText(node) == "prototype"
 }
 
 // Indicates that a symbol is an alias that does not merge with a local declaration.

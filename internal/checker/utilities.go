@@ -89,12 +89,12 @@ func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.Modif
 	return node.ModifierFlags() & flags
 }
 
-func hasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
+func HasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
 	return node.ModifierFlags()&flags != 0
 }
 
 func hasReadonlyModifier(node *ast.Node) bool {
-	return hasModifier(node, ast.ModifierFlagsReadonly)
+	return HasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
@@ -177,7 +177,7 @@ func isConstTypeReference(node *ast.Node) bool {
 	return ast.IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && ast.IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
 }
 
-func getSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
+func GetSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
 	if !ast.IsVariableStatement(node) {
 		return nil
 	}
@@ -345,7 +345,7 @@ func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
+func IsRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
 	parent := node.Parent
 	switch parent.Kind {
 	case ast.KindQualifiedName:
@@ -450,7 +450,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (hasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -1245,7 +1245,7 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 	}) != nil
 }
 
-func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
+func GetAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
 	for node != nil && node.Kind != kind {
 		node = node.Parent
 	}
