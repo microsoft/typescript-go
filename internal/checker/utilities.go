@@ -254,25 +254,6 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 	return false
 }
 
-func canHaveSymbol(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindArrowFunction, ast.KindBinaryExpression, ast.KindBindingElement, ast.KindCallExpression, ast.KindCallSignature,
-		ast.KindClassDeclaration, ast.KindClassExpression, ast.KindClassStaticBlockDeclaration, ast.KindConstructor, ast.KindConstructorType,
-		ast.KindConstructSignature, ast.KindElementAccessExpression, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindExportAssignment, ast.KindJSExportAssignment,
-		ast.KindExportDeclaration, ast.KindExportSpecifier, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindFunctionType,
-		ast.KindGetAccessor, ast.KindIdentifier, ast.KindImportClause, ast.KindImportEqualsDeclaration, ast.KindImportSpecifier,
-		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocSignature, ast.KindJSDocTypeLiteral,
-		ast.KindJsxAttribute, ast.KindJsxAttributes, ast.KindJsxSpreadAttribute, ast.KindMappedType, ast.KindMethodDeclaration,
-		ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindNamedTupleMember, ast.KindNamespaceExport, ast.KindNamespaceExportDeclaration,
-		ast.KindNamespaceImport, ast.KindNewExpression, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindObjectLiteralExpression,
-		ast.KindParameter, ast.KindPropertyAccessExpression, ast.KindPropertyAssignment, ast.KindPropertyDeclaration, ast.KindPropertySignature,
-		ast.KindSetAccessor, ast.KindShorthandPropertyAssignment, ast.KindSourceFile, ast.KindSpreadAssignment, ast.KindStringLiteral,
-		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindTypeLiteral, ast.KindTypeParameter, ast.KindVariableDeclaration:
-		return true
-	}
-	return false
-}
-
 func canHaveLocals(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindArrowFunction, ast.KindBlock, ast.KindCallSignature, ast.KindCaseBlock, ast.KindCatchClause,
@@ -1105,10 +1086,6 @@ func isThisTypeParameter(t *Type) bool {
 	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
 }
 
-func isCallOrNewExpression(node *ast.Node) bool {
-	return ast.IsCallExpression(node) || ast.IsNewExpression(node)
-}
-
 func isClassInstanceProperty(node *ast.Node) bool {
 	return node.Parent != nil && ast.IsClassLike(node.Parent) && ast.IsPropertyDeclaration(node) && !ast.HasAccessorModifier(node)
 }
@@ -1208,10 +1185,6 @@ func reverseAccessKind(a AccessKind) AccessKind {
 	panic("Unhandled case in reverseAccessKind")
 }
 
-func isJsxOpeningLikeElement(node *ast.Node) bool {
-	return ast.IsJsxOpeningElement(node) || ast.IsJsxSelfClosingElement(node)
-}
-
 // Deprecated in favor of `ast.IsObjectLiteralElement`
 func isObjectLiteralElementLike(node *ast.Node) bool {
 	return ast.IsObjectLiteralElement(node)
@@ -1289,18 +1262,6 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 	return node.Name()
 }
 
-func indexOfNode(nodes []*ast.Node, node *ast.Node) int {
-	index, ok := slices.BinarySearchFunc(nodes, node, compareNodePositions)
-	if ok {
-		return index
-	}
-	return -1
-}
-
-func compareNodePositions(n1, n2 *ast.Node) int {
-	return n1.Pos() - n2.Pos()
-}
-
 func hasContextSensitiveParameters(node *ast.Node) bool {
 	// Functions with type parameters are not context sensitive.
 	if node.TypeParameters() == nil {
@@ -1325,7 +1286,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return isCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
+	return ast.IsCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || ast.IsJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {
@@ -1862,19 +1823,6 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 	return ""
 }
 
-func getInvokedExpression(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindTaggedTemplateExpression:
-		return node.AsTaggedTemplateExpression().Tag
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		return node.TagName()
-	case ast.KindBinaryExpression:
-		return node.AsBinaryExpression().Right
-	default:
-		return node.Expression()
-	}
-}
-
 func getFirstJSDocTag(node *ast.Node, f func(*ast.Node) bool) *ast.Node {
 	for _, jsdoc := range node.JSDoc(nil) {
 		tags := jsdoc.AsJSDoc().Tags
@@ -2006,4 +1954,212 @@ func ValueToString(value any) string {
 		return value.String() + "n"
 	}
 	panic("unhandled value type in valueToString")
+}
+
+// Temporary functions for Signature Help. Will be deleted once the node builder is added.
+func TemporaryTypeParameterToDeclaration(parameterType *Type, enclosingDeclaration *ast.Node, c *Checker) *ast.Node {
+	emitContext := printer.NewEmitContext()
+	factory := emitContext.Factory.AsNodeFactory()
+	constraint := c.getConstraintOfTypeParameter(parameterType)
+	constraintDeclaration := c.getConstraintDeclaration(parameterType)
+	constraintNode := temporaryTypeToTypeNodeHelperWithPossibleReusableTypeNode(constraint, constraintDeclaration, c)
+	modifiers := c.getTypeParameterModifiers(parameterType)
+	result := factory.NewIdentifier(parameterType.Symbol().Name)
+	defaultParameter := c.getDefaultFromTypeParameter(parameterType)
+	var defaultParameterNode *ast.Node = nil
+	if defaultParameter != nil {
+		defaultParameterNode = temporaryCreateTypeNode(defaultParameter, parameterType.Symbol(), enclosingDeclaration, factory)
+	}
+	modifierList := factory.NewModifierList(temporaryGetNewModiferFromModifierFlags(modifiers, factory))
+	return factory.NewTypeParameterDeclaration(modifierList, result, constraintNode, defaultParameterNode)
+}
+
+func temporaryTypeToTypeNodeHelperWithPossibleReusableTypeNode(t *Type, typeNode *ast.Node, c *Checker) *ast.Node {
+	if typeNode == nil {
+		return nil
+	}
+	if c.getTypeFromTypeNode(typeNode) == t {
+		return typeNode
+	}
+	return nil
+}
+
+func temporaryGetNewModiferFromModifierFlags(flags ast.ModifierFlags, factory *ast.NodeFactory) []*ast.Node {
+	var result []*ast.Node
+	if flags&ast.ModifierFlagsExport != 0 {
+		result = append(result, factory.NewModifier(ast.KindExportKeyword))
+	}
+	if flags&ast.ModifierFlagsAmbient != 0 {
+		result = append(result, factory.NewModifier(ast.KindDeclareKeyword))
+	}
+	if flags&ast.ModifierFlagsDefault != 0 {
+		result = append(result, factory.NewModifier(ast.KindDefaultKeyword))
+	}
+	if flags&ast.ModifierFlagsConst != 0 {
+		result = append(result, factory.NewModifier(ast.KindConstKeyword))
+	}
+	if flags&ast.ModifierFlagsPublic != 0 {
+		result = append(result, factory.NewModifier(ast.KindPublicKeyword))
+	}
+	if flags&ast.ModifierFlagsPrivate != 0 {
+		result = append(result, factory.NewModifier(ast.KindPrivateKeyword))
+	}
+	if flags&ast.ModifierFlagsProtected != 0 {
+		result = append(result, factory.NewModifier(ast.KindProtectedKeyword))
+	}
+	if flags&ast.ModifierFlagsAbstract != 0 {
+		result = append(result, factory.NewModifier(ast.KindAbstractKeyword))
+	}
+	if flags&ast.ModifierFlagsStatic != 0 {
+		result = append(result, factory.NewModifier(ast.KindStaticKeyword))
+	}
+	if flags&ast.ModifierFlagsOverride != 0 {
+		result = append(result, factory.NewModifier(ast.KindOverrideKeyword))
+	}
+	if flags&ast.ModifierFlagsReadonly != 0 {
+		result = append(result, factory.NewModifier(ast.KindReadonlyKeyword))
+	}
+	if flags&ast.ModifierFlagsAccessor != 0 {
+		result = append(result, factory.NewModifier(ast.KindAccessorKeyword))
+	}
+	if flags&ast.ModifierFlagsAsync != 0 {
+		result = append(result, factory.NewModifier(ast.KindAsyncKeyword))
+	}
+	if flags&ast.ModifierFlagsIn != 0 {
+		result = append(result, factory.NewModifier(ast.KindInKeyword))
+	}
+	if flags&ast.ModifierFlagsOut != 0 {
+		result = append(result, factory.NewModifier(ast.KindOutKeyword))
+	}
+	return result
+}
+
+func TemporarySymbolToParameterDeclaration(parameterSymbol *ast.Symbol, c *Checker) *ast.Node {
+	emitContext := printer.NewEmitContext()
+	factory := emitContext.Factory.AsNodeFactory()
+	parameterDeclaration := GetEffectiveParameterDeclaration(parameterSymbol)
+	parameterType := c.getTypeOfSymbol(parameterSymbol)
+	parameterTypeNode := temporaryCreateTypeNode(parameterType, parameterSymbol, parameterDeclaration, factory)
+	isRest := parameterDeclaration != nil && isRestParameter(parameterDeclaration) || parameterSymbol.CheckFlags&ast.CheckFlagsRestParameter != 0
+	var dotDotDotToken *ast.Node
+	if isRest {
+		dotDotDotToken = factory.NewToken(ast.KindDotDotDotToken)
+	}
+	var name *ast.Node
+	if parameterDeclaration == nil || parameterDeclaration.Name() == nil {
+		name = factory.NewIdentifier(parameterSymbol.Name)
+	} else {
+		name = factory.DeepCloneNode(parameterDeclaration.Name())
+	}
+	isOptional := parameterDeclaration != nil && (ast.HasQuestionToken(parameterDeclaration) || parameterSymbol.CheckFlags&ast.CheckFlagsOptionalParameter != 0)
+	var questionToken *ast.Node
+	if isOptional {
+		questionToken = factory.NewToken(ast.KindQuestionToken)
+	}
+
+	parameterNode := factory.NewParameterDeclaration(
+		nil,
+		dotDotDotToken,
+		name,
+		questionToken,
+		parameterTypeNode,
+		/*initializer*/ nil,
+	)
+	return parameterNode
+}
+
+func temporaryCreateTypeNode(t *Type, symbol *ast.Symbol, parameterDeclaration *ast.Node, factory *ast.NodeFactory) *ast.Node {
+	if t == nil {
+		return factory.NewKeywordTypeNode(ast.KindAnyKeyword)
+	}
+	if t.Flags()&TypeFlagsString != 0 {
+		return factory.NewKeywordTypeNode(ast.KindStringKeyword)
+	}
+	if t.Flags()&TypeFlagsNumber != 0 {
+		return factory.NewKeywordTypeNode(ast.KindNumberKeyword)
+	}
+	if t.Flags()&TypeFlagsAny != 0 {
+		return factory.NewKeywordTypeNode(ast.KindAnyKeyword)
+	}
+	if t.Flags()&TypeFlagsUnknown != 0 {
+		return factory.NewKeywordTypeNode(ast.KindUnknownKeyword)
+	}
+	if t.Flags()&TypeFlagsBigInt != 0 {
+		return factory.NewKeywordTypeNode(ast.KindBigIntKeyword)
+	}
+	if t.Flags()&TypeFlagsBoolean != 0 {
+		return factory.NewKeywordTypeNode(ast.KindBooleanKeyword)
+	}
+	if t.Flags()&TypeFlagsVoid != 0 {
+		return factory.NewKeywordTypeNode(ast.KindVoidKeyword)
+	}
+	if t.Flags()&TypeFlagsUndefined != 0 {
+		return factory.NewKeywordTypeNode(ast.KindUndefinedKeyword)
+	}
+	if t.Flags()&TypeFlagsNull != 0 {
+		return factory.NewKeywordTypeNode(ast.KindNullKeyword)
+	}
+	if t.Flags()&TypeFlagsNever != 0 {
+		return factory.NewKeywordTypeNode(ast.KindNeverKeyword)
+	}
+	if t.Flags()&TypeFlagsESSymbol != 0 {
+		return factory.NewKeywordTypeNode(ast.KindSymbolKeyword)
+	}
+	if t.Flags()&TypeFlagsNonPrimitive != 0 {
+		return factory.NewKeywordTypeNode(ast.KindObjectKeyword)
+	}
+	if t.Flags()&TypeFlagsObject != 0 {
+		return factory.NewKeywordTypeNode(ast.KindObjectKeyword)
+	}
+	if t.Flags()&TypeFlagsUnion != 0 || t.Flags()&TypeFlagsIntersection != 0 {
+		return factory.NewUnionTypeNode(parameterDeclaration.Type().AsUnionTypeNode().Types) // come back
+	}
+	if t.Flags()&TypeFlagsIndex != 0 {
+		return factory.NewKeywordTypeNode(ast.KindIndexSignature)
+	}
+	if t.Flags()&TypeFlagsTemplateLiteral != 0 {
+		return factory.NewKeywordTypeNode(ast.KindTemplateLiteralType)
+	}
+	if t.Flags()&TypeFlagsIndexedAccess != 0 {
+		return factory.NewKeywordTypeNode(ast.KindIndexedAccessType)
+	}
+	if t.Flags()&TypeFlagsConditional != 0 {
+		return factory.NewKeywordTypeNode(ast.KindConditionalType)
+	}
+	if t.Flags()&TypeFlagsStringLiteral != 0 {
+		return factory.NewLiteralTypeNode(factory.NewStringLiteral(t.AsLiteralType().Value().(string)))
+	}
+	if t.Flags()&TypeFlagsNumberLiteral != 0 {
+		//!!! check for value < 0
+		return factory.NewLiteralTypeNode(factory.NewNumericLiteral(t.AsLiteralType().Value().(string)))
+	}
+	if t.Flags()&TypeFlagsBigIntLiteral != 0 {
+		return factory.NewLiteralTypeNode(factory.NewBigIntLiteral(t.AsLiteralType().Value().(string)))
+	}
+	if t.Flags()&TypeFlagsUniqueESSymbol != 0 {
+		return factory.NewTypeOperatorNode(ast.KindUniqueKeyword, factory.NewKeywordTypeNode(ast.KindSymbolKeyword))
+	}
+	if isThisTypeParameter(t) {
+		return factory.NewThisTypeNode()
+	}
+	if t.Flags()&TypeFlagsTypeParameter != 0 {
+		return factory.NewInferTypeNode(factory.NewTypeParameterDeclaration(
+			nil,
+			factory.NewIdentifier(symbol.Name),
+			factory.NewTypeReferenceNode(parameterDeclaration.AsTypeParameter().Name(), parameterDeclaration.AsTypeParameter().TypeArgumentList()),
+			nil, /*defaultType*/
+		))
+	}
+	return nil
+}
+
+func GetEffectiveParameterDeclaration(symbol *ast.Symbol) *ast.Node {
+	parameterDeclaration := ast.GetDeclarationOfKind(symbol, ast.KindParameter)
+	if parameterDeclaration != nil {
+		return parameterDeclaration
+	}
+	if symbol.Flags&ast.SymbolFlagsTransient == 0 {
+		return ast.GetDeclarationOfKind(symbol, ast.KindJSDocParameterTag)
+	}
+	return nil
 }
