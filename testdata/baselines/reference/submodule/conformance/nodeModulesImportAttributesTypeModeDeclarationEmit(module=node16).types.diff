@@ -1,5 +1,17 @@
 --- old.nodeModulesImportAttributesTypeModeDeclarationEmit(module=node16).types
 +++ new.nodeModulesImportAttributesTypeModeDeclarationEmit(module=node16).types
+<<<<<<< HEAD
+@@= skipped -7, +7 lines =@@
+||||||| 2303c3a6e
+@@= skipped -1, +1 lines =@@
+ 
+ === /index.ts ===
+ export type LocalInterface =
+->LocalInterface : LocalInterface
++>LocalInterface : any
+ 
+     & import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface
+=======
 @@= skipped -1, +1 lines =@@
 
  === /index.ts ===
@@ -8,6 +20,7 @@
 +>LocalInterface : any
 
      & import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface
+>>>>>>> main
      & import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface;
 
  export const a = (null as any as import("pkg", { with: {"resolution-mode": "require"} }).RequireInterface);
@@ -23,10 +36,22 @@
 ->b : import("/node_modules/pkg/import").ImportInterface
 ->(null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface) : import("/node_modules/pkg/import").ImportInterface
 ->null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface : import("/node_modules/pkg/import").ImportInterface
-+>b : any
-+>(null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface) : any
-+>null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface : any
++>b : ImportInterface
++>(null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface) : ImportInterface
++>null as any as import("pkg", { with: {"resolution-mode": "import"} }).ImportInterface : ImportInterface
  >null as any : any
+<<<<<<< HEAD
+ 
+ === /node_modules/pkg/import.d.ts ===
+||||||| 2303c3a6e
+ 
+-=== /node_modules/pkg/import.d.ts ===
+-
+-export interface ImportInterface {}
+ === /node_modules/pkg/require.d.ts ===
+ 
+ export interface RequireInterface {}
+=======
 
 -=== /node_modules/pkg/import.d.ts ===
 -
@@ -34,3 +59,4 @@
  === /node_modules/pkg/require.d.ts ===
 
  export interface RequireInterface {}
+>>>>>>> main
