@@ -294,12 +294,14 @@ type VerifyCompletionsExpectedList struct {
 	Items        *VerifyCompletionsExpectedItems
 }
 
-// !!! have type for *lsproto.CompletionItem | string (label)
+// *lsproto.CompletionItem | string
+type ExpectedCompletionItem = any
+
 // !!! unsorted completions? only used in 47 tests
 type VerifyCompletionsExpectedItems struct {
-	Includes []*lsproto.CompletionItem
+	Includes []ExpectedCompletionItem
 	Excludes []string
-	Exact    []*lsproto.CompletionItem
+	Exact    []ExpectedCompletionItem
 }
 
 // string | *Marker | []string | []*Marker
@@ -385,7 +387,10 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 		if expected.Excludes != nil {
 			t.Fatal(prefix + "Expected exact completion list but also specified 'excludes'.")
 		}
-		assertDeepEqual(t, actual, expected.Exact, prefix+"Exact completion list mismatch")
+		if len(actual) != len(expected.Exact) {
+			t.Fatalf(prefix+"Expected %d exact completion items but got %d: %s", len(expected.Exact), len(actual), cmp.Diff(actual, expected.Exact))
+		}
+		verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
 		return
 	}
 	nameToActualItem := make(map[string]*lsproto.CompletionItem)
@@ -396,17 +401,56 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 	}
 	if expected.Includes != nil {
 		for _, item := range expected.Includes {
-			actualItem, ok := nameToActualItem[item.Label]
-			if !ok {
-				t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+			switch item := item.(type) {
+			case string:
+				_, ok := nameToActualItem[item]
+				if !ok {
+					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
+				}
+			case *lsproto.CompletionItem:
+				actualItem, ok := nameToActualItem[item.Label]
+				if !ok {
+					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+				}
+				assertDeepEqual(t, actualItem, item, prefix+"Includes completion item mismatch for label "+item.Label)
+			default:
+				t.Fatalf("%sExpected completion item to be a string or *lsproto.CompletionItem, got %T", prefix, item)
 			}
-			assertDeepEqual(t, actualItem, item, prefix+"Includes completion item mismatch for label "+item.Label)
 		}
 	}
 	for _, exclude := range expected.Excludes {
 		if _, ok := nameToActualItem[exclude]; ok {
 			t.Fatalf("%sLabel '%s' should not be in actual items but was found. Actual items: %s", prefix, exclude, cmp.Diff(actual, nil))
 		}
+	}
+}
+
+func verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected []ExpectedCompletionItem) {
+	// Verify labels first
+	assertDeepEqual(t, core.Map(actual, func(item *lsproto.CompletionItem) string {
+		return item.Label
+	}), core.Map(expected, func(item ExpectedCompletionItem) string {
+		return getExpectedLabel(t, item)
+	}), prefix+"Labels mismatch")
+	for i, actualItem := range actual {
+		switch expectedItem := expected[i].(type) {
+		case string:
+			continue // already checked labels
+		case *lsproto.CompletionItem:
+			assertDeepEqual(t, actualItem, expectedItem, prefix+"Completion item mismatch for label "+actualItem.Label)
+		}
+	}
+}
+
+func getExpectedLabel(t *testing.T, item ExpectedCompletionItem) string {
+	switch item := item.(type) {
+	case string:
+		return item
+	case *lsproto.CompletionItem:
+		return item.Label
+	default:
+		t.Fatalf("Expected completion item to be a string or *lsproto.CompletionItem, got %T", item)
+		return ""
 	}
 }
 

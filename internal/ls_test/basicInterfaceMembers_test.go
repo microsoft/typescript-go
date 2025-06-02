@@ -13,12 +13,12 @@ func TestBasicInterfaceMembers(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `export {};
-	interface Point {
-		x: number;
-		y: number;
-	}
-	declare const p: Point;
-	p./*a*/`
+interface Point {
+	x: number;
+	y: number;
+}
+declare const p: Point;
+p./*a*/`
 	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content, "basicInterfaceMembers.ts")
 	f.VerifyCompletions(t, "a", &lstestutil.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
@@ -26,8 +26,8 @@ func TestBasicInterfaceMembers(t *testing.T) {
 			CommitCharacters: &lstestutil.DefaultCommitCharacters,
 		},
 		Items: &lstestutil.VerifyCompletionsExpectedItems{
-			Exact: []*lsproto.CompletionItem{
-				{
+			Exact: []lstestutil.ExpectedCompletionItem{
+				&lsproto.CompletionItem{
 					Label:      "x",
 					Kind:       lstestutil.PtrTo(lsproto.CompletionItemKindField),
 					SortText:   lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
@@ -46,25 +46,7 @@ func TestBasicInterfaceMembers(t *testing.T) {
 						},
 					},
 				},
-				{
-					Label:      "y",
-					Kind:       lstestutil.PtrTo(lsproto.CompletionItemKindField),
-					SortText:   lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
-					FilterText: lstestutil.PtrTo(".y"),
-					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
-							NewText: "y",
-							Insert: lsproto.Range{
-								Start: lsproto.Position{Line: 6, Character: 2},
-								End:   lsproto.Position{Line: 6, Character: 2},
-							},
-							Replace: lsproto.Range{
-								Start: lsproto.Position{Line: 6, Character: 2},
-								End:   lsproto.Position{Line: 6, Character: 2},
-							},
-						},
-					},
-				},
+				"y",
 			},
 		},
 	})

@@ -25,8 +25,8 @@ const test = foo./*1*/`
 			CommitCharacters: &lstestutil.DefaultCommitCharacters,
 		},
 		Items: &lstestutil.VerifyCompletionsExpectedItems{
-			Includes: []*lsproto.CompletionItem{
-				{
+			Includes: []lstestutil.ExpectedCompletionItem{
+				&lsproto.CompletionItem{
 					Label:      "bar",
 					Kind:       lstestutil.PtrTo(lsproto.CompletionItemKindField),
 					SortText:   lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
