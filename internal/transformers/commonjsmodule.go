@@ -1527,7 +1527,7 @@ func (tx *CommonJSModuleTransformer) visitDestructuringAssignmentTargetNoStack(n
 func (tx *CommonJSModuleTransformer) visitCommaExpression(node *ast.BinaryExpression, resultIsDiscarded bool) *ast.Node {
 	left := tx.discardedValueVisitor.VisitNode(node.Left)
 	right := core.IfElse(resultIsDiscarded, tx.discardedValueVisitor, tx.visitor).VisitNode(node.Right)
-	return tx.factory.UpdateBinaryExpression(node, nil, left, nil, node.OperatorToken, right)
+	return tx.factory.UpdateBinaryExpression(node, nil /*modifiers*/, left, nil /*typeNode*/, node.OperatorToken, right)
 }
 
 // Visits a prefix unary expression that might modify an exported identifier.
@@ -1878,7 +1878,7 @@ func (tx *CommonJSModuleTransformer) visitShorthandPropertyAssignment(node *ast.
 				tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
 			)
 		}
-		assignment := tx.factory.NewPropertyAssignment(nil /*modifiers*/, name, nil /*postfixToken*/, nil, expression)
+		assignment := tx.factory.NewPropertyAssignment(nil /*modifiers*/, name, nil /*postfixToken*/, nil /*typeNode*/, expression)
 		assignment.Loc = node.Loc
 		tx.emitContext.AssignCommentAndSourceMapRanges(assignment, node.AsNode())
 		return assignment
