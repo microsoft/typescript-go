@@ -58,17 +58,6 @@ func Map[T, U any](slice []T, f func(T) U) []U {
 	return result
 }
 
-func MapMethod[R, T, U any](receiver R, slice []T, f func(R, T) U) []U {
-	if slice == nil {
-		return nil
-	}
-	result := make([]U, len(slice))
-	for i, value := range slice {
-		result[i] = f(receiver, value)
-	}
-	return result
-}
-
 func TryMap[T, U any](slice []T, f func(T) (U, error)) ([]U, error) {
 	if len(slice) == 0 {
 		return nil, nil
@@ -157,15 +146,6 @@ func Some[T any](slice []T, f func(T) bool) bool {
 func Every[T any](slice []T, f func(T) bool) bool {
 	for _, value := range slice {
 		if !f(value) {
-			return false
-		}
-	}
-	return true
-}
-
-func EveryMethod[R, T any](receiver R, slice []T, f func(R, T) bool) bool {
-	for _, value := range slice {
-		if !f(receiver, value) {
 			return false
 		}
 	}

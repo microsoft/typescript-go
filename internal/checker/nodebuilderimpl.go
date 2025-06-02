@@ -212,7 +212,7 @@ func (b *nodeBuilderImpl) mapToTypeNodes(list []*Type) *ast.NodeList {
 	if len(list) == 0 {
 		return nil
 	}
-	contents := core.MapMethod(b, list, (*nodeBuilderImpl).typeToTypeNode)
+	contents := core.Map(list, b.typeToTypeNode)
 	return b.f.NewNodeList(contents)
 }
 
@@ -1984,8 +1984,8 @@ func (b *nodeBuilderImpl) isSingleQuotedStringNamed(d *ast.Declaration) bool {
 }
 
 func (b *nodeBuilderImpl) getPropertyNameNodeForSymbol(symbol *ast.Symbol) *ast.Node {
-	stringNamed := len(symbol.Declarations) != 0 && core.EveryMethod(b, symbol.Declarations, (*nodeBuilderImpl).isStringNamed)
-	singleQuote := len(symbol.Declarations) != 0 && core.EveryMethod(b, symbol.Declarations, (*nodeBuilderImpl).isSingleQuotedStringNamed)
+	stringNamed := len(symbol.Declarations) != 0 && core.Every(symbol.Declarations, b.isStringNamed)
+	singleQuote := len(symbol.Declarations) != 0 && core.Every(symbol.Declarations, b.isSingleQuotedStringNamed)
 	isMethod := symbol.Flags&ast.SymbolFlagsMethod != 0
 	fromNameType := b.getPropertyNameNodeForSymbolFromNameType(symbol, singleQuote, stringNamed, isMethod)
 	if fromNameType != nil {
