@@ -4190,6 +4190,10 @@ func IsImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration
 }
 
+func IsImportDeclarationOrJSImportDeclaration(node *Node) bool {
+	return node.Kind == KindImportDeclaration || node.Kind == KindJSImportDeclaration
+}
+
 // ImportSpecifier
 
 type ImportSpecifier struct {
@@ -7554,6 +7558,53 @@ func IsImportAttributes(node *Node) bool {
 	return node.Kind == KindImportAttributes
 }
 
+func (node *ImportAttributesNode) GetResolutionModeOverride( /* !!! grammarErrorOnNode?: (node: Node, diagnostic: DiagnosticMessage) => void*/ ) (core.ResolutionMode, bool) {
+	if node == nil {
+		return core.ResolutionModeNone, false
+	}
+
+	attributes := node.AsImportAttributes().Attributes
+
+	if len(attributes.Nodes) != 1 {
+		// !!!
+		// grammarErrorOnNode?.(
+		//     node,
+		//     node.token === SyntaxKind.WithKeyword
+		//         ? Diagnostics.Type_import_attributes_should_have_exactly_one_key_resolution_mode_with_value_import_or_require
+		//         : Diagnostics.Type_import_assertions_should_have_exactly_one_key_resolution_mode_with_value_import_or_require,
+		// );
+		return core.ResolutionModeNone, false
+	}
+
+	elem := attributes.Nodes[0].AsImportAttribute()
+	if !IsStringLiteralLike(elem.Name()) {
+		return core.ResolutionModeNone, false
+	}
+	if elem.Name().Text() != "resolution-mode" {
+		// !!!
+		// grammarErrorOnNode?.(
+		//     elem.name,
+		//     node.token === SyntaxKind.WithKeyword
+		//         ? Diagnostics.resolution_mode_is_the_only_valid_key_for_type_import_attributes
+		//         : Diagnostics.resolution_mode_is_the_only_valid_key_for_type_import_assertions,
+		// );
+		return core.ResolutionModeNone, false
+	}
+	if !IsStringLiteralLike(elem.Value) {
+		return core.ResolutionModeNone, false
+	}
+	if elem.Value.Text() != "import" && elem.Value.Text() != "require" {
+		// !!!
+		// grammarErrorOnNode?.(elem.value, Diagnostics.resolution_mode_should_be_either_require_or_import);
+		return core.ResolutionModeNone, false
+	}
+	if elem.Value.Text() == "import" {
+		return core.ResolutionModeESM, true
+	} else {
+		return core.ModuleKindCommonJS, true
+	}
+}
+
 // TypeQueryNode
 
 type TypeQueryNode struct {
@@ -9944,8 +9995,9 @@ type CommentDirective struct {
 // SourceFile
 
 type SourceFileMetaData struct {
-	PackageJsonType   string
-	ImpliedNodeFormat core.ResolutionMode
+	PackageJsonType      string
+	PackageJsonDirectory string
+	ImpliedNodeFormat    core.ResolutionMode
 }
 
 type CheckJsDirective struct {

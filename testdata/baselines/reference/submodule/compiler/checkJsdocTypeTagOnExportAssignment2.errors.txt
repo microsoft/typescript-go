@@ -1,6 +1,8 @@
 b.js(2,18): error TS2353: Object literal may only specify known properties, and 'c' does not exist in type 'Foo'.
 
 
+==== checkJsdocTypeTagOnExportAssignment2.js (0 errors) ====
+    
 ==== a.ts (0 errors) ====
     export interface Foo {
         a: number;
