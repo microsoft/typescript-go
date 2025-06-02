@@ -168,7 +168,8 @@ func TestService(t *testing.T) {
 			service, _ := projecttestutil.Setup(files, nil)
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"].(string), core.ScriptKindTS, "")
 			assert.Check(t, service.GetScriptInfo("/home/projects/TS/p1/y.ts") == nil)
-			files = nil // Avoid using initial file set after this point
+			// Avoid using initial file set after this point
+			files = nil //nolint:ineffassign
 
 			err := service.ChangeFile(
 				lsproto.VersionedTextDocumentIdentifier{
@@ -215,7 +216,8 @@ func TestService(t *testing.T) {
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			programBefore := project.GetProgram()
 			assert.Equal(t, len(programBefore.GetSourceFiles()), 2)
-			files = nil // Avoid using initial file set after this point
+			// Avoid using initial file set after this point
+			files = nil //nolint:ineffassign
 
 			err := service.ChangeFile(
 				lsproto.VersionedTextDocumentIdentifier{
@@ -278,7 +280,8 @@ func TestService(t *testing.T) {
 				service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"].(string), core.ScriptKindTS, "")
 				service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"].(string), core.ScriptKindTS, "")
 				assert.Equal(t, service.SourceFileCount(), 2)
-				files = nil // Avoid using initial file set after this point
+				// Avoid using initial file set after this point
+				files = nil //nolint:ineffassign
 
 				assert.NilError(t, host.FS().Remove("/home/projects/TS/p1/src/x.ts"))
 
@@ -306,7 +309,8 @@ func TestService(t *testing.T) {
 				service, host := projecttestutil.Setup(files, nil)
 				service.OpenFile("/home/projects/TS/p1/src/x.ts", files["/home/projects/TS/p1/src/x.ts"].(string), core.ScriptKindTS, "")
 				service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"].(string), core.ScriptKindTS, "")
-				files = nil // Avoid using initial file set after this point
+				// Avoid using initial file set after this point
+				files = nil //nolint:ineffassign
 
 				err := host.FS().Remove("/home/projects/TS/p1/src/x.ts")
 				assert.NilError(t, err)
@@ -344,7 +348,8 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"].(string), core.ScriptKindTS, "")
 			service.OpenFile("/home/projects/TS/p2/src/index.ts", files["/home/projects/TS/p2/src/index.ts"].(string), core.ScriptKindTS, "")
 			assert.Equal(t, len(service.Projects()), 2)
-			files = nil // Avoid using initial file set after this point
+			// Avoid using initial file set after this point
+			files = nil //nolint:ineffassign
 			_, p1 := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			_, p2 := service.EnsureDefaultProjectForFile("/home/projects/TS/p2/src/index.ts")
 			assert.Equal(
@@ -368,7 +373,8 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"].(string), core.ScriptKindTS, "")
 			service.OpenFile("/home/projects/TS/p2/src/index.ts", files["/home/projects/TS/p2/src/index.ts"].(string), core.ScriptKindTS, "")
 			assert.Equal(t, len(service.Projects()), 2)
-			files = nil // Avoid using initial file set after this point
+			// Avoid using initial file set after this point
+			files = nil //nolint:ineffassign
 			_, p1 := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			_, p2 := service.EnsureDefaultProjectForFile("/home/projects/TS/p2/src/index.ts")
 			x1 := p1.GetProgram().GetSourceFile("/home/projects/TS/p1/src/x.ts")
@@ -389,7 +395,8 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"].(string), core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			programBefore := project.GetProgram()
-			files = nil // Avoid using initial file set after this point
+			// Avoid using initial file set after this point
+			files = nil //nolint:ineffassign
 
 			err := host.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
 			assert.NilError(t, err)
@@ -411,7 +418,8 @@ func TestService(t *testing.T) {
 			service.OpenFile("/home/projects/TS/p1/src/index.ts", files["/home/projects/TS/p1/src/index.ts"].(string), core.ScriptKindTS, "")
 			_, project := service.EnsureDefaultProjectForFile("/home/projects/TS/p1/src/index.ts")
 			programBefore := project.GetProgram()
-			files = nil // Avoid using initial file set after this point
+			// Avoid using initial file set after this point
+			files = nil //nolint:ineffassign
 
 			err := host.FS().WriteFile("/home/projects/TS/p1/src/x.ts", `export const x = 2;`, false)
 			assert.NilError(t, err)
