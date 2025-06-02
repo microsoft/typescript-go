@@ -14,7 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
-	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
@@ -23,7 +22,6 @@ import (
 )
 
 type ProgramOptions struct {
-	ConfigFileName               string
 	RootFiles                    []string
 	Host                         CompilerHost
 	Options                      *core.CompilerOptions
@@ -31,6 +29,9 @@ type ProgramOptions struct {
 	ProjectReference             []core.ProjectReference
 	ConfigFileParsingDiagnostics []*ast.Diagnostic
 	CreateCheckerPool            func(*Program) CheckerPool
+
+	TypingsLocation string
+	ProjectName     string
 }
 
 type Program struct {
@@ -180,7 +181,11 @@ func NewProgram(options ProgramOptions) *Program {
 	p.compilerOptions = options.Options
 	p.configFileParsingDiagnostics = slices.Clip(options.ConfigFileParsingDiagnostics)
 	if p.compilerOptions == nil {
-		p.compilerOptions = &core.CompilerOptions{}
+		panic("compiler options required")
+	}
+	p.host = options.Host
+	if p.host == nil {
+		panic("host required")
 	}
 	p.initCheckerPool()
 
@@ -190,56 +195,7 @@ func NewProgram(options ProgramOptions) *Program {
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
 	// performance.mark("beforeProgram");
 
-	p.host = options.Host
-	if p.host == nil {
-		panic("host required")
-	}
-
-	rootFiles := options.RootFiles
-
-	p.configFileName = options.ConfigFileName
-	if p.configFileName != "" {
-		// !!! delete this code, require options
-		jsonText, ok := p.host.FS().ReadFile(p.configFileName)
-		if !ok {
-			panic("config file not found")
-		}
-		configFilePath := tspath.ToPath(p.configFileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-		parsedConfig := parser.ParseJSONText(p.configFileName, configFilePath, jsonText)
-		if len(parsedConfig.Diagnostics()) > 0 {
-			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parsedConfig.Diagnostics()...)
-			return p
-		}
-
-		tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
-			SourceFile: parsedConfig,
-		}
-
-		parseConfigFileContent := tsoptions.ParseJsonSourceFileConfigFileContent(
-			tsConfigSourceFile,
-			p.host,
-			p.host.GetCurrentDirectory(),
-			options.Options,
-			p.configFileName,
-			/*resolutionStack*/ nil,
-			/*extraFileExtensions*/ nil,
-			/*extendedConfigCache*/ nil,
-		)
-
-		p.compilerOptions = parseConfigFileContent.CompilerOptions()
-
-		if len(parseConfigFileContent.Errors) > 0 {
-			p.configFileParsingDiagnostics = append(p.configFileParsingDiagnostics, parseConfigFileContent.Errors...)
-			return p
-		}
-
-		if rootFiles == nil {
-			// !!! merge? override? this?
-			rootFiles = parseConfigFileContent.FileNames()
-		}
-	}
-
-	p.resolver = module.NewResolver(p.host, p.compilerOptions)
+	p.resolver = module.NewResolver(p.host, p.compilerOptions, p.programOptions.TypingsLocation, p.programOptions.ProjectName)
 
 	var libs []string
 
@@ -258,7 +214,7 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
-	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, rootFiles, libs, p.singleThreaded())
+	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, options.RootFiles, libs, p.singleThreaded())
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
