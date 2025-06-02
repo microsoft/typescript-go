@@ -18,10 +18,5 @@
 -                    ~~~~~~~
 -!!! error TS6142: Module './jsx' was resolved to '/jsx.jsx', but '--jsx' is not set.
      import js from "./js"; // OK because it's an untyped module.
--    
--==== /tsx.tsx (0 errors) ====
--    
--==== /jsx.jsx (0 errors) ====
--    
--==== /js.js (0 errors) ====
      
+ ==== /tsx.tsx (0 errors) ====
