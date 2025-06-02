@@ -3,10 +3,10 @@ package ls_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
-	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
 )
 
 func TestBasicMultifileCompletions(t *testing.T) {
@@ -18,19 +18,19 @@ export const foo = { bar: 'baz' };
 // @Filename: /b.ts
 import { foo } from './a';
 const test = foo./*1*/`
-	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &lstestutil.VerifyCompletionsExpectedList{
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &lstestutil.DefaultCommitCharacters,
+			CommitCharacters: &fourslash.DefaultCommitCharacters,
 		},
-		Items: &lstestutil.VerifyCompletionsExpectedItems{
-			Includes: []lstestutil.ExpectedCompletionItem{
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Includes: []fourslash.ExpectedCompletionItem{
 				&lsproto.CompletionItem{
 					Label:      "bar",
-					Kind:       lstestutil.PtrTo(lsproto.CompletionItemKindField),
-					SortText:   lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
-					FilterText: lstestutil.PtrTo(".bar"),
+					Kind:       fourslash.PtrTo(lsproto.CompletionItemKindField),
+					SortText:   fourslash.PtrTo(string(ls.SortTextLocationPriority)),
+					FilterText: fourslash.PtrTo(".bar"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 							NewText: "bar",

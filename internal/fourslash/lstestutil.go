@@ -1,4 +1,4 @@
-package lstestutil
+package fourslash
 
 import (
 	"strings"

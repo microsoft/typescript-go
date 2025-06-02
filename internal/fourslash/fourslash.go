@@ -1,4 +1,4 @@
-package lstestutil
+package fourslash
 
 import (
 	"fmt"
@@ -22,8 +22,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
-
-// !!! move this to a fourslash package
 
 type FourslashTest struct {
 	server *lsp.Server

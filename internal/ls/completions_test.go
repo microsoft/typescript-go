@@ -8,9 +8,9 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"gotest.tools/v3/assert"
 )
@@ -1955,10 +1955,10 @@ func runTest(t *testing.T, files map[string]string, expected map[string]*testCas
 	}
 	parsedFiles := make(map[string]any)
 	parsedFiles[defaultTsconfigFileName] = `{}`
-	var markerPositions map[string]*lstestutil.Marker
+	var markerPositions map[string]*fourslash.Marker
 	for fileName, content := range files {
 		if fileName == mainFileName {
-			testData := lstestutil.ParseTestData(t, content, fileName)
+			testData := fourslash.ParseTestData(t, content, fileName)
 			markerPositions = testData.MarkerPositions
 			parsedFiles[fileName] = testData.Files[0].Content // !!! Assumes no usage of @filename, markers only on main file
 		} else {

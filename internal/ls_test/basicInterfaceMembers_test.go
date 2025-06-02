@@ -3,10 +3,10 @@ package ls_test
 import (
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
-	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
 )
 
 func TestBasicInterfaceMembers(t *testing.T) {
@@ -19,19 +19,19 @@ interface Point {
 }
 declare const p: Point;
 p./*a*/`
-	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "a", &lstestutil.VerifyCompletionsExpectedList{
+	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.VerifyCompletions(t, "a", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &lstestutil.DefaultCommitCharacters,
+			CommitCharacters: &fourslash.DefaultCommitCharacters,
 		},
-		Items: &lstestutil.VerifyCompletionsExpectedItems{
-			Exact: []lstestutil.ExpectedCompletionItem{
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{
 				&lsproto.CompletionItem{
 					Label:      "x",
-					Kind:       lstestutil.PtrTo(lsproto.CompletionItemKindField),
-					SortText:   lstestutil.PtrTo(string(ls.SortTextLocationPriority)),
-					FilterText: lstestutil.PtrTo(".x"),
+					Kind:       fourslash.PtrTo(lsproto.CompletionItemKindField),
+					SortText:   fourslash.PtrTo(string(ls.SortTextLocationPriority)),
+					FilterText: fourslash.PtrTo(".x"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 							NewText: "x",
