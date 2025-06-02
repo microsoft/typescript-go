@@ -14326,9 +14326,17 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		contextSpecifier = location.AsVariableDeclaration().Initializer.AsCallExpression().Arguments.Nodes[0]
 	} else {
 		var ancestor *ast.Node
-		ancestor = ast.FindAncestor(location, ast.IsImportCall)
-		if ancestor != nil {
-			contextSpecifier = ancestor.AsCallExpression().Arguments.Nodes[0]
+		if location.Flags&ast.NodeFlagsJSDoc != 0 {
+			ancestor = ast.FindAncestor(location, ast.IsJSDocImportTag)
+			if ancestor != nil {
+				contextSpecifier = ancestor.AsJSDocImportTag().JSImportDeclaration.ModuleSpecifier
+			}
+		}
+		if ancestor == nil {
+			ancestor = ast.FindAncestor(location, ast.IsImportCall)
+			if ancestor != nil {
+				contextSpecifier = ancestor.AsCallExpression().Arguments.Nodes[0]
+			}
 		}
 		if ancestor == nil {
 			ancestor = ast.FindAncestor(location, ast.IsImportDeclarationOrJSImportDeclaration)
