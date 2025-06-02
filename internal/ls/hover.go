@@ -205,7 +205,7 @@ func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*check
 func formatQuickInfoAndJSDoc(quickInfo string, declaration *ast.Node) string {
 	var b strings.Builder
 	b.Grow(32)
-	writeCode(&b, "ts", quickInfo)
+	writeCode(&b, "tsx", quickInfo)
 	if declaration != nil {
 		if jsdoc := getJSDocOrTag(declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
 			writeComments(&b, jsdoc.Comments())

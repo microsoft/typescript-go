@@ -63,7 +63,7 @@ const (
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType TypeFormatFlags = 1 << 28 // Use single quotes for string literal type
 	TypeFormatFlagsNoTypeReduction                     TypeFormatFlags = 1 << 29 // Don't call getReducedType
 	TypeFormatFlagsOmitThisParameter                   TypeFormatFlags = 1 << 25
-	TypeFormatFlagsWriteCallStyleSignature             TypeFormatFlags = 1 << 26 // Write construct signatures as call style signatures
+	TypeFormatFlagsWriteCallStyleSignature             TypeFormatFlags = 1 << 27 // Write construct signatures as call style signatures
 	// Error Handling
 	TypeFormatFlagsAllowUniqueESSymbolType TypeFormatFlags = 1 << 20 // This is bit 20 to align with the same bit in `NodeBuilderFlags`
 	// TypeFormatFlags exclusive
