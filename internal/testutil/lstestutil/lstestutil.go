@@ -3,6 +3,7 @@ package lstestutil
 import (
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -117,11 +118,22 @@ var _ ls.Script = (*TestFileInfo)(nil)
 
 const emitThisFileOption = "emitthisfile"
 
+type parserState int
+
+const (
+	stateNone parserState = iota
+	stateInSlashStarMarker
+	stateInObjectMarker
+)
+
 func parseFileContent(filename string, content string, fileOptions map[string]string) *testFileWithMarkers {
 	filename = tspath.GetNormalizedAbsolutePath(filename, "/")
-	// !!! validate characters in markers
 	// Any slash-star comment with a character not in this string is not a marker.
-	// const validMarkerChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$1234567890_"
+	validMarkerChars := core.NewSetFromItems(
+		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+		'$', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_',
+	)
 
 	// The file content (minus metacharacters) so far
 	var output strings.Builder
@@ -149,36 +161,61 @@ func parseFileContent(filename string, content string, fileOptions map[string]st
 		}
 	}
 
-	// !!! TODO: use utf-8 decoder
-	previousCharacter := content[0]
-	for i := 1; i < len(content); i++ {
-		currentCharacter := content[i]
-		if previousCharacter == '/' && currentCharacter == '*' {
-			// found a possible marker start
-			openMarker = locationInformation{
-				position:       (i - 1) - difference,
-				sourcePosition: i - 1,
-				sourceLine:     line,
-				sourceColumn:   column - 1,
+	state := stateNone
+	previousCharacter, i := utf8.DecodeRuneInString(content)
+	var size int
+	var currentCharacter rune
+	for ; i < len(content); i = i + size {
+		currentCharacter, size = utf8.DecodeRuneInString(content[i:])
+		switch state {
+		case stateNone:
+			// !!! case '[', '|'
+			// !!! case '|', ']'
+			if previousCharacter == '/' && currentCharacter == '*' {
+				// found a possible marker start
+				state = stateInSlashStarMarker
+				openMarker = locationInformation{
+					position:       (i - 1) - difference,
+					sourcePosition: i - 1,
+					sourceLine:     line,
+					sourceColumn:   column - 1,
+				}
 			}
-		}
-		if previousCharacter == '*' && currentCharacter == '/' {
-			// Record the marker
-			// start + 2 to ignore the */, -1 on the end to ignore the * (/ is next)
-			markerNameText := strings.TrimSpace(content[openMarker.sourcePosition+2 : i-1])
-			marker := &Marker{
-				Filename: filename,
-				Position: openMarker.position,
-				Name:     markerNameText,
+			// !!! case '{', '|'
+		case stateInObjectMarker:
+			// !!! object marker
+		case stateInSlashStarMarker:
+			if previousCharacter == '*' && currentCharacter == '/' {
+				// Record the marker
+				// start + 2 to ignore the */, -1 on the end to ignore the * (/ is next)
+				markerNameText := strings.TrimSpace(content[openMarker.sourcePosition+2 : i-1])
+				marker := &Marker{
+					Filename: filename,
+					Position: openMarker.position,
+					Name:     markerNameText,
+				}
+				markers = append(markers, marker)
+
+				// Set the current start to point to the end of the current marker to ignore its text
+				flush(openMarker.sourcePosition)
+				lastNormalCharPosition = i + 1
+				difference += i + 1 - openMarker.sourcePosition
+
+				// Reset the state
+				openMarker = locationInformation{}
+				state = stateNone
+			} else if !validMarkerChars.Has(rune(currentCharacter)) {
+				if currentCharacter == '*' && i < len(content)-1 && content[i+1] == '/' {
+					// The marker is about to be closed, ignore the 'invalid' char
+				} else {
+					// We've hit a non-valid marker character, so we were actually in a block comment
+					// Bail out the text we've gathered so far back into the output
+					flush(i)
+					lastNormalCharPosition = i
+					openMarker = locationInformation{}
+					state = stateNone
+				}
 			}
-			markers = append(markers, marker)
-
-			flush(openMarker.sourcePosition)
-			lastNormalCharPosition = i + 1
-			difference += i + 1 - openMarker.sourcePosition
-
-			// Set the current start to point to the end of the current marker to ignore its text
-			openMarker = locationInformation{}
 		}
 		if currentCharacter == '\n' && previousCharacter == '\r' {
 			// Ignore trailing \n after \r
@@ -188,7 +225,6 @@ func parseFileContent(filename string, content string, fileOptions map[string]st
 			column = 1
 			continue
 		}
-
 		column++
 		previousCharacter = currentCharacter
 	}

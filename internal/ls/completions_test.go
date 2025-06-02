@@ -1387,12 +1387,12 @@ export function isAnyDirectorySeparator(charCode: number): boolean {
 									InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 										NewText: "CharacterCodes",
 										Insert: lsproto.Range{
-											Start: lsproto.Position{Line: 27, Character: 0},
-											End:   lsproto.Position{Line: 27, Character: 1},
+											Start: lsproto.Position{Line: 33, Character: 0},
+											End:   lsproto.Position{Line: 33, Character: 1},
 										},
 										Replace: lsproto.Range{
-											Start: lsproto.Position{Line: 27, Character: 0},
-											End:   lsproto.Position{Line: 27, Character: 1},
+											Start: lsproto.Position{Line: 33, Character: 0},
+											End:   lsproto.Position{Line: 33, Character: 1},
 										},
 									},
 								},
