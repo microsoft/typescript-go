@@ -261,7 +261,7 @@ func (ti *TypingsInstaller) invokeRoutineToInstallTypings(
 			if success {
 				p.Logf("ATA:: Installed typings %v", packageNames)
 				var installedTypingFiles []string
-				resolver := module.NewResolver(p, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext}, "", "")
+				resolver := module.NewResolver(p.uncachedHost, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext}, "", "")
 				for _, packageName := range request.filteredTypings {
 					typingFile := ti.typingToFileName(resolver, packageName)
 					if typingFile == "" {

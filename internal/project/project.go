@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -73,6 +74,7 @@ const (
 
 type ProjectHost interface {
 	tsoptions.ParseConfigHost
+	module.ResolutionHost
 	NewLine() string
 	DefaultLibraryPath() string
 	TypingsInstaller() *TypingsInstaller
@@ -121,7 +123,9 @@ func typeAcquisitionChanged(opt1 *core.TypeAcquisition, opt2 *core.TypeAcquisiti
 var _ compiler.CompilerHost = (*Project)(nil)
 
 type Project struct {
-	host *projectHostWithCachedFS
+	// TODO: remove this hack
+	uncachedHost ProjectHost
+	host         *projectHostWithCachedFS
 
 	name string
 	kind Kind
@@ -190,6 +194,7 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 
 	host.Log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
 	project := &Project{
+		uncachedHost:     host,
 		host:             cachedHost,
 		name:             name,
 		kind:             kind,
@@ -281,7 +286,7 @@ func (p *Project) NewLine() string {
 
 // Trace implements compiler.CompilerHost.
 func (p *Project) Trace(msg string) {
-	p.Log(msg)
+	p.host.Log(msg)
 }
 
 // GetDefaultLibraryPath implements compiler.CompilerHost.
