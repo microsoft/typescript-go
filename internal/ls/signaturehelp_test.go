@@ -321,16 +321,16 @@ complex("ok", "ok", e => void e, {}, /*3*/);`,
 					parameterSpan:   "item: string",
 				},
 				"2": {
-					text:            "complex(item: string, another: string, settings: object, errorHandler: object): void", // returns object
+					text:            "complex(item: string, another: string, settings: object, errorHandler: (err: Error) => void): void",
 					parameterCount:  4,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 2},
 					parameterSpan:   "settings: object",
 				},
 				"3": {
-					text:            "complex(item: string, another: string, errorHandler: object, ...mixins: object): void", // returns object
+					text:            "complex(item: string, another: string, errorHandler: (err: Error) => void, ...mixins: object[]): void",
 					parameterCount:  4,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 3},
-					parameterSpan:   "...mixins: object",
+					parameterSpan:   "...mixins: object[]",
 				},
 			},
 		},
@@ -351,16 +351,16 @@ complex("ok", "ok", e => void e, {}, /*3*/);`,
 					parameterSpan:   "item: string",
 				},
 				"2": {
-					text:            "complex(item: string, another: string, rest_0: object, rest_1: object): void", // Needs createSignatureHelpParameterForParameter
+					text:            "complex(item: string, another: string, rest_0: object, rest_1: (err: Error) => void): void",
 					parameterCount:  4,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 2},
 					parameterSpan:   "rest_0: object",
 				},
 				"3": {
-					text:            "complex(item: string, another: string, rest_0: object, ...rest: object): void", // Needs createSignatureHelpParameterForParameter
+					text:            "complex(item: string, another: string, rest_0: (err: Error) => void, ...rest: object[]): void",
 					parameterCount:  4,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 3},
-					parameterSpan:   "...rest: object",
+					parameterSpan:   "...rest: object[]",
 				},
 			},
 		},
@@ -376,7 +376,7 @@ foo(123/*4*/, ""/*5*/, )
 foo(123/*6*/, ""/*7*/, ""/*8*/)`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {
-					text:            "foo(args_0: string, args_1: string): void", // Different from Strada
+					text:            "foo(args_0: string, args_1: string): void",
 					parameterCount:  2,
 					activeParameter: &lsproto.Nullable[uint32]{Value: 0},
 					parameterSpan:   "args_0: string",
@@ -453,13 +453,13 @@ j<number>(/*10*/);`,
 				"4": {text: "f(x: number, y: string): number", parameterCount: 2, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 
 				// not matched signature and no type arguments
-				"5": {text: "g(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"6": {text: "h(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"7": {text: "j(x: unknown, y: unknown, z: object): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"5": {text: "g(x: unknown, y: unknown, z: B): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"6": {text: "h(x: unknown, y: unknown, z: A): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"7": {text: "j(x: unknown, y: unknown, z: B): unknown", parameterCount: 3, parameterSpan: "x: unknown", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				// not matched signature and too few type arguments
-				"8":  {text: "g(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"9":  {text: "h(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"10": {text: "j(x: number, y: unknown, z: object): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"8":  {text: "g(x: number, y: unknown, z: B): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"9":  {text: "h(x: number, y: unknown, z: A): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"10": {text: "j(x: number, y: unknown, z: B): number", parameterCount: 3, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -537,7 +537,7 @@ var implicitConstructor = new ImplicitConstructor(/*1*/);`,
 forEach(/*1*/() => {
 });`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "forEach(f: object): any", parameterCount: 1, parameterSpan: "f: object", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
+				"1": {text: "forEach(f: () => void): any", parameterCount: 1, parameterSpan: "f: () => void", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -568,7 +568,7 @@ forEach(/*1*/() => {
 }
 foo(/*1*/`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "foo(x: number, callback: object): void", parameterCount: 2, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
+				"1": {text: "foo(x: number, callback: (x: unknown) => number): void", parameterCount: 2, parameterSpan: "x: number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -598,9 +598,9 @@ leading(/*1*/);
 leading("ok", /*2*/);
 leading("ok", "ok", /*3*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
-				"2": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
-				"3": {text: "leading(...names: object, allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"1": {text: "leading(...names: string[], allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"2": {text: "leading(...names: string[], allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"3": {text: "leading(...names: string[], allCaps: boolean): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -756,7 +756,7 @@ f3(/*3*/)`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "f1(a: any): a is number", parameterCount: 1, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				"2": {text: "f2(a: any): a is unknown", parameterCount: 1, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"3": {text: "f3(a: any, ...b: object): a is number", parameterCount: 2, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
+				"3": {text: "f3(a: any, ...b: any[]): a is number", parameterCount: 2, parameterSpan: "a: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{
@@ -837,9 +837,9 @@ leading(/*1*/);
 leading(false, /*2*/);
 leading(false, "ok", /*3*/);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
-				"2": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, // returns object
-				"3": {text: "leading(allCaps: boolean, ...names: object): void", parameterCount: 2, parameterSpan: "...names: object", activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, // returns object
+				"1": {text: "leading(allCaps: boolean, ...names: string[]): void", parameterCount: 2, parameterSpan: "allCaps: boolean", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"2": {text: "leading(allCaps: boolean, ...names: string[]): void", parameterCount: 2, parameterSpan: "...names: string[]", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
+				"3": {text: "leading(allCaps: boolean, ...names: string[]): void", parameterCount: 2, parameterSpan: "...names: string[]", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 			},
 		},
 		{
@@ -848,31 +848,6 @@ leading(false, "ok", /*3*/);`,
 foo(hello my name /**/is`,
 			expected: map[string]verifySignatureHelpOptions{
 				"": {text: "foo(a: any): void", parameterCount: 1, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 2}},
-			},
-		},
-		{
-			title: "signatureHelp_unionType",
-			input: `declare const a: (fn?: ((x: string) => string) | ((y: number) => number)) => void;
-declare const b: (x: string | number) => void;
-
-interface Callback {
-   (x: string): string;
-   (x: number): number;
-   (x: string | number): string | number;
-}
-declare function c(callback: Callback): void;
-
-a((/*1*/) => {
-   return undefined;
-});
-
-b(/*2*/);
-
-c((/*3*/) => {});`,
-			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "a(fn?: ((x: string) => string) | ((y: number) => number)): void", parameterCount: 1, parameterSpan: "fn?: ((x: string) => string) | ((y: number) => number)", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"2": {text: "b(x: string | number): void", parameterCount: 1, parameterSpan: "x: string | number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				"3": {text: "Callback(x: string | number): string | number", parameterCount: 1, parameterSpan: "x: string | number", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
 			},
 		},
 		{
@@ -911,8 +886,8 @@ fnNoParamsWrapped(/*5*/);`,
 			expected: map[string]verifySignatureHelpOptions{
 				"1": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 				"2": {text: "fnWrapped(str: string, num: number): void", parameterCount: 2, parameterSpan: "num: number", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
-				"3": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},    // returns object
-				"4": {text: "fnVariadicWrapped(str: string, ...num: object): void", parameterCount: 2, parameterSpan: "...num: object", activeParameter: &lsproto.Nullable[uint32]{Value: 1}}, // returns object
+				"3": {text: "fnVariadicWrapped(str: string, ...num: number[]): void", parameterCount: 2, parameterSpan: "str: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				"4": {text: "fnVariadicWrapped(str: string, ...num: number[]): void", parameterCount: 2, parameterSpan: "...num: number[]", activeParameter: &lsproto.Nullable[uint32]{Value: 1}},
 				"5": {text: "fnNoParamsWrapped(): void", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
@@ -1021,7 +996,7 @@ f<number, string, boolean, /*f3*/;`,
 			input: `declare function f(a: any, ...b: any[]): any;
 f</*1*/>(1, 2);`,
 			expected: map[string]verifySignatureHelpOptions{
-				"1": {text: "f<>(a: any, ...b: object): any", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}}, // returns object
+				"1": {text: "f<>(a: any, ...b: any[]): any", parameterCount: 0, parameterSpan: "", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
 		{

@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/nodebuilder"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -323,7 +324,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 
 	thisParameter := []signatureHelpParameter{}
 	if candidateSignature.ThisParameter() != nil {
-		thisParameter = []signatureHelpParameter{createSignatureHelpParameterForParameter(candidateSignature.ThisParameter(), printer, sourceFile, c)}
+		thisParameter = []signatureHelpParameter{createSignatureHelpParameterForParameter(candidateSignature.ThisParameter(), enclosingDeclaration, printer, sourceFile, c)}
 	}
 
 	// Creating type parameter display label
@@ -349,7 +350,7 @@ func itemInfoForTypeParameters(candidateSignature *checker.Signature, c *checker
 		displayParameters.WriteString(displayParts.String())
 		parameters := thisParameter
 		for j, param := range parameterList {
-			parameter := createSignatureHelpParameterForParameter(param, printer, sourceFile, c)
+			parameter := createSignatureHelpParameterForParameter(param, enclosingDeclaration, printer, sourceFile, c)
 			parameters = append(parameters, parameter)
 			if j > 0 {
 				displayParameters.WriteString(", ")
@@ -409,7 +410,7 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 		var displayParameters strings.Builder
 		displayParameters.WriteString(displayParts.String())
 		for j, param := range parameterList {
-			parameter := createSignatureHelpParameterForParameter(param, printer, sourceFile, c)
+			parameter := createSignatureHelpParameterForParameter(param, enclosingDeclaratipn, printer, sourceFile, c)
 			parameters[j] = parameter
 			if j > 0 {
 				displayParameters.WriteString(", ")
@@ -428,8 +429,10 @@ func itemInfoForParameters(candidateSignature *checker.Signature, c *checker.Che
 	return result
 }
 
-func createSignatureHelpParameterForParameter(parameter *ast.Symbol, p *printer.Printer, sourceFile *ast.SourceFile, c *checker.Checker) signatureHelpParameter {
-	display := p.Emit(checker.TemporarySymbolToParameterDeclaration(parameter, c), sourceFile)
+const signatureHelpNodeBuilderFlags = nodebuilder.FlagsOmitParameterModifiers | nodebuilder.FlagsIgnoreErrors | nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope
+
+func createSignatureHelpParameterForParameter(parameter *ast.Symbol, enclosingDeclaratipn *ast.Node, p *printer.Printer, sourceFile *ast.SourceFile, c *checker.Checker) signatureHelpParameter {
+	display := p.Emit(checker.NewNodeBuilder(c, printer.NewEmitContext()).SymbolToParameterDeclaration(parameter, enclosingDeclaratipn, signatureHelpNodeBuilderFlags, nodebuilder.InternalFlagsNone, nil), sourceFile)
 	isOptional := parameter.CheckFlags&ast.CheckFlagsOptionalParameter != 0
 	isRest := parameter.CheckFlags&ast.CheckFlagsRestParameter != 0
 	return signatureHelpParameter{
@@ -443,7 +446,7 @@ func createSignatureHelpParameterForParameter(parameter *ast.Symbol, p *printer.
 }
 
 func createSignatureHelpParameterForTypeParameter(t *checker.Type, sourceFile *ast.SourceFile, enclosingDeclaration *ast.Node, c *checker.Checker, p *printer.Printer) signatureHelpParameter {
-	display := p.Emit(checker.TemporaryTypeParameterToDeclaration(t, enclosingDeclaration, c), sourceFile)
+	display := p.Emit(checker.NewNodeBuilder(c, printer.NewEmitContext()).TypeParameterToDeclaration(t, enclosingDeclaration, signatureHelpNodeBuilderFlags, nodebuilder.InternalFlagsNone, nil), sourceFile)
 	return signatureHelpParameter{
 		parameterInfo: &lsproto.ParameterInformation{
 			Label: lsproto.StringOrTuple{String: &display},
