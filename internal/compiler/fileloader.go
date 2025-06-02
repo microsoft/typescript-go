@@ -495,7 +495,7 @@ func getModeForUsageLocation(file *ast.SourceFile, meta *ast.SourceFileMetaData,
 			}
 		}
 	}
-	if usage.Parent.Parent != nil && ast.IsImportTypeNode(usage.Parent.Parent) {
+	if ast.IsLiteralTypeNode(usage.Parent) && ast.IsImportTypeNode(usage.Parent.Parent) {
 		if override, ok := usage.Parent.Parent.AsImportTypeNode().Attributes.GetResolutionModeOverride(); ok {
 			return override
 		}
@@ -521,8 +521,7 @@ func getEmitSyntaxForUsageLocationWorker(file *ast.SourceFile, meta *ast.SourceF
 		return core.ResolutionModeNone
 	}
 
-	exprParentParent := ast.WalkUpParenthesizedExpressions(usage.Parent).Parent
-	if exprParentParent != nil && ast.IsImportEqualsDeclaration(exprParentParent) || ast.IsRequireCall(usage.Parent) {
+	if ast.IsRequireCall(usage.Parent) || ast.IsExternalModuleReference(usage.Parent) && ast.IsImportEqualsDeclaration(usage.Parent.Parent) {
 		return core.ModuleKindCommonJS
 	}
 	if ast.IsImportCall(ast.WalkUpParenthesizedExpressions(usage.Parent)) {
