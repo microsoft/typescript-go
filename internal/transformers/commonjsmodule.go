@@ -1397,6 +1397,7 @@ func (tx *CommonJSModuleTransformer) visitShorthandAssignmentProperty(node *ast.
 			nil, /*modifiers*/
 			target,
 			nil, /*postfixToken*/
+			nil, /*typeNode*/
 			node.EqualsToken,
 			tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
 		)
@@ -1886,6 +1887,7 @@ func (tx *CommonJSModuleTransformer) visitShorthandPropertyAssignment(node *ast.
 		nil, /*modifiers*/
 		exportedOrImportedName,
 		nil, /*postfixToken*/
+		nil, /*typeNode*/
 		node.EqualsToken,
 		tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
 	)

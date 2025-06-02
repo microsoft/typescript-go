@@ -5637,7 +5637,7 @@ func (p *Parser) parseObjectLiteralElement() *ast.Node {
 		if equalsToken != nil {
 			initializer = doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
 		}
-		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, equalsToken, initializer)
+		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, nil /*typeNode*/, equalsToken, initializer)
 	} else {
 		p.parseExpected(ast.KindColonToken)
 		initializer := doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)

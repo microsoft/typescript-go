@@ -1016,6 +1016,7 @@ func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.S
 		nil, /*modifiers*/
 		exportedOrImportedName,
 		nil, /*postfixToken*/
+		nil, /*typeNode*/
 		node.EqualsToken,
 		tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
 	)

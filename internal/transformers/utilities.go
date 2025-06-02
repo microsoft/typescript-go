@@ -194,6 +194,7 @@ func convertBindingElementToObjectAssignmentElement(emitContext *printer.EmitCon
 		nil, /*modifiers*/
 		element.Name(),
 		nil, /*postfixToken*/
+		nil, /*typeNode*/
 		equalsToken,
 		element.Initializer,
 	)

@@ -366,7 +366,7 @@ func (n *Node) Expression() *Node {
 	case KindJsxSpreadAttribute:
 		return n.AsJsxSpreadAttribute().Expression
 	}
-	panic("Unhandled case in Node.Expression" + n.Kind.String())
+	panic("Unhandled case in Node.Expression: " + n.Kind.String())
 }
 
 func (n *Node) ArgumentList() *NodeList {
@@ -376,7 +376,7 @@ func (n *Node) ArgumentList() *NodeList {
 	case KindNewExpression:
 		return n.AsNewExpression().Arguments
 	}
-	panic("Unhandled case in Node.Arguments" + n.Kind.String())
+	panic("Unhandled case in Node.Arguments: " + n.Kind.String())
 }
 
 func (n *Node) Arguments() []*Node {
@@ -6733,37 +6733,39 @@ type ShorthandPropertyAssignment struct {
 	ObjectAssignmentInitializer *Expression // Optional
 }
 
-func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, equalsToken *TokenNode, objectAssignmentInitializer *Expression) *Node {
+func (f *NodeFactory) NewShorthandPropertyAssignment(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, equalsToken *TokenNode, objectAssignmentInitializer *Expression) *Node {
 	data := &ShorthandPropertyAssignment{}
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
+	data.Type = typeNode
 	data.EqualsToken = equalsToken
 	data.ObjectAssignmentInitializer = objectAssignmentInitializer
 	return f.newNode(KindShorthandPropertyAssignment, data)
 }
 
-func (f *NodeFactory) UpdateShorthandPropertyAssignment(node *ShorthandPropertyAssignment, modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, equalsToken *TokenNode, objectAssignmentInitializer *Expression) *Node {
-	if modifiers != node.modifiers || name != node.name || postfixToken != node.PostfixToken || objectAssignmentInitializer != node.ObjectAssignmentInitializer {
-		return updateNode(f.NewShorthandPropertyAssignment(modifiers, name, postfixToken, equalsToken, objectAssignmentInitializer), node.AsNode(), f.hooks)
+func (f *NodeFactory) UpdateShorthandPropertyAssignment(node *ShorthandPropertyAssignment, modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeNode *TypeNode, equalsToken *TokenNode, objectAssignmentInitializer *Expression) *Node {
+	if modifiers != node.modifiers || name != node.name || typeNode != node.Type || postfixToken != node.PostfixToken || objectAssignmentInitializer != node.ObjectAssignmentInitializer {
+		return updateNode(f.NewShorthandPropertyAssignment(modifiers, name, postfixToken, typeNode, equalsToken, objectAssignmentInitializer), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *ShorthandPropertyAssignment) ForEachChild(v Visitor) bool {
-	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.PostfixToken) || visit(v, node.EqualsToken) || visit(v, node.ObjectAssignmentInitializer)
+	return visitModifiers(v, node.modifiers) || visit(v, node.name) || visit(v, node.Type) || visit(v, node.PostfixToken) || visit(v, node.EqualsToken) || visit(v, node.ObjectAssignmentInitializer)
 }
 
 func (node *ShorthandPropertyAssignment) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateShorthandPropertyAssignment(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitToken(node.EqualsToken), v.visitNode(node.ObjectAssignmentInitializer))
+	return v.Factory.UpdateShorthandPropertyAssignment(node, v.visitModifiers(node.modifiers), v.visitNode(node.name), v.visitToken(node.PostfixToken), v.visitNode(node.Type), v.visitToken(node.EqualsToken), v.visitNode(node.ObjectAssignmentInitializer))
 }
 
 func (node *ShorthandPropertyAssignment) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewShorthandPropertyAssignment(node.Modifiers(), node.Name(), node.PostfixToken, node.EqualsToken, node.ObjectAssignmentInitializer), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewShorthandPropertyAssignment(node.Modifiers(), node.Name(), node.PostfixToken, node.Type, node.EqualsToken, node.ObjectAssignmentInitializer), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *ShorthandPropertyAssignment) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.name) | // we do not use propagateSubtreeFacts here because this is an IdentifierReference
+		propagateSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.ObjectAssignmentInitializer) |
 		SubtreeContainsTypeScript // may require rewriting in a TypeScript namespace
 }

@@ -335,6 +335,7 @@ func transformNamedEvaluationOfShorthandAssignmentProperty(emitContext *printer.
 		nil, /*modifiers*/
 		node.Name(),
 		nil, /*postfixToken*/
+		nil, /*typeNode*/
 		node.EqualsToken,
 		objectAssignmentInitializer,
 	)
