@@ -28,6 +28,9 @@ type ProgramOptions struct {
 	ProjectReference             []core.ProjectReference
 	ConfigFileParsingDiagnostics []*ast.Diagnostic
 	CreateCheckerPool            func(*Program) CheckerPool
+
+	TypingsLocation string
+	ProjectName     string
 }
 
 type Program struct {
@@ -195,7 +198,7 @@ func NewProgram(options ProgramOptions) *Program {
 		panic("host required")
 	}
 
-	p.resolver = module.NewResolver(p.host, p.compilerOptions)
+	p.resolver = module.NewResolver(p.host, p.compilerOptions, p.programOptions.TypingsLocation, p.programOptions.ProjectName)
 
 	var libs []string
 
