@@ -7,10 +7,10 @@
 ->exports.n = {} : typeof n
 ->exports.n : typeof n
 +>exports.n = {} : {}
-+>exports.n : any
++>exports.n : {}
  >exports : typeof import("mod")
 ->n : typeof n
-+>n : any
++>n : {}
  >{} : {}
 
  exports.n.K = function () {
@@ -19,12 +19,12 @@
 ->exports.n : typeof n
 +>exports.n.K = function () {    this.x = 10;} : () => void
 +>exports.n.K : any
-+>exports.n : any
++>exports.n : {}
  >exports : typeof import("mod")
 ->n : typeof n
 ->K : typeof K
 ->function () {    this.x = 10;} : typeof K
-+>n : any
++>n : {}
 +>K : any
 +>function () {    this.x = 10;} : () => void
 
@@ -65,9 +65,9 @@
 +>k : any
 +>new s.n.K() : any
 +>s.n.K : any
-+>s.n : any
++>s.n : {}
 +>s : typeof import("mod")
-+>n : any
++>n : {}
 +>K : any
 
  k.x

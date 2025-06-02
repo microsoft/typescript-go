@@ -7,11 +7,11 @@
 ->exports.A = function () {    this.x = 1;} : typeof A
 ->exports.A : typeof A
 +>exports.A = function () {    this.x = 1;} : () => void
-+>exports.A : any
++>exports.A : () => void
  >exports : typeof import("a-ext")
 ->A : typeof A
 ->function () {    this.x = 1;} : typeof A
-+>A : any
++>A : () => void
 +>function () {    this.x = 1;} : () => void
 
      this.x = 1;
@@ -27,7 +27,7 @@
  === a.js ===
  const { A } = require("./a-ext");
 ->A : typeof A
-+>A : any
++>A : () => void
  >require("./a-ext") : typeof import("a-ext")
  >require : (id: string) => any
  >"./a-ext" : "./a-ext"

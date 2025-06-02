@@ -9,18 +9,16 @@
  >len : number
 
      /**
-      * @type {number[]}
+@@= skipped -8, +8 lines =@@
       */
      this.storage = new Array(len);
-->this.storage = new Array(len) : any[]
+ >this.storage = new Array(len) : any[]
 ->this.storage : number[]
 ->this : this
 ->storage : number[]
-+>this.storage = new Array(len) : number[]
 +>this.storage : any
 +>this : any
 +>storage : any
-+>new Array(len) : number[]
  >new Array(len) : any[]
  >Array : ArrayConstructor
  >len : number
@@ -40,7 +38,7 @@
 
      /**
       * @param {Vec} other
-@@= skipped -32, +33 lines =@@
+@@= skipped -24, +24 lines =@@
 
          if (other.storage.length !== this.storage.length) {
  >other.storage.length !== this.storage.length : boolean

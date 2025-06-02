@@ -651,6 +651,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindExportDeclaration,
 		KindExportAssignment,
 		KindJSExportAssignment,
+		KindCommonJSExport,
 		KindNamespaceExportDeclaration:
 		return true
 	}
@@ -856,6 +857,15 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 		node = node.Parent
 	}
 	return node
+}
+
+func GetEffectiveTypeParent(parent *Node) *Node {
+	if IsInJSFile(parent) && parent.Kind == KindJSDocTypeExpression {
+		if host := parent.AsJSDocTypeExpression().Host; host != nil {
+			parent = host
+		}
+	}
+	return parent
 }
 
 // Walks up the parents of a node to find the containing SourceFile

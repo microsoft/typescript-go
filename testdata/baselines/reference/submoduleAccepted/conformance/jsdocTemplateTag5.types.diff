@@ -9,15 +9,13 @@
 
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
-->this._map = {} : {}
+ >this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
-+>this._map = {} : any
 +>this._map : any
 +>this : any
 +>_map : any
-+>{} : any
  >{} : {}
 
  };
@@ -36,7 +34,7 @@
 
      /**
       * @param {K} key the key ok
-@@= skipped -28, +29 lines =@@
+@@= skipped -28, +28 lines =@@
  >key : K
 
          return this._map[key + ''];
@@ -62,15 +60,13 @@
 
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
-->this._map = {} : {}
+ >this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
-+>this._map = {} : any
 +>this._map : any
 +>this : any
 +>_map : any
-+>{} : any
  >{} : {}
 
  };
@@ -86,7 +82,7 @@
  >{    /**     * @param {K} key the key ok     * @returns {V} the value ok     */    get: function(key) {        return this._map[key + ''];    }} : { get: (key: K) => V; }
 
      /**
-@@= skipped -30, +31 lines =@@
+@@= skipped -30, +30 lines =@@
  >key : K
 
          return this._map[key + ''];
@@ -127,15 +123,13 @@
 
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
-->this._map = {} : {}
+ >this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
-+>this._map = {} : any
 +>this._map : any
 +>this : {}
 +>_map : any
-+>{} : any
  >{} : {}
 
  };
@@ -158,7 +152,7 @@
 
      /**
       * @param {K} key the key ok
-@@= skipped -34, +35 lines =@@
+@@= skipped -34, +34 lines =@@
  >key : K
 
          return this._map[key + ''];

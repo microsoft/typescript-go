@@ -5,7 +5,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-func (p *Parser) reparseCommonJS(node *ast.Node) {
+func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX {
 		return
 	}
@@ -17,20 +17,21 @@ func (p *Parser) reparseCommonJS(node *ast.Node) {
 	var export *ast.Node
 	switch kind {
 	case ast.JSDeclarationKindModuleExports:
-		export = p.factory.NewJSExportAssignment(bin.Right)
+		export = p.factory.NewJSExportAssignment(nil, bin.Right)
 	case ast.JSDeclarationKindExportsProperty:
 		nodes := p.nodeSlicePool.NewSlice(1)
 		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)
 		nodes[0].Flags = ast.NodeFlagsReparsed
 		nodes[0].Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessName(bin.Left), bin.Right)
+		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessName(bin.Left), nil /*typeNode*/, bin.Right)
 	}
 	if export != nil {
 		export.Flags = ast.NodeFlagsReparsed
 		export.Loc = bin.Loc
 		p.reparseList = append(p.reparseList, export)
 		p.commonJSModuleIndicator = export
+		p.reparseTags(export, jsdoc)
 	}
 }
 
@@ -44,153 +45,73 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 			continue
 		}
 		for _, tag := range tags.Nodes {
-			switch tag.Kind {
-			case ast.KindJSDocTypedefTag:
-				// !!! Don't mark typedefs as exported if they are not in a module
-				typeExpression := tag.AsJSDocTypedefTag().TypeExpression
-				if typeExpression == nil {
-					break
-				}
-				export := p.factory.NewModifier(ast.KindExportKeyword)
-				export.Loc = tag.Loc
-				export.Flags = p.contextFlags | ast.NodeFlagsReparsed
-				nodes := p.nodeSlicePool.NewSlice(1)
-				nodes[0] = export
-				modifiers := p.newModifierList(export.Loc, nodes)
-
-				typeParameters := p.gatherTypeParameters(j)
-
-				var t *ast.Node
-				switch typeExpression.Kind {
-				case ast.KindJSDocTypeExpression:
-					t = typeExpression.Type()
-				case ast.KindJSDocTypeLiteral:
-					members := p.nodeSlicePool.NewSlice(0)
-					for _, member := range typeExpression.AsJSDocTypeLiteral().JSDocPropertyTags {
-						var questionToken *ast.TokenNode
-						if member.AsJSDocPropertyTag().IsBracketed ||
-							member.AsJSDocPropertyTag().TypeExpression != nil && member.AsJSDocPropertyTag().TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
-							questionToken = p.factory.NewToken(ast.KindQuestionToken)
-							questionToken.Loc = core.NewTextRange(member.Pos(), member.End())
-							questionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
-						}
-						prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), questionToken, member.Type(), nil /*initializer*/)
-						prop.Loc = member.Loc
-						prop.Flags = p.contextFlags | ast.NodeFlagsReparsed
-						members = append(members, prop)
-					}
-					t = p.factory.NewTypeLiteralNode(p.newNodeList(typeExpression.Loc, members))
-					t.Loc = typeExpression.Loc
-					t.Flags = p.contextFlags | ast.NodeFlagsReparsed
-				default:
-					panic("typedef tag type expression should be a name reference or a type expression" + typeExpression.Kind.String())
-				}
-				typeAlias := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), typeParameters, t)
-				typeAlias.Loc = core.NewTextRange(tag.Pos(), tag.End())
-				typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
-				p.reparseList = append(p.reparseList, typeAlias)
-			case ast.KindJSDocImportTag:
-				importTag := tag.AsJSDocImportTag()
-				importClause := importTag.ImportClause.Clone(&p.factory)
-				importClause.Flags |= ast.NodeFlagsReparsed
-				importClause.AsImportClause().IsTypeOnly = true
-				importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
-				importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
-				importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
-				p.reparseList = append(p.reparseList, importDeclaration)
-				// !!! @overload and other unattached tags (@callback et al) support goes here
+			if parent.Kind != ast.KindCommonJSExport && parent.Kind != ast.KindJSExportAssignment {
+				p.reparseUnhosted(tag, j)
 			}
-			if !isLast {
-				continue
-			}
-			switch tag.Kind {
-			case ast.KindJSDocTypeTag:
-				if parent.Kind == ast.KindVariableStatement && parent.AsVariableStatement().DeclarationList != nil {
-					for _, declaration := range parent.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
-						if declaration.AsVariableDeclaration().Type == nil {
-							declaration.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, declaration)
-							break
-						}
-					}
-				} else if parent.Kind == ast.KindVariableDeclaration {
-					if parent.AsVariableDeclaration().Type == nil {
-						parent.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
-					}
-				} else if parent.Kind == ast.KindPropertyDeclaration {
-					declaration := parent.AsPropertyDeclaration()
-					if declaration.Type == nil {
-						declaration.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
-					}
-				} else if parent.Kind == ast.KindPropertyAssignment {
-					prop := parent.AsPropertyAssignment()
-					prop.Initializer = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), prop.Initializer)
-				} else if parent.Kind == ast.KindExportAssignment {
-					export := parent.AsExportAssignment()
-					export.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), export.Expression)
-				} else if parent.Kind == ast.KindReturnStatement {
-					ret := parent.AsReturnStatement()
-					ret.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), ret.Expression)
-				} else if parent.Kind == ast.KindParenthesizedExpression {
-					paren := parent.AsParenthesizedExpression()
-					paren.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), paren.Expression)
-				} else if parent.Kind == ast.KindExpressionStatement &&
-					parent.AsExpressionStatement().Expression.Kind == ast.KindBinaryExpression {
-					bin := parent.AsExpressionStatement().Expression.AsBinaryExpression()
-					if ast.GetAssignmentDeclarationKind(bin) != ast.JSDeclarationKindNone {
-						bin.Right = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), bin.Right)
-					}
-				}
-			case ast.KindJSDocTemplateTag:
-				if fun, ok := getFunctionLikeHost(parent); ok {
-					if fun.TypeParameters() == nil {
-						fun.FunctionLikeData().TypeParameters = p.gatherTypeParameters(j)
-					}
-				} else if parent.Kind == ast.KindClassDeclaration {
-					class := parent.AsClassDeclaration()
-					if class.TypeParameters == nil {
-						class.TypeParameters = p.gatherTypeParameters(j)
-					}
-				} else if parent.Kind == ast.KindClassExpression {
-					class := parent.AsClassExpression()
-					if class.TypeParameters == nil {
-						class.TypeParameters = p.gatherTypeParameters(j)
-					}
-				}
-			case ast.KindJSDocParameterTag:
-				if fun, ok := getFunctionLikeHost(parent); ok {
-					jsparam := tag.AsJSDocParameterTag()
-					if param, ok := findMatchingParameter(fun, jsparam); ok {
-						if param.Type() == nil {
-							param.AsParameterDeclaration().Type = p.makeNewType(jsparam.TypeExpression, param)
-							if param.AsParameterDeclaration().QuestionToken == nil &&
-								param.AsParameterDeclaration().Initializer == nil &&
-								(jsparam.IsBracketed || jsparam.TypeExpression != nil && jsparam.TypeExpression.Type().Kind == ast.KindJSDocOptionalType) {
-								param.AsParameterDeclaration().QuestionToken = p.factory.NewToken(ast.KindQuestionToken)
-								param.AsParameterDeclaration().QuestionToken.Loc = core.NewTextRange(param.End(), param.End())
-								param.AsParameterDeclaration().QuestionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
-							}
-						}
-					}
-				}
-			case ast.KindJSDocReturnTag:
-				if fun, ok := getFunctionLikeHost(parent); ok {
-					if fun.Type() == nil {
-						fun.FunctionLikeData().Type = p.makeNewType(tag.AsJSDocReturnTag().TypeExpression, fun)
-					}
-				}
+			if isLast {
+				p.reparseHosted(tag, parent, j)
 			}
 		}
 	}
 }
 
-func findMatchingParameter(fun *ast.Node, tag *ast.JSDocParameterTag) (*ast.Node, bool) {
-	for _, parameter := range fun.Parameters() {
-		if parameter.Name().Kind == ast.KindIdentifier && tag.Name().Kind == ast.KindIdentifier &&
-			parameter.Name().Text() == tag.Name().Text() {
-			return parameter, true
+func (p *Parser) reparseUnhosted(tag *ast.Node, jsDoc *ast.Node) {
+	switch tag.Kind {
+	case ast.KindJSDocTypedefTag:
+		// !!! Don't mark typedefs as exported if they are not in a module
+		typeExpression := tag.AsJSDocTypedefTag().TypeExpression
+		if typeExpression == nil {
+			break
 		}
+		export := p.factory.NewModifier(ast.KindExportKeyword)
+		export.Loc = tag.Loc
+		export.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		nodes := p.nodeSlicePool.NewSlice(1)
+		nodes[0] = export
+		modifiers := p.newModifierList(export.Loc, nodes)
+
+		typeParameters := p.gatherTypeParameters(jsDoc)
+
+		var t *ast.Node
+		switch typeExpression.Kind {
+		case ast.KindJSDocTypeExpression:
+			t = typeExpression.Type()
+		case ast.KindJSDocTypeLiteral:
+			members := p.nodeSlicePool.NewSlice(0)
+			for _, member := range typeExpression.AsJSDocTypeLiteral().JSDocPropertyTags {
+				var questionToken *ast.TokenNode
+				if member.AsJSDocPropertyTag().IsBracketed ||
+					member.AsJSDocPropertyTag().TypeExpression != nil && member.AsJSDocPropertyTag().TypeExpression.Type().Kind == ast.KindJSDocOptionalType {
+					questionToken = p.factory.NewToken(ast.KindQuestionToken)
+					questionToken.Loc = core.NewTextRange(member.Pos(), member.End())
+					questionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				}
+				prop := p.factory.NewPropertySignatureDeclaration(nil, member.Name(), questionToken, member.Type(), nil /*initializer*/)
+				prop.Loc = member.Loc
+				prop.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				members = append(members, prop)
+			}
+			t = p.factory.NewTypeLiteralNode(p.newNodeList(typeExpression.Loc, members))
+			t.Loc = typeExpression.Loc
+			t.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		default:
+			panic("typedef tag type expression should be a name reference or a type expression" + typeExpression.Kind.String())
+		}
+		typeAlias := p.factory.NewJSTypeAliasDeclaration(modifiers, tag.AsJSDocTypedefTag().Name(), typeParameters, t)
+		typeAlias.Loc = core.NewTextRange(tag.Pos(), tag.End())
+		typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		p.reparseList = append(p.reparseList, typeAlias)
+	case ast.KindJSDocImportTag:
+		importTag := tag.AsJSDocImportTag()
+		importClause := importTag.ImportClause.Clone(&p.factory)
+		importClause.Flags |= ast.NodeFlagsReparsed
+		importClause.AsImportClause().IsTypeOnly = true
+		importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
+		importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
+		importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		p.reparseList = append(p.reparseList, importDeclaration)
+		// !!! @overload and other unattached tags (@callback et al) support goes here
 	}
-	return nil, false
 }
 
 func (p *Parser) gatherTypeParameters(j *ast.Node) *ast.NodeList {
@@ -230,6 +151,109 @@ func (p *Parser) gatherTypeParameters(j *ast.Node) *ast.NodeList {
 	}
 }
 
+func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node) {
+	switch tag.Kind {
+	case ast.KindJSDocTypeTag:
+		if parent.Kind == ast.KindVariableStatement && parent.AsVariableStatement().DeclarationList != nil {
+			for _, declaration := range parent.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
+				if declaration.AsVariableDeclaration().Type == nil {
+					declaration.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, declaration)
+					break
+				}
+			}
+		} else if parent.Kind == ast.KindVariableDeclaration {
+			if parent.AsVariableDeclaration().Type == nil {
+				parent.AsVariableDeclaration().Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
+			}
+		} else if parent.Kind == ast.KindCommonJSExport {
+			export := parent.AsCommonJSExport()
+			if export.Type == nil {
+				export.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
+			}
+		} else if parent.Kind == ast.KindPropertyDeclaration {
+			declaration := parent.AsPropertyDeclaration()
+			if declaration.Type == nil {
+				declaration.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
+			}
+		} else if parent.Kind == ast.KindPropertyAssignment {
+			prop := parent.AsPropertyAssignment()
+			if prop.Type == nil {
+				prop.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
+			}
+		} else if parent.Kind == ast.KindShorthandPropertyAssignment {
+			prop := parent.AsShorthandPropertyAssignment()
+			if prop.Type == nil {
+				prop.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
+			}
+		} else if parent.Kind == ast.KindExportAssignment || parent.Kind == ast.KindJSExportAssignment {
+			export := parent.AsExportAssignment()
+			if export.Type == nil {
+				export.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent)
+			}
+		} else if parent.Kind == ast.KindReturnStatement {
+			ret := parent.AsReturnStatement()
+			ret.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), ret.Expression)
+		} else if parent.Kind == ast.KindParenthesizedExpression {
+			paren := parent.AsParenthesizedExpression()
+			paren.Expression = p.makeNewTypeAssertion(p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, nil), paren.Expression)
+		} else if parent.Kind == ast.KindExpressionStatement &&
+			parent.AsExpressionStatement().Expression.Kind == ast.KindBinaryExpression {
+			bin := parent.AsExpressionStatement().Expression.AsBinaryExpression()
+			if kind := ast.GetAssignmentDeclarationKind(bin); kind != ast.JSDeclarationKindNone {
+				bin.Type = p.makeNewType(tag.AsJSDocTypeTag().TypeExpression, parent.AsExpressionStatement().Expression)
+			}
+		}
+	case ast.KindJSDocTemplateTag:
+		if fun, ok := getFunctionLikeHost(parent); ok {
+			if fun.TypeParameters() == nil {
+				fun.FunctionLikeData().TypeParameters = p.gatherTypeParameters(jsDoc)
+			}
+		} else if parent.Kind == ast.KindClassDeclaration {
+			class := parent.AsClassDeclaration()
+			if class.TypeParameters == nil {
+				class.TypeParameters = p.gatherTypeParameters(jsDoc)
+			}
+		} else if parent.Kind == ast.KindClassExpression {
+			class := parent.AsClassExpression()
+			if class.TypeParameters == nil {
+				class.TypeParameters = p.gatherTypeParameters(jsDoc)
+			}
+		}
+	case ast.KindJSDocParameterTag:
+		if fun, ok := getFunctionLikeHost(parent); ok {
+			jsparam := tag.AsJSDocParameterTag()
+			if param, ok := findMatchingParameter(fun, jsparam); ok {
+				if param.Type() == nil {
+					param.AsParameterDeclaration().Type = p.makeNewType(jsparam.TypeExpression, param)
+					if param.AsParameterDeclaration().QuestionToken == nil &&
+						param.AsParameterDeclaration().Initializer == nil &&
+						(jsparam.IsBracketed || jsparam.TypeExpression != nil && jsparam.TypeExpression.Type().Kind == ast.KindJSDocOptionalType) {
+						param.AsParameterDeclaration().QuestionToken = p.factory.NewToken(ast.KindQuestionToken)
+						param.AsParameterDeclaration().QuestionToken.Loc = core.NewTextRange(param.End(), param.End())
+						param.AsParameterDeclaration().QuestionToken.Flags = p.contextFlags | ast.NodeFlagsReparsed
+					}
+				}
+			}
+		}
+	case ast.KindJSDocReturnTag:
+		if fun, ok := getFunctionLikeHost(parent); ok {
+			if fun.Type() == nil {
+				fun.FunctionLikeData().Type = p.makeNewType(tag.AsJSDocReturnTag().TypeExpression, fun)
+			}
+		}
+	}
+}
+
+func findMatchingParameter(fun *ast.Node, tag *ast.JSDocParameterTag) (*ast.Node, bool) {
+	for _, parameter := range fun.Parameters() {
+		if parameter.Name().Kind == ast.KindIdentifier && tag.Name().Kind == ast.KindIdentifier &&
+			parameter.Name().Text() == tag.Name().Text() {
+			return parameter, true
+		}
+	}
+	return nil, false
+}
+
 func getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
 	fun := host
 	if host.Kind == ast.KindVariableStatement && host.AsVariableStatement().DeclarationList != nil {
@@ -267,13 +291,10 @@ func (p *Parser) makeNewType(typeExpression *ast.TypeNode, host *ast.Node) *ast.
 	}
 	if typeExpression.AsJSDocTypeExpression().Host == nil {
 		typeExpression.AsJSDocTypeExpression().Host = host
-	} else {
+	} else if host.Kind != ast.KindJSExportAssignment && host.Kind != ast.KindCommonJSExport {
 		panic("JSDoc type expression already has a host: " + typeExpression.AsJSDocTypeExpression().Host.Kind.String())
 	}
-	t := typeExpression.Type().Clone(&p.factory)
+	t := typeExpression.Type()
 	t.Flags |= ast.NodeFlagsReparsed
-	if host != nil {
-		t.Parent = host
-	}
 	return t
 }

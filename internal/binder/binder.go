@@ -1647,7 +1647,7 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
 	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
-		return // Reparsed nodes do not double-bind children, which are not reparsed
+		// Reparsed nodes do not double-bind children, which are not reparsed
 	default:
 		b.bindEachChild(node)
 	}
@@ -2206,9 +2206,11 @@ func (b *Binder) bindDestructuringAssignmentFlow(node *ast.Node) {
 		b.bind(expr.Right)
 		b.inAssignmentPattern = true
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 	} else {
 		b.inAssignmentPattern = true
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 		b.inAssignmentPattern = false
 		b.bind(expr.OperatorToken)
 		b.bind(expr.Right)
@@ -2237,6 +2239,7 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		}
 	} else {
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 		if operator == ast.KindCommaToken {
 			b.maybeBindExpressionFlowIfCall(node)
 		}
