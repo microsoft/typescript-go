@@ -49,6 +49,11 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, node *ast.Node) (s
 	if symbol == nil || symbol == c.GetUnknownSymbol() {
 		return "", nil
 	}
+	if symbol.Flags&ast.SymbolFlagsClass != 0 && node.Kind == ast.KindConstructorKeyword {
+		if s := symbol.Members[ast.InternalSymbolNameConstructor]; s != nil {
+			symbol = s
+		}
+	}
 	flags := symbol.Flags
 	declaration := symbol.ValueDeclaration
 	if flags&ast.SymbolFlagsType != 0 && (ast.IsPartOfTypeNode(node) || ast.IsTypeDeclarationName(node)) {
@@ -97,21 +102,12 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, node *ast.Node) (s
 			b.WriteString(t.AsLiteralType().String())
 		}
 	case flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsMethod) != 0:
-		t := c.GetTypeOfSymbol(symbol)
-		signatures := c.GetSignaturesOfType(t, checker.SignatureKindCall)
+		signatures := c.GetSignaturesOfType(c.GetTypeOfSymbol(symbol), checker.SignatureKindCall)
 		prefix := core.IfElse(symbol.Flags&ast.SymbolFlagsMethod != 0, "(method) ", "function ")
-		for i, sig := range signatures {
-			if i != 0 {
-				b.WriteString("\n")
-			}
-			if i == 3 && len(signatures) >= 5 {
-				b.WriteString(fmt.Sprintf("// +%v more overloads", len(signatures)-3))
-				break
-			}
-			b.WriteString(prefix)
-			b.WriteString(c.SymbolToStringEx(symbol, nil, ast.SymbolFlagsNone, symbolFormatFlags))
-			b.WriteString(c.SignatureToStringEx(sig, nil, typeFormatFlags))
-		}
+		writeSignatures(&b, c, signatures, prefix, symbol)
+	case flags&ast.SymbolFlagsConstructor != 0:
+		signatures := c.GetSignaturesOfType(c.GetTypeOfSymbol(symbol.Parent), checker.SignatureKindConstruct)
+		writeSignatures(&b, c, signatures, "constructor ", symbol.Parent)
 	case flags&(ast.SymbolFlagsClass|ast.SymbolFlagsInterface) != 0:
 		b.WriteString(core.IfElse(symbol.Flags&ast.SymbolFlagsClass != 0, "class ", "interface "))
 		b.WriteString(c.SymbolToStringEx(symbol, nil, ast.SymbolFlagsNone, symbolFormatFlags))
@@ -170,6 +166,21 @@ func writeTypeParams(b *strings.Builder, c *checker.Checker, params []*checker.T
 			}
 		}
 		b.WriteString(">")
+	}
+}
+
+func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*checker.Signature, prefix string, symbol *ast.Symbol) {
+	for i, sig := range signatures {
+		if i != 0 {
+			b.WriteString("\n")
+		}
+		if i == 3 && len(signatures) >= 5 {
+			b.WriteString(fmt.Sprintf("// +%v more overloads", len(signatures)-3))
+			break
+		}
+		b.WriteString(prefix)
+		b.WriteString(c.SymbolToStringEx(symbol, nil, ast.SymbolFlagsNone, symbolFormatFlags))
+		b.WriteString(c.SignatureToStringEx(sig, nil, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature))
 	}
 }
 
