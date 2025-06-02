@@ -22,7 +22,7 @@ type ParsedCommandLine struct {
 	comparePathsOptions     tspath.ComparePathsOptions
 	wildcardDirectoriesOnce sync.Once
 	wildcardDirectories     map[string]bool
-	extraFileExtensions     []fileExtensionInfo
+	extraFileExtensions     []FileExtensionInfo
 }
 
 // WildcardDirectories returns the cached wildcard directories, initializing them if needed
@@ -60,6 +60,14 @@ func (p *ParsedCommandLine) SetCompilerOptions(o *core.CompilerOptions) {
 
 func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions {
 	return p.ParsedConfig.CompilerOptions
+}
+
+func (p *ParsedCommandLine) SetTypeAcquisition(o *core.TypeAcquisition) {
+	p.ParsedConfig.TypeAcquisition = o
+}
+
+func (p *ParsedCommandLine) TypeAcquisition() *core.TypeAcquisition {
+	return p.ParsedConfig.TypeAcquisition
 }
 
 // All file names matched by files, include, and exclude patterns

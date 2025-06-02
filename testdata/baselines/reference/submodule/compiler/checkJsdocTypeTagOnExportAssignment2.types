@@ -20,8 +20,8 @@ export default { c: false };
 
 === c.js ===
 import b from "./b";
->b : Foo
+>b : import("./a").Foo
 
 b;
->b : Foo
+>b : import("./a").Foo
 

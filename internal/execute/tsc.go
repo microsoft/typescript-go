@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"runtime"
+	"slices"
 	"strings"
 	"time"
 
@@ -114,7 +115,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 
 	if configFileName != "" {
 		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
-		configParseResult, errors := getParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
 			for _, e := range errors {
@@ -171,31 +172,6 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 	return result
 }
 
-// Reads the config file and reports errors. Exits if the config file cannot be found
-func getParsedCommandLineOfConfigFile(configFileName string, options *core.CompilerOptions, sys System, extendedConfigCache map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry) (*tsoptions.ParsedCommandLine, []*ast.Diagnostic) {
-	errors := []*ast.Diagnostic{}
-	configFileText, errors := tsoptions.TryReadFile(configFileName, sys.FS().ReadFile, errors)
-	if len(errors) > 0 {
-		// these are unrecoverable errors--exit to report them as diagnostics
-		return nil, errors
-	}
-
-	cwd := sys.GetCurrentDirectory()
-	tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(configFileName, tspath.ToPath(configFileName, cwd, sys.FS().UseCaseSensitiveFileNames()), configFileText)
-	// tsConfigSourceFile.resolvedPath = tsConfigSourceFile.FileName()
-	// tsConfigSourceFile.originalFileName = tsConfigSourceFile.FileName()
-	return tsoptions.ParseJsonSourceFileConfigFileContent(
-		tsConfigSourceFile,
-		sys,
-		tspath.GetNormalizedAbsolutePath(tspath.GetDirectoryPath(configFileName), cwd),
-		options,
-		tspath.GetNormalizedAbsolutePath(configFileName, cwd),
-		nil,
-		nil,
-		extendedConfigCache,
-	), nil
-}
-
 func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) ExitStatus {
 	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
 	// todo: cache, statistics, tracing
@@ -203,7 +179,7 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 	program := compiler.NewProgramFromParsedCommandLine(config, host)
 	parseTime := time.Since(parseStart)
 
-	result := compileAndEmit(sys, program, reportDiagnostic)
+	result := emitFilesAndReportErrors(sys, program, reportDiagnostic)
 	if result.status != ExitStatusSuccess {
 		// compile exited early
 		return result.status
@@ -245,59 +221,57 @@ type compileAndEmitResult struct {
 	totalTime   time.Duration
 }
 
-func compileAndEmit(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
-	// todo: check if third return needed after execute is fully implemented
-
+func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
 	ctx := context.Background()
 	options := program.Options()
-	allDiagnostics := program.GetConfigFileParsingDiagnostics()
+	allDiagnostics := slices.Clip(program.GetConfigFileParsingDiagnostics())
+	configFileParsingDiagnosticsLength := len(allDiagnostics)
 
-	// todo: early exit logic and append diagnostics
-	diagnostics := program.GetSyntacticDiagnostics(ctx, nil)
-	if len(diagnostics) == 0 {
+	allDiagnostics = append(allDiagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
+
+	if len(allDiagnostics) == configFileParsingDiagnosticsLength {
+		// Options diagnostics include global diagnostics (even though we collect them separately),
+		// and global diagnostics create checkers, which then bind all of the files. Do this binding
+		// early so we can track the time.
 		bindStart := time.Now()
 		_ = program.GetBindDiagnostics(ctx, nil)
 		result.bindTime = time.Since(bindStart)
 
-		diagnostics = append(diagnostics, program.GetOptionsDiagnostics(ctx)...)
-		if options.ListFilesOnly.IsFalse() {
-			// program.GetBindDiagnostics(nil)
-			diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
+		allDiagnostics = append(allDiagnostics, program.GetOptionsDiagnostics(ctx)...)
+
+		if options.ListFilesOnly.IsFalseOrUnknown() {
+			allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
+
+			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
+				checkStart := time.Now()
+				allDiagnostics = append(allDiagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
+				result.checkTime = time.Since(checkStart)
+			}
+
+			if options.NoEmit.IsTrue() && options.GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
+				allDiagnostics = append(allDiagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
+			}
 		}
-	}
-	if len(diagnostics) == 0 {
-		checkStart := time.Now()
-		diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
-		result.checkTime = time.Since(checkStart)
-	}
-	// TODO: declaration diagnostics
-	if len(diagnostics) == 0 && options.NoEmit == core.TSTrue && (options.Declaration.IsTrue() && options.Composite.IsTrue()) {
-		result.status = ExitStatusNotImplemented
-		return result
-		// addRange(allDiagnostics, program.getDeclarationDiagnostics(/*sourceFile*/ undefined, cancellationToken));
 	}
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !options.ListFilesOnly.IsTrue() {
-		// !!! Emit is not yet fully implemented, will not emit unless `outfile` specified
 		emitStart := time.Now()
 		emitResult = program.Emit(compiler.EmitOptions{})
 		result.emitTime = time.Since(emitStart)
 	}
-	diagnostics = append(diagnostics, emitResult.Diagnostics...)
+	allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)
 
-	allDiagnostics = append(allDiagnostics, diagnostics...)
 	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
 	for _, diagnostic := range allDiagnostics {
 		reportDiagnostic(diagnostic)
 	}
 
-	// !!! if (write)
 	if sys.Writer() != nil {
 		for _, file := range emitResult.EmittedFiles {
 			fmt.Fprint(sys.Writer(), "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, sys.GetCurrentDirectory()))
 		}
-		// todo: listFiles(program, sys.Writer())
+		listFiles(sys, program)
 	}
 
 	createReportErrorSummary(sys, program.Options())(allDiagnostics)
@@ -324,4 +298,14 @@ func showConfig(sys System, config *core.CompilerOptions) {
 	enc := json.NewEncoder(sys.Writer())
 	enc.SetIndent("", "    ")
 	enc.Encode(config) //nolint:errcheck,errchkjson
+}
+
+func listFiles(sys System, program *compiler.Program) {
+	options := program.Options()
+	// !!! explainFiles
+	if options.ListFiles.IsTrue() || options.ListFilesOnly.IsTrue() {
+		for _, file := range program.GetSourceFiles() {
+			fmt.Fprintf(sys.Writer(), "%s%s", file.FileName(), sys.NewLine())
+		}
+	}
 }

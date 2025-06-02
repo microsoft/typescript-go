@@ -109,6 +109,7 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, jsDoc *ast.Node) {
 		importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
 		importDeclaration.Loc = core.NewTextRange(tag.Pos(), tag.End())
 		importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		importTag.JSImportDeclaration = importDeclaration.AsImportDeclaration()
 		p.reparseList = append(p.reparseList, importDeclaration)
 		// !!! @overload and other unattached tags (@callback et al) support goes here
 	}
