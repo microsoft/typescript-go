@@ -1319,16 +1319,6 @@ func IsThisParameter(node *Node) bool {
 	return IsParameter(node) && node.Name() != nil && IsThisIdentifier(node.Name())
 }
 
-func IsBindableObjectDefinePropertyCall(expr *Node) bool {
-	return len(expr.Arguments()) == 3 &&
-		IsPropertyAccessExpression(expr.Expression()) &&
-		IsIdentifier(expr.Expression().Expression()) &&
-		// IdText(expr.Expression().Expression()) == "Object" &&
-		// IdText(expr.Expression().Name()) == "defineProperty" &&
-		IsStringOrNumericLiteralLike(expr.Arguments()[1]) &&
-		IsBindableStaticNameExpression(expr.Arguments()[0] /*excludeThisKeyword*/, true)
-}
-
 func IsBindableStaticAccessExpression(node *Node, excludeThisKeyword bool) bool {
 	return IsPropertyAccessExpression(node) &&
 		(!excludeThisKeyword && node.Expression().Kind == KindThisKeyword || IsIdentifier(node.Name()) && IsBindableStaticNameExpression(node.Expression() /*excludeThisKeyword*/, true)) ||
@@ -1482,19 +1472,6 @@ const (
 	JSDeclarationKindThisProperty
 	/// F.name = expr, F[name] = expr
 	JSDeclarationKindProperty
-
-	// PropertyAccessKinds
-	// F.prototype = { ... }
-	JSDeclarationKindPrototype
-	// Object.defineProperty(x, 'name', { value: any, writable?: boolean (false by default) });
-	// Object.defineProperty(x, 'name', { get: Function, set: Function });
-	// Object.defineProperty(x, 'name', { get: Function });
-	// Object.defineProperty(x, 'name', { set: Function });
-	JSDeclarationKindObjectDefinePropertyValue
-	// Object.defineProperty(exports || module.exports, 'name', ...);
-	JSDeclarationKindObjectDefinePropertyExports
-	// Object.defineProperty(Foo.prototype, 'name', ...);
-	JSDeclarationKindObjectDefinePrototypeProperty
 )
 
 func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
@@ -1515,44 +1492,6 @@ func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
 		return JSDeclarationKindProperty
 	}
 	return JSDeclarationKindNone
-}
-
-func GetAssignmentDeclarationPropertyAccessKind(lhs *Node) JSDeclarationKind {
-	if lhs.Expression().Kind == KindThisKeyword {
-		return JSDeclarationKindThisProperty
-	} else if IsModuleExportsAccessExpression(lhs) {
-		// module.exports = expr
-		return JSDeclarationKindModuleExports
-	} else if IsBindableStaticNameExpression(lhs.Expression() /*excludeThisKeyword*/, true) {
-		if IsPrototypeAccess(lhs.Expression()) {
-			// F.G....prototype.x = expr
-			return JSDeclarationKindPrototypeProperty
-		}
-
-		nextToLast := lhs
-		for nextToLast.Expression().Kind != KindIdentifier {
-			nextToLast = nextToLast.Expression()
-		}
-		idText := nextToLast.Expression().AsIdentifier().Text
-		if (idText == "exports" || idText == "module" && getElementOrPropertyAccessNameText(nextToLast) == "exports") &&
-			// ExportsProperty does not support binding with computed names
-			IsBindableStaticAccessExpression(lhs, false) {
-			// exports.name = expr OR module.exports.name = expr OR exports["name"] = expr ...
-			return JSDeclarationKindExportsProperty
-		}
-		if IsBindableStaticNameExpression(lhs /*excludeThisKeyword*/, true) || (IsElementAccessExpression(lhs) && IsDynamicName(lhs)) {
-			// F.G...x = expr
-			return JSDeclarationKindProperty
-		}
-	}
-	return JSDeclarationKindNone
-}
-
-func getElementOrPropertyAccessNameText(node *Node) string {
-	if name := GetElementOrPropertyAccessName(node); name != nil {
-		return name.Text()
-	}
-	return ""
 }
 
 /**
@@ -2599,10 +2538,6 @@ func GetDeclarationContainer(node *Node) *Node {
 			return true
 		}
 	}).Parent
-}
-
-func IsPrototypeAccess(node *Node) bool {
-	return IsBindableStaticAccessExpression(node, false) && getElementOrPropertyAccessNameText(node) == "prototype"
 }
 
 // Indicates that a symbol is an alias that does not merge with a local declaration.

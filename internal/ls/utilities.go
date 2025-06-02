@@ -86,7 +86,7 @@ func isModuleSpecifierLike(node *ast.Node) bool {
 		return false
 	}
 
-	if ast.IsRequireCall(node.Parent /*requireStringLiteralLikeArgument*/) || ast.IsImportCall(node.Parent) {
+	if ast.IsVariableDeclarationInitializedToRequire(node.Parent) || ast.IsImportCall(node.Parent) {
 		return node.Parent.AsCallExpression().Arguments.Nodes[0] == node
 	}
 
@@ -1022,6 +1022,8 @@ func getContainerNode(node *ast.Node) *ast.Node {
 }
 
 func getAdjustedLocation(node *ast.Node, forRename bool, sourceFile *ast.SourceFile) *ast.Node {
+	// todo: check if this function needs to be changed for jsdoc updates
+
 	parent := node.Parent
 	// /**/<modifier> [|name|] ...
 	// /**/<modifier> <class|interface|type|enum|module|namespace|function|get|set> [|name|] ...
@@ -1352,6 +1354,8 @@ func getAdjustedLocationForExportDeclaration(node *ast.ExportDeclaration, forRen
 }
 
 func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
+	// todo: check if this function needs to be changed for jsdoc updates
+
 	node = getAdjustedLocation(node, false /*forRename*/, nil)
 	parent := node.Parent
 	if node.Kind == ast.KindSourceFile {
@@ -1392,10 +1396,10 @@ func getMeaningFromLocation(node *ast.Node) ast.SemanticMeaning {
 
 func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 	switch node.Kind {
-	case ast.KindVariableDeclaration, ast.KindCommonJSExport:
-		return ast.SemanticMeaningValue
-
-	case ast.KindParameter, ast.KindBindingElement, ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindCatchClause, ast.KindJsxAttribute:
+	case ast.KindVariableDeclaration, ast.KindCommonJSExport, ast.KindParameter, ast.KindBindingElement,
+		ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment,
+		ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor,
+		ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction, ast.KindCatchClause, ast.KindJsxAttribute:
 		return ast.SemanticMeaningValue
 
 	case ast.KindTypeParameter, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindTypeLiteral:
@@ -1413,7 +1417,8 @@ func getMeaningFromDeclaration(node *ast.Node) ast.SemanticMeaning {
 			return ast.SemanticMeaningNamespace
 		}
 
-	case ast.KindEnumDeclaration, ast.KindNamedImports, ast.KindImportSpecifier, ast.KindImportEqualsDeclaration, ast.KindImportDeclaration, ast.KindJSImportDeclaration, ast.KindExportAssignment, ast.KindExportDeclaration:
+	case ast.KindEnumDeclaration, ast.KindNamedImports, ast.KindImportSpecifier, ast.KindImportEqualsDeclaration, ast.KindImportDeclaration,
+		ast.KindJSImportDeclaration, ast.KindExportAssignment, ast.KindJSExportAssignment, ast.KindExportDeclaration:
 		return ast.SemanticMeaningAll
 
 	// An external module can be a Value
