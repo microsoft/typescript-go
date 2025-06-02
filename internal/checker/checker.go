@@ -13692,7 +13692,7 @@ func (c *Checker) getSymbolOfPartOfRightHandSideOfImportEquals(entityName *ast.N
 	//     import a = |b|; // Namespace
 	//     import a = |b.c|; // Value, type, namespace
 	//     import a = |b.c|.d; // Namespace
-	if entityName.Kind == ast.KindIdentifier && isRightSideOfQualifiedNameOrPropertyAccess(entityName) {
+	if entityName.Kind == ast.KindIdentifier && ast.IsRightSideOfQualifiedNameOrPropertyAccess(entityName) {
 		entityName = entityName.Parent // QualifiedName
 	}
 	// Check for case 1 and 3 in the above example
@@ -15201,7 +15201,7 @@ func (c *Checker) GetTypeOfSymbolAtLocation(symbol *ast.Symbol, location *ast.No
 		// of the expression (which will reflect control flow analysis). If the expression indeed
 		// resolved to the given symbol, return the narrowed type.
 		if ast.IsIdentifier(location) || ast.IsPrivateIdentifier(location) {
-			if isRightSideOfQualifiedNameOrPropertyAccess(location) {
+			if ast.IsRightSideOfQualifiedNameOrPropertyAccess(location) {
 				location = location.Parent
 			}
 			if ast.IsExpressionNode(location) && (!ast.IsAssignmentTarget(location) || isWriteAccess(location)) {
@@ -29682,7 +29682,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	}
 
-	for isRightSideOfQualifiedNameOrPropertyAccess(name) {
+	for ast.IsRightSideOfQualifiedNameOrPropertyAccess(name) {
 		name = name.Parent
 	}
 
@@ -29975,7 +29975,7 @@ func (c *Checker) getApplicableIndexSymbol(t *Type, keyType *Type) *ast.Symbol {
 }
 
 func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
-	if isRightSideOfQualifiedNameOrPropertyAccess(expr) {
+	if ast.IsRightSideOfQualifiedNameOrPropertyAccess(expr) {
 		expr = expr.Parent
 	}
 	return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(expr))

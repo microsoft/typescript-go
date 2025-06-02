@@ -3303,3 +3303,16 @@ func IsTypeDeclarationName(name *Node) bool {
 		IsTypeDeclaration(name.Parent) &&
 		GetNameOfDeclaration(name.Parent) == name
 }
+
+func IsRightSideOfQualifiedNameOrPropertyAccess(node *Node) bool {
+	parent := node.Parent
+	switch parent.Kind {
+	case KindQualifiedName:
+		return parent.AsQualifiedName().Right == node
+	case KindPropertyAccessExpression:
+		return parent.AsPropertyAccessExpression().Name() == node
+	case KindMetaProperty:
+		return parent.AsMetaProperty().Name() == node
+	}
+	return false
+}

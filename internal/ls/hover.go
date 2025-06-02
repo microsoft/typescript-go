@@ -49,13 +49,16 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, node *ast.Node) (s
 	if symbol == nil || symbol == c.GetUnknownSymbol() {
 		return "", nil
 	}
-	if symbol.Flags&ast.SymbolFlagsClass != 0 && node.Kind == ast.KindConstructorKeyword {
+	declaration := symbol.ValueDeclaration
+	if symbol.Flags&ast.SymbolFlagsClass != 0 && inConstructorContext(node) {
 		if s := symbol.Members[ast.InternalSymbolNameConstructor]; s != nil {
 			symbol = s
+			declaration = core.Find(symbol.Declarations, func(d *ast.Node) bool {
+				return ast.IsConstructorDeclaration(d) || ast.IsConstructSignatureDeclaration(d)
+			})
 		}
 	}
 	flags := symbol.Flags
-	declaration := symbol.ValueDeclaration
 	if flags&ast.SymbolFlagsType != 0 && (ast.IsPartOfTypeNode(node) || ast.IsTypeDeclarationName(node)) {
 		// If the symbol has a type meaning and we're in a type context, remove value-only meanings
 		flags &^= ast.SymbolFlagsVariable | ast.SymbolFlagsFunction
@@ -148,6 +151,21 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, node *ast.Node) (s
 		b.WriteString(c.TypeToStringEx(c.GetTypeOfSymbol(symbol), nil, typeFormatFlags))
 	}
 	return b.String(), declaration
+}
+
+func inConstructorContext(node *ast.Node) bool {
+	if node.Kind == ast.KindConstructorKeyword {
+		return true
+	}
+	if ast.IsIdentifier(node) {
+		for ast.IsRightSideOfQualifiedNameOrPropertyAccess(node) {
+			node = node.Parent
+		}
+		if ast.IsNewExpression(node.Parent) {
+			return true
+		}
+	}
+	return false
 }
 
 func writeTypeParams(b *strings.Builder, c *checker.Checker, params []*checker.Type) {
