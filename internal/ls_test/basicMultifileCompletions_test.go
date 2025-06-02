@@ -18,7 +18,7 @@ export const foo = { bar: 'baz' };
 // @Filename: /b.ts
 import { foo } from './a';
 const test = foo./*1*/`
-	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content, "basicMultifileCompletions.ts")
+	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "1", &lstestutil.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{

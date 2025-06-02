@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"testing"
+	"unicode"
+	"unicode/utf8"
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -73,9 +76,9 @@ func newLSPPipe() (*lspReader, *lspWriter) {
 
 var sourceFileCache collections.SyncMap[harnessutil.SourceFileCacheKey, *ast.SourceFile]
 
-// !!! automatically get fileName from test somehow?
-func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string, fileName string) (*FourslashTest, func()) {
+func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
 	rootDir := "/"
+	fileName := getFileNameFromTest(t)
 	testfs := make(map[string]string)
 	testData := ParseTestData(t, content, fileName)
 	for _, file := range testData.Files {
@@ -141,6 +144,12 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		inputWriter.Close()
 	}
 	return f, done
+}
+
+func getFileNameFromTest(t *testing.T) string {
+	name := strings.TrimPrefix(t.Name(), "Test")
+	char, size := utf8.DecodeRuneInString(name)
+	return string(unicode.ToLower(char)) + name[size:] + tspath.ExtensionTs
 }
 
 func (f *FourslashTest) nextID() int32 {

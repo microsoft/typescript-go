@@ -19,7 +19,7 @@ interface Point {
 }
 declare const p: Point;
 p./*a*/`
-	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content, "basicInterfaceMembers.ts")
+	f, done := lstestutil.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "a", &lstestutil.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
