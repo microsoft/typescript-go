@@ -3409,10 +3409,6 @@ func HasQuestionToken(node *Node) bool {
 	return false
 }
 
-func IsJsxOpeningLikeElement(node *Node) bool {
-	return IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node)
-}
-
 func GetInvokedExpression(node *Node) *Node {
 	switch node.Kind {
 	case KindTaggedTemplateExpression:
@@ -3469,4 +3465,8 @@ func IsUnterminatedNode(node *Node) bool {
 func IsInitializedProperty(member *ClassElement) bool {
 	return member.Kind == KindPropertyDeclaration &&
 		member.Initializer() != nil
+}
+
+func IsJsxOpeningLikeElement(node *Node) bool {
+	return IsJsxOpeningElement(node) || IsJsxSelfClosingElement(node)
 }
