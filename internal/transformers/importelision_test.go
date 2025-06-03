@@ -25,6 +25,11 @@ type fakeProgram struct {
 	getSourceFile               func(FileName string) *ast.SourceFile
 }
 
+// CommonSourceDirectory implements checker.Program.
+func (p *fakeProgram) CommonSourceDirectory() string {
+	panic("unimplemented")
+}
+
 func (p *fakeProgram) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
 	panic("unimplemented")
 }

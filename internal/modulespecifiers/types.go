@@ -47,6 +47,7 @@ type ModuleSpecifierGenerationHost interface {
 	// GetModuleResolutionCache() any // !!! TODO: adapt new resolution cache model
 	// GetSymlinkCache() any // !!! TODO: adapt new resolution cache model
 	// GetFileIncludeReasons() any // !!! TODO: adapt new resolution cache model
+	CommonSourceDirectory() string
 	GetGlobalTypingsCacheLocation() string
 	UseCaseSensitiveFileNames() bool
 	GetCurrentDirectory() string

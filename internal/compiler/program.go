@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
+	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
@@ -785,10 +786,16 @@ func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirector
 
 func getCommonSourceDirectory(options *core.CompilerOptions, files []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
 	var commonSourceDirectory string
-	// !!! If a rootDir is specified use it as the commonSourceDirectory
-	// !!! Project compilations never infer their root from the input source paths
-
-	commonSourceDirectory = computeCommonSourceDirectoryOfFilenames(files, currentDirectory, useCaseSensitiveFileNames)
+	if options.RootDir != "" {
+		// If a rootDir is specified use it as the commonSourceDirectory
+		commonSourceDirectory = options.RootDir
+	} else if options.Composite.IsTrue() && options.ConfigFilePath != "" {
+		// If the rootDir is not specified, but the project is composite, then the common source directory
+		// is the directory of the config file.
+		commonSourceDirectory = tspath.GetDirectoryPath(options.ConfigFilePath)
+	} else {
+		commonSourceDirectory = computeCommonSourceDirectoryOfFilenames(files, currentDirectory, useCaseSensitiveFileNames)
+	}
 
 	if len(commonSourceDirectory) > 0 {
 		// Make sure directory path ends with directory separator so this string can directly
@@ -849,7 +856,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 
 			// attach writer and perform emit
 			emitter.writer = writer
-			emitter.paths = getOutputPathsFor(sourceFile, host, options.forceDtsEmit)
+			emitter.paths = outputpaths.GetOutputPathsFor(sourceFile, host.Options(), host, options.forceDtsEmit)
 			emitter.emit()
 			emitter.writer = nil
 
