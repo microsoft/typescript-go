@@ -133,22 +133,30 @@ func (s *ScriptInfo) markContainingProjectsAsDirty() {
 // attachToProject attaches the script info to the project if it's not already attached
 // and returns true if the script info was newly attached.
 func (s *ScriptInfo) attachToProject(project *Project) bool {
-	if !s.isAttached(project) {
-		s.containingProjectsMu.Lock()
-		s.containingProjects = append(s.containingProjects, project)
-		s.containingProjectsMu.Unlock()
-		if project.compilerOptions.PreserveSymlinks != core.TSTrue {
-			s.ensureRealpath(project.FS())
-		}
-		project.onFileAddedOrRemoved()
-		return true
+	if s.isAttached(project) {
+		return false
 	}
-	return false
+	s.containingProjectsMu.Lock()
+	if s.isAttachedLocked(project) {
+		s.containingProjectsMu.Unlock()
+		return false
+	}
+	s.containingProjects = append(s.containingProjects, project)
+	s.containingProjectsMu.Unlock()
+	if project.compilerOptions.PreserveSymlinks != core.TSTrue {
+		s.ensureRealpath(project)
+	}
+	project.onFileAddedOrRemoved()
+	return true
 }
 
 func (s *ScriptInfo) isAttached(project *Project) bool {
 	s.containingProjectsMu.RLock()
 	defer s.containingProjectsMu.RUnlock()
+	return s.isAttachedLocked(project)
+}
+
+func (s *ScriptInfo) isAttachedLocked(project *Project) bool {
 	return slices.Contains(s.containingProjects, project)
 }
 
@@ -171,15 +179,9 @@ func (s *ScriptInfo) editContent(change ls.TextChange) {
 	s.markContainingProjectsAsDirty()
 }
 
-func (s *ScriptInfo) ensureRealpath(fs vfs.FS) {
+func (s *ScriptInfo) ensureRealpath(project *Project) {
 	if s.realpath == "" {
-		s.containingProjectsMu.RLock()
-		defer s.containingProjectsMu.RUnlock()
-		if len(s.containingProjects) == 0 {
-			panic("scriptInfo must be attached to a project before calling ensureRealpath")
-		}
-		realpath := fs.Realpath(string(s.path))
-		project := s.containingProjects[0]
+		realpath := project.FS().Realpath(string(s.path))
 		s.realpath = project.toPath(realpath)
 		if s.realpath != s.path {
 			project.host.OnDiscoveredSymlink(s)
