@@ -2092,7 +2092,7 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 		ch, size := utf8.DecodeRuneInString(text[pos:])
 		switch ch {
 		case '\r':
-			if text[pos+1] == '\n' {
+			if pos+1 < len(text) && text[pos+1] == '\n' {
 				pos++
 			}
 			fallthrough
@@ -2126,7 +2126,7 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 				if text[pos+1] == '*' {
 					pos += 2
 					for pos < len(text) {
-						if text[pos] == '*' && text[pos+1] == '/' {
+						if text[pos] == '*' && (pos+1 < len(text)) && text[pos+1] == '/' {
 							pos += 2
 							break
 						}
