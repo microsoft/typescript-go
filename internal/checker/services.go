@@ -301,12 +301,15 @@ func runWithInferenceBlockedFromSourceNode[T any](c *Checker, node *ast.Node, fn
 }
 
 func GetResolvedSignatureForSignatureHelp(node *ast.Node, argumentCount int, c *Checker) (*Signature, []*Signature) {
-	var candidatesOutArray []*Signature
-	return runWithoutResolvedSignatureCaching(c, node, func() *Signature {
-		var res *Signature
-		res, candidatesOutArray = c.getResolvedSignatureWorker(node, CheckModeIsForSignatureHelp, argumentCount)
-		return res
-	}), candidatesOutArray
+	type result struct {
+		signature  *Signature
+		candidates []*Signature
+	}
+	res := runWithoutResolvedSignatureCaching(c, node, func() result {
+		signature, candidates := c.getResolvedSignatureWorker(node, CheckModeIsForSignatureHelp, argumentCount)
+		return result{signature, candidates}
+	})
+	return res.signature, res.candidates
 }
 
 func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
