@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -398,7 +399,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 				if ast.NodeIsMissing(leftMostAccessExpression) ||
 					((ast.IsCallExpression(node) || ast.IsFunctionLike(node)) &&
 						node.End() == contextToken.Pos() &&
-						getLastChild(node, file).Kind != ast.KindCloseParenToken) {
+						lsutil.GetLastChild(node, file).Kind != ast.KindCloseParenToken) {
 					// This is likely dot from incorrectly parsed expression and user is starting to write spread
 					// eg: Math.min(./**/)
 					// const x = function (./**/) {}
@@ -412,7 +413,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 			case ast.KindImportType:
 				node = parent
 			case ast.KindMetaProperty:
-				node = getFirstToken(parent, file)
+				node = lsutil.GetFirstToken(parent, file)
 				if node.Kind != ast.KindImportKeyword && node.Kind != ast.KindNewKeyword {
 					panic("Unexpected token kind: " + node.Kind.String())
 				}
@@ -1814,7 +1815,7 @@ func (l *LanguageService) createCompletionItem(
 		}
 		precedingToken := astnav.FindPrecedingToken(file, data.propertyAccessToConvert.Pos())
 		var awaitText string
-		if precedingToken != nil && positionIsASICandidate(precedingToken.End(), precedingToken.Parent, file) {
+		if precedingToken != nil && lsutil.PositionIsASICandidate(precedingToken.End(), precedingToken.Parent, file) {
 			awaitText = ";"
 		}
 
@@ -1868,7 +1869,7 @@ func (l *LanguageService) createCompletionItem(
 			ast.IsGetAccessorDeclaration(contextToken.Parent.Parent) ||
 			ast.IsSetAccessorDeclaration(contextToken.Parent.Parent) ||
 			ast.IsSpreadAssignment(contextToken.Parent) ||
-			getLastToken(ast.FindAncestor(contextToken.Parent, ast.IsPropertyAssignment), file) == contextToken ||
+			lsutil.GetLastToken(ast.FindAncestor(contextToken.Parent, ast.IsPropertyAssignment), file) == contextToken ||
 			ast.IsShorthandPropertyAssignment(contextToken.Parent) &&
 				getLineOfPosition(file, contextToken.End()) != getLineOfPosition(file, position) {
 			source = string(completionSourceObjectLiteralMemberWithComma)
@@ -3424,7 +3425,7 @@ func tryGetObjectLikeCompletionContainer(contextToken *ast.Node, position int, f
 				return parent.Parent
 			}
 			ancestorNode := ast.FindAncestor(parent, ast.IsPropertyAssignment)
-			if ancestorNode != nil && getLastToken(ancestorNode, file) == contextToken && ast.IsObjectLiteralExpression(ancestorNode.Parent) {
+			if ancestorNode != nil && lsutil.GetLastToken(ancestorNode, file) == contextToken && ast.IsObjectLiteralExpression(ancestorNode.Parent) {
 				return ancestorNode.Parent
 			}
 		}
@@ -3441,7 +3442,7 @@ func tryGetObjectLikeCompletionContainer(contextToken *ast.Node, position int, f
 		}
 		ancestorNode := ast.FindAncestor(parent, ast.IsPropertyAssignment)
 		if contextToken.Kind != ast.KindColonToken &&
-			ancestorNode != nil && getLastToken(ancestorNode, file) == contextToken &&
+			ancestorNode != nil && lsutil.GetLastToken(ancestorNode, file) == contextToken &&
 			ast.IsObjectLiteralExpression(ancestorNode.Parent) {
 			return ancestorNode.Parent
 		}

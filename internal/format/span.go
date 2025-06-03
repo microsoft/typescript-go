@@ -17,12 +17,12 @@ import (
 type FormatRequestKind int
 
 const (
-	FormatDocument FormatRequestKind = iota
-	FormatSelection
-	FormatOnEnter
-	FormatOnSemicolon
-	FormatOnOpeningCurlyBrace
-	FormatOnClosingCurlyBrace
+	FormatRequestKindFormatDocument FormatRequestKind = iota
+	FormatRequestKindFormatSelection
+	FormatRequestKindFormatOnEnter
+	FormatRequestKindFormatOnSemicolon
+	FormatRequestKindFormatOnOpeningCurlyBrace
+	FormatRequestKindFormatOnClosingCurlyBrace
 )
 
 /** find node that fully contains given text range */
@@ -507,7 +507,7 @@ func (w *formatSpanWorker) getProcessNodeVisitor(node *ast.Node, indenter *dynam
 		}
 
 		inheritedIndentation := -1
-		for i := 0; i < len(nodes.Nodes); i++ {
+		for i := range len(nodes.Nodes) {
 			child := nodes.Nodes[i]
 			inheritedIndentation = processChildNode(child, inheritedIndentation, node, listDynamicIndentation, startLine, startLine, true, i == 0)
 		}
@@ -695,7 +695,7 @@ func (w *formatSpanWorker) processPair(currentItem *TextRangeWithKind, currentSt
 	return lineAction
 }
 
-func (w *formatSpanWorker) applyRuleEdits(rule Rule, previousRange *TextRangeWithKind, previousStartLine int, currentRange *TextRangeWithKind, currentStartLine int) LineAction {
+func (w *formatSpanWorker) applyRuleEdits(rule *Rule, previousRange *TextRangeWithKind, previousStartLine int, currentRange *TextRangeWithKind, currentStartLine int) LineAction {
 	onLaterLine := currentStartLine != previousStartLine
 	switch rule.Action() {
 	case RuleActionStopProcessingSpaceActions:
@@ -881,7 +881,7 @@ func (w *formatSpanWorker) insertIndentation(pos int, indentation int, lineAdded
 
 func (w *formatSpanWorker) characterToColumn(startLinePosition int, characterInLine int) int {
 	column := 0
-	for i := 0; i < characterInLine; i++ {
+	for i := range characterInLine {
 		if w.sourceFile.Text()[startLinePosition+i] == '\t' {
 			column += w.formattingContext.Options.TabSize - (column % w.formattingContext.Options.TabSize)
 		} else {
@@ -993,22 +993,22 @@ func getIndentationString(indentation int, options *FormatCodeSettings) string {
 	}
 }
 
-func createTextChangeFromStartLength(start int, len int, newText string) core.TextChange {
+func createTextChangeFromStartLength(start int, length int, newText string) core.TextChange {
 	return core.TextChange{
 		NewText:   newText,
-		TextRange: core.NewTextRange(start, start+len),
+		TextRange: core.NewTextRange(start, start+length),
 	}
 }
 
-func (w *formatSpanWorker) recordDelete(start int, len int) {
-	if len != 0 {
-		w.edits = append(w.edits, createTextChangeFromStartLength(start, len, ""))
+func (w *formatSpanWorker) recordDelete(start int, length int) {
+	if length != 0 {
+		w.edits = append(w.edits, createTextChangeFromStartLength(start, length, ""))
 	}
 }
 
-func (w *formatSpanWorker) recordReplace(start int, len int, newText string) {
-	if len != 0 || newText != "" {
-		w.edits = append(w.edits, createTextChangeFromStartLength(start, len, newText))
+func (w *formatSpanWorker) recordReplace(start int, length int, newText string) {
+	if length != 0 || newText != "" {
+		w.edits = append(w.edits, createTextChangeFromStartLength(start, length, newText))
 	}
 }
 
@@ -1036,7 +1036,7 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo *token
 		rangeHasError := w.rangeContainsError(currentTokenInfo.token.Loc)
 		// save previousRange since processRange will overwrite this value with current one
 		savePreviousRange := w.previousRange
-		lineAction := w.processRange(currentTokenInfo.token, tokenStartLine, tokenStartChar, parent, w.childContextNode, dynamicIndenation)
+		lineAction = w.processRange(currentTokenInfo.token, tokenStartLine, tokenStartChar, parent, w.childContextNode, dynamicIndenation)
 		// do not indent comments\token if token range overlaps with some error
 		if !rangeHasError {
 			if lineAction == LineActionNone {
