@@ -126,6 +126,10 @@ func IsModifier(node *Node) bool {
 	return IsModifierKind(node.Kind)
 }
 
+func IsModifierLike(node *Node) bool {
+	return IsModifier(node) || IsDecorator(node)
+}
+
 func IsKeywordKind(token Kind) bool {
 	return KindFirstKeyword <= token && token <= KindLastKeyword
 }

@@ -135,7 +135,7 @@ func withTokenStart(loc *ast.Node, file *ast.SourceFile) core.TextRange {
 }
 
 func (this *formattingContext) blockIsOnOneLine(node *ast.Node) core.Tristate {
-	// !!! in strada, this relies on token child manifesting - we just use the scanner here,
+	// In strada, this relies on token child manifesting - we just use the scanner here,
 	// so this will have a differing performance profile. Is this OK? Needs profiling to know.
 	this.scanner.ResetPos(node.Pos())
 	end := node.End()

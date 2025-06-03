@@ -257,7 +257,6 @@ func (s *formattingScanner) getNextToken(n *ast.Node, expectedScanAction scanAct
 			// Debug.assert(n.kind == newToken); // !!!
 			return newToken
 		}
-		break
 	case actionRescanSlashToken:
 		if startsWithSlashToken(token) {
 			s.lastScanAction = actionRescanSlashToken
@@ -265,13 +264,11 @@ func (s *formattingScanner) getNextToken(n *ast.Node, expectedScanAction scanAct
 			// Debug.assert(n.kind == newToken); // !!!
 			return newToken
 		}
-		break
 	case actionRescanTemplateToken:
 		if token == ast.KindCloseBraceToken {
 			s.lastScanAction = actionRescanTemplateToken
 			return s.s.ReScanTemplateToken( /*isTaggedTemplate*/ false)
 		}
-		break
 	case actionRescanJsxIdentifier:
 		s.lastScanAction = actionRescanJsxIdentifier
 		return s.s.ScanJsxIdentifier()
