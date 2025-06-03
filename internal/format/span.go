@@ -681,7 +681,7 @@ func (w *formatSpanWorker) processPair(currentItem *TextRangeWithKind, currentSt
 			}
 
 			// We need to trim trailing whitespace between the tokens if they were on different lines, and no rule was applied to put them on the same line
-			trimTrailingWhitespaces = trimTrailingWhitespaces && !(rule.action & RuleActionDeleteSpace) && rule.flags != RuleFlagsCanDeleteNewLines
+			trimTrailingWhitespaces = trimTrailingWhitespaces && (rule.Action()&RuleActionDeleteSpace == 0) && rule.Flags() != RuleFlagsCanDeleteNewLines
 		}
 	} else {
 		trimTrailingWhitespaces = trimTrailingWhitespaces && currentItem.Kind != ast.KindEndOfFile
@@ -696,7 +696,57 @@ func (w *formatSpanWorker) processPair(currentItem *TextRangeWithKind, currentSt
 }
 
 func (w *formatSpanWorker) applyRuleEdits(rule Rule, previousRange *TextRangeWithKind, previousStartLine int, currentRange *TextRangeWithKind, currentStartLine int) LineAction {
-	// !!!
+	onLaterLine := currentStartLine != previousStartLine
+	switch rule.Action() {
+	case RuleActionStopProcessingSpaceActions:
+		// no action required
+		return LineActionNone
+	case RuleActionDeleteSpace:
+		if previousRange.Loc.End() != currentRange.Loc.Pos() {
+			// delete characters starting from t1.end up to t2.pos exclusive
+			w.recordDelete(previousRange.Loc.End(), currentRange.Loc.Pos()-previousRange.Loc.End())
+			if onLaterLine {
+				return LineActionLineRemoved
+			}
+			return LineActionNone
+		}
+	case RuleActionDeleteToken:
+		w.recordDelete(previousRange.Loc.Pos(), previousRange.Loc.Len())
+	case RuleActionInsertNewLine:
+		// exit early if we on different lines and rule cannot change number of newlines
+		// if line1 and line2 are on subsequent lines then no edits are required - ok to exit
+		// if line1 and line2 are separated with more than one newline - ok to exit since we cannot delete extra new lines
+		if rule.Flags() != RuleFlagsCanDeleteNewLines && previousStartLine != currentStartLine {
+			return LineActionNone
+		}
+
+		// edit should not be applied if we have one line feed between elements
+		lineDelta := currentStartLine - previousStartLine
+		if lineDelta != 1 {
+			w.recordReplace(previousRange.Loc.End(), currentRange.Loc.Pos()-previousRange.Loc.End(), getNewLineOrDefaultFromContext(w.ctx))
+			if onLaterLine {
+				return LineActionNone
+			}
+			return LineActionLineAdded
+		}
+	case RuleActionInsertSpace:
+		// exit early if we on different lines and rule cannot change number of newlines
+		if rule.Flags() != RuleFlagsCanDeleteNewLines && previousStartLine != currentStartLine {
+			return LineActionNone
+		}
+
+		posDelta := currentRange.Loc.Pos() - previousRange.Loc.End()
+		if posDelta != 1 || !strings.HasPrefix(w.sourceFile.Text()[previousRange.Loc.End():], " ") {
+			w.recordReplace(previousRange.Loc.End(), posDelta, " ")
+			if onLaterLine {
+				return LineActionLineRemoved
+			}
+			return LineActionNone
+		}
+	case RuleActionInsertTrailingSemicolon:
+		w.recordInsert(previousRange.Loc.End(), ";")
+	}
+	return LineActionNone
 }
 
 type LineAction int
