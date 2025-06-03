@@ -529,12 +529,11 @@ type Program interface {
 	GetSourceFile(fileName string) *ast.SourceFile
 	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
 	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
-	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
+	GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
 	GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
-	GetModeForUsageLocation(sourceFile *ast.SourceFile, location *ast.Node) core.ResolutionMode
 }
 
 type Host interface {
@@ -14366,7 +14365,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 
 	var sourceFile *ast.SourceFile
 	resolvedModule := c.program.GetResolvedModule(importingSourceFile, moduleReference, mode)
-	if resolvedModule != nil && resolvedModule.IsResolved() {
+	if resolvedModule.IsResolved() {
 		sourceFile = c.program.GetSourceFile(resolvedModule.ResolvedFileName)
 	}
 
@@ -14458,7 +14457,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		return nil
 	}
 
-	if resolvedModule != nil && resolvedModule.IsResolved() && !(tspath.ExtensionIsTs(resolvedModule.Extension) || resolvedModule.Extension == tspath.ExtensionJson) {
+	if resolvedModule.IsResolved() && !(tspath.ExtensionIsTs(resolvedModule.Extension) || resolvedModule.Extension == tspath.ExtensionJson) {
 		if isForAugmentation {
 			c.error(
 				errorNode,

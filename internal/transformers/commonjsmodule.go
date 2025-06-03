@@ -1671,7 +1671,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 
 func (tx *CommonJSModuleTransformer) shouldTransformImportCall() bool {
 	// !!! host.shouldTransformImportCall?
-	return shouldTransformImportCallWorker(tx.currentSourceFile, tx.compilerOptions, tx.sourceFileMetaDataProvider.GetSourceFileMetaData(tx.currentSourceFile.Path()))
+	return ast.ShouldTransformImportCall(tx.currentSourceFile.FileName(), tx.sourceFileMetaDataProvider.GetSourceFileMetaData(tx.currentSourceFile.Path()), tx.compilerOptions)
 }
 
 func (tx *CommonJSModuleTransformer) visitImportCallExpression(node *ast.CallExpression, rewriteOrShim bool) *ast.Node {
@@ -1987,12 +1987,4 @@ func (tx *CommonJSModuleTransformer) getExports(name *ast.IdentifierNode) []*ast
 		}
 	}
 	return nil
-}
-
-func shouldTransformImportCallWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions, sourceFileMetaData *ast.SourceFileMetaData) bool {
-	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext || moduleKind == core.ModuleKindPreserve {
-		return false
-	}
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, sourceFileMetaData) < core.ModuleKindES2015
 }

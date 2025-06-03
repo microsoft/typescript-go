@@ -325,7 +325,7 @@ func getOrCreateExternalHelpersModuleNameIfNeeded(emitContext *printer.EmitConte
 
 	create := len(helpers) > 0 ||
 		(hasExportStarsToExportValues || compilerOptions.GetESModuleInterop() && hasImportStarOrImportDefault) &&
-			ast.GetEmitModuleFormatOfFileWorker(node, compilerOptions, sourceFileMetaData) < core.ModuleKindSystem
+			ast.GetEmitModuleFormatOfFileWorker(node.FileName(), compilerOptions, sourceFileMetaData) < core.ModuleKindSystem
 
 	if create {
 		externalHelpersModuleName = emitContext.Factory.NewUniqueName(externalHelpersModuleNameText)

@@ -19,10 +19,14 @@ type fakeProgram struct {
 	singleThreaded              bool
 	compilerOptions             *core.CompilerOptions
 	files                       []*ast.SourceFile
-	getEmitModuleFormatOfFile   func(sourceFile modulespecifiers.SourceFileForSpecifierGeneration) core.ModuleKind
-	getImpliedNodeFormatForEmit func(sourceFile *ast.SourceFile) core.ModuleKind
-	getResolvedModule           func(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
+	getEmitModuleFormatOfFile   func(sourceFile ast.HasFileName) core.ModuleKind
+	getImpliedNodeFormatForEmit func(sourceFile ast.HasFileName) core.ModuleKind
+	getResolvedModule           func(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
 	getSourceFile               func(FileName string) *ast.SourceFile
+}
+
+func (p *fakeProgram) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
+	panic("unimplemented")
 }
 
 func (p *fakeProgram) FileExists(path string) bool {
@@ -89,15 +93,15 @@ func (p *fakeProgram) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) co
 	return p.getImpliedNodeFormatForEmit(sourceFile)
 }
 
-func (p *fakeProgram) GetDefaultResolutionModeForFile(sourceFile modulespecifiers.SourceFileForSpecifierGeneration) core.ResolutionMode {
+func (p *fakeProgram) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) core.ResolutionMode {
 	return p.getEmitModuleFormatOfFile(sourceFile)
 }
 
-func (p *fakeProgram) GetModeForUsageLocation(sourceFile *ast.SourceFile, location *ast.Node) core.ResolutionMode {
+func (p *fakeProgram) GetModeForUsageLocation(sourceFile ast.HasFileName, location *ast.Node) core.ResolutionMode {
 	return p.getEmitModuleFormatOfFile(sourceFile)
 }
 
-func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
+func (p *fakeProgram) GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 	return p.getResolvedModule(currentSourceFile, moduleReference, mode)
 }
 
@@ -173,10 +177,10 @@ func TestImportElision(t *testing.T) {
 				singleThreaded:  true,
 				compilerOptions: compilerOptions,
 				files:           files,
-				getEmitModuleFormatOfFile: func(sourceFile modulespecifiers.SourceFileForSpecifierGeneration) core.ModuleKind {
+				getEmitModuleFormatOfFile: func(sourceFile ast.HasFileName) core.ModuleKind {
 					return core.ModuleKindESNext
 				},
-				getImpliedNodeFormatForEmit: func(sourceFile *ast.SourceFile) core.ModuleKind {
+				getImpliedNodeFormatForEmit: func(sourceFile ast.HasFileName) core.ModuleKind {
 					return core.ModuleKindESNext
 				},
 				getSourceFile: func(fileName string) *ast.SourceFile {
@@ -185,7 +189,7 @@ func TestImportElision(t *testing.T) {
 					}
 					return nil
 				},
-				getResolvedModule: func(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
+				getResolvedModule: func(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 					if currentSourceFile == file && moduleReference == "other" {
 						return &module.ResolvedModule{
 							ResolvedFileName: "other.ts",

@@ -374,13 +374,21 @@ func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFil
 	return p.checkerPool.GetCheckerForFile(ctx, file)
 }
 
-func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
+func (p *Program) GetResolvedModule(file ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 	if resolutions, ok := p.resolvedModules[file.Path()]; ok {
 		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: mode}]; ok {
 			return resolved
 		}
 	}
 	return nil
+}
+
+func (p *Program) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
+	if !ast.IsStringLiteralLike(moduleSpecifier) {
+		panic("moduleSpecifier must be a StringLiteralLike")
+	}
+	mode := p.GetModeForUsageLocation(file, moduleSpecifier)
+	return p.GetResolvedModule(file, moduleSpecifier.Text(), mode)
 }
 
 func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule] {
@@ -694,19 +702,19 @@ func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.Mod
 }
 
 func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile, options, p.GetSourceFileMetaData(sourceFile.Path()))
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), options, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
 	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
-func (p *Program) GetModeForUsageLocation(sourceFile *ast.SourceFile, location *ast.Node) core.ResolutionMode {
-	return getModeForUsageLocation(sourceFile, p.sourceFileMetaDatas[sourceFile.Path()], location, p.compilerOptions)
+func (p *Program) GetModeForUsageLocation(sourceFile ast.HasFileName, location *ast.StringLiteralLike) core.ResolutionMode {
+	return getModeForUsageLocation(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.compilerOptions)
 }
 
-func (p *Program) GetDefaultResolutionModeForFile(sourceFile modulespecifiers.SourceFileForSpecifierGeneration) core.ResolutionMode {
-	return getDefaultResolutionModeForFile(sourceFile, p.sourceFileMetaDatas[sourceFile.Path()], p.compilerOptions)
+func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) core.ResolutionMode {
+	return getDefaultResolutionModeForFile(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], p.compilerOptions)
 }
 
 func (p *Program) CommonSourceDirectory() string {

@@ -2410,8 +2410,8 @@ func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.Modul
 	return impliedNodeFormat
 }
 
-func GetEmitModuleFormatOfFileWorker(sourceFile *SourceFile, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
-	result := GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), options, sourceFileMetaData)
+func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
+	result := GetImpliedNodeFormatForEmitWorker(fileName, options, sourceFileMetaData)
 	if result != core.ModuleKindNone {
 		return result
 	}
@@ -3384,4 +3384,12 @@ func IsRightSideOfQualifiedNameOrPropertyAccess(node *Node) bool {
 		return parent.AsMetaProperty().Name() == node
 	}
 	return false
+}
+
+func ShouldTransformImportCall(fileName string, meta *SourceFileMetaData, options *core.CompilerOptions) bool {
+	moduleKind := options.GetEmitModuleKind()
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext || moduleKind == core.ModuleKindPreserve {
+		return false
+	}
+	return GetImpliedNodeFormatForEmitWorker(fileName, options, meta) < core.ModuleKindES2015
 }

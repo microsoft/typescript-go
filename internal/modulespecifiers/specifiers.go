@@ -150,7 +150,7 @@ func getAllModulePathsWorker(
 	allFileNames := make(map[string]ModulePath)
 	paths := getEachFileNameOfModule(info.ImportingSourceFileName, importedFileName, host, true)
 	for _, p := range paths {
-		allFileNames[p.Path] = p
+		allFileNames[p.FileName] = p
 	}
 
 	// Sort by paths closest to importing file Name directory
@@ -222,7 +222,7 @@ func getEachFileNameOfModule(
 		for _, p := range targets {
 			if !(shouldFilterIgnoredPaths && containsIgnoredPath(p)) {
 				results = append(results, ModulePath{
-					Path:            p,
+					FileName:        p,
 					IsInNodeModules: containsNodeModules(p),
 					IsRedirect:      referenceRedirect == p,
 				})
@@ -265,7 +265,7 @@ func getEachFileNameOfModule(
 		for _, p := range targets {
 			if !(shouldFilterIgnoredPaths && containsIgnoredPath(p)) {
 				results = append(results, ModulePath{
-					Path:            p,
+					FileName:        p,
 					IsInNodeModules: containsNodeModules(p),
 					IsRedirect:      referenceRedirect == p,
 				})
@@ -288,29 +288,39 @@ func computeModuleSpecifiers(
 	info := getInfo(importingSourceFile.FileName(), host)
 	preferences := getModuleSpecifierPreferences(userPreferences, host, compilerOptions, importingSourceFile, "")
 
-	// !!! TODO: getFileIncludeReasons lookup based calculation
-	// const existingSpecifier = isFullSourceFile(importingSourceFile) && forEach(modulePaths, modulePath =>
-	//     forEach(
-	//         host.getFileIncludeReasons().get(toPath(modulePath.path, host.getCurrentDirectory(), info.getCanonicalFileName)),
-	//         reason => {
-	//             if (reason.kind !== FileIncludeKind.Import || reason.file !== importingSourceFile.path) return undefined;
-	//             // If the candidate import mode doesn't match the mode we're generating for, don't consider it
-	//             // TODO: maybe useful to keep around as an alternative option for certain contexts where the mode is overridable
-	//             const existingMode = host.getModeForResolutionAtIndex(importingSourceFile, reason.index);
-	//             const targetMode = options.overrideImportMode ?? host.getDefaultResolutionModeForFile(importingSourceFile);
-	//             if (existingMode !== targetMode && existingMode !== undefined && targetMode !== undefined) {
-	//                 return undefined;
-	//             }
-	//             const specifier = getModuleNameStringLiteralAt(importingSourceFile, reason.index).text;
-	//             // If the preference is for non relative and the module specifier is relative, ignore it
-	//             return preferences.relativePreference !== RelativePreference.NonRelative || !pathIsRelative(specifier) ?
-	//                 specifier :
-	//                 undefined;
-	//         },
-	//     ));
-	// if (existingSpecifier) {
-	//     return { kind: undefined, moduleSpecifiers: [existingSpecifier], computedWithoutCache: true };
-	// }
+	var existingSpecifier string
+	for _, modulePath := range modulePaths {
+		targetPath := tspath.ToPath(modulePath.FileName, host.GetCurrentDirectory(), info.UseCaseSensitiveFileNames)
+		var existingImport *ast.StringLiteralLike
+		for _, importSpecifier := range importingSourceFile.Imports() {
+			resolvedModule := host.GetResolvedModuleFromModuleSpecifier(importingSourceFile, importSpecifier)
+			if resolvedModule.IsResolved() && tspath.ToPath(resolvedModule.ResolvedFileName, host.GetCurrentDirectory(), info.UseCaseSensitiveFileNames) == targetPath {
+				existingImport = importSpecifier
+				break
+			}
+		}
+		if existingImport != nil {
+			if preferences.relativePreference == RelativePreferenceNonRelative && tspath.PathIsRelative(existingImport.Text()) {
+				// If the preference is for non-relative and the module specifier is relative, ignore it
+				continue
+			}
+			existingMode := host.GetModeForUsageLocation(importingSourceFile, existingImport)
+			targetMode := options.OverrideImportMode
+			if targetMode == core.ResolutionModeNone {
+				targetMode = host.GetDefaultResolutionModeForFile(importingSourceFile)
+			}
+			if existingMode != targetMode && existingMode != core.ResolutionModeNone && targetMode != core.ResolutionModeNone {
+				// If the candidate import mode doesn't match the mode we're generating for, don't consider it
+				continue
+			}
+			existingSpecifier = existingImport.Text()
+			break
+		}
+	}
+
+	if existingSpecifier != "" {
+		return []string{existingSpecifier}
+	}
 
 	importedFileIsInNodeModules := core.Some(modulePaths, func(p ModulePath) bool { return p.IsInNodeModules })
 
@@ -340,7 +350,7 @@ func computeModuleSpecifiers(
 
 		// !!! TODO: proper resolutionMode support
 		local := getLocalModuleSpecifier(
-			modulePath.Path,
+			modulePath.FileName,
 			info,
 			compilerOptions,
 			host,
@@ -640,7 +650,7 @@ func tryGetModuleNameAsNodeModule(
 	packageNameOnly bool,
 	overrideMode core.ResolutionMode,
 ) string {
-	parts := getNodeModulePathParts(pathObj.Path)
+	parts := getNodeModulePathParts(pathObj.FileName)
 	if parts == nil {
 		return ""
 	}
@@ -650,7 +660,7 @@ func tryGetModuleNameAsNodeModule(
 	allowedEndings := preferences.getAllowedEndingsInPreferredOrder(core.ResolutionModeNone)
 
 	caseSensitive := host.UseCaseSensitiveFileNames()
-	moduleSpecifier := pathObj.Path
+	moduleSpecifier := pathObj.FileName
 	isPackageRootPath := false
 	if !packageNameOnly {
 		packageRootIndex := parts.PackageRootIndex
@@ -686,7 +696,7 @@ func tryGetModuleNameAsNodeModule(
 				moduleFileName = moduleFileToTry
 			}
 			// try with next level of directory
-			packageRootIndex = core.IndexAfter(pathObj.Path, "/", packageRootIndex+1)
+			packageRootIndex = core.IndexAfter(pathObj.FileName, "/", packageRootIndex+1)
 			if packageRootIndex == -1 {
 				moduleSpecifier = processEnding(moduleFileName, allowedEndings, options, host)
 				break
@@ -736,11 +746,11 @@ func tryDirectoryWithPackageJson(
 ) pkgJsonDirAttemptResult {
 	rootIdx := parts.PackageRootIndex
 	if rootIdx == -1 {
-		rootIdx = len(pathObj.Path) // TODO: possible strada bug? -1 in js slice removes characters from the end, in go it panics - js behavior seems unwanted here?
+		rootIdx = len(pathObj.FileName) // TODO: possible strada bug? -1 in js slice removes characters from the end, in go it panics - js behavior seems unwanted here?
 	}
-	packageRootPath := pathObj.Path[0:rootIdx]
+	packageRootPath := pathObj.FileName[0:rootIdx]
 	packageJsonPath := tspath.CombinePaths(packageRootPath, "package.json")
-	moduleFileToTry := pathObj.Path
+	moduleFileToTry := pathObj.FileName
 	maybeBlockedByTypesVersions := false
 	packageJson := host.GetPackageJsonInfo(packageJsonPath)
 	if packageJson == nil {
@@ -774,7 +784,7 @@ func tryDirectoryWithPackageJson(
 			fromExports = tryGetModuleNameFromExports(
 				options,
 				host,
-				pathObj.Path,
+				pathObj.FileName,
 				packageRootPath,
 				packageName,
 				packageJsonContent.Fields.Exports,
@@ -789,7 +799,7 @@ func tryDirectoryWithPackageJson(
 		}
 		if packageJsonContent != nil && packageJsonContent.Fields.Exports.Type != packagejson.JSONValueTypeNotPresent {
 			return pkgJsonDirAttemptResult{
-				moduleFileToTry:  pathObj.Path,
+				moduleFileToTry:  pathObj.FileName,
 				blockedByExports: true,
 			}
 		}
@@ -800,7 +810,7 @@ func tryDirectoryWithPackageJson(
 		versionPaths = packageJsonContent.GetVersionPaths(nil)
 	}
 	if versionPaths.GetPaths() != nil {
-		subModuleName := pathObj.Path[len(packageRootPath)+1:]
+		subModuleName := pathObj.FileName[len(packageRootPath)+1:]
 		fromPaths := tryGetModuleNameFromPaths(
 			subModuleName,
 			versionPaths.GetPaths(),
