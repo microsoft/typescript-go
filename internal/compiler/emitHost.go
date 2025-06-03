@@ -39,6 +39,10 @@ type emitHost struct {
 	program *Program
 }
 
+func (host *emitHost) GetDefaultResolutionModeForFile(file *ast.SourceFile) core.ResolutionMode {
+	return host.program.GetDefaultResolutionModeForFile(file)
+}
+
 func (host *emitHost) FileExists(path string) bool {
 	return host.program.FileExists(path)
 }

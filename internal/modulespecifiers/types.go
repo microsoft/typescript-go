@@ -7,14 +7,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type SourceFileForSpecifierGeneration interface {
-	Path() tspath.Path
-	FileName() string
-	OriginalFileName() string
-	Imports() []*ast.LiteralLikeNode
-	IsJS() bool
-}
-
 type CheckerShape interface {
 	GetSymbolAtLocation(node *ast.Node) *ast.Symbol
 	GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol
@@ -58,6 +50,7 @@ type ModuleSpecifierGenerationHost interface {
 
 	GetNearestAncestorDirectoryWithPackageJson(dirname string) string
 	GetPackageJsonInfo(pkgJsonPath string) PackageJsonInfo
+	GetDefaultResolutionModeForFile(file *ast.SourceFile) core.ResolutionMode
 }
 
 type ImportModuleSpecifierPreference string

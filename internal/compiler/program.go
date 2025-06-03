@@ -385,10 +385,10 @@ func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFil
 	return p.checkerPool.GetCheckerForFile(ctx, file)
 }
 
-func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string) *ast.SourceFile {
+func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 	if resolutions, ok := p.resolvedModules[file.Path()]; ok {
-		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: core.ModuleKindCommonJS}]; ok {
-			return p.findSourceFile(resolved.ResolvedFileName, FileIncludeReason{FileIncludeKindImport, 0})
+		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: mode}]; ok {
+			return resolved
 		}
 	}
 	return nil
@@ -694,6 +694,14 @@ func (p *Program) InstantiationCount() int {
 		count += int(checker.TotalInstantiationCount)
 	}
 	return count
+}
+
+func (p *Program) GetModeForUsageLocation(sourceFile *ast.SourceFile, location *ast.Node) core.ResolutionMode {
+	return getModeForUsageLocation(sourceFile, sourceFile.Metadata, location, p.compilerOptions)
+}
+
+func (p *Program) GetDefaultResolutionModeForFile(sourceFile *ast.SourceFile) core.ResolutionMode {
+	return getDefaultResolutionModeForFile(sourceFile, p.compilerOptions)
 }
 
 func (p *Program) CommonSourceDirectory() string {
