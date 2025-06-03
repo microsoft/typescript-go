@@ -162,7 +162,6 @@ func TestProjectLifetime(t *testing.T) {
 		service.OpenFile("/home/projects/TS/p2/src/index.ts", files["/home/projects/TS/p2/src/index.ts"].(string), core.ScriptKindTS, "/home/projects/TS/p2")
 		assert.Equal(t, len(service.Projects()), 1)
 		assert.Assert(t, service.InferredProject(tspath.Path("")) == nil)
-		assert.Assert(t, service.UnrootedInferredProject() == nil)
 		assert.Assert(t, service.GetScriptInfoByPath(tspath.ToPath("/home/projects/TS/p1/src/index.ts", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())) == nil)
 		assert.Assert(t, service.InferredProject(tspath.ToPath("/home/projects/TS/p2", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames())) != nil)
 	})

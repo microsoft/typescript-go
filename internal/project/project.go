@@ -511,6 +511,7 @@ func (p *Project) updateGraph() bool {
 			for _, oldSourceFile := range oldProgram.GetSourceFiles() {
 				if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
 					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
+					p.detachScriptInfoIfNotInferredRoot(oldSourceFile.Path())
 				}
 			}
 		}
@@ -825,14 +826,9 @@ func (p *Project) isRoot(info *ScriptInfo) bool {
 	return p.rootFileNames.Has(info.path)
 }
 
-func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
+func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	p.removeFile(info, fileExists, detachFromProject)
-	p.markAsDirtyLocked()
-}
-
-func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
 	if p.isRoot(info) && p.kind == KindInferred {
 		p.rootFileNames.Delete(info.path)
 		p.typeAcquisition = nil
@@ -848,9 +844,7 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 	// 	this.resolutionCache.invalidateResolutionOfFile(info.path);
 	// }
 	// this.cachedUnresolvedImportsPerFile.delete(info.path);
-	if detachFromProject {
-		info.detachFromProject(p)
-	}
+	p.markAsDirtyLocked()
 }
 
 func (p *Project) AddInferredProjectRoot(info *ScriptInfo) {
@@ -1029,6 +1023,15 @@ func (p *Project) Logf(format string, args ...interface{}) {
 	p.Log(fmt.Sprintf(format, args...))
 }
 
+func (p *Project) detachScriptInfoIfNotInferredRoot(path tspath.Path) {
+	// We might not find the script info in case its not associated with the project any more
+	// and project graph was not updated (eg delayed update graph in case of files changed/deleted on the disk)
+	if scriptInfo := p.host.GetScriptInfoByPath(path); scriptInfo != nil &&
+		(p.kind != KindInferred || !p.isRoot(scriptInfo)) {
+		scriptInfo.detachFromProject(p)
+	}
+}
+
 func (p *Project) Close() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
@@ -1036,12 +1039,13 @@ func (p *Project) Close() {
 	if p.program != nil {
 		for _, sourceFile := range p.program.GetSourceFiles() {
 			p.host.DocumentRegistry().ReleaseDocument(sourceFile, p.program.GetCompilerOptions())
-			if scriptInfo := p.host.GetScriptInfoByPath(sourceFile.Path()); scriptInfo != nil {
-				scriptInfo.detachFromProject(p)
-			}
+			// Detach script info if its not root or is root of non inferred project
+			p.detachScriptInfoIfNotInferredRoot(sourceFile.Path())
 		}
 		p.program = nil
-	} else if p.kind == KindInferred {
+	}
+
+	if p.kind == KindInferred {
 		// Release root script infos for inferred projects.
 		for path := range p.rootFileNames.Keys() {
 			if info := p.host.GetScriptInfoByPath(path); info != nil {

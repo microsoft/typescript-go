@@ -2,6 +2,7 @@ package project
 
 import (
 	"slices"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -25,7 +26,8 @@ type ScriptInfo struct {
 	matchesDiskText       bool
 	deferredDelete        bool
 
-	containingProjects []*Project
+	containingProjectsMu sync.RWMutex
+	containingProjects   []*Project
 
 	fs vfs.FS
 }
@@ -68,6 +70,12 @@ func (s *ScriptInfo) Version() int {
 	return s.version
 }
 
+func (s *ScriptInfo) ContainingProjects() []*Project {
+	s.containingProjectsMu.RLock()
+	defer s.containingProjectsMu.RUnlock()
+	return slices.Clone(s.containingProjects)
+}
+
 func (s *ScriptInfo) reloadIfNeeded() {
 	if s.pendingReloadFromDisk {
 		if newText, ok := s.fs.ReadFile(s.fileName); ok {
@@ -97,6 +105,15 @@ func (s *ScriptInfo) close(fileExists bool) {
 		s.pendingReloadFromDisk = true
 		s.markContainingProjectsAsDirty()
 	}
+
+	s.containingProjectsMu.Lock()
+	defer s.containingProjectsMu.Unlock()
+	for _, project := range slices.Clone(s.containingProjects) {
+		if project.kind == KindInferred && project.isRoot(s) {
+			project.RemoveFile(s, fileExists)
+			s.detachFromProjectLocked(project)
+		}
+	}
 }
 
 func (s *ScriptInfo) setText(newText string) {
@@ -106,6 +123,8 @@ func (s *ScriptInfo) setText(newText string) {
 }
 
 func (s *ScriptInfo) markContainingProjectsAsDirty() {
+	s.containingProjectsMu.RLock()
+	defer s.containingProjectsMu.RUnlock()
 	for _, project := range s.containingProjects {
 		project.MarkFileAsDirty(s.path)
 	}
@@ -115,7 +134,9 @@ func (s *ScriptInfo) markContainingProjectsAsDirty() {
 // and returns true if the script info was newly attached.
 func (s *ScriptInfo) attachToProject(project *Project) bool {
 	if !s.isAttached(project) {
+		s.containingProjectsMu.Lock()
 		s.containingProjects = append(s.containingProjects, project)
+		s.containingProjectsMu.Unlock()
 		if project.compilerOptions.PreserveSymlinks != core.TSTrue {
 			s.ensureRealpath(project.FS())
 		}
@@ -126,6 +147,8 @@ func (s *ScriptInfo) attachToProject(project *Project) bool {
 }
 
 func (s *ScriptInfo) isAttached(project *Project) bool {
+	s.containingProjectsMu.RLock()
+	defer s.containingProjectsMu.RUnlock()
 	return slices.Contains(s.containingProjects, project)
 }
 
@@ -133,6 +156,8 @@ func (s *ScriptInfo) isOrphan() bool {
 	if s.deferredDelete {
 		return true
 	}
+	s.containingProjectsMu.RLock()
+	defer s.containingProjectsMu.RUnlock()
 	for _, project := range s.containingProjects {
 		if !project.isOrphan() {
 			return false
@@ -148,6 +173,8 @@ func (s *ScriptInfo) editContent(change ls.TextChange) {
 
 func (s *ScriptInfo) ensureRealpath(fs vfs.FS) {
 	if s.realpath == "" {
+		s.containingProjectsMu.RLock()
+		defer s.containingProjectsMu.RUnlock()
 		if len(s.containingProjects) == 0 {
 			panic("scriptInfo must be attached to a project before calling ensureRealpath")
 		}
@@ -168,17 +195,25 @@ func (s *ScriptInfo) getRealpathIfDifferent() (tspath.Path, bool) {
 }
 
 func (s *ScriptInfo) detachAllProjects() {
+	s.containingProjectsMu.Lock()
+	defer s.containingProjectsMu.Unlock()
 	for _, project := range s.containingProjects {
 		// !!!
 		// if (isConfiguredProject(p)) {
 		// 	p.getCachedDirectoryStructureHost().addOrDeleteFile(this.fileName, this.path, FileWatcherEventKind.Deleted);
 		// }
-		project.RemoveFile(s, false /*fileExists*/, false /*detachFromProject*/)
+		project.RemoveFile(s, false /*fileExists*/)
 	}
 	s.containingProjects = nil
 }
 
 func (s *ScriptInfo) detachFromProject(project *Project) {
+	s.containingProjectsMu.Lock()
+	defer s.containingProjectsMu.Unlock()
+	s.detachFromProjectLocked(project)
+}
+
+func (s *ScriptInfo) detachFromProjectLocked(project *Project) {
 	if index := slices.Index(s.containingProjects, project); index != -1 {
 		s.containingProjects = slices.Delete(s.containingProjects, index, index+1)
 	}
@@ -193,6 +228,8 @@ func (s *ScriptInfo) delayReloadNonMixedContentFile() {
 }
 
 func (s *ScriptInfo) containedByDeferredClosedProject() bool {
+	s.containingProjectsMu.RLock()
+	defer s.containingProjectsMu.RUnlock()
 	return slices.IndexFunc(s.containingProjects, func(project *Project) bool {
 		return project.deferredClose
 	}) != -1
