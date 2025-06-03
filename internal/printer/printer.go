@@ -2328,15 +2328,7 @@ func (p *Printer) emitBindingElement(node *ast.BindingElement) {
 	// Old parser used `OmittedExpression` as a substitute for `Elision`. New parser uses a `BindingElement` with nil members
 	if name := node.Name(); name != nil {
 		p.emitBindingName(name)
-		// Check if name is from the current source file to avoid cross-file position issues
-		var equalTokenPos int
-		if p.currentSourceFile != nil && ast.GetSourceFileOfNode(name) == p.currentSourceFile {
-			equalTokenPos = name.End()
-		} else {
-			// Use contextNode's end position as fallback when name is from a different source file
-			equalTokenPos = node.AsNode().End()
-		}
-		p.emitInitializer(node.Initializer, equalTokenPos, node.AsNode())
+		p.emitInitializer(node.Initializer, node.Name().End(), node.AsNode())
 	}
 	p.exitNode(node.AsNode(), state)
 }
@@ -3765,15 +3757,7 @@ func (p *Printer) emitCommonJSExport(node *ast.CommonJSExport) {
 	} else {
 		p.emitBindingName(node.Name())
 	}
-	// Check if name is from the current source file to avoid cross-file position issues
-	var equalTokenPos int
-	if p.currentSourceFile != nil && ast.GetSourceFileOfNode(node.Name()) == p.currentSourceFile {
-		equalTokenPos = node.Name().End()
-	} else {
-		// Use contextNode's end position as fallback when name is from a different source file
-		equalTokenPos = node.AsNode().End()
-	}
-	p.emitInitializer(node.Initializer, equalTokenPos, node.AsNode())
+	p.emitInitializer(node.Initializer, node.Name().End(), node.AsNode())
 	p.writeTrailingSemicolon()
 	p.exitNode(node.AsNode(), state)
 }
@@ -4324,15 +4308,7 @@ func (p *Printer) emitSpreadAssignment(node *ast.SpreadAssignment) {
 func (p *Printer) emitEnumMember(node *ast.EnumMember) {
 	state := p.enterNode(node.AsNode())
 	p.emitPropertyName(node.Name())
-	// Check if name is from the current source file to avoid cross-file position issues
-	var equalTokenPos int
-	if p.currentSourceFile != nil && ast.GetSourceFileOfNode(node.Name()) == p.currentSourceFile {
-		equalTokenPos = node.Name().End()
-	} else {
-		// Use contextNode's end position as fallback when name is from a different source file
-		equalTokenPos = node.AsNode().End()
-	}
-	p.emitInitializer(node.Initializer, equalTokenPos, node.AsNode())
+	p.emitInitializer(node.Initializer, node.Name().End(), node.AsNode())
 	p.exitNode(node.AsNode(), state)
 }
 
