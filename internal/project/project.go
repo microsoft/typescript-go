@@ -484,9 +484,10 @@ func (p *Project) updateGraph() bool {
 		return false
 	}
 
+	defer p.host.fs.ClearCache()
+
 	start := time.Now()
 	p.Log("Starting updateGraph: Project: " + p.name)
-	p.host.fs.ClearCache()
 	var writeFileNames bool
 	oldProgram := p.program
 	p.initialLoadPending = false
