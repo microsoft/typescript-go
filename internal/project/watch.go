@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -52,6 +53,9 @@ func (w *watchedFiles[T]) update(ctx context.Context, newData T) {
 
 func (w *watchedFiles[T]) updateWorker(ctx context.Context, newData T) (updated bool, err error) {
 	newGlobs := w.getGlobs(newData)
+	newGlobs = slices.Clone(newGlobs)
+	slices.Sort(newGlobs)
+
 	w.data = newData
 	if slices.Equal(w.globs, newGlobs) {
 		return false, nil
@@ -87,7 +91,7 @@ func (w *watchedFiles[T]) updateWorker(ctx context.Context, newData T) (updated 
 }
 
 func globMapperForTypingsInstaller(data map[tspath.Path]string) []string {
-	return slices.Sorted(maps.Values(data))
+	return slices.AppendSeq(make([]string, 0, len(data)), maps.Values(data))
 }
 
 func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Path]string) []string {
@@ -101,8 +105,16 @@ func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Pat
 
 		// dir -> recursive
 		globSet := make(map[string]bool)
+		var seenDirs core.Set[string]
 
 		for path, fileName := range data {
+			// Assuming all of the input paths are filenames, we can avoid
+			// duplicate work by only taking one file per dir, since their outputs
+			// will always be the same.
+			if !seenDirs.AddIfAbsent(tspath.GetDirectoryPath(string(path))) {
+				continue
+			}
+
 			w := getDirectoryToWatchFailedLookupLocation(
 				fileName,
 				path,
@@ -127,7 +139,6 @@ func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Pat
 				globs = append(globs, dir+"/"+fileGlobPattern)
 			}
 		}
-		slices.Sort(globs)
 
 		timeTaken := time.Since(start)
 		host.Log(fmt.Sprintf("createGlobMapper took %s to create %d globs for %d failed lookups", timeTaken, len(globs), len(data)))

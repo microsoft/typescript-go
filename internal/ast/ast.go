@@ -289,6 +289,8 @@ func (n *Node) Text() string {
 		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().name.Text()
 	case KindRegularExpressionLiteral:
 		return n.AsRegularExpressionLiteral().Text
+	case KindJSDocText:
+		return n.AsJSDocText().Text
 	}
 	panic(fmt.Sprintf("Unhandled case in Node.Text: %T", n.data))
 }
@@ -429,6 +431,8 @@ func (n *Node) TypeParameterList() *NodeList {
 		return n.AsInterfaceDeclaration().TypeParameters
 	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return n.AsTypeAliasDeclaration().TypeParameters
+	case KindJSDocTemplateTag:
+		return n.AsJSDocTemplateTag().TypeParameters
 	default:
 		funcLike := n.FunctionLikeData()
 		if funcLike != nil {
@@ -4180,6 +4184,10 @@ func IsImportDeclaration(node *Node) bool {
 	return node.Kind == KindImportDeclaration
 }
 
+func IsImportDeclarationOrJSImportDeclaration(node *Node) bool {
+	return node.Kind == KindImportDeclaration || node.Kind == KindJSImportDeclaration
+}
+
 // ImportSpecifier
 
 type ImportSpecifier struct {
@@ -7528,6 +7536,53 @@ func IsImportAttributes(node *Node) bool {
 	return node.Kind == KindImportAttributes
 }
 
+func (node *ImportAttributesNode) GetResolutionModeOverride( /* !!! grammarErrorOnNode?: (node: Node, diagnostic: DiagnosticMessage) => void*/ ) (core.ResolutionMode, bool) {
+	if node == nil {
+		return core.ResolutionModeNone, false
+	}
+
+	attributes := node.AsImportAttributes().Attributes
+
+	if len(attributes.Nodes) != 1 {
+		// !!!
+		// grammarErrorOnNode?.(
+		//     node,
+		//     node.token === SyntaxKind.WithKeyword
+		//         ? Diagnostics.Type_import_attributes_should_have_exactly_one_key_resolution_mode_with_value_import_or_require
+		//         : Diagnostics.Type_import_assertions_should_have_exactly_one_key_resolution_mode_with_value_import_or_require,
+		// );
+		return core.ResolutionModeNone, false
+	}
+
+	elem := attributes.Nodes[0].AsImportAttribute()
+	if !IsStringLiteralLike(elem.Name()) {
+		return core.ResolutionModeNone, false
+	}
+	if elem.Name().Text() != "resolution-mode" {
+		// !!!
+		// grammarErrorOnNode?.(
+		//     elem.name,
+		//     node.token === SyntaxKind.WithKeyword
+		//         ? Diagnostics.resolution_mode_is_the_only_valid_key_for_type_import_attributes
+		//         : Diagnostics.resolution_mode_is_the_only_valid_key_for_type_import_assertions,
+		// );
+		return core.ResolutionModeNone, false
+	}
+	if !IsStringLiteralLike(elem.Value) {
+		return core.ResolutionModeNone, false
+	}
+	if elem.Value.Text() != "import" && elem.Value.Text() != "require" {
+		// !!!
+		// grammarErrorOnNode?.(elem.value, Diagnostics.resolution_mode_should_be_either_require_or_import);
+		return core.ResolutionModeNone, false
+	}
+	if elem.Value.Text() == "import" {
+		return core.ResolutionModeESM, true
+	} else {
+		return core.ModuleKindCommonJS, true
+	}
+}
+
 // TypeQueryNode
 
 type TypeQueryNode struct {
@@ -9108,38 +9163,36 @@ func IsJSDocUnknownTag(node *Node) bool {
 type JSDocTemplateTag struct {
 	JSDocTagBase
 	Constraint     *Node
-	typeParameters *TypeParameterList
+	TypeParameters *TypeParameterList
 }
 
 func (f *NodeFactory) NewJSDocTemplateTag(tagName *IdentifierNode, constraint *Node, typeParameters *TypeParameterList, comment *NodeList) *Node {
 	data := &JSDocTemplateTag{}
 	data.TagName = tagName
 	data.Constraint = constraint
-	data.typeParameters = typeParameters
+	data.TypeParameters = typeParameters
 	data.Comment = comment
 	return f.newNode(KindJSDocTemplateTag, data)
 }
 
 func (f *NodeFactory) UpdateJSDocTemplateTag(node *JSDocTemplateTag, tagName *IdentifierNode, constraint *Node, typeParameters *TypeParameterList, comment *NodeList) *Node {
-	if tagName != node.TagName || constraint != node.Constraint || typeParameters != node.typeParameters || comment != node.Comment {
+	if tagName != node.TagName || constraint != node.Constraint || typeParameters != node.TypeParameters || comment != node.Comment {
 		return updateNode(f.NewJSDocTemplateTag(tagName, constraint, typeParameters, comment), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *JSDocTemplateTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visit(v, node.Constraint) || visitNodeList(v, node.typeParameters) || visitNodeList(v, node.Comment)
+	return visit(v, node.TagName) || visit(v, node.Constraint) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Comment)
 }
 
 func (node *JSDocTemplateTag) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocTemplateTag(node, v.visitNode(node.TagName), v.visitNode(node.Constraint), v.visitNodes(node.typeParameters), v.visitNodes(node.Comment))
+	return v.Factory.UpdateJSDocTemplateTag(node, v.visitNode(node.TagName), v.visitNode(node.Constraint), v.visitNodes(node.TypeParameters), v.visitNodes(node.Comment))
 }
 
 func (node *JSDocTemplateTag) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters(), node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
-
-func (node *JSDocTemplateTag) TypeParameters() *TypeParameterList { return node.typeParameters }
 
 // JSDocPropertyTag
 type JSDocPropertyTag struct {
@@ -9918,8 +9971,9 @@ type CommentDirective struct {
 // SourceFile
 
 type SourceFileMetaData struct {
-	PackageJsonType   string
-	ImpliedNodeFormat core.ResolutionMode
+	PackageJsonType      string
+	PackageJsonDirectory string
+	ImpliedNodeFormat    core.ResolutionMode
 }
 
 type CheckJsDirective struct {
