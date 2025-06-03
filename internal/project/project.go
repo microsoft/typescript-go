@@ -123,9 +123,7 @@ func typeAcquisitionChanged(opt1 *core.TypeAcquisition, opt2 *core.TypeAcquisiti
 var _ compiler.CompilerHost = (*Project)(nil)
 
 type Project struct {
-	// TODO: remove this hack
-	uncachedHost ProjectHost
-	host         *projectHostWithCachedFS
+	host *projectHostWithCachedFS
 
 	name string
 	kind Kind
@@ -194,7 +192,6 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 
 	host.Log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
 	project := &Project{
-		uncachedHost:     host,
 		host:             cachedHost,
 		name:             name,
 		kind:             kind,
@@ -223,10 +220,12 @@ type projectHostWithCachedFS struct {
 }
 
 func newProjectHostWithCachedFS(host ProjectHost) *projectHostWithCachedFS {
-	return &projectHostWithCachedFS{
+	newHost := &projectHostWithCachedFS{
 		ProjectHost: host,
 		fs:          cachedvfs.From(host.FS()),
 	}
+	newHost.fs.DisableAndClearCache()
+	return newHost
 }
 
 func (p *projectHostWithCachedFS) FS() vfs.FS {
@@ -484,7 +483,8 @@ func (p *Project) updateGraph() bool {
 		return false
 	}
 
-	defer p.host.fs.ClearCache()
+	p.host.fs.Enable()
+	defer p.host.fs.DisableAndClearCache()
 
 	start := time.Now()
 	p.Log("Starting updateGraph: Project: " + p.name)
