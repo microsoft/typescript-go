@@ -14,17 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
-type FormatRequestKind int
-
-const (
-	FormatRequestKindFormatDocument FormatRequestKind = iota
-	FormatRequestKindFormatSelection
-	FormatRequestKindFormatOnEnter
-	FormatRequestKindFormatOnSemicolon
-	FormatRequestKindFormatOnOpeningCurlyBrace
-	FormatRequestKindFormatOnClosingCurlyBrace
-)
-
 /** find node that fully contains given text range */
 func findEnclosingNode(r core.TextRange, sourceFile *ast.SourceFile) *ast.Node {
 	var find func(*ast.Node) *ast.Node
@@ -109,29 +98,6 @@ func getOwnOrInheritedDelta(n *ast.Node, options *FormatCodeSettings, sourceFile
 		n = n.Parent
 	}
 	return 0
-}
-
-func FormatSpan(ctx context.Context, span core.TextRange, file *ast.SourceFile, kind FormatRequestKind) []core.TextChange {
-	// find the smallest node that fully wraps the range and compute the initial indentation for the node
-	enclosingNode := findEnclosingNode(span, file)
-	opts := ctx.Value(formatOptionsKey).(*FormatCodeSettings)
-
-	return newFormattingScanner(
-		file.Text(),
-		file.LanguageVariant,
-		getScanStartPosition(enclosingNode, span, file),
-		span.End(),
-		newFormatSpanWorker(
-			ctx,
-			span,
-			enclosingNode,
-			GetIndentationForNode(enclosingNode, &span, file, opts),
-			getOwnOrInheritedDelta(enclosingNode, opts, file),
-			kind,
-			prepareRangeContainsErrorFunction(file.Diagnostics(), span),
-			file,
-		),
-	)
 }
 
 func rangeHasNoErrors(_ core.TextRange) bool {
@@ -225,32 +191,6 @@ func newFormatSpanWorker(
 		rangeContainsError: rangeContainsError,
 		sourceFile:         sourceFile,
 	}
-}
-
-type formatContextKey int
-
-const (
-	formatOptionsKey formatContextKey = iota
-	formatNewlineKey
-)
-
-func NewContext(ctx context.Context, options *FormatCodeSettings, newLine string) context.Context {
-	ctx = context.WithValue(ctx, formatOptionsKey, options)
-	ctx = context.WithValue(ctx, formatNewlineKey, newLine)
-	// In strada, the rules map was both globally cached *and* cached into the context, for some reason. We skip that here and just use the global one.
-	return ctx
-}
-
-func getNewLineOrDefaultFromContext(ctx context.Context) string { // TODO: Move into broader LS - more than just the formatter uses the newline editor setting/host new line
-	opt := ctx.Value(formatOptionsKey).(*FormatCodeSettings)
-	if opt != nil && len(opt.NewLineCharacter) > 0 {
-		return opt.NewLineCharacter
-	}
-	host := ctx.Value(formatNewlineKey).(string)
-	if len(host) > 0 {
-		return host
-	}
-	return "\n"
 }
 
 func getNonDecoratorTokenPosOfNode(node *ast.Node, file *ast.SourceFile) int {
