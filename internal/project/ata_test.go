@@ -266,6 +266,7 @@ func TestAta(t *testing.T) {
 					host.TestOptions.CheckBeforeNpmInstall = nil // Stop checking after first run
 					break
 				}
+				assert.NilError(t, t.Context().Err())
 				time.Sleep(10 * time.Millisecond)
 			}
 		}
