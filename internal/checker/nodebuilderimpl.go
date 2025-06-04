@@ -1487,19 +1487,27 @@ func (b *nodeBuilderImpl) parameterToParameterDeclarationName(parameterSymbol *a
 		return b.f.NewIdentifier(parameterSymbol.Name)
 	}
 
-	return b.cloneBindingName(parameterDeclaration.Name())
+	name := parameterDeclaration.Name()
+	switch {
+	case ast.IsIdentifier(name):
+		cloned := b.f.DeepCloneNode(name)
+		b.e.SetEmitFlags(cloned, printer.EFNoAsciiEscaping)
+		return cloned
+	case ast.IsQualifiedName(name):
+		cloned := b.f.DeepCloneNode(name.AsQualifiedName().Right)
+		b.e.SetEmitFlags(cloned, printer.EFNoAsciiEscaping)
+		return cloned
+	default:
+		return b.cloneBindingName(name)
+	}
 }
 
 func (b *nodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
-	return b.elideInitializerAndSetEmitFlags(node)
-}
-
-func (b *nodeBuilderImpl) elideInitializerAndSetEmitFlags(node *ast.Node) *ast.Node {
 	if b.ctx.tracker != nil && ast.IsComputedPropertyName(node) && b.ch.isLateBindableName(node) {
 		b.trackComputedName(node.Expression(), b.ctx.enclosingDeclaration)
 	}
 
-	visited := b.visitEachChildWorker(node, b.elideInitializerAndSetEmitFlags)
+	visited := b.visitEachChildWorker(node, b.cloneBindingName)
 
 	if ast.IsBindingElement(visited) {
 		bindingElement := visited.AsBindingElement()
