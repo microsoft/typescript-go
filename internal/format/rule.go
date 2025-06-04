@@ -2,26 +2,26 @@ package format
 
 import "github.com/microsoft/typescript-go/internal/ast"
 
-type Rule struct {
+type ruleImpl struct {
 	debugName string
-	context   []ContextPredicate
-	action    RuleAction
-	flags     RuleFlags
+	context   []contextPredicate
+	action    ruleAction
+	flags     ruleFlags
 }
 
-func (r Rule) Action() RuleAction {
+func (r ruleImpl) Action() ruleAction {
 	return r.action
 }
 
-func (r Rule) Context() []ContextPredicate {
+func (r ruleImpl) Context() []contextPredicate {
 	return r.context
 }
 
-func (r Rule) Flags() RuleFlags {
+func (r ruleImpl) Flags() ruleFlags {
 	return r.flags
 }
 
-func (r Rule) String() string {
+func (r ruleImpl) String() string {
 	return r.debugName
 }
 
@@ -33,7 +33,7 @@ type tokenRange struct {
 type ruleSpec struct {
 	leftTokenRange  tokenRange
 	rightTokenRange tokenRange
-	rule            *Rule
+	rule            *ruleImpl
 }
 
 /**
@@ -48,14 +48,14 @@ type ruleSpec struct {
  * @param action a declaration of the expected whitespace
  * @param flags whether the rule deletes a line or not, defaults to no-op
  */
-func rule(debugName string, left any, right any, context []ContextPredicate, action RuleAction, flags ...RuleFlags) ruleSpec {
-	flag := RuleFlagsNone
+func rule(debugName string, left any, right any, context []contextPredicate, action ruleAction, flags ...ruleFlags) ruleSpec {
+	flag := ruleFlagsNone
 	if len(flags) > 0 {
 		flag = flags[0]
 	}
 	leftRange := toTokenRange(left)
 	rightRange := toTokenRange(right)
-	rule := &Rule{
+	rule := &ruleImpl{
 		debugName: debugName,
 		context:   context,
 		action:    action,
@@ -80,30 +80,30 @@ func toTokenRange(e any) tokenRange {
 	panic("Unknown argument type passed to toTokenRange - only ast.Kind, []ast.Kind, and tokenRange supported")
 }
 
-type ContextPredicate = func(ctx *formattingContext) bool
+type contextPredicate = func(ctx *formattingContext) bool
 
-var anyContext = []ContextPredicate{}
+var anyContext = []contextPredicate{}
 
-type RuleAction int
+type ruleAction int
 
 const (
-	RuleActionNone                       RuleAction = 0
-	RuleActionStopProcessingSpaceActions RuleAction = 1 << 0
-	RuleActionStopProcessingTokenActions RuleAction = 1 << 1
-	RuleActionInsertSpace                RuleAction = 1 << 2
-	RuleActionInsertNewLine              RuleAction = 1 << 3
-	RuleActionDeleteSpace                RuleAction = 1 << 4
-	RuleActionDeleteToken                RuleAction = 1 << 5
-	RuleActionInsertTrailingSemicolon    RuleAction = 1 << 6
+	ruleActionNone                       ruleAction = 0
+	ruleActionStopProcessingSpaceActions ruleAction = 1 << 0
+	ruleActionStopProcessingTokenActions ruleAction = 1 << 1
+	ruleActionInsertSpace                ruleAction = 1 << 2
+	ruleActionInsertNewLine              ruleAction = 1 << 3
+	ruleActionDeleteSpace                ruleAction = 1 << 4
+	ruleActionDeleteToken                ruleAction = 1 << 5
+	ruleActionInsertTrailingSemicolon    ruleAction = 1 << 6
 
-	RuleActionStopAction        RuleAction = RuleActionStopProcessingSpaceActions | RuleActionStopProcessingTokenActions
-	RuleActionModifySpaceAction RuleAction = RuleActionInsertSpace | RuleActionInsertNewLine | RuleActionDeleteSpace
-	RuleActionModifyTokenAction RuleAction = RuleActionDeleteToken | RuleActionInsertTrailingSemicolon
+	ruleActionStopAction        ruleAction = ruleActionStopProcessingSpaceActions | ruleActionStopProcessingTokenActions
+	ruleActionModifySpaceAction ruleAction = ruleActionInsertSpace | ruleActionInsertNewLine | ruleActionDeleteSpace
+	ruleActionModifyTokenAction ruleAction = ruleActionDeleteToken | ruleActionInsertTrailingSemicolon
 )
 
-type RuleFlags int
+type ruleFlags int
 
 const (
-	RuleFlagsNone RuleFlags = iota
-	RuleFlagsCanDeleteNewLines
+	ruleFlagsNone ruleFlags = iota
+	ruleFlagsCanDeleteNewLines
 )

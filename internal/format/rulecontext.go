@@ -96,7 +96,7 @@ func indentSwitchCaseOption(options *FormatCodeSettings) core.Tristate {
 	return options.IndentSwitchCase
 }
 
-func optionEquals(optionName anyOptionSelector, optionValue any) ContextPredicate {
+func optionEquals(optionName anyOptionSelector, optionValue any) contextPredicate {
 	return func(context *formattingContext) bool {
 		if context.Options == nil {
 			return false
@@ -105,7 +105,7 @@ func optionEquals(optionName anyOptionSelector, optionValue any) ContextPredicat
 	}
 }
 
-func isOptionEnabled(optionName optionSelector) ContextPredicate {
+func isOptionEnabled(optionName optionSelector) contextPredicate {
 	return func(context *formattingContext) bool {
 		if context.Options == nil {
 			return false
@@ -114,7 +114,7 @@ func isOptionEnabled(optionName optionSelector) ContextPredicate {
 	}
 }
 
-func isOptionDisabled(optionName optionSelector) ContextPredicate {
+func isOptionDisabled(optionName optionSelector) contextPredicate {
 	return func(context *formattingContext) bool {
 		if context.Options == nil {
 			return true
@@ -123,7 +123,7 @@ func isOptionDisabled(optionName optionSelector) ContextPredicate {
 	}
 }
 
-func isOptionDisabledOrUndefined(optionName optionSelector) ContextPredicate {
+func isOptionDisabledOrUndefined(optionName optionSelector) contextPredicate {
 	return func(context *formattingContext) bool {
 		if context.Options == nil {
 			return true
@@ -132,7 +132,7 @@ func isOptionDisabledOrUndefined(optionName optionSelector) ContextPredicate {
 	}
 }
 
-func isOptionDisabledOrUndefinedOrTokensOnSameLine(optionName optionSelector) ContextPredicate {
+func isOptionDisabledOrUndefinedOrTokensOnSameLine(optionName optionSelector) contextPredicate {
 	return func(context *formattingContext) bool {
 		if context.Options == nil {
 			return true
@@ -141,7 +141,7 @@ func isOptionDisabledOrUndefinedOrTokensOnSameLine(optionName optionSelector) Co
 	}
 }
 
-func isOptionEnabledOrUndefined(optionName optionSelector) ContextPredicate {
+func isOptionEnabledOrUndefined(optionName optionSelector) contextPredicate {
 	return func(context *formattingContext) bool {
 		if context.Options == nil {
 			return true

@@ -8,11 +8,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
-func getRules(context *formattingContext) []*Rule {
+func getRules(context *formattingContext) []*ruleImpl {
 	bucket := getRulesMap()[getRuleBucketIndex(context.currentTokenSpan.Kind, context.nextTokenSpan.Kind)]
 	if len(bucket) > 0 {
-		var rules []*Rule
-		ruleActionMask := RuleActionNone
+		var rules []*ruleImpl
+		ruleActionMask := ruleActionNone
 		for _, rule := range bucket {
 			acceptRuleActions := ^getRuleActionExclusion(ruleActionMask)
 			if rule.Action()&acceptRuleActions != 0 && core.Every(rule.Context(), func(cb func(ctx *formattingContext) bool) bool { return cb(context) }) {
@@ -40,29 +40,29 @@ const (
  * For a given rule action, gets a mask of other rule actions that
  * cannot be applied at the same position.
  */
-func getRuleActionExclusion(ruleAction RuleAction) RuleAction {
-	mask := RuleActionNone
-	if ruleAction&RuleActionStopProcessingSpaceActions != 0 {
-		mask |= RuleActionModifySpaceAction
+func getRuleActionExclusion(ruleAction ruleAction) ruleAction {
+	mask := ruleActionNone
+	if ruleAction&ruleActionStopProcessingSpaceActions != 0 {
+		mask |= ruleActionModifySpaceAction
 	}
-	if ruleAction&RuleActionStopProcessingTokenActions != 0 {
-		mask |= RuleActionModifyTokenAction
+	if ruleAction&ruleActionStopProcessingTokenActions != 0 {
+		mask |= ruleActionModifyTokenAction
 	}
-	if ruleAction&RuleActionModifySpaceAction != 0 {
-		mask |= RuleActionModifySpaceAction
+	if ruleAction&ruleActionModifySpaceAction != 0 {
+		mask |= ruleActionModifySpaceAction
 	}
-	if ruleAction&RuleActionModifyTokenAction != 0 {
-		mask |= RuleActionModifyTokenAction
+	if ruleAction&ruleActionModifyTokenAction != 0 {
+		mask |= ruleActionModifyTokenAction
 	}
 	return mask
 }
 
 var getRulesMap = sync.OnceValue(buildRulesMap)
 
-func buildRulesMap() [][]*Rule {
+func buildRulesMap() [][]*ruleImpl {
 	rules := getAllRules()
 	// Map from bucket index to array of rules
-	m := make([][]*Rule, mapRowLength*mapRowLength)
+	m := make([][]*ruleImpl, mapRowLength*mapRowLength)
 	// This array is used only during construction of the rulesbucket in the map
 	rulesBucketConstructionStateList := make([]int, len(m))
 	for _, rule := range rules {
@@ -105,9 +105,9 @@ const (
 // Example:
 // In order to insert a rule to the end of sub-bucket (3), we get the index by adding
 // the values in the bitmap segments 3rd, 2nd, and 1st.
-func addRule(rules []*Rule, rule *Rule, specificTokens bool, constructionState []int, rulesBucketIndex int) []*Rule {
+func addRule(rules []*ruleImpl, rule *ruleImpl, specificTokens bool, constructionState []int, rulesBucketIndex int) []*ruleImpl {
 	var position RulesPosition
-	if rule.Action()&RuleActionStopAction != 0 {
+	if rule.Action()&ruleActionStopAction != 0 {
 		if specificTokens {
 			position = RulesPositionStopRulesSpecific
 		} else {
