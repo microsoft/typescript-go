@@ -169,6 +169,12 @@ type formatSpanWorker struct {
 	childContextNode              *ast.Node
 	lastIndentedLine              int
 	indentationOnLastIndentedLine int
+
+	visitor                          *ast.NodeVisitor
+	visitingNode                     *ast.Node
+	visitingIndenter                 *dynamicIndenter
+	visitingNodeStartLine            int
+	visitingUndecoratedNodeStartLine int
 }
 
 func newFormatSpanWorker(
@@ -213,6 +219,21 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	opt := GetFormatCodeSettingsFromContext(w.ctx)
 	w.formattingContext = NewFormattingContext(w.sourceFile, w.requestKind, opt)
 	// formatting context is used by rules provider
+	w.visitor = ast.NewNodeVisitor(func(child *ast.Node) *ast.Node {
+		if child == nil {
+			return child
+		}
+		w.processChildNode(w.visitingNode, w.visitingIndenter, w.visitingNodeStartLine, w.visitingUndecoratedNodeStartLine, child, -1, w.visitingNode, w.visitingIndenter, w.visitingNodeStartLine, w.visitingUndecoratedNodeStartLine, false, false)
+		return child
+	}, &ast.NodeFactory{}, ast.NodeVisitorHooks{
+		VisitNodes: func(nodes *ast.NodeList, v *ast.NodeVisitor) *ast.NodeList {
+			if nodes == nil {
+				return nodes
+			}
+			w.processChildNodes(w.visitingNode, w.visitingIndenter, w.visitingNodeStartLine, w.visitingUndecoratedNodeStartLine, nodes, w.visitingNode, w.visitingNodeStartLine, w.visitingIndenter)
+			return nodes
+		},
+	})
 
 	w.formattingScanner.advance()
 
@@ -297,202 +318,208 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	return w.edits
 }
 
-func (w *formatSpanWorker) getProcessNodeVisitor(node *ast.Node, indenter *dynamicIndenter, nodeStartLine int, undecoratedNodeStartLine int) *ast.NodeVisitor {
-	processChildNode := func(
-		child *ast.Node,
-		inheritedIndentation int,
-		parent *ast.Node,
-		parentDynamicIndentation *dynamicIndenter,
-		parentStartLine int,
-		undecoratedParentStartLine int,
-		isListItem bool,
-		isFirstListItem bool,
-	) int {
-		// Debug.assert(!nodeIsSynthesized(child)); // !!!
+func (w *formatSpanWorker) processChildNode(
+	node *ast.Node,
+	indenter *dynamicIndenter,
+	nodeStartLine int,
+	undecoratedNodeStartLine int,
+	child *ast.Node,
+	inheritedIndentation int,
+	parent *ast.Node,
+	parentDynamicIndentation *dynamicIndenter,
+	parentStartLine int,
+	undecoratedParentStartLine int,
+	isListItem bool,
+	isFirstListItem bool,
+) int {
+	// Debug.assert(!nodeIsSynthesized(child)); // !!!
 
-		if ast.NodeIsMissing(child) || isGrammarError(parent, child) {
-			return inheritedIndentation
-		}
-
-		childStartPos := scanner.GetTokenPosOfNode(child, w.sourceFile, false)
-		childStartLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, childStartPos)
-
-		undecoratedChildStartLine := childStartLine
-		if ast.HasDecorators(child) {
-			undecoratedChildStartLine, _ = scanner.GetLineAndCharacterOfPosition(w.sourceFile, getNonDecoratorTokenPosOfNode(child, w.sourceFile))
-		}
-
-		// if child is a list item - try to get its indentation, only if parent is within the original range.
-		childIndentationAmount := -1
-
-		if isListItem && parent.Loc.ContainedBy(w.originalRange) {
-			childIndentationAmount = w.tryComputeIndentationForListItem(childStartPos, child.End(), parentStartLine, w.originalRange, inheritedIndentation)
-			if childIndentationAmount != -1 {
-				inheritedIndentation = childIndentationAmount
-			}
-		}
-
-		// child node is outside the target range - do not dive inside
-		if !w.originalRange.Overlaps(child.Loc) {
-			if child.End() < w.originalRange.Pos() {
-				w.formattingScanner.skipToEndOf(&child.Loc)
-			}
-			return inheritedIndentation
-		}
-
-		if child.Loc.Len() == 0 {
-			return inheritedIndentation
-		}
-
-		for w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
-			// proceed any parent tokens that are located prior to child.getStart()
-			tokenInfo := w.formattingScanner.readTokenInfo(node)
-			if tokenInfo.token.Loc.End() > w.originalRange.End() {
-				return inheritedIndentation
-			}
-			if tokenInfo.token.Loc.End() > childStartPos {
-				if tokenInfo.token.Loc.Pos() > childStartPos {
-					w.formattingScanner.skipToStartOf(&child.Loc)
-				}
-				// stop when formatting scanner advances past the beginning of the child
-				break
-			}
-
-			w.consumeTokenAndAdvanceScanner(tokenInfo, node, parentDynamicIndentation, node, false)
-		}
-
-		if !w.formattingScanner.isOnToken() || w.formattingScanner.getTokenFullStart() >= w.originalRange.End() {
-			return inheritedIndentation
-		}
-
-		if ast.IsTokenKind(child.Kind) {
-			// if child node is a token, it does not impact indentation, proceed it using parent indentation scope rules
-			tokenInfo := w.formattingScanner.readTokenInfo(child)
-			// JSX text shouldn't affect indenting
-			if child.Kind != ast.KindJsxText {
-				// Debug.assert(tokenInfo.token.end === child.end, "Token end is child end"); // !!!
-				w.consumeTokenAndAdvanceScanner(tokenInfo, node, parentDynamicIndentation, child, false)
-				return inheritedIndentation
-			}
-		}
-
-		effectiveParentStartLine := undecoratedParentStartLine
-		if child.Kind == ast.KindDecorator {
-			effectiveParentStartLine = childStartLine
-		}
-		childIndentation, delta := w.computeIndentation(child, childStartLine, childIndentationAmount, node, parentDynamicIndentation, effectiveParentStartLine)
-
-		w.processNode(child, w.childContextNode, childStartLine, undecoratedChildStartLine, childIndentation, delta)
-
-		w.childContextNode = node
-
-		if isFirstListItem && parent.Kind == ast.KindArrayLiteralExpression && inheritedIndentation == -1 {
-			inheritedIndentation = childIndentation
-		}
-
+	if ast.NodeIsMissing(child) || isGrammarError(parent, child) {
 		return inheritedIndentation
 	}
 
-	processChildNodes := func(
-		nodes *ast.NodeList,
-		parent *ast.Node,
-		parentStartLine int,
-		parentDynamicIndentation *dynamicIndenter,
-	) {
-		// Debug.assert(isNodeArray(nodes)); // !!!
-		// Debug.assert(!nodeIsSynthesized(nodes)); // !!!
+	childStartPos := scanner.GetTokenPosOfNode(child, w.sourceFile, false)
+	childStartLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, childStartPos)
 
-		listStartToken := getOpenTokenForList(parent, nodes)
+	undecoratedChildStartLine := childStartLine
+	if ast.HasDecorators(child) {
+		undecoratedChildStartLine, _ = scanner.GetLineAndCharacterOfPosition(w.sourceFile, getNonDecoratorTokenPosOfNode(child, w.sourceFile))
+	}
 
-		listDynamicIndentation := parentDynamicIndentation
-		startLine := parentStartLine
+	// if child is a list item - try to get its indentation, only if parent is within the original range.
+	childIndentationAmount := -1
 
-		// node range is outside the target range - do not dive inside
-		if !w.originalRange.Overlaps(nodes.Loc) {
-			if nodes.End() < w.originalRange.Pos() {
-				w.formattingScanner.skipToEndOf(&nodes.Loc)
+	if isListItem && parent.Loc.ContainedBy(w.originalRange) {
+		childIndentationAmount = w.tryComputeIndentationForListItem(childStartPos, child.End(), parentStartLine, w.originalRange, inheritedIndentation)
+		if childIndentationAmount != -1 {
+			inheritedIndentation = childIndentationAmount
+		}
+	}
+
+	// child node is outside the target range - do not dive inside
+	if !w.originalRange.Overlaps(child.Loc) {
+		if child.End() < w.originalRange.Pos() {
+			w.formattingScanner.skipToEndOf(&child.Loc)
+		}
+		return inheritedIndentation
+	}
+
+	if child.Loc.Len() == 0 {
+		return inheritedIndentation
+	}
+
+	for w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
+		// proceed any parent tokens that are located prior to child.getStart()
+		tokenInfo := w.formattingScanner.readTokenInfo(node)
+		if tokenInfo.token.Loc.End() > w.originalRange.End() {
+			return inheritedIndentation
+		}
+		if tokenInfo.token.Loc.End() > childStartPos {
+			if tokenInfo.token.Loc.Pos() > childStartPos {
+				w.formattingScanner.skipToStartOf(&child.Loc)
 			}
-			return
+			// stop when formatting scanner advances past the beginning of the child
+			break
 		}
 
-		if listStartToken != -1 {
-			// introduce a new indentation scope for lists (including list start and end tokens)
-			for w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
-				tokenInfo := w.formattingScanner.readTokenInfo(parent)
-				if tokenInfo.token.Loc.End() > nodes.Pos() {
-					// stop when formatting scanner moves past the beginning of node list
-					break
-				} else if tokenInfo.token.Kind == listStartToken {
-					// consume list start token
-					startLine, _ = scanner.GetLineAndCharacterOfPosition(w.sourceFile, tokenInfo.token.Loc.Pos())
+		w.consumeTokenAndAdvanceScanner(tokenInfo, node, parentDynamicIndentation, node, false)
+	}
 
-					w.consumeTokenAndAdvanceScanner(tokenInfo, parent, parentDynamicIndentation, parent, false)
+	if !w.formattingScanner.isOnToken() || w.formattingScanner.getTokenFullStart() >= w.originalRange.End() {
+		return inheritedIndentation
+	}
 
-					indentationOnListStartToken := 0
-					if w.indentationOnLastIndentedLine != -1 {
-						// scanner just processed list start token so consider last indentation as list indentation
-						// function foo(): { // last indentation was 0, list item will be indented based on this value
-						//   foo: number;
-						// }: {};
-						indentationOnListStartToken = w.indentationOnLastIndentedLine
-					} else {
-						startLinePosition := getLineStartPositionForPosition(tokenInfo.token.Loc.Pos(), w.sourceFile)
-						indentationOnListStartToken = findFirstNonWhitespaceColumn(startLinePosition, tokenInfo.token.Loc.Pos(), w.sourceFile, w.formattingContext.Options)
-					}
-
-					listDynamicIndentation = w.getDynamicIndentation(parent, parentStartLine, indentationOnListStartToken, w.formattingContext.Options.IndentSize)
-				} else {
-					// consume any tokens that precede the list as child elements of 'node' using its indentation scope
-					w.consumeTokenAndAdvanceScanner(tokenInfo, parent, parentDynamicIndentation, parent, false)
-				}
-			}
+	if ast.IsTokenKind(child.Kind) {
+		// if child node is a token, it does not impact indentation, proceed it using parent indentation scope rules
+		tokenInfo := w.formattingScanner.readTokenInfo(child)
+		// JSX text shouldn't affect indenting
+		if child.Kind != ast.KindJsxText {
+			// Debug.assert(tokenInfo.token.end === child.end, "Token end is child end"); // !!!
+			w.consumeTokenAndAdvanceScanner(tokenInfo, node, parentDynamicIndentation, child, false)
+			return inheritedIndentation
 		}
+	}
 
-		inheritedIndentation := -1
-		for i := range len(nodes.Nodes) {
-			child := nodes.Nodes[i]
-			inheritedIndentation = processChildNode(child, inheritedIndentation, node, listDynamicIndentation, startLine, startLine, true, i == 0)
+	effectiveParentStartLine := undecoratedParentStartLine
+	if child.Kind == ast.KindDecorator {
+		effectiveParentStartLine = childStartLine
+	}
+	childIndentation, delta := w.computeIndentation(child, childStartLine, childIndentationAmount, node, parentDynamicIndentation, effectiveParentStartLine)
+
+	w.processNode(child, w.childContextNode, childStartLine, undecoratedChildStartLine, childIndentation, delta)
+
+	w.childContextNode = node
+
+	if isFirstListItem && parent.Kind == ast.KindArrayLiteralExpression && inheritedIndentation == -1 {
+		inheritedIndentation = childIndentation
+	}
+
+	return inheritedIndentation
+}
+
+func (w *formatSpanWorker) processChildNodes(
+	node *ast.Node,
+	indenter *dynamicIndenter,
+	nodeStartLine int,
+	undecoratedNodeStartLine int,
+	nodes *ast.NodeList,
+	parent *ast.Node,
+	parentStartLine int,
+	parentDynamicIndentation *dynamicIndenter,
+) {
+	// Debug.assert(isNodeArray(nodes)); // !!!
+	// Debug.assert(!nodeIsSynthesized(nodes)); // !!!
+
+	listStartToken := getOpenTokenForList(parent, nodes)
+
+	listDynamicIndentation := parentDynamicIndentation
+	startLine := parentStartLine
+
+	// node range is outside the target range - do not dive inside
+	if !w.originalRange.Overlaps(nodes.Loc) {
+		if nodes.End() < w.originalRange.Pos() {
+			w.formattingScanner.skipToEndOf(&nodes.Loc)
 		}
+		return
+	}
 
-		listEndToken := getCloseTokenForOpenToken(listStartToken)
-		if listEndToken != ast.KindUnknown && w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
+	if listStartToken != -1 {
+		// introduce a new indentation scope for lists (including list start and end tokens)
+		for w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
 			tokenInfo := w.formattingScanner.readTokenInfo(parent)
-			if tokenInfo.token.Kind == ast.KindCommaToken {
-				// consume the comma
-				w.consumeTokenAndAdvanceScanner(tokenInfo, parent, listDynamicIndentation, parent, false)
-				if w.formattingScanner.isOnToken() {
-					tokenInfo = w.formattingScanner.readTokenInfo(parent)
-				} else {
-					tokenInfo = nil
-				}
-			}
+			if tokenInfo.token.Loc.End() > nodes.Pos() {
+				// stop when formatting scanner moves past the beginning of node list
+				break
+			} else if tokenInfo.token.Kind == listStartToken {
+				// consume list start token
+				startLine, _ = scanner.GetLineAndCharacterOfPosition(w.sourceFile, tokenInfo.token.Loc.Pos())
 
-			// consume the list end token only if it is still belong to the parent
-			// there might be the case when current token matches end token but does not considered as one
-			// function (x: function) <--
-			// without this check close paren will be interpreted as list end token for function expression which is wrong
-			if tokenInfo != nil && tokenInfo.token.Kind == listEndToken && tokenInfo.token.Loc.ContainedBy(parent.Loc) {
-				// consume list end token
-				w.consumeTokenAndAdvanceScanner(tokenInfo, parent, listDynamicIndentation, parent /*isListEndToken*/, true)
+				w.consumeTokenAndAdvanceScanner(tokenInfo, parent, parentDynamicIndentation, parent, false)
+
+				indentationOnListStartToken := 0
+				if w.indentationOnLastIndentedLine != -1 {
+					// scanner just processed list start token so consider last indentation as list indentation
+					// function foo(): { // last indentation was 0, list item will be indented based on this value
+					//   foo: number;
+					// }: {};
+					indentationOnListStartToken = w.indentationOnLastIndentedLine
+				} else {
+					startLinePosition := getLineStartPositionForPosition(tokenInfo.token.Loc.Pos(), w.sourceFile)
+					indentationOnListStartToken = findFirstNonWhitespaceColumn(startLinePosition, tokenInfo.token.Loc.Pos(), w.sourceFile, w.formattingContext.Options)
+				}
+
+				listDynamicIndentation = w.getDynamicIndentation(parent, parentStartLine, indentationOnListStartToken, w.formattingContext.Options.IndentSize)
+			} else {
+				// consume any tokens that precede the list as child elements of 'node' using its indentation scope
+				w.consumeTokenAndAdvanceScanner(tokenInfo, parent, parentDynamicIndentation, parent, false)
 			}
 		}
 	}
 
-	return ast.NewNodeVisitor(func(child *ast.Node) *ast.Node {
-		if child == nil {
-			return child
-		}
-		processChildNode(child, -1, node, indenter, nodeStartLine, undecoratedNodeStartLine, false, false)
-		return node
-	}, &ast.NodeFactory{}, ast.NodeVisitorHooks{
-		VisitNodes: func(nodes *ast.NodeList, v *ast.NodeVisitor) *ast.NodeList {
-			if nodes == nil {
-				return nodes
+	inheritedIndentation := -1
+	for i := range len(nodes.Nodes) {
+		child := nodes.Nodes[i]
+		inheritedIndentation = w.processChildNode(node, indenter, nodeStartLine, undecoratedNodeStartLine, child, inheritedIndentation, node, listDynamicIndentation, startLine, startLine, true, i == 0)
+	}
+
+	listEndToken := getCloseTokenForOpenToken(listStartToken)
+	if listEndToken != ast.KindUnknown && w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
+		tokenInfo := w.formattingScanner.readTokenInfo(parent)
+		if tokenInfo.token.Kind == ast.KindCommaToken {
+			// consume the comma
+			w.consumeTokenAndAdvanceScanner(tokenInfo, parent, listDynamicIndentation, parent, false)
+			if w.formattingScanner.isOnToken() {
+				tokenInfo = w.formattingScanner.readTokenInfo(parent)
+			} else {
+				tokenInfo = nil
 			}
-			processChildNodes(nodes, node, nodeStartLine, indenter)
-			return nodes
-		},
-	})
+		}
+
+		// consume the list end token only if it is still belong to the parent
+		// there might be the case when current token matches end token but does not considered as one
+		// function (x: function) <--
+		// without this check close paren will be interpreted as list end token for function expression which is wrong
+		if tokenInfo != nil && tokenInfo.token.Kind == listEndToken && tokenInfo.token.Loc.ContainedBy(parent.Loc) {
+			// consume list end token
+			w.consumeTokenAndAdvanceScanner(tokenInfo, parent, listDynamicIndentation, parent /*isListEndToken*/, true)
+		}
+	}
+}
+
+func (w *formatSpanWorker) executeProcessNodeVisitor(node *ast.Node, indenter *dynamicIndenter, nodeStartLine int, undecoratedNodeStartLine int) {
+	oldNode := w.visitingNode
+	oldIndenter := w.visitingIndenter
+	oldStart := w.visitingNodeStartLine
+	oldUndecoratedStart := w.visitingUndecoratedNodeStartLine
+	w.visitingNode = node
+	w.visitingIndenter = indenter
+	w.visitingNodeStartLine = nodeStartLine
+	w.visitingUndecoratedNodeStartLine = undecoratedNodeStartLine
+	node.VisitEachChild(w.visitor)
+	w.visitingNode = oldNode
+	w.visitingIndenter = oldIndenter
+	w.visitingNodeStartLine = oldStart
+	w.visitingUndecoratedNodeStartLine = oldUndecoratedStart
 }
 
 func (w *formatSpanWorker) computeIndentation(node *ast.Node, startLine int, inheritedIndentation int, parent *ast.Node, parentDynamicIndentation *dynamicIndenter, effectiveParentStartLine int) (indentation int, delta int) {
@@ -581,8 +608,7 @@ func (w *formatSpanWorker) processNode(node *ast.Node, contextNode *ast.Node, no
 
 	// if there are any tokens that logically belong to node and interleave child nodes
 	// such tokens will be consumed in processChildNode for the child that follows them
-	v := w.getProcessNodeVisitor(node, nodeDynamicIndentation, nodeStartLine, undecoratedNodeStartLine)
-	node.VisitEachChild(v)
+	w.executeProcessNodeVisitor(node, nodeDynamicIndentation, nodeStartLine, undecoratedNodeStartLine)
 
 	// proceed any tokens in the node that are located after child nodes
 	for w.formattingScanner.isOnToken() && w.formattingScanner.getTokenFullStart() < w.originalRange.End() {
