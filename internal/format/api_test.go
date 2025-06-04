@@ -1,7 +1,6 @@
 package format_test
 
 import (
-	"context"
 	"os"
 	"path/filepath"
 	"testing"
@@ -20,7 +19,8 @@ func TestFormat(t *testing.T) {
 	t.Parallel()
 
 	t.Run("format checker.ts", func(t *testing.T) {
-		ctx := format.NewContext(context.Background(), &format.FormatCodeSettings{
+		t.Parallel()
+		ctx := format.NewContext(t.Context(), &format.FormatCodeSettings{
 			EditorSettings: format.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
@@ -57,7 +57,7 @@ func TestFormat(t *testing.T) {
 }
 
 func BenchmarkFormat(b *testing.B) {
-	ctx := format.NewContext(context.Background(), &format.FormatCodeSettings{
+	ctx := format.NewContext(b.Context(), &format.FormatCodeSettings{
 		EditorSettings: format.EditorSettings{
 			TabSize:                4,
 			IndentSize:             4,
