@@ -194,6 +194,7 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 		kind:             kind,
 		currentDirectory: currentDirectory,
 		rootFileNames:    &collections.OrderedMap[tspath.Path, string]{},
+		dirty:            true,
 	}
 	project.comparePathsOptions = tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
@@ -490,7 +491,9 @@ func (p *Project) updateGraph() bool {
 			p.programConfig = nil
 			p.pendingReload = PendingReloadNone
 		case PendingReloadFull:
-			if err := p.loadConfig(); err != nil {
+			var err error
+			writeFileNames, err = p.LoadConfig()
+			if err != nil {
 				panic(fmt.Sprintf("failed to reload config: %v", err))
 			}
 		}
@@ -865,15 +868,7 @@ func (p *Project) AddInferredProjectRoot(info *ScriptInfo) {
 	p.markAsDirtyLocked()
 }
 
-func (p *Project) LoadConfig() error {
-	if err := p.loadConfig(); err != nil {
-		return err
-	}
-	p.markAsDirty()
-	return nil
-}
-
-func (p *Project) loadConfig() error {
+func (p *Project) LoadConfig() (bool, error) {
 	if p.kind != KindConfigured {
 		panic("loadConfig called on non-configured project")
 	}
@@ -906,13 +901,12 @@ func (p *Project) loadConfig() error {
 		p.parsedCommandLine = parsedCommandLine
 		p.compilerOptions = parsedCommandLine.CompilerOptions()
 		p.typeAcquisition = parsedCommandLine.TypeAcquisition()
-		p.setRootFiles(parsedCommandLine.FileNames())
+		return p.setRootFiles(parsedCommandLine.FileNames()), nil
 	} else {
 		p.compilerOptions = &core.CompilerOptions{}
 		p.typeAcquisition = nil
-		return fmt.Errorf("could not read file %q", p.configFileName)
+		return false, fmt.Errorf("could not read file %q", p.configFileName)
 	}
-	return nil
 }
 
 // setRootFiles returns true if the set of root files has changed.

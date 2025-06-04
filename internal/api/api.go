@@ -220,7 +220,7 @@ func (api *API) LoadProject(configFileName string) (*ProjectResponse, error) {
 	configFileName = api.toAbsoluteFileName(configFileName)
 	configFilePath := api.toPath(configFileName)
 	p := project.NewConfiguredProject(configFileName, configFilePath, api)
-	if err := p.LoadConfig(); err != nil {
+	if _, err := p.LoadConfig(); err != nil {
 		return nil, err
 	}
 	p.GetProgram()
