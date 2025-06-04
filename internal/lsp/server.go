@@ -594,6 +594,14 @@ func (s *Server) handleReferences(ctx context.Context, req *lsproto.RequestMessa
 	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
+	// !!! remove this after find all references is fully ported/tested
+	defer func() {
+		if r := recover(); r != nil {
+			stack := debug.Stack()
+			s.Log("panic obtaining references:", r, string(stack))
+			s.sendResult(req.ID, []*lsproto.Location{})
+		}
+	}()
 
 	locations := languageService.ProvideReferences(params)
 	s.sendResult(req.ID, locations)

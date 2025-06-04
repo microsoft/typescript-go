@@ -345,7 +345,7 @@ func getSymbolScope(symbol *ast.Symbol) *ast.Node {
 			return checker.HasModifier(d, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(d)
 		})
 		if privateDeclaration != nil {
-			return checker.GetAncestor(privateDeclaration, ast.KindClassDeclaration)
+			return ast.FindAncestorKind(privateDeclaration, ast.KindClassDeclaration)
 		}
 		// Else this is a public property and could be accessed from anywhere.
 		return nil

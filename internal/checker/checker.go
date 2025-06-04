@@ -1830,12 +1830,12 @@ func (c *Checker) isBlockScopedNameDeclaredBeforeUse(declaration *ast.Node, usag
 		switch {
 		case declaration.Kind == ast.KindBindingElement:
 			// still might be illegal if declaration and usage are both binding elements (eg var [a = b, b = b] = [1, 2])
-			errorBindingElement := GetAncestor(usage, ast.KindBindingElement)
+			errorBindingElement := ast.FindAncestorKind(usage, ast.KindBindingElement)
 			if errorBindingElement != nil {
 				return ast.FindAncestor(errorBindingElement, ast.IsBindingElement) != ast.FindAncestor(declaration, ast.IsBindingElement) || declaration.Pos() < errorBindingElement.Pos()
 			}
 			// or it might be illegal if usage happens before parent variable is declared (eg var [a] = a)
-			return c.isBlockScopedNameDeclaredBeforeUse(GetAncestor(declaration, ast.KindVariableDeclaration), usage)
+			return c.isBlockScopedNameDeclaredBeforeUse(ast.FindAncestorKind(declaration, ast.KindVariableDeclaration), usage)
 		case declaration.Kind == ast.KindVariableDeclaration:
 			// still might be illegal if usage is in the initializer of the variable declaration (eg var a = a)
 			return !isImmediatelyUsedInInitializerOfBlockScopedVariable(declaration, usage, declContainer)
@@ -5631,7 +5631,7 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 		localDeclarationSymbol := c.resolveName(node, name.Text(), ast.SymbolFlagsVariable, nil /*nameNotFoundMessage*/, false /*isUse*/, false)
 		if localDeclarationSymbol != nil && localDeclarationSymbol != symbol && localDeclarationSymbol.Flags&ast.SymbolFlagsBlockScopedVariable != 0 {
 			if c.getDeclarationNodeFlagsFromSymbol(localDeclarationSymbol)&ast.NodeFlagsBlockScoped != 0 {
-				varDeclList := GetAncestor(localDeclarationSymbol.ValueDeclaration, ast.KindVariableDeclarationList)
+				varDeclList := ast.FindAncestorKind(localDeclarationSymbol.ValueDeclaration, ast.KindVariableDeclarationList)
 				var container *ast.Node
 				if ast.IsVariableStatement(varDeclList.Parent) && varDeclList.Parent.Parent != nil {
 					container = varDeclList.Parent.Parent
@@ -29926,7 +29926,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	} else if ast.IsEntityName(name) && isInRightSideOfImportOrExportAssignment(name) {
 		// Since we already checked for ExportAssignment, this really could only be an Import
-		importEqualsDeclaration := GetAncestor(name, ast.KindImportEqualsDeclaration)
+		importEqualsDeclaration := ast.FindAncestorKind(name, ast.KindImportEqualsDeclaration)
 		if importEqualsDeclaration == nil {
 			panic("ImportEqualsDeclaration should be defined")
 		}

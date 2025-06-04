@@ -1202,13 +1202,6 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 	}) != nil
 }
 
-func GetAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
-	for node != nil && node.Kind != kind {
-		node = node.Parent
-	}
-	return node
-}
-
 func isLiteralExpressionOfObject(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression, ast.KindRegularExpressionLiteral,
