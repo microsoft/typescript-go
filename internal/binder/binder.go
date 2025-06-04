@@ -581,7 +581,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	node.Parent = b.parent
+	if node.Parent == nil || node.Parent.Flags&ast.NodeFlagsReparsed != 0 {
+		node.Parent = b.parent
+	}
 	saveInStrictMode := b.inStrictMode
 	// Even though in the AST the jsdoc @typedef node belongs to the current node,
 	// its symbol might be in the same scope with the current node's symbol. Consider:
@@ -1560,8 +1562,8 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	// and set it before we descend into nodes that could actually be part of an assignment pattern.
 	b.inAssignmentPattern = false
 	if b.checkUnreachable(node) {
-		b.bindEachChild(node)
 		b.setJSDocParents(node)
+		b.bindEachChild(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
 		return
 	}
@@ -1572,6 +1574,7 @@ func (b *Binder) bindChildren(node *ast.Node) {
 			hasFlowNodeData.FlowNode = b.currentFlow
 		}
 	}
+	b.setJSDocParents(node)
 	switch node.Kind {
 	case ast.KindWhileStatement:
 		b.bindWhileStatement(node)
@@ -1651,7 +1654,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	default:
 		b.bindEachChild(node)
 	}
-	b.setJSDocParents(node)
 	b.inAssignmentPattern = saveInAssignmentPattern
 }
 

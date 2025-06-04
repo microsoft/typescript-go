@@ -90,6 +90,7 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 				importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
 				importDeclaration.Loc = tag.Loc
 				importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				importTag.JSImportDeclaration = importDeclaration.AsImportDeclaration()
 				p.reparseList = append(p.reparseList, importDeclaration)
 			case ast.KindJSDocOverloadTag:
 				if fun, ok := getFunctionLikeHost(parent); ok {
@@ -246,7 +247,7 @@ func (p *Parser) gatherTypeParameters(j *ast.Node) *ast.NodeList {
 			end = tag.End()
 
 			constraint := tag.AsJSDocTemplateTag().Constraint
-			for _, tp := range tag.AsJSDocTemplateTag().TypeParameters().Nodes {
+			for _, tp := range tag.TypeParameters() {
 				typeParameter := tp.AsTypeParameter()
 				var reparse *ast.Node
 				if constraint == nil {

@@ -257,3 +257,17 @@ export const useEntries = () => {
         select: (data) => data.slice(0, 10)
     });
 };
+
+
+//// [index.d.mts]
+interface IEntry {
+    API: string;
+    Description: string;
+    Auth: string;
+    HTTPS: boolean;
+    Cors: string;
+    Link: string;
+    Category: string;
+}
+export declare const useEntries: any;
+export {};

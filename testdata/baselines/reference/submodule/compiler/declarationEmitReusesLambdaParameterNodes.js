@@ -12,5 +12,16 @@ export function CustomSelect2<Option,>(x: Props<Option> & {}) {}
 
 
 //// [index.js]
-export const CustomSelect1 = (x) => { };
-export function CustomSelect2(x) { }
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CustomSelect1 = void 0;
+exports.CustomSelect2 = CustomSelect2;
+const CustomSelect1 = (x) => { };
+exports.CustomSelect1 = CustomSelect1;
+function CustomSelect2(x) { }
+
+
+//// [index.d.ts]
+import { Props } from "react-select";
+export declare const CustomSelect1: <Option>(x: Omit<import("react-select").Whatever, "y"> & Partial<import("react-select").Whatever> & Option) => void;
+export declare function CustomSelect2<Option>(x: Props<Option> & {}): void;
