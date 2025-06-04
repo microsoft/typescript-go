@@ -719,7 +719,7 @@ func (s *Service) cleanupConfiguredProjects(openInfo *ScriptInfo, retainedByOpen
 }
 
 func (s *Service) removeProject(project *Project) {
-	s.Log("`remove Project:: " + project.name)
+	s.Log("remove Project:: " + project.name)
 	s.Log(project.print( /*writeProjectFileNames*/ true /*writeFileExplaination*/, true /*writeFileVersionAndText*/, false, &strings.Builder{}))
 
 	switch project.kind {
@@ -936,9 +936,5 @@ func (s *Service) printMemoryUsage() {
 	runtime.GC() // Force garbage collection to get accurate memory stats
 	var memStats runtime.MemStats
 	runtime.ReadMemStats(&memStats)
-
-	s.logf("Alloc: %v KB", memStats.Alloc/1024)
-	s.logf("TotalAlloc: %v KB", memStats.TotalAlloc/1024)
-	s.logf("Sys: %v KB", memStats.Sys/1024)
-	s.logf("NumGC: %v", memStats.NumGC)
+	s.logf("MemoryStats:\n\tAlloc: %v KB\n\tSys: %v KB\n\tNumGC: %v", memStats.Alloc/1024, memStats.Sys/1024, memStats.NumGC)
 }
