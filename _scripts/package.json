@@ -1,11 +1,11 @@
 {
-  "private": true,
-  "name": "scripts",
-  "version": "1.0.0",
-  "description": "Test conversion script",
-  "scripts": {
-    "build": "npx tsc -p .",
-    "runjs": "node dist/convertCompletions.js",
-    "run": "npx tsc -p . && node dist/convertCompletions.js"
-  }
+    "private": true,
+    "name": "scripts",
+    "version": "1.0.0",
+    "description": "Test conversion script",
+    "scripts": {
+        "build": "npx tsc -p .",
+        "runjs": "node dist/convertCompletions.js",
+        "run": "npx tsc -p . && node dist/convertCompletions.js"
+    }
 }

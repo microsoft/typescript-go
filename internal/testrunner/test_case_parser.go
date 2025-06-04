@@ -102,7 +102,6 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	}
 }
 
-// !!! move this to a different package
 // Given a test file containing // @FileName and // @symlink directives,
 // return an array of named units of code to be added to an existing compiler instance,
 // along with a map of symlinks and the current directory.

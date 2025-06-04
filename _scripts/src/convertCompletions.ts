@@ -1,16 +1,16 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import * as ts from 'typescript';
+import * as fs from "fs";
+import * as path from "path";
+import * as ts from "typescript";
 
-const stradaFourslashPath = path.resolve(__dirname, '../', '../', '_submodules', 'TypeScript', 'tests', 'cases', 'fourslash');
+const stradaFourslashPath = path.resolve(__dirname, "../", "../", "_submodules", "TypeScript", "tests", "cases", "fourslash");
 
 let inputFileSet: Set<string> | undefined;
 
-const failingTestsPath = path.join(__dirname, '../', 'failingTests.txt');
-const failingTestsList = fs.readFileSync(failingTestsPath, 'utf-8').split('\n').map(line => line.trim().substring(4)).filter(line => line.length > 0);
+const failingTestsPath = path.join(__dirname, "../", "failingTests.txt");
+const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
 const failingTests = new Set(failingTestsList);
 
-const outputDir = path.join(__dirname, '../', '../', 'internal', 'fourslash', 'tests', 'gen');
+const outputDir = path.join(__dirname, "../", "../", "internal", "fourslash", "tests", "gen");
 
 const unparsedFiles: string[] = [];
 
@@ -18,8 +18,8 @@ function main() {
     const args = process.argv.slice(2);
     const inputFilesPath = args[0];
     if (inputFilesPath) {
-        const inputFiles = fs.readFileSync(inputFilesPath, 'utf-8')
-            .split('\n').map(line => line.trim())
+        const inputFiles = fs.readFileSync(inputFilesPath, "utf-8")
+            .split("\n").map(line => line.trim())
             .filter(line => line.length > 0)
             .map(line => path.basename(line));
         inputFileSet = new Set(inputFiles);
@@ -30,13 +30,13 @@ function main() {
     }
 
     parseTypeScriptFiles(stradaFourslashPath);
-    console.log(unparsedFiles.join('\n'));
+    console.log(unparsedFiles.join("\n"));
 }
 
 function parseTypeScriptFiles(folder: string): void {
     const files = fs.readdirSync(folder);
 
-    files.forEach((file) => {
+    files.forEach(file => {
         const filePath = path.join(folder, file);
         const stat = fs.statSync(filePath);
         if (inputFileSet && !inputFileSet.has(file)) {
@@ -45,13 +45,14 @@ function parseTypeScriptFiles(folder: string): void {
 
         if (stat.isDirectory()) {
             parseTypeScriptFiles(filePath);
-        } else if (file.endsWith('.ts')) {
-            const content = fs.readFileSync(filePath, 'utf-8');
+        }
+        else if (file.endsWith(".ts")) {
+            const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
             if (test) {
-                const testContent = generateGoTest(test)
+                const testContent = generateGoTest(test);
                 const testPath = path.join(outputDir, `${test.name}_test.go`);
-                fs.writeFileSync(testPath, testContent, 'utf-8');
+                fs.writeFileSync(testPath, testContent, "utf-8");
             }
         }
     });
@@ -59,19 +60,20 @@ function parseTypeScriptFiles(folder: string): void {
 
 function parseFileContent(filename: string, content: string): GoTest | undefined {
     console.error(`Parsing file: ${filename}`);
-    const sourceFile = ts.createSourceFile('temp.ts', content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
+    const sourceFile = ts.createSourceFile("temp.ts", content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
     const goTest: GoTest = {
-        name: filename.replace('.ts', ''),
+        name: filename.replace(".ts", ""),
         content: getTestInput(content),
         commands: [],
-    }
+    };
     for (const statement of statements) {
         const result = parseFourslashStatement(statement);
         if (!result) {
             unparsedFiles.push(filename);
             return undefined;
-        } else {
+        }
+        else {
             goTest.commands.push(...result);
         }
     }
@@ -79,12 +81,12 @@ function parseFileContent(filename: string, content: string): GoTest | undefined
 }
 
 function getTestInput(content: string): string {
-    const lines = content.split('\n');
+    const lines = content.split("\n");
     let testInput: string[] = [];
     for (const line of lines) {
         let newLine = "";
-        if (line.startsWith('////')) {
-            const parts = line.substring(4).split('`');
+        if (line.startsWith("////")) {
+            const parts = line.substring(4).split("`");
             for (let i = 0; i < parts.length; i++) {
                 if (i > 0) {
                     newLine += `\` + "\`" + \``;
@@ -92,7 +94,8 @@ function getTestInput(content: string): string {
                 newLine += parts[i];
             }
             testInput.push(newLine);
-        } else if (line.startsWith('// @') || line.startsWith('//@')) {
+        }
+        else if (line.startsWith("// @") || line.startsWith("//@")) {
             testInput.push(line);
         }
         // !!! preserve non-input comments?
@@ -105,7 +108,7 @@ function getTestInput(content: string): string {
             return line;
         });
     }
-    return `\`${testInput.join('\n')}\``;
+    return `\`${testInput.join("\n")}\``;
 }
 
 /**
@@ -116,7 +119,8 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
     if (ts.isVariableStatement(statement)) {
         // variable declarations (for ranges and markers), e.g. `const range = test.ranges()[0];`
         return [];
-    } else if (ts.isExpressionStatement(statement) && ts.isCallExpression(statement.expression)) {
+    }
+    else if (ts.isExpressionStatement(statement) && ts.isCallExpression(statement.expression)) {
         const callExpression = statement.expression;
         if (!ts.isPropertyAccessExpression(callExpression.expression)) {
             console.error(`Expected property access expression, got ${callExpression.expression.getText()}`);
@@ -129,11 +133,11 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
             return undefined;
         }
         // `verify.completions(...)`
-        if (namespace.text === 'verify' && func.text === 'completions') {
+        if (namespace.text === "verify" && func.text === "completions") {
             return parseVerifyCompletionsArgs(callExpression.arguments);
         }
         // `goTo.marker(...)`
-        if (namespace.text === 'goTo' && func.text === 'marker') {
+        if (namespace.text === "goTo" && func.text === "marker") {
             return parseGoToMarkerArgs(callExpression.arguments);
         }
         // !!! other fourslash commands
@@ -190,12 +194,12 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
         const propName = prop.name.text;
         const init = prop.initializer;
         switch (propName) {
-            case 'marker':
+            case "marker":
                 if (ts.isStringLiteral(init)) {
                     marker = getGoStringLiteral(init.text);
                 }
                 else if (ts.isArrayLiteralExpression(init)) {
-                    marker = "[]string{"
+                    marker = "[]string{";
                     for (const elem of init.elements) {
                         if (!ts.isStringLiteral(elem)) {
                             console.error(`Expected string literal in marker array, got ${elem.getText()}`);
@@ -203,14 +207,14 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                         }
                         marker += `${getGoStringLiteral(elem.text)}, `;
                     }
-                    marker += '}';
+                    marker += "}";
                 }
                 else if (ts.isObjectLiteralExpression(init)) {
                     // !!! parse marker objects?
                     console.error(`Unrecognized marker initializer: ${init.getText()}`);
                     return undefined;
                 }
-                else if (init.getText() === 'test.markers()') {
+                else if (init.getText() === "test.markers()") {
                     marker = "f.Markers()";
                 }
                 else {
@@ -218,9 +222,9 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                     return undefined;
                 }
                 break;
-            case 'exact':
-            case 'includes':
-                if (init.getText() === 'undefined') {
+            case "exact":
+            case "includes":
+                if (init.getText() === "undefined") {
                     return {
                         kind: CommandKind.verifyCompletions,
                         marker: marker ? marker : "nil",
@@ -234,23 +238,25 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                         if (!result) {
                             return undefined;
                         }
-                        expected += result + ', ';
+                        expected += result + ", ";
                     }
-                } else {
+                }
+                else {
                     const result = parseExpectedCompletionItem(init);
                     if (!result) {
                         return undefined;
                     }
                     expected += result;
                 }
-                expected += '}';
-                if (propName === 'includes') {
+                expected += "}";
+                if (propName === "includes") {
                     (goArgs ??= {}).includes = expected;
-                } else {
+                }
+                else {
                     (goArgs ??= {}).exact = expected;
                 }
                 break; // !!! parse these args
-            case 'excludes':
+            case "excludes":
                 let excludes = "[]string{";
                 if (ts.isStringLiteral(init)) {
                     excludes += `${getGoStringLiteral(init.text)}, `;
@@ -263,20 +269,20 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                         excludes += `${getGoStringLiteral(elem.text)}, `;
                     }
                 }
-                excludes += '}';
+                excludes += "}";
                 (goArgs ??= {}).excludes = excludes;
                 break;
-            case 'isNewIdentifierLocation':
+            case "isNewIdentifierLocation":
                 if (init.kind === ts.SyntaxKind.TrueKeyword) {
                     isNewIdentifierLocation = true;
                 }
                 break;
-            case 'preferences':
-            case 'triggerCharacter':
-            case 'defaultCommitCharacters':
+            case "preferences":
+            case "triggerCharacter":
+            case "defaultCommitCharacters":
                 break; // !!! parse once they're supported in fourslash
-            case 'optionalReplacementSpan':
-            case 'isGlobalCompletion':
+            case "optionalReplacementSpan":
+            case "isGlobalCompletion":
                 break; // Ignored, unused
             default:
                 console.error(`Unrecognized expected completion item: ${init.parent.getText()}`);
@@ -311,58 +317,61 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
             const propName = prop.name.text;
             const init = prop.initializer;
             switch (propName) {
-                case 'name':
+                case "name":
                     if (ts.isStringLiteral(init)) {
                         name = init.text;
-                    } else {
+                    }
+                    else {
                         console.error(`Expected string literal for completion item name, got ${init.getText()}`);
                         return undefined;
                     }
                     break;
-                case 'sortText':
+                case "sortText":
                     const result = parseSortText(init);
                     if (!result) {
                         return undefined;
                     }
                     item += `SortText: fourslash.PtrTo(string(${result})), `;
                     break;
-                case 'insertText':
+                case "insertText":
                     if (ts.isStringLiteral(init)) {
                         insertText = init.text;
-                    } else {
+                    }
+                    else {
                         console.error(`Expected string literal for insertText, got ${init.getText()}`);
                         return undefined;
                     }
                     break;
-                case 'filterText':
+                case "filterText":
                     if (ts.isStringLiteral(init)) {
                         filterText = init.text;
-                    } else {
+                    }
+                    else {
                         console.error(`Expected string literal for filterText, got ${init.getText()}`);
                         return undefined;
                     }
                     break;
-                case 'isRecommended':
+                case "isRecommended":
                     if (init.kind === ts.SyntaxKind.TrueKeyword) {
                         item += `Preselect: fourslash.PtrTo(true), `;
                     }
                     break;
-                case 'kind': 
+                case "kind":
                     const kind = parseKind(init);
                     if (!kind) {
                         return undefined;
                     }
                     item += `Kind: fourslash.PtrTo(${kind}), `;
                     break;
-                case 'kindModifiers':
+                case "kindModifiers":
                     const modifiers = parseKindModifiers(init);
                     if (!modifiers) {
                         return undefined;
                     }
                     ({ isDeprecated, isOptional, extensions } = modifiers);
                     break;
-                case 'commitCharacters':
-                case 'replacementSpan':
+                case "commitCharacters":
+                case "replacementSpan":
                     // !!! support these later
                     break;
                 default:
@@ -376,7 +385,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
         if (isOptional) {
             insertText ??= name;
             filterText ??= name;
-            name += '?';
+            name += "?";
         }
         item += `Label: ${getGoStringLiteral(name!)}, `;
         if (insertText) item += `InsertText: fourslash.PtrTo(${getGoStringLiteral(insertText)}), `;
@@ -441,15 +450,9 @@ function parseKind(expr: ts.Expression): string | undefined {
     }
 }
 
-const fileKindModifiers = new Set([".d.ts",
-	".ts",
-    ".tsx",
-    ".js",
-    ".jsx",
-    ".json",
-]);
+const fileKindModifiers = new Set([".d.ts", ".ts", ".tsx", ".js", ".jsx", ".json"]);
 
-function parseKindModifiers(expr: ts.Expression): { isOptional: boolean, isDeprecated: boolean, extensions: string[] } | undefined {
+function parseKindModifiers(expr: ts.Expression): { isOptional: boolean; isDeprecated: boolean; extensions: string[]; } | undefined {
     if (!ts.isStringLiteral(expr)) {
         console.error(`Expected string literal for kind modifiers, got ${expr.getText()}`);
         return undefined;
@@ -457,13 +460,13 @@ function parseKindModifiers(expr: ts.Expression): { isOptional: boolean, isDepre
     let isOptional = false;
     let isDeprecated = false;
     const extensions: string[] = [];
-    const modifiers = expr.text.split(',');
+    const modifiers = expr.text.split(",");
     for (const modifier of modifiers) {
         switch (modifier) {
-            case 'optional':
+            case "optional":
                 isOptional = true;
                 break;
-            case 'deprecated':
+            case "deprecated":
                 isDeprecated = true;
                 break;
             default:
@@ -482,24 +485,24 @@ function parseKindModifiers(expr: ts.Expression): { isOptional: boolean, isDepre
 function parseSortText(expr: ts.Expression): string | undefined {
     const text = expr.getText();
     switch (text) {
-        case 'completion.SortText.LocalDeclarationPriority':
-            return 'ls.SortTextLocalDeclarationPriority';
-        case 'completion.SortText.LocationPriority':
-            return 'ls.SortTextLocationPriority';
-        case 'completion.SortText.OptionalMember':
-            return 'ls.SortTextOptionalMember';
-        case 'completion.SortText.MemberDeclaredBySpreadAssignment':
-            return 'ls.SortTextMemberDeclaredBySpreadAssignment';
-        case 'completion.SortText.SuggestedClassMember':
-            return 'ls.SortTextSuggestedClassMember';
-        case 'completion.SortText.GlobalsOrKeywords':
-            return 'ls.SortTextGlobalsOrKeywords';
-        case 'completion.SortText.AutoImportSuggestions':
-            return 'ls.SortTextAutoImportSuggestions';
-        case 'completion.SortText.ClassMemberSnippets':
-            return 'ls.SortTextClassMemberSnippets';
-        case 'completion.SortText.JavaScriptIdentifiers':
-            return 'ls.SortTextJavaScriptIdentifiers';
+        case "completion.SortText.LocalDeclarationPriority":
+            return "ls.SortTextLocalDeclarationPriority";
+        case "completion.SortText.LocationPriority":
+            return "ls.SortTextLocationPriority";
+        case "completion.SortText.OptionalMember":
+            return "ls.SortTextOptionalMember";
+        case "completion.SortText.MemberDeclaredBySpreadAssignment":
+            return "ls.SortTextMemberDeclaredBySpreadAssignment";
+        case "completion.SortText.SuggestedClassMember":
+            return "ls.SortTextSuggestedClassMember";
+        case "completion.SortText.GlobalsOrKeywords":
+            return "ls.SortTextGlobalsOrKeywords";
+        case "completion.SortText.AutoImportSuggestions":
+            return "ls.SortTextAutoImportSuggestions";
+        case "completion.SortText.ClassMemberSnippets":
+            return "ls.SortTextClassMemberSnippets";
+        case "completion.SortText.JavaScriptIdentifiers":
+            return "ls.SortTextJavaScriptIdentifiers";
         default:
             console.error(`Unrecognized sort text: ${text}`);
             return undefined; // !!! support deprecated/obj literal prop/etc
@@ -510,7 +513,6 @@ enum CommandKind {
     verifyCompletions,
     goToMarker,
 }
-
 
 interface VerifyCompletionsCmd {
     kind: CommandKind.verifyCompletions;
@@ -547,7 +549,7 @@ function generateVerifyCompletions({ marker, args }: VerifyCompletionsCmd): stri
         CommitCharacters: &fourslash.DefaultCommitCharacters,
     },
     Items: &fourslash.VerifyCompletionsExpectedItems{
-        ${expected.join('\n')}
+        ${expected.join("\n")}
     },
 }`;
     }
@@ -578,21 +580,21 @@ interface GoTest {
 function generateGoTest(test: GoTest): string {
     const testName = test.name[0].toUpperCase() + test.name.substring(1);
     const content = test.content;
-    const commands = test.commands.map(cmd => generateCmd(cmd)).join('\n');
+    const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
     const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];
     // Only include these imports if the commands use them to avoid unused import errors.
-    if (commands.includes('ls.')) {
+    if (commands.includes("ls.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/ls"`);
     }
-    if (commands.includes('lsproto.')) {
+    if (commands.includes("lsproto.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
     }
-    imports.push(`"github.com/microsoft/typescript-go/internal/testutil"`)
+    imports.push(`"github.com/microsoft/typescript-go/internal/testutil"`);
     const template = `package ls_test
 import (
 	"testing"
 
-    ${imports.join('\n\t')}
+    ${imports.join("\n\t")}
 )
 
 func Test${testName}(t *testing.T) {
@@ -603,7 +605,7 @@ func Test${testName}(t *testing.T) {
     f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
     defer done()
     ${commands}
-}`
+}`;
     return template;
 }
 

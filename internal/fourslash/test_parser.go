@@ -204,7 +204,7 @@ func parseFileContent(filename string, content string, fileOptions map[string]st
 				// Reset the state
 				openMarker = locationInformation{}
 				state = stateNone
-			} else if !validMarkerChars.Has(rune(currentCharacter)) {
+			} else if !validMarkerChars.Has(currentCharacter) {
 				if currentCharacter == '*' && i < len(content)-1 && content[i+1] == '/' {
 					// The marker is about to be closed, ignore the 'invalid' char
 				} else {
