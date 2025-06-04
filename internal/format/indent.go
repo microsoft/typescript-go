@@ -265,11 +265,11 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 	case ast.KindTypeReference:
 		return getList(node.AsTypeReferenceNode().TypeArguments, r, node, sourceFile)
 	case ast.KindObjectLiteralExpression:
-		return getList((node).AsObjectLiteralExpression().Properties, r, node, sourceFile)
+		return getList(node.AsObjectLiteralExpression().Properties, r, node, sourceFile)
 	case ast.KindArrayLiteralExpression:
-		return getList((node).AsArrayLiteralExpression().Elements, r, node, sourceFile)
+		return getList(node.AsArrayLiteralExpression().Elements, r, node, sourceFile)
 	case ast.KindTypeLiteral:
-		return getList((node).AsTypeLiteralNode().Members, r, node, sourceFile)
+		return getList(node.AsTypeLiteralNode().Members, r, node, sourceFile)
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindArrowFunction,
@@ -279,33 +279,33 @@ func getListByRange(start int, end int, node *ast.Node, sourceFile *ast.SourceFi
 		ast.KindConstructor,
 		ast.KindConstructorType,
 		ast.KindConstructSignature:
-		tpl := getList((node).TypeParameterList(), r, node, sourceFile)
+		tpl := getList(node.TypeParameterList(), r, node, sourceFile)
 		if tpl != nil {
 			return tpl
 		}
-		return getList((node).ParameterList(), r, node, sourceFile)
+		return getList(node.ParameterList(), r, node, sourceFile)
 	case ast.KindGetAccessor:
-		return getList((node).ParameterList(), r, node, sourceFile)
+		return getList(node.ParameterList(), r, node, sourceFile)
 	case ast.KindClassDeclaration,
 		ast.KindClassExpression,
 		ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration,
 		ast.KindJSDocTemplateTag:
-		return getList((node).TypeParameterList(), r, node, sourceFile)
+		return getList(node.TypeParameterList(), r, node, sourceFile)
 	case ast.KindNewExpression, ast.KindCallExpression:
-		l := getList((node).TypeArgumentList(), r, node, sourceFile)
+		l := getList(node.TypeArgumentList(), r, node, sourceFile)
 		if l != nil {
 			return l
 		}
-		return getList((node).ArgumentList(), r, node, sourceFile)
+		return getList(node.ArgumentList(), r, node, sourceFile)
 	case ast.KindVariableDeclarationList:
-		return getList((node).AsVariableDeclarationList().Declarations, r, node, sourceFile)
+		return getList(node.AsVariableDeclarationList().Declarations, r, node, sourceFile)
 	case ast.KindNamedImports:
-		return getList((node).AsNamedImports().Elements, r, node, sourceFile)
+		return getList(node.AsNamedImports().Elements, r, node, sourceFile)
 	case ast.KindNamedExports:
-		return getList((node).AsNamedExports().Elements, r, node, sourceFile)
+		return getList(node.AsNamedExports().Elements, r, node, sourceFile)
 	case ast.KindObjectBindingPattern, ast.KindArrayBindingPattern:
-		return getList((node).AsBindingPattern().Elements, r, node, sourceFile)
+		return getList(node.AsBindingPattern().Elements, r, node, sourceFile)
 	}
 	return nil // TODO: should this be a panic? It isn't in strada.
 }
