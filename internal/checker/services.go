@@ -403,7 +403,7 @@ func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbo
 		if node.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil {
 			return c.getExternalModuleMember(node.Parent.Parent, node, false /*dontResolveAlias*/)
 		}
-		name := node.AsExportSpecifier().PropertyName
+		name := node.PropertyName()
 		if name == nil {
 			name = node.Name()
 		}

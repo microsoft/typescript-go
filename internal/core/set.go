@@ -48,17 +48,6 @@ func (s *Set[T]) AddIfAbsent(key T) bool {
 	return true
 }
 
-// Returns true if the key is already in the set. Adds the key and returns false otherwise.
-//
-//	"marks" keys for in "seen" sets in services
-func (s *Set[T]) HasAndAdd(key T) bool {
-	if s.Has(key) {
-		return true
-	}
-	s.Add(key)
-	return false
-}
-
 func NewSetFromItems[T comparable](items ...T) *Set[T] {
 	s := &Set[T]{}
 	for _, item := range items {

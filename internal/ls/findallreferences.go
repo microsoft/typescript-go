@@ -30,11 +30,11 @@ const (
 )
 
 type refOptions struct {
-	findInStrings                       bool
-	findInComments                      bool
-	use                                 referenceUse // other, references, rename
-	implementations                     bool
-	providePrefixAndSuffixTextForRename bool
+	findInStrings       bool
+	findInComments      bool
+	use                 referenceUse // other, references, rename
+	implementations     bool
+	useAliasesForRename bool // renamed from providePrefixAndSuffixTextForRename. default: true
 }
 
 // === types for results ===
@@ -48,10 +48,10 @@ type refInfo struct {
 
 type SymbolAndEntries struct {
 	definition *Definition
-	references []*Entry
+	references []*referenceEntry
 }
 
-func NewSymbolAndEntries(kind definitionKind, node *ast.Node, symbol *ast.Symbol, references []*Entry) *SymbolAndEntries {
+func NewSymbolAndEntries(kind definitionKind, node *ast.Node, symbol *ast.Symbol, references []*referenceEntry) *SymbolAndEntries {
 	return &SymbolAndEntries{
 		&Definition{
 			Kind:   kind,
@@ -95,7 +95,7 @@ const (
 	entryKindSearchedPropertyFoundLocal entryKind = 5
 )
 
-type Entry struct {
+type referenceEntry struct {
 	kind      entryKind
 	node      *ast.Node
 	context   *ast.Node // !!! ContextWithStartAndEndNode, optional
@@ -103,34 +103,35 @@ type Entry struct {
 	textRange *lsproto.Range
 }
 
-func (l *LanguageService) getRangeOfEntry(entry *Entry) *lsproto.Range {
+func (l *LanguageService) getRangeOfEntry(entry *referenceEntry) *lsproto.Range {
 	if entry.textRange == nil {
 		entry.textRange = l.getRangeOfNode(entry.node, nil, nil)
 	}
 	return entry.textRange
 }
 
-func (l *LanguageService) NewRangeEntry(file *ast.SourceFile, start, end int) *Entry {
-	return &Entry{
+func (l *LanguageService) newRangeEntry(file *ast.SourceFile, start, end int) *referenceEntry {
+	// !!! used in not-yet implemented features
+	return &referenceEntry{
 		kind:      entryKindRange,
 		fileName:  file.FileName(),
 		textRange: l.createLspRangeFromBounds(start, end, file),
 	}
 }
 
-func NewNodeEntryWithKind(node *ast.Node, kind entryKind) *Entry {
-	e := NewNodeEntry(node)
+func newNodeEntryWithKind(node *ast.Node, kind entryKind) *referenceEntry {
+	e := newNodeEntry(node)
 	e.kind = kind
 	return e
 }
 
-func NewNodeEntry(node *ast.Node) *Entry {
+func newNodeEntry(node *ast.Node) *referenceEntry {
 	// creates nodeEntry with `kind == entryKindNode`
 	n := node
 	if node != nil && node.Name() != nil {
 		n = node.Name()
 	}
-	return &Entry{
+	return &referenceEntry{
 		kind:    entryKindNode,
 		node:    node,
 		context: getContextNodeForNodeEntry(n),
@@ -173,9 +174,10 @@ func getContextNodeForNodeEntry(node *ast.Node) *ast.Node {
 				declOrStatement := ast.FindAncestor(validImport, func(*ast.Node) bool {
 					return ast.IsDeclaration(node) || ast.IsStatement(node) || ast.IsJSDocTag(node)
 				})
-				return core.IfElse(ast.IsDeclaration(declOrStatement),
-					getContextNode(declOrStatement),
-					declOrStatement)
+				if ast.IsDeclaration(declOrStatement) {
+					return getContextNode(declOrStatement)
+				}
+				return declOrStatement
 			}
 		}
 
@@ -296,7 +298,7 @@ func isValidReferencePosition(node *ast.Node, searchSymbolName string) bool {
 }
 
 func isForRenameWithPrefixAndSuffixText(options refOptions) bool {
-	return options.use == referenceUseRename && options.providePrefixAndSuffixTextForRename
+	return options.use == referenceUseRename && options.useAliasesForRename
 }
 
 func skipPastExportOrImportSpecifierOrUnion(symbol *ast.Symbol, node *ast.Node, checker *checker.Checker, useLocalSymbolForExportSpecifier bool) *ast.Symbol {
@@ -429,7 +431,7 @@ func (l *LanguageService) convertSymbolAndEntryToLocation(s *SymbolAndEntries) [
 
 func (l *LanguageService) mergeReferences(program *compiler.Program, referencesToMerge ...[]*SymbolAndEntries) []*SymbolAndEntries {
 	result := []*SymbolAndEntries{}
-	getSourceFileIndexOfEntry := func(program *compiler.Program, entry *Entry) int {
+	getSourceFileIndexOfEntry := func(program *compiler.Program, entry *referenceEntry) int {
 		var sourceFile *ast.SourceFile
 		if entry.kind == entryKindRange {
 			sourceFile = program.GetSourceFile(entry.fileName)
@@ -465,7 +467,7 @@ func (l *LanguageService) mergeReferences(program *compiler.Program, referencesT
 
 			reference := result[refIndex]
 			sortedRefs := append(reference.references, entry.references...)
-			slices.SortStableFunc(sortedRefs, func(entry1, entry2 *Entry) int {
+			slices.SortStableFunc(sortedRefs, func(entry1, entry2 *referenceEntry) int {
 				entry1File := getSourceFileIndexOfEntry(program, entry1)
 				entry2File := getSourceFileIndexOfEntry(program, entry2)
 				if entry1File != entry2File {
@@ -621,7 +623,7 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 	}
 
 	if node.Kind == ast.KindStaticKeyword && node.Parent.Kind == ast.KindClassStaticBlockDeclaration {
-		return []*SymbolAndEntries{{definition: &Definition{Kind: definitionKindKeyword, node: node}, references: []*Entry{NewNodeEntry(node)}}}
+		return []*SymbolAndEntries{{definition: &Definition{Kind: definitionKindKeyword, node: node}, references: []*referenceEntry{newNodeEntry(node)}}}
 	}
 
 	// Labels
@@ -653,10 +655,10 @@ func getReferencedSymbolsSpecial(node *ast.Node, sourceFiles []*ast.SourceFile) 
 func getLabelReferencesInNode(container *ast.Node, targetLabel *ast.Identifier) []*SymbolAndEntries {
 	sourceFile := ast.GetSourceFileOfNode(container)
 	labelName := targetLabel.Text
-	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, labelName, container), func(node *ast.Node) *Entry {
+	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, labelName, container), func(node *ast.Node) *referenceEntry {
 		// Only pick labels that are either the target label, or have a target that is the target label
 		if node == targetLabel.AsNode() || (isJumpStatementTarget(node) && getTargetLabel(node, labelName) == targetLabel) {
-			return NewNodeEntry(node)
+			return newNodeEntry(node)
 		}
 		return nil
 	})
@@ -727,10 +729,10 @@ func getReferencesForThisKeyword(thisOrSuperKeyword *ast.Node, sourceFiles []*as
 					return false
 				})
 		}),
-		func(n *ast.Node) *Entry { return NewNodeEntry(n) },
+		func(n *ast.Node) *referenceEntry { return newNodeEntry(n) },
 	)
 
-	thisParameter := core.FirstNonNil(references, func(ref *Entry) *ast.Node {
+	thisParameter := core.FirstNonNil(references, func(ref *referenceEntry) *ast.Node {
 		if ref.node.Parent.Kind == ast.KindParameter {
 			return ref.node
 		}
@@ -760,7 +762,7 @@ func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
 	}
 
 	sourceFile := ast.GetSourceFileOfNode(searchSpaceNode)
-	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "super", searchSpaceNode), func(node *ast.Node) *Entry {
+	references := core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, "super", searchSpaceNode), func(node *ast.Node) *referenceEntry {
 		if node.Kind != ast.KindSuperKeyword {
 			return nil
 		}
@@ -771,7 +773,7 @@ func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
 		// Now make sure the owning class is the same as the search-space
 		// and has the same static qualifier as the original 'super's owner.
 		if container != nil && ast.IsStatic(container) == (staticFlag != ast.ModifierFlagsNone) && container.Parent.Symbol() == searchSpaceNode.Symbol() {
-			return NewNodeEntry(node)
+			return newNodeEntry(node)
 		}
 		return nil
 	})
@@ -781,11 +783,11 @@ func getReferencesForSuperKeyword(superKeyword *ast.Node) []*SymbolAndEntries {
 
 func getAllReferencesForKeyword(sourceFiles []*ast.SourceFile, keywordKind ast.Kind, filterReadOnlyTypeOperator bool) []*SymbolAndEntries {
 	// references is a list of NodeEntry
-	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*Entry {
+	references := core.FlatMap(sourceFiles, func(sourceFile *ast.SourceFile) []*referenceEntry {
 		// cancellationToken.throwIfCancellationRequested();
-		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, scanner.TokenToString(keywordKind), sourceFile.AsNode()), func(referenceLocation *ast.Node) *Entry {
+		return core.MapNonNil(getPossibleSymbolReferenceNodes(sourceFile, scanner.TokenToString(keywordKind), sourceFile.AsNode()), func(referenceLocation *ast.Node) *referenceEntry {
 			if referenceLocation.Kind == keywordKind && (!filterReadOnlyTypeOperator || isReadonlyTypeOperator(referenceLocation)) {
-				return NewNodeEntry(referenceLocation)
+				return newNodeEntry(referenceLocation)
 			}
 			return nil
 		})
@@ -847,9 +849,9 @@ func getPossibleSymbolReferencePositions(sourceFile *ast.SourceFile, symbolName 
 	return positions
 }
 
-func getReferencesForNonModule(referencedFile *ast.SourceFile, program *compiler.Program) []*Entry {
+func getReferencesForNonModule(referencedFile *ast.SourceFile, program *compiler.Program) []*referenceEntry {
 	// !!! not implemented
-	return []*Entry{}
+	return []*referenceEntry{}
 }
 
 func getMergedAliasedSymbolOfNamespaceExportDeclaration(node *ast.Node, symbol *ast.Symbol, checker *checker.Checker) *ast.Symbol {
@@ -942,7 +944,7 @@ func getReferencedSymbolsForSymbol(originalSymbol *ast.Symbol, node *ast.Node, s
 		// !!! not implemented
 		// state.searchForImportsOfExport(node, symbol, &ExportInfo{exportingModuleSymbol: symbol.Parent, exportKind: ExportKindDefault})
 	} else {
-		search := state.createSearch(node, symbol, comingFromUnknown /*comingFrom*/, "", state.populateSearchSymbolSet(symbol, node, options.use == referenceUseRename, options.providePrefixAndSuffixTextForRename, options.implementations))
+		search := state.createSearch(node, symbol, comingFromUnknown /*comingFrom*/, "", state.populateSearchSymbolSet(symbol, node, options.use == referenceUseRename, options.useAliasesForRename, options.implementations))
 		state.getReferencesInContainerOrFiles(symbol, search)
 	}
 
@@ -1084,12 +1086,12 @@ func (state *refState) referenceAdder(searchSymbol *ast.Symbol) func(*ast.Node, 
 	symbolId := ast.GetSymbolId(searchSymbol)
 	symbolAndEntry := state.symbolIdToReferences[symbolId]
 	if symbolAndEntry == nil {
-		state.symbolIdToReferences[symbolId] = NewSymbolAndEntries(definitionKindSymbol, nil, searchSymbol, []*Entry{})
+		state.symbolIdToReferences[symbolId] = NewSymbolAndEntries(definitionKindSymbol, nil, searchSymbol, []*referenceEntry{})
 		state.result = append(state.result, state.symbolIdToReferences[symbolId])
 		symbolAndEntry = state.symbolIdToReferences[symbolId]
 	}
 	return func(node *ast.Node, kind entryKind) {
-		symbolAndEntry.references = append(symbolAndEntry.references, NewNodeEntryWithKind(node, kind))
+		symbolAndEntry.references = append(symbolAndEntry.references, newNodeEntryWithKind(node, kind))
 	}
 }
 
@@ -1143,7 +1145,7 @@ func (state *refState) addImplementationReferences(refNode *ast.Node, addRef fun
 	}
 
 	typeHavingNode := typeNode.Parent
-	if typeHavingNode.Type() == typeNode && state.seenContainingTypeReferences.HasAndAdd(typeHavingNode) {
+	if typeHavingNode.Type() == typeNode && !state.seenContainingTypeReferences.AddIfAbsent(typeHavingNode) {
 		addIfImplementation := func(e *ast.Expression) {
 			if isImplementationExpression(e) {
 				addRef(e)
@@ -1347,7 +1349,7 @@ func (state *refState) getRelatedSymbol(search *refSearch, referenceSymbol *ast.
 		referenceSymbol,
 		referenceLocation,
 		false, /*isForRenamePopulateSearchSymbolSet*/
-		state.options.use != referenceUseRename || state.options.providePrefixAndSuffixTextForRename, /*onlyIncludeBindingElementAtReferenceLocation*/
+		state.options.use != referenceUseRename || state.options.useAliasesForRename, /*onlyIncludeBindingElementAtReferenceLocation*/
 		func(sym *ast.Symbol, rootSymbol *ast.Symbol, baseSymbol *ast.Symbol, kind entryKind) (*ast.Symbol, entryKind) {
 			// check whether the symbol used to search itself is just the searched one.
 			if baseSymbol != nil {
