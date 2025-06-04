@@ -479,7 +479,6 @@ func (p *Project) updateGraph() bool {
 
 	start := time.Now()
 	p.Log("Starting updateGraph: Project: " + p.name)
-	var writeFileNames bool
 	oldProgram := p.program
 	p.initialLoadPending = false
 
@@ -487,12 +486,11 @@ func (p *Project) updateGraph() bool {
 		switch p.pendingReload {
 		case PendingReloadFileNames:
 			p.parsedCommandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(p.parsedCommandLine, p.host.FS())
-			writeFileNames = p.setRootFiles(p.parsedCommandLine.FileNames())
+			p.setRootFiles(p.parsedCommandLine.FileNames())
 			p.programConfig = nil
 			p.pendingReload = PendingReloadNone
 		case PendingReloadFull:
-			var err error
-			writeFileNames, err = p.LoadConfig()
+			err := p.LoadConfig()
 			if err != nil {
 				panic(fmt.Sprintf("failed to reload config: %v", err))
 			}
@@ -504,7 +502,7 @@ func (p *Project) updateGraph() bool {
 	p.hasAddedorRemovedFiles.Store(false)
 	p.dirty = false
 	p.dirtyFilePath = ""
-	if writeFileNames {
+	if hasAddedOrRemovedFiles {
 		p.Log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/, &strings.Builder{}))
 	} else if p.program != oldProgram {
 		p.Log("Different program with same set of root files")
@@ -868,7 +866,7 @@ func (p *Project) AddInferredProjectRoot(info *ScriptInfo) {
 	p.markAsDirtyLocked()
 }
 
-func (p *Project) LoadConfig() (bool, error) {
+func (p *Project) LoadConfig() error {
 	if p.kind != KindConfigured {
 		panic("loadConfig called on non-configured project")
 	}
@@ -901,25 +899,23 @@ func (p *Project) LoadConfig() (bool, error) {
 		p.parsedCommandLine = parsedCommandLine
 		p.compilerOptions = parsedCommandLine.CompilerOptions()
 		p.typeAcquisition = parsedCommandLine.TypeAcquisition()
-		return p.setRootFiles(parsedCommandLine.FileNames()), nil
+		p.setRootFiles(parsedCommandLine.FileNames())
 	} else {
 		p.compilerOptions = &core.CompilerOptions{}
 		p.typeAcquisition = nil
-		return false, fmt.Errorf("could not read file %q", p.configFileName)
+		return fmt.Errorf("could not read file %q", p.configFileName)
 	}
+	return nil
 }
 
 // setRootFiles returns true if the set of root files has changed.
-func (p *Project) setRootFiles(rootFileNames []string) bool {
-	var hasChanged bool
+func (p *Project) setRootFiles(rootFileNames []string) {
 	newRootScriptInfos := make(map[tspath.Path]struct{}, len(rootFileNames))
 	for _, file := range rootFileNames {
 		path := p.toPath(file)
 		// !!! updateNonInferredProjectFiles uses a fileExists check, which I guess
 		// could be needed if a watcher fails?
 		newRootScriptInfos[path] = struct{}{}
-		isAlreadyRoot := p.rootFileNames.Has(path)
-		hasChanged = hasChanged || !isAlreadyRoot
 		p.rootFileNames.Set(path, file)
 		// if !isAlreadyRoot {
 		// 	if scriptInfo.isOpen {
@@ -929,17 +925,12 @@ func (p *Project) setRootFiles(rootFileNames []string) bool {
 	}
 
 	if p.rootFileNames.Size() > len(rootFileNames) {
-		hasChanged = true
 		for root := range p.rootFileNames.Keys() {
 			if _, ok := newRootScriptInfos[root]; !ok {
 				p.rootFileNames.Delete(root)
 			}
 		}
 	}
-	if hasChanged {
-		p.onFileAddedOrRemoved()
-	}
-	return hasChanged
 }
 
 func (p *Project) clearSourceMapperCache() {
