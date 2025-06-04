@@ -254,8 +254,8 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 
 // Updates the program if needed.
 func (p *Project) GetProgram() *compiler.Program {
-	p.updateGraph()
-	return p.program
+	program, _ := p.updateGraph()
+	return program
 }
 
 // NewLine implements compiler.CompilerHost.
@@ -294,6 +294,9 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 		panic("context must already have a request ID")
 	}
 	program := p.GetProgram()
+	if program == nil {
+		panic("must have gced by other request")
+	}
 	checkerPool := p.checkerPool
 	snapshot := &snapshot{
 		project:          p,
@@ -469,12 +472,12 @@ func (p *Project) onFileAddedOrRemoved() {
 // Returns true if the set of files in has changed. NOTE: this is the
 // opposite of the return value in Strada, which was frequently inverted,
 // as in `updateProjectIfDirty()`.
-func (p *Project) updateGraph() bool {
+func (p *Project) updateGraph() (*compiler.Program, bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	if !p.dirty {
-		return false
+	if !p.dirty || p.isClosed() {
+		return p.program, false
 	}
 
 	start := time.Now()
@@ -522,7 +525,7 @@ func (p *Project) updateGraph() bool {
 		p.updateWatchers(context.TODO())
 	}
 	p.Logf("Finishing updateGraph: Project: %s version: %d in %s", p.name, p.version, time.Since(start))
-	return true
+	return p.program, true
 }
 
 func (p *Project) updateProgram() bool {
@@ -1043,6 +1046,7 @@ func (p *Project) Close() {
 	p.programConfig = nil
 	p.checkerPool = nil
 	p.unresolvedImportsPerFile = nil
+	p.unresolvedImports = nil
 	p.typingsInfo = nil
 	p.typingFiles = nil
 
