@@ -93,6 +93,9 @@ type nodeBuilderImpl struct {
 
 	// state
 	ctx *NodeBuilderContext
+
+	// reusable visitor
+	cloneBindingNameVisitor *ast.NodeVisitor
 }
 
 const (
@@ -104,6 +107,7 @@ const (
 
 func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext) nodeBuilderImpl {
 	result := nodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e}
+	result.cloneBindingNameVisitor = ast.NewNodeVisitor(result.cloneBindingName, result.f, ast.NodeVisitorHooks{})
 	return result
 }
 
@@ -1489,8 +1493,7 @@ func (b *nodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
 		b.trackComputedName(node.Expression(), b.ctx.enclosingDeclaration)
 	}
 
-	visitor := ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
-	visited := visitor.VisitEachChild(node)
+	visited := b.cloneBindingNameVisitor.VisitEachChild(node)
 
 	if ast.IsBindingElement(visited) {
 		bindingElement := visited.AsBindingElement()
