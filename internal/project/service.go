@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"maps"
+	"runtime"
 	"strings"
 	"sync"
 
@@ -219,6 +220,7 @@ func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.
 	}
 	result := s.assignProjectToOpenedScriptInfo(info)
 	s.cleanupProjectsAndScriptInfos(info, result)
+	s.printMemoryUsage()
 	s.printProjects()
 }
 
@@ -928,4 +930,15 @@ func (s *Service) printProjects() {
 
 func (s *Service) logf(format string, args ...any) {
 	s.Log(fmt.Sprintf(format, args...))
+}
+
+func (s *Service) printMemoryUsage() {
+	runtime.GC() // Force garbage collection to get accurate memory stats
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+
+	s.logf("Alloc: %v KB", memStats.Alloc/1024)
+	s.logf("TotalAlloc: %v KB", memStats.TotalAlloc/1024)
+	s.logf("Sys: %v KB", memStats.Sys/1024)
+	s.logf("NumGC: %v", memStats.NumGC)
 }
