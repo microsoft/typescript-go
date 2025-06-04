@@ -222,7 +222,7 @@ func newProjectServiceHost(files map[string]any) *ProjectServiceHost {
 		defaultLibraryPath: bundled.LibPath(),
 		ClientMock:         &ClientMock{},
 	}
-	var watchCount atomic.Int32
+	var watchCount atomic.Uint32
 	host.ClientMock.WatchFilesFunc = func(_ context.Context, _ []*lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
 		return project.WatcherHandle(fmt.Sprintf("#%d", watchCount.Add(1))), nil
 	}
