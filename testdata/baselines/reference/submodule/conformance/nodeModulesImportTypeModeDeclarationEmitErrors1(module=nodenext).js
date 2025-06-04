@@ -65,46 +65,64 @@ export const b = (null as any as import("pkg", { assert: {} }).ImportInterface);
 
 
 //// [index.js]
-export const a = null;
-export const b = null;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = exports.a = void 0;
+exports.a = null;
+exports.b = null;
 //// [other.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = exports.a = void 0;
 "resolution-mode";
 "require";
 RequireInterface
     & import("pkg", { "resolution-mode": "import" }).ImportInterface;
-export const a = null;
+exports.a = null;
 "resolution-mode";
 "require";
 RequireInterface;
 ;
-export const b = null;
+exports.b = null;
 "resolution-mode";
 "import";
 ImportInterface;
 ;
 //// [other2.js]
-export const a = null;
-export const b = null;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = exports.a = void 0;
+exports.a = null;
+exports.b = null;
 //// [other3.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = exports.a = void 0;
 RequireInterface
     & import("pkg", [{ "resolution-mode": "import" }]).ImportInterface;
-export const a = null.RequireInterface;
-export const b = null.ImportInterface;
+exports.a = null.RequireInterface;
+exports.b = null.ImportInterface;
 //// [other4.js]
-Asserts1;
-RequireInterface
-    & import("pkg", Asserts2).ImportInterface;
-export const a = null, Asserts1, RequireInterface;
-export const b = null, Asserts2, ImportInterface;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ImportInterface = exports.Asserts2 = exports.b = exports.RequireInterface = exports.Asserts1 = exports.a = void 0;
+exports.Asserts1;
+exports.RequireInterface
+    & import("pkg", exports.Asserts2).ImportInterface;
+exports.a = null;
+exports.b = null;
 //// [other5.js]
-export const a = null;
-export const b = null;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = exports.a = void 0;
+exports.a = null;
+exports.b = null;
 
 
 //// [index.d.ts]
 export type LocalInterface = import("pkg", { assert: { "resolution-mode": "foobar" } }).RequireInterface & import("pkg", { assert: { "resolution-mode": "import" } }).ImportInterface;
-export declare const a: any;
-export declare const b: any;
+export declare const a: import("pkg").RequireInterface;
+export declare const b: import("pkg", { with: { "resolution-mode": "import" } }).ImportInterface;
 //// [other.d.ts]
 // missing assert:
 export type LocalInterface = import("pkg", { with: {} });
@@ -113,7 +131,7 @@ export declare const b: any;
 //// [other2.d.ts]
 // wrong assertion key
 export type LocalInterface = import("pkg", { assert: { "bad": "require" } }).RequireInterface & import("pkg", { assert: { "bad": "import" } }).ImportInterface;
-export declare const a: any;
+export declare const a: import("pkg").RequireInterface;
 export declare const b: any;
 //// [other3.d.ts]
 // Array instead of object-y thing
@@ -128,5 +146,5 @@ export declare const a: any, Asserts1: any, RequireInterface: any;
 export declare const b: any, Asserts2: any, ImportInterface: any;
 //// [other5.d.ts]
 export type LocalInterface = import("pkg", { assert: {} }).RequireInterface & import("pkg", { assert: {} }).ImportInterface;
-export declare const a: any;
+export declare const a: import("pkg").RequireInterface;
 export declare const b: any;

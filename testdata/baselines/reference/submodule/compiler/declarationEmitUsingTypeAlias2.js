@@ -43,10 +43,19 @@ export const bar = goodDeclaration<{}>;
 
 
 //// [index.js]
-import { goodDeclaration } from "some-dep";
-export const bar = goodDeclaration;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.bar = void 0;
+const some_dep_1 = require("some-dep");
+exports.bar = some_dep_1.goodDeclaration;
 
 
 //// [index.d.ts]
 import { shouldReuseLocalName } from "some-dep";
-export declare const bar: any;
+export declare const bar: () => () => {
+    shouldPrintResult: "N";
+    shouldPrintResult2: "N";
+    shouldLookupName: typeof import("some-dep").shouldLookupName;
+    shouldReuseLocalName: typeof shouldReuseLocalName;
+    reuseDepName: typeof import("some-dep").reuseDepName;
+};

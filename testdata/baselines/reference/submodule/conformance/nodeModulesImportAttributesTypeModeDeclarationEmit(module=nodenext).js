@@ -23,11 +23,14 @@ export const b = (null as any as import("pkg", { with: {"resolution-mode": "impo
 
 
 //// [index.js]
-export const a = null;
-export const b = null;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = exports.a = void 0;
+exports.a = null;
+exports.b = null;
 
 
 //// [index.d.ts]
 export type LocalInterface = import("pkg", { with: { "resolution-mode": "require" } }).RequireInterface & import("pkg", { with: { "resolution-mode": "import" } }).ImportInterface;
-export declare const a: any;
-export declare const b: any;
+export declare const a: import("pkg").RequireInterface;
+export declare const b: import("pkg", { with: { "resolution-mode": "import" } }).ImportInterface;

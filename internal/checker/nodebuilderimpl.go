@@ -91,16 +91,11 @@ type nodeBuilderImpl struct {
 	links       core.LinkStore[*ast.Node, NodeBuilderLinks]
 	symbolLinks core.LinkStore[*ast.Symbol, NodeBuilderSymbolLinks]
 
-	// closures
-	typeToTypeNode               func(t *Type) *ast.TypeNode
-	typeReferenceToTypeNode      func(t *Type) *ast.TypeNode
-	conditionalTypeToTypeNode    func(t *Type) *ast.TypeNode
-	createTypeNodeFromObjectType func(t *Type) *ast.TypeNode
-	isStringNamed                func(d *ast.Declaration) bool
-	isSingleQuotedStringNamed    func(d *ast.Declaration) bool
-
 	// state
 	ctx *NodeBuilderContext
+
+	// reusable visitor
+	cloneBindingNameVisitor *ast.NodeVisitor
 }
 
 const (
@@ -110,19 +105,10 @@ const (
 
 // Node builder utility functions
 
-func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext) nodeBuilderImpl {
-	result := nodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e, typeToTypeNode: nil, typeReferenceToTypeNode: nil, conditionalTypeToTypeNode: nil, ctx: nil}
-	result.initializeClosures()
-	return result
-}
-
-func (b *nodeBuilderImpl) initializeClosures() {
-	b.typeToTypeNode = b.typeToTypeNodeWorker
-	b.typeReferenceToTypeNode = b.typeReferenceToTypeNodeWorker
-	b.conditionalTypeToTypeNode = b.conditionalTypeToTypeNodeWorker
-	b.createTypeNodeFromObjectType = b.createTypeNodeFromObjectTypeWorker
-	b.isStringNamed = b.isStringNamedWorker
-	b.isSingleQuotedStringNamed = b.isSingleQuotedStringNamedWorker
+func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext) *nodeBuilderImpl {
+	b := &nodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e}
+	b.cloneBindingNameVisitor = ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
+	return b
 }
 
 func (b *nodeBuilderImpl) saveRestoreFlags() func() {
@@ -1074,11 +1060,9 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	contextFile := b.ctx.enclosingFile
 	resolutionMode := overrideImportMode
 	if resolutionMode == core.ResolutionModeNone && originalModuleSpecifier != nil {
-		// !!! import resolution mode support
-		// resolutionMode = b.ch.host.GetModeForUsageLocation(contextFile, originalModuleSpecifier)
+		resolutionMode = b.ch.program.GetModeForUsageLocation(contextFile, originalModuleSpecifier)
 	} else if resolutionMode == core.ResolutionModeNone && contextFile != nil {
-		// !!! import resolution mode support
-		// resolutionMode = b.ch.host.GetDefaultResolutionModeForFile(contextFile)
+		resolutionMode = b.ch.program.GetDefaultResolutionModeForFile(contextFile)
 	}
 	cacheKey := module.ModeAwareCacheKey{Name: string(contextFile.Path()), Mode: resolutionMode}
 	links := b.symbolLinks.Get(symbol)
@@ -1488,8 +1472,46 @@ func (b *nodeBuilderImpl) parameterToParameterDeclarationName(parameterSymbol *a
 	if parameterDeclaration == nil || parameterDeclaration.Name() == nil {
 		return b.f.NewIdentifier(parameterSymbol.Name)
 	}
-	// !!! TODO - symbol tracking of computed names in cloned binding patterns, set singleline emit flags
-	return b.f.DeepCloneNode(parameterDeclaration.Name())
+
+	name := parameterDeclaration.Name()
+	switch name.Kind {
+	case ast.KindIdentifier:
+		cloned := b.f.DeepCloneNode(name)
+		b.e.SetEmitFlags(cloned, printer.EFNoAsciiEscaping)
+		return cloned
+	case ast.KindQualifiedName:
+		cloned := b.f.DeepCloneNode(name.AsQualifiedName().Right)
+		b.e.SetEmitFlags(cloned, printer.EFNoAsciiEscaping)
+		return cloned
+	default:
+		return b.cloneBindingName(name)
+	}
+}
+
+func (b *nodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
+	if ast.IsComputedPropertyName(node) && b.ch.isLateBindableName(node) {
+		b.trackComputedName(node.Expression(), b.ctx.enclosingDeclaration)
+	}
+
+	visited := b.cloneBindingNameVisitor.VisitEachChild(node)
+
+	if ast.IsBindingElement(visited) {
+		bindingElement := visited.AsBindingElement()
+		visited = b.f.UpdateBindingElement(
+			bindingElement,
+			bindingElement.DotDotDotToken,
+			bindingElement.PropertyName,
+			bindingElement.Name(),
+			nil, // remove initializer
+		)
+	}
+
+	if !ast.NodeIsSynthesized(visited) {
+		visited = b.f.DeepCloneNode(visited)
+	}
+
+	b.e.SetEmitFlags(visited, printer.EFSingleLine|printer.EFNoAsciiEscaping)
+	return visited
 }
 
 func (b *nodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable *ast.SymbolTable) []*ast.Node {
@@ -1978,7 +2000,7 @@ func (b *nodeBuilderImpl) createPropertyNameNodeForIdentifierOrLiteral(name stri
 	return result
 }
 
-func (b *nodeBuilderImpl) isStringNamedWorker(d *ast.Declaration) bool {
+func (b *nodeBuilderImpl) isStringNamed(d *ast.Declaration) bool {
 	name := ast.GetNameOfDeclaration(d)
 	if name == nil {
 		return false
@@ -1994,7 +2016,7 @@ func (b *nodeBuilderImpl) isStringNamedWorker(d *ast.Declaration) bool {
 	return ast.IsStringLiteral(name)
 }
 
-func (b *nodeBuilderImpl) isSingleQuotedStringNamedWorker(d *ast.Declaration) bool {
+func (b *nodeBuilderImpl) isSingleQuotedStringNamed(d *ast.Declaration) bool {
 	return false // !!!
 	// TODO: actually support single-quote-style-maintenance
 	// name := ast.GetNameOfDeclaration(d)
@@ -2218,7 +2240,7 @@ func (b *nodeBuilderImpl) createTypeNodesFromResolvedType(resolvedType *Structur
 	}
 }
 
-func (b *nodeBuilderImpl) createTypeNodeFromObjectTypeWorker(t *Type) *ast.TypeNode {
+func (b *nodeBuilderImpl) createTypeNodeFromObjectType(t *Type) *ast.TypeNode {
 	if b.ch.isGenericMappedType(t) || (t.objectFlags&ObjectFlagsMapped != 0 && t.AsMappedType().containsError) {
 		return b.createMappedTypeNodeFromType(t)
 	}
@@ -2331,7 +2353,7 @@ func (b *nodeBuilderImpl) createAnonymousTypeNode(t *Type) *ast.TypeNode {
 			if _, ok := b.ctx.visitedTypes[typeId]; ok {
 				return b.createElidedInformationPlaceholder()
 			}
-			return b.visitAndTransformType(t, b.createTypeNodeFromObjectType)
+			return b.visitAndTransformType(t, (*nodeBuilderImpl).createTypeNodeFromObjectType)
 		}
 		var isInstanceType ast.SymbolFlags
 		if isClassInstanceSide(b.ch, t) {
@@ -2357,7 +2379,7 @@ func (b *nodeBuilderImpl) createAnonymousTypeNode(t *Type) *ast.TypeNode {
 				return b.createElidedInformationPlaceholder()
 			}
 		} else {
-			return b.visitAndTransformType(t, b.createTypeNodeFromObjectType)
+			return b.visitAndTransformType(t, (*nodeBuilderImpl).createTypeNodeFromObjectType)
 		}
 	} else {
 		// Anonymous types without a symbol are never circular.
@@ -2388,12 +2410,12 @@ func (b *nodeBuilderImpl) typeToTypeNodeOrCircularityElision(t *Type) *ast.TypeN
 			}
 			return b.createElidedInformationPlaceholder()
 		}
-		return b.visitAndTransformType(t, b.typeToTypeNode)
+		return b.visitAndTransformType(t, (*nodeBuilderImpl).typeToTypeNode)
 	}
 	return b.typeToTypeNode(t)
 }
 
-func (b *nodeBuilderImpl) conditionalTypeToTypeNodeWorker(_t *Type) *ast.TypeNode {
+func (b *nodeBuilderImpl) conditionalTypeToTypeNode(_t *Type) *ast.TypeNode {
 	t := _t.AsConditionalType()
 	checkTypeNode := b.typeToTypeNode(t.checkType)
 	b.ctx.approximateLength += 15
@@ -2451,7 +2473,7 @@ func (b *nodeBuilderImpl) getParentSymbolOfTypeParameter(typeParameter *TypePara
 	return b.ch.getSymbolOfNode(host)
 }
 
-func (b *nodeBuilderImpl) typeReferenceToTypeNodeWorker(t *Type) *ast.TypeNode {
+func (b *nodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 	var typeArguments []*Type = b.ch.getTypeArguments(t)
 	if t.Target() == b.ch.globalArrayType || t.Target() == b.ch.globalReadonlyArrayType {
 		if b.ctx.flags&nodebuilder.FlagsWriteArrayAsGenericType != 0 {
@@ -2585,7 +2607,7 @@ func (b *nodeBuilderImpl) typeReferenceToTypeNodeWorker(t *Type) *ast.TypeNode {
 	}
 }
 
-func (b *nodeBuilderImpl) visitAndTransformType(t *Type, transform func(t *Type) *ast.TypeNode) *ast.TypeNode {
+func (b *nodeBuilderImpl) visitAndTransformType(t *Type, transform func(b *nodeBuilderImpl, t *Type) *ast.TypeNode) *ast.TypeNode {
 	typeId := t.id
 	isConstructorObject := t.objectFlags&ObjectFlagsAnonymous != 0 && t.symbol != nil && t.symbol.Flags&ast.SymbolFlagsClass != 0
 	var id *CompositeSymbolIdentity
@@ -2631,7 +2653,7 @@ func (b *nodeBuilderImpl) visitAndTransformType(t *Type, transform func(t *Type)
 	prevTrackedSymbols := b.ctx.trackedSymbols
 	b.ctx.trackedSymbols = nil
 	startLength := b.ctx.approximateLength
-	result := transform(t)
+	result := transform(b, t)
 	addedLength := b.ctx.approximateLength - startLength
 	if !b.ctx.reportedDiagnostic && !b.ctx.encounteredError {
 		links := b.links.Get(b.ctx.enclosingDeclaration)
@@ -2670,7 +2692,7 @@ func (b *nodeBuilderImpl) visitAndTransformType(t *Type, transform func(t *Type)
 	// }
 }
 
-func (b *nodeBuilderImpl) typeToTypeNodeWorker(t *Type) *ast.TypeNode {
+func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 	inTypeAlias := b.ctx.flags & nodebuilder.FlagsInTypeAlias
 	b.ctx.flags &^= nodebuilder.FlagsInTypeAlias
 
@@ -2832,7 +2854,7 @@ func (b *nodeBuilderImpl) typeToTypeNodeWorker(t *Type) *ast.TypeNode {
 	if objectFlags&ObjectFlagsReference != 0 {
 		// Debug.assert(t.flags&TypeFlagsObject != 0) // !!!
 		if t.AsTypeReference().node != nil {
-			return b.visitAndTransformType(t, b.typeReferenceToTypeNode)
+			return b.visitAndTransformType(t, (*nodeBuilderImpl).typeReferenceToTypeNode)
 		} else {
 			return b.typeReferenceToTypeNode(t)
 		}
@@ -2938,7 +2960,7 @@ func (b *nodeBuilderImpl) typeToTypeNodeWorker(t *Type) *ast.TypeNode {
 		return b.f.NewIndexedAccessTypeNode(objectTypeNode, indexTypeNode)
 	}
 	if t.flags&TypeFlagsConditional != 0 {
-		return b.visitAndTransformType(t, b.conditionalTypeToTypeNode)
+		return b.visitAndTransformType(t, (*nodeBuilderImpl).conditionalTypeToTypeNode)
 	}
 	if t.flags&TypeFlagsSubstitution != 0 {
 		typeNode := b.typeToTypeNode(t.AsSubstitutionType().baseType)

@@ -216,7 +216,7 @@ func prepareDeclarationCompilationContext(
 		////outFile := options.OutFile;
 		////if len(outFile) == 0 {
 		if len(options.OutDir) != 0 {
-			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.Host().GetCurrentDirectory())
+			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.GetCurrentDirectory())
 			sourceFilePath = strings.Replace(sourceFilePath, result.Program.CommonSourceDirectory(), "", 1)
 			sourceFileName = tspath.CombinePaths(options.OutDir, sourceFilePath)
 		} else {
@@ -281,7 +281,8 @@ func compileDeclarationFiles(t *testing.T, context *declarationCompilationContex
 		context.harnessSettings,
 		context.options,
 		context.currentDirectory,
-		symlinks)
+		symlinks,
+		nil)
 	return &declarationCompilationResult{
 		context.declInputFiles,
 		context.declOtherFiles,

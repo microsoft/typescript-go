@@ -109,17 +109,23 @@ type Resolver struct {
 	caches
 	host            ResolutionHost
 	compilerOptions *core.CompilerOptions
+	typingsLocation string
+	projectName     string
 	// reportDiagnostic: DiagnosticReporter
 }
 
 func NewResolver(
 	host ResolutionHost,
 	options *core.CompilerOptions,
+	typingsLocation string,
+	projectName string,
 ) *Resolver {
 	return &Resolver{
 		host:            host,
 		caches:          newCaches(host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames(), options),
 		compilerOptions: options,
+		typingsLocation: typingsLocation,
+		projectName:     projectName,
 	}
 }
 
@@ -131,26 +137,17 @@ func (r *Resolver) GetPackageScopeForPath(directory string) *packagejson.InfoCac
 	return (&resolutionState{compilerOptions: r.compilerOptions, resolver: r}).getPackageScopeForPath(directory)
 }
 
-func (r *Resolver) GetPackageJsonTypeIfApplicable(path string) string {
+func (r *Resolver) GetPackageJsonScopeIfApplicable(path string) *packagejson.InfoCacheEntry {
 	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionMts, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionCjs}) {
-		return ""
+		return nil
 	}
 
-	var moduleResolutionKind core.ModuleResolutionKind
-	if r.compilerOptions != nil {
-		moduleResolutionKind = r.compilerOptions.GetModuleResolutionKind()
+	moduleResolutionKind := r.compilerOptions.GetModuleResolutionKind()
+	if core.ModuleResolutionKindNode16 <= moduleResolutionKind && moduleResolutionKind <= core.ModuleResolutionKindNodeNext || strings.Contains(path, "/node_modules/") {
+		return r.GetPackageScopeForPath(tspath.GetDirectoryPath(path))
 	}
 
-	var packageJsonType string
-	shouldLookupFromPackageJson := core.ModuleResolutionKindNode16 <= moduleResolutionKind && moduleResolutionKind <= core.ModuleResolutionKindNodeNext || strings.Contains(path, "/node_modules/")
-	if shouldLookupFromPackageJson {
-		packageJsonScope := r.GetPackageScopeForPath(tspath.GetDirectoryPath(path))
-		if packageJsonScope.Exists() {
-			packageJsonType, _ = packageJsonScope.Contents.Type.GetValue()
-		}
-	}
-
-	return packageJsonType
+	return nil
 }
 
 func (r *Resolver) ResolveTypeReferenceDirective(typeReferenceDirectiveName string, containingFile string, resolutionMode core.ResolutionMode, redirectedReference *ResolvedProjectReference) *ResolvedTypeReferenceDirective {
@@ -229,6 +226,36 @@ func (r *Resolver) ResolveModuleName(moduleName string, containingFile string, r
 		}
 	}
 
+	return r.tryResolveFromTypingsLocation(moduleName, containingDirectory, result)
+}
+
+func (r *Resolver) tryResolveFromTypingsLocation(moduleName string, containingDirectory string, originalResult *ResolvedModule) *ResolvedModule {
+	if r.typingsLocation == "" ||
+		tspath.IsExternalModuleNameRelative(moduleName) ||
+		(originalResult.ResolvedFileName != "" && tspath.ExtensionIsOneOf(originalResult.Extension, tspath.SupportedTSExtensionsWithJsonFlat)) {
+		return originalResult
+	}
+
+	state := newResolutionState(
+		moduleName,
+		containingDirectory,
+		false,               /*isTypeReferenceDirective*/
+		core.ModuleKindNone, // resolutionMode,
+		r.compilerOptions,
+		nil, // redirectedReference,
+		r,
+	)
+	if r.traceEnabled() {
+		r.host.Trace(diagnostics.Auto_discovery_for_typings_is_enabled_in_project_0_Running_extra_resolution_pass_for_module_1_using_cache_location_2.Format(r.projectName, moduleName, r.typingsLocation))
+	}
+	globalResolved := state.loadModuleFromImmediateNodeModulesDirectory(extensionsDeclaration, r.typingsLocation, false)
+	if globalResolved == nil {
+		return originalResult
+	}
+	result := state.createResolvedModule(globalResolved, true)
+	result.FailedLookupLocations = append(originalResult.FailedLookupLocations, result.FailedLookupLocations...)
+	result.AffectingLocations = append(originalResult.AffectingLocations, result.AffectingLocations...)
+	result.ResolutionDiagnostics = append(originalResult.ResolutionDiagnostics, result.ResolutionDiagnostics...)
 	return result
 }
 
@@ -835,7 +862,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 			r.esmMode {
 			// EsmMode disables index lookup in `loadNodeModuleFromDirectoryWorker` generally, however non-relative package resolutions still assume
 			// a default `index.js` entrypoint if no `main` or `exports` are present
-			if indexResult := r.loadModuleFromFile(extensions, tspath.CombinePaths(candidate, "index"), onlyRecordFailures); !indexResult.shouldContinueSearching() {
+			if indexResult := r.loadModuleFromFile(extensions, tspath.CombinePaths(candidate, "index.js"), onlyRecordFailures); !indexResult.shouldContinueSearching() {
 				indexResult.packageId = r.getPackageId(packageDirectory, packageInfo)
 				return indexResult
 			}
@@ -1718,7 +1745,7 @@ func extensionIsOk(extensions extensions, extension string) bool {
 }
 
 func ResolveConfig(moduleName string, containingFile string, host ResolutionHost) *ResolvedModule {
-	resolver := NewResolver(host, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext})
+	resolver := NewResolver(host, &core.CompilerOptions{ModuleResolution: core.ModuleResolutionKindNodeNext}, "", "")
 	return resolver.resolveConfig(moduleName, containingFile)
 }
 
