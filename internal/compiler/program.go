@@ -888,9 +888,10 @@ func (p *Program) GetResolvedTypeReferenceDirectiveFromTypeReferenceDirective(ty
 }
 
 func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ref.ResolutionMode
-	// TODO
-	// !!! || p.getDefaultResolutionModeForFile(sourceFile)
+	if ref.ResolutionMode != core.ResolutionModeNone {
+		return ref.ResolutionMode
+	}
+	return p.GetDefaultResolutionModeForFile(sourceFile)
 }
 
 type FileIncludeKind int

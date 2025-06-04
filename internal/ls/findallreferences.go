@@ -539,7 +539,7 @@ func (l *LanguageService) getReferencedSymbolsForNode(position int, node *ast.No
 			if isModuleSpecifierLike(node) {
 				// !!! fileIncludeReasons := program.GetFileIncludeReasons()
 				if referencedFile := program.GetResolvedModuleFromModuleSpecifier(node, nil /*sourceFile*/); referencedFile != nil {
-					// !!! not implemented 
+					// !!! not implemented
 					// return []*SymbolAndEntries{{
 					// 	definition: &Definition{Kind: definitionKindString, node: node},
 					// 	references: getReferencesForNonModule(referencedFile, program /*fileIncludeReasons,*/),
