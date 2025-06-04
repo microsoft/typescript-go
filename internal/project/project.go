@@ -315,9 +315,7 @@ func (p *Project) getRootFileWatchGlobs() []string {
 		for dir, recursive := range globs {
 			result = append(result, fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
 		}
-		for _, fileName := range p.parsedCommandLine.LiteralFileNames() {
-			result = append(result, fileName)
-		}
+		result = append(result, p.parsedCommandLine.LiteralFileNames()...)
 		return result
 	}
 	return nil

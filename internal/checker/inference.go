@@ -579,10 +579,10 @@ func (c *Checker) inferToTemplateLiteralType(n *InferenceState, source *Type, ta
 								case left.flags&TypeFlagsBoolean != 0:
 									return left
 								case right.flags&TypeFlagsBoolean != 0:
-									switch {
-									case str == "true":
+									switch str {
+									case "true":
 										return c.trueType
-									case str == "false":
+									case "false":
 										return c.falseType
 									default:
 										return c.booleanType

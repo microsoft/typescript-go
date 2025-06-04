@@ -1021,7 +1021,7 @@ func parseConfig(
 	if ownConfig.extendedConfigPath != nil {
 		// copy the resolution stack so it is never reused between branches in potential diamond-problem scenarios.
 		resolutionStack = append(resolutionStack, resolvedPath)
-		var result *extendsResult = &extendsResult{
+		result := &extendsResult{
 			options: &core.CompilerOptions{},
 		}
 		if reflect.TypeOf(ownConfig.extendedConfigPath).Kind() == reflect.String {
@@ -1220,7 +1220,7 @@ func parseJsonConfigFileContentWorker(
 	}
 
 	getProjectReferences := func(basePath string) []core.ProjectReference {
-		var projectReferences []core.ProjectReference = []core.ProjectReference{}
+		projectReferences := []core.ProjectReference{}
 		newReferencesOfRaw := getPropFromRaw("references", func(element any) bool { return reflect.TypeOf(element) == orderedMapType }, "object")
 		if newReferencesOfRaw.sliceValue != nil {
 			for _, reference := range newReferencesOfRaw.sliceValue {
@@ -1505,7 +1505,6 @@ func getFileNamesFromConfigSpecs(
 	host vfs.FS,
 	extraFileExtensions []FileExtensionInfo,
 ) []string {
-	extraFileExtensions = []FileExtensionInfo{}
 	basePath = tspath.NormalizePath(basePath)
 	keyMappper := func(value string) string { return tspath.GetCanonicalFileName(value, host.UseCaseSensitiveFileNames()) }
 	// Literal file names (provided via the "files" array in tsconfig.json) are stored in a
