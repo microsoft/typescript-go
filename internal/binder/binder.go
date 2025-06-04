@@ -762,7 +762,10 @@ func (b *Binder) bind(node *ast.Node) bool {
 func (b *Binder) setJSDocParents(node *ast.Node) {
 	for _, jsdoc := range node.JSDoc(b.file) {
 		setParent(jsdoc, node)
-		ast.SetParentInChildren(jsdoc)
+		if jsdoc.Kind != ast.KindJSDocImportTag {
+			// JSDocImportTag children have parents set during parsing for module resolution purposes.
+			ast.SetParentInChildren(jsdoc)
+		}
 	}
 }
 
@@ -1892,13 +1895,16 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	stmt := node.AsForStatement()
 	preLoopLabel := b.setContinueTarget(node, b.createLoopLabel())
 	preBodyLabel := b.createBranchLabel()
+	preIncrementorLabel := b.createBranchLabel()
 	postLoopLabel := b.createBranchLabel()
 	b.bind(stmt.Initializer)
 	topFlow := b.currentFlow
 	b.currentFlow = preLoopLabel
 	b.bindCondition(stmt.Condition, preBodyLabel, postLoopLabel)
 	b.currentFlow = b.finishFlowLabel(preBodyLabel)
-	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preLoopLabel)
+	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preIncrementorLabel)
+	b.addAntecedent(preIncrementorLabel, b.currentFlow)
+	b.currentFlow = b.finishFlowLabel(preIncrementorLabel)
 	b.bind(stmt.Incrementor)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.addAntecedent(preLoopLabel, topFlow)
@@ -2686,9 +2692,11 @@ func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindQuestionQuestionEqualsToken:
 		return containsNarrowableReference(expr.Left)
 	case ast.KindEqualsEqualsToken, ast.KindExclamationEqualsToken, ast.KindEqualsEqualsEqualsToken, ast.KindExclamationEqualsEqualsToken:
-		return isNarrowableOperand(expr.Left) || isNarrowableOperand(expr.Right) ||
-			isNarrowingTypeOfOperands(expr.Right, expr.Left) || isNarrowingTypeOfOperands(expr.Left, expr.Right) ||
-			(ast.IsBooleanLiteral(expr.Right) && isNarrowingExpression(expr.Left) || ast.IsBooleanLiteral(expr.Left) && isNarrowingExpression(expr.Right))
+		left := ast.SkipParentheses(expr.Left)
+		right := ast.SkipParentheses(expr.Right)
+		return isNarrowableOperand(left) || isNarrowableOperand(right) ||
+			isNarrowingTypeOfOperands(right, left) || isNarrowingTypeOfOperands(left, right) ||
+			(ast.IsBooleanLiteral(right) && isNarrowingExpression(left) || ast.IsBooleanLiteral(left) && isNarrowingExpression(right))
 	case ast.KindInstanceOfKeyword:
 		return isNarrowableOperand(expr.Left)
 	case ast.KindInKeyword:

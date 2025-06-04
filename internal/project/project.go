@@ -245,7 +245,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 		)
 		if p.program != nil {
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
-			oldCompilerOptions = p.program.GetCompilerOptions()
+			oldCompilerOptions = p.program.Options()
 		}
 		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, oldSourceFile, oldCompilerOptions)
 	}
@@ -513,7 +513,7 @@ func (p *Project) updateGraph() bool {
 		if oldProgram != nil {
 			for _, oldSourceFile := range oldProgram.GetSourceFiles() {
 				if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
-					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
+					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.Options())
 					p.detachScriptInfoIfNotInferredRoot(oldSourceFile.Path())
 				}
 			}
@@ -1032,7 +1032,7 @@ func (p *Project) Close() {
 
 	if p.program != nil {
 		for _, sourceFile := range p.program.GetSourceFiles() {
-			p.host.DocumentRegistry().ReleaseDocument(sourceFile, p.program.GetCompilerOptions())
+			p.host.DocumentRegistry().ReleaseDocument(sourceFile, p.program.Options())
 			// Detach script info if its not root or is root of non inferred project
 			p.detachScriptInfoIfNotInferredRoot(sourceFile.Path())
 		}
