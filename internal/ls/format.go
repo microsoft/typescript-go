@@ -85,7 +85,7 @@ func (l *LanguageService) getFormattingEditsForRange(
 	options *format.FormatCodeSettings,
 	r core.TextRange,
 ) []core.TextChange {
-	ctx = format.NewContext(ctx, options, options.NewLineCharacter)
+	ctx = format.WithFormatCodeSettings(ctx, options, options.NewLineCharacter)
 	return format.FormatSelection(ctx, file, r.Pos(), r.End())
 }
 
@@ -94,7 +94,7 @@ func (l *LanguageService) getFormattingEditsForDocument(
 	file *ast.SourceFile,
 	options *format.FormatCodeSettings,
 ) []core.TextChange {
-	ctx = format.NewContext(ctx, options, options.NewLineCharacter)
+	ctx = format.WithFormatCodeSettings(ctx, options, options.NewLineCharacter)
 	return format.FormatDocument(ctx, file)
 }
 
@@ -105,7 +105,7 @@ func (l *LanguageService) getFormattingEditsAfterKeystroke(
 	position int,
 	key string,
 ) []core.TextChange {
-	ctx = format.NewContext(ctx, options, options.NewLineCharacter)
+	ctx = format.WithFormatCodeSettings(ctx, options, options.NewLineCharacter)
 
 	if isInComment(file, position, nil) == nil {
 		switch key {

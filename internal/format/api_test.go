@@ -20,7 +20,7 @@ func TestFormat(t *testing.T) {
 
 	t.Run("format checker.ts", func(t *testing.T) {
 		t.Parallel()
-		ctx := format.NewContext(t.Context(), &format.FormatCodeSettings{
+		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
 			EditorSettings: format.EditorSettings{
 				TabSize:                4,
 				IndentSize:             4,
@@ -57,7 +57,7 @@ func TestFormat(t *testing.T) {
 }
 
 func BenchmarkFormat(b *testing.B) {
-	ctx := format.NewContext(b.Context(), &format.FormatCodeSettings{
+	ctx := format.WithFormatCodeSettings(b.Context(), &format.FormatCodeSettings{
 		EditorSettings: format.EditorSettings{
 			TabSize:                4,
 			IndentSize:             4,
