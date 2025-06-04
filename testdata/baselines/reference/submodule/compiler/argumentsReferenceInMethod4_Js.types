@@ -8,8 +8,8 @@ class A {
 	 * @param {object} [foo={}]
 	 */
 	m(foo = {}) {
->m : (foo?: {}) => void
->foo : {}
+>m : (foo?: object) => void
+>foo : object
 >{} : {}
 
 		const key = "bar";
@@ -20,17 +20,18 @@ class A {
 		 * @type object
 		 */
 		this.foo = foo;
->this.foo = foo : {}
->this.foo : any
+>this.foo = foo : object
+>this.foo : object
 >this : this
->foo : any
->foo : {}
+>foo : object
+>foo : object
+>foo : object
 
 		/**
 		 * @type object
 		 */
 		const arguments = this.arguments;
->arguments : { bar: {}; }
+>arguments : object
 >this.arguments : { bar: {}; }
 >this : this
 >arguments : { bar: {}; }
@@ -39,35 +40,38 @@ class A {
 		 * @type object
 		 */
 		this.bar = arguments.bar;
->this.bar = arguments.bar : {}
->this.bar : any
+>this.bar = arguments.bar : object
+>this.bar : object
 >this : this
+>bar : object
+>arguments.bar : object
+>arguments.bar : any
+>arguments : object
 >bar : any
->arguments.bar : {}
->arguments : { bar: {}; }
->bar : {}
 
 		/**
 		 * @type object
 		 */
 		this.baz = arguments[key];
->this.baz = arguments[key] : {}
->this.baz : any
+>this.baz = arguments[key] : object
+>this.baz : object
 >this : this
->baz : any
->arguments[key] : {}
->arguments : { bar: {}; }
+>baz : object
+>arguments[key] : object
+>arguments[key] : any
+>arguments : object
 >key : "bar"
 
 		/**
 		 * @type object
 		 */
 		this.options = arguments;
->this.options = arguments : { bar: {}; }
->this.options : any
+>this.options = arguments : object
+>this.options : object
 >this : this
->options : any
->arguments : { bar: {}; }
+>options : object
+>arguments : object
+>arguments : object
 	}
 
 	get arguments() {

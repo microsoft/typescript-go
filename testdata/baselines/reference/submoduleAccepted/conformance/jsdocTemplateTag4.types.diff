@@ -5,21 +5,23 @@
   */
  function Multimap() {
 ->Multimap : typeof Multimap
-+>Multimap : () => void
- 
++>Multimap : <K extends string, V>() => void
+
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
- >this._map = {} : {}
+->this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
++>this._map = {} : any
 +>this._map : any
 +>this : any
 +>_map : any
++>{} : any
  >{} : {}
- 
+
  };
-@@= skipped -17, +17 lines =@@
+@@= skipped -17, +18 lines =@@
   * @returns {V} the value ok
   */
  Multimap.prototype.get = function (key) {
@@ -28,14 +30,14 @@
  >Multimap.prototype.get : any
  >Multimap.prototype : any
 ->Multimap : typeof Multimap
-+>Multimap : () => void
++>Multimap : <K extends string, V>() => void
  >prototype : any
  >get : any
 ->function (key) {    return this._map[key + ''];} : (key: K) => V
 ->key : K
 +>function (key) {    return this._map[key + ''];} : (key: any) => any
 +>key : any
- 
+
      return this._map[key + ''];
 ->this._map[key + ''] : V
 ->this._map : { [x: string]: V; }
@@ -50,29 +52,31 @@
 +>key : any
  >'' : ""
  }
- 
+
 @@= skipped -26, +26 lines =@@
   * @template V
   */
  var Multimap2 = function() {
 ->Multimap2 : typeof Multimap2
 ->function() {    /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */    this._map = {};} : typeof Multimap2
-+>Multimap2 : () => void
-+>function() {    /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */    this._map = {};} : () => void
- 
++>Multimap2 : <K extends string, V>() => void
++>function() {    /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */    this._map = {};} : <K extends string, V>() => void
+
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
- >this._map = {} : {}
+->this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
++>this._map = {} : any
 +>this._map : any
 +>this : any
 +>_map : any
++>{} : any
  >{} : {}
- 
+
  };
-@@= skipped -18, +18 lines =@@
+@@= skipped -18, +19 lines =@@
   * @returns {V} the value ok
   */
  Multimap2.prototype.get = function (key) {
@@ -81,14 +85,14 @@
  >Multimap2.prototype.get : any
  >Multimap2.prototype : any
 ->Multimap2 : typeof Multimap2
-+>Multimap2 : () => void
++>Multimap2 : <K extends string, V>() => void
  >prototype : any
  >get : any
 ->function (key) {    return this._map[key + ''];} : (key: K) => V
 ->key : K
 +>function (key) {    return this._map[key + ''];} : (key: any) => any
 +>key : any
- 
+
      return this._map[key + ''];
 ->this._map[key + ''] : V
 ->this._map : { [x: string]: V; }
@@ -103,12 +107,12 @@
 +>key : any
  >'' : ""
  }
- 
+
  var Ns = {};
 ->Ns : typeof Ns
 +>Ns : {}
  >{} : {}
- 
+
  /**
 @@= skipped -30, +30 lines =@@
   * @template V
@@ -124,20 +128,22 @@
 +>Ns : {}
 +>Multimap3 : any
 +>function() {    /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */    this._map = {};} : () => void
- 
+
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
- >this._map = {} : {}
+->this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
++>this._map = {} : any
 +>this._map : any
 +>this : {}
 +>_map : any
++>{} : any
  >{} : {}
- 
+
  };
-@@= skipped -21, +21 lines =@@
+@@= skipped -21, +22 lines =@@
   * @returns {V} the value ok
   */
  Ns.Multimap3.prototype.get = function (key) {
@@ -157,7 +163,7 @@
 ->key : K
 +>function (key) {    return this._map[key + ''];} : (key: any) => any
 +>key : any
- 
+
      return this._map[key + ''];
 ->this._map[key + ''] : V
 ->this._map : { [x: string]: V; }
@@ -172,4 +178,3 @@
 +>key : any
  >'' : ""
  }
- 

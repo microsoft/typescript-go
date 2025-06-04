@@ -1,7 +1,7 @@
 --- old.typeFromParamTagForFunction.types
 +++ new.typeFromParamTagForFunction.types
 @@= skipped -10, +10 lines =@@
- 
+
  === a-ext.js ===
  exports.A = function () {
 ->exports.A = function () {    this.x = 1;} : typeof A
@@ -11,10 +11,10 @@
 ->function () {    this.x = 1;} : typeof A
 +>exports.A = function () {    this.x = 1;} : () => void
 +>exports.A : any
-+>exports : any
++>exports : typeof import("./a-ext")
 +>A : any
 +>function () {    this.x = 1;} : () => void
- 
+
      this.x = 1;
  >this.x = 1 : 1
  >this.x : any
@@ -22,72 +22,72 @@
 +>this : any
  >x : any
  >1 : 1
- 
+
 @@= skipped -17, +17 lines =@@
- 
+
  === a.js ===
  const { A } = require("./a-ext");
 ->A : typeof A
 ->require("./a-ext") : typeof import("a-ext")
 +>A : any
-+>require("./a-ext") : any
++>require("./a-ext") : typeof import("./a-ext")
  >require : (id: string) => any
  >"./a-ext" : "./a-ext"
- 
- /** @param {A} p */
+
+@@= skipped -9, +9 lines =@@
  function a(p) { p.x; }
-->a : (p: A) => void
-->p : A
+ >a : (p: A) => void
+ >p : A
 ->p.x : number
-->p : A
-->x : number
-+>a : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : A
+->x : number
 +>x : any
- 
+
  === b-ext.js ===
  exports.B = class {
  >exports.B = class {    constructor() {        this.x = 1;    }} : typeof B
-->exports.B : typeof B
+ >exports.B : typeof B
 ->exports : typeof import("b-ext")
-->B : typeof B
-+>exports.B : any
-+>exports : any
-+>B : any
++>exports : typeof import("./b-ext")
+ >B : typeof B
  >class {    constructor() {        this.x = 1;    }} : typeof B
- 
+
      constructor() {
-@@= skipped -33, +33 lines =@@
- 
+         this.x = 1;
+ >this.x = 1 : 1
+->this.x : any
++>this.x : number
+ >this : this
+->x : any
++>x : number
+ >1 : 1
+     }
+ };
+@@= skipped -25, +25 lines =@@
  === b.js ===
  const { B } = require("./b-ext");
-->B : typeof B
+ >B : typeof B
 ->require("./b-ext") : typeof import("b-ext")
-+>B : any
-+>require("./b-ext") : any
++>require("./b-ext") : typeof import("./b-ext")
  >require : (id: string) => any
  >"./b-ext" : "./b-ext"
- 
- /** @param {B} p */
+
+@@= skipped -8, +8 lines =@@
  function b(p) { p.x; }
-->b : (p: B) => void
-->p : B
+ >b : (p: B) => void
+ >p : B
 ->p.x : number
-->p : B
-->x : number
-+>b : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : B
+->x : number
 +>x : any
- 
+
  === c-ext.js ===
  export function C() {
 ->C : typeof C
 +>C : () => void
- 
+
      this.x = 1;
  >this.x = 1 : 1
  >this.x : any
@@ -96,36 +96,33 @@
  >x : any
  >1 : 1
  }
- 
+
  === c.js ===
  const { C } = require("./c-ext");
 ->C : typeof C
 ->require("./c-ext") : typeof import("c-ext")
-+>C : any
-+>require("./c-ext") : any
++>C : () => void
++>require("./c-ext") : typeof import("./c-ext")
  >require : (id: string) => any
  >"./c-ext" : "./c-ext"
- 
- /** @param {C} p */
+
+@@= skipped -27, +27 lines =@@
  function c(p) { p.x; }
-->c : (p: C) => void
-->p : C
+ >c : (p: C) => void
+ >p : C
 ->p.x : number
-->p : C
-->x : number
-+>c : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : C
+->x : number
 +>x : any
- 
+
  === d-ext.js ===
  export var D = function() {
 ->D : typeof D
 ->function() {    this.x = 1;} : typeof D
 +>D : () => void
 +>function() {    this.x = 1;} : () => void
- 
+
      this.x = 1;
  >this.x = 1 : 1
  >this.x : any
@@ -133,64 +130,60 @@
 +>this : any
  >x : any
  >1 : 1
- 
-@@= skipped -56, +56 lines =@@
- 
+
+@@= skipped -20, +20 lines =@@
+
  === d.js ===
  const { D } = require("./d-ext");
 ->D : typeof D
 ->require("./d-ext") : typeof import("d-ext")
-+>D : any
-+>require("./d-ext") : any
++>D : () => void
++>require("./d-ext") : typeof import("./d-ext")
  >require : (id: string) => any
  >"./d-ext" : "./d-ext"
- 
- /** @param {D} p */
+
+@@= skipped -9, +9 lines =@@
  function d(p) { p.x; }
-->d : (p: D) => void
-->p : D
+ >d : (p: D) => void
+ >p : D
 ->p.x : number
-->p : D
-->x : number
-+>d : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : D
+->x : number
 +>x : any
- 
+
  === e-ext.js ===
  export class E {
-@@= skipped -29, +29 lines =@@
- 
+@@= skipped -11, +11 lines =@@
+     constructor() {
+         this.x = 1;
+ >this.x = 1 : 1
+->this.x : any
++>this.x : number
+ >this : this
+->x : any
++>x : number
+ >1 : 1
+     }
+ }
+@@= skipped -10, +10 lines =@@
  === e.js ===
  const { E } = require("./e-ext");
-->E : typeof E
+ >E : typeof E
 ->require("./e-ext") : typeof import("e-ext")
-+>E : any
-+>require("./e-ext") : any
++>require("./e-ext") : typeof import("./e-ext")
  >require : (id: string) => any
  >"./e-ext" : "./e-ext"
- 
- /** @param {E} p */
- function e(p) { p.x; }
-->e : (p: E) => void
-->p : E
-->p.x : number
-->p : E
-->x : number
-+>e : (p: any) => void
-+>p : any
-+>p.x : any
-+>p : any
-+>x : any
- 
+
+@@= skipped -14, +14 lines =@@
+
  === f.js ===
  var F = function () {
 ->F : typeof F
 ->function () {    this.x = 1;} : typeof F
 +>F : () => void
 +>function () {    this.x = 1;} : () => void
- 
+
      this.x = 1;
  >this.x = 1 : 1
  >this.x : any
@@ -198,27 +191,22 @@
 +>this : any
  >x : any
  >1 : 1
- 
-@@= skipped -29, +29 lines =@@
- 
- /** @param {F} p */
+
+@@= skipped -16, +16 lines =@@
  function f(p) { p.x; }
-->f : (p: F) => void
-->p : F
+ >f : (p: F) => void
+ >p : F
 ->p.x : number
-->p : F
-->x : number
-+>f : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : F
+->x : number
 +>x : any
- 
+
  === g.js ===
  function G() {
 ->G : typeof G
 +>G : () => void
- 
+
      this.x = 1;
  >this.x = 1 : 1
  >this.x : any
@@ -227,34 +215,27 @@
  >x : any
  >1 : 1
  }
- 
- /** @param {G} p */
+@@= skipped -20, +20 lines =@@
  function g(p) { p.x; }
-->g : (p: G) => void
-->p : G
+ >g : (p: G) => void
+ >p : G
 ->p.x : number
-->p : G
-->x : number
-+>g : (p: any) => void
-+>p : any
 +>p.x : any
-+>p : any
+ >p : G
+->x : number
 +>x : any
- 
+
  === h.js ===
  class H {
-@@= skipped -42, +42 lines =@@
- 
- /** @param {H} p */
- function h(p) { p.x; }
-->h : (p: H) => void
-->p : H
-->p.x : number
-->p : H
-->x : number
-+>h : (p: any) => void
-+>p : any
-+>p.x : any
-+>p : any
-+>x : any
- 
+@@= skipped -11, +11 lines =@@
+     constructor() {
+         this.x = 1;
+ >this.x = 1 : 1
+->this.x : any
++>this.x : number
+ >this : this
+->x : any
++>x : number
+ >1 : 1
+     }
+ }

@@ -1,7 +1,7 @@
 --- old.neverReturningFunctions1.js
 +++ new.neverReturningFunctions1.js
 @@= skipped -266, +266 lines =@@
- 
+
  //// [neverReturningFunctions1.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -124,11 +124,12 @@
 -    __extends(SuperThrowable, _super);
 -    function SuperThrowable() {
 -        return _super !== null && _super.apply(this, arguments) || this;
-     }
+-    }
 -    SuperThrowable.prototype.err = function (msg) {
 -        _super.prototype.throw.call(this);
 -    };
 -    SuperThrowable.prototype.ok = function () {
++    }
 +}
 +class SuperThrowable extends MyThrowable {
 +    err(msg) {
@@ -144,40 +145,20 @@
  function foo(services, s) {
      if (s === null) {
          services.panic("ouch");
-@@= skipped -61, +53 lines =@@
-         return s;
-     }
+@@= skipped -64, +56 lines =@@
+
+
+ //// [neverReturningFunctions1.d.ts]
++// Repro from #33582
+ export interface Component<T extends object = any> {
+     attrName?: string;
+     data: T;
+@@= skipped -21, +22 lines =@@
+     flushToDOM(): void;
  }
--
--
--//// [neverReturningFunctions1.d.ts]
--export interface Component<T extends object = any> {
--    attrName?: string;
--    data: T;
--    dependencies?: string[];
--    el: any;
--    id: string;
--    multiple?: boolean;
--    name: string;
--    schema: unknown;
--    system: any;
--    init(data?: T): void;
--    pause(): void;
--    play(): void;
--    remove(): void;
--    tick?(time: number, timeDelta: number): void;
--    update(oldData: T): void;
--    updateSchema?(): void;
--    extendSchema(update: unknown): void;
--    flushToDOM(): void;
--}
--export interface ComponentConstructor<T extends object> {
+ export interface ComponentConstructor<T extends object> {
 -    new (el: unknown, attrValue: string, id: string): T & Component;
--    prototype: T & {
--        name: string;
--        system: unknown;
--        play(): void;
--        pause(): void;
--    };
--}
--export type ComponentDefinition<T extends object = object> = T & Partial<Component> & ThisType<T & Component>;
++    new (el: unknown, attrValue: string, id: string);
+     prototype: T & {
+         name: string;
+         system: unknown;

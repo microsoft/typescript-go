@@ -103,7 +103,15 @@ func TestTsc(t *testing.T) {
 			commandLineArgs: []string{"--moduleResolution", "nodenext ", "first.ts", "--module", "nodenext", "--target", "esnext", "--moduleDetection", "auto", "--jsx", "react", "--newLine", "crlf"},
 		},
 		{
-			subScenario:     "Parse watch interval option",
+			subScenario: "Parse watch interval option",
+			sys: newTestSys(FileMap{
+				"/home/src/workspaces/project/first.ts":      `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "strict": true, "noEmit": true  } }`,
+			}, ""),
+			commandLineArgs: []string{"-w", "--watchInterval", "1000"},
+		},
+		{
+			subScenario:     "Parse watch interval option without tsconfig.json",
 			sys:             newTestSys(nil, ""),
 			commandLineArgs: []string{"-w", "--watchInterval", "1000"},
 		},
@@ -243,4 +251,31 @@ func TestExtends(t *testing.T) {
 	for _, c := range cases {
 		c.verify(t, "extends")
 	}
+}
+
+func TestTypeAcquisition(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
+		// Just skip this for now.
+		t.Skip("bundled files are not embedded")
+	}
+	(&tscInput{
+		subScenario: "parse tsconfig with typeAcquisition",
+		sys: newTestSys(FileMap{"/home/src/workspaces/project/tsconfig.json": `{
+	"compilerOptions": {
+		"composite": true,
+		"noEmit": true,
+	},
+	"typeAcquisition": {
+		"enable": true,
+		"include": ["0.d.ts", "1.d.ts"],
+		"exclude": ["0.js", "1.js"],
+		"disableFilenameBasedTypeAcquisition": true,
+	},
+}`},
+			"/home/src/workspaces/project",
+		),
+		commandLineArgs: []string{},
+	}).verify(t, "typeAcquisition")
 }

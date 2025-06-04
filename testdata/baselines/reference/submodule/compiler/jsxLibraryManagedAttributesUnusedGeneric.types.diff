@@ -1,0 +1,12 @@
+--- old.jsxLibraryManagedAttributesUnusedGeneric.types
++++ new.jsxLibraryManagedAttributesUnusedGeneric.types
+@@= skipped -5, +5 lines =@@
+ >React : any
+
+ declare const jsx: typeof React.createElement
+->jsx : error
+->React.createElement : error
++>jsx : any
++>React.createElement : any
+ >React : any
+ >createElement : any

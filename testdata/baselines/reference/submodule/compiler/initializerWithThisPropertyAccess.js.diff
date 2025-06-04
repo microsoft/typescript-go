@@ -1,8 +1,8 @@
 --- old.initializerWithThisPropertyAccess.js
 +++ new.initializerWithThisPropertyAccess.js
 @@= skipped -35, +35 lines =@@
- 
- 
+
+
  //// [initializerWithThisPropertyAccess.js]
 -"use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -77,30 +77,36 @@
 -    }
 -    return Bar;
 -}());
--
--
--//// [initializerWithThisPropertyAccess.d.ts]
--declare class A {
--    a: number;
--    b: number;
--    c: () => number;
--    d: number;
--    constructor();
- }
--declare class B extends A {
--    x: number;
++}
 +class Bar {
 +    prop = false;
- }
--declare class C {
--    a: number;
++}
+
+
+ //// [initializerWithThisPropertyAccess.d.ts]
+ declare class A {
+     a: number;
 -    b: number;
--}
--declare class Foo {
--    private bar;
++    b: number; // Error
+     c: () => number;
+     d: number;
+     constructor();
+@@= skipped -69, +41 lines =@@
+     x: number;
+ }
+ declare class C {
+-    a: number;
++    a!: number;
+     b: number;
+ }
++// Repro from #37979
+ declare class Foo {
+     private bar;
 -    readonly barProp = false;
--    constructor();
--}
--declare class Bar {
++    readonly barProp: boolean;
+     constructor();
+ }
+ declare class Bar {
 -    readonly prop = false;
--}
++    readonly prop: boolean;
+ }

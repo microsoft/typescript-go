@@ -38,7 +38,7 @@ func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOpti
 	tx.assignmentPatternVisitor = emitContext.NewNodeVisitor(tx.visitAssignmentPattern)
 	tx.languageVersion = compilerOptions.GetEmitScriptTarget()
 	tx.moduleKind = compilerOptions.GetEmitModuleKind()
-	return tx.newTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, emitContext)
 }
 
 // Pushes a new child node onto the ancestor tracking stack, returning the grandparent node to be restored later via `popNode`.
@@ -242,7 +242,7 @@ func (tx *CommonJSModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.
 
 func (tx *CommonJSModuleTransformer) shouldEmitUnderscoreUnderscoreESModule() bool {
 	if tspath.FileExtensionIsOneOf(tx.currentSourceFile.FileName(), tspath.SupportedJSExtensionsFlat) &&
-		tx.currentSourceFile.CommonJsModuleIndicator != nil &&
+		tx.currentSourceFile.CommonJSModuleIndicator != nil &&
 		(tx.currentSourceFile.ExternalModuleIndicator == nil /*|| tx.currentSourceFile.ExternalModuleIndicator == true*/) { // !!!
 		return false
 	}
@@ -272,7 +272,7 @@ func (tx *CommonJSModuleTransformer) createUnderscoreUnderscoreESModule() *ast.S
 							nil, /*modifiers*/
 							tx.factory.NewIdentifier("value"),
 							nil, /*postfixToken*/
-							tx.factory.NewToken(ast.KindTrueKeyword),
+							tx.factory.NewTrueExpression(),
 						),
 					}),
 					false, /*multiLine*/
@@ -289,17 +289,17 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 	tx.emitContext.StartVariableEnvironment()
 
 	// emit standard prologue directives (e.g. "use strict")
-	prologue, rest := tx.emitContext.SplitStandardPrologue(node.Statements.Nodes)
+	prologue, rest := tx.factory.SplitStandardPrologue(node.Statements.Nodes)
 	statements := slices.Clone(prologue)
 
 	// ensure "use strict" if not present
 	if ast.IsExternalModule(tx.currentSourceFile) ||
 		tx.compilerOptions.AlwaysStrict.DefaultIfUnknown(tx.compilerOptions.Strict).IsTrue() {
-		statements = tx.emitContext.EnsureUseStrict(statements)
+		statements = tx.factory.EnsureUseStrict(statements)
 	}
 
 	// emit custom prologues from other transformations
-	custom, rest := tx.emitContext.SplitCustomPrologue(rest)
+	custom, rest := tx.factory.SplitCustomPrologue(rest)
 	statements = append(statements, core.FirstResult(tx.topLevelVisitor.VisitSlice(custom))...)
 
 	// emits `Object.defineProperty(exports, "__esModule", { value: true });` at the top of the file
@@ -313,25 +313,27 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 		const chunkSize = 50
 		l := len(tx.currentModuleInfo.exportedNames)
 		for i := 0; i < l; i += chunkSize {
-			right := tx.factory.NewVoidExpression(tx.factory.NewNumericLiteral("0"))
+			right := tx.factory.NewVoidZeroExpression()
 			for _, nextId := range tx.currentModuleInfo.exportedNames[i:min(i+chunkSize, l)] {
 				var left *ast.Expression
 				if nextId.Kind == ast.KindStringLiteral {
 					left = tx.factory.NewElementAccessExpression(
 						tx.factory.NewIdentifier("exports"),
 						nil, /*questionDotToken*/
-						tx.emitContext.NewStringLiteralFromNode(nextId),
+						tx.factory.NewStringLiteralFromNode(nextId),
 						ast.NodeFlagsNone,
 					)
 				} else {
+					name := nextId.Clone(tx.factory)
+					tx.emitContext.SetEmitFlags(name, printer.EFNoSourceMap) // TODO: Strada emits comments here, but shouldn't
 					left = tx.factory.NewPropertyAccessExpression(
 						tx.factory.NewIdentifier("exports"),
 						nil, /*questionDotToken*/
-						nextId.Clone(tx.factory),
+						name,
 						ast.NodeFlagsNone,
 					)
 				}
-				right = tx.factory.NewBinaryExpression(left, tx.factory.NewToken(ast.KindEqualsToken), right)
+				right = tx.factory.NewAssignmentExpression(left, right)
 			}
 			statement := tx.factory.NewExpressionStatement(right)
 			tx.emitContext.AddEmitFlags(statement, printer.EFCustomPrologue)
@@ -363,8 +365,8 @@ func (tx *CommonJSModuleTransformer) transformCommonJSModule(node *ast.SourceFil
 
 	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.emitContext, result, tx.compilerOptions, tx.sourceFileMetaDataProvider, false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
 	if externalHelpersImportDeclaration != nil {
-		prologue, rest := tx.emitContext.SplitStandardPrologue(result.Statements.Nodes)
-		custom, rest := tx.emitContext.SplitCustomPrologue(rest)
+		prologue, rest := tx.factory.SplitStandardPrologue(result.Statements.Nodes)
+		custom, rest := tx.factory.SplitCustomPrologue(rest)
 		statements := slices.Clone(prologue)
 		statements = append(statements, custom...)
 		statements = append(statements, tx.topLevelVisitor.VisitNode(externalHelpersImportDeclaration))
@@ -385,14 +387,13 @@ func (tx *CommonJSModuleTransformer) appendExportEqualsIfNeeded(statements []*as
 		expressionResult := tx.visitor.VisitNode(tx.currentModuleInfo.exportEquals.Expression)
 		if expressionResult != nil {
 			statement := tx.factory.NewExpressionStatement(
-				tx.factory.NewBinaryExpression(
+				tx.factory.NewAssignmentExpression(
 					tx.factory.NewPropertyAccessExpression(
 						tx.factory.NewIdentifier("module"),
 						nil, /*questionDotToken*/
 						tx.factory.NewIdentifier("exports"),
 						ast.NodeFlagsNone,
 					),
-					tx.factory.NewToken(ast.KindEqualsToken),
 					expressionResult,
 				),
 			)
@@ -503,10 +504,10 @@ func (tx *CommonJSModuleTransformer) appendExportsOfClassOrFunctionDeclaration(s
 		if ast.HasSyntacticModifier(decl, ast.ModifierFlagsDefault) {
 			exportName = tx.factory.NewIdentifier("default")
 		} else {
-			exportName = getDeclarationName(tx.emitContext, decl, nameOptions{})
+			exportName = tx.factory.GetDeclarationName(decl)
 		}
 
-		exportValue := getLocalName(tx.emitContext, decl, assignedNameOptions{})
+		exportValue := tx.factory.GetLocalName(decl)
 		statements = tx.appendExportStatement(statements, seen, exportName, exportValue, &decl.Loc, false /*allowComments*/, false /*liveBinding*/)
 	}
 
@@ -531,7 +532,7 @@ func (tx *CommonJSModuleTransformer) appendExportsOfDeclaration(statements []*as
 	}
 
 	if name := decl.Name(); tx.currentModuleInfo.exportSpecifiers.Len() > 0 && name != nil && ast.IsIdentifier(name) {
-		name = getDeclarationName(tx.emitContext, decl, nameOptions{})
+		name = tx.factory.GetDeclarationName(decl)
 		exportSpecifiers := tx.currentModuleInfo.exportSpecifiers.Get(name.Text())
 		if len(exportSpecifiers) > 0 {
 			exportValue := tx.visitExpressionIdentifier(name)
@@ -601,14 +602,14 @@ func (tx *CommonJSModuleTransformer) createExportExpression(name *ast.ModuleExpo
 			nil, /*typeArguments*/
 			tx.factory.NewNodeList([]*ast.Node{
 				tx.factory.NewIdentifier("exports"),
-				tx.emitContext.NewStringLiteralFromNode(name),
+				tx.factory.NewStringLiteralFromNode(name),
 				tx.factory.NewObjectLiteralExpression(
 					tx.factory.NewNodeList([]*ast.Node{
 						tx.factory.NewPropertyAssignment(
 							nil, /*modifiers*/
 							tx.factory.NewIdentifier("enumerable"),
 							nil, /*postfixToken*/
-							tx.factory.NewToken(ast.KindTrueKeyword),
+							tx.factory.NewTrueExpression(),
 						),
 						tx.factory.NewPropertyAssignment(
 							nil, /*modifiers*/
@@ -644,7 +645,7 @@ func (tx *CommonJSModuleTransformer) createExportExpression(name *ast.ModuleExpo
 			left = tx.factory.NewElementAccessExpression(
 				tx.factory.NewIdentifier("exports"),
 				nil, /*questionDotToken*/
-				tx.emitContext.NewStringLiteralFromNode(name),
+				tx.factory.NewStringLiteralFromNode(name),
 				ast.NodeFlagsNone,
 			)
 		} else {
@@ -657,11 +658,7 @@ func (tx *CommonJSModuleTransformer) createExportExpression(name *ast.ModuleExpo
 				ast.NodeFlagsNone,
 			)
 		}
-		expression = tx.factory.NewBinaryExpression(
-			left,
-			tx.factory.NewToken(ast.KindEqualsToken),
-			value,
-		)
+		expression = tx.factory.NewAssignmentExpression(left, value)
 	}
 	if location != nil {
 		tx.emitContext.SetCommentRange(expression, *location)
@@ -689,7 +686,7 @@ func (tx *CommonJSModuleTransformer) getHelperExpressionForExport(node *ast.Expo
 		return innerExpr
 	}
 	if getExportNeedsImportStarHelper(node) {
-		return tx.visitor.VisitNode(tx.emitContext.NewImportStarHelper(innerExpr))
+		return tx.visitor.VisitNode(tx.factory.NewImportStarHelper(innerExpr))
 	}
 	return innerExpr
 }
@@ -699,10 +696,10 @@ func (tx *CommonJSModuleTransformer) getHelperExpressionForImport(node *ast.Impo
 		return innerExpr
 	}
 	if getImportNeedsImportStarHelper(node) {
-		return tx.visitor.VisitNode(tx.emitContext.NewImportStarHelper(innerExpr))
+		return tx.visitor.VisitNode(tx.factory.NewImportStarHelper(innerExpr))
 	}
 	if getImportNeedsImportDefaultHelper(node) {
-		return tx.visitor.VisitNode(tx.emitContext.NewImportDefaultHelper(innerExpr))
+		return tx.visitor.VisitNode(tx.factory.NewImportDefaultHelper(innerExpr))
 	}
 	return innerExpr
 }
@@ -736,7 +733,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportDeclaration(node *ast.Im
 		// import d, * as n from "mod";
 		variables = append(variables,
 			tx.factory.NewVariableDeclaration(
-				tx.emitContext.NewGeneratedNameForNode(node.AsNode(), printer.AutoGenerateOptions{}),
+				tx.factory.NewGeneratedNameForNode(node.AsNode()),
 				nil, /*exclamationToken*/
 				nil, /*type*/
 				tx.getHelperExpressionForImport(node, tx.createRequireCall(node.AsNode())),
@@ -749,7 +746,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelImportDeclaration(node *ast.Im
 					namespaceDeclaration.Name().Clone(tx.factory),
 					nil, /*exclamationToken*/
 					nil, /*type*/
-					tx.emitContext.NewGeneratedNameForNode(node.AsNode(), printer.AutoGenerateOptions{}),
+					tx.factory.NewGeneratedNameForNode(node.AsNode()),
 				),
 			)
 		}
@@ -823,7 +820,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		return nil
 	}
 
-	generatedName := tx.emitContext.NewGeneratedNameForNode(node.AsNode(), printer.AutoGenerateOptions{})
+	generatedName := tx.factory.NewGeneratedNameForNode(node.AsNode())
 	if node.ExportClause != nil && ast.IsNamedExports(node.ExportClause) {
 		// export { x, y } from "mod";
 		var statements []*ast.Statement
@@ -853,16 +850,16 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 
 			var target *ast.Node
 			if exportNeedsImportDefault {
-				target = tx.emitContext.NewImportDefaultHelper(generatedName)
+				target = tx.factory.NewImportDefaultHelper(generatedName)
 			} else {
 				target = generatedName
 			}
 
 			var exportName *ast.Node
 			if ast.IsStringLiteral(specifier.Name()) {
-				exportName = tx.emitContext.NewStringLiteralFromNode(specifier.Name())
+				exportName = tx.factory.NewStringLiteralFromNode(specifier.Name())
 			} else {
-				exportName = getExportName(tx.emitContext, specifier.AsNode(), assignedNameOptions{})
+				exportName = tx.factory.GetExportName(specifier.AsNode())
 			}
 
 			var exportedValue *ast.Node
@@ -892,7 +889,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 		// export * as default from "mod";
 		var exportName *ast.Node
 		if ast.IsStringLiteral(node.ExportClause.Name()) {
-			exportName = tx.emitContext.NewStringLiteralFromNode(node.ExportClause.Name())
+			exportName = tx.factory.NewStringLiteralFromNode(node.ExportClause.Name())
 		} else {
 			exportName = node.ExportClause.Name().Clone(tx.factory)
 		}
@@ -914,7 +911,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelExportDeclaration(node *ast.Ex
 
 	// export * from "mod";
 	statement := tx.factory.NewExpressionStatement(
-		tx.visitor.VisitNode(tx.emitContext.NewExportStarHelper(tx.createRequireCall(node.AsNode()), tx.factory.NewIdentifier("exports"))),
+		tx.visitor.VisitNode(tx.factory.NewExportStarHelper(tx.createRequireCall(node.AsNode()), tx.factory.NewIdentifier("exports"))),
 	)
 	tx.emitContext.SetOriginal(statement, node.AsNode())
 	tx.emitContext.AssignCommentAndSourceMapRanges(statement, node.AsNode())
@@ -941,7 +938,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelFunctionDeclaration(node *ast.
 			node,
 			extractModifiers(tx.emitContext, node.Modifiers(), ^ast.ModifierFlagsExportDefault),
 			node.AsteriskToken,
-			getDeclarationName(tx.emitContext, node.AsNode(), nameOptions{}),
+			tx.factory.GetDeclarationName(node.AsNode()),
 			nil, /*typeParameters*/
 			tx.visitor.VisitNodes(node.Parameters),
 			nil, /*type*/
@@ -958,7 +955,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelClassDeclaration(node *ast.Cla
 		statements = append(statements, tx.factory.UpdateClassDeclaration(
 			node,
 			tx.visitor.VisitModifiers(extractModifiers(tx.emitContext, node.Modifiers(), ^ast.ModifierFlagsExportDefault)),
-			getDeclarationName(tx.emitContext, node.AsNode(), nameOptions{}),
+			tx.factory.GetDeclarationName(node.AsNode()),
 			nil, /*typeParameters*/
 			tx.visitor.VisitNodes(node.HeritageClauses),
 			tx.visitor.VisitNodes(node.Members),
@@ -1000,7 +997,7 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 
 		commitPendingExpressions := func() {
 			if len(expressions) > 0 {
-				statement := tx.factory.NewExpressionStatement(inlineExpressions(expressions, tx.factory))
+				statement := tx.factory.NewExpressionStatement(tx.factory.InlineExpressions(expressions))
 				tx.emitContext.AssignCommentAndSourceMapRanges(statement, node.AsNode())
 				if len(statements) > 0 {
 					tx.emitContext.AddEmitFlags(statement, printer.EFNoComments)
@@ -1070,9 +1067,8 @@ func (tx *CommonJSModuleTransformer) visitTopLevelVariableStatement(node *ast.Va
 				)
 				tx.emitContext.AssignCommentAndSourceMapRanges(propertyAccess, v.Name())
 
-				pushExpression(tx.factory.NewBinaryExpression(
+				pushExpression(tx.factory.NewAssignmentExpression(
 					propertyAccess,
-					tx.factory.NewToken(ast.KindEqualsToken),
 					v.Name().Clone(tx.factory),
 				))
 			} else {
@@ -1478,14 +1474,10 @@ func (tx *CommonJSModuleTransformer) visitDestructuringAssignmentTargetNoStack(n
 			// to:
 			//  { x: { set value(v) { exports.x = x = v; } }.value } = y
 
-			value := tx.emitContext.NewUniqueName("value", printer.AutoGenerateOptions{
+			value := tx.factory.NewUniqueNameEx("value", printer.AutoGenerateOptions{
 				Flags: printer.GeneratedIdentifierFlagsOptimistic,
 			})
-			expression = tx.factory.NewBinaryExpression(
-				expression,
-				tx.factory.NewToken(ast.KindEqualsToken),
-				value,
-			)
+			expression = tx.factory.NewAssignmentExpression(expression, value)
 
 			for _, exportName := range exportedNames {
 				expression = tx.createExportExpression(exportName, expression, nil /*location*/, false /*liveBinding*/)
@@ -1607,14 +1599,14 @@ func (tx *CommonJSModuleTransformer) visitPostfixUnaryExpression(node *ast.Postf
 			var temp *ast.IdentifierNode
 			expression := tx.factory.UpdatePostfixUnaryExpression(node, tx.visitor.VisitNode(node.Operand))
 			if !resultIsDiscarded {
-				temp = tx.emitContext.NewTempVariable(printer.AutoGenerateOptions{})
+				temp = tx.factory.NewTempVariable()
 				tx.emitContext.AddVariableDeclaration(temp)
 
-				expression = tx.factory.NewBinaryExpression(temp, tx.factory.NewToken(ast.KindEqualsToken), expression)
+				expression = tx.factory.NewAssignmentExpression(temp, expression)
 				tx.emitContext.AssignCommentAndSourceMapRanges(expression, node.AsNode())
 			}
 
-			expression = tx.factory.NewBinaryExpression(expression, tx.factory.NewToken(ast.KindCommaToken), node.Operand.Clone(tx.factory))
+			expression = tx.factory.NewCommaExpression(expression, node.Operand.Clone(tx.factory))
 			tx.emitContext.AssignCommentAndSourceMapRanges(expression, node.AsNode())
 
 			for _, exportName := range exportedNames {
@@ -1623,7 +1615,7 @@ func (tx *CommonJSModuleTransformer) visitPostfixUnaryExpression(node *ast.Postf
 			}
 
 			if temp != nil {
-				expression = tx.factory.NewBinaryExpression(expression, tx.factory.NewToken(ast.KindCommaToken), temp.AsNode())
+				expression = tx.factory.NewCommaExpression(expression, temp.AsNode())
 				tx.emitContext.AssignCommentAndSourceMapRanges(expression, node.AsNode())
 			}
 
@@ -1640,7 +1632,7 @@ func (tx *CommonJSModuleTransformer) visitCallExpression(node *ast.CallExpressio
 	needsRewrite := false
 	if tx.compilerOptions.RewriteRelativeImportExtensions.IsTrue() {
 		if ast.IsImportCall(node.AsNode()) && len(node.Arguments.Nodes) > 0 ||
-			ast.IsInJSFile(node.AsNode()) && ast.IsRequireCall(node.AsNode(), false /*requireStringLiteralLikeArgument*/) {
+			ast.IsInJSFile(node.AsNode()) && ast.IsRequireCall(node.AsNode()) {
 			needsRewrite = true
 		}
 	}
@@ -1698,7 +1690,7 @@ func (tx *CommonJSModuleTransformer) visitImportCallExpression(node *ast.CallExp
 		if ast.IsStringLiteral(firstArgument) {
 			argument = rewriteModuleSpecifier(tx.emitContext, firstArgument, tx.compilerOptions)
 		} else {
-			argument = tx.emitContext.NewRewriteRelativeImportExtensionsHelper(firstArgument, tx.compilerOptions.Jsx == core.JsxEmitPreserve)
+			argument = tx.factory.NewRewriteRelativeImportExtensionsHelper(firstArgument, tx.compilerOptions.Jsx == core.JsxEmitPreserve)
 		}
 	} else {
 		argument = firstArgument
@@ -1709,7 +1701,7 @@ func (tx *CommonJSModuleTransformer) visitImportCallExpression(node *ast.CallExp
 func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast.Expression) *ast.Expression {
 	// import(x)
 	// emit as
-	// Promise.resolve(`${x}`).then((s) => require(s)) /*CommonJs Require*/
+	// Promise.resolve(`${x}`).then((s) => require(s)) /*CommonJS Require*/
 	// We have to wrap require in then callback so that require is done in asynchronously
 	// if we simply do require in resolve callback in Promise constructor. We will execute the loading immediately
 	// If the arg is not inlineable, we have to evaluate and ToString() it in the current scope
@@ -1759,7 +1751,7 @@ func (tx *CommonJSModuleTransformer) createImportCallExpressionCommonJS(arg *ast
 	)
 
 	if tx.compilerOptions.GetESModuleInterop() {
-		requireCall = tx.emitContext.NewImportStarHelper(requireCall)
+		requireCall = tx.factory.NewImportStarHelper(requireCall)
 	}
 
 	var parameters []*ast.ParameterDeclarationNode
@@ -1811,7 +1803,7 @@ func (tx *CommonJSModuleTransformer) shimOrRewriteImportOrRequireCall(node *ast.
 			firstArgumentChanged = rewritten != firstArgument
 			firstArgument = rewritten
 		} else {
-			firstArgument = tx.emitContext.NewRewriteRelativeImportExtensionsHelper(firstArgument, tx.compilerOptions.Jsx == core.JsxEmitPreserve)
+			firstArgument = tx.factory.NewRewriteRelativeImportExtensionsHelper(firstArgument, tx.compilerOptions.Jsx == core.JsxEmitPreserve)
 			firstArgumentChanged = true
 		}
 
@@ -1869,9 +1861,8 @@ func (tx *CommonJSModuleTransformer) visitShorthandPropertyAssignment(node *ast.
 		// destructuring assignment
 		expression := exportedOrImportedName
 		if node.ObjectAssignmentInitializer != nil {
-			expression = tx.factory.NewBinaryExpression(
+			expression = tx.factory.NewAssignmentExpression(
 				expression,
-				tx.factory.NewToken(ast.KindEqualsToken),
 				tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
 			)
 		}
@@ -1920,7 +1911,7 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 		if importDeclaration != nil {
 			if ast.IsImportClause(importDeclaration) {
 				reference := tx.factory.NewPropertyAccessExpression(
-					tx.emitContext.NewGeneratedNameForNode(importDeclaration.Parent, printer.AutoGenerateOptions{}),
+					tx.factory.NewGeneratedNameForNode(importDeclaration.Parent),
 					nil, /*questionDotToken*/
 					tx.factory.NewIdentifier("default"),
 					ast.NodeFlagsNone,
@@ -1932,20 +1923,22 @@ func (tx *CommonJSModuleTransformer) visitExpressionIdentifier(node *ast.Identif
 			if ast.IsImportSpecifier(importDeclaration) {
 				name := importDeclaration.AsImportSpecifier().PropertyNameOrName()
 				decl := ast.FindAncestor(importDeclaration, ast.IsImportDeclaration)
-				target := tx.emitContext.NewGeneratedNameForNode(core.Coalesce(decl, importDeclaration), printer.AutoGenerateOptions{})
+				target := tx.factory.NewGeneratedNameForNode(core.Coalesce(decl, importDeclaration))
 				var reference *ast.Node
 				if ast.IsStringLiteral(name) {
 					reference = tx.factory.NewElementAccessExpression(
 						target,
 						nil, /*questionDotToken*/
-						tx.emitContext.NewStringLiteralFromNode(name),
+						tx.factory.NewStringLiteralFromNode(name),
 						ast.NodeFlagsNone,
 					)
 				} else {
+					referenceName := name.Clone(tx.factory)
+					tx.emitContext.AddEmitFlags(referenceName, printer.EFNoSourceMap|printer.EFNoComments)
 					reference = tx.factory.NewPropertyAccessExpression(
 						target,
 						nil, /*questionDotToken*/
-						name.Clone(tx.factory),
+						referenceName,
 						ast.NodeFlagsNone,
 					)
 				}

@@ -10,26 +10,21 @@
 -    MyComponent.create = make(MyComponent);
 -    return MyComponent;
 -}());
--exports.default = MyComponent;
--
--
--//// [defaultDeclarationEmitNamedCorrectly.d.ts]
--export interface Things<P, T> {
--    p: P;
--    t: T;
 +class MyComponent {
 +    props;
 +    static create = make(MyComponent);
++}
+ exports.default = MyComponent;
+
+
+@@= skipped -15, +13 lines =@@
+     t: T;
  }
--export declare function make<P, CTor>(x: {
+ export declare function make<P, CTor>(x: {
 -    new (): CTor & {
 -        props: P;
 -    };
--}): Things<P, CTor>;
--export interface Props {
--}
--export default class MyComponent {
--    props: Props;
--    static create: Things<Props, MyComponent>;
--}
-+exports.default = MyComponent;
++    new ();
+ }): Things<P, CTor>;
+ export interface Props {
+ }

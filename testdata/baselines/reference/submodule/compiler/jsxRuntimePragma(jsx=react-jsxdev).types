@@ -4,112 +4,112 @@
 /// <reference path="react16.d.ts" />
 /* @jsxRuntime classic */
 import * as React from "react";
->React : any
+>React : typeof React
 
 export const HelloWorld = () => <h1>Hello world</h1>;
->HelloWorld : () => any
->() => <h1>Hello world</h1> : () => any
-><h1>Hello world</h1> : any
+>HelloWorld : () => JSX.Element
+>() => <h1>Hello world</h1> : () => JSX.Element
+><h1>Hello world</h1> : JSX.Element
 >h1 : any
 >h1 : any
 
 export const frag = <><div></div></>;
->frag : any
-><><div></div></> : any
-><div></div> : any
+>frag : JSX.Element
+><><div></div></> : JSX.Element
+><div></div> : JSX.Element
 >div : any
 >div : any
 
 export const selfClosing = <img src="./image.png" />;
->selfClosing : any
-><img src="./image.png" /> : any
+>selfClosing : JSX.Element
+><img src="./image.png" /> : JSX.Element
 >img : any
->src : any
+>src : string
 
 === two.tsx ===
 /// <reference path="react16.d.ts" />
 /* @jsxRuntime automatic */
 export const HelloWorld = () => <h1>Hello world</h1>;
->HelloWorld : () => any
->() => <h1>Hello world</h1> : () => any
-><h1>Hello world</h1> : any
+>HelloWorld : () => JSX.Element
+>() => <h1>Hello world</h1> : () => JSX.Element
+><h1>Hello world</h1> : JSX.Element
 >h1 : any
 >h1 : any
 
 export const frag = <><div></div></>;
->frag : any
-><><div></div></> : any
-><div></div> : any
+>frag : JSX.Element
+><><div></div></> : JSX.Element
+><div></div> : JSX.Element
 >div : any
 >div : any
 
 export const selfClosing = <img src="./image.png" />;
->selfClosing : any
-><img src="./image.png" /> : any
+>selfClosing : JSX.Element
+><img src="./image.png" /> : JSX.Element
 >img : any
->src : any
+>src : string
 
 === three.tsx ===
 /// <reference path="react16.d.ts" />
 /* @jsxRuntime classic */
 /* @jsxRuntime automatic */
 export const HelloWorld = () => <h1>Hello world</h1>;
->HelloWorld : () => any
->() => <h1>Hello world</h1> : () => any
-><h1>Hello world</h1> : any
+>HelloWorld : () => JSX.Element
+>() => <h1>Hello world</h1> : () => JSX.Element
+><h1>Hello world</h1> : JSX.Element
 >h1 : any
 >h1 : any
 
 export const frag = <><div></div></>;
->frag : any
-><><div></div></> : any
-><div></div> : any
+>frag : JSX.Element
+><><div></div></> : JSX.Element
+><div></div> : JSX.Element
 >div : any
 >div : any
 
 export const selfClosing = <img src="./image.png" />;
->selfClosing : any
-><img src="./image.png" /> : any
+>selfClosing : JSX.Element
+><img src="./image.png" /> : JSX.Element
 >img : any
->src : any
+>src : string
 
 === four.tsx ===
 /// <reference path="react16.d.ts" />
 /* @jsxRuntime automatic */
 /* @jsxRuntime classic */
 import * as React from "react";
->React : any
+>React : typeof React
 
 export const HelloWorld = () => <h1>Hello world</h1>;
->HelloWorld : () => any
->() => <h1>Hello world</h1> : () => any
-><h1>Hello world</h1> : any
+>HelloWorld : () => JSX.Element
+>() => <h1>Hello world</h1> : () => JSX.Element
+><h1>Hello world</h1> : JSX.Element
 >h1 : any
 >h1 : any
 
 export const frag = <><div></div></>;
->frag : any
-><><div></div></> : any
-><div></div> : any
+>frag : JSX.Element
+><><div></div></> : JSX.Element
+><div></div> : JSX.Element
 >div : any
 >div : any
 
 export const selfClosing = <img src="./image.png" />;
->selfClosing : any
-><img src="./image.png" /> : any
+>selfClosing : JSX.Element
+><img src="./image.png" /> : JSX.Element
 >img : any
->src : any
+>src : string
 
 === index.ts ===
 export * as one from "./one.js";
->one : typeof import("one")
+>one : typeof import("./one.js")
 
 export * as two from "./two.js";
->two : typeof import("two")
+>two : typeof import("./two.js")
 
 export * as three from "./three.js";
->three : typeof import("three")
+>three : typeof import("./three.js")
 
 export * as four from "./four.js";
->four : typeof import("four")
+>four : typeof import("./four.js")
 

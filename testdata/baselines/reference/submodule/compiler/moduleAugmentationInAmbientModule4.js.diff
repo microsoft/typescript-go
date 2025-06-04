@@ -1,7 +1,7 @@
 --- old.moduleAugmentationInAmbientModule4.js
 +++ new.moduleAugmentationInAmbientModule4.js
 @@= skipped -40, +40 lines =@@
- 
+
  //// [main.js]
  "use strict";
 -/// <reference path="O.d.ts" />
@@ -12,3 +12,7 @@
 +let x;
  x.foo().x;
  x.foo2().x2;
++
++
++//// [main.d.ts]
++import "Map";

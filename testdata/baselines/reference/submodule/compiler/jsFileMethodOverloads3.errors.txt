@@ -1,14 +1,19 @@
-/a.js(15,13): error TS7006: Parameter 'x' implicitly has an 'any' type.
+/a.js(2,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
+/a.js(7,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
 
 
-==== /a.js (1 errors) ====
+==== /a.js (2 errors) ====
     /**
      * @overload
+        ~~~~~~~~
+!!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
      * @param {number} x
      */
     
     /**
      * @overload
+        ~~~~~~~~
+!!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
      * @param {string} x
      */
     
@@ -17,8 +22,6 @@
      * @returns {string | number}
      */
     function id(x) {
-                ~
-!!! error TS7006: Parameter 'x' implicitly has an 'any' type.
         return x;
     }
     

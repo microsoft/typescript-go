@@ -17,6 +17,11 @@ func CommandLineTestWatch(sys System, cb cbType, commandLineArgs []string) (*tso
 	return parsedCommandLine, w
 }
 
+func StartForTest(w *watcher) {
+	// this function should perform any initializations before w.doCycle() in `start(watcher)`
+	w.initialize()
+}
+
 func RunWatchCycle(w *watcher) {
 	// this function should perform the same stuff as w.doCycle() without printing time-related output
 	if w.hasErrorsInTsConfig() {
@@ -24,7 +29,10 @@ func RunWatchCycle(w *watcher) {
 		return
 	}
 	// todo: updateProgram()
-	w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
+	w.program = compiler.NewProgram(compiler.ProgramOptions{
+		Config: w.options,
+		Host:   w.host,
+	})
 	if w.hasBeenModified(w.program) {
 		w.compileAndEmit()
 	}

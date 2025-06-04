@@ -4,7 +4,7 @@
 /// <reference path="react16.d.ts" />
 
 import * as React from 'react'
->React : any
+>React : typeof React
 
 type Tab = [string, React.ReactNode]  // [tabName, tabContent]
 >Tab : Tab
@@ -16,44 +16,44 @@ interface Props {
 }
 
 function TabLayout(props: Props) {
->TabLayout : (props: Props) => any
+>TabLayout : (props: Props) => JSX.Element
 >props : Props
 
     return <div/>
-><div/> : any
+><div/> : JSX.Element
 >div : any
 }
 
 export class App extends React.Component<{}> {
 >App : App
->React.Component : any
->React : any
->Component : any
+>React.Component : React.Component<{}, {}, any>
+>React : typeof React
+>Component : typeof React.Component
 
     render() {
->render : () => any
+>render : () => JSX.Element
 
         return <TabLayout>
-><TabLayout>            {[                ['Users', <div/>],                ['Products', <div/>]            ]}        </TabLayout> : any
->TabLayout : (props: Props) => any
+><TabLayout>            {[                ['Users', <div/>],                ['Products', <div/>]            ]}        </TabLayout> : JSX.Element
+>TabLayout : (props: Props) => JSX.Element
 
             {[
->[                ['Users', <div/>],                ['Products', <div/>]            ] : any[][]
+>[                ['Users', <div/>],                ['Products', <div/>]            ] : [string, JSX.Element][]
 
                 ['Users', <div/>],
->['Users', <div/>] : any[]
+>['Users', <div/>] : [string, JSX.Element]
 >'Users' : "Users"
-><div/> : any
+><div/> : JSX.Element
 >div : any
 
                 ['Products', <div/>]
->['Products', <div/>] : any[]
+>['Products', <div/>] : [string, JSX.Element]
 >'Products' : "Products"
-><div/> : any
+><div/> : JSX.Element
 >div : any
 
             ]}
         </TabLayout>
->TabLayout : (props: Props) => any
+>TabLayout : (props: Props) => JSX.Element
     }
 }

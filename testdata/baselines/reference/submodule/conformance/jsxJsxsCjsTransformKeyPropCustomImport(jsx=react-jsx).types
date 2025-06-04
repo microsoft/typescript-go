@@ -9,19 +9,19 @@ const props = { answer: 42 }
 >42 : 42
 
 const a = <div key="foo" {...props}>text</div>;
->a : any
-><div key="foo" {...props}>text</div> : any
+>a : JSX.Element
+><div key="foo" {...props}>text</div> : JSX.Element
 >div : any
->key : any
+>key : string
 >props : { answer: number; }
 >div : any
 
 const b = <div {...props} key="bar">text</div>;
->b : any
-><div {...props} key="bar">text</div> : any
+>b : JSX.Element
+><div {...props} key="bar">text</div> : JSX.Element
 >div : any
 >props : { answer: number; }
->key : any
+>key : string
 >div : any
 
 export {};

@@ -3,14 +3,15 @@ package scanner
 import (
 	"fmt"
 	"iter"
+	"maps"
 	"strconv"
 	"strings"
 	"unicode"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -117,69 +118,73 @@ var textToKeyword = map[string]ast.Kind{
 	"of":          ast.KindOfKeyword,
 }
 
-var textToToken = map[string]ast.Kind{
-	"{":    ast.KindOpenBraceToken,
-	"}":    ast.KindCloseBraceToken,
-	"(":    ast.KindOpenParenToken,
-	")":    ast.KindCloseParenToken,
-	"[":    ast.KindOpenBracketToken,
-	"]":    ast.KindCloseBracketToken,
-	".":    ast.KindDotToken,
-	"...":  ast.KindDotDotDotToken,
-	";":    ast.KindSemicolonToken,
-	",":    ast.KindCommaToken,
-	"<":    ast.KindLessThanToken,
-	">":    ast.KindGreaterThanToken,
-	"<=":   ast.KindLessThanEqualsToken,
-	">=":   ast.KindGreaterThanEqualsToken,
-	"==":   ast.KindEqualsEqualsToken,
-	"!=":   ast.KindExclamationEqualsToken,
-	"===":  ast.KindEqualsEqualsEqualsToken,
-	"!==":  ast.KindExclamationEqualsEqualsToken,
-	"=>":   ast.KindEqualsGreaterThanToken,
-	"+":    ast.KindPlusToken,
-	"-":    ast.KindMinusToken,
-	"**":   ast.KindAsteriskAsteriskToken,
-	"*":    ast.KindAsteriskToken,
-	"/":    ast.KindSlashToken,
-	"%":    ast.KindPercentToken,
-	"++":   ast.KindPlusPlusToken,
-	"--":   ast.KindMinusMinusToken,
-	"<<":   ast.KindLessThanLessThanToken,
-	"</":   ast.KindLessThanSlashToken,
-	">>":   ast.KindGreaterThanGreaterThanToken,
-	">>>":  ast.KindGreaterThanGreaterThanGreaterThanToken,
-	"&":    ast.KindAmpersandToken,
-	"|":    ast.KindBarToken,
-	"^":    ast.KindCaretToken,
-	"!":    ast.KindExclamationToken,
-	"~":    ast.KindTildeToken,
-	"&&":   ast.KindAmpersandAmpersandToken,
-	"||":   ast.KindBarBarToken,
-	"?":    ast.KindQuestionToken,
-	"??":   ast.KindQuestionQuestionToken,
-	"?.":   ast.KindQuestionDotToken,
-	":":    ast.KindColonToken,
-	"=":    ast.KindEqualsToken,
-	"+=":   ast.KindPlusEqualsToken,
-	"-=":   ast.KindMinusEqualsToken,
-	"*=":   ast.KindAsteriskEqualsToken,
-	"**=":  ast.KindAsteriskAsteriskEqualsToken,
-	"/=":   ast.KindSlashEqualsToken,
-	"%=":   ast.KindPercentEqualsToken,
-	"<<=":  ast.KindLessThanLessThanEqualsToken,
-	">>=":  ast.KindGreaterThanGreaterThanEqualsToken,
-	">>>=": ast.KindGreaterThanGreaterThanGreaterThanEqualsToken,
-	"&=":   ast.KindAmpersandEqualsToken,
-	"|=":   ast.KindBarEqualsToken,
-	"^=":   ast.KindCaretEqualsToken,
-	"||=":  ast.KindBarBarEqualsToken,
-	"&&=":  ast.KindAmpersandAmpersandEqualsToken,
-	"??=":  ast.KindQuestionQuestionEqualsToken,
-	"@":    ast.KindAtToken,
-	"#":    ast.KindHashToken,
-	"`":    ast.KindBacktickToken,
-}
+var textToToken = func() map[string]ast.Kind {
+	m := map[string]ast.Kind{
+		"{":    ast.KindOpenBraceToken,
+		"}":    ast.KindCloseBraceToken,
+		"(":    ast.KindOpenParenToken,
+		")":    ast.KindCloseParenToken,
+		"[":    ast.KindOpenBracketToken,
+		"]":    ast.KindCloseBracketToken,
+		".":    ast.KindDotToken,
+		"...":  ast.KindDotDotDotToken,
+		";":    ast.KindSemicolonToken,
+		",":    ast.KindCommaToken,
+		"<":    ast.KindLessThanToken,
+		">":    ast.KindGreaterThanToken,
+		"<=":   ast.KindLessThanEqualsToken,
+		">=":   ast.KindGreaterThanEqualsToken,
+		"==":   ast.KindEqualsEqualsToken,
+		"!=":   ast.KindExclamationEqualsToken,
+		"===":  ast.KindEqualsEqualsEqualsToken,
+		"!==":  ast.KindExclamationEqualsEqualsToken,
+		"=>":   ast.KindEqualsGreaterThanToken,
+		"+":    ast.KindPlusToken,
+		"-":    ast.KindMinusToken,
+		"**":   ast.KindAsteriskAsteriskToken,
+		"*":    ast.KindAsteriskToken,
+		"/":    ast.KindSlashToken,
+		"%":    ast.KindPercentToken,
+		"++":   ast.KindPlusPlusToken,
+		"--":   ast.KindMinusMinusToken,
+		"<<":   ast.KindLessThanLessThanToken,
+		"</":   ast.KindLessThanSlashToken,
+		">>":   ast.KindGreaterThanGreaterThanToken,
+		">>>":  ast.KindGreaterThanGreaterThanGreaterThanToken,
+		"&":    ast.KindAmpersandToken,
+		"|":    ast.KindBarToken,
+		"^":    ast.KindCaretToken,
+		"!":    ast.KindExclamationToken,
+		"~":    ast.KindTildeToken,
+		"&&":   ast.KindAmpersandAmpersandToken,
+		"||":   ast.KindBarBarToken,
+		"?":    ast.KindQuestionToken,
+		"??":   ast.KindQuestionQuestionToken,
+		"?.":   ast.KindQuestionDotToken,
+		":":    ast.KindColonToken,
+		"=":    ast.KindEqualsToken,
+		"+=":   ast.KindPlusEqualsToken,
+		"-=":   ast.KindMinusEqualsToken,
+		"*=":   ast.KindAsteriskEqualsToken,
+		"**=":  ast.KindAsteriskAsteriskEqualsToken,
+		"/=":   ast.KindSlashEqualsToken,
+		"%=":   ast.KindPercentEqualsToken,
+		"<<=":  ast.KindLessThanLessThanEqualsToken,
+		">>=":  ast.KindGreaterThanGreaterThanEqualsToken,
+		">>>=": ast.KindGreaterThanGreaterThanGreaterThanEqualsToken,
+		"&=":   ast.KindAmpersandEqualsToken,
+		"|=":   ast.KindBarEqualsToken,
+		"^=":   ast.KindCaretEqualsToken,
+		"||=":  ast.KindBarBarEqualsToken,
+		"&&=":  ast.KindAmpersandAmpersandEqualsToken,
+		"??=":  ast.KindQuestionQuestionEqualsToken,
+		"@":    ast.KindAtToken,
+		"#":    ast.KindHashToken,
+		"`":    ast.KindBacktickToken,
+	}
+	maps.Copy(m, textToKeyword)
+	return m
+}()
 
 // As per ECMAScript Language Specification 5th Edition, Section 7.6: ISyntaxToken Names and Identifiers
 // IdentifierStart ::
@@ -322,7 +327,7 @@ func (s *Scanner) ResetPos(pos int) {
 	s.tokenStart = pos
 }
 
-func (scanner *Scanner) SetSkipJsDocLeadingAsterisks(skip bool) {
+func (scanner *Scanner) SetSkipJSDocLeadingAsterisks(skip bool) {
 	if skip {
 		scanner.skipJSDocLeadingAsterisks += 1
 	} else {
@@ -834,7 +839,7 @@ func (s *Scanner) Scan() ast.Kind {
 			s.token = ast.KindAtToken
 		case '\\':
 			cp := s.peekUnicodeEscape()
-			if cp >= 0 && isIdentifierStart(cp, s.languageVersion) {
+			if cp >= 0 && IsIdentifierStart(cp, s.languageVersion) {
 				s.tokenValue = string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
 				s.token = GetIdentifierToken(s.tokenValue)
 			} else {
@@ -857,7 +862,7 @@ func (s *Scanner) Scan() ast.Kind {
 			if s.charAt(1) == '\\' {
 				s.pos++
 				cp := s.peekUnicodeEscape()
-				if cp >= 0 && isIdentifierStart(cp, s.languageVersion) {
+				if cp >= 0 && IsIdentifierStart(cp, s.languageVersion) {
 					s.tokenValue = "#" + string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
 					s.token = ast.KindPrivateIdentifier
 					break
@@ -920,18 +925,28 @@ func (s *Scanner) processCommentDirective(start int, end int, multiline bool) {
 	// Skip starting slashes and whitespace
 	pos := start
 	if multiline {
-		for pos < len(s.text) && (s.text[pos] == '*' || s.text[pos] == '/') {
+		// Skip whitespace
+		for pos < end && (s.text[pos] == ' ' || s.text[pos] == '\t') {
+			pos++
+		}
+		// Skip combinations of / and *
+		for pos < end && (s.text[pos] == '/' || s.text[pos] == '*') {
 			pos++
 		}
 	} else {
-		// Skip "//" for single line comments
+		// Skip opening //
 		pos += 2
+		// Skip another / if present
+		for pos < end && s.text[pos] == '/' {
+			pos++
+		}
 	}
-	for pos < len(s.text) && (s.text[pos] == ' ' || s.text[pos] == '\t') {
+	// Skip whitespace
+	for pos < end && (s.text[pos] == ' ' || s.text[pos] == '\t') {
 		pos++
 	}
 	// Directive must start with '@'
-	if !(pos < len(s.text) && s.text[pos] == '@') {
+	if !(pos < end && s.text[pos] == '@') {
 		return
 	}
 	pos++
@@ -1012,7 +1027,6 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 			switch {
 			case size == 0 || stringutil.IsLineBreak(ch):
 				s.tokenFlags |= ast.TokenFlagsUnterminated
-				s.error(diagnostics.Unterminated_regular_expression_literal)
 				break loop
 			case inEscape:
 				// Parsing an escape character;
@@ -1083,7 +1097,7 @@ func (s *Scanner) ReScanSlashToken() ast.Kind {
 			s.pos++
 			for {
 				ch, size := s.charAndSize()
-				if size == 0 || !isIdentifierPart(ch, s.languageVersion) {
+				if size == 0 || !IsIdentifierPart(ch, s.languageVersion) {
 					break
 				}
 				s.pos += size
@@ -1350,7 +1364,7 @@ func (s *Scanner) ScanJSDocToken() ast.Kind {
 	case '\\':
 		s.pos--
 		cp := s.peekUnicodeEscape()
-		if cp >= 0 && isIdentifierStart(cp, s.languageVersion) {
+		if cp >= 0 && IsIdentifierStart(cp, s.languageVersion) {
 			s.tokenValue = string(s.scanUnicodeEscape(true)) + s.scanIdentifierParts()
 			s.token = GetIdentifierToken(s.tokenValue)
 		} else {
@@ -1359,14 +1373,14 @@ func (s *Scanner) ScanJSDocToken() ast.Kind {
 		return s.token
 	}
 
-	if isIdentifierStart(ch, s.languageVersion) {
+	if IsIdentifierStart(ch, s.languageVersion) {
 		char := ch
 		for {
 			if s.pos >= len(s.text) {
 				break
 			}
 			char, size = s.charAndSize()
-			if !isIdentifierPart(char, s.languageVersion) && char != '-' {
+			if !IsIdentifierPart(char, s.languageVersion) && char != '-' {
 				break
 			}
 			s.pos += size
@@ -1403,11 +1417,11 @@ func (s *Scanner) scanIdentifier(prefixLength int) bool {
 		s.pos = start + prefixLength
 	}
 	ch, size := s.charAndSize()
-	if isIdentifierStart(ch, s.languageVersion) {
+	if IsIdentifierStart(ch, s.languageVersion) {
 		for {
 			s.pos += size
 			ch, size = s.charAndSize()
-			if !isIdentifierPart(ch, s.languageVersion) {
+			if !IsIdentifierPart(ch, s.languageVersion) {
 				break
 			}
 		}
@@ -1425,13 +1439,13 @@ func (s *Scanner) scanIdentifierParts() string {
 	start := s.pos
 	for {
 		ch, size := s.charAndSize()
-		if isIdentifierPart(ch, s.languageVersion) {
+		if IsIdentifierPart(ch, s.languageVersion) {
 			s.pos += size
 			continue
 		}
 		if ch == '\\' {
 			escaped := s.peekUnicodeEscape()
-			if escaped >= 0 && isIdentifierPart(escaped, s.languageVersion) {
+			if escaped >= 0 && IsIdentifierPart(escaped, s.languageVersion) {
 				sb.WriteString(s.text[start:s.pos])
 				sb.WriteRune(s.scanUnicodeEscape(true))
 				start = s.pos
@@ -1600,17 +1614,10 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		return "\""
 	case 'u':
 		// '\uDDDD' and '\U{DDDDDD}'
-		extended := s.char() == '{'
 		s.pos -= 2
 		codePoint := s.scanUnicodeEscape(flags&EscapeSequenceScanningFlagsReportInvalidEscapeErrors != 0)
 		if codePoint < 0 {
-			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			return s.text[start:s.pos]
-		}
-		if extended {
-			s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
-		} else {
-			s.tokenFlags |= ast.TokenFlagsUnicodeEscape
 		}
 		return string(codePoint)
 	case 'x':
@@ -1639,7 +1646,7 @@ func (s *Scanner) scanEscapeSequence(flags EscapeSequenceScanningFlags) string {
 		// case CharacterCodes.paragraphSeparator !!!
 		return ""
 	default:
-		if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 || flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAnnexB == 0 && isIdentifierPart(ch, s.languageVersion) {
+		if flags&EscapeSequenceScanningFlagsAnyUnicodeMode != 0 || flags&EscapeSequenceScanningFlagsRegularExpression != 0 && flags&EscapeSequenceScanningFlagsAnnexB == 0 && IsIdentifierPart(ch, s.languageVersion) {
 			s.errorAt(diagnostics.This_character_cannot_be_escaped_in_a_regular_expression, s.pos-2, 2)
 		}
 		return string(ch)
@@ -1654,11 +1661,14 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	var hexDigits string
 	if extended {
 		s.pos++
+		s.tokenFlags |= ast.TokenFlagsExtendedUnicodeEscape
 		hexDigits = s.scanHexDigits(1, true, false)
 	} else {
+		s.tokenFlags |= ast.TokenFlagsUnicodeEscape
 		hexDigits = s.scanHexDigits(4, false, false)
 	}
 	if hexDigits == "" {
+		s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 		if shouldEmitInvalidEscapeError {
 			s.error(diagnostics.Hexadecimal_digit_expected)
 		}
@@ -1667,12 +1677,14 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 	hexValue, _ := strconv.ParseInt(hexDigits, 16, 32)
 	if extended {
 		if hexValue > 0x10FFFF {
+			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.errorAt(diagnostics.An_extended_Unicode_escape_value_must_be_between_0x0_and_0x10FFFF_inclusive, start+1, s.pos-start-1)
 			}
 			return -1
 		}
 		if s.char() != '}' {
+			s.tokenFlags |= ast.TokenFlagsContainsInvalidEscape
 			if shouldEmitInvalidEscapeError {
 				s.error(diagnostics.Unterminated_Unicode_escape_sequence)
 			}
@@ -1687,9 +1699,11 @@ func (s *Scanner) scanUnicodeEscape(shouldEmitInvalidEscapeError bool) rune {
 // or '\u{XXXXXX}' and return code point value if valid Unicode escape is found. Otherwise return -1.
 func (s *Scanner) peekUnicodeEscape() rune {
 	if s.charAt(1) == 'u' {
-		start := s.pos
+		savePos := s.pos
+		saveTokenFlags := s.tokenFlags
 		codePoint := s.scanUnicodeEscape(false)
-		s.pos = start
+		s.pos = savePos
+		s.tokenFlags = saveTokenFlags
 		return codePoint
 	}
 	return -1
@@ -1775,7 +1789,7 @@ func (s *Scanner) scanNumber() ast.Kind {
 		result = ast.KindNumericLiteral
 	}
 	ch, _ := s.charAndSize()
-	if isIdentifierStart(ch, s.languageVersion) {
+	if IsIdentifierStart(ch, s.languageVersion) {
 		idStart := s.pos
 		id := s.scanIdentifierParts()
 		if result != ast.KindBigIntLiteral && len(id) == 1 && s.text[idStart] == 'n' {
@@ -1949,7 +1963,7 @@ func IsValidIdentifier(s string, languageVersion core.ScriptTarget) bool {
 		return false
 	}
 	for i, ch := range s {
-		if i == 0 && !isIdentifierStart(ch, languageVersion) || i != 0 && !isIdentifierPart(ch, languageVersion) {
+		if i == 0 && !IsIdentifierStart(ch, languageVersion) || i != 0 && !IsIdentifierPart(ch, languageVersion) {
 			return false
 		}
 	}
@@ -1961,12 +1975,18 @@ func isWordCharacter(ch rune) bool {
 	return stringutil.IsASCIILetter(ch) || stringutil.IsDigit(ch) || ch == '_'
 }
 
-func isIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
+func IsIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
 	return stringutil.IsASCIILetter(ch) || ch == '_' || ch == '$' || ch >= utf8.RuneSelf && isUnicodeIdentifierStart(ch, languageVersion)
 }
 
-func isIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
-	return isWordCharacter(ch) || ch == '$' || ch >= utf8.RuneSelf && isUnicodeIdentifierPart(ch, languageVersion)
+func IsIdentifierPart(ch rune, languageVersion core.ScriptTarget) bool {
+	return IsIdentifierPartEx(ch, languageVersion, core.LanguageVariantStandard)
+}
+
+func IsIdentifierPartEx(ch rune, languageVersion core.ScriptTarget, languageVariant core.LanguageVariant) bool {
+	return isWordCharacter(ch) || ch == '$' ||
+		ch >= utf8.RuneSelf && isUnicodeIdentifierPart(ch, languageVersion) ||
+		languageVariant == core.LanguageVariantJSX && (ch == '-' || ch == ':') // "-" and ":" are valid in JSX Identifiers
 }
 
 func isUnicodeIdentifierStart(ch rune, languageVersion core.ScriptTarget) bool {
@@ -2004,10 +2024,7 @@ func isInUnicodeRanges(cp rune, ranges []rune) bool {
 var tokenToText map[ast.Kind]string
 
 func init() {
-	tokenToText = make(map[ast.Kind]string, len(textToKeyword)+len(textToToken))
-	for text, key := range textToKeyword {
-		tokenToText[key] = text
-	}
+	tokenToText = make(map[ast.Kind]string, len(textToToken))
 	for text, key := range textToToken {
 		tokenToText[key] = text
 	}
@@ -2015,6 +2032,14 @@ func init() {
 
 func TokenToString(token ast.Kind) string {
 	return tokenToText[token]
+}
+
+func StringToToken(s string) ast.Kind {
+	kind, ok := textToToken[s]
+	if ok {
+		return kind
+	}
+	return ast.KindUnknown
 }
 
 func GetViableKeywordSuggestions() []string {
@@ -2229,7 +2254,7 @@ func scanShebangTrivia(text string, pos int) int {
 
 func GetScannerForSourceFile(sourceFile *ast.SourceFile, pos int) *Scanner {
 	s := NewScanner()
-	s.text = sourceFile.Text
+	s.text = sourceFile.Text()
 	s.pos = pos
 	s.languageVersion = sourceFile.LanguageVersion
 	s.languageVariant = sourceFile.LanguageVariant
@@ -2247,7 +2272,7 @@ func GetRangeOfTokenAtPosition(sourceFile *ast.SourceFile, pos int) core.TextRan
 	return core.NewTextRange(s.tokenStart, s.pos)
 }
 
-func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJsDoc bool) int {
+func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJSDoc bool) int {
 	// With nodes that have no width (i.e. 'Missing' nodes), we actually *don't*
 	// want to skip trivia because this will launch us forward to the next token.
 	if ast.NodeIsMissing(node) {
@@ -2256,15 +2281,15 @@ func GetTokenPosOfNode(node *ast.Node, sourceFile *ast.SourceFile, includeJsDoc 
 
 	if ast.IsJSDocNode(node) || node.Kind == ast.KindJsxText {
 		// JsxText cannot actually contain comments, even though the scanner will think it sees comments
-		return SkipTriviaEx(sourceFile.Text, node.Pos(), &SkipTriviaOptions{StopAtComments: true})
+		return SkipTriviaEx(sourceFile.Text(), node.Pos(), &SkipTriviaOptions{StopAtComments: true})
 	}
 
-	if includeJsDoc && len(node.JSDoc(sourceFile)) > 0 {
-		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJsDoc*/)
+	if includeJSDoc && len(node.JSDoc(sourceFile)) > 0 {
+		return GetTokenPosOfNode(node.JSDoc(sourceFile)[0], sourceFile, false /*includeJSDoc*/)
 	}
 
 	return SkipTriviaEx(
-		sourceFile.Text,
+		sourceFile.Text(),
 		node.Pos(),
 		&SkipTriviaOptions{InJSDoc: node.Flags&ast.NodeFlagsJSDoc != 0},
 	)
@@ -2287,21 +2312,21 @@ func ComputeLineOfPosition(lineStarts []core.TextPos, pos int) int {
 	return low - 1
 }
 
-func GetLineStarts(sourceFile *ast.SourceFile) []core.TextPos {
+func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 	return sourceFile.LineMap()
 }
 
-func GetLineAndCharacterOfPosition(sourceFile *ast.SourceFile, pos int) (line int, character int) {
+func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetLineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
-	character = utf8.RuneCountInString(sourceFile.Text[lineMap[line]:pos])
+	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
 	return
 }
 
 func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	pos := int(GetLineStarts(sourceFile)[line])
 	for {
-		ch, size := utf8.DecodeRuneInString(sourceFile.Text[pos:])
+		ch, size := utf8.DecodeRuneInString(sourceFile.Text()[pos:])
 		if size == 0 || stringutil.IsLineBreak(ch) {
 			return pos
 		}

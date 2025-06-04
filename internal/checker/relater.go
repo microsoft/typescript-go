@@ -7,8 +7,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 )
 
@@ -255,7 +255,7 @@ func (c *Checker) isSimpleTypeRelatedTo(source *Type, target *Type, relation *Re
 	if s&TypeFlagsNull != 0 && (!c.strictNullChecks && t&TypeFlagsUnionOrIntersection == 0 || t&TypeFlagsNull != 0) {
 		return true
 	}
-	if s&TypeFlagsObject != 0 && t&TypeFlagsNonPrimitive != 0 && !(relation == c.strictSubtypeRelation && c.isEmptyAnonymousObjectType(source) && source.objectFlags&ObjectFlagsFreshLiteral == 0) {
+	if s&TypeFlagsObject != 0 && t&TypeFlagsNonPrimitive != 0 && !(relation == c.strictSubtypeRelation && c.IsEmptyAnonymousObjectType(source) && source.objectFlags&ObjectFlagsFreshLiteral == 0) {
 		return true
 	}
 	if relation == c.assignableRelation || relation == c.comparableRelation {
@@ -461,8 +461,8 @@ func (c *Checker) elaborateError(node *ast.Node, source *Type, target *Type, rel
 		return c.elaborateArrayLiteral(node, source, target, relation, diagnosticOutput)
 	case ast.KindArrowFunction:
 		return c.elaborateArrowFunction(node, source, target, relation, diagnosticOutput)
-		// case ast.KindJsxAttributes:
-		// 	return c.elaborateJsxComponents(node.AsJsxAttributes(), source, target, relation, containingMessageChain, errorOutputContainer)
+	case ast.KindJsxAttributes:
+		return c.elaborateJsxComponents(node, source, target, relation, diagnosticOutput)
 	}
 	return false
 }
@@ -1410,7 +1410,7 @@ func (c *Checker) getTypeParameterModifiers(tp *Type) ast.ModifierFlags {
 	var flags ast.ModifierFlags
 	if tp.symbol != nil {
 		for _, d := range tp.symbol.Declarations {
-			flags |= getEffectiveModifierFlags(d)
+			flags |= d.ModifierFlags()
 		}
 	}
 	return flags & (ast.ModifierFlagsIn | ast.ModifierFlagsOut | ast.ModifierFlagsConst)
@@ -1532,10 +1532,10 @@ func (c *Checker) compareSignaturesRelated(source *Signature, target *Signature,
 			var sourceSig *Signature
 			var targetSig *Signature
 			if checkMode&SignatureCheckModeCallback == 0 && !c.isInstantiatedGenericParameter(source, i) {
-				sourceSig = c.getSingleCallSignature(c.getNonNullableType(sourceType))
+				sourceSig = c.getSingleCallSignature(c.GetNonNullableType(sourceType))
 			}
 			if checkMode&SignatureCheckModeCallback == 0 && !c.isInstantiatedGenericParameter(target, i) {
-				targetSig = c.getSingleCallSignature(c.getNonNullableType(targetType))
+				targetSig = c.getSingleCallSignature(c.GetNonNullableType(targetType))
 			}
 			callbacks := sourceSig != nil && targetSig != nil && c.getTypePredicateOfSignature(sourceSig) == nil && c.getTypePredicateOfSignature(targetSig) == nil &&
 				c.getTypeFacts(sourceType, TypeFactsIsUndefinedOrNull) == c.getTypeFacts(targetType, TypeFactsIsUndefinedOrNull)
@@ -2265,7 +2265,7 @@ func (c *Checker) getEffectiveConstraintOfIntersection(types []*Type, targetIsUn
 					constraints = append(constraints, t)
 				}
 			}
-		} else if t.flags&TypeFlagsDisjointDomains != 0 || c.isEmptyAnonymousObjectType(t) {
+		} else if t.flags&TypeFlagsDisjointDomains != 0 || c.IsEmptyAnonymousObjectType(t) {
 			hasDisjointDomainType = true
 		}
 	}
@@ -2276,7 +2276,7 @@ func (c *Checker) getEffectiveConstraintOfIntersection(types []*Type, targetIsUn
 			// We add any types belong to one of the disjoint domains because they might cause the final
 			// intersection operation to reduce the union constraints.
 			for _, t := range types {
-				if t.flags&TypeFlagsDisjointDomains != 0 || c.isEmptyAnonymousObjectType(t) {
+				if t.flags&TypeFlagsDisjointDomains != 0 || c.IsEmptyAnonymousObjectType(t) {
 					constraints = append(constraints, t)
 				}
 			}
@@ -2692,28 +2692,21 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 					if r.errorNode == nil {
 						panic("No errorNode in hasExcessProperties")
 					}
-					if ast.IsJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.Parent) {
-						// !!!
-						// // JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
-						// // However, using an object-literal error message will be very confusing to the users so we give different a message.
-						// if prop.valueDeclaration && isJsxAttribute(prop.valueDeclaration) && ast.GetSourceFileOfNode(errorNode) == ast.GetSourceFileOfNode(prop.valueDeclaration.name) {
-						// 	// Note that extraneous children (as in `<NoChild>extra</NoChild>`) don't pass this check,
-						// 	// since `children` is a Kind.PropertySignature instead of a Kind.JsxAttribute.
-						// 	errorNode = prop.valueDeclaration.name
-						// }
-						// propName := c.symbolToString(prop)
-						// suggestionSymbol := c.getSuggestedSymbolForNonexistentJSXAttribute(propName, errorTarget)
-						// var suggestion *string
-						// if suggestionSymbol {
-						// 	suggestion = c.symbolToString(suggestionSymbol)
-						// } else {
-						// 	suggestion = nil
-						// }
-						// if suggestion {
-						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, c.TypeToString(errorTarget), suggestion)
-						// } else {
-						// 	reportError(Diagnostics.Property_0_does_not_exist_on_type_1, propName, c.TypeToString(errorTarget))
-						// }
+					if ast.IsJsxAttributes(r.errorNode) || ast.IsJsxOpeningLikeElement(r.errorNode) || ast.IsJsxOpeningLikeElement(r.errorNode.Parent) {
+						// JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
+						// However, using an object-literal error message will be very confusing to the users so we give different a message.
+						if prop.ValueDeclaration != nil && ast.IsJsxAttribute(prop.ValueDeclaration) && ast.GetSourceFileOfNode(r.errorNode) == ast.GetSourceFileOfNode(prop.ValueDeclaration.Name()) {
+							// Note that extraneous children (as in `<NoChild>extra</NoChild>`) don't pass this check,
+							// since `children` is a Kind.PropertySignature instead of a Kind.JsxAttribute.
+							r.errorNode = prop.ValueDeclaration.Name()
+						}
+						propName := r.c.symbolToString(prop)
+						suggestionSymbol := r.c.getSuggestedSymbolForNonexistentJSXAttribute(propName, errorTarget)
+						if suggestionSymbol != nil {
+							r.reportError(diagnostics.Property_0_does_not_exist_on_type_1_Did_you_mean_2, propName, r.c.TypeToString(errorTarget), r.c.symbolToString(suggestionSymbol))
+						} else {
+							r.reportError(diagnostics.Property_0_does_not_exist_on_type_1, propName, r.c.TypeToString(errorTarget))
+						}
 					} else {
 						// use the property's value declaration if the property is assigned inside the literal itself
 						var objectLiteralDeclaration *ast.Node
@@ -4361,7 +4354,7 @@ func (r *Relater) signaturesRelatedTo(source *Type, target *Type, kind Signature
 	if r.relation == r.c.identityRelation {
 		return r.signaturesIdenticalTo(source, target, kind)
 	}
-	if target == r.c.anyFunctionType || source == r.c.anyFunctionType {
+	if target == r.c.anyFunctionType || r.relation != r.c.strictSubtypeRelation && source == r.c.anyFunctionType {
 		return TernaryTrue
 	}
 	sourceSignatures := r.c.getSignaturesOfType(source, kind)
@@ -4434,8 +4427,8 @@ func (r *Relater) constructorVisibilitiesAreCompatible(sourceSignature *Signatur
 	if sourceSignature.declaration == nil || targetSignature.declaration == nil {
 		return true
 	}
-	sourceAccessibility := getEffectiveModifierFlags(sourceSignature.declaration) & ast.ModifierFlagsNonPublicAccessibilityModifier
-	targetAccessibility := getEffectiveModifierFlags(targetSignature.declaration) & ast.ModifierFlagsNonPublicAccessibilityModifier
+	sourceAccessibility := sourceSignature.declaration.ModifierFlags() & ast.ModifierFlagsNonPublicAccessibilityModifier
+	targetAccessibility := targetSignature.declaration.ModifierFlags() & ast.ModifierFlagsNonPublicAccessibilityModifier
 	// A public, protected and private signature is assignable to a private signature.
 	if targetAccessibility == ast.ModifierFlagsPrivate {
 		return true
@@ -4635,14 +4628,12 @@ func (r *Relater) reportErrorResults(originalSource *Type, originalTarget *Type,
 	case source.symbol != nil && source.flags&TypeFlagsObject != 0 && r.c.globalObjectType == source:
 		r.reportError(diagnostics.The_Object_type_is_assignable_to_very_few_other_types_Did_you_mean_to_use_the_any_type_instead)
 	case source.objectFlags&ObjectFlagsJsxAttributes != 0 && target.flags&TypeFlagsIntersection != 0:
-		// !!!
-		// targetTypes := target.Types()
-		// intrinsicAttributes := c.getJsxType(JsxNames.IntrinsicAttributes, errorNode)
-		// intrinsicClassAttributes := c.getJsxType(JsxNames.IntrinsicClassAttributes, errorNode)
-		// if !c.isErrorType(intrinsicAttributes) && !c.isErrorType(intrinsicClassAttributes) && (contains(targetTypes, intrinsicAttributes) || contains(targetTypes, intrinsicClassAttributes)) {
-		// 	// do not report top error
-		// 	return
-		// }
+		targetTypes := target.Types()
+		intrinsicAttributes := r.c.getJsxType(JsxNames.IntrinsicAttributes, r.errorNode)
+		intrinsicClassAttributes := r.c.getJsxType(JsxNames.IntrinsicClassAttributes, r.errorNode)
+		if !r.c.isErrorType(intrinsicAttributes) && !r.c.isErrorType(intrinsicClassAttributes) && (slices.Contains(targetTypes, intrinsicAttributes) || slices.Contains(targetTypes, intrinsicClassAttributes)) {
+			return
+		}
 	case originalTarget.flags&TypeFlagsIntersection != 0 && originalTarget.objectFlags&ObjectFlagsIsNeverIntersection != 0:
 		message := diagnostics.The_intersection_0_was_reduced_to_never_because_property_1_has_conflicting_types_in_some_constituents
 		prop := core.Find(r.c.getPropertiesOfUnionOrIntersectionType(originalTarget), r.c.isDiscriminantWithNeverType)
@@ -4891,10 +4882,10 @@ func (c *Checker) isTypeDerivedFrom(source *Type, target *Type) bool {
 			constraint = c.unknownType
 		}
 		return c.isTypeDerivedFrom(constraint, target)
-	case c.isEmptyAnonymousObjectType(target):
+	case c.IsEmptyAnonymousObjectType(target):
 		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0
 	case target == c.globalObjectType:
-		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0 && !c.isEmptyAnonymousObjectType(source)
+		return source.flags&(TypeFlagsObject|TypeFlagsNonPrimitive) != 0 && !c.IsEmptyAnonymousObjectType(source)
 	case target == c.globalFunctionType:
 		return source.flags&TypeFlagsObject != 0 && c.isFunctionObjectType(source)
 	default:

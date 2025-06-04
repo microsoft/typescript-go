@@ -3,7 +3,7 @@
 @@= skipped -14, +14 lines =@@
      "b": "hello"
  }
- 
+
 -//// [out/b.json]
 -{
 -    "a": true,
@@ -23,7 +23,3 @@
 +    let b = b2.b;
      x = (b1.b === b);
  }
--
--
--//// [out/file1.d.ts]
--export {};

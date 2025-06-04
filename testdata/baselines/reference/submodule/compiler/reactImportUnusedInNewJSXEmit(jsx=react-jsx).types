@@ -4,20 +4,20 @@
 /// <reference path="react16.d.ts" />
 
 import React from "react";
->React : any
+>React : typeof React
 
 function Bar() {
->Bar : () => any
+>Bar : () => JSX.Element
 
   return <div />;
-><div /> : any
+><div /> : JSX.Element
 >div : any
 }
 
 export function Foo() {
->Foo : () => any
+>Foo : () => JSX.Element
 
   return <Bar />;
-><Bar /> : any
->Bar : () => any
+><Bar /> : JSX.Element
+>Bar : () => JSX.Element
 }

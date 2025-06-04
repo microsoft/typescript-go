@@ -2,7 +2,7 @@
 +++ new.sourceMapValidationWithComments.js
 @@= skipped -23, +23 lines =@@
  }
- 
+
  //// [sourceMapValidationWithComments.js]
 -var DebugClass = /** @class */ (function () {
 -    function DebugClass() {
@@ -20,6 +20,6 @@
 -    };
 -    return DebugClass;
 -}());
--//# sourceMappingURL=sourceMapValidationWithComments.js.map
 +    }
 +}
+ //# sourceMappingURL=sourceMapValidationWithComments.js.map

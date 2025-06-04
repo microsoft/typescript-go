@@ -2,46 +2,48 @@
 +++ new.checkJsdocTypeTagOnObjectProperty2.types
 @@= skipped -5, +5 lines =@@
  >lol : any
- 
+
  const obj = {
 ->obj : { bar: string | undefined; method1(arg0: number): number; method2: (arg0: number) => number; arrowFunc: (arg0: number) => number; lol: string; }
 ->{  /** @type {string|undefined} */  bar: 42,  /** @type {function(number): number} */  method1(n1) {      return "42";  },  /** @type {function(number): number} */  method2: (n1) => "lol",  /** @type {function(number): number} */  arrowFunc: (num="0") => num + 42,  /** @type {string} */  lol} : { bar: string | undefined; method1(arg0: number): number; method2: (arg0: number) => number; arrowFunc: (arg0: number) => number; lol: string; }
-+>obj : { bar: number; method1: (n1: any) => string; method2: (n1: any) => string; arrowFunc: (num?: string) => string; lol: any; }
-+>{  /** @type {string|undefined} */  bar: 42,  /** @type {function(number): number} */  method1(n1) {      return "42";  },  /** @type {function(number): number} */  method2: (n1) => "lol",  /** @type {function(number): number} */  arrowFunc: (num="0") => num + 42,  /** @type {string} */  lol} : { bar: number; method1: (n1: any) => string; method2: (n1: any) => string; arrowFunc: (num?: string) => string; lol: any; }
- 
++>obj : { bar: string | undefined; method1(n1: any): string; method2: function; arrowFunc: function; lol: any; }
++>{  /** @type {string|undefined} */  bar: 42,  /** @type {function(number): number} */  method1(n1) {      return "42";  },  /** @type {function(number): number} */  method2: (n1) => "lol",  /** @type {function(number): number} */  arrowFunc: (num="0") => num + 42,  /** @type {string} */  lol} : { bar: string | undefined; method1(n1: any): string; method2: function; arrowFunc: function; lol: any; }
+
    /** @type {string|undefined} */
    bar: 42,
-->bar : string | undefined
-+>bar : number
+ >bar : string | undefined
++>42 : string | undefined
  >42 : 42
- 
+
    /** @type {function(number): number} */
    method1(n1) {
 ->method1 : (n1: number) => number
 ->n1 : number
 +>method1 : (n1: any) => string
 +>n1 : any
- 
+
        return "42";
  >"42" : "42"
-@@= skipped -19, +19 lines =@@
+@@= skipped -19, +20 lines =@@
    },
    /** @type {function(number): number} */
    method2: (n1) => "lol",
 ->method2 : (arg0: number) => number
 ->(n1) => "lol" : (n1: number) => number
 ->n1 : number
-+>method2 : (n1: any) => string
++>method2 : function
++>(n1) => "lol" : function
 +>(n1) => "lol" : (n1: any) => string
 +>n1 : any
  >"lol" : "lol"
- 
+
    /** @type {function(number): number} */
    arrowFunc: (num="0") => num + 42,
 ->arrowFunc : (arg0: number) => number
 ->(num="0") => num + 42 : (num?: number) => number
 ->num : number
-+>arrowFunc : (num?: string) => string
++>arrowFunc : function
++>(num="0") => num + 42 : function
 +>(num="0") => num + 42 : (num?: string) => string
 +>num : string
  >"0" : "0"
@@ -50,7 +52,7 @@
 +>num + 42 : string
 +>num : string
  >42 : 42
- 
+
    /** @type {string} */
    lol
 ->lol : string
@@ -58,7 +60,7 @@
  }
  lol = "string"
  >lol = "string" : "string"
-@@= skipped -27, +27 lines =@@
+@@= skipped -27, +29 lines =@@
  /** @type {string} */
  var s = obj.method1(0);
  >s : string
@@ -68,10 +70,10 @@
 ->method1 : (arg0: number) => number
 +>obj.method1(0) : string
 +>obj.method1 : (n1: any) => string
-+>obj : { bar: number; method1: (n1: any) => string; method2: (n1: any) => string; arrowFunc: (num?: string) => string; lol: any; }
++>obj : { bar: string | undefined; method1(n1: any): string; method2: function; arrowFunc: function; lol: any; }
 +>method1 : (n1: any) => string
  >0 : 0
- 
+
  /** @type {string} */
  var s1 = obj.method2("0");
  >s1 : string
@@ -79,9 +81,8 @@
 ->obj.method2 : (arg0: number) => number
 ->obj : { bar: string | undefined; method1(arg0: number): number; method2: (arg0: number) => number; arrowFunc: (arg0: number) => number; lol: string; }
 ->method2 : (arg0: number) => number
-+>obj.method2("0") : string
-+>obj.method2 : (n1: any) => string
-+>obj : { bar: number; method1: (n1: any) => string; method2: (n1: any) => string; arrowFunc: (num?: string) => string; lol: any; }
-+>method2 : (n1: any) => string
++>obj.method2("0") : any
++>obj.method2 : function
++>obj : { bar: string | undefined; method1(n1: any): string; method2: function; arrowFunc: function; lol: any; }
++>method2 : function
  >"0" : "0"
- 

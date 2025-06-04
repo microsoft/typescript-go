@@ -1,7 +1,7 @@
 --- old.sourceMapValidationDestructuringParametertArrayBindingPatternDefaultValues.js
 +++ new.sourceMapValidationDestructuringParametertArrayBindingPatternDefaultValues.js
 @@= skipped -36, +36 lines =@@
- 
+
  //// [sourceMapValidationDestructuringParametertArrayBindingPatternDefaultValues.js]
  var robotA = [1, "mower", "mowing"];
 -function foo1(_a) {
@@ -25,8 +25,3 @@
      console.log(robotAInfo);
  }
  foo1(robotA);
-@@= skipped -24, +20 lines =@@
- foo3([2, "trimmer", "trimming"]);
- foo4(robotA);
- foo4([2, "trimmer", "trimming"]);
--//# sourceMappingURL=sourceMapValidationDestructuringParametertArrayBindingPatternDefaultValues.js.map

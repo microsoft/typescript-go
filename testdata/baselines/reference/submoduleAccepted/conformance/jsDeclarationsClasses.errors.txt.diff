@@ -1,17 +1,11 @@
 --- old.jsDeclarationsClasses.errors.txt
 +++ new.jsDeclarationsClasses.errors.txt
-@@= skipped -0, +-1 lines =@@
+@@= skipped -0, +0 lines =@@
 -<no content>
-@@= skipped --1, +1 lines =@@
-+index.js(138,14): error TS2339: Property 'p1' does not exist on type 'K'.
-+index.js(139,14): error TS2339: Property 'p2' does not exist on type 'K'.
-+index.js(143,21): error TS2339: Property 'p1' does not exist on type 'K'.
-+index.js(151,14): error TS2339: Property 'prop' does not exist on type 'M'.
-+index.js(165,14): error TS2339: Property 'another' does not exist on type 'N'.
-+index.js(179,14): error TS2339: Property 'another2' does not exist on type 'O'.
++index.js(173,24): error TS2314: Generic type 'N<T>' requires 1 type argument(s).
 +
 +
-+==== index.js (6 errors) ====
++==== index.js (1 errors) ====
 +    export class A {}
 +    
 +    export class B {
@@ -150,17 +144,11 @@
 +    export class K {
 +        constructor() {
 +            this.p1 = 12;
-+                 ~~
-+!!! error TS2339: Property 'p1' does not exist on type 'K'.
 +            this.p2 = "ok";
-+                 ~~
-+!!! error TS2339: Property 'p2' does not exist on type 'K'.
 +        }
 +    
 +        method() {
 +            return this.p1;
-+                        ~~
-+!!! error TS2339: Property 'p1' does not exist on type 'K'.
 +        }
 +    }
 +    
@@ -169,8 +157,6 @@
 +    export class M extends null {
 +        constructor() {
 +            this.prop = 12;
-+                 ~~~~
-+!!! error TS2339: Property 'prop' does not exist on type 'M'.
 +        }
 +    }
 +    
@@ -185,8 +171,6 @@
 +        constructor(param) {
 +            super();
 +            this.another = param;
-+                 ~~~~~~~
-+!!! error TS2339: Property 'another' does not exist on type 'N'.
 +        }
 +    }
 +    
@@ -195,14 +179,14 @@
 +     * @extends {N<U>}
 +     */
 +    export class O extends N {
++                           ~
++!!! error TS2314: Generic type 'N<T>' requires 1 type argument(s).
 +        /**
 +         * @param {U} param 
 +         */
 +        constructor(param) {
 +            super(param);
 +            this.another2 = param;
-+                 ~~~~~~~~
-+!!! error TS2339: Property 'another2' does not exist on type 'O'.
 +        }
 +    }
 +    

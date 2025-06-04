@@ -1,49 +1,26 @@
 --- old.jsExportMemberMergedWithModuleAugmentation.types
 +++ new.jsExportMemberMergedWithModuleAugmentation.types
-@@= skipped -5, +5 lines =@@
- 
-   /** @type {string} */
-   x;
-->x : string
-+>x : any
+@@= skipped -9, +9 lines =@@
  }
- 
+
  module.exports = {
 ->module.exports = {  Abcde} : typeof module."./test"
 ->module.exports : typeof module."./test"
 ->module : { exports: typeof module."./test"; }
 ->exports : typeof module."./test"
 +>module.exports = {  Abcde} : { Abcde: typeof Abcde; }
-+>module.exports : any
-+>module : any
-+>exports : any
++>module.exports : { Abcde: typeof Abcde; }
++>module : { "export=": { Abcde: typeof Abcde; }; }
++>exports : { Abcde: typeof Abcde; }
  >{  Abcde} : { Abcde: typeof Abcde; }
- 
+
    Abcde
-@@= skipped -17, +17 lines =@@
- 
- === /index.ts ===
- import { Abcde } from "./test";
-->Abcde : typeof Abcde
-+>Abcde : any
- 
+@@= skipped -16, +16 lines =@@
+ >Abcde : typeof Abcde
+
  declare module "./test" {
 ->"./test" : typeof import("/test")
 +>"./test" : any
- 
+
    interface Abcde { b: string }
  >b : string
- }
- 
- new Abcde().x;
-->new Abcde().x : string
-->new Abcde() : Abcde
-->Abcde : typeof Abcde
-->x : string
-+>new Abcde().x : any
-+>new Abcde() : any
-+>Abcde : any
-+>x : any
- 
- // Bug: the type meaning from /test.js does not
- // propagate through the object literal export.

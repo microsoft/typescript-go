@@ -15,7 +15,7 @@ type TypeEraserTransformer struct {
 
 func NewTypeEraserTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions) *Transformer {
 	tx := &TypeEraserTransformer{compilerOptions: compilerOptions}
-	return tx.newTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, emitContext)
 }
 
 // Pushes a new child node onto the ancestor tracking stack, returning the grandparent node to be restored later via `popNode`.
@@ -95,7 +95,11 @@ func (tx *TypeEraserTransformer) visit(node *ast.Node) *ast.Node {
 		ast.KindIndexSignature:
 		return nil
 
+	case ast.KindJSExportAssignment, ast.KindJSImportDeclaration:
+		// reparsed commonjs are elided
+		return nil
 	case ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration,
 		ast.KindInterfaceDeclaration:
 		// TypeScript type-only declarations are elided.
 		return tx.elide(node)

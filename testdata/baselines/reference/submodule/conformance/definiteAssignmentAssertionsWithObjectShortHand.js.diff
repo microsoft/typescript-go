@@ -2,7 +2,7 @@
 +++ new.definiteAssignmentAssertionsWithObjectShortHand.js
 @@= skipped -8, +8 lines =@@
  }
- 
+
  //// [definiteAssignmentAssertionsWithObjectShortHand.js]
 -"use strict";
 -var a = 'ff';
@@ -14,13 +14,4 @@
 +const bar = {
 +    a() { }
  };
--
--
--//// [definiteAssignmentAssertionsWithObjectShortHand.d.ts]
--declare const a: string | undefined;
--declare const foo: {
--    a: string;
--};
--declare const bar: {
--    a?(): void;
--};
+

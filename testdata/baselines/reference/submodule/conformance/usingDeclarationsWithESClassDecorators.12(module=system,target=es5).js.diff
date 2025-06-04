@@ -1,8 +1,8 @@
 --- old.usingDeclarationsWithESClassDecorators.12(module=system,target=es5).js
 +++ new.usingDeclarationsWithESClassDecorators.12(module=system,target=es5).js
 @@= skipped -14, +14 lines =@@
- 
- 
+
+
  //// [usingDeclarationsWithESClassDecorators.12.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -47,10 +47,21 @@
 -    };
 -});
 +"use strict";
++var after;
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.D = void 0;
 +@dec
 +class C {
 +}
 +exports.D = C;
-+using after = null;
++const env_1 = { stack: [], error: void 0, hasError: false };
++try {
++    after = __addDisposableResource(env_1, null, false);
++}
++catch (e_1) {
++    env_1.error = e_1;
++    env_1.hasError = true;
++}
++finally {
++    __disposeResources(env_1);
++}

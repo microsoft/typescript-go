@@ -34,35 +34,26 @@ export const obj4 = {
 };
 
 
-//// [declarationEmitObjectLiteralAccessors1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.obj4 = exports.obj3 = exports.obj2 = exports.obj1 = void 0;
+
+
+//// [declarationEmitObjectLiteralAccessors1.d.ts]
 // same type accessors
-exports.obj1 = {
+export declare const obj1: {
     /** my awesome getter (first in source order) */
-    get x() {
-        return "";
-    },
-    /** my awesome setter (second in source order) */
-    set x(a) { },
+    x: string;
 };
 // divergent accessors
-exports.obj2 = {
+export declare const obj2: {
     /** my awesome getter */
-    get x() {
-        return "";
-    },
+    get x(): string;
     /** my awesome setter */
-    set x(a) { },
+    set x(a: number);
 };
-exports.obj3 = {
+export declare const obj3: {
     /** my awesome getter */
-    get x() {
-        return "";
-    },
+    readonly x: string;
 };
-exports.obj4 = {
+export declare const obj4: {
     /** my awesome setter */
-    set x(a) { },
+    x: number;
 };

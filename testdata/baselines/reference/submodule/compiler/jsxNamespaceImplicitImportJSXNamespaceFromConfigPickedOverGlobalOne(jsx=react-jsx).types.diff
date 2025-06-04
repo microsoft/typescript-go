@@ -1,0 +1,24 @@
+--- old.jsxNamespaceImplicitImportJSXNamespaceFromConfigPickedOverGlobalOne(jsx=react-jsx).types
++++ new.jsxNamespaceImplicitImportJSXNamespaceFromConfigPickedOverGlobalOne(jsx=react-jsx).types
+@@= skipped -4, +4 lines =@@
+ >React : any
+
+ export as namespace React;
+->React : error
++>React : any
+
+ declare namespace React {}
+
+@@= skipped -100, +100 lines =@@
+
+ === /index.tsx ===
+ export const Comp = () => <div css="color: hotpink;"></div>;
+->Comp : () => import("/node_modules/@emotion/react/jsx-runtime/jsx-namespace").EmotionJSX.Element
+->() => <div css="color: hotpink;"></div> : () => import("/node_modules/@emotion/react/jsx-runtime/jsx-namespace").EmotionJSX.Element
+-><div css="color: hotpink;"></div> : import("/node_modules/@emotion/react/jsx-runtime/jsx-namespace").EmotionJSX.Element
++>Comp : () => import("@emotion/react").EmotionJSX.Element
++>() => <div css="color: hotpink;"></div> : () => import("@emotion/react").EmotionJSX.Element
++><div css="color: hotpink;"></div> : import("@emotion/react").EmotionJSX.Element
+ >div : any
+ >css : string
+ >div : any

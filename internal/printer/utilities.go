@@ -24,12 +24,12 @@ const (
 	getLiteralTextFlagsAllowNumericSeparator         getLiteralTextFlags = 1 << 3
 )
 
-type quoteChar rune
+type QuoteChar rune
 
 const (
-	quoteCharSingleQuote quoteChar = '\''
-	quoteCharDoubleQuote quoteChar = '"'
-	quoteCharBacktick    quoteChar = '`'
+	QuoteCharSingleQuote QuoteChar = '\''
+	QuoteCharDoubleQuote QuoteChar = '"'
+	QuoteCharBacktick    QuoteChar = '`'
 )
 
 var jsxEscapedCharsMap = map[rune]string{
@@ -44,7 +44,7 @@ var escapedCharsMap = map[rune]string{
 	'\b':     `\b`,
 	'\r':     `\r`,
 	'\n':     `\n`,
-	'\\':     `\`,
+	'\\':     `\\`,
 	'"':      `\"`,
 	'\'':     `\'`,
 	'`':      "\\`",
@@ -73,7 +73,7 @@ func encodeUtf16EscapeSequence(b *strings.Builder, charCode rune) {
 // Based heavily on the abstract 'Quote'/'QuoteJSONString' operation from ECMA-262 (24.3.2.2),
 // but augmented for a few select characters (e.g. lineSeparator, paragraphSeparator, nextLine)
 // Note that this doesn't actually wrap the input in double quotes.
-func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags, b *strings.Builder) {
+func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags, b *strings.Builder) {
 	pos := 0
 	i := 0
 	for i < len(s) {
@@ -92,13 +92,13 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 				escape = true
 			}
 		case '$':
-			if quoteChar == quoteCharBacktick && i+1 < len(s) && s[i+1] == '{' {
+			if quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '{' {
 				escape = true
 			}
 		case rune(quoteChar), '\u2028', '\u2029', '\u0085', '\r':
 			escape = true
 		case '\n':
-			if quoteChar != quoteCharBacktick {
+			if quoteChar != QuoteCharBacktick {
 				// Template strings preserve simple LF newlines, still encode CRLF (or CR).
 				escape = true
 			}
@@ -125,7 +125,7 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 				}
 
 			default:
-				if ch == '\r' && quoteChar == quoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
+				if ch == '\r' && quoteChar == QuoteCharBacktick && i+1 < len(s) && s[i+1] == '\n' {
 					// Template strings preserve simple LF newlines, but still must escape CRLF. Left alone, the
 					// above cases for `\r` and `\n` would inadvertently escape CRLF as two independent characters.
 					size++
@@ -163,21 +163,21 @@ func escapeStringWorker(s string, quoteChar quoteChar, flags getLiteralTextFlags
 	}
 }
 
-func escapeString(s string, quoteChar quoteChar) string {
+func EscapeString(s string, quoteChar QuoteChar) string {
 	var b strings.Builder
 	b.Grow(len(s) + 2)
 	escapeStringWorker(s, quoteChar, getLiteralTextFlagsNeverAsciiEscape, &b)
 	return b.String()
 }
 
-func escapeNonAsciiString(s string, quoteChar quoteChar) string {
+func escapeNonAsciiString(s string, quoteChar QuoteChar) string {
 	var b strings.Builder
 	b.Grow(len(s) + 2)
 	escapeStringWorker(s, quoteChar, getLiteralTextFlagsNone, &b)
 	return b.String()
 }
 
-func escapeJsxAttributeString(s string, quoteChar quoteChar) string {
+func escapeJsxAttributeString(s string, quoteChar QuoteChar) string {
 	var b strings.Builder
 	b.Grow(len(s) + 2)
 	escapeStringWorker(s, quoteChar, getLiteralTextFlagsJsxAttributeEscape|getLiteralTextFlagsNeverAsciiEscape, &b)
@@ -188,9 +188,7 @@ func canUseOriginalText(node *ast.LiteralLikeNode, flags getLiteralTextFlags) bo
 	// A synthetic node has no original text, nor does a node without a parent as we would be unable to find the
 	// containing SourceFile. We also cannot use the original text if the literal was unterminated and the caller has
 	// requested proper termination of unterminated literals
-	if ast.NodeIsSynthesized(node) || node.Parent == nil ||
-		flags&getLiteralTextFlagsTerminateUnterminatedLiterals != 0 &&
-			node.LiteralLikeData().TokenFlags&ast.TokenFlagsUnterminated != 0 {
+	if ast.NodeIsSynthesized(node) || node.Parent == nil || flags&getLiteralTextFlagsTerminateUnterminatedLiterals != 0 && ast.IsUnterminatedLiteral(node) {
 		return false
 	}
 
@@ -226,11 +224,11 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 	switch node.Kind {
 	case ast.KindStringLiteral:
 		var b strings.Builder
-		var quoteChar quoteChar
+		var quoteChar QuoteChar
 		if node.AsStringLiteral().TokenFlags&ast.TokenFlagsSingleQuote != 0 {
-			quoteChar = quoteCharSingleQuote
+			quoteChar = QuoteCharSingleQuote
 		} else {
-			quoteChar = quoteCharDoubleQuote
+			quoteChar = QuoteCharDoubleQuote
 		}
 
 		text := node.Text()
@@ -287,7 +285,7 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 			// If rawText is set, it is expected to be valid.
 			b.WriteString(rawText)
 		default:
-			escapeStringWorker(text, quoteCharBacktick, flags, &b)
+			escapeStringWorker(text, QuoteCharBacktick, flags, &b)
 		}
 
 		// Write trailing quote character
@@ -307,8 +305,7 @@ func getLiteralText(node *ast.LiteralLikeNode, sourceFile *ast.SourceFile, flags
 		return node.Text()
 
 	case ast.KindRegularExpressionLiteral:
-		if flags&getLiteralTextFlagsTerminateUnterminatedLiterals != 0 &&
-			node.LiteralLikeData().TokenFlags&ast.TokenFlagsUnterminated != 0 {
+		if flags&getLiteralTextFlagsTerminateUnterminatedLiterals != 0 && ast.IsUnterminatedLiteral(node) {
 			var b strings.Builder
 			text := node.Text()
 			if len(text) > 0 && text[len(text)-1] == '\\' {
@@ -361,7 +358,7 @@ func getStartPositionOfRange(r core.TextRange, sourceFile *ast.SourceFile, inclu
 	if ast.PositionIsSynthesized(r.Pos()) {
 		return -1
 	}
-	return scanner.SkipTriviaEx(sourceFile.Text, r.Pos(), &scanner.SkipTriviaOptions{StopAtComments: includeComments})
+	return scanner.SkipTriviaEx(sourceFile.Text(), r.Pos(), &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 }
 
 func positionsAreOnSameLine(pos1 int, pos2 int, sourceFile *ast.SourceFile) bool {
@@ -391,19 +388,19 @@ func getLinesBetweenRangeEndAndRangeStart(range1 core.TextRange, range2 core.Tex
 }
 
 func getLinesBetweenPositionAndPrecedingNonWhitespaceCharacter(pos int, stopPos int, sourceFile *ast.SourceFile, includeComments bool) int {
-	startPos := scanner.SkipTriviaEx(sourceFile.Text, pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
+	startPos := scanner.SkipTriviaEx(sourceFile.Text(), pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 	prevPos := getPreviousNonWhitespacePosition(startPos, stopPos, sourceFile)
 	return getLinesBetweenPositions(sourceFile, core.IfElse(prevPos >= 0, prevPos, stopPos), startPos)
 }
 
 func getLinesBetweenPositionAndNextNonWhitespaceCharacter(pos int, stopPos int, sourceFile *ast.SourceFile, includeComments bool) int {
-	nextPos := scanner.SkipTriviaEx(sourceFile.Text, pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
+	nextPos := scanner.SkipTriviaEx(sourceFile.Text(), pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 	return getLinesBetweenPositions(sourceFile, pos, core.IfElse(stopPos < nextPos, stopPos, nextPos))
 }
 
 func getPreviousNonWhitespacePosition(pos int, stopPos int, sourceFile *ast.SourceFile) int {
 	for ; pos >= stopPos; pos-- {
-		if !stringutil.IsWhiteSpaceLike(rune(sourceFile.Text[pos])) {
+		if !stringutil.IsWhiteSpaceLike(rune(sourceFile.Text()[pos])) {
 			return pos
 		}
 	}
@@ -452,10 +449,8 @@ func getContainingNodeArray(node *ast.Node) *ast.NodeList {
 			return parent.ClassLikeData().TypeParameters
 		case ast.IsInterfaceDeclaration(parent):
 			return parent.AsInterfaceDeclaration().TypeParameters
-		case ast.IsTypeAliasDeclaration(parent):
+		case ast.IsTypeOrJSTypeAliasDeclaration(parent):
 			return parent.AsTypeAliasDeclaration().TypeParameters
-		// case ast.IsJSDocTemplateTag(parent):
-		// 	return parent.AsJSDocTemplateTag().TypeParameters
 		case ast.IsInferTypeNode(parent):
 			break
 		default:
@@ -731,6 +726,14 @@ func makeIdentifierFromModuleName(moduleName string) string {
 		builder.WriteString(moduleName[start:pos])
 	}
 	return builder.String()
+}
+
+func findSpanEndWithEmitContext[T any](c *EmitContext, array []T, test func(c *EmitContext, value T) bool, start int) int {
+	i := start
+	for i < len(array) && test(c, array[i]) {
+		i++
+	}
+	return i
 }
 
 func findSpanEnd[T any](array []T, test func(value T) bool, start int) int {

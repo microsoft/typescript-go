@@ -1,14 +1,17 @@
 package project
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/tsoptions"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type projectLoadKind int
@@ -27,14 +30,19 @@ type assignProjectResult struct {
 }
 
 type ServiceOptions struct {
-	DefaultLibraryPath string
-	Logger             *Logger
+	TypingsInstallerOptions
+	Logger           *Logger
+	PositionEncoding lsproto.PositionEncodingKind
+	WatchEnabled     bool
 }
+
+var _ ProjectHost = (*Service)(nil)
 
 type Service struct {
 	host                ServiceHost
 	options             ServiceOptions
 	comparePathsOptions tspath.ComparePathsOptions
+	converters          *ls.Converters
 
 	configuredProjects map[tspath.Path]*Project
 	// unrootedInferredProject is the inferred project for files opened without a projectRootDirectory
@@ -44,7 +52,7 @@ type Service struct {
 	// if it exists
 	inferredProjects []*Project
 
-	documentRegistry *documentRegistry
+	documentRegistry *DocumentRegistry
 	scriptInfosMu    sync.RWMutex
 	scriptInfos      map[tspath.Path]*ScriptInfo
 	openFiles        map[tspath.Path]string // values are projectRootPath, if provided
@@ -53,12 +61,15 @@ type Service struct {
 	filenameToScriptInfoVersion map[tspath.Path]int
 	realpathToScriptInfosMu     sync.Mutex
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
+
+	typingsInstaller *TypingsInstaller
 }
 
 func NewService(host ServiceHost, options ServiceOptions) *Service {
 	options.Logger.Info(fmt.Sprintf("currentDirectory:: %s useCaseSensitiveFileNames:: %t", host.GetCurrentDirectory(), host.FS().UseCaseSensitiveFileNames()))
-	options.Logger.Info("libs Location:: " + options.DefaultLibraryPath)
-	return &Service{
+	options.Logger.Info("libs Location:: " + host.DefaultLibraryPath())
+	options.Logger.Info("globalTypingsCacheLocation:: " + host.TypingsLocation())
+	service := &Service{
 		host:    host,
 		options: options,
 		comparePathsOptions: tspath.ComparePathsOptions{
@@ -68,15 +79,92 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 
 		configuredProjects: make(map[tspath.Path]*Project),
 
-		documentRegistry: newDocumentRegistry(tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
-		}),
+		documentRegistry: &DocumentRegistry{
+			Options: tspath.ComparePathsOptions{
+				UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+				CurrentDirectory:          host.GetCurrentDirectory(),
+			},
+		},
 		scriptInfos:                 make(map[tspath.Path]*ScriptInfo),
 		openFiles:                   make(map[tspath.Path]string),
 		filenameToScriptInfoVersion: make(map[tspath.Path]int),
 		realpathToScriptInfos:       make(map[tspath.Path]map[*ScriptInfo]struct{}),
 	}
+
+	service.converters = ls.NewConverters(options.PositionEncoding, func(fileName string) *ls.LineMap {
+		return service.GetScriptInfo(fileName).LineMap()
+	})
+
+	return service
+}
+
+// GetCurrentDirectory implements ProjectHost.
+func (s *Service) GetCurrentDirectory() string {
+	return s.host.GetCurrentDirectory()
+}
+
+// Log implements ProjectHost.
+func (s *Service) Log(msg string) {
+	s.options.Logger.Info(msg)
+}
+
+func (s *Service) HasLevel(level LogLevel) bool {
+	return s.options.Logger.HasLevel(level)
+}
+
+// NewLine implements ProjectHost.
+func (s *Service) NewLine() string {
+	return s.host.NewLine()
+}
+
+// DefaultLibraryPath implements ProjectHost.
+func (s *Service) DefaultLibraryPath() string {
+	return s.host.DefaultLibraryPath()
+}
+
+// TypingsInstaller implements ProjectHost.
+func (s *Service) TypingsInstaller() *TypingsInstaller {
+	if s.typingsInstaller != nil {
+		return s.typingsInstaller
+	}
+
+	if typingsLocation := s.host.TypingsLocation(); typingsLocation != "" {
+		s.typingsInstaller = &TypingsInstaller{
+			TypingsLocation: typingsLocation,
+			options:         &s.options.TypingsInstallerOptions,
+		}
+	}
+	return s.typingsInstaller
+}
+
+// DocumentRegistry implements ProjectHost.
+func (s *Service) DocumentRegistry() *DocumentRegistry {
+	return s.documentRegistry
+}
+
+// FS implements ProjectHost.
+func (s *Service) FS() vfs.FS {
+	return s.host.FS()
+}
+
+// GetOrCreateScriptInfoForFile implements ProjectHost.
+func (s *Service) GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
+	return s.getOrCreateScriptInfoNotOpenedByClient(fileName, path, scriptKind)
+}
+
+// PositionEncoding implements ProjectHost.
+func (s *Service) PositionEncoding() lsproto.PositionEncodingKind {
+	return s.options.PositionEncoding
+}
+
+// Client implements ProjectHost.
+func (s *Service) Client() Client {
+	return s.host.Client()
+}
+
+// IsWatchEnabled implements ProjectHost.
+func (s *Service) IsWatchEnabled() bool {
+	return s.options.WatchEnabled
 }
 
 func (s *Service) Projects() []*Project {
@@ -89,10 +177,10 @@ func (s *Service) Projects() []*Project {
 }
 
 func (s *Service) GetScriptInfo(fileName string) *ScriptInfo {
-	return s.getScriptInfo(s.toPath(fileName))
+	return s.GetScriptInfoByPath(s.toPath(fileName))
 }
 
-func (s *Service) getScriptInfo(path tspath.Path) *ScriptInfo {
+func (s *Service) GetScriptInfoByPath(path tspath.Path) *ScriptInfo {
 	s.scriptInfosMu.RLock()
 	defer s.scriptInfosMu.RUnlock()
 	if info, ok := s.scriptInfos[path]; ok && !info.deferredDelete {
@@ -103,7 +191,7 @@ func (s *Service) getScriptInfo(path tspath.Path) *ScriptInfo {
 
 func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.ScriptKind, projectRootPath string) {
 	path := s.toPath(fileName)
-	existing := s.getScriptInfo(path)
+	existing := s.GetScriptInfoByPath(path)
 	info := s.getOrCreateOpenScriptInfo(fileName, path, fileContent, scriptKind, projectRootPath)
 	if existing == nil && info != nil && !info.isDynamic {
 		// !!!
@@ -114,22 +202,39 @@ func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.
 	s.printProjects()
 }
 
-func (s *Service) ChangeFile(fileName string, changes []ls.TextChange) {
+func (s *Service) ChangeFile(document lsproto.VersionedTextDocumentIdentifier, changes []lsproto.TextDocumentContentChangeEvent) error {
+	fileName := ls.DocumentURIToFileName(document.Uri)
 	path := s.toPath(fileName)
-	info := s.getScriptInfo(path)
-	if info == nil {
-		panic("scriptInfo not found")
+	scriptInfo := s.GetScriptInfoByPath(path)
+	if scriptInfo == nil {
+		return fmt.Errorf("file %s not found", fileName)
 	}
-	s.applyChangesToFile(info, changes)
+
+	textChanges := make([]ls.TextChange, len(changes))
+	for i, change := range changes {
+		if partialChange := change.TextDocumentContentChangePartial; partialChange != nil {
+			textChanges[i] = s.converters.FromLSPTextChange(scriptInfo, partialChange)
+		} else if wholeChange := change.TextDocumentContentChangeWholeDocument; wholeChange != nil {
+			textChanges[i] = ls.TextChange{
+				TextRange: core.NewTextRange(0, len(scriptInfo.Text())),
+				NewText:   wholeChange.Text,
+			}
+		} else {
+			return errors.New("invalid change type")
+		}
+	}
+
+	s.applyChangesToFile(scriptInfo, textChanges)
+	return nil
 }
 
 func (s *Service) CloseFile(fileName string) {
-	if info := s.getScriptInfo(s.toPath(fileName)); info != nil {
+	if info := s.GetScriptInfoByPath(s.toPath(fileName)); info != nil {
 		fileExists := !info.isDynamic && s.host.FS().FileExists(info.fileName)
 		info.close(fileExists)
 		for _, project := range info.containingProjects {
 			if project.kind == KindInferred && project.isRoot(info) {
-				project.removeFile(info, fileExists, true /*detachFromProject*/)
+				project.RemoveFile(info, fileExists, true /*detachFromProject*/)
 			}
 		}
 		delete(s.openFiles, info.path)
@@ -140,21 +245,26 @@ func (s *Service) CloseFile(fileName string) {
 }
 
 func (s *Service) MarkFileSaved(fileName string, text string) {
-	if info := s.getScriptInfo(s.toPath(fileName)); info != nil {
-		info.setTextFromDisk(text)
+	if info := s.GetScriptInfoByPath(s.toPath(fileName)); info != nil {
+		info.SetTextFromDisk(text)
 	}
+}
+
+func (s *Service) EnsureDefaultProjectForURI(url lsproto.DocumentUri) *Project {
+	_, project := s.EnsureDefaultProjectForFile(ls.DocumentURIToFileName(url))
+	return project
 }
 
 func (s *Service) EnsureDefaultProjectForFile(fileName string) (*ScriptInfo, *Project) {
 	path := s.toPath(fileName)
-	if info := s.getScriptInfo(path); info != nil && !info.isOrphan() {
-		if project := info.getDefaultProject(); project != nil {
+	if info := s.GetScriptInfoByPath(path); info != nil && !info.isOrphan() {
+		if project := s.getDefaultProjectForScript(info); project != nil {
 			return info, project
 		}
 	}
 	s.ensureProjectStructureUpToDate()
-	if info := s.getScriptInfo(path); info != nil {
-		if project := info.getDefaultProject(); project != nil {
+	if info := s.GetScriptInfoByPath(path); info != nil {
+		if project := s.getDefaultProjectForScript(info); project != nil {
 			return info, project
 		}
 	}
@@ -162,7 +272,7 @@ func (s *Service) EnsureDefaultProjectForFile(fileName string) (*ScriptInfo, *Pr
 }
 
 func (s *Service) Close() {
-	// !!!
+	s.options.Logger.Close()
 }
 
 // SourceFileCount should only be used for testing.
@@ -170,13 +280,71 @@ func (s *Service) SourceFileCount() int {
 	return s.documentRegistry.size()
 }
 
+func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.FileEvent) error {
+	for _, change := range changes {
+		fileName := ls.DocumentURIToFileName(change.Uri)
+		path := s.toPath(fileName)
+		if project, ok := s.configuredProjects[path]; ok {
+			// tsconfig of project
+			if err := s.onConfigFileChanged(project, change.Type); err != nil {
+				return fmt.Errorf("error handling config file change: %w", err)
+			}
+		} else if _, ok := s.openFiles[path]; ok {
+			// open file
+			continue
+		} else if info := s.GetScriptInfoByPath(path); info != nil {
+			// closed existing file
+			if change.Type == lsproto.FileChangeTypeDeleted {
+				s.handleDeletedFile(info, true /*deferredDelete*/)
+			} else {
+				info.deferredDelete = false
+				info.delayReloadNonMixedContentFile()
+				// !!! s.delayUpdateProjectGraphs(info.containingProjects, false /*clearSourceMapperCache*/)
+				// !!! s.handleSourceMapProjects(info)
+			}
+		} else {
+			for _, project := range s.configuredProjects {
+				project.onWatchEventForNilScriptInfo(fileName)
+			}
+			for _, project := range s.inferredProjects {
+				project.onWatchEventForNilScriptInfo(fileName)
+			}
+		}
+	}
+
+	client := s.host.Client()
+	if client != nil {
+		return client.RefreshDiagnostics(ctx)
+	}
+
+	return nil
+}
+
+func (s *Service) onConfigFileChanged(project *Project, changeKind lsproto.FileChangeType) error {
+	wasDeferredClose := project.deferredClose
+	switch changeKind {
+	case lsproto.FileChangeTypeCreated:
+		if wasDeferredClose {
+			project.deferredClose = false
+		}
+	case lsproto.FileChangeTypeDeleted:
+		project.deferredClose = true
+	}
+
+	if !project.deferredClose {
+		project.pendingReload = PendingReloadFull
+		project.markAsDirty()
+	}
+	return nil
+}
+
 func (s *Service) ensureProjectStructureUpToDate() {
 	var hasChanges bool
 	for _, project := range s.configuredProjects {
-		hasChanges = project.updateIfDirty() || hasChanges
+		hasChanges = project.updateGraph() || hasChanges
 	}
 	for _, project := range s.inferredProjects {
-		hasChanges = project.updateIfDirty() || hasChanges
+		hasChanges = project.updateGraph() || hasChanges
 	}
 	if hasChanges {
 		s.ensureProjectForOpenFiles()
@@ -184,11 +352,11 @@ func (s *Service) ensureProjectStructureUpToDate() {
 }
 
 func (s *Service) ensureProjectForOpenFiles() {
-	s.log("Before ensureProjectForOpenFiles:")
+	s.Log("Before ensureProjectForOpenFiles:")
 	s.printProjects()
 
 	for filePath, projectRootPath := range s.openFiles {
-		info := s.getScriptInfo(filePath)
+		info := s.GetScriptInfoByPath(filePath)
 		if info == nil {
 			panic("scriptInfo not found for open file")
 		}
@@ -199,10 +367,10 @@ func (s *Service) ensureProjectForOpenFiles() {
 		}
 	}
 	for _, project := range s.inferredProjects {
-		project.updateIfDirty()
+		project.updateGraph()
 	}
 
-	s.log("After ensureProjectForOpenFiles:")
+	s.Log("After ensureProjectForOpenFiles:")
 	s.printProjects()
 }
 
@@ -217,7 +385,6 @@ func (s *Service) handleDeletedFile(info *ScriptInfo, deferredDelete bool) {
 		panic("cannot delete an open file")
 	}
 
-	s.delayUpdateProjectGraphs(info.containingProjects, false /*clearSourceMapperCache*/)
 	// !!!
 	// s.handleSourceMapProjects(info)
 	info.detachAllProjects()
@@ -227,6 +394,7 @@ func (s *Service) handleDeletedFile(info *ScriptInfo, deferredDelete bool) {
 	} else {
 		s.deleteScriptInfo(info)
 	}
+	s.updateProjectGraphs(info.containingProjects, false /*clearSourceMapperCache*/)
 }
 
 func (s *Service) deleteScriptInfo(info *ScriptInfo) {
@@ -247,7 +415,7 @@ func (s *Service) deleteScriptInfo(info *ScriptInfo) {
 	// !!! closeSourceMapFileWatcher
 }
 
-func (s *Service) recordSymlink(info *ScriptInfo) {
+func (s *Service) OnDiscoveredSymlink(info *ScriptInfo) {
 	s.realpathToScriptInfosMu.Lock()
 	defer s.realpathToScriptInfosMu.Unlock()
 	if scriptInfos, ok := s.realpathToScriptInfos[info.realpath]; ok {
@@ -259,25 +427,13 @@ func (s *Service) recordSymlink(info *ScriptInfo) {
 	}
 }
 
-func (s *Service) delayUpdateProjectGraphs(projects []*Project, clearSourceMapperCache bool) {
+func (s *Service) updateProjectGraphs(projects []*Project, clearSourceMapperCache bool) {
 	for _, project := range projects {
 		if clearSourceMapperCache {
 			project.clearSourceMapperCache()
 		}
-		s.delayUpdateProjectGraph(project)
+		project.markAsDirty()
 	}
-}
-
-func (s *Service) delayUpdateProjectGraph(project *Project) {
-	if project.deferredClose {
-		return
-	}
-	project.markAsDirty()
-	if project.kind == KindAutoImportProvider || project.kind == KindAuxiliary {
-		return
-	}
-	// !!! throttle
-	project.updateIfDirty()
 }
 
 func (s *Service) getOrCreateScriptInfoNotOpenedByClient(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo {
@@ -306,9 +462,9 @@ func (s *Service) getOrCreateScriptInfoWorker(fileName string, path tspath.Path,
 			}
 		}
 
-		info = newScriptInfo(fileName, path, scriptKind)
+		info = NewScriptInfo(fileName, path, scriptKind, s.host.FS())
 		if fromDisk {
-			info.setTextFromDisk(fileContent)
+			info.SetTextFromDisk(fileContent)
 		}
 
 		s.scriptInfosMu.Lock()
@@ -362,6 +518,10 @@ func (s *Service) getConfigFileNameForFile(info *ScriptInfo, findFromCacheOnly b
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
 		if s.configFileExists(tsconfigPath) {
 			return tsconfigPath, true
+		}
+		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
+		if s.configFileExists(jsconfigPath) {
+			return jsconfigPath, true
 		}
 		if strings.HasSuffix(directory, "/node_modules") {
 			return "", true
@@ -439,7 +599,7 @@ func (s *Service) assignProjectToOpenedScriptInfo(info *ScriptInfo) assignProjec
 		// result.configFileErrors = project.getAllProjectErrors()
 	}
 	for _, project := range info.containingProjects {
-		project.updateIfDirty()
+		project.updateGraph()
 	}
 	if info.isOrphan() {
 		// !!!
@@ -467,7 +627,7 @@ func (s *Service) assignOrphanScriptInfoToInferredProject(info *ScriptInfo, proj
 		project = s.getOrCreateUnrootedInferredProject()
 	}
 
-	project.addRoot(info)
+	project.AddRoot(info)
 	project.updateGraph()
 	// !!! old code ensures that scriptInfo is only part of one project
 }
@@ -511,9 +671,82 @@ func (s *Service) getOrCreateInferredProjectForProjectRootPath(info *ScriptInfo,
 	return bestMatch
 }
 
+func (s *Service) getDefaultProjectForScript(scriptInfo *ScriptInfo) *Project {
+	switch len(scriptInfo.containingProjects) {
+	case 0:
+		panic("scriptInfo must be attached to a project before calling getDefaultProject")
+	case 1:
+		project := scriptInfo.containingProjects[0]
+		if project.deferredClose || project.kind == KindAutoImportProvider || project.kind == KindAuxiliary {
+			panic("scriptInfo must be attached to a non-background project before calling getDefaultProject")
+		}
+		return project
+	default:
+		// If this file belongs to multiple projects, below is the order in which default project is used
+		// - first external project
+		// - for open script info, its default configured project during opening is default if info is part of it
+		// - first configured project of which script info is not a source of project reference redirect
+		// - first configured project
+		// - first inferred project
+		var firstConfiguredProject *Project
+		var firstInferredProject *Project
+		var firstNonSourceOfProjectReferenceRedirect *Project
+		var defaultConfiguredProject *Project
+
+		for index, project := range scriptInfo.containingProjects {
+			if project.kind == KindConfigured {
+				if project.deferredClose {
+					continue
+				}
+				// !!! if !project.isSourceOfProjectReferenceRedirect(scriptInfo.fileName) {
+				if defaultConfiguredProject == nil && index != len(scriptInfo.containingProjects)-1 {
+					defaultConfiguredProject = s.findDefaultConfiguredProject(scriptInfo)
+				}
+				if defaultConfiguredProject == project {
+					return project
+				}
+				if firstNonSourceOfProjectReferenceRedirect == nil {
+					firstNonSourceOfProjectReferenceRedirect = project
+				}
+				// }
+				if firstConfiguredProject == nil {
+					firstConfiguredProject = project
+				}
+			} else if firstInferredProject == nil && project.kind == KindInferred {
+				firstInferredProject = project
+			}
+		}
+		if defaultConfiguredProject != nil {
+			return defaultConfiguredProject
+		}
+		if firstNonSourceOfProjectReferenceRedirect != nil {
+			return firstNonSourceOfProjectReferenceRedirect
+		}
+		if firstConfiguredProject != nil {
+			return firstConfiguredProject
+		}
+		if firstInferredProject != nil {
+			return firstInferredProject
+		}
+		panic("no project found")
+	}
+}
+
 func (s *Service) createInferredProject(currentDirectory string, projectRootPath tspath.Path) *Project {
-	// !!!
-	compilerOptions := core.CompilerOptions{}
+	compilerOptions := core.CompilerOptions{
+		AllowJs:                    core.TSTrue,
+		Module:                     core.ModuleKindESNext,
+		ModuleResolution:           core.ModuleResolutionKindBundler,
+		Target:                     core.ScriptTargetES2022,
+		Jsx:                        core.JsxEmitReactJSX,
+		AllowImportingTsExtensions: core.TSTrue,
+		StrictNullChecks:           core.TSTrue,
+		StrictFunctionTypes:        core.TSTrue,
+		SourceMap:                  core.TSTrue,
+		ESModuleInterop:            core.TSTrue,
+		AllowNonTsExtensions:       core.TSTrue,
+		ResolveJsonModule:          core.TSTrue,
+	}
 	project := NewInferredProject(&compilerOptions, currentDirectory, projectRootPath, s)
 	s.inferredProjects = append(s.inferredProjects, project)
 	return project
@@ -524,62 +757,9 @@ func (s *Service) toPath(fileName string) tspath.Path {
 }
 
 func (s *Service) loadConfiguredProject(project *Project) {
-	if configFileContent, ok := s.host.FS().ReadFile(project.configFileName); ok {
-		configDir := tspath.GetDirectoryPath(project.configFileName)
-		tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(project.configFileName, s.toPath(project.configFileName), configFileContent)
-		parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
-			tsConfigSourceFile,
-			s.host,
-			configDir,
-			nil, /*existingOptions*/
-			project.configFileName,
-			nil, /*resolutionStack*/
-			nil, /*extraFileExtensions*/
-			nil, /*extendedConfigCache*/
-		)
-
-		s.logf("Config: %s : %s",
-			project.configFileName,
-			core.Must(core.StringifyJson(map[string]any{
-				"rootNames":         parsedCommandLine.FileNames(),
-				"options":           parsedCommandLine.CompilerOptions(),
-				"projectReferences": parsedCommandLine.ProjectReferences(),
-			}, "    ", "  ")),
-		)
-
-		newRootScriptInfos := make(map[tspath.Path]struct{}, len(parsedCommandLine.FileNames()))
-		project.compilerOptions = parsedCommandLine.CompilerOptions()
-		for _, file := range parsedCommandLine.FileNames() {
-			scriptKind := project.getScriptKind(file)
-			scriptInfo := s.getOrCreateScriptInfoNotOpenedByClient(file, s.toPath(file), scriptKind)
-			newRootScriptInfos[scriptInfo.path] = struct{}{}
-			if _, isRoot := project.rootFileNames.Get(scriptInfo.path); !isRoot {
-				project.addRoot(scriptInfo)
-				if scriptInfo.isOpen {
-					// !!!
-					// s.removeRootOfInferredProjectIfNowPartOfOtherProject(scriptInfo)
-				}
-			} else {
-				project.rootFileNames.Set(scriptInfo.path, file)
-			}
-		}
-
-		if project.rootFileNames.Size() > len(parsedCommandLine.FileNames()) {
-			for root := range project.rootFileNames.Keys() {
-				if _, ok := newRootScriptInfos[root]; !ok {
-					if info := s.getScriptInfo(root); info != nil {
-						project.removeFile(info, true /*fileExists*/, true /*detachFromProject*/)
-					} else {
-						project.rootFileNames.Delete(root)
-					}
-				}
-			}
-		}
-	} else {
-		project.compilerOptions = &core.CompilerOptions{}
+	if err := project.LoadConfig(); err != nil {
+		panic(fmt.Errorf("failed to load project %q: %w", project.configFileName, err))
 	}
-
-	project.markAsDirty()
 }
 
 func (s *Service) printProjects() {
@@ -587,27 +767,23 @@ func (s *Service) printProjects() {
 		return
 	}
 
-	s.options.Logger.StartGroup()
+	var builder strings.Builder
 	for _, project := range s.configuredProjects {
-		s.log(project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/))
+		project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/, &builder)
 	}
 	for _, project := range s.inferredProjects {
-		s.log(project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/))
+		project.print(false /*writeFileNames*/, false /*writeFileExpanation*/, false /*writeFileVersionAndText*/, &builder)
 	}
 
-	s.log("Open files: ")
+	builder.WriteString("Open files: ")
 	for path, projectRootPath := range s.openFiles {
-		info := s.getScriptInfo(path)
-		s.logf("\tFileName: %s ProjectRootPath: %s", info.fileName, projectRootPath)
-		s.log("\t\tProjects: " + strings.Join(core.Map(info.containingProjects, func(project *Project) string { return project.name }), ", "))
+		info := s.GetScriptInfoByPath(path)
+		builder.WriteString(fmt.Sprintf("\tFileName: %s ProjectRootPath: %s", info.fileName, projectRootPath))
+		builder.WriteString("\t\tProjects: " + strings.Join(core.Map(info.containingProjects, func(project *Project) string { return project.name }), ", "))
 	}
-	s.options.Logger.EndGroup()
-}
-
-func (s *Service) log(msg string) {
-	s.options.Logger.Info(msg)
+	s.Log(builder.String())
 }
 
 func (s *Service) logf(format string, args ...any) {
-	s.log(fmt.Sprintf(format, args...))
+	s.Log(fmt.Sprintf(format, args...))
 }

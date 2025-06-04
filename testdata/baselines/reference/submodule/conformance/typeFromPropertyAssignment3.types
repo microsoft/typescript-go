@@ -24,27 +24,27 @@ Outer.Inner = class I {
     constructor() {
         this.x = 1
 >this.x = 1 : 1
->this.x : any
+>this.x : number
 >this : this
->x : any
+>x : number
 >1 : 1
     }
 }
 /** @type {Outer} */
 var ja
->ja : any
+>ja : Outer
 
 ja.y
 >ja.y : any
->ja : any
+>ja : Outer
 >y : any
 
 /** @type {Outer.Inner} */
 var da
->da : any
+>da : Outer.Inner
 
 da.x
 >da.x : any
->da : any
+>da : Outer.Inner
 >x : any
 

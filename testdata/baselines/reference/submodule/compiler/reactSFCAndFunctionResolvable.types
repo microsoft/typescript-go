@@ -4,19 +4,19 @@
 /// <reference path="react16.d.ts" />
 
 import * as React from 'react';
->React : any
+>React : typeof React
 
 declare const Radio: (props: {}) => React.ReactElement<{}>;
->Radio : (props: {}) => ReactElement<{}>
+>Radio : (props: {}) => React.ReactElement<{}>
 >props : {}
 >React : any
 
 declare const OtherRadio: () => React.ReactElement<{}>;
->OtherRadio : () => ReactElement<{}>
+>OtherRadio : () => React.ReactElement<{}>
 >React : any
 
 declare const Checkbox: React.SFC;
->Checkbox : SFC
+>Checkbox : React.SFC<{}>
 >React : any
 
 declare const condition1: boolean;
@@ -29,43 +29,43 @@ declare const condition3: boolean;
 >condition3 : boolean
 
 const RandomComponent: React.SFC = () => {
->RandomComponent : SFC
+>RandomComponent : React.SFC<{}>
 >React : any
->() => {  const Component =    condition1      ? Radio      : Checkbox;  const OtherComponent =    condition2      ? OtherRadio      : Checkbox;  return condition1 ? <Component /> : <OtherComponent />;} : () => any
+>() => {  const Component =    condition1      ? Radio      : Checkbox;  const OtherComponent =    condition2      ? OtherRadio      : Checkbox;  return condition1 ? <Component /> : <OtherComponent />;} : () => JSX.Element
 
   const Component =
->Component : any
+>Component : React.SFC<{}> | ((props: {}) => React.ReactElement<{}>)
 
     condition1
->condition1      ? Radio      : Checkbox : any
+>condition1      ? Radio      : Checkbox : React.SFC<{}> | ((props: {}) => React.ReactElement<{}>)
 >condition1 : boolean
 
       ? Radio
->Radio : (props: {}) => ReactElement<{}>
+>Radio : (props: {}) => React.ReactElement<{}>
 
       : Checkbox;
->Checkbox : SFC
+>Checkbox : React.SFC<{}>
 
   const OtherComponent =
->OtherComponent : any
+>OtherComponent : React.SFC<{}> | (() => React.ReactElement<{}>)
 
     condition2
->condition2      ? OtherRadio      : Checkbox : any
+>condition2      ? OtherRadio      : Checkbox : React.SFC<{}> | (() => React.ReactElement<{}>)
 >condition2 : boolean
 
       ? OtherRadio
->OtherRadio : () => ReactElement<{}>
+>OtherRadio : () => React.ReactElement<{}>
 
       : Checkbox;
->Checkbox : SFC
+>Checkbox : React.SFC<{}>
 
   return condition1 ? <Component /> : <OtherComponent />;
->condition1 ? <Component /> : <OtherComponent /> : any
+>condition1 ? <Component /> : <OtherComponent /> : JSX.Element
 >condition1 : boolean
-><Component /> : any
->Component : any
-><OtherComponent /> : any
->OtherComponent : any
+><Component /> : JSX.Element
+>Component : React.SFC<{}> | ((props: {}) => React.ReactElement<{}>)
+><OtherComponent /> : JSX.Element
+>OtherComponent : React.SFC<{}> | (() => React.ReactElement<{}>)
 
 };
 

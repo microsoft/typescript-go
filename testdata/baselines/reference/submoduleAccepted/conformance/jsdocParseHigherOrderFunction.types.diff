@@ -11,11 +11,10 @@
 ->id(s) : string
 ->id : (arg0: (string)) => string
 ->s : string
-+>x : (s: any, id: any) => any
++>x : function
 +>(s, id) => id(s) : (s: any, id: any) => any
 +>s : any
 +>id : any
 +>id(s) : any
 +>id : any
 +>s : any
- 

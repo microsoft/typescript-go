@@ -5,5 +5,4 @@
   */
  var s;
 ->s : number
-+>s : any
- 
++>s : foo

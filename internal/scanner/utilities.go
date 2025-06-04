@@ -16,7 +16,7 @@ func IdentifierToKeywordKind(node *ast.Identifier) ast.Kind {
 }
 
 func GetSourceTextOfNodeFromSourceFile(sourceFile *ast.SourceFile, node *ast.Node, includeTrivia bool) string {
-	return GetTextOfNodeFromSourceText(sourceFile.Text, node, includeTrivia)
+	return GetTextOfNodeFromSourceText(sourceFile.Text(), node, includeTrivia)
 }
 
 func GetTextOfNodeFromSourceText(sourceText string, node *ast.Node, includeTrivia bool) string {
@@ -46,14 +46,14 @@ func DeclarationNameToString(name *ast.Node) string {
 	return GetTextOfNode(name)
 }
 
-func IsIdentifierText(name string, languageVersion core.ScriptTarget) bool {
+func IsIdentifierText(name string, languageVersion core.ScriptTarget, languageVariant core.LanguageVariant) bool {
 	ch, size := utf8.DecodeRuneInString(name)
-	if !isIdentifierStart(ch, languageVersion) {
+	if !IsIdentifierStart(ch, languageVersion) {
 		return false
 	}
 	for i := size; i < len(name); {
 		ch, size = utf8.DecodeRuneInString(name[i:])
-		if !isIdentifierPart(ch, languageVersion) {
+		if !IsIdentifierPartEx(ch, languageVersion, languageVariant) {
 			return false
 		}
 		i += size

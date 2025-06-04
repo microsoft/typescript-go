@@ -10,9 +10,9 @@ declare module "m" {
     }
     export import a = x.c;
 >a : any
->x : typeof x
->c : c
+>x : any
+>c : a
 
     export = x;
->x : typeof x
+>x : any
 }

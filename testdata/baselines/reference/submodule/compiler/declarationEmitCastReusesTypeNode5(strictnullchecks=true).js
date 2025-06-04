@@ -25,28 +25,30 @@ export class C {
     reuseType9? = null! as this | this;
 }
 
-//// [declarationEmitCastReusesTypeNode5.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.C = exports.vLiteral = exports.vStringLiteral = exports.vNumberLiteral = void 0;
-exports.vNumberLiteral = null;
-exports.vStringLiteral = null;
-exports.vLiteral = null;
-class C {
+
+
+//// [declarationEmitCastReusesTypeNode5.d.ts]
+export declare const vNumberLiteral: 1;
+export declare const vStringLiteral: "1";
+export declare const vLiteral: "1";
+type R = {
+    foo: string;
+};
+export declare class C {
     // under !strictNullChecks all types can be reused from the assertion
     // under strictNullChecks we need to add undefined, and we can't always know we can
     // Can't know if references contain undefined, fall back to inference
-    tsResolve = null;
-    tsResolve2 = null;
+    tsResolve?: R | undefined;
+    tsResolve2?: string | R | undefined;
     // Simple type. we can add undefined
-    reuseType = null;
-    reuseType2 = null;
-    reuseType3 = null;
-    reuseType4 = null;
-    reuseType5 = null;
-    reuseType6 = null;
-    reuseType7 = null;
-    reuseType8 = null;
-    reuseType9 = null;
+    reuseType?: string | ((p: R) => void) | undefined;
+    reuseType2?: string | (new (p: R) => R) | undefined;
+    reuseType3?: any;
+    reuseType4?: [R, R, R] | undefined;
+    reuseType5?: R[] | undefined;
+    reuseType6?: "2" | 1 | 1n | undefined;
+    reuseType7?: "A" | undefined;
+    reuseType8?: `${string}-ok` | undefined;
+    reuseType9?: this | undefined;
 }
-exports.C = C;
+export {};

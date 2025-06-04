@@ -1,51 +1,41 @@
 {
+    "private": true,
     "name": "typescript-go",
-    "author": "Microsoft Corp.",
-    "homepage": "https://www.typescriptlang.org/",
     "version": "0.0.0",
     "license": "Apache-2.0",
-    "description": "TypeScript is a language for application scale JavaScript development",
-    "keywords": [
-        "TypeScript",
-        "Microsoft",
-        "compiler",
-        "language",
-        "javascript"
-    ],
-    "bugs": {
-        "url": "https://github.com/microsoft/typescript-go/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/microsoft/typescript-go.git"
-    },
     "devDependencies": {
+        "@types/adm-zip": "^0.5.7",
         "@types/node": "latest",
         "@types/which": "^3.0.4",
+        "adm-zip": "^0.5.16",
         "chokidar": "^4.0.3",
-        "dprint": "^0.47.6",
-        "execa": "^9.5.1",
+        "dprint": "^0.50.0",
+        "execa": "^9.6.0",
         "glob": "^10.4.5",
-        "hereby": "^1.10.0",
-        "json-schema-to-typescript-lite": "^14.1.0",
+        "hereby": "^1.11.0",
+        "p-limit": "^6.2.0",
         "picocolors": "^1.1.1",
-        "typescript": "^5.7.3",
+        "typescript": "^5.8.3",
         "which": "^5.0.0"
     },
     "scripts": {
         "postinstall": "hereby postinstall",
         "build": "hereby build",
         "build:watch": "hereby build:watch",
+        "build:watch:debug": "hereby build:watch --debug",
         "test": "hereby test",
-        "extension:build": "npm run -w typescript-lsp build",
-        "extension:watch": "npm run -w typescript-lsp watch"
+        "api:build": "npm run -w @typescript/api build",
+        "extension:build": "npm run -w _extension build",
+        "extension:watch": "npm run -w _extension watch",
+        "node": "node --no-warnings --conditions @typescript/source"
     },
     "workspaces": [
-        "./_extension"
+        "./_extension",
+        "./_packages/*"
     ],
     "packageManager": "npm@8.19.4",
     "volta": {
-        "node": "20.5.1",
+        "node": "20.19.1",
         "npm": "8.19.4"
     }
 }

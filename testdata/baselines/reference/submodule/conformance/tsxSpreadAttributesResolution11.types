@@ -2,7 +2,7 @@
 
 === file.tsx ===
 import React = require('react');
->React : any
+>React : typeof React
 
 const obj = {};
 >obj : {}
@@ -47,15 +47,15 @@ interface Prop {
 
 class OverWriteAttr extends React.Component<Prop, {}> {
 >OverWriteAttr : OverWriteAttr
->React.Component : any
->React : any
->Component : any
+>React.Component : React.Component<Prop, {}>
+>React : typeof React
+>Component : typeof React.Component
 
     render() {
->render : () => any
+>render : () => JSX.Element
 
         return <div>Hello</div>;
-><div>Hello</div> : any
+><div>Hello</div> : JSX.Element
 >div : any
 >div : any
     }
@@ -66,66 +66,66 @@ let anyobj: any;
 
 // OK
 let x = <OverWriteAttr {...obj} y overwrite="hi" {...obj1} />
->x : any
-><OverWriteAttr {...obj} y overwrite="hi" {...obj1} /> : any
+>x : JSX.Element
+><OverWriteAttr {...obj} y overwrite="hi" {...obj1} /> : JSX.Element
 >OverWriteAttr : typeof OverWriteAttr
 >obj : {}
->y : any
->overwrite : any
+>y : true
+>overwrite : string
 >obj1 : { x: 2; }
 
 let x1 = <OverWriteAttr {...obj1} {...obj3} />
->x1 : any
-><OverWriteAttr {...obj1} {...obj3} /> : any
+>x1 : JSX.Element
+><OverWriteAttr {...obj1} {...obj3} /> : JSX.Element
 >OverWriteAttr : typeof OverWriteAttr
 >obj1 : { x: 2; }
 >obj3 : { y: true; overwrite: string; }
 
 let x2 = <OverWriteAttr x={3} overwrite="hi" {...obj1} {...{y: true}} />
->x2 : any
-><OverWriteAttr x={3} overwrite="hi" {...obj1} {...{y: true}} /> : any
+>x2 : JSX.Element
+><OverWriteAttr x={3} overwrite="hi" {...obj1} {...{y: true}} /> : JSX.Element
 >OverWriteAttr : typeof OverWriteAttr
->x : any
+>x : 3
 >3 : 3
->overwrite : any
+>overwrite : string
 >obj1 : { x: 2; }
->{y: true} : { y: boolean; }
->y : boolean
+>{y: true} : { y: true; }
+>y : true
 >true : true
 
 let x3 = <OverWriteAttr overwrite="hi" {...obj1} x={3} {...{y: true, x: 2, overwrite:"world"}} />
->x3 : any
-><OverWriteAttr overwrite="hi" {...obj1} x={3} {...{y: true, x: 2, overwrite:"world"}} /> : any
+>x3 : JSX.Element
+><OverWriteAttr overwrite="hi" {...obj1} x={3} {...{y: true, x: 2, overwrite:"world"}} /> : JSX.Element
 >OverWriteAttr : typeof OverWriteAttr
->overwrite : any
+>overwrite : string
 >obj1 : { x: 2; }
->x : any
+>x : 3
 >3 : 3
->{y: true, x: 2, overwrite:"world"} : { y: boolean; x: number; overwrite: string; }
->y : boolean
+>{y: true, x: 2, overwrite:"world"} : { y: true; x: 2; overwrite: string; }
+>y : true
 >true : true
->x : number
+>x : 2
 >2 : 2
 >overwrite : string
 >"world" : "world"
 
 let x4 = <OverWriteAttr {...{x: 2}} {...{overwrite: "world"}} {...{y: true}} />
->x4 : any
-><OverWriteAttr {...{x: 2}} {...{overwrite: "world"}} {...{y: true}} /> : any
+>x4 : JSX.Element
+><OverWriteAttr {...{x: 2}} {...{overwrite: "world"}} {...{y: true}} /> : JSX.Element
 >OverWriteAttr : typeof OverWriteAttr
->{x: 2} : { x: number; }
->x : number
+>{x: 2} : { x: 2; }
+>x : 2
 >2 : 2
 >{overwrite: "world"} : { overwrite: string; }
 >overwrite : string
 >"world" : "world"
->{y: true} : { y: boolean; }
->y : boolean
+>{y: true} : { y: true; }
+>y : true
 >true : true
 
 let x5 = <OverWriteAttr {...anyobj} />
->x5 : any
-><OverWriteAttr {...anyobj} /> : any
+>x5 : JSX.Element
+><OverWriteAttr {...anyobj} /> : JSX.Element
 >OverWriteAttr : typeof OverWriteAttr
 >anyobj : any
 

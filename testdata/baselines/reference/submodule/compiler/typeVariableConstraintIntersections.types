@@ -206,28 +206,28 @@ type OptionHandlers = {
 
 const optionHandlers: OptionHandlers = {
 >optionHandlers : OptionHandlers
->{  "one": option => option.s,  "two": option => option.x + "," + option.y,} : { one: (option: Options & { kind: "one"; }) => string; two: (option: Options & { kind: "two"; }) => string; }
+>{  "one": option => option.s,  "two": option => option.x + "," + option.y,} : { one: (option: OptionOne & { kind: "one"; }) => string; two: (option: OptionTwo & { kind: "two"; }) => string; }
 
   "one": option => option.s,
->"one" : (option: Options & { kind: "one"; }) => string
->option => option.s : (option: Options & { kind: "one"; }) => string
->option : Options & { kind: "one"; }
+>"one" : (option: OptionOne & { kind: "one"; }) => string
+>option => option.s : (option: OptionOne & { kind: "one"; }) => string
+>option : OptionOne & { kind: "one"; }
 >option.s : string
->option : Options & { kind: "one"; }
+>option : OptionOne & { kind: "one"; }
 >s : string
 
   "two": option => option.x + "," + option.y,
->"two" : (option: Options & { kind: "two"; }) => string
->option => option.x + "," + option.y : (option: Options & { kind: "two"; }) => string
->option : Options & { kind: "two"; }
+>"two" : (option: OptionTwo & { kind: "two"; }) => string
+>option => option.x + "," + option.y : (option: OptionTwo & { kind: "two"; }) => string
+>option : OptionTwo & { kind: "two"; }
 >option.x + "," + option.y : string
 >option.x + "," : string
 >option.x : number
->option : Options & { kind: "two"; }
+>option : OptionTwo & { kind: "two"; }
 >x : number
 >"," : ","
 >option.y : number
->option : Options & { kind: "two"; }
+>option : OptionTwo & { kind: "two"; }
 >y : number
 
 };

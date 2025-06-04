@@ -6,32 +6,32 @@
 // Repro from #50858
 
 import React, { ComponentPropsWithRef, ElementType, ReactNode } from 'react';
->React : any
+>React : typeof React
 >ComponentPropsWithRef : any
 >ElementType : any
 >ReactNode : any
 
 type ButtonBaseProps<T extends ElementType> = ComponentPropsWithRef<T> & { children?: ReactNode };
->ButtonBaseProps : any
->children : any
+>ButtonBaseProps : ButtonBaseProps<T>
+>children : ReactNode
 
 function Component<T extends ElementType = 'span'>(props: ButtonBaseProps<T>) {
->Component : <T extends ElementType>(props: any) => any
->props : any
+>Component : <T extends ElementType = "span">(props: ButtonBaseProps<T>) => JSX.Element
+>props : ButtonBaseProps<T>
 
     return <></>;
-><></> : any
+><></> : JSX.Element
 }
 
 const v1 = <Component onClick={e => e.preventDefault()} />;
->v1 : any
-><Component onClick={e => e.preventDefault()} /> : any
->Component : <T extends ElementType>(props: any) => any
->onClick : any
->e => e.preventDefault() : (e: any) => any
->e : any
->e.preventDefault() : any
->e.preventDefault : any
->e : any
->preventDefault : any
+>v1 : JSX.Element
+><Component onClick={e => e.preventDefault()} /> : JSX.Element
+>Component : <T extends ElementType = "span">(props: ButtonBaseProps<T>) => JSX.Element
+>onClick : (e: React.MouseEvent<HTMLSpanElement>) => void
+>e => e.preventDefault() : (e: React.MouseEvent<HTMLSpanElement>) => void
+>e : React.MouseEvent<HTMLSpanElement>
+>e.preventDefault() : void
+>e.preventDefault : () => void
+>e : React.MouseEvent<HTMLSpanElement>
+>preventDefault : () => void
 

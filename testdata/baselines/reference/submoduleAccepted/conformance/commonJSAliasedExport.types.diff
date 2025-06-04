@@ -1,7 +1,7 @@
 --- old.commonJSAliasedExport.types
 +++ new.commonJSAliasedExport.types
 @@= skipped -1, +1 lines =@@
- 
+
  === bug43713.js ===
  const { funky } = require('./commonJSAliasedExport');
 ->funky : (declaration: any) => boolean
@@ -10,22 +10,18 @@
 +>require('./commonJSAliasedExport') : any
  >require : any
  >'./commonJSAliasedExport' : "./commonJSAliasedExport"
- 
- /** @type {boolean} */
- var diddy
-->diddy : boolean
-+>diddy : any
- 
+
+@@= skipped -11, +11 lines =@@
+
  var diddy = funky(1)
-->diddy : boolean
+ >diddy : boolean
 ->funky(1) : boolean
 ->funky : (declaration: any) => boolean
-+>diddy : any
 +>funky(1) : any
 +>funky : any
  >1 : 1
- 
- 
+
+-
 -=== commonJSAliasedExport.js ===
 -const donkey = (ast) =>  ast;
 ->donkey : (ast: any) => any
@@ -55,4 +51,3 @@
 ->exports : { (ast: any): any; funky: (declaration: any) => boolean; }
 ->funky : (declaration: any) => boolean
 ->funky : (declaration: any) => boolean
--

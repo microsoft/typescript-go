@@ -2,71 +2,71 @@
 
 === file.tsx ===
 import React = require('react');
->React : any
+>React : typeof React
 
 function EmptySFC1() {
->EmptySFC1 : () => any
+>EmptySFC1 : () => JSX.Element
 
     return <div>Hi</div>
-><div>Hi</div> : any
+><div>Hi</div> : JSX.Element
 >div : any
 >div : any
 }
 
 function EmptySFC2() {
->EmptySFC2 : () => any
+>EmptySFC2 : () => JSX.Element
 
     return <div>Hello</div>
-><div>Hello</div> : any
+><div>Hello</div> : JSX.Element
 >div : any
 >div : any
 }
 
 function SFC2(prop: { x: boolean }) {
->SFC2 : (prop: { x: boolean; }) => any
+>SFC2 : (prop: { x: boolean; }) => JSX.Element
 >prop : { x: boolean; }
 >x : boolean
 
     return <h1>World</h1>;
-><h1>World</h1> : any
+><h1>World</h1> : JSX.Element
 >h1 : any
 >h1 : any
 }
 
 var EmptySFCComp = EmptySFC1 || EmptySFC2;
->EmptySFCComp : () => any
->EmptySFC1 || EmptySFC2 : () => any
->EmptySFC1 : () => any
->EmptySFC2 : () => any
+>EmptySFCComp : () => JSX.Element
+>EmptySFC1 || EmptySFC2 : () => JSX.Element
+>EmptySFC1 : () => JSX.Element
+>EmptySFC2 : () => JSX.Element
 
 var SFC2AndEmptyComp = SFC2 || EmptySFC1;
->SFC2AndEmptyComp : (prop: { x: boolean; }) => any
->SFC2 || EmptySFC1 : (prop: { x: boolean; }) => any
->SFC2 : (prop: { x: boolean; }) => any
->EmptySFC1 : () => any
+>SFC2AndEmptyComp : (prop: { x: boolean; }) => JSX.Element
+>SFC2 || EmptySFC1 : (prop: { x: boolean; }) => JSX.Element
+>SFC2 : (prop: { x: boolean; }) => JSX.Element
+>EmptySFC1 : () => JSX.Element
 
 // Error
 let a = <EmptySFCComp x />;
->a : any
-><EmptySFCComp x /> : any
->EmptySFCComp : () => any
->x : any
+>a : JSX.Element
+><EmptySFCComp x /> : JSX.Element
+>EmptySFCComp : () => JSX.Element
+>x : true
 
 let b = <SFC2AndEmptyComp x="hi" />;
->b : any
-><SFC2AndEmptyComp x="hi" /> : any
->SFC2AndEmptyComp : (prop: { x: boolean; }) => any
->x : any
+>b : JSX.Element
+><SFC2AndEmptyComp x="hi" /> : JSX.Element
+>SFC2AndEmptyComp : (prop: { x: boolean; }) => JSX.Element
+>x : string
 
 let c = <SFC2AndEmptyComp />;
->c : any
-><SFC2AndEmptyComp /> : any
->SFC2AndEmptyComp : (prop: { x: boolean; }) => any
+>c : JSX.Element
+><SFC2AndEmptyComp /> : JSX.Element
+>SFC2AndEmptyComp : (prop: { x: boolean; }) => JSX.Element
 
 let d = <SFC2AndEmptyComp data-prop />;
->d : any
-><SFC2AndEmptyComp data-prop /> : any
->SFC2AndEmptyComp : (prop: { x: boolean; }) => any
->data-prop : any
+>d : JSX.Element
+><SFC2AndEmptyComp data-prop /> : JSX.Element
+>SFC2AndEmptyComp : (prop: { x: boolean; }) => JSX.Element
+>data-prop : true
 
 

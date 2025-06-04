@@ -3,8 +3,8 @@
 @@= skipped -0, +0 lines =@@
 -/somepath/index.ts(6,1): error TS2304: Cannot find name 'window'.
 +/somepath/index.ts(2,10): error TS2304: Cannot find name 'ABC'.
- 
- 
+
+
  ==== /somepath/tsconfig.json (0 errors) ====
 @@= skipped -5, +5 lines =@@
  ==== /somepath/index.ts (1 errors) ====
@@ -18,5 +18,6 @@
      window.localStorage
 -    ~~~~~~
 -!!! error TS2304: Cannot find name 'window'.
+     
  ==== /somepath/node_modules/@typescript/lib-dom/index.d.ts (0 errors) ====
      interface ABC { abc: string }

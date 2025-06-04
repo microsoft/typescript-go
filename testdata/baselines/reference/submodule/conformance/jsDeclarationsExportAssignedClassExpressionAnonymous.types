@@ -2,25 +2,25 @@
 
 === index.js ===
 module.exports = class {
->module.exports = class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof exports
->module.exports : any
->module : any
->exports : any
->class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof exports
+>module.exports = class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof import(".")
+>module.exports : typeof import(".")
+>module : { "\uFFFDclass": typeof import("."); }
+>exports : typeof import(".")
+>class {    /**     * @param {number} p     */    constructor(p) {        this.t = 12 + p;    }} : typeof import(".")
 
     /**
      * @param {number} p
      */
     constructor(p) {
->p : any
+>p : number
 
         this.t = 12 + p;
->this.t = 12 + p : any
->this.t : any
+>this.t = 12 + p : number
+>this.t : number
 >this : this
->t : any
->12 + p : any
+>t : number
+>12 + p : number
 >12 : 12
->p : any
+>p : number
     }
 }

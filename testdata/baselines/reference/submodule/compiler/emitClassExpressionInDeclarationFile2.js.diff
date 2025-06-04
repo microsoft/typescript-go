@@ -1,7 +1,7 @@
 --- old.emitClassExpressionInDeclarationFile2.js
 +++ new.emitClassExpressionInDeclarationFile2.js
 @@= skipped -32, +32 lines =@@
- 
+
  //// [emitClassExpressionInDeclarationFile2.js]
  "use strict";
 -var __extends = (this && this.__extends) || (function () {
@@ -38,13 +38,7 @@
 -    __setFunctionName(_a, "noPrivates"),
 -    _a.ps = -1,
 -    _a);
-+var noPrivates = class {
-+    static getTags() { }
-+    tags() { }
-+    static ps = -1;
-+    p = 12;
-+}
- // altered repro from #15066 to add private property
+-// altered repro from #15066 to add private property
 -var FooItem = /** @class */ (function () {
 -    function FooItem() {
 -        this.property = "capitalism";
@@ -52,6 +46,13 @@
 -    FooItem.prototype.foo = function () { };
 -    return FooItem;
 -}());
++var noPrivates = class {
++    static getTags() { }
++    tags() { }
++    static ps = -1;
++    p = 12;
++}
++// altered repro from #15066 to add private property
 +;
 +exports.noPrivates = noPrivates;
 +// altered repro from #15066 to add private property
@@ -71,11 +72,7 @@
 -        class_2.prototype.tags = function () { };
 -        return class_2;
 -    }(Base));
-+    return class extends Base {
-+        static getTags() { }
-+        tags() { }
-+    };
- }
+-}
 -var Test = /** @class */ (function (_super) {
 -    __extends(Test, _super);
 -    function Test() {
@@ -83,6 +80,11 @@
 -    }
 -    return Test;
 -}(WithTags(FooItem)));
++    return class extends Base {
++        static getTags() { }
++        tags() { }
++    };
++}
 +class Test extends WithTags(FooItem) {
 +}
  exports.Test = Test;
@@ -90,3 +92,42 @@
 +const test = new Test();
  Test.getTags();
  test.tags();
++
++
++//// [emitClassExpressionInDeclarationFile2.d.ts]
++export declare var noPrivates: {
++    new (): {
++        tags(): void;
++        p: number;
++    };
++    getTags(): void;
++    ps: number;
++};
++// altered repro from #15066 to add private property
++export declare class FooItem {
++    foo(): void;
++    name?: string;
++    private property;
++}
++export type Constructor<T> = new (...args: any[]) => T;
++export declare function WithTags<T extends Constructor<FooItem>>(Base: T): {
++    new (...args: any[]): {
++        foo(): void;
++        name?: string;
++        property: string;
++        tags(): void;
++    };
++    getTags(): void;
++} & T;
++declare const Test_base: {
++    new (...args: any[]): {
++        foo(): void;
++        name?: string;
++        property: string;
++        tags(): void;
++    };
++    getTags(): void;
++} & typeof FooItem;
++export declare class Test extends Test_base {
++}
++export {};

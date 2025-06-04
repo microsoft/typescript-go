@@ -2,13 +2,18 @@ package execute
 
 import (
 	"fmt"
+	"io"
+	"runtime"
 	"slices"
+	"strconv"
 	"strings"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -26,9 +31,13 @@ func getFormatOptsOfSys(sys System) *diagnosticwriter.FormattingOptions {
 
 type diagnosticReporter = func(*ast.Diagnostic)
 
-func createDiagnosticReporter(sys System, pretty core.Tristate) diagnosticReporter {
+func createDiagnosticReporter(sys System, options *core.CompilerOptions) diagnosticReporter {
+	if options.Quiet.IsTrue() {
+		return func(diagnostic *ast.Diagnostic) {}
+	}
+
 	formatOpts := getFormatOptsOfSys(sys)
-	if pretty.IsFalseOrUnknown() {
+	if !shouldBePretty(sys, options) {
 		return func(diagnostic *ast.Diagnostic) {
 			diagnosticwriter.WriteFormatDiagnostic(sys.Writer(), diagnostic, formatOpts)
 			sys.EndWrite()
@@ -59,32 +68,34 @@ func createReportErrorSummary(sys System, options *core.CompilerOptions) func(di
 	return func(diagnostics []*ast.Diagnostic) {}
 }
 
-func reportStatistics(sys System, program *compiler.Program) {
-	// todo
-	stats := []statistic{
-		newStatistic("Files", len(program.SourceFiles())),
-		// newStatistic("Identifiers", program.IdentifierCount()),
-		// newStatistic("Symbols", program.getSymbolCount()),
-		newStatistic("Types", program.TypeCount()),
-		// newStatistic("Instantiations", program.getInstantiationCount()),
+func reportStatistics(sys System, program *compiler.Program, result compileAndEmitResult, memStats *runtime.MemStats) {
+	var stats table
+
+	stats.add("Files", len(program.SourceFiles()))
+	stats.add("Lines", program.LineCount())
+	stats.add("Identifiers", program.IdentifierCount())
+	stats.add("Symbols", program.SymbolCount())
+	stats.add("Types", program.TypeCount())
+	stats.add("Instantiations", program.InstantiationCount())
+	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
+	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
+	stats.add("Parse time", result.parseTime)
+	if result.bindTime != 0 {
+		stats.add("Bind time", result.bindTime)
 	}
-
-	for _, stat := range stats {
-		fmt.Fprintf(sys.Writer(), "%s:"+strings.Repeat(" ", 20-len(stat.name))+"%v\n", stat.name, stat.value)
+	if result.checkTime != 0 {
+		stats.add("Check time", result.checkTime)
 	}
-}
+	if result.emitTime != 0 {
+		stats.add("Emit time", result.emitTime)
+	}
+	stats.add("Total time", result.totalTime)
 
-type statistic struct {
-	name  string
-	value int
-}
-
-func newStatistic(name string, count int) statistic {
-	return statistic{name, count}
+	stats.print(sys.Writer())
 }
 
 func printVersion(sys System) {
-	fmt.Fprint(sys.Writer(), diagnostics.Version_0.Format(core.Version)+sys.NewLine())
+	fmt.Fprint(sys.Writer(), diagnostics.Version_0.Format(core.Version())+sys.NewLine())
 	sys.EndWrite()
 }
 
@@ -147,7 +158,7 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 		output = append(output, "  ", desc.Format(), sys.NewLine(), sys.NewLine())
 	}
 
-	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version)
+	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version())
 	output = append(output, getHeader(sys, msg)...)
 
 	output = append(output /*colors.bold(*/, diagnostics.COMMON_COMMANDS.Format() /*)*/, sys.NewLine(), sys.NewLine())
@@ -244,9 +255,9 @@ func generateGroupOptionOutput(sys System, optionsList []*tsoptions.CommandLineO
 	}
 
 	// make sure always a blank line in the end.
-	// !!! if lines[len(lines)-2] != sys.NewLine() {
-	// !!! 	lines = append(lines, sys.NewLine())
-	// !!! }
+	if len(lines) < 2 || lines[len(lines)-2] != sys.NewLine() {
+		lines = append(lines, sys.NewLine())
+	}
 
 	return lines
 }
@@ -260,13 +271,211 @@ func generateOptionOutput(
 	// !!! const colors = createColors(sys);
 
 	// name and description
-	// !!! name := getDisplayNameTextOfOption(option)
+	name := getDisplayNameTextOfOption(option)
 
-	// !!!
+	// value type and possible value
+	valueCandidates := getValueCandidate(option)
+
+	var defaultValueDescription string
+	if msg, ok := option.DefaultValueDescription.(*diagnostics.Message); ok && msg != nil {
+		defaultValueDescription = msg.Format()
+	} else {
+		defaultValueDescription = formatDefaultValue(
+			option.DefaultValueDescription,
+			core.IfElse(
+				option.Kind == tsoptions.CommandLineOptionTypeList || option.Kind == tsoptions.CommandLineOptionTypeListOrElement,
+				option.Elements(), option,
+			),
+		)
+	}
+
+	var terminalWidth int
+	// !!! const terminalWidth = sys.getWidthOfTerminal?.() ?? 0;
+
+	// Note: child_process might return `terminalWidth` as undefined.
+	if terminalWidth >= 80 {
+		// !!!     let description = "";
+		// !!!     if (option.description) {
+		// !!!         description = getDiagnosticText(option.description);
+		// !!!     }
+		// !!!     text.push(...getPrettyOutput(name, description, rightAlignOfLeft, leftAlignOfRight, terminalWidth, /*colorLeft*/ true), sys.newLine);
+		// !!!     if (showAdditionalInfoOutput(valueCandidates, option)) {
+		// !!!         if (valueCandidates) {
+		// !!!             text.push(...getPrettyOutput(valueCandidates.valueType, valueCandidates.possibleValues, rightAlignOfLeft, leftAlignOfRight, terminalWidth, /*colorLeft*/ false), sys.newLine);
+		// !!!         }
+		// !!!         if (defaultValueDescription) {
+		// !!!             text.push(...getPrettyOutput(getDiagnosticText(Diagnostics.default_Colon), defaultValueDescription, rightAlignOfLeft, leftAlignOfRight, terminalWidth, /*colorLeft*/ false), sys.newLine);
+		// !!!         }
+		// !!!     }
+		// !!!     text.push(sys.newLine);
+	} else {
+		text = append(text /* !!! colors.blue(name) */, name, sys.NewLine())
+		if option.Description != nil {
+			text = append(text, option.Description.Format())
+		}
+		text = append(text, sys.NewLine())
+		if showAdditionalInfoOutput(valueCandidates, option) {
+			if valueCandidates != nil {
+				text = append(text, valueCandidates.valueType, " ", valueCandidates.possibleValues)
+			}
+			if defaultValueDescription != "" {
+				if valueCandidates != nil {
+					text = append(text, sys.NewLine())
+				}
+				text = append(text, diagnostics.X_default_Colon.Format(), " ", defaultValueDescription)
+			}
+
+			text = append(text, sys.NewLine())
+		}
+		text = append(text, sys.NewLine())
+	}
 
 	return text
 }
 
+func formatDefaultValue(defaultValue any, option *tsoptions.CommandLineOption) string {
+	if defaultValue == nil || defaultValue == core.TSUnknown {
+		return "undefined"
+	}
+
+	if option.Kind == tsoptions.CommandLineOptionTypeEnum {
+		// e.g. ScriptTarget.ES2015 -> "es6/es2015"
+		var names []string
+		for name, value := range option.EnumMap().Entries() {
+			if value == defaultValue {
+				names = append(names, name)
+			}
+		}
+		return strings.Join(names, "/")
+	}
+	return fmt.Sprintf("%v", defaultValue)
+}
+
+type valueCandidate struct {
+	// "one or more" or "any of"
+	valueType      string
+	possibleValues string
+}
+
+func showAdditionalInfoOutput(valueCandidates *valueCandidate, option *tsoptions.CommandLineOption) bool {
+	if option.Category == diagnostics.Command_line_Options {
+		return false
+	}
+	if valueCandidates != nil && valueCandidates.possibleValues == "string" &&
+		(option.DefaultValueDescription == nil ||
+			option.DefaultValueDescription == "false" ||
+			option.DefaultValueDescription == "n/a") {
+		return false
+	}
+	return true
+}
+
+func getValueCandidate(option *tsoptions.CommandLineOption) *valueCandidate {
+	// option.type might be "string" | "number" | "boolean" | "object" | "list" | Map<string, number | string>
+	// string -- any of: string
+	// number -- any of: number
+	// boolean -- any of: boolean
+	// object -- null
+	// list -- one or more: , content depends on `option.element.type`, the same as others
+	// Map<string, number | string> -- any of: key1, key2, ....
+	if option.Kind == tsoptions.CommandLineOptionTypeObject {
+		return nil
+	}
+
+	res := &valueCandidate{}
+	if option.Kind == tsoptions.CommandLineOptionTypeListOrElement {
+		// assert(option.type !== "listOrElement")
+		panic("no value candidate for list or element")
+	}
+
+	switch option.Kind {
+	case tsoptions.CommandLineOptionTypeString,
+		tsoptions.CommandLineOptionTypeNumber,
+		tsoptions.CommandLineOptionTypeBoolean:
+		res.valueType = diagnostics.X_type_Colon.Format()
+	case tsoptions.CommandLineOptionTypeList:
+		res.valueType = diagnostics.X_one_or_more_Colon.Format()
+	default:
+		res.valueType = diagnostics.X_one_of_Colon.Format()
+	}
+
+	res.possibleValues = getPossibleValues(option)
+
+	return res
+}
+
+func getPossibleValues(option *tsoptions.CommandLineOption) string {
+	switch option.Kind {
+	case tsoptions.CommandLineOptionTypeString,
+		tsoptions.CommandLineOptionTypeNumber,
+		tsoptions.CommandLineOptionTypeBoolean:
+		return string(option.Kind)
+	case tsoptions.CommandLineOptionTypeList,
+		tsoptions.CommandLineOptionTypeListOrElement:
+		return getPossibleValues(option.Elements())
+	case tsoptions.CommandLineOptionTypeObject:
+		return ""
+	default:
+		// Map<string, number | string>
+		// Group synonyms: es6/es2015
+		enumMap := option.EnumMap()
+		inverted := collections.NewOrderedMapWithSizeHint[any, []string](enumMap.Size())
+		deprecatedKeys := option.DeprecatedKeys()
+
+		for name, value := range enumMap.Entries() {
+			if deprecatedKeys == nil || !deprecatedKeys.Has(name) {
+				inverted.Set(value, append(inverted.GetOrZero(value), name))
+			}
+		}
+		var syns []string
+		for synonyms := range inverted.Values() {
+			syns = append(syns, strings.Join(synonyms, "/"))
+		}
+		return strings.Join(syns, ", ")
+	}
+}
+
 func getDisplayNameTextOfOption(option *tsoptions.CommandLineOption) string {
 	return "--" + option.Name + core.IfElse(option.ShortName != "", ", -"+option.ShortName, "")
+}
+
+type tableRow struct {
+	name  string
+	value string
+}
+
+type table struct {
+	rows []tableRow
+}
+
+func (t *table) add(name string, value any) {
+	if d, ok := value.(time.Duration); ok {
+		value = formatDuration(d)
+	}
+	t.rows = append(t.rows, tableRow{name, fmt.Sprint(value)})
+}
+
+func (t *table) print(w io.Writer) {
+	nameWidth := 0
+	valueWidth := 0
+	for _, r := range t.rows {
+		nameWidth = max(nameWidth, len(r.name))
+		valueWidth = max(valueWidth, len(r.value))
+	}
+
+	for _, r := range t.rows {
+		fmt.Fprintf(w, "%-*s %*s\n", nameWidth+1, r.name+":", valueWidth, r.value)
+	}
+}
+
+func formatDuration(d time.Duration) string {
+	return fmt.Sprintf("%.3fs", d.Seconds())
+}
+
+func identifierCount(p *compiler.Program) int {
+	count := 0
+	for _, file := range p.SourceFiles() {
+		count += file.IdentifierCount
+	}
+	return count
 }

@@ -339,9 +339,12 @@ exports.x = x;
 const x = 1;
 export { x };
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 // cjs format file
 const x = 1;
-export { x };
+exports.x = x;
 //// [index.cjs]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -656,4 +659,54 @@ const _m44 = import("./subfolder2/another/");
 const _m45 = import("./subfolder2/another/index");
 // esm format file
 const x = 1;
+export { x };
+
+
+//// [index.d.ts]
+// cjs format file
+declare const x = 1;
+export { x };
+//// [index.d.cts]
+// cjs format file
+declare const x = 1;
+export { x };
+//// [index.d.mts]
+// esm format file
+declare const x = 1;
+export { x };
+//// [index.d.ts]
+// cjs format file
+declare const x = 1;
+export { x };
+//// [index.d.cts]
+// cjs format file
+declare const x = 1;
+export { x };
+//// [index.d.mts]
+// esm format file
+declare const x = 1;
+export { x };
+//// [index.d.ts]
+// esm format file
+declare const x = 1;
+export { x };
+//// [index.d.mts]
+// esm format file
+declare const x = 1;
+export { x };
+//// [index.d.cts]
+// cjs format file
+declare const x = 1;
+export { x };
+//// [index.d.cts]
+// cjs format file
+declare const x = 1;
+export { x };
+//// [index.d.ts]
+// esm format file
+declare const x = 1;
+export { x };
+//// [index.d.mts]
+// esm format file
+declare const x = 1;
 export { x };

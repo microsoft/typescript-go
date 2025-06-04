@@ -1,13 +1,13 @@
 --- old.typeFromPropertyAssignment15.types
 +++ new.typeFromPropertyAssignment15.types
 @@= skipped -1, +1 lines =@@
- 
+
  === a.js ===
  var Outer = {};
 ->Outer : typeof Outer
 +>Outer : {}
  >{} : {}
- 
+
  Outer.Inner = class {
  >Outer.Inner = class {    constructor() {        this.x = 1    }    m() { }} : typeof Inner
 ->Outer.Inner : typeof Inner
@@ -17,23 +17,33 @@
 +>Outer : {}
 +>Inner : any
  >class {    constructor() {        this.x = 1    }    m() { }} : typeof Inner
- 
+
      constructor() {
+         this.x = 1
+ >this.x = 1 : 1
+->this.x : any
++>this.x : number
+ >this : this
+->x : any
++>x : number
+ >1 : 1
+     }
+     m() { }
 @@= skipped -24, +24 lines =@@
- 
+
  /** @type {Outer.Inner} */
  var inner
 ->inner : Inner
-+>inner : any
- 
++>inner : Outer.Inner
+
  inner.x
 ->inner.x : number
 ->inner : Inner
 ->x : number
 +>inner.x : any
-+>inner : any
++>inner : Outer.Inner
 +>x : any
- 
+
  inner.m()
 ->inner.m() : void
 ->inner.m : () => void
@@ -41,9 +51,9 @@
 ->m : () => void
 +>inner.m() : any
 +>inner.m : any
-+>inner : any
++>inner : Outer.Inner
 +>m : any
- 
+
  var inno = new Outer.Inner()
 ->inno : Inner
 ->new Outer.Inner() : Inner
@@ -55,7 +65,7 @@
 +>Outer.Inner : any
 +>Outer : {}
 +>Inner : any
- 
+
  inno.x
 ->inno.x : number
 ->inno : Inner
@@ -63,7 +73,7 @@
 +>inno.x : any
 +>inno : any
 +>x : any
- 
+
  inno.m()
 ->inno.m() : void
 ->inno.m : () => void
@@ -73,4 +83,3 @@
 +>inno.m : any
 +>inno : any
 +>m : any
- 

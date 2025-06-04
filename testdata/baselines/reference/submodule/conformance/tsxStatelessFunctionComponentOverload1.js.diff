@@ -1,8 +1,8 @@
 --- old.tsxStatelessFunctionComponentOverload1.js
 +++ new.tsxStatelessFunctionComponentOverload1.js
 @@= skipped -44, +44 lines =@@
- 
- 
+
+
  //// [file.jsx]
 -define(["require", "exports", "react"], function (require, exports, React) {
 -    "use strict";
@@ -29,6 +29,7 @@
 -});
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
++const React = require("react");
 +// OK
 +const c1 = <OneThing yxx='ok'/>;
 +const c2 = <OneThing yy={100} yy1="hello"/>;

@@ -36,6 +36,7 @@ type CompilerOptions struct {
 	DisableSourceOfProjectReferenceRedirect   Tristate                                  `json:"disableSourceOfProjectReferenceRedirect,omitzero"`
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
 	DisableReferencedProjectLoad              Tristate                                  `json:"disableReferencedProjectLoad,omitzero"`
+	ErasableSyntaxOnly                        Tristate                                  `json:"erasableSyntaxOnly,omitzero"`
 	ESModuleInterop                           Tristate                                  `json:"esModuleInterop,omitzero"`
 	ExactOptionalPropertyTypes                Tristate                                  `json:"exactOptionalPropertyTypes,omitzero"`
 	ExperimentalDecorators                    Tristate                                  `json:"experimentalDecorators,omitzero"`
@@ -54,12 +55,13 @@ type CompilerOptions struct {
 	JsxImportSource                           string                                    `json:"jsxImportSource,omitzero"`
 	KeyofStringsOnly                          Tristate                                  `json:"keyofStringsOnly,omitzero"`
 	Lib                                       []string                                  `json:"lib,omitzero"`
+	LibReplacement                            Tristate                                  `json:"libReplacement,omitzero"`
 	Locale                                    string                                    `json:"locale,omitzero"`
 	MapRoot                                   string                                    `json:"mapRoot,omitzero"`
-	ModuleKind                                ModuleKind                                `json:"module,omitzero"`
+	Module                                    ModuleKind                                `json:"module,omitzero"`
 	ModuleResolution                          ModuleResolutionKind                      `json:"moduleResolution,omitzero"`
 	ModuleSuffixes                            []string                                  `json:"moduleSuffixes,omitzero"`
-	ModuleDetection                           ModuleDetectionKind                       `json:"moduleDetectionKind,omitzero"`
+	ModuleDetection                           ModuleDetectionKind                       `json:"moduleDetection,omitzero"`
 	NewLine                                   NewLineKind                               `json:"newLine,omitzero"`
 	NoEmit                                    Tristate                                  `json:"noEmit,omitzero"`
 	NoCheck                                   Tristate                                  `json:"noCheck,omitzero"`
@@ -136,18 +138,29 @@ type CompilerOptions struct {
 	TscBuild            Tristate `json:"tscBuild,omitzero"`
 	Help                Tristate `json:"help,omitzero"`
 	All                 Tristate `json:"all,omitzero"`
+
+	PprofDir       string   `json:"pprofDir,omitzero"`
+	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
+	Quiet          Tristate `json:"quiet,omitzero"`
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	if options.Target != ScriptTargetNone {
 		return options.Target
 	}
-	return ScriptTargetES5
+	switch options.GetEmitModuleKind() {
+	case ModuleKindNode16:
+		return ScriptTargetES2022
+	case ModuleKindNodeNext:
+		return ScriptTargetESNext
+	default:
+		return ScriptTargetES5
+	}
 }
 
 func (options *CompilerOptions) GetEmitModuleKind() ModuleKind {
-	if options.ModuleKind != ModuleKindNone {
-		return options.ModuleKind
+	if options.Module != ModuleKindNone {
+		return options.Module
 	}
 	if options.Target >= ScriptTargetES2015 {
 		return ModuleKindES2015
@@ -167,6 +180,22 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 	default:
 		return ModuleResolutionKindBundler
 	}
+}
+
+func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
+	return options.ResolvePackageJsonExports.IsTrueOrUnknown()
+}
+
+func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
+	return options.ResolvePackageJsonImports.IsTrueOrUnknown()
+}
+
+func (options *CompilerOptions) GetAllowImportingTsExtensions() bool {
+	return options.AllowImportingTsExtensions.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()
+}
+
+func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) bool {
+	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
 }
 
 func (options *CompilerOptions) GetESModuleInterop() bool {
@@ -200,7 +229,7 @@ func (options *CompilerOptions) ShouldPreserveConstEnums() bool {
 	return options.PreserveConstEnums == TSTrue || options.IsolatedModules == TSTrue
 }
 
-func (options *CompilerOptions) GetAllowJs() bool {
+func (options *CompilerOptions) GetAllowJS() bool {
 	if options.AllowJs != TSUnknown {
 		return options.AllowJs == TSTrue
 	}
@@ -245,13 +274,11 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 }
 
 func (options *CompilerOptions) GetEmitDeclarations() bool {
-	// !!!
-	return false
+	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
 
 func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
-	// !!!
-	return false
+	return options.DeclarationMap == TSTrue && options.GetEmitDeclarations()
 }
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
@@ -262,34 +289,35 @@ func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 	return true
 }
 
-// SourceFileAffectingCompilerOptions are the CompilerOptions values that when
-// changed require a new SourceFile be created.
-type SourceFileAffectingCompilerOptions struct {
-	// !!! generate this
-	Target               ScriptTarget
-	Jsx                  JsxEmit
-	JsxImportSource      string
-	ImportHelpers        Tristate
-	AlwaysStrict         Tristate
-	ModuleDetection      ModuleDetectionKind
-	AllowUnreachableCode Tristate
-	AllowUnusedLabels    Tristate
-	PreserveConstEnums   Tristate
-	IsolatedModules      Tristate
+func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string {
+	if options.Paths.Size() == 0 {
+		return ""
+	}
+	if options.PathsBasePath != "" {
+		return options.PathsBasePath
+	}
+	return currentDirectory
 }
 
-func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
-	return SourceFileAffectingCompilerOptions{
-		Target:               options.Target,
-		Jsx:                  options.Jsx,
-		JsxImportSource:      options.JsxImportSource,
-		ImportHelpers:        options.ImportHelpers,
-		AlwaysStrict:         options.AlwaysStrict,
-		ModuleDetection:      options.ModuleDetection,
-		AllowUnreachableCode: options.AllowUnreachableCode,
-		AllowUnusedLabels:    options.AllowUnusedLabels,
-		PreserveConstEnums:   options.PreserveConstEnums,
-		IsolatedModules:      options.IsolatedModules,
+// SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
+// affect the parse and bind of a source file.
+type SourceFileAffectingCompilerOptions struct {
+	AllowUnreachableCode       Tristate
+	AllowUnusedLabels          Tristate
+	BindInStrictMode           bool
+	EmitScriptTarget           ScriptTarget
+	NoFallthroughCasesInSwitch Tristate
+	ShouldPreserveConstEnums   bool
+}
+
+func (options *CompilerOptions) SourceFileAffecting() *SourceFileAffectingCompilerOptions {
+	return &SourceFileAffectingCompilerOptions{
+		AllowUnreachableCode:       options.AllowUnreachableCode,
+		AllowUnusedLabels:          options.AllowUnusedLabels,
+		BindInStrictMode:           options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
+		EmitScriptTarget:           options.GetEmitScriptTarget(),
+		NoFallthroughCasesInSwitch: options.NoFallthroughCasesInSwitch,
+		ShouldPreserveConstEnums:   options.ShouldPreserveConstEnums(),
 	}
 }
 
@@ -319,10 +347,15 @@ const (
 	ModuleKindESNext ModuleKind = 99
 	// Node16+ is an amalgam of commonjs (albeit updated) and es2022+, and represents a distinct module system from es2020/esnext
 	ModuleKindNode16   ModuleKind = 100
+	ModuleKindNode18   ModuleKind = 101
 	ModuleKindNodeNext ModuleKind = 199
 	// Emit as written
 	ModuleKindPreserve ModuleKind = 200
 )
+
+func (moduleKind ModuleKind) IsNonNodeESM() bool {
+	return moduleKind >= ModuleKindES2015 && moduleKind <= ModuleKindESNext
+}
 
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
 

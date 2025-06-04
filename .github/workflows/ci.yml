@@ -7,6 +7,9 @@ on:
   pull_request:
     branches:
       - main
+  merge_group:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -22,10 +25,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
         with:
           cache-name: build
+
+      # Avoid duplicate PR annotations.
+      - name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
 
       - run: npm ci
 
@@ -35,7 +47,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
 
       - run: npm ci
 
@@ -45,57 +58,101 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
+        config:
           - os: ubuntu-latest
+            coverage: true
+            main: true
           - os: windows-latest
+            coverage: true
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: macos-latest
+            coverage: true
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'no submodules'
             no-submodules: true
           - os: ['self-hosted', '1ES.Pool=TypeScript-1ES-GitHub-XL', '1ES.ImageOverride=mariner-2.0']
             name: 'race mode'
             race: true
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
           - os: ubuntu-latest
             name: 'concurrent test programs'
-            concurrent-test-program: true
+            concurrent-test-programs: true
+            coverage: true
+        exclude:
+          - config:
+              skip: true
 
-    name: test (${{ matrix.name || matrix.os }})
+    name: test (${{ matrix.config.name || matrix.config.os }})
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.config.os }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    env:
+      TSGO_HEREBY_RACE: ${{ (matrix.config.race && 'true') || 'false' }}
+      TSGO_HEREBY_NOEMBED: ${{ (matrix.config.noembed && 'true') || 'false' }}
+      TSGO_HEREBY_CONCURRENT_TEST_PROGRAMS: ${{ (matrix.config.concurrent-test-programs && 'true') || 'false' }}
+      TSGO_HEREBY_COVERAGE: ${{ (matrix.config.coverage && 'true') || 'false' }}
 
     steps:
       - run: git config --system core.longpaths true
-        if: ${{ matrix.os == 'windows-latest' }}
+        if: ${{ matrix.config.os == 'windows-latest' }}
 
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
-          submodules: ${{ !matrix.no-submodules }}
-      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+          submodules: ${{ !matrix.config.no-submodules }}
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: 'lts/*'
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
         with:
           cache-name: test
+
+      # Avoid duplicate PR annotations.
+      - if: ${{ ! matrix.config.main }}
+        name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
 
       - run: npm ci
 
       - run: go install gotest.tools/gotestsum@latest
         # Installing gotestsum is super slow on Windows.
         # Also, avoid using it in race mode so we get the full output.
-        if: ${{ matrix.os != 'windows-latest' && !matrix.race }}
+        if: ${{ matrix.config.os != 'windows-latest' && !matrix.config.race }}
 
       - name: Tests
         id: test
-        run: npx hereby test:all ${RACE_FLAG:+"$RACE_FLAG"} ${NOEMBED_FLAG:+"$NOEMBED_FLAG"} ${CONCURRENTTESTPROGRAM_FLAG:+"$CONCURRENTTESTPROGRAM_FLAG"}
-        env:
-          RACE_FLAG: ${{ (matrix.race && '--race') || '' }}
-          NOEMBED_FLAG: ${{ (matrix.noembed && '--noembed') || '' }}
-          CONCURRENTTESTPROGRAM_FLAG: ${{ (matrix.concurrent-test-program && '--concurrentTestPrograms') || '' }}
+        run: npx hereby test
+
+      - name: Benchmarks
+        run: npx hereby test:benchmarks
+
+      - name: Tools Tests
+        run: npx hereby test:tools
+
+      - name: API Tests
+        run: npx hereby test:api
 
       - run: git add .
+
+      - uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
+        if: ${{ always() && matrix.config.coverage && github.event_name != 'merge_group' }}
+        with:
+          use_oidc: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) }}
+          name: ${{ matrix.config.name || matrix.config.os }}
+          directory: ./coverage
+
       - run: git diff --staged --exit-code --stat
 
       - name: Print baseline diff on failure
@@ -107,51 +164,68 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         if: ${{ failure() && steps.test.conclusion == 'failure' }}
         with:
-          name: ${{ matrix.os }}-${{ (matrix.race && 'race') || 'norace' }}-new-baselines-artifact
+          name: ${{ matrix.config.os }}-${{ (matrix.config.race && 'race') || 'norace' }}-new-baselines-artifact
           path: testdata/baselines/local
 
   lint:
     strategy:
       fail-fast: false
       matrix:
-        include:
+        config:
           - os: ubuntu-latest
+            main: true
           - os: windows-latest
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: macos-latest
+            skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
+            skip: ${{ github.event_name == 'merge_group' }}
+        exclude:
+          - config:
+              skip: true
 
-    name: lint (${{ matrix.name || matrix.os }})
+    name: lint (${{ matrix.config.name || matrix.config.os }})
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.config.os }}
+
+    env:
+      TSGO_HEREBY_NOEMBED: ${{ (matrix.config.noembed && 'true') || 'false' }}
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
         with:
-          cache-name: lint${{ (matrix.noembed && '-noembed') || ''}}
+          cache-name: lint${{ (matrix.config.noembed && '-noembed') || ''}}
+
+      # Avoid duplicate PR annotations.
+      - if: ${{ ! matrix.config.main }}
+        name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
 
       - run: npm ci
 
-      - run: npx hereby install-tools
-      - run: npx hereby lint ${NOEMBED_FLAG:+"$NOEMBED_FLAG"}
-        env:
-          NOEMBED_FLAG: ${{ (matrix.noembed && '--noembed') || '' }}
+      - run: npx hereby lint
 
   format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
         with:
           cache-name: format
 
       - run: npm ci
 
-      - run: npx hereby install-tools
       - run: npx hereby check:format
 
   generate:
@@ -160,7 +234,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           submodules: true
-      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
         with:
           cache-name: generate
@@ -168,6 +243,9 @@ jobs:
       - run: npm ci
 
       - run: npx hereby generate
+
+      - run: node ./internal/lsp/lsproto/_generate/fetchModel.mjs
+      - run: node ./internal/lsp/lsproto/_generate/generate.mjs
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
@@ -189,10 +267,19 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           submodules: true
-      - uses: actions/setup-node@cdca7365b2dadb8aad0a33bc7601856ffabcc48e # v4.3.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
         with:
           cache-name: smoke
+
+      # Avoid duplicate PR annotations.
+      - name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
 
       - run: npm ci
 
@@ -214,21 +301,77 @@ jobs:
 
       - run: go -C ./_tools run ./cmd/checkmodpaths $PWD
 
+  baselines:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          submodules: true
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+      - uses: ./.github/actions/setup-go
+        with:
+          cache-name: baselines
+
+      - run: npm ci
+
+      - name: Remove all baselines
+        run: rm -rf testdata/baselines/reference
+
+      - name: Run tests
+        run: npx hereby test &> /dev/null || exit 0
+
+      - name: Accept baselines
+        run: |
+          npx hereby baseline-accept
+          git add testdata/baselines/reference
+
+      - name: Run tests
+        run: npx hereby test
+
+      - name: Check baselines
+        id: check-baselines
+        run: |
+          function print_diff() {
+            if ! git diff --staged --exit-code --quiet --diff-filter=$1; then
+              echo "$2:"
+              git diff --staged --name-only --diff-filter=$1
+            fi
+          }
+
+          if ! git diff --staged --exit-code --quiet; then
+            print_diff ACR "Missing baselines"
+            print_diff MTUXB "Modified baselines"
+            print_diff D "Unused baselines"
+            git diff --staged > fix_baselines.patch
+            exit 1
+          fi
+
+      - name: Upload baseline diff artifact
+        if: ${{ failure() && steps.check-baselines.conclusion == 'failure' }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fix_baselines.patch
+          path: fix_baselines.patch
+
   required:
     runs-on: ubuntu-latest
     if: ${{ always() }}
     needs:
+      - baselines
       - build
-      - test
-      - lint
+      - extension
       - format
       - generate
-      - tidy
+      - lint
+      - misc
       - smoke
+      - test
+      - tidy
 
     steps:
       - name: Check required jobs
         env:
           NEEDS: ${{ toJson(needs) }}
         run: |
-          ! echo $NEEDS | jq -e 'to_entries[] | { job: .key, result: .value.result } | select(.result != "success")'
+          ! echo $NEEDS | jq -e 'to_entries[] | { job: .key, result: .value.result } | select((.result == "success" or .result == "skipped") | not)'

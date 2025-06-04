@@ -1,26 +1,40 @@
 --- old.argumentsReferenceInMethod3_Js.types
 +++ new.argumentsReferenceInMethod3_Js.types
-@@= skipped -21, +21 lines =@@
- 	 * @param {object} [foo={}]
+@@= skipped -22, +22 lines =@@
  	 */
  	m(foo = {}) {
-->m : (foo?: object) => void
+ >m : (foo?: object) => void
 ->foo : any
-+>m : (foo?: {}) => void
-+>foo : {}
++>foo : object
  >{} : {}
- 
+
  		/**
  		 * @type object
  		 */
  		this.x = foo;
 ->this.x = foo : any
-+>this.x = foo : {}
- >this.x : any
+->this.x : any
++>this.x = foo : object
++>this.x : object
  >this : this
- >x : any
+->x : any
 ->foo : any
-+>foo : {}
- 
++>x : object
++>foo : object
++>foo : object
+
  		/**
  		 * @type object
+ 		 */
+ 		this.y = super.arguments.bar;
+->this.y = super.arguments.bar : {}
+->this.y : any
++>this.y = super.arguments.bar : object
++>this.y : object
+ >this : this
+->y : any
++>y : object
++>super.arguments.bar : object
+ >super.arguments.bar : {}
+ >super.arguments : { bar: {}; }
+ >super : A

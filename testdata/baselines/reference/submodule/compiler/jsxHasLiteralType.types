@@ -2,7 +2,7 @@
 
 === jsxHasLiteralType.tsx ===
 import * as React from "react";
->React : any
+>React : typeof React
 
 interface Props {
     x?: "a" | "b";
@@ -10,13 +10,13 @@ interface Props {
 }
 class MyComponent<P extends Props = Props> extends React.Component<P, {}> {}
 >MyComponent : MyComponent<P>
->React.Component : any
->React : any
->Component : any
+>React.Component : React.Component<P, {}>
+>React : typeof React
+>Component : typeof React.Component
 
 const m = <MyComponent x="a"/>
->m : any
-><MyComponent x="a"/> : any
+>m : JSX.Element
+><MyComponent x="a"/> : JSX.Element
 >MyComponent : typeof MyComponent
->x : any
+>x : "a"
 

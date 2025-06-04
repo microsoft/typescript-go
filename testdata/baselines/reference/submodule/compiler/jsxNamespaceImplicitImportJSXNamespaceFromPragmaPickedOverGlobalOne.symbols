@@ -11,7 +11,7 @@ declare namespace React { }
 >React : Symbol(React, Decl(index.d.ts, 1, 26))
 
 declare global {
->global : Symbol((Missing), Decl(index.d.ts, 3, 27))
+>global : Symbol(global, Decl(index.d.ts, 3, 27))
 
     namespace JSX {
 >JSX : Symbol(JSX, Decl(index.d.ts, 5, 16))
@@ -181,5 +181,7 @@ export namespace EmotionJSX {
 /* @jsxImportSource @emotion/react */
 export const Comp = () => <div css="color: hotpink;"></div>;
 >Comp : Symbol(Comp, Decl(index.tsx, 1, 12))
+>div : Symbol(div, Decl(index.d.ts, 14, 37))
 >css : Symbol(css, Decl(index.tsx, 1, 30))
+>div : Symbol(div, Decl(index.d.ts, 14, 37))
 

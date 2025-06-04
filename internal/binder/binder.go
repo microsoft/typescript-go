@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -40,7 +40,7 @@ const (
 
 type Binder struct {
 	file                    *ast.SourceFile
-	options                 *core.CompilerOptions
+	options                 *core.SourceFileAffectingCompilerOptions
 	languageVersion         core.ScriptTarget
 	bindFunc                func(*ast.Node) bool
 	unreachableFlow         *ast.FlowNode
@@ -66,6 +66,7 @@ type Binder struct {
 	hasFlowEffects         bool
 	inStrictMode           bool
 	inAssignmentPattern    bool
+	seenParseError         bool
 	symbolCount            int
 	classifiableNames      core.Set[string]
 	symbolPool             core.Pool[ast.Symbol]
@@ -85,7 +86,7 @@ type ActiveLabel struct {
 func (label *ActiveLabel) BreakTarget() *ast.FlowNode    { return label.breakTarget }
 func (label *ActiveLabel) ContinueTarget() *ast.FlowNode { return label.continueTarget }
 
-func BindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
+func BindSourceFile(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) {
 	// This is constructed this way to make the compiler "out-line" the function,
 	// avoiding most work in the common case where the file has already been bound.
 	if !file.IsBound() {
@@ -110,14 +111,14 @@ func putBinder(b *Binder) {
 	binderPool.Put(b)
 }
 
-func bindSourceFile(file *ast.SourceFile, options *core.CompilerOptions) {
+func bindSourceFile(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) {
 	file.BindOnce(func() {
 		b := getBinder()
 		defer putBinder(b)
 		b.file = file
 		b.options = options
-		b.languageVersion = options.GetEmitScriptTarget()
-		b.inStrictMode = (options.AlwaysStrict.IsTrue() || options.Strict.IsTrue()) && !file.IsDeclarationFile || ast.IsExternalModule(file)
+		b.languageVersion = options.EmitScriptTarget
+		b.inStrictMode = options.BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.reportedUnreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
@@ -304,6 +305,8 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 func (b *Binder) getDeclarationName(node *ast.Node) string {
 	if ast.IsExportAssignment(node) {
 		return core.IfElse(node.AsExportAssignment().IsExportEquals, ast.InternalSymbolNameExportEquals, ast.InternalSymbolNameDefault)
+	} else if ast.IsJSExportAssignment(node) {
+		return ast.InternalSymbolNameExportEquals
 	}
 	name := ast.GetNameOfDeclaration(node)
 	if name != nil {
@@ -323,7 +326,7 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			}
 			return GetSymbolNameForPrivateIdentifier(containingClass.Symbol(), name.Text())
 		}
-		if ast.IsPropertyNameLiteral(name) {
+		if ast.IsPropertyNameLiteral(name) || ast.IsJsxNamespacedName(name) {
 			return name.Text()
 		}
 		if ast.IsComputedPropertyName(name) {
@@ -338,9 +341,6 @@ func (b *Binder) getDeclarationName(node *ast.Node) string {
 			}
 			panic("Only computed properties with literal names have declaration names")
 		}
-		// if isJsxNamespacedName(name) {
-		// 	return getEscapedTextOfJsxNamespacedName(name)
-		// }
 		return ast.InternalSymbolNameMissing
 	}
 	switch node.Kind {
@@ -377,12 +377,16 @@ func GetSymbolNameForPrivateIdentifier(containingClassSymbol *ast.Symbol, descri
 }
 
 func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
+	container := b.container
+	if node.Kind == ast.KindCommonJSExport {
+		container = b.file.AsNode()
+	}
 	hasExportModifier := ast.GetCombinedModifierFlags(node)&ast.ModifierFlagsExport != 0
 	if symbolFlags&ast.SymbolFlagsAlias != 0 {
 		if node.Kind == ast.KindExportSpecifier || (node.Kind == ast.KindImportEqualsDeclaration && hasExportModifier) {
-			return b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
+			return b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, symbolFlags, symbolExcludes)
 		}
-		return b.declareSymbol(ast.GetLocals(b.container), nil /*parent*/, node, symbolFlags, symbolExcludes)
+		return b.declareSymbol(ast.GetLocals(container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 	}
 	// Exported module members are given 2 symbols: A local symbol that is classified with an ExportValue flag,
 	// and an associated export symbol with all the correct flags set on it. There are 2 main reasons:
@@ -399,21 +403,21 @@ func (b *Binder) declareModuleMember(node *ast.Node, symbolFlags ast.SymbolFlags
 	//       during global merging in the checker. Why? The only case when ambient module is permitted inside another module is module augmentation
 	//       and this case is specially handled. Module augmentations should only be merged with original module definition
 	//       and should never be merged directly with other augmentation, and the latter case would be possible if automatic merge is allowed.
-	if !ast.IsAmbientModule(node) && (hasExportModifier || b.container.Flags&ast.NodeFlagsExportContext != 0) {
-		if !ast.IsLocalsContainer(b.container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == ast.InternalSymbolNameMissing) {
-			return b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
+	if !ast.IsAmbientModule(node) && (hasExportModifier || container.Flags&ast.NodeFlagsExportContext != 0) {
+		if !ast.IsLocalsContainer(container) || (ast.HasSyntacticModifier(node, ast.ModifierFlagsDefault) && b.getDeclarationName(node) == ast.InternalSymbolNameMissing) || ast.IsCommonJSExport(node) {
+			return b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, symbolFlags, symbolExcludes)
 			// No local symbol for an unnamed default!
 		}
 		exportKind := ast.SymbolFlagsNone
 		if symbolFlags&ast.SymbolFlagsValue != 0 {
 			exportKind = ast.SymbolFlagsExportValue
 		}
-		local := b.declareSymbol(ast.GetLocals(b.container), nil /*parent*/, node, exportKind, symbolExcludes)
-		local.ExportSymbol = b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, symbolFlags, symbolExcludes)
+		local := b.declareSymbol(ast.GetLocals(container), nil /*parent*/, node, exportKind, symbolExcludes)
+		local.ExportSymbol = b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, symbolFlags, symbolExcludes)
 		node.ExportableData().LocalSymbol = local
 		return local
 	}
-	return b.declareSymbol(ast.GetLocals(b.container), nil /*parent*/, node, symbolFlags, symbolExcludes)
+	return b.declareSymbol(ast.GetLocals(container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 }
 
 func (b *Binder) declareClassMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
@@ -424,7 +428,7 @@ func (b *Binder) declareClassMember(node *ast.Node, symbolFlags ast.SymbolFlags,
 }
 
 func (b *Binder) declareSourceFileMember(node *ast.Node, symbolFlags ast.SymbolFlags, symbolExcludes ast.SymbolFlags) *ast.Symbol {
-	if ast.IsExternalModule(b.file) {
+	if ast.IsExternalOrCommonJSModule(b.file) {
 		return b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	}
 	return b.declareSymbol(ast.GetLocals(b.file.AsNode()), nil /*parent*/, node, symbolFlags, symbolExcludes)
@@ -445,7 +449,7 @@ func (b *Binder) declareSymbolAndAddToSymbolTable(node *ast.Node, symbolFlags as
 	case ast.KindFunctionType, ast.KindConstructorType, ast.KindCallSignature, ast.KindConstructSignature, ast.KindJSDocSignature,
 		ast.KindIndexSignature, ast.KindMethodDeclaration, ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor,
 		ast.KindSetAccessor, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindArrowFunction,
-		ast.KindClassStaticBlockDeclaration, ast.KindTypeAliasDeclaration, ast.KindMappedType:
+		ast.KindClassStaticBlockDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType:
 		return b.declareSymbol(ast.GetLocals(b.container), nil /*parent*/, node, symbolFlags, symbolExcludes)
 	}
 	panic("Unhandled case in declareSymbolAndAddToSymbolTable")
@@ -577,7 +581,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	node.Parent = b.parent
+	if node.Parent == nil || node.Parent.Flags&ast.NodeFlagsReparsed != 0 {
+		node.Parent = b.parent
+	}
 	saveInStrictMode := b.inStrictMode
 	// Even though in the AST the jsdoc @typedef node belongs to the current node,
 	// its symbol might be in the same scope with the current node's symbol. Consider:
@@ -618,8 +624,11 @@ func (b *Binder) bind(node *ast.Node) bool {
 			setFlowNode(node, b.currentFlow)
 		}
 	case ast.KindBinaryExpression:
-		if ast.IsFunctionPropertyAssignment(node) {
+		switch ast.GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
+		case ast.JSDeclarationKindProperty:
 			b.bindFunctionPropertyAssignment(node)
+		case ast.JSDeclarationKindThisProperty:
+			b.bindThisPropertyAssignment(node)
 		}
 		b.checkStrictModeBinaryExpression(node)
 	case ast.KindCatchClause:
@@ -645,6 +654,8 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindBindingElement:
 		node.AsBindingElement().FlowNode = b.currentFlow
 		b.bindVariableDeclarationOrBindingElement(node)
+	case ast.KindCommonJSExport:
+		b.declareModuleMember(node, ast.SymbolFlagsFunctionScopedVariable, ast.SymbolFlagsFunctionScopedVariableExcludes)
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature:
 		b.bindPropertyWorker(node)
 	case ast.KindPropertyAssignment, ast.KindShorthandPropertyAssignment:
@@ -678,7 +689,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindClassLikeDeclaration(node)
 	case ast.KindInterfaceDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsInterface, ast.SymbolFlagsInterfaceExcludes)
-	case ast.KindTypeAliasDeclaration:
+	case ast.KindCallExpression:
+		b.bindCallExpression(node)
+	case ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsTypeAlias, ast.SymbolFlagsTypeAliasExcludes)
 	case ast.KindEnumDeclaration:
 		b.bindEnumDeclaration(node)
@@ -692,7 +705,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		b.bindImportClause(node)
 	case ast.KindExportDeclaration:
 		b.bindExportDeclaration(node)
-	case ast.KindExportAssignment:
+	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		b.bindExportAssignment(node)
 	case ast.KindSourceFile:
 		b.updateStrictModeStatementList(node.AsSourceFile().Statements)
@@ -713,34 +726,46 @@ func (b *Binder) bind(node *ast.Node) bool {
 	// the current 'container' node when it changes. This helps us know which symbol table
 	// a local should go into for example. Since terminal nodes are known not to have
 	// children, as an optimization we don't process those.
+	thisNodeOrAnySubnodesHasError := node.Flags&ast.NodeFlagsThisNodeHasError != 0
 	if node.Kind > ast.KindLastToken {
 		saveParent := b.parent
+		saveSeenParseError := b.seenParseError
 		b.parent = node
+		b.seenParseError = false
 		containerFlags := GetContainerFlags(node)
 		if containerFlags == ContainerFlagsNone {
 			b.bindChildren(node)
 		} else {
 			b.bindContainer(node, containerFlags)
 		}
+		if b.seenParseError {
+			thisNodeOrAnySubnodesHasError = true
+		}
 		b.parent = saveParent
+		b.seenParseError = saveSeenParseError
 	} else {
 		saveParent := b.parent
 		if node.Kind == ast.KindEndOfFile {
 			b.parent = node
 		}
-		b.bindJSDoc(node)
+		b.setJSDocParents(node)
 		b.parent = saveParent
+	}
+	if thisNodeOrAnySubnodesHasError {
+		node.Flags |= ast.NodeFlagsThisNodeOrAnySubNodesHasError
+		b.seenParseError = true
 	}
 	b.inStrictMode = saveInStrictMode
 	return false
 }
 
-func (b *Binder) bindJSDoc(node *ast.Node) {
-	// !!! if isInJSFile(node) {
-	// !!! else {
+func (b *Binder) setJSDocParents(node *ast.Node) {
 	for _, jsdoc := range node.JSDoc(b.file) {
 		setParent(jsdoc, node)
-		ast.SetParentInChildren(jsdoc)
+		if jsdoc.Kind != ast.KindJSDocImportTag {
+			// JSDocImportTag children have parents set during parsing for module resolution purposes.
+			ast.SetParentInChildren(jsdoc)
+		}
 	}
 }
 
@@ -753,7 +778,7 @@ func (b *Binder) bindPropertyWorker(node *ast.Node) {
 
 func (b *Binder) bindSourceFileIfExternalModule() {
 	b.setExportContextFlag(b.file.AsNode())
-	if ast.IsExternalModule(b.file) {
+	if ast.IsExternalOrCommonJSModule(b.file) {
 		b.bindSourceFileAsExternalModule()
 	} else if ast.IsJsonSourceFile(b.file) {
 		b.bindSourceFileAsExternalModule()
@@ -777,17 +802,17 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 		if ast.IsModuleAugmentationExternal(node) {
 			b.declareModuleSymbol(node)
 		} else {
-			var pattern core.Pattern
 			name := node.AsModuleDeclaration().Name()
-			if ast.IsStringLiteral(name) {
-				pattern = core.TryParsePattern(name.AsStringLiteral().Text)
-				if !pattern.IsValid() {
-					b.errorOnFirstToken(name, diagnostics.Pattern_0_can_have_at_most_one_Asterisk_character, name.AsStringLiteral().Text)
-				}
-			}
 			symbol := b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsValueModule, ast.SymbolFlagsValueModuleExcludes)
-			if pattern.StarIndex >= 0 {
-				b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
+
+			if ast.IsStringLiteral(name) {
+				pattern := core.TryParsePattern(name.AsStringLiteral().Text)
+				if !pattern.IsValid() {
+					// An invalid pattern - must have multiple wildcards.
+					b.errorOnFirstToken(name, diagnostics.Pattern_0_can_have_at_most_one_Asterisk_character, name.AsStringLiteral().Text)
+				} else if pattern.StarIndex >= 0 {
+					b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, &ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
+				}
 			}
 		}
 	} else {
@@ -848,7 +873,11 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 }
 
 func (b *Binder) bindExportAssignment(node *ast.Node) {
-	if b.container.Symbol() == nil {
+	container := b.container
+	if ast.IsJSExportAssignment(node) {
+		container = b.file.AsNode()
+	}
+	if container.Symbol() == nil && ast.IsExportAssignment(node) {
 		// Incorrect export assignment in some sort of block construct
 		b.bindAnonymousDeclaration(node, ast.SymbolFlagsValue, b.getDeclarationName(node))
 	} else {
@@ -858,8 +887,8 @@ func (b *Binder) bindExportAssignment(node *ast.Node) {
 		}
 		// If there is an `export default x;` alias declaration, can't `export default` anything else.
 		// (In contrast, you can still have `export default function f() {}` and `export default interface I {}`.)
-		symbol := b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, flags, ast.SymbolFlagsAll)
-		if node.AsExportAssignment().IsExportEquals {
+		symbol := b.declareSymbol(ast.GetExports(container.Symbol()), container.Symbol(), node, flags, ast.SymbolFlagsAll)
+		if ast.IsJSExportAssignment(node) || node.AsExportAssignment().IsExportEquals {
 			// Will be an error later, since the module already has other exports. Just make sure this has a valueDeclaration set.
 			SetValueDeclaration(symbol, node)
 		}
@@ -896,7 +925,7 @@ func (b *Binder) hasExportDeclarations(node *ast.Node) bool {
 		}
 	}
 	return core.Some(statements, func(s *ast.Node) bool {
-		return ast.IsExportDeclaration(s) || ast.IsExportAssignment(s)
+		return ast.IsExportDeclaration(s) || ast.IsExportAssignment(s) || ast.IsJSExportAssignment(s)
 	})
 }
 
@@ -908,6 +937,19 @@ func (b *Binder) bindFunctionExpression(node *ast.Node) {
 		bindingName = node.AsFunctionExpression().Name().AsIdentifier().Text
 	}
 	b.bindAnonymousDeclaration(node, ast.SymbolFlagsFunction, bindingName)
+}
+
+func (b *Binder) bindCallExpression(node *ast.Node) {
+	// !!! for ModuleDetectionKind.Force, external module indicator is forced to `true` in Strada for source files, in which case
+	//  we should set the commonjs module indicator but not call b.bindSourceFileAsExternalModule
+	// !!! && file.externalModuleIndicator !== true (used for ModuleDetectionKind.Force)
+	if ast.IsInJSFile(node) &&
+		b.file.ExternalModuleIndicator == nil &&
+		b.file.CommonJSModuleIndicator == nil &&
+		ast.IsVariableDeclarationInitializedToRequire(node.Parent) {
+		b.file.CommonJSModuleIndicator = node
+		b.bindSourceFileAsExternalModule()
+	}
 }
 
 func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
@@ -1008,6 +1050,41 @@ func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
 	}
 }
 
+func (b *Binder) bindThisPropertyAssignment(node *ast.Node) {
+	if !ast.IsInJSFile(node) {
+		return
+	}
+	bin := node.AsBinaryExpression()
+	if ast.IsPropertyAccessExpression(bin.Left) && ast.IsPrivateIdentifier(bin.Left.AsPropertyAccessExpression().Name()) {
+		return
+	}
+	thisContainer := ast.GetThisContainer(node /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/, false)
+	switch thisContainer.Kind {
+	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
+		// !!! constructor functions
+	case ast.KindConstructor, ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindClassStaticBlockDeclaration:
+		// this.property assignment in class member -- bind to the containing class
+		containingClass := thisContainer.Parent
+		classSymbol := containingClass.Symbol()
+		var symbolTable ast.SymbolTable
+		if ast.IsStatic(thisContainer) {
+			symbolTable = ast.GetExports(containingClass.Symbol())
+		} else {
+			symbolTable = ast.GetMembers(containingClass.Symbol())
+		}
+		if ast.HasDynamicName(node) {
+			b.declareSymbolEx(symbolTable, containingClass.Symbol(), node, ast.SymbolFlagsProperty, ast.SymbolFlagsNone, true /*isReplaceableByMethod*/, true /*isComputedName*/)
+			addLateBoundAssignmentDeclarationToSymbol(node, classSymbol)
+		} else {
+			b.declareSymbolEx(symbolTable, containingClass.Symbol(), node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone, true /*isReplaceableByMethod*/, false /*isComputedName*/)
+		}
+	case ast.KindSourceFile, ast.KindModuleDeclaration:
+		// top-level this.property as assignment to globals is no longer supported
+	default:
+		panic("Unhandled case in bindThisPropertyAssignment: " + thisContainer.Kind.String())
+	}
+}
+
 func (b *Binder) bindEnumDeclaration(node *ast.Node) {
 	if ast.IsEnumConst(node) {
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsConstEnum, ast.SymbolFlagsConstEnumExcludes)
@@ -1022,6 +1099,8 @@ func (b *Binder) bindVariableDeclarationOrBindingElement(node *ast.Node) {
 	}
 	if name := node.Name(); name != nil && !ast.IsBindingPattern(name) {
 		switch {
+		case ast.IsVariableDeclarationInitializedToRequire(node):
+			b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 		case ast.IsBlockOrCatchScoped(node):
 			b.bindBlockScopedDeclaration(node, ast.SymbolFlagsBlockScopedVariable, ast.SymbolFlagsBlockScopedVariableExcludes)
 		case ast.IsPartOfParameterDeclaration(node):
@@ -1101,7 +1180,7 @@ func (b *Binder) bindBlockScopedDeclaration(node *ast.Node, symbolFlags ast.Symb
 	case ast.KindModuleDeclaration:
 		b.declareModuleMember(node, symbolFlags, symbolExcludes)
 	case ast.KindSourceFile:
-		if ast.IsExternalOrCommonJsModule(b.container.AsSourceFile()) {
+		if ast.IsExternalOrCommonJSModule(b.container.AsSourceFile()) {
 			b.declareModuleMember(node, symbolFlags, symbolExcludes)
 			break
 		}
@@ -1144,7 +1223,7 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 		}
 	}
 	if ast.IsSourceFile(container) {
-		local := container.AsSourceFile().JsGlobalAugmentations[name]
+		local := container.AsSourceFile().JSGlobalAugmentations[name]
 		if local != nil {
 			return local
 		}
@@ -1319,7 +1398,7 @@ func (b *Binder) checkStrictModeWithStatement(node *ast.Node) {
 
 func (b *Binder) checkStrictModeLabeledStatement(node *ast.Node) {
 	// Grammar checking for labeledStatement
-	if b.inStrictMode && b.options.Target >= core.ScriptTargetES2015 {
+	if b.inStrictMode && b.options.EmitScriptTarget >= core.ScriptTargetES2015 {
 		data := node.AsLabeledStatement()
 		if ast.IsDeclarationStatement(data.Statement) || ast.IsVariableStatement(data.Statement) {
 			b.errorOnFirstToken(data.Label, diagnostics.A_label_is_not_allowed_here)
@@ -1486,8 +1565,8 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	// and set it before we descend into nodes that could actually be part of an assignment pattern.
 	b.inAssignmentPattern = false
 	if b.checkUnreachable(node) {
+		b.setJSDocParents(node)
 		b.bindEachChild(node)
-		b.bindJSDoc(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
 		return
 	}
@@ -1498,6 +1577,7 @@ func (b *Binder) bindChildren(node *ast.Node) {
 			hasFlowNodeData.FlowNode = b.currentFlow
 		}
 	}
+	b.setJSDocParents(node)
 	switch node.Kind {
 	case ast.KindWhileStatement:
 		b.bindWhileStatement(node)
@@ -1572,10 +1652,11 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	case ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression, ast.KindPropertyAssignment, ast.KindSpreadElement:
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
+	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
+		return // Reparsed nodes do not double-bind children, which are not reparsed
 	default:
 		b.bindEachChild(node)
 	}
-	b.bindJSDoc(node)
 	b.inAssignmentPattern = saveInAssignmentPattern
 }
 
@@ -1653,7 +1734,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 
 func (b *Binder) shouldReportErrorOnModuleDeclaration(node *ast.Node) bool {
 	instanceState := ast.GetModuleInstanceState(node)
-	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums())
+	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums)
 }
 
 func (b *Binder) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
@@ -1691,7 +1772,7 @@ func (b *Binder) isExecutableStatement(s *ast.Node) bool {
 
 func (b *Binder) isPurelyTypeDeclaration(s *ast.Node) bool {
 	switch s.Kind {
-	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration:
+	case ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration:
 		return true
 	case ast.KindModuleDeclaration:
 		return ast.GetModuleInstanceState(s) != ast.ModuleInstanceStateInstantiated
@@ -1814,13 +1895,16 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	stmt := node.AsForStatement()
 	preLoopLabel := b.setContinueTarget(node, b.createLoopLabel())
 	preBodyLabel := b.createBranchLabel()
+	preIncrementorLabel := b.createBranchLabel()
 	postLoopLabel := b.createBranchLabel()
 	b.bind(stmt.Initializer)
 	topFlow := b.currentFlow
 	b.currentFlow = preLoopLabel
 	b.bindCondition(stmt.Condition, preBodyLabel, postLoopLabel)
 	b.currentFlow = b.finishFlowLabel(preBodyLabel)
-	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preLoopLabel)
+	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preIncrementorLabel)
+	b.addAntecedent(preIncrementorLabel, b.currentFlow)
+	b.currentFlow = b.finishFlowLabel(preIncrementorLabel)
 	b.bind(stmt.Incrementor)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.addAntecedent(preLoopLabel, topFlow)
@@ -2409,8 +2493,8 @@ func (b *Binder) bindInitializer(node *ast.Node) {
 	b.currentFlow = b.finishFlowLabel(exitFlow)
 }
 
-func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.CompilerOptions) bool {
-	return node.Kind == ast.KindEnumDeclaration && (!ast.IsEnumConst(node) || options.ShouldPreserveConstEnums())
+func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.SourceFileAffectingCompilerOptions) bool {
+	return node.Kind == ast.KindEnumDeclaration && (!ast.IsEnumConst(node) || options.ShouldPreserveConstEnums)
 }
 
 func setFlowNode(node *ast.Node, flowNode *ast.FlowNode) {
@@ -2488,7 +2572,7 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 		return ContainerFlagsIsContainer
 	case ast.KindInterfaceDeclaration:
 		return ContainerFlagsIsContainer | ContainerFlagsIsInterface
-	case ast.KindModuleDeclaration, ast.KindTypeAliasDeclaration, ast.KindMappedType, ast.KindIndexSignature:
+	case ast.KindModuleDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindMappedType, ast.KindIndexSignature:
 		return ContainerFlagsIsContainer | ContainerFlagsHasLocals
 	case ast.KindSourceFile:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals
@@ -2608,9 +2692,11 @@ func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindQuestionQuestionEqualsToken:
 		return containsNarrowableReference(expr.Left)
 	case ast.KindEqualsEqualsToken, ast.KindExclamationEqualsToken, ast.KindEqualsEqualsEqualsToken, ast.KindExclamationEqualsEqualsToken:
-		return isNarrowableOperand(expr.Left) || isNarrowableOperand(expr.Right) ||
-			isNarrowingTypeOfOperands(expr.Right, expr.Left) || isNarrowingTypeOfOperands(expr.Left, expr.Right) ||
-			(ast.IsBooleanLiteral(expr.Right) && isNarrowingExpression(expr.Left) || ast.IsBooleanLiteral(expr.Left) && isNarrowingExpression(expr.Right))
+		left := ast.SkipParentheses(expr.Left)
+		right := ast.SkipParentheses(expr.Right)
+		return isNarrowableOperand(left) || isNarrowableOperand(right) ||
+			isNarrowingTypeOfOperands(right, left) || isNarrowingTypeOfOperands(left, right) ||
+			(ast.IsBooleanLiteral(right) && isNarrowingExpression(left) || ast.IsBooleanLiteral(left) && isNarrowingExpression(right))
 	case ast.KindInstanceOfKeyword:
 		return isNarrowableOperand(expr.Left)
 	case ast.KindInKeyword:
@@ -2734,11 +2820,11 @@ func isFunctionSymbol(symbol *ast.Symbol) bool {
 	return false
 }
 
-func unreachableCodeIsError(options *core.CompilerOptions) bool {
+func unreachableCodeIsError(options *core.SourceFileAffectingCompilerOptions) bool {
 	return options.AllowUnreachableCode == core.TSFalse
 }
 
-func unusedLabelIsError(options *core.CompilerOptions) bool {
+func unusedLabelIsError(options *core.SourceFileAffectingCompilerOptions) bool {
 	return options.AllowUnusedLabels == core.TSFalse
 }
 
@@ -2774,7 +2860,7 @@ func isEffectiveModuleDeclaration(node *ast.Node) bool {
 }
 
 func getErrorRangeForArrowFunction(sourceFile *ast.SourceFile, node *ast.Node) core.TextRange {
-	pos := scanner.SkipTrivia(sourceFile.Text, node.Pos())
+	pos := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
 	body := node.AsArrowFunction().Body
 	if body != nil && body.Kind == ast.KindBlock {
 		startLine, _ := scanner.GetLineAndCharacterOfPosition(sourceFile, body.Pos())
@@ -2792,21 +2878,27 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 	errorNode := node
 	switch node.Kind {
 	case ast.KindSourceFile:
-		pos := scanner.SkipTrivia(sourceFile.Text, 0)
-		if pos == len(sourceFile.Text) {
+		pos := scanner.SkipTrivia(sourceFile.Text(), 0)
+		if pos == len(sourceFile.Text()) {
 			return core.NewTextRange(0, 0)
 		}
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	// This list is a work in progress. Add missing node kinds to improve their error spans
+	case ast.KindFunctionDeclaration, ast.KindMethodDeclaration:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
+		fallthrough
 	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration,
-		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionDeclaration, ast.KindFunctionExpression,
-		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindPropertyDeclaration,
+		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionExpression,
+		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
 		ast.KindPropertySignature, ast.KindNamespaceImport:
 		errorNode = ast.GetNameOfDeclaration(node)
 	case ast.KindArrowFunction:
 		return getErrorRangeForArrowFunction(sourceFile, node)
 	case ast.KindCaseClause, ast.KindDefaultClause:
-		start := scanner.SkipTrivia(sourceFile.Text, node.Pos())
+		start := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
 		end := node.End()
 		statements := node.AsCaseOrDefaultClause().Statements.Nodes
 		if len(statements) != 0 {
@@ -2814,12 +2906,16 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		}
 		return core.NewTextRange(start, end)
 	case ast.KindReturnStatement, ast.KindYieldExpression:
-		pos := scanner.SkipTrivia(sourceFile.Text, node.Pos())
+		pos := scanner.SkipTrivia(sourceFile.Text(), node.Pos())
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindSatisfiesExpression:
-		pos := scanner.SkipTrivia(sourceFile.Text, node.AsSatisfiesExpression().Expression.End())
+		pos := scanner.SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindConstructor:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
 		scanner := scanner.GetScannerForSourceFile(sourceFile, node.Pos())
 		start := scanner.TokenStart()
 		for scanner.Token() != ast.KindConstructorKeyword && scanner.Token() != ast.KindStringLiteral && scanner.Token() != ast.KindEndOfFile {
@@ -2828,7 +2924,7 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		return core.NewTextRange(start, scanner.TokenEnd())
 		// !!!
 		// case KindJSDocSatisfiesTag:
-		// 	pos := scanner.SkipTrivia(sourceFile.text, node.tagName.pos)
+		// 	pos := scanner.SkipTrivia(sourceFile.Text(), node.tagName.pos)
 		// 	return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	}
 	if errorNode == nil {
@@ -2837,8 +2933,8 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos())
 	}
 	pos := errorNode.Pos()
-	if !ast.NodeIsMissing(errorNode) {
-		pos = scanner.SkipTrivia(sourceFile.Text, pos)
+	if !ast.NodeIsMissing(errorNode) && !ast.IsJsxText(errorNode) {
+		pos = scanner.SkipTrivia(sourceFile.Text(), pos)
 	}
 	return core.NewTextRange(pos, errorNode.End())
 }

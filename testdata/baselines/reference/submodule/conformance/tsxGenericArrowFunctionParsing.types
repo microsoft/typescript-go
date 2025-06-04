@@ -13,14 +13,14 @@ var T: any, T1: any, T2: any;
 
 // This is an element
 var x1 = <T>() => {}</T>;
->x1 : any
-><T>() => {}</T> : any
+>x1 : JSX.Element
+><T>() => {}</T> : JSX.Element
 >T : any
 >T : any
 
 x1.isElement;
 >x1.isElement : any
->x1 : any
+>x1 : JSX.Element
 >isElement : any
 
 // This is a generic function
@@ -43,37 +43,37 @@ x3();
 
 // This is an element
 var x4 = <T extends={true}>() => {}</T>;
->x4 : any
-><T extends={true}>() => {}</T> : any
+>x4 : JSX.Element
+><T extends={true}>() => {}</T> : JSX.Element
 >T : any
->extends : any
+>extends : boolean
 >true : true
 >T : any
 
 x4.isElement;
 >x4.isElement : any
->x4 : any
+>x4 : JSX.Element
 >isElement : any
 
 // This is an element
 var x5 = <T extends>() => {}</T>;
->x5 : any
-><T extends>() => {}</T> : any
+>x5 : JSX.Element
+><T extends>() => {}</T> : JSX.Element
 >T : any
->extends : any
+>extends : true
 >T : any
 
 x5.isElement;
 >x5.isElement : any
->x5 : any
+>x5 : JSX.Element
 >isElement : any
 
 // This is a generic function
 var x6 = <T = string,>() => {};
->x6 : <T>() => void
-><T = string,>() => {} : <T>() => void
+>x6 : <T = string>() => void
+><T = string,>() => {} : <T = string>() => void
 
 x6();
 >x6() : void
->x6 : <T>() => void
+>x6 : <T = string>() => void
 

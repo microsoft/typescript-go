@@ -1019,17 +1019,18 @@ exports.a = a;`,
 			t.Parallel()
 
 			compilerOptions := rec.options
-			compilerOptions.ModuleKind = core.ModuleKindCommonJS
+			compilerOptions.Module = core.ModuleKindCommonJS
+			sourceFileAffecting := compilerOptions.SourceFileAffecting()
 
 			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
 			parsetestutil.CheckDiagnostics(t, file)
-			binder.BindSourceFile(file, &compilerOptions)
+			binder.BindSourceFile(file, sourceFileAffecting)
 
 			var other *ast.SourceFile
 			if len(rec.other) > 0 {
 				other = parsetestutil.ParseTypeScript(rec.other, rec.jsx)
 				parsetestutil.CheckDiagnostics(t, other)
-				binder.BindSourceFile(other, &compilerOptions)
+				binder.BindSourceFile(other, sourceFileAffecting)
 			}
 
 			emitContext := printer.NewEmitContext()

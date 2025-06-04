@@ -2,7 +2,7 @@
 +++ new.computedPropertyNamesSourceMap1_ES5.js
 @@= skipped -10, +10 lines =@@
  }
- 
+
  //// [computedPropertyNamesSourceMap1_ES5.js]
 -var C = /** @class */ (function () {
 -    function C() {
@@ -21,9 +21,9 @@
 -    });
 -    return C;
 -}());
--//# sourceMappingURL=computedPropertyNamesSourceMap1_ES5.js.map
 +    }
 +    get ["goodbye"]() {
 +        return 0;
 +    }
 +}
+ //# sourceMappingURL=computedPropertyNamesSourceMap1_ES5.js.map

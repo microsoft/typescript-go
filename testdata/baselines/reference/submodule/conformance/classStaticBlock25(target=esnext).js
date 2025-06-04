@@ -36,3 +36,11 @@ class C {
         b;
     }
 }
+//# sourceMappingURL=classStaticBlock25.js.map
+
+//// [classStaticBlock25.d.ts]
+declare const a = 1;
+declare const b = 2;
+declare class C {
+}
+//# sourceMappingURL=classStaticBlock25.d.ts.map

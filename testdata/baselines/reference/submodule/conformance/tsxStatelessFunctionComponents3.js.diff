@@ -2,7 +2,7 @@
 +++ new.tsxStatelessFunctionComponents3.js
 @@= skipped -19, +19 lines =@@
  );
- 
+
  //// [file.jsx]
 -define(["require", "exports", "react"], function (require, exports, React) {
 -    "use strict";
@@ -14,6 +14,7 @@
 -    var MainMenu = function (props) { return (<div>
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
++const React = require("react");
 +const Foo = (props) => <div />;
 +// Should be OK
 +const foo = <Foo />;

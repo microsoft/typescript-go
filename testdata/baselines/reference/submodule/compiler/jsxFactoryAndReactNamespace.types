@@ -35,7 +35,7 @@ export namespace Element {
 >Element : typeof Element
 
     export function isElement(el: any): el is JSX.Element {
->isElement : (el: any) => el is Element
+>isElement : (el: any) => el is JSX.Element
 >el : any
 >JSX : any
 
@@ -109,13 +109,13 @@ class A {
 			<meta content="helloworld"></meta>,
 ><meta content="helloworld"></meta> : any
 >meta : any
->content : any
+>content : string
 >meta : any
 
 			<meta content={c.a!.b}></meta>
 ><meta content={c.a!.b}></meta> : any
 >meta : any
->content : any
+>content : string
 >c.a!.b : string
 >c.a! : { b: string; }
 >c.a : { b: string; }

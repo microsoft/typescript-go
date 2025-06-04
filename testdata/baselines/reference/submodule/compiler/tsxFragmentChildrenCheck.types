@@ -5,21 +5,21 @@ declare var React: any;
 >React : any
 
 export function MyComponent(props: any) {
->MyComponent : (props: any) => any
+>MyComponent : (props: any) => JSX.Element
 >props : any
 
     return <span>my component</span>;
-><span>my component</span> : any
+><span>my component</span> : JSX.Element
 >span : any
 >span : any
 }
 
 === file1.tsx ===
 import * as React from 'react'
->React : any
+>React : typeof React
 
 import { MyComponent } from './my-component'
->MyComponent : (props: any) => any
+>MyComponent : (props: any) => JSX.Element
 
 const MY_STRING: string = 'Ceci n\'est pas une string.'
 >MY_STRING : string
@@ -31,33 +31,33 @@ const MY_CLASSNAME: string = 'jeclass'
 
 class RenderString extends React.PureComponent<any, any> {
 >RenderString : RenderString
->React.PureComponent : any
->React : any
->PureComponent : any
+>React.PureComponent : React.PureComponent<any, any>
+>React : typeof React
+>PureComponent : typeof React.PureComponent
 
   render() {
->render : () => any
+>render : () => JSX.Element
 
     return (
->(      <>        <MyComponent />        <span>{ MY_STRING }</span>        <span className={ MY_CLASSNAME } />      </>    ) : any
+>(      <>        <MyComponent />        <span>{ MY_STRING }</span>        <span className={ MY_CLASSNAME } />      </>    ) : JSX.Element
 
       <>
-><>        <MyComponent />        <span>{ MY_STRING }</span>        <span className={ MY_CLASSNAME } />      </> : any
+><>        <MyComponent />        <span>{ MY_STRING }</span>        <span className={ MY_CLASSNAME } />      </> : JSX.Element
 
         <MyComponent />
-><MyComponent /> : any
->MyComponent : (props: any) => any
+><MyComponent /> : JSX.Element
+>MyComponent : (props: any) => JSX.Element
 
         <span>{ MY_STRING }</span>
-><span>{ MY_STRING }</span> : any
+><span>{ MY_STRING }</span> : JSX.Element
 >span : any
 >MY_STRING : string
 >span : any
 
         <span className={ MY_CLASSNAME } />
-><span className={ MY_CLASSNAME } /> : any
+><span className={ MY_CLASSNAME } /> : JSX.Element
 >span : any
->className : any
+>className : string
 >MY_CLASSNAME : string
 
       </>

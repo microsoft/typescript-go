@@ -1,8 +1,7 @@
 --- old.declarationEmitVarInElidedBlock.js
 +++ new.declarationEmitVarInElidedBlock.js
-@@= skipped -0, +-1 lines =@@
+@@= skipped -0, +0 lines =@@
 -<no content>
-@@= skipped --1, +1 lines =@@
 +//// [tests/cases/compiler/declarationEmitVarInElidedBlock.ts] ////
 +
 +//// [declarationEmitVarInElidedBlock.ts]
@@ -11,10 +10,7 @@
 +}
 +export let b: typeof a;
 +
-+//// [declarationEmitVarInElidedBlock.js]
-+"use strict";
-+Object.defineProperty(exports, "__esModule", { value: true });
-+exports.b = void 0;
-+{
-+    var a = "";
-+}
++
++
++//// [declarationEmitVarInElidedBlock.d.ts]
++export declare let b: typeof a;

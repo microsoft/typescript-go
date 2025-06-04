@@ -1,7 +1,7 @@
 --- old.legacyNodeModulesExportsSpecifierGenerationConditions.js
 +++ new.legacyNodeModulesExportsSpecifierGenerationConditions.js
 @@= skipped -32, +32 lines =@@
- 
+
  //// [index.js]
  "use strict";
 -var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
@@ -50,7 +50,8 @@
 -}); }); };
 +const a = async () => (await Promise.resolve().then(() => require("inner"))).x();
  exports.a = a;
--
--
--//// [index.d.ts]
+
+
+ //// [index.d.ts]
 -export declare const a: () => Promise<import("inner/private").Thing>;
++export declare const a: any;

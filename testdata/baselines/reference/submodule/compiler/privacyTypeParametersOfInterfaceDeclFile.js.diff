@@ -14,7 +14,11 @@
 -    }
 -    return publicClass;
 -}());
--exports.publicClass = publicClass;
++class privateClass {
++}
++class publicClass {
++}
+ exports.publicClass = publicClass;
 -var privateClassT = /** @class */ (function () {
 -    function privateClassT() {
 -    }
@@ -25,9 +29,13 @@
 -    }
 -    return publicClassT;
 -}());
--exports.publicClassT = publicClassT;
--var publicModule;
--(function (publicModule) {
++class privateClassT {
++}
++class publicClassT {
++}
+ exports.publicClassT = publicClassT;
+ var publicModule;
+ (function (publicModule) {
 -    var privateClassInPublicModule = /** @class */ (function () {
 -        function privateClassInPublicModule() {
 -        }
@@ -38,7 +46,11 @@
 -        }
 -        return publicClassInPublicModule;
 -    }());
--    publicModule.publicClassInPublicModule = publicClassInPublicModule;
++    class privateClassInPublicModule {
++    }
++    class publicClassInPublicModule {
++    }
+     publicModule.publicClassInPublicModule = publicClassInPublicModule;
 -    var privateClassInPublicModuleT = /** @class */ (function () {
 -        function privateClassInPublicModuleT() {
 -        }
@@ -49,10 +61,14 @@
 -        }
 -        return publicClassInPublicModuleT;
 -    }());
--    publicModule.publicClassInPublicModuleT = publicClassInPublicModuleT;
--})(publicModule || (exports.publicModule = publicModule = {}));
--var privateModule;
--(function (privateModule) {
++    class privateClassInPublicModuleT {
++    }
++    class publicClassInPublicModuleT {
++    }
+     publicModule.publicClassInPublicModuleT = publicClassInPublicModuleT;
+ })(publicModule || (exports.publicModule = publicModule = {}));
+ var privateModule;
+ (function (privateModule) {
 -    var privateClassInPrivateModule = /** @class */ (function () {
 -        function privateClassInPrivateModule() {
 -        }
@@ -63,7 +79,11 @@
 -        }
 -        return publicClassInPrivateModule;
 -    }());
--    privateModule.publicClassInPrivateModule = publicClassInPrivateModule;
++    class privateClassInPrivateModule {
++    }
++    class publicClassInPrivateModule {
++    }
+     privateModule.publicClassInPrivateModule = publicClassInPrivateModule;
 -    var privateClassInPrivateModuleT = /** @class */ (function () {
 -        function privateClassInPrivateModuleT() {
 -        }
@@ -74,125 +94,9 @@
 -        }
 -        return publicClassInPrivateModuleT;
 -    }());
--    privateModule.publicClassInPrivateModuleT = publicClassInPrivateModuleT;
--})(privateModule || (privateModule = {}));
--
--
--//// [privacyTypeParametersOfInterfaceDeclFile.d.ts]
--declare class privateClass {
-+class privateClass {
- }
--export declare class publicClass {
-+class publicClass {
- }
--declare class privateClassT<T> {
-+exports.publicClass = publicClass;
-+class privateClassT {
- }
--export declare class publicClassT<T> {
-+class publicClassT {
- }
--export interface publicInterfaceWithPrivateTypeParameters<T extends privateClass> {
--    myMethod(val: T): T;
--    myMethod0(): publicClassT<T>;
--    myMethod1(): privateClassT<privateClass>;
--    myMethod2(): privateClassT<publicClass>;
--    myMethod3(): publicClassT<privateClass>;
--    myMethod4(): publicClassT<publicClass>;
--}
--export interface publicInterfaceWithPublicTypeParameters<T extends publicClass> {
--    myMethod(val: T): T;
--    myMethod0(): publicClassT<T>;
--    myMethod1(): privateClassT<privateClass>;
--    myMethod2(): privateClassT<publicClass>;
--    myMethod3(): publicClassT<privateClass>;
--    myMethod4(): publicClassT<publicClass>;
--}
--export interface publicInterfaceWithPublicTypeParametersWithoutExtends<T> {
--    myMethod(val: T): T;
--    myMethod0(): publicClassT<T>;
--}
--export interface publicInterfaceWithPrivateModuleTypeParameterConstraints<T extends privateModule.publicClassInPrivateModule> {
--}
--export declare namespace publicModule {
-+exports.publicClassT = publicClassT;
-+var publicModule;
-+(function (publicModule) {
-     class privateClassInPublicModule {
-     }
--    export class publicClassInPublicModule {
-+    class publicClassInPublicModule {
-     }
--    class privateClassInPublicModuleT<T> {
-+    publicModule.publicClassInPublicModule = publicClassInPublicModule;
-+    class privateClassInPublicModuleT {
-     }
--    export class publicClassInPublicModuleT<T> {
-+    class publicClassInPublicModuleT {
-     }
--    export interface publicInterfaceWithPrivateTypeParameters<T extends privateClassInPublicModule> {
--        myMethod(val: T): T;
--        myMethod0(): publicClassInPublicModuleT<T>;
--        myMethod1(): privateClassInPublicModuleT<privateClassInPublicModule>;
--        myMethod2(): privateClassInPublicModuleT<publicClassInPublicModule>;
--        myMethod3(): publicClassInPublicModuleT<privateClassInPublicModule>;
--        myMethod4(): publicClassInPublicModuleT<publicClassInPublicModule>;
--    }
--    export interface publicInterfaceWithPublicTypeParameters<T extends publicClassInPublicModule> {
--        myMethod(val: T): T;
--        myMethod0(): publicClassInPublicModuleT<T>;
--        myMethod1(): privateClassInPublicModuleT<privateClassInPublicModule>;
--        myMethod2(): privateClassInPublicModuleT<publicClassInPublicModule>;
--        myMethod3(): publicClassInPublicModuleT<privateClassInPublicModule>;
--        myMethod4(): publicClassInPublicModuleT<publicClassInPublicModule>;
--    }
--    export interface publicInterfaceWithPublicTypeParametersWithoutExtends<T> {
--        myMethod(val: T): T;
--        myMethod0(): publicClassInPublicModuleT<T>;
--    }
--    export interface publicInterfaceWithPrivateModuleTypeParameterConstraints<T extends privateModule.publicClassInPrivateModule> {
--    }
--    export {};
--}
--declare namespace privateModule {
-+    publicModule.publicClassInPublicModuleT = publicClassInPublicModuleT;
-+})(publicModule || (exports.publicModule = publicModule = {}));
-+var privateModule;
-+(function (privateModule) {
-     class privateClassInPrivateModule {
-     }
--    export class publicClassInPrivateModule {
-+    class publicClassInPrivateModule {
-     }
--    class privateClassInPrivateModuleT<T> {
-+    privateModule.publicClassInPrivateModule = publicClassInPrivateModule;
 +    class privateClassInPrivateModuleT {
-     }
--    export class publicClassInPrivateModuleT<T> {
++    }
 +    class publicClassInPrivateModuleT {
-     }
--    export interface publicInterfaceWithPrivateTypeParameters<T extends privateClassInPrivateModule> {
--        myMethod(val: T): T;
--        myMethod0(): publicClassInPrivateModuleT<T>;
--        myMethod1(): privateClassInPrivateModuleT<privateClassInPrivateModule>;
--        myMethod2(): privateClassInPrivateModuleT<publicClassInPrivateModule>;
--        myMethod3(): publicClassInPrivateModuleT<privateClassInPrivateModule>;
--        myMethod4(): publicClassInPrivateModuleT<publicClassInPrivateModule>;
--    }
--    export interface publicInterfaceWithPublicTypeParameters<T extends publicClassInPrivateModule> {
--        myMethod(val: T): T;
--        myMethod0(): publicClassInPrivateModuleT<T>;
--        myMethod1(): privateClassInPrivateModuleT<privateClassInPrivateModule>;
--        myMethod2(): privateClassInPrivateModuleT<publicClassInPrivateModule>;
--        myMethod3(): publicClassInPrivateModuleT<privateClassInPrivateModule>;
--        myMethod4(): publicClassInPrivateModuleT<publicClassInPrivateModule>;
--    }
--    export interface publicInterfaceWithPublicTypeParametersWithoutExtends<T> {
--        myMethod(val: T): T;
--        myMethod0(): publicClassInPrivateModuleT<T>;
--    }
--    export {};
--}
--export {};
-+    privateModule.publicClassInPrivateModuleT = publicClassInPrivateModuleT;
-+})(privateModule || (privateModule = {}));
++    }
+     privateModule.publicClassInPrivateModuleT = publicClassInPrivateModuleT;
+ })(privateModule || (privateModule = {}));

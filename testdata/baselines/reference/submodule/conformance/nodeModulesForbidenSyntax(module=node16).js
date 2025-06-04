@@ -85,9 +85,12 @@ exports.x = x;
 const x = () => (void 0);
 export { x };
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
 // cjs format file
 const x = () => (void 0);
-export { x };
+exports.x = x;
 //// [index.cjs]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -128,4 +131,54 @@ exports.x = x;
 //// [index.js]
 // esm format file
 const x = () => (void 0);
+export { x };
+
+
+//// [index.d.ts]
+// cjs format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.cts]
+// cjs format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.mts]
+// esm format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.ts]
+// cjs format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.cts]
+// cjs format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.mts]
+// esm format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.ts]
+// esm format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.mts]
+// esm format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.cts]
+// cjs format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.mts]
+// esm format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.cts]
+// cjs format file
+declare const x: <T>() => T;
+export { x };
+//// [index.d.ts]
+// esm format file
+declare const x: <T>() => T;
 export { x };

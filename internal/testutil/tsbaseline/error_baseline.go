@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -151,8 +152,7 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, inpu
 
 	// 'merge' the lines of each input file with any errors associated with it
 	dupeCase := map[string]int{}
-	nonEmptyFiles := core.Filter(inputFiles, func(f *harnessutil.TestFile) bool { return len(f.Content) > 0 })
-	for _, inputFile := range nonEmptyFiles {
+	for _, inputFile := range inputFiles {
 		// Filter down to the errors in the file
 		fileErrors := core.Filter(diagnostics, func(e *ast.Diagnostic) bool {
 			return e.File() != nil &&
@@ -207,8 +207,8 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, inpu
 					outputLines.WriteString("    ")
 					outputLines.WriteString(nonWhitespace.ReplaceAllString(line[:squiggleStart], " "))
 					// This was `new Array(count).join("~")`; which maps 0 to "", 1 to "", 2 to "~", 3 to "~~", etc.
-					outputLines.WriteString(strings.Repeat("~", max(0, min(length, len(line)-squiggleStart))))
-
+					squiggleEnd := max(squiggleStart, min(squiggleStart+length, len(line)))
+					outputLines.WriteString(strings.Repeat("~", utf8.RuneCountInString(line[squiggleStart:squiggleEnd])))
 					// If the error ended here, or we're at the end of the file, emit its message
 					if lineIndex == len(lines)-1 || nextLineStart > end {
 						outputErrorText(errDiagnostic)
@@ -242,9 +242,9 @@ func iterateErrorBaseline(t *testing.T, inputFiles []*harnessutil.TestFile, inpu
 		func(d *ast.Diagnostic) bool {
 			return d.File() != nil && isTsConfigFile(d.File().FileName())
 		})
-
 	// Verify we didn't miss any errors in total
 	assert.Check(t, cmp.Equal(totalErrorsReportedInNonLibraryNonTsconfigFiles+numLibraryDiagnostics+numTsconfigDiagnostics, len(diagnostics)), "total number of errors")
+
 	return result
 }
 

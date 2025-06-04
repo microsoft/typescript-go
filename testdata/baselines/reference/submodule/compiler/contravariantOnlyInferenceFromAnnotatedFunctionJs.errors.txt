@@ -1,10 +1,20 @@
-index.js(13,14): error TS7006: Parameter 'fns' implicitly has an 'any' type.
-index.js(21,8): error TS7006: Parameter 'a' implicitly has an 'any' type.
+index.js(2,28): error TS2304: Cannot find name 'B'.
+index.js(2,42): error TS2304: Cannot find name 'A'.
+index.js(2,48): error TS2304: Cannot find name 'B'.
+index.js(2,67): error TS2304: Cannot find name 'B'.
 
 
-==== index.js (2 errors) ====
+==== index.js (4 errors) ====
     /**
      * @typedef {{ [K in keyof B]: { fn: (a: A, b: B) => void; thing: B[K]; } }} Funcs
+                               ~
+!!! error TS2304: Cannot find name 'B'.
+                                             ~
+!!! error TS2304: Cannot find name 'A'.
+                                                   ~
+!!! error TS2304: Cannot find name 'B'.
+                                                                      ~
+!!! error TS2304: Cannot find name 'B'.
      * @template A
      * @template {Record<string, unknown>} B
      */
@@ -16,8 +26,6 @@ index.js(21,8): error TS7006: Parameter 'a' implicitly has an 'any' type.
      * @returns {[A, B]}
      */
     function foo(fns) {
-                 ~~~
-!!! error TS7006: Parameter 'fns' implicitly has an 'any' type.
       return /** @type {any} */ (null);
     }
     
@@ -26,8 +34,6 @@ index.js(21,8): error TS7006: Parameter 'a' implicitly has an 'any' type.
         fn:
           /** @param {string} a */
           (a) => {},
-           ~
-!!! error TS7006: Parameter 'a' implicitly has an 'any' type.
         thing: "asd",
       },
     });

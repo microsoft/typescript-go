@@ -1,15 +1,14 @@
 --- old.moduleExportDuplicateAlias3.errors.txt
 +++ new.moduleExportDuplicateAlias3.errors.txt
-@@= skipped -0, +-1 lines =@@
+@@= skipped -0, +0 lines =@@
 -<no content>
-@@= skipped --1, +1 lines =@@
-+test.js(1,19): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++test.js(1,27): error TS7016: Could not find a declaration file for module './moduleExportAliasDuplicateAlias'. 'moduleExportAliasDuplicateAlias.js' implicitly has an 'any' type.
 +
 +
 +==== test.js (1 errors) ====
 +    const { apply } = require('./moduleExportAliasDuplicateAlias')
-+                      ~~~~~~~
-+!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS7016: Could not find a declaration file for module './moduleExportAliasDuplicateAlias'. 'moduleExportAliasDuplicateAlias.js' implicitly has an 'any' type.
 +    const result = apply.toFixed()
 +    
 +==== moduleExportAliasDuplicateAlias.js (0 errors) ====

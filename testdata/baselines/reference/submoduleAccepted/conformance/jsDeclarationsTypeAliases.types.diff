@@ -5,20 +5,10 @@
   */
  function doTheThing(x) {
 ->doTheThing : (x: number) => SomeType
-->x : number
-+>doTheThing : (x: any) => { x: string; }
-+>x : any
- 
++>doTheThing : (x: number) => number | ExportedThing | LocalThing | { x: string; }
+ >x : number
+
      return {x: ""+x};
- >{x: ""+x} : { x: string; }
- >x : string
- >""+x : string
- >"" : ""
-->x : number
-+>x : any
- }
- class ExportedThing {
- >ExportedThing : ExportedThing
 @@= skipped -18, +18 lines =@@
  >"ok" : "ok"
  }
@@ -28,15 +18,15 @@
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
 ->{    doTheThing,    ExportedThing,} : { doTheThing: (x: number) => SomeType; ExportedThing: typeof ExportedThing; }
-+>module.exports = {    doTheThing,    ExportedThing,} : { doTheThing: (x: any) => { x: string; }; ExportedThing: typeof ExportedThing; }
-+>module.exports : any
-+>module : any
-+>exports : any
-+>{    doTheThing,    ExportedThing,} : { doTheThing: (x: any) => { x: string; }; ExportedThing: typeof ExportedThing; }
- 
++>module.exports = {    doTheThing,    ExportedThing,} : { doTheThing: (x: number) => number | ExportedThing | LocalThing | { x: string; }; ExportedThing: typeof ExportedThing; }
++>module.exports : { doTheThing: (x: number) => number | ExportedThing | LocalThing | { x: string; }; ExportedThing: typeof ExportedThing; }
++>module : { "export=": { doTheThing: (x: number) => number | ExportedThing | LocalThing | { x: string; }; ExportedThing: typeof ExportedThing; }; }
++>exports : { doTheThing: (x: number) => number | ExportedThing | LocalThing | { x: string; }; ExportedThing: typeof ExportedThing; }
++>{    doTheThing,    ExportedThing,} : { doTheThing: (x: number) => number | ExportedThing | LocalThing | { x: string; }; ExportedThing: typeof ExportedThing; }
+
      doTheThing,
 ->doTheThing : (x: number) => SomeType
-+>doTheThing : (x: any) => { x: string; }
- 
++>doTheThing : (x: number) => number | ExportedThing | LocalThing | { x: string; }
+
      ExportedThing,
  >ExportedThing : typeof ExportedThing

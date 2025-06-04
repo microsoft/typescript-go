@@ -1,8 +1,8 @@
 --- old.tsxStatelessFunctionComponentsWithTypeArguments5.js
 +++ new.tsxStatelessFunctionComponentsWithTypeArguments5.js
 @@= skipped -20, +20 lines =@@
- 
- 
+
+
  //// [file.jsx]
 -define(["require", "exports", "react"], function (require, exports, React) {
 -    "use strict";
@@ -20,6 +20,7 @@
 -});
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
++const React = require("react");
 +function createComponent(arg) {
 +    let a1 = <Component {...arg}/>;
 +    let a2 = <Component {...arg} prop1/>;

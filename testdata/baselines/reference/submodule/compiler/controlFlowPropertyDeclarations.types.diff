@@ -11,14 +11,3 @@
 +>stringify : { (value: any, replacer?: (this: any, key: string, value: any) => any, space?: string | number): string; (value: any, replacer?: (string | number)[], space?: string | number): string; }
  >whitespace : string
  >'}' : "}"
- 
-@@= skipped -15, +15 lines =@@
- >text.indexOf : (searchString: string, position?: number) => number
- >text : string
- >indexOf : (searchString: string, position?: number) => number
-->'\n' : "\n"
-+>'\n' : "
-+"
- >-1 : -1
- >1 : 1
-       }

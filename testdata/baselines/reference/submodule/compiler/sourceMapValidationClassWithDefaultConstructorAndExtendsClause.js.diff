@@ -2,7 +2,7 @@
 +++ new.sourceMapValidationClassWithDefaultConstructorAndExtendsClause.js
 @@= skipped -9, +9 lines =@@
  }
- 
+
  //// [sourceMapValidationClassWithDefaultConstructorAndExtendsClause.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -34,10 +34,10 @@
 -    }
 -    return Greeter;
 -}(AbstractGreeter));
--//# sourceMappingURL=sourceMapValidationClassWithDefaultConstructorAndExtendsClause.js.map
 +class AbstractGreeter {
 +}
 +class Greeter extends AbstractGreeter {
 +    a = 10;
 +    nameA = "Ten";
 +}
+ //# sourceMappingURL=sourceMapValidationClassWithDefaultConstructorAndExtendsClause.js.map

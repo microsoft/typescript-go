@@ -1,6 +1,7 @@
 package execute
 
 import (
+	"reflect"
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -22,19 +23,22 @@ type watcher struct {
 }
 
 func createWatcher(sys System, configParseResult *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) *watcher {
-	return &watcher{
+	w := &watcher{
 		sys:              sys,
-		configFileName:   configParseResult.ConfigFile.SourceFile.FileName(),
 		options:          configParseResult,
 		reportDiagnostic: reportDiagnostic,
 		// reportWatchStatus: createWatchStatusReporter(sys, configParseResult.CompilerOptions().Pretty),
 	}
+	if configParseResult.ConfigFile != nil {
+		w.configFileName = configParseResult.ConfigFile.SourceFile.FileName()
+	}
+	return w
 }
 
 func (w *watcher) compileAndEmit() {
 	// !!! output/error reporting is currently the same as non-watch mode
 	// diagnostics, emitResult, exitStatus :=
-	compileAndEmit(w.sys, w.program, w.reportDiagnostic)
+	emitFilesAndReportErrors(w.sys, w.program, w.reportDiagnostic)
 }
 
 func (w *watcher) hasErrorsInTsConfig() bool {
@@ -42,14 +46,15 @@ func (w *watcher) hasErrorsInTsConfig() bool {
 	if w.configFileName != "" {
 		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
 		// !!! need to check that this merges compileroptions correctly. This differs from non-watch, since we allow overriding of previous options
-		configParseResult, errors := getParsedCommandLineOfConfigFile(w.configFileName, &core.CompilerOptions{}, w.sys, extendedConfigCache)
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(w.configFileName, &core.CompilerOptions{}, w.sys, extendedConfigCache)
 		if len(errors) > 0 {
 			for _, e := range errors {
 				w.reportDiagnostic(e)
 			}
 			return true
 		}
-		if w.options.CompilerOptions() != configParseResult.CompilerOptions() {
+		if !reflect.DeepEqual(w.options.CompilerOptions(), configParseResult.CompilerOptions()) {
+			// fmt.Fprint(w.sys.Writer(), "build triggered due to config change", w.sys.NewLine())
 			w.configModified = true
 		}
 		w.options = configParseResult
@@ -73,12 +78,15 @@ func (w *watcher) hasBeenModified(program *compiler.Program) bool {
 		currState[fileName] = s.ModTime()
 		if !filesModified {
 			if currState[fileName] != w.prevModified[fileName] {
+				// fmt.Fprint(w.sys.Writer(), "build triggered from ", fileName, ": ", w.prevModified[fileName], " -> ", currState[fileName], w.sys.NewLine())
 				filesModified = true
 			}
+			// catch cases where no files are modified, but some were deleted
 			delete(w.prevModified, fileName)
 		}
 	}
-	if len(w.prevModified) > 0 {
+	if !filesModified && len(w.prevModified) > 0 {
+		// fmt.Fprint(w.sys.Writer(), "build triggered due to deleted file", w.sys.NewLine())
 		filesModified = true
 	}
 	w.prevModified = currState

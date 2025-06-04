@@ -9,15 +9,15 @@
 +>readonlyStaticCall : symbol
 +>Symbol() : symbol
  >Symbol : SymbolConstructor
- 
+
      /**
 @@= skipped -9, +9 lines =@@
       * @readonly
       */
      static readonlyStaticType;
 ->readonlyStaticType : unique symbol
-+>readonlyStaticType : any
- 
++>readonlyStaticType : symbol
+
      /**
       * @type {unique symbol}
       * @readonly
@@ -28,5 +28,5 @@
 +>readonlyStaticTypeAndCall : symbol
 +>Symbol() : symbol
  >Symbol : SymbolConstructor
- 
+
      static readwriteStaticCall = Symbol();

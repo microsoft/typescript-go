@@ -5,8 +5,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
 // Diagnostic
@@ -19,6 +19,8 @@ type Diagnostic struct {
 	message            string
 	messageChain       []*Diagnostic
 	relatedInformation []*Diagnostic
+	reportsUnnecessary bool
+	reportsDeprecated  bool
 }
 
 func (d *Diagnostic) File() *SourceFile                 { return d.file }
@@ -31,6 +33,8 @@ func (d *Diagnostic) Category() diagnostics.Category    { return d.category }
 func (d *Diagnostic) Message() string                   { return d.message }
 func (d *Diagnostic) MessageChain() []*Diagnostic       { return d.messageChain }
 func (d *Diagnostic) RelatedInformation() []*Diagnostic { return d.relatedInformation }
+func (d *Diagnostic) ReportsUnnecessary() bool          { return d.reportsUnnecessary }
+func (d *Diagnostic) ReportsDeprecated() bool           { return d.reportsDeprecated }
 
 func (d *Diagnostic) SetFile(file *SourceFile)                  { d.file = file }
 func (d *Diagnostic) SetLocation(loc core.TextRange)            { d.loc = loc }
@@ -60,13 +64,20 @@ func (d *Diagnostic) AddRelatedInfo(relatedInformation *Diagnostic) *Diagnostic 
 	return d
 }
 
+func (d *Diagnostic) Clone() *Diagnostic {
+	result := *d
+	return &result
+}
+
 func NewDiagnostic(file *SourceFile, loc core.TextRange, message *diagnostics.Message, args ...any) *Diagnostic {
 	return &Diagnostic{
-		file:     file,
-		loc:      loc,
-		code:     message.Code(),
-		category: message.Category(),
-		message:  message.Format(args...),
+		file:               file,
+		loc:                loc,
+		code:               message.Code(),
+		category:           message.Category(),
+		message:            message.Format(args...),
+		reportsUnnecessary: message.ReportsUnnecessary(),
+		reportsDeprecated:  message.ReportsDeprecated(),
 	}
 }
 
@@ -137,12 +148,16 @@ func getDiagnosticPath(d *Diagnostic) string {
 }
 
 func EqualDiagnostics(d1, d2 *Diagnostic) bool {
+	return EqualDiagnosticsNoRelatedInfo(d1, d2) &&
+		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), EqualDiagnostics)
+}
+
+func EqualDiagnosticsNoRelatedInfo(d1, d2 *Diagnostic) bool {
 	return getDiagnosticPath(d1) == getDiagnosticPath(d2) &&
 		d1.Loc() == d2.Loc() &&
 		d1.Code() == d2.Code() &&
 		d1.Message() == d2.Message() &&
-		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain) &&
-		slices.EqualFunc(d1.RelatedInformation(), d2.RelatedInformation(), EqualDiagnostics)
+		slices.EqualFunc(d1.MessageChain(), d2.MessageChain(), equalMessageChain)
 }
 
 func equalMessageChain(c1, c2 *Diagnostic) bool {

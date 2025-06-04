@@ -4,7 +4,7 @@
 /// <reference path="react16.d.ts" />
 
 import React = require('react');
->React : any
+>React : typeof React
 
 type TranslationEntry = {
 >TranslationEntry : TranslationEntry
@@ -37,7 +37,7 @@ type TProps<Entry extends TranslationEntry> = {
 } : {});
 
 declare function T<Entry extends TranslationEntry>(
->T : <Entry extends TranslationEntry>(props: TProps<Entry>) => Element
+>T : <Entry extends TranslationEntry>(props: TProps<Entry>) => JSX.Element
 
     props: TProps<Entry>
 >props : TProps<Entry>
@@ -46,13 +46,13 @@ declare function T<Entry extends TranslationEntry>(
 >JSX : any
 
 <T getTranslationEntry={(allTranslations) => allTranslations.a} args="a" />
-><T getTranslationEntry={(allTranslations) => allTranslations.a} args="a" /> : any
->T : <Entry extends TranslationEntry>(props: TProps<Entry>) => Element
->getTranslationEntry : any
->(allTranslations) => allTranslations.a : (allTranslations: any) => any
->allTranslations : any
->allTranslations.a : any
->allTranslations : any
->a : any
->args : any
+><T getTranslationEntry={(allTranslations) => allTranslations.a} args="a" /> : JSX.Element
+>T : <Entry extends TranslationEntry>(props: TProps<Entry>) => JSX.Element
+>getTranslationEntry : (allTranslations: Translations) => { args: [string]; }
+>(allTranslations) => allTranslations.a : (allTranslations: Translations) => { args: [string]; }
+>allTranslations : Translations
+>allTranslations.a : { args: [string]; }
+>allTranslations : Translations
+>a : { args: [string]; }
+>args : string
 

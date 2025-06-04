@@ -2,7 +2,7 @@
 +++ new.declFileWithExtendsClauseThatHasItsContainerNameConflict.js
 @@= skipped -19, +19 lines =@@
  }
- 
+
  //// [declFileWithExtendsClauseThatHasItsContainerNameConflict.js]
 -var __extends = (this && this.__extends) || (function () {
 -    var extendStatics = function (d, b) {
@@ -55,21 +55,3 @@
              C.ContextMenu = ContextMenu;
          })(C = B.C || (B.C = {}));
      })(B = A.B || (A.B = {}));
- })(A || (A = {}));
--
--
--//// [declFileWithExtendsClauseThatHasItsContainerNameConflict.d.ts]
--declare namespace A.B.C {
--    class B {
--    }
--}
--declare namespace A.B {
--    class EventManager {
--        id: number;
--    }
--}
--declare namespace A.B.C {
--    class ContextMenu extends EventManager {
--        name: string;
--    }
--}

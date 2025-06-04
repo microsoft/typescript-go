@@ -2,8 +2,8 @@ package binder
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
 type NameResolver struct {
@@ -12,6 +12,8 @@ type NameResolver struct {
 	Error                            func(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic
 	Globals                          ast.SymbolTable
 	ArgumentsSymbol                  *ast.Symbol
+	RequireSymbol                    *ast.Symbol
+	GetModuleSymbol                  func(sourceFile *ast.Node) *ast.Symbol
 	Lookup                           func(symbols ast.SymbolTable, name string, meaning ast.SymbolFlags) *ast.Symbol
 	SymbolReferenced                 func(symbol *ast.Symbol, meaning ast.SymbolFlags)
 	SetRequiresScopeChangeCache      func(node *ast.Node, value core.Tristate)
@@ -55,12 +57,8 @@ loop:
 					// - Type parameters of a function are in scope in the entire function declaration, including the parameter
 					//   list and return type. However, local types are only in scope in the function body.
 					// - parameters are only in the scope of function body
-					// This restriction does not apply to JSDoc comment types because they are parented
-					// at a higher level than type parameters would normally be
-					if meaning&result.Flags&ast.SymbolFlagsType != 0 && lastLocation.Kind != ast.KindJSDoc {
-						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation.Flags&ast.NodeFlagsSynthesized != 0 ||
-							lastLocation == location.Type() ||
-							ast.IsParameterLikeOrReturnTag(lastLocation))
+					if meaning&result.Flags&ast.SymbolFlagsType != 0 {
+						useResult = result.Flags&ast.SymbolFlagsTypeParameter != 0 && (lastLocation == location.Type() || ast.IsParameterLike(lastLocation))
 					}
 					if meaning&result.Flags&ast.SymbolFlagsVariable != 0 {
 						// expression inside parameter will lookup as normal variable scope when targeting es2015+
@@ -90,7 +88,7 @@ loop:
 		withinDeferredContext = withinDeferredContext || getIsDeferredContext(location, lastLocation)
 		switch location.Kind {
 		case ast.KindSourceFile:
-			if !ast.IsExternalOrCommonJsModule(location.AsSourceFile()) {
+			if !ast.IsExternalOrCommonJSModule(location.AsSourceFile()) {
 				break
 			}
 			fallthrough
@@ -290,19 +288,11 @@ loop:
 		if isSelfReferenceLocation(location, lastLocation) {
 			lastSelfReferenceLocation = location
 		}
-		lastLocation = location
-		switch {
-		// case isJSDocTemplateTag(location):
-		// 	location = getEffectiveContainerForJSDocTemplateTag(location.(*JSDocTemplateTag))
-		// 	if location == nil {
-		// 		location = location.parent
-		// 	}
-		// case isJSDocParameterTag(location) || isJSDocReturnTag(location):
-		// 	location = getHostSignatureFromJSDoc(location)
-		// 	if location == nil {
-		// 		location = location.parent
-		// 	}
-		default:
+		if location.Kind == ast.KindJSDocTypeExpression && location.AsJSDocTypeExpression().Host != nil {
+			lastLocation = location.AsJSDocTypeExpression().Host.Type()
+			location = location.AsJSDocTypeExpression().Host
+		} else {
+			lastLocation = location
 			location = location.Parent
 		}
 	}
@@ -315,8 +305,31 @@ loop:
 		}
 	}
 	if result == nil {
+		if lastLocation != nil &&
+			lastLocation.Kind == ast.KindSourceFile &&
+			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
+			name == "exports" &&
+			meaning&lastLocation.Symbol().Flags != 0 {
+			return lastLocation.Symbol()
+		}
+		if lastLocation != nil &&
+			r.GetModuleSymbol != nil &&
+			lastLocation.Kind == ast.KindSourceFile &&
+			lastLocation.AsSourceFile().CommonJSModuleIndicator != nil &&
+			name == "module" &&
+			originalLocation.Parent != nil &&
+			ast.IsModuleExportsAccessExpression(originalLocation.Parent) &&
+			meaning&lastLocation.Symbol().Flags != 0 {
+			return r.GetModuleSymbol(lastLocation)
+		}
 		if !excludeGlobals {
 			result = r.lookup(r.Globals, name, meaning|ast.SymbolFlagsGlobalLookup)
+		}
+	}
+	if result == nil {
+		if originalLocation != nil && originalLocation.Parent != nil && originalLocation.Parent.Parent != nil &&
+			ast.IsVariableDeclarationInitializedToRequire(originalLocation.Parent.Parent) {
+			return r.RequireSymbol
 		}
 	}
 	if nameNotFoundMessage != nil {
@@ -489,9 +502,9 @@ func isTypeParameterSymbolDeclaredInContainer(symbol *ast.Symbol, container *ast
 func isSelfReferenceLocation(node *ast.Node, lastLocation *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindParameter:
-		return lastLocation != nil && lastLocation == node.AsParameterDeclaration().Name()
+		return lastLocation != nil && lastLocation == node.Name()
 	case ast.KindFunctionDeclaration, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindEnumDeclaration,
-		ast.KindTypeAliasDeclaration, ast.KindModuleDeclaration: // For `namespace N { N; }`
+		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindModuleDeclaration: // For `namespace N { N; }`
 		return true
 	}
 	return false

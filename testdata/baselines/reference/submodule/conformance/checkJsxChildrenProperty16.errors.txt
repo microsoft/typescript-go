@@ -1,15 +1,12 @@
-checkJsxChildrenProperty16.tsx(5,24): error TS2307: Cannot find module 'react' or its corresponding type declarations.
-checkJsxChildrenProperty16.tsx(14,44): error TS2503: Cannot find namespace 'JSX'.
+checkJsxChildrenProperty16.tsx(19,14): error TS7006: Parameter 'value' implicitly has an 'any' type.
 
 
-==== checkJsxChildrenProperty16.tsx (2 errors) ====
+==== checkJsxChildrenProperty16.tsx (1 errors) ====
     /// <reference path="/.lib/react16.d.ts" />
     
     // repro from #53493
     
     import React = require('react');
-                           ~~~~~~~
-!!! error TS2307: Cannot find module 'react' or its corresponding type declarations.
     
     export type Props =
       | { renderNumber?: false; children: (arg: string) => void }
@@ -19,13 +16,13 @@ checkJsxChildrenProperty16.tsx(14,44): error TS2503: Cannot find namespace 'JSX'
         };
     
     export declare function Foo(props: Props): JSX.Element;
-                                               ~~~
-!!! error TS2503: Cannot find namespace 'JSX'.
     
     export const Test = () => {
       return (
         <>
           <Foo>{(value) => {}}</Foo>
+                 ~~~~~
+!!! error TS7006: Parameter 'value' implicitly has an 'any' type.
           <Foo renderNumber>{(value) => {}}</Foo>
     
           <Foo children={(value) => {}} />

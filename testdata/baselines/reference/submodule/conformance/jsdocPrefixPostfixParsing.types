@@ -19,21 +19,21 @@
  * @param {[number, number?]} m - [number, (number | undefined)?]
  */
 function f(x, y, z, a, b, c, e, f, g, h, i, j, k, l, m) {
->f : (x: any, y: any, z: any, a: any, b: any, c: any, e: any, f: any, g: any, h: any, i: any, j: any, k: any, l: any, m: any) => void
->x : any
->y : any
->z : any
+>f : (x: number[], y: number[], z: number[], a: any, b: number[] | null, c: number[] | null, e: (number | null)[], f: (number | null)[], g: (number | null)[], h: any, i: number[][], j: (number[] | null)[], k: any, l: true, m: [number, (number | undefined)?]) => void
+>x : number[]
+>y : number[]
+>z : number[]
 >a : any
->b : any
->c : any
->e : any
->f : any
->g : any
+>b : number[] | null
+>c : number[] | null
+>e : (number | null)[]
+>f : (number | null)[]
+>g : (number | null)[]
 >h : any
->i : any
->j : any
+>i : number[][]
+>j : (number[] | null)[]
 >k : any
->l : any
->m : any
+>l : true
+>m : [number, (number | undefined)?]
 }
 

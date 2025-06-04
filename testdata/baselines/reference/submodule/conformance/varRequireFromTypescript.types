@@ -2,24 +2,24 @@
 
 === use.js ===
 var ex = require('./ex')
->ex : any
->require('./ex') : any
+>ex : typeof ex
+>require('./ex') : typeof ex
 >require : any
 >'./ex' : "./ex"
 
 // values work
 var crunch = new ex.Crunch(1);
->crunch : any
->new ex.Crunch(1) : any
->ex.Crunch : any
->ex : any
->Crunch : any
+>crunch : ex.Crunch
+>new ex.Crunch(1) : ex.Crunch
+>ex.Crunch : typeof ex.Crunch
+>ex : typeof ex
+>Crunch : typeof ex.Crunch
 >1 : 1
 
 crunch.n
->crunch.n : any
->crunch : any
->n : any
+>crunch.n : number
+>crunch : ex.Crunch
+>n : number
 
 
 // types work
@@ -28,19 +28,19 @@ crunch.n
  * @param {ex.Crunch} wrap
  */
 function f(greatest, wrap) {
->f : (greatest: any, wrap: any) => void
->greatest : any
->wrap : any
+>f : (greatest: ex.Greatest, wrap: ex.Crunch) => void
+>greatest : ex.Greatest
+>wrap : ex.Crunch
 
     greatest.day
->greatest.day : any
->greatest : any
->day : any
+>greatest.day : 1
+>greatest : ex.Greatest
+>day : 1
 
     wrap.n
->wrap.n : any
->wrap : any
->n : any
+>wrap.n : number
+>wrap : ex.Crunch
+>n : number
 }
 
 === ex.d.ts ===

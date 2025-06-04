@@ -377,11 +377,17 @@ const (
 	KindJSDocImportTag
 	// Synthesized list
 	KindSyntaxList
+	// Reparsed JS nodes
+	KindJSTypeAliasDeclaration
+	KindJSExportAssignment
+	KindCommonJSExport
+	KindJSImportDeclaration
 	// Transformation nodes
 	KindNotEmittedStatement
 	KindPartiallyEmittedExpression
 	KindCommaListExpression
 	KindSyntheticReferenceExpression
+	KindNotEmittedTypeElement
 	// Enum value count
 	KindCount
 	// Markers

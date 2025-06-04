@@ -8,8 +8,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
-	"github.com/microsoft/typescript-go/internal/compiler/diagnostics"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/evaluator"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -309,7 +309,7 @@ func (c *Checker) narrowTypeByTypePredicate(f *FlowState, t *Type, predicate *Ty
 			if c.isMatchingReference(f.reference, predicateArgument) {
 				return c.getNarrowedType(t, predicate.t, assumeTrue, false /*checkDerived*/)
 			}
-			if c.strictNullChecks && c.optionalChainContainsReference(predicateArgument, f.reference) && (assumeTrue && !(c.hasTypeFacts(predicate.t, TypeFactsEQUndefined)) || !assumeTrue && everyType(predicate.t, c.isNullableType)) {
+			if c.strictNullChecks && c.optionalChainContainsReference(predicateArgument, f.reference) && (assumeTrue && !(c.hasTypeFacts(predicate.t, TypeFactsEQUndefined)) || !assumeTrue && everyType(predicate.t, c.IsNullableType)) {
 				t = c.getAdjustedTypeWithFacts(t, TypeFactsNEUndefinedOrNull)
 			}
 			access := c.getDiscriminantPropertyAccess(f, predicateArgument, t)
@@ -388,7 +388,7 @@ func (c *Checker) narrowType(f *FlowState, t *Type, expr *ast.Node, assumeTrue b
 		return c.narrowTypeByTruthiness(f, t, expr, assumeTrue)
 	case ast.KindCallExpression:
 		return c.narrowTypeByCallExpression(f, t, expr, assumeTrue)
-	case ast.KindParenthesizedExpression, ast.KindNonNullExpression:
+	case ast.KindParenthesizedExpression, ast.KindNonNullExpression, ast.KindSatisfiesExpression:
 		return c.narrowType(f, t, expr.Expression(), assumeTrue)
 	case ast.KindBinaryExpression:
 		return c.narrowTypeByBinaryExpression(f, t, expr.AsBinaryExpression(), assumeTrue)
@@ -566,8 +566,8 @@ func (c *Checker) narrowTypeByEquality(t *Type, operator ast.Kind, value *ast.No
 		return c.getAdjustedTypeWithFacts(t, facts)
 	}
 	if assumeTrue {
-		if !doubleEquals && (t.flags&TypeFlagsUnknown != 0 || someType(t, c.isEmptyAnonymousObjectType)) {
-			if valueType.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.isEmptyAnonymousObjectType(valueType) {
+		if !doubleEquals && (t.flags&TypeFlagsUnknown != 0 || someType(t, c.IsEmptyAnonymousObjectType)) {
+			if valueType.flags&(TypeFlagsPrimitive|TypeFlagsNonPrimitive) != 0 || c.IsEmptyAnonymousObjectType(valueType) {
 				return valueType
 			}
 			if valueType.flags&TypeFlagsObject != 0 {
@@ -718,8 +718,8 @@ func (c *Checker) narrowTypeByDiscriminant(t *Type, access *ast.Node, narrowType
 	}
 	narrowedPropType := narrowType(propType)
 	return c.filterType(t, func(t *Type) bool {
-		discriminantType := c.getTypeOfPropertyOrIndexSignatureOfType(t, propName)
-		return discriminantType == nil || discriminantType.flags&TypeFlagsNever == 0 && narrowedPropType.flags&TypeFlagsNever == 0 && c.areTypesComparable(narrowedPropType, discriminantType)
+		discriminantType := core.OrElse(c.getTypeOfPropertyOrIndexSignatureOfType(t, propName), c.unknownType)
+		return discriminantType.flags&TypeFlagsNever == 0 && narrowedPropType.flags&TypeFlagsNever == 0 && c.areTypesComparable(narrowedPropType, discriminantType)
 	})
 }
 
@@ -812,7 +812,7 @@ func (c *Checker) narrowTypeByInstanceof(f *FlowState, t *Type, expr *ast.Binary
 	instanceType := c.mapType(rightType, c.getInstanceType)
 	// Don't narrow from `any` if the target type is exactly `Object` or `Function`, and narrow
 	// in the false branch only if the target is a non-empty object type.
-	if IsTypeAny(t) && (instanceType == c.globalObjectType || instanceType == c.globalFunctionType) || !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.isEmptyAnonymousObjectType(instanceType)) {
+	if IsTypeAny(t) && (instanceType == c.globalObjectType || instanceType == c.globalFunctionType) || !assumeTrue && !(instanceType.flags&TypeFlagsObject != 0 && !c.IsEmptyAnonymousObjectType(instanceType)) {
 		return t
 	}
 	return c.getNarrowedType(t, instanceType, assumeTrue, true /*checkDerived*/)
@@ -841,10 +841,13 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 				return !c.isTypeDerivedFrom(t, candidate)
 			})
 		}
+		if t.flags&TypeFlagsUnknown != 0 {
+			t = c.unknownUnionType
+		}
 		trueType := c.getNarrowedType(t, candidate, true /*assumeTrue*/, false /*checkDerived*/)
-		return c.filterType(t, func(t *Type) bool {
+		return c.recombineUnknownType(c.filterType(t, func(t *Type) bool {
 			return !c.isTypeSubsetOf(t, trueType)
-		})
+		}))
 	}
 	if t.flags&TypeFlagsAnyOrUnknown != 0 {
 		return candidate
@@ -1419,7 +1422,7 @@ func (c *Checker) getDiscriminantPropertyAccess(f *FlowState, expr *ast.Node, co
 func (c *Checker) getCandidateDiscriminantPropertyAccess(f *FlowState, expr *ast.Node) *ast.Node {
 	switch {
 	case ast.IsBindingPattern(f.reference) || ast.IsFunctionExpressionOrArrowFunction(f.reference) || ast.IsObjectLiteralMethod(f.reference):
-		// When the reference is a binding pattern or function or arrow expression, we are narrowing a pesudo-reference in
+		// When the reference is a binding pattern or function or arrow expression, we are narrowing a pseudo-reference in
 		// getNarrowedTypeOfSymbol. An identifier for a destructuring variable declared in the same binding pattern or
 		// parameter declared in the same parameter list is a candidate.
 		if ast.IsIdentifier(expr) {
@@ -1563,7 +1566,7 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 	case ast.KindMetaProperty:
 		return ast.IsMetaProperty(target) && source.AsMetaProperty().KeywordToken == target.AsMetaProperty().KeywordToken && source.Name().Text() == target.Name().Text()
 	case ast.KindIdentifier, ast.KindPrivateIdentifier:
-		if isThisInTypeQuery(source) {
+		if ast.IsThisInTypeQuery(source) {
 			return target.Kind == ast.KindThisKeyword
 		}
 		return ast.IsIdentifier(target) && c.getResolvedSymbol(source) == c.getResolvedSymbol(target) ||
@@ -1572,7 +1575,7 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 		return target.Kind == ast.KindThisKeyword
 	case ast.KindSuperKeyword:
 		return target.Kind == ast.KindSuperKeyword
-	case ast.KindNonNullExpression, ast.KindParenthesizedExpression:
+	case ast.KindNonNullExpression, ast.KindParenthesizedExpression, ast.KindSatisfiesExpression:
 		return c.isMatchingReference(source.Expression(), target)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		if sourcePropertyName, ok := c.getAccessedPropertyName(source); ok {
@@ -1619,7 +1622,7 @@ func (c *Checker) getFlowReferenceKey(f *FlowState) string {
 func (c *Checker) writeFlowCacheKey(b *KeyBuilder, node *ast.Node, declaredType *Type, initialType *Type, flowContainer *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindIdentifier:
-		if !isThisInTypeQuery(node) {
+		if !ast.IsThisInTypeQuery(node) {
 			symbol := c.getResolvedSymbol(node)
 			if symbol == c.unknownSymbol {
 				return false
@@ -1713,7 +1716,7 @@ func (c *Checker) tryGetNameFromEntityNameExpression(node *ast.Node) (string, bo
 	if declaration == nil {
 		return "", false
 	}
-	t := c.tryGetTypeFromEffectiveTypeNode(declaration)
+	t := c.tryGetTypeFromTypeNode(declaration)
 	if t != nil {
 		if name, ok := tryGetNameFromType(t); ok {
 			return name, true
@@ -1778,14 +1781,14 @@ func (c *Checker) isConstantReference(node *ast.Node) bool {
 	case ast.KindThisKeyword:
 		return true
 	case ast.KindIdentifier:
-		if !isThisInTypeQuery(node) {
+		if !ast.IsThisInTypeQuery(node) {
 			symbol := c.getResolvedSymbol(node)
 			return c.isConstantVariable(symbol) || c.isParameterOrMutableLocalVariable(symbol) && !c.isSymbolAssigned(symbol) || symbol.ValueDeclaration != nil && ast.IsFunctionExpression(symbol.ValueDeclaration)
 		}
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		// The resolvedSymbol property is initialized by checkPropertyAccess or checkElementAccess before we get here.
 		if c.isConstantReference(node.Expression()) {
-			symbol := c.typeNodeLinks.Get(node).resolvedSymbol
+			symbol := c.getResolvedSymbolOrNil(node)
 			if symbol != nil {
 				return c.isReadonlySymbol(symbol)
 			}
@@ -2423,7 +2426,7 @@ func (c *Checker) getFlowTypeInConstructor(symbol *ast.Symbol, constructor *ast.
 		c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.TypeToString(flowType))
 	}
 	// We don't infer a type if assignments are only null or undefined.
-	if everyType(flowType, c.isNullableType) {
+	if everyType(flowType, c.IsNullableType) {
 		return nil
 	}
 	return c.convertAutoToAny(flowType)
@@ -2446,7 +2449,7 @@ func (c *Checker) getFlowTypeInStaticBlocks(symbol *ast.Symbol, staticBlocks []*
 			c.error(symbol.ValueDeclaration, diagnostics.Member_0_implicitly_has_an_1_type, c.symbolToString(symbol), c.TypeToString(flowType))
 		}
 		// We don't infer a type if assignments are only null or undefined.
-		if everyType(flowType, c.isNullableType) {
+		if everyType(flowType, c.IsNullableType) {
 			continue
 		}
 		return c.convertAutoToAny(flowType)
@@ -2484,12 +2487,9 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 		case flags&(ast.FlowFlagsAssignment|ast.FlowFlagsCondition|ast.FlowFlagsArrayMutation) != 0:
 			flow = flow.Antecedent
 		case flags&ast.FlowFlagsCall != 0:
-			signature := c.getEffectsSignature(flow.Node)
-			if signature != nil {
-				predicate := c.getTypePredicateOfSignature(signature)
-				if predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
-					predicateArgument := flow.Node.Arguments()[predicate.parameterIndex]
-					if predicateArgument != nil && c.isFalseExpression(predicateArgument) {
+			if signature := c.getEffectsSignature(flow.Node); signature != nil {
+				if predicate := c.getTypePredicateOfSignature(signature); predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
+					if arguments := flow.Node.Arguments(); int(predicate.parameterIndex) < len(arguments) && c.isFalseExpression(arguments[predicate.parameterIndex]) {
 						return false
 					}
 				}
@@ -2686,6 +2686,7 @@ func (c *Checker) markNodeAssignmentsWorker(node *ast.Node) bool {
 		return false
 	case ast.KindInterfaceDeclaration,
 		ast.KindTypeAliasDeclaration,
+		ast.KindJSTypeAliasDeclaration,
 		ast.KindEnumDeclaration:
 		return false
 	}

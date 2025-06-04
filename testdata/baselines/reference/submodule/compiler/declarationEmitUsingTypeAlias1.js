@@ -28,9 +28,19 @@ export const bar = (thing: SomeType) => {
 };
 
 //// [index.js]
-export const foo = (thing) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.bar = exports.foo = void 0;
+const foo = (thing) => {
     return thing;
 };
-export const bar = (thing) => {
+exports.foo = foo;
+const bar = (thing) => {
     return thing.arg;
 };
+exports.bar = bar;
+
+
+//// [index.d.ts]
+export declare const foo: any;
+export declare const bar: any;

@@ -3,13 +3,13 @@
 === jsxImportForSideEffectsNonExtantNoError.tsx ===
 /// <reference path="react16.d.ts" />
 import * as React from "react";
->React : any
+>React : typeof React
 
 import "./App.css"; // doesn't actually exist
 
 const tag = <div></div>;
->tag : any
-><div></div> : any
+>tag : JSX.Element
+><div></div> : JSX.Element
 >div : any
 >div : any
 

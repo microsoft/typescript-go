@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -18,18 +20,40 @@ const (
 )
 
 type Logger struct {
-	outputs []*bufio.Writer
-	level   LogLevel
-	inGroup bool
-	seq     int
+	mu         sync.Mutex
+	outputs    []*bufio.Writer
+	fileHandle *os.File
+	level      LogLevel
+	seq        int
 }
 
-func NewLogger(outputs []io.Writer, level LogLevel) *Logger {
+func NewLogger(outputs []io.Writer, file string, level LogLevel) *Logger {
 	var o []*bufio.Writer
 	for _, w := range outputs {
 		o = append(o, bufio.NewWriter(w))
 	}
-	return &Logger{outputs: o, level: level}
+	logger := &Logger{outputs: o, level: level}
+	logger.SetFile(file)
+	return logger
+}
+
+func (l *Logger) SetFile(file string) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	if l.fileHandle != nil {
+		oldWriter := l.outputs[len(l.outputs)-1]
+		l.outputs = l.outputs[:len(l.outputs)-1]
+		_ = oldWriter.Flush()
+		l.fileHandle.Close()
+	}
+	if file != "" {
+		f, err := os.OpenFile(file, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o666)
+		if err != nil {
+			panic(err)
+		}
+		l.fileHandle = f
+		l.outputs = append(l.outputs, bufio.NewWriter(f))
+	}
 }
 
 func (l *Logger) PerfTrace(s string) {
@@ -44,23 +68,34 @@ func (l *Logger) Error(s string) {
 	l.msg(s, "Err")
 }
 
-func (l *Logger) StartGroup() {
-	l.inGroup = true
-}
-
-func (l *Logger) EndGroup() {
-	l.inGroup = false
-}
-
 func (l *Logger) LoggingEnabled() bool {
-	return len(l.outputs) > 0
+	return l != nil && len(l.outputs) > 0
 }
 
 func (l *Logger) HasLevel(level LogLevel) bool {
-	return l.LoggingEnabled() && l.level >= level
+	return l != nil && l.LoggingEnabled() && l.level >= level
+}
+
+func (l *Logger) Close() {
+	if l == nil {
+		return
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	for _, output := range l.outputs {
+		_ = output.Flush()
+	}
+	if l.fileHandle != nil {
+		_ = l.fileHandle.Close()
+	}
 }
 
 func (l *Logger) msg(s string, messageType string) {
+	if l == nil {
+		return
+	}
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	for _, output := range l.outputs {
 		header := fmt.Sprintf("%s %d", messageType, l.seq)
 		output.WriteString(header)                                      //nolint: errcheck
@@ -72,7 +107,5 @@ func (l *Logger) msg(s string, messageType string) {
 		output.WriteRune('\n')                                          //nolint: errcheck
 		output.Flush()
 	}
-	if !l.inGroup {
-		l.seq++
-	}
+	l.seq++
 }

@@ -1,7 +1,7 @@
 --- old.contextualTyping.js
 +++ new.contextualTyping.js
 @@= skipped -227, +227 lines =@@
- 
+
  //// [contextualTyping.js]
  // CONTEXT: Class property declaration
 -var C1T5 = /** @class */ (function () {
@@ -54,8 +54,3 @@
  ;
  var i = new C11t5(function (n) { return ({}); });
  // CONTEXT: Type annotated expression
-@@= skipped -44, +42 lines =@@
-     }
- };
- var x = {};
--//# sourceMappingURL=contextualTyping.js.map

@@ -2,7 +2,7 @@
 +++ new.es5-souremap-amd.js
 @@= skipped -14, +14 lines =@@
  }
- 
+
  //// [es5-souremap-amd.js]
 -var A = /** @class */ (function () {
 -    function A() {
@@ -15,6 +15,6 @@
 -    };
 -    return A;
 -}());
--//# sourceMappingURL=es5-souremap-amd.js.map
 +    }
 +}
+ //# sourceMappingURL=es5-souremap-amd.js.map

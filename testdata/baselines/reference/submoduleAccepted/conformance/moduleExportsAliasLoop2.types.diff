@@ -5,17 +5,14 @@
  >exports.fn1() : any
  >exports.fn1 : any
 ->exports : typeof import("x")
-+>exports : any
++>exports : typeof import("./x")
  >fn1 : any
- 
+
  exports.fn2 = Foo.min;
  >exports.fn2 = Foo.min : number
-->exports.fn2 : number
+ >exports.fn2 : number
 ->exports : typeof import("x")
-->fn2 : number
-+>exports.fn2 : any
-+>exports : any
-+>fn2 : any
++>exports : typeof import("./x")
+ >fn2 : number
  >Foo.min : number
  >Foo : { min: number; }
- >min : number

@@ -58,6 +58,21 @@ func Map[T, U any](slice []T, f func(T) U) []U {
 	return result
 }
 
+func TryMap[T, U any](slice []T, f func(T) (U, error)) ([]U, error) {
+	if len(slice) == 0 {
+		return nil, nil
+	}
+	result := make([]U, len(slice))
+	for i, value := range slice {
+		mapped, err := f(value)
+		if err != nil {
+			return nil, err
+		}
+		result[i] = mapped
+	}
+	return result, nil
+}
+
 func MapIndex[T, U any](slice []T, f func(T, int) U) []U {
 	if slice == nil {
 		return nil
@@ -523,4 +538,22 @@ func levenshteinWithMax(s1 []rune, s2 []rune, maxValue float64) float64 {
 
 func Identity[T any](t T) T {
 	return t
+}
+
+func CheckEachDefined[S any](s []*S, msg string) []*S {
+	for _, value := range s {
+		if value == nil {
+			panic(msg)
+		}
+	}
+	return s
+}
+
+func IndexAfter(s string, pattern string, startIndex int) int {
+	matched := strings.Index(s[startIndex:], pattern)
+	if matched == -1 {
+		return -1
+	} else {
+		return matched + startIndex
+	}
 }

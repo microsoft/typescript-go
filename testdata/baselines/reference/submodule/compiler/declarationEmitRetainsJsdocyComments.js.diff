@@ -6,11 +6,11 @@
  Object.defineProperty(exports, "__esModule", { value: true });
 -exports.someMethod = exports.Foo = exports.foo = void 0;
 +exports.
- /**
++/**
 +* comment5
 +*/
 +someMethod = exports.Foo = exports.foo = void 0;
-+/**
+ /**
   * comment1
   * @param p
   */
@@ -44,54 +44,38 @@
 -    };
 -    return Foo;
 -}());
--exports.Foo = Foo;
++    bar(s) {
++    }
++}
+ exports.Foo = Foo;
 -/**
 -* comment5
 -*/
 -exports.someMethod = null.someMethod;
--
--
--//// [declarationEmitRetainsJsdocyComments.d.ts]
--/**
-- * comment1
-- * @param p
-- */
--export declare const foo: (p: string) => {
--    /**
--     * comment2
--     * @param s
--     */
--    bar: (s: number) => void;
--    /**
--     * comment3
--     * @param s
--     */
--    bar2(s: number): void;
--};
--export declare class Foo {
--    /**
--     * comment4
--     * @param s
--     */
--    bar(s: number): void;
--}
++({ 
++    /**
++    * comment5
++    */
++    someMethod: exports.someMethod } = null);
+
+
+ //// [declarationEmitRetainsJsdocyComments.d.ts]
+@@= skipped -62, +64 lines =@@
+      */
+     bar(s: number): void;
+ }
 -export declare let 
 -/**
 -* comment5
 -*/
 -someMethod: any;
 -declare global {
--    interface ExtFunc {
--        /**
--        * comment6
--        */
--        someMethod(collection: any[]): boolean;
-+    bar(s) {
++declare namespace global {
+     interface ExtFunc {
+         /**
+         * comment6
+@@= skipped -13, +8 lines =@@
+         someMethod(collection: any[]): boolean;
      }
  }
-+exports.Foo = Foo;
-+({ 
-+    /**
-+    * comment5
-+    */
-+    someMethod: exports.someMethod } = null);
++export {};

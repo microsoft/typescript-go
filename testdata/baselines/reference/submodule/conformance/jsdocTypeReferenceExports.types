@@ -3,15 +3,15 @@
 === bug27342.js ===
 module.exports = {}
 >module.exports = {} : {}
->module.exports : any
->module : any
->exports : any
+>module.exports : {}
+>module : { "export=": {}; }
+>exports : {}
 >{} : {}
 
 /**
  * @type {exports}
  */
 var x
->x : any
+>x : exports
 
 

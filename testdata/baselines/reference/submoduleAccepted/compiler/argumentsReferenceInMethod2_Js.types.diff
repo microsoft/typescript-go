@@ -1,26 +1,25 @@
 --- old.argumentsReferenceInMethod2_Js.types
 +++ new.argumentsReferenceInMethod2_Js.types
-@@= skipped -7, +7 lines =@@
- 	 * @param {object} [foo={}]
+@@= skipped -8, +8 lines =@@
  	 */
  	m(foo = {}) {
-->m : (foo?: object) => void
+ >m : (foo?: object) => void
 ->foo : any
-+>m : (foo?: {}) => void
-+>foo : {}
++>foo : object
  >{} : {}
- 
+
  		/**
  		 * @type object
  		 */
  		this["arguments"] = foo;
 ->this["arguments"] = foo : any
-+>this["arguments"] = foo : {}
- >this["arguments"] : any
+->this["arguments"] : any
++>this["arguments"] = foo : object
++>this["arguments"] : object
  >this : this
  >"arguments" : "arguments"
 ->foo : any
-+>foo : {}
++>foo : object
++>foo : object
  	}
  }
- 

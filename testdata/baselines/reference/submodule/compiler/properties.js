@@ -23,3 +23,10 @@ class MyClass {
         //
     }
 }
+//# sourceMappingURL=properties.js.map
+
+//// [properties.d.ts]
+declare class MyClass {
+    get Count(): number;
+    set Count(value: number);
+}

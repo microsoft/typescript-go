@@ -7,18 +7,16 @@
 ->d : typeof d
 +>d : "string"
  >a : number
- 
+
  import * as ns from './a.cjs';
-->ns : typeof ns
-+>ns : typeof import("src/a")
- 
+ >ns : typeof ns
+
  export {d, a, ns};
 ->d : typeof d
 +>d : "string"
  >a : number
-->ns : typeof ns
-+>ns : typeof import("src/a")
- 
+ >ns : typeof ns
+
  d.a;
 ->d.a : number
 ->d : typeof d
@@ -26,16 +24,14 @@
 +>d.a : any
 +>d : "string"
 +>a : any
- 
+
  ns.default.a;
 ->ns.default.a : number
 ->ns.default : typeof d
-->ns : typeof ns
-->default : typeof d
-->a : number
 +>ns.default.a : any
 +>ns.default : "string"
-+>ns : typeof import("src/a")
+ >ns : typeof ns
+->default : typeof d
+->a : number
 +>default : "string"
 +>a : any
- 

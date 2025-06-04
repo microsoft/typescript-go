@@ -26,8 +26,24 @@ export interface IData {
 }
 
 
-//// [declarationEmitComputedPropertyName1.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.c = void 0;
-exports.c = create();
+
+
+//// [declarationEmitComputedPropertyName1.d.ts]
+export declare const c: {
+    data: {
+        a_b_c: string;
+        sss: string;
+        s_d: string;
+        queryData?: string | undefined;
+        "foo bar": string;
+    };
+    a_b_c: string;
+};
+export interface IData {
+    ["a_b_c"]: string;
+    nested: {
+        ["d_e_f"]: string;
+        value: string;
+        ["qwe rty"]: string;
+    };
+}

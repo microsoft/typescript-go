@@ -9,15 +9,12 @@ new myModule.c();
 
 
 
-//// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.c = void 0;
-class c {
-}
-exports.c = c;
 //// [test.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const myModule = require("myModule");
 new myModule.c();
+
+
+//// [test.d.ts]
+export {};

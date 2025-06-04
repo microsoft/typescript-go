@@ -5,30 +5,27 @@
  /** @param {number} x */
  function C(x) {
 ->C : typeof C
-->x : number
-+>C : (x: any) => void
-+>x : any
- 
++>C : (x: number) => void
+ >x : number
+
      this.x = x
-->this.x = x : number
-+>this.x = x : any
+ >this.x = x : number
  >this.x : any
 ->this : this
 +>this : any
  >x : any
-->x : number
-+>x : any
+ >x : number
  }
- C.prototype.m = function() {
+@@= skipped -14, +14 lines =@@
  >C.prototype.m = function() {    this.y = 12} : () => void
  >C.prototype.m : any
  >C.prototype : any
 ->C : typeof C
-+>C : (x: any) => void
++>C : (x: number) => void
  >prototype : any
  >m : any
  >function() {    this.y = 12} : () => void
- 
+
      this.y = 12
  >this.y = 12 : 12
 ->this.y : number | undefined
@@ -45,9 +42,9 @@
 ->C : typeof C
 +>c : any
 +>new C(1) : any
-+>C : (x: any) => void
++>C : (x: number) => void
  >1 : 1
- 
+
  c.x = undefined // should error
  >c.x = undefined : undefined
 ->c.x : number
@@ -57,7 +54,7 @@
 +>c : any
 +>x : any
  >undefined : undefined
- 
+
  c.y = undefined // ok
  >c.y = undefined : undefined
 ->c.y : number | undefined
@@ -67,14 +64,13 @@
 +>c : any
 +>y : any
  >undefined : undefined
- 
+
  /** @param {number} x */
  function A(x) {
 ->A : typeof A
-->x : number
-+>A : (x: any) => any
-+>x : any
- 
++>A : (x: number) => any
+ >x : number
+
      if (!(this instanceof A)) {
  >!(this instanceof A) : boolean
  >(this instanceof A) : boolean
@@ -82,25 +78,22 @@
 ->this : this
 ->A : typeof A
 +>this : any
-+>A : (x: any) => any
- 
++>A : (x: number) => any
+
          return new A(x)
 ->new A(x) : A
 ->A : typeof A
-->x : number
 +>new A(x) : any
-+>A : (x: any) => any
-+>x : any
++>A : (x: number) => any
+ >x : number
      }
      this.x = x
-->this.x = x : number
-+>this.x = x : any
+ >this.x = x : number
  >this.x : any
 ->this : this
 +>this : any
  >x : any
-->x : number
-+>x : any
+ >x : number
  }
  var k = A(1)
 ->k : A
@@ -108,18 +101,18 @@
 ->A : typeof A
 +>k : any
 +>A(1) : any
-+>A : (x: any) => any
++>A : (x: number) => any
  >1 : 1
- 
+
  var j = new A(2)
 ->j : A
 ->new A(2) : A
 ->A : typeof A
 +>j : any
 +>new A(2) : any
-+>A : (x: any) => any
++>A : (x: number) => any
  >2 : 2
- 
+
  k.x === j.x
  >k.x === j.x : boolean
 ->k.x : number | undefined
@@ -134,4 +127,3 @@
 +>j.x : any
 +>j : any
 +>x : any
- 

@@ -3,19 +3,19 @@
 === main.js ===
 const { K } = require("./mod1");
 >K : any
->require("./mod1") : any
+>require("./mod1") : typeof import("./mod1")
 >require : any
 >"./mod1" : "./mod1"
 
 /** @param {K} k */
 function f(k) {
->f : (k: any) => void
->k : any
+>f : (k: K) => void
+>k : K
 
     k.values()
 >k.values() : any
 >k.values : any
->k : any
+>k : K
 >values : any
 }
 
@@ -44,7 +44,7 @@ NS.K =class {
 exports.K = NS.K;
 >exports.K = NS.K : any
 >exports.K : any
->exports : any
+>exports : typeof import("./mod1")
 >K : any
 >NS.K : any
 >NS : {}

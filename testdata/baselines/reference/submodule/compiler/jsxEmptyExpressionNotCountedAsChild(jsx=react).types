@@ -3,42 +3,42 @@
 === jsxEmptyExpressionNotCountedAsChild.tsx ===
 /// <reference path="react16.d.ts" />
 import * as React from 'react'
->React : any
+>React : typeof React
 
 interface Props {
     children: React.ReactElement<any>
->children : ReactElement<any>
+>children : React.ReactElement<any>
 >React : any
 }
 
 function Wrapper(props: Props) {
->Wrapper : (props: Props) => any
+>Wrapper : (props: Props) => JSX.Element
 >props : Props
 
     return <div>{props.children}</div>
-><div>{props.children}</div> : any
+><div>{props.children}</div> : JSX.Element
 >div : any
->props.children : ReactElement<any>
+>props.children : React.ReactElement<any>
 >props : Props
->children : ReactElement<any>
+>children : React.ReactElement<any>
 >div : any
 }
 
 const element = (
->element : any
->(    <Wrapper>    {/* comment */}     <div>Hello</div>    </Wrapper>) : any
+>element : JSX.Element
+>(    <Wrapper>    {/* comment */}     <div>Hello</div>    </Wrapper>) : JSX.Element
 
     <Wrapper>
-><Wrapper>    {/* comment */}     <div>Hello</div>    </Wrapper> : any
->Wrapper : (props: Props) => any
+><Wrapper>    {/* comment */}     <div>Hello</div>    </Wrapper> : JSX.Element
+>Wrapper : (props: Props) => JSX.Element
 
     {/* comment */}
      <div>Hello</div>
-><div>Hello</div> : any
+><div>Hello</div> : JSX.Element
 >div : any
 >div : any
 
     </Wrapper>
->Wrapper : (props: Props) => any
+>Wrapper : (props: Props) => JSX.Element
 
 )

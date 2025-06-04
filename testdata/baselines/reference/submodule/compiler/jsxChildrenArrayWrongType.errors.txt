@@ -1,7 +1,12 @@
-index.tsx(9,27): error TS2304: Cannot find name 'React'.
+index.tsx(12,9): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'unknown' is not assignable to type 'string | boolean'.
+index.tsx(13,9): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Type 'string' is not assignable to type 'number | boolean'.
 
 
-==== index.tsx (1 errors) ====
+==== index.tsx (2 errors) ====
     /// <reference path="/.lib/react18/react18.d.ts" />
     /// <reference path="/.lib/react18/global.d.ts" />
     
@@ -11,11 +16,19 @@ index.tsx(9,27): error TS2304: Cannot find name 'React'.
         children: [string, number] | boolean[];
     }
     declare class Foo extends React.Component<PropsType, {}> {}
-                              ~~~~~
-!!! error TS2304: Cannot find name 'React'.
     const b = (
         <Foo>
             {<div/> as unknown}
+            ~~~~~~~~~~~~~~~~~~~
+!!! error TS2769: No overload matches this call.
+!!! error TS2769:   The last overload gave the following error.
+!!! error TS2769:     Type 'unknown' is not assignable to type 'string | boolean'.
+!!! related TS2771 react18/react18.d.ts:478:9: The last overload is declared here.
             {"aa"}
+            ~~~~~~
+!!! error TS2769: No overload matches this call.
+!!! error TS2769:   The last overload gave the following error.
+!!! error TS2769:     Type 'string' is not assignable to type 'number | boolean'.
+!!! related TS2771 react18/react18.d.ts:478:9: The last overload is declared here.
         </Foo>
     );

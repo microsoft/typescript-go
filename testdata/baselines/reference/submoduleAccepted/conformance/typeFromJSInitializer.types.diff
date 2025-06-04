@@ -1,12 +1,12 @@
 --- old.typeFromJSInitializer.types
 +++ new.typeFromJSInitializer.types
 @@= skipped -1, +1 lines =@@
- 
+
  === a.js ===
  function A () {
 ->A : typeof A
 +>A : () => void
- 
+
      // should get any on this-assignments in constructor
      this.unknown = null
  >this.unknown = null : null
@@ -14,7 +14,7 @@
 ->this : this
 +>this : any
  >unknown : any
- 
+
      this.unknowable = undefined
  >this.unknowable = undefined : undefined
  >this.unknowable : any
@@ -22,7 +22,7 @@
 +>this : any
  >unknowable : any
  >undefined : undefined
- 
+
      this.empty = []
  >this.empty = [] : never[]
  >this.empty : any
@@ -38,7 +38,7 @@
 +>a : any
 +>new A() : any
 +>A : () => void
- 
+
  a.unknown = 1
  >a.unknown = 1 : 1
  >a.unknown : any
@@ -46,7 +46,7 @@
 +>a : any
  >unknown : any
  >1 : 1
- 
+
  a.unknown = true
  >a.unknown = true : true
  >a.unknown : any
@@ -54,7 +54,7 @@
 +>a : any
  >unknown : any
  >true : true
- 
+
  a.unknown = {}
  >a.unknown = {} : {}
  >a.unknown : any
@@ -62,7 +62,7 @@
 +>a : any
  >unknown : any
  >{} : {}
- 
+
  a.unknown = 'hi'
  >a.unknown = 'hi' : "hi"
  >a.unknown : any
@@ -70,7 +70,7 @@
 +>a : any
  >unknown : any
  >'hi' : "hi"
- 
+
  a.unknowable = 1
  >a.unknowable = 1 : 1
  >a.unknowable : any
@@ -78,7 +78,7 @@
 +>a : any
  >unknowable : any
  >1 : 1
- 
+
  a.unknowable = true
  >a.unknowable = true : true
  >a.unknowable : any
@@ -86,7 +86,7 @@
 +>a : any
  >unknowable : any
  >true : true
- 
+
  a.unknowable = {}
  >a.unknowable = {} : {}
  >a.unknowable : any
@@ -94,7 +94,7 @@
 +>a : any
  >unknowable : any
  >{} : {}
- 
+
  a.unknowable = 'hi'
  >a.unknowable = 'hi' : "hi"
  >a.unknowable : any
@@ -102,7 +102,7 @@
 +>a : any
  >unknowable : any
  >'hi' : "hi"
- 
+
  a.empty.push(1)
 ->a.empty.push(1) : number
 ->a.empty.push : (...items: any[]) => number
@@ -117,7 +117,7 @@
 +>empty : any
 +>push : any
  >1 : 1
- 
+
  a.empty.push(true)
 ->a.empty.push(true) : number
 ->a.empty.push : (...items: any[]) => number
@@ -132,7 +132,7 @@
 +>empty : any
 +>push : any
  >true : true
- 
+
  a.empty.push({})
 ->a.empty.push({}) : number
 ->a.empty.push : (...items: any[]) => number
@@ -147,7 +147,7 @@
 +>empty : any
 +>push : any
  >{} : {}
- 
+
  a.empty.push('hi')
 ->a.empty.push('hi') : number
 ->a.empty.push : (...items: any[]) => number
@@ -162,46 +162,23 @@
 +>empty : any
 +>push : any
  >'hi' : "hi"
- 
+
  /** @type {number | undefined} */
- var n;
-->n : number | undefined
-+>n : any
- 
+@@= skipped -126, +126 lines =@@
+
  // should get any on parameter initialisers
  function f(a = null, b = n, l = []) {
 ->f : (a?: null, b?: number | undefined, l?: any[]) => void
-+>f : (a?: null, b?: any, l?: never[]) => void
++>f : (a?: null, b?: number | undefined, l?: never[]) => void
  >a : null
-->b : number | undefined
-->n : number | undefined
+ >b : number | undefined
+ >n : number | undefined
 ->l : any[]
-+>b : any
-+>n : any
 +>l : never[]
  >[] : never[]
- 
+
      // a should be null in strict mode
-@@= skipped -166, +166 lines =@@
-     // b should be number | undefined, not any
-     b = 1
- >b = 1 : 1
-->b : number | undefined
-+>b : any
- >1 : 1
- 
-     b = undefined
- >b = undefined : undefined
-->b : number | undefined
-+>b : any
- >undefined : undefined
- 
-     b = 'error'
- >b = 'error' : "error"
-->b : number | undefined
-+>b : any
- >'error' : "error"
- 
+@@= skipped -56, +56 lines =@@
      // l should be any[]
      l.push(1)
  >l.push(1) : number
@@ -212,7 +189,7 @@
 +>l : never[]
 +>push : (...items: never[]) => number
  >1 : 1
- 
+
      l.push('ok')
  >l.push('ok') : number
 ->l.push : (...items: any[]) => number
@@ -223,34 +200,3 @@
 +>push : (...items: never[]) => number
  >'ok' : "ok"
  }
- 
-@@= skipped -72, +72 lines =@@
- 
- /** @type {(v: unknown) => v is undefined} */
- const isUndef = v => v === undefined;
-->isUndef : (v: unknown) => v is undefined
-->v => v === undefined : (v: unknown) => v is undefined
-->v : unknown
-+>isUndef : (v: any) => boolean
-+>v => v === undefined : (v: any) => boolean
-+>v : any
- >v === undefined : boolean
-->v : unknown
-+>v : any
- >undefined : undefined
- 
- const e = [1, undefined];
-@@= skipped -15, +15 lines =@@
- 
- // should be undefined[]
- const g = e.filter(isUndef);
-->g : undefined[]
-->e.filter(isUndef) : undefined[]
-+>g : (number | undefined)[]
-+>e.filter(isUndef) : (number | undefined)[]
- >e.filter : { <S extends number | undefined>(predicate: (value: number | undefined, index: number, array: (number | undefined)[]) => value is S, thisArg?: any): S[]; (predicate: (value: number | undefined, index: number, array: (number | undefined)[]) => unknown, thisArg?: any): (number | undefined)[]; }
- >e : (number | undefined)[]
- >filter : { <S extends number | undefined>(predicate: (value: number | undefined, index: number, array: (number | undefined)[]) => value is S, thisArg?: any): S[]; (predicate: (value: number | undefined, index: number, array: (number | undefined)[]) => unknown, thisArg?: any): (number | undefined)[]; }
-->isUndef : (v: unknown) => v is undefined
-+>isUndef : (v: any) => boolean
- 
