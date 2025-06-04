@@ -26926,11 +26926,12 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 	if ast.IsJsxOpeningLikeElement(node) {
 		jsxFactoryLocation = node.TagName()
 	}
+	shouldFactoryRefErr := c.compilerOptions.Jsx != core.JsxEmitPreserve && c.compilerOptions.Jsx != core.JsxEmitReactNative
 	// #38720/60122, allow null as jsxFragmentFactory
 	var jsxFactorySym *ast.Symbol
 	if !(ast.IsJsxOpeningFragment(node) && jsxFactoryNamespace == "null") {
 		flags := ast.SymbolFlagsValue
-		if c.compilerOptions.Jsx == core.JsxEmitPreserve || c.compilerOptions.Jsx == core.JsxEmitReactNative {
+		if !shouldFactoryRefErr {
 			flags &= ^ast.SymbolFlagsEnum
 		}
 		jsxFactorySym = c.resolveName(jsxFactoryLocation, jsxFactoryNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
@@ -26950,7 +26951,7 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 		localJsxNamespace := c.getLocalJsxNamespace(file)
 		if localJsxNamespace != "" {
 			flags := ast.SymbolFlagsValue
-			if c.compilerOptions.Jsx == core.JsxEmitPreserve || c.compilerOptions.Jsx == core.JsxEmitReactNative {
+			if !shouldFactoryRefErr {
 				flags &= ^ast.SymbolFlagsEnum
 			}
 			c.resolveName(jsxFactoryLocation, localJsxNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)

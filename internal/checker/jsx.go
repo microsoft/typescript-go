@@ -490,14 +490,16 @@ func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
 	}
 	jsxFragmentFactoryName := c.getJsxNamespace(node)
 	// #38720/60122, allow null as jsxFragmentFactory
-	if jsxFragmentFactoryName == "null" {
+	shouldResolveFactoryReference := (c.compilerOptions.Jsx == core.JsxEmitReact || c.compilerOptions.JsxFragmentFactory != "") && jsxFragmentFactoryName != "null"
+	if !shouldResolveFactoryReference {
 		links.jsxFragmentType = c.anyType
 		return links.jsxFragmentType
 	}
 	jsxFactorySymbol := c.getJsxNamespaceContainerForImplicitImport(node)
 	if jsxFactorySymbol == nil {
+		shouldModuleRefErr := c.compilerOptions.Jsx != core.JsxEmitPreserve && c.compilerOptions.Jsx != core.JsxEmitReactNative
 		flags := ast.SymbolFlagsValue
-		if c.compilerOptions.Jsx == core.JsxEmitPreserve || c.compilerOptions.Jsx == core.JsxEmitReactNative {
+		if !shouldModuleRefErr {
 			flags &= ^ast.SymbolFlagsEnum
 		}
 		jsxFactorySymbol = c.resolveName(node, jsxFragmentFactoryName, flags, diagnostics.Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found, true /*isUse*/, false /*excludeGlobals*/)
