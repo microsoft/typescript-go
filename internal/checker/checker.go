@@ -26930,7 +26930,7 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 	var jsxFactorySym *ast.Symbol
 	if !(ast.IsJsxOpeningFragment(node) && jsxFactoryNamespace == "null") {
 		flags := ast.SymbolFlagsValue
-		if c.compilerOptions.Jsx == core.JsxEmitPreserve {
+		if c.compilerOptions.Jsx == core.JsxEmitPreserve || c.compilerOptions.Jsx == core.JsxEmitReactNative {
 			flags &= ^ast.SymbolFlagsEnum
 		}
 		jsxFactorySym = c.resolveName(jsxFactoryLocation, jsxFactoryNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
@@ -26950,7 +26950,7 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 		localJsxNamespace := c.getLocalJsxNamespace(file)
 		if localJsxNamespace != "" {
 			flags := ast.SymbolFlagsValue
-			if c.compilerOptions.Jsx == core.JsxEmitPreserve {
+			if c.compilerOptions.Jsx == core.JsxEmitPreserve || c.compilerOptions.Jsx == core.JsxEmitReactNative {
 				flags &= ^ast.SymbolFlagsEnum
 			}
 			c.resolveName(jsxFactoryLocation, localJsxNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
