@@ -97,11 +97,13 @@ func isGrammarError(parent *ast.Node, child *ast.Node) bool {
 	}
 	if ast.IsPropertyAssignment(parent) {
 		pa := parent.AsPropertyAssignment()
-		return child == pa.PostfixToken || isGrammarErrorElement(&pa.Modifiers().NodeList, child, ast.IsModifierLike)
+		mods := pa.Modifiers()
+		return child == pa.PostfixToken || (mods != nil && isGrammarErrorElement(&mods.NodeList, child, ast.IsModifierLike))
 	}
 	if ast.IsShorthandPropertyAssignment(parent) {
 		sp := parent.AsShorthandPropertyAssignment()
-		return child == sp.EqualsToken || child == sp.PostfixToken || isGrammarErrorElement(&parent.Modifiers().NodeList, child, ast.IsModifierLike)
+		mods := sp.Modifiers()
+		return child == sp.EqualsToken || child == sp.PostfixToken || (mods != nil && isGrammarErrorElement(&mods.NodeList, child, ast.IsModifierLike))
 	}
 	if ast.IsMethodDeclaration(parent) {
 		return child == parent.AsMethodDeclaration().PostfixToken && child.Kind == ast.KindExclamationToken
@@ -116,7 +118,8 @@ func isGrammarError(parent *ast.Node, child *ast.Node) bool {
 		return child == parent.AsSetAccessorDeclaration().Type || isGrammarErrorElement(parent.AsSetAccessorDeclaration().TypeParameters, child, ast.IsTypeParameterDeclaration)
 	}
 	if ast.IsNamespaceExportDeclaration(parent) {
-		return isGrammarErrorElement(&parent.AsNamespaceExportDeclaration().Modifiers().NodeList, child, ast.IsModifierLike)
+		mods := parent.AsNamespaceExportDeclaration().Modifiers()
+		return mods != nil && isGrammarErrorElement(&mods.NodeList, child, ast.IsModifierLike)
 	}
 	return false
 }

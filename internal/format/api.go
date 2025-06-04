@@ -121,13 +121,15 @@ func FormatOnEnter(ctx context.Context, sourceFile *ast.SourceFile, position int
 	if line == 0 {
 		return nil
 	}
+	// get start position for the previous line
+	startPos := int(scanner.GetLineStarts(sourceFile)[line-1])
 	// After the enter key, the cursor is now at a new line. The new line may or may not contain non-whitespace characters.
 	// If the new line has only whitespaces, we won't want to format this line, because that would remove the indentation as
 	// trailing whitespaces. So the end of the formatting span should be the later one between:
 	//  1. the end of the previous line
 	//  2. the last non-whitespace character in the current line
 	endOfFormatSpan := scanner.GetEndLinePosition(sourceFile, line)
-	for endOfFormatSpan > 0 {
+	for endOfFormatSpan > startPos {
 		ch, s := utf8.DecodeRuneInString(sourceFile.Text()[endOfFormatSpan:])
 		if s == 0 || stringutil.IsWhiteSpaceSingleLine(ch) { // on multibyte character keep backing up
 			endOfFormatSpan--
@@ -136,9 +138,16 @@ func FormatOnEnter(ctx context.Context, sourceFile *ast.SourceFile, position int
 		break
 	}
 
+	// if the character at the end of the span is a line break, we shouldn't include it, because it indicates we don't want to
+	// touch the current line at all. Also, on some OSes the line break consists of two characters (\r\n), we should test if the
+	// previous character before the end of format span is line break character as well.
+	ch, _ := utf8.DecodeRuneInString(sourceFile.Text()[endOfFormatSpan:])
+	if stringutil.IsLineBreak(ch) {
+		endOfFormatSpan--
+	}
+
 	span := core.NewTextRange(
-		// get start position for the previous line
-		int(scanner.GetLineStarts(sourceFile)[line-1]),
+		startPos,
 		// end value is exclusive so add 1 to the result
 		endOfFormatSpan+1,
 	)

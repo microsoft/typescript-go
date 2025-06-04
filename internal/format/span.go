@@ -357,6 +357,8 @@ func (w *formatSpanWorker) getProcessNodeVisitor(node *ast.Node, indenter *dynam
 				// stop when formatting scanner advances past the beginning of the child
 				break
 			}
+
+			w.consumeTokenAndAdvanceScanner(tokenInfo, node, parentDynamicIndentation, node, false)
 		}
 
 		if !w.formattingScanner.isOnToken() || w.formattingScanner.getTokenFullStart() >= w.originalRange.End() {
@@ -477,10 +479,16 @@ func (w *formatSpanWorker) getProcessNodeVisitor(node *ast.Node, indenter *dynam
 	}
 
 	return ast.NewNodeVisitor(func(child *ast.Node) *ast.Node {
+		if child == nil {
+			return child
+		}
 		processChildNode(child, -1, node, indenter, nodeStartLine, undecoratedNodeStartLine, false, false)
 		return node
 	}, &ast.NodeFactory{}, ast.NodeVisitorHooks{
 		VisitNodes: func(nodes *ast.NodeList, v *ast.NodeVisitor) *ast.NodeList {
+			if nodes == nil {
+				return nodes
+			}
 			processChildNodes(nodes, node, nodeStartLine, indenter)
 			return nodes
 		},
@@ -709,6 +717,12 @@ func (w *formatSpanWorker) processRange(r *TextRangeWithKind, rangeStartLine int
 			lineAction = w.processPair(r, rangeStartLine, parent, w.previousRange, w.previousRangeStartLine, w.previousParent, contextNode, dynamicIndentation)
 		}
 	}
+
+	w.previousRange = r
+	w.previousRangeTriviaEnd = r.Loc.End()
+	w.previousParent = parent
+	w.previousRangeStartLine = rangeStartLine
+
 	return lineAction
 }
 
