@@ -105,10 +105,10 @@ const (
 
 // Node builder utility functions
 
-func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext) nodeBuilderImpl {
-	result := nodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e}
-	result.cloneBindingNameVisitor = ast.NewNodeVisitor(result.cloneBindingName, result.f, ast.NodeVisitorHooks{})
-	return result
+func newNodeBuilderImpl(ch *Checker, e *printer.EmitContext) *nodeBuilderImpl {
+	b := &nodeBuilderImpl{f: e.Factory.AsNodeFactory(), ch: ch, e: e}
+	b.cloneBindingNameVisitor = ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
+	return b
 }
 
 func (b *nodeBuilderImpl) saveRestoreFlags() func() {
