@@ -1408,6 +1408,9 @@ func (c *Checker) createNameResolverForSuggestion() *binder.NameResolver {
 		SymbolReferenced:            c.symbolReferenced,
 		SetRequiresScopeChangeCache: c.setRequiresScopeChangeCache,
 		GetRequiresScopeChangeCache: c.getRequiresScopeChangeCache,
+		OnPropertyWithInvalidInitializer: c.checkAndReportErrorForInvalidInitializer,
+		OnFailedToResolveSymbol:          c.onFailedToResolveSymbol,
+		OnSuccessfullyResolvedSymbol:     c.onSuccessfullyResolvedSymbol,
 	}
 }
 
