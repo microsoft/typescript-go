@@ -1488,12 +1488,12 @@ func (b *nodeBuilderImpl) parameterToParameterDeclarationName(parameterSymbol *a
 	}
 
 	name := parameterDeclaration.Name()
-	switch {
-	case ast.IsIdentifier(name):
+	switch name.Kind {
+	case ast.KindIdentifier:
 		cloned := b.f.DeepCloneNode(name)
 		b.e.SetEmitFlags(cloned, printer.EFNoAsciiEscaping)
 		return cloned
-	case ast.IsQualifiedName(name):
+	case ast.KindQualifiedName:
 		cloned := b.f.DeepCloneNode(name.AsQualifiedName().Right)
 		b.e.SetEmitFlags(cloned, printer.EFNoAsciiEscaping)
 		return cloned
