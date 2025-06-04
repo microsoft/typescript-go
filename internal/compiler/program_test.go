@@ -106,8 +106,10 @@ var esnextLibs = []string{
 	"lib.esnext.collection.d.ts",
 	"lib.esnext.intl.d.ts",
 	"lib.esnext.disposable.d.ts",
+	"lib.esnext.promise.d.ts",
 	"lib.esnext.decorators.d.ts",
 	"lib.esnext.iterator.d.ts",
+	"lib.esnext.float16.d.ts",
 	"lib.decorators.d.ts",
 	"lib.decorators.legacy.d.ts",
 	"lib.esnext.full.d.ts",
@@ -232,9 +234,13 @@ func TestProgram(t *testing.T) {
 			opts := core.CompilerOptions{Target: testCase.target}
 
 			program := NewProgram(ProgramOptions{
-				RootFiles: []string{"c:/dev/src/index.ts"},
-				Host:      NewCompilerHost(&opts, "c:/dev/src", fs, bundled.LibPath()),
-				Options:   &opts,
+				Config: &tsoptions.ParsedCommandLine{
+					ParsedConfig: &core.ParsedOptions{
+						FileNames:       []string{"c:/dev/src/index.ts"},
+						CompilerOptions: &opts,
+					},
+				},
+				Host: NewCompilerHost(&opts, "c:/dev/src", fs, bundled.LibPath()),
 			})
 
 			actualFiles := []string{}
@@ -265,9 +271,13 @@ func BenchmarkNewProgram(b *testing.B) {
 
 			opts := core.CompilerOptions{Target: testCase.target}
 			programOpts := ProgramOptions{
-				RootFiles: []string{"c:/dev/src/index.ts"},
-				Host:      NewCompilerHost(&opts, "c:/dev/src", fs, bundled.LibPath()),
-				Options:   &opts,
+				Config: &tsoptions.ParsedCommandLine{
+					ParsedConfig: &core.ParsedOptions{
+						FileNames:       []string{"c:/dev/src/index.ts"},
+						CompilerOptions: &opts,
+					},
+				},
+				Host: NewCompilerHost(&opts, "c:/dev/src", fs, bundled.LibPath()),
 			}
 
 			for b.Loop() {
@@ -290,8 +300,8 @@ func BenchmarkNewProgram(b *testing.B) {
 		assert.Equal(b, len(errors), 0, "Expected no errors in parsed command line")
 
 		opts := ProgramOptions{
-			Host:    host,
-			Options: parsed.CompilerOptions(),
+			Config: parsed,
+			Host:   host,
 		}
 
 		for b.Loop() {
