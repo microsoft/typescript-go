@@ -1486,8 +1486,48 @@ func (b *nodeBuilderImpl) parameterToParameterDeclarationName(parameterSymbol *a
 	if parameterDeclaration == nil || parameterDeclaration.Name() == nil {
 		return b.f.NewIdentifier(parameterSymbol.Name)
 	}
-	// !!! TODO - symbol tracking of computed names in cloned binding patterns, set singleline emit flags
-	return b.f.DeepCloneNode(parameterDeclaration.Name())
+
+	return b.cloneBindingName(parameterDeclaration.Name())
+}
+
+func (b *nodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
+	return b.elideInitializerAndSetEmitFlags(node)
+}
+
+func (b *nodeBuilderImpl) elideInitializerAndSetEmitFlags(node *ast.Node) *ast.Node {
+	if b.ctx.tracker != nil && ast.IsComputedPropertyName(node) && b.ch.isLateBindableName(node) {
+		b.trackComputedName(node.Expression(), b.ctx.enclosingDeclaration)
+	}
+
+	visited := b.visitEachChildWorker(node, b.elideInitializerAndSetEmitFlags)
+
+	if ast.IsBindingElement(visited) {
+		bindingElement := visited.AsBindingElement()
+		visited = b.f.UpdateBindingElement(
+			bindingElement,
+			bindingElement.DotDotDotToken,
+			bindingElement.PropertyName,
+			bindingElement.Name(),
+			nil, // remove initializer
+		)
+	}
+
+	if !ast.NodeIsSynthesized(visited) {
+		visited = b.f.DeepCloneNode(visited)
+	}
+
+	b.e.SetEmitFlags(visited, printer.EFSingleLine|printer.EFNoAsciiEscaping)
+	return visited
+}
+
+func (b *nodeBuilderImpl) visitEachChildWorker(node *ast.Node, cbNode func(*ast.Node) *ast.Node) *ast.Node {
+	if node == nil {
+		return nil
+	}
+
+	// Create a visitor that applies the callback to each child
+	visitor := ast.NewNodeVisitor(cbNode, b.f, ast.NodeVisitorHooks{})
+	return visitor.VisitEachChild(node)
 }
 
 func (b *nodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable *ast.SymbolTable) []*ast.Node {

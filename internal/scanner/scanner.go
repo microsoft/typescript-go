@@ -2090,9 +2090,6 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 	canConsumeStar := false
 	// Keep in sync with couldStartTrivia
 	for {
-		if pos >= textLen {
-			return pos
-		}
 		ch, size := utf8.DecodeRuneInString(text[pos:])
 		switch ch {
 		case '\r':
