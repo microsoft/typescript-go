@@ -482,6 +482,16 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
 				TriggerCharacters: &[]string{"(", ","},
 			},
+			DocumentFormattingProvider: &lsproto.BooleanOrDocumentFormattingOptions{
+				Boolean: ptrTo(true),
+			},
+			DocumentRangeFormattingProvider: &lsproto.BooleanOrDocumentRangeFormattingOptions{
+				Boolean: ptrTo(true),
+			},
+			DocumentOnTypeFormattingProvider: &lsproto.DocumentOnTypeFormattingOptions{
+				FirstTriggerCharacter: "{",
+				MoreTriggerCharacter:  &[]string{"}", ";", "\n"},
+			},
 		},
 	})
 }
