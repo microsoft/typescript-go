@@ -351,7 +351,7 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 				for line := range strings.SplitSeq(old, "\n") {
 					const (
 						relativePrefixNew = "==== "
-						relativePrefixOld = relativePrefixNew+"./"
+						relativePrefixOld = relativePrefixNew + "./"
 					)
 					if rest, ok := strings.CutPrefix(line, relativePrefixOld); ok {
 						line = relativePrefixNew + rest
