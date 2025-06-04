@@ -7,10 +7,7 @@ const verifyCompletionsListPath = path.join(__dirname, '../', "verify-completion
 const verifyFiles = fs.readFileSync(verifyCompletionsListPath, 'utf-8')
     .split('\n').map(line => line.trim())
     .filter(line => line.length > 0)
-    .map(line => {
-        line = line.replace('tests/cases/fourslash/server', '');
-        return line.replace('tests/cases/fourslash/', '');
-    });
+    .map(line => path.basename(line));
 const verifyFilesSet = new Set(verifyFiles);
 
 const unparsedFiles: string[] = [];
@@ -40,6 +37,7 @@ function parseTypeScriptFiles(folder: string): void {
 }
 
 function parseFileContent(filename: string, content: string): GoTest | undefined {
+    console.error(`Parsing file: ${filename}`);
     const sourceFile = ts.createSourceFile('temp.ts', content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
     const goTest: GoTest = {
@@ -50,10 +48,9 @@ function parseFileContent(filename: string, content: string): GoTest | undefined
     for (const statement of statements) {
         const result = parseFourslashStatement(statement);
         if (!result) {
-            console.error(`Unrecognized statement in file: ${statement.getText()}`);
             unparsedFiles.push(filename);
             return undefined;
-        } else if (typeof result == 'object') {
+        } else {
             goTest.commands.push(...result);
         }
     }
@@ -90,61 +87,84 @@ function getTestInput(content: string): string {
     return `\`${testInput.join('\n')}\``;
 }
 
-// !!! return a reason for the failure
-function parseFourslashStatement(statement: ts.Statement): Cmd[] | boolean {
+/**
+ * Parses a Strada fourslash statement and returns the corresponding Corsa commands.
+ * @returns an array of commands if the statement is a valid fourslash command, or `false` if the statement could not be parsed.
+ */
+function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
     if (ts.isVariableStatement(statement)) {
-        // !!! variable declarations (for ranges and markers) or function calls
-        return true;
+        // variable declarations (for ranges and markers), e.g. `const range = test.ranges()[0];`
+        return [];
     } else if (ts.isExpressionStatement(statement) && ts.isCallExpression(statement.expression)) {
         const callExpression = statement.expression;
         if (!ts.isPropertyAccessExpression(callExpression.expression)) {
-            return false;
+            console.error(`Expected property access expression, got ${callExpression.expression.getText()}`);
+            return undefined;
         }
         const namespace = callExpression.expression.expression;
         const func = callExpression.expression.name;
         if (!ts.isIdentifier(namespace) || !ts.isIdentifier(func)) {
-            return false;
+            console.error(`Expected identifiers for namespace and function, got ${namespace.getText()} and ${func.getText()}`);
+            return undefined;
         }
+        // `verify.completions(...)`
         if (namespace.text === 'verify' && func.text === 'completions') {
             return parseVerifyCompletionsArgs(callExpression.arguments);
         }
+        // `goTo.marker(...)`
         if (namespace.text === 'goTo' && func.text === 'marker') {
-            // !!! parse args
-            return true;
+            return parseGoToMarkerArgs(callExpression.arguments);
         }
-        // !!! baseline completions
+        // !!! other fourslash commands
     }
-    return false;
+    console.error(`Unrecognized fourslash statement: ${statement.getText()}`);
+    return undefined;
 }
 
 function getGoStringLiteral(text: string): string {
-    // if (text.includes('`')) {
-    //     return `"${text}"`;
-    // }
-    // return `\`${text}\``;
     return `${JSON.stringify(text)}`;
 }
 
-function parseVerifyCompletionsArgs(args: readonly ts.Expression[]): VerifyCompletionsCmd[] | false {
+function parseGoToMarkerArgs(args: readonly ts.Expression[]): GoToMarkerCmd[] | undefined {
+    if (args.length !== 1) {
+        console.error(`Expected exactly one argument in goTo.marker, got ${args.length}`);
+        return undefined;
+    }
+    const arg = args[0];
+    if (!ts.isStringLiteral(arg)) {
+        console.error(`Unrecognized argument in goTo.marker: ${arg.getText()}`);
+        return undefined;
+    }
+    return [{
+        kind: CommandKind.goToMarker,
+        marker: getGoStringLiteral(arg.text),
+    }];
+}
+
+function parseVerifyCompletionsArgs(args: readonly ts.Expression[]): VerifyCompletionsCmd[] | undefined {
     const cmds = [];
     for (const arg of args) {
         const result = parseVerifyCompletionArg(arg);
         if (!result) {
-            return false;
+            return undefined;
         }
         cmds.push(result);
     }
     return cmds;
 }
-function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | false {
+
+function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | undefined {
     let marker: string | undefined;
     let goArgs: VerifyCompletionsArgs | undefined;
     if (!ts.isObjectLiteralExpression(arg)) {
-        return false;
+        console.error(`Expected object literal expression in verify.completions, got ${arg.getText()}`);
+        return undefined;
     }
+    let isNewIdentifierLocation: true | undefined;
     for (const prop of arg.properties) {
         if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
-            return false;
+            console.error(`Expected property assignment with identifier name, got ${prop.getText()}`);
+            return undefined;
         }
         const propName = prop.name.text;
         const init = prop.initializer;
@@ -157,7 +177,8 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | fa
                     marker = "[]string{"
                     for (const elem of init.elements) {
                         if (!ts.isStringLiteral(elem)) {
-                            return false; // !!! parse marker arrays?
+                            console.error(`Expected string literal in marker array, got ${elem.getText()}`);
+                            return undefined; // !!! parse marker arrays?
                         }
                         marker += `${getGoStringLiteral(elem.text)}, `;
                     }
@@ -165,13 +186,15 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | fa
                 }
                 else if (ts.isObjectLiteralExpression(init)) {
                     // !!! parse marker objects?
-                    return false;
+                    console.error(`Unrecognized marker initializer: ${init.getText()}`);
+                    return undefined;
                 }
                 else if (init.getText() === 'test.markers()') {
                     marker = "f.Markers()";
                 }
                 else {
-                    return false;
+                    console.error(`Unrecognized marker initializer: ${init.getText()}`);
+                    return undefined;
                 }
                 break;
             case 'exact':
@@ -188,14 +211,14 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | fa
                     for (const elem of init.elements) {
                         const result = parseExpectedCompletionItem(elem);
                         if (!result) {
-                            return false;
+                            return undefined;
                         }
                         expected += result + ', ';
                     }
                 } else {
                     const result = parseExpectedCompletionItem(init);
                     if (!result) {
-                        return false;
+                        return undefined;
                     }
                     expected += result;
                 }
@@ -214,7 +237,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | fa
                 else if (ts.isArrayLiteralExpression(init)) {
                     for (const elem of init.elements) {
                         if (!ts.isStringLiteral(elem)) {
-                            return false; // Shouldn't happen
+                            return undefined; // Shouldn't happen
                         }
                         excludes += `${getGoStringLiteral(elem.text)}, `;
                     }
@@ -223,40 +246,46 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | fa
                 (goArgs ??= {}).excludes = excludes;
                 break;
             case 'isNewIdentifierLocation':
-                break; // !!! parse this into item defaults/commit characters
+                if (init.kind === ts.SyntaxKind.TrueKeyword) {
+                    isNewIdentifierLocation = true;
+                }
+                break;
             case 'preferences':
             case 'triggerCharacter':
             case 'defaultCommitCharacters':
-                break; // !!! parse once they're supported
+                break; // !!! parse once they're supported in fourslash
             case 'optionalReplacementSpan':
             case 'isGlobalCompletion':
-                break; // Ignored
+                break; // Ignored, unused
             default:
-                return false;
+                console.error(`Unrecognized expected completion item: ${init.parent.getText()}`);
+                return undefined;
         }
     }
     return {
         kind: CommandKind.verifyCompletions,
         marker: marker ? marker : "nil",
         args: goArgs,
+        isNewIdentifierLocation: isNewIdentifierLocation,
     };
 }
 
-function parseExpectedCompletionItem(expr: ts.Expression): string | false {
+function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
     if (ts.isStringLiteral(expr)) {
         return getGoStringLiteral(expr.text);
     }
     if (ts.isObjectLiteralExpression(expr)) {
-        let isDeprecated = false;
+        let isDeprecated = false; // !!!
         let isOptional = false;
-        let extensions: string[] = [];
+        let extensions: string[] = []; // !!!
         let item = "&lsproto.CompletionItem{";
         let name: string | undefined;
         let insertText: string | undefined;
         let filterText: string | undefined;
         for (const prop of expr.properties) {
             if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) {
-                return false;
+                console.error(`Expected property assignment with identifier name for completion item, got ${prop.getText()}`);
+                return undefined;
             }
             const propName = prop.name.text;
             const init = prop.initializer;
@@ -265,13 +294,14 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | false {
                     if (ts.isStringLiteral(init)) {
                         name = init.text;
                     } else {
-                        return false;
+                        console.error(`Expected string literal for completion item name, got ${init.getText()}`);
+                        return undefined;
                     }
                     break;
                 case 'sortText':
                     const result = parseSortText(init);
                     if (!result) {
-                        return false;
+                        return undefined;
                     }
                     item += `SortText: fourslash.PtrTo(string(${result})), `;
                     break;
@@ -279,14 +309,16 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | false {
                     if (ts.isStringLiteral(init)) {
                         insertText = init.text;
                     } else {
-                        return false;
+                        console.error(`Expected string literal for insertText, got ${init.getText()}`);
+                        return undefined;
                     }
                     break;
                 case 'filterText':
                     if (ts.isStringLiteral(init)) {
                         filterText = init.text;
                     } else {
-                        return false;
+                        console.error(`Expected string literal for filterText, got ${init.getText()}`);
+                        return undefined;
                     }
                     break;
                 case 'isRecommended':
@@ -297,27 +329,28 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | false {
                 case 'kind': 
                     const kind = parseKind(init);
                     if (!kind) {
-                        return false;
+                        return undefined;
                     }
                     item += `Kind: fourslash.PtrTo(${kind}), `;
                     break;
                 case 'kindModifiers':
                     const modifiers = parseKindModifiers(init);
                     if (!modifiers) {
-                        return false;
+                        return undefined;
                     }
                     ({ isDeprecated, isOptional, extensions } = modifiers);
                     break;
                 case 'commitCharacters':
                 case 'replacementSpan':
-                    return false; // !!! support these later
+                    // !!! support these later
                     break;
                 default:
-                    return false; // Unsupported property
+                    console.error(`Unrecognized property in expected completion item: ${propName}`);
+                    return undefined; // Unsupported property
             }
         }
         if (!name) {
-            return false; // Shouldn't happen
+            return undefined; // Shouldn't happen
         }
         if (isOptional) {
             insertText ??= name;
@@ -330,12 +363,14 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | false {
         item += "}";
         return item;
     }
-    return false; // Unsupported expression type
+    console.error(`Expected string literal or object literal for expected completion item, got ${expr.getText()}`);
+    return undefined; // Unsupported expression type
 }
 
-function parseKind(expr: ts.Expression): string | false {
+function parseKind(expr: ts.Expression): string | undefined {
     if (!ts.isStringLiteral(expr)) {
-        return false;
+        console.error(`Expected string literal for kind, got ${expr.getText()}`);
+        return undefined;
     }
     switch (expr.text) {
         case "primitive type":
@@ -393,9 +428,10 @@ const fileKindModifiers = new Set([".d.ts",
     ".json",
 ]);
 
-function parseKindModifiers(expr: ts.Expression): { isOptional: boolean, isDeprecated: boolean, extensions: string[] } | false {
+function parseKindModifiers(expr: ts.Expression): { isOptional: boolean, isDeprecated: boolean, extensions: string[] } | undefined {
     if (!ts.isStringLiteral(expr)) {
-        return false;
+        console.error(`Expected string literal for kind modifiers, got ${expr.getText()}`);
+        return undefined;
     }
     let isOptional = false;
     let isDeprecated = false;
@@ -422,7 +458,7 @@ function parseKindModifiers(expr: ts.Expression): { isOptional: boolean, isDepre
     };
 }
 
-function parseSortText(expr: ts.Expression): string | false {
+function parseSortText(expr: ts.Expression): string | undefined {
     const text = expr.getText();
     switch (text) {
         case 'completion.SortText.LocalDeclarationPriority':
@@ -444,7 +480,8 @@ function parseSortText(expr: ts.Expression): string | false {
         case 'completion.SortText.JavaScriptIdentifiers':
             return 'ls.SortTextJavaScriptIdentifiers';
         default:
-            return false; // !!! support deprecated/obj literal prop/etc
+            console.error(`Unrecognized sort text: ${text}`);
+            return undefined; // !!! support deprecated/obj literal prop/etc
     }
 }
 
@@ -457,6 +494,7 @@ enum CommandKind {
 interface VerifyCompletionsCmd {
     kind: CommandKind.verifyCompletions;
     marker: string;
+    isNewIdentifierLocation?: true;
     args?: VerifyCompletionsArgs;
 }
 
@@ -480,7 +518,7 @@ function generateVerifyCompletions({ marker, args }: VerifyCompletionsCmd): stri
         const excludes = args.excludes ? `Excludes: ${args.excludes},` : '';
         const exact = args.exact ? `Exact: ${args.exact},` : '';
         // !!! isIncomplete
-        // !!! itemDefaults/commitCharacters
+        // !!! itemDefaults/commitCharacters from `isNewIdentifierLocation`
         expectedList = `&fourslash.VerifyCompletionsExpectedList{
     IsIncomplete: false,
     ItemDefaults: &lsproto.CompletionItemDefaults{
@@ -522,6 +560,7 @@ function generateGoTest(test: GoTest): string {
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join('\n');
     const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];
+    // Only include these imports if the commands use them to avoid unused import errors.
     if (commands.includes('ls.')) {
         imports.push(`"github.com/microsoft/typescript-go/internal/ls"`);
     }
