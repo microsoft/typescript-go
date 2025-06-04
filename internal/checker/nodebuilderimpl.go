@@ -1507,7 +1507,8 @@ func (b *nodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
 		b.trackComputedName(node.Expression(), b.ctx.enclosingDeclaration)
 	}
 
-	visited := b.visitEachChildWorker(node, b.cloneBindingName)
+	visitor := ast.NewNodeVisitor(b.cloneBindingName, b.f, ast.NodeVisitorHooks{})
+	visited := visitor.VisitEachChild(node)
 
 	if ast.IsBindingElement(visited) {
 		bindingElement := visited.AsBindingElement()
@@ -1526,16 +1527,6 @@ func (b *nodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
 
 	b.e.SetEmitFlags(visited, printer.EFSingleLine|printer.EFNoAsciiEscaping)
 	return visited
-}
-
-func (b *nodeBuilderImpl) visitEachChildWorker(node *ast.Node, cbNode func(*ast.Node) *ast.Node) *ast.Node {
-	if node == nil {
-		return nil
-	}
-
-	// Create a visitor that applies the callback to each child
-	visitor := ast.NewNodeVisitor(cbNode, b.f, ast.NodeVisitorHooks{})
-	return visitor.VisitEachChild(node)
 }
 
 func (b *nodeBuilderImpl) symbolTableToDeclarationStatements(symbolTable *ast.SymbolTable) []*ast.Node {
