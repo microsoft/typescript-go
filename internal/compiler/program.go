@@ -30,7 +30,7 @@ type ProgramOptions struct {
 }
 
 type Program struct {
-	programOptions   ProgramOptions
+	opts             ProgramOptions
 	nodeModules      map[string]*ast.SourceFile
 	checkerPool      CheckerPool
 	currentDirectory string
@@ -164,15 +164,15 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 	return nil
 }
 
-func NewProgram(options ProgramOptions) *Program {
+func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{
-		programOptions: options,
+		opts: opts,
 	}
-	compilerOptions := p.programOptions.Config.CompilerOptions()
+	compilerOptions := p.opts.Config.CompilerOptions()
 	if compilerOptions == nil {
 		panic("compiler options required")
 	}
-	if p.programOptions.Host == nil {
+	if p.opts.Host == nil {
 		panic("host required")
 	}
 	p.initCheckerPool()
@@ -183,7 +183,7 @@ func NewProgram(options ProgramOptions) *Program {
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
 	// performance.mark("beforeProgram");
 
-	p.resolver = module.NewResolver(p.Host(), compilerOptions, p.programOptions.TypingsLocation, p.programOptions.ProjectName)
+	p.resolver = module.NewResolver(p.Host(), compilerOptions, p.opts.TypingsLocation, p.opts.ProjectName)
 
 	var libs []string
 
@@ -202,7 +202,7 @@ func NewProgram(options ProgramOptions) *Program {
 		}
 	}
 
-	p.processedFiles = processAllProgramFiles(p.programOptions, p.resolver, libs, p.singleThreaded())
+	p.processedFiles = processAllProgramFiles(p.opts, p.resolver, libs, p.singleThreaded())
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
@@ -224,10 +224,10 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	oldFile := p.filesByPath[changedFilePath]
 	newFile := p.Host().GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
 	if !canReplaceFileInProgram(oldFile, newFile) {
-		return NewProgram(p.programOptions), false
+		return NewProgram(p.opts), false
 	}
 	result := &Program{
-		programOptions:              p.programOptions,
+		opts:                        p.opts,
 		nodeModules:                 p.nodeModules,
 		currentDirectory:            p.currentDirectory,
 		resolver:                    p.resolver,
@@ -248,8 +248,8 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 }
 
 func (p *Program) initCheckerPool() {
-	if p.programOptions.CreateCheckerPool != nil {
-		p.checkerPool = p.programOptions.CreateCheckerPool(p)
+	if p.opts.CreateCheckerPool != nil {
+		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
 		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
 	}
@@ -290,14 +290,14 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 }
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
-func (p *Program) Options() *core.CompilerOptions { return p.programOptions.Config.CompilerOptions() }
-func (p *Program) Host() CompilerHost             { return p.programOptions.Host }
+func (p *Program) Options() *core.CompilerOptions { return p.opts.Config.CompilerOptions() }
+func (p *Program) Host() CompilerHost             { return p.opts.Host }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
-	return slices.Clip(p.programOptions.Config.GetConfigFileParsingDiagnostics())
+	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
 
 func (p *Program) singleThreaded() bool {
-	return p.programOptions.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
+	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
 func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingCompilerOptions {

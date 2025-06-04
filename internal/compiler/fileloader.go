@@ -18,7 +18,7 @@ import (
 )
 
 type fileLoader struct {
-	programOptions      ProgramOptions
+	opts                ProgramOptions
 	resolver            *module.Resolver
 	defaultLibraryPath  string
 	comparePathsOptions tspath.ComparePathsOptions
@@ -50,21 +50,21 @@ type jsxRuntimeImportSpecifier struct {
 }
 
 func processAllProgramFiles(
-	programOptions ProgramOptions,
+	opts ProgramOptions,
 	resolver *module.Resolver,
 	libs []string,
 	singleThreaded bool,
 ) processedFiles {
-	compilerOptions := programOptions.Config.CompilerOptions()
-	rootFiles := programOptions.Config.FileNames()
+	compilerOptions := opts.Config.CompilerOptions()
+	rootFiles := opts.Config.FileNames()
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
 	loader := fileLoader{
-		programOptions:     programOptions,
+		opts:               opts,
 		resolver:           resolver,
-		defaultLibraryPath: tspath.GetNormalizedAbsolutePath(programOptions.Host.DefaultLibraryPath(), programOptions.Host.GetCurrentDirectory()),
+		defaultLibraryPath: tspath.GetNormalizedAbsolutePath(opts.Host.DefaultLibraryPath(), opts.Host.GetCurrentDirectory()),
 		comparePathsOptions: tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: programOptions.Host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          programOptions.Host.GetCurrentDirectory(),
+			UseCaseSensitiveFileNames: opts.Host.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          opts.Host.GetCurrentDirectory(),
 		},
 		wg:                  core.NewWorkGroup(singleThreaded),
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(libs)),
@@ -133,8 +133,8 @@ func processAllProgramFiles(
 
 func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	for _, fileName := range files {
-		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.programOptions.Host.GetCurrentDirectory())
-		if core.Tristate.IsTrue(p.programOptions.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
+		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
+		if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
 			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib})
 		}
 	}
@@ -142,15 +142,15 @@ func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 
 func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 	var containingDirectory string
-	compilerOptions := p.programOptions.Config.CompilerOptions()
+	compilerOptions := p.opts.Config.CompilerOptions()
 	if compilerOptions.ConfigFilePath != "" {
 		containingDirectory = tspath.GetDirectoryPath(compilerOptions.ConfigFilePath)
 	} else {
-		containingDirectory = p.programOptions.Host.GetCurrentDirectory()
+		containingDirectory = p.opts.Host.GetCurrentDirectory()
 	}
 	containingFileName := tspath.CombinePaths(containingDirectory, module.InferredTypesContainingFile)
 
-	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(compilerOptions, p.programOptions.Host)
+	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(compilerOptions, p.opts.Host)
 	for _, name := range automaticTypeDirectiveNames {
 		resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, core.ModuleKindNodeNext, nil)
 		if resolved.IsResolved() {
@@ -261,7 +261,7 @@ func (t *parseTask) start(loader *fileLoader) {
 			t.addSubTask(resolvedPath, false)
 		}
 
-		compilerOptions := loader.programOptions.Config.CompilerOptions()
+		compilerOptions := loader.opts.Config.CompilerOptions()
 		for _, ref := range file.TypeReferenceDirectives {
 			resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, t.metadata, compilerOptions)
 			resolved := loader.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), resolutionMode, nil)
@@ -311,8 +311,8 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) *ast.SourceFileMeta
 }
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
-	path := tspath.ToPath(fileName, p.programOptions.Host.GetCurrentDirectory(), p.programOptions.Host.FS().UseCaseSensitiveFileNames())
-	sourceFile := p.programOptions.Host.GetSourceFile(fileName, path, p.programOptions.Config.CompilerOptions().GetEmitScriptTarget())
+	path := tspath.ToPath(fileName, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
+	sourceFile := p.opts.Host.GetSourceFile(fileName, path, p.opts.Config.CompilerOptions().GetEmitScriptTarget())
 	return sourceFile
 }
 
@@ -351,7 +351,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 	isJavaScriptFile := ast.IsSourceFileJS(file)
 	isExternalModuleFile := ast.IsExternalModule(file)
 
-	compilerOptions := p.programOptions.Config.CompilerOptions()
+	compilerOptions := p.opts.Config.CompilerOptions()
 	if isJavaScriptFile || (!file.IsDeclarationFile && (compilerOptions.GetIsolatedModules() || isExternalModuleFile)) {
 		if compilerOptions.ImportHelpers.IsTrue() {
 			specifier := p.createSyntheticImport(externalHelpersModuleNameText, file)
@@ -428,7 +428,7 @@ func (p *fileLoader) resolveModuleNames(entries []*ast.Node, file *ast.SourceFil
 		if moduleName == "" {
 			continue
 		}
-		resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), getModeForUsageLocation(file, meta, entry, p.programOptions.Config.CompilerOptions()), nil)
+		resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), getModeForUsageLocation(file, meta, entry, p.opts.Config.CompilerOptions()), nil)
 		resolvedModules = append(resolvedModules, &resolution{node: entry, resolvedModule: resolvedModule})
 	}
 
@@ -455,7 +455,7 @@ type resolution struct {
 
 func (p *fileLoader) getCompilerOptionsForFile(file *ast.SourceFile) *core.CompilerOptions {
 	// !!! return getRedirectReferenceForResolution(file)?.commandLine.options || options;
-	return p.programOptions.Config.CompilerOptions()
+	return p.opts.Config.CompilerOptions()
 }
 
 func getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, file *ast.SourceFile, meta *ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
