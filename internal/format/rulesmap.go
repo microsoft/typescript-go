@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/core"
 )
 
 func getRules(context *formattingContext) []*ruleImpl {
@@ -13,9 +12,16 @@ func getRules(context *formattingContext) []*ruleImpl {
 	if len(bucket) > 0 {
 		var rules []*ruleImpl
 		ruleActionMask := ruleActionNone
+	outer:
 		for _, rule := range bucket {
 			acceptRuleActions := ^getRuleActionExclusion(ruleActionMask)
-			if rule.Action()&acceptRuleActions != 0 && core.Every(rule.Context(), func(cb func(ctx *formattingContext) bool) bool { return cb(context) }) {
+			if rule.Action()&acceptRuleActions != 0 {
+				preds := rule.Context()
+				for _, p := range preds {
+					if !p(context) {
+						continue outer
+					}
+				}
 				rules = append(rules, rule)
 				ruleActionMask |= rule.Action()
 			}
