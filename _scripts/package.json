@@ -1,0 +1,11 @@
+{
+  "name": "scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "npx tsc -p . && node dist/convertCompletions.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
