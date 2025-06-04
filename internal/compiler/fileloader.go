@@ -54,17 +54,16 @@ type jsxRuntimeImportSpecifier struct {
 func processAllProgramFiles(
 	host CompilerHost,
 	programOptions ProgramOptions,
-	compilerOptions *core.CompilerOptions,
 	resolver *module.Resolver,
-	rootFiles []string,
 	libs []string,
 	singleThreaded bool,
 ) processedFiles {
+	compilerOptions := programOptions.Config.CompilerOptions()
+	rootFiles := programOptions.Config.FileNames()
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
 	loader := fileLoader{
 		host:               host,
 		programOptions:     programOptions,
-		compilerOptions:    compilerOptions,
 		resolver:           resolver,
 		defaultLibraryPath: tspath.GetNormalizedAbsolutePath(host.DefaultLibraryPath(), host.GetCurrentDirectory()),
 		comparePathsOptions: tspath.ComparePathsOptions{
