@@ -539,10 +539,11 @@ func (l *LanguageService) getReferencedSymbolsForNode(position int, node *ast.No
 			if isModuleSpecifierLike(node) {
 				// !!! fileIncludeReasons := program.GetFileIncludeReasons()
 				if referencedFile := program.GetResolvedModuleFromModuleSpecifier(node, nil /*sourceFile*/); referencedFile != nil {
-					return []*SymbolAndEntries{{
-						definition: &Definition{Kind: definitionKindString, node: node},
-						references: getReferencesForNonModule(referencedFile, program /*fileIncludeReasons,*/),
-					}}
+					// !!! not implemented 
+					// return []*SymbolAndEntries{{
+					// 	definition: &Definition{Kind: definitionKindString, node: node},
+					// 	references: getReferencesForNonModule(referencedFile, program /*fileIncludeReasons,*/),
+					// }}
 				}
 				// Fall through to string literal references. This is not very likely to return
 				// anything useful, but I guess it's better than nothing, and there's an existing
@@ -904,8 +905,8 @@ func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *c
 		return nil
 	}
 	if resolution := program.GetResolvedModuleFromModuleSpecifier(node, sourceFile); resolution != nil {
-		verifiedFileName := resolution.FileName()
-		fileName := verifiedFileName
+		verifiedFileName := resolution.ResolvedFileName
+		fileName := resolution.ResolvedFileName
 		if fileName == "" {
 			fileName = tspath.ResolvePath(tspath.GetDirectoryPath(sourceFile.FileName()), node.Text())
 		}
