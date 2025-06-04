@@ -701,6 +701,7 @@ type Checker struct {
 	permissiveMapper                           *TypeMapper
 	emptyObjectType                            *Type
 	emptyJsxObjectType                         *Type
+	emptyFreshJsxObjectType                    *Type
 	emptyTypeLiteralType                       *Type
 	unknownEmptyObjectType                     *Type
 	unknownUnionType                           *Type
@@ -967,6 +968,7 @@ func NewChecker(program Program) *Checker {
 	c.permissiveMapper = newFunctionTypeMapper(c.permissiveMapperWorker)
 	c.emptyObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.emptyJsxObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
+	c.emptyFreshJsxObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.emptyTypeLiteralType = c.newAnonymousType(c.newSymbol(ast.SymbolFlagsTypeLiteral, ast.InternalSymbolNameType), nil, nil, nil, nil)
 	c.unknownEmptyObjectType = c.newAnonymousType(nil /*symbol*/, nil, nil, nil, nil)
 	c.unknownUnionType = c.createUnknownUnionType()
@@ -8046,7 +8048,7 @@ func (c *Checker) resolveSignature(node *ast.Node, candidatesOutArray *[]*Signat
 		return c.resolveTaggedTemplateExpression(node, candidatesOutArray, checkMode)
 	case ast.KindDecorator:
 		return c.resolveDecorator(node, candidatesOutArray, checkMode)
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
+	case ast.KindJsxOpeningFragment, ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
 		return c.resolveJsxOpeningLikeElement(node, candidatesOutArray, checkMode)
 	case ast.KindBinaryExpression:
 		return c.resolveInstanceofExpression(node, candidatesOutArray, checkMode)
@@ -8424,7 +8426,7 @@ func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidate
 	reportErrors := !c.isInferencePartiallyBlocked && candidatesOutArray == nil
 	var s CallState
 	s.node = node
-	if !isDecorator && !isInstanceof && !isSuperCall(node) {
+	if !isDecorator && !isInstanceof && !isSuperCall(node) && !ast.IsJsxOpeningFragment(node) {
 		s.typeArguments = node.TypeArguments()
 		// We already perform checking on the type arguments on the class declaration itself.
 		if isTaggedTemplate || isJsxOpeningOrSelfClosingElement || node.Expression().Kind != ast.KindSuperKeyword {
@@ -8518,7 +8520,7 @@ func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidate
 		if headMessage == nil && isInstanceof {
 			headMessage = diagnostics.The_left_hand_side_of_an_instanceof_expression_must_be_assignable_to_the_first_argument_of_the_right_hand_side_s_Symbol_hasInstance_method
 		}
-		c.reportCallResolutionErrors(&s, signatures, headMessage)
+		c.reportCallResolutionErrors(node, &s, signatures, headMessage)
 	}
 	return result
 }
@@ -8700,6 +8702,9 @@ func (c *Checker) getImplementationSignature(signature *Signature) *Signature {
 }
 
 func (c *Checker) hasCorrectArity(node *ast.Node, args []*ast.Node, signature *Signature, signatureHelpTrailingComma bool) bool {
+	if ast.IsJsxOpeningFragment(node) {
+		return true
+	}
 	var argCount int
 	callIsIncomplete := false
 	// In incomplete call we want to be lenient when we have too few arguments
@@ -8845,8 +8850,8 @@ func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*
 }
 
 func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signature *Signature, relation *Relation, checkMode CheckMode, reportErrors bool, inferenceContext *InferenceContext, diagnosticOutput *[]*ast.Diagnostic) bool {
-	if ast.IsJsxOpeningLikeElement(node) {
-		return c.checkApplicableSignatureForJsxOpeningLikeElement(node, signature, relation, checkMode, reportErrors, diagnosticOutput)
+	if ast.IsJsxCallLike(node) {
+		return c.checkApplicableSignatureForJsxCallLikeElement(node, signature, relation, checkMode, reportErrors, diagnosticOutput)
 	}
 	thisType := c.getThisTypeOfSignature(signature)
 	if thisType != nil && thisType != c.voidType && !(ast.IsNewExpression(node) || ast.IsCallExpression(node) && isSuperProperty(node.Expression())) {
@@ -9240,7 +9245,7 @@ func (c *Checker) tryGetRestTypeOfSignature(signature *Signature) *Type {
 	return c.getIndexTypeOfType(restType, c.numberType)
 }
 
-func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signature, headMessage *diagnostics.Message) {
+func (c *Checker) reportCallResolutionErrors(node *ast.Node, s *CallState, signatures []*Signature, headMessage *diagnostics.Message) {
 	switch {
 	case len(s.candidatesForArgumentError) != 0:
 		last := s.candidatesForArgumentError[len(s.candidatesForArgumentError)-1]
@@ -9264,7 +9269,7 @@ func (c *Checker) reportCallResolutionErrors(s *CallState, signatures []*Signatu
 		c.diagnostics.Add(c.getArgumentArityError(s.node, []*Signature{s.candidateForArgumentArityError}, s.args, headMessage))
 	case s.candidateForTypeArgumentError != nil:
 		c.checkTypeArguments(s.candidateForTypeArgumentError, s.node.TypeArguments(), true /*reportErrors*/, headMessage)
-	default:
+	case !ast.IsJsxOpeningFragment(node):
 		signaturesWithCorrectTypeArgumentArity := core.Filter(signatures, func(sig *Signature) bool {
 			return c.hasCorrectTypeArgumentArity(sig, s.typeArguments)
 		})
@@ -28199,6 +28204,9 @@ func (c *Checker) getContextualImportAttributeType(node *ast.Node) *Type {
 // Returns the effective arguments for an expression that works like a function invocation.
 func (c *Checker) getEffectiveCallArguments(node *ast.Node) []*ast.Node {
 	switch {
+	case ast.IsJsxOpeningFragment(node):
+		// This attributes Type does not include a children property yet, the same way a fragment created with <React.Fragment> does not at this stage
+		return []*ast.Node{c.createSyntheticExpression(node, c.emptyFreshJsxObjectType, false, nil)}
 	case ast.IsTaggedTemplateExpression(node):
 		template := node.AsTaggedTemplateExpression().Template
 		firstArg := c.createSyntheticExpression(template, c.getGlobalTemplateStringsArrayType(), false, nil)
