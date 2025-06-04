@@ -35,8 +35,13 @@ func WithFormatCodeSettings(ctx context.Context, options *FormatCodeSettings, ne
 	return ctx
 }
 
-func getNewLineOrDefaultFromContext(ctx context.Context) string { // TODO: Move into broader LS - more than just the formatter uses the newline editor setting/host new line
+func GetFormatCodeSettingsFromContext(ctx context.Context) *FormatCodeSettings {
 	opt := ctx.Value(formatOptionsKey).(*FormatCodeSettings)
+	return opt
+}
+
+func GetNewLineOrDefaultFromContext(ctx context.Context) string { // TODO: Move into broader LS - more than just the formatter uses the newline editor setting/host new line
+	opt := GetFormatCodeSettingsFromContext(ctx)
 	if opt != nil && len(opt.NewLineCharacter) > 0 {
 		return opt.NewLineCharacter
 	}
@@ -50,7 +55,7 @@ func getNewLineOrDefaultFromContext(ctx context.Context) string { // TODO: Move 
 func FormatSpan(ctx context.Context, span core.TextRange, file *ast.SourceFile, kind FormatRequestKind) []core.TextChange {
 	// find the smallest node that fully wraps the range and compute the initial indentation for the node
 	enclosingNode := findEnclosingNode(span, file)
-	opts := ctx.Value(formatOptionsKey).(*FormatCodeSettings)
+	opts := GetFormatCodeSettingsFromContext(ctx)
 
 	return newFormattingScanner(
 		file.Text(),

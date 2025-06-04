@@ -210,7 +210,7 @@ func getNonDecoratorTokenPosOfNode(node *ast.Node, file *ast.SourceFile) int {
 func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 	w.formattingScanner = s
 	w.indentationOnLastIndentedLine = -1
-	opt := w.ctx.Value(formatOptionsKey).(*FormatCodeSettings)
+	opt := GetFormatCodeSettingsFromContext(w.ctx)
 	w.formattingContext = NewFormattingContext(w.sourceFile, w.requestKind, opt)
 	// formatting context is used by rules provider
 
@@ -671,7 +671,7 @@ func (w *formatSpanWorker) applyRuleEdits(rule *ruleImpl, previousRange *TextRan
 		// edit should not be applied if we have one line feed between elements
 		lineDelta := currentStartLine - previousStartLine
 		if lineDelta != 1 {
-			w.recordReplace(previousRange.Loc.End(), currentRange.Loc.Pos()-previousRange.Loc.End(), getNewLineOrDefaultFromContext(w.ctx))
+			w.recordReplace(previousRange.Loc.End(), currentRange.Loc.Pos()-previousRange.Loc.End(), GetNewLineOrDefaultFromContext(w.ctx))
 			if onLaterLine {
 				return LineActionNone
 			}
