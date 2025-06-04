@@ -12,7 +12,7 @@ import (
 func toFormatCodeSettings(opt *lsproto.FormattingOptions) *format.FormatCodeSettings {
 	initial := format.GetDefaultFormatCodeSettings("\n")
 	initial.TabSize = int(opt.TabSize)
-	initial.BaseIndentSize = int(opt.TabSize)
+	initial.IndentSize = int(opt.TabSize)
 	initial.ConvertTabsToSpaces = opt.InsertSpaces
 	if opt.TrimTrailingWhitespace != nil {
 		initial.TrimTrailingWhitespace = *opt.TrimTrailingWhitespace
