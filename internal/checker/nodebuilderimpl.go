@@ -1503,7 +1503,7 @@ func (b *nodeBuilderImpl) parameterToParameterDeclarationName(parameterSymbol *a
 }
 
 func (b *nodeBuilderImpl) cloneBindingName(node *ast.Node) *ast.Node {
-	if b.ctx.tracker != nil && ast.IsComputedPropertyName(node) && b.ch.isLateBindableName(node) {
+	if ast.IsComputedPropertyName(node) && b.ch.isLateBindableName(node) {
 		b.trackComputedName(node.Expression(), b.ctx.enclosingDeclaration)
 	}
 
