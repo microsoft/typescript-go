@@ -92,7 +92,7 @@ function getTestInput(content: string): string {
                 newLine += parts[i];
             }
             testInput.push(newLine);
-        } else if (line.startsWith('// @')) {
+        } else if (line.startsWith('// @') || line.startsWith('//@')) {
             testInput.push(line);
         }
         // !!! preserve non-input comments?
