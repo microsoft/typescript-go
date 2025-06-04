@@ -31,9 +31,7 @@ type ProgramOptions struct {
 }
 
 type Program struct {
-	host             CompilerHost
-	programOptions   ProgramOptions
-	compilerOptions  *core.CompilerOptions
+	opts             ProgramOptions
 	nodeModules      map[string]*ast.SourceFile
 	checkerPool      CheckerPool
 	currentDirectory string
@@ -70,12 +68,12 @@ type Program struct {
 
 // FileExists implements checker.Program.
 func (p *Program) FileExists(path string) bool {
-	return p.host.FS().FileExists(path)
+	return p.Host().FS().FileExists(path)
 }
 
 // GetCurrentDirectory implements checker.Program.
 func (p *Program) GetCurrentDirectory() string {
-	return p.host.GetCurrentDirectory()
+	return p.Host().GetCurrentDirectory()
 }
 
 // GetGlobalTypingsCacheLocation implements checker.Program.
@@ -118,7 +116,7 @@ func (p *Program) IsSourceOfProjectReferenceRedirect(path string) bool {
 
 // UseCaseSensitiveFileNames implements checker.Program.
 func (p *Program) UseCaseSensitiveFileNames() bool {
-	return p.host.FS().UseCaseSensitiveFileNames()
+	return p.Host().FS().UseCaseSensitiveFileNames()
 }
 
 var _ checker.Program = (*Program)(nil)
@@ -135,7 +133,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 	allowNonTsExtensions := p.Options().AllowNonTsExtensions.IsTrue()
 	if tspath.HasExtension(fileName) {
 		if !allowNonTsExtensions {
-			canonicalFileName := tspath.GetCanonicalFileName(fileName, p.host.FS().UseCaseSensitiveFileNames())
+			canonicalFileName := tspath.GetCanonicalFileName(fileName, p.UseCaseSensitiveFileNames())
 			supported := false
 			for _, group := range supportedExtensions {
 				if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
@@ -167,15 +165,15 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 	return nil
 }
 
-func NewProgram(options ProgramOptions) *Program {
-	p := &Program{}
-	p.programOptions = options
-	p.compilerOptions = options.Config.CompilerOptions()
-	if p.compilerOptions == nil {
+func NewProgram(opts ProgramOptions) *Program {
+	p := &Program{
+		opts: opts,
+	}
+	compilerOptions := p.opts.Config.CompilerOptions()
+	if compilerOptions == nil {
 		panic("compiler options required")
 	}
-	p.host = options.Host
-	if p.host == nil {
+	if p.opts.Host == nil {
 		panic("host required")
 	}
 	p.initCheckerPool()
@@ -186,26 +184,26 @@ func NewProgram(options ProgramOptions) *Program {
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
 	// performance.mark("beforeProgram");
 
-	p.resolver = module.NewResolver(p.host, p.compilerOptions, p.programOptions.TypingsLocation, p.programOptions.ProjectName)
+	p.resolver = module.NewResolver(p.Host(), compilerOptions, p.opts.TypingsLocation, p.opts.ProjectName)
 
 	var libs []string
 
-	if p.compilerOptions.NoLib != core.TSTrue {
-		if p.compilerOptions.Lib == nil {
-			name := tsoptions.GetDefaultLibFileName(p.compilerOptions)
-			libs = append(libs, tspath.CombinePaths(p.host.DefaultLibraryPath(), name))
+	if compilerOptions.NoLib != core.TSTrue {
+		if compilerOptions.Lib == nil {
+			name := tsoptions.GetDefaultLibFileName(compilerOptions)
+			libs = append(libs, tspath.CombinePaths(p.Host().DefaultLibraryPath(), name))
 		} else {
-			for _, lib := range p.compilerOptions.Lib {
+			for _, lib := range compilerOptions.Lib {
 				name, ok := tsoptions.GetLibFileName(lib)
 				if ok {
-					libs = append(libs, tspath.CombinePaths(p.host.DefaultLibraryPath(), name))
+					libs = append(libs, tspath.CombinePaths(p.Host().DefaultLibraryPath(), name))
 				}
 				// !!! error on unknown name
 			}
 		}
 	}
 
-	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.compilerOptions, p.resolver, options.Config.FileNames(), libs, p.singleThreaded())
+	p.processedFiles = processAllProgramFiles(p.opts, p.resolver, libs, p.singleThreaded())
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
@@ -225,14 +223,12 @@ func NewProgram(options ProgramOptions) *Program {
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
 func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := p.host.GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
+	newFile := p.Host().GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
 	if !canReplaceFileInProgram(oldFile, newFile) {
-		return NewProgram(p.programOptions), false
+		return NewProgram(p.opts), false
 	}
 	result := &Program{
-		host:                        p.host,
-		programOptions:              p.programOptions,
-		compilerOptions:             p.compilerOptions,
+		opts:                        p.opts,
 		nodeModules:                 p.nodeModules,
 		currentDirectory:            p.currentDirectory,
 		resolver:                    p.resolver,
@@ -253,8 +249,8 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 }
 
 func (p *Program) initCheckerPool() {
-	if p.programOptions.CreateCheckerPool != nil {
-		p.checkerPool = p.programOptions.CreateCheckerPool(p)
+	if p.opts.CreateCheckerPool != nil {
+		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
 		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
 	}
@@ -295,19 +291,19 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 }
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
-func (p *Program) Options() *core.CompilerOptions { return p.compilerOptions }
-func (p *Program) Host() CompilerHost             { return p.host }
+func (p *Program) Options() *core.CompilerOptions { return p.opts.Config.CompilerOptions() }
+func (p *Program) Host() CompilerHost             { return p.opts.Host }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
-	return slices.Clip(p.programOptions.Config.GetConfigFileParsingDiagnostics())
+	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
 
 func (p *Program) singleThreaded() bool {
-	return p.programOptions.SingleThreaded.DefaultIfUnknown(p.compilerOptions.SingleThreaded).IsTrue()
+	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
 func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingCompilerOptions {
 	p.sourceAffectingCompilerOptionsOnce.Do(func() {
-		p.sourceAffectingCompilerOptions = p.compilerOptions.SourceFileAffecting()
+		p.sourceAffectingCompilerOptions = p.Options().SourceFileAffecting()
 	})
 	return p.sourceAffectingCompilerOptions
 }
@@ -377,7 +373,7 @@ func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*mo
 }
 
 func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
-	path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	path := tspath.ToPath(candidate, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 	return p.filesByPath[path]
 }
 
@@ -438,7 +434,8 @@ func (p *Program) getBindDiagnosticsForFile(ctx context.Context, sourceFile *ast
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+	compilerOptions := p.Options()
+	if checker.SkipTypeChecking(sourceFile, compilerOptions) {
 		return nil
 	}
 
@@ -465,7 +462,7 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 		return nil
 	}
 
-	isPlainJS := ast.IsPlainJSFile(sourceFile, p.compilerOptions.CheckJs)
+	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
 		diags = core.Filter(diags, func(d *ast.Diagnostic) bool {
 			return plainJSErrors.Has(d.Code())
@@ -522,7 +519,7 @@ func (p *Program) getDeclarationDiagnosticsForFile(_ctx context.Context, sourceF
 }
 
 func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if checker.SkipTypeChecking(sourceFile, p.compilerOptions) {
+	if checker.SkipTypeChecking(sourceFile, p.Options()) {
 		return nil
 	}
 
@@ -679,19 +676,19 @@ func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaDat
 }
 
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), p.Options(), p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.Options(), p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) GetModeForUsageLocation(sourceFile ast.HasFileName, location *ast.StringLiteralLike) core.ResolutionMode {
-	return getModeForUsageLocation(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.compilerOptions)
+	return getModeForUsageLocation(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.Options())
 }
 
 func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) core.ResolutionMode {
-	return getDefaultResolutionModeForFile(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], p.compilerOptions)
+	return getDefaultResolutionModeForFile(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], p.Options())
 }
 
 func (p *Program) CommonSourceDirectory() string {
@@ -704,17 +701,13 @@ func (p *Program) CommonSourceDirectory() string {
 			}
 		}
 		p.commonSourceDirectory = getCommonSourceDirectory(
-			p.compilerOptions,
+			p.Options(),
 			files,
-			p.host.GetCurrentDirectory(),
-			p.host.FS().UseCaseSensitiveFileNames(),
+			p.GetCurrentDirectory(),
+			p.UseCaseSensitiveFileNames(),
 		)
 	})
 	return p.commonSourceDirectory
-}
-
-func (p *Program) GetCompilerOptions() *core.CompilerOptions {
-	return p.compilerOptions
 }
 
 func computeCommonSourceDirectoryOfFilenames(fileNames []string, currentDirectory string, useCaseSensitiveFileNames bool) string {
@@ -862,7 +855,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 }
 
 func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
-	path := tspath.ToPath(filename, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	path := tspath.ToPath(filename, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 	return p.GetSourceFileByPath(path)
 }
 

@@ -4438,11 +4438,16 @@ func (c *Checker) checkMembersForOverrideModifier(node *ast.Node, t *Type, typeW
 }
 
 func (c *Checker) checkMemberForOverrideModifier(node *ast.Node, staticType *Type, baseStaticType *Type, baseWithThis *Type, t *Type, typeWithThis *Type, member *ast.Node) {
+	isJs := ast.IsInJSFile(node)
 	memberHasOverrideModifier := hasOverrideModifier(member)
 	if baseWithThis == nil {
 		if memberHasOverrideModifier {
-			c.error(member, diagnostics.This_member_cannot_have_an_override_modifier_because_its_containing_class_0_does_not_extend_another_class, c.TypeToString(t))
+			c.error(member, core.IfElse(isJs, diagnostics.This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_its_containing_class_0_does_not_extend_another_class, diagnostics.This_member_cannot_have_an_override_modifier_because_its_containing_class_0_does_not_extend_another_class), c.TypeToString(t))
 		}
+		return
+	}
+	if sym := member.Symbol(); memberHasOverrideModifier && sym != nil && sym.ValueDeclaration != nil && ast.IsClassElement(member) && member.Name() != nil && c.isNonBindableDynamicName(member.Name()) {
+		c.error(member, core.IfElse(isJs, diagnostics.This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_its_name_is_dynamic, diagnostics.This_member_cannot_have_an_override_modifier_because_its_name_is_dynamic))
 		return
 	}
 	if !memberHasOverrideModifier && !c.compilerOptions.NoImplicitOverride.IsTrue() {
@@ -4464,18 +4469,18 @@ func (c *Checker) checkMemberForOverrideModifier(node *ast.Node, staticType *Typ
 	if baseProp == nil && memberHasOverrideModifier {
 		suggestion := c.getSuggestedSymbolForNonexistentClassMember(ast.SymbolName(symbol), baseType)
 		if suggestion != nil {
-			c.error(member, diagnostics.This_member_cannot_have_an_override_modifier_because_it_is_not_declared_in_the_base_class_0_Did_you_mean_1, c.TypeToString(baseWithThis), c.symbolToString(suggestion))
+			c.error(member, core.IfElse(isJs, diagnostics.This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_it_is_not_declared_in_the_base_class_0_Did_you_mean_1, diagnostics.This_member_cannot_have_an_override_modifier_because_it_is_not_declared_in_the_base_class_0_Did_you_mean_1), c.TypeToString(baseWithThis), c.symbolToString(suggestion))
 			return
 		}
-		c.error(member, diagnostics.This_member_cannot_have_an_override_modifier_because_it_is_not_declared_in_the_base_class_0, c.TypeToString(baseWithThis))
+		c.error(member, core.IfElse(isJs, diagnostics.This_member_cannot_have_a_JSDoc_comment_with_an_override_tag_because_it_is_not_declared_in_the_base_class_0, diagnostics.This_member_cannot_have_an_override_modifier_because_it_is_not_declared_in_the_base_class_0), c.TypeToString(baseWithThis))
 		return
 	}
 	if baseProp != nil && len(baseProp.Declarations) != 0 && !memberHasOverrideModifier && c.compilerOptions.NoImplicitOverride.IsTrue() && node.Flags&ast.NodeFlagsAmbient == 0 {
 		baseHasAbstract := core.Some(baseProp.Declarations, hasAbstractModifier)
 		if !baseHasAbstract {
 			message := core.IfElse(ast.IsParameter(member),
-				diagnostics.This_parameter_property_must_have_an_override_modifier_because_it_overrides_a_member_in_base_class_0,
-				diagnostics.This_member_must_have_an_override_modifier_because_it_overrides_a_member_in_the_base_class_0)
+				core.IfElse(isJs, diagnostics.This_parameter_property_must_have_a_JSDoc_comment_with_an_override_tag_because_it_overrides_a_member_in_the_base_class_0, diagnostics.This_parameter_property_must_have_an_override_modifier_because_it_overrides_a_member_in_base_class_0),
+				core.IfElse(isJs, diagnostics.This_member_must_have_a_JSDoc_comment_with_an_override_tag_because_it_overrides_a_member_in_the_base_class_0, diagnostics.This_member_must_have_an_override_modifier_because_it_overrides_a_member_in_the_base_class_0))
 			c.error(member, message, c.TypeToString(baseWithThis))
 			return
 		}
@@ -4697,6 +4702,9 @@ func (c *Checker) isPropertyInitializedInConstructor(propName *ast.Node, propTyp
 func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 	if !c.checkGrammarModifiers(node) {
 		c.checkGrammarInterfaceDeclaration(node.AsInterfaceDeclaration())
+	}
+	if !c.containerAllowsBlockScopedVariable(node.Parent) {
+		c.grammarErrorOnNode(node, diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, "interface")
 	}
 	c.checkTypeParameters(node.TypeParameters())
 	c.checkTypeNameIsReserved(node.Name(), diagnostics.Interface_name_cannot_be_0)
@@ -6419,6 +6427,9 @@ func (c *Checker) checkTypeAliasDeclaration(node *ast.Node) {
 	// Grammar checking
 	c.checkGrammarModifiers(node)
 	c.checkTypeNameIsReserved(node.Name(), diagnostics.Type_alias_name_cannot_be_0)
+	if !c.containerAllowsBlockScopedVariable(node.Parent) {
+		c.grammarErrorOnNode(node, diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, "type")
+	}
 	c.checkExportsOnMergedDeclarations(node)
 
 	typeNode := node.AsTypeAliasDeclaration().Type
@@ -12263,7 +12274,9 @@ func (c *Checker) getSyntacticNullishnessSemantics(node *ast.Node) PredicateSema
 	switch node.Kind {
 	case ast.KindAwaitExpression,
 		ast.KindCallExpression,
+		ast.KindTaggedTemplateExpression,
 		ast.KindElementAccessExpression,
+		ast.KindMetaProperty,
 		ast.KindNewExpression,
 		ast.KindPropertyAccessExpression,
 		ast.KindYieldExpression,
@@ -12281,6 +12294,8 @@ func (c *Checker) getSyntacticNullishnessSemantics(node *ast.Node) PredicateSema
 			ast.KindAmpersandAmpersandToken,
 			ast.KindAmpersandAmpersandEqualsToken:
 			return PredicateSemanticsSometimes
+		case ast.KindCommaToken:
+			return c.getSyntacticNullishnessSemantics(node.AsBinaryExpression().Right)
 		}
 		return PredicateSemanticsNever
 	case ast.KindConditionalExpression:
@@ -17378,7 +17393,7 @@ func (c *Checker) getTypeOfAccessors(symbol *ast.Symbol) *Type {
 				t = c.getReturnTypeFromBody(getter, CheckModeNormal)
 			}
 		}
-		if t == nil && accessor != nil && accessor.Initializer() != nil {
+		if t == nil && accessor != nil {
 			t = c.getWidenedTypeForVariableLikeDeclaration(accessor, true /*reportErrors*/)
 		}
 		if t == nil {
@@ -21668,7 +21683,7 @@ func (c *Checker) getTypeFromTypeLiteralOrFunctionOrConstructorTypeNode(node *as
 	if links.resolvedType == nil {
 		// Deferred resolution of members is handled by resolveObjectTypeMembers
 		alias := c.getAliasForTypeNode(node)
-		if len(c.getMembersOfSymbol(node.Symbol())) == 0 && alias == nil {
+		if sym := node.Symbol(); sym == nil || len(c.getMembersOfSymbol(sym)) == 0 && alias == nil {
 			links.resolvedType = c.emptyTypeLiteralType
 		} else {
 			t := c.newObjectType(ObjectFlagsAnonymous, node.Symbol())
@@ -25866,7 +25881,7 @@ func (c *Checker) isAssignmentToReadonlyEntity(expr *ast.Node, symbol *ast.Symbo
 		// Allow assignments to readonly properties within constructors of the same class declaration.
 		if symbol.Flags&ast.SymbolFlagsProperty != 0 && ast.IsAccessExpression(expr) && expr.Expression().Kind == ast.KindThisKeyword {
 			// Look for if this is the constructor for the class that `symbol` is a property of.
-			ctor := getContainingFunction(expr)
+			ctor := c.getControlFlowContainer(expr)
 			if ctor == nil || !ast.IsConstructorDeclaration(ctor) {
 				return true
 			}
