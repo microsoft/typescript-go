@@ -27,13 +27,13 @@ func (l *LanguageService) GetDocumentDiagnostics(ctx context.Context, documentUR
 	return &lsproto.DocumentDiagnosticReport{
 		RelatedFullDocumentDiagnosticReport: &lsproto.RelatedFullDocumentDiagnosticReport{
 			FullDocumentDiagnosticReport: lsproto.FullDocumentDiagnosticReport{
-				Items: toLSPDiagnostics(diagnostics...),
+				Items: toLSPDiagnostics(l.converters, diagnostics...),
 			},
 		},
 	}, nil
 }
 
-func toLSPDiagnostics(diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {
+func toLSPDiagnostics(converters *Converters, diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {
 	size := 0
 	for _, diagSlice := range diagnostics {
 		size += len(diagSlice)
@@ -41,13 +41,13 @@ func toLSPDiagnostics(diagnostics ...[]*ast.Diagnostic) []*lsproto.Diagnostic {
 	lspDiagnostics := make([]*lsproto.Diagnostic, 0, size)
 	for _, diagSlice := range diagnostics {
 		for _, diag := range diagSlice {
-			lspDiagnostics = append(lspDiagnostics, toLSPDiagnostic(diag, nil)) // converters can be nil if not needed
+			lspDiagnostics = append(lspDiagnostics, toLSPDiagnostic(converters, diag))
 		}
 	}
 	return lspDiagnostics
 }
 
-func toLSPDiagnostic(diagnostic *ast.Diagnostic, converters *Converters) *lsproto.Diagnostic {
+func toLSPDiagnostic(converters *Converters, diagnostic *ast.Diagnostic) *lsproto.Diagnostic {
 	var severity lsproto.DiagnosticSeverity
 	switch diagnostic.Category() {
 	case diagnostics.CategorySuggestion:
