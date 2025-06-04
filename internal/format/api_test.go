@@ -3,6 +3,7 @@ package format_test
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -14,6 +15,24 @@ import (
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"gotest.tools/v3/assert"
 )
+
+func applyBulkEdits(text string, edits []core.TextChange) string {
+	b := strings.Builder{}
+	b.Grow(len(text))
+	lastEnd := 0
+	for _, e := range edits {
+		start := e.TextRange.Pos()
+		if start != lastEnd {
+			b.WriteString(text[lastEnd:e.TextRange.Pos()])
+		}
+		b.WriteString(e.NewText)
+
+		lastEnd = e.TextRange.End()
+	}
+	b.WriteString(text[lastEnd:])
+
+	return b.String()
+}
 
 func TestFormat(t *testing.T) {
 	t.Parallel()
@@ -46,11 +65,7 @@ func TestFormat(t *testing.T) {
 		)
 		ast.SetParentInChildren(sourceFile.AsNode())
 		edits := format.FormatDocument(ctx, sourceFile)
-		newText := text
-		for i := len(edits) - 1; i >= 0; i-- { // iterate edits back to front so no spans need to be adjusted
-			e := edits[i]
-			newText = e.ApplyTo(newText)
-		}
+		newText := applyBulkEdits(text, edits)
 		assert.Assert(t, len(newText) > 0)
 		assert.Assert(t, text != newText)
 	})
@@ -86,11 +101,7 @@ func BenchmarkFormat(b *testing.B) {
 	b.Run("format checker.ts", func(b *testing.B) {
 		for b.Loop() {
 			edits := format.FormatDocument(ctx, sourceFile)
-			newText := text
-			for i := len(edits) - 1; i >= 0; i-- { // iterate edits back to front so no spans need to be adjusted
-				e := edits[i]
-				newText = e.ApplyTo(newText)
-			}
+			newText := applyBulkEdits(text, edits)
 			assert.Assert(b, len(newText) > 0)
 		}
 	})
