@@ -15,11 +15,13 @@
      ;
 -    return C;
 -}());
--exports.C = C;
--
--
--//// [main.d.ts]
--export declare class C {
--    [x: number]: () => void;
++}
+ exports.C = C;
+
+
+ //// [main.d.ts]
+-import Test from "abcdefgh";
+ export declare class C {
+-    [Test.someKey]: () => void;
++    [x: number]: () => void;
  }
-+exports.C = C;

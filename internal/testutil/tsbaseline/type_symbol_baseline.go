@@ -12,6 +12,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/nodebuilder"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -77,6 +79,14 @@ func DoTypeAndSymbolBaseline(
 					} else {
 						continue
 					}
+				}
+
+				const (
+					relativePrefixNew = "=== "
+					relativePrefixOld = relativePrefixNew + "./"
+				)
+				if rest, ok := strings.CutPrefix(line, relativePrefixOld); ok {
+					line = relativePrefixNew + rest
 				}
 
 				sb.WriteString(line)
@@ -336,6 +346,8 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 	fileChecker, done := walker.getTypeCheckerForCurrentFile()
 	defer done()
 
+	ctx := printer.NewEmitContext()
+
 	if !isSymbolWalk {
 		// Don't try to get the type of something that's already a type.
 		// Exception for `T` in `type T = something` because that may evaluate to some interesting type.
@@ -372,21 +384,21 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 			!isIntrinsicJsxTag(node, walker.currentSourceFile) {
 			typeString = t.AsIntrinsicType().IntrinsicName()
 		} else {
-			// !!! TODO: full type printing and underline when we have node builder
-			// const typeFormatFlags = ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.AllowUniqueESSymbolType | ts.TypeFormatFlags.GenerateNamesForShadowedTypeParams;
-			// let typeNode = this.checker.typeToTypeNode(type, node.parent, (typeFormatFlags & ts.TypeFormatFlags.NodeBuilderFlagsMask) | ts.NodeBuilderFlags.IgnoreErrors, ts.InternalNodeBuilderFlags.AllowUnresolvedNames)!;
-			// if (ts.isIdentifier(node) && ts.isTypeAliasDeclaration(node.parent) && node.parent.name === node && ts.isIdentifier(typeNode) && ts.idText(typeNode) === ts.idText(node)) {
-			// 	// for a complex type alias `type T = ...`, showing "T : T" isn't very helpful for type tests. When the type produced is the same as
-			// 	// the name of the type alias, recreate the type string without reusing the alias name
-			// 	typeNode = this.checker.typeToTypeNode(type, node.parent, ((typeFormatFlags | ts.TypeFormatFlags.InTypeAlias) & ts.TypeFormatFlags.NodeBuilderFlagsMask) | ts.NodeBuilderFlags.IgnoreErrors)!;
-			// }
+			ctx.Reset()
+			builder := checker.NewNodeBuilder(fileChecker, ctx)
+			typeFormatFlags := checker.TypeFormatFlagsNoTruncation | checker.TypeFormatFlagsAllowUniqueESSymbolType | checker.TypeFormatFlagsGenerateNamesForShadowedTypeParams
+			typeNode := builder.TypeToTypeNode(t, node.Parent, nodebuilder.Flags(typeFormatFlags&checker.TypeFormatFlagsNodeBuilderFlagsMask)|nodebuilder.FlagsIgnoreErrors, nodebuilder.InternalFlagsAllowUnresolvedNames, nil)
+			if ast.IsIdentifier(node) && ast.IsTypeAliasDeclaration(node.Parent) && node.Parent.Name() == node && ast.IsIdentifier(typeNode) && typeNode.AsIdentifier().Text == node.AsIdentifier().Text {
+				// for a complex type alias `type T = ...`, showing "T : T" isn't very helpful for type tests. When the type produced is the same as
+				// the name of the type alias, recreate the type string without reusing the alias name
+				typeNode = builder.TypeToTypeNode(t, node.Parent, nodebuilder.Flags((typeFormatFlags|checker.TypeFormatFlagsInTypeAlias)&checker.TypeFormatFlagsNodeBuilderFlagsMask)|nodebuilder.FlagsIgnoreErrors, nodebuilder.InternalFlagsAllowUnresolvedNames, nil)
+			}
 
-			// const { printer, writer, underliner, reset } = createSyntheticNodeUnderliningPrinter();
-			// printer.writeNode(ts.EmitHint.Unspecified, typeNode, this.currentSourceFile, writer);
-			// typeString = writer.getText();
-			// underline = underliner.getText();
-			// reset();
-			typeString = fileChecker.TypeToString(t)
+			// !!! TODO: port underline printer, memoize
+			writer := printer.NewTextWriter("")
+			printer := printer.NewPrinter(printer.PrinterOptions{RemoveComments: true}, printer.PrintHandlers{}, ctx)
+			printer.Write(typeNode, walker.currentSourceFile, writer, nil)
+			typeString = writer.String()
 		}
 		return &typeWriterResult{
 			line:       line,
@@ -404,7 +416,7 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 	var symbolString strings.Builder
 	symbolString.Grow(256)
 	symbolString.WriteString("Symbol(")
-	symbolString.WriteString(fileChecker.SymbolToString(symbol))
+	symbolString.WriteString(strings.ReplaceAll(fileChecker.SymbolToString(symbol), ast.InternalSymbolNamePrefix, "__"))
 	count := 0
 	for _, declaration := range symbol.Declarations {
 		if count >= 5 {

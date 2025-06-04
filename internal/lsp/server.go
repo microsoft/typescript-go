@@ -32,6 +32,7 @@ type ServerOptions struct {
 	NewLine            core.NewLineKind
 	FS                 vfs.FS
 	DefaultLibraryPath string
+	TypingsLocation    string
 
 	GetCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile
 }
@@ -52,6 +53,7 @@ func NewServer(opts *ServerOptions) *Server {
 		newLine:               opts.NewLine,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
+		typingsLocation:       opts.TypingsLocation,
 		getCachedSourceFile:   opts.GetCachedSourceFile,
 	}
 }
@@ -135,6 +137,7 @@ type Server struct {
 	newLine            core.NewLineKind
 	fs                 vfs.FS
 	defaultLibraryPath string
+	typingsLocation    string
 
 	initializeParams *lsproto.InitializeParams
 	positionEncoding lsproto.PositionEncodingKind
@@ -160,6 +163,11 @@ func (s *Server) FS() vfs.FS {
 // DefaultLibraryPath implements project.ServiceHost.
 func (s *Server) DefaultLibraryPath() string {
 	return s.defaultLibraryPath
+}
+
+// TypingsLocation implements project.ServiceHost.
+func (s *Server) TypingsLocation() string {
+	return s.typingsLocation
 }
 
 // GetCurrentDirectory implements project.ServiceHost.
@@ -463,6 +471,8 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return s.handleDefinition(ctx, req)
 	case *lsproto.CompletionParams:
 		return s.handleCompletion(ctx, req)
+	case *lsproto.SignatureHelpParams:
+		return s.handleSignatureHelp(ctx, req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -524,6 +534,9 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 				TriggerCharacters: &ls.TriggerCharacters,
 				// !!! other options
 			},
+			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
+				TriggerCharacters: &[]string{"(", ","},
+			},
 		},
 	})
 }
@@ -538,6 +551,10 @@ func (s *Server) handleInitialized(ctx context.Context, req *lsproto.RequestMess
 		Logger:           s.logger,
 		WatchEnabled:     s.watchEnabled,
 		PositionEncoding: s.positionEncoding,
+		TypingsInstallerOptions: project.TypingsInstallerOptions{
+			ThrottleLimit: 5,
+			NpmInstall:    project.NpmInstall,
+		},
 	})
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	if s.compilerOptionsForInferredProjects != nil {
@@ -598,6 +615,23 @@ func (s *Server) handleHover(ctx context.Context, req *lsproto.RequestMessage) e
 		return err
 	}
 	s.sendResult(req.ID, hover)
+	return nil
+}
+
+func (s *Server) handleSignatureHelp(ctx context.Context, req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.SignatureHelpParams)
+	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	defer done()
+	signatureHelp := languageService.ProvideSignatureHelp(
+		ctx,
+		params.TextDocument.Uri,
+		params.Position,
+		params.Context,
+		s.initializeParams.Capabilities.TextDocument.SignatureHelp,
+		&ls.UserPreferences{},
+	)
+	s.sendResult(req.ID, signatureHelp)
 	return nil
 }
 

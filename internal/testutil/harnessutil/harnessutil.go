@@ -79,13 +79,13 @@ func CompileFiles(
 	inputFiles []*TestFile,
 	otherFiles []*TestFile,
 	testConfig TestConfiguration,
-	tsconfigOptions *core.CompilerOptions,
+	tsconfig *tsoptions.ParsedCommandLine,
 	currentDirectory string,
 	symlinks map[string]string,
 ) *CompilationResult {
 	var compilerOptions core.CompilerOptions
-	if tsconfigOptions != nil {
-		compilerOptions = *tsconfigOptions
+	if tsconfig != nil {
+		compilerOptions = *tsconfig.ParsedConfig.CompilerOptions
 	}
 	// Set default options for tests
 	if compilerOptions.NewLine == core.NewLineKindNone {
@@ -102,7 +102,7 @@ func CompileFiles(
 		setOptionsFromTestConfig(t, testConfig, &compilerOptions, &harnessOptions)
 	}
 
-	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, &compilerOptions, currentDirectory, symlinks)
+	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, &compilerOptions, currentDirectory, symlinks, tsconfig)
 }
 
 func CompileFilesEx(
@@ -113,6 +113,7 @@ func CompileFilesEx(
 	compilerOptions *core.CompilerOptions,
 	currentDirectory string,
 	symlinks map[string]string,
+	tsconfig *tsoptions.ParsedCommandLine,
 ) *CompilationResult {
 	var programFileNames []string
 	for _, file := range inputFiles {
@@ -206,13 +207,26 @@ func CompileFilesEx(
 	fs = NewOutputRecorderFS(fs)
 
 	host := createCompilerHost(fs, bundled.LibPath(), compilerOptions, currentDirectory)
-	result := compileFilesWithHost(host, programFileNames, compilerOptions, harnessOptions)
+	var configFile *tsoptions.TsConfigSourceFile
+	var errors []*ast.Diagnostic
+	if tsconfig != nil {
+		configFile = tsconfig.ConfigFile
+		errors = tsconfig.Errors
+	}
+	result := compileFilesWithHost(host, &tsoptions.ParsedCommandLine{
+		ParsedConfig: &core.ParsedOptions{
+			CompilerOptions: compilerOptions,
+			FileNames:       programFileNames,
+		},
+		ConfigFile: configFile,
+		Errors:     errors,
+	}, harnessOptions)
 	result.Symlinks = symlinks
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
 		newCompilerOptions := *compilerOptions
 		setOptionsFromTestConfig(t, testConfig, &newCompilerOptions, &newHarnessOptions)
-		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, &newCompilerOptions, currentDirectory, symlinks)
+		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, &newCompilerOptions, currentDirectory, symlinks, tsconfig)
 	}
 	return result
 }
@@ -515,8 +529,7 @@ func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.Comp
 
 func compileFilesWithHost(
 	host compiler.CompilerHost,
-	rootFiles []string,
-	options *core.CompilerOptions,
+	config *tsoptions.ParsedCommandLine,
 	harnessOptions *HarnessOptions,
 ) *CompilationResult {
 	// !!!
@@ -575,14 +588,17 @@ func compileFilesWithHost(
 	//     ),
 	// ] : postErrors;
 	ctx := context.Background()
-	program := createProgram(host, options, rootFiles)
+	program := createProgram(host, config)
 	var diagnostics []*ast.Diagnostic
 	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
 	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
 	diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
+	if config.CompilerOptions().GetEmitDeclarations() {
+		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
+	}
 	emitResult := program.Emit(compiler.EmitOptions{})
 
-	return newCompilationResult(options, program, emitResult, diagnostics, harnessOptions)
+	return newCompilationResult(config.CompilerOptions(), program, emitResult, diagnostics, harnessOptions)
 }
 
 type CompilationResult struct {
@@ -704,7 +720,7 @@ func (c *CompilationResult) getOutputPath(path string, ext string) string {
 	if c.Options.OutFile != "" {
 		/// !!! options.OutFile not yet supported
 	} else {
-		path = tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), path)
+		path = tspath.ResolvePath(c.Program.GetCurrentDirectory(), path)
 		var outDir string
 		if ext == ".d.ts" || ext == ".d.mts" || ext == ".d.cts" || (strings.HasSuffix(ext, ".ts") && strings.Contains(ext, ".d.")) {
 			outDir = c.Options.DeclarationDir
@@ -718,10 +734,10 @@ func (c *CompilationResult) getOutputPath(path string, ext string) string {
 			common := c.Program.CommonSourceDirectory()
 			if common != "" {
 				path = tspath.GetRelativePathFromDirectory(common, path, tspath.ComparePathsOptions{
-					UseCaseSensitiveFileNames: c.Program.Host().FS().UseCaseSensitiveFileNames(),
-					CurrentDirectory:          c.Program.Host().GetCurrentDirectory(),
+					UseCaseSensitiveFileNames: c.Program.UseCaseSensitiveFileNames(),
+					CurrentDirectory:          c.Program.GetCurrentDirectory(),
 				})
-				path = tspath.CombinePaths(tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), c.Options.OutDir), path)
+				path = tspath.CombinePaths(tspath.ResolvePath(c.Program.GetCurrentDirectory(), c.Options.OutDir), path)
 			}
 		}
 	}
@@ -754,7 +770,7 @@ func (c *CompilationResult) Outputs() []*TestFile {
 }
 
 func (c *CompilationResult) GetInputsAndOutputsForFile(path string) *CompilationOutput {
-	return c.inputsAndOutputs.GetOrZero(tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), path))
+	return c.inputsAndOutputs.GetOrZero(tspath.ResolvePath(c.Program.GetCurrentDirectory(), path))
 }
 
 func (c *CompilationResult) GetInputsForFile(path string) []*TestFile {
@@ -817,16 +833,15 @@ func (c *CompilationResult) GetSourceMapRecord() string {
 	return sourceMapRecorder.String()
 }
 
-func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {
+func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine) *compiler.Program {
 	var singleThreaded core.Tristate
 	if testutil.TestProgramIsSingleThreaded() {
 		singleThreaded = core.TSTrue
 	}
 
 	programOptions := compiler.ProgramOptions{
-		RootFiles:      rootFiles,
+		Config:         config,
 		Host:           host,
-		Options:        options,
 		SingleThreaded: singleThreaded,
 	}
 	program := compiler.NewProgram(programOptions)

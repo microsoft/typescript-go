@@ -28,5 +28,16 @@ export interface LocalInterface extends RequireInterface, ImportInterface {}
 
 
 //// [index.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 // not exclusively type-only
-import "pkg" with { "resolution-mode": "require" };
+require("pkg");
+
+
+//// [index.d.ts]
+// incorrect mode
+import type { RequireInterface } from "pkg";
+// not type-only
+import { ImportInterface } from "pkg" with { "resolution-mode": "import" };
+export interface LocalInterface extends RequireInterface, ImportInterface {
+}
