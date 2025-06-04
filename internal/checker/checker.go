@@ -26926,10 +26926,14 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 	if ast.IsJsxOpeningLikeElement(node) {
 		jsxFactoryLocation = node.TagName()
 	}
-	// allow null as jsxFragmentFactory
+	// #38720/60122, allow null as jsxFragmentFactory
 	var jsxFactorySym *ast.Symbol
 	if !(ast.IsJsxOpeningFragment(node) && jsxFactoryNamespace == "null") {
-		jsxFactorySym = c.resolveName(jsxFactoryLocation, jsxFactoryNamespace, ast.SymbolFlagsValue, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
+		flags := ast.SymbolFlagsValue
+		if c.compilerOptions.Jsx == core.JsxEmitPreserve {
+			flags &= ^ast.SymbolFlagsEnum
+		}
+		jsxFactorySym = c.resolveName(jsxFactoryLocation, jsxFactoryNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
 	}
 	if jsxFactorySym != nil {
 		// Mark local symbol as referenced here because it might not have been marked
@@ -26940,12 +26944,16 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 			c.markAliasSymbolAsReferenced(jsxFactorySym)
 		}
 	}
-	// For JsxFragment, mark jsx pragma as referenced via resolveName
+	// if JsxFragment, additionally mark jsx pragma as referenced, since `getJsxNamespace` above would have resolved to only the fragment factory if they are distinct
 	if ast.IsJsxOpeningFragment(node) {
 		file := ast.GetSourceFileOfNode(node)
 		localJsxNamespace := c.getLocalJsxNamespace(file)
 		if localJsxNamespace != "" {
-			c.resolveName(jsxFactoryLocation, localJsxNamespace, ast.SymbolFlagsValue, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
+			flags := ast.SymbolFlagsValue
+			if c.compilerOptions.Jsx == core.JsxEmitPreserve {
+				flags &= ^ast.SymbolFlagsEnum
+			}
+			c.resolveName(jsxFactoryLocation, localJsxNamespace, flags, jsxFactoryRefErr, true /*isUse*/, false /*excludeGlobals*/)
 		}
 	}
 }

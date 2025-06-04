@@ -117,7 +117,8 @@ func (c *Checker) checkJsxFragment(node *ast.Node) *Type {
 		c.error(node, message)
 	}
 	c.checkJsxChildren(node, CheckModeNormal)
-	return c.getJsxElementTypeAt(node)
+	t := c.getJsxElementTypeAt(node)
+	return core.IfElse(c.isErrorType(t), c.anyType, t)
 }
 
 func (c *Checker) checkJsxAttributes(node *ast.Node, checkMode CheckMode) *Type {
@@ -488,9 +489,18 @@ func (c *Checker) getJSXFragmentType(node *ast.Node) *Type {
 		return links.jsxFragmentType
 	}
 	jsxFragmentFactoryName := c.getJsxNamespace(node)
+	// #38720/60122, allow null as jsxFragmentFactory
+	if jsxFragmentFactoryName == "null" {
+		links.jsxFragmentType = c.anyType
+		return links.jsxFragmentType
+	}
 	jsxFactorySymbol := c.getJsxNamespaceContainerForImplicitImport(node)
 	if jsxFactorySymbol == nil {
-		jsxFactorySymbol = c.resolveName(node, jsxFragmentFactoryName, ast.SymbolFlagsValue, diagnostics.Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found, true /*isUse*/, false /*excludeGlobals*/)
+		flags := ast.SymbolFlagsValue
+		if c.compilerOptions.Jsx == core.JsxEmitPreserve {
+			flags &= ^ast.SymbolFlagsEnum
+		}
+		jsxFactorySymbol = c.resolveName(node, jsxFragmentFactoryName, flags, diagnostics.Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_not_be_found, true /*isUse*/, false /*excludeGlobals*/)
 	}
 	if jsxFactorySymbol == nil {
 		links.jsxFragmentType = c.errorType
