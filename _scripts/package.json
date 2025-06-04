@@ -5,7 +5,7 @@
     "description": "Test conversion script",
     "scripts": {
         "build": "npx tsc -p .",
-        "runjs": "node dist/convertCompletions.js",
-        "run": "npx tsc -p . && node dist/convertCompletions.js"
+        "runjs": "node dist/convertFourslash.js",
+        "run": "npx tsc -p . && node dist/convertFourslash.js"
     }
 }
