@@ -3,7 +3,6 @@ package fourslash
 import (
 	"fmt"
 	"io"
-	"os"
 	"strings"
 	"testing"
 	"unicode"
@@ -105,10 +104,12 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		cachedFile, _ := sourceFileCache.Load(key)
 		return cachedFile
 	}
+
+	var err strings.Builder
 	server := lsp.NewServer(&lsp.ServerOptions{
 		In:  inputReader,
 		Out: outputWriter,
-		Err: os.Stderr,
+		Err: &err,
 
 		Cwd:                "/",
 		NewLine:            core.NewLineKindLF,
