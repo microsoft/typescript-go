@@ -18,7 +18,6 @@ import (
 )
 
 type fileLoader struct {
-	host                CompilerHost
 	programOptions      ProgramOptions
 	resolver            *module.Resolver
 	defaultLibraryPath  string
@@ -51,7 +50,6 @@ type jsxRuntimeImportSpecifier struct {
 }
 
 func processAllProgramFiles(
-	host CompilerHost,
 	programOptions ProgramOptions,
 	resolver *module.Resolver,
 	libs []string,
@@ -61,13 +59,12 @@ func processAllProgramFiles(
 	rootFiles := programOptions.Config.FileNames()
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
 	loader := fileLoader{
-		host:               host,
 		programOptions:     programOptions,
 		resolver:           resolver,
-		defaultLibraryPath: tspath.GetNormalizedAbsolutePath(host.DefaultLibraryPath(), host.GetCurrentDirectory()),
+		defaultLibraryPath: tspath.GetNormalizedAbsolutePath(programOptions.Host.DefaultLibraryPath(), programOptions.Host.GetCurrentDirectory()),
 		comparePathsOptions: tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          host.GetCurrentDirectory(),
+			UseCaseSensitiveFileNames: programOptions.Host.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          programOptions.Host.GetCurrentDirectory(),
 		},
 		wg:                  core.NewWorkGroup(singleThreaded),
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(libs)),
@@ -136,7 +133,7 @@ func processAllProgramFiles(
 
 func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	for _, fileName := range files {
-		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.host.GetCurrentDirectory())
+		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.programOptions.Host.GetCurrentDirectory())
 		if core.Tristate.IsTrue(p.programOptions.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
 			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib})
 		}
@@ -149,11 +146,11 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 	if compilerOptions.ConfigFilePath != "" {
 		containingDirectory = tspath.GetDirectoryPath(compilerOptions.ConfigFilePath)
 	} else {
-		containingDirectory = p.host.GetCurrentDirectory()
+		containingDirectory = p.programOptions.Host.GetCurrentDirectory()
 	}
 	containingFileName := tspath.CombinePaths(containingDirectory, module.InferredTypesContainingFile)
 
-	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(compilerOptions, p.host)
+	automaticTypeDirectiveNames := module.GetAutomaticTypeDirectiveNames(compilerOptions, p.programOptions.Host)
 	for _, name := range automaticTypeDirectiveNames {
 		resolved := p.resolver.ResolveTypeReferenceDirective(name, containingFileName, core.ModuleKindNodeNext, nil)
 		if resolved.IsResolved() {
@@ -314,8 +311,8 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) *ast.SourceFileMeta
 }
 
 func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
-	path := tspath.ToPath(fileName, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
-	sourceFile := p.host.GetSourceFile(fileName, path, p.programOptions.Config.CompilerOptions().GetEmitScriptTarget())
+	path := tspath.ToPath(fileName, p.programOptions.Host.GetCurrentDirectory(), p.programOptions.Host.FS().UseCaseSensitiveFileNames())
+	sourceFile := p.programOptions.Host.GetSourceFile(fileName, path, p.programOptions.Config.CompilerOptions().GetEmitScriptTarget())
 	return sourceFile
 }
 

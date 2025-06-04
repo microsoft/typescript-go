@@ -30,7 +30,6 @@ type ProgramOptions struct {
 }
 
 type Program struct {
-	host             CompilerHost
 	programOptions   ProgramOptions
 	nodeModules      map[string]*ast.SourceFile
 	checkerPool      CheckerPool
@@ -68,12 +67,12 @@ type Program struct {
 
 // FileExists implements checker.Program.
 func (p *Program) FileExists(path string) bool {
-	return p.host.FS().FileExists(path)
+	return p.Host().FS().FileExists(path)
 }
 
 // GetCurrentDirectory implements checker.Program.
 func (p *Program) GetCurrentDirectory() string {
-	return p.host.GetCurrentDirectory()
+	return p.Host().GetCurrentDirectory()
 }
 
 // GetGlobalTypingsCacheLocation implements checker.Program.
@@ -116,7 +115,7 @@ func (p *Program) IsSourceOfProjectReferenceRedirect(path string) bool {
 
 // UseCaseSensitiveFileNames implements checker.Program.
 func (p *Program) UseCaseSensitiveFileNames() bool {
-	return p.host.FS().UseCaseSensitiveFileNames()
+	return p.Host().FS().UseCaseSensitiveFileNames()
 }
 
 var _ checker.Program = (*Program)(nil)
@@ -133,7 +132,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 	allowNonTsExtensions := p.Options().AllowNonTsExtensions.IsTrue()
 	if tspath.HasExtension(fileName) {
 		if !allowNonTsExtensions {
-			canonicalFileName := tspath.GetCanonicalFileName(fileName, p.host.FS().UseCaseSensitiveFileNames())
+			canonicalFileName := tspath.GetCanonicalFileName(fileName, p.UseCaseSensitiveFileNames())
 			supported := false
 			for _, group := range supportedExtensions {
 				if tspath.FileExtensionIsOneOf(canonicalFileName, group) {
@@ -166,14 +165,14 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 }
 
 func NewProgram(options ProgramOptions) *Program {
-	p := &Program{}
-	p.programOptions = options
+	p := &Program{
+		programOptions: options,
+	}
 	compilerOptions := p.programOptions.Config.CompilerOptions()
 	if compilerOptions == nil {
 		panic("compiler options required")
 	}
-	p.host = options.Host
-	if p.host == nil {
+	if p.programOptions.Host == nil {
 		panic("host required")
 	}
 	p.initCheckerPool()
@@ -184,26 +183,26 @@ func NewProgram(options ProgramOptions) *Program {
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
 	// performance.mark("beforeProgram");
 
-	p.resolver = module.NewResolver(p.host, compilerOptions, p.programOptions.TypingsLocation, p.programOptions.ProjectName)
+	p.resolver = module.NewResolver(p.Host(), compilerOptions, p.programOptions.TypingsLocation, p.programOptions.ProjectName)
 
 	var libs []string
 
 	if compilerOptions.NoLib != core.TSTrue {
 		if compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(compilerOptions)
-			libs = append(libs, tspath.CombinePaths(p.host.DefaultLibraryPath(), name))
+			libs = append(libs, tspath.CombinePaths(p.Host().DefaultLibraryPath(), name))
 		} else {
 			for _, lib := range compilerOptions.Lib {
 				name, ok := tsoptions.GetLibFileName(lib)
 				if ok {
-					libs = append(libs, tspath.CombinePaths(p.host.DefaultLibraryPath(), name))
+					libs = append(libs, tspath.CombinePaths(p.Host().DefaultLibraryPath(), name))
 				}
 				// !!! error on unknown name
 			}
 		}
 	}
 
-	p.processedFiles = processAllProgramFiles(p.host, p.programOptions, p.resolver, libs, p.singleThreaded())
+	p.processedFiles = processAllProgramFiles(p.programOptions, p.resolver, libs, p.singleThreaded())
 	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
 	for _, file := range p.files {
 		p.filesByPath[file.Path()] = file
@@ -223,12 +222,11 @@ func NewProgram(options ProgramOptions) *Program {
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
 func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := p.host.GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
+	newFile := p.Host().GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(p.programOptions), false
 	}
 	result := &Program{
-		host:                        p.host,
 		programOptions:              p.programOptions,
 		nodeModules:                 p.nodeModules,
 		currentDirectory:            p.currentDirectory,
@@ -293,7 +291,7 @@ func equalCheckJSDirectives(d1 *ast.CheckJsDirective, d2 *ast.CheckJsDirective) 
 
 func (p *Program) SourceFiles() []*ast.SourceFile { return p.files }
 func (p *Program) Options() *core.CompilerOptions { return p.programOptions.Config.CompilerOptions() }
-func (p *Program) Host() CompilerHost             { return p.host }
+func (p *Program) Host() CompilerHost             { return p.programOptions.Host }
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.programOptions.Config.GetConfigFileParsingDiagnostics())
 }
@@ -366,7 +364,7 @@ func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*mo
 }
 
 func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
-	path := tspath.ToPath(candidate, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	path := tspath.ToPath(candidate, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 	return p.filesByPath[path]
 }
 
@@ -700,8 +698,8 @@ func (p *Program) CommonSourceDirectory() string {
 		p.commonSourceDirectory = getCommonSourceDirectory(
 			p.Options(),
 			files,
-			p.host.GetCurrentDirectory(),
-			p.host.FS().UseCaseSensitiveFileNames(),
+			p.GetCurrentDirectory(),
+			p.UseCaseSensitiveFileNames(),
 		)
 	})
 	return p.commonSourceDirectory
@@ -846,7 +844,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 }
 
 func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
-	path := tspath.ToPath(filename, p.host.GetCurrentDirectory(), p.host.FS().UseCaseSensitiveFileNames())
+	path := tspath.ToPath(filename, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
 	return p.GetSourceFileByPath(path)
 }
 
