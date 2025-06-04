@@ -119,6 +119,8 @@ func isIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		return parent.AsImportAttribute().Value == name
 	case ast.KindJsxOpeningElement:
 		return parent.AsJsxOpeningElement().TagName == name
+	case ast.KindJsxClosingElement:
+		return parent.AsJsxClosingElement().TagName == name
 	default:
 		return false
 	}
