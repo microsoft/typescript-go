@@ -524,7 +524,7 @@ func getEmitSyntaxForUsageLocationWorker(fileName string, meta *ast.SourceFileMe
 		return core.ModuleKindCommonJS
 	}
 	if ast.IsImportCall(ast.WalkUpParenthesizedExpressions(usage.Parent)) {
-		if ast.ShouldTransformImportCall(fileName, meta, options) {
+		if ast.ShouldTransformImportCall(fileName, options, ast.GetImpliedNodeFormatForEmitWorker(fileName, options, meta)) {
 			return core.ModuleKindCommonJS
 		} else {
 			return core.ModuleKindESNext

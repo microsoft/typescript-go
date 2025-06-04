@@ -527,8 +527,8 @@ type Program interface {
 	BindSourceFiles()
 	FileExists(fileName string) bool
 	GetSourceFile(fileName string) *ast.SourceFile
-	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
-	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
+	GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind
+	GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ModuleKind
 	GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
 	GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData

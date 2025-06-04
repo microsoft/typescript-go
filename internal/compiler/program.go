@@ -678,15 +678,11 @@ func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaDat
 	return p.sourceFileMetaDatas[path]
 }
 
-func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
-	return p.GetEmitModuleFormatOfFileWorker(sourceFile, p.compilerOptions)
+func (p *Program) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
-func (p *Program) GetEmitModuleFormatOfFileWorker(sourceFile *ast.SourceFile, options *core.CompilerOptions) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), options, p.GetSourceFileMetaData(sourceFile.Path()))
-}
-
-func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
+func (p *Program) GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ResolutionMode {
 	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.compilerOptions, p.GetSourceFileMetaData(sourceFile.Path()))
 }
 

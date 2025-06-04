@@ -90,11 +90,11 @@ func (p *fakeProgram) BindSourceFiles() {
 	wg.RunAndWait()
 }
 
-func (p *fakeProgram) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
+func (p *fakeProgram) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {
 	return p.getEmitModuleFormatOfFile(sourceFile)
 }
 
-func (p *fakeProgram) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind {
+func (p *fakeProgram) GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ModuleKind {
 	return p.getImpliedNodeFormatForEmit(sourceFile)
 }
 

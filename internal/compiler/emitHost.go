@@ -31,7 +31,6 @@ type EmitHost interface {
 	GetCurrentDirectory() string
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
-	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) printer.EmitResolver
 }
 
@@ -52,6 +51,10 @@ func (host *emitHost) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName,
 
 func (host *emitHost) GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode {
 	return host.program.GetDefaultResolutionModeForFile(file)
+}
+
+func (host *emitHost) GetEmitModuleFormatOfFile(file ast.HasFileName) core.ModuleKind {
+	return host.program.GetEmitModuleFormatOfFile(file)
 }
 
 func (host *emitHost) FileExists(path string) bool {
@@ -123,8 +126,4 @@ func (host *emitHost) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool
 	checker, done := host.program.GetTypeCheckerForFile(context.TODO(), file)
 	defer done()
 	return checker.GetEmitResolver(file, skipDiagnostics)
-}
-
-func (host *emitHost) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
-	return host.program.GetSourceFileMetaData(path)
 }
