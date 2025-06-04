@@ -12,7 +12,7 @@ export function prepareConfig({
 >additionalFiles : any
 
         json = []
->json : never[]
+>json : any[]
 >[] : never[]
 
     } = {}
@@ -22,7 +22,7 @@ export function prepareConfig({
 >{} : {}
 
     json // string[]
->json : never[]
+>json : any[]
 }
 
 export function prepareConfigWithoutAnnotation({
@@ -32,7 +32,7 @@ export function prepareConfigWithoutAnnotation({
 >additionalFiles : any
 
         json = []
->json : never[]
+>json : any[]
 >[] : never[]
 
     } = {}
@@ -42,7 +42,7 @@ export function prepareConfigWithoutAnnotation({
 >{} : {}
 
     json
->json : never[]
+>json : any[]
 }
 
 /** @type {(param: {
@@ -75,22 +75,22 @@ export const prepareConfigWithContextualSignature = ({
  * @param {{ a?: { json?: string[] }}} [config]
  */
 function f1({ a: { json = [] } = {} } = {}) { return json }
->f1 : ({ a: { json } }?: { a?: { json?: never[] | undefined; } | undefined; }) => never[]
+>f1 : ({ a: { json } }?: { a?: { json?: never[] | undefined; } | undefined; }) => any[]
 >a : any
->json : never[]
+>json : any[]
 >[] : never[]
 >{} : {}
 >{} : {}
->json : never[]
+>json : any[]
 
 /**
  * @param {[[string[]?]?]} [x]
  */
 function f2([[json = []] = []] = []) { return json }
->f2 : ([[json]]?: [([(never[] | undefined)?] | undefined)?]) => never[]
->json : never[]
+>f2 : ([[json]]?: [([(never[] | undefined)?] | undefined)?]) => any[]
+>json : any[]
 >[] : never[]
 >[] : []
 >[] : []
->json : never[]
+>json : any[]
 
