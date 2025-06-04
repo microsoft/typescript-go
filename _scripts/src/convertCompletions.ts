@@ -2,18 +2,36 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as ts from 'typescript';
 
-const folderPath = path.resolve(__dirname, '../', '../', '_submodules', 'TypeScript', 'tests', 'cases', 'fourslash');
-const verifyCompletionsListPath = path.join(__dirname, '../', "verify-completions.txt");
-const verifyFiles = fs.readFileSync(verifyCompletionsListPath, 'utf-8')
-    .split('\n').map(line => line.trim())
-    .filter(line => line.length > 0)
-    .map(line => path.basename(line));
-const verifyFilesSet = new Set(verifyFiles);
+const stradaFourslashPath = path.resolve(__dirname, '../', '../', '_submodules', 'TypeScript', 'tests', 'cases', 'fourslash');
+
+let inputFileSet: Set<string> | undefined;
+
 const failingTestsPath = path.join(__dirname, '../', 'failingTests.txt');
 const failingTestsList = fs.readFileSync(failingTestsPath, 'utf-8').split('\n').map(line => line.trim().substring(4)).filter(line => line.length > 0);
 const failingTests = new Set(failingTestsList);
 
+const outputDir = path.join(__dirname, '../', '../', 'internal', 'fourslash', 'tests', 'gen');
+
 const unparsedFiles: string[] = [];
+
+function main() {
+    const args = process.argv.slice(2);
+    const inputFilesPath = args[0];
+    if (inputFilesPath) {
+        const inputFiles = fs.readFileSync(inputFilesPath, 'utf-8')
+            .split('\n').map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => path.basename(line));
+        inputFileSet = new Set(inputFiles);
+    }
+
+    if (!fs.existsSync(outputDir)) {
+        fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    parseTypeScriptFiles(stradaFourslashPath);
+    console.log(unparsedFiles.join('\n'));
+}
 
 function parseTypeScriptFiles(folder: string): void {
     const files = fs.readdirSync(folder);
@@ -21,7 +39,7 @@ function parseTypeScriptFiles(folder: string): void {
     files.forEach((file) => {
         const filePath = path.join(folder, file);
         const stat = fs.statSync(filePath);
-        if (!verifyFilesSet.has(file)) {
+        if (inputFileSet && !inputFileSet.has(file)) {
             return;
         }
 
@@ -32,7 +50,7 @@ function parseTypeScriptFiles(folder: string): void {
             const test = parseFileContent(file, content);
             if (test) {
                 const testContent = generateGoTest(test)
-                const testPath = path.join(__dirname, '../', '../', 'internal', 'fourslash', 'tests', 'gen', `${test.name}_test.go`);
+                const testPath = path.join(outputDir, `${test.name}_test.go`);
                 fs.writeFileSync(testPath, testContent, 'utf-8');
             }
         }
@@ -590,6 +608,4 @@ func Test${testName}(t *testing.T) {
     return template;
 }
 
-
-parseTypeScriptFiles(folderPath);
-console.log(unparsedFiles.join('\n'));
+main();
