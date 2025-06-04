@@ -299,12 +299,12 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 }
 
 func (p *Program) singleThreaded() bool {
-	return p.programOptions.SingleThreaded.DefaultIfUnknown(p.programOptions.Config.CompilerOptions().SingleThreaded).IsTrue()
+	return p.programOptions.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
 func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingCompilerOptions {
 	p.sourceAffectingCompilerOptionsOnce.Do(func() {
-		p.sourceAffectingCompilerOptions = p.programOptions.Config.CompilerOptions().SourceFileAffecting()
+		p.sourceAffectingCompilerOptions = p.Options().SourceFileAffecting()
 	})
 	return p.sourceAffectingCompilerOptions
 }
@@ -427,7 +427,7 @@ func (p *Program) getBindDiagnosticsForFile(ctx context.Context, sourceFile *ast
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	compilerOptions := p.programOptions.Config.CompilerOptions()
+	compilerOptions := p.Options()
 	if checker.SkipTypeChecking(sourceFile, compilerOptions) {
 		return nil
 	}
@@ -512,7 +512,7 @@ func (p *Program) getDeclarationDiagnosticsForFile(_ctx context.Context, sourceF
 }
 
 func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if checker.SkipTypeChecking(sourceFile, p.programOptions.Config.CompilerOptions()) {
+	if checker.SkipTypeChecking(sourceFile, p.Options()) {
 		return nil
 	}
 
@@ -698,7 +698,7 @@ func (p *Program) CommonSourceDirectory() string {
 			}
 		}
 		p.commonSourceDirectory = getCommonSourceDirectory(
-			p.programOptions.Config.CompilerOptions(),
+			p.Options(),
 			files,
 			p.host.GetCurrentDirectory(),
 			p.host.FS().UseCaseSensitiveFileNames(),
