@@ -1,6 +1,8 @@
 package ls
 
-import "github.com/microsoft/typescript-go/internal/core"
+import (
+	"github.com/microsoft/typescript-go/internal/core"
+)
 
 type Location struct {
 	FileName string

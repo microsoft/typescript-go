@@ -56,6 +56,35 @@ type FormatCodeSettings struct {
 	IndentSwitchCase                                            core.Tristate
 }
 
+func GetDefaultFormatCodeSettings(newLineCharacter string) *FormatCodeSettings {
+	return &FormatCodeSettings{
+		EditorSettings: EditorSettings{
+			IndentSize:             4,
+			TabSize:                4,
+			NewLineCharacter:       newLineCharacter,
+			ConvertTabsToSpaces:    true,
+			IndentStyle:            IndentStyleSmart,
+			TrimTrailingWhitespace: true,
+		},
+		InsertSpaceAfterConstructor:                                 core.TSFalse,
+		InsertSpaceAfterCommaDelimiter:                              core.TSTrue,
+		InsertSpaceAfterSemicolonInForStatements:                    core.TSTrue,
+		InsertSpaceBeforeAndAfterBinaryOperators:                    core.TSTrue,
+		InsertSpaceAfterKeywordsInControlFlowStatements:             core.TSTrue,
+		InsertSpaceAfterFunctionKeywordForAnonymousFunctions:        core.TSFalse,
+		InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis:  core.TSFalse,
+		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets:     core.TSFalse,
+		InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces:       core.TSTrue,
+		InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: core.TSFalse,
+		InsertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces:  core.TSFalse,
+		InsertSpaceBeforeFunctionParenthesis:                        core.TSFalse,
+		PlaceOpenBraceOnNewLineForFunctions:                         core.TSFalse,
+		PlaceOpenBraceOnNewLineForControlBlocks:                     core.TSFalse,
+		Semicolons:                                                  SemicolonPreferenceIgnore,
+		IndentSwitchCase:                                            core.TSTrue,
+	}
+}
+
 type formattingContext struct {
 	currentTokenSpan   *TextRangeWithKind
 	nextTokenSpan      *TextRangeWithKind

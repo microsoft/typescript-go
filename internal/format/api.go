@@ -111,6 +111,11 @@ func FormatOnOpeningCurly(ctx context.Context, sourceFile *ast.SourceFile, posit
 	return FormatSpan(ctx, textRange, sourceFile, FormatRequestKindFormatOnOpeningCurlyBrace)
 }
 
+func FormatOnClosingCurly(ctx context.Context, sourceFile *ast.SourceFile, position int) []core.TextChange {
+	precedingToken := findImmediatelyPrecedingTokenOfKind(position, ast.KindCloseBraceToken, sourceFile)
+	return formatNodeLines(ctx, sourceFile, findOutermostNodeWithinListLevel(precedingToken), FormatRequestKindFormatOnClosingCurlyBrace)
+}
+
 func FormatOnSemicolon(ctx context.Context, sourceFile *ast.SourceFile, position int) []core.TextChange {
 	semicolon := findImmediatelyPrecedingTokenOfKind(position, ast.KindSemicolonToken, sourceFile)
 	return formatNodeLines(ctx, sourceFile, findOutermostNodeWithinListLevel(semicolon), FormatRequestKindFormatOnSemicolon)
