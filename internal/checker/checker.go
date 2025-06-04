@@ -4700,7 +4700,7 @@ func (c *Checker) checkInterfaceDeclaration(node *ast.Node) {
 		c.checkGrammarInterfaceDeclaration(node.AsInterfaceDeclaration())
 	}
 	if !c.containerAllowsBlockScopedVariable(node.Parent) {
-		c.grammarErrorOnNode(node, diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, "interface");
+		c.grammarErrorOnNode(node, diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, "interface")
 	}
 	c.checkTypeParameters(node.TypeParameters())
 	c.checkTypeNameIsReserved(node.Name(), diagnostics.Interface_name_cannot_be_0)
@@ -6424,7 +6424,7 @@ func (c *Checker) checkTypeAliasDeclaration(node *ast.Node) {
 	c.checkGrammarModifiers(node)
 	c.checkTypeNameIsReserved(node.Name(), diagnostics.Type_alias_name_cannot_be_0)
 	if !c.containerAllowsBlockScopedVariable(node.Parent) {
-		c.grammarErrorOnNode(node, diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, "type");
+		c.grammarErrorOnNode(node, diagnostics.X_0_declarations_can_only_be_declared_inside_a_block, "type")
 	}
 	c.checkExportsOnMergedDeclarations(node)
 
