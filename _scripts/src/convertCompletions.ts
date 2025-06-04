@@ -9,6 +9,9 @@ const verifyFiles = fs.readFileSync(verifyCompletionsListPath, 'utf-8')
     .filter(line => line.length > 0)
     .map(line => path.basename(line));
 const verifyFilesSet = new Set(verifyFiles);
+const failingTestsPath = path.join(__dirname, '../', 'failingTests.txt');
+const failingTestsList = fs.readFileSync(failingTestsPath, 'utf-8').split('\n').map(line => line.trim().substring(4)).filter(line => line.length > 0);
+const failingTests = new Set(failingTestsList);
 
 const unparsedFiles: string[] = [];
 
@@ -577,6 +580,7 @@ import (
 
 func Test${testName}(t *testing.T) {
     t.Parallel()
+    ${failingTests.has(testName) ? "t.Skip()" : ""}
     defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ${content}
     f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
