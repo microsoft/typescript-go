@@ -232,7 +232,7 @@ func (s *ScriptInfo) delayReloadNonMixedContentFile() {
 func (s *ScriptInfo) containedByDeferredClosedProject() bool {
 	s.containingProjectsMu.RLock()
 	defer s.containingProjectsMu.RUnlock()
-	return slices.IndexFunc(s.containingProjects, func(project *Project) bool {
+	return slices.ContainsFunc(s.containingProjects, func(project *Project) bool {
 		return project.deferredClose
-	}) != -1
+	})
 }
