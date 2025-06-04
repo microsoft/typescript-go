@@ -1,4 +1,4 @@
-package ls_test
+package fourslash_test
 
 import (
 	"testing"
@@ -19,7 +19,8 @@ export const foo = { bar: 'baz' };
 import { foo } from './a';
 const test = foo./*1*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	defer done()
+	f.VerifyCompletions(t, "2", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
 			CommitCharacters: &fourslash.DefaultCommitCharacters,
@@ -48,5 +49,4 @@ const test = foo./*1*/`
 			},
 		},
 	})
-	done()
 }

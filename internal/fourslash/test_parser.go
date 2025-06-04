@@ -256,9 +256,3 @@ func parseFileContent(filename string, content string, fileOptions map[string]st
 		markers: markers,
 	}
 }
-
-func PtrTo[T any](v T) *T {
-	return &v
-}
-
-var DefaultCommitCharacters = []string{".", ",", ";"}

@@ -469,3 +469,9 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string) {
 		t.Fatalf("%s:\n%s", prefix, diff)
 	}
 }
+
+func PtrTo[T any](v T) *T {
+	return &v
+}
+
+var DefaultCommitCharacters = []string{".", ",", ";"}

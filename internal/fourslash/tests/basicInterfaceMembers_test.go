@@ -1,4 +1,4 @@
-package ls_test
+package fourslash_test
 
 import (
 	"testing"
@@ -20,6 +20,7 @@ interface Point {
 declare const p: Point;
 p./*a*/`
 	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	defer done()
 	f.VerifyCompletions(t, "a", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
@@ -50,5 +51,4 @@ p./*a*/`
 			},
 		},
 	})
-	done()
 }
