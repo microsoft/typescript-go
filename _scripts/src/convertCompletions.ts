@@ -535,9 +535,10 @@ type Cmd = VerifyCompletionsCmd | GoToMarkerCmd;
 function generateVerifyCompletions({ marker, args }: VerifyCompletionsCmd): string {
     let expectedList = "nil";
     if (args) {
-        const includes = args.includes ? `Includes: ${args.includes},` : '';
-        const excludes = args.excludes ? `Excludes: ${args.excludes},` : '';
-        const exact = args.exact ? `Exact: ${args.exact},` : '';
+        const expected = [];
+        if (args.includes) expected.push(`Includes: ${args.includes},`);
+        if (args.excludes) expected.push(`Excludes: ${args.excludes},`);
+        if (args.exact) expected.push(`Exact: ${args.exact},`);
         // !!! isIncomplete
         // !!! itemDefaults/commitCharacters from `isNewIdentifierLocation`
         expectedList = `&fourslash.VerifyCompletionsExpectedList{
@@ -546,9 +547,7 @@ function generateVerifyCompletions({ marker, args }: VerifyCompletionsCmd): stri
         CommitCharacters: &fourslash.DefaultCommitCharacters,
     },
     Items: &fourslash.VerifyCompletionsExpectedItems{
-        ${exact}
-        ${includes}
-        ${excludes}
+        ${expected.join('\n')}
     },
 }`;
     }
