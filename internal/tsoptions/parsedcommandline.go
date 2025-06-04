@@ -17,7 +17,6 @@ type ParsedCommandLine struct {
 	Errors        []*ast.Diagnostic   `json:"errors"`
 	Raw           any                 `json:"raw"`
 	CompileOnSave *bool               `json:"compileOnSave"`
-	// TypeAquisition *core.TypeAcquisition
 
 	comparePathsOptions     tspath.ComparePathsOptions
 	wildcardDirectoriesOnce sync.Once
@@ -60,6 +59,14 @@ func (p *ParsedCommandLine) SetCompilerOptions(o *core.CompilerOptions) {
 
 func (p *ParsedCommandLine) CompilerOptions() *core.CompilerOptions {
 	return p.ParsedConfig.CompilerOptions
+}
+
+func (p *ParsedCommandLine) SetTypeAcquisition(o *core.TypeAcquisition) {
+	p.ParsedConfig.TypeAcquisition = o
+}
+
+func (p *ParsedCommandLine) TypeAcquisition() *core.TypeAcquisition {
+	return p.ParsedConfig.TypeAcquisition
 }
 
 // All file names matched by files, include, and exclude patterns
