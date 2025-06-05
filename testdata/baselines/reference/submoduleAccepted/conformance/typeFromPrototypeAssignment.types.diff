@@ -6,8 +6,8 @@
  var Multimap = function() {
 ->Multimap : typeof Multimap
 ->function() {    this._map = {};    this._map    this.set    this.get    this.addon} : typeof Multimap
-+>Multimap : { (): void; prototype: { set: () => void; get: () => void; }; }
-+>function() {    this._map = {};    this._map    this.set    this.get    this.addon} : { (): void; prototype: { set: () => void; get: () => void; }; }
++>Multimap : { (): void; prototype: { set: () => void; get(): void; }; }
++>function() {    this._map = {};    this._map    this.set    this.get    this.addon} : { (): void; prototype: { set: () => void; get(): void; }; }
 
      this._map = {};
  >this._map = {} : {}
@@ -52,19 +52,14 @@
  };
 
  Multimap.prototype = {
-->Multimap.prototype = {    set: function() {        this._map        this.set        this.get        this.addon    },    get() {        this._map        this.set        this.get        this.addon    }} : { set: () => void; get(): void; }
-->Multimap.prototype : { set: () => void; get(): void; }
+ >Multimap.prototype = {    set: function() {        this._map        this.set        this.get        this.addon    },    get() {        this._map        this.set        this.get        this.addon    }} : { set: () => void; get(): void; }
+ >Multimap.prototype : { set: () => void; get(): void; }
 ->Multimap : typeof Multimap
-->prototype : { set: () => void; get(): void; }
-->{    set: function() {        this._map        this.set        this.get        this.addon    },    get() {        this._map        this.set        this.get        this.addon    }} : { set: () => void; get(): void; }
-+>Multimap.prototype = {    set: function() {        this._map        this.set        this.get        this.addon    },    get() {        this._map        this.set        this.get        this.addon    }} : { set: () => void; get: () => void; }
-+>Multimap.prototype : { set: () => void; get: () => void; }
-+>Multimap : { (): void; prototype: { set: () => void; get: () => void; }; }
-+>prototype : { set: () => void; get: () => void; }
-+>{    set: function() {        this._map        this.set        this.get        this.addon    },    get() {        this._map        this.set        this.get        this.addon    }} : { set: () => void; get: () => void; }
++>Multimap : { (): void; prototype: { set: () => void; get(): void; }; }
+ >prototype : { set: () => void; get(): void; }
+ >{    set: function() {        this._map        this.set        this.get        this.addon    },    get() {        this._map        this.set        this.get        this.addon    }} : { set: () => void; get(): void; }
 
-     set: function() {
- >set : () => void
+@@= skipped -44, +44 lines =@@
  >function() {        this._map        this.set        this.get        this.addon    } : () => void
 
          this._map
@@ -72,19 +67,19 @@
 ->this : this
 ->_map : {}
 +>this._map : any
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
 +>_map : any
 
          this.set
  >this.set : () => void
 ->this : this
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
  >set : () => void
 
          this.get
  >this.get : () => void
 ->this : this
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
  >get : () => void
 
          this.addon
@@ -92,7 +87,7 @@
 ->this : this
 ->addon : () => void
 +>this.addon : any
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
 +>addon : any
 
      },
@@ -104,19 +99,19 @@
 ->this : this
 ->_map : {}
 +>this._map : any
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
 +>_map : any
 
          this.set
  >this.set : () => void
 ->this : this
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
  >set : () => void
 
          this.get
  >this.get : () => void
 ->this : this
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
  >get : () => void
 
          this.addon
@@ -124,20 +119,18 @@
 ->this : this
 ->addon : () => void
 +>this.addon : any
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
 +>addon : any
      }
  }
 
- Multimap.prototype.addon = function () {
+@@= skipped -49, +49 lines =@@
  >Multimap.prototype.addon = function () {    this._map    this.set    this.get    this.addon} : () => void
  >Multimap.prototype.addon : any
-->Multimap.prototype : { set: () => void; get(): void; }
+ >Multimap.prototype : { set: () => void; get(): void; }
 ->Multimap : typeof Multimap
-->prototype : { set: () => void; get(): void; }
-+>Multimap.prototype : { set: () => void; get: () => void; }
-+>Multimap : { (): void; prototype: { set: () => void; get: () => void; }; }
-+>prototype : { set: () => void; get: () => void; }
++>Multimap : { (): void; prototype: { set: () => void; get(): void; }; }
+ >prototype : { set: () => void; get(): void; }
  >addon : any
  >function () {    this._map    this.set    this.get    this.addon} : () => void
 
@@ -146,19 +139,19 @@
 ->this : this
 ->_map : {}
 +>this._map : any
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
 +>_map : any
 
      this.set
  >this.set : () => void
 ->this : this
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
  >set : () => void
 
      this.get
  >this.get : () => void
 ->this : this
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
  >get : () => void
 
      this.addon
@@ -166,7 +159,7 @@
 ->this : this
 ->addon : () => void
 +>this.addon : any
-+>this : { set: () => void; get: () => void; }
++>this : { set: () => void; get(): void; }
 +>addon : any
  }
 
@@ -176,7 +169,7 @@
 ->Multimap : typeof Multimap
 +>mm : any
 +>new Multimap() : any
-+>Multimap : { (): void; prototype: { set: () => void; get: () => void; }; }
++>Multimap : { (): void; prototype: { set: () => void; get(): void; }; }
 
  mm._map
 ->mm._map : {}

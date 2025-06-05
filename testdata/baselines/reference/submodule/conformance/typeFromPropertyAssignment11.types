@@ -6,11 +6,25 @@ var Inner = function() {}
 >function() {} : { (): void; prototype: { m: () => void; i: number; }; }
 
 Inner.prototype = {
+<<<<<<< HEAD
 >Inner.prototype = {    m() { },    i: 1} : { m: () => void; i: number; }
 >Inner.prototype : { m: () => void; i: number; }
 >Inner : { (): void; prototype: { m: () => void; i: number; }; }
 >prototype : { m: () => void; i: number; }
 >{    m() { },    i: 1} : { m: () => void; i: number; }
+||||||| b0e1b84ac
+>Inner.prototype = {    m() { },    i: 1} : { m: () => void; i: number; }
+>Inner.prototype : any
+>Inner : () => void
+>prototype : any
+>{    m() { },    i: 1} : { m: () => void; i: number; }
+=======
+>Inner.prototype = {    m() { },    i: 1} : { m(): void; i: number; }
+>Inner.prototype : any
+>Inner : () => void
+>prototype : any
+>{    m() { },    i: 1} : { m(): void; i: number; }
+>>>>>>> main
 
     m() { },
 >m : () => void

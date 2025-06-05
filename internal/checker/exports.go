@@ -2,8 +2,13 @@ package checker
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
+
+func (c *Checker) GetUnknownSymbol() *ast.Symbol {
+	return c.unknownSymbol
+}
 
 func (c *Checker) GetUnionType(types []*Type) *Type {
 	return c.getUnionType(types)
@@ -53,6 +58,62 @@ func (c *Checker) WasCanceled() bool {
 	return c.wasCanceled
 }
 
+func (c *Checker) GetSignaturesOfType(t *Type, kind SignatureKind) []*Signature {
+	return c.getSignaturesOfType(t, kind)
+}
+
+func (c *Checker) GetDeclaredTypeOfSymbol(symbol *ast.Symbol) *Type {
+	return c.getDeclaredTypeOfSymbol(symbol)
+}
+
+func (c *Checker) GetTypeOfSymbol(symbol *ast.Symbol) *Type {
+	return c.getTypeOfSymbol(symbol)
+}
+
+func (c *Checker) GetConstraintOfTypeParameter(typeParameter *Type) *Type {
+	return c.getConstraintOfTypeParameter(typeParameter)
+}
+
+func (c *Checker) GetResolutionModeOverride(node *ast.ImportAttributes, reportErrors bool) core.ResolutionMode {
+	return c.getResolutionModeOverride(node, reportErrors)
+}
+
+func (c *Checker) GetEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.ModifierFlags) ast.ModifierFlags {
+	return c.getEffectiveDeclarationFlags(n, flagsToCheck)
+}
+
 func (c *Checker) GetBaseConstraintOfType(t *Type) *Type {
 	return c.getBaseConstraintOfType(t)
+}
+
+func (c *Checker) GetTypePredicateOfSignature(sig *Signature) *TypePredicate {
+	return c.getTypePredicateOfSignature(sig)
+}
+
+func IsTupleType(t *Type) bool {
+	return isTupleType(t)
+}
+
+func (c *Checker) GetReturnTypeOfSignature(sig *Signature) *Type {
+	return c.getReturnTypeOfSignature(sig)
+}
+
+func (c *Checker) HasEffectiveRestParameter(signature *Signature) bool {
+	return c.hasEffectiveRestParameter(signature)
+}
+
+func (c *Checker) GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol *ast.Symbol) []*Type {
+	return c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+}
+
+func (c *Checker) GetContextualTypeForObjectLiteralElement(element *ast.Node, contextFlags ContextFlags) *Type {
+	return c.getContextualTypeForObjectLiteralElement(element, contextFlags)
+}
+
+func (c *Checker) TypePredicateToString(t *TypePredicate) string {
+	return c.typePredicateToString(t)
+}
+
+func (c *Checker) GetExpandedParameters(signature *Signature, skipUnionExpanding bool) [][]*ast.Symbol {
+	return c.getExpandedParameters(signature, skipUnionExpanding)
 }

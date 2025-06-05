@@ -20,6 +20,7 @@ Ns.Two = function() {};
 >function() {} : { (): void; prototype: {}; }
 
 Ns.One.prototype = {
+<<<<<<< HEAD
 >Ns.One.prototype = {  ok() {},} : { ok: () => void; }
 >Ns.One.prototype : { ok: () => void; }
 >Ns.One : { (): void; prototype: { ok: () => void; }; }
@@ -27,6 +28,23 @@ Ns.One.prototype = {
 >One : { (): void; prototype: { ok: () => void; }; }
 >prototype : { ok: () => void; }
 >{  ok() {},} : { ok: () => void; }
+||||||| b0e1b84ac
+>Ns.One.prototype = {  ok() {},} : { ok: () => void; }
+>Ns.One.prototype : any
+>Ns.One : any
+>Ns : {}
+>One : any
+>prototype : any
+>{  ok() {},} : { ok: () => void; }
+=======
+>Ns.One.prototype = {  ok() {},} : { ok(): void; }
+>Ns.One.prototype : any
+>Ns.One : any
+>Ns : {}
+>One : any
+>prototype : any
+>{  ok() {},} : { ok(): void; }
+>>>>>>> main
 
   ok() {},
 >ok : () => void
@@ -47,21 +65,21 @@ Ns.Two.prototype = {
  * @type {Ns.One}
  */
 var one;
->one : One
+>one : Ns.One
 
 one.wat;
 >one.wat : any
->one : One
+>one : Ns.One
 >wat : any
 
 /**
  * @type {Ns.Two}
  */
 var two;
->two : Two
+>two : Ns.Two
 
 two.wat;
 >two.wat : any
->two : Two
+>two : Ns.Two
 >wat : any
 

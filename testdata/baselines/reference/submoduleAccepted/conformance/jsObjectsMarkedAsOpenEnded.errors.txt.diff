@@ -2,14 +2,31 @@
 +++ new.jsObjectsMarkedAsOpenEnded.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
+<<<<<<< HEAD
 +a.js(16,14): error TS2339: Property 'a' does not exist on type '{}'.
+||||||| b0e1b84ac
++a.js(2,10): error TS2339: Property 'a' does not exist on type '{}'.
++a.js(8,21): error TS2339: Property 'a' does not exist on type '{}'.
++a.js(16,14): error TS2339: Property 'a' does not exist on type '{}'.
++b.ts(1,10): error TS2339: Property 'a' does not exist on type '{}'.
++b.ts(2,18): error TS2339: Property 'a' does not exist on type '{}'.
+=======
++b.ts(1,10): error TS2339: Property 'a' does not exist on type '{}'.
++b.ts(2,18): error TS2339: Property 'a' does not exist on type '{}'.
+>>>>>>> main
 +b.ts(3,29): error TS2339: Property 'a' does not exist on type '{}'.
 +b.ts(4,14): error TS2339: Property 'a' does not exist on type '{}'.
 +b.ts(5,8): error TS2339: Property 'a' does not exist on type '{}'.
 +b.ts(6,10): error TS2339: Property 'a' does not exist on type '{}'.
 +
 +
+<<<<<<< HEAD
 +==== a.js (1 errors) ====
+||||||| b0e1b84ac
++==== a.js (3 errors) ====
+=======
++==== a.js (0 errors) ====
+>>>>>>> main
 +    var variable = {};
 +    variable.a = 0;
 +    
@@ -26,8 +43,6 @@
 +    };
 +    
 +    obj.property.a = 0;
-+                 ~
-+!!! error TS2339: Property 'a' does not exist on type '{}'.
 +    
 +    var arr = [{}];
 +    

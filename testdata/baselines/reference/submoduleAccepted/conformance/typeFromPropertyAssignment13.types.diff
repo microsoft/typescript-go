@@ -22,12 +22,13 @@
 +>function() {} : { (): void; prototype: { m: () => void; i: number; }; }
 
  Outer.Inner.prototype = {
-->Outer.Inner.prototype = {    m() { },    i: 1} : { m(): void; i: number; }
+ >Outer.Inner.prototype = {    m() { },    i: 1} : { m(): void; i: number; }
 ->Outer.Inner.prototype : { m(): void; i: number; }
 ->Outer.Inner : typeof Inner
 ->Outer : typeof Outer
 ->Inner : typeof Inner
 ->prototype : { m(): void; i: number; }
+<<<<<<< HEAD
 ->{    m() { },    i: 1} : { m(): void; i: number; }
 +>Outer.Inner.prototype = {    m() { },    i: 1} : { m: () => void; i: number; }
 +>Outer.Inner.prototype : { m: () => void; i: number; }
@@ -36,9 +37,25 @@
 +>Inner : { (): void; prototype: { m: () => void; i: number; }; }
 +>prototype : { m: () => void; i: number; }
 +>{    m() { },    i: 1} : { m: () => void; i: number; }
+||||||| b0e1b84ac
+->{    m() { },    i: 1} : { m(): void; i: number; }
++>Outer.Inner.prototype = {    m() { },    i: 1} : { m: () => void; i: number; }
++>Outer.Inner.prototype : any
++>Outer.Inner : any
++>Outer : {}
++>Inner : any
++>prototype : any
++>{    m() { },    i: 1} : { m: () => void; i: number; }
+=======
++>Outer.Inner.prototype : any
++>Outer.Inner : any
++>Outer : {}
++>Inner : any
++>prototype : any
+ >{    m() { },    i: 1} : { m(): void; i: number; }
+>>>>>>> main
 
      m() { },
- >m : () => void
 @@= skipped -30, +30 lines =@@
  Outer.Inner.prototype.j = 2
  >Outer.Inner.prototype.j = 2 : 2

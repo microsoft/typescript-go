@@ -30,57 +30,19 @@
  >staticProp : number
  >0 : 0
 
-@@= skipped -33, +33 lines =@@
-
- === b.ts ===
- import * as a from "./a";
-->a : typeof a
-+>a : typeof import("a")
-
- var n: number;
- >n : number
-@@= skipped -8, +8 lines =@@
- var n = a.C1.staticProp;
- >n : number
- >a.C1.staticProp : number
-->a.C1 : typeof a.C1
-->a : typeof a
-->C1 : typeof a.C1
-+>a.C1 : typeof C1
-+>a : typeof import("a")
-+>C1 : typeof C1
- >staticProp : number
-
- var n = a.C2.staticProp;
- >n : number
- >a.C2.staticProp : number
- >a.C2 : typeof C2
-->a : typeof a
-+>a : typeof import("a")
- >C2 : typeof C2
- >staticProp : number
-
+@@= skipped -57, +57 lines =@@
  var n = a.F1.staticProp;
  >n : number
  >a.F1.staticProp : number
 ->a.F1 : typeof a.F1
-->a : typeof a
-->F1 : typeof a.F1
 +>a.F1 : { (): void; staticProp: number; }
-+>a : typeof import("a")
+ >a : typeof a
+->F1 : typeof a.F1
 +>F1 : { (): void; staticProp: number; }
  >staticProp : number
 
  var n = a.F2.staticProp;
- >n : number
- >a.F2.staticProp : number
- >a.F2 : { (): void; staticProp: number; }
-->a : typeof a
-+>a : typeof import("a")
- >F2 : { (): void; staticProp: number; }
- >staticProp : number
-
-@@= skipped -45, +45 lines =@@
+@@= skipped -29, +29 lines =@@
  var n = F3.staticProp;
  >n : number
  >F3.staticProp : number

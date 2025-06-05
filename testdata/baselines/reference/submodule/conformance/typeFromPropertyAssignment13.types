@@ -13,6 +13,7 @@ Outer.Inner = function() {}
 >function() {} : { (): void; prototype: { m: () => void; i: number; }; }
 
 Outer.Inner.prototype = {
+<<<<<<< HEAD
 >Outer.Inner.prototype = {    m() { },    i: 1} : { m: () => void; i: number; }
 >Outer.Inner.prototype : { m: () => void; i: number; }
 >Outer.Inner : { (): void; prototype: { m: () => void; i: number; }; }
@@ -20,6 +21,23 @@ Outer.Inner.prototype = {
 >Inner : { (): void; prototype: { m: () => void; i: number; }; }
 >prototype : { m: () => void; i: number; }
 >{    m() { },    i: 1} : { m: () => void; i: number; }
+||||||| b0e1b84ac
+>Outer.Inner.prototype = {    m() { },    i: 1} : { m: () => void; i: number; }
+>Outer.Inner.prototype : any
+>Outer.Inner : any
+>Outer : {}
+>Inner : any
+>prototype : any
+>{    m() { },    i: 1} : { m: () => void; i: number; }
+=======
+>Outer.Inner.prototype = {    m() { },    i: 1} : { m(): void; i: number; }
+>Outer.Inner.prototype : any
+>Outer.Inner : any
+>Outer : {}
+>Inner : any
+>prototype : any
+>{    m() { },    i: 1} : { m(): void; i: number; }
+>>>>>>> main
 
     m() { },
 >m : () => void

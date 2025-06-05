@@ -63,6 +63,7 @@ const (
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType TypeFormatFlags = 1 << 28 // Use single quotes for string literal type
 	TypeFormatFlagsNoTypeReduction                     TypeFormatFlags = 1 << 29 // Don't call getReducedType
 	TypeFormatFlagsOmitThisParameter                   TypeFormatFlags = 1 << 25
+	TypeFormatFlagsWriteCallStyleSignature             TypeFormatFlags = 1 << 27 // Write construct signatures as call style signatures
 	// Error Handling
 	TypeFormatFlagsAllowUniqueESSymbolType TypeFormatFlags = 1 << 20 // This is bit 20 to align with the same bit in `NodeBuilderFlags`
 	// TypeFormatFlags exclusive
@@ -73,6 +74,36 @@ const (
 	TypeFormatFlagsInElementType       TypeFormatFlags = 1 << 21 // Writing an array or union element type
 	TypeFormatFlagsInFirstTypeArgument TypeFormatFlags = 1 << 22 // Writing first type argument of the instantiated type
 	TypeFormatFlagsInTypeAlias         TypeFormatFlags = 1 << 23 // Writing type in type alias declaration
+)
+
+const TypeFormatFlagsNodeBuilderFlagsMask = TypeFormatFlagsNoTruncation | TypeFormatFlagsWriteArrayAsGenericType | TypeFormatFlagsGenerateNamesForShadowedTypeParams | TypeFormatFlagsUseStructuralFallback | TypeFormatFlagsWriteTypeArgumentsOfSignature |
+	TypeFormatFlagsUseFullyQualifiedType | TypeFormatFlagsSuppressAnyReturnType | TypeFormatFlagsMultilineObjectLiterals | TypeFormatFlagsWriteClassExpressionAsTypeLiteral |
+	TypeFormatFlagsUseTypeOfFunction | TypeFormatFlagsOmitParameterModifiers | TypeFormatFlagsUseAliasDefinedOutsideCurrentScope | TypeFormatFlagsAllowUniqueESSymbolType | TypeFormatFlagsInTypeAlias |
+	TypeFormatFlagsUseSingleQuotesForStringLiteralType | TypeFormatFlagsNoTypeReduction | TypeFormatFlagsOmitThisParameter
+
+type SymbolFormatFlags int32
+
+const (
+	SymbolFormatFlagsNone SymbolFormatFlags = 0
+	// Write symbols's type argument if it is instantiated symbol
+	// eg. class C<T> { p: T }   <-- Show p as C<T>.p here
+	//     var a: C<number>;
+	//     var p = a.p; <--- Here p is property of C<number> so show it as C<number>.p instead of just C.p
+	SymbolFormatFlagsWriteTypeParametersOrArguments SymbolFormatFlags = 1 << 0
+	// Use only external alias information to get the symbol name in the given context
+	// eg.  module m { export class c { } } import x = m.c;
+	// When this flag is specified m.c will be used to refer to the class instead of alias symbol x
+	SymbolFormatFlagsUseOnlyExternalAliasing SymbolFormatFlags = 1 << 1
+	// Build symbol name using any nodes needed, instead of just components of an entity name
+	SymbolFormatFlagsAllowAnyNodeKind SymbolFormatFlags = 1 << 2
+	// Prefer aliases which are not directly visible
+	SymbolFormatFlagsUseAliasDefinedOutsideCurrentScope SymbolFormatFlags = 1 << 3
+	// { [E.A]: 1 }
+	/** @internal */
+	SymbolFormatFlagsWriteComputedProps SymbolFormatFlags = 1 << 4
+	// Skip building an accessible symbol chain
+	/** @internal */
+	SymbolFormatFlagsDoNotIncludeSymbolChain SymbolFormatFlags = 1 << 5
 )
 
 // Ids
@@ -235,6 +266,18 @@ type IndexSymbolLinks struct {
 type MarkedAssignmentSymbolLinks struct {
 	lastAssignmentPos     int32
 	hasDefiniteAssignment bool // Symbol is definitely assigned somewhere
+}
+
+type accessibleChainCacheKey struct {
+	useOnlyExternalAliasing bool
+	location                *ast.Node
+	meaning                 ast.SymbolFlags
+}
+
+type ContainingSymbolLinks struct {
+	extendedContainersByFile map[ast.NodeId][]*ast.Symbol // Symbols of nodes which which logically contain this one, cached by file the request is made within
+	extendedContainers       *[]*ast.Symbol               // Containers (other than the parent) which this symbol is aliased in
+	accessibleChainCache     map[accessibleChainCacheKey][]*ast.Symbol
 }
 
 type AccessFlags uint32
@@ -449,7 +492,6 @@ type ObjectFlags uint32
 // Types included in TypeFlags.ObjectFlagsType have an objectFlags property. Some ObjectFlags
 // are specific to certain types and reuse the same bit position. Those ObjectFlags require a check
 // for a certain TypeFlags value to determine their meaning.
-// dprint-ignore
 const (
 	ObjectFlagsNone                                       ObjectFlags = 0
 	ObjectFlagsClass                                      ObjectFlags = 1 << 0  // Class
@@ -546,6 +588,10 @@ func (t *Type) Flags() TypeFlags {
 	return t.flags
 }
 
+func (t *Type) ObjectFlags() ObjectFlags {
+	return t.objectFlags
+}
+
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
@@ -602,6 +648,8 @@ func (t *Type) Target() *Type {
 		return t.AsIndexType().target
 	case t.flags&TypeFlagsStringMapping != 0:
 		return t.AsStringMappingType().target
+	case t.flags&TypeFlagsObject != 0 && t.objectFlags&ObjectFlagsMapped != 0:
+		return t.AsMappedType().target
 	}
 	panic("Unhandled case in Type.Target")
 }
@@ -732,6 +780,10 @@ func (t *LiteralType) Value() any {
 	return t.value
 }
 
+func (t *LiteralType) String() string {
+	return ValueToString(t.value)
+}
+
 // UniqueESSymbolTypeData
 
 type UniqueESSymbolType struct {
@@ -757,6 +809,8 @@ type StructuredType struct {
 	signatures         []*Signature // Signatures (call + construct)
 	callSignatureCount int          // Count of call signatures
 	indexInfos         []*IndexInfo
+
+	objectTypeWithoutAbstractConstructSignatures *Type
 }
 
 func (t *StructuredType) AsStructuredType() *StructuredType { return t }
@@ -890,6 +944,8 @@ type TupleElementInfo struct {
 	labeledDeclaration *ast.Node // NamedTupleMember | ParameterDeclaration | nil
 }
 
+func (t *TupleElementInfo) TupleElementFlags() ElementFlags { return t.flags }
+
 type TupleType struct {
 	InterfaceType
 	elementInfos  []TupleElementInfo
@@ -897,6 +953,15 @@ type TupleType struct {
 	fixedLength   int // Number of initial required or optional elements
 	combinedFlags ElementFlags
 	readonly      bool
+}
+
+func (t *TupleType) FixedLength() int { return t.fixedLength }
+func (t *TupleType) ElementFlags() []ElementFlags {
+	elementFlags := make([]ElementFlags, len(t.elementInfos))
+	for i, info := range t.elementInfos {
+		elementFlags[i] = info.flags
+	}
+	return elementFlags
 }
 
 // SingleSignatureType
@@ -1096,6 +1161,22 @@ type Signature struct {
 	mapper                   *TypeMapper
 	isolatedSignatureType    *Type
 	composite                *CompositeSignature
+}
+
+func (s *Signature) TypeParameters() []*Type {
+	return s.typeParameters
+}
+
+func (s *Signature) Declaration() *ast.Node {
+	return s.declaration
+}
+
+func (s *Signature) Target() *Signature {
+	return s.target
+}
+
+func (s *Signature) ThisParameter() *ast.Symbol {
+	return s.thisParameter
 }
 
 type CompositeSignature struct {
