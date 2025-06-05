@@ -9,9 +9,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
@@ -36,6 +38,11 @@ type ServiceOptions struct {
 
 var _ ProjectHost = (*Service)(nil)
 
+type ConfigFileCacheEntry struct {
+	commandLine *tsoptions.ParsedCommandLine
+	// !!! sheetal projects watching it and ref counting
+}
+
 type Service struct {
 	host                ServiceHost
 	options             ServiceOptions
@@ -59,6 +66,10 @@ type Service struct {
 	filenameToScriptInfoVersion map[tspath.Path]int
 	realpathToScriptInfosMu     sync.Mutex
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
+
+	// !!! sheetal gc for this and extendedConfigCache
+	configFileCache     collections.SyncMap[tspath.Path, *ConfigFileCacheEntry]
+	extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
 
 	typingsInstaller *TypingsInstaller
 
@@ -147,6 +158,19 @@ func (s *Service) TypingsInstaller() *TypingsInstaller {
 // DocumentRegistry implements ProjectHost.
 func (s *Service) DocumentRegistry() *DocumentRegistry {
 	return s.documentRegistry
+}
+
+func (s *Service) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	if existing, ok := s.configFileCache.Load(path); ok {
+		return existing.commandLine
+	}
+
+	// Create parsed command line
+	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, s.host, &s.extendedConfigCache)
+	entry, _ := s.configFileCache.LoadOrStore(path, &ConfigFileCacheEntry{
+		commandLine: commandLine,
+	})
+	return entry.commandLine
 }
 
 // FS implements ProjectHost.
