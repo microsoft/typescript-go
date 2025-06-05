@@ -563,12 +563,6 @@ func TestService(t *testing.T) {
 				{
 					Kind: ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete),
 					GlobPattern: lsproto.GlobPattern{
-						Pattern: ptrTo("/home/projects/TS/p1/tsconfig.json"),
-					},
-				},
-				{
-					Kind: ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete),
-					GlobPattern: lsproto.GlobPattern{
 						Pattern: ptrTo("/home/projects/TS/p1/src/index.ts"),
 					},
 				},
@@ -576,6 +570,12 @@ func TestService(t *testing.T) {
 					Kind: ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete),
 					GlobPattern: lsproto.GlobPattern{
 						Pattern: ptrTo("/home/projects/TS/p1/src/y.ts"),
+					},
+				},
+				{
+					Kind: ptrTo(lsproto.WatchKindCreate | lsproto.WatchKindChange | lsproto.WatchKindDelete),
+					GlobPattern: lsproto.GlobPattern{
+						Pattern: ptrTo("/home/projects/TS/p1/tsconfig.json"),
 					},
 				},
 			})

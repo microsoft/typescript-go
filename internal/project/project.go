@@ -105,8 +105,8 @@ func setIsEqualTo(arr1 []string, arr2 []string) bool {
 	if slices.Equal(arr1, arr2) {
 		return true
 	}
-	compact1 := slices.Compact(arr1)
-	compact2 := slices.Compact(arr2)
+	compact1 := slices.Clone(arr1)
+	compact2 := slices.Clone(arr2)
 	slices.Sort(compact1)
 	slices.Sort(compact2)
 	return slices.Equal(compact1, compact2)
@@ -150,6 +150,7 @@ type Project struct {
 	compilerOptions   *core.CompilerOptions
 	typeAcquisition   *core.TypeAcquisition
 	parsedCommandLine *tsoptions.ParsedCommandLine
+	programConfig     *tsoptions.ParsedCommandLine
 	program           *compiler.Program
 	checkerPool       *checkerPool
 
@@ -265,7 +266,7 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 		)
 		if p.program != nil {
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
-			oldCompilerOptions = p.program.GetCompilerOptions()
+			oldCompilerOptions = p.program.Options()
 		}
 		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, oldSourceFile, oldCompilerOptions)
 	}
@@ -497,6 +498,7 @@ func (p *Project) updateGraph() bool {
 		case PendingReloadFileNames:
 			p.parsedCommandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(p.parsedCommandLine, p.host.FS())
 			writeFileNames = p.setRootFiles(p.parsedCommandLine.FileNames())
+			p.programConfig = nil
 		case PendingReloadFull:
 			if err := p.loadConfig(); err != nil {
 				panic(fmt.Sprintf("failed to reload config: %v", err))
@@ -519,7 +521,7 @@ func (p *Project) updateGraph() bool {
 		if oldProgram != nil {
 			for _, oldSourceFile := range oldProgram.GetSourceFiles() {
 				if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
-					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.GetCompilerOptions())
+					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.Options())
 				}
 			}
 		}
@@ -538,16 +540,40 @@ func (p *Project) updateProgram() bool {
 	}
 	var oldProgramReused bool
 	if p.program == nil || p.dirtyFilePath == "" {
-		rootFileNames := p.GetRootFileNames()
-		compilerOptions := p.compilerOptions
+		if p.programConfig == nil {
+			// Get from config file = config file root files + typings files
+			if p.parsedCommandLine != nil {
+				// There are no typing files so use the parsed command line as is
+				if len(p.typingFiles) == 0 {
+					p.programConfig = p.parsedCommandLine
+				} else {
+					// Update the fileNames
+					parsedConfig := *p.parsedCommandLine.ParsedConfig
+					parsedConfig.FileNames = append(p.parsedCommandLine.FileNames(), p.typingFiles...)
+					p.programConfig = &tsoptions.ParsedCommandLine{
+						ParsedConfig: &parsedConfig,
+						ConfigFile:   p.parsedCommandLine.ConfigFile,
+						Errors:       p.parsedCommandLine.Errors,
+					}
+				}
+			} else {
+				rootFileNames := p.GetRootFileNames()
+				compilerOptions := p.compilerOptions
+				p.programConfig = &tsoptions.ParsedCommandLine{
+					ParsedConfig: &core.ParsedOptions{
+						CompilerOptions: compilerOptions,
+						FileNames:       rootFileNames,
+					},
+				}
+			}
+		}
 		var typingsLocation string
 		if typeAcquisition := p.getTypeAcquisition(); typeAcquisition != nil && typeAcquisition.Enable.IsTrue() {
 			typingsLocation = p.host.TypingsInstaller().TypingsLocation
 		}
 		p.program = compiler.NewProgram(compiler.ProgramOptions{
-			RootFiles:       rootFileNames,
+			Config:          p.programConfig,
 			Host:            p,
-			Options:         compilerOptions,
 			TypingsLocation: typingsLocation,
 			CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 				p.checkerPool = newCheckerPool(4, program, p.Log)
@@ -720,6 +746,7 @@ func (p *Project) UpdateTypingFiles(typingsInfo *TypingsInfo, typingFiles []stri
 	if !slices.Equal(typingFiles, p.typingFiles) {
 		// If typing files changed, then only schedule project update
 		p.typingFiles = typingFiles
+		p.programConfig = nil
 
 		// 	// Invalidate files with unresolved imports
 		// 	this.resolutionCache.setFilesWithInvalidatedNonRelativeUnresolvedImports(this.cachedUnresolvedImportsPerFile);
@@ -816,6 +843,7 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 		case KindInferred:
 			p.rootFileNames.Delete(info.path)
 			p.typeAcquisition = nil
+			p.programConfig = nil
 		case KindConfigured:
 			p.pendingReload = PendingReloadFileNames
 		}
@@ -839,6 +867,7 @@ func (p *Project) AddRoot(info *ScriptInfo) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.addRoot(info)
+	p.programConfig = nil
 	p.markAsDirtyLocked()
 }
 
@@ -871,6 +900,7 @@ func (p *Project) loadConfig() error {
 		panic("loadConfig called on non-configured project")
 	}
 
+	p.programConfig = nil
 	if configFileContent, ok := p.host.FS().ReadFile(p.configFileName); ok {
 		configDir := tspath.GetDirectoryPath(p.configFileName)
 		tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(p.configFileName, p.configFilePath, configFileContent)

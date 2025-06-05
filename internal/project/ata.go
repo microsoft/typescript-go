@@ -61,6 +61,12 @@ type TypingsInstaller struct {
 	pendingRunRequestsMu sync.Mutex
 }
 
+func (ti *TypingsInstaller) PendingRunRequestsCount() int {
+	ti.pendingRunRequestsMu.Lock()
+	defer ti.pendingRunRequestsMu.Unlock()
+	return len(ti.pendingRunRequests)
+}
+
 func (ti *TypingsInstaller) IsKnownTypesPackageName(p *Project, name string) bool {
 	// We want to avoid looking this up in the registry as that is expensive. So first check that it's actually an NPM package.
 	validationResult, _, _ := ValidatePackageName(name)
@@ -323,6 +329,7 @@ func (ti *TypingsInstaller) invokeRoutineToInstallTypings(
 				if pendingRequestsCount == 1 {
 					ti.pendingRunRequests = nil
 				} else {
+					ti.pendingRunRequests[0] = nil // ensure the request is GC'd
 					ti.pendingRunRequests = ti.pendingRunRequests[1:]
 				}
 			}
