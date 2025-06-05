@@ -42,8 +42,8 @@ func runLSP(args []string) int {
 	typingsLocation := getGlobalTypingsCacheLocation()
 
 	s := lsp.NewServer(&lsp.ServerOptions{
-		In:                 lsp.ToLSPReader(os.Stdin),
-		Out:                lsp.ToLSPWriter(os.Stdout),
+		In:                 lsp.ToReader(os.Stdin),
+		Out:                lsp.ToWriter(os.Stdout),
 		Err:                os.Stderr,
 		Cwd:                core.Must(os.Getwd()),
 		FS:                 fs,

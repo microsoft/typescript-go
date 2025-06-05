@@ -63,8 +63,8 @@ func (r *lspWriter) Close() {
 }
 
 var (
-	_ lsp.LSPReader = (*lspReader)(nil)
-	_ lsp.LSPWriter = (*lspWriter)(nil)
+	_ lsp.Reader = (*lspReader)(nil)
+	_ lsp.Writer = (*lspWriter)(nil)
 )
 
 func newLSPPipe() (*lspReader, *lspWriter) {

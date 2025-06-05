@@ -8,7 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	runner "github.com/microsoft/typescript-go/internal/testrunner"
+	"github.com/microsoft/typescript-go/internal/testrunner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -52,7 +52,7 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 
 	markerPositions := make(map[string]*Marker)
 	var markers []*Marker
-	filesWithMarker, symlinks, _, globalOptions := runner.ParseTestFilesAndSymlinks(
+	filesWithMarker, symlinks, _, globalOptions := testrunner.ParseTestFilesAndSymlinks(
 		contents,
 		fileName,
 		parseFileContent,

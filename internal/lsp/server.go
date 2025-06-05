@@ -22,8 +22,8 @@ import (
 )
 
 type ServerOptions struct {
-	In  LSPReader
-	Out LSPWriter
+	In  Reader
+	Out Writer
 	Err io.Writer
 
 	Cwd                string
@@ -66,11 +66,11 @@ type pendingClientRequest struct {
 	cancel context.CancelFunc
 }
 
-type LSPReader interface {
+type Reader interface {
 	Read() (*lsproto.Message, error)
 }
 
-type LSPWriter interface {
+type Writer interface {
 	Write(msg *lsproto.Message) error
 }
 
@@ -96,7 +96,7 @@ func (r *lspReader) Read() (*lsproto.Message, error) {
 	return req, nil
 }
 
-func ToLSPReader(r io.Reader) LSPReader {
+func ToReader(r io.Reader) Reader {
 	return &lspReader{r: lsproto.NewBaseReader(r)}
 }
 
@@ -108,18 +108,18 @@ func (w *lspWriter) Write(msg *lsproto.Message) error {
 	return w.w.Write(data)
 }
 
-func ToLSPWriter(w io.Writer) LSPWriter {
+func ToWriter(w io.Writer) Writer {
 	return &lspWriter{w: lsproto.NewBaseWriter(w)}
 }
 
 var (
-	_ LSPReader = (*lspReader)(nil)
-	_ LSPWriter = (*lspWriter)(nil)
+	_ Reader = (*lspReader)(nil)
+	_ Writer = (*lspWriter)(nil)
 )
 
 type Server struct {
-	r LSPReader
-	w LSPWriter
+	r Reader
+	w Writer
 
 	stderr io.Writer
 
@@ -346,7 +346,7 @@ func (s *Server) dispatchLoop(ctx context.Context) error {
 				defer func() {
 					if r := recover(); r != nil {
 						stack := debug.Stack()
-						s.Log("panic obtaining completions:", r, string(stack))
+						s.Log("panic handling request", req.Method, r, string(stack))
 						// !!! send something back to client
 						lspExit()
 					}

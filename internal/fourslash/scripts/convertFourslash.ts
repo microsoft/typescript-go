@@ -29,6 +29,7 @@ function main() {
         fs.mkdirSync(outputDir, { recursive: true });
     }
 
+    generateHelperFile();
     parseTypeScriptFiles(stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
 }
@@ -585,7 +586,8 @@ function generateGoTest(test: GoTest): string {
         imports.push(`"github.com/microsoft/typescript-go/internal/lsp/lsproto"`);
     }
     imports.push(`"github.com/microsoft/typescript-go/internal/testutil"`);
-    const template = `package ls_test
+    const template = `package fourslash_test
+
 import (
 	"testing"
 
@@ -601,6 +603,17 @@ func Test${testName}(t *testing.T) {
     ${commands}
 }`;
     return template;
+}
+
+function generateHelperFile() {
+    const helper = `package fourslash_test
+
+func ptrTo[T any](v T) *T {
+	return &v
+}
+
+var defaultCommitCharacters = []string{".", ",", ";"}`;
+    fs.writeFileSync(path.join(outputDir, 'util_test.go'), helper, 'utf-8');
 }
 
 main();

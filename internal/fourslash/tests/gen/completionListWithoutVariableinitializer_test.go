@@ -1,4 +1,4 @@
-package ls_test
+package fourslash_test
 
 import (
 	"testing"
