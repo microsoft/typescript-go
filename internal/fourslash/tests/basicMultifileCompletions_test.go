@@ -22,15 +22,15 @@ const test = foo./*1*/`
 	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{
 				&lsproto.CompletionItem{
 					Label:      "bar",
-					Kind:       fourslash.PtrTo(lsproto.CompletionItemKindField),
-					SortText:   fourslash.PtrTo(string(ls.SortTextLocationPriority)),
-					FilterText: fourslash.PtrTo(".bar"),
+					Kind:       ptrTo(lsproto.CompletionItemKindField),
+					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
+					FilterText: ptrTo(".bar"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 							NewText: "bar",

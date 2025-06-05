@@ -25,7 +25,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"1"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Excludes: []string{"a"},
@@ -34,7 +34,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"2"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"a"},
@@ -44,7 +44,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"3"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b"},
@@ -54,7 +54,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"4"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c", "d"},
@@ -63,7 +63,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"5"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c", "d", "e"},
@@ -72,7 +72,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"6"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c", "d", "e"},
@@ -81,7 +81,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"7"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c", "d", "e", "fn"},
@@ -90,7 +90,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"8"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c", "d", "e", "fn"},
@@ -99,7 +99,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 	f.VerifyCompletions(t, []string{"9"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c", "d", "e", "fn"},

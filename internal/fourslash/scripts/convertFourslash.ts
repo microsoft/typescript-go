@@ -331,7 +331,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     if (!result) {
                         return undefined;
                     }
-                    item += `SortText: fourslash.PtrTo(string(${result})), `;
+                    item += `SortText: ptrTo(string(${result})), `;
                     break;
                 case "insertText":
                     if (ts.isStringLiteral(init)) {
@@ -353,7 +353,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     break;
                 case "isRecommended":
                     if (init.kind === ts.SyntaxKind.TrueKeyword) {
-                        item += `Preselect: fourslash.PtrTo(true), `;
+                        item += `Preselect: ptrTo(true), `;
                     }
                     break;
                 case "kind":
@@ -361,7 +361,7 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                     if (!kind) {
                         return undefined;
                     }
-                    item += `Kind: fourslash.PtrTo(${kind}), `;
+                    item += `Kind: ptrTo(${kind}), `;
                     break;
                 case "kindModifiers":
                     const modifiers = parseKindModifiers(init);
@@ -388,8 +388,8 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
             name += "?";
         }
         item += `Label: ${getGoStringLiteral(name!)}, `;
-        if (insertText) item += `InsertText: fourslash.PtrTo(${getGoStringLiteral(insertText)}), `;
-        if (filterText) item += `FilterText: fourslash.PtrTo(${getGoStringLiteral(filterText)}), `;
+        if (insertText) item += `InsertText: ptrTo(${getGoStringLiteral(insertText)}), `;
+        if (filterText) item += `FilterText: ptrTo(${getGoStringLiteral(filterText)}), `;
         item += "}";
         return item;
     }
@@ -541,7 +541,7 @@ function generateVerifyCompletions({ marker, args }: VerifyCompletionsCmd): stri
         expectedList = `&fourslash.VerifyCompletionsExpectedList{
     IsIncomplete: false,
     ItemDefaults: &lsproto.CompletionItemDefaults{
-        CommitCharacters: &fourslash.DefaultCommitCharacters,
+        CommitCharacters: &defaultCommitCharacters,
     },
     Items: &fourslash.VerifyCompletionsExpectedItems{
         ${expected.join("\n")}

@@ -197,7 +197,7 @@ func (f *FourslashTest) initialize(t *testing.T, capabilities *lsproto.ClientCap
 }
 
 var (
-	ptrTrue                       = PtrTo(true)
+	ptrTrue                       = ptrTo(true)
 	defaultCompletionCapabilities = &lsproto.CompletionClientCapabilities{
 		CompletionItem: &lsproto.ClientCompletionItemOptions{
 			SnippetSupport:          ptrTrue,
@@ -502,8 +502,6 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string) {
 	}
 }
 
-func PtrTo[T any](v T) *T {
+func ptrTo[T any](v T) *T {
 	return &v
 }
-
-var DefaultCommitCharacters = []string{".", ",", ";"}

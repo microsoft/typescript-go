@@ -23,15 +23,15 @@ p./*a*/`
 	f.VerifyCompletions(t, "a", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &fourslash.DefaultCommitCharacters,
+			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Exact: []fourslash.ExpectedCompletionItem{
 				&lsproto.CompletionItem{
 					Label:      "x",
-					Kind:       fourslash.PtrTo(lsproto.CompletionItemKindField),
-					SortText:   fourslash.PtrTo(string(ls.SortTextLocationPriority)),
-					FilterText: fourslash.PtrTo(".x"),
+					Kind:       ptrTo(lsproto.CompletionItemKindField),
+					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
+					FilterText: ptrTo(".x"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 							NewText: "x",
