@@ -537,14 +537,14 @@ func (l *LanguageService) getReferencedSymbolsForNode(position int, node *ast.No
 		// String literal might be a property (and thus have a symbol), so do this here rather than in getReferencedSymbolsSpecial.
 		if !options.implementations && ast.IsStringLiteralLike(node) {
 			if isModuleSpecifierLike(node) {
-				// !!! fileIncludeReasons := program.GetFileIncludeReasons()
-				if referencedFile := program.GetResolvedModuleFromModuleSpecifier(node, nil /*sourceFile*/); referencedFile != nil {
-					// !!! not implemented
-					// return []*SymbolAndEntries{{
-					// 	definition: &Definition{Kind: definitionKindString, node: node},
-					// 	references: getReferencesForNonModule(referencedFile, program /*fileIncludeReasons,*/),
-					// }}
-				}
+				// !!! not implemented
+				// fileIncludeReasons := program.GetFileIncludeReasons()
+				// if referencedFile := program.GetResolvedModuleFromModuleSpecifier(node, nil /*sourceFile*/); referencedFile != nil {
+				// return []*SymbolAndEntries{{
+				// 	definition: &Definition{Kind: definitionKindString, node: node},
+				// 	references: getReferencesForNonModule(referencedFile, program /*fileIncludeReasons,*/),
+				// }}
+				// }
 				// Fall through to string literal references. This is not very likely to return
 				// anything useful, but I guess it's better than nothing, and there's an existing
 				// test that expects this to happen (fourslash/cases/untypedModuleImport.ts).
@@ -904,7 +904,7 @@ func getReferenceAtPosition(sourceFile *ast.SourceFile, position int, program *c
 	if !isModuleSpecifierLike(node) || !tspath.IsExternalModuleNameRelative(node.Text()) {
 		return nil
 	}
-	if resolution := program.GetResolvedModuleFromModuleSpecifier(node, sourceFile); resolution != nil {
+	if resolution := program.GetResolvedModuleFromModuleSpecifier(sourceFile, node); resolution != nil {
 		verifiedFileName := resolution.ResolvedFileName
 		fileName := resolution.ResolvedFileName
 		if fileName == "" {

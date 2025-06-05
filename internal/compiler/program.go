@@ -382,15 +382,6 @@ func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *as
 	return p.filesByPath[path]
 }
 
-func (p *Program) GetResolvedModuleFromModuleSpecifier(moduleSpecifier *ast.Node /*!!! stringliterallike*/, sourceFile *ast.SourceFile) *module.ResolvedModule {
-	if sourceFile == nil {
-		if sourceFile = ast.GetSourceFileOfNode(moduleSpecifier); sourceFile == nil {
-			panic("`moduleSpecifier` must have a `SourceFile` ancestor. Use `program.getResolvedModule` instead to provide the containing file and resolution mode.")
-		}
-	}
-	return p.GetResolvedModule(sourceFile, moduleSpecifier.Text(), p.GetModeForUsageLocation(sourceFile, moduleSpecifier))
-}
-
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return p.getDiagnosticsHelper(ctx, sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntacticDiagnosticsForFile)
 }
