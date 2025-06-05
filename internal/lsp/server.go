@@ -194,9 +194,11 @@ func (s *Server) Run() error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
-	g.Go(func() error { return s.readLoop(ctx) })
 
-	if err := g.Wait(); err != nil && !errors.Is(err, io.EOF) {
+	// Don't run this in the group, as it blocks on stdin read and cannot be cancelled.
+	go s.readLoop(ctx) //nolint:errcheck
+
+	if err := g.Wait(); err != nil && !errors.Is(err, io.EOF) && ctx.Err() != nil {
 		return err
 	}
 	return nil
