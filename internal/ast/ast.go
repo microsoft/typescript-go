@@ -9994,10 +9994,6 @@ type SourceFile struct {
 	lineMapMu sync.RWMutex
 	lineMap   []core.TextPos
 
-	// Fields set by document registry
-
-	Version int
-
 	// Fields set by language service
 
 	tokenCacheMu sync.Mutex
