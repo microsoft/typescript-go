@@ -2470,6 +2470,9 @@ func (c *Checker) checkParameter(node *ast.Node) {
 		paramName = node.Name().Text()
 	}
 	if ast.HasSyntacticModifier(node, ast.ModifierFlagsParameterPropertyModifier) {
+		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+			c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
+		}
 		if !(ast.IsConstructorDeclaration(fn) && ast.NodeIsPresent(fn.Body())) {
 			c.error(node, diagnostics.A_parameter_property_is_only_allowed_in_a_constructor_implementation)
 		}
@@ -4785,6 +4788,11 @@ func (c *Checker) checkEnumDeclaration(node *ast.Node) {
 	c.checkCollisionsForDeclarationName(node, node.Name())
 	c.checkExportsOnMergedDeclarations(node)
 	c.checkSourceElements(node.Members())
+
+	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.Flags&ast.NodeFlagsAmbient == 0 {
+		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
+	}
+
 	c.computeEnumMemberValues(node)
 	// Spec 2014 - Section 9.3:
 	// It isn't possible for one enum declaration to continue the automatic numbering sequence of another,
@@ -4871,6 +4879,9 @@ func (c *Checker) checkModuleDeclaration(node *ast.Node) {
 	symbol := c.getSymbolOfDeclaration(node)
 	// The following checks only apply on a non-ambient instantiated module declaration.
 	if symbol.Flags&ast.SymbolFlagsValueModule != 0 && !inAmbientContext && isInstantiatedModule(node, c.compilerOptions.ShouldPreserveConstEnums()) {
+		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+			c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
+		}
 		if c.compilerOptions.GetIsolatedModules() && ast.GetSourceFileOfNode(node).ExternalModuleIndicator == nil {
 			// This could be loosened a little if needed. The only problem we are trying to avoid is unqualified
 			// references to namespace members declared in other files. But use of namespaces is discouraged anyway,
@@ -5161,6 +5172,9 @@ func (c *Checker) checkImportEqualsDeclaration(node *ast.Node) {
 		return // If we hit an import declaration in an illegal context, just bail out to avoid cascading errors.
 	}
 	c.checkGrammarModifiers(node)
+	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.Flags&ast.NodeFlagsAmbient == 0 {
+		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
+	}
 	if ast.IsInternalModuleImportEqualsDeclaration(node) || c.checkExternalImportOrExportDeclaration(node) {
 		c.checkImportBinding(node)
 		c.markLinkedReferences(node, ReferenceHintExportImportEquals, nil, nil)
@@ -5259,6 +5273,9 @@ func (c *Checker) checkExportAssignment(node *ast.Node) {
 		diagnostics.A_default_export_must_be_at_the_top_level_of_a_file_or_module_declaration)
 	if c.checkGrammarModuleElementContext(node, illegalContextMessage) {
 		return // If we hit an export assignment in an illegal context, just bail out to avoid cascading errors.
+	}
+	if c.compilerOptions.ErasableSyntaxOnly.IsTrue() && node.AsExportAssignment().IsExportEquals && node.Flags&ast.NodeFlagsAmbient == 0 {
+		c.error(node, diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled)
 	}
 	container := node.Parent
 	if !ast.IsSourceFile(container) {
@@ -5655,7 +5672,7 @@ func (c *Checker) checkVarDeclaredNamesNotShadowed(node *ast.Node) {
 func (c *Checker) checkDecorators(node *ast.Node) {
 	// skip this check for nodes that cannot have decorators. These should have already had an error reported by
 	// checkGrammarModifiers.
-	if !ast.CanHaveDecorators(node) || !hasDecorators(node) || !nodeCanBeDecorated(c.legacyDecorators, node, node.Parent, node.Parent.Parent) {
+	if !ast.CanHaveDecorators(node) || !ast.HasDecorators(node) || !nodeCanBeDecorated(c.legacyDecorators, node, node.Parent, node.Parent.Parent) {
 		return
 	}
 	firstDecorator := core.Find(node.ModifierNodes(), ast.IsDecorator)
@@ -11622,7 +11639,7 @@ func (c *Checker) getThisTypeOfDeclaration(declaration *ast.Node) *Type {
 func (c *Checker) checkThisInStaticClassFieldInitializerInDecoratedClass(thisExpression *ast.Node, container *ast.Node) {
 	if ast.IsPropertyDeclaration(container) && ast.HasStaticModifier(container) && c.legacyDecorators {
 		initializer := container.Initializer()
-		if initializer != nil && initializer.Loc.ContainsInclusive(thisExpression.Pos()) && hasDecorators(container.Parent) {
+		if initializer != nil && initializer.Loc.ContainsInclusive(thisExpression.Pos()) && ast.HasDecorators(container.Parent) {
 			c.error(thisExpression, diagnostics.Cannot_use_this_in_a_static_property_initializer_of_a_decorated_class)
 		}
 	}
@@ -11653,6 +11670,11 @@ func (c *Checker) classDeclarationExtendsNull(classDecl *ast.Node) bool {
 }
 
 func (c *Checker) checkAssertion(node *ast.Node, checkMode CheckMode) *Type {
+	if node.Kind == ast.KindTypeAssertionExpression {
+		if c.compilerOptions.ErasableSyntaxOnly.IsTrue() {
+			c.diagnostics.Add(ast.NewDiagnostic(ast.GetSourceFileOfNode(node), core.NewTextRange(scanner.SkipTrivia(ast.GetSourceFileOfNode(node).Text(), node.Pos()), node.Expression().Pos()), diagnostics.This_syntax_is_not_allowed_when_erasableSyntaxOnly_is_enabled))
+		}
+	}
 	typeNode := node.Type()
 	exprType := c.checkExpressionEx(node.Expression(), checkMode)
 	if isConstTypeReference(typeNode) {
@@ -26794,7 +26816,7 @@ func (c *Checker) markLinkedReferences(location *ast.Node, hint ReferenceHint, p
 		if !c.compilerOptions.EmitDecoratorMetadata.IsTrue() {
 			return
 		}
-		if !ast.CanHaveDecorators(location) || !hasDecorators(location) || location.Modifiers() == nil || !nodeCanBeDecorated(c.legacyDecorators, location, location.Parent, location.Parent.Parent) {
+		if !ast.CanHaveDecorators(location) || !ast.HasDecorators(location) || location.Modifiers() == nil || !nodeCanBeDecorated(c.legacyDecorators, location, location.Parent, location.Parent.Parent) {
 			return
 		}
 
@@ -26966,8 +26988,9 @@ func (c *Checker) markJsxAliasReferenced(node *ast.Node /*JsxOpeningLikeElement 
 	// if JsxFragment, additionally mark jsx pragma as referenced, since `getJsxNamespace` above would have resolved to only the fragment factory if they are distinct
 	if ast.IsJsxOpeningFragment(node) {
 		file := ast.GetSourceFileOfNode(node)
-		localJsxNamespace := c.getLocalJsxNamespace(file)
-		if localJsxNamespace != "" {
+		entity := c.getJsxFactoryEntity(file.AsNode())
+		if entity != nil {
+			localJsxNamespace := ast.GetFirstIdentifier(entity).Text()
 			flags := ast.SymbolFlagsValue
 			if !shouldFactoryRefErr {
 				flags &= ^ast.SymbolFlagsEnum
