@@ -5881,7 +5881,7 @@ func (c *Checker) getIterationTypesOfIterable(t *Type, use IterationUse, errorNo
 	if IsTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
-	key := IterationTypesKey{typeId: t.id, use: use&IterationUseCacheFlags}
+	key := IterationTypesKey{typeId: t.id, use: use & IterationUseCacheFlags}
 	// If we are reporting errors and encounter a cached `noIterationTypes`, we should ignore the cached value and continue as if nothing was cached.
 	// In addition, we should not cache any new results for this call.
 	noCache := false
