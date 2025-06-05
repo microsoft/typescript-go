@@ -95,25 +95,11 @@ var n: number;
 
 var n = a.C1.staticProp;
 >n : number
-<<<<<<< HEAD
 >a.C1.staticProp : number
->a.C1 : typeof C1
->a : typeof import("a")
->C1 : typeof C1
->staticProp : number
-||||||| b0e1b84ac
->a.C1.staticProp : any
->a.C1 : typeof C1
->a : typeof import("a")
->C1 : typeof C1
->staticProp : any
-=======
->a.C1.staticProp : any
 >a.C1 : typeof a.C1
 >a : typeof a
 >C1 : typeof a.C1
->staticProp : any
->>>>>>> main
+>staticProp : number
 
 var n = a.C2.staticProp;
 >n : number
@@ -133,25 +119,11 @@ var n = a.F1.staticProp;
 
 var n = a.F2.staticProp;
 >n : number
-<<<<<<< HEAD
 >a.F2.staticProp : number
 >a.F2 : { (): void; staticProp: number; }
->a : typeof import("a")
+>a : typeof a
 >F2 : { (): void; staticProp: number; }
 >staticProp : number
-||||||| b0e1b84ac
->a.F2.staticProp : any
->a.F2 : () => void
->a : typeof import("a")
->F2 : () => void
->staticProp : any
-=======
->a.F2.staticProp : any
->a.F2 : () => void
->a : typeof a
->F2 : () => void
->staticProp : any
->>>>>>> main
 
 
 var n = C3.staticProp;

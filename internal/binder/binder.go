@@ -1249,16 +1249,16 @@ func (b *Binder) lookupEntity(node *ast.Node, container *ast.Node) *ast.Symbol {
 	if ast.IsPropertyAccessExpression(node) && node.AsPropertyAccessExpression().Expression.Kind == ast.KindThisKeyword ||
 		ast.IsElementAccessExpression(node) && node.AsElementAccessExpression().Expression.Kind == ast.KindThisKeyword {
 		if _, symbolTable := b.getThisClassAndSymbolTable(); symbolTable != nil {
-             if name := ast.GetElementOrPropertyAccessName(node); name != nil {
-		        return symbolTable[name.Text()]
-		    }
+			if name := ast.GetElementOrPropertyAccessName(node); name != nil {
+				return symbolTable[name.Text()]
+			}
 		}
 		return nil
 	}
 	if symbol := getInitializerSymbol(b.lookupEntity(node.Expression(), container)); symbol != nil && symbol.Exports != nil {
-         if name := ast.GetElementOrPropertyAccessName(node); name != nil {
-            return symbol.Exports[name.Text()]
-        }
+		if name := ast.GetElementOrPropertyAccessName(node); name != nil {
+			return symbol.Exports[name.Text()]
+		}
 	}
 	return nil
 }

@@ -6,8 +6,8 @@
  var Workspace = {}
 ->Workspace : typeof Workspace
 ->{} : {}
-+>Workspace : { Project: { (): void; prototype: { isServiceProject: () => void; }; }; }
-+>{} : { Project: { (): void; prototype: { isServiceProject: () => void; }; }; }
++>Workspace : { Project: { (): void; prototype: { isServiceProject(): void; }; }; }
++>{} : { Project: { (): void; prototype: { isServiceProject(): void; }; }; }
 
  /** @type {Workspace.Project} */
  var p;
@@ -31,45 +31,21 @@
 ->Project : typeof wp
 ->function wp() { } : typeof wp
 ->wp : typeof wp
-+>Workspace.Project = function wp() { } : { (): void; prototype: { isServiceProject: () => void; }; }
-+>Workspace.Project : { (): void; prototype: { isServiceProject: () => void; }; }
-+>Workspace : { Project: { (): void; prototype: { isServiceProject: () => void; }; }; }
-+>Project : { (): void; prototype: { isServiceProject: () => void; }; }
-+>function wp() { } : { (): void; prototype: { isServiceProject: () => void; }; }
-+>wp : { (): void; prototype: { isServiceProject: () => void; }; }
++>Workspace.Project = function wp() { } : { (): void; prototype: { isServiceProject(): void; }; }
++>Workspace.Project : { (): void; prototype: { isServiceProject(): void; }; }
++>Workspace : { Project: { (): void; prototype: { isServiceProject(): void; }; }; }
++>Project : { (): void; prototype: { isServiceProject(): void; }; }
++>function wp() { } : { (): void; prototype: { isServiceProject(): void; }; }
++>wp : { (): void; prototype: { isServiceProject(): void; }; }
 
  Workspace.Project.prototype = {
  >Workspace.Project.prototype = {  isServiceProject() {}} : { isServiceProject(): void; }
-->Workspace.Project.prototype : { isServiceProject(): void; }
+ >Workspace.Project.prototype : { isServiceProject(): void; }
 ->Workspace.Project : typeof wp
 ->Workspace : typeof Workspace
 ->Project : typeof wp
-->prototype : { isServiceProject(): void; }
-<<<<<<< HEAD
-->{  isServiceProject() {}} : { isServiceProject(): void; }
-+>Workspace.Project.prototype = {  isServiceProject() {}} : { isServiceProject: () => void; }
-+>Workspace.Project.prototype : { isServiceProject: () => void; }
-+>Workspace.Project : { (): void; prototype: { isServiceProject: () => void; }; }
-+>Workspace : { Project: { (): void; prototype: { isServiceProject: () => void; }; }; }
-+>Project : { (): void; prototype: { isServiceProject: () => void; }; }
-+>prototype : { isServiceProject: () => void; }
-+>{  isServiceProject() {}} : { isServiceProject: () => void; }
-||||||| b0e1b84ac
-->{  isServiceProject() {}} : { isServiceProject(): void; }
-+>Workspace.Project.prototype = {  isServiceProject() {}} : { isServiceProject: () => void; }
-+>Workspace.Project.prototype : any
-+>Workspace.Project : any
-+>Workspace : {}
-+>Project : any
-+>prototype : any
-+>{  isServiceProject() {}} : { isServiceProject: () => void; }
-=======
-+>Workspace.Project.prototype : any
-+>Workspace.Project : any
-+>Workspace : {}
-+>Project : any
-+>prototype : any
++>Workspace.Project : { (): void; prototype: { isServiceProject(): void; }; }
++>Workspace : { Project: { (): void; prototype: { isServiceProject(): void; }; }; }
++>Project : { (): void; prototype: { isServiceProject(): void; }; }
+ >prototype : { isServiceProject(): void; }
  >{  isServiceProject() {}} : { isServiceProject(): void; }
->>>>>>> main
-
-   isServiceProject() {}

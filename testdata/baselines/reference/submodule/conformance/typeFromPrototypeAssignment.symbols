@@ -23,40 +23,40 @@ Multimap.prototype = {
 >set : Symbol(set, Decl(a.js, 11, 22))
 
         this._map
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 
         this.set
 >this.set : Symbol(set, Decl(a.js, 11, 22))
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 >set : Symbol(set, Decl(a.js, 11, 22))
 
         this.get
 >this.get : Symbol(get, Decl(a.js, 17, 6))
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 >get : Symbol(get, Decl(a.js, 17, 6))
 
         this.addon
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 
     },
     get() {
 >get : Symbol(get, Decl(a.js, 17, 6))
 
         this._map
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 
         this.set
 >this.set : Symbol(set, Decl(a.js, 11, 22))
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 >set : Symbol(set, Decl(a.js, 11, 22))
 
         this.get
 >this.get : Symbol(get, Decl(a.js, 17, 6))
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 >get : Symbol(get, Decl(a.js, 17, 6))
 
         this.addon
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
     }
 }
 
@@ -66,20 +66,20 @@ Multimap.prototype.addon = function () {
 >prototype : Symbol(prototype, Decl(a.js, 9, 2))
 
     this._map
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 
     this.set
 >this.set : Symbol(set, Decl(a.js, 11, 22))
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 >set : Symbol(set, Decl(a.js, 11, 22))
 
     this.get
 >this.get : Symbol(get, Decl(a.js, 17, 6))
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 >get : Symbol(get, Decl(a.js, 17, 6))
 
     this.addon
->this : Symbol((Anonymous type), Decl(a.js, 11, 20))
+>this : Symbol(þobject, Decl(a.js, 11, 20))
 }
 
 var mm = new Multimap();

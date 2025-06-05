@@ -60,7 +60,7 @@ Multimap2.prototype = {
 >key : Symbol(key, Decl(a.js, 37, 18))
 
         return this._map[key + ''];
->this : Symbol((Anonymous type), Decl(a.js, 32, 21))
+>this : Symbol(þobject, Decl(a.js, 32, 21))
 >key : Symbol(key, Decl(a.js, 37, 18))
     }
 }
@@ -101,7 +101,7 @@ Ns.Multimap3.prototype = {
 >key : Symbol(key, Decl(a.js, 59, 8))
 
         return this._map[key + ''];
->this : Symbol((Anonymous type), Decl(a.js, 54, 24))
+>this : Symbol(þobject, Decl(a.js, 54, 24))
 >key : Symbol(key, Decl(a.js, 59, 8))
     }
 }

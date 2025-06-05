@@ -26,40 +26,40 @@
 >set : Symbol(set, Decl(a.js, 12, 26))
 
             this._map
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 
             this.set
 >this.set : Symbol(set, Decl(a.js, 12, 26))
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 >set : Symbol(set, Decl(a.js, 12, 26))
 
             this.get
 >this.get : Symbol(get, Decl(a.js, 18, 10))
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 >get : Symbol(get, Decl(a.js, 18, 10))
 
             this.addon
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 
         },
         get() {
 >get : Symbol(get, Decl(a.js, 18, 10))
 
             this._map
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 
             this.set
 >this.set : Symbol(set, Decl(a.js, 12, 26))
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 >set : Symbol(set, Decl(a.js, 12, 26))
 
             this.get
 >this.get : Symbol(get, Decl(a.js, 18, 10))
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 >get : Symbol(get, Decl(a.js, 18, 10))
 
             this.addon
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
         }
     }
 
@@ -69,20 +69,20 @@
 >prototype : Symbol(prototype, Decl(a.js, 10, 6))
 
         this._map
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 
         this.set
 >this.set : Symbol(set, Decl(a.js, 12, 26))
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 >set : Symbol(set, Decl(a.js, 12, 26))
 
         this.get
 >this.get : Symbol(get, Decl(a.js, 18, 10))
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
 >get : Symbol(get, Decl(a.js, 18, 10))
 
         this.addon
->this : Symbol((Anonymous type), Decl(a.js, 12, 24))
+>this : Symbol(þobject, Decl(a.js, 12, 24))
     }
 
     var mm = new Multimap();

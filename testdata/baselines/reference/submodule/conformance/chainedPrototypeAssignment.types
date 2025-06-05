@@ -11,36 +11,16 @@ var mod = require('./mod');
 var a = new mod.A()
 >a : any
 >new mod.A() : any
-<<<<<<< HEAD
->mod.A : { (): void; prototype: { m: (n: number) => number; }; }
->mod : typeof import("mod")
->A : { (): void; prototype: { m: (n: number) => number; }; }
-||||||| b0e1b84ac
->mod.A : () => void
->mod : typeof import("mod")
->A : () => void
-=======
->mod.A : () => void
+>mod.A : { (): void; prototype: { m(n: number): number; }; }
 >mod : typeof mod
->A : () => void
->>>>>>> main
+>A : { (): void; prototype: { m(n: number): number; }; }
 
 var b = new mod.B()
 >b : any
 >new mod.B() : any
-<<<<<<< HEAD
->mod.B : { (): void; prototype: { m: (n: number) => number; }; }
->mod : typeof import("mod")
->B : { (): void; prototype: { m: (n: number) => number; }; }
-||||||| b0e1b84ac
->mod.B : () => void
->mod : typeof import("mod")
->B : () => void
-=======
->mod.B : () => void
+>mod.B : { (): void; prototype: { m(n: number): number; }; }
 >mod : typeof mod
->B : () => void
->>>>>>> main
+>B : { (): void; prototype: { m(n: number): number; }; }
 
 a.m('nope')
 >a.m('nope') : any
@@ -67,9 +47,9 @@ declare var exports: any;
 === mod.js ===
 /// <reference path='./types.d.ts'/>
 var A = function A() {
->A : { (): void; prototype: { m: (n: number) => number; }; }
->function A() {    this.a = 1} : { (): void; prototype: { m: (n: number) => number; }; }
->A : { (): void; prototype: { m: (n: number) => number; }; }
+>A : { (): void; prototype: { m(n: number): number; }; }
+>function A() {    this.a = 1} : { (): void; prototype: { m(n: number): number; }; }
+>A : { (): void; prototype: { m(n: number): number; }; }
 
     this.a = 1
 >this.a = 1 : 1
@@ -79,9 +59,9 @@ var A = function A() {
 >1 : 1
 }
 var B = function B() {
->B : { (): void; prototype: { m: (n: number) => number; }; }
->function B() {    this.b = 2} : { (): void; prototype: { m: (n: number) => number; }; }
->B : { (): void; prototype: { m: (n: number) => number; }; }
+>B : { (): void; prototype: { m(n: number): number; }; }
+>function B() {    this.b = 2} : { (): void; prototype: { m(n: number): number; }; }
+>B : { (): void; prototype: { m(n: number): number; }; }
 
     this.b = 2
 >this.b = 2 : 2
@@ -91,79 +71,29 @@ var B = function B() {
 >2 : 2
 }
 exports.A = A
-<<<<<<< HEAD
->exports.A = A : { (): void; prototype: { m: (n: number) => number; }; }
->exports.A : { (): void; prototype: { m: (n: number) => number; }; }
->exports : typeof import("mod")
->A : { (): void; prototype: { m: (n: number) => number; }; }
->A : { (): void; prototype: { m: (n: number) => number; }; }
-||||||| b0e1b84ac
->exports.A = A : () => void
->exports.A : () => void
->exports : typeof import("mod")
->A : () => void
->A : () => void
-=======
->exports.A = A : () => void
->exports.A : () => void
+>exports.A = A : { (): void; prototype: { m(n: number): number; }; }
+>exports.A : { (): void; prototype: { m(n: number): number; }; }
 >exports : typeof import("./mod")
->A : () => void
->A : () => void
->>>>>>> main
+>A : { (): void; prototype: { m(n: number): number; }; }
+>A : { (): void; prototype: { m(n: number): number; }; }
 
 exports.B = B
-<<<<<<< HEAD
->exports.B = B : { (): void; prototype: { m: (n: number) => number; }; }
->exports.B : { (): void; prototype: { m: (n: number) => number; }; }
->exports : typeof import("mod")
->B : { (): void; prototype: { m: (n: number) => number; }; }
->B : { (): void; prototype: { m: (n: number) => number; }; }
-||||||| b0e1b84ac
->exports.B = B : () => void
->exports.B : () => void
->exports : typeof import("mod")
->B : () => void
->B : () => void
-=======
->exports.B = B : () => void
->exports.B : () => void
+>exports.B = B : { (): void; prototype: { m(n: number): number; }; }
+>exports.B : { (): void; prototype: { m(n: number): number; }; }
 >exports : typeof import("./mod")
->B : () => void
->B : () => void
->>>>>>> main
+>B : { (): void; prototype: { m(n: number): number; }; }
+>B : { (): void; prototype: { m(n: number): number; }; }
 
 A.prototype = B.prototype = {
-<<<<<<< HEAD
->A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
->A.prototype : { m: (n: number) => number; }
->A : { (): void; prototype: { m: (n: number) => number; }; }
->prototype : { m: (n: number) => number; }
->B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
->B.prototype : { m: (n: number) => number; }
->B : { (): void; prototype: { m: (n: number) => number; }; }
->prototype : { m: (n: number) => number; }
->{    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
-||||||| b0e1b84ac
->A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
->A.prototype : any
->A : () => void
->prototype : any
->B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
->B.prototype : any
->B : () => void
->prototype : any
->{    /** @param {number} n */    m(n) {        return n + 1    }} : { m: (n: number) => number; }
-=======
 >A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
->A.prototype : any
->A : () => void
->prototype : any
+>A.prototype : { m(n: number): number; }
+>A : { (): void; prototype: { m(n: number): number; }; }
+>prototype : { m(n: number): number; }
 >B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
->B.prototype : any
->B : () => void
->prototype : any
+>B.prototype : { m(n: number): number; }
+>B : { (): void; prototype: { m(n: number): number; }; }
+>prototype : { m(n: number): number; }
 >{    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
->>>>>>> main
 
     /** @param {number} n */
     m(n) {

@@ -28025,7 +28025,8 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 		expr := left.Expression()
 		switch expr.Kind {
 		case ast.KindIdentifier:
-			if symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(expr)); symbol.Flags&ast.SymbolFlagsModuleExports != 0 {
+			symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(expr))
+			if symbol.Flags&ast.SymbolFlagsModuleExports != 0 {
 				// No contextual type for an expression of the form 'module.exports = expr'.
 				return nil
 			}
@@ -28034,7 +28035,7 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 				// 'F.id = expr' or 'F[xxx] = expr'. If 'F' is declared as a variable with a type annotation, we can obtain a
 				// contextual type from the annotated type without triggering a circularity. Otherwise, the assignment
 				// declaration has no contextual type.
-				if symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(expr)); symbol.ValueDeclaration != nil && ast.IsVariableDeclaration(symbol.ValueDeclaration) {
+				if symbol.ValueDeclaration != nil && ast.IsVariableDeclaration(symbol.ValueDeclaration) {
 					if typeNode := symbol.ValueDeclaration.Type(); typeNode != nil {
 						if ast.IsPropertyAccessExpression(left) {
 							return c.getTypeOfPropertyOfContextualType(c.getTypeFromTypeNode(typeNode), left.Name().Text())
@@ -28043,14 +28044,18 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 						if isTypeUsableAsPropertyName(nameType) {
 							return c.getTypeOfPropertyOfContextualTypeEx(c.getTypeFromTypeNode(typeNode), getPropertyNameFromType(nameType), nameType)
 						}
-                        return c.getTypeOfExpression(left)
+						return c.getTypeOfExpression(left)
 					}
 				}
 				return nil
 			}
+		case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+			if binary.Symbol != nil {
+				return nil
+			}
 		case ast.KindThisKeyword:
 			var symbol *ast.Symbol
-            thisType := c.getTypeOfExpression(expr)
+			thisType := c.getTypeOfExpression(expr)
 			if ast.IsPropertyAccessExpression(left) {
 				name := left.Name()
 				if ast.IsPrivateIdentifier(name) {
@@ -28083,7 +28088,6 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 					// !!! contextual typing for `this` in object literals
 					return nil
 				}
-				return c.getTypeOfExpression(left)
 			}
 		}
 	}

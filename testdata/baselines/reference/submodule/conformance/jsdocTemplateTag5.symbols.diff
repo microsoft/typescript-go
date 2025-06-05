@@ -68,7 +68,7 @@
 ->this._map : Symbol(Multimap2._map, Decl(a.js, 27, 28))
 ->this : Symbol(Multimap2, Decl(a.js, 27, 15))
 ->_map : Symbol(Multimap2._map, Decl(a.js, 27, 28))
-+>this : Symbol((Anonymous type), Decl(a.js, 32, 21))
++>this : Symbol(þobject, Decl(a.js, 32, 21))
  >key : Symbol(key, Decl(a.js, 37, 18))
      }
  }
@@ -120,7 +120,7 @@
 ->this._map : Symbol(Multimap3._map, Decl(a.js, 49, 27))
 ->this : Symbol(Multimap3, Decl(a.js, 49, 14))
 ->_map : Symbol(Multimap3._map, Decl(a.js, 49, 27))
-+>this : Symbol((Anonymous type), Decl(a.js, 54, 24))
++>this : Symbol(þobject, Decl(a.js, 54, 24))
  >key : Symbol(key, Decl(a.js, 59, 8))
      }
  }

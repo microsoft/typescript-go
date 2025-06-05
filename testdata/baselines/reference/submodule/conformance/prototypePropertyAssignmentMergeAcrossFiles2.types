@@ -2,49 +2,31 @@
 
 === prototypePropertyAssignmentMergeAcrossFiles2.js ===
 var Ns = {}
->Ns : { One: { (): void; prototype: { ok: () => void; }; }; Two: { (): void; prototype: {}; }; }
->{} : { One: { (): void; prototype: { ok: () => void; }; }; Two: { (): void; prototype: {}; }; }
+>Ns : { One: { (): void; prototype: { ok(): void; }; }; Two: { (): void; prototype: {}; }; }
+>{} : { One: { (): void; prototype: { ok(): void; }; }; Two: { (): void; prototype: {}; }; }
 
 Ns.One = function() {};
->Ns.One = function() {} : { (): void; prototype: { ok: () => void; }; }
->Ns.One : { (): void; prototype: { ok: () => void; }; }
->Ns : { One: { (): void; prototype: { ok: () => void; }; }; Two: { (): void; prototype: {}; }; }
->One : { (): void; prototype: { ok: () => void; }; }
->function() {} : { (): void; prototype: { ok: () => void; }; }
+>Ns.One = function() {} : { (): void; prototype: { ok(): void; }; }
+>Ns.One : { (): void; prototype: { ok(): void; }; }
+>Ns : { One: { (): void; prototype: { ok(): void; }; }; Two: { (): void; prototype: {}; }; }
+>One : { (): void; prototype: { ok(): void; }; }
+>function() {} : { (): void; prototype: { ok(): void; }; }
 
 Ns.Two = function() {};
 >Ns.Two = function() {} : { (): void; prototype: {}; }
 >Ns.Two : { (): void; prototype: {}; }
->Ns : { One: { (): void; prototype: { ok: () => void; }; }; Two: { (): void; prototype: {}; }; }
+>Ns : { One: { (): void; prototype: { ok(): void; }; }; Two: { (): void; prototype: {}; }; }
 >Two : { (): void; prototype: {}; }
 >function() {} : { (): void; prototype: {}; }
 
 Ns.One.prototype = {
-<<<<<<< HEAD
->Ns.One.prototype = {  ok() {},} : { ok: () => void; }
->Ns.One.prototype : { ok: () => void; }
->Ns.One : { (): void; prototype: { ok: () => void; }; }
->Ns : { One: { (): void; prototype: { ok: () => void; }; }; Two: { (): void; prototype: {}; }; }
->One : { (): void; prototype: { ok: () => void; }; }
->prototype : { ok: () => void; }
->{  ok() {},} : { ok: () => void; }
-||||||| b0e1b84ac
->Ns.One.prototype = {  ok() {},} : { ok: () => void; }
->Ns.One.prototype : any
->Ns.One : any
->Ns : {}
->One : any
->prototype : any
->{  ok() {},} : { ok: () => void; }
-=======
 >Ns.One.prototype = {  ok() {},} : { ok(): void; }
->Ns.One.prototype : any
->Ns.One : any
->Ns : {}
->One : any
->prototype : any
+>Ns.One.prototype : { ok(): void; }
+>Ns.One : { (): void; prototype: { ok(): void; }; }
+>Ns : { One: { (): void; prototype: { ok(): void; }; }; Two: { (): void; prototype: {}; }; }
+>One : { (): void; prototype: { ok(): void; }; }
+>prototype : { ok(): void; }
 >{  ok() {},} : { ok(): void; }
->>>>>>> main
 
   ok() {},
 >ok : () => void
@@ -54,7 +36,7 @@ Ns.Two.prototype = {
 >Ns.Two.prototype = {} : {}
 >Ns.Two.prototype : {}
 >Ns.Two : { (): void; prototype: {}; }
->Ns : { One: { (): void; prototype: { ok: () => void; }; }; Two: { (): void; prototype: {}; }; }
+>Ns : { One: { (): void; prototype: { ok(): void; }; }; Two: { (): void; prototype: {}; }; }
 >Two : { (): void; prototype: {}; }
 >prototype : {}
 >{} : {}

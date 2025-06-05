@@ -68,16 +68,7 @@
  >Cls : typeof Cls
  >class {    /**     * @param {!Host.UserMetrics.Action} p     */    method(p) {}    usage() {        this.method(Host.UserMetrics.Action.WindowDocked);    }} : typeof Cls
 
-<<<<<<< HEAD
-@@= skipped -14, +14 lines =@@
-      * @param {!Host.UserMetrics.Action} p
-||||||| b0e1b84ac
-     /**
-      * @param {!Host.UserMetrics.Action} p
-=======
-     /**
 @@= skipped -15, +15 lines =@@
->>>>>>> main
       */
      method(p) {}
  >method : (p: Host.UserMetrics.Action) => void
@@ -107,13 +98,7 @@
      }
  }
 
-<<<<<<< HEAD
-@@= skipped -25, +25 lines =@@
-||||||| b0e1b84ac
-@@= skipped -39, +39 lines =@@
-=======
 @@= skipped -14, +14 lines =@@
->>>>>>> main
   * @type {Host.UserMetrics.Bargh}
   */
  var x = "ok";
