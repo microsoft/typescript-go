@@ -2,15 +2,15 @@ import * as fs from "fs";
 import * as path from "path";
 import * as ts from "typescript";
 
-const stradaFourslashPath = path.resolve(__dirname, "../", "../", "_submodules", "TypeScript", "tests", "cases", "fourslash");
+const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../", "_submodules", "TypeScript", "tests", "cases", "fourslash");
 
 let inputFileSet: Set<string> | undefined;
 
-const failingTestsPath = path.join(__dirname, "../", "failingTests.txt");
+const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
 const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
 const failingTests = new Set(failingTestsList);
 
-const outputDir = path.join(__dirname, "../", "../", "internal", "fourslash", "tests", "gen");
+const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
 
 const unparsedFiles: string[] = [];
 
@@ -161,7 +161,7 @@ function parseGoToMarkerArgs(args: readonly ts.Expression[]): GoToMarkerCmd[] | 
         return undefined;
     }
     return [{
-        kind: CommandKind.goToMarker,
+        kind: "goToMarker",
         marker: getGoStringLiteral(arg.text),
     }];
 }
@@ -226,7 +226,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
             case "includes":
                 if (init.getText() === "undefined") {
                     return {
-                        kind: CommandKind.verifyCompletions,
+                        kind: "verifyCompletions",
                         marker: marker ? marker : "nil",
                         args: undefined,
                     };
@@ -290,7 +290,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
         }
     }
     return {
-        kind: CommandKind.verifyCompletions,
+        kind: "verifyCompletions",
         marker: marker ? marker : "nil",
         args: goArgs,
         isNewIdentifierLocation: isNewIdentifierLocation,
@@ -509,13 +509,8 @@ function parseSortText(expr: ts.Expression): string | undefined {
     }
 }
 
-enum CommandKind {
-    verifyCompletions,
-    goToMarker,
-}
-
 interface VerifyCompletionsCmd {
-    kind: CommandKind.verifyCompletions;
+    kind: "verifyCompletions";
     marker: string;
     isNewIdentifierLocation?: true;
     args?: VerifyCompletionsArgs;
@@ -528,7 +523,7 @@ interface VerifyCompletionsArgs {
 }
 
 interface GoToMarkerCmd {
-    kind: CommandKind.goToMarker;
+    kind: "goToMarker";
     marker: string;
 }
 
@@ -562,9 +557,9 @@ function generateGoToMarker({ marker }: GoToMarkerCmd): string {
 
 function generateCmd(cmd: Cmd): string {
     switch (cmd.kind) {
-        case CommandKind.verifyCompletions:
+        case "verifyCompletions":
             return generateVerifyCompletions(cmd as VerifyCompletionsCmd);
-        case CommandKind.goToMarker:
+        case "goToMarker":
             return generateGoToMarker(cmd as GoToMarkerCmd);
         default:
             throw new Error(`Unknown command kind: ${cmd}`);

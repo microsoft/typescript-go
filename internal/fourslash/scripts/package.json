@@ -1,0 +1,10 @@
+{
+    "private": true,
+    "name": "scripts",
+    "version": "1.0.0",
+    "description": "Test conversion script",
+    "type": "module",
+    "scripts": {
+        "run": "node --experimental-strip-types --no-warnings convertFourslash.ts"
+    }
+}
