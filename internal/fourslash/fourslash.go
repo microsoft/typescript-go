@@ -118,7 +118,7 @@ func (c *parsedFileCache) CacheFile(
 
 var _ project.ParsedFileCache = (*parsedFileCache)(nil)
 
-func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
+func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) *FourslashTest {
 	rootDir := "/"
 	fileName := getFileNameFromTest(t)
 	testfs := make(map[string]string)
@@ -170,10 +170,10 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	f.initialize(t, capabilities)
 	f.openFile(t, f.testData.Files[0])
 
-	done := func() {
+	t.Cleanup(func() {
 		inputWriter.Close()
-	}
-	return f, done
+	})
+	return f
 }
 
 func getFileNameFromTest(t *testing.T) string {

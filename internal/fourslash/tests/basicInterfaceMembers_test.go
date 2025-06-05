@@ -19,8 +19,7 @@ interface Point {
 }
 declare const p: Point;
 p./*a*/`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
+	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "a", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{

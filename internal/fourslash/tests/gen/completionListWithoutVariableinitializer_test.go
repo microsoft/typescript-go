@@ -21,8 +21,7 @@ const f = { prop() { e/*6*/ }  };
 const fn = (p = /*7*/) => {}
 const { g, h = /*8*/ } = { ... }
 const [ g1, h1 = /*9*/ ] = [ ... ]`
-	f, done := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	defer done()
+	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, []string{"1"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
