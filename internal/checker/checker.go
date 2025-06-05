@@ -226,7 +226,6 @@ type ReverseMappedTypeKey struct {
 type IterationTypesKey struct {
 	typeId TypeId
 	use    IterationUse
-	nodeId ast.NodeId
 }
 
 // FlowLoopKey
@@ -5882,22 +5881,26 @@ func (c *Checker) getIterationTypesOfIterable(t *Type, use IterationUse, errorNo
 	if IsTypeAny(t) {
 		return IterationTypes{c.anyType, c.anyType, c.anyType}
 	}
-	var nodeId ast.NodeId
-	if errorNode != nil {
-		nodeId = ast.GetNodeId(errorNode)
-	}
-	key := IterationTypesKey{typeId: t.id, use: use & IterationUseCacheFlags, nodeId: nodeId}
+	key := IterationTypesKey{typeId: t.id, use: use & IterationUseCacheFlags}
+	// If we are reporting errors and encounter a cached `noIterationTypes`, we should ignore the cached value and continue as if nothing was cached.
+	// In addition, we should not cache any new results for this call.
+	noCache := false
 	if cached, ok := c.iterationTypesCache[key]; ok {
-		return cached
+		if errorNode == nil || cached.hasTypes() {
+			return cached
+		}
+		noCache = true
 	}
-	result := c.getIterationTypesOfIterableWorker(t, use, errorNode)
-	c.iterationTypesCache[key] = result
+	result := c.getIterationTypesOfIterableWorker(t, use, errorNode, noCache)
+	if !noCache {
+		c.iterationTypesCache[key] = result
+	}
 	return result
 }
 
-func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, errorNode *ast.Node) IterationTypes {
+func (c *Checker) getIterationTypesOfIterableWorker(t *Type, use IterationUse, errorNode *ast.Node, noCache bool) IterationTypes {
 	if t.flags&TypeFlagsUnion != 0 {
-		return c.combineIterationTypes(core.Map(t.Types(), func(t *Type) IterationTypes { return c.getIterationTypesOfIterableWorker(t, use, errorNode) }))
+		return c.combineIterationTypes(core.Map(t.Types(), func(t *Type) IterationTypes { return c.getIterationTypesOfIterableWorker(t, use, errorNode, noCache) }))
 	}
 	if use&IterationUseAllowsAsyncIterablesFlag != 0 {
 		iterationTypes := c.getIterationTypesOfIterableFast(t, c.asyncIterationTypesResolver)
