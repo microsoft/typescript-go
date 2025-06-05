@@ -496,13 +496,13 @@ func GetSourceFileCacheKey(
 func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
 	text, _ := h.FS().ReadFile(fileName)
 
-	key := SourceFileCacheKey{
-		SourceFileAffectingCompilerOptions: *h.options.SourceFileAffecting(),
-		fileName:                           fileName,
-		path:                               path,
-		languageVersion:                    languageVersion,
-		text:                               text,
-	}
+	key := GetSourceFileCacheKey(
+		*h.options.SourceFileAffecting(),
+		fileName,
+		path,
+		languageVersion,
+		text,
+	)
 
 	if cached, ok := sourceFileCache.Load(key); ok {
 		return cached

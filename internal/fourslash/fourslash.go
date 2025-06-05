@@ -16,6 +16,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -73,6 +74,50 @@ func newLSPPipe() (*lspReader, *lspWriter) {
 
 var sourceFileCache collections.SyncMap[harnessutil.SourceFileCacheKey, *ast.SourceFile]
 
+type parsedFileCache struct{}
+
+func (c *parsedFileCache) GetFile(
+	fileName string,
+	path tspath.Path,
+	text string,
+	scriptTarget core.ScriptTarget,
+	options core.SourceFileAffectingCompilerOptions,
+) *ast.SourceFile {
+	key := harnessutil.GetSourceFileCacheKey(
+		options,
+		fileName,
+		path,
+		scriptTarget,
+		text,
+	)
+
+	cachedFile, ok := sourceFileCache.Load(key)
+	if !ok {
+		return nil
+	}
+	return cachedFile
+}
+
+func (c *parsedFileCache) CacheFile(
+	fileName string,
+	path tspath.Path,
+	text string,
+	scriptTarget core.ScriptTarget,
+	options core.SourceFileAffectingCompilerOptions,
+	sourceFile *ast.SourceFile,
+) {
+	key := harnessutil.GetSourceFileCacheKey(
+		options,
+		fileName,
+		path,
+		scriptTarget,
+		text,
+	)
+	sourceFileCache.Store(key, sourceFile)
+}
+
+var _ project.ParsedFileCache = (*parsedFileCache)(nil)
+
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) (*FourslashTest, func()) {
 	rootDir := "/"
 	fileName := getFileNameFromTest(t)
@@ -90,20 +135,6 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
 	fs := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
-	getCachedSourceFile := func(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
-		text, _ := fs.ReadFile(fileName)
-
-		key := harnessutil.GetSourceFileCacheKey(
-			*compilerOptions.SourceFileAffecting(),
-			fileName,
-			path,
-			languageVersion,
-			text,
-		)
-
-		cachedFile, _ := sourceFileCache.Load(key)
-		return cachedFile
-	}
 
 	var err strings.Builder
 	server := lsp.NewServer(&lsp.ServerOptions{
@@ -116,7 +147,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		FS:                 bundled.WrapFS(fs),
 		DefaultLibraryPath: bundled.LibPath(),
 
-		GetCachedSourceFile: getCachedSourceFile,
+		ParsedFileCache: &parsedFileCache{},
 	})
 
 	go func() {

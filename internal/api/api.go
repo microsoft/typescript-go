@@ -219,7 +219,7 @@ func (api *API) ParseConfigFile(configFileName string) (*ConfigFileResponse, err
 func (api *API) LoadProject(configFileName string) (*ProjectResponse, error) {
 	configFileName = api.toAbsoluteFileName(configFileName)
 	configFilePath := api.toPath(configFileName)
-	p := project.NewConfiguredProject(configFileName, configFilePath, api, nil /*getCachedSourceFile*/)
+	p := project.NewConfiguredProject(configFileName, configFilePath, api)
 	if err := p.LoadConfig(); err != nil {
 		return nil, err
 	}

@@ -164,18 +164,14 @@ type Project struct {
 	typingsFilesWatch       *watchedFiles[map[tspath.Path]string]
 	typingsDirectoryWatch   *watchedFiles[map[tspath.Path]string]
 	typingsWatchInvoked     atomic.Bool
-
-	// enables tests to share a cache of parsed source files
-	getCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile
 }
 
 func NewConfiguredProject(
 	configFileName string,
 	configFilePath tspath.Path,
 	host ProjectHost,
-	getCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile,
 ) *Project {
-	project := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), host, getCachedSourceFile)
+	project := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), host)
 	project.configFileName = configFileName
 	project.configFilePath = configFilePath
 	project.initialLoadPending = true
@@ -191,9 +187,8 @@ func NewInferredProject(
 	currentDirectory string,
 	projectRootPath tspath.Path,
 	host ProjectHost,
-	getCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile,
 ) *Project {
-	project := NewProject(projectNamer.next("/dev/null/inferredProject"), KindInferred, currentDirectory, host, getCachedSourceFile)
+	project := NewProject(projectNamer.next("/dev/null/inferredProject"), KindInferred, currentDirectory, host)
 	project.rootPath = projectRootPath
 	project.compilerOptions = compilerOptions
 	return project
@@ -204,16 +199,14 @@ func NewProject(
 	kind Kind,
 	currentDirectory string,
 	host ProjectHost,
-	getCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile,
 ) *Project {
 	host.Log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
 	project := &Project{
-		host:                host,
-		name:                name,
-		kind:                kind,
-		currentDirectory:    currentDirectory,
-		rootFileNames:       &collections.OrderedMap[tspath.Path, string]{},
-		getCachedSourceFile: getCachedSourceFile,
+		host:             host,
+		name:             name,
+		kind:             kind,
+		currentDirectory: currentDirectory,
+		rootFileNames:    &collections.OrderedMap[tspath.Path, string]{},
 	}
 	project.comparePathsOptions = tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
@@ -256,11 +249,6 @@ func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 
 // GetSourceFile implements compiler.CompilerHost.
 func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
-	if p.getCachedSourceFile != nil {
-		if cached := p.getCachedSourceFile(fileName, path, languageVersion); cached != nil {
-			return cached
-		}
-	}
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
 		var (

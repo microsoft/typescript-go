@@ -7,7 +7,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -35,6 +34,8 @@ type ServiceOptions struct {
 	Logger           *Logger
 	PositionEncoding lsproto.PositionEncodingKind
 	WatchEnabled     bool
+
+	ParsedFileCache ParsedFileCache
 }
 
 var _ ProjectHost = (*Service)(nil)
@@ -66,8 +67,6 @@ type Service struct {
 	typingsInstaller *TypingsInstaller
 
 	compilerOptionsForInferredProjects *core.CompilerOptions
-	// enables tests to share a cache of parsed source files
-	getCachedSourceFile func(string, tspath.Path, core.ScriptTarget) *ast.SourceFile
 }
 
 func NewService(host ServiceHost, options ServiceOptions) *Service {
@@ -89,6 +88,7 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 				UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 				CurrentDirectory:          host.GetCurrentDirectory(),
 			},
+			parsedFileCache: options.ParsedFileCache,
 		},
 		scriptInfos:                 make(map[tspath.Path]*ScriptInfo),
 		openFiles:                   make(map[tspath.Path]string),
@@ -555,7 +555,7 @@ func (s *Service) findConfiguredProjectByName(configFilePath tspath.Path, includ
 
 func (s *Service) createConfiguredProject(configFileName string, configFilePath tspath.Path) *Project {
 	// !!! config file existence cache stuff omitted
-	project := NewConfiguredProject(configFileName, configFilePath, s, s.getCachedSourceFile)
+	project := NewConfiguredProject(configFileName, configFilePath, s)
 	s.configuredProjects[configFilePath] = project
 	// !!!
 	// s.createConfigFileWatcherForParsedConfig(configFileName, configFilePath, project)
@@ -755,7 +755,7 @@ func (s *Service) createInferredProject(currentDirectory string, projectRootPath
 			ResolveJsonModule:          core.TSTrue,
 		}
 	}
-	project := NewInferredProject(compilerOptions, currentDirectory, projectRootPath, s, s.getCachedSourceFile)
+	project := NewInferredProject(compilerOptions, currentDirectory, projectRootPath, s)
 	s.inferredProjects = append(s.inferredProjects, project)
 	return project
 }
