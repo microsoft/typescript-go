@@ -377,11 +377,6 @@ func (p *Program) GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*mo
 	return p.resolvedModules
 }
 
-func (p *Program) findSourceFile(candidate string, reason FileIncludeReason) *ast.SourceFile {
-	path := tspath.ToPath(candidate, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
-	return p.filesByPath[path]
-}
-
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return p.getDiagnosticsHelper(ctx, sourceFile, false /*ensureBound*/, false /*ensureChecked*/, p.getSyntacticDiagnosticsForFile)
 }
