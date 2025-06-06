@@ -338,15 +338,16 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 	isJavaScriptFile := ast.IsSourceFileJS(file)
 	isExternalModuleFile := ast.IsExternalModule(file)
 
-	compilerOptions := p.opts.Config.CompilerOptions() // !!! sheetal this should probably be options for file
-	if isJavaScriptFile || (!file.IsDeclarationFile && (compilerOptions.GetIsolatedModules() || isExternalModuleFile)) {
-		if compilerOptions.ImportHelpers.IsTrue() {
+	redirect := p.projectReferenceFileMapper.getRedirectForResolution(file)
+	optionsForFile := module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)
+	if isJavaScriptFile || (!file.IsDeclarationFile && (optionsForFile.GetIsolatedModules() || isExternalModuleFile)) {
+		if optionsForFile.ImportHelpers.IsTrue() {
 			specifier := p.createSyntheticImport(externalHelpersModuleNameText, file)
 			moduleNames = append(moduleNames, specifier)
 			importHelpersImportSpecifier = specifier
 		}
 
-		jsxImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(compilerOptions, file), compilerOptions)
+		jsxImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(optionsForFile, file), optionsForFile)
 		if jsxImport != "" {
 			specifier := p.createSyntheticImport(jsxImport, file)
 			moduleNames = append(moduleNames, specifier)
@@ -360,9 +361,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 	if len(moduleNames) != 0 {
 		toParse = make([]string, 0, len(moduleNames))
 
-		redirect := p.projectReferenceFileMapper.getRedirectForResolution(file)
 		resolutions := p.resolveModuleNames(moduleNames, file, meta, redirect)
-		optionsForFile := module.GetCompilerOptionsWithRedirect(compilerOptions, redirect)
 
 		resolutionsInFile = make(module.ModeAwareCache[*module.ResolvedModule], len(resolutions))
 
