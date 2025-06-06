@@ -613,7 +613,7 @@ func ptrTo[T any](v T) *T {
 }
 
 var defaultCommitCharacters = []string{".", ",", ";"}`;
-    fs.writeFileSync(path.join(outputDir, 'util_test.go'), helper, 'utf-8');
+    fs.writeFileSync(path.join(outputDir, "util_test.go"), helper, "utf-8");
 }
 
 main();
