@@ -1,6 +1,8 @@
 import * as fs from "fs";
+import * as cp from "child_process";
 import * as path from "path";
 import * as ts from "typescript";
+import which from "which";
 
 const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../", "_submodules", "TypeScript", "tests", "cases", "fourslash");
 
@@ -32,6 +34,8 @@ function main() {
     generateHelperFile();
     parseTypeScriptFiles(stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
+    const gofmt = which.sync("go");
+    cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.24", "-w", outputDir]);
 }
 
 function parseTypeScriptFiles(folder: string): void {
