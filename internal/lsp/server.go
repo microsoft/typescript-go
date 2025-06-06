@@ -254,9 +254,20 @@ func (s *Server) Run() error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
-	go func() { _ = s.readLoop(ctx) }() // !!! do something with the error here?
 
-	if err := g.Wait(); err != nil && !errors.Is(err, io.EOF) {
+	// Don't run readLoop in the group, as it blocks on stdin read and cannot be cancelled.
+	readLoopErr := make(chan error, 1)
+	g.Go(func() error {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case err := <-readLoopErr:
+			return err
+		}
+	})
+	go func() { readLoopErr <- s.readLoop(ctx) }()
+
+	if err := g.Wait(); err != nil && !errors.Is(err, io.EOF) && ctx.Err() != nil {
 		return err
 	}
 	return nil
@@ -467,6 +478,8 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return s.handleDefinition(ctx, req)
 	case *lsproto.CompletionParams:
 		return s.handleCompletion(ctx, req)
+	case *lsproto.ReferenceParams:
+		return s.handleReferences(ctx, req)
 	case *lsproto.SignatureHelpParams:
 		return s.handleSignatureHelp(ctx, req)
 	case *lsproto.DocumentFormattingParams:
@@ -525,6 +538,9 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 				Boolean: ptrTo(true),
 			},
 			DefinitionProvider: &lsproto.BooleanOrDefinitionOptions{
+				Boolean: ptrTo(true),
+			},
+			ReferencesProvider: &lsproto.BooleanOrReferenceOptions{
 				Boolean: ptrTo(true),
 			},
 			DiagnosticProvider: &lsproto.DiagnosticOptionsOrDiagnosticRegistrationOptions{
@@ -658,6 +674,26 @@ func (s *Server) handleDefinition(ctx context.Context, req *lsproto.RequestMessa
 		return err
 	}
 	s.sendResult(req.ID, definition)
+	return nil
+}
+
+func (s *Server) handleReferences(ctx context.Context, req *lsproto.RequestMessage) error {
+	// findAllReferences
+	params := req.Params.(*lsproto.ReferenceParams)
+	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	defer done()
+	// !!! remove this after find all references is fully ported/tested
+	defer func() {
+		if r := recover(); r != nil {
+			stack := debug.Stack()
+			s.Log("panic obtaining references:", r, string(stack))
+			s.sendResult(req.ID, []*lsproto.Location{})
+		}
+	}()
+
+	locations := languageService.ProvideReferences(params)
+	s.sendResult(req.ID, locations)
 	return nil
 }
 

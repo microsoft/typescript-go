@@ -8,6 +8,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w compileroptions_stringer_generated.go
 
 type CompilerOptions struct {
 	AllowJs                                   Tristate                                  `json:"allowJs,omitzero"`
@@ -149,7 +150,7 @@ func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 		return options.Target
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16:
+	case ModuleKindNode16, ModuleKindNode18:
 		return ScriptTargetES2022
 	case ModuleKindNodeNext:
 		return ScriptTargetESNext
@@ -173,7 +174,7 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return options.ModuleResolution
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16:
+	case ModuleKindNode16, ModuleKindNode18:
 		return ModuleResolutionKindNode16
 	case ModuleKindNodeNext:
 		return ModuleResolutionKindNodeNext
@@ -355,6 +356,12 @@ const (
 
 func (moduleKind ModuleKind) IsNonNodeESM() bool {
 	return moduleKind >= ModuleKindES2015 && moduleKind <= ModuleKindESNext
+}
+
+func (moduleKind ModuleKind) SupportsImportAttributes() bool {
+	return ModuleKindNode18 <= moduleKind && moduleKind <= ModuleKindNodeNext ||
+		moduleKind == ModuleKindPreserve ||
+		moduleKind == ModuleKindESNext
 }
 
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
