@@ -9,7 +9,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -38,11 +37,6 @@ type ServiceOptions struct {
 
 var _ ProjectHost = (*Service)(nil)
 
-type ConfigFileCacheEntry struct {
-	commandLine *tsoptions.ParsedCommandLine
-	// !!! sheetal projects watching it and ref counting
-}
-
 type Service struct {
 	host                ServiceHost
 	options             ServiceOptions
@@ -68,8 +62,7 @@ type Service struct {
 	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
 
 	// !!! sheetal gc for this and extendedConfigCache
-	configFileCache     collections.SyncMap[tspath.Path, *ConfigFileCacheEntry]
-	extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	configFileCache configFileCache
 
 	typingsInstaller *TypingsInstaller
 
@@ -104,6 +97,7 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 		filenameToScriptInfoVersion: make(map[tspath.Path]int),
 		realpathToScriptInfos:       make(map[tspath.Path]map[*ScriptInfo]struct{}),
 	}
+	service.configFileCache.service = service
 
 	service.converters = ls.NewConverters(options.PositionEncoding, func(fileName string) *ls.LineMap {
 		return service.GetScriptInfo(fileName).LineMap()
@@ -160,17 +154,14 @@ func (s *Service) DocumentRegistry() *DocumentRegistry {
 	return s.documentRegistry
 }
 
-func (s *Service) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	if existing, ok := s.configFileCache.Load(path); ok {
-		return existing.commandLine
-	}
+// GetResolvedProjectReference implements ProjectHost.
+func (s *Service) GetResolvedProjectReference(fileName string, path tspath.Path, forProject tspath.Path) *tsoptions.ParsedCommandLine {
+	return s.configFileCache.getResolvedProjectReference(fileName, path, forProject)
+}
 
-	// Create parsed command line
-	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, s.host, &s.extendedConfigCache)
-	entry, _ := s.configFileCache.LoadOrStore(path, &ConfigFileCacheEntry{
-		commandLine: commandLine,
-	})
-	return entry.commandLine
+// ReleaseResolvedProjectReference implements ProjectHost.
+func (s *Service) ReleaseResolvedProjectReference(path tspath.Path, forProject tspath.Path) {
+	s.configFileCache.releaseResolvedProjectReference(path, forProject)
 }
 
 // FS implements ProjectHost.
@@ -253,11 +244,7 @@ func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.
 	info := s.getOrCreateOpenScriptInfo(fileName, path, fileContent, scriptKind, projectRootPath)
 	if existing == nil && info != nil && !info.isDynamic {
 		// Invoke wild card directory watcher to ensure that the file presence is reflected
-		s.projectsMu.RLock()
-		for _, project := range s.configuredProjects {
-			project.tryInvokeWildCardDirectories(fileName, info.path)
-		}
-		s.projectsMu.RUnlock()
+		s.configFileCache.tryInvokeWildCardDirectories(fileName, info.path)
 	}
 	result := s.assignProjectToOpenedScriptInfo(info)
 	s.cleanupProjectsAndScriptInfos(info, result)
@@ -345,9 +332,8 @@ func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.
 	for _, change := range changes {
 		fileName := ls.DocumentURIToFileName(change.Uri)
 		path := s.toPath(fileName)
-		if project, ok := s.configuredProjects[path]; ok {
-			// tsconfig of project
-			if err := s.onConfigFileChanged(project, change.Type); err != nil {
+		if err, ok := s.configFileCache.onWatchedFilesChanged(path, change.Type); ok {
+			if err != nil {
 				return fmt.Errorf("error handling config file change: %w", err)
 			}
 		} else if _, ok := s.openFiles[path]; ok {
@@ -370,6 +356,7 @@ func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.
 			for _, project := range s.inferredProjects {
 				project.onWatchEventForNilScriptInfo(fileName)
 			}
+			s.configFileCache.tryInvokeWildCardDirectories(fileName, path)
 		}
 	}
 
@@ -378,23 +365,6 @@ func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.
 		return client.RefreshDiagnostics(ctx)
 	}
 
-	return nil
-}
-
-func (s *Service) onConfigFileChanged(project *Project, changeKind lsproto.FileChangeType) error {
-	wasDeferredClose := project.deferredClose
-	switch changeKind {
-	case lsproto.FileChangeTypeCreated:
-		if wasDeferredClose {
-			project.deferredClose = false
-		}
-	case lsproto.FileChangeTypeDeleted:
-		project.deferredClose = true
-	}
-
-	if !project.deferredClose {
-		project.SetPendingReload(PendingReloadFull)
-	}
 	return nil
 }
 

@@ -16,8 +16,7 @@ func (t *projectReferenceParseTask) FileName() string {
 }
 
 func (t *projectReferenceParseTask) start(loader *fileLoader) {
-	path := loader.toPath(t.configName)
-	t.resolved = loader.opts.Host.GetResolvedProjectReference(t.configName, path)
+	t.resolved = loader.opts.Host.GetResolvedProjectReference(t.configName, loader.toPath(t.configName))
 	if t.resolved == nil {
 		return
 	}

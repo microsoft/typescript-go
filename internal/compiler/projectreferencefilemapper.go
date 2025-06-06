@@ -31,7 +31,7 @@ func (mapper *ProjectReferenceFileMapper) init(loader *fileLoader, rootTasks []*
 	mapper.referencesInConfigFile = make(map[tspath.Path][]tspath.Path, totalReferences)
 	mapper.sourceToOutput = make(map[tspath.Path]*tsoptions.OutputDtsAndProjectReference)
 	mapper.outputDtsToSource = make(map[tspath.Path]*tsoptions.SourceAndProjectReference)
-	mapper.referencesInConfigFile[loader.toPath(mapper.opts.Config.CompilerOptions().ConfigFilePath)] = loader.projectReferenceParseTasks.collect(
+	mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()] = loader.projectReferenceParseTasks.collect(
 		loader,
 		rootTasks,
 		func(task *projectReferenceParseTask, referencesInConfig []tspath.Path) {
@@ -48,18 +48,26 @@ func (mapper *ProjectReferenceFileMapper) init(loader *fileLoader, rootTasks []*
 				for key, value := range task.resolved.OutputDtsToSource() {
 					mapper.outputDtsToSource[key] = value
 				}
-
-				if mapper.opts.canUseProjectReferenceSource() {
-					declDir := task.resolved.CompilerOptions().DeclarationDir
-					if declDir == "" {
-						declDir = task.resolved.CompilerOptions().OutDir
+				if mapper.opts.Config.ConfigFile != task.resolved.ConfigFile {
+					mapper.referencesInConfigFile[path] = referencesInConfig
+					for key, value := range task.resolved.SourceToOutput() {
+						mapper.sourceToOutput[key] = value
 					}
-					if declDir != "" {
-						loader.dtsDirectories.Add(loader.toPath(declDir))
+					for key, value := range task.resolved.OutputDtsToSource() {
+						mapper.outputDtsToSource[key] = value
+					}
+
+					if mapper.opts.canUseProjectReferenceSource() {
+						declDir := task.resolved.CompilerOptions().DeclarationDir
+						if declDir == "" {
+							declDir = task.resolved.CompilerOptions().OutDir
+						}
+						if declDir != "" {
+							loader.dtsDirectories.Add(loader.toPath(declDir))
+						}
 					}
 				}
 			}
-			return
 		})
 }
 
@@ -83,7 +91,7 @@ func (mapper *ProjectReferenceFileMapper) getParseFileRedirect(file ast.HasFileN
 	return ""
 }
 
-func (mapper *ProjectReferenceFileMapper) GetResolvedProjectReferences() []*tsoptions.ParsedCommandLine {
+func (mapper *ProjectReferenceFileMapper) getResolvedProjectReferences() []*tsoptions.ParsedCommandLine {
 	refs, ok := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
 	var result []*tsoptions.ParsedCommandLine
 	if ok {
@@ -97,13 +105,11 @@ func (mapper *ProjectReferenceFileMapper) GetResolvedProjectReferences() []*tsop
 }
 
 func (mapper *ProjectReferenceFileMapper) getOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
-	result, ok := mapper.sourceToOutput[path]
-	return core.IfElse(ok, result, nil)
+	return mapper.sourceToOutput[path]
 }
 
 func (mapper *ProjectReferenceFileMapper) getSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference {
-	result, ok := mapper.outputDtsToSource[path]
-	return core.IfElse(ok, result, nil)
+	return mapper.outputDtsToSource[path]
 }
 
 func (mapper *ProjectReferenceFileMapper) isSourceFromProjectReference(path tspath.Path) bool {
@@ -137,6 +143,33 @@ func (mapper *ProjectReferenceFileMapper) getRedirectForResolution(file ast.HasF
 		return realpathDtsToSource.Resolved
 	}
 	return nil
+}
+
+func (mapper *ProjectReferenceFileMapper) getResolvedReferenceFor(path tspath.Path) (*tsoptions.ParsedCommandLine, bool) {
+	config, ok := mapper.configToProjectReference[path]
+	return config, ok
+}
+
+func (mapper *ProjectReferenceFileMapper) forEachResolvedProjectReference(
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
+) {
+	if mapper.opts.Config.ConfigFile == nil {
+		return
+	}
+	refs := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
+	mapper.forEachResolvedReferenceWorker(refs, fn)
+}
+
+func (mapper *ProjectReferenceFileMapper) forEachResolvedReferenceWorker(
+	referenes []tspath.Path,
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
+) {
+	for _, path := range referenes {
+		config, _ := mapper.configToProjectReference[path]
+		if !fn(path, config) {
+			return
+		}
+	}
 }
 
 func (mapper *ProjectReferenceFileMapper) getSourceToDtsIfSymlink(file ast.HasFileName) *tsoptions.SourceAndProjectReference {

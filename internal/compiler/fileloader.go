@@ -218,7 +218,7 @@ func (p *fileLoader) addProjectReferenceTasks() {
 	// Add files from project reference as root if moduleKind is none
 	// !!! sheetal Do we really need it?
 	if len(p.opts.Config.FileNames()) != 0 {
-		for _, resolved := range p.projectReferenceFileMapper.GetResolvedProjectReferences() {
+		for _, resolved := range p.projectReferenceFileMapper.getResolvedProjectReferences() {
 			if resolved == nil || resolved.CompilerOptions().GetEmitModuleKind() != core.ModuleKindNone {
 				continue
 			}

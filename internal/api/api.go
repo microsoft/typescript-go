@@ -83,9 +83,15 @@ func (api *API) DocumentRegistry() *project.DocumentRegistry {
 	return api.documentRegistry
 }
 
-func (api *API) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+// GetResolvedProjectReference implements ProjectHost.
+func (api *API) GetResolvedProjectReference(fileName string, path tspath.Path, forProject tspath.Path) *tsoptions.ParsedCommandLine {
 	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, api.host, nil)
 	return commandLine
+}
+
+// ReleaseResolvedProjectReference implements ProjectHost.
+func (api *API) ReleaseResolvedProjectReference(path tspath.Path, forProject tspath.Path) {
+	// No-op, as we don't cache resolved project references.
 }
 
 // FS implements ProjectHost.
