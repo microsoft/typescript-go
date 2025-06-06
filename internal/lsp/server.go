@@ -6,12 +6,9 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
-	"os/signal"
 	"runtime/debug"
 	"slices"
 	"sync"
-	"syscall"
 
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -31,6 +28,8 @@ type ServerOptions struct {
 	FS                 vfs.FS
 	DefaultLibraryPath string
 	TypingsLocation    string
+
+	SetParentPID func(pid int)
 }
 
 func NewServer(opts *ServerOptions) *Server {
@@ -50,6 +49,7 @@ func NewServer(opts *ServerOptions) *Server {
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
 		typingsLocation:       opts.TypingsLocation,
+		setParentPID:          opts.SetParentPID,
 	}
 }
 
@@ -82,6 +82,8 @@ type Server struct {
 	fs                 vfs.FS
 	defaultLibraryPath string
 	typingsLocation    string
+
+	setParentPID func(pid int)
 
 	initializeParams *lsproto.InitializeParams
 	positionEncoding lsproto.PositionEncodingKind
@@ -187,10 +189,7 @@ func (s *Server) RefreshDiagnostics(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) Run() error {
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer stop()
-
+func (s *Server) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error { return s.dispatchLoop(ctx) })
 	g.Go(func() error { return s.writeLoop(ctx) })
@@ -451,6 +450,12 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 
 func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 	s.initializeParams = req.Params.(*lsproto.InitializeParams)
+
+	if s.setParentPID != nil {
+		if pid := s.initializeParams.ProcessId.Value; pid != 0 {
+			s.setParentPID(int(pid))
+		}
+	}
 
 	s.positionEncoding = lsproto.PositionEncodingKindUTF16
 	if genCapabilities := s.initializeParams.Capabilities.General; genCapabilities != nil && genCapabilities.PositionEncodings != nil {
