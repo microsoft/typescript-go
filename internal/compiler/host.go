@@ -91,7 +91,10 @@ func (h *compilerHost) Trace(msg string) {
 }
 
 func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
-	text, _ := h.FS().ReadFile(fileName)
+	text, ok := h.FS().ReadFile(fileName)
+	if !ok {
+		return nil
+	}
 	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(fileName, path, text)
 	}

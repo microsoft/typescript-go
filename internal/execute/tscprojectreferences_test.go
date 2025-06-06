@@ -15,6 +15,7 @@ func TestProjectReferences(t *testing.T) {
 	}
 
 	cases := []tscInput{
+		// !!! sheetal todo verifyCompilerOptions - check for noEmit
 		{
 			subScenario: "when project references composite project with noEmit",
 			sys: newTestSys(FileMap{
@@ -41,6 +42,24 @@ func TestProjectReferences(t *testing.T) {
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/solution/utils/index.ts":   "export const x = 10;",
 				"/home/src/workspaces/solution/utils/index.d.ts": "export declare const x = 10;",
+				"/home/src/workspaces/solution/utils/tsconfig.json": `{
+	"compilerOptions": {
+		"composite": true,
+	},
+}`,
+				"/home/src/workspaces/solution/project/index.ts": `import { x } from "../utils";`,
+				"/home/src/workspaces/solution/project/tsconfig.json": `{
+	"references": [
+		{ "path": "../utils" },
+	],
+}`,
+			}, "/home/src/workspaces/solution"),
+			commandLineArgs: []string{"--p", "project"},
+		},
+		{
+			subScenario: "when project reference is not built",
+			sys: newTestSys(FileMap{
+				"/home/src/workspaces/solution/utils/index.ts": "export const x = 10;",
 				"/home/src/workspaces/solution/utils/tsconfig.json": `{
 	"compilerOptions": {
 		"composite": true,

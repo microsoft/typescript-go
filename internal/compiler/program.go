@@ -244,7 +244,8 @@ func (p *Program) initCheckerPool() {
 }
 
 func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
-	return file1.FileName() == file2.FileName() &&
+	return file2 != nil &&
+		file1.FileName() == file2.FileName() &&
 		file1.Path() == file2.Path() &&
 		file1.LanguageVersion == file2.LanguageVersion &&
 		file1.LanguageVariant == file2.LanguageVariant &&
