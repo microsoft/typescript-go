@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"os"
 	"runtime"
 	"slices"
 	"strings"
@@ -51,31 +50,7 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 			sys.EndWrite()
 			return ExitStatusNotImplemented
 		case "-f":
-			path := commandLineArgs[1]
-			ctx := format.WithFormatCodeSettings(context.Background(), format.GetDefaultFormatCodeSettings("\n"), "\n")
-			fileContent, err := os.ReadFile(path)
-			if err != nil {
-				fmt.Fprint(sys.Writer(), err.Error()+sys.NewLine())
-				return ExitStatusNotImplemented
-			}
-			text := string(fileContent)
-			pathified := tspath.ToPath(path, sys.GetCurrentDirectory(), true)
-			sourceFile := parser.ParseSourceFile(
-				string(pathified),
-				pathified,
-				text,
-				core.ScriptTargetESNext,
-				scanner.JSDocParsingModeParseAll,
-			)
-			ast.SetParentInChildren(sourceFile.AsNode())
-			edits := format.FormatDocument(ctx, sourceFile)
-			newText := applyBulkEdits(text, edits)
-			err = os.WriteFile(path, []byte(newText), 0o644)
-			if err != nil {
-				fmt.Fprint(sys.Writer(), err.Error()+sys.NewLine())
-				return ExitStatusNotImplemented
-			}
-			return ExitStatusSuccess
+			return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
@@ -85,6 +60,35 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 		return e
 	}
 	return start(watcher)
+}
+
+func fmtMain(sys System, input, output string) ExitStatus {
+	ctx := format.WithFormatCodeSettings(context.Background(), format.GetDefaultFormatCodeSettings(sys.NewLine()), sys.NewLine())
+	input = string(tspath.ToPath(input, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
+	output = string(tspath.ToPath(output, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
+	fileContent, ok := sys.FS().ReadFile(input)
+	if !ok {
+		fmt.Fprint(sys.Writer(), "File not found: "+input+sys.NewLine())
+		return ExitStatusNotImplemented
+	}
+	text := string(fileContent)
+	pathified := tspath.ToPath(input, sys.GetCurrentDirectory(), true)
+	sourceFile := parser.ParseSourceFile(
+		string(pathified),
+		pathified,
+		text,
+		core.ScriptTargetESNext,
+		scanner.JSDocParsingModeParseAll,
+	)
+	ast.SetParentInChildren(sourceFile.AsNode())
+	edits := format.FormatDocument(ctx, sourceFile)
+	newText := applyBulkEdits(text, edits)
+
+	if err := sys.FS().WriteFile(output, newText, false); err != nil {
+		fmt.Fprint(sys.Writer(), err.Error()+sys.NewLine())
+		return ExitStatusNotImplemented
+	}
+	return ExitStatusSuccess
 }
 
 func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) (ExitStatus, *watcher) {
