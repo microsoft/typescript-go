@@ -34,9 +34,9 @@
         "./_extension",
         "./_packages/*"
     ],
-    "packageManager": "npm@10.8.2",
+    "packageManager": "npm@8.19.4",
     "volta": {
         "node": "22.16.0",
-        "npm": "10.8.2"
+        "npm": "8.19.4"
     }
 }
