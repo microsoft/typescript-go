@@ -494,7 +494,7 @@ func isConstructorSignatureContext(context *formattingContext) bool {
 	return context.contextNode.Kind == ast.KindConstructSignature
 }
 
-func isTypeArgumentOrParameterOrAssertion(token *TextRangeWithKind, parent *ast.Node) bool {
+func isTypeArgumentOrParameterOrAssertion(token TextRangeWithKind, parent *ast.Node) bool {
 	if token.Kind != ast.KindLessThanToken && token.Kind != ast.KindGreaterThanToken {
 		return false
 	}

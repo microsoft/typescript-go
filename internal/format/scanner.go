@@ -13,17 +13,17 @@ type TextRangeWithKind struct {
 	Kind ast.Kind
 }
 
-func NewTextRangeWithKind(pos int, end int, kind ast.Kind) *TextRangeWithKind {
-	return &TextRangeWithKind{
+func NewTextRangeWithKind(pos int, end int, kind ast.Kind) TextRangeWithKind {
+	return TextRangeWithKind{
 		Loc:  core.NewTextRange(pos, end),
 		Kind: kind,
 	}
 }
 
 type tokenInfo struct {
-	leadingTrivia  []*TextRangeWithKind
-	token          *TextRangeWithKind
-	trailingTrivia []*TextRangeWithKind
+	leadingTrivia  []TextRangeWithKind
+	token          TextRangeWithKind
+	trailingTrivia []TextRangeWithKind
 }
 
 type formattingScanner struct {
@@ -33,8 +33,8 @@ type formattingScanner struct {
 	savedPos       int
 	lastTokenInfo  *tokenInfo
 	lastScanAction scanAction
-	leadingTrivia  []*TextRangeWithKind
-	trailingTrivia []*TextRangeWithKind
+	leadingTrivia  []TextRangeWithKind
+	trailingTrivia []TextRangeWithKind
 	wasNewLine     bool
 }
 
@@ -287,7 +287,7 @@ func (s *formattingScanner) getNextToken(n *ast.Node, expectedScanAction scanAct
 	return token
 }
 
-func (s *formattingScanner) readEOFTokenRange() *TextRangeWithKind {
+func (s *formattingScanner) readEOFTokenRange() TextRangeWithKind {
 	// Debug.assert(isOnEOF()); // !!!
 	return NewTextRangeWithKind(
 		s.s.TokenFullStart(),
@@ -332,7 +332,7 @@ func (s *formattingScanner) skipToStartOf(r *core.TextRange) {
 	s.trailingTrivia = nil
 }
 
-func (s *formattingScanner) getCurrentLeadingTrivia() []*TextRangeWithKind {
+func (s *formattingScanner) getCurrentLeadingTrivia() []TextRangeWithKind {
 	return s.leadingTrivia
 }
 

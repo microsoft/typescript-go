@@ -161,7 +161,7 @@ type formatSpanWorker struct {
 	formattingContext *formattingContext
 
 	edits                  []core.TextChange
-	previousRange          *TextRangeWithKind
+	previousRange          TextRangeWithKind
 	previousRangeTriviaEnd int
 	previousParent         *ast.Node
 	previousRangeStartLine int
@@ -257,7 +257,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 			indentation += opt.IndentSize // !!! TODO: nil check???
 		}
 
-		w.indentTriviaItems(remainingTrivia, indentation, true, func(item *TextRangeWithKind) {
+		w.indentTriviaItems(remainingTrivia, indentation, true, func(item TextRangeWithKind) {
 			startLine, startChar := scanner.GetLineAndCharacterOfPosition(w.sourceFile, item.Loc.Pos())
 			w.processRange(item, startLine, startChar, w.enclosingNode, w.enclosingNode, nil)
 			w.insertIndentation(item.Loc.Pos(), indentation, false)
@@ -268,7 +268,7 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 		}
 	}
 
-	if w.previousRange != nil && w.formattingScanner.getTokenFullStart() >= w.originalRange.End() {
+	if w.previousRange != NewTextRangeWithKind(0, 0, 0) && w.formattingScanner.getTokenFullStart() >= w.originalRange.End() {
 		// Formatting edits happen by looking at pairs of contiguous tokens (see `processPair`),
 		// typically inserting or deleting whitespace between them. The recursive `processNode`
 		// logic above bails out as soon as it encounters a token that is beyond the end of the
@@ -279,14 +279,14 @@ func (w *formatSpanWorker) execute(s *formattingScanner) []core.TextChange {
 		// inclusive. We would expect a format-selection would delete the space (if rules apply),
 		// but in order to do that, we need to process the pair ["{", "}"], but we stopped processing
 		// just before getting there. This block handles this trailing edit.
-		var tokenInfo *TextRangeWithKind
+		var tokenInfo TextRangeWithKind
 		if w.formattingScanner.isOnEOF() {
 			tokenInfo = w.formattingScanner.readEOFTokenRange()
 		} else if w.formattingScanner.isOnToken() {
 			tokenInfo = w.formattingScanner.readTokenInfo(w.enclosingNode).token
 		}
 
-		if tokenInfo != nil && tokenInfo.Loc.Pos() == w.previousRangeTriviaEnd {
+		if tokenInfo.Loc.Pos() == w.previousRangeTriviaEnd {
 			// We need to check that tokenInfo and previousRange are contiguous: the `originalRange`
 			// may have ended in the middle of a token, which means we will have stopped formatting
 			// on that token, leaving `previousRange` pointing to the token before it, but already
@@ -624,7 +624,7 @@ func (w *formatSpanWorker) processNode(node *ast.Node, contextNode *ast.Node, no
 	}
 }
 
-func (w *formatSpanWorker) processPair(currentItem *TextRangeWithKind, currentStartLine int, currentParent *ast.Node, previousItem *TextRangeWithKind, previousStartLine int, previousParent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) LineAction {
+func (w *formatSpanWorker) processPair(currentItem TextRangeWithKind, currentStartLine int, currentParent *ast.Node, previousItem TextRangeWithKind, previousStartLine int, previousParent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) LineAction {
 	w.formattingContext.UpdateContext(previousItem, previousParent, currentItem, currentParent, contextNode)
 
 	rules := getRules(w.formattingContext)
@@ -673,7 +673,7 @@ func (w *formatSpanWorker) processPair(currentItem *TextRangeWithKind, currentSt
 	return lineAction
 }
 
-func (w *formatSpanWorker) applyRuleEdits(rule *ruleImpl, previousRange *TextRangeWithKind, previousStartLine int, currentRange *TextRangeWithKind, currentStartLine int) LineAction {
+func (w *formatSpanWorker) applyRuleEdits(rule *ruleImpl, previousRange TextRangeWithKind, previousStartLine int, currentRange TextRangeWithKind, currentStartLine int) LineAction {
 	onLaterLine := currentStartLine != previousStartLine
 	switch rule.Action() {
 	case ruleActionStopProcessingSpaceActions:
@@ -735,14 +735,14 @@ const (
 	LineActionLineRemoved
 )
 
-func (w *formatSpanWorker) processRange(r *TextRangeWithKind, rangeStartLine int, rangeStartCharacter int, parent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) LineAction {
+func (w *formatSpanWorker) processRange(r TextRangeWithKind, rangeStartLine int, rangeStartCharacter int, parent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) LineAction {
 	rangeHasError := w.rangeContainsError(r.Loc)
 	lineAction := LineActionNone
 	if !rangeHasError {
-		if w.previousRange == nil {
+		if w.previousRange == NewTextRangeWithKind(0, 0, 0) {
 			// trim whitespaces starting from the beginning of the span up to the current line
 			originalStartLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, w.originalRange.Pos())
-			w.trimTrailingWhitespacesForLines(originalStartLine, rangeStartLine, nil)
+			w.trimTrailingWhitespacesForLines(originalStartLine, rangeStartLine, NewTextRangeWithKind(0, 0, 0))
 		} else {
 			lineAction = w.processPair(r, rangeStartLine, parent, w.previousRange, w.previousRangeStartLine, w.previousParent, contextNode, dynamicIndentation)
 		}
@@ -756,7 +756,7 @@ func (w *formatSpanWorker) processRange(r *TextRangeWithKind, rangeStartLine int
 	return lineAction
 }
 
-func (w *formatSpanWorker) processTrivia(trivia []*TextRangeWithKind, parent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) {
+func (w *formatSpanWorker) processTrivia(trivia []TextRangeWithKind, parent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) {
 	for _, triviaItem := range trivia {
 		if isComment(triviaItem.Kind) && triviaItem.Loc.ContainedBy(w.originalRange) {
 			triviaItemStartLine, triviaItemStartCharacter := scanner.GetLineAndCharacterOfPosition(w.sourceFile, triviaItem.Loc.Pos())
@@ -769,9 +769,9 @@ func (w *formatSpanWorker) processTrivia(trivia []*TextRangeWithKind, parent *as
 * Trimming will be done for lines after the previous range.
 * Exclude comments as they had been previously processed.
  */
-func (w *formatSpanWorker) trimTrailingWhitespacesForRemainingRange(trivias []*TextRangeWithKind) {
+func (w *formatSpanWorker) trimTrailingWhitespacesForRemainingRange(trivias []TextRangeWithKind) {
 	startPos := w.originalRange.Pos()
-	if w.previousRange != nil {
+	if w.previousRange != NewTextRangeWithKind(0, 0, 0) {
 		startPos = w.previousRange.Loc.End()
 	}
 
@@ -790,21 +790,21 @@ func (w *formatSpanWorker) trimTrailingWhitespacesForRemainingRange(trivias []*T
 	}
 }
 
-func (w *formatSpanWorker) trimTrailingWitespacesForPositions(startPos int, endPos int, previousRange *TextRangeWithKind) {
+func (w *formatSpanWorker) trimTrailingWitespacesForPositions(startPos int, endPos int, previousRange TextRangeWithKind) {
 	startLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, startPos)
 	endLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, endPos)
 
 	w.trimTrailingWhitespacesForLines(startLine, endLine+1, previousRange)
 }
 
-func (w *formatSpanWorker) trimTrailingWhitespacesForLines(line1 int, line2 int, r *TextRangeWithKind) {
+func (w *formatSpanWorker) trimTrailingWhitespacesForLines(line1 int, line2 int, r TextRangeWithKind) {
 	lineStarts := scanner.GetLineStarts(w.sourceFile)
 	for line := line1; line < line2; line++ {
 		lineStartPosition := int(lineStarts[line])
 		lineEndPosition := scanner.GetEndLinePosition(w.sourceFile, line)
 
 		// do not trim whitespaces in comments or template expression
-		if r != nil && (isComment(r.Kind) || isStringOrRegularExpressionOrTemplateLiteral(r.Kind)) && r.Loc.Pos() <= lineEndPosition && r.Loc.End() > lineEndPosition {
+		if r != NewTextRangeWithKind(0, 0, 0) && (isComment(r.Kind) || isStringOrRegularExpressionOrTemplateLiteral(r.Kind)) && r.Loc.Pos() <= lineEndPosition && r.Loc.End() > lineEndPosition {
 			continue
 		}
 
@@ -879,7 +879,7 @@ func (w *formatSpanWorker) indentationIsDifferent(indentationString string, star
 	return indentationString != w.sourceFile.Text()[startLinePosition:startLinePosition+len(indentationString)]
 }
 
-func (w *formatSpanWorker) indentTriviaItems(trivia []*TextRangeWithKind, commentIndentation int, indentNextTokenOrTrivia bool, indentSingleLine func(item *TextRangeWithKind)) bool {
+func (w *formatSpanWorker) indentTriviaItems(trivia []TextRangeWithKind, commentIndentation int, indentNextTokenOrTrivia bool, indentSingleLine func(item TextRangeWithKind)) bool {
 	for _, triviaItem := range trivia {
 		triviaInRange := triviaItem.Loc.ContainedBy(w.originalRange)
 		switch triviaItem.Kind {
@@ -1025,7 +1025,7 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo *token
 		if !rangeHasError {
 			if lineAction == LineActionNone {
 				// indent token only if end line of previous range does not match start line of the token
-				if savePreviousRange != nil {
+				if savePreviousRange != NewTextRangeWithKind(0, 0, 0) {
 					prevEndLine, _ := scanner.GetLineAndCharacterOfPosition(w.sourceFile, savePreviousRange.Loc.End())
 					indentToken = lastTriviaWasNewLine && tokenStartLine != prevEndLine
 				}
@@ -1048,7 +1048,7 @@ func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo *token
 		indentNextTokenOrTrivia := true
 		if len(currentTokenInfo.leadingTrivia) > 0 {
 			commentIndentation := dynamicIndenation.getIndentationForComment(currentTokenInfo.token.Kind, tokenIndentation, container)
-			indentNextTokenOrTrivia = w.indentTriviaItems(currentTokenInfo.leadingTrivia, commentIndentation, indentNextTokenOrTrivia, func(item *TextRangeWithKind) {
+			indentNextTokenOrTrivia = w.indentTriviaItems(currentTokenInfo.leadingTrivia, commentIndentation, indentNextTokenOrTrivia, func(item TextRangeWithKind) {
 				w.insertIndentation(item.Loc.Pos(), commentIndentation, false)
 			})
 		}
