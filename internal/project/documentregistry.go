@@ -144,6 +144,17 @@ func (r *DocumentRegistry) size() int {
 }
 
 type ParsedFileCache interface {
-	GetFile(string, tspath.Path, string, core.ScriptTarget, core.SourceFileAffectingCompilerOptions) *ast.SourceFile
-	CacheFile(string, tspath.Path, string, core.ScriptTarget, core.SourceFileAffectingCompilerOptions, *ast.SourceFile)
+	GetFile(fileName string,
+		path tspath.Path,
+		text string,
+		scriptTarget core.ScriptTarget,
+		options core.SourceFileAffectingCompilerOptions,
+	) *ast.SourceFile
+	CacheFile(fileName string,
+		path tspath.Path,
+		text string,
+		scriptTarget core.ScriptTarget,
+		options core.SourceFileAffectingCompilerOptions,
+		sourceFile *ast.SourceFile,
+	)
 }
