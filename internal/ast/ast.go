@@ -5984,6 +5984,10 @@ func (node *ConditionalExpression) computeSubtreeFacts() SubtreeFacts {
 		propagateSubtreeFacts(node.WhenFalse)
 }
 
+func IsConditionalExpression(node *Node) bool {
+	return node.Kind == KindConditionalExpression
+}
+
 // PropertyAccessExpression
 
 type PropertyAccessExpression struct {
@@ -9993,10 +9997,6 @@ type SourceFile struct {
 
 	lineMapMu sync.RWMutex
 	lineMap   []core.TextPos
-
-	// Fields set by document registry
-
-	Version int
 
 	// Fields set by language service
 
