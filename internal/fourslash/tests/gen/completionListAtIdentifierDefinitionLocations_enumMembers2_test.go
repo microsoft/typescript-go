@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListAtIdentifierDefinitionLocations_enumMembers2(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var aa = 1;
 enum a { foo, /*enumValueName3*/`

@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListNewIdentifierVariableDeclaration(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var y : (s:string, list/*2*/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)

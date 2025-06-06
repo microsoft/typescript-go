@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsDotDotDotInObjectLiteral1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// https://github.com/microsoft/TypeScript/issues/57540
 

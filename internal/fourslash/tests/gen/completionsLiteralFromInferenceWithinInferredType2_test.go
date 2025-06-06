@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsLiteralFromInferenceWithinInferredType2(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /a.tsx
 type Values<T> = T[keyof T];

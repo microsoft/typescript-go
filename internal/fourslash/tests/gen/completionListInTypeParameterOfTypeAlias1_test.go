@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInTypeParameterOfTypeAlias1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type List1</*0*/
 type List2</*1*/T> = T[];

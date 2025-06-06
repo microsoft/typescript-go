@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsRecommended_nonAccessibleSymbol(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function f() {
     class C {}

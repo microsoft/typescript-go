@@ -10,7 +10,7 @@ import (
 
 func TestStringLiteralCompletionsForTypeIndexedAccess(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type Foo = { a: string; b: number; c: boolean; };
 type A = Foo["/*1*/"];

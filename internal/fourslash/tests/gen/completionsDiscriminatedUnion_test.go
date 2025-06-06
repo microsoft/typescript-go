@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsDiscriminatedUnion(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface A { kind: "a"; a: number; }
 interface B { kind: "b"; b: number; }

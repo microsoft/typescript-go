@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListBeforeNewScope01(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `p/*1*/
 

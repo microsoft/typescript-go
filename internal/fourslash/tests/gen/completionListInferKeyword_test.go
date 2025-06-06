@@ -11,7 +11,7 @@ import (
 
 func TestCompletionListInferKeyword(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type Bar<T> = T extends { a: (x: in/**/) => void }
    ? U

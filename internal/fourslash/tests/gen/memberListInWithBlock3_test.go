@@ -10,7 +10,7 @@ import (
 
 func TestMemberListInWithBlock3(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x = { a: 0 };
 with(x./*1*/`

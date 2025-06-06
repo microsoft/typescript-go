@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsAfterAsyncInObjectLiteral(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const x: { m(): Promise<void> } = { async /**/ };`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
