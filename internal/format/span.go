@@ -491,7 +491,7 @@ func (w *formatSpanWorker) processChildNodes(
 			if w.formattingScanner.isOnToken() {
 				tokenInfo = w.formattingScanner.readTokenInfo(parent)
 			} else {
-				tokenInfo = nil
+				return
 			}
 		}
 
@@ -499,7 +499,7 @@ func (w *formatSpanWorker) processChildNodes(
 		// there might be the case when current token matches end token but does not considered as one
 		// function (x: function) <--
 		// without this check close paren will be interpreted as list end token for function expression which is wrong
-		if tokenInfo != nil && tokenInfo.token.Kind == listEndToken && tokenInfo.token.Loc.ContainedBy(parent.Loc) {
+		if tokenInfo.token.Kind == listEndToken && tokenInfo.token.Loc.ContainedBy(parent.Loc) {
 			// consume list end token
 			w.consumeTokenAndAdvanceScanner(tokenInfo, parent, listDynamicIndentation, parent /*isListEndToken*/, true)
 		}
@@ -1002,7 +1002,7 @@ func (w *formatSpanWorker) recordInsert(start int, text string) {
 	}
 }
 
-func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo *tokenInfo, parent *ast.Node, dynamicIndenation *dynamicIndenter, container *ast.Node, isListEndToken bool) {
+func (w *formatSpanWorker) consumeTokenAndAdvanceScanner(currentTokenInfo tokenInfo, parent *ast.Node, dynamicIndenation *dynamicIndenter, container *ast.Node, isListEndToken bool) {
 	// assert(currentTokenInfo.token.Loc.ContainedBy(parent.Loc)) // !!!
 	lastTriviaWasNewLine := w.formattingScanner.lastTrailingTriviaWasNewLine()
 	indentToken := false

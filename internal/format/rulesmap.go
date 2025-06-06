@@ -22,6 +22,9 @@ func getRules(context *formattingContext) []*ruleImpl {
 						continue outer
 					}
 				}
+				if len(rules) == 0 {
+					rules = make([]*ruleImpl, 0, len(bucket))
+				}
 				rules = append(rules, rule)
 				ruleActionMask |= rule.Action()
 			}
