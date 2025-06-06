@@ -8,6 +8,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/testrunner"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -128,12 +129,6 @@ const (
 
 func parseFileContent(filename string, content string, fileOptions map[string]string) *testFileWithMarkers {
 	filename = tspath.GetNormalizedAbsolutePath(filename, "/")
-	// Any slash-star comment with a character not in this string is not a marker.
-	validMarkerChars := core.NewSetFromItems(
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-		'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-		'$', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '_',
-	)
 
 	// The file content (minus metacharacters) so far
 	var output strings.Builder
@@ -204,7 +199,10 @@ func parseFileContent(filename string, content string, fileOptions map[string]st
 				// Reset the state
 				openMarker = locationInformation{}
 				state = stateNone
-			} else if !validMarkerChars.Has(currentCharacter) {
+			} else if !(stringutil.IsDigit(currentCharacter) ||
+				stringutil.IsASCIILetter(currentCharacter) ||
+				currentCharacter == '$' ||
+				currentCharacter == '_') { // Invalid marker character
 				if currentCharacter == '*' && i < len(content)-1 && content[i+1] == '/' {
 					// The marker is about to be closed, ignore the 'invalid' char
 				} else {
