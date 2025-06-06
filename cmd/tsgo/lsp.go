@@ -1,10 +1,14 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"runtime"
+	"syscall"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -41,6 +45,9 @@ func runLSP(args []string) int {
 	defaultLibraryPath := bundled.LibPath()
 	typingsLocation := getGlobalTypingsCacheLocation()
 
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
 	s := lsp.NewServer(&lsp.ServerOptions{
 		In:                 os.Stdin,
 		Out:                os.Stdout,
@@ -49,9 +56,27 @@ func runLSP(args []string) int {
 		FS:                 fs,
 		DefaultLibraryPath: defaultLibraryPath,
 		TypingsLocation:    typingsLocation,
+		SetParentPID: func(pid int) {
+			go func() {
+				for {
+					select {
+					case <-ctx.Done():
+						return
+					case <-time.After(10 * time.Second):
+						p, err := os.FindProcess(pid)
+						if err != nil {
+							os.Exit(1)
+						}
+						if p.Signal(syscall.Signal(0)) != nil {
+							os.Exit(1)
+						}
+					}
+				}
+			}()
+		},
 	})
 
-	if err := s.Run(); err != nil {
+	if err := s.Run(ctx); err != nil {
 		return 1
 	}
 	return 0
