@@ -83,6 +83,11 @@ func (api *API) DocumentRegistry() *project.DocumentRegistry {
 	return api.documentRegistry
 }
 
+func (api *API) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, api.host, nil)
+	return commandLine
+}
+
 // FS implements ProjectHost.
 func (api *API) FS() vfs.FS {
 	return api.host.FS()
