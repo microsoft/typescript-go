@@ -21,7 +21,7 @@ type fileLoader struct {
 	comparePathsOptions tspath.ComparePathsOptions
 	supportedExtensions []string
 
-	parseTasks                 *fileLoaderWorker[*parseTask, any]
+	parseTasks                 *fileLoaderWorker[*parseTask, *ast.SourceFile]
 	projectReferenceParseTasks *fileLoaderWorker[*projectReferenceParseTask, *tsoptions.ParsedCommandLine]
 	rootTasks                  []*parseTask
 
@@ -70,7 +70,7 @@ func processAllProgramFiles(
 			UseCaseSensitiveFileNames: opts.Host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          opts.Host.GetCurrentDirectory(),
 		},
-		parseTasks: &fileLoaderWorker[*parseTask, any]{
+		parseTasks: &fileLoaderWorker[*parseTask, *ast.SourceFile]{
 			wg:          core.NewWorkGroup(singleThreaded),
 			getSubTasks: getSubTasksOfParseTask,
 		},
@@ -115,14 +115,14 @@ func processAllProgramFiles(
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	var unsupportedExtensions []string
 
-	loader.parseTasks.collect(loader.rootTasks, func(task *parseTask, _ []any) any {
+	loader.parseTasks.collect(loader.rootTasks, func(task *parseTask, _ []*ast.SourceFile) *ast.SourceFile {
 		file := task.file
-		if task.isRedirect {
-			return nil
+		if task.isRedirected {
+			return file
 		}
 		if file == nil {
 			missingFiles = append(missingFiles, task.normalizedFilePath)
-			return nil
+			return file
 		}
 		if task.isLib {
 			libFiles = append(libFiles, file)
@@ -151,7 +151,7 @@ func processAllProgramFiles(
 		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
 			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
 		}
-		return nil
+		return file
 	})
 	loader.sortLibs(libFiles)
 

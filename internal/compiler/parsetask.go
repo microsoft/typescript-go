@@ -13,7 +13,7 @@ type parseTask struct {
 	path               tspath.Path
 	file               *ast.SourceFile
 	isLib              bool
-	isRedirect         bool
+	isRedirected       bool
 	subTasks           []*parseTask
 
 	metadata                     *ast.SourceFileMetaData
@@ -88,7 +88,7 @@ func (t *parseTask) start(loader *fileLoader) {
 }
 
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
-	t.isRedirect = true
+	t.isRedirected = true
 	t.subTasks = []*parseTask{{normalizedFilePath: tspath.NormalizePath(fileName), isLib: t.isLib}}
 }
 
