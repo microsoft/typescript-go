@@ -1565,6 +1565,10 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	// and set it before we descend into nodes that could actually be part of an assignment pattern.
 	b.inAssignmentPattern = false
 	if b.checkUnreachable(node) {
+		hasFlowNodeData := node.FlowNodeData()
+		if hasFlowNodeData != nil {
+			hasFlowNodeData.FlowNode = nil
+		}
 		b.setJSDocParents(node)
 		b.bindEachChild(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
