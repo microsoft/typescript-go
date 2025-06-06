@@ -264,45 +264,43 @@ func (s *Server) Run() error {
 
 func (s *Server) readLoop(ctx context.Context) error {
 	for {
-		select {
-		case <-ctx.Done():
-			return ctx.Err()
-		default:
-			msg, err := s.read()
-			if err != nil {
-				if errors.Is(err, lsproto.ErrInvalidRequest) {
-					s.sendError(nil, err)
-					continue
-				}
-				return err
-			}
-
-			if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
-				req := msg.AsRequest()
-				if req.Method == lsproto.MethodInitialize {
-					s.handleInitialize(req)
-				} else {
-					s.sendError(req.ID, lsproto.ErrServerNotInitialized)
-				}
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		msg, err := s.read()
+		if err != nil {
+			if errors.Is(err, lsproto.ErrInvalidRequest) {
+				s.sendError(nil, err)
 				continue
 			}
+			return err
+		}
 
-			if msg.Kind == lsproto.MessageKindResponse {
-				resp := msg.AsResponse()
-				s.pendingServerRequestsMu.Lock()
-				if respChan, ok := s.pendingServerRequests[*resp.ID]; ok {
-					respChan <- resp
-					close(respChan)
-					delete(s.pendingServerRequests, *resp.ID)
-				}
-				s.pendingServerRequestsMu.Unlock()
+		if s.initializeParams == nil && msg.Kind == lsproto.MessageKindRequest {
+			req := msg.AsRequest()
+			if req.Method == lsproto.MethodInitialize {
+				s.handleInitialize(req)
 			} else {
-				req := msg.AsRequest()
-				if req.Method == lsproto.MethodCancelRequest {
-					s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
-				} else {
-					s.requestQueue <- req
-				}
+				s.sendError(req.ID, lsproto.ErrServerNotInitialized)
+			}
+			continue
+		}
+
+		if msg.Kind == lsproto.MessageKindResponse {
+			resp := msg.AsResponse()
+			s.pendingServerRequestsMu.Lock()
+			if respChan, ok := s.pendingServerRequests[*resp.ID]; ok {
+				respChan <- resp
+				close(respChan)
+				delete(s.pendingServerRequests, *resp.ID)
+			}
+			s.pendingServerRequestsMu.Unlock()
+		} else {
+			req := msg.AsRequest()
+			if req.Method == lsproto.MethodCancelRequest {
+				s.cancelRequest(req.Params.(*lsproto.CancelParams).Id)
+			} else {
+				s.requestQueue <- req
 			}
 		}
 	}
