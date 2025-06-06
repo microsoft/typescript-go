@@ -548,7 +548,11 @@ func (w *formatSpanWorker) computeIndentation(node *ast.Node, startLine int, inh
 			argumentStartsOnSameLineAsPreviousArgument(parent, node, startLine, w.sourceFile) {
 			return parentDynamicIndentation.getIndentation(), delta
 		} else {
-			return parentDynamicIndentation.getIndentation() + parentDynamicIndentation.getDelta(node), delta
+			i := parentDynamicIndentation.getIndentation()
+			if i == -1 {
+				return parentDynamicIndentation.getIndentation(), delta
+			}
+			return i + parentDynamicIndentation.getDelta(node), delta
 		}
 	}
 
