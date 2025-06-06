@@ -121,7 +121,7 @@ func (r *DocumentRegistry) getDocumentWorker(
 
 func (r *DocumentRegistry) getFileVersion(file *ast.SourceFile, options *core.CompilerOptions) int {
 	key := newRegistryKey(options, file.Path(), file.ScriptKind)
-	if entry, ok := r.documents.Load(key); ok {
+	if entry, ok := r.documents.Load(key); ok && entry.sourceFile == file {
 		return entry.version
 	}
 	return -1
