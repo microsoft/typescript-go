@@ -581,7 +581,7 @@ function generateGoTest(test: GoTest): string {
     const testName = test.name[0].toUpperCase() + test.name.substring(1);
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
-    const imports = [`"github.com/microsoft/typescript-go/internal/bundled"`, `"github.com/microsoft/typescript-go/internal/fourslash"`];
+    const imports = [`"github.com/microsoft/typescript-go/internal/fourslash"`];
     // Only include these imports if the commands use them to avoid unused import errors.
     if (commands.includes("ls.")) {
         imports.push(`"github.com/microsoft/typescript-go/internal/ls"`);
@@ -600,11 +600,6 @@ import (
 
 func Test${testName}(t *testing.T) {
     t.Parallel()
-    if !bundled.Embedded {
-		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
-		// Just skip this for now.
-		t.Skip("bundled files are not embedded")
-	}
     ${failingTests.has(testName) ? "t.Skip()" : ""}
     defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ${content}
