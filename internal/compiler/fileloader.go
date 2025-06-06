@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -86,10 +87,9 @@ func processAllProgramFiles(
 		loader.resolver = module.NewResolver(opts.Host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 	} else {
 		loader.resolver = module.NewResolver(&ProjectReferenceDtsFakingHost{
-			host:                       opts.Host,
 			projectReferenceFileMapper: loader.projectReferenceFileMapper,
 			dtsDirectories:             loader.dtsDirectories,
-			symlinkCache:               module.SymlinkCache{},
+			symlinkCache:               modulespecifiers.SymlinkCache{},
 		}, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 	}
 
