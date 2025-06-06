@@ -26,9 +26,9 @@ type ParsedCommandLine struct {
 	wildcardDirectories     map[string]bool
 	extraFileExtensions     []FileExtensionInfo
 
-	sourceAndOutputMapsOnce sync.Once
-	sourceToOutput          map[tspath.Path]*OutputDtsAndProjectReference
-	outputDtsToSource       map[tspath.Path]*SourceAndProjectReference
+	inputOutputNameMu sync.RWMutex
+	sourceToOutput    map[tspath.Path]*OutputDtsAndProjectReference
+	outputDtsToSource map[tspath.Path]*SourceAndProjectReference
 
 	commonSourceDirectory     string
 	commonSourceDirectoryOnce sync.Once
@@ -57,34 +57,38 @@ func (p *ParsedCommandLine) ConfigName() string {
 }
 
 func (p *ParsedCommandLine) SourceToOutput() map[tspath.Path]*OutputDtsAndProjectReference {
+	p.inputOutputNameMu.RLock()
+	defer p.inputOutputNameMu.RUnlock()
 	return p.sourceToOutput
 }
 
 func (p *ParsedCommandLine) OutputDtsToSource() map[tspath.Path]*SourceAndProjectReference {
+	p.inputOutputNameMu.RLock()
+	defer p.inputOutputNameMu.RUnlock()
 	return p.outputDtsToSource
 }
 
 func (p *ParsedCommandLine) ParseInputOutputNames() {
-	p.sourceAndOutputMapsOnce.Do(func() {
-		sourceToOutput := map[tspath.Path]*OutputDtsAndProjectReference{}
-		outputDtsToSource := map[tspath.Path]*SourceAndProjectReference{}
-
-		for outputDts, source := range p.GetOutputDeclarationFileNames() {
-			path := tspath.ToPath(source, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
-			if outputDts != "" {
-				outputDtsToSource[tspath.ToPath(outputDts, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())] = &SourceAndProjectReference{
-					Source:   source,
-					Resolved: p,
-				}
-			}
-			sourceToOutput[path] = &OutputDtsAndProjectReference{
-				OutputDts: outputDts,
-				Resolved:  p,
+	p.inputOutputNameMu.Lock()
+	defer p.inputOutputNameMu.Unlock()
+	if p.sourceToOutput != nil {
+		return
+	}
+	p.sourceToOutput = map[tspath.Path]*OutputDtsAndProjectReference{}
+	p.outputDtsToSource = map[tspath.Path]*SourceAndProjectReference{}
+	for outputDts, source := range p.GetOutputDeclarationFileNames() {
+		path := tspath.ToPath(source, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+		if outputDts != "" {
+			p.outputDtsToSource[tspath.ToPath(outputDts, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())] = &SourceAndProjectReference{
+				Source:   source,
+				Resolved: p,
 			}
 		}
-		p.outputDtsToSource = outputDtsToSource
-		p.sourceToOutput = sourceToOutput
-	})
+		p.sourceToOutput[path] = &OutputDtsAndProjectReference{
+			OutputDts: outputDts,
+			Resolved:  p,
+		}
+	}
 }
 
 func (p *ParsedCommandLine) CommonSourceDirectory() string {

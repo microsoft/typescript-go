@@ -23,11 +23,9 @@ func (t *projectReferenceParseTask) start(loader *fileLoader) {
 	if t.resolved == nil {
 		return
 	}
-	if t.resolved.SourceToOutput() == nil {
-		loader.projectReferenceParseTasks.wg.Queue(func() {
-			t.resolved.ParseInputOutputNames()
-		})
-	}
+	loader.projectReferenceParseTasks.wg.Queue(func() {
+		t.resolved.ParseInputOutputNames()
+	})
 	subReferences := t.resolved.ProjectReferences()
 	if len(subReferences) == 0 {
 		return
