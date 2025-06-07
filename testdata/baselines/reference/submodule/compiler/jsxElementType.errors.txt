@@ -14,10 +14,15 @@ jsxElementType.tsx(59,2): error TS2741: Property 'title' is missing in type '{}'
 jsxElementType.tsx(61,16): error TS2322: Type '{ excessProp: true; }' is not assignable to type 'IntrinsicAttributes & { title: string; }'.
   Property 'excessProp' does not exist on type 'IntrinsicAttributes & { title: string; }'.
 jsxElementType.tsx(70,2): error TS2769: No overload matches this call.
-  The last overload gave the following error.
+  Overload 1 of 2, 'new (props: Readonly<{ title: string; }>): RenderStringClass', gave the following error.
+    Property 'title' is missing in type '{}' but required in type 'Readonly<{ title: string; }>'.
+  Overload 2 of 2, 'new (props: { title: string; }, context?: any): RenderStringClass', gave the following error.
     Property 'title' is missing in type '{}' but required in type 'Readonly<{ title: string; }>'.
 jsxElementType.tsx(72,20): error TS2769: No overload matches this call.
-  The last overload gave the following error.
+  Overload 1 of 2, 'new (props: Readonly<{ title: string; }>): RenderStringClass', gave the following error.
+    Type '{ excessProp: true; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<RenderStringClass> & Readonly<{ children?: ReactNode; }> & Readonly<{ title: string; }>'.
+      Property 'excessProp' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<RenderStringClass> & Readonly<{ children?: ReactNode; }> & Readonly<{ title: string; }>'.
+  Overload 2 of 2, 'new (props: { title: string; }, context?: any): RenderStringClass', gave the following error.
     Type '{ excessProp: true; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<RenderStringClass> & Readonly<{ children?: ReactNode; }> & Readonly<{ title: string; }>'.
       Property 'excessProp' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<RenderStringClass> & Readonly<{ children?: ReactNode; }> & Readonly<{ title: string; }>'.
 jsxElementType.tsx(78,1): error TS2339: Property 'boop' does not exist on type 'JSX.IntrinsicElements'.
@@ -139,18 +144,22 @@ jsxElementType.tsx(111,19): error TS2322: Type '{ a: string; b: string; }' is no
     <RenderStringClass />;
      ~~~~~~~~~~~~~~~~~
 !!! error TS2769: No overload matches this call.
-!!! error TS2769:   The last overload gave the following error.
+!!! error TS2769:   Overload 1 of 2, 'new (props: Readonly<{ title: string; }>): RenderStringClass', gave the following error.
+!!! error TS2769:     Property 'title' is missing in type '{}' but required in type 'Readonly<{ title: string; }>'.
+!!! error TS2769:   Overload 2 of 2, 'new (props: { title: string; }, context?: any): RenderStringClass', gave the following error.
 !!! error TS2769:     Property 'title' is missing in type '{}' but required in type 'Readonly<{ title: string; }>'.
 !!! related TS2728 jsxElementType.tsx:64:51: 'title' is declared here.
-!!! related TS2771 react16.d.ts:357:13: The last overload is declared here.
+!!! related TS2728 jsxElementType.tsx:64:51: 'title' is declared here.
     <RenderStringClass title="react" />;
     <RenderStringClass excessProp />;
                        ~~~~~~~~~~
 !!! error TS2769: No overload matches this call.
-!!! error TS2769:   The last overload gave the following error.
+!!! error TS2769:   Overload 1 of 2, 'new (props: Readonly<{ title: string; }>): RenderStringClass', gave the following error.
 !!! error TS2769:     Type '{ excessProp: true; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<RenderStringClass> & Readonly<{ children?: ReactNode; }> & Readonly<{ title: string; }>'.
 !!! error TS2769:       Property 'excessProp' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<RenderStringClass> & Readonly<{ children?: ReactNode; }> & Readonly<{ title: string; }>'.
-!!! related TS2771 react16.d.ts:357:13: The last overload is declared here.
+!!! error TS2769:   Overload 2 of 2, 'new (props: { title: string; }, context?: any): RenderStringClass', gave the following error.
+!!! error TS2769:     Type '{ excessProp: true; }' is not assignable to type 'IntrinsicAttributes & IntrinsicClassAttributes<RenderStringClass> & Readonly<{ children?: ReactNode; }> & Readonly<{ title: string; }>'.
+!!! error TS2769:       Property 'excessProp' does not exist on type 'IntrinsicAttributes & IntrinsicClassAttributes<RenderStringClass> & Readonly<{ children?: ReactNode; }> & Readonly<{ title: string; }>'.
     
     // Host element types still work
     <div />;
