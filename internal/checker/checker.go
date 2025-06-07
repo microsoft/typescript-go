@@ -12165,6 +12165,9 @@ func (c *Checker) checkAssignmentOperator(left *ast.Node, operator ast.Kind, rig
 		// getters can be a subtype of setters, so to check for assignability we use the setter's type instead
 		if isCompoundAssignment(operator) && ast.IsPropertyAccessExpression(left) {
 			leftType = c.checkPropertyAccessExpression(left, CheckModeNormal, true /*writeOnly*/)
+		} else if operator == ast.KindEqualsToken && ast.IsPropertyAccessExpression(left) {
+			// For simple assignments to property access expressions, check for readonly properties
+			c.checkPropertyAccessExpression(left, CheckModeNormal, true /*writeOnly*/)
 		}
 		if c.checkReferenceExpression(left, diagnostics.The_left_hand_side_of_an_assignment_expression_must_be_a_variable_or_a_property_access, diagnostics.The_left_hand_side_of_an_assignment_expression_may_not_be_an_optional_property_access) {
 			var headMessage *diagnostics.Message
@@ -25941,7 +25944,10 @@ func (c *Checker) isAssignmentToReadonlyEntity(expr *ast.Node, symbol *ast.Symbo
 			// references through namespace import should be readonly
 			if expressionSymbol.Flags&ast.SymbolFlagsAlias != 0 {
 				declaration := c.getDeclarationOfAliasSymbol(expressionSymbol)
-				return declaration != nil && ast.IsNamespaceImport(declaration)
+				if declaration != nil && ast.IsNamespaceImport(declaration) {
+					return true
+				}
+				// For other types of aliases (named imports), continue to check the target symbol
 			}
 		}
 	}
