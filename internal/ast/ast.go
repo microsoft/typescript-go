@@ -368,7 +368,7 @@ func (n *Node) Expression() *Node {
 	case KindJsxSpreadAttribute:
 		return n.AsJsxSpreadAttribute().Expression
 	}
-	panic("Unhandled case in Node.Expression")
+	panic("Unhandled case in Node.Expression: " + n.Kind.String())
 }
 
 func (n *Node) ArgumentList() *NodeList {
@@ -378,7 +378,7 @@ func (n *Node) ArgumentList() *NodeList {
 	case KindNewExpression:
 		return n.AsNewExpression().Arguments
 	}
-	panic("Unhandled case in Node.Arguments")
+	panic("Unhandled case in Node.Arguments: " + n.Kind.String())
 }
 
 func (n *Node) Arguments() []*Node {

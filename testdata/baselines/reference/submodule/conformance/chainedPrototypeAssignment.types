@@ -11,16 +11,16 @@ var mod = require('./mod');
 var a = new mod.A()
 >a : any
 >new mod.A() : any
->mod.A : () => void
+>mod.A : { (): void; prototype: { m(n: number): number; }; }
 >mod : typeof mod
->A : () => void
+>A : { (): void; prototype: { m(n: number): number; }; }
 
 var b = new mod.B()
 >b : any
 >new mod.B() : any
->mod.B : () => void
+>mod.B : { (): void; prototype: { m(n: number): number; }; }
 >mod : typeof mod
->B : () => void
+>B : { (): void; prototype: { m(n: number): number; }; }
 
 a.m('nope')
 >a.m('nope') : any
@@ -47,9 +47,9 @@ declare var exports: any;
 === mod.js ===
 /// <reference path='./types.d.ts'/>
 var A = function A() {
->A : () => void
->function A() {    this.a = 1} : () => void
->A : () => void
+>A : { (): void; prototype: { m(n: number): number; }; }
+>function A() {    this.a = 1} : { (): void; prototype: { m(n: number): number; }; }
+>A : { (): void; prototype: { m(n: number): number; }; }
 
     this.a = 1
 >this.a = 1 : 1
@@ -59,9 +59,9 @@ var A = function A() {
 >1 : 1
 }
 var B = function B() {
->B : () => void
->function B() {    this.b = 2} : () => void
->B : () => void
+>B : { (): void; prototype: { m(n: number): number; }; }
+>function B() {    this.b = 2} : { (): void; prototype: { m(n: number): number; }; }
+>B : { (): void; prototype: { m(n: number): number; }; }
 
     this.b = 2
 >this.b = 2 : 2
@@ -71,28 +71,28 @@ var B = function B() {
 >2 : 2
 }
 exports.A = A
->exports.A = A : () => void
->exports.A : () => void
+>exports.A = A : { (): void; prototype: { m(n: number): number; }; }
+>exports.A : { (): void; prototype: { m(n: number): number; }; }
 >exports : typeof import("./mod")
->A : () => void
->A : () => void
+>A : { (): void; prototype: { m(n: number): number; }; }
+>A : { (): void; prototype: { m(n: number): number; }; }
 
 exports.B = B
->exports.B = B : () => void
->exports.B : () => void
+>exports.B = B : { (): void; prototype: { m(n: number): number; }; }
+>exports.B : { (): void; prototype: { m(n: number): number; }; }
 >exports : typeof import("./mod")
->B : () => void
->B : () => void
+>B : { (): void; prototype: { m(n: number): number; }; }
+>B : { (): void; prototype: { m(n: number): number; }; }
 
 A.prototype = B.prototype = {
 >A.prototype = B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
->A.prototype : any
->A : () => void
->prototype : any
+>A.prototype : { m(n: number): number; }
+>A : { (): void; prototype: { m(n: number): number; }; }
+>prototype : { m(n: number): number; }
 >B.prototype = {    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
->B.prototype : any
->B : () => void
->prototype : any
+>B.prototype : { m(n: number): number; }
+>B : { (): void; prototype: { m(n: number): number; }; }
+>prototype : { m(n: number): number; }
 >{    /** @param {number} n */    m(n) {        return n + 1    }} : { m(n: number): number; }
 
     /** @param {number} n */

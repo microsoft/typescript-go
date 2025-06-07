@@ -12571,6 +12571,11 @@ func (c *Checker) checkObjectLiteral(node *ast.Node, checkMode CheckMode) *Type 
 		}
 		return result
 	}
+	// expando object literals have empty properties but filled exports -- skip straight to type creation
+	if len(node.AsObjectLiteralExpression().Properties.Nodes) == 0 && node.Symbol() != nil && len(node.Symbol().Exports) > 0 {
+		propertiesTable = node.Symbol().Exports
+		return createObjectLiteralType()
+	}
 	for _, memberDecl := range node.AsObjectLiteralExpression().Properties.Nodes {
 		member := c.getSymbolOfDeclaration(memberDecl)
 		var computedNameType *Type
@@ -17317,6 +17322,11 @@ func (c *Checker) getWidenedTypeWithContext(t *Type, context *WideningContext) *
 		case t.flags&(TypeFlagsAny|TypeFlagsNullable) != 0:
 			result = c.anyType
 		case isObjectLiteralType(t):
+			// expando object literal types do not widen to prevent circular checking (but should, ideally)
+			symbol := t.Symbol()
+			if symbol != nil && len(symbol.Exports) > 0 && symbol.ValueDeclaration.Kind == ast.KindObjectLiteralExpression && len(symbol.ValueDeclaration.AsObjectLiteralExpression().Properties.Nodes) == 0 {
+				return t
+			}
 			result = c.getWidenedTypeOfObjectLiteral(t, context)
 		case t.flags&TypeFlagsUnion != 0:
 			unionContext := context
@@ -28107,7 +28117,8 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 		expr := left.Expression()
 		switch expr.Kind {
 		case ast.KindIdentifier:
-			if symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(expr)); symbol.Flags&ast.SymbolFlagsModuleExports != 0 {
+			symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(expr))
+			if symbol.Flags&ast.SymbolFlagsModuleExports != 0 {
 				// No contextual type for an expression of the form 'module.exports = expr'.
 				return nil
 			}
@@ -28116,7 +28127,7 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 				// 'F.id = expr' or 'F[xxx] = expr'. If 'F' is declared as a variable with a type annotation, we can obtain a
 				// contextual type from the annotated type without triggering a circularity. Otherwise, the assignment
 				// declaration has no contextual type.
-				if symbol := c.getExportSymbolOfValueSymbolIfExported(c.getResolvedSymbol(expr)); symbol.ValueDeclaration != nil && ast.IsVariableDeclaration(symbol.ValueDeclaration) {
+				if symbol.ValueDeclaration != nil && ast.IsVariableDeclaration(symbol.ValueDeclaration) {
 					if typeNode := symbol.ValueDeclaration.Type(); typeNode != nil {
 						if ast.IsPropertyAccessExpression(left) {
 							return c.getTypeOfPropertyOfContextualType(c.getTypeFromTypeNode(typeNode), left.Name().Text())
@@ -28125,15 +28136,20 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 						if isTypeUsableAsPropertyName(nameType) {
 							return c.getTypeOfPropertyOfContextualTypeEx(c.getTypeFromTypeNode(typeNode), getPropertyNameFromType(nameType), nameType)
 						}
+						return c.getTypeOfExpression(left)
 					}
 				}
 				return nil
 			}
+		case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+			if binary.Symbol != nil {
+				return nil
+			}
 		case ast.KindThisKeyword:
 			var symbol *ast.Symbol
+			thisType := c.getTypeOfExpression(expr)
 			if ast.IsPropertyAccessExpression(left) {
 				name := left.Name()
-				thisType := c.getTypeOfExpression(expr)
 				if ast.IsPrivateIdentifier(name) {
 					symbol = c.getPropertyOfType(thisType, binder.GetSymbolNameForPrivateIdentifier(thisType.symbol, name.Text()))
 				} else {
@@ -28142,7 +28158,7 @@ func (c *Checker) getContextualTypeForAssignmentExpression(binary *ast.BinaryExp
 			} else {
 				propType := c.checkExpressionCached(left.AsElementAccessExpression().ArgumentExpression)
 				if isTypeUsableAsPropertyName(propType) {
-					symbol = c.getPropertyOfType(c.getTypeOfExpression(expr), getPropertyNameFromType(propType))
+					symbol = c.getPropertyOfType(thisType, getPropertyNameFromType(propType))
 				}
 			}
 			if symbol != nil {
