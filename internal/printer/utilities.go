@@ -360,9 +360,9 @@ func getStartPositionOfRange(r core.TextRange, sourceFile *ast.SourceFile, inclu
 	}
 	text := sourceFile.Text()
 	pos := r.Pos()
-	// Bounds check: if position is beyond text length, it's likely from a different file
+	// Safety check: if position exceeds text length, it might be from a different file
 	if pos >= len(text) {
-		return pos // Return the original position without trying to skip trivia
+		return pos // Return the original position without attempting to skip trivia
 	}
 	return scanner.SkipTriviaEx(text, pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 }
@@ -394,31 +394,19 @@ func getLinesBetweenRangeEndAndRangeStart(range1 core.TextRange, range2 core.Tex
 }
 
 func getLinesBetweenPositionAndPrecedingNonWhitespaceCharacter(pos int, stopPos int, sourceFile *ast.SourceFile, includeComments bool) int {
-	text := sourceFile.Text()
-	if pos >= len(text) {
-		return 0 // Can't determine line differences for out-of-bounds positions
-	}
-	startPos := scanner.SkipTriviaEx(text, pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
+	startPos := scanner.SkipTriviaEx(sourceFile.Text(), pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 	prevPos := getPreviousNonWhitespacePosition(startPos, stopPos, sourceFile)
 	return getLinesBetweenPositions(sourceFile, core.IfElse(prevPos >= 0, prevPos, stopPos), startPos)
 }
 
 func getLinesBetweenPositionAndNextNonWhitespaceCharacter(pos int, stopPos int, sourceFile *ast.SourceFile, includeComments bool) int {
-	text := sourceFile.Text()
-	if pos >= len(text) {
-		return 0 // Can't determine line differences for out-of-bounds positions
-	}
-	nextPos := scanner.SkipTriviaEx(text, pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
+	nextPos := scanner.SkipTriviaEx(sourceFile.Text(), pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 	return getLinesBetweenPositions(sourceFile, pos, core.IfElse(stopPos < nextPos, stopPos, nextPos))
 }
 
 func getPreviousNonWhitespacePosition(pos int, stopPos int, sourceFile *ast.SourceFile) int {
-	text := sourceFile.Text()
 	for ; pos >= stopPos; pos-- {
-		if pos >= len(text) {
-			continue // Skip out-of-bounds positions
-		}
-		if !stringutil.IsWhiteSpaceLike(rune(text[pos])) {
+		if !stringutil.IsWhiteSpaceLike(rune(sourceFile.Text()[pos])) {
 			return pos
 		}
 	}
