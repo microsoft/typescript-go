@@ -175,6 +175,8 @@ type formatSpanWorker struct {
 	visitingIndenter                 *dynamicIndenter
 	visitingNodeStartLine            int
 	visitingUndecoratedNodeStartLine int
+
+	currentRules []*ruleImpl
 }
 
 func newFormatSpanWorker(
@@ -196,6 +198,7 @@ func newFormatSpanWorker(
 		requestKind:        requestKind,
 		rangeContainsError: rangeContainsError,
 		sourceFile:         sourceFile,
+		currentRules:       make([]*ruleImpl, 0, 32), // increaseInsertionIndex should assert there are no more than 32 rules in a given bucket
 	}
 }
 
@@ -627,16 +630,17 @@ func (w *formatSpanWorker) processNode(node *ast.Node, contextNode *ast.Node, no
 func (w *formatSpanWorker) processPair(currentItem TextRangeWithKind, currentStartLine int, currentParent *ast.Node, previousItem TextRangeWithKind, previousStartLine int, previousParent *ast.Node, contextNode *ast.Node, dynamicIndentation *dynamicIndenter) LineAction {
 	w.formattingContext.UpdateContext(previousItem, previousParent, currentItem, currentParent, contextNode)
 
-	rules := getRules(w.formattingContext)
+	w.currentRules = w.currentRules[:0]
+	w.currentRules = getRules(w.formattingContext, w.currentRules)
 
 	trimTrailingWhitespaces := w.formattingContext.Options.TrimTrailingWhitespace != false
 	lineAction := LineActionNone
 
-	if len(rules) > 0 {
+	if len(w.currentRules) > 0 {
 		// Apply rules in reverse order so that higher priority rules (which are first in the array)
 		// win in a conflict with lower priority rules.
-		for i := len(rules) - 1; i >= 0; i-- {
-			rule := rules[i]
+		for i := len(w.currentRules) - 1; i >= 0; i-- {
+			rule := w.currentRules[i]
 			lineAction = w.applyRuleEdits(rule, previousItem, previousStartLine, currentItem, currentStartLine)
 			if dynamicIndentation != nil {
 				switch lineAction {
