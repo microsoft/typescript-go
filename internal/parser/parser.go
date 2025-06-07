@@ -358,11 +358,10 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
-	result.Metadata = p.metadata
-	result.ExternalModuleIndicator = getExternalModuleIndicator(result, p.options)
+	result.ExternalModuleIndicator = getExternalModuleIndicator(result, p.options, p.metadata)
 }
 
-func getExternalModuleIndicator(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) *ast.Node {
+func getExternalModuleIndicator(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.Node {
 	// All detection kinds start by checking this.
 	if node := isFileProbablyExternalModule(file); node != nil {
 		return node
@@ -387,7 +386,7 @@ func getExternalModuleIndicator(file *ast.SourceFile, options *core.SourceFileAf
 				return node
 			}
 		}
-		return isFileForcedToBeModuleByFormat(file, options)
+		return isFileForcedToBeModuleByFormat(file, options, metadata)
 	default:
 		return nil
 	}
@@ -427,11 +426,11 @@ func walkTreeForJSXTags(node *ast.Node) *ast.Node {
 
 var isFileForcedToBeModuleByFormatExtensions = []string{tspath.ExtensionCjs, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionMts}
 
-func isFileForcedToBeModuleByFormat(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) *ast.Node {
+func isFileForcedToBeModuleByFormat(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.Node {
 	// Excludes declaration files - they still require an explicit `export {}` or the like
 	// for back compat purposes. The only non-declaration files _not_ forced to be a module are `.js` files
 	// that aren't esm-mode (meaning not in a `type: module` scope).
-	if !file.IsDeclarationFile && (ast.GetImpliedNodeFormatForEmitWorker(file, options.EmitModuleKind) == core.ModuleKindESNext || tspath.FileExtensionIsOneOf(file.FileName(), isFileForcedToBeModuleByFormatExtensions)) {
+	if !file.IsDeclarationFile && (ast.GetImpliedNodeFormatForEmitWorker(file.FileName(), options.EmitModuleKind, metadata) == core.ModuleKindESNext || tspath.FileExtensionIsOneOf(file.FileName(), isFileForcedToBeModuleByFormatExtensions)) {
 		return file.AsNode()
 	}
 	return nil
