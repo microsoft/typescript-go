@@ -2094,6 +2094,9 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 	}
 
 	textLen := len(text)
+	if pos >= textLen {
+		return pos
+	}
 	canConsumeStar := false
 	// Keep in sync with couldStartTrivia
 	for {
@@ -2327,7 +2330,15 @@ func GetLineStarts(sourceFile ast.SourceFileLike) []core.TextPos {
 func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line int, character int) {
 	lineMap := GetLineStarts(sourceFile)
 	line = ComputeLineOfPosition(lineMap, pos)
-	character = utf8.RuneCountInString(sourceFile.Text()[lineMap[line]:pos])
+	textLen := len(sourceFile.Text())
+	startPos := int(lineMap[line])
+	if pos > textLen {
+		pos = textLen
+	}
+	if startPos > textLen {
+		startPos = textLen
+	}
+	character = utf8.RuneCountInString(sourceFile.Text()[startPos:pos])
 	return
 }
 
