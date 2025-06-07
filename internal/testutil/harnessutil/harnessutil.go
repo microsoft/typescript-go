@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -79,13 +80,13 @@ func CompileFiles(
 	inputFiles []*TestFile,
 	otherFiles []*TestFile,
 	testConfig TestConfiguration,
-	tsconfigOptions *core.CompilerOptions,
+	tsconfig *tsoptions.ParsedCommandLine,
 	currentDirectory string,
 	symlinks map[string]string,
 ) *CompilationResult {
 	var compilerOptions core.CompilerOptions
-	if tsconfigOptions != nil {
-		compilerOptions = *tsconfigOptions
+	if tsconfig != nil {
+		compilerOptions = *tsconfig.ParsedConfig.CompilerOptions
 	}
 	// Set default options for tests
 	if compilerOptions.NewLine == core.NewLineKindNone {
@@ -102,7 +103,7 @@ func CompileFiles(
 		setOptionsFromTestConfig(t, testConfig, &compilerOptions, &harnessOptions)
 	}
 
-	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, &compilerOptions, currentDirectory, symlinks)
+	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, &compilerOptions, currentDirectory, symlinks, tsconfig)
 }
 
 func CompileFilesEx(
@@ -113,6 +114,7 @@ func CompileFilesEx(
 	compilerOptions *core.CompilerOptions,
 	currentDirectory string,
 	symlinks map[string]string,
+	tsconfig *tsoptions.ParsedCommandLine,
 ) *CompilationResult {
 	var programFileNames []string
 	for _, file := range inputFiles {
@@ -206,13 +208,26 @@ func CompileFilesEx(
 	fs = NewOutputRecorderFS(fs)
 
 	host := createCompilerHost(fs, bundled.LibPath(), compilerOptions, currentDirectory)
-	result := compileFilesWithHost(host, programFileNames, compilerOptions, harnessOptions)
+	var configFile *tsoptions.TsConfigSourceFile
+	var errors []*ast.Diagnostic
+	if tsconfig != nil {
+		configFile = tsconfig.ConfigFile
+		errors = tsconfig.Errors
+	}
+	result := compileFilesWithHost(host, &tsoptions.ParsedCommandLine{
+		ParsedConfig: &core.ParsedOptions{
+			CompilerOptions: compilerOptions,
+			FileNames:       programFileNames,
+		},
+		ConfigFile: configFile,
+		Errors:     errors,
+	}, harnessOptions)
 	result.Symlinks = symlinks
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
 		newCompilerOptions := *compilerOptions
 		setOptionsFromTestConfig(t, testConfig, &newCompilerOptions, &newHarnessOptions)
-		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, &newCompilerOptions, currentDirectory, symlinks)
+		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, &newCompilerOptions, currentDirectory, symlinks, tsconfig)
 	}
 	return result
 }
@@ -241,6 +256,23 @@ var testLibFolderMap = sync.OnceValue(func() map[string]any {
 	}
 	return testfs
 })
+
+func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions) {
+	for name, value := range testConfig {
+		if name == "typescriptversion" {
+			continue
+		}
+
+		commandLineOption := getCommandLineOption(name)
+		if commandLineOption != nil {
+			parsedValue := getOptionValue(t, commandLineOption, value)
+			errors := tsoptions.ParseCompilerOptions(commandLineOption.Name, parsedValue, compilerOptions)
+			if len(errors) > 0 {
+				t.Fatalf("Error parsing value '%s' for compiler option '%s'.", value, commandLineOption.Name)
+			}
+		}
+	}
+}
 
 func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions) {
 	for name, value := range testConfig {
@@ -435,28 +467,42 @@ type cachedCompilerHost struct {
 	options *core.CompilerOptions
 }
 
-var sourceFileCache collections.SyncMap[sourceFileCacheKey, *ast.SourceFile]
+var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
 
-type sourceFileCacheKey struct {
+type SourceFileCacheKey struct {
 	core.SourceFileAffectingCompilerOptions
-	ast.SourceFileMetaData
 	fileName        string
 	path            tspath.Path
 	languageVersion core.ScriptTarget
 	text            string
 }
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, metadata *ast.SourceFileMetaData) *ast.SourceFile {
-	text, _ := h.FS().ReadFile(fileName)
-	sourceAffecting := h.options.SourceFileAffecting()
-
-	key := sourceFileCacheKey{
-		SourceFileAffectingCompilerOptions: *sourceAffecting,
-		SourceFileMetaData:                 *metadata,
+func GetSourceFileCacheKey(
+	options core.SourceFileAffectingCompilerOptions,
+	fileName string,
+	path tspath.Path,
+	languageVersion core.ScriptTarget,
+	text string,
+) SourceFileCacheKey {
+	return SourceFileCacheKey{
+		SourceFileAffectingCompilerOptions: options,
 		fileName:                           fileName,
 		path:                               path,
+		languageVersion:                    languageVersion,
 		text:                               text,
 	}
+}
+
+func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+	text, _ := h.FS().ReadFile(fileName)
+
+	key := GetSourceFileCacheKey(
+		*h.options.SourceFileAffecting(),
+		fileName,
+		path,
+		languageVersion,
+		text,
+	)
 
 	if cached, ok := sourceFileCache.Load(key); ok {
 		return cached
@@ -468,7 +514,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, me
 		sourceFile = parser.ParseJSONText(fileName, path, text)
 	} else {
 		// !!! JSDocParsingMode
-		sourceFile = parser.ParseSourceFile(fileName, path, text, sourceAffecting, metadata, scanner.JSDocParsingModeParseAll)
+		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll)
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
@@ -484,8 +530,7 @@ func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.Comp
 
 func compileFilesWithHost(
 	host compiler.CompilerHost,
-	rootFiles []string,
-	options *core.CompilerOptions,
+	config *tsoptions.ParsedCommandLine,
 	harnessOptions *HarnessOptions,
 ) *CompilationResult {
 	// !!!
@@ -544,17 +589,17 @@ func compileFilesWithHost(
 	//     ),
 	// ] : postErrors;
 	ctx := context.Background()
-	program := createProgram(host, options, rootFiles)
+	program := createProgram(host, config)
 	var diagnostics []*ast.Diagnostic
 	diagnostics = append(diagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
 	diagnostics = append(diagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
 	diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
-	if options.GetEmitDeclarations() {
+	if config.CompilerOptions().GetEmitDeclarations() {
 		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
 	}
 	emitResult := program.Emit(compiler.EmitOptions{})
 
-	return newCompilationResult(options, program, emitResult, diagnostics, harnessOptions)
+	return newCompilationResult(config.CompilerOptions(), program, emitResult, diagnostics, harnessOptions)
 }
 
 type CompilationResult struct {
@@ -623,7 +668,7 @@ func newCompilationResult(
 				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text()}
 				c.inputs = append(c.inputs, input)
 				if !tspath.IsDeclarationFileName(sourceFile.FileName()) {
-					extname := core.GetOutputExtension(sourceFile.FileName(), options.Jsx)
+					extname := outputpaths.GetOutputExtension(sourceFile.FileName(), options.Jsx)
 					outputs := &CompilationOutput{
 						Inputs: []*TestFile{input},
 						JS:     js.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname)),
@@ -676,7 +721,7 @@ func (c *CompilationResult) getOutputPath(path string, ext string) string {
 	if c.Options.OutFile != "" {
 		/// !!! options.OutFile not yet supported
 	} else {
-		path = tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), path)
+		path = tspath.ResolvePath(c.Program.GetCurrentDirectory(), path)
 		var outDir string
 		if ext == ".d.ts" || ext == ".d.mts" || ext == ".d.cts" || (strings.HasSuffix(ext, ".ts") && strings.Contains(ext, ".d.")) {
 			outDir = c.Options.DeclarationDir
@@ -690,10 +735,10 @@ func (c *CompilationResult) getOutputPath(path string, ext string) string {
 			common := c.Program.CommonSourceDirectory()
 			if common != "" {
 				path = tspath.GetRelativePathFromDirectory(common, path, tspath.ComparePathsOptions{
-					UseCaseSensitiveFileNames: c.Program.Host().FS().UseCaseSensitiveFileNames(),
-					CurrentDirectory:          c.Program.Host().GetCurrentDirectory(),
+					UseCaseSensitiveFileNames: c.Program.UseCaseSensitiveFileNames(),
+					CurrentDirectory:          c.Program.GetCurrentDirectory(),
 				})
-				path = tspath.CombinePaths(tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), c.Options.OutDir), path)
+				path = tspath.CombinePaths(tspath.ResolvePath(c.Program.GetCurrentDirectory(), c.Options.OutDir), path)
 			}
 		}
 	}
@@ -726,7 +771,7 @@ func (c *CompilationResult) Outputs() []*TestFile {
 }
 
 func (c *CompilationResult) GetInputsAndOutputsForFile(path string) *CompilationOutput {
-	return c.inputsAndOutputs.GetOrZero(tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), path))
+	return c.inputsAndOutputs.GetOrZero(tspath.ResolvePath(c.Program.GetCurrentDirectory(), path))
 }
 
 func (c *CompilationResult) GetInputsForFile(path string) []*TestFile {
@@ -789,16 +834,15 @@ func (c *CompilationResult) GetSourceMapRecord() string {
 	return sourceMapRecorder.String()
 }
 
-func createProgram(host compiler.CompilerHost, options *core.CompilerOptions, rootFiles []string) *compiler.Program {
+func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine) *compiler.Program {
 	var singleThreaded core.Tristate
 	if testutil.TestProgramIsSingleThreaded() {
 		singleThreaded = core.TSTrue
 	}
 
 	programOptions := compiler.ProgramOptions{
-		RootFiles:      rootFiles,
+		Config:         config,
 		Host:           host,
-		Options:        options,
 		SingleThreaded: singleThreaded,
 	}
 	program := compiler.NewProgram(programOptions)

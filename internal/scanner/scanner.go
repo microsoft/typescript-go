@@ -327,6 +327,13 @@ func (s *Scanner) ResetPos(pos int) {
 	s.tokenStart = pos
 }
 
+func (s *Scanner) ResetTokenState(pos int) {
+	s.ResetPos(pos)
+	s.token = ast.KindUnknown
+	s.tokenValue = ""
+	s.tokenFlags = ast.TokenFlagsNone
+}
+
 func (scanner *Scanner) SetSkipJSDocLeadingAsterisks(skip bool) {
 	if skip {
 		scanner.skipJSDocLeadingAsterisks += 1
@@ -1497,12 +1504,12 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 	startedWithBacktick := s.char() == '`'
 	s.pos++
 	start := s.pos
-	contents := ""
+	b := strings.Builder{}
 	var token ast.Kind
 	for {
 		ch := s.char()
 		if ch < 0 || ch == '`' {
-			contents += s.text[start:s.pos]
+			b.WriteString(s.text[start:s.pos])
 			if ch == '`' {
 				s.pos++
 			} else {
@@ -1513,32 +1520,32 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 			break
 		}
 		if ch == '$' && s.charAt(1) == '{' {
-			contents += s.text[start:s.pos]
+			b.WriteString(s.text[start:s.pos])
 			s.pos += 2
 			token = core.IfElse(startedWithBacktick, ast.KindTemplateHead, ast.KindTemplateMiddle)
 			break
 		}
 		if ch == '\\' {
-			contents += s.text[start:s.pos]
-			contents += s.scanEscapeSequence(EscapeSequenceScanningFlagsString | core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0))
+			b.WriteString(s.text[start:s.pos])
+			b.WriteString(s.scanEscapeSequence(EscapeSequenceScanningFlagsString | core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0)))
 			start = s.pos
 			continue
 		}
 		// Speculated ECMAScript 6 Spec 11.8.6.1:
 		// <CR><LF> and <CR> LineTerminatorSequences are normalized to <LF> for Template Values
 		if ch == '\r' {
-			contents += s.text[start:s.pos]
+			b.WriteString(s.text[start:s.pos])
 			s.pos++
 			if s.char() == '\n' {
 				s.pos++
 			}
-			contents += "\n"
+			b.WriteString("\n")
 			start = s.pos
 			continue
 		}
 		s.pos++
 	}
-	s.tokenValue = contents
+	s.tokenValue = b.String()
 	return token
 }
 
@@ -2086,13 +2093,14 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 		options = &SkipTriviaOptions{}
 	}
 
+	textLen := len(text)
 	canConsumeStar := false
 	// Keep in sync with couldStartTrivia
 	for {
 		ch, size := utf8.DecodeRuneInString(text[pos:])
 		switch ch {
 		case '\r':
-			if text[pos+1] == '\n' {
+			if pos+1 < textLen && text[pos+1] == '\n' {
 				pos++
 			}
 			fallthrough
@@ -2110,10 +2118,10 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 			if options.StopAtComments {
 				break
 			}
-			if pos+1 < len(text) {
+			if pos+1 < textLen {
 				if text[pos+1] == '/' {
 					pos += 2
-					for pos < len(text) {
+					for pos < textLen {
 						ch, size := utf8.DecodeRuneInString(text[pos:])
 						if stringutil.IsLineBreak(ch) {
 							break
@@ -2125,8 +2133,8 @@ func SkipTriviaEx(text string, pos int, options *SkipTriviaOptions) int {
 				}
 				if text[pos+1] == '*' {
 					pos += 2
-					for pos < len(text) {
-						if text[pos] == '*' && text[pos+1] == '/' {
+					for pos < textLen {
+						if text[pos] == '*' && (pos+1 < textLen) && text[pos+1] == '/' {
 							pos += 2
 							break
 						}

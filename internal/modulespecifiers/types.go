@@ -3,9 +3,18 @@ package modulespecifiers
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+type SourceFileForSpecifierGeneration interface {
+	Path() tspath.Path
+	FileName() string
+	OriginalFileName() string
+	Imports() []*ast.StringLiteralLike
+	IsJS() bool
+}
 
 type CheckerShape interface {
 	GetSymbolAtLocation(node *ast.Node) *ast.Symbol
@@ -24,7 +33,7 @@ const (
 )
 
 type ModulePath struct {
-	Path            string
+	FileName        string
 	IsInNodeModules bool
 	IsRedirect      bool
 }
@@ -38,6 +47,7 @@ type ModuleSpecifierGenerationHost interface {
 	// GetModuleResolutionCache() any // !!! TODO: adapt new resolution cache model
 	// GetSymlinkCache() any // !!! TODO: adapt new resolution cache model
 	// GetFileIncludeReasons() any // !!! TODO: adapt new resolution cache model
+	CommonSourceDirectory() string
 	GetGlobalTypingsCacheLocation() string
 	UseCaseSensitiveFileNames() bool
 	GetCurrentDirectory() string
@@ -50,7 +60,9 @@ type ModuleSpecifierGenerationHost interface {
 
 	GetNearestAncestorDirectoryWithPackageJson(dirname string) string
 	GetPackageJsonInfo(pkgJsonPath string) PackageJsonInfo
-	GetDefaultResolutionModeForFile(file *ast.SourceFile) core.ResolutionMode
+	GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode
+	GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule
+	GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode
 }
 
 type ImportModuleSpecifierPreference string

@@ -11,6 +11,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
 )
 
+func fakeGetEmitModuleFormatOfFile(file ast.HasFileName) core.ModuleKind {
+	return core.ModuleKindNone
+}
+
 func TestCommonJSModuleTransformer(t *testing.T) {
 	t.Parallel()
 	data := []struct {
@@ -1030,7 +1034,7 @@ exports.a = a;`,
 			resolver := binder.NewReferenceResolver(&compilerOptions, binder.ReferenceResolverHooks{})
 
 			file = NewRuntimeSyntaxTransformer(emitContext, &compilerOptions, resolver).TransformSourceFile(file)
-			file = NewCommonJSModuleTransformer(emitContext, &compilerOptions, resolver).TransformSourceFile(file)
+			file = NewCommonJSModuleTransformer(emitContext, &compilerOptions, resolver, fakeGetEmitModuleFormatOfFile).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}

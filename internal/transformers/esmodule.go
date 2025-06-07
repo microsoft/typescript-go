@@ -11,11 +11,12 @@ import (
 
 type ESModuleTransformer struct {
 	Transformer
-	compilerOptions         *core.CompilerOptions
-	resolver                binder.ReferenceResolver
-	currentSourceFile       *ast.SourceFile
-	importRequireStatements *importRequireStatements
-	helperNameSubstitutions map[string]*ast.IdentifierNode
+	compilerOptions           *core.CompilerOptions
+	resolver                  binder.ReferenceResolver
+	getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
+	currentSourceFile         *ast.SourceFile
+	importRequireStatements   *importRequireStatements
+	helperNameSubstitutions   map[string]*ast.IdentifierNode
 }
 
 type importRequireStatements struct {
@@ -23,11 +24,11 @@ type importRequireStatements struct {
 	requireHelperName *ast.IdentifierNode
 }
 
-func NewESModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver) *Transformer {
+func NewESModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *Transformer {
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
-	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver}
+	tx := &ESModuleTransformer{compilerOptions: compilerOptions, resolver: resolver, getEmitModuleFormatOfFile: getEmitModuleFormatOfFile}
 	return tx.NewTransformer(tx.visit, emitContext)
 }
 
@@ -64,7 +65,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 	result := tx.visitor.VisitEachChild(node.AsNode()).AsSourceFile()
 	tx.emitContext.AddEmitHelper(result.AsNode(), tx.emitContext.ReadEmitHelpers()...)
 
-	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.emitContext, result, tx.compilerOptions, false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
+	externalHelpersImportDeclaration := createExternalHelpersImportDeclarationIfNeeded(tx.emitContext, result, tx.compilerOptions, tx.getEmitModuleFormatOfFile(node), false /*hasExportStarsToExportValues*/, false /*hasImportStar*/, false /*hasImportDefault*/)
 	if externalHelpersImportDeclaration != nil || tx.importRequireStatements != nil {
 		prologue, rest := tx.factory.SplitStandardPrologue(result.Statements.Nodes)
 		statements := slices.Clone(prologue)

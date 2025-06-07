@@ -6,6 +6,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 )
 
+func (c *Checker) GetStringType() *Type {
+	return c.stringType
+}
+
 func (c *Checker) GetUnknownSymbol() *ast.Symbol {
 	return c.unknownSymbol
 }
@@ -18,6 +22,10 @@ func (c *Checker) GetGlobalSymbol(name string, meaning ast.SymbolFlags, diagnost
 	return c.getGlobalSymbol(name, meaning, diagnostic)
 }
 
+func (c *Checker) GetMergedSymbol(symbol *ast.Symbol) *ast.Symbol {
+	return c.getMergedSymbol(symbol)
+}
+
 func (c *Checker) GetTypeFromTypeNode(node *ast.Node) *Type {
 	return c.getTypeFromTypeNode(node)
 }
@@ -28,6 +36,10 @@ func (c *Checker) IsArrayLikeType(t *Type) bool {
 
 func (c *Checker) GetPropertiesOfType(t *Type) []*ast.Symbol {
 	return c.getPropertiesOfType(t)
+}
+
+func (c *Checker) GetPropertyOfType(t *Type, name string) *ast.Symbol {
+	return c.getPropertyOfType(t, name)
 }
 
 func (c *Checker) TypeHasCallOrConstructSignatures(t *Type) bool {
@@ -84,4 +96,36 @@ func (c *Checker) GetEffectiveDeclarationFlags(n *ast.Node, flagsToCheck ast.Mod
 
 func (c *Checker) GetBaseConstraintOfType(t *Type) *Type {
 	return c.getBaseConstraintOfType(t)
+}
+
+func (c *Checker) GetTypePredicateOfSignature(sig *Signature) *TypePredicate {
+	return c.getTypePredicateOfSignature(sig)
+}
+
+func IsTupleType(t *Type) bool {
+	return isTupleType(t)
+}
+
+func (c *Checker) GetReturnTypeOfSignature(sig *Signature) *Type {
+	return c.getReturnTypeOfSignature(sig)
+}
+
+func (c *Checker) HasEffectiveRestParameter(signature *Signature) bool {
+	return c.hasEffectiveRestParameter(signature)
+}
+
+func (c *Checker) GetLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol *ast.Symbol) []*Type {
+	return c.getLocalTypeParametersOfClassOrInterfaceOrTypeAlias(symbol)
+}
+
+func (c *Checker) GetContextualTypeForObjectLiteralElement(element *ast.Node, contextFlags ContextFlags) *Type {
+	return c.getContextualTypeForObjectLiteralElement(element, contextFlags)
+}
+
+func (c *Checker) TypePredicateToString(t *TypePredicate) string {
+	return c.typePredicateToString(t)
+}
+
+func (c *Checker) GetExpandedParameters(signature *Signature, skipUnionExpanding bool) [][]*ast.Symbol {
+	return c.getExpandedParameters(signature, skipUnionExpanding)
 }

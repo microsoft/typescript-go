@@ -18,13 +18,9 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{
-	EmitScriptTarget: core.ScriptTargetLatest,
-}
-
 func TestEncodeSourceFile(t *testing.T) {
 	t.Parallel()
-	sourceFile := parser.ParseSourceFile("/test.ts", "/test.ts", "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", parseCompilerOptions, nil, scanner.JSDocParsingModeParseAll)
+	sourceFile := parser.ParseSourceFile("/test.ts", "/test.ts", "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
 		buf, err := encoder.EncodeSourceFile(sourceFile, "")
@@ -46,8 +42,7 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 		"/checker.ts",
 		"/checker.ts",
 		string(fileContent),
-		parseCompilerOptions,
-		nil,
+		core.ScriptTargetESNext,
 		scanner.JSDocParsingModeParseAll,
 	)
 

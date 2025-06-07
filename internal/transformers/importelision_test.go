@@ -19,10 +19,24 @@ type fakeProgram struct {
 	singleThreaded              bool
 	compilerOptions             *core.CompilerOptions
 	files                       []*ast.SourceFile
-	getEmitModuleFormatOfFile   func(sourceFile *ast.SourceFile) core.ModuleKind
-	getImpliedNodeFormatForEmit func(sourceFile *ast.SourceFile) core.ModuleKind
-	getResolvedModule           func(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
+	getEmitModuleFormatOfFile   func(sourceFile ast.HasFileName) core.ModuleKind
+	getImpliedNodeFormatForEmit func(sourceFile ast.HasFileName) core.ModuleKind
+	getResolvedModule           func(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
 	getSourceFile               func(FileName string) *ast.SourceFile
+}
+
+// GetEmitSyntaxForUsageLocation implements checker.Program.
+func (p *fakeProgram) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, usageLocation *ast.StringLiteralLike) core.ResolutionMode {
+	panic("unimplemented")
+}
+
+// CommonSourceDirectory implements checker.Program.
+func (p *fakeProgram) CommonSourceDirectory() string {
+	panic("unimplemented")
+}
+
+func (p *fakeProgram) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
+	panic("unimplemented")
 }
 
 func (p *fakeProgram) FileExists(path string) bool {
@@ -81,28 +95,32 @@ func (p *fakeProgram) BindSourceFiles() {
 	wg.RunAndWait()
 }
 
-func (p *fakeProgram) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
+func (p *fakeProgram) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {
 	return p.getEmitModuleFormatOfFile(sourceFile)
 }
 
-func (p *fakeProgram) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind {
+func (p *fakeProgram) GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ModuleKind {
 	return p.getImpliedNodeFormatForEmit(sourceFile)
 }
 
-func (p *fakeProgram) GetDefaultResolutionModeForFile(sourceFile *ast.SourceFile) core.ResolutionMode {
+func (p *fakeProgram) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) core.ResolutionMode {
 	return p.getEmitModuleFormatOfFile(sourceFile)
 }
 
-func (p *fakeProgram) GetModeForUsageLocation(sourceFile *ast.SourceFile, location *ast.Node) core.ResolutionMode {
+func (p *fakeProgram) GetModeForUsageLocation(sourceFile ast.HasFileName, location *ast.Node) core.ResolutionMode {
 	return p.getEmitModuleFormatOfFile(sourceFile)
 }
 
-func (p *fakeProgram) GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
+func (p *fakeProgram) GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 	return p.getResolvedModule(currentSourceFile, moduleReference, mode)
 }
 
 func (p *fakeProgram) GetSourceFile(FileName string) *ast.SourceFile {
 	return p.getSourceFile(FileName)
+}
+
+func (p *fakeProgram) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData {
+	return nil
 }
 
 func (p *fakeProgram) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
@@ -169,10 +187,10 @@ func TestImportElision(t *testing.T) {
 				singleThreaded:  true,
 				compilerOptions: compilerOptions,
 				files:           files,
-				getEmitModuleFormatOfFile: func(sourceFile *ast.SourceFile) core.ModuleKind {
+				getEmitModuleFormatOfFile: func(sourceFile ast.HasFileName) core.ModuleKind {
 					return core.ModuleKindESNext
 				},
-				getImpliedNodeFormatForEmit: func(sourceFile *ast.SourceFile) core.ModuleKind {
+				getImpliedNodeFormatForEmit: func(sourceFile ast.HasFileName) core.ModuleKind {
 					return core.ModuleKindESNext
 				},
 				getSourceFile: func(fileName string) *ast.SourceFile {
@@ -181,7 +199,7 @@ func TestImportElision(t *testing.T) {
 					}
 					return nil
 				},
-				getResolvedModule: func(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
+				getResolvedModule: func(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 					if currentSourceFile == file && moduleReference == "other" {
 						return &module.ResolvedModule{
 							ResolvedFileName: "other.ts",

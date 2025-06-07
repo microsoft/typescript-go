@@ -65,10 +65,8 @@ func DoJSEmitBaseline(
 				file.UnitName,
 				tspath.Path(file.UnitName),
 				file.Content,
-				options.SourceFileAffecting(),
-				nil, // TODO(jakebailey): what should this be?
-				scanner.JSDocParsingModeParseAll,
-			)
+				options.GetEmitScriptTarget(),
+				scanner.JSDocParsingModeParseAll)
 			if len(fileParseResult.Diagnostics()) > 0 {
 				jsCode.WriteString(getErrorBaseline(t, []*harnessutil.TestFile{file}, fileParseResult.Diagnostics(), false /*pretty*/))
 				continue
@@ -218,7 +216,7 @@ func prepareDeclarationCompilationContext(
 		////outFile := options.OutFile;
 		////if len(outFile) == 0 {
 		if len(options.OutDir) != 0 {
-			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.Host().GetCurrentDirectory())
+			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.GetCurrentDirectory())
 			sourceFilePath = strings.Replace(sourceFilePath, result.Program.CommonSourceDirectory(), "", 1)
 			sourceFileName = tspath.CombinePaths(options.OutDir, sourceFilePath)
 		} else {
@@ -283,7 +281,8 @@ func compileDeclarationFiles(t *testing.T, context *declarationCompilationContex
 		context.harnessSettings,
 		context.options,
 		context.currentDirectory,
-		symlinks)
+		symlinks,
+		nil)
 	return &declarationCompilationResult{
 		context.declInputFiles,
 		context.declOtherFiles,
