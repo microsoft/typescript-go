@@ -35,6 +35,25 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 	return NewDiagnosticForNode(node, message, args...)
 }
 
+func createDiagnosticForNodeFromMessageChain(sourceFile *ast.SourceFile, node *ast.Node, messageChain *ast.Diagnostic, relatedInformation []*ast.Diagnostic) *ast.Diagnostic {
+	if node == nil || messageChain == nil {
+		return messageChain
+	}
+
+	loc := binder.GetErrorRangeForNode(sourceFile, node)
+
+	diagnostic := &ast.Diagnostic{}
+	*diagnostic = *messageChain
+	diagnostic.SetFile(sourceFile)
+	diagnostic.SetLocation(loc)
+
+	if relatedInformation != nil {
+		diagnostic.SetRelatedInfo(relatedInformation)
+	}
+
+	return diagnostic
+}
+
 func IsIntrinsicJsxName(name string) bool {
 	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
 }

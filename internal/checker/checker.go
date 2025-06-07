@@ -8980,6 +8980,7 @@ func (c *Checker) isSignatureApplicable(node *ast.Node, args []*ast.Node, signat
 			}
 		}
 	}
+
 	if restType != nil {
 		spreadType := c.getSpreadArgumentType(args, argCount, len(args), restType, nil /*context*/, checkMode)
 		restArgCount := len(args) - argCount
@@ -9319,22 +9320,94 @@ func (c *Checker) tryGetRestTypeOfSignature(signature *Signature) *Type {
 func (c *Checker) reportCallResolutionErrors(node *ast.Node, s *CallState, signatures []*Signature, headMessage *diagnostics.Message) {
 	switch {
 	case len(s.candidatesForArgumentError) != 0:
-		last := s.candidatesForArgumentError[len(s.candidatesForArgumentError)-1]
-		var diags []*ast.Diagnostic
-		c.isSignatureApplicable(s.node, s.args, last, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, nil /*inferenceContext*/, &diags)
-		for _, diagnostic := range diags {
-			if len(s.candidatesForArgumentError) > 1 {
-				diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.The_last_overload_gave_the_following_error)
-				diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.No_overload_matches_this_call)
+		if len(s.candidatesForArgumentError) == 1 || len(s.candidatesForArgumentError) > 3 {
+			last := s.candidatesForArgumentError[len(s.candidatesForArgumentError)-1]
+			var diags []*ast.Diagnostic
+			c.isSignatureApplicable(s.node, s.args, last, c.assignableRelation, CheckModeNormal, true /*reportErrors*/, nil /*inferenceContext*/, &diags)
+			for _, diagnostic := range diags {
+				if len(s.candidatesForArgumentError) > 3 {
+					diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.The_last_overload_gave_the_following_error)
+					diagnostic = ast.NewDiagnosticChain(diagnostic, diagnostics.No_overload_matches_this_call)
+				}
+				if headMessage != nil {
+					diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
+				}
+				if last.declaration != nil && len(s.candidatesForArgumentError) > 3 {
+					diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
+				}
+				c.addImplementationSuccessElaboration(s, last, diagnostic)
+				c.diagnostics.Add(diagnostic)
 			}
-			if headMessage != nil {
-				diagnostic = ast.NewDiagnosticChain(diagnostic, headMessage)
+		} else {
+			// 2-3 candidates: show detailed errors for each individual overload
+			var allDiagnostics [][]*ast.Diagnostic
+			maxDiagCount := 0
+			minDiagCount := int(^uint(0) >> 1) // Max int value
+			minIndex := 0
+
+			for i, candidate := range s.candidatesForArgumentError {
+				var originalDiags []*ast.Diagnostic
+				c.isSignatureApplicable(s.node, s.args, candidate, c.assignableRelation, CheckModeNormal, true, nil, &originalDiags)
+
+				if len(originalDiags) > 0 {
+					chainedDiag := ast.NewDiagnosticChain(originalDiags[0], diagnostics.Overload_0_of_1_2_gave_the_following_error, i+1, len(s.candidates), c.signatureToString(candidate))
+					for j := 1; j < len(originalDiags); j++ {
+						chainedDiag.AddMessageChain(originalDiags[j])
+					}
+					diags := []*ast.Diagnostic{chainedDiag}
+
+					if len(originalDiags) <= minDiagCount {
+						minDiagCount = len(originalDiags)
+						minIndex = len(allDiagnostics)
+					}
+					maxDiagCount = max(maxDiagCount, len(originalDiags))
+					allDiagnostics = append(allDiagnostics, diags)
+				}
 			}
-			if last.declaration != nil && len(s.candidatesForArgumentError) > 1 {
-				diagnostic.AddRelatedInfo(NewDiagnosticForNode(last.declaration, diagnostics.The_last_overload_is_declared_here))
+
+			var diagsToShow []*ast.Diagnostic
+			if maxDiagCount > 1 {
+				diagsToShow = allDiagnostics[minIndex]
+			} else {
+				diagsToShow = core.Flatten(allDiagnostics)
 			}
-			c.addImplementationSuccessElaboration(s, last, diagnostic)
-			c.diagnostics.Add(diagnostic)
+
+			if len(diagsToShow) > 0 {
+				var allRelatedInfo []*ast.Diagnostic
+				for _, diag := range diagsToShow {
+					allRelatedInfo = append(allRelatedInfo, diag.RelatedInformation()...)
+				}
+
+				mainDiag := ast.NewDiagnosticChain(diagsToShow[0], diagnostics.No_overload_matches_this_call)
+				for i := 1; i < len(diagsToShow); i++ {
+					mainDiag.AddMessageChain(diagsToShow[i])
+				}
+
+				if headMessage != nil {
+					mainDiag = ast.NewDiagnosticChain(mainDiag, headMessage)
+				}
+
+				allSameSpan := len(diagsToShow) > 0
+				if allSameSpan {
+					first := diagsToShow[0]
+					for i := 1; i < len(diagsToShow); i++ {
+						d := diagsToShow[i]
+						if d.File() != first.File() || d.Loc().Pos() != first.Loc().Pos() || d.Loc().Len() != first.Loc().Len() {
+							allSameSpan = false
+							break
+						}
+					}
+				}
+
+				if allSameSpan {
+					mainDiag.SetRelatedInfo(allRelatedInfo)
+				} else {
+					mainDiag = createDiagnosticForNodeFromMessageChain(ast.GetSourceFileOfNode(s.node), getErrorNodeForCallNode(s.node), mainDiag, allRelatedInfo)
+				}
+
+				c.addImplementationSuccessElaboration(s, s.candidatesForArgumentError[0], mainDiag)
+				c.diagnostics.Add(mainDiag)
+			}
 		}
 	case s.candidateForArgumentArityError != nil:
 		c.diagnostics.Add(c.getArgumentArityError(s.node, []*Signature{s.candidateForArgumentArityError}, s.args, headMessage))
