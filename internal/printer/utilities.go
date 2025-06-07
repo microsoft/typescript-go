@@ -358,13 +358,7 @@ func getStartPositionOfRange(r core.TextRange, sourceFile *ast.SourceFile, inclu
 	if ast.PositionIsSynthesized(r.Pos()) {
 		return -1
 	}
-	text := sourceFile.Text()
-	pos := r.Pos()
-	// Safety check: if position exceeds text length, it might be from a different file
-	if pos >= len(text) {
-		return pos // Return the original position without attempting to skip trivia
-	}
-	return scanner.SkipTriviaEx(text, pos, &scanner.SkipTriviaOptions{StopAtComments: includeComments})
+	return scanner.SkipTriviaEx(sourceFile.Text(), r.Pos(), &scanner.SkipTriviaOptions{StopAtComments: includeComments})
 }
 
 func positionsAreOnSameLine(pos1 int, pos2 int, sourceFile *ast.SourceFile) bool {

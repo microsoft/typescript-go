@@ -5467,7 +5467,15 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 	if !ast.IsNotEmittedStatement(node) &&
 		emitFlags&EFNoLeadingSourceMap == 0 &&
 		!ast.PositionIsSynthesized(loc.Pos()) {
-		p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos())) // !!! support SourceMapRange from Strada?
+		// Check if the source map range is from the same file as the current file being emitted.
+		// For cross-file scenarios (e.g., type predicates referencing identifiers from other files),
+		// we should skip source map emission to avoid slice bounds violations.
+		nodeSourceFile := ast.GetSourceFileOfNode(node)
+		if p.currentSourceFile != nil && nodeSourceFile != nil && nodeSourceFile != p.currentSourceFile {
+			// Skip source map emission for cross-file references
+		} else {
+			p.emitSourcePos(p.sourceMapSource, scanner.SkipTrivia(p.currentSourceFile.Text(), loc.Pos())) // !!! support SourceMapRange from Strada?
+		}
 	}
 
 	if emitFlags&EFNoNestedSourceMaps != 0 {

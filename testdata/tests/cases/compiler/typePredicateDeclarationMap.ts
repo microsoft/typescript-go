@@ -1,10 +1,13 @@
-// @filename: /src/predicateExport.ts
+// @declaration: true
+// @declarationMap: true
+
+// @filename: predicateExport.ts
 export function createPredicate() {
   return (_item: unknown): _item is boolean => {
     return true;
   };
 }
 
-// @filename: /src/predicateImport.ts  
+// @filename: predicateImport.ts  
 import { createPredicate } from './predicateExport';
 export const predicate = createPredicate();
