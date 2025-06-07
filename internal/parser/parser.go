@@ -3986,9 +3986,12 @@ func (p *Parser) nextTokenCanFollowModifier() bool {
 		return p.canFollowExportModifier()
 	case ast.KindDefaultKeyword:
 		return p.nextTokenCanFollowDefaultKeyword()
-	case ast.KindStaticKeyword, ast.KindGetKeyword, ast.KindSetKeyword:
+	case ast.KindStaticKeyword:
 		p.nextToken()
 		return p.canFollowModifier()
+	case ast.KindGetKeyword, ast.KindSetKeyword:
+		p.nextToken()
+		return p.canFollowGetOrSetKeyword()
 	default:
 		return p.nextTokenIsOnSameLineAndCanFollowModifier()
 	}
@@ -4041,6 +4044,10 @@ func (p *Parser) canFollowExportModifier() bool {
 
 func (p *Parser) canFollowModifier() bool {
 	return p.token == ast.KindOpenBracketToken || p.token == ast.KindOpenBraceToken || p.token == ast.KindAsteriskToken || p.token == ast.KindDotDotDotToken || p.isLiteralPropertyName()
+}
+
+func (p *Parser) canFollowGetOrSetKeyword() bool {
+	return p.token == ast.KindOpenBracketToken || p.isLiteralPropertyName()
 }
 
 func (p *Parser) nextTokenIsOnSameLineAndCanFollowModifier() bool {

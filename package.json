@@ -9,10 +9,10 @@
         "@types/which": "^3.0.4",
         "adm-zip": "^0.5.16",
         "chokidar": "^4.0.3",
-        "dprint": "^0.49.1",
-        "execa": "^9.5.2",
+        "dprint": "^0.50.0",
+        "execa": "^9.6.0",
         "glob": "^10.4.5",
-        "hereby": "^1.10.0",
+        "hereby": "^1.11.0",
         "p-limit": "^6.2.0",
         "picocolors": "^1.1.1",
         "typescript": "^5.8.3",
@@ -27,7 +27,8 @@
         "api:build": "npm run -w @typescript/api build",
         "extension:build": "npm run -w _extension build",
         "extension:watch": "npm run -w _extension watch",
-        "node": "node --no-warnings --conditions @typescript/source"
+        "node": "node --no-warnings --conditions @typescript/source",
+        "convertfourslash": "node --experimental-strip-types --no-warnings internal/fourslash/_scripts/convertFourslash.mts"
     },
     "workspaces": [
         "./_extension",
@@ -35,7 +36,7 @@
     ],
     "packageManager": "npm@8.19.4",
     "volta": {
-        "node": "20.19.1",
+        "node": "22.16.0",
         "npm": "8.19.4"
     }
 }
