@@ -801,8 +801,9 @@ const (
 	OEKNonNullAssertions            OuterExpressionKinds = 1 << 2
 	OEKPartiallyEmittedExpressions  OuterExpressionKinds = 1 << 3
 	OEKExpressionsWithTypeArguments OuterExpressionKinds = 1 << 4
-	OEKExcludeJSDocTypeAssertion                         = 1 << 5
-	OEKAssertions                                        = OEKTypeAssertions | OEKNonNullAssertions
+	OEKSatisfies                    OuterExpressionKinds = 1 << 5
+	OEKExcludeJSDocTypeAssertion                         = 1 << 6
+	OEKAssertions                                        = OEKTypeAssertions | OEKNonNullAssertions | OEKSatisfies
 	OEKAll                                               = OEKParentheses | OEKAssertions | OEKPartiallyEmittedExpressions | OEKExpressionsWithTypeArguments
 )
 
@@ -811,8 +812,10 @@ func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 	switch node.Kind {
 	case KindParenthesizedExpression:
 		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && isJSDocTypeAssertion(node))
-	case KindTypeAssertionExpression, KindAsExpression, KindSatisfiesExpression:
+	case KindTypeAssertionExpression, KindAsExpression:
 		return kinds&OEKTypeAssertions != 0
+	case KindSatisfiesExpression:
+		return kinds&(OEKExpressionsWithTypeArguments|OEKSatisfies) != 0
 	case KindExpressionWithTypeArguments:
 		return kinds&OEKExpressionsWithTypeArguments != 0
 	case KindNonNullExpression:
