@@ -1990,6 +1990,10 @@ var Using_JSX_fragments_requires_fragment_factory_0_to_be_in_scope_but_it_could_
 
 var Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert = &Message{code: 2880, category: CategoryError, key: "Import_assertions_have_been_replaced_by_import_attributes_Use_with_instead_of_assert_2880", text: "Import assertions have been replaced by import attributes. Use 'with' instead of 'assert'."}
 
+var This_expression_is_never_nullish = &Message{code: 2881, category: CategoryError, key: "This_expression_is_never_nullish_2881", text: "This expression is never nullish."}
+
+var Type_Colon_0_is_not_assignable_to_type_Colon_1 = &Message{code: 2882, category: CategoryError, key: "Type_Colon_0_is_not_assignable_to_type_Colon_1_2882", text: "Type:\n  {0}\n\nis not assignable to type:\n  {1}\n"}
+
 var Import_declaration_0_is_using_private_name_1 = &Message{code: 4000, category: CategoryError, key: "Import_declaration_0_is_using_private_name_1_4000", text: "Import declaration '{0}' is using private name '{1}'."}
 
 var Type_parameter_0_of_exported_class_has_or_is_using_private_name_1 = &Message{code: 4002, category: CategoryError, key: "Type_parameter_0_of_exported_class_has_or_is_using_private_name_1_4002", text: "Type parameter '{0}' of exported class has or is using private name '{1}'."}

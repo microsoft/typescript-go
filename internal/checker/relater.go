@@ -4705,7 +4705,14 @@ func (r *Relater) reportRelationError(message *diagnostics.Message, source *Type
 					return
 				}
 			}
-			message = diagnostics.Type_0_is_not_assignable_to_type_1
+
+			includesWideTypes := len(sourceType) > 30 && len(targetType) > 30 
+			isPretty := r.c.compilerOptions.Pretty == core.TSTrue
+			if isPretty && includesWideTypes {
+				message = diagnostics.Type_Colon_0_is_not_assignable_to_type_Colon_1
+			} else {
+				message = diagnostics.Type_0_is_not_assignable_to_type_1
+			}
 		}
 	}
 	switch r.getChainMessage(0) {
