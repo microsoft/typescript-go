@@ -49,8 +49,8 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 			fmt.Fprint(sys.Writer(), "Build mode is currently unsupported."+sys.NewLine())
 			sys.EndWrite()
 			return ExitStatusNotImplemented
-		case "-f":
-			return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
+			// case "-f":
+			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
