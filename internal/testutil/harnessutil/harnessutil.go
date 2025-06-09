@@ -20,6 +20,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -256,6 +257,23 @@ var testLibFolderMap = sync.OnceValue(func() map[string]any {
 	return testfs
 })
 
+func SetCompilerOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions) {
+	for name, value := range testConfig {
+		if name == "typescriptversion" {
+			continue
+		}
+
+		commandLineOption := getCommandLineOption(name)
+		if commandLineOption != nil {
+			parsedValue := getOptionValue(t, commandLineOption, value)
+			errors := tsoptions.ParseCompilerOptions(commandLineOption.Name, parsedValue, compilerOptions)
+			if len(errors) > 0 {
+				t.Fatalf("Error parsing value '%s' for compiler option '%s'.", value, commandLineOption.Name)
+			}
+		}
+	}
+}
+
 func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compilerOptions *core.CompilerOptions, harnessOptions *HarnessOptions) {
 	for name, value := range testConfig {
 		if name == "typescriptversion" {
@@ -449,9 +467,9 @@ type cachedCompilerHost struct {
 	options *core.CompilerOptions
 }
 
-var sourceFileCache collections.SyncMap[sourceFileCacheKey, *ast.SourceFile]
+var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
 
-type sourceFileCacheKey struct {
+type SourceFileCacheKey struct {
 	core.SourceFileAffectingCompilerOptions
 	fileName        string
 	path            tspath.Path
@@ -459,16 +477,32 @@ type sourceFileCacheKey struct {
 	text            string
 }
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
-	text, _ := h.FS().ReadFile(fileName)
-
-	key := sourceFileCacheKey{
-		SourceFileAffectingCompilerOptions: *h.options.SourceFileAffecting(),
+func GetSourceFileCacheKey(
+	options core.SourceFileAffectingCompilerOptions,
+	fileName string,
+	path tspath.Path,
+	languageVersion core.ScriptTarget,
+	text string,
+) SourceFileCacheKey {
+	return SourceFileCacheKey{
+		SourceFileAffectingCompilerOptions: options,
 		fileName:                           fileName,
 		path:                               path,
 		languageVersion:                    languageVersion,
 		text:                               text,
 	}
+}
+
+func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+	text, _ := h.FS().ReadFile(fileName)
+
+	key := GetSourceFileCacheKey(
+		*h.options.SourceFileAffecting(),
+		fileName,
+		path,
+		languageVersion,
+		text,
+	)
 
 	if cached, ok := sourceFileCache.Load(key); ok {
 		return cached
@@ -634,7 +668,7 @@ func newCompilationResult(
 				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text()}
 				c.inputs = append(c.inputs, input)
 				if !tspath.IsDeclarationFileName(sourceFile.FileName()) {
-					extname := core.GetOutputExtension(sourceFile.FileName(), options.Jsx)
+					extname := outputpaths.GetOutputExtension(sourceFile.FileName(), options.Jsx)
 					outputs := &CompilationOutput{
 						Inputs: []*TestFile{input},
 						JS:     js.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname)),
@@ -687,7 +721,7 @@ func (c *CompilationResult) getOutputPath(path string, ext string) string {
 	if c.Options.OutFile != "" {
 		/// !!! options.OutFile not yet supported
 	} else {
-		path = tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), path)
+		path = tspath.ResolvePath(c.Program.GetCurrentDirectory(), path)
 		var outDir string
 		if ext == ".d.ts" || ext == ".d.mts" || ext == ".d.cts" || (strings.HasSuffix(ext, ".ts") && strings.Contains(ext, ".d.")) {
 			outDir = c.Options.DeclarationDir
@@ -701,10 +735,10 @@ func (c *CompilationResult) getOutputPath(path string, ext string) string {
 			common := c.Program.CommonSourceDirectory()
 			if common != "" {
 				path = tspath.GetRelativePathFromDirectory(common, path, tspath.ComparePathsOptions{
-					UseCaseSensitiveFileNames: c.Program.Host().FS().UseCaseSensitiveFileNames(),
-					CurrentDirectory:          c.Program.Host().GetCurrentDirectory(),
+					UseCaseSensitiveFileNames: c.Program.UseCaseSensitiveFileNames(),
+					CurrentDirectory:          c.Program.GetCurrentDirectory(),
 				})
-				path = tspath.CombinePaths(tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), c.Options.OutDir), path)
+				path = tspath.CombinePaths(tspath.ResolvePath(c.Program.GetCurrentDirectory(), c.Options.OutDir), path)
 			}
 		}
 	}
@@ -737,7 +771,7 @@ func (c *CompilationResult) Outputs() []*TestFile {
 }
 
 func (c *CompilationResult) GetInputsAndOutputsForFile(path string) *CompilationOutput {
-	return c.inputsAndOutputs.GetOrZero(tspath.ResolvePath(c.Program.Host().GetCurrentDirectory(), path))
+	return c.inputsAndOutputs.GetOrZero(tspath.ResolvePath(c.Program.GetCurrentDirectory(), path))
 }
 
 func (c *CompilationResult) GetInputsForFile(path string) []*TestFile {

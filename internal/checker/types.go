@@ -10,6 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w stringer_generated.go
 
 // ParseFlags
 
@@ -394,6 +395,7 @@ type SourceFileLinks struct {
 	localJsxFragmentNamespace string
 	localJsxFactory           *ast.EntityName
 	localJsxFragmentFactory   *ast.EntityName
+	jsxFragmentType           *Type
 }
 
 // Signature specific links

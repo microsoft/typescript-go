@@ -83,20 +83,16 @@ func hasAsyncModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync)
 }
 
-func hasDecorators(node *ast.Node) bool {
-	return ast.HasSyntacticModifier(node, ast.ModifierFlagsDecorator)
-}
-
 func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
 	return node.ModifierFlags() & flags
 }
 
-func hasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
+func HasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
 	return node.ModifierFlags()&flags != 0
 }
 
 func hasReadonlyModifier(node *ast.Node) bool {
-	return hasModifier(node, ast.ModifierFlagsReadonly)
+	return HasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
@@ -179,7 +175,7 @@ func isConstTypeReference(node *ast.Node) bool {
 	return ast.IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && ast.IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
 }
 
-func getSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
+func GetSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
 	if !ast.IsVariableStatement(node) {
 		return nil
 	}
@@ -420,7 +416,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (hasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -1174,11 +1170,6 @@ func reverseAccessKind(a AccessKind) AccessKind {
 	panic("Unhandled case in reverseAccessKind")
 }
 
-// Deprecated in favor of `ast.IsObjectLiteralElement`
-func isObjectLiteralElementLike(node *ast.Node) bool {
-	return ast.IsObjectLiteralElement(node)
-}
-
 func isInfinityOrNaNString(name string) bool {
 	return name == "Infinity" || name == "-Infinity" || name == "NaN"
 }
@@ -1205,13 +1196,6 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
 		return ast.IsInterfaceDeclaration(n) || ast.IsTypeOrJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
 	}) != nil
-}
-
-func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
-	for node != nil && node.Kind != kind {
-		node = node.Parent
-	}
-	return node
 }
 
 func isLiteralExpressionOfObject(node *ast.Node) bool {
