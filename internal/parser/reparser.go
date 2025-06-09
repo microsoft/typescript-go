@@ -208,6 +208,71 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 						fun.FunctionLikeData().Type = p.makeNewType(tag.AsJSDocReturnTag().TypeExpression, fun)
 					}
 				}
+			case ast.KindJSDocImplementsTag:
+				implementsTag := tag.AsJSDocImplementsTag()
+				if parent.Kind == ast.KindClassDeclaration {
+					class := parent.AsClassDeclaration()
+					
+					// Create ExpressionWithTypeArguments from the class name
+					expression := implementsTag.ClassName
+					// For JSDoc @implements, we use the className as-is without extracting type arguments
+					// since it's already parsed appropriately in parseExpressionWithTypeArgumentsForAugments
+					var typeArguments *ast.NodeList
+					if expression.Kind == ast.KindExpressionWithTypeArguments {
+						exprWithArgs := expression.AsExpressionWithTypeArguments()
+						expression = exprWithArgs.Expression
+						typeArguments = exprWithArgs.TypeArguments
+					}
+					
+					// Create a new ExpressionWithTypeArguments
+					implementsExpression := p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
+					implementsExpression.Loc = tag.Loc
+					implementsExpression.Flags = p.contextFlags | ast.NodeFlagsReparsed
+					
+					// Create implements heritage clause
+					implementsClause := p.factory.NewHeritageClause(ast.KindImplementsKeyword, p.factory.NewNodeList([]*ast.Node{implementsExpression}))
+					implementsClause.Loc = tag.Loc  
+					implementsClause.Flags = p.contextFlags | ast.NodeFlagsReparsed
+					
+					// Add to existing heritage clauses or create new list
+					var heritageList []*ast.Node
+					if class.HeritageClauses != nil {
+						heritageList = append(heritageList, class.HeritageClauses.Nodes...)
+					}
+					heritageList = append(heritageList, implementsClause)
+					
+					class.HeritageClauses = p.factory.NewNodeList(heritageList)
+				} else if parent.Kind == ast.KindClassExpression {
+					class := parent.AsClassExpression()
+					
+					// Create ExpressionWithTypeArguments from the class name
+					expression := implementsTag.ClassName
+					var typeArguments *ast.NodeList
+					if expression.Kind == ast.KindExpressionWithTypeArguments {
+						exprWithArgs := expression.AsExpressionWithTypeArguments()
+						expression = exprWithArgs.Expression
+						typeArguments = exprWithArgs.TypeArguments
+					}
+					
+					// Create a new ExpressionWithTypeArguments
+					implementsExpression := p.factory.NewExpressionWithTypeArguments(expression, typeArguments)
+					implementsExpression.Loc = tag.Loc
+					implementsExpression.Flags = p.contextFlags | ast.NodeFlagsReparsed
+					
+					// Create implements heritage clause
+					implementsClause := p.factory.NewHeritageClause(ast.KindImplementsKeyword, p.factory.NewNodeList([]*ast.Node{implementsExpression}))
+					implementsClause.Loc = tag.Loc
+					implementsClause.Flags = p.contextFlags | ast.NodeFlagsReparsed
+					
+					// Add to existing heritage clauses or create new list
+					var heritageList []*ast.Node
+					if class.HeritageClauses != nil {
+						heritageList = append(heritageList, class.HeritageClauses.Nodes...)
+					}
+					heritageList = append(heritageList, implementsClause)
+					
+					class.HeritageClauses = p.factory.NewNodeList(heritageList)
+				}
 			}
 		}
 	}
