@@ -169,7 +169,7 @@ func (options *CompilerOptions) Clone() *CompilerOptions {
 	sourceValue := reflect.ValueOf(options).Elem()
 	targetValue := reflect.ValueOf(target).Elem()
 
-	for i := 0; i < sourceValue.NumField(); i++ {
+	for i := range sourceValue.NumField() {
 		if optionsType.Field(i).IsExported() {
 			targetValue.Field(i).Set(sourceValue.Field(i))
 		}
