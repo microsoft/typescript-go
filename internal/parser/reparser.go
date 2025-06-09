@@ -243,8 +243,32 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 						class.HeritageClauses.Nodes = append(class.HeritageClauses.Nodes, heritageClause)
 					}
 				}
+			case ast.KindJSDocAugmentsTag:
+				var class *ast.ClassLikeBase
+				if parent.Kind == ast.KindClassDeclaration {
+					class = parent.AsClassDeclaration().ClassLikeData()
+				} else if parent.Kind == ast.KindClassExpression {
+					class = parent.AsClassExpression().ClassLikeData()
+				}
+				if class != nil && class.HeritageClauses != nil {
+					if extendsClause := core.Find(class.HeritageClauses.Nodes, func(node *ast.Node) bool {
+						return node.AsHeritageClause().Token == ast.KindExtendsKeyword
+					}); extendsClause != nil && len(extendsClause.AsHeritageClause().Types.Nodes) == 1 {
+						target := extendsClause.AsHeritageClause().Types.Nodes[0].AsExpressionWithTypeArguments()
+						source := tag.AsJSDocAugmentsTag().ClassName.AsExpressionWithTypeArguments()
+						if hasSamePropertyAccessName(target.Expression, source.Expression) {
+							if target.TypeArguments != nil && source.TypeArguments != nil {
+								target.TypeArguments = source.TypeArguments
+								for _, typeArg := range source.TypeArguments.Nodes {
+									typeArg.Flags |= ast.NodeFlagsReparsed
+								}
+							}
+							return
+						}
+					}
+				}
 			}
-			// !!! other attached tags (@augments, @this, @satisfies) support goes here
+			// !!! other attached tags (@this, @satisfies) support goes here
 		}
 	}
 }
@@ -352,4 +376,14 @@ func (p *Parser) makeNewType(typeExpression *ast.TypeNode, host *ast.Node) *ast.
 		t.Parent = host
 	}
 	return t
+}
+
+func hasSamePropertyAccessName(node1, node2 *ast.Node) bool {
+	if node1.Kind == ast.KindIdentifier && node2.Kind == ast.KindIdentifier {
+		return node1.Text() == node2.Text()
+	} else if node1.Kind == ast.KindPropertyAccessExpression && node2.Kind == ast.KindPropertyAccessExpression {
+		return node1.AsPropertyAccessExpression().Name().Text() == node2.AsPropertyAccessExpression().Name().Text() &&
+			hasSamePropertyAccessName(node1.AsPropertyAccessExpression().Expression, node2.AsPropertyAccessExpression().Expression)
+	}
+	return false
 }
