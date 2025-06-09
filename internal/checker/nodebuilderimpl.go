@@ -2151,15 +2151,17 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 	if b.shouldUsePlaceholderForProperty(propertySymbol) {
 		propertyTypeNode = b.createElidedInformationPlaceholder()
 	} else {
+		pushedToStack := false
 		if propertyIsReverseMapped {
 			b.ctx.reverseMappedStack = append(b.ctx.reverseMappedStack, propertySymbol)
+			pushedToStack = true
 		}
 		if propertyType != nil {
 			propertyTypeNode = b.serializeTypeForDeclaration(nil /*declaration*/, propertyType, propertySymbol)
 		} else {
 			propertyTypeNode = b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 		}
-		if propertyIsReverseMapped {
+		if pushedToStack {
 			b.ctx.reverseMappedStack = b.ctx.reverseMappedStack[:len(b.ctx.reverseMappedStack)-1]
 		}
 	}
