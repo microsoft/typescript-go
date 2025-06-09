@@ -304,6 +304,12 @@ func (b *nodeBuilderImpl) tryReuseExistingNonParameterTypeNode(existing *ast.Typ
 	if annotationType == nil {
 		annotationType = b.getTypeFromTypeNode(existing, true)
 	}
+	if annotationType != nil && b.ch.isErrorType(annotationType) {
+		// allow "reusing" type nodes that resolve to error types
+		// those can't truly be reused but it prevents cascading errors in isolatedDeclarations
+		// for source with errors there is no guarantee to emit correct code anyway
+		return existing
+	}
 	if annotationType != nil && b.typeNodeIsEquivalentToType(host, t, annotationType) && b.existingTypeNodeIsNotReferenceOrIsReferenceWithCompatibleTypeArgumentCount(existing, t) {
 		result := b.tryReuseExistingTypeNodeHelper(existing)
 		if result != nil {
