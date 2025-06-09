@@ -8,71 +8,84 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
-	"gotest.tools/v3/assert"
 )
 
-// TestSliceBoundsPanicFix tests the fix for issue #1108
-// 
-// The issue was a panic in addPropertyToElementList with the error:
-// "runtime error: slice bounds out of range [:-1]"
-//
-// Root cause: Asymmetric push/pop operations on reverseMappedStack when:
-// 1. propertyIsReverseMapped = true  
-// 2. shouldUsePlaceholderForProperty() returns true (skip push)
-// 3. Pop operation still executed (was outside the conditional)
-//
-// Fix: Track whether we actually pushed to stack and only pop if we did
-func TestSliceBoundsPanicFix(t *testing.T) {
-	t.Parallel()
-
-	// Create TypeScript code that exercises reverse-mapped types
-	// in scenarios that could trigger the stack imbalance
+func TestReverseMappedPropertySliceBoundsPanic(t *testing.T) {
+	// This test attempts to reproduce the slice bounds panic in addPropertyToElementList.
+	//
+	// THE ISSUE:
+	// In addPropertyToElementList, there's an asymmetric push/pop operation on reverseMappedStack:
+	//
+	// 1. Push operation (line 2154-2156):
+	//    if propertyIsReverseMapped {
+	//        b.ctx.reverseMappedStack = append(b.ctx.reverseMappedStack, propertySymbol)
+	//    }
+	//    This only happens if !b.shouldUsePlaceholderForProperty(propertySymbol) (in else branch)
+	//
+	// 2. Pop operation (line 2162-2164):
+	//    if propertyIsReverseMapped {
+	//        b.ctx.reverseMappedStack = b.ctx.reverseMappedStack[:len(b.ctx.reverseMappedStack)-1]
+	//    }
+	//    This happens unconditionally if propertyIsReverseMapped is true
+	//
+	// PROBLEMATIC SCENARIO:
+	// - propertySymbol.CheckFlags&ast.CheckFlagsReverseMapped != 0 (propertyIsReverseMapped = true)
+	// - shouldUsePlaceholderForProperty(propertySymbol) returns true (skip push)
+	// - Pop operation still executes because propertyIsReverseMapped is true
+	// - Panic: slice bounds out of range [:-1] when stack is empty
+	//
+	// This test creates TypeScript code that attempts to trigger this scenario by:
+	// 1. Creating reverse-mapped properties through type inference
+	// 2. Creating conditions that would make shouldUsePlaceholderForProperty return true
+	// 3. Forcing the nodebuilder to process these types
+	
 	content := `
-// Complex nested mapped types that can trigger reverse mapping
-type DeepPartial<T> = {
-	[P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
+// Attempt to create reverse-mapped properties through complex type inference
+type MappedType<T> = { [K in keyof T]: T[K] };
 
-type ComplexNested<T> = {
-	[K in keyof T]: {
-		wrapper: T[K];
-		optional?: T[K];
-	}
-};
+// Conditional type that forces reverse mapping during inference
+type ExtractMapped<T> = T extends MappedType<infer U> ? U : never;
 
-interface TestInterface {
-	id: string;
-	data: {
-		items: TestInterface[];
-		meta: {
-			count: number;
-			nested: TestInterface;
-		}
-	}
+// Create nested interface to trigger deep processing
+interface TargetInterface {
+  prop1: string;
+  prop2: {
+    nested1: number;
+    nested2: {
+      deep: boolean;
+    }
+  };
 }
 
-// These mapped types create complex reverse mapping scenarios
-type PartialTest = DeepPartial<TestInterface>;
-type ComplexTest = ComplexNested<TestInterface>;
-type CombinedTest = DeepPartial<ComplexNested<TestInterface>>;
+// Recursive mapped type to populate reverse mapping stack
+type RecursiveMapped<T> = {
+  [K in keyof T]: T[K] extends object ? RecursiveMapped<T[K]> : T[K]
+};
 
-// Force type checking and potential serialization that would 
-// trigger addPropertyToElementList in various scenarios
-declare function testPartial(x: PartialTest): void;
-declare function testComplex(x: ComplexTest): void; 
-declare function testCombined(x: CombinedTest): void;
+// Create scenario with reverse mapping inference
+type InferredType = ExtractMapped<MappedType<TargetInterface>>;
 
-declare const partialValue: PartialTest;
-declare const complexValue: ComplexTest;
-declare const combinedValue: CombinedTest;
+// Create deep nesting to trigger placeholder logic
+type DeepType = RecursiveMapped<TargetInterface>;
 
-// These calls should trigger type checking without panicking
-testPartial(partialValue);
-testComplex(complexValue);
-testCombined(combinedValue);
+// Combine types to create complex reverse mapping scenario
+type ComplexType = InferredType & DeepType;
 
-// Test deep property access that might exercise the reverse mapping stack
-const deepAccess = combinedValue.data?.wrapper.data?.wrapper.meta?.wrapper.count;
+// Force type processing
+declare const testVariable: ComplexType;
+
+// Additional patterns that might trigger reverse mapping
+type ConditionalMapped<T> = T extends object ? {
+  [K in keyof T]: T[K] extends MappedType<infer R> ? R : T[K]
+} : never;
+
+interface ComplexInterface {
+  data: MappedType<TargetInterface>;
+  recursive: RecursiveMapped<TargetInterface>;
+}
+
+type ProcessedComplex = ConditionalMapped<ComplexInterface>;
+declare const complexTest: ProcessedComplex;
 `
 
 	fs := vfstest.FromMap(map[string]string{
@@ -80,120 +93,82 @@ const deepAccess = combinedValue.data?.wrapper.data?.wrapper.meta?.wrapper.count
 		"/tsconfig.json": `{
 			"compilerOptions": {
 				"strict": true,
-				"exactOptionalPropertyTypes": true,
-				"noEmit": true
+				"target": "es2015"
 			},
 			"files": ["test.ts"]
 		}`,
-	}, false /*useCaseSensitiveFileNames*/)
+	}, false)
 	fs = bundled.WrapFS(fs)
 
 	cd := "/"
 	host := compiler.NewCompilerHost(nil, cd, fs, bundled.LibPath())
 
 	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, host, nil)
-	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
+	if len(errors) > 0 {
+		t.Fatalf("Expected no errors in parsed command line, got: %v", errors)
+	}
 
 	p := compiler.NewProgram(compiler.ProgramOptions{
 		Config: parsed,
 		Host:   host,
 	})
+	
 	p.BindSourceFiles()
+	
+	// Set up panic recovery
+	defer func() {
+		if r := recover(); r != nil {
+			// Check for the specific slice bounds panic
+			switch v := r.(type) {
+			case string:
+				if v == "runtime error: slice bounds out of range [:-1]" {
+					t.Logf("SUCCESS: Reproduced the slice bounds panic: %v", r)
+					return
+				}
+			case interface{ Error() string }:
+				errStr := v.Error()
+				if errStr == "runtime error: slice bounds out of range [:-1]" {
+					t.Logf("SUCCESS: Reproduced the slice bounds panic: %v", r)
+					return
+				}
+			}
+			// Different panic - re-throw
+			panic(r)
+		}
+		
+		// Test didn't reproduce the panic
+		t.Fatal("Expected slice bounds panic [:-1] but test completed without panic")
+	}()
+	
+	// Process the TypeScript code to attempt triggering the nodebuilder
 	c, done := p.GetTypeChecker(t.Context())
 	defer done()
-
-	// The main test: this should complete without any slice bounds panic
-	// Before the fix, complex reverse mapping scenarios could cause:
-	// panic: runtime error: slice bounds out of range [:-1]
+	
 	file := p.GetSourceFile("/test.ts")
+	if file == nil {
+		t.Fatal("Could not get source file")
+	}
 	
-	// Wrap in a defer to catch any panics and provide context
-	defer func() {
-		if r := recover(); r != nil {
-			t.Fatalf("Unexpected panic occurred during type checking: %v\n"+
-				"This suggests the fix for issue #1108 is not working correctly.\n"+
-				"The panic likely occurred in addPropertyToElementList due to "+
-				"asymmetric push/pop operations on reverseMappedStack.", r)
+	// Force type checking and nodebuilder usage
+	for _, stmt := range file.Statements.Nodes {
+		switch stmt.Kind {
+		case 260: // TypeAliasDeclaration
+			if symbol := c.GetSymbolAtLocation(stmt.Name()); symbol != nil {
+				if typeOfSymbol := c.GetTypeOfSymbolAtLocation(symbol, stmt); typeOfSymbol != nil {
+					// Force nodebuilder processing through TypeToString
+					_ = c.TypeToString(typeOfSymbol)
+				}
+			}
+		case 240: // VariableStatement  
+			varStmt := stmt.AsVariableStatement()
+			for _, decl := range varStmt.DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
+				if symbol := c.GetSymbolAtLocation(decl.Name()); symbol != nil {
+					if typeOfSymbol := c.GetTypeOfSymbolAtLocation(symbol, decl); typeOfSymbol != nil {
+						// Force nodebuilder processing through TypeToString
+						_ = c.TypeToString(typeOfSymbol)
+					}
+				}
+			}
 		}
-	}()
-
-	// Force comprehensive type checking that exercises the nodebuilder
-	c.CheckSourceFile(t.Context(), file)
-	
-	t.Log("SUCCESS: Complex reverse mapping scenarios completed without slice bounds panic")
-	t.Log("The fix for issue #1108 is working correctly")
-}
-
-// TestReverseMappedStackBalance verifies the fix maintains proper
-// balance between push and pop operations on the reverseMappedStack
-func TestReverseMappedStackBalance(t *testing.T) {
-	t.Parallel()
-
-	// Test various edge cases that could expose stack imbalance issues
-	content := `
-// Test recursive mapped types that stress the reverse mapping stack
-type Identity<T> = T;
-type Nested<T> = { nested: T };
-type DoubleNested<T> = Nested<Nested<T>>;
-type TripleNested<T> = Nested<DoubleNested<T>>;
-
-type MappedIdentity<T> = { [K in keyof T]: Identity<T[K]> };
-type MappedNested<T> = { [K in keyof T]: Nested<T[K]> };
-
-interface BaseType {
-	a: string;
-	b: number;  
-	c: boolean;
-}
-
-// Create multiple layers that could trigger different stack behaviors
-type Layer1 = MappedIdentity<BaseType>;
-type Layer2 = MappedNested<Layer1>;
-type Layer3 = MappedIdentity<Layer2>;
-type Layer4 = MappedNested<Layer3>;
-
-// Force evaluation
-declare const value: Layer4;
-const test1 = value.a.nested.a.nested.a;
-const test2 = value.b.nested.b.nested.b;
-const test3 = value.c.nested.c.nested.c;
-`
-
-	fs := vfstest.FromMap(map[string]string{
-		"/balance_test.ts": content,
-		"/tsconfig.json": `{
-			"compilerOptions": {
-				"strict": true,
-				"noEmit": true
-			},
-			"files": ["balance_test.ts"]
-		}`,
-	}, false /*useCaseSensitiveFileNames*/)
-	fs = bundled.WrapFS(fs)
-
-	cd := "/"
-	host := compiler.NewCompilerHost(nil, cd, fs, bundled.LibPath())
-
-	parsed, errors := tsoptions.GetParsedCommandLineOfConfigFile("/tsconfig.json", &core.CompilerOptions{}, host, nil)
-	assert.Equal(t, len(errors), 0, "Expected no errors in parsed command line")
-
-	p := compiler.NewProgram(compiler.ProgramOptions{
-		Config: parsed,
-		Host:   host,
-	})
-	p.BindSourceFiles()
-	c, done := p.GetTypeChecker(t.Context())
-	defer done()
-
-	// Test that complex nested scenarios don't cause stack issues
-	defer func() {
-		if r := recover(); r != nil {
-			t.Fatalf("Stack balance test failed with panic: %v", r)
-		}
-	}()
-
-	file := p.GetSourceFile("/balance_test.ts")
-	c.CheckSourceFile(t.Context(), file)
-	
-	t.Log("Stack balance test passed - proper push/pop balance maintained")
+	}
 }
