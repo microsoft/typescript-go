@@ -71,7 +71,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 		fmt.Fprint(sys.Writer(), "File not found: "+input+sys.NewLine())
 		return ExitStatusNotImplemented
 	}
-	text := string(fileContent)
+	text := fileContent
 	pathified := tspath.ToPath(input, sys.GetCurrentDirectory(), true)
 	sourceFile := parser.ParseSourceFile(
 		string(pathified),
