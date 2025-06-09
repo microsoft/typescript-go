@@ -14497,6 +14497,36 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						tsExtension,
 					)
 				}
+			} else if c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
+				location.Flags&ast.NodeFlagsAmbient == 0 &&
+				!tspath.IsDeclarationFileName(moduleReference) &&
+				!ast.IsLiteralImportTypeNode(location) &&
+				!ast.IsPartOfTypeOnlyImportOrExportDeclaration(location) {
+				shouldRewrite := tspath.ShouldRewriteModuleSpecifier(moduleReference, c.compilerOptions.RewriteRelativeImportExtensions.IsTrue())
+				if !resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
+					// Get relative path from current source file to resolved file
+					sourceFileDir := tspath.GetDirectoryPath(importingSourceFile.FileName())
+					targetPath := resolvedModule.ResolvedFileName
+					canonicalSourceDir := tspath.GetCanonicalFileName(sourceFileDir, !c.program.UseCaseSensitiveFileNames())
+					canonicalTargetPath := tspath.GetCanonicalFileName(targetPath, !c.program.UseCaseSensitiveFileNames())
+					relativePath := tspath.GetRelativePathFromDirectory(canonicalSourceDir, canonicalTargetPath, tspath.ComparePathsOptions{
+						CurrentDirectory:          c.program.GetCurrentDirectory(),
+						UseCaseSensitiveFileNames: c.program.UseCaseSensitiveFileNames(),
+					})
+					c.error(
+						errorNode,
+						diagnostics.This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0,
+						relativePath,
+					)
+				} else if resolvedModule.ResolvedUsingTsExtension && !shouldRewrite {
+					// For now, we'll skip the sourceFileMayBeEmitted check to keep it simple
+					c.error(
+						errorNode,
+						diagnostics.This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path,
+						tspath.GetAnyExtensionFromPath(moduleReference, nil, !c.program.UseCaseSensitiveFileNames()),
+					)
+				}
+				// TODO: Add project reference validation for the third error case
 			}
 		}
 

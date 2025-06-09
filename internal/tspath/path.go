@@ -902,3 +902,7 @@ func ForEachAncestorDirectoryPath[T any](directory Path, callback func(directory
 func HasExtension(fileName string) bool {
 	return strings.Contains(GetBaseFileName(fileName), ".")
 }
+
+func ShouldRewriteModuleSpecifier(specifier string, rewriteRelativeImportExtensions bool) bool {
+	return rewriteRelativeImportExtensions && PathIsRelative(specifier) && !IsDeclarationFileName(specifier)
+}
