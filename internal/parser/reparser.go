@@ -208,7 +208,43 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 						fun.FunctionLikeData().Type = p.makeNewType(tag.AsJSDocReturnTag().TypeExpression, fun)
 					}
 				}
+			case ast.KindJSDocImplementsTag:
+				var class *ast.ClassLikeBase
+				if parent.Kind == ast.KindClassDeclaration {
+					class = parent.AsClassDeclaration().ClassLikeData()
+				} else if parent.Kind == ast.KindClassExpression {
+					class = parent.AsClassExpression().ClassLikeData()
+				}
+				if class != nil {
+					implementsTag := tag.AsJSDocImplementsTag()
+
+					if class.HeritageClauses != nil {
+						if implementsClause := core.Find(class.HeritageClauses.Nodes, func(node *ast.Node) bool {
+							return node.AsHeritageClause().Token == ast.KindImplementsKeyword
+						}); implementsClause != nil {
+							implementsClause.AsHeritageClause().Types.Nodes = append(implementsClause.AsHeritageClause().Types.Nodes, implementsTag.ClassName)
+							return
+						}
+					}
+					types := p.nodeSlicePool.NewSlice(1)
+					types[0] = implementsTag.ClassName
+					implementsTag.ClassName.Flags |= ast.NodeFlagsReparsed
+					typesList := p.newNodeList(implementsTag.ClassName.Loc, types)
+
+					heritageClause := p.factory.NewHeritageClause(ast.KindImplementsKeyword, typesList)
+					heritageClause.Loc = implementsTag.ClassName.Loc
+					heritageClause.Flags = p.contextFlags | ast.NodeFlagsReparsed
+
+					if class.HeritageClauses == nil {
+						heritageClauses := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice(1))
+						heritageClauses.Nodes[0] = heritageClause
+						class.HeritageClauses = heritageClauses
+					} else {
+						class.HeritageClauses.Nodes = append(class.HeritageClauses.Nodes, heritageClause)
+					}
+				}
 			}
+			// !!! other attached tags (@augments, @this, @satisfies) support goes here
 		}
 	}
 }
