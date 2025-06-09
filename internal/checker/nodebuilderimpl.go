@@ -2140,7 +2140,13 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 				name:          propertyName,
 				questionToken: optionalToken,
 			})
-			b.setCommentRange(methodDeclaration, propertySymbol.ValueDeclaration) // !!! missing JSDoc support formerly provided by preserveCommentsOn
+			var commentRange *ast.Node
+			if signature.Declaration() != nil {
+				commentRange = signature.Declaration()
+			} else {
+				commentRange = propertySymbol.ValueDeclaration
+			}
+			b.setCommentRange(methodDeclaration, commentRange) // !!! missing JSDoc support formerly provided by preserveCommentsOn
 			typeElements = append(typeElements, methodDeclaration)
 		}
 		if len(signatures) != 0 || optionalToken == nil {
