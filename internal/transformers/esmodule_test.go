@@ -220,6 +220,10 @@ var __rewriteRelativeImportExtension;`,
 			t.Parallel()
 
 			compilerOptions := rec.options
+			if compilerOptions == nil {
+				compilerOptions = &core.CompilerOptions{}
+			}
+
 			sourceFileAffecting := compilerOptions.SourceFileAffecting()
 			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
 			parsetestutil.CheckDiagnostics(t, file)

@@ -88,6 +88,9 @@ func CompileFiles(
 	if tsconfig != nil {
 		compilerOptions = tsconfig.ParsedConfig.CompilerOptions.Clone()
 	}
+	if compilerOptions == nil {
+		compilerOptions = &core.CompilerOptions{}
+	}
 	// Set default options for tests
 	if compilerOptions.NewLine == core.NewLineKindNone {
 		compilerOptions.NewLine = core.NewLineKindCRLF

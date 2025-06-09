@@ -1016,6 +1016,10 @@ exports.a = a;`,
 			t.Parallel()
 
 			compilerOptions := rec.options
+			if compilerOptions == nil {
+				compilerOptions = &core.CompilerOptions{}
+			}
+
 			compilerOptions.Module = core.ModuleKindCommonJS
 			sourceFileAffecting := compilerOptions.SourceFileAffecting()
 
