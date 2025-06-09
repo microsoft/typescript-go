@@ -44,30 +44,27 @@ func newWatchedFiles[T any](
 }
 
 func (w *watchedFiles[T]) update(ctx context.Context, newData T) {
-	if updated, err := w.updateWorker(ctx, newData); err != nil {
-		w.p.Log(fmt.Sprintf("Failed to update %s watch: %v\n%s", w.watchType, err, formatFileList(w.globs, "\t", hr)))
-	} else if updated {
-		w.p.Logf("%s watches updated %s:\n%s", w.watchType, w.watcherID, formatFileList(w.globs, "\t", hr))
-	}
-}
-
-func (w *watchedFiles[T]) updateWorker(ctx context.Context, newData T) (updated bool, err error) {
 	newGlobs := w.getGlobs(newData)
+	newGlobs = slices.Clone(newGlobs)
+	slices.Sort(newGlobs)
+
 	w.data = newData
 	if slices.Equal(w.globs, newGlobs) {
-		return false, nil
+		return
 	}
 
 	w.globs = newGlobs
 	if w.watcherID != "" {
-		if err = w.p.host.Client().UnwatchFiles(ctx, w.watcherID); err != nil {
-			return false, err
+		if err := w.p.host.Client().UnwatchFiles(ctx, w.watcherID); err != nil {
+			w.p.Log(fmt.Sprintf("%s:: Failed to unwatch %s watch: %s, err: %v newGlobs that are not updated: \n%s", w.p.name, w.watchType, w.watcherID, err, formatFileList(w.globs, "\t", hr)))
+			return
 		}
+		w.p.Logf("%s:: %s watches unwatch %s", w.p.name, w.watchType, w.watcherID)
 	}
 
 	w.watcherID = ""
 	if len(newGlobs) == 0 {
-		return true, nil
+		return
 	}
 
 	watchers := make([]*lsproto.FileSystemWatcher, 0, len(newGlobs))
@@ -81,14 +78,16 @@ func (w *watchedFiles[T]) updateWorker(ctx context.Context, newData T) (updated 
 	}
 	watcherID, err := w.p.host.Client().WatchFiles(ctx, watchers)
 	if err != nil {
-		return false, err
+		w.p.Log(fmt.Sprintf("%s:: Failed to update %s watch: %v\n%s", w.p.name, w.watchType, err, formatFileList(w.globs, "\t", hr)))
+		return
 	}
 	w.watcherID = watcherID
-	return true, nil
+	w.p.Logf("%s:: %s watches updated %s:\n%s", w.p.name, w.watchType, w.watcherID, formatFileList(w.globs, "\t", hr))
+	return
 }
 
 func globMapperForTypingsInstaller(data map[tspath.Path]string) []string {
-	return slices.Sorted(maps.Values(data))
+	return slices.AppendSeq(make([]string, 0, len(data)), maps.Values(data))
 }
 
 func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Path]string) []string {
@@ -136,7 +135,6 @@ func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Pat
 				globs = append(globs, dir+"/"+fileGlobPattern)
 			}
 		}
-		slices.Sort(globs)
 
 		timeTaken := time.Since(start)
 		host.Log(fmt.Sprintf("createGlobMapper took %s to create %d globs for %d failed lookups", timeTaken, len(globs), len(data)))

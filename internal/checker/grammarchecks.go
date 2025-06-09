@@ -233,7 +233,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				}
 			} else if c.legacyDecorators && (node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor) {
 				accessors := c.getAllAccessorDeclarationsForDeclaration(node)
-				if hasDecorators(accessors.firstAccessor) && node == accessors.secondAccessor {
+				if ast.HasDecorators(accessors.firstAccessor) && node == accessors.secondAccessor {
 					return c.grammarErrorOnFirstToken(node, diagnostics.Decorators_cannot_be_applied_to_multiple_get_Slashset_accessors_of_the_same_name)
 				}
 			}
@@ -1211,7 +1211,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module))
 					}
 					switch c.moduleKind {
-					case core.ModuleKindNode16, core.ModuleKindNodeNext:
+					case core.ModuleKindNode16, core.ModuleKindNode18, core.ModuleKindNodeNext:
 						sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
 						if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
 							c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
@@ -1227,7 +1227,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 						}
 						fallthrough
 					default:
-						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher))
+						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher))
 					}
 				}
 			} else {
@@ -1412,7 +1412,17 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 }
 
 func (c *Checker) checkGrammarForInvalidDynamicName(node *ast.DeclarationName, message *diagnostics.Message) bool {
-	if c.isNonBindableDynamicName(node) {
+	if !c.isNonBindableDynamicName(node) {
+		return false
+	}
+	var expression *ast.Node
+	if ast.IsElementAccessExpression(node) {
+		expression = ast.SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
+	} else {
+		expression = node.Expression()
+	}
+
+	if !ast.IsEntityNameExpression(expression) {
 		return c.grammarErrorOnNode(node, message)
 	}
 
@@ -1707,6 +1717,7 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 				}
 				switch c.moduleKind {
 				case core.ModuleKindNode16,
+					core.ModuleKindNode18,
 					core.ModuleKindNodeNext:
 					sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
 					if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
@@ -1732,9 +1743,9 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 					}
 					var message *diagnostics.Message
 					if ast.IsAwaitExpression(node) {
-						message = diagnostics.Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
+						message = diagnostics.Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
 					} else {
-						message = diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
+						message = diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
 					}
 					c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, message))
 					hasError = true
@@ -2152,7 +2163,7 @@ func (c *Checker) checkGrammarImportCallExpression(node *ast.Node) bool {
 	}
 
 	if c.moduleKind == core.ModuleKindES2015 {
-		return c.grammarErrorOnNode(node, diagnostics.Dynamic_imports_are_only_supported_when_the_module_flag_is_set_to_es2020_es2022_esnext_commonjs_amd_system_umd_node16_or_nodenext)
+		return c.grammarErrorOnNode(node, diagnostics.Dynamic_imports_are_only_supported_when_the_module_flag_is_set_to_es2020_es2022_esnext_commonjs_amd_system_umd_node16_node18_or_nodenext)
 	}
 
 	nodeAsCall := node.AsCallExpression()
@@ -2168,7 +2179,7 @@ func (c *Checker) checkGrammarImportCallExpression(node *ast.Node) bool {
 
 		if len(argumentNodes) > 1 {
 			importAttributesArgument := argumentNodes[1]
-			return c.grammarErrorOnNode(importAttributesArgument, diagnostics.Dynamic_imports_only_support_a_second_argument_when_the_module_option_is_set_to_esnext_node16_nodenext_or_preserve)
+			return c.grammarErrorOnNode(importAttributesArgument, diagnostics.Dynamic_imports_only_support_a_second_argument_when_the_module_option_is_set_to_esnext_node16_node18_nodenext_or_preserve)
 		}
 	}
 

@@ -27,6 +27,7 @@ func newRegistryKey(options *core.CompilerOptions, path tspath.Path, scriptKind 
 
 type registryEntry struct {
 	sourceFile *ast.SourceFile
+	version    int
 	refCount   int
 	mu         sync.Mutex
 }
@@ -38,9 +39,10 @@ type DocumentRegistryHooks struct {
 // The document registry represents a store of SourceFile objects that can be shared between
 // multiple LanguageService instances.
 type DocumentRegistry struct {
-	Options   tspath.ComparePathsOptions
-	Hooks     DocumentRegistryHooks
-	documents collections.SyncMap[registryKey, *registryEntry]
+	Options         tspath.ComparePathsOptions
+	Hooks           DocumentRegistryHooks
+	documents       collections.SyncMap[registryKey, *registryEntry]
+	parsedFileCache ParsedFileCache
 }
 
 // AcquireDocument gets a SourceFile from the registry if it exists as the same version tracked
@@ -94,22 +96,22 @@ func (r *DocumentRegistry) getDocumentWorker(
 	if entry, ok := r.documents.Load(key); ok {
 		// We have an entry for this file. However, it may be for a different version of
 		// the script snapshot. If so, update it appropriately.
-		if entry.sourceFile.Version != scriptInfoVersion {
-			sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, scriptTarget, scanner.JSDocParsingModeParseAll)
-			sourceFile.Version = scriptInfoVersion
+		if entry.version != scriptInfoVersion {
+			sourceFile := r.getParsedFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, scriptTarget, compilerOptions)
 			entry.mu.Lock()
 			defer entry.mu.Unlock()
 			entry.sourceFile = sourceFile
+			entry.version = scriptInfoVersion
 		}
 		entry.refCount++
 		return entry.sourceFile
 	} else {
 		// Have never seen this file with these settings. Create a new source file for it.
-		sourceFile := parser.ParseSourceFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, scriptTarget, scanner.JSDocParsingModeParseAll)
-		sourceFile.Version = scriptInfoVersion
+		sourceFile := r.getParsedFile(scriptInfo.fileName, scriptInfo.path, scriptInfoText, scriptTarget, compilerOptions)
 		entry, _ := r.documents.LoadOrStore(key, &registryEntry{
 			sourceFile: sourceFile,
 			refCount:   0,
+			version:    scriptInfoVersion,
 		})
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
@@ -118,7 +120,50 @@ func (r *DocumentRegistry) getDocumentWorker(
 	}
 }
 
+func (r *DocumentRegistry) getFileVersion(file *ast.SourceFile, options *core.CompilerOptions) int {
+	key := newRegistryKey(options, file.Path(), file.ScriptKind)
+	if entry, ok := r.documents.Load(key); ok && entry.sourceFile == file {
+		return entry.version
+	}
+	return -1
+}
+
+func (r *DocumentRegistry) getParsedFile(
+	fileName string,
+	path tspath.Path,
+	sourceText string,
+	scriptTarget core.ScriptTarget,
+	options *core.CompilerOptions,
+) *ast.SourceFile {
+	if r.parsedFileCache != nil {
+		if file := r.parsedFileCache.GetFile(fileName, path, sourceText, scriptTarget, *options.SourceFileAffecting()); file != nil {
+			return file
+		}
+	}
+	file := parser.ParseSourceFile(fileName, path, sourceText, scriptTarget, scanner.JSDocParsingModeParseAll)
+	if r.parsedFileCache != nil {
+		r.parsedFileCache.CacheFile(fileName, path, sourceText, scriptTarget, *options.SourceFileAffecting(), file)
+	}
+	return file
+}
+
 // size should only be used for testing.
 func (r *DocumentRegistry) size() int {
 	return r.documents.Size()
+}
+
+type ParsedFileCache interface {
+	GetFile(fileName string,
+		path tspath.Path,
+		text string,
+		scriptTarget core.ScriptTarget,
+		options core.SourceFileAffectingCompilerOptions,
+	) *ast.SourceFile
+	CacheFile(fileName string,
+		path tspath.Path,
+		text string,
+		scriptTarget core.ScriptTarget,
+		options core.SourceFileAffectingCompilerOptions,
+		sourceFile *ast.SourceFile,
+	)
 }

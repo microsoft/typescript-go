@@ -289,6 +289,8 @@ func (n *Node) Text() string {
 		return n.AsJsxNamespacedName().Namespace.Text() + ":" + n.AsJsxNamespacedName().name.Text()
 	case KindRegularExpressionLiteral:
 		return n.AsRegularExpressionLiteral().Text
+	case KindJSDocText:
+		return n.AsJSDocText().Text
 	}
 	panic(fmt.Sprintf("Unhandled case in Node.Text: %T", n.data))
 }
@@ -429,6 +431,8 @@ func (n *Node) TypeParameterList() *NodeList {
 		return n.AsInterfaceDeclaration().TypeParameters
 	case KindTypeAliasDeclaration, KindJSTypeAliasDeclaration:
 		return n.AsTypeAliasDeclaration().TypeParameters
+	case KindJSDocTemplateTag:
+		return n.AsJSDocTemplateTag().TypeParameters
 	default:
 		funcLike := n.FunctionLikeData()
 		if funcLike != nil {
@@ -548,8 +552,8 @@ func (n *Node) Type() *Node {
 		return n.AsTemplateLiteralTypeSpan().Type
 	case KindJSDocTypeExpression:
 		return n.AsJSDocTypeExpression().Type
-	case KindJSDocPropertyTag:
-		return n.AsJSDocPropertyTag().TypeExpression
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return n.AsJSDocParameterOrPropertyTag().TypeExpression
 	case KindJSDocNullableType:
 		return n.AsJSDocNullableType().Type
 	case KindJSDocNonNullableType:
@@ -629,8 +633,8 @@ func (n *Node) TagName() *Node {
 		return n.AsJSDocCallbackTag().TagName
 	case KindJSDocOverloadTag:
 		return n.AsJSDocOverloadTag().TagName
-	case KindJSDocParameterTag:
-		return n.AsJSDocParameterTag().TagName
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return n.AsJSDocParameterOrPropertyTag().TagName
 	case KindJSDocReturnTag:
 		return n.AsJSDocReturnTag().TagName
 	case KindJSDocThisTag:
@@ -643,8 +647,6 @@ func (n *Node) TagName() *Node {
 		return n.AsJSDocTypedefTag().TagName
 	case KindJSDocSeeTag:
 		return n.AsJSDocSeeTag().TagName
-	case KindJSDocPropertyTag:
-		return n.AsJSDocPropertyTag().TagName
 	case KindJSDocSatisfiesTag:
 		return n.AsJSDocSatisfiesTag().TagName
 	case KindJSDocImportTag:
@@ -715,8 +717,8 @@ func (n *Node) CommentList() *NodeList {
 		return n.AsJSDocCallbackTag().Comment
 	case KindJSDocOverloadTag:
 		return n.AsJSDocOverloadTag().Comment
-	case KindJSDocParameterTag:
-		return n.AsJSDocParameterTag().Comment
+	case KindJSDocParameterTag, KindJSDocPropertyTag:
+		return n.AsJSDocParameterOrPropertyTag().Comment
 	case KindJSDocReturnTag:
 		return n.AsJSDocReturnTag().Comment
 	case KindJSDocThisTag:
@@ -729,8 +731,6 @@ func (n *Node) CommentList() *NodeList {
 		return n.AsJSDocTypedefTag().Comment
 	case KindJSDocSeeTag:
 		return n.AsJSDocSeeTag().Comment
-	case KindJSDocPropertyTag:
-		return n.AsJSDocPropertyTag().Comment
 	case KindJSDocSatisfiesTag:
 		return n.AsJSDocSatisfiesTag().Comment
 	case KindJSDocImportTag:
@@ -1526,12 +1526,8 @@ func (n *Node) AsJSDocTemplateTag() *JSDocTemplateTag {
 	return n.data.(*JSDocTemplateTag)
 }
 
-func (n *Node) AsJSDocPropertyTag() *JSDocPropertyTag {
-	return n.data.(*JSDocPropertyTag)
-}
-
-func (n *Node) AsJSDocParameterTag() *JSDocParameterTag {
-	return n.data.(*JSDocParameterTag)
+func (n *Node) AsJSDocParameterOrPropertyTag() *JSDocParameterOrPropertyTag {
+	return n.data.(*JSDocParameterOrPropertyTag)
 }
 
 func (n *Node) AsJSDocReturnTag() *JSDocReturnTag {
@@ -1852,7 +1848,7 @@ func IsDeclarationNode(node *Node) bool {
 	return node.DeclarationData() != nil
 }
 
-// DeclarationBase
+// ExportableBase
 
 type ExportableBase struct {
 	LocalSymbol *Symbol // Local symbol declared by node (initialized by binding only for exported nodes)
@@ -5539,6 +5535,10 @@ func (node *RegularExpressionLiteral) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewRegularExpressionLiteral(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsRegularExpressionLiteral(node *Node) bool {
+	return node.Kind == KindRegularExpressionLiteral
+}
+
 // NoSubstitutionTemplateLiteral
 
 type NoSubstitutionTemplateLiteral struct {
@@ -6002,6 +6002,10 @@ func (node *ConditionalExpression) computeSubtreeFacts() SubtreeFacts {
 	return propagateSubtreeFacts(node.Condition) |
 		propagateSubtreeFacts(node.WhenTrue) |
 		propagateSubtreeFacts(node.WhenFalse)
+}
+
+func IsConditionalExpression(node *Node) bool {
+	return node.Kind == KindConditionalExpression
 }
 
 // PropertyAccessExpression
@@ -9185,41 +9189,39 @@ func IsJSDocUnknownTag(node *Node) bool {
 type JSDocTemplateTag struct {
 	JSDocTagBase
 	Constraint     *Node
-	typeParameters *TypeParameterList
+	TypeParameters *TypeParameterList
 }
 
 func (f *NodeFactory) NewJSDocTemplateTag(tagName *IdentifierNode, constraint *Node, typeParameters *TypeParameterList, comment *NodeList) *Node {
 	data := &JSDocTemplateTag{}
 	data.TagName = tagName
 	data.Constraint = constraint
-	data.typeParameters = typeParameters
+	data.TypeParameters = typeParameters
 	data.Comment = comment
 	return f.newNode(KindJSDocTemplateTag, data)
 }
 
 func (f *NodeFactory) UpdateJSDocTemplateTag(node *JSDocTemplateTag, tagName *IdentifierNode, constraint *Node, typeParameters *TypeParameterList, comment *NodeList) *Node {
-	if tagName != node.TagName || constraint != node.Constraint || typeParameters != node.typeParameters || comment != node.Comment {
+	if tagName != node.TagName || constraint != node.Constraint || typeParameters != node.TypeParameters || comment != node.Comment {
 		return updateNode(f.NewJSDocTemplateTag(tagName, constraint, typeParameters, comment), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
 func (node *JSDocTemplateTag) ForEachChild(v Visitor) bool {
-	return visit(v, node.TagName) || visit(v, node.Constraint) || visitNodeList(v, node.typeParameters) || visitNodeList(v, node.Comment)
+	return visit(v, node.TagName) || visit(v, node.Constraint) || visitNodeList(v, node.TypeParameters) || visitNodeList(v, node.Comment)
 }
 
 func (node *JSDocTemplateTag) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocTemplateTag(node, v.visitNode(node.TagName), v.visitNode(node.Constraint), v.visitNodes(node.typeParameters), v.visitNodes(node.Comment))
+	return v.Factory.UpdateJSDocTemplateTag(node, v.visitNode(node.TagName), v.visitNode(node.Constraint), v.visitNodes(node.TypeParameters), v.visitNodes(node.Comment))
 }
 
 func (node *JSDocTemplateTag) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters(), node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocTemplateTag(node.TagName, node.Constraint, node.TypeParameters, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
-func (node *JSDocTemplateTag) TypeParameters() *TypeParameterList { return node.typeParameters }
-
-// JSDocPropertyTag
-type JSDocPropertyTag struct {
+// JSDocParameterOrPropertyTag
+type JSDocParameterOrPropertyTag struct {
 	JSDocTagBase
 	name           *EntityName
 	IsBracketed    bool
@@ -9227,25 +9229,38 @@ type JSDocPropertyTag struct {
 	IsNameFirst    bool
 }
 
-func (f *NodeFactory) NewJSDocPropertyTag(tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
-	data := &JSDocPropertyTag{}
+type (
+	JSDocParameterTag = JSDocParameterOrPropertyTag
+	JSDocPropertyTag  = JSDocParameterOrPropertyTag
+)
+
+func (f *NodeFactory) newJSDocParameterOrPropertyTag(kind Kind, tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
+	data := &JSDocParameterOrPropertyTag{}
 	data.TagName = tagName
 	data.name = name
 	data.IsBracketed = isBracketed
 	data.TypeExpression = typeExpression
 	data.IsNameFirst = isNameFirst
 	data.Comment = comment
-	return f.newNode(KindJSDocPropertyTag, data)
+	return f.newNode(kind, data)
 }
 
-func (f *NodeFactory) UpdateJSDocPropertyTag(node *JSDocPropertyTag, tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
+func (f *NodeFactory) NewJSDocParameterTag(tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
+	return f.newJSDocParameterOrPropertyTag(KindJSDocParameterTag, tagName, name, isBracketed, typeExpression, isNameFirst, comment)
+}
+
+func (f *NodeFactory) NewJSDocPropertyTag(tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
+	return f.newJSDocParameterOrPropertyTag(KindJSDocPropertyTag, tagName, name, isBracketed, typeExpression, isNameFirst, comment)
+}
+
+func (f *NodeFactory) UpdateJSDocParameterOrPropertyTag(kind Kind, node *JSDocParameterOrPropertyTag, tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
 	if tagName != node.TagName || name != node.name || isBracketed != node.IsBracketed || typeExpression != node.TypeExpression || isNameFirst != node.IsNameFirst || comment != node.Comment {
-		return updateNode(f.NewJSDocPropertyTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment), node.AsNode(), f.hooks)
+		return updateNode(f.newJSDocParameterOrPropertyTag(kind, tagName, name, isBracketed, typeExpression, isNameFirst, comment), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
 }
 
-func (node *JSDocPropertyTag) ForEachChild(v Visitor) bool {
+func (node *JSDocParameterOrPropertyTag) ForEachChild(v Visitor) bool {
 	if node.IsNameFirst {
 		return visit(v, node.TagName) || visit(v, node.name) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
 	} else {
@@ -9253,7 +9268,7 @@ func (node *JSDocPropertyTag) ForEachChild(v Visitor) bool {
 	}
 }
 
-func (node *JSDocPropertyTag) VisitEachChild(v *NodeVisitor) *Node {
+func (node *JSDocParameterOrPropertyTag) VisitEachChild(v *NodeVisitor) *Node {
 	tagName := v.visitNode(node.TagName)
 	var name, typeExpression *Node
 	if node.IsNameFirst {
@@ -9261,69 +9276,14 @@ func (node *JSDocPropertyTag) VisitEachChild(v *NodeVisitor) *Node {
 	} else {
 		typeExpression, name = v.visitNode(node.TypeExpression), v.visitNode(node.name)
 	}
-	return v.Factory.UpdateJSDocPropertyTag(node, tagName, name, node.IsBracketed, typeExpression, node.IsNameFirst, v.visitNodes(node.Comment))
+	return v.Factory.UpdateJSDocParameterOrPropertyTag(node.Kind, node, tagName, name, node.IsBracketed, typeExpression, node.IsNameFirst, v.visitNodes(node.Comment))
 }
 
-func (node *JSDocPropertyTag) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocPropertyTag(node.TagName, node.Name(), node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+func (node *JSDocParameterOrPropertyTag) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().newJSDocParameterOrPropertyTag(node.Kind, node.TagName, node.Name(), node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
-func (node *JSDocPropertyTag) Name() *EntityName { return node.name }
-
-// JSDocParameterTag
-type JSDocParameterTag struct {
-	JSDocTagBase
-	name           *EntityName
-	IsBracketed    bool
-	TypeExpression *TypeNode
-	IsNameFirst    bool
-}
-
-func (f *NodeFactory) NewJSDocParameterTag(tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
-	data := &JSDocParameterTag{}
-	data.TagName = tagName
-	data.name = name
-	data.IsBracketed = isBracketed
-	data.TypeExpression = typeExpression
-	data.IsNameFirst = isNameFirst
-	data.Comment = comment
-	return f.newNode(KindJSDocParameterTag, data)
-}
-
-func (f *NodeFactory) UpdateJSDocParameterTag(node *JSDocParameterTag, tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
-	if tagName != node.TagName || name != node.name || isBracketed != node.IsBracketed || typeExpression != node.TypeExpression || isNameFirst != node.IsNameFirst || comment != node.Comment {
-		return updateNode(f.NewJSDocParameterTag(tagName, name, isBracketed, typeExpression, isNameFirst, comment), node.AsNode(), f.hooks)
-	}
-	return node.AsNode()
-}
-
-func (node *JSDocParameterTag) ForEachChild(v Visitor) bool {
-	if visit(v, node.TagName) {
-		return true
-	}
-	if node.IsNameFirst {
-		return visit(v, node.name) || visit(v, node.TypeExpression) || visitNodeList(v, node.Comment)
-	} else {
-		return visit(v, node.TypeExpression) || visit(v, node.name) || visitNodeList(v, node.Comment)
-	}
-}
-
-func (node *JSDocParameterTag) VisitEachChild(v *NodeVisitor) *Node {
-	tagName := v.visitNode(node.TagName)
-	var name, typeExpression *Node
-	if node.IsNameFirst {
-		name, typeExpression = v.visitNode(node.name), v.visitNode(node.TypeExpression)
-	} else {
-		typeExpression, name = v.visitNode(node.TypeExpression), v.visitNode(node.name)
-	}
-	return v.Factory.UpdateJSDocParameterTag(node, tagName, name, node.IsBracketed, typeExpression, node.IsNameFirst, v.visitNodes(node.Comment))
-}
-
-func (node *JSDocParameterTag) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocParameterTag(node.TagName, node.Name(), node.IsBracketed, node.TypeExpression, node.IsNameFirst, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
-}
-
-func (node *JSDocParameterTag) Name() *EntityName { return node.name }
+func (node *JSDocParameterOrPropertyTag) Name() *EntityName { return node.name }
 
 // JSDocReturnTag
 type JSDocReturnTag struct {
@@ -10005,6 +9965,11 @@ type CheckJsDirective struct {
 	Range   CommentRange
 }
 
+type HasFileName interface {
+	FileName() string
+	Path() tspath.Path
+}
+
 type SourceFile struct {
 	NodeBase
 	DeclarationBase
@@ -10058,10 +10023,6 @@ type SourceFile struct {
 
 	lineMapMu sync.RWMutex
 	lineMap   []core.TextPos
-
-	// Fields set by document registry
-
-	Version int
 
 	// Fields set by language service
 

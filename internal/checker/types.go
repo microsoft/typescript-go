@@ -10,6 +10,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=SignatureKind -output=stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w stringer_generated.go
 
 // ParseFlags
 
@@ -63,6 +64,7 @@ const (
 	TypeFormatFlagsUseSingleQuotesForStringLiteralType TypeFormatFlags = 1 << 28 // Use single quotes for string literal type
 	TypeFormatFlagsNoTypeReduction                     TypeFormatFlags = 1 << 29 // Don't call getReducedType
 	TypeFormatFlagsOmitThisParameter                   TypeFormatFlags = 1 << 25
+	TypeFormatFlagsWriteCallStyleSignature             TypeFormatFlags = 1 << 27 // Write construct signatures as call style signatures
 	// Error Handling
 	TypeFormatFlagsAllowUniqueESSymbolType TypeFormatFlags = 1 << 20 // This is bit 20 to align with the same bit in `NodeBuilderFlags`
 	// TypeFormatFlags exclusive
@@ -393,6 +395,7 @@ type SourceFileLinks struct {
 	localJsxFragmentNamespace string
 	localJsxFactory           *ast.EntityName
 	localJsxFragmentFactory   *ast.EntityName
+	jsxFragmentType           *Type
 }
 
 // Signature specific links
@@ -587,6 +590,10 @@ func (t *Type) Flags() TypeFlags {
 	return t.flags
 }
 
+func (t *Type) ObjectFlags() ObjectFlags {
+	return t.objectFlags
+}
+
 // Casts for concrete struct types
 
 func (t *Type) AsIntrinsicType() *IntrinsicType             { return t.data.(*IntrinsicType) }
@@ -776,7 +783,7 @@ func (t *LiteralType) Value() any {
 }
 
 func (t *LiteralType) String() string {
-	return ValueToString(t)
+	return ValueToString(t.value)
 }
 
 // UniqueESSymbolTypeData
@@ -939,6 +946,8 @@ type TupleElementInfo struct {
 	labeledDeclaration *ast.Node // NamedTupleMember | ParameterDeclaration | nil
 }
 
+func (t *TupleElementInfo) TupleElementFlags() ElementFlags { return t.flags }
+
 type TupleType struct {
 	InterfaceType
 	elementInfos  []TupleElementInfo
@@ -946,6 +955,15 @@ type TupleType struct {
 	fixedLength   int // Number of initial required or optional elements
 	combinedFlags ElementFlags
 	readonly      bool
+}
+
+func (t *TupleType) FixedLength() int { return t.fixedLength }
+func (t *TupleType) ElementFlags() []ElementFlags {
+	elementFlags := make([]ElementFlags, len(t.elementInfos))
+	for i, info := range t.elementInfos {
+		elementFlags[i] = info.flags
+	}
+	return elementFlags
 }
 
 // SingleSignatureType
@@ -1145,6 +1163,22 @@ type Signature struct {
 	mapper                   *TypeMapper
 	isolatedSignatureType    *Type
 	composite                *CompositeSignature
+}
+
+func (s *Signature) TypeParameters() []*Type {
+	return s.typeParameters
+}
+
+func (s *Signature) Declaration() *ast.Node {
+	return s.declaration
+}
+
+func (s *Signature) Target() *Signature {
+	return s.target
+}
+
+func (s *Signature) ThisParameter() *ast.Symbol {
+	return s.thisParameter
 }
 
 type CompositeSignature struct {

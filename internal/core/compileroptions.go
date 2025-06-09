@@ -8,6 +8,7 @@ import (
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w compileroptions_stringer_generated.go
 
 type CompilerOptions struct {
 	AllowJs                                   Tristate                                  `json:"allowJs,omitzero"`
@@ -36,6 +37,7 @@ type CompilerOptions struct {
 	DisableSourceOfProjectReferenceRedirect   Tristate                                  `json:"disableSourceOfProjectReferenceRedirect,omitzero"`
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
 	DisableReferencedProjectLoad              Tristate                                  `json:"disableReferencedProjectLoad,omitzero"`
+	ErasableSyntaxOnly                        Tristate                                  `json:"erasableSyntaxOnly,omitzero"`
 	ESModuleInterop                           Tristate                                  `json:"esModuleInterop,omitzero"`
 	ExactOptionalPropertyTypes                Tristate                                  `json:"exactOptionalPropertyTypes,omitzero"`
 	ExperimentalDecorators                    Tristate                                  `json:"experimentalDecorators,omitzero"`
@@ -54,6 +56,7 @@ type CompilerOptions struct {
 	JsxImportSource                           string                                    `json:"jsxImportSource,omitzero"`
 	KeyofStringsOnly                          Tristate                                  `json:"keyofStringsOnly,omitzero"`
 	Lib                                       []string                                  `json:"lib,omitzero"`
+	LibReplacement                            Tristate                                  `json:"libReplacement,omitzero"`
 	Locale                                    string                                    `json:"locale,omitzero"`
 	MapRoot                                   string                                    `json:"mapRoot,omitzero"`
 	Module                                    ModuleKind                                `json:"module,omitzero"`
@@ -147,7 +150,7 @@ func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 		return options.Target
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16:
+	case ModuleKindNode16, ModuleKindNode18:
 		return ScriptTargetES2022
 	case ModuleKindNodeNext:
 		return ScriptTargetESNext
@@ -171,7 +174,7 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return options.ModuleResolution
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16:
+	case ModuleKindNode16, ModuleKindNode18:
 		return ModuleResolutionKindNode16
 	case ModuleKindNodeNext:
 		return ModuleResolutionKindNodeNext
@@ -345,6 +348,7 @@ const (
 	ModuleKindESNext ModuleKind = 99
 	// Node16+ is an amalgam of commonjs (albeit updated) and es2022+, and represents a distinct module system from es2020/esnext
 	ModuleKindNode16   ModuleKind = 100
+	ModuleKindNode18   ModuleKind = 101
 	ModuleKindNodeNext ModuleKind = 199
 	// Emit as written
 	ModuleKindPreserve ModuleKind = 200
@@ -352,6 +356,12 @@ const (
 
 func (moduleKind ModuleKind) IsNonNodeESM() bool {
 	return moduleKind >= ModuleKindES2015 && moduleKind <= ModuleKindESNext
+}
+
+func (moduleKind ModuleKind) SupportsImportAttributes() bool {
+	return ModuleKindNode18 <= moduleKind && moduleKind <= ModuleKindNodeNext ||
+		moduleKind == ModuleKindPreserve ||
+		moduleKind == ModuleKindESNext
 }
 
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
