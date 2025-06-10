@@ -14,9 +14,9 @@ function getPredicate(alwaysTrue: boolean) {
     const predicate: (input: string) => boolean = useMemo(() => {
 >predicate : (input: string) => boolean
 >input : string
->useMemo(() => {        if (alwaysTrue) {            return () => true;        }        return x => x.length > 0;    }) : (x: string) => boolean
+>useMemo(() => {        if (alwaysTrue) {            return () => true;        }        return x => x.length > 0;    }) : (x: any) => boolean
 >useMemo : <T>(func: () => T) => T
->() => {        if (alwaysTrue) {            return () => true;        }        return x => x.length > 0;    } : () => (x: string) => boolean
+>() => {        if (alwaysTrue) {            return () => true;        }        return x => x.length > 0;    } : () => (x: any) => boolean
 
         if (alwaysTrue) {
 >alwaysTrue : boolean
@@ -26,12 +26,12 @@ function getPredicate(alwaysTrue: boolean) {
 >true : true
         }
         return x => x.length > 0;
->x => x.length > 0 : (x: string) => boolean
->x : string
+>x => x.length > 0 : (x: any) => boolean
+>x : any
 >x.length > 0 : boolean
->x.length : number
->x : string
->length : number
+>x.length : any
+>x : any
+>length : any
 >0 : 0
 
     });

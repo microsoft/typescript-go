@@ -26,9 +26,7 @@ function getPredicate(alwaysTrue: boolean) {
         }
         return x => x.length > 0;
 >x : Symbol(x, Decl(subtypeReductionWithAnyFunctionType.ts, 9, 14))
->x.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 >x : Symbol(x, Decl(subtypeReductionWithAnyFunctionType.ts, 9, 14))
->length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 
     });
     return predicate;
