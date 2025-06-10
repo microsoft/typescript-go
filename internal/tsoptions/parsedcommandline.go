@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
@@ -237,7 +238,7 @@ func (p *ParsedCommandLine) MatchesFileName(fileName string) bool {
 		return false
 	}
 
-	var allFileNames core.Set[tspath.Path]
+	var allFileNames collections.Set[tspath.Path]
 	for _, fileName := range p.FileNames() {
 		allFileNames.Add(tspath.ToPath(fileName, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames()))
 	}

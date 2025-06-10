@@ -16,14 +16,14 @@ import (
 type ConfigFileEntry struct {
 	mu             sync.Mutex
 	commandLine    *tsoptions.ParsedCommandLine
-	projects       core.Set[*Project]
+	projects       collections.Set[*Project]
 	pendingReload  PendingReload
 	rootFilesWatch *watchedFiles[[]string]
 }
 
 type ExtendedConfigFileEntry struct {
 	mu          sync.Mutex
-	configFiles core.Set[tspath.Path]
+	configFiles collections.Set[tspath.Path]
 }
 
 type ConfigFileRegistry struct {

@@ -3,6 +3,7 @@ package compiler
 import (
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -47,7 +48,7 @@ func (h *projectReferenceDtsFakingHost) Trace(msg string) {
 
 type projectReferenceDtsFakingVfs struct {
 	projectReferenceFileMapper *projectReferenceFileMapper
-	dtsDirectories             core.Set[tspath.Path]
+	dtsDirectories             collections.Set[tspath.Path]
 	knownSymlinks              knownSymlinks
 }
 

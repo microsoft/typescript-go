@@ -42,10 +42,10 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K) {
 }
 
 func (w *fileLoaderWorker[K]) collect(loader *fileLoader, tasks []K, iterate func(K, []tspath.Path)) []tspath.Path {
-	return w.collectWorker(loader, tasks, iterate, core.Set[K]{})
+	return w.collectWorker(loader, tasks, iterate, collections.Set[K]{})
 }
 
-func (w *fileLoaderWorker[K]) collectWorker(loader *fileLoader, tasks []K, iterate func(K, []tspath.Path), seen core.Set[K]) []tspath.Path {
+func (w *fileLoaderWorker[K]) collectWorker(loader *fileLoader, tasks []K, iterate func(K, []tspath.Path), seen collections.Set[K]) []tspath.Path {
 	var results []tspath.Path
 	for _, task := range tasks {
 		// ensure we only walk each task once

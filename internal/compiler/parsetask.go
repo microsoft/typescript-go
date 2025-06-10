@@ -44,13 +44,13 @@ func (t *parseTask) start(loader *fileLoader) {
 		loader.libFileCount.Add(1)
 	}
 
+	t.metadata = loader.loadSourceFileMetaData(t.normalizedFilePath)
 	file := loader.parseSourceFile(t)
 	if file == nil {
 		return
 	}
 
 	t.file = file
-	t.metadata = loader.loadSourceFileMetaData(file.FileName())
 
 	// !!! if noResolve, skip all of this
 	t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports())+len(file.ModuleAugmentations))

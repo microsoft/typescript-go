@@ -8,6 +8,7 @@ import (
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -32,7 +33,7 @@ type fileLoader struct {
 	factory   ast.NodeFactory
 
 	projectReferenceFileMapper *projectReferenceFileMapper
-	dtsDirectories             core.Set[tspath.Path]
+	dtsDirectories             collections.Set[tspath.Path]
 }
 
 type processedFiles struct {
@@ -277,7 +278,7 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) *ast.SourceFileMeta
 
 func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	path := p.toPath(t.normalizedFilePath)
-	sourceFile := p.opts.Host.GetSourceFile(t.normalizedFilePath, path, p.projectReferenceFileMapper.getCompilerOptionsForFile(t).GetEmitScriptTarget())
+	sourceFile := p.opts.Host.GetSourceFile(t.normalizedFilePath, path, p.projectReferenceFileMapper.getCompilerOptionsForFile(t).SourceFileAffecting(), t.metadata) // TODO(jakebailey): cache :(
 	return sourceFile
 }
 
@@ -443,7 +444,7 @@ func getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, file *ast.So
 
 func getDefaultResolutionModeForFile(fileName string, meta *ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
 	if importSyntaxAffectsModuleResolution(options) {
-		return ast.GetImpliedNodeFormatForEmitWorker(fileName, options, meta)
+		return ast.GetImpliedNodeFormatForEmitWorker(fileName, options.GetEmitModuleKind(), meta)
 	} else {
 		return core.ResolutionModeNone
 	}
