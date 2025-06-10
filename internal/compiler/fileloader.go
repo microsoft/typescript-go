@@ -87,7 +87,6 @@ func processAllProgramFiles(
 		loader.resolver = module.NewResolver(opts.Host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 	} else {
 		loader.resolver = module.NewResolver(&ProjectReferenceDtsFakingHost{
-			host:                       opts.Host,
 			projectReferenceFileMapper: loader.projectReferenceFileMapper,
 			dtsDirectories:             loader.dtsDirectories,
 			symlinkCache:               modulespecifiers.SymlinkCache{},

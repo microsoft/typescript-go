@@ -11,7 +11,6 @@ import (
 )
 
 type ProjectReferenceDtsFakingHost struct {
-	host                       CompilerHost
 	projectReferenceFileMapper *ProjectReferenceFileMapper
 	dtsDirectories             core.Set[tspath.Path]
 	symlinkCache               modulespecifiers.SymlinkCache
@@ -24,21 +23,21 @@ func (h *ProjectReferenceDtsFakingHost) FS() vfs.FS {
 }
 
 func (h *ProjectReferenceDtsFakingHost) GetCurrentDirectory() string {
-	return h.host.GetCurrentDirectory()
+	return h.projectReferenceFileMapper.opts.Host.GetCurrentDirectory()
 }
 
 func (h *ProjectReferenceDtsFakingHost) Trace(msg string) {
-	h.host.Trace(msg)
+	h.projectReferenceFileMapper.opts.Host.Trace(msg)
 }
 
 // UseCaseSensitiveFileNames returns true if the file system is case-sensitive.
 func (h *ProjectReferenceDtsFakingHost) UseCaseSensitiveFileNames() bool {
-	return h.host.FS().UseCaseSensitiveFileNames()
+	return h.projectReferenceFileMapper.opts.Host.FS().UseCaseSensitiveFileNames()
 }
 
 // FileExists returns true if the file exists.
 func (h *ProjectReferenceDtsFakingHost) FileExists(path string) bool {
-	if h.host.FS().FileExists(path) {
+	if h.projectReferenceFileMapper.opts.Host.FS().FileExists(path) {
 		return true
 	}
 	if !tspath.IsDeclarationFileName(path) {
@@ -50,7 +49,7 @@ func (h *ProjectReferenceDtsFakingHost) FileExists(path string) bool {
 
 func (h *ProjectReferenceDtsFakingHost) ReadFile(path string) (contents string, ok bool) {
 	// Dont need to override as we cannot mimick read file
-	return h.host.FS().ReadFile(path)
+	return h.projectReferenceFileMapper.opts.Host.FS().ReadFile(path)
 }
 
 func (h *ProjectReferenceDtsFakingHost) WriteFile(path string, data string, writeByteOrderMark bool) error {
@@ -64,7 +63,7 @@ func (h *ProjectReferenceDtsFakingHost) Remove(path string) error {
 
 // DirectoryExists returns true if the path is a directory.
 func (h *ProjectReferenceDtsFakingHost) DirectoryExists(path string) bool {
-	if h.host.FS().DirectoryExists(path) {
+	if h.projectReferenceFileMapper.opts.Host.FS().DirectoryExists(path) {
 		h.handleDirectoryCouldBeSymlink(path)
 		return true
 	}
@@ -90,11 +89,11 @@ func (h *ProjectReferenceDtsFakingHost) WalkDir(root string, walkFn vfs.WalkDirF
 // Realpath returns the "real path" of the specified path,
 // following symlinks and correcting filename casing.
 func (h *ProjectReferenceDtsFakingHost) Realpath(path string) string {
-	result, ok := h.symlinkCache.SymlinkedFiles()[h.toPath(path)]
+	result, ok := h.symlinkCache.SymlinkedFiles().Load(h.toPath(path))
 	if ok {
 		return result
 	}
-	return h.host.FS().Realpath(path)
+	return h.projectReferenceFileMapper.opts.Host.FS().Realpath(path)
 }
 
 func (h *ProjectReferenceDtsFakingHost) toPath(path string) tspath.Path {
@@ -111,27 +110,26 @@ func (h *ProjectReferenceDtsFakingHost) handleDirectoryCouldBeSymlink(directory 
 		return
 	}
 	directoryPath := tspath.Path(tspath.EnsureTrailingDirectorySeparator(string(h.toPath(directory))))
-	if _, ok := h.symlinkCache.SymlinkedDirectories()[directoryPath]; ok {
+	if _, ok := h.symlinkCache.SymlinkedDirectories().Load(directoryPath); ok {
 		return
 	}
 
-	realDirectory := h.host.FS().Realpath(directory)
+	realDirectory := h.projectReferenceFileMapper.opts.Host.FS().Realpath(directory)
 	var realPath tspath.Path
+	var symlinkedDirectory *modulespecifiers.SymlinkedDirectory
 	if realDirectory == directory {
 		// not symlinked
-		h.symlinkCache.SetSymlinkedDirectory(directory, directoryPath, nil)
-		return
-	}
-	if realPath = tspath.Path(tspath.EnsureTrailingDirectorySeparator(string(h.toPath(realDirectory)))); realPath == directoryPath {
+		symlinkedDirectory = nil
+	} else if realPath = tspath.Path(tspath.EnsureTrailingDirectorySeparator(string(h.toPath(realDirectory)))); realPath == directoryPath {
 		// not symlinked
-		h.symlinkCache.SetSymlinkedDirectory(directory, directoryPath, nil)
-		return
+		symlinkedDirectory = nil
+	} else {
+		symlinkedDirectory = &modulespecifiers.SymlinkedDirectory{
+			Real:     tspath.EnsureTrailingDirectorySeparator(realDirectory),
+			RealPath: realPath,
+		}
 	}
-
-	h.symlinkCache.SetSymlinkedDirectory(directory, directoryPath, &modulespecifiers.SymlinkedDirectory{
-		Real:     tspath.EnsureTrailingDirectorySeparator(realDirectory),
-		RealPath: realPath,
-	})
+	h.symlinkCache.SetSymlinkedDirectory(directory, directoryPath, symlinkedDirectory)
 }
 
 func (h *ProjectReferenceDtsFakingHost) fileOrDirectoryExistsUsingSource(fileOrDirectory string, isFile bool) bool {
@@ -142,9 +140,8 @@ func (h *ProjectReferenceDtsFakingHost) fileOrDirectoryExistsUsingSource(fileOrD
 		return result == core.TSTrue
 	}
 
-	// !!! sheetal this needs to be thread safe !!
 	symlinkedDirectories := h.symlinkCache.SymlinkedDirectories()
-	if symlinkedDirectories == nil {
+	if symlinkedDirectories.Size() == 0 {
 		return false
 	}
 	fileOrDirectoryPath := h.toPath(fileOrDirectory)
@@ -152,23 +149,24 @@ func (h *ProjectReferenceDtsFakingHost) fileOrDirectoryExistsUsingSource(fileOrD
 		return false
 	}
 	if isFile {
-		_, ok := h.symlinkCache.SymlinkedFiles()[fileOrDirectoryPath]
+		_, ok := h.symlinkCache.SymlinkedFiles().Load(fileOrDirectoryPath)
 		if ok {
 			return true
 		}
 	}
 
 	// If it contains node_modules check if its one of the symlinked path we know of
-	for directoryPath, symlinkedDirectory := range symlinkedDirectories {
+	var exists bool
+	symlinkedDirectories.Range(func(directoryPath tspath.Path, symlinkedDirectory *modulespecifiers.SymlinkedDirectory) bool {
 		if symlinkedDirectory == nil {
-			continue
+			return true
 		}
 
 		relative, hasPrefix := strings.CutPrefix(string(fileOrDirectoryPath), string(directoryPath))
 		if !hasPrefix {
-			continue
+			return true
 		}
-		if fileOrDirectoryExistsUsingSource(string(symlinkedDirectory.RealPath) + relative).IsTrue() {
+		if exists = fileOrDirectoryExistsUsingSource(string(symlinkedDirectory.RealPath) + relative).IsTrue(); exists {
 			if isFile {
 				// Store the real path for the file
 				absolutePath := tspath.GetNormalizedAbsolutePath(fileOrDirectory, h.GetCurrentDirectory())
@@ -177,16 +175,17 @@ func (h *ProjectReferenceDtsFakingHost) fileOrDirectoryExistsUsingSource(fileOrD
 					symlinkedDirectory.Real+absolutePath[len(directoryPath):],
 				)
 			}
-			return true
+			return false
 		}
-	}
-	return false
+		return true
+	})
+	return exists
 }
 
 func (h *ProjectReferenceDtsFakingHost) fileExistsIfProjectReferenceDts(file string) core.Tristate {
 	source := h.projectReferenceFileMapper.getSourceAndProjectReference(h.toPath(file))
 	if source != nil {
-		return core.IfElse(h.host.FS().FileExists(source.Source), core.TSTrue, core.TSFalse)
+		return core.IfElse(h.projectReferenceFileMapper.opts.Host.FS().FileExists(source.Source), core.TSTrue, core.TSFalse)
 	}
 	return core.TSUnknown
 }
