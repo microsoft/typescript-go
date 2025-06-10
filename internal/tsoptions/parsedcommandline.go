@@ -121,6 +121,10 @@ func (p *ParsedCommandLine) GetOutputDeclarationFileNames() iter.Seq2[string, st
 
 // WildcardDirectories returns the cached wildcard directories, initializing them if needed
 func (p *ParsedCommandLine) WildcardDirectories() map[string]bool {
+	if p == nil {
+		return nil
+	}
+
 	if p.wildcardDirectories != nil {
 		return p.wildcardDirectories
 	}
@@ -174,6 +178,13 @@ func (p *ParsedCommandLine) FileNames() []string {
 
 func (p *ParsedCommandLine) ProjectReferences() []*core.ProjectReference {
 	return p.ParsedConfig.ProjectReferences
+}
+
+func (p *ParsedCommandLine) ExtendedSourceFiles() []string {
+	if p == nil || p.ConfigFile == nil {
+		return nil
+	}
+	return p.ConfigFile.ExtendedSourceFiles
 }
 
 func (p *ParsedCommandLine) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {

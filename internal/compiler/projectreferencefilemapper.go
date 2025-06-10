@@ -130,6 +130,33 @@ func (mapper *ProjectReferenceFileMapper) getRedirectForResolution(file ast.HasF
 	return nil
 }
 
+func (mapper *ProjectReferenceFileMapper) getResolvedReferenceFor(path tspath.Path) (*tsoptions.ParsedCommandLine, bool) {
+	config, ok := mapper.configToProjectReference[path]
+	return config, ok
+}
+
+func (mapper *ProjectReferenceFileMapper) forEachResolvedProjectReference(
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
+) {
+	if mapper.opts.Config.ConfigFile == nil {
+		return
+	}
+	refs := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
+	mapper.forEachResolvedReferenceWorker(refs, fn)
+}
+
+func (mapper *ProjectReferenceFileMapper) forEachResolvedReferenceWorker(
+	referenes []tspath.Path,
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
+) {
+	for _, path := range referenes {
+		config, _ := mapper.configToProjectReference[path]
+		if !fn(path, config) {
+			return
+		}
+	}
+}
+
 func (mapper *ProjectReferenceFileMapper) getSourceToDtsIfSymlink(file ast.HasFileName) *tsoptions.SourceAndProjectReference {
 	// If preserveSymlinks is true, module resolution wont jump the symlink
 	// but the resolved real path may be the .d.ts from project reference

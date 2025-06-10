@@ -239,7 +239,7 @@ func parseOwnConfigOfJsonSourceFile(
 }
 
 type TsConfigSourceFile struct {
-	extendedSourceFiles []string
+	ExtendedSourceFiles []string
 	configFileSpecs     *configFileSpecs
 	SourceFile          *ast.SourceFile
 }
@@ -930,10 +930,8 @@ func getExtendedConfig(
 	}
 	if sourceFile != nil {
 		result.extendedSourceFiles.Add(extendedResult.SourceFile.FileName())
-		if len(extendedResult.extendedSourceFiles) != 0 {
-			for _, extendedSourceFile := range extendedResult.extendedSourceFiles {
-				result.extendedSourceFiles.Add(extendedSourceFile)
-			}
+		for _, extendedSourceFile := range extendedResult.ExtendedSourceFiles {
+			result.extendedSourceFiles.Add(extendedSourceFile)
 		}
 	}
 	if len(extendedResult.SourceFile.Diagnostics()) != 0 {
@@ -1064,7 +1062,7 @@ func parseConfig(
 		}
 		if sourceFile != nil {
 			for extendedSourceFile := range result.extendedSourceFiles.Keys() {
-				sourceFile.extendedSourceFiles = append(sourceFile.extendedSourceFiles, extendedSourceFile)
+				sourceFile.ExtendedSourceFiles = append(sourceFile.ExtendedSourceFiles, extendedSourceFile)
 			}
 		}
 		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options)

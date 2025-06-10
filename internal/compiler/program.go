@@ -118,6 +118,16 @@ func (p *Program) GetSourceAndProjectReference(path tspath.Path) *tsoptions.Sour
 	return p.projectReferenceFileMapper.getSourceAndProjectReference(path)
 }
 
+func (p *Program) GetResolvedProjectReferenceFor(path tspath.Path) (*tsoptions.ParsedCommandLine, bool) {
+	return p.projectReferenceFileMapper.getResolvedReferenceFor(path)
+}
+
+func (p *Program) ForEachResolvedProjectReference(
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
+) {
+	p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
+}
+
 // UseCaseSensitiveFileNames implements checker.Program.
 func (p *Program) UseCaseSensitiveFileNames() bool {
 	return p.Host().FS().UseCaseSensitiveFileNames()
