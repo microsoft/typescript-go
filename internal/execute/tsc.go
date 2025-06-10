@@ -77,7 +77,10 @@ func fmtMain(sys System, input, output string) ExitStatus {
 		string(pathified),
 		pathified,
 		text,
-		core.ScriptTargetESNext,
+		&core.SourceFileAffectingCompilerOptions{
+			EmitScriptTarget: core.ScriptTargetLatest,
+		},
+		nil,
 		scanner.JSDocParsingModeParseAll,
 	)
 	ast.SetParentInChildren(sourceFile.AsNode())
