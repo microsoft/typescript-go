@@ -48,7 +48,7 @@ type snapshot struct {
 func (s *snapshot) GetLineMap(fileName string) *ls.LineMap {
 	file := s.program.GetSourceFile(fileName)
 	scriptInfo := s.project.host.GetScriptInfoByPath(file.Path())
-	if s.project.getFileVersion(file, s.program.Options()) == scriptInfo.Version() {
+	if s.project.getFileVersion(file, s.program.Options(), s.program.GetSourceFileMetaData(file.Path())) == scriptInfo.Version() {
 		return scriptInfo.LineMap()
 	}
 	return ls.ComputeLineStarts(file.Text())
@@ -171,7 +171,11 @@ type Project struct {
 	typingsWatchInvoked     atomic.Bool
 }
 
-func NewConfiguredProject(configFileName string, configFilePath tspath.Path, host ProjectHost) *Project {
+func NewConfiguredProject(
+	configFileName string,
+	configFilePath tspath.Path,
+	host ProjectHost,
+) *Project {
 	project := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), host)
 	project.configFileName = configFileName
 	project.configFilePath = configFilePath
@@ -184,7 +188,12 @@ func NewConfiguredProject(configFileName string, configFilePath tspath.Path, hos
 	return project
 }
 
-func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory string, projectRootPath tspath.Path, host ProjectHost) *Project {
+func NewInferredProject(
+	compilerOptions *core.CompilerOptions,
+	currentDirectory string,
+	projectRootPath tspath.Path,
+	host ProjectHost,
+) *Project {
 	project := NewProject(projectNamer.next("/dev/null/inferredProject"), KindInferred, currentDirectory, host)
 	project.rootPath = projectRootPath
 	project.compilerOptions = compilerOptions
@@ -261,18 +270,20 @@ func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 }
 
 // GetSourceFile implements compiler.CompilerHost.
-func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+func (p *Project) GetSourceFile(fileName string, path tspath.Path, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.SourceFile {
 	scriptKind := p.getScriptKind(fileName)
 	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
 		var (
 			oldSourceFile      *ast.SourceFile
 			oldCompilerOptions *core.CompilerOptions
+			oldMetadata        *ast.SourceFileMetaData
 		)
 		if p.program != nil {
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
 			oldCompilerOptions = p.program.Options()
+			oldMetadata = p.program.GetSourceFileMetaData(scriptInfo.path)
 		}
-		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, oldSourceFile, oldCompilerOptions)
+		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, metadata, oldSourceFile, oldCompilerOptions, oldMetadata)
 	}
 	return nil
 }
@@ -542,7 +553,7 @@ func (p *Project) updateGraph() (*compiler.Program, bool) {
 		if oldProgram != nil {
 			for _, oldSourceFile := range oldProgram.GetSourceFiles() {
 				if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
-					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.Options())
+					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.Options(), oldProgram.GetSourceFileMetaData(oldSourceFile.Path()))
 					p.detachScriptInfoIfNotInferredRoot(oldSourceFile.Path())
 				}
 			}
@@ -684,7 +695,7 @@ func (p *Project) extractUnresolvedImports(oldProgram *compiler.Program) []strin
 	// tracing?.push(tracing.Phase.Session, "getUnresolvedImports", { count: sourceFiles.length });
 	hasChanges := false
 	sourceFiles := p.program.GetSourceFiles()
-	sourceFilesSet := core.NewSetWithSizeHint[*ast.SourceFile](len(sourceFiles))
+	sourceFilesSet := collections.NewSetWithSizeHint[*ast.SourceFile](len(sourceFiles))
 
 	// !!! sheetal remove ambient module names from unresolved imports
 	// const ambientModules = program.getTypeChecker().getAmbientModules().map(mod => stripQuotes(mod.getName()));
@@ -1021,7 +1032,7 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 			for _, sourceFile := range sourceFiles {
 				builder.WriteString("\n\t\t" + sourceFile.FileName())
 				if writeFileVersionAndText {
-					builder.WriteString(fmt.Sprintf(" %d %s", p.getFileVersion(sourceFile, options), sourceFile.Text()))
+					builder.WriteString(fmt.Sprintf(" %d %s", p.getFileVersion(sourceFile, options, p.program.GetSourceFileMetaData(sourceFile.Path())), sourceFile.Text()))
 				}
 			}
 			// !!!
@@ -1032,8 +1043,8 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 	return builder.String()
 }
 
-func (p *Project) getFileVersion(file *ast.SourceFile, options *core.CompilerOptions) int {
-	return p.host.DocumentRegistry().getFileVersion(file, options)
+func (p *Project) getFileVersion(file *ast.SourceFile, options *core.CompilerOptions, metadata *ast.SourceFileMetaData) int {
+	return p.host.DocumentRegistry().getFileVersion(file, options, metadata)
 }
 
 func (p *Project) Log(s string) {
@@ -1059,7 +1070,7 @@ func (p *Project) Close() {
 
 	if p.program != nil {
 		for _, sourceFile := range p.program.GetSourceFiles() {
-			p.host.DocumentRegistry().ReleaseDocument(sourceFile, p.program.Options())
+			p.host.DocumentRegistry().ReleaseDocument(sourceFile, p.program.Options(), p.program.GetSourceFileMetaData(sourceFile.Path()))
 			// Detach script info if its not root or is root of non inferred project
 			p.detachScriptInfoIfNotInferredRoot(sourceFile.Path())
 		}

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"reflect"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -11,6 +12,8 @@ import (
 //go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w compileroptions_stringer_generated.go
 
 type CompilerOptions struct {
+	_ noCopy
+
 	AllowJs                                   Tristate                                  `json:"allowJs,omitzero"`
 	AllowArbitraryExtensions                  Tristate                                  `json:"allowArbitraryExtensions,omitzero"`
 	AllowSyntheticDefaultImports              Tristate                                  `json:"allowSyntheticDefaultImports,omitzero"`
@@ -145,6 +148,36 @@ type CompilerOptions struct {
 	Quiet          Tristate `json:"quiet,omitzero"`
 }
 
+// noCopy may be embedded into structs which must not be copied
+// after the first use.
+//
+// See https://golang.org/issues/8005#issuecomment-190753527
+// for details.
+type noCopy struct{}
+
+// Lock is a no-op used by -copylocks checker from `go vet`.
+func (*noCopy) Lock()   {}
+func (*noCopy) Unlock() {}
+
+var optionsType = reflect.TypeFor[CompilerOptions]()
+
+// Clone creates a shallow copy of the CompilerOptions.
+func (options *CompilerOptions) Clone() *CompilerOptions {
+	// TODO: this could be generated code instead of reflection.
+	target := &CompilerOptions{}
+
+	sourceValue := reflect.ValueOf(options).Elem()
+	targetValue := reflect.ValueOf(target).Elem()
+
+	for i := range sourceValue.NumField() {
+		if optionsType.Field(i).IsExported() {
+			targetValue.Field(i).Set(sourceValue.Field(i))
+		}
+	}
+
+	return target
+}
+
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 	if options.Target != ScriptTargetNone {
 		return options.Target
@@ -180,6 +213,18 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return ModuleResolutionKindNodeNext
 	default:
 		return ModuleResolutionKindBundler
+	}
+}
+
+func (options *CompilerOptions) GetEmitModuleDetectionKind() ModuleDetectionKind {
+	if options.ModuleDetection != ModuleDetectionKindNone {
+		return options.ModuleDetection
+	}
+	switch options.GetEmitModuleKind() {
+	case ModuleKindNode16, ModuleKindNodeNext:
+		return ModuleDetectionKindForce
+	default:
+		return ModuleDetectionKindAuto
 	}
 }
 
@@ -306,7 +351,10 @@ type SourceFileAffectingCompilerOptions struct {
 	AllowUnreachableCode       Tristate
 	AllowUnusedLabels          Tristate
 	BindInStrictMode           bool
+	EmitModuleDetectionKind    ModuleDetectionKind
+	EmitModuleKind             ModuleKind
 	EmitScriptTarget           ScriptTarget
+	JsxEmit                    JsxEmit
 	NoFallthroughCasesInSwitch Tristate
 	ShouldPreserveConstEnums   bool
 }
@@ -316,7 +364,10 @@ func (options *CompilerOptions) SourceFileAffecting() *SourceFileAffectingCompil
 		AllowUnreachableCode:       options.AllowUnreachableCode,
 		AllowUnusedLabels:          options.AllowUnusedLabels,
 		BindInStrictMode:           options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
+		EmitModuleDetectionKind:    options.GetEmitModuleDetectionKind(),
+		EmitModuleKind:             options.GetEmitModuleKind(),
 		EmitScriptTarget:           options.GetEmitScriptTarget(),
+		JsxEmit:                    options.Jsx,
 		NoFallthroughCasesInSwitch: options.NoFallthroughCasesInSwitch,
 		ShouldPreserveConstEnums:   options.ShouldPreserveConstEnums(),
 	}

@@ -1,4 +1,4 @@
-package runner
+package testrunner
 
 import (
 	"fmt"
@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -323,7 +324,7 @@ func newCompilerTest(
 	}
 }
 
-var concurrentSkippedErrorBaselines = core.NewSetFromItems(
+var concurrentSkippedErrorBaselines = collections.NewSetFromItems(
 	"circular1.ts",
 	"circular3.ts",
 	"recursiveExportAssignmentAndFindAliasedType1.ts",

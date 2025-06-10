@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -52,6 +53,8 @@ type Parser struct {
 	fileName         string
 	path             tspath.Path
 	sourceText       string
+	options          *core.SourceFileAffectingCompilerOptions
+	metadata         *ast.SourceFileMetaData
 	languageVersion  core.ScriptTarget
 	scriptKind       core.ScriptKind
 	languageVariant  core.LanguageVariant
@@ -68,7 +71,7 @@ type Parser struct {
 
 	identifiers             map[string]string
 	identifierCount         int
-	notParenthesizedArrow   core.Set[int]
+	notParenthesizedArrow   collections.Set[int]
 	nodeSlicePool           core.Pool[*ast.Node]
 	jsdocCache              map[*ast.Node][]*ast.Node
 	possibleAwaitSpans      []int
@@ -96,10 +99,10 @@ func putParser(p *Parser) {
 	parserPool.Put(p)
 }
 
-func ParseSourceFile(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode) *ast.SourceFile {
+func ParseSourceFile(fileName string, path tspath.Path, sourceText string, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData, jsdocParsingMode scanner.JSDocParsingMode) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, languageVersion, core.ScriptKindUnknown, jsdocParsingMode)
+	p.initializeState(fileName, path, sourceText, options, metadata, core.ScriptKindUnknown, jsdocParsingMode)
 	p.nextToken()
 	return p.parseSourceFileWorker()
 }
@@ -107,7 +110,7 @@ func ParseSourceFile(fileName string, path tspath.Path, sourceText string, langu
 func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll)
+	p.initializeState(fileName, path, sourceText, &core.SourceFileAffectingCompilerOptions{EmitScriptTarget: core.ScriptTargetES2015}, nil, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll)
 	p.nextToken()
 	pos := p.nodePos()
 	var statements *ast.NodeList
@@ -183,13 +186,13 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 func ParseIsolatedEntityName(text string, languageVersion core.ScriptTarget) *ast.EntityName {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState("", "", text, languageVersion, core.ScriptKindJS, scanner.JSDocParsingModeParseAll)
+	p.initializeState("", "", text, &core.SourceFileAffectingCompilerOptions{EmitScriptTarget: languageVersion}, nil, core.ScriptKindJS, scanner.JSDocParsingModeParseAll)
 	p.nextToken()
 	entityName := p.parseEntityName(true, nil)
 	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
 }
 
-func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode) {
+func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode) {
 	if p.scanner == nil {
 		p.scanner = scanner.NewScanner()
 	} else {
@@ -198,7 +201,9 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	p.fileName = fileName
 	p.path = path
 	p.sourceText = sourceText
-	p.languageVersion = languageVersion
+	p.options = options
+	p.metadata = metadata
+	p.languageVersion = options.EmitScriptTarget
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = ast.GetLanguageVariant(p.scriptKind)
 	switch p.scriptKind {
@@ -343,7 +348,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
 	p.processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-	result.ExternalModuleIndicator = isFileProbablyExternalModule(result) // !!!
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVersion = p.languageVersion
@@ -355,6 +359,82 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
+	result.ExternalModuleIndicator = getExternalModuleIndicator(result, p.options, p.metadata)
+}
+
+func getExternalModuleIndicator(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.Node {
+	// All detection kinds start by checking this.
+	if node := isFileProbablyExternalModule(file); node != nil {
+		return node
+	}
+
+	switch options.EmitModuleDetectionKind {
+	case core.ModuleDetectionKindForce:
+		// All non-declaration files are modules, declaration files still do the usual isFileProbablyExternalModule
+		if !file.IsDeclarationFile {
+			return file.AsNode()
+		}
+		return nil
+	case core.ModuleDetectionKindLegacy:
+		// Files are modules if they have imports, exports, or import.meta
+		return nil
+	case core.ModuleDetectionKindAuto:
+		// If module is nodenext or node16, all esm format files are modules
+		// If jsx is react-jsx or react-jsxdev then jsx tags force module-ness
+		// otherwise, the presence of import or export statments (or import.meta) implies module-ness
+		if options.JsxEmit == core.JsxEmitReactJSX || options.JsxEmit == core.JsxEmitReactJSXDev {
+			if node := isFileModuleFromUsingJSXTag(file); node != nil {
+				return node
+			}
+		}
+		return isFileForcedToBeModuleByFormat(file, options, metadata)
+	default:
+		return nil
+	}
+}
+
+func isFileModuleFromUsingJSXTag(file *ast.SourceFile) *ast.Node {
+	if file.IsDeclarationFile {
+		return nil
+	}
+	return walkTreeForJSXTags(file.AsNode())
+}
+
+// This is a somewhat unavoidable full tree walk to locate a JSX tag - `import.meta` requires the same,
+// but we avoid that walk (or parts of it) if at all possible using the `PossiblyContainsImportMeta` node flag.
+// Unfortunately, there's no `NodeFlag` space to do the same for JSX.
+func walkTreeForJSXTags(node *ast.Node) *ast.Node {
+	var found *ast.Node
+
+	var visitor func(node *ast.Node) bool
+	visitor = func(node *ast.Node) bool {
+		if found != nil {
+			return true
+		}
+		if node.SubtreeFacts()&ast.SubtreeContainsJsx == 0 {
+			return true
+		}
+		if ast.IsJsxOpeningElement(node) || ast.IsJsxFragment(node) {
+			found = node
+			return true
+		}
+		return node.ForEachChild(visitor)
+	}
+	visitor(node)
+
+	return found
+}
+
+var isFileForcedToBeModuleByFormatExtensions = []string{tspath.ExtensionCjs, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionMts}
+
+func isFileForcedToBeModuleByFormat(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.Node {
+	// Excludes declaration files - they still require an explicit `export {}` or the like
+	// for back compat purposes. The only non-declaration files _not_ forced to be a module are `.js` files
+	// that aren't esm-mode (meaning not in a `type: module` scope).
+	if !file.IsDeclarationFile && (ast.GetImpliedNodeFormatForEmitWorker(file.FileName(), options.EmitModuleKind, metadata) == core.ModuleKindESNext || tspath.FileExtensionIsOneOf(file.FileName(), isFileForcedToBeModuleByFormatExtensions)) {
+		return file.AsNode()
+	}
+	return nil
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
@@ -1396,8 +1476,8 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	}
 	result := p.factory.NewExpressionStatement(expression)
 	p.finishNode(result, pos)
-	p.withJSDoc(result, hasJSDoc && !hasParen)
-	p.reparseCommonJS(result)
+	jsdoc := p.withJSDoc(result, hasJSDoc && !hasParen)
+	p.reparseCommonJS(result, jsdoc)
 	return result
 }
 
@@ -2378,7 +2458,7 @@ func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.Mo
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
-	result := p.factory.NewExportAssignment(modifiers, isExportEquals, expression)
+	result := p.factory.NewExportAssignment(modifiers, isExportEquals, nil /*typeNode*/, expression)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
@@ -4592,7 +4672,7 @@ func (p *Parser) makeAsExpression(left *ast.Expression, right *ast.TypeNode) *as
 }
 
 func (p *Parser) makeBinaryExpression(left *ast.Expression, operatorToken *ast.Node, right *ast.Expression, pos int) *ast.Node {
-	result := p.factory.NewBinaryExpression(left, operatorToken, right)
+	result := p.factory.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, operatorToken, right)
 	p.finishNode(result, pos)
 	return result
 }
@@ -4734,7 +4814,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 		operatorToken := p.factory.NewToken(ast.KindCommaToken)
 		operatorToken.Loc = core.NewTextRange(invalidElement.Pos(), invalidElement.Pos())
 		p.parseErrorAt(scanner.SkipTrivia(p.sourceText, topBadPos), invalidElement.End(), diagnostics.JSX_expressions_must_have_one_parent_element)
-		result = p.factory.NewBinaryExpression(result, operatorToken, invalidElement)
+		result = p.factory.NewBinaryExpression(nil /*modifiers*/, result, nil /*typeNode*/, operatorToken, invalidElement)
 		p.finishNode(result, pos)
 	}
 	return result
@@ -5644,11 +5724,11 @@ func (p *Parser) parseObjectLiteralElement() *ast.Node {
 		if equalsToken != nil {
 			initializer = doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
 		}
-		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, equalsToken, initializer)
+		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, nil /*typeNode*/, equalsToken, initializer)
 	} else {
 		p.parseExpected(ast.KindColonToken)
 		initializer := doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
-		node = p.factory.NewPropertyAssignment(modifiers, name, postfixToken, initializer)
+		node = p.factory.NewPropertyAssignment(modifiers, name, postfixToken, nil /*typeNode*/, initializer)
 	}
 	p.finishNode(node, pos)
 	p.withJSDoc(node, hasJSDoc)

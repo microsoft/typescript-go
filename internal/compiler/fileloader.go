@@ -174,11 +174,11 @@ func (p *fileLoader) startTasks(tasks []*parseTask) {
 
 func (p *fileLoader) collectTasks(tasks []*parseTask) iter.Seq[*parseTask] {
 	return func(yield func(*parseTask) bool) {
-		p.collectTasksWorker(tasks, core.Set[*parseTask]{}, yield)
+		p.collectTasksWorker(tasks, collections.Set[*parseTask]{}, yield)
 	}
 }
 
-func (p *fileLoader) collectTasksWorker(tasks []*parseTask, seen core.Set[*parseTask], yield func(*parseTask) bool) bool {
+func (p *fileLoader) collectTasksWorker(tasks []*parseTask, seen collections.Set[*parseTask], yield func(*parseTask) bool) bool {
 	for _, task := range tasks {
 		// ensure we only walk each task once
 		if seen.Has(task) {
@@ -244,13 +244,13 @@ func (t *parseTask) start(loader *fileLoader) {
 	}
 
 	loader.wg.Queue(func() {
-		file := loader.parseSourceFile(t.normalizedFilePath)
+		t.metadata = loader.loadSourceFileMetaData(t.normalizedFilePath)
+		file := loader.parseSourceFile(t.normalizedFilePath, t.metadata)
 		if file == nil {
 			return
 		}
 
 		t.file = file
-		t.metadata = loader.loadSourceFileMetaData(file.FileName())
 
 		// !!! if noResolve, skip all of this
 		t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports())+len(file.ModuleAugmentations))
@@ -309,9 +309,9 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) *ast.SourceFileMeta
 	}
 }
 
-func (p *fileLoader) parseSourceFile(fileName string) *ast.SourceFile {
+func (p *fileLoader) parseSourceFile(fileName string, metadata *ast.SourceFileMetaData) *ast.SourceFile {
 	path := tspath.ToPath(fileName, p.opts.Host.GetCurrentDirectory(), p.opts.Host.FS().UseCaseSensitiveFileNames())
-	sourceFile := p.opts.Host.GetSourceFile(fileName, path, p.opts.Config.CompilerOptions().GetEmitScriptTarget())
+	sourceFile := p.opts.Host.GetSourceFile(fileName, path, p.opts.Config.CompilerOptions().SourceFileAffecting(), metadata) // TODO(jakebailey): cache :(
 	return sourceFile
 }
 
@@ -395,7 +395,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
 			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
 			hasAllowedExtension := false
-			if compilerOptions.ResolveJsonModule.IsTrue() {
+			if compilerOptions.GetResolveJsonModule() {
 				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat)
 			} else if compilerOptions.AllowJs.IsTrue() {
 				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedJSExtensionsFlat) || tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsFlat)
@@ -467,7 +467,7 @@ func getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, file *ast.So
 
 func getDefaultResolutionModeForFile(fileName string, meta *ast.SourceFileMetaData, options *core.CompilerOptions) core.ResolutionMode {
 	if importSyntaxAffectsModuleResolution(options) {
-		return ast.GetImpliedNodeFormatForEmitWorker(fileName, options, meta)
+		return ast.GetImpliedNodeFormatForEmitWorker(fileName, options.GetEmitModuleKind(), meta)
 	} else {
 		return core.ResolutionModeNone
 	}
