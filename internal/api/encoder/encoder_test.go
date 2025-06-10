@@ -27,7 +27,7 @@ func TestEncodeSourceFile(t *testing.T) {
 		FileName:        "/test.ts",
 		Path:            "/test.ts",
 		CompilerOptions: parseCompilerOptions,
-	}, "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();")
+	}, "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptKindTS)
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
 		buf, err := encoder.EncodeSourceFile(sourceFile, "")
@@ -49,7 +49,7 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 		FileName:        "/checker.ts",
 		Path:            "/checker.ts",
 		CompilerOptions: parseCompilerOptions,
-	}, string(fileContent))
+	}, string(fileContent), core.ScriptKindTS)
 
 	for b.Loop() {
 		_, err := encoder.EncodeSourceFile(sourceFile, "")

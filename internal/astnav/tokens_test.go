@@ -60,7 +60,7 @@ func TestGetTokenAtPosition(t *testing.T) {
 			FileName:        "/file.ts",
 			Path:            "/file.ts",
 			CompilerOptions: parseCompilerOptions,
-		}, fileText)
+		}, fileText, core.ScriptKindTS)
 		assert.Equal(t, astnav.GetTokenAtPosition(file, 0), astnav.GetTokenAtPosition(file, 0))
 	})
 }
@@ -99,7 +99,7 @@ func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens 
 				FileName:        "/file.ts",
 				Path:            "/file.ts",
 				CompilerOptions: parseCompilerOptions,
-			}, string(fileText))
+			}, string(fileText), core.ScriptKindTS)
 
 			var output strings.Builder
 			currentRange := core.NewTextRange(0, 0)
@@ -436,7 +436,7 @@ export function isAnyDirectorySeparator(charCode: number): boolean {
 				FileName:        "/file.ts",
 				Path:            "/file.ts",
 				CompilerOptions: parseCompilerOptions,
-			}, testCase.fileContent)
+			}, testCase.fileContent, core.ScriptKindTS)
 			token := astnav.FindPrecedingToken(file, testCase.position)
 			assert.Equal(t, token.Kind, testCase.expectedKind)
 		})

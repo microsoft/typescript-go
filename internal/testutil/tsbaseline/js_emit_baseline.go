@@ -67,7 +67,7 @@ func DoJSEmitBaseline(
 				CompilerOptions: *options.SourceFileAffecting(),
 				// TODO(jakebailey) Metadata?,
 				JSDocParsingMode: ast.JSDocParsingModeParseAll,
-			}, file.Content)
+			}, file.Content, core.ScriptKindJSON) // TODO(jakebailey) why not ParseJSONSourceFile?
 			if len(fileParseResult.Diagnostics()) > 0 {
 				jsCode.WriteString(getErrorBaseline(t, []*harnessutil.TestFile{file}, fileParseResult.Diagnostics(), false /*pretty*/))
 				continue

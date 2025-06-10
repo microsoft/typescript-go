@@ -97,7 +97,7 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 	if tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(opts.FileName, opts.Path, text)
 	}
-	return parser.ParseSourceFile(opts, text)
+	return parser.ParseSourceFile(opts, text, core.GetScriptKindFromFileName(opts.FileName))
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {

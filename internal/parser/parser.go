@@ -96,10 +96,9 @@ func putParser(p *Parser) {
 	parserPool.Put(p)
 }
 
-func ParseSourceFile(opts ast.SourceFileParseOptions, sourceText string) *ast.SourceFile {
+func ParseSourceFile(opts ast.SourceFileParseOptions, sourceText string, scriptKind core.ScriptKind) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	scriptKind := ensureScriptKind(opts.FileName, opts.ScriptKindOverride)
 	p.initializeState(opts, sourceText, scriptKind)
 	p.nextToken()
 	return p.parseSourceFileWorker()
@@ -199,6 +198,10 @@ func ParseIsolatedEntityName(text string, languageVersion core.ScriptTarget) *as
 }
 
 func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText string, scriptKind core.ScriptKind) {
+	if scriptKind == core.ScriptKindUnknown {
+		panic("ScriptKind must be specified when parsing source files.")
+	}
+
 	if p.scanner == nil {
 		p.scanner = scanner.NewScanner()
 	} else {

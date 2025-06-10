@@ -23,7 +23,7 @@ func ParseTypeScript(text string, jsx bool) *ast.SourceFile {
 		Path:             tspath.Path(fileName),
 		CompilerOptions:  parseCompilerOptions,
 		JSDocParsingMode: ast.JSDocParsingModeParseNone,
-	}, text)
+	}, text, core.GetScriptKindFromFileName(fileName))
 	ast.SetParentInChildren(file.AsNode())
 	return file
 }

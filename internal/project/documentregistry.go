@@ -5,9 +5,22 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
+
+type registryKey struct {
+	ast.SourceFileParseOptions
+	scriptKind core.ScriptKind
+}
+
+func newRegistryKey(opts ast.SourceFileParseOptions, scriptKind core.ScriptKind) registryKey {
+	return registryKey{
+		SourceFileParseOptions: opts,
+		scriptKind:             scriptKind,
+	}
+}
 
 type registryEntry struct {
 	sourceFile *ast.SourceFile
@@ -25,7 +38,7 @@ type DocumentRegistryHooks struct {
 type DocumentRegistry struct {
 	Options         tspath.ComparePathsOptions
 	Hooks           DocumentRegistryHooks
-	documents       collections.SyncMap[ast.SourceFileParseOptions, *registryEntry]
+	documents       collections.SyncMap[registryKey, *registryEntry]
 	parsedFileCache ParsedFileCache
 }
 
@@ -40,19 +53,21 @@ type DocumentRegistry struct {
 // LanguageService instance over time, as well as across multiple instances. Here, we still
 // reuse files across multiple LanguageServices, but we only reuse them across Program updates
 // when the files haven't changed.
-func (r *DocumentRegistry) AcquireDocument(scriptInfo *ScriptInfo, key ast.SourceFileParseOptions, oldSourceFile *ast.SourceFile) *ast.SourceFile {
+func (r *DocumentRegistry) AcquireDocument(scriptInfo *ScriptInfo, opts ast.SourceFileParseOptions, oldSourceFile *ast.SourceFile) *ast.SourceFile {
+	key := newRegistryKey(opts, scriptInfo.scriptKind)
 	document := r.getDocumentWorker(scriptInfo, key)
 	if oldSourceFile != nil {
-		r.releaseDocumentWithKey(oldSourceFile.ParseOptions())
+		r.releaseDocumentWithKey(key)
 	}
 	return document
 }
 
 func (r *DocumentRegistry) ReleaseDocument(file *ast.SourceFile) {
-	r.releaseDocumentWithKey(file.ParseOptions())
+	key := newRegistryKey(file.ParseOptions(), file.ScriptKind)
+	r.releaseDocumentWithKey(key)
 }
 
-func (r *DocumentRegistry) releaseDocumentWithKey(key ast.SourceFileParseOptions) {
+func (r *DocumentRegistry) releaseDocumentWithKey(key registryKey) {
 	if entry, ok := r.documents.Load(key); ok {
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
@@ -66,14 +81,14 @@ func (r *DocumentRegistry) releaseDocumentWithKey(key ast.SourceFileParseOptions
 	}
 }
 
-func (r *DocumentRegistry) getDocumentWorker(scriptInfo *ScriptInfo, key ast.SourceFileParseOptions) *ast.SourceFile {
+func (r *DocumentRegistry) getDocumentWorker(scriptInfo *ScriptInfo, key registryKey) *ast.SourceFile {
 	scriptInfoVersion := scriptInfo.Version()
 	scriptInfoText := scriptInfo.Text()
 	if entry, ok := r.documents.Load(key); ok {
 		// We have an entry for this file. However, it may be for a different version of
 		// the script snapshot. If so, update it appropriately.
 		if entry.version != scriptInfoVersion {
-			sourceFile := r.getParsedFile(key, scriptInfoText)
+			sourceFile := r.getParsedFile(key.SourceFileParseOptions, scriptInfoText, key.scriptKind)
 			entry.mu.Lock()
 			defer entry.mu.Unlock()
 			entry.sourceFile = sourceFile
@@ -83,7 +98,7 @@ func (r *DocumentRegistry) getDocumentWorker(scriptInfo *ScriptInfo, key ast.Sou
 		return entry.sourceFile
 	} else {
 		// Have never seen this file with these settings. Create a new source file for it.
-		sourceFile := r.getParsedFile(key, scriptInfoText)
+		sourceFile := r.getParsedFile(key.SourceFileParseOptions, scriptInfoText, key.scriptKind)
 		entry, _ := r.documents.LoadOrStore(key, &registryEntry{
 			sourceFile: sourceFile,
 			refCount:   0,
@@ -97,22 +112,22 @@ func (r *DocumentRegistry) getDocumentWorker(scriptInfo *ScriptInfo, key ast.Sou
 }
 
 func (r *DocumentRegistry) getFileVersion(file *ast.SourceFile) int {
-	key := file.ParseOptions()
+	key := newRegistryKey(file.ParseOptions(), file.ScriptKind)
 	if entry, ok := r.documents.Load(key); ok && entry.sourceFile == file {
 		return entry.version
 	}
 	return -1
 }
 
-func (r *DocumentRegistry) getParsedFile(opts ast.SourceFileParseOptions, text string) *ast.SourceFile {
+func (r *DocumentRegistry) getParsedFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind) *ast.SourceFile {
 	if r.parsedFileCache != nil {
-		if file := r.parsedFileCache.GetFile(opts, text); file != nil {
+		if file := r.parsedFileCache.GetFile(opts, text, scriptKind); file != nil {
 			return file
 		}
 	}
-	file := parser.ParseSourceFile(opts, text)
+	file := parser.ParseSourceFile(opts, text, scriptKind)
 	if r.parsedFileCache != nil {
-		r.parsedFileCache.CacheFile(opts, text, file)
+		r.parsedFileCache.CacheFile(opts, text, scriptKind, file)
 	}
 	return file
 }
@@ -123,6 +138,6 @@ func (r *DocumentRegistry) size() int {
 }
 
 type ParsedFileCache interface {
-	GetFile(opts ast.SourceFileParseOptions, text string) *ast.SourceFile
-	CacheFile(opts ast.SourceFileParseOptions, text string, sourceFile *ast.SourceFile)
+	GetFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind) *ast.SourceFile
+	CacheFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind, sourceFile *ast.SourceFile)
 }

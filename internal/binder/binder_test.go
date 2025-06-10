@@ -33,10 +33,11 @@ func BenchmarkBind(b *testing.B) {
 				},
 				JSDocParsingMode: ast.JSDocParsingModeParseAll,
 			}
+			scriptKind := core.GetScriptKindFromFileName(fileName)
 
 			sourceFiles := make([]*ast.SourceFile, b.N)
 			for i := range b.N {
-				sourceFiles[i] = parser.ParseSourceFile(parseOptions, sourceText)
+				sourceFiles[i] = parser.ParseSourceFile(parseOptions, sourceText, scriptKind)
 			}
 
 			// The above parses do a lot of work; ensure GC is finished before we start collecting performance data.

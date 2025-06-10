@@ -76,8 +76,8 @@ var sourceFileCache collections.SyncMap[harnessutil.SourceFileCacheKey, *ast.Sou
 
 type parsedFileCache struct{}
 
-func (c *parsedFileCache) GetFile(opts ast.SourceFileParseOptions, text string) *ast.SourceFile {
-	key := harnessutil.GetSourceFileCacheKey(opts, text)
+func (c *parsedFileCache) GetFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind) *ast.SourceFile {
+	key := harnessutil.GetSourceFileCacheKey(opts, text, scriptKind)
 	cachedFile, ok := sourceFileCache.Load(key)
 	if !ok {
 		return nil
@@ -85,8 +85,8 @@ func (c *parsedFileCache) GetFile(opts ast.SourceFileParseOptions, text string) 
 	return cachedFile
 }
 
-func (c *parsedFileCache) CacheFile(opts ast.SourceFileParseOptions, text string, sourceFile *ast.SourceFile) {
-	key := harnessutil.GetSourceFileCacheKey(opts, text)
+func (c *parsedFileCache) CacheFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind, sourceFile *ast.SourceFile) {
+	key := harnessutil.GetSourceFileCacheKey(opts, text, scriptKind)
 	sourceFileCache.Store(key, sourceFile)
 }
 

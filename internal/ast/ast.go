@@ -9965,15 +9965,11 @@ const (
 )
 
 type SourceFileParseOptions struct {
-	FileName        string
-	Path            tspath.Path
-	CompilerOptions core.SourceFileAffectingCompilerOptions
-	Metadata        SourceFileMetaData
-
-	// Optional fields handled by the parser
-
-	ScriptKindOverride core.ScriptKind
-	JSDocParsingMode   JSDocParsingMode
+	FileName         string
+	Path             tspath.Path
+	CompilerOptions  core.SourceFileAffectingCompilerOptions
+	Metadata         SourceFileMetaData
+	JSDocParsingMode JSDocParsingMode
 }
 
 type SourceFileMetaData struct {

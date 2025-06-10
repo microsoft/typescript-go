@@ -471,11 +471,12 @@ type cachedCompilerHost struct {
 var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
 
 type SourceFileCacheKey struct {
-	opts ast.SourceFileParseOptions
-	text string
+	opts       ast.SourceFileParseOptions
+	text       string
+	scriptKind core.ScriptKind
 }
 
-func GetSourceFileCacheKey(opts ast.SourceFileParseOptions, text string) SourceFileCacheKey {
+func GetSourceFileCacheKey(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind) SourceFileCacheKey {
 	return SourceFileCacheKey{
 		opts: opts,
 		text: text,
@@ -488,7 +489,12 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 		return nil
 	}
 
-	key := GetSourceFileCacheKey(opts, text)
+	scriptKind := core.GetScriptKindFromFileName(opts.FileName)
+	if scriptKind == core.ScriptKindUnknown {
+		panic(fmt.Sprintf("Unknown script kind for file %s", opts.FileName))
+	}
+
+	key := GetSourceFileCacheKey(opts, text, scriptKind)
 
 	if cached, ok := sourceFileCache.Load(key); ok {
 		return cached
@@ -499,7 +505,7 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 	if tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson) {
 		sourceFile = parser.ParseJSONText(opts.FileName, opts.Path, text)
 	} else {
-		sourceFile = parser.ParseSourceFile(opts, text)
+		sourceFile = parser.ParseSourceFile(opts, text, scriptKind)
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
