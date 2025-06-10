@@ -276,9 +276,11 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			}
 		}
 	case ast.KindJSDocReadonlyTag, ast.KindJSDocPrivateTag, ast.KindJSDocPublicTag, ast.KindJSDocProtectedTag, ast.KindJSDocOverrideTag:
+		if parent.Kind == ast.KindExpressionStatement {
+			parent = parent.AsExpressionStatement().Expression
+		}
 		switch parent.Kind {
-		case ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
-			// !!! BinaryExpression (this.p assignments)
+		case ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindBinaryExpression:
 			var keyword ast.Kind
 			switch tag.Kind {
 			case ast.KindJSDocReadonlyTag:

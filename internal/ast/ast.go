@@ -5619,6 +5619,8 @@ func (node *BinaryExpression) computeSubtreeFacts() SubtreeFacts {
 		core.IfElse(node.OperatorToken.Kind == KindInKeyword && IsPrivateIdentifier(node.Left), SubtreeContainsClassFields, SubtreeFactsNone)
 }
 
+func (node *BinaryExpression) setModifiers(modifiers *ModifierList) { node.modifiers = modifiers }
+
 func IsBinaryExpression(node *Node) bool {
 	return node.Kind == KindBinaryExpression
 }
