@@ -265,6 +265,32 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				}
 			}
 		}
+	case ast.KindJSDocThisTag:
+        if fun, ok := getFunctionLikeHost(parent); ok {
+            // Only add a this parameter if we don't already have one
+            params := fun.Parameters()
+            if len(params) == 0 || params[0].Name().Text() != "this" {
+                thisParam := p.factory.NewParameterDeclaration(
+                    nil, /* decorators */
+                    nil, /* modifiers */
+                    p.factory.NewIdentifier("this"),
+                    nil, /* questionToken */
+                    nil, /* type */
+                    nil, /* initializer */
+                )
+				thisParam.AsParameterDeclaration().Type = p.makeNewType(tag.AsJSDocThisTag().TypeExpression, thisParam)
+                thisParam.Loc = tag.AsJSDocThisTag().TagName.Loc
+                thisParam.Flags = p.contextFlags | ast.NodeFlagsReparsed
+                
+                newParams := p.nodeSlicePool.NewSlice(len(params) + 1)
+                newParams[0] = thisParam
+                for i, param := range params {
+                    newParams[i+1] = param
+                }
+                
+                fun.FunctionLikeData().Parameters = p.newNodeList(thisParam.Loc, newParams)
+            }
+        }
 	case ast.KindJSDocReturnTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
 			if fun.Type() == nil {
@@ -319,7 +345,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			}
 		}
 	}
-	// !!! other attached tags (@this, @satisfies) support goes here
+	// !!! other attached tags (@satisfies) support goes here
 }
 
 func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.Node {
