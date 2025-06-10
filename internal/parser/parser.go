@@ -53,6 +53,7 @@ type Parser struct {
 	opts       ast.SourceFileParseOptions
 	sourceText string
 
+	scriptKind       core.ScriptKind
 	languageVariant  core.LanguageVariant
 	diagnostics      []*ast.Diagnostic
 	jsdocDiagnostics []*ast.Diagnostic
@@ -95,10 +96,11 @@ func putParser(p *Parser) {
 	parserPool.Put(p)
 }
 
-func ParseSourceFile(options ast.SourceFileParseOptions, sourceText string) *ast.SourceFile {
+func ParseSourceFile(opts ast.SourceFileParseOptions, sourceText string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(options, sourceText)
+	scriptKind := ensureScriptKind(opts.FileName, opts.ScriptKindOverride)
+	p.initializeState(opts, sourceText, scriptKind)
 	p.nextToken()
 	return p.parseSourceFileWorker()
 }
@@ -110,9 +112,8 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 		FileName:         fileName,
 		Path:             path,
 		CompilerOptions:  core.SourceFileAffectingCompilerOptions{EmitScriptTarget: core.ScriptTargetES2015},
-		ScriptKind:       core.ScriptKindJSON,
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
-	}, sourceText)
+	}, sourceText, core.ScriptKindJSON)
 	p.nextToken()
 	pos := p.nodePos()
 	var statements *ast.NodeList
@@ -190,15 +191,14 @@ func ParseIsolatedEntityName(text string, languageVersion core.ScriptTarget) *as
 		CompilerOptions: core.SourceFileAffectingCompilerOptions{
 			EmitScriptTarget: languageVersion,
 		},
-		ScriptKind:       core.ScriptKindJS,
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
-	}, text)
+	}, text, core.ScriptKindJS)
 	p.nextToken()
 	entityName := p.parseEntityName(true, nil)
 	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
 }
 
-func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText string) {
+func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText string, scriptKind core.ScriptKind) {
 	if p.scanner == nil {
 		p.scanner = scanner.NewScanner()
 	} else {
@@ -206,9 +206,9 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	}
 	p.opts = opts
 	p.sourceText = sourceText
-	p.opts.ScriptKind = ensureScriptKind(p.opts.FileName, p.opts.ScriptKind)
-	p.languageVariant = ast.GetLanguageVariant(p.opts.ScriptKind)
-	switch p.opts.ScriptKind {
+	p.scriptKind = scriptKind
+	p.languageVariant = ast.GetLanguageVariant(p.scriptKind)
+	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
 	case core.ScriptKindJSON:
@@ -220,12 +220,8 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	p.scanner.SetOnError(p.scanError)
 	p.scanner.SetScriptTarget(p.opts.CompilerOptions.EmitScriptTarget)
 	p.scanner.SetLanguageVariant(p.languageVariant)
-	p.scanner.SetScriptKind(p.opts.ScriptKind)
+	p.scanner.SetScriptKind(p.scriptKind)
 	p.scanner.SetJSDocParsingMode(p.opts.JSDocParsingMode)
-}
-
-func (p *Parser) scriptKind() core.ScriptKind {
-	return p.opts.ScriptKind
 }
 
 func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
@@ -357,6 +353,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVariant = p.languageVariant
+	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
 	result.NodeCount = p.factory.NodeCount()

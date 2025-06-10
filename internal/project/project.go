@@ -274,7 +274,8 @@ func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 
 // GetSourceFile implements compiler.CompilerHost.
 func (p *Project) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
-	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(opts.FileName, opts.ScriptKind); scriptInfo != nil {
+	scriptKind := p.getScriptKind(opts.FileName)
+	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(opts.FileName, scriptKind); scriptInfo != nil {
 		var oldSourceFile *ast.SourceFile
 		if p.program != nil {
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)

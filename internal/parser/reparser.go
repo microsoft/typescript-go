@@ -6,7 +6,7 @@ import (
 )
 
 func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
-	if p.scriptKind() != core.ScriptKindJS && p.scriptKind() != core.ScriptKindJSX {
+	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX {
 		return
 	}
 	if node.Kind != ast.KindExpressionStatement || node.AsExpressionStatement().Expression.Kind != ast.KindBinaryExpression {

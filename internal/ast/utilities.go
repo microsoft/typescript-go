@@ -1250,7 +1250,7 @@ func WalkUpBindingElementsAndPatterns(binding *Node) *Node {
 }
 
 func IsSourceFileJS(file *SourceFile) bool {
-	return file.ScriptKind() == core.ScriptKindJS || file.ScriptKind() == core.ScriptKindJSX
+	return file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX
 }
 
 func IsInJSFile(node *Node) bool {
@@ -1804,7 +1804,7 @@ func IsAnyImportSyntax(node *Node) bool {
 }
 
 func IsJsonSourceFile(file *SourceFile) bool {
-	return file.ScriptKind() == core.ScriptKindJSON
+	return file.ScriptKind == core.ScriptKindJSON
 }
 
 func IsInJsonFile(node *Node) bool {
@@ -2807,7 +2807,7 @@ func IsCheckJSEnabledForFile(sourceFile *SourceFile, compilerOptions *core.Compi
 }
 
 func IsPlainJSFile(file *SourceFile, checkJs core.Tristate) bool {
-	return file != nil && (file.ScriptKind() == core.ScriptKindJS || file.ScriptKind() == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
+	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
 }
 
 func GetLeftmostAccessExpression(expr *Node) *Node {

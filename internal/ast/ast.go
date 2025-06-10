@@ -9972,8 +9972,8 @@ type SourceFileParseOptions struct {
 
 	// Optional fields handled by the parser
 
-	ScriptKind       core.ScriptKind
-	JSDocParsingMode JSDocParsingMode
+	ScriptKindOverride core.ScriptKind
+	JSDocParsingMode   JSDocParsingMode
 }
 
 type SourceFileMetaData struct {
@@ -10007,6 +10007,7 @@ type SourceFile struct {
 	diagnostics                 []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
 	LanguageVariant             core.LanguageVariant
+	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
 	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
@@ -10068,10 +10069,6 @@ func (node *SourceFile) ParseOptions() SourceFileParseOptions {
 
 func (node *SourceFile) LanguageVersion() core.ScriptTarget {
 	return node.parseOptions.CompilerOptions.EmitScriptTarget
-}
-
-func (node *SourceFile) ScriptKind() core.ScriptKind {
-	return node.parseOptions.ScriptKind
 }
 
 func (node *SourceFile) Metadata() SourceFileMetaData {
@@ -10145,6 +10142,7 @@ func (node *SourceFile) IsJS() bool {
 func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
 	node.LanguageVariant = other.LanguageVariant
+	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile
 	node.HasNoDefaultLib = other.HasNoDefaultLib
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules

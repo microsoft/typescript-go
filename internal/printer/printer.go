@@ -840,7 +840,7 @@ func (p *Printer) shouldEmitIndirectCall(node *ast.Node) bool {
 }
 
 func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) bool {
-	if p.currentSourceFile == nil || p.currentSourceFile.ScriptKind() == core.ScriptKindJSON {
+	if p.currentSourceFile == nil || p.currentSourceFile.ScriptKind == core.ScriptKindJSON {
 		return false
 	}
 
@@ -3185,7 +3185,7 @@ func (p *Printer) emitExpressionStatement(node *ast.ExpressionStatement) {
 	// Emit semicolon in non json files
 	// or if json file that created synthesized expression(eg.define expression statement when --out and amd code generation)
 	if p.currentSourceFile == nil ||
-		p.currentSourceFile.ScriptKind() != core.ScriptKindJSON ||
+		p.currentSourceFile.ScriptKind != core.ScriptKindJSON ||
 		ast.NodeIsSynthesized(node.Expression) {
 		p.writeTrailingSemicolon()
 	}
@@ -4385,7 +4385,7 @@ func (p *Printer) emitSourceFile(node *ast.SourceFile) {
 	p.generateAllNames(node.Statements)
 
 	index := 0
-	if node.ScriptKind() != core.ScriptKindJSON {
+	if node.ScriptKind != core.ScriptKindJSON {
 		p.emitShebangIfNeeded(node)
 		index = p.emitPrologueDirectives(node.Statements)
 		p.emitHelpers(node.AsNode())

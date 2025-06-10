@@ -56,7 +56,7 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 			p.hasDeprecatedTag = false
 			node.Flags |= ast.NodeFlagsDeprecated
 		}
-		if p.scriptKind() == core.ScriptKindJS || p.scriptKind() == core.ScriptKindJSX {
+		if p.scriptKind == core.ScriptKindJS || p.scriptKind == core.ScriptKindJSX {
 			p.reparseTags(node, jsdoc)
 		}
 		p.jsdocCache[node] = jsdoc
