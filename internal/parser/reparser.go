@@ -272,9 +272,8 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		}
 	case ast.KindJSDocThisTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
-			// Only add a this parameter if we don't already have one
 			params := fun.Parameters()
-			if len(params) == 0 || params[0].Name().Text() != "this" {
+			if len(params) == 0 || params[0].Name().Kind != ast.KindThisKeyword {
 				thisParam := p.factory.NewParameterDeclaration(
 					nil, /* decorators */
 					nil, /* modifiers */
