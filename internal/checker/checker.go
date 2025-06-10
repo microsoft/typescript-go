@@ -17354,11 +17354,6 @@ func (c *Checker) getWidenedTypeWithContext(t *Type, context *WideningContext) *
 		case t.flags&(TypeFlagsAny|TypeFlagsNullable) != 0:
 			result = c.anyType
 		case isObjectLiteralType(t):
-			// expando object literal types do not widen to prevent circular checking (but should, ideally)
-			symbol := t.Symbol()
-			if symbol != nil && len(symbol.Exports) > 0 && symbol.ValueDeclaration.Kind == ast.KindObjectLiteralExpression && len(symbol.ValueDeclaration.AsObjectLiteralExpression().Properties.Nodes) == 0 {
-				return t
-			}
 			result = c.getWidenedTypeOfObjectLiteral(t, context)
 		case t.flags&TypeFlagsUnion != 0:
 			unionContext := context
