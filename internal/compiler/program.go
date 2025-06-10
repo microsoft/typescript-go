@@ -946,6 +946,10 @@ func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 	return p.importHelpersImportSpecifiers[path]
 }
 
+func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
+	return sourceFileMayBeEmitted(sourceFile, &emitHost{program: p}, forceDtsEmit)
+}
+
 var plainJSErrors = core.NewSetFromItems(
 	// binder errors
 	diagnostics.Cannot_redeclare_block_scoped_variable_0.Code(),
