@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -589,7 +590,10 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 	configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
 	path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
-	parsed := parser.ParseJSONText(configFileName, path, config.jsonText)
+	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: configFileName,
+		Path:     path,
+	}, config.jsonText, core.ScriptKindJSON)
 	tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
 		SourceFile: parsed,
 	}
@@ -807,7 +811,10 @@ func TestParseSrcCompiler(t *testing.T) {
 	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(t, ok)
 	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
-	parsed := parser.ParseJSONText(tsconfigFileName, tsconfigPath, jsonText)
+	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: tsconfigFileName,
+		Path:     tsconfigPath,
+	}, jsonText, core.ScriptKindJSON)
 
 	if len(parsed.Diagnostics()) > 0 {
 		for _, error := range parsed.Diagnostics() {
@@ -974,7 +981,10 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(b, ok)
 	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
-	parsed := parser.ParseJSONText(tsconfigFileName, tsconfigPath, jsonText)
+	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: tsconfigFileName,
+		Path:     tsconfigPath,
+	}, jsonText, core.ScriptKindJSON)
 
 	b.ReportAllocs()
 

@@ -94,9 +94,6 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 	if !ok {
 		return nil
 	}
-	if tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson) {
-		return parser.ParseJSONText(opts.FileName, opts.Path, text)
-	}
 	return parser.ParseSourceFile(opts, text, core.GetScriptKindFromFileName(opts.FileName))
 }
 

@@ -80,7 +80,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 			EmitScriptTarget: core.ScriptTargetLatest,
 		},
 		JSDocParsingMode: ast.JSDocParsingModeParseAll,
-	}, text)
+	}, text, core.GetScriptKindFromFileName(string(pathified)))
 	ast.SetParentInChildren(sourceFile.AsNode())
 	edits := format.FormatDocument(ctx, sourceFile)
 	newText := applyBulkEdits(text, edits)

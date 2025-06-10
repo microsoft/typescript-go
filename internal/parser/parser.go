@@ -101,19 +101,13 @@ func ParseSourceFile(opts ast.SourceFileParseOptions, sourceText string, scriptK
 	defer putParser(p)
 	p.initializeState(opts, sourceText, scriptKind)
 	p.nextToken()
+	if p.scriptKind == core.ScriptKindJSON {
+		return p.parseJSONText()
+	}
 	return p.parseSourceFileWorker()
 }
 
-func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.SourceFile {
-	p := getParser()
-	defer putParser(p)
-	p.initializeState(ast.SourceFileParseOptions{
-		FileName:         fileName,
-		Path:             path,
-		CompilerOptions:  core.SourceFileAffectingCompilerOptions{EmitScriptTarget: core.ScriptTargetES2015},
-		JSDocParsingMode: ast.JSDocParsingModeParseAll,
-	}, sourceText, core.ScriptKindJSON)
-	p.nextToken()
+func (p *Parser) parseJSONText() *ast.SourceFile {
 	pos := p.nodePos()
 	var statements *ast.NodeList
 
@@ -177,9 +171,7 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
-	result.Flags |= p.sourceFlags
-	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
+	p.finishSourceFile(result, false)
 	return result
 }
 
@@ -353,6 +345,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
 	p.processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
+	// !!! result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVariant = p.languageVariant

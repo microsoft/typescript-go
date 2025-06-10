@@ -137,11 +137,6 @@ func FuzzParser(f *testing.F) {
 		fileName := "/index" + extension
 		path := tspath.Path(fileName)
 
-		if extension == ".json" {
-			ParseJSONText(fileName, path, sourceText)
-			return
-		}
-
 		opts := ast.SourceFileParseOptions{
 			FileName: fileName,
 			Path:     path,

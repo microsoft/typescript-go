@@ -501,14 +501,7 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 		return cached
 	}
 
-	// !!! dedupe with compiler.compilerHost
-	var sourceFile *ast.SourceFile
-	if tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson) {
-		sourceFile = parser.ParseJSONText(opts.FileName, opts.Path, text)
-	} else {
-		sourceFile = parser.ParseSourceFile(opts, text, scriptKind)
-	}
-
+	sourceFile := parser.ParseSourceFile(opts, text, scriptKind)
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
 	return result
 }
