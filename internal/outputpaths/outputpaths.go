@@ -199,5 +199,3 @@ func getDeclarationEmitExtensionForPath(fileName string) string {
 	}
 	return tspath.ExtensionDts
 }
-
-

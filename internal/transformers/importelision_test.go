@@ -27,6 +27,11 @@ type fakeProgram struct {
 	getSourceFileForResolvedModule func(FileName string) *ast.SourceFile
 }
 
+// SourceFileMayBeEmitted implements checker.Program.
+func (p *fakeProgram) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
+	panic("unimplemented")
+}
+
 // GetEmitSyntaxForUsageLocation implements checker.Program.
 func (p *fakeProgram) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, usageLocation *ast.StringLiteralLike) core.ResolutionMode {
 	panic("unimplemented")
