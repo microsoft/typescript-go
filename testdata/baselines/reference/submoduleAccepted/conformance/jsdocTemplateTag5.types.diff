@@ -9,19 +9,17 @@
 
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
-->this._map = {} : {}
+ >this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
-+>this._map = {} : any
 +>this._map : any
 +>this : any
 +>_map : any
-+>{} : any
  >{} : {}
 
  };
-@@= skipped -15, +16 lines =@@
+@@= skipped -15, +15 lines =@@
  Multimap.prototype = {
  >Multimap.prototype = {    /**     * @param {K} key the key ok     * @returns {V} the value ok     */    get(key) {        return this._map[key + ''];    }} : { get(key: K): V; }
  >Multimap.prototype : { get(key: K): V; }
@@ -56,19 +54,17 @@
 
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
-->this._map = {} : {}
+ >this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
-+>this._map = {} : any
 +>this._map : any
 +>this : any
 +>_map : any
-+>{} : any
  >{} : {}
 
  };
-@@= skipped -16, +17 lines =@@
+@@= skipped -16, +16 lines =@@
  Multimap2.prototype = {
  >Multimap2.prototype = {    /**     * @param {K} key the key ok     * @returns {V} the value ok     */    get: function(key) {        return this._map[key + ''];    }} : { get: (key: K) => V; }
  >Multimap2.prototype : { get: (key: K) => V; }
@@ -120,19 +116,17 @@
 
      /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
      this._map = {};
-->this._map = {} : {}
+ >this._map = {} : {}
 ->this._map : { [x: string]: V; }
 ->this : this
 ->_map : { [x: string]: V; }
-+>this._map = {} : any
 +>this._map : any
 +>this : { Multimap3: { (): void; prototype: { get(key: K): V; }; }; }
 +>_map : any
-+>{} : any
  >{} : {}
 
  };
-@@= skipped -19, +20 lines =@@
+@@= skipped -19, +19 lines =@@
  Ns.Multimap3.prototype = {
  >Ns.Multimap3.prototype = {    /**     * @param {K} key the key ok     * @returns {V} the value ok     */    get(key) {        return this._map[key + ''];    }} : { get(key: K): V; }
  >Ns.Multimap3.prototype : { get(key: K): V; }
