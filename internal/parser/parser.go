@@ -345,7 +345,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
 	p.processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-	// !!! result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
+	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
 	result.LanguageVariant = p.languageVariant
@@ -356,7 +356,10 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
-	result.ExternalModuleIndicator = getExternalModuleIndicator(result)
+
+	if p.scriptKind != core.ScriptKindJSON {
+		result.ExternalModuleIndicator = getExternalModuleIndicator(result)
+	}
 }
 
 func getExternalModuleIndicator(file *ast.SourceFile) *ast.Node {
