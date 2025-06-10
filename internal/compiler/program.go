@@ -229,7 +229,7 @@ func NewProgram(opts ProgramOptions) *Program {
 func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	oldFile := p.filesByPath[changedFilePath]
 	newFile := p.Host().GetSourceFile(oldFile.FileName(), changedFilePath, oldFile.LanguageVersion)
-	if !canReplaceFileInProgram(oldFile, newFile) {
+	if newFile == nil || !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(p.opts), false
 	}
 	result := &Program{
