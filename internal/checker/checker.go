@@ -14518,7 +14518,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						diagnostics.This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0,
 						relativeToSourceFile,
 					)
-				} else if resolvedModule.ResolvedUsingTsExtension && !shouldRewrite && outputpaths.SourceFileMayBeEmitted(sourceFile, c.compilerOptions) {
+				} else if resolvedModule.ResolvedUsingTsExtension && !shouldRewrite && outputpaths.SourceFileMayBeEmitted(sourceFile, c.compilerOptions, false) {
 					c.error(
 						errorNode,
 						diagnostics.This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path,
@@ -30410,8 +30410,8 @@ func (c *Checker) GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
 }
 
 func (c *Checker) shouldRewriteModuleSpecifier(specifier string) bool {
-	return c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() && 
-		tspath.PathIsRelative(specifier) && 
-		!tspath.IsDeclarationFileName(specifier) && 
+	return c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
+		tspath.PathIsRelative(specifier) &&
+		!tspath.IsDeclarationFileName(specifier) &&
 		tspath.HasTSFileExtension(specifier)
 }
