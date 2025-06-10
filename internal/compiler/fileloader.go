@@ -31,7 +31,7 @@ type fileLoader struct {
 	factoryMu sync.Mutex
 	factory   ast.NodeFactory
 
-	projectReferenceFileMapper *ProjectReferenceFileMapper
+	projectReferenceFileMapper *projectReferenceFileMapper
 	dtsDirectories             core.Set[tspath.Path]
 }
 
@@ -39,7 +39,7 @@ type processedFiles struct {
 	resolver                      *module.Resolver
 	files                         []*ast.SourceFile
 	filesByPath                   map[tspath.Path]*ast.SourceFile
-	projectReferenceFileMapper    *ProjectReferenceFileMapper
+	projectReferenceFileMapper    *projectReferenceFileMapper
 	missingFiles                  []string
 	resolvedModules               map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	typeResolutionsInFile         map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
@@ -195,7 +195,7 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 }
 
 func (p *fileLoader) addProjectReferenceTasks() {
-	p.projectReferenceFileMapper = &ProjectReferenceFileMapper{
+	p.projectReferenceFileMapper = &projectReferenceFileMapper{
 		opts: p.opts,
 		host: p.opts.Host,
 	}

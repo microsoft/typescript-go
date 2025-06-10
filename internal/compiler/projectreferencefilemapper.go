@@ -7,12 +7,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type ProjectReferenceFileMapper struct {
+type projectReferenceFileMapper struct {
 	opts   ProgramOptions
 	host   module.ResolutionHost
 	loader *fileLoader // Only present during populating the mapper and parsing, released after that
@@ -26,7 +25,7 @@ type ProjectReferenceFileMapper struct {
 	realpathDtsToSource collections.SyncMap[tspath.Path, *tsoptions.SourceAndProjectReference]
 }
 
-func (mapper *ProjectReferenceFileMapper) init(loader *fileLoader, rootTasks []*projectReferenceParseTask) {
+func (mapper *projectReferenceFileMapper) init(loader *fileLoader, rootTasks []*projectReferenceParseTask) {
 	totalReferences := loader.projectReferenceParseTasks.tasksByFileName.Size() + 1
 	mapper.loader = loader
 	mapper.configToProjectReference = make(map[tspath.Path]*tsoptions.ParsedCommandLine, totalReferences)
@@ -60,15 +59,11 @@ func (mapper *ProjectReferenceFileMapper) init(loader *fileLoader, rootTasks []*
 			}
 		})
 	if mapper.opts.canUseProjectReferenceSource() && len(loader.projectReferenceFileMapper.outputDtsToSource) != 0 {
-		mapper.host = &ProjectReferenceDtsFakingHost{
-			projectReferenceFileMapper: loader.projectReferenceFileMapper,
-			dtsDirectories:             loader.dtsDirectories,
-			symlinkCache:               modulespecifiers.SymlinkCache{},
-		}
+		mapper.host = newProjectReferenceDtsFakingHost(loader)
 	}
 }
 
-func (mapper *ProjectReferenceFileMapper) getParseFileRedirect(file ast.HasFileName) string {
+func (mapper *projectReferenceFileMapper) getParseFileRedirect(file ast.HasFileName) string {
 	if mapper.opts.canUseProjectReferenceSource() {
 		// Map to source file from project reference
 		source := mapper.getSourceAndProjectReference(file.Path())
@@ -88,7 +83,7 @@ func (mapper *ProjectReferenceFileMapper) getParseFileRedirect(file ast.HasFileN
 	return ""
 }
 
-func (mapper *ProjectReferenceFileMapper) getResolvedProjectReferences() []*tsoptions.ParsedCommandLine {
+func (mapper *projectReferenceFileMapper) getResolvedProjectReferences() []*tsoptions.ParsedCommandLine {
 	refs, ok := mapper.referencesInConfigFile[mapper.opts.Config.ConfigFile.SourceFile.Path()]
 	var result []*tsoptions.ParsedCommandLine
 	if ok {
@@ -101,24 +96,24 @@ func (mapper *ProjectReferenceFileMapper) getResolvedProjectReferences() []*tsop
 	return result
 }
 
-func (mapper *ProjectReferenceFileMapper) getOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
+func (mapper *projectReferenceFileMapper) getOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
 	return mapper.sourceToOutput[path]
 }
 
-func (mapper *ProjectReferenceFileMapper) getSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference {
+func (mapper *projectReferenceFileMapper) getSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference {
 	return mapper.outputDtsToSource[path]
 }
 
-func (mapper *ProjectReferenceFileMapper) isSourceFromProjectReference(path tspath.Path) bool {
+func (mapper *projectReferenceFileMapper) isSourceFromProjectReference(path tspath.Path) bool {
 	return mapper.opts.canUseProjectReferenceSource() && mapper.getOutputAndProjectReference(path) != nil
 }
 
-func (mapper *ProjectReferenceFileMapper) getCompilerOptionsForFile(file ast.HasFileName) *core.CompilerOptions {
+func (mapper *projectReferenceFileMapper) getCompilerOptionsForFile(file ast.HasFileName) *core.CompilerOptions {
 	redirect := mapper.getRedirectForResolution(file)
 	return module.GetCompilerOptionsWithRedirect(mapper.opts.Config.CompilerOptions(), redirect)
 }
 
-func (mapper *ProjectReferenceFileMapper) getRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine {
+func (mapper *projectReferenceFileMapper) getRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine {
 	path := file.Path()
 	// Check if outputdts of source file from project reference
 	output := mapper.getOutputAndProjectReference(path)
@@ -139,12 +134,12 @@ func (mapper *ProjectReferenceFileMapper) getRedirectForResolution(file ast.HasF
 	return nil
 }
 
-func (mapper *ProjectReferenceFileMapper) getResolvedReferenceFor(path tspath.Path) (*tsoptions.ParsedCommandLine, bool) {
+func (mapper *projectReferenceFileMapper) getResolvedReferenceFor(path tspath.Path) (*tsoptions.ParsedCommandLine, bool) {
 	config, ok := mapper.configToProjectReference[path]
 	return config, ok
 }
 
-func (mapper *ProjectReferenceFileMapper) forEachResolvedProjectReference(
+func (mapper *projectReferenceFileMapper) forEachResolvedProjectReference(
 	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
 ) {
 	if mapper.opts.Config.ConfigFile == nil {
@@ -154,7 +149,7 @@ func (mapper *ProjectReferenceFileMapper) forEachResolvedProjectReference(
 	mapper.forEachResolvedReferenceWorker(refs, fn)
 }
 
-func (mapper *ProjectReferenceFileMapper) forEachResolvedReferenceWorker(
+func (mapper *projectReferenceFileMapper) forEachResolvedReferenceWorker(
 	referenes []tspath.Path,
 	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
 ) {
@@ -166,7 +161,7 @@ func (mapper *ProjectReferenceFileMapper) forEachResolvedReferenceWorker(
 	}
 }
 
-func (mapper *ProjectReferenceFileMapper) getSourceToDtsIfSymlink(file ast.HasFileName) *tsoptions.SourceAndProjectReference {
+func (mapper *projectReferenceFileMapper) getSourceToDtsIfSymlink(file ast.HasFileName) *tsoptions.SourceAndProjectReference {
 	// If preserveSymlinks is true, module resolution wont jump the symlink
 	// but the resolved real path may be the .d.ts from project reference
 	// Note:: Currently we try the real path only if the
