@@ -275,10 +275,11 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaD
 func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	path := p.toPath(t.normalizedFilePath)
 	sourceFile := p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
-		FileName:        t.normalizedFilePath,
-		Path:            path,
-		CompilerOptions: *p.projectReferenceFileMapper.getCompilerOptionsForFile(t).SourceFileAffecting(), // TODO(jakebailey): cache :(
-		Metadata:        t.metadata,
+		FileName:         t.normalizedFilePath,
+		Path:             path,
+		CompilerOptions:  *p.projectReferenceFileMapper.getCompilerOptionsForFile(t).SourceFileAffecting(), // TODO(jakebailey): cache :(
+		Metadata:         t.metadata,
+		JSDocParsingMode: p.opts.JSDocParsingMode,
 	})
 	return sourceFile
 }

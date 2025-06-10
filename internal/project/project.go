@@ -585,6 +585,7 @@ func (p *Project) updateProgram() bool {
 				p.checkerPool = newCheckerPool(4, program, p.Log)
 				return p.checkerPool
 			},
+			JSDocParsingMode: ast.JSDocParsingModeParseAll,
 		})
 	} else {
 		// The only change in the current program is the contents of the file named by p.dirtyFilePath.

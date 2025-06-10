@@ -243,8 +243,9 @@ func performCompilation(
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: config,
-		Host:   host,
+		Config:           config,
+		Host:             host,
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	parseTime := sys.Now().Sub(parseStart)
 
