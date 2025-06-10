@@ -81,6 +81,7 @@ type ProjectHost interface {
 	DefaultLibraryPath() string
 	TypingsInstaller() *TypingsInstaller
 	DocumentRegistry() *DocumentRegistry
+	ConfigFileRegistry() *ConfigFileRegistry
 	GetScriptInfoByPath(path tspath.Path) *ScriptInfo
 	GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo
 	OnDiscoveredSymlink(info *ScriptInfo)
@@ -284,6 +285,11 @@ func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersi
 		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, oldSourceFile, oldCompilerOptions)
 	}
 	return nil
+}
+
+// GetResolvedProjectReference implements compiler.CompilerHost.
+func (p *Project) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	return p.host.ConfigFileRegistry().AcquireConfig(fileName, path, p)
 }
 
 // Updates the program if needed.
@@ -536,7 +542,6 @@ func (p *Project) updateGraph() (*compiler.Program, bool) {
 			}
 		}
 	}
-
 	oldProgramReused := p.updateProgram()
 	hasAddedOrRemovedFiles := p.hasAddedorRemovedFiles.Load()
 	p.hasAddedorRemovedFiles.Store(false)
@@ -603,9 +608,10 @@ func (p *Project) updateProgram() bool {
 			typingsLocation = p.host.TypingsInstaller().TypingsLocation
 		}
 		p.program = compiler.NewProgram(compiler.ProgramOptions{
-			Config:          p.programConfig,
-			Host:            p,
-			TypingsLocation: typingsLocation,
+			Config:                      p.programConfig,
+			Host:                        p,
+			UseSourceOfProjectReference: true,
+			TypingsLocation:             typingsLocation,
 			CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 				p.checkerPool = newCheckerPool(4, program, p.Log)
 				return p.checkerPool

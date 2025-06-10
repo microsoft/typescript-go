@@ -23,32 +23,30 @@ import (
 )
 
 type ProgramOptions struct {
-	Host              CompilerHost
-	Config            *tsoptions.ParsedCommandLine
-	SingleThreaded    core.Tristate
-	CreateCheckerPool func(*Program) CheckerPool
-	TypingsLocation   string
-	ProjectName       string
+	Host                        CompilerHost
+	Config                      *tsoptions.ParsedCommandLine
+	UseSourceOfProjectReference bool
+	SingleThreaded              core.Tristate
+	CreateCheckerPool           func(*Program) CheckerPool
+	TypingsLocation             string
+	ProjectName                 string
+}
+
+func (p *ProgramOptions) canUseProjectReferenceSource() bool {
+	return p.UseSourceOfProjectReference && !p.Config.CompilerOptions().DisableSourceOfProjectReferenceRedirect.IsTrue()
 }
 
 type Program struct {
-	opts             ProgramOptions
-	nodeModules      map[string]*ast.SourceFile
-	checkerPool      CheckerPool
-	currentDirectory string
+	opts        ProgramOptions
+	nodeModules map[string]*ast.SourceFile
+	checkerPool CheckerPool
 
 	sourceAffectingCompilerOptionsOnce sync.Once
 	sourceAffectingCompilerOptions     *core.SourceFileAffectingCompilerOptions
 
-	resolver *module.Resolver
-
-	comparePathsOptions                            tspath.ComparePathsOptions
-	supportedExtensions                            [][]string
-	supportedExtensionsWithJsonIfResolveJsonModule []string
+	comparePathsOptions tspath.ComparePathsOptions
 
 	processedFiles
-
-	filesByPath map[tspath.Path]*ast.SourceFile
 
 	// The below settings are to track if a .js file should be add to the program if loaded via searching under node_modules.
 	// This works as imported modules are discovered recursively in a depth first manner, specifically:
@@ -64,9 +62,6 @@ type Program struct {
 
 	commonSourceDirectory     string
 	commonSourceDirectoryOnce sync.Once
-
-	// List of present unsupported extensions
-	unsupportedExtensions []string
 
 	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
 }
@@ -104,19 +99,23 @@ func (p *Program) GetPackageJsonInfo(pkgJsonPath string) modulespecifiers.Packag
 	return nil
 }
 
-// GetProjectReferenceRedirect implements checker.Program.
-func (p *Program) GetProjectReferenceRedirect(path string) string {
-	return "" // !!! TODO: project references support
-}
-
 // GetRedirectTargets implements checker.Program.
 func (p *Program) GetRedirectTargets(path tspath.Path) []string {
 	return nil // !!! TODO: project references support
 }
 
-// IsSourceOfProjectReferenceRedirect implements checker.Program.
-func (p *Program) IsSourceOfProjectReferenceRedirect(path string) bool {
-	return false // !!! TODO: project references support
+// GetOutputAndProjectReference implements checker.Program.
+func (p *Program) GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference {
+	return p.projectReferenceFileMapper.getOutputAndProjectReference(path)
+}
+
+// IsSourceFromProjectReference implements checker.Program.
+func (p *Program) IsSourceFromProjectReference(path tspath.Path) bool {
+	return p.projectReferenceFileMapper.isSourceFromProjectReference(path)
+}
+
+func (p *Program) GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference {
+	return p.projectReferenceFileMapper.getSourceAndProjectReference(path)
 }
 
 // UseCaseSensitiveFileNames implements checker.Program.
@@ -189,8 +188,6 @@ func NewProgram(opts ProgramOptions) *Program {
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
 	// performance.mark("beforeProgram");
 
-	p.resolver = module.NewResolver(p.Host(), compilerOptions, p.opts.TypingsLocation, p.opts.ProjectName)
-
 	var libs []string
 
 	if compilerOptions.NoLib != core.TSTrue {
@@ -208,18 +205,7 @@ func NewProgram(opts ProgramOptions) *Program {
 		}
 	}
 
-	p.processedFiles = processAllProgramFiles(p.opts, p.resolver, libs, p.singleThreaded())
-	p.filesByPath = make(map[tspath.Path]*ast.SourceFile, len(p.files))
-	for _, file := range p.files {
-		p.filesByPath[file.Path()] = file
-	}
-
-	for _, file := range p.files {
-		extension := tspath.TryGetExtensionFromPath(file.FileName())
-		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
-			p.unsupportedExtensions = core.AppendIfUnique(p.unsupportedExtensions, extension)
-		}
-	}
+	p.processedFiles = processAllProgramFiles(&p.opts, libs, p.singleThreaded())
 
 	return p
 }
@@ -235,14 +221,10 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	result := &Program{
 		opts:                        p.opts,
 		nodeModules:                 p.nodeModules,
-		currentDirectory:            p.currentDirectory,
-		resolver:                    p.resolver,
 		comparePathsOptions:         p.comparePathsOptions,
 		processedFiles:              p.processedFiles,
-		filesByPath:                 p.filesByPath,
 		currentNodeModulesDepth:     p.currentNodeModulesDepth,
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
-		unsupportedExtensions:       p.unsupportedExtensions,
 	}
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
@@ -435,7 +417,7 @@ func (p *Program) getBindDiagnosticsForFile(ctx context.Context, sourceFile *ast
 
 func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	compilerOptions := p.Options()
-	if checker.SkipTypeChecking(sourceFile, compilerOptions) {
+	if checker.SkipTypeChecking(sourceFile, compilerOptions, p) {
 		return nil
 	}
 
@@ -526,7 +508,7 @@ func (p *Program) getDeclarationDiagnosticsForFile(_ctx context.Context, sourceF
 }
 
 func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if checker.SkipTypeChecking(sourceFile, p.Options()) {
+	if checker.SkipTypeChecking(sourceFile, p.Options(), p) {
 		return nil
 	}
 
@@ -683,23 +665,23 @@ func (p *Program) GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaDat
 }
 
 func (p *Program) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), p.Options(), p.GetSourceFileMetaData(sourceFile.Path()))
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile), p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, location *ast.StringLiteralLike) core.ResolutionMode {
-	return getEmitSyntaxForUsageLocationWorker(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.Options())
+	return getEmitSyntaxForUsageLocationWorker(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
 }
 
 func (p *Program) GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.Options(), p.GetSourceFileMetaData(sourceFile.Path()))
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile), p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
 func (p *Program) GetModeForUsageLocation(sourceFile ast.HasFileName, location *ast.StringLiteralLike) core.ResolutionMode {
-	return getModeForUsageLocation(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.Options())
+	return getModeForUsageLocation(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
 }
 
 func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) core.ResolutionMode {
-	return getDefaultResolutionModeForFile(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], p.Options())
+	return getDefaultResolutionModeForFile(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
 }
 
 func (p *Program) CommonSourceDirectory() string {
@@ -806,6 +788,17 @@ func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
 	return p.GetSourceFileByPath(path)
 }
 
+func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFile {
+	file := p.GetSourceFile(fileName)
+	if file == nil {
+		filename := p.projectReferenceFileMapper.getParseFileRedirect(ast.NewHasFileName(fileName, tspath.ToPath(fileName, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())))
+		if filename != "" {
+			return p.GetSourceFile(filename)
+		}
+	}
+	return file
+}
+
 func (p *Program) GetSourceFileByPath(path tspath.Path) *ast.SourceFile {
 	return p.filesByPath[path]
 }
@@ -826,12 +819,12 @@ func (p *Program) GetLibFileFromReference(ref *ast.FileReference) *ast.SourceFil
 }
 
 func (p *Program) GetResolvedTypeReferenceDirectiveFromTypeReferenceDirective(typeRef *ast.FileReference, sourceFile *ast.SourceFile) *module.ResolvedTypeReferenceDirective {
-	return p.resolver.ResolveTypeReferenceDirective(
-		typeRef.FileName,
-		sourceFile.FileName(),
-		p.getModeForTypeReferenceDirectiveInFile(typeRef, sourceFile),
-		nil,
-	)
+	if resolutions, ok := p.typeResolutionsInFile[sourceFile.Path()]; ok {
+		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: typeRef.FileName, Mode: p.getModeForTypeReferenceDirectiveInFile(typeRef, sourceFile)}]; ok {
+			return resolved
+		}
+	}
+	return nil
 }
 
 func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, sourceFile *ast.SourceFile) core.ResolutionMode {

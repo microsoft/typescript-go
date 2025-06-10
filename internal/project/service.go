@@ -53,6 +53,7 @@ type Service struct {
 	scriptInfos            map[tspath.Path]*ScriptInfo
 	openFiles              map[tspath.Path]string // values are projectRootPath, if provided
 	configFileForOpenFiles map[tspath.Path]string // default config project for open files !!! todo solution and project reference handling
+	configFileRegistry     *ConfigFileRegistry
 
 	// Contains all the deleted script info's version information so that
 	// it does not reset when creating script info again
@@ -93,7 +94,9 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 		filenameToScriptInfoVersion: make(map[tspath.Path]int),
 		realpathToScriptInfos:       make(map[tspath.Path]map[*ScriptInfo]struct{}),
 	}
-
+	service.configFileRegistry = &ConfigFileRegistry{
+		Host: service,
+	}
 	service.converters = ls.NewConverters(options.PositionEncoding, func(fileName string) *ls.LineMap {
 		return service.GetScriptInfo(fileName).LineMap()
 	})
@@ -147,6 +150,11 @@ func (s *Service) TypingsInstaller() *TypingsInstaller {
 // DocumentRegistry implements ProjectHost.
 func (s *Service) DocumentRegistry() *DocumentRegistry {
 	return s.documentRegistry
+}
+
+// ConfigFileRegistry implements ProjectHost.
+func (s *Service) ConfigFileRegistry() *ConfigFileRegistry {
+	return s.configFileRegistry
 }
 
 // FS implements ProjectHost.

@@ -3580,3 +3580,23 @@ func IsTrivia(token Kind) bool {
 func HasDecorators(node *Node) bool {
 	return HasSyntacticModifier(node, ModifierFlagsDecorator)
 }
+
+type HasFileNameImpl struct {
+	fileName string
+	path     tspath.Path
+}
+
+func NewHasFileName(fileName string, path tspath.Path) HasFileName {
+	return &HasFileNameImpl{
+		fileName: fileName,
+		path:     path,
+	}
+}
+
+func (h *HasFileNameImpl) FileName() string {
+	return h.fileName
+}
+
+func (h *HasFileNameImpl) Path() tspath.Path {
+	return h.path
+}
