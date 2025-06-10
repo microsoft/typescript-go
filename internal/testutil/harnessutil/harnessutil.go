@@ -492,7 +492,7 @@ func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast
 
 	scriptKind := core.GetScriptKindFromFileName(opts.FileName)
 	if scriptKind == core.ScriptKindUnknown {
-		panic(fmt.Sprintf("Unknown script kind for file %s", opts.FileName))
+		panic("Unknown script kind for file  " + opts.FileName)
 	}
 
 	key := GetSourceFileCacheKey(opts, text, scriptKind)
