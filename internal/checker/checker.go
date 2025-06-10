@@ -14497,35 +14497,35 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						tsExtension,
 					)
 				}
+			} else if c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
+				location.Flags&ast.NodeFlagsAmbient == 0 &&
+				!tspath.IsDeclarationFileName(moduleReference) &&
+				!ast.IsLiteralImportTypeNode(location) &&
+				!ast.IsPartOfTypeOnlyImportOrExportDeclaration(location) {
+				shouldRewrite := c.shouldRewriteModuleSpecifier(moduleReference)
+				if !resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
+					relativeToSourceFile := tspath.GetRelativePathFromDirectory(
+						tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(importingSourceFile.FileName(), c.program.GetCurrentDirectory())),
+						resolvedModule.ResolvedFileName,
+						tspath.ComparePathsOptions{
+							UseCaseSensitiveFileNames: c.program.UseCaseSensitiveFileNames(),
+							CurrentDirectory:          c.program.GetCurrentDirectory(),
+						},
+					)
+					c.error(
+						errorNode,
+						diagnostics.This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0,
+						relativeToSourceFile,
+					)
+				} else if resolvedModule.ResolvedUsingTsExtension && !shouldRewrite && c.sourceFileMayBeEmitted(sourceFile) {
+					c.error(
+						errorNode,
+						diagnostics.This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path,
+						tspath.GetAnyExtensionFromPath(moduleReference, nil, false),
+					)
+				}
+				// TODO: Add project reference check when GetResolvedProjectReferenceToRedirect is implemented
 			}
-		} else if c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
-			location.Flags&ast.NodeFlagsAmbient == 0 &&
-			!tspath.IsDeclarationFileName(moduleReference) &&
-			!ast.IsLiteralImportTypeNode(location) &&
-			!ast.IsPartOfTypeOnlyImportOrExportDeclaration(location) {
-			shouldRewrite := c.shouldRewriteModuleSpecifier(moduleReference)
-			if !resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
-				relativeToSourceFile := tspath.GetRelativePathFromDirectory(
-					tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(importingSourceFile.FileName(), c.program.GetCurrentDirectory())),
-					resolvedModule.ResolvedFileName,
-					tspath.ComparePathsOptions{
-						UseCaseSensitiveFileNames: c.program.UseCaseSensitiveFileNames(),
-						CurrentDirectory:          c.program.GetCurrentDirectory(),
-					},
-				)
-				c.error(
-					errorNode,
-					diagnostics.This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0,
-					relativeToSourceFile,
-				)
-			} else if resolvedModule.ResolvedUsingTsExtension && !shouldRewrite && c.sourceFileMayBeEmitted(sourceFile) {
-				c.error(
-					errorNode,
-					diagnostics.This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path,
-					tspath.GetAnyExtensionFromPath(moduleReference, nil, false),
-				)
-			}
-			// TODO: Add project reference check when GetResolvedProjectReferenceToRedirect is implemented
 		}
 
 		if sourceFile.Symbol != nil {
