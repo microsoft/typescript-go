@@ -215,7 +215,7 @@ func NewProgram(opts ProgramOptions) *Program {
 		}
 	}
 
-	p.processedFiles = processAllProgramFiles(&p.opts, libs, p.singleThreaded())
+	p.processedFiles = processAllProgramFiles(p.opts, libs, p.singleThreaded())
 
 	return p
 }

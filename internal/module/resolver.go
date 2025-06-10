@@ -135,10 +135,6 @@ func NewResolver(
 	}
 }
 
-func (r *Resolver) GetHost() ResolutionHost {
-	return r.host
-}
-
 func (r *Resolver) traceEnabled() bool {
 	return r.compilerOptions.TraceResolution == core.TSTrue
 }

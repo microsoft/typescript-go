@@ -3581,22 +3581,22 @@ func HasDecorators(node *Node) bool {
 	return HasSyntacticModifier(node, ModifierFlagsDecorator)
 }
 
-type HasFileNameImpl struct {
+type hasFileNameImpl struct {
 	fileName string
 	path     tspath.Path
 }
 
 func NewHasFileName(fileName string, path tspath.Path) HasFileName {
-	return &HasFileNameImpl{
+	return &hasFileNameImpl{
 		fileName: fileName,
 		path:     path,
 	}
 }
 
-func (h *HasFileNameImpl) FileName() string {
+func (h *hasFileNameImpl) FileName() string {
 	return h.fileName
 }
 
-func (h *HasFileNameImpl) Path() tspath.Path {
+func (h *hasFileNameImpl) Path() tspath.Path {
 	return h.path
 }

@@ -89,7 +89,19 @@ func (p *ParsedCommandLine) ParseInputOutputNames() {
 
 func (p *ParsedCommandLine) CommonSourceDirectory() string {
 	p.commonSourceDirectoryOnce.Do(func() {
-		p.commonSourceDirectory = core.GetCommonSourceDirectoryOfConfig(p.ParsedConfig, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+		p.commonSourceDirectory = outputpaths.GetCommonSourceDirectory(
+			p.ParsedConfig.CompilerOptions,
+			func() []string {
+				return core.Filter(
+					p.ParsedConfig.FileNames,
+					func(file string) bool {
+						return !(p.ParsedConfig.CompilerOptions.NoEmitForJsFiles.IsTrue() && tspath.HasJSFileExtension(file)) &&
+							!tspath.IsDeclarationFileName(file)
+					})
+			},
+			p.GetCurrentDirectory(),
+			p.UseCaseSensitiveFileNames(),
+		)
 	})
 	return p.commonSourceDirectory
 }

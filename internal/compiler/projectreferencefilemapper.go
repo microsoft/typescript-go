@@ -7,12 +7,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type ProjectReferenceFileMapper struct {
-	opts   *ProgramOptions
+	opts   ProgramOptions
+	host   module.ResolutionHost
 	loader *fileLoader // Only present during populating the mapper and parsing, released after that
 
 	configToProjectReference map[tspath.Path]*tsoptions.ParsedCommandLine // All the resolved references needed
@@ -57,6 +59,13 @@ func (mapper *ProjectReferenceFileMapper) init(loader *fileLoader, rootTasks []*
 				}
 			}
 		})
+	if mapper.opts.canUseProjectReferenceSource() && len(loader.projectReferenceFileMapper.outputDtsToSource) != 0 {
+		mapper.host = &ProjectReferenceDtsFakingHost{
+			projectReferenceFileMapper: loader.projectReferenceFileMapper,
+			dtsDirectories:             loader.dtsDirectories,
+			symlinkCache:               modulespecifiers.SymlinkCache{},
+		}
+	}
 }
 
 func (mapper *ProjectReferenceFileMapper) getParseFileRedirect(file ast.HasFileName) string {
@@ -172,7 +181,7 @@ func (mapper *ProjectReferenceFileMapper) getSourceToDtsIfSymlink(file ast.HasFi
 		if !strings.Contains(fileName, "/node_modules/") {
 			mapper.realpathDtsToSource.Store(path, nil)
 		} else {
-			realDeclarationPath := mapper.loader.toPath(mapper.loader.resolver.GetHost().FS().Realpath(fileName))
+			realDeclarationPath := mapper.loader.toPath(mapper.host.FS().Realpath(fileName))
 			if realDeclarationPath == path {
 				mapper.realpathDtsToSource.Store(path, nil)
 			} else {

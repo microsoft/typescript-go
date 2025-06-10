@@ -9,10 +9,10 @@ type ProjectReference struct {
 }
 
 func ResolveProjectReferencePath(ref *ProjectReference) string {
-	return resolveConfiFileNameOfProjectReference(ref.Path)
+	return resolveConfigFileNameOfProjectReference(ref.Path)
 }
 
-func resolveConfiFileNameOfProjectReference(path string) string {
+func resolveConfigFileNameOfProjectReference(path string) string {
 	if tspath.FileExtensionIs(path, tspath.ExtensionJson) {
 		return path
 	}

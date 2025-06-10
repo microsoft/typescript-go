@@ -10,13 +10,12 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/module"
-	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type fileLoader struct {
-	opts                *ProgramOptions
+	opts                ProgramOptions
 	resolver            *module.Resolver
 	defaultLibraryPath  string
 	comparePathsOptions tspath.ComparePathsOptions
@@ -57,7 +56,7 @@ type jsxRuntimeImportSpecifier struct {
 }
 
 func processAllProgramFiles(
-	opts *ProgramOptions,
+	opts ProgramOptions,
 	libs []string,
 	singleThreaded bool,
 ) processedFiles {
@@ -83,22 +82,15 @@ func processAllProgramFiles(
 		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
 	}
 	loader.addProjectReferenceTasks()
-	if !opts.canUseProjectReferenceSource() || len(loader.projectReferenceFileMapper.outputDtsToSource) == 0 {
-		loader.resolver = module.NewResolver(opts.Host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
-	} else {
-		loader.resolver = module.NewResolver(&ProjectReferenceDtsFakingHost{
-			projectReferenceFileMapper: loader.projectReferenceFileMapper,
-			dtsDirectories:             loader.dtsDirectories,
-			symlinkCache:               modulespecifiers.SymlinkCache{},
-		}, compilerOptions, opts.TypingsLocation, opts.ProjectName)
-	}
-
+	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 	loader.addRootTasks(rootFiles, false)
 	loader.addRootTasks(libs, true)
 	loader.addAutomaticTypeDirectiveTasks()
 
 	loader.parseTasks.runAndWait(&loader, loader.rootTasks)
+	// Clear out loader and host to ensure its not used post program creation
 	loader.projectReferenceFileMapper.loader = nil
+	loader.projectReferenceFileMapper.host = nil
 
 	totalFileCount := int(loader.totalFileCount.Load())
 	libFileCount := int(loader.libFileCount.Load())
@@ -205,6 +197,7 @@ func (p *fileLoader) addAutomaticTypeDirectiveTasks() {
 func (p *fileLoader) addProjectReferenceTasks() {
 	p.projectReferenceFileMapper = &ProjectReferenceFileMapper{
 		opts: p.opts,
+		host: p.opts.Host,
 	}
 	projectReferences := p.opts.Config.ProjectReferences()
 	if len(projectReferences) == 0 {
@@ -215,7 +208,9 @@ func (p *fileLoader) addProjectReferenceTasks() {
 	p.projectReferenceParseTasks.runAndWait(p, rootTasks)
 	p.projectReferenceFileMapper.init(p, rootTasks)
 
-	// Add files from project reference as root if moduleKind is none
+	// Add files from project references as root if the module kind is 'none'.
+	// This ensures that files from project references are included in the root tasks
+	// when no module system is specified, allowing including all files for global symbol merging
 	// !!! sheetal Do we really need it?
 	if len(p.opts.Config.FileNames()) != 0 {
 		for _, resolved := range p.projectReferenceFileMapper.getResolvedProjectReferences() {
