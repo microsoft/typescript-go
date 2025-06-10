@@ -478,8 +478,9 @@ type SourceFileCacheKey struct {
 
 func GetSourceFileCacheKey(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind) SourceFileCacheKey {
 	return SourceFileCacheKey{
-		opts: opts,
-		text: text,
+		opts:       opts,
+		text:       text,
+		scriptKind: scriptKind,
 	}
 }
 
