@@ -42,7 +42,7 @@ func (tx *Transformer) TransformSourceFile(file *ast.SourceFile) *ast.SourceFile
 	return tx.visitor.VisitSourceFile(file)
 }
 
-func getModuleTransformer(emitContext *printer.EmitContext, options *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *Transformer {
+func getModuleTransformer(emitContext *printer.EmitContext, options *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file *ast.SourceFile) core.ModuleKind) *Transformer {
 	switch options.GetEmitModuleKind() {
 	case core.ModuleKindPreserve:
 		// `ESModuleTransformer` contains logic for preserving CJS input syntax in `--module preserve`

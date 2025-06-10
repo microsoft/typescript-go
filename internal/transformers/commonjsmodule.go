@@ -19,7 +19,7 @@ type CommonJSModuleTransformer struct {
 	assignmentPatternVisitor  *ast.NodeVisitor // visits assignment patterns in a destructuring assignment
 	compilerOptions           *core.CompilerOptions
 	resolver                  binder.ReferenceResolver
-	getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
+	getEmitModuleFormatOfFile func(file *ast.SourceFile) core.ModuleKind
 	moduleKind                core.ModuleKind
 	languageVersion           core.ScriptTarget
 	currentSourceFile         *ast.SourceFile
@@ -28,7 +28,7 @@ type CommonJSModuleTransformer struct {
 	currentNode               *ast.Node // used for ancestor tracking via pushNode/popNode to detect expression identifiers
 }
 
-func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *Transformer {
+func NewCommonJSModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file *ast.SourceFile) core.ModuleKind) *Transformer {
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}

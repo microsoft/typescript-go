@@ -9955,6 +9955,27 @@ type CommentDirective struct {
 
 // SourceFile
 
+type JSDocParsingMode int
+
+const (
+	JSDocParsingModeParseAll JSDocParsingMode = iota
+	JSDocParsingModeParseNone
+	JSDocParsingModeParseForTypeErrors
+	JSDocParsingModeParseForTypeInfo
+)
+
+type SourceFileParseOptions struct {
+	FileName        string
+	Path            tspath.Path
+	CompilerOptions core.SourceFileAffectingCompilerOptions
+	Metadata        SourceFileMetaData
+
+	// Optional fields handled by the parser
+
+	ScriptKind       core.ScriptKind
+	JSDocParsingMode JSDocParsingMode
+}
+
 type SourceFileMetaData struct {
 	PackageJsonType      string
 	PackageJsonDirectory string
@@ -9978,19 +9999,14 @@ type SourceFile struct {
 	compositeNodeBase
 
 	// Fields set by NewSourceFile
-
-	text       string
-	fileName   string
-	path       tspath.Path
-	Statements *NodeList // NodeList[*Statement]
+	parseOptions SourceFileParseOptions
+	text         string
+	Statements   *NodeList // NodeList[*Statement]
 
 	// Fields set by parser
-
 	diagnostics                 []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
-	LanguageVersion             core.ScriptTarget
 	LanguageVariant             core.LanguageVariant
-	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
 	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
@@ -10035,18 +10051,31 @@ type SourceFile struct {
 	JSGlobalAugmentations SymbolTable // !!! remove me
 }
 
-func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Path, statements *NodeList) *Node {
-	if (tspath.GetEncodedRootLength(fileName) == 0 && !strings.HasPrefix(fileName, "^/")) || fileName != tspath.NormalizePath(fileName) {
-		panic(fmt.Sprintf("fileName should be normalized and absolute: %q", fileName))
+func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList) *Node {
+	if (tspath.GetEncodedRootLength(opts.FileName) == 0 && !strings.HasPrefix(opts.FileName, "^/")) || opts.FileName != tspath.NormalizePath(opts.FileName) {
+		panic(fmt.Sprintf("fileName should be normalized and absolute: %q", opts.FileName))
 	}
-
 	data := &SourceFile{}
+	data.parseOptions = opts
 	data.text = text
-	data.fileName = fileName
-	data.path = path
 	data.Statements = statements
-	data.LanguageVersion = core.ScriptTargetLatest
 	return f.newNode(KindSourceFile, data)
+}
+
+func (node *SourceFile) ParseOptions() SourceFileParseOptions {
+	return node.parseOptions
+}
+
+func (node *SourceFile) LanguageVersion() core.ScriptTarget {
+	return node.parseOptions.CompilerOptions.EmitScriptTarget
+}
+
+func (node *SourceFile) ScriptKind() core.ScriptKind {
+	return node.parseOptions.ScriptKind
+}
+
+func (node *SourceFile) Metadata() SourceFileMetaData {
+	return node.parseOptions.Metadata
 }
 
 func (node *SourceFile) Text() string {
@@ -10054,11 +10083,11 @@ func (node *SourceFile) Text() string {
 }
 
 func (node *SourceFile) FileName() string {
-	return node.fileName
+	return node.parseOptions.FileName
 }
 
 func (node *SourceFile) Path() tspath.Path {
-	return node.path
+	return node.parseOptions.Path
 }
 
 func (node *SourceFile) OriginalFileName() string {
@@ -10115,9 +10144,7 @@ func (node *SourceFile) IsJS() bool {
 
 func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
-	node.LanguageVersion = other.LanguageVersion
 	node.LanguageVariant = other.LanguageVariant
-	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile
 	node.HasNoDefaultLib = other.HasNoDefaultLib
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules
@@ -10137,7 +10164,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 }
 
 func (node *SourceFile) Clone(f NodeFactoryCoercible) *Node {
-	updated := f.AsNodeFactory().NewSourceFile(node.Text(), node.FileName(), node.Path(), node.Statements)
+	updated := f.AsNodeFactory().NewSourceFile(node.parseOptions, node.text, node.Statements)
 	newFile := updated.AsSourceFile()
 	newFile.copyFrom(node)
 	return cloneNode(updated, node.AsNode(), f.AsNodeFactory().hooks)
@@ -10149,7 +10176,7 @@ func (node *SourceFile) computeSubtreeFacts() SubtreeFacts {
 
 func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementList) *Node {
 	if statements != node.Statements {
-		updated := f.NewSourceFile(node.Text(), node.fileName, node.path, statements).AsSourceFile()
+		updated := f.NewSourceFile(node.parseOptions, node.text, statements).AsSourceFile()
 		updated.copyFrom(node)
 		return updateNode(updated.AsNode(), node.AsNode(), f.hooks)
 	}

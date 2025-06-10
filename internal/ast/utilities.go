@@ -1250,7 +1250,7 @@ func WalkUpBindingElementsAndPatterns(binding *Node) *Node {
 }
 
 func IsSourceFileJS(file *SourceFile) bool {
-	return file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX
+	return file.ScriptKind() == core.ScriptKindJS || file.ScriptKind() == core.ScriptKindJSX
 }
 
 func IsInJSFile(node *Node) bool {
@@ -1804,7 +1804,7 @@ func IsAnyImportSyntax(node *Node) bool {
 }
 
 func IsJsonSourceFile(file *SourceFile) bool {
-	return file.ScriptKind == core.ScriptKindJSON
+	return file.ScriptKind() == core.ScriptKindJSON
 }
 
 func IsInJsonFile(node *Node) bool {
@@ -2523,7 +2523,7 @@ func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.Modul
 	return impliedNodeFormat
 }
 
-func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
+func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData SourceFileMetaData) core.ModuleKind {
 	result := GetImpliedNodeFormatForEmitWorker(fileName, options.GetEmitModuleKind(), sourceFileMetaData)
 	if result != core.ModuleKindNone {
 		return result
@@ -2531,19 +2531,16 @@ func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOpti
 	return options.GetEmitModuleKind()
 }
 
-func GetImpliedNodeFormatForEmitWorker(fileName string, emitModuleKind core.ModuleKind, sourceFileMetaData *SourceFileMetaData) core.ResolutionMode {
+func GetImpliedNodeFormatForEmitWorker(fileName string, emitModuleKind core.ModuleKind, sourceFileMetaData SourceFileMetaData) core.ResolutionMode {
 	if core.ModuleKindNode16 <= emitModuleKind && emitModuleKind <= core.ModuleKindNodeNext {
-		if sourceFileMetaData == nil {
-			return core.ModuleKindNone
-		}
 		return sourceFileMetaData.ImpliedNodeFormat
 	}
-	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
+	if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
 		(sourceFileMetaData.PackageJsonType == "commonjs" ||
 			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
-	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
+	if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
 		(sourceFileMetaData.PackageJsonType == "module" ||
 			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
 		return core.ModuleKindESNext
@@ -2810,7 +2807,7 @@ func IsCheckJSEnabledForFile(sourceFile *SourceFile, compilerOptions *core.Compi
 }
 
 func IsPlainJSFile(file *SourceFile, checkJs core.Tristate) bool {
-	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
+	return file != nil && (file.ScriptKind() == core.ScriptKindJS || file.ScriptKind() == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
 }
 
 func GetLeftmostAccessExpression(expr *Node) *Node {

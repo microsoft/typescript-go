@@ -1484,11 +1484,11 @@ func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core
 		return false
 	}
 
-	if sourceFile.ScriptKind == core.ScriptKindTS || sourceFile.ScriptKind == core.ScriptKindTSX || sourceFile.ScriptKind == core.ScriptKindExternal {
+	if sourceFile.ScriptKind() == core.ScriptKindTS || sourceFile.ScriptKind() == core.ScriptKindTSX || sourceFile.ScriptKind() == core.ScriptKindExternal {
 		return true
 	}
 
-	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
+	isJS := sourceFile.ScriptKind() == core.ScriptKindJS || sourceFile.ScriptKind() == core.ScriptKindJSX
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, options)
 	isPlainJS := ast.IsPlainJSFile(sourceFile, options.CheckJs)
 
@@ -1496,7 +1496,7 @@ func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
 	// - external: files that are added by plugins
-	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
+	return isPlainJS || isCheckJS || sourceFile.ScriptKind() == core.ScriptKindDeferred
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {

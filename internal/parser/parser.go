@@ -50,13 +50,9 @@ type Parser struct {
 	scanner *scanner.Scanner
 	factory ast.NodeFactory
 
-	fileName         string
-	path             tspath.Path
-	sourceText       string
-	options          *core.SourceFileAffectingCompilerOptions
-	metadata         *ast.SourceFileMetaData
-	languageVersion  core.ScriptTarget
-	scriptKind       core.ScriptKind
+	opts       ast.SourceFileParseOptions
+	sourceText string
+
 	languageVariant  core.LanguageVariant
 	diagnostics      []*ast.Diagnostic
 	jsdocDiagnostics []*ast.Diagnostic
@@ -99,10 +95,10 @@ func putParser(p *Parser) {
 	parserPool.Put(p)
 }
 
-func ParseSourceFile(fileName string, path tspath.Path, sourceText string, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData, jsdocParsingMode scanner.JSDocParsingMode) *ast.SourceFile {
+func ParseSourceFile(options ast.SourceFileParseOptions, sourceText string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, options, metadata, core.ScriptKindUnknown, jsdocParsingMode)
+	p.initializeState(options, sourceText)
 	p.nextToken()
 	return p.parseSourceFileWorker()
 }
@@ -110,7 +106,13 @@ func ParseSourceFile(fileName string, path tspath.Path, sourceText string, optio
 func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, &core.SourceFileAffectingCompilerOptions{EmitScriptTarget: core.ScriptTargetES2015}, nil, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll)
+	p.initializeState(ast.SourceFileParseOptions{
+		FileName:         fileName,
+		Path:             path,
+		CompilerOptions:  core.SourceFileAffectingCompilerOptions{EmitScriptTarget: core.ScriptTargetES2015},
+		ScriptKind:       core.ScriptKindJSON,
+		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+	}, sourceText)
 	p.nextToken()
 	pos := p.nodePos()
 	var statements *ast.NodeList
@@ -172,11 +174,9 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 		statements = p.newNodeList(core.NewTextRange(pos, p.nodePos()), []*ast.Node{statement})
 		p.parseExpectedToken(ast.KindEndOfFile)
 	}
-	node := p.factory.NewSourceFile(p.sourceText, p.fileName, p.path, statements)
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
-	result.ScriptKind = core.ScriptKindJSON
-	result.LanguageVersion = core.ScriptTargetES2015
 	result.Flags |= p.sourceFlags
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
@@ -186,27 +186,29 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 func ParseIsolatedEntityName(text string, languageVersion core.ScriptTarget) *ast.EntityName {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState("", "", text, &core.SourceFileAffectingCompilerOptions{EmitScriptTarget: languageVersion}, nil, core.ScriptKindJS, scanner.JSDocParsingModeParseAll)
+	p.initializeState(ast.SourceFileParseOptions{
+		CompilerOptions: core.SourceFileAffectingCompilerOptions{
+			EmitScriptTarget: languageVersion,
+		},
+		ScriptKind:       core.ScriptKindJS,
+		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+	}, text)
 	p.nextToken()
 	entityName := p.parseEntityName(true, nil)
 	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
 }
 
-func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode) {
+func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText string) {
 	if p.scanner == nil {
 		p.scanner = scanner.NewScanner()
 	} else {
 		p.scanner.Reset()
 	}
-	p.fileName = fileName
-	p.path = path
+	p.opts = opts
 	p.sourceText = sourceText
-	p.options = options
-	p.metadata = metadata
-	p.languageVersion = options.EmitScriptTarget
-	p.scriptKind = ensureScriptKind(fileName, scriptKind)
-	p.languageVariant = ast.GetLanguageVariant(p.scriptKind)
-	switch p.scriptKind {
+	p.opts.ScriptKind = ensureScriptKind(p.opts.FileName, p.opts.ScriptKind)
+	p.languageVariant = ast.GetLanguageVariant(p.opts.ScriptKind)
+	switch p.opts.ScriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
 	case core.ScriptKindJSON:
@@ -216,10 +218,14 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	}
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
-	p.scanner.SetScriptTarget(p.languageVersion)
+	p.scanner.SetScriptTarget(p.opts.CompilerOptions.EmitScriptTarget)
 	p.scanner.SetLanguageVariant(p.languageVariant)
-	p.scanner.SetScriptKind(p.scriptKind)
-	p.scanner.SetJSDocParsingMode(jsdocParsingMode)
+	p.scanner.SetScriptKind(p.opts.ScriptKind)
+	p.scanner.SetJSDocParsingMode(p.opts.JSDocParsingMode)
+}
+
+func (p *Parser) scriptKind() core.ScriptKind {
+	return p.opts.ScriptKind
 }
 
 func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
@@ -317,7 +323,7 @@ func (p *Parser) hasPrecedingJSDocComment() bool {
 }
 
 func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
-	isDeclarationFile := tspath.IsDeclarationFileName(p.fileName)
+	isDeclarationFile := tspath.IsDeclarationFileName(p.opts.FileName)
 	if isDeclarationFile {
 		p.contextFlags |= ast.NodeFlagsAmbient
 	}
@@ -327,7 +333,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	if eof.Kind != ast.KindEndOfFile {
 		panic("Expected end of file token from scanner.")
 	}
-	node := p.factory.NewSourceFile(p.sourceText, p.fileName, p.path, statements)
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, isDeclarationFile)
@@ -350,24 +356,23 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
-	result.LanguageVersion = p.languageVersion
 	result.LanguageVariant = p.languageVariant
-	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
 	result.Identifiers = p.identifiers
 	result.NodeCount = p.factory.NodeCount()
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
-	result.ExternalModuleIndicator = getExternalModuleIndicator(result, p.options, p.metadata)
+	result.ExternalModuleIndicator = getExternalModuleIndicator(result)
 }
 
-func getExternalModuleIndicator(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.Node {
+func getExternalModuleIndicator(file *ast.SourceFile) *ast.Node {
 	// All detection kinds start by checking this.
 	if node := isFileProbablyExternalModule(file); node != nil {
 		return node
 	}
 
+	options := file.ParseOptions().CompilerOptions
 	switch options.EmitModuleDetectionKind {
 	case core.ModuleDetectionKindForce:
 		// All non-declaration files are modules, declaration files still do the usual isFileProbablyExternalModule
@@ -387,7 +392,7 @@ func getExternalModuleIndicator(file *ast.SourceFile, options *core.SourceFileAf
 				return node
 			}
 		}
-		return isFileForcedToBeModuleByFormat(file, options, metadata)
+		return isFileForcedToBeModuleByFormat(file)
 	default:
 		return nil
 	}
@@ -427,11 +432,11 @@ func walkTreeForJSXTags(node *ast.Node) *ast.Node {
 
 var isFileForcedToBeModuleByFormatExtensions = []string{tspath.ExtensionCjs, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionMts}
 
-func isFileForcedToBeModuleByFormat(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.Node {
+func isFileForcedToBeModuleByFormat(file *ast.SourceFile) *ast.Node {
 	// Excludes declaration files - they still require an explicit `export {}` or the like
 	// for back compat purposes. The only non-declaration files _not_ forced to be a module are `.js` files
 	// that aren't esm-mode (meaning not in a `type: module` scope).
-	if !file.IsDeclarationFile && (ast.GetImpliedNodeFormatForEmitWorker(file.FileName(), options.EmitModuleKind, metadata) == core.ModuleKindESNext || tspath.FileExtensionIsOneOf(file.FileName(), isFileForcedToBeModuleByFormatExtensions)) {
+	if !file.IsDeclarationFile && (ast.GetImpliedNodeFormatForEmitWorker(file.FileName(), file.ParseOptions().CompilerOptions.EmitModuleKind, file.ParseOptions().Metadata) == core.ModuleKindESNext || tspath.FileExtensionIsOneOf(file.FileName(), isFileForcedToBeModuleByFormatExtensions)) {
 		return file.AsNode()
 	}
 	return nil
@@ -539,7 +544,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		}
 	}
 
-	return p.factory.NewSourceFile(sourceFile.Text(), sourceFile.FileName(), sourceFile.Path(), p.newNodeList(sourceFile.Statements.Loc, statements))
+	return p.factory.NewSourceFile(sourceFile.ParseOptions(), p.sourceText, p.newNodeList(sourceFile.Statements.Loc, statements))
 }
 
 func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) *ast.NodeList {

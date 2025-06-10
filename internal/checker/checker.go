@@ -529,12 +529,11 @@ type Program interface {
 	FileExists(fileName string) bool
 	GetSourceFile(fileName string) *ast.SourceFile
 	GetSourceFileForResolvedModule(fileName string) *ast.SourceFile
-	GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind
-	GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, usageLocation *ast.StringLiteralLike) core.ResolutionMode
-	GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ModuleKind
-	GetResolvedModule(currentSourceFile ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
+	GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind
+	GetEmitSyntaxForUsageLocation(sourceFile *ast.SourceFile, usageLocation *ast.StringLiteralLike) core.ResolutionMode
+	GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ModuleKind
+	GetResolvedModule(currentSourceFile *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule
 	GetResolvedModules() map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
-	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 	IsSourceFromProjectReference(path tspath.Path) bool
@@ -10256,8 +10255,8 @@ func (c *Checker) checkNewTargetMetaProperty(node *ast.Node) *Type {
 
 func (c *Checker) checkImportMetaProperty(node *ast.Node) *Type {
 	if core.ModuleKindNode16 <= c.moduleKind && c.moduleKind <= core.ModuleKindNodeNext {
-		sourceFileMetaData := c.program.GetSourceFileMetaData(ast.GetSourceFileOfNode(node).Path())
-		if sourceFileMetaData == nil || sourceFileMetaData.ImpliedNodeFormat != core.ModuleKindESNext {
+		sourceFileMetaData := ast.GetSourceFileOfNode(node).Metadata()
+		if sourceFileMetaData.ImpliedNodeFormat != core.ModuleKindESNext {
 			c.error(node, diagnostics.The_import_meta_meta_property_is_not_allowed_in_files_which_will_build_into_CommonJS_output)
 		}
 	} else if c.moduleKind < core.ModuleKindES2020 && c.moduleKind != core.ModuleKindSystem {
@@ -14699,7 +14698,7 @@ func (c *Checker) createModuleNotFoundChain(resolvedModule *module.ResolvedModul
 func (c *Checker) createModeMismatchDetails(sourceFile *ast.SourceFile, errorNode *ast.Node) *ast.Diagnostic {
 	ext := tspath.TryGetExtensionFromPath(sourceFile.FileName())
 	targetExt := core.IfElse(ext == tspath.ExtensionTs, tspath.ExtensionMts, core.IfElse(ext == tspath.ExtensionJs, tspath.ExtensionMjs, ""))
-	meta := c.program.GetSourceFileMetaData(sourceFile.Path())
+	meta := sourceFile.Metadata()
 	packageJsonType := meta.PackageJsonType
 	packageJsonDirectory := meta.PackageJsonDirectory
 	var result *ast.Diagnostic

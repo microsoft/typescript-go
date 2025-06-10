@@ -23,7 +23,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -467,48 +466,29 @@ func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value str
 
 type cachedCompilerHost struct {
 	compiler.CompilerHost
-	options *core.CompilerOptions
 }
 
 var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
 
 type SourceFileCacheKey struct {
-	core.SourceFileAffectingCompilerOptions
-	ast.SourceFileMetaData
-	fileName string
-	path     tspath.Path
-	text     string
+	opts ast.SourceFileParseOptions
+	text string
 }
 
-func GetSourceFileCacheKey(
-	fileName string,
-	path tspath.Path,
-	text string,
-	options *core.SourceFileAffectingCompilerOptions,
-	metadata *ast.SourceFileMetaData,
-) SourceFileCacheKey {
+func GetSourceFileCacheKey(opts ast.SourceFileParseOptions, text string) SourceFileCacheKey {
 	return SourceFileCacheKey{
-		SourceFileAffectingCompilerOptions: *options,
-		SourceFileMetaData:                 *metadata,
-		fileName:                           fileName,
-		path:                               path,
-		text:                               text,
+		opts: opts,
+		text: text,
 	}
 }
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.SourceFile {
-	text, ok := h.FS().ReadFile(fileName)
+func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	text, ok := h.FS().ReadFile(opts.FileName)
 	if !ok {
 		return nil
 	}
 
-	key := GetSourceFileCacheKey(
-		fileName,
-		path,
-		text,
-		h.options.SourceFileAffecting(),
-		metadata,
-	)
+	key := GetSourceFileCacheKey(opts, text)
 
 	if cached, ok := sourceFileCache.Load(key); ok {
 		return cached
@@ -516,11 +496,10 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, op
 
 	// !!! dedupe with compiler.compilerHost
 	var sourceFile *ast.SourceFile
-	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
-		sourceFile = parser.ParseJSONText(fileName, path, text)
+	if tspath.FileExtensionIs(opts.FileName, tspath.ExtensionJson) {
+		sourceFile = parser.ParseJSONText(opts.FileName, opts.Path, text)
 	} else {
-		// !!! JSDocParsingMode
-		sourceFile = parser.ParseSourceFile(fileName, path, text, options, metadata, scanner.JSDocParsingModeParseAll)
+		sourceFile = parser.ParseSourceFile(opts, text)
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
@@ -530,7 +509,6 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, op
 func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) compiler.CompilerHost {
 	return &cachedCompilerHost{
 		CompilerHost: compiler.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath, nil),
-		options:      options,
 	}
 }
 
