@@ -16,7 +16,7 @@ type CompilerHost interface {
 	GetCurrentDirectory() string
 	NewLine() string
 	Trace(msg string)
-	GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile
+	GetSourceFile(fileName string, path tspath.Path, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.SourceFile
 }
 
 type FileInfo struct {
@@ -73,7 +73,7 @@ func (h *compilerHost) Trace(msg string) {
 	//!!! TODO: implement
 }
 
-func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
+func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.SourceFile {
 	text, ok := h.FS().ReadFile(fileName)
 	if !ok {
 		return nil
@@ -81,5 +81,5 @@ func (h *compilerHost) GetSourceFile(fileName string, path tspath.Path, language
 	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
 		return parser.ParseJSONText(fileName, path, text)
 	}
-	return parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseForTypeErrors)
+	return parser.ParseSourceFile(fileName, path, text, options, metadata, scanner.JSDocParsingModeParseForTypeErrors)
 }
