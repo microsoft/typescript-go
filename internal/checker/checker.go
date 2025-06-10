@@ -14498,6 +14498,34 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 					)
 				}
 			}
+		} else if c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
+			location.Flags&ast.NodeFlagsAmbient == 0 &&
+			!tspath.IsDeclarationFileName(moduleReference) &&
+			!ast.IsLiteralImportTypeNode(location) &&
+			!ast.IsPartOfTypeOnlyImportOrExportDeclaration(location) {
+			shouldRewrite := c.shouldRewriteModuleSpecifier(moduleReference)
+			if !resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
+				relativeToSourceFile := tspath.GetRelativePathFromDirectory(
+					tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(importingSourceFile.FileName(), c.program.GetCurrentDirectory())),
+					resolvedModule.ResolvedFileName,
+					tspath.ComparePathsOptions{
+						UseCaseSensitiveFileNames: c.program.UseCaseSensitiveFileNames(),
+						CurrentDirectory:          c.program.GetCurrentDirectory(),
+					},
+				)
+				c.error(
+					errorNode,
+					diagnostics.This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0,
+					relativeToSourceFile,
+				)
+			} else if resolvedModule.ResolvedUsingTsExtension && !shouldRewrite && c.sourceFileMayBeEmitted(sourceFile) {
+				c.error(
+					errorNode,
+					diagnostics.This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path,
+					tspath.GetAnyExtensionFromPath(moduleReference, nil, false),
+				)
+			}
+			// TODO: Add project reference check when GetResolvedProjectReferenceToRedirect is implemented
 		}
 
 		if sourceFile.Symbol != nil {
@@ -30378,4 +30406,27 @@ func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *e
 
 func (c *Checker) GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.resolveAlias(symbol)
+}
+
+func (c *Checker) sourceFileMayBeEmitted(sourceFile *ast.SourceFile) bool {
+	options := c.compilerOptions
+	if options.NoEmit.IsTrue() || options.EmitDeclarationOnly.IsTrue() {
+		return false
+	}
+	// Check if this source file is a declaration file
+	if tspath.IsDeclarationFileName(sourceFile.FileName()) {
+		return false
+	}
+	// Check if this is a JS file and allowJs is disabled
+	if tspath.HasJSFileExtension(sourceFile.FileName()) && !options.AllowJs.IsTrue() {
+		return false
+	}
+	return true
+}
+
+func (c *Checker) shouldRewriteModuleSpecifier(specifier string) bool {
+	return c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() && 
+		tspath.PathIsRelative(specifier) && 
+		!tspath.IsDeclarationFileName(specifier) && 
+		tspath.HasTSFileExtension(specifier)
 }
