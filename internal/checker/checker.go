@@ -14503,7 +14503,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 				!tspath.IsDeclarationFileName(moduleReference) &&
 				!ast.IsLiteralImportTypeNode(location) &&
 				!ast.IsPartOfTypeOnlyImportOrExportDeclaration(location) {
-				shouldRewrite := c.shouldRewriteModuleSpecifier(moduleReference)
+				shouldRewrite := core.ShouldRewriteModuleSpecifier(moduleReference, c.compilerOptions)
 				if !resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
 					relativeToSourceFile := tspath.GetRelativePathFromFile(
 						tspath.GetNormalizedAbsolutePath(importingSourceFile.FileName(), c.program.GetCurrentDirectory()),
@@ -30407,11 +30407,4 @@ func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *e
 
 func (c *Checker) GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.resolveAlias(symbol)
-}
-
-func (c *Checker) shouldRewriteModuleSpecifier(specifier string) bool {
-	return c.compilerOptions.RewriteRelativeImportExtensions.IsTrue() &&
-		tspath.PathIsRelative(specifier) &&
-		!tspath.IsDeclarationFileName(specifier) &&
-		tspath.HasTSFileExtension(specifier)
 }
