@@ -44,7 +44,7 @@ func BenchmarkBind(b *testing.B) {
 
 			b.ResetTimer()
 			for i := range b.N {
-				BindSourceFile(sourceFiles[i], sourceAffecting)
+				BindSourceFile(sourceFiles[i])
 			}
 		})
 	}

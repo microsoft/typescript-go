@@ -307,7 +307,7 @@ func (p *Program) BindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
-				binder.BindSourceFile(file, p.getSourceAffectingCompilerOptions())
+				binder.BindSourceFile(file)
 			})
 		}
 	}
@@ -598,7 +598,7 @@ func compactAndMergeRelatedInfos(diagnostics []*ast.Diagnostic) []*ast.Diagnosti
 func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.SourceFile, ensureBound bool, ensureChecked bool, getDiagnostics func(context.Context, *ast.SourceFile) []*ast.Diagnostic) []*ast.Diagnostic {
 	if sourceFile != nil {
 		if ensureBound {
-			binder.BindSourceFile(sourceFile, p.getSourceAffectingCompilerOptions())
+			binder.BindSourceFile(sourceFile)
 		}
 		return SortAndDeduplicateDiagnostics(getDiagnostics(ctx, sourceFile))
 	}

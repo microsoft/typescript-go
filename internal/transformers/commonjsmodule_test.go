@@ -1021,17 +1021,16 @@ exports.a = a;`,
 			}
 
 			compilerOptions.Module = core.ModuleKindCommonJS
-			sourceFileAffecting := compilerOptions.SourceFileAffecting()
 
 			file := parsetestutil.ParseTypeScript(rec.input, rec.jsx)
 			parsetestutil.CheckDiagnostics(t, file)
-			binder.BindSourceFile(file, sourceFileAffecting)
+			binder.BindSourceFile(file)
 
 			var other *ast.SourceFile
 			if len(rec.other) > 0 {
 				other = parsetestutil.ParseTypeScript(rec.other, rec.jsx)
 				parsetestutil.CheckDiagnostics(t, other)
-				binder.BindSourceFile(other, sourceFileAffecting)
+				binder.BindSourceFile(other)
 			}
 
 			emitContext := printer.NewEmitContext()

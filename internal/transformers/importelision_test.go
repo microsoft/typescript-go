@@ -94,7 +94,7 @@ func (p *fakeProgram) BindSourceFiles() {
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
-				binder.BindSourceFile(file, p.compilerOptions.SourceFileAffecting())
+				binder.BindSourceFile(file)
 			})
 		}
 	}
