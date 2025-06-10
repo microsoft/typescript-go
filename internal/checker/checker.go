@@ -19479,7 +19479,10 @@ func (c *Checker) checkIfExpressionRefinesAnyParameter(fn *ast.Node, expr *ast.N
 }
 
 func (c *Checker) checkIfExpressionRefinesParameter(fn *ast.Node, expr *ast.Node, param *ast.Node, initType *Type) *Type {
-	antecedent := getFlowNodeOfNode(expr)
+	var antecedent *ast.FlowNode
+	if canHaveFlowNode(expr) {
+		antecedent = expr.FlowNodeData().FlowNode
+	}
 	if antecedent == nil && ast.IsReturnStatement(expr.Parent) {
 		antecedent = getFlowNodeOfNode(expr.Parent)
 	}
