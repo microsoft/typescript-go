@@ -35,6 +35,10 @@ type EmitResolver interface {
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
 	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
 
+	// JSX Emit
+	GetJsxFactoryEntity(location *ast.Node) *ast.Node
+	GetJsxFragmentFactoryEntity(location *ast.Node) *ast.Node
+
 	// declaration emit checker functionality projections
 	PrecalculateDeclarationEmitVisibility(file *ast.SourceFile)
 	IsSymbolAccessible(symbol *ast.Symbol, enclosingDeclaration *ast.Node, meaning ast.SymbolFlags, shouldComputeAliasToMarkVisible bool) SymbolAccessibilityResult

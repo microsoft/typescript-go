@@ -35,6 +35,18 @@ type emitResolver struct {
 	declarationFileLinks    core.LinkStore[*ast.Node, DeclarationFileLinks]
 }
 
+func (r *emitResolver) GetJsxFactoryEntity(location *ast.Node) *ast.Node {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.getJsxFactoryEntity(location)
+}
+
+func (r *emitResolver) GetJsxFragmentFactoryEntity(location *ast.Node) *ast.Node {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.getJsxFragmentFactoryEntity(location)
+}
+
 func (r *emitResolver) IsOptionalParameter(node *ast.Node) bool {
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
