@@ -202,7 +202,7 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	p.opts = opts
 	p.sourceText = sourceText
 	p.scriptKind = scriptKind
-	p.languageVariant = ast.GetLanguageVariant(p.scriptKind)
+	p.languageVariant = getLanguageVariant(p.scriptKind)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
