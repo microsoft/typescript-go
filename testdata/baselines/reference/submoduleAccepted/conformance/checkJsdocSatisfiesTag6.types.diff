@@ -1,12 +1,9 @@
 --- old.checkJsdocSatisfiesTag6.types
 +++ new.checkJsdocSatisfiesTag6.types
-@@= skipped -10, +10 lines =@@
- const a = /** @satisfies {Partial<Point2d>} */ ({ x: 10 });
+@@= skipped -11, +11 lines =@@
  >a : { x: number; }
  >({ x: 10 }) : { x: number; }
-->{ x: 10 } : { x: number; }
-->x : number
-->10 : 10
-
- // Should OK
- console.log(a.x.toFixed());
+ >{ x: 10 } : { x: number; }
++>{ x: 10 } : { x: number; }
+ >x : number
+ >10 : 10

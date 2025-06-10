@@ -27,4 +27,6 @@ const t1 = { a: 1 };
 const t2 = /** @satisfies {number} */ (1);
 >t2 : 1
 >(1) : 1
+>1 : 1
+>1 : 1
 

@@ -7,6 +7,8 @@
  */
 export default /** @satisfies {Foo} */ ({});
 >({}) : {}
+>{} : {}
+>{} : {}
 
 === /b.js ===
 /**
@@ -16,4 +18,8 @@ export default /** @satisfies {Foo} */ ({});
 
 export default /** @satisfies {Foo} */ ({ a: 1 });
 >({ a: 1 }) : { a: number; }
+>{ a: 1 } : { a: number; }
+>{ a: 1 } : { a: number; }
+>a : number
+>1 : 1
 

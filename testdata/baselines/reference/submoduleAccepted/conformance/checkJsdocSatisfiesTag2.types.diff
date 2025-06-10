@@ -9,25 +9,33 @@
 ->{    isEven: n => n % 2 === 0,    isOdd: n => n % 2 === 1} : { isEven: (n: number) => boolean; isOdd: (n: number) => boolean; }
 +>p : any
 +>({    isEven: n => n % 2 === 0,    isOdd: n => n % 2 === 1}) : any
++>{    isEven: n => n % 2 === 0,    isOdd: n => n % 2 === 1} : any
++>{    isEven: n => n % 2 === 0,    isOdd: n => n % 2 === 1} : { isEven: (n: any) => boolean; isOdd: (n: any) => boolean; }
 
      isEven: n => n % 2 === 0,
 ->isEven : (n: number) => boolean
 ->n => n % 2 === 0 : (n: number) => boolean
 ->n : number
-->n % 2 === 0 : boolean
-->n % 2 : number
++>isEven : (n: any) => boolean
++>n => n % 2 === 0 : (n: any) => boolean
++>n : any
+ >n % 2 === 0 : boolean
+ >n % 2 : number
 ->n : number
-->2 : 2
-->0 : 0
--
++>n : any
+ >2 : 2
+ >0 : 0
+
      isOdd: n => n % 2 === 1
 ->isOdd : (n: number) => boolean
 ->n => n % 2 === 1 : (n: number) => boolean
 ->n : number
-->n % 2 === 1 : boolean
-->n % 2 : number
++>isOdd : (n: any) => boolean
++>n => n % 2 === 1 : (n: any) => boolean
++>n : any
+ >n % 2 === 1 : boolean
+ >n % 2 : number
 ->n : number
-->2 : 2
-->1 : 1
--
- });
++>n : any
+ >2 : 2
+ >1 : 1

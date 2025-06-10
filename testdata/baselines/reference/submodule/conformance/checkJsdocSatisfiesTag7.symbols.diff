@@ -1,19 +1,6 @@
 --- old.checkJsdocSatisfiesTag7.symbols
 +++ new.checkJsdocSatisfiesTag7.symbols
-@@= skipped -6, +6 lines =@@
- >p : Symbol(p, Decl(a.js, 2, 5))
-
-     a: 0,
-->a : Symbol(a, Decl(a.js, 2, 54))
--
-     b: "hello",
-->b : Symbol(b, Decl(a.js, 3, 9))
--
-     x: 8 // Should error, 'x' isn't in 'Keys'
-->x : Symbol(x, Decl(a.js, 4, 15))
--
- })
-
+@@= skipped -19, +19 lines =@@
  // Should be OK -- retain info that a is number and b is string
  let a = p.a.toFixed();
  >a : Symbol(a, Decl(a.js, 9, 3))

@@ -1,10 +1,6 @@
 --- old.checkJsdocSatisfiesTag6.symbols
 +++ new.checkJsdocSatisfiesTag6.symbols
-@@= skipped -9, +9 lines =@@
- // Undesirable behavior today with type annotation
- const a = /** @satisfies {Partial<Point2d>} */ ({ x: 10 });
- >a : Symbol(a, Decl(a.js, 7, 5))
-->x : Symbol(x, Decl(a.js, 7, 49))
+@@= skipped -13, +13 lines =@@
 
  // Should OK
  console.log(a.x.toFixed());

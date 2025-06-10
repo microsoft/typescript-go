@@ -1,7 +1,0 @@
---- old.checkJsdocSatisfiesTag14.symbols
-+++ new.checkJsdocSatisfiesTag14.symbols
-@@= skipped -14, +14 lines =@@
-
- const t2 = /** @satisfies T1 */ ({ a: 1 });
- >t2 : Symbol(t2, Decl(a.js, 9, 5))
-->a : Symbol(a, Decl(a.js, 9, 34))
