@@ -64,15 +64,7 @@
  >class {    constructor() {        /** @type {number} */        this.y = 12;    }} : typeof Inner
 
      constructor() {
-         /** @type {number} */
-         this.y = 12;
-->this.y = 12 : 12
-+>this.y = 12 : number
- >this.y : number
- >this : this
- >y : number
-+>12 : number
- >12 : 12
+@@= skipped -18, +18 lines =@@
      }
  }
  var example = new Outer.app.Inner();
@@ -229,13 +221,15 @@
 
  /** @type {Outer.app.Inner} */
  var x;
- >x : Inner
+->x : Inner
++>x : Outer.app.Inner
 
  x.y;
 ->x.y : number
-+>x.y : any
- >x : Inner
+->x : Inner
 ->y : number
++>x.y : any
++>x : Outer.app.Inner
 +>y : any
 
  Outer.app.statische(101); // Infinity, duh

@@ -1396,8 +1396,8 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	}
 	result := p.factory.NewExpressionStatement(expression)
 	p.finishNode(result, pos)
-	p.withJSDoc(result, hasJSDoc && !hasParen)
-	p.reparseCommonJS(result)
+	jsdoc := p.withJSDoc(result, hasJSDoc && !hasParen)
+	p.reparseCommonJS(result, jsdoc)
 	return result
 }
 
@@ -2378,7 +2378,7 @@ func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.Mo
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
-	result := p.factory.NewExportAssignment(modifiers, isExportEquals, expression)
+	result := p.factory.NewExportAssignment(modifiers, isExportEquals, nil /*typeNode*/, expression)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
@@ -3906,9 +3906,12 @@ func (p *Parser) nextTokenCanFollowModifier() bool {
 		return p.canFollowExportModifier()
 	case ast.KindDefaultKeyword:
 		return p.nextTokenCanFollowDefaultKeyword()
-	case ast.KindStaticKeyword, ast.KindGetKeyword, ast.KindSetKeyword:
+	case ast.KindStaticKeyword:
 		p.nextToken()
 		return p.canFollowModifier()
+	case ast.KindGetKeyword, ast.KindSetKeyword:
+		p.nextToken()
+		return p.canFollowGetOrSetKeyword()
 	default:
 		return p.nextTokenIsOnSameLineAndCanFollowModifier()
 	}
@@ -3961,6 +3964,10 @@ func (p *Parser) canFollowExportModifier() bool {
 
 func (p *Parser) canFollowModifier() bool {
 	return p.token == ast.KindOpenBracketToken || p.token == ast.KindOpenBraceToken || p.token == ast.KindAsteriskToken || p.token == ast.KindDotDotDotToken || p.isLiteralPropertyName()
+}
+
+func (p *Parser) canFollowGetOrSetKeyword() bool {
+	return p.token == ast.KindOpenBracketToken || p.isLiteralPropertyName()
 }
 
 func (p *Parser) nextTokenIsOnSameLineAndCanFollowModifier() bool {
@@ -4585,7 +4592,7 @@ func (p *Parser) makeAsExpression(left *ast.Expression, right *ast.TypeNode) *as
 }
 
 func (p *Parser) makeBinaryExpression(left *ast.Expression, operatorToken *ast.Node, right *ast.Expression, pos int) *ast.Node {
-	result := p.factory.NewBinaryExpression(left, operatorToken, right)
+	result := p.factory.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, operatorToken, right)
 	p.finishNode(result, pos)
 	return result
 }
@@ -4727,7 +4734,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 		operatorToken := p.factory.NewToken(ast.KindCommaToken)
 		operatorToken.Loc = core.NewTextRange(invalidElement.Pos(), invalidElement.Pos())
 		p.parseErrorAt(scanner.SkipTrivia(p.sourceText, topBadPos), invalidElement.End(), diagnostics.JSX_expressions_must_have_one_parent_element)
-		result = p.factory.NewBinaryExpression(result, operatorToken, invalidElement)
+		result = p.factory.NewBinaryExpression(nil /*modifiers*/, result, nil /*typeNode*/, operatorToken, invalidElement)
 		p.finishNode(result, pos)
 	}
 	return result
@@ -5637,11 +5644,11 @@ func (p *Parser) parseObjectLiteralElement() *ast.Node {
 		if equalsToken != nil {
 			initializer = doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
 		}
-		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, equalsToken, initializer)
+		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, nil /*typeNode*/, equalsToken, initializer)
 	} else {
 		p.parseExpected(ast.KindColonToken)
 		initializer := doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
-		node = p.factory.NewPropertyAssignment(modifiers, name, postfixToken, initializer)
+		node = p.factory.NewPropertyAssignment(modifiers, name, postfixToken, nil /*typeNode*/, initializer)
 	}
 	p.finishNode(node, pos)
 	p.withJSDoc(node, hasJSDoc)

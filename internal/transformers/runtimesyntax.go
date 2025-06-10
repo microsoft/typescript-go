@@ -33,7 +33,7 @@ type RuntimeSyntaxTransformer struct {
 
 func NewRuntimeSyntaxTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver) *Transformer {
 	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions, resolver: resolver}
-	return tx.newTransformer(tx.visit, emitContext)
+	return tx.NewTransformer(tx.visit, emitContext)
 }
 
 // Pushes a new child node onto the ancestor tracking stack, returning the grandparent node to be restored later via `popNode`.
@@ -998,13 +998,15 @@ func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.S
 				equalsToken = tx.factory.NewToken(ast.KindEqualsToken)
 			}
 			expression = tx.factory.NewBinaryExpression(
+				nil, /*modifiers*/
 				expression,
+				nil, /*typeNode*/
 				equalsToken,
 				tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
 			)
 		}
 
-		updated := tx.factory.NewPropertyAssignment(nil /*modifiers*/, node.Name(), nil /*postfixToken*/, expression)
+		updated := tx.factory.NewPropertyAssignment(nil /*modifiers*/, node.Name(), nil /*postfixToken*/, nil /*typeNode*/, expression)
 		updated.Loc = node.Loc
 		tx.emitContext.SetOriginal(updated, node.AsNode())
 		tx.emitContext.AssignCommentAndSourceMapRanges(updated, node.AsNode())
@@ -1014,6 +1016,7 @@ func (tx *RuntimeSyntaxTransformer) visitShorthandPropertyAssignment(node *ast.S
 		nil, /*modifiers*/
 		exportedOrImportedName,
 		nil, /*postfixToken*/
+		nil, /*typeNode*/
 		node.EqualsToken,
 		tx.visitor.VisitNode(node.ObjectAssignmentInitializer),
 	)

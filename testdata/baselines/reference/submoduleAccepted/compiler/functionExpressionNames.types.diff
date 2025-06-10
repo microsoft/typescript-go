@@ -6,12 +6,13 @@
  exports.E = function() {
 ->exports.E = function() {    this.e = 'exported'} : typeof E
 ->exports.E : typeof E
-+>exports.E = function() {    this.e = 'exported'} : () => void
-+>exports.E : any
- >exports : typeof import("b")
+->exports : typeof import("b")
 ->E : typeof E
 ->function() {    this.e = 'exported'} : typeof E
-+>E : any
++>exports.E = function() {    this.e = 'exported'} : () => void
++>exports.E : () => void
++>exports : typeof import("./b")
++>E : () => void
 +>function() {    this.e = 'exported'} : () => void
 
      this.e = 'exported'
@@ -26,12 +27,13 @@
 ->e : E
 ->new exports.E() : E
 ->exports.E : typeof E
+->exports : typeof import("b")
+->E : typeof E
 +>e : any
 +>new exports.E() : any
-+>exports.E : any
- >exports : typeof import("b")
-->E : typeof E
-+>E : any
++>exports.E : () => void
++>exports : typeof import("./b")
++>E : () => void
 
  var o = {
 ->o : { C: typeof C; }

@@ -581,7 +581,9 @@ func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	node.Parent = b.parent
+	if node.Parent == nil || node.Parent.Flags&ast.NodeFlagsReparsed != 0 {
+		node.Parent = b.parent
+	}
 	saveInStrictMode := b.inStrictMode
 	// Even though in the AST the jsdoc @typedef node belongs to the current node,
 	// its symbol might be in the same scope with the current node's symbol. Consider:
@@ -760,7 +762,10 @@ func (b *Binder) bind(node *ast.Node) bool {
 func (b *Binder) setJSDocParents(node *ast.Node) {
 	for _, jsdoc := range node.JSDoc(b.file) {
 		setParent(jsdoc, node)
-		ast.SetParentInChildren(jsdoc)
+		if jsdoc.Kind != ast.KindJSDocImportTag {
+			// JSDocImportTag children have parents set during parsing for module resolution purposes.
+			ast.SetParentInChildren(jsdoc)
+		}
 	}
 }
 
@@ -1560,8 +1565,8 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	// and set it before we descend into nodes that could actually be part of an assignment pattern.
 	b.inAssignmentPattern = false
 	if b.checkUnreachable(node) {
-		b.bindEachChild(node)
 		b.setJSDocParents(node)
+		b.bindEachChild(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
 		return
 	}
@@ -1572,6 +1577,7 @@ func (b *Binder) bindChildren(node *ast.Node) {
 			hasFlowNodeData.FlowNode = b.currentFlow
 		}
 	}
+	b.setJSDocParents(node)
 	switch node.Kind {
 	case ast.KindWhileStatement:
 		b.bindWhileStatement(node)
@@ -1647,11 +1653,10 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
 	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
-		return // Reparsed nodes do not double-bind children, which are not reparsed
+		// Reparsed nodes do not double-bind children, which are not reparsed
 	default:
 		b.bindEachChild(node)
 	}
-	b.setJSDocParents(node)
 	b.inAssignmentPattern = saveInAssignmentPattern
 }
 
@@ -1890,13 +1895,16 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	stmt := node.AsForStatement()
 	preLoopLabel := b.setContinueTarget(node, b.createLoopLabel())
 	preBodyLabel := b.createBranchLabel()
+	preIncrementorLabel := b.createBranchLabel()
 	postLoopLabel := b.createBranchLabel()
 	b.bind(stmt.Initializer)
 	topFlow := b.currentFlow
 	b.currentFlow = preLoopLabel
 	b.bindCondition(stmt.Condition, preBodyLabel, postLoopLabel)
 	b.currentFlow = b.finishFlowLabel(preBodyLabel)
-	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preLoopLabel)
+	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preIncrementorLabel)
+	b.addAntecedent(preIncrementorLabel, b.currentFlow)
+	b.currentFlow = b.finishFlowLabel(preIncrementorLabel)
 	b.bind(stmt.Incrementor)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.addAntecedent(preLoopLabel, topFlow)
@@ -2206,9 +2214,11 @@ func (b *Binder) bindDestructuringAssignmentFlow(node *ast.Node) {
 		b.bind(expr.Right)
 		b.inAssignmentPattern = true
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 	} else {
 		b.inAssignmentPattern = true
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 		b.inAssignmentPattern = false
 		b.bind(expr.OperatorToken)
 		b.bind(expr.Right)
@@ -2237,6 +2247,7 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		}
 	} else {
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 		if operator == ast.KindCommaToken {
 			b.maybeBindExpressionFlowIfCall(node)
 		}
@@ -2684,9 +2695,11 @@ func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindQuestionQuestionEqualsToken:
 		return containsNarrowableReference(expr.Left)
 	case ast.KindEqualsEqualsToken, ast.KindExclamationEqualsToken, ast.KindEqualsEqualsEqualsToken, ast.KindExclamationEqualsEqualsToken:
-		return isNarrowableOperand(expr.Left) || isNarrowableOperand(expr.Right) ||
-			isNarrowingTypeOfOperands(expr.Right, expr.Left) || isNarrowingTypeOfOperands(expr.Left, expr.Right) ||
-			(ast.IsBooleanLiteral(expr.Right) && isNarrowingExpression(expr.Left) || ast.IsBooleanLiteral(expr.Left) && isNarrowingExpression(expr.Right))
+		left := ast.SkipParentheses(expr.Left)
+		right := ast.SkipParentheses(expr.Right)
+		return isNarrowableOperand(left) || isNarrowableOperand(right) ||
+			isNarrowingTypeOfOperands(right, left) || isNarrowingTypeOfOperands(left, right) ||
+			(ast.IsBooleanLiteral(right) && isNarrowingExpression(left) || ast.IsBooleanLiteral(left) && isNarrowingExpression(right))
 	case ast.KindInstanceOfKeyword:
 		return isNarrowableOperand(expr.Left)
 	case ast.KindInKeyword:
@@ -2874,9 +2887,15 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		}
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	// This list is a work in progress. Add missing node kinds to improve their error spans
+	case ast.KindFunctionDeclaration, ast.KindMethodDeclaration:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
+		fallthrough
 	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration,
-		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionDeclaration, ast.KindFunctionExpression,
-		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
+		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionExpression,
+		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
 		ast.KindPropertySignature, ast.KindNamespaceImport:
 		errorNode = ast.GetNameOfDeclaration(node)
 	case ast.KindArrowFunction:
@@ -2896,6 +2915,10 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		pos := scanner.SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindConstructor:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
 		scanner := scanner.GetScannerForSourceFile(sourceFile, node.Pos())
 		start := scanner.TokenStart()
 		for scanner.Token() != ast.KindConstructorKeyword && scanner.Token() != ast.KindStringLiteral && scanner.Token() != ast.KindEndOfFile {

@@ -1,19 +1,6 @@
 --- old.jsdocReadonlyDeclarations.types
 +++ new.jsdocReadonlyDeclarations.types
-@@= skipped -24, +24 lines =@@
-          * @type {number}
-          */
-         this.y = n
-->this.y = n : any
-+>this.y = n : number
- >this.y : number
- >this : this
- >y : number
-+>n : number
- >n : any
-     }
- }
-@@= skipped -14, +15 lines =@@
+@@= skipped -38, +38 lines =@@
  >x : 6
 
  function F() {

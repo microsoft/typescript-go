@@ -23,17 +23,18 @@ const (
 )
 
 var (
-	supportedDeclarationExtensions           = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
-	supportedTSImplementationExtensions      = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
-	supportedTSExtensionsForExtractExtension = []string{ExtensionDts, ExtensionDcts, ExtensionDmts, ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
-	AllSupportedExtensions                   = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts, ExtensionJs, ExtensionJsx}, {ExtensionCts, ExtensionDcts, ExtensionCjs}, {ExtensionMts, ExtensionDmts, ExtensionMjs}}
-	SupportedTSExtensions                    = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts}, {ExtensionCts, ExtensionDcts}, {ExtensionMts, ExtensionDmts}}
-	SupportedTSExtensionsFlat                = []string{ExtensionTs, ExtensionTsx, ExtensionDts, ExtensionCts, ExtensionDcts, ExtensionMts, ExtensionDmts}
-	SupportedJSExtensions                    = [][]string{{ExtensionJs, ExtensionJsx}, {ExtensionMjs}, {ExtensionCjs}}
-	SupportedJSExtensionsFlat                = []string{ExtensionJs, ExtensionJsx, ExtensionMjs, ExtensionCjs}
-	AllSupportedExtensionsWithJson           = slices.Concat(AllSupportedExtensions, [][]string{{ExtensionJson}})
-	SupportedTSExtensionsWithJson            = slices.Concat(SupportedTSExtensions, [][]string{{ExtensionJson}})
-	SupportedTSExtensionsWithJsonFlat        = slices.Concat(SupportedTSExtensionsFlat, []string{ExtensionJson})
+	supportedDeclarationExtensions                 = []string{ExtensionDts, ExtensionDcts, ExtensionDmts}
+	supportedTSImplementationExtensions            = []string{ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
+	supportedTSExtensionsForExtractExtension       = []string{ExtensionDts, ExtensionDcts, ExtensionDmts, ExtensionTs, ExtensionTsx, ExtensionMts, ExtensionCts}
+	AllSupportedExtensions                         = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts, ExtensionJs, ExtensionJsx}, {ExtensionCts, ExtensionDcts, ExtensionCjs}, {ExtensionMts, ExtensionDmts, ExtensionMjs}}
+	SupportedTSExtensions                          = [][]string{{ExtensionTs, ExtensionTsx, ExtensionDts}, {ExtensionCts, ExtensionDcts}, {ExtensionMts, ExtensionDmts}}
+	SupportedTSExtensionsFlat                      = []string{ExtensionTs, ExtensionTsx, ExtensionDts, ExtensionCts, ExtensionDcts, ExtensionMts, ExtensionDmts}
+	SupportedJSExtensions                          = [][]string{{ExtensionJs, ExtensionJsx}, {ExtensionMjs}, {ExtensionCjs}}
+	SupportedJSExtensionsFlat                      = []string{ExtensionJs, ExtensionJsx, ExtensionMjs, ExtensionCjs}
+	AllSupportedExtensionsWithJson                 = slices.Concat(AllSupportedExtensions, [][]string{{ExtensionJson}})
+	SupportedTSExtensionsWithJson                  = slices.Concat(SupportedTSExtensions, [][]string{{ExtensionJson}})
+	SupportedTSExtensionsWithJsonFlat              = slices.Concat(SupportedTSExtensionsFlat, []string{ExtensionJson})
+	ExtensionsNotSupportingExtensionlessResolution = []string{ExtensionMts, ExtensionDmts, ExtensionMjs, ExtensionCts, ExtensionDcts, ExtensionCjs}
 )
 
 func ExtensionIsTs(ext string) bool {
@@ -104,6 +105,10 @@ func IsDeclarationFileName(fileName string) bool {
 	return GetDeclarationFileExtension(fileName) != ""
 }
 
+func ExtensionIsOneOf(ext string, extensions []string) bool {
+	return slices.Contains(extensions, ext)
+}
+
 func GetDeclarationFileExtension(fileName string) string {
 	base := GetBaseFileName(fileName)
 	for _, ext := range supportedDeclarationExtensions {
@@ -153,4 +158,21 @@ func changeAnyExtension(path string, ext string, extensions []string, ignoreCase
 
 func ChangeExtension(path string, newExtension string) string {
 	return changeAnyExtension(path, newExtension, extensionsToRemove /*ignoreCase*/, false)
+}
+
+// Like `changeAnyExtension`, but declaration file extensions are recognized
+// and replaced starting from the `.d`.
+//
+//	changeAnyExtension("file.d.ts", ".js") === "file.d.js"
+//	changeFullExtension("file.d.ts", ".js") === "file.js"
+func ChangeFullExtension(path string, newExtension string) string {
+	declarationExtension := GetDeclarationFileExtension(path)
+	if declarationExtension != "" {
+		ext := newExtension
+		if !strings.HasPrefix(ext, ".") {
+			ext = "." + ext
+		}
+		return path[:len(path)-len(declarationExtension)] + ext
+	}
+	return ChangeExtension(path, newExtension)
 }

@@ -26,9 +26,9 @@ const (
 	propertyLikeParseCallbackParameter
 )
 
-func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
+func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 	if !hasJSDoc {
-		return
+		return nil
 	}
 
 	if p.jsdocCache == nil {
@@ -60,7 +60,9 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) {
 			p.reparseTags(node, jsdoc)
 		}
 		p.jsdocCache[node] = jsdoc
+		return jsdoc
 	}
+	return nil
 }
 
 func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
@@ -457,6 +459,7 @@ func (p *Parser) parseTag(tags []*ast.Node, margin int) *ast.Node {
 		tag = p.parseSeeTag(start, tagName, margin, indentText)
 	case "import":
 		tag = p.parseImportTag(start, tagName, margin, indentText)
+		ast.SetParentInChildren(tag)
 	default:
 		tag = p.parseUnknownTag(start, tagName, margin, indentText)
 	}
@@ -883,6 +886,7 @@ func (p *Parser) parseExpressionWithTypeArgumentsForAugments() *ast.Node {
 	res := node
 	p.finishNode(node, pos)
 	if usedBrace {
+		p.skipWhitespace()
 		p.parseExpected(ast.KindCloseBraceToken)
 	}
 	return res

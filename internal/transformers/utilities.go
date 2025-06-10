@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -119,6 +120,8 @@ func isIdentifierReference(name *ast.IdentifierNode, parent *ast.Node) bool {
 		return parent.AsImportAttribute().Value == name
 	case ast.KindJsxOpeningElement:
 		return parent.AsJsxOpeningElement().TagName == name
+	case ast.KindJsxClosingElement:
+		return parent.AsJsxClosingElement().TagName == name
 	default:
 		return false
 	}
@@ -181,7 +184,7 @@ func convertBindingElementToObjectAssignmentElement(emitContext *printer.EmitCon
 		if element.Initializer != nil {
 			expression = emitContext.Factory.NewAssignmentExpression(expression, element.Initializer)
 		}
-		assignment := emitContext.Factory.NewPropertyAssignment(nil /*modifiers*/, element.PropertyName, nil /*postfixToken*/, expression)
+		assignment := emitContext.Factory.NewPropertyAssignment(nil /*modifiers*/, element.PropertyName, nil /*postfixToken*/, nil /*typeNode*/, expression)
 		emitContext.SetOriginal(assignment, element.AsNode())
 		emitContext.AssignCommentAndSourceMapRanges(assignment, element.AsNode())
 		return assignment
@@ -194,6 +197,7 @@ func convertBindingElementToObjectAssignmentElement(emitContext *printer.EmitCon
 		nil, /*modifiers*/
 		element.Name(),
 		nil, /*postfixToken*/
+		nil, /*typeNode*/
 		equalsToken,
 		element.Initializer,
 	)
@@ -335,7 +339,7 @@ func rewriteModuleSpecifier(emitContext *printer.EmitContext, node *ast.Expressi
 	if node == nil || !ast.IsStringLiteral(node) || !shouldRewriteModuleSpecifier(node.Text(), compilerOptions) {
 		return node
 	}
-	updatedText := tspath.ChangeExtension(node.Text(), core.GetOutputExtension(node.Text(), compilerOptions.Jsx))
+	updatedText := tspath.ChangeExtension(node.Text(), outputpaths.GetOutputExtension(node.Text(), compilerOptions.Jsx))
 	if updatedText != node.Text() {
 		updated := emitContext.Factory.NewStringLiteral(updatedText)
 		// !!! set quote style

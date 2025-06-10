@@ -73,3 +73,36 @@ export const name = pkg.name;
 import * as ns from "./package.json" with { type: "json" };
 export const thing = ns;
 export const name2 = ns.default.name;
+
+
+//// [index.d.ts]
+export declare const name: string;
+export declare const thing: {
+    default: {
+        name: string;
+        version: string;
+        type: string;
+        default: string;
+    };
+};
+export declare const name2: string;
+//// [index.d.cts]
+export declare const name: string;
+export declare const thing: {
+    name: string;
+    version: string;
+    type: string;
+    default: string;
+};
+export declare const name2: any;
+//// [index.d.mts]
+export declare const name: string;
+export declare const thing: {
+    default: {
+        name: string;
+        version: string;
+        type: string;
+        default: string;
+    };
+};
+export declare const name2: string;

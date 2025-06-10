@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -118,6 +119,7 @@ func parseJsonToStringKey(json any) *collections.OrderedMap[string, any] {
 
 type optionParser interface {
 	ParseOption(key string, value any) []*ast.Diagnostic
+	UnknownOptionDiagnostic() *diagnostics.Message
 }
 
 type compilerOptionsParser struct {
@@ -128,6 +130,10 @@ func (o *compilerOptionsParser) ParseOption(key string, value any) []*ast.Diagno
 	return ParseCompilerOptions(key, value, o.CompilerOptions)
 }
 
+func (o *compilerOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
+	return extraKeyDiagnostics("compilerOptions")
+}
+
 type watchOptionsParser struct {
 	*core.WatchOptions
 }
@@ -136,12 +142,20 @@ func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnosti
 	return ParseWatchOptions(key, value, o.WatchOptions)
 }
 
+func (o *watchOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
+	return extraKeyDiagnostics("watchOptions")
+}
+
 type typeAcquisitionParser struct {
 	*core.TypeAcquisition
 }
 
 func (o *typeAcquisitionParser) ParseOption(key string, value any) []*ast.Diagnostic {
 	return ParseTypeAcquisition(key, value, o.TypeAcquisition)
+}
+
+func (o *typeAcquisitionParser) UnknownOptionDiagnostic() *diagnostics.Message {
+	return extraKeyDiagnostics("typeAcquisition")
 }
 
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
@@ -205,6 +219,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.Declaration = parseTristate(value)
 	case "downlevelIteration":
 		allOptions.DownlevelIteration = parseTristate(value)
+	case "erasableSyntaxOnly":
+		allOptions.ErasableSyntaxOnly = parseTristate(value)
 	case "emitDeclarationOnly":
 		allOptions.EmitDeclarationOnly = parseTristate(value)
 	case "extendedDiagnostics":
@@ -259,6 +275,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		} else {
 			allOptions.Lib = parseStringArray(value)
 		}
+	case "libReplacement":
+		allOptions.LibReplacement = parseTristate(value)
 	case "listEmittedFiles":
 		allOptions.ListEmittedFiles = parseTristate(value)
 	case "listFiles":

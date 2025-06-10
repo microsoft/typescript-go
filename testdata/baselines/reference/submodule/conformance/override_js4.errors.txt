@@ -1,4 +1,4 @@
-a.js(7,5): error TS4117: This member cannot have an 'override' modifier because it is not declared in the base class 'A'. Did you mean 'doSomething'?
+a.js(7,5): error TS4123: This member cannot have a JSDoc comment with an 'override' tag because it is not declared in the base class 'A'. Did you mean 'doSomething'?
 
 
 ==== a.js (1 errors) ====
@@ -10,6 +10,6 @@ a.js(7,5): error TS4117: This member cannot have an 'override' modifier because 
         /** @override  */
         doSomethang() {}
         ~~~~~~~~~~~
-!!! error TS4117: This member cannot have an 'override' modifier because it is not declared in the base class 'A'. Did you mean 'doSomething'?
+!!! error TS4123: This member cannot have a JSDoc comment with an 'override' tag because it is not declared in the base class 'A'. Did you mean 'doSomething'?
     }
     

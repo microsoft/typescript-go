@@ -73,6 +73,11 @@ func (api *API) DefaultLibraryPath() string {
 	return api.host.DefaultLibraryPath()
 }
 
+// TypingsInstaller implements ProjectHost
+func (api *API) TypingsInstaller() *project.TypingsInstaller {
+	return nil
+}
+
 // DocumentRegistry implements ProjectHost.
 func (api *API) DocumentRegistry() *project.DocumentRegistry {
 	return api.documentRegistry
@@ -107,6 +112,11 @@ func (api *API) OnDiscoveredSymlink(info *project.ScriptInfo) {
 
 // Log implements ProjectHost.
 func (api *API) Log(s string) {
+	api.options.Logger.Info(s)
+}
+
+// Log implements ProjectHost.
+func (api *API) Trace(s string) {
 	api.options.Logger.Info(s)
 }
 

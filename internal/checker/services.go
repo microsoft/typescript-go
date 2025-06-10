@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/printer"
 )
 
 func (c *Checker) GetSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags) []*ast.Symbol {
@@ -110,10 +111,6 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 
 	delete(symbols, ast.InternalSymbolNameThis) // Not a symbol, a keyword
 	return symbolsToArray(symbols)
-}
-
-func (c *Checker) GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
-	return c.resolveAlias(symbol)
 }
 
 func (c *Checker) GetExportsOfModule(symbol *ast.Symbol) []*ast.Symbol {
@@ -303,10 +300,20 @@ func runWithInferenceBlockedFromSourceNode[T any](c *Checker, node *ast.Node, fn
 	return result
 }
 
-func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
-	ancestorNode := ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsCallLikeOrFunctionLikeExpression(n)
+func GetResolvedSignatureForSignatureHelp(node *ast.Node, argumentCount int, c *Checker) (*Signature, []*Signature) {
+	type result struct {
+		signature  *Signature
+		candidates []*Signature
+	}
+	res := runWithoutResolvedSignatureCaching(c, node, func() result {
+		signature, candidates := c.getResolvedSignatureWorker(node, CheckModeIsForSignatureHelp, argumentCount)
+		return result{signature, candidates}
 	})
+	return res.signature, res.candidates
+}
+
+func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
+	ancestorNode := ast.FindAncestor(node, ast.IsCallLikeOrFunctionLikeExpression)
 	if ancestorNode != nil {
 		cachedResolvedSignatures := make(map[*SignatureLinks]*Signature)
 		cachedTypes := make(map[*ValueSymbolLinks]*Type)
@@ -398,6 +405,56 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 
 func (c *Checker) GetExportSymbolOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol))
+}
+
+func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbol {
+	// node should be ExportSpecifier | Identifier
+	switch node.Kind {
+	case ast.KindExportSpecifier:
+		if node.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil {
+			return c.getExternalModuleMember(node.Parent.Parent, node, false /*dontResolveAlias*/)
+		}
+		name := node.PropertyName()
+		if name == nil {
+			name = node.Name()
+		}
+		if name.Kind == ast.KindStringLiteral {
+			// Skip for invalid syntax like this: export { "x" }
+			return nil
+		}
+	case ast.KindIdentifier:
+		// do nothing (don't panic)
+	default:
+		panic("Unhandled case in getExportSpecifierLocalTargetSymbol, node should be ExportSpecifier | Identifier")
+	}
+	return c.resolveEntityName(node, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
+}
+
+func (c *Checker) GetShorthandAssignmentValueSymbol(location *ast.Node) *ast.Symbol {
+	if location != nil && location.Kind == ast.KindShorthandPropertyAssignment {
+		return c.resolveEntityName(location.Name(), ast.SymbolFlagsValue|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
+	}
+	return nil
+}
+
+/**
+* Get symbols that represent parameter-property-declaration as parameter and as property declaration
+* @param parameter a parameterDeclaration node
+* @param parameterName a name of the parameter to get the symbols for.
+* @return a tuple of two symbols
+ */
+func (c *Checker) GetSymbolsOfParameterPropertyDeclaration(parameter *ast.Node /*ParameterPropertyDeclaration*/, parameterName string) (*ast.Symbol, *ast.Symbol) {
+	constructorDeclaration := parameter.Parent
+	classDeclaration := parameter.Parent.Parent
+
+	parameterSymbol := c.getSymbol(constructorDeclaration.Locals(), parameterName, ast.SymbolFlagsValue)
+	propertySymbol := c.getSymbol(c.getMembersOfSymbol(classDeclaration.Symbol()), parameterName, ast.SymbolFlagsValue)
+
+	if parameterSymbol != nil && propertySymbol != nil {
+		return parameterSymbol, propertySymbol
+	}
+
+	panic("There should exist two symbols, one as property declaration and one as parameter declaration")
 }
 
 func (c *Checker) GetTypeArgumentConstraint(node *ast.Node) *Type {
@@ -509,4 +566,16 @@ func (c *Checker) GetConstantValue(node *ast.Node) any {
 	}
 
 	return nil
+}
+
+func (c *Checker) getResolvedSignatureWorker(node *ast.Node, checkMode CheckMode, argumentCount int) (*Signature, []*Signature) {
+	parsedNode := printer.NewEmitContext().ParseNode(node)
+	c.apparentArgumentCount = &argumentCount
+	candidatesOutArray := &[]*Signature{}
+	var res *Signature
+	if parsedNode != nil {
+		res = c.getResolvedSignature(parsedNode, candidatesOutArray, checkMode)
+	}
+	c.apparentArgumentCount = nil
+	return res, *candidatesOutArray
 }
