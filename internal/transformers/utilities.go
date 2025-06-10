@@ -336,7 +336,7 @@ func tryRenameExternalModule(factory *printer.NodeFactory, moduleName *ast.Liter
 }
 
 func rewriteModuleSpecifier(emitContext *printer.EmitContext, node *ast.Expression, compilerOptions *core.CompilerOptions) *ast.Expression {
-	if node == nil || !ast.IsStringLiteral(node) || !ShouldRewriteModuleSpecifier(node.Text(), compilerOptions) {
+	if node == nil || !ast.IsStringLiteral(node) || !shouldRewriteModuleSpecifier(node.Text(), compilerOptions) {
 		return node
 	}
 	updatedText := tspath.ChangeExtension(node.Text(), outputpaths.GetOutputExtension(node.Text(), compilerOptions.Jsx))
@@ -350,7 +350,7 @@ func rewriteModuleSpecifier(emitContext *printer.EmitContext, node *ast.Expressi
 	return node
 }
 
-func ShouldRewriteModuleSpecifier(specifier string, compilerOptions *core.CompilerOptions) bool {
+func shouldRewriteModuleSpecifier(specifier string, compilerOptions *core.CompilerOptions) bool {
 	return compilerOptions.RewriteRelativeImportExtensions.IsTrue() && tspath.PathIsRelative(specifier) && !tspath.IsDeclarationFileName(specifier) && tspath.HasTSFileExtension(specifier)
 }
 
