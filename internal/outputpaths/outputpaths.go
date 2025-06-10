@@ -199,3 +199,19 @@ func getDeclarationEmitExtensionForPath(fileName string) string {
 	}
 	return tspath.ExtensionDts
 }
+
+// SourceFileMayBeEmitted checks if a source file may be emitted by the compiler
+func SourceFileMayBeEmitted(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+	if options.NoEmit.IsTrue() || options.EmitDeclarationOnly.IsTrue() {
+		return false
+	}
+	// Check if this source file is a declaration file
+	if tspath.IsDeclarationFileName(sourceFile.FileName()) {
+		return false
+	}
+	// Check if this is a JS file and allowJs is disabled
+	if tspath.HasJSFileExtension(sourceFile.FileName()) && !options.AllowJs.IsTrue() {
+		return false
+	}
+	return true
+}
