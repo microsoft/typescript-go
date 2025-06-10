@@ -20,7 +20,7 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 		export = p.factory.NewJSExportAssignment(nil, bin.Right)
 	case ast.JSDeclarationKindExportsProperty:
 		mod := p.factory.NewModifier(ast.KindExportKeyword)
-		mod.Flags = ast.NodeFlagsReparsed
+		mod.Flags = p.contextFlags | ast.NodeFlagsReparsed
 		mod.Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
 		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, p.nodeSlicePool.NewSlice1(mod)), ast.GetElementOrPropertyAccessName(bin.Left), nil /*typeNode*/, bin.Right)

@@ -1557,7 +1557,6 @@ func IsDottedName(node *Node) bool {
 	return false
 }
 
-
 func HasSamePropertyAccessName(node1, node2 *Node) bool {
 	if node1.Kind == KindIdentifier && node2.Kind == KindIdentifier {
 		return node1.Text() == node2.Text()
@@ -1567,6 +1566,7 @@ func HasSamePropertyAccessName(node1, node2 *Node) bool {
 	}
 	return false
 }
+
 func IsAmbientModule(node *Node) bool {
 	return IsModuleDeclaration(node) && (node.AsModuleDeclaration().Name().Kind == KindStringLiteral || IsGlobalScopeAugmentation(node))
 }
