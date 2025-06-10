@@ -8,10 +8,6 @@ const x = /** @satisfies {Facts} */ ({
 >x : Symbol(x, Decl(a.js, 3, 5))
 
     m: true,
->m : Symbol(m, Decl(a.js, 3, 38))
-
     s: "false"
->s : Symbol(s, Decl(a.js, 4, 12))
-
 })
 

@@ -11,9 +11,6 @@
 const a = /** @satisfies {Partial<Point2d>} */ ({ x: 10 });
 >a : { x: number; }
 >({ x: 10 }) : { x: number; }
->{ x: 10 } : { x: number; }
->x : number
->10 : 10
 
 // Should OK
 console.log(a.x.toFixed());

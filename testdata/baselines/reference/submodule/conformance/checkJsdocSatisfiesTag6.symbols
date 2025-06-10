@@ -10,7 +10,6 @@
 // Undesirable behavior today with type annotation
 const a = /** @satisfies {Partial<Point2d>} */ ({ x: 10 });
 >a : Symbol(a, Decl(a.js, 7, 5))
->x : Symbol(x, Decl(a.js, 7, 49))
 
 // Should OK
 console.log(a.x.toFixed());

@@ -1,0 +1,7 @@
+--- old.checkJsdocSatisfiesTag11.types
++++ new.checkJsdocSatisfiesTag11.types
+@@= skipped -26, +26 lines =@@
+ const t2 = /** @satisfies {number} */ (1);
+ >t2 : 1
+ >(1) : 1
+->1 : 1

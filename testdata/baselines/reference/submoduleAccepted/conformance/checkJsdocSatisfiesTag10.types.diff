@@ -1,0 +1,23 @@
+--- old.checkJsdocSatisfiesTag10.types
++++ new.checkJsdocSatisfiesTag10.types
+@@= skipped -5, +5 lines =@@
+ const p = /** @satisfies {Partial<Record<Keys, unknown>>} */ ({
+ >p : { a: number; b: string; x: number; }
+ >({    a: 0,    b: "hello",    x: 8 // Should error, 'x' isn't in 'Keys'}) : { a: number; b: string; x: number; }
+->{    a: 0,    b: "hello",    x: 8 // Should error, 'x' isn't in 'Keys'} : { a: number; b: string; x: number; }
+
+     a: 0,
+->a : number
+->0 : 0
+-
+     b: "hello",
+->b : string
+->"hello" : "hello"
+-
+     x: 8 // Should error, 'x' isn't in 'Keys'
+->x : number
+->8 : 8
+-
+ });
+
+ // Should be OK -- retain info that a is number and b is string
