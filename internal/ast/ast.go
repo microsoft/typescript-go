@@ -6,6 +6,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -10007,6 +10008,8 @@ type SourceFile struct {
 	CheckJsDirective            *CheckJsDirective
 	NodeCount                   int
 	TextCount                   int
+	CommonJSModuleIndicator     *Node
+	ExternalModuleIndicator     *Node
 
 	// Fields set by binder
 
@@ -10016,7 +10019,7 @@ type SourceFile struct {
 	BindSuggestionDiagnostics []*Diagnostic
 	EndFlowNode               *FlowNode
 	SymbolCount               int
-	ClassifiableNames         core.Set[string]
+	ClassifiableNames         collections.Set[string]
 	PatternAmbientModules     []*PatternAmbientModule
 
 	// Fields set by LineMap
@@ -10029,11 +10032,7 @@ type SourceFile struct {
 	tokenCacheMu sync.Mutex
 	tokenCache   map[core.TextRange]*Node
 
-	// !!!
-
-	CommonJSModuleIndicator *Node
-	ExternalModuleIndicator *Node
-	JSGlobalAugmentations   SymbolTable
+	JSGlobalAugmentations SymbolTable // !!! remove me
 }
 
 func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Path, statements *NodeList) *Node {
