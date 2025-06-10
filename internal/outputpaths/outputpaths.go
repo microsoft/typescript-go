@@ -200,34 +200,4 @@ func getDeclarationEmitExtensionForPath(fileName string) string {
 	return tspath.ExtensionDts
 }
 
-// SourceFileMayBeEmitted checks if a source file may be emitted by the compiler
-func SourceFileMayBeEmitted(sourceFile *ast.SourceFile, options *core.CompilerOptions, forceDtsEmit bool) bool {
-	// !!! Js files are emitted only if option is enabled
 
-	// Declaration files are not emitted
-	if sourceFile.IsDeclarationFile {
-		return false
-	}
-
-	// !!! Source file from node_modules are not emitted. In Strada, this depends on module resolution and uses
-	// `sourceFilesFoundSearchingNodeModules` in `createProgram`. For now, we will just check for `/node_modules/` in
-	// the file name.
-	if strings.Contains(sourceFile.FileName(), "/node_modules/") {
-		return false
-	}
-
-	// forcing dts emit => file needs to be emitted
-	if forceDtsEmit {
-		return true
-	}
-
-	// !!! Source files from referenced projects are not emitted
-
-	// Any non json file should be emitted
-	if !ast.IsJsonSourceFile(sourceFile) {
-		return true
-	}
-
-	// !!! Should JSON input files be emitted
-	return false
-}

@@ -710,8 +710,9 @@ func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) co
 func (p *Program) CommonSourceDirectory() string {
 	p.commonSourceDirectoryOnce.Do(func() {
 		var files []string
+		host := &emitHost{program: p}
 		for _, file := range p.files {
-			if outputpaths.SourceFileMayBeEmitted(file, p.Options(), false /*forceDtsEmit*/) {
+			if sourceFileMayBeEmitted(file, host, false /*forceDtsEmit*/) {
 				files = append(files, file.FileName())
 			}
 		}

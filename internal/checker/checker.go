@@ -22,7 +22,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
-	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
@@ -14518,7 +14517,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						diagnostics.This_relative_import_path_is_unsafe_to_rewrite_because_it_looks_like_a_file_name_but_actually_resolves_to_0,
 						relativeToSourceFile,
 					)
-				} else if resolvedModule.ResolvedUsingTsExtension && !shouldRewrite && outputpaths.SourceFileMayBeEmitted(sourceFile, c.compilerOptions, false) {
+				} else if resolvedModule.ResolvedUsingTsExtension && !shouldRewrite && c.sourceFileMayBeEmitted(sourceFile) {
 					c.error(
 						errorNode,
 						diagnostics.This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path,
@@ -30407,4 +30406,26 @@ func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *e
 
 func (c *Checker) GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.resolveAlias(symbol)
+}
+
+// sourceFileMayBeEmitted is a simplified version of the function in compiler/emitter.go
+// that handles the basic checks needed for import rewrite diagnostics
+func (c *Checker) sourceFileMayBeEmitted(sourceFile *ast.SourceFile) bool {
+	// Declaration files are not emitted
+	if sourceFile.IsDeclarationFile {
+		return false
+	}
+
+	// Source file from node_modules are not emitted
+	if strings.Contains(sourceFile.FileName(), "/node_modules/") {
+		return false
+	}
+
+	// Any non json file should be emitted
+	if !ast.IsJsonSourceFile(sourceFile) {
+		return true
+	}
+
+	// JSON files are generally not emitted
+	return false
 }
