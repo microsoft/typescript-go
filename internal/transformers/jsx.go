@@ -92,7 +92,7 @@ func (tx *JSXTransformer) getImplicitImportForName(name string) *ast.Node {
 	specifier := tx.factory.NewImportSpecifier(false, tx.factory.NewIdentifier(name), generatedName)
 	// setIdentifierGeneratedImportReference(generatedName, specifier); // !!!
 	tx.utilizedImplicitRuntimeImports[importSource][name] = specifier
-	return specifier
+	return specifier.Name()
 }
 
 func (tx *JSXTransformer) setInChild(v bool) {
@@ -100,6 +100,9 @@ func (tx *JSXTransformer) setInChild(v bool) {
 }
 
 func (tx *JSXTransformer) visit(node *ast.Node) *ast.Node {
+	if node == nil {
+		return nil
+	}
 	if node.SubtreeFacts()&ast.SubtreeContainsJsx == 0 {
 		return node
 	}
@@ -133,7 +136,11 @@ func (tx *JSXTransformer) visit(node *ast.Node) *ast.Node {
  */
 func hasKeyAfterPropsSpread(node *ast.Node) bool {
 	spread := false
-	for _, elem := range node.Attributes().Properties() {
+	opener := node
+	if node.Kind == ast.KindJsxElement {
+		opener = node.AsJsxElement().OpeningElement
+	} // otherwise self-closing
+	for _, elem := range opener.Attributes().Properties() {
 		if ast.IsJsxSpreadAttribute(elem) && (!ast.IsObjectLiteralExpression(elem.Expression()) || core.Some(elem.Expression().Properties(), ast.IsSpreadAssignment)) {
 			spread = true
 		} else if spread && ast.IsJsxAttribute(elem) && ast.IsIdentifier(elem.Name()) && elem.Name().AsIdentifier().Text == "key" {
@@ -544,7 +551,7 @@ func (tx *JSXTransformer) visitJsxOpeningLikeElementOrFragmentJSX(
 	if children != nil {
 		nonWhitespaceChildren = ast.GetSemanticJsxChildren(children.Nodes)
 	}
-	isStaticChildren := len(nonWhitespaceChildren) > 1 || nonWhitespaceChildren[0].AsJsxExpression().DotDotDotToken != nil
+	isStaticChildren := len(nonWhitespaceChildren) > 1 || (len(nonWhitespaceChildren) == 1 && ast.IsJsxExpression(nonWhitespaceChildren[0]) && nonWhitespaceChildren[0].AsJsxExpression().DotDotDotToken != nil)
 	args := make([]*ast.Node, 0, 3)
 	args = append(args, tagName, object)
 	// function jsx(type, config, maybeKey) {}
@@ -677,10 +684,12 @@ func (tx *JSXTransformer) visitJsxOpeningLikeElementCreateElement(element *ast.N
 	if children != nil && len(children.Nodes) > 0 {
 		for _, c := range children.Nodes {
 			res := tx.transformJsxChildToExpression(c)
-			if len(children.Nodes) > 1 {
-				tx.emitContext.AddEmitFlags(res, printer.EFStartOnNewLine)
+			if res != nil {
+				if len(children.Nodes) > 1 {
+					tx.emitContext.AddEmitFlags(res, printer.EFStartOnNewLine)
+				}
+				newChildren = append(newChildren, res)
 			}
-			newChildren = append(newChildren, res)
 		}
 	}
 
@@ -712,10 +721,12 @@ func (tx *JSXTransformer) visitJsxOpeningFragmentCreateElement(fragment *ast.Jsx
 	if children != nil && len(children.Nodes) > 0 {
 		for _, c := range children.Nodes {
 			res := tx.transformJsxChildToExpression(c)
-			if len(children.Nodes) > 1 {
-				tx.emitContext.AddEmitFlags(res, printer.EFStartOnNewLine)
+			if res != nil {
+				if len(children.Nodes) > 1 {
+					tx.emitContext.AddEmitFlags(res, printer.EFStartOnNewLine)
+				}
+				newChildren = append(newChildren, res)
 			}
-			newChildren = append(newChildren, res)
 		}
 	}
 
