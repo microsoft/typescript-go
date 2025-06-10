@@ -540,6 +540,8 @@ type Program interface {
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
 	IsSourceFromProjectReference(path tspath.Path) bool
 	GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference
+	GetResolvedProjectReferenceToRedirect(fileName string) *tsoptions.ParsedCommandLine
+	GetCommonSourceDirectory() string
 }
 
 type Host interface {
@@ -14525,8 +14527,38 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						diagnostics.This_import_uses_a_0_extension_to_resolve_to_an_input_TypeScript_file_but_will_not_be_rewritten_during_emit_because_it_is_not_a_relative_path,
 						tspath.GetAnyExtensionFromPath(moduleReference, nil, false),
 					)
+				} else if resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
+					redirect := c.program.GetResolvedProjectReferenceToRedirect(sourceFile.FileName())
+					if redirect != nil {
+						ownRootDir := c.program.GetCommonSourceDirectory()
+						otherRootDir := redirect.CommonSourceDirectory()
+						
+						compareOptions := tspath.ComparePathsOptions{
+							UseCaseSensitiveFileNames: c.program.UseCaseSensitiveFileNames(),
+							CurrentDirectory:          c.program.GetCurrentDirectory(),
+						}
+						
+						rootDirPath := tspath.GetRelativePathFromDirectory(ownRootDir, otherRootDir, compareOptions)
+						
+						// Get outDir paths, defaulting to root directories if not specified
+						ownOutDir := c.compilerOptions.OutDir
+						if ownOutDir == "" {
+							ownOutDir = ownRootDir
+						}
+						otherOutDir := redirect.CompilerOptions().OutDir
+						if otherOutDir == "" {
+							otherOutDir = otherRootDir
+						}
+						outDirPath := tspath.GetRelativePathFromDirectory(ownOutDir, otherOutDir, compareOptions)
+						
+						if rootDirPath != outDirPath {
+							c.error(
+								errorNode,
+								diagnostics.This_import_path_is_unsafe_to_rewrite_because_it_resolves_to_another_project_and_the_relative_path_between_the_projects_output_files_is_not_the_same_as_the_relative_path_between_its_input_files,
+							)
+						}
+					}
 				}
-				// TODO: Add project reference check when GetResolvedProjectReferenceToRedirect is implemented
 			}
 		}
 

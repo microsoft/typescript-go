@@ -128,6 +128,16 @@ func (p *Program) ForEachResolvedProjectReference(
 	p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
 }
 
+// GetResolvedProjectReferenceToRedirect implements checker.Program.
+func (p *Program) GetResolvedProjectReferenceToRedirect(fileName string) *tsoptions.ParsedCommandLine {
+	return p.projectReferenceFileMapper.getResolvedProjectReferenceToRedirect(fileName)
+}
+
+// GetCommonSourceDirectory implements checker.Program.
+func (p *Program) GetCommonSourceDirectory() string {
+	return p.CommonSourceDirectory()
+}
+
 // UseCaseSensitiveFileNames implements checker.Program.
 func (p *Program) UseCaseSensitiveFileNames() bool {
 	return p.Host().FS().UseCaseSensitiveFileNames()

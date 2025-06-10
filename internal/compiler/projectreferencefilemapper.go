@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -23,6 +24,10 @@ type projectReferenceFileMapper struct {
 
 	// Store all the realpath from dts in node_modules to source file from project reference needed during parsing so it can be used later
 	realpathDtsToSource collections.SyncMap[tspath.Path, *tsoptions.SourceAndProjectReference]
+
+	// Lazy-initialized map for getResolvedProjectReferenceToRedirect
+	fileToProjectReferenceRedirects map[tspath.Path]tspath.Path
+	fileToProjectReferenceRedirectsOnce sync.Once
 }
 
 func (mapper *projectReferenceFileMapper) init(loader *fileLoader, rootTasks []*projectReferenceParseTask) {
@@ -189,5 +194,36 @@ func (mapper *projectReferenceFileMapper) getSourceToDtsIfSymlink(file ast.HasFi
 			}
 		}
 	}
+	return nil
+}
+
+func (mapper *projectReferenceFileMapper) getResolvedProjectReferenceToRedirect(fileName string) *tsoptions.ParsedCommandLine {
+	mapper.fileToProjectReferenceRedirectsOnce.Do(func() {
+		mapper.fileToProjectReferenceRedirects = make(map[tspath.Path]tspath.Path)
+		
+		// Build the map from file paths to project reference paths
+		for configPath, config := range mapper.configToProjectReference {
+			if config == nil {
+				continue
+			}
+			// Skip if this is the same config file as the current project
+			if mapper.opts.Config.ConfigFile != nil && configPath == mapper.opts.Config.ConfigFile.SourceFile.Path() {
+				continue
+			}
+			
+			// Map all file names in this project reference to the config path
+			for _, fileName := range config.FileNames() {
+				filePath := tspath.ToPath(fileName, config.GetCurrentDirectory(), config.UseCaseSensitiveFileNames())
+				mapper.fileToProjectReferenceRedirects[filePath] = configPath
+			}
+		}
+	})
+	
+	filePath := tspath.ToPath(fileName, mapper.opts.Config.GetCurrentDirectory(), mapper.opts.Config.UseCaseSensitiveFileNames())
+	if referencedProjectPath, exists := mapper.fileToProjectReferenceRedirects[filePath]; exists {
+		config, _ := mapper.configToProjectReference[referencedProjectPath]
+		return config
+	}
+	
 	return nil
 }

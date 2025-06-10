@@ -82,6 +82,14 @@ func (p *fakeProgram) GetSourceAndProjectReference(path tspath.Path) *tsoptions.
 	return nil
 }
 
+func (p *fakeProgram) GetResolvedProjectReferenceToRedirect(fileName string) *tsoptions.ParsedCommandLine {
+	return nil
+}
+
+func (p *fakeProgram) GetCommonSourceDirectory() string {
+	return ""
+}
+
 func (p *fakeProgram) UseCaseSensitiveFileNames() bool {
 	return true
 }
