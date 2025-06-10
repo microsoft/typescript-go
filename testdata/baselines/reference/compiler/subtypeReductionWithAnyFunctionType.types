@@ -39,3 +39,34 @@ function getPredicate(alwaysTrue: boolean) {
 >predicate : (input: string) => boolean
 }
 
+// https://github.com/microsoft/typescript-go/issues/1016
+
+declare function compact<T>(array: T[]): T[];
+>compact : <T>(array: T[]) => T[]
+>array : T[]
+
+declare function makeFooer(): Fooer;
+>makeFooer : () => Fooer
+
+interface Fooer {
+    foo: (v: string) => string;
+>foo : (v: string) => string
+>v : string
+}
+function f() {
+>f : () => void
+
+    const _ = compact([makeFooer(), { foo: (v) => v }]);
+>_ : Fooer[]
+>compact([makeFooer(), { foo: (v) => v }]) : Fooer[]
+>compact : <T>(array: T[]) => T[]
+>[makeFooer(), { foo: (v) => v }] : Fooer[]
+>makeFooer() : Fooer
+>makeFooer : () => Fooer
+>{ foo: (v) => v } : { foo: (v: string) => string; }
+>foo : (v: string) => string
+>(v) => v : (v: string) => string
+>v : string
+>v : string
+}
+
