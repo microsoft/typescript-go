@@ -35,19 +35,26 @@ let x: TodoListProps;
 
 
 //// [tsxSpreadChildrenInvalidType.js]
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 function Todo(prop) {
-    return <div>{prop.key.toString() + prop.todo}</div>;
+    return _jsx("div", { children: prop.key.toString() + prop.todo });
 }
 function TodoList({ todos }) {
-    return <div>
-        {...<Todo key={todos[0].id} todo={todos[0].todo}/>}
-    </div>;
+    return _jsxs("div", { children: [..._jsx(Todo, { todo: todos[0].todo }, todos[0].id)] });
 }
 function TodoListNoError({ todos }) {
     // any is not checked
-    return <div>
-        {...<Todo key={todos[0].id} todo={todos[0].todo}/>}
-    </div>;
+    return _jsxs("div", { children: [..._jsx(Todo, { todo: todos[0].todo }, todos[0].id)] });
 }
 let x;
-<TodoList {...x}/>;
+_jsx(TodoList, __assign({}, x));

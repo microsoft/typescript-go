@@ -20,8 +20,8 @@ export {};
 export {};
 
 //// [test.js]
-const Title = (props) => <h1>{props.children}</h1>;
-const element = <Title>Hello, world!</Title>;
+const Title = (props) => _jsx("h1", { children: props.children });
+const element = _jsx(Title, { children: "Hello, world!" });
 //// [jsx-runtime.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

@@ -36,18 +36,14 @@ let x: TodoListProps;
 
 //// [tsxSpreadChildrenInvalidType.js]
 function Todo(prop) {
-    return <div>{prop.key.toString() + prop.todo}</div>;
+    return _jsx("div", { children: prop.key.toString() + prop.todo });
 }
 function TodoList({ todos }) {
-    return <div>
-        {...<Todo key={todos[0].id} todo={todos[0].todo}/>}
-    </div>;
+    return _jsxs("div", { children: [..._jsx(Todo, { todo: todos[0].todo }, todos[0].id)] });
 }
 function TodoListNoError({ todos }) {
     // any is not checked
-    return <div>
-        {...<Todo key={todos[0].id} todo={todos[0].todo}/>}
-    </div>;
+    return _jsxs("div", { children: [..._jsx(Todo, { todo: todos[0].todo }, todos[0].id)] });
 }
 let x;
-<TodoList {...x}/>;
+_jsx(TodoList, Object.assign({}, x));

@@ -8,8 +8,9 @@
 -"use strict";
 -Object.defineProperty(exports, "__esModule", { value: true });
  //// [test.js]
-+const Title = (props) => <h1>{props.children}</h1>;
-+const element = <Title>Hello, world!</Title>;
++const _jsxFileName = "/test.tsx";
++const Title = (props) => _jsxDEV("h1", { children: props.children }, void 0, false, { fileName: _jsxFileName, lineNumber: 1, columnNumber: 47 }, this);
++const element = _jsxDEV(Title, { children: "Hello, world!" }, void 0, false, { fileName: _jsxFileName, lineNumber: 3, columnNumber: 16 }, this);
 +//// [jsx-dev-runtime.js]
  "use strict";
 -var _this = this;

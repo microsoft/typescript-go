@@ -29,10 +29,10 @@ export {};
 
 
 //// [test.js]
-const Title = (props) => <h1>{props.children}</h1>;
-<Title>Hello, world!</Title>;
-const Wrong = (props) => <h1>{props.offspring}</h1>;
-<Wrong>Byebye, world!</Wrong>;
+const Title = (props) => _jsx("h1", { children: props.children });
+_jsx(Title, { children: "Hello, world!" });
+const Wrong = (props) => _jsx("h1", { children: props.offspring });
+_jsx(Wrong, { children: "Byebye, world!" });
 //// [jsx-runtime.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
