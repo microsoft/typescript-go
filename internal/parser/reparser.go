@@ -91,6 +91,87 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		typeAlias.Loc = tag.Loc
 		typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
 		p.reparseList = append(p.reparseList, typeAlias)
+	case ast.KindJSDocCallbackTag:
+		// Similar to typedef but creates a function type
+		callbackTag := tag.AsJSDocCallbackTag()
+		if callbackTag.TypeExpression == nil || callbackTag.TypeExpression.Kind != ast.KindJSDocSignature {
+			break
+		}
+
+		export := p.factory.NewModifier(ast.KindExportKeyword)
+		export.Loc = tag.Loc
+		export.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		modifiers := p.newModifierList(export.Loc, p.nodeSlicePool.NewSlice1(export))
+
+		typeParameters := p.gatherTypeParameters(jsDoc)
+		jsSignature := callbackTag.TypeExpression.AsJSDocSignature()
+
+		// Check if there's a @this tag in the JSDoc that needs to be added as a parameter
+		parameters := p.nodeSlicePool.NewSlice(0)
+
+		// Check for @this tag in the JSDoc comment
+		for _, tag := range jsDoc.AsJSDoc().Tags.Nodes {
+			if tag.Kind == ast.KindJSDocThisTag {
+				// Create "this" parameter as the first parameter
+				thisTag := tag.AsJSDocThisTag()
+				thisIdent := p.factory.NewIdentifier("this")
+				thisIdent.Loc = thisTag.Loc
+				thisIdent.Flags = p.contextFlags | ast.NodeFlagsReparsed
+
+				// Get the this parameter type if specified
+				var thisType *ast.Node
+				if thisTag.TypeExpression != nil {
+					thisType = p.makeNewType(thisTag.TypeExpression, nil)
+				} else {
+					// Default to any if no type specified
+					thisType = p.factory.NewKeywordTypeNode(ast.KindAnyKeyword)
+					thisType.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				}
+
+				thisParam := p.factory.NewParameterDeclaration(nil, nil, thisIdent, nil, thisType, nil)
+				thisParam.Loc = thisTag.Loc
+				thisParam.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				parameters = append(parameters, thisParam)
+				break
+			}
+		}
+
+		// Create parameters from the JSDocParameterTags
+		for _, param := range jsSignature.Parameters.Nodes {
+			jsparam := param.AsJSDocParameterOrPropertyTag()
+
+			var parameterType *ast.Node
+			if jsparam.TypeExpression != nil {
+				parameterType = p.makeNewType(jsparam.TypeExpression, nil)
+			}
+
+			parameter := p.factory.NewParameterDeclaration(nil, nil, jsparam.Name(), p.makeQuestionIfOptional(jsparam), parameterType, nil)
+			parameter.Loc = jsparam.Loc
+			parameter.Flags = p.contextFlags | ast.NodeFlagsReparsed
+			parameters = append(parameters, parameter)
+		}
+
+		// Get return type if available
+		var returnType *ast.Node
+		if jsSignature.Type != nil {
+			returnType = p.makeNewType(jsSignature.Type.AsJSDocReturnTag().TypeExpression, nil)
+		} else {
+			// Default to any if no return type specified
+			returnType = p.factory.NewKeywordTypeNode(ast.KindAnyKeyword)
+			returnType.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		}
+
+		// Create the function type
+		parameterList := p.newNodeList(tag.Loc, parameters)
+		functionType := p.factory.NewFunctionTypeNode(typeParameters, parameterList, returnType)
+		functionType.Loc = tag.Loc
+		functionType.Flags = p.contextFlags | ast.NodeFlagsReparsed
+
+		// Create the type alias with the function type
+		typeAlias := p.factory.NewJSTypeAliasDeclaration(modifiers, callbackTag.FullName, typeParameters, functionType)
+		typeAlias.Loc = tag.Loc
+		typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		p.reparseList = append(p.reparseList, typeAlias)
 	case ast.KindJSDocImportTag:
 		importTag := tag.AsJSDocImportTag()
 		importClause := importTag.ImportClause.Clone(&p.factory)
