@@ -27,6 +27,11 @@ type fakeProgram struct {
 	getSourceFileForResolvedModule func(FileName string) *ast.SourceFile
 }
 
+// GetRedirectForResolution implements checker.Program.
+func (p *fakeProgram) GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine {
+	panic("unimplemented")
+}
+
 // SourceFileMayBeEmitted implements checker.Program.
 func (p *fakeProgram) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
 	panic("unimplemented")
@@ -39,7 +44,7 @@ func (p *fakeProgram) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, 
 
 // CommonSourceDirectory implements checker.Program.
 func (p *fakeProgram) CommonSourceDirectory() string {
-	return ""
+	panic("unimplemented")
 }
 
 func (p *fakeProgram) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
