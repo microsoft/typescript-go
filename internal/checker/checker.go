@@ -540,7 +540,7 @@ type Program interface {
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
 	IsSourceFromProjectReference(path tspath.Path) bool
 	GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference
-	GetCommonSourceDirectory() string
+	CommonSourceDirectory() string
 }
 
 type Host interface {
@@ -14529,7 +14529,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 				} else if resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
 					if redirect := c.program.GetOutputAndProjectReference(sourceFile.Path()); redirect != nil {
 						redirectOptions := redirect.Resolved.CompilerOptions()
-						ownRootDir := c.program.GetCommonSourceDirectory()
+						ownRootDir := c.program.CommonSourceDirectory()
 						otherRootDir := redirect.Resolved.CommonSourceDirectory()
 
 						compareOptions := tspath.ComparePathsOptions{

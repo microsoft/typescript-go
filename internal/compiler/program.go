@@ -128,10 +128,6 @@ func (p *Program) ForEachResolvedProjectReference(
 	p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
 }
 
-// GetCommonSourceDirectory implements checker.Program.
-func (p *Program) GetCommonSourceDirectory() string {
-	return p.CommonSourceDirectory()
-}
 
 // UseCaseSensitiveFileNames implements checker.Program.
 func (p *Program) UseCaseSensitiveFileNames() bool {

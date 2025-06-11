@@ -39,7 +39,7 @@ func (p *fakeProgram) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, 
 
 // CommonSourceDirectory implements checker.Program.
 func (p *fakeProgram) CommonSourceDirectory() string {
-	panic("unimplemented")
+	return ""
 }
 
 func (p *fakeProgram) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
@@ -82,13 +82,7 @@ func (p *fakeProgram) GetSourceAndProjectReference(path tspath.Path) *tsoptions.
 	return nil
 }
 
-func (p *fakeProgram) GetResolvedProjectReferenceToRedirect(fileName string) *tsoptions.ParsedCommandLine {
-	return nil
-}
 
-func (p *fakeProgram) GetCommonSourceDirectory() string {
-	return ""
-}
 
 func (p *fakeProgram) UseCaseSensitiveFileNames() bool {
 	return true
