@@ -430,7 +430,7 @@ func getFunctionLikeHost(host *ast.Node) (*ast.Node, bool) {
 func (p *Parser) makeNewCast(t *ast.TypeNode, e *ast.Node, isAssertion bool) *ast.Node {
 	var assert *ast.Node
 	if isAssertion {
-		assert = p.factory.NewTypeAssertion(t, e)
+		assert = p.factory.NewAsExpression(e, t)
 	} else {
 		assert = p.factory.NewSatisfiesExpression(e, t)
 	}
