@@ -98,7 +98,10 @@ func DocumentURIToFileName(uri lsproto.DocumentUri) string {
 
 	authority := "ts-nul-authority"
 	if rest, ok := strings.CutPrefix(path, "//"); ok {
-		authority, path, _ = strings.Cut(rest, "/")
+		authority, path, ok = strings.Cut(rest, "/")
+		if !ok {
+			panic(fmt.Sprintf("invalid URI: %s", uri))
+		}
 	}
 
 	return "^/" + scheme + "/" + authority + "/" + path
@@ -147,8 +150,14 @@ var extraEscapeReplacer = strings.NewReplacer(
 
 func FileNameToDocumentURI(fileName string) lsproto.DocumentUri {
 	if strings.HasPrefix(fileName, "^/") {
-		scheme, rest, _ := strings.Cut(fileName[2:], "/")
-		authority, path, _ := strings.Cut(rest, "/")
+		scheme, rest, ok := strings.Cut(fileName[2:], "/")
+		if !ok {
+			panic(fmt.Sprintf("invalid file name: %s", fileName))
+		}
+		authority, path, ok := strings.Cut(rest, "/")
+		if !ok {
+			panic(fmt.Sprintf("invalid file name: %s", fileName))
+		}
 		if authority == "ts-nul-authority" {
 			return lsproto.DocumentUri(scheme + ":" + path)
 		}
