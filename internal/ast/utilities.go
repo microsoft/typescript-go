@@ -2868,8 +2868,6 @@ func GetClassLikeDeclarationOfSymbol(symbol *Symbol) *Node {
 	return core.Find(symbol.Declarations, IsClassLike)
 }
 
-
-
 func IsCallLikeExpression(node *Node) bool {
 	switch node.Kind {
 	case KindJsxOpeningElement, KindJsxSelfClosingElement, KindJsxOpeningFragment, KindCallExpression, KindNewExpression,
