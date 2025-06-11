@@ -42,9 +42,6 @@ type Program struct {
 	nodeModules map[string]*ast.SourceFile
 	checkerPool CheckerPool
 
-	sourceAffectingCompilerOptionsOnce sync.Once
-	sourceAffectingCompilerOptions     *core.SourceFileAffectingCompilerOptions
-
 	comparePathsOptions tspath.ComparePathsOptions
 
 	processedFiles
@@ -293,13 +290,6 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 
 func (p *Program) singleThreaded() bool {
 	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
-}
-
-func (p *Program) getSourceAffectingCompilerOptions() *core.SourceFileAffectingCompilerOptions {
-	p.sourceAffectingCompilerOptionsOnce.Do(func() {
-		p.sourceAffectingCompilerOptions = p.Options().SourceFileAffecting()
-	})
-	return p.sourceAffectingCompilerOptions
 }
 
 func (p *Program) BindSourceFiles() {
