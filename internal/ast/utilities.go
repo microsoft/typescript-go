@@ -1557,6 +1557,16 @@ func IsDottedName(node *Node) bool {
 	return false
 }
 
+func HasSamePropertyAccessName(node1, node2 *Node) bool {
+	if node1.Kind == KindIdentifier && node2.Kind == KindIdentifier {
+		return node1.Text() == node2.Text()
+	} else if node1.Kind == KindPropertyAccessExpression && node2.Kind == KindPropertyAccessExpression {
+		return node1.AsPropertyAccessExpression().Name().Text() == node2.AsPropertyAccessExpression().Name().Text() &&
+			HasSamePropertyAccessName(node1.AsPropertyAccessExpression().Expression, node2.AsPropertyAccessExpression().Expression)
+	}
+	return false
+}
+
 func IsAmbientModule(node *Node) bool {
 	return IsModuleDeclaration(node) && (node.AsModuleDeclaration().Name().Kind == KindStringLiteral || IsGlobalScopeAugmentation(node))
 }
@@ -2514,16 +2524,15 @@ func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.Modul
 }
 
 func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
-	result := GetImpliedNodeFormatForEmitWorker(fileName, options, sourceFileMetaData)
+	result := GetImpliedNodeFormatForEmitWorker(fileName, options.GetEmitModuleKind(), sourceFileMetaData)
 	if result != core.ModuleKindNone {
 		return result
 	}
 	return options.GetEmitModuleKind()
 }
 
-func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ResolutionMode {
-	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+func GetImpliedNodeFormatForEmitWorker(fileName string, emitModuleKind core.ModuleKind, sourceFileMetaData *SourceFileMetaData) core.ResolutionMode {
+	if core.ModuleKindNode16 <= emitModuleKind && emitModuleKind <= core.ModuleKindNodeNext {
 		if sourceFileMetaData == nil {
 			return core.ModuleKindNone
 		}
@@ -3579,4 +3588,24 @@ func IsTrivia(token Kind) bool {
 
 func HasDecorators(node *Node) bool {
 	return HasSyntacticModifier(node, ModifierFlagsDecorator)
+}
+
+type hasFileNameImpl struct {
+	fileName string
+	path     tspath.Path
+}
+
+func NewHasFileName(fileName string, path tspath.Path) HasFileName {
+	return &hasFileNameImpl{
+		fileName: fileName,
+		path:     path,
+	}
+}
+
+func (h *hasFileNameImpl) FileName() string {
+	return h.fileName
+}
+
+func (h *hasFileNameImpl) Path() tspath.Path {
+	return h.path
 }
