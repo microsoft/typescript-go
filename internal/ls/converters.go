@@ -152,11 +152,11 @@ func FileNameToDocumentURI(fileName string) lsproto.DocumentUri {
 	if strings.HasPrefix(fileName, "^/") {
 		scheme, rest, ok := strings.Cut(fileName[2:], "/")
 		if !ok {
-			panic(fmt.Sprintf("invalid file name: %s", fileName))
+			panic("invalid file name: " + fileName)
 		}
 		authority, path, ok := strings.Cut(rest, "/")
 		if !ok {
-			panic(fmt.Sprintf("invalid file name: %s", fileName))
+			panic("invalid file name: " + fileName)
 		}
 		if authority == "ts-nul-authority" {
 			return lsproto.DocumentUri(scheme + ":" + path)
