@@ -805,16 +805,17 @@ func (r *emitResolver) GetReferencedExportContainer(node *ast.IdentifierNode, pr
 }
 
 func (r *emitResolver) SetReferencedImportDeclaration(node *ast.IdentifierNode, ref *ast.Declaration) {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 	r.jsxLinks.Get(node).importRef = ref
 }
 
 func (r *emitResolver) GetReferencedImportDeclaration(node *ast.IdentifierNode) *ast.Declaration {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
 	if !ast.IsParseTreeNode(node) {
 		return r.jsxLinks.Get(node).importRef
 	}
-
-	r.checkerMu.Lock()
-	defer r.checkerMu.Unlock()
 
 	return r.getReferenceResolver().GetReferencedImportDeclaration(node)
 }
