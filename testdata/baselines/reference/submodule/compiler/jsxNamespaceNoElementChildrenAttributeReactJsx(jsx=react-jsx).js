@@ -19,12 +19,15 @@ export {};
 //// [jsx-dev-runtime.ts]
 export {};
 
-//// [test.js]
-const Title = (props) => _jsx("h1", { children: props.children });
-const element = _jsx(Title, { children: "Hello, world!" });
 //// [jsx-runtime.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+//// [test.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const jsx_runtime_1 = require("/jsx/jsx-runtime");
+const Title = (props) => jsx_runtime_1.jsx("h1", { children: props.children });
+const element = jsx_runtime_1.jsx(Title, { children: "Hello, world!" });
 //// [jsx-dev-runtime.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
