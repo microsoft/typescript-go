@@ -540,6 +540,7 @@ type Program interface {
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
 	IsSourceFromProjectReference(path tspath.Path) bool
 	GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference
+	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
 }
 
@@ -14527,10 +14528,9 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						tspath.GetAnyExtensionFromPath(moduleReference, nil, false),
 					)
 				} else if resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
-					if redirect := c.program.GetOutputAndProjectReference(sourceFile.Path()); redirect != nil {
-						redirectOptions := redirect.Resolved.CompilerOptions()
+					if redirect := c.program.GetRedirectForResolution(sourceFile); redirect != nil {
 						ownRootDir := c.program.CommonSourceDirectory()
-						otherRootDir := redirect.Resolved.CommonSourceDirectory()
+						otherRootDir := redirect.CommonSourceDirectory()
 
 						compareOptions := tspath.ComparePathsOptions{
 							UseCaseSensitiveFileNames: c.program.UseCaseSensitiveFileNames(),
@@ -14544,7 +14544,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						if ownOutDir == "" {
 							ownOutDir = ownRootDir
 						}
-						otherOutDir := redirectOptions.OutDir
+						otherOutDir := redirect.CompilerOptions().OutDir
 						if otherOutDir == "" {
 							otherOutDir = otherRootDir
 						}

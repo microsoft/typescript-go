@@ -122,6 +122,10 @@ func (p *Program) GetResolvedProjectReferenceFor(path tspath.Path) (*tsoptions.P
 	return p.projectReferenceFileMapper.getResolvedReferenceFor(path)
 }
 
+func (p *Program) GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine {
+	return p.projectReferenceFileMapper.getRedirectForResolution(file)
+}
+
 func (p *Program) ForEachResolvedProjectReference(
 	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
 ) {
