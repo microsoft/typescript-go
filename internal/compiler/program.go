@@ -132,7 +132,6 @@ func (p *Program) ForEachResolvedProjectReference(
 	p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
 }
 
-
 // UseCaseSensitiveFileNames implements checker.Program.
 func (p *Program) UseCaseSensitiveFileNames() bool {
 	return p.Host().FS().UseCaseSensitiveFileNames()

@@ -82,8 +82,6 @@ func (p *fakeProgram) GetSourceAndProjectReference(path tspath.Path) *tsoptions.
 	return nil
 }
 
-
-
 func (p *fakeProgram) UseCaseSensitiveFileNames() bool {
 	return true
 }
