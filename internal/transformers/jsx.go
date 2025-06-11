@@ -90,7 +90,7 @@ func (tx *JSXTransformer) getImplicitImportForName(name string) *ast.Node {
 		Flags: printer.GeneratedIdentifierFlagsOptimistic | printer.GeneratedIdentifierFlagsFileLevel | printer.GeneratedIdentifierFlagsAllowNameSubstitution,
 	})
 	specifier := tx.factory.NewImportSpecifier(false, tx.factory.NewIdentifier(name), generatedName)
-	// setIdentifierGeneratedImportReference(generatedName, specifier); // !!!
+	tx.emitResolver.SetReferencedImportDeclaration(generatedName, specifier)
 	tx.utilizedImplicitRuntimeImports[importSource][name] = specifier
 	return specifier.Name()
 }
@@ -328,7 +328,7 @@ func (tx *JSXTransformer) convertJsxChildrenToChildrenPropAssignment(children []
 		if result == nil {
 			return nil
 		}
-		return tx.factory.NewPropertyAssignment(nil, tx.factory.NewIdentifier("children"), nil, nil, tx.factory.NewArrayLiteralExpression(tx.factory.NewNodeList([]*ast.Node{result}), false))
+		return tx.factory.NewPropertyAssignment(nil, tx.factory.NewIdentifier("children"), nil, nil, result)
 	}
 	results := make([]*ast.Node, 0, len(nonWhitespceChildren))
 	for _, child := range nonWhitespceChildren {

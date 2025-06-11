@@ -16,6 +16,11 @@ import (
 
 var _ printer.EmitResolver = &emitResolver{}
 
+// Links for jsx
+type JSXLinks struct {
+	importRef *ast.Node
+}
+
 // Links for declarations
 
 type DeclarationLinks struct {
@@ -31,6 +36,7 @@ type emitResolver struct {
 	checkerMu               sync.Mutex
 	isValueAliasDeclaration func(node *ast.Node) bool
 	referenceResolver       binder.ReferenceResolver
+	jsxLinks                core.LinkStore[*ast.Node, JSXLinks]
 	declarationLinks        core.LinkStore[*ast.Node, DeclarationLinks]
 	declarationFileLinks    core.LinkStore[*ast.Node, DeclarationFileLinks]
 }
@@ -798,9 +804,13 @@ func (r *emitResolver) GetReferencedExportContainer(node *ast.IdentifierNode, pr
 	return r.getReferenceResolver().GetReferencedExportContainer(node, prefixLocals)
 }
 
+func (r *emitResolver) SetReferencedImportDeclaration(node *ast.IdentifierNode, ref *ast.Declaration) {
+	r.jsxLinks.Get(node).importRef = ref
+}
+
 func (r *emitResolver) GetReferencedImportDeclaration(node *ast.IdentifierNode) *ast.Declaration {
 	if !ast.IsParseTreeNode(node) {
-		return nil
+		return r.jsxLinks.Get(node).importRef
 	}
 
 	r.checkerMu.Lock()
