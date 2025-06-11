@@ -540,7 +540,6 @@ type Program interface {
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
 	IsSourceFromProjectReference(path tspath.Path) bool
 	GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference
-	GetResolvedProjectReferenceToRedirect(fileName string) *tsoptions.ParsedCommandLine
 	GetCommonSourceDirectory() string
 }
 
@@ -14528,29 +14527,29 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 						tspath.GetAnyExtensionFromPath(moduleReference, nil, false),
 					)
 				} else if resolvedModule.ResolvedUsingTsExtension && shouldRewrite {
-					redirect := c.program.GetResolvedProjectReferenceToRedirect(sourceFile.FileName())
-					if redirect != nil {
+					if redirect := c.program.GetOutputAndProjectReference(sourceFile.Path()); redirect != nil {
+						redirectOptions := redirect.Resolved.CompilerOptions()
 						ownRootDir := c.program.GetCommonSourceDirectory()
-						otherRootDir := redirect.CommonSourceDirectory()
-						
+						otherRootDir := redirect.Resolved.CommonSourceDirectory()
+
 						compareOptions := tspath.ComparePathsOptions{
 							UseCaseSensitiveFileNames: c.program.UseCaseSensitiveFileNames(),
 							CurrentDirectory:          c.program.GetCurrentDirectory(),
 						}
-						
+
 						rootDirPath := tspath.GetRelativePathFromDirectory(ownRootDir, otherRootDir, compareOptions)
-						
+
 						// Get outDir paths, defaulting to root directories if not specified
 						ownOutDir := c.compilerOptions.OutDir
 						if ownOutDir == "" {
 							ownOutDir = ownRootDir
 						}
-						otherOutDir := redirect.CompilerOptions().OutDir
+						otherOutDir := redirectOptions.OutDir
 						if otherOutDir == "" {
 							otherOutDir = otherRootDir
 						}
 						outDirPath := tspath.GetRelativePathFromDirectory(ownOutDir, otherOutDir, compareOptions)
-						
+
 						if rootDirPath != outDirPath {
 							c.error(
 								errorNode,
