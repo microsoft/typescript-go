@@ -86,7 +86,7 @@ func DocumentURIToFileName(uri lsproto.DocumentUri) string {
 		if parsed.Host != "" {
 			return "//" + parsed.Host + parsed.Path
 		}
-		return fixWindowsURIPath(parsed.Path, true)
+		return fixWindowsURIPath(parsed.Path)
 	}
 
 	// Leave all other URIs escaped so we can round-trip them.
@@ -104,16 +104,8 @@ func DocumentURIToFileName(uri lsproto.DocumentUri) string {
 	return "^/" + scheme + "/" + authority + "/" + path
 }
 
-func fixWindowsURIPath(path string, cutLeadingSlash bool) string {
-	var rest string
-	var ok bool
-	if cutLeadingSlash {
-		rest, ok = strings.CutPrefix(path, "/")
-	} else {
-		rest = path
-		ok = true
-	}
-	if ok {
+func fixWindowsURIPath(path string) string {
+	if rest, ok := strings.CutPrefix(path, "/"); ok {
 		if volume, rest, ok := splitVolumePath(rest); ok {
 			return volume + rest
 		}
