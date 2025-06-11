@@ -19,12 +19,11 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 	case ast.JSDeclarationKindModuleExports:
 		export = p.factory.NewJSExportAssignment(nil, bin.Right)
 	case ast.JSDeclarationKindExportsProperty:
-		nodes := p.nodeSlicePool.NewSlice(1)
-		nodes[0] = p.factory.NewModifier(ast.KindExportKeyword)
-		nodes[0].Flags = ast.NodeFlagsReparsed
-		nodes[0].Loc = bin.Loc
+		mod := p.factory.NewModifier(ast.KindExportKeyword)
+		mod.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		mod.Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, nodes), ast.GetElementOrPropertyAccessName(bin.Left), nil /*typeNode*/, bin.Right)
+		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, p.nodeSlicePool.NewSlice1(mod)), ast.GetElementOrPropertyAccessName(bin.Left), nil /*typeNode*/, bin.Right)
 	}
 	if export != nil {
 		export.Flags = ast.NodeFlagsReparsed
@@ -66,9 +65,7 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		export := p.factory.NewModifier(ast.KindExportKeyword)
 		export.Loc = tag.Loc
 		export.Flags = p.contextFlags | ast.NodeFlagsReparsed
-		nodes := p.nodeSlicePool.NewSlice(1)
-		nodes[0] = export
-		modifiers := p.newModifierList(export.Loc, nodes)
+		modifiers := p.newModifierList(export.Loc, p.nodeSlicePool.NewSlice1(export))
 
 		typeParameters := p.gatherTypeParameters(jsDoc)
 
@@ -309,8 +306,52 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			}
 			parent.AsMutable().SetModifiers(p.newModifierList(loc, nodes))
 		}
-		// !!! @extends, @implements, @this, @satisfies
+	case ast.KindJSDocImplementsTag:
+		if class := getClassLikeData(parent); class != nil {
+			implementsTag := tag.AsJSDocImplementsTag()
+
+			if class.HeritageClauses != nil {
+				if implementsClause := core.Find(class.HeritageClauses.Nodes, func(node *ast.Node) bool {
+					return node.AsHeritageClause().Token == ast.KindImplementsKeyword
+				}); implementsClause != nil {
+					implementsClause.AsHeritageClause().Types.Nodes = append(implementsClause.AsHeritageClause().Types.Nodes, implementsTag.ClassName)
+					return
+				}
+			}
+			implementsTag.ClassName.Flags |= ast.NodeFlagsReparsed
+			typesList := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(implementsTag.ClassName))
+
+			heritageClause := p.factory.NewHeritageClause(ast.KindImplementsKeyword, typesList)
+			heritageClause.Loc = implementsTag.ClassName.Loc
+			heritageClause.Flags = p.contextFlags | ast.NodeFlagsReparsed
+
+			if class.HeritageClauses == nil {
+				heritageClauses := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(heritageClause))
+				class.HeritageClauses = heritageClauses
+			} else {
+				class.HeritageClauses.Nodes = append(class.HeritageClauses.Nodes, heritageClause)
+			}
+		}
+	case ast.KindJSDocAugmentsTag:
+		if class := getClassLikeData(parent); class != nil && class.HeritageClauses != nil {
+			if extendsClause := core.Find(class.HeritageClauses.Nodes, func(node *ast.Node) bool {
+				return node.AsHeritageClause().Token == ast.KindExtendsKeyword
+			}); extendsClause != nil && len(extendsClause.AsHeritageClause().Types.Nodes) == 1 {
+				target := extendsClause.AsHeritageClause().Types.Nodes[0].AsExpressionWithTypeArguments()
+				source := tag.AsJSDocAugmentsTag().ClassName.AsExpressionWithTypeArguments()
+				if ast.HasSamePropertyAccessName(target.Expression, source.Expression) {
+					if target.TypeArguments == nil && source.TypeArguments != nil {
+						target.TypeArguments = source.TypeArguments
+						for _, typeArg := range source.TypeArguments.Nodes {
+							typeArg.Flags |= ast.NodeFlagsReparsed
+						}
+					}
+					return
+				}
+			}
+		}
 	}
+	// !!! other attached tags (@this, @satisfies) support goes here
 }
 
 func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.Node {
@@ -376,4 +417,14 @@ func (p *Parser) makeNewType(typeExpression *ast.TypeNode, host *ast.Node) *ast.
 	t := typeExpression.Type()
 	t.Flags |= ast.NodeFlagsReparsed
 	return t
+}
+
+func getClassLikeData(parent *ast.Node) *ast.ClassLikeBase {
+	var class *ast.ClassLikeBase
+	if parent.Kind == ast.KindClassDeclaration {
+		class = parent.AsClassDeclaration().ClassLikeData()
+	} else if parent.Kind == ast.KindClassExpression {
+		class = parent.AsClassExpression().ClassLikeData()
+	}
+	return class
 }

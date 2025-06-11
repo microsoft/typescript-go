@@ -11,8 +11,10 @@ import (
 	"runtime/debug"
 	"slices"
 	"sync"
+	"sync/atomic"
 	"syscall"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -123,7 +125,7 @@ type Server struct {
 
 	stderr io.Writer
 
-	clientSeq               int32
+	clientSeq               atomic.Int32
 	requestQueue            chan *lsproto.RequestMessage
 	outgoingQueue           chan *lsproto.Message
 	pendingClientRequests   map[lsproto.ID]pendingClientRequest
@@ -142,7 +144,7 @@ type Server struct {
 
 	watchEnabled   bool
 	watcherID      int
-	watchers       core.Set[project.WatcherHandle]
+	watchers       collections.Set[project.WatcherHandle]
 	logger         *project.Logger
 	projectService *project.Service
 
@@ -398,8 +400,7 @@ func (s *Server) writeLoop(ctx context.Context) error {
 }
 
 func (s *Server) sendRequest(ctx context.Context, method lsproto.Method, params any) (any, error) {
-	s.clientSeq++
-	id := lsproto.NewIDString(fmt.Sprintf("ts%d", s.clientSeq))
+	id := lsproto.NewIDString(fmt.Sprintf("ts%d", s.clientSeq.Add(1)))
 	req := lsproto.NewRequestMessage(method, id, params)
 
 	responseChan := make(chan *lsproto.ResponseMessage, 1)

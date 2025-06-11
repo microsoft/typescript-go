@@ -25,6 +25,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -527,6 +528,7 @@ type Program interface {
 	BindSourceFiles()
 	FileExists(fileName string) bool
 	GetSourceFile(fileName string) *ast.SourceFile
+	GetSourceFileForResolvedModule(fileName string) *ast.SourceFile
 	GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind
 	GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, usageLocation *ast.StringLiteralLike) core.ResolutionMode
 	GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ModuleKind
@@ -535,6 +537,8 @@ type Program interface {
 	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
 	GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReference string, specifier *ast.Node)
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
+	IsSourceFromProjectReference(path tspath.Path) bool
+	GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference
 }
 
 type Host interface {
@@ -605,7 +609,7 @@ type Checker struct {
 	reverseMappedCache                         map[ReverseMappedTypeKey]*Type
 	reverseHomomorphicMappedCache              map[ReverseMappedTypeKey]*Type
 	iterationTypesCache                        map[IterationTypesKey]IterationTypes
-	markerTypes                                core.Set[*Type]
+	markerTypes                                collections.Set[*Type]
 	undefinedSymbol                            *ast.Symbol
 	argumentsSymbol                            *ast.Symbol
 	requireSymbol                              *ast.Symbol
@@ -843,7 +847,7 @@ type Checker struct {
 	nodeBuilder                                *NodeBuilder
 	_jsxNamespace                              string
 	_jsxFactoryEntity                          *ast.Node
-	skipDirectInferenceNodes                   core.Set[*ast.Node]
+	skipDirectInferenceNodes                   collections.Set[*ast.Node]
 	ctx                                        context.Context
 	packagesMap                                map[string]bool
 }
@@ -2086,7 +2090,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 }
 
 func (c *Checker) CheckSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
-	if SkipTypeChecking(sourceFile, c.compilerOptions) {
+	if SkipTypeChecking(sourceFile, c.compilerOptions, c.program) {
 		return
 	}
 	c.checkSourceFile(ctx, sourceFile)
@@ -6462,15 +6466,13 @@ func (c *Checker) checkAliasSymbol(node *ast.Node) {
 			// in files that are unambiguously CommonJS in this mode.
 			c.error(node, diagnostics.ESM_syntax_is_not_allowed_in_a_CommonJS_module_when_module_is_set_to_preserve)
 		}
-		// !!!
-
-		// if c.compilerOptions.VerbatimModuleSyntax.IsTrue() && !ast.IsTypeOnlyImportOrExportDeclaration(node) && node.Flags&ast.NodeFlagsAmbient == 0 && targetFlags&ast.SymbolFlagsConstEnum != 0 {
-		// 	constEnumDeclaration := target.ValueDeclaration
-		// 	redirect := host.getRedirectReferenceForResolutionFromSourceOfProject(ast.GetSourceFileOfNode(constEnumDeclaration).ResolvedPath)
-		// 	if constEnumDeclaration.Flags&ast.NodeFlagsAmbient != 0 && (redirect == nil || !shouldPreserveConstEnums(redirect.commandLine.options)) {
-		// 		c.error(node, diagnostics.Cannot_access_ambient_const_enums_when_0_is_enabled, c.getIsolatedModulesLikeFlagName())
-		// 	}
-		// }
+		if c.compilerOptions.VerbatimModuleSyntax.IsTrue() && !ast.IsTypeOnlyImportOrExportDeclaration(node) && node.Flags&ast.NodeFlagsAmbient == 0 && targetFlags&ast.SymbolFlagsConstEnum != 0 {
+			constEnumDeclaration := target.ValueDeclaration
+			redirect := c.program.GetSourceAndProjectReference(ast.GetSourceFileOfNode(constEnumDeclaration).Path())
+			if constEnumDeclaration.Flags&ast.NodeFlagsAmbient != 0 && (redirect == nil || !redirect.Resolved.CompilerOptions().ShouldPreserveConstEnums()) {
+				c.error(node, diagnostics.Cannot_access_ambient_const_enums_when_0_is_enabled, c.getIsolatedModulesLikeFlagName())
+			}
+		}
 	}
 	if ast.IsImportSpecifier(node) {
 		targetSymbol := c.resolveAliasWithDeprecationCheck(symbol, node)
@@ -6742,7 +6744,7 @@ func (c *Checker) checkUnusedClassMembers(node *ast.Node) {
 }
 
 func (c *Checker) checkUnusedLocalsAndParameters(node *ast.Node) {
-	var variableParents core.Set[*ast.Node]
+	var variableParents collections.Set[*ast.Node]
 	var importClauses map[*ast.Node][]*ast.Node
 	for _, local := range node.Locals() {
 		referenceKinds := c.symbolReferenceLinks.Get(local).referenceKinds
@@ -7184,15 +7186,14 @@ func (c *Checker) checkConstEnumAccess(node *ast.Node, t *Type) {
 	// --verbatimModuleSyntax only gets checked here when the enum usage does not
 	// resolve to an import, because imports of ambient const enums get checked
 	// separately in `checkAliasSymbol`.
-	// !!!
-	// if c.compilerOptions.IsolatedModules.IsTrue() || c.compilerOptions.VerbatimModuleSyntax.IsTrue() && ok && c.resolveName(node, getFirstIdentifier(node).Text(), ast.SymbolFlagsAlias, nil, false, true) == nil {
-	// 	// Debug.assert(t.symbol.Flags&ast.SymbolFlagsConstEnum != 0)
-	// 	constEnumDeclaration := t.symbol.ValueDeclaration
-	// 	redirect := host.getRedirectReferenceForResolutionFromSourceOfProject(ast.GetSourceFileOfNode(constEnumDeclaration).ResolvedPath)
-	// 	if constEnumDeclaration.Flags&ast.NodeFlagsAmbient != 0 && !isValidTypeOnlyAliasUseSite(node) && (redirect == nil || !shouldPreserveConstEnums(redirect.commandLine.options)) {
-	// 		c.error(node, diagnostics.Cannot_access_ambient_const_enums_when_0_is_enabled, c.getIsolatedModulesLikeFlagName())
-	// 	}
-	// }
+	if c.compilerOptions.IsolatedModules.IsTrue() || c.compilerOptions.VerbatimModuleSyntax.IsTrue() && ok && c.resolveName(node, ast.GetFirstIdentifier(node).Text(), ast.SymbolFlagsAlias, nil, false, true) == nil {
+		// Debug.assert(t.symbol.Flags&ast.SymbolFlagsConstEnum != 0)
+		constEnumDeclaration := t.symbol.ValueDeclaration
+		redirect := c.program.GetSourceAndProjectReference(ast.GetSourceFileOfNode(constEnumDeclaration).Path())
+		if constEnumDeclaration.Flags&ast.NodeFlagsAmbient != 0 && !ast.IsValidTypeOnlyAliasUseSite(node) && (redirect == nil || !redirect.Resolved.CompilerOptions().ShouldPreserveConstEnums()) {
+			c.error(node, diagnostics.Cannot_access_ambient_const_enums_when_0_is_enabled, c.getIsolatedModulesLikeFlagName())
+		}
+	}
 }
 
 func (c *Checker) instantiateTypeWithSingleGenericCallSignature(node *ast.Node, t *Type, checkMode CheckMode) *Type {
@@ -12784,7 +12785,7 @@ func (c *Checker) getSpreadType(left *Type, right *Type, symbol *ast.Symbol, obj
 		return c.getIntersectionType([]*Type{left, right})
 	}
 	members := make(ast.SymbolTable)
-	var skippedPrivateMembers core.Set[string]
+	var skippedPrivateMembers collections.Set[string]
 	var indexInfos []*IndexInfo
 	if left == c.emptyObjectType {
 		indexInfos = c.getIndexInfosOfType(right)
@@ -14467,7 +14468,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 	var sourceFile *ast.SourceFile
 	resolvedModule := c.program.GetResolvedModule(importingSourceFile, moduleReference, mode)
 	if resolvedModule.IsResolved() {
-		sourceFile = c.program.GetSourceFile(resolvedModule.ResolvedFileName)
+		sourceFile = c.program.GetSourceFileForResolvedModule(resolvedModule.ResolvedFileName)
 	}
 
 	if sourceFile != nil {
@@ -14573,6 +14574,21 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 	}
 
 	if moduleNotFoundError != nil {
+
+		// See if this was possibly a projectReference redirect
+		if resolvedModule.IsResolved() {
+			redirect := c.program.GetOutputAndProjectReference(tspath.ToPath(resolvedModule.ResolvedFileName, c.program.GetCurrentDirectory(), c.program.UseCaseSensitiveFileNames()))
+			if redirect != nil && redirect.OutputDts != "" {
+				c.error(
+					errorNode,
+					diagnostics.Output_file_0_has_not_been_built_from_source_file_1,
+					redirect.OutputDts,
+					resolvedModule.ResolvedFileName,
+				)
+				return nil
+			}
+		}
+
 		// !!!
 		isExtensionlessRelativePathImport := tspath.PathIsRelative(moduleReference) && !tspath.HasExtension(moduleReference)
 		resolutionIsNode16OrNext := c.moduleResolutionKind == core.ModuleResolutionKindNode16 || c.moduleResolutionKind == core.ModuleResolutionKindNodeNext
@@ -15257,7 +15273,7 @@ type ExportCollisionTable = map[string]*ExportCollision
 
 func (c *Checker) getExportsOfModuleWorker(moduleSymbol *ast.Symbol) (exports ast.SymbolTable, typeOnlyExportStarMap map[string]*ast.Node) {
 	var visitedSymbols []*ast.Symbol
-	nonTypeOnlyNames := core.NewSetWithSizeHint[string](len(moduleSymbol.Exports))
+	nonTypeOnlyNames := collections.NewSetWithSizeHint[string](len(moduleSymbol.Exports))
 	// The ES6 spec permits export * declarations in a module to circularly reference the module itself. For example,
 	// module 'a' can 'export * from "b"' and 'b' can 'export * from "a"' without error.
 	var visit func(*ast.Symbol, *ast.Node, bool) ast.SymbolTable
@@ -15463,7 +15479,7 @@ func (c *Checker) getSymbolFlagsEx(symbol *ast.Symbol, excludeTypeOnlyMeanings b
 	if !excludeLocalMeanings {
 		flags = symbol.Flags
 	}
-	var seenSymbols core.Set[*ast.Symbol]
+	var seenSymbols collections.Set[*ast.Symbol]
 	for symbol.Flags&ast.SymbolFlagsAlias != 0 {
 		target := c.getExportSymbolOfValueSymbolIfExported(c.resolveAlias(symbol))
 		if !typeOnlyDeclarationIsExportStar && target == typeOnlyResolution || typeOnlyExportStarTargets[target.Name] == target {
@@ -17811,7 +17827,7 @@ func (c *Checker) getPropertiesOfObjectType(t *Type) []*ast.Symbol {
 func (c *Checker) getPropertiesOfUnionOrIntersectionType(t *Type) []*ast.Symbol {
 	d := t.AsUnionOrIntersectionType()
 	if d.resolvedProperties == nil {
-		var checked core.Set[string]
+		var checked collections.Set[string]
 		props := []*ast.Symbol{}
 		for _, current := range d.types {
 			for _, prop := range c.getPropertiesOfType(current) {
@@ -20562,7 +20578,7 @@ func isPrototypeProperty(symbol *ast.Symbol) bool {
 }
 
 func (c *Checker) hasCommonDeclaration(symbols *collections.OrderedSet[*ast.Symbol]) bool {
-	var commonDeclarations core.Set[*ast.Node]
+	var commonDeclarations collections.Set[*ast.Node]
 	for symbol := range symbols.Values() {
 		if len(symbol.Declarations) == 0 {
 			return false
