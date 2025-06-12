@@ -54,10 +54,6 @@ func createDiagnosticForNodeFromMessageChain(sourceFile *ast.SourceFile, node *a
 	return diagnostic
 }
 
-func IsIntrinsicJsxName(name string) bool {
-	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
-}
-
 func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 	for _, value := range m {
 		if predicate(value) {
@@ -1356,7 +1352,7 @@ func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
 }
 
 func isJsxIntrinsicTagName(tagName *ast.Node) bool {
-	return ast.IsIdentifier(tagName) && IsIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
+	return ast.IsIdentifier(tagName) && scanner.IsIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
 }
 
 func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
