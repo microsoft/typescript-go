@@ -84,9 +84,12 @@ func CompileFiles(
 	currentDirectory string,
 	symlinks map[string]string,
 ) *CompilationResult {
-	var compilerOptions core.CompilerOptions
+	var compilerOptions *core.CompilerOptions
 	if tsconfig != nil {
-		compilerOptions = *tsconfig.ParsedConfig.CompilerOptions
+		compilerOptions = tsconfig.ParsedConfig.CompilerOptions.Clone()
+	}
+	if compilerOptions == nil {
+		compilerOptions = &core.CompilerOptions{}
 	}
 	// Set default options for tests
 	if compilerOptions.NewLine == core.NewLineKindNone {
@@ -100,10 +103,10 @@ func CompileFiles(
 
 	// Parse harness and compiler options from the test configuration
 	if testConfig != nil {
-		setOptionsFromTestConfig(t, testConfig, &compilerOptions, &harnessOptions)
+		setOptionsFromTestConfig(t, testConfig, compilerOptions, &harnessOptions)
 	}
 
-	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, &compilerOptions, currentDirectory, symlinks, tsconfig)
+	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, compilerOptions, currentDirectory, symlinks, tsconfig)
 }
 
 func CompileFilesEx(
@@ -225,9 +228,9 @@ func CompileFilesEx(
 	result.Symlinks = symlinks
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
-		newCompilerOptions := *compilerOptions
-		setOptionsFromTestConfig(t, testConfig, &newCompilerOptions, &newHarnessOptions)
-		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, &newCompilerOptions, currentDirectory, symlinks, tsconfig)
+		newCompilerOptions := compilerOptions.Clone()
+		setOptionsFromTestConfig(t, testConfig, newCompilerOptions, &newHarnessOptions)
+		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, newCompilerOptions, currentDirectory, symlinks, tsconfig)
 	}
 	return result
 }
@@ -471,37 +474,40 @@ var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
 
 type SourceFileCacheKey struct {
 	core.SourceFileAffectingCompilerOptions
-	fileName        string
-	path            tspath.Path
-	languageVersion core.ScriptTarget
-	text            string
+	ast.SourceFileMetaData
+	fileName string
+	path     tspath.Path
+	text     string
 }
 
 func GetSourceFileCacheKey(
-	options core.SourceFileAffectingCompilerOptions,
 	fileName string,
 	path tspath.Path,
-	languageVersion core.ScriptTarget,
 	text string,
+	options *core.SourceFileAffectingCompilerOptions,
+	metadata *ast.SourceFileMetaData,
 ) SourceFileCacheKey {
 	return SourceFileCacheKey{
-		SourceFileAffectingCompilerOptions: options,
+		SourceFileAffectingCompilerOptions: *options,
+		SourceFileMetaData:                 *metadata,
 		fileName:                           fileName,
 		path:                               path,
-		languageVersion:                    languageVersion,
 		text:                               text,
 	}
 }
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
-	text, _ := h.FS().ReadFile(fileName)
+func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.SourceFile {
+	text, ok := h.FS().ReadFile(fileName)
+	if !ok {
+		return nil
+	}
 
 	key := GetSourceFileCacheKey(
-		*h.options.SourceFileAffecting(),
 		fileName,
 		path,
-		languageVersion,
 		text,
+		h.options.SourceFileAffecting(),
+		metadata,
 	)
 
 	if cached, ok := sourceFileCache.Load(key); ok {
@@ -514,7 +520,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 		sourceFile = parser.ParseJSONText(fileName, path, text)
 	} else {
 		// !!! JSDocParsingMode
-		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll)
+		sourceFile = parser.ParseSourceFile(fileName, path, text, options, metadata, scanner.JSDocParsingModeParseAll)
 	}
 
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
@@ -523,7 +529,7 @@ func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, la
 
 func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) compiler.CompilerHost {
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath),
+		CompilerHost: compiler.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath, nil),
 		options:      options,
 	}
 }

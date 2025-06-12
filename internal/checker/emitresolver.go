@@ -16,6 +16,11 @@ import (
 
 var _ printer.EmitResolver = &emitResolver{}
 
+// Links for jsx
+type JSXLinks struct {
+	importRef *ast.Node
+}
+
 // Links for declarations
 
 type DeclarationLinks struct {
@@ -31,8 +36,21 @@ type emitResolver struct {
 	checkerMu               sync.Mutex
 	isValueAliasDeclaration func(node *ast.Node) bool
 	referenceResolver       binder.ReferenceResolver
+	jsxLinks                core.LinkStore[*ast.Node, JSXLinks]
 	declarationLinks        core.LinkStore[*ast.Node, DeclarationLinks]
 	declarationFileLinks    core.LinkStore[*ast.Node, DeclarationFileLinks]
+}
+
+func (r *emitResolver) GetJsxFactoryEntity(location *ast.Node) *ast.Node {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.getJsxFactoryEntity(location)
+}
+
+func (r *emitResolver) GetJsxFragmentFactoryEntity(location *ast.Node) *ast.Node {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.checker.getJsxFragmentFactoryEntity(location)
 }
 
 func (r *emitResolver) IsOptionalParameter(node *ast.Node) bool {
@@ -472,14 +490,21 @@ func (r *emitResolver) IsImportRequiredByAugmentation(decl *ast.ImportDeclaratio
 }
 
 func (r *emitResolver) RequiresAddingImplicitUndefined(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
+	if !ast.IsParseTreeNode(declaration) {
+		return false
+	}
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	return r.requiresAddingImplicitUndefined(declaration, symbol, enclosingDeclaration)
+}
+
+func (r *emitResolver) requiresAddingImplicitUndefined(declaration *ast.Node, symbol *ast.Symbol, enclosingDeclaration *ast.Node) bool {
 	// node = r.emitContext.ParseNode(node)
 	if !ast.IsParseTreeNode(declaration) {
 		return false
 	}
 	switch declaration.Kind {
 	case ast.KindPropertyDeclaration, ast.KindPropertySignature, ast.KindJSDocPropertyTag:
-		r.checkerMu.Lock()
-		defer r.checkerMu.Unlock()
 		if symbol == nil {
 			symbol = r.checker.getSymbolOfDeclaration(declaration)
 		}
@@ -487,13 +512,13 @@ func (r *emitResolver) RequiresAddingImplicitUndefined(declaration *ast.Node, sy
 		r.checker.mappedSymbolLinks.Has(symbol)
 		return !!((symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t))
 	case ast.KindParameter, ast.KindJSDocParameterTag:
-		return r.requiresAddingImplicitUndefined(declaration, enclosingDeclaration)
+		return r.requiresAddingImplicitUndefinedWorker(declaration, enclosingDeclaration)
 	default:
 		panic("Node cannot possibly require adding undefined")
 	}
 }
 
-func (r *emitResolver) requiresAddingImplicitUndefined(parameter *ast.Node, enclosingDeclaration *ast.Node) bool {
+func (r *emitResolver) requiresAddingImplicitUndefinedWorker(parameter *ast.Node, enclosingDeclaration *ast.Node) bool {
 	return (r.isRequiredInitializedParameter(parameter, enclosingDeclaration) || r.isOptionalUninitializedParameterProperty(parameter)) && !r.declaredParameterTypeContainsUndefined(parameter)
 }
 
@@ -779,13 +804,18 @@ func (r *emitResolver) GetReferencedExportContainer(node *ast.IdentifierNode, pr
 	return r.getReferenceResolver().GetReferencedExportContainer(node, prefixLocals)
 }
 
-func (r *emitResolver) GetReferencedImportDeclaration(node *ast.IdentifierNode) *ast.Declaration {
-	if !ast.IsParseTreeNode(node) {
-		return nil
-	}
-
+func (r *emitResolver) SetReferencedImportDeclaration(node *ast.IdentifierNode, ref *ast.Declaration) {
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
+	r.jsxLinks.Get(node).importRef = ref
+}
+
+func (r *emitResolver) GetReferencedImportDeclaration(node *ast.IdentifierNode) *ast.Declaration {
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+	if !ast.IsParseTreeNode(node) {
+		return r.jsxLinks.Get(node).importRef
+	}
 
 	return r.getReferenceResolver().GetReferencedImportDeclaration(node)
 }

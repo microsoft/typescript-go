@@ -656,6 +656,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindExportDeclaration,
 		KindExportAssignment,
 		KindJSExportAssignment,
+		KindCommonJSExport,
 		KindNamespaceExportDeclaration:
 		return true
 	}
@@ -861,6 +862,15 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 		node = node.Parent
 	}
 	return node
+}
+
+func GetEffectiveTypeParent(parent *Node) *Node {
+	if IsInJSFile(parent) && parent.Kind == KindJSDocTypeExpression {
+		if host := parent.AsJSDocTypeExpression().Host; host != nil {
+			parent = host
+		}
+	}
+	return parent
 }
 
 // Walks up the parents of a node to find the containing SourceFile
@@ -1543,6 +1553,16 @@ func IsDottedName(node *Node) bool {
 		return true
 	case KindPropertyAccessExpression, KindParenthesizedExpression:
 		return IsDottedName(node.Expression())
+	}
+	return false
+}
+
+func HasSamePropertyAccessName(node1, node2 *Node) bool {
+	if node1.Kind == KindIdentifier && node2.Kind == KindIdentifier {
+		return node1.Text() == node2.Text()
+	} else if node1.Kind == KindPropertyAccessExpression && node2.Kind == KindPropertyAccessExpression {
+		return node1.AsPropertyAccessExpression().Name().Text() == node2.AsPropertyAccessExpression().Name().Text() &&
+			HasSamePropertyAccessName(node1.AsPropertyAccessExpression().Expression, node2.AsPropertyAccessExpression().Expression)
 	}
 	return false
 }
@@ -2504,16 +2524,15 @@ func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.Modul
 }
 
 func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
-	result := GetImpliedNodeFormatForEmitWorker(fileName, options, sourceFileMetaData)
+	result := GetImpliedNodeFormatForEmitWorker(fileName, options.GetEmitModuleKind(), sourceFileMetaData)
 	if result != core.ModuleKindNone {
 		return result
 	}
 	return options.GetEmitModuleKind()
 }
 
-func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ResolutionMode {
-	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
+func GetImpliedNodeFormatForEmitWorker(fileName string, emitModuleKind core.ModuleKind, sourceFileMetaData *SourceFileMetaData) core.ResolutionMode {
+	if core.ModuleKindNode16 <= emitModuleKind && emitModuleKind <= core.ModuleKindNodeNext {
 		if sourceFileMetaData == nil {
 			return core.ModuleKindNone
 		}
@@ -3403,6 +3422,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 		return factory.UpdateExportAssignment(
 			node.AsExportAssignment(),
 			modifierArray,
+			node.Type(),
 			node.Expression(),
 		)
 	case KindExportDeclaration:
@@ -3568,4 +3588,37 @@ func IsTrivia(token Kind) bool {
 
 func HasDecorators(node *Node) bool {
 	return HasSyntacticModifier(node, ModifierFlagsDecorator)
+}
+
+type hasFileNameImpl struct {
+	fileName string
+	path     tspath.Path
+}
+
+func NewHasFileName(fileName string, path tspath.Path) HasFileName {
+	return &hasFileNameImpl{
+		fileName: fileName,
+		path:     path,
+	}
+}
+
+func (h *hasFileNameImpl) FileName() string {
+	return h.fileName
+}
+
+func (h *hasFileNameImpl) Path() tspath.Path {
+	return h.path
+}
+
+func GetSemanticJsxChildren(children []*JsxChild) []*JsxChild {
+	return core.Filter(children, func(i *JsxChild) bool {
+		switch i.Kind {
+		case KindJsxExpression:
+			return i.Expression() != nil
+		case KindJsxText:
+			return !i.AsJsxText().ContainsOnlyTriviaWhiteSpaces
+		default:
+			return true
+		}
+	})
 }

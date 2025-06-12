@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -68,7 +69,7 @@ type Binder struct {
 	inAssignmentPattern    bool
 	seenParseError         bool
 	symbolCount            int
-	classifiableNames      core.Set[string]
+	classifiableNames      collections.Set[string]
 	symbolPool             core.Pool[ast.Symbol]
 	flowNodePool           core.Pool[ast.FlowNode]
 	flowListPool           core.Pool[ast.FlowList]
@@ -536,9 +537,7 @@ func (b *Binder) combineFlowLists(head *ast.FlowList, tail *ast.FlowList) *ast.F
 }
 
 func (b *Binder) newSingleDeclaration(declaration *ast.Node) []*ast.Node {
-	nodes := b.singleDeclarationsPool.NewSlice(1)
-	nodes[0] = declaration
-	return nodes
+	return b.singleDeclarationsPool.NewSlice1(declaration)
 }
 
 func setFlowNodeReferenced(flow *ast.FlowNode) {
@@ -1222,12 +1221,6 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 			return core.OrElse(local.ExportSymbol, local)
 		}
 	}
-	if ast.IsSourceFile(container) {
-		local := container.AsSourceFile().JSGlobalAugmentations[name]
-		if local != nil {
-			return local
-		}
-	}
 	declaration := container.DeclarationData()
 	if declaration != nil && declaration.Symbol != nil {
 		return declaration.Symbol.Exports[name]
@@ -1653,7 +1646,7 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
 	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
-		return // Reparsed nodes do not double-bind children, which are not reparsed
+		// Reparsed nodes do not double-bind children, which are not reparsed
 	default:
 		b.bindEachChild(node)
 	}
@@ -2214,9 +2207,11 @@ func (b *Binder) bindDestructuringAssignmentFlow(node *ast.Node) {
 		b.bind(expr.Right)
 		b.inAssignmentPattern = true
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 	} else {
 		b.inAssignmentPattern = true
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 		b.inAssignmentPattern = false
 		b.bind(expr.OperatorToken)
 		b.bind(expr.Right)
@@ -2245,6 +2240,7 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		}
 	} else {
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 		if operator == ast.KindCommaToken {
 			b.maybeBindExpressionFlowIfCall(node)
 		}
