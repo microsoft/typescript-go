@@ -11,12 +11,12 @@ func getDeepCloneVisitor(f *NodeFactory) *NodeVisitor {
 			if visited != node {
 				return visited
 			}
-			copy := node.Clone(f) // forcibly clone leaf nodes, which will then cascade new nodes/arrays upwards via `update` calls
+			c := node.Clone(f) // forcibly clone leaf nodes, which will then cascade new nodes/arrays upwards via `update` calls
 			// In strada, `factory.cloneNode` was dynamic and did _not_ clone positions for any "special cases", meanwhile
 			// Node.Clone in corsa reliably uses `Update` calls for all nodes and so copies locations by default.
 			// Deep clones are done to copy a node across files, so here, we explicitly make the location range synthetic on all cloned nodes
-			copy.Loc = core.NewTextRange(-1, -1)
-			return copy
+			c.Loc = core.NewTextRange(-1, -1)
+			return c
 		},
 		f,
 		NodeVisitorHooks{
