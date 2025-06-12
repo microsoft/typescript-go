@@ -1,7 +1,0 @@
---- old.checkJsdocSatisfiesTag11.types
-+++ new.checkJsdocSatisfiesTag11.types
-@@= skipped -27, +27 lines =@@
- >t2 : 1
- >(1) : 1
- >1 : 1
-+>1 : 1

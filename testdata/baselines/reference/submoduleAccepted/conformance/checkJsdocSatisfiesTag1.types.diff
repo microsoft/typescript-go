@@ -1,27 +1,6 @@
 --- old.checkJsdocSatisfiesTag1.types
 +++ new.checkJsdocSatisfiesTag1.types
-@@= skipped -23, +23 lines =@@
- >t1 : { a: number; }
- >({ a: 1 }) : { a: number; }
- >{ a: 1 } : { a: number; }
-+>{ a: 1 } : { a: number; }
- >a : number
- >1 : 1
-
-@@= skipped -7, +8 lines =@@
- >t2 : { a: number; b: number; }
- >({ a: 1, b: 1 }) : { a: number; b: number; }
- >{ a: 1, b: 1 } : { a: number; b: number; }
-+>{ a: 1, b: 1 } : { a: number; b: number; }
- >a : number
- >1 : 1
- >b : number
-@@= skipped -9, +10 lines =@@
- >t3 : {}
- >({}) : {}
- >{} : {}
-+>{} : {}
-
+@@= skipped -43, +43 lines =@@
  /** @type {T2} */
  const t4 = /** @satisfies {T2} */ ({ a: "a" });
  >t4 : T2
@@ -30,39 +9,7 @@
 ->a : "a"
 +>({ a: "a" }) : { a: string; }
 +>{ a: "a" } : { a: string; }
-+>{ a: "a" } : { a: string; }
 +>a : string
  >"a" : "a"
 
  /** @type {(m: string) => string} */
-@@= skipped -14, +16 lines =@@
- >t5 : (m: string) => string
- >((m) => m.substring(0)) : (m: string) => string
- >(m) => m.substring(0) : (m: string) => string
-+>(m) => m.substring(0) : (m: string) => string
- >m : string
- >m.substring(0) : string
- >m.substring : (start: number, end?: number) => string
-@@= skipped -11, +12 lines =@@
- >t6 : [number, number]
- >([1, 2]) : [number, number]
- >[1, 2] : [number, number]
-+>[1, 2] : [number, number]
- >1 : 1
- >2 : 2
-
-@@= skipped -7, +8 lines =@@
- >t7 : { a: string; }
- >({ a: 'test' }) : { a: string; }
- >{ a: 'test' } : { a: string; }
-+>{ a: 'test' } : { a: string; }
- >a : string
- >'test' : "test"
-
- const t8 = /** @satisfies {T4} */ ({ a: 'test', b: 'test' });
- >t8 : { a: string; b: string; }
- >({ a: 'test', b: 'test' }) : { a: string; b: string; }
-+>{ a: 'test', b: 'test' } : { a: string; b: string; }
- >{ a: 'test', b: 'test' } : { a: string; b: string; }
- >a : string
- >'test' : "test"

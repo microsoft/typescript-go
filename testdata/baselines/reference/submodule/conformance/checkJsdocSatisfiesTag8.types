@@ -7,7 +7,6 @@
 const x = /** @satisfies {Facts} */ ({
 >x : any
 >({    m: true,    s: "false"}) : any
->{    m: true,    s: "false"} : any
 >{    m: true,    s: "false"} : { m: boolean; s: string; }
 
     m: true,

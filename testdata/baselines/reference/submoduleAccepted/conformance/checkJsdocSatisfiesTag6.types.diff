@@ -1,9 +1,0 @@
---- old.checkJsdocSatisfiesTag6.types
-+++ new.checkJsdocSatisfiesTag6.types
-@@= skipped -11, +11 lines =@@
- >a : { x: number; }
- >({ x: 10 }) : { x: number; }
- >{ x: 10 } : { x: number; }
-+>{ x: 10 } : { x: number; }
- >x : number
- >10 : 10

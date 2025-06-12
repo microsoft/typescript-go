@@ -6,7 +6,6 @@ let obj = /** @satisfies {{ g(s: string): void } & Record<string, unknown>} */ (
 >obj : { f(s: string): void; } & Record<string, unknown>
 >({    f(s) { }, // "incorrect" implicit any on 's'    g(s) { }}) : { f(s: any): void; g(s: string): void; }
 >{    f(s) { }, // "incorrect" implicit any on 's'    g(s) { }} : { f(s: any): void; g(s: string): void; }
->{    f(s) { }, // "incorrect" implicit any on 's'    g(s) { }} : { f(s: any): void; g(s: string): void; }
 
     f(s) { }, // "incorrect" implicit any on 's'
 >f : (s: any) => void
@@ -21,7 +20,6 @@ let obj = /** @satisfies {{ g(s: string): void } & Record<string, unknown>} */ (
 // This needs to not crash (outer node is not expression)
 /** @satisfies {{ f(s: string): void }} */ ({ f(x) { } })
 >({ f(x) { } }) : { f(x: string): void; }
->{ f(x) { } } : { f(x: string): void; }
 >{ f(x) { } } : { f(x: string): void; }
 >f : (x: string) => void
 >x : string

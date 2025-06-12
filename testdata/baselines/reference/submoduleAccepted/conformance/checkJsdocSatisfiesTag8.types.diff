@@ -9,7 +9,6 @@
 ->{    m: true,    s: "false"} : { m: true; s: string; }
 +>x : any
 +>({    m: true,    s: "false"}) : any
-+>{    m: true,    s: "false"} : any
 +>{    m: true,    s: "false"} : { m: boolean; s: string; }
 
      m: true,

@@ -6,15 +6,6 @@
  >obj : { f(s: string): void; } & Record<string, unknown>
 ->({    f(s) { }, // "incorrect" implicit any on 's'    g(s) { }}) : { f(s: string): void; } & Record<string, unknown>
 +>({    f(s) { }, // "incorrect" implicit any on 's'    g(s) { }}) : { f(s: any): void; g(s: string): void; }
-+>{    f(s) { }, // "incorrect" implicit any on 's'    g(s) { }} : { f(s: any): void; g(s: string): void; }
  >{    f(s) { }, // "incorrect" implicit any on 's'    g(s) { }} : { f(s: any): void; g(s: string): void; }
 
      f(s) { }, // "incorrect" implicit any on 's'
-@@= skipped -16, +17 lines =@@
- // This needs to not crash (outer node is not expression)
- /** @satisfies {{ f(s: string): void }} */ ({ f(x) { } })
- >({ f(x) { } }) : { f(x: string): void; }
-+>{ f(x) { } } : { f(x: string): void; }
- >{ f(x) { } } : { f(x: string): void; }
- >f : (x: string) => void
- >x : string

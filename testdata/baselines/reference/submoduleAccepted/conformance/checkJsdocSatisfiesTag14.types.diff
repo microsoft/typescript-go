@@ -1,9 +1,0 @@
---- old.checkJsdocSatisfiesTag14.types
-+++ new.checkJsdocSatisfiesTag14.types
-@@= skipped -18, +18 lines =@@
- >t2 : { a: number; }
- >({ a: 1 }) : { a: number; }
- >{ a: 1 } : { a: number; }
-+>{ a: 1 } : { a: number; }
- >a : number
- >1 : 1

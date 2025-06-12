@@ -7,7 +7,6 @@ const p = /** @satisfies {Record<Keys, unknown>} */ ({
 >p : { a: number; b: string; x: number; }
 >({    a: 0,    b: "hello",    x: 8 // Should error, 'x' isn't in 'Keys'}) : { a: number; b: string; x: number; }
 >{    a: 0,    b: "hello",    x: 8 // Should error, 'x' isn't in 'Keys'} : { a: number; b: string; x: number; }
->{    a: 0,    b: "hello",    x: 8 // Should error, 'x' isn't in 'Keys'} : { a: number; b: string; x: number; }
 
     a: 0,
 >a : number
