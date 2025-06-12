@@ -103,18 +103,8 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 				escape = true
 			}
 		default:
-			// For template strings, exclude \u000a (LF/newline) from the character range that gets escaped
-			// This matches the TypeScript fix in PR #60303 that changed the regex from \u0000-\u001f to \u0000-\u0009\u000b-\u001f
-			if quoteChar == QuoteCharBacktick {
-				// For template strings: escape \u0000-\u0009 and \u000b-\u001f (excluding \u000a which is LF)
-				if (ch >= '\u0000' && ch <= '\u0009') || (ch >= '\u000b' && ch <= '\u001f') || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
-					escape = true
-				}
-			} else {
-				// For regular strings: escape \u0000-\u001f as before
-				if ch < '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
-					escape = true
-				}
+			if ch <= '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
+				escape = true
 			}
 		}
 

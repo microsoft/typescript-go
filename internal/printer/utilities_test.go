@@ -90,6 +90,39 @@ func TestEscapeJsxAttributeString(t *testing.T) {
 	}
 }
 
+func TestEscapeStringTemplateStrings(t *testing.T) {
+	t.Parallel()
+	data := []struct {
+		s         string
+		quoteChar QuoteChar
+		expected  string
+		desc      string
+	}{
+		// Test newline character (\u000a) - should NOT be escaped in template strings
+		{s: "\n", quoteChar: QuoteCharBacktick, expected: "\n", desc: "newline in template string"},
+		{s: "\n", quoteChar: QuoteCharDoubleQuote, expected: "\\n", desc: "newline in double quote string"},
+		{s: "\n", quoteChar: QuoteCharSingleQuote, expected: "\\n", desc: "newline in single quote string"},
+		
+		// Test \u001f (Unit Separator) - should be escaped in template strings according to TypeScript PR #60303
+		{s: "\u001f", quoteChar: QuoteCharBacktick, expected: "\\u001F", desc: "\\u001f in template string"},
+		{s: "\u001f", quoteChar: QuoteCharDoubleQuote, expected: "\\u001F", desc: "\\u001f in double quote string"},
+		{s: "\u001f", quoteChar: QuoteCharSingleQuote, expected: "\\u001F", desc: "\\u001f in single quote string"},
+		
+		// Test other control characters that should be escaped
+		{s: "\u0000", quoteChar: QuoteCharBacktick, expected: "\\0", desc: "\\u0000 in template string"},
+		{s: "\u0009", quoteChar: QuoteCharBacktick, expected: "\\t", desc: "\\u0009 (tab) in template string"},
+		{s: "\u000b", quoteChar: QuoteCharBacktick, expected: "\\v", desc: "\\u000b (vtab) in template string"},
+		{s: "\u001e", quoteChar: QuoteCharBacktick, expected: "\\u001E", desc: "\\u001e in template string"},
+	}
+	for i, rec := range data {
+		t.Run(fmt.Sprintf("[%d] %s", i, rec.desc), func(t *testing.T) {
+			t.Parallel()
+			actual := EscapeString(rec.s, rec.quoteChar)
+			assert.Equal(t, actual, rec.expected)
+		})
+	}
+}
+
 func TestIsRecognizedTripleSlashComment(t *testing.T) {
 	t.Parallel()
 	data := []struct {
