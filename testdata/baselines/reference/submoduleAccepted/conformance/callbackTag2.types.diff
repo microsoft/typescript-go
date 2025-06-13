@@ -1,12 +1,6 @@
 --- old.callbackTag2.types
 +++ new.callbackTag2.types
-@@= skipped -22, +22 lines =@@
-  * @return {S}
-  */
- class SharedClass {
-->SharedClass : SharedClass
-+>SharedClass : SharedClass<S>
-
+@@= skipped -27, +27 lines =@@
      constructor() {
          /** @type {SharedId<S>} */
          this.id;
@@ -18,7 +12,7 @@
      }
  }
  /** @type {SharedId<number>} */
-@@= skipped -22, +22 lines =@@
+@@= skipped -17, +17 lines =@@
  /** @type {Final<{ fantasy }, { heroes }>} */
  var noreturn = (barts, tidus, noctis) => "cecil"
  >noreturn : Final<{ fantasy: any; }, { heroes: any; }>

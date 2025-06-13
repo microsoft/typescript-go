@@ -9191,6 +9191,7 @@ type JSDocTemplateTag struct {
 	JSDocTagBase
 	Constraint     *Node
 	TypeParameters *TypeParameterList
+	Host           *Node
 }
 
 func (f *NodeFactory) NewJSDocTemplateTag(tagName *IdentifierNode, constraint *Node, typeParameters *TypeParameterList, comment *NodeList) *Node {

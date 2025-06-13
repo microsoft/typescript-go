@@ -23,7 +23,7 @@ var one_twenty = s => "120";
  * @return {S}
  */
 class SharedClass {
->SharedClass : SharedClass<S>
+>SharedClass : SharedClass
 
     constructor() {
         /** @type {SharedId<S>} */

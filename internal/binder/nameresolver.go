@@ -289,8 +289,9 @@ loop:
 			lastSelfReferenceLocation = location
 		}
 		if location.Kind == ast.KindJSDocTypeExpression && location.AsJSDocTypeExpression().Host != nil {
-			lastLocation = location.AsJSDocTypeExpression().Host.Type()
 			location = location.AsJSDocTypeExpression().Host
+		} else if location.Kind == ast.KindJSDocTemplateTag && location.AsJSDocTemplateTag().Host != nil {
+			location = location.AsJSDocTemplateTag().Host
 		} else {
 			lastLocation = location
 			location = location.Parent
@@ -487,6 +488,9 @@ func isTypeParameterSymbolDeclaredInContainer(symbol *ast.Symbol, container *ast
 	for _, decl := range symbol.Declarations {
 		if decl.Kind == ast.KindTypeParameter {
 			parent := decl.Parent
+			if parent.Kind == ast.KindJSDocTemplateTag {
+				parent = parent.AsJSDocTemplateTag().Host
+			}
 			if parent == container {
 				return true
 			}

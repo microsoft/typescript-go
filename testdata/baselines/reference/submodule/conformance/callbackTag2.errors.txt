@@ -1,4 +1,4 @@
-cb.js(19,14): error TS2339: Property 'id' does not exist on type 'SharedClass<S>'.
+cb.js(19,14): error TS2339: Property 'id' does not exist on type 'SharedClass'.
 cb.js(25,12): error TS2304: Cannot find name 'Final'.
 
 
@@ -23,7 +23,7 @@ cb.js(25,12): error TS2304: Cannot find name 'Final'.
             /** @type {SharedId<S>} */
             this.id;
                  ~~
-!!! error TS2339: Property 'id' does not exist on type 'SharedClass<S>'.
+!!! error TS2339: Property 'id' does not exist on type 'SharedClass'.
         }
     }
     /** @type {SharedId<number>} */

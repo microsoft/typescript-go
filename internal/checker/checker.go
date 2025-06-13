@@ -22541,6 +22541,11 @@ func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) 
 		if node == nil {
 			return nil
 		}
+		if node.Kind == ast.KindJSDocTypeExpression && node.AsJSDocTypeExpression().Host != nil {
+			node = node.AsJSDocTypeExpression().Host
+		} else if node.Kind == ast.KindJSDocTemplateTag && node.AsJSDocTemplateTag().Host != nil {
+			node = node.AsJSDocTemplateTag().Host
+		}
 		kind := node.Kind
 		switch kind {
 		case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindCallSignature, ast.KindConstructSignature,
