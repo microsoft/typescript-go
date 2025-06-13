@@ -101,7 +101,7 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		p.reparseList = append(p.reparseList, typeAlias)
 	case ast.KindJSDocImportTag:
 		importTag := tag.AsJSDocImportTag()
-		importClause := importTag.ImportClause.Clone(&p.factory)
+		importClause := importTag.ImportClause
 		importClause.Flags |= ast.NodeFlagsReparsed
 		importClause.AsImportClause().IsTypeOnly = true
 		importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
