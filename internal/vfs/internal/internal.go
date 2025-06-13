@@ -173,7 +173,7 @@ func decodeBytes(s string) (contents string, ok bool) {
 		s = s[3:]
 	}
 
-	return string(s), true
+	return s, true
 }
 
 func decodeUtf16(s string, order binary.ByteOrder) string {
