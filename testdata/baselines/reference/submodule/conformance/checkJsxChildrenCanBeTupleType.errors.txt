@@ -1,5 +1,10 @@
 checkJsxChildrenCanBeTupleType.tsx(17,18): error TS2769: No overload matches this call.
-  The last overload gave the following error.
+  Overload 1 of 2, 'new (props: Readonly<ResizablePanelProps>): ResizablePanel', gave the following error.
+    Type '{ children: [Element, Element, Element]; }' is not assignable to type 'Readonly<ResizablePanelProps>'.
+      Types of property 'children' are incompatible.
+        Type '[Element, Element, Element]' is not assignable to type '[ReactNode, ReactNode]'.
+          Source has 3 element(s) but target allows only 2.
+  Overload 2 of 2, 'new (props: ResizablePanelProps, context?: any): ResizablePanel', gave the following error.
     Type '{ children: [Element, Element, Element]; }' is not assignable to type 'Readonly<ResizablePanelProps>'.
       Types of property 'children' are incompatible.
         Type '[Element, Element, Element]' is not assignable to type '[ReactNode, ReactNode]'.
@@ -26,12 +31,16 @@ checkJsxChildrenCanBeTupleType.tsx(17,18): error TS2769: No overload matches thi
     const testErr = <ResizablePanel>
                      ~~~~~~~~~~~~~~
 !!! error TS2769: No overload matches this call.
-!!! error TS2769:   The last overload gave the following error.
+!!! error TS2769:   Overload 1 of 2, 'new (props: Readonly<ResizablePanelProps>): ResizablePanel', gave the following error.
 !!! error TS2769:     Type '{ children: [Element, Element, Element]; }' is not assignable to type 'Readonly<ResizablePanelProps>'.
 !!! error TS2769:       Types of property 'children' are incompatible.
 !!! error TS2769:         Type '[Element, Element, Element]' is not assignable to type '[ReactNode, ReactNode]'.
 !!! error TS2769:           Source has 3 element(s) but target allows only 2.
-!!! related TS2771 react16.d.ts:357:13: The last overload is declared here.
+!!! error TS2769:   Overload 2 of 2, 'new (props: ResizablePanelProps, context?: any): ResizablePanel', gave the following error.
+!!! error TS2769:     Type '{ children: [Element, Element, Element]; }' is not assignable to type 'Readonly<ResizablePanelProps>'.
+!!! error TS2769:       Types of property 'children' are incompatible.
+!!! error TS2769:         Type '[Element, Element, Element]' is not assignable to type '[ReactNode, ReactNode]'.
+!!! error TS2769:           Source has 3 element(s) but target allows only 2.
       <div />
       <div />
       <div />
