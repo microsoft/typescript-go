@@ -148,7 +148,7 @@ func (vfs *Common) ReadFile(path string) (contents string, ok bool) {
 	}
 
 	// An invariant of any underlying filesystem is that the bytes returned
-	// are immtuable, otherwise anyone using the filesystem would end up
+	// are immutable, otherwise anyone using the filesystem would end up
 	// with data races.
 	//
 	// This means that we can safely convert the bytes to a string directly,
