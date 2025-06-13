@@ -1404,7 +1404,11 @@ func (p *Printer) emitTypeParameter(node *ast.TypeParameterDeclaration) {
 }
 
 func (p *Printer) emitTypeParameterNode(node *ast.TypeParameterDeclarationNode) {
-	p.emitTypeParameter(node.AsTypeParameter())
+	if ast.IsTypeParameterDeclaration(node) {
+		p.emitTypeParameter(node.AsTypeParameter())
+	} else {
+		p.emitTypeArgument(node)
+	}
 }
 
 func (p *Printer) emitParameterName(node *ast.BindingName) {
