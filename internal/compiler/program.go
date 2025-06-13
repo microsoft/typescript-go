@@ -454,7 +454,7 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
-		diags = core.Filter(diags, func(d *ast.Diagnostic) bool {
+		return core.Filter(diags, func(d *ast.Diagnostic) bool {
 			return plainJSErrors.Has(d.Code())
 		})
 	}
