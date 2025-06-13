@@ -288,14 +288,8 @@ loop:
 		if isSelfReferenceLocation(location, lastLocation) {
 			lastSelfReferenceLocation = location
 		}
-		if location.Kind == ast.KindJSDocTypeExpression && location.AsJSDocTypeExpression().Host != nil {
-			location = location.AsJSDocTypeExpression().Host
-		} else if location.Kind == ast.KindJSDocTemplateTag && location.AsJSDocTemplateTag().Host != nil {
-			location = location.AsJSDocTemplateTag().Host
-		} else {
-			lastLocation = location
-			location = location.Parent
-		}
+		lastLocation = location
+		location = ast.GetEffectiveTypeParent(location.Parent)
 	}
 	// We just climbed up parents looking for the name, meaning that we started in a descendant node of `lastLocation`.
 	// If `result === lastSelfReferenceLocation.symbol`, that means that we are somewhere inside `lastSelfReferenceLocation` looking up a name, and resolving to `lastLocation` itself.

@@ -147,7 +147,11 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 		} else {
 			jsparam := param.AsJSDocParameterOrPropertyTag()
 			parameter = p.factory.NewParameterDeclaration(nil, nil, jsparam.Name(), p.makeQuestionIfOptional(jsparam), nil, nil)
-			parameter.AsParameterDeclaration().Type = p.reparseParameter(jsparam.TypeExpression, parameter)
+			if jsparam.TypeExpression != nil {
+				t := p.reparseJSDocTypeLiteral(jsparam.TypeExpression.Type(), parameter)
+				setHost(jsparam.TypeExpression, parameter)
+				parameter.AsParameterDeclaration().Type = t
+			}
 		}
 		parameter.Loc = param.Loc
 		parameter.Flags = p.contextFlags | ast.NodeFlagsReparsed
@@ -164,17 +168,6 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	}
 	signature.Flags = p.contextFlags | ast.NodeFlagsReparsed
 	return signature
-}
-
-// todo:inline
-func (p *Parser) reparseParameter(typeExpression *ast.TypeNode, host *ast.Node) *ast.Node {
-	if typeExpression == nil || typeExpression.Type() == nil {
-		return nil
-	}
-
-	t := p.reparseJSDocTypeLiteral(typeExpression.Type(), host)
-	setHost(typeExpression, host)
-	return t
 }
 
 func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode, host *ast.Node) *ast.Node {

@@ -22537,14 +22537,9 @@ func (c *Checker) getOuterTypeParametersOfClassOrInterface(symbol *ast.Symbol) [
 // Return the outer type parameters of a node or undefined if the node has no outer type parameters.
 func (c *Checker) getOuterTypeParameters(node *ast.Node, includeThisTypes bool) []*Type {
 	for {
-		node = node.Parent
+		node = ast.GetEffectiveTypeParent(node.Parent)
 		if node == nil {
 			return nil
-		}
-		if node.Kind == ast.KindJSDocTypeExpression && node.AsJSDocTypeExpression().Host != nil {
-			node = node.AsJSDocTypeExpression().Host
-		} else if node.Kind == ast.KindJSDocTemplateTag && node.AsJSDocTemplateTag().Host != nil {
-			node = node.AsJSDocTemplateTag().Host
 		}
 		kind := node.Kind
 		switch kind {
