@@ -336,7 +336,7 @@ func tryRenameExternalModule(factory *printer.NodeFactory, moduleName *ast.Liter
 }
 
 func rewriteModuleSpecifier(emitContext *printer.EmitContext, node *ast.Expression, compilerOptions *core.CompilerOptions) *ast.Expression {
-	if node == nil || !ast.IsStringLiteral(node) || !shouldRewriteModuleSpecifier(node.Text(), compilerOptions) {
+	if node == nil || !ast.IsStringLiteral(node) || !core.ShouldRewriteModuleSpecifier(node.Text(), compilerOptions) {
 		return node
 	}
 	updatedText := tspath.ChangeExtension(node.Text(), outputpaths.GetOutputExtension(node.Text(), compilerOptions.Jsx))
@@ -348,10 +348,6 @@ func rewriteModuleSpecifier(emitContext *printer.EmitContext, node *ast.Expressi
 		return updated
 	}
 	return node
-}
-
-func shouldRewriteModuleSpecifier(specifier string, compilerOptions *core.CompilerOptions) bool {
-	return compilerOptions.RewriteRelativeImportExtensions.IsTrue() && tspath.PathIsRelative(specifier) && !tspath.IsDeclarationFileName(specifier) && tspath.HasTSFileExtension(specifier)
 }
 
 func singleOrMany(nodes []*ast.Node, factory *printer.NodeFactory) *ast.Node {
@@ -408,4 +404,21 @@ func convertClassDeclarationToClassExpression(emitContext *printer.EmitContext, 
 	emitContext.SetOriginal(updated, node.AsNode())
 	updated.Loc = node.Loc
 	return updated
+}
+
+func createExpressionFromEntityName(factory ast.NodeFactoryCoercible, node *ast.Node) *ast.Expression {
+	if ast.IsQualifiedName(node) {
+		left := createExpressionFromEntityName(factory, node.AsQualifiedName().Left)
+		// TODO(rbuckton): Does this need to be parented?
+		right := node.AsQualifiedName().Right.Clone(factory.AsNodeFactory())
+		right.Loc = node.AsQualifiedName().Right.Loc
+		right.Parent = node.AsQualifiedName().Right.Parent
+		return factory.AsNodeFactory().NewPropertyAccessExpression(left, nil, right, ast.NodeFlagsNone)
+	} else {
+		// TODO(rbuckton): Does this need to be parented?
+		res := node.Clone(factory.AsNodeFactory())
+		res.Loc = node.Loc
+		res.Parent = node.Parent
+		return res
+	}
 }
