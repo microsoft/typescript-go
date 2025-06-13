@@ -153,6 +153,10 @@ func (vfs *Common) ReadFile(path string) (contents string, ok bool) {
 	//
 	// This means that we can safely convert the bytes to a string directly,
 	// saving a copy.
+	if len(b) == 0 {
+		return "", true
+	}
+
 	s := unsafe.String(&b[0], len(b))
 
 	return decodeBytes(s)
