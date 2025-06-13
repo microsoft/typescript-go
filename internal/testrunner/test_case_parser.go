@@ -50,8 +50,8 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 	testUnits, symlinks, currentDirectory, _, _ := ParseTestFilesAndSymlinks(
 		code,
 		fileName,
-		func(filename string, content string, fileOptions map[string]string) (*testUnit, string) {
-			return &testUnit{content: content, name: filename}, ""
+		func(filename string, content string, fileOptions map[string]string) (*testUnit, error) {
+			return &testUnit{content: content, name: filename}, nil
 		},
 	)
 	if currentDirectory == "" {
@@ -108,8 +108,8 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 func ParseTestFilesAndSymlinks[T any](
 	code string,
 	fileName string,
-	parseFile func(filename string, content string, fileOptions map[string]string) (T, string),
-) (units []T, symlinks map[string]string, currentDir string, globalOptions map[string]string, e string) {
+	parseFile func(filename string, content string, fileOptions map[string]string) (T, error),
+) (units []T, symlinks map[string]string, currentDir string, globalOptions map[string]string, e error) {
 	// List of all the subfiles we've parsed out
 	var testUnits []T
 
@@ -119,7 +119,7 @@ func ParseTestFilesAndSymlinks[T any](
 	var currentFileContent strings.Builder
 	var currentFileName string
 	var currentDirectory string
-	var parseError string
+	var parseError error
 	currentFileOptions := make(map[string]string)
 	symlinks = make(map[string]string)
 	globalOptions = make(map[string]string)
@@ -155,7 +155,7 @@ func ParseTestFilesAndSymlinks[T any](
 			if currentFileName != "" {
 				// Store result file
 				newTestFile, e := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
-				if e != "" {
+				if e != nil {
 					parseError = e
 					break
 				}
@@ -190,7 +190,7 @@ func ParseTestFilesAndSymlinks[T any](
 	}
 
 	// if there are no parse errors so far, parse the rest of the file
-	if parseError == "" {
+	if parseError == nil {
 		// EOF, push whatever remains
 		newTestFile2, e := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
 

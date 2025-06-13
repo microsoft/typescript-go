@@ -63,8 +63,8 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 		fileName,
 		parseFileContent,
 	)
-	if e != "" {
-		t.Fatalf("Error parsing fourslash data: %s", e)
+	if e != nil {
+		t.Fatalf("Error parsing fourslash data: %s", e.Error())
 	}
 
 	hasTSConfig := false
@@ -143,7 +143,7 @@ const (
 	stateInObjectMarker
 )
 
-func parseFileContent(fileName string, content string, fileOptions map[string]string) (*testFileWithMarkers, string) {
+func parseFileContent(fileName string, content string, fileOptions map[string]string) (*testFileWithMarkers, error) {
 	fileName = tspath.GetNormalizedAbsolutePath(fileName, "/")
 
 	// The file content (minus metacharacters) so far
@@ -246,7 +246,7 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 			if previousCharacter == '|' && currentCharacter == '}' {
 				objectMarkerData := strings.TrimSpace(content[openMarker.sourcePosition+2 : i-1])
 				marker, e := getObjectMarker(fileName, openMarker, objectMarkerData)
-				if e != "" {
+				if e != nil {
 					return nil, e
 				}
 
@@ -355,10 +355,10 @@ func parseFileContent(fileName string, content string, fileOptions map[string]st
 		file:    testFileInfo,
 		markers: markers,
 		ranges:  rangeMarkers,
-	}, ""
+	}, nil
 }
 
-func getObjectMarker(fileName string, location *locationInformation, text string) (*Marker, string) {
+func getObjectMarker(fileName string, location *locationInformation, text string) (*Marker, error) {
 	// Attempt to parse the marker value as JSON
 	var v interface{}
 	e := json.Unmarshal([]byte("{ "+text+" }"), &v)
@@ -384,9 +384,17 @@ func getObjectMarker(fileName string, location *locationInformation, text string
 		}
 	}
 
-	return marker, ""
+	return marker, nil
 }
 
-func reportError(fileName string, line int, col int, message string) string {
-	return fmt.Sprintf("%v (%v,%v): %v", fileName, line, col, message)
+func reportError(fileName string, line int, col int, message string) error {
+	return &fourslashError{fmt.Sprintf("%v (%v,%v): %v", fileName, line, col, message)}
+}
+
+type fourslashError struct {
+	err string
+}
+
+func (e *fourslashError) Error() string {
+	return e.err
 }
