@@ -1087,7 +1087,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	}
 	if isBundle {
 		// !!! relies on option cloning and specifier host implementation
-		// specifierCompilerOptions = &core.CompilerOptions{BaseUrl: host.GetCommonSourceDirectory()}
+		// specifierCompilerOptions = &core.CompilerOptions{BaseUrl: host.CommonSourceDirectory()}
 		// TODO: merge with b.ch.compilerOptions
 		specifierPref = modulespecifiers.ImportModuleSpecifierPreferenceNonRelative
 		endingPref = modulespecifiers.ImportModuleSpecifierEndingPreferenceMinimal
@@ -1898,7 +1898,7 @@ func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			}
 		}
 		// !!! TODO: JSDoc, getEmitResolver call is unfortunate layering for the helper - hoist it into checker
-		addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver(nil, true).RequiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
+		addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver(nil, true).requiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
 		if addUndefinedForParameter {
 			t = b.ch.getOptionalType(t, false)
 		}

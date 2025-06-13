@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -32,12 +33,15 @@ func BenchmarkParse(b *testing.B) {
 			fileName := tspath.GetNormalizedAbsolutePath(f.Path(), "/")
 			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
 			sourceText := f.ReadFile(b)
+			options := &core.SourceFileAffectingCompilerOptions{
+				EmitScriptTarget: core.ScriptTargetESNext,
+			}
 
 			for _, jsdoc := range jsdocModes {
 				b.Run(jsdoc.name, func(b *testing.B) {
 					jsdocMode := jsdoc.mode
 					for b.Loop() {
-						ParseSourceFile(fileName, path, sourceText, core.ScriptTargetESNext, jsdocMode)
+						ParseSourceFile(fileName, path, sourceText, options, nil, jsdocMode)
 					}
 				})
 			}
@@ -88,7 +92,7 @@ func FuzzParser(f *testing.F) {
 		// "tests/cases",
 	}
 
-	var extensions core.Set[string]
+	var extensions collections.Set[string]
 	for _, es := range tspath.AllSupportedExtensionsWithJson {
 		for _, e := range es {
 			extensions.Add(e)
@@ -130,6 +134,10 @@ func FuzzParser(f *testing.F) {
 			return
 		}
 
-		ParseSourceFile(fileName, path, sourceText, scriptTarget, jsdocParsingMode)
+		options := &core.SourceFileAffectingCompilerOptions{
+			EmitScriptTarget: scriptTarget,
+		}
+
+		ParseSourceFile(fileName, path, sourceText, options, nil, jsdocParsingMode)
 	})
 }

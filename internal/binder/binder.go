@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -69,7 +70,7 @@ type Binder struct {
 	inAssignmentPattern    bool
 	seenParseError         bool
 	symbolCount            int
-	classifiableNames      core.Set[string]
+	classifiableNames      collections.Set[string]
 	symbolPool             core.Pool[ast.Symbol]
 	flowNodePool           core.Pool[ast.FlowNode]
 	flowListPool           core.Pool[ast.FlowList]
@@ -537,9 +538,7 @@ func (b *Binder) combineFlowLists(head *ast.FlowList, tail *ast.FlowList) *ast.F
 }
 
 func (b *Binder) newSingleDeclaration(declaration *ast.Node) []*ast.Node {
-	nodes := b.singleDeclarationsPool.NewSlice(1)
-	nodes[0] = declaration
-	return nodes
+	return b.singleDeclarationsPool.NewSlice1(declaration)
 }
 
 func setFlowNodeReferenced(flow *ast.FlowNode) {
@@ -1272,11 +1271,7 @@ func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
 			return core.OrElse(local.ExportSymbol, local)
 		}
 	}
-	if ast.IsSourceFile(container) {
-		if local := container.AsSourceFile().JSGlobalAugmentations[name]; local != nil {
-			return local
-		}
-	}
+	
 	if declaration := container.DeclarationData(); declaration != nil && declaration.Symbol != nil {
 		return declaration.Symbol.Exports[name]
 	}

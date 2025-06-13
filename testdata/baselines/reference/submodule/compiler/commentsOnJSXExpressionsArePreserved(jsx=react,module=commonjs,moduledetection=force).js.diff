@@ -1,27 +1,18 @@
 --- old.commentsOnJSXExpressionsArePreserved(jsx=react,module=commonjs,moduledetection=force).js
 +++ new.commentsOnJSXExpressionsArePreserved(jsx=react,module=commonjs,moduledetection=force).js
-@@= skipped -22, +22 lines =@@
- }
-
+@@= skipped -24, +24 lines =@@
  //// [commentsOnJSXExpressionsArePreserved.js]
--"use strict";
--Object.defineProperty(exports, "__esModule", { value: true });
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
 -var Component = /** @class */ (function () {
 -    function Component() {
+-    }
+-    Component.prototype.render = function () {
 +class Component {
 +    render() {
-+        return <div>
-+            
-+            {null /* preserved */}
-+            
-+            
-+            
-+            
-+        </div>;
-     }
--    Component.prototype.render = function () {
--        return React.createElement("div", null, null /* preserved */);
+         return React.createElement("div", null, null /* preserved */);
 -    };
 -    return Component;
 -}());
++    }
 +}
