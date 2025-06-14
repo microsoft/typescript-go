@@ -2953,7 +2953,76 @@ func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpre
 }
 
 func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
-	return false // !!! check if node will emit a leading comment that contains a trailing newline
+	// Check if node will emit a leading comment that contains a trailing newline
+	if p.commentsDisabled || p.currentSourceFile == nil {
+		return false
+	}
+
+	pos := node.Pos()
+	if ast.PositionIsSynthesized(pos) || pos == p.containerPos {
+		return false
+	}
+
+	// Get leading comments for this node
+	text := p.currentSourceFile.Text()
+	hasLeadingNewLineComment := false
+	for comment := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, pos) {
+		if p.shouldWriteComment(comment) {
+			// Check if this comment will cause a newline to be emitted
+			if comment.Kind == ast.KindSingleLineCommentTrivia {
+				// Single line comments always end with a newline
+				hasLeadingNewLineComment = true
+				break
+			} else if comment.Kind == ast.KindMultiLineCommentTrivia {
+				// Multi-line comments may contain newlines or cause newlines
+				commentText := text[comment.Pos():comment.End()]
+				// Check if the comment ends with a newline or contains newlines
+				if len(commentText) > 0 && (commentText[len(commentText)-1] == '\n' || commentText[len(commentText)-1] == '\r') {
+					hasLeadingNewLineComment = true
+					break
+				}
+				// Also check if the comment contains internal newlines
+				for i := 0; i < len(commentText); i++ {
+					if commentText[i] == '\n' || commentText[i] == '\r' {
+						hasLeadingNewLineComment = true
+						break
+					}
+				}
+			}
+		}
+	}
+
+	// If this node doesn't have leading comments, check if any of its child expressions do
+	if !hasLeadingNewLineComment {
+		switch node.Kind {
+		case ast.KindAsExpression:
+			return p.willEmitLeadingNewLine(node.AsAsExpression().Expression)
+		case ast.KindSatisfiesExpression:
+			return p.willEmitLeadingNewLine(node.AsSatisfiesExpression().Expression)
+		case ast.KindNonNullExpression:
+			return p.willEmitLeadingNewLine(node.AsNonNullExpression().Expression)
+		case ast.KindParenthesizedExpression:
+			return p.willEmitLeadingNewLine(node.AsParenthesizedExpression().Expression)
+		case ast.KindPropertyAccessExpression:
+			return p.willEmitLeadingNewLine(node.AsPropertyAccessExpression().Expression)
+		case ast.KindElementAccessExpression:
+			return p.willEmitLeadingNewLine(node.AsElementAccessExpression().Expression)
+		case ast.KindCallExpression:
+			return p.willEmitLeadingNewLine(node.AsCallExpression().Expression)
+		case ast.KindTaggedTemplateExpression:
+			return p.willEmitLeadingNewLine(node.AsTaggedTemplateExpression().Tag)
+		case ast.KindPostfixUnaryExpression:
+			return p.willEmitLeadingNewLine(node.AsPostfixUnaryExpression().Operand)
+		case ast.KindBinaryExpression:
+			return p.willEmitLeadingNewLine(node.AsBinaryExpression().Left)
+		case ast.KindConditionalExpression:
+			return p.willEmitLeadingNewLine(node.AsConditionalExpression().Condition)
+		case ast.KindPartiallyEmittedExpression:
+			return p.willEmitLeadingNewLine(node.AsPartiallyEmittedExpression().Expression)
+		}
+	}
+
+	return hasLeadingNewLineComment
 }
 
 func (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.OperatorPrecedence) {
@@ -2969,7 +3038,7 @@ func (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.Opera
 	//	    a;
 	//	}
 	// Due to ASI, this would result in a `return` with no value followed by an unreachable expression statement.
-	if !p.commentsDisabled && node.Kind == ast.KindPartiallyEmittedExpression && p.willEmitLeadingNewLine(node) {
+	if !p.commentsDisabled && p.willEmitLeadingNewLine(node) {
 		// !!! if there is an original parse tree node, restore it with location to preserve comments and source maps.
 		p.emitExpression(node, ast.OperatorPrecedenceParentheses)
 	} else {
