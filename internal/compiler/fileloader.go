@@ -16,11 +16,12 @@ import (
 )
 
 type fileLoader struct {
-	opts                ProgramOptions
-	resolver            *module.Resolver
-	defaultLibraryPath  string
-	comparePathsOptions tspath.ComparePathsOptions
-	supportedExtensions []string
+	opts                 ProgramOptions
+	resolver             *module.Resolver
+	defaultLibraryPath   string
+	comparePathsOptions  tspath.ComparePathsOptions
+	supportedExtensions  []string
+	maxNodeModuleJsDepth int
 
 	parseTasks                 *fileLoaderWorker[*parseTask]
 	projectReferenceParseTasks *fileLoaderWorker[*projectReferenceParseTask]
@@ -354,17 +355,21 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 
 	if len(moduleNames) != 0 {
 		toParse = make([]string, 0, len(moduleNames))
+		resolutionsInFile = make(module.ModeAwareCache[*module.ResolvedModule], len(moduleNames))
 
-		resolutions := p.resolveModuleNames(moduleNames, file, meta, redirect)
+		for _, entry := range moduleNames {
+			moduleName := entry.Text()
+			if moduleName == "" {
+				continue
+			}
 
-		resolutionsInFile = make(module.ModeAwareCache[*module.ResolvedModule], len(resolutions))
-
-		for _, resolution := range resolutions {
-			resolvedFileName := resolution.resolvedModule.ResolvedFileName
 			// TODO(ercornel): !!!: check if from node modules
 
-			mode := getModeForUsageLocation(file.FileName(), meta, resolution.node, optionsForFile)
-			resolutionsInFile[module.ModeAwareCacheKey{Name: resolution.node.Text(), Mode: mode}] = resolution.resolvedModule
+			mode := getModeForUsageLocation(file.FileName(), meta, entry, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
+			resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), mode, redirect)
+			resolvedFileName := resolvedModule.ResolvedFileName
+
+			resolutionsInFile[module.ModeAwareCacheKey{Name: moduleName, Mode: mode}] = resolvedModule
 
 			// add file to program only if:
 			// - resolution was successful
@@ -384,7 +389,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 			} else {
 				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsFlat)
 			}
-			shouldAddFile := resolution.resolvedModule.IsResolved() && hasAllowedExtension
+			shouldAddFile := resolvedModule.IsResolved() && hasAllowedExtension
 			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {
@@ -395,25 +400,6 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 	}
 
 	return toParse, resolutionsInFile, importHelpersImportSpecifier, jsxRuntimeImportSpecifier_
-}
-
-func (p *fileLoader) resolveModuleNames(entries []*ast.Node, file *ast.SourceFile, meta *ast.SourceFileMetaData, redirect *tsoptions.ParsedCommandLine) []*resolution {
-	if len(entries) == 0 {
-		return nil
-	}
-
-	resolvedModules := make([]*resolution, 0, len(entries))
-
-	for _, entry := range entries {
-		moduleName := entry.Text()
-		if moduleName == "" {
-			continue
-		}
-		resolvedModule := p.resolver.ResolveModuleName(moduleName, file.FileName(), getModeForUsageLocation(file.FileName(), meta, entry, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect)), redirect)
-		resolvedModules = append(resolvedModules, &resolution{node: entry, resolvedModule: resolvedModule})
-	}
-
-	return resolvedModules
 }
 
 func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *ast.Node {

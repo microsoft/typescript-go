@@ -15,6 +15,7 @@ type parseTask struct {
 	isLib              bool
 	isRedirected       bool
 	subTasks           []*parseTask
+	nodeModulesDepth   int
 
 	metadata                     *ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
