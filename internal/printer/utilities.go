@@ -103,7 +103,7 @@ func escapeStringWorker(s string, quoteChar QuoteChar, flags getLiteralTextFlags
 				escape = true
 			}
 		default:
-			if ch < '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
+			if ch <= '\u001f' || flags&getLiteralTextFlagsNeverAsciiEscape == 0 && ch > '\u007f' {
 				escape = true
 			}
 		}
@@ -202,6 +202,21 @@ func canUseOriginalText(node *ast.LiteralLikeNode, flags getLiteralTextFlags) bo
 		// are not permitted
 		if tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
 			return flags&getLiteralTextFlagsAllowNumericSeparator != 0
+		}
+	}
+
+	// For template literals, check if they contain characters that need escaping
+	if node.Kind == ast.KindNoSubstitutionTemplateLiteral || 
+	   node.Kind == ast.KindTemplateHead ||
+	   node.Kind == ast.KindTemplateMiddle ||
+	   node.Kind == ast.KindTemplateTail {
+		text := node.TemplateLiteralLikeData().Text
+		for _, ch := range text {
+			// Check if this character needs escaping according to the TypeScript PR #60303 fix
+			// Characters in range \u0000-\u001f (excluding \u000a which is handled separately) should be escaped
+			if ch <= '\u001f' && ch != '\n' {
+				return false // Force escaping path
+			}
 		}
 	}
 
