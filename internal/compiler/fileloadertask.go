@@ -12,6 +12,7 @@ import (
 type fileLoaderWorkerTask[T any] interface {
 	comparable
 	FileName() string
+	hasRun() bool
 	run(loader *fileLoader)
 	getSubTasks() []T
 	shouldIncreaseDepth() bool
@@ -26,7 +27,6 @@ type fileLoaderWorker[K fileLoaderWorkerTask[K]] struct {
 type queuedTask[K fileLoaderWorkerTask[K]] struct {
 	task        K
 	mu          sync.Mutex
-	run         bool
 	lowestDepth int
 }
 
@@ -57,9 +57,8 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K, depth int) {
 			loadedTask.mu.Lock()
 			defer loadedTask.mu.Unlock()
 
-			if !loadedTask.run {
+			if !task.hasRun() {
 				task.run(loader)
-				loadedTask.run = true
 			}
 
 			if nextDepth < loadedTask.lowestDepth {
@@ -79,11 +78,10 @@ func (w *fileLoaderWorker[K]) collectWorker(loader *fileLoader, tasks []K, itera
 	var results []tspath.Path
 	for _, task := range tasks {
 		// ensure we only walk each task once
-		if seen.Has(task) {
+		if !task.hasRun() || seen.Has(task) {
 			continue
 		}
 		seen.Add(task)
-		// TODO(jakebailey): skip unrun tasks?
 		var subResults []tspath.Path
 		if subTasks := task.getSubTasks(); len(subTasks) > 0 {
 			subResults = w.collectWorker(loader, subTasks, iterate, seen)
