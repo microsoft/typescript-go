@@ -6,7 +6,7 @@ import (
 )
 
 type projectReferenceParseTask struct {
-	ran        bool
+	loaded     bool
 	configName string
 	resolved   *tsoptions.ParsedCommandLine
 	subTasks   []*projectReferenceParseTask
@@ -16,8 +16,8 @@ func (t *projectReferenceParseTask) FileName() string {
 	return t.configName
 }
 
-func (t *projectReferenceParseTask) run(loader *fileLoader) {
-	t.ran = true
+func (t *projectReferenceParseTask) load(loader *fileLoader) {
+	t.loaded = true
 
 	t.resolved = loader.opts.Host.GetResolvedProjectReference(t.configName, loader.toPath(t.configName))
 	if t.resolved == nil {
@@ -43,8 +43,8 @@ func (t *projectReferenceParseTask) shouldIncreaseDepth() bool {
 	return false
 }
 
-func (t *projectReferenceParseTask) hasRun() bool {
-	return t.ran
+func (t *projectReferenceParseTask) isLoaded() bool {
+	return t.loaded
 }
 
 func createProjectReferenceParseTasks(projectReferences []string) []*projectReferenceParseTask {

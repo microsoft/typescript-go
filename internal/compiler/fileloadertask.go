@@ -12,8 +12,8 @@ import (
 type fileLoaderWorkerTask[T any] interface {
 	comparable
 	FileName() string
-	hasRun() bool
-	run(loader *fileLoader)
+	isLoaded() bool
+	load(loader *fileLoader)
 	getSubTasks() []T
 	shouldIncreaseDepth() bool
 }
@@ -57,8 +57,8 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K, depth int) {
 			loadedTask.mu.Lock()
 			defer loadedTask.mu.Unlock()
 
-			if !task.hasRun() {
-				task.run(loader)
+			if !task.isLoaded() {
+				task.load(loader)
 			}
 
 			if currentDepth < loadedTask.lowestDepth {
@@ -80,7 +80,7 @@ func (w *fileLoaderWorker[K]) collectWorker(loader *fileLoader, tasks []K, itera
 	var results []tspath.Path
 	for _, task := range tasks {
 		// ensure we only walk each task once
-		if !task.hasRun() || seen.Has(task) {
+		if !task.isLoaded() || seen.Has(task) {
 			continue
 		}
 		seen.Add(task)

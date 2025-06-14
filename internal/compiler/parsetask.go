@@ -15,7 +15,7 @@ type parseTask struct {
 	isLib              bool
 	isRedirected       bool
 	subTasks           []*parseTask
-	ran                bool
+	loaded                bool
 
 	metadata                     *ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
@@ -33,8 +33,8 @@ func (t *parseTask) Path() tspath.Path {
 	return t.path
 }
 
-func (t *parseTask) run(loader *fileLoader) {
-	t.ran = true
+func (t *parseTask) load(loader *fileLoader) {
+	t.loaded = true
 
 	t.path = loader.toPath(t.normalizedFilePath)
 	redirect := loader.projectReferenceFileMapper.getParseFileRedirect(t)
@@ -115,6 +115,6 @@ func (t *parseTask) shouldIncreaseDepth() bool {
 	return t.isJsFileFromNodeModules
 }
 
-func (t *parseTask) hasRun() bool {
-	return t.ran
+func (t *parseTask) isLoaded() bool {
+	return t.loaded
 }
