@@ -401,9 +401,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 			}
 
 			isFromNodeModulesSearch := resolvedModule.IsExternalLibraryImport
-			redirect := p.projectReferenceFileMapper.getRedirectForResolution(ast.NewHasFileName(resolvedFileName, p.toPath(resolvedFileName)))
 			// If this is js file source of project reference, dont treat it as js file but as d.ts
-			isJsFile := !tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat) && redirect == nil
+			isJsFile := !tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat) &&
+				p.projectReferenceFileMapper.getRedirectForResolution(ast.NewHasFileName(resolvedFileName, p.toPath(resolvedFileName))) == nil
 			isJsFileFromNodeModules := isFromNodeModulesSearch && isJsFile && (resolvedFileName == "" || strings.Contains(resolvedFileName, "/node_modules/"))
 
 			toParse = append(toParse, resolvedRef{
