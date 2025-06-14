@@ -389,7 +389,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 			} else {
 				hasAllowedExtension = tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsFlat)
 			}
-			shouldAddFile := resolvedModule.IsResolved() && hasAllowedExtension
+			shouldAddFile := resolvedModule.IsResolved() && hasAllowedExtension && optionsForFile.NoResolve.IsFalseOrUnknown()
 			// TODO(ercornel): !!!: other checks on whether or not to add the file
 
 			if shouldAddFile {
