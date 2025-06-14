@@ -335,7 +335,8 @@ var concurrentSkippedErrorBaselines = collections.NewSetFromItems(
 
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("error", func(t *testing.T) {
-		if !testutil.TestProgramIsSingleThreaded() && concurrentSkippedErrorBaselines.Has(c.testName) {
+		concurrency, _ := core.TestProgramConcurrency()
+		if !concurrency.SingleThreaded() && concurrentSkippedErrorBaselines.Has(c.testName) {
 			t.Skip("Skipping error baseline in concurrent mode")
 		}
 

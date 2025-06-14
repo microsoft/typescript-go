@@ -26,7 +26,6 @@ type ProgramOptions struct {
 	Host                        CompilerHost
 	Config                      *tsoptions.ParsedCommandLine
 	UseSourceOfProjectReference bool
-	SingleThreaded              core.Tristate
 	CreateCheckerPool           func(*Program) CheckerPool
 	TypingsLocation             string
 	ProjectName                 string
@@ -39,7 +38,11 @@ func (p *ProgramOptions) canUseProjectReferenceSource() bool {
 type Program struct {
 	opts        ProgramOptions
 	nodeModules map[string]*ast.SourceFile
-	checkerPool CheckerPool
+
+	concurrency     core.Concurrency
+	concurrencyOnce sync.Once
+	checkerPool     CheckerPool
+	checkerPoolOnce sync.Once
 
 	comparePathsOptions tspath.ComparePathsOptions
 
@@ -191,9 +194,6 @@ func NewProgram(opts ProgramOptions) *Program {
 	if p.opts.Host == nil {
 		panic("host required")
 	}
-	p.initCheckerPool()
-
-	// p.maxNodeModuleJsDepth = p.options.MaxNodeModuleJsDepth
 
 	// TODO(ercornel): !!! tracing?
 	// tracing?.push(tracing.Phase.Program, "createProgram", { configFilePath: options.configFilePath, rootDir: options.rootDir }, /*separateBeginAndEnd*/ true);
@@ -239,21 +239,12 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 		currentNodeModulesDepth:     p.currentNodeModulesDepth,
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
 	}
-	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
 	result.files = slices.Clone(result.files)
 	result.files[index] = newFile
 	result.filesByPath = maps.Clone(result.filesByPath)
 	result.filesByPath[newFile.Path()] = newFile
 	return result, true
-}
-
-func (p *Program) initCheckerPool() {
-	if p.opts.CreateCheckerPool != nil {
-		p.checkerPool = p.opts.CreateCheckerPool(p)
-	} else {
-		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
-	}
 }
 
 func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
@@ -299,8 +290,26 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
 
+func (p *Program) getConcurrency() core.Concurrency {
+	p.concurrencyOnce.Do(func() {
+		p.concurrency = core.ParseConcurrency(p.Options())
+	})
+	return p.concurrency
+}
+
 func (p *Program) singleThreaded() bool {
-	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
+	return p.getConcurrency().SingleThreaded()
+}
+
+func (p *Program) getCheckerPool() CheckerPool {
+	p.checkerPoolOnce.Do(func() {
+		if p.opts.CreateCheckerPool != nil {
+			p.checkerPool = p.opts.CreateCheckerPool(p)
+		} else {
+			p.checkerPool = newCheckerPool(p.getConcurrency().CheckerCount(len(p.files)), p)
+		}
+	})
+	return p.checkerPool
 }
 
 func (p *Program) BindSourceFiles() {
@@ -317,11 +326,11 @@ func (p *Program) BindSourceFiles() {
 
 func (p *Program) CheckSourceFiles(ctx context.Context) {
 	wg := core.NewWorkGroup(p.singleThreaded())
-	checkers, done := p.checkerPool.GetAllCheckers(ctx)
+	checkers, done := p.getCheckerPool().GetAllCheckers(ctx)
 	defer done()
 	for _, checker := range checkers {
 		wg.Queue(func() {
-			for file := range p.checkerPool.Files(checker) {
+			for file := range p.getCheckerPool().Files(checker) {
 				checker.CheckSourceFile(ctx, file)
 			}
 		})
@@ -331,11 +340,11 @@ func (p *Program) CheckSourceFiles(ctx context.Context) {
 
 // Return the type checker associated with the program.
 func (p *Program) GetTypeChecker(ctx context.Context) (*checker.Checker, func()) {
-	return p.checkerPool.GetChecker(ctx)
+	return p.getCheckerPool().GetChecker(ctx)
 }
 
 func (p *Program) GetTypeCheckers(ctx context.Context) ([]*checker.Checker, func()) {
-	return p.checkerPool.GetAllCheckers(ctx)
+	return p.getCheckerPool().GetAllCheckers(ctx)
 }
 
 // Return a checker for the given file. We may have multiple checkers in concurrent scenarios and this
@@ -343,7 +352,7 @@ func (p *Program) GetTypeCheckers(ctx context.Context) ([]*checker.Checker, func
 // types obtained from different checkers, so only non-type data (such as diagnostics or string
 // representations of types) should be obtained from checkers returned by this method.
 func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFile) (*checker.Checker, func()) {
-	return p.checkerPool.GetCheckerForFile(ctx, file)
+	return p.getCheckerPool().GetCheckerForFile(ctx, file)
 }
 
 func (p *Program) GetResolvedModule(file ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
@@ -385,7 +394,7 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 
 func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
 	var globalDiagnostics []*ast.Diagnostic
-	checkers, done := p.checkerPool.GetAllCheckers(ctx)
+	checkers, done := p.getCheckerPool().GetAllCheckers(ctx)
 	defer done()
 	for _, checker := range checkers {
 		globalDiagnostics = append(globalDiagnostics, checker.GetGlobalDiagnostics()...)
@@ -432,11 +441,11 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 	var fileChecker *checker.Checker
 	var done func()
 	if sourceFile != nil {
-		fileChecker, done = p.checkerPool.GetCheckerForFile(ctx, sourceFile)
+		fileChecker, done = p.getCheckerPool().GetCheckerForFile(ctx, sourceFile)
 		defer done()
 	}
 	diags := slices.Clip(sourceFile.BindDiagnostics())
-	checkers, closeCheckers := p.checkerPool.GetAllCheckers(ctx)
+	checkers, closeCheckers := p.getCheckerPool().GetAllCheckers(ctx)
 	defer closeCheckers()
 
 	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
@@ -525,13 +534,13 @@ func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFil
 	var fileChecker *checker.Checker
 	var done func()
 	if sourceFile != nil {
-		fileChecker, done = p.checkerPool.GetCheckerForFile(ctx, sourceFile)
+		fileChecker, done = p.getCheckerPool().GetCheckerForFile(ctx, sourceFile)
 		defer done()
 	}
 
 	diags := slices.Clip(sourceFile.BindSuggestionDiagnostics)
 
-	checkers, closeCheckers := p.checkerPool.GetAllCheckers(ctx)
+	checkers, closeCheckers := p.getCheckerPool().GetAllCheckers(ctx)
 	defer closeCheckers()
 
 	// Ask for diags from all checkers; checking one file may add diagnostics to other files.
@@ -642,7 +651,7 @@ func (p *Program) SymbolCount() int {
 	for _, file := range p.files {
 		count += file.SymbolCount
 	}
-	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
+	checkers, done := p.getCheckerPool().GetAllCheckers(context.Background())
 	defer done()
 	for _, checker := range checkers {
 		count += int(checker.SymbolCount)
@@ -652,7 +661,7 @@ func (p *Program) SymbolCount() int {
 
 func (p *Program) TypeCount() int {
 	var count int
-	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
+	checkers, done := p.getCheckerPool().GetAllCheckers(context.Background())
 	defer done()
 	for _, checker := range checkers {
 		count += int(checker.TypeCount)
@@ -662,7 +671,7 @@ func (p *Program) TypeCount() int {
 
 func (p *Program) InstantiationCount() int {
 	var count int
-	checkers, done := p.checkerPool.GetAllCheckers(context.Background())
+	checkers, done := p.getCheckerPool().GetAllCheckers(context.Background())
 	defer done()
 	for _, checker := range checkers {
 		count += int(checker.TotalInstantiationCount)

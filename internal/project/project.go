@@ -341,7 +341,6 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 	if program == nil {
 		panic("must have gced by other request")
 	}
-	checkerPool := p.checkerPool
 	snapshot := &snapshot{
 		project:          p,
 		positionEncoding: p.host.PositionEncoding(),
@@ -349,7 +348,7 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 	}
 	languageService := ls.NewLanguageService(ctx, snapshot)
 	cleanup := func() {
-		if checkerPool.isRequestCheckerInUse(core.GetRequestID(ctx)) {
+		if p.checkerPool != nil && p.checkerPool.isRequestCheckerInUse(core.GetRequestID(ctx)) {
 			panic(fmt.Errorf("checker for request ID %s not returned to pool at end of request", core.GetRequestID(ctx)))
 		}
 	}

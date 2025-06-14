@@ -25,7 +25,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
-	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -180,6 +179,11 @@ func CompileFilesEx(
 	}
 	for i, typeRoot := range compilerOptions.TypeRoots {
 		compilerOptions.TypeRoots[i] = tspath.GetNormalizedAbsolutePath(typeRoot, currentDirectory)
+	}
+
+	if compilerOptions.Concurrency == "" && compilerOptions.SingleThreaded.IsUnknown() {
+		_, concurrency := core.TestProgramConcurrency()
+		compilerOptions.Concurrency = concurrency
 	}
 
 	// Create fake FS for testing
@@ -841,18 +845,11 @@ func (c *CompilationResult) GetSourceMapRecord() string {
 }
 
 func createProgram(host compiler.CompilerHost, config *tsoptions.ParsedCommandLine) *compiler.Program {
-	var singleThreaded core.Tristate
-	if testutil.TestProgramIsSingleThreaded() {
-		singleThreaded = core.TSTrue
-	}
-
 	programOptions := compiler.ProgramOptions{
-		Config:         config,
-		Host:           host,
-		SingleThreaded: singleThreaded,
+		Config: config,
+		Host:   host,
 	}
-	program := compiler.NewProgram(programOptions)
-	return program
+	return compiler.NewProgram(programOptions)
 }
 
 func EnumerateFiles(folder string, testRegex *regexp.Regexp, recursive bool) ([]string, error) {
