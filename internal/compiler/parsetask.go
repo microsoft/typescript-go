@@ -15,6 +15,7 @@ type parseTask struct {
 	isLib              bool
 	isRedirected       bool
 	subTasks           []*parseTask
+	elidableSubTasks   []*parseTask
 	nodeModulesDepth   int
 
 	metadata                     *ast.SourceFileMetaData
@@ -74,7 +75,7 @@ func (t *parseTask) start(loader *fileLoader) {
 			if !ok {
 				continue
 			}
-			t.addSubTask(tspath.CombinePaths(loader.defaultLibraryPath, name), true)
+			t.addSubTask(resolvedRef{fileName: tspath.CombinePaths(loader.defaultLibraryPath, name)}, true)
 		}
 	}
 
@@ -93,9 +94,20 @@ func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 	t.subTasks = []*parseTask{{normalizedFilePath: tspath.NormalizePath(fileName), isLib: t.isLib}}
 }
 
-func (t *parseTask) addSubTask(fileName string, isLib bool) {
-	normalizedFilePath := tspath.NormalizePath(fileName)
-	t.subTasks = append(t.subTasks, &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib})
+type resolvedRef struct {
+	fileName                string
+	isJsFileFromNodeModules bool
+}
+
+func (t *parseTask) addSubTask(sub resolvedRef, isLib bool) {
+	normalizedFilePath := tspath.NormalizePath(sub.fileName)
+	s := &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib}
+	if sub.isJsFileFromNodeModules {
+		// TODO(jakebailey): requeue these, track depth in fileloader.go
+		t.elidableSubTasks = append(t.elidableSubTasks, s)
+	} else {
+		t.subTasks = append(t.subTasks, s)
+	}
 }
 
 func (t *parseTask) getSubTasks() []*parseTask {
