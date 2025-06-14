@@ -44,12 +44,12 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K, depth int) {
 			tasks[i] = task
 		}
 
-		nextDepth := depth
+		currentDepth := depth
 		if task.shouldIncreaseDepth() {
-			nextDepth++
+			currentDepth++
 		}
 
-		if nextDepth > w.maxDepth {
+		if currentDepth > w.maxDepth {
 			continue
 		}
 
@@ -61,10 +61,12 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K, depth int) {
 				task.run(loader)
 			}
 
-			if nextDepth < loadedTask.lowestDepth {
-				loadedTask.lowestDepth = nextDepth
+			if currentDepth < loadedTask.lowestDepth {
+				// If we're seeing this task at a lower depth than before,
+				// reprocess its subtasks to ensure they are loaded.
+				loadedTask.lowestDepth = currentDepth
 				subTasks := task.getSubTasks()
-				w.start(loader, subTasks, nextDepth)
+				w.start(loader, subTasks, currentDepth)
 			}
 		})
 	}
