@@ -11,12 +11,12 @@ type ImpliedModuleTransformer struct {
 	Transformer
 	compilerOptions           *core.CompilerOptions
 	resolver                  binder.ReferenceResolver
-	getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
+	getEmitModuleFormatOfFile func(file *ast.SourceFile) core.ModuleKind
 	cjsTransformer            *Transformer
 	esmTransformer            *Transformer
 }
 
-func NewImpliedModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *Transformer {
+func NewImpliedModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file *ast.SourceFile) core.ModuleKind) *Transformer {
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}
