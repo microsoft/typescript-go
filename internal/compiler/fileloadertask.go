@@ -6,16 +6,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type fileLoaderWorkerTask interface {
+type fileLoaderWorkerTask[T any] interface {
 	comparable
 	FileName() string
 	start(loader *fileLoader)
+	getSubTasks() []T
 }
 
-type fileLoaderWorker[K fileLoaderWorkerTask] struct {
+type fileLoaderWorker[K fileLoaderWorkerTask[K]] struct {
 	wg              core.WorkGroup
 	tasksByFileName collections.SyncMap[string, K]
-	getSubTasks     func(t K) []K
 }
 
 func (w *fileLoaderWorker[K]) runAndWait(loader *fileLoader, tasks []K) {
@@ -33,7 +33,7 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K) {
 			} else {
 				w.wg.Queue(func() {
 					task.start(loader)
-					subTasks := w.getSubTasks(task)
+					subTasks := task.getSubTasks()
 					w.start(loader, subTasks)
 				})
 			}
@@ -54,7 +54,7 @@ func (w *fileLoaderWorker[K]) collectWorker(loader *fileLoader, tasks []K, itera
 		}
 		seen.Add(task)
 		var subResults []tspath.Path
-		if subTasks := w.getSubTasks(task); len(subTasks) > 0 {
+		if subTasks := task.getSubTasks(); len(subTasks) > 0 {
 			subResults = w.collectWorker(loader, subTasks, iterate, seen)
 		}
 		iterate(task, subResults)

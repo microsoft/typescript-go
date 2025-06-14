@@ -73,12 +73,10 @@ func processAllProgramFiles(
 			CurrentDirectory:          opts.Host.GetCurrentDirectory(),
 		},
 		parseTasks: &fileLoaderWorker[*parseTask]{
-			wg:          core.NewWorkGroup(singleThreaded),
-			getSubTasks: getSubTasksOfParseTask,
+			wg: core.NewWorkGroup(singleThreaded),
 		},
 		projectReferenceParseTasks: &fileLoaderWorker[*projectReferenceParseTask]{
-			wg:          core.NewWorkGroup(singleThreaded),
-			getSubTasks: getSubTasksOfProjectReferenceParseTask,
+			wg: core.NewWorkGroup(singleThreaded),
 		},
 		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(libs)),
 		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),

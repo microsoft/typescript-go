@@ -98,6 +98,6 @@ func (t *parseTask) addSubTask(fileName string, isLib bool) {
 	t.subTasks = append(t.subTasks, &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib})
 }
 
-func getSubTasksOfParseTask(t *parseTask) []*parseTask {
+func (t *parseTask) getSubTasks() []*parseTask {
 	return t.subTasks
 }

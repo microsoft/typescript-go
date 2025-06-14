@@ -32,7 +32,7 @@ func (t *projectReferenceParseTask) start(loader *fileLoader) {
 	t.subTasks = createProjectReferenceParseTasks(subReferences)
 }
 
-func getSubTasksOfProjectReferenceParseTask(t *projectReferenceParseTask) []*projectReferenceParseTask {
+func (t *projectReferenceParseTask) getSubTasks() []*projectReferenceParseTask {
 	return t.subTasks
 }
 
