@@ -15,7 +15,7 @@ func (t *projectReferenceParseTask) FileName() string {
 	return t.configName
 }
 
-func (t *projectReferenceParseTask) start(loader *fileLoader) {
+func (t *projectReferenceParseTask) run(loader *fileLoader) {
 	t.resolved = loader.opts.Host.GetResolvedProjectReference(t.configName, loader.toPath(t.configName))
 	if t.resolved == nil {
 		return
@@ -34,6 +34,10 @@ func (t *projectReferenceParseTask) start(loader *fileLoader) {
 
 func (t *projectReferenceParseTask) getSubTasks() []*projectReferenceParseTask {
 	return t.subTasks
+}
+
+func (t *projectReferenceParseTask) shouldIncreaseDepth() bool {
+	return false
 }
 
 func createProjectReferenceParseTasks(projectReferences []string) []*projectReferenceParseTask {

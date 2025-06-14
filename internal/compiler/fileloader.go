@@ -16,12 +16,11 @@ import (
 )
 
 type fileLoader struct {
-	opts                 ProgramOptions
-	resolver             *module.Resolver
-	defaultLibraryPath   string
-	comparePathsOptions  tspath.ComparePathsOptions
-	supportedExtensions  []string
-	maxNodeModuleJsDepth int
+	opts                ProgramOptions
+	resolver            *module.Resolver
+	defaultLibraryPath  string
+	comparePathsOptions tspath.ComparePathsOptions
+	supportedExtensions []string
 
 	parseTasks                 *fileLoaderWorker[*parseTask]
 	projectReferenceParseTasks *fileLoaderWorker[*projectReferenceParseTask]
@@ -65,6 +64,10 @@ func processAllProgramFiles(
 	compilerOptions := opts.Config.CompilerOptions()
 	rootFiles := opts.Config.FileNames()
 	supportedExtensions := tsoptions.GetSupportedExtensions(compilerOptions, nil /*extraFileExtensions*/)
+	var maxNodeModuleJsDepth int
+	if p := opts.Config.CompilerOptions().MaxNodeModuleJsDepth; p != nil {
+		maxNodeModuleJsDepth = *p
+	}
 	loader := fileLoader{
 		opts:               opts,
 		defaultLibraryPath: tspath.GetNormalizedAbsolutePath(opts.Host.DefaultLibraryPath(), opts.Host.GetCurrentDirectory()),
@@ -73,7 +76,8 @@ func processAllProgramFiles(
 			CurrentDirectory:          opts.Host.GetCurrentDirectory(),
 		},
 		parseTasks: &fileLoaderWorker[*parseTask]{
-			wg: core.NewWorkGroup(singleThreaded),
+			wg:       core.NewWorkGroup(singleThreaded),
+			maxDepth: maxNodeModuleJsDepth,
 		},
 		projectReferenceParseTasks: &fileLoaderWorker[*projectReferenceParseTask]{
 			wg: core.NewWorkGroup(singleThreaded),

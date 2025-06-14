@@ -1,6 +1,9 @@
 package compiler
 
 import (
+	"math"
+	"sync"
+
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -9,35 +12,62 @@ import (
 type fileLoaderWorkerTask[T any] interface {
 	comparable
 	FileName() string
-	start(loader *fileLoader)
+	run(loader *fileLoader)
 	getSubTasks() []T
+	shouldIncreaseDepth() bool
 }
 
 type fileLoaderWorker[K fileLoaderWorkerTask[K]] struct {
 	wg              core.WorkGroup
-	tasksByFileName collections.SyncMap[string, K]
+	tasksByFileName collections.SyncMap[string, *queuedTask[K]]
+	maxDepth        int
+}
+
+type queuedTask[K fileLoaderWorkerTask[K]] struct {
+	task        K
+	mu          sync.Mutex
+	run         bool
+	lowestDepth int
 }
 
 func (w *fileLoaderWorker[K]) runAndWait(loader *fileLoader, tasks []K) {
-	w.start(loader, tasks)
+	w.start(loader, tasks, 0)
 	w.wg.RunAndWait()
 }
 
-func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K) {
-	if len(tasks) > 0 {
-		for i, task := range tasks {
-			loadedTask, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), task)
-			if loaded {
-				// dedup tasks to ensure correct file order, regardless of which task would be started first
-				tasks[i] = loadedTask
-			} else {
-				w.wg.Queue(func() {
-					task.start(loader)
-					subTasks := task.getSubTasks()
-					w.start(loader, subTasks)
-				})
-			}
+func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K, depth int) {
+	for i, task := range tasks {
+		newTask := &queuedTask[K]{task: task, lowestDepth: math.MaxInt}
+		loadedTask, loaded := w.tasksByFileName.LoadOrStore(task.FileName(), newTask)
+		task = loadedTask.task
+		if loaded {
+			tasks[i] = task
 		}
+
+		nextDepth := depth
+		if task.shouldIncreaseDepth() {
+			nextDepth++
+		}
+
+		if nextDepth > w.maxDepth {
+			continue
+		}
+
+		w.wg.Queue(func() {
+			loadedTask.mu.Lock()
+			defer loadedTask.mu.Unlock()
+
+			if !loadedTask.run {
+				task.run(loader)
+				loadedTask.run = true
+			}
+
+			if nextDepth < loadedTask.lowestDepth {
+				loadedTask.lowestDepth = nextDepth
+				subTasks := task.getSubTasks()
+				w.start(loader, subTasks, nextDepth)
+			}
+		})
 	}
 }
 
@@ -53,6 +83,7 @@ func (w *fileLoaderWorker[K]) collectWorker(loader *fileLoader, tasks []K, itera
 			continue
 		}
 		seen.Add(task)
+		// TODO(jakebailey): skip unrun tasks?
 		var subResults []tspath.Path
 		if subTasks := task.getSubTasks(); len(subTasks) > 0 {
 			subResults = w.collectWorker(loader, subTasks, iterate, seen)
