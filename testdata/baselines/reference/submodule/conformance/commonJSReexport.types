@@ -12,3 +12,38 @@ const { hardline } = require('./second').nested;
 hardline
 >hardline : any
 
+=== first.js ===
+const hardline = { type: "hard" }
+>hardline : { type: string; }
+>{ type: "hard" } : { type: string; }
+>type : string
+>"hard" : "hard"
+
+module.exports = {
+>module.exports = {  hardline} : { hardline: { type: string; }; }
+>module.exports : { hardline: { type: string; }; }
+>module : { "export=": { hardline: { type: string; }; }; }
+>exports : { hardline: { type: string; }; }
+>{  hardline} : { hardline: { type: string; }; }
+
+  hardline
+>hardline : { type: string; }
+}
+
+
+=== second.js ===
+module.exports = {
+>module.exports = {  nested: require('./first')} : { nested: any; }
+>module.exports : { nested: any; }
+>module : { "export=": { nested: any; }; }
+>exports : { nested: any; }
+>{  nested: require('./first')} : { nested: any; }
+
+  nested: require('./first')
+>nested : any
+>require('./first') : any
+>require : any
+>'./first' : "./first"
+
+};
+

@@ -1,11 +1,10 @@
 /user.js(2,7): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
 /user.js(5,15): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-/user.js(8,21): error TS7016: Could not find a declaration file for module './js.js'. '/js.js' implicitly has an 'any' type.
 /user.js(9,7): error TS2339: Property 'b' does not exist on type '{ a: number; }'.
 /user.js(12,13): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== /user.js (5 errors) ====
+==== /user.js (4 errors) ====
     const json0 = require("./json.json");
     json0.b; // Error (good)
           ~
@@ -18,8 +17,6 @@
     json1.b; // No error (OK since that's the type annotation)
     
     const js0 = require("./js.js");
-                        ~~~~~~~~~
-!!! error TS7016: Could not find a declaration file for module './js.js'. '/js.js' implicitly has an 'any' type.
     json0.b; // Error (good)
           ~
 !!! error TS2339: Property 'b' does not exist on type '{ a: number; }'.

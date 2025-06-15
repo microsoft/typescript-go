@@ -20,3 +20,18 @@ module.exports = { Thing }
 >{ Thing } : { Thing: any; }
 >Thing : any
 
+=== thing.js ===
+'use strict';
+>'use strict' : "use strict"
+
+class Thing {}
+>Thing : Thing
+
+module.exports = { Thing }
+>module.exports = { Thing } : { Thing: typeof Thing; }
+>module.exports : { Thing: typeof Thing; }
+>module : { "export=": { Thing: typeof Thing; }; }
+>exports : { Thing: typeof Thing; }
+>{ Thing } : { Thing: typeof Thing; }
+>Thing : typeof Thing
+
