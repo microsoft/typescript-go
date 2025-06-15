@@ -56,7 +56,6 @@ func (t *parseTask) load(loader *fileLoader) {
 
 	t.file = file
 
-	// !!! if noResolve, skip all of this
 	t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports())+len(file.ModuleAugmentations))
 
 	for _, ref := range file.ReferencedFiles {
