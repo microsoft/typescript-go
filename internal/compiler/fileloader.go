@@ -406,15 +406,13 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 				(importIndex < 0 || (importIndex < len(file.Imports()) &&
 					(ast.IsInJSFile(file.Imports()[importIndex]) || file.Imports()[importIndex].Flags&ast.NodeFlagsJSDoc == 0)))
 
-			if !shouldAddFile {
-				continue
+			if shouldAddFile {
+				toParse = append(toParse, resolvedRef{
+					fileName:      resolvedFileName,
+					increaseDepth: resolvedModule.IsExternalLibraryImport,
+					elideOnDepth:  isJsFileFromNodeModules,
+				})
 			}
-
-			toParse = append(toParse, resolvedRef{
-				fileName:      resolvedFileName,
-				increaseDepth: resolvedModule.IsExternalLibraryImport,
-				elideOnDepth:  isJsFileFromNodeModules,
-			})
 		}
 	}
 
