@@ -1,0 +1,618 @@
+[33mcommit 6a767e86275bc52594e27104a9b8cbe687d3f992[m
+Author: copilot-swe-agent[bot] <198982749+Copilot@users.noreply.github.com>
+Date:   Thu Jun 12 15:47:46 2025 +0000
+
+    Port TypeScript PR #60304: More rigorous ASI prevention when emitting return/yield
+    
+    Co-authored-by: andrewbranch <3277153+andrewbranch@users.noreply.github.com>
+
+[1mdiff --git a/internal/printer/printer.go b/internal/printer/printer.go[m
+[1mindex 4f9c7197..a2cad69d 100644[m
+[1m--- a/internal/printer/printer.go[m
+[1m+++ b/internal/printer/printer.go[m
+[36m@@ -2950,7 +2950,110 @@[m [mfunc (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpre[m
+ }[m
+ [m
+ func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {[m
+[31m-	return false // !!! check if node will emit a leading comment that contains a trailing newline[m
+[32m+[m	[32m// !!! check if node will emit a leading comment that contains a trailing newline[m
+[32m+[m	[32m// For now, assume that PartiallyEmittedExpression with comments may have leading newlines[m
+[32m+[m	[32mif node.Kind == ast.KindPartiallyEmittedExpression {[m
+[32m+[m		[32m// This is a simplification - in a real implementation we'd check the actual comments[m
+[32m+[m		[32m// but for now, let's assume partially emitted expressions might have leading newlines[m
+[32m+[m		[32mreturn true[m
+[32m+[m	[32m}[m
+[32m+[m	[32mreturn false[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m// parenthesizeExpressionForNoAsi wraps an expression in parens if we would emit a leading comment that would introduce a line separator[m
+[32m+[m[32m// between the node and its parent.[m
+[32m+[m[32mfunc (p *Printer) parenthesizeExpressionForNoAsi(node *ast.Expression) *ast.Expression {[m
+[32m+[m	[32mif !p.commentsDisabled {[m
+[32m+[m		[32mswitch node.Kind {[m
+[32m+[m		[32mcase ast.KindPartiallyEmittedExpression:[m
+[32m+[m			[32mif p.willEmitLeadingNewLine(node) {[m
+[32m+[m				[32mparseNode := p.emitContext.ParseNode(node.AsNode())[m
+[32m+[m				[32mif parseNode != nil && parseNode.Kind == ast.KindParenthesizedExpression {[m
+[32m+[m					[32m// If the original node was a parenthesized expression, restore it to preserve comment and source map emit[m
+[32m+[m					[32mparens := p.emitContext.Factory.NewParenthesizedExpression(node.AsPartiallyEmittedExpression().Expression)[m
+[32m+[m					[32mp.emitContext.SetOriginal(parens, node.AsNode())[m
+[32m+[m					[32mparens.Loc = parseNode.Loc[m
+[32m+[m					[32mreturn parens[m
+[32m+[m				[32m}[m
+[32m+[m				[32mreturn p.emitContext.Factory.NewParenthesizedExpression(node)[m
+[32m+[m			[32m}[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdatePartiallyEmittedExpression([m
+[32m+[m				[32mnode.AsPartiallyEmittedExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsPartiallyEmittedExpression().Expression),[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindPropertyAccessExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdatePropertyAccessExpression([m
+[32m+[m				[32mnode.AsPropertyAccessExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsPropertyAccessExpression().Expression),[m
+[32m+[m				[32mnode.AsPropertyAccessExpression().QuestionDotToken,[m
+[32m+[m				[32mnode.AsPropertyAccessExpression().Name(),[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindElementAccessExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdateElementAccessExpression([m
+[32m+[m				[32mnode.AsElementAccessExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsElementAccessExpression().Expression),[m
+[32m+[m				[32mnode.AsElementAccessExpression().QuestionDotToken,[m
+[32m+[m				[32mnode.AsElementAccessExpression().ArgumentExpression,[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindCallExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdateCallExpression([m
+[32m+[m				[32mnode.AsCallExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsCallExpression().Expression),[m
+[32m+[m				[32mnode.AsCallExpression().QuestionDotToken,[m
+[32m+[m				[32mnode.AsCallExpression().TypeArguments,[m
+[32m+[m				[32mnode.AsCallExpression().Arguments,[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindTaggedTemplateExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdateTaggedTemplateExpression([m
+[32m+[m				[32mnode.AsTaggedTemplateExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsTaggedTemplateExpression().Tag),[m
+[32m+[m				[32mnode.AsTaggedTemplateExpression().QuestionDotToken,[m
+[32m+[m				[32mnode.AsTaggedTemplateExpression().TypeArguments,[m
+[32m+[m				[32mnode.AsTaggedTemplateExpression().Template,[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindPostfixUnaryExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdatePostfixUnaryExpression([m
+[32m+[m				[32mnode.AsPostfixUnaryExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsPostfixUnaryExpression().Operand),[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindBinaryExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdateBinaryExpression([m
+[32m+[m				[32mnode.AsBinaryExpression(),[m
+[32m+[m				[32mnode.AsBinaryExpression().Modifiers(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsBinaryExpression().Left),[m
+[32m+[m				[32mnode.AsBinaryExpression().Type,[m
+[32m+[m				[32mnode.AsBinaryExpression().OperatorToken,[m
+[32m+[m				[32mnode.AsBinaryExpression().Right,[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindConditionalExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdateConditionalExpression([m
+[32m+[m				[32mnode.AsConditionalExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsConditionalExpression().Condition),[m
+[32m+[m				[32mnode.AsConditionalExpression().QuestionToken,[m
+[32m+[m				[32mnode.AsConditionalExpression().WhenTrue,[m
+[32m+[m				[32mnode.AsConditionalExpression().ColonToken,[m
+[32m+[m				[32mnode.AsConditionalExpression().WhenFalse,[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindAsExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdateAsExpression([m
+[32m+[m				[32mnode.AsAsExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsAsExpression().Expression),[m
+[32m+[m				[32mnode.AsAsExpression().Type,[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindSatisfiesExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdateSatisfiesExpression([m
+[32m+[m				[32mnode.AsSatisfiesExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsSatisfiesExpression().Expression),[m
+[32m+[m				[32mnode.AsSatisfiesExpression().Type,[m
+[32m+[m			[32m)[m
+[32m+[m		[32mcase ast.KindNonNullExpression:[m
+[32m+[m			[32mreturn p.emitContext.Factory.UpdateNonNullExpression([m
+[32m+[m				[32mnode.AsNonNullExpression(),[m
+[32m+[m				[32mp.parenthesizeExpressionForNoAsi(node.AsNonNullExpression().Expression),[m
+[32m+[m			[32m)[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m	[32mreturn node[m
+ }[m
+ [m
+ func (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.OperatorPrecedence) {[m
+[36m@@ -2966,12 +3069,8 @@[m [mfunc (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.Opera[m
+ 	//	    a;[m
+ 	//	}[m
+ 	// Due to ASI, this would result in a `return` with no value followed by an unreachable expression statement.[m
+[31m-	if !p.commentsDisabled && node.Kind == ast.KindPartiallyEmittedExpression && p.willEmitLeadingNewLine(node) {[m
+[31m-		// !!! if there is an original parse tree node, restore it with location to preserve comments and source maps.[m
+[31m-		p.emitExpression(node, ast.OperatorPrecedenceParentheses)[m
+[31m-	} else {[m
+[31m-		p.emitExpression(node, precedence)[m
+[31m-	}[m
+[32m+[m	[32mnode = p.parenthesizeExpressionForNoAsi(node)[m
+[32m+[m	[32mp.emitExpression(node, precedence)[m
+ }[m
+ [m
+ func (p *Printer) emitExpression(node *ast.Expression, precedence ast.OperatorPrecedence) {[m
+[1mdiff --git a/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=es5).js b/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=es5).js[m
+[1mindex af3c2fde..65e3b705 100644[m
+[1m--- a/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=es5).js[m
+[1m+++ b/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=es5).js[m
+[36m@@ -67,52 +67,52 @@[m [mfunction t10() {[m
+ [m
+ //// [returnStatementNoAsiAfterTransform.js][m
+ function t1() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function t2() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a + 1;[m
+[32m+[m[32m    a) + 1;[m[41m[m
+ }[m
+ function t3() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a ? 0 : 1;[m
+[32m+[m[32m    a) ? 0 : 1;[m[41m[m
+ }[m
+ function t4() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a.b;[m
+[32m+[m[32m    a).b;[m[41m[m
+ }[m
+ function t5() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a[a];[m
+[32m+[m[32m    a)[a];[m[41m[m
+ }[m
+ function t6() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a();[m
+[32m+[m[32m    a)();[m[41m[m
+ }[m
+ function t7() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a ``;[m
+[32m+[m[32m    a) ``;[m[41m[m
+ }[m
+ function t8() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function t9() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function t10() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+[1mdiff --git a/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=es5).js.diff b/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=es5).js.diff[m
+[1mindex 531a57c9..245619e9 100644[m
+[1m--- a/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=es5).js.diff[m
+[1m+++ b/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=es5).js.diff[m
+[36m@@ -9,72 +9,14 @@[m
+ -    return cooked;[m
+ -};[m
+  function t1() {[m
+[31m--    return ([m
+[31m-+    return [m
+[32m+[m[32m     return ([m
+      // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function t2() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a) + 1;[m
+[31m-+    a + 1;[m
+[31m- }[m
+[31m- function t3() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a) ? 0 : 1;[m
+[31m-+    a ? 0 : 1;[m
+[31m- }[m
+[31m- function t4() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a).b;[m
+[31m-+    a.b;[m
+[31m- }[m
+[31m- function t5() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a)[a];[m
+[31m-+    a[a];[m
+[31m- }[m
+[31m- function t6() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a)();[m
+[31m-+    a();[m
+[31m- }[m
+[32m+[m[32m@@= skipped -37, +33 lines =@@[m
+  function t7() {[m
+[31m--    return ([m
+[31m-+    return [m
+[32m+[m[32m     return ([m
+      // comment[m
+ -    a)(__makeTemplateObject([""], [""]));[m
+[31m-+    a ``;[m
+[32m+[m[32m+    a) ``;[m
+  }[m
+  function t8() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function t9() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function t10() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+\ No newline at end of file[m
+[32m+[m[32m     return ([m
+\ No newline at end of file[m
+[1mdiff --git a/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=esnext).js b/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=esnext).js[m
+[1mindex af3c2fde..65e3b705 100644[m
+[1m--- a/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=esnext).js[m
+[1m+++ b/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=esnext).js[m
+[36m@@ -67,52 +67,52 @@[m [mfunction t10() {[m
+ [m
+ //// [returnStatementNoAsiAfterTransform.js][m
+ function t1() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function t2() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a + 1;[m
+[32m+[m[32m    a) + 1;[m[41m[m
+ }[m
+ function t3() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a ? 0 : 1;[m
+[32m+[m[32m    a) ? 0 : 1;[m[41m[m
+ }[m
+ function t4() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a.b;[m
+[32m+[m[32m    a).b;[m[41m[m
+ }[m
+ function t5() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a[a];[m
+[32m+[m[32m    a)[a];[m[41m[m
+ }[m
+ function t6() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a();[m
+[32m+[m[32m    a)();[m[41m[m
+ }[m
+ function t7() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a ``;[m
+[32m+[m[32m    a) ``;[m[41m[m
+ }[m
+ function t8() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function t9() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function t10() {[m
+[31m-    return [m
+[32m+[m[32m    return ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+[1mdiff --git a/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=esnext).js.diff b/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=esnext).js.diff[m
+[1mdeleted file mode 100644[m
+[1mindex b5a0ca9f..00000000[m
+[1m--- a/testdata/baselines/reference/submodule/conformance/returnStatementNoAsiAfterTransform(target=esnext).js.diff[m
+[1m+++ /dev/null[m
+[36m@@ -1,75 +0,0 @@[m
+[31m---- old.returnStatementNoAsiAfterTransform(target=esnext).js[m
+[31m-+++ new.returnStatementNoAsiAfterTransform(target=esnext).js[m
+[31m-@@= skipped -66, +66 lines =@@[m
+[31m-[m
+[31m- //// [returnStatementNoAsiAfterTransform.js][m
+[31m- function t1() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function t2() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a) + 1;[m
+[31m-+    a + 1;[m
+[31m- }[m
+[31m- function t3() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a) ? 0 : 1;[m
+[31m-+    a ? 0 : 1;[m
+[31m- }[m
+[31m- function t4() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a).b;[m
+[31m-+    a.b;[m
+[31m- }[m
+[31m- function t5() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a)[a];[m
+[31m-+    a[a];[m
+[31m- }[m
+[31m- function t6() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a)();[m
+[31m-+    a();[m
+[31m- }[m
+[31m- function t7() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a) ``;[m
+[31m-+    a ``;[m
+[31m- }[m
+[31m- function t8() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function t9() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function t10() {[m
+[31m--    return ([m
+[31m-+    return [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+\ No newline at end of file[m
+[1mdiff --git a/testdata/baselines/reference/submodule/conformance/yieldStatementNoAsiAfterTransform(target=esnext).js b/testdata/baselines/reference/submodule/conformance/yieldStatementNoAsiAfterTransform(target=esnext).js[m
+[1mindex c0af9e05..71167e54 100644[m
+[1m--- a/testdata/baselines/reference/submodule/conformance/yieldStatementNoAsiAfterTransform(target=esnext).js[m
+[1m+++ b/testdata/baselines/reference/submodule/conformance/yieldStatementNoAsiAfterTransform(target=esnext).js[m
+[36m@@ -67,52 +67,52 @@[m [mfunction *t10() {[m
+ [m
+ //// [yieldStatementNoAsiAfterTransform.js][m
+ function* t1() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function* t2() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a + 1;[m
+[32m+[m[32m    a) + 1;[m[41m[m
+ }[m
+ function* t3() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a ? 0 : 1;[m
+[32m+[m[32m    a) ? 0 : 1;[m[41m[m
+ }[m
+ function* t4() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a.b;[m
+[32m+[m[32m    a).b;[m[41m[m
+ }[m
+ function* t5() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a[a];[m
+[32m+[m[32m    a)[a];[m[41m[m
+ }[m
+ function* t6() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a();[m
+[32m+[m[32m    a)();[m[41m[m
+ }[m
+ function* t7() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a ``;[m
+[32m+[m[32m    a) ``;[m[41m[m
+ }[m
+ function* t8() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function* t9() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+ function* t10() {[m
+[31m-    yield [m
+[32m+[m[32m    yield ([m[41m[m
+     // comment[m
+[31m-    a;[m
+[32m+[m[32m    a);[m[41m[m
+ }[m
+[1mdiff --git a/testdata/baselines/reference/submodule/conformance/yieldStatementNoAsiAfterTransform(target=esnext).js.diff b/testdata/baselines/reference/submodule/conformance/yieldStatementNoAsiAfterTransform(target=esnext).js.diff[m
+[1mdeleted file mode 100644[m
+[1mindex 1cd12174..00000000[m
+[1m--- a/testdata/baselines/reference/submodule/conformance/yieldStatementNoAsiAfterTransform(target=esnext).js.diff[m
+[1m+++ /dev/null[m
+[36m@@ -1,75 +0,0 @@[m
+[31m---- old.yieldStatementNoAsiAfterTransform(target=esnext).js[m
+[31m-+++ new.yieldStatementNoAsiAfterTransform(target=esnext).js[m
+[31m-@@= skipped -66, +66 lines =@@[m
+[31m-[m
+[31m- //// [yieldStatementNoAsiAfterTransform.js][m
+[31m- function* t1() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function* t2() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a) + 1;[m
+[31m-+    a + 1;[m
+[31m- }[m
+[31m- function* t3() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a) ? 0 : 1;[m
+[31m-+    a ? 0 : 1;[m
+[31m- }[m
+[31m- function* t4() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a).b;[m
+[31m-+    a.b;[m
+[31m- }[m
+[31m- function* t5() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a)[a];[m
+[31m-+    a[a];[m
+[31m- }[m
+[31m- function* t6() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a)();[m
+[31m-+    a();[m
+[31m- }[m
+[31m- function* t7() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a) ``;[m
+[31m-+    a ``;[m
+[31m- }[m
+[31m- function* t8() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function* t9() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+[31m- function* t10() {[m
+[31m--    yield ([m
+[31m-+    yield [m
+[31m-     // comment[m
+[31m--    a);[m
+[31m-+    a;[m
+[31m- }[m
+\ No newline at end of file[m
