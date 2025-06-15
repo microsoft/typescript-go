@@ -418,6 +418,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 	return toParse, resolutionsInFile, importHelpersImportSpecifier, jsxRuntimeImportSpecifier_
 }
 
+// Returns a DiagnosticMessage if we won't include a resolved module due to its extension.
+// The DiagnosticMessage's parameters are the imported module name, and the filename it resolved to.
+// This returns a diagnostic even if the module will be an untyped module.
 func getResolutionDiagnostic(options *core.CompilerOptions, resolvedModule *module.ResolvedModule, file *ast.SourceFile) *diagnostics.Message {
 	needJsx := func() *diagnostics.Message {
 		if options.Jsx != core.JsxEmitNone {
