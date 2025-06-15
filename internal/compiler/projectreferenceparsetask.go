@@ -43,6 +43,10 @@ func (t *projectReferenceParseTask) shouldIncreaseDepth() bool {
 	return false
 }
 
+func (t *projectReferenceParseTask) shouldElideOnDepth() bool {
+	return false
+}
+
 func (t *projectReferenceParseTask) isLoaded() bool {
 	return t.loaded
 }

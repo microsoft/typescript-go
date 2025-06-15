@@ -22,7 +22,8 @@ type parseTask struct {
 	typeResolutionsInFile        module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	importHelpersImportSpecifier *ast.Node
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
-	isJsFileFromNodeModules      bool
+	increaseDepth                bool
+	elideOnDepth                 bool
 }
 
 func (t *parseTask) FileName() string {
@@ -96,13 +97,14 @@ func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 }
 
 type resolvedRef struct {
-	fileName                string
-	isJsFileFromNodeModules bool
+	fileName      string
+	increaseDepth bool
+	elideOnDepth  bool
 }
 
 func (t *parseTask) addSubTask(ref resolvedRef, isLib bool) {
 	normalizedFilePath := tspath.NormalizePath(ref.fileName)
-	subTask := &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib, isJsFileFromNodeModules: ref.isJsFileFromNodeModules}
+	subTask := &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib, increaseDepth: ref.increaseDepth, elideOnDepth: ref.elideOnDepth}
 	t.subTasks = append(t.subTasks, subTask)
 }
 
@@ -111,7 +113,11 @@ func (t *parseTask) getSubTasks() []*parseTask {
 }
 
 func (t *parseTask) shouldIncreaseDepth() bool {
-	return t.isJsFileFromNodeModules
+	return t.increaseDepth
+}
+
+func (t *parseTask) shouldElideOnDepth() bool {
+	return t.elideOnDepth
 }
 
 func (t *parseTask) isLoaded() bool {

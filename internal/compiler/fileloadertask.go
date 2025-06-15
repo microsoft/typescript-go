@@ -16,6 +16,7 @@ type fileLoaderWorkerTask[T any] interface {
 	load(loader *fileLoader)
 	getSubTasks() []T
 	shouldIncreaseDepth() bool
+	shouldElideOnDepth() bool
 }
 
 type fileLoaderWorker[K fileLoaderWorkerTask[K]] struct {
@@ -49,7 +50,7 @@ func (w *fileLoaderWorker[K]) start(loader *fileLoader, tasks []K, depth int) {
 			currentDepth++
 		}
 
-		if currentDepth > w.maxDepth {
+		if task.shouldElideOnDepth() && currentDepth > w.maxDepth {
 			continue
 		}
 

@@ -312,7 +312,9 @@ func (p *fileLoader) resolveTypeReferenceDirectives(file *ast.SourceFile, meta *
 			typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
 			if resolved.IsResolved() {
 				toParse = append(toParse, resolvedRef{
-					fileName: resolved.ResolvedFileName,
+					fileName:      resolved.ResolvedFileName,
+					increaseDepth: resolved.IsExternalLibraryImport,
+					elideOnDepth:  false,
 				})
 			}
 		}
@@ -409,8 +411,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 			}
 
 			toParse = append(toParse, resolvedRef{
-				fileName:                resolvedFileName,
-				isJsFileFromNodeModules: isJsFileFromNodeModules,
+				fileName:      resolvedFileName,
+				increaseDepth: resolvedModule.IsExternalLibraryImport,
+				elideOnDepth:  isJsFileFromNodeModules,
 			})
 		}
 	}
