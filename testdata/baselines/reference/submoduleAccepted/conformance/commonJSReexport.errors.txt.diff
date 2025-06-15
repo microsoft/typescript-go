@@ -3,6 +3,7 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +main.js(1,22): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
++second.js(2,11): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
 +==== main.js (1 errors) ====
@@ -18,8 +19,10 @@
 +    }
 +    
 +    
-+==== second.js (0 errors) ====
++==== second.js (1 errors) ====
 +    module.exports = {
 +      nested: require('./first')
++              ~~~~~~~
++!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +    };
 +    

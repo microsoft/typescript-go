@@ -17,39 +17,44 @@
 
  hardline
 ->hardline : { type: string; }
--
--=== first.js ===
--const hardline = { type: "hard" }
-->hardline : { type: string; }
-->{ type: "hard" } : { type: string; }
-->type : string
-->"hard" : "hard"
--
--module.exports = {
++>hardline : any
+
+ === first.js ===
+ const hardline = { type: "hard" }
+@@= skipped -18, +18 lines =@@
+ >"hard" : "hard"
+
+ module.exports = {
 ->module.exports = {  hardline} : typeof module.exports
 ->module.exports : typeof module.exports
 ->module : { exports: typeof module.exports; }
 ->exports : typeof module.exports
-->{  hardline} : { hardline: { type: string; }; }
--
--  hardline
-->hardline : { type: string; }
--}
--
--
--=== second.js ===
--module.exports = {
++>module.exports = {  hardline} : { hardline: { type: string; }; }
++>module.exports : { hardline: { type: string; }; }
++>module : { "export=": { hardline: { type: string; }; }; }
++>exports : { hardline: { type: string; }; }
+ >{  hardline} : { hardline: { type: string; }; }
+
+   hardline
+@@= skipped -13, +13 lines =@@
+
+ === second.js ===
+ module.exports = {
 ->module.exports = {  nested: require('./first')} : { nested: typeof import("first"); }
 ->module.exports : { nested: typeof import("first"); }
 ->module : { exports: { nested: typeof import("first"); }; }
 ->exports : { nested: typeof import("first"); }
 ->{  nested: require('./first')} : { nested: typeof import("first"); }
--
--  nested: require('./first')
++>module.exports = {  nested: require('./first')} : { nested: any; }
++>module.exports : { nested: any; }
++>module : { "export=": { nested: any; }; }
++>exports : { nested: any; }
++>{  nested: require('./first')} : { nested: any; }
+
+   nested: require('./first')
 ->nested : typeof import("first")
 ->require('./first') : typeof import("first")
-->require : any
-->'./first' : "./first"
--
--};
-+>hardline : any
++>nested : any
++>require('./first') : any
+ >require : any
+ >'./first' : "./first"

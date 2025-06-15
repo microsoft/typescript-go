@@ -13,35 +13,35 @@
  >require : any
  >'./thing' : "./thing"
 ->Thing : typeof Thing
--
--module.exports = { Thing }
-->module.exports = { Thing } : typeof module.exports
-->module.exports : typeof module.exports
-->module : { exports: typeof module.exports; }
-->exports : typeof module.exports
-->{ Thing } : { Thing: typeof Thing; }
-->Thing : typeof Thing
--
--=== thing.js ===
--'use strict';
-->'use strict' : "use strict"
--
--class Thing {}
-->Thing : Thing
--
--module.exports = { Thing }
-->module.exports = { Thing } : typeof module.exports
-->module.exports : typeof module.exports
-->module : { exports: typeof module.exports; }
-->exports : typeof module.exports
-->{ Thing } : { Thing: typeof Thing; }
-->Thing : typeof Thing
 +>Thing : any
-+
-+module.exports = { Thing }
+
+ module.exports = { Thing }
+->module.exports = { Thing } : typeof module.exports
+->module.exports : typeof module.exports
+->module : { exports: typeof module.exports; }
+->exports : typeof module.exports
+->{ Thing } : { Thing: typeof Thing; }
+->Thing : typeof Thing
 +>module.exports = { Thing } : { Thing: any; }
 +>module.exports : { Thing: any; }
 +>module : { "export=": { Thing: any; }; }
 +>exports : { Thing: any; }
 +>{ Thing } : { Thing: any; }
 +>Thing : any
+
+ === thing.js ===
+ 'use strict';
+@@= skipped -23, +23 lines =@@
+ >Thing : Thing
+
+ module.exports = { Thing }
+->module.exports = { Thing } : typeof module.exports
+->module.exports : typeof module.exports
+->module : { exports: typeof module.exports; }
+->exports : typeof module.exports
++>module.exports = { Thing } : { Thing: typeof Thing; }
++>module.exports : { Thing: typeof Thing; }
++>module : { "export=": { Thing: typeof Thing; }; }
++>exports : { Thing: typeof Thing; }
+ >{ Thing } : { Thing: typeof Thing; }
+ >Thing : typeof Thing

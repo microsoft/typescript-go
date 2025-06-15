@@ -11,3 +11,14 @@ module.exports = { Thing }
 >exports : Symbol(export=, Decl(reexport.js, 1, 38))
 >Thing : Symbol(Thing, Decl(reexport.js, 2, 18))
 
+=== thing.js ===
+'use strict';
+class Thing {}
+>Thing : Symbol(Thing, Decl(thing.js, 0, 13))
+
+module.exports = { Thing }
+>module.exports : Symbol(export=, Decl(thing.js, 1, 14))
+>module : Symbol(module.exports)
+>exports : Symbol(export=, Decl(thing.js, 1, 14))
+>Thing : Symbol(Thing, Decl(thing.js, 2, 18))
+
