@@ -6430,11 +6430,17 @@ func isReservedWord(token ast.Kind) bool {
 
 func isFileProbablyExternalModule(sourceFile *ast.SourceFile) *ast.Node {
 	for _, statement := range sourceFile.Statements.Nodes {
-		if ast.IsExternalModuleIndicator(statement) {
+		if isAnExternalModuleIndicatorNode(statement) {
 			return statement
 		}
 	}
 	return getImportMetaIfNecessary(sourceFile)
+}
+
+func isAnExternalModuleIndicatorNode(node *ast.Node) bool {
+	return ast.HasSyntacticModifier(node, ast.ModifierFlagsExport) ||
+		ast.IsImportEqualsDeclaration(node) && ast.IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) ||
+		ast.IsImportDeclaration(node) || ast.IsExportAssignment(node) || ast.IsExportDeclaration(node)
 }
 
 func getImportMetaIfNecessary(sourceFile *ast.SourceFile) *ast.Node {
