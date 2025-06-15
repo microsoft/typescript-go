@@ -403,8 +403,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 				getResolutionDiagnostic(optionsForFile, resolvedModule, file) == nil &&
 				!optionsForFile.NoResolve.IsTrue() &&
 				!(isJsFile && !optionsForFile.GetAllowJS()) &&
-				(importIndex < 0 || (importIndex < len(file.Imports()) &&
-					(ast.IsInJSFile(file.Imports()[importIndex]) || file.Imports()[importIndex].Flags&ast.NodeFlagsJSDoc == 0)))
+				(importIndex < 0 || (importIndex < len(file.Imports()) && (ast.IsInJSFile(file.Imports()[importIndex]) || file.Imports()[importIndex].Flags&ast.NodeFlagsJSDoc == 0)))
 
 			if shouldAddFile {
 				toParse = append(toParse, resolvedRef{
