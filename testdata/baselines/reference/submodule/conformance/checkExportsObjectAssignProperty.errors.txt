@@ -1,5 +1,5 @@
-index.js(4,11): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-index.js(9,11): error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+index.js(4,19): error TS2306: File 'mod1.js' is not a module.
+index.js(9,19): error TS2306: File 'mod2.js' is not a module.
 mod1.js(1,23): error TS2304: Cannot find name 'exports'.
 mod1.js(2,23): error TS2304: Cannot find name 'exports'.
 mod1.js(3,23): error TS2304: Cannot find name 'exports'.
@@ -110,13 +110,13 @@ validator.ts(23,21): error TS2306: File 'mod2.js' is not a module.
      * @type {number}
      */
     const q = require("./mod1").thing;
-              ~~~~~~~
-!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+                      ~~~~~~~~
+!!! error TS2306: File 'mod1.js' is not a module.
     
     /**
      * @type {string}
      */
     const u = require("./mod2").thing;
-              ~~~~~~~
-!!! error TS2580: Cannot find name 'require'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
+                      ~~~~~~~~
+!!! error TS2306: File 'mod2.js' is not a module.
     

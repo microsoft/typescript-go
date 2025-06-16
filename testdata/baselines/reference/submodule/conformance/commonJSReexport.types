@@ -2,15 +2,15 @@
 
 === main.js ===
 const { hardline } = require('./second').nested;
->hardline : any
->require('./second').nested : any
->require('./second') : any
+>hardline : { type: string; }
+>require('./second').nested : { hardline: { type: string; }; }
+>require('./second') : { nested: { hardline: { type: string; }; }; }
 >require : any
 >'./second' : "./second"
->nested : any
+>nested : { hardline: { type: string; }; }
 
 hardline
->hardline : any
+>hardline : { type: string; }
 
 === first.js ===
 const hardline = { type: "hard" }
@@ -33,15 +33,15 @@ module.exports = {
 
 === second.js ===
 module.exports = {
->module.exports = {  nested: require('./first')} : { nested: any; }
->module.exports : { nested: any; }
->module : { "export=": { nested: any; }; }
->exports : { nested: any; }
->{  nested: require('./first')} : { nested: any; }
+>module.exports = {  nested: require('./first')} : { nested: { hardline: { type: string; }; }; }
+>module.exports : { nested: { hardline: { type: string; }; }; }
+>module : { "export=": { nested: { hardline: { type: string; }; }; }; }
+>exports : { nested: { hardline: { type: string; }; }; }
+>{  nested: require('./first')} : { nested: { hardline: { type: string; }; }; }
 
   nested: require('./first')
->nested : any
->require('./first') : any
+>nested : { hardline: { type: string; }; }
+>require('./first') : { hardline: { type: string; }; }
 >require : any
 >'./first' : "./first"
 

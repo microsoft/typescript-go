@@ -6,8 +6,8 @@
  const _item = require("./namespacer");
 ->_item : typeof _item
 ->require("./namespacer") : typeof _item
-+>_item : { NS: any; }
-+>require("./namespacer") : { NS: any; }
++>_item : { NS: { bar: typeof Q; }; }
++>require("./namespacer") : { NS: { bar: typeof Q; }; }
  >require : any
  >"./namespacer" : "./namespacer"
 
@@ -67,8 +67,8 @@
  const B = {}
 ->B : typeof B
 ->{} : {}
-+>B : { NS: any; }
-+>{} : { NS: any; }
++>B : { NS: { bar: typeof Q; }; }
++>{} : { NS: { bar: typeof Q; }; }
 
  B.NS = require("./namespacey");
 ->B.NS = require("./namespacey") : typeof A
@@ -76,22 +76,22 @@
 ->B : typeof B
 ->NS : string | typeof A
 ->require("./namespacey") : typeof A
-+>B.NS = require("./namespacey") : any
-+>B.NS : any
-+>B : { NS: any; }
-+>NS : any
-+>require("./namespacey") : any
++>B.NS = require("./namespacey") : { bar: typeof Q; }
++>B.NS : { bar: typeof Q; }
++>B : { NS: { bar: typeof Q; }; }
++>NS : { bar: typeof Q; }
++>require("./namespacey") : { bar: typeof Q; }
  >require : any
  >"./namespacey" : "./namespacey"
 
  Object.defineProperty(B, "NS", { value: "why though", writable: true });
 ->Object.defineProperty(B, "NS", { value: "why though", writable: true }) : typeof B
-+>Object.defineProperty(B, "NS", { value: "why though", writable: true }) : { NS: any; }
++>Object.defineProperty(B, "NS", { value: "why though", writable: true }) : { NS: { bar: typeof Q; }; }
  >Object.defineProperty : <T>(o: T, p: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => T
  >Object : ObjectConstructor
  >defineProperty : <T>(o: T, p: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => T
 ->B : typeof B
-+>B : { NS: any; }
++>B : { NS: { bar: typeof Q; }; }
  >"NS" : "NS"
  >{ value: "why though", writable: true } : { value: string; writable: true; }
  >value : string
@@ -104,8 +104,8 @@
 ->module : { exports: typeof B; }
 ->exports : typeof B
 ->B : typeof B
-+>module.exports = B : { NS: any; }
-+>module.exports : { NS: any; }
-+>module : { readonly B: { NS: any; }; }
-+>exports : { NS: any; }
-+>B : { NS: any; }
++>module.exports = B : { NS: { bar: typeof Q; }; }
++>module.exports : { NS: { bar: typeof Q; }; }
++>module : { readonly B: { NS: { bar: typeof Q; }; }; }
++>exports : { NS: { bar: typeof Q; }; }
++>B : { NS: { bar: typeof Q; }; }

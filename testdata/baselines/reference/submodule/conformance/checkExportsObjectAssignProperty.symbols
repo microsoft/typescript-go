@@ -187,10 +187,12 @@ Object.defineProperty(module.exports, "setonlyAccessor", {
  */
 const q = require("./mod1").thing;
 >q : Symbol(q, Decl(index.js, 3, 5))
+>require : Symbol(require)
 
 /**
  * @type {string}
  */
 const u = require("./mod2").thing;
 >u : Symbol(u, Decl(index.js, 8, 5))
+>require : Symbol(require)
 
