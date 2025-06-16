@@ -948,7 +948,7 @@ func (b *Binder) bindCallExpression(node *ast.Node) {
 	if ast.IsInJSFile(node) &&
 		b.file.ExternalModuleIndicator == nil &&
 		b.file.CommonJSModuleIndicator == nil &&
-		ast.IsVariableDeclarationInitializedToRequire(node.Parent) {
+		ast.IsRequireCall(node, false /*requireStringLiteralLikeArgument*/) {
 		b.file.CommonJSModuleIndicator = node
 		b.bindSourceFileAsExternalModule()
 	}
