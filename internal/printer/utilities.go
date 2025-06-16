@@ -205,21 +205,6 @@ func canUseOriginalText(node *ast.LiteralLikeNode, flags getLiteralTextFlags) bo
 		}
 	}
 
-	// For template literals, check if they contain characters that need escaping
-	if node.Kind == ast.KindNoSubstitutionTemplateLiteral || 
-	   node.Kind == ast.KindTemplateHead ||
-	   node.Kind == ast.KindTemplateMiddle ||
-	   node.Kind == ast.KindTemplateTail {
-		text := node.TemplateLiteralLikeData().Text
-		for _, ch := range text {
-			// Check if this character needs escaping according to the TypeScript PR #60303 fix
-			// Characters in range \u0000-\u001f (excluding \u000a which is handled separately) should be escaped
-			if ch <= '\u001f' && ch != '\n' {
-				return false // Force escaping path
-			}
-		}
-	}
-
 	// Finally, we do not use the original text of a BigInt literal
 	// TODO(rbuckton): The reason as to why we do not use the original text for bigints is not mentioned in the
 	// original compiler source. It could be that this is no longer necessary, in which case bigint literals should
