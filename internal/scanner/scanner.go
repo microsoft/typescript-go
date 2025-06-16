@@ -2264,7 +2264,7 @@ func GetShebang(text string) string {
 	if !isShebangTrivia(text, 0) {
 		return ""
 	}
-	
+
 	end := scanShebangTrivia(text, 0)
 	return text[:end]
 }
