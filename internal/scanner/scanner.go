@@ -217,7 +217,6 @@ type ScannerState struct {
 
 type Scanner struct {
 	text string
-	// TODO: remove this? unused except for (unimplemented) regex checking
 	languageVariant  core.LanguageVariant
 	onError          ErrorCallback
 	skipTrivia       bool
