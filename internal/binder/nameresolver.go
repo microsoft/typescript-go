@@ -323,7 +323,7 @@ loop:
 	}
 	if result == nil {
 		if originalLocation != nil && ast.IsInJSFile(originalLocation) && originalLocation.Parent != nil {
-			if ast.IsRequireCall(originalLocation.Parent) {
+			if ast.IsRequireCall(originalLocation.Parent, false /*requireStringLiteralLikeArgument*/) {
 				return r.RequireSymbol
 			}
 		}
