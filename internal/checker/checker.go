@@ -14431,7 +14431,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		contextSpecifier = location.AsModuleDeclaration().Name()
 	} else if ast.IsLiteralImportTypeNode(location) {
 		contextSpecifier = location.AsImportTypeNode().Argument.AsLiteralTypeNode().Literal
-	} else if ast.IsVariableDeclaration(location) &&  location.AsVariableDeclaration().Initializer != nil && ast.IsRequireCall(location.AsVariableDeclaration().Initializer) {
+	} else if ast.IsVariableDeclaration(location) && location.AsVariableDeclaration().Initializer != nil && ast.IsRequireCall(location.AsVariableDeclaration().Initializer) {
 		contextSpecifier = location.AsVariableDeclaration().Initializer.AsCallExpression().Arguments.Nodes[0]
 	} else {
 		var ancestor *ast.Node
