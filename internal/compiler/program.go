@@ -124,7 +124,7 @@ func (p *Program) GetRedirectForResolution(file ast.HasFileName) *tsoptions.Pars
 }
 
 func (p *Program) ForEachResolvedProjectReference(
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine),
 ) {
 	p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
 }
@@ -452,9 +452,11 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 		return nil
 	}
 
+	// !!! This should be rewritten to work like getBindAndCheckDiagnosticsForFileNoCache.
+
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
-		diags = core.Filter(diags, func(d *ast.Diagnostic) bool {
+		return core.Filter(diags, func(d *ast.Diagnostic) bool {
 			return plainJSErrors.Has(d.Code())
 		})
 	}
