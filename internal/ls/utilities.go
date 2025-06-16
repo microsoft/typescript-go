@@ -88,7 +88,7 @@ func isModuleSpecifierLike(node *ast.Node) bool {
 		return false
 	}
 
-	if ast.IsVariableDeclarationInitializedToRequire(node.Parent) || ast.IsImportCall(node.Parent) {
+	if ast.IsRequireCall(node.Parent) || ast.IsImportCall(node.Parent) {
 		return node.Parent.AsCallExpression().Arguments.Nodes[0] == node
 	}
 
