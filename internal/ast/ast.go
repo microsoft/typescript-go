@@ -9995,7 +9995,6 @@ type SourceFile struct {
 
 	diagnostics                 []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
-	LanguageVersion             core.ScriptTarget
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
@@ -10050,7 +10049,6 @@ func (f *NodeFactory) NewSourceFile(text string, fileName string, path tspath.Pa
 	data.fileName = fileName
 	data.path = path
 	data.Statements = statements
-	data.LanguageVersion = core.ScriptTargetLatest
 	return f.newNode(KindSourceFile, data)
 }
 
@@ -10120,7 +10118,6 @@ func (node *SourceFile) IsJS() bool {
 
 func (node *SourceFile) copyFrom(other *SourceFile) {
 	// Do not copy fields set by NewSourceFile (Text, FileName, Path, or Statements)
-	node.LanguageVersion = other.LanguageVersion
 	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile

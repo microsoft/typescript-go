@@ -34,9 +34,7 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 	return b.String()
 }
 
-var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{
-	EmitScriptTarget: core.ScriptTargetLatest,
-}
+var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{}
 
 func TestFormat(t *testing.T) {
 	t.Parallel()

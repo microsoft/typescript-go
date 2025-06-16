@@ -12,9 +12,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{
-	EmitScriptTarget: core.ScriptTargetLatest,
-}
+var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{}
 
 // Simplifies parsing an input string into a SourceFile for testing purposes.
 func ParseTypeScript(text string, jsx bool) *ast.SourceFile {

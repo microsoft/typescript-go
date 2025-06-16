@@ -55,7 +55,6 @@ type Parser struct {
 	sourceText       string
 	options          *core.SourceFileAffectingCompilerOptions
 	metadata         *ast.SourceFileMetaData
-	languageVersion  core.ScriptTarget
 	scriptKind       core.ScriptKind
 	languageVariant  core.LanguageVariant
 	diagnostics      []*ast.Diagnostic
@@ -110,7 +109,7 @@ func ParseSourceFile(fileName string, path tspath.Path, sourceText string, optio
 func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, &core.SourceFileAffectingCompilerOptions{EmitScriptTarget: core.ScriptTargetES2015}, nil, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll)
+	p.initializeState(fileName, path, sourceText, &core.SourceFileAffectingCompilerOptions{}, nil, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll)
 	p.nextToken()
 	pos := p.nodePos()
 	var statements *ast.NodeList
@@ -176,7 +175,6 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	result.ScriptKind = core.ScriptKindJSON
-	result.LanguageVersion = core.ScriptTargetES2015
 	result.Flags |= p.sourceFlags
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
@@ -186,7 +184,7 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 func ParseIsolatedEntityName(text string, languageVersion core.ScriptTarget) *ast.EntityName {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState("", "", text, &core.SourceFileAffectingCompilerOptions{EmitScriptTarget: languageVersion}, nil, core.ScriptKindJS, scanner.JSDocParsingModeParseAll)
+	p.initializeState("", "", text, &core.SourceFileAffectingCompilerOptions{}, nil, core.ScriptKindJS, scanner.JSDocParsingModeParseAll)
 	p.nextToken()
 	entityName := p.parseEntityName(true, nil)
 	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
@@ -203,7 +201,6 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	p.sourceText = sourceText
 	p.options = options
 	p.metadata = metadata
-	p.languageVersion = options.EmitScriptTarget
 	p.scriptKind = ensureScriptKind(fileName, scriptKind)
 	p.languageVariant = ast.GetLanguageVariant(p.scriptKind)
 	switch p.scriptKind {
@@ -216,7 +213,6 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	}
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
-	p.scanner.SetScriptTarget(p.languageVersion)
 	p.scanner.SetLanguageVariant(p.languageVariant)
 	p.scanner.SetScriptKind(p.scriptKind)
 	p.scanner.SetJSDocParsingMode(jsdocParsingMode)
@@ -350,7 +346,6 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
-	result.LanguageVersion = p.languageVersion
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags

@@ -34,7 +34,6 @@ func BenchmarkParse(b *testing.B) {
 			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
 			sourceText := f.ReadFile(b)
 			options := &core.SourceFileAffectingCompilerOptions{
-				EmitScriptTarget: core.ScriptTargetESNext,
 			}
 
 			for _, jsdoc := range jsdocModes {
@@ -135,7 +134,6 @@ func FuzzParser(f *testing.F) {
 		}
 
 		options := &core.SourceFileAffectingCompilerOptions{
-			EmitScriptTarget: scriptTarget,
 		}
 
 		ParseSourceFile(fileName, path, sourceText, options, nil, jsdocParsingMode)

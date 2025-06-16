@@ -78,9 +78,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 		string(pathified),
 		pathified,
 		text,
-		&core.SourceFileAffectingCompilerOptions{
-			EmitScriptTarget: core.ScriptTargetLatest,
-		},
+		&core.SourceFileAffectingCompilerOptions{},
 		nil,
 		scanner.JSDocParsingModeParseAll,
 	)

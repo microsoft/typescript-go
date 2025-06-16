@@ -357,7 +357,6 @@ type SourceFileAffectingCompilerOptions struct {
 	BindInStrictMode           bool
 	EmitModuleDetectionKind    ModuleDetectionKind
 	EmitModuleKind             ModuleKind
-	EmitScriptTarget           ScriptTarget
 	JsxEmit                    JsxEmit
 	NoFallthroughCasesInSwitch Tristate
 	ShouldPreserveConstEnums   bool
@@ -371,7 +370,6 @@ func (options *CompilerOptions) SourceFileAffecting() *SourceFileAffectingCompil
 			BindInStrictMode:           options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
 			EmitModuleDetectionKind:    options.GetEmitModuleDetectionKind(),
 			EmitModuleKind:             options.GetEmitModuleKind(),
-			EmitScriptTarget:           options.GetEmitScriptTarget(),
 			JsxEmit:                    options.Jsx,
 			NoFallthroughCasesInSwitch: options.NoFallthroughCasesInSwitch,
 			ShouldPreserveConstEnums:   options.ShouldPreserveConstEnums(),

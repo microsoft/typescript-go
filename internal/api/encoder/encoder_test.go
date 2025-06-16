@@ -18,9 +18,7 @@ import (
 	"gotest.tools/v3/assert"
 )
 
-var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{
-	EmitScriptTarget: core.ScriptTargetLatest,
-}
+var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{}
 
 func TestEncodeSourceFile(t *testing.T) {
 	t.Parallel()

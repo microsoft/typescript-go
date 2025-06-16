@@ -26,9 +26,7 @@ var testFiles = []string{
 	filepath.Join(repo.TypeScriptSubmodulePath, "src/services/mapCode.ts"),
 }
 
-var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{
-	EmitScriptTarget: core.ScriptTargetLatest,
-}
+var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{}
 
 func TestGetTokenAtPosition(t *testing.T) {
 	t.Parallel()
