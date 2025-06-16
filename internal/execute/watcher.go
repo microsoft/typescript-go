@@ -54,7 +54,7 @@ func (w *watcher) hasErrorsInTsConfig() bool {
 			}
 			return true
 		}
-		if !reflect.DeepEqual(w.options.CompilerOptions().SourceFileAffecting(), configParseResult.CompilerOptions().SourceFileAffecting()) {
+		if !reflect.DeepEqual(w.options.CompilerOptions().Clone(), configParseResult.CompilerOptions().Clone()) {
 			// fmt.Fprint(w.sys.Writer(), "build triggered due to config change", w.sys.NewLine())
 			w.configModified = true
 		}
