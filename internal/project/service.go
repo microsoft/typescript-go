@@ -19,10 +19,10 @@ import (
 type projectLoadKind int
 
 const (
+	// Project is not created or updated, only looked up in cache
 	projectLoadKindFind projectLoadKind = iota
-	projectLoadKindCreateReplay
+	// Project is created and then its graph is updated
 	projectLoadKindCreate
-	projectLoadKindReload
 )
 
 type ServiceOptions struct {
@@ -48,18 +48,11 @@ type Service struct {
 	// if it exists
 	inferredProjects map[tspath.Path]*Project
 
-	documentRegistry       *DocumentRegistry
-	scriptInfosMu          sync.RWMutex
-	scriptInfos            map[tspath.Path]*ScriptInfo
+	documentStore          *DocumentStore
 	openFiles              map[tspath.Path]string // values are projectRootPath, if provided
 	configFileForOpenFiles map[tspath.Path]string // default config project for open files !!! todo solution and project reference handling
+	defaultProjectFinder   *defaultProjectFinder
 	configFileRegistry     *ConfigFileRegistry
-
-	// Contains all the deleted script info's version information so that
-	// it does not reset when creating script info again
-	filenameToScriptInfoVersion map[tspath.Path]int
-	realpathToScriptInfosMu     sync.Mutex
-	realpathToScriptInfos       map[tspath.Path]map[*ScriptInfo]struct{}
 
 	typingsInstaller *TypingsInstaller
 
@@ -81,21 +74,24 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 		configuredProjects: make(map[tspath.Path]*Project),
 		inferredProjects:   make(map[tspath.Path]*Project),
 
-		documentRegistry: &DocumentRegistry{
-			Options: tspath.ComparePathsOptions{
+		documentStore: NewDocumentStore(DocumentStoreOptions{
+			ComparePathsOptions: tspath.ComparePathsOptions{
 				UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 				CurrentDirectory:          host.GetCurrentDirectory(),
 			},
-			parsedFileCache: options.ParsedFileCache,
-		},
-		scriptInfos:                 make(map[tspath.Path]*ScriptInfo),
-		openFiles:                   make(map[tspath.Path]string),
-		configFileForOpenFiles:      make(map[tspath.Path]string),
-		filenameToScriptInfoVersion: make(map[tspath.Path]int),
-		realpathToScriptInfos:       make(map[tspath.Path]map[*ScriptInfo]struct{}),
+			ParsedFileCache: options.ParsedFileCache,
+		}),
+		openFiles:              make(map[tspath.Path]string),
+		configFileForOpenFiles: make(map[tspath.Path]string),
+	}
+	service.defaultProjectFinder = &defaultProjectFinder{
+		service:                         service,
+		configFileForOpenFiles:          make(map[tspath.Path]string),
+		configFilesAncestorForOpenFiles: make(map[tspath.Path]map[string]string),
 	}
 	service.configFileRegistry = &ConfigFileRegistry{
-		Host: service,
+		Host:                 service,
+		defaultProjectFinder: service.defaultProjectFinder,
 	}
 	service.converters = ls.NewConverters(options.PositionEncoding, func(fileName string) *ls.LineMap {
 		return service.GetScriptInfo(fileName).LineMap()
@@ -149,7 +145,7 @@ func (s *Service) TypingsInstaller() *TypingsInstaller {
 
 // DocumentRegistry implements ProjectHost.
 func (s *Service) DocumentRegistry() *DocumentRegistry {
-	return s.documentRegistry
+	return s.documentStore.DocumentRegistry()
 }
 
 // ConfigFileRegistry implements ProjectHost.
@@ -218,12 +214,7 @@ func (s *Service) GetScriptInfo(fileName string) *ScriptInfo {
 }
 
 func (s *Service) GetScriptInfoByPath(path tspath.Path) *ScriptInfo {
-	s.scriptInfosMu.RLock()
-	defer s.scriptInfosMu.RUnlock()
-	if info, ok := s.scriptInfos[path]; ok && !info.deferredDelete {
-		return info
-	}
-	return nil
+	return s.documentStore.GetScriptInfoByPath(path)
 }
 
 func (s *Service) isOpenFile(info *ScriptInfo) bool {
@@ -276,7 +267,9 @@ func (s *Service) CloseFile(fileName string) {
 		fileExists := !info.isDynamic && s.host.FS().FileExists(info.fileName)
 		info.close(fileExists)
 		delete(s.openFiles, info.path)
-		delete(s.configFileForOpenFiles, info.path)
+		delete(s.defaultProjectFinder.configFileForOpenFiles, info.path)
+		delete(s.defaultProjectFinder.configFilesAncestorForOpenFiles, info.path)
+		s.configFileRegistry.releaseConfigsForInfo(info)
 		if !fileExists {
 			s.handleDeletedFile(info, false /*deferredDelete*/)
 		}
@@ -316,7 +309,7 @@ func (s *Service) Close() {
 
 // SourceFileCount should only be used for testing.
 func (s *Service) SourceFileCount() int {
-	return s.documentRegistry.size()
+	return s.documentStore.SourceFileCount()
 }
 
 func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.FileEvent) error {
@@ -431,34 +424,16 @@ func (s *Service) deleteScriptInfo(info *ScriptInfo) {
 	if s.isOpenFile(info) {
 		panic("cannot delete an open file")
 	}
-	s.scriptInfosMu.Lock()
-	defer s.scriptInfosMu.Unlock()
 	s.deleteScriptInfoLocked(info)
 }
 
 func (s *Service) deleteScriptInfoLocked(info *ScriptInfo) {
-	delete(s.scriptInfos, info.path)
-	s.filenameToScriptInfoVersion[info.path] = info.version
-	// !!!
-	// s.stopWatchingScriptInfo(info)
-	if realpath, ok := info.getRealpathIfDifferent(); ok {
-		s.realpathToScriptInfosMu.Lock()
-		defer s.realpathToScriptInfosMu.Unlock()
-		delete(s.realpathToScriptInfos[realpath], info)
-	}
+	s.documentStore.DeleteScriptInfo(info)
 	// !!! closeSourceMapFileWatcher
 }
 
 func (s *Service) OnDiscoveredSymlink(info *ScriptInfo) {
-	s.realpathToScriptInfosMu.Lock()
-	defer s.realpathToScriptInfosMu.Unlock()
-	if scriptInfos, ok := s.realpathToScriptInfos[info.realpath]; ok {
-		scriptInfos[info] = struct{}{}
-	} else {
-		scriptInfos = make(map[*ScriptInfo]struct{})
-		scriptInfos[info] = struct{}{}
-		s.realpathToScriptInfos[info.realpath] = scriptInfos
-	}
+	s.documentStore.AddRealpathMapping(info)
 }
 
 func (s *Service) updateProjectGraphs(projects []*Project, clearSourceMapperCache bool) {
@@ -481,113 +456,7 @@ func (s *Service) getOrCreateOpenScriptInfo(fileName string, path tspath.Path, f
 }
 
 func (s *Service) getOrCreateScriptInfoWorker(fileName string, path tspath.Path, scriptKind core.ScriptKind, openedByClient bool, fileContent string, deferredDeleteOk bool) *ScriptInfo {
-	s.scriptInfosMu.RLock()
-	info, ok := s.scriptInfos[path]
-	s.scriptInfosMu.RUnlock()
-
-	var fromDisk bool
-	if !ok {
-		if !openedByClient && !isDynamicFileName(fileName) {
-			if content, ok := s.host.FS().ReadFile(fileName); !ok {
-				return nil
-			} else {
-				fileContent = content
-				fromDisk = true
-			}
-		}
-
-		info = NewScriptInfo(fileName, path, scriptKind, s.host.FS())
-		if fromDisk {
-			info.SetTextFromDisk(fileContent)
-		}
-
-		s.scriptInfosMu.Lock()
-		defer s.scriptInfosMu.Unlock()
-		if prevVersion, ok := s.filenameToScriptInfoVersion[path]; ok {
-			info.version = prevVersion + 1
-			delete(s.filenameToScriptInfoVersion, path)
-		}
-		s.scriptInfos[path] = info
-	} else if info.deferredDelete {
-		if !openedByClient && !s.host.FS().FileExists(fileName) {
-			// If the file is not opened by client and the file does not exist on the disk, return
-			return core.IfElse(deferredDeleteOk, info, nil)
-		}
-		info.deferredDelete = false
-	}
-
-	if openedByClient {
-		// Opening closed script info
-		// either it was created just now, or was part of projects but was closed
-		// !!!
-		// s.stopWatchingScriptInfo(info)
-		info.open(fileContent)
-	} else {
-		// !!!
-		// s.watchClosedScriptInfo(info)
-	}
-	return info
-}
-
-func (s *Service) configFileExists(configFilename string) bool {
-	// !!! convoluted cache goes here
-	return s.host.FS().FileExists(configFilename)
-}
-
-func (s *Service) getConfigFileNameForFile(info *ScriptInfo, findFromCacheOnly bool) string {
-	configName, ok := s.configFileForOpenFiles[info.path]
-	if ok {
-		return configName
-	}
-
-	if findFromCacheOnly {
-		return ""
-	}
-
-	projectRootPath := s.openFiles[info.path]
-	if info.isDynamic {
-		return ""
-	}
-
-	searchPath := tspath.GetDirectoryPath(info.fileName)
-	fileName, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
-		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
-		if s.configFileExists(tsconfigPath) {
-			return tsconfigPath, true
-		}
-		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
-		if s.configFileExists(jsconfigPath) {
-			return jsconfigPath, true
-		}
-		if strings.HasSuffix(directory, "/node_modules") {
-			return "", true
-		}
-		if projectRootPath != "" && !tspath.ContainsPath(projectRootPath, directory, s.comparePathsOptions) {
-			return "", true
-		}
-		return "", false
-	})
-	s.logf("getConfigFileNameForFile:: File: %s ProjectRootPath: %s:: Result: %s", info.fileName, s.openFiles[info.path], fileName)
-
-	if _, ok := s.openFiles[info.path]; ok {
-		s.configFileForOpenFiles[info.path] = fileName
-	}
-	return fileName
-}
-
-func (s *Service) findDefaultConfiguredProject(scriptInfo *ScriptInfo) *Project {
-	return s.findCreateOrReloadConfiguredProject(s.getConfigFileNameForFile(scriptInfo, true /*findFromCacheOnly*/), projectLoadKindFind, false /*includeDeferredClosedProjects*/)
-}
-
-func (s *Service) findConfiguredProjectByName(configFilePath tspath.Path, includeDeferredClosedProjects bool) *Project {
-	s.projectsMu.RLock()
-	defer s.projectsMu.RUnlock()
-	if result, ok := s.configuredProjects[configFilePath]; ok {
-		if includeDeferredClosedProjects || !result.deferredClose {
-			return result
-		}
-	}
-	return nil
+	return s.documentStore.getOrCreateScriptInfoWorker(fileName, path, scriptKind, openedByClient, fileContent, deferredDeleteOk, s.host.FS())
 }
 
 func (s *Service) createConfiguredProject(configFileName string, configFilePath tspath.Path) *Project {
@@ -602,47 +471,10 @@ func (s *Service) createConfiguredProject(configFileName string, configFilePath 
 	return project
 }
 
-func (s *Service) findCreateOrReloadConfiguredProject(configFileName string, projectLoadKind projectLoadKind, includeDeferredClosedProjects bool) *Project {
-	// !!! many such things omitted
-	configFilePath := s.toPath(configFileName)
-	project := s.findConfiguredProjectByName(configFilePath, includeDeferredClosedProjects)
-	switch projectLoadKind {
-	case projectLoadKindFind, projectLoadKindCreateReplay:
-		return project
-	case projectLoadKindCreate, projectLoadKindReload:
-		if project == nil {
-			project = s.createConfiguredProject(configFileName, configFilePath)
-		}
-		project.updateGraph()
-	default:
-		panic("unhandled projectLoadKind")
-	}
-	return project
-}
-
-func (s *Service) tryFindDefaultConfiguredProjectForOpenScriptInfo(info *ScriptInfo, projectLoadKind projectLoadKind, includeDeferredClosedProjects bool) *Project {
-	findConfigFromCacheOnly := projectLoadKind == projectLoadKindFind || projectLoadKind == projectLoadKindCreateReplay
-	if configFileName := s.getConfigFileNameForFile(info, findConfigFromCacheOnly); configFileName != "" {
-		// !!! Maybe this recently added "optimized" stuff can be simplified?
-		// const optimizedKind = toConfiguredProjectLoadOptimized(kind);
-		return s.findCreateOrReloadConfiguredProject(configFileName, projectLoadKind, includeDeferredClosedProjects)
-	}
-	return nil
-}
-
-func (s *Service) tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(info *ScriptInfo, projectLoadKind projectLoadKind) *Project {
-	includeDeferredClosedProjects := projectLoadKind == projectLoadKindFind
-	result := s.tryFindDefaultConfiguredProjectForOpenScriptInfo(info, projectLoadKind, includeDeferredClosedProjects)
-	// !!! I don't even know what an ancestor project is
-	return result
-}
-
-func (s *Service) assignProjectToOpenedScriptInfo(info *ScriptInfo) *Project {
+func (s *Service) assignProjectToOpenedScriptInfo(info *ScriptInfo) *openScriptInfoProjectResult {
 	// !!! todo retain projects list when its multiple projects that are looked up
-	var result *Project
-	if project := s.tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(info, projectLoadKindCreate); project != nil {
-		result = project
-	}
+	result := s.defaultProjectFinder.tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(info, projectLoadKindCreate)
+
 	for _, project := range info.ContainingProjects() {
 		project.updateGraph()
 	}
@@ -658,7 +490,7 @@ func (s *Service) assignProjectToOpenedScriptInfo(info *ScriptInfo) *Project {
 	return result
 }
 
-func (s *Service) cleanupProjectsAndScriptInfos(openInfo *ScriptInfo, retainedByOpenFile *Project) {
+func (s *Service) cleanupProjectsAndScriptInfos(openInfo *ScriptInfo, retainedByOpenFile *openScriptInfoProjectResult) {
 	// This was postponed from closeOpenFile to after opening next file,
 	// so that we can reuse the project if we need to right away
 	// Remove all the non marked projects
@@ -682,17 +514,26 @@ func (s *Service) cleanupProjectsAndScriptInfos(openInfo *ScriptInfo, retainedBy
 	s.removeOrphanScriptInfos()
 }
 
-func (s *Service) cleanupConfiguredProjects(openInfo *ScriptInfo, retainedByOpenFile *Project) {
+func (s *Service) cleanupConfiguredProjects(openInfo *ScriptInfo, retainedByOpenFile *openScriptInfoProjectResult) {
 	s.projectsMu.RLock()
 	toRemoveProjects := maps.Clone(s.configuredProjects)
 	s.projectsMu.RUnlock()
 
+	toRemoveConfigs := s.configFileRegistry.ConfigFiles.ToMap()
+
 	// !!! handle declarationMap
-	retainConfiguredProject := func(project *Project) {
-		if _, ok := toRemoveProjects[project.configFilePath]; !ok {
+	retainConfiguredProject := func(r *openScriptInfoProjectResult) {
+		if r == nil {
 			return
 		}
-		delete(toRemoveProjects, project.configFilePath)
+		r.seenProjects.Range(func(project *Project, _ projectLoadKind) bool {
+			delete(toRemoveProjects, project.configFilePath)
+			return true
+		})
+		r.seenConfigs.Range(func(config tspath.Path, _ projectLoadKind) bool {
+			delete(toRemoveConfigs, config)
+			return true
+		})
 		// // Keep original projects used
 		// markOriginalProjectsAsUsed(project);
 		// // Keep all the references alive
@@ -704,35 +545,29 @@ func (s *Service) cleanupConfiguredProjects(openInfo *ScriptInfo, retainedByOpen
 	}
 
 	// Everything needs to be retained, fast path to skip all the work
-	if len(toRemoveProjects) == 0 {
-		return
-	}
-
-	// Retain default configured project for open script info
-	for path := range s.openFiles {
-		if path == openInfo.path {
-			continue
-		}
-		info := s.GetScriptInfoByPath(path)
-		// We want to retain the projects for open file if they are pending updates so deferredClosed projects are ok
-		result := s.tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(
-			info,
-			projectLoadKindFind,
-		)
-		if result != nil {
+	if len(toRemoveProjects) != 0 {
+		// Retain default configured project for open script info
+		for path := range s.openFiles {
+			if path == openInfo.path {
+				continue
+			}
+			info := s.GetScriptInfoByPath(path)
+			// We want to retain the projects for open file if they are pending updates so deferredClosed projects are ok
+			result := s.defaultProjectFinder.tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(
+				info,
+				projectLoadKindFind,
+			)
 			retainConfiguredProject(result)
 			// Everything needs to be retained, fast path to skip all the work
 			if len(toRemoveProjects) == 0 {
-				return
+				break
 			}
 		}
 	}
-
-	// !!! project references
-
 	for _, project := range toRemoveProjects {
 		s.removeProject(project)
 	}
+	s.configFileRegistry.cleanup(toRemoveConfigs)
 }
 
 func (s *Service) removeProject(project *Project) {
@@ -750,12 +585,15 @@ func (s *Service) removeProject(project *Project) {
 }
 
 func (s *Service) removeOrphanScriptInfos() {
-	s.scriptInfosMu.Lock()
-	defer s.scriptInfosMu.Unlock()
+	// Get all script infos from document store
+	scriptInfos := make(map[tspath.Path]*ScriptInfo)
+	s.documentStore.ForEachScriptInfo(func(info *ScriptInfo) {
+		scriptInfos[info.path] = info
+	})
 
-	toRemoveScriptInfos := maps.Clone(s.scriptInfos)
+	toRemoveScriptInfos := maps.Clone(scriptInfos)
 
-	for _, info := range s.scriptInfos {
+	for _, info := range scriptInfos {
 		if info.deferredDelete {
 			continue
 		}
@@ -838,11 +676,11 @@ func (s *Service) getDefaultProjectForScript(scriptInfo *ScriptInfo) *Project {
 	containingProjects := scriptInfo.ContainingProjects()
 	switch len(containingProjects) {
 	case 0:
-		panic("scriptInfo must be attached to a project before calling getDefaultProject")
+		return nil
 	case 1:
 		project := containingProjects[0]
 		if project.deferredClose || project.kind == KindAutoImportProvider || project.kind == KindAuxiliary {
-			panic("scriptInfo must be attached to a non-background project before calling getDefaultProject")
+			return nil
 		}
 		return project
 	default:
@@ -862,17 +700,17 @@ func (s *Service) getDefaultProjectForScript(scriptInfo *ScriptInfo) *Project {
 				if project.deferredClose {
 					continue
 				}
-				// !!! if !project.isSourceOfProjectReferenceRedirect(scriptInfo.fileName) {
-				if defaultConfiguredProject == nil && index != len(containingProjects)-1 {
-					defaultConfiguredProject = s.findDefaultConfiguredProject(scriptInfo)
+				if !project.isSourceFromProjectReference(scriptInfo) {
+					if defaultConfiguredProject == nil && index != len(containingProjects)-1 {
+						defaultConfiguredProject = s.defaultProjectFinder.findDefaultConfiguredProject(scriptInfo)
+					}
+					if defaultConfiguredProject == project {
+						return project
+					}
+					if firstNonSourceOfProjectReferenceRedirect == nil {
+						firstNonSourceOfProjectReferenceRedirect = project
+					}
 				}
-				if defaultConfiguredProject == project {
-					return project
-				}
-				if firstNonSourceOfProjectReferenceRedirect == nil {
-					firstNonSourceOfProjectReferenceRedirect = project
-				}
-				// }
 				if firstConfiguredProject == nil {
 					firstConfiguredProject = project
 				}
@@ -892,8 +730,8 @@ func (s *Service) getDefaultProjectForScript(scriptInfo *ScriptInfo) *Project {
 		if firstInferredProject != nil {
 			return firstInferredProject
 		}
-		panic("no project found")
 	}
+	return nil
 }
 
 func (s *Service) createInferredProject(currentDirectory string, projectRootPath tspath.Path) *Project {

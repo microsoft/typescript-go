@@ -120,8 +120,12 @@ func (p *Program) GetResolvedProjectReferenceFor(path tspath.Path) (*tsoptions.P
 	return p.projectReferenceFileMapper.getResolvedReferenceFor(path)
 }
 
+func (p *Program) GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine {
+	return p.projectReferenceFileMapper.getRedirectForResolution(file)
+}
+
 func (p *Program) ForEachResolvedProjectReference(
-	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine) bool,
+	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine),
 ) {
 	p.projectReferenceFileMapper.forEachResolvedProjectReference(fn)
 }
@@ -441,9 +445,11 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 		return nil
 	}
 
+	// !!! This should be rewritten to work like getBindAndCheckDiagnosticsForFileNoCache.
+
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
-		diags = core.Filter(diags, func(d *ast.Diagnostic) bool {
+		return core.Filter(diags, func(d *ast.Diagnostic) bool {
 			return plainJSErrors.Has(d.Code())
 		})
 	}
@@ -861,6 +867,10 @@ func (p *Program) GetJSXRuntimeImportSpecifier(path tspath.Path) (moduleReferenc
 
 func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 	return p.importHelpersImportSpecifiers[path]
+}
+
+func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
+	return sourceFileMayBeEmitted(sourceFile, &emitHost{program: p}, forceDtsEmit)
 }
 
 var plainJSErrors = collections.NewSetFromItems(
