@@ -2607,11 +2607,9 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		}
 		return nil
 	default:
-		// argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker) // !!! signature help
-		var argInfo *struct{} // !!! signature help
+		argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker)
 		if argInfo != nil {
-			// !!! signature help
-			return nil
+			return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
 		} else if isEqualityOperatorKind(previousToken.Kind) && ast.IsBinaryExpression(parent) && isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
 			// completion at `x ===/**/`
 			return typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Left)
@@ -4460,4 +4458,22 @@ func clientSupportsDefaultCommitCharacters(clientOptions *lsproto.CompletionClie
 		return false
 	}
 	return slices.Contains(*clientOptions.CompletionList.ItemDefaults, "commitCharacters")
+}
+
+type argumentInfoForCompletions struct {
+	invocation    *ast.CallLikeExpression
+	argumentIndex int
+	argumentCount int
+}
+
+func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.SourceFile, typeChecker *checker.Checker) *argumentInfoForCompletions {
+	info := getImmediatelyContainingArgumentInfo(node, position, file, typeChecker)
+	if info == nil || info.isTypeParameterList || info.invocation.callInvocation != nil {
+		return nil
+	}
+	return &argumentInfoForCompletions{
+		invocation:    info.invocation.callInvocation.node,
+		argumentIndex: *info.argumentIndex,
+		argumentCount: info.argumentCount,
+	}
 }
