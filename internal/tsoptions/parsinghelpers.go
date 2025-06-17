@@ -430,6 +430,8 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.PprofDir = parseString(value)
 	case "singleThreaded":
 		allOptions.SingleThreaded = parseTristate(value)
+	case "concurrency":
+		allOptions.Concurrency = parseString(value)
 	case "quiet":
 		allOptions.Quiet = parseTristate(value)
 	default:

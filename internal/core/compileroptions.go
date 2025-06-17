@@ -146,6 +146,7 @@ type CompilerOptions struct {
 
 	PprofDir       string   `json:"pprofDir,omitzero"`
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
+	Concurrency    string   `json:"concurrency,omitzero"`
 	Quiet          Tristate `json:"quiet,omitzero"`
 
 	sourceFileAffectingCompilerOptionsOnce sync.Once
