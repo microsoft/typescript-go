@@ -216,7 +216,7 @@ type ScannerState struct {
 }
 
 type Scanner struct {
-	text string
+	text             string
 	languageVariant  core.LanguageVariant
 	onError          ErrorCallback
 	skipTrivia       bool
