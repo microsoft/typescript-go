@@ -9971,13 +9971,6 @@ const (
 	JSDocParsingModeParseForTypeInfo
 )
 
-type SourceFileParseOptions struct {
-	FileName                       string
-	Path                           tspath.Path
-	CompilerOptions                core.SourceFileAffectingCompilerOptions
-	ExternalModuleIndicatorOptions ExternalModuleIndicatorOptions
-	JSDocParsingMode               JSDocParsingMode
-}
 
 type SourceFileMetaData struct {
 	PackageJsonType      string
