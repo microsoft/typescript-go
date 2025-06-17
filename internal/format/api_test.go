@@ -56,8 +56,8 @@ func TestFormat(t *testing.T) {
 		assert.NilError(t, err)
 		text := string(fileContent)
 		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-			FileName:        "/checker.ts",
-			Path:            "/checker.ts",
+			FileName: "/checker.ts",
+			Path:     "/checker.ts",
 		}, text, core.ScriptKindTS)
 		ast.SetParentInChildren(sourceFile.AsNode())
 		edits := format.FormatDocument(ctx, sourceFile)
@@ -86,8 +86,8 @@ func BenchmarkFormat(b *testing.B) {
 	assert.NilError(b, err)
 	text := string(fileContent)
 	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
-		FileName:        "/checker.ts",
-		Path:            "/checker.ts",
+		FileName: "/checker.ts",
+		Path:     "/checker.ts",
 	}, text, core.ScriptKindTS)
 	ast.SetParentInChildren(sourceFile.AsNode())
 
