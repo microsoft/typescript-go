@@ -6,25 +6,25 @@ import (
 )
 
 type ExternalModuleIndicatorOptions struct {
-	IsDeclarationFile              bool
-	IsFileForcedToBeModuleByFormat bool
-	EmitModuleDetectionKind        core.ModuleDetectionKind
-	JsxEmit                        core.JsxEmit
+	isDeclarationFile              bool
+	isFileForcedToBeModuleByFormat bool
+	emitModuleDetectionKind        core.ModuleDetectionKind
+	jsxEmit                        core.JsxEmit
 }
 
 func GetExternalModuleIndicatorOptions(fileName string, options *core.CompilerOptions, metadata SourceFileMetaData) ExternalModuleIndicatorOptions {
 	if tspath.IsDeclarationFileName(fileName) {
 		return ExternalModuleIndicatorOptions{
-			IsDeclarationFile: true,
+			isDeclarationFile: true,
 		}
 	}
 
-	// TODO(jakebailey): encode fewer things into the key, even unexport the fields. Have opts.Nil to force nil, etc
+	// TODO(jakebailey): encode fewer things into the key by precalculating some of getExternalModuleIndicator's ifs/switches up front
 
 	return ExternalModuleIndicatorOptions{
-		IsFileForcedToBeModuleByFormat: isFileForcedToBeModuleByFormat(fileName, options, metadata),
-		EmitModuleDetectionKind:        options.GetEmitModuleDetectionKind(),
-		JsxEmit:                        options.Jsx,
+		isFileForcedToBeModuleByFormat: isFileForcedToBeModuleByFormat(fileName, options, metadata),
+		emitModuleDetectionKind:        options.GetEmitModuleDetectionKind(),
+		jsxEmit:                        options.Jsx,
 	}
 }
 
@@ -58,7 +58,7 @@ func getExternalModuleIndicator(file *SourceFile, opts ExternalModuleIndicatorOp
 		return nil
 	}
 
-	switch opts.EmitModuleDetectionKind {
+	switch opts.emitModuleDetectionKind {
 	case core.ModuleDetectionKindForce:
 		// All non-declaration files are modules, declaration files still do the usual isFileProbablyExternalModule
 		return file.AsNode()
@@ -69,12 +69,12 @@ func getExternalModuleIndicator(file *SourceFile, opts ExternalModuleIndicatorOp
 		// If module is nodenext or node16, all esm format files are modules
 		// If jsx is react-jsx or react-jsxdev then jsx tags force module-ness
 		// otherwise, the presence of import or export statments (or import.meta) implies module-ness
-		if opts.JsxEmit == core.JsxEmitReactJSX || opts.JsxEmit == core.JsxEmitReactJSXDev {
+		if opts.jsxEmit == core.JsxEmitReactJSX || opts.jsxEmit == core.JsxEmitReactJSXDev {
 			if node := isFileModuleFromUsingJSXTag(file); node != nil {
 				return node
 			}
 		}
-		if opts.IsFileForcedToBeModuleByFormat {
+		if opts.isFileForcedToBeModuleByFormat {
 			return file.AsNode()
 		}
 		return nil
