@@ -2171,7 +2171,7 @@ func (b *Binder) bindCaseBlock(node *ast.Node) {
 		clause := clauses[i]
 		b.bind(clause)
 		fallthroughFlow = b.currentFlow
-		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && i != len(clauses)-1 && b.options.NoFallthroughCasesInSwitch == core.TSTrue {
+		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && i != len(clauses)-1 {
 			clause.AsCaseOrDefaultClause().FallthroughFlowNode = b.currentFlow
 		}
 	}
