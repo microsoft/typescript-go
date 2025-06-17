@@ -12,7 +12,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"gotest.tools/v3/assert"
 )
 
@@ -33,8 +32,6 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 
 	return b.String()
 }
-
-var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{}
 
 func TestFormat(t *testing.T) {
 	t.Parallel()
@@ -58,14 +55,10 @@ func TestFormat(t *testing.T) {
 		fileContent, err := os.ReadFile(filePath)
 		assert.NilError(t, err)
 		text := string(fileContent)
-		sourceFile := parser.ParseSourceFile(
-			"/checker.ts",
-			"/checker.ts",
-			text,
-			parseCompilerOptions,
-			nil,
-			scanner.JSDocParsingModeParseAll,
-		)
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName:        "/checker.ts",
+			Path:            "/checker.ts",
+		}, text, core.ScriptKindTS)
 		ast.SetParentInChildren(sourceFile.AsNode())
 		edits := format.FormatDocument(ctx, sourceFile)
 		newText := applyBulkEdits(text, edits)
@@ -92,14 +85,10 @@ func BenchmarkFormat(b *testing.B) {
 	fileContent, err := os.ReadFile(filePath)
 	assert.NilError(b, err)
 	text := string(fileContent)
-	sourceFile := parser.ParseSourceFile(
-		"/checker.ts",
-		"/checker.ts",
-		text,
-		parseCompilerOptions,
-		nil,
-		scanner.JSDocParsingModeParseAll,
-	)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName:        "/checker.ts",
+		Path:            "/checker.ts",
+	}, text, core.ScriptKindTS)
 	ast.SetParentInChildren(sourceFile.AsNode())
 
 	b.Run("format checker.ts", func(b *testing.B) {

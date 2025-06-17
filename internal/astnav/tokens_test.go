@@ -14,7 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/jstest"
 	"gotest.tools/v3/assert"
@@ -25,8 +24,6 @@ var testFiles = []string{
 	// filepath.Join(repo.TestDataPath, "fixtures/astnav/eofJSDoc.ts"),
 	filepath.Join(repo.TypeScriptSubmodulePath, "src/services/mapCode.ts"),
 }
-
-var parseCompilerOptions = &core.SourceFileAffectingCompilerOptions{}
 
 func TestGetTokenAtPosition(t *testing.T) {
 	t.Parallel()
@@ -55,7 +52,10 @@ func TestGetTokenAtPosition(t *testing.T) {
 				return 0;
 			}
 		`
-		file := parser.ParseSourceFile("/file.ts", "/file.ts", fileText, parseCompilerOptions, nil, scanner.JSDocParsingModeParseAll)
+		file := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName:        "/file.ts",
+			Path:            "/file.ts",
+		}, fileText, core.ScriptKindTS)
 		assert.Equal(t, astnav.GetTokenAtPosition(file, 0), astnav.GetTokenAtPosition(file, 0))
 	})
 }
@@ -90,7 +90,10 @@ func baselineTokens(t *testing.T, testName string, includeEOF bool, getTSTokens 
 				positions[i] = i
 			}
 			tsTokens := getTSTokens(string(fileText), positions)
-			file := parser.ParseSourceFile("/file.ts", "/file.ts", string(fileText), parseCompilerOptions, nil, scanner.JSDocParsingModeParseAll)
+			file := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName:        "/file.ts",
+				Path:            "/file.ts",
+			}, string(fileText), core.ScriptKindTS)
 
 			var output strings.Builder
 			currentRange := core.NewTextRange(0, 0)
@@ -423,7 +426,10 @@ export function isAnyDirectorySeparator(charCode: number): boolean {
 	for _, testCase := range testCases {
 		t.Run(testCase.name, func(t *testing.T) {
 			t.Parallel()
-			file := parser.ParseSourceFile("/file.ts", "/file.ts", testCase.fileContent, parseCompilerOptions, nil, scanner.JSDocParsingModeParseAll)
+			file := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName:        "/file.ts",
+				Path:            "/file.ts",
+			}, testCase.fileContent, core.ScriptKindTS)
 			token := astnav.FindPrecedingToken(file, testCase.position)
 			assert.Equal(t, token.Kind, testCase.expectedKind)
 		})
