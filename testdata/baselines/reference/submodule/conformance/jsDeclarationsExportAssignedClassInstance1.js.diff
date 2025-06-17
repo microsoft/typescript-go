@@ -1,0 +1,24 @@
+--- old.jsDeclarationsExportAssignedClassInstance1.js
++++ new.jsDeclarationsExportAssignedClassInstance1.js
+@@= skipped -5, +5 lines =@@
+ module.exports = new Foo();
+
+ //// [index.js]
+-var Foo = /** @class */ (function () {
+-    function Foo() {
+-    }
+-    return Foo;
+-}());
++class Foo {
++}
++export = new Foo();
+ module.exports = new Foo();
+
+
+ //// [index.d.ts]
+-declare const _exports: Foo;
+-export = _exports;
+ declare class Foo {
+ }
++declare const _default: Foo;
++export = _default;

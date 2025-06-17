@@ -1,0 +1,34 @@
+--- old.grammarErrors.js
++++ new.grammarErrors.js
+@@= skipped -18, +18 lines =@@
+ import type Foo = ns.Foo;
+
+
++//// [a.js]
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
++exports.C = exports.B = void 0;
++class A {
++}
++exports.default = A;
++class B {
++}
++exports.B = B;
++class C {
++}
++exports.C = C;
+ //// [b.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ //// [c.js]
+ var ns;
+ (function (ns) {
+-    var Foo = /** @class */ (function () {
+-        function Foo() {
+-        }
+-        return Foo;
+-    }());
++    class Foo {
++    }
+     ns.Foo = Foo;
+ })(ns || (ns = {}));

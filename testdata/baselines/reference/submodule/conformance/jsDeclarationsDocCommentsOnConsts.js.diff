@@ -1,0 +1,34 @@
+--- old.jsDeclarationsDocCommentsOnConsts.js
++++ new.jsDeclarationsDocCommentsOnConsts.js
+@@= skipped -20, +20 lines =@@
+ /**
+  * const doc comment
+  */
+-var x = function (a) {
++const x = (a) => {
+     return '';
+ };
+ /**
+@@= skipped -9, +9 lines =@@
+ function b() {
+     return 0;
+ }
+-module.exports = { x: x, b: b };
++module.exports = { x, b };
+
+
+ //// [index1.d.ts]
+ /**
+- * const doc comment
+- */
+-export function x(a: any): string;
+-/**
+  * function doc comment
+  */
+-export function b(): number;
++declare function b(): number;
++declare const _default: {
++    x: (a: any) => string;
++    b: typeof b;
++};
++export = _default;

@@ -1,0 +1,42 @@
+--- old.checkJsdocTypeTagOnObjectProperty1.js
++++ new.checkJsdocTypeTagOnObjectProperty1.js
+@@= skipped -26, +26 lines =@@
+ obj.arrowFunc(0);
+
+ //// [0.js]
+-var _a;
+ // @ts-check
+ var lol = "hello Lol";
+-var obj = (_a = {
+-        /** @type {string|undefined} */
+-        foo: undefined,
+-        /** @type {string|undefined} */
+-        bar: "42",
+-        /** @type {function(number): number} */
+-        method1: function (n1) {
+-            return n1 + 42;
+-        },
+-        /** @type {string} */
+-        lol: lol
++const obj = {
++    /** @type {string|undefined} */
++    foo: undefined,
++    /** @type {string|undefined} */
++    bar: "42",
++    /** @type {function(number): number} */
++    method1(n1) {
++        return n1 + 42;
+     },
++    /** @type {string} */
++    lol,
+     /** @type {number} */
+-    _a['b' + 'ar1'] = 42,
++    ['b' + 'ar1']: 42,
+     /** @type {function(number): number} */
+-    _a.arrowFunc = function (num) { return num + 42; },
+-    _a);
++    arrowFunc: (num) => num + 42
++};
+ obj.foo = 'string';
+ obj.lol;
+ obj.bar = undefined;

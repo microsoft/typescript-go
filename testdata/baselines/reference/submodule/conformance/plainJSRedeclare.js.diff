@@ -1,0 +1,10 @@
+--- old.plainJSRedeclare.js
++++ new.plainJSRedeclare.js
+@@= skipped -6, +6 lines =@@
+
+
+ //// [plainJSRedeclare.js]
+-var orbitol = 1;
++const orbitol = 1;
+ var orbitol = 1 + false;
+ orbitol.toExponential();

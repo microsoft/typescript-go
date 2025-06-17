@@ -1,0 +1,16 @@
+--- old.checkJsxNotSetError.js
++++ new.checkJsxNotSetError.js
+@@= skipped -12, +12 lines =@@
+ //// [foo.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var Foo = function () { return (<div>foo</div>); };
++const Foo = () => (<div>foo</div>);
+ exports.default = Foo;
+ //// [bar.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var foo_1 = require("/foo");
+-var a = <foo_1.default />;
++const foo_1 = require("/foo");
++const a = <foo_1.default />;

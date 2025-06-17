@@ -1,0 +1,41 @@
+--- old.commonJSImportExportedClassExpression.js
++++ new.commonJSImportExportedClassExpression.js
+@@= skipped -15, +15 lines =@@
+
+ //// [mod1.js]
+ "use strict";
+-exports.K = /** @class */ (function () {
+-    function K() {
+-    }
+-    K.prototype.values = function () {
+-    };
+-    return K;
+-}());
++Object.defineProperty(exports, "__esModule", { value: true });
++export var K = class K {
++    values() {
++    }
++};
++exports.K = class K {
++    values() {
++    }
++};
+ //// [main.js]
+ "use strict";
+-var K = require("./mod1").K;
++const { K } = require("./mod1");
+ /** @param {K} k */
+ function f(k) {
+     k.values();
+@@= skipped -17, +19 lines =@@
+
+
+ //// [mod1.d.ts]
+-export class K {
++export var K = class K {
+     values(): void;
+-}
++};
++export {};
+ //// [main.d.ts]
+ export {};

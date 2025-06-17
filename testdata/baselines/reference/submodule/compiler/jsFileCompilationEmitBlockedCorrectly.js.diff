@@ -1,0 +1,18 @@
+--- old.jsFileCompilationEmitBlockedCorrectly.js
++++ new.jsFileCompilationEmitBlockedCorrectly.js
+@@= skipped -13, +13 lines =@@
+ }
+
+
++//// [a.js]
++class c {
++}
+ //// [b.js]
+ // this should be emitted
+-var d = /** @class */ (function () {
+-    function d() {
+-    }
+-    return d;
+-}());
++class d {
++}

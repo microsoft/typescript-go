@@ -1,0 +1,25 @@
+--- old.checkingObjectDefinePropertyOnFunctionNonexistentPropertyNoCrash1.js
++++ new.checkingObjectDefinePropertyOnFunctionNonexistentPropertyNoCrash1.js
+@@= skipped -16, +16 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.test = test;
+ function test(fn) {
+-    var composed = function () {
+-        var args = [];
+-        for (var _i = 0; _i < arguments.length; _i++) {
+-            args[_i] = arguments[_i];
+-        }
+-    };
++    const composed = function (...args) { };
+     Object.defineProperty(composed, 'name', {
+         value: composed.fn + '_test'
+     });
+@@= skipped -14, +9 lines =@@
+
+
+ //// [index.d.ts]
+-export function test(fn: any): {
+-    (...args: any[]): void;
+-    readonly name: string;
+-};
++export declare function test(fn: any): (...args: any[]) => void;

@@ -1,0 +1,19 @@
+--- old.jsFileCompilationNoErrorWithoutDeclarationsWithJsFileReferenceWithNoOut.js
++++ new.jsFileCompilationNoErrorWithoutDeclarationsWithJsFileReferenceWithNoOut.js
+@@= skipped -14, +14 lines =@@
+ }
+
+ //// [a.js]
+-var c = /** @class */ (function () {
+-    function c() {
+-    }
+-    return c;
+-}());
++class c {
++}
++//// [c.js]
++function bar() {
++}
+ //// [b.js]
+ /// <reference path="c.js"/>
+ // no error on above reference path since not emitting declarations

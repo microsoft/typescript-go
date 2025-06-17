@@ -25,10 +25,6 @@ func DoJSEmitBaseline(
 	harnessSettings *harnessutil.HarnessOptions,
 	opts baseline.Options,
 ) {
-	if options.GetAllowJS() {
-		t.Skip("AllowJS is not supported")
-		return
-	}
 	if options.OutFile != "" || options.Out != "" {
 		t.Skip("OutFile/Out is not supported")
 		return

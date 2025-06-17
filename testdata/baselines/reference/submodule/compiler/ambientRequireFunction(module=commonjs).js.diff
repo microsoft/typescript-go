@@ -1,0 +1,10 @@
+--- old.ambientRequireFunction(module=commonjs).js
++++ new.ambientRequireFunction(module=commonjs).js
+@@= skipped -14, +14 lines =@@
+
+ //// [app.js]
+ /// <reference path="node.d.ts"/>
+-var fs = require("fs");
+-var text = fs.readFileSync("/a/b/c");
++const fs = require("fs");
++const text = fs.readFileSync("/a/b/c");

@@ -1,0 +1,30 @@
+--- old.jsDeclarationsRestArgsWithThisTypeInJSDocFunction.js
++++ new.jsDeclarationsRestArgsWithThisTypeInJSDocFunction.js
+@@= skipped -12, +12 lines =@@
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Clazz = void 0;
+-var Clazz = /** @class */ (function () {
+-    function Clazz() {
+-    }
++class Clazz {
+     /**
+      * @param {function(this:Object, ...*):*} functionDeclaration
+      */
+-    Clazz.prototype.method = function (functionDeclaration) { };
+-    return Clazz;
+-}());
++    method(functionDeclaration) { }
++}
+ exports.Clazz = Clazz;
+
+
+ //// [bug38550.d.ts]
+-export class Clazz {
++export declare class Clazz {
+     /**
+      * @param {function(this:Object, ...*):*} functionDeclaration
+      */
+-    method(functionDeclaration: (this: any, ...args: any[]) => any): void;
++    method(functionDeclaration: any): void;
+ }

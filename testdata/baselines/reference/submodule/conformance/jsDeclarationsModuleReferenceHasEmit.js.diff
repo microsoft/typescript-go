@@ -1,0 +1,36 @@
+--- old.jsDeclarationsModuleReferenceHasEmit.js
++++ new.jsDeclarationsModuleReferenceHasEmit.js
+@@= skipped -21, +21 lines =@@
+ /**
+  * @module A
+  */
+-var A = /** @class */ (function () {
+-    function A() {
+-    }
+-    return A;
+-}());
++class A {
++}
+ /**
+  * Target element
+  * @type {module:A}
+@@= skipped -15, +12 lines =@@
+
+ //// [index.d.ts]
+ /**
+- * Target element
+- * @type {module:A}
+- */
+-export let el: any;
+-export default A;
+-/**
+  * @module A
+  */
+ declare class A {
+ }
++/**
++ * Target element
++ * @type {module:A}
++ */
++export declare let el: module;
++export default A;
