@@ -9971,7 +9971,6 @@ const (
 	JSDocParsingModeParseForTypeInfo
 )
 
-
 type SourceFileMetaData struct {
 	PackageJsonType      string
 	PackageJsonDirectory string
