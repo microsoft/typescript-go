@@ -11,7 +11,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
 )
 
-func fakeGetEmitModuleFormatOfFile(file *ast.SourceFile) core.ModuleKind {
+func fakeGetEmitModuleFormatOfFile(file ast.HasFileName) core.ModuleKind {
 	return core.ModuleKindNone
 }
 

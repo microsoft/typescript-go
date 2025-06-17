@@ -339,7 +339,7 @@ func (p *Program) GetTypeCheckerForFile(ctx context.Context, file *ast.SourceFil
 	return p.checkerPool.GetCheckerForFile(ctx, file)
 }
 
-func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
+func (p *Program) GetResolvedModule(file ast.HasFileName, moduleReference string, mode core.ResolutionMode) *module.ResolvedModule {
 	if resolutions, ok := p.resolvedModules[file.Path()]; ok {
 		if resolved, ok := resolutions[module.ModeAwareCacheKey{Name: moduleReference, Mode: mode}]; ok {
 			return resolved
@@ -348,7 +348,7 @@ func (p *Program) GetResolvedModule(file *ast.SourceFile, moduleReference string
 	return nil
 }
 
-func (p *Program) GetResolvedModuleFromModuleSpecifier(file *ast.SourceFile, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
+func (p *Program) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
 	if !ast.IsStringLiteralLike(moduleSpecifier) {
 		panic("moduleSpecifier must be a StringLiteralLike")
 	}
@@ -663,24 +663,28 @@ func (p *Program) InstantiationCount() int {
 	return count
 }
 
-func (p *Program) GetEmitModuleFormatOfFile(sourceFile *ast.SourceFile) core.ModuleKind {
-	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile), sourceFile.Metadata())
+func (p *Program) GetSourceFileMetaData(path tspath.Path) ast.SourceFileMetaData {
+	return p.sourceFileMetaDatas[path]
 }
 
-func (p *Program) GetEmitSyntaxForUsageLocation(sourceFile *ast.SourceFile, location *ast.StringLiteralLike) core.ResolutionMode {
-	return getEmitSyntaxForUsageLocationWorker(sourceFile.FileName(), sourceFile.Metadata(), location, p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
+func (p *Program) GetEmitModuleFormatOfFile(sourceFile ast.HasFileName) core.ModuleKind {
+	return ast.GetEmitModuleFormatOfFileWorker(sourceFile.FileName(), p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile), p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
-func (p *Program) GetImpliedNodeFormatForEmit(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile).GetEmitModuleKind(), sourceFile.Metadata())
+func (p *Program) GetEmitSyntaxForUsageLocation(sourceFile ast.HasFileName, location *ast.StringLiteralLike) core.ResolutionMode {
+	return getEmitSyntaxForUsageLocationWorker(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
 }
 
-func (p *Program) GetModeForUsageLocation(sourceFile *ast.SourceFile, location *ast.StringLiteralLike) core.ResolutionMode {
-	return getModeForUsageLocation(sourceFile.FileName(), sourceFile.Metadata(), location, p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
+func (p *Program) GetImpliedNodeFormatForEmit(sourceFile ast.HasFileName) core.ResolutionMode {
+	return ast.GetImpliedNodeFormatForEmitWorker(sourceFile.FileName(), p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile).GetEmitModuleKind(), p.GetSourceFileMetaData(sourceFile.Path()))
 }
 
-func (p *Program) GetDefaultResolutionModeForFile(sourceFile *ast.SourceFile) core.ResolutionMode {
-	return getDefaultResolutionModeForFile(sourceFile.FileName(), sourceFile.Metadata(), p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
+func (p *Program) GetModeForUsageLocation(sourceFile ast.HasFileName, location *ast.StringLiteralLike) core.ResolutionMode {
+	return getModeForUsageLocation(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], location, p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
+}
+
+func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) core.ResolutionMode {
+	return getDefaultResolutionModeForFile(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
 }
 
 func (p *Program) CommonSourceDirectory() string {

@@ -24,7 +24,7 @@ type EmitHost interface {
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
 	WriteFile(fileName string, text string, writeByteOrderMark bool, relatedSourceFiles []*ast.SourceFile, data *WriteFileData) error
-	GetEmitModuleFormatOfFile(file *ast.SourceFile) core.ModuleKind
+	GetEmitModuleFormatOfFile(file ast.HasFileName) core.ModuleKind
 	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) EmitResolver
 	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
 }

@@ -14,7 +14,7 @@ func shouldAllowImportingTsExtension(compilerOptions *core.CompilerOptions, from
 	return compilerOptions.GetAllowImportingTsExtensions() || len(fromFileName) > 0 && tspath.IsDeclarationFileName(fromFileName)
 }
 
-func usesExtensionsOnImports(file *ast.SourceFile) bool {
+func usesExtensionsOnImports(file SourceFileForSpecifierGeneration) bool {
 	for _, ref := range file.Imports() {
 		text := ref.Text()
 		if tspath.PathIsRelative(text) && !tspath.FileExtensionIsOneOf(text, tspath.ExtensionsNotSupportingExtensionlessResolution) {
@@ -26,7 +26,7 @@ func usesExtensionsOnImports(file *ast.SourceFile) bool {
 
 func inferPreference(
 	resolutionMode core.ResolutionMode,
-	sourceFile *ast.SourceFile,
+	sourceFile SourceFileForSpecifierGeneration,
 	moduleResolutionIsNodeNext bool,
 ) ModuleSpecifierEnding {
 	usesJsExtensions := false
@@ -69,7 +69,7 @@ func getModuleSpecifierEndingPreference(
 	pref ImportModuleSpecifierEndingPreference,
 	resolutionMode core.ResolutionMode,
 	compilerOptions *core.CompilerOptions,
-	sourceFile *ast.SourceFile,
+	sourceFile SourceFileForSpecifierGeneration,
 ) ModuleSpecifierEnding {
 	moduleResolution := compilerOptions.GetModuleResolutionKind()
 	moduleResolutionIsNodeNext := core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext
@@ -114,7 +114,7 @@ func getPreferredEnding(
 	prefs UserPreferences,
 	host ModuleSpecifierGenerationHost,
 	compilerOptions *core.CompilerOptions,
-	importingSourceFile *ast.SourceFile,
+	importingSourceFile SourceFileForSpecifierGeneration,
 	oldImportSpecifier string,
 	resolutionMode core.ResolutionMode,
 ) ModuleSpecifierEnding {
@@ -147,7 +147,7 @@ func getModuleSpecifierPreferences(
 	prefs UserPreferences,
 	host ModuleSpecifierGenerationHost,
 	compilerOptions *core.CompilerOptions,
-	importingSourceFile *ast.SourceFile,
+	importingSourceFile SourceFileForSpecifierGeneration,
 	oldImportSpecifier string,
 ) ModuleSpecifierPreferences {
 	excludes := prefs.AutoImportSpecifierExcludeRegexes

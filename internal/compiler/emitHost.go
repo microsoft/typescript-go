@@ -42,19 +42,19 @@ type emitHost struct {
 	program *Program
 }
 
-func (host *emitHost) GetModeForUsageLocation(file *ast.SourceFile, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode {
+func (host *emitHost) GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode {
 	return host.program.GetModeForUsageLocation(file, moduleSpecifier)
 }
 
-func (host *emitHost) GetResolvedModuleFromModuleSpecifier(file *ast.SourceFile, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
+func (host *emitHost) GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule {
 	return host.program.GetResolvedModuleFromModuleSpecifier(file, moduleSpecifier)
 }
 
-func (host *emitHost) GetDefaultResolutionModeForFile(file *ast.SourceFile) core.ResolutionMode {
+func (host *emitHost) GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode {
 	return host.program.GetDefaultResolutionModeForFile(file)
 }
 
-func (host *emitHost) GetEmitModuleFormatOfFile(file *ast.SourceFile) core.ModuleKind {
+func (host *emitHost) GetEmitModuleFormatOfFile(file ast.HasFileName) core.ModuleKind {
 	return host.program.GetEmitModuleFormatOfFile(file)
 }
 

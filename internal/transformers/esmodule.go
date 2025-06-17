@@ -13,7 +13,7 @@ type ESModuleTransformer struct {
 	Transformer
 	compilerOptions           *core.CompilerOptions
 	resolver                  binder.ReferenceResolver
-	getEmitModuleFormatOfFile func(file *ast.SourceFile) core.ModuleKind
+	getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind
 	currentSourceFile         *ast.SourceFile
 	importRequireStatements   *importRequireStatements
 	helperNameSubstitutions   map[string]*ast.IdentifierNode
@@ -24,7 +24,7 @@ type importRequireStatements struct {
 	requireHelperName *ast.IdentifierNode
 }
 
-func NewESModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file *ast.SourceFile) core.ModuleKind) *Transformer {
+func NewESModuleTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *Transformer {
 	if resolver == nil {
 		resolver = binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
 	}

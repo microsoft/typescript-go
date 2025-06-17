@@ -19,7 +19,7 @@ func GetModuleSpecifiers(
 	moduleSymbol *ast.Symbol,
 	checker CheckerShape,
 	compilerOptions *core.CompilerOptions,
-	importingSourceFile *ast.SourceFile,
+	importingSourceFile SourceFileForSpecifierGeneration,
 	host ModuleSpecifierGenerationHost,
 	userPreferences UserPreferences,
 	options ModuleSpecifierOptions,
@@ -281,7 +281,7 @@ func getEachFileNameOfModule(
 func computeModuleSpecifiers(
 	modulePaths []ModulePath,
 	compilerOptions *core.CompilerOptions,
-	importingSourceFile *ast.SourceFile,
+	importingSourceFile SourceFileForSpecifierGeneration,
 	host ModuleSpecifierGenerationHost,
 	userPreferences UserPreferences,
 	options ModuleSpecifierOptions,
@@ -648,7 +648,7 @@ func tryGetModuleNameFromRootDirs(
 func tryGetModuleNameAsNodeModule(
 	pathObj ModulePath,
 	info Info,
-	importingSourceFile *ast.SourceFile,
+	importingSourceFile SourceFileForSpecifierGeneration,
 	host ModuleSpecifierGenerationHost,
 	options *core.CompilerOptions,
 	userPreferences UserPreferences,
@@ -737,7 +737,7 @@ type pkgJsonDirAttemptResult struct {
 func tryDirectoryWithPackageJson(
 	parts NodeModulePathParts,
 	pathObj ModulePath,
-	importingSourceFile *ast.SourceFile,
+	importingSourceFile SourceFileForSpecifierGeneration,
 	host ModuleSpecifierGenerationHost,
 	overrideMode core.ResolutionMode,
 	options *core.CompilerOptions,

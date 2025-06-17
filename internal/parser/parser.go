@@ -356,85 +356,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
-	result.ExternalModuleIndicator = getExternalModuleIndicator(result)
-}
-
-func getExternalModuleIndicator(file *ast.SourceFile) *ast.Node {
-	if file.ScriptKind == core.ScriptKindJSON {
-		return nil
-	}
-
-	// All detection kinds start by checking this.
-	if node := isFileProbablyExternalModule(file); node != nil {
-		return node
-	}
-
-	if file.IsDeclarationFile {
-		return nil
-	}
-
-	options := file.ParseOptions().CompilerOptions
-	switch options.EmitModuleDetectionKind {
-	case core.ModuleDetectionKindForce:
-		// All non-declaration files are modules, declaration files still do the usual isFileProbablyExternalModule
-		return file.AsNode()
-	case core.ModuleDetectionKindLegacy:
-		// Files are modules if they have imports, exports, or import.meta
-		return nil
-	case core.ModuleDetectionKindAuto:
-		// If module is nodenext or node16, all esm format files are modules
-		// If jsx is react-jsx or react-jsxdev then jsx tags force module-ness
-		// otherwise, the presence of import or export statments (or import.meta) implies module-ness
-		if options.JsxEmit == core.JsxEmitReactJSX || options.JsxEmit == core.JsxEmitReactJSXDev {
-			if node := isFileModuleFromUsingJSXTag(file); node != nil {
-				return node
-			}
-		}
-		return isFileForcedToBeModuleByFormat(file)
-	default:
-		return nil
-	}
-}
-
-func isFileModuleFromUsingJSXTag(file *ast.SourceFile) *ast.Node {
-	return walkTreeForJSXTags(file.AsNode())
-}
-
-// This is a somewhat unavoidable full tree walk to locate a JSX tag - `import.meta` requires the same,
-// but we avoid that walk (or parts of it) if at all possible using the `PossiblyContainsImportMeta` node flag.
-// Unfortunately, there's no `NodeFlag` space to do the same for JSX.
-func walkTreeForJSXTags(node *ast.Node) *ast.Node {
-	var found *ast.Node
-
-	var visitor func(node *ast.Node) bool
-	visitor = func(node *ast.Node) bool {
-		if found != nil {
-			return true
-		}
-		if node.SubtreeFacts()&ast.SubtreeContainsJsx == 0 {
-			return false
-		}
-		if ast.IsJsxOpeningElement(node) || ast.IsJsxFragment(node) {
-			found = node
-			return true
-		}
-		return node.ForEachChild(visitor)
-	}
-	visitor(node)
-
-	return found
-}
-
-var isFileForcedToBeModuleByFormatExtensions = []string{tspath.ExtensionCjs, tspath.ExtensionCts, tspath.ExtensionMjs, tspath.ExtensionMts}
-
-func isFileForcedToBeModuleByFormat(file *ast.SourceFile) *ast.Node {
-	// Excludes declaration files - they still require an explicit `export {}` or the like
-	// for back compat purposes. The only non-declaration files _not_ forced to be a module are `.js` files
-	// that aren't esm-mode (meaning not in a `type: module` scope).
-	if ast.GetImpliedNodeFormatForEmitWorker(file.FileName(), file.ParseOptions().CompilerOptions.EmitModuleKind, file.ParseOptions().Metadata) == core.ModuleKindESNext || tspath.FileExtensionIsOneOf(file.FileName(), isFileForcedToBeModuleByFormatExtensions) {
-		return file.AsNode()
-	}
-	return nil
+	ast.SetExternalModuleIndicator(result, p.opts.ExternalModuleIndicatorOptions)
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
@@ -6426,36 +6348,6 @@ func isKeyword(token ast.Kind) bool {
 
 func isReservedWord(token ast.Kind) bool {
 	return ast.KindFirstReservedWord <= token && token <= ast.KindLastReservedWord
-}
-
-func isFileProbablyExternalModule(sourceFile *ast.SourceFile) *ast.Node {
-	for _, statement := range sourceFile.Statements.Nodes {
-		if ast.IsExternalModuleIndicator(statement) {
-			return statement
-		}
-	}
-	return getImportMetaIfNecessary(sourceFile)
-}
-
-func getImportMetaIfNecessary(sourceFile *ast.SourceFile) *ast.Node {
-	if sourceFile.AsNode().Flags&ast.NodeFlagsPossiblyContainsImportMeta != 0 {
-		return findChildNode(sourceFile.AsNode(), ast.IsImportMeta)
-	}
-	return nil
-}
-
-func findChildNode(root *ast.Node, check func(*ast.Node) bool) *ast.Node {
-	var result *ast.Node
-	var visit func(*ast.Node) bool
-	visit = func(node *ast.Node) bool {
-		if check(node) {
-			result = node
-			return true
-		}
-		return node.ForEachChild(visit)
-	}
-	visit(root)
-	return result
 }
 
 func tagNamesAreEquivalent(lhs *ast.Expression, rhs *ast.Expression) bool {

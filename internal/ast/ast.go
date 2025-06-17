@@ -9972,11 +9972,11 @@ const (
 )
 
 type SourceFileParseOptions struct {
-	FileName         string
-	Path             tspath.Path
-	CompilerOptions  core.SourceFileAffectingCompilerOptions
-	Metadata         SourceFileMetaData
-	JSDocParsingMode JSDocParsingMode
+	FileName                       string
+	Path                           tspath.Path
+	CompilerOptions                core.SourceFileAffectingCompilerOptions
+	ExternalModuleIndicatorOptions ExternalModuleIndicatorOptions
+	JSDocParsingMode               JSDocParsingMode
 }
 
 type SourceFileMetaData struct {
@@ -10070,10 +10070,6 @@ func (node *SourceFile) ParseOptions() SourceFileParseOptions {
 
 func (node *SourceFile) LanguageVersion() core.ScriptTarget {
 	return node.parseOptions.CompilerOptions.EmitScriptTarget
-}
-
-func (node *SourceFile) Metadata() SourceFileMetaData {
-	return node.parseOptions.Metadata
 }
 
 func (node *SourceFile) Text() string {

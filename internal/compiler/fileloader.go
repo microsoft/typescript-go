@@ -44,6 +44,7 @@ type processedFiles struct {
 	missingFiles                  []string
 	resolvedModules               map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule]
 	typeResolutionsInFile         map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
+	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
 	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	// List of present unsupported extensions
@@ -102,6 +103,7 @@ func processAllProgramFiles(
 	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
 	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount)
 	typeResolutionsInFile := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], totalFileCount)
+	sourceFileMetaDatas := make(map[tspath.Path]ast.SourceFileMetaData, totalFileCount)
 	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	var unsupportedExtensions []string
@@ -125,6 +127,7 @@ func processAllProgramFiles(
 		filesByPath[path] = file
 		resolvedModules[path] = task.resolutionsInFile
 		typeResolutionsInFile[path] = task.typeResolutionsInFile
+		sourceFileMetaDatas[path] = task.metadata
 		if task.jsxRuntimeImportSpecifier != nil {
 			if jsxRuntimeImportSpecifiers == nil {
 				jsxRuntimeImportSpecifiers = make(map[tspath.Path]*jsxRuntimeImportSpecifier, totalFileCount)
@@ -153,6 +156,7 @@ func processAllProgramFiles(
 		projectReferenceFileMapper:    loader.projectReferenceFileMapper,
 		resolvedModules:               resolvedModules,
 		typeResolutionsInFile:         typeResolutionsInFile,
+		sourceFileMetaDatas:           sourceFileMetaDatas,
 		jsxRuntimeImportSpecifiers:    jsxRuntimeImportSpecifiers,
 		importHelpersImportSpecifiers: importHelpersImportSpecifiers,
 		unsupportedExtensions:         unsupportedExtensions,
@@ -274,12 +278,13 @@ func (p *fileLoader) loadSourceFileMetaData(fileName string) ast.SourceFileMetaD
 
 func (p *fileLoader) parseSourceFile(t *parseTask) *ast.SourceFile {
 	path := p.toPath(t.normalizedFilePath)
+	options := p.projectReferenceFileMapper.getCompilerOptionsForFile(t)
 	sourceFile := p.opts.Host.GetSourceFile(ast.SourceFileParseOptions{
-		FileName:         t.normalizedFilePath,
-		Path:             path,
-		CompilerOptions:  p.projectReferenceFileMapper.getCompilerOptionsForFile(t).SourceFileAffecting(),
-		Metadata:         t.metadata,
-		JSDocParsingMode: p.opts.JSDocParsingMode,
+		FileName:                       t.normalizedFilePath,
+		Path:                           path,
+		CompilerOptions:                options.SourceFileAffecting(),
+		ExternalModuleIndicatorOptions: ast.GetExternalModuleIndicatorOptions(t.normalizedFilePath, options, t.metadata),
+		JSDocParsingMode:               p.opts.JSDocParsingMode,
 	})
 	return sourceFile
 }
