@@ -9985,6 +9985,7 @@ type SourceFile struct {
 	compositeNodeBase
 
 	// Fields set by NewSourceFile
+	fileName     string // For debugging convenience
 	parseOptions SourceFileParseOptions
 	text         string
 	Statements   *NodeList // NodeList[*Statement]
@@ -10041,6 +10042,7 @@ func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, st
 		panic(fmt.Sprintf("fileName should be normalized and absolute: %q", opts.FileName))
 	}
 	data := &SourceFile{}
+	data.fileName = opts.FileName
 	data.parseOptions = opts
 	data.text = text
 	data.Statements = statements
