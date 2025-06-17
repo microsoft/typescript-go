@@ -17,7 +17,7 @@ type parseTask struct {
 	subTasks           []*parseTask
 	loaded             bool
 
-	metadata                     *ast.SourceFileMetaData
+	metadata                     ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
 	typeResolutionsInFile        module.ModeAwareCache[*module.ResolvedTypeReferenceDirective]
 	importHelpersImportSpecifier *ast.Node
