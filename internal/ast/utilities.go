@@ -1615,9 +1615,8 @@ func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
 }
 
 func IsExternalModuleIndicator(node *Statement) bool {
-	return HasSyntacticModifier(node, ModifierFlagsExport) ||
-		IsImportEqualsDeclaration(node) && IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) ||
-		IsImportDeclaration(node) || IsExportAssignment(node) || IsExportDeclaration(node)
+	// Exported top-level member indicates moduleness
+	return IsAnyImportOrReExport(node) || IsExportAssignment(node) || HasSyntacticModifier(node, ModifierFlagsExport)
 }
 
 func IsExportNamespaceAsDefaultDeclaration(node *Node) bool {
@@ -2549,7 +2548,7 @@ func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.Modul
 	return impliedNodeFormat
 }
 
-func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
+func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData SourceFileMetaData) core.ModuleKind {
 	result := GetImpliedNodeFormatForEmitWorker(fileName, options.GetEmitModuleKind(), sourceFileMetaData)
 	if result != core.ModuleKindNone {
 		return result
@@ -2557,19 +2556,16 @@ func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOpti
 	return options.GetEmitModuleKind()
 }
 
-func GetImpliedNodeFormatForEmitWorker(fileName string, emitModuleKind core.ModuleKind, sourceFileMetaData *SourceFileMetaData) core.ResolutionMode {
+func GetImpliedNodeFormatForEmitWorker(fileName string, emitModuleKind core.ModuleKind, sourceFileMetaData SourceFileMetaData) core.ResolutionMode {
 	if core.ModuleKindNode16 <= emitModuleKind && emitModuleKind <= core.ModuleKindNodeNext {
-		if sourceFileMetaData == nil {
-			return core.ModuleKindNone
-		}
 		return sourceFileMetaData.ImpliedNodeFormat
 	}
-	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
+	if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
 		(sourceFileMetaData.PackageJsonType == "commonjs" ||
 			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
-	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
+	if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
 		(sourceFileMetaData.PackageJsonType == "module" ||
 			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
 		return core.ModuleKindESNext
@@ -2705,7 +2701,7 @@ func ForEachDynamicImportOrRequireCall(
 	lastIndex, size := findImportOrRequire(file.Text(), 0)
 	for lastIndex >= 0 {
 		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
-		if isJavaScriptFile && IsRequireCall(node) {
+		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
 			if cb(node, node.Arguments()[0]) {
 				return true
 			}
@@ -2725,8 +2721,10 @@ func ForEachDynamicImportOrRequireCall(
 	return false
 }
 
-// IsVariableDeclarationInitializedToRequire should be used wherever parent pointers are set
-func IsRequireCall(node *Node) bool {
+// Returns true if the node is a CallExpression to the identifier 'require' with
+// exactly one argument (of the form 'require("name")').
+// This function does not test if the node is in a JavaScript file or not.
+func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 	if !IsCallExpression(node) {
 		return false
 	}
@@ -2737,7 +2735,7 @@ func IsRequireCall(node *Node) bool {
 	if len(call.Arguments.Nodes) != 1 {
 		return false
 	}
-	return IsStringLiteralLike(call.Arguments.Nodes[0])
+	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
 }
 
 func IsUnterminatedLiteral(node *Node) bool {
@@ -2812,7 +2810,7 @@ func IsVariableDeclarationInitializedToRequire(node *Node) bool {
 	return node.Parent.Parent.ModifierFlags()&ModifierFlagsExport == 0 &&
 		node.AsVariableDeclaration().Initializer != nil &&
 		node.Type() == nil &&
-		IsRequireCall(node.AsVariableDeclaration().Initializer)
+		IsRequireCall(node.AsVariableDeclaration().Initializer, true /*requireStringLiteralLikeArgument*/)
 }
 
 func IsModuleExportsAccessExpression(node *Node) bool {
@@ -2895,15 +2893,6 @@ func IsExclusivelyTypeOnlyImportOrExport(node *Node) bool {
 
 func GetClassLikeDeclarationOfSymbol(symbol *Symbol) *Node {
 	return core.Find(symbol.Declarations, IsClassLike)
-}
-
-func GetLanguageVariant(scriptKind core.ScriptKind) core.LanguageVariant {
-	switch scriptKind {
-	case core.ScriptKindTSX, core.ScriptKindJSX, core.ScriptKindJS, core.ScriptKindJSON:
-		// .tsx and .jsx files are treated as jsx language variant.
-		return core.LanguageVariantJSX
-	}
-	return core.LanguageVariantStandard
 }
 
 func IsCallLikeExpression(node *Node) bool {
@@ -3116,7 +3105,7 @@ func IsPartOfExclusivelyTypeOnlyImportOrExportDeclaration(node *Node) bool {
 func IsEmittableImport(node *Node) bool {
 	switch node.Kind {
 	case KindImportDeclaration:
-		return node.AsImportDeclaration().ImportClause == nil || !node.AsImportDeclaration().ImportClause.IsTypeOnly()
+		return node.AsImportDeclaration().ImportClause != nil && !node.AsImportDeclaration().ImportClause.IsTypeOnly()
 	case KindExportDeclaration:
 		return !node.AsExportDeclaration().IsTypeOnly
 	case KindImportEqualsDeclaration:
