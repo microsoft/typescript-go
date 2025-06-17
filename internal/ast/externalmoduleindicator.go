@@ -6,25 +6,32 @@ import (
 )
 
 type ExternalModuleIndicatorOptions struct {
-	isDeclarationFile              bool
-	isFileForcedToBeModuleByFormat bool
-	emitModuleDetectionKind        core.ModuleDetectionKind
-	jsxEmit                        core.JsxEmit
+	jsx   bool
+	force bool
 }
 
 func GetExternalModuleIndicatorOptions(fileName string, options *core.CompilerOptions, metadata SourceFileMetaData) ExternalModuleIndicatorOptions {
 	if tspath.IsDeclarationFileName(fileName) {
-		return ExternalModuleIndicatorOptions{
-			isDeclarationFile: true,
-		}
+		return ExternalModuleIndicatorOptions{}
 	}
 
-	// TODO(jakebailey): encode fewer things into the key by precalculating some of getExternalModuleIndicator's ifs/switches up front
-
-	return ExternalModuleIndicatorOptions{
-		isFileForcedToBeModuleByFormat: isFileForcedToBeModuleByFormat(fileName, options, metadata),
-		emitModuleDetectionKind:        options.GetEmitModuleDetectionKind(),
-		jsxEmit:                        options.Jsx,
+	switch options.GetEmitModuleDetectionKind() {
+	case core.ModuleDetectionKindForce:
+		// All non-declaration files are modules, declaration files still do the usual isFileProbablyExternalModule
+		return ExternalModuleIndicatorOptions{force: true}
+	case core.ModuleDetectionKindLegacy:
+		// Files are modules if they have imports, exports, or import.meta
+		return ExternalModuleIndicatorOptions{}
+	case core.ModuleDetectionKindAuto:
+		// If module is nodenext or node16, all esm format files are modules
+		// If jsx is react-jsx or react-jsxdev then jsx tags force module-ness
+		// otherwise, the presence of import or export statments (or import.meta) implies module-ness
+		return ExternalModuleIndicatorOptions{
+			jsx:   options.Jsx == core.JsxEmitReactJSX || options.Jsx == core.JsxEmitReactJSXDev,
+			force: isFileForcedToBeModuleByFormat(fileName, options, metadata),
+		}
+	default:
+		return ExternalModuleIndicatorOptions{}
 	}
 }
 
@@ -49,7 +56,6 @@ func getExternalModuleIndicator(file *SourceFile, opts ExternalModuleIndicatorOp
 		return nil
 	}
 
-	// All detection kinds start by checking this.
 	if node := isFileProbablyExternalModule(file); node != nil {
 		return node
 	}
@@ -58,29 +64,17 @@ func getExternalModuleIndicator(file *SourceFile, opts ExternalModuleIndicatorOp
 		return nil
 	}
 
-	switch opts.emitModuleDetectionKind {
-	case core.ModuleDetectionKindForce:
-		// All non-declaration files are modules, declaration files still do the usual isFileProbablyExternalModule
-		return file.AsNode()
-	case core.ModuleDetectionKindLegacy:
-		// Files are modules if they have imports, exports, or import.meta
-		return nil
-	case core.ModuleDetectionKindAuto:
-		// If module is nodenext or node16, all esm format files are modules
-		// If jsx is react-jsx or react-jsxdev then jsx tags force module-ness
-		// otherwise, the presence of import or export statments (or import.meta) implies module-ness
-		if opts.jsxEmit == core.JsxEmitReactJSX || opts.jsxEmit == core.JsxEmitReactJSXDev {
-			if node := isFileModuleFromUsingJSXTag(file); node != nil {
-				return node
-			}
+	if opts.jsx {
+		if node := isFileModuleFromUsingJSXTag(file); node != nil {
+			return node
 		}
-		if opts.isFileForcedToBeModuleByFormat {
-			return file.AsNode()
-		}
-		return nil
-	default:
-		return nil
 	}
+
+	if opts.force {
+		return file.AsNode()
+	}
+
+	return nil
 }
 
 func isFileProbablyExternalModule(sourceFile *SourceFile) *Node {
