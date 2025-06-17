@@ -331,6 +331,26 @@ func (p *fileLoader) resolveTypeReferenceDirectives(file *ast.SourceFile, meta a
 
 const externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
 
+// findPackageRoot walks up the directory tree to find the nearest package.json file
+// and returns the directory containing it, or empty string if not found
+func (p *fileLoader) findPackageRoot(startDir string) string {
+	current := startDir
+	for {
+		packageJsonPath := tspath.CombinePaths(current, "package.json")
+		if p.opts.Host.FS().FileExists(packageJsonPath) {
+			return current
+		}
+
+		parent := tspath.GetDirectoryPath(current)
+		if parent == current {
+			// Reached root directory
+			break
+		}
+		current = parent
+	}
+	return ""
+}
+
 func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, meta ast.SourceFileMetaData) (
 	toParse []resolvedRef,
 	resolutionsInFile module.ModeAwareCache[*module.ResolvedModule],
@@ -401,13 +421,41 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 			// - noResolve is falsy
 			// - module name comes from the list of imports
 			// - it's not a top level JavaScript module that exceeded the search max
+			// - it's not a TypeScript source file from an external dependency (which would cause nested output directories)
 
 			importIndex := index - importsStart
+
+			// Check if this is a TypeScript source file from an external dependency
+			// External dependencies should only contribute declaration files (.d.ts) and JavaScript files (.js/.jsx)
+			// not TypeScript source files (.ts/.tsx) which would be included in compilation
+			isExternalDependency := resolvedModule.IsExternalLibraryImport
+
+			// In monorepo setups, also check if this is a cross-package import (package name import that resolves outside current package)
+			if !isExternalDependency && !tspath.IsExternalModuleNameRelative(moduleName) {
+				// This is a package name import (e.g., "@tsgo-repros/my-package-b")
+				// Check if the resolved file is outside the current package directory
+				currentPackageDir := tspath.GetDirectoryPath(file.FileName())
+				resolvedPackageDir := tspath.GetDirectoryPath(resolvedModule.ResolvedFileName)
+
+				// Find the root of the current package (look for package.json)
+				currentPackageRoot := p.findPackageRoot(currentPackageDir)
+				resolvedPackageRoot := p.findPackageRoot(resolvedPackageDir)
+
+				// If they have different package roots, this is a cross-package dependency
+				if currentPackageRoot != "" && resolvedPackageRoot != "" && currentPackageRoot != resolvedPackageRoot {
+					isExternalDependency = true
+				}
+			}
+
+			isTypeScriptSourceFromExternalDep := isExternalDependency &&
+				(resolvedModule.Extension == tspath.ExtensionTs || resolvedModule.Extension == tspath.ExtensionTsx ||
+					resolvedModule.Extension == tspath.ExtensionMts || resolvedModule.Extension == tspath.ExtensionCts)
 
 			shouldAddFile := moduleName != "" &&
 				getResolutionDiagnostic(optionsForFile, resolvedModule, file) == nil &&
 				!optionsForFile.NoResolve.IsTrue() &&
 				!(isJsFile && !optionsForFile.GetAllowJS()) &&
+				!isTypeScriptSourceFromExternalDep &&
 				(importIndex < 0 || (importIndex < len(file.Imports()) && (ast.IsInJSFile(file.Imports()[importIndex]) || file.Imports()[importIndex].Flags&ast.NodeFlagsJSDoc == 0)))
 
 			if shouldAddFile {
