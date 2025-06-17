@@ -178,12 +178,7 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 func ParseIsolatedEntityName(text string, languageVersion core.ScriptTarget) *ast.EntityName {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(ast.SourceFileParseOptions{
-		CompilerOptions: core.SourceFileAffectingCompilerOptions{
-			EmitScriptTarget: languageVersion,
-		},
-		JSDocParsingMode: ast.JSDocParsingModeParseAll,
-	}, text, core.ScriptKindJS)
+	p.initializeState(ast.SourceFileParseOptions{}, text, core.ScriptKindJS)
 	p.nextToken()
 	entityName := p.parseEntityName(true, nil)
 	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
@@ -213,7 +208,6 @@ func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText str
 	}
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
-	p.scanner.SetScriptTarget(p.opts.CompilerOptions.EmitScriptTarget)
 	p.scanner.SetLanguageVariant(p.languageVariant)
 	p.scanner.SetScriptKind(p.scriptKind)
 	p.scanner.SetJSDocParsingMode(p.opts.JSDocParsingMode)
