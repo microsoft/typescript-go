@@ -392,9 +392,9 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 
 			resolvedFileName := resolvedModule.ResolvedFileName
 			isFromNodeModulesSearch := resolvedModule.IsExternalLibraryImport
-			// If this is js file source of project reference, dont treat it as js file but as d.ts
+			// Don't treat redirected files as JS files.
 			isJsFile := !tspath.FileExtensionIsOneOf(resolvedFileName, tspath.SupportedTSExtensionsWithJsonFlat) && p.projectReferenceFileMapper.getRedirectForResolution(ast.NewHasFileName(resolvedFileName, p.toPath(resolvedFileName))) == nil
-			isJsFileFromNodeModules := isFromNodeModulesSearch && isJsFile && (resolvedFileName == "" || strings.Contains(resolvedFileName, "/node_modules/"))
+			isJsFileFromNodeModules := isFromNodeModulesSearch && isJsFile && strings.Contains(resolvedFileName, "/node_modules/")
 
 			// add file to program only if:
 			// - resolution was successful
@@ -404,8 +404,6 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 
 			importIndex := index - importsStart
 
-			// Don't add the file if it has a bad extension (e.g. 'tsx' if we don't have '--allowJs')
-			// This may still end up being an untyped module -- the file won't be included but imports will be allowed.
 			shouldAddFile := moduleName != "" &&
 				getResolutionDiagnostic(optionsForFile, resolvedModule, file) == nil &&
 				!optionsForFile.NoResolve.IsTrue() &&
