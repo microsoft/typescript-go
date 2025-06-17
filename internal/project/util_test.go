@@ -9,6 +9,7 @@ import (
 )
 
 func configFileExists(t *testing.T, service *project.Service, path tspath.Path, exists bool) {
+	t.Helper()
 	_, loaded := service.ConfigFileRegistry().ConfigFiles.Load(path)
 	assert.Equal(t, loaded, exists, "config file %s should exist: %v", path, exists)
 }
