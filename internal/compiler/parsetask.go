@@ -93,6 +93,7 @@ func (t *parseTask) load(loader *fileLoader) {
 
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 	t.isRedirected = true
+	// increaseDepth and elideOnDepth are not copied to redirects, otherwise their depth would be double counted.
 	t.subTasks = []*parseTask{{normalizedFilePath: tspath.NormalizePath(fileName), isLib: t.isLib}}
 }
 
