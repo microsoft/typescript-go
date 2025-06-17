@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInTypeLiteralInTypeParameter8(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo {
     one: string;
@@ -46,15 +46,7 @@ var foobar: Bar<{
 			Exact: []fourslash.ExpectedCompletionItem{"four"},
 		},
 	})
-	f.VerifyCompletions(t, "0", &fourslash.VerifyCompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{},
-		},
-	})
+	f.VerifyCompletions(t, "0", nil)
 	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{

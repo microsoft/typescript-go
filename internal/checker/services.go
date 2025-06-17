@@ -169,7 +169,7 @@ func (c *Checker) GetAllPossiblePropertiesOfTypes(types []*Type) []*ast.Symbol {
 		return c.getAugmentedPropertiesOfType(unionType)
 	}
 
-	props := createSymbolTable(nil)
+	props := make(ast.SymbolTable)
 	for _, memberType := range types {
 		augmentedProps := c.getAugmentedPropertiesOfType(memberType)
 		for _, p := range augmentedProps {
@@ -232,6 +232,9 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 		functionType = c.globalNewableFunctionType
 	}
 
+	if propsByName == nil {
+		propsByName = make(ast.SymbolTable)
+	}
 	if functionType != nil {
 		for _, p := range c.getPropertiesOfType(functionType) {
 			if _, ok := propsByName[p.Name]; !ok {

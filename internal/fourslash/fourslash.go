@@ -459,7 +459,7 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
 				}
-				assertDeepEqual(t, actualItem, item, prefix+"Includes completion item mismatch for label "+item.Label)
+				verifyCompletionItem(t, prefix+"Includes completion item mismatch for label "+item.Label, actualItem, item)
 			default:
 				t.Fatalf("%sExpected completion item to be a string or *lsproto.CompletionItem, got %T", prefix, item)
 			}
@@ -484,8 +484,21 @@ func verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.
 		case string:
 			continue // already checked labels
 		case *lsproto.CompletionItem:
-			assertDeepEqual(t, actualItem, expectedItem, prefix+"Completion item mismatch for label "+actualItem.Label)
+			verifyCompletionItem(t, prefix+"Completion item mismatch for label "+actualItem.Label, actualItem, expectedItem)
 		}
+	}
+}
+
+func verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
+	ignoreKind := cmp.FilterPath(
+		func(p cmp.Path) bool {
+			return p.Last().String() == ".Kind"
+		},
+		cmp.Ignore(),
+	)
+	assertDeepEqual(t, actual, expected, prefix, ignoreKind)
+	if expected.Kind != nil {
+		assertDeepEqual(t, actual.Kind, expected.Kind, prefix+" Kind mismatch")
 	}
 }
 
@@ -501,10 +514,10 @@ func getExpectedLabel(t *testing.T, item ExpectedCompletionItem) string {
 	}
 }
 
-func assertDeepEqual(t *testing.T, actual any, expected any, prefix string) {
+func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts ...cmp.Option) {
 	t.Helper()
 
-	diff := cmp.Diff(actual, expected)
+	diff := cmp.Diff(actual, expected, opts...)
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
 	}

@@ -1425,7 +1425,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 
 	// exclude literal suggestions after <input type="text" [||] /> microsoft/TypeScript#51667) and after closing quote (microsoft/TypeScript#52675)
 	// for strings getStringLiteralCompletions handles completions
-	isLiteralExpected := !ast.IsStringLiteralLike(previousToken) && !isJsxIdentifierExpected
+	isLiteralExpected := !(previousToken != nil && ast.IsStringLiteralLike(previousToken)) && !isJsxIdentifierExpected
 	var literals []literalValue
 	if isLiteralExpected {
 		var types []*checker.Type
@@ -4468,7 +4468,7 @@ type argumentInfoForCompletions struct {
 
 func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.SourceFile, typeChecker *checker.Checker) *argumentInfoForCompletions {
 	info := getImmediatelyContainingArgumentInfo(node, position, file, typeChecker)
-	if info == nil || info.isTypeParameterList || info.invocation.callInvocation != nil {
+	if info == nil || info.isTypeParameterList || info.invocation.callInvocation == nil {
 		return nil
 	}
 	return &argumentInfoForCompletions{

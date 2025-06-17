@@ -10,7 +10,7 @@ import (
 
 func TestPathCompletionsPackageJsonImportsOnlyFromClosestScope1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /package.json
@@ -28,15 +28,7 @@ import {} from "/*1*/";
 // @Filename: /a.ts
 import {} from "/*2*/";`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, []string{"1"}, &fourslash.VerifyCompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{},
-		},
-	})
+	f.VerifyCompletions(t, []string{"1"}, nil)
 	f.VerifyCompletions(t, []string{"2"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{

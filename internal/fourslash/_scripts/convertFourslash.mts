@@ -229,7 +229,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                 break;
             case "exact":
             case "includes":
-                if (init.getText() === "undefined") {
+                if (init.getText() === "undefined" || (ts.isArrayLiteralExpression(init) && init.elements.length === 0)) {
                     return {
                         kind: "verifyCompletions",
                         marker: marker ? marker : "nil",
@@ -337,6 +337,9 @@ function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
                         return undefined;
                     }
                     item += `SortText: ptrTo(string(${result})), `;
+                    if (result === "ls.SortTextOptionalMember") {
+                        isOptional = true;
+                    }
                     break;
                 case "insertText":
                     if (ts.isStringLiteral(init)) {

@@ -10,7 +10,7 @@ import (
 
 func TestCompletionPreferredSuggestions1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare let v1: string & {} | "a" | "b" | "c";
 v1 = "/*1*/";
@@ -52,15 +52,7 @@ v5 = "/*5*/";`
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c"},
 		},
 	})
-	f.VerifyCompletions(t, "4", &fourslash.VerifyCompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{},
-		},
-	})
+	f.VerifyCompletions(t, "4", nil)
 	f.VerifyCompletions(t, "5", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{

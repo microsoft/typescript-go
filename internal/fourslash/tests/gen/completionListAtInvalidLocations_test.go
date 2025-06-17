@@ -4,13 +4,12 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestCompletionListAtInvalidLocations(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = ` var v1 = '';
  " /*openString1*/
@@ -33,14 +32,6 @@ func TestCompletionListAtInvalidLocations(t *testing.T) {
  foo;
  var v10 = /reg/*inRegExp1*/ex/;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, []string{"openString1", "openString2", "openString3"}, &fourslash.VerifyCompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{},
-		},
-	})
+	f.VerifyCompletions(t, []string{"openString1", "openString2", "openString3"}, nil)
 	f.VerifyCompletions(t, []string{"inComment1", "inComment2", "inComment3", "inComment4", "inTypeAlias", "inComment5", "inRegExp1"}, nil)
 }

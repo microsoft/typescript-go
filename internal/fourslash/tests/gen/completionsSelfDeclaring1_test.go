@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsSelfDeclaring1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Test {
   keyPath?: string;
@@ -33,7 +33,7 @@ test({
 			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "autoIncrement"}},
+			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "autoIncrement?", InsertText: ptrTo("autoIncrement"), FilterText: ptrTo("autoIncrement")}},
 		},
 	})
 }

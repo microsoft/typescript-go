@@ -219,7 +219,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 	preferences *UserPreferences,
 ) *stringLiteralCompletions {
 	typeChecker, done := program.GetTypeChecker(ctx)
-	done()
+	defer done()
 	parent := walkUpParentheses(node.Parent)
 	switch parent.Kind {
 	case ast.KindLiteralType:

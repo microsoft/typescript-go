@@ -10,7 +10,7 @@ import (
 
 func TestImportCompletionsPackageJsonImportsLength1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @module: node18
 // @Filename: /package.json
@@ -64,13 +64,5 @@ import {} from "#a/b/c/something//*5*/";`
 			Exact: []fourslash.ExpectedCompletionItem{"d", "something"},
 		},
 	})
-	f.VerifyCompletions(t, []string{"5"}, &fourslash.VerifyCompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{},
-		},
-	})
+	f.VerifyCompletions(t, []string{"5"}, nil)
 }

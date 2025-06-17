@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsAfterKeywordsInBlock(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class C1 {
     method(map: Map<string, string>, key: string, defaultValue: string) {
