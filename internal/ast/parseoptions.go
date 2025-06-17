@@ -5,6 +5,15 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+type JSDocParsingMode int
+
+const (
+	JSDocParsingModeParseAll JSDocParsingMode = iota
+	JSDocParsingModeParseNone
+	JSDocParsingModeParseForTypeErrors
+	JSDocParsingModeParseForTypeInfo
+)
+
 type SourceFileParseOptions struct {
 	FileName                       string
 	Path                           tspath.Path

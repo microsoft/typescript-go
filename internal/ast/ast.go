@@ -9962,15 +9962,6 @@ type CommentDirective struct {
 
 // SourceFile
 
-type JSDocParsingMode int
-
-const (
-	JSDocParsingModeParseAll JSDocParsingMode = iota
-	JSDocParsingModeParseNone
-	JSDocParsingModeParseForTypeErrors
-	JSDocParsingModeParseForTypeInfo
-)
-
 type SourceFileMetaData struct {
 	PackageJsonType      string
 	PackageJsonDirectory string
