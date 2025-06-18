@@ -23,11 +23,3 @@
 
 
  //// [f1.d.ts]
- export declare class A {
- }
- //// [f2.d.ts]
--declare global {
-+declare namespace global {
-     interface Array<T> {
-         getCountAsString(): string;
-     }

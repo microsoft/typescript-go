@@ -8,18 +8,3 @@
 +const func = (account, acc2) => { };
  exports.func = func;
 
-
-@@= skipped -15, +15 lines =@@
- //// [index.d.ts]
- export * from "./account";
- //// [index.d.ts]
--declare global {
-+declare namespace global {
-     interface Account {
-         someProp: number;
-     }
-@@= skipped -10, +10 lines =@@
- }
- import * as model from "./model";
- export declare const func: (account: model.Account, acc2: model.Acc) => void;
-+export {};

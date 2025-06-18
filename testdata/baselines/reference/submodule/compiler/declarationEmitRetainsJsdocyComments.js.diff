@@ -34,18 +34,21 @@
  exports.foo = foo;
 -var Foo = /** @class */ (function () {
 -    function Foo() {
--    }
 +class Foo {
-     /**
-      * comment4
-      * @param s
-      */
++    /**
++     * comment4
++     * @param s
++     */
++    bar(s) {
+     }
+-    /**
+-     * comment4
+-     * @param s
+-     */
 -    Foo.prototype.bar = function (s) {
 -    };
 -    return Foo;
 -}());
-+    bar(s) {
-+    }
 +}
  exports.Foo = Foo;
 -/**
@@ -69,13 +72,6 @@
 -* comment5
 -*/
 -someMethod: any;
--declare global {
-+declare namespace global {
+ declare global {
      interface ExtFunc {
          /**
-         * comment6
-@@= skipped -13, +8 lines =@@
-         someMethod(collection: any[]): boolean;
-     }
- }
-+export {};
