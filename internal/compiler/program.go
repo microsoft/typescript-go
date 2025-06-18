@@ -53,8 +53,6 @@ type Program struct {
 
 	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
 
-	// Track which source files were found while searching node_modules
-	// Similar to TypeScript's sourceFilesFoundSearchingNodeModules map
 	sourceFilesFoundSearchingNodeModules collections.SyncMap[tspath.Path, bool]
 }
 
