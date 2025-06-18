@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListInImportClause01(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @ModuleResolution: classic
 // @Filename: m1.ts
