@@ -5,11 +5,13 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestGenericCloduleCompletionList(t *testing.T) {
 	t.Parallel()
 
+	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `class D<T> { x: number }
 module D { export function f() { } }
 var d: D<number>;
