@@ -37,7 +37,7 @@ v5 = "/*5*/";`
 	f.VerifyCompletions(t, "2", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+			CommitCharacters: &[]string{},
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Includes: []fourslash.ExpectedCompletionItem{"0", "1", "2"},
@@ -52,7 +52,15 @@ v5 = "/*5*/";`
 			Includes: []fourslash.ExpectedCompletionItem{"a", "b", "c"},
 		},
 	})
-	f.VerifyCompletions(t, "4", nil)
+	f.VerifyCompletions(t, "4", &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 	f.VerifyCompletions(t, "5", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{

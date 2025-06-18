@@ -4231,7 +4231,7 @@ func isInStringOrRegularExpressionOrTemplateLiteral(contextToken *ast.Node, posi
 	return (ast.IsRegularExpressionLiteral(contextToken) || ast.IsStringTextContainingNode(contextToken)) &&
 		(contextToken.Loc.ContainsExclusive(position)) ||
 		position == contextToken.End() &&
-			(ast.IsUnterminatedNode(contextToken) || ast.IsRegularExpressionLiteral(contextToken))
+			(ast.IsUnterminatedLiteral(contextToken) || ast.IsRegularExpressionLiteral(contextToken))
 }
 
 // true if we are certain that the currently edited location must define a new location; false otherwise.

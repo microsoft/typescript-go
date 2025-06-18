@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
@@ -15,5 +16,13 @@ func TestCompletionListInStringLiterals2(t *testing.T) {
  /*4*/   \\\/*5*/
  /*6*/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, f.Markers(), nil)
+	f.VerifyCompletions(t, f.Markers(), &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 }

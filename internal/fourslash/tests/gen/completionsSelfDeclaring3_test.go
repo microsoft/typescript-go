@@ -24,7 +24,15 @@ f({ x/*x*/: 0, hello/*hello*/: "", goodbye/*goodbye*/: 0, abc/*abc*/: "" })`
 			Exact: []fourslash.ExpectedCompletionItem{"x"},
 		},
 	})
-	f.VerifyCompletions(t, "hello", nil)
+	f.VerifyCompletions(t, "hello", &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 	f.VerifyCompletions(t, "goodbye", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
@@ -34,5 +42,13 @@ f({ x/*x*/: 0, hello/*hello*/: "", goodbye/*goodbye*/: 0, abc/*abc*/: "" })`
 			Exact: []fourslash.ExpectedCompletionItem{"goodbye"},
 		},
 	})
-	f.VerifyCompletions(t, "abc", nil)
+	f.VerifyCompletions(t, "abc", &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 }

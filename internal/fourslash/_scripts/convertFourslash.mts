@@ -229,7 +229,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                 break;
             case "exact":
             case "includes":
-                if (init.getText() === "undefined" || (ts.isArrayLiteralExpression(init) && init.elements.length === 0)) {
+                if (init.getText() === "undefined") {
                     return {
                         kind: "verifyCompletions",
                         marker: marker ? marker : "nil",
@@ -537,7 +537,7 @@ interface GoToMarkerCmd {
 
 type Cmd = VerifyCompletionsCmd | GoToMarkerCmd;
 
-function generateVerifyCompletions({ marker, args }: VerifyCompletionsCmd): string {
+function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList = "nil";
     if (args) {
         const expected = [];
@@ -546,10 +546,11 @@ function generateVerifyCompletions({ marker, args }: VerifyCompletionsCmd): stri
         if (args.exact) expected.push(`Exact: ${args.exact},`);
         // !!! isIncomplete
         // !!! itemDefaults/commitCharacters from `isNewIdentifierLocation`
+        const commitCharacters = isNewIdentifierLocation ? "[]string{}" : "defaultCommitCharacters";
         expectedList = `&fourslash.VerifyCompletionsExpectedList{
     IsIncomplete: false,
     ItemDefaults: &lsproto.CompletionItemDefaults{
-        CommitCharacters: &defaultCommitCharacters,
+        CommitCharacters: &${commitCharacters},
     },
     Items: &fourslash.VerifyCompletionsExpectedItems{
         ${expected.join("\n")}

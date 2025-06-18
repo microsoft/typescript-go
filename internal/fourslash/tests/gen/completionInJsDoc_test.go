@@ -80,7 +80,15 @@ func TestCompletionInJsDoc(t *testing.T) {
 			Includes: []fourslash.ExpectedCompletionItem{"constructor", "param", "type", "method", "template"},
 		},
 	})
-	f.VerifyCompletions(t, []string{"3", "15", "16"}, nil)
+	f.VerifyCompletions(t, []string{"3", "15", "16"}, &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 	f.VerifyCompletions(t, []string{"4", "5", "8"}, &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{

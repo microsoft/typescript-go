@@ -52,7 +52,7 @@ func (l *LanguageService) getStringLiteralCompletions(
 ) *lsproto.CompletionList {
 	// !!! reference comment
 	if IsInString(file, position, contextToken) {
-		if contextToken == nil || !ast.IsStringOrNumericLiteralLike(contextToken) {
+		if contextToken == nil || !ast.IsStringLiteralLike(contextToken) {
 			return nil
 		}
 		entries := l.getStringLiteralCompletionEntries(

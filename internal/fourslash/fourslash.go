@@ -407,7 +407,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *VerifyCo
 func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected *VerifyCompletionsExpectedList) {
 	prefix := fmt.Sprintf("At marker '%s': ", markerName)
 	if actual == nil {
-		if expected != nil {
+		if !isEmptyExpectedList(expected) {
 			t.Fatal(prefix + "Expected completion list but got nil.")
 		}
 		return
@@ -420,13 +420,11 @@ func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.Co
 	verifyCompletionsItems(t, prefix, actual.Items, expected.Items)
 }
 
+func isEmptyExpectedList(expected *VerifyCompletionsExpectedList) bool {
+	return expected == nil || (len(expected.Items.Exact) == 0 && len(expected.Items.Includes) == 0 && len(expected.Items.Excludes) == 0)
+}
+
 func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected *VerifyCompletionsExpectedItems) {
-	if expected == nil {
-		if actual != nil {
-			t.Fatalf(prefix+"Expected nil completion items but got non-nil: %s", cmp.Diff(actual, nil))
-		}
-		return
-	}
 	if expected.Exact != nil {
 		if expected.Includes != nil {
 			t.Fatal(prefix + "Expected exact completion list but also specified 'includes'.")
@@ -437,7 +435,9 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 		if len(actual) != len(expected.Exact) {
 			t.Fatalf(prefix+"Expected %d exact completion items but got %d: %s", len(expected.Exact), len(actual), cmp.Diff(actual, expected.Exact))
 		}
-		verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
+		if len(actual) > 0 {
+			verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
+		}
 		return
 	}
 	nameToActualItem := make(map[string]*lsproto.CompletionItem)

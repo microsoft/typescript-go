@@ -59,7 +59,15 @@ export { type foo, type "/*typeExport3*/" } from "./exports";`
 			Exact: []fourslash.ExpectedCompletionItem{"__some type", "__some value", "foo"},
 		},
 	})
-	f.VerifyCompletions(t, "valueImport2", nil)
+	f.VerifyCompletions(t, "valueImport2", &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 	f.VerifyCompletions(t, "valueImport3", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
@@ -87,7 +95,15 @@ export { type foo, type "/*typeExport3*/" } from "./exports";`
 			Exact: []fourslash.ExpectedCompletionItem{"__some type", "__some value", "foo"},
 		},
 	})
-	f.VerifyCompletions(t, "valueExport2", nil)
+	f.VerifyCompletions(t, "valueExport2", &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 	f.VerifyCompletions(t, "valueExport3", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
@@ -115,7 +131,15 @@ export { type foo, type "/*typeExport3*/" } from "./exports";`
 			Exact: []fourslash.ExpectedCompletionItem{"__some type", "__some value", "foo"},
 		},
 	})
-	f.VerifyCompletions(t, "typeImport2", nil)
+	f.VerifyCompletions(t, "typeImport2", &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 	f.VerifyCompletions(t, "typeImport3", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
@@ -143,7 +167,15 @@ export { type foo, type "/*typeExport3*/" } from "./exports";`
 			Exact: []fourslash.ExpectedCompletionItem{"__some type", "__some value", "foo"},
 		},
 	})
-	f.VerifyCompletions(t, "typeExport2", nil)
+	f.VerifyCompletions(t, "typeExport2", &fourslash.VerifyCompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &lsproto.CompletionItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.VerifyCompletionsExpectedItems{
+			Exact: []fourslash.ExpectedCompletionItem{},
+		},
+	})
 	f.VerifyCompletions(t, "typeExport3", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
