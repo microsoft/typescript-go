@@ -27,4 +27,6 @@ type EmitHost interface {
 	GetEmitModuleFormatOfFile(file ast.HasFileName) core.ModuleKind
 	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) EmitResolver
 	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
+	
+	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool
 }

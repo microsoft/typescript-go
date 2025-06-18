@@ -24,6 +24,10 @@ type parseTask struct {
 	jsxRuntimeImportSpecifier    *jsxRuntimeImportSpecifier
 	increaseDepth                bool
 	elideOnDepth                 bool
+
+	// Track if this file is from an external library (node_modules)
+	// This mirrors the TypeScript currentNodeModulesDepth > 0 check
+	isFromExternalLibrary bool
 }
 
 func (t *parseTask) FileName() string {
@@ -98,14 +102,21 @@ func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 }
 
 type resolvedRef struct {
-	fileName      string
-	increaseDepth bool
-	elideOnDepth  bool
+	fileName               string
+	increaseDepth          bool
+	elideOnDepth           bool
+	isFromExternalLibrary  bool
 }
 
 func (t *parseTask) addSubTask(ref resolvedRef, isLib bool) {
 	normalizedFilePath := tspath.NormalizePath(ref.fileName)
-	subTask := &parseTask{normalizedFilePath: normalizedFilePath, isLib: isLib, increaseDepth: ref.increaseDepth, elideOnDepth: ref.elideOnDepth}
+	subTask := &parseTask{
+		normalizedFilePath:    normalizedFilePath, 
+		isLib:                 isLib, 
+		increaseDepth:         ref.increaseDepth, 
+		elideOnDepth:          ref.elideOnDepth,
+		isFromExternalLibrary: ref.isFromExternalLibrary || t.isFromExternalLibrary, // Propagate external library status
+	}
 	t.subTasks = append(t.subTasks, subTask)
 }
 
