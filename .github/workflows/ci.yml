@@ -368,6 +368,8 @@ jobs:
         with:
           cache-name: checkfourslash
 
+      - run: npm ci
+
       - name: Remove all converted fourslash tests
         run: rm -rf internal/fourslash/tests/gen
 
