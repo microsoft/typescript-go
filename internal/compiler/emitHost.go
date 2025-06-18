@@ -124,3 +124,9 @@ func (host *emitHost) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool
 	defer done()
 	return checker.GetEmitResolver(file, skipDiagnostics)
 }
+
+func (host *emitHost) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
+	// Use the Program's proper tracking mechanism which mirrors the TypeScript implementation
+	// This tracks files that were found while searching node_modules during module resolution
+	return host.program.IsSourceFileFromExternalLibrary(file)
+}

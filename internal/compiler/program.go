@@ -52,6 +52,10 @@ type Program struct {
 	commonSourceDirectoryOnce sync.Once
 
 	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
+
+	// Track which source files were found while searching node_modules
+	// Similar to TypeScript's sourceFilesFoundSearchingNodeModules map
+	sourceFilesFoundSearchingNodeModules collections.SyncMap[tspath.Path, bool]
 }
 
 // FileExists implements checker.Program.
@@ -203,6 +207,14 @@ func NewProgram(opts ProgramOptions) *Program {
 
 	p.processedFiles = processAllProgramFiles(p.opts, libs, p.singleThreaded())
 
+	// Populate sourceFilesFoundSearchingNodeModules from the processed files
+	// This mirrors the TypeScript implementation's tracking behavior
+	if p.processedFiles.sourceFilesFoundSearchingNodeModules != nil {
+		for path, isExternal := range p.processedFiles.sourceFilesFoundSearchingNodeModules {
+			p.sourceFilesFoundSearchingNodeModules.Store(path, isExternal)
+		}
+	}
+
 	return p
 }
 
@@ -215,11 +227,12 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 		return NewProgram(p.opts), false
 	}
 	result := &Program{
-		opts:                        p.opts,
-		nodeModules:                 p.nodeModules,
-		comparePathsOptions:         p.comparePathsOptions,
-		processedFiles:              p.processedFiles,
-		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
+		opts:                                 p.opts,
+		nodeModules:                          p.nodeModules,
+		comparePathsOptions:                  p.comparePathsOptions,
+		processedFiles:                       p.processedFiles,
+		usesUriStyleNodeCoreModules:          p.usesUriStyleNodeCoreModules,
+		sourceFilesFoundSearchingNodeModules: p.sourceFilesFoundSearchingNodeModules,
 	}
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
@@ -818,6 +831,16 @@ func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference,
 		return ref.ResolutionMode
 	}
 	return p.GetDefaultResolutionModeForFile(sourceFile)
+}
+
+// IsSourceFileFromExternalLibrary returns true if the source file is from an external library.
+// This mirrors the TypeScript implementation which tracks files found while searching node_modules.
+func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
+	if file == nil {
+		return false
+	}
+	isExternal, exists := p.sourceFilesFoundSearchingNodeModules.Load(file.Path())
+	return exists && isExternal
 }
 
 type FileIncludeKind int

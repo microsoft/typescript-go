@@ -50,6 +50,9 @@ type processedFiles struct {
 	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	// List of present unsupported extensions
 	unsupportedExtensions []string
+	// Track which source files were found while searching node_modules
+	// Similar to TypeScript's sourceFilesFoundSearchingNodeModules map
+	sourceFilesFoundSearchingNodeModules map[tspath.Path]bool
 }
 
 type jsxRuntimeImportSpecifier struct {
@@ -111,6 +114,7 @@ func processAllProgramFiles(
 	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	var unsupportedExtensions []string
+	var sourceFilesFoundSearchingNodeModules map[tspath.Path]bool
 
 	loader.parseTasks.collect(&loader, loader.rootTasks, func(task *parseTask, _ []tspath.Path) {
 		file := task.file
@@ -148,22 +152,30 @@ func processAllProgramFiles(
 		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
 			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
 		}
+		// Track files from external libraries using the proper module resolution flag
+		if task.isFromExternalLibrary {
+			if sourceFilesFoundSearchingNodeModules == nil {
+				sourceFilesFoundSearchingNodeModules = make(map[tspath.Path]bool, totalFileCount)
+			}
+			sourceFilesFoundSearchingNodeModules[path] = true
+		}
 	})
 	loader.sortLibs(libFiles)
 
 	allFiles := append(libFiles, files...)
 
 	return processedFiles{
-		resolver:                      loader.resolver,
-		files:                         allFiles,
-		filesByPath:                   filesByPath,
-		projectReferenceFileMapper:    loader.projectReferenceFileMapper,
-		resolvedModules:               resolvedModules,
-		typeResolutionsInFile:         typeResolutionsInFile,
-		sourceFileMetaDatas:           sourceFileMetaDatas,
-		jsxRuntimeImportSpecifiers:    jsxRuntimeImportSpecifiers,
-		importHelpersImportSpecifiers: importHelpersImportSpecifiers,
-		unsupportedExtensions:         unsupportedExtensions,
+		resolver:                             loader.resolver,
+		files:                                allFiles,
+		filesByPath:                          filesByPath,
+		projectReferenceFileMapper:           loader.projectReferenceFileMapper,
+		resolvedModules:                      resolvedModules,
+		typeResolutionsInFile:                typeResolutionsInFile,
+		sourceFileMetaDatas:                  sourceFileMetaDatas,
+		jsxRuntimeImportSpecifiers:           jsxRuntimeImportSpecifiers,
+		importHelpersImportSpecifiers:        importHelpersImportSpecifiers,
+		unsupportedExtensions:                unsupportedExtensions,
+		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
 	}
 }
 
@@ -301,7 +313,10 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 		referencedFileName = tspath.CombinePaths(basePath, moduleName)
 	}
 	return resolvedRef{
-		fileName: tspath.NormalizePath(referencedFileName),
+		fileName:              tspath.NormalizePath(referencedFileName),
+		increaseDepth:         false,
+		elideOnDepth:          false,
+		isFromExternalLibrary: false, // Triple-slash references are always local files
 	}
 }
 
@@ -319,9 +334,10 @@ func (p *fileLoader) resolveTypeReferenceDirectives(file *ast.SourceFile, meta a
 			typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
 			if resolved.IsResolved() {
 				toParse = append(toParse, resolvedRef{
-					fileName:      resolved.ResolvedFileName,
-					increaseDepth: resolved.IsExternalLibraryImport,
-					elideOnDepth:  false,
+					fileName:              resolved.ResolvedFileName,
+					increaseDepth:         resolved.IsExternalLibraryImport,
+					elideOnDepth:          false,
+					isFromExternalLibrary: resolved.IsExternalLibraryImport,
 				})
 			}
 		}
@@ -412,9 +428,10 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 
 			if shouldAddFile {
 				toParse = append(toParse, resolvedRef{
-					fileName:      resolvedFileName,
-					increaseDepth: resolvedModule.IsExternalLibraryImport,
-					elideOnDepth:  isJsFileFromNodeModules,
+					fileName:              resolvedFileName,
+					increaseDepth:         resolvedModule.IsExternalLibraryImport,
+					elideOnDepth:          isJsFileFromNodeModules,
+					isFromExternalLibrary: isFromNodeModulesSearch,
 				})
 			}
 		}
