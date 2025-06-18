@@ -19,8 +19,8 @@ export class Foo {
         getThing: () => Promise.resolve('')
     };
     foo() {
-        return 
-        /* TODO: please refactor */ this.client
-            .getThing();
+        return (
+        /* TODO: please refactor */ (this.client
+            .getThing()));
     }
 }

@@ -67,9 +67,9 @@ function t10() {
 
 //// [returnStatementNoAsiAfterTransform.js]
 function t1() {
-    return 
+    return (
     // comment
-    a;
+    (a));
 }
 function t2() {
     return 
@@ -102,17 +102,17 @@ function t7() {
     a ``;
 }
 function t8() {
-    return 
+    return (
     // comment
-    a;
+    (a));
 }
 function t9() {
-    return 
+    return (
     // comment
-    a;
+    (a));
 }
 function t10() {
-    return 
+    return (
     // comment
-    a;
+    (a));
 }

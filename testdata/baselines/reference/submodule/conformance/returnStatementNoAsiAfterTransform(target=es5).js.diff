@@ -9,11 +9,10 @@
 -    return cooked;
 -};
  function t1() {
--    return (
-+    return 
+     return (
      // comment
 -    a);
-+    a;
++    (a));
  }
  function t2() {
 -    return (
@@ -58,23 +57,20 @@
 +    a ``;
  }
  function t8() {
--    return (
-+    return 
+     return (
      // comment
 -    a);
-+    a;
++    (a));
  }
  function t9() {
--    return (
-+    return 
+     return (
      // comment
 -    a);
-+    a;
++    (a));
  }
  function t10() {
--    return (
-+    return 
+     return (
      // comment
 -    a);
-+    a;
++    (a));
  }

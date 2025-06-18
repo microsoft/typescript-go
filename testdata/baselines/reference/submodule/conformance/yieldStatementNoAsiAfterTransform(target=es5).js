@@ -67,9 +67,9 @@ function *t10() {
 
 //// [yieldStatementNoAsiAfterTransform.js]
 function* t1() {
-    yield 
+    yield (
     // comment
-    a;
+    (a));
 }
 function* t2() {
     yield 
@@ -102,17 +102,17 @@ function* t7() {
     a ``;
 }
 function* t8() {
-    yield 
+    yield (
     // comment
-    a;
+    (a));
 }
 function* t9() {
-    yield 
+    yield (
     // comment
-    a;
+    (a));
 }
 function* t10() {
-    yield 
+    yield (
     // comment
-    a;
+    (a));
 }

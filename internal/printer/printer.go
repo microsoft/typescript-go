@@ -2954,8 +2954,56 @@ func (p *Printer) emitPartiallyEmittedExpression(node *ast.PartiallyEmittedExpre
 	}
 }
 
+func (p *Printer) commentWillEmitNewLine(comment ast.CommentRange) bool {
+	return comment.Kind == ast.KindSingleLineCommentTrivia || comment.HasTrailingNewLine
+}
+
 func (p *Printer) willEmitLeadingNewLine(node *ast.Expression) bool {
-	return false // !!! check if node will emit a leading comment that contains a trailing newline
+	if p.currentSourceFile == nil {
+		return false
+	}
+	
+	text := p.currentSourceFile.Text()
+	pos := node.Pos()
+	
+	// Get leading comment ranges
+	var leadingCommentRanges []ast.CommentRange
+	for commentRange := range scanner.GetLeadingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, pos) {
+		leadingCommentRanges = append(leadingCommentRanges, commentRange)
+	}
+	
+	if len(leadingCommentRanges) > 0 {
+		parseNode := p.emitContext.ParseNode(node.AsNode())
+		if parseNode != nil && parseNode.Parent != nil && ast.IsParenthesizedExpression(parseNode.Parent) {
+			return true
+		}
+	}
+	
+	// Check if any leading comment will emit a newline
+	for _, comment := range leadingCommentRanges {
+		if p.commentWillEmitNewLine(comment) {
+			return true
+		}
+	}
+	
+	// Check synthetic leading comments (currently stubbed out in this codebase)
+	// if some(getSyntheticLeadingComments(node), commentWillEmitNewLine)) return true;
+	
+	// Handle PartiallyEmittedExpression recursively
+	if node.Kind == ast.KindPartiallyEmittedExpression {
+		partiallyEmitted := node.AsPartiallyEmittedExpression()
+		if node.Pos() != partiallyEmitted.Expression.Pos() {
+			// Check trailing comments at the expression position
+			for trailingComment := range scanner.GetTrailingCommentRanges(p.emitContext.Factory.AsNodeFactory(), text, partiallyEmitted.Expression.Pos()) {
+				if p.commentWillEmitNewLine(trailingComment) {
+					return true
+				}
+			}
+		}
+		return p.willEmitLeadingNewLine(partiallyEmitted.Expression)
+	}
+	
+	return false
 }
 
 func (p *Printer) emitExpressionNoASI(node *ast.Expression, precedence ast.OperatorPrecedence) {
