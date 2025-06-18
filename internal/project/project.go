@@ -47,8 +47,8 @@ type snapshot struct {
 // GetLineMap implements ls.Host.
 func (s *snapshot) GetLineMap(fileName string) *ls.LineMap {
 	file := s.program.GetSourceFile(fileName)
-	scriptInfo := s.project.host.GetScriptInfoByPath(file.Path())
-	if s.project.getFileVersion(file, s.program.Options(), s.program.GetSourceFileMetaData(file.Path())) == scriptInfo.Version() {
+	scriptInfo := s.project.host.DocumentStore().GetScriptInfoByPath(file.Path())
+	if s.project.getFileVersion(file) == scriptInfo.Version() {
 		return scriptInfo.LineMap()
 	}
 	return ls.ComputeLineStarts(file.Text())
@@ -80,11 +80,8 @@ type ProjectHost interface {
 	NewLine() string
 	DefaultLibraryPath() string
 	TypingsInstaller() *TypingsInstaller
-	DocumentRegistry() *DocumentRegistry
+	DocumentStore() *DocumentStore
 	ConfigFileRegistry() *ConfigFileRegistry
-	GetScriptInfoByPath(path tspath.Path) *ScriptInfo
-	GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo
-	OnDiscoveredSymlink(info *ScriptInfo)
 	Log(s string)
 	PositionEncoding() lsproto.PositionEncodingKind
 
@@ -273,20 +270,14 @@ func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 }
 
 // GetSourceFile implements compiler.CompilerHost.
-func (p *Project) GetSourceFile(fileName string, path tspath.Path, options *core.SourceFileAffectingCompilerOptions, metadata *ast.SourceFileMetaData) *ast.SourceFile {
-	scriptKind := p.getScriptKind(fileName)
-	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
-		var (
-			oldSourceFile      *ast.SourceFile
-			oldCompilerOptions *core.CompilerOptions
-			oldMetadata        *ast.SourceFileMetaData
-		)
+func (p *Project) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	scriptKind := p.getScriptKind(opts.FileName)
+	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(opts.FileName, scriptKind); scriptInfo != nil {
+		var oldSourceFile *ast.SourceFile
 		if p.program != nil {
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
-			oldCompilerOptions = p.program.Options()
-			oldMetadata = p.program.GetSourceFileMetaData(scriptInfo.path)
 		}
-		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, metadata, oldSourceFile, oldCompilerOptions, oldMetadata)
+		return p.host.DocumentStore().documentRegistry.AcquireDocument(scriptInfo, opts, oldSourceFile)
 	}
 	return nil
 }
@@ -424,7 +415,7 @@ func (p *Project) onWatchEventForNilScriptInfo(fileName string) {
 }
 
 func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *ScriptInfo {
-	if scriptInfo := p.host.GetOrCreateScriptInfoForFile(fileName, p.toPath(fileName), scriptKind); scriptInfo != nil {
+	if scriptInfo := p.host.DocumentStore().getOrCreateScriptInfoWorker(fileName, p.toPath(fileName), scriptKind, false, "", false, p.host.FS()); scriptInfo != nil {
 		scriptInfo.attachToProject(p)
 		return scriptInfo
 	}
@@ -525,7 +516,7 @@ func (p *Project) updateGraph() (*compiler.Program, bool) {
 		if oldProgram != nil {
 			for _, oldSourceFile := range oldProgram.GetSourceFiles() {
 				if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
-					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.Options(), oldProgram.GetSourceFileMetaData(oldSourceFile.Path()))
+					p.host.DocumentStore().documentRegistry.ReleaseDocument(oldSourceFile)
 					p.detachScriptInfoIfNotInferredRoot(oldSourceFile.Path())
 				}
 			}
@@ -594,6 +585,7 @@ func (p *Project) updateProgram() bool {
 				p.checkerPool = newCheckerPool(4, program, p.Log)
 				return p.checkerPool
 			},
+			JSDocParsingMode: ast.JSDocParsingModeParseAll,
 		})
 	} else {
 		// The only change in the current program is the contents of the file named by p.dirtyFilePath.
@@ -1008,13 +1000,12 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 		builder.WriteString("\n\tFiles (0) NoProgram\n")
 	} else {
 		sourceFiles := p.program.GetSourceFiles()
-		options := p.program.Options()
 		builder.WriteString(fmt.Sprintf("\n\tFiles (%d)\n", len(sourceFiles)))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
 				builder.WriteString("\n\t\t" + sourceFile.FileName())
 				if writeFileVersionAndText {
-					builder.WriteString(fmt.Sprintf(" %d %s", p.getFileVersion(sourceFile, options, p.program.GetSourceFileMetaData(sourceFile.Path())), sourceFile.Text()))
+					builder.WriteString(fmt.Sprintf(" %d %s", p.getFileVersion(sourceFile), sourceFile.Text()))
 				}
 			}
 			// !!!
@@ -1025,8 +1016,8 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 	return builder.String()
 }
 
-func (p *Project) getFileVersion(file *ast.SourceFile, options *core.CompilerOptions, metadata *ast.SourceFileMetaData) int {
-	return p.host.DocumentRegistry().getFileVersion(file, options, metadata)
+func (p *Project) getFileVersion(file *ast.SourceFile) int {
+	return p.host.DocumentStore().documentRegistry.getFileVersion(file)
 }
 
 func (p *Project) Log(s string) {
@@ -1040,7 +1031,7 @@ func (p *Project) Logf(format string, args ...interface{}) {
 func (p *Project) detachScriptInfoIfNotInferredRoot(path tspath.Path) {
 	// We might not find the script info in case its not associated with the project any more
 	// and project graph was not updated (eg delayed update graph in case of files changed/deleted on the disk)
-	if scriptInfo := p.host.GetScriptInfoByPath(path); scriptInfo != nil &&
+	if scriptInfo := p.host.DocumentStore().GetScriptInfoByPath(path); scriptInfo != nil &&
 		(p.kind != KindInferred || !p.isRoot(scriptInfo)) {
 		scriptInfo.detachFromProject(p)
 	}
@@ -1052,7 +1043,7 @@ func (p *Project) Close() {
 
 	if p.program != nil {
 		for _, sourceFile := range p.program.GetSourceFiles() {
-			p.host.DocumentRegistry().ReleaseDocument(sourceFile, p.program.Options(), p.program.GetSourceFileMetaData(sourceFile.Path()))
+			p.host.DocumentStore().documentRegistry.ReleaseDocument(sourceFile)
 			// Detach script info if its not root or is root of non inferred project
 			p.detachScriptInfoIfNotInferredRoot(sourceFile.Path())
 		}
@@ -1068,7 +1059,7 @@ func (p *Project) Close() {
 	if p.kind == KindInferred {
 		// Release root script infos for inferred projects.
 		for path := range p.rootFileNames.Keys() {
-			if info := p.host.GetScriptInfoByPath(path); info != nil {
+			if info := p.host.DocumentStore().GetScriptInfoByPath(path); info != nil {
 				info.detachFromProject(p)
 			}
 		}

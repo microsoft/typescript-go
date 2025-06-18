@@ -17,7 +17,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -74,16 +73,11 @@ func fmtMain(sys System, input, output string) ExitStatus {
 	}
 	text := fileContent
 	pathified := tspath.ToPath(input, sys.GetCurrentDirectory(), true)
-	sourceFile := parser.ParseSourceFile(
-		string(pathified),
-		pathified,
-		text,
-		&core.SourceFileAffectingCompilerOptions{
-			EmitScriptTarget: core.ScriptTargetLatest,
-		},
-		nil,
-		scanner.JSDocParsingModeParseAll,
-	)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName:         string(pathified),
+		Path:             pathified,
+		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+	}, text, core.GetScriptKindFromFileName(string(pathified)))
 	ast.SetParentInChildren(sourceFile.AsNode())
 	edits := format.FormatDocument(ctx, sourceFile)
 	newText := applyBulkEdits(text, edits)
@@ -246,8 +240,9 @@ func performCompilation(
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: config,
-		Host:   host,
+		Config:           config,
+		Host:             host,
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	parseTime := sys.Now().Sub(parseStart)
 

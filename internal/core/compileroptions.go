@@ -149,7 +149,7 @@ type CompilerOptions struct {
 	Quiet          Tristate `json:"quiet,omitzero"`
 
 	sourceFileAffectingCompilerOptionsOnce sync.Once
-	sourceFileAffectingCompilerOptions     *SourceFileAffectingCompilerOptions
+	sourceFileAffectingCompilerOptions     SourceFileAffectingCompilerOptions
 }
 
 // noCopy may be embedded into structs which must not be copied
@@ -352,29 +352,19 @@ func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
 // affect the parse and bind of a source file.
 type SourceFileAffectingCompilerOptions struct {
-	AllowUnreachableCode       Tristate
-	AllowUnusedLabels          Tristate
-	BindInStrictMode           bool
-	EmitModuleDetectionKind    ModuleDetectionKind
-	EmitModuleKind             ModuleKind
-	EmitScriptTarget           ScriptTarget
-	JsxEmit                    JsxEmit
-	NoFallthroughCasesInSwitch Tristate
-	ShouldPreserveConstEnums   bool
+	AllowUnreachableCode     Tristate
+	AllowUnusedLabels        Tristate
+	BindInStrictMode         bool
+	ShouldPreserveConstEnums bool
 }
 
-func (options *CompilerOptions) SourceFileAffecting() *SourceFileAffectingCompilerOptions {
+func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
 	options.sourceFileAffectingCompilerOptionsOnce.Do(func() {
-		options.sourceFileAffectingCompilerOptions = &SourceFileAffectingCompilerOptions{
-			AllowUnreachableCode:       options.AllowUnreachableCode,
-			AllowUnusedLabels:          options.AllowUnusedLabels,
-			BindInStrictMode:           options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
-			EmitModuleDetectionKind:    options.GetEmitModuleDetectionKind(),
-			EmitModuleKind:             options.GetEmitModuleKind(),
-			EmitScriptTarget:           options.GetEmitScriptTarget(),
-			JsxEmit:                    options.Jsx,
-			NoFallthroughCasesInSwitch: options.NoFallthroughCasesInSwitch,
-			ShouldPreserveConstEnums:   options.ShouldPreserveConstEnums(),
+		options.sourceFileAffectingCompilerOptions = SourceFileAffectingCompilerOptions{
+			AllowUnreachableCode:     options.AllowUnreachableCode,
+			AllowUnusedLabels:        options.AllowUnusedLabels,
+			BindInStrictMode:         options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
+			ShouldPreserveConstEnums: options.ShouldPreserveConstEnums(),
 		}
 	})
 	return options.sourceFileAffectingCompilerOptions
