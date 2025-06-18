@@ -1,16 +1,8 @@
 --- old.jsFileCompilationWithMapFileAsJs.js
 +++ new.jsFileCompilationWithMapFileAsJs.js
-@@= skipped -12, +12 lines =@@
+@@= skipped -15, +15 lines =@@
+ class c {
  }
-
- //// [a.js]
--var c = /** @class */ (function () {
--    function c() {
--    }
--    return c;
--}());
-+class c {
-+}
  //# sourceMappingURL=a.js.map
 +//// [b.js]
 +function bar() {

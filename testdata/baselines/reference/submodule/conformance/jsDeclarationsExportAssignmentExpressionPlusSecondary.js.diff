@@ -4,10 +4,9 @@
 
 
  //// [index.js]
--var Strings = {
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+const Strings = {
+ const Strings = {
      a: "A",
      b: "B"
  };

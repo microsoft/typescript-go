@@ -1,12 +1,6 @@
 --- old.jsDeclarationsExportAssignmentWithKeywordName.js
 +++ new.jsDeclarationsExportAssignmentWithKeywordName.js
-@@= skipped -16, +16 lines =@@
-     more: {
-         others: ['strs']
-     },
--    x: x
-+    x
- };
+@@= skipped -21, +21 lines =@@
 
 
  //// [index.d.ts]

@@ -20,10 +20,7 @@
  exports.apply = 1;
  //// [test.js]
  "use strict";
--var apply = require('./moduleExportAliasDuplicateAlias').apply;
--var result = apply.toFixed();
-+const { apply } = require('./moduleExportAliasDuplicateAlias');
-+const result = apply.toFixed();
+@@= skipped -15, +21 lines =@@
 
 
  //// [moduleExportAliasDuplicateAlias.d.ts]

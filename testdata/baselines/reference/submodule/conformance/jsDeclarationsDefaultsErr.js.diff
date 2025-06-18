@@ -4,13 +4,15 @@
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
  // merge type alias and alias (should error, see #32367)
--var Cls = /** @class */ (function () {
--    function Cls() {
--        this.x = 12;
+-let Cls = (() => {
+-    class Cls {
+-        constructor() {
+-            this.x = 12;
+-        }
 -    }
 -    Cls.y = "ok";
 -    return Cls;
--}());
+-})();
 +class Cls {
 +    x = 12;
 +    static y = "ok";
@@ -18,30 +20,7 @@
  exports.default = Cls;
  /**
   * @typedef {string | number} default
-@@= skipped -15, +12 lines =@@
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- // merge type alias and class (error message improvement needed, see #32368)
--var C = /** @class */ (function () {
--    function C() {
--    }
--    return C;
--}());
-+class C {
-+}
- exports.default = C;
- ;
- /**
-@@= skipped -15, +12 lines =@@
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.default = void 0;
- // merge type alias and variable (behavior is borked, see #32366)
--var x = 12;
-+const x = 12;
- exports.default = x;
- /**
-  * @typedef {string | number} default
-@@= skipped -8, +8 lines =@@
+@@= skipped -37, +32 lines =@@
 
 
  //// [index1.d.ts]

@@ -9,9 +9,3 @@
  /**
   * @typedef {any} A
   */
-@@= skipped -8, +10 lines =@@
-  * @see {@linkcode A}
-  * @see {@linkplain A}
-  */
--var foo;
-+let foo;

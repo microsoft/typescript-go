@@ -1,19 +1,6 @@
 --- old.argumentsPropertyNameInJsMode1.js
 +++ new.argumentsPropertyNameInJsMode1.js
-@@= skipped -12, +12 lines =@@
-
-
- //// [a.js]
--var foo = {
--    f1: function (params) { }
-+const foo = {
-+    f1: (params) => { }
- };
- function f2(x) {
--    foo.f1({ x: x, arguments: [] });
-+    foo.f1({ x, arguments: [] });
- }
- f2(1, 2, 3);
+@@= skipped -22, +22 lines =@@
 
 
  //// [a.d.ts]

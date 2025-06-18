@@ -9,9 +9,3 @@
  // @ts-check
  var exports = {};
  /**
-@@= skipped -7, +9 lines =@@
-  */
- exports.SomeName;
- /** @type {exports.SomeName} */
--var myString = 'str';
-+const myString = 'str';

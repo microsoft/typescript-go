@@ -17,10 +17,9 @@
 + * @returns {number}
 + */
  /** @type {Foo} */
--var x = function () { return 1; };
-+const x = () => 1;
+ const x = () => 1;
  exports.x = x;
- var res = (0, exports.x)('a', 'b');
+@@= skipped -14, +14 lines =@@
 
 
  //// [callbackTagVariadicType.d.ts]

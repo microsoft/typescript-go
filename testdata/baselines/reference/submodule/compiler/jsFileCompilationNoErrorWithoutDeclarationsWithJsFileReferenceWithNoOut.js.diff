@@ -1,16 +1,9 @@
 --- old.jsFileCompilationNoErrorWithoutDeclarationsWithJsFileReferenceWithNoOut.js
 +++ new.jsFileCompilationNoErrorWithoutDeclarationsWithJsFileReferenceWithNoOut.js
-@@= skipped -14, +14 lines =@@
- }
-
+@@= skipped -16, +16 lines =@@
  //// [a.js]
--var c = /** @class */ (function () {
--    function c() {
--    }
--    return c;
--}());
-+class c {
-+}
+ class c {
+ }
 +//// [c.js]
 +function bar() {
 +}

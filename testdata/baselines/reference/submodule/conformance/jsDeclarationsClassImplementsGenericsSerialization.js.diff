@@ -1,28 +1,6 @@
 --- old.jsDeclarationsClassImplementsGenericsSerialization.js
 +++ new.jsDeclarationsClassImplementsGenericsSerialization.js
-@@= skipped -34, +34 lines =@@
-  * @template T
-  * @implements {IEncoder<T>}
-  */
--var Encoder = /** @class */ (function () {
--    function Encoder() {
--    }
-+class Encoder {
-     /**
-      * @param {T} value
-      */
--    Encoder.prototype.encode = function (value) {
-+    encode(value) {
-         return new Uint8Array(0);
--    };
--    return Encoder;
--}());
-+    }
-+}
- exports.Encoder = Encoder;
- /**
-  * @template T
-@@= skipped -27, +24 lines =@@
+@@= skipped -58, +58 lines =@@
   * @template T
   * @implements {IEncoder<T>}
   */

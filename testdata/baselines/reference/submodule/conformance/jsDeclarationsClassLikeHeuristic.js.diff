@@ -1,13 +1,6 @@
 --- old.jsDeclarationsClassLikeHeuristic.js
 +++ new.jsDeclarationsClassLikeHeuristic.js
-@@= skipped -7, +7 lines =@@
-
- //// [index.js]
- // https://github.com/microsoft/TypeScript/issues/35801
--var A;
-+let A;
- A = {};
- A.prototype.b = {};
+@@= skipped -13, +13 lines =@@
 
 
  //// [index.d.ts]

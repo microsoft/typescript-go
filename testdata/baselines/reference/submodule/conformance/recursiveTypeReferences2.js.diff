@@ -9,12 +9,7 @@
  /** @typedef {ReadonlyArray<Json>} JsonArray */
  /** @typedef {{ readonly [key: string]: Json }} JsonRecord */
  /** @typedef {boolean | number | string | null | JsonRecord | JsonArray | readonly []} Json */
-@@= skipped -22, +24 lines =@@
-   )
- }} XMLObject<T> */
- /** @type {XMLObject<{foo:string}>} */
--var p = {};
-+const p = {};
+@@= skipped -26, +28 lines =@@
 
 
  //// [bug39372.d.ts]

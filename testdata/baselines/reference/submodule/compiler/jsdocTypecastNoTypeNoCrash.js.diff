@@ -1,8 +1,0 @@
---- old.jsdocTypecastNoTypeNoCrash.js
-+++ new.jsdocTypecastNoTypeNoCrash.js
-@@= skipped -6, +6 lines =@@
-
- //// [index.js]
- function Foo() { }
--var a = /* @type string */ (Foo);
-+const a = /* @type string */ (Foo);

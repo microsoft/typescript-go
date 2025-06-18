@@ -37,8 +37,7 @@
 -    }
 -}
  //// [index.js]
--var j = require("./package.json");
-+const j = require("./package.json");
+ const j = require("./package.json");
 +export = j;
  module.exports = j;
 

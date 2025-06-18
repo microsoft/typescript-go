@@ -1,21 +1,6 @@
 --- old.jsDeclarationsDocCommentsOnConsts.js
 +++ new.jsDeclarationsDocCommentsOnConsts.js
-@@= skipped -20, +20 lines =@@
- /**
-  * const doc comment
-  */
--var x = function (a) {
-+const x = (a) => {
-     return '';
- };
- /**
-@@= skipped -9, +9 lines =@@
- function b() {
-     return 0;
- }
--module.exports = { x: x, b: b };
-+module.exports = { x, b };
-
+@@= skipped -34, +34 lines =@@
 
  //// [index1.d.ts]
  /**

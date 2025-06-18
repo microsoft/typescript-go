@@ -12,13 +12,7 @@
  /**
   * Imports
   *
-@@= skipped -41, +44 lines =@@
-      * @param {HookHandler=} handle
-      * @returns {State}
-      */
--    construct: function (input, handle) {
--        if (handle === void 0) { handle = function () { return void 0; }; }
-+    construct(input, handle = () => void 0) {
+@@= skipped -45, +48 lines =@@
          return input;
      }
  };
@@ -30,7 +24,7 @@
  /**
   * @typedef {(arg: import("./context")) => void} HookHandler
   */
-@@= skipped -16, +18 lines =@@
+@@= skipped -11, +14 lines =@@
  function Hook(handle) {
      this.handle = handle;
  }

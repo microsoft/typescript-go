@@ -4,10 +4,9 @@
 
 
  //// [commonJSAliasedExport.js]
--var donkey = function (ast) { return ast; };
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
-+const donkey = (ast) => ast;
+ const donkey = (ast) => ast;
  function funky(declaration) {
      return false;
  }
@@ -16,11 +15,7 @@
 +export var funky = funky;
  module.exports.funky = funky;
  //// [bug43713.js]
--var funky = require('./commonJSAliasedExport').funky;
-+const { funky } = require('./commonJSAliasedExport');
- /** @type {boolean} */
- var diddy;
- var diddy = funky(1);
+ const { funky } = require('./commonJSAliasedExport');
 @@= skipped -15, +19 lines =@@
 
  //// [commonJSAliasedExport.d.ts]

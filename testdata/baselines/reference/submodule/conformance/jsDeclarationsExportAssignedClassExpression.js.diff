@@ -1,21 +1,6 @@
 --- old.jsDeclarationsExportAssignedClassExpression.js
 +++ new.jsDeclarationsExportAssignedClassExpression.js
-@@= skipped -10, +10 lines =@@
- }
-
- //// [index.js]
--module.exports = /** @class */ (function () {
-+module.exports = class Thing {
-     /**
-      * @param {number} p
-      */
--    function Thing(p) {
-+    constructor(p) {
-         this.t = 12 + p;
-     }
--    return Thing;
--}());
-+};
+@@= skipped -21, +21 lines =@@
 
 
  //// [index.d.ts]

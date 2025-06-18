@@ -1,16 +1,6 @@
 --- old.jsDeclarationsExportFormsErr.js
 +++ new.jsDeclarationsExportFormsErr.js
-@@= skipped -24, +24 lines =@@
- "use strict";
- Object.defineProperty(exports, "__esModule", { value: true });
- exports.Foo = void 0;
--var Foo = /** @class */ (function () {
--    function Foo() {
--    }
--    return Foo;
--}());
-+class Foo {
-+}
+@@= skipped -29, +29 lines =@@
  exports.Foo = Foo;
  //// [bar.js]
  "use strict";
@@ -26,7 +16,7 @@
  module.exports = ns; // We refuse to bind cjs module exports assignments in the same file we find an import in
  //// [globalNs.js]
  "use strict";
-@@= skipped -42, +40 lines =@@
+@@= skipped -34, +35 lines =@@
 
 
  //// [cls.d.ts]

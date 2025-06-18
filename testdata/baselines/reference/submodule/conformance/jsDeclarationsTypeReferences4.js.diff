@@ -1,16 +1,9 @@
 --- old.jsDeclarationsTypeReferences4.js
 +++ new.jsDeclarationsTypeReferences4.js
-@@= skipped -28, +28 lines =@@
- var A;
- (function (A) {
-     // @ts-ignore
--    var B;
-+    let B;
+@@= skipped -32, +32 lines =@@
      (function (B) {
--        var Something = require("fs").Something;
--        var thing = new Something();
-+        const Something = require("fs").Something;
-+        const thing = new Something();
+         const Something = require("fs").Something;
+         const thing = new Something();
 +        // @ts-ignore
 +        export { thing };
      })(B = A.B || (A.B = {}));

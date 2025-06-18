@@ -1,21 +1,14 @@
 --- old.jsDeclarationsReexportAliasesEsModuleInterop.js
 +++ new.jsDeclarationsReexportAliasesEsModuleInterop.js
-@@= skipped -12, +12 lines =@@
-
-
+@@= skipped -14, +14 lines =@@
  //// [cls.js]
--var Foo = /** @class */ (function () {
--    function Foo() {
--    }
--    return Foo;
--}());
-+class Foo {
-+}
+ class Foo {
+ }
 +export = Foo;
  module.exports = Foo;
  //// [usage.js]
  "use strict";
-@@= skipped -13, +11 lines =@@
+@@= skipped -8, +9 lines =@@
  };
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Foob = exports.x = void 0;
