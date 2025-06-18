@@ -589,8 +589,8 @@ func (c *Checker) GetCandidateSignaturesForStringLiteralCompletions(call *ast.Ca
 
 	// first, get candidates when inference is blocked from the source node.
 	candidates := runWithInferenceBlockedFromSourceNode(c, editingArgument, func() []*Signature {
-		_, candidates := c.getResolvedSignatureWorker(call, CheckModeNormal, 0)
-		return candidates
+		_, blockedInferenceCandidates := c.getResolvedSignatureWorker(call, CheckModeNormal, 0)
+		return blockedInferenceCandidates
 	})
 	for _, candidate := range candidates {
 		candidatesSet.Add(candidate)
@@ -598,8 +598,8 @@ func (c *Checker) GetCandidateSignaturesForStringLiteralCompletions(call *ast.Ca
 
 	// next, get candidates where the source node is considered for inference.
 	candidates = runWithoutResolvedSignatureCaching(c, editingArgument, func() []*Signature {
-		_, candidates := c.getResolvedSignatureWorker(call, CheckModeNormal, 0)
-		return candidates
+		_, inferenceCandidates := c.getResolvedSignatureWorker(call, CheckModeNormal, 0)
+		return inferenceCandidates
 	})
 
 	for _, candidate := range candidates {
