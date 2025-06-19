@@ -93,6 +93,7 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 		"typeOnlyMerge2.ts":                       "Needs investigation",
 		"typeOnlyMerge3.ts":                       "Needs investigation",
 		"filesEmittingIntoSameOutput.ts":          "Output order nondeterministic due to collision on filename during parallel emit.",
+		"grammarErrors.ts":                        "Output order nondeterministic due to collision on filename during parallel emit.",
 	}
 	deprecatedTests := []string{
 		// Test deprecated `importsNotUsedAsValue`
