@@ -27,7 +27,6 @@ export const x: () => Thing = null as any;
     "exports": "./index.ts"
 }
 
-
 //// [other.js]
 export const x = null;
 //// [index.js]

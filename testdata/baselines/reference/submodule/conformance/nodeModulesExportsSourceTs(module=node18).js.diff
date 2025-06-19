@@ -1,14 +1,6 @@
 --- old.nodeModulesExportsSourceTs(module=node18).js
 +++ new.nodeModulesExportsSourceTs(module=node18).js
-@@= skipped -26, +26 lines =@@
-     "exports": "./index.ts"
- }
-
-+
- //// [other.js]
- export const x = null;
- //// [index.js]
-@@= skipped -10, +11 lines =@@
+@@= skipped -36, +36 lines =@@
 
 
  //// [other.d.ts]
