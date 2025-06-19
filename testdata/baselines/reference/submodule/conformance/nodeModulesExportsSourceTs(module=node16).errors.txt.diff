@@ -1,0 +1,7 @@
+--- old.nodeModulesExportsSourceTs(module=node16).errors.txt
++++ new.nodeModulesExportsSourceTs(module=node16).errors.txt
+@@= skipped -31, +31 lines =@@
+         "type": "module",
+         "exports": "./index.ts"
+     }
++    

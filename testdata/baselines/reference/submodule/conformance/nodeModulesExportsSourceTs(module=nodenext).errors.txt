@@ -32,3 +32,4 @@ index.ts(3,14): error TS2742: The inferred type of 'a' cannot be named without a
         "type": "module",
         "exports": "./index.ts"
     }
+    
