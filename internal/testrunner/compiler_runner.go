@@ -362,6 +362,7 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 
 var skippedEmitTests = map[string]string{
 	"filesEmittingIntoSameOutput.ts":                  "Output order nondeterministic due to collision on filename during parallel emit.",
+	"jsFileCompilationWithJsEmitPathSameAsInput.ts":   "Output order nondeterministic due to collision on filename during parallel emit.",
 	"grammarErrors.ts":                                "Output order nondeterministic due to collision on filename during parallel emit.",
 	"jsDeclarationsReexportAliasesEsModuleInterop.ts": "cls.d.ts is missing statements when run concurrently.",
 	"jsFileCompilationWithoutJsExtensions.ts":         "No files are emitted.",
