@@ -16,6 +16,7 @@ type parseTask struct {
 	isRedirected       bool
 	subTasks           []*parseTask
 	loaded             bool
+	root               bool
 
 	metadata                     ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
@@ -27,7 +28,7 @@ type parseTask struct {
 
 	// Track if this file is from an external library (node_modules)
 	// This mirrors the TypeScript currentNodeModulesDepth > 0 check
-	isFromExternalLibrary bool
+	fromExternalLibrary bool
 }
 
 func (t *parseTask) FileName() string {
@@ -86,7 +87,7 @@ func (t *parseTask) load(loader *fileLoader) {
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 	t.isRedirected = true
 	// increaseDepth and elideOnDepth are not copied to redirects, otherwise their depth would be double counted.
-	t.subTasks = []*parseTask{{normalizedFilePath: tspath.NormalizePath(fileName), isLib: t.isLib}}
+	t.subTasks = []*parseTask{{normalizedFilePath: tspath.NormalizePath(fileName), isLib: t.isLib, fromExternalLibrary: t.fromExternalLibrary}}
 }
 
 type resolvedRef struct {
@@ -99,11 +100,11 @@ type resolvedRef struct {
 func (t *parseTask) addSubTask(ref resolvedRef, isLib bool) {
 	normalizedFilePath := tspath.NormalizePath(ref.fileName)
 	subTask := &parseTask{
-		normalizedFilePath:    normalizedFilePath,
-		isLib:                 isLib,
-		increaseDepth:         ref.increaseDepth,
-		elideOnDepth:          ref.elideOnDepth,
-		isFromExternalLibrary: ref.isFromExternalLibrary || t.isFromExternalLibrary, // Propagate external library status
+		normalizedFilePath:  normalizedFilePath,
+		isLib:               isLib,
+		increaseDepth:       ref.increaseDepth,
+		elideOnDepth:        ref.elideOnDepth,
+		fromExternalLibrary: ref.isFromExternalLibrary,
 	}
 	t.subTasks = append(t.subTasks, subTask)
 }
@@ -122,4 +123,16 @@ func (t *parseTask) shouldElideOnDepth() bool {
 
 func (t *parseTask) isLoaded() bool {
 	return t.loaded
+}
+
+func (t *parseTask) isRoot() bool {
+	return t.root
+}
+
+func (t *parseTask) isFromExternalLibrary() bool {
+	return t.fromExternalLibrary
+}
+
+func (t *parseTask) markFromExternalLibrary() {
+	t.fromExternalLibrary = true
 }

@@ -150,7 +150,7 @@ func processAllProgramFiles(
 		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
 			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
 		}
-		if task.isFromExternalLibrary {
+		if task.fromExternalLibrary {
 			sourceFilesFoundSearchingNodeModules.Add(path)
 		}
 	})
@@ -181,7 +181,7 @@ func (p *fileLoader) addRootTasks(files []string, isLib bool) {
 	for _, fileName := range files {
 		absPath := tspath.GetNormalizedAbsolutePath(fileName, p.opts.Host.GetCurrentDirectory())
 		if core.Tristate.IsTrue(p.opts.Config.CompilerOptions().AllowNonTsExtensions) || slices.Contains(p.supportedExtensions, tspath.TryGetExtensionFromPath(absPath)) {
-			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib})
+			p.rootTasks = append(p.rootTasks, &parseTask{normalizedFilePath: absPath, isLib: isLib, root: true})
 		}
 	}
 }
@@ -420,7 +420,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
 					fileName:              resolvedFileName,
 					increaseDepth:         resolvedModule.IsExternalLibraryImport,
 					elideOnDepth:          isJsFileFromNodeModules,
-					isFromExternalLibrary: isFromNodeModulesSearch,
+					isFromExternalLibrary: resolvedModule.IsExternalLibraryImport,
 				}, false)
 			}
 		}
