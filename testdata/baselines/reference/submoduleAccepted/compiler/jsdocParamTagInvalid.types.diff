@@ -1,0 +1,10 @@
+--- old.jsdocParamTagInvalid.types
++++ new.jsdocParamTagInvalid.types
+@@= skipped -2, +2 lines =@@
+ === /a.js ===
+ /** @param {string} colour */
+ function f(color) {}
+->f : (color: any) => void
+->color : any
++>f : (color: string) => void
++>color : string

@@ -1,0 +1,12 @@
+paramTagNestedWithoutTopLevelObject.js(5,16): error TS2339: Property 'p' does not exist on type 'number'.
+
+
+==== paramTagNestedWithoutTopLevelObject.js (1 errors) ====
+    /**
+     * @param {number} xyz.p
+     */
+    function g(xyz) {
+        return xyz.p;
+                   ~
+!!! error TS2339: Property 'p' does not exist on type 'number'.
+    }

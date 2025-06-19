@@ -5,13 +5,13 @@
  * @param {number} xyz.bar.p
  */
 function g(xyz) {
->g : (xyz: any) => any
->xyz : any
+>g : (xyz: number) => any
+>xyz : number
 
     return xyz.bar.p;
 >xyz.bar.p : any
 >xyz.bar : any
->xyz : any
+>xyz : number
 >bar : any
 >p : any
 }
