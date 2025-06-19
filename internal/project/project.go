@@ -164,6 +164,7 @@ type Project struct {
 	typingFiles              []string
 
 	// Watchers
+	watchMu                 sync.RWMutex
 	failedLookupsWatch      *watchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *watchedFiles[map[tspath.Path]string]
 	typingsFilesWatch       *watchedFiles[map[tspath.Path]string]
@@ -347,37 +348,48 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 	return languageService, cleanup
 }
 
-func (p *Project) getModuleResolutionWatchGlobs() (failedLookups map[tspath.Path]string, affectingLocaions map[tspath.Path]string) {
-	failedLookups = make(map[tspath.Path]string)
-	affectingLocaions = make(map[tspath.Path]string)
-	for _, resolvedModulesInFile := range p.program.GetResolvedModules() {
-		for _, resolvedModule := range resolvedModulesInFile {
-			for _, failedLookupLocation := range resolvedModule.FailedLookupLocations {
-				path := p.toPath(failedLookupLocation)
-				if _, ok := failedLookups[path]; !ok {
-					failedLookups[path] = failedLookupLocation
-				}
-			}
-			for _, affectingLocation := range resolvedModule.AffectingLocations {
-				path := p.toPath(affectingLocation)
-				if _, ok := affectingLocaions[path]; !ok {
-					affectingLocaions[path] = affectingLocation
-				}
-			}
-		}
-	}
-	return failedLookups, affectingLocaions
-}
-
-func (p *Project) updateWatchers(ctx context.Context) {
+func (p *Project) updatedResolutionWatchers(ctx context.Context, program *compiler.Program) {
 	client := p.Client()
 	if !p.host.IsWatchEnabled() || client == nil {
 		return
 	}
 
-	failedLookupGlobs, affectingLocationGlobs := p.getModuleResolutionWatchGlobs()
-	p.failedLookupsWatch.update(ctx, failedLookupGlobs)
-	p.affectingLocationsWatch.update(ctx, affectingLocationGlobs)
+	failedLookups := make(map[tspath.Path]string)
+	affectingLocations := make(map[tspath.Path]string)
+	extractLookups(program, failedLookups, affectingLocations, program.GetResolvedModules())
+	extractLookups(program, failedLookups, affectingLocations, program.GetResolvedTypeReferenceDirectives())
+	p.watchMu.Lock()
+	defer p.watchMu.Unlock()
+	p.failedLookupsWatch.update(ctx, failedLookups)
+	p.affectingLocationsWatch.update(ctx, affectingLocations)
+}
+
+type ResolutionWithLookupLocations interface {
+	GetLookupLocations() *module.LookupLocations
+}
+
+func extractLookups[T ResolutionWithLookupLocations](
+	program *compiler.Program,
+	failedLookups map[tspath.Path]string,
+	affectingLocations map[tspath.Path]string,
+	allResolutions map[tspath.Path]module.ModeAwareCache[T],
+) {
+	for _, resolutionsInFile := range allResolutions {
+		for _, resolution := range resolutionsInFile {
+			for _, failedLookupLocation := range resolution.GetLookupLocations().FailedLookupLocations {
+				path := tspath.ToPath(failedLookupLocation, program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames())
+				if _, ok := failedLookups[path]; !ok {
+					failedLookups[path] = failedLookupLocation
+				}
+			}
+			for _, affectingLocation := range resolution.GetLookupLocations().AffectingLocations {
+				path := tspath.ToPath(affectingLocation, program.GetCurrentDirectory(), program.UseCaseSensitiveFileNames())
+				if _, ok := affectingLocations[path]; !ok {
+					affectingLocations[path] = affectingLocation
+				}
+			}
+		}
+	}
 }
 
 // onWatchEventForNilScriptInfo is fired for watch events that are not the
@@ -389,6 +401,8 @@ func (p *Project) updateWatchers(ctx context.Context) {
 //     part of the project, e.g., a .js file in a project without --allowJs.
 func (p *Project) onWatchEventForNilScriptInfo(fileName string) {
 	path := p.toPath(fileName)
+	p.watchMu.RLock()
+	defer p.watchMu.RUnlock()
 	if _, ok := p.failedLookupsWatch.data[path]; ok {
 		p.markAsDirty()
 	} else if _, ok := p.affectingLocationsWatch.data[path]; ok {
@@ -528,9 +542,7 @@ func (p *Project) updateGraph() (*compiler.Program, bool) {
 			})
 		}
 		p.enqueueInstallTypingsForProject(oldProgram, hasAddedOrRemovedFiles)
-		// TODO: this is currently always synchronously called by some kind of updating request,
-		// but in Strada we throttle, so at least sometimes this should be considered top-level?
-		p.updateWatchers(context.TODO())
+		go p.updatedResolutionWatchers(context.TODO(), p.program)
 	}
 	p.Logf("Finishing updateGraph: Project: %s version: %d in %s", p.name, p.version, time.Since(start))
 	return p.program, true
@@ -771,10 +783,11 @@ func (p *Project) UpdateTypingFiles(typingsInfo *TypingsInfo, typingFiles []stri
 
 func (p *Project) WatchTypingLocations(files []string) {
 	p.mu.Lock()
-	defer p.mu.Unlock()
 	if p.isClosed() {
+		p.mu.Unlock()
 		return
 	}
+	p.mu.Unlock()
 
 	client := p.Client()
 	if !p.host.IsWatchEnabled() || client == nil {
@@ -820,6 +833,8 @@ func (p *Project) WatchTypingLocations(files []string) {
 		}
 	}
 	ctx := context.Background()
+	p.watchMu.Lock()
+	defer p.watchMu.Unlock()
 	p.typingsFilesWatch.update(ctx, typingsInstallerFileGlobs)
 	p.typingsDirectoryWatch.update(ctx, typingsInstallerDirectoryGlobs)
 }

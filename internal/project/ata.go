@@ -158,7 +158,7 @@ func (ti *TypingsInstaller) discoverAndInstallTypings(p *Project, typingsInfo *T
 	)
 
 	// start watching files
-	p.WatchTypingLocations(filesToWatch)
+	go p.WatchTypingLocations(filesToWatch)
 
 	requestId := ti.installRunCount.Add(1)
 	// install typings
