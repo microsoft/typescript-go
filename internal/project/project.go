@@ -864,7 +864,7 @@ func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.isRoot(info) && p.kind == KindInferred {
-		p.deleteRootFileName(info.path)
+		p.deleteRootFileNameOfInferred(info.path)
 		p.typeAcquisition = nil
 		p.programConfig = nil
 	}
@@ -887,7 +887,7 @@ func (p *Project) AddInferredProjectRoot(info *ScriptInfo) {
 	if p.isRoot(info) {
 		panic("script info is already a root")
 	}
-	p.setRootFileName(info.path, info.fileName)
+	p.setRootFileNameOfInferred(info.path, info.fileName)
 	p.programConfig = nil
 	p.typeAcquisition = nil
 	// !!!
@@ -935,7 +935,7 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 		// !!! updateNonInferredProjectFiles uses a fileExists check, which I guess
 		// could be needed if a watcher fails?
 		newRootScriptInfos[path] = struct{}{}
-		p.setRootFileName(path, file)
+		p.rootFileNames.Set(path, file)
 		// if !isAlreadyRoot {
 		// 	if scriptInfo.isOpen {
 		// 		!!!s.removeRootOfInferredProjectIfNowPartOfOtherProject(scriptInfo)
@@ -946,13 +946,13 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 	if p.rootFileNames.Size() > len(rootFileNames) {
 		for root := range p.rootFileNames.Keys() {
 			if _, ok := newRootScriptInfos[root]; !ok {
-				p.deleteRootFileName(root)
+				p.rootFileNames.Delete(root)
 			}
 		}
 	}
 }
 
-func (p *Project) setRootFileName(path tspath.Path, fileName string) {
+func (p *Project) setRootFileNameOfInferred(path tspath.Path, fileName string) {
 	has := p.rootFileNames.Has(path)
 	p.rootFileNames.Set(path, fileName)
 	if p.kind == KindInferred {
@@ -962,7 +962,7 @@ func (p *Project) setRootFileName(path tspath.Path, fileName string) {
 	}
 }
 
-func (p *Project) deleteRootFileName(path tspath.Path) {
+func (p *Project) deleteRootFileNameOfInferred(path tspath.Path) {
 	fileName, ok := p.rootFileNames.Get(path)
 	if !ok {
 		return
