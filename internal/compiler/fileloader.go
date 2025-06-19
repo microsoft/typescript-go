@@ -49,9 +49,7 @@ type processedFiles struct {
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
 	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	// List of present unsupported extensions
-	unsupportedExtensions []string
-	// Track which source files were found while searching node_modules
-	// Similar to TypeScript's sourceFilesFoundSearchingNodeModules map
+	unsupportedExtensions                []string
 	sourceFilesFoundSearchingNodeModules map[tspath.Path]bool
 }
 
@@ -152,7 +150,6 @@ func processAllProgramFiles(
 		if slices.Contains(tspath.SupportedJSExtensionsFlat, extension) {
 			unsupportedExtensions = core.AppendIfUnique(unsupportedExtensions, extension)
 		}
-		// Track files from external libraries using the proper module resolution flag
 		if task.isFromExternalLibrary {
 			if sourceFilesFoundSearchingNodeModules == nil {
 				sourceFilesFoundSearchingNodeModules = make(map[tspath.Path]bool, totalFileCount)
@@ -313,10 +310,7 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 		referencedFileName = tspath.CombinePaths(basePath, moduleName)
 	}
 	return resolvedRef{
-		fileName:              tspath.NormalizePath(referencedFileName),
-		increaseDepth:         false,
-		elideOnDepth:          false,
-		isFromExternalLibrary: false, // Triple-slash references are always local files
+		fileName: tspath.NormalizePath(referencedFileName),
 	}
 }
 
