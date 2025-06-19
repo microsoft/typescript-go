@@ -11,7 +11,6 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/checker"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/testutil"
@@ -314,21 +313,22 @@ func newCompilerTest(
 	}
 }
 
-var concurrentSkippedErrorBaselines = collections.NewSetFromItems(
-	"circular1.ts",
-	"circular3.ts",
-	"recursiveExportAssignmentAndFindAliasedType1.ts",
-	"recursiveExportAssignmentAndFindAliasedType2.ts",
-	"recursiveExportAssignmentAndFindAliasedType3.ts",
-	"superInStaticMembers1.ts target=es2015",
-	"typeOnlyMerge2.ts",
-	"typeOnlyMerge3.ts",
-)
+var concurrentSkippedErrorBaselines = map[string]string{
+	"circular1.ts": "Circular error reported in an extra position.",
+	"circular3.ts": "Circular error reported in an extra position.",
+	"recursiveExportAssignmentAndFindAliasedType1.ts": "Circular error reported in an extra position.",
+	"recursiveExportAssignmentAndFindAliasedType2.ts": "Circular error reported in an extra position.",
+	"recursiveExportAssignmentAndFindAliasedType3.ts": "Circular error reported in an extra position.",
+	"typeOnlyMerge2.ts": "Type-only merging is not detected when files are checked on different checkers.",
+	"typeOnlyMerge3.ts": "Type-only merging is not detected when files are checked on different checkers.",
+}
 
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("error", func(t *testing.T) {
-		if !testutil.TestProgramIsSingleThreaded() && concurrentSkippedErrorBaselines.Has(c.testName) {
-			t.Skip("Skipping error baseline in concurrent mode")
+		if !testutil.TestProgramIsSingleThreaded() {
+			if msg, ok := concurrentSkippedErrorBaselines[c.basename]; ok {
+				t.Skipf("Skipping in concurrent mode: %s", msg)
+			}
 		}
 
 		defer testutil.RecoverAndFail(t, "Panic on creating error baseline for test "+c.filename)
