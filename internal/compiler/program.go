@@ -821,7 +821,7 @@ func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference,
 }
 
 func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
-	return p.sourceFilesFoundSearchingNodeModules[file.Path()]
+	return p.sourceFilesFoundSearchingNodeModules.Has(file.Path())
 }
 
 type FileIncludeKind int
