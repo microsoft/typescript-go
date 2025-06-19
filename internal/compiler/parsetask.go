@@ -9,13 +9,14 @@ import (
 )
 
 type parseTask struct {
-	normalizedFilePath string
-	path               tspath.Path
-	file               *ast.SourceFile
-	isLib              bool
-	isRedirected       bool
-	subTasks           []*parseTask
-	loaded             bool
+	normalizedFilePath          string
+	path                        tspath.Path
+	file                        *ast.SourceFile
+	isLib                       bool
+	isRedirected                bool
+	subTasks                    []*parseTask
+	loaded                      bool
+	isForAutomaticTypeDirective bool
 	root               bool
 
 	metadata                     ast.SourceFileMetaData
@@ -41,8 +42,11 @@ func (t *parseTask) Path() tspath.Path {
 
 func (t *parseTask) load(loader *fileLoader) {
 	t.loaded = true
-
 	t.path = loader.toPath(t.normalizedFilePath)
+	if t.isForAutomaticTypeDirective {
+		t.loadAutomaticTypeDirectives(loader)
+		return
+	}
 	redirect := loader.projectReferenceFileMapper.getParseFileRedirect(t)
 	if redirect != "" {
 		t.redirect(loader, redirect)
@@ -89,6 +93,15 @@ func (t *parseTask) redirect(loader *fileLoader, fileName string) {
 	// increaseDepth and elideOnDepth are not copied to redirects, otherwise their depth would be double counted.
 	t.subTasks = []*parseTask{{normalizedFilePath: tspath.NormalizePath(fileName), isLib: t.isLib, fromExternalLibrary: t.fromExternalLibrary}}
 }
+
+func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
+	toParseTypeRefs, typeResolutionsInFile := loader.resolveAutomaticTypeDirectives(t.normalizedFilePath)
+	t.typeResolutionsInFile = typeResolutionsInFile
+	for _, typeResolution := range toParseTypeRefs {
+		t.addSubTask(typeResolution, false)
+	}
+}
+
 
 type resolvedRef struct {
 	fileName              string
