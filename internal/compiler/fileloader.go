@@ -311,39 +311,38 @@ func (p *fileLoader) resolveTripleslashPathReference(moduleName string, containi
 	}
 }
 
-func (p *fileLoader) resolveTypeReferenceDirectives(file *ast.SourceFile, meta ast.SourceFileMetaData) (
-	toParse []resolvedRef,
-	typeResolutionsInFile module.ModeAwareCache[*module.ResolvedTypeReferenceDirective],
-) {
-	if len(file.TypeReferenceDirectives) != 0 {
-		toParse = make([]resolvedRef, 0, len(file.TypeReferenceDirectives))
-		typeResolutionsInFile = make(module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], len(file.TypeReferenceDirectives))
-		for _, ref := range file.TypeReferenceDirectives {
-			redirect := p.projectReferenceFileMapper.getRedirectForResolution(file)
-			resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, meta, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
-			resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), resolutionMode, redirect)
-			typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
-			if resolved.IsResolved() {
-				toParse = append(toParse, resolvedRef{
-					fileName:              resolved.ResolvedFileName,
-					increaseDepth:         resolved.IsExternalLibraryImport,
-					elideOnDepth:          false,
-					isFromExternalLibrary: resolved.IsExternalLibraryImport,
-				})
-			}
+func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
+	file := t.file
+	if len(file.TypeReferenceDirectives) == 0 {
+		return
+	}
+	meta := t.metadata
+
+	typeResolutionsInFile := make(module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], len(file.TypeReferenceDirectives))
+	for _, ref := range file.TypeReferenceDirectives {
+		redirect := p.projectReferenceFileMapper.getRedirectForResolution(file)
+		resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, meta, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
+		resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), resolutionMode, redirect)
+		typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
+		if resolved.IsResolved() {
+			t.addSubTask(resolvedRef{
+				fileName:              resolved.ResolvedFileName,
+				increaseDepth:         resolved.IsExternalLibraryImport,
+				elideOnDepth:          false,
+				isFromExternalLibrary: resolved.IsExternalLibraryImport,
+			}, false)
 		}
 	}
-	return toParse, typeResolutionsInFile
+
+	t.typeResolutionsInFile = typeResolutionsInFile
 }
 
 const externalHelpersModuleNameText = "tslib" // TODO(jakebailey): dedupe
 
-func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, meta ast.SourceFileMetaData) (
-	toParse []resolvedRef,
-	resolutionsInFile module.ModeAwareCache[*module.ResolvedModule],
-	importHelpersImportSpecifier *ast.Node,
-	jsxRuntimeImportSpecifier_ *jsxRuntimeImportSpecifier,
-) {
+func (p *fileLoader) resolveImportsAndModuleAugmentations(t *parseTask) {
+	file := t.file
+	meta := t.metadata
+
 	moduleNames := make([]*ast.Node, 0, len(file.Imports())+len(file.ModuleAugmentations)+2)
 
 	isJavaScriptFile := ast.IsSourceFileJS(file)
@@ -355,14 +354,14 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 		if optionsForFile.ImportHelpers.IsTrue() {
 			specifier := p.createSyntheticImport(externalHelpersModuleNameText, file)
 			moduleNames = append(moduleNames, specifier)
-			importHelpersImportSpecifier = specifier
+			t.importHelpersImportSpecifier = specifier
 		}
 
 		jsxImport := ast.GetJSXRuntimeImport(ast.GetJSXImplicitImportBase(optionsForFile, file), optionsForFile)
 		if jsxImport != "" {
 			specifier := p.createSyntheticImport(jsxImport, file)
 			moduleNames = append(moduleNames, specifier)
-			jsxRuntimeImportSpecifier_ = &jsxRuntimeImportSpecifier{
+			t.jsxRuntimeImportSpecifier = &jsxRuntimeImportSpecifier{
 				moduleReference: jsxImport,
 				specifier:       specifier,
 			}
@@ -380,8 +379,7 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 	}
 
 	if len(moduleNames) != 0 {
-		toParse = make([]resolvedRef, 0, len(moduleNames))
-		resolutionsInFile = make(module.ModeAwareCache[*module.ResolvedModule], len(moduleNames))
+		resolutionsInFile := make(module.ModeAwareCache[*module.ResolvedModule], len(moduleNames))
 
 		for index, entry := range moduleNames {
 			moduleName := entry.Text()
@@ -418,17 +416,17 @@ func (p *fileLoader) resolveImportsAndModuleAugmentations(file *ast.SourceFile, 
 				(importIndex < 0 || (importIndex < len(file.Imports()) && (ast.IsInJSFile(file.Imports()[importIndex]) || file.Imports()[importIndex].Flags&ast.NodeFlagsJSDoc == 0)))
 
 			if shouldAddFile {
-				toParse = append(toParse, resolvedRef{
+				t.addSubTask(resolvedRef{
 					fileName:              resolvedFileName,
 					increaseDepth:         resolvedModule.IsExternalLibraryImport,
 					elideOnDepth:          isJsFileFromNodeModules,
 					isFromExternalLibrary: isFromNodeModulesSearch,
-				})
+				}, false)
 			}
 		}
-	}
 
-	return toParse, resolutionsInFile, importHelpersImportSpecifier, jsxRuntimeImportSpecifier_
+		t.resolutionsInFile = resolutionsInFile
+	}
 }
 
 // Returns a DiagnosticMessage if we won't include a resolved module due to its extension.

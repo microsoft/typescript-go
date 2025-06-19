@@ -60,7 +60,6 @@ func (t *parseTask) load(loader *fileLoader) {
 	}
 
 	t.file = file
-
 	t.subTasks = make([]*parseTask, 0, len(file.ReferencedFiles)+len(file.Imports())+len(file.ModuleAugmentations))
 
 	for _, ref := range file.ReferencedFiles {
@@ -69,11 +68,7 @@ func (t *parseTask) load(loader *fileLoader) {
 	}
 
 	compilerOptions := loader.opts.Config.CompilerOptions()
-	toParseTypeRefs, typeResolutionsInFile := loader.resolveTypeReferenceDirectives(file, t.metadata)
-	t.typeResolutionsInFile = typeResolutionsInFile
-	for _, typeResolution := range toParseTypeRefs {
-		t.addSubTask(typeResolution, false)
-	}
+	loader.resolveTypeReferenceDirectives(t)
 
 	if compilerOptions.NoLib != core.TSTrue {
 		for _, lib := range file.LibReferenceDirectives {
@@ -85,14 +80,7 @@ func (t *parseTask) load(loader *fileLoader) {
 		}
 	}
 
-	toParse, resolutionsInFile, importHelpersImportSpecifier, jsxRuntimeImportSpecifier := loader.resolveImportsAndModuleAugmentations(file, t.metadata)
-	for _, imp := range toParse {
-		t.addSubTask(imp, false)
-	}
-
-	t.resolutionsInFile = resolutionsInFile
-	t.importHelpersImportSpecifier = importHelpersImportSpecifier
-	t.jsxRuntimeImportSpecifier = jsxRuntimeImportSpecifier
+	loader.resolveImportsAndModuleAugmentations(t)
 }
 
 func (t *parseTask) redirect(loader *fileLoader, fileName string) {
