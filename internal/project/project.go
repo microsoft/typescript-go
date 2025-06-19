@@ -953,9 +953,10 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 }
 
 func (p *Project) setRootFileName(path tspath.Path, fileName string) {
+	has := p.rootFileNames.Has(path)
 	p.rootFileNames.Set(path, fileName)
 	if p.kind == KindInferred {
-		if tspath.HasJSFileExtension(fileName) {
+		if !has && tspath.HasJSFileExtension(fileName) {
 			p.rootJSFileCount++
 		}
 	}
@@ -967,8 +968,10 @@ func (p *Project) deleteRootFileName(path tspath.Path) {
 		return
 	}
 	p.rootFileNames.Delete(path)
-	if p.kind == KindInferred && tspath.HasJSFileExtension(fileName) {
-		p.rootJSFileCount--
+	if p.kind == KindInferred {
+		if tspath.HasJSFileExtension(fileName) {
+			p.rootJSFileCount--
+		}
 	}
 }
 
