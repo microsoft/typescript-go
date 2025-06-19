@@ -1425,7 +1425,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 
 	// exclude literal suggestions after <input type="text" [||] /> microsoft/TypeScript#51667) and after closing quote (microsoft/TypeScript#52675)
 	// for strings getStringLiteralCompletions handles completions
-	isLiteralExpected := !ast.IsStringLiteralLike(previousToken) && !isJsxIdentifierExpected
+	isLiteralExpected := !(previousToken != nil && ast.IsStringLiteralLike(previousToken)) && !isJsxIdentifierExpected
 	var literals []literalValue
 	if isLiteralExpected {
 		var types []*checker.Type
@@ -3054,7 +3054,7 @@ func isFunctionLikeBodyKeyword(kind ast.Kind) bool {
 		kind == ast.KindAwaitKeyword ||
 		kind == ast.KindUsingKeyword ||
 		kind == ast.KindAsKeyword ||
-		kind == ast.KindAssertsKeyword ||
+		kind == ast.KindSatisfiesKeyword ||
 		kind == ast.KindTypeKeyword ||
 		!ast.IsContextualKeyword(kind) && !isClassMemberCompletionKeyword(kind)
 }

@@ -506,8 +506,8 @@ function parseSortText(expr: ts.Expression): string | undefined {
             return "ls.SortTextAutoImportSuggestions";
         case "completion.SortText.ClassMemberSnippets":
             return "ls.SortTextClassMemberSnippets";
-        case "completion.SortText.JavaScriptIdentifiers":
-            return "ls.SortTextJavaScriptIdentifiers";
+        case "completion.SortText.JavascriptIdentifiers":
+            return "ls.SortTextJavascriptIdentifiers";
         default:
             console.error(`Unrecognized sort text: ${text}`);
             return undefined; // !!! support deprecated/obj literal prop/etc

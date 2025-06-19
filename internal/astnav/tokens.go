@@ -511,7 +511,10 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 
 		// Case 3: childless node.
 		if !hasChildren {
-			return n
+			if n != containingNode {
+				return n
+			}
+			return nil
 		}
 		// Case 1: recur on rightmostValidNode.
 		if rightmostValidNode != nil {
