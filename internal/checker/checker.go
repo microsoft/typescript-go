@@ -20998,7 +20998,7 @@ func (c *Checker) fillMissingTypeArguments(typeArguments []*Type, typeParameters
 		return nil
 	}
 	numTypeArguments := len(typeArguments)
-	if numTypeArguments >= minTypeArgumentCount && numTypeArguments < numTypeParameters {
+	if isJavaScriptImplicitAny || (numTypeArguments >= minTypeArgumentCount && numTypeArguments < numTypeParameters) {
 		result := make([]*Type, numTypeParameters)
 		copy(result, typeArguments)
 		// Map invalid forward references in default types to the error type
@@ -22086,14 +22086,26 @@ func (c *Checker) getTypeFromClassOrInterfaceReference(node *ast.Node, symbol *a
 		isJs := ast.IsInJSFile(node)
 		isJsImplicitAny := !c.noImplicitAny && isJs
 		if !isJsImplicitAny && (numTypeArguments < minTypeArgumentCount || numTypeArguments > len(typeParameters)) {
-			message := diagnostics.Generic_type_0_requires_1_type_argument_s
-			if minTypeArgumentCount < len(typeParameters) {
-				message = diagnostics.Generic_type_0_requires_between_1_and_2_type_arguments
+			var message *diagnostics.Message
+
+			missingAugmentsTag := isJs && ast.IsExpressionWithTypeArguments(node) && !ast.IsJSDocAugmentsTag(node.Parent)
+			if missingAugmentsTag {
+				message = diagnostics.Expected_0_type_arguments_provide_these_with_an_extends_tag
+				if minTypeArgumentCount < len(typeParameters) {
+					message = diagnostics.Expected_0_1_type_arguments_provide_these_with_an_extends_tag
+				}
+			} else {
+				message = diagnostics.Generic_type_0_requires_1_type_argument_s
+				if minTypeArgumentCount < len(typeParameters) {
+					message = diagnostics.Generic_type_0_requires_between_1_and_2_type_arguments
+				}
 			}
-			typeStr := c.TypeToString(t) // !!! /*enclosingDeclaration*/, nil, TypeFormatFlagsWriteArrayAsGenericType
+			typeStr := c.TypeToStringEx(t, nil /*enclosingDeclaration*/, TypeFormatFlagsWriteArrayAsGenericType)
 			c.error(node, message, typeStr, minTypeArgumentCount, len(typeParameters))
-			// TODO: Adopt same permissive behavior in TS as in JS to reduce follow-on editing experience failures (requires editing fillMissingTypeArguments)
-			return c.errorType
+			if !isJs {
+				// TODO: Adopt same permissive behavior in TS as in JS to reduce follow-on editing experience failures (requires editing fillMissingTypeArguments)
+				return c.errorType
+			}
 		}
 		if node.Kind == ast.KindTypeReference && c.isDeferredTypeReferenceNode(node, numTypeArguments != len(typeParameters)) {
 			return c.createDeferredTypeReference(t, node, nil /*mapper*/, nil /*alias*/)

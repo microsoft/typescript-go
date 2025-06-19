@@ -9624,6 +9624,10 @@ func (node *JSDocAugmentsTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocAugmentsTag(node.TagName, node.ClassName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func IsJSDocAugmentsTag(node *Node) bool {
+	return node.Kind == KindJSDocAugmentsTag
+}
+
 // JSDocSatisfiesTag
 type JSDocSatisfiesTag struct {
 	JSDocTagBase
