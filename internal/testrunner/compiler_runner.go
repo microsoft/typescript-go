@@ -87,13 +87,8 @@ func (r *CompilerBaselineRunner) RunTests(t *testing.T) {
 	r.cleanUpLocal(t)
 	files := r.EnumerateTestFiles()
 	skippedTests := map[string]string{
-		"mappedTypeRecursiveInference.ts":         "Skipped until we have type printer with truncation limit.",
-		"jsFileCompilationWithoutJsExtensions.ts": "Skipped until we have proper allowJS support (and errors when not enabled.)",
-		"fileReferencesWithNoExtensions.ts":       "Skipped until we support adding missing extensions in subtasks in fileloader.go",
-		"typeOnlyMerge2.ts":                       "Needs investigation",
-		"typeOnlyMerge3.ts":                       "Needs investigation",
-		"filesEmittingIntoSameOutput.ts":          "Output order nondeterministic due to collision on filename during parallel emit.",
-		"grammarErrors.ts":                        "Output order nondeterministic due to collision on filename during parallel emit.",
+		"typeOnlyMerge2.ts": "Needs investigation",
+		"typeOnlyMerge3.ts": "Needs investigation",
 	}
 	deprecatedTests := []string{
 		// Test deprecated `importsNotUsedAsValue`
@@ -369,12 +364,23 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 	})
 }
 
+var skippedEmitTests = map[string]string{
+	"filesEmittingIntoSameOutput.ts":                  "Output order nondeterministic due to collision on filename during parallel emit.",
+	"grammarErrors.ts":                                "Output order nondeterministic due to collision on filename during parallel emit.",
+	"jsDeclarationsReexportAliasesEsModuleInterop.ts": "cls.d.ts is missing statements when run concurrently.",
+	"jsFileCompilationWithoutJsExtensions.ts":         "No files are emitted.",
+}
+
 func (c *compilerTest) verifyJavaScriptOutput(t *testing.T, suiteName string, isSubmodule bool) {
 	if !c.hasNonDtsFiles {
 		return
 	}
 
 	t.Run("output", func(t *testing.T) {
+		if msg, ok := skippedEmitTests[c.basename]; ok {
+			t.Skip(msg)
+		}
+
 		defer testutil.RecoverAndFail(t, "Panic on creating js output for test "+c.filename)
 		headerComponents := tspath.GetPathComponentsRelativeTo(repo.TestDataPath, c.filename, tspath.ComparePathsOptions{})
 		if isSubmodule {
