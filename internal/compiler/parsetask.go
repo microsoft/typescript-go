@@ -17,7 +17,7 @@ type parseTask struct {
 	subTasks                    []*parseTask
 	loaded                      bool
 	isForAutomaticTypeDirective bool
-	root               bool
+	root                        bool
 
 	metadata                     ast.SourceFileMetaData
 	resolutionsInFile            module.ModeAwareCache[*module.ResolvedModule]
@@ -101,7 +101,6 @@ func (t *parseTask) loadAutomaticTypeDirectives(loader *fileLoader) {
 		t.addSubTask(typeResolution, false)
 	}
 }
-
 
 type resolvedRef struct {
 	fileName              string
