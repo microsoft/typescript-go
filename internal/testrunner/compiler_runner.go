@@ -364,6 +364,7 @@ var skippedEmitTests = map[string]string{
 	"filesEmittingIntoSameOutput.ts":                  "Output order nondeterministic due to collision on filename during parallel emit.",
 	"jsFileCompilationWithJsEmitPathSameAsInput.ts":   "Output order nondeterministic due to collision on filename during parallel emit.",
 	"grammarErrors.ts":                                "Output order nondeterministic due to collision on filename during parallel emit.",
+	"jsFileCompilationEmitBlockedCorrectly.ts":        "Output order nondeterministic due to collision on filename during parallel emit.",
 	"jsDeclarationsReexportAliasesEsModuleInterop.ts": "cls.d.ts is missing statements when run concurrently.",
 	"jsFileCompilationWithoutJsExtensions.ts":         "No files are emitted.",
 	"typeOnlyMerge2.ts":                               "Nondeterministic contents when run concurrently.",
