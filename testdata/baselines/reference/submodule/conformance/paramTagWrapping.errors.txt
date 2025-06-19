@@ -1,4 +1,6 @@
 bad.js(9,14): error TS7006: Parameter 'x' implicitly has an 'any' type.
+bad.js(9,17): error TS7006: Parameter 'y' implicitly has an 'any' type.
+bad.js(9,20): error TS7006: Parameter 'z' implicitly has an 'any' type.
 
 
 ==== good.js (0 errors) ====
@@ -16,7 +18,7 @@ bad.js(9,14): error TS7006: Parameter 'x' implicitly has an 'any' type.
     good(1, 2, 3)
     
     
-==== bad.js (1 errors) ====
+==== bad.js (3 errors) ====
     /**
      * @param *
      * {number} x Arg x.
@@ -28,6 +30,10 @@ bad.js(9,14): error TS7006: Parameter 'x' implicitly has an 'any' type.
     function bad(x, y, z) {
                  ~
 !!! error TS7006: Parameter 'x' implicitly has an 'any' type.
+                    ~
+!!! error TS7006: Parameter 'y' implicitly has an 'any' type.
+                       ~
+!!! error TS7006: Parameter 'z' implicitly has an 'any' type.
     }
     
     bad(1, 2, 3)

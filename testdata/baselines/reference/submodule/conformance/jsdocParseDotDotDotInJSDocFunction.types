@@ -4,12 +4,12 @@
 // from bcryptjs
 /** @param {function(...[*])} callback */
 function g(callback) {
->g : (callback: function) => void
->callback : function
+>g : (callback: any) => void
+>callback : any
 
     callback([1], [2], [3])
 >callback([1], [2], [3]) : any
->callback : function
+>callback : any
 >[1] : number[]
 >1 : 1
 >[2] : number[]

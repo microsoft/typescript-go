@@ -50,19 +50,7 @@
   */
  function bad1(x, {a, b}) {}
 ->bad1 : (x: string, { a, b }: string) => void
-->x : string
-+>bad1 : (x: { a: string; b: string; }, { a, b }: { a: any; b: any; }) => void
-+>x : { a: string; b: string; }
++>bad1 : (x: string, { a, b }: { a: any; b: any; }) => void
+ >x : string
  >a : any
  >b : any
-
-@@= skipped -10, +10 lines =@@
-  * @param {{a: string, b: string}} obj
-  */
- function bad2(x, {a, b}) {}
-->bad2 : (x: any, { a, b }: { a: string; b: string; }) => void
-->x : any
-+>bad2 : (x: string, { a, b }: { a: string; b: string; }) => void
-+>x : string
- >a : string
- >b : string

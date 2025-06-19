@@ -118,8 +118,8 @@ function good9({ a }) {
  * @param {string} x
  */
 function bad1(x, {a, b}) {}
->bad1 : (x: { a: string; b: string; }, { a, b }: { a: any; b: any; }) => void
->x : { a: string; b: string; }
+>bad1 : (x: string, { a, b }: { a: any; b: any; }) => void
+>x : string
 >a : any
 >b : any
 
@@ -128,8 +128,8 @@ function bad1(x, {a, b}) {}
  * @param {{a: string, b: string}} obj
  */
 function bad2(x, {a, b}) {}
->bad2 : (x: string, { a, b }: { a: string; b: string; }) => void
->x : string
+>bad2 : (x: any, { a, b }: { a: string; b: string; }) => void
+>x : any
 >a : string
 >b : string
 
