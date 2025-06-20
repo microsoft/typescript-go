@@ -340,6 +340,11 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 		return true
 	}
 
+	// Json file is not emitted if outDir is not specified
+	if options.OutDir == "" {
+		return false
+	}
+
 	// Otherwise if rootDir or composite config file, we know common sourceDir and can check if file would be emitted in same location
 	if options.RootDir != "" || (options.Composite.IsTrue() && options.ConfigFilePath != "") {
 		commonDir := tspath.GetNormalizedAbsolutePath(outputpaths.GetCommonSourceDirectory(options, func() []string { return nil }, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames()), host.GetCurrentDirectory())
