@@ -1,28 +1,6 @@
 --- old.requireOfJsonFileWithEmptyObject.js
 +++ new.requireOfJsonFileWithEmptyObject.js
-@@= skipped -11, +11 lines =@@
- {
- }
-
--//// [out/b.json]
--{}
-+out/b.json(1,1): error TS1005: '{' expected.
-+out/b.json(1,2): error TS1136: Property assignment expected.
-+out/b.json(1,4): error TS1012: Unexpected token.
-+out/b.json(2,1): error TS1005: '}' expected.
-+
-+
-+==== out/b.json (4 errors) ====
-+    ({})
-+    ~
-+!!! error TS1005: '{' expected.
-+     ~
-+!!! error TS1136: Property assignment expected.
-+       ~
-+!!! error TS1012: Unexpected token.
-+    
-+    
-+!!! error TS1005: '}' expected.
+@@= skipped -16, +16 lines =@@
  //// [out/file1.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });

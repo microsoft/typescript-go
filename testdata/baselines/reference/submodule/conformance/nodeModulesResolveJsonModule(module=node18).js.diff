@@ -1,21 +1,6 @@
 --- old.nodeModulesResolveJsonModule(module=node18).js
 +++ new.nodeModulesResolveJsonModule(module=node18).js
-@@= skipped -26, +26 lines =@@
- }
-
- //// [package.json]
--{
-+({
-     "name": "pkg",
-     "version": "0.0.1",
-     "type": "module",
-     "default": "misedirection"
--}
-+})
- //// [index.js]
- import pkg from "./package.json" with { type: "json" };
- export const name = pkg.name;
-@@= skipped -14, +14 lines =@@
+@@= skipped -40, +40 lines =@@
  export const name2 = ns.default.name;
  //// [index.cjs]
  "use strict";

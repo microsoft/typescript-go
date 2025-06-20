@@ -1,15 +1,8 @@
 --- old.requireOfJsonFileWithAmd.js
 +++ new.requireOfJsonFileWithAmd.js
-@@= skipped -15, +15 lines =@@
- }
-
- //// [out/b.json]
--{
-+({
-     "a": true,
+@@= skipped -20, +20 lines =@@
      "b": "hello"
--}
-+})
+ }
  //// [out/file1.js]
 -define(["require", "exports", "./b", "./b.json"], function (require, exports, b1, b2) {
 -    "use strict";

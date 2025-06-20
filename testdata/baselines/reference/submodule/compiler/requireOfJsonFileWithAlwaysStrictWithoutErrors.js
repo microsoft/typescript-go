@@ -15,26 +15,11 @@ if (x) {
     "b": "hello"
 }
 
-out/b.json(1,1): error TS1005: '{' expected.
-out/b.json(1,2): error TS1136: Property assignment expected.
-out/b.json(4,2): error TS1012: Unexpected token.
-out/b.json(5,1): error TS1005: '}' expected.
-
-
-==== out/b.json (4 errors) ====
-    ({
-    ~
-!!! error TS1005: '{' expected.
-     ~
-!!! error TS1136: Property assignment expected.
-        "a": true,
-        "b": "hello"
-    })
-     ~
-!!! error TS1012: Unexpected token.
-    
-    
-!!! error TS1005: '}' expected.
+//// [b.json]
+{
+    "a": true,
+    "b": "hello"
+}
 //// [file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
