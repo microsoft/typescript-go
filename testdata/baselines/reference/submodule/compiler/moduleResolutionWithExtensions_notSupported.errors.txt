@@ -1,11 +1,14 @@
 /a.ts(1,17): error TS2307: Cannot find module './tsx' or its corresponding type declarations.
+/a.ts(2,17): error TS2307: Cannot find module './jsx' or its corresponding type declarations.
 
 
-==== /a.ts (1 errors) ====
+==== /a.ts (2 errors) ====
     import tsx from "./tsx"; // Not allowed.
                     ~~~~~~~
 !!! error TS2307: Cannot find module './tsx' or its corresponding type declarations.
     import jsx from "./jsx"; // Not allowed.
+                    ~~~~~~~
+!!! error TS2307: Cannot find module './jsx' or its corresponding type declarations.
     import js from "./js"; // OK because it's an untyped module.
     
 ==== /tsx.tsx (0 errors) ====

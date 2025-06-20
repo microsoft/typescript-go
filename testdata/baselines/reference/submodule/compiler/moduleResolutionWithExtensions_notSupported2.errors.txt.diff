@@ -2,13 +2,14 @@
 +++ new.moduleResolutionWithExtensions_notSupported2.errors.txt
 @@= skipped -0, +0 lines =@@
 -/a.ts(1,17): error TS6142: Module './jsx' was resolved to '/jsx.jsx', but '--jsx' is not set.
--
--
--==== /a.ts (1 errors) ====
--    import jsx from "./jsx";
--                    ~~~~~~~
++/a.ts(1,17): error TS2307: Cannot find module './jsx' or its corresponding type declarations.
+
+
+ ==== /a.ts (1 errors) ====
+     import jsx from "./jsx";
+                     ~~~~~~~
 -!!! error TS6142: Module './jsx' was resolved to '/jsx.jsx', but '--jsx' is not set.
--    
--==== /jsx.jsx (0 errors) ====
--    
-+<no content>
++!!! error TS2307: Cannot find module './jsx' or its corresponding type declarations.
+     
+ ==== /jsx.jsx (0 errors) ====
+     

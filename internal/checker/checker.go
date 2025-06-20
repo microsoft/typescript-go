@@ -14482,13 +14482,24 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		mode = c.program.GetDefaultResolutionModeForFile(importingSourceFile)
 	}
 
-	var sourceFile *ast.SourceFile
 	resolvedModule := c.program.GetResolvedModule(importingSourceFile, moduleReference, mode)
-	if resolvedModule.IsResolved() {
+
+	var resolutionDiagnostic *diagnostics.Message
+	if errorNode != nil && resolvedModule.IsResolved() {
+		resolutionDiagnostic = module.GetResolutionDiagnostic(c.compilerOptions, resolvedModule, importingSourceFile)
+	}
+
+	var sourceFile *ast.SourceFile
+	if resolvedModule.IsResolved() && (resolutionDiagnostic == nil || resolutionDiagnostic == diagnostics.Module_0_was_resolved_to_1_but_jsx_is_not_set) {
 		sourceFile = c.program.GetSourceFileForResolvedModule(resolvedModule.ResolvedFileName)
 	}
 
 	if sourceFile != nil {
+		// If there's a resolutionDiagnostic we need to report it even if a sourceFile is found.
+		if resolutionDiagnostic != nil {
+			c.error(errorNode, resolutionDiagnostic, moduleReference, resolvedModule.ResolvedFileName)
+		}
+
 		// !!!
 		if errorNode != nil {
 			if resolvedModule.ResolvedUsingTsExtension && tspath.IsDeclarationFileName(moduleReference) {
@@ -14577,7 +14588,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 
 		if sourceFile.Symbol != nil {
 			if errorNode != nil {
-				if resolvedModule.IsExternalLibraryImport && !(tspath.ExtensionIsTs(resolvedModule.Extension) || resolvedModule.Extension == tspath.ExtensionJson) {
+				if resolvedModule.IsExternalLibraryImport && !resolutionExtensionIsTSOrJson(resolvedModule.Extension) {
 					c.errorOnImplicitAnyModule(false /*isError*/, errorNode, mode, resolvedModule, moduleReference)
 				}
 				if c.moduleKind == core.ModuleKindNode16 || c.moduleKind == core.ModuleKindNode18 {
@@ -14633,7 +14644,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		return nil
 	}
 
-	if resolvedModule.IsResolved() && !(tspath.ExtensionIsTs(resolvedModule.Extension) || resolvedModule.Extension == tspath.ExtensionJson) {
+	if resolvedModule.IsResolved() && !resolutionExtensionIsTSOrJson(resolvedModule.Extension) && resolutionDiagnostic == nil || resolutionDiagnostic == diagnostics.Could_not_find_a_declaration_file_for_module_0_1_implicitly_has_an_any_type {
 		if isForAugmentation {
 			c.error(
 				errorNode,
@@ -14663,7 +14674,6 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 			}
 		}
 
-		// !!!
 		isExtensionlessRelativePathImport := tspath.PathIsRelative(moduleReference) && !tspath.HasExtension(moduleReference)
 		resolutionIsNode16OrNext := c.moduleResolutionKind == core.ModuleResolutionKindNode16 || c.moduleResolutionKind == core.ModuleResolutionKindNodeNext
 		if !c.compilerOptions.GetResolveJsonModule() && tspath.FileExtensionIs(moduleReference, tspath.ExtensionJson) {
@@ -14684,6 +14694,10 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 	}
 
 	return nil
+}
+
+func resolutionExtensionIsTSOrJson(ext string) bool {
+	return tspath.ExtensionIsTs(ext) || ext == tspath.ExtensionJson
 }
 
 func (c *Checker) getSuggestedImportSource(moduleReference string, tsExtension string, mode core.ResolutionMode) string {
