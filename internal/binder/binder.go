@@ -584,7 +584,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	if node.Parent == nil || node.Parent.Flags&ast.NodeFlagsReparsed != 0 {
+	if node.Parent == nil || node.Parent != b.parent && node.Parent.Flags&ast.NodeFlagsReparsed != 0 {
 		node.Parent = b.parent
 	}
 	saveInStrictMode := b.inStrictMode
