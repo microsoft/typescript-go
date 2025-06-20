@@ -126,7 +126,8 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 	}
 
 	if commandLine.CompilerOptions().Watch.IsTrue() && commandLine.CompilerOptions().ListFilesOnly.IsTrue() {
-		return ExitStatusNotImplemented, nil
+		reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "watch", "listFilesOnly"))
+		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
 	}
 
 	if commandLine.CompilerOptions().Project != "" {
@@ -166,12 +167,13 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 
 	// !!! convert to options with absolute paths is usually done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
-
+	configForCompilation := commandLine
+	var extendedConfigCache collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	var configTime time.Duration
 	if configFileName != "" {
 		configStart := sys.Now()
-		extendedConfigCache := collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
 		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, &extendedConfigCache)
-		configTime := sys.Now().Sub(configStart)
+		configTime = sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
 			for _, e := range errors {
@@ -179,40 +181,32 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 			}
 			return ExitStatusDiagnosticsPresent_OutputsGenerated, nil
 		}
-		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
-			showConfig(sys, configParseResult.CompilerOptions())
-			return ExitStatusSuccess, nil
-		}
-		// updateReportDiagnostic
-		if isWatchSet(configParseResult.CompilerOptions()) {
-			return ExitStatusSuccess, createWatcher(sys, configParseResult, reportDiagnostic)
-		}
-		// !!! incremental
-		return performCompilation(
+		configForCompilation = configParseResult
+		// Updater to reflect pretty
+		reportDiagnostic = createDiagnosticReporter(sys, commandLine.CompilerOptions())
+	}
+
+	if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
+		showConfig(sys, configForCompilation.CompilerOptions())
+		return ExitStatusSuccess, nil
+	}
+	if configForCompilation.CompilerOptions().Watch.IsTrue() {
+		return ExitStatusSuccess, createWatcher(sys, configForCompilation, reportDiagnostic)
+	} else if configForCompilation.CompilerOptions().IsIncremental() {
+		return performIncrementalCompilation(
 			sys,
-			configParseResult,
+			configForCompilation,
 			reportDiagnostic,
 			&extendedConfigCache,
 			configTime,
 		), nil
-	} else {
-		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
-			showConfig(sys, compilerOptionsFromCommandLine)
-			return ExitStatusSuccess, nil
-		}
-		// todo update reportDiagnostic
-		if isWatchSet(compilerOptionsFromCommandLine) {
-			// !!! reportWatchModeWithoutSysSupport
-			return ExitStatusSuccess, createWatcher(sys, commandLine, reportDiagnostic)
-		}
-		// !!! incremental
 	}
 	return performCompilation(
 		sys,
-		commandLine,
+		configForCompilation,
 		reportDiagnostic,
-		nil,
-		0, /*configTime*/
+		&extendedConfigCache,
+		configTime,
 	), nil
 }
 
@@ -228,6 +222,17 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 		return ""
 	}
 	return result
+}
+
+func performIncrementalCompilation(
+	sys System,
+	config *tsoptions.ParsedCommandLine,
+	reportDiagnostic diagnosticReporter,
+	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	configTime time.Duration,
+) ExitStatus {
+	// !!
+	return performCompilation(sys, config, reportDiagnostic, extendedConfigCache, configTime)
 }
 
 func performCompilation(
@@ -350,14 +355,6 @@ func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagn
 // func isBuildCommand(args []string) bool {
 // 	return len(args) > 0 && args[0] == "build"
 // }
-
-func isWatchSet(options *core.CompilerOptions) bool {
-	return options.Watch.IsTrue()
-}
-
-func isIncrementalCompilation(options *core.CompilerOptions) bool {
-	return options.Incremental.IsTrue()
-}
 
 func showConfig(sys System, config *core.CompilerOptions) {
 	// !!!
