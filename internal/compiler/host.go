@@ -2,6 +2,7 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -22,28 +23,32 @@ type CompilerHost interface {
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	currentDirectory   string
-	fs                 vfs.FS
-	defaultLibraryPath string
+	currentDirectory    string
+	fs                  vfs.FS
+	defaultLibraryPath  string
+	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
 }
 
 func NewCachedFSCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
+	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 ) CompilerHost {
-	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache)
 }
 
 func NewCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
+	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 ) CompilerHost {
 	return &compilerHost{
-		currentDirectory:   currentDirectory,
-		fs:                 fs,
-		defaultLibraryPath: defaultLibraryPath,
+		currentDirectory:    currentDirectory,
+		fs:                  fs,
+		defaultLibraryPath:  defaultLibraryPath,
+		extendedConfigCache: extendedConfigCache,
 	}
 }
 
@@ -72,6 +77,9 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, nil)
+	if h.extendedConfigCache == nil {
+		h.extendedConfigCache = &collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
+	}
+	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, h.extendedConfigCache)
 	return commandLine
 }
