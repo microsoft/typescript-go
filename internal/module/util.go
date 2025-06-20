@@ -141,7 +141,10 @@ func GetResolutionDiagnostic(options *core.CompilerOptions, resolvedModule *Reso
 	case tspath.ExtensionTsx:
 		return needJsx()
 	case tspath.ExtensionJsx:
-		return core.Coalesce(needJsx(), needAllowJs())
+		if message := needJsx(); message != nil {
+			return message
+		}
+		return needAllowJs()
 	case tspath.ExtensionJs, tspath.ExtensionMjs, tspath.ExtensionCjs:
 		return needAllowJs()
 	case tspath.ExtensionJson:

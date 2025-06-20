@@ -1,4 +1,4 @@
-file.ts(1,22): error TS2307: Cannot find module './component.html' or its corresponding type declarations.
+file.ts(1,22): error TS6263: Module './component.html' was resolved to 'component.d.html.ts', but '--allowArbitraryExtensions' is not set.
 
 
 ==== component.d.html.ts (0 errors) ====
@@ -18,7 +18,7 @@ file.ts(1,22): error TS2307: Cannot find module './component.html' or its corres
 ==== file.ts (1 errors) ====
     import * as mod from "./component.html";
                          ~~~~~~~~~~~~~~~~~~
-!!! error TS2307: Cannot find module './component.html' or its corresponding type declarations.
+!!! error TS6263: Module './component.html' was resolved to 'component.d.html.ts', but '--allowArbitraryExtensions' is not set.
     
     window.customElements.define("my-html5-element", mod.HTML5Element);
     
