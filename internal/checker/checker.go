@@ -14500,7 +14500,6 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 			c.error(errorNode, resolutionDiagnostic, moduleReference, resolvedModule.ResolvedFileName)
 		}
 
-		// !!!
 		if errorNode != nil {
 			if resolvedModule.ResolvedUsingTsExtension && tspath.IsDeclarationFileName(moduleReference) {
 				if ast.FindAncestor(location, ast.IsEmittableImport) != nil {
