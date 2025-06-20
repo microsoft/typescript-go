@@ -41,25 +41,30 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 	return b.String()
 }
 
-func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
+func CommandLine(sys System, commandLineArgs []string) ExitStatus {
+	status, _, watcher := commandLineWorker(sys, commandLineArgs)
+	if watcher == nil {
+		return status
+	}
+	return start(watcher)
+}
+
+func commandLineWorker(sys System, commandLineArgs []string) (ExitStatus, *tsoptions.ParsedCommandLine, *watcher) {
 	if len(commandLineArgs) > 0 {
 		// !!! build mode
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
 			fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
 			sys.EndWrite()
-			return ExitStatusNotImplemented
+			return ExitStatusNotImplemented, nil, nil
 			// case "-f":
 			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
 	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
-	e, watcher := executeCommandLineWorker(sys, cb, parsedCommandLine)
-	if watcher == nil {
-		return e
-	}
-	return start(watcher)
+	status, watcher := tscCompilation(sys, parsedCommandLine)
+	return status, parsedCommandLine, watcher
 }
 
 func fmtMain(sys System, input, output string) ExitStatus {
@@ -88,7 +93,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 	return ExitStatusSuccess
 }
 
-func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) (ExitStatus, *watcher) {
+func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitStatus, *watcher) {
 	configFileName := ""
 	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions())
 	// if commandLine.Options().Locale != nil
@@ -185,7 +190,6 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		// !!! incremental
 		return performCompilation(
 			sys,
-			cb,
 			configParseResult,
 			reportDiagnostic,
 			configTime,
@@ -204,7 +208,6 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	}
 	return performCompilation(
 		sys,
-		cb,
 		commandLine,
 		reportDiagnostic,
 		0, /*configTime*/
@@ -227,7 +230,6 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 
 func performCompilation(
 	sys System,
-	cb cbType,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
 	configTime time.Duration,
@@ -260,10 +262,6 @@ func performCompilation(
 		runtime.ReadMemStats(&memStats)
 
 		reportStatistics(sys, program, result, &memStats)
-	}
-
-	if cb != nil {
-		cb(program)
 	}
 
 	if result.emitResult.EmitSkipped && len(result.diagnostics) > 0 {
