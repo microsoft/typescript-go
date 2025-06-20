@@ -348,37 +348,47 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 	return languageService, cleanup
 }
 
-func (p *Project) getModuleResolutionWatchGlobs() (failedLookups map[tspath.Path]string, affectingLocaions map[tspath.Path]string) {
-	failedLookups = make(map[tspath.Path]string)
-	affectingLocaions = make(map[tspath.Path]string)
-	for _, resolvedModulesInFile := range p.program.GetResolvedModules() {
-		for _, resolvedModule := range resolvedModulesInFile {
-			for _, failedLookupLocation := range resolvedModule.FailedLookupLocations {
-				path := p.toPath(failedLookupLocation)
-				if _, ok := failedLookups[path]; !ok {
-					failedLookups[path] = failedLookupLocation
-				}
-			}
-			for _, affectingLocation := range resolvedModule.AffectingLocations {
-				path := p.toPath(affectingLocation)
-				if _, ok := affectingLocaions[path]; !ok {
-					affectingLocaions[path] = affectingLocation
-				}
-			}
-		}
-	}
-	return failedLookups, affectingLocaions
-}
-
-func (p *Project) updateWatchers(ctx context.Context) {
+func (p *Project) updateModuleResolutionWatches(ctx context.Context) {
 	client := p.Client()
 	if !p.host.IsWatchEnabled() || client == nil {
 		return
 	}
 
-	failedLookupGlobs, affectingLocationGlobs := p.getModuleResolutionWatchGlobs()
-	p.failedLookupsWatch.update(ctx, failedLookupGlobs)
-	p.affectingLocationsWatch.update(ctx, affectingLocationGlobs)
+	failedLookups := make(map[tspath.Path]string)
+	affectingLocations := make(map[tspath.Path]string)
+	extractLookups(p, failedLookups, affectingLocations, p.program.GetResolvedModules())
+	extractLookups(p, failedLookups, affectingLocations, p.program.GetResolvedTypeReferenceDirectives())
+
+	p.failedLookupsWatch.update(ctx, failedLookups)
+	p.affectingLocationsWatch.update(ctx, affectingLocations)
+}
+
+type ResolutionWithLookupLocations interface {
+	GetLookupLocations() *module.LookupLocations
+}
+
+func extractLookups[T ResolutionWithLookupLocations](
+	p *Project,
+	failedLookups map[tspath.Path]string,
+	affectingLocations map[tspath.Path]string,
+	cache map[tspath.Path]module.ModeAwareCache[T],
+) {
+	for _, resolvedModulesInFile := range cache {
+		for _, resolvedModule := range resolvedModulesInFile {
+			for _, failedLookupLocation := range resolvedModule.GetLookupLocations().FailedLookupLocations {
+				path := p.toPath(failedLookupLocation)
+				if _, ok := failedLookups[path]; !ok {
+					failedLookups[path] = failedLookupLocation
+				}
+			}
+			for _, affectingLocation := range resolvedModule.GetLookupLocations().AffectingLocations {
+				path := p.toPath(affectingLocation)
+				if _, ok := affectingLocations[path]; !ok {
+					affectingLocations[path] = affectingLocation
+				}
+			}
+		}
+	}
 }
 
 // onWatchEventForNilScriptInfo is fired for watch events that are not the
@@ -531,7 +541,7 @@ func (p *Project) updateGraph() (*compiler.Program, bool) {
 		p.enqueueInstallTypingsForProject(oldProgram, hasAddedOrRemovedFiles)
 		// TODO: this is currently always synchronously called by some kind of updating request,
 		// but in Strada we throttle, so at least sometimes this should be considered top-level?
-		p.updateWatchers(context.TODO())
+		p.updateModuleResolutionWatches(context.TODO())
 	}
 	p.Logf("Finishing updateGraph: Project: %s version: %d in %s", p.name, p.version, time.Since(start))
 	return p.program, true
@@ -578,7 +588,10 @@ func (p *Project) updateProgram() bool {
 		}
 		var typingsLocation string
 		if typeAcquisition := p.getTypeAcquisition(); typeAcquisition != nil && typeAcquisition.Enable.IsTrue() {
-			typingsLocation = p.host.TypingsInstaller().TypingsLocation
+			typingsInstaller := p.host.TypingsInstaller()
+			if typingsInstaller != nil {
+				typingsLocation = typingsInstaller.TypingsLocation
+			}
 		}
 		p.program = compiler.NewProgram(compiler.ProgramOptions{
 			Config:                      p.programConfig,
@@ -629,6 +642,15 @@ func (p *Project) getTypeAcquisition() *core.TypeAcquisition {
 	return p.typeAcquisition
 }
 
+func (p *Project) setTypeAcquisition(typeAcquisition *core.TypeAcquisition) {
+	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
+		p.unresolvedImports = nil
+		p.unresolvedImportsPerFile = nil
+		p.typingFiles = nil
+	}
+	p.typeAcquisition = typeAcquisition
+}
+
 func (p *Project) enqueueInstallTypingsForProject(oldProgram *compiler.Program, forceRefresh bool) {
 	typingsInstaller := p.host.TypingsInstaller()
 	if typingsInstaller == nil {
@@ -637,10 +659,6 @@ func (p *Project) enqueueInstallTypingsForProject(oldProgram *compiler.Program, 
 
 	typeAcquisition := p.getTypeAcquisition()
 	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
-		// !!! sheetal Should be probably done where we set typeAcquisition
-		p.unresolvedImports = nil
-		p.unresolvedImportsPerFile = nil
-		p.typingFiles = nil
 		return
 	}
 
@@ -865,7 +883,7 @@ func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool) {
 	defer p.mu.Unlock()
 	if p.isRoot(info) && p.kind == KindInferred {
 		p.deleteRootFileNameOfInferred(info.path)
-		p.typeAcquisition = nil
+		p.setTypeAcquisition(nil)
 		p.programConfig = nil
 	}
 	p.onFileAddedOrRemoved()
@@ -889,7 +907,7 @@ func (p *Project) AddInferredProjectRoot(info *ScriptInfo) {
 	}
 	p.setRootFileNameOfInferred(info.path, info.fileName)
 	p.programConfig = nil
-	p.typeAcquisition = nil
+	p.setTypeAcquisition(nil)
 	// !!!
 	// if p.kind == KindInferred {
 	// 	p.host.startWatchingConfigFilesForInferredProjectRoot(info.path);
@@ -917,11 +935,11 @@ func (p *Project) LoadConfig() error {
 		)
 
 		p.compilerOptions = p.parsedCommandLine.CompilerOptions()
-		p.typeAcquisition = p.parsedCommandLine.TypeAcquisition()
+		p.setTypeAcquisition(p.parsedCommandLine.TypeAcquisition())
 		p.setRootFiles(p.parsedCommandLine.FileNames())
 	} else {
 		p.compilerOptions = &core.CompilerOptions{}
-		p.typeAcquisition = nil
+		p.setTypeAcquisition(nil)
 		return fmt.Errorf("could not read file %q", p.configFileName)
 	}
 	return nil
@@ -999,9 +1017,9 @@ func (p *Project) GetFileNames(excludeFilesFromExternalLibraries bool, excludeCo
 	result := []string{}
 	sourceFiles := p.program.GetSourceFiles()
 	for _, sourceFile := range sourceFiles {
-		// if excludeFilesFromExternalLibraries && p.program.IsSourceFileFromExternalLibrary(sourceFile) {
-		//     continue;
-		// }
+		if excludeFilesFromExternalLibraries && p.program.IsSourceFileFromExternalLibrary(sourceFile) {
+			continue
+		}
 		result = append(result, sourceFile.FileName())
 	}
 	// if (!excludeConfigFiles) {

@@ -30,13 +30,10 @@
  >"number" : "number"
  >Directive[value] != null : boolean
 ->Directive[value] : (typeof Directive)[Directive | (T & number)]
-+>Directive[value] : typeof Directive[Directive | T & number]
++>Directive[value] : typeof Directive[Directive | (T & number)]
  >Directive : typeof Directive
-->value : Directive | (T & number)
-+>value : Directive | T & number
+ >value : Directive | (T & number)
    }
- }
-
 @@= skipped -122, +122 lines =@@
  };
 
@@ -46,16 +43,7 @@
 
    _step: T,
  >_step : T
-@@= skipped -9, +9 lines =@@
- >_state : PartialStepState<unknown>
-
-   _selection: StepItemType<T> | Directive
-->_selection : Directive | StepItemType<T>
-+>_selection : StepItemType<T> | Directive
-
- ): _selection is StepItemType<T> {
-   return false;
-@@= skipped -19, +19 lines =@@
+@@= skipped -28, +28 lines =@@
  }
 
  function* showStep<
