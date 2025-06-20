@@ -971,25 +971,29 @@ func (p *Project) setRootFiles(rootFileNames []string) {
 }
 
 func (p *Project) setRootFileNameOfInferred(path tspath.Path, fileName string) {
+	if p.kind != KindInferred {
+		panic("setRootFileNameOfInferred called on non-inferred project")
+	}
+
 	has := p.rootFileNames.Has(path)
 	p.rootFileNames.Set(path, fileName)
-	if p.kind == KindInferred {
-		if !has && tspath.HasJSFileExtension(fileName) {
-			p.rootJSFileCount++
-		}
+	if !has && tspath.HasJSFileExtension(fileName) {
+		p.rootJSFileCount++
 	}
 }
 
 func (p *Project) deleteRootFileNameOfInferred(path tspath.Path) {
+	if p.kind != KindInferred {
+		panic("deleteRootFileNameOfInferred called on non-inferred project")
+	}
+
 	fileName, ok := p.rootFileNames.Get(path)
 	if !ok {
 		return
 	}
 	p.rootFileNames.Delete(path)
-	if p.kind == KindInferred {
-		if tspath.HasJSFileExtension(fileName) {
-			p.rootJSFileCount--
-		}
+	if tspath.HasJSFileExtension(fileName) {
+		p.rootJSFileCount--
 	}
 }
 
