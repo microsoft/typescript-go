@@ -45,6 +45,38 @@ booleanLiteral = g[0];
 //// [g.json]
 [true, false]
 
+out/b.json(1,1): error TS1005: '{' expected.
+out/b.json(1,2): error TS1136: Property assignment expected.
+out/b.json(6,2): error TS1012: Unexpected token.
+out/b.json(7,1): error TS1005: '}' expected.
+
+
+==== out/b.json (4 errors) ====
+    ({
+    ~
+!!! error TS1005: '{' expected.
+     ~
+!!! error TS1136: Property assignment expected.
+        "a": true,
+        "b": "hello",
+        "c": null,
+        "d": false
+    })
+     ~
+!!! error TS1012: Unexpected token.
+    
+    
+!!! error TS1005: '}' expected.
+//// [out/c.json]
+["a", null, "string"]
+//// [out/d.json]
+"dConfig"
+//// [out/e.json]
+-10
+//// [out/f.json]
+[-10, 30]
+//// [out/g.json]
+[true, false]
 //// [out/file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });

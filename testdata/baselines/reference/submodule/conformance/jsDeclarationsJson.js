@@ -12,6 +12,29 @@ module.exports = j;
     }
 }
 
+out/obj.json(1,1): error TS1005: '{' expected.
+out/obj.json(1,2): error TS1136: Property assignment expected.
+out/obj.json(7,2): error TS1012: Unexpected token.
+out/obj.json(8,1): error TS1005: '}' expected.
+
+
+==== out/obj.json (4 errors) ====
+    ({
+    ~
+!!! error TS1005: '{' expected.
+     ~
+!!! error TS1136: Property assignment expected.
+        "x": 12,
+        "y": 12,
+        "obj": {
+            "items": [{ "x": 12 }, { "x": 12, "y": 12 }, { "x": 0 }, { "x": -1, "err": true }]
+        }
+    })
+     ~
+!!! error TS1012: Unexpected token.
+    
+    
+!!! error TS1005: '}' expected.
 //// [index.js]
 const j = require("./obj.json");
 export = j;
