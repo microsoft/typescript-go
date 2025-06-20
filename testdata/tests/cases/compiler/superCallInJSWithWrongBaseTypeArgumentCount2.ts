@@ -1,7 +1,7 @@
-// @target: esnext
 // @module: nodenext
 // @checkJs: true
 // @declaration: true
+// @strict: true, false
 
 // @filename: a.ts
 export class A<T> {}
@@ -16,8 +16,15 @@ export class B1 extends A {
     }
 }
 
-/** @extends {A<unknown, unknown>} */
+/** @extends {A<string>} */
 export class B2 extends A {
+    constructor() {
+        super();
+    }
+}
+
+/** @extends {A<string, string>} */
+export class B3 extends A {
     constructor() {
         super();
     }
