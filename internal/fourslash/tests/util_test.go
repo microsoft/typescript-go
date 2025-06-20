@@ -17,7 +17,7 @@ func ptrTo[T any](v T) *T {
 
 var defaultCommitCharacters = []string{".", ",", ";"}
 
-var completionGlobalItem = &lsproto.CompletionItem{
+var completionGlobalThisItem = &lsproto.CompletionItem{
 	Label:    "globalThis",
 	Kind:     ptrTo(lsproto.CompletionItemKindModule),
 	SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
@@ -4897,12 +4897,13 @@ var completionGlobalKeywords = []fourslash.ExpectedCompletionItem{
 
 var completionGlobals = sortCompletionItems(append(
 	append(completionGlobalVars, completionGlobalKeywords...),
-	completionGlobalItem,
+	completionGlobalThisItem,
 	completionUndefinedVarItem,
 ))
 
 func sortCompletionItems(items []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
-	slices.SortFunc(items, func(a fourslash.ExpectedCompletionItem, b fourslash.ExpectedCompletionItem) int {
+	items = slices.Clone(items)
+	slices.SortStableFunc(items, func(a fourslash.ExpectedCompletionItem, b fourslash.ExpectedCompletionItem) int {
 		defaultSortText := string(ls.SortTextLocationPriority)
 		var aSortText, bSortText string
 		switch a := a.(type) {
@@ -4943,4 +4944,17 @@ func sortCompletionItems(items []fourslash.ExpectedCompletionItem) []fourslash.E
 		return cmp.Compare(aLabel, bLabel)
 	})
 	return items
+}
+
+func completionGlobalsPlus(items []fourslash.ExpectedCompletionItem, noLib bool) []fourslash.ExpectedCompletionItem {
+	var all []fourslash.ExpectedCompletionItem
+	if noLib {
+		all = append(
+			append(items, completionGlobalThisItem, completionUndefinedVarItem),
+			completionGlobalKeywords...,
+		)
+	} else {
+		all = append(items, completionGlobals...)
+	}
+	return sortCompletionItems(all)
 }
