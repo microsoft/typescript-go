@@ -35,7 +35,7 @@ func (test *tscInput) verify(t *testing.T, scenario string) {
 			// initial test tsc compile
 			baselineBuilder := test.startBaseline()
 
-			parsedCommandLine, exit := execute.CommandLineTest(test.sys, nil, test.commandLineArgs)
+			exit, parsedCommandLine, _ := execute.CommandLineTest(test.sys, test.commandLineArgs)
 			baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 
 			compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
@@ -92,7 +92,7 @@ func (test *tscInput) verifyCommandLineParsing(t *testing.T, scenario string) {
 			// initial test tsc compile
 			baselineBuilder := test.startBaseline()
 
-			parsedCommandLine, exit := execute.CommandLineTest(test.sys, nil, test.commandLineArgs)
+			exit, parsedCommandLine, _ := execute.CommandLineTest(test.sys, test.commandLineArgs)
 			baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 			//nolint:musttag
 			parsedCommandLineString, _ := json.MarshalIndent(parsedCommandLine, "", "    ")
