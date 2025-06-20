@@ -18,7 +18,7 @@ func verifyWatch(t *testing.T, test *tscInput, scenario string, edits []*testTsc
 			t.Parallel()
 			baselineBuilder := test.startBaseline()
 
-			parsedCommandLine, watcher := execute.CommandLineTestWatch(test.sys, nil, test.commandLineArgs)
+			_, parsedCommandLine, watcher := execute.CommandLineTest(test.sys, test.commandLineArgs)
 
 			compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
 			baselineBuilder.WriteString("\n\nCompilerOptions::")
