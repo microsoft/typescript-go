@@ -7464,12 +7464,14 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 	isCallExpression := ast.IsCallExpression(node.Parent) && node.Parent.Expression() == node
 	immediateContainer := getSuperContainer(node, true /*stopOnFunctions*/)
 	container := immediateContainer
+
 	// adjust the container reference in case if super is used inside arrow functions with arbitrarily deep nesting
 	if !isCallExpression {
 		for container != nil && ast.IsArrowFunction(container) {
 			container = getSuperContainer(container, true /*stopOnFunctions*/)
 		}
 	}
+
 	isLegalUsageOfSuperExpression := func() bool {
 		if isCallExpression {
 			// TS 1.0 SPEC (April 2014): 4.8.1
@@ -7490,6 +7492,7 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 		}
 		return false
 	}
+
 	if container == nil || !isLegalUsageOfSuperExpression() {
 		// issue more specific error if super is used in computed property name
 		// class A { foo() { return "1" }}
@@ -18337,8 +18340,9 @@ func (c *Checker) getInstantiatedConstructorsForTypeArguments(t *Type, typeArgum
 
 func (c *Checker) getConstructorsForTypeArguments(t *Type, typeArgumentNodes []*ast.Node, location *ast.Node) []*Signature {
 	typeArgCount := len(typeArgumentNodes)
+	isJavaScript := ast.IsInJSFile(location)
 	return core.Filter(c.getSignaturesOfType(t, SignatureKindConstruct), func(sig *Signature) bool {
-		return typeArgCount >= c.getMinTypeArgumentCount(sig.typeParameters) && typeArgCount <= len(sig.typeParameters)
+		return isJavaScript || typeArgCount >= c.getMinTypeArgumentCount(sig.typeParameters) && typeArgCount <= len(sig.typeParameters)
 	})
 }
 
@@ -22070,6 +22074,8 @@ func (c *Checker) getTypeReferenceType(node *ast.Node, symbol *ast.Symbol) *Type
 	if res != nil && c.checkNoTypeArguments(node, symbol) {
 		return c.getRegularTypeOfLiteralType(res)
 	}
+
+	// !!! Resolving values as types for JS
 	return c.errorType
 }
 
