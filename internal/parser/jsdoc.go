@@ -139,7 +139,6 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 	p.parsingContexts = p.parsingContexts | ParsingContexts(PCJSDocComment)
 
 	comment := p.parseJSDocCommentWorker(start, end, fullStart, initialIndent)
-	// comment.Parent = parent
 	// move jsdoc diagnostics to jsdocDiagnostics -- for JS files only
 	if p.contextFlags&ast.NodeFlagsJavaScriptFile != 0 {
 		p.jsdocDiagnostics = append(p.jsdocDiagnostics, p.diagnostics[saveDiagnosticsLength:]...)
