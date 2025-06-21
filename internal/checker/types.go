@@ -362,7 +362,6 @@ type NodeLinks struct {
 	flags                                NodeCheckFlags // Set of flags specific to Node
 	declarationRequiresScopeChange       core.Tristate  // Set by `useOuterVariableScopeInParameter` in checker when downlevel emit would change the name resolution scope inside of a parameter.
 	hasReportedStatementInAmbientContext bool           // Cache boolean if we report statements in ambient context
-	containsArgumentsReference           core.Tristate  // Whether a function-like declaration contains an 'arguments' reference
 }
 
 type SymbolNodeLinks struct {
