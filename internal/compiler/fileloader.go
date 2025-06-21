@@ -59,7 +59,6 @@ type jsxRuntimeImportSpecifier struct {
 
 func processAllProgramFiles(
 	opts ProgramOptions,
-	libs []string,
 	singleThreaded bool,
 ) processedFiles {
 	compilerOptions := opts.Config.CompilerOptions()
@@ -83,11 +82,30 @@ func processAllProgramFiles(
 		projectReferenceParseTasks: &fileLoaderWorker[*projectReferenceParseTask]{
 			wg: core.NewWorkGroup(singleThreaded),
 		},
-		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(libs)),
 		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
 	}
 	loader.addProjectReferenceTasks()
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
+
+	// TODO(jakebailey): libReplacement
+
+	var libs []string
+	if compilerOptions.NoLib != core.TSTrue {
+		if compilerOptions.Lib == nil {
+			name := tsoptions.GetDefaultLibFileName(compilerOptions)
+			libs = append(libs, tspath.CombinePaths(opts.Host.DefaultLibraryPath(), name))
+		} else {
+			for _, lib := range compilerOptions.Lib {
+				name, ok := tsoptions.GetLibFileName(lib)
+				if ok {
+					libs = append(libs, tspath.CombinePaths(opts.Host.DefaultLibraryPath(), name))
+				}
+				// !!! error on unknown name
+			}
+		}
+	}
+
+	loader.rootTasks = make([]*parseTask, 0, len(rootFiles)+len(libs))
 	loader.addRootTasks(rootFiles, false)
 	loader.addRootTasks(libs, true)
 	loader.addAutomaticTypeDirectiveTasks()
