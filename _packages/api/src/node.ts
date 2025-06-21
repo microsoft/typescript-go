@@ -674,6 +674,9 @@ export class RemoteNode extends RemoteNodeBase implements Node {
     get elseStatement(): RemoteNode | undefined {
         return this.getNamedChild("elseStatement") as RemoteNode;
     }
+    get endOfFileToken(): RemoteNode | undefined {
+        return this.getNamedChild("endOfFileToken") as RemoteNode;
+    }
     get equalsGreaterThanToken(): RemoteNode | undefined {
         return this.getNamedChild("equalsGreaterThanToken") as RemoteNode;
     }
