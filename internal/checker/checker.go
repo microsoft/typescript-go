@@ -2554,6 +2554,7 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 		c.checkGrammarFunctionLikeDeclaration(node)
 	}
 	c.checkTypeParameters(node.TypeParameters())
+	c.checkUnmatchedJSDocParameters(node)
 	c.checkSourceElements(node.Parameters())
 	returnTypeNode := node.Type()
 	if returnTypeNode != nil {
@@ -30480,6 +30481,36 @@ func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
 		expr = expr.Parent
 	}
 	return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(expr))
+}
+
+func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
+	links := c.nodeLinks.Get(node)
+	if links.containsArgumentsReference == core.TSUnknown {
+		var visit func(node *ast.Node) bool
+		visit = func(node *ast.Node) bool {
+			if node == nil {
+				return false
+			}
+			switch node.Kind {
+			case ast.KindIdentifier:
+				return node.Text() == c.argumentsSymbol.Name && c.IsArgumentsSymbol(c.getResolvedSymbol(node))
+			case ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+				if ast.IsComputedPropertyName(node.Name()) {
+					return visit(node.Name())
+				}
+			case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+				return visit(node.Expression())
+			case ast.KindPropertyAssignment:
+				return visit(node.AsPropertyAssignment().Initializer)
+			}
+			if nodeStartsNewLexicalEnvironment(node) || ast.IsPartOfTypeNode(node) {
+				return false
+			}
+			return node.ForEachChild(visit)
+		}
+		links.containsArgumentsReference = core.IfElse(visit(node.Body()), core.TSTrue, core.TSFalse)
+	}
+	return links.containsArgumentsReference == core.TSTrue
 }
 
 func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
