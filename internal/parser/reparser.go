@@ -44,6 +44,10 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 			continue
 		}
 		for _, tag := range tags.Nodes {
+			if parent.Kind == ast.KindEndOfFile {
+				p.reparseUnhosted(tag, parent, j)
+				continue
+			}
 			if parent.Kind != ast.KindCommonJSExport && parent.Kind != ast.KindJSExportAssignment {
 				p.reparseUnhosted(tag, parent, j)
 			}
@@ -102,6 +106,9 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 	case ast.KindJSDocImportTag:
 		importTag := tag.AsJSDocImportTag()
 		importClause := importTag.ImportClause
+		if importClause == nil {
+			break
+		}
 		importClause.Flags |= ast.NodeFlagsReparsed
 		importClause.AsImportClause().IsTypeOnly = true
 		importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)

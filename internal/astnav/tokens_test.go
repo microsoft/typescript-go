@@ -20,7 +20,6 @@ import (
 )
 
 var testFiles = []string{
-	// !!! EOFToken JSDoc parsing is missing
 	// filepath.Join(repo.TestDataPath, "fixtures/astnav/eofJSDoc.ts"),
 	filepath.Join(repo.TypeScriptSubmodulePath, "src/services/mapCode.ts"),
 }

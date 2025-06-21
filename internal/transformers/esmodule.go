@@ -78,7 +78,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		statements = append(statements, rest...)
 		statementList := tx.factory.NewNodeList(statements)
 		statementList.Loc = result.Statements.Loc
-		result = tx.factory.UpdateSourceFile(result, statementList).AsSourceFile()
+		result = tx.factory.UpdateSourceFile(result, statementList, node.EndOfFileToken).AsSourceFile()
 	}
 
 	if ast.IsExternalModule(result) &&
@@ -88,7 +88,7 @@ func (tx *ESModuleTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 		statements = append(statements, createEmptyImports(tx.factory))
 		statementList := tx.factory.NewNodeList(statements)
 		statementList.Loc = result.Statements.Loc
-		result = tx.factory.UpdateSourceFile(result, statementList).AsSourceFile()
+		result = tx.factory.UpdateSourceFile(result, statementList, node.EndOfFileToken).AsSourceFile()
 	}
 
 	tx.importRequireStatements = nil
