@@ -915,15 +915,7 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 		}
 		return emitContext.Factory.NewNumericLiteral(value.String())
 	case jsnum.PseudoBigInt:
-		value := literalValue.(jsnum.PseudoBigInt)
-		if value.Negative {
-			// negative
-			return emitContext.Factory.NewPrefixUnaryExpression(
-				ast.KindMinusToken,
-				emitContext.Factory.NewBigIntLiteral(value.Base10Value),
-			)
-		}
-		return emitContext.Factory.NewNumericLiteral(value.Base10Value)
+		return emitContext.Factory.NewBigIntLiteral(pseudoBigIntToString(literalValue.(jsnum.PseudoBigInt)) + "n")
 	case bool:
 		if literalValue.(bool) {
 			return emitContext.Factory.NewKeywordExpression(ast.KindTrueKeyword)
