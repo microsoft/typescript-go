@@ -30484,6 +30484,9 @@ func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
 }
 
 func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
+	if node.Body() == nil {
+		return false
+	}
 	links := c.nodeLinks.Get(node)
 	if links.containsArgumentsReference == core.TSUnknown {
 		var visit func(node *ast.Node) bool
@@ -30508,7 +30511,7 @@ func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
 			}
 			return node.ForEachChild(visit)
 		}
-		links.containsArgumentsReference = core.IfElse(visit(node.Body()), core.TSTrue, core.TSFalse)
+		links.containsArgumentsReference = boolToTristate(visit(node.Body()))
 	}
 	return links.containsArgumentsReference == core.TSTrue
 }
