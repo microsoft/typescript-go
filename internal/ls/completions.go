@@ -3659,7 +3659,6 @@ func tryGetObjectTypeDeclarationCompletionContainer(
 			return location.Parent
 		}
 		return nil
-	// !!! we don't include EOF token anymore, verify what we should do in this case.
 	case ast.KindEndOfFile:
 		stmtList := location.Parent.AsSourceFile().Statements
 		if stmtList != nil && len(stmtList.Nodes) > 0 && ast.IsObjectTypeDeclaration(stmtList.Nodes[len(stmtList.Nodes)-1]) {

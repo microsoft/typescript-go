@@ -172,7 +172,7 @@ func (tx *ESNextTransformer) visitSourceFile(node *ast.SourceFile) *ast.Node {
 			))
 		}
 
-		visited = tx.factory.UpdateSourceFile(node, tx.factory.NewNodeList(topLevelStatements))
+		visited = tx.factory.UpdateSourceFile(node, tx.factory.NewNodeList(topLevelStatements), node.EndOfFileToken)
 	} else {
 		visited = tx.visitor.VisitEachChild(node.AsNode())
 	}
