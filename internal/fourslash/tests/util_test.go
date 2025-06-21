@@ -15,6 +15,8 @@ func ptrTo[T any](v T) *T {
 	return &v
 }
 
+var ignored = struct{}{}
+
 var defaultCommitCharacters = []string{".", ",", ";"}
 
 var completionGlobalThisItem = &lsproto.CompletionItem{

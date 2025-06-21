@@ -17,11 +17,12 @@ export const foo = { bar: 'baz' };
 
 // @Filename: /b.ts
 import { foo } from './a';
-const test = foo./*1*/`
+const test = foo./*1*/
+const x = 1;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.VerifyCompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{

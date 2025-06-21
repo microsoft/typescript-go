@@ -189,7 +189,7 @@ var (
 			InsertReplaceSupport:    ptrTrue,
 		},
 		CompletionList: &lsproto.CompletionListCapabilities{
-			ItemDefaults: &[]string{"commitCharacters"},
+			ItemDefaults: &[]string{"commitCharacters", "editRange"},
 		},
 	}
 )
@@ -260,6 +260,10 @@ func (f *FourslashTest) Markers() []*Marker {
 	return f.testData.Markers
 }
 
+func (f *FourslashTest) Ranges() []*RangeMarker {
+	return f.testData.Ranges
+}
+
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
 	if f.activeFilename != filename {
 		file := core.Find(f.testData.Files, func(f *TestFileInfo) bool {
@@ -307,18 +311,31 @@ func getLanguageKind(filename string) lsproto.LanguageKind {
 	return lsproto.LanguageKindTypeScript // !!! should we error in this case?
 }
 
-// !!! break up this file into smaller files?
-// !!! add constant items like `classElementKeywords`
 type VerifyCompletionsExpectedList struct {
 	IsIncomplete bool
-	ItemDefaults *lsproto.CompletionItemDefaults
+	ItemDefaults *VerifyCompletionsExpectedItemDefaults
 	Items        *VerifyCompletionsExpectedItems
+}
+
+type Ignored = struct{}
+
+// *EditRange | Ignored
+type ExpectedCompletionEditRange = any
+
+type EditRange struct {
+	Insert  *RangeMarker
+	Replace *RangeMarker
+}
+
+type VerifyCompletionsExpectedItemDefaults struct {
+	CommitCharacters *[]string
+	EditRange        ExpectedCompletionEditRange
 }
 
 // *lsproto.CompletionItem | string
 type ExpectedCompletionItem = any
 
-// !!! unsorted completions? only used in 47 tests
+// !!! unsorted completions
 type VerifyCompletionsExpectedItems struct {
 	Includes []ExpectedCompletionItem
 	Excludes []string
@@ -390,8 +407,46 @@ func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.Co
 		t.Fatalf(prefix+"Expected nil completion list but got non-nil: %s", cmp.Diff(actual, nil))
 	}
 	assert.Equal(t, actual.IsIncomplete, expected.IsIncomplete, prefix+"IsIncomplete mismatch")
-	assertDeepEqual(t, actual.ItemDefaults, expected.ItemDefaults, prefix+"ItemDefaults mismatch")
+	verifyCompletionsItemDefaults(t, actual.ItemDefaults, expected.ItemDefaults, prefix+"ItemDefaults mismatch: ")
 	verifyCompletionsItems(t, prefix, actual.Items, expected.Items)
+}
+
+func verifyCompletionsItemDefaults(t *testing.T, actual *lsproto.CompletionItemDefaults, expected *VerifyCompletionsExpectedItemDefaults, prefix string) {
+	if actual == nil {
+		if expected == nil {
+			return
+		}
+		t.Fatalf(prefix+"Expected non-nil completion item defaults but got nil: %s", cmp.Diff(actual, nil))
+	}
+	if expected == nil {
+		t.Fatalf(prefix+"Expected nil completion item defaults but got non-nil: %s", cmp.Diff(actual, nil))
+	}
+	assertDeepEqual(t, actual.CommitCharacters, expected.CommitCharacters, prefix+"CommitCharacters mismatch:")
+	switch editRange := expected.EditRange.(type) {
+	case *EditRange:
+		if actual.EditRange == nil {
+			t.Fatal(prefix + "Expected non-nil EditRange but got nil")
+		}
+		expectedInsert := editRange.Insert.LSRange
+		expectedReplace := editRange.Replace.LSRange
+		assertDeepEqual(
+			t,
+			actual.EditRange,
+			&lsproto.RangeOrEditRangeWithInsertReplace{
+				EditRangeWithInsertReplace: &lsproto.EditRangeWithInsertReplace{
+					Insert:  expectedInsert,
+					Replace: expectedReplace,
+				},
+			},
+			prefix+"EditRange mismatch:")
+	case nil:
+		if actual.EditRange != nil {
+			t.Fatalf(prefix+"Expected nil EditRange but got non-nil: %s", cmp.Diff(actual.EditRange, nil))
+		}
+	case Ignored:
+	default:
+		t.Fatalf(prefix+"Expected EditRange to be *EditRange or Ignored, got %T", editRange)
+	}
 }
 
 func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected *VerifyCompletionsExpectedItems) {

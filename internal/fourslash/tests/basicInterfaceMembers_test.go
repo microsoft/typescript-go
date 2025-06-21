@@ -22,7 +22,7 @@ p./*a*/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "a", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.VerifyCompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{

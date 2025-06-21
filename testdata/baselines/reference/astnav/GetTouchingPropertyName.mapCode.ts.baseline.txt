@@ -1,3 +1,13 @@
+〚Positions: [753, 753]〛
+【TS: Identifier [739, 753)】
+《Go: NamedImports [737, 755)》
+38 │    UserPreferences,
+39 │} from "./_namespaces/ts.js";
+40 │import《 {【 ChangeTracker】〚 〛}》 from "./textChanges.js";
+41 │
+42 │/** @internal */
+
+
 〚Positions: [784, 787]〛
 【TS: JSDoc [784, 800)】
 《Go: JSDoc [780, 800)》
@@ -58,6 +68,94 @@
 68 │/**
 
 
+〚Positions: [808, 808]〛
+【TS: ExportKeyword [780, 808)】
+《Go: FunctionDeclaration [780, 1607)》
+38 │    UserPreferences,
+39 │} from "./_namespaces/ts.js";
+40 │import { ChangeTracker } from "./textChanges.js";《【
+41 │
+42 │/** @internal */
+43 │export】〚 〛function mapCode(
+44 │    sourceFile: SourceFile,
+45 │    contents: string[],
+46 │    focusLocations: TextSpan[][] | undefined,
+47 │    host: LanguageServiceHost,
+48 │    formatContext: formatting.FormatContext,
+   │........ 13 lines omitted ........
+61 │                    flattenedLocations,
+62 │                );
+63 │            }
+64 │        },
+65 │    );
+66 │}》
+67 │
+68 │/**
+
+
+〚Positions: [1152, 1152]〛
+【TS: Identifier [1140, 1152)】
+《Go: ObjectLiteralExpression [1108, 1154)》
+49 │    preferences: UserPreferences,
+50 │): FileTextChanges[] {
+51 │    return textChanges.ChangeTracker.with(《
+52 │        { host, formatContext,【 preferences】〚 〛}》,
+53 │        changeTracker => {
+54 │            const parsed = contents.map(c => parse(sourceFile, c));
+
+
+〚Positions: [1178, 1178]〛
+【TS: Identifier [1155, 1178)】
+《Go: ArrowFunction [1155, 1595)》
+50 │): FileTextChanges[] {
+51 │    return textChanges.ChangeTracker.with(
+52 │        { host, formatContext, preferences },《【
+53 │        changeTracker】〚 〛=> {
+54 │            const parsed = contents.map(c => parse(sourceFile, c));
+55 │            const flattenedLocations = focusLocations && flatten(focusLocations);
+56 │            for (const nodes of parsed) {
+57 │                placeNodeGroup(
+58 │                    sourceFile,
+59 │                    changeTracker,
+60 │                    nodes,
+61 │                    flattenedLocations,
+62 │                );
+63 │            }
+64 │        }》,
+65 │    );
+66 │}
+
+
+〚Positions: [1226, 1226]〛
+【TS: Identifier [1225, 1226)】
+《Go: ArrowFunction [1225, 1250)》
+52 │        { host, formatContext, preferences },
+53 │        changeTracker => {
+54 │            const parsed = contents.map(《【c】〚 〛=> parse(sourceFile, c)》);
+55 │            const flattenedLocations = focusLocations && flatten(focusLocations);
+56 │            for (const nodes of parsed) {
+
+
+〚Positions: [1249, 1249]〛
+【TS: Identifier [1247, 1249)】
+《Go: CloseParenToken [1249, 1250)》
+52 │        { host, formatContext, preferences },
+53 │        changeTracker => {
+54 │            const parsed = contents.map(c => parse(sourceFile,【 c】《〚)〛》);
+55 │            const flattenedLocations = focusLocations && flatten(focusLocations);
+56 │            for (const nodes of parsed) {
+
+
+〚Positions: [1333, 1333]〛
+【TS: Identifier [1319, 1333)】
+《Go: CloseParenToken [1333, 1334)》
+53 │        changeTracker => {
+54 │            const parsed = contents.map(c => parse(sourceFile, c));
+55 │            const flattenedLocations = focusLocations && flatten(【focusLocations】《〚)〛》;
+56 │            for (const nodes of parsed) {
+57 │                placeNodeGroup(
+
+
 〚Positions: [1611, 1730]〛
 【TS: JSDoc [1611, 1733)】
 《Go: JSDocText [1611, 1731)》
@@ -84,3 +182,628 @@
 71 │ 〚*/〛】》
 72 │function parse(sourceFile: SourceFile, content: string): NodeArray<Node> {
 73 │    // We're going to speculatively parse different kinds of contexts to see
+
+
+〚Positions: [1789, 1789]〛
+【TS: StringKeyword [1782, 1789)】
+《Go: CloseParenToken [1789, 1790)》
+70 │ * of class-context definitions.
+71 │ */
+72 │function parse(sourceFile: SourceFile, content:【 string】《〚)〛》: NodeArray<Node> {
+73 │    // We're going to speculatively parse different kinds of contexts to see
+74 │    // which one makes the most sense, and grab the NodeArray from there. Do
+
+
+〚Positions: [1806, 1806]〛
+【TS: Identifier [1802, 1806)】
+《Go: GreaterThanToken [1806, 1807)》
+70 │ * of class-context definitions.
+71 │ */
+72 │function parse(sourceFile: SourceFile, content: string): NodeArray<【Node】《〚>〛》 {
+73 │    // We're going to speculatively parse different kinds of contexts to see
+74 │    // which one makes the most sense, and grab the NodeArray from there. Do
+
+
+〚Positions: [2373, 2373]〛
+【TS: Identifier [2362, 2373)】
+《Go: CloseParenToken [2373, 2374)》
+84 │                    sourceFile.scriptKind,
+85 │                ),
+86 │            body: (sf:【 SourceFile】《〚)〛》 => sf.statements,
+87 │        },
+88 │        {
+
+
+〚Positions: [2782, 2782]〛
+【TS: Identifier [2771, 2782)】
+《Go: CloseParenToken [2782, 2783)》
+95 │                    sourceFile.scriptKind,
+96 │                ),
+97 │            body: (cw:【 SourceFile】《〚)〛》 => (cw.statements[0] as ClassLikeDeclaration).members,
+98 │        },
+99 │    ];
+
+
+〚Positions: [2919, 2919]〛
+【TS: Identifier [2914, 2919)】
+《Go: ObjectBindingPattern [2905, 2921)》
+100 │
+101 │    const parsedNodes = [];
+102 │    for (const《 { parse,【 body】〚 〛}》 of nodeKinds) {
+103 │        const sourceFile = parse();
+104 │        const bod = body(sourceFile);
+
+
+〚Positions: [3011, 3011]〛
+【TS: Identifier [3001, 3011)】
+《Go: CloseParenToken [3011, 3012)》
+102 │    for (const { parse, body } of nodeKinds) {
+103 │        const sourceFile = parse();
+104 │        const bod = body(【sourceFile】《〚)〛》;
+105 │        if (bod.length && sourceFile.parseDiagnostics.length === 0) {
+106 │            // If we run into a case with no parse errors, this is likely the right kind.
+
+
+〚Positions: [3425, 3425]〛
+【TS: Identifier [3421, 3425)】
+《Go: ObjectLiteralExpression [3402, 3427)》
+110 │        else if (bod.length) {
+111 │            // Otherwise, we'll need to look at others.
+112 │            parsedNodes.push(《{ sourceFile, body:【 bod】〚 〛}》);
+113 │        }
+114 │    }
+
+
+〚Positions: [3553, 3553]〛
+【TS: Identifier [3551, 3553)】
+《Go: CloseParenToken [3553, 3554)》
+115 │    // Heuristic: fewer errors = more likely to be the right kind.
+116 │    parsedNodes.sort(
+117 │        (a,【 b】《〚)〛》 =>
+118 │            a.sourceFile.parseDiagnostics.length -
+119 │            b.sourceFile.parseDiagnostics.length,
+
+
+〚Positions: [3686, 3686]〛
+【TS: Identifier [3681, 3686)】
+《Go: ObjectBindingPattern [3679, 3688)》
+119 │            b.sourceFile.parseDiagnostics.length,
+120 │    );
+121 │    const《 {【 body】〚 〛}》 = parsedNodes[0];
+122 │    return body;
+123 │}
+
+
+〚Positions: [3850, 3850]〛
+【TS: Identifier [3846, 3850)】
+《Go: GreaterThanToken [3850, 3851)》
+126 │    originalFile: SourceFile,
+127 │    changeTracker: ChangeTracker,
+128 │    changes: NodeArray<【Node】《〚>〛》,
+129 │    focusLocations?: TextSpan[],
+130 │) {
+
+
+〚Positions: [4091, 4091]〛
+【TS: Identifier [4079, 4091)】
+《Go: GreaterThanToken [4091, 4092)》
+133 │            originalFile,
+134 │            changeTracker,
+135 │            changes as NodeArray<【ClassElement】《〚>〛》,
+136 │            focusLocations,
+137 │        );
+
+
+〚Positions: [4278, 4278]〛
+【TS: Identifier [4269, 4278)】
+《Go: GreaterThanToken [4278, 4279)》
+141 │            originalFile,
+142 │            changeTracker,
+143 │            changes as NodeArray<【Statement】《〚>〛》,
+144 │            focusLocations,
+145 │        );
+
+
+〚Positions: [4467, 4467]〛
+【TS: Identifier [4455, 4467)】
+《Go: GreaterThanToken [4467, 4468)》
+150 │    originalFile: SourceFile,
+151 │    changeTracker: ChangeTracker,
+152 │    changes: NodeArray<【ClassElement】《〚>〛》 | NodeArray<TypeElement>,
+153 │    focusLocations?: TextSpan[],
+154 │) {
+
+
+〚Positions: [4492, 4492]〛
+【TS: Identifier [4481, 4492)】
+《Go: GreaterThanToken [4492, 4493)》
+150 │    originalFile: SourceFile,
+151 │    changeTracker: ChangeTracker,
+152 │    changes: NodeArray<ClassElement> | NodeArray<【TypeElement】《〚>〛》,
+153 │    focusLocations?: TextSpan[],
+154 │) {
+
+
+〚Positions: [4711, 4711]〛
+【TS: Identifier [4688, 4711)】
+《Go: CloseParenToken [4711, 4712)》
+155 │    let classOrInterface;
+156 │    if (!focusLocations || !focusLocations.length) {
+157 │        classOrInterface = find(originalFile.statements, or(isClassLike,【 isInterfaceDeclaration】《〚)〛》);
+158 │    }
+159 │    else {
+
+
+〚Positions: [4794, 4794]〛
+【TS: Identifier [4785, 4794)】
+《Go: ArrowFunction [4785, 4964)》
+158 │    }
+159 │    else {
+160 │        classOrInterface = forEach(focusLocations,《【 location】〚 〛=>
+161 │            findAncestor(
+162 │                getTokenAtPosition(originalFile, location.start),
+163 │                or(isClassLike, isInterfaceDeclaration),
+164 │            )》);
+165 │    }
+166 │
+
+
+〚Positions: [4889, 4889]〛
+【TS: Identifier [4884, 4889)】
+《Go: CloseParenToken [4889, 4890)》
+160 │        classOrInterface = forEach(focusLocations, location =>
+161 │            findAncestor(
+162 │                getTokenAtPosition(originalFile, location.【start】《〚)〛》,
+163 │                or(isClassLike, isInterfaceDeclaration),
+164 │            ));
+
+
+〚Positions: [4947, 4947]〛
+【TS: Identifier [4924, 4947)】
+《Go: CloseParenToken [4947, 4948)》
+161 │            findAncestor(
+162 │                getTokenAtPosition(originalFile, location.start),
+163 │                or(isClassLike,【 isInterfaceDeclaration】《〚)〛》,
+164 │            ));
+165 │    }
+
+
+〚Positions: [5128, 5128]〛
+【TS: Identifier [5122, 5128)】
+《Go: ArrowFunction [5122, 5181)》
+170 │    }
+171 │
+172 │    const firstMatch = classOrInterface.members.find(《【member】〚 〛=> changes.some(change => matchNode(change, member))》);
+173 │    if (firstMatch) {
+174 │        // can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [5151, 5151]〛
+【TS: Identifier [5145, 5151)】
+《Go: ArrowFunction [5145, 5180)》
+170 │    }
+171 │
+172 │    const firstMatch = classOrInterface.members.find(member => changes.some(《【change】〚 〛=> matchNode(change, member)》));
+173 │    if (firstMatch) {
+174 │        // can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [5179, 5179]〛
+【TS: Identifier [5172, 5179)】
+《Go: CloseParenToken [5179, 5180)》
+170 │    }
+171 │
+172 │    const firstMatch = classOrInterface.members.find(member => changes.some(change => matchNode(change,【 member】《〚)〛》));
+173 │    if (firstMatch) {
+174 │        // can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [5400, 5400]〛
+【TS: Identifier [5388, 5400)】
+《Go: GreaterThanToken [5400, 5401)》
+174 │        // can't be undefined here, since we know we have at least one match.
+175 │        const lastMatch = findLast(
+176 │            classOrInterface.members as NodeArray<ClassElement |【 TypeElement】《〚>〛》,
+177 │            member => changes.some(change => matchNode(change, member)),
+178 │        )!;
+
+
+〚Positions: [5422, 5422]〛
+【TS: Identifier [5402, 5422)】
+《Go: ArrowFunction [5402, 5475)》
+174 │        // can't be undefined here, since we know we have at least one match.
+175 │        const lastMatch = findLast(
+176 │            classOrInterface.members as NodeArray<ClassElement | TypeElement>,《【
+177 │            member】〚 〛=> changes.some(change => matchNode(change, member))》,
+178 │        )!;
+179 │
+
+
+〚Positions: [5445, 5445]〛
+【TS: Identifier [5439, 5445)】
+《Go: ArrowFunction [5439, 5474)》
+175 │        const lastMatch = findLast(
+176 │            classOrInterface.members as NodeArray<ClassElement | TypeElement>,
+177 │            member => changes.some(《【change】〚 〛=> matchNode(change, member)》),
+178 │        )!;
+179 │
+
+
+〚Positions: [5473, 5473]〛
+【TS: Identifier [5466, 5473)】
+《Go: CloseParenToken [5473, 5474)》
+175 │        const lastMatch = findLast(
+176 │            classOrInterface.members as NodeArray<ClassElement | TypeElement>,
+177 │            member => changes.some(change => matchNode(change,【 member】《〚)〛》),
+178 │        )!;
+179 │
+
+
+〚Positions: [5526, 5526]〛
+【TS: Identifier [5517, 5526)】
+《Go: CloseParenToken [5526, 5527)》
+178 │        )!;
+179 │
+180 │        forEach(changes,【 wipeNode】《〚)〛》;
+181 │        changeTracker.replaceNodeRangeWithNodes(
+182 │            originalFile,
+
+
+〚Positions: [5745, 5745]〛
+【TS: Identifier [5736, 5745)】
+《Go: CloseParenToken [5745, 5746)》
+188 │    }
+189 │
+190 │    forEach(changes,【 wipeNode】《〚)〛》;
+191 │    changeTracker.insertNodesAfter(
+192 │        originalFile,
+
+
+〚Positions: [6037, 6037]〛
+【TS: Identifier [6028, 6037)】
+《Go: GreaterThanToken [6037, 6038)》
+199 │    originalFile: SourceFile,
+200 │    changeTracker: ChangeTracker,
+201 │    changes: NodeArray<【Statement】《〚>〛》,
+202 │    focusLocations?: TextSpan[],
+203 │) {
+
+
+〚Positions: [6433, 6433]〛
+【TS: Identifier [6428, 6433)】
+《Go: CloseParenToken [6433, 6434)》
+213 │    for (const location of focusLocations) {
+214 │        const scope = findAncestor(
+215 │            getTokenAtPosition(originalFile, location.【start】《〚)〛》,
+216 │            (block): block is Block | SourceFile =>
+217 │                or(isBlock, isSourceFile)(block) &&
+
+
+〚Positions: [6455, 6455]〛
+【TS: Identifier [6450, 6455)】
+《Go: CloseParenToken [6455, 6456)》
+214 │        const scope = findAncestor(
+215 │            getTokenAtPosition(originalFile, location.start),
+216 │            (【block】《〚)〛》: block is Block | SourceFile =>
+217 │                or(isBlock, isSourceFile)(block) &&
+218 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+
+
+〚Positions: [6530, 6530]〛
+【TS: Identifier [6517, 6530)】
+《Go: CloseParenToken [6530, 6531)》
+215 │            getTokenAtPosition(originalFile, location.start),
+216 │            (block): block is Block | SourceFile =>
+217 │                or(isBlock,【 isSourceFile】《〚)〛》(block) &&
+218 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+219 │        );
+
+
+〚Positions: [6537, 6537]〛
+【TS: Identifier [6532, 6537)】
+《Go: CloseParenToken [6537, 6538)》
+215 │            getTokenAtPosition(originalFile, location.start),
+216 │            (block): block is Block | SourceFile =>
+217 │                or(isBlock, isSourceFile)(【block】《〚)〛》 &&
+218 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt, origStmt))),
+219 │        );
+
+
+〚Positions: [6590, 6590]〛
+【TS: Identifier [6581, 6590)】
+《Go: ArrowFunction [6581, 6647)》
+216 │            (block): block is Block | SourceFile =>
+217 │                or(isBlock, isSourceFile)(block) &&
+218 │                some(block.statements,《【 origStmt】〚 〛=> changes.some(newStmt => matchNode(newStmt, origStmt))》),
+219 │        );
+220 │        if (scope) {
+
+
+〚Positions: [6614, 6614]〛
+【TS: Identifier [6607, 6614)】
+《Go: ArrowFunction [6607, 6646)》
+216 │            (block): block is Block | SourceFile =>
+217 │                or(isBlock, isSourceFile)(block) &&
+218 │                some(block.statements, origStmt => changes.some(《【newStmt】〚 〛=> matchNode(newStmt, origStmt)》)),
+219 │        );
+220 │        if (scope) {
+
+
+〚Positions: [6645, 6645]〛
+【TS: Identifier [6636, 6645)】
+《Go: CloseParenToken [6645, 6646)》
+216 │            (block): block is Block | SourceFile =>
+217 │                or(isBlock, isSourceFile)(block) &&
+218 │                some(block.statements, origStmt => changes.some(newStmt => matchNode(newStmt,【 origStmt】《〚)〛》)),
+219 │        );
+220 │        if (scope) {
+
+
+〚Positions: [6737, 6737]〛
+【TS: Identifier [6733, 6737)】
+《Go: ArrowFunction [6733, 6784)》
+219 │        );
+220 │        if (scope) {
+221 │            const start = scope.statements.find(《【stmt】〚 〛=> changes.some(node => matchNode(node, stmt))》);
+222 │            if (start) {
+223 │                // Can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [6758, 6758]〛
+【TS: Identifier [6754, 6758)】
+《Go: ArrowFunction [6754, 6783)》
+219 │        );
+220 │        if (scope) {
+221 │            const start = scope.statements.find(stmt => changes.some(《【node】〚 〛=> matchNode(node, stmt)》));
+222 │            if (start) {
+223 │                // Can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [6782, 6782]〛
+【TS: Identifier [6777, 6782)】
+《Go: CloseParenToken [6782, 6783)》
+219 │        );
+220 │        if (scope) {
+221 │            const start = scope.statements.find(stmt => changes.some(node => matchNode(node,【 stmt】《〚)〛》));
+222 │            if (start) {
+223 │                // Can't be undefined here, since we know we have at least one match.
+
+
+〚Positions: [6960, 6960]〛
+【TS: Identifier [6955, 6960)】
+《Go: ArrowFunction [6955, 7007)》
+222 │            if (start) {
+223 │                // Can't be undefined here, since we know we have at least one match.
+224 │                const end = findLast(scope.statements,《【 stmt】〚 〛=> changes.some(node => matchNode(node, stmt))》)!;
+225 │                forEach(changes, wipeNode);
+226 │                changeTracker.replaceNodeRangeWithNodes(
+
+
+〚Positions: [6981, 6981]〛
+【TS: Identifier [6977, 6981)】
+《Go: ArrowFunction [6977, 7006)》
+222 │            if (start) {
+223 │                // Can't be undefined here, since we know we have at least one match.
+224 │                const end = findLast(scope.statements, stmt => changes.some(《【node】〚 〛=> matchNode(node, stmt)》))!;
+225 │                forEach(changes, wipeNode);
+226 │                changeTracker.replaceNodeRangeWithNodes(
+
+
+〚Positions: [7005, 7005]〛
+【TS: Identifier [7000, 7005)】
+《Go: CloseParenToken [7005, 7006)》
+222 │            if (start) {
+223 │                // Can't be undefined here, since we know we have at least one match.
+224 │                const end = findLast(scope.statements, stmt => changes.some(node => matchNode(node,【 stmt】《〚)〛》))!;
+225 │                forEach(changes, wipeNode);
+226 │                changeTracker.replaceNodeRangeWithNodes(
+
+
+〚Positions: [7053, 7053]〛
+【TS: Identifier [7044, 7053)】
+《Go: CloseParenToken [7053, 7054)》
+223 │                // Can't be undefined here, since we know we have at least one match.
+224 │                const end = findLast(scope.statements, stmt => changes.some(node => matchNode(node, stmt)))!;
+225 │                forEach(changes,【 wipeNode】《〚)〛》;
+226 │                changeTracker.replaceNodeRangeWithNodes(
+227 │                    originalFile,
+
+
+〚Positions: [7358, 7358]〛
+【TS: Identifier [7349, 7358)】
+《Go: GreaterThanToken [7358, 7359)》
+235 │    }
+236 │
+237 │    let scopeStatements: NodeArray<【Statement】《〚>〛》 = originalFile.statements;
+238 │    for (const location of focusLocations) {
+239 │        const block = findAncestor(
+
+
+〚Positions: [7530, 7530]〛
+【TS: Identifier [7525, 7530)】
+《Go: CloseParenToken [7530, 7531)》
+238 │    for (const location of focusLocations) {
+239 │        const block = findAncestor(
+240 │            getTokenAtPosition(originalFile, location.【start】《〚)〛》,
+241 │            isBlock,
+242 │        );
+
+
+〚Positions: [7706, 7706]〛
+【TS: Identifier [7697, 7706)】
+《Go: CloseParenToken [7706, 7707)》
+246 │        }
+247 │    }
+248 │    forEach(changes,【 wipeNode】《〚)〛》;
+249 │    changeTracker.insertNodesAfter(
+250 │        originalFile,
+
+
+〚Positions: [7890, 7890]〛
+【TS: Identifier [7885, 7890)】
+《Go: CloseParenToken [7890, 7891)》
+254 │}
+255 │
+256 │function matchNode(a: Node, b:【 Node】《〚)〛》: boolean {
+257 │    if (a.kind !== b.kind) {
+258 │        return false;
+
+
+〚Positions: [8084, 8084]〛
+【TS: Identifier [8083, 8084)】
+《Go: CloseParenToken [8084, 8085)》
+263 │    }
+264 │
+265 │    if (isNamedDeclaration(【a】《〚)〛》 && isNamedDeclaration(b)) {
+266 │        return a.name.getText() === b.name.getText();
+267 │    }
+
+
+〚Positions: [8109, 8109]〛
+【TS: Identifier [8108, 8109)】
+《Go: CloseParenToken [8109, 8110)》
+263 │    }
+264 │
+265 │    if (isNamedDeclaration(a) && isNamedDeclaration(【b】《〚)〛》) {
+266 │        return a.name.getText() === b.name.getText();
+267 │    }
+
+
+〚Positions: [8202, 8202]〛
+【TS: Identifier [8201, 8202)】
+《Go: CloseParenToken [8202, 8203)》
+267 │    }
+268 │
+269 │    if (isIfStatement(【a】《〚)〛》 && isIfStatement(b)) {
+270 │        return (
+271 │            a.expression.getText() === b.expression.getText()
+
+
+〚Positions: [8222, 8222]〛
+【TS: Identifier [8221, 8222)】
+《Go: CloseParenToken [8222, 8223)》
+267 │    }
+268 │
+269 │    if (isIfStatement(a) && isIfStatement(【b】《〚)〛》) {
+270 │        return (
+271 │            a.expression.getText() === b.expression.getText()
+
+
+〚Positions: [8356, 8356]〛
+【TS: Identifier [8355, 8356)】
+《Go: CloseParenToken [8356, 8357)》
+273 │    }
+274 │
+275 │    if (isWhileStatement(【a】《〚)〛》 && isWhileStatement(b)) {
+276 │        return (
+277 │            a.expression.getText() ===
+
+
+〚Positions: [8379, 8379]〛
+【TS: Identifier [8378, 8379)】
+《Go: CloseParenToken [8379, 8380)》
+273 │    }
+274 │
+275 │    if (isWhileStatement(a) && isWhileStatement(【b】《〚)〛》) {
+276 │        return (
+277 │            a.expression.getText() ===
+
+
+〚Positions: [8528, 8528]〛
+【TS: Identifier [8527, 8528)】
+《Go: CloseParenToken [8528, 8529)》
+280 │    }
+281 │
+282 │    if (isForStatement(【a】《〚)〛》 && isForStatement(b)) {
+283 │        return (
+284 │            a.initializer?.getText() ===
+
+
+〚Positions: [8549, 8549]〛
+【TS: Identifier [8548, 8549)】
+《Go: CloseParenToken [8549, 8550)》
+280 │    }
+281 │
+282 │    if (isForStatement(a) && isForStatement(【b】《〚)〛》) {
+283 │        return (
+284 │            a.initializer?.getText() ===
+
+
+〚Positions: [8861, 8861]〛
+【TS: Identifier [8860, 8861)】
+《Go: CloseParenToken [8861, 8862)》
+290 │    }
+291 │
+292 │    if (isForInOrOfStatement(【a】《〚)〛》 && isForInOrOfStatement(b)) {
+293 │        return (
+294 │            a.expression.getText() ===
+
+
+〚Positions: [8888, 8888]〛
+【TS: Identifier [8887, 8888)】
+《Go: CloseParenToken [8888, 8889)》
+290 │    }
+291 │
+292 │    if (isForInOrOfStatement(a) && isForInOrOfStatement(【b】《〚)〛》) {
+293 │        return (
+294 │            a.expression.getText() ===
+
+
+〚Positions: [9126, 9126]〛
+【TS: Identifier [9125, 9126)】
+《Go: CloseParenToken [9126, 9127)》
+299 │    }
+300 │
+301 │    if (isLabeledStatement(【a】《〚)〛》 && isLabeledStatement(b)) {
+302 │        // If we're actually labeling/naming something, we should be a bit
+303 │        // more lenient about when we match, so we don't care what the actual
+
+
+〚Positions: [9151, 9151]〛
+【TS: Identifier [9150, 9151)】
+《Go: CloseParenToken [9151, 9152)》
+299 │    }
+300 │
+301 │    if (isLabeledStatement(a) && isLabeledStatement(【b】《〚)〛》) {
+302 │        // If we're actually labeling/naming something, we should be a bit
+303 │        // more lenient about when we match, so we don't care what the actual
+
+
+〚Positions: [9560, 9560]〛
+【TS: Identifier [9556, 9560)】
+《Go: GreaterThanToken [9560, 9561)》
+313 │}
+314 │
+315 │function wipeNode(node: Mutable<【Node】《〚>〛》) {
+316 │    resetNodePositions(node);
+317 │    node.parent = undefined!;
+
+
+〚Positions: [9593, 9593]〛
+【TS: Identifier [9589, 9593)】
+《Go: CloseParenToken [9593, 9594)》
+314 │
+315 │function wipeNode(node: Mutable<Node>) {
+316 │    resetNodePositions(【node】《〚)〛》;
+317 │    node.parent = undefined!;
+318 │}
+
+
+〚Positions: [9679, 9679]〛
+【TS: Identifier [9675, 9679)】
+《Go: GreaterThanToken [9679, 9680)》
+318 │}
+319 │
+320 │function resetNodePositions(node: Mutable<【Node】《〚>〛》) {
+321 │    node.pos = -1;
+322 │    node.end = -1;
+
+
+〚Positions: [9765, 9765]〛
+【TS: Identifier [9747, 9765)】
+《Go: CloseParenToken [9765, 9766)》
+321 │    node.pos = -1;
+322 │    node.end = -1;
+323 │    node.forEachChild(【resetNodePositions】《〚)〛》;
+324 │}
+325 │

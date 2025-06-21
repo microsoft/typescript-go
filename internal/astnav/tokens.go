@@ -133,7 +133,7 @@ func getTokenAtPosition(
 		// Check if the rightmost token of prevSubtree should be returned based on the
 		// `includePrecedingTokenAtEndPosition` callback.
 		if prevSubtree != nil {
-			child := findRightmostNode(prevSubtree)
+			child := FindPrecedingTokenEx(sourceFile, position, prevSubtree, false /*excludeJSDoc*/)
 			if child.End() == position && includePrecedingTokenAtEndPosition(child) {
 				// Optimization: includePrecedingTokenAtEndPosition only ever returns true
 				// for real AST nodes, so we don't run the scanner here.
