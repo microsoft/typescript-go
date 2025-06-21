@@ -901,11 +901,10 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 		return nil // non-literal type
 	}
 	literalValue := t.AsLiteralType().value
-	switch literalValue.(type) {
+	switch value := literalValue.(type) {
 	case string:
 		return emitContext.Factory.NewStringLiteral(literalValue.(string))
 	case jsnum.Number:
-		value := literalValue.(jsnum.Number)
 		if value.Abs() != value {
 			// negative
 			return emitContext.Factory.NewPrefixUnaryExpression(
@@ -915,9 +914,9 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 		}
 		return emitContext.Factory.NewNumericLiteral(value.String())
 	case jsnum.PseudoBigInt:
-		return emitContext.Factory.NewBigIntLiteral(pseudoBigIntToString(literalValue.(jsnum.PseudoBigInt)) + "n")
+		return emitContext.Factory.NewBigIntLiteral(pseudoBigIntToString(value) + "n")
 	case bool:
-		if literalValue.(bool) {
+		if value {
 			return emitContext.Factory.NewKeywordExpression(ast.KindTrueKeyword)
 		}
 		return emitContext.Factory.NewKeywordExpression(ast.KindFalseKeyword)
