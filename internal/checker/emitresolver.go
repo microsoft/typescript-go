@@ -900,10 +900,9 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 	if t.flags&TypeFlagsLiteral == 0 {
 		return nil // non-literal type
 	}
-	literalValue := t.AsLiteralType().value
-	switch value := literalValue.(type) {
+	switch value := t.AsLiteralType().value.(type) {
 	case string:
-		return emitContext.Factory.NewStringLiteral(literalValue.(string))
+		return emitContext.Factory.NewStringLiteral(value)
 	case jsnum.Number:
 		if value.Abs() != value {
 			// negative
@@ -916,10 +915,11 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 	case jsnum.PseudoBigInt:
 		return emitContext.Factory.NewBigIntLiteral(pseudoBigIntToString(value) + "n")
 	case bool:
+		kind := ast.KindFalseKeyword
 		if value {
-			return emitContext.Factory.NewKeywordExpression(ast.KindTrueKeyword)
+			kind = ast.KindTrueKeyword
 		}
-		return emitContext.Factory.NewKeywordExpression(ast.KindFalseKeyword)
+		return emitContext.Factory.NewKeywordExpression(kind)
 	}
 	panic("unhandled literal const value kind")
 }
