@@ -141,6 +141,7 @@ type Server struct {
 
 	initializeParams *lsproto.InitializeParams
 	positionEncoding lsproto.PositionEncodingKind
+	workspace        *project.Workspace
 
 	watchEnabled bool
 	watcherID    atomic.Uint32
@@ -471,6 +472,8 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return s.handleDidClose(ctx, req)
 	case *lsproto.DidChangeWatchedFilesParams:
 		return s.handleDidChangeWatchedFiles(ctx, req)
+	case *lsproto.DidChangeWorkspaceFoldersParams:
+		return s.handleDidChangeWorkspaceFolders(ctx, req)
 	case *lsproto.DocumentDiagnosticParams:
 		return s.handleDocumentDiagnostic(ctx, req)
 	case *lsproto.HoverParams:
@@ -566,6 +569,14 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 				FirstTriggerCharacter: "{",
 				MoreTriggerCharacter:  &[]string{"}", ";", "\n"},
 			},
+			Workspace: &lsproto.WorkspaceOptions{
+				WorkspaceFolders: &lsproto.WorkspaceFoldersServerCapabilities{
+					Supported: ptrTo(true),
+					ChangeNotifications: ptrTo(lsproto.StringOrBoolean{
+						Boolean: ptrTo(true),
+					}),
+				},
+			},
 		},
 	})
 }
@@ -591,12 +602,20 @@ func (s *Server) handleInitialized(ctx context.Context, req *lsproto.RequestMess
 		s.projectService.SetCompilerOptionsForInferredProjects(s.compilerOptionsForInferredProjects)
 	}
 
+	if s.initializeParams.RootUri.Value != "" {
+		s.projectService.Workspace.SetRoot(ls.DocumentURIToFileName(s.initializeParams.RootUri.Value))
+	}
+	if s.initializeParams.WorkspaceFolders != nil {
+		for _, folder := range s.initializeParams.WorkspaceFolders.Value {
+			s.projectService.Workspace.AddFolder(ls.DocumentURIToFileName(lsproto.DocumentUri(folder.Uri)))
+		}
+	}
 	return nil
 }
 
 func (s *Server) handleDidOpen(ctx context.Context, req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidOpenTextDocumentParams)
-	s.projectService.OpenFile(ls.DocumentURIToFileName(params.TextDocument.Uri), params.TextDocument.Text, ls.LanguageKindToScriptKind(params.TextDocument.LanguageId), "")
+	s.projectService.OpenFile(ls.DocumentURIToFileName(params.TextDocument.Uri), params.TextDocument.Text, ls.LanguageKindToScriptKind(params.TextDocument.LanguageId))
 	return nil
 }
 
@@ -620,6 +639,19 @@ func (s *Server) handleDidClose(ctx context.Context, req *lsproto.RequestMessage
 func (s *Server) handleDidChangeWatchedFiles(ctx context.Context, req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.DidChangeWatchedFilesParams)
 	return s.projectService.OnWatchedFilesChanged(ctx, params.Changes)
+}
+
+func (s *Server) handleDidChangeWorkspaceFolders(ctx context.Context, req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.DidChangeWorkspaceFoldersParams)
+	if params.Event != nil {
+		for _, folder := range params.Event.Added {
+			s.workspace.AddFolder(ls.DocumentURIToFileName(lsproto.DocumentUri(folder.Uri)))
+		}
+		for _, folder := range params.Event.Removed {
+			s.workspace.RemoveFolder(ls.DocumentURIToFileName(lsproto.DocumentUri(folder.Uri)))
+		}
+	}
+	return nil
 }
 
 func (s *Server) handleDocumentDiagnostic(ctx context.Context, req *lsproto.RequestMessage) error {
@@ -827,7 +859,8 @@ func isBlockingMethod(method lsproto.Method) bool {
 		lsproto.MethodTextDocumentDidChange,
 		lsproto.MethodTextDocumentDidSave,
 		lsproto.MethodTextDocumentDidClose,
-		lsproto.MethodWorkspaceDidChangeWatchedFiles:
+		lsproto.MethodWorkspaceDidChangeWatchedFiles,
+		lsproto.MethodWorkspaceDidChangeWorkspaceFolders:
 		return true
 	}
 	return false
