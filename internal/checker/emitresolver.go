@@ -510,7 +510,7 @@ func (r *emitResolver) requiresAddingImplicitUndefined(declaration *ast.Node, sy
 		}
 		t := r.checker.getTypeOfSymbol(symbol)
 		r.checker.mappedSymbolLinks.Has(symbol)
-		return !!((symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t))
+		return (symbol.Flags&ast.SymbolFlagsProperty != 0) && (symbol.Flags&ast.SymbolFlagsOptional != 0) && isOptionalDeclaration(declaration) && r.checker.ReverseMappedSymbolLinks.Has(symbol) && r.checker.ReverseMappedSymbolLinks.Get(symbol).mappedType != nil && containsNonMissingUndefinedType(r.checker, t)
 	case ast.KindParameter, ast.KindJSDocParameterTag:
 		return r.requiresAddingImplicitUndefinedWorker(declaration, enclosingDeclaration)
 	default:
@@ -900,12 +900,10 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 	if t.flags&TypeFlagsLiteral == 0 {
 		return nil // non-literal type
 	}
-	literalValue := t.AsLiteralType().value
-	switch literalValue.(type) {
+	switch value := t.AsLiteralType().value.(type) {
 	case string:
-		return emitContext.Factory.NewStringLiteral(literalValue.(string))
+		return emitContext.Factory.NewStringLiteral(value)
 	case jsnum.Number:
-		value := literalValue.(jsnum.Number)
 		if value.Abs() != value {
 			// negative
 			return emitContext.Factory.NewPrefixUnaryExpression(
@@ -915,7 +913,6 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 		}
 		return emitContext.Factory.NewNumericLiteral(value.String())
 	case jsnum.PseudoBigInt:
-		value := literalValue.(jsnum.PseudoBigInt)
 		if value.Negative {
 			// negative
 			return emitContext.Factory.NewPrefixUnaryExpression(
@@ -925,7 +922,7 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 		}
 		return emitContext.Factory.NewNumericLiteral(value.Base10Value)
 	case bool:
-		if literalValue.(bool) {
+		if value {
 			return emitContext.Factory.NewKeywordExpression(ast.KindTrueKeyword)
 		}
 		return emitContext.Factory.NewKeywordExpression(ast.KindFalseKeyword)

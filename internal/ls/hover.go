@@ -245,7 +245,7 @@ func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*check
 			b.WriteString("\n")
 		}
 		if i == 3 && len(signatures) >= 5 {
-			b.WriteString(fmt.Sprintf("// +%v more overloads", len(signatures)-3))
+			fmt.Fprintf(b, "// +%v more overloads", len(signatures)-3)
 			break
 		}
 		b.WriteString(prefix)

@@ -49,7 +49,7 @@ func validatePackageNameWorker(packageName string, supportScopedPackage bool) (r
 	if supportScopedPackage {
 		if withoutScope, found := strings.CutPrefix(packageName, "@"); found {
 			scope, scopedPackageName, found := strings.Cut(withoutScope, "/")
-			if found && len(scope) > 0 && len(scopedPackageName) > 0 && strings.Index(scopedPackageName, "/") == -1 {
+			if found && len(scope) > 0 && len(scopedPackageName) > 0 && !strings.Contains(scopedPackageName, "/") {
 				scopeResult, _, _ := validatePackageNameWorker(scope /*supportScopedPackage*/, false)
 				if scopeResult != NameOk {
 					return scopeResult, scope, true

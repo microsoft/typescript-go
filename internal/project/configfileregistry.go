@@ -139,15 +139,11 @@ func (c *ConfigFileRegistry) updateRootFilesWatch(fileName string, entry *Config
 	wildcardGlobs := entry.commandLine.WildcardDirectories()
 	rootFileGlobs := make([]string, 0, len(wildcardGlobs)+1+len(entry.commandLine.ExtendedSourceFiles()))
 	rootFileGlobs = append(rootFileGlobs, fileName)
-	for _, extendedConfig := range entry.commandLine.ExtendedSourceFiles() {
-		rootFileGlobs = append(rootFileGlobs, extendedConfig)
-	}
+	rootFileGlobs = append(rootFileGlobs, entry.commandLine.ExtendedSourceFiles()...)
 	for dir, recursive := range wildcardGlobs {
 		rootFileGlobs = append(rootFileGlobs, fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
 	}
-	for _, fileName := range entry.commandLine.LiteralFileNames() {
-		rootFileGlobs = append(rootFileGlobs, fileName)
-	}
+	rootFileGlobs = append(rootFileGlobs, entry.commandLine.LiteralFileNames()...)
 	entry.rootFilesWatch.update(context.Background(), rootFileGlobs)
 }
 

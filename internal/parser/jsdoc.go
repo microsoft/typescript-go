@@ -1217,7 +1217,7 @@ func (p *Parser) parseOptionalJsdoc(t ast.Kind) bool {
 }
 
 func (p *Parser) parseJSDocEntityName() *ast.EntityName {
-	var entity *ast.EntityName = p.parseJSDocIdentifierName(nil)
+	entity := p.parseJSDocIdentifierName(nil)
 	if p.parseOptional(ast.KindOpenBracketToken) {
 		p.parseExpected(ast.KindCloseBracketToken)
 		// Note that y[] is accepted as an entity name, but the postfix brackets are not saved for checking.

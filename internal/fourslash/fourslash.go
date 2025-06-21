@@ -415,10 +415,8 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 		return
 	}
 	nameToActualItem := make(map[string]*lsproto.CompletionItem)
-	if actual != nil {
-		for _, item := range actual {
-			nameToActualItem[item.Label] = item
-		}
+	for _, item := range actual {
+		nameToActualItem[item.Label] = item
 	}
 	if expected.Includes != nil {
 		for _, item := range expected.Includes {
