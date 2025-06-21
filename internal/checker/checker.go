@@ -30487,7 +30487,7 @@ func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
 	if node.Body() == nil {
 		return false
 	}
-	links := c.nodeLinks.Get(node)
+	links := c.signatureLinks.Get(node)
 	if links.containsArgumentsReference == core.TSUnknown {
 		var visit func(node *ast.Node) bool
 		visit = func(node *ast.Node) bool {

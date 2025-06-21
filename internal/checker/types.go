@@ -402,9 +402,10 @@ type SourceFileLinks struct {
 // Signature specific links
 
 type SignatureLinks struct {
-	resolvedSignature  *Signature // Cached signature of signature node or call expression
-	effectsSignature   *Signature // Signature with possible control flow effects
-	decoratorSignature *Signature // Signature for decorator as if invoked by the runtime
+	resolvedSignature          *Signature    // Cached signature of signature node or call expression
+	effectsSignature           *Signature    // Signature with possible control flow effects
+	decoratorSignature         *Signature    // Signature for decorator as if invoked by the runtime
+	containsArgumentsReference core.Tristate // Whether the signature contains an 'arguments' reference
 }
 
 type TypeFlags uint32
