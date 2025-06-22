@@ -4,23 +4,25 @@
 // Test case to reproduce jsx-runtime declaration emit issue
 
 
+/// <reference path="react16.d.ts" />
+
 // This should trigger the jsx-runtime import without type annotation error
 
 export const FunctionComponent = () => {
->FunctionComponent : () => any
->() => {  return <div>Hello World</div>} : () => any
+>FunctionComponent : () => JSX.Element
+>() => {  return <div>Hello World</div>} : () => JSX.Element
 
   return <div>Hello World</div>
-><div>Hello World</div> : any
+><div>Hello World</div> : JSX.Element
 >div : any
 >div : any
 }
 
 export const AnotherComponent = () => {
->AnotherComponent : () => any
->() => {  return <FunctionComponent />} : () => any
+>AnotherComponent : () => JSX.Element
+>() => {  return <FunctionComponent />} : () => JSX.Element
 
   return <FunctionComponent />
-><FunctionComponent /> : any
->FunctionComponent : () => any
+><FunctionComponent /> : JSX.Element
+>FunctionComponent : () => JSX.Element
 }

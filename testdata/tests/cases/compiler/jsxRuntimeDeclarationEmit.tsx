@@ -7,6 +7,8 @@
 // @target: esnext
 // @module: esnext
 
+/// <reference path="/.lib/react16.d.ts" />
+
 // This should trigger the jsx-runtime import without type annotation error
 
 export const FunctionComponent = () => {
