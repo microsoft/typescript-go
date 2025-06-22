@@ -23,7 +23,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/testutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -84,9 +83,12 @@ func CompileFiles(
 	currentDirectory string,
 	symlinks map[string]string,
 ) *CompilationResult {
-	var compilerOptions core.CompilerOptions
+	var compilerOptions *core.CompilerOptions
 	if tsconfig != nil {
-		compilerOptions = *tsconfig.ParsedConfig.CompilerOptions
+		compilerOptions = tsconfig.ParsedConfig.CompilerOptions.Clone()
+	}
+	if compilerOptions == nil {
+		compilerOptions = &core.CompilerOptions{}
 	}
 	// Set default options for tests
 	if compilerOptions.NewLine == core.NewLineKindNone {
@@ -100,10 +102,10 @@ func CompileFiles(
 
 	// Parse harness and compiler options from the test configuration
 	if testConfig != nil {
-		setOptionsFromTestConfig(t, testConfig, &compilerOptions, &harnessOptions)
+		setOptionsFromTestConfig(t, testConfig, compilerOptions, &harnessOptions)
 	}
 
-	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, &compilerOptions, currentDirectory, symlinks, tsconfig)
+	return CompileFilesEx(t, inputFiles, otherFiles, &harnessOptions, compilerOptions, currentDirectory, symlinks, tsconfig)
 }
 
 func CompileFilesEx(
@@ -225,9 +227,9 @@ func CompileFilesEx(
 	result.Symlinks = symlinks
 	result.Repeat = func(testConfig TestConfiguration) *CompilationResult {
 		newHarnessOptions := *harnessOptions
-		newCompilerOptions := *compilerOptions
-		setOptionsFromTestConfig(t, testConfig, &newCompilerOptions, &newHarnessOptions)
-		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, &newCompilerOptions, currentDirectory, symlinks, tsconfig)
+		newCompilerOptions := compilerOptions.Clone()
+		setOptionsFromTestConfig(t, testConfig, newCompilerOptions, &newHarnessOptions)
+		return CompileFilesEx(t, inputFiles, otherFiles, &newHarnessOptions, newCompilerOptions, currentDirectory, symlinks, tsconfig)
 	}
 	return result
 }
@@ -464,67 +466,49 @@ func getOptionValue(t *testing.T, option *tsoptions.CommandLineOption, value str
 
 type cachedCompilerHost struct {
 	compiler.CompilerHost
-	options *core.CompilerOptions
 }
 
 var sourceFileCache collections.SyncMap[SourceFileCacheKey, *ast.SourceFile]
 
 type SourceFileCacheKey struct {
-	core.SourceFileAffectingCompilerOptions
-	fileName        string
-	path            tspath.Path
-	languageVersion core.ScriptTarget
-	text            string
+	opts       ast.SourceFileParseOptions
+	text       string
+	scriptKind core.ScriptKind
 }
 
-func GetSourceFileCacheKey(
-	options core.SourceFileAffectingCompilerOptions,
-	fileName string,
-	path tspath.Path,
-	languageVersion core.ScriptTarget,
-	text string,
-) SourceFileCacheKey {
+func GetSourceFileCacheKey(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind) SourceFileCacheKey {
 	return SourceFileCacheKey{
-		SourceFileAffectingCompilerOptions: options,
-		fileName:                           fileName,
-		path:                               path,
-		languageVersion:                    languageVersion,
-		text:                               text,
+		opts:       opts,
+		text:       text,
+		scriptKind: scriptKind,
 	}
 }
 
-func (h *cachedCompilerHost) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
-	text, _ := h.FS().ReadFile(fileName)
+func (h *cachedCompilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	text, ok := h.FS().ReadFile(opts.FileName)
+	if !ok {
+		return nil
+	}
 
-	key := GetSourceFileCacheKey(
-		*h.options.SourceFileAffecting(),
-		fileName,
-		path,
-		languageVersion,
-		text,
-	)
+	scriptKind := core.GetScriptKindFromFileName(opts.FileName)
+	if scriptKind == core.ScriptKindUnknown {
+		panic("Unknown script kind for file  " + opts.FileName)
+	}
+
+	key := GetSourceFileCacheKey(opts, text, scriptKind)
 
 	if cached, ok := sourceFileCache.Load(key); ok {
 		return cached
 	}
 
-	// !!! dedupe with compiler.compilerHost
-	var sourceFile *ast.SourceFile
-	if tspath.FileExtensionIs(fileName, tspath.ExtensionJson) {
-		sourceFile = parser.ParseJSONText(fileName, path, text)
-	} else {
-		// !!! JSDocParsingMode
-		sourceFile = parser.ParseSourceFile(fileName, path, text, languageVersion, scanner.JSDocParsingModeParseAll)
-	}
-
+	sourceFile := parser.ParseSourceFile(opts, text, scriptKind)
 	result, _ := sourceFileCache.LoadOrStore(key, sourceFile)
 	return result
 }
 
 func createCompilerHost(fs vfs.FS, defaultLibraryPath string, options *core.CompilerOptions, currentDirectory string) compiler.CompilerHost {
 	return &cachedCompilerHost{
-		CompilerHost: compiler.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath),
-		options:      options,
+		CompilerHost: compiler.NewCompilerHost(options, currentDirectory, fs, defaultLibraryPath, nil),
 	}
 }
 
@@ -596,6 +580,9 @@ func compileFilesWithHost(
 	diagnostics = append(diagnostics, program.GetGlobalDiagnostics(ctx)...)
 	if config.CompilerOptions().GetEmitDeclarations() {
 		diagnostics = append(diagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
+	}
+	if harnessOptions.CaptureSuggestions {
+		diagnostics = append(diagnostics, program.GetSuggestionDiagnostics(ctx, nil)...)
 	}
 	emitResult := program.Emit(compiler.EmitOptions{})
 

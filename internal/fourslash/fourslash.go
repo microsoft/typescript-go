@@ -76,21 +76,8 @@ var sourceFileCache collections.SyncMap[harnessutil.SourceFileCacheKey, *ast.Sou
 
 type parsedFileCache struct{}
 
-func (c *parsedFileCache) GetFile(
-	fileName string,
-	path tspath.Path,
-	text string,
-	scriptTarget core.ScriptTarget,
-	options core.SourceFileAffectingCompilerOptions,
-) *ast.SourceFile {
-	key := harnessutil.GetSourceFileCacheKey(
-		options,
-		fileName,
-		path,
-		scriptTarget,
-		text,
-	)
-
+func (c *parsedFileCache) GetFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind) *ast.SourceFile {
+	key := harnessutil.GetSourceFileCacheKey(opts, text, scriptKind)
 	cachedFile, ok := sourceFileCache.Load(key)
 	if !ok {
 		return nil
@@ -98,21 +85,8 @@ func (c *parsedFileCache) GetFile(
 	return cachedFile
 }
 
-func (c *parsedFileCache) CacheFile(
-	fileName string,
-	path tspath.Path,
-	text string,
-	scriptTarget core.ScriptTarget,
-	options core.SourceFileAffectingCompilerOptions,
-	sourceFile *ast.SourceFile,
-) {
-	key := harnessutil.GetSourceFileCacheKey(
-		options,
-		fileName,
-		path,
-		scriptTarget,
-		text,
-	)
+func (c *parsedFileCache) CacheFile(opts ast.SourceFileParseOptions, text string, scriptKind core.ScriptKind, sourceFile *ast.SourceFile) {
+	key := harnessutil.GetSourceFileCacheKey(opts, text, scriptKind)
 	sourceFileCache.Store(key, sourceFile)
 }
 
@@ -129,7 +103,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	testfs := make(map[string]string)
 	testData := ParseTestData(t, content, fileName)
 	for _, file := range testData.Files {
-		filePath := tspath.GetNormalizedAbsolutePath(file.Filename, rootDir)
+		filePath := tspath.GetNormalizedAbsolutePath(file.fileName, rootDir)
 		testfs[filePath] = file.Content
 	}
 
@@ -276,9 +250,9 @@ func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
 	if !ok {
 		t.Fatalf("Marker %s not found", markerName)
 	}
-	f.ensureActiveFile(t, marker.Filename)
+	f.ensureActiveFile(t, marker.FileName)
 	f.currentCaretPosition = marker.LSPosition
-	f.currentFilename = marker.Filename
+	f.currentFilename = marker.FileName
 	f.lastKnownMarkerName = marker.Name
 }
 
@@ -289,7 +263,7 @@ func (f *FourslashTest) Markers() []*Marker {
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
 	if f.activeFilename != filename {
 		file := core.Find(f.testData.Files, func(f *TestFileInfo) bool {
-			return f.Filename == filename
+			return f.fileName == filename
 		})
 		if file == nil {
 			t.Fatalf("File %s not found in test data", filename)
@@ -299,11 +273,11 @@ func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
 }
 
 func (f *FourslashTest) openFile(t *testing.T, file *TestFileInfo) {
-	f.activeFilename = file.Filename
+	f.activeFilename = file.fileName
 	f.sendNotification(t, lsproto.MethodTextDocumentDidOpen, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
-			Uri:        ls.FileNameToDocumentURI(file.Filename),
-			LanguageId: getLanguageKind(file.Filename),
+			Uri:        ls.FileNameToDocumentURI(file.fileName),
+			LanguageId: getLanguageKind(file.fileName),
 			Text:       file.Content,
 		},
 	})
@@ -407,7 +381,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *VerifyCo
 func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected *VerifyCompletionsExpectedList) {
 	prefix := fmt.Sprintf("At marker '%s': ", markerName)
 	if actual == nil {
-		if expected != nil {
+		if !isEmptyExpectedList(expected) {
 			t.Fatal(prefix + "Expected completion list but got nil.")
 		}
 		return
@@ -420,13 +394,11 @@ func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.Co
 	verifyCompletionsItems(t, prefix, actual.Items, expected.Items)
 }
 
+func isEmptyExpectedList(expected *VerifyCompletionsExpectedList) bool {
+	return expected == nil || (len(expected.Items.Exact) == 0 && len(expected.Items.Includes) == 0 && len(expected.Items.Excludes) == 0)
+}
+
 func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected *VerifyCompletionsExpectedItems) {
-	if expected == nil {
-		if actual != nil {
-			t.Fatalf(prefix+"Expected nil completion items but got non-nil: %s", cmp.Diff(actual, nil))
-		}
-		return
-	}
 	if expected.Exact != nil {
 		if expected.Includes != nil {
 			t.Fatal(prefix + "Expected exact completion list but also specified 'includes'.")
@@ -437,7 +409,9 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 		if len(actual) != len(expected.Exact) {
 			t.Fatalf(prefix+"Expected %d exact completion items but got %d: %s", len(expected.Exact), len(actual), cmp.Diff(actual, expected.Exact))
 		}
-		verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
+		if len(actual) > 0 {
+			verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
+		}
 		return
 	}
 	nameToActualItem := make(map[string]*lsproto.CompletionItem)
@@ -459,7 +433,7 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
 				}
-				assertDeepEqual(t, actualItem, item, prefix+"Includes completion item mismatch for label "+item.Label)
+				verifyCompletionItem(t, prefix+"Includes completion item mismatch for label "+item.Label, actualItem, item)
 			default:
 				t.Fatalf("%sExpected completion item to be a string or *lsproto.CompletionItem, got %T", prefix, item)
 			}
@@ -484,8 +458,21 @@ func verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.
 		case string:
 			continue // already checked labels
 		case *lsproto.CompletionItem:
-			assertDeepEqual(t, actualItem, expectedItem, prefix+"Completion item mismatch for label "+actualItem.Label)
+			verifyCompletionItem(t, prefix+"Completion item mismatch for label "+actualItem.Label, actualItem, expectedItem)
 		}
+	}
+}
+
+func verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
+	ignoreKind := cmp.FilterPath(
+		func(p cmp.Path) bool {
+			return p.Last().String() == ".Kind"
+		},
+		cmp.Ignore(),
+	)
+	assertDeepEqual(t, actual, expected, prefix, ignoreKind)
+	if expected.Kind != nil {
+		assertDeepEqual(t, actual.Kind, expected.Kind, prefix+" Kind mismatch")
 	}
 }
 
@@ -501,10 +488,10 @@ func getExpectedLabel(t *testing.T, item ExpectedCompletionItem) string {
 	}
 }
 
-func assertDeepEqual(t *testing.T, actual any, expected any, prefix string) {
+func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts ...cmp.Option) {
 	t.Helper()
 
-	diff := cmp.Diff(actual, expected)
+	diff := cmp.Diff(actual, expected, opts...)
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
 	}

@@ -5,6 +5,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
@@ -47,11 +49,11 @@ var fourslashDirectives = []string{"emitthisfile"}
 // Given a test file containing // @FileName directives,
 // return an array of named units of code to be added to an existing compiler instance.
 func makeUnitsFromTest(code string, fileName string) testCaseContent {
-	testUnits, symlinks, currentDirectory, _ := ParseTestFilesAndSymlinks(
+	testUnits, symlinks, currentDirectory, _, _ := ParseTestFilesAndSymlinks(
 		code,
 		fileName,
-		func(filename string, content string, fileOptions map[string]string) *testUnit {
-			return &testUnit{content: content, name: filename}
+		func(filename string, content string, fileOptions map[string]string) (*testUnit, error) {
+			return &testUnit{content: content, name: filename}, nil
 		},
 	)
 	if currentDirectory == "" {
@@ -72,7 +74,10 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 		if harnessutil.GetConfigNameFromFileName(data.name) != "" {
 			configFileName := tspath.GetNormalizedAbsolutePath(data.name, currentDirectory)
 			path := tspath.ToPath(data.name, parseConfigHost.GetCurrentDirectory(), parseConfigHost.Vfs.UseCaseSensitiveFileNames())
-			configJson := parser.ParseJSONText(configFileName, path, data.content)
+			configJson := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName: configFileName,
+				Path:     path,
+			}, data.content, core.ScriptKindJSON)
 			tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
 				SourceFile: configJson,
 			}
@@ -108,8 +113,8 @@ func makeUnitsFromTest(code string, fileName string) testCaseContent {
 func ParseTestFilesAndSymlinks[T any](
 	code string,
 	fileName string,
-	parseFile func(filename string, content string, fileOptions map[string]string) T,
-) (units []T, symlinks map[string]string, currentDir string, globalOptions map[string]string) {
+	parseFile func(filename string, content string, fileOptions map[string]string) (T, error),
+) (units []T, symlinks map[string]string, currentDir string, globalOptions map[string]string, e error) {
 	// List of all the subfiles we've parsed out
 	var testUnits []T
 
@@ -119,6 +124,7 @@ func ParseTestFilesAndSymlinks[T any](
 	var currentFileContent strings.Builder
 	var currentFileName string
 	var currentDirectory string
+	var parseError error
 	currentFileOptions := make(map[string]string)
 	symlinks = make(map[string]string)
 	globalOptions = make(map[string]string)
@@ -153,7 +159,11 @@ func ParseTestFilesAndSymlinks[T any](
 			// New metadata statement after having collected some code to go with the previous metadata
 			if currentFileName != "" {
 				// Store result file
-				newTestFile := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
+				newTestFile, e := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
+				if e != nil {
+					parseError = e
+					break
+				}
 				testUnits = append(testUnits, newTestFile)
 
 				// Reset local data
@@ -184,11 +194,16 @@ func ParseTestFilesAndSymlinks[T any](
 		currentFileName = tspath.GetBaseFileName(fileName)
 	}
 
-	// EOF, push whatever remains
-	newTestFile2 := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
-	testUnits = append(testUnits, newTestFile2)
+	// if there are no parse errors so far, parse the rest of the file
+	if parseError == nil {
+		// EOF, push whatever remains
+		newTestFile2, e := parseFile(currentFileName, currentFileContent.String(), currentFileOptions)
 
-	return testUnits, symlinks, currentDirectory, globalOptions
+		parseError = e
+		testUnits = append(testUnits, newTestFile2)
+	}
+
+	return testUnits, symlinks, currentDirectory, globalOptions, parseError
 }
 
 func extractCompilerSettings(content string) rawCompilerSettings {

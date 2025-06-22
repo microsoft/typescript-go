@@ -1,7 +1,9 @@
 package core
 
 import (
+	"reflect"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -11,6 +13,8 @@ import (
 //go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w compileroptions_stringer_generated.go
 
 type CompilerOptions struct {
+	_ noCopy
+
 	AllowJs                                   Tristate                                  `json:"allowJs,omitzero"`
 	AllowArbitraryExtensions                  Tristate                                  `json:"allowArbitraryExtensions,omitzero"`
 	AllowSyntheticDefaultImports              Tristate                                  `json:"allowSyntheticDefaultImports,omitzero"`
@@ -143,6 +147,39 @@ type CompilerOptions struct {
 	PprofDir       string   `json:"pprofDir,omitzero"`
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
 	Quiet          Tristate `json:"quiet,omitzero"`
+
+	sourceFileAffectingCompilerOptionsOnce sync.Once
+	sourceFileAffectingCompilerOptions     SourceFileAffectingCompilerOptions
+}
+
+// noCopy may be embedded into structs which must not be copied
+// after the first use.
+//
+// See https://golang.org/issues/8005#issuecomment-190753527
+// for details.
+type noCopy struct{}
+
+// Lock is a no-op used by -copylocks checker from `go vet`.
+func (*noCopy) Lock()   {}
+func (*noCopy) Unlock() {}
+
+var optionsType = reflect.TypeFor[CompilerOptions]()
+
+// Clone creates a shallow copy of the CompilerOptions.
+func (options *CompilerOptions) Clone() *CompilerOptions {
+	// TODO: this could be generated code instead of reflection.
+	target := &CompilerOptions{}
+
+	sourceValue := reflect.ValueOf(options).Elem()
+	targetValue := reflect.ValueOf(target).Elem()
+
+	for i := range sourceValue.NumField() {
+		if optionsType.Field(i).IsExported() {
+			targetValue.Field(i).Set(sourceValue.Field(i))
+		}
+	}
+
+	return target
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
@@ -180,6 +217,18 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return ModuleResolutionKindNodeNext
 	default:
 		return ModuleResolutionKindBundler
+	}
+}
+
+func (options *CompilerOptions) GetEmitModuleDetectionKind() ModuleDetectionKind {
+	if options.ModuleDetection != ModuleDetectionKindNone {
+		return options.ModuleDetection
+	}
+	switch options.GetEmitModuleKind() {
+	case ModuleKindNode16, ModuleKindNodeNext:
+		return ModuleDetectionKindForce
+	default:
+		return ModuleDetectionKindAuto
 	}
 }
 
@@ -303,23 +352,22 @@ func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
 // affect the parse and bind of a source file.
 type SourceFileAffectingCompilerOptions struct {
-	AllowUnreachableCode       Tristate
-	AllowUnusedLabels          Tristate
-	BindInStrictMode           bool
-	EmitScriptTarget           ScriptTarget
-	NoFallthroughCasesInSwitch Tristate
-	ShouldPreserveConstEnums   bool
+	AllowUnreachableCode     Tristate
+	AllowUnusedLabels        Tristate
+	BindInStrictMode         bool
+	ShouldPreserveConstEnums bool
 }
 
-func (options *CompilerOptions) SourceFileAffecting() *SourceFileAffectingCompilerOptions {
-	return &SourceFileAffectingCompilerOptions{
-		AllowUnreachableCode:       options.AllowUnreachableCode,
-		AllowUnusedLabels:          options.AllowUnusedLabels,
-		BindInStrictMode:           options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
-		EmitScriptTarget:           options.GetEmitScriptTarget(),
-		NoFallthroughCasesInSwitch: options.NoFallthroughCasesInSwitch,
-		ShouldPreserveConstEnums:   options.ShouldPreserveConstEnums(),
-	}
+func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
+	options.sourceFileAffectingCompilerOptionsOnce.Do(func() {
+		options.sourceFileAffectingCompilerOptions = SourceFileAffectingCompilerOptions{
+			AllowUnreachableCode:     options.AllowUnreachableCode,
+			AllowUnusedLabels:        options.AllowUnusedLabels,
+			BindInStrictMode:         options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
+			ShouldPreserveConstEnums: options.ShouldPreserveConstEnums(),
+		}
+	})
+	return options.sourceFileAffectingCompilerOptions
 }
 
 type ModuleDetectionKind int32

@@ -10,15 +10,36 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type cbType = func(p any) any
+
+func applyBulkEdits(text string, edits []core.TextChange) string {
+	b := strings.Builder{}
+	b.Grow(len(text))
+	lastEnd := 0
+	for _, e := range edits {
+		start := e.TextRange.Pos()
+		if start != lastEnd {
+			b.WriteString(text[lastEnd:e.TextRange.Pos()])
+		}
+		b.WriteString(e.NewText)
+
+		lastEnd = e.TextRange.End()
+	}
+	b.WriteString(text[lastEnd:])
+
+	return b.String()
+}
 
 func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 	if len(commandLineArgs) > 0 {
@@ -28,6 +49,8 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 			fmt.Fprint(sys.Writer(), "Build mode is currently unsupported."+sys.NewLine())
 			sys.EndWrite()
 			return ExitStatusNotImplemented
+			// case "-f":
+			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
@@ -37,6 +60,33 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 		return e
 	}
 	return start(watcher)
+}
+
+func fmtMain(sys System, input, output string) ExitStatus {
+	ctx := format.WithFormatCodeSettings(context.Background(), format.GetDefaultFormatCodeSettings(sys.NewLine()), sys.NewLine())
+	input = string(tspath.ToPath(input, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
+	output = string(tspath.ToPath(output, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
+	fileContent, ok := sys.FS().ReadFile(input)
+	if !ok {
+		fmt.Fprint(sys.Writer(), "File not found: "+input+sys.NewLine())
+		return ExitStatusNotImplemented
+	}
+	text := fileContent
+	pathified := tspath.ToPath(input, sys.GetCurrentDirectory(), true)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName:         string(pathified),
+		Path:             pathified,
+		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+	}, text, core.GetScriptKindFromFileName(string(pathified)))
+	ast.SetParentInChildren(sourceFile.AsNode())
+	edits := format.FormatDocument(ctx, sourceFile)
+	newText := applyBulkEdits(text, edits)
+
+	if err := sys.FS().WriteFile(output, newText, false); err != nil {
+		fmt.Fprint(sys.Writer(), err.Error()+sys.NewLine())
+		return ExitStatusNotImplemented
+	}
+	return ExitStatusSuccess
 }
 
 func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) (ExitStatus, *watcher) {
@@ -115,8 +165,8 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 
 	if configFileName != "" {
 		configStart := sys.Now()
-		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
+		extendedConfigCache := collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, &extendedConfigCache)
 		configTime := sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
@@ -139,6 +189,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			cb,
 			configParseResult,
 			reportDiagnostic,
+			&extendedConfigCache,
 			configTime,
 		), nil
 	} else {
@@ -158,6 +209,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		cb,
 		commandLine,
 		reportDiagnostic,
+		nil,
 		0, /*configTime*/
 	), nil
 }
@@ -176,13 +228,21 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 	return result
 }
 
-func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter, configTime time.Duration) ExitStatus {
-	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
+func performCompilation(
+	sys System,
+	cb cbType,
+	config *tsoptions.ParsedCommandLine,
+	reportDiagnostic diagnosticReporter,
+	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	configTime time.Duration,
+) ExitStatus {
+	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: config,
-		Host:   host,
+		Config:           config,
+		Host:             host,
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	parseTime := sys.Now().Sub(parseStart)
 

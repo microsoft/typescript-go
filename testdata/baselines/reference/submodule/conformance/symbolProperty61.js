@@ -53,15 +53,16 @@ from(new MyObservable(42));
 
 
 //// [symbolProperty61.d.ts]
-declare namespace global {
+declare global {
     interface SymbolConstructor {
         readonly obs: symbol;
     }
 }
+declare const observable: typeof Symbol.obs;
 export declare class MyObservable<T> {
-    [x: symbol]: () => this;
     private _val;
     constructor(_val: T);
     subscribe(next: (val: T) => void): void;
+    [observable](): this;
 }
 export {};
