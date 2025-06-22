@@ -316,14 +316,20 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 		p.contextFlags |= ast.NodeFlagsAmbient
 	}
 	pos := p.nodePos()
-	statements := p.parseListIndex(PCSourceElements, (*Parser).parseToplevelStatement)
+	nodes := p.parseListIndex(PCSourceElements, (*Parser).parseToplevelStatement)
+	end := p.nodePos()
 	endHasJSDoc := p.hasPrecedingJSDocComment()
 	eof := p.parseTokenNode()
 	p.withJSDoc(eof, endHasJSDoc)
 	if eof.Kind != ast.KindEndOfFile {
 		panic("Expected end of file token from scanner.")
 	}
-	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements, eof)
+	if len(p.reparseList) > 0 {
+		nodes = append(nodes, p.reparseList...)
+		p.reparseList = nil
+		end = p.nodePos()
+	}
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, p.newNodeList(core.NewTextRange(pos, end), nodes), eof)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, isDeclarationFile)
@@ -463,8 +469,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 	return p.factory.NewSourceFile(sourceFile.ParseOptions(), p.sourceText, p.newNodeList(sourceFile.Statements.Loc, statements), sourceFile.EndOfFileToken)
 }
 
-func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) *ast.NodeList {
-	pos := p.nodePos()
+func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) []*ast.Node {
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
 	list := make([]*ast.Node, 0, 16)
@@ -485,11 +490,13 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 	p.parsingContexts = saveParsingContexts
 	slice := p.nodeSlicePool.NewSlice(len(list))
 	copy(slice, list)
-	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), slice)
+	return slice
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
-	return p.parseListIndex(kind, func(p *Parser, _ int) *ast.Node { return parseElement(p) })
+	pos := p.nodePos()
+	nodes := p.parseListIndex(kind, func(p *Parser, _ int) *ast.Node { return parseElement(p) })
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), nodes)
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if parseElement returned nil

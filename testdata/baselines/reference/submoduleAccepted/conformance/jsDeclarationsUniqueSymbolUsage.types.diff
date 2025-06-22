@@ -6,10 +6,10 @@
  export function b(value) {
 ->b : (value: import("./a").WithSymbol) => import("./a").WithSymbol
 ->value : import("a").WithSymbol
-+>b : (value: any) => any
-+>value : any
++>b : (value: { [kSymbol]: true; }) => { [kSymbol]: true; }
++>value : { [kSymbol]: true; }
 
      return value;
 ->value : import("a").WithSymbol
-+>value : any
++>value : { [kSymbol]: true; }
  }
