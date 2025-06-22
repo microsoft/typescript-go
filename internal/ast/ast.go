@@ -53,16 +53,20 @@ type NodeFactory struct {
 	blockPool                        core.Pool[Block]
 	callExpressionPool               core.Pool[CallExpression]
 	expressionStatementPool          core.Pool[ExpressionStatement]
+	functionDeclarationPool          core.Pool[FunctionDeclaration]
 	identifierPool                   core.Pool[Identifier]
 	ifStatementPool                  core.Pool[IfStatement]
 	jsdocPool                        core.Pool[JSDoc]
 	jsdocTextPool                    core.Pool[JSDocText]
+	keywordExpressionPool            core.Pool[KeywordExpression]
 	keywordTypeNodePool              core.Pool[KeywordTypeNode]
 	literalTypeNodePool              core.Pool[LiteralTypeNode]
 	modifierListPool                 core.Pool[ModifierList]
 	nodeListPool                     core.Pool[NodeList]
+	numericLiteralPool               core.Pool[NumericLiteral]
 	parameterDeclarationPool         core.Pool[ParameterDeclaration]
 	parenthesizedExpressionPool      core.Pool[ParenthesizedExpression]
+	prefixUnaryExpressionPool        core.Pool[PrefixUnaryExpression]
 	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
 	propertyAssignmentPool           core.Pool[PropertyAssignment]
 	propertySignatureDeclarationPool core.Pool[PropertySignatureDeclaration]
@@ -70,6 +74,7 @@ type NodeFactory struct {
 	stringLiteralPool                core.Pool[StringLiteral]
 	tokenPool                        core.Pool[Token]
 	typeReferenceNodePool            core.Pool[TypeReferenceNode]
+	unionTypeNodePool                core.Pool[UnionTypeNode]
 	variableDeclarationListPool      core.Pool[VariableDeclarationList]
 	variableDeclarationPool          core.Pool[VariableDeclaration]
 	variableStatementPool            core.Pool[VariableStatement]
@@ -3466,7 +3471,7 @@ type FunctionDeclaration struct {
 }
 
 func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
-	data := &FunctionDeclaration{}
+	data := f.functionDeclarationPool.New()
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
 	data.name = name
@@ -5433,7 +5438,7 @@ type KeywordExpression struct {
 }
 
 func (f *NodeFactory) NewKeywordExpression(kind Kind) *Node {
-	return f.newNode(kind, &KeywordExpression{})
+	return f.newNode(kind, f.keywordExpressionPool.New())
 }
 
 func (node *KeywordExpression) Clone(f NodeFactoryCoercible) *Node {
@@ -5489,7 +5494,7 @@ type NumericLiteral struct {
 }
 
 func (f *NodeFactory) NewNumericLiteral(text string) *Node {
-	data := &NumericLiteral{}
+	data := f.numericLiteralPool.New()
 	data.Text = text
 	f.textCount++
 	return f.newNode(KindNumericLiteral, data)
@@ -5638,7 +5643,7 @@ type PrefixUnaryExpression struct {
 }
 
 func (f *NodeFactory) NewPrefixUnaryExpression(operator Kind, operand *Expression) *Node {
-	data := &PrefixUnaryExpression{}
+	data := f.prefixUnaryExpressionPool.New()
 	data.Operator = operator
 	data.Operand = operand
 	return f.newNode(KindPrefixUnaryExpression, data)
@@ -7035,7 +7040,7 @@ func (f *NodeFactory) UpdateUnionTypeNode(node *UnionTypeNode, types *TypeList) 
 }
 
 func (f *NodeFactory) NewUnionTypeNode(types *NodeList) *Node {
-	data := &UnionTypeNode{}
+	data := f.unionTypeNodePool.New()
 	data.Types = types
 	return f.newNode(KindUnionType, data)
 }
