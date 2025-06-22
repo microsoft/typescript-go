@@ -87,18 +87,15 @@ func processAllProgramFiles(
 	loader.addProjectReferenceTasks()
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 
-	// TODO(jakebailey): libReplacement
-
 	var libs []string
 	if compilerOptions.NoLib != core.TSTrue {
 		if compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(compilerOptions)
-			libs = append(libs, tspath.CombinePaths(opts.Host.DefaultLibraryPath(), name))
+			libs = append(libs, loader.pathForLibFile(name))
 		} else {
 			for _, lib := range compilerOptions.Lib {
-				name, ok := tsoptions.GetLibFileName(lib)
-				if ok {
-					libs = append(libs, tspath.CombinePaths(opts.Host.DefaultLibraryPath(), name))
+				if name, ok := tsoptions.GetLibFileName(lib); ok {
+					libs = append(libs, loader.pathForLibFile(name))
 				}
 				// !!! error on unknown name
 			}
@@ -479,6 +476,50 @@ func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *a
 	// !!! externalHelpersModuleReference.Flags &^= ast.NodeFlagsSynthesized
 	// !!! importDecl.Flags &^= ast.NodeFlagsSynthesized
 	return externalHelpersModuleReference
+}
+
+func (p *fileLoader) pathForLibFile(name string) string {
+	// TODO(jakebailey): cache this
+
+	if p.opts.Config.CompilerOptions().LibReplacement.IsFalseOrUnknown() {
+		return tspath.CombinePaths(p.defaultLibraryPath, name)
+	}
+
+	libraryName := getLibraryNameFromLibFileName(name)
+	resolveFrom := getInferredLibraryNameResolveFrom(p.opts.Config.CompilerOptions(), p.opts.Host.GetCurrentDirectory(), name)
+	resolution := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
+	if resolution.IsResolved() {
+		return resolution.ResolvedFileName
+	}
+
+	return tspath.CombinePaths(p.defaultLibraryPath, name)
+}
+
+func getLibraryNameFromLibFileName(libFileName string) string {
+	// Support resolving to lib.dom.d.ts -> @typescript/lib-dom, and
+	//                      lib.dom.iterable.d.ts -> @typescript/lib-dom/iterable
+	//                      lib.es2015.symbol.wellknown.d.ts -> @typescript/lib-es2015/symbol-wellknown
+	components := strings.Split(libFileName, ".")
+	var path string
+	if len(components) > 1 {
+		path = components[1]
+	}
+	i := 2
+	for i < len(components) && components[i] != "" && components[i] != "d" {
+		path += core.IfElse(i == 2, "/", "-") + components[i]
+		i++
+	}
+	return "@typescript/lib-" + path
+}
+
+func getInferredLibraryNameResolveFrom(options *core.CompilerOptions, currentDirectory string, libFileName string) string {
+	var containingDirectory string
+	if options.ConfigFilePath != "" {
+		containingDirectory = tspath.GetDirectoryPath(options.ConfigFilePath)
+	} else {
+		containingDirectory = currentDirectory
+	}
+	return tspath.CombinePaths(containingDirectory, "__lib_node_modules_lookup_"+libFileName+"__.ts")
 }
 
 type resolution struct {
