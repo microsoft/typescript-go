@@ -1,0 +1,24 @@
+jsxRuntimeDeclarationEmit.tsx(7,10): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+jsxRuntimeDeclarationEmit.tsx(7,10): error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+jsxRuntimeDeclarationEmit.tsx(7,26): error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+
+
+==== jsxRuntimeDeclarationEmit.tsx (3 errors) ====
+    // Test case to reproduce jsx-runtime declaration emit issue
+    
+    
+    // This should trigger the jsx-runtime import without type annotation error
+    
+    export const FunctionComponent = () => {
+      return <div>Hello World</div>
+             ~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+             ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS2875: This JSX tag requires the module path 'react/jsx-runtime' to exist, but none could be found. Make sure you have types for the appropriate package installed.
+                             ~~~~~~
+!!! error TS7026: JSX element implicitly has type 'any' because no interface 'JSX.IntrinsicElements' exists.
+    }
+    
+    export const AnotherComponent = () => {
+      return <FunctionComponent />
+    }

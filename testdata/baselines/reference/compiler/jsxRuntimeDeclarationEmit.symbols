@@ -1,0 +1,20 @@
+//// [tests/cases/compiler/jsxRuntimeDeclarationEmit.tsx] ////
+
+=== jsxRuntimeDeclarationEmit.tsx ===
+// Test case to reproduce jsx-runtime declaration emit issue
+
+
+// This should trigger the jsx-runtime import without type annotation error
+
+export const FunctionComponent = () => {
+>FunctionComponent : Symbol(FunctionComponent, Decl(jsxRuntimeDeclarationEmit.tsx, 5, 12))
+
+  return <div>Hello World</div>
+}
+
+export const AnotherComponent = () => {
+>AnotherComponent : Symbol(AnotherComponent, Decl(jsxRuntimeDeclarationEmit.tsx, 9, 12))
+
+  return <FunctionComponent />
+>FunctionComponent : Symbol(FunctionComponent, Decl(jsxRuntimeDeclarationEmit.tsx, 5, 12))
+}
