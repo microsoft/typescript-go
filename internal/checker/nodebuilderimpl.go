@@ -18,6 +18,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+// isJSXRuntimeImport checks if a specifier is a safe JSX runtime import
+// JSX runtime imports (jsx-runtime and jsx-dev-runtime) are considered safe
+// as they are standard React APIs that should be allowed in declaration files
+func isJSXRuntimeImport(specifier string) bool {
+	return strings.Contains(specifier, "/jsx-runtime") || 
+		   strings.Contains(specifier, "/jsx-dev-runtime") ||
+		   strings.Contains(specifier, "@types/react/jsx-runtime") ||
+		   strings.Contains(specifier, "react/jsx-runtime")
+}
+
 type CompositeSymbolIdentity struct {
 	isConstructorNode bool
 	symbolId          ast.SymbolId
@@ -433,7 +443,7 @@ func (b *nodeBuilderImpl) symbolToTypeNode(symbol *ast.Symbol, mask ast.SymbolFl
 		if len(specifier) == 0 {
 			specifier = b.getSpecifierForModuleSymbol(chain[0], core.ResolutionModeNone)
 		}
-		if (b.ctx.flags&nodebuilder.FlagsAllowNodeModulesRelativePaths == 0) /* && b.ch.compilerOptions.GetModuleResolutionKind() != core.ModuleResolutionKindClassic */ && strings.Contains(specifier, "/node_modules/") {
+		if (b.ctx.flags&nodebuilder.FlagsAllowNodeModulesRelativePaths == 0) /* && b.ch.compilerOptions.GetModuleResolutionKind() != core.ModuleResolutionKindClassic */ && strings.Contains(specifier, "/node_modules/") && !isJSXRuntimeImport(specifier) {
 			oldSpecifier := specifier
 
 			if b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNode16 || b.ch.compilerOptions.GetModuleResolutionKind() == core.ModuleResolutionKindNodeNext {
