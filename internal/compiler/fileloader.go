@@ -91,7 +91,7 @@ func processAllProgramFiles(
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 
 	var libs []string
-	if compilerOptions.NoLib != core.TSTrue {
+	if compilerOptions.NoLib.IsFalseOrUnknown() {
 		if compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(compilerOptions)
 			libs = append(libs, loader.pathForLibFile(name))
