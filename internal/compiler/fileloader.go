@@ -84,6 +84,7 @@ func processAllProgramFiles(
 		projectReferenceParseTasks: &fileLoaderWorker[*projectReferenceParseTask]{
 			wg: core.NewWorkGroup(singleThreaded),
 		},
+		rootTasks:           make([]*parseTask, 0, len(rootFiles)+len(compilerOptions.Lib)),
 		supportedExtensions: core.Flatten(tsoptions.GetSupportedExtensionsWithJsonIfResolveJsonModule(compilerOptions, supportedExtensions)),
 	}
 	loader.addProjectReferenceTasks()
@@ -104,7 +105,6 @@ func processAllProgramFiles(
 		}
 	}
 
-	loader.rootTasks = make([]*parseTask, 0, len(rootFiles)+len(libs))
 	loader.addRootTasks(rootFiles, false)
 	loader.addRootTasks(libs, true)
 	loader.addAutomaticTypeDirectiveTasks()
