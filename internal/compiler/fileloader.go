@@ -34,6 +34,8 @@ type fileLoader struct {
 
 	projectReferenceFileMapper *projectReferenceFileMapper
 	dtsDirectories             collections.Set[tspath.Path]
+
+	pathForLibFileCache collections.SyncMap[string, string]
 }
 
 type processedFiles struct {
@@ -479,20 +481,22 @@ func (p *fileLoader) createSyntheticImport(text string, file *ast.SourceFile) *a
 }
 
 func (p *fileLoader) pathForLibFile(name string) string {
-	// TODO(jakebailey): cache this
-
-	if p.opts.Config.CompilerOptions().LibReplacement.IsFalseOrUnknown() {
-		return tspath.CombinePaths(p.defaultLibraryPath, name)
+	if cached, ok := p.pathForLibFileCache.Load(name); ok {
+		return cached
 	}
 
-	libraryName := getLibraryNameFromLibFileName(name)
-	resolveFrom := getInferredLibraryNameResolveFrom(p.opts.Config.CompilerOptions(), p.opts.Host.GetCurrentDirectory(), name)
-	resolution := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
-	if resolution.IsResolved() {
-		return resolution.ResolvedFileName
+	path := tspath.CombinePaths(p.defaultLibraryPath, name)
+	if p.opts.Config.CompilerOptions().LibReplacement.IsTrue() {
+		libraryName := getLibraryNameFromLibFileName(name)
+		resolveFrom := getInferredLibraryNameResolveFrom(p.opts.Config.CompilerOptions(), p.opts.Host.GetCurrentDirectory(), name)
+		resolution := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
+		if resolution.IsResolved() {
+			path = resolution.ResolvedFileName
+		}
 	}
 
-	return tspath.CombinePaths(p.defaultLibraryPath, name)
+	path, _ = p.pathForLibFileCache.LoadOrStore(name, path)
+	return path
 }
 
 func getLibraryNameFromLibFileName(libFileName string) string {
