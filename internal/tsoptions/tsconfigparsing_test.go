@@ -600,11 +600,11 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     "target": "es2017"
   }
 }`,
-				"/src/main.ts":        "export {}",
-				"/types/global.d.ts":  "export {}",
-				"/lib/util.ts":        "export {}",
-				"/src/test.test.ts":   "export {}",
-				"/src/spec.spec.ts":   "export {}",
+				"/src/main.ts":       "export {}",
+				"/types/global.d.ts": "export {}",
+				"/lib/util.ts":       "export {}",
+				"/src/test.test.ts":  "export {}",
+				"/src/spec.spec.ts":  "export {}",
 			},
 		}},
 	},
@@ -660,12 +660,12 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
     "files": true
   }
 }`,
-				"/tsconfig-base/types/ical2json.d.ts": "export {}",
-				"/tsconfig-base/types/express.d.ts": "export {}",
-				"/tsconfig-base/types/multer.d.ts": "export {}",
-				"/tsconfig-base/types/reset.d.ts": "export {}",
+				"/tsconfig-base/types/ical2json.d.ts":             "export {}",
+				"/tsconfig-base/types/express.d.ts":               "export {}",
+				"/tsconfig-base/types/multer.d.ts":                "export {}",
+				"/tsconfig-base/types/reset.d.ts":                 "export {}",
 				"/tsconfig-base/types/stripe-custom-typings.d.ts": "export {}",
-				"/tsconfig-base/types/nestjs-modules.d.ts": "export {}",
+				"/tsconfig-base/types/nestjs-modules.d.ts":        "export {}",
 				"/tsconfig-base/types/luxon.d.ts": `declare module 'luxon' {
   interface TSSettings {
     throwOnInvalid: true
@@ -673,8 +673,8 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 }
 export {}`,
 				"/tsconfig-base/types/nestjs-pino.d.ts": "export {}",
-				"/src/main.ts": "export {}",
-				"/src/utils.ts": "export {}",
+				"/src/main.ts":                          "export {}",
+				"/src/utils.ts":                         "export {}",
 			},
 		}},
 	},

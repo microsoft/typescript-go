@@ -1021,7 +1021,7 @@ func parseConfig(
 							})
 						}
 					}
-					
+
 					// Get value from own config if it exists
 					var ownValue []any
 					if rawMap, ok := ownConfig.raw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
@@ -1029,7 +1029,7 @@ func parseConfig(
 							ownValue = slice
 						}
 					}
-					
+
 					// Merge the arrays: extended config first, then own config
 					var mergedValue []any
 					if extendedValue != nil {
@@ -1038,7 +1038,7 @@ func parseConfig(
 					if ownValue != nil {
 						mergedValue = append(mergedValue, ownValue...)
 					}
-					
+
 					// Set the result only if we have something to set
 					if mergedValue != nil {
 						if propertyName == "include" {
