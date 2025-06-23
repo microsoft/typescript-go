@@ -41,6 +41,6 @@ func GetESTransformer(options *core.CompilerOptions, emitContext *printer.EmitCo
 	case core.ScriptTargetES2016:
 		return NewES2017Transformer(emitContext)
 	default: // other, older, option, transform maximally
-		return NewES2017Transformer(emitContext)
+		return NewES2016Transformer(emitContext)
 	}
 }
