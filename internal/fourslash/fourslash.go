@@ -30,6 +30,7 @@ type FourslashTest struct {
 	id     int32
 
 	testData *TestData
+	baseline *baselineFromTest
 
 	currentCaretPosition lsproto.Position
 	currentFilename      string
@@ -250,14 +251,26 @@ func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
 	if !ok {
 		t.Fatalf("Marker %s not found", markerName)
 	}
-	f.ensureActiveFile(t, marker.FileName)
+	f.ensureActiveFile(t, marker.fileName)
 	f.currentCaretPosition = marker.LSPosition
-	f.currentFilename = marker.FileName
+	f.currentFilename = marker.fileName
 	f.lastKnownMarkerName = marker.Name
+}
+
+func (f *FourslashTest) GoToPosAndFile(t *testing.T, pos lsproto.Position, fileName string) {
+	// GoToRangeStart
+	f.ensureActiveFile(t, fileName)
+	f.currentCaretPosition = pos
+	f.currentFilename = fileName
+	// !!! this.selectionEnd = -1
 }
 
 func (f *FourslashTest) Markers() []*Marker {
 	return f.testData.Markers
+}
+
+func (f *FourslashTest) Ranges() []*RangeMarker {
+	return f.testData.Ranges
 }
 
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
@@ -281,6 +294,15 @@ func (f *FourslashTest) openFile(t *testing.T, file *TestFileInfo) {
 			Text:       file.Content,
 		},
 	})
+}
+
+func (f *FourslashTest) currentTextDocumentPositionParams() lsproto.TextDocumentPositionParams {
+	return lsproto.TextDocumentPositionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.currentFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
 }
 
 func getLanguageKind(filename string) lsproto.LanguageKind {
@@ -357,13 +379,8 @@ func (f *FourslashTest) verifyCompletionsAtMarker(t *testing.T, markerName strin
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *VerifyCompletionsExpectedList) {
 	params := &lsproto.CompletionParams{
-		TextDocumentPositionParams: lsproto.TextDocumentPositionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.currentFilename),
-			},
-			Position: f.currentCaretPosition,
-		},
-		Context: &lsproto.CompletionContext{},
+		TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
+		Context:                    &lsproto.CompletionContext{},
 	}
 	resMsg := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
 	if resMsg == nil {
@@ -500,6 +517,54 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	diff := cmp.Diff(actual, expected, opts...)
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
+	}
+}
+
+func (f *FourslashTest) VerifyBaselineFindAllReferences(
+	t *testing.T,
+	markers ...string,
+) {
+	// if there are no markers specified, use all ranges
+	var referenceLocations []MarkerOrRange
+	if len(markers) == 0 {
+		referenceLocations = core.Map(f.testData.Ranges, func(r *RangeMarker) MarkerOrRange { return r })
+	} else {
+		referenceLocations = core.Map(markers, func(markerName string) MarkerOrRange {
+			marker, ok := f.testData.MarkerPositions[markerName]
+			if !ok {
+				t.Fatalf("Marker %s not found", markerName)
+			}
+			return marker
+		})
+	}
+
+	if f.baseline != nil {
+		t.Fatalf("Another baseline is already in progress")
+	} else {
+		f.baseline = &baselineFromTest{
+			baseline: &strings.Builder{},
+			testName: t.Name(),
+			ext:      ".baseline.jsonc",
+		}
+	}
+
+	for _, markerOrRange := range referenceLocations {
+		// worker in `baselineEachMarkerOrRange`
+		f.GoToPosAndFile(t, markerOrRange.LSPos(), markerOrRange.FileName())
+		params := &lsproto.ReferenceParams{
+			TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
+			Context:                    &lsproto.ReferenceContext{},
+		}
+		resMsg := f.sendRequest(t, lsproto.MethodTextDocumentReferences, params)
+		if resMsg == nil {
+			t.Fatalf("Nil response received for completion request at marker %s", f.lastKnownMarkerName)
+		}
+		result := resMsg.AsResponse().Result
+		if result, ok := result.([]*lsproto.Location); ok {
+			// !!! TODO verifyFindAllReferences(t, markerOrRange)
+		} else {
+			t.Fatalf("Unexpected response type at marker %s: %v", f.lastKnownMarkerName, result)
+		}
 	}
 }
 
