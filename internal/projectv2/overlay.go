@@ -1,6 +1,11 @@
 package projectv2
 
-import "github.com/microsoft/typescript-go/internal/lsp/lsproto"
+import (
+	"crypto/sha256"
+
+	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+)
 
 var _ fileHandle = (*overlay)(nil)
 
@@ -8,6 +13,8 @@ type overlay struct {
 	uri             lsproto.DocumentUri
 	version         int32
 	content         string
+	hash            [sha256.Size]byte
+	kind            core.ScriptKind
 	matchesDiskText bool
 }
 
@@ -26,7 +33,11 @@ func (o *overlay) Version() int32 {
 	return o.version
 }
 
-// MatchesDiskText implements fileHandle.
+func (o *overlay) Hash() [sha256.Size]byte {
+	return o.hash
+}
+
+// MatchesDiskText implements fileHandle. May return false positives but never false negatives.
 func (o *overlay) MatchesDiskText() bool {
 	return o.matchesDiskText
 }

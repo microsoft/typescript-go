@@ -1,6 +1,7 @@
 package projectv2
 
 import (
+	"crypto/sha256"
 	"maps"
 
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -9,6 +10,7 @@ import (
 type fileHandle interface {
 	URI() lsproto.DocumentUri
 	Version() int32
+	Hash() [sha256.Size]byte
 	Content() string
 	MatchesDiskText() bool
 }
@@ -16,6 +18,7 @@ type fileHandle interface {
 type diskFile struct {
 	uri     lsproto.DocumentUri
 	content string
+	hash    [sha256.Size]byte
 }
 
 var _ fileHandle = (*diskFile)(nil)
@@ -26,6 +29,10 @@ func (f *diskFile) URI() lsproto.DocumentUri {
 
 func (f *diskFile) Version() int32 {
 	return 0
+}
+
+func (f *diskFile) Hash() [sha256.Size]byte {
+	return f.hash
 }
 
 func (f *diskFile) Content() string {
