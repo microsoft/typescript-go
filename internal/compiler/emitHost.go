@@ -14,14 +14,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-type WriteFileData struct {
-	SourceMapUrlPos int
-	// BuildInfo BuildInfo
-	Diagnostics      []*ast.Diagnostic
-	DiffersOnlyInMap bool
-	SkippedDtsWrite  bool
-}
-
 // NOTE: EmitHost operations must be thread-safe
 type EmitHost interface {
 	printer.EmitHost
@@ -39,6 +31,7 @@ var _ EmitHost = (*emitHost)(nil)
 
 // NOTE: emitHost operations must be thread-safe
 type emitHost struct {
+	ctx     context.Context
 	program *Program
 }
 
@@ -112,7 +105,7 @@ func (host *emitHost) IsEmitBlocked(file string) bool {
 	return false
 }
 
-func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool, _ []*ast.SourceFile, _ *printer.WriteFileData) error {
+func (host *emitHost) WriteFile(fileName string, text string, writeByteOrderMark bool) error {
 	return host.program.Host().FS().WriteFile(fileName, text, writeByteOrderMark)
 }
 
@@ -120,7 +113,7 @@ func (host *emitHost) GetEmitResolver(file *ast.SourceFile) printer.EmitResolver
 	// The context and done function don't matter in tsc, currently the only caller of this function.
 	// But if this ever gets used by LSP code, we'll need to thread the context properly and pass the
 	// done function to the caller to ensure resources are cleaned up at the end of the request.
-	checker, done := host.program.GetTypeCheckerForFile(context.TODO(), file)
+	checker, done := host.program.GetTypeCheckerForFile(host.ctx, file)
 	defer done()
 	return checker.GetEmitResolver(file)
 }

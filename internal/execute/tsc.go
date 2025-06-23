@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"runtime"
-	"slices"
 	"strings"
 	"time"
 
@@ -15,6 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -231,8 +231,26 @@ func performIncrementalCompilation(
 	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	configTime time.Duration,
 ) ExitStatus {
-	// !!
-	return performCompilation(sys, config, reportDiagnostic, extendedConfigCache, configTime)
+	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
+	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host))
+	// todo: cache, statistics, tracing
+	parseStart := sys.Now()
+	program := compiler.NewProgram(compiler.ProgramOptions{
+		Config:           config,
+		Host:             host,
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+	})
+	parseTime := sys.Now().Sub(parseStart)
+	incrementalProgram := incremental.NewProgram(program, oldProgram)
+	return emitAndReportStatistics(
+		sys,
+		incrementalProgram,
+		incrementalProgram.GetProgram,
+		config,
+		reportDiagnostic,
+		configTime,
+		parseTime,
+	)
 }
 
 func performCompilation(
@@ -251,7 +269,28 @@ func performCompilation(
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	parseTime := sys.Now().Sub(parseStart)
+	return emitAndReportStatistics(
+		sys,
+		program,
+		func() *compiler.Program {
+			return program
+		},
+		config,
+		reportDiagnostic,
+		configTime,
+		parseTime,
+	)
+}
 
+func emitAndReportStatistics(
+	sys System,
+	program compiler.AnyProgram,
+	getCoreProgram func() *compiler.Program,
+	config *tsoptions.ParsedCommandLine,
+	reportDiagnostic diagnosticReporter,
+	configTime time.Duration,
+	parseTime time.Duration,
+) ExitStatus {
 	result := emitFilesAndReportErrors(sys, program, reportDiagnostic)
 	if result.status != ExitStatusSuccess {
 		// compile exited early
@@ -269,7 +308,7 @@ func performCompilation(
 		runtime.GC()
 		runtime.ReadMemStats(&memStats)
 
-		reportStatistics(sys, program, result, &memStats)
+		reportStatistics(sys, getCoreProgram(), result, &memStats)
 	}
 
 	if result.emitResult.EmitSkipped && len(result.diagnostics) > 0 {
@@ -292,43 +331,35 @@ type compileAndEmitResult struct {
 	emitTime    time.Duration
 }
 
-func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
+func emitFilesAndReportErrors(
+	sys System,
+	program compiler.AnyProgram,
+	reportDiagnostic diagnosticReporter,
+) (result compileAndEmitResult) {
 	ctx := context.Background()
-	options := program.Options()
-	allDiagnostics := slices.Clip(program.GetConfigFileParsingDiagnostics())
-	configFileParsingDiagnosticsLength := len(allDiagnostics)
 
-	allDiagnostics = append(allDiagnostics, program.GetSyntacticDiagnostics(ctx, nil)...)
-
-	if len(allDiagnostics) == configFileParsingDiagnosticsLength {
-		// Options diagnostics include global diagnostics (even though we collect them separately),
-		// and global diagnostics create checkers, which then bind all of the files. Do this binding
-		// early so we can track the time.
-		bindStart := sys.Now()
-		_ = program.GetBindDiagnostics(ctx, nil)
-		result.bindTime = sys.Now().Sub(bindStart)
-
-		allDiagnostics = append(allDiagnostics, program.GetOptionsDiagnostics(ctx)...)
-
-		if options.ListFilesOnly.IsFalseOrUnknown() {
-			allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
-
-			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
-				checkStart := sys.Now()
-				allDiagnostics = append(allDiagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
-				result.checkTime = sys.Now().Sub(checkStart)
+	allDiagnostics := compiler.GetDiagnosticsOfAnyProgram(
+		ctx,
+		program,
+		nil,
+		false,
+		func(name string, start bool, startTime time.Time) time.Time {
+			if !start {
+				switch name {
+				case "bind":
+					result.bindTime = sys.Now().Sub(startTime)
+				case "check":
+					result.checkTime = sys.Now().Sub(startTime)
+				}
 			}
-
-			if options.NoEmit.IsTrue() && options.GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
-				allDiagnostics = append(allDiagnostics, program.GetDeclarationDiagnostics(ctx, nil)...)
-			}
-		}
-	}
+			return sys.Now()
+		},
+	)
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
-	if !options.ListFilesOnly.IsTrue() {
+	if !program.Options().ListFilesOnly.IsTrue() {
 		emitStart := sys.Now()
-		emitResult = program.Emit(compiler.EmitOptions{})
+		emitResult = program.Emit(ctx, compiler.EmitOptions{})
 		result.emitTime = sys.Now().Sub(emitStart)
 	}
 	allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)
@@ -363,7 +394,7 @@ func showConfig(sys System, config *core.CompilerOptions) {
 	enc.Encode(config) //nolint:errcheck,errchkjson
 }
 
-func listFiles(sys System, program *compiler.Program) {
+func listFiles(sys System, program compiler.AnyProgram) {
 	options := program.Options()
 	// !!! explainFiles
 	if options.ListFiles.IsTrue() || options.ListFilesOnly.IsTrue() {
