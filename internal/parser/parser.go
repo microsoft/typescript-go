@@ -316,7 +316,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 		p.contextFlags |= ast.NodeFlagsAmbient
 	}
 	pos := p.nodePos()
-	nodes := p.parseListIndex(PCSourceElements, (*Parser).parseToplevelStatement)
+	statements := p.parseListIndex(PCSourceElements, (*Parser).parseToplevelStatement)
 	end := p.nodePos()
 	endHasJSDoc := p.hasPrecedingJSDocComment()
 	eof := p.parseTokenNode()
@@ -325,11 +325,11 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 		panic("Expected end of file token from scanner.")
 	}
 	if len(p.reparseList) > 0 {
-		nodes = append(nodes, p.reparseList...)
+		statements = append(statements, p.reparseList...)
 		p.reparseList = nil
 		end = p.nodePos()
 	}
-	node := p.factory.NewSourceFile(p.opts, p.sourceText, p.newNodeList(core.NewTextRange(pos, end), nodes), eof)
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, p.newNodeList(core.NewTextRange(pos, end), statements), eof)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, isDeclarationFile)

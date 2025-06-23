@@ -44,10 +44,6 @@ func (p *Parser) reparseTags(parent *ast.Node, jsDoc []*ast.Node) {
 			continue
 		}
 		for _, tag := range tags.Nodes {
-			if parent.Kind == ast.KindEndOfFile {
-				p.reparseUnhosted(tag, parent, j)
-				continue
-			}
 			if parent.Kind != ast.KindCommonJSExport && parent.Kind != ast.KindJSExportAssignment {
 				p.reparseUnhosted(tag, parent, j)
 			}
