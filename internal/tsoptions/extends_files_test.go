@@ -114,4 +114,94 @@ func TestExtendsFilesMerging(t *testing.T) {
 	if !hasMain {
 		t.Error("Files from extending config are missing!")  
 	}
+	
+	// Verify that the files are in the expected order: extended files first, then own files
+	expectedOrder := []string{"luxon.d.ts", "express.d.ts", "main.ts"}
+	actualOrder := make([]string, 0, len(result.ParsedConfig.FileNames))
+	for _, file := range result.ParsedConfig.FileNames {
+		actualOrder = append(actualOrder, filepath.Base(file))
+	}
+	
+	t.Logf("Expected order: %v", expectedOrder)
+	t.Logf("Actual order: %v", actualOrder)
+	
+	for i, expected := range expectedOrder {
+		if i >= len(actualOrder) || actualOrder[i] != expected {
+			t.Errorf("File order mismatch at position %d. Expected %s, got %s", i, expected, actualOrder[i])
+		}
+	}
+}
+
+func TestExtendsFilesMergingWithoutOwnFiles(t *testing.T) {
+	// Test case where extending config doesn't have its own files array
+	tempDir, err := os.MkdirTemp("", "tsconfig_test")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tempDir)
+	
+	// Create base config with files
+	baseDir := filepath.Join(tempDir, "base")
+	os.MkdirAll(baseDir, 0755)
+	
+	baseConfig := `{
+  "files": [
+    "types/luxon.d.ts"
+  ],
+  "compilerOptions": {
+    "target": "es2017"
+  }
+}`
+	
+	// Create extending config WITHOUT its own files
+	extendingDir := filepath.Join(tempDir, "extending")
+	os.MkdirAll(extendingDir, 0755)
+	
+	extendingConfig := `{
+  "extends": "../base/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}`
+	
+	// Write configs
+	baseConfigPath := filepath.Join(baseDir, "tsconfig.json")
+	extendingConfigPath := filepath.Join(extendingDir, "tsconfig.json")
+	
+	os.WriteFile(baseConfigPath, []byte(baseConfig), 0644)
+	os.WriteFile(extendingConfigPath, []byte(extendingConfig), 0644)
+	
+	// Create dummy files 
+	os.MkdirAll(filepath.Join(baseDir, "types"), 0755)
+	os.WriteFile(filepath.Join(baseDir, "types", "luxon.d.ts"), []byte("export {}"), 0644)
+	
+	// Parse the extending config
+	host := &tsoptionstest.VfsParseConfigHost{
+		Vfs:              osvfs.FS(),
+		CurrentDirectory: extendingDir,
+	}
+	
+	configPath, _ := tsoptions.ParseConfigFileTextToJson(extendingConfigPath, "", extendingConfig)
+	result := tsoptions.ParseJsonConfigFileContent(
+		configPath,
+		host,
+		extendingDir,
+		nil,
+		extendingConfigPath,
+		nil,
+		nil,
+		nil,
+	)
+	
+	// Should still have the file from the extended config
+	hasLuxon := false
+	for _, file := range result.ParsedConfig.FileNames {
+		if filepath.Base(file) == "luxon.d.ts" {
+			hasLuxon = true
+		}
+	}
+	
+	if !hasLuxon {
+		t.Error("Files from extended config are missing when extending config has no files array!")
+	}
 }
