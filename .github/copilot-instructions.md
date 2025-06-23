@@ -80,5 +80,5 @@ It is fine to implement more and more of a feature across commits, but be sure t
 
 # Other Instructions
 
-- Do not add or change existing new dependencies unless asked to.
+- Do not add or change existing dependencies unless asked to.
  
