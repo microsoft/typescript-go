@@ -222,7 +222,7 @@ export class RemoteNodeBase {
 
     protected get childMask(): number {
         if (this.dataType !== NODE_DATA_TYPE_CHILDREN) {
-            return 0;
+            return -1;
         }
         return this.data & NODE_CHILD_MASK;
     }
