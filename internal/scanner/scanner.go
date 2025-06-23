@@ -2323,6 +2323,27 @@ func GetLineAndCharacterOfPosition(sourceFile ast.SourceFileLike, pos int) (line
 	return
 }
 
+func GetLineEndOfPosition(sourceFile ast.SourceFileLike, pos int) int {
+	line, _ := GetLineAndCharacterOfPosition(sourceFile, pos)
+	lineStarts := GetLineStarts(sourceFile)
+
+	var lastCharPos int
+	if line+1 >= len(lineStarts) {
+		lineMap := sourceFile.LineMap()
+		lastCharPos = int(lineMap[len(lineMap)-1])
+	} else {
+		lastCharPos = int(lineStarts[line+1] - 1)
+	}
+
+	fullText := sourceFile.Text()
+	// if the new line is "\r\n", we should return the last non-new-line-character position
+	if len(fullText) > 0 && fullText[lastCharPos] == '\n' && fullText[lastCharPos-1] == '\r' {
+		return lastCharPos - 1
+	} else {
+		return lastCharPos
+	}
+}
+
 func GetEndLinePosition(sourceFile *ast.SourceFile, line int) int {
 	pos := int(GetLineStarts(sourceFile)[line])
 	for {

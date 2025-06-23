@@ -412,6 +412,9 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return s.handleCompletion(ctx, req)
 	case *lsproto.SignatureHelpParams:
 		return s.handleSignatureHelp(ctx, req)
+	case *lsproto.FoldingRangeParams:
+		return s.handleFoldingRange(ctx, req)
+
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -475,6 +478,13 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 			},
 			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
 				TriggerCharacters: &[]string{"(", ","},
+			},
+			FoldingRangeProvider: &lsproto.BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{
+				FoldingRangeOptions: &lsproto.FoldingRangeOptions{
+					WorkDoneProgressOptions: lsproto.WorkDoneProgressOptions{
+						WorkDoneProgress: ptrTo(true),
+					},
+				},
 			},
 		},
 	})
@@ -567,6 +577,16 @@ func (s *Server) handleSignatureHelp(ctx context.Context, req *lsproto.RequestMe
 		&ls.UserPreferences{},
 	)
 	s.sendResult(req.ID, signatureHelp)
+	return nil
+}
+
+func (s *Server) handleFoldingRange(ctx context.Context, req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.FoldingRangeParams)
+	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	defer done()
+	foldingRanges := languageService.ProvideFoldingRange(ctx, params.TextDocument.Uri)
+	s.sendResult(req.ID, foldingRanges)
 	return nil
 }
 
