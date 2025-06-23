@@ -31,16 +31,13 @@ p./*a*/`
 					Label:      "x",
 					Kind:       ptrTo(lsproto.CompletionItemKindField),
 					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
+					InsertText: ptrTo(".x"),
 					FilterText: ptrTo(".x"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
-							NewText: "x",
-							Insert: lsproto.Range{
-								Start: lsproto.Position{Line: 6, Character: 2},
-								End:   lsproto.Position{Line: 6, Character: 2},
-							},
-							Replace: lsproto.Range{
-								Start: lsproto.Position{Line: 6, Character: 2},
+						TextEdit: &lsproto.TextEdit{
+							NewText: ".x",
+							Range: lsproto.Range{
+								Start: lsproto.Position{Line: 6, Character: 1},
 								End:   lsproto.Position{Line: 6, Character: 2},
 							},
 						},

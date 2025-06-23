@@ -17,8 +17,7 @@ export const foo = { bar: 'baz' };
 
 // @Filename: /b.ts
 import { foo } from './a';
-const test = foo./*1*/
-const x = 1;`
+const test = foo./*1*/`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
@@ -32,15 +31,12 @@ const x = 1;`
 					Kind:       ptrTo(lsproto.CompletionItemKindField),
 					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
 					FilterText: ptrTo(".bar"),
+					InsertText: ptrTo(".bar"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
-							NewText: "bar",
-							Insert: lsproto.Range{
-								Start: lsproto.Position{Line: 1, Character: 17},
-								End:   lsproto.Position{Line: 1, Character: 17},
-							},
-							Replace: lsproto.Range{
-								Start: lsproto.Position{Line: 1, Character: 17},
+						TextEdit: &lsproto.TextEdit{
+							NewText: ".bar",
+							Range: lsproto.Range{
+								Start: lsproto.Position{Line: 1, Character: 16},
 								End:   lsproto.Position{Line: 1, Character: 17},
 							},
 						},
