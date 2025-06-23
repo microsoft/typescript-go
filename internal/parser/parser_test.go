@@ -7,9 +7,10 @@ import (
 	"path/filepath"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/fixtures"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
@@ -19,10 +20,10 @@ import (
 func BenchmarkParse(b *testing.B) {
 	jsdocModes := []struct {
 		name string
-		mode scanner.JSDocParsingMode
+		mode ast.JSDocParsingMode
 	}{
-		{"tsc", scanner.JSDocParsingModeParseForTypeErrors},
-		{"server", scanner.JSDocParsingModeParseAll},
+		{"tsc", ast.JSDocParsingModeParseForTypeErrors},
+		{"server", ast.JSDocParsingModeParseAll},
 	}
 
 	for _, f := range fixtures.BenchFixtures {
@@ -32,12 +33,20 @@ func BenchmarkParse(b *testing.B) {
 			fileName := tspath.GetNormalizedAbsolutePath(f.Path(), "/")
 			path := tspath.ToPath(fileName, "/", osvfs.FS().UseCaseSensitiveFileNames())
 			sourceText := f.ReadFile(b)
+			scriptKind := core.GetScriptKindFromFileName(fileName)
 
 			for _, jsdoc := range jsdocModes {
 				b.Run(jsdoc.name, func(b *testing.B) {
 					jsdocMode := jsdoc.mode
+
+					opts := ast.SourceFileParseOptions{
+						FileName:         fileName,
+						Path:             path,
+						JSDocParsingMode: jsdocMode,
+					}
+
 					for b.Loop() {
-						ParseSourceFile(fileName, path, sourceText, core.ScriptTargetESNext, jsdocMode)
+						ParseSourceFile(opts, sourceText, scriptKind)
 					}
 				})
 			}
@@ -88,7 +97,7 @@ func FuzzParser(f *testing.F) {
 		// "tests/cases",
 	}
 
-	var extensions core.Set[string]
+	var extensions collections.Set[string]
 	for _, es := range tspath.AllSupportedExtensionsWithJson {
 		for _, e := range es {
 			extensions.Add(e)
@@ -102,13 +111,13 @@ func FuzzParser(f *testing.F) {
 			sourceText, err := os.ReadFile(file.path)
 			assert.NilError(f, err)
 			extension := tspath.TryGetExtensionFromPath(file.path)
-			f.Add(extension, string(sourceText), int(core.ScriptTargetESNext), int(scanner.JSDocParsingModeParseAll))
+			f.Add(extension, string(sourceText), int(core.ScriptTargetESNext), int(ast.JSDocParsingModeParseAll))
 		}
 	}
 
 	f.Fuzz(func(t *testing.T, extension string, sourceText string, scriptTarget_ int, jsdocParsingMode_ int) {
 		scriptTarget := core.ScriptTarget(scriptTarget_)
-		jsdocParsingMode := scanner.JSDocParsingMode(jsdocParsingMode_)
+		jsdocParsingMode := ast.JSDocParsingMode(jsdocParsingMode_)
 
 		if !extensions.Has(extension) {
 			t.Skip()
@@ -118,18 +127,19 @@ func FuzzParser(f *testing.F) {
 			t.Skip()
 		}
 
-		if jsdocParsingMode < scanner.JSDocParsingModeParseAll || jsdocParsingMode > scanner.JSDocParsingModeParseNone {
+		if jsdocParsingMode < ast.JSDocParsingModeParseAll || jsdocParsingMode > ast.JSDocParsingModeParseNone {
 			t.Skip()
 		}
 
 		fileName := "/index" + extension
 		path := tspath.Path(fileName)
 
-		if extension == ".json" {
-			ParseJSONText(fileName, path, sourceText)
-			return
+		opts := ast.SourceFileParseOptions{
+			FileName:         fileName,
+			Path:             path,
+			JSDocParsingMode: jsdocParsingMode,
 		}
 
-		ParseSourceFile(fileName, path, sourceText, scriptTarget, jsdocParsingMode)
+		ParseSourceFile(opts, sourceText, core.GetScriptKindFromFileName(fileName))
 	})
 }

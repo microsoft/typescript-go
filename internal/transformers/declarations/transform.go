@@ -478,7 +478,7 @@ func (tx *DeclarationTransformer) visitDeclarationSubtree(input *ast.Node) *ast.
 	case ast.KindJSDocTypeLiteral:
 		result = tx.transformJSDocTypeLiteral(input.AsJSDocTypeLiteral())
 	case ast.KindJSDocPropertyTag:
-		result = tx.transformJSDocPropertyTag(input.AsJSDocPropertyTag())
+		result = tx.transformJSDocPropertyTag(input.AsJSDocParameterOrPropertyTag())
 	case ast.KindJSDocAllType:
 		result = tx.transformJSDocAllType(input.AsJSDocAllType())
 	case ast.KindJSDocNullableType:
@@ -931,7 +931,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		}
 		statement := tx.Factory().NewVariableStatement(modList, tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl})))
 
-		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), newId)
+		assignment := tx.Factory().UpdateExportAssignment(input.AsExportAssignment(), input.Modifiers(), input.Type(), newId)
 		// Remove coments from the export declaration and copy them onto the synthetic _default declaration
 		tx.preserveJsDoc(statement, input)
 		tx.removeAllComments(assignment)
@@ -1167,7 +1167,7 @@ func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDe
 	tx.needsDeclare = false
 	inner := input.Body
 	keyword := input.Keyword
-	if input.Name() == nil || !ast.IsStringLiteral(input.Name()) {
+	if keyword != ast.KindGlobalKeyword && (input.Name() == nil || !ast.IsStringLiteral(input.Name())) {
 		keyword = ast.KindNamespaceKeyword
 	}
 

@@ -686,21 +686,15 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.Name() != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
 	case ast.KindJSDocSignature:
 		n := node.AsJSDocSignature()
-		return (boolToByte(n.TypeParameters() != nil) << 0) | (boolToByte(n.Parameters != nil) << 1) | (boolToByte(n.Type != nil) << 2)
+		return (boolToByte(n.TypeParameters != nil) << 0) | (boolToByte(n.Parameters != nil) << 1) | (boolToByte(n.Type != nil) << 2)
 	case ast.KindClassStaticBlockDeclaration:
 		n := node.AsClassStaticBlockDeclaration()
 		return (boolToByte(n.Modifiers() != nil) << 0) | (boolToByte(n.Body != nil) << 1)
 	case ast.KindClassDeclaration:
 		n := node.AsClassDeclaration()
 		return (boolToByte(n.Modifiers() != nil) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.TypeParameters != nil) << 2) | (boolToByte(n.HeritageClauses != nil) << 3) | (boolToByte(n.Members != nil) << 4)
-	case ast.KindJSDocPropertyTag:
-		n := node.AsJSDocPropertyTag()
-		if n.IsNameFirst {
-			return (boolToByte(n.Name() != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1)
-		}
-		return (boolToByte(n.TypeExpression != nil) << 0) | (boolToByte(n.Name() != nil) << 1)
-	case ast.KindJSDocParameterTag:
-		n := node.AsJSDocParameterTag()
+	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
+		n := node.AsJSDocParameterOrPropertyTag()
 		if n.IsNameFirst {
 			return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.Name() != nil) << 1) | (boolToByte(n.TypeExpression != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
 		}
@@ -745,11 +739,8 @@ func getNodeDefinedData(node *ast.Node) uint32 {
 	case ast.KindObjectLiteralExpression:
 		n := node.AsObjectLiteralExpression()
 		return uint32(boolToByte(n.MultiLine)) << 24
-	case ast.KindJSDocPropertyTag:
-		n := node.AsJSDocPropertyTag()
-		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
-	case ast.KindJSDocParameterTag:
-		n := node.AsJSDocParameterTag()
+	case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
+		n := node.AsJSDocParameterOrPropertyTag()
 		return uint32(boolToByte(n.IsBracketed))<<24 | uint32(boolToByte(n.IsNameFirst))<<25
 	case ast.KindJsxText:
 		n := node.AsJsxText()

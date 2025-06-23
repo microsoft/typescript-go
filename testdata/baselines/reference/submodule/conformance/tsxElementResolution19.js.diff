@@ -8,11 +8,8 @@
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    exports.MyClass = void 0;
--    var MyClass = /** @class */ (function () {
--        function MyClass() {
--        }
--        return MyClass;
--    }());
+-    class MyClass {
+-    }
 -    exports.MyClass = MyClass;
 -});
 +"use strict";
@@ -32,4 +29,4 @@
 +// Should not elide React import
 +const React = require("react");
 +const file1_1 = require("./file1");
-+<file1_1.MyClass />;
++React.createElement(file1_1.MyClass, null);

@@ -11,12 +11,12 @@
 -    return {
 -        setters: [],
 -        execute: function () {
--            Component = /** @class */ (function () {
--                function Component() {
--                }
--                Component.prototype.render = function () {
+-            Component = class Component {
+-                render() {
 -                    return <div>
 -            {/* missing */}
++"use strict";
++Object.defineProperty(exports, "__esModule", { value: true });
 +class Component {
 +    render() {
 +        return <div>
@@ -37,9 +37,8 @@
 +            
 +            
          </div>;
--                };
--                return Component;
--            }());
+-                }
+-            };
 -        }
 -    };
 -});

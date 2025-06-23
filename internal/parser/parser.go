@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -49,10 +50,9 @@ type Parser struct {
 	scanner *scanner.Scanner
 	factory ast.NodeFactory
 
-	fileName         string
-	path             tspath.Path
-	sourceText       string
-	languageVersion  core.ScriptTarget
+	opts       ast.SourceFileParseOptions
+	sourceText string
+
 	scriptKind       core.ScriptKind
 	languageVariant  core.LanguageVariant
 	diagnostics      []*ast.Diagnostic
@@ -68,7 +68,7 @@ type Parser struct {
 
 	identifiers             map[string]string
 	identifierCount         int
-	notParenthesizedArrow   core.Set[int]
+	notParenthesizedArrow   collections.Set[int]
 	nodeSlicePool           core.Pool[*ast.Node]
 	jsdocCache              map[*ast.Node][]*ast.Node
 	possibleAwaitSpans      []int
@@ -96,19 +96,18 @@ func putParser(p *Parser) {
 	parserPool.Put(p)
 }
 
-func ParseSourceFile(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, jsdocParsingMode scanner.JSDocParsingMode) *ast.SourceFile {
+func ParseSourceFile(opts ast.SourceFileParseOptions, sourceText string, scriptKind core.ScriptKind) *ast.SourceFile {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, languageVersion, core.ScriptKindUnknown, jsdocParsingMode)
+	p.initializeState(opts, sourceText, scriptKind)
 	p.nextToken()
+	if p.scriptKind == core.ScriptKindJSON {
+		return p.parseJSONText()
+	}
 	return p.parseSourceFileWorker()
 }
 
-func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.SourceFile {
-	p := getParser()
-	defer putParser(p)
-	p.initializeState(fileName, path, sourceText, core.ScriptTargetES2015, core.ScriptKindJSON, scanner.JSDocParsingModeParseAll)
-	p.nextToken()
+func (p *Parser) parseJSONText() *ast.SourceFile {
 	pos := p.nodePos()
 	var statements *ast.NodeList
 
@@ -169,38 +168,38 @@ func ParseJSONText(fileName string, path tspath.Path, sourceText string) *ast.So
 		statements = p.newNodeList(core.NewTextRange(pos, p.nodePos()), []*ast.Node{statement})
 		p.parseExpectedToken(ast.KindEndOfFile)
 	}
-	node := p.factory.NewSourceFile(p.sourceText, p.fileName, p.path, statements)
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
-	result.ScriptKind = core.ScriptKindJSON
-	result.LanguageVersion = core.ScriptTargetES2015
-	result.Flags |= p.sourceFlags
-	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
+	p.finishSourceFile(result, false)
 	return result
 }
 
-func ParseIsolatedEntityName(text string, languageVersion core.ScriptTarget) *ast.EntityName {
+func ParseIsolatedEntityName(text string) *ast.EntityName {
 	p := getParser()
 	defer putParser(p)
-	p.initializeState("", "", text, languageVersion, core.ScriptKindJS, scanner.JSDocParsingModeParseAll)
+	p.initializeState(ast.SourceFileParseOptions{
+		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+	}, text, core.ScriptKindJS)
 	p.nextToken()
 	entityName := p.parseEntityName(true, nil)
 	return core.IfElse(p.token == ast.KindEndOfFile && len(p.diagnostics) == 0, entityName, nil)
 }
 
-func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText string, languageVersion core.ScriptTarget, scriptKind core.ScriptKind, jsdocParsingMode scanner.JSDocParsingMode) {
+func (p *Parser) initializeState(opts ast.SourceFileParseOptions, sourceText string, scriptKind core.ScriptKind) {
+	if scriptKind == core.ScriptKindUnknown {
+		panic("ScriptKind must be specified when parsing source files.")
+	}
+
 	if p.scanner == nil {
 		p.scanner = scanner.NewScanner()
 	} else {
 		p.scanner.Reset()
 	}
-	p.fileName = fileName
-	p.path = path
+	p.opts = opts
 	p.sourceText = sourceText
-	p.languageVersion = languageVersion
-	p.scriptKind = ensureScriptKind(fileName, scriptKind)
-	p.languageVariant = ast.GetLanguageVariant(p.scriptKind)
+	p.scriptKind = scriptKind
+	p.languageVariant = getLanguageVariant(p.scriptKind)
 	switch p.scriptKind {
 	case core.ScriptKindJS, core.ScriptKindJSX:
 		p.contextFlags = ast.NodeFlagsJavaScriptFile
@@ -211,10 +210,9 @@ func (p *Parser) initializeState(fileName string, path tspath.Path, sourceText s
 	}
 	p.scanner.SetText(p.sourceText)
 	p.scanner.SetOnError(p.scanError)
-	p.scanner.SetScriptTarget(p.languageVersion)
 	p.scanner.SetLanguageVariant(p.languageVariant)
 	p.scanner.SetScriptKind(p.scriptKind)
-	p.scanner.SetJSDocParsingMode(jsdocParsingMode)
+	p.scanner.SetJSDocParsingMode(p.opts.JSDocParsingMode)
 }
 
 func (p *Parser) scanError(message *diagnostics.Message, pos int, length int, args ...any) {
@@ -312,7 +310,7 @@ func (p *Parser) hasPrecedingJSDocComment() bool {
 }
 
 func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
-	isDeclarationFile := tspath.IsDeclarationFileName(p.fileName)
+	isDeclarationFile := tspath.IsDeclarationFileName(p.opts.FileName)
 	if isDeclarationFile {
 		p.contextFlags |= ast.NodeFlagsAmbient
 	}
@@ -322,7 +320,7 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	if eof.Kind != ast.KindEndOfFile {
 		panic("Expected end of file token from scanner.")
 	}
-	node := p.factory.NewSourceFile(p.sourceText, p.fileName, p.path, statements)
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, isDeclarationFile)
@@ -343,10 +341,9 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.Pragmas = getCommentPragmas(&p.factory, p.sourceText)
 	p.processPragmasIntoFields(result)
 	result.SetDiagnostics(attachFileToDiagnostics(p.diagnostics, result))
-	result.ExternalModuleIndicator = isFileProbablyExternalModule(result) // !!!
+	result.SetJSDocDiagnostics(attachFileToDiagnostics(p.jsdocDiagnostics, result))
 	result.CommonJSModuleIndicator = p.commonJSModuleIndicator
 	result.IsDeclarationFile = isDeclarationFile
-	result.LanguageVersion = p.languageVersion
 	result.LanguageVariant = p.languageVariant
 	result.ScriptKind = p.scriptKind
 	result.Flags |= p.sourceFlags
@@ -355,6 +352,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
+	ast.SetExternalModuleIndicator(result, p.opts.ExternalModuleIndicatorOptions)
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
@@ -459,7 +457,7 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		}
 	}
 
-	return p.factory.NewSourceFile(sourceFile.Text(), sourceFile.FileName(), sourceFile.Path(), p.newNodeList(sourceFile.Statements.Loc, statements))
+	return p.factory.NewSourceFile(sourceFile.ParseOptions(), p.sourceText, p.newNodeList(sourceFile.Statements.Loc, statements))
 }
 
 func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) *ast.NodeList {
@@ -1396,8 +1394,8 @@ func (p *Parser) parseExpressionOrLabeledStatement() *ast.Statement {
 	}
 	result := p.factory.NewExpressionStatement(expression)
 	p.finishNode(result, pos)
-	p.withJSDoc(result, hasJSDoc && !hasParen)
-	p.reparseCommonJS(result)
+	jsdoc := p.withJSDoc(result, hasJSDoc && !hasParen)
+	p.reparseCommonJS(result, jsdoc)
 	return result
 }
 
@@ -2082,9 +2080,7 @@ func (p *Parser) parseModuleOrNamespaceDeclaration(pos int, hasJSDoc bool, modif
 		implicitExport := p.factory.NewModifier(ast.KindExportKeyword)
 		implicitExport.Loc = core.NewTextRange(p.nodePos(), p.nodePos())
 		implicitExport.Flags = ast.NodeFlagsReparsed
-		nodes := p.nodeSlicePool.NewSlice(1)
-		nodes[0] = implicitExport
-		implicitModifiers := p.newModifierList(implicitExport.Loc, nodes)
+		implicitModifiers := p.newModifierList(implicitExport.Loc, p.nodeSlicePool.NewSlice1(implicitExport))
 		body = p.parseModuleOrNamespaceDeclaration(p.nodePos(), false /*hasJSDoc*/, implicitModifiers, true /*nested*/, keyword)
 	} else {
 		body = p.parseModuleBlock()
@@ -2378,7 +2374,7 @@ func (p *Parser) parseExportAssignment(pos int, hasJSDoc bool, modifiers *ast.Mo
 	p.parseSemicolon()
 	p.contextFlags = saveContextFlags
 	p.statementHasAwaitIdentifier = saveHasAwaitIdentifier
-	result := p.factory.NewExportAssignment(modifiers, isExportEquals, expression)
+	result := p.factory.NewExportAssignment(modifiers, isExportEquals, nil /*typeNode*/, expression)
 	p.finishNode(result, pos)
 	p.withJSDoc(result, hasJSDoc)
 	return result
@@ -3724,9 +3720,7 @@ func (p *Parser) parseModifiersForConstructorType() *ast.ModifierList {
 		modifier := p.factory.NewModifier(p.token)
 		p.nextToken()
 		p.finishNode(modifier, pos)
-		nodes := p.nodeSlicePool.NewSlice(1)
-		nodes[0] = modifier
-		return p.newModifierList(modifier.Loc, nodes)
+		return p.newModifierList(modifier.Loc, p.nodeSlicePool.NewSlice1(modifier))
 	}
 	return nil
 }
@@ -3906,9 +3900,12 @@ func (p *Parser) nextTokenCanFollowModifier() bool {
 		return p.canFollowExportModifier()
 	case ast.KindDefaultKeyword:
 		return p.nextTokenCanFollowDefaultKeyword()
-	case ast.KindStaticKeyword, ast.KindGetKeyword, ast.KindSetKeyword:
+	case ast.KindStaticKeyword:
 		p.nextToken()
 		return p.canFollowModifier()
+	case ast.KindGetKeyword, ast.KindSetKeyword:
+		p.nextToken()
+		return p.canFollowGetOrSetKeyword()
 	default:
 		return p.nextTokenIsOnSameLineAndCanFollowModifier()
 	}
@@ -3961,6 +3958,10 @@ func (p *Parser) canFollowExportModifier() bool {
 
 func (p *Parser) canFollowModifier() bool {
 	return p.token == ast.KindOpenBracketToken || p.token == ast.KindOpenBraceToken || p.token == ast.KindAsteriskToken || p.token == ast.KindDotDotDotToken || p.isLiteralPropertyName()
+}
+
+func (p *Parser) canFollowGetOrSetKeyword() bool {
+	return p.token == ast.KindOpenBracketToken || p.isLiteralPropertyName()
 }
 
 func (p *Parser) nextTokenIsOnSameLineAndCanFollowModifier() bool {
@@ -4368,9 +4369,7 @@ func (p *Parser) parseModifiersForArrowFunction() *ast.ModifierList {
 		p.nextToken()
 		modifier := p.factory.NewModifier(ast.KindAsyncKeyword)
 		p.finishNode(modifier, pos)
-		nodes := p.nodeSlicePool.NewSlice(1)
-		nodes[0] = modifier
-		return p.newModifierList(modifier.Loc, nodes)
+		return p.newModifierList(modifier.Loc, p.nodeSlicePool.NewSlice1(modifier))
 	}
 	return nil
 }
@@ -4585,7 +4584,7 @@ func (p *Parser) makeAsExpression(left *ast.Expression, right *ast.TypeNode) *as
 }
 
 func (p *Parser) makeBinaryExpression(left *ast.Expression, operatorToken *ast.Node, right *ast.Expression, pos int) *ast.Node {
-	result := p.factory.NewBinaryExpression(left, operatorToken, right)
+	result := p.factory.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, operatorToken, right)
 	p.finishNode(result, pos)
 	return result
 }
@@ -4727,7 +4726,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 		operatorToken := p.factory.NewToken(ast.KindCommaToken)
 		operatorToken.Loc = core.NewTextRange(invalidElement.Pos(), invalidElement.Pos())
 		p.parseErrorAt(scanner.SkipTrivia(p.sourceText, topBadPos), invalidElement.End(), diagnostics.JSX_expressions_must_have_one_parent_element)
-		result = p.factory.NewBinaryExpression(result, operatorToken, invalidElement)
+		result = p.factory.NewBinaryExpression(nil /*modifiers*/, result, nil /*typeNode*/, operatorToken, invalidElement)
 		p.finishNode(result, pos)
 	}
 	return result
@@ -5637,11 +5636,11 @@ func (p *Parser) parseObjectLiteralElement() *ast.Node {
 		if equalsToken != nil {
 			initializer = doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
 		}
-		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, equalsToken, initializer)
+		node = p.factory.NewShorthandPropertyAssignment(modifiers, name, postfixToken, nil /*typeNode*/, equalsToken, initializer)
 	} else {
 		p.parseExpected(ast.KindColonToken)
 		initializer := doInContext(p, ast.NodeFlagsDisallowInContext, false, (*Parser).parseAssignmentExpressionOrHigher)
-		node = p.factory.NewPropertyAssignment(modifiers, name, postfixToken, initializer)
+		node = p.factory.NewPropertyAssignment(modifiers, name, postfixToken, nil /*typeNode*/, initializer)
 	}
 	p.finishNode(node, pos)
 	p.withJSDoc(node, hasJSDoc)
@@ -6345,36 +6344,6 @@ func isKeyword(token ast.Kind) bool {
 
 func isReservedWord(token ast.Kind) bool {
 	return ast.KindFirstReservedWord <= token && token <= ast.KindLastReservedWord
-}
-
-func isFileProbablyExternalModule(sourceFile *ast.SourceFile) *ast.Node {
-	for _, statement := range sourceFile.Statements.Nodes {
-		if ast.IsExternalModuleIndicator(statement) {
-			return statement
-		}
-	}
-	return getImportMetaIfNecessary(sourceFile)
-}
-
-func getImportMetaIfNecessary(sourceFile *ast.SourceFile) *ast.Node {
-	if sourceFile.AsNode().Flags&ast.NodeFlagsPossiblyContainsImportMeta != 0 {
-		return findChildNode(sourceFile.AsNode(), ast.IsImportMeta)
-	}
-	return nil
-}
-
-func findChildNode(root *ast.Node, check func(*ast.Node) bool) *ast.Node {
-	var result *ast.Node
-	var visit func(*ast.Node) bool
-	visit = func(node *ast.Node) bool {
-		if check(node) {
-			result = node
-			return true
-		}
-		return node.ForEachChild(visit)
-	}
-	visit(root)
-	return result
 }
 
 func tagNamesAreEquivalent(lhs *ast.Expression, rhs *ast.Expression) bool {

@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/lsutil"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 )
@@ -31,12 +32,16 @@ func (l *LanguageService) ProvideCompletion(
 	preferences *UserPreferences,
 ) (*lsproto.CompletionList, error) {
 	program, file := l.getProgramAndFile(documentURI)
+	var triggerCharacter *string
+	if context != nil {
+		triggerCharacter = context.TriggerCharacter
+	}
 	return l.getCompletionsAtPosition(
 		ctx,
 		program,
 		file,
 		int(l.converters.LineAndCharacterToPosition(file, position)),
-		context,
+		triggerCharacter,
 		preferences,
 		clientOptions,
 	), nil
@@ -272,16 +277,16 @@ func (l *LanguageService) getCompletionsAtPosition(
 	program *compiler.Program,
 	file *ast.SourceFile,
 	position int,
-	context *lsproto.CompletionContext,
+	triggerCharacter *string,
 	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 ) *lsproto.CompletionList {
 	_, previousToken := getRelevantTokens(position, file)
-	if context.TriggerCharacter != nil && !IsInString(file, position, previousToken) && !isValidTrigger(file, *context.TriggerCharacter, previousToken, position) {
+	if triggerCharacter != nil && !IsInString(file, position, previousToken) && !isValidTrigger(file, *triggerCharacter, previousToken, position) {
 		return nil
 	}
 
-	if context.TriggerCharacter != nil && *context.TriggerCharacter == " " {
+	if triggerCharacter != nil && *triggerCharacter == " " {
 		// `isValidTrigger` ensures we are at `import |`
 		if ptrIsTrue(preferences.IncludeCompletionsForImportStatements) {
 			return &lsproto.CompletionList{
@@ -291,7 +296,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 		return nil
 	}
 
-	compilerOptions := program.GetCompilerOptions()
+	compilerOptions := program.Options()
 
 	// !!! see if incomplete completion list and continue or clean
 
@@ -309,10 +314,10 @@ func (l *LanguageService) getCompletionsAtPosition(
 		return stringCompletions
 	}
 
-	if previousToken != nil && ast.IsBreakOrContinueStatement(previousToken.Parent) &&
-		(previousToken.Kind == ast.KindBreakKeyword ||
-			previousToken.Kind == ast.KindContinueKeyword ||
-			previousToken.Kind == ast.KindIdentifier) {
+	if previousToken != nil && (previousToken.Kind == ast.KindBreakKeyword ||
+		previousToken.Kind == ast.KindContinueKeyword ||
+		previousToken.Kind == ast.KindIdentifier) &&
+		ast.IsBreakOrContinueStatement(previousToken.Parent) {
 		return l.getLabelCompletionsAtPosition(previousToken.Parent, clientOptions, file, position)
 	}
 
@@ -346,7 +351,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 }
 
 func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, file *ast.SourceFile, position int, preferences *UserPreferences) completionData {
-	inCheckedFile := isCheckedFile(file, program.GetCompilerOptions())
+	inCheckedFile := isCheckedFile(file, program.Options())
 
 	currentToken := astnav.GetTokenAtPosition(file, position)
 
@@ -385,6 +390,15 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 
 	if contextToken != nil {
 		// !!! import completions
+		// Bail out if this is a known invalid completion location.
+		// !!! if (!importStatementCompletionInfo.replacementSpan && ...)
+		if isCompletionListBlocker(contextToken, previousToken, location, file, position, typeChecker) {
+			if keywordFilters != KeywordCompletionFiltersNone {
+				isNewIdentifierLocation, _ := computeCommitCharactersAndIsNewIdentifier(contextToken, file, position)
+				return keywordCompletionData(keywordFilters, isJSOnlyLocation, isNewIdentifierLocation)
+			}
+			return nil
+		}
 
 		parent := contextToken.Parent
 		if contextToken.Kind == ast.KindDotToken || contextToken.Kind == ast.KindQuestionDotToken {
@@ -398,7 +412,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 				if ast.NodeIsMissing(leftMostAccessExpression) ||
 					((ast.IsCallExpression(node) || ast.IsFunctionLike(node)) &&
 						node.End() == contextToken.Pos() &&
-						getLastChild(node, file).Kind != ast.KindCloseParenToken) {
+						lsutil.GetLastChild(node, file).Kind != ast.KindCloseParenToken) {
 					// This is likely dot from incorrectly parsed expression and user is starting to write spread
 					// eg: Math.min(./**/)
 					// const x = function (./**/) {}
@@ -412,7 +426,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 			case ast.KindImportType:
 				node = parent
 			case ast.KindMetaProperty:
-				node = getFirstToken(parent, file)
+				node = lsutil.GetFirstToken(parent, file)
 				if node.Kind != ast.KindImportKeyword && node.Kind != ast.KindNewKeyword {
 					panic("Unexpected token kind: " + node.Kind.String())
 				}
@@ -500,7 +514,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 	symbolToOriginInfoMap := map[ast.SymbolId]*symbolOriginInfo{}
 	symbolToSortTextMap := map[ast.SymbolId]sortText{}
 	// var importSpecifierResolver any // !!! import
-	var seenPropertySymbols core.Set[ast.SymbolId]
+	var seenPropertySymbols collections.Set[ast.SymbolId]
 	isTypeOnlyLocation := insideJSDocTagTypeExpression || insideJsDocImportTag ||
 		importStatementCompletion != nil && ast.IsTypeOnlyImportOrExportDeclaration(location.Parent) ||
 		!isContextTokenValueLocation(contextToken) &&
@@ -691,7 +705,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 							return typeChecker.IsValidPropertyAccess(valueAccessNode, s.Name)
 						}
 						isValidTypeAccess := func(s *ast.Symbol) bool {
-							return symbolCanBeReferencedAtTypeLocation(s, typeChecker, core.Set[ast.SymbolId]{})
+							return symbolCanBeReferencedAtTypeLocation(s, typeChecker, collections.Set[ast.SymbolId]{})
 						}
 						var isValidAccess bool
 						if isNamespaceName {
@@ -793,7 +807,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 		members := getPropertiesForCompletion(containerExpectedType, typeChecker)
 		existingMembers := getPropertiesForCompletion(containerActualType, typeChecker)
 
-		existingMemberNames := core.Set[string]{}
+		existingMemberNames := collections.Set[string]{}
 		for _, member := range existingMembers {
 			existingMemberNames.Add(member.Name)
 		}
@@ -1008,7 +1022,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 		isNewIdentifierLocation = false
 		exports := typeChecker.GetExportsAndPropertiesOfModule(moduleSpecifierSymbol)
 
-		existing := core.Set[string]{}
+		existing := collections.Set[string]{}
 		for _, element := range namedImportsOrExports.Elements() {
 			if isCurrentlyEditingNode(element, file, position) {
 				continue
@@ -1048,7 +1062,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 		if importAttributes.AsImportAttributes().Attributes != nil {
 			elements = importAttributes.AsImportAttributes().Attributes.Nodes
 		}
-		existing := core.NewSetFromItems(core.Map(elements, (*ast.Node).Text)...)
+		existing := collections.NewSetFromItems(core.Map(elements, (*ast.Node).Text)...)
 		uniques := core.Filter(
 			typeChecker.GetApparentProperties(typeChecker.GetTypeAtLocation(importAttributes)),
 			func(symbol *ast.Symbol) bool {
@@ -1411,7 +1425,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 
 	// exclude literal suggestions after <input type="text" [||] /> microsoft/TypeScript#51667) and after closing quote (microsoft/TypeScript#52675)
 	// for strings getStringLiteralCompletions handles completions
-	isLiteralExpected := !ast.IsStringLiteralLike(previousToken) && !isJsxIdentifierExpected
+	isLiteralExpected := !(previousToken != nil && ast.IsStringLiteralLike(previousToken)) && !isJsxIdentifierExpected
 	var literals []literalValue
 	if isLiteralExpected {
 		var types []*checker.Type
@@ -1499,7 +1513,7 @@ func (l *LanguageService) completionInfoFromData(
 	defer done()
 
 	// Verify if the file is JSX language variant
-	if ast.GetLanguageVariant(file.ScriptKind) == core.LanguageVariantJSX {
+	if file.LanguageVariant == core.LanguageVariantJSX {
 		list := l.getJsxClosingTagCompletion(data.location, file, position, clientOptions)
 		if list != nil {
 			return list
@@ -1541,7 +1555,6 @@ func (l *LanguageService) completionInfoFromData(
 		position,
 		file,
 		program,
-		compilerOptions.GetEmitScriptTarget(),
 		preferences,
 		compilerOptions,
 		clientOptions,
@@ -1579,7 +1592,6 @@ func (l *LanguageService) completionInfoFromData(
 			file,
 			position,
 			&uniqueNames,
-			compilerOptions.GetEmitScriptTarget(),
 			sortedEntries,
 		)
 	}
@@ -1603,11 +1615,10 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 	position int,
 	file *ast.SourceFile,
 	program *compiler.Program,
-	target core.ScriptTarget,
 	preferences *UserPreferences,
 	compilerOptions *core.CompilerOptions,
 	clientOptions *lsproto.CompletionClientCapabilities,
-) (uniqueNames core.Set[string], sortedEntries []*lsproto.CompletionItem) {
+) (uniqueNames collections.Set[string], sortedEntries []*lsproto.CompletionItem) {
 	closestSymbolDeclaration := getClosestSymbolDeclaration(data.contextToken, data.location)
 	useSemicolons := probablyUsesSemicolons(file)
 	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
@@ -1623,7 +1634,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		origin := data.symbolToOriginInfoMap[symbolId]
 		name, needsConvertPropertyAccess := getCompletionEntryDisplayNameForSymbol(
 			symbol,
-			target,
 			origin,
 			data.completionKind,
 			data.isJsxIdentifierExpected,
@@ -1682,7 +1692,7 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 		sortedEntries = core.InsertSorted(sortedEntries, entry, compareCompletionEntries)
 	}
 
-	uniqueSet := core.NewSetWithSizeHint[string](len(uniques))
+	uniqueSet := collections.NewSetWithSizeHint[string](len(uniques))
 	for name := range maps.Keys(uniques) {
 		uniqueSet.Add(name)
 	}
@@ -1814,7 +1824,7 @@ func (l *LanguageService) createCompletionItem(
 		}
 		precedingToken := astnav.FindPrecedingToken(file, data.propertyAccessToConvert.Pos())
 		var awaitText string
-		if precedingToken != nil && positionIsASICandidate(precedingToken.End(), precedingToken.Parent, file) {
+		if precedingToken != nil && lsutil.PositionIsASICandidate(precedingToken.End(), precedingToken.Parent, file) {
 			awaitText = ";"
 		}
 
@@ -1868,7 +1878,7 @@ func (l *LanguageService) createCompletionItem(
 			ast.IsGetAccessorDeclaration(contextToken.Parent.Parent) ||
 			ast.IsSetAccessorDeclaration(contextToken.Parent.Parent) ||
 			ast.IsSpreadAssignment(contextToken.Parent) ||
-			getLastToken(ast.FindAncestor(contextToken.Parent, ast.IsPropertyAssignment), file) == contextToken ||
+			lsutil.GetLastToken(ast.FindAncestor(contextToken.Parent, ast.IsPropertyAssignment), file) == contextToken ||
 			ast.IsShorthandPropertyAssignment(contextToken.Parent) &&
 				getLineOfPosition(file, contextToken.End()) != getLineOfPosition(file, position) {
 			source = string(completionSourceObjectLiteralMemberWithComma)
@@ -1886,7 +1896,7 @@ func (l *LanguageService) createCompletionItem(
 		insertText = origin.asObjectLiteralMethod().insertText
 		isSnippet = origin.asObjectLiteralMethod().isSnippet
 		labelDetails = origin.asObjectLiteralMethod().labelDetails // !!! check if this can conflict with case above where we set label details
-		if !ptrIsTrue(clientOptions.CompletionItem.LabelDetailsSupport) {
+		if !clientSupportsItemLabelDetails(clientOptions) {
 			name = name + *origin.asObjectLiteralMethod().labelDetails.Detail
 			labelDetails = nil
 		}
@@ -1896,7 +1906,7 @@ func (l *LanguageService) createCompletionItem(
 
 	if data.isJsxIdentifierExpected &&
 		!data.isRightOfOpenTag &&
-		ptrIsTrue(clientOptions.CompletionItem.SnippetSupport) &&
+		clientSupportsItemSnippet(clientOptions) &&
 		!jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleNone) &&
 		!(ast.IsJsxAttribute(data.location.Parent) && data.location.Parent.Initializer() != nil) {
 		useBraces := jsxAttributeCompletionStyleIs(preferences.JsxAttributeCompletionStyle, JsxAttributeCompletionStyleBraces)
@@ -1937,8 +1947,7 @@ func (l *LanguageService) createCompletionItem(
 
 	parentNamedImportOrExport := ast.FindAncestor(data.location, isNamedImportsOrExports)
 	if parentNamedImportOrExport != nil {
-		languageVersion := compilerOptions.GetEmitScriptTarget()
-		if !scanner.IsIdentifierText(name, languageVersion, core.LanguageVariantStandard) {
+		if !scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
 			insertText = quotePropertyName(file, preferences, name)
 
 			if parentNamedImportOrExport.Kind == ast.KindNamedImports {
@@ -1948,7 +1957,7 @@ func (l *LanguageService) createCompletionItem(
 				scanner.SetText(file.Text())
 				scanner.ResetPos(position)
 				if !(scanner.Scan() == ast.KindAsKeyword && scanner.Scan() == ast.KindIdentifier) {
-					insertText += " as " + generateIdentifierForArbitraryString(name, languageVersion)
+					insertText += " as " + generateIdentifierForArbitraryString(name)
 				}
 			}
 		} else if parentNamedImportOrExport.Kind == ast.KindNamedImports {
@@ -1964,10 +1973,10 @@ func (l *LanguageService) createCompletionItem(
 
 	elementKind := getSymbolKind(typeChecker, symbol, data.location)
 	var commitCharacters *[]string
-	if ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport) {
+	if clientSupportsItemCommitCharacters(clientOptions) {
 		if elementKind == ScriptElementKindWarning || elementKind == ScriptElementKindString {
 			commitCharacters = &[]string{}
-		} else if !supportsDefaultCommitCharacters(clientOptions) {
+		} else if !clientSupportsDefaultCommitCharacters(clientOptions) {
 			commitCharacters = ptrTo(data.defaultCommitCharacters)
 		}
 		// Otherwise use the completion list default.
@@ -1998,18 +2007,13 @@ func (l *LanguageService) createCompletionItem(
 	)
 }
 
-func supportsDefaultCommitCharacters(clientOptions *lsproto.CompletionClientCapabilities) bool {
-	return clientOptions.CompletionList.ItemDefaults != nil &&
-		slices.Contains(*clientOptions.CompletionList.ItemDefaults, "commitCharacters")
-}
-
 func isRecommendedCompletionMatch(localSymbol *ast.Symbol, recommendedCompletion *ast.Symbol, typeChecker *checker.Checker) bool {
 	return localSymbol == recommendedCompletion ||
 		localSymbol.Flags&ast.SymbolFlagsExportValue != 0 && typeChecker.GetExportSymbolOfSymbol(localSymbol) == recommendedCompletion
 }
 
 // Ported from vscode's `USUAL_WORD_SEPARATORS`.
-var wordSeparators = core.NewSetFromItems(
+var wordSeparators = collections.NewSetFromItems(
 	'`', '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', '{', ']', '}', '\\', '|',
 	';', ':', '\'', '"', ',', '.', '<', '>', '/', '?',
 )
@@ -2254,7 +2258,7 @@ func shouldIncludeSymbol(
 
 		if data.isTypeOnlyLocation {
 			// It's a type, but you can reach it by namespace.type as well.
-			return symbolCanBeReferencedAtTypeLocation(symbol, typeChecker, core.Set[ast.SymbolId]{})
+			return symbolCanBeReferencedAtTypeLocation(symbol, typeChecker, collections.Set[ast.SymbolId]{})
 		}
 	}
 
@@ -2264,7 +2268,6 @@ func shouldIncludeSymbol(
 
 func getCompletionEntryDisplayNameForSymbol(
 	symbol *ast.Symbol,
-	target core.ScriptTarget,
 	origin *symbolOriginInfo,
 	completionKind CompletionKind,
 	isJsxIdentifierExpected bool,
@@ -2290,7 +2293,7 @@ func getCompletionEntryDisplayNameForSymbol(
 
 	variant := core.IfElse(isJsxIdentifierExpected, core.LanguageVariantJSX, core.LanguageVariantStandard)
 	// name is a valid identifier or private identifier text
-	if scanner.IsIdentifierText(name, target, variant) ||
+	if scanner.IsIdentifierText(name, variant) ||
 		symbol.ValueDeclaration != nil && ast.IsPrivateIdentifierClassElementDeclaration(symbol.ValueDeclaration) {
 		return name, false
 	}
@@ -2493,7 +2496,7 @@ func isContextTokenTypeLocation(contextToken *ast.Node) bool {
 }
 
 // True if symbol is a type or a module containing at least one type.
-func symbolCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *checker.Checker, seenModules core.Set[ast.SymbolId]) bool {
+func symbolCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *checker.Checker, seenModules collections.Set[ast.SymbolId]) bool {
 	// Since an alias can be merged with a local declaration, we need to test both the alias and its target.
 	// This code used to just test the result of `skipAlias`, but that would ignore any locally introduced meanings.
 	return nonAliasCanBeReferencedAtTypeLocation(symbol, typeChecker, seenModules) ||
@@ -2504,7 +2507,7 @@ func symbolCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *checke
 		)
 }
 
-func nonAliasCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *checker.Checker, seenModules core.Set[ast.SymbolId]) bool {
+func nonAliasCanBeReferencedAtTypeLocation(symbol *ast.Symbol, typeChecker *checker.Checker, seenModules collections.Set[ast.SymbolId]) bool {
 	return symbol.Flags&ast.SymbolFlagsType != 0 || typeChecker.IsUnknownSymbol(symbol) ||
 		symbol.Flags&ast.SymbolFlagsModule != 0 && seenModules.AddIfAbsent(ast.GetSymbolId(symbol)) &&
 			core.Some(
@@ -2598,11 +2601,9 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		}
 		return nil
 	default:
-		// argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker) // !!! signature help
-		var argInfo *struct{} // !!! signature help
+		argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker)
 		if argInfo != nil {
-			// !!! signature help
-			return nil
+			return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
 		} else if isEqualityOperatorKind(previousToken.Kind) && ast.IsBinaryExpression(parent) && isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
 			// completion at `x ===/**/`
 			return typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Left)
@@ -2810,7 +2811,7 @@ func isNamedImportsOrExports(node *ast.Node) bool {
 	return ast.IsNamedImports(node) || ast.IsNamedExports(node)
 }
 
-func generateIdentifierForArbitraryString(text string, languageVersion core.ScriptTarget) string {
+func generateIdentifierForArbitraryString(text string) string {
 	needsUnderscore := false
 	identifier := ""
 	var ch rune
@@ -2821,9 +2822,9 @@ func generateIdentifierForArbitraryString(text string, languageVersion core.Scri
 		ch, size = utf8.DecodeRuneInString(text[pos:])
 		var validChar bool
 		if pos == 0 {
-			validChar = scanner.IsIdentifierStart(ch, languageVersion)
+			validChar = scanner.IsIdentifierStart(ch)
 		} else {
-			validChar = scanner.IsIdentifierPart(ch, languageVersion)
+			validChar = scanner.IsIdentifierPart(ch)
 		}
 		if size > 0 && validChar {
 			if needsUnderscore {
@@ -3111,8 +3112,7 @@ func getContextualKeywords(file *ast.SourceFile, contextToken *ast.Node, positio
 func getJSCompletionEntries(
 	file *ast.SourceFile,
 	position int,
-	uniqueNames *core.Set[string],
-	target core.ScriptTarget,
+	uniqueNames *collections.Set[string],
 	sortedEntries []*lsproto.CompletionItem,
 ) []*lsproto.CompletionItem {
 	nameTable := getNameTable(file)
@@ -3121,7 +3121,7 @@ func getJSCompletionEntries(
 		if pos == position {
 			continue
 		}
-		if !uniqueNames.Has(name) && scanner.IsIdentifierText(name, target, core.LanguageVariantStandard) {
+		if !uniqueNames.Has(name) && scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
 			uniqueNames.Add(name)
 			sortedEntries = core.InsertSorted(
 				sortedEntries,
@@ -3424,7 +3424,7 @@ func tryGetObjectLikeCompletionContainer(contextToken *ast.Node, position int, f
 				return parent.Parent
 			}
 			ancestorNode := ast.FindAncestor(parent, ast.IsPropertyAssignment)
-			if ancestorNode != nil && getLastToken(ancestorNode, file) == contextToken && ast.IsObjectLiteralExpression(ancestorNode.Parent) {
+			if ancestorNode != nil && lsutil.GetLastToken(ancestorNode, file) == contextToken && ast.IsObjectLiteralExpression(ancestorNode.Parent) {
 				return ancestorNode.Parent
 			}
 		}
@@ -3441,7 +3441,7 @@ func tryGetObjectLikeCompletionContainer(contextToken *ast.Node, position int, f
 		}
 		ancestorNode := ast.FindAncestor(parent, ast.IsPropertyAssignment)
 		if contextToken.Kind != ast.KindColonToken &&
-			ancestorNode != nil && getLastToken(ancestorNode, file) == contextToken &&
+			ancestorNode != nil && lsutil.GetLastToken(ancestorNode, file) == contextToken &&
 			ast.IsObjectLiteralExpression(ancestorNode.Parent) {
 			return ancestorNode.Parent
 		}
@@ -3544,13 +3544,13 @@ func filterObjectMembersList(
 	file *ast.SourceFile,
 	position int,
 	typeChecker *checker.Checker,
-) (filteredMembers []*ast.Symbol, spreadMemberNames core.Set[string]) {
+) (filteredMembers []*ast.Symbol, spreadMemberNames collections.Set[string]) {
 	if len(existingMembers) == 0 {
-		return contextualMemberSymbols, core.Set[string]{}
+		return contextualMemberSymbols, collections.Set[string]{}
 	}
 
-	membersDeclaredBySpreadAssignment := core.Set[string]{}
-	existingMemberNames := core.Set[string]{}
+	membersDeclaredBySpreadAssignment := collections.Set[string]{}
+	existingMemberNames := collections.Set[string]{}
 	for _, member := range existingMembers {
 		// Ignore omitted expressions for missing members.
 		if member.Kind != ast.KindPropertyAssignment &&
@@ -3604,7 +3604,7 @@ func isCurrentlyEditingNode(node *ast.Node, file *ast.SourceFile, position int) 
 	return start <= position && position <= node.End()
 }
 
-func setMemberDeclaredBySpreadAssignment(declaration *ast.Node, members *core.Set[string], typeChecker *checker.Checker) {
+func setMemberDeclaredBySpreadAssignment(declaration *ast.Node, members *collections.Set[string], typeChecker *checker.Checker) {
 	expression := declaration.Expression()
 	symbol := typeChecker.GetSymbolAtLocation(expression)
 	var t *checker.Type
@@ -3756,7 +3756,7 @@ func filterClassMembersList(
 	file *ast.SourceFile,
 	position int,
 ) []*ast.Symbol {
-	existingMemberNames := core.Set[string]{}
+	existingMemberNames := collections.Set[string]{}
 	for _, member := range existingMembers {
 		// Ignore omitted expressions for missing members.
 		if member.Kind != ast.KindPropertyDeclaration &&
@@ -3856,9 +3856,9 @@ func filterJsxAttributes(
 	file *ast.SourceFile,
 	position int,
 	typeChecker *checker.Checker,
-) (filteredMembers []*ast.Symbol, spreadMemberNames *core.Set[string]) {
-	existingNames := core.Set[string]{}
-	membersDeclaredBySpreadAssignment := core.Set[string]{}
+) (filteredMembers []*ast.Symbol, spreadMemberNames *collections.Set[string]) {
+	existingNames := collections.Set[string]{}
+	membersDeclaredBySpreadAssignment := collections.Set[string]{}
 	for _, attr := range attributes {
 		// If this is the item we are editing right now, do not filter it out.
 		if isCurrentlyEditingNode(attr, file, position) {
@@ -3889,8 +3889,8 @@ func setCommitCharacters(
 	defaultCommitCharacters *[]string,
 ) *lsproto.CompletionItemDefaults {
 	var itemDefaults *lsproto.CompletionItemDefaults
-	supportsItemCommitCharacters := ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport)
-	if supportsDefaultCommitCharacters(clientOptions) && supportsItemCommitCharacters {
+	supportsItemCommitCharacters := clientSupportsItemCommitCharacters(clientOptions)
+	if clientSupportsDefaultCommitCharacters(clientOptions) && supportsItemCommitCharacters {
 		itemDefaults = &lsproto.CompletionItemDefaults{
 			CommitCharacters: defaultCommitCharacters,
 		}
@@ -3970,8 +3970,8 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",             /*filterText*/
 		SortTextLocationPriority,
 		ScriptElementKindClassElement,
-		core.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
-		nil,                                   /*replacementSpan*/
+		collections.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
+		nil, /*replacementSpan*/
 		optionalReplacementSpan,
 		nil, /*commitCharacters*/
 		nil, /*labelDetails*/
@@ -4000,7 +4000,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	filterText string,
 	sortText sortText,
 	elementKind ScriptElementKind,
-	kindModifiers core.Set[ScriptElementKindModifier],
+	kindModifiers collections.Set[ScriptElementKindModifier],
 	replacementSpan *lsproto.Range,
 	optionalReplacementSpan *lsproto.Range,
 	commitCharacters *[]string,
@@ -4027,7 +4027,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		}
 	} else {
 		// Ported from vscode ts extension.
-		if optionalReplacementSpan != nil && ptrIsTrue(clientOptions.CompletionItem.InsertReplaceSupport) {
+		if optionalReplacementSpan != nil && clientSupportsItemInsertReplace(clientOptions) {
 			insertRange := &lsproto.Range{
 				Start: optionalReplacementSpan.Start,
 				End:   l.createLspPosition(position, file),
@@ -4056,7 +4056,7 @@ func (l *LanguageService) createLSPCompletionItem(
 			filterText = accessorText + core.IfElse(insertText != "", insertText, name)
 			if textEdit == nil {
 				insertText = filterText
-				if wordRange != nil && ptrIsTrue(clientOptions.CompletionItem.InsertReplaceSupport) {
+				if wordRange != nil && clientSupportsItemInsertReplace(clientOptions) {
 					textEdit = &lsproto.TextEditOrInsertReplaceEdit{
 						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
 							NewText: insertText,
@@ -4163,7 +4163,7 @@ func (l *LanguageService) getLabelStatementCompletions(
 	file *ast.SourceFile,
 	position int,
 ) []*lsproto.CompletionItem {
-	var uniques core.Set[string]
+	var uniques collections.Set[string]
 	var items []*lsproto.CompletionItem
 	current := node
 	for current != nil {
@@ -4180,11 +4180,11 @@ func (l *LanguageService) getLabelStatementCompletions(
 					"", /*filterText*/
 					SortTextLocationPriority,
 					ScriptElementKindLabel,
-					core.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
-					nil,                                   /*replacementSpan*/
-					nil,                                   /*optionalReplacementSpan*/
-					nil,                                   /*commitCharacters*/
-					nil,                                   /*labelDetails*/
+					collections.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
+					nil, /*replacementSpan*/
+					nil, /*optionalReplacementSpan*/
+					nil, /*commitCharacters*/
+					nil, /*labelDetails*/
 					file,
 					position,
 					clientOptions,
@@ -4199,4 +4199,274 @@ func (l *LanguageService) getLabelStatementCompletions(
 		current = current.Parent
 	}
 	return items
+}
+
+func isCompletionListBlocker(
+	contextToken *ast.Node,
+	previousToken *ast.Node,
+	location *ast.Node,
+	file *ast.SourceFile,
+	position int,
+	typeChecker *checker.Checker,
+) bool {
+	return isInStringOrRegularExpressionOrTemplateLiteral(contextToken, position) ||
+		isSolelyIdentifierDefinitionLocation(contextToken, previousToken, file, position, typeChecker) ||
+		isDotOfNumericLiteral(contextToken, file) ||
+		isInJsxText(contextToken, location) ||
+		ast.IsBigIntLiteral(contextToken)
+}
+
+func isInStringOrRegularExpressionOrTemplateLiteral(contextToken *ast.Node, position int) bool {
+	// To be "in" one of these literals, the position has to be:
+	//   1. entirely within the token text.
+	//   2. at the end position of an unterminated token.
+	//   3. at the end of a regular expression (due to trailing flags like '/foo/g').
+	return (ast.IsRegularExpressionLiteral(contextToken) || ast.IsStringTextContainingNode(contextToken)) &&
+		(contextToken.Loc.ContainsExclusive(position)) ||
+		position == contextToken.End() &&
+			(ast.IsUnterminatedLiteral(contextToken) || ast.IsRegularExpressionLiteral(contextToken))
+}
+
+// true if we are certain that the currently edited location must define a new location; false otherwise.
+func isSolelyIdentifierDefinitionLocation(
+	contextToken *ast.Node,
+	previousToken *ast.Node,
+	file *ast.SourceFile,
+	position int,
+	typeChecker *checker.Checker,
+) bool {
+	parent := contextToken.Parent
+	containingNodeKind := parent.Kind
+	switch contextToken.Kind {
+	case ast.KindCommaToken:
+		return containingNodeKind == ast.KindVariableDeclaration ||
+			isVariableDeclarationListButNotTypeArgument(contextToken, file, typeChecker) ||
+			containingNodeKind == ast.KindVariableStatement ||
+			containingNodeKind == ast.KindEnumDeclaration || // enum a { foo, |
+			isFunctionLikeButNotConstructor(containingNodeKind) ||
+			containingNodeKind == ast.KindInterfaceDeclaration || // interface A<T, |
+			containingNodeKind == ast.KindArrayBindingPattern || // var [x, y|
+			containingNodeKind == ast.KindTypeAliasDeclaration || // type Map, K, |
+			// class A<T, |
+			// var C = class D<T, |
+			(ast.IsClassLike(parent) && parent.TypeParameterList() != nil && parent.TypeParameterList().End() >= contextToken.Pos())
+	case ast.KindDotToken:
+		return containingNodeKind == ast.KindArrayBindingPattern // var [.|
+	case ast.KindColonToken:
+		return containingNodeKind == ast.KindBindingElement // var {x :html|
+	case ast.KindOpenBracketToken:
+		return containingNodeKind == ast.KindArrayBindingPattern // var [x|
+	case ast.KindOpenParenToken:
+		return containingNodeKind == ast.KindCatchClause || isFunctionLikeButNotConstructor(containingNodeKind)
+	case ast.KindOpenBraceToken:
+		return containingNodeKind == ast.KindEnumDeclaration // enum a { |
+	case ast.KindLessThanToken:
+		return containingNodeKind == ast.KindClassDeclaration || // class A< |
+			containingNodeKind == ast.KindClassExpression || // var C = class D< |
+			containingNodeKind == ast.KindInterfaceDeclaration || // interface A< |
+			containingNodeKind == ast.KindTypeAliasDeclaration || // type List< |
+			ast.IsFunctionLikeKind(containingNodeKind)
+	case ast.KindStaticKeyword:
+		return containingNodeKind == ast.KindPropertyDeclaration &&
+			!ast.IsClassLike(parent.Parent)
+	case ast.KindDotDotDotToken:
+		return containingNodeKind == ast.KindParameter ||
+			(parent.Parent != nil && parent.Parent.Kind == ast.KindArrayBindingPattern) // var [...z|
+	case ast.KindPublicKeyword, ast.KindPrivateKeyword, ast.KindProtectedKeyword:
+		return containingNodeKind == ast.KindParameter && !ast.IsConstructorDeclaration(parent.Parent)
+	case ast.KindAsKeyword:
+		return containingNodeKind == ast.KindImportSpecifier ||
+			containingNodeKind == ast.KindExportSpecifier ||
+			containingNodeKind == ast.KindNamespaceImport
+	case ast.KindGetKeyword, ast.KindSetKeyword:
+		return !isFromObjectTypeDeclaration(contextToken)
+	case ast.KindIdentifier:
+		if (containingNodeKind == ast.KindImportSpecifier || containingNodeKind == ast.KindExportSpecifier) &&
+			contextToken == parent.Name() &&
+			contextToken.Text() == "type" {
+			// import { type | }
+			return false
+		}
+		ancestorVariableDeclaration := ast.FindAncestor(parent, ast.IsVariableDeclaration)
+		if ancestorVariableDeclaration != nil && getLineOfPosition(file, contextToken.End()) < position {
+			// let a
+			// |
+			return false
+		}
+	case ast.KindClassKeyword, ast.KindEnumKeyword, ast.KindInterfaceKeyword, ast.KindFunctionKeyword,
+		ast.KindVarKeyword, ast.KindImportKeyword, ast.KindLetKeyword, ast.KindConstKeyword, ast.KindInferKeyword:
+		return true
+	case ast.KindTypeKeyword:
+		// import { type foo| }
+		return containingNodeKind != ast.KindImportSpecifier
+	case ast.KindAsteriskToken:
+		return ast.IsFunctionLike(parent) && !ast.IsMethodDeclaration(parent)
+	}
+
+	// If the previous token is keyword corresponding to class member completion keyword
+	// there will be completion available here
+	if isClassMemberCompletionKeyword(keywordForNode(contextToken)) && isFromObjectTypeDeclaration(contextToken) {
+		return false
+	}
+
+	if isConstructorParameterCompletion(contextToken) {
+		// constructor parameter completion is available only if
+		// - its modifier of the constructor parameter or
+		// - its name of the parameter and not being edited
+		// eg. constructor(a |<- this shouldnt show completion
+		if !ast.IsIdentifier(contextToken) ||
+			ast.IsParameterPropertyModifier(keywordForNode(contextToken)) ||
+			isCurrentlyEditingNode(contextToken, file, position) {
+			return false
+		}
+	}
+
+	// Previous token may have been a keyword that was converted to an identifier.
+	switch keywordForNode(contextToken) {
+	case ast.KindAbstractKeyword, ast.KindClassKeyword, ast.KindConstKeyword, ast.KindDeclareKeyword,
+		ast.KindEnumKeyword, ast.KindFunctionKeyword, ast.KindInterfaceKeyword, ast.KindLetKeyword,
+		ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindPublicKeyword,
+		ast.KindStaticKeyword, ast.KindVarKeyword:
+		return true
+	case ast.KindAsyncKeyword:
+		return ast.IsPropertyDeclaration(contextToken.Parent)
+	}
+
+	// If we are inside a class declaration, and `constructor` is totally not present,
+	// but we request a completion manually at a whitespace...
+	ancestorClassLike := ast.FindAncestor(parent, ast.IsClassLike)
+	if ancestorClassLike != nil && contextToken == previousToken &&
+		isPreviousPropertyDeclarationTerminated(contextToken, file, position) {
+		// Don't block completions.
+		return false
+	}
+
+	ancestorPropertyDeclaration := ast.FindAncestor(parent, ast.IsPropertyDeclaration)
+	// If we are inside a class declaration and typing `constructor` after property declaration...
+	if ancestorPropertyDeclaration != nil && contextToken != previousToken &&
+		ast.IsClassLike(previousToken.Parent.Parent) &&
+		// And the cursor is at the token...
+		position <= previousToken.End() {
+		// If we are sure that the previous property declaration is terminated according to newline or semicolon...
+		if isPreviousPropertyDeclarationTerminated(contextToken, file, previousToken.End()) {
+			// Don't block completions.
+			return false
+		} else if contextToken.Kind != ast.KindEqualsToken &&
+			// Should not block: `class C { blah = c/**/ }`
+			// But should block: `class C { blah = somewhat c/**/ }` and `class C { blah: SomeType c/**/ }`
+			(ast.IsInitializedProperty(ancestorPropertyDeclaration) || ancestorPropertyDeclaration.Type() != nil) {
+			return true
+		}
+	}
+
+	return ast.IsDeclarationName(contextToken) &&
+		!ast.IsShorthandPropertyAssignment(parent) &&
+		!ast.IsJsxAttribute(parent) &&
+		// Don't block completions if we're in `class C /**/`, `interface I /**/` or `<T /**/>` ,
+		// because we're *past* the end of the identifier and might want to complete `extends`.
+		// If `contextToken !== previousToken`, this is `class C ex/**/`, `interface I ex/**/` or `<T ex/**/>`.
+		!((ast.IsClassLike(parent) || ast.IsInterfaceDeclaration(parent) || ast.IsTypeParameterDeclaration(parent)) &&
+			(contextToken != previousToken || position > previousToken.End()))
+}
+
+func isVariableDeclarationListButNotTypeArgument(node *ast.Node, file *ast.SourceFile, typeChecker *checker.Checker) bool {
+	return node.Parent.Kind == ast.KindVariableDeclarationList &&
+		!isPossiblyTypeArgumentPosition(node, file, typeChecker)
+}
+
+func isFunctionLikeButNotConstructor(kind ast.Kind) bool {
+	return ast.IsFunctionLikeKind(kind) && kind != ast.KindConstructor
+}
+
+func isPreviousPropertyDeclarationTerminated(contextToken *ast.Node, file *ast.SourceFile, position int) bool {
+	return contextToken.Kind != ast.KindEqualsToken &&
+		(contextToken.Kind == ast.KindSemicolonToken ||
+			getLineOfPosition(file, contextToken.End()) != getLineOfPosition(file, position))
+}
+
+func isDotOfNumericLiteral(contextToken *ast.Node, file *ast.SourceFile) bool {
+	if contextToken.Kind == ast.KindNumericLiteral {
+		text := file.Text()[contextToken.Pos():contextToken.End()]
+		r, _ := utf8.DecodeLastRuneInString(text)
+		return r == '.'
+	}
+
+	return false
+}
+
+func isInJsxText(contextToken *ast.Node, location *ast.Node) bool {
+	if contextToken.Kind == ast.KindJsxText {
+		return true
+	}
+
+	if contextToken.Kind == ast.KindGreaterThanToken && contextToken.Parent != nil {
+		// <Component<string> /**/ />
+		// <Component<string> /**/ ><Component>
+		// - contextToken: GreaterThanToken (before cursor)
+		// - location: JsxSelfClosingElement or JsxOpeningElement
+		// - contextToken.parent === location
+		if location == contextToken.Parent && ast.IsJsxOpeningLikeElement(location) {
+			return false
+		}
+
+		if contextToken.Parent.Kind == ast.KindJsxOpeningElement {
+			// <div>/**/
+			// - contextToken: GreaterThanToken (before cursor)
+			// - location: JSXElement
+			// - different parents (JSXOpeningElement, JSXElement)
+			return location.Parent.Kind != ast.KindJsxOpeningElement
+		}
+
+		if contextToken.Parent.Kind == ast.KindJsxClosingElement ||
+			contextToken.Parent.Kind == ast.KindJsxSelfClosingElement {
+			return contextToken.Parent.Parent != nil && contextToken.Parent.Parent.Kind == ast.KindJsxElement
+		}
+	}
+
+	return false
+}
+
+func hasCompletionItem(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return clientOptions != nil && clientOptions.CompletionItem != nil
+}
+
+func clientSupportsItemLabelDetails(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.LabelDetailsSupport)
+}
+
+func clientSupportsItemSnippet(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.SnippetSupport)
+}
+
+func clientSupportsItemCommitCharacters(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.CommitCharactersSupport)
+}
+
+func clientSupportsItemInsertReplace(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	return hasCompletionItem(clientOptions) && ptrIsTrue(clientOptions.CompletionItem.InsertReplaceSupport)
+}
+
+func clientSupportsDefaultCommitCharacters(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	if clientOptions == nil || clientOptions.CompletionList == nil || clientOptions.CompletionList.ItemDefaults == nil {
+		return false
+	}
+	return slices.Contains(*clientOptions.CompletionList.ItemDefaults, "commitCharacters")
+}
+
+type argumentInfoForCompletions struct {
+	invocation    *ast.CallLikeExpression
+	argumentIndex int
+	argumentCount int
+}
+
+func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.SourceFile, typeChecker *checker.Checker) *argumentInfoForCompletions {
+	info := getImmediatelyContainingArgumentInfo(node, position, file, typeChecker)
+	if info == nil || info.isTypeParameterList || info.invocation.callInvocation == nil {
+		return nil
+	}
+	return &argumentInfoForCompletions{
+		invocation:    info.invocation.callInvocation.node,
+		argumentIndex: *info.argumentIndex,
+		argumentCount: info.argumentCount,
+	}
 }

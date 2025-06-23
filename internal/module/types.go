@@ -22,10 +22,9 @@ type ModeAwareCacheKey struct {
 	Mode core.ResolutionMode
 }
 
-type ResolvedProjectReference struct {
-	CommandLine core.ParsedOptions
-	SourceFile  *ast.SourceFile
-	References  []*ResolvedProjectReference
+type ResolvedProjectReference interface {
+	ConfigName() string
+	CompilerOptions() *core.CompilerOptions
 }
 
 type NodeResolutionFeatures int32
@@ -79,7 +78,11 @@ type ResolvedModule struct {
 }
 
 func (r *ResolvedModule) IsResolved() bool {
-	return r.ResolvedFileName != ""
+	return r != nil && r.ResolvedFileName != ""
+}
+
+func (r *ResolvedModule) GetLookupLocations() *LookupLocations {
+	return &r.LookupLocations
 }
 
 type ResolvedTypeReferenceDirective struct {
@@ -93,6 +96,10 @@ type ResolvedTypeReferenceDirective struct {
 
 func (r *ResolvedTypeReferenceDirective) IsResolved() bool {
 	return r.ResolvedFileName != ""
+}
+
+func (r *ResolvedTypeReferenceDirective) GetLookupLocations() *LookupLocations {
+	return &r.LookupLocations
 }
 
 type extensions int32
