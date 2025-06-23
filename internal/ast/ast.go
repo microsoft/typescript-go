@@ -54,18 +54,22 @@ type NodeFactory struct {
 	callExpressionPool               core.Pool[CallExpression]
 	expressionStatementPool          core.Pool[ExpressionStatement]
 	functionDeclarationPool          core.Pool[FunctionDeclaration]
+	functionTypeNodePool             core.Pool[FunctionTypeNode]
 	identifierPool                   core.Pool[Identifier]
 	ifStatementPool                  core.Pool[IfStatement]
+	interfaceDeclarationPool         core.Pool[InterfaceDeclaration]
 	jsdocPool                        core.Pool[JSDoc]
 	jsdocTextPool                    core.Pool[JSDocText]
 	keywordExpressionPool            core.Pool[KeywordExpression]
 	keywordTypeNodePool              core.Pool[KeywordTypeNode]
 	literalTypeNodePool              core.Pool[LiteralTypeNode]
+	methodSignatureDeclarationPool   core.Pool[MethodSignatureDeclaration]
 	modifierListPool                 core.Pool[ModifierList]
 	nodeListPool                     core.Pool[NodeList]
 	numericLiteralPool               core.Pool[NumericLiteral]
 	parameterDeclarationPool         core.Pool[ParameterDeclaration]
 	parenthesizedExpressionPool      core.Pool[ParenthesizedExpression]
+	parenthesizedTypeNodePool        core.Pool[ParenthesizedTypeNode]
 	prefixUnaryExpressionPool        core.Pool[PrefixUnaryExpression]
 	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
 	propertyAssignmentPool           core.Pool[PropertyAssignment]
@@ -73,6 +77,7 @@ type NodeFactory struct {
 	returnStatementPool              core.Pool[ReturnStatement]
 	stringLiteralPool                core.Pool[StringLiteral]
 	tokenPool                        core.Pool[Token]
+	typeLiteralNodePool              core.Pool[TypeLiteralNode]
 	typeReferenceNodePool            core.Pool[TypeReferenceNode]
 	unionTypeNodePool                core.Pool[UnionTypeNode]
 	variableDeclarationListPool      core.Pool[VariableDeclarationList]
@@ -3727,7 +3732,7 @@ type InterfaceDeclaration struct {
 }
 
 func (f *NodeFactory) NewInterfaceDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, heritageClauses *NodeList, members *NodeList) *Node {
-	data := &InterfaceDeclaration{}
+	data := f.interfaceDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
@@ -5129,7 +5134,7 @@ type MethodSignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode) *Node {
-	data := &MethodSignatureDeclaration{}
+	data := f.methodSignatureDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -7723,7 +7728,7 @@ type TypeLiteralNode struct {
 }
 
 func (f *NodeFactory) NewTypeLiteralNode(members *NodeList) *Node {
-	data := &TypeLiteralNode{}
+	data := f.typeLiteralNodePool.New()
 	data.Members = members
 	return f.newNode(KindTypeLiteral, data)
 }
@@ -7914,7 +7919,7 @@ type ParenthesizedTypeNode struct {
 }
 
 func (f *NodeFactory) NewParenthesizedTypeNode(typeNode *TypeNode) *Node {
-	data := &ParenthesizedTypeNode{}
+	data := f.parenthesizedTypeNodePool.New()
 	data.Type = typeNode
 	return f.newNode(KindParenthesizedType, data)
 }
@@ -7962,7 +7967,7 @@ type FunctionTypeNode struct {
 }
 
 func (f *NodeFactory) NewFunctionTypeNode(typeParameters *NodeList, parameters *NodeList, returnType *TypeNode) *Node {
-	data := &FunctionTypeNode{}
+	data := f.functionTypeNodePool.New()
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
