@@ -52,6 +52,7 @@ type DeclarationTransformer struct {
 	needsScopeFixMarker              bool
 	resultHasScopeMarker             bool
 	enclosingDeclaration             *ast.Node
+	generatedDefaultExportIdentifier *ast.Node
 	resultHasExternalModuleIndicator bool
 	suppressNewDiagnosticContexts    bool
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
@@ -912,7 +913,7 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 			return input
 		}
 		// expression is non-identifier, create _default typed variable to reference
-		newId := tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		newId := tx.getGeneratedDefaultExportIdentifier()
 		tx.state.getSymbolAccessibilityDiagnostic = func(_ printer.SymbolAccessibilityResult) *SymbolAccessibilityDiagnostic {
 			return &SymbolAccessibilityDiagnostic{
 				diagnosticMessage: diagnostics.Default_export_of_the_module_has_or_is_using_private_name_0,
@@ -1114,10 +1115,14 @@ func (tx *DeclarationTransformer) transformTopLevelDeclaration(input *ast.Node) 
 
 func (tx *DeclarationTransformer) transformTypeAliasDeclaration(input *ast.TypeAliasDeclaration) *ast.Node {
 	tx.needsDeclare = false
+	name := input.Name()
+	if ast.IsSourceFile(input.Parent) && ast.IsIdentifier(name) && name.Text() == "default" {
+		name = tx.getGeneratedDefaultExportIdentifier()
+	}
 	return tx.Factory().UpdateTypeAliasDeclaration(
 		input,
 		tx.ensureModifiers(input.AsNode()),
-		input.Name(),
+		name,
 		tx.Visitor().VisitNodes(input.TypeParameters),
 		tx.Visitor().Visit(input.Type),
 	)
@@ -1766,4 +1771,13 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 	}))
 	tx.EmitContext().SetOriginal(replacement, input.AsNode())
 	return replacement
+}
+
+func (tx *DeclarationTransformer) getGeneratedDefaultExportIdentifier() *ast.Node {
+	name := tx.generatedDefaultExportIdentifier
+	if name == nil {
+		name = tx.Factory().NewUniqueNameEx("_default", printer.AutoGenerateOptions{Flags: printer.GeneratedIdentifierFlagsOptimistic})
+		tx.generatedDefaultExportIdentifier = name
+	}
+	return name
 }
