@@ -35,7 +35,8 @@ type fileLoader struct {
 	projectReferenceFileMapper *projectReferenceFileMapper
 	dtsDirectories             collections.Set[tspath.Path]
 
-	pathForLibFileCache collections.SyncMap[string, string]
+	pathForLibFileCache       collections.SyncMap[string, string]
+	pathForLibFileResolutions collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]
 }
 
 type processedFiles struct {
@@ -122,7 +123,7 @@ func processAllProgramFiles(
 	libFiles := make([]*ast.SourceFile, 0, totalFileCount) // totalFileCount here since we append files to it later to construct the final list
 
 	filesByPath := make(map[tspath.Path]*ast.SourceFile, totalFileCount)
-	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount)
+	resolvedModules := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedModule], totalFileCount+1)
 	typeResolutionsInFile := make(map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective], totalFileCount)
 	sourceFileMetaDatas := make(map[tspath.Path]ast.SourceFileMetaData, totalFileCount)
 	var jsxRuntimeImportSpecifiers map[tspath.Path]*jsxRuntimeImportSpecifier
@@ -178,6 +179,12 @@ func processAllProgramFiles(
 	loader.sortLibs(libFiles)
 
 	allFiles := append(libFiles, files...)
+
+	if loader.pathForLibFileResolutions.Size() > 0 {
+		// Hack: place lib file resolutions into the resolvedModules map as if they were
+		// resolved by the config file itself, letting the Project code watch these files.
+		resolvedModules[loader.toPath(compilerOptions.ConfigFilePath)] = loader.pathForLibFileResolutions.ToMap()
+	}
 
 	return processedFiles{
 		resolver:                             loader.resolver,
@@ -492,6 +499,7 @@ func (p *fileLoader) pathForLibFile(name string) string {
 		resolution := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
 		if resolution.IsResolved() {
 			path = resolution.ResolvedFileName
+			p.pathForLibFileResolutions.LoadOrStore(module.ModeAwareCacheKey{Name: libraryName, Mode: core.ModuleKindCommonJS}, resolution)
 		}
 	}
 
