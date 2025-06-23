@@ -10,15 +10,36 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/format"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/pprof"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type cbType = func(p any) any
+
+func applyBulkEdits(text string, edits []core.TextChange) string {
+	b := strings.Builder{}
+	b.Grow(len(text))
+	lastEnd := 0
+	for _, e := range edits {
+		start := e.TextRange.Pos()
+		if start != lastEnd {
+			b.WriteString(text[lastEnd:e.TextRange.Pos()])
+		}
+		b.WriteString(e.NewText)
+
+		lastEnd = e.TextRange.End()
+	}
+	b.WriteString(text[lastEnd:])
+
+	return b.String()
+}
 
 func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 	if len(commandLineArgs) > 0 {
@@ -28,6 +49,8 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 			fmt.Fprint(sys.Writer(), "Build mode is currently unsupported."+sys.NewLine())
 			sys.EndWrite()
 			return ExitStatusNotImplemented
+			// case "-f":
+			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
@@ -37,6 +60,33 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 		return e
 	}
 	return start(watcher)
+}
+
+func fmtMain(sys System, input, output string) ExitStatus {
+	ctx := format.WithFormatCodeSettings(context.Background(), format.GetDefaultFormatCodeSettings(sys.NewLine()), sys.NewLine())
+	input = string(tspath.ToPath(input, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
+	output = string(tspath.ToPath(output, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
+	fileContent, ok := sys.FS().ReadFile(input)
+	if !ok {
+		fmt.Fprint(sys.Writer(), "File not found: "+input+sys.NewLine())
+		return ExitStatusNotImplemented
+	}
+	text := fileContent
+	pathified := tspath.ToPath(input, sys.GetCurrentDirectory(), true)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName:         string(pathified),
+		Path:             pathified,
+		JSDocParsingMode: ast.JSDocParsingModeParseAll,
+	}, text, core.GetScriptKindFromFileName(string(pathified)))
+	ast.SetParentInChildren(sourceFile.AsNode())
+	edits := format.FormatDocument(ctx, sourceFile)
+	newText := applyBulkEdits(text, edits)
+
+	if err := sys.FS().WriteFile(output, newText, false); err != nil {
+		fmt.Fprint(sys.Writer(), err.Error()+sys.NewLine())
+		return ExitStatusNotImplemented
+	}
+	return ExitStatusSuccess
 }
 
 func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.ParsedCommandLine) (ExitStatus, *watcher) {
@@ -114,8 +164,10 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 	compilerOptionsFromCommandLine := commandLine.CompilerOptions()
 
 	if configFileName != "" {
-		extendedConfigCache := map[tspath.Path]*tsoptions.ExtendedConfigCacheEntry{}
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
+		configStart := sys.Now()
+		extendedConfigCache := collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, &extendedConfigCache)
+		configTime := sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
 			for _, e := range errors {
@@ -137,6 +189,8 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			cb,
 			configParseResult,
 			reportDiagnostic,
+			&extendedConfigCache,
+			configTime,
 		), nil
 	} else {
 		if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
@@ -155,6 +209,8 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		cb,
 		commandLine,
 		reportDiagnostic,
+		nil,
+		0, /*configTime*/
 	), nil
 }
 
@@ -172,15 +228,23 @@ func findConfigFile(searchPath string, fileExists func(string) bool, configName 
 	return result
 }
 
-func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLine, reportDiagnostic diagnosticReporter) ExitStatus {
-	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
+func performCompilation(
+	sys System,
+	cb cbType,
+	config *tsoptions.ParsedCommandLine,
+	reportDiagnostic diagnosticReporter,
+	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	configTime time.Duration,
+) ExitStatus {
+	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
 	// todo: cache, statistics, tracing
-	parseStart := time.Now()
+	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
-		Config: config,
-		Host:   host,
+		Config:           config,
+		Host:             host,
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
-	parseTime := time.Since(parseStart)
+	parseTime := sys.Now().Sub(parseStart)
 
 	result := emitFilesAndReportErrors(sys, program, reportDiagnostic)
 	if result.status != ExitStatusSuccess {
@@ -188,8 +252,9 @@ func performCompilation(sys System, cb cbType, config *tsoptions.ParsedCommandLi
 		return result.status
 	}
 
+	result.configTime = configTime
 	result.parseTime = parseTime
-	result.totalTime = time.Since(parseStart)
+	result.totalTime = sys.SinceStart()
 
 	if config.CompilerOptions().Diagnostics.IsTrue() || config.CompilerOptions().ExtendedDiagnostics.IsTrue() {
 		var memStats runtime.MemStats
@@ -217,11 +282,12 @@ type compileAndEmitResult struct {
 	diagnostics []*ast.Diagnostic
 	emitResult  *compiler.EmitResult
 	status      ExitStatus
+	configTime  time.Duration
 	parseTime   time.Duration
 	bindTime    time.Duration
 	checkTime   time.Duration
-	emitTime    time.Duration
 	totalTime   time.Duration
+	emitTime    time.Duration
 }
 
 func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagnostic diagnosticReporter) (result compileAndEmitResult) {
@@ -236,9 +302,9 @@ func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagn
 		// Options diagnostics include global diagnostics (even though we collect them separately),
 		// and global diagnostics create checkers, which then bind all of the files. Do this binding
 		// early so we can track the time.
-		bindStart := time.Now()
+		bindStart := sys.Now()
 		_ = program.GetBindDiagnostics(ctx, nil)
-		result.bindTime = time.Since(bindStart)
+		result.bindTime = sys.Now().Sub(bindStart)
 
 		allDiagnostics = append(allDiagnostics, program.GetOptionsDiagnostics(ctx)...)
 
@@ -246,9 +312,9 @@ func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagn
 			allDiagnostics = append(allDiagnostics, program.GetGlobalDiagnostics(ctx)...)
 
 			if len(allDiagnostics) == configFileParsingDiagnosticsLength {
-				checkStart := time.Now()
+				checkStart := sys.Now()
 				allDiagnostics = append(allDiagnostics, program.GetSemanticDiagnostics(ctx, nil)...)
-				result.checkTime = time.Since(checkStart)
+				result.checkTime = sys.Now().Sub(checkStart)
 			}
 
 			if options.NoEmit.IsTrue() && options.GetEmitDeclarations() && len(allDiagnostics) == configFileParsingDiagnosticsLength {
@@ -259,9 +325,9 @@ func emitFilesAndReportErrors(sys System, program *compiler.Program, reportDiagn
 
 	emitResult := &compiler.EmitResult{EmitSkipped: true, Diagnostics: []*ast.Diagnostic{}}
 	if !options.ListFilesOnly.IsTrue() {
-		emitStart := time.Now()
+		emitStart := sys.Now()
 		emitResult = program.Emit(compiler.EmitOptions{})
-		result.emitTime = time.Since(emitStart)
+		result.emitTime = sys.Now().Sub(emitStart)
 	}
 	allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)
 

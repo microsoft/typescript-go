@@ -134,7 +134,7 @@ function test<T extends IFoo>() {
 
     // Excess property checks only on non-generic parts of unions
     const obj4: T & { prop: boolean } | { name: string } = { name: "test", prop: true };
->obj4 : { name: string; } | T & { prop: boolean; }
+>obj4 : { name: string; } | (T & { prop: boolean; })
 >prop : boolean
 >name : string
 >{ name: "test", prop: true } : { name: string; prop: boolean; }
@@ -145,7 +145,7 @@ function test<T extends IFoo>() {
 
     // No excess property checks when union includes 'object' type
     const obj5: object | { x: string } = { z: 'abc' }
->obj5 : { x: string; } | object
+>obj5 : object | { x: string; }
 >x : string
 >{ z: 'abc' } : { z: string; }
 >z : string

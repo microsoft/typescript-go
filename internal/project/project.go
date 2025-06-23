@@ -15,12 +15,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
+	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=Kind -output=project_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w project_stringer_generated.go
+
 const hr = "-----------------------------------------------"
 
 var projectNamer = &namer{}
@@ -43,8 +47,8 @@ type snapshot struct {
 // GetLineMap implements ls.Host.
 func (s *snapshot) GetLineMap(fileName string) *ls.LineMap {
 	file := s.program.GetSourceFile(fileName)
-	scriptInfo := s.project.host.GetScriptInfoByPath(file.Path())
-	if file.Version == scriptInfo.Version() {
+	scriptInfo := s.project.host.DocumentStore().GetScriptInfoByPath(file.Path())
+	if s.project.getFileVersion(file) == scriptInfo.Version() {
 		return scriptInfo.LineMap()
 	}
 	return ls.ComputeLineStarts(file.Text())
@@ -72,13 +76,12 @@ const (
 
 type ProjectHost interface {
 	tsoptions.ParseConfigHost
+	module.ResolutionHost
 	NewLine() string
 	DefaultLibraryPath() string
 	TypingsInstaller() *TypingsInstaller
-	DocumentRegistry() *DocumentRegistry
-	GetScriptInfoByPath(path tspath.Path) *ScriptInfo
-	GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *ScriptInfo
-	OnDiscoveredSymlink(info *ScriptInfo)
+	DocumentStore() *DocumentStore
+	ConfigFileRegistry() *ConfigFileRegistry
 	Log(s string)
 	PositionEncoding() lsproto.PositionEncodingKind
 
@@ -117,10 +120,13 @@ func typeAcquisitionChanged(opt1 *core.TypeAcquisition, opt2 *core.TypeAcquisiti
 			opt1.DisableFilenameBasedTypeAcquisition.IsTrue() != opt2.DisableFilenameBasedTypeAcquisition.IsTrue())
 }
 
-var _ compiler.CompilerHost = (*Project)(nil)
+var (
+	_ compiler.CompilerHost = (*Project)(nil)
+	_ watchFileHost         = (*Project)(nil)
+)
 
 type Project struct {
-	host ProjectHost
+	host *projectHostWithCachedFS
 
 	name string
 	kind Kind
@@ -144,6 +150,7 @@ type Project struct {
 	// rootFileNames was a map from Path to { NormalizedPath, ScriptInfo? } in the original code.
 	// But the ProjectService owns script infos, so it's not clear why there was an extra pointer.
 	rootFileNames     *collections.OrderedMap[tspath.Path, string]
+	rootJSFileCount   int
 	compilerOptions   *core.CompilerOptions
 	typeAcquisition   *core.TypeAcquisition
 	parsedCommandLine *tsoptions.ParsedCommandLine
@@ -158,7 +165,6 @@ type Project struct {
 	typingFiles              []string
 
 	// Watchers
-	rootFilesWatch          *watchedFiles[[]string]
 	failedLookupsWatch      *watchedFiles[map[tspath.Path]string]
 	affectingLocationsWatch *watchedFiles[map[tspath.Path]string]
 	typingsFilesWatch       *watchedFiles[map[tspath.Path]string]
@@ -166,19 +172,25 @@ type Project struct {
 	typingsWatchInvoked     atomic.Bool
 }
 
-func NewConfiguredProject(configFileName string, configFilePath tspath.Path, host ProjectHost) *Project {
+func NewConfiguredProject(
+	configFileName string,
+	configFilePath tspath.Path,
+	host ProjectHost,
+) *Project {
 	project := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), host)
 	project.configFileName = configFileName
 	project.configFilePath = configFilePath
 	project.initialLoadPending = true
-	client := host.Client()
-	if host.IsWatchEnabled() && client != nil {
-		project.rootFilesWatch = newWatchedFiles(project, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, core.Identity, "root files")
-	}
+	project.pendingReload = PendingReloadFull
 	return project
 }
 
-func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory string, projectRootPath tspath.Path, host ProjectHost) *Project {
+func NewInferredProject(
+	compilerOptions *core.CompilerOptions,
+	currentDirectory string,
+	projectRootPath tspath.Path,
+	host ProjectHost,
+) *Project {
 	project := NewProject(projectNamer.next("/dev/null/inferredProject"), KindInferred, currentDirectory, host)
 	project.rootPath = projectRootPath
 	project.compilerOptions = compilerOptions
@@ -186,21 +198,24 @@ func NewInferredProject(compilerOptions *core.CompilerOptions, currentDirectory 
 }
 
 func NewProject(name string, kind Kind, currentDirectory string, host ProjectHost) *Project {
+	cachedHost := newProjectHostWithCachedFS(host)
+
 	host.Log(fmt.Sprintf("Creating %sProject: %s, currentDirectory: %s", kind.String(), name, currentDirectory))
 	project := &Project{
-		host:             host,
+		host:             cachedHost,
 		name:             name,
 		kind:             kind,
 		currentDirectory: currentDirectory,
 		rootFileNames:    &collections.OrderedMap[tspath.Path, string]{},
+		dirty:            true,
 	}
 	project.comparePathsOptions = tspath.ComparePathsOptions{
 		CurrentDirectory:          currentDirectory,
-		UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+		UseCaseSensitiveFileNames: project.host.FS().UseCaseSensitiveFileNames(),
 	}
-	client := host.Client()
-	if host.IsWatchEnabled() && client != nil {
-		globMapper := createResolutionLookupGlobMapper(host)
+	client := project.Client()
+	if project.host.IsWatchEnabled() && client != nil {
+		globMapper := createResolutionLookupGlobMapper(project.host)
 		project.failedLookupsWatch = newWatchedFiles(project, lsproto.WatchKindCreate, globMapper, "failed lookup")
 		project.affectingLocationsWatch = newWatchedFiles(project, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, globMapper, "affecting location")
 		project.typingsFilesWatch = newWatchedFiles(project, lsproto.WatchKindChange|lsproto.WatchKindCreate|lsproto.WatchKindDelete, globMapperForTypingsInstaller, "typings installer files")
@@ -208,6 +223,28 @@ func NewProject(name string, kind Kind, currentDirectory string, host ProjectHos
 	}
 	project.markAsDirty()
 	return project
+}
+
+type projectHostWithCachedFS struct {
+	ProjectHost
+	fs *cachedvfs.FS
+}
+
+func newProjectHostWithCachedFS(host ProjectHost) *projectHostWithCachedFS {
+	newHost := &projectHostWithCachedFS{
+		ProjectHost: host,
+		fs:          cachedvfs.From(host.FS()),
+	}
+	newHost.fs.DisableAndClearCache()
+	return newHost
+}
+
+func (p *projectHostWithCachedFS) FS() vfs.FS {
+	return p.fs
+}
+
+func (p *Project) Client() Client {
+	return p.host.Client()
 }
 
 // FS implements compiler.CompilerHost.
@@ -234,26 +271,27 @@ func (p *Project) GetCompilerOptions() *core.CompilerOptions {
 }
 
 // GetSourceFile implements compiler.CompilerHost.
-func (p *Project) GetSourceFile(fileName string, path tspath.Path, languageVersion core.ScriptTarget) *ast.SourceFile {
-	scriptKind := p.getScriptKind(fileName)
-	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(fileName, scriptKind); scriptInfo != nil {
-		var (
-			oldSourceFile      *ast.SourceFile
-			oldCompilerOptions *core.CompilerOptions
-		)
+func (p *Project) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
+	scriptKind := p.getScriptKind(opts.FileName)
+	if scriptInfo := p.getOrCreateScriptInfoAndAttachToProject(opts.FileName, scriptKind); scriptInfo != nil {
+		var oldSourceFile *ast.SourceFile
 		if p.program != nil {
 			oldSourceFile = p.program.GetSourceFileByPath(scriptInfo.path)
-			oldCompilerOptions = p.program.Options()
 		}
-		return p.host.DocumentRegistry().AcquireDocument(scriptInfo, p.compilerOptions, oldSourceFile, oldCompilerOptions)
+		return p.host.DocumentStore().documentRegistry.AcquireDocument(scriptInfo, opts, oldSourceFile)
 	}
 	return nil
 }
 
+// GetResolvedProjectReference implements compiler.CompilerHost.
+func (p *Project) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
+	return p.host.ConfigFileRegistry().acquireConfig(fileName, path, p, nil)
+}
+
 // Updates the program if needed.
 func (p *Project) GetProgram() *compiler.Program {
-	p.updateGraph()
-	return p.program
+	program, _ := p.updateGraph()
+	return program
 }
 
 // NewLine implements compiler.CompilerHost.
@@ -263,7 +301,7 @@ func (p *Project) NewLine() string {
 
 // Trace implements compiler.CompilerHost.
 func (p *Project) Trace(msg string) {
-	p.Log(msg)
+	p.host.Log(msg)
 }
 
 // GetDefaultLibraryPath implements compiler.CompilerHost.
@@ -292,6 +330,9 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 		panic("context must already have a request ID")
 	}
 	program := p.GetProgram()
+	if program == nil {
+		panic("must have gced by other request")
+	}
 	checkerPool := p.checkerPool
 	snapshot := &snapshot{
 		project:          p,
@@ -307,59 +348,47 @@ func (p *Project) GetLanguageServiceForRequest(ctx context.Context) (*ls.Languag
 	return languageService, cleanup
 }
 
-func (p *Project) getRootFileWatchGlobs() []string {
-	if p.kind == KindConfigured {
-		globs := p.parsedCommandLine.WildcardDirectories()
-		result := make([]string, 0, len(globs)+1)
-		result = append(result, p.configFileName)
-		for dir, recursive := range globs {
-			result = append(result, fmt.Sprintf("%s/%s", tspath.NormalizePath(dir), core.IfElse(recursive, recursiveFileGlobPattern, fileGlobPattern)))
-		}
-		for _, fileName := range p.parsedCommandLine.LiteralFileNames() {
-			result = append(result, fileName)
-		}
-		return result
+func (p *Project) updateModuleResolutionWatches(ctx context.Context) {
+	client := p.Client()
+	if !p.host.IsWatchEnabled() || client == nil {
+		return
 	}
-	return nil
+
+	failedLookups := make(map[tspath.Path]string)
+	affectingLocations := make(map[tspath.Path]string)
+	extractLookups(p, failedLookups, affectingLocations, p.program.GetResolvedModules())
+	extractLookups(p, failedLookups, affectingLocations, p.program.GetResolvedTypeReferenceDirectives())
+
+	p.failedLookupsWatch.update(ctx, failedLookups)
+	p.affectingLocationsWatch.update(ctx, affectingLocations)
 }
 
-func (p *Project) getModuleResolutionWatchGlobs() (failedLookups map[tspath.Path]string, affectingLocaions map[tspath.Path]string) {
-	failedLookups = make(map[tspath.Path]string)
-	affectingLocaions = make(map[tspath.Path]string)
-	for _, resolvedModulesInFile := range p.program.GetResolvedModules() {
+type ResolutionWithLookupLocations interface {
+	GetLookupLocations() *module.LookupLocations
+}
+
+func extractLookups[T ResolutionWithLookupLocations](
+	p *Project,
+	failedLookups map[tspath.Path]string,
+	affectingLocations map[tspath.Path]string,
+	cache map[tspath.Path]module.ModeAwareCache[T],
+) {
+	for _, resolvedModulesInFile := range cache {
 		for _, resolvedModule := range resolvedModulesInFile {
-			for _, failedLookupLocation := range resolvedModule.FailedLookupLocations {
+			for _, failedLookupLocation := range resolvedModule.GetLookupLocations().FailedLookupLocations {
 				path := p.toPath(failedLookupLocation)
 				if _, ok := failedLookups[path]; !ok {
 					failedLookups[path] = failedLookupLocation
 				}
 			}
-			for _, affectingLocation := range resolvedModule.AffectingLocations {
+			for _, affectingLocation := range resolvedModule.GetLookupLocations().AffectingLocations {
 				path := p.toPath(affectingLocation)
-				if _, ok := affectingLocaions[path]; !ok {
-					affectingLocaions[path] = affectingLocation
+				if _, ok := affectingLocations[path]; !ok {
+					affectingLocations[path] = affectingLocation
 				}
 			}
 		}
 	}
-	return failedLookups, affectingLocaions
-}
-
-func (p *Project) updateWatchers(ctx context.Context) {
-	client := p.host.Client()
-	if !p.host.IsWatchEnabled() || client == nil {
-		return
-	}
-
-	rootFileGlobs := p.getRootFileWatchGlobs()
-	failedLookupGlobs, affectingLocationGlobs := p.getModuleResolutionWatchGlobs()
-
-	if rootFileGlobs != nil {
-		p.rootFilesWatch.update(ctx, rootFileGlobs)
-	}
-
-	p.failedLookupsWatch.update(ctx, failedLookupGlobs)
-	p.affectingLocationsWatch.update(ctx, affectingLocationGlobs)
 }
 
 // onWatchEventForNilScriptInfo is fired for watch events that are not the
@@ -371,14 +400,6 @@ func (p *Project) updateWatchers(ctx context.Context) {
 //     part of the project, e.g., a .js file in a project without --allowJs.
 func (p *Project) onWatchEventForNilScriptInfo(fileName string) {
 	path := p.toPath(fileName)
-	if p.kind == KindConfigured {
-		if p.rootFileNames.Has(path) || p.parsedCommandLine.MatchesFileName(fileName) {
-			p.pendingReload = PendingReloadFileNames
-			p.markAsDirty()
-			return
-		}
-	}
-
 	if _, ok := p.failedLookupsWatch.data[path]; ok {
 		p.markAsDirty()
 	} else if _, ok := p.affectingLocationsWatch.data[path]; ok {
@@ -405,7 +426,7 @@ func (p *Project) onWatchEventForNilScriptInfo(fileName string) {
 }
 
 func (p *Project) getOrCreateScriptInfoAndAttachToProject(fileName string, scriptKind core.ScriptKind) *ScriptInfo {
-	if scriptInfo := p.host.GetOrCreateScriptInfoForFile(fileName, p.toPath(fileName), scriptKind); scriptInfo != nil {
+	if scriptInfo := p.host.DocumentStore().getOrCreateScriptInfoWorker(fileName, p.toPath(fileName), scriptKind, false, "", false, p.host.FS()); scriptInfo != nil {
 		scriptInfo.attachToProject(p)
 		return scriptInfo
 	}
@@ -427,6 +448,15 @@ func (p *Project) MarkFileAsDirty(path tspath.Path) {
 		p.version++
 	} else if path != p.dirtyFilePath {
 		p.dirtyFilePath = ""
+	}
+}
+
+func (p *Project) SetPendingReload(level PendingReload) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if level > p.pendingReload {
+		p.pendingReload = level
+		p.markAsDirtyLocked()
 	}
 }
 
@@ -453,40 +483,42 @@ func (p *Project) onFileAddedOrRemoved() {
 // Returns true if the set of files in has changed. NOTE: this is the
 // opposite of the return value in Strada, which was frequently inverted,
 // as in `updateProjectIfDirty()`.
-func (p *Project) updateGraph() bool {
+func (p *Project) updateGraph() (*compiler.Program, bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	if !p.dirty {
-		return false
+	if !p.dirty || p.isClosed() {
+		return p.program, false
 	}
+
+	p.host.fs.Enable()
+	defer p.host.fs.DisableAndClearCache()
 
 	start := time.Now()
 	p.Log("Starting updateGraph: Project: " + p.name)
-	var writeFileNames bool
 	oldProgram := p.program
 	p.initialLoadPending = false
 
 	if p.kind == KindConfigured && p.pendingReload != PendingReloadNone {
 		switch p.pendingReload {
 		case PendingReloadFileNames:
-			p.parsedCommandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(p.parsedCommandLine, p.host.FS())
-			writeFileNames = p.setRootFiles(p.parsedCommandLine.FileNames())
+			p.parsedCommandLine = p.GetResolvedProjectReference(p.configFileName, p.configFilePath)
+			p.setRootFiles(p.parsedCommandLine.FileNames())
 			p.programConfig = nil
+			p.pendingReload = PendingReloadNone
 		case PendingReloadFull:
-			if err := p.loadConfig(); err != nil {
+			err := p.LoadConfig()
+			if err != nil {
 				panic(fmt.Sprintf("failed to reload config: %v", err))
 			}
 		}
-		p.pendingReload = PendingReloadNone
 	}
-
 	oldProgramReused := p.updateProgram()
 	hasAddedOrRemovedFiles := p.hasAddedorRemovedFiles.Load()
 	p.hasAddedorRemovedFiles.Store(false)
 	p.dirty = false
 	p.dirtyFilePath = ""
-	if writeFileNames {
+	if hasAddedOrRemovedFiles {
 		p.Log(p.print(true /*writeFileNames*/, true /*writeFileExplanation*/, false /*writeFileVersionAndText*/, &strings.Builder{}))
 	} else if p.program != oldProgram {
 		p.Log("Different program with same set of root files")
@@ -495,17 +527,24 @@ func (p *Project) updateGraph() bool {
 		if oldProgram != nil {
 			for _, oldSourceFile := range oldProgram.GetSourceFiles() {
 				if p.program.GetSourceFileByPath(oldSourceFile.Path()) == nil {
-					p.host.DocumentRegistry().ReleaseDocument(oldSourceFile, oldProgram.Options())
+					p.host.DocumentStore().documentRegistry.ReleaseDocument(oldSourceFile)
+					p.detachScriptInfoIfNotInferredRoot(oldSourceFile.Path())
 				}
 			}
+
+			oldProgram.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine) {
+				if _, ok := p.program.GetResolvedProjectReferenceFor(path); !ok {
+					p.host.ConfigFileRegistry().releaseConfig(path, p)
+				}
+			})
 		}
 		p.enqueueInstallTypingsForProject(oldProgram, hasAddedOrRemovedFiles)
 		// TODO: this is currently always synchronously called by some kind of updating request,
 		// but in Strada we throttle, so at least sometimes this should be considered top-level?
-		p.updateWatchers(context.TODO())
+		p.updateModuleResolutionWatches(context.TODO())
 	}
 	p.Logf("Finishing updateGraph: Project: %s version: %d in %s", p.name, p.version, time.Since(start))
-	return true
+	return p.program, true
 }
 
 func (p *Project) updateProgram() bool {
@@ -533,6 +572,12 @@ func (p *Project) updateProgram() bool {
 			} else {
 				rootFileNames := p.GetRootFileNames()
 				compilerOptions := p.compilerOptions
+
+				if compilerOptions.MaxNodeModuleJsDepth == nil && p.rootJSFileCount > 0 {
+					compilerOptions = compilerOptions.Clone()
+					compilerOptions.MaxNodeModuleJsDepth = ptrTo(2)
+				}
+
 				p.programConfig = &tsoptions.ParsedCommandLine{
 					ParsedConfig: &core.ParsedOptions{
 						CompilerOptions: compilerOptions,
@@ -543,16 +588,21 @@ func (p *Project) updateProgram() bool {
 		}
 		var typingsLocation string
 		if typeAcquisition := p.getTypeAcquisition(); typeAcquisition != nil && typeAcquisition.Enable.IsTrue() {
-			typingsLocation = p.host.TypingsInstaller().TypingsLocation
+			typingsInstaller := p.host.TypingsInstaller()
+			if typingsInstaller != nil {
+				typingsLocation = typingsInstaller.TypingsLocation
+			}
 		}
 		p.program = compiler.NewProgram(compiler.ProgramOptions{
-			Config:          p.programConfig,
-			Host:            p,
-			TypingsLocation: typingsLocation,
+			Config:                      p.programConfig,
+			Host:                        p,
+			UseSourceOfProjectReference: true,
+			TypingsLocation:             typingsLocation,
 			CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
 				p.checkerPool = newCheckerPool(4, program, p.Log)
 				return p.checkerPool
 			},
+			JSDocParsingMode: ast.JSDocParsingModeParseAll,
 		})
 	} else {
 		// The only change in the current program is the contents of the file named by p.dirtyFilePath.
@@ -592,6 +642,15 @@ func (p *Project) getTypeAcquisition() *core.TypeAcquisition {
 	return p.typeAcquisition
 }
 
+func (p *Project) setTypeAcquisition(typeAcquisition *core.TypeAcquisition) {
+	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
+		p.unresolvedImports = nil
+		p.unresolvedImportsPerFile = nil
+		p.typingFiles = nil
+	}
+	p.typeAcquisition = typeAcquisition
+}
+
 func (p *Project) enqueueInstallTypingsForProject(oldProgram *compiler.Program, forceRefresh bool) {
 	typingsInstaller := p.host.TypingsInstaller()
 	if typingsInstaller == nil {
@@ -600,10 +659,6 @@ func (p *Project) enqueueInstallTypingsForProject(oldProgram *compiler.Program, 
 
 	typeAcquisition := p.getTypeAcquisition()
 	if typeAcquisition == nil || !typeAcquisition.Enable.IsTrue() {
-		// !!! sheetal Should be probably done where we set typeAcquisition
-		p.unresolvedImports = nil
-		p.unresolvedImportsPerFile = nil
-		p.typingFiles = nil
 		return
 	}
 
@@ -636,7 +691,7 @@ func (p *Project) extractUnresolvedImports(oldProgram *compiler.Program) []strin
 	// tracing?.push(tracing.Phase.Session, "getUnresolvedImports", { count: sourceFiles.length });
 	hasChanges := false
 	sourceFiles := p.program.GetSourceFiles()
-	sourceFilesSet := core.NewSetWithSizeHint[*ast.SourceFile](len(sourceFiles))
+	sourceFilesSet := collections.NewSetWithSizeHint[*ast.SourceFile](len(sourceFiles))
 
 	// !!! sheetal remove ambient module names from unresolved imports
 	// const ambientModules = program.getTypeChecker().getAmbientModules().map(mod => stripQuotes(mod.getName()));
@@ -707,7 +762,7 @@ func (p *Project) extractUnresolvedImportsFromSourceFile(file *ast.SourceFile, o
 func (p *Project) UpdateTypingFiles(typingsInfo *TypingsInfo, typingFiles []string) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	if p.typingsInfo != typingsInfo {
+	if p.isClosed() || p.typingsInfo != typingsInfo {
 		return
 	}
 
@@ -726,7 +781,7 @@ func (p *Project) UpdateTypingFiles(typingsInfo *TypingsInfo, typingFiles []stri
 		// 	this.resolutionCache.setFilesWithInvalidatedNonRelativeUnresolvedImports(this.cachedUnresolvedImportsPerFile);
 
 		p.markAsDirtyLocked()
-		client := p.host.Client()
+		client := p.Client()
 		if client != nil {
 			err := client.RefreshDiagnostics(context.Background())
 			if err != nil {
@@ -737,7 +792,13 @@ func (p *Project) UpdateTypingFiles(typingsInfo *TypingsInfo, typingFiles []stri
 }
 
 func (p *Project) WatchTypingLocations(files []string) {
-	client := p.host.Client()
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.isClosed() {
+		return
+	}
+
+	client := p.Client()
 	if !p.host.IsWatchEnabled() || client == nil {
 		return
 	}
@@ -785,6 +846,19 @@ func (p *Project) WatchTypingLocations(files []string) {
 	p.typingsDirectoryWatch.update(ctx, typingsInstallerDirectoryGlobs)
 }
 
+func (p *Project) isSourceFromProjectReference(info *ScriptInfo) bool {
+	program := p.program
+	return program != nil && program.IsSourceFromProjectReference(info.Path())
+}
+
+func (p *Project) containsScriptInfo(info *ScriptInfo) bool {
+	if p.isRoot(info) {
+		return true
+	}
+	program := p.program
+	return program != nil && program.GetSourceFileByPath(info.Path()) != nil
+}
+
 func (p *Project) isOrphan() bool {
 	switch p.kind {
 	case KindInferred:
@@ -804,23 +878,13 @@ func (p *Project) isRoot(info *ScriptInfo) bool {
 	return p.rootFileNames.Has(info.path)
 }
 
-func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
+func (p *Project) RemoveFile(info *ScriptInfo, fileExists bool) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	p.removeFile(info, fileExists, detachFromProject)
-	p.markAsDirtyLocked()
-}
-
-func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProject bool) {
-	if p.isRoot(info) {
-		switch p.kind {
-		case KindInferred:
-			p.rootFileNames.Delete(info.path)
-			p.typeAcquisition = nil
-			p.programConfig = nil
-		case KindConfigured:
-			p.pendingReload = PendingReloadFileNames
-		}
+	if p.isRoot(info) && p.kind == KindInferred {
+		p.deleteRootFileNameOfInferred(info.path)
+		p.setTypeAcquisition(nil)
+		p.programConfig = nil
 	}
 	p.onFileAddedOrRemoved()
 
@@ -832,122 +896,105 @@ func (p *Project) removeFile(info *ScriptInfo, fileExists bool, detachFromProjec
 	// 	this.resolutionCache.invalidateResolutionOfFile(info.path);
 	// }
 	// this.cachedUnresolvedImportsPerFile.delete(info.path);
-	if detachFromProject {
-		info.detachFromProject(p)
-	}
-}
-
-func (p *Project) AddRoot(info *ScriptInfo) {
-	p.mu.Lock()
-	defer p.mu.Unlock()
-	p.addRoot(info)
-	p.programConfig = nil
 	p.markAsDirtyLocked()
 }
 
-func (p *Project) addRoot(info *ScriptInfo) {
-	// !!!
-	// if p.kind == KindInferred {
-	// 	p.host.startWatchingConfigFilesForInferredProjectRoot(info.path);
-	//  // handle JS toggling
-	// }
+func (p *Project) AddInferredProjectRoot(info *ScriptInfo) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if p.isRoot(info) {
 		panic("script info is already a root")
 	}
-	p.rootFileNames.Set(info.path, info.fileName)
-	if p.kind == KindInferred {
-		p.typeAcquisition = nil
-	}
+	p.setRootFileNameOfInferred(info.path, info.fileName)
+	p.programConfig = nil
+	p.setTypeAcquisition(nil)
+	// !!!
+	// if p.kind == KindInferred {
+	// 	p.host.startWatchingConfigFilesForInferredProjectRoot(info.path);
+	// }
 	info.attachToProject(p)
+	p.markAsDirtyLocked()
 }
 
 func (p *Project) LoadConfig() error {
-	if err := p.loadConfig(); err != nil {
-		return err
-	}
-	p.markAsDirty()
-	return nil
-}
-
-func (p *Project) loadConfig() error {
 	if p.kind != KindConfigured {
 		panic("loadConfig called on non-configured project")
 	}
 
 	p.programConfig = nil
-	if configFileContent, ok := p.host.FS().ReadFile(p.configFileName); ok {
-		configDir := tspath.GetDirectoryPath(p.configFileName)
-		tsConfigSourceFile := tsoptions.NewTsconfigSourceFileFromFilePath(p.configFileName, p.configFilePath, configFileContent)
-		parsedCommandLine := tsoptions.ParseJsonSourceFileConfigFileContent(
-			tsConfigSourceFile,
-			p.host,
-			configDir,
-			nil, /*existingOptions*/
-			p.configFileName,
-			nil, /*resolutionStack*/
-			nil, /*extraFileExtensions*/
-			nil, /*extendedConfigCache*/
-		)
-
+	p.pendingReload = PendingReloadNone
+	p.parsedCommandLine = p.GetResolvedProjectReference(p.configFileName, p.configFilePath)
+	if p.parsedCommandLine != nil {
 		p.Logf("Config: %s : %s",
 			p.configFileName,
 			core.Must(core.StringifyJson(map[string]any{
-				"rootNames":         parsedCommandLine.FileNames(),
-				"options":           parsedCommandLine.CompilerOptions(),
-				"projectReferences": parsedCommandLine.ProjectReferences(),
+				"rootNames":         p.parsedCommandLine.FileNames(),
+				"options":           p.parsedCommandLine.CompilerOptions(),
+				"projectReferences": p.parsedCommandLine.ProjectReferences(),
 			}, "    ", "  ")),
 		)
 
-		p.parsedCommandLine = parsedCommandLine
-		p.compilerOptions = parsedCommandLine.CompilerOptions()
-		p.typeAcquisition = parsedCommandLine.TypeAcquisition()
-		p.setRootFiles(parsedCommandLine.FileNames())
+		p.compilerOptions = p.parsedCommandLine.CompilerOptions()
+		p.setTypeAcquisition(p.parsedCommandLine.TypeAcquisition())
+		p.setRootFiles(p.parsedCommandLine.FileNames())
 	} else {
 		p.compilerOptions = &core.CompilerOptions{}
-		p.typeAcquisition = nil
+		p.setTypeAcquisition(nil)
 		return fmt.Errorf("could not read file %q", p.configFileName)
 	}
 	return nil
 }
 
 // setRootFiles returns true if the set of root files has changed.
-func (p *Project) setRootFiles(rootFileNames []string) bool {
-	var hasChanged bool
+func (p *Project) setRootFiles(rootFileNames []string) {
 	newRootScriptInfos := make(map[tspath.Path]struct{}, len(rootFileNames))
 	for _, file := range rootFileNames {
-		scriptKind := p.getScriptKind(file)
 		path := p.toPath(file)
 		// !!! updateNonInferredProjectFiles uses a fileExists check, which I guess
 		// could be needed if a watcher fails?
-		scriptInfo := p.host.GetOrCreateScriptInfoForFile(file, path, scriptKind)
 		newRootScriptInfos[path] = struct{}{}
-		isAlreadyRoot := p.rootFileNames.Has(path)
-		hasChanged = hasChanged || !isAlreadyRoot
-
-		if !isAlreadyRoot && scriptInfo != nil {
-			p.addRoot(scriptInfo)
-			if scriptInfo.isOpen {
-				// !!!
-				// s.removeRootOfInferredProjectIfNowPartOfOtherProject(scriptInfo)
-			}
-		} else if !isAlreadyRoot {
-			p.rootFileNames.Set(path, file)
-		}
+		p.rootFileNames.Set(path, file)
+		// if !isAlreadyRoot {
+		// 	if scriptInfo.isOpen {
+		// 		!!!s.removeRootOfInferredProjectIfNowPartOfOtherProject(scriptInfo)
+		// 	}
+		// }
 	}
 
 	if p.rootFileNames.Size() > len(rootFileNames) {
-		hasChanged = true
 		for root := range p.rootFileNames.Keys() {
 			if _, ok := newRootScriptInfos[root]; !ok {
-				if info := p.host.GetScriptInfoByPath(root); info != nil {
-					p.removeFile(info, true /*fileExists*/, true /*detachFromProject*/)
-				} else {
-					p.rootFileNames.Delete(root)
-				}
+				p.rootFileNames.Delete(root)
 			}
 		}
 	}
-	return hasChanged
+}
+
+func (p *Project) setRootFileNameOfInferred(path tspath.Path, fileName string) {
+	if p.kind != KindInferred {
+		panic("setRootFileNameOfInferred called on non-inferred project")
+	}
+
+	has := p.rootFileNames.Has(path)
+	p.rootFileNames.Set(path, fileName)
+	if !has && tspath.HasJSFileExtension(fileName) {
+		p.rootJSFileCount++
+	}
+}
+
+func (p *Project) deleteRootFileNameOfInferred(path tspath.Path) {
+	if p.kind != KindInferred {
+		panic("deleteRootFileNameOfInferred called on non-inferred project")
+	}
+
+	fileName, ok := p.rootFileNames.Get(path)
+	if !ok {
+		return
+	}
+	p.rootFileNames.Delete(path)
+	if tspath.HasJSFileExtension(fileName) {
+		p.rootJSFileCount--
+	}
 }
 
 func (p *Project) clearSourceMapperCache() {
@@ -974,9 +1021,9 @@ func (p *Project) GetFileNames(excludeFilesFromExternalLibraries bool, excludeCo
 	result := []string{}
 	sourceFiles := p.program.GetSourceFiles()
 	for _, sourceFile := range sourceFiles {
-		// if excludeFilesFromExternalLibraries && p.program.IsSourceFileFromExternalLibrary(sourceFile) {
-		//     continue;
-		// }
+		if excludeFilesFromExternalLibraries && p.program.IsSourceFileFromExternalLibrary(sourceFile) {
+			continue
+		}
 		result = append(result, sourceFile.FileName())
 	}
 	// if (!excludeConfigFiles) {
@@ -994,21 +1041,20 @@ func (p *Project) GetFileNames(excludeFilesFromExternalLibraries bool, excludeCo
 }
 
 func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFileVersionAndText bool, builder *strings.Builder) string {
-	builder.WriteString(fmt.Sprintf("Project '%s' (%s)\n", p.name, p.kind.String()))
+	builder.WriteString(fmt.Sprintf("\nProject '%s' (%s)\n", p.name, p.kind.String()))
 	if p.initialLoadPending {
-		builder.WriteString("\tFiles (0) InitialLoadPending\n")
+		builder.WriteString("\n\tFiles (0) InitialLoadPending\n")
 	} else if p.program == nil {
-		builder.WriteString("\tFiles (0) NoProgram\n")
+		builder.WriteString("\n\tFiles (0) NoProgram\n")
 	} else {
 		sourceFiles := p.program.GetSourceFiles()
-		builder.WriteString(fmt.Sprintf("\tFiles (%d)\n", len(sourceFiles)))
+		builder.WriteString(fmt.Sprintf("\n\tFiles (%d)\n", len(sourceFiles)))
 		if writeFileNames {
 			for _, sourceFile := range sourceFiles {
-				builder.WriteString("\t\t" + sourceFile.FileName())
+				builder.WriteString("\n\t\t" + sourceFile.FileName())
 				if writeFileVersionAndText {
-					builder.WriteString(fmt.Sprintf(" %d %s", sourceFile.Version, sourceFile.Text()))
+					builder.WriteString(fmt.Sprintf(" %d %s", p.getFileVersion(sourceFile), sourceFile.Text()))
 				}
-				builder.WriteRune('\n')
 			}
 			// !!!
 			// if writeFileExplanation {}
@@ -1016,6 +1062,10 @@ func (p *Project) print(writeFileNames bool, writeFileExplanation bool, writeFil
 	}
 	builder.WriteString(hr)
 	return builder.String()
+}
+
+func (p *Project) getFileVersion(file *ast.SourceFile) int {
+	return p.host.DocumentStore().documentRegistry.getFileVersion(file)
 }
 
 func (p *Project) Log(s string) {
@@ -1026,8 +1076,65 @@ func (p *Project) Logf(format string, args ...interface{}) {
 	p.Log(fmt.Sprintf(format, args...))
 }
 
+func (p *Project) detachScriptInfoIfNotInferredRoot(path tspath.Path) {
+	// We might not find the script info in case its not associated with the project any more
+	// and project graph was not updated (eg delayed update graph in case of files changed/deleted on the disk)
+	if scriptInfo := p.host.DocumentStore().GetScriptInfoByPath(path); scriptInfo != nil &&
+		(p.kind != KindInferred || !p.isRoot(scriptInfo)) {
+		scriptInfo.detachFromProject(p)
+	}
+}
+
 func (p *Project) Close() {
-	// !!!
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	if p.program != nil {
+		for _, sourceFile := range p.program.GetSourceFiles() {
+			p.host.DocumentStore().documentRegistry.ReleaseDocument(sourceFile)
+			// Detach script info if its not root or is root of non inferred project
+			p.detachScriptInfoIfNotInferredRoot(sourceFile.Path())
+		}
+		p.program.ForEachResolvedProjectReference(func(path tspath.Path, ref *tsoptions.ParsedCommandLine) {
+			p.host.ConfigFileRegistry().releaseConfig(path, p)
+		})
+		if p.kind == KindConfigured {
+			p.host.ConfigFileRegistry().releaseConfig(p.configFilePath, p)
+		}
+		p.program = nil
+	}
+
+	if p.kind == KindInferred {
+		// Release root script infos for inferred projects.
+		for path := range p.rootFileNames.Keys() {
+			if info := p.host.DocumentStore().GetScriptInfoByPath(path); info != nil {
+				info.detachFromProject(p)
+			}
+		}
+	}
+	p.rootFileNames = nil
+	p.rootJSFileCount = 0
+	p.parsedCommandLine = nil
+	p.programConfig = nil
+	p.checkerPool = nil
+	p.unresolvedImportsPerFile = nil
+	p.unresolvedImports = nil
+	p.typingsInfo = nil
+	p.typingFiles = nil
+
+	// Clean up file watchers waiting for missing files
+	client := p.Client()
+	if p.host.IsWatchEnabled() && client != nil {
+		ctx := context.Background()
+		p.failedLookupsWatch.update(ctx, nil)
+		p.affectingLocationsWatch.update(ctx, nil)
+		p.typingsFilesWatch.update(ctx, nil)
+		p.typingsDirectoryWatch.update(ctx, nil)
+	}
+}
+
+func (p *Project) isClosed() bool {
+	return p.rootFileNames == nil
 }
 
 func formatFileList(files []string, linePrefix string, groupSuffix string) string {

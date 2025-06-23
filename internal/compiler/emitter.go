@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"encoding/base64"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -305,10 +304,7 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host printer.EmitHost, f
 		return false
 	}
 
-	// !!! Source file from node_modules are not emitted. In Strada, this depends on module resolution and uses
-	// `sourceFilesFoundSearchingNodeModules` in `createProgram`. For now, we will just check for `/node_modules/` in
-	// the file name.
-	if strings.Contains(sourceFile.FileName(), "/node_modules/") {
+	if host.IsSourceFileFromExternalLibrary(sourceFile) {
 		return false
 	}
 
@@ -317,7 +313,10 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host printer.EmitHost, f
 		return true
 	}
 
-	// !!! Source files from referenced projects are not emitted
+	// Source files from referenced projects are not emitted
+	if host.GetOutputAndProjectReference(sourceFile.Path()) != nil {
+		return false
+	}
 
 	// Any non json file should be emitted
 	if !ast.IsJsonSourceFile(sourceFile) {

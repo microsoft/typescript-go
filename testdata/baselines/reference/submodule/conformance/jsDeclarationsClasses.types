@@ -62,7 +62,6 @@ export class E {
     get f1() { return /** @type {*} */(null); }
 >f1 : U
 >(null) : any
->null : any
 
     /**
      * @param {U} _p
@@ -77,7 +76,6 @@ export class E {
     get f2() { return /** @type {*} */(null); }
 >f2 : U
 >(null) : any
->null : any
 
     /**
      * @param {U} _p
@@ -284,7 +282,7 @@ export class N extends L {
  */
 export class O extends N {
 >O : O<U>
->N : typeof N
+>N : N<U>
 
     /**
      * @param {U} param 
@@ -294,7 +292,7 @@ export class O extends N {
 
         super(param);
 >super(param) : void
->super : any
+>super : typeof N
 >param : U
 
         this.another2 = param;
@@ -309,7 +307,6 @@ export class O extends N {
 var x = /** @type {*} */(null);
 >x : any
 >(null) : any
->null : any
 
 export class VariableBase extends x {}
 >VariableBase : VariableBase

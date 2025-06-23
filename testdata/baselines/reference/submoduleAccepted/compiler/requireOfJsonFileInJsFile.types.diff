@@ -1,46 +1,11 @@
 --- old.requireOfJsonFileInJsFile.types
 +++ new.requireOfJsonFileInJsFile.types
-@@= skipped -14, +14 lines =@@
- /** @type {{ b: number }} */
- const json1 = require("./json.json"); // No error (bad)
- >json1 : { b: number; }
-->require("./json.json") : { a: number; }
-+>require("./json.json") : any
- >require : any
- >"./json.json" : "./json.json"
-
-@@= skipped -10, +10 lines =@@
- >b : number
-
- const js0 = require("./js.js");
-->js0 : { a: number; }
-->require("./js.js") : { a: number; }
-+>js0 : any
-+>require("./js.js") : any
- >require : any
- >"./js.js" : "./js.js"
-
-@@= skipped -13, +13 lines =@@
- /** @type {{ b: number }} */
- const js1 = require("./js.js"); // Error (good)
- >js1 : { b: number; }
-->require("./js.js") : { a: number; }
-+>require("./js.js") : any
- >require : any
- >"./js.js" : "./js.js"
-
-@@= skipped -13, +13 lines =@@
- { "a": 0 }
- >{ "a": 0 } : { a: number; }
- >"a" : number
-->0 : 0
--
--=== /js.js ===
--module.exports = { a: 0 };
-->module.exports = { a: 0 } : { a: number; }
-->module.exports : { a: number; }
+@@= skipped -56, +56 lines =@@
+ module.exports = { a: 0 };
+ >module.exports = { a: 0 } : { a: number; }
+ >module.exports : { a: number; }
 ->module : { exports: { a: number; }; }
-->exports : { a: number; }
-->{ a: 0 } : { a: number; }
-->a : number
- >0 : 0
++>module : { "export=": { a: number; }; }
+ >exports : { a: number; }
+ >{ a: 0 } : { a: number; }
+ >a : number

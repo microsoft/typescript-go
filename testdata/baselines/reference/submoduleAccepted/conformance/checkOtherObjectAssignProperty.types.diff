@@ -116,11 +116,7 @@
  >"thing" : "thing"
  >obj : { value: number; writable: boolean; }
 
-@@= skipped -14, +14 lines =@@
- let str = /** @type {string} */("other");
- >str : string
- >("other") : string
-+>"other" : string
+@@= skipped -17, +17 lines =@@
  >"other" : "other"
 
  Object.defineProperty(exports, str, { value: 42, writable: true });
@@ -134,7 +130,7 @@
  >str : string
  >{ value: 42, writable: true } : { value: number; writable: true; }
  >value : number
-@@= skipped -20, +21 lines =@@
+@@= skipped -17, +17 lines =@@
  >"prop" : "prop"
 
  Object.defineProperty(exports, propName, { value: 42, writable: true });

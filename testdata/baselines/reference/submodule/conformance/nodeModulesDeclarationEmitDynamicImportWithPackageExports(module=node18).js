@@ -71,46 +71,32 @@ export const cjsNonmain = true;
 }
 
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [index.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+export {};
 //// [index.cjs]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 //// [other.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.f = exports.c = exports.b = exports.a = void 0;
 // esm format file
-exports.a = await import("package/cjs");
-exports.b = await import("package/mjs");
-exports.c = await import("package");
-exports.f = await import("inner");
+export const a = await import("package/cjs");
+export const b = await import("package/mjs");
+export const c = await import("package");
+export const f = await import("inner");
 //// [other2.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.e = exports.d = void 0;
 // esm format file
-exports.d = await import("inner/cjs");
-exports.e = await import("inner/mjs");
+export const d = await import("inner/cjs");
+export const e = await import("inner/mjs");
 //// [other.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.f = exports.c = exports.b = exports.a = void 0;
 // esm format file
-exports.a = await import("package/cjs");
-exports.b = await import("package/mjs");
-exports.c = await import("package");
-exports.f = await import("inner");
+export const a = await import("package/cjs");
+export const b = await import("package/mjs");
+export const c = await import("package");
+export const f = await import("inner");
 //// [other2.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.e = exports.d = void 0;
 // esm format file
-exports.d = await import("inner/cjs");
-exports.e = await import("inner/mjs");
+export const d = await import("inner/cjs");
+export const e = await import("inner/mjs");
 //// [other.cjs]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -140,40 +126,31 @@ export {};
 export {};
 //// [other.d.ts]
 // esm format file
-export declare const a: typeof import("./index.cts");
-export declare const b: typeof import("./index.mts");
-export declare const c: typeof import(".");
-export declare const f: any;
+export declare const a: typeof import("package/cjs");
+export declare const b: typeof import("package/mjs");
+export declare const c: typeof import("package");
+export declare const f: typeof import("inner");
 //// [other2.d.ts]
 // esm format file
-export declare const d: any;
-export declare const e: any;
+export declare const d: typeof import("inner/cjs");
+export declare const e: typeof import("inner/mjs");
 //// [other.d.mts]
 // esm format file
 export declare const a: typeof import("package/cjs");
 export declare const b: typeof import("package/mjs");
 export declare const c: typeof import("package");
-export declare const f: {
-    cjsMain: true;
-    default: typeof import("inner");
-};
+export declare const f: typeof import("inner");
 //// [other2.d.mts]
 // esm format file
-export declare const d: {
-    cjsNonmain: true;
-    default: typeof import("inner/cjs");
-};
-export declare const e: {
-    esm: true;
-    default: typeof import("inner/mjs");
-};
+export declare const d: typeof import("inner/cjs");
+export declare const e: typeof import("inner/mjs");
 //// [other.d.cts]
 // cjs format file, no TLA
 export declare const a: Promise<typeof import("./index.cts")>;
-export declare const b: Promise<typeof import("./index.mts")>;
-export declare const c: Promise<typeof import(".")>;
-export declare const f: any;
+export declare const b: Promise<typeof import("package/mjs", { with: { "resolution-mode": "import" } })>;
+export declare const c: Promise<typeof import("package", { with: { "resolution-mode": "import" } })>;
+export declare const f: Promise<typeof import("inner")>;
 //// [other2.d.cts]
 // cjs format file, no TLA
-export declare const d: any;
-export declare const e: any;
+export declare const d: Promise<typeof import("inner/cjs")>;
+export declare const e: Promise<typeof import("inner/mjs", { with: { "resolution-mode": "import" } })>;

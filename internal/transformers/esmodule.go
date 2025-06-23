@@ -223,7 +223,7 @@ func (tx *ESModuleTransformer) visitExportDeclaration(node *ast.ExportDeclaratio
 
 	var exportDecl *ast.Node
 	if ast.IsExportNamespaceAsDefaultDeclaration(node.AsNode()) {
-		exportDecl = tx.factory.NewExportAssignment(nil /*modifiers*/, false /*isExportEquals*/, synthName)
+		exportDecl = tx.factory.NewExportAssignment(nil /*modifiers*/, false /*isExportEquals*/, nil /*typeNode*/, synthName)
 	} else {
 		exportDecl = tx.factory.NewExportDeclaration(
 			nil,   /*modifiers*/
@@ -244,7 +244,7 @@ func (tx *ESModuleTransformer) visitExportDeclaration(node *ast.ExportDeclaratio
 func (tx *ESModuleTransformer) visitCallExpression(node *ast.CallExpression) *ast.Node {
 	if tx.compilerOptions.RewriteRelativeImportExtensions.IsTrue() {
 		if ast.IsImportCall(node.AsNode()) && len(node.Arguments.Nodes) > 0 ||
-			ast.IsInJSFile(node.AsNode()) && ast.IsRequireCall(node.AsNode()) {
+			ast.IsInJSFile(node.AsNode()) && ast.IsRequireCall(node.AsNode(), false /*requireStringLiteralLikeArgument*/) {
 			return tx.visitImportOrRequireCall(node)
 		}
 	}

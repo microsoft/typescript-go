@@ -52,6 +52,7 @@ func getModuleTransformer(emitContext *printer.EmitContext, options *core.Compil
 		core.ModuleKindES2022,
 		core.ModuleKindES2020,
 		core.ModuleKindES2015,
+		core.ModuleKindNode18,
 		core.ModuleKindNode16,
 		core.ModuleKindNodeNext,
 		core.ModuleKindCommonJS:
@@ -72,7 +73,7 @@ func GetScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 
 	var emitResolver printer.EmitResolver
 	var referenceResolver binder.ReferenceResolver
-	if importElisionEnabled {
+	if importElisionEnabled || options.GetJSXTransformEnabled() {
 		emitResolver = host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 		referenceResolver = emitResolver
@@ -95,7 +96,9 @@ func GetScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	}
 
 	// !!! transform legacy decorator syntax
-	// !!! transform JSX syntax
+	if options.GetJSXTransformEnabled() {
+		tx = append(tx, NewJSXTransformer(emitContext, options, emitResolver))
+	}
 
 	if languageVersion < core.ScriptTargetESNext {
 		tx = append(tx, NewESNextTransformer(emitContext))

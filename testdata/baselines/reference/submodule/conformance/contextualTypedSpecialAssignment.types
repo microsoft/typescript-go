@@ -8,16 +8,15 @@
 
 // property assignment
 var ns = {}
->ns : {}
->{} : {}
+>ns : { x: { status: "done"; m(n: number): void; }; }
+>{} : { x: { status: "done"; m(n: number): void; }; }
 
 /** @type {DoneStatus} */
 ns.x = {
 >ns.x = {    status: 'done',    m(n) { }} : { status: "done"; m(n: number): void; }
->ns.x : any
->ns : {}
->x : any
->{    status: 'done',    m(n) { }} : { status: "done"; m(n: number): void; }
+>ns.x : { status: "done"; m(n: number): void; }
+>ns : { x: { status: "done"; m(n: number): void; }; }
+>x : { status: "done"; m(n: number): void; }
 >{    status: 'done',    m(n) { }} : { status: "done"; m(n: number): void; }
 
     status: 'done',
@@ -31,9 +30,9 @@ ns.x = {
 
 ns.x = {
 >ns.x = {    status: 'done',    m(n) { }} : { status: string; m(n: any): void; }
->ns.x : any
->ns : {}
->x : any
+>ns.x : { status: "done"; m(n: number): void; }
+>ns : { x: { status: "done"; m(n: number): void; }; }
+>x : { status: "done"; m(n: number): void; }
 >{    status: 'done',    m(n) { }} : { status: string; m(n: any): void; }
 
     status: 'done',
@@ -45,9 +44,9 @@ ns.x = {
 >n : any
 }
 ns.x
->ns.x : any
->ns : {}
->x : any
+>ns.x : { status: "done"; m(n: number): void; }
+>ns : { x: { status: "done"; m(n: number): void; }; }
+>x : { status: "done"; m(n: number): void; }
 
 
 // this-property assignment
@@ -61,7 +60,6 @@ class Thing {
 >this.s : { status: "done"; m(n: number): void; }
 >this : this
 >s : { status: "done"; m(n: number): void; }
->{            status: 'done',            m(n) { }        } : { status: "done"; m(n: number): void; }
 >{            status: 'done',            m(n) { }        } : { status: "done"; m(n: number): void; }
 
             status: 'done',
@@ -78,19 +76,19 @@ class Thing {
 >fail : () => void
 
         this.s = {
->this.s = {            status: 'done',            m(n) { }        } : { status: string; m(n: any): void; }
+>this.s = {            status: 'done',            m(n) { }        } : { status: "done"; m(n: number): void; }
 >this.s : { status: "done"; m(n: number): void; }
 >this : this
 >s : { status: "done"; m(n: number): void; }
->{            status: 'done',            m(n) { }        } : { status: string; m(n: any): void; }
+>{            status: 'done',            m(n) { }        } : { status: "done"; m(n: number): void; }
 
             status: 'done',
->status : string
+>status : "done"
 >'done' : "done"
 
             m(n) { }
->m : (n: any) => void
->n : any
+>m : (n: number) => void
+>n : number
         }
     }
 }
@@ -103,7 +101,6 @@ exports.x = {
 >exports.x : { status: "done"; m(n: number): void; }
 >exports : typeof import("./test")
 >x : { status: "done"; m(n: number): void; }
->{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 >{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 
     status: "done",
@@ -128,7 +125,6 @@ module.exports.y = {
 >exports : typeof import("./test")
 >y : { status: "done"; m(n: number): void; }
 >{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
->{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 
     status: "done",
 >status : "done"
@@ -148,21 +144,21 @@ module.exports.y
 // prototype-property assignment
 /** @type {DoneStatus} */
 Thing.prototype.x = {
->Thing.prototype.x = {    status: 'done',    m(n) { }} : { status: string; m(n: any): void; }
+>Thing.prototype.x = {    status: 'done',    m(n) { }} : { status: "done"; m(n: number): void; }
 >Thing.prototype.x : any
 >Thing.prototype : Thing
 >Thing : typeof Thing
 >prototype : Thing
 >x : any
->{    status: 'done',    m(n) { }} : { status: string; m(n: any): void; }
+>{    status: 'done',    m(n) { }} : { status: "done"; m(n: number): void; }
 
     status: 'done',
->status : string
+>status : "done"
 >'done' : "done"
 
     m(n) { }
->m : (n: any) => void
->n : any
+>m : (n: number) => void
+>n : number
 }
 Thing.prototype.x
 >Thing.prototype.x : any
@@ -182,7 +178,6 @@ F.prototype = {
 >F : { (): void; prototype: { status: "done"; m(n: number): void; }; }
 >prototype : { status: "done"; m(n: number): void; }
 >{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
->{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 
     status: "done",
 >status : "done"
@@ -201,7 +196,6 @@ module.exports = {
 >module.exports : { status: "done"; m(n: number): void; }
 >module : { "export=": { status: "done"; m(n: number): void; }; }
 >exports : { status: "done"; m(n: number): void; }
->{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 >{    status: "done",    m(n) { }} : { status: "done"; m(n: number): void; }
 
     status: "done",
