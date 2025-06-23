@@ -59,7 +59,7 @@ You can see more tests in `_submodules/TypeScript/tests/cases/{compiler,conforma
 
 When tests are run, they will produce output files in the `testdata/baselines/local` directory.
 **Test failures are fine** if they are just differences in output files.
-The new outputs will be can be diffed against `testdata/baselines/reference` to see if the output has changed.
+The new outputs can be diffed against `testdata/baselines/reference` to see if the output has changed.
 
 Running
 
