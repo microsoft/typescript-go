@@ -118,7 +118,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			clientOptions,
 		)
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.hasIndexSignature)
-		itemDefaults := l.setCommitCharacters(
+		itemDefaults := l.setItemDefaults(
 			clientOptions,
 			position,
 			file,
@@ -164,7 +164,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			)
 		})
 		defaultCommitCharacters := getDefaultCommitCharacters(completion.isNewIdentifier)
-		itemDefaults := l.setCommitCharacters(
+		itemDefaults := l.setItemDefaults(
 			clientOptions,
 			position,
 			file,
@@ -212,7 +212,7 @@ func (l *LanguageService) convertPathCompletions(
 			"",    /*source*/
 		)
 	})
-	itemDefaults := l.setCommitCharacters(
+	itemDefaults := l.setItemDefaults(
 		clientOptions,
 		position,
 		file,

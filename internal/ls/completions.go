@@ -1613,7 +1613,7 @@ func (l *LanguageService) completionInfoFromData(
 
 	// !!! exhaustive case completions
 
-	itemDefaults := l.setCommitCharacters(
+	itemDefaults := l.setItemDefaults(
 		clientOptions,
 		position,
 		file,
@@ -3901,7 +3901,7 @@ func isTypeKeywordTokenOrIdentifier(node *ast.Node) bool {
 
 // Returns the item defaults for completion items, if that capability is supported.
 // Otherwise, if some item default is not supported by client, sets that property on each item.
-func (l *LanguageService) setCommitCharacters(
+func (l *LanguageService) setItemDefaults(
 	clientOptions *lsproto.CompletionClientCapabilities,
 	position int,
 	file *ast.SourceFile,
@@ -3965,7 +3965,7 @@ func (l *LanguageService) specificKeywordCompletionInfo(
 	optionalReplacementSpan *lsproto.Range,
 ) *lsproto.CompletionList {
 	defaultCommitCharacters := getDefaultCommitCharacters(isNewIdentifierLocation)
-	itemDefaults := l.setCommitCharacters(
+	itemDefaults := l.setItemDefaults(
 		clientOptions,
 		position,
 		file,
@@ -4041,7 +4041,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",    /*source*/
 	)
 	items := []*lsproto.CompletionItem{item}
-	itemDefaults := l.setCommitCharacters(
+	itemDefaults := l.setItemDefaults(
 		clientOptions,
 		position,
 		file,
@@ -4196,7 +4196,7 @@ func (l *LanguageService) getLabelCompletionsAtPosition(
 		return nil
 	}
 	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
-	itemDefaults := l.setCommitCharacters(
+	itemDefaults := l.setItemDefaults(
 		clientOptions,
 		position,
 		file,
