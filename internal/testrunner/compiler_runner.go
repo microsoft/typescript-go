@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -174,6 +175,7 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	// !!! Verify all baselines
 
 	compilerTest.verifyUnionOrdering(t)
+	compilerTest.verifyParentPointers(t)
 }
 
 type compilerFileBasedTest struct {
@@ -502,6 +504,39 @@ func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
 					assert.Assert(t, slices.Equal(shuffled, types), "compareTypes does not sort union types consistently")
 				}
 			}
+		}
+	})
+}
+
+func (c *compilerTest) verifyParentPointers(t *testing.T) {
+	t.Run("source file parent pointers", func(t *testing.T) {
+		var parent *ast.Node
+		var verifier func(n *ast.Node) bool
+		verifier = func(n *ast.Node) bool {
+			assert.Assert(t, n.Parent != nil, "parent node does not exist")
+			elab := ""
+			if !ast.NodeIsSynthesized(n) {
+				elab += ast.GetSourceFileOfNode(n).Text()[n.Loc.Pos():n.Loc.End()]
+			} else {
+				elab += "!synthetic! no text available"
+			}
+			if n.Parent.Kind == ast.KindBinaryExpression && parent.Kind == ast.KindJSExportAssignment {
+				// known current violation of parent pointer invariant, ignore
+			} else {
+				assert.Assert(t, n.Parent == parent, "parent node does not match traversed parent: "+n.Kind.String()+": "+elab)
+			}
+			oldParent := parent
+			parent = n
+			n.ForEachChild(verifier)
+			parent = oldParent
+			return false
+		}
+		for _, f := range c.result.Program.GetSourceFiles() {
+			if f.HasNoDefaultLib {
+				continue
+			}
+			parent = f.AsNode()
+			f.AsNode().ForEachChild(verifier)
 		}
 	})
 }

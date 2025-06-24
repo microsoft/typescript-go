@@ -7,7 +7,12 @@ import (
 
 func (p *Parser) finishReparsedNode(node *ast.Node) {
 	p.currentParent = node
-	node.ForEachChild(p.setParent)
+	node.ForEachChild(p.setParentOverride)
+}
+
+func (p *Parser) setParentOverride(node *ast.Node) bool {
+	node.Parent = p.currentParent // this overrides an existing parent - the jsdoc reparser does this when it moves nodes from jsdoc into concrete expressions
+	return false
 }
 
 func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
@@ -37,6 +42,7 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 		p.commonJSModuleIndicator = export
 		p.reparseTags(export, jsdoc)
 		p.finishReparsedNode(export)
+		p.finishReparsedNode(bin.AsNode()) // TODO: the same node appears in both the new export declaration and the original binary expression - both locations cannot have correct `.Parent` pointers. For now, the binary expression being correctly parented is baselined behavior, since it appears first in the AST.
 	}
 }
 
@@ -112,6 +118,7 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		importClause := importTag.ImportClause
 		importClause.Flags |= ast.NodeFlagsReparsed
 		importClause.AsImportClause().IsTypeOnly = true
+		p.finishReparsedNode(importClause)
 		importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
 		importDeclaration.Loc = tag.Loc
 		importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
@@ -543,8 +550,6 @@ func (p *Parser) makeNewCast(t *ast.TypeNode, e *ast.Node, isAssertion bool) *as
 	assert.Flags = p.contextFlags | ast.NodeFlagsReparsed
 	assert.Loc = core.NewTextRange(e.Pos(), e.End())
 	p.finishReparsedNode(assert)
-	t.Parent = assert // force reset parent to the new expression injected into the AST
-	e.Parent = assert
 	return assert
 }
 

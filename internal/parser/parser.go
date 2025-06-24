@@ -3569,7 +3569,7 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		node := p.factory.NewOptionalTypeNode(typeNode.Type())
 		node.Flags = typeNode.Flags
 		node.Loc = typeNode.Loc
-		typeNode.Parent = node
+		typeNode.Type().Parent = node
 		return node
 	}
 	return typeNode
