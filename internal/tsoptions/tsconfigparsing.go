@@ -998,33 +998,27 @@ func parseConfig(
 		errors = append(errors, extendedErrors...)
 		if extendedConfig != nil && extendedConfig.options != nil {
 			extendsRaw := extendedConfig.raw
-			// Get the base path of the extended config file for resolving relative paths
 			extendedBasePath := tspath.GetDirectoryPath(extendedConfigPath)
 			setPropertyValue := func(propertyName string) {
+				if rawMap, ok := ownConfig.raw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
+					return
+				}
 				if propertyName == "include" || propertyName == "exclude" || propertyName == "files" {
-					// If own config already has this property, don't use extended config's value (overwrite behavior)
-					if rawMap, ok := ownConfig.raw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
-						return
-					}
-
-					// Only use extended config's value if own config doesn't have it
 					if rawMap, ok := extendsRaw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
 						if slice, _ := rawMap.GetOrZero(propertyName).([]any); slice != nil {
-							extendedValue := core.Map(slice, func(path any) any {
+							value := core.Map(slice, func(path any) any {
 								if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
 									return path.(string)
 								} else {
-									// Resolve relative paths relative to the extended config's directory
 									return tspath.GetNormalizedAbsolutePath(path.(string), extendedBasePath)
 								}
 							})
-
 							if propertyName == "include" {
-								result.include = extendedValue
+								result.include = value
 							} else if propertyName == "exclude" {
-								result.exclude = extendedValue
+								result.exclude = value
 							} else if propertyName == "files" {
-								result.files = extendedValue
+								result.files = value
 							}
 						}
 					}
