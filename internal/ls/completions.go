@@ -467,7 +467,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 					if parent.Kind == ast.KindJsxElement || parent.Kind == ast.KindJsxOpeningElement {
 						location = currentToken
 					}
-				case ast.KindSlashToken:
+				case ast.KindLessThanSlashToken:
 					if parent.Kind == ast.KindJsxSelfClosingElement {
 						location = currentToken
 					}
@@ -476,7 +476,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 
 			switch parent.Kind {
 			case ast.KindJsxClosingElement:
-				if contextToken.Kind == ast.KindSlashToken {
+				if contextToken.Kind == ast.KindLessThanSlashToken {
 					isStartingCloseTag = true
 					location = contextToken
 				}
@@ -2450,7 +2450,7 @@ func isValidTrigger(file *ast.SourceFile, triggerCharacter CompletionsTriggerCha
 		if ast.IsStringLiteralLike(contextToken) {
 			return tryGetImportFromModuleSpecifier(contextToken) != nil
 		}
-		return contextToken.Kind == ast.KindSlashToken && ast.IsJsxClosingElement(contextToken.Parent)
+		return contextToken.Kind == ast.KindLessThanSlashToken && ast.IsJsxClosingElement(contextToken.Parent)
 	case " ":
 		return contextToken != nil && contextToken.Kind == ast.KindImportKeyword && contextToken.Parent.Kind == ast.KindSourceFile
 	default:
@@ -2619,11 +2619,9 @@ func getContextualType(previousToken *ast.Node, position int, file *ast.SourceFi
 		}
 		return nil
 	default:
-		// argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker) // !!! signature help
-		var argInfo *struct{} // !!! signature help
+		argInfo := getArgumentInfoForCompletions(previousToken, position, file, typeChecker)
 		if argInfo != nil {
-			// !!! signature help
-			return nil
+			return typeChecker.GetContextualTypeForArgumentAtIndex(argInfo.invocation, argInfo.argumentIndex)
 		} else if isEqualityOperatorKind(previousToken.Kind) && ast.IsBinaryExpression(parent) && isEqualityOperatorKind(parent.AsBinaryExpression().OperatorToken.Kind) {
 			// completion at `x ===/**/`
 			return typeChecker.GetTypeAtLocation(parent.AsBinaryExpression().Left)
@@ -3993,7 +3991,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		switch node.Kind {
 		case ast.KindJsxClosingElement:
 			return ast.FindAncestorTrue
-		case ast.KindSlashToken, ast.KindGreaterThanToken, ast.KindIdentifier, ast.KindPropertyAccessExpression:
+		case ast.KindLessThanSlashToken, ast.KindGreaterThanToken, ast.KindIdentifier, ast.KindPropertyAccessExpression:
 			return ast.FindAncestorFalse
 		default:
 			return ast.FindAncestorQuit
@@ -4279,7 +4277,7 @@ func isInStringOrRegularExpressionOrTemplateLiteral(contextToken *ast.Node, posi
 	return (ast.IsRegularExpressionLiteral(contextToken) || ast.IsStringTextContainingNode(contextToken)) &&
 		(contextToken.Loc.ContainsExclusive(position)) ||
 		position == contextToken.End() &&
-			(ast.IsUnterminatedNode(contextToken) || ast.IsRegularExpressionLiteral(contextToken))
+			(ast.IsUnterminatedLiteral(contextToken) || ast.IsRegularExpressionLiteral(contextToken))
 }
 
 // true if we are certain that the currently edited location must define a new location; false otherwise.
@@ -4513,4 +4511,22 @@ func clientSupportsDefaultEditRange(clientOptions *lsproto.CompletionClientCapab
 		return false
 	}
 	return slices.Contains(*clientOptions.CompletionList.ItemDefaults, "editRange")
+}
+
+type argumentInfoForCompletions struct {
+	invocation    *ast.CallLikeExpression
+	argumentIndex int
+	argumentCount int
+}
+
+func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.SourceFile, typeChecker *checker.Checker) *argumentInfoForCompletions {
+	info := getImmediatelyContainingArgumentInfo(node, position, file, typeChecker)
+	if info == nil || info.isTypeParameterList || info.invocation.callInvocation == nil {
+		return nil
+	}
+	return &argumentInfoForCompletions{
+		invocation:    info.invocation.callInvocation.node,
+		argumentIndex: *info.argumentIndex,
+		argumentCount: info.argumentCount,
+	}
 }

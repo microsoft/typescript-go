@@ -398,7 +398,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *VerifyCo
 func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected *VerifyCompletionsExpectedList) {
 	prefix := fmt.Sprintf("At marker '%s': ", markerName)
 	if actual == nil {
-		if expected != nil {
+		if !isEmptyExpectedList(expected) {
 			t.Fatal(prefix + "Expected completion list but got nil.")
 		}
 		return
@@ -409,6 +409,10 @@ func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.Co
 	assert.Equal(t, actual.IsIncomplete, expected.IsIncomplete, prefix+"IsIncomplete mismatch")
 	verifyCompletionsItemDefaults(t, actual.ItemDefaults, expected.ItemDefaults, prefix+"ItemDefaults mismatch: ")
 	verifyCompletionsItems(t, prefix, actual.Items, expected.Items)
+}
+
+func isEmptyExpectedList(expected *VerifyCompletionsExpectedList) bool {
+	return expected == nil || (len(expected.Items.Exact) == 0 && len(expected.Items.Includes) == 0 && len(expected.Items.Excludes) == 0)
 }
 
 func verifyCompletionsItemDefaults(t *testing.T, actual *lsproto.CompletionItemDefaults, expected *VerifyCompletionsExpectedItemDefaults, prefix string) {
@@ -450,12 +454,6 @@ func verifyCompletionsItemDefaults(t *testing.T, actual *lsproto.CompletionItemD
 }
 
 func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected *VerifyCompletionsExpectedItems) {
-	if expected == nil {
-		if actual != nil {
-			t.Fatalf(prefix+"Expected nil completion items but got non-nil: %s", cmp.Diff(actual, nil))
-		}
-		return
-	}
 	if expected.Exact != nil {
 		if expected.Includes != nil {
 			t.Fatal(prefix + "Expected exact completion list but also specified 'includes'.")
@@ -466,7 +464,9 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 		if len(actual) != len(expected.Exact) {
 			t.Fatalf(prefix+"Expected %d exact completion items but got %d: %s", len(expected.Exact), len(actual), cmp.Diff(actual, expected.Exact))
 		}
-		verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
+		if len(actual) > 0 {
+			verifyCompletionsAreExactly(t, prefix, actual, expected.Exact)
+		}
 		return
 	}
 	nameToActualItem := make(map[string]*lsproto.CompletionItem)
@@ -488,7 +488,7 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 				if !ok {
 					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
 				}
-				assertDeepEqual(t, actualItem, item, prefix+"Includes completion item mismatch for label "+item.Label)
+				verifyCompletionItem(t, prefix+"Includes completion item mismatch for label "+item.Label, actualItem, item)
 			default:
 				t.Fatalf("%sExpected completion item to be a string or *lsproto.CompletionItem, got %T", prefix, item)
 			}
@@ -513,9 +513,28 @@ func verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.
 		case string:
 			continue // already checked labels
 		case *lsproto.CompletionItem:
-			assertDeepEqual(t, actualItem, expectedItem, prefix+"Completion item mismatch for label "+actualItem.Label)
+			verifyCompletionItem(t, prefix+"Completion item mismatch for label "+actualItem.Label, actualItem, expectedItem)
 		}
 	}
+}
+
+func verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
+	ignoreKind := cmp.FilterPath(
+		func(p cmp.Path) bool {
+			switch p.Last().String() {
+			case ".Kind", ".SortText":
+				return true
+			default:
+				return false
+			}
+		},
+		cmp.Ignore(),
+	)
+	assertDeepEqual(t, actual, expected, prefix, ignoreKind)
+	if expected.Kind != nil {
+		assertDeepEqual(t, actual.Kind, expected.Kind, prefix+" Kind mismatch")
+	}
+	assertDeepEqual(t, actual.SortText, core.OrElse(expected.SortText, ptrTo(string(ls.SortTextLocationPriority))), prefix+" SortText mismatch")
 }
 
 func getExpectedLabel(t *testing.T, item ExpectedCompletionItem) string {
@@ -530,10 +549,10 @@ func getExpectedLabel(t *testing.T, item ExpectedCompletionItem) string {
 	}
 }
 
-func assertDeepEqual(t *testing.T, actual any, expected any, prefix string) {
+func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts ...cmp.Option) {
 	t.Helper()
 
-	diff := cmp.Diff(actual, expected)
+	diff := cmp.Diff(actual, expected, opts...)
 	if diff != "" {
 		t.Fatalf("%s:\n%s", prefix, diff)
 	}

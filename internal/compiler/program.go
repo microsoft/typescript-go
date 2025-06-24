@@ -813,11 +813,19 @@ func (p *Program) GetResolvedTypeReferenceDirectiveFromTypeReferenceDirective(ty
 	return nil
 }
 
+func (p *Program) GetResolvedTypeReferenceDirectives() map[tspath.Path]module.ModeAwareCache[*module.ResolvedTypeReferenceDirective] {
+	return p.typeResolutionsInFile
+}
+
 func (p *Program) getModeForTypeReferenceDirectiveInFile(ref *ast.FileReference, sourceFile *ast.SourceFile) core.ResolutionMode {
 	if ref.ResolutionMode != core.ResolutionModeNone {
 		return ref.ResolutionMode
 	}
 	return p.GetDefaultResolutionModeForFile(sourceFile)
+}
+
+func (p *Program) IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool {
+	return p.sourceFilesFoundSearchingNodeModules.Has(file.Path())
 }
 
 type FileIncludeKind int

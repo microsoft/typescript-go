@@ -46,7 +46,6 @@ type Binder struct {
 	unreachableFlow         *ast.FlowNode
 	reportedUnreachableFlow *ast.FlowNode
 
-	parent                 *ast.Node
 	container              *ast.Node
 	thisContainer          *ast.Node
 	blockScopeContainer    *ast.Node
@@ -211,9 +210,6 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 			} else if !(includes&ast.SymbolFlagsVariable != 0 && symbol.Flags&ast.SymbolFlagsAssignment != 0 ||
 				includes&ast.SymbolFlagsAssignment != 0 && symbol.Flags&ast.SymbolFlagsVariable != 0) {
 				// Assignment declarations are allowed to merge with variables, no matter what other flags they have.
-				if node.Name() != nil {
-					setParent(node.Name(), node)
-				}
 				// Report errors every position with duplicate declaration
 				// Report errors on previous encountered declarations
 				var message *diagnostics.Message
@@ -550,21 +546,24 @@ func setFlowNodeReferenced(flow *ast.FlowNode) {
 	}
 }
 
-func hasAntecedent(list *ast.FlowList, antecedent *ast.FlowNode) bool {
-	for list != nil {
-		if list.Flow == antecedent {
-			return true
-		}
-		list = list.Next
-	}
-	return false
-}
-
 func (b *Binder) addAntecedent(label *ast.FlowLabel, antecedent *ast.FlowNode) {
-	if antecedent.Flags&ast.FlowFlagsUnreachable == 0 && !hasAntecedent(label.Antecedents, antecedent) {
-		label.Antecedents = b.newFlowList(antecedent, label.Antecedents)
-		setFlowNodeReferenced(antecedent)
+	if antecedent.Flags&ast.FlowFlagsUnreachable != 0 {
+		return
 	}
+	// If antecedent isn't already on the Antecedents list, add it to the end of the list
+	var last *ast.FlowList
+	for list := label.Antecedents; list != nil; list = list.Next {
+		if list.Flow == antecedent {
+			return
+		}
+		last = list
+	}
+	if last == nil {
+		label.Antecedents = b.newFlowList(antecedent, nil)
+	} else {
+		last.Next = b.newFlowList(antecedent, nil)
+	}
+	setFlowNodeReferenced(antecedent)
 }
 
 func (b *Binder) finishFlowLabel(label *ast.FlowLabel) *ast.FlowNode {
@@ -580,9 +579,6 @@ func (b *Binder) finishFlowLabel(label *ast.FlowLabel) *ast.FlowNode {
 func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
-	}
-	if node.Parent == nil || node.Parent.Flags&ast.NodeFlagsReparsed != 0 {
-		node.Parent = b.parent
 	}
 	saveInStrictMode := b.inStrictMode
 	// Even though in the AST the jsdoc @typedef node belongs to the current node,
@@ -728,9 +724,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	// children, as an optimization we don't process those.
 	thisNodeOrAnySubnodesHasError := node.Flags&ast.NodeFlagsThisNodeHasError != 0
 	if node.Kind > ast.KindLastToken {
-		saveParent := b.parent
 		saveSeenParseError := b.seenParseError
-		b.parent = node
 		b.seenParseError = false
 		containerFlags := GetContainerFlags(node)
 		if containerFlags == ContainerFlagsNone {
@@ -741,15 +735,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		if b.seenParseError {
 			thisNodeOrAnySubnodesHasError = true
 		}
-		b.parent = saveParent
 		b.seenParseError = saveSeenParseError
-	} else {
-		saveParent := b.parent
-		if node.Kind == ast.KindEndOfFile {
-			b.parent = node
-		}
-		b.setJSDocParents(node)
-		b.parent = saveParent
 	}
 	if thisNodeOrAnySubnodesHasError {
 		node.Flags |= ast.NodeFlagsThisNodeOrAnySubNodesHasError
@@ -757,16 +743,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 	}
 	b.inStrictMode = saveInStrictMode
 	return false
-}
-
-func (b *Binder) setJSDocParents(node *ast.Node) {
-	for _, jsdoc := range node.JSDoc(b.file) {
-		setParent(jsdoc, node)
-		if jsdoc.Kind != ast.KindJSDocImportTag {
-			// JSDocImportTag children have parents set during parsing for module resolution purposes.
-			ast.SetParentInChildren(jsdoc)
-		}
-	}
 }
 
 func (b *Binder) bindPropertyWorker(node *ast.Node) {
@@ -865,9 +841,6 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 		// All export * declarations are collected in an __export symbol
 		b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, ast.SymbolFlagsExportStar, ast.SymbolFlagsNone)
 	} else if ast.IsNamespaceExport(decl.ExportClause) {
-		// declareSymbol walks up parents to find name text, parent _must_ be set
-		// but won't be set by the normal binder walk until `bindChildren` later on.
-		setParent(decl.ExportClause, node)
 		b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), decl.ExportClause, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 	}
 }
@@ -978,7 +951,6 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 	prototypeSymbol := b.newSymbol(ast.SymbolFlagsProperty|ast.SymbolFlagsPrototype, "prototype")
 	symbolExport := ast.GetExports(symbol)[prototypeSymbol.Name]
 	if symbolExport != nil {
-		setParent(name, node)
 		b.errorOnNode(symbolExport.Declarations[0], diagnostics.Duplicate_identifier_0, ast.SymbolName(prototypeSymbol))
 	}
 	ast.GetExports(symbol)[prototypeSymbol.Name] = prototypeSymbol
@@ -1023,9 +995,6 @@ func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
 		symbol = b.lookupEntity(parent, b.container)
 	}
 	if symbol = getInitializerSymbol(symbol); symbol != nil {
-		// Fix up parent pointers since we're going to use these nodes before we bind into them
-		setParent(expr.Left, node)
-		setParent(expr.Right, node)
 		if ast.HasDynamicName(node) {
 			b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
 			addLateBoundAssignmentDeclarationToSymbol(node, symbol)
@@ -1596,7 +1565,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	// and set it before we descend into nodes that could actually be part of an assignment pattern.
 	b.inAssignmentPattern = false
 	if b.checkUnreachable(node) {
-		b.setJSDocParents(node)
 		b.bindEachChild(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
 		return
@@ -1608,7 +1576,6 @@ func (b *Binder) bindChildren(node *ast.Node) {
 			hasFlowNodeData.FlowNode = b.currentFlow
 		}
 	}
-	b.setJSDocParents(node)
 	switch node.Kind {
 	case ast.KindWhileStatement:
 		b.bindWhileStatement(node)
@@ -1897,13 +1864,12 @@ func (b *Binder) bindWhileStatement(node *ast.Node) {
 	preWhileLabel := b.setContinueTarget(node, b.createLoopLabel())
 	preBodyLabel := b.createBranchLabel()
 	postWhileLabel := b.createBranchLabel()
-	topFlow := b.currentFlow
+	b.addAntecedent(preWhileLabel, b.currentFlow)
 	b.currentFlow = preWhileLabel
 	b.bindCondition(stmt.Expression, preBodyLabel, postWhileLabel)
 	b.currentFlow = b.finishFlowLabel(preBodyLabel)
 	b.bindIterativeStatement(stmt.Statement, postWhileLabel, preWhileLabel)
 	b.addAntecedent(preWhileLabel, b.currentFlow)
-	b.addAntecedent(preWhileLabel, topFlow)
 	b.currentFlow = b.finishFlowLabel(postWhileLabel)
 }
 
@@ -1912,13 +1878,12 @@ func (b *Binder) bindDoStatement(node *ast.Node) {
 	preDoLabel := b.createLoopLabel()
 	preConditionLabel := b.setContinueTarget(node, b.createBranchLabel())
 	postDoLabel := b.createBranchLabel()
-	topFlow := b.currentFlow
+	b.addAntecedent(preDoLabel, b.currentFlow)
 	b.currentFlow = preDoLabel
 	b.bindIterativeStatement(stmt.Statement, postDoLabel, preConditionLabel)
 	b.addAntecedent(preConditionLabel, b.currentFlow)
 	b.currentFlow = b.finishFlowLabel(preConditionLabel)
 	b.bindCondition(stmt.Expression, preDoLabel, postDoLabel)
-	b.addAntecedent(preDoLabel, topFlow)
 	b.currentFlow = b.finishFlowLabel(postDoLabel)
 }
 
@@ -1929,7 +1894,7 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	preIncrementorLabel := b.createBranchLabel()
 	postLoopLabel := b.createBranchLabel()
 	b.bind(stmt.Initializer)
-	topFlow := b.currentFlow
+	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.currentFlow = preLoopLabel
 	b.bindCondition(stmt.Condition, preBodyLabel, postLoopLabel)
 	b.currentFlow = b.finishFlowLabel(preBodyLabel)
@@ -1938,7 +1903,6 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	b.currentFlow = b.finishFlowLabel(preIncrementorLabel)
 	b.bind(stmt.Incrementor)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
-	b.addAntecedent(preLoopLabel, topFlow)
 	b.currentFlow = b.finishFlowLabel(postLoopLabel)
 }
 
@@ -1947,7 +1911,7 @@ func (b *Binder) bindForInOrForOfStatement(node *ast.Node) {
 	preLoopLabel := b.setContinueTarget(node, b.createLoopLabel())
 	postLoopLabel := b.createBranchLabel()
 	b.bind(stmt.Expression)
-	topFlow := b.currentFlow
+	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.currentFlow = preLoopLabel
 	if node.Kind == ast.KindForOfStatement {
 		b.bind(stmt.AwaitModifier)
@@ -1959,7 +1923,6 @@ func (b *Binder) bindForInOrForOfStatement(node *ast.Node) {
 	}
 	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preLoopLabel)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
-	b.addAntecedent(preLoopLabel, topFlow)
 	b.currentFlow = b.finishFlowLabel(postLoopLabel)
 }
 
@@ -2799,12 +2762,6 @@ func (b *Binder) createDiagnosticForNode(node *ast.Node, message *diagnostics.Me
 
 func (b *Binder) addDiagnostic(diagnostic *ast.Diagnostic) {
 	b.file.SetBindDiagnostics(append(b.file.BindDiagnostics(), diagnostic))
-}
-
-func setParent(child *ast.Node, parent *ast.Node) {
-	if child != nil {
-		child.Parent = parent
-	}
 }
 
 func isSignedNumericLiteral(node *ast.Node) bool {
