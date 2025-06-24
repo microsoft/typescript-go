@@ -904,8 +904,7 @@ func newParentInChildrenSetter() func(node *Node) bool {
 	}
 
 	state.visit = func(node *Node) bool {
-		if state.parent != nil && node.Parent != state.parent {
-			// Avoid data races on no-ops
+		if state.parent != nil {
 			node.Parent = state.parent
 		}
 		saveParent := state.parent
@@ -3033,7 +3032,7 @@ func IsJSDocSingleCommentNode(node *Node) bool {
 }
 
 func IsValidTypeOnlyAliasUseSite(useSite *Node) bool {
-	return useSite.Flags&NodeFlagsAmbient != 0 ||
+	return useSite.Flags&(NodeFlagsAmbient|NodeFlagsJSDoc) != 0 ||
 		IsPartOfTypeQuery(useSite) ||
 		isIdentifierInNonEmittingHeritageClause(useSite) ||
 		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
