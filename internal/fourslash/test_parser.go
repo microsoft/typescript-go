@@ -96,8 +96,12 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 		markers = append(markers, file.markers...)
 		ranges = append(ranges, file.ranges...)
 		for _, marker := range file.markers {
-			if _, ok := markerPositions[marker.Name]; ok {
-				t.Fatalf("Duplicate marker name: %s", marker.Name)
+			if marker.Name == "" && marker.Data != nil {
+				// The marker is an object marker, which does not need a name. Markers are only set into markerPositions if they have a name
+				continue
+			}
+			if existing, ok := markerPositions[marker.Name]; ok {
+				t.Fatalf(`Duplicate marker name: "%s" at %v and %v`, marker.Name, marker.Position, existing.Position)
 			}
 			markerPositions[marker.Name] = marker
 		}
