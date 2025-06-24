@@ -95,18 +95,18 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 }
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) *ls.LanguageService {
-	changed := s.flushChanges(ctx)
+	changes := s.flushChanges(ctx)
 }
 
-func (s *Session) flushChanges(ctx context.Context) {
+func (s *Session) flushChanges(ctx context.Context) overlayChanges {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
 
 	if len(s.pendingFileChanges) == 0 {
-		return
+		return overlayChanges{}
 	}
 
-	changed := s.fs.updateOverlays(s.pendingFileChanges, s.converters)
+	changes := s.fs.updateOverlays(s.pendingFileChanges, s.converters)
 	s.pendingFileChanges = nil
-	return changed
+	return changes
 }

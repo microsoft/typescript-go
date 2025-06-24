@@ -5,6 +5,7 @@ import (
 	"maps"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -117,12 +118,18 @@ func (fs *overlayFS) getFile(uri lsproto.DocumentUri) fileHandle {
 	return &diskFile{uri: uri, content: content, hash: sha256.Sum256([]byte(content))}
 }
 
-func (fs *overlayFS) updateOverlays(changes []FileChange, converters *ls.Converters) {
+type overlayChanges struct {
+	uris collections.Set[lsproto.DocumentUri]
+}
+
+func (fs *overlayFS) updateOverlays(changes []FileChange, converters *ls.Converters) overlayChanges {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
 
+	var result overlayChanges
 	newOverlays := maps.Clone(fs.overlays)
 	for _, change := range changes {
+		result.uris.Add(change.URI)
 		switch change.Kind {
 		case FileChangeKindOpen:
 			newOverlays[change.URI] = &overlay{
@@ -171,4 +178,5 @@ func (fs *overlayFS) updateOverlays(changes []FileChange, converters *ls.Convert
 	}
 
 	fs.overlays = newOverlays
+	return result
 }

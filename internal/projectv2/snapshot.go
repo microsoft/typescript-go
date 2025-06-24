@@ -6,6 +6,7 @@ import (
 	"slices"
 	"sync/atomic"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -14,13 +15,6 @@ import (
 )
 
 var snapshotID atomic.Uint64
-
-type StateChangeKind int
-
-const (
-	StateChangeKindFile StateChangeKind = iota
-	StateChangeKindProgramLoad
-)
 
 var _ vfs.FS = (*compilerFS)(nil)
 
@@ -155,14 +149,50 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	return nil
 }
 
-func (s *Snapshot) Clone(ctx context.Context, changes []lsproto.DocumentUri, ensureProjectsFor []lsproto.DocumentUri, session *Session) *Snapshot {
+type snapshotChange struct {
+	// changedURIs are URIs that have changed since the last snapshot.
+	changedURIs collections.Set[lsproto.DocumentUri]
+	// requestedURIs are URIs that were requested by the client.
+	// The new snapshot should ensure projects for these URIs have loaded programs.
+	requestedURIs []lsproto.DocumentUri
+}
+
+func (c snapshotChange) toProjectChange(snapshot *Snapshot) projectChange {
+	changedURIs := make([]tspath.Path, c.changedURIs.Len())
+	requestedURIs := make([]struct {
+		path           tspath.Path
+		defaultProject *Project
+	}, len(c.requestedURIs))
+	for i, uri := range c.requestedURIs {
+		requestedURIs[i] = struct {
+			path           tspath.Path
+			defaultProject *Project
+		}{
+			path:           snapshot.toPath(ls.DocumentURIToFileName(uri)),
+			defaultProject: snapshot.GetDefaultProject(uri),
+		}
+	}
+	return projectChange{
+		changedURIs:   changedURIs,
+		requestedURIs: requestedURIs,
+	}
+}
+
+func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Session) *Snapshot {
 	newSnapshot := NewSnapshot(
 		session.fs.fs,
 		session.fs.overlays,
 		s.sessionOptions,
 		s.parseCache,
 	)
-	for _, project := range s.Projects() {
+
+	projectChange := change.toProjectChange(s)
+
+	for configFilePath, project := range s.configuredProjects {
+		newProject, changes := project.Clone(ctx, projectChange, newSnapshot)
+		if newProject != nil {
+			newSnapshot.configuredProjects[configFilePath] = newProject
+		}
 	}
 	return newSnapshot
 }

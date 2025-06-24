@@ -1,6 +1,8 @@
 package projectv2
 
 import (
+	"context"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -109,4 +111,17 @@ func (p *Project) containsFile(path tspath.Path) bool {
 
 func (p *Project) isRoot(path tspath.Path) bool {
 	return p.rootFileNames.Has(path)
+}
+
+type projectChange struct {
+	changedURIs   []tspath.Path
+	requestedURIs []struct {
+		path           tspath.Path
+		defaultProject *Project
+	}
+}
+
+func (p *Project) Clone(ctx context.Context, change projectChange, newSnapshot *Snapshot) (*Project, projectChanges) {
+	loadProgram := false
+
 }
