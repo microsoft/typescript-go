@@ -118,6 +118,6 @@ TypeAcquisition::
 {}
 
 FileNames::
-/types/ical2json.d.ts,/types/express.d.ts,/types/multer.d.ts,/types/reset.d.ts,/types/stripe-custom-typings.d.ts,/types/nestjs-modules.d.ts,/types/luxon.d.ts,/types/nestjs-pino.d.ts,/src/main.ts,/src/utils.ts
+/tsconfig-base/types/ical2json.d.ts,/tsconfig-base/types/express.d.ts,/tsconfig-base/types/multer.d.ts,/tsconfig-base/types/reset.d.ts,/tsconfig-base/types/stripe-custom-typings.d.ts,/tsconfig-base/types/nestjs-modules.d.ts,/tsconfig-base/types/luxon.d.ts,/tsconfig-base/types/nestjs-pino.d.ts,/src/main.ts,/src/utils.ts
 Errors::
 

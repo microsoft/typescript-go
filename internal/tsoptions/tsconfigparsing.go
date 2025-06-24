@@ -998,7 +998,8 @@ func parseConfig(
 		errors = append(errors, extendedErrors...)
 		if extendedConfig != nil && extendedConfig.options != nil {
 			extendsRaw := extendedConfig.raw
-			relativeDifference := ""
+			// Get the base path of the extended config file for resolving relative paths
+			extendedBasePath := tspath.GetDirectoryPath(extendedConfigPath)
 			setPropertyValue := func(propertyName string) {
 				if propertyName == "include" || propertyName == "exclude" || propertyName == "files" {
 					// If own config already has this property, don't use extended config's value (overwrite behavior)
@@ -1013,17 +1014,11 @@ func parseConfig(
 								if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
 									return path.(string)
 								} else {
-									if relativeDifference == "" {
-										t := tspath.ComparePathsOptions{
-											UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
-											CurrentDirectory:          host.GetCurrentDirectory(),
-										}
-										relativeDifference = tspath.ConvertToRelativePath(basePath, t)
-									}
-									return tspath.CombinePaths(relativeDifference, path.(string))
+									// Resolve relative paths relative to the extended config's directory
+									return tspath.GetNormalizedAbsolutePath(path.(string), extendedBasePath)
 								}
 							})
-							
+
 							if propertyName == "include" {
 								result.include = extendedValue
 							} else if propertyName == "exclude" {
