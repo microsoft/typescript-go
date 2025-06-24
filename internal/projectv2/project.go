@@ -2,6 +2,7 @@ package projectv2
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -20,11 +21,13 @@ const (
 var _ compiler.CompilerHost = (*Project)(nil)
 
 type Project struct {
-	Name        string
-	Kind        Kind
-	CommandLine *tsoptions.ParsedCommandLine
+	Name string
+	Kind Kind
 
-	snapshot *Snapshot
+	CommandLine   *tsoptions.ParsedCommandLine
+	Program       *compiler.Program
+	rootFileNames collections.OrderedMap[tspath.Path, string] // values are file names
+	snapshot      *Snapshot
 
 	currentDirectory string
 }
@@ -95,4 +98,15 @@ func (p *Project) getScriptKind(fileName string) core.ScriptKind {
 	// Customizing script kind per file extension is a common plugin / LS host customization case
 	// which can probably be replaced with static info in the future
 	return core.GetScriptKindFromFileName(fileName)
+}
+
+func (p *Project) containsFile(path tspath.Path) bool {
+	if p.isRoot(path) {
+		return true
+	}
+	return p.Program != nil && p.Program.GetSourceFileByPath(path) != nil
+}
+
+func (p *Project) isRoot(path tspath.Path) bool {
+	return p.rootFileNames.Has(path)
 }

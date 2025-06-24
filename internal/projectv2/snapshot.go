@@ -1,6 +1,9 @@
 package projectv2
 
 import (
+	"cmp"
+	"context"
+	"slices"
 	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -91,13 +94,14 @@ type Snapshot struct {
 
 	overlayFS          *overlayFS
 	compilerFS         *compilerFS
-	files              *fileMap
 	configuredProjects map[tspath.Path]*Project
+	inferredProject    *Project
 }
 
+// NewSnapshot
 func NewSnapshot(
 	fs vfs.FS,
-	overlays *overlays,
+	overlays map[lsproto.DocumentUri]*overlay,
 	sessionOptions *SessionOptions,
 	parseCache *parseCache,
 ) *Snapshot {
@@ -107,9 +111,8 @@ func NewSnapshot(
 	s := &Snapshot{
 		id:                 id,
 		sessionOptions:     sessionOptions,
-		overlayFS:          newOverlayFSFromOverlays(cachedFS, overlays),
+		overlayFS:          newOverlayFS(cachedFS, overlays),
 		parseCache:         parseCache,
-		files:              newFileMap(),
 		configuredProjects: make(map[tspath.Path]*Project),
 	}
 
@@ -123,10 +126,47 @@ func NewSnapshot(
 // file system if the key is not known to the cache. GetFile respects the state
 // of overlays.
 func (s *Snapshot) GetFile(uri lsproto.DocumentUri) fileHandle {
-	if f, ok := s.files.Get(uri); ok {
-		return f // may be nil, a file known to be missing
+	return s.overlayFS.getFile(uri)
+}
+
+func (s *Snapshot) Projects() []*Project {
+	projects := make([]*Project, 0, len(s.configuredProjects)+1)
+	for _, p := range s.configuredProjects {
+		projects = append(projects, p)
 	}
-	fh := s.overlayFS.getFile(uri)
-	s.files.Set(uri, fh)
-	return fh
+	slices.SortFunc(projects, func(a, b *Project) int {
+		return cmp.Compare(a.Name, b.Name)
+	})
+	if s.inferredProject != nil {
+		projects = append(projects, s.inferredProject)
+	}
+	return projects
+}
+
+func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
+	// !!!
+	fileName := ls.DocumentURIToFileName(uri)
+	path := s.toPath(fileName)
+	for _, p := range s.Projects() {
+		if p.containsFile(path) {
+			return p
+		}
+	}
+	return nil
+}
+
+func (s *Snapshot) Clone(ctx context.Context, changes []lsproto.DocumentUri, ensureProjectsFor []lsproto.DocumentUri, session *Session) *Snapshot {
+	newSnapshot := NewSnapshot(
+		session.fs.fs,
+		session.fs.overlays,
+		s.sessionOptions,
+		s.parseCache,
+	)
+	for _, project := range s.Projects() {
+	}
+	return newSnapshot
+}
+
+func (s *Snapshot) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, s.sessionOptions.CurrentDirectory, s.sessionOptions.UseCaseSensitiveFileNames)
 }
