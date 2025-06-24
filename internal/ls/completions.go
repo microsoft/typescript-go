@@ -1196,7 +1196,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 			// List of property symbols of base type that are not private and already implemented
 			var baseTypeNodes []*ast.Node
 			if ast.IsClassLike(decl) && classElementModifierFlags&ast.ModifierFlagsOverride != 0 {
-				baseTypeNodes = []*ast.Node{ast.GetClassExtendsHeritageElement(decl)}
+				baseTypeNodes = core.SingleElementSlice(ast.GetClassExtendsHeritageElement(decl))
 			} else {
 				baseTypeNodes = getAllSuperTypeNodes(decl)
 			}
