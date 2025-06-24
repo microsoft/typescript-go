@@ -1402,26 +1402,26 @@ function fn3() {
 				"": {
 					list: &lsproto.CompletionList{
 						IsIncomplete: false,
-						ItemDefaults: itemDefaults,
+						ItemDefaults: &lsproto.CompletionItemDefaults{
+							CommitCharacters: &defaultCommitCharacters,
+							EditRange: &lsproto.RangeOrEditRangeWithInsertReplace{
+								EditRangeWithInsertReplace: &lsproto.EditRangeWithInsertReplace{
+									Insert: lsproto.Range{
+										Start: lsproto.Position{Line: 0, Character: 16},
+										End:   lsproto.Position{Line: 0, Character: 16},
+									},
+									Replace: lsproto.Range{
+										Start: lsproto.Position{Line: 0, Character: 16},
+										End:   lsproto.Position{Line: 0, Character: 16},
+									},
+								},
+							},
+						},
 						Items: []*lsproto.CompletionItem{
 							{
 								Label:    "div>",
 								Kind:     classKind,
 								SortText: sortTextLocationPriority,
-
-								TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
-									InsertReplaceEdit: &lsproto.InsertReplaceEdit{
-										NewText: "div>",
-										Insert: lsproto.Range{
-											Start: lsproto.Position{Line: 0, Character: 16},
-											End:   lsproto.Position{Line: 0, Character: 16},
-										},
-										Replace: lsproto.Range{
-											Start: lsproto.Position{Line: 0, Character: 16},
-											End:   lsproto.Position{Line: 0, Character: 16},
-										},
-									},
-								},
 							},
 						},
 					},
