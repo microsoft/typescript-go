@@ -923,6 +923,75 @@ func SetParentInChildren(node *Node) {
 	fn(node)
 }
 
+var setParentInImmediateChildrenPool = sync.Pool{
+	New: func() any {
+		return newParentInImmediateChildrenSetter()
+	},
+}
+
+func newParentInImmediateChildrenSetter() func(node *Node) bool {
+	// Consolidate state into one allocation.
+	// Similar to https://go.dev/cl/552375.
+	var state struct {
+		parent *Node
+		visit  func(*Node) bool
+	}
+
+	state.visit = func(node *Node) bool {
+		if state.parent != nil && node.Parent == nil {
+			node.Parent = state.parent
+		}
+		// TODO: panic if attempt to overwrite .Parent with new, different .Parent when jsdoc reparser is fixed to not reuse the same nodes in many places
+		if state.parent == nil {
+			state.parent = node
+			node.ForEachChild(state.visit)
+		}
+		return false
+	}
+
+	return state.visit
+}
+
+func SetParentInImmediateChildren(node *Node) {
+	fn := setParentInImmediateChildrenPool.Get().(func(node *Node) bool)
+	defer setParentInImmediateChildrenPool.Put(fn)
+	fn(node)
+}
+
+var overrideParentInImmediateChildrenPool = sync.Pool{
+	New: func() any {
+		return newOverrideParentInImmediateChildrenSetter()
+	},
+}
+
+func newOverrideParentInImmediateChildrenSetter() func(node *Node) bool {
+	// Consolidate state into one allocation.
+	// Similar to https://go.dev/cl/552375.
+	var state struct {
+		parent *Node
+		visit  func(*Node) bool
+	}
+
+	state.visit = func(node *Node) bool {
+		if state.parent != nil {
+			node.Parent = state.parent
+		}
+		if state.parent == nil {
+			state.parent = node
+			node.ForEachChild(state.visit)
+		}
+		return false
+	}
+
+	return state.visit
+}
+
+func OverrideParentInImmediateChildren(node *Node) {
+	fn := overrideParentInImmediateChildrenPool.Get().(func(node *Node) bool)
+	defer overrideParentInImmediateChildrenPool.Put(fn)
+	fn(node)
+}
+
 // This should never be called outside the parser
 func SetImportsOfSourceFile(node *SourceFile, imports []*LiteralLikeNode) {
 	node.imports = imports
