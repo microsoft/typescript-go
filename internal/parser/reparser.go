@@ -6,13 +6,10 @@ import (
 )
 
 func (p *Parser) finishReparsedNode(node *ast.Node) {
-	p.currentParent = node
-	node.ForEachChild(p.setParentOverride)
-}
-
-func (p *Parser) setParentOverride(node *ast.Node) bool {
-	node.Parent = p.currentParent // this overrides an existing parent - the jsdoc reparser does this when it moves nodes from jsdoc into concrete expressions
-	return false
+	node.ForEachChild(func(n *ast.Node) bool {
+		n.Parent = node // this overrides an existing parent - the jsdoc reparser does this when it moves nodes from jsdoc into concrete expressions
+		return false
+	})
 }
 
 func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {

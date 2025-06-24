@@ -77,8 +77,6 @@ type Parser struct {
 	jsdocTagCommentsSpace   []string
 	reparseList             []*ast.Node
 	commonJSModuleIndicator *ast.Node
-
-	currentParent *ast.Node
 }
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
@@ -5915,16 +5913,13 @@ func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 		node.Flags |= ast.NodeFlagsThisNodeHasError
 		p.hasParseError = false
 	}
-	p.currentParent = node
-	node.ForEachChild(p.setParent)
-}
-
-func (p *Parser) setParent(node *ast.Node) bool {
-	if node.Parent == nil {
-		node.Parent = p.currentParent
-	}
-	// TODO: panic if attempt to overwrite .Parent with new, different .Parent when jsdoc reparser is fixed to not reuse the same nodes in many places
-	return false
+	node.ForEachChild(func(n *ast.Node) bool {
+		if n.Parent == nil {
+			n.Parent = node
+		}
+		// TODO: panic if attempt to overwrite .Parent with new, different .Parent when jsdoc reparser is fixed to not reuse the same nodes in many places
+		return false
+	})
 }
 
 func (p *Parser) nextTokenIsSlash() bool {
