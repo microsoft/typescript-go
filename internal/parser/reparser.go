@@ -74,7 +74,7 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		case ast.KindJSDocTypeExpression:
 			t = setHost(typeExpression, typeAlias)
 		case ast.KindJSDocTypeLiteral:
-			t = p.reparseJSDocTypeLiteral(typeExpression, typeAlias)
+			t = p.reparseJSDocTypeLiteral(typeExpression)
 		default:
 			panic("typedef tag type expression should be a name reference or a type expression" + typeExpression.Kind.String())
 		}
@@ -148,9 +148,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 			jsparam := param.AsJSDocParameterOrPropertyTag()
 			parameter = p.factory.NewParameterDeclaration(nil, nil, jsparam.Name(), p.makeQuestionIfOptional(jsparam), nil, nil)
 			if jsparam.TypeExpression != nil {
-				t := p.reparseJSDocTypeLiteral(jsparam.TypeExpression.Type(), parameter)
-				setHost(jsparam.TypeExpression, parameter)
-				parameter.AsParameterDeclaration().Type = t
+				parameter.AsParameterDeclaration().Type = p.reparseJSDocTypeLiteral(setHost(jsparam.TypeExpression, parameter))
 			}
 		}
 		parameter.Loc = param.Loc
@@ -170,7 +168,7 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 	return signature
 }
 
-func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode, host *ast.Node) *ast.Node {
+func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 	if t == nil {
 		return nil
 	}
@@ -185,7 +183,7 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode, host *ast.Node) *ast.N
 			}
 			property := p.factory.NewPropertySignatureDeclaration(nil, name, p.makeQuestionIfOptional(jsprop), nil, nil)
 			if jsprop.TypeExpression != nil {
-				property.AsPropertySignatureDeclaration().Type = p.reparseJSDocTypeLiteral(jsprop.TypeExpression.Type(), property)
+				property.AsPropertySignatureDeclaration().Type = p.reparseJSDocTypeLiteral(jsprop.TypeExpression.Type())
 			}
 			property.Loc = prop.Loc
 			property.Flags = p.contextFlags | ast.NodeFlagsReparsed
@@ -341,11 +339,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			parameterTag := tag.AsJSDocParameterOrPropertyTag()
 			if param, ok := findMatchingParameter(fun, parameterTag, jsDoc); ok {
 				if param.Type == nil {
-					paramType := setHost(parameterTag.TypeExpression, param.AsNode())
-					if parameterTag.IsNameFirst && parameterTag.TypeExpression != nil && parameterTag.TypeExpression.Type().Kind == ast.KindJSDocTypeLiteral {
-						paramType = p.reparseJSDocTypeLiteral(parameterTag.TypeExpression.Type(), param.AsNode())
-					}
-					param.AsParameterDeclaration().Type = paramType
+					param.AsParameterDeclaration().Type = p.reparseJSDocTypeLiteral(setHost(p.reparseJSDocTypeLiteral(parameterTag.TypeExpression), param.AsNode()))
 				}
 				if param.QuestionToken == nil && param.Initializer == nil {
 					if question := p.makeQuestionIfOptional(parameterTag); question != nil {
