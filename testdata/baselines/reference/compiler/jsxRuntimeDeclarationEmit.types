@@ -1,28 +1,19 @@
 //// [tests/cases/compiler/jsxRuntimeDeclarationEmit.tsx] ////
 
 === jsxRuntimeDeclarationEmit.tsx ===
-// Test case to reproduce jsx-runtime declaration emit issue
+// Reproduces issue #1011: jsx-runtime declaration emit requires type annotation
+// https://github.com/microsoft/typescript-go/issues/1011
 
 
 /// <reference path="react16.d.ts" />
 
-// This should trigger the jsx-runtime import without type annotation error
-
-export const FunctionComponent = () => {
->FunctionComponent : () => JSX.Element
+// This should produce clean jsx-runtime imports without "unsafe import" errors
+export const MyComponent = () => {
+>MyComponent : () => JSX.Element
 >() => {  return <div>Hello World</div>} : () => JSX.Element
 
   return <div>Hello World</div>
 ><div>Hello World</div> : JSX.Element
 >div : any
 >div : any
-}
-
-export const AnotherComponent = () => {
->AnotherComponent : () => JSX.Element
->() => {  return <FunctionComponent />} : () => JSX.Element
-
-  return <FunctionComponent />
-><FunctionComponent /> : JSX.Element
->FunctionComponent : () => JSX.Element
 }

@@ -1,44 +1,37 @@
 //// [tests/cases/compiler/jsxRuntimeDeclarationEmit.tsx] ////
 
 //// [jsxRuntimeDeclarationEmit.tsx]
-// Test case to reproduce jsx-runtime declaration emit issue
+// Reproduces issue #1011: jsx-runtime declaration emit requires type annotation
+// https://github.com/microsoft/typescript-go/issues/1011
 
 
 /// <reference path="/.lib/react16.d.ts" />
 
-// This should trigger the jsx-runtime import without type annotation error
-
-export const FunctionComponent = () => {
+// This should produce clean jsx-runtime imports without "unsafe import" errors
+export const MyComponent = () => {
   return <div>Hello World</div>
-}
-
-export const AnotherComponent = () => {
-  return <FunctionComponent />
 }
 
 
 
 //// [jsxRuntimeDeclarationEmit.d.ts]
-// Test case to reproduce jsx-runtime declaration emit issue
-// This should trigger the jsx-runtime import without type annotation error
-export declare const FunctionComponent: () => JSX.Element;
-export declare const AnotherComponent: () => JSX.Element;
+// Reproduces issue #1011: jsx-runtime declaration emit requires type annotation
+// https://github.com/microsoft/typescript-go/issues/1011
+// This should produce clean jsx-runtime imports without "unsafe import" errors
+export declare const MyComponent: () => JSX.Element;
 
 
 //// [DtsFileErrors]
 
 
-jsxRuntimeDeclarationEmit.d.ts(3,47): error TS2503: Cannot find namespace 'JSX'.
-jsxRuntimeDeclarationEmit.d.ts(4,46): error TS2503: Cannot find namespace 'JSX'.
+jsxRuntimeDeclarationEmit.d.ts(4,41): error TS2503: Cannot find namespace 'JSX'.
 
 
-==== jsxRuntimeDeclarationEmit.d.ts (2 errors) ====
-    // Test case to reproduce jsx-runtime declaration emit issue
-    // This should trigger the jsx-runtime import without type annotation error
-    export declare const FunctionComponent: () => JSX.Element;
-                                                  ~~~
-!!! error TS2503: Cannot find namespace 'JSX'.
-    export declare const AnotherComponent: () => JSX.Element;
-                                                 ~~~
+==== jsxRuntimeDeclarationEmit.d.ts (1 errors) ====
+    // Reproduces issue #1011: jsx-runtime declaration emit requires type annotation
+    // https://github.com/microsoft/typescript-go/issues/1011
+    // This should produce clean jsx-runtime imports without "unsafe import" errors
+    export declare const MyComponent: () => JSX.Element;
+                                            ~~~
 !!! error TS2503: Cannot find namespace 'JSX'.
     
