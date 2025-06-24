@@ -36,7 +36,7 @@ type fileLoader struct {
 	dtsDirectories             collections.Set[tspath.Path]
 
 	pathForLibFileCache       collections.SyncMap[string, string]
-	pathForLibFileResolutions collections.SyncMap[module.ModeAwareCacheKey, *module.ResolvedModule]
+	pathForLibFileResolutions collections.SyncMap[tspath.Path, module.ModeAwareCache[*module.ResolvedModule]]
 }
 
 type processedFiles struct {
@@ -180,11 +180,10 @@ func processAllProgramFiles(
 
 	allFiles := append(libFiles, files...)
 
-	if loader.pathForLibFileResolutions.Size() > 0 {
-		// Hack: place lib file resolutions into the resolvedModules map as if they were
-		// resolved by the config file itself, letting the Project code watch these files.
-		resolvedModules[loader.toPath(compilerOptions.ConfigFilePath)] = loader.pathForLibFileResolutions.ToMap()
-	}
+	loader.pathForLibFileResolutions.Range(func(key tspath.Path, value module.ModeAwareCache[*module.ResolvedModule]) bool {
+		resolvedModules[key] = value
+		return true
+	})
 
 	return processedFiles{
 		resolver:                             loader.resolver,
@@ -499,7 +498,9 @@ func (p *fileLoader) pathForLibFile(name string) string {
 		resolution := p.resolver.ResolveModuleName(libraryName, resolveFrom, core.ModuleKindCommonJS, nil)
 		if resolution.IsResolved() {
 			path = resolution.ResolvedFileName
-			p.pathForLibFileResolutions.LoadOrStore(module.ModeAwareCacheKey{Name: libraryName, Mode: core.ModuleKindCommonJS}, resolution)
+			p.pathForLibFileResolutions.LoadOrStore(p.toPath(resolveFrom), module.ModeAwareCache[*module.ResolvedModule]{
+				module.ModeAwareCacheKey{Name: libraryName, Mode: core.ModuleKindCommonJS}: resolution,
+			})
 		}
 	}
 
