@@ -998,7 +998,7 @@ func parseConfig(
 		errors = append(errors, extendedErrors...)
 		if extendedConfig != nil && extendedConfig.options != nil {
 			extendsRaw := extendedConfig.raw
-			extendedBasePath := tspath.GetDirectoryPath(extendedConfigPath)
+			relativeDifference := ""
 			setPropertyValue := func(propertyName string) {
 				if rawMap, ok := ownConfig.raw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
 					return
@@ -1010,7 +1010,14 @@ func parseConfig(
 								if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
 									return path.(string)
 								} else {
-									return tspath.GetNormalizedAbsolutePath(path.(string), extendedBasePath)
+									if relativeDifference == "" {
+										t := tspath.ComparePathsOptions{
+											UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+											CurrentDirectory:          basePath,
+										}
+										relativeDifference = tspath.ConvertToRelativePath(tspath.GetDirectoryPath(extendedConfigPath), t)
+									}
+									return tspath.CombinePaths(relativeDifference, path.(string))
 								}
 							})
 							if propertyName == "include" {
