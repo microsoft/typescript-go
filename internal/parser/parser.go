@@ -5913,13 +5913,12 @@ func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 		node.Flags |= ast.NodeFlagsThisNodeHasError
 		p.hasParseError = false
 	}
-	node.ForEachChild(func(n *ast.Node) bool {
+	for n := range node.IterChildren() {
 		if n.Parent == nil {
 			n.Parent = node
 		}
 		// TODO: panic if attempt to overwrite .Parent with new, different .Parent when jsdoc reparser is fixed to not reuse the same nodes in many places
-		return false
-	})
+	}
 }
 
 func (p *Parser) nextTokenIsSlash() bool {
