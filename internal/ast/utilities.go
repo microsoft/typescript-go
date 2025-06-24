@@ -945,6 +945,7 @@ func newParentInImmediateChildrenSetter() func(node *Node) bool {
 		if state.parent == nil {
 			state.parent = node
 			node.ForEachChild(state.visit)
+			state.parent = nil
 		}
 		return false
 	}
@@ -975,10 +976,10 @@ func newOverrideParentInImmediateChildrenSetter() func(node *Node) bool {
 	state.visit = func(node *Node) bool {
 		if state.parent != nil {
 			node.Parent = state.parent
-		}
-		if state.parent == nil {
+		} else {
 			state.parent = node
 			node.ForEachChild(state.visit)
+			state.parent = nil
 		}
 		return false
 	}

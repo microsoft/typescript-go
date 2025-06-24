@@ -513,6 +513,9 @@ func (c *compilerTest) verifyParentPointers(t *testing.T) {
 		var parent *ast.Node
 		var verifier func(n *ast.Node) bool
 		verifier = func(n *ast.Node) bool {
+			if n == nil {
+				return false
+			}
 			assert.Assert(t, n.Parent != nil, "parent node does not exist")
 			elab := ""
 			if !ast.NodeIsSynthesized(n) {
