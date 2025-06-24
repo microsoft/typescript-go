@@ -31,7 +31,7 @@ var completionUndefinedVarItem = &lsproto.CompletionItem{
 	SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
 }
 
-var completionGlobalVars = []fourslash.ExpectedCompletionItem{
+var completionGlobalVars = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "AbortController",
 		Kind:     ptrTo(lsproto.CompletionItemKindVariable),
@@ -1508,7 +1508,7 @@ var completionGlobalVars = []fourslash.ExpectedCompletionItem{
 		SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
 	&lsproto.CompletionItem{
-		Label:    "IntptrTo(lsproto.CompletionItemKindInterface)Array",
+		Label:    "Int8Array",
 		Kind:     ptrTo(lsproto.CompletionItemKindVariable),
 		SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
 	},
@@ -4569,7 +4569,7 @@ var completionGlobalVars = []fourslash.ExpectedCompletionItem{
 	},
 }
 
-var completionGlobalKeywords = []fourslash.ExpectedCompletionItem{
+var completionGlobalKeywords = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "abstract",
 		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
@@ -4897,7 +4897,7 @@ var completionGlobalKeywords = []fourslash.ExpectedCompletionItem{
 	},
 }
 
-var completionGlobalTypeDecls = []fourslash.ExpectedCompletionItem{
+var completionGlobalTypeDecls = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "ANGLE_instanced_arrays",
 		Kind:     ptrTo(lsproto.CompletionItemKindInterface),
@@ -13085,7 +13085,7 @@ var completionGlobalTypeDecls = []fourslash.ExpectedCompletionItem{
 	},
 }
 
-var completionTypeKeywords = []fourslash.ExpectedCompletionItem{
+var completionTypeKeywords = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "any",
 		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
@@ -13188,7 +13188,7 @@ var completionTypeKeywords = []fourslash.ExpectedCompletionItem{
 	},
 }
 
-var completionClassElementKeywords = []fourslash.ExpectedCompletionItem{
+var completionClassElementKeywords = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "abstract",
 		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
@@ -13264,9 +13264,9 @@ var completionGlobals = sortCompletionItems(append(
 	completionUndefinedVarItem,
 ))
 
-func sortCompletionItems(items []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
+func sortCompletionItems(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	items = slices.Clone(items)
-	slices.SortStableFunc(items, func(a fourslash.ExpectedCompletionItem, b fourslash.ExpectedCompletionItem) int {
+	slices.SortStableFunc(items, func(a fourslash.CompletionsExpectedItem, b fourslash.CompletionsExpectedItem) int {
 		defaultSortText := string(ls.SortTextLocationPriority)
 		var aSortText, bSortText string
 		switch a := a.(type) {
@@ -13309,8 +13309,8 @@ func sortCompletionItems(items []fourslash.ExpectedCompletionItem) []fourslash.E
 	return items
 }
 
-func completionGlobalsPlus(items []fourslash.ExpectedCompletionItem, noLib bool) []fourslash.ExpectedCompletionItem {
-	var all []fourslash.ExpectedCompletionItem
+func completionGlobalsPlus(items []fourslash.CompletionsExpectedItem, noLib bool) []fourslash.CompletionsExpectedItem {
+	var all []fourslash.CompletionsExpectedItem
 	if noLib {
 		all = append(
 			append(items, completionGlobalThisItem, completionUndefinedVarItem),
@@ -13322,7 +13322,7 @@ func completionGlobalsPlus(items []fourslash.ExpectedCompletionItem, noLib bool)
 	return sortCompletionItems(all)
 }
 
-func completionGlobalTypesPlus(items []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
+func completionGlobalTypesPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
 		append(
 			append(
@@ -13336,8 +13336,8 @@ func completionGlobalTypesPlus(items []fourslash.ExpectedCompletionItem) []fours
 
 var completionGlobalTypes = completionGlobalTypesPlus(nil)
 
-func getInJSKeywords(keywords []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
-	return core.Filter(keywords, func(item fourslash.ExpectedCompletionItem) bool {
+func getInJSKeywords(keywords []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
+	return core.Filter(keywords, func(item fourslash.CompletionsExpectedItem) bool {
 		var label string
 		switch item := item.(type) {
 		case *lsproto.CompletionItem:
@@ -13362,8 +13362,8 @@ func getInJSKeywords(keywords []fourslash.ExpectedCompletionItem) []fourslash.Ex
 
 var completionGlobalInJSKeywords = getInJSKeywords(completionGlobalKeywords)
 
-func completionGlobalsInJSPlus(items []fourslash.ExpectedCompletionItem, noLib bool) []fourslash.ExpectedCompletionItem {
-	var all []fourslash.ExpectedCompletionItem
+func completionGlobalsInJSPlus(items []fourslash.CompletionsExpectedItem, noLib bool) []fourslash.CompletionsExpectedItem {
+	var all []fourslash.CompletionsExpectedItem
 	all = append(
 		append(items, completionGlobalThisItem, completionUndefinedVarItem),
 		completionGlobalInJSKeywords...,
@@ -13374,7 +13374,7 @@ func completionGlobalsInJSPlus(items []fourslash.ExpectedCompletionItem, noLib b
 	return sortCompletionItems(all)
 }
 
-var completionConstructorParameterKeywords = []fourslash.ExpectedCompletionItem{
+var completionConstructorParameterKeywords = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label:    "override",
 		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
@@ -13402,7 +13402,7 @@ var completionConstructorParameterKeywords = []fourslash.ExpectedCompletionItem{
 	},
 }
 
-var completionFunctionMembers = []fourslash.ExpectedCompletionItem{
+var completionFunctionMembers = []fourslash.CompletionsExpectedItem{
 	&lsproto.CompletionItem{
 		Label: "apply",
 		Kind:  ptrTo(lsproto.CompletionItemKindMethod),
@@ -13433,7 +13433,7 @@ var completionFunctionMembers = []fourslash.ExpectedCompletionItem{
 	},
 }
 
-func completionFunctionMembersPlus(items []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
+func completionFunctionMembersPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
 		append(
 			completionFunctionMembers,
@@ -13450,7 +13450,7 @@ var completionFunctionMembersWithPrototype = sortCompletionItems(append(
 	},
 ))
 
-func completionFunctionMembersWithPrototypePlus(items []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
+func completionFunctionMembersWithPrototypePlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
 	return sortCompletionItems(
 		append(
 			completionFunctionMembersWithPrototype,

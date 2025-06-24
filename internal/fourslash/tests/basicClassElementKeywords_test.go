@@ -14,12 +14,12 @@ func TestBasicClassElementKeywords(t *testing.T) {
 	/*a*/
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "a", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "a", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &fourslash.VerifyCompletionsExpectedItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
+		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionClassElementKeywords,
 		},
 	})

@@ -13,12 +13,12 @@ func TestCompletionListDefaultTypeArgumentPositionTypeOnly(t *testing.T) {
 	const content = `const foo = "foo";
 function test1<T = /*1*/>() {}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &fourslash.VerifyCompletionsExpectedItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
+		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalTypes,
 		},
 	})

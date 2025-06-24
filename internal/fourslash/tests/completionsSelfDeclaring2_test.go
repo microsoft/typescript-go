@@ -13,17 +13,17 @@ func TestCompletionsSelfDeclaring2(t *testing.T) {
 	const content = `function f1<T>(x: T) {}
 f1({ [|abc|]/*1*/ });`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &fourslash.VerifyCompletionsExpectedItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
 			EditRange: &fourslash.EditRange{
 				Insert:  f.Ranges()[0],
 				Replace: f.Ranges()[0],
 			},
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: completionGlobalsPlus([]fourslash.ExpectedCompletionItem{
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: completionGlobalsPlus([]fourslash.CompletionsExpectedItem{
 				"f1",
 			}, false /*noLib*/),
 		},
