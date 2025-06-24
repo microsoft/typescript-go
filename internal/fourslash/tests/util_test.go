@@ -13256,6 +13256,8 @@ var completionClassElementKeywords = []fourslash.ExpectedCompletionItem{
 	},
 }
 
+var completionClassElementInJSKeywords = getInJSKeywords(completionClassElementKeywords)
+
 var completionGlobals = sortCompletionItems(append(
 	append(completionGlobalVars, completionGlobalKeywords...),
 	completionGlobalThisItem,
@@ -13333,3 +13335,126 @@ func completionGlobalTypesPlus(items []fourslash.ExpectedCompletionItem) []fours
 }
 
 var completionGlobalTypes = completionGlobalTypesPlus(nil)
+
+func getInJSKeywords(keywords []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
+	return core.Filter(keywords, func(item fourslash.ExpectedCompletionItem) bool {
+		var label string
+		switch item := item.(type) {
+		case *lsproto.CompletionItem:
+			label = item.Label
+		case string:
+			label = item
+		default:
+			panic(fmt.Sprintf("unexpected completion item type: %T", item))
+		}
+		switch label {
+		case "enum", "interface", "implements", "private", "protected", "public", "abstract",
+			"any", "boolean", "declare", "infer", "is", "keyof", "module", "namespace", "never",
+			"readonly", "number", "object", "string", "symbol", "type", "unique", "override",
+			"unknown", "global", "bigint":
+			return false
+		default:
+			return true
+		}
+	},
+	)
+}
+
+var completionGlobalInJSKeywords = getInJSKeywords(completionGlobalKeywords)
+
+func completionGlobalsInJSPlus(items []fourslash.ExpectedCompletionItem, noLib bool) []fourslash.ExpectedCompletionItem {
+	var all []fourslash.ExpectedCompletionItem
+	all = append(
+		append(items, completionGlobalThisItem, completionUndefinedVarItem),
+		completionGlobalInJSKeywords...,
+	)
+	if !noLib {
+		all = append(all, completionGlobalVars...)
+	}
+	return sortCompletionItems(all)
+}
+
+var completionConstructorParameterKeywords = []fourslash.ExpectedCompletionItem{
+	&lsproto.CompletionItem{
+		Label:    "override",
+		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
+		SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "private",
+		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
+		SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "protected",
+		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
+		SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "public",
+		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
+		SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+	&lsproto.CompletionItem{
+		Label:    "readonly",
+		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
+		SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+}
+
+var completionFunctionMembers = []fourslash.ExpectedCompletionItem{
+	&lsproto.CompletionItem{
+		Label: "apply",
+		Kind:  ptrTo(lsproto.CompletionItemKindMethod),
+	},
+	&lsproto.CompletionItem{
+		Label: "arguments",
+		Kind:  ptrTo(lsproto.CompletionItemKindProperty),
+	},
+	&lsproto.CompletionItem{
+		Label: "bind",
+		Kind:  ptrTo(lsproto.CompletionItemKindMethod),
+	},
+	&lsproto.CompletionItem{
+		Label: "call",
+		Kind:  ptrTo(lsproto.CompletionItemKindMethod),
+	},
+	&lsproto.CompletionItem{
+		Label: "caller",
+		Kind:  ptrTo(lsproto.CompletionItemKindProperty),
+	},
+	&lsproto.CompletionItem{
+		Label: "length",
+		Kind:  ptrTo(lsproto.CompletionItemKindProperty),
+	},
+	&lsproto.CompletionItem{
+		Label: "toString",
+		Kind:  ptrTo(lsproto.CompletionItemKindMethod),
+	},
+}
+
+func completionFunctionMembersPlus(items []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
+	return sortCompletionItems(
+		append(
+			completionFunctionMembers,
+			items...,
+		),
+	)
+}
+
+var completionFunctionMembersWithPrototype = sortCompletionItems(append(
+	completionFunctionMembers,
+	&lsproto.CompletionItem{
+		Label: "prototype",
+		Kind:  ptrTo(lsproto.CompletionItemKindProperty),
+	},
+))
+
+func completionFunctionMembersWithPrototypePlus(items []fourslash.ExpectedCompletionItem) []fourslash.ExpectedCompletionItem {
+	return sortCompletionItems(
+		append(
+			completionFunctionMembersWithPrototype,
+			items...,
+		),
+	)
+}
