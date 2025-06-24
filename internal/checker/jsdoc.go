@@ -36,10 +36,21 @@ func (c *Checker) checkUnmatchedJSDocParameters(node *ast.Node) {
 		}
 	}
 	if c.containsArgumentsReference(node) {
-		lastJSDocParamIndex := len(jsdocParameters) - 1
-		lastJSDocParam := jsdocParameters[lastJSDocParamIndex].AsJSDocParameterOrPropertyTag()
-		if isJs && lastJSDocParam != nil && ast.IsIdentifier(lastJSDocParam.Name()) && lastJSDocParam.TypeExpression != nil &&
-			lastJSDocParam.TypeExpression.Type() != nil && !parameters.Has(lastJSDocParam.Name().Text()) && !excludedParameters.Has(lastJSDocParamIndex) {
+		if isJs {
+			lastJSDocParamIndex := len(jsdocParameters) - 1
+			lastJSDocParam := jsdocParameters[lastJSDocParamIndex].AsJSDocParameterOrPropertyTag()
+			if lastJSDocParam == nil || !ast.IsIdentifier(lastJSDocParam.Name()) {
+				return
+			}
+			if excludedParameters.Has(lastJSDocParamIndex) || parameters.Has(lastJSDocParam.Name().Text()) {
+				return
+			}
+			if lastJSDocParam.TypeExpression == nil || lastJSDocParam.TypeExpression.Type() == nil {
+				return
+			}
+			if c.isArrayType(c.getTypeFromTypeNode(lastJSDocParam.TypeExpression.Type())) {
+				return
+			}
 			c.error(lastJSDocParam.Name(), diagnostics.JSDoc_param_tag_has_name_0_but_there_is_no_parameter_with_that_name_It_would_match_arguments_if_it_had_an_array_type, lastJSDocParam.Name().Text())
 		}
 	} else {
@@ -74,13 +85,13 @@ func getAllJSDocTags(node *ast.Node) []*ast.Node {
 	if node == nil {
 		return nil
 	}
-	tags := []*ast.Node{}
-	for _, jsdoc := range node.JSDoc(nil) {
-		jsdocTags := jsdoc.AsJSDoc().Tags
-		if jsdocTags == nil {
-			continue
-		}
-		tags = append(tags, jsdocTags.Nodes...)
+	jsdocs := node.JSDoc(nil)
+	if len(jsdocs) == 0 {
+		return nil
 	}
-	return tags
+	lastJSDoc := jsdocs[len(jsdocs)-1].AsJSDoc()
+	if lastJSDoc.Tags == nil {
+		return nil
+	}
+	return lastJSDoc.Tags.Nodes
 }
