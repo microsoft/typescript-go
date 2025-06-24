@@ -3,12 +3,13 @@ The source directories of interest that we have are:
 
 - `internal` - Contains the compiler and language server code.
 - `_extension` - Contains a preview VS Code extension code that integrates with the language server.
+- `_submodules/TypeScript` - the stable TypeScript repository, checked out at the appropriate commit.
 
 Most of our development takes place in the `internal` directory, and most behaviors can be tested via compiler tests.
 
 Most development on the codebase is in Go.
 Standard Go commands and practices apply, but we primarily use a tool called `hereby` to build, run tests, and other tasks.
-Feel free to install `hereby` globally if it is easier, and run `hereby --list` to see all available commands.
+Feel free to install `hereby` globally (`npm install -g hereby`) if it is easier, and run `hereby --list` to see all available commands.
 
 ```sh
 hereby build  # Build the project
@@ -20,7 +21,6 @@ hereby lint   # Run linters
 Always make sure code is formatted, linted, and tested before sending a pull request.
 
 ## Compiler Features, Fixes, and Tests
-
 
 When fixing a bug or implementing a new feature, at least one minimal test case should always be added in advance to verify the fix.
 This project primarily uses snapshot/baseline/golden tests rather than unit tests.
@@ -59,6 +59,7 @@ You can see more tests in `_submodules/TypeScript/tests/cases/{compiler,conforma
 
 When tests are run, they will produce output files in the `testdata/baselines/local` directory.
 **Test failures are fine** if they are just differences in output files.
+A reduction/removal of `.diff` file baselines is **ideal** because it indicates the port has converged in behavior with the stable TypeScript codebase.
 The new outputs can be diffed against `testdata/baselines/reference` to see if the output has changed.
 
 Running
