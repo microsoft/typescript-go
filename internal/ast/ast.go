@@ -53,23 +53,33 @@ type NodeFactory struct {
 	blockPool                        core.Pool[Block]
 	callExpressionPool               core.Pool[CallExpression]
 	expressionStatementPool          core.Pool[ExpressionStatement]
+	functionDeclarationPool          core.Pool[FunctionDeclaration]
+	functionTypeNodePool             core.Pool[FunctionTypeNode]
 	identifierPool                   core.Pool[Identifier]
 	ifStatementPool                  core.Pool[IfStatement]
+	interfaceDeclarationPool         core.Pool[InterfaceDeclaration]
 	jsdocPool                        core.Pool[JSDoc]
 	jsdocTextPool                    core.Pool[JSDocText]
+	keywordExpressionPool            core.Pool[KeywordExpression]
 	keywordTypeNodePool              core.Pool[KeywordTypeNode]
 	literalTypeNodePool              core.Pool[LiteralTypeNode]
+	methodSignatureDeclarationPool   core.Pool[MethodSignatureDeclaration]
 	modifierListPool                 core.Pool[ModifierList]
 	nodeListPool                     core.Pool[NodeList]
+	numericLiteralPool               core.Pool[NumericLiteral]
 	parameterDeclarationPool         core.Pool[ParameterDeclaration]
 	parenthesizedExpressionPool      core.Pool[ParenthesizedExpression]
+	parenthesizedTypeNodePool        core.Pool[ParenthesizedTypeNode]
+	prefixUnaryExpressionPool        core.Pool[PrefixUnaryExpression]
 	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
 	propertyAssignmentPool           core.Pool[PropertyAssignment]
 	propertySignatureDeclarationPool core.Pool[PropertySignatureDeclaration]
 	returnStatementPool              core.Pool[ReturnStatement]
 	stringLiteralPool                core.Pool[StringLiteral]
 	tokenPool                        core.Pool[Token]
+	typeLiteralNodePool              core.Pool[TypeLiteralNode]
 	typeReferenceNodePool            core.Pool[TypeReferenceNode]
+	unionTypeNodePool                core.Pool[UnionTypeNode]
 	variableDeclarationListPool      core.Pool[VariableDeclarationList]
 	variableDeclarationPool          core.Pool[VariableDeclaration]
 	variableStatementPool            core.Pool[VariableStatement]
@@ -296,7 +306,7 @@ func (n *Node) Text() string {
 	case KindRegularExpressionLiteral:
 		return n.AsRegularExpressionLiteral().Text
 	case KindJSDocText:
-		return n.AsJSDocText().Text
+		return strings.Join(n.AsJSDocText().text, "")
 	}
 	panic(fmt.Sprintf("Unhandled case in Node.Text: %T", n.data))
 }
@@ -1999,10 +2009,8 @@ func (node *Token) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *Token) computeSubtreeFacts() SubtreeFacts {
 	switch node.Kind {
-	case KindAsyncKeyword:
-		return SubtreeContainsES2017 | SubtreeContainsES2018
 	case KindUsingKeyword:
-		return SubtreeContainsESNext
+		return SubtreeContainsUsing
 	case KindPublicKeyword,
 		KindPrivateKeyword,
 		KindProtectedKeyword,
@@ -2029,11 +2037,11 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 	case KindAccessorKeyword:
 		return SubtreeContainsClassFields
 	case KindAsteriskAsteriskToken, KindAsteriskAsteriskEqualsToken:
-		return SubtreeContainsES2016
+		return SubtreeContainsExponentiationOperator
 	case KindQuestionQuestionToken, KindQuestionDotToken:
-		return SubtreeContainsES2020
+		return SubtreeContainsOptionalChaining
 	case KindQuestionQuestionEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
-		return SubtreeContainsES2021
+		return SubtreeContainsLogicalAssignments
 	}
 	return SubtreeFactsNone
 }
@@ -2927,8 +2935,12 @@ func (node *CatchClause) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *CatchClause) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.VariableDeclaration) |
+	res := propagateSubtreeFacts(node.VariableDeclaration) |
 		propagateSubtreeFacts(node.Block)
+	if node.VariableDeclaration == nil {
+		res |= SubtreeContainsMissingCatchClauseVariable
+	}
+	return res
 }
 
 func (node *CatchClause) propagateSubtreeFacts() SubtreeFacts {
@@ -3220,7 +3232,7 @@ func (node *VariableDeclarationList) Clone(f NodeFactoryCoercible) *Node {
 
 func (node *VariableDeclarationList) computeSubtreeFacts() SubtreeFacts {
 	return propagateNodeListSubtreeFacts(node.Declarations, propagateSubtreeFacts) |
-		core.IfElse(node.Flags&NodeFlagsUsing != 0, SubtreeContainsESNext, SubtreeFactsNone)
+		core.IfElse(node.Flags&NodeFlagsUsing != 0, SubtreeContainsUsing, SubtreeFactsNone)
 }
 
 func (node *VariableDeclarationList) propagateSubtreeFacts() SubtreeFacts {
@@ -3464,7 +3476,7 @@ type FunctionDeclaration struct {
 }
 
 func (f *NodeFactory) NewFunctionDeclaration(modifiers *ModifierList, asteriskToken *TokenNode, name *IdentifierNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode, body *BlockNode) *Node {
-	data := &FunctionDeclaration{}
+	data := f.functionDeclarationPool.New()
 	data.modifiers = modifiers
 	data.AsteriskToken = asteriskToken
 	data.name = name
@@ -3512,8 +3524,8 @@ func (node *FunctionDeclaration) computeSubtreeFacts() SubtreeFacts {
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
 			propagateSubtreeFacts(node.Body) |
-			core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
-			core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
+			core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
+			core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)
 	}
 }
 
@@ -3720,7 +3732,7 @@ type InterfaceDeclaration struct {
 }
 
 func (f *NodeFactory) NewInterfaceDeclaration(modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, heritageClauses *NodeList, members *NodeList) *Node {
-	data := &InterfaceDeclaration{}
+	data := f.interfaceDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
@@ -5122,7 +5134,7 @@ type MethodSignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewMethodSignatureDeclaration(modifiers *ModifierList, name *PropertyName, postfixToken *TokenNode, typeParameters *NodeList, parameters *NodeList, returnType *TypeNode) *Node {
-	data := &MethodSignatureDeclaration{}
+	data := f.methodSignatureDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.PostfixToken = postfixToken
@@ -5215,8 +5227,8 @@ func (node *MethodDeclaration) computeSubtreeFacts() SubtreeFacts {
 			propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 			propagateSubtreeFacts(node.Body) |
 			propagateEraseableSyntaxSubtreeFacts(node.Type) |
-			core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
-			core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
+			core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
+			core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)
 	}
 }
 
@@ -5431,7 +5443,7 @@ type KeywordExpression struct {
 }
 
 func (f *NodeFactory) NewKeywordExpression(kind Kind) *Node {
-	return f.newNode(kind, &KeywordExpression{})
+	return f.newNode(kind, f.keywordExpressionPool.New())
 }
 
 func (node *KeywordExpression) Clone(f NodeFactoryCoercible) *Node {
@@ -5487,7 +5499,7 @@ type NumericLiteral struct {
 }
 
 func (f *NodeFactory) NewNumericLiteral(text string) *Node {
-	data := &NumericLiteral{}
+	data := f.numericLiteralPool.New()
 	data.Text = text
 	f.textCount++
 	return f.newNode(KindNumericLiteral, data)
@@ -5520,7 +5532,7 @@ func (node *BigIntLiteral) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *BigIntLiteral) computeSubtreeFacts() SubtreeFacts {
-	return SubtreeContainsES2020
+	return SubtreeFactsNone // `bigint` is not downleveled in any way
 }
 
 func IsBigIntLiteral(node *Node) bool {
@@ -5636,7 +5648,7 @@ type PrefixUnaryExpression struct {
 }
 
 func (f *NodeFactory) NewPrefixUnaryExpression(operator Kind, operand *Expression) *Node {
-	data := &PrefixUnaryExpression{}
+	data := f.prefixUnaryExpressionPool.New()
 	data.Operator = operator
 	data.Operand = operand
 	return f.newNode(KindPrefixUnaryExpression, data)
@@ -5798,7 +5810,7 @@ func (node *ArrowFunction) computeSubtreeFacts() SubtreeFacts {
 		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.Body) |
-		core.IfElse(node.ModifierFlags()&ModifierFlagsAsync != 0, SubtreeContainsES2017, SubtreeFactsNone)
+		core.IfElse(node.ModifierFlags()&ModifierFlagsAsync != 0, SubtreeContainsAnyAwait, SubtreeFactsNone)
 }
 
 func (node *ArrowFunction) propagateSubtreeFacts() SubtreeFacts {
@@ -5868,8 +5880,8 @@ func (node *FunctionExpression) computeSubtreeFacts() SubtreeFacts {
 		propagateNodeListSubtreeFacts(node.Parameters, propagateSubtreeFacts) |
 		propagateEraseableSyntaxSubtreeFacts(node.Type) |
 		propagateSubtreeFacts(node.Body) |
-		core.IfElse(isAsync && isGenerator, SubtreeContainsES2018, SubtreeFactsNone) |
-		core.IfElse(isAsync && !isGenerator, SubtreeContainsES2017, SubtreeFactsNone)
+		core.IfElse(isAsync && isGenerator, SubtreeContainsForAwaitOrAsyncGenerator, SubtreeFactsNone) |
+		core.IfElse(isAsync && !isGenerator, SubtreeContainsAnyAwait, SubtreeFactsNone)
 }
 
 func (node *FunctionExpression) propagateSubtreeFacts() SubtreeFacts {
@@ -6279,8 +6291,7 @@ func (node *MetaProperty) Name() *DeclarationName {
 }
 
 func (node *MetaProperty) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.name) |
-		core.IfElse(node.KeywordToken == KindImportKeyword, SubtreeContainsES2020, SubtreeFactsNone)
+	return propagateSubtreeFacts(node.name) // `import.meta` is not downleveled in any way
 }
 
 func IsMetaProperty(node *Node) bool {
@@ -6939,7 +6950,7 @@ func (node *AwaitExpression) Clone(f NodeFactoryCoercible) *Node {
 }
 
 func (node *AwaitExpression) computeSubtreeFacts() SubtreeFacts {
-	return propagateSubtreeFacts(node.Expression) | SubtreeContainsES2017 | SubtreeContainsES2018 | SubtreeContainsAwait
+	return propagateSubtreeFacts(node.Expression) | SubtreeContainsAwait
 }
 
 func IsAwaitExpression(node *Node) bool {
@@ -7034,7 +7045,7 @@ func (f *NodeFactory) UpdateUnionTypeNode(node *UnionTypeNode, types *TypeList) 
 }
 
 func (f *NodeFactory) NewUnionTypeNode(types *NodeList) *Node {
-	data := &UnionTypeNode{}
+	data := f.unionTypeNodePool.New()
 	data.Types = types
 	return f.newNode(KindUnionType, data)
 }
@@ -7717,7 +7728,7 @@ type TypeLiteralNode struct {
 }
 
 func (f *NodeFactory) NewTypeLiteralNode(members *NodeList) *Node {
-	data := &TypeLiteralNode{}
+	data := f.typeLiteralNodePool.New()
 	data.Members = members
 	return f.newNode(KindTypeLiteral, data)
 }
@@ -7908,7 +7919,7 @@ type ParenthesizedTypeNode struct {
 }
 
 func (f *NodeFactory) NewParenthesizedTypeNode(typeNode *TypeNode) *Node {
-	data := &ParenthesizedTypeNode{}
+	data := f.parenthesizedTypeNodePool.New()
 	data.Type = typeNode
 	return f.newNode(KindParenthesizedType, data)
 }
@@ -7956,7 +7967,7 @@ type FunctionTypeNode struct {
 }
 
 func (f *NodeFactory) NewFunctionTypeNode(typeParameters *NodeList, parameters *NodeList, returnType *TypeNode) *Node {
-	data := &FunctionTypeNode{}
+	data := f.functionTypeNodePool.New()
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
@@ -8813,7 +8824,7 @@ type JSDocTagBase struct {
 
 type JSDocCommentBase struct {
 	NodeBase
-	Text string
+	text []string
 }
 
 // JSDoc comments
@@ -8821,15 +8832,15 @@ type JSDocText struct {
 	JSDocCommentBase
 }
 
-func (f *NodeFactory) NewJSDocText(text string) *Node {
+func (f *NodeFactory) NewJSDocText(text []string) *Node {
 	data := f.jsdocTextPool.New()
-	data.Text = text
+	data.text = text
 	f.textCount++
 	return f.newNode(KindJSDocText, data)
 }
 
 func (node *JSDocText) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocText(node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocText(node.text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 type JSDocLink struct {
@@ -8837,16 +8848,16 @@ type JSDocLink struct {
 	name *Node // optional (should only be EntityName)
 }
 
-func (f *NodeFactory) NewJSDocLink(name *Node, text string) *Node {
+func (f *NodeFactory) NewJSDocLink(name *Node, text []string) *Node {
 	data := &JSDocLink{}
 	data.name = name
-	data.Text = text
+	data.text = text
 	f.textCount++
 	return f.newNode(KindJSDocLink, data)
 }
 
-func (f *NodeFactory) UpdateJSDocLink(node *JSDocLink, name *Node, text string) *Node {
-	if name != node.name || text != node.Text {
+func (f *NodeFactory) UpdateJSDocLink(node *JSDocLink, name *Node, text []string) *Node {
+	if name != node.name || !core.Same(text, node.text) {
 		return updateNode(f.NewJSDocLink(name, text), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -8857,11 +8868,11 @@ func (node *JSDocLink) ForEachChild(v Visitor) bool {
 }
 
 func (node *JSDocLink) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocLink(node, v.visitNode(node.name), node.Text)
+	return v.Factory.UpdateJSDocLink(node, v.visitNode(node.name), node.text)
 }
 
 func (node *JSDocLink) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocLink(node.Name(), node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocLink(node.Name(), node.text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocLink) Name() *DeclarationName {
@@ -8873,16 +8884,16 @@ type JSDocLinkPlain struct {
 	name *Node // optional (should only be EntityName)
 }
 
-func (f *NodeFactory) NewJSDocLinkPlain(name *Node, text string) *Node {
+func (f *NodeFactory) NewJSDocLinkPlain(name *Node, text []string) *Node {
 	data := &JSDocLinkPlain{}
 	data.name = name
-	data.Text = text
+	data.text = text
 	f.textCount++
 	return f.newNode(KindJSDocLinkPlain, data)
 }
 
-func (f *NodeFactory) UpdateJSDocLinkPlain(node *JSDocLinkPlain, name *Node, text string) *Node {
-	if name != node.name || text != node.Text {
+func (f *NodeFactory) UpdateJSDocLinkPlain(node *JSDocLinkPlain, name *Node, text []string) *Node {
+	if name != node.name || !core.Same(text, node.text) {
 		return updateNode(f.NewJSDocLinkPlain(name, text), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -8893,11 +8904,11 @@ func (node *JSDocLinkPlain) ForEachChild(v Visitor) bool {
 }
 
 func (node *JSDocLinkPlain) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocLinkPlain(node, v.visitNode(node.name), node.Text)
+	return v.Factory.UpdateJSDocLinkPlain(node, v.visitNode(node.name), node.text)
 }
 
 func (node *JSDocLinkPlain) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocLinkPlain(node.Name(), node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocLinkPlain(node.Name(), node.text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocLinkPlain) Name() *DeclarationName {
@@ -8909,16 +8920,16 @@ type JSDocLinkCode struct {
 	name *Node // optional (should only be EntityName)
 }
 
-func (f *NodeFactory) NewJSDocLinkCode(name *Node, text string) *Node {
+func (f *NodeFactory) NewJSDocLinkCode(name *Node, text []string) *Node {
 	data := &JSDocLinkCode{}
 	data.name = name
-	data.Text = text
+	data.text = text
 	f.textCount++
 	return f.newNode(KindJSDocLinkCode, data)
 }
 
-func (f *NodeFactory) UpdateJSDocLinkCode(node *JSDocLinkCode, name *Node, text string) *Node {
-	if name != node.name || text != node.Text {
+func (f *NodeFactory) UpdateJSDocLinkCode(node *JSDocLinkCode, name *Node, text []string) *Node {
+	if name != node.name || !core.Same(text, node.text) {
 		return updateNode(f.NewJSDocLinkCode(name, text), node.AsNode(), f.hooks)
 	}
 	return node.AsNode()
@@ -8929,11 +8940,11 @@ func (node *JSDocLinkCode) ForEachChild(v Visitor) bool {
 }
 
 func (node *JSDocLinkCode) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateJSDocLinkCode(node, v.visitNode(node.name), node.Text)
+	return v.Factory.UpdateJSDocLinkCode(node, v.visitNode(node.name), node.text)
 }
 
 func (node *JSDocLinkCode) Clone(f NodeFactoryCoercible) *Node {
-	return cloneNode(f.AsNodeFactory().NewJSDocLinkCode(node.Name(), node.Text), node.AsNode(), f.AsNodeFactory().hooks)
+	return cloneNode(f.AsNodeFactory().NewJSDocLinkCode(node.Name(), node.text), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
 func (node *JSDocLinkCode) Name() *DeclarationName {
@@ -9622,6 +9633,10 @@ func (node *JSDocAugmentsTag) VisitEachChild(v *NodeVisitor) *Node {
 
 func (node *JSDocAugmentsTag) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDocAugmentsTag(node.TagName, node.ClassName, node.Comment), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func IsJSDocAugmentsTag(node *Node) bool {
+	return node.Kind == KindJSDocAugmentsTag
 }
 
 // JSDocSatisfiesTag
