@@ -514,7 +514,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
-		title:               "extends with files merging - both configs have files",
+		title:               "extends with files overwrite - both configs have files",
 		noSubmoduleBaseline: true,
 		input: []testConfig{{
 			jsonText: `{
@@ -545,7 +545,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
-		title:               "extends with files merging - only base has files",
+		title:               "extends with files overwrite - only base has files",
 		noSubmoduleBaseline: true,
 		input: []testConfig{{
 			jsonText: `{
@@ -570,7 +570,7 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 		}},
 	},
 	{
-		title:               "extends with include/exclude merging",
+		title:               "extends with include/exclude overwrite",
 		noSubmoduleBaseline: true,
 		input: []testConfig{{
 			jsonText: `{

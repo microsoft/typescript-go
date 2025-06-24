@@ -1001,11 +1001,15 @@ func parseConfig(
 			relativeDifference := ""
 			setPropertyValue := func(propertyName string) {
 				if propertyName == "include" || propertyName == "exclude" || propertyName == "files" {
-					var extendedValue []any
-					// Get value from extended config
+					// If own config already has this property, don't use extended config's value (overwrite behavior)
+					if rawMap, ok := ownConfig.raw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
+						return
+					}
+
+					// Only use extended config's value if own config doesn't have it
 					if rawMap, ok := extendsRaw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
 						if slice, _ := rawMap.GetOrZero(propertyName).([]any); slice != nil {
-							extendedValue = core.Map(slice, func(path any) any {
+							extendedValue := core.Map(slice, func(path any) any {
 								if startsWithConfigDirTemplate(path) || tspath.IsRootedDiskPath(path.(string)) {
 									return path.(string)
 								} else {
@@ -1019,34 +1023,14 @@ func parseConfig(
 									return tspath.CombinePaths(relativeDifference, path.(string))
 								}
 							})
-						}
-					}
-
-					// Get value from own config if it exists
-					var ownValue []any
-					if rawMap, ok := ownConfig.raw.(*collections.OrderedMap[string, any]); ok && rawMap.Has(propertyName) {
-						if slice, ok := rawMap.GetOrZero(propertyName).([]any); ok {
-							ownValue = slice
-						}
-					}
-
-					// Merge the arrays: extended config first, then own config
-					var mergedValue []any
-					if extendedValue != nil {
-						mergedValue = append(mergedValue, extendedValue...)
-					}
-					if ownValue != nil {
-						mergedValue = append(mergedValue, ownValue...)
-					}
-
-					// Set the result only if we have something to set
-					if mergedValue != nil {
-						if propertyName == "include" {
-							result.include = mergedValue
-						} else if propertyName == "exclude" {
-							result.exclude = mergedValue
-						} else if propertyName == "files" {
-							result.files = mergedValue
+							
+							if propertyName == "include" {
+								result.include = extendedValue
+							} else if propertyName == "exclude" {
+								result.exclude = extendedValue
+							} else if propertyName == "files" {
+								result.files = extendedValue
+							}
 						}
 					}
 				}
