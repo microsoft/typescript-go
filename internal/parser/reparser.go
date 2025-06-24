@@ -326,7 +326,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				bin := parent.AsExpressionStatement().Expression.AsBinaryExpression()
 				if kind := ast.GetAssignmentDeclarationKind(bin); kind != ast.JSDeclarationKindNone {
 					bin.Type = setHost(tag.AsJSDocTypeTag().TypeExpression, parent.AsExpressionStatement().Expression)
-					p.finishReparsedNode(parent)
+					p.finishReparsedNode(bin.AsNode())
 				}
 			}
 		}

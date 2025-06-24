@@ -5913,7 +5913,7 @@ func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 		node.Flags |= ast.NodeFlagsThisNodeHasError
 		p.hasParseError = false
 	}
-	ast.SetParentInImmediateChildren(node)
+	ast.OverrideParentInImmediateChildren(node)
 }
 
 func (p *Parser) nextTokenIsSlash() bool {
