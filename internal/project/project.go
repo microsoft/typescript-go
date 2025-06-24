@@ -600,7 +600,7 @@ func (p *Project) updateProgram() bool {
 	} else {
 		// The only change in the current program is the contents of the file named by p.dirtyFilePath.
 		// If possible, use data from the old program to create the new program.
-		p.program, oldProgramReused = p.program.UpdateProgram(p.dirtyFilePath)
+		p.program, oldProgramReused = p.program.UpdateProgram(p.dirtyFilePath, p)
 	}
 	p.program.BindSourceFiles()
 	return oldProgramReused

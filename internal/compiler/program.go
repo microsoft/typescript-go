@@ -208,14 +208,16 @@ func NewProgram(opts ProgramOptions) *Program {
 
 // Return an updated program for which it is known that only the file with the given path has changed.
 // In addition to a new program, return a boolean indicating whether the data of the old program was reused.
-func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
+func (p *Program) UpdateProgram(changedFilePath tspath.Path, newHost CompilerHost) (*Program, bool) {
 	oldFile := p.filesByPath[changedFilePath]
-	newFile := p.Host().GetSourceFile(oldFile.ParseOptions())
+	newOpts := p.opts
+	newOpts.Host = newHost
+	newFile := newHost.GetSourceFile(oldFile.ParseOptions())
 	if !canReplaceFileInProgram(oldFile, newFile) {
-		return NewProgram(p.opts), false
+		return NewProgram(newOpts), false
 	}
 	result := &Program{
-		opts:                        p.opts,
+		opts:                        newOpts,
 		nodeModules:                 p.nodeModules,
 		comparePathsOptions:         p.comparePathsOptions,
 		processedFiles:              p.processedFiles,

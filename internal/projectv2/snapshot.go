@@ -189,11 +189,12 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 	projectChange := change.toProjectChange(s)
 
 	for configFilePath, project := range s.configuredProjects {
-		newProject, changes := project.Clone(ctx, projectChange, newSnapshot)
+		newProject, _ := project.Clone(ctx, projectChange, newSnapshot)
 		if newProject != nil {
 			newSnapshot.configuredProjects[configFilePath] = newProject
 		}
 	}
+	// !!! update inferred project if needed
 	return newSnapshot
 }
 

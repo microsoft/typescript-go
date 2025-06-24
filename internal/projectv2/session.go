@@ -2,6 +2,7 @@ package projectv2
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
@@ -94,8 +95,25 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 	})
 }
 
-func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) *ls.LanguageService {
+func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	changes := s.flushChanges(ctx)
+	if changes.uris.Len() > 0 {
+		s.snapshotMu.Lock()
+		s.snapshot = s.snapshot.Clone(ctx, snapshotChange{
+			changedURIs:   changes.uris,
+			requestedURIs: []lsproto.DocumentUri{uri},
+		}, s)
+		s.snapshotMu.Unlock()
+	}
+
+	project := s.snapshot.GetDefaultProject(uri)
+	if project == nil {
+		return nil, fmt.Errorf("no project found for URI %s", uri)
+	}
+	if project.LanguageService == nil {
+		panic("project language service is nil")
+	}
+	return project.LanguageService, nil
 }
 
 func (s *Session) flushChanges(ctx context.Context) overlayChanges {

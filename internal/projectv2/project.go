@@ -2,12 +2,14 @@ package projectv2
 
 import (
 	"context"
+	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -20,16 +22,26 @@ const (
 	KindConfigured
 )
 
+type PendingReload int
+
+const (
+	PendingReloadNone PendingReload = iota
+	PendingReloadFileNames
+	PendingReloadFull
+)
+
 var _ compiler.CompilerHost = (*Project)(nil)
+var _ ls.Host = (*Project)(nil)
 
 type Project struct {
 	Name string
 	Kind Kind
 
-	CommandLine   *tsoptions.ParsedCommandLine
-	Program       *compiler.Program
-	rootFileNames collections.OrderedMap[tspath.Path, string] // values are file names
-	snapshot      *Snapshot
+	CommandLine     *tsoptions.ParsedCommandLine
+	Program         *compiler.Program
+	LanguageService *ls.LanguageService
+	rootFileNames   *collections.OrderedMap[tspath.Path, string] // values are file names
+	snapshot        *Snapshot
 
 	currentDirectory string
 }
@@ -96,6 +108,26 @@ func (p *Project) Trace(msg string) {
 	panic("unimplemented")
 }
 
+// GetLineMap implements ls.Host.
+func (p *Project) GetLineMap(fileName string) *ls.LineMap {
+	// !!! cache
+	return ls.ComputeLineStarts(p.snapshot.GetFile(ls.FileNameToDocumentURI(fileName)).Content())
+}
+
+// GetPositionEncoding implements ls.Host.
+func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
+	return p.snapshot.sessionOptions.PositionEncoding
+}
+
+// GetProgram implements ls.Host.
+func (p *Project) GetProgram() *compiler.Program {
+	return p.Program
+}
+
+func (p *Project) GetRootFileNames() []string {
+	return slices.Collect(p.rootFileNames.Values())
+}
+
 func (p *Project) getScriptKind(fileName string) core.ScriptKind {
 	// Customizing script kind per file extension is a common plugin / LS host customization case
 	// which can probably be replaced with static info in the future
@@ -121,7 +153,83 @@ type projectChange struct {
 	}
 }
 
-func (p *Project) Clone(ctx context.Context, change projectChange, newSnapshot *Snapshot) (*Project, projectChanges) {
-	loadProgram := false
+type projectChangeResult struct {
+	changed bool
+}
 
+func (p *Project) Clone(ctx context.Context, change projectChange, newSnapshot *Snapshot) (*Project, projectChangeResult) {
+	var result projectChangeResult
+	var loadProgram bool
+	// var pendingReload PendingReload
+	for _, file := range change.requestedURIs {
+		if file.defaultProject == p {
+			loadProgram = true
+			break
+		}
+	}
+
+	var singleChangedFile tspath.Path
+	if p.Program != nil || !loadProgram {
+		for _, path := range change.changedURIs {
+			if p.containsFile(path) {
+				loadProgram = true
+				if p.Program == nil {
+					break
+				} else if singleChangedFile == "" {
+					singleChangedFile = path
+				} else {
+					singleChangedFile = ""
+					break
+				}
+			}
+		}
+	}
+
+	if loadProgram {
+		result.changed = true
+		newProject := &Project{
+			Name:             p.Name,
+			Kind:             p.Kind,
+			CommandLine:      p.CommandLine,
+			rootFileNames:    p.rootFileNames,
+			currentDirectory: p.currentDirectory,
+			snapshot:         newSnapshot,
+		}
+
+		var cloned bool
+		var newProgram *compiler.Program
+		oldProgram := p.Program
+		if singleChangedFile != "" {
+			newProgram, cloned = p.Program.UpdateProgram(singleChangedFile, newProject)
+			if !cloned {
+				// !!! make this less janky
+				// UpdateProgram called GetSourceFile (acquiring the document) but was unable to use it directly,
+				// so it called NewProgram which acquired it a second time. We need to decrement the ref count
+				// for the first acquisition.
+				p.snapshot.parseCache.releaseDocument(newProgram.GetSourceFileByPath(singleChangedFile))
+			}
+		} else {
+			newProgram = compiler.NewProgram(
+				compiler.ProgramOptions{
+					Host:                        newProject,
+					Config:                      newProject.CommandLine,
+					UseSourceOfProjectReference: true,
+					TypingsLocation:             newProject.snapshot.sessionOptions.TypingsLocation,
+					JSDocParsingMode:            ast.JSDocParsingModeParseAll,
+				},
+			)
+		}
+
+		if !cloned {
+			for _, file := range oldProgram.GetSourceFiles() {
+				p.snapshot.parseCache.releaseDocument(file)
+			}
+		}
+
+		newProject.Program = newProgram
+		newProject.LanguageService = ls.NewLanguageService(ctx, newProject)
+		return newProject, result
+	}
+
+	return p, result
 }
