@@ -290,10 +290,10 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                         const noLib = opts.properties[0];
                         if (noLib && ts.isPropertyAssignment(noLib) && noLib.name.getText() === "noLib") {
                             if (noLib.initializer.kind === ts.SyntaxKind.TrueKeyword) {
-                                expected += ", true"
+                                expected += ", true";
                             }
                             else if (noLib.initializer.kind === ts.SyntaxKind.FalseKeyword) {
-                                expected += ", false"
+                                expected += ", false";
                             }
                             else {
                                 console.error(`Expected boolean literal for noLib, got ${noLib.initializer.getText()}`);
@@ -308,7 +308,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                     else if (tsFunc === "completion.globalsPlus" || tsFunc === "completion.globalsInJsPlus") {
                         expected += ", false"; // Default for noLib
                     }
-                    expected += ")"
+                    expected += ")";
                 }
                 else {
                     expected = "[]fourslash.CompletionsExpectedItem{";
@@ -693,7 +693,7 @@ func Test${testName}(t *testing.T) {
 }
 
 function generateHelperFile() {
-    fs.copyFileSync(helperFilePath, path.join(outputDir, "util_test.go"))
+    fs.copyFileSync(helperFilePath, path.join(outputDir, "util_test.go"));
 }
 
 main();
