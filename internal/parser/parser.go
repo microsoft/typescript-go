@@ -102,8 +102,7 @@ func getParser() *Parser {
 }
 
 func putParser(p *Parser) {
-	*p = Parser{scanner: p.scanner}
-	p.initializeClosures()
+	*p = Parser{scanner: p.scanner, setParentFromContext: p.setParentFromContext}
 	parserPool.Put(p)
 }
 
