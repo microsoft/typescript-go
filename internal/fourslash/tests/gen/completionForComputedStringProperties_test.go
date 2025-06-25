@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForComputedStringProperties(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const p2 = "p2";
 interface A {
@@ -24,6 +24,7 @@ a[|./**/|]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "p1"}, &lsproto.CompletionItem{Label: "p2", InsertText: ptrTo("[p2]")}},

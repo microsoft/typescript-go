@@ -27,6 +27,7 @@ new Q<{ id: string; name: string }>().select("name", "/*ts3*/");`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"aaa", "bbb", "ccc"},
@@ -36,6 +37,7 @@ new Q<{ id: string; name: string }>().select("name", "/*ts3*/");`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"name", "id"},

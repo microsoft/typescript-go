@@ -34,6 +34,7 @@ func TestTripleSlashRefPathCompletionExtensionsAllowJSFalse(t *testing.T) {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"f1.d.ts", "f1.ts", "f1.tsx"},

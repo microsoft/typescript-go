@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsAtIncompleteObjectLiteralProperty(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @noLib: true
 f({
@@ -24,6 +24,7 @@ declare function f(options: { abc?: number, xyz?: string }): void;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindField), SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "abc?", InsertText: ptrTo("abc"), FilterText: ptrTo("abc")}},

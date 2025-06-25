@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsPropertiesPriorities(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 interface I {
@@ -33,6 +33,7 @@ const i: I = {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Kind: ptrTo(lsproto.CompletionItemKindField), Label: "d"}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Kind: ptrTo(lsproto.CompletionItemKindField), Label: "c?", InsertText: ptrTo("c"), FilterText: ptrTo("c")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextMemberDeclaredBySpreadAssignment)), Kind: ptrTo(lsproto.CompletionItemKindField), Label: "a"}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextMemberDeclaredBySpreadAssignment)), Kind: ptrTo(lsproto.CompletionItemKindField), Label: "B?", InsertText: ptrTo("B"), FilterText: ptrTo("B")}},

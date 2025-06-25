@@ -192,6 +192,9 @@ const completionConstants = new Map([
     ["completion.constructorParameterKeywords", "completionConstructorParameterKeywords"],
     ["completion.functionMembersWithPrototype", "completionFunctionMembersWithPrototype"],
     ["completion.functionMembers", "completionFunctionMembers"],
+    ["completion.typeKeywords", "completionTypeKeywords"],
+    ["completion.undefinedVarEntry", "completionUndefinedVarItem"],
+    ["completion.typeAssertionKeywords", "completionTypeAssertionKeywords"],
 ]);
 
 const completionPlus = new Map([
@@ -200,6 +203,7 @@ const completionPlus = new Map([
     ["completion.functionMembersPlus", "completionFunctionMembersPlus"],
     ["completion.functionMembersWithPrototypePlus", "completionFunctionMembersWithPrototypePlus"],
     ["completion.globalsInJsPlus", "completionGlobalsInJSPlus"],
+    ["completion.typeKeywordsPlus", "completionTypeKeywordsPlus"],
 ]);
 
 function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | undefined {
@@ -358,7 +362,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
             case "triggerCharacter":
             case "defaultCommitCharacters":
                 break; // !!! parse once they're supported in fourslash
-            case "optionalReplacementSpan":
+            case "optionalReplacementSpan": // the only two tests that use this will require manual conversion
             case "isGlobalCompletion":
                 break; // Ignored, unused
             default:
@@ -375,6 +379,9 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
 }
 
 function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
+    if (completionConstants.has(expr.getText())) {
+        return completionConstants.get(expr.getText())!;
+    }
     if (ts.isStringLiteral(expr)) {
         return getGoStringLiteral(expr.text);
     }
@@ -573,8 +580,8 @@ function parseSortText(expr: ts.Expression): string | undefined {
             return "ls.SortTextOptionalMember";
         case "completion.SortText.MemberDeclaredBySpreadAssignment":
             return "ls.SortTextMemberDeclaredBySpreadAssignment";
-        case "completion.SortText.SuggestedClassMember":
-            return "ls.SortTextSuggestedClassMember";
+        case "completion.SortText.SuggestedClassMembers":
+            return "ls.SortTextSuggestedClassMembers";
         case "completion.SortText.GlobalsOrKeywords":
             return "ls.SortTextGlobalsOrKeywords";
         case "completion.SortText.AutoImportSuggestions":
@@ -622,6 +629,7 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: Ve
     IsIncomplete: false,
     ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
         CommitCharacters: &${commitCharacters},
+        EditRange: ignored,
     },
     Items: &fourslash.CompletionsExpectedItems{
         ${expected.join("\n")}

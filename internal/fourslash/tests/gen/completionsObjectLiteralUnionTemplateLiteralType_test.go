@@ -31,6 +31,7 @@ const obj2: UnionType = {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "key1"}, &lsproto.CompletionItem{Label: "key2"}},
@@ -40,6 +41,7 @@ const obj2: UnionType = {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "key2"}},

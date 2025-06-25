@@ -23,6 +23,7 @@ function foo(x: string, y: number, z: boolean) {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"foo", "x", "y", "z", "bar", "a", "b", "c", "v", "p"},

@@ -9,7 +9,7 @@ import (
 
 func TestCompletionEntryForArgumentConstrainedToString(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function test<P extends "a" | "b">(p: P): void;
 
@@ -20,6 +20,7 @@ test(/*ts*/)
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"\"a\"", "\"b\""},

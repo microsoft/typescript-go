@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListWithoutVariableinitializer(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const a = a/*1*/;
 const b = a && b/*2*/;
@@ -25,6 +25,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Excludes: []string{"a"},
@@ -34,6 +35,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"a"},
@@ -44,6 +46,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"a", "b"},
@@ -54,6 +57,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"a", "b", "c", "d"},
@@ -63,6 +67,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"a", "b", "c", "d", "e"},
@@ -72,6 +77,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"a", "b", "c", "d", "e"},
@@ -81,6 +87,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"a", "b", "c", "d", "e", "fn"},
@@ -90,6 +97,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"a", "b", "c", "d", "e", "fn"},
@@ -99,6 +107,7 @@ const [ g1, h1 = /*9*/ ] = [ ... ]`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"a", "b", "c", "d", "e", "fn"},

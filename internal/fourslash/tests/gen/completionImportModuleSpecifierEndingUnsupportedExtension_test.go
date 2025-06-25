@@ -9,7 +9,7 @@ import (
 
 func TestCompletionImportModuleSpecifierEndingUnsupportedExtension(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename:index.css
  body {}
@@ -20,6 +20,7 @@ import ".//**/"`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Excludes: []string{"index.css"},
@@ -29,6 +30,7 @@ import ".//**/"`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Excludes: []string{"index"},

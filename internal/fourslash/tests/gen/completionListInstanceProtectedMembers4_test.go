@@ -37,6 +37,7 @@ class C1 extends Base {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"protectedOverriddenMethod", "protectedOverriddenProperty", "publicMethod", "publicProperty"},

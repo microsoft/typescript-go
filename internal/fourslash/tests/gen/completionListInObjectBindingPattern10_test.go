@@ -27,6 +27,7 @@ var [{ property1: { propertyOfI_1, }, /*1*/ }, { /*2*/ }] = foo;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"property2"},
@@ -36,6 +37,7 @@ var [{ property1: { propertyOfI_1, }, /*1*/ }, { /*2*/ }] = foo;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"property1", "property2"},

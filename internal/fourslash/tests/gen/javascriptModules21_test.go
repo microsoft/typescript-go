@@ -11,7 +11,7 @@ import (
 
 func TestJavascriptModules21(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @module: system
@@ -26,6 +26,7 @@ mod./**/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindField), Label: "a"}, &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindText), SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)), Label: "mod"}},

@@ -33,6 +33,7 @@ v.x.V./*4*/;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"toExponential"},
@@ -42,6 +43,7 @@ v.x.V./*4*/;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"toLowerCase"},
@@ -51,6 +53,7 @@ v.x.V./*4*/;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"V", &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)), Label: "ref1"}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)), Label: "ref2"}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)), Label: "require"}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)), Label: "v"}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)), Label: "x"}},
@@ -60,6 +63,7 @@ v.x.V./*4*/;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"toLowerCase"},

@@ -9,7 +9,7 @@ import (
 
 func TestCompletionOfAwaitPromise6(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `async function foo(x: Promise<string>) {
    [|x./**/|]
@@ -19,6 +19,7 @@ func TestCompletionOfAwaitPromise6(t *testing.T) {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"catch", "then"},

@@ -43,6 +43,7 @@ myFunction2("valA", { b: ` + "`" + `/*ts4*/` + "`" + ` });`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"1", "2"},

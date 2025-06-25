@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteral_quotePreference(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `enum A {
     A,
@@ -28,6 +28,7 @@ const b: B = {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "'A'"}, &lsproto.CompletionItem{Label: "'B'"}, &lsproto.CompletionItem{Label: "'C'"}},

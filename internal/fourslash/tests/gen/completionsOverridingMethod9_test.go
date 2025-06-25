@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsOverridingMethod9(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: a.ts
 // @newline: LF
@@ -27,6 +27,7 @@ class Foo implements IFoo {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "a", InsertText: ptrTo("a?: number;"), FilterText: ptrTo("a")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "b", InsertText: ptrTo("b(x: number): void {\n}"), FilterText: ptrTo("b")}},

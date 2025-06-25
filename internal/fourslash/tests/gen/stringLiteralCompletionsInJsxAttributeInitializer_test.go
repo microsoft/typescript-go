@@ -26,6 +26,7 @@ const a5 = <Foo b={"somethingelse"} c={0} /*5*/ />`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"somethingelse"},
@@ -35,6 +36,7 @@ const a5 = <Foo b={"somethingelse"} c={0} /*5*/ />`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Excludes: []string{"\"somethingelse\""},
@@ -44,6 +46,7 @@ const a5 = <Foo b={"somethingelse"} c={0} /*5*/ />`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Excludes: []string{"0", "1"},

@@ -18,6 +18,7 @@ var y = this as/*1*/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalsPlus([]fourslash.CompletionsExpectedItem{"x"}, false),

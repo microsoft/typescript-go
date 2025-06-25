@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListInArrowFunctionInUnclosedCallSite01(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function foo(...params: any[]): any;
 function getAllFiles(rootFileNames: string[]) {
@@ -19,6 +19,7 @@ function getAllFiles(rootFileNames: string[]) {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"fileName", "rootFileNames", "getAllFiles", "foo"},

@@ -9,7 +9,7 @@ import (
 
 func TestCompletionsJSDocNoCrash1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @checkJs: true
@@ -35,6 +35,7 @@ var ngShowDirective = ['$animate', function($animate) {}];`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"url"},

@@ -48,6 +48,7 @@ const m = import("./src//*9*/");`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"decl.cjs", "decl.mjs", "decl.js", "js.cjs", "js.js", "js.mjs", "module.cjs", "module.js", "module.mjs"},
@@ -57,6 +58,7 @@ const m = import("./src//*9*/");`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"decl.cjs", "decl.mjs", "decl", "js.cjs", "js", "js.mjs", "module.cjs", "module", "module.mjs"},

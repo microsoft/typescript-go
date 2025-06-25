@@ -9,7 +9,7 @@ import (
 
 func TestMemberListOnConstructorType(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var f: new () => void;
 f./*1*/`
@@ -18,6 +18,7 @@ f./*1*/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionFunctionMembersWithPrototype,

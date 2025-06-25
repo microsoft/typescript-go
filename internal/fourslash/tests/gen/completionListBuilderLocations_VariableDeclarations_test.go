@@ -30,6 +30,7 @@ var y = 10; y=/*var12*/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalsPlus([]fourslash.CompletionsExpectedItem{"C", "y"}, false),
@@ -39,6 +40,7 @@ var y = 10; y=/*var12*/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalsPlus([]fourslash.CompletionsExpectedItem{"C", "x", "y"}, false),

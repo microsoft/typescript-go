@@ -9,7 +9,7 @@ import (
 
 func TestCompletionForStringLiteralNonrelativeImport3(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: tests/test0.ts
@@ -37,6 +37,7 @@ var foo3 = require("fake-module//*require0*/
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"dts", "js", "jsx", "repeated", "ts", "tsx"},

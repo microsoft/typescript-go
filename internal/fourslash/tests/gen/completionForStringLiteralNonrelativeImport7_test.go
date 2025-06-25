@@ -9,7 +9,7 @@ import (
 
 func TestCompletionForStringLiteralNonrelativeImport7(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @baseUrl: tests/cases/fourslash/modules
 // @Filename: tests/test0.ts
@@ -27,6 +27,7 @@ export var x = 5;
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"module", "module-from-node"},

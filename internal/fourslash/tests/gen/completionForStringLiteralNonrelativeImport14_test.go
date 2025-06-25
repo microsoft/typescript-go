@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteralNonrelativeImport14(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: tsconfig.json
 {
@@ -35,6 +35,7 @@ export var y = 10;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"lib", "lib.decorators", "lib.decorators.legacy", "tests", &lsproto.CompletionItem{Label: "/module1"}, &lsproto.CompletionItem{Label: "/module2"}},
@@ -44,6 +45,7 @@ export var y = 10;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"lib", "lib.decorators", "lib.decorators.legacy", "tests", &lsproto.CompletionItem{Label: "/module1"}, &lsproto.CompletionItem{Label: "/module2"}},
@@ -53,6 +55,7 @@ export var y = 10;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"lib", "lib.decorators", "lib.decorators.legacy", "tests", &lsproto.CompletionItem{Label: "/module1"}, &lsproto.CompletionItem{Label: "/module2"}},

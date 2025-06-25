@@ -9,7 +9,7 @@ import (
 
 func TestCompletionsNonExistentImport(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `import { NonExistentType } from "non-existent-module";
 let foo: /**/`
@@ -18,6 +18,7 @@ let foo: /**/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"NonExistentType"},

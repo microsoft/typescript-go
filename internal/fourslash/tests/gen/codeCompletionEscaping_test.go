@@ -21,6 +21,7 @@ ___foo; __foo;/**/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindText), SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)), Label: "__foo"}, &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindText), SortText: ptrTo(string(ls.SortTextJavascriptIdentifiers)), Label: "___foo"}},

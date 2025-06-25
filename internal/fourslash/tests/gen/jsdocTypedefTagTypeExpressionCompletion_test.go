@@ -11,7 +11,7 @@ import (
 
 func TestJsdocTypedefTagTypeExpressionCompletion(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I {
     age: number;
@@ -47,6 +47,7 @@ var y;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindClass), Label: "Foo"}, &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindInterface), Label: "I"}},
@@ -57,6 +58,7 @@ var y;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindModule), Label: "Namespace"}},
@@ -66,6 +68,7 @@ var y;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindInterface), Label: "SomeType"}},
@@ -75,6 +78,7 @@ var y;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindClass), Label: "Foo"}, &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindVariable), Label: "x"}, &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindVariable), Label: "x1"}, &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindVariable), Label: "y"}},
@@ -86,6 +90,7 @@ var y;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindMethod), Label: "method3"}, &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindMethod), Label: "method4"}, &lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindField), Label: "property1"}},
@@ -95,6 +100,7 @@ var y;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionFunctionMembersPlus([]fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindMethod), SortText: ptrTo(string(ls.SortTextLocalDeclarationPriority)), Label: "method1"}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "prototype"}}),

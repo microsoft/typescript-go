@@ -39,6 +39,7 @@ const i = t(null, { name: "addBook", group: "Sample", payload: { /**/ } })`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "name"}, &lsproto.CompletionItem{Label: "year"}},

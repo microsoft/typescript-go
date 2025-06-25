@@ -30,6 +30,7 @@ fn({ a: "a", b: "b" }, {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "on_a?", InsertText: ptrTo("on_a"), FilterText: ptrTo("on_a")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "on_b?", InsertText: ptrTo("on_b"), FilterText: ptrTo("on_b")}},

@@ -36,6 +36,7 @@ func TestTripleSlashRefPathCompletionAbsolutePaths(t *testing.T) {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"fourslash"},
@@ -45,6 +46,7 @@ func TestTripleSlashRefPathCompletionAbsolutePaths(t *testing.T) {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"e1.ts", "f1.ts", "f2.tsx", "folder", "tests"},

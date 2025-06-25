@@ -21,6 +21,7 @@ const f = foo</*3*/, /*4*/,`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalTypesPlus([]fourslash.CompletionsExpectedItem{"Foo"}),
@@ -30,6 +31,7 @@ const f = foo</*3*/, /*4*/,`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalTypesPlus([]fourslash.CompletionsExpectedItem{"Foo"}),
@@ -39,6 +41,7 @@ const f = foo</*3*/, /*4*/,`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalTypesPlus([]fourslash.CompletionsExpectedItem{"Foo"}),
@@ -48,6 +51,7 @@ const f = foo</*3*/, /*4*/,`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalTypesPlus([]fourslash.CompletionsExpectedItem{"Foo"}),

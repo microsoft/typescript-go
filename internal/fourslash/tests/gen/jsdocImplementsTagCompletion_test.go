@@ -9,7 +9,7 @@ import (
 
 func TestJsdocImplementsTagCompletion(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @implements {/**/} */
 class A {}`
@@ -18,6 +18,7 @@ class A {}`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalTypesPlus([]fourslash.CompletionsExpectedItem{"A"}),

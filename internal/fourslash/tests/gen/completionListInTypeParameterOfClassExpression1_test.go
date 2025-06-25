@@ -22,6 +22,7 @@ var C4 = class D<T extends /*4*/>{}`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalTypesPlus([]fourslash.CompletionsExpectedItem{"D"}),

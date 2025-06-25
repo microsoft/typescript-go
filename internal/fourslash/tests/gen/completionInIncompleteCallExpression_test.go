@@ -19,6 +19,7 @@ a4(...<crash>/**/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalsPlus([]fourslash.CompletionsExpectedItem{"a4", "array"}, false),

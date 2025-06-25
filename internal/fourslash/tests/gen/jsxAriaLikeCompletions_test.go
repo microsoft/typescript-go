@@ -28,6 +28,7 @@ const a = <div {...{}} /*1*/></div>;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "aria-whatever?", InsertText: ptrTo("aria-whatever"), FilterText: ptrTo("aria-whatever")}},

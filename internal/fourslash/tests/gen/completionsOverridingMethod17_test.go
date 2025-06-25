@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsOverridingMethod17(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: a.ts
 // @newline: LF
@@ -29,6 +29,7 @@ export class Class implements Interface {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "method", InsertText: ptrTo("method(): void {\n}"), FilterText: ptrTo("method")}},

@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsStringsWithTriggerCharacter(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `type A = "a/b" | "b/a";
 const a: A = "[|a/*1*/|]";
@@ -37,6 +37,7 @@ const g: G = '[|a</*7*/|]';`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a/b"}, &lsproto.CompletionItem{Label: "b/a"}},
@@ -46,6 +47,7 @@ const g: G = '[|a</*7*/|]';`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a@b"}, &lsproto.CompletionItem{Label: "b@a"}},
@@ -55,6 +57,7 @@ const g: G = '[|a</*7*/|]';`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a.b"}, &lsproto.CompletionItem{Label: "b.a"}},
@@ -64,6 +67,7 @@ const g: G = '[|a</*7*/|]';`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a'b"}, &lsproto.CompletionItem{Label: "b'a"}},
@@ -73,6 +77,7 @@ const g: G = '[|a</*7*/|]';`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a`b"}, &lsproto.CompletionItem{Label: "b`a"}},
@@ -82,6 +87,7 @@ const g: G = '[|a</*7*/|]';`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a\"b"}, &lsproto.CompletionItem{Label: "b\"a"}},
@@ -91,6 +97,7 @@ const g: G = '[|a</*7*/|]';`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a<b"}, &lsproto.CompletionItem{Label: "b<a"}},

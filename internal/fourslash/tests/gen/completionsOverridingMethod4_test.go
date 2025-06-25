@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsOverridingMethod4(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
 // @Filename: secret.ts
@@ -42,6 +42,7 @@ class Gossip extends Secret {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "hint", InsertText: ptrTo("protected hint(): string {\n}"), FilterText: ptrTo("hint")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "refuse", InsertText: ptrTo("public refuse(): string {\n}"), FilterText: ptrTo("refuse")}},

@@ -10,7 +10,7 @@ import (
 
 func TestCompletionCloneQuestionToken(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: /file2.ts
 type TCallback<T = any> = (options: T) => any;
@@ -29,6 +29,7 @@ class Foo extends Bar<TwoKeys> {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "baz", InsertText: ptrTo("baz(a: { a?: (options: { thisFails?: any; }) => any; b?: (options: { thisFails?: any; }) => any; }): void {\n}"), FilterText: ptrTo("baz")}},

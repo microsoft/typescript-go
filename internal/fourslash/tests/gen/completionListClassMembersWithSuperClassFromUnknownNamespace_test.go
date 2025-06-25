@@ -19,6 +19,7 @@ func TestCompletionListClassMembersWithSuperClassFromUnknownNamespace(t *testing
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: completionClassElementKeywords,

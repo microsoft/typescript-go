@@ -9,7 +9,7 @@ import (
 
 func TestCompletionForStringLiteralNonrelativeImport8(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: tsconfig.json
 {
@@ -45,6 +45,7 @@ export var z = 5;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"2test", "prefix", "prefix-only", "0test", "1test"},

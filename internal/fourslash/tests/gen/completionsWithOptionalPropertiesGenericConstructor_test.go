@@ -29,6 +29,7 @@ new Clazz({ /*1*/ })`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "someFunction?", InsertText: ptrTo("someFunction"), FilterText: ptrTo("someFunction")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "anotherFunction?", InsertText: ptrTo("anotherFunction"), FilterText: ptrTo("anotherFunction")}},

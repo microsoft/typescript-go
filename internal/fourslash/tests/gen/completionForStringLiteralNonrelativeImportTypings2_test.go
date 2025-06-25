@@ -9,7 +9,7 @@ import (
 
 func TestCompletionForStringLiteralNonrelativeImportTypings2(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @typeRoots: my_typings,my_other_typings
 // @types: module-x,module-z
@@ -29,6 +29,7 @@ export var z = 9;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"module-x", "module-z"},

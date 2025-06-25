@@ -9,7 +9,7 @@ import (
 
 func TestCompletionForStringLiteralRelativeImport4(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @rootDirs: /sub/src1,/src2
 // @Filename: /src2/test0.ts
@@ -47,6 +47,7 @@ export const x = 0;
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"module1", "module2", "more", "module0", "inner"},
@@ -56,6 +57,7 @@ export const x = 0;
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"inner1"},

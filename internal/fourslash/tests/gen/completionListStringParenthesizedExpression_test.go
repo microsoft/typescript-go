@@ -10,7 +10,7 @@ import (
 
 func TestCompletionListStringParenthesizedExpression(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const foo = {
     a: 1,
@@ -25,6 +25,7 @@ const c = foo[(("[|/*3*/|]"))];`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a"}, &lsproto.CompletionItem{Label: "b"}, &lsproto.CompletionItem{Label: "c"}},
@@ -34,6 +35,7 @@ const c = foo[(("[|/*3*/|]"))];`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a"}, &lsproto.CompletionItem{Label: "b"}, &lsproto.CompletionItem{Label: "c"}},
@@ -43,6 +45,7 @@ const c = foo[(("[|/*3*/|]"))];`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "a"}, &lsproto.CompletionItem{Label: "b"}, &lsproto.CompletionItem{Label: "c"}},

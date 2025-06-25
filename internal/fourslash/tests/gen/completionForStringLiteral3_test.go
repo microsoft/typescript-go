@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteral3(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function f(a: "A", b: number): void;
 declare function f(a: "B", b: number): void;
@@ -25,6 +25,7 @@ f("/*2*/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "A"}, &lsproto.CompletionItem{Label: "B"}, &lsproto.CompletionItem{Label: "C"}},
@@ -34,6 +35,7 @@ f("/*2*/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"A", "B", "C"},

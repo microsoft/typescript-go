@@ -9,7 +9,7 @@ import (
 
 func TestCompletionsJSDocImportTagEmptyModuleSpecifier1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strict: true
 // @checkJs: true
@@ -24,6 +24,7 @@ export type MyUnion = string | number;
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"pkg"},

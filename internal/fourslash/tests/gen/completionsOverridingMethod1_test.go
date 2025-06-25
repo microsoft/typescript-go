@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsOverridingMethod1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @newline: LF
 // @Filename: h.ts
@@ -28,6 +28,7 @@ class HSub extends HBase {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "foo", InsertText: ptrTo("override foo(a: string): void {\n}"), FilterText: ptrTo("foo")}},

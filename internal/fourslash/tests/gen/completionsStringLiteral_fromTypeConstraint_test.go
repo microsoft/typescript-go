@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsStringLiteral_fromTypeConstraint(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface Foo { foo: string; bar: string; }
 type T = Pick<Foo, "[|/**/|]">;`
@@ -19,6 +19,7 @@ type T = Pick<Foo, "[|/**/|]">;`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "bar"}, &lsproto.CompletionItem{Label: "foo"}},

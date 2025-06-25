@@ -10,7 +10,7 @@ import (
 
 func TestCompletionInfoWithExplicitTypeArguments(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface I { x: number; y: number; }
 
@@ -24,6 +24,7 @@ g<I>("[|/*g*/|]");`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "x"}, &lsproto.CompletionItem{Label: "y"}},
@@ -33,6 +34,7 @@ g<I>("[|/*g*/|]");`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "x"}, &lsproto.CompletionItem{Label: "y"}},

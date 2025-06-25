@@ -29,6 +29,7 @@ export const backtickQuoted2: '` + "`" + `backtick-quoted` + "`" + `' = ` + "`" 
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"var(--\\\\\\\\, one)", "var(--\\\\\\\\, two)"},
@@ -38,6 +39,7 @@ export const backtickQuoted2: '` + "`" + `backtick-quoted` + "`" + `' = ` + "`" 
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"\\ntest\\n"},
@@ -47,6 +49,7 @@ export const backtickQuoted2: '` + "`" + `backtick-quoted` + "`" + `' = ` + "`" 
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"\"double-quoted\""},
@@ -56,6 +59,7 @@ export const backtickQuoted2: '` + "`" + `backtick-quoted` + "`" + `' = ` + "`" 
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"\\\"double-quoted\\\""},
@@ -65,6 +69,7 @@ export const backtickQuoted2: '` + "`" + `backtick-quoted` + "`" + `' = ` + "`" 
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"'single-quoted'"},
@@ -74,6 +79,7 @@ export const backtickQuoted2: '` + "`" + `backtick-quoted` + "`" + `' = ` + "`" 
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"\\'single-quoted\\'"},
@@ -83,6 +89,7 @@ export const backtickQuoted2: '` + "`" + `backtick-quoted` + "`" + `' = ` + "`" 
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"`backtick-quoted`"},
@@ -92,6 +99,7 @@ export const backtickQuoted2: '` + "`" + `backtick-quoted` + "`" + `' = ` + "`" 
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"\\`backtick-quoted\\`"},

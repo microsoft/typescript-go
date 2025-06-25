@@ -24,6 +24,7 @@ const obj2: any = {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalsPlus([]fourslash.CompletionsExpectedItem{"bar", "foo", "obj2"}, false),
@@ -33,6 +34,7 @@ const obj2: any = {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionGlobalsPlus([]fourslash.CompletionsExpectedItem{"bar", "foo", "obj1"}, false),

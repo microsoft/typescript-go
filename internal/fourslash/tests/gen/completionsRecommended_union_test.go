@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsRecommended_union(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strictNullChecks: true
 const enum E { A = "A", B = "B" }
@@ -22,6 +22,7 @@ const e2: E | E2 = /*b*/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Preselect: ptrTo(true), Label: "E"}},
@@ -31,6 +32,7 @@ const e2: E | E2 = /*b*/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Preselect: ptrTo(true), Label: "E"}, &lsproto.CompletionItem{Label: "E2"}},

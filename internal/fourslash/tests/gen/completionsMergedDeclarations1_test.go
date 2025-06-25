@@ -32,6 +32,7 @@ var b = point./*3*/equals(p1, p2);`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"point"},
@@ -41,6 +42,7 @@ var b = point./*3*/equals(p1, p2);`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: completionFunctionMembersWithPrototypePlus([]fourslash.CompletionsExpectedItem{"equals", "origin"}),

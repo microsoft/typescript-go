@@ -13458,3 +13458,20 @@ func completionFunctionMembersWithPrototypePlus(items []fourslash.CompletionsExp
 		),
 	)
 }
+
+func completionTypeKeywordsPlus(items []fourslash.CompletionsExpectedItem) []fourslash.CompletionsExpectedItem {
+	return sortCompletionItems(
+		append(
+			completionTypeKeywords,
+			items...,
+		),
+	)
+}
+
+var completionTypeAssertionKeywords = completionGlobalTypesPlus([]fourslash.CompletionsExpectedItem{
+	&lsproto.CompletionItem{
+		Label:    "const",
+		Kind:     ptrTo(lsproto.CompletionItemKindKeyword),
+		SortText: ptrTo(string(ls.SortTextGlobalsOrKeywords)),
+	},
+})

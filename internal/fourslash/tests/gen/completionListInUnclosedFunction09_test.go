@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListInUnclosedFunction09(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `function foo(x: string, y: number, z: boolean) {
     function bar(a: number, b: string = "hello", c: typeof x = "hello") {
@@ -20,6 +20,7 @@ func TestCompletionListInUnclosedFunction09(t *testing.T) {
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"foo", "x", "y", "z", "bar", "a", "b", "c"},

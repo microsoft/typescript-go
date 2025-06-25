@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListForTransitivelyExportedMembers01(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @Filename: A.ts
 export interface I1 { one: number }
@@ -43,6 +43,7 @@ var x = c./**/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"bVar", "C1", "cVar", "Inner"},

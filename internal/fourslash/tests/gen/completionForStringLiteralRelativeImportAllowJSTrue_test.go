@@ -9,7 +9,7 @@ import (
 
 func TestCompletionForStringLiteralRelativeImportAllowJSTrue(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @Filename: test0.ts
@@ -40,6 +40,7 @@ var foo6 = require("./f/*require1*/
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Exact: []fourslash.CompletionsExpectedItem{"f1", "f2", "f3", "f4", "f5", "f6", "g1", "g2"},

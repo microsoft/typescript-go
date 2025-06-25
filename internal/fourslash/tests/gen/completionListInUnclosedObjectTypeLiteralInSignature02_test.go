@@ -22,6 +22,7 @@ declare function foo<TString, TNumber>(obj: I<TString, TNumber>): { str: TStr/*1
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{"I", "TString", "TNumber"},

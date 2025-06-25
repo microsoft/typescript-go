@@ -11,7 +11,7 @@ import (
 
 func TestCompletionsWithDeprecatedTag3(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `/** @deprecated foo */
 declare function foo<T>();
@@ -24,6 +24,7 @@ foo/**/`
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindFunction), SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "foo"}},
