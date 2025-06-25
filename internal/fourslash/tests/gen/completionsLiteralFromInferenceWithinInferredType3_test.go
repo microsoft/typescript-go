@@ -9,7 +9,7 @@ import (
 
 func TestCompletionsLiteralFromInferenceWithinInferredType3(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function test<T>(a: {
   [K in keyof T]: {

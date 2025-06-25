@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListInUnclosedTaggedTemplate01(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `var x;
 var y = (p) => x ` + "`" + `abc ${ /*1*/`

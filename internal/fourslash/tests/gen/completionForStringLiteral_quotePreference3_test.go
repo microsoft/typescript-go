@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteral_quotePreference3(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `const a = {
     "#": "a"

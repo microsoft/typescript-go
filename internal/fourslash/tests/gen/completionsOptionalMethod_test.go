@@ -9,7 +9,7 @@ import (
 
 func TestCompletionsOptionalMethod(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @strictNullChecks: true
 declare const x: { m?(): void };

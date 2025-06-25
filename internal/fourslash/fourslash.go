@@ -362,6 +362,8 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 		for _, marker := range marker {
 			f.verifyCompletionsAtMarker(t, marker.Name, expected)
 		}
+	case nil:
+		f.verifyCompletionsWorker(t, expected)
 	default:
 		t.Fatalf("Invalid marker input type: %T. Expected string, *Marker, []string, or []*Marker.", markerInput)
 	}
