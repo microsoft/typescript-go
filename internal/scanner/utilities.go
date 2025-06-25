@@ -1,6 +1,7 @@
 package scanner
 
 import (
+	"strings"
 	"unicode/utf8"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -46,17 +47,21 @@ func DeclarationNameToString(name *ast.Node) string {
 	return GetTextOfNode(name)
 }
 
-func IsIdentifierText(name string, languageVersion core.ScriptTarget, languageVariant core.LanguageVariant) bool {
+func IsIdentifierText(name string, languageVariant core.LanguageVariant) bool {
 	ch, size := utf8.DecodeRuneInString(name)
-	if !IsIdentifierStart(ch, languageVersion) {
+	if !IsIdentifierStart(ch) {
 		return false
 	}
 	for i := size; i < len(name); {
 		ch, size = utf8.DecodeRuneInString(name[i:])
-		if !IsIdentifierPartEx(ch, languageVersion, languageVariant) {
+		if !IsIdentifierPartEx(ch, languageVariant) {
 			return false
 		}
 		i += size
 	}
 	return true
+}
+
+func IsIntrinsicJsxName(name string) bool {
+	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
 }

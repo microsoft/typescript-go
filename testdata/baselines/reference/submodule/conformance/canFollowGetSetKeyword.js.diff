@@ -1,0 +1,14 @@
+--- old.canFollowGetSetKeyword.js
++++ new.canFollowGetSetKeyword.js
+@@= skipped -19, +19 lines =@@
+
+ //// [canFollowGetSetKeyword.js]
+ class A {
++    get;
+     *x() { }
+ }
+ class B {
++    set;
+     *x() { }
+ }
+ const c = {

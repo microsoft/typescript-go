@@ -95,6 +95,17 @@ func MapNonNil[T any, U comparable](slice []T, f func(T) U) []U {
 	return result
 }
 
+func FlatMap[T any, U comparable](slice []T, f func(T) []U) []U {
+	var result []U
+	for _, value := range slice {
+		mapped := f(value)
+		if len(mapped) != 0 {
+			result = append(result, mapped...)
+		}
+	}
+	return result
+}
+
 func SameMap[T comparable](slice []T, f func(T) T) []T {
 	for i, value := range slice {
 		mapped := f(value)
@@ -327,6 +338,12 @@ func Coalesce[T *U, U any](a T, b T) T {
 	}
 }
 
+// Returns the first element that is not `nil`; CoalesceList(a, b, c) is roughly analogous to `a ?? b ?? c` in JS, except that it
+// non-shortcutting, so it is advised to only use a constant or precomputed value for non-first values in the list
+func CoalesceList[T *U, U any](a ...T) T {
+	return FirstNonNil(a, func(t T) T { return t })
+}
+
 func ComputeLineStarts(text string) []TextPos {
 	result := make([]TextPos, 0, strings.Count(text, "\n")+1)
 	return slices.AppendSeq(result, ComputeLineStartsSeq(text))
@@ -429,21 +446,6 @@ func GetScriptKindFromFileName(fileName string) ScriptKind {
 		}
 	}
 	return ScriptKindUnknown
-}
-
-func GetOutputExtension(fileName string, jsx JsxEmit) string {
-	switch {
-	case tspath.FileExtensionIs(fileName, tspath.ExtensionJson):
-		return tspath.ExtensionJson
-	case jsx == JsxEmitPreserve && tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionJsx, tspath.ExtensionTsx}):
-		return tspath.ExtensionJsx
-	case tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMts, tspath.ExtensionMjs}):
-		return tspath.ExtensionMjs
-	case tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCts, tspath.ExtensionCjs}):
-		return tspath.ExtensionCjs
-	default:
-		return tspath.ExtensionJs
-	}
 }
 
 // Given a name and a list of names that are *not* equal to the name, return a spelling suggestion if there is one that is close enough.
@@ -549,11 +551,15 @@ func CheckEachDefined[S any](s []*S, msg string) []*S {
 	return s
 }
 
-func StripQuotes(name string) string {
-	firstChar, _ := utf8.DecodeRuneInString(name)
-	lastChar, _ := utf8.DecodeLastRuneInString(name)
-	if firstChar == lastChar && (firstChar == '\'' || firstChar == '"' || firstChar == '`') {
-		return name[1 : len(name)-1]
+func IndexAfter(s string, pattern string, startIndex int) int {
+	matched := strings.Index(s[startIndex:], pattern)
+	if matched == -1 {
+		return -1
+	} else {
+		return matched + startIndex
 	}
-	return name
+}
+
+func ShouldRewriteModuleSpecifier(specifier string, compilerOptions *CompilerOptions) bool {
+	return compilerOptions.RewriteRelativeImportExtensions.IsTrue() && tspath.PathIsRelative(specifier) && !tspath.IsDeclarationFileName(specifier) && tspath.HasTSFileExtension(specifier)
 }

@@ -1,7 +1,7 @@
 --- old.unusedLocalsAndObjectSpread2.js
 +++ new.unusedLocalsAndObjectSpread2.js
 @@= skipped -19, +19 lines =@@
- 
+
  //// [unusedLocalsAndObjectSpread2.js]
  "use strict";
 -var __rest = (this && this.__rest) || function (s, e) {
@@ -17,14 +17,13 @@
 -};
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.asdf = void 0;
--var children = props.children, // here!
--_a = props.active, // here!
+ const { children, // here!
+-active: _a } = props, // here!
 -rest = __rest(props, ["children", "active"]);
-+const { children, // here!
 +active: _a, // here!
 +...rest } = props;
  function foo() {
--    var children = props.children, _a = props.active, rest = __rest(props, ["children", "active"]);
+-    const { children, active: _a } = props, rest = __rest(props, ["children", "active"]);
 +    const { children, active: _a, ...rest } = props;
  }
  exports.asdf = 123;

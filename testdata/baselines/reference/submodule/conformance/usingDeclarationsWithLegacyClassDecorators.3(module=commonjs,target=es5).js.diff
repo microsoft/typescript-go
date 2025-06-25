@@ -1,25 +1,24 @@
 --- old.usingDeclarationsWithLegacyClassDecorators.3(module=commonjs,target=es5).js
 +++ new.usingDeclarationsWithLegacyClassDecorators.3(module=commonjs,target=es5).js
 @@= skipped -13, +13 lines =@@
- 
+
  //// [usingDeclarationsWithLegacyClassDecorators.3.js]
  "use strict";
 +var before, C, _default;
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.default = void 0;
 -var before, C, _default;
--var env_1 = { stack: [], error: void 0, hasError: false };
-+const env_1 = { stack: [], error: void 0, hasError: false };
+ const env_1 = { stack: [], error: void 0, hasError: false };
  try {
      before = __addDisposableResource(env_1, null, false);
--    C = /** @class */ (function () {
--        function C() {
--        }
+-    C = (() => {
+-        let C = class C {
+-        };
 -        C = __decorate([
 -            dec
 -        ], C);
 -        return C;
--    }());
+-    })();
 -    exports.default = _default = C;
 +    exports.default = _default = C = 
 +    @dec

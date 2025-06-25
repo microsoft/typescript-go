@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
 )
 
@@ -23,7 +24,7 @@ func start(w *watcher) ExitStatus {
 func (w *watcher) initialize() {
 	// if this function is updated, make sure to update `StartForTest` in export_test.go as needed
 	if w.configFileName == "" {
-		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath())
+		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil)
 	}
 }
 
@@ -35,7 +36,11 @@ func (w *watcher) doCycle() {
 		return
 	}
 	// updateProgram()
-	w.program = compiler.NewProgramFromParsedCommandLine(w.options, w.host)
+	w.program = compiler.NewProgram(compiler.ProgramOptions{
+		Config:           w.options,
+		Host:             w.host,
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+	})
 	if w.hasBeenModified(w.program) {
 		fmt.Fprint(w.sys.Writer(), "build starting at ", w.sys.Now(), w.sys.NewLine())
 		timeStart := w.sys.Now()

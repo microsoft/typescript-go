@@ -2,7 +2,7 @@
 +++ new.symbolDeclarationEmit2.js
 @@= skipped -5, +5 lines =@@
  }
- 
+
  //// [symbolDeclarationEmit2.js]
 -var _a;
  class C {
@@ -12,9 +12,6 @@
 +    [Symbol.toPrimitive] = "";
  }
 -_a = Symbol.toPrimitive;
--
--
--//// [symbolDeclarationEmit2.d.ts]
--declare class C {
--    [Symbol.toPrimitive]: string;
--}
+
+
+ //// [symbolDeclarationEmit2.d.ts]

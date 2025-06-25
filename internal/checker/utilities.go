@@ -12,7 +12,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
+	"github.com/microsoft/typescript-go/internal/module"
+	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 func NewDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
@@ -30,10 +33,6 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 		return ast.NewDiagnosticChain(chain, message, args...)
 	}
 	return NewDiagnosticForNode(node, message, args...)
-}
-
-func IsIntrinsicJsxName(name string) bool {
-	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
 }
 
 func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
@@ -80,20 +79,16 @@ func hasAsyncModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync)
 }
 
-func hasDecorators(node *ast.Node) bool {
-	return ast.HasSyntacticModifier(node, ast.ModifierFlagsDecorator)
-}
-
 func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
 	return node.ModifierFlags() & flags
 }
 
-func hasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
+func HasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
 	return node.ModifierFlags()&flags != 0
 }
 
 func hasReadonlyModifier(node *ast.Node) bool {
-	return hasModifier(node, ast.ModifierFlagsReadonly)
+	return HasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
@@ -176,7 +171,7 @@ func isConstTypeReference(node *ast.Node) bool {
 	return ast.IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && ast.IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
 }
 
-func getSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
+func GetSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
 	if !ast.IsVariableStatement(node) {
 		return nil
 	}
@@ -247,43 +242,9 @@ func nodeCanBeDecorated(useLegacyDecorators bool, node *ast.Node, parent *ast.No
 		// if the parameter's parent has a body and its grandparent is a class declaration, this is a valid target.
 		return parent != nil && parent.Body() != nil &&
 			(parent.Kind == ast.KindConstructor || parent.Kind == ast.KindMethodDeclaration || parent.Kind == ast.KindSetAccessor) &&
-			getThisParameter(parent) != node && grandparent != nil && grandparent.Kind == ast.KindClassDeclaration
+			ast.GetThisParameter(parent) != node && grandparent != nil && grandparent.Kind == ast.KindClassDeclaration
 	}
 
-	return false
-}
-
-func isTypeDeclaration(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindTypeParameter, ast.KindClassDeclaration, ast.KindInterfaceDeclaration, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindEnumDeclaration:
-		return true
-	case ast.KindImportClause:
-		return node.AsImportClause().IsTypeOnly
-	case ast.KindImportSpecifier:
-		return node.Parent.Parent.AsImportClause().IsTypeOnly
-	case ast.KindExportSpecifier:
-		return node.Parent.Parent.AsExportDeclaration().IsTypeOnly
-	default:
-		return false
-	}
-}
-
-func canHaveSymbol(node *ast.Node) bool {
-	switch node.Kind {
-	case ast.KindArrowFunction, ast.KindBinaryExpression, ast.KindBindingElement, ast.KindCallExpression, ast.KindCallSignature,
-		ast.KindClassDeclaration, ast.KindClassExpression, ast.KindClassStaticBlockDeclaration, ast.KindConstructor, ast.KindConstructorType,
-		ast.KindConstructSignature, ast.KindElementAccessExpression, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindExportAssignment, ast.KindJSExportAssignment,
-		ast.KindExportDeclaration, ast.KindExportSpecifier, ast.KindFunctionDeclaration, ast.KindFunctionExpression, ast.KindFunctionType,
-		ast.KindGetAccessor, ast.KindIdentifier, ast.KindImportClause, ast.KindImportEqualsDeclaration, ast.KindImportSpecifier,
-		ast.KindIndexSignature, ast.KindInterfaceDeclaration, ast.KindJSDocSignature, ast.KindJSDocTypeLiteral,
-		ast.KindJsxAttribute, ast.KindJsxAttributes, ast.KindJsxSpreadAttribute, ast.KindMappedType, ast.KindMethodDeclaration,
-		ast.KindMethodSignature, ast.KindModuleDeclaration, ast.KindNamedTupleMember, ast.KindNamespaceExport, ast.KindNamespaceExportDeclaration,
-		ast.KindNamespaceImport, ast.KindNewExpression, ast.KindNoSubstitutionTemplateLiteral, ast.KindNumericLiteral, ast.KindObjectLiteralExpression,
-		ast.KindParameter, ast.KindPropertyAccessExpression, ast.KindPropertyAssignment, ast.KindPropertyDeclaration, ast.KindPropertySignature,
-		ast.KindSetAccessor, ast.KindShorthandPropertyAssignment, ast.KindSourceFile, ast.KindSpreadAssignment, ast.KindStringLiteral,
-		ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindTypeLiteral, ast.KindTypeParameter, ast.KindVariableDeclaration:
-		return true
-	}
 	return false
 }
 
@@ -359,22 +320,9 @@ func getExternalModuleRequireArgument(node *ast.Node) *ast.Node {
 	return nil
 }
 
-func getExternalModuleImportEqualsDeclarationExpression(node *ast.Node) *ast.Node {
-	// Debug.assert(isExternalModuleImportEqualsDeclaration(node))
-	return node.AsImportEqualsDeclaration().ModuleReference.AsExternalModuleReference().Expression
-}
-
-func isRightSideOfQualifiedNameOrPropertyAccess(node *ast.Node) bool {
-	parent := node.Parent
-	switch parent.Kind {
-	case ast.KindQualifiedName:
-		return parent.AsQualifiedName().Right == node
-	case ast.KindPropertyAccessExpression:
-		return parent.AsPropertyAccessExpression().Name() == node
-	case ast.KindMetaProperty:
-		return parent.AsMetaProperty().Name() == node
-	}
-	return false
+func isRightSideOfAccessExpression(node *ast.Node) bool {
+	return node.Parent != nil && (ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node ||
+		ast.IsElementAccessExpression(node.Parent) && node.Parent.AsElementAccessExpression().ArgumentExpression == node)
 }
 
 func isTopLevelInExternalModuleAugmentation(node *ast.Node) bool {
@@ -464,7 +412,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (hasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -1092,17 +1040,6 @@ func isLateBoundName(name string) bool {
 	return len(name) >= 2 && name[0] == '\xfe' && name[1] == '@'
 }
 
-func getThisParameter(signature *ast.Node) *ast.Node {
-	// callback tags do not currently support this parameters
-	if len(signature.Parameters()) != 0 {
-		thisParameter := signature.Parameters()[0]
-		if ast.IsThisParameter(thisParameter) {
-			return thisParameter
-		}
-	}
-	return nil
-}
-
 func isObjectOrArrayLiteralType(t *Type) bool {
 	return t.objectFlags&(ObjectFlagsObjectLiteral|ObjectFlagsArrayLiteral) != 0
 }
@@ -1128,10 +1065,6 @@ func getContainingClassExcludingClassDecorators(node *ast.Node) *ast.ClassLikeDe
 
 func isThisTypeParameter(t *Type) bool {
 	return t.flags&TypeFlagsTypeParameter != 0 && t.AsTypeParameter().isThisType
-}
-
-func isCallOrNewExpression(node *ast.Node) bool {
-	return ast.IsCallExpression(node) || ast.IsNewExpression(node)
 }
 
 func isClassInstanceProperty(node *ast.Node) bool {
@@ -1233,15 +1166,6 @@ func reverseAccessKind(a AccessKind) AccessKind {
 	panic("Unhandled case in reverseAccessKind")
 }
 
-func isJsxOpeningLikeElement(node *ast.Node) bool {
-	return ast.IsJsxOpeningElement(node) || ast.IsJsxSelfClosingElement(node)
-}
-
-// Deprecated in favor of `ast.IsObjectLiteralElement`
-func isObjectLiteralElementLike(node *ast.Node) bool {
-	return ast.IsObjectLiteralElement(node)
-}
-
 func isInfinityOrNaNString(name string) bool {
 	return name == "Infinity" || name == "-Infinity" || name == "NaN"
 }
@@ -1268,13 +1192,6 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 	return node.Flags&ast.NodeFlagsAmbient != 0 || ast.FindAncestor(node, func(n *ast.Node) bool {
 		return ast.IsInterfaceDeclaration(n) || ast.IsTypeOrJSTypeAliasDeclaration(n) || ast.IsTypeLiteralNode(n)
 	}) != nil
-}
-
-func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
-	for node != nil && node.Kind != kind {
-		node = node.Parent
-	}
-	return node
 }
 
 func isLiteralExpressionOfObject(node *ast.Node) bool {
@@ -1314,18 +1231,6 @@ func getBindingElementPropertyName(node *ast.Node) *ast.Node {
 	return node.Name()
 }
 
-func indexOfNode(nodes []*ast.Node, node *ast.Node) int {
-	index, ok := slices.BinarySearchFunc(nodes, node, compareNodePositions)
-	if ok {
-		return index
-	}
-	return -1
-}
-
-func compareNodePositions(n1, n2 *ast.Node) int {
-	return n1.Pos() - n2.Pos()
-}
-
 func hasContextSensitiveParameters(node *ast.Node) bool {
 	// Functions with type parameters are not context sensitive.
 	if node.TypeParameters() == nil {
@@ -1350,7 +1255,7 @@ func isCallChain(node *ast.Node) bool {
 }
 
 func (c *Checker) callLikeExpressionMayHaveTypeArguments(node *ast.Node) bool {
-	return isCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || isJsxOpeningLikeElement(node)
+	return ast.IsCallOrNewExpression(node) || ast.IsTaggedTemplateExpression(node) || ast.IsJsxOpeningLikeElement(node)
 }
 
 func isSuperCall(n *ast.Node) bool {
@@ -1428,7 +1333,7 @@ func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
 }
 
 func isJsxIntrinsicTagName(tagName *ast.Node) bool {
-	return ast.IsIdentifier(tagName) && IsIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
+	return ast.IsIdentifier(tagName) && scanner.IsIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
 }
 
 func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
@@ -1462,12 +1367,6 @@ func isInNameOfExpressionWithTypeArguments(node *ast.Node) bool {
 	}
 
 	return node.Parent.Kind == ast.KindExpressionWithTypeArguments
-}
-
-func isTypeDeclarationName(name *ast.Node) bool {
-	return name.Kind == ast.KindIdentifier &&
-		isTypeDeclaration(name.Parent) &&
-		ast.GetNameOfDeclaration(name.Parent) == name
 }
 
 func getIndexSymbolFromSymbolTable(symbolTable ast.SymbolTable) *ast.Symbol {
@@ -1568,10 +1467,11 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program) bool {
 	return options.NoCheck.IsTrue() ||
 		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
 		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
+		host.IsSourceFromProjectReference(sourceFile.Path()) ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
 
@@ -1586,17 +1486,13 @@ func canIncludeBindAndCheckDiagnostics(sourceFile *ast.SourceFile, options *core
 
 	isJS := sourceFile.ScriptKind == core.ScriptKindJS || sourceFile.ScriptKind == core.ScriptKindJSX
 	isCheckJS := isJS && ast.IsCheckJSEnabledForFile(sourceFile, options)
-	isPlainJS := isPlainJSFile(sourceFile, options.CheckJs)
+	isPlainJS := ast.IsPlainJSFile(sourceFile, options.CheckJs)
 
 	// By default, only type-check .ts, .tsx, Deferred, plain JS, checked JS and External
 	// - plain JS: .js files with no // ts-check and checkJs: undefined
 	// - check JS: .js files with either // ts-check or checkJs: true
 	// - external: files that are added by plugins
 	return isPlainJS || isCheckJS || sourceFile.ScriptKind == core.ScriptKindDeferred
-}
-
-func isPlainJSFile(file *ast.SourceFile, checkJs core.Tristate) bool {
-	return file != nil && (file.ScriptKind == core.ScriptKindJS || file.ScriptKind == core.ScriptKindJSX) && file.CheckJsDirective == nil && checkJs == core.TSUnknown
 }
 
 func getEnclosingContainer(node *ast.Node) *ast.Node {
@@ -1630,10 +1526,6 @@ func minAndMax[T any](slice []T, getValue func(value T) int) (int, int) {
 		}
 	}
 	return minValue, maxValue
-}
-
-func isModuleExportsAccessExpression(node *ast.Node) bool {
-	return ast.IsAccessExpression(node) && ast.IsModuleIdentifier(node.Expression()) && ast.GetElementOrPropertyAccessName(node) == "exports"
 }
 
 func getNonModifierTokenRangeOfNode(node *ast.Node) core.TextRange {
@@ -1901,19 +1793,6 @@ func tryGetPropertyAccessOrIdentifierToString(expr *ast.Node) string {
 	return ""
 }
 
-func getInvokedExpression(node *ast.Node) *ast.Node {
-	switch node.Kind {
-	case ast.KindTaggedTemplateExpression:
-		return node.AsTaggedTemplateExpression().Tag
-	case ast.KindJsxOpeningElement, ast.KindJsxSelfClosingElement:
-		return node.TagName()
-	case ast.KindBinaryExpression:
-		return node.AsBinaryExpression().Right
-	default:
-		return node.Expression()
-	}
-}
-
 func getFirstJSDocTag(node *ast.Node, f func(*ast.Node) bool) *ast.Node {
 	for _, jsdoc := range node.JSDoc(nil) {
 		tags := jsdoc.AsJSDoc().Tags
@@ -1944,6 +1823,36 @@ func allDeclarationsInSameSourceFile(symbol *ast.Symbol) bool {
 		}
 	}
 	return true
+}
+
+func containsNonMissingUndefinedType(c *Checker, t *Type) bool {
+	var candidate *Type
+	if t.flags&TypeFlagsUnion != 0 {
+		candidate = t.AsUnionType().types[0]
+	} else {
+		candidate = t
+	}
+	return candidate.flags&TypeFlagsUndefined != 0 && candidate != c.missingType
+}
+
+func getAnyImportSyntax(node *ast.Node) *ast.Node {
+	var importNode *ast.Node
+	switch node.Kind {
+	case ast.KindImportEqualsDeclaration:
+		importNode = node
+	case ast.KindImportClause:
+		importNode = node.Parent
+	case ast.KindNamespaceImport:
+		importNode = node.Parent.Parent
+	case ast.KindImportSpecifier:
+		importNode = node.Parent.Parent.Parent
+	default:
+		return nil
+	}
+	if importNode.Kind == ast.KindJSDocImportTag {
+		return importNode.AsJSDocImportTag().JSImportDeclaration.AsNode()
+	}
+	return importNode
 }
 
 // A reserved member name consists of the byte 0xFE (which is an invalid UTF-8 encoding) followed by one or more
@@ -2001,4 +1910,45 @@ func (c *Checker) checkNotCanceled() {
 	if c.wasCanceled {
 		panic("Checker was previously cancelled")
 	}
+}
+
+func (c *Checker) getPackagesMap() map[string]bool {
+	if c.packagesMap == nil {
+		c.packagesMap = make(map[string]bool)
+		resolvedModules := c.program.GetResolvedModules()
+		for _, resolvedModulesInFile := range resolvedModules {
+			for _, module := range resolvedModulesInFile {
+				if module.PackageId.Name != "" {
+					c.packagesMap[module.PackageId.Name] = c.packagesMap[module.PackageId.Name] || module.Extension == tspath.ExtensionDts
+				}
+			}
+		}
+	}
+	return c.packagesMap
+}
+
+func (c *Checker) typesPackageExists(packageName string) bool {
+	packagesMap := c.getPackagesMap()
+	_, ok := packagesMap[module.GetTypesPackageName(packageName)]
+	return ok
+}
+
+func (c *Checker) packageBundlesTypes(packageName string) bool {
+	packagesMap := c.getPackagesMap()
+	hasTypes, _ := packagesMap[packageName]
+	return hasTypes
+}
+
+func ValueToString(value any) string {
+	switch value := value.(type) {
+	case string:
+		return "\"" + printer.EscapeString(value, '"') + "\""
+	case jsnum.Number:
+		return value.String()
+	case bool:
+		return core.IfElse(value, "true", "false")
+	case jsnum.PseudoBigInt:
+		return value.String() + "n"
+	}
+	panic("unhandled value type in valueToString")
 }

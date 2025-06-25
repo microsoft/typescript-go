@@ -2,7 +2,7 @@
 +++ new.modulePrologueSystem.js
 @@= skipped -5, +5 lines =@@
  export class Foo {}
- 
+
  //// [modulePrologueSystem.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -11,11 +11,8 @@
 -    return {
 -        setters: [],
 -        execute: function () {
--            Foo = /** @class */ (function () {
--                function Foo() {
--                }
--                return Foo;
--            }());
+-            Foo = class Foo {
+-            };
 -            exports_1("Foo", Foo);
 -        }
 -    };

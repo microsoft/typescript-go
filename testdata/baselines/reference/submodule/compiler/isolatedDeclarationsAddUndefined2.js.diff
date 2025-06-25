@@ -1,0 +1,47 @@
+--- old.isolatedDeclarationsAddUndefined2.js
++++ new.isolatedDeclarationsAddUndefined2.js
+@@= skipped -27, +27 lines =@@
+
+ //// [isolatedDeclarationsAddUndefined2.js]
+ "use strict";
+-// https://github.com/microsoft/TypeScript/issues/60123
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.Bar4 = exports.Bar3 = exports.Bar2 = exports.Bar = void 0;
+ exports.test1 = test1;
+ exports.test2 = test2;
+ exports.test3 = test3;
++// https://github.com/microsoft/TypeScript/issues/60123
+ class Bar {
++    x;
+     constructor(x) {
+         this.x = x;
+     }
+ }
+ exports.Bar = Bar;
+ class Bar2 {
++    x;
+     constructor(x) {
+         this.x = x;
+     }
+ }
+ exports.Bar2 = Bar2;
+ class Bar3 {
++    x;
+     constructor(x) {
+         this.x = x;
+     }
+ }
+ exports.Bar3 = Bar3;
+ class Bar4 {
++    x;
+     constructor(x) {
+         this.x = x;
+     }
+@@= skipped -36, +40 lines =@@
+
+
+ //// [isolatedDeclarationsAddUndefined2.d.ts]
++// https://github.com/microsoft/TypeScript/issues/60123
+ export declare class Bar {
+     private x?;
+     constructor(x?: Array | undefined);

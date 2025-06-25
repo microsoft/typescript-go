@@ -12,11 +12,10 @@ function Multimap() {
 
     /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
     this._map = {};
->this._map = {} : any
+>this._map = {} : {}
 >this._map : any
 >this : any
 >_map : any
->{} : any
 >{} : {}
 
 };
@@ -57,11 +56,10 @@ var Multimap2 = function() {
 
     /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
     this._map = {};
->this._map = {} : any
+>this._map = {} : {}
 >this._map : any
 >this : any
 >_map : any
->{} : any
 >{} : {}
 
 };
@@ -91,8 +89,8 @@ Multimap2.prototype.get = function (key) {
 }
 
 var Ns = {};
->Ns : {}
->{} : {}
+>Ns : { Multimap3: () => void; }
+>{} : { Multimap3: () => void; }
 
 /**
  * Should work for expando-namespaced initialisers too
@@ -102,18 +100,17 @@ var Ns = {};
  */
 Ns.Multimap3 = function() {
 >Ns.Multimap3 = function() {    /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */    this._map = {};} : () => void
->Ns.Multimap3 : any
->Ns : {}
->Multimap3 : any
+>Ns.Multimap3 : () => void
+>Ns : { Multimap3: () => void; }
+>Multimap3 : () => void
 >function() {    /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */    this._map = {};} : () => void
 
     /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
     this._map = {};
->this._map = {} : any
+>this._map = {} : {}
 >this._map : any
->this : {}
+>this : { Multimap3: () => void; }
 >_map : any
->{} : any
 >{} : {}
 
 };
@@ -126,9 +123,9 @@ Ns.Multimap3.prototype.get = function (key) {
 >Ns.Multimap3.prototype.get = function (key) {    return this._map[key + ''];} : (key: any) => any
 >Ns.Multimap3.prototype.get : any
 >Ns.Multimap3.prototype : any
->Ns.Multimap3 : any
->Ns : {}
->Multimap3 : any
+>Ns.Multimap3 : () => void
+>Ns : { Multimap3: () => void; }
+>Multimap3 : () => void
 >prototype : any
 >get : any
 >function (key) {    return this._map[key + ''];} : (key: any) => any

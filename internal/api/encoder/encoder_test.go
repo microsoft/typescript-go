@@ -13,14 +13,16 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"gotest.tools/v3/assert"
 )
 
 func TestEncodeSourceFile(t *testing.T) {
 	t.Parallel()
-	sourceFile := parser.ParseSourceFile("/test.ts", "/test.ts", "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptTargetESNext, scanner.JSDocParsingModeParseAll)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/test.ts",
+		Path:     "/test.ts",
+	}, "import { bar } from \"bar\";\nexport function foo<T, U>(a: string, b: string): any {}\nfoo();", core.ScriptKindTS)
 	t.Run("baseline", func(t *testing.T) {
 		t.Parallel()
 		buf, err := encoder.EncodeSourceFile(sourceFile, "")
@@ -38,13 +40,10 @@ func BenchmarkEncodeSourceFile(b *testing.B) {
 	filePath := filepath.Join(repo.TypeScriptSubmodulePath, "src/compiler/checker.ts")
 	fileContent, err := os.ReadFile(filePath)
 	assert.NilError(b, err)
-	sourceFile := parser.ParseSourceFile(
-		"/checker.ts",
-		"/checker.ts",
-		string(fileContent),
-		core.ScriptTargetESNext,
-		scanner.JSDocParsingModeParseAll,
-	)
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: "/checker.ts",
+		Path:     "/checker.ts",
+	}, string(fileContent), core.ScriptKindTS)
 
 	for b.Loop() {
 		_, err := encoder.EncodeSourceFile(sourceFile, "")

@@ -1,8 +1,8 @@
 --- old.decoratorCallGeneric.js
 +++ new.decoratorCallGeneric.js
 @@= skipped -14, +14 lines =@@
- 
- 
+
+
  //// [decoratorCallGeneric.js]
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -11,15 +11,15 @@
 -    return c > 3 && r && Object.defineProperty(target, key, r), r;
 -};
  function dec(c) { }
--var C = /** @class */ (function () {
--    function C() {
--    }
--    C.m = function () { };
+-let C = (() => {
+-    let C = class C {
+-        static m() { }
+-    };
 -    C = __decorate([
 -        dec
 -    ], C);
 -    return C;
--}());
+-})();
 +@dec
 +class C {
 +    _brand;

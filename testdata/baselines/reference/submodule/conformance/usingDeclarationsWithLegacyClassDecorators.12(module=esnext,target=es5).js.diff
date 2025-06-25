@@ -1,25 +1,23 @@
 --- old.usingDeclarationsWithLegacyClassDecorators.12(module=esnext,target=es5).js
 +++ new.usingDeclarationsWithLegacyClassDecorators.12(module=esnext,target=es5).js
 @@= skipped -14, +14 lines =@@
- 
- 
+
+
  //// [usingDeclarationsWithLegacyClassDecorators.12.js]
--var C = /** @class */ (function () {
--    function C() {
--    }
+-let C = (() => {
+-    let C = class C {
+-    };
 -    C = __decorate([
 -        dec
 -    ], C);
 -    return C;
--}());
+-})();
 -export { C as D };
  var after;
--var env_1 = { stack: [], error: void 0, hasError: false };
 +@dec
 +class C {
 +}
 +export { C as D };
-+const env_1 = { stack: [], error: void 0, hasError: false };
+ const env_1 = { stack: [], error: void 0, hasError: false };
  try {
      after = __addDisposableResource(env_1, null, false);
- }

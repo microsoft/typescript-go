@@ -778,7 +778,7 @@ if (c.isC2()) {
 }
 
 function doNotRefineDestructuredParam({x, y}: {x: number | null, y: number}) {
->doNotRefineDestructuredParam : (__0: { x: number | null; y: number; }) => boolean
+>doNotRefineDestructuredParam : ({ x, y }: { x: number | null; y: number; }) => boolean
 >x : number | null
 >y : number
 >x : number | null
@@ -1011,5 +1011,41 @@ if (foobarPred(foobar)) {
 >foobar.foo : number
 >foobar : { type: "foo"; foo: number; }
 >foo : number
+}
+
+// https://github.com/microsoft/TypeScript/issues/60778
+const arrTest: Array<number> = [1, 2, null, 3].filter(
+>arrTest : number[]
+>[1, 2, null, 3].filter(  (x) => (x != null) satisfies boolean,) : number[]
+>[1, 2, null, 3].filter : { <S extends number | null>(predicate: (value: number | null, index: number, array: (number | null)[]) => value is S, thisArg?: any): S[]; (predicate: (value: number | null, index: number, array: (number | null)[]) => unknown, thisArg?: any): (number | null)[]; }
+>[1, 2, null, 3] : (number | null)[]
+>1 : 1
+>2 : 2
+>3 : 3
+>filter : { <S extends number | null>(predicate: (value: number | null, index: number, array: (number | null)[]) => value is S, thisArg?: any): S[]; (predicate: (value: number | null, index: number, array: (number | null)[]) => unknown, thisArg?: any): (number | null)[]; }
+
+  (x) => (x != null) satisfies boolean,
+>(x) => (x != null) satisfies boolean : (x: number | null) => x is number
+>x : number | null
+>(x != null) satisfies boolean : boolean
+>(x != null) : boolean
+>x != null : boolean
+>x : number | null
+
+);
+
+function isEmptyString(x: unknown) {
+>isEmptyString : (x: unknown) => x is ""
+>x : unknown
+
+  const rv = x === "";
+>rv : boolean
+>x === "" : boolean
+>x : unknown
+>"" : ""
+
+  return rv satisfies boolean;
+>rv satisfies boolean : boolean
+>rv : boolean
 }
 

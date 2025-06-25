@@ -2,7 +2,7 @@
 +++ new.elidedEmbeddedStatementsReplacedWithSemicolon.js
 @@= skipped -26, +26 lines =@@
      const enum H {}
- 
+
  //// [elidedEmbeddedStatementsReplacedWithSemicolon.js]
 -if (1)
 -    ;
@@ -15,16 +15,15 @@
 -    ;
 -for (; 0;)
 -    ;
--for (var _ in [])
+-for (let _ in [])
 -    ;
--for (var _i = 0, _a = []; _i < _a.length; _i++) {
--    var _ = _a[_i];
+-for (let _ of [])
 -    ;
 +if (1) {
 +    var A;
 +    (function (A) {
 +    })(A || (A = {}));
- }
++}
 +else {
 +    var B;
 +    (function (B) {

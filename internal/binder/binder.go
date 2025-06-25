@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -36,19 +37,17 @@ const (
 	ContainerFlagsHasLocals                                        ContainerFlags = 1 << 5
 	ContainerFlagsIsInterface                                      ContainerFlags = 1 << 6
 	ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor ContainerFlags = 1 << 7
+	ContainerFlagsIsThisContainer                                  ContainerFlags = 1 << 8
 )
 
 type Binder struct {
 	file                    *ast.SourceFile
-	options                 *core.SourceFileAffectingCompilerOptions
-	languageVersion         core.ScriptTarget
 	bindFunc                func(*ast.Node) bool
 	unreachableFlow         *ast.FlowNode
 	reportedUnreachableFlow *ast.FlowNode
 
-	parent                 *ast.Node
 	container              *ast.Node
-	thisParentContainer    *ast.Node
+	thisContainer          *ast.Node
 	blockScopeContainer    *ast.Node
 	lastContainer          *ast.Node
 	currentFlow            *ast.FlowNode
@@ -68,12 +67,16 @@ type Binder struct {
 	inAssignmentPattern    bool
 	seenParseError         bool
 	symbolCount            int
-	classifiableNames      core.Set[string]
+	classifiableNames      collections.Set[string]
 	symbolPool             core.Pool[ast.Symbol]
 	flowNodePool           core.Pool[ast.FlowNode]
 	flowListPool           core.Pool[ast.FlowList]
 	singleDeclarationsPool core.Pool[*ast.Node]
 	delayedTypeAliases     []*ast.Node
+}
+
+func (b *Binder) options() core.SourceFileAffectingCompilerOptions {
+	return b.file.ParseOptions().CompilerOptions
 }
 
 type ActiveLabel struct {
@@ -87,11 +90,11 @@ type ActiveLabel struct {
 func (label *ActiveLabel) BreakTarget() *ast.FlowNode    { return label.breakTarget }
 func (label *ActiveLabel) ContinueTarget() *ast.FlowNode { return label.continueTarget }
 
-func BindSourceFile(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) {
+func BindSourceFile(file *ast.SourceFile) {
 	// This is constructed this way to make the compiler "out-line" the function,
 	// avoiding most work in the common case where the file has already been bound.
 	if !file.IsBound() {
-		bindSourceFile(file, options)
+		bindSourceFile(file)
 	}
 }
 
@@ -112,14 +115,12 @@ func putBinder(b *Binder) {
 	binderPool.Put(b)
 }
 
-func bindSourceFile(file *ast.SourceFile, options *core.SourceFileAffectingCompilerOptions) {
+func bindSourceFile(file *ast.SourceFile) {
 	file.BindOnce(func() {
 		b := getBinder()
 		defer putBinder(b)
 		b.file = file
-		b.options = options
-		b.languageVersion = options.EmitScriptTarget
-		b.inStrictMode = options.BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
+		b.inStrictMode = b.options().BindInStrictMode && !file.IsDeclarationFile || ast.IsExternalModule(file)
 		b.unreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.reportedUnreachableFlow = b.newFlowNode(ast.FlowFlagsUnreachable)
 		b.bind(file.AsNode())
@@ -233,9 +234,6 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 			} else if !(includes&ast.SymbolFlagsVariable != 0 && symbol.Flags&ast.SymbolFlagsAssignment != 0 ||
 				includes&ast.SymbolFlagsAssignment != 0 && symbol.Flags&ast.SymbolFlagsVariable != 0) {
 				// Assignment declarations are allowed to merge with variables, no matter what other flags they have.
-				if node.Name() != nil {
-					setParent(node.Name(), node)
-				}
 				// Report errors every position with duplicate declaration
 				// Report errors on previous encountered declarations
 				var message *diagnostics.Message
@@ -560,9 +558,7 @@ func (b *Binder) combineFlowLists(head *ast.FlowList, tail *ast.FlowList) *ast.F
 }
 
 func (b *Binder) newSingleDeclaration(declaration *ast.Node) []*ast.Node {
-	nodes := b.singleDeclarationsPool.NewSlice(1)
-	nodes[0] = declaration
-	return nodes
+	return b.singleDeclarationsPool.NewSlice1(declaration)
 }
 
 func setFlowNodeReferenced(flow *ast.FlowNode) {
@@ -574,21 +570,24 @@ func setFlowNodeReferenced(flow *ast.FlowNode) {
 	}
 }
 
-func hasAntecedent(list *ast.FlowList, antecedent *ast.FlowNode) bool {
-	for list != nil {
-		if list.Flow == antecedent {
-			return true
-		}
-		list = list.Next
-	}
-	return false
-}
-
 func (b *Binder) addAntecedent(label *ast.FlowLabel, antecedent *ast.FlowNode) {
-	if antecedent.Flags&ast.FlowFlagsUnreachable == 0 && !hasAntecedent(label.Antecedents, antecedent) {
-		label.Antecedents = b.newFlowList(antecedent, label.Antecedents)
-		setFlowNodeReferenced(antecedent)
+	if antecedent.Flags&ast.FlowFlagsUnreachable != 0 {
+		return
 	}
+	// If antecedent isn't already on the Antecedents list, add it to the end of the list
+	var last *ast.FlowList
+	for list := label.Antecedents; list != nil; list = list.Next {
+		if list.Flow == antecedent {
+			return
+		}
+		last = list
+	}
+	if last == nil {
+		label.Antecedents = b.newFlowList(antecedent, nil)
+	} else {
+		last.Next = b.newFlowList(antecedent, nil)
+	}
+	setFlowNodeReferenced(antecedent)
 }
 
 func (b *Binder) finishFlowLabel(label *ast.FlowLabel) *ast.FlowNode {
@@ -605,7 +604,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 	if node == nil {
 		return false
 	}
-	node.Parent = b.parent
 	saveInStrictMode := b.inStrictMode
 	// Even though in the AST the jsdoc @typedef node belongs to the current node,
 	// its symbol might be in the same scope with the current node's symbol. Consider:
@@ -648,7 +646,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	case ast.KindBinaryExpression:
 		switch ast.GetAssignmentDeclarationKind(node.AsBinaryExpression()) {
 		case ast.JSDeclarationKindProperty:
-			b.bindFunctionPropertyAssignment(node)
+			b.bindExpandoPropertyAssignment(node)
 		case ast.JSDeclarationKindThisProperty:
 			b.bindThisPropertyAssignment(node)
 		}
@@ -756,9 +754,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 	// children, as an optimization we don't process those.
 	thisNodeOrAnySubnodesHasError := node.Flags&ast.NodeFlagsThisNodeHasError != 0
 	if node.Kind > ast.KindLastToken {
-		saveParent := b.parent
 		saveSeenParseError := b.seenParseError
-		b.parent = node
 		b.seenParseError = false
 		containerFlags := GetContainerFlags(node)
 		if containerFlags == ContainerFlagsNone {
@@ -769,15 +765,7 @@ func (b *Binder) bind(node *ast.Node) bool {
 		if b.seenParseError {
 			thisNodeOrAnySubnodesHasError = true
 		}
-		b.parent = saveParent
 		b.seenParseError = saveSeenParseError
-	} else {
-		saveParent := b.parent
-		if node.Kind == ast.KindEndOfFile {
-			b.parent = node
-		}
-		b.setJSDocParents(node)
-		b.parent = saveParent
 	}
 	if thisNodeOrAnySubnodesHasError {
 		node.Flags |= ast.NodeFlagsThisNodeOrAnySubNodesHasError
@@ -785,13 +773,6 @@ func (b *Binder) bind(node *ast.Node) bool {
 	}
 	b.inStrictMode = saveInStrictMode
 	return false
-}
-
-func (b *Binder) setJSDocParents(node *ast.Node) {
-	for _, jsdoc := range node.JSDoc(b.file) {
-		setParent(jsdoc, node)
-		ast.SetParentInChildren(jsdoc)
-	}
 }
 
 func (b *Binder) bindPropertyWorker(node *ast.Node) {
@@ -827,17 +808,17 @@ func (b *Binder) bindModuleDeclaration(node *ast.Node) {
 		if ast.IsModuleAugmentationExternal(node) {
 			b.declareModuleSymbol(node)
 		} else {
-			var pattern core.Pattern
 			name := node.AsModuleDeclaration().Name()
-			if ast.IsStringLiteral(name) {
-				pattern = core.TryParsePattern(name.AsStringLiteral().Text)
-				if !pattern.IsValid() {
-					b.errorOnFirstToken(name, diagnostics.Pattern_0_can_have_at_most_one_Asterisk_character, name.AsStringLiteral().Text)
-				}
-			}
 			symbol := b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsValueModule, ast.SymbolFlagsValueModuleExcludes)
-			if pattern.StarIndex >= 0 {
-				b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, &ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
+
+			if ast.IsStringLiteral(name) {
+				pattern := core.TryParsePattern(name.AsStringLiteral().Text)
+				if !pattern.IsValid() {
+					// An invalid pattern - must have multiple wildcards.
+					b.errorOnFirstToken(name, diagnostics.Pattern_0_can_have_at_most_one_Asterisk_character, name.AsStringLiteral().Text)
+				} else if pattern.StarIndex >= 0 {
+					b.file.PatternAmbientModules = append(b.file.PatternAmbientModules, &ast.PatternAmbientModule{Pattern: pattern, Symbol: symbol})
+				}
 			}
 		}
 	} else {
@@ -890,9 +871,6 @@ func (b *Binder) bindExportDeclaration(node *ast.Node) {
 		// All export * declarations are collected in an __export symbol
 		b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), node, ast.SymbolFlagsExportStar, ast.SymbolFlagsNone)
 	} else if ast.IsNamespaceExport(decl.ExportClause) {
-		// declareSymbol walks up parents to find name text, parent _must_ be set
-		// but won't be set by the normal binder walk until `bindChildren` later on.
-		setParent(decl.ExportClause, node)
 		b.declareSymbol(ast.GetExports(b.container.Symbol()), b.container.Symbol(), decl.ExportClause, ast.SymbolFlagsAlias, ast.SymbolFlagsAliasExcludes)
 	}
 }
@@ -971,7 +949,7 @@ func (b *Binder) bindCallExpression(node *ast.Node) {
 	if ast.IsInJSFile(node) &&
 		b.file.ExternalModuleIndicator == nil &&
 		b.file.CommonJSModuleIndicator == nil &&
-		ast.IsVariableDeclarationInitializedToRequire(node.Parent) {
+		ast.IsRequireCall(node, false /*requireStringLiteralLikeArgument*/) {
 		b.file.CommonJSModuleIndicator = node
 		b.bindSourceFileAsExternalModule()
 	}
@@ -1003,7 +981,6 @@ func (b *Binder) bindClassLikeDeclaration(node *ast.Node) {
 	prototypeSymbol := b.newSymbol(ast.SymbolFlagsProperty|ast.SymbolFlagsPrototype, "prototype")
 	symbolExport := ast.GetExports(symbol)[prototypeSymbol.Name]
 	if symbolExport != nil {
-		setParent(name, node)
 		b.errorOnNode(symbolExport.Declarations[0], diagnostics.Duplicate_identifier_0, ast.SymbolName(prototypeSymbol))
 	}
 	ast.GetExports(symbol)[prototypeSymbol.Name] = prototypeSymbol
@@ -1040,39 +1017,60 @@ func addLateBoundAssignmentDeclarationToSymbol(node *ast.Node, symbol *ast.Symbo
 	symbol.AssignmentDeclarationMembers.Add(node)
 }
 
-func (b *Binder) bindFunctionPropertyAssignment(node *ast.Node) {
+func (b *Binder) bindExpandoPropertyAssignment(node *ast.Node) {
 	expr := node.AsBinaryExpression()
-	parentName := expr.Left.Expression().Text()
-	symbol := b.lookupName(parentName, b.blockScopeContainer)
+	parent := expr.Left.Expression()
+	symbol := b.lookupEntity(parent, b.blockScopeContainer)
 	if symbol == nil {
-		symbol = b.lookupName(parentName, b.container)
+		symbol = b.lookupEntity(parent, b.container)
 	}
-	if symbol != nil && symbol.ValueDeclaration != nil {
-		// For an assignment 'fn.xxx = ...', where 'fn' is a previously declared function or a previously
-		// declared const variable initialized with a function expression or arrow function, we add expando
-		// property declarations to the function's symbol.
-		var funcSymbol *ast.Symbol
-		switch {
-		case ast.IsFunctionDeclaration(symbol.ValueDeclaration):
-			funcSymbol = symbol
-		case ast.IsVariableDeclaration(symbol.ValueDeclaration) && symbol.ValueDeclaration.Parent.Flags&ast.NodeFlagsConst != 0:
-			initializer := symbol.ValueDeclaration.Initializer()
-			if initializer != nil && ast.IsFunctionExpressionOrArrowFunction(initializer) {
-				funcSymbol = initializer.Symbol()
-			}
-		}
-		if funcSymbol != nil {
-			// Fix up parent pointers since we're going to use these nodes before we bind into them
-			setParent(expr.Left, node)
-			setParent(expr.Right, node)
-			if ast.HasDynamicName(node) {
-				b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
-				addLateBoundAssignmentDeclarationToSymbol(node, funcSymbol)
-			} else {
-				b.declareSymbol(ast.GetExports(funcSymbol), funcSymbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
-			}
+	if symbol = getInitializerSymbol(symbol); symbol != nil {
+		if ast.HasDynamicName(node) {
+			b.bindAnonymousDeclaration(node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.InternalSymbolNameComputed)
+			addLateBoundAssignmentDeclarationToSymbol(node, symbol)
+		} else {
+			b.declareSymbol(ast.GetExports(symbol), symbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsPropertyExcludes)
 		}
 	}
+}
+
+func getInitializerSymbol(symbol *ast.Symbol) *ast.Symbol {
+	if symbol == nil || symbol.ValueDeclaration == nil {
+		return nil
+	}
+	declaration := symbol.ValueDeclaration
+	// For an assignment 'fn.xxx = ...', where 'fn' is a previously declared function or a previously
+	// declared const variable initialized with a function expression or arrow function, we add expando
+	// property declarations to the function's symbol.
+	// This also applies to class expressions and empty object literals.
+	switch {
+	case ast.IsFunctionDeclaration(declaration) || ast.IsInJSFile(declaration) && ast.IsClassDeclaration(declaration):
+		return symbol
+	case ast.IsVariableDeclaration(declaration) &&
+		(declaration.Parent.Flags&ast.NodeFlagsConst != 0 || ast.IsInJSFile(declaration)):
+		initializer := declaration.Initializer()
+		if isExpandoInitializer(initializer) {
+			return initializer.Symbol()
+		}
+	case ast.IsBinaryExpression(declaration) && ast.IsInJSFile(declaration):
+		initializer := declaration.AsBinaryExpression().Right
+		if isExpandoInitializer(initializer) {
+			return initializer.Symbol()
+		}
+	}
+	return nil
+}
+
+func isExpandoInitializer(initializer *ast.Node) bool {
+	if initializer == nil {
+		return false
+	}
+	if ast.IsFunctionExpressionOrArrowFunction(initializer) {
+		return true
+	} else if ast.IsInJSFile(initializer) {
+		return ast.IsClassExpression(initializer) || (ast.IsObjectLiteralExpression(initializer) && len(initializer.AsObjectLiteralExpression().Properties.Nodes) == 0)
+	}
+	return false
 }
 
 func (b *Binder) bindThisPropertyAssignment(node *ast.Node) {
@@ -1080,34 +1078,40 @@ func (b *Binder) bindThisPropertyAssignment(node *ast.Node) {
 		return
 	}
 	bin := node.AsBinaryExpression()
-	if ast.IsPropertyAccessExpression(bin.Left) && ast.IsPrivateIdentifier(bin.Left.AsPropertyAccessExpression().Name()) {
+	if ast.IsPropertyAccessExpression(bin.Left) && ast.IsPrivateIdentifier(bin.Left.AsPropertyAccessExpression().Name()) ||
+		b.thisContainer == nil {
 		return
 	}
-	thisContainer := ast.GetThisContainer(node /*includeArrowFunctions*/, false /*includeClassComputedPropertyName*/, false)
-	switch thisContainer.Kind {
+	if classSymbol, symbolTable := b.getThisClassAndSymbolTable(); symbolTable != nil {
+		if ast.HasDynamicName(node) {
+			b.declareSymbolEx(symbolTable, classSymbol, node, ast.SymbolFlagsProperty, ast.SymbolFlagsNone, true /*isReplaceableByMethod*/, true /*isComputedName*/)
+			addLateBoundAssignmentDeclarationToSymbol(node, classSymbol)
+		} else {
+			b.declareSymbolEx(symbolTable, classSymbol, node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone, true /*isReplaceableByMethod*/, false /*isComputedName*/)
+		}
+	} else if b.thisContainer.Kind != ast.KindFunctionDeclaration && b.thisContainer.Kind != ast.KindFunctionExpression {
+		// !!! constructor functions
+		panic("Unhandled case in bindThisPropertyAssignment: " + b.thisContainer.Kind.String())
+	}
+}
+
+func (b *Binder) getThisClassAndSymbolTable() (classSymbol *ast.Symbol, symbolTable ast.SymbolTable) {
+	if b.thisContainer == nil {
+		return nil, nil
+	}
+	switch b.thisContainer.Kind {
 	case ast.KindFunctionDeclaration, ast.KindFunctionExpression:
 		// !!! constructor functions
 	case ast.KindConstructor, ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindClassStaticBlockDeclaration:
 		// this.property assignment in class member -- bind to the containing class
-		containingClass := thisContainer.Parent
-		classSymbol := containingClass.Symbol()
-		var symbolTable ast.SymbolTable
-		if ast.IsStatic(thisContainer) {
-			symbolTable = ast.GetExports(containingClass.Symbol())
+		classSymbol = b.thisContainer.Parent.Symbol()
+		if ast.IsStatic(b.thisContainer) {
+			symbolTable = ast.GetExports(classSymbol)
 		} else {
-			symbolTable = ast.GetMembers(containingClass.Symbol())
+			symbolTable = ast.GetMembers(classSymbol)
 		}
-		if ast.HasDynamicName(node) {
-			b.declareSymbolEx(symbolTable, containingClass.Symbol(), node, ast.SymbolFlagsProperty, ast.SymbolFlagsNone, true /*isReplaceableByMethod*/, true /*isComputedName*/)
-			addLateBoundAssignmentDeclarationToSymbol(node, classSymbol)
-		} else {
-			b.declareSymbolEx(symbolTable, containingClass.Symbol(), node, ast.SymbolFlagsProperty|ast.SymbolFlagsAssignment, ast.SymbolFlagsNone, true /*isReplaceableByMethod*/, false /*isComputedName*/)
-		}
-	case ast.KindSourceFile, ast.KindModuleDeclaration:
-		// top-level this.property as assignment to globals is no longer supported
-	default:
-		panic("Unhandled case in bindThisPropertyAssignment: " + thisContainer.Kind.String())
 	}
+	return classSymbol, symbolTable
 }
 
 func (b *Binder) bindEnumDeclaration(node *ast.Node) {
@@ -1174,7 +1178,6 @@ func (b *Binder) bindParameter(node *ast.Node) {
 func (b *Binder) bindFunctionDeclaration(node *ast.Node) {
 	b.checkStrictModeFunctionName(node)
 	if b.inStrictMode {
-		b.checkStrictModeFunctionDeclaration(node)
 		b.bindBlockScopedDeclaration(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
 	} else {
 		b.declareSymbolAndAddToSymbolTable(node, ast.SymbolFlagsFunction, ast.SymbolFlagsFunctionExcludes)
@@ -1239,22 +1242,35 @@ func (b *Binder) bindTypeParameter(node *ast.Node) {
 	}
 }
 
+func (b *Binder) lookupEntity(node *ast.Node, container *ast.Node) *ast.Symbol {
+	if ast.IsIdentifier(node) {
+		return b.lookupName(node.AsIdentifier().Text, container)
+	}
+	if ast.IsPropertyAccessExpression(node) && node.AsPropertyAccessExpression().Expression.Kind == ast.KindThisKeyword ||
+		ast.IsElementAccessExpression(node) && node.AsElementAccessExpression().Expression.Kind == ast.KindThisKeyword {
+		if _, symbolTable := b.getThisClassAndSymbolTable(); symbolTable != nil {
+			if name := ast.GetElementOrPropertyAccessName(node); name != nil {
+				return symbolTable[name.Text()]
+			}
+		}
+		return nil
+	}
+	if symbol := getInitializerSymbol(b.lookupEntity(node.Expression(), container)); symbol != nil && symbol.Exports != nil {
+		if name := ast.GetElementOrPropertyAccessName(node); name != nil {
+			return symbol.Exports[name.Text()]
+		}
+	}
+	return nil
+}
+
 func (b *Binder) lookupName(name string, container *ast.Node) *ast.Symbol {
-	localsContainer := container.LocalsContainerData()
-	if localsContainer != nil {
-		local := localsContainer.Locals[name]
-		if local != nil {
+	if localsContainer := container.LocalsContainerData(); localsContainer != nil {
+		if local := localsContainer.Locals[name]; local != nil {
 			return core.OrElse(local.ExportSymbol, local)
 		}
 	}
-	if ast.IsSourceFile(container) {
-		local := container.AsSourceFile().JSGlobalAugmentations[name]
-		if local != nil {
-			return local
-		}
-	}
-	declaration := container.DeclarationData()
-	if declaration != nil && declaration.Symbol != nil {
+
+	if declaration := container.DeclarationData(); declaration != nil && declaration.Symbol != nil {
 		return declaration.Symbol.Exports[name]
 	}
 	return nil
@@ -1344,17 +1360,6 @@ func (b *Binder) checkStrictModeFunctionName(node *ast.Node) {
 	}
 }
 
-func (b *Binder) checkStrictModeFunctionDeclaration(node *ast.Node) {
-	if b.languageVersion < core.ScriptTargetES2015 {
-		// Report error if function is not top level function declaration
-		if b.blockScopeContainer.Kind != ast.KindSourceFile && b.blockScopeContainer.Kind != ast.KindModuleDeclaration && !ast.IsFunctionLikeOrClassStaticBlockDeclaration(b.blockScopeContainer) {
-			// We check first if the name is inside class declaration or class expression; if so give explicit message
-			// otherwise report generic error message.
-			b.errorOnNode(node, b.getStrictModeBlockScopeFunctionDeclarationMessage(node))
-		}
-	}
-}
-
 func (b *Binder) getStrictModeBlockScopeFunctionDeclarationMessage(node *ast.Node) *diagnostics.Message {
 	// Provide specialized messages to help the user understand why we think they're in strict mode.
 	if ast.GetContainingClass(node) != nil {
@@ -1423,7 +1428,7 @@ func (b *Binder) checkStrictModeWithStatement(node *ast.Node) {
 
 func (b *Binder) checkStrictModeLabeledStatement(node *ast.Node) {
 	// Grammar checking for labeledStatement
-	if b.inStrictMode && b.options.EmitScriptTarget >= core.ScriptTargetES2015 {
+	if b.inStrictMode {
 		data := node.AsLabeledStatement()
 		if ast.IsDeclarationStatement(data.Statement) || ast.IsVariableStatement(data.Statement) {
 			b.errorOnFirstToken(data.Label, diagnostics.A_label_is_not_allowed_here)
@@ -1466,7 +1471,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 	// and block-container.  Then after we pop out of processing the children, we restore
 	// these saved values.
 	saveContainer := b.container
-	saveThisParentContainer := b.thisParentContainer
+	saveThisContainer := b.thisContainer
 	savedBlockScopeContainer := b.blockScopeContainer
 	// Depending on what kind of node this is, we may have to adjust the current container
 	// and block-container.   If the current node is a container, then it is automatically
@@ -1486,9 +1491,6 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 	// for it.  We must clear this so we don't accidentally move any stale data forward from
 	// a previous compilation.
 	if containerFlags&ContainerFlagsIsContainer != 0 {
-		if node.Kind != ast.KindArrowFunction {
-			b.thisParentContainer = b.container
-		}
 		b.container = node
 		b.blockScopeContainer = node
 		if containerFlags&ContainerFlagsHasLocals != 0 {
@@ -1499,6 +1501,9 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 	} else if containerFlags&ContainerFlagsIsBlockScopedContainer != 0 {
 		b.blockScopeContainer = node
 		b.addToContainerChain(node)
+	}
+	if containerFlags&ContainerFlagsIsThisContainer != 0 {
+		b.thisContainer = node
 	}
 	if containerFlags&ContainerFlagsIsControlFlowContainer != 0 {
 		saveCurrentFlow := b.currentFlow
@@ -1580,7 +1585,7 @@ func (b *Binder) bindContainer(node *ast.Node, containerFlags ContainerFlags) {
 		b.bindChildren(node)
 	}
 	b.container = saveContainer
-	b.thisParentContainer = saveThisParentContainer
+	b.thisContainer = saveThisContainer
 	b.blockScopeContainer = savedBlockScopeContainer
 }
 
@@ -1591,12 +1596,11 @@ func (b *Binder) bindChildren(node *ast.Node) {
 	b.inAssignmentPattern = false
 	if b.checkUnreachable(node) {
 		b.bindEachChild(node)
-		b.setJSDocParents(node)
 		b.inAssignmentPattern = saveInAssignmentPattern
 		return
 	}
 	kind := node.Kind
-	if kind >= ast.KindFirstStatement && kind <= ast.KindLastStatement && (b.options.AllowUnreachableCode != core.TSTrue || kind == ast.KindReturnStatement) {
+	if kind >= ast.KindFirstStatement && kind <= ast.KindLastStatement && (b.options().AllowUnreachableCode != core.TSTrue || kind == ast.KindReturnStatement) {
 		hasFlowNodeData := node.FlowNodeData()
 		if hasFlowNodeData != nil {
 			hasFlowNodeData.FlowNode = b.currentFlow
@@ -1677,11 +1681,10 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
 	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
-		return // Reparsed nodes do not double-bind children, which are not reparsed
+		// Reparsed nodes do not double-bind children, which are not reparsed
 	default:
 		b.bindEachChild(node)
 	}
-	b.setJSDocParents(node)
 	b.inAssignmentPattern = saveInAssignmentPattern
 }
 
@@ -1731,11 +1734,11 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 		// report errors on instantiated modules
 		reportError := ast.IsStatementButNotDeclaration(node) && !ast.IsEmptyStatement(node) ||
 			ast.IsClassDeclaration(node) ||
-			isEnumDeclarationWithPreservedEmit(node, b.options) ||
+			isEnumDeclarationWithPreservedEmit(node, b.options()) ||
 			ast.IsModuleDeclaration(node) && b.shouldReportErrorOnModuleDeclaration(node)
 		if reportError {
 			b.currentFlow = b.reportedUnreachableFlow
-			if b.options.AllowUnreachableCode != core.TSTrue {
+			if b.options().AllowUnreachableCode != core.TSTrue {
 				// unreachable code is reported if
 				// - user has explicitly asked about it AND
 				// - statement is in not ambient context (statements in ambient context is already an error
@@ -1745,7 +1748,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 				//   - node is not block scoped variable statement and at least one variable declaration has initializer
 				//   Rationale: we don't want to report errors on non-initialized var's since they are hoisted
 				//   On the other side we do want to report errors on non-initialized 'lets' because of TDZ
-				isError := unreachableCodeIsError(b.options) && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
+				isError := unreachableCodeIsError(b.options()) && node.Flags&ast.NodeFlagsAmbient == 0 && (!ast.IsVariableStatement(node) ||
 					ast.GetCombinedNodeFlags(node.AsVariableStatement().DeclarationList)&ast.NodeFlagsBlockScoped != 0 ||
 					core.Some(node.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes, func(d *ast.Node) bool {
 						return d.AsVariableDeclaration().Initializer != nil
@@ -1759,7 +1762,7 @@ func (b *Binder) checkUnreachable(node *ast.Node) bool {
 
 func (b *Binder) shouldReportErrorOnModuleDeclaration(node *ast.Node) bool {
 	instanceState := ast.GetModuleInstanceState(node)
-	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options.ShouldPreserveConstEnums)
+	return instanceState == ast.ModuleInstanceStateInstantiated || (instanceState == ast.ModuleInstanceStateConstEnumOnly && b.options().ShouldPreserveConstEnums)
 }
 
 func (b *Binder) errorOnEachUnreachableRange(node *ast.Node, isError bool) {
@@ -1802,7 +1805,7 @@ func (b *Binder) isPurelyTypeDeclaration(s *ast.Node) bool {
 	case ast.KindModuleDeclaration:
 		return ast.GetModuleInstanceState(s) != ast.ModuleInstanceStateInstantiated
 	case ast.KindEnumDeclaration:
-		return !isEnumDeclarationWithPreservedEmit(s, b.options)
+		return !isEnumDeclarationWithPreservedEmit(s, b.options())
 	default:
 		return false
 	}
@@ -1891,13 +1894,12 @@ func (b *Binder) bindWhileStatement(node *ast.Node) {
 	preWhileLabel := b.setContinueTarget(node, b.createLoopLabel())
 	preBodyLabel := b.createBranchLabel()
 	postWhileLabel := b.createBranchLabel()
-	topFlow := b.currentFlow
+	b.addAntecedent(preWhileLabel, b.currentFlow)
 	b.currentFlow = preWhileLabel
 	b.bindCondition(stmt.Expression, preBodyLabel, postWhileLabel)
 	b.currentFlow = b.finishFlowLabel(preBodyLabel)
 	b.bindIterativeStatement(stmt.Statement, postWhileLabel, preWhileLabel)
 	b.addAntecedent(preWhileLabel, b.currentFlow)
-	b.addAntecedent(preWhileLabel, topFlow)
 	b.currentFlow = b.finishFlowLabel(postWhileLabel)
 }
 
@@ -1906,13 +1908,12 @@ func (b *Binder) bindDoStatement(node *ast.Node) {
 	preDoLabel := b.createLoopLabel()
 	preConditionLabel := b.setContinueTarget(node, b.createBranchLabel())
 	postDoLabel := b.createBranchLabel()
-	topFlow := b.currentFlow
+	b.addAntecedent(preDoLabel, b.currentFlow)
 	b.currentFlow = preDoLabel
 	b.bindIterativeStatement(stmt.Statement, postDoLabel, preConditionLabel)
 	b.addAntecedent(preConditionLabel, b.currentFlow)
 	b.currentFlow = b.finishFlowLabel(preConditionLabel)
 	b.bindCondition(stmt.Expression, preDoLabel, postDoLabel)
-	b.addAntecedent(preDoLabel, topFlow)
 	b.currentFlow = b.finishFlowLabel(postDoLabel)
 }
 
@@ -1920,16 +1921,18 @@ func (b *Binder) bindForStatement(node *ast.Node) {
 	stmt := node.AsForStatement()
 	preLoopLabel := b.setContinueTarget(node, b.createLoopLabel())
 	preBodyLabel := b.createBranchLabel()
+	preIncrementorLabel := b.createBranchLabel()
 	postLoopLabel := b.createBranchLabel()
 	b.bind(stmt.Initializer)
-	topFlow := b.currentFlow
+	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.currentFlow = preLoopLabel
 	b.bindCondition(stmt.Condition, preBodyLabel, postLoopLabel)
 	b.currentFlow = b.finishFlowLabel(preBodyLabel)
-	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preLoopLabel)
+	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preIncrementorLabel)
+	b.addAntecedent(preIncrementorLabel, b.currentFlow)
+	b.currentFlow = b.finishFlowLabel(preIncrementorLabel)
 	b.bind(stmt.Incrementor)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
-	b.addAntecedent(preLoopLabel, topFlow)
 	b.currentFlow = b.finishFlowLabel(postLoopLabel)
 }
 
@@ -1938,7 +1941,7 @@ func (b *Binder) bindForInOrForOfStatement(node *ast.Node) {
 	preLoopLabel := b.setContinueTarget(node, b.createLoopLabel())
 	postLoopLabel := b.createBranchLabel()
 	b.bind(stmt.Expression)
-	topFlow := b.currentFlow
+	b.addAntecedent(preLoopLabel, b.currentFlow)
 	b.currentFlow = preLoopLabel
 	if node.Kind == ast.KindForOfStatement {
 		b.bind(stmt.AwaitModifier)
@@ -1950,7 +1953,6 @@ func (b *Binder) bindForInOrForOfStatement(node *ast.Node) {
 	}
 	b.bindIterativeStatement(stmt.Statement, postLoopLabel, preLoopLabel)
 	b.addAntecedent(preLoopLabel, b.currentFlow)
-	b.addAntecedent(preLoopLabel, topFlow)
 	b.currentFlow = b.finishFlowLabel(postLoopLabel)
 }
 
@@ -2150,7 +2152,7 @@ func (b *Binder) bindCaseBlock(node *ast.Node) {
 		clause := clauses[i]
 		b.bind(clause)
 		fallthroughFlow = b.currentFlow
-		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && i != len(clauses)-1 && b.options.NoFallthroughCasesInSwitch == core.TSTrue {
+		if b.currentFlow.Flags&ast.FlowFlagsUnreachable == 0 && i != len(clauses)-1 {
 			clause.AsCaseOrDefaultClause().FallthroughFlowNode = b.currentFlow
 		}
 	}
@@ -2195,8 +2197,8 @@ func (b *Binder) bindLabeledStatement(node *ast.Node) {
 	}
 	b.bind(stmt.Label)
 	b.bind(stmt.Statement)
-	if !b.activeLabelList.referenced && b.options.AllowUnusedLabels != core.TSTrue {
-		b.errorOrSuggestionOnNode(unusedLabelIsError(b.options), stmt.Label, diagnostics.Unused_label)
+	if !b.activeLabelList.referenced && b.options().AllowUnusedLabels != core.TSTrue {
+		b.errorOrSuggestionOnNode(unusedLabelIsError(b.options()), stmt.Label, diagnostics.Unused_label)
 	}
 	b.activeLabelList = b.activeLabelList.next
 	b.addAntecedent(postStatementLabel, b.currentFlow)
@@ -2236,9 +2238,11 @@ func (b *Binder) bindDestructuringAssignmentFlow(node *ast.Node) {
 		b.bind(expr.Right)
 		b.inAssignmentPattern = true
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 	} else {
 		b.inAssignmentPattern = true
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 		b.inAssignmentPattern = false
 		b.bind(expr.OperatorToken)
 		b.bind(expr.Right)
@@ -2267,6 +2271,7 @@ func (b *Binder) bindBinaryExpressionFlow(node *ast.Node) {
 		}
 	} else {
 		b.bind(expr.Left)
+		b.bind(expr.Type)
 		if operator == ast.KindCommaToken {
 			b.maybeBindExpressionFlowIfCall(node)
 		}
@@ -2515,7 +2520,7 @@ func (b *Binder) bindInitializer(node *ast.Node) {
 	b.currentFlow = b.finishFlowLabel(exitFlow)
 }
 
-func isEnumDeclarationWithPreservedEmit(node *ast.Node, options *core.SourceFileAffectingCompilerOptions) bool {
+func isEnumDeclarationWithPreservedEmit(node *ast.Node, options core.SourceFileAffectingCompilerOptions) bool {
 	return node.Kind == ast.KindEnumDeclaration && (!ast.IsEnumConst(node) || options.ShouldPreserveConstEnums)
 }
 
@@ -2600,19 +2605,24 @@ func GetContainerFlags(node *ast.Node) ContainerFlags {
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals
 	case ast.KindGetAccessor, ast.KindSetAccessor, ast.KindMethodDeclaration:
 		if ast.IsObjectLiteralOrClassExpressionMethodOrAccessor(node) {
-			return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor
+			return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsObjectLiteralOrClassExpressionMethodOrAccessor | ContainerFlagsIsThisContainer
 		}
 		fallthrough
-	case ast.KindConstructor, ast.KindFunctionDeclaration, ast.KindMethodSignature, ast.KindCallSignature, ast.KindJSDocSignature,
-		ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType, ast.KindClassStaticBlockDeclaration:
+	case ast.KindConstructor, ast.KindClassStaticBlockDeclaration:
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
+	case ast.KindMethodSignature, ast.KindCallSignature, ast.KindJSDocSignature, ast.KindFunctionType, ast.KindConstructSignature, ast.KindConstructorType:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike
-	case ast.KindFunctionExpression, ast.KindArrowFunction:
+	case ast.KindFunctionDeclaration:
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsThisContainer
+	case ast.KindFunctionExpression:
+		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression | ContainerFlagsIsThisContainer
+	case ast.KindArrowFunction:
 		return ContainerFlagsIsContainer | ContainerFlagsIsControlFlowContainer | ContainerFlagsHasLocals | ContainerFlagsIsFunctionLike | ContainerFlagsIsFunctionExpression
 	case ast.KindModuleBlock:
 		return ContainerFlagsIsControlFlowContainer
 	case ast.KindPropertyDeclaration:
 		if node.AsPropertyDeclaration().Initializer != nil {
-			return ContainerFlagsIsControlFlowContainer
+			return ContainerFlagsIsControlFlowContainer | ContainerFlagsIsThisContainer
 		} else {
 			return ContainerFlagsNone
 		}
@@ -2714,9 +2724,11 @@ func isNarrowingBinaryExpression(expr *ast.BinaryExpression) bool {
 	case ast.KindEqualsToken, ast.KindBarBarEqualsToken, ast.KindAmpersandAmpersandEqualsToken, ast.KindQuestionQuestionEqualsToken:
 		return containsNarrowableReference(expr.Left)
 	case ast.KindEqualsEqualsToken, ast.KindExclamationEqualsToken, ast.KindEqualsEqualsEqualsToken, ast.KindExclamationEqualsEqualsToken:
-		return isNarrowableOperand(expr.Left) || isNarrowableOperand(expr.Right) ||
-			isNarrowingTypeOfOperands(expr.Right, expr.Left) || isNarrowingTypeOfOperands(expr.Left, expr.Right) ||
-			(ast.IsBooleanLiteral(expr.Right) && isNarrowingExpression(expr.Left) || ast.IsBooleanLiteral(expr.Left) && isNarrowingExpression(expr.Right))
+		left := ast.SkipParentheses(expr.Left)
+		right := ast.SkipParentheses(expr.Right)
+		return isNarrowableOperand(left) || isNarrowableOperand(right) ||
+			isNarrowingTypeOfOperands(right, left) || isNarrowingTypeOfOperands(left, right) ||
+			(ast.IsBooleanLiteral(right) && isNarrowingExpression(left) || ast.IsBooleanLiteral(left) && isNarrowingExpression(right))
 	case ast.KindInstanceOfKeyword:
 		return isNarrowableOperand(expr.Left)
 	case ast.KindInKeyword:
@@ -2782,12 +2794,6 @@ func (b *Binder) addDiagnostic(diagnostic *ast.Diagnostic) {
 	b.file.SetBindDiagnostics(append(b.file.BindDiagnostics(), diagnostic))
 }
 
-func setParent(child *ast.Node, parent *ast.Node) {
-	if child != nil {
-		child.Parent = parent
-	}
-}
-
 func isSignedNumericLiteral(node *ast.Node) bool {
 	if node.Kind == ast.KindPrefixUnaryExpression {
 		node := node.AsPrefixUnaryExpression()
@@ -2840,11 +2846,11 @@ func isFunctionSymbol(symbol *ast.Symbol) bool {
 	return false
 }
 
-func unreachableCodeIsError(options *core.SourceFileAffectingCompilerOptions) bool {
+func unreachableCodeIsError(options core.SourceFileAffectingCompilerOptions) bool {
 	return options.AllowUnreachableCode == core.TSFalse
 }
 
-func unusedLabelIsError(options *core.SourceFileAffectingCompilerOptions) bool {
+func unusedLabelIsError(options core.SourceFileAffectingCompilerOptions) bool {
 	return options.AllowUnusedLabels == core.TSFalse
 }
 
@@ -2904,9 +2910,15 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		}
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	// This list is a work in progress. Add missing node kinds to improve their error spans
+	case ast.KindFunctionDeclaration, ast.KindMethodDeclaration:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
+		fallthrough
 	case ast.KindVariableDeclaration, ast.KindBindingElement, ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration,
-		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionDeclaration, ast.KindFunctionExpression,
-		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
+		ast.KindModuleDeclaration, ast.KindEnumDeclaration, ast.KindEnumMember, ast.KindFunctionExpression,
+		ast.KindGetAccessor, ast.KindSetAccessor, ast.KindTypeAliasDeclaration, ast.KindJSTypeAliasDeclaration, ast.KindPropertyDeclaration,
 		ast.KindPropertySignature, ast.KindNamespaceImport:
 		errorNode = ast.GetNameOfDeclaration(node)
 	case ast.KindArrowFunction:
@@ -2926,6 +2938,10 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 		pos := scanner.SkipTrivia(sourceFile.Text(), node.AsSatisfiesExpression().Expression.End())
 		return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	case ast.KindConstructor:
+		if node.Flags&ast.NodeFlagsReparsed != 0 {
+			errorNode = node
+			break
+		}
 		scanner := scanner.GetScannerForSourceFile(sourceFile, node.Pos())
 		start := scanner.TokenStart()
 		for scanner.Token() != ast.KindConstructorKeyword && scanner.Token() != ast.KindStringLiteral && scanner.Token() != ast.KindEndOfFile {

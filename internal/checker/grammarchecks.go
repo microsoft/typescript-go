@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
@@ -233,7 +234,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				}
 			} else if c.legacyDecorators && (node.Kind == ast.KindGetAccessor || node.Kind == ast.KindSetAccessor) {
 				accessors := c.getAllAccessorDeclarationsForDeclaration(node)
-				if hasDecorators(accessors.firstAccessor) && node == accessors.secondAccessor {
+				if ast.HasDecorators(accessors.firstAccessor) && node == accessors.secondAccessor {
 					return c.grammarErrorOnFirstToken(node, diagnostics.Decorators_cannot_be_applied_to_multiple_get_Slashset_accessors_of_the_same_name)
 				}
 			}
@@ -307,11 +308,11 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "override")
 				} else if flags&ast.ModifierFlagsAmbient != 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_with_1_modifier, "override", "declare")
-				} else if flags&ast.ModifierFlagsReadonly != 0 {
+				} else if flags&ast.ModifierFlagsReadonly != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "override", "readonly")
-				} else if flags&ast.ModifierFlagsAccessor != 0 {
+				} else if flags&ast.ModifierFlagsAccessor != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "override", "accessor")
-				} else if flags&ast.ModifierFlagsAsync != 0 {
+				} else if flags&ast.ModifierFlagsAsync != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "override", "async")
 				}
 				flags |= ast.ModifierFlagsOverride
@@ -324,22 +325,22 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 
 				if flags&ast.ModifierFlagsAccessibilityModifier != 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.Accessibility_modifier_already_seen)
-				} else if flags&ast.ModifierFlagsOverride != 0 {
+				} else if flags&ast.ModifierFlagsOverride != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "override")
-				} else if flags&ast.ModifierFlagsStatic != 0 {
+				} else if flags&ast.ModifierFlagsStatic != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "static")
-				} else if flags&ast.ModifierFlagsAccessor != 0 {
+				} else if flags&ast.ModifierFlagsAccessor != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "accessor")
-				} else if flags&ast.ModifierFlagsReadonly != 0 {
+				} else if flags&ast.ModifierFlagsReadonly != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "readonly")
-				} else if flags&ast.ModifierFlagsAsync != 0 {
+				} else if flags&ast.ModifierFlagsAsync != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "async")
 				} else if node.Parent.Kind == ast.KindModuleBlock || node.Parent.Kind == ast.KindSourceFile {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_module_or_namespace_element, text)
 				} else if flags&ast.ModifierFlagsAbstract != 0 {
 					if modifier.Kind == ast.KindPrivateKeyword {
 						return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_with_1_modifier, text, "abstract")
-					} else {
+					} else if modifier.Flags&ast.NodeFlagsReparsed == 0 {
 						return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, text, "abstract")
 					}
 				} else if ast.IsPrivateIdentifierClassElementDeclaration(node) {
@@ -349,11 +350,11 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 			case ast.KindStaticKeyword:
 				if flags&ast.ModifierFlagsStatic != 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "static")
-				} else if flags&ast.ModifierFlagsReadonly != 0 {
+				} else if flags&ast.ModifierFlagsReadonly != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "static", "readonly")
-				} else if flags&ast.ModifierFlagsAsync != 0 {
+				} else if flags&ast.ModifierFlagsAsync != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "static", "async")
-				} else if flags&ast.ModifierFlagsAccessor != 0 {
+				} else if flags&ast.ModifierFlagsAccessor != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "static", "accessor")
 				} else if node.Parent.Kind == ast.KindModuleBlock || node.Parent.Kind == ast.KindSourceFile {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_module_or_namespace_element, "static")
@@ -361,7 +362,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_parameter, "static")
 				} else if flags&ast.ModifierFlagsAbstract != 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_be_used_with_1_modifier, "static", "abstract")
-				} else if flags&ast.ModifierFlagsOverride != 0 {
+				} else if flags&ast.ModifierFlagsOverride != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "static", "override")
 				}
 				flags |= ast.ModifierFlagsStatic
@@ -394,11 +395,11 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 				}
 				if flags&ast.ModifierFlagsExport != 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_already_seen, "export")
-				} else if flags&ast.ModifierFlagsAmbient != 0 {
+				} else if flags&ast.ModifierFlagsAmbient != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "declare")
-				} else if flags&ast.ModifierFlagsAbstract != 0 {
+				} else if flags&ast.ModifierFlagsAbstract != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "abstract")
-				} else if flags&ast.ModifierFlagsAsync != 0 {
+				} else if flags&ast.ModifierFlagsAsync != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "async")
 				} else if ast.IsClassLike(node.Parent) && !ast.IsJSTypeAliasDeclaration(node) {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_class_elements_of_this_kind, "export")
@@ -423,7 +424,7 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_a_using_declaration, "default")
 				} else if blockScopeKind == ast.NodeFlagsAwaitUsing {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_cannot_appear_on_an_await_using_declaration, "default")
-				} else if flags&ast.ModifierFlagsExport == 0 {
+				} else if flags&ast.ModifierFlagsExport == 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 					return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "export", "default")
 				} else if sawExportBeforeDecorators {
 					return c.grammarErrorOnNode(firstDecorator, diagnostics.Decorators_are_not_valid_here)
@@ -480,10 +481,10 @@ func (c *Checker) checkGrammarModifiers(node *ast.Node /*Union[HasModifiers, Has
 					if flags&ast.ModifierFlagsAsync != 0 && lastAsync != nil {
 						return c.grammarErrorOnNode(lastAsync, diagnostics.X_0_modifier_cannot_be_used_with_1_modifier, "async", "abstract")
 					}
-					if flags&ast.ModifierFlagsOverride != 0 {
+					if flags&ast.ModifierFlagsOverride != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 						return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "abstract", "override")
 					}
-					if flags&ast.ModifierFlagsAccessor != 0 {
+					if flags&ast.ModifierFlagsAccessor != 0 && modifier.Flags&ast.NodeFlagsReparsed == 0 {
 						return c.grammarErrorOnNode(modifier, diagnostics.X_0_modifier_must_precede_1_modifier, "abstract", "accessor")
 					}
 				}
@@ -778,7 +779,7 @@ func (c *Checker) checkGrammarFunctionLikeDeclaration(node *ast.Node) bool {
 
 func (c *Checker) checkGrammarClassLikeDeclaration(node *ast.Node) bool {
 	file := ast.GetSourceFileOfNode(node)
-	return c.checkGrammarClassDeclarationHeritageClauses(node) || c.checkGrammarTypeParameterList(node.ClassLikeData().TypeParameters, file)
+	return c.checkGrammarClassDeclarationHeritageClauses(node, file) || c.checkGrammarTypeParameterList(node.ClassLikeData().TypeParameters, file)
 }
 
 func (c *Checker) checkGrammarArrowFunction(node *ast.Node, file *ast.SourceFile) bool {
@@ -906,7 +907,7 @@ func (c *Checker) checkGrammarExpressionWithTypeArguments(node *ast.Node /*Union
 	return c.checkGrammarTypeArguments(node, exprWithTypeArgs.TypeArguments)
 }
 
-func (c *Checker) checkGrammarClassDeclarationHeritageClauses(node *ast.ClassLikeDeclaration) bool {
+func (c *Checker) checkGrammarClassDeclarationHeritageClauses(node *ast.ClassLikeDeclaration, file *ast.SourceFile) bool {
 	seenExtendsClause := false
 	seenImplementsClause := false
 
@@ -929,6 +930,22 @@ func (c *Checker) checkGrammarClassDeclarationHeritageClauses(node *ast.ClassLik
 					return c.grammarErrorOnFirstToken(typeNodes[1], diagnostics.Classes_can_only_extend_a_single_class)
 				}
 
+				for _, j := range node.JSDoc(file) {
+					if j.AsJSDoc().Tags == nil {
+						continue
+					}
+					for _, tag := range j.AsJSDoc().Tags.Nodes {
+						if tag.Kind == ast.KindJSDocAugmentsTag {
+							target := typeNodes[0].AsExpressionWithTypeArguments()
+							source := tag.AsJSDocAugmentsTag().ClassName.AsExpressionWithTypeArguments()
+							if !ast.HasSamePropertyAccessName(target.Expression, source.Expression) &&
+								target.Expression.Kind == ast.KindIdentifier &&
+								source.Expression.Kind == ast.KindIdentifier {
+								return c.grammarErrorOnNode(tag.AsJSDocAugmentsTag().ClassName, diagnostics.JSDoc_0_1_does_not_match_the_extends_2_clause, tag.AsJSDocAugmentsTag().TagName.Text(), source.Expression.Text(), target.Expression.Text())
+							}
+						}
+					}
+				}
 				seenExtendsClause = true
 			} else {
 				if heritageClause.Token != ast.KindImplementsKeyword {
@@ -1155,7 +1172,7 @@ func (c *Checker) checkGrammarObjectLiteralExpression(node *ast.ObjectLiteralExp
 func (c *Checker) checkGrammarJsxElement(node *ast.Node) bool {
 	c.checkGrammarJsxName(node.TagName())
 	c.checkGrammarTypeArguments(node, node.TypeArgumentList())
-	var seen core.Set[string]
+	var seen collections.Set[string]
 	for _, attrNode := range node.Attributes().AsJsxAttributes().Properties.Nodes {
 		if attrNode.Kind == ast.KindJsxSpreadAttribute {
 			continue
@@ -1181,7 +1198,7 @@ func (c *Checker) checkGrammarJsxName(node *ast.JsxTagNameExpression) bool {
 		return c.grammarErrorOnNode(node.Expression(), diagnostics.JSX_property_access_expressions_cannot_include_JSX_namespace_names)
 	}
 
-	if ast.IsJsxNamespacedName(node) && c.compilerOptions.GetJSXTransformEnabled() && !IsIntrinsicJsxName(node.AsJsxNamespacedName().Namespace.Text()) {
+	if ast.IsJsxNamespacedName(node) && c.compilerOptions.GetJSXTransformEnabled() && !scanner.IsIntrinsicJsxName(node.AsJsxNamespacedName().Namespace.Text()) {
 		return c.grammarErrorOnNode(node, diagnostics.React_components_cannot_include_JSX_namespace_names)
 	}
 
@@ -1211,9 +1228,9 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.X_for_await_loops_are_only_allowed_at_the_top_level_of_a_file_when_that_file_is_a_module_but_this_file_has_no_imports_or_exports_Consider_adding_an_empty_export_to_make_this_file_a_module))
 					}
 					switch c.moduleKind {
-					case core.ModuleKindNode16, core.ModuleKindNodeNext:
+					case core.ModuleKindNode16, core.ModuleKindNode18, core.ModuleKindNodeNext:
 						sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
-						if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
+						if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
 							c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.The_current_file_is_a_CommonJS_module_and_cannot_use_await_at_the_top_level))
 							break
 						}
@@ -1227,7 +1244,7 @@ func (c *Checker) checkGrammarForInOrForOfStatement(forInOrOfStatement *ast.ForI
 						}
 						fallthrough
 					default:
-						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher))
+						c.diagnostics.Add(createDiagnosticForNode(forInOrOfStatement.AwaitModifier, diagnostics.Top_level_for_await_loops_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher))
 					}
 				}
 			} else {
@@ -1377,14 +1394,7 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 		if innerType.Kind != ast.KindSymbolKeyword {
 			return c.grammarErrorOnNode(innerType, diagnostics.X_0_expected, scanner.TokenToString(ast.KindSymbolKeyword))
 		}
-		parent := ast.WalkUpParenthesizedTypes(node.Parent)
-		// !!!
-		// if ast.IsInJSFile(parent) && isJSDocTypeExpression(parent) {
-		// 	host := getJSDocHost(parent)
-		// 	if host != nil {
-		// 		parent = getSingleVariableOfVariableStatement(host) || host
-		// 	}
-		// }
+		parent := ast.GetEffectiveTypeParent(ast.WalkUpParenthesizedTypes(node.Parent))
 		switch parent.Kind {
 		case ast.KindVariableDeclaration:
 			decl := parent.AsVariableDeclaration()
@@ -1419,7 +1429,17 @@ func (c *Checker) checkGrammarTypeOperatorNode(node *ast.TypeOperatorNode) bool 
 }
 
 func (c *Checker) checkGrammarForInvalidDynamicName(node *ast.DeclarationName, message *diagnostics.Message) bool {
-	if c.isNonBindableDynamicName(node) {
+	if !c.isNonBindableDynamicName(node) {
+		return false
+	}
+	var expression *ast.Node
+	if ast.IsElementAccessExpression(node) {
+		expression = ast.SkipParentheses(node.AsElementAccessExpression().ArgumentExpression)
+	} else {
+		expression = node.Expression()
+	}
+
+	if !ast.IsEntityNameExpression(expression) {
 		return c.grammarErrorOnNode(node, message)
 	}
 
@@ -1714,9 +1734,10 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 				}
 				switch c.moduleKind {
 				case core.ModuleKindNode16,
+					core.ModuleKindNode18,
 					core.ModuleKindNodeNext:
 					sourceFileMetaData := c.program.GetSourceFileMetaData(sourceFile.Path())
-					if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
+					if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS {
 						if !spanCalculated {
 							span = scanner.GetRangeOfTokenAtPosition(sourceFile, node.Pos())
 						}
@@ -1739,9 +1760,9 @@ func (c *Checker) checkGrammarAwaitOrAwaitUsing(node *ast.Node) bool {
 					}
 					var message *diagnostics.Message
 					if ast.IsAwaitExpression(node) {
-						message = diagnostics.Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
+						message = diagnostics.Top_level_await_expressions_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
 					} else {
-						message = diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
+						message = diagnostics.Top_level_await_using_statements_are_only_allowed_when_the_module_option_is_set_to_es2022_esnext_system_node16_node18_nodenext_or_preserve_and_the_target_option_is_set_to_es2017_or_higher
 					}
 					c.diagnostics.Add(ast.NewDiagnostic(sourceFile, span, message))
 					hasError = true
@@ -2117,7 +2138,7 @@ func (c *Checker) checkGrammarBigIntLiteral(node *ast.BigIntLiteral) bool {
 }
 
 func (c *Checker) checkGrammarImportClause(node *ast.ImportClause) bool {
-	if node.IsTypeOnly && node.Name() != nil && node.NamedBindings != nil {
+	if node.Flags&ast.NodeFlagsJSDoc == 0 && node.IsTypeOnly && node.Name() != nil && node.NamedBindings != nil {
 		return c.grammarErrorOnNode(&node.Node, diagnostics.A_type_only_import_can_specify_a_default_import_or_named_bindings_but_not_both)
 	}
 	if node.IsTypeOnly && node.NamedBindings != nil && node.NamedBindings.Kind == ast.KindNamedImports {
@@ -2159,7 +2180,7 @@ func (c *Checker) checkGrammarImportCallExpression(node *ast.Node) bool {
 	}
 
 	if c.moduleKind == core.ModuleKindES2015 {
-		return c.grammarErrorOnNode(node, diagnostics.Dynamic_imports_are_only_supported_when_the_module_flag_is_set_to_es2020_es2022_esnext_commonjs_amd_system_umd_node16_or_nodenext)
+		return c.grammarErrorOnNode(node, diagnostics.Dynamic_imports_are_only_supported_when_the_module_flag_is_set_to_es2020_es2022_esnext_commonjs_amd_system_umd_node16_node18_or_nodenext)
 	}
 
 	nodeAsCall := node.AsCallExpression()
@@ -2175,7 +2196,7 @@ func (c *Checker) checkGrammarImportCallExpression(node *ast.Node) bool {
 
 		if len(argumentNodes) > 1 {
 			importAttributesArgument := argumentNodes[1]
-			return c.grammarErrorOnNode(importAttributesArgument, diagnostics.Dynamic_imports_only_support_a_second_argument_when_the_module_option_is_set_to_esnext_node16_nodenext_or_preserve)
+			return c.grammarErrorOnNode(importAttributesArgument, diagnostics.Dynamic_imports_only_support_a_second_argument_when_the_module_option_is_set_to_esnext_node16_node18_nodenext_or_preserve)
 		}
 	}
 

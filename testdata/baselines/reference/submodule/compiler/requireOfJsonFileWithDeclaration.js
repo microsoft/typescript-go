@@ -15,6 +15,11 @@ if (x) {
     "b": "hello"
 }
 
+//// [out/b.json]
+{
+    "a": true,
+    "b": "hello"
+}
 //// [out/file1.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -25,3 +30,7 @@ if (x) {
     let b = b2.b;
     x = (b1.b === b);
 }
+
+
+//// [out/file1.d.ts]
+export {};

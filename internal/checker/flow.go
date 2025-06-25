@@ -388,7 +388,7 @@ func (c *Checker) narrowType(f *FlowState, t *Type, expr *ast.Node, assumeTrue b
 		return c.narrowTypeByTruthiness(f, t, expr, assumeTrue)
 	case ast.KindCallExpression:
 		return c.narrowTypeByCallExpression(f, t, expr, assumeTrue)
-	case ast.KindParenthesizedExpression, ast.KindNonNullExpression:
+	case ast.KindParenthesizedExpression, ast.KindNonNullExpression, ast.KindSatisfiesExpression:
 		return c.narrowType(f, t, expr.Expression(), assumeTrue)
 	case ast.KindBinaryExpression:
 		return c.narrowTypeByBinaryExpression(f, t, expr.AsBinaryExpression(), assumeTrue)
@@ -718,8 +718,8 @@ func (c *Checker) narrowTypeByDiscriminant(t *Type, access *ast.Node, narrowType
 	}
 	narrowedPropType := narrowType(propType)
 	return c.filterType(t, func(t *Type) bool {
-		discriminantType := c.getTypeOfPropertyOrIndexSignatureOfType(t, propName)
-		return discriminantType == nil || discriminantType.flags&TypeFlagsNever == 0 && narrowedPropType.flags&TypeFlagsNever == 0 && c.areTypesComparable(narrowedPropType, discriminantType)
+		discriminantType := core.OrElse(c.getTypeOfPropertyOrIndexSignatureOfType(t, propName), c.unknownType)
+		return discriminantType.flags&TypeFlagsNever == 0 && narrowedPropType.flags&TypeFlagsNever == 0 && c.areTypesComparable(narrowedPropType, discriminantType)
 	})
 }
 
@@ -841,10 +841,13 @@ func (c *Checker) getNarrowedTypeWorker(t *Type, candidate *Type, assumeTrue boo
 				return !c.isTypeDerivedFrom(t, candidate)
 			})
 		}
+		if t.flags&TypeFlagsUnknown != 0 {
+			t = c.unknownUnionType
+		}
 		trueType := c.getNarrowedType(t, candidate, true /*assumeTrue*/, false /*checkDerived*/)
-		return c.filterType(t, func(t *Type) bool {
+		return c.recombineUnknownType(c.filterType(t, func(t *Type) bool {
 			return !c.isTypeSubsetOf(t, trueType)
-		})
+		}))
 	}
 	if t.flags&TypeFlagsAnyOrUnknown != 0 {
 		return candidate
@@ -1572,7 +1575,7 @@ func (c *Checker) isMatchingReference(source *ast.Node, target *ast.Node) bool {
 		return target.Kind == ast.KindThisKeyword
 	case ast.KindSuperKeyword:
 		return target.Kind == ast.KindSuperKeyword
-	case ast.KindNonNullExpression, ast.KindParenthesizedExpression:
+	case ast.KindNonNullExpression, ast.KindParenthesizedExpression, ast.KindSatisfiesExpression:
 		return c.isMatchingReference(source.Expression(), target)
 	case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
 		if sourcePropertyName, ok := c.getAccessedPropertyName(source); ok {
@@ -1926,7 +1929,7 @@ func (c *Checker) computeExhaustiveSwitchStatement(node *ast.Node) bool {
 			return c.getTypeFacts(t, notEqualFacts) == notEqualFacts
 		})
 	}
-	t := c.checkExpressionCached(node.Expression())
+	t := c.getBaseConstraintOrType(c.checkExpressionCached(node.Expression()))
 	if !isLiteralType(t) {
 		return false
 	}
@@ -2484,12 +2487,9 @@ func (c *Checker) isReachableFlowNodeWorker(f *FlowState, flow *ast.FlowNode, no
 		case flags&(ast.FlowFlagsAssignment|ast.FlowFlagsCondition|ast.FlowFlagsArrayMutation) != 0:
 			flow = flow.Antecedent
 		case flags&ast.FlowFlagsCall != 0:
-			signature := c.getEffectsSignature(flow.Node)
-			if signature != nil {
-				predicate := c.getTypePredicateOfSignature(signature)
-				if predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
-					predicateArgument := flow.Node.Arguments()[predicate.parameterIndex]
-					if predicateArgument != nil && c.isFalseExpression(predicateArgument) {
+			if signature := c.getEffectsSignature(flow.Node); signature != nil {
+				if predicate := c.getTypePredicateOfSignature(signature); predicate != nil && predicate.kind == TypePredicateKindAssertsIdentifier && predicate.t == nil {
+					if arguments := flow.Node.Arguments(); int(predicate.parameterIndex) < len(arguments) && c.isFalseExpression(arguments[predicate.parameterIndex]) {
 						return false
 					}
 				}

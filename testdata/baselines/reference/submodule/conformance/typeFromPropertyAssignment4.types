@@ -16,22 +16,21 @@ Outer.Inner = class {
     constructor() {
         /** @type {number} */
         this.y = 12
->this.y = 12 : number
+>this.y = 12 : 12
 >this.y : number
 >this : this
 >y : number
->12 : number
 >12 : 12
     }
 }
 
 /** @type {Outer.Inner} */
 var local
->local : Inner
+>local : Outer.Inner
 
 local.y
 >local.y : any
->local : Inner
+>local : Outer.Inner
 >y : any
 
 var inner = new Outer.Inner()
@@ -49,11 +48,11 @@ inner.y
 === b.js ===
 /** @type {Outer.Inner} */
 var x
->x : Inner
+>x : Outer.Inner
 
 x.y
 >x.y : any
->x : Inner
+>x : Outer.Inner
 >y : any
 
 var z = new Outer.Inner()

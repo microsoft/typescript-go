@@ -1,8 +1,8 @@
 --- old.usingDeclarationsWithLegacyClassDecorators.8(module=system,target=es5).js
 +++ new.usingDeclarationsWithLegacyClassDecorators.8(module=system,target=es5).js
 @@= skipped -12, +12 lines =@@
- 
- 
+
+
  //// [usingDeclarationsWithLegacyClassDecorators.8.js]
 -System.register([], function (exports_1, context_1) {
 -    "use strict";
@@ -11,14 +11,14 @@
 -    return {
 -        setters: [],
 -        execute: function () {
--            C = /** @class */ (function () {
--                function C() {
--                }
+-            C = (() => {
+-                let C = class C {
+-                };
 -                C = __decorate([
 -                    dec
 -                ], C);
 -                return C;
--            }());
+-            })();
 -            exports_1("C", C);
 -            env_1 = { stack: [], error: void 0, hasError: false };
 -            try {

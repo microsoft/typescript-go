@@ -1,8 +1,8 @@
 --- old.esModuleInteropUsesExportStarWhenDefaultPlusNames.js
 +++ new.esModuleInteropUsesExportStarWhenDefaultPlusNames.js
-@@= skipped -30, +30 lines =@@
-     return result;
- };
+@@= skipped -40, +40 lines =@@
+     };
+ })();
  Object.defineProperty(exports, "__esModule", { value: true });
 -var dep_1 = __importStar(require("./dep"));
 +const dep_1 = __importStar(require("./dep"));

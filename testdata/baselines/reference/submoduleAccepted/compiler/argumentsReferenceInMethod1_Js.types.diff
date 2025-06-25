@@ -7,7 +7,7 @@
 ->foo : any
 +>foo : object
  >{} : {}
- 
+
  		/**
  		 * @type object
  		 */
@@ -21,7 +21,5 @@
 ->foo : any
 +>arguments : object
 +>foo : object
-+>foo : object
  	}
  }
- 

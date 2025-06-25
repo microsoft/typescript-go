@@ -17,6 +17,14 @@ var N;
 var n;
 >n : number
 
+/** @type {BigInt} */
+var BI;
+>BI : BigInt
+
+/** @type {bigint} */
+var bi;
+>bi : bigint
+
 /** @type {Boolean} */
 var B;
 >B : Boolean
@@ -51,7 +59,7 @@ var nl;
 
 /** @type {Array} */
 var A;
->A : any
+>A : any[]
 
 /** @type {array} */
 var a;
@@ -59,7 +67,7 @@ var a;
 
 /** @type {Promise} */
 var P;
->P : any
+>P : Promise<any>
 
 /** @type {promise} */
 var p;
@@ -108,6 +116,12 @@ var B: boolean;
 var b: boolean;
 >b : boolean
 
+var BI: bigint;
+>BI : BigInt
+
+var bi: bigint;
+>bi : bigint
+
 var V :void;
 >V : Void
 
@@ -127,13 +141,13 @@ var nl: null;
 >nl : null
 
 var A: any[];
->A : any
+>A : any[]
 
 var a: any[];
 >a : array
 
 var P: Promise<any>;
->P : any
+>P : Promise<any>
 
 var p: Promise<any>;
 >p : promise

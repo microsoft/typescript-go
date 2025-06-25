@@ -32,3 +32,13 @@ exports._ = boxedBox_1.boxedBox;
 /**
  * wat
  */
+
+
+//// [a.d.ts]
+export declare const _: import("./box").Box<{
+    boxed: import("./box").Box<number>;
+}>;
+// At index 83
+/**
+ * wat
+ */

@@ -7,6 +7,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/jsnum"
@@ -1002,7 +1003,7 @@ func (c *Checker) getUnmatchedPropertiesWorker(source *Type, target *Type, requi
 	return nil
 }
 
-func excludeProperties(properties []*ast.Symbol, excludedProperties core.Set[string]) []*ast.Symbol {
+func excludeProperties(properties []*ast.Symbol, excludedProperties collections.Set[string]) []*ast.Symbol {
 	if excludedProperties.Len() == 0 || len(properties) == 0 {
 		return properties
 	}
@@ -1217,10 +1218,12 @@ func (c *Checker) discriminateTypeByDiscriminableItems(target *Type, discriminat
 		for i := range types {
 			if include[i] != TernaryFalse {
 				targetType := c.getTypeOfPropertyOrIndexSignatureOfType(types[i], discriminator.name(n))
-				if targetType != nil && discriminator.matches(n, targetType) {
-					matched = true
-				} else {
-					include[i] = TernaryMaybe
+				if targetType != nil {
+					if discriminator.matches(n, targetType) {
+						matched = true
+					} else {
+						include[i] = TernaryMaybe
+					}
 				}
 			}
 		}
@@ -2439,7 +2442,7 @@ func (c *Checker) isValidTypeForTemplateLiteralPlaceholder(source *Type, target 
 		return target.flags&TypeFlagsNumber != 0 && isValidNumberString(value, false /*roundTripOnly*/) ||
 			target.flags&TypeFlagsBigInt != 0 && isValidBigIntString(value, false /*roundTripOnly*/) ||
 			target.flags&(TypeFlagsBooleanLiteral|TypeFlagsNullable) != 0 && value == target.AsIntrinsicType().intrinsicName ||
-			target.flags&TypeFlagsStringMapping != 0 && c.isMemberOfStringMapping(c.getStringLiteralType(value), target) ||
+			target.flags&TypeFlagsStringMapping != 0 && c.isMemberOfStringMapping(source, target) ||
 			target.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, target.AsTemplateLiteralType())
 	case source.flags&TypeFlagsTemplateLiteral != 0:
 		texts := source.AsTemplateLiteralType().texts
@@ -2504,7 +2507,7 @@ type Relater struct {
 	errorChain     *ErrorChain
 	relatedInfo    []*ast.Diagnostic
 	maybeKeys      []string
-	maybeKeysSet   core.Set[string]
+	maybeKeysSet   collections.Set[string]
 	sourceStack    []*Type
 	targetStack    []*Type
 	maybeCount     int
@@ -2693,7 +2696,7 @@ func (r *Relater) hasExcessProperties(source *Type, target *Type, reportErrors b
 					if r.errorNode == nil {
 						panic("No errorNode in hasExcessProperties")
 					}
-					if ast.IsJsxAttributes(r.errorNode) || isJsxOpeningLikeElement(r.errorNode) || isJsxOpeningLikeElement(r.errorNode.Parent) {
+					if ast.IsJsxAttributes(r.errorNode) || ast.IsJsxOpeningLikeElement(r.errorNode) || ast.IsJsxOpeningLikeElement(r.errorNode.Parent) {
 						// JsxAttributes has an object-literal flag and undergo same type-assignablity check as normal object-literal.
 						// However, using an object-literal error message will be very confusing to the users so we give different a message.
 						if prop.ValueDeclaration != nil && ast.IsJsxAttribute(prop.ValueDeclaration) && ast.GetSourceFileOfNode(r.errorNode) == ast.GetSourceFileOfNode(prop.ValueDeclaration.Name()) {
@@ -3173,7 +3176,7 @@ func (r *Relater) structuredTypeRelatedTo(source *Type, target *Type, reportErro
 		//   let weak: { a?: { x?: number } } & { c?: string } = wrong;  // Nested weak object type
 		//
 		case result != TernaryFalse && intersectionState&IntersectionStateTarget == 0 && target.flags&TypeFlagsIntersection != 0 && !r.c.isGenericObjectType(target) && source.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0:
-			result &= r.propertiesRelatedTo(source, target, reportErrors, core.Set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, IntersectionStateNone)
+			result &= r.propertiesRelatedTo(source, target, reportErrors, collections.Set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, IntersectionStateNone)
 			if result != 0 && isObjectLiteralType(source) && source.objectFlags&ObjectFlagsFreshLiteral != 0 {
 				result &= r.indexSignaturesRelatedTo(source, target, false /*sourceIsPrimitive*/, reportErrors, IntersectionStateNone)
 			}
@@ -3185,7 +3188,7 @@ func (r *Relater) structuredTypeRelatedTo(source *Type, target *Type, reportErro
 		//   }
 		//
 		case result != 0 && r.c.isNonGenericObjectType(target) && !r.c.isArrayOrTupleType(target) && r.isSourceIntersectionNeedingExtraCheck(source, target):
-			result &= r.propertiesRelatedTo(source, target, reportErrors, core.Set[string]{} /*excludedProperties*/, true /*optionalsOnly*/, intersectionState)
+			result &= r.propertiesRelatedTo(source, target, reportErrors, collections.Set[string]{} /*excludedProperties*/, true /*optionalsOnly*/, intersectionState)
 		}
 	}
 	if result != TernaryFalse {
@@ -3324,8 +3327,9 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		}
 		params := r.c.typeAliasLinks.Get(source.alias.symbol).typeParameters
 		minParams := r.c.getMinTypeArgumentCount(params)
-		sourceTypes := r.c.fillMissingTypeArguments(source.alias.typeArguments, params, minParams)
-		targetTypes := r.c.fillMissingTypeArguments(target.alias.typeArguments, params, minParams)
+		nodeIsInJsFile := ast.IsInJSFile(source.alias.symbol.ValueDeclaration)
+		sourceTypes := r.c.fillMissingTypeArguments(source.alias.typeArguments, params, minParams, nodeIsInJsFile)
+		targetTypes := r.c.fillMissingTypeArguments(target.alias.typeArguments, params, minParams, nodeIsInJsFile)
 		varianceResult, ok := relateVariances(sourceTypes, targetTypes, variances, intersectionState)
 		if ok {
 			return varianceResult
@@ -3794,7 +3798,7 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		if source.flags&(TypeFlagsObject|TypeFlagsIntersection) != 0 && target.flags&TypeFlagsObject != 0 {
 			// Report structural errors only if we haven't reported any errors yet
 			reportStructuralErrors := reportErrors && r.errorChain == saveErrorState.errorChain && !sourceIsPrimitive
-			result = r.propertiesRelatedTo(source, target, reportStructuralErrors, core.Set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, intersectionState)
+			result = r.propertiesRelatedTo(source, target, reportStructuralErrors, collections.Set[string]{} /*excludedProperties*/, false /*optionalsOnly*/, intersectionState)
 			if result != TernaryFalse {
 				result &= r.signaturesRelatedTo(source, target, SignatureKindCall, reportStructuralErrors, intersectionState)
 				if result != TernaryFalse {
@@ -3942,7 +3946,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	}
 	// Compute the set of types for each discriminant property.
 	sourceDiscriminantTypes := make([][]*Type, len(sourcePropertiesFiltered))
-	var excludedProperties core.Set[string]
+	var excludedProperties collections.Set[string]
 	for i, sourceProperty := range sourcePropertiesFiltered {
 		sourcePropertyType := r.c.getNonMissingTypeOfSymbol(sourceProperty)
 		sourceDiscriminantTypes[i] = sourcePropertyType.Distributed()
@@ -4018,7 +4022,7 @@ func (r *Relater) typeRelatedToDiscriminatedType(source *Type, target *Type) Ter
 	return result
 }
 
-func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors bool, excludedProperties core.Set[string], optionalsOnly bool, intersectionState IntersectionState) Ternary {
+func (r *Relater) propertiesRelatedTo(source *Type, target *Type, reportErrors bool, excludedProperties collections.Set[string], optionalsOnly bool, intersectionState IntersectionState) Ternary {
 	if r.relation == r.c.identityRelation {
 		return r.propertiesIdenticalTo(source, target, excludedProperties)
 	}
@@ -4329,7 +4333,7 @@ func (r *Relater) tryElaborateErrorsForPrimitivesAndObjects(source *Type, target
 	}
 }
 
-func (r *Relater) propertiesIdenticalTo(source *Type, target *Type, excludedProperties core.Set[string]) Ternary {
+func (r *Relater) propertiesIdenticalTo(source *Type, target *Type, excludedProperties collections.Set[string]) Ternary {
 	if source.flags&TypeFlagsObject == 0 || target.flags&TypeFlagsObject == 0 {
 		return TernaryFalse
 	}
@@ -4357,8 +4361,12 @@ func (r *Relater) signaturesRelatedTo(source *Type, target *Type, kind Signature
 	if r.relation == r.c.identityRelation {
 		return r.signaturesIdenticalTo(source, target, kind)
 	}
-	if target == r.c.anyFunctionType || r.relation != r.c.strictSubtypeRelation && source == r.c.anyFunctionType {
+	// With respect to signatures, the anyFunctionType wildcard is a subtype of every other function type.
+	if source == r.c.anyFunctionType {
 		return TernaryTrue
+	}
+	if target == r.c.anyFunctionType {
+		return TernaryFalse
 	}
 	sourceSignatures := r.c.getSignaturesOfType(source, kind)
 	targetSignatures := r.c.getSignaturesOfType(target, kind)

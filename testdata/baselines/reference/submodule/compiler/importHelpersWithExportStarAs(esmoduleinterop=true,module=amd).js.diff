@@ -2,7 +2,7 @@
 +++ new.importHelpersWithExportStarAs(esmoduleinterop=true,module=amd).js
 @@= skipped -11, +11 lines =@@
  }
- 
+
  //// [a.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -29,4 +29,4 @@
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.a = void 0;
 +const tslib_1 = require("tslib");
-+exports.a = tslib_1.__importStar(require("./a"));
++exports.a = __importStar(require("./a"));

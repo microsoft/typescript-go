@@ -1,15 +1,20 @@
 package core
 
 import (
+	"reflect"
 	"strings"
+	"sync"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=ModuleKind,ScriptTarget -output=compileroptions_stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w compileroptions_stringer_generated.go
 
 type CompilerOptions struct {
+	_ noCopy
+
 	AllowJs                                   Tristate                                  `json:"allowJs,omitzero"`
 	AllowArbitraryExtensions                  Tristate                                  `json:"allowArbitraryExtensions,omitzero"`
 	AllowSyntheticDefaultImports              Tristate                                  `json:"allowSyntheticDefaultImports,omitzero"`
@@ -36,6 +41,7 @@ type CompilerOptions struct {
 	DisableSourceOfProjectReferenceRedirect   Tristate                                  `json:"disableSourceOfProjectReferenceRedirect,omitzero"`
 	DisableSolutionSearching                  Tristate                                  `json:"disableSolutionSearching,omitzero"`
 	DisableReferencedProjectLoad              Tristate                                  `json:"disableReferencedProjectLoad,omitzero"`
+	ErasableSyntaxOnly                        Tristate                                  `json:"erasableSyntaxOnly,omitzero"`
 	ESModuleInterop                           Tristate                                  `json:"esModuleInterop,omitzero"`
 	ExactOptionalPropertyTypes                Tristate                                  `json:"exactOptionalPropertyTypes,omitzero"`
 	ExperimentalDecorators                    Tristate                                  `json:"experimentalDecorators,omitzero"`
@@ -54,6 +60,7 @@ type CompilerOptions struct {
 	JsxImportSource                           string                                    `json:"jsxImportSource,omitzero"`
 	KeyofStringsOnly                          Tristate                                  `json:"keyofStringsOnly,omitzero"`
 	Lib                                       []string                                  `json:"lib,omitzero"`
+	LibReplacement                            Tristate                                  `json:"libReplacement,omitzero"`
 	Locale                                    string                                    `json:"locale,omitzero"`
 	MapRoot                                   string                                    `json:"mapRoot,omitzero"`
 	Module                                    ModuleKind                                `json:"module,omitzero"`
@@ -140,6 +147,39 @@ type CompilerOptions struct {
 	PprofDir       string   `json:"pprofDir,omitzero"`
 	SingleThreaded Tristate `json:"singleThreaded,omitzero"`
 	Quiet          Tristate `json:"quiet,omitzero"`
+
+	sourceFileAffectingCompilerOptionsOnce sync.Once
+	sourceFileAffectingCompilerOptions     SourceFileAffectingCompilerOptions
+}
+
+// noCopy may be embedded into structs which must not be copied
+// after the first use.
+//
+// See https://golang.org/issues/8005#issuecomment-190753527
+// for details.
+type noCopy struct{}
+
+// Lock is a no-op used by -copylocks checker from `go vet`.
+func (*noCopy) Lock()   {}
+func (*noCopy) Unlock() {}
+
+var optionsType = reflect.TypeFor[CompilerOptions]()
+
+// Clone creates a shallow copy of the CompilerOptions.
+func (options *CompilerOptions) Clone() *CompilerOptions {
+	// TODO: this could be generated code instead of reflection.
+	target := &CompilerOptions{}
+
+	sourceValue := reflect.ValueOf(options).Elem()
+	targetValue := reflect.ValueOf(target).Elem()
+
+	for i := range sourceValue.NumField() {
+		if optionsType.Field(i).IsExported() {
+			targetValue.Field(i).Set(sourceValue.Field(i))
+		}
+	}
+
+	return target
 }
 
 func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
@@ -147,7 +187,7 @@ func (options *CompilerOptions) GetEmitScriptTarget() ScriptTarget {
 		return options.Target
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16:
+	case ModuleKindNode16, ModuleKindNode18:
 		return ScriptTargetES2022
 	case ModuleKindNodeNext:
 		return ScriptTargetESNext
@@ -171,13 +211,41 @@ func (options *CompilerOptions) GetModuleResolutionKind() ModuleResolutionKind {
 		return options.ModuleResolution
 	}
 	switch options.GetEmitModuleKind() {
-	case ModuleKindNode16:
+	case ModuleKindNode16, ModuleKindNode18:
 		return ModuleResolutionKindNode16
 	case ModuleKindNodeNext:
 		return ModuleResolutionKindNodeNext
 	default:
 		return ModuleResolutionKindBundler
 	}
+}
+
+func (options *CompilerOptions) GetEmitModuleDetectionKind() ModuleDetectionKind {
+	if options.ModuleDetection != ModuleDetectionKindNone {
+		return options.ModuleDetection
+	}
+	switch options.GetEmitModuleKind() {
+	case ModuleKindNode16, ModuleKindNodeNext:
+		return ModuleDetectionKindForce
+	default:
+		return ModuleDetectionKindAuto
+	}
+}
+
+func (options *CompilerOptions) GetResolvePackageJsonExports() bool {
+	return options.ResolvePackageJsonExports.IsTrueOrUnknown()
+}
+
+func (options *CompilerOptions) GetResolvePackageJsonImports() bool {
+	return options.ResolvePackageJsonImports.IsTrueOrUnknown()
+}
+
+func (options *CompilerOptions) GetAllowImportingTsExtensions() bool {
+	return options.AllowImportingTsExtensions.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()
+}
+
+func (options *CompilerOptions) AllowImportingTsExtensionsFrom(fileName string) bool {
+	return options.GetAllowImportingTsExtensions() || tspath.IsDeclarationFileName(fileName)
 }
 
 func (options *CompilerOptions) GetESModuleInterop() bool {
@@ -256,13 +324,11 @@ func (options *CompilerOptions) GetEmitStandardClassFields() bool {
 }
 
 func (options *CompilerOptions) GetEmitDeclarations() bool {
-	// !!!
-	return false
+	return options.Declaration.IsTrue() || options.Composite.IsTrue()
 }
 
 func (options *CompilerOptions) GetAreDeclarationMapsEnabled() bool {
-	// !!!
-	return false
+	return options.DeclarationMap == TSTrue && options.GetEmitDeclarations()
 }
 
 func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
@@ -273,26 +339,35 @@ func (options *CompilerOptions) HasJsonModuleEmitEnabled() bool {
 	return true
 }
 
+func (options *CompilerOptions) GetPathsBasePath(currentDirectory string) string {
+	if options.Paths.Size() == 0 {
+		return ""
+	}
+	if options.PathsBasePath != "" {
+		return options.PathsBasePath
+	}
+	return currentDirectory
+}
+
 // SourceFileAffectingCompilerOptions are the precomputed CompilerOptions values which
 // affect the parse and bind of a source file.
 type SourceFileAffectingCompilerOptions struct {
-	AllowUnreachableCode       Tristate
-	AllowUnusedLabels          Tristate
-	BindInStrictMode           bool
-	EmitScriptTarget           ScriptTarget
-	NoFallthroughCasesInSwitch Tristate
-	ShouldPreserveConstEnums   bool
+	AllowUnreachableCode     Tristate
+	AllowUnusedLabels        Tristate
+	BindInStrictMode         bool
+	ShouldPreserveConstEnums bool
 }
 
-func (options *CompilerOptions) SourceFileAffecting() *SourceFileAffectingCompilerOptions {
-	return &SourceFileAffectingCompilerOptions{
-		AllowUnreachableCode:       options.AllowUnreachableCode,
-		AllowUnusedLabels:          options.AllowUnusedLabels,
-		BindInStrictMode:           options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
-		EmitScriptTarget:           options.GetEmitScriptTarget(),
-		NoFallthroughCasesInSwitch: options.NoFallthroughCasesInSwitch,
-		ShouldPreserveConstEnums:   options.ShouldPreserveConstEnums(),
-	}
+func (options *CompilerOptions) SourceFileAffecting() SourceFileAffectingCompilerOptions {
+	options.sourceFileAffectingCompilerOptionsOnce.Do(func() {
+		options.sourceFileAffectingCompilerOptions = SourceFileAffectingCompilerOptions{
+			AllowUnreachableCode:     options.AllowUnreachableCode,
+			AllowUnusedLabels:        options.AllowUnusedLabels,
+			BindInStrictMode:         options.AlwaysStrict.IsTrue() || options.Strict.IsTrue(),
+			ShouldPreserveConstEnums: options.ShouldPreserveConstEnums(),
+		}
+	})
+	return options.sourceFileAffectingCompilerOptions
 }
 
 type ModuleDetectionKind int32
@@ -321,10 +396,21 @@ const (
 	ModuleKindESNext ModuleKind = 99
 	// Node16+ is an amalgam of commonjs (albeit updated) and es2022+, and represents a distinct module system from es2020/esnext
 	ModuleKindNode16   ModuleKind = 100
+	ModuleKindNode18   ModuleKind = 101
 	ModuleKindNodeNext ModuleKind = 199
 	// Emit as written
 	ModuleKindPreserve ModuleKind = 200
 )
+
+func (moduleKind ModuleKind) IsNonNodeESM() bool {
+	return moduleKind >= ModuleKindES2015 && moduleKind <= ModuleKindESNext
+}
+
+func (moduleKind ModuleKind) SupportsImportAttributes() bool {
+	return ModuleKindNode18 <= moduleKind && moduleKind <= ModuleKindNodeNext ||
+		moduleKind == ModuleKindPreserve ||
+		moduleKind == ModuleKindESNext
+}
 
 type ResolutionMode = ModuleKind // ModuleKindNone | ModuleKindCommonJS | ModuleKindESNext
 

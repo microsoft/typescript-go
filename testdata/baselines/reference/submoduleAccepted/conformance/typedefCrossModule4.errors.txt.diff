@@ -1,6 +1,6 @@
 --- old.typedefCrossModule4.errors.txt
 +++ new.typedefCrossModule4.errors.txt
-@@= skipped -0, +-1 lines =@@
+@@= skipped -0, +0 lines =@@
 -mod3.js(1,23): error TS2300: Duplicate identifier 'Foo'.
 -mod3.js(3,20): error TS2300: Duplicate identifier 'Foo'.
 -
@@ -17,5 +17,4 @@
 -!!! related TS6203 mod3.js:1:23: 'Foo' was also declared here.
 -    
 -    
-@@= skipped --1, +1 lines =@@
 +<no content>

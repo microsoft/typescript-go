@@ -2,7 +2,7 @@
 +++ new.callbackTag4.symbols
 @@= skipped -0, +0 lines =@@
  //// [tests/cases/conformance/jsdoc/callbackTag4.ts] ////
- 
+
 -=== ./a.js ===
 +=== a.js ===
  /**
@@ -10,10 +10,11 @@
   * @this {{ a: string, b: number }}
 @@= skipped -15, +15 lines =@@
  >b : Symbol(b, Decl(a.js, 9, 23))
- 
+
      this
 ->this : Symbol(this)
--
++>this : Symbol(@this {{ a: string, b: number }}
++ * , Decl(a.js, 2, 3))
+
      return true
  }
- 

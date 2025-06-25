@@ -10,6 +10,8 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/go-cmp/cmp/cmpopts"
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
 	"github.com/microsoft/typescript-go/internal/parser"
@@ -511,6 +513,76 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			allFileList:    map[string]string{"/app.ts": ""},
 		}},
 	},
+	{
+		title:               "issue 1267 scenario - extended files not picked up",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base/backend.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "dist",
+    "rootDir": "src",
+    "resolveJsonModule": true
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*"]
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base/backend.json": `{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Backend",
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "nodenext",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "esnext",
+    "lib": ["ESNext"],
+    "incremental": false,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "moduleResolution": "nodenext",
+    "types": ["node", "vitest/globals"],
+    "sourceMap": true,
+    "strictPropertyInitialization": false
+  },
+  "files": [
+    "types/ical2json.d.ts",
+    "types/express.d.ts",
+    "types/multer.d.ts",
+    "types/reset.d.ts",
+    "types/stripe-custom-typings.d.ts",
+    "types/nestjs-modules.d.ts",
+    "types/luxon.d.ts",
+    "types/nestjs-pino.d.ts"
+  ],
+  "ts-node": {
+    "files": true
+  }
+}`,
+				"/tsconfig-base/types/ical2json.d.ts":             "export {}",
+				"/tsconfig-base/types/express.d.ts":               "export {}",
+				"/tsconfig-base/types/multer.d.ts":                "export {}",
+				"/tsconfig-base/types/reset.d.ts":                 "export {}",
+				"/tsconfig-base/types/stripe-custom-typings.d.ts": "export {}",
+				"/tsconfig-base/types/nestjs-modules.d.ts":        "export {}",
+				"/tsconfig-base/types/luxon.d.ts": `declare module 'luxon' {
+  interface TSSettings {
+    throwOnInvalid: true
+  }
+}
+export {}`,
+				"/tsconfig-base/types/nestjs-pino.d.ts": "export {}",
+				"/src/main.ts":                          "export {}",
+				"/src/utils.ts":                         "export {}",
+			},
+		}},
+	},
 }
 
 var tsconfigWithExtends = `{
@@ -589,7 +661,10 @@ func TestParseJsonSourceFileConfigFileContent(t *testing.T) {
 func getParsedWithJsonSourceFileApi(config testConfig, host tsoptions.ParseConfigHost, basePath string) *tsoptions.ParsedCommandLine {
 	configFileName := tspath.GetNormalizedAbsolutePath(config.configFileName, basePath)
 	path := tspath.ToPath(config.configFileName, basePath, host.FS().UseCaseSensitiveFileNames())
-	parsed := parser.ParseJSONText(configFileName, path, config.jsonText)
+	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: configFileName,
+		Path:     path,
+	}, config.jsonText, core.ScriptKindJSON)
 	tsConfigSourceFile := &tsoptions.TsConfigSourceFile{
 		SourceFile: parsed,
 	}
@@ -807,7 +882,10 @@ func TestParseSrcCompiler(t *testing.T) {
 	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(t, ok)
 	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
-	parsed := parser.ParseJSONText(tsconfigFileName, tsconfigPath, jsonText)
+	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: tsconfigFileName,
+		Path:     tsconfigPath,
+	}, jsonText, core.ScriptKindJSON)
 
 	if len(parsed.Diagnostics()) > 0 {
 		for _, error := range parsed.Diagnostics() {
@@ -863,7 +941,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		SourceMap:                  core.TSTrue,
 		UseUnknownInCatchVariables: core.TSFalse,
 		Pretty:                     core.TSTrue,
-	})
+	}, cmpopts.IgnoreUnexported(core.CompilerOptions{}))
 
 	fileNames := parseConfigFileContent.ParsedConfig.FileNames
 	relativePaths := make([]string, 0, len(fileNames))
@@ -899,6 +977,7 @@ func TestParseSrcCompiler(t *testing.T) {
 		"performance.ts",
 		"performanceCore.ts",
 		"program.ts",
+		"programDiagnostics.ts",
 		"resolutionCache.ts",
 		"scanner.ts",
 		"semver.ts",
@@ -933,7 +1012,6 @@ func TestParseSrcCompiler(t *testing.T) {
 		"transformers/classThis.ts",
 		"transformers/declarations.ts",
 		"transformers/destructuring.ts",
-		"transformers/es2015.ts",
 		"transformers/es2016.ts",
 		"transformers/es2017.ts",
 		"transformers/es2018.ts",
@@ -942,7 +1020,6 @@ func TestParseSrcCompiler(t *testing.T) {
 		"transformers/es2021.ts",
 		"transformers/esDecorators.ts",
 		"transformers/esnext.ts",
-		"transformers/generators.ts",
 		"transformers/jsx.ts",
 		"transformers/legacyDecorators.ts",
 		"transformers/namedEvaluation.ts",
@@ -973,7 +1050,10 @@ func BenchmarkParseSrcCompiler(b *testing.B) {
 	jsonText, ok := fs.ReadFile(tsconfigFileName)
 	assert.Assert(b, ok)
 	tsconfigPath := tspath.ToPath(tsconfigFileName, compilerDir, fs.UseCaseSensitiveFileNames())
-	parsed := parser.ParseJSONText(tsconfigFileName, tsconfigPath, jsonText)
+	parsed := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: tsconfigFileName,
+		Path:     tsconfigPath,
+	}, jsonText, core.ScriptKindJSON)
 
 	b.ReportAllocs()
 

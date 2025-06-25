@@ -2,15 +2,22 @@ package compiler
 
 import (
 	"encoding/base64"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/transformers"
+	"github.com/microsoft/typescript-go/internal/transformers/declarations"
+	"github.com/microsoft/typescript-go/internal/transformers/estransforms"
+	"github.com/microsoft/typescript-go/internal/transformers/jsxtransforms"
+	"github.com/microsoft/typescript-go/internal/transformers/moduletransforms"
+	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -24,22 +31,95 @@ const (
 )
 
 type emitter struct {
-	host               printer.EmitHost
+	host               EmitHost
 	emitOnly           emitOnly
 	emittedFilesList   []string
 	emitterDiagnostics ast.DiagnosticsCollection
 	emitSkipped        bool
 	sourceMapDataList  []*SourceMapEmitResult
 	writer             printer.EmitTextWriter
-	paths              *outputPaths
+	paths              *outputpaths.OutputPaths
 	sourceFile         *ast.SourceFile
 }
 
 func (e *emitter) emit() {
 	// !!! tracing
-	e.emitJSFile(e.sourceFile, e.paths.jsFilePath, e.paths.sourceMapFilePath)
-	e.emitDeclarationFile(e.sourceFile, e.paths.declarationFilePath, e.paths.declarationMapPath)
-	e.emitBuildInfo(e.paths.buildInfoPath)
+	e.emitJSFile(e.sourceFile, e.paths.JsFilePath(), e.paths.SourceMapFilePath())
+	e.emitDeclarationFile(e.sourceFile, e.paths.DeclarationFilePath(), e.paths.DeclarationMapPath())
+	e.emitBuildInfo(e.paths.BuildInfoPath())
+}
+
+func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, declarationFilePath string, declarationMapPath string) []*declarations.DeclarationTransformer {
+	emitResolver := e.host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
+	transform := declarations.NewDeclarationTransformer(e.host, emitResolver, emitContext, e.host.Options(), declarationFilePath, declarationMapPath)
+	return []*declarations.DeclarationTransformer{transform}
+}
+
+func getModuleTransformer(emitContext *printer.EmitContext, options *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+	switch options.GetEmitModuleKind() {
+	case core.ModuleKindPreserve:
+		// `ESModuleTransformer` contains logic for preserving CJS input syntax in `--module preserve`
+		return moduletransforms.NewESModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+
+	case core.ModuleKindESNext,
+		core.ModuleKindES2022,
+		core.ModuleKindES2020,
+		core.ModuleKindES2015,
+		core.ModuleKindNode18,
+		core.ModuleKindNode16,
+		core.ModuleKindNodeNext,
+		core.ModuleKindCommonJS:
+		return moduletransforms.NewImpliedModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+
+	default:
+		return moduletransforms.NewCommonJSModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+	}
+}
+
+func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHost, sourceFile *ast.SourceFile) []*transformers.Transformer {
+	var tx []*transformers.Transformer
+	options := host.Options()
+
+	// JS files don't use reference calculations as they don't do import elision, no need to calculate it
+	importElisionEnabled := !options.VerbatimModuleSyntax.IsTrue() && !ast.IsInJSFile(sourceFile.AsNode())
+
+	var emitResolver printer.EmitResolver
+	var referenceResolver binder.ReferenceResolver
+	if importElisionEnabled || options.GetJSXTransformEnabled() {
+		emitResolver = host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
+		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
+		referenceResolver = emitResolver
+	} else {
+		referenceResolver = binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
+	}
+
+	// transform TypeScript syntax
+	{
+		// erase types
+		tx = append(tx, tstransforms.NewTypeEraserTransformer(emitContext, options))
+
+		// elide imports
+		if importElisionEnabled {
+			tx = append(tx, tstransforms.NewImportElisionTransformer(emitContext, options, emitResolver))
+		}
+
+		// transform `enum`, `namespace`, and parameter properties
+		tx = append(tx, tstransforms.NewRuntimeSyntaxTransformer(emitContext, options, referenceResolver))
+	}
+
+	// !!! transform legacy decorator syntax
+	if options.GetJSXTransformEnabled() {
+		tx = append(tx, jsxtransforms.NewJSXTransformer(emitContext, options, emitResolver))
+	}
+
+	downleveler := estransforms.GetESTransformer(options, emitContext)
+	if downleveler != nil {
+		tx = append(tx, downleveler)
+	}
+
+	// transform module syntax
+	tx = append(tx, getModuleTransformer(emitContext, options, referenceResolver, host.GetEmitModuleFormatOfFile))
+	return tx
 }
 
 func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sourceMapFilePath string) {
@@ -53,8 +133,10 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
-	emitContext := printer.NewEmitContext()
-	for _, transformer := range transformers.GetScriptTransformers(emitContext, e.host, sourceFile) {
+	emitContext, putEmitContext := printer.GetEmitContext()
+	defer putEmitContext()
+
+	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 	}
 
@@ -73,7 +155,7 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		// !!!
 	}, emitContext)
 
-	e.printSourceFile(jsFilePath, sourceMapFilePath, sourceFile, printer)
+	e.printSourceFile(jsFilePath, sourceMapFilePath, sourceFile, printer, shouldEmitSourceMaps(options, sourceFile))
 
 	if e.emittedFilesList != nil {
 		e.emittedFilesList = append(e.emittedFilesList, jsFilePath)
@@ -84,18 +166,56 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 }
 
 func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFilePath string, declarationMapPath string) {
-	// !!!
+	options := e.host.Options()
+
+	if sourceFile == nil || e.emitOnly != emitAll && e.emitOnly != emitOnlyDts || len(declarationFilePath) == 0 {
+		return
+	}
+
+	if options.NoEmit == core.TSTrue || e.host.IsEmitBlocked(declarationFilePath) {
+		return
+	}
+
+	var diags []*ast.Diagnostic
+	emitContext, putEmitContext := printer.GetEmitContext()
+	defer putEmitContext()
+	for _, transformer := range e.getDeclarationTransformers(emitContext, sourceFile, declarationFilePath, declarationMapPath) {
+		sourceFile = transformer.TransformSourceFile(sourceFile)
+		diags = append(diags, transformer.GetDiagnostics()...)
+	}
+
+	printerOptions := printer.PrinterOptions{
+		RemoveComments:  options.RemoveComments.IsTrue(),
+		NewLine:         options.NewLine,
+		NoEmitHelpers:   options.NoEmitHelpers.IsTrue(),
+		SourceMap:       options.DeclarationMap.IsTrue(),
+		InlineSourceMap: options.InlineSourceMap.IsTrue(),
+		InlineSources:   options.InlineSources.IsTrue(),
+		// !!!
+	}
+
+	// create a printer to print the nodes
+	printer := printer.NewPrinter(printerOptions, printer.PrintHandlers{
+		// !!!
+	}, emitContext)
+
+	e.printSourceFile(declarationFilePath, declarationMapPath, sourceFile, printer, shouldEmitDeclarationSourceMaps(options, sourceFile))
+
+	for _, elem := range diags {
+		// Add declaration transform diagnostics to emit diagnostics
+		e.emitterDiagnostics.Add(elem)
+	}
 }
 
 func (e *emitter) emitBuildInfo(buildInfoPath string) {
 	// !!!
 }
 
-func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, sourceFile *ast.SourceFile, printer_ *printer.Printer) bool {
+func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, sourceFile *ast.SourceFile, printer_ *printer.Printer, shouldEmitSourceMaps bool) bool {
 	// !!! sourceMapGenerator
 	options := e.host.Options()
 	var sourceMapGenerator *sourcemap.Generator
-	if shouldEmitSourceMaps(options, sourceFile) {
+	if shouldEmitSourceMaps {
 		sourceMapGenerator = sourcemap.NewGenerator(
 			tspath.GetBaseFileName(tspath.NormalizeSlashes(jsFilePath)),
 			getSourceRoot(options),
@@ -163,46 +283,13 @@ func (e *emitter) printSourceFile(jsFilePath string, sourceMapFilePath string, s
 	return !data.SkippedDtsWrite
 }
 
-func getSourceFilePathInNewDir(fileName string, newDirPath string, currentDirectory string, commonSourceDirectory string, useCaseSensitiveFileNames bool) string {
-	sourceFilePath := tspath.GetNormalizedAbsolutePath(fileName, currentDirectory)
-	commonSourceDirectory = tspath.EnsureTrailingDirectorySeparator(commonSourceDirectory)
-	isSourceFileInCommonSourceDirectory := tspath.ContainsPath(commonSourceDirectory, sourceFilePath, tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: useCaseSensitiveFileNames,
-		CurrentDirectory:          currentDirectory,
-	})
-	if isSourceFileInCommonSourceDirectory {
-		sourceFilePath = sourceFilePath[len(commonSourceDirectory):]
-	}
-	return tspath.CombinePaths(newDirPath, sourceFilePath)
-}
-
-func getOwnEmitOutputFilePath(fileName string, host printer.EmitHost, extension string) string {
-	compilerOptions := host.Options()
-	var emitOutputFilePathWithoutExtension string
-	if len(compilerOptions.OutDir) > 0 {
-		currentDirectory := host.GetCurrentDirectory()
-		emitOutputFilePathWithoutExtension = tspath.RemoveFileExtension(getSourceFilePathInNewDir(
-			fileName,
-			compilerOptions.OutDir,
-			currentDirectory,
-			host.CommonSourceDirectory(),
-			host.UseCaseSensitiveFileNames(),
-		))
-	} else {
-		emitOutputFilePathWithoutExtension = tspath.RemoveFileExtension(fileName)
-	}
-	return emitOutputFilePathWithoutExtension + extension
-}
-
-func getSourceMapFilePath(jsFilePath string, options *core.CompilerOptions) string {
-	if options.SourceMap.IsTrue() && !options.InlineSourceMap.IsTrue() {
-		return jsFilePath + ".map"
-	}
-	return ""
-}
-
 func shouldEmitSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
 	return (mapOptions.SourceMap.IsTrue() || mapOptions.InlineSourceMap.IsTrue()) &&
+		!tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionJson)
+}
+
+func shouldEmitDeclarationSourceMaps(mapOptions *core.CompilerOptions, sourceFile *ast.SourceFile) bool {
+	return mapOptions.DeclarationMap.IsTrue() &&
 		!tspath.FileExtensionIs(sourceFile.FileName(), tspath.ExtensionJson)
 }
 
@@ -225,7 +312,7 @@ func (e *emitter) getSourceMapDirectory(mapOptions *core.CompilerOptions, filePa
 		if sourceFile != nil {
 			// For modules or multiple emit files the mapRoot will have directory structure like the sources
 			// So if src\a.ts and src\lib\b.ts are compiled together user would be moving the maps into mapRoot\a.js.map and mapRoot\lib\b.js.map
-			sourceMapDir = tspath.GetDirectoryPath(getSourceFilePathInNewDir(
+			sourceMapDir = tspath.GetDirectoryPath(outputpaths.GetSourceFilePathInNewDir(
 				sourceFile.FileName(),
 				sourceMapDir,
 				e.host.GetCurrentDirectory(),
@@ -256,7 +343,7 @@ func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMa
 		if sourceFile != nil {
 			// For modules or multiple emit files the mapRoot will have directory structure like the sources
 			// So if src\a.ts and src\lib\b.ts are compiled together user would be moving the maps into mapRoot\a.js.map and mapRoot\lib\b.js.map
-			sourceMapDir = tspath.GetDirectoryPath(getSourceFilePathInNewDir(
+			sourceMapDir = tspath.GetDirectoryPath(outputpaths.GetSourceFilePathInNewDir(
 				sourceFile.FileName(),
 				sourceMapDir,
 				e.host.GetCurrentDirectory(),
@@ -285,68 +372,30 @@ func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMa
 	return stringutil.EncodeURI(sourceMapFile)
 }
 
-func getDeclarationEmitOutputFilePath(file string, host printer.EmitHost) string {
-	// !!!
-	return ""
+type SourceFileMayBeEmittedHost interface {
+	Options() *core.CompilerOptions
+	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
+	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool
+	GetCurrentDirectory() string
+	UseCaseSensitiveFileNames() bool
 }
 
-type outputPaths struct {
-	jsFilePath          string
-	sourceMapFilePath   string
-	declarationFilePath string
-	declarationMapPath  string
-	buildInfoPath       string
-}
+func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmittedHost, forceDtsEmit bool) bool {
+	// TODO: move this to outputpaths?
 
-func getOutputPathsFor(sourceFile *ast.SourceFile, host printer.EmitHost, forceDtsEmit bool) *outputPaths {
 	options := host.Options()
-	// !!! bundle not implemented, may be deprecated
-	ownOutputFilePath := getOwnEmitOutputFilePath(sourceFile.FileName(), host, core.GetOutputExtension(sourceFile.FileName(), options.Jsx))
-	isJsonFile := ast.IsJsonSourceFile(sourceFile)
-	// If json file emits to the same location skip writing it, if emitDeclarationOnly skip writing it
-	isJsonEmittedToSameLocation := isJsonFile &&
-		tspath.ComparePaths(sourceFile.FileName(), ownOutputFilePath, tspath.ComparePathsOptions{
-			CurrentDirectory:          host.GetCurrentDirectory(),
-			UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
-		}) == 0
-	paths := &outputPaths{}
-	if options.EmitDeclarationOnly != core.TSTrue && !isJsonEmittedToSameLocation {
-		paths.jsFilePath = ownOutputFilePath
-		if !ast.IsJsonSourceFile(sourceFile) {
-			paths.sourceMapFilePath = getSourceMapFilePath(paths.jsFilePath, options)
-		}
+	// Js files are emitted only if option is enabled
+	if options.NoEmitForJsFiles.IsTrue() && ast.IsSourceFileJS(sourceFile) {
+		return false
 	}
-	if forceDtsEmit || options.GetEmitDeclarations() && !isJsonFile {
-		paths.declarationFilePath = getDeclarationEmitOutputFilePath(sourceFile.FileName(), host)
-		if options.GetAreDeclarationMapsEnabled() {
-			paths.declarationMapPath = paths.declarationFilePath + ".map"
-		}
-	}
-	return paths
-}
-
-func forEachEmittedFile(host printer.EmitHost, action func(emitFileNames *outputPaths, sourceFile *ast.SourceFile) bool, sourceFiles []*ast.SourceFile, options *EmitOptions) bool {
-	// !!! outFile not yet implemented, may be deprecated
-	for _, sourceFile := range sourceFiles {
-		if action(getOutputPathsFor(sourceFile, host, options.forceDtsEmit), sourceFile) {
-			return true
-		}
-	}
-	return false
-}
-
-func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host printer.EmitHost, forceDtsEmit bool) bool {
-	// !!! Js files are emitted only if option is enabled
 
 	// Declaration files are not emitted
 	if sourceFile.IsDeclarationFile {
 		return false
 	}
 
-	// !!! Source file from node_modules are not emitted. In Strada, this depends on module resolution and uses
-	// `sourceFilesFoundSearchingNodeModules` in `createProgram`. For now, we will just check for `/node_modules/` in
-	// the file name.
-	if strings.Contains(sourceFile.FileName(), "/node_modules/") {
+	// Source file from node_modules are not emitted
+	if host.IsSourceFileFromExternalLibrary(sourceFile) {
 		return false
 	}
 
@@ -355,15 +404,35 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host printer.EmitHost, f
 		return true
 	}
 
-	// !!! Source files from referenced projects are not emitted
+	// Check other conditions for file emit
+	// Source files from referenced projects are not emitted
+	if host.GetOutputAndProjectReference(sourceFile.Path()) != nil {
+		return false
+	}
 
 	// Any non json file should be emitted
 	if !ast.IsJsonSourceFile(sourceFile) {
 		return true
 	}
 
-	// !!! Should JSON input files be emitted
-	return false
+	// Json file is not emitted if outDir is not specified
+	if options.OutDir == "" {
+		return false
+	}
+
+	// Otherwise if rootDir or composite config file, we know common sourceDir and can check if file would be emitted in same location
+	if options.RootDir != "" || (options.Composite.IsTrue() && options.ConfigFilePath != "") {
+		commonDir := tspath.GetNormalizedAbsolutePath(outputpaths.GetCommonSourceDirectory(options, func() []string { return nil }, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames()), host.GetCurrentDirectory())
+		outputPath := outputpaths.GetSourceFilePathInNewDirWorker(sourceFile.FileName(), options.OutDir, host.GetCurrentDirectory(), commonDir, host.UseCaseSensitiveFileNames())
+		if tspath.ComparePaths(sourceFile.FileName(), outputPath, tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
+			CurrentDirectory:          host.GetCurrentDirectory(),
+		}) == 0 {
+			return false
+		}
+	}
+
+	return true
 }
 
 func getSourceFilesToEmit(host printer.EmitHost, targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
@@ -377,4 +446,19 @@ func getSourceFilesToEmit(host printer.EmitHost, targetSourceFile *ast.SourceFil
 	return core.Filter(sourceFiles, func(sourceFile *ast.SourceFile) bool {
 		return sourceFileMayBeEmitted(sourceFile, host, forceDtsEmit)
 	})
+}
+
+func isSourceFileNotJson(file *ast.SourceFile) bool {
+	return !ast.IsJsonSourceFile(file)
+}
+
+func getDeclarationDiagnostics(host EmitHost, resolver printer.EmitResolver, file *ast.SourceFile) []*ast.Diagnostic {
+	fullFiles := core.Filter(getSourceFilesToEmit(host, file, false), isSourceFileNotJson)
+	if !core.Some(fullFiles, func(f *ast.SourceFile) bool { return f == file }) {
+		return []*ast.Diagnostic{}
+	}
+	options := host.Options()
+	transform := declarations.NewDeclarationTransformer(host, resolver, nil, options, "", "")
+	transform.TransformSourceFile(file)
+	return transform.GetDiagnostics()
 }

@@ -25,37 +25,20 @@
 +    let Thing;
      (function (Thing) {
          var Internal = My.Internal;
--        var Foo = /** @class */ (function () {
--            function Foo() {
-+        class Foo {
+         class Foo {
 +            _which;
-+            constructor() {
+             constructor() {
                  Internal.getThing();
 -                0 /* Internal.WhichThing.A */ ? "foo" : "bar";
 +                Internal.WhichThing.A ? "foo" : "bar";
              }
--            return Foo;
--        }());
-+        }
+         }
          Thing.Foo = Foo;
-     })(Thing = SomeOther.Thing || (SomeOther.Thing = {}));
- })(SomeOther || (SomeOther = {}));
--
--
--//// [internal.d.ts]
--declare namespace My.Internal {
--    function getThing(): void;
--    const enum WhichThing {
--        A = 0,
--        B = 1,
--        C = 2
--    }
--}
--//// [usage.d.ts]
+@@= skipped -34, +41 lines =@@
+     }
+ }
+ //// [usage.d.ts]
 -/// <reference path="internal.d.ts" preserve="true" />
--declare namespace SomeOther.Thing {
--    class Foo {
--        private _which;
--        constructor();
--    }
--}
+ declare namespace SomeOther.Thing {
+     class Foo {
+         private _which;

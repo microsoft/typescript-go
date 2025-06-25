@@ -1,75 +1,64 @@
 --- old.typeFromPropertyAssignment13.types
 +++ new.typeFromPropertyAssignment13.types
 @@= skipped -1, +1 lines =@@
- 
+
  === module.js ===
  var Outer = {}
 ->Outer : typeof Outer
-+>Outer : {}
- >{} : {}
- 
+->{} : {}
++>Outer : { Inner: { (): void; prototype: { m(): void; i: number; }; }; }
++>{} : { Inner: { (): void; prototype: { m(): void; i: number; }; }; }
+
  Outer.Inner = function() {}
 ->Outer.Inner = function() {} : typeof Inner
 ->Outer.Inner : typeof Inner
 ->Outer : typeof Outer
 ->Inner : typeof Inner
 ->function() {} : typeof Inner
-+>Outer.Inner = function() {} : () => void
-+>Outer.Inner : any
-+>Outer : {}
-+>Inner : any
-+>function() {} : () => void
- 
++>Outer.Inner = function() {} : { (): void; prototype: { m(): void; i: number; }; }
++>Outer.Inner : { (): void; prototype: { m(): void; i: number; }; }
++>Outer : { Inner: { (): void; prototype: { m(): void; i: number; }; }; }
++>Inner : { (): void; prototype: { m(): void; i: number; }; }
++>function() {} : { (): void; prototype: { m(): void; i: number; }; }
+
  Outer.Inner.prototype = {
-->Outer.Inner.prototype = {    m() { },    i: 1} : { m(): void; i: number; }
-->Outer.Inner.prototype : { m(): void; i: number; }
+ >Outer.Inner.prototype = {    m() { },    i: 1} : { m(): void; i: number; }
+ >Outer.Inner.prototype : { m(): void; i: number; }
 ->Outer.Inner : typeof Inner
 ->Outer : typeof Outer
 ->Inner : typeof Inner
-->prototype : { m(): void; i: number; }
-->{    m() { },    i: 1} : { m(): void; i: number; }
-+>Outer.Inner.prototype = {    m() { },    i: 1} : { m: () => void; i: number; }
-+>Outer.Inner.prototype : any
-+>Outer.Inner : any
-+>Outer : {}
-+>Inner : any
-+>prototype : any
-+>{    m() { },    i: 1} : { m: () => void; i: number; }
- 
-     m() { },
- >m : () => void
-@@= skipped -30, +30 lines =@@
- Outer.Inner.prototype.j = 2
++>Outer.Inner : { (): void; prototype: { m(): void; i: number; }; }
++>Outer : { Inner: { (): void; prototype: { m(): void; i: number; }; }; }
++>Inner : { (): void; prototype: { m(): void; i: number; }; }
+ >prototype : { m(): void; i: number; }
+ >{    m() { },    i: 1} : { m(): void; i: number; }
+
+@@= skipped -31, +31 lines =@@
  >Outer.Inner.prototype.j = 2 : 2
  >Outer.Inner.prototype.j : any
-->Outer.Inner.prototype : { m(): void; i: number; }
+ >Outer.Inner.prototype : { m(): void; i: number; }
 ->Outer.Inner : typeof Inner
 ->Outer : typeof Outer
 ->Inner : typeof Inner
-->prototype : { m(): void; i: number; }
-+>Outer.Inner.prototype : any
-+>Outer.Inner : any
-+>Outer : {}
-+>Inner : any
-+>prototype : any
++>Outer.Inner : { (): void; prototype: { m(): void; i: number; }; }
++>Outer : { Inner: { (): void; prototype: { m(): void; i: number; }; }; }
++>Inner : { (): void; prototype: { m(): void; i: number; }; }
+ >prototype : { m(): void; i: number; }
  >j : any
  >2 : 2
- 
- /** @type {string} */
+@@= skipped -11, +11 lines =@@
  Outer.Inner.prototype.k;
  >Outer.Inner.prototype.k : any
-->Outer.Inner.prototype : { m(): void; i: number; }
+ >Outer.Inner.prototype : { m(): void; i: number; }
 ->Outer.Inner : typeof Inner
 ->Outer : typeof Outer
 ->Inner : typeof Inner
-->prototype : { m(): void; i: number; }
-+>Outer.Inner.prototype : any
-+>Outer.Inner : any
-+>Outer : {}
-+>Inner : any
-+>prototype : any
++>Outer.Inner : { (): void; prototype: { m(): void; i: number; }; }
++>Outer : { Inner: { (): void; prototype: { m(): void; i: number; }; }; }
++>Inner : { (): void; prototype: { m(): void; i: number; }; }
+ >prototype : { m(): void; i: number; }
  >k : any
- 
+
  var inner = new Outer.Inner()
 ->inner : Inner
 ->new Outer.Inner() : Inner
@@ -78,10 +67,10 @@
 ->Inner : typeof Inner
 +>inner : any
 +>new Outer.Inner() : any
-+>Outer.Inner : any
-+>Outer : {}
-+>Inner : any
- 
++>Outer.Inner : { (): void; prototype: { m(): void; i: number; }; }
++>Outer : { Inner: { (): void; prototype: { m(): void; i: number; }; }; }
++>Inner : { (): void; prototype: { m(): void; i: number; }; }
+
  inner.m()
 ->inner.m() : void
 ->inner.m : () => void
@@ -91,7 +80,7 @@
 +>inner.m : any
 +>inner : any
 +>m : any
- 
+
  inner.i
 ->inner.i : number
 ->inner : Inner
@@ -99,7 +88,7 @@
 +>inner.i : any
 +>inner : any
 +>i : any
- 
+
  inner.j
 ->inner.j : number
 ->inner : Inner
@@ -107,7 +96,7 @@
 +>inner.j : any
 +>inner : any
 +>j : any
- 
+
  inner.k
 ->inner.k : string
 ->inner : Inner
@@ -115,4 +104,3 @@
 +>inner.k : any
 +>inner : any
 +>k : any
- 

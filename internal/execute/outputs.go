@@ -79,6 +79,9 @@ func reportStatistics(sys System, program *compiler.Program, result compileAndEm
 	stats.add("Instantiations", program.InstantiationCount())
 	stats.add("Memory used", fmt.Sprintf("%vK", memStats.Alloc/1024))
 	stats.add("Memory allocs", strconv.FormatUint(memStats.Mallocs, 10))
+	if result.configTime != 0 {
+		stats.add("Config time", result.configTime)
+	}
 	stats.add("Parse time", result.parseTime)
 	if result.bindTime != 0 {
 		stats.add("Bind time", result.bindTime)
@@ -95,7 +98,7 @@ func reportStatistics(sys System, program *compiler.Program, result compileAndEm
 }
 
 func printVersion(sys System) {
-	fmt.Fprint(sys.Writer(), diagnostics.Version_0.Format(core.Version)+sys.NewLine())
+	fmt.Fprint(sys.Writer(), diagnostics.Version_0.Format(core.Version())+sys.NewLine())
 	sys.EndWrite()
 }
 
@@ -158,7 +161,7 @@ func printEasyHelp(sys System, simpleOptions []*tsoptions.CommandLineOption) {
 		output = append(output, "  ", desc.Format(), sys.NewLine(), sys.NewLine())
 	}
 
-	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version)
+	msg := diagnostics.X_tsc_Colon_The_TypeScript_Compiler.Format() + " - " + diagnostics.Version_0.Format(core.Version())
 	output = append(output, getHeader(sys, msg)...)
 
 	output = append(output /*colors.bold(*/, diagnostics.COMMON_COMMANDS.Format() /*)*/, sys.NewLine(), sys.NewLine())

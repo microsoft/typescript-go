@@ -7,14 +7,12 @@
 ->f : <U>(x: U) => T
 +>f : <U>(x: U) => U
  >x : U
- 
+
      return x;
 @@= skipped -28, +28 lines =@@
  /** @type {Cb} */
  const cb = x => {}
  >cb : Cb
 ->x => {} : (x: V) => any
-->x : V
-+>x => {} : (x: any) => void
-+>x : any
- 
++>x => {} : (x: V) => void
+ >x : V

@@ -1,10 +1,9 @@
 --- old.indexTypeNoSubstitutionTemplateLiteral.js
 +++ new.indexTypeNoSubstitutionTemplateLiteral.js
 @@= skipped -8, +8 lines =@@
- 
- 
+
+
  //// [indexTypeNoSubstitutionTemplateLiteral.js]
 -"use strict";
  function Foo() { }
--Foo["b"] = function () { };
-+Foo[`b`] = function () { };
+ Foo[`b`] = function () { };

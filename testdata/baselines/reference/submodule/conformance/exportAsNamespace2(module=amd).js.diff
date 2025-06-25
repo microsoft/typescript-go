@@ -2,7 +2,7 @@
 +++ new.exportAsNamespace2(module=amd).js
 @@= skipped -15, +15 lines =@@
  foo.ns.b;
- 
+
  //// [0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -21,10 +21,10 @@
  var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
      if (k2 === undefined) k2 = k;
      var desc = Object.getOwnPropertyDescriptor(m, k);
-@@= skipped -31, +30 lines =@@
-     __setModuleDefault(result, mod);
-     return result;
- };
+@@= skipped -41, +40 lines =@@
+         return result;
+     };
+ })();
 -define(["require", "exports", "./0"], function (require, exports, ns) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -43,10 +43,10 @@
  var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
      if (k2 === undefined) k2 = k;
      var desc = Object.getOwnPropertyDescriptor(m, k);
-@@= skipped -32, +30 lines =@@
-     __setModuleDefault(result, mod);
-     return result;
- };
+@@= skipped -42, +40 lines =@@
+         return result;
+     };
+ })();
 -define(["require", "exports", "./1"], function (require, exports, foo) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
@@ -54,16 +54,10 @@
 -    foo.ns.a;
 -    foo.ns.b;
 -});
--
--
--//// [0.d.ts]
--export declare const a = 1;
--export declare const b = 2;
--//// [1.d.ts]
--export * as ns from './0';
--//// [2.d.ts]
--export {};
 +Object.defineProperty(exports, "__esModule", { value: true });
 +const foo = __importStar(require("./1"));
 +foo.ns.a;
 +foo.ns.b;
+
+
+ //// [0.d.ts]

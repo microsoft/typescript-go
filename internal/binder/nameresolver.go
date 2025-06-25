@@ -40,7 +40,7 @@ loop:
 			// (it refers to the constant type of the expression instead)
 			return nil
 		}
-		if isModuleOrEnumDeclaration(location) && lastLocation != nil && location.Name() == lastLocation {
+		if ast.IsModuleOrEnumDeclaration(location) && lastLocation != nil && location.Name() == lastLocation {
 			// If lastLocation is the name of a namespace or enum, skip the parent since it will have is own locals that could
 			// conflict.
 			lastLocation = location
@@ -99,7 +99,7 @@ loop:
 				// name of that export default matches.
 				result = moduleExports[ast.InternalSymbolNameDefault]
 				if result != nil {
-					localSymbol := getLocalSymbolForExportDefault(result)
+					localSymbol := GetLocalSymbolForExportDefault(result)
 					if localSymbol != nil && result.Flags&meaning != 0 && localSymbol.Name == name {
 						break loop
 					}
@@ -288,13 +288,8 @@ loop:
 		if isSelfReferenceLocation(location, lastLocation) {
 			lastSelfReferenceLocation = location
 		}
-		if location.Kind == ast.KindJSDocTypeExpression && location.AsJSDocTypeExpression().Host != nil {
-			lastLocation = location.AsJSDocTypeExpression().Host.Type()
-			location = location.AsJSDocTypeExpression().Host
-		} else {
-			lastLocation = location
-			location = location.Parent
-		}
+		lastLocation = location
+		location = ast.GetEffectiveTypeParent(location.Parent)
 	}
 	// We just climbed up parents looking for the name, meaning that we started in a descendant node of `lastLocation`.
 	// If `result === lastSelfReferenceLocation.symbol`, that means that we are somewhere inside `lastSelfReferenceLocation` looking up a name, and resolving to `lastLocation` itself.
@@ -327,9 +322,10 @@ loop:
 		}
 	}
 	if result == nil {
-		if originalLocation != nil && originalLocation.Parent != nil && originalLocation.Parent.Parent != nil &&
-			ast.IsVariableDeclarationInitializedToRequire(originalLocation.Parent.Parent) {
-			return r.RequireSymbol
+		if originalLocation != nil && ast.IsInJSFile(originalLocation) && originalLocation.Parent != nil {
+			if ast.IsRequireCall(originalLocation.Parent, false /*requireStringLiteralLikeArgument*/) {
+				return r.RequireSymbol
+			}
 		}
 	}
 	if nameNotFoundMessage != nil {
@@ -448,11 +444,7 @@ func (r *NameResolver) argumentsSymbol() *ast.Symbol {
 	return r.ArgumentsSymbol
 }
 
-func isModuleOrEnumDeclaration(node *ast.Node) bool {
-	return node.Kind == ast.KindModuleDeclaration || node.Kind == ast.KindEnumDeclaration
-}
-
-func getLocalSymbolForExportDefault(symbol *ast.Symbol) *ast.Symbol {
+func GetLocalSymbolForExportDefault(symbol *ast.Symbol) *ast.Symbol {
 	if !isExportDefaultSymbol(symbol) || len(symbol.Declarations) == 0 {
 		return nil
 	}
@@ -491,6 +483,9 @@ func isTypeParameterSymbolDeclaredInContainer(symbol *ast.Symbol, container *ast
 	for _, decl := range symbol.Declarations {
 		if decl.Kind == ast.KindTypeParameter {
 			parent := decl.Parent
+			if parent.Kind == ast.KindJSDocTemplateTag {
+				parent = parent.AsJSDocTemplateTag().Host
+			}
 			if parent == container {
 				return true
 			}

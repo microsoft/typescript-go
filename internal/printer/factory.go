@@ -204,15 +204,15 @@ func (f *NodeFactory) NewFalseExpression() *ast.Expression {
 //
 
 func (f *NodeFactory) NewCommaExpression(left *ast.Expression, right *ast.Expression) *ast.Expression {
-	return f.NewBinaryExpression(left, f.NewToken(ast.KindCommaToken), right)
+	return f.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, f.NewToken(ast.KindCommaToken), right)
 }
 
 func (f *NodeFactory) NewAssignmentExpression(left *ast.Expression, right *ast.Expression) *ast.Expression {
-	return f.NewBinaryExpression(left, f.NewToken(ast.KindEqualsToken), right)
+	return f.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, f.NewToken(ast.KindEqualsToken), right)
 }
 
 func (f *NodeFactory) NewLogicalORExpression(left *ast.Expression, right *ast.Expression) *ast.Expression {
-	return f.NewBinaryExpression(left, f.NewToken(ast.KindBarBarToken), right)
+	return f.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, f.NewToken(ast.KindBarBarToken), right)
 }
 
 // func (f *NodeFactory) NewLogicalANDExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
@@ -222,7 +222,7 @@ func (f *NodeFactory) NewLogicalORExpression(left *ast.Expression, right *ast.Ex
 // func (f *NodeFactory) NewStrictEqualityExpression(left *ast.Expression, right *ast.Expression) *ast.Expression
 
 func (f *NodeFactory) NewStrictInequalityExpression(left *ast.Expression, right *ast.Expression) *ast.Expression {
-	return f.NewBinaryExpression(left, f.NewToken(ast.KindExclamationEqualsEqualsToken), right)
+	return f.NewBinaryExpression(nil /*modifiers*/, left, nil /*typeNode*/, f.NewToken(ast.KindExclamationEqualsEqualsToken), right)
 }
 
 //
@@ -492,6 +492,21 @@ func (f *NodeFactory) NewDisposeResourcesHelper(envBinding *ast.Expression) *ast
 
 // !!! Class Fields Helpers
 // !!! ES2018 Helpers
+// Chains a sequence of expressions using the __assign helper or Object.assign if available in the target
+func (f *NodeFactory) NewAssignHelper(attributesSegments []*ast.Expression, scriptTarget core.ScriptTarget) *ast.Expression {
+	if scriptTarget >= core.ScriptTargetES2015 {
+		return f.NewCallExpression(f.NewPropertyAccessExpression(f.NewIdentifier("Object"), nil, f.NewIdentifier("assign"), ast.NodeFlagsNone), nil, nil, f.NewNodeList(attributesSegments), ast.NodeFlagsNone)
+	}
+	f.emitContext.RequestEmitHelper(assignHelper)
+	return f.NewCallExpression(
+		f.NewUnscopedHelperName("__assign"),
+		nil,
+		nil,
+		f.NewNodeList(attributesSegments),
+		ast.NodeFlagsNone,
+	)
+}
+
 // !!! ES2018 Destructuring Helpers
 // !!! ES2017 Helpers
 

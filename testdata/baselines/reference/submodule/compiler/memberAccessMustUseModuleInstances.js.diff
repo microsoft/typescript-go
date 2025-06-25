@@ -1,30 +1,26 @@
 --- old.memberAccessMustUseModuleInstances.js
 +++ new.memberAccessMustUseModuleInstances.js
 @@= skipped -14, +14 lines =@@
- 
- 
+
+
  //// [memberAccessMustUseModuleInstances_0.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    exports.Promise = void 0;
--    var Promise = /** @class */ (function () {
--        function Promise() {
--        }
--        Promise.timeout = function (delay) {
+-    class Promise {
+-        static timeout(delay) {
 -            return null;
--        };
--        return Promise;
--    }());
--    exports.Promise = Promise;
--});
+-        }
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.Promise = void 0;
 +class Promise {
 +    static timeout(delay) {
 +        return null;
-+    }
+     }
+-    exports.Promise = Promise;
+-});
 +}
 +exports.Promise = Promise;
  //// [memberAccessMustUseModuleInstances_1.js]

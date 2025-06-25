@@ -11,8 +11,8 @@
 +main.js(6,28): error TS2694: Namespace '"mod".export=' has no exported member 'baz'.
 +main.js(8,28): error TS2694: Namespace '"mod".export=' has no exported member 'literal'.
  main.js(20,35): error TS2694: Namespace '"mod".export=' has no exported member 'buz'.
- 
- 
+
+
 @@= skipped -17, +23 lines =@@
          baz() { return 5 },
          literal: "",
