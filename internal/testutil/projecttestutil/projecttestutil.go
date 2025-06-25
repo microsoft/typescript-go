@@ -7,9 +7,11 @@ import (
 	"slices"
 	"strings"
 	"sync"
+	"sync/atomic"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -17,6 +19,7 @@ import (
 )
 
 //go:generate go tool github.com/matryer/moq -stub -fmt goimports -pkg projecttestutil -out clientmock_generated.go ../../project Client
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w clientmock_generated.go
 
 type TestTypingsInstallerOptions struct {
 	TypesRegistry         []string
@@ -79,10 +82,6 @@ func (p *ProjectServiceHost) NewLine() string {
 // Client implements project.ProjectServiceHost.
 func (p *ProjectServiceHost) Client() project.Client {
 	return p.ClientMock
-}
-
-func (p *ProjectServiceHost) ReplaceFS(files map[string]any) {
-	p.fs = bundled.WrapFS(vfstest.FromMap(files, false /*useCaseSensitiveFileNames*/))
 }
 
 var _ project.ServiceHost = (*ProjectServiceHost)(nil)
@@ -219,6 +218,10 @@ func newProjectServiceHost(files map[string]any) *ProjectServiceHost {
 		fs:                 fs,
 		defaultLibraryPath: bundled.LibPath(),
 		ClientMock:         &ClientMock{},
+	}
+	var watchCount atomic.Uint32
+	host.ClientMock.WatchFilesFunc = func(_ context.Context, _ []*lsproto.FileSystemWatcher) (project.WatcherHandle, error) {
+		return project.WatcherHandle(fmt.Sprintf("#%d", watchCount.Add(1))), nil
 	}
 	host.logger = project.NewLogger([]io.Writer{&host.output}, "", project.LogLevelVerbose)
 	return host

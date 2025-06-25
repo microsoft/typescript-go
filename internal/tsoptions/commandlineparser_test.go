@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/diagnosticwriter"
@@ -170,10 +171,10 @@ func (f commandLineSubScenario) assertParseResult(t *testing.T) {
 		assert.Equal(t, tsBaseline.fileNames, newBaselineFileNames)
 
 		o, _ := json.Marshal(parsed.Options)
-		newParsedCompilerOptions := core.CompilerOptions{}
-		e := json.Unmarshal(o, &newParsedCompilerOptions)
+		newParsedCompilerOptions := &core.CompilerOptions{}
+		e := json.Unmarshal(o, newParsedCompilerOptions)
 		assert.NilError(t, e)
-		assert.DeepEqual(t, tsBaseline.options, newParsedCompilerOptions)
+		assert.DeepEqual(t, tsBaseline.options, newParsedCompilerOptions, cmpopts.IgnoreUnexported(core.CompilerOptions{}))
 
 		newParsedWatchOptions := core.WatchOptions{}
 		e = json.Unmarshal(o, &newParsedWatchOptions)
@@ -215,8 +216,8 @@ func parseExistingCompilerBaseline(t *testing.T, baseline string) *TestCommandLi
 	}
 
 	return &TestCommandLineParser{
-		options:      *baselineCompilerOptions,
-		watchoptions: *baselineWatchOptions,
+		options:      baselineCompilerOptions,
+		watchoptions: baselineWatchOptions,
 		fileNames:    fileNames,
 		errors:       errors,
 	}
@@ -300,8 +301,8 @@ type verifyNull struct {
 }
 
 type TestCommandLineParser struct {
-	options           core.CompilerOptions
-	watchoptions      core.WatchOptions
+	options           *core.CompilerOptions
+	watchoptions      *core.WatchOptions
 	fileNames, errors string
 }
 

@@ -7,7 +7,7 @@ export const a = <div></div>;
     "name": "@types/react",
     "version": "0.0.1",
     "main": "",
-    "types": "index.d.ts",
+    "types": "index.d.ts"
 }
 //// [index.d.ts]
 declare namespace JSX {
@@ -23,4 +23,5 @@ import './';
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.a = void 0;
-exports.a = <div></div>;
+const jsx_runtime_1 = require("react/jsx-runtime");
+exports.a = jsx_runtime_1.jsx("div", {});

@@ -3,7 +3,9 @@ package modulespecifiers
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/packagejson"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -11,7 +13,7 @@ type SourceFileForSpecifierGeneration interface {
 	Path() tspath.Path
 	FileName() string
 	OriginalFileName() string
-	Imports() []*ast.LiteralLikeNode
+	Imports() []*ast.StringLiteralLike
 	IsJS() bool
 }
 
@@ -32,7 +34,7 @@ const (
 )
 
 type ModulePath struct {
-	Path            string
+	FileName        string
 	IsInNodeModules bool
 	IsRedirect      bool
 }
@@ -46,19 +48,21 @@ type ModuleSpecifierGenerationHost interface {
 	// GetModuleResolutionCache() any // !!! TODO: adapt new resolution cache model
 	// GetSymlinkCache() any // !!! TODO: adapt new resolution cache model
 	// GetFileIncludeReasons() any // !!! TODO: adapt new resolution cache model
+	CommonSourceDirectory() string
 	GetGlobalTypingsCacheLocation() string
 	UseCaseSensitiveFileNames() bool
 	GetCurrentDirectory() string
 
-	IsSourceOfProjectReferenceRedirect(path string) bool
-	GetProjectReferenceRedirect(path string) string
+	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
 	GetRedirectTargets(path tspath.Path) []string
 
 	FileExists(path string) bool
 
 	GetNearestAncestorDirectoryWithPackageJson(dirname string) string
 	GetPackageJsonInfo(pkgJsonPath string) PackageJsonInfo
-	GetDefaultResolutionModeForFile(file SourceFileForSpecifierGeneration) core.ResolutionMode
+	GetDefaultResolutionModeForFile(file ast.HasFileName) core.ResolutionMode
+	GetResolvedModuleFromModuleSpecifier(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) *module.ResolvedModule
+	GetModeForUsageLocation(file ast.HasFileName, moduleSpecifier *ast.StringLiteralLike) core.ResolutionMode
 }
 
 type ImportModuleSpecifierPreference string

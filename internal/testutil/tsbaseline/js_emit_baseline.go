@@ -5,9 +5,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -25,17 +25,13 @@ func DoJSEmitBaseline(
 	harnessSettings *harnessutil.HarnessOptions,
 	opts baseline.Options,
 ) {
-	if options.GetAllowJS() {
-		t.Skip("AllowJS is not supported")
-		return
-	}
 	if options.OutFile != "" || options.Out != "" {
-		t.Skip("OutFile/Out is not supported")
+		// Just return, no t.Skip; these options are not going to be supported so noting them is not helpful.
 		return
 	}
 
 	if !options.NoEmit.IsTrue() && !options.EmitDeclarationOnly.IsTrue() && result.JS.Size() == 0 && len(result.Diagnostics) == 0 {
-		panic("Expected at least one js file to be emitted or at least one error to be created.")
+		t.Fatal("Expected at least one js file to be emitted or at least one error to be created.")
 	}
 
 	// check js output
@@ -61,12 +57,11 @@ func DoJSEmitBaseline(
 			jsCode.WriteString("\r\n")
 		}
 		if len(result.Diagnostics) == 0 && strings.HasSuffix(file.UnitName, tspath.ExtensionJson) {
-			fileParseResult := parser.ParseSourceFile(
-				file.UnitName,
-				tspath.Path(file.UnitName),
-				file.Content,
-				options.GetEmitScriptTarget(),
-				scanner.JSDocParsingModeParseAll)
+			fileParseResult := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName:        file.UnitName,
+				Path:            tspath.Path(file.UnitName),
+				CompilerOptions: options.SourceFileAffecting(),
+			}, file.Content, core.ScriptKindJSON)
 			if len(fileParseResult.Diagnostics()) > 0 {
 				jsCode.WriteString(getErrorBaseline(t, []*harnessutil.TestFile{file}, fileParseResult.Diagnostics(), false /*pretty*/))
 				continue

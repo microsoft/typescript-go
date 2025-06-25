@@ -686,7 +686,7 @@ func getChildrenPropertyMask(node *ast.Node) uint8 {
 		return (boolToByte(n.TagName != nil) << 0) | (boolToByte(n.TypeExpression != nil) << 1) | (boolToByte(n.Name() != nil) << 2) | (boolToByte(n.Comment != nil) << 3)
 	case ast.KindJSDocSignature:
 		n := node.AsJSDocSignature()
-		return (boolToByte(n.TypeParameters() != nil) << 0) | (boolToByte(n.Parameters != nil) << 1) | (boolToByte(n.Type != nil) << 2)
+		return (boolToByte(n.TypeParameters != nil) << 0) | (boolToByte(n.Parameters != nil) << 1) | (boolToByte(n.Type != nil) << 2)
 	case ast.KindClassStaticBlockDeclaration:
 		n := node.AsClassStaticBlockDeclaration()
 		return (boolToByte(n.Modifiers() != nil) << 0) | (boolToByte(n.Body != nil) << 1)
@@ -774,7 +774,7 @@ func recordNodeStrings(node *ast.Node, strs *stringTable) uint32 {
 	case ast.KindNoSubstitutionTemplateLiteral:
 		return strs.add(node.AsNoSubstitutionTemplateLiteral().Text, node.Kind, node.Pos(), node.End())
 	case ast.KindJSDocText:
-		return strs.add(node.AsJSDocText().Text, node.Kind, node.Pos(), node.End())
+		return strs.add(node.AsJSDocText().Text(), node.Kind, node.Pos(), node.End())
 	default:
 		panic(fmt.Sprintf("Unexpected node kind %v", node.Kind))
 	}

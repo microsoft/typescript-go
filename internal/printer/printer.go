@@ -844,10 +844,9 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 		return false
 	}
 
-	target := p.currentSourceFile.LanguageVersion
 	switch node.Kind {
 	case ast.KindObjectLiteralExpression:
-		return target >= core.ScriptTargetES5
+		return true
 	case ast.KindArrayLiteralExpression,
 		ast.KindArrowFunction,
 		ast.KindConstructor,
@@ -874,11 +873,11 @@ func (p *Printer) shouldAllowTrailingComma(node *ast.Node, list *ast.NodeList) b
 	case ast.KindFunctionDeclaration,
 		ast.KindFunctionExpression,
 		ast.KindMethodDeclaration:
-		return target >= core.ScriptTargetES2015 || list == node.FunctionLikeData().TypeParameters
+		return true
 	case ast.KindCallExpression:
-		return target >= core.ScriptTargetES2015 || list == node.AsCallExpression().TypeArguments
+		return true
 	case ast.KindNewExpression:
-		return target >= core.ScriptTargetES2015 || list == node.AsNewExpression().TypeArguments
+		return true
 	}
 
 	return false
@@ -1404,7 +1403,13 @@ func (p *Printer) emitTypeParameter(node *ast.TypeParameterDeclaration) {
 }
 
 func (p *Printer) emitTypeParameterNode(node *ast.TypeParameterDeclarationNode) {
-	p.emitTypeParameter(node.AsTypeParameter())
+	// NOTE: QuickInfo uses TypeFormatFlagsWriteTypeArgumentsOfSignature to instruct the NodeBuilder to store type arguments
+	// (i.e. type nodes) instead of type parameter declarations in the type parameter list.
+	if ast.IsTypeParameterDeclaration(node) {
+		p.emitTypeParameter(node.AsTypeParameter())
+	} else {
+		p.emitTypeArgument(node)
+	}
 }
 
 func (p *Printer) emitParameterName(node *ast.BindingName) {
@@ -1450,12 +1455,9 @@ func (p *Printer) emitModifierLike(node *ast.ModifierLike) {
 }
 
 func (p *Printer) emitTypeParameters(parentNode *ast.Node, nodes *ast.TypeParameterList) {
-	// NOTE: for quickinfo, the old emitter emits TypeArguments instead of TypeParameters if they are present. this
-	// behavior should be moved to the caller if it is needed
 	if nodes == nil {
 		return
 	}
-
 	p.emitList((*Printer).emitTypeParameterNode, parentNode, nodes, LFTypeParameters|core.IfElse(ast.IsArrowFunction(parentNode) /*p.shouldAllowTrailingComma(parentNode, nodes)*/, LFAllowTrailingComma, LFNone)) // TODO: preserve trailing comma after Strada migration
 }
 
@@ -1843,6 +1845,9 @@ func (p *Printer) emitTypeReference(node *ast.TypeReferenceNode) {
 
 // Emits the return type of a FunctionTypeNode or ConstructorTypeNode, including the arrow (`=>`)
 func (p *Printer) emitReturnType(node *ast.TypeNode) {
+	if node == nil {
+		return
+	}
 	p.writePunctuation("=>")
 	p.writeSpace()
 	if p.inExtends && node.Kind == ast.KindInferType && node.AsInferTypeNode().TypeParameter.AsTypeParameter().Constraint != nil {
@@ -1959,7 +1964,7 @@ func (p *Printer) emitNamedTupleMember(node *ast.NamedTupleMember) {
 }
 
 func (p *Printer) emitUnionTypeConstituent(node *ast.TypeNode) {
-	p.emitTypeNode(node, ast.TypePrecedenceIntersection)
+	p.emitTypeNode(node, ast.TypePrecedenceTypeOperator)
 }
 
 func (p *Printer) emitUnionType(node *ast.UnionTypeNode) {
@@ -3170,7 +3175,10 @@ func (p *Printer) emitEmptyStatement(node *ast.EmptyStatement, isEmbeddedStateme
 func (p *Printer) emitExpressionStatement(node *ast.ExpressionStatement) {
 	state := p.enterNode(node.AsNode())
 
-	if isImmediatelyInvokedFunctionExpressionOrArrowFunction(node.Expression) {
+	if p.currentSourceFile != nil && p.currentSourceFile.ScriptKind == core.ScriptKindJSON {
+		// !!! In strada, this was handled by an undefined parenthesizerRule, so this is a hack.
+		p.emitExpression(node.Expression, ast.OperatorPrecedenceComma)
+	} else if isImmediatelyInvokedFunctionExpressionOrArrowFunction(node.Expression) {
 		// !!! introduce parentheses around callee
 		p.emitExpression(node.Expression, ast.OperatorPrecedenceParentheses)
 	} else {
@@ -4330,7 +4338,11 @@ func (p *Printer) emitJSDocNode(node *ast.Node) {
 //
 
 func (p *Printer) emitShebangIfNeeded(node *ast.SourceFile) {
-	// !!!
+	shebang := scanner.GetShebang(node.Text())
+	if shebang != "" {
+		p.writeComment(shebang)
+		p.writeLine()
+	}
 }
 
 func (p *Printer) emitPrologueDirectives(statements *ast.StatementList) int {

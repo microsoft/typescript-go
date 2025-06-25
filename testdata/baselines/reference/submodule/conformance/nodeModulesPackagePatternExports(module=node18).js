@@ -52,7 +52,7 @@ export { type };
 {
     "name": "package",
     "private": true,
-    "type": "module",
+    "type": "module"
 }
 //// [package.json]
 {
@@ -65,23 +65,20 @@ export { type };
     }
 }
 
+
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // esm format file
-const cjsi = require("inner/cjs/index");
-const mjsi = require("inner/mjs/index");
-const typei = require("inner/js/index");
+import * as cjsi from "inner/cjs/index";
+import * as mjsi from "inner/mjs/index";
+import * as typei from "inner/js/index";
 cjsi;
 mjsi;
 typei;
 //// [index.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // esm format file
-const cjsi = require("inner/cjs/index");
-const mjsi = require("inner/mjs/index");
-const typei = require("inner/js/index");
+import * as cjsi from "inner/cjs/index";
+import * as mjsi from "inner/mjs/index";
+import * as typei from "inner/js/index";
 cjsi;
 mjsi;
 typei;

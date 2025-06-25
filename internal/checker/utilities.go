@@ -35,10 +35,6 @@ func NewDiagnosticChainForNode(chain *ast.Diagnostic, node *ast.Node, message *d
 	return NewDiagnosticForNode(node, message, args...)
 }
 
-func IsIntrinsicJsxName(name string) bool {
-	return len(name) != 0 && (name[0] >= 'a' && name[0] <= 'z' || strings.ContainsRune(name, '-'))
-}
-
 func findInMap[K comparable, V any](m map[K]V, predicate func(V) bool) V {
 	for _, value := range m {
 		if predicate(value) {
@@ -83,20 +79,16 @@ func hasAsyncModifier(node *ast.Node) bool {
 	return ast.HasSyntacticModifier(node, ast.ModifierFlagsAsync)
 }
 
-func hasDecorators(node *ast.Node) bool {
-	return ast.HasSyntacticModifier(node, ast.ModifierFlagsDecorator)
-}
-
 func getSelectedModifierFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags {
 	return node.ModifierFlags() & flags
 }
 
-func hasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
+func HasModifier(node *ast.Node, flags ast.ModifierFlags) bool {
 	return node.ModifierFlags()&flags != 0
 }
 
 func hasReadonlyModifier(node *ast.Node) bool {
-	return hasModifier(node, ast.ModifierFlagsReadonly)
+	return HasModifier(node, ast.ModifierFlagsReadonly)
 }
 
 func isStaticPrivateIdentifierProperty(s *ast.Symbol) bool {
@@ -179,7 +171,7 @@ func isConstTypeReference(node *ast.Node) bool {
 	return ast.IsTypeReferenceNode(node) && len(node.TypeArguments()) == 0 && ast.IsIdentifier(node.AsTypeReferenceNode().TypeName) && node.AsTypeReferenceNode().TypeName.Text() == "const"
 }
 
-func getSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
+func GetSingleVariableOfVariableStatement(node *ast.Node) *ast.Node {
 	if !ast.IsVariableStatement(node) {
 		return nil
 	}
@@ -420,7 +412,7 @@ func declarationBelongsToPrivateAmbientMember(declaration *ast.Node) bool {
 }
 
 func isPrivateWithinAmbient(node *ast.Node) bool {
-	return (hasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
+	return (HasModifier(node, ast.ModifierFlagsPrivate) || ast.IsPrivateIdentifierClassElementDeclaration(node)) && node.Flags&ast.NodeFlagsAmbient != 0
 }
 
 func isTypeAssertion(node *ast.Node) bool {
@@ -1202,13 +1194,6 @@ func isInAmbientOrTypeNode(node *ast.Node) bool {
 	}) != nil
 }
 
-func getAncestor(node *ast.Node, kind ast.Kind) *ast.Node {
-	for node != nil && node.Kind != kind {
-		node = node.Parent
-	}
-	return node
-}
-
 func isLiteralExpressionOfObject(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindObjectLiteralExpression, ast.KindArrayLiteralExpression, ast.KindRegularExpressionLiteral,
@@ -1348,7 +1333,7 @@ func isInRightSideOfImportOrExportAssignment(node *ast.EntityName) bool {
 }
 
 func isJsxIntrinsicTagName(tagName *ast.Node) bool {
-	return ast.IsIdentifier(tagName) && IsIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
+	return ast.IsIdentifier(tagName) && scanner.IsIntrinsicJsxName(tagName.Text()) || ast.IsJsxNamespacedName(tagName)
 }
 
 func getContainingObjectLiteral(f *ast.SignatureDeclaration) *ast.Node {
@@ -1482,10 +1467,11 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 	traverse(body)
 }
 
-func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions) bool {
+func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program) bool {
 	return options.NoCheck.IsTrue() ||
 		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
 		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
+		host.IsSourceFromProjectReference(sourceFile.Path()) ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
 

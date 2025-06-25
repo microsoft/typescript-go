@@ -29,9 +29,8 @@ type API struct {
 	host    APIHost
 	options APIOptions
 
-	documentRegistry *project.DocumentRegistry
-	scriptInfosMu    sync.RWMutex
-	scriptInfos      map[tspath.Path]*project.ScriptInfo
+	documentStore      *project.DocumentStore
+	configFileRegistry *project.ConfigFileRegistry
 
 	projects  handleMap[project.Project]
 	filesMu   sync.Mutex
@@ -46,16 +45,16 @@ var _ project.ProjectHost = (*API)(nil)
 
 func NewAPI(host APIHost, options APIOptions) *API {
 	api := &API{
-		host:        host,
-		options:     options,
-		scriptInfos: make(map[tspath.Path]*project.ScriptInfo),
-		projects:    make(handleMap[project.Project]),
-		files:       make(handleMap[ast.SourceFile]),
-		symbols:     make(handleMap[ast.Symbol]),
-		types:       make(handleMap[checker.Type]),
+		host:     host,
+		options:  options,
+		projects: make(handleMap[project.Project]),
+		files:    make(handleMap[ast.SourceFile]),
+		symbols:  make(handleMap[ast.Symbol]),
+		types:    make(handleMap[checker.Type]),
 	}
-	api.documentRegistry = &project.DocumentRegistry{
-		Options: tspath.ComparePathsOptions{
+
+	api.documentStore = project.NewDocumentStore(project.DocumentStoreOptions{
+		ComparePathsOptions: tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
 			CurrentDirectory:          host.GetCurrentDirectory(),
 		},
@@ -64,6 +63,10 @@ func NewAPI(host APIHost, options APIOptions) *API {
 				_ = api.releaseHandle(string(FileHandle(file)))
 			},
 		},
+	})
+
+	api.configFileRegistry = &project.ConfigFileRegistry{
+		Host: api,
 	}
 	return api
 }
@@ -78,9 +81,14 @@ func (api *API) TypingsInstaller() *project.TypingsInstaller {
 	return nil
 }
 
-// DocumentRegistry implements ProjectHost.
-func (api *API) DocumentRegistry() *project.DocumentRegistry {
-	return api.documentRegistry
+// DocumentStore implements ProjectHost.
+func (api *API) DocumentStore() *project.DocumentStore {
+	return api.documentStore
+}
+
+// ConfigFileRegistry implements ProjectHost.
+func (api *API) ConfigFileRegistry() *project.ConfigFileRegistry {
+	return api.configFileRegistry
 }
 
 // FS implements ProjectHost.
@@ -93,25 +101,13 @@ func (api *API) GetCurrentDirectory() string {
 	return api.host.GetCurrentDirectory()
 }
 
-// GetOrCreateScriptInfoForFile implements ProjectHost.
-func (api *API) GetOrCreateScriptInfoForFile(fileName string, path tspath.Path, scriptKind core.ScriptKind) *project.ScriptInfo {
-	return api.getOrCreateScriptInfo(fileName, path, scriptKind)
-}
-
-// GetScriptInfoByPath implements ProjectHost.
-func (api *API) GetScriptInfoByPath(path tspath.Path) *project.ScriptInfo {
-	api.scriptInfosMu.RLock()
-	defer api.scriptInfosMu.RUnlock()
-	return api.scriptInfos[path]
-}
-
-// OnDiscoveredSymlink implements ProjectHost.
-func (api *API) OnDiscoveredSymlink(info *project.ScriptInfo) {
-	// !!!
+// Log implements ProjectHost.
+func (api *API) Log(s string) {
+	api.options.Logger.Info(s)
 }
 
 // Log implements ProjectHost.
-func (api *API) Log(s string) {
+func (api *API) Trace(s string) {
 	api.options.Logger.Info(s)
 }
 
@@ -359,26 +355,6 @@ func (api *API) releaseHandle(handle string) error {
 		return fmt.Errorf("unhandled handle type %q", handle[0])
 	}
 	return nil
-}
-
-func (api *API) getOrCreateScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind) *project.ScriptInfo {
-	api.scriptInfosMu.RLock()
-	info, ok := api.scriptInfos[path]
-	api.scriptInfosMu.RUnlock()
-	if ok {
-		return info
-	}
-
-	content, ok := api.host.FS().ReadFile(fileName)
-	if !ok {
-		return nil
-	}
-	info = project.NewScriptInfo(fileName, path, scriptKind, api.host.FS())
-	info.SetTextFromDisk(content)
-	api.scriptInfosMu.Lock()
-	defer api.scriptInfosMu.Unlock()
-	api.scriptInfos[path] = info
-	return info
 }
 
 func (api *API) toAbsoluteFileName(fileName string) string {
