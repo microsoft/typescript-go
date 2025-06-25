@@ -29,3 +29,96 @@ Corsa no longer parses the following JSDoc tags with a specific node type. They 
 2. `@throws`
 3. `@author`
 4. `@enum`
+
+## Checker
+
+### JSDoc Tags
+
+1. `@type` tags no longer apply to function declarations, and now contextually type functionn expressions instead of applying directly. So this annotation no longer does anything:
+
+```js
+
+/** @type {(x: unknown) => asserts x is string } */
+function assertIsString(x) {
+    if (!(typeof x === "string")) throw new Error();
+}
+```
+
+Although this one still works via contextual typing:
+
+```js
+/** @typedef {(check: boolean) => asserts check} AssertFunc */
+
+/** @type {AssertFunc} */
+const assert = check => {
+    if (!check) throw new Error();
+}
+```
+
+A number of things change slightly because of differences between type annotation and contextual typing.
+
+2. `asserts` annotation for an arrow function must be on the declaring variable, not on the arrow itself. This no longer works:
+
+```js
+/**
+ * @param {A} a
+ * @returns { asserts a is B }
+ */
+const foo = (a) => {
+    if (/** @type { B } */ (a).y !== 0) throw TypeError();
+    return undefined;
+};
+```
+
+And must be written like this:
+
+```js
+/**
+ * @type {(a: A) => asserts a is B}
+ */
+const foo = (a) => {
+    if (/** @type { B } */ (a).y !== 0) throw TypeError();
+    return undefined;
+};
+```
+
+This is identical to the Typescript rule.
+
+3. Error messages on async functions that incorrectly return non-Promises now use the same error as TS.
+
+### Expandos
+
+1. Exporting `void 0` is no longer ignored as a special case:
+
+```js
+var o = {}
+o.y = void 0
+```
+
+creates a property `y: undefined` on `o` (which will widen to `y: any` if strictNullChecks is off).
+
+### CommonJS
+
+1. Chained exports no longer work:
+
+```js
+exports.x = exports.y = 12
+```
+
+Now only exports `x`, not `y` as well.
+
+2. Exporting `void 0` is no longer ignored as a special case:
+
+```js
+exports.x = void 0
+// several lines later...
+exports.x = theRealExport
+```
+
+3. Type info for `module` shows a property with name of an instead of `exports`:
+
+```js
+module.exports = singleIdentifier
+```
+
+results in `module: { singleIdentifier: any }`
