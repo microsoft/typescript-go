@@ -38,6 +38,6 @@ export type ParamStateRecord = Record<Keyword, ParamValueTyped>;
 //// [index.d.ts]
 export declare const blah: {
     publicMixin: {
-        getGovernedParams: () => globalThis.ERef<Record<Keyword, ParamValueTyped>>;
+        getGovernedParams: () => globalThis.ERef<globalThis.ParamStateRecord>;
     };
 };
