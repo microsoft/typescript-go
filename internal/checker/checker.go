@@ -727,6 +727,7 @@ type Checker struct {
 	unknownSignature                            *Signature
 	resolvingSignature                          *Signature
 	silentNeverSignature                        *Signature
+	cachedArgumentsReferenced                   map[*ast.Node]bool
 	enumNumberIndexInfo                         *IndexInfo
 	anyBaseTypeIndexInfo                        *IndexInfo
 	patternAmbientModules                       []*ast.PatternAmbientModule
@@ -1000,6 +1001,7 @@ func NewChecker(program Program) *Checker {
 	c.unknownSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.errorType, nil, 0)
 	c.resolvingSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.anyType, nil, 0)
 	c.silentNeverSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.silentNeverType, nil, 0)
+	c.cachedArgumentsReferenced = make(map[*ast.Node]bool)
 	c.enumNumberIndexInfo = &IndexInfo{keyType: c.numberType, valueType: c.stringType, isReadonly: true}
 	c.anyBaseTypeIndexInfo = &IndexInfo{keyType: c.stringType, valueType: c.anyType, isReadonly: false}
 	c.emptyStringType = c.getStringLiteralType("")
@@ -1600,9 +1602,9 @@ func (c *Checker) checkAndReportErrorForUsingTypeAsValue(errorLocation *ast.Node
 				containerKind := grandparent.Parent.Kind
 				if containerKind == ast.KindInterfaceDeclaration && heritageKind == ast.KindExtendsKeyword {
 					c.error(errorLocation, diagnostics.An_interface_cannot_extend_a_primitive_type_like_0_It_can_only_extend_other_named_object_types, name)
-				} else if containerKind == ast.KindClassDeclaration && heritageKind == ast.KindExtendsKeyword {
+				} else if ast.IsClassLike(grandparent.Parent) && heritageKind == ast.KindExtendsKeyword {
 					c.error(errorLocation, diagnostics.A_class_cannot_extend_a_primitive_type_like_0_Classes_can_only_extend_constructable_values, name)
-				} else if containerKind == ast.KindClassDeclaration && heritageKind == ast.KindImplementsKeyword {
+				} else if ast.IsClassLike(grandparent.Parent) && heritageKind == ast.KindImplementsKeyword {
 					c.error(errorLocation, diagnostics.A_class_cannot_implement_a_primitive_type_like_0_It_can_only_implement_other_named_object_types, name)
 				}
 			} else {
@@ -2554,6 +2556,7 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 		c.checkGrammarFunctionLikeDeclaration(node)
 	}
 	c.checkTypeParameters(node.TypeParameters())
+	c.checkUnmatchedJSDocParameters(node)
 	c.checkSourceElements(node.Parameters())
 	returnTypeNode := node.Type()
 	if returnTypeNode != nil {
@@ -22640,9 +22643,9 @@ func (c *Checker) getAliasForTypeNode(node *ast.Node) *TypeAlias {
 }
 
 func (c *Checker) getAliasSymbolForTypeNode(node *ast.Node) *ast.Symbol {
-	host := node.Parent
+	host := ast.GetEffectiveTypeParent(node.Parent)
 	for ast.IsParenthesizedTypeNode(host) || ast.IsTypeOperatorNode(host) && host.AsTypeOperatorNode().Operator == ast.KindReadonlyKeyword {
-		host = host.Parent
+		host = ast.GetEffectiveTypeParent(host.Parent)
 	}
 	if isTypeAlias(host) {
 		return c.getSymbolOfDeclaration(host)
@@ -30292,7 +30295,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	} else if ast.IsEntityName(name) && isTypeReferenceIdentifier(name) {
 		meaning := core.IfElse(name.Parent.Kind == ast.KindTypeReference, ast.SymbolFlagsType, ast.SymbolFlagsNamespace)
-		symbol := c.resolveEntityName(name, meaning, false /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
+		symbol := c.resolveEntityName(name, meaning, true /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
 		if symbol != nil && symbol != c.unknownSymbol {
 			return symbol
 		}
@@ -30303,7 +30306,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		return c.resolveEntityName(
 			name,
 			ast.SymbolFlagsFunctionScopedVariable, /*meaning*/
-			false,                                 /*ignoreErrors*/
+			true,                                  /*ignoreErrors*/
 			false,                                 /*dontResolveAlias*/
 			nil,                                   /*location*/
 		)
@@ -30518,6 +30521,43 @@ func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
 		expr = expr.Parent
 	}
 	return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(expr))
+}
+
+func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
+	if node.Body() == nil {
+		return false
+	}
+
+	if containsArguments, ok := c.cachedArgumentsReferenced[node]; ok {
+		return containsArguments
+	}
+
+	var visit func(node *ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if node == nil {
+			return false
+		}
+		switch node.Kind {
+		case ast.KindIdentifier:
+			return node.Text() == c.argumentsSymbol.Name && c.IsArgumentsSymbol(c.getResolvedSymbol(node))
+		case ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+			if ast.IsComputedPropertyName(node.Name()) {
+				return visit(node.Name())
+			}
+		case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+			return visit(node.Expression())
+		case ast.KindPropertyAssignment:
+			return visit(node.AsPropertyAssignment().Initializer)
+		}
+		if nodeStartsNewLexicalEnvironment(node) || ast.IsPartOfTypeNode(node) {
+			return false
+		}
+		return node.ForEachChild(visit)
+	}
+
+	containsArguments := visit(node.Body())
+	c.cachedArgumentsReferenced[node] = containsArguments
+	return containsArguments
 }
 
 func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
