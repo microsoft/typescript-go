@@ -6,7 +6,7 @@ import (
 )
 
 func (p *Parser) finishReparsedNode(node *ast.Node) {
-	ast.OverrideParentInImmediateChildren(node)
+	p.overrideParentInImmediateChildren(node)
 }
 
 func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {

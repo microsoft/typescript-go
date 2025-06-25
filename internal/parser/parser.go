@@ -78,13 +78,22 @@ type Parser struct {
 	jsdocTagCommentsSpace   []string
 	reparseList             []*ast.Node
 	commonJSModuleIndicator *ast.Node
+
+	currentParent        *ast.Node
+	setParentFromContext ast.Visitor
+}
+
+func newParser() *Parser {
+	res := &Parser{}
+	res.initializeClosures()
+	return res
 }
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
 
 var parserPool = sync.Pool{
 	New: func() any {
-		return &Parser{}
+		return newParser()
 	},
 }
 
@@ -94,6 +103,7 @@ func getParser() *Parser {
 
 func putParser(p *Parser) {
 	*p = Parser{scanner: p.scanner}
+	p.initializeClosures()
 	parserPool.Put(p)
 }
 
@@ -106,6 +116,13 @@ func ParseSourceFile(opts ast.SourceFileParseOptions, sourceText string, scriptK
 		return p.parseJSONText()
 	}
 	return p.parseSourceFileWorker()
+}
+
+func (p *Parser) initializeClosures() {
+	p.setParentFromContext = func(n *ast.Node) bool {
+		n.Parent = p.currentParent
+		return false
+	}
 }
 
 func (p *Parser) parseJSONText() *ast.SourceFile {
@@ -5914,7 +5931,13 @@ func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 		node.Flags |= ast.NodeFlagsThisNodeHasError
 		p.hasParseError = false
 	}
-	ast.OverrideParentInImmediateChildren(node)
+	p.overrideParentInImmediateChildren(node)
+}
+
+func (p *Parser) overrideParentInImmediateChildren(node *ast.Node) {
+	p.currentParent = node
+	node.ForEachChild(p.setParentFromContext)
+	p.currentParent = nil
 }
 
 func (p *Parser) nextTokenIsSlash() bool {
