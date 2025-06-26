@@ -34,6 +34,7 @@ type readableBuildInfo struct {
 }
 
 type readableBuildInfoFileInfo struct {
+	FileName           string                         `json:"fileName,omitzero"`
 	Version            string                         `json:"version,omitzero"`
 	Signature          string                         `json:"signature,omitzero"`
 	AffectsGlobalScope bool                           `json:"affectsGlobalScope,omitzero"`
@@ -132,13 +133,14 @@ func (r *readableBuildInfo) toFilePathSet(fileIdListId incremental.BuildInfoFile
 }
 
 func (r *readableBuildInfo) setFileInfos() {
-	for _, original := range r.buildInfo.FileInfos {
+	for index, original := range r.buildInfo.FileInfos {
 		fileInfo := original.GetFileInfo()
 		// Dont set original for string encoding
 		if original.HasSignature() {
 			original = nil
 		}
 		r.FileInfos = append(r.FileInfos, &readableBuildInfoFileInfo{
+			FileName:           r.toFilePath(incremental.BuildInfoFileId(index + 1)),
 			Version:            fileInfo.Version(),
 			Signature:          fileInfo.Signature(),
 			AffectsGlobalScope: fileInfo.AffectsGlobalScope(),
