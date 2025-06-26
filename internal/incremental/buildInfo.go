@@ -89,15 +89,33 @@ type BuildInfoFileInfo struct {
 	fileInfo    *buildInfoFileInfoWithSignature
 }
 
-func (b *BuildInfoFileInfo) HasSignature() bool {
-	return b.signature != ""
+func newBuildInfoFileInfo(fileInfo *fileInfo) *BuildInfoFileInfo {
+	if fileInfo.version == fileInfo.signature {
+		if !fileInfo.affectsGlobalScope && fileInfo.impliedNodeFormat == core.ResolutionModeCommonJS {
+			return &BuildInfoFileInfo{signature: fileInfo.signature}
+		}
+	} else if fileInfo.signature == "" {
+		return &BuildInfoFileInfo{noSignature: &buildInfoFileInfoNoSignature{
+			Version:            fileInfo.version,
+			NoSignature:        true,
+			AffectsGlobalScope: fileInfo.affectsGlobalScope,
+			ImpliedNodeFormat:  fileInfo.impliedNodeFormat,
+		}}
+	}
+	return &BuildInfoFileInfo{fileInfo: &buildInfoFileInfoWithSignature{
+		Version:            fileInfo.version,
+		Signature:          core.IfElse(fileInfo.signature == fileInfo.version, "", fileInfo.signature),
+		AffectsGlobalScope: fileInfo.affectsGlobalScope,
+		ImpliedNodeFormat:  fileInfo.impliedNodeFormat,
+	}}
 }
 
 func (b *BuildInfoFileInfo) GetFileInfo() *fileInfo {
 	if b.signature != "" {
 		return &fileInfo{
-			version:   b.signature,
-			signature: b.signature,
+			version:           b.signature,
+			signature:         b.signature,
+			impliedNodeFormat: core.ResolutionModeCommonJS,
 		}
 	}
 	if b.noSignature != nil {
@@ -113,6 +131,10 @@ func (b *BuildInfoFileInfo) GetFileInfo() *fileInfo {
 		affectsGlobalScope: b.fileInfo.AffectsGlobalScope,
 		impliedNodeFormat:  b.fileInfo.ImpliedNodeFormat,
 	}
+}
+
+func (b *BuildInfoFileInfo) HasSignature() bool {
+	return b.signature != ""
 }
 
 func (b *BuildInfoFileInfo) MarshalJSON() ([]byte, error) {

@@ -200,39 +200,16 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 			}
 		}
 		if actualSignature == info.signature {
-			t.setFileInfo(info)
+			t.buildInfo.FileInfos = append(t.buildInfo.FileInfos, newBuildInfoFileInfo(info))
 		} else {
-			t.setFileInfo(&fileInfo{
+			t.buildInfo.FileInfos = append(t.buildInfo.FileInfos, newBuildInfoFileInfo(&fileInfo{
 				version:            info.version,
 				signature:          actualSignature,
 				affectsGlobalScope: info.affectsGlobalScope,
 				impliedNodeFormat:  info.impliedNodeFormat,
-			})
+			}))
 		}
 	}
-}
-
-func (t *toBuildInfo) setFileInfo(fileInfo *fileInfo) {
-	if fileInfo.version == fileInfo.signature {
-		if !fileInfo.affectsGlobalScope && fileInfo.impliedNodeFormat == core.ResolutionModeNone {
-			t.buildInfo.FileInfos = append(t.buildInfo.FileInfos, &BuildInfoFileInfo{signature: fileInfo.signature})
-			return
-		}
-	} else if fileInfo.signature == "" {
-		t.buildInfo.FileInfos = append(t.buildInfo.FileInfos, &BuildInfoFileInfo{noSignature: &buildInfoFileInfoNoSignature{
-			Version:            fileInfo.version,
-			NoSignature:        true,
-			AffectsGlobalScope: fileInfo.affectsGlobalScope,
-			ImpliedNodeFormat:  fileInfo.impliedNodeFormat,
-		}})
-		return
-	}
-	t.buildInfo.FileInfos = append(t.buildInfo.FileInfos, &BuildInfoFileInfo{fileInfo: &buildInfoFileInfoWithSignature{
-		Version:            fileInfo.version,
-		Signature:          core.IfElse(fileInfo.signature == fileInfo.version, "", fileInfo.signature),
-		AffectsGlobalScope: fileInfo.affectsGlobalScope,
-		ImpliedNodeFormat:  fileInfo.impliedNodeFormat,
-	}})
 }
 
 func (t *toBuildInfo) setCompilerOptions() {
