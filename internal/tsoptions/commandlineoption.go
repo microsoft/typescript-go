@@ -62,7 +62,7 @@ type CommandLineOption struct {
 	// used for CommandLineOptionTypeList
 	listPreserveFalsyValues bool
 	// used for compilerOptionsDeclaration
-	ElementOptions map[string]*CommandLineOption
+	ElementOptions CommandLineOptionNameMap
 }
 
 func (o *CommandLineOption) DeprecatedKeys() *collections.Set[string] {

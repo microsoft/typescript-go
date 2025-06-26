@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -141,32 +142,6 @@ func (b *BuildInfoFileInfo) UnmarshalJSON(data []byte) error {
 	}
 	*b = BuildInfoFileInfo{fileInfo: &fileInfo}
 	return nil
-}
-
-type BuildInfoCompilerOption struct {
-	name  string
-	value any
-}
-
-func (b *BuildInfoCompilerOption) MarshalJSON() ([]byte, error) {
-	return json.Marshal([]any{b.name, b.value})
-}
-
-func (b *BuildInfoCompilerOption) UnmarshalJSON(data []byte) error {
-	var nameAndValue []any
-	if err := json.Unmarshal(data, &nameAndValue); err != nil {
-		return err
-	}
-	if len(nameAndValue) != 2 {
-		return fmt.Errorf("invalid incrementalBuildInfoCompilerOption: expected array of length 2, got %d", len(nameAndValue))
-	}
-	if name, ok := nameAndValue[0].(string); ok {
-		*b = BuildInfoCompilerOption{}
-		b.name = name
-		b.value = nameAndValue[1]
-		return nil
-	}
-	return fmt.Errorf("invalid name in incrementalBuildInfoCompilerOption: expected string, got %T", nameAndValue[0])
 }
 
 type BuildInfoReferenceMapEntry struct {
@@ -595,17 +570,17 @@ type BuildInfo struct {
 	// Root         []BuildInfoRoot `json:"root,omitempty,omitzero"`
 
 	// IncrementalProgram info
-	FileNames                  []string                      `json:"fileNames,omitzero"`
-	FileInfos                  []*BuildInfoFileInfo          `json:"fileInfos,omitzero"`
-	FileIdsList                [][]BuildInfoFileId           `json:"fileIdsList,omitzero"`
-	Options                    []BuildInfoCompilerOption     `json:"options,omitzero"`
-	ReferencedMap              []BuildInfoReferenceMapEntry  `json:"referencedMap,omitzero"`
-	SemanticDiagnosticsPerFile []BuildInfoSemanticDiagnostic `json:"semanticDiagnosticsPerFile,omitzero"`
-	EmitDiagnosticsPerFile     []BuildInfoDiagnosticOfFile   `json:"emitDiagnosticsPerFile,omitzero"`
-	ChangeFileSet              []BuildInfoFileId             `json:"changeFileSet,omitzero"`
-	AffectedFilesPendingEmit   []BuildInfoFilePendingEmit    `json:"affectedFilesPendingEmit,omitzero"`
-	LatestChangedDtsFile       string                        `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
-	EmitSignatures             []BuildInfoEmitSignature      `json:"emitSignatures,omitzero"`
+	FileNames                  []string                             `json:"fileNames,omitzero"`
+	FileInfos                  []*BuildInfoFileInfo                 `json:"fileInfos,omitzero"`
+	FileIdsList                [][]BuildInfoFileId                  `json:"fileIdsList,omitzero"`
+	Options                    *collections.OrderedMap[string, any] `json:"options,omitempty"`
+	ReferencedMap              []BuildInfoReferenceMapEntry         `json:"referencedMap,omitzero"`
+	SemanticDiagnosticsPerFile []BuildInfoSemanticDiagnostic        `json:"semanticDiagnosticsPerFile,omitzero"`
+	EmitDiagnosticsPerFile     []BuildInfoDiagnosticOfFile          `json:"emitDiagnosticsPerFile,omitzero"`
+	ChangeFileSet              []BuildInfoFileId                    `json:"changeFileSet,omitzero"`
+	AffectedFilesPendingEmit   []BuildInfoFilePendingEmit           `json:"affectedFilesPendingEmit,omitzero"`
+	LatestChangedDtsFile       string                               `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
+	EmitSignatures             []BuildInfoEmitSignature             `json:"emitSignatures,omitzero"`
 	// resolvedRoot: readonly IncrementalBuildInfoResolvedRoot[] | undefined;
 }
 

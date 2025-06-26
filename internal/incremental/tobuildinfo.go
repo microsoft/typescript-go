@@ -3,6 +3,7 @@ package incremental
 import (
 	"fmt"
 	"maps"
+	"reflect"
 	"slices"
 	"strings"
 
@@ -99,7 +100,7 @@ func (t *toBuildInfo) toRelativeToBuildInfoCompilerOptionValue(option *tsoptions
 				return t.relativeToBuildInfo(item)
 			})
 		}
-	} else {
+	} else if str, ok := v.(string); ok && str != "" {
 		return t.relativeToBuildInfo(v.(string))
 	}
 	return v
@@ -239,12 +240,15 @@ func (t *toBuildInfo) setCompilerOptions() {
 		t.state.options, func(option *tsoptions.CommandLineOption) bool {
 			return option.AffectsBuildInfo
 		},
-		func(option *tsoptions.CommandLineOption, value any, i int) bool {
+		func(option *tsoptions.CommandLineOption, value reflect.Value, i int) bool {
+			if value.IsZero() {
+				return false
+			}
 			// Make it relative to buildInfo directory if file path
-			t.buildInfo.Options = append(t.buildInfo.Options, BuildInfoCompilerOption{
-				name:  option.Name,
-				value: t.toRelativeToBuildInfoCompilerOptionValue(option, value),
-			})
+			if t.buildInfo.Options == nil {
+				t.buildInfo.Options = &collections.OrderedMap[string, any]{}
+			}
+			t.buildInfo.Options.Set(option.Name, t.toRelativeToBuildInfoCompilerOptionValue(option, value.Interface()))
 			return false
 		},
 	)
