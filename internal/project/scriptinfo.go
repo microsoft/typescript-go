@@ -33,7 +33,7 @@ type ScriptInfo struct {
 }
 
 func NewScriptInfo(fileName string, path tspath.Path, scriptKind core.ScriptKind, fs vfs.FS) *ScriptInfo {
-	isDynamic := isDynamicFileName(fileName)
+	isDynamic := IsDynamicFileName(fileName)
 	realpath := core.IfElse(isDynamic, path, "")
 	return &ScriptInfo{
 		fileName:   fileName,

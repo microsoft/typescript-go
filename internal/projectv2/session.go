@@ -8,12 +8,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 type SessionOptions struct {
-	tspath.ComparePathsOptions
+	CurrentDirectory   string
 	DefaultLibraryPath string
 	TypingsLocation    string
 	PositionEncoding   lsproto.PositionEncodingKind
@@ -24,6 +26,7 @@ type SessionOptions struct {
 type Session struct {
 	options    SessionOptions
 	fs         *overlayFS
+	logger     *project.Logger
 	parseCache *parseCache
 	converters *ls.Converters
 
@@ -34,9 +37,12 @@ type Session struct {
 	pendingFileChanges   []FileChange
 }
 
-func NewSession(options SessionOptions) *Session {
-	overlayFS := newOverlayFS(bundled.WrapFS(osvfs.FS()), make(map[lsproto.DocumentUri]*overlay))
-	parseCache := &parseCache{options: options.ComparePathsOptions}
+func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Session {
+	overlayFS := newOverlayFS(bundled.WrapFS(osvfs.FS()), make(map[tspath.Path]*overlay))
+	parseCache := &parseCache{options: tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
+		CurrentDirectory:          options.CurrentDirectory,
+	}}
 	converters := ls.NewConverters(options.PositionEncoding, func(fileName string) *ls.LineMap {
 		// !!! cache
 		return ls.ComputeLineStarts(overlayFS.getFile(ls.FileNameToDocumentURI(fileName)).Content())
@@ -45,14 +51,20 @@ func NewSession(options SessionOptions) *Session {
 	return &Session{
 		options:    options,
 		fs:         overlayFS,
+		logger:     logger,
 		parseCache: parseCache,
 		converters: converters,
+		snapshot: NewSnapshot(
+			overlayFS.fs,
+			overlayFS.overlays,
+			&options,
+			parseCache,
+		),
 	}
 }
 
 func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, version int32, content string, languageKind lsproto.LanguageKind) {
 	s.pendingFileChangesMu.Lock()
-	defer s.pendingFileChangesMu.Unlock()
 	s.pendingFileChanges = append(s.pendingFileChanges, FileChange{
 		Kind:         FileChangeKindOpen,
 		URI:          uri,
@@ -60,9 +72,12 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 		Content:      content,
 		LanguageKind: languageKind,
 	})
-	s.fs.updateOverlays(s.pendingFileChanges, s.converters)
-	s.pendingFileChanges = nil
-	// !!! update snapshot
+	changes := s.flushChangesLocked(ctx)
+	s.pendingFileChangesMu.Unlock()
+	s.UpdateSnapshot(ctx, snapshotChange{
+		fileChanges:   changes,
+		requestedURIs: []lsproto.DocumentUri{uri},
+	})
 }
 
 func (s *Session) DidCloseFile(ctx context.Context, uri lsproto.DocumentUri) {
@@ -97,13 +112,11 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	changes := s.flushChanges(ctx)
-	if changes.uris.Len() > 0 {
-		s.snapshotMu.Lock()
-		s.snapshot = s.snapshot.Clone(ctx, snapshotChange{
-			changedURIs:   changes.uris,
+	if !changes.IsEmpty() {
+		s.UpdateSnapshot(ctx, snapshotChange{
+			fileChanges:   changes,
 			requestedURIs: []lsproto.DocumentUri{uri},
-		}, s)
-		s.snapshotMu.Unlock()
+		})
 	}
 
 	project := s.snapshot.GetDefaultProject(uri)
@@ -116,15 +129,29 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return project.LanguageService, nil
 }
 
-func (s *Session) flushChanges(ctx context.Context) overlayChanges {
+func (s *Session) UpdateSnapshot(ctx context.Context, change snapshotChange) {
+	s.snapshotMu.Lock()
+	defer s.snapshotMu.Unlock()
+	s.snapshot = s.snapshot.Clone(ctx, change, s)
+}
+
+func (s *Session) Close() {
+	// !!!
+}
+
+func (s *Session) flushChanges(ctx context.Context) FileChangeSummary {
 	s.pendingFileChangesMu.Lock()
 	defer s.pendingFileChangesMu.Unlock()
+	return s.flushChangesLocked(ctx)
+}
 
+// flushChangesLocked should only be called with s.pendingFileChangesMu held.
+func (s *Session) flushChangesLocked(ctx context.Context) FileChangeSummary {
 	if len(s.pendingFileChanges) == 0 {
-		return overlayChanges{}
+		return FileChangeSummary{}
 	}
 
-	changes := s.fs.updateOverlays(s.pendingFileChanges, s.converters)
+	changes := s.fs.processChanges(s.pendingFileChanges, s.converters)
 	s.pendingFileChanges = nil
 	return changes
 }

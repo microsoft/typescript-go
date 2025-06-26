@@ -34,8 +34,10 @@ var _ compiler.CompilerHost = (*Project)(nil)
 var _ ls.Host = (*Project)(nil)
 
 type Project struct {
-	Name string
-	Kind Kind
+	Name           string
+	Kind           Kind
+	configFileName string
+	configFilePath tspath.Path
 
 	CommandLine     *tsoptions.ParsedCommandLine
 	Program         *compiler.Program
@@ -51,7 +53,10 @@ func NewConfiguredProject(
 	configFilePath tspath.Path,
 	snapshot *Snapshot,
 ) *Project {
-	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), snapshot)
+	p := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), snapshot)
+	p.configFileName = configFileName
+	p.configFilePath = configFilePath
+	return p
 }
 
 func NewProject(
@@ -143,6 +148,10 @@ func (p *Project) containsFile(path tspath.Path) bool {
 
 func (p *Project) isRoot(path tspath.Path) bool {
 	return p.rootFileNames.Has(path)
+}
+
+func (p *Project) IsSourceFromProjectReference(path tspath.Path) bool {
+	return p.Program != nil && p.Program.IsSourceFromProjectReference(path)
 }
 
 type projectChange struct {

@@ -915,3 +915,10 @@ func ForEachAncestorDirectoryPath[T any](directory Path, callback func(directory
 func HasExtension(fileName string) bool {
 	return strings.Contains(GetBaseFileName(fileName), ".")
 }
+
+func SplitVolumePath(path string) (volume string, rest string, ok bool) {
+	if len(path) >= 2 && IsVolumeCharacter(path[0]) && path[1] == ':' {
+		return strings.ToLower(path[0:2]), path[2:], true
+	}
+	return "", path, false
+}

@@ -78,7 +78,7 @@ func (ds *DocumentStore) getOrCreateScriptInfoWorker(fileName string, path tspat
 
 	var fromDisk bool
 	if !ok {
-		if !openedByClient && !isDynamicFileName(fileName) {
+		if !openedByClient && !IsDynamicFileName(fileName) {
 			if content, ok := fs.ReadFile(fileName); !ok {
 				return nil
 			} else {

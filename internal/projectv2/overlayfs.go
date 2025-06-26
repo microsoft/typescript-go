@@ -5,10 +5,10 @@ import (
 	"maps"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
@@ -92,10 +92,10 @@ type overlayFS struct {
 	fs vfs.FS
 
 	mu       sync.Mutex
-	overlays map[lsproto.DocumentUri]*overlay
+	overlays map[tspath.Path]*overlay
 }
 
-func newOverlayFS(fs vfs.FS, overlays map[lsproto.DocumentUri]*overlay) *overlayFS {
+func newOverlayFS(fs vfs.FS, overlays map[tspath.Path]*overlay) *overlayFS {
 	return &overlayFS{
 		fs:       fs,
 		overlays: overlays,
@@ -107,32 +107,31 @@ func (fs *overlayFS) getFile(uri lsproto.DocumentUri) fileHandle {
 	overlays := fs.overlays
 	fs.mu.Unlock()
 
-	if overlay, ok := overlays[uri]; ok {
+	fileName := ls.DocumentURIToFileName(uri)
+	path := tspath.ToPath(fileName, "", fs.fs.UseCaseSensitiveFileNames())
+	if overlay, ok := overlays[path]; ok {
 		return overlay
 	}
 
-	content, ok := fs.fs.ReadFile(string(uri))
+	content, ok := fs.fs.ReadFile(fileName)
 	if !ok {
 		return nil
 	}
 	return &diskFile{uri: uri, content: content, hash: sha256.Sum256([]byte(content))}
 }
 
-type overlayChanges struct {
-	uris collections.Set[lsproto.DocumentUri]
-}
-
-func (fs *overlayFS) updateOverlays(changes []FileChange, converters *ls.Converters) overlayChanges {
+func (fs *overlayFS) processChanges(changes []FileChange, converters *ls.Converters) FileChangeSummary {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
 
-	var result overlayChanges
+	var result FileChangeSummary
 	newOverlays := maps.Clone(fs.overlays)
 	for _, change := range changes {
-		result.uris.Add(change.URI)
+		path := change.URI.Path(fs.fs.UseCaseSensitiveFileNames())
 		switch change.Kind {
 		case FileChangeKindOpen:
-			newOverlays[change.URI] = &overlay{
+			result.Opened.Add(change.URI)
+			newOverlays[path] = &overlay{
 				uri:     change.URI,
 				content: change.Content,
 				hash:    sha256.Sum256([]byte(change.Content)),
@@ -140,7 +139,8 @@ func (fs *overlayFS) updateOverlays(changes []FileChange, converters *ls.Convert
 				kind:    ls.LanguageKindToScriptKind(change.LanguageKind),
 			}
 		case FileChangeKindChange:
-			o, ok := newOverlays[change.URI]
+			result.Changed.Add(change.URI)
+			o, ok := newOverlays[path]
 			if !ok {
 				panic("overlay not found for change")
 			}
@@ -158,12 +158,13 @@ func (fs *overlayFS) updateOverlays(changes []FileChange, converters *ls.Convert
 			// is allowed to be a false negative.
 			o.matchesDiskText = false
 		case FileChangeKindSave:
-			o, ok := newOverlays[change.URI]
+			result.Saved.Add(change.URI)
+			o, ok := newOverlays[path]
 			if !ok {
 				panic("overlay not found for save")
 			}
-			newOverlays[change.URI] = &overlay{
-				uri:             o.uri,
+			newOverlays[path] = &overlay{
+				uri:             o.URI(),
 				content:         o.Content(),
 				hash:            o.Hash(),
 				version:         o.Version(),
@@ -171,9 +172,43 @@ func (fs *overlayFS) updateOverlays(changes []FileChange, converters *ls.Convert
 			}
 		case FileChangeKindClose:
 			// Remove the overlay for the closed file.
-			delete(newOverlays, change.URI)
-		case FileChangeKindWatchAdd, FileChangeKindWatchChange, FileChangeKindWatchDelete:
-			// !!! set matchesDiskText?
+			result.Closed.Add(change.URI)
+			delete(newOverlays, path)
+		case FileChangeKindWatchCreate:
+			result.Created.Add(change.URI)
+		case FileChangeKindWatchChange:
+			if o, ok := newOverlays[path]; ok {
+				if o.matchesDiskText {
+					// Assume the overlay does not match disk text after a change.
+					newOverlays[path] = &overlay{
+						uri:             o.URI(),
+						content:         o.Content(),
+						hash:            o.Hash(),
+						version:         o.Version(),
+						matchesDiskText: false,
+					}
+				}
+			} else {
+				// Only count this as a change if the file is closed.
+				result.Changed.Add(change.URI)
+			}
+		case FileChangeKindWatchDelete:
+			if o, ok := newOverlays[path]; ok {
+				if o.matchesDiskText {
+					newOverlays[path] = &overlay{
+						uri:             o.URI(),
+						content:         o.Content(),
+						hash:            o.Hash(),
+						version:         o.Version(),
+						matchesDiskText: false,
+					}
+				}
+			} else {
+				// Only count this as a deletion if the file is closed.
+				result.Deleted.Add(change.URI)
+			}
+		default:
+			panic("unhandled file change kind")
 		}
 	}
 

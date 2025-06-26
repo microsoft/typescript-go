@@ -17,6 +17,7 @@ import (
 func runLSP(args []string) int {
 	flag := flag.NewFlagSet("lsp", flag.ContinueOnError)
 	stdio := flag.Bool("stdio", false, "use stdio for communication")
+	v2 := flag.Bool("v2", false, "use v2 project system")
 	pprofDir := flag.String("pprofDir", "", "Generate pprof CPU/memory profiles to the given directory.")
 	pipe := flag.String("pipe", "", "use named pipe for communication")
 	_ = pipe
@@ -41,7 +42,7 @@ func runLSP(args []string) int {
 	defaultLibraryPath := bundled.LibPath()
 	typingsLocation := getGlobalTypingsCacheLocation()
 
-	s := lsp.NewServer(&lsp.ServerOptions{
+	serverOptions := lsp.ServerOptions{
 		In:                 lsp.ToReader(os.Stdin),
 		Out:                lsp.ToWriter(os.Stdout),
 		Err:                os.Stderr,
@@ -49,10 +50,18 @@ func runLSP(args []string) int {
 		FS:                 fs,
 		DefaultLibraryPath: defaultLibraryPath,
 		TypingsLocation:    typingsLocation,
-	})
+	}
 
-	if err := s.Run(); err != nil {
-		return 1
+	if *v2 {
+		s := lsp.NewProjectV2Server(serverOptions)
+		if err := s.Run(); err != nil {
+			return 1
+		}
+	} else {
+		s := lsp.NewServer(&serverOptions)
+		if err := s.Run(); err != nil {
+			return 1
+		}
 	}
 	return 0
 }
