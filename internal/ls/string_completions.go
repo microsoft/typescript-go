@@ -8,6 +8,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -51,7 +52,7 @@ func (l *LanguageService) getStringLiteralCompletions(
 ) *lsproto.CompletionList {
 	// !!! reference comment
 	if IsInString(file, position, contextToken) {
-		if contextToken == nil || !ast.IsStringOrNumericLiteralLike(contextToken) {
+		if contextToken == nil || !ast.IsStringLiteralLike(contextToken) {
 			return nil
 		}
 		entries := l.getStringLiteralCompletionEntries(
@@ -113,7 +114,6 @@ func (l *LanguageService) convertStringLiteralCompletions(
 			position,
 			file,
 			program,
-			core.ScriptTargetESNext,
 			preferences,
 			options,
 			clientOptions,
@@ -143,7 +143,7 @@ func (l *LanguageService) convertStringLiteralCompletions(
 				"", /*filterText*/
 				SortTextLocationPriority,
 				ScriptElementKindString,
-				core.Set[ScriptElementKindModifier]{},
+				collections.Set[ScriptElementKindModifier]{},
 				l.getReplacementRangeForContextToken(file, contextToken, position),
 				nil, /*optionalReplacementSpan*/
 				nil, /*commitCharacters*/
@@ -186,7 +186,7 @@ func (l *LanguageService) convertPathCompletions(
 			"", /*filterText*/
 			SortTextLocationPriority,
 			pathCompletion.kind,
-			*core.NewSetFromItems(kindModifiersFromExtension(pathCompletion.extension)),
+			*collections.NewSetFromItems(kindModifiersFromExtension(pathCompletion.extension)),
 			replacementSpan,
 			nil, /*optionalReplacementSpan*/
 			nil, /*commitCharacters*/
@@ -217,8 +217,8 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 	program *compiler.Program,
 	preferences *UserPreferences,
 ) *stringLiteralCompletions {
-	typeChecker, done := program.GetTypeChecker(ctx)
-	done()
+	typeChecker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
 	parent := walkUpParentheses(node.Parent)
 	switch parent.Kind {
 	case ast.KindLiteralType:
@@ -277,13 +277,29 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 		return nil
 	case ast.KindCallExpression, ast.KindNewExpression, ast.KindJsxAttribute:
 		if !isRequireCallArgument(node) && !ast.IsImportCall(parent) {
-			// !!! signature help
-			// const argumentInfo = SignatureHelp.getArgumentInfoForCompletions(parent.kind === SyntaxKind.JsxAttribute ? parent.parent : node, position, sourceFile, typeChecker);
-			// // Get string literal completions from specialized signatures of the target
-			// // i.e. declare function f(a: 'A');
-			// // f("/*completion position*/")
-			// return argumentInfo && getStringLiteralCompletionsFromSignature(argumentInfo.invocation, node, argumentInfo, typeChecker) || fromContextualType(ContextFlags.None);
-			return nil
+			var argumentNode *ast.Node
+			if parent.Kind == ast.KindJsxAttribute {
+				argumentNode = parent.Parent
+			} else {
+				argumentNode = node
+			}
+			argumentInfo := getArgumentInfoForCompletions(argumentNode, position, file, typeChecker)
+			// Get string literal completions from specialized signatures of the target
+			// i.e. declare function f(a: 'A');
+			// f("/*completion position*/")
+			if argumentInfo == nil {
+				return nil
+			}
+
+			result := getStringLiteralCompletionsFromSignature(argumentInfo.invocation, node, argumentInfo, typeChecker)
+			if result != nil {
+				return &stringLiteralCompletions{
+					fromTypes: result,
+				}
+			}
+			return &stringLiteralCompletions{
+				fromTypes: fromContextualType(checker.ContextFlagsNone, node, typeChecker),
+			}
 		}
 		fallthrough // is `require("")` or `require(""` or `import("")`
 	case ast.KindImportDeclaration, ast.KindExportDeclaration, ast.KindExternalModuleReference, ast.KindJSDocImportTag:
@@ -330,7 +346,7 @@ func (l *LanguageService) getStringLiteralCompletionEntries(
 			return nil
 		}
 		exports := typeChecker.GetExportsAndPropertiesOfModule(moduleSpecifierSymbol)
-		existing := core.NewSetFromItems(core.Map(namedImportsOrExports.Elements(), func(n *ast.Node) string {
+		existing := collections.NewSetFromItems(core.Map(namedImportsOrExports.Elements(), func(n *ast.Node) string {
 			if n.PropertyName() != nil {
 				return n.PropertyName().Text()
 			}
@@ -498,12 +514,12 @@ func walkUpParentheses(node *ast.Node) *ast.Node {
 	}
 }
 
-func getStringLiteralTypes(t *checker.Type, uniques *core.Set[string], typeChecker *checker.Checker) []*checker.StringLiteralType {
+func getStringLiteralTypes(t *checker.Type, uniques *collections.Set[string], typeChecker *checker.Checker) []*checker.StringLiteralType {
 	if t == nil {
 		return nil
 	}
 	if uniques == nil {
-		uniques = &core.Set[string]{}
+		uniques = &collections.Set[string]{}
 	}
 	t = skipConstraint(t, typeChecker)
 	if t.IsUnion() {
@@ -580,4 +596,46 @@ func kindModifiersFromExtension(extension string) ScriptElementKindModifier {
 	default:
 		panic(fmt.Sprintf("Unexpected extension: %v", extension))
 	}
+}
+
+func getStringLiteralCompletionsFromSignature(
+	call *ast.CallLikeExpression,
+	arg *ast.StringLiteralLike,
+	argumentInfo *argumentInfoForCompletions,
+	typeChecker *checker.Checker,
+) *completionsFromTypes {
+	isNewIdentifier := false
+	uniques := collections.Set[string]{}
+	var editingArgument *ast.Node
+	if ast.IsJsxOpeningLikeElement(call) {
+		editingArgument = ast.FindAncestor(arg.Parent, ast.IsJsxAttribute)
+		if editingArgument == nil {
+			panic("Expected jsx opening-like element to have a jsx attribute as ancestor.")
+		}
+	} else {
+		editingArgument = arg
+	}
+	candidates := typeChecker.GetCandidateSignaturesForStringLiteralCompletions(call, editingArgument)
+	var types []*checker.StringLiteralType
+	for _, candidate := range candidates {
+		if !candidate.HasRestParameter() && argumentInfo.argumentCount > len(candidate.Parameters()) {
+			continue
+		}
+		t := typeChecker.GetTypeParameterAtPosition(candidate, argumentInfo.argumentIndex)
+		if ast.IsJsxOpeningLikeElement(call) {
+			propType := typeChecker.GetTypeOfPropertyOfType(t, editingArgument.AsJsxAttribute().Name().Text())
+			if propType != nil {
+				t = propType
+			}
+		}
+		isNewIdentifier = isNewIdentifier || t.IsString()
+		types = append(types, getStringLiteralTypes(t, &uniques, typeChecker)...)
+	}
+	if len(types) > 0 {
+		return &completionsFromTypes{
+			types:           types,
+			isNewIdentifier: isNewIdentifier,
+		}
+	}
+	return nil
 }

@@ -22,7 +22,9 @@ const A = {}
 >A : Symbol(A, Decl(namespacey.js, 0, 5))
 
 A.bar = class Q {}
+>A.bar : Symbol(bar, Decl(namespacey.js, 0, 12))
 >A : Symbol(A, Decl(namespacey.js, 0, 5))
+>bar : Symbol(bar, Decl(namespacey.js, 0, 12))
 >Q : Symbol(Q, Decl(namespacey.js, 1, 7))
 
 module.exports = A;
@@ -36,7 +38,10 @@ const B = {}
 >B : Symbol(B, Decl(namespacer.js, 0, 5))
 
 B.NS = require("./namespacey");
+>B.NS : Symbol(NS, Decl(namespacer.js, 0, 12))
 >B : Symbol(B, Decl(namespacer.js, 0, 5))
+>NS : Symbol(NS, Decl(namespacer.js, 0, 12))
+>require : Symbol(require)
 
 Object.defineProperty(B, "NS", { value: "why though", writable: true });
 >Object.defineProperty : Symbol(defineProperty, Decl(lib.es5.d.ts, --, --))

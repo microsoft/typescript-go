@@ -9,22 +9,20 @@
 const x = /** @type {Foo} */ ({});
 >x : Foo
 >({}) : Foo
->{} : Foo
 >{} : {}
 
 x.foo; // number | undefined
->x.foo : any
+>x.foo : number | undefined
 >x : Foo
->foo : any
+>foo : number | undefined
 
 const y = /** @type {Required<Foo>} */ ({});
 >y : Required<Foo>
 >({}) : Required<Foo>
->{} : Required<Foo>
 >{} : {}
 
 y.foo; // number
->y.foo : any
+>y.foo : number
 >y : Required<Foo>
->foo : any
+>foo : number
 

@@ -112,7 +112,7 @@ export const cjsSource = true;
         "./types": {
             "types": {
                 "import": "./index.d.mts",
-                "require": "./index.d.cts",
+                "require": "./index.d.cts"
             },
             "node": {
                 "import": "./index.mjs",
@@ -122,20 +122,19 @@ export const cjsSource = true;
     }
 }
 
+
 //// [index.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // esm format file
-const cjs = require("package/cjs");
-const mjs = require("package/mjs");
-const type = require("package");
+import * as cjs from "package/cjs";
+import * as mjs from "package/mjs";
+import * as type from "package";
 cjs;
 mjs;
 type;
-const cjsi = require("inner/a");
-const mjsi = require("inner/b");
-const typei = require("inner");
-const ts = require("inner/types");
+import * as cjsi from "inner/a";
+import * as mjsi from "inner/b";
+import * as typei from "inner";
+import * as ts from "inner/types";
 cjsi.mjsSource;
 mjsi.mjsSource;
 typei.mjsSource;
@@ -159,19 +158,17 @@ mjsi.cjsSource;
 typei.implicitCjsSource;
 ts.cjsSource;
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // esm format file
-const cjs = require("package/cjs");
-const mjs = require("package/mjs");
-const type = require("package");
+import * as cjs from "package/cjs";
+import * as mjs from "package/mjs";
+import * as type from "package";
 cjs;
 mjs;
 type;
-const cjsi = require("inner/a");
-const mjsi = require("inner/b");
-const typei = require("inner");
-const ts = require("inner/types");
+import * as cjsi from "inner/a";
+import * as mjsi from "inner/b";
+import * as typei from "inner";
+import * as ts from "inner/types";
 cjsi.mjsSource;
 mjsi.mjsSource;
 typei.mjsSource;

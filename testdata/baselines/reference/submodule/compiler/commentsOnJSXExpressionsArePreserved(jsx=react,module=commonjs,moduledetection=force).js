@@ -23,15 +23,10 @@ class Component {
 }
 
 //// [commentsOnJSXExpressionsArePreserved.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Component {
     render() {
-        return <div>
-            
-            {null /* preserved */}
-            
-            
-            
-            
-        </div>;
+        return React.createElement("div", null, null /* preserved */);
     }
 }

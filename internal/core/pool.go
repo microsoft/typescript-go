@@ -43,6 +43,21 @@ func (p *Pool[T]) NewSlice(size int) []T {
 	return slice
 }
 
+func (p *Pool[T]) NewSlice1(t T) []T {
+	slice := p.NewSlice(1)
+	slice[0] = t
+	return slice
+}
+
+func (p *Pool[T]) Clone(t []T) []T {
+	if len(t) == 0 {
+		return nil
+	}
+	slice := p.NewSlice(len(t))
+	copy(slice, t)
+	return slice
+}
+
 func nextPoolSize(size int) int {
 	// This compiles down branch-free.
 	size = max(size, 1)

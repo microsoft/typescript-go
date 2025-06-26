@@ -327,14 +327,15 @@ func forEachASTNode(node *ast.Node) []*ast.Node {
 	for len(work) > 0 {
 		elem := work[len(work)-1]
 		work = work[:len(work)-1]
-		if elem.Flags&ast.NodeFlagsReparsed != 0 && elem.Kind != ast.KindTypeAssertionExpression {
-			continue
+		if elem.Flags&ast.NodeFlagsReparsed == 0 || elem.Kind == ast.KindAsExpression || elem.Kind == ast.KindSatisfiesExpression {
+			if elem.Flags&ast.NodeFlagsReparsed == 0 {
+				result = append(result, elem)
+			}
+			elem.ForEachChild(addChild)
+			slices.Reverse(resChildren)
+			work = append(work, resChildren...)
+			resChildren = resChildren[:0]
 		}
-		result = append(result, elem)
-		elem.ForEachChild(addChild)
-		slices.Reverse(resChildren)
-		work = append(work, resChildren...)
-		resChildren = resChildren[:0]
 	}
 	return result
 }
@@ -346,7 +347,8 @@ func (walker *typeWriterWalker) writeTypeOrSymbol(node *ast.Node, isSymbolWalk b
 	fileChecker, done := walker.getTypeCheckerForCurrentFile()
 	defer done()
 
-	ctx := printer.NewEmitContext()
+	ctx, putCtx := printer.GetEmitContext()
+	defer putCtx()
 
 	if !isSymbolWalk {
 		// Don't try to get the type of something that's already a type.
@@ -481,5 +483,5 @@ func isIntrinsicJsxTag(node *ast.Node, sourceFile *ast.SourceFile) bool {
 		return false
 	}
 	text := scanner.GetSourceTextOfNodeFromSourceFile(sourceFile, node, false /*includeTrivia*/)
-	return checker.IsIntrinsicJsxName(text)
+	return scanner.IsIntrinsicJsxName(text)
 }

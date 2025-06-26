@@ -34,7 +34,7 @@ export const futureVersionApplied = true;
 {
     "name": "package",
     "private": true,
-    "type": "module",
+    "type": "module"
 }
 //// [package.json]
 {
@@ -47,21 +47,18 @@ export const futureVersionApplied = true;
             "types": "./old-types.d.ts",
             "import": "./index.mjs",
             "node": "./index.js"
-        },
+        }
     }
 }
 
+
 //// [index.js]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // esm format file
-const mod = require("inner");
+import * as mod from "inner";
 mod.correctVersionApplied;
 //// [index.mjs]
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 // esm format file
-const mod = require("inner");
+import * as mod from "inner";
 mod.correctVersionApplied;
 //// [index.cjs]
 "use strict";

@@ -20,7 +20,7 @@ func TestPathCompletionsPackageJsonImportsBundlerNoNodeCondition(t *testing.T) {
     "#only-for-node": {
       "node": "./something.js"
     },
-    "#for-everywhere": "./other.js",
+    "#for-everywhere": "./other.js"
   }
 }
 // @Filename: /something.d.ts
@@ -33,7 +33,7 @@ import { } from "/**/";`
 	f.VerifyCompletions(t, "", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+			CommitCharacters: &[]string{},
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindFile), Label: "#for-everywhere"}},

@@ -2,9 +2,9 @@ package compiler
 
 import (
 	"encoding/base64"
-	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
@@ -13,6 +13,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/declarations"
+	"github.com/microsoft/typescript-go/internal/transformers/estransforms"
+	"github.com/microsoft/typescript-go/internal/transformers/jsxtransforms"
+	"github.com/microsoft/typescript-go/internal/transformers/moduletransforms"
+	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -50,6 +55,73 @@ func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, s
 	return []*declarations.DeclarationTransformer{transform}
 }
 
+func getModuleTransformer(emitContext *printer.EmitContext, options *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+	switch options.GetEmitModuleKind() {
+	case core.ModuleKindPreserve:
+		// `ESModuleTransformer` contains logic for preserving CJS input syntax in `--module preserve`
+		return moduletransforms.NewESModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+
+	case core.ModuleKindESNext,
+		core.ModuleKindES2022,
+		core.ModuleKindES2020,
+		core.ModuleKindES2015,
+		core.ModuleKindNode18,
+		core.ModuleKindNode16,
+		core.ModuleKindNodeNext,
+		core.ModuleKindCommonJS:
+		return moduletransforms.NewImpliedModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+
+	default:
+		return moduletransforms.NewCommonJSModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+	}
+}
+
+func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHost, sourceFile *ast.SourceFile) []*transformers.Transformer {
+	var tx []*transformers.Transformer
+	options := host.Options()
+
+	// JS files don't use reference calculations as they don't do import elision, no need to calculate it
+	importElisionEnabled := !options.VerbatimModuleSyntax.IsTrue() && !ast.IsInJSFile(sourceFile.AsNode())
+
+	var emitResolver printer.EmitResolver
+	var referenceResolver binder.ReferenceResolver
+	if importElisionEnabled || options.GetJSXTransformEnabled() {
+		emitResolver = host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
+		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
+		referenceResolver = emitResolver
+	} else {
+		referenceResolver = binder.NewReferenceResolver(options, binder.ReferenceResolverHooks{})
+	}
+
+	// transform TypeScript syntax
+	{
+		// erase types
+		tx = append(tx, tstransforms.NewTypeEraserTransformer(emitContext, options))
+
+		// elide imports
+		if importElisionEnabled {
+			tx = append(tx, tstransforms.NewImportElisionTransformer(emitContext, options, emitResolver))
+		}
+
+		// transform `enum`, `namespace`, and parameter properties
+		tx = append(tx, tstransforms.NewRuntimeSyntaxTransformer(emitContext, options, referenceResolver))
+	}
+
+	// !!! transform legacy decorator syntax
+	if options.GetJSXTransformEnabled() {
+		tx = append(tx, jsxtransforms.NewJSXTransformer(emitContext, options, emitResolver))
+	}
+
+	downleveler := estransforms.GetESTransformer(options, emitContext)
+	if downleveler != nil {
+		tx = append(tx, downleveler)
+	}
+
+	// transform module syntax
+	tx = append(tx, getModuleTransformer(emitContext, options, referenceResolver, host.GetEmitModuleFormatOfFile))
+	return tx
+}
+
 func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sourceMapFilePath string) {
 	options := e.host.Options()
 
@@ -61,8 +133,10 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
-	emitContext := printer.NewEmitContext()
-	for _, transformer := range transformers.GetScriptTransformers(emitContext, e.host, sourceFile) {
+	emitContext, putEmitContext := printer.GetEmitContext()
+	defer putEmitContext()
+
+	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 	}
 
@@ -103,7 +177,8 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	}
 
 	var diags []*ast.Diagnostic
-	emitContext := printer.NewEmitContext()
+	emitContext, putEmitContext := printer.GetEmitContext()
+	defer putEmitContext()
 	for _, transformer := range e.getDeclarationTransformers(emitContext, sourceFile, declarationFilePath, declarationMapPath) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 		diags = append(diags, transformer.GetDiagnostics()...)
@@ -297,18 +372,30 @@ func (e *emitter) getSourceMappingURL(mapOptions *core.CompilerOptions, sourceMa
 	return stringutil.EncodeURI(sourceMapFile)
 }
 
-func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host printer.EmitHost, forceDtsEmit bool) bool {
-	// !!! Js files are emitted only if option is enabled
+type SourceFileMayBeEmittedHost interface {
+	Options() *core.CompilerOptions
+	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
+	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool
+	GetCurrentDirectory() string
+	UseCaseSensitiveFileNames() bool
+}
+
+func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmittedHost, forceDtsEmit bool) bool {
+	// TODO: move this to outputpaths?
+
+	options := host.Options()
+	// Js files are emitted only if option is enabled
+	if options.NoEmitForJsFiles.IsTrue() && ast.IsSourceFileJS(sourceFile) {
+		return false
+	}
 
 	// Declaration files are not emitted
 	if sourceFile.IsDeclarationFile {
 		return false
 	}
 
-	// !!! Source file from node_modules are not emitted. In Strada, this depends on module resolution and uses
-	// `sourceFilesFoundSearchingNodeModules` in `createProgram`. For now, we will just check for `/node_modules/` in
-	// the file name.
-	if strings.Contains(sourceFile.FileName(), "/node_modules/") {
+	// Source file from node_modules are not emitted
+	if host.IsSourceFileFromExternalLibrary(sourceFile) {
 		return false
 	}
 
@@ -317,15 +404,35 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host printer.EmitHost, f
 		return true
 	}
 
-	// !!! Source files from referenced projects are not emitted
+	// Check other conditions for file emit
+	// Source files from referenced projects are not emitted
+	if host.GetOutputAndProjectReference(sourceFile.Path()) != nil {
+		return false
+	}
 
 	// Any non json file should be emitted
 	if !ast.IsJsonSourceFile(sourceFile) {
 		return true
 	}
 
-	// !!! Should JSON input files be emitted
-	return false
+	// Json file is not emitted if outDir is not specified
+	if options.OutDir == "" {
+		return false
+	}
+
+	// Otherwise if rootDir or composite config file, we know common sourceDir and can check if file would be emitted in same location
+	if options.RootDir != "" || (options.Composite.IsTrue() && options.ConfigFilePath != "") {
+		commonDir := tspath.GetNormalizedAbsolutePath(outputpaths.GetCommonSourceDirectory(options, func() []string { return nil }, host.GetCurrentDirectory(), host.UseCaseSensitiveFileNames()), host.GetCurrentDirectory())
+		outputPath := outputpaths.GetSourceFilePathInNewDirWorker(sourceFile.FileName(), options.OutDir, host.GetCurrentDirectory(), commonDir, host.UseCaseSensitiveFileNames())
+		if tspath.ComparePaths(sourceFile.FileName(), outputPath, tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: host.UseCaseSensitiveFileNames(),
+			CurrentDirectory:          host.GetCurrentDirectory(),
+		}) == 0 {
+			return false
+		}
+	}
+
+	return true
 }
 
 func getSourceFilesToEmit(host printer.EmitHost, targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {

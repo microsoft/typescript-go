@@ -632,7 +632,7 @@ func (b *nodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 		return b.f.NewStringLiteral(b.getSpecifierForModuleSymbol(symbol, core.ResolutionModeNone))
 	}
 
-	if index == 0 || canUsePropertyAccess(symbolName, b.ch.languageVersion) {
+	if index == 0 || canUsePropertyAccess(symbolName) {
 		identifier := b.f.NewIdentifier(symbolName)
 		b.e.AddEmitFlags(identifier, printer.EFNoAsciiEscaping)
 		// !!! TODO: smuggle type arguments out
@@ -667,16 +667,16 @@ func (b *nodeBuilderImpl) createExpressionFromSymbolChain(chain []*ast.Symbol, i
 	return b.f.NewElementAccessExpression(b.createExpressionFromSymbolChain(chain, index-1), nil, expression, ast.NodeFlagsNone)
 }
 
-func canUsePropertyAccess(name string, languageVersion core.ScriptTarget) bool {
+func canUsePropertyAccess(name string) bool {
 	if len(name) == 0 {
 		return false
 	}
 	// TODO: in strada, this only used `isIdentifierStart` on the first character, while this checks the whole string for validity
 	// - possible strada bug?
 	if strings.HasPrefix(name, "#") {
-		return len(name) > 1 && scanner.IsIdentifierText(name[1:], languageVersion, core.LanguageVariantStandard)
+		return len(name) > 1 && scanner.IsIdentifierText(name[1:], core.LanguageVariantStandard)
 	}
-	return scanner.IsIdentifierText(name, languageVersion, core.LanguageVariantStandard)
+	return scanner.IsIdentifierText(name, core.LanguageVariantStandard)
 }
 
 func startsWithSingleOrDoubleQuote(str string) bool {
@@ -705,7 +705,7 @@ func (b *nodeBuilderImpl) getNameOfSymbolFromNameType(symbol *ast.Symbol) string
 			case jsnum.Number:
 				name = v.String()
 			}
-			if !scanner.IsIdentifierText(name, b.ch.compilerOptions.GetEmitScriptTarget(), core.LanguageVariantStandard) && !isNumericLiteralName(name) {
+			if !scanner.IsIdentifierText(name, core.LanguageVariantStandard) && !isNumericLiteralName(name) {
 				return b.ch.valueToString(nameType.AsLiteralType().value)
 			}
 			if isNumericLiteralName(name) && strings.HasPrefix(name, "-") {
@@ -981,7 +981,7 @@ func tryGetModuleSpecifierFromDeclarationWorker(node *ast.Node) *ast.Node {
 	switch node.Kind {
 	case ast.KindVariableDeclaration, ast.KindBindingElement:
 		requireCall := ast.FindAncestor(node.Initializer(), func(node *ast.Node) bool {
-			return ast.IsRequireCall(node)
+			return ast.IsRequireCall(node, true /*requireStringLiteralLikeArgument*/)
 		})
 		if requireCall == nil {
 			return nil
@@ -1087,7 +1087,7 @@ func (b *nodeBuilderImpl) getSpecifierForModuleSymbol(symbol *ast.Symbol, overri
 	}
 	if isBundle {
 		// !!! relies on option cloning and specifier host implementation
-		// specifierCompilerOptions = &core.CompilerOptions{BaseUrl: host.GetCommonSourceDirectory()}
+		// specifierCompilerOptions = &core.CompilerOptions{BaseUrl: host.CommonSourceDirectory()}
 		// TODO: merge with b.ch.compilerOptions
 		specifierPref = modulespecifiers.ImportModuleSpecifierPreferenceNonRelative
 		endingPref = modulespecifiers.ImportModuleSpecifierEndingPreferenceMinimal
@@ -1572,8 +1572,7 @@ type SignatureToSignatureDeclarationOptions struct {
 }
 
 func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signature, kind ast.Kind, options *SignatureToSignatureDeclarationOptions) *ast.Node {
-	var typeParameters *[]*ast.Node
-	var typeArguments *[]*ast.Node
+	var typeParameters []*ast.Node
 
 	expandedParams := b.ch.getExpandedParameters(signature, true /*skipUnionExpanding*/)[0]
 	cleanup := b.enterNewScope(signature.declaration, expandedParams, signature.typeParameters, signature.parameters, signature.mapper)
@@ -1582,21 +1581,11 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 
 	if b.ctx.flags&nodebuilder.FlagsWriteTypeArgumentsOfSignature != 0 && signature.target != nil && signature.mapper != nil && signature.target.typeParameters != nil {
 		for _, parameter := range signature.target.typeParameters {
-			node := b.typeToTypeNode(b.ch.instantiateType(parameter, signature.mapper))
-			if typeArguments == nil {
-				typeArguments = &[]*ast.Node{}
-			}
-			args := append(*typeArguments, node)
-			typeArguments = &args
+			typeParameters = append(typeParameters, b.typeToTypeNode(b.ch.instantiateType(parameter, signature.mapper)))
 		}
 	} else if signature.typeParameters != nil {
 		for _, parameter := range signature.typeParameters {
-			node := b.typeParameterToDeclaration(parameter)
-			if typeParameters == nil {
-				typeParameters = &[]*ast.Node{}
-			}
-			args := append(*typeParameters, node)
-			typeParameters = &args
+			typeParameters = append(typeParameters, b.typeParameterToDeclaration(parameter))
 		}
 	}
 
@@ -1632,8 +1621,8 @@ func (b *nodeBuilderImpl) signatureToSignatureDeclarationHelper(signature *Signa
 
 	paramList := b.f.NewNodeList(parameters)
 	var typeParamList *ast.NodeList
-	if typeParameters != nil {
-		typeParamList = b.f.NewNodeList(*typeParameters)
+	if len(typeParameters) != 0 {
+		typeParamList = b.f.NewNodeList(typeParameters)
 	}
 	var modifierList *ast.ModifierList
 	if modifiers != nil && len(modifiers) > 0 {
@@ -1898,7 +1887,7 @@ func (b *nodeBuilderImpl) serializeTypeForDeclaration(declaration *ast.Declarati
 			}
 		}
 		// !!! TODO: JSDoc, getEmitResolver call is unfortunate layering for the helper - hoist it into checker
-		addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver(nil, true).RequiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
+		addUndefinedForParameter := declaration != nil && (ast.IsParameter(declaration) /*|| ast.IsJSDocParameterTag(declaration)*/) && b.ch.GetEmitResolver(nil, true).requiresAddingImplicitUndefined(declaration, symbol, b.ctx.enclosingDeclaration)
 		if addUndefinedForParameter {
 			t = b.ch.getOptionalType(t, false)
 		}
@@ -1987,9 +1976,9 @@ func (b *nodeBuilderImpl) trackComputedName(accessExpression *ast.Node, enclosin
 	}
 }
 
-func (b *nodeBuilderImpl) createPropertyNameNodeForIdentifierOrLiteral(name string, target core.ScriptTarget, _singleQuote bool, stringNamed bool, isMethod bool) *ast.Node {
+func (b *nodeBuilderImpl) createPropertyNameNodeForIdentifierOrLiteral(name string, _singleQuote bool, stringNamed bool, isMethod bool) *ast.Node {
 	isMethodNamedNew := isMethod && name == "new"
-	if !isMethodNamedNew && scanner.IsIdentifierText(name, target, core.LanguageVariantStandard) {
+	if !isMethodNamedNew && scanner.IsIdentifierText(name, core.LanguageVariantStandard) {
 		return b.f.NewIdentifier(name)
 	}
 	if !stringNamed && !isMethodNamedNew && isNumericLiteralName(name) && jsnum.FromString(name) >= 0 {
@@ -2031,7 +2020,7 @@ func (b *nodeBuilderImpl) getPropertyNameNodeForSymbol(symbol *ast.Symbol) *ast.
 	if fromNameType != nil {
 		return fromNameType
 	}
-	return b.createPropertyNameNodeForIdentifierOrLiteral(symbol.Name, b.ch.compilerOptions.GetEmitScriptTarget(), singleQuote, stringNamed, isMethod)
+	return b.createPropertyNameNodeForIdentifierOrLiteral(symbol.Name, singleQuote, stringNamed, isMethod)
 }
 
 // See getNameForSymbolFromNameType for a stringy equivalent
@@ -2051,14 +2040,14 @@ func (b *nodeBuilderImpl) getPropertyNameNodeForSymbolFromNameType(symbol *ast.S
 		case string:
 			name = nameType.AsLiteralType().value.(string)
 		}
-		if !scanner.IsIdentifierText(name, b.ch.compilerOptions.GetEmitScriptTarget(), core.LanguageVariantStandard) && (stringNamed || !isNumericLiteralName(name)) {
+		if !scanner.IsIdentifierText(name, core.LanguageVariantStandard) && (stringNamed || !isNumericLiteralName(name)) {
 			// !!! TODO: set singleQuote
 			return b.f.NewStringLiteral(name)
 		}
 		if isNumericLiteralName(name) && name[0] == '-' {
 			return b.f.NewComputedPropertyName(b.f.NewPrefixUnaryExpression(ast.KindMinusToken, b.f.NewNumericLiteral(name[1:])))
 		}
-		return b.createPropertyNameNodeForIdentifierOrLiteral(name, b.ch.compilerOptions.GetEmitScriptTarget(), singleQuote, stringNamed, isMethod)
+		return b.createPropertyNameNodeForIdentifierOrLiteral(name, singleQuote, stringNamed, isMethod)
 	}
 	if nameType.flags&TypeFlagsUniqueESSymbol != 0 {
 		return b.f.NewComputedPropertyName(b.symbolToExpression(nameType.AsUniqueESSymbolType().symbol, ast.SymbolFlagsValue))
@@ -2082,7 +2071,7 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 			if b.ch.hasLateBindableName(decl) {
 				if ast.IsBinaryExpression(decl) {
 					name := ast.GetNameOfDeclaration(decl)
-					if name != nil && ast.IsElementAccessExpression(name) && ast.IsPropertyAccessEntityNameExpression(name.AsElementAccessExpression().ArgumentExpression) {
+					if name != nil && ast.IsElementAccessExpression(name) && ast.IsPropertyAccessEntityNameExpression(name.AsElementAccessExpression().ArgumentExpression, false /*allowJs*/) {
 						b.trackComputedName(name.AsElementAccessExpression().ArgumentExpression, saveEnclosingDeclaration)
 					}
 				} else {
@@ -2140,7 +2129,7 @@ func (b *nodeBuilderImpl) addPropertyToElementList(propertySymbol *ast.Symbol, t
 				name:          propertyName,
 				questionToken: optionalToken,
 			})
-			b.setCommentRange(methodDeclaration, propertySymbol.ValueDeclaration) // !!! missing JSDoc support formerly provided by preserveCommentsOn
+			b.setCommentRange(methodDeclaration, core.Coalesce(signature.declaration, propertySymbol.ValueDeclaration)) // !!! missing JSDoc support formerly provided by preserveCommentsOn
 			typeElements = append(typeElements, methodDeclaration)
 		}
 		if len(signatures) != 0 || optionalToken == nil {
@@ -2748,7 +2737,7 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 				return parentName
 			}
 			memberName := ast.SymbolName(t.symbol)
-			if scanner.IsIdentifierText(memberName, core.ScriptTargetES5, core.LanguageVariantStandard) {
+			if scanner.IsIdentifierText(memberName, core.LanguageVariantStandard) {
 				return b.appendReferenceToType(parentName /* as TypeReferenceNode | ImportTypeNode */, b.f.NewTypeReferenceNode(b.f.NewIdentifier(memberName), nil /*typeArguments*/))
 			}
 			if ast.IsImportTypeNode(parentName) {

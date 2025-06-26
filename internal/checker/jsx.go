@@ -243,7 +243,7 @@ func (c *Checker) getContextualTypeForChildJsxExpression(node *ast.Node, child *
 	if !(attributesType != nil && !IsTypeAny(attributesType) && jsxChildrenPropertyName != ast.InternalSymbolNameMissing && jsxChildrenPropertyName != "") {
 		return nil
 	}
-	realChildren := getSemanticJsxChildren(node.Children().Nodes)
+	realChildren := ast.GetSemanticJsxChildren(node.Children().Nodes)
 	childIndex := slices.Index(realChildren, child)
 	childFieldType := c.getTypeOfPropertyOfContextualType(attributesType, jsxChildrenPropertyName)
 	if childFieldType == nil {
@@ -279,7 +279,7 @@ func (c *Checker) discriminateContextualTypeByJSXAttributes(node *ast.Node, cont
 			return false
 		}
 		element := node.Parent.Parent
-		if s.Name == jsxChildrenPropertyName && ast.IsJsxElement(element) && len(getSemanticJsxChildren(element.Children().Nodes)) != 0 {
+		if s.Name == jsxChildrenPropertyName && ast.IsJsxElement(element) && len(ast.GetSemanticJsxChildren(element.Children().Nodes)) != 0 {
 			return false
 		}
 		return node.Symbol().Members[s.Name] == nil && c.isDiscriminantProperty(contextualType, s.Name)
@@ -308,7 +308,7 @@ func (c *Checker) elaborateJsxComponents(node *ast.Node, source *Type, target *T
 		}
 		childrenNameType := c.getStringLiteralType(childrenPropName)
 		childrenTargetType := c.getIndexedAccessType(target, childrenNameType)
-		validChildren := getSemanticJsxChildren(containingElement.Children().Nodes)
+		validChildren := ast.GetSemanticJsxChildren(containingElement.Children().Nodes)
 		if len(validChildren) == 0 {
 			return reportedError
 		}
@@ -803,7 +803,7 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 				children = parent.AsJsxFragment().Children.Nodes
 			}
 		}
-		return len(getSemanticJsxChildren(children)) != 0
+		return len(ast.GetSemanticJsxChildren(children)) != 0
 	}
 	if parentHasSemanticJsxChildren(openingLikeElement) {
 		var childTypes []*Type = c.checkJsxChildren(openingLikeElement.Parent, checkMode)
@@ -853,19 +853,6 @@ func (c *Checker) createJsxAttributesTypeFromAttributesProperty(openingLikeEleme
 		return createJsxAttributesType()
 	}
 	return spread
-}
-
-func getSemanticJsxChildren(children []*ast.JsxChild) []*ast.JsxChild {
-	return core.Filter(children, func(i *ast.JsxChild) bool {
-		switch i.Kind {
-		case ast.KindJsxExpression:
-			return i.Expression() != nil
-		case ast.KindJsxText:
-			return !i.AsJsxText().ContainsOnlyTriviaWhiteSpaces
-		default:
-			return true
-		}
-	})
 }
 
 func (c *Checker) checkJsxAttribute(node *ast.Node, checkMode CheckMode) *Type {
@@ -965,7 +952,7 @@ func (c *Checker) getJsxPropsTypeFromClassType(sig *Signature, context *ast.Node
 		// Props is of type 'any' or unknown
 		return attributesType
 	}
-	// Normal case -- add in IntrinsicClassElements<T> and IntrinsicElements
+	// Normal case -- add in IntrinsicClassAttributes<T> and IntrinsicAttributes
 	apparentAttributesType := attributesType
 	intrinsicClassAttribs := c.getJsxType(JsxNames.IntrinsicClassAttributes, context)
 	if !c.isErrorType(intrinsicClassAttribs) {
@@ -973,8 +960,8 @@ func (c *Checker) getJsxPropsTypeFromClassType(sig *Signature, context *ast.Node
 		hostClassType := c.getReturnTypeOfSignature(sig)
 		var libraryManagedAttributeType *Type
 		if typeParams != nil {
-			// apply JSX.IntrinsicClassElements<hostClassType, ...>
-			inferredArgs := c.fillMissingTypeArguments([]*Type{hostClassType}, typeParams, c.getMinTypeArgumentCount(typeParams))
+			// apply JSX.IntrinsicClassAttributes<hostClassType, ...>
+			inferredArgs := c.fillMissingTypeArguments([]*Type{hostClassType}, typeParams, c.getMinTypeArgumentCount(typeParams), ast.IsInJSFile(context))
 			libraryManagedAttributeType = c.instantiateType(intrinsicClassAttribs, newTypeMapper(typeParams, inferredArgs))
 		} else {
 			libraryManagedAttributeType = intrinsicClassAttribs
@@ -1021,7 +1008,7 @@ func (c *Checker) getJsxManagedAttributesFromLocatedAttributes(context *ast.Node
 	managedSym := c.getJsxLibraryManagedAttributes(ns)
 	if managedSym != nil {
 		ctorType := c.getStaticTypeOfReferencedJsxConstructor(context)
-		result := c.instantiateAliasOrInterfaceWithDefaults(managedSym, []*Type{ctorType, attributesType})
+		result := c.instantiateAliasOrInterfaceWithDefaults(managedSym, []*Type{ctorType, attributesType}, ast.IsInJSFile(context))
 		if result != nil {
 			return result
 		}
@@ -1029,13 +1016,13 @@ func (c *Checker) getJsxManagedAttributesFromLocatedAttributes(context *ast.Node
 	return attributesType
 }
 
-func (c *Checker) instantiateAliasOrInterfaceWithDefaults(managedSym *ast.Symbol, typeArguments []*Type) *Type {
+func (c *Checker) instantiateAliasOrInterfaceWithDefaults(managedSym *ast.Symbol, typeArguments []*Type, inJavaScript bool) *Type {
 	declaredManagedType := c.getDeclaredTypeOfSymbol(managedSym)
 	// fetches interface type, or initializes symbol links type parmaeters
 	if managedSym.Flags&ast.SymbolFlagsTypeAlias != 0 {
 		params := c.typeAliasLinks.Get(managedSym).typeParameters
 		if len(params) >= len(typeArguments) {
-			args := c.fillMissingTypeArguments(typeArguments, params, len(typeArguments))
+			args := c.fillMissingTypeArguments(typeArguments, params, len(typeArguments), inJavaScript)
 			if len(args) == 0 {
 				return declaredManagedType
 			}
@@ -1043,7 +1030,7 @@ func (c *Checker) instantiateAliasOrInterfaceWithDefaults(managedSym *ast.Symbol
 		}
 	}
 	if len(declaredManagedType.AsInterfaceType().TypeParameters()) >= len(typeArguments) {
-		args := c.fillMissingTypeArguments(typeArguments, declaredManagedType.AsInterfaceType().TypeParameters(), len(typeArguments))
+		args := c.fillMissingTypeArguments(typeArguments, declaredManagedType.AsInterfaceType().TypeParameters(), len(typeArguments), inJavaScript)
 		return c.createTypeReference(declaredManagedType, args)
 	}
 	return nil
@@ -1285,7 +1272,7 @@ func (c *Checker) getJsxElementTypeTypeAt(location *ast.Node) *Type {
 	if sym == nil {
 		return nil
 	}
-	t := c.instantiateAliasOrInterfaceWithDefaults(sym, nil)
+	t := c.instantiateAliasOrInterfaceWithDefaults(sym, nil, ast.IsInJSFile(location))
 	if t == nil || c.isErrorType(t) {
 		return nil
 	}
@@ -1435,7 +1422,7 @@ func (c *Checker) getJsxFragmentFactoryEntity(location *ast.Node) *ast.EntityNam
 }
 
 func (c *Checker) parseIsolatedEntityName(name string) *ast.Node {
-	result := parser.ParseIsolatedEntityName(name, c.languageVersion)
+	result := parser.ParseIsolatedEntityName(name)
 	if result != nil {
 		markAsSynthetic(result)
 	}

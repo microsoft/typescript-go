@@ -20,7 +20,7 @@ func TestPathCompletionsPackageJsonImportsCustomConditions(t *testing.T) {
   "imports": {
     "#only-with-custom-conditions": {
       "custom-condition": "./something.js"
-    },
+    }
   }
 }
 // @Filename: /something.d.ts
@@ -31,7 +31,7 @@ import { } from "/**/";`
 	f.VerifyCompletions(t, "", &fourslash.VerifyCompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &lsproto.CompletionItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+			CommitCharacters: &[]string{},
 		},
 		Items: &fourslash.VerifyCompletionsExpectedItems{
 			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindFile), Label: "#only-with-custom-conditions"}},

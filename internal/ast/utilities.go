@@ -656,6 +656,7 @@ func isDeclarationStatementKind(kind Kind) bool {
 		KindExportDeclaration,
 		KindExportAssignment,
 		KindJSExportAssignment,
+		KindCommonJSExport,
 		KindNamespaceExportDeclaration:
 		return true
 	}
@@ -801,8 +802,9 @@ const (
 	OEKNonNullAssertions            OuterExpressionKinds = 1 << 2
 	OEKPartiallyEmittedExpressions  OuterExpressionKinds = 1 << 3
 	OEKExpressionsWithTypeArguments OuterExpressionKinds = 1 << 4
-	OEKExcludeJSDocTypeAssertion                         = 1 << 5
-	OEKAssertions                                        = OEKTypeAssertions | OEKNonNullAssertions
+	OEKSatisfies                    OuterExpressionKinds = 1 << 5
+	OEKExcludeJSDocTypeAssertion                         = 1 << 6
+	OEKAssertions                                        = OEKTypeAssertions | OEKNonNullAssertions | OEKSatisfies
 	OEKAll                                               = OEKParentheses | OEKAssertions | OEKPartiallyEmittedExpressions | OEKExpressionsWithTypeArguments
 )
 
@@ -811,8 +813,10 @@ func IsOuterExpression(node *Expression, kinds OuterExpressionKinds) bool {
 	switch node.Kind {
 	case KindParenthesizedExpression:
 		return kinds&OEKParentheses != 0 && !(kinds&OEKExcludeJSDocTypeAssertion != 0 && isJSDocTypeAssertion(node))
-	case KindTypeAssertionExpression, KindAsExpression, KindSatisfiesExpression:
+	case KindTypeAssertionExpression, KindAsExpression:
 		return kinds&OEKTypeAssertions != 0
+	case KindSatisfiesExpression:
+		return kinds&(OEKExpressionsWithTypeArguments|OEKSatisfies) != 0
 	case KindExpressionWithTypeArguments:
 		return kinds&OEKExpressionsWithTypeArguments != 0
 	case KindNonNullExpression:
@@ -863,6 +867,17 @@ func WalkUpParenthesizedTypes(node *TypeNode) *Node {
 	return node
 }
 
+func GetEffectiveTypeParent(parent *Node) *Node {
+	if parent != nil && IsInJSFile(parent) {
+		if parent.Kind == KindJSDocTypeExpression && parent.AsJSDocTypeExpression().Host != nil {
+			parent = parent.AsJSDocTypeExpression().Host
+		} else if parent.Kind == KindJSDocTemplateTag && parent.AsJSDocTemplateTag().Host != nil {
+			parent = parent.AsJSDocTemplateTag().Host
+		}
+	}
+	return parent
+}
+
 // Walks up the parents of a node to find the containing SourceFile
 func GetSourceFileOfNode(node *Node) *SourceFile {
 	for node != nil {
@@ -889,8 +904,7 @@ func newParentInChildrenSetter() func(node *Node) bool {
 	}
 
 	state.visit = func(node *Node) bool {
-		if state.parent != nil && node.Parent != state.parent {
-			// Avoid data races on no-ops
+		if state.parent != nil {
 			node.Parent = state.parent
 		}
 		saveParent := state.parent
@@ -1483,17 +1497,18 @@ func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
 	if bin.OperatorToken.Kind != KindEqualsToken || !IsAccessExpression(bin.Left) {
 		return JSDeclarationKindNone
 	}
-	if IsModuleExportsAccessExpression(bin.Left) {
+	if IsInJSFile(bin.Left) && IsModuleExportsAccessExpression(bin.Left) {
 		return JSDeclarationKindModuleExports
-	} else if (IsModuleExportsAccessExpression(bin.Left.Expression()) || IsExportsIdentifier(bin.Left.Expression())) &&
+	} else if IsInJSFile(bin.Left) &&
+		(IsModuleExportsAccessExpression(bin.Left.Expression()) || IsExportsIdentifier(bin.Left.Expression())) &&
 		GetElementOrPropertyAccessName(bin.Left) != nil {
 		return JSDeclarationKindExportsProperty
 	}
-	if bin.Left.Expression().Kind == KindThisKeyword {
+	if IsInJSFile(bin.Left) && bin.Left.Expression().Kind == KindThisKeyword {
 		return JSDeclarationKindThisProperty
 	}
-	if bin.Left.Kind == KindPropertyAccessExpression && IsIdentifier(bin.Left.Expression()) && IsIdentifier(bin.Left.Name()) ||
-		bin.Left.Kind == KindElementAccessExpression && IsIdentifier(bin.Left.Expression()) {
+	if bin.Left.Kind == KindPropertyAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) && IsIdentifier(bin.Left.Name()) ||
+		bin.Left.Kind == KindElementAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) {
 		return JSDeclarationKindProperty
 	}
 	return JSDeclarationKindNone
@@ -1526,13 +1541,33 @@ func IsDynamicName(name *Node) bool {
 }
 
 func IsEntityNameExpression(node *Node) bool {
-	return node.Kind == KindIdentifier || IsPropertyAccessEntityNameExpression(node)
+	return IsEntityNameExpressionEx(node, false /*allowJS*/)
 }
 
-func IsPropertyAccessEntityNameExpression(node *Node) bool {
+func IsEntityNameExpressionEx(node *Node, allowJS bool) bool {
+	if node.Kind == KindIdentifier || IsPropertyAccessEntityNameExpression(node, allowJS) {
+		return true
+	}
+	if allowJS {
+		return node.Kind == KindThisKeyword || isElementAccessEntityNameExpression(node, allowJS)
+	}
+	return false
+}
+
+func IsPropertyAccessEntityNameExpression(node *Node, allowJS bool) bool {
 	if node.Kind == KindPropertyAccessExpression {
 		expr := node.AsPropertyAccessExpression()
-		return expr.Name().Kind == KindIdentifier && IsEntityNameExpression(expr.Expression)
+		return expr.Name().Kind == KindIdentifier && IsEntityNameExpressionEx(expr.Expression, allowJS)
+	}
+	return false
+}
+
+func isElementAccessEntityNameExpression(node *Node, allowJS bool) bool {
+	if node.Kind == KindElementAccessExpression {
+		expr := node.AsElementAccessExpression()
+		if IsStringOrNumericLiteralLike(SkipParentheses(expr.ArgumentExpression)) {
+			return IsEntityNameExpressionEx(expr.Expression, allowJS)
+		}
 	}
 	return false
 }
@@ -1543,6 +1578,16 @@ func IsDottedName(node *Node) bool {
 		return true
 	case KindPropertyAccessExpression, KindParenthesizedExpression:
 		return IsDottedName(node.Expression())
+	}
+	return false
+}
+
+func HasSamePropertyAccessName(node1, node2 *Node) bool {
+	if node1.Kind == KindIdentifier && node2.Kind == KindIdentifier {
+		return node1.Text() == node2.Text()
+	} else if node1.Kind == KindPropertyAccessExpression && node2.Kind == KindPropertyAccessExpression {
+		return node1.AsPropertyAccessExpression().Name().Text() == node2.AsPropertyAccessExpression().Name().Text() &&
+			HasSamePropertyAccessName(node1.AsPropertyAccessExpression().Expression, node2.AsPropertyAccessExpression().Expression)
 	}
 	return false
 }
@@ -1565,13 +1610,12 @@ func IsEffectiveExternalModule(node *SourceFile, compilerOptions *core.CompilerO
 }
 
 func isCommonJSContainingModuleKind(kind core.ModuleKind) bool {
-	return kind == core.ModuleKindCommonJS || kind == core.ModuleKindNode16 || kind == core.ModuleKindNodeNext
+	return kind == core.ModuleKindCommonJS || core.ModuleKindNode16 <= kind && kind <= core.ModuleKindNodeNext
 }
 
 func IsExternalModuleIndicator(node *Statement) bool {
-	return HasSyntacticModifier(node, ModifierFlagsExport) ||
-		IsImportEqualsDeclaration(node) && IsExternalModuleReference(node.AsImportEqualsDeclaration().ModuleReference) ||
-		IsImportDeclaration(node) || IsExportAssignment(node) || IsExportDeclaration(node)
+	// Exported top-level member indicates moduleness
+	return IsAnyImportOrReExport(node) || IsExportAssignment(node) || HasSyntacticModifier(node, ModifierFlagsExport)
 }
 
 func IsExportNamespaceAsDefaultDeclaration(node *Node) bool {
@@ -2503,28 +2547,24 @@ func GetImpliedNodeFormatForFile(path string, packageJsonType string) core.Modul
 	return impliedNodeFormat
 }
 
-func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ModuleKind {
-	result := GetImpliedNodeFormatForEmitWorker(fileName, options, sourceFileMetaData)
+func GetEmitModuleFormatOfFileWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData SourceFileMetaData) core.ModuleKind {
+	result := GetImpliedNodeFormatForEmitWorker(fileName, options.GetEmitModuleKind(), sourceFileMetaData)
 	if result != core.ModuleKindNone {
 		return result
 	}
 	return options.GetEmitModuleKind()
 }
 
-func GetImpliedNodeFormatForEmitWorker(fileName string, options *core.CompilerOptions, sourceFileMetaData *SourceFileMetaData) core.ResolutionMode {
-	moduleKind := options.GetEmitModuleKind()
-	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext {
-		if sourceFileMetaData == nil {
-			return core.ModuleKindNone
-		}
+func GetImpliedNodeFormatForEmitWorker(fileName string, emitModuleKind core.ModuleKind, sourceFileMetaData SourceFileMetaData) core.ResolutionMode {
+	if core.ModuleKindNode16 <= emitModuleKind && emitModuleKind <= core.ModuleKindNodeNext {
 		return sourceFileMetaData.ImpliedNodeFormat
 	}
-	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
+	if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindCommonJS &&
 		(sourceFileMetaData.PackageJsonType == "commonjs" ||
 			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionCjs, tspath.ExtensionCts})) {
 		return core.ModuleKindCommonJS
 	}
-	if sourceFileMetaData != nil && sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
+	if sourceFileMetaData.ImpliedNodeFormat == core.ModuleKindESNext &&
 		(sourceFileMetaData.PackageJsonType == "module" ||
 			tspath.FileExtensionIsOneOf(fileName, []string{tspath.ExtensionMjs, tspath.ExtensionMts})) {
 		return core.ModuleKindESNext
@@ -2660,7 +2700,7 @@ func ForEachDynamicImportOrRequireCall(
 	lastIndex, size := findImportOrRequire(file.Text(), 0)
 	for lastIndex >= 0 {
 		node := GetNodeAtPosition(file, lastIndex, isJavaScriptFile && includeTypeSpaceImports)
-		if isJavaScriptFile && IsRequireCall(node) {
+		if isJavaScriptFile && IsRequireCall(node, requireStringLiteralLikeArgument) {
 			if cb(node, node.Arguments()[0]) {
 				return true
 			}
@@ -2680,8 +2720,10 @@ func ForEachDynamicImportOrRequireCall(
 	return false
 }
 
-// IsVariableDeclarationInitializedToRequire should be used wherever parent pointers are set
-func IsRequireCall(node *Node) bool {
+// Returns true if the node is a CallExpression to the identifier 'require' with
+// exactly one argument (of the form 'require("name")').
+// This function does not test if the node is in a JavaScript file or not.
+func IsRequireCall(node *Node, requireStringLiteralLikeArgument bool) bool {
 	if !IsCallExpression(node) {
 		return false
 	}
@@ -2692,11 +2734,7 @@ func IsRequireCall(node *Node) bool {
 	if len(call.Arguments.Nodes) != 1 {
 		return false
 	}
-	return IsStringLiteralLike(call.Arguments.Nodes[0])
-}
-
-func IsUnterminatedLiteral(node *Node) bool {
-	return node.LiteralLikeData().TokenFlags&TokenFlagsUnterminated != 0
+	return !requireStringLiteralLikeArgument || IsStringLiteralLike(call.Arguments.Nodes[0])
 }
 
 func GetJSXImplicitImportBase(compilerOptions *core.CompilerOptions, file *SourceFile) string {
@@ -2767,7 +2805,7 @@ func IsVariableDeclarationInitializedToRequire(node *Node) bool {
 	return node.Parent.Parent.ModifierFlags()&ModifierFlagsExport == 0 &&
 		node.AsVariableDeclaration().Initializer != nil &&
 		node.Type() == nil &&
-		IsRequireCall(node.AsVariableDeclaration().Initializer)
+		IsRequireCall(node.AsVariableDeclaration().Initializer, true /*requireStringLiteralLikeArgument*/)
 }
 
 func IsModuleExportsAccessExpression(node *Node) bool {
@@ -2850,15 +2888,6 @@ func IsExclusivelyTypeOnlyImportOrExport(node *Node) bool {
 
 func GetClassLikeDeclarationOfSymbol(symbol *Symbol) *Node {
 	return core.Find(symbol.Declarations, IsClassLike)
-}
-
-func GetLanguageVariant(scriptKind core.ScriptKind) core.LanguageVariant {
-	switch scriptKind {
-	case core.ScriptKindTSX, core.ScriptKindJSX, core.ScriptKindJS, core.ScriptKindJSON:
-		// .tsx and .jsx files are treated as jsx language variant.
-		return core.LanguageVariantJSX
-	}
-	return core.LanguageVariantStandard
 }
 
 func IsCallLikeExpression(node *Node) bool {
@@ -3003,7 +3032,7 @@ func IsJSDocSingleCommentNode(node *Node) bool {
 }
 
 func IsValidTypeOnlyAliasUseSite(useSite *Node) bool {
-	return useSite.Flags&NodeFlagsAmbient != 0 ||
+	return useSite.Flags&(NodeFlagsAmbient|NodeFlagsJSDoc) != 0 ||
 		IsPartOfTypeQuery(useSite) ||
 		isIdentifierInNonEmittingHeritageClause(useSite) ||
 		isPartOfPossiblyValidTypeOrAbstractComputedPropertyName(useSite) ||
@@ -3071,7 +3100,7 @@ func IsPartOfExclusivelyTypeOnlyImportOrExportDeclaration(node *Node) bool {
 func IsEmittableImport(node *Node) bool {
 	switch node.Kind {
 	case KindImportDeclaration:
-		return node.AsImportDeclaration().ImportClause == nil || !node.AsImportDeclaration().ImportClause.IsTypeOnly()
+		return node.AsImportDeclaration().ImportClause != nil && !node.AsImportDeclaration().ImportClause.IsTypeOnly()
 	case KindExportDeclaration:
 		return !node.AsExportDeclaration().IsTypeOnly
 	case KindImportEqualsDeclaration:
@@ -3403,6 +3432,7 @@ func ReplaceModifiers(factory *NodeFactory, node *Node, modifierArray *ModifierL
 		return factory.UpdateExportAssignment(
 			node.AsExportAssignment(),
 			modifierArray,
+			node.Type(),
 			node.Expression(),
 		)
 	case KindExportDeclaration:
@@ -3552,8 +3582,9 @@ func compareNodePositions(n1, n2 *Node) int {
 	return n1.Pos() - n2.Pos()
 }
 
-func IsUnterminatedNode(node *Node) bool {
-	return IsLiteralKind(node.Kind) && IsUnterminatedLiteral(node)
+func IsUnterminatedLiteral(node *Node) bool {
+	return IsLiteralKind(node.Kind) && node.LiteralLikeData().TokenFlags&TokenFlagsUnterminated != 0 ||
+		IsTemplateLiteralKind(node.Kind) && node.TemplateLiteralLikeData().TemplateFlags&TokenFlagsUnterminated != 0
 }
 
 // Gets a value indicating whether a class element is either a static or an instance property declaration with an initializer.
@@ -3568,4 +3599,37 @@ func IsTrivia(token Kind) bool {
 
 func HasDecorators(node *Node) bool {
 	return HasSyntacticModifier(node, ModifierFlagsDecorator)
+}
+
+type hasFileNameImpl struct {
+	fileName string
+	path     tspath.Path
+}
+
+func NewHasFileName(fileName string, path tspath.Path) HasFileName {
+	return &hasFileNameImpl{
+		fileName: fileName,
+		path:     path,
+	}
+}
+
+func (h *hasFileNameImpl) FileName() string {
+	return h.fileName
+}
+
+func (h *hasFileNameImpl) Path() tspath.Path {
+	return h.path
+}
+
+func GetSemanticJsxChildren(children []*JsxChild) []*JsxChild {
+	return core.Filter(children, func(i *JsxChild) bool {
+		switch i.Kind {
+		case KindJsxExpression:
+			return i.Expression() != nil
+		case KindJsxText:
+			return !i.AsJsxText().ContainsOnlyTriviaWhiteSpaces
+		default:
+			return true
+		}
+	})
 }
