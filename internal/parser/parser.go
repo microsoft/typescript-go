@@ -6592,7 +6592,6 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 	context.TypeReferenceDirectives = nil
 	context.LibReferenceDirectives = nil
 	// context.AmdDependencies = nil
-	context.HasNoDefaultLib = false
 	for _, pragma := range context.Pragmas {
 		switch pragma.Name {
 		case "reference":
@@ -6604,7 +6603,7 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 			noDefaultLib, noDefaultLibOk := pragma.Args["no-default-lib"]
 			switch {
 			case noDefaultLibOk && noDefaultLib.Value == "true":
-				context.HasNoDefaultLib = true
+				// Ignored.
 			case typesOk:
 				var parsed core.ResolutionMode
 				if resolutionModeOk {

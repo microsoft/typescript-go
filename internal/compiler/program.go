@@ -213,7 +213,6 @@ func (p *Program) initCheckerPool() {
 func canReplaceFileInProgram(file1 *ast.SourceFile, file2 *ast.SourceFile) bool {
 	return file2 != nil &&
 		file1.ParseOptions() == file2.ParseOptions() &&
-		file1.HasNoDefaultLib == file2.HasNoDefaultLib &&
 		file1.UsesUriStyleNodeCoreModules == file2.UsesUriStyleNodeCoreModules &&
 		slices.EqualFunc(file1.Imports(), file2.Imports(), equalModuleSpecifiers) &&
 		slices.EqualFunc(file1.ModuleAugmentations, file2.ModuleAugmentations, equalModuleAugmentationNames) &&
@@ -460,7 +459,7 @@ func (p *Program) getDeclarationDiagnosticsForFile(_ctx context.Context, sourceF
 	}
 
 	host := &emitHost{program: p}
-	diagnostics := getDeclarationDiagnostics(host, host.GetEmitResolver(sourceFile, true), sourceFile)
+	diagnostics := getDeclarationDiagnostics(host, host.GetEmitResolver(sourceFile), sourceFile)
 	diagnostics, _ = p.declarationDiagnosticCache.LoadOrStore(sourceFile, diagnostics)
 	return diagnostics
 }
@@ -640,6 +639,10 @@ func (p *Program) GetModeForUsageLocation(sourceFile ast.HasFileName, location *
 
 func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) core.ResolutionMode {
 	return getDefaultResolutionModeForFile(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
+}
+
+func (p *Program) IsSourceFileDefaultLibrary(path tspath.Path) bool {
+	return p.libFiles.Has(path)
 }
 
 func (p *Program) CommonSourceDirectory() string {

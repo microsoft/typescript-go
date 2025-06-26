@@ -539,6 +539,7 @@ type Program interface {
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
 	IsSourceFromProjectReference(path tspath.Path) bool
+	IsSourceFileDefaultLibrary(path tspath.Path) bool
 	GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference
 	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
@@ -30564,18 +30565,11 @@ func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
 	return c.getTypeOfNode(node)
 }
 
-func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *emitResolver {
+func (c *Checker) GetEmitResolver(file *ast.SourceFile) *emitResolver {
 	c.emitResolverOnce.Do(func() {
 		c.emitResolver = &emitResolver{checker: c}
 	})
 
-	if !skipDiagnostics {
-		// Ensure we have all the type information in place for this file so that all the
-		// emitter questions of this resolver will return the right information.
-		c.emitResolver.checkerMu.Lock()
-		defer c.emitResolver.checkerMu.Unlock()
-		c.checkSourceFile(context.Background(), file)
-	}
 	return c.emitResolver
 }
 
