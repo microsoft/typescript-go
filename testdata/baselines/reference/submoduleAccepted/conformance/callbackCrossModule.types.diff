@@ -27,23 +27,21 @@
  >p : any
  >1 : 1
  }
-@@= skipped -20, +20 lines =@@
- === use.js ===
+@@= skipped -21, +21 lines =@@
  /** @param {import('./mod1').Con} k */
  function f(k) {
-->f : (k: import("./mod1").Con) => any
+ >f : (k: import("./mod1").Con) => any
 ->k : import("mod1").Con
-+>f : (k: any) => any
-+>k : any
++>k : import("./mod1").Con
 
      if (1 === 2 - 1) {
  >1 === 2 - 1 : boolean
-@@= skipped -14, +14 lines =@@
+@@= skipped -13, +13 lines =@@
      }
      return k({ ok: true})
  >k({ ok: true}) : any
 ->k : import("mod1").Con
-+>k : any
++>k : import("./mod1").Con
  >{ ok: true} : { ok: boolean; }
  >ok : boolean
  >true : true

@@ -16,7 +16,7 @@
       */
      constructor(x, y){}
 ->x : import("module").TaskGroup
-+>x : any
++>x : import("./module.js").TaskGroup
  >y : TaskNode
  }
 
