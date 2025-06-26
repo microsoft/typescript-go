@@ -156,7 +156,7 @@ func (p *fakeProgram) GetResolvedModules() map[tspath.Path]module.ModeAwareCache
 	panic("unimplemented")
 }
 
-func (p *fakeProgram) IsLibFile(path tspath.Path) bool {
+func (p *fakeProgram) IsSourceFileDefaultLibrary(path tspath.Path) bool {
 	return false
 }
 

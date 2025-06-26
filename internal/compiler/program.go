@@ -641,7 +641,7 @@ func (p *Program) GetDefaultResolutionModeForFile(sourceFile ast.HasFileName) co
 	return getDefaultResolutionModeForFile(sourceFile.FileName(), p.sourceFileMetaDatas[sourceFile.Path()], p.projectReferenceFileMapper.getCompilerOptionsForFile(sourceFile))
 }
 
-func (p *Program) IsLibFile(path tspath.Path) bool {
+func (p *Program) IsSourceFileDefaultLibrary(path tspath.Path) bool {
 	return p.libFiles.Has(path)
 }
 
