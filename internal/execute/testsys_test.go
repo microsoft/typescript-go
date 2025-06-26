@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
@@ -22,7 +23,7 @@ func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
 		cwd = "/home/src/workspaces/project"
 	}
 	return &testSys{
-		fs:                 bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/)),
+		fs:                 incrementaltestutil.NewFsHandlingBuildInfo(bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/))),
 		defaultLibraryPath: bundled.LibPath(),
 		cwd:                cwd,
 		files:              slices.Collect(maps.Keys(fileOrFolderList)),
@@ -38,7 +39,7 @@ type testSys struct {
 	currentWrite   *strings.Builder
 	serializedDiff map[string]string
 
-	fs                 vfs.FS
+	fs                 *incrementaltestutil.FsHandlingBuildInfo
 	defaultLibraryPath string
 	cwd                string
 	files              []string
@@ -61,6 +62,10 @@ func (s *testSys) SinceStart() time.Duration {
 }
 
 func (s *testSys) FS() vfs.FS {
+	return s.fs
+}
+
+func (s *testSys) TestFS() *incrementaltestutil.FsHandlingBuildInfo {
 	return s.fs
 }
 
@@ -121,7 +126,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			return nil
 		}
 
-		newContents, ok := s.FS().ReadFile(path)
+		newContents, ok := s.TestFS().FS().ReadFile(path)
 		if !ok {
 			return nil
 		}
