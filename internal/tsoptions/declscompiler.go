@@ -1248,19 +1248,19 @@ func optionsHaveChanges(oldOptions *core.CompilerOptions, newOptions *core.Compi
 		return true
 	}
 	oldOptionsValue := reflect.ValueOf(oldOptions).Elem()
-	return ForEachCompilerOptionValue(newOptions, declFilter, func(option *CommandLineOption, value any, i int) bool {
+	return ForEachCompilerOptionValue(newOptions, declFilter, func(option *CommandLineOption, value reflect.Value, i int) bool {
 		return !reflect.DeepEqual(value, oldOptionsValue.Field(i))
 	})
 }
 
-func ForEachCompilerOptionValue(options *core.CompilerOptions, declFilter func(*CommandLineOption) bool, fn func(option *CommandLineOption, value any, i int) bool) bool {
+func ForEachCompilerOptionValue(options *core.CompilerOptions, declFilter func(*CommandLineOption) bool, fn func(option *CommandLineOption, value reflect.Value, i int) bool) bool {
 	optionsValue := reflect.ValueOf(options).Elem()
 	for i := range optionsValue.NumField() {
 		field := optionsType.Field(i)
 		if !field.IsExported() {
 			continue
 		}
-		if optionDeclaration, ok := CommandLineCompilerOptionsMap[field.Name]; ok && declFilter(optionDeclaration) {
+		if optionDeclaration := CommandLineCompilerOptionsMap.Get(field.Name); optionDeclaration != nil && declFilter(optionDeclaration) {
 			if fn(optionDeclaration, optionsValue.Field(i), i) {
 				return true
 			}

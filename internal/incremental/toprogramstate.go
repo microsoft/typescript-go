@@ -93,13 +93,12 @@ func (t *toProgramState) toDiagnosticCompatibleWithProgramState(diagnostics []*B
 
 func (t *toProgramState) setCompilerOptions() {
 	t.state.options = &core.CompilerOptions{}
-	for _, option := range t.buildInfo.Options {
-		value := option.value
-		result, ok := tsoptions.ConvertOptionToAbsolutePath(option.name, value, tsoptions.CommandLineCompilerOptionsMap, t.buildInfoDirectory)
+	for option, value := range t.buildInfo.Options.Entries() {
+		result, ok := tsoptions.ConvertOptionToAbsolutePath(option, value, tsoptions.CommandLineCompilerOptionsMap, t.buildInfoDirectory)
 		if ok {
-			tsoptions.ParseCompilerOptions(option.name, result, t.state.options)
+			tsoptions.ParseCompilerOptions(option, result, t.state.options)
 		} else {
-			tsoptions.ParseCompilerOptions(option.name, value, t.state.options)
+			tsoptions.ParseCompilerOptions(option, value, t.state.options)
 		}
 	}
 }

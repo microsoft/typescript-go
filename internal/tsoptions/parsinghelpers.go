@@ -167,7 +167,11 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 }
 
 func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) (foundKey bool) {
-	switch key {
+	option := CommandLineCompilerOptionsMap.Get(key)
+	if option == nil {
+		return false
+	}
+	switch option.Name {
 	case "allowJs":
 		allOptions.AllowJs = parseTristate(value)
 	case "allowImportingTsExtensions":
@@ -510,7 +514,7 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *c
 	return targetOptions
 }
 
-func convertToOptionsWithAbsolutePaths(optionsBase *collections.OrderedMap[string, any], optionMap map[string]*CommandLineOption, cwd string) *collections.OrderedMap[string, any] {
+func convertToOptionsWithAbsolutePaths(optionsBase *collections.OrderedMap[string, any], optionMap CommandLineOptionNameMap, cwd string) *collections.OrderedMap[string, any] {
 	// !!! convert to options with absolute paths was previously done with `CompilerOptions` object, but for ease of implementation, we do it pre-conversion.
 	// !!! Revisit this choice if/when refactoring when conversion is done in tsconfig parsing
 	if optionsBase == nil {
@@ -525,8 +529,8 @@ func convertToOptionsWithAbsolutePaths(optionsBase *collections.OrderedMap[strin
 	return optionsBase
 }
 
-func ConvertOptionToAbsolutePath(o string, v any, optionMap map[string]*CommandLineOption, cwd string) (any, bool) {
-	option := optionMap[o]
+func ConvertOptionToAbsolutePath(o string, v any, optionMap CommandLineOptionNameMap, cwd string) (any, bool) {
+	option := optionMap.Get(o)
 	if option == nil || !option.IsFilePath {
 		return nil, false
 	}
