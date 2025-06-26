@@ -27,6 +27,11 @@ type fileInfo struct {
 	impliedNodeFormat  core.ResolutionMode
 }
 
+func (f *fileInfo) Version() string                        { return f.version }
+func (f *fileInfo) Signature() string                      { return f.signature }
+func (f *fileInfo) AffectsGlobalScope() bool               { return f.affectsGlobalScope }
+func (f *fileInfo) ImpliedNodeFormat() core.ResolutionMode { return f.impliedNodeFormat }
+
 type fileEmitKind uint32
 
 const (
@@ -144,7 +149,7 @@ func (e *emitSignature) getNewEmitSignature(oldOptions *core.CompilerOptions, ne
 
 type diagnosticsOrBuildInfoDiagnostics struct {
 	diagnostics          []*ast.Diagnostic
-	buildInfoDiagnostics []*incrementalBuildInfoDiagnostic
+	buildInfoDiagnostics []*BuildInfoDiagnostic
 }
 
 func (d *diagnosticsOrBuildInfoDiagnostics) getDiagnostics(p *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
@@ -152,7 +157,7 @@ func (d *diagnosticsOrBuildInfoDiagnostics) getDiagnostics(p *compiler.Program, 
 		return d.diagnostics
 	}
 	// Convert and cache the diagnostics
-	d.diagnostics = core.Map(d.buildInfoDiagnostics, func(diag *incrementalBuildInfoDiagnostic) *ast.Diagnostic {
+	d.diagnostics = core.Map(d.buildInfoDiagnostics, func(diag *BuildInfoDiagnostic) *ast.Diagnostic {
 		return diag.toDiagnostic(p, file)
 	})
 	return d.diagnostics
