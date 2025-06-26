@@ -77,9 +77,6 @@ exports.default = Bar;
 Object.defineProperty(exports, "__esModule", { value: true });
 // merge type alias and const (OK)
 exports.default = 12;
-/**
- * @typedef {string | number} default
- */
 //// [index6.js]
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -87,9 +84,6 @@ exports.default = func;
 // merge type alias and function (OK)
 function func() { }
 ;
-/**
- * @typedef {string | number} default
- */
 
 
 //// [index1.d.ts]
@@ -114,12 +108,8 @@ export default Bar;
 //// [index5.d.ts]
 declare const _default: number;
 export default _default;
-/**
- * @typedef {string | number} default
- */
+export type _default = string | number;
 //// [index6.d.ts]
 // merge type alias and function (OK)
 export default function func(): void;
-/**
- * @typedef {string | number} default
- */
+export type _default = string | number;

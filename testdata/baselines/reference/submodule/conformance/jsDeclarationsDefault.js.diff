@@ -26,7 +26,23 @@
  }
  exports.default = Bar;
  //// [index5.js]
-@@= skipped -29, +26 lines =@@
+@@= skipped -13, +10 lines =@@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ // merge type alias and const (OK)
+ exports.default = 12;
+-/**
+- * @typedef {string | number} default
+- */
+ //// [index6.js]
+ "use strict";
+ Object.defineProperty(exports, "__esModule", { value: true });
+@@= skipped -10, +7 lines =@@
+ // merge type alias and function (OK)
+ function func() { }
+ ;
+-/**
+- * @typedef {string | number} default
+- */
 
 
  //// [index1.d.ts]
@@ -58,15 +74,11 @@
 -declare const _default: 12;
 +declare const _default: number;
  export default _default;
-+/**
-+ * @typedef {string | number} default
-+ */
++export type _default = string | number;
  //// [index6.d.ts]
 -declare function func(): void;
 -type func = string | number;
 -export default func;
 +// merge type alias and function (OK)
 +export default function func(): void;
-+/**
-+ * @typedef {string | number} default
-+ */
++export type _default = string | number;
