@@ -3,6 +3,7 @@ package incrementaltestutil
 import (
 	"encoding/json"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/incremental"
 )
@@ -20,7 +21,7 @@ type readableBuildInfo struct {
 	FileNames                  []string                                  `json:"fileNames,omitzero"`
 	FileInfos                  []*readableBuildInfoFileInfo              `json:"fileInfos,omitzero"`
 	FileIdsList                [][]string                                `json:"fileIdsList,omitzero"`
-	Options                    []incremental.BuildInfoCompilerOption     `json:"options,omitzero"`
+	Options                    *collections.OrderedMap[string, any]      `json:"options,omitempty"`
 	ReferencedMap              []readableBuildInfoReferenceMapEntry      `json:"referencedMap,omitzero"`
 	SemanticDiagnosticsPerFile []incremental.BuildInfoSemanticDiagnostic `json:"semanticDiagnosticsPerFile,omitzero"`
 	EmitDiagnosticsPerFile     []incremental.BuildInfoDiagnosticOfFile   `json:"emitDiagnosticsPerFile,omitzero"`
