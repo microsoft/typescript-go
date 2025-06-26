@@ -12,8 +12,8 @@ import (
 )
 
 type (
-	incrementalBuildInfoFileId       int
-	incrementalBuildInfoFileIdListId int
+	BuildInfoFileId       int
+	BuildInfoFileIdListId int
 )
 
 // /**
@@ -63,97 +63,96 @@ type (
 // 	return fmt.Errorf("invalid BuildInfoRoot: %s", data)
 // }
 
-/**
-*  - string if FileInfo.version === FileInfo.signature && !FileInfo.affectsGlobalScope
-*  - otherwise encoded FileInfo
-*    Signature is
-* 	 - undefined if FileInfo.version === FileInfo.signature
-* 	 - false if FileInfo has signature as undefined (not calculated)
-* 	 - string actual signature
- */
-func (f *fileInfo) MarshalJSON() ([]byte, error) {
-	if f.version == f.signature && !f.affectsGlobalScope && f.impliedNodeFormat == core.ResolutionModeNone {
-		return json.Marshal(f.version)
-	}
-	info := map[string]any{}
-	if f.version != "" {
-		info["version"] = f.version
-	}
-	if f.signature != f.version {
-		if f.signature == "" {
-			info["signature"] = false
-		} else {
-			info["signature"] = f.signature
-		}
-	}
-	if f.affectsGlobalScope {
-		info["affectsGlobalScope"] = f.affectsGlobalScope
-	}
-	if f.impliedNodeFormat != core.ResolutionModeNone {
-		info["impliedNodeFormat"] = f.impliedNodeFormat
-	}
-	return json.Marshal(info)
+type buildInfoFileInfoNoSignature struct {
+	Version            string              `json:"version,omitzero"`
+	NoSignature        bool                `json:"noSignature,omitzero"`
+	AffectsGlobalScope bool                `json:"affectsGlobalScope,omitzero"`
+	ImpliedNodeFormat  core.ResolutionMode `json:"impliedNodeFormat,omitzero"`
 }
 
-func (f *fileInfo) UnmarshalJSON(data []byte) error {
-	var version string
-	if err := json.Unmarshal(data, &version); err == nil {
-		*f = fileInfo{
-			version:   version,
-			signature: version,
+/**
+ *   Signature is
+ * 	 - undefined if FileInfo.version === FileInfo.signature
+ * 	 - string actual signature
+ */
+type buildInfoFileInfoWithSignature struct {
+	Version            string              `json:"version,omitzero"`
+	Signature          string              `json:"signature,omitzero"`
+	AffectsGlobalScope bool                `json:"affectsGlobalScope,omitzero"`
+	ImpliedNodeFormat  core.ResolutionMode `json:"impliedNodeFormat,omitzero"`
+}
+
+type BuildInfoFileInfo struct {
+	signature   string
+	noSignature *buildInfoFileInfoNoSignature
+	fileInfo    *buildInfoFileInfoWithSignature
+}
+
+func (b *BuildInfoFileInfo) HasSignature() bool {
+	return b.signature != ""
+}
+
+func (b *BuildInfoFileInfo) GetFileInfo() *fileInfo {
+	if b.signature != "" {
+		return &fileInfo{
+			version:   b.signature,
+			signature: b.signature,
 		}
+	}
+	if b.noSignature != nil {
+		return &fileInfo{
+			version:            b.noSignature.Version,
+			affectsGlobalScope: b.noSignature.AffectsGlobalScope,
+			impliedNodeFormat:  b.noSignature.ImpliedNodeFormat,
+		}
+	}
+	return &fileInfo{
+		version:            b.fileInfo.Version,
+		signature:          core.IfElse(b.fileInfo.Signature == "", b.fileInfo.Version, b.fileInfo.Signature),
+		affectsGlobalScope: b.fileInfo.AffectsGlobalScope,
+		impliedNodeFormat:  b.fileInfo.ImpliedNodeFormat,
+	}
+}
+
+func (b *BuildInfoFileInfo) MarshalJSON() ([]byte, error) {
+	if b.signature != "" {
+		return json.Marshal(b.signature)
+	}
+	if b.noSignature != nil {
+		return json.Marshal(b.noSignature)
+	}
+	return json.Marshal(b.fileInfo)
+}
+
+func (b *BuildInfoFileInfo) UnmarshalJSON(data []byte) error {
+	var vSignature string
+	if err := json.Unmarshal(data, &vSignature); err == nil {
+		*b = BuildInfoFileInfo{signature: vSignature}
 		return nil
 	}
-
-	var vFileInfo map[string]any
-	if err := json.Unmarshal(data, &vFileInfo); err != nil {
-		return fmt.Errorf("invalid fileInfo: %s", data)
+	var noSignature buildInfoFileInfoNoSignature
+	if err := json.Unmarshal(data, &noSignature); err == nil && noSignature.NoSignature {
+		*b = BuildInfoFileInfo{noSignature: &noSignature}
+		return nil
 	}
-
-	*f = fileInfo{}
-	if version, ok := vFileInfo["version"]; ok {
-		f.version = version.(string)
+	var fileInfo buildInfoFileInfoWithSignature
+	if err := json.Unmarshal(data, &fileInfo); err != nil {
+		return fmt.Errorf("invalid incrementalBuildInfoFileInfo: %s", data)
 	}
-	if signature, ok := vFileInfo["signature"]; ok {
-		if signature == false {
-			f.signature = ""
-		} else if f.signature, ok = signature.(string); !ok {
-			return fmt.Errorf("invalid signature in fileInfo: expected string or false, got %T", signature)
-		}
-	} else {
-		f.signature = f.version // default to version if no signature provided
-	}
-	if affectsGlobalScope, ok := vFileInfo["affectsGlobalScope"]; ok {
-		if f.affectsGlobalScope, ok = affectsGlobalScope.(bool); !ok {
-			return fmt.Errorf("invalid affectsGlobalScope in fileInfo: expected bool, got %T", affectsGlobalScope)
-		}
-	}
-	if impliedNodeFormatV, ok := vFileInfo["impliedNodeFormat"]; ok {
-		if impliedNodeFormat, ok := impliedNodeFormatV.(int); ok {
-			if impliedNodeFormat != int(core.ResolutionModeCommonJS) && impliedNodeFormat != int(core.ResolutionModeESM) {
-				return fmt.Errorf("invalid impliedNodeFormat in fileInfo: %d is out of range", impliedNodeFormat)
-			}
-			f.impliedNodeFormat = core.ResolutionMode(impliedNodeFormat)
-		} else {
-			return fmt.Errorf("invalid impliedNodeFormat in fileInfo: expected int, got %T", impliedNodeFormatV)
-		}
-	}
+	*b = BuildInfoFileInfo{fileInfo: &fileInfo}
 	return nil
 }
 
-type incrementalBuildInfoCompilerOption struct {
+type BuildInfoCompilerOption struct {
 	name  string
 	value any
 }
 
-func (i *incrementalBuildInfoCompilerOption) MarshalJSON() ([]byte, error) {
-	nameAndValue := make([]any, 2)
-	nameAndValue[0] = i.name
-	nameAndValue[1] = i.value
-	return json.Marshal(nameAndValue)
+func (b *BuildInfoCompilerOption) MarshalJSON() ([]byte, error) {
+	return json.Marshal([]any{b.name, b.value})
 }
 
-func (i *incrementalBuildInfoCompilerOption) UnmarshalJSON(data []byte) error {
+func (b *BuildInfoCompilerOption) UnmarshalJSON(data []byte) error {
 	var nameAndValue []any
 	if err := json.Unmarshal(data, &nameAndValue); err != nil {
 		return err
@@ -162,36 +161,36 @@ func (i *incrementalBuildInfoCompilerOption) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("invalid incrementalBuildInfoCompilerOption: expected array of length 2, got %d", len(nameAndValue))
 	}
 	if name, ok := nameAndValue[0].(string); ok {
-		*i = incrementalBuildInfoCompilerOption{}
-		i.name = name
-		i.value = nameAndValue[1]
+		*b = BuildInfoCompilerOption{}
+		b.name = name
+		b.value = nameAndValue[1]
 		return nil
 	}
 	return fmt.Errorf("invalid name in incrementalBuildInfoCompilerOption: expected string, got %T", nameAndValue[0])
 }
 
-type incrementalBuildInfoReferenceMapEntry struct {
-	fileId       incrementalBuildInfoFileId
-	fileIdListId incrementalBuildInfoFileIdListId
+type BuildInfoReferenceMapEntry struct {
+	FileId       BuildInfoFileId
+	FileIdListId BuildInfoFileIdListId
 }
 
-func (i *incrementalBuildInfoReferenceMapEntry) MarshalJSON() ([]byte, error) {
-	return json.Marshal([2]int{int(i.fileId), int(i.fileIdListId)})
+func (b *BuildInfoReferenceMapEntry) MarshalJSON() ([]byte, error) {
+	return json.Marshal([2]int{int(b.FileId), int(b.FileIdListId)})
 }
 
-func (i *incrementalBuildInfoReferenceMapEntry) UnmarshalJSON(data []byte) error {
+func (b *BuildInfoReferenceMapEntry) UnmarshalJSON(data []byte) error {
 	var v *[2]int
 	if err := json.Unmarshal(data, &v); err != nil {
 		return err
 	}
-	*i = incrementalBuildInfoReferenceMapEntry{
-		fileId:       incrementalBuildInfoFileId(v[0]),
-		fileIdListId: incrementalBuildInfoFileIdListId(v[1]),
+	*b = BuildInfoReferenceMapEntry{
+		FileId:       BuildInfoFileId(v[0]),
+		FileIdListId: BuildInfoFileIdListId(v[1]),
 	}
 	return nil
 }
 
-type incrementalBuildInfoDiagnostic struct {
+type BuildInfoDiagnostic struct {
 	// false if diagnostic is not for a file,
 	// incrementalBuildInfoFileId if it is for a file thats other than its stored for
 	file               any
@@ -199,86 +198,86 @@ type incrementalBuildInfoDiagnostic struct {
 	code               int32
 	category           diagnostics.Category
 	message            string
-	messageChain       []*incrementalBuildInfoDiagnostic
-	relatedInformation []*incrementalBuildInfoDiagnostic
+	messageChain       []*BuildInfoDiagnostic
+	relatedInformation []*BuildInfoDiagnostic
 	reportsUnnecessary bool
 	reportsDeprecated  bool
 	skippedOnNoEmit    bool
 }
 
-func (i *incrementalBuildInfoDiagnostic) toDiagnostic(p *compiler.Program, file *ast.SourceFile) *ast.Diagnostic {
+func (b *BuildInfoDiagnostic) toDiagnostic(p *compiler.Program, file *ast.SourceFile) *ast.Diagnostic {
 	var fileForDiagnostic *ast.SourceFile
-	if i.file != false {
-		if i.file == nil {
+	if b.file != false {
+		if b.file == nil {
 			fileForDiagnostic = file
 		} else {
-			fileForDiagnostic = p.GetSourceFileByPath(tspath.Path(i.file.(string)))
+			fileForDiagnostic = p.GetSourceFileByPath(tspath.Path(b.file.(string)))
 		}
 	}
 	var messageChain []*ast.Diagnostic
-	for _, msg := range i.messageChain {
+	for _, msg := range b.messageChain {
 		messageChain = append(messageChain, msg.toDiagnostic(p, fileForDiagnostic))
 	}
 	var relatedInformation []*ast.Diagnostic
-	for _, info := range i.relatedInformation {
+	for _, info := range b.relatedInformation {
 		relatedInformation = append(relatedInformation, info.toDiagnostic(p, fileForDiagnostic))
 	}
 	return ast.NewDiagnosticWith(
 		fileForDiagnostic,
-		i.loc,
-		i.code,
-		i.category,
-		i.message,
+		b.loc,
+		b.code,
+		b.category,
+		b.message,
 		messageChain,
 		relatedInformation,
-		i.reportsUnnecessary,
-		i.reportsDeprecated,
-		i.skippedOnNoEmit,
+		b.reportsUnnecessary,
+		b.reportsDeprecated,
+		b.skippedOnNoEmit,
 	)
 }
 
-func (i *incrementalBuildInfoDiagnostic) MarshalJSON() ([]byte, error) {
+func (b *BuildInfoDiagnostic) MarshalJSON() ([]byte, error) {
 	info := map[string]any{}
-	if i.file != "" {
-		info["file"] = i.file
-		info["pos"] = i.loc.Pos()
-		info["end"] = i.loc.End()
+	if b.file != "" {
+		info["file"] = b.file
+		info["pos"] = b.loc.Pos()
+		info["end"] = b.loc.End()
 	}
-	info["code"] = i.code
-	info["category"] = i.category
-	info["message"] = i.message
-	if len(i.messageChain) > 0 {
-		info["messageChain"] = i.messageChain
+	info["code"] = b.code
+	info["category"] = b.category
+	info["message"] = b.message
+	if len(b.messageChain) > 0 {
+		info["messageChain"] = b.messageChain
 	}
-	if len(i.relatedInformation) > 0 {
-		info["relatedInformation"] = i.relatedInformation
+	if len(b.relatedInformation) > 0 {
+		info["relatedInformation"] = b.relatedInformation
 	}
-	if i.reportsUnnecessary {
-		info["reportsUnnecessary"] = i.reportsUnnecessary
+	if b.reportsUnnecessary {
+		info["reportsUnnecessary"] = b.reportsUnnecessary
 	}
-	if i.reportsDeprecated {
-		info["reportsDeprecated"] = i.reportsDeprecated
+	if b.reportsDeprecated {
+		info["reportsDeprecated"] = b.reportsDeprecated
 	}
-	if i.skippedOnNoEmit {
-		info["skippedOnNoEmit"] = i.skippedOnNoEmit
+	if b.skippedOnNoEmit {
+		info["skippedOnNoEmit"] = b.skippedOnNoEmit
 	}
 	return json.Marshal(info)
 }
 
-func (i *incrementalBuildInfoDiagnostic) UnmarshalJSON(data []byte) error {
+func (b *BuildInfoDiagnostic) UnmarshalJSON(data []byte) error {
 	var vIncrementalBuildInfoDiagnostic map[string]any
 	if err := json.Unmarshal(data, &vIncrementalBuildInfoDiagnostic); err != nil {
 		return fmt.Errorf("invalid incrementalBuildInfoDiagnostic: %s", data)
 	}
 
-	*i = incrementalBuildInfoDiagnostic{}
+	*b = BuildInfoDiagnostic{}
 	if file, ok := vIncrementalBuildInfoDiagnostic["file"]; ok {
 		if _, ok := file.(float64); !ok {
 			if value, ok := file.(bool); !ok || value {
 				return fmt.Errorf("invalid file in incrementalBuildInfoDiagnostic: expected false or float64, got %T", file)
 			}
 		}
-		i.file = file
+		b.file = file
 		var pos float64
 		posV, ok := vIncrementalBuildInfoDiagnostic["pos"]
 		if ok {
@@ -299,14 +298,14 @@ func (i *incrementalBuildInfoDiagnostic) UnmarshalJSON(data []byte) error {
 		} else {
 			return fmt.Errorf("missing end in incrementalBuildInfoDiagnostic")
 		}
-		i.loc = core.NewTextRange(int(pos), int(end))
+		b.loc = core.NewTextRange(int(pos), int(end))
 	}
 	if codeV, ok := vIncrementalBuildInfoDiagnostic["code"]; ok {
 		code, ok := codeV.(float64)
 		if !ok {
 			return fmt.Errorf("invalid code in incrementalBuildInfoDiagnostic: expected float64, got %T", codeV)
 		}
-		i.code = int32(code)
+		b.code = int32(code)
 	} else {
 		return fmt.Errorf("missing code in incrementalBuildInfoDiagnostic")
 	}
@@ -318,12 +317,12 @@ func (i *incrementalBuildInfoDiagnostic) UnmarshalJSON(data []byte) error {
 		if category < 0 || category > float64(diagnostics.CategoryMessage) {
 			return fmt.Errorf("invalid category in incrementalBuildInfoDiagnostic: %f is out of range", category)
 		}
-		i.category = diagnostics.Category(category)
+		b.category = diagnostics.Category(category)
 	} else {
 		return fmt.Errorf("missing category in incrementalBuildInfoDiagnostic")
 	}
 	if messageV, ok := vIncrementalBuildInfoDiagnostic["message"]; ok {
-		if i.message, ok = messageV.(string); !ok {
+		if b.message, ok = messageV.(string); !ok {
 			return fmt.Errorf("invalid message in incrementalBuildInfoDiagnostic: expected string, got %T", messageV)
 		}
 	} else {
@@ -331,59 +330,59 @@ func (i *incrementalBuildInfoDiagnostic) UnmarshalJSON(data []byte) error {
 	}
 	if messageChain, ok := vIncrementalBuildInfoDiagnostic["messageChain"]; ok {
 		if messages, ok := messageChain.([]any); ok {
-			i.messageChain = make([]*incrementalBuildInfoDiagnostic, len(messages))
+			b.messageChain = make([]*BuildInfoDiagnostic, len(messages))
 			for _, msg := range messages {
-				var diagnostic incrementalBuildInfoDiagnostic
+				var diagnostic BuildInfoDiagnostic
 				if err := json.Unmarshal([]byte(msg.(string)), &diagnostic); err != nil {
 					return fmt.Errorf("invalid messageChain in incrementalBuildInfoDiagnostic: %s", msg)
 				}
-				i.messageChain = append(i.messageChain, &diagnostic)
+				b.messageChain = append(b.messageChain, &diagnostic)
 			}
 		}
 	}
 	if relatedInformation, ok := vIncrementalBuildInfoDiagnostic["relatedInformation"]; ok {
 		if infos, ok := relatedInformation.([]any); ok {
-			i.relatedInformation = make([]*incrementalBuildInfoDiagnostic, len(infos))
+			b.relatedInformation = make([]*BuildInfoDiagnostic, len(infos))
 			for _, info := range infos {
-				var diagnostic incrementalBuildInfoDiagnostic
+				var diagnostic BuildInfoDiagnostic
 				if err := json.Unmarshal([]byte(info.(string)), &diagnostic); err != nil {
 					return fmt.Errorf("invalid relatedInformation in incrementalBuildInfoDiagnostic: %s", info)
 				}
-				i.relatedInformation = append(i.relatedInformation, &diagnostic)
+				b.relatedInformation = append(b.relatedInformation, &diagnostic)
 			}
 		}
 	}
 	if reportsUnnecessary, ok := vIncrementalBuildInfoDiagnostic["reportsUnnecessary"]; ok {
-		if i.reportsUnnecessary, ok = reportsUnnecessary.(bool); !ok {
+		if b.reportsUnnecessary, ok = reportsUnnecessary.(bool); !ok {
 			return fmt.Errorf("invalid reportsUnnecessary in incrementalBuildInfoDiagnostic: expected boolean, got %T", reportsUnnecessary)
 		}
 	}
 	if reportsDeprecated, ok := vIncrementalBuildInfoDiagnostic["reportsDeprecated"]; ok {
-		if i.reportsDeprecated, ok = reportsDeprecated.(bool); !ok {
+		if b.reportsDeprecated, ok = reportsDeprecated.(bool); !ok {
 			return fmt.Errorf("invalid reportsDeprecated in incrementalBuildInfoDiagnostic: expected boolean, got %T", reportsDeprecated)
 		}
 	}
 	if skippedOnNoEmit, ok := vIncrementalBuildInfoDiagnostic["skippedOnNoEmit"]; ok {
-		if i.skippedOnNoEmit, ok = skippedOnNoEmit.(bool); !ok {
+		if b.skippedOnNoEmit, ok = skippedOnNoEmit.(bool); !ok {
 			return fmt.Errorf("invalid skippedOnNoEmit in incrementalBuildInfoDiagnostic: expected boolean, got %T", skippedOnNoEmit)
 		}
 	}
 	return nil
 }
 
-type incrementalBuildInfoDiagnosticOfFile struct {
-	fileId      incrementalBuildInfoFileId
-	diagnostics []*incrementalBuildInfoDiagnostic
+type BuildInfoDiagnosticOfFile struct {
+	fileId      BuildInfoFileId
+	diagnostics []*BuildInfoDiagnostic
 }
 
-func (i *incrementalBuildInfoDiagnosticOfFile) MarshalJSON() ([]byte, error) {
+func (b *BuildInfoDiagnosticOfFile) MarshalJSON() ([]byte, error) {
 	fileIdAndDiagnostics := make([]any, 0, 2)
-	fileIdAndDiagnostics = append(fileIdAndDiagnostics, i.fileId)
-	fileIdAndDiagnostics = append(fileIdAndDiagnostics, i.diagnostics)
+	fileIdAndDiagnostics = append(fileIdAndDiagnostics, b.fileId)
+	fileIdAndDiagnostics = append(fileIdAndDiagnostics, b.diagnostics)
 	return json.Marshal(fileIdAndDiagnostics)
 }
 
-func (i *incrementalBuildInfoDiagnosticOfFile) UnmarshalJSON(data []byte) error {
+func (b *BuildInfoDiagnosticOfFile) UnmarshalJSON(data []byte) error {
 	var fileIdAndDiagnostics []any
 	if err := json.Unmarshal(data, &fileIdAndDiagnostics); err != nil {
 		return fmt.Errorf("invalid IncrementalBuildInfoDiagnostic: %s", data)
@@ -391,14 +390,14 @@ func (i *incrementalBuildInfoDiagnosticOfFile) UnmarshalJSON(data []byte) error 
 	if len(fileIdAndDiagnostics) != 2 {
 		return fmt.Errorf("invalid IncrementalBuildInfoDiagnostic: expected 2 elements, got %d", len(fileIdAndDiagnostics))
 	}
-	var fileId incrementalBuildInfoFileId
+	var fileId BuildInfoFileId
 	if fileIdV, ok := fileIdAndDiagnostics[0].(float64); !ok {
 		return fmt.Errorf("invalid fileId in IncrementalBuildInfoDiagnostic: expected float64, got %T", fileIdAndDiagnostics[0])
 	} else {
-		fileId = incrementalBuildInfoFileId(fileIdV)
+		fileId = BuildInfoFileId(fileIdV)
 	}
-	if diagnostics, ok := fileIdAndDiagnostics[1].([]*incrementalBuildInfoDiagnostic); ok {
-		*i = incrementalBuildInfoDiagnosticOfFile{
+	if diagnostics, ok := fileIdAndDiagnostics[1].([]*BuildInfoDiagnostic); ok {
+		*b = BuildInfoDiagnosticOfFile{
 			fileId:      fileId,
 			diagnostics: diagnostics,
 		}
@@ -407,30 +406,30 @@ func (i *incrementalBuildInfoDiagnosticOfFile) UnmarshalJSON(data []byte) error 
 	return fmt.Errorf("invalid diagnostics in IncrementalBuildInfoDiagnostic: expected []*incrementalBuildInfoDiagnostic, got %T", fileIdAndDiagnostics[1])
 }
 
-type incrementalBuildInfoSemanticDiagnostic struct {
-	fileId     incrementalBuildInfoFileId           // File is not in changedSet and still doesnt have cached diagnostics
-	diagnostic incrementalBuildInfoDiagnosticOfFile // Diagnostics for file
+type BuildInfoSemanticDiagnostic struct {
+	FileId     BuildInfoFileId           // File is not in changedSet and still doesnt have cached diagnostics
+	Diagnostic BuildInfoDiagnosticOfFile // Diagnostics for file
 }
 
-func (i *incrementalBuildInfoSemanticDiagnostic) MarshalJSON() ([]byte, error) {
-	if i.fileId != 0 {
-		return json.Marshal(i.fileId)
+func (b *BuildInfoSemanticDiagnostic) MarshalJSON() ([]byte, error) {
+	if b.FileId != 0 {
+		return json.Marshal(b.FileId)
 	}
-	return json.Marshal(i.diagnostic)
+	return json.Marshal(b.Diagnostic)
 }
 
-func (i *incrementalBuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
-	var fileId incrementalBuildInfoFileId
+func (b *BuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
+	var fileId BuildInfoFileId
 	if err := json.Unmarshal(data, &fileId); err == nil {
-		*i = incrementalBuildInfoSemanticDiagnostic{
-			fileId: fileId,
+		*b = BuildInfoSemanticDiagnostic{
+			FileId: fileId,
 		}
 		return nil
 	}
-	var diagnostic incrementalBuildInfoDiagnosticOfFile
+	var diagnostic BuildInfoDiagnosticOfFile
 	if err := json.Unmarshal(data, &diagnostic); err == nil {
-		*i = incrementalBuildInfoSemanticDiagnostic{
-			diagnostic: diagnostic,
+		*b = BuildInfoSemanticDiagnostic{
+			Diagnostic: diagnostic,
 		}
 		return nil
 	}
@@ -442,27 +441,27 @@ func (i *incrementalBuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) erro
  * [fileId] if pending emit is only dts file emit
  * [fileId, emitKind] if any other type emit is pending
  */
-type incrementalBuildInfoFilePendingEmit struct {
-	fileId   incrementalBuildInfoFileId
+type BuildInfoFilePendingEmit struct {
+	fileId   BuildInfoFileId
 	emitKind fileEmitKind
 }
 
-func (i *incrementalBuildInfoFilePendingEmit) MarshalJSON() ([]byte, error) {
-	if i.emitKind == 0 {
-		return json.Marshal(i.fileId)
+func (b *BuildInfoFilePendingEmit) MarshalJSON() ([]byte, error) {
+	if b.emitKind == 0 {
+		return json.Marshal(b.fileId)
 	}
-	if i.emitKind == fileEmitKindDts {
-		fileListIds := []incrementalBuildInfoFileId{i.fileId}
+	if b.emitKind == fileEmitKindDts {
+		fileListIds := []BuildInfoFileId{b.fileId}
 		return json.Marshal(fileListIds)
 	}
-	fileAndEmitKind := []int{int(i.fileId), int(i.emitKind)}
+	fileAndEmitKind := []int{int(b.fileId), int(b.emitKind)}
 	return json.Marshal(fileAndEmitKind)
 }
 
-func (i *incrementalBuildInfoFilePendingEmit) UnmarshalJSON(data []byte) error {
-	var fileId incrementalBuildInfoFileId
+func (b *BuildInfoFilePendingEmit) UnmarshalJSON(data []byte) error {
+	var fileId BuildInfoFileId
 	if err := json.Unmarshal(data, &fileId); err == nil {
-		*i = incrementalBuildInfoFilePendingEmit{
+		*b = BuildInfoFilePendingEmit{
 			fileId: fileId,
 		}
 		return nil
@@ -470,14 +469,14 @@ func (i *incrementalBuildInfoFilePendingEmit) UnmarshalJSON(data []byte) error {
 	var intTuple []int
 	if err := json.Unmarshal(data, &intTuple); err == nil {
 		if len(intTuple) == 1 {
-			*i = incrementalBuildInfoFilePendingEmit{
-				fileId:   incrementalBuildInfoFileId(intTuple[0]),
+			*b = BuildInfoFilePendingEmit{
+				fileId:   BuildInfoFileId(intTuple[0]),
 				emitKind: fileEmitKindDts,
 			}
 			return nil
 		} else if len(intTuple) == 2 {
-			*i = incrementalBuildInfoFilePendingEmit{
-				fileId:   incrementalBuildInfoFileId(intTuple[0]),
+			*b = BuildInfoFilePendingEmit{
+				fileId:   BuildInfoFileId(intTuple[0]),
 				emitKind: fileEmitKind(intTuple[1]),
 			}
 			return nil
@@ -491,29 +490,29 @@ func (i *incrementalBuildInfoFilePendingEmit) UnmarshalJSON(data []byte) error {
  * [fileId, signature] if different from file's signature
  * fileId if file wasnt emitted
  */
-type incrementalBuildInfoEmitSignature struct {
-	fileId incrementalBuildInfoFileId
+type BuildInfoEmitSignature struct {
+	fileId BuildInfoFileId
 	// Signature if it is different from file's signature
 	signature           string
 	differsOnlyInDtsMap bool // true if signature is different only in dtsMap value
 	differsInOptions    bool // true if signature is different in options used to emit file
 }
 
-func (i *incrementalBuildInfoEmitSignature) noEmitSignature() bool {
-	return i.signature == "" && !i.differsOnlyInDtsMap && !i.differsInOptions
+func (b *BuildInfoEmitSignature) noEmitSignature() bool {
+	return b.signature == "" && !b.differsOnlyInDtsMap && !b.differsInOptions
 }
 
-func (i *incrementalBuildInfoEmitSignature) toEmitSignature(path tspath.Path, emitSignatures map[tspath.Path]*emitSignature) *emitSignature {
+func (b *BuildInfoEmitSignature) toEmitSignature(path tspath.Path, emitSignatures map[tspath.Path]*emitSignature) *emitSignature {
 	var signature string
 	var signatureWithDifferentOptions []string
-	if i.differsOnlyInDtsMap {
+	if b.differsOnlyInDtsMap {
 		signatureWithDifferentOptions = make([]string, 0, 1)
 		signatureWithDifferentOptions = append(signatureWithDifferentOptions, emitSignatures[path].signature)
-	} else if i.differsInOptions {
+	} else if b.differsInOptions {
 		signatureWithDifferentOptions = make([]string, 0, 1)
-		signatureWithDifferentOptions = append(signatureWithDifferentOptions, i.signature)
+		signatureWithDifferentOptions = append(signatureWithDifferentOptions, b.signature)
 	} else {
-		signature = i.signature
+		signature = b.signature
 	}
 	return &emitSignature{
 		signature:                     signature,
@@ -521,28 +520,28 @@ func (i *incrementalBuildInfoEmitSignature) toEmitSignature(path tspath.Path, em
 	}
 }
 
-func (i *incrementalBuildInfoEmitSignature) MarshalJSON() ([]byte, error) {
-	if i.noEmitSignature() {
-		return json.Marshal(i.fileId)
+func (b *BuildInfoEmitSignature) MarshalJSON() ([]byte, error) {
+	if b.noEmitSignature() {
+		return json.Marshal(b.fileId)
 	}
 	fileIdAndSignature := make([]any, 2)
-	fileIdAndSignature[0] = i.fileId
+	fileIdAndSignature[0] = b.fileId
 	var signature any
-	if i.differsOnlyInDtsMap {
+	if b.differsOnlyInDtsMap {
 		signature = []string{}
-	} else if i.differsInOptions {
-		signature = []string{i.signature}
+	} else if b.differsInOptions {
+		signature = []string{b.signature}
 	} else {
-		signature = i.signature
+		signature = b.signature
 	}
 	fileIdAndSignature[1] = signature
 	return json.Marshal(fileIdAndSignature)
 }
 
-func (i *incrementalBuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
-	var fileId incrementalBuildInfoFileId
+func (b *BuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
+	var fileId BuildInfoFileId
 	if err := json.Unmarshal(data, &fileId); err == nil {
-		*i = incrementalBuildInfoEmitSignature{
+		*b = BuildInfoEmitSignature{
 			fileId: fileId,
 		}
 		return nil
@@ -550,9 +549,9 @@ func (i *incrementalBuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
 	var fileIdAndSignature []any
 	if err := json.Unmarshal(data, &fileIdAndSignature); err == nil {
 		if len(fileIdAndSignature) == 2 {
-			var fileId incrementalBuildInfoFileId
+			var fileId BuildInfoFileId
 			if id, ok := fileIdAndSignature[0].(float64); ok {
-				fileId = incrementalBuildInfoFileId(id)
+				fileId = BuildInfoFileId(id)
 			} else {
 				return fmt.Errorf("invalid fileId in incrementalBuildInfoEmitSignature: expected float64, got %T", fileIdAndSignature[0])
 			}
@@ -574,7 +573,7 @@ func (i *incrementalBuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
 			} else {
 				signature = signatureV
 			}
-			*i = incrementalBuildInfoEmitSignature{
+			*b = BuildInfoEmitSignature{
 				fileId:              fileId,
 				signature:           signature,
 				differsOnlyInDtsMap: differsOnlyInDtsMap,
@@ -596,17 +595,17 @@ type BuildInfo struct {
 	// Root         []BuildInfoRoot `json:"root,omitempty,omitzero"`
 
 	// IncrementalProgram info
-	FileNames                  []string                                 `json:"fileNames,omitzero"`
-	FileInfos                  []*fileInfo                              `json:"fileInfos,omitzero"`
-	FileIdsList                [][]incrementalBuildInfoFileId           `json:"fileIdsList,omitzero"`
-	Options                    []incrementalBuildInfoCompilerOption     `json:"options,omitzero"`
-	ReferencedMap              []incrementalBuildInfoReferenceMapEntry  `json:"referencedMap,omitzero"`
-	SemanticDiagnosticsPerFile []incrementalBuildInfoSemanticDiagnostic `json:"semanticDiagnosticsPerFile,omitzero"`
-	EmitDiagnosticsPerFile     []incrementalBuildInfoDiagnosticOfFile   `json:"emitDiagnosticsPerFile,omitzero"`
-	ChangeFileSet              []incrementalBuildInfoFileId             `json:"changeFileSet,omitzero"`
-	AffectedFilesPendingEmit   []incrementalBuildInfoFilePendingEmit    `json:"affectedFilesPendingEmit,omitzero"`
-	LatestChangedDtsFile       string                                   `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
-	EmitSignatures             []incrementalBuildInfoEmitSignature      `json:"emitSignatures,omitzero"`
+	FileNames                  []string                      `json:"fileNames,omitzero"`
+	FileInfos                  []*BuildInfoFileInfo          `json:"fileInfos,omitzero"`
+	FileIdsList                [][]BuildInfoFileId           `json:"fileIdsList,omitzero"`
+	Options                    []BuildInfoCompilerOption     `json:"options,omitzero"`
+	ReferencedMap              []BuildInfoReferenceMapEntry  `json:"referencedMap,omitzero"`
+	SemanticDiagnosticsPerFile []BuildInfoSemanticDiagnostic `json:"semanticDiagnosticsPerFile,omitzero"`
+	EmitDiagnosticsPerFile     []BuildInfoDiagnosticOfFile   `json:"emitDiagnosticsPerFile,omitzero"`
+	ChangeFileSet              []BuildInfoFileId             `json:"changeFileSet,omitzero"`
+	AffectedFilesPendingEmit   []BuildInfoFilePendingEmit    `json:"affectedFilesPendingEmit,omitzero"`
+	LatestChangedDtsFile       string                        `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
+	EmitSignatures             []BuildInfoEmitSignature      `json:"emitSignatures,omitzero"`
 	// resolvedRoot: readonly IncrementalBuildInfoResolvedRoot[] | undefined;
 }
 

@@ -52,26 +52,26 @@ func (t *toProgramState) toAbsolutePath(path string) string {
 	return tspath.GetNormalizedAbsolutePath(path, t.buildInfoDirectory)
 }
 
-func (t *toProgramState) toFilePath(fileId incrementalBuildInfoFileId) tspath.Path {
+func (t *toProgramState) toFilePath(fileId BuildInfoFileId) tspath.Path {
 	return t.filePaths[fileId-1]
 }
 
-func (t *toProgramState) toFilePathSet(fileIdListId incrementalBuildInfoFileIdListId) *collections.Set[tspath.Path] {
+func (t *toProgramState) toFilePathSet(fileIdListId BuildInfoFileIdListId) *collections.Set[tspath.Path] {
 	return t.filePathSet[fileIdListId-1]
 }
 
-func (t *toProgramState) toDiagnosticCompatibleWithProgramState(diagnostics []*incrementalBuildInfoDiagnostic) ([]*incrementalBuildInfoDiagnostic, bool) {
-	var fixedDiagnostics []*incrementalBuildInfoDiagnostic
+func (t *toProgramState) toDiagnosticCompatibleWithProgramState(diagnostics []*BuildInfoDiagnostic) ([]*BuildInfoDiagnostic, bool) {
+	var fixedDiagnostics []*BuildInfoDiagnostic
 	var changed bool
 	for _, d := range diagnostics {
 		file := d.file
 		if d.file != false && d.file != 0 {
-			file = t.toFilePath(incrementalBuildInfoFileId(d.file.(float64)))
+			file = t.toFilePath(BuildInfoFileId(d.file.(float64)))
 		}
 		messageChain, changedMessageChain := t.toDiagnosticCompatibleWithProgramState(d.messageChain)
 		relatedInformation, changedRelatedInformation := t.toDiagnosticCompatibleWithProgramState(d.relatedInformation)
 		if file != d.file || changedMessageChain || changedRelatedInformation {
-			fixedDiagnostics = append(fixedDiagnostics, &incrementalBuildInfoDiagnostic{
+			fixedDiagnostics = append(fixedDiagnostics, &BuildInfoDiagnostic{
 				file:               file,
 				loc:                d.loc,
 				code:               d.code,
@@ -107,12 +107,13 @@ func (t *toProgramState) setCompilerOptions() {
 func (t *toProgramState) setFileInfoAndEmitSignatures() {
 	t.state.fileInfos = make(map[tspath.Path]*fileInfo, len(t.buildInfo.FileInfos))
 	t.state.createEmitSignaturesMap()
-	for index, fileInfo := range t.buildInfo.FileInfos {
-		path := t.toFilePath(incrementalBuildInfoFileId(index + 1))
-		t.state.fileInfos[path] = fileInfo
+	for index, buildInfoFileInfo := range t.buildInfo.FileInfos {
+		path := t.toFilePath(BuildInfoFileId(index + 1))
+		info := buildInfoFileInfo.GetFileInfo()
+		t.state.fileInfos[path] = info
 		// Add default emit signature as file's signature
-		if fileInfo.signature != "" && len(t.state.emitSignatures) != 0 {
-			t.state.emitSignatures[path] = &emitSignature{signature: fileInfo.signature}
+		if info.signature != "" && len(t.state.emitSignatures) != 0 {
+			t.state.emitSignatures[path] = &emitSignature{signature: info.signature}
 		}
 	}
 	// Fix up emit signatures
@@ -129,7 +130,7 @@ func (t *toProgramState) setFileInfoAndEmitSignatures() {
 func (t *toProgramState) setReferenceMap() {
 	t.state.createReferenceMap()
 	for _, entry := range t.buildInfo.ReferencedMap {
-		t.state.referencedMap.Add(t.toFilePath(entry.fileId), t.toFilePathSet(entry.fileIdListId))
+		t.state.referencedMap.Add(t.toFilePath(entry.FileId), t.toFilePathSet(entry.FileIdListId))
 	}
 }
 
@@ -150,12 +151,12 @@ func (t *toProgramState) setSemanticDiagnostics() {
 		}
 	}
 	for _, diagnostic := range t.buildInfo.SemanticDiagnosticsPerFile {
-		if diagnostic.fileId != 0 {
-			filePath := t.toFilePath(diagnostic.fileId)
+		if diagnostic.FileId != 0 {
+			filePath := t.toFilePath(diagnostic.FileId)
 			delete(t.state.semanticDiagnosticsPerFile, filePath) // does not have cached diagnostics
 		} else {
-			filePath := t.toFilePath(diagnostic.diagnostic.fileId)
-			diagnostics, _ := t.toDiagnosticCompatibleWithProgramState(diagnostic.diagnostic.diagnostics)
+			filePath := t.toFilePath(diagnostic.Diagnostic.fileId)
+			diagnostics, _ := t.toDiagnosticCompatibleWithProgramState(diagnostic.Diagnostic.diagnostics)
 			t.state.semanticDiagnosticsPerFile[filePath] = &diagnosticsOrBuildInfoDiagnostics{
 				buildInfoDiagnostics: diagnostics,
 			}
