@@ -191,7 +191,7 @@ func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string)
 	readable.setEmitDiagnostics()
 	readable.setAffectedFilesPendingEmit()
 	readable.setEmitSignatures()
-	contents, err := json.MarshalIndent(&readable, "", "    ")
+	contents, err := json.MarshalIndent(&readable, "", "  ")
 	if err != nil {
 		panic("readableBuildInfo: failed to marshal readable build info: " + err.Error())
 	}
