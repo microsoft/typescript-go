@@ -178,7 +178,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
 	p.initCheckerPool()
-	p.processedFiles = processAllProgramFiles(p.opts, p.singleThreaded())
+	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	return p
 }
 
@@ -210,7 +210,7 @@ func (p *Program) initCheckerPool() {
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
+		p.checkerPool = newCheckerPool(core.IfElse(p.SingleThreaded(), 1, 4), p)
 	}
 }
 
@@ -250,12 +250,12 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
 
-func (p *Program) singleThreaded() bool {
+func (p *Program) SingleThreaded() bool {
 	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
 func (p *Program) BindSourceFiles() {
-	wg := core.NewWorkGroup(p.singleThreaded())
+	wg := core.NewWorkGroup(p.SingleThreaded())
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
@@ -267,7 +267,7 @@ func (p *Program) BindSourceFiles() {
 }
 
 func (p *Program) CheckSourceFiles(ctx context.Context) {
-	wg := core.NewWorkGroup(p.singleThreaded())
+	wg := core.NewWorkGroup(p.SingleThreaded())
 	checkers, done := p.checkerPool.GetAllCheckers(ctx)
 	defer done()
 	for _, checker := range checkers {
@@ -727,7 +727,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 			return printer.NewTextWriter(host.Options().NewLine.GetNewLineCharacter())
 		},
 	}
-	wg := core.NewWorkGroup(p.singleThreaded())
+	wg := core.NewWorkGroup(p.SingleThreaded())
 	var emitters []*emitter
 	sourceFiles := getSourceFilesToEmit(host, options.TargetSourceFile, options.EmitOnly == EmitOnlyForcedDts)
 

@@ -16,3 +16,9 @@ func (s *SyncSet[T]) Add(key T) {
 func (s *SyncSet[T]) Delete(key T) {
 	s.m.Delete(key)
 }
+
+func (s *SyncSet[T]) Range(fn func(key T) bool) {
+	s.m.Range(func(key T, value struct{}) bool {
+		return fn(key)
+	})
+}
