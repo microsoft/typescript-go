@@ -168,10 +168,10 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 
 func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) (foundKey bool) {
 	option := CommandLineCompilerOptionsMap.Get(key)
-	if option == nil {
-		return false
+	if option != nil {
+		key = option.Name
 	}
-	switch option.Name {
+	switch key {
 	case "allowJs":
 		allOptions.AllowJs = parseTristate(value)
 	case "allowImportingTsExtensions":
