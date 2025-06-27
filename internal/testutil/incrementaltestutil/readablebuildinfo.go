@@ -28,9 +28,9 @@ type readableBuildInfo struct {
 	SemanticDiagnosticsPerFile []*readableBuildInfoSemanticDiagnostic    `json:"semanticDiagnosticsPerFile,omitzero"`
 	EmitDiagnosticsPerFile     []*readableBuildInfoDiagnosticsOfFile     `json:"emitDiagnosticsPerFile,omitzero"`
 	ChangeFileSet              []string                                  `json:"changeFileSet,omitzero"` // List of changed files in the program, not the whole set of files
-	AffectedFilesPendingEmit   []*incremental.BuildInfoFilePendingEmit   `json:"affectedFilesPendingEmit,omitzero"`
+	AffectedFilesPendingEmit   []*readableBuildInfoFilePendingEmit       `json:"affectedFilesPendingEmit,omitzero"`
 	LatestChangedDtsFile       string                                    `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
-	EmitSignatures             []*incremental.BuildInfoEmitSignature     `json:"emitSignatures,omitzero"`
+	EmitSignatures             []*readableBuildInfoEmitSignature         `json:"emitSignatures,omitzero"`
 	// resolvedRoot: readonly IncrementalBuildInfoResolvedRoot[] | undefined;
 	Size int `json:"size,omitzero"` // Size of the build info file
 }
@@ -124,6 +124,54 @@ func (r *readableBuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid readableBuildInfoSemanticDiagnostic: %s", data)
 }
 
+type readableBuildInfoFilePendingEmit struct {
+	file     string
+	emitKind string
+	original *incremental.BuildInfoFilePendingEmit
+}
+
+func (b *readableBuildInfoFilePendingEmit) MarshalJSON() ([]byte, error) {
+	return json.Marshal([]any{b.file, b.emitKind, b.original})
+}
+
+func (b *readableBuildInfoFilePendingEmit) UnmarshalJSON(data []byte) error {
+	var fileIdAndEmitKind []any
+	if err := json.Unmarshal(data, &fileIdAndEmitKind); err != nil {
+		return fmt.Errorf("invalid readableBuildInfoFilePendingEmit: %s", data)
+	}
+	if len(fileIdAndEmitKind) != 3 {
+		return fmt.Errorf("invalid readableBuildInfoFilePendingEmit: expected 3 elements, got %d", len(fileIdAndEmitKind))
+	}
+	file, ok := fileIdAndEmitKind[0].(string)
+	if !ok {
+		return fmt.Errorf("invalid fileId in readableBuildInfoFilePendingEmit: expected string, got %T", fileIdAndEmitKind[0])
+	}
+	var emitKind string
+	emitKind, ok = fileIdAndEmitKind[1].(string)
+	if !ok {
+		return fmt.Errorf("invalid emitKind in readableBuildInfoFilePendingEmit: expected string, got %T", fileIdAndEmitKind[1])
+	}
+	var original *incremental.BuildInfoFilePendingEmit
+	original, ok = fileIdAndEmitKind[2].(*incremental.BuildInfoFilePendingEmit)
+	if !ok {
+		return fmt.Errorf("invalid original in readableBuildInfoFilePendingEmit: expected *incremental.BuildInfoFilePendingEmit, got %T", fileIdAndEmitKind[2])
+	}
+	*b = readableBuildInfoFilePendingEmit{
+		file:     file,
+		emitKind: emitKind,
+		original: original,
+	}
+	return nil
+}
+
+type readableBuildInfoEmitSignature struct {
+	File                string                              `json:"file,omitzero"`
+	Signature           string                              `json:"signature,omitzero"`
+	DiffersOnlyInDtsMap bool                                `json:"differsOnlyInDtsMap,omitzero"`
+	DiffersInOptions    bool                                `json:"differsInOptions,omitzero"`
+	Original            *incremental.BuildInfoEmitSignature `json:"original,omitzero"`
+}
+
 func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string) string {
 	readable := readableBuildInfo{
 		buildInfo:            buildInfo,
@@ -188,17 +236,6 @@ func (r *readableBuildInfo) toReadableBuildInfoDiagnosticsOfFile(diagnostics *in
 	}
 }
 
-func (r *readableBuildInfo) toReadableBuildInfoSemanticDiagnostic(diagnostics *incremental.BuildInfoSemanticDiagnostic) *readableBuildInfoSemanticDiagnostic {
-	if diagnostics.FileId != 0 {
-		return &readableBuildInfoSemanticDiagnostic{
-			file: r.toFilePath(diagnostics.FileId),
-		}
-	}
-	return &readableBuildInfoSemanticDiagnostic{
-		diagnostics: r.toReadableBuildInfoDiagnosticsOfFile(diagnostics.Diagnostics),
-	}
-}
-
 func (r *readableBuildInfo) setFileInfos() {
 	r.FileInfos = core.MapIndex(r.buildInfo.FileInfos, func(original *incremental.BuildInfoFileInfo, index int) *readableBuildInfoFileInfo {
 		fileInfo := original.GetFileInfo()
@@ -237,7 +274,16 @@ func (r *readableBuildInfo) setChangeFileSet() {
 }
 
 func (r *readableBuildInfo) setSemanticDiagnostics() {
-	r.SemanticDiagnosticsPerFile = core.Map(r.buildInfo.SemanticDiagnosticsPerFile, r.toReadableBuildInfoSemanticDiagnostic)
+	r.SemanticDiagnosticsPerFile = core.Map(r.buildInfo.SemanticDiagnosticsPerFile, func(diagnostics *incremental.BuildInfoSemanticDiagnostic) *readableBuildInfoSemanticDiagnostic {
+		if diagnostics.FileId != 0 {
+			return &readableBuildInfoSemanticDiagnostic{
+				file: r.toFilePath(diagnostics.FileId),
+			}
+		}
+		return &readableBuildInfoSemanticDiagnostic{
+			diagnostics: r.toReadableBuildInfoDiagnosticsOfFile(diagnostics.Diagnostics),
+		}
+	})
 }
 
 func (r *readableBuildInfo) setEmitDiagnostics() {
@@ -245,22 +291,28 @@ func (r *readableBuildInfo) setEmitDiagnostics() {
 }
 
 func (r *readableBuildInfo) setAffectedFilesPendingEmit() {
-	// if len(r.buildInfo.AffectedFilesPendingEmit) == 0 {
-	// 	return
-	// }
-	// ownOptionsEmitKind := getFileEmitKind(r.state.options)
-	// r.state.affectedFilesPendingEmit = make(map[tspath.Path]fileEmitKind, len(r.buildInfo.AffectedFilesPendingEmit))
-	// for _, pendingEmit := range r.buildInfo.AffectedFilesPendingEmit {
-	// 	r.state.affectedFilesPendingEmit[r.toFilePath(pendingEmit.fileId)] = core.IfElse(pendingEmit.emitKind == 0, ownOptionsEmitKind, pendingEmit.emitKind)
-	// }
+	if r.buildInfo.AffectedFilesPendingEmit == nil {
+		return
+	}
+	fullEmitKind := incremental.GetFileEmitKind(r.buildInfo.GetCompilerOptions(""))
+	r.AffectedFilesPendingEmit = core.Map(r.buildInfo.AffectedFilesPendingEmit, func(pendingEmit *incremental.BuildInfoFilePendingEmit) *readableBuildInfoFilePendingEmit {
+		emitKind := core.IfElse(pendingEmit.EmitKind == 0, fullEmitKind, pendingEmit.EmitKind)
+		return &readableBuildInfoFilePendingEmit{
+			file:     r.toFilePath(pendingEmit.FileId),
+			emitKind: emitKind.String(),
+			original: pendingEmit,
+		}
+	})
 }
 
 func (r *readableBuildInfo) setEmitSignatures() {
-	// r.EmitSignatures = make([]*incremental.BuildInfoEmitSignature, 0, len(r.buildInfo.EmitSignatures))
-	// for _, value := range r.buildInfo.EmitSignatures {
-	// 	if value == nil {
-	// 		continue
-	// 	}
-	// 	r.EmitSignatures = append(r.EmitSignatures, value)
-	// }
+	r.EmitSignatures = core.Map(r.buildInfo.EmitSignatures, func(signature *incremental.BuildInfoEmitSignature) *readableBuildInfoEmitSignature {
+		return &readableBuildInfoEmitSignature{
+			File:                r.toFilePath(signature.FileId),
+			Signature:           signature.Signature,
+			DiffersOnlyInDtsMap: signature.DiffersOnlyInDtsMap,
+			DiffersInOptions:    signature.DiffersInOptions,
+			Original:            signature,
+		}
+	})
 }
