@@ -2,6 +2,7 @@ package incremental
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
@@ -22,10 +23,14 @@ func NewProgram(program *compiler.Program, oldProgram *Program) *Program {
 	}
 }
 
-func (p *Program) GetProgram() *compiler.Program {
+func (p *Program) panicIfNoProgram(method string) {
 	if p.program == nil {
-		panic("GetProgram should not be called without program")
+		panic(fmt.Sprintf("%s should not be called without program", method))
 	}
+}
+
+func (p *Program) GetProgram() *compiler.Program {
+	p.panicIfNoProgram("GetProgram")
 	return p.program
 }
 
@@ -34,64 +39,46 @@ func (p *Program) Options() *core.CompilerOptions {
 }
 
 func (p *Program) GetSourceFiles() []*ast.SourceFile {
-	if p.program == nil {
-		panic("GetSourceFiles should not be called without program")
-	}
+	p.panicIfNoProgram("GetSourceFiles")
 	return p.program.GetSourceFiles()
 }
 
 func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
-	if p.program == nil {
-		panic("GetConfigFileParsingDiagnostics should not be called without program")
-	}
+	p.panicIfNoProgram("GetConfigFileParsingDiagnostics")
 	return p.program.GetConfigFileParsingDiagnostics()
 }
 
 func (p *Program) GetSyntacticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-	if p.program == nil {
-		panic("GetSyntacticDiagnostics should not be called without program")
-	}
+	p.panicIfNoProgram("GetSyntacticDiagnostics")
 	return p.program.GetSyntacticDiagnostics(ctx, file)
 }
 
 func (p *Program) GetBindDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-	if p.program == nil {
-		panic("GetBindDiagnostics should not be called without program")
-	}
+	p.panicIfNoProgram("GetBindDiagnostics")
 	return p.program.GetBindDiagnostics(ctx, file)
 }
 
 func (p *Program) GetOptionsDiagnostics(ctx context.Context) []*ast.Diagnostic {
-	if p.program == nil {
-		panic("GetOptionsDiagnostics should not be called without program")
-	}
+	p.panicIfNoProgram("GetOptionsDiagnostics")
 	return p.program.GetOptionsDiagnostics(ctx)
 }
 
 func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
-	if p.program == nil {
-		panic("GetGlobalDiagnostics should not be called without program")
-	}
+	p.panicIfNoProgram("GetGlobalDiagnostics")
 	return p.program.GetGlobalDiagnostics(ctx)
 }
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-	if p.program == nil {
-		panic("GetSemanticDiagnostics should not be called without program")
-	}
+	p.panicIfNoProgram("GetSemanticDiagnostics")
 	return p.state.getSemanticDiagnostics(ctx, p.program, file)
 }
 
 func (p *Program) GetDeclarationDiagnostics(ctx context.Context, file *ast.SourceFile) []*ast.Diagnostic {
-	if p.program == nil {
-		panic("GetDeclarationDiagnostics should not be called without program")
-	}
+	p.panicIfNoProgram("GetDeclarationDiagnostics")
 	return p.state.getDeclarationDiagnostics(ctx, p.program, file)
 }
 
 func (p *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
-	if p.program == nil {
-		panic("Emit should not be called without program")
-	}
+	p.panicIfNoProgram("Emit")
 	return p.state.emit(ctx, p.program, options)
 }
