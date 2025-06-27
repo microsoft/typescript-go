@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -188,231 +186,67 @@ func (b *BuildInfoReferenceMapEntry) UnmarshalJSON(data []byte) error {
 }
 
 type BuildInfoDiagnostic struct {
-	// false if diagnostic is not for a file,
-	// incrementalBuildInfoFileId if it is for a file thats other than its stored for
-	file               any
-	loc                core.TextRange
-	code               int32
-	category           diagnostics.Category
-	message            string
-	messageChain       []*BuildInfoDiagnostic
-	relatedInformation []*BuildInfoDiagnostic
-	reportsUnnecessary bool
-	reportsDeprecated  bool
-	skippedOnNoEmit    bool
+	// incrementalBuildInfoFileId if it is for a File thats other than its stored for
+	File               BuildInfoFileId        `json:"file,omitzero"`
+	NoFile             bool                   `json:"noFile,omitzero"`
+	Pos                int                    `json:"pos,omitzero"`
+	End                int                    `json:"end,omitzero"`
+	Code               int32                  `json:"code,omitzero"`
+	Category           diagnostics.Category   `json:"category,omitzero"`
+	Message            string                 `json:"message,omitzero"`
+	MessageChain       []*BuildInfoDiagnostic `json:"messageChain,omitzero"`
+	RelatedInformation []*BuildInfoDiagnostic `json:"relatedInformation,omitzero"`
+	ReportsUnnecessary bool                   `json:"reportsUnnecessary,omitzero"`
+	ReportsDeprecated  bool                   `json:"reportsDeprecated,omitzero"`
+	SkippedOnNoEmit    bool                   `json:"skippedOnNoEmit,omitzero"`
 }
 
-func (b *BuildInfoDiagnostic) toDiagnostic(p *compiler.Program, file *ast.SourceFile) *ast.Diagnostic {
-	var fileForDiagnostic *ast.SourceFile
-	if b.file != false {
-		if b.file == nil {
-			fileForDiagnostic = file
-		} else {
-			fileForDiagnostic = p.GetSourceFileByPath(tspath.Path(b.file.(string)))
-		}
-	}
-	var messageChain []*ast.Diagnostic
-	for _, msg := range b.messageChain {
-		messageChain = append(messageChain, msg.toDiagnostic(p, fileForDiagnostic))
-	}
-	var relatedInformation []*ast.Diagnostic
-	for _, info := range b.relatedInformation {
-		relatedInformation = append(relatedInformation, info.toDiagnostic(p, fileForDiagnostic))
-	}
-	return ast.NewDiagnosticWith(
-		fileForDiagnostic,
-		b.loc,
-		b.code,
-		b.category,
-		b.message,
-		messageChain,
-		relatedInformation,
-		b.reportsUnnecessary,
-		b.reportsDeprecated,
-		b.skippedOnNoEmit,
-	)
+type BuildInfoDiagnosticsOfFile struct {
+	FileId      BuildInfoFileId
+	Diagnostics []*BuildInfoDiagnostic
 }
 
-func (b *BuildInfoDiagnostic) MarshalJSON() ([]byte, error) {
-	info := map[string]any{}
-	if b.file != "" {
-		info["file"] = b.file
-		info["pos"] = b.loc.Pos()
-		info["end"] = b.loc.End()
-	}
-	info["code"] = b.code
-	info["category"] = b.category
-	info["message"] = b.message
-	if len(b.messageChain) > 0 {
-		info["messageChain"] = b.messageChain
-	}
-	if len(b.relatedInformation) > 0 {
-		info["relatedInformation"] = b.relatedInformation
-	}
-	if b.reportsUnnecessary {
-		info["reportsUnnecessary"] = b.reportsUnnecessary
-	}
-	if b.reportsDeprecated {
-		info["reportsDeprecated"] = b.reportsDeprecated
-	}
-	if b.skippedOnNoEmit {
-		info["skippedOnNoEmit"] = b.skippedOnNoEmit
-	}
-	return json.Marshal(info)
-}
-
-func (b *BuildInfoDiagnostic) UnmarshalJSON(data []byte) error {
-	var vIncrementalBuildInfoDiagnostic map[string]any
-	if err := json.Unmarshal(data, &vIncrementalBuildInfoDiagnostic); err != nil {
-		return fmt.Errorf("invalid incrementalBuildInfoDiagnostic: %s", data)
-	}
-
-	*b = BuildInfoDiagnostic{}
-	if file, ok := vIncrementalBuildInfoDiagnostic["file"]; ok {
-		if _, ok := file.(float64); !ok {
-			if value, ok := file.(bool); !ok || value {
-				return fmt.Errorf("invalid file in incrementalBuildInfoDiagnostic: expected false or float64, got %T", file)
-			}
-		}
-		b.file = file
-		var pos float64
-		posV, ok := vIncrementalBuildInfoDiagnostic["pos"]
-		if ok {
-			pos, ok = posV.(float64)
-			if !ok {
-				return fmt.Errorf("invalid pos in incrementalBuildInfoDiagnostic: expected float64, got %T", posV)
-			}
-		} else {
-			return fmt.Errorf("missing pos in incrementalBuildInfoDiagnostic")
-		}
-		var end float64
-		endv, ok := vIncrementalBuildInfoDiagnostic["end"]
-		if ok {
-			end, ok = endv.(float64)
-			if !ok {
-				return fmt.Errorf("invalid end in incrementalBuildInfoDiagnostic: expected float64, got %T", endv)
-			}
-		} else {
-			return fmt.Errorf("missing end in incrementalBuildInfoDiagnostic")
-		}
-		b.loc = core.NewTextRange(int(pos), int(end))
-	}
-	if codeV, ok := vIncrementalBuildInfoDiagnostic["code"]; ok {
-		code, ok := codeV.(float64)
-		if !ok {
-			return fmt.Errorf("invalid code in incrementalBuildInfoDiagnostic: expected float64, got %T", codeV)
-		}
-		b.code = int32(code)
-	} else {
-		return fmt.Errorf("missing code in incrementalBuildInfoDiagnostic")
-	}
-	if categoryV, ok := vIncrementalBuildInfoDiagnostic["category"]; ok {
-		category, ok := categoryV.(float64)
-		if !ok {
-			return fmt.Errorf("invalid category in incrementalBuildInfoDiagnostic: expected float64, got %T", categoryV)
-		}
-		if category < 0 || category > float64(diagnostics.CategoryMessage) {
-			return fmt.Errorf("invalid category in incrementalBuildInfoDiagnostic: %f is out of range", category)
-		}
-		b.category = diagnostics.Category(category)
-	} else {
-		return fmt.Errorf("missing category in incrementalBuildInfoDiagnostic")
-	}
-	if messageV, ok := vIncrementalBuildInfoDiagnostic["message"]; ok {
-		if b.message, ok = messageV.(string); !ok {
-			return fmt.Errorf("invalid message in incrementalBuildInfoDiagnostic: expected string, got %T", messageV)
-		}
-	} else {
-		return fmt.Errorf("missing message in incrementalBuildInfoDiagnostic")
-	}
-	if messageChain, ok := vIncrementalBuildInfoDiagnostic["messageChain"]; ok {
-		if messages, ok := messageChain.([]any); ok {
-			b.messageChain = make([]*BuildInfoDiagnostic, len(messages))
-			for _, msg := range messages {
-				var diagnostic BuildInfoDiagnostic
-				if err := json.Unmarshal([]byte(msg.(string)), &diagnostic); err != nil {
-					return fmt.Errorf("invalid messageChain in incrementalBuildInfoDiagnostic: %s", msg)
-				}
-				b.messageChain = append(b.messageChain, &diagnostic)
-			}
-		}
-	}
-	if relatedInformation, ok := vIncrementalBuildInfoDiagnostic["relatedInformation"]; ok {
-		if infos, ok := relatedInformation.([]any); ok {
-			b.relatedInformation = make([]*BuildInfoDiagnostic, len(infos))
-			for _, info := range infos {
-				var diagnostic BuildInfoDiagnostic
-				if err := json.Unmarshal([]byte(info.(string)), &diagnostic); err != nil {
-					return fmt.Errorf("invalid relatedInformation in incrementalBuildInfoDiagnostic: %s", info)
-				}
-				b.relatedInformation = append(b.relatedInformation, &diagnostic)
-			}
-		}
-	}
-	if reportsUnnecessary, ok := vIncrementalBuildInfoDiagnostic["reportsUnnecessary"]; ok {
-		if b.reportsUnnecessary, ok = reportsUnnecessary.(bool); !ok {
-			return fmt.Errorf("invalid reportsUnnecessary in incrementalBuildInfoDiagnostic: expected boolean, got %T", reportsUnnecessary)
-		}
-	}
-	if reportsDeprecated, ok := vIncrementalBuildInfoDiagnostic["reportsDeprecated"]; ok {
-		if b.reportsDeprecated, ok = reportsDeprecated.(bool); !ok {
-			return fmt.Errorf("invalid reportsDeprecated in incrementalBuildInfoDiagnostic: expected boolean, got %T", reportsDeprecated)
-		}
-	}
-	if skippedOnNoEmit, ok := vIncrementalBuildInfoDiagnostic["skippedOnNoEmit"]; ok {
-		if b.skippedOnNoEmit, ok = skippedOnNoEmit.(bool); !ok {
-			return fmt.Errorf("invalid skippedOnNoEmit in incrementalBuildInfoDiagnostic: expected boolean, got %T", skippedOnNoEmit)
-		}
-	}
-	return nil
-}
-
-type BuildInfoDiagnosticOfFile struct {
-	fileId      BuildInfoFileId
-	diagnostics []*BuildInfoDiagnostic
-}
-
-func (b *BuildInfoDiagnosticOfFile) MarshalJSON() ([]byte, error) {
+func (b *BuildInfoDiagnosticsOfFile) MarshalJSON() ([]byte, error) {
 	fileIdAndDiagnostics := make([]any, 0, 2)
-	fileIdAndDiagnostics = append(fileIdAndDiagnostics, b.fileId)
-	fileIdAndDiagnostics = append(fileIdAndDiagnostics, b.diagnostics)
+	fileIdAndDiagnostics = append(fileIdAndDiagnostics, b.FileId)
+	fileIdAndDiagnostics = append(fileIdAndDiagnostics, b.Diagnostics)
 	return json.Marshal(fileIdAndDiagnostics)
 }
 
-func (b *BuildInfoDiagnosticOfFile) UnmarshalJSON(data []byte) error {
+func (b *BuildInfoDiagnosticsOfFile) UnmarshalJSON(data []byte) error {
 	var fileIdAndDiagnostics []any
 	if err := json.Unmarshal(data, &fileIdAndDiagnostics); err != nil {
-		return fmt.Errorf("invalid IncrementalBuildInfoDiagnostic: %s", data)
+		return fmt.Errorf("invalid BuildInfoDiagnosticsOfFile: %s", data)
 	}
 	if len(fileIdAndDiagnostics) != 2 {
-		return fmt.Errorf("invalid IncrementalBuildInfoDiagnostic: expected 2 elements, got %d", len(fileIdAndDiagnostics))
+		return fmt.Errorf("invalid BuildInfoDiagnosticsOfFile: expected 2 elements, got %d", len(fileIdAndDiagnostics))
 	}
 	var fileId BuildInfoFileId
 	if fileIdV, ok := fileIdAndDiagnostics[0].(float64); !ok {
-		return fmt.Errorf("invalid fileId in IncrementalBuildInfoDiagnostic: expected float64, got %T", fileIdAndDiagnostics[0])
+		return fmt.Errorf("invalid fileId in BuildInfoDiagnosticsOfFile: expected float64, got %T", fileIdAndDiagnostics[0])
 	} else {
 		fileId = BuildInfoFileId(fileIdV)
 	}
 	if diagnostics, ok := fileIdAndDiagnostics[1].([]*BuildInfoDiagnostic); ok {
-		*b = BuildInfoDiagnosticOfFile{
-			fileId:      fileId,
-			diagnostics: diagnostics,
+		*b = BuildInfoDiagnosticsOfFile{
+			FileId:      fileId,
+			Diagnostics: diagnostics,
 		}
 		return nil
 	}
-	return fmt.Errorf("invalid diagnostics in IncrementalBuildInfoDiagnostic: expected []*incrementalBuildInfoDiagnostic, got %T", fileIdAndDiagnostics[1])
+	return fmt.Errorf("invalid diagnostics in BuildInfoDiagnosticsOfFile: expected []*BuildInfoDiagnostic, got %T", fileIdAndDiagnostics[1])
 }
 
 type BuildInfoSemanticDiagnostic struct {
-	FileId     BuildInfoFileId           // File is not in changedSet and still doesnt have cached diagnostics
-	Diagnostic BuildInfoDiagnosticOfFile // Diagnostics for file
+	FileId      BuildInfoFileId             // File is not in changedSet and still doesnt have cached diagnostics
+	Diagnostics *BuildInfoDiagnosticsOfFile // Diagnostics for file
 }
 
 func (b *BuildInfoSemanticDiagnostic) MarshalJSON() ([]byte, error) {
 	if b.FileId != 0 {
 		return json.Marshal(b.FileId)
 	}
-	return json.Marshal(b.Diagnostic)
+	return json.Marshal(b.Diagnostics)
 }
 
 func (b *BuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
@@ -423,14 +257,14 @@ func (b *BuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
 		}
 		return nil
 	}
-	var diagnostic BuildInfoDiagnosticOfFile
-	if err := json.Unmarshal(data, &diagnostic); err == nil {
+	var diagnostics BuildInfoDiagnosticsOfFile
+	if err := json.Unmarshal(data, &diagnostics); err == nil {
 		*b = BuildInfoSemanticDiagnostic{
-			Diagnostic: diagnostic,
+			Diagnostics: &diagnostics,
 		}
 		return nil
 	}
-	return fmt.Errorf("invalid IncrementalBuildInfoDiagnostic: %s", data)
+	return fmt.Errorf("invalid BuildInfoSemanticDiagnostic: %s", data)
 }
 
 /**
@@ -589,20 +423,20 @@ type BuildInfo struct {
 	// Common between incremental and tsc -b buildinfo for non incremental programs
 	Errors       bool `json:"errors,omitzero"`
 	CheckPending bool `json:"checkPending,omitzero"`
-	// Root         []BuildInfoRoot `json:"root,omitempty,omitzero"`
+	// Root         []BuildInfoRoot `json:"root,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                             `json:"fileNames,omitzero"`
 	FileInfos                  []*BuildInfoFileInfo                 `json:"fileInfos,omitzero"`
 	FileIdsList                [][]BuildInfoFileId                  `json:"fileIdsList,omitzero"`
-	Options                    *collections.OrderedMap[string, any] `json:"options,omitempty"`
-	ReferencedMap              []BuildInfoReferenceMapEntry         `json:"referencedMap,omitzero"`
-	SemanticDiagnosticsPerFile []BuildInfoSemanticDiagnostic        `json:"semanticDiagnosticsPerFile,omitzero"`
-	EmitDiagnosticsPerFile     []BuildInfoDiagnosticOfFile          `json:"emitDiagnosticsPerFile,omitzero"`
+	Options                    *collections.OrderedMap[string, any] `json:"options,omitzero"`
+	ReferencedMap              []*BuildInfoReferenceMapEntry        `json:"referencedMap,omitzero"`
+	SemanticDiagnosticsPerFile []*BuildInfoSemanticDiagnostic       `json:"semanticDiagnosticsPerFile,omitzero"`
+	EmitDiagnosticsPerFile     []*BuildInfoDiagnosticsOfFile        `json:"emitDiagnosticsPerFile,omitzero"`
 	ChangeFileSet              []BuildInfoFileId                    `json:"changeFileSet,omitzero"`
-	AffectedFilesPendingEmit   []BuildInfoFilePendingEmit           `json:"affectedFilesPendingEmit,omitzero"`
+	AffectedFilesPendingEmit   []*BuildInfoFilePendingEmit          `json:"affectedFilesPendingEmit,omitzero"`
 	LatestChangedDtsFile       string                               `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
-	EmitSignatures             []BuildInfoEmitSignature             `json:"emitSignatures,omitzero"`
+	EmitSignatures             []*BuildInfoEmitSignature            `json:"emitSignatures,omitzero"`
 	// resolvedRoot: readonly IncrementalBuildInfoResolvedRoot[] | undefined;
 }
 

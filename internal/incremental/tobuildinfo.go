@@ -31,7 +31,7 @@ func programStateToBuildInfo(state *programState, program *compiler.Program, bui
 	if state.options.IsIncremental() {
 		to.setFileInfoAndEmitSignatures()
 		to.setCompilerOptions()
-		to.setReferenceMap()
+		to.setReferencedMap()
 		to.setChangeFileSet()
 		to.setSemanticDiagnostics()
 		to.setEmitDiagnostics()
@@ -96,9 +96,7 @@ func (t *toBuildInfo) toRelativeToBuildInfoCompilerOptionValue(option *tsoptions
 	}
 	if option.Kind == "list" {
 		if arr, ok := v.([]string); ok {
-			return core.Map(arr, func(item string) string {
-				return t.relativeToBuildInfo(item)
-			})
+			return core.Map(arr, t.relativeToBuildInfo)
 		}
 	} else if str, ok := v.(string); ok && str != "" {
 		return t.relativeToBuildInfo(v.(string))
@@ -106,64 +104,73 @@ func (t *toBuildInfo) toRelativeToBuildInfoCompilerOptionValue(option *tsoptions
 	return v
 }
 
-func (t *toBuildInfo) toDiagnosticCompatibleWithBuildInfo(diagnostics []*BuildInfoDiagnostic) ([]*BuildInfoDiagnostic, bool) {
-	var fixedDiagnostics []*BuildInfoDiagnostic
-	var changed bool
-	for _, d := range diagnostics {
-		file := d.file
-		if d.file != false && d.file != "" {
-			file = t.toFileId(d.file.(tspath.Path))
+func (t *toBuildInfo) toBuildInfoDiagnosticsFromFileNameDiagnostics(diagnostics []*buildInfoDiagnosticWithFileName) []*BuildInfoDiagnostic {
+	return core.Map(diagnostics, func(d *buildInfoDiagnosticWithFileName) *BuildInfoDiagnostic {
+		var file BuildInfoFileId
+		if d.file != "" {
+			file = t.toFileId(d.file)
 		}
-		messageChain, changedMessageChain := t.toDiagnosticCompatibleWithBuildInfo(d.messageChain)
-		relatedInformation, changedRelatedInformation := t.toDiagnosticCompatibleWithBuildInfo(d.relatedInformation)
-		if file != d.file || changedMessageChain || changedRelatedInformation {
-			fixedDiagnostics = append(fixedDiagnostics, &BuildInfoDiagnostic{
-				file:               file,
-				loc:                d.loc,
-				code:               d.code,
-				category:           d.category,
-				message:            d.message,
-				messageChain:       messageChain,
-				relatedInformation: relatedInformation,
-				reportsUnnecessary: d.reportsUnnecessary,
-				reportsDeprecated:  d.reportsDeprecated,
-				skippedOnNoEmit:    d.skippedOnNoEmit,
-			})
-			changed = true
-		} else {
-			fixedDiagnostics = append(fixedDiagnostics, d)
+		return &BuildInfoDiagnostic{
+			File:               file,
+			NoFile:             d.noFile,
+			Pos:                d.pos,
+			End:                d.end,
+			Code:               d.code,
+			Category:           d.category,
+			Message:            d.message,
+			MessageChain:       t.toBuildInfoDiagnosticsFromFileNameDiagnostics(d.messageChain),
+			RelatedInformation: t.toBuildInfoDiagnosticsFromFileNameDiagnostics(d.relatedInformation),
+			ReportsUnnecessary: d.reportsUnnecessary,
+			ReportsDeprecated:  d.reportsDeprecated,
+			SkippedOnNoEmit:    d.skippedOnNoEmit,
 		}
-	}
-	return core.IfElse(changed, fixedDiagnostics, diagnostics), changed
+	})
 }
 
-func (t *toBuildInfo) toIncrementalBuildInfoDiagnostic(diagnostics []*ast.Diagnostic, file *ast.SourceFile) []*BuildInfoDiagnostic {
-	var incrementalDiagnostics []*BuildInfoDiagnostic
-	for _, d := range diagnostics {
-		var fileValue any
+func (t *toBuildInfo) toBuildInfoDiagnosticsFromDiagnostics(filePath tspath.Path, diagnostics []*ast.Diagnostic) []*BuildInfoDiagnostic {
+	return core.Map(diagnostics, func(d *ast.Diagnostic) *BuildInfoDiagnostic {
+		var file BuildInfoFileId
+		noFile := false
 		if d.File() == nil {
-			fileValue = false
-		} else if d.File() != file {
-			fileValue = t.toFileId(d.File().Path())
+			noFile = true
+		} else if d.File().Path() != filePath {
+			file = t.toFileId(d.File().Path())
 		}
-		incrementalDiagnostics = append(incrementalDiagnostics, &BuildInfoDiagnostic{
-			file:               fileValue,
-			loc:                d.Loc(),
-			code:               d.Code(),
-			category:           d.Category(),
-			message:            d.Message(),
-			messageChain:       t.toIncrementalBuildInfoDiagnostic(d.MessageChain(), file),
-			relatedInformation: t.toIncrementalBuildInfoDiagnostic(d.RelatedInformation(), file),
-			reportsUnnecessary: d.ReportsUnnecessary(),
-			reportsDeprecated:  d.ReportsDeprecated(),
-			skippedOnNoEmit:    d.SkippedOnNoEmit(),
-		})
+		return &BuildInfoDiagnostic{
+			File:               file,
+			NoFile:             noFile,
+			Pos:                d.Loc().Pos(),
+			End:                d.Loc().End(),
+			Code:               d.Code(),
+			Category:           d.Category(),
+			Message:            d.Message(),
+			MessageChain:       t.toBuildInfoDiagnosticsFromDiagnostics(filePath, d.MessageChain()),
+			RelatedInformation: t.toBuildInfoDiagnosticsFromDiagnostics(filePath, d.RelatedInformation()),
+			ReportsUnnecessary: d.ReportsUnnecessary(),
+			ReportsDeprecated:  d.ReportsDeprecated(),
+			SkippedOnNoEmit:    d.SkippedOnNoEmit(),
+		}
+	})
+}
+
+func (t *toBuildInfo) toBuildInfoDiagnosticsOfFile(filePath tspath.Path, diags *diagnosticsOrBuildInfoDiagnosticsWithFileName) *BuildInfoDiagnosticsOfFile {
+	if len(diags.diagnostics) > 0 {
+		return &BuildInfoDiagnosticsOfFile{
+			FileId:      t.toFileId(filePath),
+			Diagnostics: t.toBuildInfoDiagnosticsFromDiagnostics(filePath, diags.diagnostics),
+		}
 	}
-	return incrementalDiagnostics
+	if len(diags.buildInfoDiagnostics) > 0 {
+		return &BuildInfoDiagnosticsOfFile{
+			FileId:      t.toFileId(filePath),
+			Diagnostics: t.toBuildInfoDiagnosticsFromFileNameDiagnostics(diags.buildInfoDiagnostics),
+		}
+	}
+	return nil
 }
 
 func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
-	for _, file := range t.program.GetSourceFiles() {
+	t.buildInfo.FileInfos = core.Map(t.program.GetSourceFiles(), func(file *ast.SourceFile) *BuildInfoFileInfo {
 		info := t.state.fileInfos[file.Path()]
 		fileId := t.toFileId(file.Path())
 		//  tryAddRoot(key, fileId);
@@ -180,11 +187,11 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 			if !ast.IsJsonSourceFile(file) && t.program.SourceFileMayBeEmitted(file, false) {
 				emitSignature := t.state.emitSignatures[file.Path()]
 				if emitSignature == nil {
-					t.buildInfo.EmitSignatures = append(t.buildInfo.EmitSignatures, BuildInfoEmitSignature{
+					t.buildInfo.EmitSignatures = append(t.buildInfo.EmitSignatures, &BuildInfoEmitSignature{
 						fileId: fileId,
 					})
 				} else if emitSignature.signature != actualSignature {
-					incrementalEmitSignature := BuildInfoEmitSignature{
+					incrementalEmitSignature := &BuildInfoEmitSignature{
 						fileId: fileId,
 					}
 					if emitSignature.signature != "" {
@@ -200,21 +207,22 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 			}
 		}
 		if actualSignature == info.signature {
-			t.buildInfo.FileInfos = append(t.buildInfo.FileInfos, newBuildInfoFileInfo(info))
+			return newBuildInfoFileInfo(info)
 		} else {
-			t.buildInfo.FileInfos = append(t.buildInfo.FileInfos, newBuildInfoFileInfo(&fileInfo{
+			return newBuildInfoFileInfo(&fileInfo{
 				version:            info.version,
 				signature:          actualSignature,
 				affectsGlobalScope: info.affectsGlobalScope,
 				impliedNodeFormat:  info.impliedNodeFormat,
-			}))
+			})
 		}
-	}
+	})
 }
 
 func (t *toBuildInfo) setCompilerOptions() {
 	tsoptions.ForEachCompilerOptionValue(
-		t.state.options, func(option *tsoptions.CommandLineOption) bool {
+		t.state.options,
+		func(option *tsoptions.CommandLineOption) bool {
 			return option.AffectsBuildInfo
 		},
 		func(option *tsoptions.CommandLineOption, value reflect.Value, i int) bool {
@@ -231,27 +239,25 @@ func (t *toBuildInfo) setCompilerOptions() {
 	)
 }
 
-func (t *toBuildInfo) setReferenceMap() {
+func (t *toBuildInfo) setReferencedMap() {
 	if !t.state.tracksReferences() {
 		return
 	}
 	keys := slices.Collect(maps.Keys(t.state.referencedMap.Keys()))
 	slices.Sort(keys)
-	for _, filePath := range keys {
+	t.buildInfo.ReferencedMap = core.Map(keys, func(filePath tspath.Path) *BuildInfoReferenceMapEntry {
 		references, _ := t.state.referencedMap.GetValues(filePath)
-		t.buildInfo.ReferencedMap = append(t.buildInfo.ReferencedMap, BuildInfoReferenceMapEntry{
+		return &BuildInfoReferenceMapEntry{
 			FileId:       t.toFileId(filePath),
 			FileIdListId: t.toFileIdListId(references),
-		})
-	}
+		}
+	})
 }
 
 func (t *toBuildInfo) setChangeFileSet() {
 	files := slices.Collect(maps.Keys(t.state.changedFilesSet.Keys()))
 	slices.Sort(files)
-	for _, filePath := range files {
-		t.buildInfo.ChangeFileSet = append(t.buildInfo.ChangeFileSet, t.toFileId(filePath))
-	}
+	t.buildInfo.ChangeFileSet = core.Map(files, t.toFileId)
 }
 
 func (t *toBuildInfo) setSemanticDiagnostics() {
@@ -259,25 +265,17 @@ func (t *toBuildInfo) setSemanticDiagnostics() {
 		value, ok := t.state.semanticDiagnosticsPerFile[file.Path()]
 		if !ok {
 			if !t.state.changedFilesSet.Has(file.Path()) {
-				t.buildInfo.SemanticDiagnosticsPerFile = append(t.buildInfo.SemanticDiagnosticsPerFile, BuildInfoSemanticDiagnostic{
+				t.buildInfo.SemanticDiagnosticsPerFile = append(t.buildInfo.SemanticDiagnosticsPerFile, &BuildInfoSemanticDiagnostic{
 					FileId: t.toFileId(file.Path()),
 				})
 			}
-		} else if len(value.buildInfoDiagnostics) > 0 {
-			diagnostics, _ := t.toDiagnosticCompatibleWithBuildInfo(value.buildInfoDiagnostics)
-			t.buildInfo.SemanticDiagnosticsPerFile = append(t.buildInfo.SemanticDiagnosticsPerFile, BuildInfoSemanticDiagnostic{
-				Diagnostic: BuildInfoDiagnosticOfFile{
-					fileId:      t.toFileId(file.Path()),
-					diagnostics: diagnostics,
-				},
-			})
-		} else if len(value.diagnostics) > 0 {
-			t.buildInfo.SemanticDiagnosticsPerFile = append(t.buildInfo.SemanticDiagnosticsPerFile, BuildInfoSemanticDiagnostic{
-				Diagnostic: BuildInfoDiagnosticOfFile{
-					fileId:      t.toFileId(file.Path()),
-					diagnostics: t.toIncrementalBuildInfoDiagnostic(value.diagnostics, file),
-				},
-			})
+		} else {
+			diagnostics := t.toBuildInfoDiagnosticsOfFile(file.Path(), value)
+			if diagnostics != nil {
+				t.buildInfo.SemanticDiagnosticsPerFile = append(t.buildInfo.SemanticDiagnosticsPerFile, &BuildInfoSemanticDiagnostic{
+					Diagnostics: diagnostics,
+				})
+			}
 		}
 	}
 }
@@ -285,21 +283,9 @@ func (t *toBuildInfo) setSemanticDiagnostics() {
 func (t *toBuildInfo) setEmitDiagnostics() {
 	files := slices.Collect(maps.Keys(t.state.emitDiagnosticsPerFile))
 	slices.Sort(files)
-	for _, filePath := range files {
-		value := t.state.emitDiagnosticsPerFile[filePath]
-		if len(value.buildInfoDiagnostics) > 0 {
-			diagnostics, _ := t.toDiagnosticCompatibleWithBuildInfo(value.buildInfoDiagnostics)
-			t.buildInfo.EmitDiagnosticsPerFile = append(t.buildInfo.EmitDiagnosticsPerFile, BuildInfoDiagnosticOfFile{
-				fileId:      t.toFileId(filePath),
-				diagnostics: diagnostics,
-			})
-		} else {
-			t.buildInfo.EmitDiagnosticsPerFile = append(t.buildInfo.EmitDiagnosticsPerFile, BuildInfoDiagnosticOfFile{
-				fileId:      t.toFileId(filePath),
-				diagnostics: t.toIncrementalBuildInfoDiagnostic(value.diagnostics, t.program.GetSourceFileByPath(filePath)),
-			})
-		}
-	}
+	t.buildInfo.EmitDiagnosticsPerFile = core.Map(files, func(filePath tspath.Path) *BuildInfoDiagnosticsOfFile {
+		return t.toBuildInfoDiagnosticsOfFile(filePath, t.state.emitDiagnosticsPerFile[filePath])
+	})
 }
 
 func (t *toBuildInfo) setAffectedFilesPendingEmit() {
@@ -315,7 +301,7 @@ func (t *toBuildInfo) setAffectedFilesPendingEmit() {
 			continue
 		}
 		pendingEmit := t.state.affectedFilesPendingEmit[filePath]
-		t.buildInfo.AffectedFilesPendingEmit = append(t.buildInfo.AffectedFilesPendingEmit, BuildInfoFilePendingEmit{
+		t.buildInfo.AffectedFilesPendingEmit = append(t.buildInfo.AffectedFilesPendingEmit, &BuildInfoFilePendingEmit{
 			fileId:   t.toFileId(filePath),
 			emitKind: core.IfElse(pendingEmit == fullEmitKind, 0, pendingEmit),
 		})
