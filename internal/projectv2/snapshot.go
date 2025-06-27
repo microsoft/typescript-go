@@ -91,8 +91,7 @@ type Snapshot struct {
 	// Immutable state, cloned between snapshots
 	overlayFS          *overlayFS
 	compilerFS         *compilerFS
-	configuredProjects map[tspath.Path]*Project
-	inferredProject    *Project
+	projectCollection  *projectCollection
 	configFileRegistry *configFileRegistry
 }
 
@@ -116,8 +115,7 @@ func NewSnapshot(
 		logger:             logger,
 		configFileRegistry: configFileRegistry,
 
-		overlayFS:          newOverlayFS(cachedFS, overlays),
-		configuredProjects: make(map[tspath.Path]*Project),
+		overlayFS: newOverlayFS(cachedFS, overlays),
 	}
 
 	s.compilerFS = &compilerFS{snapshot: s}
@@ -144,13 +142,13 @@ func (s *Snapshot) IsOpenFile(path tspath.Path) bool {
 }
 
 func (s *Snapshot) ConfiguredProjects() []*Project {
-	projects := make([]*Project, 0, len(s.configuredProjects))
+	projects := make([]*Project, 0, len(s.projectCollection.configuredProjects))
 	s.fillConfiguredProjects(&projects)
 	return projects
 }
 
 func (s *Snapshot) fillConfiguredProjects(projects *[]*Project) {
-	for _, p := range s.configuredProjects {
+	for _, p := range s.projectCollection.configuredProjects {
 		*projects = append(*projects, p)
 	}
 	slices.SortFunc(*projects, func(a, b *Project) int {
@@ -159,12 +157,12 @@ func (s *Snapshot) fillConfiguredProjects(projects *[]*Project) {
 }
 
 func (s *Snapshot) Projects() []*Project {
-	if s.inferredProject == nil {
+	if s.projectCollection.inferredProject == nil {
 		return s.ConfiguredProjects()
 	}
-	projects := make([]*Project, 0, len(s.configuredProjects)+1)
+	projects := make([]*Project, 0, len(s.projectCollection.configuredProjects)+1)
 	s.fillConfiguredProjects(&projects)
-	projects = append(projects, s.inferredProject)
+	projects = append(projects, s.projectCollection.inferredProject)
 	return projects
 }
 
@@ -196,8 +194,8 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 		return containingProjects[0]
 	}
 	if len(containingProjects) == 0 {
-		if s.inferredProject != nil && s.inferredProject.containsFile(path) {
-			return s.inferredProject
+		if s.projectCollection.inferredProject != nil && s.projectCollection.inferredProject.containsFile(path) {
+			return s.projectCollection.inferredProject
 		}
 		return nil
 	}
@@ -210,7 +208,15 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 		return firstConfiguredProject
 	}
 	// Multiple projects include the file directly.
-	if defaultProject := s.findDefaultConfiguredProject(fileName, path); defaultProject != nil {
+	// !!! temporary!
+	builder := newProjectCollectionBuilder(context.Background(), s, s.projectCollection, snapshotChange{})
+	defer func() {
+		if builder.finalize() != s.projectCollection {
+			panic("temporary builder should have collected no changes for a find lookup")
+		}
+	}()
+
+	if defaultProject := builder.findDefaultConfiguredProject(fileName, path); defaultProject != nil {
 		return defaultProject
 	}
 	return firstConfiguredProject
@@ -225,13 +231,24 @@ type snapshotChange struct {
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Session) *Snapshot {
-	configFileRegistry := s.configFileRegistry.Clone()
 	newSnapshot := NewSnapshot(
 		session.fs.fs,
 		session.fs.overlays,
 		s.sessionOptions,
 		s.parseCache,
+		s.logger,
+		nil,
 	)
+
+	projectCollectionBuilder := newProjectCollectionBuilder(
+		ctx,
+		newSnapshot,
+		s.projectCollection,
+		change,
+	)
+
+	newSnapshot.configFileRegistry = projectCollectionBuilder.configFileRegistryBuilder.finalize()
+	newSnapshot.projectCollection = projectCollectionBuilder.finalize()
 
 	return newSnapshot
 }

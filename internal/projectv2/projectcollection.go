@@ -1,7 +1,9 @@
 package projectv2
 
 import (
+	"context"
 	"fmt"
+	"maps"
 	"strings"
 	"sync"
 
@@ -21,21 +23,137 @@ const (
 	projectLoadKindCreate
 )
 
-// type defaultProjectFinder struct {
-// 	snapshot                        *Snapshot
-// 	configFileForOpenFiles          map[tspath.Path]string            // default config project for open files
-// 	configFilesAncestorForOpenFiles map[tspath.Path]map[string]string // ancestor config file for open files
-// }
+type projectCollection struct {
+	configuredProjects map[tspath.Path]*Project
+	inferredProject    *Project
+}
 
-func (s *Snapshot) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool) string {
+func (c *projectCollection) clone() *projectCollection {
+	return &projectCollection{
+		configuredProjects: maps.Clone(c.configuredProjects),
+		inferredProject:    c.inferredProject,
+	}
+}
+
+type projectCollectionBuilder struct {
+	ctx                       context.Context
+	snapshot                  *Snapshot
+	configFileRegistryBuilder *configFileRegistryBuilder
+	base                      *projectCollection
+	changes                   snapshotChange
+	dirty                     collections.SyncMap[tspath.Path, *Project]
+}
+
+type projectCollectionBuilderEntry struct {
+	b       *projectCollectionBuilder
+	project *Project
+	dirty   bool
+}
+
+func newProjectCollectionBuilder(ctx context.Context, newSnapshot *Snapshot, oldProjectCollection *projectCollection, changes snapshotChange) *projectCollectionBuilder {
+	return &projectCollectionBuilder{
+		ctx:      ctx,
+		snapshot: newSnapshot,
+		base:     oldProjectCollection,
+		changes:  changes,
+	}
+}
+
+func (b *projectCollectionBuilder) finalize() *projectCollection {
+	var changed bool
+	newProjectCollection := b.base
+	b.dirty.Range(func(path tspath.Path, project *Project) bool {
+		if !changed {
+			newProjectCollection = newProjectCollection.clone()
+			changed = true
+		}
+		newProjectCollection.configuredProjects[path] = project
+		return true
+	})
+	return newProjectCollection
+}
+
+func (b *projectCollectionBuilder) loadOrStoreNewEntry(
+	fileName string,
+	path tspath.Path,
+) (*projectCollectionBuilderEntry, bool) {
+	// Check for existence in the base registry first so that all SyncMap
+	// access is atomic. We're trying to avoid the scenario where we
+	//   1. try to load from the dirty map but find nothing,
+	//   2. try to load from the base registry but find nothing, then
+	//   3. have to do a subsequent Store in the dirty map for the new entry.
+	if prev, ok := b.base.configuredProjects[path]; ok {
+		if dirty, ok := b.dirty.Load(path); ok {
+			return &projectCollectionBuilderEntry{
+				b:       b,
+				project: dirty,
+				dirty:   true,
+			}, true
+		}
+		return &projectCollectionBuilderEntry{
+			b:       b,
+			project: prev,
+			dirty:   false,
+		}, true
+	} else {
+		entry, loaded := b.dirty.LoadOrStore(path, NewConfiguredProject(fileName, path, b.snapshot))
+		return &projectCollectionBuilderEntry{
+			b:       b,
+			project: entry,
+			dirty:   true,
+		}, loaded
+	}
+}
+
+func (b *projectCollectionBuilder) load(path tspath.Path) (*projectCollectionBuilderEntry, bool) {
+	if entry, ok := b.dirty.Load(path); ok {
+		return &projectCollectionBuilderEntry{
+			b:       b,
+			project: entry,
+			dirty:   true,
+		}, true
+	}
+	if entry, ok := b.base.configuredProjects[path]; ok {
+		return &projectCollectionBuilderEntry{
+			b:       b,
+			project: entry,
+			dirty:   false,
+		}, true
+	}
+	return nil, false
+}
+
+func (b *projectCollectionBuilder) updateProject(path tspath.Path) *Project {
+	if dirty, ok := b.load(path); ok {
+		// !!! right now, the only kind of project update is program loading,
+		// so we can just assume that if the project is in the dirty map,
+		// it's already been updated. This assumption probably won't hold
+		// as this logic gets more fleshed out.
+		return dirty.project
+	}
+	if entry, ok := b.base.configuredProjects[path]; ok {
+		if project, result := entry.Clone(b.ctx, b.changes, b.snapshot); result.changed {
+			project, loaded := b.dirty.LoadOrStore(path, project)
+			if loaded {
+				// I don't think we get into a state where multiple goroutines try to update
+				// the same project at the same time; ensure this is the case
+				panic("unexpected concurrent project update")
+			}
+			return project
+		}
+	}
+	return nil
+}
+
+func (b *projectCollectionBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool) string {
 	searchPath := tspath.GetDirectoryPath(fileName)
 	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
-		if !skipSearchInDirectoryOfFile && s.compilerFS.FileExists(tsconfigPath) {
+		if !skipSearchInDirectoryOfFile && b.snapshot.compilerFS.FileExists(tsconfigPath) {
 			return tsconfigPath, true
 		}
 		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
-		if !skipSearchInDirectoryOfFile && s.compilerFS.FileExists(jsconfigPath) {
+		if !skipSearchInDirectoryOfFile && b.snapshot.compilerFS.FileExists(jsconfigPath) {
 			return jsconfigPath, true
 		}
 		if strings.HasSuffix(directory, "/node_modules") {
@@ -44,11 +162,11 @@ func (s *Snapshot) computeConfigFileName(fileName string, skipSearchInDirectoryO
 		skipSearchInDirectoryOfFile = false
 		return "", false
 	})
-	s.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
+	b.snapshot.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
 	return result
 }
 
-func (s *Snapshot) getConfigFileNameForFile(fileName string, path tspath.Path, loadKind projectLoadKind) string {
+func (b *projectCollectionBuilder) getConfigFileNameForFile(fileName string, path tspath.Path, loadKind projectLoadKind) string {
 	if project.IsDynamicFileName(fileName) {
 		return ""
 	}
@@ -62,7 +180,7 @@ func (s *Snapshot) getConfigFileNameForFile(fileName string, path tspath.Path, l
 		return ""
 	}
 
-	configName := s.computeConfigFileName(fileName, false)
+	configName := b.computeConfigFileName(fileName, false)
 
 	// if f.IsOpenFile(ls.FileNameToDocumentURI(fileName)) {
 	// 	f.configFileForOpenFiles[path] = configName
@@ -70,7 +188,7 @@ func (s *Snapshot) getConfigFileNameForFile(fileName string, path tspath.Path, l
 	return configName
 }
 
-func (s *Snapshot) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, loadKind projectLoadKind) string {
+func (b *projectCollectionBuilder) getAncestorConfigFileName(fileName string, path tspath.Path, configFileName string, loadKind projectLoadKind) string {
 	if project.IsDynamicFileName(fileName) {
 		return ""
 	}
@@ -86,7 +204,7 @@ func (s *Snapshot) getAncestorConfigFileName(fileName string, path tspath.Path, 
 	}
 
 	// Look for config in parent folders of config file
-	result := s.computeConfigFileName(configFileName, true)
+	result := b.computeConfigFileName(configFileName, true)
 
 	// if f.IsOpenFile(ls.FileNameToDocumentURI(fileName)) {
 	// 	ancestorConfigMap, ok := f.configFilesAncestorForOpenFiles[path]
@@ -99,7 +217,7 @@ func (s *Snapshot) getAncestorConfigFileName(fileName string, path tspath.Path, 
 	return result
 }
 
-func (s *Snapshot) findOrAcquireConfig(
+func (b *projectCollectionBuilder) findOrAcquireConfig(
 	// info *ScriptInfo,
 	configFileName string,
 	configFilePath tspath.Path,
@@ -107,30 +225,28 @@ func (s *Snapshot) findOrAcquireConfig(
 ) *tsoptions.ParsedCommandLine {
 	switch loadKind {
 	case projectLoadKindFind:
-		return s.configFileRegistry.getConfig(configFilePath)
+		// !!! is this right?
+		return b.snapshot.configFileRegistry.getConfig(configFilePath)
 	case projectLoadKindCreate:
-		return s.configFileRegistry.acquireConfig(configFileName, configFilePath, nil)
+		return b.configFileRegistryBuilder.acquireConfig(configFileName, configFilePath, nil)
 	default:
 		panic(fmt.Sprintf("unknown project load kind: %d", loadKind))
 	}
 }
 
-func (s *Snapshot) findOrCreateProject(
+func (b *projectCollectionBuilder) findOrCreateProject(
 	configFileName string,
 	configFilePath tspath.Path,
 	loadKind projectLoadKind,
 ) *Project {
-	project := s.configuredProjects[configFilePath]
-	if project == nil {
-		if loadKind == projectLoadKindFind {
-			return nil
-		}
-		project = NewConfiguredProject(configFileName, configFilePath, s)
+	if loadKind == projectLoadKindFind {
+		return b.base.configuredProjects[configFilePath]
 	}
-	return project
+	entry, _ := b.loadOrStoreNewEntry(configFileName, configFilePath)
+	return entry.project
 }
 
-func (s *Snapshot) isDefaultConfigForScript(
+func (b *projectCollectionBuilder) isDefaultConfigForScript(
 	scriptFileName string,
 	scriptPath tspath.Path,
 	configFileName string,
@@ -151,11 +267,11 @@ func (s *Snapshot) isDefaultConfigForScript(
 	}
 
 	// Ensure the project is uptodate and created since the file may belong to this project
-	project := s.findOrCreateProject(configFileName, configFilePath, loadKind)
-	return s.isDefaultProject(scriptFileName, scriptPath, project, loadKind, result)
+	project := b.findOrCreateProject(configFileName, configFilePath, loadKind)
+	return b.isDefaultProject(scriptFileName, scriptPath, project, loadKind, result)
 }
 
-func (s *Snapshot) isDefaultProject(
+func (b *projectCollectionBuilder) isDefaultProject(
 	fileName string,
 	path tspath.Path,
 	project *Project,
@@ -172,7 +288,7 @@ func (s *Snapshot) isDefaultProject(
 	}
 	// Make sure project is upto date when in create mode
 	if loadKind == projectLoadKindCreate {
-		project.updateGraph()
+		project = b.updateProject(project.configFilePath)
 	}
 	// If script info belongs to this project, use this as default config project
 	if project.containsFile(path) {
@@ -187,7 +303,7 @@ func (s *Snapshot) isDefaultProject(
 	return false
 }
 
-func (s *Snapshot) tryFindDefaultConfiguredProjectFromReferences(
+func (b *projectCollectionBuilder) tryFindDefaultConfiguredProjectFromReferences(
 	fileName string,
 	path tspath.Path,
 	config *tsoptions.ParsedCommandLine,
@@ -198,12 +314,12 @@ func (s *Snapshot) tryFindDefaultConfiguredProjectFromReferences(
 		return false
 	}
 	wg := core.NewWorkGroup(false)
-	s.tryFindDefaultConfiguredProjectFromReferencesWorker(fileName, path, config, loadKind, result, wg)
+	b.tryFindDefaultConfiguredProjectFromReferencesWorker(fileName, path, config, loadKind, result, wg)
 	wg.RunAndWait()
 	return result.isDone()
 }
 
-func (s *Snapshot) tryFindDefaultConfiguredProjectFromReferencesWorker(
+func (b *projectCollectionBuilder) tryFindDefaultConfiguredProjectFromReferencesWorker(
 	fileName string,
 	path tspath.Path,
 	config *tsoptions.ParsedCommandLine,
@@ -216,18 +332,18 @@ func (s *Snapshot) tryFindDefaultConfiguredProjectFromReferencesWorker(
 	}
 	for _, childConfigFileName := range config.ResolvedProjectReferencePaths() {
 		wg.Queue(func() {
-			childConfigFilePath := s.toPath(childConfigFileName)
-			childConfig := s.findOrAcquireConfig(childConfigFileName, childConfigFilePath, loadKind)
-			if childConfig == nil || s.isDefaultConfigForScript(fileName, path, childConfigFileName, childConfigFilePath, childConfig, loadKind, result) {
+			childConfigFilePath := b.snapshot.toPath(childConfigFileName)
+			childConfig := b.findOrAcquireConfig(childConfigFileName, childConfigFilePath, loadKind)
+			if childConfig == nil || b.isDefaultConfigForScript(fileName, path, childConfigFileName, childConfigFilePath, childConfig, loadKind, result) {
 				return
 			}
 			// Search in references if we cant find default project in current config
-			s.tryFindDefaultConfiguredProjectFromReferencesWorker(fileName, path, childConfig, loadKind, result, wg)
+			b.tryFindDefaultConfiguredProjectFromReferencesWorker(fileName, path, childConfig, loadKind, result, wg)
 		})
 	}
 }
 
-func (s *Snapshot) tryFindDefaultConfiguredProjectFromAncestor(
+func (b *projectCollectionBuilder) tryFindDefaultConfiguredProjectFromAncestor(
 	fileName string,
 	path tspath.Path,
 	configFileName string,
@@ -238,13 +354,13 @@ func (s *Snapshot) tryFindDefaultConfiguredProjectFromAncestor(
 	if config != nil && config.CompilerOptions().DisableSolutionSearching.IsTrue() {
 		return false
 	}
-	if ancestorConfigName := s.getAncestorConfigFileName(fileName, path, configFileName, loadKind); ancestorConfigName != "" {
-		return s.tryFindDefaultConfiguredProjectForScriptInfo(fileName, path, ancestorConfigName, loadKind, result)
+	if ancestorConfigName := b.getAncestorConfigFileName(fileName, path, configFileName, loadKind); ancestorConfigName != "" {
+		return b.tryFindDefaultConfiguredProjectForScriptInfo(fileName, path, ancestorConfigName, loadKind, result)
 	}
 	return false
 }
 
-func (s *Snapshot) tryFindDefaultConfiguredProjectForScriptInfo(
+func (b *projectCollectionBuilder) tryFindDefaultConfiguredProjectForScriptInfo(
 	fileName string,
 	path tspath.Path,
 	configFileName string,
@@ -252,39 +368,39 @@ func (s *Snapshot) tryFindDefaultConfiguredProjectForScriptInfo(
 	result *openScriptInfoProjectResult,
 ) bool {
 	// Lookup from parsedConfig if available
-	configFilePath := s.toPath(configFileName)
-	config := s.findOrAcquireConfig(configFileName, configFilePath, loadKind)
+	configFilePath := b.snapshot.toPath(configFileName)
+	config := b.findOrAcquireConfig(configFileName, configFilePath, loadKind)
 	if config != nil {
 		if config.CompilerOptions().Composite == core.TSTrue {
-			if s.isDefaultConfigForScript(fileName, path, configFileName, configFilePath, config, loadKind, result) {
+			if b.isDefaultConfigForScript(fileName, path, configFileName, configFilePath, config, loadKind, result) {
 				return true
 			}
 		} else if len(config.FileNames()) > 0 {
-			project := s.findOrCreateProject(configFileName, configFilePath, loadKind)
-			if s.isDefaultProject(fileName, path, project, loadKind, result) {
+			project := b.findOrCreateProject(configFileName, configFilePath, loadKind)
+			if b.isDefaultProject(fileName, path, project, loadKind, result) {
 				return true
 			}
 		}
 		// Lookup in references
-		if s.tryFindDefaultConfiguredProjectFromReferences(fileName, path, config, loadKind, result) {
+		if b.tryFindDefaultConfiguredProjectFromReferences(fileName, path, config, loadKind, result) {
 			return true
 		}
 	}
 	// Lookup in ancestor projects
-	if s.tryFindDefaultConfiguredProjectFromAncestor(fileName, path, configFileName, config, loadKind, result) {
+	if b.tryFindDefaultConfiguredProjectFromAncestor(fileName, path, configFileName, config, loadKind, result) {
 		return true
 	}
 	return false
 }
 
-func (s *Snapshot) tryFindDefaultConfiguredProjectForOpenScriptInfo(
+func (b *projectCollectionBuilder) tryFindDefaultConfiguredProjectForOpenScriptInfo(
 	fileName string,
 	path tspath.Path,
 	loadKind projectLoadKind,
 ) *openScriptInfoProjectResult {
-	if configFileName := s.getConfigFileNameForFile(fileName, path, loadKind); configFileName != "" {
+	if configFileName := b.getConfigFileNameForFile(fileName, path, loadKind); configFileName != "" {
 		var result openScriptInfoProjectResult
-		s.tryFindDefaultConfiguredProjectForScriptInfo(fileName, path, configFileName, loadKind, &result)
+		b.tryFindDefaultConfiguredProjectForScriptInfo(fileName, path, configFileName, loadKind, &result)
 		if result.project == nil && result.fallbackDefault != nil {
 			result.setProject(result.fallbackDefault)
 		}
@@ -293,12 +409,12 @@ func (s *Snapshot) tryFindDefaultConfiguredProjectForOpenScriptInfo(
 	return nil
 }
 
-func (s *Snapshot) tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(
+func (b *projectCollectionBuilder) tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(
 	fileName string,
 	path tspath.Path,
 	loadKind projectLoadKind,
 ) *openScriptInfoProjectResult {
-	result := s.tryFindDefaultConfiguredProjectForOpenScriptInfo(fileName, path, loadKind)
+	result := b.tryFindDefaultConfiguredProjectForOpenScriptInfo(fileName, path, loadKind)
 	if result != nil && result.project != nil {
 		// !!! sheetal todo this later
 		// // Create ancestor tree for findAllRefs (dont load them right away)
@@ -319,9 +435,9 @@ func (s *Snapshot) tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptI
 	return result
 }
 
-func (s *Snapshot) findDefaultConfiguredProject(fileName string, path tspath.Path) *Project {
-	if s.IsOpenFile(path) {
-		result := s.tryFindDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind)
+func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string, path tspath.Path) *Project {
+	if b.snapshot.IsOpenFile(path) {
+		result := b.tryFindDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind)
 		if result != nil && result.project != nil /* !!! && !result.project.deferredClose */ {
 			return result.project
 		}

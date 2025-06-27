@@ -59,6 +59,8 @@ func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Sess
 			overlayFS.overlays,
 			&options,
 			parseCache,
+			logger,
+			&configFileRegistry{},
 		),
 	}
 }

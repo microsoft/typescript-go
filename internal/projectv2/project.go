@@ -154,24 +154,17 @@ func (p *Project) IsSourceFromProjectReference(path tspath.Path) bool {
 	return p.Program != nil && p.Program.IsSourceFromProjectReference(path)
 }
 
-type projectChange struct {
-	changedURIs   []tspath.Path
-	requestedURIs []struct {
-		path           tspath.Path
-		defaultProject *Project
-	}
-}
-
 type projectChangeResult struct {
 	changed bool
 }
 
-func (p *Project) Clone(ctx context.Context, change projectChange, newSnapshot *Snapshot) (*Project, projectChangeResult) {
+func (p *Project) Clone(ctx context.Context, change snapshotChange, newSnapshot *Snapshot) (*Project, projectChangeResult) {
 	var result projectChangeResult
 	var loadProgram bool
 	// var pendingReload PendingReload
 	for _, file := range change.requestedURIs {
-		if file.defaultProject == p {
+		// !!! ensure this is cheap
+		if p.snapshot.GetDefaultProject(file) == p {
 			loadProgram = true
 			break
 		}
@@ -179,7 +172,8 @@ func (p *Project) Clone(ctx context.Context, change projectChange, newSnapshot *
 
 	var singleChangedFile tspath.Path
 	if p.Program != nil || !loadProgram {
-		for _, path := range change.changedURIs {
+		for uri := range change.fileChanges.Changed.Keys() {
+			path := uri.Path(p.FS().UseCaseSensitiveFileNames())
 			if p.containsFile(path) {
 				loadProgram = true
 				if p.Program == nil {
