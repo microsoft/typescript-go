@@ -1,11 +1,13 @@
 package project
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
 	"maps"
 	"runtime"
+	"slices"
 	"strings"
 	"sync"
 
@@ -296,6 +298,17 @@ func (s *Service) Close() {
 }
 
 func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.FileEvent) error {
+	{
+		deduped := slices.Clone(changes)
+		slices.SortFunc(deduped, func(a, b *lsproto.FileEvent) int {
+			if c := strings.Compare(string(a.Uri), string(b.Uri)); c != 0 {
+				return c
+			}
+			return cmp.Compare(a.Type, b.Type)
+		})
+		changes = slices.CompactFunc(deduped, func(a, b *lsproto.FileEvent) bool { return *a == *b })
+	}
+
 	s.projectsMu.RLock()
 	defer s.projectsMu.RUnlock()
 	for _, change := range changes {
