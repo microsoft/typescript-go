@@ -14,20 +14,19 @@ func buildInfoToProgramState(buildInfo *BuildInfo, buildInfoFileName string, con
 		filePaths:          make([]tspath.Path, 0, len(buildInfo.FileNames)),
 		filePathSet:        make([]*collections.Set[tspath.Path], 0, len(buildInfo.FileIdsList)),
 	}
-	for _, fileName := range buildInfo.FileNames {
-		path := tspath.ToPath(fileName, to.buildInfoDirectory, config.UseCaseSensitiveFileNames())
-		to.filePaths = append(to.filePaths, path)
-	}
-	for _, fileIdList := range buildInfo.FileIdsList {
+	to.filePaths = core.Map(buildInfo.FileNames, func(fileName string) tspath.Path {
+		return tspath.ToPath(fileName, to.buildInfoDirectory, config.UseCaseSensitiveFileNames())
+	})
+	to.filePathSet = core.Map(buildInfo.FileIdsList, func(fileIdList []BuildInfoFileId) *collections.Set[tspath.Path] {
 		fileSet := collections.NewSetWithSizeHint[tspath.Path](len(fileIdList))
 		for _, fileId := range fileIdList {
 			fileSet.Add(to.toFilePath(fileId))
 		}
-		to.filePathSet = append(to.filePathSet, fileSet)
-	}
+		return fileSet
+	})
 	to.setCompilerOptions()
 	to.setFileInfoAndEmitSignatures()
-	to.setReferenceMap()
+	to.setReferencedMap()
 	to.setChangeFileSet()
 	to.setSemanticDiagnostics()
 	to.setEmitDiagnostics()
@@ -60,35 +59,33 @@ func (t *toProgramState) toFilePathSet(fileIdListId BuildInfoFileIdListId) *coll
 	return t.filePathSet[fileIdListId-1]
 }
 
-func (t *toProgramState) toDiagnosticCompatibleWithProgramState(diagnostics []*BuildInfoDiagnostic) ([]*BuildInfoDiagnostic, bool) {
-	var fixedDiagnostics []*BuildInfoDiagnostic
-	var changed bool
-	for _, d := range diagnostics {
-		file := d.file
-		if d.file != false && d.file != 0 {
-			file = t.toFilePath(BuildInfoFileId(d.file.(float64)))
+func (t *toProgramState) toBuildInfoDiagnosticsWithFileName(diagnostics []*BuildInfoDiagnostic) []*buildInfoDiagnosticWithFileName {
+	return core.Map(diagnostics, func(d *BuildInfoDiagnostic) *buildInfoDiagnosticWithFileName {
+		var file tspath.Path
+		if d.File != 0 {
+			file = t.toFilePath(d.File)
 		}
-		messageChain, changedMessageChain := t.toDiagnosticCompatibleWithProgramState(d.messageChain)
-		relatedInformation, changedRelatedInformation := t.toDiagnosticCompatibleWithProgramState(d.relatedInformation)
-		if file != d.file || changedMessageChain || changedRelatedInformation {
-			fixedDiagnostics = append(fixedDiagnostics, &BuildInfoDiagnostic{
-				file:               file,
-				loc:                d.loc,
-				code:               d.code,
-				category:           d.category,
-				message:            d.message,
-				messageChain:       messageChain,
-				relatedInformation: relatedInformation,
-				reportsUnnecessary: d.reportsUnnecessary,
-				reportsDeprecated:  d.reportsDeprecated,
-				skippedOnNoEmit:    d.skippedOnNoEmit,
-			})
-			changed = true
-		} else {
-			fixedDiagnostics = append(fixedDiagnostics, d)
+		return &buildInfoDiagnosticWithFileName{
+			file:               file,
+			noFile:             d.NoFile,
+			pos:                d.Pos,
+			end:                d.End,
+			code:               d.Code,
+			category:           d.Category,
+			message:            d.Message,
+			messageChain:       t.toBuildInfoDiagnosticsWithFileName(d.MessageChain),
+			relatedInformation: t.toBuildInfoDiagnosticsWithFileName(d.RelatedInformation),
+			reportsUnnecessary: d.ReportsUnnecessary,
+			reportsDeprecated:  d.ReportsDeprecated,
+			skippedOnNoEmit:    d.SkippedOnNoEmit,
 		}
+	})
+}
+
+func (t *toProgramState) toDiagnosticsOrBuildInfoDiagnosticsWithFileName(dig *BuildInfoDiagnosticsOfFile) *diagnosticsOrBuildInfoDiagnosticsWithFileName {
+	return &diagnosticsOrBuildInfoDiagnosticsWithFileName{
+		buildInfoDiagnostics: t.toBuildInfoDiagnosticsWithFileName(dig.Diagnostics),
 	}
-	return core.IfElse(changed, fixedDiagnostics, diagnostics), changed
 }
 
 func (t *toProgramState) setCompilerOptions() {
@@ -126,7 +123,7 @@ func (t *toProgramState) setFileInfoAndEmitSignatures() {
 	}
 }
 
-func (t *toProgramState) setReferenceMap() {
+func (t *toProgramState) setReferencedMap() {
 	t.state.createReferenceMap()
 	for _, entry := range t.buildInfo.ReferencedMap {
 		t.state.referencedMap.Add(t.toFilePath(entry.FileId), t.toFilePathSet(entry.FileIdListId))
@@ -142,11 +139,11 @@ func (t *toProgramState) setChangeFileSet() {
 }
 
 func (t *toProgramState) setSemanticDiagnostics() {
-	t.state.semanticDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnostics, len(t.state.fileInfos))
+	t.state.semanticDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(t.state.fileInfos))
 	for path := range t.state.fileInfos {
 		// Initialize to have no diagnostics if its not changed file
 		if !t.state.changedFilesSet.Has(path) {
-			t.state.semanticDiagnosticsPerFile[path] = &diagnosticsOrBuildInfoDiagnostics{}
+			t.state.semanticDiagnosticsPerFile[path] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{}
 		}
 	}
 	for _, diagnostic := range t.buildInfo.SemanticDiagnosticsPerFile {
@@ -154,23 +151,17 @@ func (t *toProgramState) setSemanticDiagnostics() {
 			filePath := t.toFilePath(diagnostic.FileId)
 			delete(t.state.semanticDiagnosticsPerFile, filePath) // does not have cached diagnostics
 		} else {
-			filePath := t.toFilePath(diagnostic.Diagnostic.fileId)
-			diagnostics, _ := t.toDiagnosticCompatibleWithProgramState(diagnostic.Diagnostic.diagnostics)
-			t.state.semanticDiagnosticsPerFile[filePath] = &diagnosticsOrBuildInfoDiagnostics{
-				buildInfoDiagnostics: diagnostics,
-			}
+			filePath := t.toFilePath(diagnostic.Diagnostics.FileId)
+			t.state.semanticDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic.Diagnostics)
 		}
 	}
 }
 
 func (t *toProgramState) setEmitDiagnostics() {
-	t.state.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnostics, len(t.state.fileInfos))
+	t.state.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(t.state.fileInfos))
 	for _, diagnostic := range t.buildInfo.EmitDiagnosticsPerFile {
-		filePath := t.toFilePath(diagnostic.fileId)
-		diagnostics, _ := t.toDiagnosticCompatibleWithProgramState(diagnostic.diagnostics)
-		t.state.emitDiagnosticsPerFile[filePath] = &diagnosticsOrBuildInfoDiagnostics{
-			buildInfoDiagnostics: diagnostics,
-		}
+		filePath := t.toFilePath(diagnostic.FileId)
+		t.state.emitDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic)
 	}
 }
 
