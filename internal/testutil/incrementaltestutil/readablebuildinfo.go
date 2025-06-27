@@ -2,9 +2,11 @@ package incrementaltestutil
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/incremental"
 )
 
@@ -15,20 +17,20 @@ type readableBuildInfo struct {
 	// Common between incremental and tsc -b buildinfo for non incremental programs
 	Errors       bool `json:"errors,omitzero"`
 	CheckPending bool `json:"checkPending,omitzero"`
-	// Root         []BuildInfoRoot `json:"root,omitempty,omitzero"`
+	// Root         []BuildInfoRoot `json:"root,omitzero"`
 
 	// IncrementalProgram info
 	FileNames                  []string                                  `json:"fileNames,omitzero"`
 	FileInfos                  []*readableBuildInfoFileInfo              `json:"fileInfos,omitzero"`
 	FileIdsList                [][]string                                `json:"fileIdsList,omitzero"`
-	Options                    *collections.OrderedMap[string, any]      `json:"options,omitempty"`
-	ReferencedMap              []readableBuildInfoReferenceMapEntry      `json:"referencedMap,omitzero"`
-	SemanticDiagnosticsPerFile []incremental.BuildInfoSemanticDiagnostic `json:"semanticDiagnosticsPerFile,omitzero"`
-	EmitDiagnosticsPerFile     []incremental.BuildInfoDiagnosticOfFile   `json:"emitDiagnosticsPerFile,omitzero"`
-	ChangeFileSet              []incremental.BuildInfoFileId             `json:"changeFileSet,omitzero"`
-	AffectedFilesPendingEmit   []incremental.BuildInfoFilePendingEmit    `json:"affectedFilesPendingEmit,omitzero"`
+	Options                    *collections.OrderedMap[string, any]      `json:"options,omitzero"`
+	ReferencedMap              *collections.OrderedMap[string, []string] `json:"referencedMap,omitzero"`
+	SemanticDiagnosticsPerFile []*readableBuildInfoSemanticDiagnostic    `json:"semanticDiagnosticsPerFile,omitzero"`
+	EmitDiagnosticsPerFile     []*readableBuildInfoDiagnosticsOfFile     `json:"emitDiagnosticsPerFile,omitzero"`
+	ChangeFileSet              []string                                  `json:"changeFileSet,omitzero"` // List of changed files in the program, not the whole set of files
+	AffectedFilesPendingEmit   []*incremental.BuildInfoFilePendingEmit   `json:"affectedFilesPendingEmit,omitzero"`
 	LatestChangedDtsFile       string                                    `json:"latestChangedDtsFile,omitzero"` // Because this is only output file in the program, we dont need fileId to deduplicate name
-	EmitSignatures             []incremental.BuildInfoEmitSignature      `json:"emitSignatures,omitzero"`
+	EmitSignatures             []*incremental.BuildInfoEmitSignature     `json:"emitSignatures,omitzero"`
 	// resolvedRoot: readonly IncrementalBuildInfoResolvedRoot[] | undefined;
 	Size int `json:"size,omitzero"` // Size of the build info file
 }
@@ -39,84 +41,108 @@ type readableBuildInfoFileInfo struct {
 	Signature          string                         `json:"signature,omitzero"`
 	AffectsGlobalScope bool                           `json:"affectsGlobalScope,omitzero"`
 	ImpliedNodeFormat  string                         `json:"impliedNodeFormat,omitzero"`
-	Original           *incremental.BuildInfoFileInfo `json:"original,omitempty"` // Original file path, if available
+	Original           *incremental.BuildInfoFileInfo `json:"original,omitzero"` // Original file path, if available
 }
 
-type readableBuildInfoReferenceMapEntry struct {
-	file     string
-	fileList []string
+type readableBuildInfoDiagnostic struct {
+	// incrementalBuildInfoFileId if it is for a File thats other than its stored for
+	File               string                         `json:"file,omitzero"`
+	NoFile             bool                           `json:"noFile,omitzero"`
+	Pos                int                            `json:"pos,omitzero"`
+	End                int                            `json:"end,omitzero"`
+	Code               int32                          `json:"code,omitzero"`
+	Category           diagnostics.Category           `json:"category,omitzero"`
+	Message            string                         `json:"message,omitzero"`
+	MessageChain       []*readableBuildInfoDiagnostic `json:"messageChain,omitzero"`
+	RelatedInformation []*readableBuildInfoDiagnostic `json:"relatedInformation,omitzero"`
+	ReportsUnnecessary bool                           `json:"reportsUnnecessary,omitzero"`
+	ReportsDeprecated  bool                           `json:"reportsDeprecated,omitzero"`
+	SkippedOnNoEmit    bool                           `json:"skippedOnNoEmit,omitzero"`
 }
 
-func (r *readableBuildInfoReferenceMapEntry) MarshalJSON() ([]byte, error) {
-	return json.Marshal([2]any{r.file, r.fileList})
+type readableBuildInfoDiagnosticsOfFile struct {
+	file        string
+	diagnostics []*readableBuildInfoDiagnostic
 }
 
-func (r *readableBuildInfoReferenceMapEntry) UnmarshalJSON(data []byte) error {
-	var v [2]any
-	if err := json.Unmarshal(data, &v); err != nil {
-		return err
+func (r *readableBuildInfoDiagnosticsOfFile) MarshalJSON() ([]byte, error) {
+	fileIdAndDiagnostics := make([]any, 0, 2)
+	fileIdAndDiagnostics = append(fileIdAndDiagnostics, r.file)
+	fileIdAndDiagnostics = append(fileIdAndDiagnostics, r.diagnostics)
+	return json.Marshal(fileIdAndDiagnostics)
+}
+
+func (r *readableBuildInfoDiagnosticsOfFile) UnmarshalJSON(data []byte) error {
+	var fileIdAndDiagnostics []any
+	if err := json.Unmarshal(data, &fileIdAndDiagnostics); err != nil {
+		return fmt.Errorf("invalid readableBuildInfoDiagnosticsOfFile: %s", data)
 	}
-	*r = readableBuildInfoReferenceMapEntry{
-		file:     v[0].(string),
-		fileList: v[1].([]string),
+	if len(fileIdAndDiagnostics) != 2 {
+		return fmt.Errorf("invalid readableBuildInfoDiagnosticsOfFile: expected 2 elements, got %d", len(fileIdAndDiagnostics))
 	}
-	return nil
+	file, ok := fileIdAndDiagnostics[0].(string)
+	if !ok {
+		return fmt.Errorf("invalid fileId in readableBuildInfoDiagnosticsOfFile: expected string, got %T", fileIdAndDiagnostics[0])
+	}
+	if diagnostics, ok := fileIdAndDiagnostics[1].([]*readableBuildInfoDiagnostic); ok {
+		*r = readableBuildInfoDiagnosticsOfFile{
+			file:        file,
+			diagnostics: diagnostics,
+		}
+		return nil
+	}
+	return fmt.Errorf("invalid diagnostics in readableBuildInfoDiagnosticsOfFile: expected []*readableBuildInfoDiagnostic, got %T", fileIdAndDiagnostics[1])
 }
 
-// type readableBuildInfoSemanticDiagnostic struct {
-// 	file       string                                // File is not in changedSet and still doesnt have cached diagnostics
-// 	diagnostic incremental.BuildInfoDiagnosticOfFile // Diagnostics for file
-// }
+type readableBuildInfoSemanticDiagnostic struct {
+	file        string                              // File is not in changedSet and still doesnt have cached diagnostics
+	diagnostics *readableBuildInfoDiagnosticsOfFile // Diagnostics for file
+}
 
-// func (b *readableBuildInfoSemanticDiagnostic) MarshalJSON() ([]byte, error) {
-// 	if b.file != 0 {
-// 		return json.Marshal(b.file)
-// 	}
-// 	return json.Marshal(b.diagnostic)
-// }
+func (r *readableBuildInfoSemanticDiagnostic) MarshalJSON() ([]byte, error) {
+	if r.file != "" {
+		return json.Marshal(r.file)
+	}
+	return json.Marshal(r.diagnostics)
+}
 
-// func (b *readableBuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
-// 	var fileId BuildInfoFileId
-// 	if err := json.Unmarshal(data, &fileId); err == nil {
-// 		*b = BuildInfoSemanticDiagnostic{
-// 			FileId: fileId,
-// 		}
-// 		return nil
-// 	}
-// 	var diagnostic BuildInfoDiagnosticOfFile
-// 	if err := json.Unmarshal(data, &diagnostic); err == nil {
-// 		*b = BuildInfoSemanticDiagnostic{
-// 			Diagnostic: diagnostic,
-// 		}
-// 		return nil
-// 	}
-// 	return fmt.Errorf("invalid IncrementalBuildInfoDiagnostic: %s", data)
-// }
+func (r *readableBuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
+	var file string
+	if err := json.Unmarshal(data, &file); err == nil {
+		*r = readableBuildInfoSemanticDiagnostic{
+			file: file,
+		}
+		return nil
+	}
+	var diagnostics readableBuildInfoDiagnosticsOfFile
+	if err := json.Unmarshal(data, &diagnostics); err == nil {
+		*r = readableBuildInfoSemanticDiagnostic{
+			diagnostics: &diagnostics,
+		}
+		return nil
+	}
+	return fmt.Errorf("invalid readableBuildInfoSemanticDiagnostic: %s", data)
+}
 
 func toReadableBuildInfo(buildInfo *incremental.BuildInfo, buildInfoText string) string {
 	readable := readableBuildInfo{
-		buildInfo: buildInfo,
-		Version:   buildInfo.Version,
-
-		Errors:       buildInfo.Errors,
-		CheckPending: buildInfo.CheckPending,
-		// Root:         buildInfo.Root,
-
-		FileNames: buildInfo.FileNames,
-		Options:   buildInfo.Options,
-		// SemanticDiagnosticsPerFile []incremental.BuildInfoSemanticDiagnostic `json:"semanticDiagnosticsPerFile,omitzero"`
-		// EmitDiagnosticsPerFile     []incremental.BuildInfoDiagnosticOfFile   `json:"emitDiagnosticsPerFile,omitzero"`
-		// ChangeFileSet              []incremental.BuildInfoFileId             `json:"changeFileSet,omitzero"`
-		// AffectedFilesPendingEmit   []incremental.BuildInfoFilePendingEmit    `json:"affectedFilesPendingEmit,omitzero"`
+		buildInfo:            buildInfo,
+		Version:              buildInfo.Version,
+		Errors:               buildInfo.Errors,
+		CheckPending:         buildInfo.CheckPending,
+		FileNames:            buildInfo.FileNames,
+		Options:              buildInfo.Options,
 		LatestChangedDtsFile: buildInfo.LatestChangedDtsFile,
-		// EmitSignatures             []incremental.BuildInfoEmitSignature      `json:"emitSignatures,omitzero"`
-		// resolvedRoot: readonly IncrementalBuildInfoResolvedRoot[] | undefined;
-
-		Size: len(buildInfoText),
+		Size:                 len(buildInfoText),
 	}
 	readable.setFileInfos()
 	readable.setFileIdsList()
 	readable.setReferencedMap()
+	readable.setChangeFileSet()
+	readable.setSemanticDiagnostics()
+	readable.setEmitDiagnostics()
+	readable.setAffectedFilesPendingEmit()
+	readable.setEmitSignatures()
 	contents, err := json.MarshalIndent(&readable, "", "    ")
 	if err != nil {
 		panic("readableBuildInfo: failed to marshal readable build info: " + err.Error())
@@ -132,35 +158,109 @@ func (r *readableBuildInfo) toFilePathSet(fileIdListId incremental.BuildInfoFile
 	return r.FileIdsList[fileIdListId-1]
 }
 
+func (r *readableBuildInfo) toReadableBuildInfoDiagnostic(diagnostics []*incremental.BuildInfoDiagnostic) []*readableBuildInfoDiagnostic {
+	return core.Map(diagnostics, func(d *incremental.BuildInfoDiagnostic) *readableBuildInfoDiagnostic {
+		var file string
+		if d.File != 0 {
+			file = r.toFilePath(d.File)
+		}
+		return &readableBuildInfoDiagnostic{
+			File:               file,
+			NoFile:             d.NoFile,
+			Pos:                d.Pos,
+			End:                d.End,
+			Code:               d.Code,
+			Category:           d.Category,
+			Message:            d.Message,
+			MessageChain:       r.toReadableBuildInfoDiagnostic(d.MessageChain),
+			RelatedInformation: r.toReadableBuildInfoDiagnostic(d.RelatedInformation),
+			ReportsUnnecessary: d.ReportsUnnecessary,
+			ReportsDeprecated:  d.ReportsDeprecated,
+			SkippedOnNoEmit:    d.SkippedOnNoEmit,
+		}
+	})
+}
+
+func (r *readableBuildInfo) toReadableBuildInfoDiagnosticsOfFile(diagnostics *incremental.BuildInfoDiagnosticsOfFile) *readableBuildInfoDiagnosticsOfFile {
+	return &readableBuildInfoDiagnosticsOfFile{
+		file:        r.toFilePath(diagnostics.FileId),
+		diagnostics: r.toReadableBuildInfoDiagnostic(diagnostics.Diagnostics),
+	}
+}
+
+func (r *readableBuildInfo) toReadableBuildInfoSemanticDiagnostic(diagnostics *incremental.BuildInfoSemanticDiagnostic) *readableBuildInfoSemanticDiagnostic {
+	if diagnostics.FileId != 0 {
+		return &readableBuildInfoSemanticDiagnostic{
+			file: r.toFilePath(diagnostics.FileId),
+		}
+	}
+	return &readableBuildInfoSemanticDiagnostic{
+		diagnostics: r.toReadableBuildInfoDiagnosticsOfFile(diagnostics.Diagnostics),
+	}
+}
+
 func (r *readableBuildInfo) setFileInfos() {
-	for index, original := range r.buildInfo.FileInfos {
+	r.FileInfos = core.MapIndex(r.buildInfo.FileInfos, func(original *incremental.BuildInfoFileInfo, index int) *readableBuildInfoFileInfo {
 		fileInfo := original.GetFileInfo()
 		// Dont set original for string encoding
 		if original.HasSignature() {
 			original = nil
 		}
-		r.FileInfos = append(r.FileInfos, &readableBuildInfoFileInfo{
+		return &readableBuildInfoFileInfo{
 			FileName:           r.toFilePath(incremental.BuildInfoFileId(index + 1)),
 			Version:            fileInfo.Version(),
 			Signature:          fileInfo.Signature(),
 			AffectsGlobalScope: fileInfo.AffectsGlobalScope(),
 			ImpliedNodeFormat:  fileInfo.ImpliedNodeFormat().String(),
 			Original:           original,
-		})
-	}
+		}
+	})
 }
 
 func (r *readableBuildInfo) setFileIdsList() {
-	for _, ids := range r.buildInfo.FileIdsList {
-		r.FileIdsList = append(r.FileIdsList, core.Map(ids, r.toFilePath))
-	}
+	r.FileIdsList = core.Map(r.buildInfo.FileIdsList, func(ids []incremental.BuildInfoFileId) []string {
+		return core.Map(ids, r.toFilePath)
+	})
 }
 
 func (r *readableBuildInfo) setReferencedMap() {
-	for _, entry := range r.buildInfo.ReferencedMap {
-		r.ReferencedMap = append(r.ReferencedMap, readableBuildInfoReferenceMapEntry{
-			file:     r.toFilePath(entry.FileId),
-			fileList: r.toFilePathSet(entry.FileIdListId),
-		})
+	if r.buildInfo.ReferencedMap != nil {
+		r.ReferencedMap = &collections.OrderedMap[string, []string]{}
+		for _, entry := range r.buildInfo.ReferencedMap {
+			r.ReferencedMap.Set(r.toFilePath(entry.FileId), r.toFilePathSet(entry.FileIdListId))
+		}
 	}
+}
+
+func (r *readableBuildInfo) setChangeFileSet() {
+	r.ChangeFileSet = core.Map(r.buildInfo.ChangeFileSet, r.toFilePath)
+}
+
+func (r *readableBuildInfo) setSemanticDiagnostics() {
+	r.SemanticDiagnosticsPerFile = core.Map(r.buildInfo.SemanticDiagnosticsPerFile, r.toReadableBuildInfoSemanticDiagnostic)
+}
+
+func (r *readableBuildInfo) setEmitDiagnostics() {
+	r.EmitDiagnosticsPerFile = core.Map(r.buildInfo.EmitDiagnosticsPerFile, r.toReadableBuildInfoDiagnosticsOfFile)
+}
+
+func (r *readableBuildInfo) setAffectedFilesPendingEmit() {
+	// if len(r.buildInfo.AffectedFilesPendingEmit) == 0 {
+	// 	return
+	// }
+	// ownOptionsEmitKind := getFileEmitKind(r.state.options)
+	// r.state.affectedFilesPendingEmit = make(map[tspath.Path]fileEmitKind, len(r.buildInfo.AffectedFilesPendingEmit))
+	// for _, pendingEmit := range r.buildInfo.AffectedFilesPendingEmit {
+	// 	r.state.affectedFilesPendingEmit[r.toFilePath(pendingEmit.fileId)] = core.IfElse(pendingEmit.emitKind == 0, ownOptionsEmitKind, pendingEmit.emitKind)
+	// }
+}
+
+func (r *readableBuildInfo) setEmitSignatures() {
+	// r.EmitSignatures = make([]*incremental.BuildInfoEmitSignature, 0, len(r.buildInfo.EmitSignatures))
+	// for _, value := range r.buildInfo.EmitSignatures {
+	// 	if value == nil {
+	// 		continue
+	// 	}
+	// 	r.EmitSignatures = append(r.EmitSignatures, value)
+	// }
 }

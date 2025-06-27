@@ -147,17 +147,62 @@ func (e *emitSignature) getNewEmitSignature(oldOptions *core.CompilerOptions, ne
 	}
 }
 
-type diagnosticsOrBuildInfoDiagnostics struct {
-	diagnostics          []*ast.Diagnostic
-	buildInfoDiagnostics []*BuildInfoDiagnostic
+type buildInfoDiagnosticWithFileName struct {
+	// filename if it is for a File thats other than its stored for
+	file               tspath.Path
+	noFile             bool
+	pos                int
+	end                int
+	code               int32
+	category           diagnostics.Category
+	message            string
+	messageChain       []*buildInfoDiagnosticWithFileName
+	relatedInformation []*buildInfoDiagnosticWithFileName
+	reportsUnnecessary bool
+	reportsDeprecated  bool
+	skippedOnNoEmit    bool
 }
 
-func (d *diagnosticsOrBuildInfoDiagnostics) getDiagnostics(p *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
+type diagnosticsOrBuildInfoDiagnosticsWithFileName struct {
+	diagnostics          []*ast.Diagnostic
+	buildInfoDiagnostics []*buildInfoDiagnosticWithFileName
+}
+
+func (b *buildInfoDiagnosticWithFileName) toDiagnostic(p *compiler.Program, file *ast.SourceFile) *ast.Diagnostic {
+	var fileForDiagnostic *ast.SourceFile
+	if b.file != "" {
+		fileForDiagnostic = p.GetSourceFileByPath(b.file)
+	} else if !b.noFile {
+		fileForDiagnostic = file
+	}
+	var messageChain []*ast.Diagnostic
+	for _, msg := range b.messageChain {
+		messageChain = append(messageChain, msg.toDiagnostic(p, fileForDiagnostic))
+	}
+	var relatedInformation []*ast.Diagnostic
+	for _, info := range b.relatedInformation {
+		relatedInformation = append(relatedInformation, info.toDiagnostic(p, fileForDiagnostic))
+	}
+	return ast.NewDiagnosticWith(
+		fileForDiagnostic,
+		core.NewTextRange(b.pos, b.end),
+		b.code,
+		b.category,
+		b.message,
+		messageChain,
+		relatedInformation,
+		b.reportsUnnecessary,
+		b.reportsDeprecated,
+		b.skippedOnNoEmit,
+	)
+}
+
+func (d *diagnosticsOrBuildInfoDiagnosticsWithFileName) getDiagnostics(p *compiler.Program, file *ast.SourceFile) []*ast.Diagnostic {
 	if d.diagnostics != nil {
 		return d.diagnostics
 	}
 	// Convert and cache the diagnostics
-	d.diagnostics = core.Map(d.buildInfoDiagnostics, func(diag *BuildInfoDiagnostic) *ast.Diagnostic {
+	d.diagnostics = core.Map(d.buildInfoDiagnostics, func(diag *buildInfoDiagnosticWithFileName) *ast.Diagnostic {
 		return diag.toDiagnostic(p, file)
 	})
 	return d.diagnostics
@@ -177,9 +222,9 @@ type programState struct {
 	/**
 	 * Cache of bind and check diagnostics for files with their Path being the key
 	 */
-	semanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnostics
+	semanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
 	/** Cache of dts emit diagnostics for files with their Path being the key */
-	emitDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnostics
+	emitDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
 	/**
 	 * The map has key by source file's path that has been changed
 	 */
@@ -462,9 +507,9 @@ func (p *programState) emitNextAffectedFile(ctx context.Context, program *compil
 	}
 	if len(result.Diagnostics) != 0 {
 		if p.emitDiagnosticsPerFile == nil {
-			p.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnostics)
+			p.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName)
 		}
-		p.emitDiagnosticsPerFile[affected.Path()] = &diagnosticsOrBuildInfoDiagnostics{
+		p.emitDiagnosticsPerFile[affected.Path()] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{
 			diagnostics: result.Diagnostics,
 		}
 	}
@@ -493,7 +538,7 @@ func (p *programState) getNextAffectedFilePendingEmit(program *compiler.Program,
 	return nil, 0
 }
 
-func (p *programState) getNextPendingEmitDiagnosticsFile(program *compiler.Program, isForDtsErrors bool) (*ast.SourceFile, *diagnosticsOrBuildInfoDiagnostics, fileEmitKind) {
+func (p *programState) getNextPendingEmitDiagnosticsFile(program *compiler.Program, isForDtsErrors bool) (*ast.SourceFile, *diagnosticsOrBuildInfoDiagnosticsWithFileName, fileEmitKind) {
 	if len(p.emitDiagnosticsPerFile) == 0 {
 		return nil, nil, 0
 	}
@@ -726,7 +771,7 @@ func (p *programState) getSemanticDiagnosticsOfFile(ctx context.Context, program
 
 	// Diagnostics werent cached, get them from program, and cache the result
 	diagnostics := program.GetSemanticDiagnostics(ctx, file)
-	p.semanticDiagnosticsPerFile[file.Path()] = &diagnosticsOrBuildInfoDiagnostics{diagnostics: diagnostics}
+	p.semanticDiagnosticsPerFile[file.Path()] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: diagnostics}
 	p.buildInfoEmitPending = true
 	return compiler.FilterNoEmitSemanticDiagnostics(diagnostics, p.options)
 }
@@ -1124,7 +1169,7 @@ func newProgramState(program *compiler.Program, oldProgram *Program) *programSta
 	files := program.GetSourceFiles()
 	state := &programState{
 		options:                    program.Options(),
-		semanticDiagnosticsPerFile: make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnostics, len(files)),
+		semanticDiagnosticsPerFile: make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(files)),
 		seenEmittedFiles:           make(map[tspath.Path]fileEmitKind, len(files)),
 	}
 	state.createReferenceMap()
@@ -1206,7 +1251,7 @@ func newProgramState(program *compiler.Program, oldProgram *Program) *programSta
 			if !state.changedFilesSet.Has(file.Path()) {
 				if emitDiagnostics, ok := oldProgram.state.emitDiagnosticsPerFile[file.Path()]; ok {
 					if state.emitDiagnosticsPerFile == nil {
-						state.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnostics, len(files))
+						state.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(files))
 					}
 					state.emitDiagnosticsPerFile[file.Path()] = emitDiagnostics
 				}
