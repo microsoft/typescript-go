@@ -50,16 +50,23 @@ type projectCollectionBuilderEntry struct {
 	dirty   bool
 }
 
-func newProjectCollectionBuilder(ctx context.Context, newSnapshot *Snapshot, oldProjectCollection *projectCollection, changes snapshotChange) *projectCollectionBuilder {
+func newProjectCollectionBuilder(
+	ctx context.Context,
+	newSnapshot *Snapshot,
+	oldProjectCollection *projectCollection,
+	oldConfigFileRegistry *configFileRegistry,
+	changes snapshotChange,
+) *projectCollectionBuilder {
 	return &projectCollectionBuilder{
-		ctx:      ctx,
-		snapshot: newSnapshot,
-		base:     oldProjectCollection,
-		changes:  changes,
+		ctx:                       ctx,
+		snapshot:                  newSnapshot,
+		base:                      oldProjectCollection,
+		configFileRegistryBuilder: newConfigFileRegistryBuilder(newSnapshot, oldConfigFileRegistry),
+		changes:                   changes,
 	}
 }
 
-func (b *projectCollectionBuilder) finalize() *projectCollection {
+func (b *projectCollectionBuilder) finalize() (*projectCollection, *configFileRegistry) {
 	var changed bool
 	newProjectCollection := b.base
 	b.dirty.Range(func(path tspath.Path, project *Project) bool {
@@ -70,7 +77,7 @@ func (b *projectCollectionBuilder) finalize() *projectCollection {
 		newProjectCollection.configuredProjects[path] = project
 		return true
 	})
-	return newProjectCollection
+	return newProjectCollection, b.configFileRegistryBuilder.finalize()
 }
 
 func (b *projectCollectionBuilder) loadOrStoreNewEntry(

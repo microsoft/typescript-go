@@ -114,6 +114,9 @@ func NewSnapshot(
 		parseCache:         parseCache,
 		logger:             logger,
 		configFileRegistry: configFileRegistry,
+		projectCollection: &projectCollection{
+			configuredProjects: make(map[tspath.Path]*Project),
+		},
 
 		overlayFS: newOverlayFS(cachedFS, overlays),
 	}
@@ -209,9 +212,10 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	}
 	// Multiple projects include the file directly.
 	// !!! temporary!
-	builder := newProjectCollectionBuilder(context.Background(), s, s.projectCollection, snapshotChange{})
+	builder := newProjectCollectionBuilder(context.Background(), s, s.projectCollection, s.configFileRegistry, snapshotChange{})
 	defer func() {
-		if builder.finalize() != s.projectCollection {
+		p, c := builder.finalize()
+		if p != s.projectCollection || c != s.configFileRegistry {
 			panic("temporary builder should have collected no changes for a find lookup")
 		}
 	}()
@@ -244,11 +248,11 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		ctx,
 		newSnapshot,
 		s.projectCollection,
+		s.configFileRegistry,
 		change,
 	)
 
-	newSnapshot.configFileRegistry = projectCollectionBuilder.configFileRegistryBuilder.finalize()
-	newSnapshot.projectCollection = projectCollectionBuilder.finalize()
+	newSnapshot.projectCollection, newSnapshot.configFileRegistry = projectCollectionBuilder.finalize()
 
 	return newSnapshot
 }

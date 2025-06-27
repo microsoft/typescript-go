@@ -98,12 +98,12 @@ export class Client {
         const serverOptions: ServerOptions = {
             run: {
                 command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
+                args: ["--lsp", "-v2", ...pprofArgs],
                 transport: TransportKind.stdio,
             },
             debug: {
                 command: this.exe.path,
-                args: ["--lsp", ...pprofArgs],
+                args: ["--lsp", "-v2", ...pprofArgs],
                 transport: TransportKind.stdio,
             },
         };
