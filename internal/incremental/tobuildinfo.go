@@ -188,19 +188,19 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 				emitSignature := t.state.emitSignatures[file.Path()]
 				if emitSignature == nil {
 					t.buildInfo.EmitSignatures = append(t.buildInfo.EmitSignatures, &BuildInfoEmitSignature{
-						fileId: fileId,
+						FileId: fileId,
 					})
 				} else if emitSignature.signature != actualSignature {
 					incrementalEmitSignature := &BuildInfoEmitSignature{
-						fileId: fileId,
+						FileId: fileId,
 					}
 					if emitSignature.signature != "" {
-						incrementalEmitSignature.signature = emitSignature.signature
+						incrementalEmitSignature.Signature = emitSignature.signature
 					} else if emitSignature.signatureWithDifferentOptions[0] == actualSignature {
-						incrementalEmitSignature.differsOnlyInDtsMap = true
+						incrementalEmitSignature.DiffersOnlyInDtsMap = true
 					} else {
-						incrementalEmitSignature.signature = emitSignature.signatureWithDifferentOptions[0]
-						incrementalEmitSignature.differsInOptions = true
+						incrementalEmitSignature.Signature = emitSignature.signatureWithDifferentOptions[0]
+						incrementalEmitSignature.DiffersInOptions = true
 					}
 					t.buildInfo.EmitSignatures = append(t.buildInfo.EmitSignatures, incrementalEmitSignature)
 				}
@@ -294,7 +294,7 @@ func (t *toBuildInfo) setAffectedFilesPendingEmit() {
 	}
 	files := slices.Collect(maps.Keys(t.state.affectedFilesPendingEmit))
 	slices.Sort(files)
-	fullEmitKind := getFileEmitKind(t.state.options)
+	fullEmitKind := GetFileEmitKind(t.state.options)
 	for _, filePath := range files {
 		file := t.program.GetSourceFileByPath(filePath)
 		if file == nil || !t.program.SourceFileMayBeEmitted(file, false) {
@@ -302,8 +302,8 @@ func (t *toBuildInfo) setAffectedFilesPendingEmit() {
 		}
 		pendingEmit := t.state.affectedFilesPendingEmit[filePath]
 		t.buildInfo.AffectedFilesPendingEmit = append(t.buildInfo.AffectedFilesPendingEmit, &BuildInfoFilePendingEmit{
-			fileId:   t.toFileId(filePath),
-			emitKind: core.IfElse(pendingEmit == fullEmitKind, 0, pendingEmit),
+			FileId:   t.toFileId(filePath),
+			EmitKind: core.IfElse(pendingEmit == fullEmitKind, 0, pendingEmit),
 		})
 	}
 }

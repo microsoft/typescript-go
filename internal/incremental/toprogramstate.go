@@ -89,15 +89,7 @@ func (t *toProgramState) toDiagnosticsOrBuildInfoDiagnosticsWithFileName(dig *Bu
 }
 
 func (t *toProgramState) setCompilerOptions() {
-	t.state.options = &core.CompilerOptions{}
-	for option, value := range t.buildInfo.Options.Entries() {
-		result, ok := tsoptions.ConvertOptionToAbsolutePath(option, value, tsoptions.CommandLineCompilerOptionsMap, t.buildInfoDirectory)
-		if ok {
-			tsoptions.ParseCompilerOptions(option, result, t.state.options)
-		} else {
-			tsoptions.ParseCompilerOptions(option, value, t.state.options)
-		}
-	}
+	t.state.options = t.buildInfo.GetCompilerOptions(t.buildInfoDirectory)
 }
 
 func (t *toProgramState) setFileInfoAndEmitSignatures() {
@@ -115,9 +107,9 @@ func (t *toProgramState) setFileInfoAndEmitSignatures() {
 	// Fix up emit signatures
 	for _, value := range t.buildInfo.EmitSignatures {
 		if value.noEmitSignature() {
-			delete(t.state.emitSignatures, t.toFilePath(value.fileId))
+			delete(t.state.emitSignatures, t.toFilePath(value.FileId))
 		} else {
-			path := t.toFilePath(value.fileId)
+			path := t.toFilePath(value.FileId)
 			t.state.emitSignatures[path] = value.toEmitSignature(path, t.state.emitSignatures)
 		}
 	}
@@ -169,9 +161,9 @@ func (t *toProgramState) setAffectedFilesPendingEmit() {
 	if len(t.buildInfo.AffectedFilesPendingEmit) == 0 {
 		return
 	}
-	ownOptionsEmitKind := getFileEmitKind(t.state.options)
-	t.state.affectedFilesPendingEmit = make(map[tspath.Path]fileEmitKind, len(t.buildInfo.AffectedFilesPendingEmit))
+	ownOptionsEmitKind := GetFileEmitKind(t.state.options)
+	t.state.affectedFilesPendingEmit = make(map[tspath.Path]FileEmitKind, len(t.buildInfo.AffectedFilesPendingEmit))
 	for _, pendingEmit := range t.buildInfo.AffectedFilesPendingEmit {
-		t.state.affectedFilesPendingEmit[t.toFilePath(pendingEmit.fileId)] = core.IfElse(pendingEmit.emitKind == 0, ownOptionsEmitKind, pendingEmit.emitKind)
+		t.state.affectedFilesPendingEmit[t.toFilePath(pendingEmit.FileId)] = core.IfElse(pendingEmit.EmitKind == 0, ownOptionsEmitKind, pendingEmit.EmitKind)
 	}
 }

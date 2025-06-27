@@ -32,16 +32,16 @@ func (f *fileInfo) Signature() string                      { return f.signature 
 func (f *fileInfo) AffectsGlobalScope() bool               { return f.affectsGlobalScope }
 func (f *fileInfo) ImpliedNodeFormat() core.ResolutionMode { return f.impliedNodeFormat }
 
-type fileEmitKind uint32
+type FileEmitKind uint32
 
 const (
-	fileEmitKindNone        fileEmitKind = 0
-	fileEmitKindJs          fileEmitKind = 1 << 0 // emit js file
-	fileEmitKindJsMap       fileEmitKind = 1 << 1 // emit js.map file
-	fileEmitKindJsInlineMap fileEmitKind = 1 << 2 // emit inline source map in js file
-	fileEmitKindDtsErrors   fileEmitKind = 1 << 3 // emit dts errors
-	fileEmitKindDtsEmit     fileEmitKind = 1 << 4 // emit d.ts file
-	fileEmitKindDtsMap      fileEmitKind = 1 << 5 // emit d.ts.map file
+	fileEmitKindNone        FileEmitKind = 0
+	fileEmitKindJs          FileEmitKind = 1 << 0 // emit js file
+	fileEmitKindJsMap       FileEmitKind = 1 << 1 // emit js.map file
+	fileEmitKindJsInlineMap FileEmitKind = 1 << 2 // emit inline source map in js file
+	fileEmitKindDtsErrors   FileEmitKind = 1 << 3 // emit dts errors
+	fileEmitKindDtsEmit     FileEmitKind = 1 << 4 // emit d.ts file
+	fileEmitKindDtsMap      FileEmitKind = 1 << 5 // emit d.ts.map file
 
 	fileEmitKindDts        = fileEmitKindDtsErrors | fileEmitKindDtsEmit
 	fileEmitKindAllJs      = fileEmitKindJs | fileEmitKindJsMap | fileEmitKindJsInlineMap
@@ -50,7 +50,47 @@ const (
 	fileEmitKindAll        = fileEmitKindAllJs | fileEmitKindAllDts
 )
 
-func getFileEmitKind(options *core.CompilerOptions) fileEmitKind {
+func (fileEmitKind FileEmitKind) String() string {
+	var builder strings.Builder
+	addFlags := func(flags string) {
+		if builder.Len() == 0 {
+			builder.WriteString(flags)
+		} else {
+			builder.WriteString("|")
+			builder.WriteString(flags)
+		}
+	}
+	if fileEmitKind != 0 {
+		if (fileEmitKind & fileEmitKindJs) != 0 {
+			addFlags("Js")
+		}
+		if (fileEmitKind & fileEmitKindJsMap) != 0 {
+			addFlags("JsMap")
+		}
+		if (fileEmitKind & fileEmitKindJsInlineMap) != 0 {
+			addFlags("JsInlineMap")
+		}
+		if (fileEmitKind & fileEmitKindDts) == fileEmitKindDts {
+			addFlags("Dts")
+		} else {
+			if (fileEmitKind & fileEmitKindDtsEmit) != 0 {
+				addFlags("DtsEmit")
+			}
+			if (fileEmitKind & fileEmitKindDtsErrors) != 0 {
+				addFlags("DtsErrors")
+			}
+		}
+		if (fileEmitKind & fileEmitKindDtsMap) != 0 {
+			addFlags("DtsMap")
+		}
+	}
+	if builder.Len() != 0 {
+		return builder.String()
+	}
+	return "None"
+}
+
+func GetFileEmitKind(options *core.CompilerOptions) FileEmitKind {
 	result := fileEmitKindJs
 	if options.SourceMap.IsTrue() {
 		result |= fileEmitKindJsMap
@@ -70,13 +110,13 @@ func getFileEmitKind(options *core.CompilerOptions) fileEmitKind {
 	return result
 }
 
-func getPendingEmitKindWithOptions(options *core.CompilerOptions, oldOptions *core.CompilerOptions) fileEmitKind {
-	oldEmitKind := getFileEmitKind(oldOptions)
-	newEmitKind := getFileEmitKind(options)
+func getPendingEmitKindWithOptions(options *core.CompilerOptions, oldOptions *core.CompilerOptions) FileEmitKind {
+	oldEmitKind := GetFileEmitKind(oldOptions)
+	newEmitKind := GetFileEmitKind(options)
 	return getPendingEmitKind(newEmitKind, oldEmitKind)
 }
 
-func getPendingEmitKind(emitKind fileEmitKind, oldEmitKind fileEmitKind) fileEmitKind {
+func getPendingEmitKind(emitKind FileEmitKind, oldEmitKind FileEmitKind) FileEmitKind {
 	if oldEmitKind == emitKind {
 		return fileEmitKindNone
 	}
@@ -104,7 +144,7 @@ func getPendingEmitKind(emitKind fileEmitKind, oldEmitKind fileEmitKind) fileEmi
  * Determining what all is pending to be emitted based on previous options or previous file emit flags
  *  @internal
  */
-func getPendingEmitKindWithSeen(emitKind fileEmitKind, seenEmitKind fileEmitKind, options compiler.EmitOptions, isForDtsErrors bool) fileEmitKind {
+func getPendingEmitKindWithSeen(emitKind FileEmitKind, seenEmitKind FileEmitKind, options compiler.EmitOptions, isForDtsErrors bool) FileEmitKind {
 	pendingKind := getPendingEmitKind(emitKind, seenEmitKind)
 	if options.EmitOnly == compiler.EmitOnlyDts {
 		pendingKind &= fileEmitKindAllDts
@@ -115,7 +155,7 @@ func getPendingEmitKindWithSeen(emitKind fileEmitKind, seenEmitKind fileEmitKind
 	return pendingKind
 }
 
-func getFileEmitKindAllDts(isForDtsErrors bool) fileEmitKind {
+func getFileEmitKindAllDts(isForDtsErrors bool) FileEmitKind {
 	return core.IfElse(isForDtsErrors, fileEmitKindDtsErrors, fileEmitKindAllDts)
 }
 
@@ -232,7 +272,7 @@ type programState struct {
 	/**
 	 * Files pending to be emitted
 	 */
-	affectedFilesPendingEmit map[tspath.Path]fileEmitKind
+	affectedFilesPendingEmit map[tspath.Path]FileEmitKind
 	/**
 	 * Name of the file whose dts was the latest to change
 	 */
@@ -300,7 +340,7 @@ type programState struct {
 	/**
 	 * Already seen emitted files
 	 */
-	seenEmittedFiles map[tspath.Path]fileEmitKind
+	seenEmittedFiles map[tspath.Path]FileEmitKind
 	/**
 	 * Records if change in dts emit was detected
 	 */
@@ -328,11 +368,11 @@ func (p *programState) addFileToChangeSet(filePath tspath.Path) {
 	p.buildInfoEmitPending = true
 }
 
-func (p *programState) addFileToAffectedFilesPendingEmit(filePath tspath.Path, emitKind fileEmitKind) {
+func (p *programState) addFileToAffectedFilesPendingEmit(filePath tspath.Path, emitKind FileEmitKind) {
 	existingKind := p.affectedFilesPendingEmit[filePath]
 
 	if p.affectedFilesPendingEmit == nil {
-		p.affectedFilesPendingEmit = make(map[tspath.Path]fileEmitKind)
+		p.affectedFilesPendingEmit = make(map[tspath.Path]FileEmitKind)
 	}
 	p.affectedFilesPendingEmit[filePath] = existingKind | emitKind
 	delete(p.emitDiagnosticsPerFile, filePath)
@@ -421,8 +461,8 @@ func (p *programState) getDeclarationDiagnostics(ctx context.Context, program *c
  */
 func (p *programState) emitNextAffectedFile(ctx context.Context, program *compiler.Program, options compiler.EmitOptions, isForDtsErrors bool) (*compiler.EmitResult, bool) {
 	affected := p.getNextAffectedFile(ctx, program)
-	programEmitKind := getFileEmitKind(p.options)
-	var emitKind fileEmitKind
+	programEmitKind := GetFileEmitKind(p.options)
+	var emitKind FileEmitKind
 	if affected == nil {
 		// file pending emit
 		pendingAffectedFile, pendingEmitKind := p.getNextAffectedFilePendingEmit(program, options, isForDtsErrors)
@@ -519,7 +559,7 @@ func (p *programState) emitNextAffectedFile(ctx context.Context, program *compil
 /**
  * Returns next file to be emitted from files that retrieved semantic diagnostics but did not emit yet
  */
-func (p *programState) getNextAffectedFilePendingEmit(program *compiler.Program, options compiler.EmitOptions, isForDtsErrors bool) (*ast.SourceFile, fileEmitKind) {
+func (p *programState) getNextAffectedFilePendingEmit(program *compiler.Program, options compiler.EmitOptions, isForDtsErrors bool) (*ast.SourceFile, FileEmitKind) {
 	if len(p.affectedFilesPendingEmit) == 0 {
 		return nil, 0
 	}
@@ -538,7 +578,7 @@ func (p *programState) getNextAffectedFilePendingEmit(program *compiler.Program,
 	return nil, 0
 }
 
-func (p *programState) getNextPendingEmitDiagnosticsFile(program *compiler.Program, isForDtsErrors bool) (*ast.SourceFile, *diagnosticsOrBuildInfoDiagnosticsWithFileName, fileEmitKind) {
+func (p *programState) getNextPendingEmitDiagnosticsFile(program *compiler.Program, isForDtsErrors bool) (*ast.SourceFile, *diagnosticsOrBuildInfoDiagnosticsWithFileName, FileEmitKind) {
 	if len(p.emitDiagnosticsPerFile) == 0 {
 		return nil, nil, 0
 	}
@@ -814,7 +854,7 @@ func (p *programState) getNextAffectedFile(ctx context.Context, program *compile
 				affectedFile := p.affectedFiles[p.affectedFilesIndex]
 				if !p.seenAffectedFiles.Has(affectedFile.Path()) {
 					// Set the next affected file as seen and remove the cached semantic diagnostics
-					p.addFileToAffectedFilesPendingEmit(affectedFile.Path(), getFileEmitKind(p.options))
+					p.addFileToAffectedFilesPendingEmit(affectedFile.Path(), GetFileEmitKind(p.options))
 					p.handleDtsMayChangeOfAffectedFile(ctx, program, affectedFile)
 					return affectedFile
 				}
@@ -1156,7 +1196,7 @@ func (p *programState) handleDtsMayChangeOf(ctx context.Context, program *compil
 	p.updateShapeSignature(ctx, program, file, true)
 	// If not dts emit, nothing more to do
 	if invalidateJsFiles {
-		p.addFileToAffectedFilesPendingEmit(path, getFileEmitKind(p.options))
+		p.addFileToAffectedFilesPendingEmit(path, GetFileEmitKind(p.options))
 	} else if p.options.GetEmitDeclarations() {
 		p.addFileToAffectedFilesPendingEmit(path, core.IfElse(p.options.DeclarationMap.IsTrue(), fileEmitKindAllDts, fileEmitKindDts))
 	}
@@ -1170,7 +1210,7 @@ func newProgramState(program *compiler.Program, oldProgram *Program) *programSta
 	state := &programState{
 		options:                    program.Options(),
 		semanticDiagnosticsPerFile: make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(files)),
-		seenEmittedFiles:           make(map[tspath.Path]fileEmitKind, len(files)),
+		seenEmittedFiles:           make(map[tspath.Path]FileEmitKind, len(files)),
 	}
 	state.createReferenceMap()
 	if oldProgram != nil && state.options.Composite.IsTrue() {
@@ -1301,9 +1341,9 @@ func newProgramState(program *compiler.Program, oldProgram *Program) *programSta
 		if !allFilesExcludingDefaultLibraryFileAddedToChangeSet {
 			// If options affect emit, then we need to do complete emit per compiler options
 			// otherwise only the js or dts that needs to emitted because its different from previously emitted options
-			var pendingEmitKind fileEmitKind
+			var pendingEmitKind FileEmitKind
 			if tsoptions.CompilerOptionsAffectEmit(oldProgram.state.options, state.options) {
-				pendingEmitKind = getFileEmitKind(state.options)
+				pendingEmitKind = GetFileEmitKind(state.options)
 			} else {
 				pendingEmitKind = getPendingEmitKindWithOptions(state.options, oldProgram.state.options)
 			}
