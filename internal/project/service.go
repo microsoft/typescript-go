@@ -297,14 +297,15 @@ func (s *Service) Close() {
 }
 
 func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.FileEvent) error {
-	{
-		seen := collections.NewSetWithSizeHint[lsproto.FileEvent](len(changes))
-		changes = core.Filter(changes, func(change *lsproto.FileEvent) bool { return seen.AddIfAbsent(*change) })
-	}
+	seen := collections.NewSetWithSizeHint[lsproto.FileEvent](len(changes))
 
 	s.projectsMu.RLock()
 	defer s.projectsMu.RUnlock()
 	for _, change := range changes {
+		if seen.AddIfAbsent(*change) {
+			continue
+		}
+
 		fileName := ls.DocumentURIToFileName(change.Uri)
 		path := s.toPath(fileName)
 		if err, ok := s.configFileRegistry.onWatchedFilesChanged(path, change.Type); ok {
