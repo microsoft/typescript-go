@@ -1,62 +1,63 @@
 --- old.typeFromPropertyAssignment16.types
 +++ new.typeFromPropertyAssignment16.types
 @@= skipped -1, +1 lines =@@
- 
+
  === a.js ===
  var Outer = {};
 ->Outer : typeof Outer
-+>Outer : {}
- >{} : {}
- 
+->{} : {}
++>Outer : { Inner: { (): void; prototype: { x: number; m(): void; }; }; }
++>{} : { Inner: { (): void; prototype: { x: number; m(): void; }; }; }
+
  Outer.Inner = function () {}
 ->Outer.Inner = function () {} : typeof Inner
 ->Outer.Inner : typeof Inner
 ->Outer : typeof Outer
 ->Inner : typeof Inner
 ->function () {} : typeof Inner
-+>Outer.Inner = function () {} : () => void
-+>Outer.Inner : any
-+>Outer : {}
-+>Inner : any
-+>function () {} : () => void
- 
++>Outer.Inner = function () {} : { (): void; prototype: { x: number; m(): void; }; }
++>Outer.Inner : { (): void; prototype: { x: number; m(): void; }; }
++>Outer : { Inner: { (): void; prototype: { x: number; m(): void; }; }; }
++>Inner : { (): void; prototype: { x: number; m(): void; }; }
++>function () {} : { (): void; prototype: { x: number; m(): void; }; }
+
  Outer.Inner.prototype = {
-->Outer.Inner.prototype = {    x: 1,    m() { }} : { x: number; m(): void; }
-->Outer.Inner.prototype : { x: number; m(): void; }
+ >Outer.Inner.prototype = {    x: 1,    m() { }} : { x: number; m(): void; }
+ >Outer.Inner.prototype : { x: number; m(): void; }
 ->Outer.Inner : typeof Inner
 ->Outer : typeof Outer
 ->Inner : typeof Inner
-->prototype : { x: number; m(): void; }
-->{    x: 1,    m() { }} : { x: number; m(): void; }
-+>Outer.Inner.prototype = {    x: 1,    m() { }} : { x: number; m: () => void; }
-+>Outer.Inner.prototype : any
-+>Outer.Inner : any
-+>Outer : {}
-+>Inner : any
-+>prototype : any
-+>{    x: 1,    m() { }} : { x: number; m: () => void; }
- 
-     x: 1,
- >x : number
-@@= skipped -32, +32 lines =@@
- >inner : Inner
- 
++>Outer.Inner : { (): void; prototype: { x: number; m(): void; }; }
++>Outer : { Inner: { (): void; prototype: { x: number; m(): void; }; }; }
++>Inner : { (): void; prototype: { x: number; m(): void; }; }
+ >prototype : { x: number; m(): void; }
+ >{    x: 1,    m() { }} : { x: number; m(): void; }
+
+@@= skipped -29, +29 lines =@@
+
+ /** @type {Outer.Inner} */
+ var inner
+->inner : Inner
++>inner : Outer.Inner
+
  inner.x
 ->inner.x : number
-+>inner.x : any
- >inner : Inner
+->inner : Inner
 ->x : number
++>inner.x : any
++>inner : Outer.Inner
 +>x : any
- 
+
  inner.m()
 ->inner.m() : void
 ->inner.m : () => void
+->inner : Inner
+->m : () => void
 +>inner.m() : any
 +>inner.m : any
- >inner : Inner
-->m : () => void
++>inner : Outer.Inner
 +>m : any
- 
+
  var inno = new Outer.Inner()
 ->inno : Inner
 ->new Outer.Inner() : Inner
@@ -65,10 +66,10 @@
 ->Inner : typeof Inner
 +>inno : any
 +>new Outer.Inner() : any
-+>Outer.Inner : any
-+>Outer : {}
-+>Inner : any
- 
++>Outer.Inner : { (): void; prototype: { x: number; m(): void; }; }
++>Outer : { Inner: { (): void; prototype: { x: number; m(): void; }; }; }
++>Inner : { (): void; prototype: { x: number; m(): void; }; }
+
  inno.x
 ->inno.x : number
 ->inno : Inner
@@ -76,7 +77,7 @@
 +>inno.x : any
 +>inno : any
 +>x : any
- 
+
  inno.m()
 ->inno.m() : void
 ->inno.m : () => void
@@ -86,4 +87,3 @@
 +>inno.m : any
 +>inno : any
 +>m : any
- 

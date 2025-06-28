@@ -1,0 +1,63 @@
+--- old.erasableSyntaxOnly.js
++++ new.erasableSyntaxOnly.js
+@@= skipped -112, +112 lines =@@
+
+ //// [index.js]
+ class MyClassErr {
++    foo;
+     // No parameter properties
+     constructor(foo) {
+         this.foo = foo;
+@@= skipped -25, +26 lines =@@
+ (function (NotLegalEnum) {
+     NotLegalEnum[NotLegalEnum["B"] = 1] = "B";
+ })(NotLegalEnum || (NotLegalEnum = {}));
+-var NoGoodAlias = NotLegalEnum.B;
++var NotLegalConstEnum;
++(function (NotLegalConstEnum) {
++    NotLegalConstEnum[NotLegalConstEnum["C"] = 2] = "C";
++})(NotLegalConstEnum || (NotLegalConstEnum = {}));
+ // No errors after this point
+ class MyClassOk {
+     // Not a parameter property, ok
+     constructor(foo) { }
+ }
+ // Not erasable
+-(() => ({}))();
+-(() => ({}))();
+-(() => ({}))();
++(() => (({})))();
++(() => (({})))();
++(() => (({})))();
+ // Erasable
+ (() => ({}))();
+-(() => ({}))();
+-({});
++(() => (({})))();
++(({}));
+ // return and yield ASI
+ function* gen() {
+     yield 1;
+     return 1;
+ }
+ // at the start of an ExpressionStatement if followed by an object literal; though I'm not sure why one would use it there
+-({ foo() { } }.foo());
++(({ foo() { } }.foo()));
+ // at the start of an ExpressionStatement if followed by function keyword
+-(function () { })();
+-(function () { });
++((function () { }()));
++((function () { }));
+ // at the start of an ExpressionStatement if followed by an anonymous class expression
+ // note that this exact syntax currently emits invalid JS (no parenthesis added like for function above)
+-class {
+-};
++((class {
++}));
+ //// [commonjs.cjs]
+ "use strict";
+-var foo = require("./other.cjs");
++const foo = require("./other.cjs");
+ module.exports = foo;
+ //// [esm.mjs]
+ const foo = 1234;

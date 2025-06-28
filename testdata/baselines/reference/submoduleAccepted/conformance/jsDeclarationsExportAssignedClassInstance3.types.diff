@@ -2,7 +2,7 @@
 +++ new.jsDeclarationsExportAssignedClassInstance3.types
 @@= skipped -13, +13 lines =@@
  }
- 
+
  module.exports = new Foo();
 ->module.exports = new Foo() : { member: number; additional: 20; }
 ->module.exports : { member: number; additional: 20; }
@@ -10,11 +10,11 @@
 ->exports : { member: number; additional: 20; }
 +>module.exports = new Foo() : Foo
 +>module.exports : Foo
-+>module : { export=: Foo; }
++>module : { "export=": Foo; }
 +>exports : Foo
  >new Foo() : Foo
  >Foo : typeof Foo
- 
+
  module.exports.additional = 20;
  >module.exports.additional = 20 : 20
 ->module.exports.additional : 20
@@ -24,8 +24,7 @@
 ->additional : 20
 +>module.exports.additional : any
 +>module.exports : Foo
-+>module : { export=: Foo; }
++>module : { "export=": Foo; }
 +>exports : Foo
 +>additional : any
  >20 : 20
- 

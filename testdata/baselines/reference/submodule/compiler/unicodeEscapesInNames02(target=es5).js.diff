@@ -1,36 +1,10 @@
 --- old.unicodeEscapesInNames02(target=es5).js
 +++ new.unicodeEscapesInNames02(target=es5).js
-@@= skipped -32, +32 lines =@@
- //// [extendedEscapesForAstralsInVarsAndClasses.js]
- // U+102A7 CARIAN LETTER A2
- var string;
--var u, A7 = (void 0)[102];
-+var u, { 102: A7 };
- if (Math.random()) {
-     "hello";
+@@= skipped -40, +40 lines =@@
+     \u{102A7} = "hallo";
  }
-@@= skipped -12, +12 lines =@@
+ class Foo {
++    \u{102A7};
+     constructor() {
+         this.\u{102A7} = " world";
      }
-     "hallo";
- }
--var Foo = /** @class */ (function () {
--    function Foo() {
--    }
--    return Foo;
--}());
-+class Foo {
-+    u;
-+}
- {
-     102;
-     A7;
-@@= skipped -22, +20 lines =@@
- }
- methodA();
- {
--    return this.𐊧;
-+    return this.;
-+    ;
- }
- export var _;
- new Foo().;

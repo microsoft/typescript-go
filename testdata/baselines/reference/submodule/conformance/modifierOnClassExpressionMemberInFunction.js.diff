@@ -1,17 +1,16 @@
 --- old.modifierOnClassExpressionMemberInFunction.js
 +++ new.modifierOnClassExpressionMemberInFunction.js
 @@= skipped -10, +10 lines =@@
- 
+
  //// [modifierOnClassExpressionMemberInFunction.js]
  function g() {
 -    var _a;
--    var x = (_a = /** @class */ (function () {
--            function C() {
+-    var x = (_a = class C {
+-            constructor() {
 -                this.prop1 = 1;
 -            }
--            C.prototype.foo = function () { };
--            return C;
--        }()),
+-            foo() { }
+-        },
 -        _a.prop2 = 43,
 -        _a);
 +    var x = class C {
@@ -20,7 +19,4 @@
 +        static prop2 = 43;
 +    };
  }
--
--
--//// [modifierOnClassExpressionMemberInFunction.d.ts]
--declare function g(): void;
+

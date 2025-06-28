@@ -958,7 +958,7 @@ type UnregistrationParams struct {
 }
 
 type InitializeParams struct {
-	_InitializeParams
+	InitializeParamsBase
 	WorkspaceFoldersInitializeParams
 }
 
@@ -983,8 +983,7 @@ type InitializeError struct {
 	Retry bool `json:"retry"`
 }
 
-type InitializedParams struct {
-}
+type InitializedParams struct{}
 
 // The parameters of a change configuration notification.
 type DidChangeConfigurationParams struct {
@@ -2748,7 +2747,7 @@ type Unregistration struct {
 }
 
 // The initialize parameters
-type _InitializeParams struct {
+type InitializeParamsBase struct {
 	WorkDoneProgressParams
 
 	// The process Id of the parent process that started

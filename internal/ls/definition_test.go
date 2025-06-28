@@ -3,19 +3,13 @@ package ls_test
 import (
 	"testing"
 
-	"github.com/google/go-cmp/cmp"
 	"github.com/microsoft/typescript-go/internal/bundled"
-	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/fourslash"
 	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/testutil/lstestutil"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/testutil/projecttestutil"
 	"gotest.tools/v3/assert"
 )
-
-type definitionTestCase struct {
-	name     string
-	files    map[string]string
-	expected map[string][]ls.Location
-}
 
 func TestDefinition(t *testing.T) {
 	t.Parallel()
@@ -25,50 +19,56 @@ func TestDefinition(t *testing.T) {
 		t.Skip("bundled files are not embedded")
 	}
 
-	testCases := []definitionTestCase{
+	testCases := []struct {
+		title    string
+		input    string
+		expected map[string]lsproto.Definition
+	}{
 		{
-			name: "localFunction",
-			files: map[string]string{
-				mainFileName: `
+			title: "localFunction",
+			input: `
+// @filename: index.ts
 function localFunction() { }
 /*localFunction*/localFunction();`,
-			},
-			expected: map[string][]ls.Location{
-				"localFunction": {{
-					FileName: mainFileName,
-					Range:    core.NewTextRange(9, 22),
-				}},
+			expected: map[string]lsproto.Definition{
+				"localFunction": {
+					Locations: &[]lsproto.Location{{
+						Uri:   ls.FileNameToDocumentURI("/index.ts"),
+						Range: lsproto.Range{Start: lsproto.Position{Character: 9}, End: lsproto.Position{Character: 22}},
+					}},
+				},
 			},
 		},
 	}
 
 	for _, testCase := range testCases {
-		t.Run(testCase.name, func(t *testing.T) {
+		t.Run(testCase.title, func(t *testing.T) {
 			t.Parallel()
-			runDefinitionTest(t, testCase.files, testCase.expected)
+			runDefinitionTest(t, testCase.input, testCase.expected)
 		})
 	}
 }
 
-func runDefinitionTest(t *testing.T, files map[string]string, expected map[string][]ls.Location) {
-	parsedFiles := make(map[string]string)
-	var markerPositions map[string]*lstestutil.Marker
-	for fileName, content := range files {
-		if fileName == mainFileName {
-			testData := lstestutil.ParseTestData("", content, fileName)
-			markerPositions = testData.MarkerPositions
-			parsedFiles[fileName] = testData.Files[0].Content // !!! Assumes no usage of @filename
-		} else {
-			parsedFiles[fileName] = content
-		}
-	}
-	languageService := createLanguageService(mainFileName, parsedFiles)
+func runDefinitionTest(t *testing.T, input string, expected map[string]lsproto.Definition) {
+	testData := fourslash.ParseTestData(t, input, "/mainFile.ts")
+	file := testData.Files[0].FileName()
+	markerPositions := testData.MarkerPositions
+	ctx := projecttestutil.WithRequestID(t.Context())
+	languageService, done := createLanguageService(ctx, file, map[string]any{
+		file: testData.Files[0].Content,
+	})
+	defer done()
+
 	for markerName, expectedResult := range expected {
 		marker, ok := markerPositions[markerName]
 		if !ok {
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
-		locations := languageService.ProvideDefinitions(mainFileName, marker.Position)
-		assert.DeepEqual(t, locations, expectedResult, cmp.AllowUnexported(core.TextRange{}))
+		locations, err := languageService.ProvideDefinition(
+			ctx,
+			ls.FileNameToDocumentURI(file),
+			marker.LSPosition)
+		assert.NilError(t, err)
+		assert.DeepEqual(t, *locations, expectedResult)
 	}
 }

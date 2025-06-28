@@ -13,9 +13,9 @@ class Container {
     constructor() {
         this.usage = new Obj();
 >this.usage = new Obj() : Obj
->this.usage : any
+>this.usage : Obj
 >this : this
->usage : any
+>usage : Obj
 >new Obj() : Obj
 >Obj : typeof Obj
     }
@@ -30,19 +30,19 @@ module.exports = Container;
 
 === obj.js ===
 module.exports = class Obj {
->module.exports = class Obj {    constructor() {        this.x = 12;    }} : typeof Obj
->module.exports : typeof Obj
->module : { Obj: typeof Obj; }
->exports : typeof Obj
->class Obj {    constructor() {        this.x = 12;    }} : typeof Obj
->Obj : typeof Obj
+>module.exports = class Obj {    constructor() {        this.x = 12;    }} : typeof import("./obj")
+>module.exports : typeof import("./obj")
+>module : { Obj: typeof import("./obj"); }
+>exports : typeof import("./obj")
+>class Obj {    constructor() {        this.x = 12;    }} : typeof import("./obj")
+>Obj : typeof import("./obj")
 
     constructor() {
         this.x = 12;
 >this.x = 12 : 12
->this.x : any
+>this.x : number
 >this : this
->x : any
+>x : number
 >12 : 12
     }
 }

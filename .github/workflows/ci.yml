@@ -31,6 +31,14 @@ jobs:
         with:
           cache-name: build
 
+      # Avoid duplicate PR annotations.
+      - name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
+
       - run: npm ci
 
       - run: npx hereby build
@@ -53,6 +61,7 @@ jobs:
         config:
           - os: ubuntu-latest
             coverage: true
+            main: true
           - os: windows-latest
             coverage: true
             skip: ${{ github.event_name == 'merge_group' }}
@@ -106,6 +115,15 @@ jobs:
         with:
           cache-name: test
 
+      # Avoid duplicate PR annotations.
+      - if: ${{ ! matrix.config.main }}
+        name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
+
       - run: npm ci
 
       - run: go install gotest.tools/gotestsum@latest
@@ -128,7 +146,7 @@ jobs:
 
       - run: git add .
 
-      - uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # v5.4.2
+      - uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         if: ${{ always() && matrix.config.coverage && github.event_name != 'merge_group' }}
         with:
           use_oidc: ${{ !(github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) }}
@@ -155,10 +173,12 @@ jobs:
       matrix:
         config:
           - os: ubuntu-latest
+            main: true
           - os: windows-latest
             skip: ${{ github.event_name == 'merge_group' }}
-          - os: macos-latest
-            skip: ${{ github.event_name == 'merge_group' }}
+          # Skip macOS; we do not have any build tag'd files that require checking.
+          # - os: macos-latest
+          #   skip: ${{ github.event_name == 'merge_group' }}
           - os: ubuntu-latest
             name: 'noembed'
             noembed: true
@@ -182,6 +202,15 @@ jobs:
         with:
           cache-name: lint${{ (matrix.config.noembed && '-noembed') || ''}}
 
+      # Avoid duplicate PR annotations.
+      - if: ${{ ! matrix.config.main }}
+        name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
+
       - run: npm ci
 
       - run: npx hereby lint
@@ -198,7 +227,6 @@ jobs:
 
       - run: npm ci
 
-      - run: npx hereby install-tools
       - run: npx hereby check:format
 
   generate:
@@ -208,6 +236,8 @@ jobs:
         with:
           submodules: true
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '>=22.16.0'
       - uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
       - uses: ./.github/actions/setup-go
         with:
@@ -219,6 +249,12 @@ jobs:
 
       - run: node ./internal/lsp/lsproto/_generate/fetchModel.mjs
       - run: node ./internal/lsp/lsproto/_generate/generate.mjs
+
+      - name: Remove all converted fourslash tests
+        run: rm -rf internal/fourslash/tests/gen
+
+      - name: Regenerate fourslash tests
+        run: npm run convertfourslash
 
       - run: git add .
       - run: git diff --staged --exit-code --stat
@@ -245,6 +281,14 @@ jobs:
       - uses: ./.github/actions/setup-go
         with:
           cache-name: smoke
+
+      # Avoid duplicate PR annotations.
+      - name: Disable PR annotations
+        run: |
+          echo "::remove-matcher owner=eslint-compact::"
+          echo "::remove-matcher owner=eslint-stylish::"
+          echo "::remove-matcher owner=tsc::"
+          echo "::remove-matcher owner=go::"
 
       - run: npm ci
 

@@ -8,30 +8,11 @@
 +exports.cProp = exports.x = void 0;
  var x;
  (function (x) {
--    var c = /** @class */ (function () {
--        function c() {
--        }
--        c.prototype.foo = function (a) {
-+    class c {
-+        foo(a) {
-             return a;
--        };
--        return c;
--    }());
-+        }
-+    }
+     class c {
+@@= skipped -10, +10 lines =@@
+     }
      x.c = c;
  })(x || (exports.x = x = {}));
 -exports.xc = x.c;
  exports.cProp = new exports.xc();
  var cReturnVal = exports.cProp.foo(10);
--
--
--//// [internalAliasClassInsideTopLevelModuleWithExport.d.ts]
--export declare namespace x {
--    class c {
--        foo(a: number): number;
--    }
--}
--export import xc = x.c;
--export declare var cProp: xc;

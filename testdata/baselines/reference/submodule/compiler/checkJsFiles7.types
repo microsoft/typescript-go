@@ -8,20 +8,20 @@ class C {
 		/** @type {boolean} */
 		this.a = true;
 >this.a = true : true
->this.a : any
+>this.a : boolean
 >this : this
->a : any
+>a : boolean
 >true : true
 
 		this.a = !!this.a;
 >this.a = !!this.a : boolean
->this.a : any
+>this.a : boolean
 >this : this
->a : any
+>a : boolean
 >!!this.a : boolean
 >!this.a : boolean
->this.a : any
+>this.a : true
 >this : this
->a : any
+>a : true
 	}
 }

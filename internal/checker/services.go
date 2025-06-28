@@ -5,7 +5,9 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/printer"
 )
 
 func (c *Checker) GetSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags) []*ast.Symbol {
@@ -18,7 +20,7 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 		return nil
 	}
 
-	symbols := createSymbolTable(nil)
+	symbols := make(ast.SymbolTable)
 	isStaticSymbol := false
 
 	// Copy the given symbol into symbol tables if the symbol has the given meaning
@@ -112,10 +114,6 @@ func (c *Checker) getSymbolsInScope(location *ast.Node, meaning ast.SymbolFlags)
 	return symbolsToArray(symbols)
 }
 
-func (c *Checker) GetAliasedSymbol(symbol *ast.Symbol) *ast.Symbol {
-	return c.resolveAlias(symbol)
-}
-
 func (c *Checker) GetExportsOfModule(symbol *ast.Symbol) []*ast.Symbol {
 	return symbolsToArray(c.getExportsOfModule(symbol))
 }
@@ -171,7 +169,7 @@ func (c *Checker) GetAllPossiblePropertiesOfTypes(types []*Type) []*ast.Symbol {
 		return c.getAugmentedPropertiesOfType(unionType)
 	}
 
-	props := createSymbolTable(nil)
+	props := make(ast.SymbolTable)
 	for _, memberType := range types {
 		augmentedProps := c.getAugmentedPropertiesOfType(memberType)
 		for _, p := range augmentedProps {
@@ -234,6 +232,9 @@ func (c *Checker) getAugmentedPropertiesOfType(t *Type) []*ast.Symbol {
 		functionType = c.globalNewableFunctionType
 	}
 
+	if propsByName == nil {
+		propsByName = make(ast.SymbolTable)
+	}
 	if functionType != nil {
 		for _, p := range c.getPropertiesOfType(functionType) {
 			if _, ok := propsByName[p.Name]; !ok {
@@ -303,10 +304,20 @@ func runWithInferenceBlockedFromSourceNode[T any](c *Checker, node *ast.Node, fn
 	return result
 }
 
-func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
-	ancestorNode := ast.FindAncestor(node, func(n *ast.Node) bool {
-		return ast.IsCallLikeOrFunctionLikeExpression(n)
+func GetResolvedSignatureForSignatureHelp(node *ast.Node, argumentCount int, c *Checker) (*Signature, []*Signature) {
+	type result struct {
+		signature  *Signature
+		candidates []*Signature
+	}
+	res := runWithoutResolvedSignatureCaching(c, node, func() result {
+		signature, candidates := c.getResolvedSignatureWorker(node, CheckModeIsForSignatureHelp, argumentCount)
+		return result{signature, candidates}
 	})
+	return res.signature, res.candidates
+}
+
+func runWithoutResolvedSignatureCaching[T any](c *Checker, node *ast.Node, fn func() T) T {
+	ancestorNode := ast.FindAncestor(node, ast.IsCallLikeOrFunctionLikeExpression)
 	if ancestorNode != nil {
 		cachedResolvedSignatures := make(map[*SignatureLinks]*Signature)
 		cachedTypes := make(map[*ValueSymbolLinks]*Type)
@@ -341,6 +352,7 @@ func (c *Checker) GetRootSymbols(symbol *ast.Symbol) []*ast.Symbol {
 		for _, root := range roots {
 			result = append(result, c.GetRootSymbols(root)...)
 		}
+		return result
 	}
 	return []*ast.Symbol{symbol}
 }
@@ -397,4 +409,212 @@ func (c *Checker) tryGetTarget(symbol *ast.Symbol) *ast.Symbol {
 
 func (c *Checker) GetExportSymbolOfSymbol(symbol *ast.Symbol) *ast.Symbol {
 	return c.getMergedSymbol(core.IfElse(symbol.ExportSymbol != nil, symbol.ExportSymbol, symbol))
+}
+
+func (c *Checker) GetExportSpecifierLocalTargetSymbol(node *ast.Node) *ast.Symbol {
+	// node should be ExportSpecifier | Identifier
+	switch node.Kind {
+	case ast.KindExportSpecifier:
+		if node.Parent.Parent.AsExportDeclaration().ModuleSpecifier != nil {
+			return c.getExternalModuleMember(node.Parent.Parent, node, false /*dontResolveAlias*/)
+		}
+		name := node.PropertyName()
+		if name == nil {
+			name = node.Name()
+		}
+		if name.Kind == ast.KindStringLiteral {
+			// Skip for invalid syntax like this: export { "x" }
+			return nil
+		}
+	case ast.KindIdentifier:
+		// do nothing (don't panic)
+	default:
+		panic("Unhandled case in getExportSpecifierLocalTargetSymbol, node should be ExportSpecifier | Identifier")
+	}
+	return c.resolveEntityName(node, ast.SymbolFlagsValue|ast.SymbolFlagsType|ast.SymbolFlagsNamespace|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
+}
+
+func (c *Checker) GetShorthandAssignmentValueSymbol(location *ast.Node) *ast.Symbol {
+	if location != nil && location.Kind == ast.KindShorthandPropertyAssignment {
+		return c.resolveEntityName(location.Name(), ast.SymbolFlagsValue|ast.SymbolFlagsAlias, true /*ignoreErrors*/, false, nil)
+	}
+	return nil
+}
+
+/**
+* Get symbols that represent parameter-property-declaration as parameter and as property declaration
+* @param parameter a parameterDeclaration node
+* @param parameterName a name of the parameter to get the symbols for.
+* @return a tuple of two symbols
+ */
+func (c *Checker) GetSymbolsOfParameterPropertyDeclaration(parameter *ast.Node /*ParameterPropertyDeclaration*/, parameterName string) (*ast.Symbol, *ast.Symbol) {
+	constructorDeclaration := parameter.Parent
+	classDeclaration := parameter.Parent.Parent
+
+	parameterSymbol := c.getSymbol(constructorDeclaration.Locals(), parameterName, ast.SymbolFlagsValue)
+	propertySymbol := c.getSymbol(c.getMembersOfSymbol(classDeclaration.Symbol()), parameterName, ast.SymbolFlagsValue)
+
+	if parameterSymbol != nil && propertySymbol != nil {
+		return parameterSymbol, propertySymbol
+	}
+
+	panic("There should exist two symbols, one as property declaration and one as parameter declaration")
+}
+
+func (c *Checker) GetTypeArgumentConstraint(node *ast.Node) *Type {
+	if !ast.IsTypeNode(node) {
+		return nil
+	}
+	return c.getTypeArgumentConstraint(node)
+}
+
+func (c *Checker) getTypeArgumentConstraint(node *ast.Node) *Type {
+	typeReferenceNode := core.IfElse(ast.IsTypeReferenceType(node.Parent), node.Parent, nil)
+	if typeReferenceNode == nil {
+		return nil
+	}
+	typeParameters := c.getTypeParametersForTypeReferenceOrImport(typeReferenceNode)
+	if len(typeParameters) == 0 {
+		return nil
+	}
+
+	typeParamIndex := core.FindIndex(typeReferenceNode.TypeArguments(), func(n *ast.Node) bool {
+		return n == node
+	})
+	constraint := c.getConstraintOfTypeParameter(typeParameters[typeParamIndex])
+	if constraint != nil {
+		return c.instantiateType(
+			constraint,
+			newTypeMapper(typeParameters, c.getEffectiveTypeArguments(typeReferenceNode, typeParameters)))
+	}
+	return nil
+}
+
+func (c *Checker) IsTypeInvalidDueToUnionDiscriminant(contextualType *Type, obj *ast.Node) bool {
+	properties := obj.Properties()
+	return core.Some(properties, func(property *ast.Node) bool {
+		var nameType *Type
+		propertyName := property.Name()
+		if propertyName != nil {
+			if ast.IsJsxNamespacedName(propertyName) {
+				nameType = c.getStringLiteralType(propertyName.Text())
+			} else {
+				nameType = c.getLiteralTypeFromPropertyName(propertyName)
+			}
+		}
+		var name string
+		if nameType != nil && isTypeUsableAsPropertyName(nameType) {
+			name = getPropertyNameFromType(nameType)
+		}
+		var expected *Type
+		if name != "" {
+			expected = c.getTypeOfPropertyOfType(contextualType, name)
+		}
+		return expected != nil && isLiteralType(expected) && !c.isTypeAssignableTo(c.getTypeOfNode(property), expected)
+	})
+}
+
+// Unlike `getExportsOfModule`, this includes properties of an `export =` value.
+func (c *Checker) GetExportsAndPropertiesOfModule(moduleSymbol *ast.Symbol) []*ast.Symbol {
+	exports := c.getExportsOfModuleAsArray(moduleSymbol)
+	exportEquals := c.resolveExternalModuleSymbol(moduleSymbol, false /*dontResolveAlias*/)
+	if exportEquals != moduleSymbol {
+		t := c.getTypeOfSymbol(exportEquals)
+		if c.shouldTreatPropertiesOfExternalModuleAsExports(t) {
+			exports = append(exports, c.getPropertiesOfType(t)...)
+		}
+	}
+	return exports
+}
+
+func (c *Checker) getExportsOfModuleAsArray(moduleSymbol *ast.Symbol) []*ast.Symbol {
+	return symbolsToArray(c.getExportsOfModule(moduleSymbol))
+}
+
+// Returns all the properties of the Jsx.IntrinsicElements interface.
+func (c *Checker) GetJsxIntrinsicTagNamesAt(location *ast.Node) []*ast.Symbol {
+	intrinsics := c.getJsxType(JsxNames.IntrinsicElements, location)
+	if intrinsics == nil {
+		return nil
+	}
+	return c.GetPropertiesOfType(intrinsics)
+}
+
+func (c *Checker) GetContextualTypeForJsxAttribute(attribute *ast.JsxAttributeLike) *Type {
+	return c.getContextualTypeForJsxAttribute(attribute, ContextFlagsNone)
+}
+
+func (c *Checker) GetConstantValue(node *ast.Node) any {
+	if node.Kind == ast.KindEnumMember {
+		return c.getEnumMemberValue(node).Value
+	}
+
+	if c.symbolNodeLinks.Get(node).resolvedSymbol == nil {
+		c.checkExpressionCached(node) // ensure cached resolved symbol is set
+	}
+	symbol := c.symbolNodeLinks.Get(node).resolvedSymbol
+	if symbol == nil && ast.IsEntityNameExpression(node) {
+		symbol = c.resolveEntityName(
+			node,
+			ast.SymbolFlagsValue,
+			true,  /*ignoreErrors*/
+			false, /*dontResolveAlias*/
+			nil /*location*/)
+	}
+	if symbol != nil && symbol.Flags&ast.SymbolFlagsEnumMember != 0 {
+		// inline property\index accesses only for const enums
+		member := symbol.ValueDeclaration
+		if ast.IsEnumConst(member.Parent) {
+			return c.getEnumMemberValue(member).Value
+		}
+	}
+
+	return nil
+}
+
+func (c *Checker) getResolvedSignatureWorker(node *ast.Node, checkMode CheckMode, argumentCount int) (*Signature, []*Signature) {
+	parsedNode := printer.NewEmitContext().ParseNode(node)
+	c.apparentArgumentCount = &argumentCount
+	candidatesOutArray := &[]*Signature{}
+	var res *Signature
+	if parsedNode != nil {
+		res = c.getResolvedSignature(parsedNode, candidatesOutArray, checkMode)
+	}
+	c.apparentArgumentCount = nil
+	return res, *candidatesOutArray
+}
+
+func (c *Checker) GetCandidateSignaturesForStringLiteralCompletions(call *ast.CallLikeExpression, editingArgument *ast.Node) []*Signature {
+	// first, get candidates when inference is blocked from the source node.
+	candidates := runWithInferenceBlockedFromSourceNode(c, editingArgument, func() []*Signature {
+		_, blockedInferenceCandidates := c.getResolvedSignatureWorker(call, CheckModeNormal, 0)
+		return blockedInferenceCandidates
+	})
+	candidatesSet := collections.NewSetFromItems(candidates...)
+
+	// next, get candidates where the source node is considered for inference.
+	otherCandidates := runWithoutResolvedSignatureCaching(c, editingArgument, func() []*Signature {
+		_, inferenceCandidates := c.getResolvedSignatureWorker(call, CheckModeNormal, 0)
+		return inferenceCandidates
+	})
+
+	for _, candidate := range otherCandidates {
+		if candidatesSet.Has(candidate) {
+			continue
+		}
+		candidates = append(candidates, candidate)
+	}
+
+	return candidates
+}
+
+func (c *Checker) GetTypeParameterAtPosition(s *Signature, pos int) *Type {
+	t := c.getTypeAtPosition(s, pos)
+	if t.IsIndex() && isThisTypeParameter(t.AsIndexType().target) {
+		constraint := c.getBaseConstraintOfType(t.AsIndexType().target)
+		if constraint != nil {
+			return c.getIndexType(constraint)
+		}
+	}
+	return t
 }

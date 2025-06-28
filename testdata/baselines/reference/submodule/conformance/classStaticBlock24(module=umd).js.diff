@@ -1,8 +1,8 @@
 --- old.classStaticBlock24(module=umd).js
 +++ new.classStaticBlock24(module=umd).js
 @@= skipped -9, +9 lines =@@
- 
- 
+
+
  //// [classStaticBlock24.js]
 -(function (factory) {
 -    if (typeof module === "object" && typeof module.exports === "object") {
@@ -16,13 +16,10 @@
 -    "use strict";
 -    Object.defineProperty(exports, "__esModule", { value: true });
 -    exports.C = void 0;
--    var C = /** @class */ (function () {
--        function C() {
--        }
--        return C;
--    }());
+-    class C {
+-    }
 -    exports.C = C;
--    (function () {
+-    (() => {
 +"use strict";
 +Object.defineProperty(exports, "__esModule", { value: true });
 +exports.C = void 0;

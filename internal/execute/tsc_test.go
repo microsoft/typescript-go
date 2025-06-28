@@ -145,37 +145,6 @@ func TestNoEmit(t *testing.T) {
 	}).verify(t, "noEmit")
 }
 
-func TestProjectReferences(t *testing.T) {
-	t.Parallel()
-	if !bundled.Embedded {
-		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
-		// Just skip this for now.
-		t.Skip("bundled files are not embedded")
-	}
-
-	(&tscInput{
-		subScenario: "when project references composite project with noEmit",
-		sys: newTestSys(FileMap{
-			"/home/src/workspaces/solution/src/utils/index.ts": "export const x = 10;",
-			"/home/src/workspaces/solution/src/utils/tsconfig.json": `{
-	"compilerOptions": {
-		"composite": true,
-		"noEmit": true,
-	},
-}`,
-			"/home/src/workspaces/solution/project/index.ts": `import { x } from "../utils";`,
-			"/home/src/workspaces/solution/project/tsconfig.json": `{
-	"references": [
-		{ "path": "../utils" },
-	],
-}`,
-		},
-			"/home/src/workspaces/solution",
-		),
-		commandLineArgs: []string{"--p", "project"},
-	}).verify(t, "projectReferences")
-}
-
 func TestExtends(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
@@ -251,4 +220,31 @@ func TestExtends(t *testing.T) {
 	for _, c := range cases {
 		c.verify(t, "extends")
 	}
+}
+
+func TestTypeAcquisition(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
+		// Just skip this for now.
+		t.Skip("bundled files are not embedded")
+	}
+	(&tscInput{
+		subScenario: "parse tsconfig with typeAcquisition",
+		sys: newTestSys(FileMap{"/home/src/workspaces/project/tsconfig.json": `{
+	"compilerOptions": {
+		"composite": true,
+		"noEmit": true,
+	},
+	"typeAcquisition": {
+		"enable": true,
+		"include": ["0.d.ts", "1.d.ts"],
+		"exclude": ["0.js", "1.js"],
+		"disableFilenameBasedTypeAcquisition": true,
+	},
+}`},
+			"/home/src/workspaces/project",
+		),
+		commandLineArgs: []string{},
+	}).verify(t, "typeAcquisition")
 }

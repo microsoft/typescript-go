@@ -7,18 +7,19 @@
 ->foo : any
 +>foo : object
  >{} : {}
- 
+
  		/**
  		 * @type object
  		 */
  		this.arguments = foo;
 ->this.arguments = foo : any
+->this.arguments : any
 +>this.arguments = foo : object
- >this.arguments : any
++>this.arguments : object
  >this : this
- >arguments : any
+->arguments : any
 ->foo : any
++>arguments : object
 +>foo : object
  	}
  }
- 

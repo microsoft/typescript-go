@@ -6,6 +6,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -64,20 +65,17 @@ func parseNumber(value any) *int {
 	return nil
 }
 
-func parseProjectReference(json any) []core.ProjectReference {
-	var result []core.ProjectReference
+func parseProjectReference(json any) []*core.ProjectReference {
+	var result []*core.ProjectReference
 	if v, ok := json.(*collections.OrderedMap[string, any]); ok {
 		var reference core.ProjectReference
 		if v, ok := v.Get("path"); ok {
 			reference.Path = v.(string)
 		}
-		if v, ok := v.Get("originalPath"); ok {
-			reference.OriginalPath = v.(string)
-		}
 		if v, ok := v.Get("circular"); ok {
 			reference.Circular = v.(bool)
 		}
-		result = append(result, reference)
+		result = append(result, &reference)
 	}
 	return result
 }
@@ -109,12 +107,16 @@ func parseJsonToStringKey(json any) *collections.OrderedMap[string, any] {
 		if v, ok := m.Get("excludes"); ok {
 			result.Set("excludes", v)
 		}
+		if v, ok := m.Get("typeAcquisition"); ok {
+			result.Set("typeAcquisition", v)
+		}
 	}
 	return result
 }
 
 type optionParser interface {
 	ParseOption(key string, value any) []*ast.Diagnostic
+	UnknownOptionDiagnostic() *diagnostics.Message
 }
 
 type compilerOptionsParser struct {
@@ -125,12 +127,32 @@ func (o *compilerOptionsParser) ParseOption(key string, value any) []*ast.Diagno
 	return ParseCompilerOptions(key, value, o.CompilerOptions)
 }
 
+func (o *compilerOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
+	return extraKeyDiagnostics("compilerOptions")
+}
+
 type watchOptionsParser struct {
 	*core.WatchOptions
 }
 
 func (o *watchOptionsParser) ParseOption(key string, value any) []*ast.Diagnostic {
 	return ParseWatchOptions(key, value, o.WatchOptions)
+}
+
+func (o *watchOptionsParser) UnknownOptionDiagnostic() *diagnostics.Message {
+	return extraKeyDiagnostics("watchOptions")
+}
+
+type typeAcquisitionParser struct {
+	*core.TypeAcquisition
+}
+
+func (o *typeAcquisitionParser) ParseOption(key string, value any) []*ast.Diagnostic {
+	return ParseTypeAcquisition(key, value, o.TypeAcquisition)
+}
+
+func (o *typeAcquisitionParser) UnknownOptionDiagnostic() *diagnostics.Message {
+	return extraKeyDiagnostics("typeAcquisition")
 }
 
 func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) []*ast.Diagnostic {
@@ -140,9 +162,16 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	if allOptions == nil {
 		return nil
 	}
+	parseCompilerOptions(key, value, allOptions)
+	return nil
+}
+
+func parseCompilerOptions(key string, value any, allOptions *core.CompilerOptions) (foundKey bool) {
 	switch key {
 	case "allowJs":
 		allOptions.AllowJs = parseTristate(value)
+	case "allowImportingTsExtensions":
+		allOptions.AllowImportingTsExtensions = parseTristate(value)
 	case "allowSyntheticDefaultImports":
 		allOptions.AllowSyntheticDefaultImports = parseTristate(value)
 	case "allowNonTsExtensions":
@@ -185,6 +214,12 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.DeclarationMap = parseTristate(value)
 	case "declaration":
 		allOptions.Declaration = parseTristate(value)
+	case "downlevelIteration":
+		allOptions.DownlevelIteration = parseTristate(value)
+	case "erasableSyntaxOnly":
+		allOptions.ErasableSyntaxOnly = parseTristate(value)
+	case "emitDeclarationOnly":
+		allOptions.EmitDeclarationOnly = parseTristate(value)
 	case "extendedDiagnostics":
 		allOptions.ExtendedDiagnostics = parseTristate(value)
 	case "emitDecoratorMetadata":
@@ -237,6 +272,8 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		} else {
 			allOptions.Lib = parseStringArray(value)
 		}
+	case "libReplacement":
+		allOptions.LibReplacement = parseTristate(value)
 	case "listEmittedFiles":
 		allOptions.ListEmittedFiles = parseTristate(value)
 	case "listFiles":
@@ -248,7 +285,9 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	case "mapRoot":
 		allOptions.MapRoot = parseString(value)
 	case "module":
-		allOptions.ModuleKind = value.(core.ModuleKind)
+		allOptions.Module = value.(core.ModuleKind)
+	case "moduleDetectionKind":
+		allOptions.ModuleDetection = value.(core.ModuleDetectionKind)
 	case "moduleResolution":
 		allOptions.ModuleResolution = value.(core.ModuleResolutionKind)
 	case "moduleSuffixes":
@@ -261,6 +300,8 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.NoFallthroughCasesInSwitch = parseTristate(value)
 	case "noEmitForJsFiles":
 		allOptions.NoEmitForJsFiles = parseTristate(value)
+	case "noErrorTruncation":
+		allOptions.NoErrorTruncation = parseTristate(value)
 	case "noImplicitAny":
 		allOptions.NoImplicitAny = parseTristate(value)
 	case "noImplicitThis":
@@ -311,6 +352,8 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.ResolvePackageJsonImports = parseTristate(value)
 	case "reactNamespace":
 		allOptions.ReactNamespace = parseString(value)
+	case "rewriteRelativeImportExtensions":
+		allOptions.RewriteRelativeImportExtensions = parseTristate(value)
 	case "rootDir":
 		allOptions.RootDir = parseString(value)
 	case "rootDirs":
@@ -383,8 +426,17 @@ func ParseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		allOptions.NewLine = value.(core.NewLineKind)
 	case "watch":
 		allOptions.Watch = parseTristate(value)
+	case "pprofDir":
+		allOptions.PprofDir = parseString(value)
+	case "singleThreaded":
+		allOptions.SingleThreaded = parseTristate(value)
+	case "quiet":
+		allOptions.Quiet = parseTristate(value)
+	default:
+		// different than any key above
+		return false
 	}
-	return nil
+	return true
 }
 
 func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*ast.Diagnostic {
@@ -412,6 +464,26 @@ func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*
 		allOptions.ExcludeDir = parseStringArray(value)
 	case "excludeFiles":
 		allOptions.ExcludeFiles = parseStringArray(value)
+	}
+	return nil
+}
+
+func ParseTypeAcquisition(key string, value any, allOptions *core.TypeAcquisition) []*ast.Diagnostic {
+	if value == nil {
+		return nil
+	}
+	if allOptions == nil {
+		return nil
+	}
+	switch key {
+	case "enable":
+		allOptions.Enable = parseTristate(value)
+	case "include":
+		allOptions.Include = parseStringArray(value)
+	case "exclude":
+		allOptions.Exclude = parseStringArray(value)
+	case "disableFilenameBasedTypeAcquisition":
+		allOptions.DisableFilenameBasedTypeAcquisition = parseTristate(value)
 	}
 	return nil
 }

@@ -11,15 +11,14 @@
 
 /** @type {Foo} */
 export default { c: false };
->{ c: false } : Foo
 >{ c: false } : { c: boolean; }
 >c : boolean
 >false : false
 
 === b.js ===
 import a from "./a";
->a : Foo
+>a : import("./a").Foo
 
 a;
->a : Foo
+>a : import("./a").Foo
 

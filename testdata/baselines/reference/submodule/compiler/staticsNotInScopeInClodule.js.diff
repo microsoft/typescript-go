@@ -2,14 +2,14 @@
 +++ new.staticsNotInScopeInClodule.js
 @@= skipped -9, +9 lines =@@
  }
- 
+
  //// [staticsNotInScopeInClodule.js]
--var Clod = /** @class */ (function () {
--    function Clod() {
+-let Clod = (() => {
+-    class Clod {
 -    }
 -    Clod.x = 10;
 -    return Clod;
--}());
+-})();
 +class Clod {
 +    static x = 10;
 +}

@@ -1,26 +1,31 @@
 package ls
 
 import (
+	"context"
+
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
-func (l *LanguageService) ProvideDefinitions(fileName string, position int) []Location {
-	program, file := l.getProgramAndFile(fileName)
-	node := astnav.GetTouchingPropertyName(file, position)
+func (l *LanguageService) ProvideDefinition(ctx context.Context, documentURI lsproto.DocumentUri, position lsproto.Position) (*lsproto.Definition, error) {
+	program, file := l.getProgramAndFile(documentURI)
+	node := astnav.GetTouchingPropertyName(file, int(l.converters.LineAndCharacterToPosition(file, position)))
 	if node.Kind == ast.KindSourceFile {
-		return nil
+		return nil, nil
 	}
 
-	checker := program.GetTypeChecker()
+	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
+
 	calledDeclaration := tryGetSignatureDeclaration(checker, node)
 	if calledDeclaration != nil {
 		name := ast.GetNameOfDeclaration(calledDeclaration)
 		if name != nil {
-			return createLocationsFromDeclarations([]*ast.Node{name})
+			return l.createLocationsFromDeclarations([]*ast.Node{name})
 		}
 	}
 
@@ -31,34 +36,33 @@ func (l *LanguageService) ProvideDefinitions(fileName string, position int) []Lo
 			}
 		}
 
-		return createLocationsFromDeclarations(symbol.Declarations)
+		return l.createLocationsFromDeclarations(symbol.Declarations)
 	}
-	return nil
+	return nil, nil
 }
 
-func createLocationsFromDeclarations(declarations []*ast.Node) []Location {
-	locations := make([]Location, 0, len(declarations))
+func (l *LanguageService) createLocationsFromDeclarations(declarations []*ast.Node) (*lsproto.Definition, error) {
+	locations := make([]lsproto.Location, 0, len(declarations))
 	for _, decl := range declarations {
 		file := ast.GetSourceFileOfNode(decl)
 		loc := decl.Loc
 		pos := scanner.GetTokenPosOfNode(decl, file, false /*includeJSDoc*/)
-
-		locations = append(locations, Location{
-			FileName: file.FileName(),
-			Range:    core.NewTextRange(pos, loc.End()),
+		locations = append(locations, lsproto.Location{
+			Uri:   FileNameToDocumentURI(file.FileName()),
+			Range: l.converters.ToLSPRange(file, core.NewTextRange(pos, loc.End())),
 		})
 	}
-	return locations
+	return &lsproto.Definition{Locations: &locations}, nil
 }
 
 /** Returns a CallLikeExpression where `node` is the target being invoked. */
 func getAncestorCallLikeExpression(node *ast.Node) *ast.Node {
 	target := ast.FindAncestor(node, func(n *ast.Node) bool {
-		return !ast.IsRightSideOfPropertyAccess(n)
+		return !isRightSideOfPropertyAccess(n)
 	})
 
 	callLike := target.Parent
-	if callLike != nil && ast.IsCallLikeExpression(callLike) && checker.GetInvokedExpression(callLike) == target {
+	if callLike != nil && ast.IsCallLikeExpression(callLike) && ast.GetInvokedExpression(callLike) == target {
 		return callLike
 	}
 
@@ -69,13 +73,13 @@ func tryGetSignatureDeclaration(typeChecker *checker.Checker, node *ast.Node) *a
 	var signature *checker.Signature
 	callLike := getAncestorCallLikeExpression(node)
 	if callLike != nil {
-		signature = typeChecker.GetResolvedSignature(callLike, nil, checker.CheckModeNormal)
+		signature = typeChecker.GetResolvedSignature(callLike)
 	}
 
 	// Don't go to a function type, go to the value having that type.
 	var declaration *ast.Node
-	if signature != nil && checker.GetDeclaration(signature) != nil {
-		declaration = checker.GetDeclaration(signature)
+	if signature != nil && signature.Declaration() != nil {
+		declaration = signature.Declaration()
 		if ast.IsFunctionLike(declaration) && !ast.IsFunctionTypeNode(declaration) {
 			return declaration
 		}

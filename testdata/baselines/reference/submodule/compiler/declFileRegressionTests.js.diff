@@ -1,17 +1,11 @@
 --- old.declFileRegressionTests.js
 +++ new.declFileRegressionTests.js
-@@= skipped -9, +9 lines =@@
- //// [declFileRegressionTests.js]
- // 'null' not converted to 'any' in d.ts
- // function types not piped through correctly
--var n = { w: null, x: '', y: function () { }, z: 32 };
--
--
--//// [declFileRegressionTests.d.ts]
--declare var n: {
--    w: any;
--    x: string;
--    y: () => void;
--    z: number;
--};
-+var n = { w: null, x: '', y: () => { }, z: 32 };
+@@= skipped -13, +13 lines =@@
+
+
+ //// [declFileRegressionTests.d.ts]
++// 'null' not converted to 'any' in d.ts
++// function types not piped through correctly
+ declare var n: {
+     w: any;
+     x: string;

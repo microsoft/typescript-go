@@ -1,8 +1,8 @@
 --- old.nonPrimitiveAccessProperty.js
 +++ new.nonPrimitiveAccessProperty.js
 @@= skipped -9, +9 lines =@@
- 
- 
+
+
  //// [nonPrimitiveAccessProperty.js]
 -var __rest = (this && this.__rest) || function (s, e) {
 -    var t = {};
@@ -18,7 +18,6 @@
  var a;
  a.toString();
  a.nonExist(); // error
--var destructuring = a.destructuring; // error
+ var { destructuring } = a; // error
 -var rest = __rest(a, []); // ok
-+var { destructuring } = a; // error
 +var { ...rest } = a; // ok

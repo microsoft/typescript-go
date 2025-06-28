@@ -1,7 +1,7 @@
 --- old.decoratorOnClass2.js
 +++ new.decoratorOnClass2.js
 @@= skipped -8, +8 lines =@@
- 
+
  //// [decoratorOnClass2.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -12,14 +12,14 @@
 -};
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.C = void 0;
--var C = /** @class */ (function () {
--    function C() {
--    }
+-let C = (() => {
+-    let C = class C {
+-    };
 -    C = __decorate([
 -        dec
 -    ], C);
 -    return C;
--}());
+-})();
 +@dec
 +class C {
 +}

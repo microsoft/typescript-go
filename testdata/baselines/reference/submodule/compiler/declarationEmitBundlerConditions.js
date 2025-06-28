@@ -31,11 +31,10 @@ import { makeC } from "./makeC";
 export const c = makeC();
 
 
-//// [makeC.js]
+
+
+//// [makeC.d.ts]
 import { C } from "pkg";
-export function makeC() {
-    return new C();
-}
-//// [index.js]
-import { makeC } from "./makeC";
-export const c = makeC();
+export declare function makeC(): C;
+//// [index.d.ts]
+export declare const c: import("pkg").C;

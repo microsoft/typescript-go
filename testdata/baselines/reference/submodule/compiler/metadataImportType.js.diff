@@ -1,7 +1,7 @@
 --- old.metadataImportType.js
 +++ new.metadataImportType.js
 @@= skipped -7, +7 lines =@@
- 
+
  //// [metadataImportType.js]
  "use strict";
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -15,15 +15,15 @@
 -};
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.A = void 0;
--var A = /** @class */ (function () {
--    function A() {
+-let A = (() => {
+-    class A {
 -    }
 -    __decorate([
 -        test,
 -        __metadata("design:type", Object)
 -    ], A.prototype, "b", void 0);
 -    return A;
--}());
+-})();
 +class A {
 +    @test
 +    b;

@@ -11,7 +11,7 @@ ParsedCommandLine::{
             "jsx": 3,
             "module": 199,
             "moduleResolution": 99,
-            "moduleDetectionKind": 1,
+            "moduleDetection": 1,
             "newLine": 1,
             "target": 99
         },
@@ -24,6 +24,7 @@ ParsedCommandLine::{
             "excludeDirectories": null,
             "excludeFiles": null
         },
+        "typeAcquisition": null,
         "fileNames": [
             "first.ts"
         ],
@@ -42,6 +43,4 @@ ParsedCommandLine::{
     "compileOnSave": null
 }
 Output::
-//// [/home/src/workspaces/project/first.js] new file
-
 

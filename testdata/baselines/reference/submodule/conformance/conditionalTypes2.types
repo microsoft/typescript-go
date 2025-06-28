@@ -82,7 +82,7 @@ function getFunction<T>(item: T) {
 
     if (isFunction(item)) {
 >isFunction(item) : boolean
->isFunction : <T>(value: T) => value is Extract<T, Function>
+>isFunction : <T_1>(value: T_1) => value is Extract<T_1, Function>
 >item : T
 
         return item;
@@ -99,7 +99,7 @@ function f10<T>(x: T) {
 
     if (isFunction(x)) {
 >isFunction(x) : boolean
->isFunction : <T>(value: T) => value is Extract<T, Function>
+>isFunction : <T_1>(value: T_1) => value is Extract<T_1, Function>
 >x : T
 
         const f: Function = x;
@@ -277,8 +277,8 @@ interface B1<T> extends A1<T> {
 // Repro from #22899
 
 declare function toString1(value: object | Function): string ;
->toString1 : (value: Function | object) => string
->value : Function | object
+>toString1 : (value: object | Function) => string
+>value : object | Function
 
 declare function toString2(value: Function): string ;
 >toString2 : (value: Function) => string
@@ -290,12 +290,12 @@ function foo<T>(value: T) {
 
     if (isFunction(value)) {
 >isFunction(value) : boolean
->isFunction : <T>(value: T) => value is Extract<T, Function>
+>isFunction : <T_1>(value: T_1) => value is Extract<T_1, Function>
 >value : T
 
         toString1(value);
 >toString1(value) : string
->toString1 : (value: Function | object) => string
+>toString1 : (value: object | Function) => string
 >value : Extract<T, Function>
 
         toString2(value);

@@ -2,7 +2,7 @@
 +++ new.decoratorOnClassMethod11.js
 @@= skipped -10, +10 lines =@@
  }
- 
+
  //// [decoratorOnClassMethod11.js]
 -var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
 -    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -12,16 +12,16 @@
 -};
  var M;
  (function (M) {
--    var C = /** @class */ (function () {
--        function C() {
+-    let C = (() => {
+-        class C {
+-            decorator(target, key) { }
+-            method() { }
 -        }
--        C.prototype.decorator = function (target, key) { };
--        C.prototype.method = function () { };
 -        __decorate([
 -            (this.decorator)
 -        ], C.prototype, "method", null);
 -        return C;
--    }());
+-    })();
 +    class C {
 +        decorator(target, key) { }
 +        @(this.decorator)

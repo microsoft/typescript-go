@@ -8,10 +8,10 @@
 +>require("./index") : { Render: typeof Render; }
  >require : any
  >"./index" : "./index"
- 
+
 @@= skipped -10, +10 lines =@@
  >Render : typeof Render
- 
+
  render.addRectangle();
 ->render.addRectangle() : import("rectangle").Rectangle
 ->render.addRectangle : () => import("rectangle").Rectangle
@@ -20,7 +20,7 @@
  >render : Render
 ->addRectangle : () => import("rectangle").Rectangle
 +>addRectangle : () => Rectangle
- 
+
  console.log("Objects", render.objects);
  >console.log("Objects", render.objects) : void
 @@= skipped -11, +11 lines =@@
@@ -28,16 +28,16 @@
  >log : (...data: any[]) => void
  >"Objects" : "Objects"
 ->render.objects : import("rectangle").Rectangle[]
-+>render.objects : any
++>render.objects : Rectangle[]
  >render : Render
 ->objects : import("rectangle").Rectangle[]
-+>objects : any
- 
++>objects : Rectangle[]
+
  === rectangle.js ===
  class Rectangle {
 @@= skipped -19, +19 lines =@@
  }
- 
+
  module.exports = { Rectangle };
 ->module.exports = { Rectangle } : typeof module.exports
 ->module.exports : typeof module.exports
@@ -45,11 +45,11 @@
 ->exports : typeof module.exports
 +>module.exports = { Rectangle } : { Rectangle: typeof Rectangle; }
 +>module.exports : { Rectangle: typeof Rectangle; }
-+>module : { export=: { Rectangle: typeof Rectangle; }; }
++>module : { "export=": { Rectangle: typeof Rectangle; }; }
 +>exports : { Rectangle: typeof Rectangle; }
  >{ Rectangle } : { Rectangle: typeof Rectangle; }
  >Rectangle : typeof Rectangle
- 
+
  === index.js ===
  const {Rectangle} = require('./rectangle');
  >Rectangle : typeof Rectangle
@@ -57,40 +57,10 @@
 +>require('./rectangle') : { Rectangle: typeof Rectangle; }
  >require : any
  >'./rectangle' : "./rectangle"
- 
-@@= skipped -24, +24 lines =@@
-          */
-         this.objects = [];
- >this.objects = [] : undefined[]
-->this.objects : Rectangle[]
-+>this.objects : any
- >this : this
-->objects : Rectangle[]
-+>objects : any
- >[] : undefined[]
-     }
-     /**
-@@= skipped -19, +19 lines =@@
- >Rectangle : typeof Rectangle
- 
-         this.objects.push(obj);
-->this.objects.push(obj) : number
-->this.objects.push : (...items: Rectangle[]) => number
-->this.objects : Rectangle[]
-+>this.objects.push(obj) : any
-+>this.objects.push : any
-+>this.objects : any
- >this : this
-->objects : Rectangle[]
-->push : (...items: Rectangle[]) => number
-+>objects : any
-+>push : any
- >obj : Rectangle
- 
-         return obj;
-@@= skipped -14, +14 lines =@@
+
+@@= skipped -57, +57 lines =@@
  }
- 
+
  module.exports = { Render };
 ->module.exports = { Render } : typeof module.exports
 ->module.exports : typeof module.exports
@@ -98,8 +68,7 @@
 ->exports : typeof module.exports
 +>module.exports = { Render } : { Render: typeof Render; }
 +>module.exports : { Render: typeof Render; }
-+>module : { export=: { Render: typeof Render; }; }
++>module : { "export=": { Render: typeof Render; }; }
 +>exports : { Render: typeof Render; }
  >{ Render } : { Render: typeof Render; }
  >Render : typeof Render
- 

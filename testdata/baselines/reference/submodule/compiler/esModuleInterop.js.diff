@@ -1,6 +1,6 @@
 --- old.esModuleInterop.js
 +++ new.esModuleInterop.js
-@@= skipped -46, +46 lines =@@
+@@= skipped -56, +56 lines =@@
      return (mod && mod.__esModule) ? mod : { "default": mod };
  };
  Object.defineProperty(exports, "__esModule", { value: true });

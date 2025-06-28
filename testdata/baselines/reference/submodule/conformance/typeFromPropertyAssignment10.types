@@ -55,9 +55,9 @@ Outer.app.Inner = class {
         /** @type {number} */
         this.y = 12;
 >this.y = 12 : 12
->this.y : any
+>this.y : number
 >this : this
->y : any
+>y : number
 >12 : 12
     }
 }
@@ -158,11 +158,11 @@ inner.y;
 
 /** @type {Outer.app.Inner} */
 var x;
->x : Inner
+>x : Outer.app.Inner
 
 x.y;
 >x.y : any
->x : Inner
+>x : Outer.app.Inner
 >y : any
 
 Outer.app.statische(101); // Infinity, duh

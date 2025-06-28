@@ -17,9 +17,19 @@ declare global {
 type Foo = teams.calling.Foo;
 export const bar = (p?: Foo) => {}
 
-//// [a.js]
-export {};
-//// [b.js]
-export {};
-//// [c.js]
-export const bar = (p) => { };
+
+
+//// [a.d.ts]
+export interface Foo {
+}
+//// [b.d.ts]
+import * as a from "./a";
+declare global {
+    namespace teams {
+        namespace calling {
+            export import Foo = a.Foo;
+        }
+    }
+}
+//// [c.d.ts]
+export declare const bar: (p?: import("./a").Foo | undefined) => void;

@@ -7,14 +7,20 @@ class Test {
     constructor() {
         /** @type {number[]} */
         this.data = [1, 2, 3];
+>this.data : Symbol(data, Decl(a.js, 1, 19))
 >this : Symbol(Test, Decl(a.js, 0, 0))
+>data : Symbol(data, Decl(a.js, 1, 19))
     }
 
     finderRaw() {
 >finderRaw : Symbol(finderRaw, Decl(a.js, 4, 5))
 
         this.data.find(function (d) {
+>this.data.find : Symbol(find, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+>this.data : Symbol(data, Decl(a.js, 1, 19))
 >this : Symbol(Test, Decl(a.js, 0, 0))
+>data : Symbol(data, Decl(a.js, 1, 19))
+>find : Symbol(find, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
 >d : Symbol(d, Decl(a.js, 7, 33))
 
             return d === this.data.length
@@ -27,7 +33,11 @@ class Test {
 >forEacherRaw : Symbol(forEacherRaw, Decl(a.js, 10, 5))
 
         this.data.forEach(function (d) {
+>this.data.forEach : Symbol(forEach, Decl(lib.es5.d.ts, --, --))
+>this.data : Symbol(data, Decl(a.js, 1, 19))
 >this : Symbol(Test, Decl(a.js, 0, 0))
+>data : Symbol(data, Decl(a.js, 1, 19))
+>forEach : Symbol(forEach, Decl(lib.es5.d.ts, --, --))
 >d : Symbol(d, Decl(a.js, 13, 36))
 
             console.log(d === this.data.length)
@@ -43,7 +53,11 @@ class Test {
 >forEacher : Symbol(forEacher, Decl(a.js, 16, 5))
 
         this.data.forEach(
+>this.data.forEach : Symbol(forEach, Decl(lib.es5.d.ts, --, --))
+>this.data : Symbol(data, Decl(a.js, 1, 19))
 >this : Symbol(Test, Decl(a.js, 0, 0))
+>data : Symbol(data, Decl(a.js, 1, 19))
+>forEach : Symbol(forEach, Decl(lib.es5.d.ts, --, --))
 
         /** @this {Test} */
         function (d) {
@@ -54,6 +68,11 @@ class Test {
 >console : Symbol(console, Decl(lib.dom.d.ts, --, --))
 >log : Symbol(log, Decl(lib.dom.d.ts, --, --))
 >d : Symbol(d, Decl(a.js, 21, 18))
+>this.data.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
+>this.data : Symbol(data, Decl(a.js, 1, 19))
+>this : Symbol((Missing), Decl(a.js, 20, 13))
+>data : Symbol(data, Decl(a.js, 1, 19))
+>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 
         }, this)
 >this : Symbol(Test, Decl(a.js, 0, 0))
@@ -63,7 +82,11 @@ class Test {
 >finder : Symbol(finder, Decl(a.js, 24, 5))
 
         this.data.find(
+>this.data.find : Symbol(find, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
+>this.data : Symbol(data, Decl(a.js, 1, 19))
 >this : Symbol(Test, Decl(a.js, 0, 0))
+>data : Symbol(data, Decl(a.js, 1, 19))
+>find : Symbol(find, Decl(lib.es2015.core.d.ts, --, --), Decl(lib.es2015.core.d.ts, --, --))
 
         /** @this {Test} */
         function (d) {
@@ -71,6 +94,11 @@ class Test {
 
             return d === this.data.length
 >d : Symbol(d, Decl(a.js, 29, 18))
+>this.data.length : Symbol(length, Decl(lib.es5.d.ts, --, --))
+>this.data : Symbol(data, Decl(a.js, 1, 19))
+>this : Symbol((Missing), Decl(a.js, 28, 13))
+>data : Symbol(data, Decl(a.js, 1, 19))
+>length : Symbol(length, Decl(lib.es5.d.ts, --, --))
 
         }, this)
 >this : Symbol(Test, Decl(a.js, 0, 0))

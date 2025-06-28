@@ -1,12 +1,13 @@
 package tsbaseline
 
 import (
+	"slices"
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
-	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -24,17 +25,13 @@ func DoJSEmitBaseline(
 	harnessSettings *harnessutil.HarnessOptions,
 	opts baseline.Options,
 ) {
-	if options.GetAllowJS() {
-		t.Skip("AllowJS is not supported")
-		return
-	}
 	if options.OutFile != "" || options.Out != "" {
-		t.Skip("OutFile/Out is not supported")
+		// Just return, no t.Skip; these options are not going to be supported so noting them is not helpful.
 		return
 	}
 
 	if !options.NoEmit.IsTrue() && !options.EmitDeclarationOnly.IsTrue() && result.JS.Size() == 0 && len(result.Diagnostics) == 0 {
-		panic("Expected at least one js file to be emitted or at least one error to be created.")
+		t.Fatal("Expected at least one js file to be emitted or at least one error to be created.")
 	}
 
 	// check js output
@@ -60,12 +57,11 @@ func DoJSEmitBaseline(
 			jsCode.WriteString("\r\n")
 		}
 		if len(result.Diagnostics) == 0 && strings.HasSuffix(file.UnitName, tspath.ExtensionJson) {
-			fileParseResult := parser.ParseSourceFile(
-				file.UnitName,
-				tspath.Path(file.UnitName),
-				file.Content,
-				options.GetEmitScriptTarget(),
-				scanner.JSDocParsingModeParseAll)
+			fileParseResult := parser.ParseSourceFile(ast.SourceFileParseOptions{
+				FileName:        file.UnitName,
+				Path:            tspath.Path(file.UnitName),
+				CompilerOptions: options.SourceFileAffecting(),
+			}, file.Content, core.ScriptKindJSON)
 			if len(fileParseResult.Diagnostics()) > 0 {
 				jsCode.WriteString(getErrorBaseline(t, []*harnessutil.TestFile{file}, fileParseResult.Diagnostics(), false /*pretty*/))
 				continue
@@ -74,34 +70,33 @@ func DoJSEmitBaseline(
 		jsCode.WriteString(fileOutput(file, harnessSettings))
 	}
 
-	// !!! Enable the following once .d.ts emit is implemented
-	////if result.Dts.Size() > 0 {
-	////	jsCode += "\r\n\r\n"
-	////	for declFile := range result.Dts.Values() {
-	////		jsCode += fileOutput(declFile, harnessSettings)
-	////	}
-	////}
-	////
-	////declFileContext := prepareDeclarationCompilationContext(
-	////	toBeCompiled,
-	////	otherFiles,
-	////	result,
-	////	harnessSettings,
-	////	options,
-	////	"", /*currentDirectory*/
-	////)
-	////declFileCompilationResult := compileDeclarationFiles(t, declFileContext, result.Symlinks)
-	////
-	////if declFileCompilationResult != nil && len(declFileCompilationResult.declResult.Diagnostics) > 0 {
-	////	jsCode += "\r\n\r\n//// [DtsFileErrors]\r\n"
-	////	jsCode += "\r\n\r\n"
-	////	jsCode += getErrorBaseline(
-	////		t,
-	////		slices.Concat(tsConfigFiles, declFileCompilationResult.declInputFiles, declFileCompilationResult.declOtherFiles),
-	////		declFileCompilationResult.declResult.Diagnostics,
-	////		false, /*pretty*/
-	////	)
-	////} else
+	if result.DTS.Size() > 0 {
+		jsCode.WriteString("\r\n\r\n")
+		for declFile := range result.DTS.Values() {
+			jsCode.WriteString(fileOutput(declFile, harnessSettings))
+		}
+	}
+
+	declFileContext := prepareDeclarationCompilationContext(
+		toBeCompiled,
+		otherFiles,
+		result,
+		harnessSettings,
+		options,
+		"", /*currentDirectory*/
+	)
+	declFileCompilationResult := compileDeclarationFiles(t, declFileContext, result.Symlinks)
+
+	if declFileCompilationResult != nil && len(declFileCompilationResult.declResult.Diagnostics) > 0 {
+		jsCode.WriteString("\r\n\r\n//// [DtsFileErrors]\r\n")
+		jsCode.WriteString("\r\n\r\n")
+		jsCode.WriteString(getErrorBaseline(
+			t,
+			slices.Concat(tsConfigFiles, declFileCompilationResult.declInputFiles, declFileCompilationResult.declOtherFiles),
+			declFileCompilationResult.declResult.Diagnostics,
+			false, /*pretty*/
+		))
+	}
 
 	// !!! Enable the following once noCheck is more comprehensive
 	////if !options.NoCheck.IsTrue() && !options.NoEmit.IsTrue() {
@@ -216,7 +211,7 @@ func prepareDeclarationCompilationContext(
 		////outFile := options.OutFile;
 		////if len(outFile) == 0 {
 		if len(options.OutDir) != 0 {
-			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.Host().GetCurrentDirectory())
+			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.GetCurrentDirectory())
 			sourceFilePath = strings.Replace(sourceFilePath, result.Program.CommonSourceDirectory(), "", 1)
 			sourceFileName = tspath.CombinePaths(options.OutDir, sourceFilePath)
 		} else {
@@ -281,7 +276,8 @@ func compileDeclarationFiles(t *testing.T, context *declarationCompilationContex
 		context.harnessSettings,
 		context.options,
 		context.currentDirectory,
-		symlinks)
+		symlinks,
+		nil)
 	return &declarationCompilationResult{
 		context.declInputFiles,
 		context.declOtherFiles,

@@ -2,39 +2,39 @@
 
 === bug24730.js ===
 var UI = {}
->UI : {}
->{} : {}
+>UI : any
+>{} : { TreeElement: typeof TreeElement; context: any; }
 
 UI.TreeElement = class {
 >UI.TreeElement = class {    constructor() {        this.treeOutline = 12    }} : typeof TreeElement
 >UI.TreeElement : any
->UI : {}
+>UI : any
 >TreeElement : any
 >class {    constructor() {        this.treeOutline = 12    }} : typeof TreeElement
 
     constructor() {
         this.treeOutline = 12
 >this.treeOutline = 12 : 12
->this.treeOutline : any
+>this.treeOutline : number
 >this : this
->treeOutline : any
+>treeOutline : number
 >12 : 12
     }
 };
 UI.context = new UI.TreeElement()
 >UI.context = new UI.TreeElement() : any
 >UI.context : any
->UI : {}
+>UI : any
 >context : any
 >new UI.TreeElement() : any
 >UI.TreeElement : any
->UI : {}
+>UI : any
 >TreeElement : any
 
 class C extends UI.TreeElement {
 >C : C
 >UI.TreeElement : any
->UI : {}
+>UI : any
 >TreeElement : any
 
     onpopulate() {

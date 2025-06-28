@@ -1,7 +1,7 @@
 --- old.trivialSubtypeReductionNoStructuralCheck2.js
 +++ new.trivialSubtypeReductionNoStructuralCheck2.js
 @@= skipped -16, +16 lines =@@
- 
+
  //// [trivialSubtypeReductionNoStructuralCheck2.js]
  "use strict";
 -var __assign = (this && this.__assign) || function () {
@@ -17,23 +17,13 @@
 -};
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.Wizard = void 0;
--var Wizard = /** @class */ (function () {
--    function Wizard() {
-+class Wizard {
-+    get steps() {
+ class Wizard {
+     get steps() {
+-        return __assign({ wizard: this }, props);
 +        return {
 +            wizard: this,
 +            ...props,
 +        };
      }
--    Object.defineProperty(Wizard.prototype, "steps", {
--        get: function () {
--            return __assign({ wizard: this }, props);
--        },
--        enumerable: false,
--        configurable: true
--    });
--    return Wizard;
--}());
-+}
+ }
  exports.Wizard = Wizard;

@@ -12,9 +12,9 @@ declare var module: any, exports: any;
 === a-ext.js ===
 exports.A = function () {
 >exports.A = function () {    this.x = 1;} : () => void
->exports.A : any
->exports : typeof import("a-ext")
->A : any
+>exports.A : () => void
+>exports : typeof import("./a-ext")
+>A : () => void
 >function () {    this.x = 1;} : () => void
 
     this.x = 1;
@@ -28,8 +28,8 @@ exports.A = function () {
 
 === a.js ===
 const { A } = require("./a-ext");
->A : any
->require("./a-ext") : typeof import("a-ext")
+>A : () => void
+>require("./a-ext") : typeof import("./a-ext")
 >require : (id: string) => any
 >"./a-ext" : "./a-ext"
 
@@ -45,16 +45,16 @@ function a(p) { p.x; }
 exports.B = class {
 >exports.B = class {    constructor() {        this.x = 1;    }} : typeof B
 >exports.B : typeof B
->exports : typeof import("b-ext")
+>exports : typeof import("./b-ext")
 >B : typeof B
 >class {    constructor() {        this.x = 1;    }} : typeof B
 
     constructor() {
         this.x = 1;
 >this.x = 1 : 1
->this.x : any
+>this.x : number
 >this : this
->x : any
+>x : number
 >1 : 1
     }
 };
@@ -62,7 +62,7 @@ exports.B = class {
 === b.js ===
 const { B } = require("./b-ext");
 >B : typeof B
->require("./b-ext") : typeof import("b-ext")
+>require("./b-ext") : typeof import("./b-ext")
 >require : (id: string) => any
 >"./b-ext" : "./b-ext"
 
@@ -89,7 +89,7 @@ export function C() {
 === c.js ===
 const { C } = require("./c-ext");
 >C : () => void
->require("./c-ext") : typeof import("c-ext")
+>require("./c-ext") : typeof import("./c-ext")
 >require : (id: string) => any
 >"./c-ext" : "./c-ext"
 
@@ -118,7 +118,7 @@ export var D = function() {
 === d.js ===
 const { D } = require("./d-ext");
 >D : () => void
->require("./d-ext") : typeof import("d-ext")
+>require("./d-ext") : typeof import("./d-ext")
 >require : (id: string) => any
 >"./d-ext" : "./d-ext"
 
@@ -137,9 +137,9 @@ export class E {
     constructor() {
         this.x = 1;
 >this.x = 1 : 1
->this.x : any
+>this.x : number
 >this : this
->x : any
+>x : number
 >1 : 1
     }
 }
@@ -147,7 +147,7 @@ export class E {
 === e.js ===
 const { E } = require("./e-ext");
 >E : typeof E
->require("./e-ext") : typeof import("e-ext")
+>require("./e-ext") : typeof import("./e-ext")
 >require : (id: string) => any
 >"./e-ext" : "./e-ext"
 
@@ -155,9 +155,9 @@ const { E } = require("./e-ext");
 function e(p) { p.x; }
 >e : (p: E) => void
 >p : E
->p.x : any
+>p.x : number
 >p : E
->x : any
+>x : number
 
 === f.js ===
 var F = function () {
@@ -208,9 +208,9 @@ class H {
     constructor() {
         this.x = 1;
 >this.x = 1 : 1
->this.x : any
+>this.x : number
 >this : this
->x : any
+>x : number
 >1 : 1
     }
 }
@@ -219,7 +219,7 @@ class H {
 function h(p) { p.x; }
 >h : (p: H) => void
 >p : H
->p.x : any
+>p.x : number
 >p : H
->x : any
+>x : number
 

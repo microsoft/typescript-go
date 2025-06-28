@@ -9,7 +9,7 @@
  module.exports = mod;
  //// [b.js]
  "use strict";
-@@= skipped -32, +32 lines =@@
+@@= skipped -42, +42 lines =@@
  };
  Object.defineProperty(exports, "__esModule", { value: true });
  exports.def = exports.default = void 0;

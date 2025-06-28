@@ -24,9 +24,9 @@ console.log("Objects", render.objects);
 >console : Console
 >log : (...data: any[]) => void
 >"Objects" : "Objects"
->render.objects : any
+>render.objects : Rectangle[]
 >render : Render
->objects : any
+>objects : Rectangle[]
 
 === rectangle.js ===
 class Rectangle {
@@ -45,7 +45,7 @@ class Rectangle {
 module.exports = { Rectangle };
 >module.exports = { Rectangle } : { Rectangle: typeof Rectangle; }
 >module.exports : { Rectangle: typeof Rectangle; }
->module : { export=: { Rectangle: typeof Rectangle; }; }
+>module : { "export=": { Rectangle: typeof Rectangle; }; }
 >exports : { Rectangle: typeof Rectangle; }
 >{ Rectangle } : { Rectangle: typeof Rectangle; }
 >Rectangle : typeof Rectangle
@@ -67,9 +67,9 @@ class Render {
          */
         this.objects = [];
 >this.objects = [] : undefined[]
->this.objects : any
+>this.objects : Rectangle[]
 >this : this
->objects : any
+>objects : Rectangle[]
 >[] : undefined[]
     }
     /**
@@ -86,12 +86,12 @@ class Render {
 >Rectangle : typeof Rectangle
 
         this.objects.push(obj);
->this.objects.push(obj) : any
->this.objects.push : any
->this.objects : any
+>this.objects.push(obj) : number
+>this.objects.push : (...items: Rectangle[]) => number
+>this.objects : Rectangle[]
 >this : this
->objects : any
->push : any
+>objects : Rectangle[]
+>push : (...items: Rectangle[]) => number
 >obj : Rectangle
 
         return obj;
@@ -102,7 +102,7 @@ class Render {
 module.exports = { Render };
 >module.exports = { Render } : { Render: typeof Render; }
 >module.exports : { Render: typeof Render; }
->module : { export=: { Render: typeof Render; }; }
+>module : { "export=": { Render: typeof Render; }; }
 >exports : { Render: typeof Render; }
 >{ Render } : { Render: typeof Render; }
 >Render : typeof Render

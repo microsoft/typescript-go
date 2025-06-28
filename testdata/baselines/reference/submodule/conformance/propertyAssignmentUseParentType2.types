@@ -31,7 +31,7 @@ duplicated.nuo = 789
 /** @type {{ (): boolean; nuo: 789 }} */
 export const conflictingDuplicated = () => true
 >conflictingDuplicated : { (): boolean; nuo: 789; }
->() => true : { (): true; nuo: 789; }
+>() => true : { (): true; nuo: 1000; }
 >true : true
 
 /** @type {1000} */

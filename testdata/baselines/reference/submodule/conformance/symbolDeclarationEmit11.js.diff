@@ -2,7 +2,7 @@
 +++ new.symbolDeclarationEmit11.js
 @@= skipped -8, +8 lines =@@
  }
- 
+
  //// [symbolDeclarationEmit11.js]
 -var _a;
  class C {
@@ -13,12 +13,6 @@
      static set [Symbol.toPrimitive](x) { }
  }
 -C[_a] = 0;
--
--
--//// [symbolDeclarationEmit11.d.ts]
--declare class C {
--    static [Symbol.iterator]: number;
--    static [Symbol.isConcatSpreadable](): void;
--    static get [Symbol.toPrimitive](): string;
--    static set [Symbol.toPrimitive](x: string);
--}
+
+
+ //// [symbolDeclarationEmit11.d.ts]

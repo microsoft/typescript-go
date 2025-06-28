@@ -194,3 +194,7 @@ custom-gcl.hash
 .idea
 
 !testdata/submoduleAccepted.txt
+
+!NOTICE.txt
+
+!internal/fourslash/_scripts/failingTests.txt

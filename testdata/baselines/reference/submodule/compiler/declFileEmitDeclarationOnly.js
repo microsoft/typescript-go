@@ -15,16 +15,14 @@ class HelloWorld {
 }
 
 
-//// [helloworld.js]
-const Log = {
-    info(msg) { }
+
+
+//// [helloworld.d.ts]
+declare const Log: {
+    info(msg: string): void;
 };
-class HelloWorld {
-    name;
-    constructor(name) {
-        this.name = name;
-    }
-    hello() {
-        Log.info(`Hello ${this.name}`);
-    }
+declare class HelloWorld {
+    private name;
+    constructor(name: string);
+    hello(): void;
 }

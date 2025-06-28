@@ -12,7 +12,9 @@ var ns = {}
 
 /** @type {DoneStatus} */
 ns.x = {
+>ns.x : Symbol(x, Decl(test.js, 6, 11), Decl(test.js, 11, 1))
 >ns : Symbol(ns, Decl(test.js, 6, 3))
+>x : Symbol(x, Decl(test.js, 6, 11), Decl(test.js, 11, 1))
 
     status: 'done',
 >status : Symbol(status, Decl(test.js, 8, 8))
@@ -23,7 +25,9 @@ ns.x = {
 }
 
 ns.x = {
+>ns.x : Symbol(x, Decl(test.js, 6, 11), Decl(test.js, 11, 1))
 >ns : Symbol(ns, Decl(test.js, 6, 3))
+>x : Symbol(x, Decl(test.js, 6, 11), Decl(test.js, 11, 1))
 
     status: 'done',
 >status : Symbol(status, Decl(test.js, 13, 8))
@@ -33,7 +37,9 @@ ns.x = {
 >n : Symbol(n, Decl(test.js, 15, 6))
 }
 ns.x
+>ns.x : Symbol(x, Decl(test.js, 6, 11), Decl(test.js, 11, 1))
 >ns : Symbol(ns, Decl(test.js, 6, 3))
+>x : Symbol(x, Decl(test.js, 6, 11), Decl(test.js, 11, 1))
 
 
 // this-property assignment
@@ -43,7 +49,9 @@ class Thing {
     constructor() {
         /** @type {DoneStatus} */
         this.s = {
+>this.s : Symbol(s, Decl(test.js, 22, 19), Decl(test.js, 30, 12))
 >this : Symbol(Thing, Decl(test.js, 17, 4))
+>s : Symbol(s, Decl(test.js, 22, 19), Decl(test.js, 30, 12))
 
             status: 'done',
 >status : Symbol(status, Decl(test.js, 24, 18))
@@ -58,7 +66,9 @@ class Thing {
 >fail : Symbol(fail, Decl(test.js, 28, 5))
 
         this.s = {
+>this.s : Symbol(s, Decl(test.js, 22, 19), Decl(test.js, 30, 12))
 >this : Symbol(Thing, Decl(test.js, 17, 4))
+>s : Symbol(s, Decl(test.js, 22, 19), Decl(test.js, 30, 12))
 
             status: 'done',
 >status : Symbol(status, Decl(test.js, 31, 18))

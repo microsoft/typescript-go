@@ -1,30 +1,15 @@
 --- old.stripMembersOptionality(exactoptionalpropertytypes=false).types
 +++ new.stripMembersOptionality(exactoptionalpropertytypes=false).types
-@@= skipped -3, +3 lines =@@
- // repro from #52494
- 
- declare const someVal: Required<{
-->someVal : Required<{ fn?(key: string): string | null; }>
-+>someVal : Required<{ fn?: ((key: string) => string | null) | undefined; }>
- 
-     fn?(key: string): string | null;
- >fn : ((key: string) => string | null) | undefined
-@@= skipped -10, +10 lines =@@
- someVal.fn("");
- >someVal.fn("") : string | null
- >someVal.fn : (key: string) => string | null
-->someVal : Required<{ fn?(key: string): string | null; }>
-+>someVal : Required<{ fn?: ((key: string) => string | null) | undefined; }>
- >fn : (key: string) => string | null
+@@= skipped -18, +18 lines =@@
  >"" : ""
- 
+
  declare const someVal2: Required<{
 ->someVal2 : Required<{ fn?: (key: string) => string | null; }>
 +>someVal2 : Required<{ fn?: ((key: string) => string | null) | undefined; }>
- 
+
      fn?: (key: string) => string | null;
  >fn : ((key: string) => string | null) | undefined
-@@= skipped -15, +15 lines =@@
+@@= skipped -10, +10 lines =@@
  someVal2.fn("");
  >someVal2.fn("") : string | null
  >someVal2.fn : (key: string) => string | null
@@ -32,4 +17,3 @@
 +>someVal2 : Required<{ fn?: ((key: string) => string | null) | undefined; }>
  >fn : (key: string) => string | null
  >"" : ""
- 

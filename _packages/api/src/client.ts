@@ -1,4 +1,4 @@
-import { SyncRpcChannel } from "libsyncrpc";
+import { SyncRpcChannel } from "@typescript/libsyncrpc";
 import type { FileSystem } from "./fs.ts";
 
 export interface ClientOptions {
@@ -15,7 +15,7 @@ export class Client {
 
     constructor(options: ClientOptions) {
         this.channel = new SyncRpcChannel(options.tsserverPath, [
-            "api",
+            "--api",
             "-cwd",
             options.cwd ?? process.cwd(),
         ]);

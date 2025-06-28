@@ -1,66 +1,18 @@
 --- old.collisionThisExpressionAndPropertyNameAsConstuctorParameter.js
 +++ new.collisionThisExpressionAndPropertyNameAsConstuctorParameter.js
-@@= skipped -37, +37 lines =@@
- }  
- 
- //// [collisionThisExpressionAndPropertyNameAsConstuctorParameter.js]
--var Foo2 = /** @class */ (function () {
--    function Foo2(_this) {
--        var _this_1 = this;
--        var lambda = function () {
--            return function (x) { return _this_1; }; // New scope.  So should inject new _this capture
-+class Foo2 {
-+    constructor(_this) {
-+        var lambda = () => {
-+            return x => this; // New scope.  So should inject new _this capture
-         };
+@@= skipped -45, +45 lines =@@
      }
--    return Foo2;
--}());
--var Foo3 = /** @class */ (function () {
--    function Foo3(_this) {
--        var _this_1 = this;
-+}
-+class Foo3 {
+ }
+ class Foo3 {
 +    _this;
-+    constructor(_this) {
+     constructor(_this) {
          this._this = _this;
--        var lambda = function () {
--            return function (x) { return _this_1; }; // New scope.  So should inject new _this capture
-+        var lambda = () => {
-+            return x => this; // New scope.  So should inject new _this capture
-         };
+         var lambda = () => {
+@@= skipped -15, +16 lines =@@
      }
--    return Foo3;
--}());
--var Foo4 = /** @class */ (function () {
--    function Foo4(_this) {
--        var _this_1 = this;
--        var lambda = function () {
--            return function (x) { return _this_1; }; // New scope.  So should inject new _this capture
-+}
-+class Foo4 {
-+    constructor(_this) {
-+        var lambda = () => {
-+            return x => this; // New scope.  So should inject new _this capture
-         };
-     }
--    return Foo4;
--}());
--var Foo5 = /** @class */ (function () {
--    function Foo5(_this) {
--        var _this_1 = this;
-+}
-+class Foo5 {
+ }
+ class Foo5 {
 +    _this;
-+    constructor(_this) {
+     constructor(_this) {
          this._this = _this;
--        var lambda = function () {
--            return function (x) { return _this_1; }; // New scope.  So should inject new _this capture
-+        var lambda = () => {
-+            return x => this; // New scope.  So should inject new _this capture
-         };
-     }
--    return Foo5;
--}());
-+}
+         var lambda = () => {

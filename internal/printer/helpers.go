@@ -100,6 +100,24 @@ var disposeResourcesHelper = &EmitHelper{
 
 // !!! Class Fields Helpers
 // !!! ES2018 Helpers
+var assignHelper = &EmitHelper{
+	Name:       "typescript:assign",
+	ImportName: "__assign",
+	Scoped:     false,
+	Priority:   &Priority{1},
+	Text: `var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};`,
+}
+
 // !!! ES2018 Destructuring Helpers
 // !!! ES2017 Helpers
 
@@ -163,13 +181,23 @@ var importStarHelper = &EmitHelper{
 	Scoped:       false,
 	Dependencies: []*EmitHelper{createBindingHelper, setModuleDefaultHelper},
 	Priority:     &Priority{2},
-	Text: `var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};`,
+	Text: `var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();`,
 }
 
 var importDefaultHelper = &EmitHelper{

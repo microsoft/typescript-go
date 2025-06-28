@@ -32,10 +32,7 @@ function foo() {
     return SCRIPT;
 }
 
-//// [app.js]
-/// <reference types="foo" resolution-mode="require" />
-MODULE; // error
-SCRIPT; // ok
-function foo() {
-    return SCRIPT;
-}
+
+
+//// [app.d.ts]
+declare function foo(): any;

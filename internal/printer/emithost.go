@@ -3,6 +3,7 @@ package printer
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -16,7 +17,6 @@ type WriteFileData struct {
 
 // NOTE: EmitHost operations must be thread-safe
 type EmitHost interface {
-	SourceFileMetaDataProvider
 	Options() *core.CompilerOptions
 	SourceFiles() []*ast.SourceFile
 	UseCaseSensitiveFileNames() bool
@@ -24,6 +24,8 @@ type EmitHost interface {
 	CommonSourceDirectory() string
 	IsEmitBlocked(file string) bool
 	WriteFile(fileName string, text string, writeByteOrderMark bool, relatedSourceFiles []*ast.SourceFile, data *WriteFileData) error
-	GetSourceFileMetaData(path tspath.Path) *ast.SourceFileMetaData
+	GetEmitModuleFormatOfFile(file ast.HasFileName) core.ModuleKind
 	GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) EmitResolver
+	GetOutputAndProjectReference(path tspath.Path) *tsoptions.OutputDtsAndProjectReference
+	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool
 }

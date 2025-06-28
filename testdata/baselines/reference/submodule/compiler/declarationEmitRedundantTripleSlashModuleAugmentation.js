@@ -21,7 +21,20 @@ export interface _ {
 }
 
 
-//// [augmentation.js]
-export {};
-//// [index.js]
-export {};
+
+
+//// [augmentation.d.ts]
+export interface FooOptions {
+}
+declare module "foo" {
+    interface Augmentation {
+    }
+}
+//// [index.d.ts]
+import { Original, Augmentation } from "foo";
+import type { FooOptions } from "./augmentation";
+export interface _ {
+    original: Original;
+    augmentation: Augmentation;
+    options: FooOptions;
+}

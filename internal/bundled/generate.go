@@ -12,6 +12,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/repo"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -133,14 +135,17 @@ func readLibs() []lib {
 		paths map[string]string
 	}
 
-	libsFile := filepath.Join(libInputDir, "libs.json")
+	libsFile := tspath.NormalizeSlashes(filepath.Join(libInputDir, "libs.json"))
 
 	b, err := os.ReadFile(libsFile)
 	if err != nil {
 		log.Fatalf("failed to open libs.json: %v", err)
 	}
 
-	sourceFile := parser.ParseJSONText(libsFile, tspath.Path(libsFile), string(b))
+	sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+		FileName: libsFile,
+		Path:     tspath.Path(libsFile),
+	}, string(b), core.ScriptKindJSON)
 	diags := sourceFile.Diagnostics()
 
 	if len(diags) > 0 {

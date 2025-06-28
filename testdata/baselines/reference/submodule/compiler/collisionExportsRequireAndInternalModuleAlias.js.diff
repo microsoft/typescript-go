@@ -2,7 +2,7 @@
 +++ new.collisionExportsRequireAndInternalModuleAlias.js
 @@= skipped -24, +24 lines =@@
  }
- 
+
  //// [collisionExportsRequireAndInternalModuleAlias.js]
 -define(["require", "exports"], function (require, exports) {
 -    "use strict";
@@ -10,11 +10,8 @@
 -    exports.m = void 0;
 -    var m;
 -    (function (m) {
--        var c = /** @class */ (function () {
--            function c() {
--            }
--            return c;
--        }());
+-        class c {
+-        }
 -        m.c = c;
 -    })(m || (exports.m = m = {}));
 +"use strict";

@@ -6,11 +6,11 @@
 -astralAsSurrogatePair.ts(1,23): error TS1127: Invalid character.
 -astralAsSurrogatePair.ts(1,24): error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uDEA7'.
 +astralAsSurrogatePair.ts(1,16): error TS1127: Invalid character.
-+astralAsSurrogatePair.ts(1,17): error TS2305: Module '"extendedEscapesForAstralsInVarsAndClasses"' has no exported member 'uD800'.
++astralAsSurrogatePair.ts(1,17): error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uD800'.
 +astralAsSurrogatePair.ts(1,22): error TS1127: Invalid character.
-+astralAsSurrogatePair.ts(1,23): error TS2305: Module '"extendedEscapesForAstralsInVarsAndClasses"' has no exported member 'uDEA7'.
- 
- 
++astralAsSurrogatePair.ts(1,23): error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uDEA7'.
+
+
  ==== extendedEscapesForAstralsInVarsAndClasses.ts (0 errors) ====
 @@= skipped -31, +31 lines =@@
      
@@ -20,14 +20,12 @@
 +                   ~
  !!! error TS1127: Invalid character.
 -                     ~~~~~
--!!! error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uD800'.
--                          
 +                    ~~~~~
-+!!! error TS2305: Module '"extendedEscapesForAstralsInVarsAndClasses"' has no exported member 'uD800'.
+ !!! error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uD800'.
+-                          
 +                         ~
  !!! error TS1127: Invalid character.
 -                           ~~~~~
--!!! error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uDEA7'.
 +                          ~~~~~
-+!!! error TS2305: Module '"extendedEscapesForAstralsInVarsAndClasses"' has no exported member 'uDEA7'.
+ !!! error TS2305: Module '"./extendedEscapesForAstralsInVarsAndClasses.js"' has no exported member 'uDEA7'.
      

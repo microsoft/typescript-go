@@ -1,8 +1,8 @@
 --- old.spreadTypeRemovesReadonly.js
 +++ new.spreadTypeRemovesReadonly.js
 @@= skipped -10, +10 lines =@@
- 
- 
+
+
  //// [spreadTypeRemovesReadonly.js]
 -var __assign = (this && this.__assign) || function () {
 -    __assign = Object.assign || function(t) {
@@ -15,8 +15,7 @@
 -    };
 -    return __assign.apply(this, arguments);
 -};
--var data = { value: 'foo' };
--var clone = __assign({}, data);
-+const data = { value: 'foo' };
+ const data = { value: 'foo' };
+-const clone = __assign({}, data);
 +const clone = { ...data };
  clone.value = 'bar';

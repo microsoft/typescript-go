@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/stringutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
@@ -58,6 +59,11 @@ func ParseCommandLine(
 		Errors:        parser.errors,
 		Raw:           parser.options, // !!! keep optionsBase incase needed later. todo: figure out if this is still needed
 		CompileOnSave: nil,
+
+		comparePathsOptions: tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: host.FS().UseCaseSensitiveFileNames(),
+			CurrentDirectory:          host.GetCurrentDirectory(),
+		},
 	}
 }
 
@@ -114,7 +120,7 @@ func getInputOptionName(input string) string {
 }
 
 func (p *commandLineParser) parseResponseFile(fileName string) {
-	fileContents, errors := TryReadFile(fileName, func(fileName string) (string, bool) {
+	fileContents, errors := tryReadFile(fileName, func(fileName string) (string, bool) {
 		if p.fs == nil {
 			return "", false
 		}
@@ -160,7 +166,7 @@ func (p *commandLineParser) parseResponseFile(fileName string) {
 	p.parseStrings(args)
 }
 
-func TryReadFile(fileName string, readFile func(string) (string, bool), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
+func tryReadFile(fileName string, readFile func(string) (string, bool), errors []*ast.Diagnostic) (string, []*ast.Diagnostic) {
 	// this function adds a compiler diagnostic if the file cannot be read
 	text, e := readFile(fileName)
 

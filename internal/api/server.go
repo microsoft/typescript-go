@@ -2,19 +2,23 @@ package api
 
 import (
 	"bufio"
+	"context"
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"io"
+	"strconv"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 //go:generate go tool golang.org/x/tools/cmd/stringer -type=MessageType -output=stringer_generated.go
+//go:generate go tool mvdan.cc/gofumpt -lang=go1.24 -w stringer_generated.go
 
 type MessageType uint8
 
@@ -254,7 +258,7 @@ func (s *Server) handleRequest(method string, payload []byte) ([]byte, error) {
 	case "echo":
 		return payload, nil
 	default:
-		return s.api.HandleRequest(s.requestId, method, payload)
+		return s.api.HandleRequest(core.WithRequestID(context.Background(), strconv.Itoa(s.requestId)), method, payload)
 	}
 }
 

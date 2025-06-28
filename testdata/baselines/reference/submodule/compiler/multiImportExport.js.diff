@@ -1,19 +1,6 @@
 --- old.multiImportExport.js
 +++ new.multiImportExport.js
-@@= skipped -26, +26 lines =@@
- 
- //// [Adder.js]
- "use strict";
--var Adder = /** @class */ (function () {
--    function Adder() {
-+class Adder {
-+    add(a, b) {
-     }
--    Adder.prototype.add = function (a, b) {
--    };
--    return Adder;
--}());
-+}
+@@= skipped -33, +33 lines =@@
  module.exports = Adder;
  //// [Math.js]
  "use strict";
@@ -22,27 +9,11 @@
  var Math = {
      Adder: Adder
  };
-@@= skipped -22, +19 lines =@@
+@@= skipped -12, +12 lines =@@
  //// [consumer.js]
  "use strict";
  Object.defineProperty(exports, "__esModule", { value: true });
 -var Drawing = require("./Drawing");
 +const Drawing = require("./Drawing");
  var addr = new Drawing.Math.Adder();
--
--
--//// [Adder.d.ts]
--declare class Adder {
--    add(a: number, b: number): void;
--}
--export = Adder;
--//// [Math.d.ts]
--import Adder = require('./Adder');
--declare var Math: {
--    Adder: typeof Adder;
--};
--export = Math;
--//// [Drawing.d.ts]
--export import Math = require('./Math/Math');
--//// [consumer.d.ts]
--export {};
+

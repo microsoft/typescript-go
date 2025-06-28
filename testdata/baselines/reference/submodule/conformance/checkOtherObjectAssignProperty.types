@@ -104,7 +104,6 @@ Object.defineProperty(exports, "thing", obj);
 let str = /** @type {string} */("other");
 >str : string
 >("other") : string
->"other" : string
 >"other" : "other"
 
 Object.defineProperty(exports, str, { value: 42, writable: true });
@@ -154,7 +153,7 @@ Object.defineProperty(exports, "bad2", { get() { return 12 }, value: "no" });
 >defineProperty : <T>(o: T, p: PropertyKey, attributes: PropertyDescriptor & ThisType<any>) => T
 >exports : any
 >"bad2" : "bad2"
->{ get() { return 12 }, value: "no" } : { get: () => number; value: string; }
+>{ get() { return 12 }, value: "no" } : { get(): number; value: string; }
 >get : () => number
 >12 : 12
 >value : string

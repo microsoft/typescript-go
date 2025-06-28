@@ -2,10 +2,21 @@
 +++ new.argumentsReferenceInMethod6_Js.types
 @@= skipped -4, +4 lines =@@
  >A : A
- 
+
  	m() {
 ->m : (...args: any[]) => void
 +>m : () => void
- 
+
  		/**
  		 * @type object
+ 		 */
+ 		this.foo = arguments;
+ >this.foo = arguments : IArguments
+->this.foo : any
++>this.foo : object
+ >this : this
+->foo : any
++>foo : object
+ >arguments : IArguments
+ 	}
+ }

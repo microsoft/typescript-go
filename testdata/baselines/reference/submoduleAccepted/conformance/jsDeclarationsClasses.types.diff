@@ -1,60 +1,59 @@
 --- old.jsDeclarationsClasses.types
 +++ new.jsDeclarationsClasses.types
-@@= skipped -61, +61 lines =@@
-     get f1() { return /** @type {*} */(null); }
- >f1 : U
- >(null) : any
-+>null : any
- 
-     /**
-      * @param {U} _p
-@@= skipped -14, +15 lines =@@
-     get f2() { return /** @type {*} */(null); }
- >f2 : U
- >(null) : any
-+>null : any
- 
-     /**
-      * @param {U} _p
-@@= skipped -147, +148 lines =@@
-     }
- 
-     method() {
-->method : () => number
-+>method : () => any
- 
-         return this.p1;
-->this.p1 : number
-+>this.p1 : any
+@@= skipped -208, +208 lines =@@
+     constructor() {
+         this.p1 = 12;
+ >this.p1 = 12 : 12
+->this.p1 : any
++>this.p1 : number
  >this : this
-->p1 : number
-+>p1 : any
+->p1 : any
++>p1 : number
+ >12 : 12
+
+         this.p2 = "ok";
+ >this.p2 = "ok" : "ok"
+->this.p2 : any
++>this.p2 : string
+ >this : this
+->p2 : any
++>p2 : string
+ >"ok" : "ok"
+     }
+
+@@= skipped -33, +33 lines =@@
+     constructor() {
+         this.prop = 12;
+ >this.prop = 12 : 12
+->this.prop : any
++>this.prop : number
+ >this : this
+->prop : any
++>prop : number
+ >12 : 12
      }
  }
- 
-@@= skipped -59, +59 lines =@@
-  */
- export class O extends N {
- >O : O<U>
-->N : N<U>
-+>N : typeof N
- 
-     /**
-      * @param {U} param 
-@@= skipped -10, +10 lines =@@
- 
-         super(param);
- >super(param) : void
-->super : typeof N
-+>super : any
- >param : U
- 
+@@= skipped -27, +27 lines =@@
+
+         this.another = param;
+ >this.another = param : T
+->this.another : any
++>this.another : T
+ >this : this
+->another : any
++>another : T
+ >param : T
+     }
+ }
+@@= skipped -28, +28 lines =@@
+
          this.another2 = param;
-@@= skipped -15, +15 lines =@@
- var x = /** @type {*} */(null);
- >x : any
- >(null) : any
-+>null : any
- 
- export class VariableBase extends x {}
- >VariableBase : VariableBase
+ >this.another2 = param : U
+->this.another2 : any
++>this.another2 : U
+ >this : this
+->another2 : any
++>another2 : U
+ >param : U
+     }
+ }
