@@ -302,7 +302,7 @@ func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.
 	s.projectsMu.RLock()
 	defer s.projectsMu.RUnlock()
 	for _, change := range changes {
-		if seen.AddIfAbsent(*change) {
+		if !seen.AddIfAbsent(*change) {
 			continue
 		}
 
