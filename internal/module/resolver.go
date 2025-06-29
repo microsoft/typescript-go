@@ -54,7 +54,7 @@ type resolutionState struct {
 	resolvedPackageDirectory        bool
 	failedLookupLocations           []string
 	affectingLocations              []string
-	diagnostics                     []ast.Diagnostic
+	diagnostics                     []*ast.Diagnostic
 }
 
 func newResolutionState(
