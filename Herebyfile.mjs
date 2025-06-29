@@ -51,6 +51,20 @@ function parseEnvBoolean(name, defaultValue = false) {
     throw new Error(`Invalid value for ${name}: ${value}`);
 }
 
+/**
+ * @param {string} name
+ * @param {string} defaultValue
+ * @returns {string}
+ */
+function parseEnvString(name, defaultValue = "") {
+    name = "TSGO_HEREBY_" + name.toUpperCase();
+    const value = process.env[name];
+    if (!value) {
+        return defaultValue;
+    }
+    return value;
+}
+
 const { values: rawOptions } = parseArgs({
     args: process.argv.slice(2),
     options: {
@@ -65,7 +79,7 @@ const { values: rawOptions } = parseArgs({
 
         race: { type: "boolean", default: parseEnvBoolean("RACE") },
         noembed: { type: "boolean", default: parseEnvBoolean("NOEMBED") },
-        concurrentTestPrograms: { type: "boolean", default: parseEnvBoolean("CONCURRENT_TEST_PROGRAMS") },
+        concurrency: { type: "string", default: parseEnvString("TEST_PROGRAM_CONCURRENCY") },
         coverage: { type: "boolean", default: parseEnvBoolean("COVERAGE") },
     },
     strict: false,
@@ -291,7 +305,7 @@ function goTestFlags(taskName) {
 }
 
 const goTestEnv = {
-    ...(options.concurrentTestPrograms ? { TS_TEST_PROGRAM_SINGLE_THREADED: "false" } : {}),
+    ...(options.concurrency ? { TSGO_TEST_PROGRAM_CONCURRENCY: "false" } : {}),
     // Go test caching takes a long time on Windows.
     // https://github.com/golang/go/issues/72992
     ...(process.platform === "win32" ? { GOFLAGS: "-count=1" } : {}),

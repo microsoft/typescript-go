@@ -97,7 +97,7 @@ jobs:
     env:
       TSGO_HEREBY_RACE: ${{ (matrix.config.race && 'true') || 'false' }}
       TSGO_HEREBY_NOEMBED: ${{ (matrix.config.noembed && 'true') || 'false' }}
-      TSGO_HEREBY_CONCURRENT_TEST_PROGRAMS: ${{ (matrix.config.concurrent-test-programs && 'true') || 'false' }}
+      TSGO_HEREBY_TEST_PROGRAM_CONCURRENCY: ${{ (matrix.config.concurrent-test-programs && 'true') || 'false' }}
       TSGO_HEREBY_COVERAGE: ${{ (matrix.config.coverage && 'true') || 'false' }}
 
     steps:
