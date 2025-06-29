@@ -946,6 +946,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 			symbols = append(symbols, filteredMembers...)
 
 			// Set sort texts.
+			//nolint:staticcheck
 			transformObjectLiteralMembers := ptrIsTrue(preferences.IncludeCompletionsWithObjectLiteralMethodSnippets) &&
 				objectLikeContainer.Kind == ast.KindObjectLiteralExpression
 			for _, member := range filteredMembers {

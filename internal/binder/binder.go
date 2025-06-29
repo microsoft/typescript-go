@@ -244,7 +244,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 						}
 					}
 				}
-				var declarationName *ast.Node = ast.GetNameOfDeclaration(node)
+				declarationName := ast.GetNameOfDeclaration(node)
 				if declarationName == nil {
 					declarationName = node
 				}
@@ -259,7 +259,7 @@ func (b *Binder) declareSymbolEx(symbolTable ast.SymbolTable, parent *ast.Symbol
 					diag.AddRelatedInfo(b.createDiagnosticForNode(node, diagnostics.Did_you_mean_0, "export type { "+node.AsTypeAliasDeclaration().Name().AsIdentifier().Text+" }"))
 				}
 				for index, declaration := range symbol.Declarations {
-					var decl *ast.Node = ast.GetNameOfDeclaration(declaration)
+					decl := ast.GetNameOfDeclaration(declaration)
 					if decl == nil {
 						decl = declaration
 					}
@@ -2101,7 +2101,7 @@ func (b *Binder) bindCaseBlock(node *ast.Node) {
 	switchStatement := node.Parent
 	clauses := node.AsCaseBlock().Clauses.Nodes
 	isNarrowingSwitch := switchStatement.Expression().Kind == ast.KindTrueKeyword || isNarrowingExpression(switchStatement.Expression())
-	var fallthroughFlow *ast.FlowNode = b.unreachableFlow
+	fallthroughFlow := b.unreachableFlow
 	for i := 0; i < len(clauses); i++ {
 		clauseStart := i
 		for len(clauses[i].AsCaseOrDefaultClause().Statements.Nodes) == 0 && i+1 < len(clauses) {
