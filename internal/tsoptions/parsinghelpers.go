@@ -544,26 +544,33 @@ func handleExplicitNullValues(targetOptions *core.CompilerOptions, rawCompilerOp
 	targetType := targetValue.Type()
 
 	for key, value := range rawCompilerOptions.Entries() {
-		if value == nil {
-			// Find the corresponding field in CompilerOptions
-			numFields := targetValue.NumField()
-			for i := range numFields {
-				field := targetType.Field(i)
-				jsonTag := field.Tag.Get("json")
-				if jsonTag == "" {
-					continue
-				}
-				// Extract the field name from the json tag (remove ,omitzero etc.)
-				jsonFieldName := strings.Split(jsonTag, ",")[0]
-				if jsonFieldName == key {
-					targetField := targetValue.Field(i)
-					if targetField.CanSet() {
-						// Set the field to its zero value (nil for slices, etc.)
-						targetField.Set(reflect.Zero(targetField.Type()))
-					}
-					break
-				}
+		if value != nil {
+			continue
+		}
+
+		// Find the corresponding field in CompilerOptions
+		numFields := targetValue.NumField()
+		for i := range numFields {
+			field := targetType.Field(i)
+			jsonTag := field.Tag.Get("json")
+			if jsonTag == "" {
+				continue
 			}
+
+			// Extract the field name from the json tag (remove ,omitzero etc.)
+			jsonFieldName, _, _ := strings.Cut(jsonTag, ",")
+			if jsonFieldName != key {
+				continue
+			}
+
+			targetField := targetValue.Field(i)
+			if !targetField.CanSet() {
+				break
+			}
+
+			// Set the field to its zero value (nil for slices, etc.)
+			targetField.SetZero()
+			break
 		}
 	}
 }
