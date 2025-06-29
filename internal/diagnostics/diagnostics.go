@@ -61,3 +61,12 @@ func FormatMessage(m *Message, args ...any) *Message {
 	result.text = stringutil.Format(m.text, args)
 	return &result
 }
+
+func NewAdHocMessage(message string) *Message {
+	return &Message{
+		code:     -1,
+		category: CategoryError,
+		key:      "-1",
+		text:     message,
+	}
+}
