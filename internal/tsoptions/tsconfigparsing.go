@@ -1074,7 +1074,7 @@ func parseConfig(
 				sourceFile.ExtendedSourceFiles = append(sourceFile.ExtendedSourceFiles, extendedSourceFile)
 			}
 		}
-		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options)
+		ownConfig.options = mergeCompilerOptionsWithRaw(result.options, ownConfig.options, ownConfig.raw)
 		// ownConfig.watchOptions = ownConfig.watchOptions && result.watchOptions ?
 		//     assignWatchOptions(result, ownConfig.watchOptions) :
 		//     ownConfig.watchOptions || result.watchOptions;

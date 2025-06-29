@@ -2,6 +2,7 @@ package tsoptions
 
 import (
 	"reflect"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -508,6 +509,62 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *c
 		}
 	}
 	return targetOptions
+}
+
+// mergeCompilerOptionsWithRaw merges the source compiler options into the target compiler options
+// with awareness of explicitly set null values in the raw JSON.
+// Fields in the source options will overwrite the corresponding fields in the target options,
+// including when they are explicitly set to null in the raw configuration.
+func mergeCompilerOptionsWithRaw(targetOptions, sourceOptions *core.CompilerOptions, rawSource any) *core.CompilerOptions {
+	if sourceOptions == nil {
+		return targetOptions
+	}
+
+	// First do the normal merge
+	mergeCompilerOptions(targetOptions, sourceOptions)
+
+	// Then handle explicitly set null values using the raw JSON
+	if rawSource != nil {
+		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok {
+			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
+				if compilerOptionsMap, ok := compilerOptionsRaw.(*collections.OrderedMap[string, any]); ok {
+					handleExplicitNullValues(targetOptions, compilerOptionsMap)
+				}
+			}
+		}
+	}
+
+	return targetOptions
+}
+
+// handleExplicitNullValues processes explicitly set null values in the raw JSON
+// and applies them to the target options to override inherited values
+func handleExplicitNullValues(targetOptions *core.CompilerOptions, rawCompilerOptions *collections.OrderedMap[string, any]) {
+	targetValue := reflect.ValueOf(targetOptions).Elem()
+	targetType := targetValue.Type()
+
+	for key, value := range rawCompilerOptions.Entries() {
+		if value == nil {
+			// Find the corresponding field in CompilerOptions
+			for i := 0; i < targetValue.NumField(); i++ {
+				field := targetType.Field(i)
+				jsonTag := field.Tag.Get("json")
+				if jsonTag == "" {
+					continue
+				}
+				// Extract the field name from the json tag (remove ,omitzero etc.)
+				jsonFieldName := strings.Split(jsonTag, ",")[0]
+				if jsonFieldName == key {
+					targetField := targetValue.Field(i)
+					if targetField.CanSet() {
+						// Set the field to its zero value (nil for slices, etc.)
+						targetField.Set(reflect.Zero(targetField.Type()))
+					}
+					break
+				}
+			}
+		}
+	}
 }
 
 func convertToOptionsWithAbsolutePaths(optionsBase *collections.OrderedMap[string, any], optionMap map[string]*CommandLineOption, cwd string) *collections.OrderedMap[string, any] {

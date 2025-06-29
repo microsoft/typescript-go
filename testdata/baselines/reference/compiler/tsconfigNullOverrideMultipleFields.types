@@ -1,0 +1,5 @@
+//// [tests/cases/compiler/tsconfigNullOverrideMultipleFields.ts] ////
+
+=== index.ts ===
+
+export {};
