@@ -1,5 +1,0 @@
-//// [tests/cases/compiler/tsconfigNullOverride.ts] ////
-
-=== index.ts ===
-
-export {};

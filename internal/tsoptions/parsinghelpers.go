@@ -546,7 +546,8 @@ func handleExplicitNullValues(targetOptions *core.CompilerOptions, rawCompilerOp
 	for key, value := range rawCompilerOptions.Entries() {
 		if value == nil {
 			// Find the corresponding field in CompilerOptions
-			for i := 0; i < targetValue.NumField(); i++ {
+			numFields := targetValue.NumField()
+			for i := range numFields {
 				field := targetType.Field(i)
 				jsonTag := field.Tag.Get("json")
 				if jsonTag == "" {
