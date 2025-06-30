@@ -489,8 +489,6 @@ func ParseTypeAcquisition(key string, value any, allOptions *core.TypeAcquisitio
 	return nil
 }
 
-// getJSONFieldName extracts the JSON field name from a struct field's tag
-
 // mergeCompilerOptions merges the source compiler options into the target compiler options
 // with optional awareness of explicitly set null values in the raw JSON.
 // Fields in the source options will overwrite the corresponding fields in the target options,
