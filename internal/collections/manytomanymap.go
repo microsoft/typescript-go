@@ -25,10 +25,16 @@ func (m *ManyToManyMap[K, V]) Keys() map[K]*Set[V] {
 
 func (m *ManyToManyMap[K, V]) Add(key K, valueSet *Set[V]) {
 	existingValueSet, hasExisting := m.keyToValueSet[key]
+	if m.keyToValueSet == nil {
+		m.keyToValueSet = make(map[K]*Set[V])
+	}
 	m.keyToValueSet[key] = valueSet
 	for value := range valueSet.Keys() {
 		if !hasExisting || !existingValueSet.Has(value) {
 			// Add to valueToKeySet
+			if m.valueToKeySet == nil {
+				m.valueToKeySet = make(map[V]*Set[K])
+			}
 			addToMapOfSet(m.valueToKeySet, value, key)
 		}
 	}
@@ -46,7 +52,7 @@ func (m *ManyToManyMap[K, V]) Add(key K, valueSet *Set[V]) {
 func addToMapOfSet[K comparable, V comparable](mapKSetV map[K]*Set[V], key K, value V) {
 	set, exists := mapKSetV[key]
 	if !exists {
-		set := &Set[V]{}
+		set = &Set[V]{}
 		mapKSetV[key] = set
 	}
 	set.Add(value)

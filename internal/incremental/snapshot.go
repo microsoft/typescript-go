@@ -358,33 +358,35 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 		impliedNodeFormat := program.GetSourceFileMetaData(file.Path()).ImpliedNodeFormat
 		affectsGlobalScope := fileAffectsGlobalScope(file)
 		var signature string
+		var newReferences *collections.Set[tspath.Path]
+		if snapshot.referencedMap != nil {
+			newReferences := getReferencedFiles(program, file)
+			if newReferences != nil {
+				snapshot.referencedMap.Add(file.Path(), newReferences)
+			}
+		}
 		if canUseStateFromOldProgram {
 			if oldFileInfo, ok := oldProgram.snapshot.fileInfos[file.Path()]; ok {
 				signature = oldFileInfo.signature
 				if oldFileInfo.version == version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
 					snapshot.addFileToChangeSet(file.Path())
-				}
-			} else {
-				snapshot.addFileToChangeSet(file.Path())
-			}
-			if snapshot.referencedMap != nil {
-				newReferences := getReferencedFiles(program, file)
-				if newReferences != nil {
-					snapshot.referencedMap.Add(file.Path(), newReferences)
-				}
-				oldReferences, _ := oldProgram.snapshot.referencedMap.GetValues(file.Path())
-				// Referenced files changed
-				if !newReferences.Equals(oldReferences) {
-					snapshot.addFileToChangeSet(file.Path())
-				} else {
-					for refPath := range newReferences.Keys() {
-						if program.GetSourceFileByPath(refPath) == nil {
-							// Referenced file was deleted in the new program
-							snapshot.addFileToChangeSet(file.Path())
-							break
+				} else if snapshot.referencedMap != nil {
+					oldReferences, _ := oldProgram.snapshot.referencedMap.GetValues(file.Path())
+					// Referenced files changed
+					if !newReferences.Equals(oldReferences) {
+						snapshot.addFileToChangeSet(file.Path())
+					} else {
+						for refPath := range newReferences.Keys() {
+							if program.GetSourceFileByPath(refPath) == nil {
+								// Referenced file was deleted in the new program
+								snapshot.addFileToChangeSet(file.Path())
+								break
+							}
 						}
 					}
 				}
+			} else {
+				snapshot.addFileToChangeSet(file.Path())
 			}
 			if !snapshot.changedFilesSet.Has(file.Path()) {
 				if emitDiagnostics, ok := oldProgram.snapshot.emitDiagnosticsPerFile[file.Path()]; ok {
