@@ -509,7 +509,7 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 	}
 
 	// Collect explicitly null field names from raw JSON
-	explicitNullFields := &collections.Set[string]{}
+	var explicitNullFields collections.Set[string]
 	if rawSource != nil {
 		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok {
 			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
