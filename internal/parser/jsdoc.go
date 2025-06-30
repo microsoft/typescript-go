@@ -44,6 +44,7 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 	pos := node.Pos()
 	for _, comment := range ranges {
 		if parsed := p.parseJSDocComment(node, comment.Pos(), comment.End(), pos); parsed != nil {
+			parsed.Parent = node
 			jsdoc = append(jsdoc, parsed)
 			pos = parsed.End()
 		}
@@ -82,11 +83,6 @@ func (p *Parser) parseJSDocTypeExpression(mayOmitBraces bool) *ast.Node {
 	}
 
 	result := p.factory.NewJSDocTypeExpression(t)
-	// normally parent references are set during binding. However, for clients that only need
-	// a syntax tree, and no semantic features, then the binding process is an unnecessary
-	// overhead.  This functions allows us to set all the parents, without all the expense of
-	// binding.
-	ast.SetParentInChildren(result)
 	p.finishNode(result, pos)
 	return result
 }
@@ -107,7 +103,6 @@ func (p *Parser) parseJSDocNameReference() *ast.Node {
 	}
 
 	result := p.factory.NewJSDocNameReference(entityName)
-	ast.SetParentInChildren(result)
 	p.finishNode(result, pos)
 	return result
 }
@@ -145,7 +140,6 @@ func (p *Parser) parseJSDocComment(parent *ast.Node, start int, end int, fullSta
 	p.parsingContexts = p.parsingContexts | ParsingContexts(PCJSDocComment)
 
 	comment := p.parseJSDocCommentWorker(start, end, fullStart, initialIndent)
-	comment.Parent = parent
 	// move jsdoc diagnostics to jsdocDiagnostics -- for JS files only
 	if p.contextFlags&ast.NodeFlagsJavaScriptFile != 0 {
 		p.jsdocDiagnostics = append(p.jsdocDiagnostics, p.diagnostics[saveDiagnosticsLength:]...)
@@ -263,7 +257,7 @@ loop:
 				if linkEnd == start {
 					comments = removeLeadingNewlines(comments)
 				}
-				jsdocText := p.factory.NewJSDocText(strings.Join(comments, ""))
+				jsdocText := p.factory.NewJSDocText(p.stringSlicePool.Clone(comments))
 				p.finishNodeWithEnd(jsdocText, linkEnd, commentEnd)
 				commentParts = append(commentParts, jsdocText, link)
 				comments = comments[:0]
@@ -290,9 +284,8 @@ loop:
 		commentsPos = p.scanner.TokenFullStart()
 	}
 
-	trimmedComments := trimEnd(strings.Join(comments, ""))
-	if len(trimmedComments) > 0 {
-		jsdocText := p.factory.NewJSDocText(trimmedComments)
+	if len(comments) > 0 {
+		jsdocText := p.factory.NewJSDocText(p.stringSlicePool.Clone(comments))
 		p.finishNodeWithEnd(jsdocText, linkEnd, commentsPos)
 		commentParts = append(commentParts, jsdocText)
 	}
@@ -457,7 +450,6 @@ func (p *Parser) parseTag(tags []*ast.Node, margin int) *ast.Node {
 		tag = p.parseSeeTag(start, tagName, margin, indentText)
 	case "import":
 		tag = p.parseImportTag(start, tagName, margin, indentText)
-		ast.SetParentInChildren(tag)
 	default:
 		tag = p.parseUnknownTag(start, tagName, margin, indentText)
 	}
@@ -537,7 +529,7 @@ loop:
 			linkStart := p.scanner.TokenEnd() - 1
 			link := p.parseJSDocLink(linkStart)
 			if link != nil {
-				text := p.factory.NewJSDocText(strings.Join(comments, ""))
+				text := p.factory.NewJSDocText(p.stringSlicePool.Clone(comments))
 				var commentStart int
 				if linkEnd > -1 {
 					commentStart = linkEnd
@@ -591,15 +583,14 @@ loop:
 	p.jsdocTagCommentsSpace = comments[:0]
 
 	comments = removeLeadingNewlines(comments)
-	trimmedComments := trimEnd(strings.Join(comments, ""))
-	if len(trimmedComments) > 0 {
+	if len(comments) > 0 {
 		var commentStart int
 		if linkEnd > -1 {
 			commentStart = linkEnd
 		} else {
 			commentStart = commentsPos
 		}
-		text := p.factory.NewJSDocText(trimmedComments)
+		text := p.factory.NewJSDocText(p.stringSlicePool.Clone(comments))
 		p.finishNode(text, commentStart)
 		parts = append(parts, text)
 	}
@@ -628,11 +619,11 @@ func (p *Parser) parseJSDocLink(start int) *ast.Node {
 	var create *ast.Node
 	switch linkType {
 	case "link":
-		create = p.factory.NewJSDocLink(name, strings.Join(text, ""))
+		create = p.factory.NewJSDocLink(name, text)
 	case "linkcode":
-		create = p.factory.NewJSDocLinkCode(name, strings.Join(text, ""))
+		create = p.factory.NewJSDocLinkCode(name, text)
 	default:
-		create = p.factory.NewJSDocLinkPlain(name, strings.Join(text, ""))
+		create = p.factory.NewJSDocLinkPlain(name, text)
 	}
 	p.finishNodeWithEnd(create, start, p.scanner.TokenEnd())
 	return create
@@ -987,6 +978,9 @@ func (p *Parser) parseTypedefTag(start int, tagName *ast.IdentifierNode, indent 
 
 	typedefTag := p.factory.NewJSDocTypedefTag(tagName, typeExpression, fullName, comment)
 	p.finishNodeWithEnd(typedefTag, start, end)
+	if typeExpression != nil {
+		typeExpression.Parent = typedefTag // forcibly overwrite parent potentially set by inner type expression parse
+	}
 	return typedefTag
 }
 
