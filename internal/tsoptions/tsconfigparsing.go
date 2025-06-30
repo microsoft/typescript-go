@@ -1040,7 +1040,7 @@ func parseConfig(
 					result.compileOnSave = compileOnSave
 				}
 			}
-			mergeCompilerOptions(result.options, extendedConfig.options, nil)
+			mergeCompilerOptions(result.options, extendedConfig.options, extendsRaw)
 		}
 	}
 

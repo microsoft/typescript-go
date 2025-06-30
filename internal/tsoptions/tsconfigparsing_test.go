@@ -699,6 +699,39 @@ export {}`,
 			},
 		}},
 	},
+	{
+		title:               "null overrides in middle level of extends chain",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-middle.json",
+  "compilerOptions": {
+    "outDir": "./final"
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-middle.json": `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null,
+    "outDir": "./middle"
+  }
+}`,
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020"],
+    "outDir": "./base",
+    "strict": true
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
 }
 
 var tsconfigWithExtends = `{
