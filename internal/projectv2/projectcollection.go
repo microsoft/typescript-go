@@ -7,8 +7,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -48,6 +51,82 @@ type projectCollectionBuilderEntry struct {
 	b       *projectCollectionBuilder
 	project *Project
 	dirty   bool
+}
+
+func (e *projectCollectionBuilderEntry) updateProgram() {
+	commandLine := e.b.configFileRegistryBuilder.acquireConfig(e.project.configFileName, e.project.configFilePath, e.project)
+	loadProgram := e.project.Program == nil || commandLine != e.project.CommandLine // !!! smarter equality check?
+	// var pendingReload PendingReload
+	if !loadProgram {
+		for _, file := range e.b.changes.requestedURIs {
+			// !!! ensure this is cheap
+			if e.b.snapshot.GetDefaultProject(file) == e.project {
+				loadProgram = true
+				break
+			}
+		}
+	}
+
+	var singleChangedFile tspath.Path
+	if e.project.Program != nil && !loadProgram {
+		for uri := range e.b.changes.fileChanges.Changed.Keys() {
+			path := uri.Path(e.project.FS().UseCaseSensitiveFileNames())
+			if e.project.containsFile(path) {
+				loadProgram = true
+				if singleChangedFile == "" {
+					singleChangedFile = path
+				} else {
+					singleChangedFile = ""
+					break
+				}
+			}
+		}
+	}
+
+	if loadProgram {
+		oldProgram := e.project.Program
+		if !e.dirty {
+			e.project = e.project.Clone(e.b.snapshot)
+			e.dirty = true
+		}
+		e.project.CommandLine = commandLine
+		var programCloned bool
+		var newProgram *compiler.Program
+		if singleChangedFile != "" {
+			newProgram, programCloned = e.project.Program.UpdateProgram(singleChangedFile, e.project)
+			if !programCloned {
+				// !!! make this less janky
+				// UpdateProgram called GetSourceFile (acquiring the document) but was unable to use it directly,
+				// so it called NewProgram which acquired it a second time. We need to decrement the ref count
+				// for the first acquisition.
+				e.b.snapshot.parseCache.releaseDocument(newProgram.GetSourceFileByPath(singleChangedFile))
+			}
+		} else {
+			newProgram = compiler.NewProgram(
+				compiler.ProgramOptions{
+					Host:                        e.project,
+					Config:                      e.project.CommandLine,
+					UseSourceOfProjectReference: true,
+					TypingsLocation:             e.project.snapshot.sessionOptions.TypingsLocation,
+					JSDocParsingMode:            ast.JSDocParsingModeParseAll,
+					CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
+						e.project.checkerPool = project.NewCheckerPool(4, program, e.b.snapshot.Log)
+						return e.project.checkerPool
+					},
+				},
+			)
+		}
+
+		if !programCloned && oldProgram != nil {
+			for _, file := range oldProgram.GetSourceFiles() {
+				e.b.snapshot.parseCache.releaseDocument(file)
+			}
+		}
+
+		e.project.Program = newProgram
+		// !!! unthread context
+		e.project.LanguageService = ls.NewLanguageService(e.b.ctx, e.project)
+	}
 }
 
 func newProjectCollectionBuilder(
@@ -131,27 +210,6 @@ func (b *projectCollectionBuilder) load(path tspath.Path) (*projectCollectionBui
 		}, true
 	}
 	return nil, false
-}
-
-func (b *projectCollectionBuilder) updateProject(entry *projectCollectionBuilderEntry) {
-	if entry.dirty {
-		// !!! right now, the only kind of project update is program loading,
-		// so we can just assume that if the project is in the dirty map,
-		// it's already been updated. This assumption probably won't hold
-		// as this logic gets more fleshed out.
-		if entry.project.Program == nil {
-			entry.project, _ = entry.project.Clone(b.ctx, b.changes, b.snapshot)
-		}
-		return
-	}
-	if project, result := entry.project.Clone(b.ctx, b.changes, b.snapshot); result.changed {
-		_, loaded := b.dirty.LoadOrStore(project.configFilePath, project)
-		if loaded {
-			// I don't think we get into a state where multiple goroutines try to update
-			// the same project at the same time; ensure this is the case
-			panic("unexpected concurrent project update")
-		}
-	}
 }
 
 func (b *projectCollectionBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool) string {
@@ -301,7 +359,7 @@ func (b *projectCollectionBuilder) isDefaultProject(
 	}
 	// Make sure project is upto date when in create mode
 	if loadKind == projectLoadKindCreate {
-		b.updateProject(entry)
+		entry.updateProgram()
 	}
 	// If script info belongs to this project, use this as default config project
 	if entry.project.containsFile(path) {

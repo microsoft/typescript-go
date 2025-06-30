@@ -145,6 +145,7 @@ func (c *configFileRegistryBuilder) load(path tspath.Path) (*configFileBuilderEn
 // cached, then adds the project (if provided) to `retainingProjects` to keep it alive
 // in the cache. Each `acquireConfig` call that passes a `project` should be accompanied
 // by an eventual `releaseConfig` call with the same project.
+// !!! still need retain by open file
 func (c *configFileRegistryBuilder) acquireConfig(fileName string, path tspath.Path, project *Project) *tsoptions.ParsedCommandLine {
 	entry, _ := c.loadOrStoreNewEntry(path)
 
@@ -208,6 +209,9 @@ func (e *configFileBuilderEntry) retainProject(projectPath tspath.Path) {
 	if e.dirty {
 		e.mu.Lock()
 		defer e.mu.Unlock()
+		if e.retainingProjects == nil {
+			e.retainingProjects = make(map[tspath.Path]struct{})
+		}
 		e.retainingProjects[projectPath] = struct{}{}
 	} else {
 		entry := &configFileEntry{

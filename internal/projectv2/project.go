@@ -1,7 +1,6 @@
 package projectv2
 
 import (
-	"context"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -10,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -42,6 +42,7 @@ type Project struct {
 	CommandLine     *tsoptions.ParsedCommandLine
 	Program         *compiler.Program
 	LanguageService *ls.LanguageService
+	checkerPool     *project.CheckerPool
 	rootFileNames   *collections.OrderedMap[tspath.Path, string] // values are file names
 	snapshot        *Snapshot
 
@@ -155,85 +156,13 @@ func (p *Project) IsSourceFromProjectReference(path tspath.Path) bool {
 	return p.Program != nil && p.Program.IsSourceFromProjectReference(path)
 }
 
-type projectChangeResult struct {
-	changed bool
-}
-
-func (p *Project) Clone(ctx context.Context, change snapshotChange, newSnapshot *Snapshot) (*Project, projectChangeResult) {
-	var result projectChangeResult
-	loadProgram := p.Program == nil
-	// var pendingReload PendingReload
-	if !loadProgram {
-		for _, file := range change.requestedURIs {
-			// !!! ensure this is cheap
-			if p.snapshot.GetDefaultProject(file) == p {
-				loadProgram = true
-				break
-			}
-		}
+func (p *Project) Clone(newSnapshot *Snapshot) *Project {
+	return &Project{
+		Name:             p.Name,
+		Kind:             p.Kind,
+		CommandLine:      p.CommandLine,
+		rootFileNames:    p.rootFileNames,
+		currentDirectory: p.currentDirectory,
+		snapshot:         newSnapshot,
 	}
-
-	var singleChangedFile tspath.Path
-	if p.Program != nil && !loadProgram {
-		for uri := range change.fileChanges.Changed.Keys() {
-			path := uri.Path(p.FS().UseCaseSensitiveFileNames())
-			if p.containsFile(path) {
-				loadProgram = true
-				if singleChangedFile == "" {
-					singleChangedFile = path
-				} else {
-					singleChangedFile = ""
-					break
-				}
-			}
-		}
-	}
-
-	if loadProgram {
-		result.changed = true
-		newProject := &Project{
-			Name:             p.Name,
-			Kind:             p.Kind,
-			CommandLine:      p.CommandLine,
-			rootFileNames:    p.rootFileNames,
-			currentDirectory: p.currentDirectory,
-			snapshot:         newSnapshot,
-		}
-
-		var cloned bool
-		var newProgram *compiler.Program
-		oldProgram := p.Program
-		if singleChangedFile != "" {
-			newProgram, cloned = p.Program.UpdateProgram(singleChangedFile, newProject)
-			if !cloned {
-				// !!! make this less janky
-				// UpdateProgram called GetSourceFile (acquiring the document) but was unable to use it directly,
-				// so it called NewProgram which acquired it a second time. We need to decrement the ref count
-				// for the first acquisition.
-				p.snapshot.parseCache.releaseDocument(newProgram.GetSourceFileByPath(singleChangedFile))
-			}
-		} else {
-			newProgram = compiler.NewProgram(
-				compiler.ProgramOptions{
-					Host:                        newProject,
-					Config:                      newProject.CommandLine,
-					UseSourceOfProjectReference: true,
-					TypingsLocation:             newProject.snapshot.sessionOptions.TypingsLocation,
-					JSDocParsingMode:            ast.JSDocParsingModeParseAll,
-				},
-			)
-		}
-
-		if !cloned {
-			for _, file := range oldProgram.GetSourceFiles() {
-				p.snapshot.parseCache.releaseDocument(file)
-			}
-		}
-
-		newProject.Program = newProgram
-		newProject.LanguageService = ls.NewLanguageService(ctx, newProject)
-		return newProject, result
-	}
-
-	return p, result
 }

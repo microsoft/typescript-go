@@ -116,7 +116,7 @@ func NewSnapshot(
 		configFileRegistry: configFileRegistry,
 		projectCollection:  &projectCollection{},
 
-		overlayFS: newOverlayFS(cachedFS, overlays),
+		overlayFS: newOverlayFS(cachedFS, sessionOptions.PositionEncoding, overlays),
 	}
 
 	s.compilerFS = &compilerFS{snapshot: s}

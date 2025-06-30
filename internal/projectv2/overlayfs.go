@@ -20,28 +20,52 @@ type fileHandle interface {
 	MatchesDiskText() bool
 }
 
-type diskFile struct {
+type fileBase struct {
 	uri     lsproto.DocumentUri
 	content string
 	hash    [sha256.Size]byte
+
+	lineMapOnce sync.Once
+	lineMap     *ls.LineMap
+}
+
+func (f *fileBase) URI() lsproto.DocumentUri {
+	return f.uri
+}
+
+func (f *fileBase) Hash() [sha256.Size]byte {
+	return f.hash
+}
+
+func (f *fileBase) Content() string {
+	return f.content
+}
+
+func (f *fileBase) LineMap() *ls.LineMap {
+	f.lineMapOnce.Do(func() {
+		f.lineMap = ls.ComputeLineStarts(f.content)
+	})
+	return f.lineMap
+}
+
+type diskFile struct {
+	fileBase
+}
+
+func newDiskFile(uri lsproto.DocumentUri, content string) *diskFile {
+	return &diskFile{
+		fileBase: fileBase{
+			uri:     uri,
+			content: content,
+			hash:    sha256.Sum256([]byte(content)),
+		},
+	}
 }
 
 var _ fileHandle = (*diskFile)(nil)
 
-func (f *diskFile) URI() lsproto.DocumentUri {
-	return f.uri
-}
-
 func (f *diskFile) Version() int32 {
 	return 0
-}
-
-func (f *diskFile) Hash() [sha256.Size]byte {
-	return f.hash
-}
-
-func (f *diskFile) Content() string {
-	return f.content
 }
 
 func (f *diskFile) MatchesDiskText() bool {
@@ -51,28 +75,26 @@ func (f *diskFile) MatchesDiskText() bool {
 var _ fileHandle = (*overlay)(nil)
 
 type overlay struct {
-	uri             lsproto.DocumentUri
+	fileBase
 	version         int32
-	content         string
-	hash            [sha256.Size]byte
 	kind            core.ScriptKind
 	matchesDiskText bool
 }
 
-func (o *overlay) Content() string {
-	return o.content
-}
-
-func (o *overlay) URI() lsproto.DocumentUri {
-	return o.uri
+func newOverlay(uri lsproto.DocumentUri, content string, version int32, kind core.ScriptKind) *overlay {
+	return &overlay{
+		fileBase: fileBase{
+			uri:     uri,
+			content: content,
+			hash:    sha256.Sum256([]byte(content)),
+		},
+		version: version,
+		kind:    kind,
+	}
 }
 
 func (o *overlay) Version() int32 {
 	return o.version
-}
-
-func (o *overlay) Hash() [sha256.Size]byte {
-	return o.hash
 }
 
 func (o *overlay) FileName() string {
@@ -89,16 +111,18 @@ func (o *overlay) MatchesDiskText() bool {
 }
 
 type overlayFS struct {
-	fs vfs.FS
+	fs               vfs.FS
+	positionEncoding lsproto.PositionEncodingKind
 
 	mu       sync.Mutex
 	overlays map[tspath.Path]*overlay
 }
 
-func newOverlayFS(fs vfs.FS, overlays map[tspath.Path]*overlay) *overlayFS {
+func newOverlayFS(fs vfs.FS, positionEncoding lsproto.PositionEncodingKind, overlays map[tspath.Path]*overlay) *overlayFS {
 	return &overlayFS{
-		fs:       fs,
-		overlays: overlays,
+		fs:               fs,
+		positionEncoding: positionEncoding,
+		overlays:         overlays,
 	}
 }
 
@@ -117,10 +141,10 @@ func (fs *overlayFS) getFile(uri lsproto.DocumentUri) fileHandle {
 	if !ok {
 		return nil
 	}
-	return &diskFile{uri: uri, content: content, hash: sha256.Sum256([]byte(content))}
+	return newDiskFile(uri, content)
 }
 
-func (fs *overlayFS) processChanges(changes []FileChange, converters *ls.Converters) FileChangeSummary {
+func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 	fs.mu.Lock()
 	defer fs.mu.Unlock()
 
@@ -131,25 +155,27 @@ func (fs *overlayFS) processChanges(changes []FileChange, converters *ls.Convert
 		switch change.Kind {
 		case FileChangeKindOpen:
 			result.Opened.Add(change.URI)
-			newOverlays[path] = &overlay{
-				uri:     change.URI,
-				content: change.Content,
-				hash:    sha256.Sum256([]byte(change.Content)),
-				version: change.Version,
-				kind:    ls.LanguageKindToScriptKind(change.LanguageKind),
-			}
+			newOverlays[path] = newOverlay(
+				change.URI,
+				change.Content,
+				change.Version,
+				ls.LanguageKindToScriptKind(change.LanguageKind),
+			)
 		case FileChangeKindChange:
 			result.Changed.Add(change.URI)
 			o, ok := newOverlays[path]
 			if !ok {
 				panic("overlay not found for change")
 			}
+			converters := ls.NewConverters(fs.positionEncoding, func(fileName string) *ls.LineMap {
+				return ls.ComputeLineStarts(o.Content())
+			})
 			for _, textChange := range change.Changes {
 				if partialChange := textChange.TextDocumentContentChangePartial; partialChange != nil {
 					newContent := converters.FromLSPTextChange(o, partialChange).ApplyTo(o.content)
-					o = &overlay{uri: o.uri, content: newContent} // need intermediate structs to pass back into FromLSPTextChange
+					o = newOverlay(o.uri, newContent, o.version, o.kind)
 				} else if wholeChange := textChange.TextDocumentContentChangeWholeDocument; wholeChange != nil {
-					o = &overlay{uri: o.uri, content: wholeChange.Text}
+					o = newOverlay(o.uri, wholeChange.Text, o.version, o.kind)
 				}
 			}
 			o.version = change.Version
@@ -163,13 +189,9 @@ func (fs *overlayFS) processChanges(changes []FileChange, converters *ls.Convert
 			if !ok {
 				panic("overlay not found for save")
 			}
-			newOverlays[path] = &overlay{
-				uri:             o.URI(),
-				content:         o.Content(),
-				hash:            o.Hash(),
-				version:         o.Version(),
-				matchesDiskText: true,
-			}
+			o = newOverlay(o.URI(), o.Content(), o.Version(), o.kind)
+			o.matchesDiskText = true
+			newOverlays[path] = o
 		case FileChangeKindClose:
 			// Remove the overlay for the closed file.
 			result.Closed.Add(change.URI)
@@ -180,13 +202,7 @@ func (fs *overlayFS) processChanges(changes []FileChange, converters *ls.Convert
 			if o, ok := newOverlays[path]; ok {
 				if o.matchesDiskText {
 					// Assume the overlay does not match disk text after a change.
-					newOverlays[path] = &overlay{
-						uri:             o.URI(),
-						content:         o.Content(),
-						hash:            o.Hash(),
-						version:         o.Version(),
-						matchesDiskText: false,
-					}
+					newOverlays[path] = newOverlay(o.URI(), o.Content(), o.Version(), o.kind)
 				}
 			} else {
 				// Only count this as a change if the file is closed.
@@ -195,13 +211,7 @@ func (fs *overlayFS) processChanges(changes []FileChange, converters *ls.Convert
 		case FileChangeKindWatchDelete:
 			if o, ok := newOverlays[path]; ok {
 				if o.matchesDiskText {
-					newOverlays[path] = &overlay{
-						uri:             o.URI(),
-						content:         o.Content(),
-						hash:            o.Hash(),
-						version:         o.Version(),
-						matchesDiskText: false,
-					}
+					newOverlays[path] = newOverlay(o.URI(), o.Content(), o.Version(), o.kind)
 				}
 			} else {
 				// Only count this as a deletion if the file is closed.

@@ -155,7 +155,7 @@ type Project struct {
 	parsedCommandLine *tsoptions.ParsedCommandLine
 	programConfig     *tsoptions.ParsedCommandLine
 	program           *compiler.Program
-	checkerPool       *checkerPool
+	checkerPool       *CheckerPool
 
 	typingsCacheMu           sync.Mutex
 	unresolvedImportsPerFile map[*ast.SourceFile][]string
@@ -592,7 +592,7 @@ func (p *Project) updateProgram() bool {
 			UseSourceOfProjectReference: true,
 			TypingsLocation:             typingsLocation,
 			CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-				p.checkerPool = newCheckerPool(4, program, p.Log)
+				p.checkerPool = NewCheckerPool(4, program, p.Log)
 				return p.checkerPool
 			},
 			JSDocParsingMode: ast.JSDocParsingModeParseAll,

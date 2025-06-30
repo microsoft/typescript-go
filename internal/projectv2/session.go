@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -39,24 +38,17 @@ type Session struct {
 }
 
 func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Session {
-	overlayFS := newOverlayFS(bundled.WrapFS(osvfs.FS()), make(map[tspath.Path]*overlay))
+	overlayFS := newOverlayFS(bundled.WrapFS(osvfs.FS()), options.PositionEncoding, make(map[tspath.Path]*overlay))
 	parseCache := &parseCache{options: tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 		CurrentDirectory:          options.CurrentDirectory,
 	}}
-	converters := ls.NewConverters(options.PositionEncoding, func(fileName string) *ls.LineMap {
-		// !!! cache
-		return ls.ComputeLineStarts(overlayFS.getFile(ls.FileNameToDocumentURI(fileName)).Content())
-	})
-
-	time.Sleep(10 * time.Second)
 
 	return &Session{
 		options:    options,
 		fs:         overlayFS,
 		logger:     logger,
 		parseCache: parseCache,
-		converters: converters,
 		snapshot: NewSnapshot(
 			overlayFS.fs,
 			overlayFS.overlays,
@@ -158,7 +150,7 @@ func (s *Session) flushChangesLocked(ctx context.Context) FileChangeSummary {
 		return FileChangeSummary{}
 	}
 
-	changes := s.fs.processChanges(s.pendingFileChanges, s.converters)
+	changes := s.fs.processChanges(s.pendingFileChanges)
 	s.pendingFileChanges = nil
 	return changes
 }
