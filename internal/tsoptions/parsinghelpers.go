@@ -526,8 +526,7 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 		sourceField := sourceValue.Field(i)
 
 		// Get the JSON field name for this struct field and check if it's explicitly null
-		field := targetType.Field(i)
-		if jsonTag := field.Tag.Get("json"); jsonTag != "" {
+		if jsonTag := targetType.Field(i).Tag.Get("json"); jsonTag != "" {
 			if jsonFieldName, _, _ := strings.Cut(jsonTag, ","); jsonFieldName != "" && explicitNullFields.Has(jsonFieldName) {
 				targetField.SetZero()
 				continue
