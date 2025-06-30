@@ -213,7 +213,7 @@ func (b *BuildInfoDiagnosticsOfFile) MarshalJSON() ([]byte, error) {
 }
 
 func (b *BuildInfoDiagnosticsOfFile) UnmarshalJSON(data []byte) error {
-	var fileIdAndDiagnostics []any
+	var fileIdAndDiagnostics []json.RawMessage
 	if err := json.Unmarshal(data, &fileIdAndDiagnostics); err != nil {
 		return fmt.Errorf("invalid BuildInfoDiagnosticsOfFile: %s", data)
 	}
@@ -221,19 +221,19 @@ func (b *BuildInfoDiagnosticsOfFile) UnmarshalJSON(data []byte) error {
 		return fmt.Errorf("invalid BuildInfoDiagnosticsOfFile: expected 2 elements, got %d", len(fileIdAndDiagnostics))
 	}
 	var fileId BuildInfoFileId
-	if fileIdV, ok := fileIdAndDiagnostics[0].(float64); !ok {
-		return fmt.Errorf("invalid fileId in BuildInfoDiagnosticsOfFile: expected float64, got %T", fileIdAndDiagnostics[0])
-	} else {
-		fileId = BuildInfoFileId(fileIdV)
+	if err := json.Unmarshal(fileIdAndDiagnostics[0], &fileId); err != nil {
+		return fmt.Errorf("invalid fileId in BuildInfoDiagnosticsOfFile: %s", err)
 	}
-	if diagnostics, ok := fileIdAndDiagnostics[1].([]*BuildInfoDiagnostic); ok {
-		*b = BuildInfoDiagnosticsOfFile{
-			FileId:      fileId,
-			Diagnostics: diagnostics,
-		}
-		return nil
+
+	var diagnostics []*BuildInfoDiagnostic
+	if err := json.Unmarshal(fileIdAndDiagnostics[1], &diagnostics); err != nil {
+		return fmt.Errorf("invalid diagnostics in BuildInfoDiagnosticsOfFile: %s", err)
 	}
-	return fmt.Errorf("invalid diagnostics in BuildInfoDiagnosticsOfFile: expected []*BuildInfoDiagnostic, got %T", fileIdAndDiagnostics[1])
+	*b = BuildInfoDiagnosticsOfFile{
+		FileId:      fileId,
+		Diagnostics: diagnostics,
+	}
+	return nil
 }
 
 type BuildInfoSemanticDiagnostic struct {

@@ -288,15 +288,15 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	case "mapRoot":
 		allOptions.MapRoot = parseString(value)
 	case "module":
-		allOptions.Module = value.(core.ModuleKind)
+		allOptions.Module = floatOrInt32ToFlag[core.ModuleKind](value)
 	case "moduleDetectionKind":
-		allOptions.ModuleDetection = value.(core.ModuleDetectionKind)
+		allOptions.ModuleDetection = floatOrInt32ToFlag[core.ModuleDetectionKind](value)
 	case "moduleResolution":
-		allOptions.ModuleResolution = value.(core.ModuleResolutionKind)
+		allOptions.ModuleResolution = floatOrInt32ToFlag[core.ModuleResolutionKind](value)
 	case "moduleSuffixes":
 		allOptions.ModuleSuffixes = parseStringArray(value)
 	case "moduleDetection":
-		allOptions.ModuleDetection = value.(core.ModuleDetectionKind)
+		allOptions.ModuleDetection = floatOrInt32ToFlag[core.ModuleDetectionKind](value)
 	case "noCheck":
 		allOptions.NoCheck = parseTristate(value)
 	case "noFallthroughCasesInSwitch":
@@ -384,7 +384,7 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	case "suppressOutputPathCheck":
 		allOptions.SuppressOutputPathCheck = parseTristate(value)
 	case "target":
-		allOptions.Target = value.(core.ScriptTarget)
+		allOptions.Target = floatOrInt32ToFlag[core.ScriptTarget](value)
 	case "traceResolution":
 		allOptions.TraceResolution = parseTristate(value)
 	case "tsBuildInfoFile":
@@ -424,7 +424,7 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	case "outDir":
 		allOptions.OutDir = parseString(value)
 	case "newLine":
-		allOptions.NewLine = value.(core.NewLineKind)
+		allOptions.NewLine = floatOrInt32ToFlag[core.NewLineKind](value)
 	case "watch":
 		allOptions.Watch = parseTristate(value)
 	case "pprofDir":
@@ -438,6 +438,13 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 		return false
 	}
 	return true
+}
+
+func floatOrInt32ToFlag[T ~int32](value any) T {
+	if v, ok := value.(T); ok {
+		return v
+	}
+	return T(value.(float64))
 }
 
 func ParseWatchOptions(key string, value any, allOptions *core.WatchOptions) []*ast.Diagnostic {

@@ -18,7 +18,7 @@ import (
 
 type FileMap map[string]string
 
-func newTestSys(fileOrFolderList FileMap, cwd string, args ...string) *testSys {
+func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
