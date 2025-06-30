@@ -390,7 +390,7 @@ func isInRightSideOfInternalImportEqualsDeclaration(node *ast.Node) bool {
 }
 
 func (l *LanguageService) createLspRangeFromNode(node *ast.Node, file *ast.SourceFile) *lsproto.Range {
-	return l.createLspRangeFromBounds(node.Pos(), node.End(), file)
+	return l.createLspRangeFromBounds(astnav.GetStartOfNode(node, file, false /*includeJSDoc*/), node.End(), file)
 }
 
 func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {

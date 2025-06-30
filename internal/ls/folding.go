@@ -18,16 +18,15 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 	res := l.addNodeOutliningSpans(sourceFile)
 	res = append(res, l.addRegionOutliningSpans(sourceFile)...)
 	sort.Slice(res, func(i, j int) bool {
-		if res[i] == nil && res[j] == nil {
-			return false
+		if res[i].StartLine != res[j].StartLine {
+			return res[i].StartLine < res[j].StartLine
 		}
-		if res[i] == nil {
-			return false
+		if res[i].EndLine != res[j].EndLine {
+			return res[i].EndLine < res[j].EndLine
+		} else if res[i].StartCharacter != nil && res[j].StartCharacter != nil {
+			return *res[i].StartCharacter < *res[j].StartCharacter
 		}
-		if res[j] == nil {
-			return true
-		}
-		return res[i].StartLine < res[j].StartLine
+		return *res[i].EndCharacter < *res[j].EndCharacter
 	})
 	return res
 }
@@ -36,9 +35,22 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 	depthRemaining := 40
 	current := 0
 	// Includes the EOF Token so that comments which aren't attached to statements are included
-	statements := sourceFile.Statements //!!! sourceFile.endOfFileToken
+	statements := sourceFile.Statements
+	var curr *ast.Node
+	currentTokenEnd := 0
+	if statements != nil && statements.Nodes != nil {
+		curr = statements.Nodes[len(statements.Nodes)-1]
+		currentTokenEnd = curr.End()
+	}
+	scanner := scanner.GetScannerForSourceFile(sourceFile, currentTokenEnd)
+	eof := scanner.Token()
+	tokenFullStart := scanner.TokenFullStart()
+	tokenEnd := scanner.TokenEnd()
+	k := sourceFile.GetOrCreateToken(eof, tokenFullStart, tokenEnd, curr)
+	statements.Nodes = append(statements.Nodes, k)
+
 	n := len(statements.Nodes)
-	foldingRange := make([]*lsproto.FoldingRange, n)
+	var foldingRange []*lsproto.FoldingRange
 	for current < n {
 		for current < n && !ast.IsAnyImportSyntax(statements.Nodes[current]) {
 			foldingRange = append(foldingRange, visitNode(statements.Nodes[current], depthRemaining, sourceFile, l)...)
@@ -59,7 +71,7 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 				astnav.GetStartOfNode(findChildOfKind(statements.Nodes[firstImport],
 					ast.KindImportKeyword, sourceFile), sourceFile, false /*includeJSDoc*/),
 				statements.Nodes[lastImport].End(),
-				&foldingRangeKind,
+				foldingRangeKind,
 				sourceFile,
 				l))
 		}
@@ -68,7 +80,8 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 }
 
 func (l *LanguageService) addRegionOutliningSpans(sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
-	regions := []*lsproto.FoldingRange{}
+	var regions []*lsproto.FoldingRange
+	var out []*lsproto.FoldingRange
 	lineStarts := scanner.GetLineStarts(sourceFile)
 	for _, currentLineStart := range lineStarts {
 		lineEnd := scanner.GetLineEndOfPosition(sourceFile, int(currentLineStart))
@@ -78,26 +91,37 @@ func (l *LanguageService) addRegionOutliningSpans(sourceFile *ast.SourceFile) []
 			continue
 		}
 		if result.isStart {
-			span := l.createLspRangeFromBounds(strings.Index(sourceFile.Text()[currentLineStart:lineEnd], "//"), lineEnd, sourceFile)
+			// span := l.createLspRangeFromBounds(strings.Index(sourceFile.Text()[currentLineStart:lineEnd], "//"), lineEnd, sourceFile)
+			i := strings.Index(sourceFile.Text()[currentLineStart:lineEnd], "//")
+			span := l.createLspPosition(i+int(currentLineStart), sourceFile)
 			foldingRangeKindRegion := lsproto.FoldingRangeKindRegion
 			collapsedTest := "#region"
 			if result.name != "" {
 				collapsedTest = result.name
-			}
-			regions = append(regions, createFoldingRange(span, &foldingRangeKindRegion, nil, collapsedTest))
+			} // createFoldingRange(span, foldingRangeKindRegion, nil, collapsedTest)
+			regions = append(regions, &lsproto.FoldingRange{
+				StartLine:      span.Line,
+				StartCharacter: &span.Character,
+				Kind:           &foldingRangeKindRegion,
+				CollapsedText:  &collapsedTest,
+			})
 		} else {
-			// if len(regions) > 0 {
-			// 	region := regions[len(regions)-1]
-			// 	regions = regions[:len(regions)-1]
-			// 	if region != nil {
-			// 		region.StartLine = uint32(lineEnd - int(region.StartLine)) // !!! test
-			// 		region.EndLine = lineEnd - region.HintSpan.Start
-			// 		out = append(out, region)
-			// 	}
-			// }
+			if len(regions) > 0 {
+				region := regions[len(regions)-1]
+				regions = regions[:len(regions)-1]
+				if region != nil {
+					if out == nil {
+						out = []*lsproto.FoldingRange{}
+					}
+					endingPosition := l.createLspPosition(lineEnd, sourceFile)
+					region.EndLine = endingPosition.Line
+					region.EndCharacter = &endingPosition.Character
+					out = append(out, region)
+				}
+			}
 		}
 	}
-	return regions
+	return out
 }
 
 func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
@@ -107,18 +131,35 @@ func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *L
 	// cancellationToken.throwIfCancellationRequested();
 	var foldingRange []*lsproto.FoldingRange
 	if ast.IsDeclaration(n) || ast.IsVariableStatement(n) || ast.IsReturnStatement(n) || ast.IsCallOrNewExpression(n) || n.Kind == ast.KindEndOfFile {
-		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n, sourceFile)...)
+		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n, sourceFile, l)...)
 	}
 	if ast.IsFunctionLike(n) && n.Parent != nil && ast.IsBinaryExpression(n.Parent) && n.Parent.AsBinaryExpression().Left != nil && ast.IsPropertyAccessExpression(n.Parent.AsBinaryExpression().Left) {
-		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n.Parent.AsBinaryExpression().Left, sourceFile)...)
+		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n.Parent.AsBinaryExpression().Left, sourceFile, l)...)
 	}
-	if ast.IsBlock(n) || ast.IsModuleBlock(n) {
-		statements := n.Statements()
-		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(statements[len(statements)-1].End(), sourceFile)...)
+	if ast.IsBlock(n) {
+		statements := n.AsBlock().Statements
+		if statements != nil {
+			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(statements.End(), sourceFile, l)...)
+		}
+	}
+	if ast.IsModuleBlock(n) {
+		statements := n.AsModuleBlock().Statements
+		if statements != nil {
+			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(statements.End(), sourceFile, l)...)
+		}
 	}
 	if ast.IsClassLike(n) || ast.IsInterfaceDeclaration(n) {
-		members := n.Members()
-		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(members[len(members)-1].End(), sourceFile)...)
+		var members *ast.NodeList
+		if ast.IsClassDeclaration(n) {
+			members = n.AsClassDeclaration().Members
+		} else if ast.IsClassExpression(n) {
+			members = n.AsClassExpression().Members
+		} else {
+			members = n.AsInterfaceDeclaration().Members
+		}
+		if members != nil {
+			foldingRange = append(foldingRange, addOutliningForLeadingCommentsForPos(members.End(), sourceFile, l)...)
+		}
 	}
 
 	span := getOutliningSpanForNode(n, sourceFile, l)
@@ -177,21 +218,18 @@ func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *L
 	return foldingRange
 }
 
-func addOutliningForLeadingCommentsForNode(n *ast.Node, sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
+func addOutliningForLeadingCommentsForNode(n *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
 	if ast.IsJsxText(n) {
 		return nil
 	}
-	return addOutliningForLeadingCommentsForPos(n.Pos(), sourceFile)
+	return addOutliningForLeadingCommentsForPos(n.Pos(), sourceFile, l)
 }
 
-func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
+func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
 	c := &printer.EmitContext{}
 	comments := scanner.GetLeadingCommentRanges(&printer.NewNodeFactory(c).NodeFactory, sourceFile.Text(), pos)
-	if comments == nil {
-		return nil
-	}
 
-	foldingRange := []*lsproto.FoldingRange{}
+	var foldingRange []*lsproto.FoldingRange
 	firstSingleLineCommentStart := -1
 	lastSingleLineCommentEnd := -1
 	singleLineCommentCount := 0
@@ -202,13 +240,13 @@ func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile) [
 		if singleLineCommentCount > 1 {
 
 			return createFoldingRangeFromBounds(
-				firstSingleLineCommentStart, lastSingleLineCommentEnd, &foldingRangeKindComment, sourceFile, nil)
+				firstSingleLineCommentStart, lastSingleLineCommentEnd, foldingRangeKindComment, sourceFile, l)
 		}
 		return nil
 	}
 
 	sourceText := sourceFile.Text()
-	for comment := range comments {
+	comments(func(comment ast.CommentRange) bool {
 		pos := comment.Pos()
 		end := comment.End()
 		// cancellationToken.throwIfCancellationRequested();
@@ -238,12 +276,17 @@ func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile) [
 			if comments != nil {
 				foldingRange = append(foldingRange, comments)
 			}
-			foldingRange = append(foldingRange, createFoldingRangeFromBounds(pos, end, &foldingRangeKindComment, sourceFile, nil))
+			foldingRange = append(foldingRange, createFoldingRangeFromBounds(pos, end, foldingRangeKindComment, sourceFile, l))
 			singleLineCommentCount = 0
 			break
 		default:
 			// Debug.assertNever(kind);
 		}
+		return true
+	})
+	addedComments := combineAndAddMultipleSingleLineComments()
+	if addedComments != nil {
+		foldingRange = append(foldingRange, addedComments)
 	}
 	return foldingRange
 }
@@ -299,7 +342,7 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 		default:
 			// Block was a standalone block.  In this case we want to only collapse
 			// the span of the block, independent of any parent span.
-			return createFoldingRange(l.createLspRangeFromNode(n, sourceFile), nil, nil, "")
+			return createFoldingRange(l.createLspRangeFromNode(n, sourceFile), "", nil, "")
 		}
 	case ast.KindModuleBlock:
 		return spanForNode(n, n.Parent, ast.KindOpenBraceToken, true /*useFullStart */, sourceFile, l)
@@ -334,12 +377,20 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 }
 
 func spanForImportExportElements(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
-	if len(node.Elements()) == 0 {
+	var elements *ast.NodeList
+	if node.Kind == ast.KindNamedImports {
+		elements = node.AsNamedImports().Elements
+	} else if node.Kind == ast.KindNamedExports {
+		elements = node.AsNamedExports().Elements
+	} else if node.Kind == ast.KindImportAttributes {
+		elements = node.AsImportAttributes().Attributes
+	}
+	if elements == nil {
 		return nil
 	}
 	openToken := findChildOfKind(node, ast.KindOpenBraceToken, sourceFile)
 	closeToken := findChildOfKind(node, ast.KindCloseBraceToken, sourceFile)
-	if openToken == nil || closeToken == nil || printer.PositionsAreOnSameLine(openToken.Pos(), closeToken.End(), sourceFile) {
+	if openToken == nil || closeToken == nil || printer.PositionsAreOnSameLine(openToken.Pos(), closeToken.Pos(), sourceFile) {
 		return nil
 	}
 	return spanBetweenTokens(openToken, closeToken, node, sourceFile, false /*useFullStart*/, l)
@@ -351,7 +402,7 @@ func spanForParenthesizedExpression(node *ast.Node, sourceFile *ast.SourceFile, 
 		return nil
 	}
 	textRange := l.createLspRangeFromBounds(start, node.End(), sourceFile)
-	return createFoldingRange(textRange, nil, l.createLspRangeFromNode(node, sourceFile), "")
+	return createFoldingRange(textRange, "", l.createLspRangeFromNode(node, sourceFile), "")
 }
 
 func spanForCallExpression(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
@@ -360,7 +411,7 @@ func spanForCallExpression(node *ast.Node, sourceFile *ast.SourceFile, l *Langua
 	}
 	openToken := findChildOfKind(node, ast.KindOpenParenToken, sourceFile)
 	closeToken := findChildOfKind(node, ast.KindCloseParenToken, sourceFile)
-	if openToken == nil || closeToken == nil || printer.PositionsAreOnSameLine(openToken.Pos(), closeToken.End(), sourceFile) {
+	if openToken == nil || closeToken == nil || printer.PositionsAreOnSameLine(openToken.Pos(), closeToken.Pos(), sourceFile) {
 		return nil
 	}
 
@@ -373,14 +424,14 @@ func spanForArrowFunction(node *ast.Node, sourceFile *ast.SourceFile, l *Languag
 		return nil
 	}
 	textRange := l.createLspRangeFromBounds(arrowFunctionNode.Body.Pos(), arrowFunctionNode.Body.End(), sourceFile)
-	return createFoldingRange(textRange, nil, l.createLspRangeFromNode(node, sourceFile), "")
+	return createFoldingRange(textRange, "", l.createLspRangeFromNode(node, sourceFile), "")
 }
 
 func spanForTemplateLiteral(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
 	if node.Kind == ast.KindNoSubstitutionTemplateLiteral && len(node.Text()) == 0 {
 		return nil
 	}
-	return createFoldingRangeFromBounds(astnav.GetStartOfNode(node, sourceFile, false /*includeJSDoc*/), node.End(), nil, sourceFile, l)
+	return createFoldingRangeFromBounds(astnav.GetStartOfNode(node, sourceFile, false /*includeJSDoc*/), node.End(), "", sourceFile, l)
 }
 
 func spanForJSXElement(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
@@ -390,7 +441,7 @@ func spanForJSXElement(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageSe
 	} else {
 		openingElement = node.AsJsxFragment().OpeningFragment
 	}
-	textRange := l.createLspRangeFromBounds(openingElement.Pos(), openingElement.End(), sourceFile)
+	textRange := l.createLspRangeFromBounds(astnav.GetStartOfNode(openingElement, sourceFile, false /*includeJSDoc*/), openingElement.End(), sourceFile)
 	tagName := openingElement.TagName().Text()
 	var bannerText strings.Builder
 	if node.Kind == ast.KindJsxElement {
@@ -403,7 +454,7 @@ func spanForJSXElement(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageSe
 		bannerText.WriteString("<>...</>")
 	}
 
-	return createFoldingRange(textRange, nil, nil, bannerText.String())
+	return createFoldingRange(textRange, "", nil, bannerText.String())
 }
 
 func spanForJSXAttributes(node *ast.Node, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
@@ -416,12 +467,12 @@ func spanForJSXAttributes(node *ast.Node, sourceFile *ast.SourceFile, l *Languag
 	if len(attributes.Properties()) == 0 {
 		return nil
 	}
-	return createFoldingRangeFromBounds(astnav.GetStartOfNode(node, sourceFile, false /*includeJSDoc*/), node.End(), nil, sourceFile, l)
+	return createFoldingRangeFromBounds(astnav.GetStartOfNode(node, sourceFile, false /*includeJSDoc*/), node.End(), "", sourceFile, l)
 }
 
 func spanForNodeArray(statements *ast.NodeList, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
 	if statements != nil && len(statements.Nodes) != 0 {
-		return createFoldingRange(l.createLspRangeFromBounds(statements.Pos(), statements.End(), sourceFile), nil, nil, "")
+		return createFoldingRange(l.createLspRangeFromBounds(statements.Pos(), statements.End(), sourceFile), "", nil, "")
 	}
 	return nil
 }
@@ -446,10 +497,10 @@ func spanBetweenTokens(openToken *ast.Node, closeToken *ast.Node, hintSpanNode *
 	} else {
 		textRange = l.createLspRangeFromBounds(astnav.GetStartOfNode(openToken, sourceFile, false /*includeJSDoc*/), closeToken.End(), sourceFile)
 	}
-	return createFoldingRange(textRange, nil, l.createLspRangeFromNode(hintSpanNode, sourceFile), "")
+	return createFoldingRange(textRange, "", l.createLspRangeFromNode(hintSpanNode, sourceFile), "")
 }
 
-func createFoldingRange(textRange *lsproto.Range, foldingRangeKind *lsproto.FoldingRangeKind, hintRange *lsproto.Range, collapsedText string) *lsproto.FoldingRange {
+func createFoldingRange(textRange *lsproto.Range, foldingRangeKind lsproto.FoldingRangeKind, hintRange *lsproto.Range, collapsedText string) *lsproto.FoldingRange {
 	if hintRange == nil {
 		hintRange = textRange
 	}
@@ -457,21 +508,21 @@ func createFoldingRange(textRange *lsproto.Range, foldingRangeKind *lsproto.Fold
 		defaultText := "..."
 		collapsedText = defaultText
 	}
+	var kind *lsproto.FoldingRangeKind
+	if foldingRangeKind != "" {
+		kind = &foldingRangeKind
+	}
 	return &lsproto.FoldingRange{
-		StartLine:     textRange.Start.Line,
-		EndLine:       textRange.End.Line, // !!! needs to be adjusted for in vscode repo
-		Kind:          foldingRangeKind,
-		CollapsedText: &collapsedText,
+		StartLine:      textRange.Start.Line,
+		StartCharacter: &textRange.Start.Character,
+		EndLine:        textRange.End.Line, // !!! needs to be adjusted for in vscode repo
+		EndCharacter:   &textRange.End.Character,
+		Kind:           kind,
+		CollapsedText:  &collapsedText,
 	}
 }
 
-// func adjustFoldingRange(textRange lsproto.Range, sourceFile *ast.SourceFile) {
-// 	if textRange.End.Character > 0 {
-// 		foldEndCharacter := sourceFile.Text()[textRange.End.Line : textRange.End]
-// 	}
-// }
-
-func createFoldingRangeFromBounds(pos int, end int, foldingRangeKind *lsproto.FoldingRangeKind, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
+func createFoldingRangeFromBounds(pos int, end int, foldingRangeKind lsproto.FoldingRangeKind, sourceFile *ast.SourceFile, l *LanguageService) *lsproto.FoldingRange {
 	return createFoldingRange(l.createLspRangeFromBounds(pos, end, sourceFile), foldingRangeKind, nil, "")
 }
 
