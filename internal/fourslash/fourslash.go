@@ -17,6 +17,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -542,11 +543,16 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 		t.Fatalf("Another baseline is already in progress")
 	} else {
 		f.baseline = &baselineFromTest{
-			baseline: &strings.Builder{},
-			testName: t.Name(),
+			content:  &strings.Builder{},
+			testName: "findAllRef/" + strings.TrimPrefix(t.Name(), "Test"),
 			ext:      ".baseline.jsonc",
 		}
 	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
 
 	for _, markerOrRange := range referenceLocations {
 		// worker in `baselineEachMarkerOrRange`
@@ -561,11 +567,15 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 		}
 		result := resMsg.AsResponse().Result
 		if result, ok := result.([]*lsproto.Location); ok {
-			// !!! TODO verifyFindAllReferences(t, markerOrRange)
+			f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(result, baselineFourslashLocationsOptions{
+				marker:     markerOrRange.GetMarker(),
+				markerName: "/*FIND ALL REFS*/",
+			}))
 		} else {
 			t.Fatalf("Unexpected response type at marker %s: %v", f.lastKnownMarkerName, result)
 		}
 	}
+	baseline.Run(t, f.baseline.getBaselineName(), f.baseline.content.String(), baseline.Options{})
 }
 
 func ptrTo[T any](v T) *T {

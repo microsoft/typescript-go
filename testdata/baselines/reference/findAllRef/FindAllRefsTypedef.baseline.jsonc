@@ -1,0 +1,18 @@
+// === findAllReferences ===
+
+
+
+
+// === findAllReferences ===
+
+
+
+
+// === findAllReferences ===
+// === /a.js ===
+
+// --- (line: 4) skipped ---
+// 
+// /** @type {I} */
+// let x;
+// x./*FIND ALL REFS*/[|p|];

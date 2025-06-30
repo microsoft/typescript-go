@@ -35,6 +35,10 @@ func (r *RangeMarker) FileName() string {
 	return r.fileName
 }
 
+func (r *RangeMarker) GetMarker() *Marker {
+	return r.Marker
+}
+
 type Marker struct {
 	fileName   string
 	Position   int
@@ -51,9 +55,14 @@ func (m *Marker) FileName() string {
 	return m.fileName
 }
 
+func (m *Marker) GetMarker() *Marker {
+	return m
+}
+
 type MarkerOrRange interface {
 	FileName() string
 	LSPos() lsproto.Position
+	GetMarker() *Marker
 }
 
 type TestData struct {

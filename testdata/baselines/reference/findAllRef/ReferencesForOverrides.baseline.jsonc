@@ -1,0 +1,47 @@
+// === findAllReferences ===
+
+
+
+
+// === findAllReferences ===
+// === /referencesForOverrides.ts ===
+
+// --- (line: 10) skipped ---
+// 	}
+// 
+// 	module SimpleInterfaceTest {
+// 		export interface IFoo {[|
+// 			/*FIND ALL REFS*/ifoo|](): void;
+// 		}
+// 		export interface IBar extends IFoo {[|
+// 			ifoo|](): void;
+// 		}
+// 	}
+// 
+// // --- (line: 22) skipped ---
+
+
+// --- (line: 61) skipped ---
+// 		x.foo();
+// 
+// 		var y: SimpleInterfaceTest.IBar = null;
+// 		y.[|ifoo|]();
+// 
+//         var w: SimpleClassInterfaceTest.Bar = null;
+//         w.icfoo();
+// // --- (line: 69) skipped ---
+
+
+
+
+// === findAllReferences ===
+
+
+
+
+// === findAllReferences ===
+
+
+
+
+// === findAllReferences ===

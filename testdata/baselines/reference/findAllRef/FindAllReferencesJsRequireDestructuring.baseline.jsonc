@@ -1,0 +1,11 @@
+// === findAllReferences ===
+// === /foo.js ===
+
+// module.exports = {[|
+//     foo|]: '1'
+// };
+
+
+// === /bar.js ===
+
+// const { /*FIND ALL REFS*/[| foo|]: bar } = require('./foo');

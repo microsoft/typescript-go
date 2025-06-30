@@ -1,0 +1,30 @@
+// === findAllReferences ===
+// === /infer.d.ts ===
+
+// export declare function infer(o: { m(): void } & ThisType<{[| x|]: number }>): void;
+
+
+// === /a.js ===
+
+// import { infer } from "./infer";
+// infer({
+//     m() {
+//         this.[|x|] = 1;
+//         this./*FIND ALL REFS*/[|x|];
+//     },
+// });
+
+
+
+
+// === findAllReferences ===
+// === /b.js ===
+
+// --- (line: 4) skipped ---
+// function infer(o) {}
+// infer({
+//     m() {
+//         this.[|x|] = 2;
+//         this./*FIND ALL REFS*/[|x|];
+//     },
+// });
