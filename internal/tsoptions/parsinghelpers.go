@@ -498,70 +498,53 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 		return targetOptions
 	}
 
-	// Do the normal merge
-	targetValue := reflect.ValueOf(targetOptions).Elem()
-	sourceValue := reflect.ValueOf(sourceOptions).Elem()
-
-	for i := range targetValue.NumField() {
-		targetField := targetValue.Field(i)
-		sourceField := sourceValue.Field(i)
-		if sourceField.IsZero() {
-			continue
-		} else {
-			targetField.Set(sourceField)
-		}
-	}
-
-	// Then handle explicitly set null values using the raw JSON (if provided)
+	// Collect explicitly null field names from raw JSON
+	explicitNullFields := make(map[string]bool)
 	if rawSource != nil {
 		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok {
 			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
 				if compilerOptionsMap, ok := compilerOptionsRaw.(*collections.OrderedMap[string, any]); ok {
-					handleExplicitNullValues(targetOptions, compilerOptionsMap)
+					for key, value := range compilerOptionsMap.Entries() {
+						if value == nil {
+							explicitNullFields[key] = true
+						}
+					}
 				}
 			}
 		}
 	}
 
-	return targetOptions
-}
-
-// handleExplicitNullValues processes explicitly set null values in the raw JSON
-// and applies them to the target options to override inherited values
-func handleExplicitNullValues(targetOptions *core.CompilerOptions, rawCompilerOptions *collections.OrderedMap[string, any]) {
+	// Do the merge, handling explicit nulls during the normal merge
 	targetValue := reflect.ValueOf(targetOptions).Elem()
+	sourceValue := reflect.ValueOf(sourceOptions).Elem()
 	targetType := targetValue.Type()
 
-	for key, value := range rawCompilerOptions.Entries() {
-		if value != nil {
-			continue
+	for i := range targetValue.NumField() {
+		targetField := targetValue.Field(i)
+		sourceField := sourceValue.Field(i)
+
+		// Get the JSON field name for this struct field
+		field := targetType.Field(i)
+		jsonTag := field.Tag.Get("json")
+		if jsonTag != "" {
+			jsonFieldName, _, _ := strings.Cut(jsonTag, ",")
+
+			// If this field is explicitly set to null, zero it
+			if explicitNullFields[jsonFieldName] {
+				if targetField.CanSet() {
+					targetField.SetZero()
+				}
+				continue
+			}
 		}
 
-		// Find the corresponding field in CompilerOptions
-		numFields := targetValue.NumField()
-		for i := range numFields {
-			field := targetType.Field(i)
-			jsonTag := field.Tag.Get("json")
-			if jsonTag == "" {
-				continue
-			}
-
-			// Extract the field name from the json tag (remove ,omitzero etc.)
-			jsonFieldName, _, _ := strings.Cut(jsonTag, ",")
-			if jsonFieldName != key {
-				continue
-			}
-
-			targetField := targetValue.Field(i)
-			if !targetField.CanSet() {
-				break
-			}
-
-			// Set the field to its zero value (nil for slices, etc.)
-			targetField.SetZero()
-			break
+		// Normal merge behavior: copy non-zero fields
+		if !sourceField.IsZero() {
+			targetField.Set(sourceField)
 		}
 	}
+
+	return targetOptions
 }
 
 func convertToOptionsWithAbsolutePaths(optionsBase *collections.OrderedMap[string, any], optionMap map[string]*CommandLineOption, cwd string) *collections.OrderedMap[string, any] {
