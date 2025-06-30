@@ -845,7 +845,7 @@ type B =[| [
 		}|]
 
 		interface IFoo[| {
-		   [|// all consecutive single line comments should be in one block regardless of their number or empty lines/spaces inbetween
+		   [|// all consecutive single line comments should be in one block regardless of their number or empty lines/spaces in between
 
 		   // comment 2
 		   // comment 3
@@ -880,8 +880,6 @@ type B =[| [
 		}|]
 
 		function Foo()[| {
-		  [|// comment 1
-		    // comment 2|]
 		   this.method = function (param)[| {
 		   }|]
 
@@ -1101,12 +1099,6 @@ const[| {
 		const foo = null;
 
 		function Foo()[| {
-		  [|/**
-		    * Description
-		    *
-		    * @param {string} param
-		    * @returns
-		    */|]
 		   this.method = function (param)[| {
 		   }|]
 

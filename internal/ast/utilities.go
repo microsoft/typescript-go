@@ -663,49 +663,6 @@ func isDeclarationStatementKind(kind Kind) bool {
 	return false
 }
 
-func isDeclarationKind(kind Kind) bool {
-	switch kind {
-	case KindArrowFunction,
-		KindBindingElement,
-		KindClassDeclaration,
-		KindClassExpression,
-		KindClassStaticBlockDeclaration,
-		KindConstructor,
-		KindEnumDeclaration,
-		KindEnumMember,
-		KindExportSpecifier,
-		KindFunctionDeclaration,
-		KindFunctionExpression,
-		KindGetAccessor,
-		KindImportClause,
-		KindImportEqualsDeclaration,
-		KindImportSpecifier,
-		KindInterfaceDeclaration,
-		KindJsxAttribute,
-		KindMethodDeclaration,
-		KindMethodSignature,
-		KindModuleDeclaration,
-		KindNamespaceExportDeclaration,
-		KindNamespaceExport,
-		KindNamespaceImport,
-		KindParameter,
-		KindPropertyAssignment,
-		KindPropertyDeclaration,
-		KindPropertySignature,
-		KindSetAccessor,
-		KindShorthandPropertyAssignment,
-		KindTypeAliasDeclaration,
-		KindTypeParameter,
-		KindVariableDeclaration,
-		KindJSDocTypedefTag,
-		KindJSDocCallbackTag,
-		KindJSDocPropertyTag,
-		KindNamedTupleMember:
-		return true
-	}
-	return false
-}
-
 // Determines whether a node is a DeclarationStatement. Ideally this does not use Parent pointers, but it may use them
 // to rule out a Block node that is part of `try` or `catch` or is the Block-like body of a function.
 //
@@ -1308,7 +1265,7 @@ func IsDeclaration(node *Node) bool {
 	if node.Kind == KindTypeParameter {
 		return node.Parent != nil
 	}
-	return isDeclarationKind(node.Kind)
+	return IsDeclarationNode(node)
 }
 
 // True if `name` is the name of a declaration node

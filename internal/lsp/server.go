@@ -577,11 +577,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 				MoreTriggerCharacter:  &[]string{"}", ";", "\n"},
 			},
 			FoldingRangeProvider: &lsproto.BooleanOrFoldingRangeOptionsOrFoldingRangeRegistrationOptions{
-				FoldingRangeOptions: &lsproto.FoldingRangeOptions{
-					WorkDoneProgressOptions: lsproto.WorkDoneProgressOptions{
-						WorkDoneProgress: ptrTo(true),
-					},
-				},
+				Boolean: ptrTo(true),
 			},
 		},
 	})
