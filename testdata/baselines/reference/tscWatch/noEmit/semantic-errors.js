@@ -7,8 +7,7 @@ const a: number = "hello"
 //// [/home/src/workspaces/project/tsconfig.json] new file
 {
 	"compilerOptions": {
-            "noEmit": true,
-            "outFile": "../outFile.js"
+            "noEmit": true
 	}
 }
 
@@ -68,7 +67,7 @@ const a = "hello";
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
 	"compilerOptions": {
-            "outFile": "../outFile.js"
+            
 	}
 }
 
@@ -91,7 +90,7 @@ Found 1 error in tsconfig.json[90m:4[0m
 {
 	"compilerOptions": {
             "noEmit": true,
-            "outFile": "../outFile.js"
+            
 	}
 }
 
@@ -131,7 +130,7 @@ Found 1 error in tsconfig.json[90m:3[0m
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
 	"compilerOptions": {
-            "outFile": "../outFile.js"
+            
 	}
 }
 
@@ -154,7 +153,7 @@ Found 1 error in tsconfig.json[90m:4[0m
 {
 	"compilerOptions": {
             "noEmit": true,
-            "outFile": "../outFile.js"
+            
 	}
 }
 

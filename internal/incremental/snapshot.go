@@ -249,9 +249,7 @@ type snapshot struct {
 	// Additional fields that are not serialized but needed to track state
 
 	// true if build info emit is pending
-	buildInfoEmitPending bool
-	// True if the semantic diagnostics were copied from the old state
-	semanticDiagnosticsFromOldState         collections.Set[tspath.Path]
+	buildInfoEmitPending                    bool
 	allFilesExcludingDefaultLibraryFileOnce sync.Once
 	//  Cache of all files excluding default library file for the current program
 	allFilesExcludingDefaultLibraryFile []*ast.SourceFile
@@ -401,7 +399,6 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 						// Unchanged file copy diagnostics
 						if diagnostics, ok := oldProgram.snapshot.semanticDiagnosticsPerFile[file.Path()]; ok {
 							snapshot.semanticDiagnosticsPerFile[file.Path()] = diagnostics
-							snapshot.semanticDiagnosticsFromOldState.Add(file.Path())
 						}
 					}
 				}

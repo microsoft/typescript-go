@@ -133,25 +133,25 @@ func TestTscNoEmitWatch(t *testing.T) {
 		noEmitWatchTestInput("syntax errors",
 			[]string{"-w"},
 			`const a = "hello`,
-			[]string{`"outFile": "../outFile.js"`},
+			nil,
 		),
 		noEmitWatchTestInput(
 			"semantic errors",
 			[]string{"-w"},
 			`const a: number = "hello"`,
-			[]string{`"outFile": "../outFile.js"`},
+			nil,
 		),
 		noEmitWatchTestInput(
 			"dts errors without dts enabled",
 			[]string{"-w"},
 			`const a = class { private p = 10; };`,
-			[]string{`"outFile": "../outFile.js"`},
+			nil,
 		),
 		noEmitWatchTestInput(
 			"dts errors",
 			[]string{"-w"},
 			`const a = class { private p = 10; };`,
-			[]string{`"outFile": "../outFile.js"`, `"declaration": true`},
+			[]string{`"declaration": true`},
 		),
 	}
 
