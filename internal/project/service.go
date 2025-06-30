@@ -42,6 +42,7 @@ type Service struct {
 	options             ServiceOptions
 	comparePathsOptions tspath.ComparePathsOptions
 	converters          *ls.Converters
+	Workspace           Workspace
 
 	projectsMu         sync.RWMutex
 	configuredProjects map[tspath.Path]*Project
@@ -85,6 +86,7 @@ func NewService(host ServiceHost, options ServiceOptions) *Service {
 		openFiles:              make(map[tspath.Path]string),
 		configFileForOpenFiles: make(map[tspath.Path]string),
 	}
+	service.Workspace.comparePathsOptions = service.comparePathsOptions
 	service.defaultProjectFinder = &defaultProjectFinder{
 		service:                         service,
 		configFileForOpenFiles:          make(map[tspath.Path]string),
@@ -210,11 +212,12 @@ func (s *Service) isOpenFile(info *ScriptInfo) bool {
 	return ok
 }
 
-func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.ScriptKind, projectRootPath string) {
+func (s *Service) OpenFile(fileName string, fileContent string, scriptKind core.ScriptKind) {
 	path := s.toPath(fileName)
 	existing := s.documentStore.GetScriptInfoByPath(path)
+	// Find project root path
 	info := s.documentStore.getOrCreateScriptInfoWorker(fileName, path, scriptKind, true /*openedByClient*/, fileContent, true /*deferredDeleteOk*/, s.FS())
-	s.openFiles[info.path] = projectRootPath
+	s.openFiles[info.path] = s.Workspace.GetProjectRootPath(fileName)
 	if existing == nil && info != nil && !info.isDynamic {
 		// Invoke wild card directory watcher to ensure that the file presence is reflected
 		s.configFileRegistry.tryInvokeWildCardDirectories(fileName, info.path)
@@ -621,22 +624,6 @@ func (s *Service) getInferredProjectForProjectRootPath(info *ScriptInfo, project
 		}
 		return nil
 	}
-
-	if !info.isDynamic {
-		var bestMatch *Project
-		for _, project := range s.inferredProjects {
-			if project.rootPath != "" &&
-				tspath.ContainsPath(string(project.rootPath), string(info.path), s.comparePathsOptions) &&
-				(bestMatch == nil || len(bestMatch.rootPath) <= len(project.rootPath)) {
-				bestMatch = project
-			}
-		}
-
-		if bestMatch != nil {
-			return bestMatch
-		}
-	}
-
 	// unrooted inferred project if no best match found
 	if unrootedProject, ok := s.inferredProjects[""]; ok {
 		return unrootedProject

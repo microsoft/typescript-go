@@ -25,8 +25,9 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files := filesForReferencedProjectProgram(false)
 		service, _ := projecttestutil.Setup(files, nil)
+		service.Workspace.SetRoot("/user/username/projects/myproject")
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile("/user/username/projects/myproject/main/main.ts", files["/user/username/projects/myproject/main/main.ts"].(string), core.ScriptKindTS, "/user/username/projects/myproject")
+		service.OpenFile("/user/username/projects/myproject/main/main.ts", files["/user/username/projects/myproject/main/main.ts"].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -51,8 +52,9 @@ func TestProjectReferencesProgram(t *testing.T) {
 			export declare function fn5(): void;
 		`
 		service, _ := projecttestutil.Setup(files, nil)
+		service.Workspace.SetRoot("/user/username/projects/myproject")
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile("/user/username/projects/myproject/main/main.ts", files["/user/username/projects/myproject/main/main.ts"].(string), core.ScriptKindTS, "/user/username/projects/myproject")
+		service.OpenFile("/user/username/projects/myproject/main/main.ts", files["/user/username/projects/myproject/main/main.ts"].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -71,7 +73,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(false, "")
 		service, _ := projecttestutil.Setup(files, nil)
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS, "")
+		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -90,7 +92,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(true, "")
 		service, _ := projecttestutil.Setup(files, nil)
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS, "")
+		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -109,7 +111,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(false, "@issue/")
 		service, _ := projecttestutil.Setup(files, nil)
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS, "")
+		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -128,7 +130,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(true, "@issue/")
 		service, _ := projecttestutil.Setup(files, nil)
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS, "")
+		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -147,7 +149,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(false, "")
 		service, _ := projecttestutil.Setup(files, nil)
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS, "")
+		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -166,7 +168,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(true, "")
 		service, _ := projecttestutil.Setup(files, nil)
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS, "")
+		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -185,7 +187,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(false, "@issue/")
 		service, _ := projecttestutil.Setup(files, nil)
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS, "")
+		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -204,7 +206,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(true, "@issue/")
 		service, _ := projecttestutil.Setup(files, nil)
 		assert.Equal(t, len(service.Projects()), 0)
-		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS, "")
+		service.OpenFile(aTest, files[aTest].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		p := service.Projects()[0]
 		assert.Equal(t, p.Kind(), project.KindConfigured)
@@ -222,7 +224,8 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files := filesForReferencedProjectProgram(false)
 		service, host := projecttestutil.Setup(files, nil)
-		service.OpenFile("/user/username/projects/myproject/main/main.ts", files["/user/username/projects/myproject/main/main.ts"].(string), core.ScriptKindTS, "/user/username/projects/myproject")
+		service.Workspace.SetRoot("/user/username/projects/myproject")
+		service.OpenFile("/user/username/projects/myproject/main/main.ts", files["/user/username/projects/myproject/main/main.ts"].(string), core.ScriptKindTS)
 		assert.Equal(t, len(service.Projects()), 1)
 		project := service.Projects()[0]
 		programBefore := project.GetProgram()
