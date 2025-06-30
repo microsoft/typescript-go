@@ -490,14 +490,6 @@ func ParseTypeAcquisition(key string, value any, allOptions *core.TypeAcquisitio
 }
 
 // getJSONFieldName extracts the JSON field name from a struct field's tag
-func getJSONFieldName(field reflect.StructField) string {
-	jsonTag := field.Tag.Get("json")
-	if jsonTag == "" {
-		return ""
-	}
-	jsonFieldName, _, _ := strings.Cut(jsonTag, ",")
-	return jsonFieldName
-}
 
 // mergeCompilerOptions merges the source compiler options into the target compiler options
 // with optional awareness of explicitly set null values in the raw JSON.
@@ -535,9 +527,11 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 
 		// Get the JSON field name for this struct field and check if it's explicitly null
 		field := targetType.Field(i)
-		if jsonFieldName := getJSONFieldName(field); jsonFieldName != "" && explicitNullFields.Has(jsonFieldName) {
-			targetField.SetZero()
-			continue
+		if jsonTag := field.Tag.Get("json"); jsonTag != "" {
+			if jsonFieldName, _, _ := strings.Cut(jsonTag, ","); jsonFieldName != "" && explicitNullFields.Has(jsonFieldName) {
+				targetField.SetZero()
+				continue
+			}
 		}
 
 		// Normal merge behavior: copy non-zero fields
