@@ -489,13 +489,16 @@ func ParseTypeAcquisition(key string, value any, allOptions *core.TypeAcquisitio
 	return nil
 }
 
-// mergeCompilerOptions merges the source compiler options into the target compiler options.
-// Fields in the source options will overwrite the corresponding fields in the target options.
-func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *core.CompilerOptions {
+// mergeCompilerOptions merges the source compiler options into the target compiler options
+// with optional awareness of explicitly set null values in the raw JSON.
+// Fields in the source options will overwrite the corresponding fields in the target options,
+// including when they are explicitly set to null in the raw configuration (if rawSource is provided).
+func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, rawSource any) *core.CompilerOptions {
 	if sourceOptions == nil {
 		return targetOptions
 	}
 
+	// Do the normal merge
 	targetValue := reflect.ValueOf(targetOptions).Elem()
 	sourceValue := reflect.ValueOf(sourceOptions).Elem()
 
@@ -508,22 +511,8 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions) *c
 			targetField.Set(sourceField)
 		}
 	}
-	return targetOptions
-}
 
-// mergeCompilerOptionsWithRaw merges the source compiler options into the target compiler options
-// with awareness of explicitly set null values in the raw JSON.
-// Fields in the source options will overwrite the corresponding fields in the target options,
-// including when they are explicitly set to null in the raw configuration.
-func mergeCompilerOptionsWithRaw(targetOptions, sourceOptions *core.CompilerOptions, rawSource any) *core.CompilerOptions {
-	if sourceOptions == nil {
-		return targetOptions
-	}
-
-	// First do the normal merge
-	mergeCompilerOptions(targetOptions, sourceOptions)
-
-	// Then handle explicitly set null values using the raw JSON
+	// Then handle explicitly set null values using the raw JSON (if provided)
 	if rawSource != nil {
 		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok {
 			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
