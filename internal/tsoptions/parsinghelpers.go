@@ -509,14 +509,14 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 	}
 
 	// Collect explicitly null field names from raw JSON
-	explicitNullFields := make(map[string]bool)
+	explicitNullFields := &collections.Set[string]{}
 	if rawSource != nil {
 		if rawMap, ok := rawSource.(*collections.OrderedMap[string, any]); ok {
 			if compilerOptionsRaw, exists := rawMap.Get("compilerOptions"); exists {
 				if compilerOptionsMap, ok := compilerOptionsRaw.(*collections.OrderedMap[string, any]); ok {
 					for key, value := range compilerOptionsMap.Entries() {
 						if value == nil {
-							explicitNullFields[key] = true
+							explicitNullFields.Add(key)
 						}
 					}
 				}
@@ -533,15 +533,11 @@ func mergeCompilerOptions(targetOptions, sourceOptions *core.CompilerOptions, ra
 		targetField := targetValue.Field(i)
 		sourceField := sourceValue.Field(i)
 
-		// Get the JSON field name for this struct field
+		// Get the JSON field name for this struct field and check if it's explicitly null
 		field := targetType.Field(i)
-		jsonFieldName := getJSONFieldName(field)
-		if jsonFieldName != "" {
-			// If this field is explicitly set to null, zero it
-			if explicitNullFields[jsonFieldName] {
-				targetField.SetZero()
-				continue
-			}
+		if jsonFieldName := getJSONFieldName(field); jsonFieldName != "" && explicitNullFields.Has(jsonFieldName) {
+			targetField.SetZero()
+			continue
 		}
 
 		// Normal merge behavior: copy non-zero fields
