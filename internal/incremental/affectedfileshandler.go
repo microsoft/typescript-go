@@ -48,9 +48,7 @@ func (h *affectedFilesHandler) isChangedSignature(path tspath.Path) bool {
 }
 
 func (h *affectedFilesHandler) removeSemanticDiagnosticsOf(path tspath.Path) {
-	if h.program.snapshot.semanticDiagnosticsFromOldState.Has(path) {
-		h.filesToRemoveDiagnostics.Add(path)
-	}
+	h.filesToRemoveDiagnostics.Add(path)
 }
 
 func (h *affectedFilesHandler) removeDiagnosticsOfLibraryFiles() {
@@ -309,7 +307,6 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfGlobalScope(dtsMayChange dtsM
 // Handle the dts may change, so they need to be added to pending emit if dts emit is enabled,
 // Also we need to make sure signature is updated for these files
 func (h *affectedFilesHandler) handleDtsMayChangeOf(dtsMayChange dtsMayChange, path tspath.Path, invalidateJsFiles bool) {
-	h.removeSemanticDiagnosticsOf(path)
 	if h.program.snapshot.changedFilesSet.Has(path) {
 		return
 	}
@@ -317,6 +314,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOf(dtsMayChange dtsMayChange, p
 	if file == nil {
 		return
 	}
+	h.removeSemanticDiagnosticsOf(path)
 	// Even though the js emit doesnt change and we are already handling dts emit and semantic diagnostics
 	// we need to update the signature to reflect correctness of the signature(which is output d.ts emit) of this file
 	// This ensures that we dont later during incremental builds considering wrong signature.
@@ -340,7 +338,6 @@ func (h *affectedFilesHandler) updateSnapshot() {
 		return true
 	})
 	h.filesToRemoveDiagnostics.Range(func(file tspath.Path) bool {
-		h.program.snapshot.semanticDiagnosticsFromOldState.Delete(file)
 		delete(h.program.snapshot.semanticDiagnosticsPerFile, file)
 		return true
 	})

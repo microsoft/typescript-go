@@ -7,8 +7,7 @@ const a = "hello
 //// [/home/src/workspaces/project/tsconfig.json] new file
 {
 	"compilerOptions": {
-            "noEmit": true,
-            "outFile": "../outFile.js"
+            "noEmit": true
 	}
 }
 
@@ -52,7 +51,7 @@ const a = "hello";
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
 	"compilerOptions": {
-            "outFile": "../outFile.js"
+            
 	}
 }
 
@@ -67,7 +66,7 @@ Output::
 {
 	"compilerOptions": {
             "noEmit": true,
-            "outFile": "../outFile.js"
+            
 	}
 }
 
@@ -109,7 +108,7 @@ const a = "hello;
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
 	"compilerOptions": {
-            "outFile": "../outFile.js"
+            
 	}
 }
 
@@ -132,7 +131,7 @@ Found 1 error in a.ts[90m:1[0m
 {
 	"compilerOptions": {
             "noEmit": true,
-            "outFile": "../outFile.js"
+            
 	}
 }
 

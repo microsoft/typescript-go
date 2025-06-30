@@ -6,6 +6,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/incremental"
 )
 
 func start(w *watcher) ExitStatus {
@@ -26,6 +27,7 @@ func (w *watcher) initialize() {
 	if w.configFileName == "" {
 		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), nil)
 	}
+	w.program = incremental.ReadBuildInfoProgram(w.options, incremental.NewBuildInfoReader(w.host))
 }
 
 func (w *watcher) doCycle() {
@@ -36,12 +38,13 @@ func (w *watcher) doCycle() {
 		return
 	}
 	// updateProgram()
-	w.program = compiler.NewProgram(compiler.ProgramOptions{
+	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
 		Config:           w.options,
 		Host:             w.host,
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
-	})
-	if w.hasBeenModified(w.program) {
+	}), w.program)
+
+	if w.hasBeenModified(w.program.GetProgram()) {
 		fmt.Fprint(w.sys.Writer(), "build starting at ", w.sys.Now(), w.sys.NewLine())
 		timeStart := w.sys.Now()
 		w.compileAndEmit()

@@ -8,7 +8,6 @@ const a = class { private p = 10; };
 {
 	"compilerOptions": {
             "noEmit": true,
-            "outFile": "../outFile.js",
             "declaration": true
 	}
 }
@@ -60,7 +59,6 @@ const a = "hello";
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
 	"compilerOptions": {
-            "outFile": "../outFile.js",
             "declaration": true
 	}
 }
@@ -77,7 +75,6 @@ Output::
 {
 	"compilerOptions": {
             "noEmit": true,
-            "outFile": "../outFile.js",
             "declaration": true
 	}
 }
@@ -138,7 +135,6 @@ const a = class {
 //// [/home/src/workspaces/project/tsconfig.json] modified. new content:
 {
 	"compilerOptions": {
-            "outFile": "../outFile.js",
             "declaration": true
 	}
 }
@@ -167,7 +163,6 @@ Found 1 error in a.ts[90m:1[0m
 {
 	"compilerOptions": {
             "noEmit": true,
-            "outFile": "../outFile.js",
             "declaration": true
 	}
 }

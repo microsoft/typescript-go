@@ -133,16 +133,16 @@ func (h *Program) GetDeclarationDiagnostics(ctx context.Context, file *ast.Sourc
 func (h *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compiler.EmitResult {
 	h.panicIfNoProgram("Emit")
 
+	var result *compiler.EmitResult
 	if h.snapshot.options.NoEmit.IsTrue() {
-		if options.TargetSourceFile != nil {
-			return &compiler.EmitResult{EmitSkipped: true}
+		result = &compiler.EmitResult{EmitSkipped: true}
+	} else {
+		result = compiler.HandleNoEmitOnError(ctx, h, options.TargetSourceFile)
+		if ctx.Err() != nil {
+			return nil
 		}
-		buildInfoResult := h.emitBuildInfo(ctx, options)
-		buildInfoResult.EmitSkipped = true
-		return buildInfoResult
 	}
-
-	if result := compiler.HandleNoEmitOnError(ctx, h, options.TargetSourceFile); result != nil {
+	if result != nil {
 		if options.TargetSourceFile != nil {
 			return result
 		}
@@ -155,10 +155,6 @@ func (h *Program) Emit(ctx context.Context, options compiler.EmitOptions) *compi
 		}
 		return result
 	}
-	if ctx.Err() != nil {
-		return nil
-	}
-
 	return emitFiles(ctx, h, options, false)
 }
 
@@ -199,7 +195,6 @@ func (h *Program) collectSemanticDiagnosticsOfAffectedFiles(ctx context.Context,
 
 	// Commit changes to snapshot
 	for file, diagnostics := range diagnosticsPerFile {
-		h.snapshot.semanticDiagnosticsFromOldState.Delete(file.Path())
 		h.snapshot.semanticDiagnosticsPerFile[file.Path()] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{diagnostics: diagnostics}
 	}
 	if len(h.snapshot.semanticDiagnosticsPerFile) == len(h.program.GetSourceFiles()) && h.snapshot.checkPending && !h.snapshot.options.NoCheck.IsTrue() {

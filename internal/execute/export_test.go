@@ -1,7 +1,9 @@
 package execute
 
 import (
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
+	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 )
 
@@ -21,11 +23,12 @@ func RunWatchCycle(w *watcher) {
 		return
 	}
 	// todo: updateProgram()
-	w.program = compiler.NewProgram(compiler.ProgramOptions{
-		Config: w.options,
-		Host:   w.host,
-	})
-	if w.hasBeenModified(w.program) {
+	w.program = incremental.NewProgram(compiler.NewProgram(compiler.ProgramOptions{
+		Config:           w.options,
+		Host:             w.host,
+		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
+	}), w.program)
+	if w.hasBeenModified(w.program.GetProgram()) {
 		w.compileAndEmit()
 	}
 }

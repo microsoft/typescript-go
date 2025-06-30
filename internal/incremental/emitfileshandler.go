@@ -242,7 +242,7 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		} else {
 			h.program.snapshot.affectedFilesPendingEmit[file] = update.pendingKind
 		}
-		if update.result == nil {
+		if update.result != nil {
 			results = append(results, update.result)
 			if len(update.result.Diagnostics) != 0 {
 				if h.program.snapshot.emitDiagnosticsPerFile == nil {
