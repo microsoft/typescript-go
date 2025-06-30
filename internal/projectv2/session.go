@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"sync"
+	"time"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -47,6 +48,8 @@ func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Sess
 		// !!! cache
 		return ls.ComputeLineStarts(overlayFS.getFile(ls.FileNameToDocumentURI(fileName)).Content())
 	})
+
+	time.Sleep(10 * time.Second)
 
 	return &Session{
 		options:    options,
@@ -121,6 +124,8 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		})
 	}
 
+	s.snapshotMu.Lock()
+	defer s.snapshotMu.Unlock()
 	project := s.snapshot.GetDefaultProject(uri)
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)

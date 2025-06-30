@@ -70,6 +70,7 @@ func NewProject(
 		Kind:             kind,
 		snapshot:         snapshot,
 		currentDirectory: currentDirectory,
+		rootFileNames:    &collections.OrderedMap[tspath.Path, string]{},
 	}
 }
 
@@ -160,25 +161,25 @@ type projectChangeResult struct {
 
 func (p *Project) Clone(ctx context.Context, change snapshotChange, newSnapshot *Snapshot) (*Project, projectChangeResult) {
 	var result projectChangeResult
-	var loadProgram bool
+	loadProgram := p.Program == nil
 	// var pendingReload PendingReload
-	for _, file := range change.requestedURIs {
-		// !!! ensure this is cheap
-		if p.snapshot.GetDefaultProject(file) == p {
-			loadProgram = true
-			break
+	if !loadProgram {
+		for _, file := range change.requestedURIs {
+			// !!! ensure this is cheap
+			if p.snapshot.GetDefaultProject(file) == p {
+				loadProgram = true
+				break
+			}
 		}
 	}
 
 	var singleChangedFile tspath.Path
-	if p.Program != nil || !loadProgram {
+	if p.Program != nil && !loadProgram {
 		for uri := range change.fileChanges.Changed.Keys() {
 			path := uri.Path(p.FS().UseCaseSensitiveFileNames())
 			if p.containsFile(path) {
 				loadProgram = true
-				if p.Program == nil {
-					break
-				} else if singleChangedFile == "" {
+				if singleChangedFile == "" {
 					singleChangedFile = path
 				} else {
 					singleChangedFile = ""

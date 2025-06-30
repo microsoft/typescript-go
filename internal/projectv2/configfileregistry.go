@@ -73,6 +73,9 @@ func (c *configFileRegistryBuilder) finalize() *configFileRegistry {
 	c.dirty.Range(func(key tspath.Path, entry *configFileEntry) bool {
 		if !changed {
 			newRegistry = newRegistry.clone()
+			if newRegistry.configs == nil {
+				newRegistry.configs = make(map[tspath.Path]*configFileEntry)
+			}
 			changed = true
 		}
 		newRegistry.configs[key] = entry
@@ -145,13 +148,11 @@ func (c *configFileRegistryBuilder) load(path tspath.Path) (*configFileBuilderEn
 func (c *configFileRegistryBuilder) acquireConfig(fileName string, path tspath.Path, project *Project) *tsoptions.ParsedCommandLine {
 	entry, _ := c.loadOrStoreNewEntry(path)
 
-	entry.mu.Lock()
-	defer entry.mu.Unlock()
-
 	if project != nil {
 		entry.retainProject(project.configFilePath)
 	}
 
+	// !!! move into single locked method
 	switch entry.pendingReload {
 	case PendingReloadFileNames:
 		entry.setCommandLine(tsoptions.ReloadFileNamesOfParsedCommandLine(entry.commandLine, c.snapshot.compilerFS))

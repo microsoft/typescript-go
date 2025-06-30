@@ -72,6 +72,9 @@ func (b *projectCollectionBuilder) finalize() (*projectCollection, *configFileRe
 	b.dirty.Range(func(path tspath.Path, project *Project) bool {
 		if !changed {
 			newProjectCollection = newProjectCollection.clone()
+			if newProjectCollection.configuredProjects == nil {
+				newProjectCollection.configuredProjects = make(map[tspath.Path]*Project)
+			}
 			changed = true
 		}
 		newProjectCollection.configuredProjects[path] = project
@@ -130,26 +133,25 @@ func (b *projectCollectionBuilder) load(path tspath.Path) (*projectCollectionBui
 	return nil, false
 }
 
-func (b *projectCollectionBuilder) updateProject(path tspath.Path) *Project {
-	if dirty, ok := b.load(path); ok {
+func (b *projectCollectionBuilder) updateProject(entry *projectCollectionBuilderEntry) {
+	if entry.dirty {
 		// !!! right now, the only kind of project update is program loading,
 		// so we can just assume that if the project is in the dirty map,
 		// it's already been updated. This assumption probably won't hold
 		// as this logic gets more fleshed out.
-		return dirty.project
+		if entry.project.Program == nil {
+			entry.project, _ = entry.project.Clone(b.ctx, b.changes, b.snapshot)
+		}
+		return
 	}
-	if entry, ok := b.base.configuredProjects[path]; ok {
-		if project, result := entry.Clone(b.ctx, b.changes, b.snapshot); result.changed {
-			project, loaded := b.dirty.LoadOrStore(path, project)
-			if loaded {
-				// I don't think we get into a state where multiple goroutines try to update
-				// the same project at the same time; ensure this is the case
-				panic("unexpected concurrent project update")
-			}
-			return project
+	if project, result := entry.project.Clone(b.ctx, b.changes, b.snapshot); result.changed {
+		_, loaded := b.dirty.LoadOrStore(project.configFilePath, project)
+		if loaded {
+			// I don't think we get into a state where multiple goroutines try to update
+			// the same project at the same time; ensure this is the case
+			panic("unexpected concurrent project update")
 		}
 	}
-	return nil
 }
 
 func (b *projectCollectionBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool) string {
@@ -245,12 +247,16 @@ func (b *projectCollectionBuilder) findOrCreateProject(
 	configFileName string,
 	configFilePath tspath.Path,
 	loadKind projectLoadKind,
-) *Project {
+) *projectCollectionBuilderEntry {
 	if loadKind == projectLoadKindFind {
-		return b.base.configuredProjects[configFilePath]
+		return &projectCollectionBuilderEntry{
+			b:       b,
+			project: b.base.configuredProjects[configFilePath],
+			dirty:   false,
+		}
 	}
 	entry, _ := b.loadOrStoreNewEntry(configFileName, configFilePath)
-	return entry.project
+	return entry
 }
 
 func (b *projectCollectionBuilder) isDefaultConfigForScript(
@@ -281,30 +287,30 @@ func (b *projectCollectionBuilder) isDefaultConfigForScript(
 func (b *projectCollectionBuilder) isDefaultProject(
 	fileName string,
 	path tspath.Path,
-	project *Project,
+	entry *projectCollectionBuilderEntry,
 	loadKind projectLoadKind,
 	result *openScriptInfoProjectResult,
 ) bool {
-	if project == nil {
+	if entry == nil {
 		return false
 	}
 
 	// Skip already looked up projects
-	if !result.addSeenProject(project, loadKind) {
+	if !result.addSeenProject(entry.project, loadKind) {
 		return false
 	}
 	// Make sure project is upto date when in create mode
 	if loadKind == projectLoadKindCreate {
-		project = b.updateProject(project.configFilePath)
+		b.updateProject(entry)
 	}
 	// If script info belongs to this project, use this as default config project
-	if project.containsFile(path) {
-		if !project.IsSourceFromProjectReference(path) {
-			result.setProject(project)
+	if entry.project.containsFile(path) {
+		if !entry.project.IsSourceFromProjectReference(path) {
+			result.setProject(entry)
 			return true
 		} else if !result.hasFallbackDefault() {
 			// Use this project as default if no other project is found
-			result.setFallbackDefault(project)
+			result.setFallbackDefault(entry)
 		}
 	}
 	return false
@@ -446,7 +452,7 @@ func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string,
 	if b.snapshot.IsOpenFile(path) {
 		result := b.tryFindDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind)
 		if result != nil && result.project != nil /* !!! && !result.project.deferredClose */ {
-			return result.project
+			return result.project.project
 		}
 	}
 	return nil
@@ -454,19 +460,19 @@ func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string,
 
 type openScriptInfoProjectResult struct {
 	projectMu         sync.RWMutex
-	project           *Project
+	project           *projectCollectionBuilderEntry // use this if we found actual project
 	fallbackDefaultMu sync.RWMutex
-	fallbackDefault   *Project // use this if we cant find actual project
-	seenProjects      collections.SyncMap[*Project, projectLoadKind]
+	fallbackDefault   *projectCollectionBuilderEntry // use this if we cant find actual project
+	seenProjects      collections.SyncMap[tspath.Path, projectLoadKind]
 	seenConfigs       collections.SyncMap[tspath.Path, projectLoadKind]
 }
 
 func (r *openScriptInfoProjectResult) addSeenProject(project *Project, loadKind projectLoadKind) bool {
-	if kind, loaded := r.seenProjects.LoadOrStore(project, loadKind); loaded {
+	if kind, loaded := r.seenProjects.LoadOrStore(project.configFilePath, loadKind); loaded {
 		if kind >= loadKind {
 			return false
 		}
-		r.seenProjects.Store(project, loadKind)
+		r.seenProjects.Store(project.configFilePath, loadKind)
 	}
 	return true
 }
@@ -487,11 +493,11 @@ func (r *openScriptInfoProjectResult) isDone() bool {
 	return r.project != nil
 }
 
-func (r *openScriptInfoProjectResult) setProject(project *Project) {
+func (r *openScriptInfoProjectResult) setProject(entry *projectCollectionBuilderEntry) {
 	r.projectMu.Lock()
 	defer r.projectMu.Unlock()
 	if r.project == nil {
-		r.project = project
+		r.project = entry
 	}
 }
 
@@ -501,10 +507,10 @@ func (r *openScriptInfoProjectResult) hasFallbackDefault() bool {
 	return r.fallbackDefault != nil
 }
 
-func (r *openScriptInfoProjectResult) setFallbackDefault(project *Project) {
+func (r *openScriptInfoProjectResult) setFallbackDefault(entry *projectCollectionBuilderEntry) {
 	r.fallbackDefaultMu.Lock()
 	defer r.fallbackDefaultMu.Unlock()
 	if r.fallbackDefault == nil {
-		r.fallbackDefault = project
+		r.fallbackDefault = entry
 	}
 }

@@ -114,9 +114,7 @@ func NewSnapshot(
 		parseCache:         parseCache,
 		logger:             logger,
 		configFileRegistry: configFileRegistry,
-		projectCollection: &projectCollection{
-			configuredProjects: make(map[tspath.Path]*Project),
-		},
+		projectCollection:  &projectCollection{},
 
 		overlayFS: newOverlayFS(cachedFS, overlays),
 	}
@@ -251,6 +249,12 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		s.configFileRegistry,
 		change,
 	)
+
+	for uri := range change.fileChanges.Opened.Keys() {
+		fileName := uri.FileName()
+		path := s.toPath(fileName)
+		projectCollectionBuilder.tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(fileName, path, projectLoadKindCreate)
+	}
 
 	newSnapshot.projectCollection, newSnapshot.configFileRegistry = projectCollectionBuilder.finalize()
 
