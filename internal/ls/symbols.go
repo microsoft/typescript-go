@@ -13,6 +13,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/scanner"
+	"github.com/microsoft/typescript-go/internal/stringutil"
 )
 
 type DeclarationInfo struct {
@@ -92,9 +93,9 @@ func getMatchScore(s string, pattern string) int {
 // ascending case sensitive name, and finally by source file name and position.
 func compareDeclarationInfos(d1, d2 DeclarationInfo) int {
 	if d1.matchScore != d2.matchScore {
-		return int(d1.matchScore) - int(d2.matchScore)
+		return d1.matchScore - d2.matchScore
 	}
-	if c := compareStringsCaseInsensitive(d1.name, d2.name); c != 0 {
+	if c := stringutil.CompareStringsCaseInsensitive(d1.name, d2.name); c != 0 {
 		return c
 	}
 	if c := strings.Compare(d1.name, d2.name); c != 0 {
@@ -106,23 +107,6 @@ func compareDeclarationInfos(d1, d2 DeclarationInfo) int {
 		return strings.Compare(string(s1.Path()), string(s2.Path()))
 	}
 	return d1.declaration.Pos() - d2.declaration.Pos()
-}
-
-func compareStringsCaseInsensitive(s1, s2 string) int {
-	for {
-		c1, n1 := utf8.DecodeRuneInString(s1)
-		c2, n2 := utf8.DecodeRuneInString(s2)
-		if n1 == 0 || n2 == 0 {
-			return len(s1) - len(s2)
-		}
-		lc1 := unicode.ToLower(c1)
-		lc2 := unicode.ToLower(c2)
-		if lc1 != lc2 {
-			return int(lc1) - int(lc2)
-		}
-		s1 = s1[n1:]
-		s2 = s2[n2:]
-	}
 }
 
 func getSymbolKindFromNode(node *ast.Node) lsproto.SymbolKind {
