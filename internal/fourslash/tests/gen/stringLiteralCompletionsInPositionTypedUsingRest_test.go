@@ -4,13 +4,12 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
 func TestStringLiteralCompletionsInPositionTypedUsingRest(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `declare function pick<T extends object, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K>;
 declare function pick2<T extends object, K extends (keyof T)[]>(obj: T, ...keys: K): Pick<T, K[number]>;
@@ -24,22 +23,24 @@ class Q<T> {
 }
 new Q<{ id: string; name: string }>().select("name", "/*ts3*/");`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, []string{"ts1", "ts2"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"ts1", "ts2"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{"aaa", "bbb", "ccc"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{"aaa", "bbb", "ccc"},
 		},
 	})
-	f.VerifyCompletions(t, []string{"ts3"}, &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, []string{"ts3"}, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{"name", "id"},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{"name", "id"},
 		},
 	})
 }

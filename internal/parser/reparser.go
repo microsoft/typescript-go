@@ -5,6 +5,10 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 )
 
+func (p *Parser) finishReparsedNode(node *ast.Node) {
+	p.overrideParentInImmediateChildren(node)
+}
+
 func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 	if p.scriptKind != core.ScriptKindJS && p.scriptKind != core.ScriptKindJSX {
 		return
@@ -31,6 +35,8 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 		p.reparseList = append(p.reparseList, export)
 		p.commonJSModuleIndicator = export
 		p.reparseTags(export, jsdoc)
+		p.finishReparsedNode(export)
+		p.finishReparsedNode(bin.AsNode()) // TODO: the same node appears in both the new export declaration and the original binary expression - both locations cannot have correct `.Parent` pointers. For now, the binary expression being correctly parented is baselined behavior, since it appears first in the AST.
 	}
 }
 
@@ -74,13 +80,14 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		case ast.KindJSDocTypeExpression:
 			t = setHost(typeExpression, typeAlias)
 		case ast.KindJSDocTypeLiteral:
-			t = p.reparseJSDocTypeLiteral(typeExpression, typeAlias)
+			t = p.reparseJSDocTypeLiteral(typeExpression)
 		default:
 			panic("typedef tag type expression should be a name reference or a type expression" + typeExpression.Kind.String())
 		}
 		typeAlias.AsTypeAliasDeclaration().Type = t
 		typeAlias.Loc = tag.Loc
 		typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		p.finishReparsedNode(typeAlias)
 		p.reparseList = append(p.reparseList, typeAlias)
 	case ast.KindJSDocCallbackTag:
 		callbackTag := tag.AsJSDocCallbackTag()
@@ -98,20 +105,24 @@ func (p *Parser) reparseUnhosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Nod
 		typeAlias.AsTypeAliasDeclaration().TypeParameters = p.gatherTypeParameters(jsDoc, tag, typeAlias)
 		typeAlias.Loc = tag.Loc
 		typeAlias.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		p.finishReparsedNode(typeAlias)
 		p.reparseList = append(p.reparseList, typeAlias)
 	case ast.KindJSDocImportTag:
 		importTag := tag.AsJSDocImportTag()
 		importClause := importTag.ImportClause
 		importClause.Flags |= ast.NodeFlagsReparsed
 		importClause.AsImportClause().IsTypeOnly = true
+		p.finishReparsedNode(importClause)
 		importDeclaration := p.factory.NewJSImportDeclaration(importTag.Modifiers(), importClause, importTag.ModuleSpecifier, importTag.Attributes)
 		importDeclaration.Loc = tag.Loc
 		importDeclaration.Flags = p.contextFlags | ast.NodeFlagsReparsed
 		importTag.JSImportDeclaration = importDeclaration.AsImportDeclaration()
+		p.finishReparsedNode(importDeclaration)
 		p.reparseList = append(p.reparseList, importDeclaration)
 	case ast.KindJSDocOverloadTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
 			p.reparseList = append(p.reparseList, p.reparseJSDocSignature(tag.AsJSDocOverloadTag().TypeExpression, fun, jsDoc, tag))
+			p.finishReparsedNode(fun)
 		}
 	}
 }
@@ -148,13 +159,12 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 			jsparam := param.AsJSDocParameterOrPropertyTag()
 			parameter = p.factory.NewParameterDeclaration(nil, nil, jsparam.Name(), p.makeQuestionIfOptional(jsparam), nil, nil)
 			if jsparam.TypeExpression != nil {
-				t := p.reparseJSDocTypeLiteral(jsparam.TypeExpression.Type(), parameter)
-				setHost(jsparam.TypeExpression, parameter)
-				parameter.AsParameterDeclaration().Type = t
+				parameter.AsParameterDeclaration().Type = p.reparseJSDocTypeLiteral(setHost(jsparam.TypeExpression, parameter))
 			}
 		}
 		parameter.Loc = param.Loc
 		parameter.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		p.finishReparsedNode(parameter)
 		parameters = append(parameters, parameter)
 	}
 	signature.FunctionLikeData().Parameters = p.newNodeList(jsSignature.AsJSDocSignature().Parameters.Loc, parameters)
@@ -167,11 +177,16 @@ func (p *Parser) reparseJSDocSignature(jsSignature *ast.Node, fun *ast.Node, jsD
 		signature.Loc = tag.AsJSDocOverloadTag().TagName.Loc
 	}
 	signature.Flags = p.contextFlags | ast.NodeFlagsReparsed
+	p.finishReparsedNode(signature)
 	return signature
 }
 
-func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode, host *ast.Node) *ast.Node {
-	if t != nil && t.Kind == ast.KindJSDocTypeLiteral {
+func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
+	if t == nil {
+		return nil
+	}
+	if t.Kind == ast.KindJSDocTypeLiteral {
+		isArrayType := t.AsJSDocTypeLiteral().IsArrayType
 		properties := p.nodeSlicePool.NewSlice(0)
 		for _, prop := range t.AsJSDocTypeLiteral().JSDocPropertyTags {
 			jsprop := prop.AsJSDocParameterOrPropertyTag()
@@ -180,15 +195,25 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode, host *ast.Node) *ast.N
 				name = name.AsQualifiedName().Right
 			}
 			property := p.factory.NewPropertySignatureDeclaration(nil, name, p.makeQuestionIfOptional(jsprop), nil, nil)
-			property.AsPropertySignatureDeclaration().Type = p.reparseJSDocTypeLiteral(jsprop.TypeExpression, property)
+			if jsprop.TypeExpression != nil {
+				property.AsPropertySignatureDeclaration().Type = p.reparseJSDocTypeLiteral(jsprop.TypeExpression.Type())
+			}
 			property.Loc = prop.Loc
 			property.Flags = p.contextFlags | ast.NodeFlagsReparsed
+			p.finishReparsedNode(property)
 			properties = append(properties, property)
 		}
 		loc := t.Loc
 		t = p.factory.NewTypeLiteralNode(p.newNodeList(loc, properties))
 		t.Loc = loc
 		t.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		if isArrayType {
+			p.finishReparsedNode(t)
+			t = p.factory.NewArrayTypeNode(t)
+			t.Flags = p.contextFlags | ast.NodeFlagsReparsed
+			t.Loc = loc
+		}
+		p.finishReparsedNode(t)
 	}
 	return t
 }
@@ -227,7 +252,7 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, tagWithTypeParameters *ast.No
 			reparse := tp
 			if constraint != nil && firstTypeParameter {
 				reparse = p.factory.NewTypeParameterDeclaration(tp.Modifiers(), tp.Name(), nil, tp.AsTypeParameter().DefaultType)
-				reparse.AsTypeParameter().Constraint = setHost(constraint, host)
+				reparse.AsTypeParameter().Constraint = setHost(constraint, reparse)
 				reparse.Loc = tp.Loc
 			}
 			if tag.AsJSDocTemplateTag().Host == nil {
@@ -237,6 +262,7 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, tagWithTypeParameters *ast.No
 				panic("JSDoc type parameter already has a host: " + tag.AsJSDocTemplateTag().Host.Kind.String())
 			}
 			reparse.Flags |= ast.NodeFlagsReparsed
+			p.finishReparsedNode(reparse)
 			typeParameters = append(typeParameters, reparse)
 			firstTypeParameter = false
 		}
@@ -257,6 +283,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				for _, declaration := range parent.AsVariableStatement().DeclarationList.AsVariableDeclarationList().Declarations.Nodes {
 					if declaration.AsVariableDeclaration().Type == nil {
 						declaration.AsVariableDeclaration().Type = setHost(tag.AsJSDocTypeTag().TypeExpression, declaration)
+						p.finishReparsedNode(declaration)
 						break
 					}
 				}
@@ -264,43 +291,52 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		case ast.KindVariableDeclaration:
 			if parent.AsVariableDeclaration().Type == nil {
 				parent.AsVariableDeclaration().Type = setHost(tag.AsJSDocTypeTag().TypeExpression, parent)
+				p.finishReparsedNode(parent)
 			}
 		case ast.KindCommonJSExport:
 			export := parent.AsCommonJSExport()
 			if export.Type == nil {
 				export.Type = setHost(tag.AsJSDocTypeTag().TypeExpression, parent)
+				p.finishReparsedNode(parent)
 			}
 		case ast.KindPropertyDeclaration:
 			declaration := parent.AsPropertyDeclaration()
 			if declaration.Type == nil {
 				declaration.Type = setHost(tag.AsJSDocTypeTag().TypeExpression, parent)
+				p.finishReparsedNode(parent)
 			}
 		case ast.KindPropertyAssignment:
 			prop := parent.AsPropertyAssignment()
 			if prop.Type == nil {
 				prop.Type = setHost(tag.AsJSDocTypeTag().TypeExpression, parent)
+				p.finishReparsedNode(parent)
 			}
 		case ast.KindShorthandPropertyAssignment:
 			prop := parent.AsShorthandPropertyAssignment()
 			if prop.Type == nil {
 				prop.Type = setHost(tag.AsJSDocTypeTag().TypeExpression, parent)
+				p.finishReparsedNode(parent)
 			}
 		case ast.KindExportAssignment, ast.KindJSExportAssignment:
 			export := parent.AsExportAssignment()
 			if export.Type == nil {
 				export.Type = setHost(tag.AsJSDocTypeTag().TypeExpression, parent)
+				p.finishReparsedNode(parent)
 			}
 		case ast.KindReturnStatement:
 			ret := parent.AsReturnStatement()
 			ret.Expression = p.makeNewCast(setHost(tag.AsJSDocTypeTag().TypeExpression, nil), ret.Expression, true /*isAssertion*/)
+			p.finishReparsedNode(parent)
 		case ast.KindParenthesizedExpression:
 			paren := parent.AsParenthesizedExpression()
 			paren.Expression = p.makeNewCast(setHost(tag.AsJSDocTypeTag().TypeExpression, nil), paren.Expression, true /*isAssertion*/)
+			p.finishReparsedNode(parent)
 		case ast.KindExpressionStatement:
 			if parent.AsExpressionStatement().Expression.Kind == ast.KindBinaryExpression {
 				bin := parent.AsExpressionStatement().Expression.AsBinaryExpression()
 				if kind := ast.GetAssignmentDeclarationKind(bin); kind != ast.JSDeclarationKindNone {
 					bin.Type = setHost(tag.AsJSDocTypeTag().TypeExpression, parent.AsExpressionStatement().Expression)
+					p.finishReparsedNode(bin.AsNode())
 				}
 			}
 		}
@@ -308,35 +344,40 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 		if parent.Kind == ast.KindParenthesizedExpression {
 			paren := parent.AsParenthesizedExpression()
 			paren.Expression = p.makeNewCast(setHost(tag.AsJSDocSatisfiesTag().TypeExpression, nil), paren.Expression, false /*isAssertion*/)
+			p.finishReparsedNode(parent)
 		}
 	case ast.KindJSDocTemplateTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
 			if fun.TypeParameters() == nil {
 				fun.FunctionLikeData().TypeParameters = p.gatherTypeParameters(jsDoc, nil /*tagWithTypeParameters*/, fun)
+				p.finishReparsedNode(fun)
 			}
 		} else if parent.Kind == ast.KindClassDeclaration {
 			class := parent.AsClassDeclaration()
 			if class.TypeParameters == nil {
 				class.TypeParameters = p.gatherTypeParameters(jsDoc, nil /*tagWithTypeParameters*/, parent)
+				p.finishReparsedNode(parent)
 			}
 		} else if parent.Kind == ast.KindClassExpression {
 			class := parent.AsClassExpression()
 			if class.TypeParameters == nil {
 				class.TypeParameters = p.gatherTypeParameters(jsDoc, nil /*tagWithTypeParameters*/, parent)
+				p.finishReparsedNode(parent)
 			}
 		}
 	case ast.KindJSDocParameterTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
-			jsparam := tag.AsJSDocParameterOrPropertyTag()
-			if param, ok := findMatchingParameter(fun, jsparam); ok {
+			parameterTag := tag.AsJSDocParameterOrPropertyTag()
+			if param, ok := findMatchingParameter(fun, parameterTag, jsDoc); ok {
 				if param.Type == nil {
-					param.Type = setHost(jsparam.TypeExpression, param.AsNode())
+					param.AsParameterDeclaration().Type = p.reparseJSDocTypeLiteral(setHost(p.reparseJSDocTypeLiteral(parameterTag.TypeExpression), param.AsNode()))
 				}
 				if param.QuestionToken == nil && param.Initializer == nil {
-					if question := p.makeQuestionIfOptional(jsparam); question != nil {
+					if question := p.makeQuestionIfOptional(parameterTag); question != nil {
 						param.QuestionToken = question
 					}
 				}
+				p.finishReparsedNode(param.AsNode())
 			}
 		}
 	case ast.KindJSDocThisTag:
@@ -354,6 +395,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				thisParam.AsParameterDeclaration().Type = setHost(tag.AsJSDocThisTag().TypeExpression, thisParam)
 				thisParam.Loc = tag.AsJSDocThisTag().TagName.Loc
 				thisParam.Flags = p.contextFlags | ast.NodeFlagsReparsed
+				p.finishReparsedNode(thisParam)
 
 				newParams := p.nodeSlicePool.NewSlice(len(params) + 1)
 				newParams[0] = thisParam
@@ -362,12 +404,14 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				}
 
 				fun.FunctionLikeData().Parameters = p.newNodeList(thisParam.Loc, newParams)
+				p.finishReparsedNode(fun)
 			}
 		}
 	case ast.KindJSDocReturnTag:
 		if fun, ok := getFunctionLikeHost(parent); ok {
 			if fun.Type() == nil {
 				fun.FunctionLikeData().Type = setHost(tag.AsJSDocReturnTag().TypeExpression, fun)
+				p.finishReparsedNode(fun)
 			}
 		}
 	case ast.KindJSDocReadonlyTag, ast.KindJSDocPrivateTag, ast.KindJSDocPublicTag, ast.KindJSDocProtectedTag, ast.KindJSDocOverrideTag:
@@ -403,6 +447,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 				loc = parent.Modifiers().Loc
 			}
 			parent.AsMutable().SetModifiers(p.newModifierList(loc, nodes))
+			p.finishReparsedNode(parent)
 		}
 	case ast.KindJSDocImplementsTag:
 		if class := getClassLikeData(parent); class != nil {
@@ -413,6 +458,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					return node.AsHeritageClause().Token == ast.KindImplementsKeyword
 				}); implementsClause != nil {
 					implementsClause.AsHeritageClause().Types.Nodes = append(implementsClause.AsHeritageClause().Types.Nodes, implementsTag.ClassName)
+					p.finishReparsedNode(implementsClause)
 					return
 				}
 			}
@@ -422,6 +468,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			heritageClause := p.factory.NewHeritageClause(ast.KindImplementsKeyword, typesList)
 			heritageClause.Loc = implementsTag.ClassName.Loc
 			heritageClause.Flags = p.contextFlags | ast.NodeFlagsReparsed
+			p.finishReparsedNode(heritageClause)
 
 			if class.HeritageClauses == nil {
 				heritageClauses := p.newNodeList(implementsTag.ClassName.Loc, p.nodeSlicePool.NewSlice1(heritageClause))
@@ -429,6 +476,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 			} else {
 				class.HeritageClauses.Nodes = append(class.HeritageClauses.Nodes, heritageClause)
 			}
+			p.finishReparsedNode(parent)
 		}
 	case ast.KindJSDocAugmentsTag:
 		if class := getClassLikeData(parent); class != nil && class.HeritageClauses != nil {
@@ -443,6 +491,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 						for _, typeArg := range source.TypeArguments.Nodes {
 							typeArg.Flags |= ast.NodeFlagsReparsed
 						}
+						p.finishReparsedNode(target.AsNode())
 					}
 					return
 				}
@@ -461,11 +510,19 @@ func (p *Parser) makeQuestionIfOptional(parameter *ast.JSDocParameterTag) *ast.N
 	return questionToken
 }
 
-func findMatchingParameter(fun *ast.Node, tag *ast.JSDocParameterTag) (*ast.ParameterDeclaration, bool) {
-	for _, parameter := range fun.Parameters() {
-		if parameter.Name().Kind == ast.KindIdentifier && tag.Name().Kind == ast.KindIdentifier &&
-			parameter.Name().Text() == tag.Name().Text() {
-			return parameter.AsParameterDeclaration(), true
+func findMatchingParameter(fun *ast.Node, tag *ast.JSDocParameterTag, jsDoc *ast.Node) (*ast.ParameterDeclaration, bool) {
+	tagIndex := core.FindIndex(jsDoc.AsJSDoc().Tags.Nodes, func(n *ast.Node) bool {
+		return n.Kind == ast.KindJSDocParameterTag && n.AsJSDocParameterOrPropertyTag() == tag
+	})
+	for parameterIndex, parameter := range fun.Parameters() {
+		if parameter.Name().Kind == ast.KindIdentifier {
+			if tag.Name().Kind == ast.KindIdentifier && parameter.Name().Text() == tag.Name().Text() {
+				return parameter.AsParameterDeclaration(), true
+			}
+		} else {
+			if parameterIndex == tagIndex {
+				return parameter.AsParameterDeclaration(), true
+			}
 		}
 	}
 	return nil, false
@@ -504,6 +561,7 @@ func (p *Parser) makeNewCast(t *ast.TypeNode, e *ast.Node, isAssertion bool) *as
 	}
 	assert.Flags = p.contextFlags | ast.NodeFlagsReparsed
 	assert.Loc = core.NewTextRange(e.Pos(), e.End())
+	p.finishReparsedNode(assert)
 	return assert
 }
 

@@ -14,7 +14,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 )
 
-var _ printer.EmitResolver = &emitResolver{}
+var _ printer.EmitResolver = (*emitResolver)(nil)
 
 // Links for jsx
 type JSXLinks struct {
@@ -35,10 +35,18 @@ type emitResolver struct {
 	checker                 *Checker
 	checkerMu               sync.Mutex
 	isValueAliasDeclaration func(node *ast.Node) bool
+	aliasMarkingVisitor     func(node *ast.Node) bool
 	referenceResolver       binder.ReferenceResolver
 	jsxLinks                core.LinkStore[*ast.Node, JSXLinks]
 	declarationLinks        core.LinkStore[*ast.Node, DeclarationLinks]
 	declarationFileLinks    core.LinkStore[*ast.Node, DeclarationFileLinks]
+}
+
+func newEmitResolver(checker *Checker) *emitResolver {
+	e := &emitResolver{checker: checker}
+	e.isValueAliasDeclaration = e.isValueAliasDeclarationWorker
+	e.aliasMarkingVisitor = e.aliasMarkingVisitorWorker
+	return e
 }
 
 func (r *emitResolver) GetJsxFactoryEntity(location *ast.Node) *ast.Node {
@@ -227,7 +235,7 @@ func (r *emitResolver) PrecalculateDeclarationEmitVisibility(file *ast.SourceFil
 	file.AsNode().ForEachChild(r.aliasMarkingVisitor)
 }
 
-func (r *emitResolver) aliasMarkingVisitor(node *ast.Node) bool {
+func (r *emitResolver) aliasMarkingVisitorWorker(node *ast.Node) bool {
 	switch node.Kind {
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
 		if node.AsExportAssignment().Expression.Kind == ast.KindIdentifier {
@@ -670,9 +678,6 @@ func (r *emitResolver) isValueAliasDeclarationWorker(node *ast.Node) bool {
 		return symbol != nil && r.isAliasResolvedToValue(symbol, true /*excludeTypeOnlyValues*/)
 	case ast.KindExportDeclaration:
 		exportClause := node.AsExportDeclaration().ExportClause
-		if r.isValueAliasDeclaration == nil {
-			r.isValueAliasDeclaration = r.isValueAliasDeclarationWorker
-		}
 		return exportClause != nil && (ast.IsNamespaceExport(exportClause) ||
 			core.Some(exportClause.AsNamedExports().Elements.Nodes, r.isValueAliasDeclaration))
 	case ast.KindExportAssignment, ast.KindJSExportAssignment:
@@ -900,12 +905,10 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 	if t.flags&TypeFlagsLiteral == 0 {
 		return nil // non-literal type
 	}
-	literalValue := t.AsLiteralType().value
-	switch literalValue.(type) {
+	switch value := t.AsLiteralType().value.(type) {
 	case string:
-		return emitContext.Factory.NewStringLiteral(literalValue.(string))
+		return emitContext.Factory.NewStringLiteral(value)
 	case jsnum.Number:
-		value := literalValue.(jsnum.Number)
 		if value.Abs() != value {
 			// negative
 			return emitContext.Factory.NewPrefixUnaryExpression(
@@ -915,20 +918,13 @@ func (r *emitResolver) CreateLiteralConstValue(emitContext *printer.EmitContext,
 		}
 		return emitContext.Factory.NewNumericLiteral(value.String())
 	case jsnum.PseudoBigInt:
-		value := literalValue.(jsnum.PseudoBigInt)
-		if value.Negative {
-			// negative
-			return emitContext.Factory.NewPrefixUnaryExpression(
-				ast.KindMinusToken,
-				emitContext.Factory.NewBigIntLiteral(value.Base10Value),
-			)
-		}
-		return emitContext.Factory.NewNumericLiteral(value.Base10Value)
+		return emitContext.Factory.NewBigIntLiteral(pseudoBigIntToString(value) + "n")
 	case bool:
-		if literalValue.(bool) {
-			return emitContext.Factory.NewKeywordExpression(ast.KindTrueKeyword)
+		kind := ast.KindFalseKeyword
+		if value {
+			kind = ast.KindTrueKeyword
 		}
-		return emitContext.Factory.NewKeywordExpression(ast.KindFalseKeyword)
+		return emitContext.Factory.NewKeywordExpression(kind)
 	}
 	panic("unhandled literal const value kind")
 }

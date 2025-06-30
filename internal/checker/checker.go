@@ -539,6 +539,7 @@ type Program interface {
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
 	IsSourceFromProjectReference(path tspath.Path) bool
+	IsSourceFileDefaultLibrary(path tspath.Path) bool
 	GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference
 	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
@@ -727,6 +728,7 @@ type Checker struct {
 	unknownSignature                            *Signature
 	resolvingSignature                          *Signature
 	silentNeverSignature                        *Signature
+	cachedArgumentsReferenced                   map[*ast.Node]bool
 	enumNumberIndexInfo                         *IndexInfo
 	anyBaseTypeIndexInfo                        *IndexInfo
 	patternAmbientModules                       []*ast.PatternAmbientModule
@@ -1000,6 +1002,7 @@ func NewChecker(program Program) *Checker {
 	c.unknownSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.errorType, nil, 0)
 	c.resolvingSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.anyType, nil, 0)
 	c.silentNeverSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.silentNeverType, nil, 0)
+	c.cachedArgumentsReferenced = make(map[*ast.Node]bool)
 	c.enumNumberIndexInfo = &IndexInfo{keyType: c.numberType, valueType: c.stringType, isReadonly: true}
 	c.anyBaseTypeIndexInfo = &IndexInfo{keyType: c.stringType, valueType: c.anyType, isReadonly: false}
 	c.emptyStringType = c.getStringLiteralType("")
@@ -1600,9 +1603,9 @@ func (c *Checker) checkAndReportErrorForUsingTypeAsValue(errorLocation *ast.Node
 				containerKind := grandparent.Parent.Kind
 				if containerKind == ast.KindInterfaceDeclaration && heritageKind == ast.KindExtendsKeyword {
 					c.error(errorLocation, diagnostics.An_interface_cannot_extend_a_primitive_type_like_0_It_can_only_extend_other_named_object_types, name)
-				} else if containerKind == ast.KindClassDeclaration && heritageKind == ast.KindExtendsKeyword {
+				} else if ast.IsClassLike(grandparent.Parent) && heritageKind == ast.KindExtendsKeyword {
 					c.error(errorLocation, diagnostics.A_class_cannot_extend_a_primitive_type_like_0_Classes_can_only_extend_constructable_values, name)
-				} else if containerKind == ast.KindClassDeclaration && heritageKind == ast.KindImplementsKeyword {
+				} else if ast.IsClassLike(grandparent.Parent) && heritageKind == ast.KindImplementsKeyword {
 					c.error(errorLocation, diagnostics.A_class_cannot_implement_a_primitive_type_like_0_It_can_only_implement_other_named_object_types, name)
 				}
 			} else {
@@ -2554,6 +2557,7 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 		c.checkGrammarFunctionLikeDeclaration(node)
 	}
 	c.checkTypeParameters(node.TypeParameters())
+	c.checkUnmatchedJSDocParameters(node)
 	c.checkSourceElements(node.Parameters())
 	returnTypeNode := node.Type()
 	if returnTypeNode != nil {
@@ -7352,7 +7356,9 @@ func (c *Checker) checkExpressionWorker(node *ast.Node, checkMode CheckMode) *Ty
 	case ast.KindNullKeyword:
 		return c.nullWideningType
 	case ast.KindStringLiteral, ast.KindNoSubstitutionTemplateLiteral:
-		// !!! Handle blockedStringType
+		if c.isSkipDirectInferenceNode(node) {
+			return c.blockedStringType
+		}
 		return c.getFreshTypeOfLiteralType(c.getStringLiteralType(node.Text()))
 	case ast.KindNumericLiteral:
 		c.checkGrammarNumericLiteral(node.AsNumericLiteral())
@@ -7464,12 +7470,14 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 	isCallExpression := ast.IsCallExpression(node.Parent) && node.Parent.Expression() == node
 	immediateContainer := getSuperContainer(node, true /*stopOnFunctions*/)
 	container := immediateContainer
+
 	// adjust the container reference in case if super is used inside arrow functions with arbitrarily deep nesting
 	if !isCallExpression {
 		for container != nil && ast.IsArrowFunction(container) {
 			container = getSuperContainer(container, true /*stopOnFunctions*/)
 		}
 	}
+
 	isLegalUsageOfSuperExpression := func() bool {
 		if isCallExpression {
 			// TS 1.0 SPEC (April 2014): 4.8.1
@@ -7490,6 +7498,7 @@ func (c *Checker) checkSuperExpression(node *ast.Node) *Type {
 		}
 		return false
 	}
+
 	if container == nil || !isLegalUsageOfSuperExpression() {
 		// issue more specific error if super is used in computed property name
 		// class A { foo() { return "1" }}
@@ -8526,6 +8535,13 @@ func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidate
 	if candidatesOutArray != nil {
 		*candidatesOutArray = s.candidates
 	}
+
+	if len(s.candidates) == 0 {
+		// In Strada we would error here, but no known repro doesn't have at least
+		// one other error in this codepath. Just return instead. See #54442
+		return c.unknownSignature
+	}
+
 	s.args = c.getEffectiveCallArguments(node)
 	// The excludeArgument array contains true for each context sensitive argument (an argument
 	// is context sensitive it is susceptible to a one-time permanent contextual typing).
@@ -8738,7 +8754,7 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 			if inferenceContext != nil {
 				inferredTypeParameters = inferenceContext.inferredTypeParameters
 			}
-			checkCandidate = c.getSignatureInstantiation(candidate, typeArgumentTypes, inferredTypeParameters)
+			checkCandidate = c.getSignatureInstantiation(candidate, typeArgumentTypes, ast.IsInJSFile(candidate.declaration), inferredTypeParameters)
 			// If the original signature has a generic rest type, instantiation may produce a
 			// signature with different arity and we need to perform another arity check.
 			if c.getNonArrayRestType(candidate) != nil && !c.hasCorrectArity(s.node, s.args, checkCandidate, s.signatureHelpTrailingComma) {
@@ -8760,7 +8776,7 @@ func (c *Checker) chooseOverload(s *CallState, relation *Relation) *Signature {
 			s.argCheckMode = CheckModeNormal
 			if inferenceContext != nil {
 				typeArgumentTypes := c.instantiateTypes(c.inferTypeArguments(s.node, candidate, s.args, s.argCheckMode, inferenceContext), inferenceContext.mapper)
-				checkCandidate = c.getSignatureInstantiation(candidate, typeArgumentTypes, inferenceContext.inferredTypeParameters)
+				checkCandidate = c.getSignatureInstantiation(candidate, typeArgumentTypes, ast.IsInJSFile(candidate.declaration), inferenceContext.inferredTypeParameters)
 				// If the original signature has a generic rest type, instantiation may produce a
 				// signature with different arity and we need to perform another arity check.
 				if c.getNonArrayRestType(candidate) != nil && !c.hasCorrectArity(s.node, s.args, checkCandidate, s.signatureHelpTrailingComma) {
@@ -8906,8 +8922,9 @@ func (c *Checker) hasCorrectTypeArgumentArity(signature *Signature, typeArgument
 }
 
 func (c *Checker) checkTypeArguments(signature *Signature, typeArgumentNodes []*ast.Node, reportErrors bool, headMessage *diagnostics.Message) []*Type {
+	isJavaScript := ast.IsInJSFile(signature.declaration)
 	typeParameters := signature.typeParameters
-	typeArgumentTypes := c.fillMissingTypeArguments(core.Map(typeArgumentNodes, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
+	typeArgumentTypes := c.fillMissingTypeArguments(core.Map(typeArgumentNodes, c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters), isJavaScript)
 	var mapper *TypeMapper
 	for i := range typeArgumentNodes {
 		// Debug.assert(typeParameters[i] != nil, "Should not call checkTypeArguments with too many type arguments")
@@ -10162,7 +10179,7 @@ func (c *Checker) getInstantiationExpressionType(exprType *Type, node *ast.Node)
 		return core.SameMap(applicableSignatures, func(sig *Signature) *Signature {
 			typeArgumentTypes := c.checkTypeArguments(sig, typeArguments.Nodes, true /*reportErrors*/, nil)
 			if typeArgumentTypes != nil {
-				return c.getSignatureInstantiation(sig, typeArgumentTypes, nil)
+				return c.getSignatureInstantiation(sig, typeArgumentTypes, ast.IsInJSFile(sig.declaration), nil)
 			}
 			return sig
 		})
@@ -14482,14 +14499,24 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		mode = c.program.GetDefaultResolutionModeForFile(importingSourceFile)
 	}
 
-	var sourceFile *ast.SourceFile
 	resolvedModule := c.program.GetResolvedModule(importingSourceFile, moduleReference, mode)
-	if resolvedModule.IsResolved() {
+
+	var resolutionDiagnostic *diagnostics.Message
+	if errorNode != nil && resolvedModule.IsResolved() {
+		resolutionDiagnostic = module.GetResolutionDiagnostic(c.compilerOptions, resolvedModule, importingSourceFile)
+	}
+
+	var sourceFile *ast.SourceFile
+	if resolvedModule.IsResolved() && (resolutionDiagnostic == nil || resolutionDiagnostic == diagnostics.Module_0_was_resolved_to_1_but_jsx_is_not_set) {
 		sourceFile = c.program.GetSourceFileForResolvedModule(resolvedModule.ResolvedFileName)
 	}
 
 	if sourceFile != nil {
-		// !!!
+		// If there's a resolutionDiagnostic we need to report it even if a sourceFile is found.
+		if resolutionDiagnostic != nil {
+			c.error(errorNode, resolutionDiagnostic, moduleReference, resolvedModule.ResolvedFileName)
+		}
+
 		if errorNode != nil {
 			if resolvedModule.ResolvedUsingTsExtension && tspath.IsDeclarationFileName(moduleReference) {
 				if ast.FindAncestor(location, ast.IsEmittableImport) != nil {
@@ -14577,7 +14604,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 
 		if sourceFile.Symbol != nil {
 			if errorNode != nil {
-				if resolvedModule.IsExternalLibraryImport && !(tspath.ExtensionIsTs(resolvedModule.Extension) || resolvedModule.Extension == tspath.ExtensionJson) {
+				if resolvedModule.IsExternalLibraryImport && !resolutionExtensionIsTSOrJson(resolvedModule.Extension) {
 					c.errorOnImplicitAnyModule(false /*isError*/, errorNode, mode, resolvedModule, moduleReference)
 				}
 				if c.moduleKind == core.ModuleKindNode16 || c.moduleKind == core.ModuleKindNode18 {
@@ -14633,7 +14660,7 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 		return nil
 	}
 
-	if resolvedModule.IsResolved() && !(tspath.ExtensionIsTs(resolvedModule.Extension) || resolvedModule.Extension == tspath.ExtensionJson) {
+	if resolvedModule.IsResolved() && !resolutionExtensionIsTSOrJson(resolvedModule.Extension) && resolutionDiagnostic == nil || resolutionDiagnostic == diagnostics.Could_not_find_a_declaration_file_for_module_0_1_implicitly_has_an_any_type {
 		if isForAugmentation {
 			c.error(
 				errorNode,
@@ -14648,7 +14675,6 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 	}
 
 	if moduleNotFoundError != nil {
-
 		// See if this was possibly a projectReference redirect
 		if resolvedModule.IsResolved() {
 			redirect := c.program.GetOutputAndProjectReference(tspath.ToPath(resolvedModule.ResolvedFileName, c.program.GetCurrentDirectory(), c.program.UseCaseSensitiveFileNames()))
@@ -14663,27 +14689,34 @@ func (c *Checker) resolveExternalModule(location *ast.Node, moduleReference stri
 			}
 		}
 
-		// !!!
-		isExtensionlessRelativePathImport := tspath.PathIsRelative(moduleReference) && !tspath.HasExtension(moduleReference)
-		resolutionIsNode16OrNext := c.moduleResolutionKind == core.ModuleResolutionKindNode16 || c.moduleResolutionKind == core.ModuleResolutionKindNodeNext
-		if !c.compilerOptions.GetResolveJsonModule() && tspath.FileExtensionIs(moduleReference, tspath.ExtensionJson) {
-			c.error(errorNode, diagnostics.Cannot_find_module_0_Consider_using_resolveJsonModule_to_import_module_with_json_extension, moduleReference)
-		} else if mode == core.ResolutionModeESM && resolutionIsNode16OrNext && isExtensionlessRelativePathImport {
-			absoluteRef := tspath.GetNormalizedAbsolutePath(moduleReference, tspath.GetDirectoryPath(importingSourceFile.FileName()))
-			if suggestedExt := c.getSuggestedImportExtension(absoluteRef); suggestedExt != "" {
-				c.error(errorNode, diagnostics.Relative_import_paths_need_explicit_file_extensions_in_ECMAScript_imports_when_moduleResolution_is_node16_or_nodenext_Did_you_mean_0, moduleReference+suggestedExt)
-			} else {
-				c.error(errorNode, diagnostics.Relative_import_paths_need_explicit_file_extensions_in_ECMAScript_imports_when_moduleResolution_is_node16_or_nodenext_Consider_adding_an_extension_to_the_import_path)
-			}
-		} else if resolvedModule != nil && resolvedModule.AlternateResult != "" {
-			errorInfo := c.createModuleNotFoundChain(resolvedModule, errorNode, moduleReference, mode, moduleReference)
-			c.diagnostics.Add(NewDiagnosticChainForNode(errorInfo, errorNode, moduleNotFoundError, moduleReference))
+		if resolutionDiagnostic != nil {
+			c.error(errorNode, resolutionDiagnostic, moduleReference, resolvedModule.ResolvedFileName)
 		} else {
-			c.error(errorNode, moduleNotFoundError, moduleReference)
+			isExtensionlessRelativePathImport := tspath.PathIsRelative(moduleReference) && !tspath.HasExtension(moduleReference)
+			resolutionIsNode16OrNext := c.moduleResolutionKind == core.ModuleResolutionKindNode16 || c.moduleResolutionKind == core.ModuleResolutionKindNodeNext
+			if !c.compilerOptions.GetResolveJsonModule() && tspath.FileExtensionIs(moduleReference, tspath.ExtensionJson) {
+				c.error(errorNode, diagnostics.Cannot_find_module_0_Consider_using_resolveJsonModule_to_import_module_with_json_extension, moduleReference)
+			} else if mode == core.ResolutionModeESM && resolutionIsNode16OrNext && isExtensionlessRelativePathImport {
+				absoluteRef := tspath.GetNormalizedAbsolutePath(moduleReference, tspath.GetDirectoryPath(importingSourceFile.FileName()))
+				if suggestedExt := c.getSuggestedImportExtension(absoluteRef); suggestedExt != "" {
+					c.error(errorNode, diagnostics.Relative_import_paths_need_explicit_file_extensions_in_ECMAScript_imports_when_moduleResolution_is_node16_or_nodenext_Did_you_mean_0, moduleReference+suggestedExt)
+				} else {
+					c.error(errorNode, diagnostics.Relative_import_paths_need_explicit_file_extensions_in_ECMAScript_imports_when_moduleResolution_is_node16_or_nodenext_Consider_adding_an_extension_to_the_import_path)
+				}
+			} else if resolvedModule != nil && resolvedModule.AlternateResult != "" {
+				errorInfo := c.createModuleNotFoundChain(resolvedModule, errorNode, moduleReference, mode, moduleReference)
+				c.diagnostics.Add(NewDiagnosticChainForNode(errorInfo, errorNode, moduleNotFoundError, moduleReference))
+			} else {
+				c.error(errorNode, moduleNotFoundError, moduleReference)
+			}
 		}
 	}
 
 	return nil
+}
+
+func resolutionExtensionIsTSOrJson(ext string) bool {
+	return tspath.ExtensionIsTs(ext) || ext == tspath.ExtensionJson
 }
 
 func (c *Checker) getSuggestedImportSource(moduleReference string, tsExtension string, mode core.ResolutionMode) string {
@@ -18328,7 +18361,7 @@ func (c *Checker) getInstantiatedConstructorsForTypeArguments(t *Type, typeArgum
 	typeArguments := core.Map(typeArgumentNodes, c.getTypeFromTypeNode)
 	return core.SameMap(signatures, func(sig *Signature) *Signature {
 		if len(sig.typeParameters) != 0 {
-			return c.getSignatureInstantiation(sig, typeArguments, nil)
+			return c.getSignatureInstantiation(sig, typeArguments, ast.IsInJSFile(location), nil)
 		}
 		return sig
 	})
@@ -18336,13 +18369,14 @@ func (c *Checker) getInstantiatedConstructorsForTypeArguments(t *Type, typeArgum
 
 func (c *Checker) getConstructorsForTypeArguments(t *Type, typeArgumentNodes []*ast.Node, location *ast.Node) []*Signature {
 	typeArgCount := len(typeArgumentNodes)
+	isJavaScript := ast.IsInJSFile(location)
 	return core.Filter(c.getSignaturesOfType(t, SignatureKindConstruct), func(sig *Signature) bool {
-		return typeArgCount >= c.getMinTypeArgumentCount(sig.typeParameters) && typeArgCount <= len(sig.typeParameters)
+		return isJavaScript || typeArgCount >= c.getMinTypeArgumentCount(sig.typeParameters) && typeArgCount <= len(sig.typeParameters)
 	})
 }
 
-func (c *Checker) getSignatureInstantiation(sig *Signature, typeArguments []*Type, inferredTypeParameters []*Type) *Signature {
-	instantiatedSignature := c.getSignatureInstantiationWithoutFillingInTypeArguments(sig, c.fillMissingTypeArguments(typeArguments, sig.typeParameters, c.getMinTypeArgumentCount(sig.typeParameters)))
+func (c *Checker) getSignatureInstantiation(sig *Signature, typeArguments []*Type, isJavaScript bool, inferredTypeParameters []*Type) *Signature {
+	instantiatedSignature := c.getSignatureInstantiationWithoutFillingInTypeArguments(sig, c.fillMissingTypeArguments(typeArguments, sig.typeParameters, c.getMinTypeArgumentCount(sig.typeParameters), isJavaScript))
 	if len(inferredTypeParameters) != 0 {
 		returnSignature := c.getSingleCallOrConstructSignature(c.getReturnTypeOfSignature(instantiatedSignature))
 		if returnSignature != nil {
@@ -18480,12 +18514,13 @@ func (c *Checker) createCanonicalSignature(signature *Signature) *Signature {
 	// where different generations of the same type parameter are in scope). This leads to a lot of new type
 	// identities, and potentially a lot of work comparing those identities, so here we create an instantiation
 	// that uses the original type identities for all unconstrained type parameters.
-	return c.getSignatureInstantiation(signature, core.Map(signature.typeParameters, func(tp *Type) *Type {
+	typeArguments := core.Map(signature.typeParameters, func(tp *Type) *Type {
 		if tp.Target() != nil && c.getConstraintOfTypeParameter(tp.Target()) == nil {
 			return tp.Target()
 		}
 		return tp
-	}), nil)
+	})
+	return c.getSignatureInstantiation(signature, typeArguments, ast.IsInJSFile(signature.declaration), nil /*inferredTypeParameters*/)
 }
 
 func (c *Checker) getBaseSignature(signature *Signature) *Signature {
@@ -18545,7 +18580,7 @@ func (c *Checker) instantiateSignatureInContextOf(signature *Signature, contextu
 			c.inferTypes(context.inferences, source, target, InferencePriorityReturnType, false)
 		})
 	}
-	return c.getSignatureInstantiation(signature, c.getInferredTypes(context), nil)
+	return c.getSignatureInstantiation(signature, c.getInferredTypes(context), ast.IsInJSFile(contextualSignature.declaration), nil /*inferredTypeParameters*/)
 }
 
 func (c *Checker) resolveBaseTypesOfInterface(t *Type) {
@@ -19866,16 +19901,17 @@ func (c *Checker) getDefaultConstructSignatures(classType *Type) []*Signature {
 		return []*Signature{c.newSignature(flags, nil, classType.AsInterfaceType().LocalTypeParameters(), nil, nil, classType, nil, 0)}
 	}
 	baseTypeNode := getBaseTypeNodeOfClass(classType)
+	isJavaScript := declaration != nil && ast.IsInJSFile(declaration)
 	typeArguments := c.getTypeArgumentsFromNode(baseTypeNode)
 	typeArgCount := len(typeArguments)
 	var result []*Signature
 	for _, baseSig := range baseSignatures {
 		minTypeArgumentCount := c.getMinTypeArgumentCount(baseSig.typeParameters)
 		typeParamCount := len(baseSig.typeParameters)
-		if typeArgCount >= minTypeArgumentCount && typeArgCount <= typeParamCount {
+		if isJavaScript || typeArgCount >= minTypeArgumentCount && typeArgCount <= typeParamCount {
 			var sig *Signature
 			if typeParamCount != 0 {
-				sig = c.createSignatureInstantiation(baseSig, c.fillMissingTypeArguments(typeArguments, baseSig.typeParameters, minTypeArgumentCount))
+				sig = c.createSignatureInstantiation(baseSig, c.fillMissingTypeArguments(typeArguments, baseSig.typeParameters, minTypeArgumentCount, isJavaScript))
 			} else {
 				sig = c.cloneSignature(baseSig)
 			}
@@ -20969,7 +21005,7 @@ func (c *Checker) getTypeArguments(t *Type) []*Type {
 }
 
 func (c *Checker) getEffectiveTypeArguments(node *ast.Node, typeParameters []*Type) []*Type {
-	return c.fillMissingTypeArguments(core.Map(node.TypeArguments(), c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters))
+	return c.fillMissingTypeArguments(core.Map(node.TypeArguments(), c.getTypeFromTypeNode), typeParameters, c.getMinTypeArgumentCount(typeParameters), ast.IsInJSFile(node))
 }
 
 // Gets the minimum number of type arguments needed to satisfy all non-optional type parameters.
@@ -20989,30 +21025,43 @@ func (c *Checker) hasTypeParameterDefault(t *Type) bool {
 	})
 }
 
-func (c *Checker) fillMissingTypeArguments(typeArguments []*Type, typeParameters []*Type, minTypeArgumentCount int) []*Type {
+func (c *Checker) fillMissingTypeArguments(typeArguments []*Type, typeParameters []*Type, minTypeArgumentCount int, isJavaScriptImplicitAny bool) []*Type {
 	numTypeParameters := len(typeParameters)
 	if numTypeParameters == 0 {
 		return nil
 	}
 	numTypeArguments := len(typeArguments)
-	if numTypeArguments >= minTypeArgumentCount && numTypeArguments < numTypeParameters {
+	if isJavaScriptImplicitAny || (numTypeArguments >= minTypeArgumentCount && numTypeArguments < numTypeParameters) {
 		result := make([]*Type, numTypeParameters)
 		copy(result, typeArguments)
 		// Map invalid forward references in default types to the error type
 		for i := numTypeArguments; i < numTypeParameters; i++ {
 			result[i] = c.errorType
 		}
+		baseDefaultType := c.getDefaultTypeArgumentType(isJavaScriptImplicitAny)
 		for i := numTypeArguments; i < numTypeParameters; i++ {
 			defaultType := c.getDefaultFromTypeParameter(typeParameters[i])
+
+			if isJavaScriptImplicitAny && defaultType != nil && (c.isTypeIdenticalTo(defaultType, c.unknownType) || c.isTypeIdenticalTo(defaultType, c.emptyObjectType)) {
+				defaultType = c.anyType
+			}
+
 			if defaultType != nil {
 				result[i] = c.instantiateType(defaultType, newTypeMapper(typeParameters, result))
 			} else {
-				result[i] = c.unknownType
+				result[i] = baseDefaultType
 			}
 		}
 		return result
 	}
 	return typeArguments
+}
+
+func (c *Checker) getDefaultTypeArgumentType(isInJavaScriptFile bool) *Type {
+	if isInJavaScriptFile {
+		return c.anyType
+	}
+	return c.unknownType
 }
 
 // Gets the default type for a type parameter. If the type parameter is the result of an instantiation,
@@ -22054,6 +22103,8 @@ func (c *Checker) getTypeReferenceType(node *ast.Node, symbol *ast.Symbol) *Type
 	if res != nil && c.checkNoTypeArguments(node, symbol) {
 		return c.getRegularTypeOfLiteralType(res)
 	}
+
+	// !!! Resolving values as types for JS
 	return c.errorType
 }
 
@@ -22067,15 +22118,29 @@ func (c *Checker) getTypeFromClassOrInterfaceReference(node *ast.Node, symbol *a
 	if len(typeParameters) != 0 {
 		numTypeArguments := len(node.TypeArguments())
 		minTypeArgumentCount := c.getMinTypeArgumentCount(typeParameters)
-		if numTypeArguments < minTypeArgumentCount || numTypeArguments > len(typeParameters) {
-			message := diagnostics.Generic_type_0_requires_1_type_argument_s
-			if minTypeArgumentCount < len(typeParameters) {
-				message = diagnostics.Generic_type_0_requires_between_1_and_2_type_arguments
+		isJs := ast.IsInJSFile(node)
+		isJsImplicitAny := !c.noImplicitAny && isJs
+		if !isJsImplicitAny && (numTypeArguments < minTypeArgumentCount || numTypeArguments > len(typeParameters)) {
+			var message *diagnostics.Message
+
+			missingAugmentsTag := isJs && ast.IsExpressionWithTypeArguments(node) && !ast.IsJSDocAugmentsTag(node.Parent)
+			if missingAugmentsTag {
+				message = diagnostics.Expected_0_type_arguments_provide_these_with_an_extends_tag
+				if minTypeArgumentCount < len(typeParameters) {
+					message = diagnostics.Expected_0_1_type_arguments_provide_these_with_an_extends_tag
+				}
+			} else {
+				message = diagnostics.Generic_type_0_requires_1_type_argument_s
+				if minTypeArgumentCount < len(typeParameters) {
+					message = diagnostics.Generic_type_0_requires_between_1_and_2_type_arguments
+				}
 			}
-			typeStr := c.TypeToString(t) // !!! /*enclosingDeclaration*/, nil, TypeFormatFlagsWriteArrayAsGenericType
+			typeStr := c.TypeToStringEx(t, nil /*enclosingDeclaration*/, TypeFormatFlagsWriteArrayAsGenericType)
 			c.error(node, message, typeStr, minTypeArgumentCount, len(typeParameters))
-			// TODO: Adopt same permissive behavior in TS as in JS to reduce follow-on editing experience failures (requires editing fillMissingTypeArguments)
-			return c.errorType
+			if !isJs {
+				// TODO: Adopt same permissive behavior in TS as in JS to reduce follow-on editing experience failures (requires editing fillMissingTypeArguments)
+				return c.errorType
+			}
 		}
 		if node.Kind == ast.KindTypeReference && c.isDeferredTypeReferenceNode(node, numTypeArguments != len(typeParameters)) {
 			return c.createDeferredTypeReference(t, node, nil /*mapper*/, nil /*alias*/)
@@ -22083,7 +22148,7 @@ func (c *Checker) getTypeFromClassOrInterfaceReference(node *ast.Node, symbol *a
 		// In a type reference, the outer type parameters of the referenced class or interface are automatically
 		// supplied as type arguments and the type reference only specifies arguments for the local type parameters
 		// of the class or interface.
-		localTypeArguments := c.fillMissingTypeArguments(c.getTypeArgumentsFromNode(node), typeParameters, minTypeArgumentCount)
+		localTypeArguments := c.fillMissingTypeArguments(c.getTypeArgumentsFromNode(node), typeParameters, minTypeArgumentCount, isJs)
 		typeArguments := append(d.OuterTypeParameters(), localTypeArguments...)
 		return c.createTypeReference(t, typeArguments)
 	}
@@ -22524,7 +22589,7 @@ func (c *Checker) getTypeAliasInstantiation(symbol *ast.Symbol, typeArguments []
 	key := getTypeAliasInstantiationKey(typeArguments, alias)
 	instantiation := links.instantiations[key]
 	if instantiation == nil {
-		mapper := newTypeMapper(typeParameters, c.fillMissingTypeArguments(typeArguments, typeParameters, c.getMinTypeArgumentCount(typeParameters)))
+		mapper := newTypeMapper(typeParameters, c.fillMissingTypeArguments(typeArguments, typeParameters, c.getMinTypeArgumentCount(typeParameters), ast.IsInJSFile(symbol.ValueDeclaration)))
 		instantiation = c.instantiateTypeWithAlias(t, mapper, alias)
 		links.instantiations[key] = instantiation
 	}
@@ -22586,9 +22651,9 @@ func (c *Checker) getAliasForTypeNode(node *ast.Node) *TypeAlias {
 }
 
 func (c *Checker) getAliasSymbolForTypeNode(node *ast.Node) *ast.Symbol {
-	host := node.Parent
+	host := ast.GetEffectiveTypeParent(node.Parent)
 	for ast.IsParenthesizedTypeNode(host) || ast.IsTypeOperatorNode(host) && host.AsTypeOperatorNode().Operator == ast.KindReadonlyKeyword {
-		host = host.Parent
+		host = ast.GetEffectiveTypeParent(host.Parent)
 	}
 	if isTypeAlias(host) {
 		return c.getSymbolOfDeclaration(host)
@@ -30140,7 +30205,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		return c.getSymbolOfNode(name.Parent)
 	}
 
-	if name.Parent.Kind == ast.KindExportAssignment && ast.IsEntityNameExpression(name) {
+	if (name.Parent.Kind == ast.KindExportAssignment || name.Parent.Kind == ast.KindJSExportAssignment) && ast.IsEntityNameExpression(name) {
 		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression
 		success := c.resolveEntityName(
 			name,
@@ -30238,7 +30303,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		}
 	} else if ast.IsEntityName(name) && isTypeReferenceIdentifier(name) {
 		meaning := core.IfElse(name.Parent.Kind == ast.KindTypeReference, ast.SymbolFlagsType, ast.SymbolFlagsNamespace)
-		symbol := c.resolveEntityName(name, meaning, false /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
+		symbol := c.resolveEntityName(name, meaning, true /*ignoreErrors*/, true /*dontResolveAlias*/, nil /*location*/)
 		if symbol != nil && symbol != c.unknownSymbol {
 			return symbol
 		}
@@ -30249,7 +30314,7 @@ func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast
 		return c.resolveEntityName(
 			name,
 			ast.SymbolFlagsFunctionScopedVariable, /*meaning*/
-			false,                                 /*ignoreErrors*/
+			true,                                  /*ignoreErrors*/
 			false,                                 /*dontResolveAlias*/
 			nil,                                   /*location*/
 		)
@@ -30466,22 +30531,52 @@ func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
 	return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(expr))
 }
 
+func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
+	if node.Body() == nil {
+		return false
+	}
+
+	if containsArguments, ok := c.cachedArgumentsReferenced[node]; ok {
+		return containsArguments
+	}
+
+	var visit func(node *ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if node == nil {
+			return false
+		}
+		switch node.Kind {
+		case ast.KindIdentifier:
+			return node.Text() == c.argumentsSymbol.Name && c.IsArgumentsSymbol(c.getResolvedSymbol(node))
+		case ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+			if ast.IsComputedPropertyName(node.Name()) {
+				return visit(node.Name())
+			}
+		case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+			return visit(node.Expression())
+		case ast.KindPropertyAssignment:
+			return visit(node.AsPropertyAssignment().Initializer)
+		}
+		if nodeStartsNewLexicalEnvironment(node) || ast.IsPartOfTypeNode(node) {
+			return false
+		}
+		return node.ForEachChild(visit)
+	}
+
+	containsArguments := visit(node.Body())
+	c.cachedArgumentsReferenced[node] = containsArguments
+	return containsArguments
+}
+
 func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
 	return c.getTypeOfNode(node)
 }
 
-func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *emitResolver {
+func (c *Checker) GetEmitResolver() *emitResolver {
 	c.emitResolverOnce.Do(func() {
-		c.emitResolver = &emitResolver{checker: c}
+		c.emitResolver = newEmitResolver(c)
 	})
 
-	if !skipDiagnostics {
-		// Ensure we have all the type information in place for this file so that all the
-		// emitter questions of this resolver will return the right information.
-		c.emitResolver.checkerMu.Lock()
-		defer c.emitResolver.checkerMu.Unlock()
-		c.checkSourceFile(context.Background(), file)
-	}
 	return c.emitResolver
 }
 
