@@ -1,10 +1,7 @@
-index.js(7,9): error TS7031: Binding element 'json' implicitly has an 'any[]' type.
 index.js(15,9): error TS7031: Binding element 'json' implicitly has an 'any[]' type.
-index.js(37,20): error TS7031: Binding element 'json' implicitly has an 'any[]' type.
-index.js(42,15): error TS7031: Binding element 'json' implicitly has an 'any[]' type.
 
 
-==== index.js (4 errors) ====
+==== index.js (1 errors) ====
     /**
      * @param {Object} [config]
      * @param {Partial<Record<'json' | 'jsonc' | 'json5', string[]>>} [config.additionalFiles]
@@ -12,8 +9,6 @@ index.js(42,15): error TS7031: Binding element 'json' implicitly has an 'any[]' 
     export function prepareConfig({
         additionalFiles: {
             json = []
-            ~~~~
-!!! error TS7031: Binding element 'json' implicitly has an 'any[]' type.
         } = {}
     } = {}) {
         json // string[]
@@ -46,13 +41,9 @@ index.js(42,15): error TS7031: Binding element 'json' implicitly has an 'any[]' 
      * @param {{ a?: { json?: string[] }}} [config]
      */
     function f1({ a: { json = [] } = {} } = {}) { return json }
-                       ~~~~
-!!! error TS7031: Binding element 'json' implicitly has an 'any[]' type.
     
     /**
      * @param {[[string[]?]?]} [x]
      */
     function f2([[json = []] = []] = []) { return json }
-                  ~~~~
-!!! error TS7031: Binding element 'json' implicitly has an 'any[]' type.
     

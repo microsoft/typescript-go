@@ -1470,7 +1470,7 @@ func forEachYieldExpression(body *ast.Node, visitor func(expr *ast.Node)) {
 func SkipTypeChecking(sourceFile *ast.SourceFile, options *core.CompilerOptions, host Program) bool {
 	return options.NoCheck.IsTrue() ||
 		options.SkipLibCheck.IsTrue() && sourceFile.IsDeclarationFile ||
-		options.SkipDefaultLibCheck.IsTrue() && sourceFile.HasNoDefaultLib ||
+		options.SkipDefaultLibCheck.IsTrue() && host.IsSourceFileDefaultLibrary(sourceFile.Path()) ||
 		host.IsSourceFromProjectReference(sourceFile.Path()) ||
 		!canIncludeBindAndCheckDiagnostics(sourceFile, options)
 }
@@ -1951,4 +1951,13 @@ func ValueToString(value any) string {
 		return value.String() + "n"
 	}
 	panic("unhandled value type in valueToString")
+}
+
+func nodeStartsNewLexicalEnvironment(node *ast.Node) bool {
+	switch node.Kind {
+	case ast.KindConstructor, ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction,
+		ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor, ast.KindModuleDeclaration, ast.KindSourceFile:
+		return true
+	}
+	return false
 }

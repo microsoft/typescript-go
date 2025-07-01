@@ -587,7 +587,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 	issuedElaboration := false
 	if targetProp == nil {
 		indexInfo := c.getApplicableIndexInfo(target, nameType)
-		if indexInfo != nil && indexInfo.declaration != nil && !ast.GetSourceFileOfNode(indexInfo.declaration).HasNoDefaultLib {
+		if indexInfo != nil && indexInfo.declaration != nil && !c.program.IsSourceFileDefaultLibrary(ast.GetSourceFileOfNode(indexInfo.declaration).Path()) {
 			issuedElaboration = true
 			diagnostic.AddRelatedInfo(createDiagnosticForNode(indexInfo.declaration, diagnostics.The_expected_type_comes_from_this_index_signature))
 		}
@@ -602,7 +602,7 @@ func (c *Checker) elaborateElement(source *Type, target *Type, relation *Relatio
 		if propertyName == "" || nameType.flags&TypeFlagsUniqueESSymbol != 0 {
 			propertyName = c.TypeToString(nameType)
 		}
-		if !ast.GetSourceFileOfNode(targetNode).HasNoDefaultLib {
+		if !c.program.IsSourceFileDefaultLibrary(ast.GetSourceFileOfNode(targetNode).Path()) {
 			diagnostic.AddRelatedInfo(createDiagnosticForNode(targetNode, diagnostics.The_expected_type_comes_from_property_0_which_is_declared_here_on_type_1, propertyName, c.TypeToString(target)))
 		}
 	}
@@ -2442,7 +2442,7 @@ func (c *Checker) isValidTypeForTemplateLiteralPlaceholder(source *Type, target 
 		return target.flags&TypeFlagsNumber != 0 && isValidNumberString(value, false /*roundTripOnly*/) ||
 			target.flags&TypeFlagsBigInt != 0 && isValidBigIntString(value, false /*roundTripOnly*/) ||
 			target.flags&(TypeFlagsBooleanLiteral|TypeFlagsNullable) != 0 && value == target.AsIntrinsicType().intrinsicName ||
-			target.flags&TypeFlagsStringMapping != 0 && c.isMemberOfStringMapping(c.getStringLiteralType(value), target) ||
+			target.flags&TypeFlagsStringMapping != 0 && c.isMemberOfStringMapping(source, target) ||
 			target.flags&TypeFlagsTemplateLiteral != 0 && c.isTypeMatchedByTemplateLiteralType(source, target.AsTemplateLiteralType())
 	case source.flags&TypeFlagsTemplateLiteral != 0:
 		texts := source.AsTemplateLiteralType().texts
@@ -3327,8 +3327,9 @@ func (r *Relater) structuredTypeRelatedToWorker(source *Type, target *Type, repo
 		}
 		params := r.c.typeAliasLinks.Get(source.alias.symbol).typeParameters
 		minParams := r.c.getMinTypeArgumentCount(params)
-		sourceTypes := r.c.fillMissingTypeArguments(source.alias.typeArguments, params, minParams)
-		targetTypes := r.c.fillMissingTypeArguments(target.alias.typeArguments, params, minParams)
+		nodeIsInJsFile := ast.IsInJSFile(source.alias.symbol.ValueDeclaration)
+		sourceTypes := r.c.fillMissingTypeArguments(source.alias.typeArguments, params, minParams, nodeIsInJsFile)
+		targetTypes := r.c.fillMissingTypeArguments(target.alias.typeArguments, params, minParams, nodeIsInJsFile)
 		varianceResult, ok := relateVariances(sourceTypes, targetTypes, variances, intersectionState)
 		if ok {
 			return varianceResult
