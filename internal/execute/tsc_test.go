@@ -2,8 +2,6 @@ package execute_test
 
 import (
 	"testing"
-
-	"github.com/microsoft/typescript-go/internal/bundled"
 )
 
 func TestTsc(t *testing.T) {
@@ -206,11 +204,6 @@ func TestExtends(t *testing.T) {
 
 func TestTypeAcquisition(t *testing.T) {
 	t.Parallel()
-	if !bundled.Embedded {
-		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
-		// Just skip this for now.
-		t.Skip("bundled files are not embedded")
-	}
 	(&tscInput{
 		subScenario: "parse tsconfig with typeAcquisition",
 		sys: newTestSys(FileMap{"/home/src/workspaces/project/tsconfig.json": `{

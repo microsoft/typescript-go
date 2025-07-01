@@ -49,7 +49,7 @@ Edit:: fix syntax error
 
 Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
-&{const a = "hello"; 0xc000d0f2f0}
+const a = "hello";
 
 
 
@@ -60,11 +60,11 @@ Output::
 const a = "hello";
 
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             
 	}
-} 0xc001796ba0}
+}
 
 
 
@@ -72,12 +72,12 @@ Edit:: no emit run after fixing error
 
 Output::
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             "noEmit": true,
             
 	}
-} 0xc0002d2e40}
+}
 
 
 
@@ -85,7 +85,7 @@ Edit:: introduce error
 
 Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
-&{const a = class { private p = 10; }; 0xc000664450}
+const a = class { private p = 10; };
 
 
 
@@ -93,16 +93,16 @@ Edit:: emit when error
 
 Output::
 //// [/home/src/workspaces/project/a.js] *modified* 
-&{const a = class {
+const a = class {
     p = 10;
 };
- 0xc0009e7dd0}
+
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             
 	}
-} 0xc0009e7e30}
+}
 
 
 
@@ -110,10 +110,10 @@ Edit:: no emit run when error
 
 Output::
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             "noEmit": true,
             
 	}
-} 0xc000f92c60}
+}
 
