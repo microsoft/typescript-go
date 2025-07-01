@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
@@ -17,6 +18,11 @@ type testTscEdit struct {
 	caption         string
 	commandLineArgs []string
 	edit            func(*testSys)
+}
+
+var noChange = &testTscEdit{
+	caption: "no change",
+	edit:    func(sys *testSys) {},
 }
 
 type tscInput struct {
@@ -50,7 +56,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 
 				var incrementalProgram *incremental.Program
 				if watcher == nil {
-					exit, parsedCommandLine, incrementalProgram, watcher = execute.CommandLine(test.sys, test.commandLineArgs, true)
+					exit, parsedCommandLine, incrementalProgram, watcher = execute.CommandLine(test.sys, core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs), true)
 					baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 				} else {
 					watcher.DoCycle()
