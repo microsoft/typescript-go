@@ -234,13 +234,15 @@ func (h *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 	if buildInfoFileName == "" {
 		return nil
 	}
-
-	hasErrors := h.ensureHasErrorsForState(ctx, h.program)
-	if !h.snapshot.buildInfoEmitPending && h.snapshot.hasErrors == hasErrors {
+	if h.snapshot.hasErrors == core.TSUnknown {
+		h.snapshot.hasErrors = h.ensureHasErrorsForState(ctx, h.program)
+		if h.snapshot.hasErrors != h.snapshot.hasErrorsFromOldState {
+			h.snapshot.buildInfoEmitPending = true
+		}
+	}
+	if !h.snapshot.buildInfoEmitPending {
 		return nil
 	}
-	h.snapshot.hasErrors = hasErrors
-	h.snapshot.buildInfoEmitPending = true
 	if ctx.Err() != nil {
 		return nil
 	}
@@ -277,10 +279,6 @@ func (h *Program) emitBuildInfo(ctx context.Context, options compiler.EmitOption
 }
 
 func (h *Program) ensureHasErrorsForState(ctx context.Context, program *compiler.Program) core.Tristate {
-	if h.snapshot.hasErrors != core.TSUnknown {
-		return h.snapshot.hasErrors
-	}
-
 	// Check semantic and emit diagnostics first as we dont need to ask program about it
 	if slices.ContainsFunc(program.GetSourceFiles(), func(file *ast.SourceFile) bool {
 		semanticDiagnostics := h.snapshot.semanticDiagnosticsPerFile[file.Path()]

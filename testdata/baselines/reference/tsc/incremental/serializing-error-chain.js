@@ -181,3 +181,30 @@ SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/index.tsx
 
 Signatures::
+
+
+Edit:: no change
+
+ExitStatus:: 2
+Output::
+[96mindex.tsx[0m:[93m11[0m:[93m23[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
+  The last overload gave the following error.
+    Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.
+      Types of property 'children' are incompatible.
+        Type 'any[]' is not assignable to type 'number'.
+
+[7m11[0m                     (<Component>
+[7m  [0m [91m                      ~~~~~~~~~[0m
+
+  [96mindex.tsx[0m:[93m10[0m:[93m38[0m - The last overload is declared here.
+    [7m10[0m                     declare function Component(props: { children?: number }): any;
+    [7m  [0m [96m                                     ~~~~~~~~~[0m
+
+
+Found 1 error in index.tsx[90m:11[0m
+
+
+
+SemanticDiagnostics::
+
+Signatures::

@@ -209,6 +209,7 @@ type snapshot struct {
 
 	// true if build info emit is pending
 	buildInfoEmitPending                    bool
+	hasErrorsFromOldState                   core.Tristate
 	allFilesExcludingDefaultLibraryFileOnce sync.Once
 	//  Cache of all files excluding default library file for the current program
 	allFilesExcludingDefaultLibraryFile []*ast.SourceFile
@@ -232,6 +233,7 @@ func (s *snapshot) addFileToAffectedFilesPendingEmit(filePath tspath.Path, emitK
 	}
 	s.affectedFilesPendingEmit[filePath] = existingKind | emitKind
 	delete(s.emitDiagnosticsPerFile, filePath)
+	s.buildInfoEmitPending = true
 }
 
 func (s *snapshot) getAllFilesExcludingDefaultLibraryFile(program *compiler.Program, firstSourceFile *ast.SourceFile) []*ast.SourceFile {
@@ -278,6 +280,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 			snapshot.affectedFilesPendingEmit = maps.Clone(oldProgram.snapshot.affectedFilesPendingEmit)
 		}
 		snapshot.buildInfoEmitPending = oldProgram.snapshot.buildInfoEmitPending
+		snapshot.hasErrorsFromOldState = oldProgram.snapshot.hasErrors
 	} else {
 		snapshot.changedFilesSet = &collections.Set[tspath.Path]{}
 		snapshot.buildInfoEmitPending = snapshot.options.IsIncremental()
@@ -312,7 +315,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 		if oldProgram != nil {
 			if oldFileInfo, ok := oldProgram.snapshot.fileInfos[file.Path()]; ok {
 				signature = oldFileInfo.signature
-				if oldFileInfo.version == version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
+				if oldFileInfo.version != version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
 					snapshot.addFileToChangeSet(file.Path())
 				} else if oldReferences, _ := oldProgram.snapshot.referencedMap.GetValues(file.Path()); !newReferences.Equals(oldReferences) {
 					// Referenced files changed

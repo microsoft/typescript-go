@@ -56,7 +56,7 @@ func CommandLine(sys System, commandLineArgs []string, testing bool) (ExitStatus
 
 	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
 	status, incrementalProgram, watcher := tscCompilation(sys, parsedCommandLine, testing)
-	if watcher == nil {
+	if watcher != nil {
 		watcher.start()
 	}
 	return status, parsedCommandLine, incrementalProgram, watcher
@@ -371,7 +371,7 @@ func emitFilesAndReportErrors(
 
 	if sys.Writer() != nil {
 		for _, file := range emitResult.EmittedFiles {
-			fmt.Fprint(sys.Writer(), "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, sys.GetCurrentDirectory()))
+			fmt.Fprint(sys.Writer(), "TSFILE: ", tspath.GetNormalizedAbsolutePath(file, sys.GetCurrentDirectory()), sys.NewLine())
 		}
 		listFiles(sys, program)
 	}

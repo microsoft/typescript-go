@@ -33,6 +33,7 @@ func TestIncremental(t *testing.T) {
                         <div />
                     </Component>)`,
 			}, "/home/src/workspaces/project"),
+			edits: noChangeOnlyEdit,
 		},
 		{
 			subScenario: "serializing composite project",

@@ -63,7 +63,7 @@ func noEmitWatchTestInput(
 		commandLineArgs: commandLineArgs,
 		sys:             sys,
 		edits: []*testTscEdit{
-			newTscEdit("fix syntax error", func(sys *testSys) {
+			newTscEdit("fix error", func(sys *testSys) {
 				sys.WriteFileNoError("/home/src/workspaces/project/a.ts", `const a = "hello";`, false)
 			}),
 			newTscEdit("emit after fixing error", func(sys *testSys) {

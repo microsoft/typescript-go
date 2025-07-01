@@ -262,7 +262,7 @@ func parseCompilerOptions(key string, value any, allOptions *core.CompilerOption
 	case "isolatedDeclarations":
 		allOptions.IsolatedDeclarations = parseTristate(value)
 	case "jsx":
-		allOptions.Jsx = value.(core.JsxEmit)
+		allOptions.Jsx = floatOrInt32ToFlag[core.JsxEmit](value)
 	case "jsxFactory":
 		allOptions.JsxFactory = parseString(value)
 	case "jsxFragmentFactory":
