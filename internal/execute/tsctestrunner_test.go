@@ -28,7 +28,7 @@ type tscInput struct {
 
 func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
-	t.Run(test.getTestName(scenario), func(t *testing.T) {
+	t.Run(test.getTestName(), func(t *testing.T) {
 		t.Parallel()
 		t.Run("tsc baseline", func(t *testing.T) {
 			t.Parallel()
@@ -83,8 +83,8 @@ func (test *tscInput) getTestNamePrefix() string {
 	return commandName + w
 }
 
-func (test *tscInput) getTestName(scenario string) string {
-	return test.getTestNamePrefix() + " " + scenario + ":: " + test.subScenario + " " + strings.Join(test.commandLineArgs, " ")
+func (test *tscInput) getTestName() string {
+	return test.subScenario + " " + strings.Join(test.commandLineArgs, " ")
 }
 
 func (test *tscInput) getBaselineName(scenario string, suffix string) (baseline.Options, string) {
@@ -109,7 +109,7 @@ func (test *tscInput) startBaseline() *strings.Builder {
 
 func (test *tscInput) verifyCommandLineParsing(t *testing.T, scenario string) {
 	t.Helper()
-	t.Run(test.getTestName(scenario), func(t *testing.T) {
+	t.Run(test.getTestName(), func(t *testing.T) {
 		t.Parallel()
 		t.Run("baseline for the tsc compiles", func(t *testing.T) {
 			t.Parallel()
