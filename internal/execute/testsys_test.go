@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/collections"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -141,10 +142,24 @@ func (s *testSys) Writer() io.Writer {
 	return s.currentWrite
 }
 
+func sanitizeSysOutput(output string, prefixLine string, replaceString string) string {
+	if index := strings.Index(output, prefixLine); index != -1 {
+		indexOfNewLine := strings.Index(output[index:], "\n")
+		if indexOfNewLine != -1 {
+			output = output[:index] + replaceString + output[index+indexOfNewLine+1:]
+		}
+	}
+	return output
+}
+
 func (s *testSys) EndWrite() {
 	// todo: revisit if improving tsc/build/watch unittest baselines
-	s.output = append(s.output, s.currentWrite.String())
+	output := s.currentWrite.String()
 	s.currentWrite.Reset()
+	output = sanitizeSysOutput(output, "Version "+core.Version(), "Version FakeTSVersion\n")
+	output = sanitizeSysOutput(output, "build starting at ", "")
+	output = sanitizeSysOutput(output, "build finished in ", "")
+	s.output = append(s.output, output)
 }
 
 func (s *testSys) serializeState(baseline *strings.Builder) {
@@ -248,4 +263,10 @@ func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry
 func (s *testSys) printOutputs(baseline io.Writer) {
 	// todo sanitize sys output
 	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
+}
+
+func (s *testSys) WriteFileNoError(path string, content string, writeByteOrderMark bool) {
+	if err := s.FS().WriteFile(path, content, writeByteOrderMark); err != nil {
+		panic(err)
+	}
 }

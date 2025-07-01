@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestTsc(t *testing.T) {
+func TestTscCommandline(t *testing.T) {
 	t.Parallel()
 	testCases := []*tscInput{
 		{
@@ -128,7 +128,7 @@ func TestNoEmit(t *testing.T) {
 			"/home/src/workspaces/project/class1.ts": `export class class1 {}`,
 		}, ""),
 		commandLineArgs: []string{"--noEmit"},
-	}).verify(t, "noEmit")
+	}).run(t, "noEmit")
 }
 
 func TestExtends(t *testing.T) {
@@ -198,7 +198,7 @@ func TestExtends(t *testing.T) {
 	}}
 
 	for _, c := range cases {
-		c.verify(t, "extends")
+		c.run(t, "extends")
 	}
 }
 
@@ -221,5 +221,5 @@ func TestTypeAcquisition(t *testing.T) {
 			"/home/src/workspaces/project",
 		),
 		commandLineArgs: []string{},
-	}).verify(t, "typeAcquisition")
+	}).run(t, "typeAcquisition")
 }

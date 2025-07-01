@@ -30,6 +30,6 @@ func TestNoCheck(t *testing.T) {
 				// incremental: undefined, true
 			}, "/home/src/workspaces/project"),
 			commandLineArgs: []string{"--noCheck", "--outFile", "built"},
-		}).verify(t, "noCheck")
+		}).run(t, "noCheck")
 	}
 }

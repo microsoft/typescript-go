@@ -5,13 +5,11 @@ Input::index.ts --watch
 //// [/home/src/workspaces/project/index.ts] *new* 
 
 
-
+ExitStatus:: 0
 
 CompilerOptions::{
     "watch": true
 }
-
-
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
