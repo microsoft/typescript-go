@@ -222,12 +222,12 @@ func (b *BuildInfoDiagnosticsOfFile) UnmarshalJSON(data []byte) error {
 	}
 	var fileId BuildInfoFileId
 	if err := json.Unmarshal(fileIdAndDiagnostics[0], &fileId); err != nil {
-		return fmt.Errorf("invalid fileId in BuildInfoDiagnosticsOfFile: %s", err)
+		return fmt.Errorf("invalid fileId in BuildInfoDiagnosticsOfFile: %w", err)
 	}
 
 	var diagnostics []*BuildInfoDiagnostic
 	if err := json.Unmarshal(fileIdAndDiagnostics[1], &diagnostics); err != nil {
-		return fmt.Errorf("invalid diagnostics in BuildInfoDiagnosticsOfFile: %s", err)
+		return fmt.Errorf("invalid diagnostics in BuildInfoDiagnosticsOfFile: %w", err)
 	}
 	*b = BuildInfoDiagnosticsOfFile{
 		FileId:      fileId,
@@ -412,7 +412,7 @@ func (b *BuildInfoEmitSignature) UnmarshalJSON(data []byte) error {
 }
 
 type BuildInfo struct {
-	Version string
+	Version string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
 	Errors       bool `json:"errors,omitzero"`

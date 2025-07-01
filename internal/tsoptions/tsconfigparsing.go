@@ -540,7 +540,7 @@ type CommandLineOptionNameMap map[string]*CommandLineOption
 func (m CommandLineOptionNameMap) Get(name string) *CommandLineOption {
 	opt, ok := m[name]
 	if !ok {
-		opt, ok = m[strings.ToLower(name)]
+		opt, _ = m[strings.ToLower(name)]
 	}
 	return opt
 }

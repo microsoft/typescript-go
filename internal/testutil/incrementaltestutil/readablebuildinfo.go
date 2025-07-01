@@ -12,7 +12,7 @@ import (
 
 type readableBuildInfo struct {
 	buildInfo *incremental.BuildInfo
-	Version   string
+	Version   string `json:"version,omitzero"`
 
 	// Common between incremental and tsc -b buildinfo for non incremental programs
 	Errors       bool `json:"errors,omitzero"`

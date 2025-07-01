@@ -60,19 +60,20 @@ func (f *FsHandlingBuildInfo) ReadFile(path string) (contents string, ok bool) {
 func (f *FsHandlingBuildInfo) WriteFile(path string, data string, writeByteOrderMark bool) error {
 	if tspath.FileExtensionIs(path, tspath.ExtensionTsBuildInfo) {
 		var buildInfo incremental.BuildInfo
-		err := json.Unmarshal([]byte(data), &buildInfo)
-		if err == nil && buildInfo.Version == core.Version() {
-			// Change it to fakeTsVersion
-			buildInfo.Version = fakeTsVersion
-			newData, err := json.Marshal(&buildInfo)
-			if err != nil {
-				return fmt.Errorf("testFs.WriteFile: failed to marshal build info after fixing version: %w", err)
+		if err := json.Unmarshal([]byte(data), &buildInfo); err == nil {
+			if buildInfo.Version == core.Version() {
+				// Change it to fakeTsVersion
+				buildInfo.Version = fakeTsVersion
+				newData, err := json.Marshal(&buildInfo)
+				if err != nil {
+					return fmt.Errorf("testFs.WriteFile: failed to marshal build info after fixing version: %w", err)
+				}
+				data = string(newData)
 			}
-			data = string(newData)
-		}
-		if err == nil {
 			// Write readable build info version
-			f.fs.WriteFile(path+".readable.baseline.txt", toReadableBuildInfo(&buildInfo, data), false)
+			if err := f.fs.WriteFile(path+".readable.baseline.txt", toReadableBuildInfo(&buildInfo, data), false); err != nil {
+				return fmt.Errorf("testFs.WriteFile: failed to write readable build info: %w", err)
+			}
 		}
 	}
 	return f.fs.WriteFile(path, data, writeByteOrderMark)

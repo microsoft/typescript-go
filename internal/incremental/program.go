@@ -30,7 +30,7 @@ func NewProgram(program *compiler.Program, oldProgram *Program) *Program {
 
 func (h *Program) panicIfNoProgram(method string) {
 	if h.program == nil {
-		panic(fmt.Sprintf("%s should not be called without program", method))
+		panic(method + ": should not be called without program")
 	}
 }
 
