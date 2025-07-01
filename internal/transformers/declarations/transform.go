@@ -899,16 +899,16 @@ func (tx *DeclarationTransformer) visitDeclarationStatements(input *ast.Node) *a
 		exportDecl := input.AsExportDeclaration()
 
 		// Check if we need to generate declare statements for exported symbols
+		// This only applies to exports without module specifiers (like `export { bar }`)
 		var declareStatements []*ast.Node
 		if exportDecl.ExportClause != nil && exportDecl.ExportClause.Kind == ast.KindNamedExports && exportDecl.ModuleSpecifier == nil {
-			// This is an export like `export { bar }` without a module specifier
 			namedExports := exportDecl.ExportClause.AsNamedExports()
 			for _, element := range namedExports.Elements.Nodes {
 				exportSpecifier := element.AsExportSpecifier()
 				localName := exportSpecifier.Name()
 				if localName != nil && localName.Kind == ast.KindIdentifier {
 					// Check if this symbol needs a declare statement
-					if declareStmt := tx.createDeclareStatementIfNeeded(localName.AsIdentifier()); declareStmt != nil {
+					if declareStmt := tx.createDeclareStatementForLocalBinding(localName.AsIdentifier()); declareStmt != nil {
 						declareStatements = append(declareStatements, declareStmt)
 					}
 				}
@@ -1799,41 +1799,41 @@ func (tx *DeclarationTransformer) transformJSDocOptionalType(input *ast.JSDocOpt
 	return replacement
 }
 
-// createDeclareStatementIfNeeded creates a declare const statement for a symbol if it's needed
-func (tx *DeclarationTransformer) createDeclareStatementIfNeeded(identifier *ast.Identifier) *ast.Node {
+// createDeclareStatementForLocalBinding creates a declare const statement for a local binding
+// that comes from destructuring or other local assignments and doesn't have its own declaration
+func (tx *DeclarationTransformer) createDeclareStatementForLocalBinding(identifier *ast.Identifier) *ast.Node {
 	if identifier == nil {
 		return nil
 	}
 
-	// Try to resolve what this identifier refers to using the reference resolver
-	referencedDecl := tx.resolver.GetReferencedValueDeclaration(identifier.AsNode())
-	if referencedDecl == nil {
+	// Check if this symbol has any value declarations
+	valueDecl := tx.resolver.GetReferencedValueDeclaration(tx.EmitContext().MostOriginal(identifier.AsNode()))
+	if valueDecl == nil {
 		return nil
 	}
 
-	// Check if the referenced declaration is in the current file
-	sourceFile := ast.GetSourceFileOfNode(identifier.AsNode())
-	referencedSourceFile := ast.GetSourceFileOfNode(referencedDecl.AsNode())
-
-	if sourceFile != nil && referencedSourceFile == sourceFile {
-		// The referenced declaration is in the current file
-		// Check if it's a local variable that comes from an import
-		if referencedDecl.Kind == ast.KindVariableDeclaration || referencedDecl.Kind == ast.KindBindingElement {
-			// This might be our case - a local variable that was destructured from an import
-			// For now, let's create a declare statement for it
-
-			// Get the type of this declaration
-			typeNode := tx.resolver.CreateTypeOfDeclaration(tx.EmitContext(), referencedDecl.AsNode(), tx.enclosingDeclaration, declarationEmitNodeBuilderFlags, declarationEmitInternalNodeBuilderFlags, tx.tracker)
-			if typeNode == nil {
-				return nil
-			}
-
-			// Create a declare const statement
-			varDecl := tx.Factory().NewVariableDeclaration(identifier.AsNode(), nil, typeNode, nil)
-			modifiers := tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindDeclareKeyword)})
-			varDeclList := tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{varDecl}))
-			return tx.Factory().NewVariableStatement(modifiers, varDeclList)
+	// Generate declare statements for symbols that come from binding elements (like destructuring)
+	// rather than standalone declarations
+	if valueDecl.Kind == ast.KindBindingElement {
+		// This is a binding element (from destructuring), we need a declare statement
+		typeNode := tx.ensureType(valueDecl, false)
+		if typeNode == nil {
+			return nil
 		}
+
+		// Create the variable declaration
+		newVarDecl := tx.Factory().NewVariableDeclaration(
+			identifier.AsNode(),
+			nil, // no exclamation token
+			typeNode,
+			nil, // no initializer
+		)
+
+		// Create the variable statement with declare modifier
+		declareModifier := tx.Factory().NewModifier(ast.KindDeclareKeyword)
+		mods := tx.Factory().NewModifierList([]*ast.Node{declareModifier})
+		varDeclList := tx.Factory().NewVariableDeclarationList(ast.NodeFlagsConst, tx.Factory().NewNodeList([]*ast.Node{newVarDecl}))
+		return tx.Factory().NewVariableStatement(mods, varDeclList)
 	}
 
 	return nil
