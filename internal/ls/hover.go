@@ -408,6 +408,7 @@ func writeComments(b *strings.Builder, comments []*ast.Node) {
 			}
 			b.WriteString(text)
 		case ast.KindJSDocLinkCode:
+			// !!! TODO: This is a temporary placeholder implementation that needs to be updated later
 			name := comment.Name()
 			text := comment.AsJSDocLinkCode().Text()
 			if name != nil {
@@ -419,6 +420,7 @@ func writeComments(b *strings.Builder, comments []*ast.Node) {
 			}
 			b.WriteString(text)
 		case ast.KindJSDocLinkPlain:
+			// !!! TODO: This is a temporary placeholder implementation that needs to be updated later
 			name := comment.Name()
 			text := comment.AsJSDocLinkPlain().Text()
 			if name != nil {
