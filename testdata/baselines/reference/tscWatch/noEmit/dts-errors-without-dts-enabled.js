@@ -50,10 +50,11 @@ Signatures::
 
 
 Edit:: fix syntax error
-
-Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = "hello";
+
+
+Output::
 
 
 SemanticDiagnostics::
@@ -65,17 +66,18 @@ Signatures::
 
 
 Edit:: emit after fixing error
-
-Output::
-//// [/home/src/workspaces/project/a.js] *new* 
-const a = "hello";
-
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
             
 	}
 }
+
+
+Output::
+//// [/home/src/workspaces/project/a.js] *new* 
+const a = "hello";
+
 
 
 SemanticDiagnostics::
@@ -88,8 +90,6 @@ Signatures::
 
 
 Edit:: no emit run after fixing error
-
-Output::
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -97,6 +97,9 @@ Output::
             
 	}
 }
+
+
+Output::
 
 
 SemanticDiagnostics::
@@ -109,10 +112,11 @@ Signatures::
 
 
 Edit:: introduce error
-
-Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = class { private p = 10; };
+
+
+Output::
 
 
 SemanticDiagnostics::
@@ -124,6 +128,13 @@ Signatures::
 
 
 Edit:: emit when error
+//// [/home/src/workspaces/project/tsconfig.json] *modified* 
+{
+	"compilerOptions": {
+            
+	}
+}
+
 
 Output::
 //// [/home/src/workspaces/project/a.js] *modified* 
@@ -131,12 +142,6 @@ const a = class {
     p = 10;
 };
 
-//// [/home/src/workspaces/project/tsconfig.json] *modified* 
-{
-	"compilerOptions": {
-            
-	}
-}
 
 
 SemanticDiagnostics::
@@ -149,8 +154,6 @@ Signatures::
 
 
 Edit:: no emit run when error
-
-Output::
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -158,6 +161,9 @@ Output::
             
 	}
 }
+
+
+Output::
 
 
 SemanticDiagnostics::

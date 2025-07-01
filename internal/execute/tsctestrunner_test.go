@@ -53,6 +53,7 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 			for _, do := range test.edits {
 				do.edit(test.sys)
 				baselineBuilder.WriteString("\n\nEdit:: " + do.caption + "\n")
+				test.sys.baselineFSwithDiff(baselineBuilder)
 
 				var incrementalProgram *incremental.Program
 				if watcher == nil {

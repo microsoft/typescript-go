@@ -63,10 +63,11 @@ Signatures::
 
 
 Edit:: fix syntax error
-
-Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = "hello";
+
+
+Output::
 
 
 SemanticDiagnostics::
@@ -78,6 +79,13 @@ Signatures::
 
 
 Edit:: emit after fixing error
+//// [/home/src/workspaces/project/tsconfig.json] *modified* 
+{
+	"compilerOptions": {
+            "declaration": true
+	}
+}
+
 
 Output::
 //// [/home/src/workspaces/project/a.d.ts] *new* 
@@ -86,12 +94,6 @@ declare const a = "hello";
 //// [/home/src/workspaces/project/a.js] *new* 
 const a = "hello";
 
-//// [/home/src/workspaces/project/tsconfig.json] *modified* 
-{
-	"compilerOptions": {
-            "declaration": true
-	}
-}
 
 
 SemanticDiagnostics::
@@ -104,8 +106,6 @@ Signatures::
 
 
 Edit:: no emit run after fixing error
-
-Output::
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -113,6 +113,9 @@ Output::
             "declaration": true
 	}
 }
+
+
+Output::
 
 
 SemanticDiagnostics::
@@ -125,6 +128,9 @@ Signatures::
 
 
 Edit:: introduce error
+//// [/home/src/workspaces/project/a.ts] *modified* 
+const a = class { private p = 10; };
+
 
 Output::
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
@@ -139,8 +145,6 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
-//// [/home/src/workspaces/project/a.ts] *modified* 
-const a = class { private p = 10; };
 
 
 SemanticDiagnostics::
@@ -152,6 +156,13 @@ Signatures::
 
 
 Edit:: emit when error
+//// [/home/src/workspaces/project/tsconfig.json] *modified* 
+{
+	"compilerOptions": {
+            "declaration": true
+	}
+}
+
 
 Output::
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
@@ -178,12 +189,6 @@ const a = class {
     p = 10;
 };
 
-//// [/home/src/workspaces/project/tsconfig.json] *modified* 
-{
-	"compilerOptions": {
-            "declaration": true
-	}
-}
 
 
 SemanticDiagnostics::
@@ -196,6 +201,14 @@ Signatures::
 
 
 Edit:: no emit run when error
+//// [/home/src/workspaces/project/tsconfig.json] *modified* 
+{
+	"compilerOptions": {
+            "noEmit": true,
+            "declaration": true
+	}
+}
+
 
 Output::
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
@@ -210,13 +223,6 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
-//// [/home/src/workspaces/project/tsconfig.json] *modified* 
-{
-	"compilerOptions": {
-            "noEmit": true,
-            "declaration": true
-	}
-}
 
 
 SemanticDiagnostics::

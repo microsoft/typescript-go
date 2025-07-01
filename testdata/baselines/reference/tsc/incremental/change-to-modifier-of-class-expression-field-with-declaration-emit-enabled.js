@@ -154,6 +154,7 @@ Signatures::
 
 
 Edit:: no change
+
 ExitStatus:: 0
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.d.ts] *modified time*
@@ -176,6 +177,17 @@ Signatures::
 
 
 Edit:: modify public to protected
+//// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
+
+                        const Messageable = () => {
+                            return class MessageableClass {
+                                protected message = 'hello';
+                            }
+                        };
+                        const wrapper = () => Messageable();
+                        type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
+                        export default MessageablePerson;
+
 ExitStatus:: 2
 Output::
 [96mMessageablePerson.ts[0m:[93m7[0m:[93m31[0m - [91merror[0m[90m TS4094: [0mProperty 'message' of exported anonymous class type may not be private or protected.
@@ -201,16 +213,6 @@ Errors  Files
 
 //// [/home/src/workspaces/project/MessageablePerson.d.ts] *modified time*
 //// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
-//// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
-
-                        const Messageable = () => {
-                            return class MessageableClass {
-                                protected message = 'hello';
-                            }
-                        };
-                        const wrapper = () => Messageable();
-                        type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
-                        export default MessageablePerson;
 //// [/home/src/workspaces/project/main.d.ts] *modified time*
 //// [/home/src/workspaces/project/main.js] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
@@ -325,6 +327,7 @@ Signatures::
 
 
 Edit:: no change
+
 ExitStatus:: 2
 Output::
 [96mMessageablePerson.ts[0m:[93m7[0m:[93m31[0m - [91merror[0m[90m TS4094: [0mProperty 'message' of exported anonymous class type may not be private or protected.
@@ -465,10 +468,6 @@ Signatures::
 
 
 Edit:: modify protected to public
-ExitStatus:: 0
-Output::
-//// [/home/src/workspaces/project/MessageablePerson.d.ts] *modified time*
-//// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
 //// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
 
                         const Messageable = () => {
@@ -479,6 +478,11 @@ Output::
                         const wrapper = () => Messageable();
                         type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
                         export default MessageablePerson;
+
+ExitStatus:: 0
+Output::
+//// [/home/src/workspaces/project/MessageablePerson.d.ts] *modified time*
+//// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
 //// [/home/src/workspaces/project/main.d.ts] *modified time*
 //// [/home/src/workspaces/project/main.js] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
@@ -556,6 +560,7 @@ Signatures::
 
 
 Edit:: no change
+
 ExitStatus:: 0
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.d.ts] *modified time*
