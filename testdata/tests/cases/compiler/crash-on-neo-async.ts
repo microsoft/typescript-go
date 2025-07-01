@@ -6,7 +6,17 @@
 // Pattern that causes the crash - element access assignment
 var obj = {};
 var prop = 'test';
+// This assignment with element access should not crash
+// It previously crashed because ElementAccessExpression.Name() returns nil
+// and IsIdentifier was called on that nil value
 obj[prop] = function () {
-    // This assignment with element access should not crash
     return 42;
+};
+// Property access assignment should work fine (has a valid Name())
+obj.prop2 = function () {
+    return 43;
+};
+// Nested element access assignment
+obj['nested'][prop] = function () {
+    return 44;
 };

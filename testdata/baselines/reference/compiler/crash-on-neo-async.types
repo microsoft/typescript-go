@@ -1,0 +1,56 @@
+//// [tests/cases/compiler/crash-on-neo-async.ts] ////
+
+=== crash-on-neo-async.js ===
+// This test reproduces a crash that occurs when parsing files like webpack/node_modules/neo-async/async.js
+// The crash happens in GetAssignmentDeclarationKind when checking IsIdentifier(bin.Left.Name())
+// where bin.Left.Name() returns nil for ElementAccessExpression
+// Pattern that causes the crash - element access assignment
+var obj = {};
+>obj : { prop2: () => number; }
+>{} : { prop2: () => number; }
+
+var prop = 'test';
+>prop : string
+>'test' : "test"
+
+// This assignment with element access should not crash
+// It previously crashed because ElementAccessExpression.Name() returns nil
+// and IsIdentifier was called on that nil value
+obj[prop] = function () {
+>obj[prop] = function () {    return 42;} : () => number
+>obj[prop] : any
+>obj : { prop2: () => number; }
+>prop : string
+>function () {    return 42;} : () => number
+
+    return 42;
+>42 : 42
+
+};
+// Property access assignment should work fine (has a valid Name())
+obj.prop2 = function () {
+>obj.prop2 = function () {    return 43;} : () => number
+>obj.prop2 : () => number
+>obj : { prop2: () => number; }
+>prop2 : () => number
+>function () {    return 43;} : () => number
+
+    return 43;
+>43 : 43
+
+};
+// Nested element access assignment
+obj['nested'][prop] = function () {
+>obj['nested'][prop] = function () {    return 44;} : () => number
+>obj['nested'][prop] : any
+>obj['nested'] : any
+>obj : { prop2: () => number; }
+>'nested' : "nested"
+>prop : string
+>function () {    return 44;} : () => number
+
+    return 44;
+>44 : 44
+
+};
+
