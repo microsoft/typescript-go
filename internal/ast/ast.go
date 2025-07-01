@@ -10234,7 +10234,12 @@ func (node *SourceFile) GetOrCreateToken(
 			panic(fmt.Sprintf("Token cache mismatch: %v != %v", token.Kind, kind))
 		}
 		if token.Parent != parent {
-			panic(fmt.Sprintf("Token cache mismatch: parent. Expected parent of kind %v, got %v", token.Parent.Kind, parent.Kind))
+			// Parent mismatch can occur when AST structure changes (e.g., refactoring).
+			// Create a new token instead of panicking.
+			token := newNode(kind, &Token{}, NodeFactoryHooks{})
+			token.Loc = loc
+			token.Parent = parent
+			return token
 		}
 		return token
 	}

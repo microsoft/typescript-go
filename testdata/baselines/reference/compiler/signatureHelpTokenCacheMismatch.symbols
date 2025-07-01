@@ -1,0 +1,13 @@
+//// [tests/cases/compiler/signatureHelpTokenCacheMismatch.ts] ////
+
+=== signatureHelpTokenCacheMismatch.ts ===
+// Test case for token cache mismatch issue in signature help
+// This should reproduce the issue when AST structure changes
+declare const array: number[];
+>array : Symbol(array, Decl(signatureHelpTokenCacheMismatch.ts, 2, 13))
+
+array?.at(0);
+>array?.at : Symbol(at, Decl(lib.es2022.array.d.ts, --, --))
+>array : Symbol(array, Decl(signatureHelpTokenCacheMismatch.ts, 2, 13))
+>at : Symbol(at, Decl(lib.es2022.array.d.ts, --, --))
+
