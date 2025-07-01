@@ -187,7 +187,7 @@ type snapshot struct {
 	fileInfos map[tspath.Path]*fileInfo
 	options   *core.CompilerOptions
 	//  Contains the map of ReferencedSet=Referenced files of the file if module emit is enabled
-	referencedMap *collections.ManyToManyMap[tspath.Path, tspath.Path]
+	referencedMap collections.ManyToManyMap[tspath.Path, tspath.Path]
 	// Cache of semantic diagnostics for files with their Path being the key
 	semanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
 	// Cache of dts emit diagnostics for files with their Path being the key
@@ -212,16 +212,6 @@ type snapshot struct {
 	allFilesExcludingDefaultLibraryFileOnce sync.Once
 	//  Cache of all files excluding default library file for the current program
 	allFilesExcludingDefaultLibraryFile []*ast.SourceFile
-}
-
-func (s *snapshot) tracksReferences() bool {
-	return s.options.Module != core.ModuleKindNone
-}
-
-func (s *snapshot) createReferenceMap() {
-	if s.tracksReferences() {
-		s.referencedMap = &collections.ManyToManyMap[tspath.Path, tspath.Path]{}
-	}
 }
 
 func (s *snapshot) createEmitSignaturesMap() {
@@ -274,7 +264,6 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 		options:                    program.Options(),
 		semanticDiagnosticsPerFile: make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(files)),
 	}
-	snapshot.createReferenceMap()
 	if oldProgram != nil && snapshot.options.Composite.IsTrue() {
 		snapshot.latestChangedDtsFile = oldProgram.snapshot.latestChangedDtsFile
 	}
@@ -282,8 +271,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 		snapshot.checkPending = true
 	}
 
-	canUseStateFromOldProgram := oldProgram != nil && snapshot.tracksReferences() == oldProgram.snapshot.tracksReferences()
-	if canUseStateFromOldProgram {
+	if oldProgram != nil {
 		// Copy old snapshot's changed files set
 		snapshot.changedFilesSet = oldProgram.snapshot.changedFilesSet.Clone()
 		if len(oldProgram.snapshot.affectedFilesPendingEmit) != 0 {
@@ -295,7 +283,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 		snapshot.buildInfoEmitPending = snapshot.options.IsIncremental()
 	}
 
-	canCopySemanticDiagnostics := canUseStateFromOldProgram &&
+	canCopySemanticDiagnostics := oldProgram != nil &&
 		!tsoptions.CompilerOptionsAffectSemanticDiagnostics(oldProgram.snapshot.options, program.Options())
 	// We can only reuse emit signatures (i.e. .d.ts signatures) if the .d.ts file is unchanged,
 	// which will eg be depedent on change in options like declarationDir and outDir options are unchanged.
@@ -317,30 +305,24 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 		impliedNodeFormat := program.GetSourceFileMetaData(file.Path()).ImpliedNodeFormat
 		affectsGlobalScope := fileAffectsGlobalScope(file)
 		var signature string
-		var newReferences *collections.Set[tspath.Path]
-		if snapshot.referencedMap != nil {
-			newReferences = getReferencedFiles(program, file)
-			if newReferences != nil {
-				snapshot.referencedMap.Add(file.Path(), newReferences)
-			}
+		newReferences := getReferencedFiles(program, file)
+		if newReferences != nil {
+			snapshot.referencedMap.Add(file.Path(), newReferences)
 		}
-		if canUseStateFromOldProgram {
+		if oldProgram != nil {
 			if oldFileInfo, ok := oldProgram.snapshot.fileInfos[file.Path()]; ok {
 				signature = oldFileInfo.signature
 				if oldFileInfo.version == version || oldFileInfo.affectsGlobalScope != affectsGlobalScope || oldFileInfo.impliedNodeFormat != impliedNodeFormat {
 					snapshot.addFileToChangeSet(file.Path())
-				} else if snapshot.referencedMap != nil {
-					oldReferences, _ := oldProgram.snapshot.referencedMap.GetValues(file.Path())
+				} else if oldReferences, _ := oldProgram.snapshot.referencedMap.GetValues(file.Path()); !newReferences.Equals(oldReferences) {
 					// Referenced files changed
-					if !newReferences.Equals(oldReferences) {
-						snapshot.addFileToChangeSet(file.Path())
-					} else {
-						for refPath := range newReferences.Keys() {
-							if program.GetSourceFileByPath(refPath) == nil {
-								// Referenced file was deleted in the new program
-								snapshot.addFileToChangeSet(file.Path())
-								break
-							}
+					snapshot.addFileToChangeSet(file.Path())
+				} else if newReferences != nil {
+					for refPath := range newReferences.Keys() {
+						if program.GetSourceFileByPath(refPath) == nil {
+							// Referenced file was deleted in the new program
+							snapshot.addFileToChangeSet(file.Path())
+							break
 						}
 					}
 				}
@@ -381,7 +363,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 			impliedNodeFormat:  impliedNodeFormat,
 		}
 	}
-	if canUseStateFromOldProgram {
+	if oldProgram != nil {
 		// If the global file is removed, add all files as changed
 		allFilesExcludingDefaultLibraryFileAddedToChangeSet := false
 		for filePath, oldInfo := range oldProgram.snapshot.fileInfos {
@@ -417,11 +399,10 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 				snapshot.buildInfoEmitPending = true
 			}
 		}
-	}
-	if canUseStateFromOldProgram &&
-		len(snapshot.semanticDiagnosticsPerFile) != len(snapshot.fileInfos) &&
-		oldProgram.snapshot.checkPending != snapshot.checkPending {
-		snapshot.buildInfoEmitPending = true
+		if len(snapshot.semanticDiagnosticsPerFile) != len(snapshot.fileInfos) &&
+			oldProgram.snapshot.checkPending != snapshot.checkPending {
+			snapshot.buildInfoEmitPending = true
+		}
 	}
 	return snapshot
 }
