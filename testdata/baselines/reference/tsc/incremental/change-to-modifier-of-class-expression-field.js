@@ -129,6 +129,7 @@ Signatures::
 
 
 Edit:: no change
+
 ExitStatus:: 0
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
@@ -208,6 +209,17 @@ Signatures::
 
 
 Edit:: modify public to protected
+//// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
+
+                        const Messageable = () => {
+                            return class MessageableClass {
+                                protected message = 'hello';
+                            }
+                        };
+                        const wrapper = () => Messageable();
+                        type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
+                        export default MessageablePerson;
+
 ExitStatus:: 2
 Output::
 [96mmain.ts[0m:[93m4[0m:[93m49[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
@@ -219,16 +231,6 @@ Output::
 Found 1 error in main.ts[90m:4[0m
 
 //// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
-//// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
-
-                        const Messageable = () => {
-                            return class MessageableClass {
-                                protected message = 'hello';
-                            }
-                        };
-                        const wrapper = () => Messageable();
-                        type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
-                        export default MessageablePerson;
 //// [/home/src/workspaces/project/main.js] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"ab8b2498ae671bdc5aefe51a9de13bf17d8e0438f2f573353d18e104344dd81f","signature":"6ec1f7bdc192ba06258caff3fa202fd577f8f354d676f548500eeb232155cbbe","impliedNodeFormat":1},{"version":"36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c","signature":"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[3,[{"pos":204,"end":211,"code":2445,"category":1,"message":"Property 'message' is protected and only accessible within class 'MessageableClass' and its subclasses."}]]]}
@@ -318,6 +320,7 @@ Signatures::
 
 
 Edit:: no change
+
 ExitStatus:: 2
 Output::
 [96mmain.ts[0m:[93m4[0m:[93m49[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
@@ -419,9 +422,6 @@ Signatures::
 
 
 Edit:: modify protected to public
-ExitStatus:: 0
-Output::
-//// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
 //// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
 
                         const Messageable = () => {
@@ -432,6 +432,10 @@ Output::
                         const wrapper = () => Messageable();
                         type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
                         export default MessageablePerson;
+
+ExitStatus:: 0
+Output::
+//// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
 //// [/home/src/workspaces/project/main.js] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"ff666de4fdc53b5500de60a9b8c073c9327a9e9326417ef4861b8d2473c7457a","signature":"0858d1a081aa47feef2a37c5648868c3ecc110cde2469aea716091b9869a58ed","impliedNodeFormat":1},{"version":"36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c","signature":"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]]}
@@ -507,6 +511,7 @@ Signatures::
 
 
 Edit:: no change
+
 ExitStatus:: 0
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
