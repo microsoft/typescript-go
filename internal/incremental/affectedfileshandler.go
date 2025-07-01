@@ -107,11 +107,6 @@ func (h *affectedFilesHandler) getFilesAffectedBy(path tspath.Path) []*ast.Sourc
 		return []*ast.SourceFile{file}
 	}
 
-	if !h.program.snapshot.tracksReferences() {
-		h.hasAllFilesExcludingDefaultLibraryFile.Store(true)
-		return h.program.snapshot.getAllFilesExcludingDefaultLibraryFile(h.program.program, file)
-	}
-
 	if info := h.program.snapshot.fileInfos[file.Path()]; info.affectsGlobalScope {
 		h.hasAllFilesExcludingDefaultLibraryFile.Store(true)
 		h.program.snapshot.getAllFilesExcludingDefaultLibraryFile(h.program.program, file)
@@ -200,8 +195,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOfAffectedFile(dtsMayChange dts
 	// Iterate on referencing modules that export entities from affected file and delete diagnostics and add pending emit
 	// If there was change in signature (dts output) for the changed file,
 	// then only we need to handle pending file emit
-	if !h.program.snapshot.tracksReferences() ||
-		!h.program.snapshot.changedFilesSet.Has(affectedFile.Path()) ||
+	if !h.program.snapshot.changedFilesSet.Has(affectedFile.Path()) ||
 		!h.isChangedSignature(affectedFile.Path()) {
 		return
 	}
