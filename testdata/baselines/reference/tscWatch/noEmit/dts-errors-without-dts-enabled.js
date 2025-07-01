@@ -42,6 +42,10 @@ interface Symbol {
 declare const console: { log(msg: any): void; };
 
 
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/a.ts
+
 
 Edit:: fix syntax error
 
@@ -49,6 +53,10 @@ Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = "hello";
 
+
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/a.ts
 
 
 Edit:: emit after fixing error
@@ -65,6 +73,10 @@ const a = "hello";
 }
 
 
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/a.ts
+
 
 Edit:: no emit run after fixing error
 
@@ -78,6 +90,10 @@ Output::
 }
 
 
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/a.ts
+
 
 Edit:: introduce error
 
@@ -85,6 +101,10 @@ Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = class { private p = 10; };
 
+
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/a.ts
 
 
 Edit:: emit when error
@@ -103,6 +123,10 @@ const a = class {
 }
 
 
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/a.ts
+
 
 Edit:: no emit run when error
 
@@ -115,3 +139,7 @@ Output::
 	}
 }
 
+
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/a.ts

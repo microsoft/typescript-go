@@ -78,3 +78,6 @@ declare const console: { log(msg: any): void; };
   "size": 275
 }
 
+
+SemanticDiagnostics::
+*not cached* /home/src/tslibs/TS/Lib/lib.d.ts

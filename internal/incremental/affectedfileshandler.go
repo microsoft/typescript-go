@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"maps"
+	"os"
 	"slices"
 	"strings"
 	"sync"
@@ -327,6 +328,8 @@ func (h *affectedFilesHandler) updateSnapshot() {
 	if h.ctx.Err() != nil {
 		return
 	}
+	h.program.program.Host().Trace(fmt.Sprintf("testMode : %v\n", isTestMode()))
+
 	h.updatedSignatures.Range(func(filePath tspath.Path, signature string) bool {
 		h.program.snapshot.fileInfos[filePath].signature = signature
 		return true
@@ -342,6 +345,10 @@ func (h *affectedFilesHandler) updateSnapshot() {
 	}
 	h.program.snapshot.changedFilesSet = &collections.Set[tspath.Path]{}
 	h.program.snapshot.buildInfoEmitPending = true
+}
+
+func isTestMode() bool {
+	return os.Getenv("APP_ENV") == "test"
 }
 
 func collectAllAffectedFiles(ctx context.Context, program *Program) {

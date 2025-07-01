@@ -132,3 +132,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
   "size": 739
 }
 
+
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.esnext.full.d.ts
+*refresh*    /home/src/workspaces/solution/dist/compiler/parser.d.ts
+*refresh*    /home/src/workspaces/solution/src/services/services.ts

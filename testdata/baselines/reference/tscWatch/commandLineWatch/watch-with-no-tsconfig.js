@@ -37,3 +37,7 @@ declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/index.js] *new* 
 
 
+
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/index.ts

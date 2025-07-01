@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 )
 
@@ -34,30 +35,28 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 			// initial test tsc compile
 			baselineBuilder := test.startBaseline()
 
-			exit, parsedCommandLine, watcher := execute.CommandLineTest(test.sys, test.commandLineArgs)
+			exit, parsedCommandLine, incrementalProgram, watcher := execute.CommandLine(test.sys, test.commandLineArgs, true)
 			baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 
 			compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
 			baselineBuilder.WriteString("\n\nCompilerOptions::")
 			baselineBuilder.Write(compilerOptionsString)
 
-			if watcher != nil {
-				execute.StartForTest(watcher)
-			}
-
 			test.sys.serializeState(baselineBuilder)
-
+			test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
 			for _, do := range test.edits {
 				do.edit(test.sys)
 				baselineBuilder.WriteString("\n\nEdit:: " + do.caption + "\n")
 
+				var incrementalProgram *incremental.Program
 				if watcher == nil {
-					exit, parsedCommandLine, watcher = execute.CommandLineTest(test.sys, test.commandLineArgs)
+					exit, parsedCommandLine, incrementalProgram, watcher = execute.CommandLine(test.sys, test.commandLineArgs, true)
 					baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 				} else {
-					execute.RunWatchCycle(watcher)
+					watcher.DoCycle()
 				}
 				test.sys.serializeState(baselineBuilder)
+				test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
 			}
 
 			options, name := test.getBaselineName(scenario, "")
@@ -117,7 +116,7 @@ func (test *tscInput) verifyCommandLineParsing(t *testing.T, scenario string) {
 			// initial test tsc compile
 			baselineBuilder := test.startBaseline()
 
-			exit, parsedCommandLine, _ := execute.CommandLineTest(test.sys, test.commandLineArgs)
+			exit, parsedCommandLine, _, _ := execute.CommandLine(test.sys, test.commandLineArgs, true)
 			baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 			//nolint:musttag
 			parsedCommandLineString, _ := json.MarshalIndent(parsedCommandLine, "", "    ")
