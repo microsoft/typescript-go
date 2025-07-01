@@ -27,11 +27,15 @@ func TestSignatureHelpTokenCachePanic(t *testing.T) {
 		t.Skip("bundled files are not embedded")
 	}
 
-	// This test reproduces the token cache mismatch panic that occurs
-	// when AST structure changes (e.g., wrapping with parentheses)
-	input := `declare const array: number[];
-array?.at(0);
-(array)?.at(0);`
+	// This test reproduces the token cache mismatch panic in getTokensFromNode
+	// when isSyntacticOwner is called with different call expressions that overlap
+	// in token positions but have different parent nodes.
+	//
+	// The key is to have nested call expressions where the inner call tokens 
+	// get cached with one parent, then accessed again with a different parent.
+	input := `declare const array: string[];
+// This creates nested call structure that triggers the cache issue
+array.filter((item) => item.includes("test")).map((x) => x.length);`
 
 	testData := fourslash.ParseTestData(t, input, "/mainFile.ts")
 	file := testData.Files[0].FileName()
@@ -42,8 +46,8 @@ array?.at(0);
 	defer done()
 
 	context := &lsproto.SignatureHelpContext{
-		TriggerKind:      lsproto.SignatureHelpTriggerKindInvoked,
-		TriggerCharacter: nil,
+		TriggerKind:      lsproto.SignatureHelpTriggerKindTriggerCharacter,
+		TriggerCharacter: ptrTo("("),
 	}
 	ptrTrue := ptrTo(true)
 	capabilities := &lsproto.SignatureHelpClientCapabilities{
@@ -57,14 +61,14 @@ array?.at(0);
 	}
 	preferences := &ls.UserPreferences{}
 
-	// Call signature help for first position - this should populate the token cache
-	pos1 := lsproto.Position{Line: 1, Character: 10} // Inside array?.at(0)
+	// First signature help call - this should populate token cache via isSyntacticOwner
+	pos1 := lsproto.Position{Line: 2, Character: 14} // Inside .filter() call
 	result1 := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), pos1, context, capabilities, preferences)
 	assert.Assert(t, result1 != nil, "First signature help call should succeed")
 
-	// Call signature help for second position - this should trigger the cache mismatch panic
-	// because the same token positions now have different parent nodes due to parentheses
-	pos2 := lsproto.Position{Line: 2, Character: 12} // Inside (array)?.at(0)
+	// Second signature help call in the chained .map() call
+	// This may trigger the token cache mismatch when isSyntacticOwner processes overlapping tokens
+	pos2 := lsproto.Position{Line: 2, Character: 58} // Inside .map() call  
 	result2 := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), pos2, context, capabilities, preferences)
 	assert.Assert(t, result2 != nil, "Second signature help call should succeed without panic")
 }

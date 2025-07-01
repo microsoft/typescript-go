@@ -1059,24 +1059,14 @@ func getTokensFromNode(node *ast.Node, sourceFile *ast.SourceFile) []*ast.Node {
 		return nil
 	}
 	var children []*ast.Node
+	current := node
 	left := node.Pos()
 	scanner := scanner.GetScannerForSourceFile(sourceFile, left)
-	for left < node.End() {
+	for left < current.End() {
 		token := scanner.Token()
 		tokenFullStart := scanner.TokenFullStart()
 		tokenEnd := scanner.TokenEnd()
-
-		// Use GetTokenAtPosition to find the token with the correct parent
-		// instead of always using the passed node as parent
-		existingToken := astnav.GetTokenAtPosition(sourceFile, tokenFullStart)
-		if existingToken != nil && ast.IsTokenKind(existingToken.Kind) &&
-			existingToken.Pos() == tokenFullStart && existingToken.End() == tokenEnd {
-			// Use the existing token which has the correct parent
-			children = append(children, existingToken)
-		} else {
-			// Create token using the passed node as parent (fallback to original behavior)
-			children = append(children, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, node))
-		}
+		children = append(children, sourceFile.GetOrCreateToken(token, tokenFullStart, tokenEnd, current))
 		left = tokenEnd
 		scanner.Scan()
 	}
