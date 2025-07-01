@@ -360,7 +360,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 		var signature string
 		var newReferences *collections.Set[tspath.Path]
 		if snapshot.referencedMap != nil {
-			newReferences := getReferencedFiles(program, file)
+			newReferences = getReferencedFiles(program, file)
 			if newReferences != nil {
 				snapshot.referencedMap.Add(file.Path(), newReferences)
 			}
