@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"maps"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -15,17 +16,28 @@ import (
 )
 
 type Program struct {
-	snapshot *snapshot
-	program  *compiler.Program
+	snapshot                   *snapshot
+	program                    *compiler.Program
+	semanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
 }
 
 var _ compiler.AnyProgram = (*Program)(nil)
 
-func NewProgram(program *compiler.Program, oldProgram *Program) *Program {
-	return &Program{
+func NewProgram(program *compiler.Program, oldProgram *Program, testing bool) *Program {
+	incrementalProgram := &Program{
 		snapshot: newSnapshotForProgram(program, oldProgram),
 		program:  program,
 	}
+
+	if testing {
+		incrementalProgram.semanticDiagnosticsPerFile = maps.Clone(incrementalProgram.snapshot.semanticDiagnosticsPerFile)
+		// !! signatures
+	}
+	return incrementalProgram
+}
+
+func (h *Program) GetTestingData(program *compiler.Program) (map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName) {
+	return h.snapshot.semanticDiagnosticsPerFile, h.semanticDiagnosticsPerFile
 }
 
 func (h *Program) panicIfNoProgram(method string) {

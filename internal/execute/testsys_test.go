@@ -12,6 +12,8 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/execute"
+	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -95,6 +97,8 @@ type testSys struct {
 	start time.Time
 }
 
+var _ execute.System = (*testSys)(nil)
+
 func (s *testSys) Now() time.Time {
 	// todo: make a "test time" structure
 	return time.Now()
@@ -156,6 +160,29 @@ func (s *testSys) EndWrite() {
 	output = sanitizeSysOutput(output, "build starting at ", "")
 	output = sanitizeSysOutput(output, "build finished in ", "")
 	s.output = append(s.output, output)
+}
+
+func (s *testSys) baselineProgram(baseline *strings.Builder, program *incremental.Program, watcher *execute.Watcher) {
+	if watcher != nil {
+		program = watcher.GetProgram()
+	}
+	if program == nil {
+		return
+	}
+
+	baseline.WriteString("\nSemanticDiagnostics::\n")
+	semanticDiagnostics, diagnosticsFromOldProgram := program.GetTestingData(program.GetProgram())
+	for _, file := range program.GetProgram().GetSourceFiles() {
+		if diagnostics, ok := semanticDiagnostics[file.Path()]; ok {
+			if oldDiagnostics, ok := diagnosticsFromOldProgram[file.Path()]; !ok || oldDiagnostics != diagnostics {
+				baseline.WriteString("*refresh*    " + file.FileName() + "\n")
+			}
+		} else {
+			baseline.WriteString("*not cached* " + file.FileName() + "\n")
+		}
+	}
+
+	// Write signature updates
 }
 
 func (s *testSys) serializeState(baseline *strings.Builder) {

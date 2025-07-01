@@ -41,30 +41,25 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 	return b.String()
 }
 
-func CommandLine(sys System, commandLineArgs []string) ExitStatus {
-	status, _, watcher := commandLineWorker(sys, commandLineArgs)
-	if watcher == nil {
-		return status
-	}
-	return start(watcher)
-}
-
-func commandLineWorker(sys System, commandLineArgs []string) (ExitStatus, *tsoptions.ParsedCommandLine, *watcher) {
+func CommandLine(sys System, commandLineArgs []string, testing bool) (ExitStatus, *tsoptions.ParsedCommandLine, *incremental.Program, *Watcher) {
 	if len(commandLineArgs) > 0 {
 		// !!! build mode
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
 			fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
 			sys.EndWrite()
-			return ExitStatusNotImplemented, nil, nil
+			return ExitStatusNotImplemented, nil, nil, nil
 			// case "-f":
 			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
 	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
-	status, watcher := tscCompilation(sys, parsedCommandLine)
-	return status, parsedCommandLine, watcher
+	status, incrementalProgram, watcher := tscCompilation(sys, parsedCommandLine, testing)
+	if watcher != nil {
+		watcher.start()
+	}
+	return status, parsedCommandLine, incrementalProgram, watcher
 }
 
 func fmtMain(sys System, input, output string) ExitStatus {
@@ -93,7 +88,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 	return ExitStatusSuccess
 }
 
-func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitStatus, *watcher) {
+func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testing bool) (ExitStatus, *incremental.Program, *Watcher) {
 	configFileName := ""
 	reportDiagnostic := createDiagnosticReporter(sys, commandLine.CompilerOptions())
 	// if commandLine.Options().Locale != nil
@@ -102,7 +97,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 		for _, e := range commandLine.Errors {
 			reportDiagnostic(e)
 		}
-		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
+		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
 	}
 
 	if pprofDir := commandLine.CompilerOptions().PprofDir; pprofDir != "" {
@@ -112,28 +107,28 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 	}
 
 	if commandLine.CompilerOptions().Init.IsTrue() {
-		return ExitStatusNotImplemented, nil
+		return ExitStatusNotImplemented, nil, nil
 	}
 
 	if commandLine.CompilerOptions().Version.IsTrue() {
 		printVersion(sys)
-		return ExitStatusSuccess, nil
+		return ExitStatusSuccess, nil, nil
 	}
 
 	if commandLine.CompilerOptions().Help.IsTrue() || commandLine.CompilerOptions().All.IsTrue() {
 		printHelp(sys, commandLine)
-		return ExitStatusSuccess, nil
+		return ExitStatusSuccess, nil, nil
 	}
 
 	if commandLine.CompilerOptions().Watch.IsTrue() && commandLine.CompilerOptions().ListFilesOnly.IsTrue() {
 		reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Options_0_and_1_cannot_be_combined, "watch", "listFilesOnly"))
-		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
+		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
 	}
 
 	if commandLine.CompilerOptions().Project != "" {
 		if len(commandLine.FileNames()) != 0 {
 			reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Option_project_cannot_be_mixed_with_source_files_on_a_command_line))
-			return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
+			return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
 		}
 
 		fileOrDirectory := tspath.NormalizePath(commandLine.CompilerOptions().Project)
@@ -141,13 +136,13 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 			configFileName = tspath.CombinePaths(fileOrDirectory, "tsconfig.json")
 			if !sys.FS().FileExists(configFileName) {
 				reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.Cannot_find_a_tsconfig_json_file_at_the_current_directory_Colon_0, configFileName))
-				return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
+				return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
 			}
 		} else {
 			configFileName = fileOrDirectory
 			if !sys.FS().FileExists(configFileName) {
 				reportDiagnostic(ast.NewCompilerDiagnostic(diagnostics.The_specified_path_does_not_exist_Colon_0, fileOrDirectory))
-				return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
+				return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
 			}
 		}
 	} else if len(commandLine.FileNames()) == 0 {
@@ -162,7 +157,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 			printVersion(sys)
 			printHelp(sys, commandLine)
 		}
-		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil
+		return ExitStatusDiagnosticsPresent_OutputsSkipped, nil, nil
 	}
 
 	// !!! convert to options with absolute paths is usually done here, but for ease of implementation, it's done in `tsoptions.ParseCommandLine()`
@@ -179,7 +174,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 			for _, e := range errors {
 				reportDiagnostic(e)
 			}
-			return ExitStatusDiagnosticsPresent_OutputsGenerated, nil
+			return ExitStatusDiagnosticsPresent_OutputsGenerated, nil, nil
 		}
 		configForCompilation = configParseResult
 		// Updater to reflect pretty
@@ -188,18 +183,20 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 
 	if compilerOptionsFromCommandLine.ShowConfig.IsTrue() {
 		showConfig(sys, configForCompilation.CompilerOptions())
-		return ExitStatusSuccess, nil
+		return ExitStatusSuccess, nil, nil
 	}
 	if configForCompilation.CompilerOptions().Watch.IsTrue() {
-		return ExitStatusSuccess, createWatcher(sys, configForCompilation, reportDiagnostic)
+		return ExitStatusSuccess, nil, createWatcher(sys, configForCompilation, reportDiagnostic, testing)
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
-		return performIncrementalCompilation(
+		exitStatus, program := performIncrementalCompilation(
 			sys,
 			configForCompilation,
 			reportDiagnostic,
 			&extendedConfigCache,
 			configTime,
-		), nil
+			testing,
+		)
+		return exitStatus, program, nil
 	}
 	return performCompilation(
 		sys,
@@ -207,7 +204,7 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine) (ExitS
 		reportDiagnostic,
 		&extendedConfigCache,
 		configTime,
-	), nil
+	), nil, nil
 }
 
 func findConfigFile(searchPath string, fileExists func(string) bool, configName string) string {
@@ -230,7 +227,8 @@ func performIncrementalCompilation(
 	reportDiagnostic diagnosticReporter,
 	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	configTime time.Duration,
-) ExitStatus {
+	testing bool,
+) (ExitStatus, *incremental.Program) {
 	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
 	oldProgram := incremental.ReadBuildInfoProgram(config, incremental.NewBuildInfoReader(host))
 	// todo: cache, statistics, tracing
@@ -241,7 +239,7 @@ func performIncrementalCompilation(
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	parseTime := sys.Now().Sub(parseStart)
-	incrementalProgram := incremental.NewProgram(program, oldProgram)
+	incrementalProgram := incremental.NewProgram(program, oldProgram, testing)
 	return emitAndReportStatistics(
 		sys,
 		incrementalProgram,
@@ -250,7 +248,7 @@ func performIncrementalCompilation(
 		reportDiagnostic,
 		configTime,
 		parseTime,
-	)
+	), incrementalProgram
 }
 
 func performCompilation(

@@ -175,3 +175,7 @@ declare const console: { log(msg: any): void; };
   "size": 1181
 }
 
+
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/index.tsx
