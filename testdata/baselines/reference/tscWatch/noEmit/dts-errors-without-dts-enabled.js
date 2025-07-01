@@ -11,13 +11,11 @@ const a = class { private p = 10; };
 	}
 }
 
-
+ExitStatus:: 0
 
 CompilerOptions::{
     "watch": true
 }
-
-
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>

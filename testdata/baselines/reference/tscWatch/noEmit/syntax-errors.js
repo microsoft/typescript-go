@@ -11,13 +11,11 @@ const a = "hello
 	}
 }
 
-
+ExitStatus:: 0
 
 CompilerOptions::{
     "watch": true
 }
-
-
 Output::
 [96ma.ts[0m:[93m1[0m:[93m17[0m - [91merror[0m[90m TS1002: [0mUnterminated string literal.
 

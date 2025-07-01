@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 
@@ -14,57 +15,81 @@ import (
 type testTscEdit struct {
 	caption         string
 	commandLineArgs []string
-	edit            func(execute.System)
+	edit            func(*testSys)
 }
 
 type tscInput struct {
 	subScenario     string
 	commandLineArgs []string
 	sys             *testSys
-
-	// for watch tests
-	data map[string]string
+	edits           []*testTscEdit
 }
 
-func (test *tscInput) verify(t *testing.T, scenario string) {
+func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
 	t.Run(test.getTestName(scenario), func(t *testing.T) {
 		t.Parallel()
-		t.Run("baseline for the tsc compiles", func(t *testing.T) {
+		t.Run("tsc baseline", func(t *testing.T) {
 			t.Parallel()
 			// initial test tsc compile
 			baselineBuilder := test.startBaseline()
 
-			exit, parsedCommandLine, _ := execute.CommandLineTest(test.sys, test.commandLineArgs)
+			exit, parsedCommandLine, watcher := execute.CommandLineTest(test.sys, test.commandLineArgs)
 			baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 
 			compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
 			baselineBuilder.WriteString("\n\nCompilerOptions::")
 			baselineBuilder.Write(compilerOptionsString)
 
+			if watcher != nil {
+				execute.StartForTest(watcher)
+			}
+
 			test.sys.serializeState(baselineBuilder)
-			options, name := test.getBaselineName(scenario, false, "")
+
+			for _, do := range test.edits {
+				do.edit(test.sys)
+				baselineBuilder.WriteString("\n\nEdit:: " + do.caption + "\n")
+
+				if watcher == nil {
+					exit, parsedCommandLine, watcher = execute.CommandLineTest(test.sys, test.commandLineArgs)
+					baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
+				} else {
+					execute.RunWatchCycle(watcher)
+				}
+				test.sys.serializeState(baselineBuilder)
+			}
+
+			options, name := test.getBaselineName(scenario, "")
 			baseline.Run(t, name, baselineBuilder.String(), options)
 		})
+
+		// !!! sheetal TODO :: add incremental correctness
 	})
 }
 
-func (test *tscInput) getTestName(scenario string) string {
-	return "tsc " + strings.Join(test.commandLineArgs, " ") + " " + scenario + ":: " + test.subScenario
-}
-
-func (test *tscInput) getBaselineName(scenario string, watch bool, suffix string) (baseline.Options, string) {
+func (test *tscInput) getTestNamePrefix() string {
 	commandName := "tsc"
-	// todo build
-	// if isBuildCommand(v.data.commandLineArgs) {
-	// 	commandName = "tsbuild"
-	// }
+	if slices.ContainsFunc(test.commandLineArgs, func(arg string) bool {
+		return arg == "--build" || arg == "-b"
+	}) {
+		commandName = "tsbuild"
+	}
 	w := ""
-	if watch {
+	if slices.ContainsFunc(test.commandLineArgs, func(arg string) bool {
+		return arg == "--watch" || arg == "-w"
+	}) {
 		w = "Watch"
 	}
+	return commandName + w
+}
 
-	return baseline.Options{Subfolder: filepath.Join(commandName+w, scenario)},
+func (test *tscInput) getTestName(scenario string) string {
+	return test.getTestNamePrefix() + " " + scenario + ":: " + test.subScenario + " " + strings.Join(test.commandLineArgs, " ")
+}
+
+func (test *tscInput) getBaselineName(scenario string, suffix string) (baseline.Options, string) {
+	return baseline.Options{Subfolder: filepath.Join(test.getTestNamePrefix(), scenario)},
 		strings.ReplaceAll(test.subScenario, " ", "-") + suffix + ".js"
 }
 
@@ -100,7 +125,7 @@ func (test *tscInput) verifyCommandLineParsing(t *testing.T, scenario string) {
 			baselineBuilder.Write(parsedCommandLineString)
 
 			test.sys.serializeState(baselineBuilder)
-			options, name := test.getBaselineName(scenario, false, "")
+			options, name := test.getBaselineName(scenario, "")
 			baseline.Run(t, name, baselineBuilder.String(), options)
 		})
 	})

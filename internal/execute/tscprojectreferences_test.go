@@ -289,6 +289,6 @@ func TestProjectReferences(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		c.verify(t, "projectReferences")
+		c.run(t, "projectReferences")
 	}
 }

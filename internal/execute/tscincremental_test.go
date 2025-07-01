@@ -125,6 +125,6 @@ func TestIncremental(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		test.verify(t, "incremental")
+		test.run(t, "incremental")
 	}
 }

@@ -27,9 +27,9 @@ ParsedCommandLine::{
     "compileOnSave": null
 }
 Output::
-Version 7.0.0-dev
+Version FakeTSVersion
 
-tsc: The TypeScript Compiler - Version 7.0.0-dev
+tsc: The TypeScript Compiler - Version FakeTSVersion
 
 COMMON COMMANDS
 
