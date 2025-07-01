@@ -78,7 +78,7 @@ type diffEntry struct {
 
 type snapshot struct {
 	snap        map[string]*diffEntry
-	defaultLibs *collections.Set[string]
+	defaultLibs *collections.SyncSet[string]
 }
 
 type testSys struct {
@@ -116,7 +116,7 @@ func (s *testSys) ensureLibPathExists(path string) {
 	path = tscLibPath + "/" + path
 	if _, ok := s.TestFS().ReadFile(path); !ok {
 		if s.fs.defaultLibs == nil {
-			s.fs.defaultLibs = collections.NewSetWithSizeHint[string](tsoptions.LibFilesSet.Len() + len(tsoptions.TargetToLibMap()) + 1)
+			s.fs.defaultLibs = &collections.SyncSet[string]{}
 		}
 		s.fs.defaultLibs.Add(path)
 		err := s.TestFS().WriteFile(path, tscDefaultLibContent, false)
@@ -225,20 +225,23 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			}
 		}
 	}
-	var defaultLibs *collections.Set[string]
+	var defaultLibs collections.SyncSet[string]
 	if s.fs.defaultLibs != nil {
-		defaultLibs = s.fs.defaultLibs.Clone()
+		s.fs.defaultLibs.Range(func(libPath string) bool {
+			defaultLibs.Add(libPath)
+			return true
+		})
 	}
 	s.serializedDiff = &snapshot{
 		snap:        snap,
-		defaultLibs: defaultLibs,
+		defaultLibs: &defaultLibs,
 	}
 	fmt.Fprintln(baseline)
 }
 
 func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry, path string) {
 	var oldDirContent *diffEntry
-	var defaultLibs *collections.Set[string]
+	var defaultLibs *collections.SyncSet[string]
 	if s.serializedDiff != nil {
 		oldDirContent = s.serializedDiff.snap[path]
 		defaultLibs = s.serializedDiff.defaultLibs
