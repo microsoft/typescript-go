@@ -407,6 +407,28 @@ func writeComments(b *strings.Builder, comments []*ast.Node) {
 				}
 			}
 			b.WriteString(text)
+		case ast.KindJSDocLinkCode:
+			name := comment.Name()
+			text := comment.AsJSDocLinkCode().Text()
+			if name != nil {
+				if text == "" {
+					writeEntityName(b, name)
+				} else {
+					writeEntityNameParts(b, name)
+				}
+			}
+			b.WriteString(text)
+		case ast.KindJSDocLinkPlain:
+			name := comment.Name()
+			text := comment.AsJSDocLinkPlain().Text()
+			if name != nil {
+				if text == "" {
+					writeEntityName(b, name)
+				} else {
+					writeEntityNameParts(b, name)
+				}
+			}
+			b.WriteString(text)
 		}
 	}
 }
