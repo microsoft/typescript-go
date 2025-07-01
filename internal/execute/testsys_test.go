@@ -171,7 +171,7 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 	}
 
 	baseline.WriteString("\nSemanticDiagnostics::\n")
-	semanticDiagnostics, diagnosticsFromOldProgram := program.GetTestingData(program.GetProgram())
+	semanticDiagnostics, diagnosticsFromOldProgram, updatedSignatureKinds := program.GetTestingData(program.GetProgram())
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if diagnostics, ok := semanticDiagnostics[file.Path()]; ok {
 			if oldDiagnostics, ok := diagnosticsFromOldProgram[file.Path()]; !ok || oldDiagnostics != diagnostics {
@@ -183,6 +183,19 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 	}
 
 	// Write signature updates
+	baseline.WriteString("\nSignatures::\n")
+	for _, file := range program.GetProgram().GetSourceFiles() {
+		if kind, loaded := updatedSignatureKinds.Load(file.Path()); loaded {
+			switch kind {
+			case incremental.SignatureUpdateKindComputedDts:
+				baseline.WriteString("(computed .d.ts) " + file.FileName() + "\n")
+			case incremental.SignatureUpdateKindStoredAtEmit:
+				baseline.WriteString("(stored at emit) " + file.FileName() + "\n")
+			case incremental.SignatureUpdateKindUsedVersion:
+				baseline.WriteString("(used version)   " + file.FileName() + "\n")
+			}
+		}
+	}
 }
 
 func (s *testSys) serializeState(baseline *strings.Builder) {

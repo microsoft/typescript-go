@@ -39,3 +39,5 @@ Found 1 error.
 
 
 SemanticDiagnostics::
+
+Signatures::

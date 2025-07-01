@@ -217,6 +217,9 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 	h.signatures.Range(func(file tspath.Path, signature string) bool {
 		info := h.program.snapshot.fileInfos[file]
 		info.signature = signature
+		if h.program.updatedSignatureKinds != nil {
+			h.program.updatedSignatureKinds.Store(file, SignatureUpdateKindStoredAtEmit)
+		}
 		h.program.snapshot.buildInfoEmitPending = true
 		return true
 	})

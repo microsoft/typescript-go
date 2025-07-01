@@ -179,3 +179,5 @@ declare const console: { log(msg: any): void; };
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/index.tsx
+
+Signatures::

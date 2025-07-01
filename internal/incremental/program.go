@@ -8,6 +8,7 @@ import (
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -15,10 +16,19 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+type SignatureUpdateKind byte
+
+const (
+	SignatureUpdateKindComputedDts SignatureUpdateKind = iota
+	SignatureUpdateKindStoredAtEmit
+	SignatureUpdateKindUsedVersion
+)
+
 type Program struct {
 	snapshot                   *snapshot
 	program                    *compiler.Program
 	semanticDiagnosticsPerFile map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName
+	updatedSignatureKinds      *collections.SyncMap[tspath.Path, SignatureUpdateKind]
 }
 
 var _ compiler.AnyProgram = (*Program)(nil)
@@ -31,13 +41,13 @@ func NewProgram(program *compiler.Program, oldProgram *Program, testing bool) *P
 
 	if testing {
 		incrementalProgram.semanticDiagnosticsPerFile = maps.Clone(incrementalProgram.snapshot.semanticDiagnosticsPerFile)
-		// !! signatures
+		incrementalProgram.updatedSignatureKinds = &collections.SyncMap[tspath.Path, SignatureUpdateKind]{}
 	}
 	return incrementalProgram
 }
 
-func (h *Program) GetTestingData(program *compiler.Program) (map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName) {
-	return h.snapshot.semanticDiagnosticsPerFile, h.semanticDiagnosticsPerFile
+func (h *Program) GetTestingData(program *compiler.Program) (map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, *collections.SyncMap[tspath.Path, SignatureUpdateKind]) {
+	return h.snapshot.semanticDiagnosticsPerFile, h.semanticDiagnosticsPerFile, h.updatedSignatureKinds
 }
 
 func (h *Program) panicIfNoProgram(method string) {
