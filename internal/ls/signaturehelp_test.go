@@ -21,6 +21,54 @@ type verifySignatureHelpOptions struct {
 	// tags?: ReadonlyArray<JSDocTagInfo>;
 }
 
+func TestSignatureHelpTokenCachePanic(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	// This test reproduces the token cache mismatch panic that occurs
+	// when AST structure changes (e.g., wrapping with parentheses)
+	input := `declare const array: number[];
+array?.at(0);
+(array)?.at(0);`
+
+	testData := fourslash.ParseTestData(t, input, "/mainFile.ts")
+	file := testData.Files[0].FileName()
+	ctx := projecttestutil.WithRequestID(t.Context())
+	languageService, done := createLanguageService(ctx, file, map[string]any{
+		file: testData.Files[0].Content,
+	})
+	defer done()
+
+	context := &lsproto.SignatureHelpContext{
+		TriggerKind:      lsproto.SignatureHelpTriggerKindInvoked,
+		TriggerCharacter: nil,
+	}
+	ptrTrue := ptrTo(true)
+	capabilities := &lsproto.SignatureHelpClientCapabilities{
+		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+			ActiveParameterSupport:   ptrTrue,
+			NoActiveParameterSupport: ptrTrue,
+			ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+				LabelOffsetSupport: ptrTrue,
+			},
+		},
+	}
+	preferences := &ls.UserPreferences{}
+
+	// Call signature help for first position - this should populate the token cache
+	pos1 := lsproto.Position{Line: 1, Character: 10} // Inside array?.at(0)
+	result1 := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), pos1, context, capabilities, preferences)
+	assert.Assert(t, result1 != nil, "First signature help call should succeed")
+
+	// Call signature help for second position - this should trigger the cache mismatch panic
+	// because the same token positions now have different parent nodes due to parentheses
+	pos2 := lsproto.Position{Line: 2, Character: 12} // Inside (array)?.at(0)
+	result2 := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), pos2, context, capabilities, preferences)
+	assert.Assert(t, result2 != nil, "Second signature help call should succeed without panic")
+}
+
 func TestSignatureHelp(t *testing.T) {
 	t.Parallel()
 	if !bundled.Embedded {
