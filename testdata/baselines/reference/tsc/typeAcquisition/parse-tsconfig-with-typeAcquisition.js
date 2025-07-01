@@ -81,3 +81,5 @@ declare const console: { log(msg: any): void; };
 
 SemanticDiagnostics::
 *not cached* /home/src/tslibs/TS/Lib/lib.d.ts
+
+Signatures::

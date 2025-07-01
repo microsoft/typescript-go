@@ -46,6 +46,8 @@ SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
 
+Signatures::
+
 
 Edit:: fix syntax error
 
@@ -57,6 +59,9 @@ const a = "hello";
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
+
+Signatures::
+(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
 
 
 Edit:: emit after fixing error
@@ -77,6 +82,10 @@ SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
 
+Signatures::
+(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
+(computed .d.ts) /home/src/workspaces/project/a.ts
+
 
 Edit:: no emit run after fixing error
 
@@ -94,6 +103,10 @@ SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
 
+Signatures::
+(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
+(computed .d.ts) /home/src/workspaces/project/a.ts
+
 
 Edit:: introduce error
 
@@ -105,6 +118,9 @@ const a = class { private p = 10; };
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
+
+Signatures::
+(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
 
 
 Edit:: emit when error
@@ -127,6 +143,10 @@ SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
 
+Signatures::
+(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
+(computed .d.ts) /home/src/workspaces/project/a.ts
+
 
 Edit:: no emit run when error
 
@@ -143,3 +163,7 @@ Output::
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
+
+Signatures::
+(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
+(computed .d.ts) /home/src/workspaces/project/a.ts

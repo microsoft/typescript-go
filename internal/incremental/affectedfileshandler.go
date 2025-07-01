@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"maps"
-	"os"
 	"slices"
 	"strings"
 	"sync"
@@ -30,6 +29,7 @@ type affectedFilesHandler struct {
 	program                                *Program
 	hasAllFilesExcludingDefaultLibraryFile atomic.Bool
 	updatedSignatures                      collections.SyncMap[tspath.Path, string]
+	updatedSignatureKinds                  *collections.SyncMap[tspath.Path, SignatureUpdateKind]
 	dtsMayChange                           []dtsMayChange
 	filesToRemoveDiagnostics               collections.SyncSet[tspath.Path]
 	cleanedDiagnosticsOfLibFiles           sync.Once
@@ -87,14 +87,19 @@ func (h *affectedFilesHandler) updateShapeSignature(file *ast.SourceFile, useFil
 	info := h.program.snapshot.fileInfos[file.Path()]
 	prevSignature := info.signature
 	var latestSignature string
+	var updateKind SignatureUpdateKind
 	if !file.IsDeclarationFile && !useFileVersionAsSignature {
 		latestSignature = h.computeDtsSignature(file)
 	}
 	// Default is to use file version as signature
 	if latestSignature == "" {
 		latestSignature = info.version
+		updateKind = SignatureUpdateKindUsedVersion
 	}
 	h.updatedSignatures.Store(file.Path(), latestSignature)
+	if h.updatedSignatureKinds != nil {
+		h.updatedSignatureKinds.Store(file.Path(), updateKind)
+	}
 	return latestSignature != prevSignature
 }
 
@@ -328,12 +333,16 @@ func (h *affectedFilesHandler) updateSnapshot() {
 	if h.ctx.Err() != nil {
 		return
 	}
-	h.program.program.Host().Trace(fmt.Sprintf("testMode : %v\n", isTestMode()))
-
 	h.updatedSignatures.Range(func(filePath tspath.Path, signature string) bool {
 		h.program.snapshot.fileInfos[filePath].signature = signature
 		return true
 	})
+	if h.updatedSignatureKinds != nil {
+		h.updatedSignatureKinds.Range(func(filePath tspath.Path, kind SignatureUpdateKind) bool {
+			h.program.updatedSignatureKinds.Store(filePath, kind)
+			return true
+		})
+	}
 	h.filesToRemoveDiagnostics.Range(func(file tspath.Path) bool {
 		delete(h.program.snapshot.semanticDiagnosticsPerFile, file)
 		return true
@@ -347,16 +356,12 @@ func (h *affectedFilesHandler) updateSnapshot() {
 	h.program.snapshot.buildInfoEmitPending = true
 }
 
-func isTestMode() bool {
-	return os.Getenv("APP_ENV") == "test"
-}
-
 func collectAllAffectedFiles(ctx context.Context, program *Program) {
 	if program.snapshot.changedFilesSet.Len() == 0 {
 		return
 	}
 
-	handler := affectedFilesHandler{ctx: ctx, program: program}
+	handler := affectedFilesHandler{ctx: ctx, program: program, updatedSignatureKinds: core.IfElse(program.updatedSignatureKinds == nil, nil, &collections.SyncMap[tspath.Path, SignatureUpdateKind]{})}
 	wg := core.NewWorkGroup(handler.program.program.SingleThreaded())
 	var result collections.SyncSet[*ast.SourceFile]
 	for file := range program.snapshot.changedFilesSet.Keys() {

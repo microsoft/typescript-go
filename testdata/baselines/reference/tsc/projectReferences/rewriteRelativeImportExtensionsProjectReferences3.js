@@ -141,3 +141,6 @@ SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.esnext.full.d.ts
 *refresh*    /home/src/workspaces/solution/dist/compiler/parser.d.ts
 *refresh*    /home/src/workspaces/solution/src/services/services.ts
+
+Signatures::
+(stored at emit) /home/src/workspaces/solution/src/services/services.ts
