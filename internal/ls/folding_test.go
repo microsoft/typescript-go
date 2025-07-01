@@ -388,7 +388,7 @@ foo[|([|
 		},
 		{
 			title: "outliningSpansForArguments",
-			input: `console.log(123, 456)l;
+			input: `console.log(123, 456);
 console.log(
 );
 console.log[|(
@@ -880,6 +880,8 @@ type B =[| [
 		}|]
 
 		function Foo()[| {
+		  [|// comment 1
+		    // comment 2|]
 		   this.method = function (param)[| {
 		   }|]
 
@@ -1099,6 +1101,12 @@ const[| {
 		const foo = null;
 
 		function Foo()[| {
+		  [|/**
+		    * Description
+		    *
+		    * @param {string} param
+		    * @returns
+		    */|]
 		   this.method = function (param)[| {
 		   }|]
 

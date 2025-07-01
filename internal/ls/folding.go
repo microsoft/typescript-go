@@ -125,7 +125,8 @@ func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *L
 	}
 	// cancellationToken.throwIfCancellationRequested();
 	var foldingRange []*lsproto.FoldingRange
-	if ast.IsDeclaration(n) || ast.IsVariableStatement(n) || ast.IsReturnStatement(n) || ast.IsCallOrNewExpression(n) || n.Kind == ast.KindEndOfFile {
+	// !!! remove !ast.IsBinaryExpression(n) after JSDoc implementation
+	if (!ast.IsBinaryExpression(n) && ast.IsDeclaration(n)) || ast.IsVariableStatement(n) || ast.IsReturnStatement(n) || ast.IsCallOrNewExpression(n) || n.Kind == ast.KindEndOfFile {
 		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n, sourceFile, l)...)
 	}
 	if ast.IsFunctionLike(n) && n.Parent != nil && ast.IsBinaryExpression(n.Parent) && n.Parent.AsBinaryExpression().Left != nil && ast.IsPropertyAccessExpression(n.Parent.AsBinaryExpression().Left) {
