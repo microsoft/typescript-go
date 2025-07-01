@@ -2,6 +2,7 @@ package ast
 
 import (
 	"fmt"
+	"iter"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -224,6 +225,7 @@ func (n *Node) AsNode() *Node                             { return n }
 func (n *Node) Pos() int                                  { return n.Loc.Pos() }
 func (n *Node) End() int                                  { return n.Loc.End() }
 func (n *Node) ForEachChild(v Visitor) bool               { return n.data.ForEachChild(v) }
+func (n *Node) IterChildren() iter.Seq[*Node]             { return n.data.IterChildren() }
 func (n *Node) Clone(f NodeFactoryCoercible) *Node        { return n.data.Clone(f) }
 func (n *Node) VisitEachChild(v *NodeVisitor) *Node       { return n.data.VisitEachChild(v) }
 func (n *Node) Name() *DeclarationName                    { return n.data.Name() }
@@ -1655,6 +1657,7 @@ func (n *Node) AsSyntaxList() *SyntaxList {
 type nodeData interface {
 	AsNode() *Node
 	ForEachChild(v Visitor) bool
+	IterChildren() iter.Seq[*Node]
 	VisitEachChild(v *NodeVisitor) *Node
 	Clone(v NodeFactoryCoercible) *Node
 	Name() *DeclarationName
@@ -1681,8 +1684,21 @@ type NodeDefault struct {
 	Node
 }
 
-func (node *NodeDefault) AsNode() *Node                                     { return &node.Node }
-func (node *NodeDefault) ForEachChild(v Visitor) bool                       { return false }
+func invert(yield func(v *Node) bool) Visitor {
+	return func(n *Node) bool {
+		return !yield(n)
+	}
+}
+
+func (node *NodeDefault) AsNode() *Node               { return &node.Node }
+func (node *NodeDefault) ForEachChild(v Visitor) bool { return false }
+func (node *NodeDefault) forEachChildIter(yield func(v *Node) bool) {
+	node.data.ForEachChild(invert(yield)) // `true` is return early for a ts visitor, `false` is return early for a go iterator yield function
+}
+
+func (node *NodeDefault) IterChildren() iter.Seq[*Node] {
+	return node.forEachChildIter
+}
 func (node *NodeDefault) VisitEachChild(v *NodeVisitor) *Node               { return node.AsNode() }
 func (node *NodeDefault) Clone(v NodeFactoryCoercible) *Node                { return nil }
 func (node *NodeDefault) Name() *DeclarationName                            { return nil }
@@ -10013,7 +10029,6 @@ type SourceFile struct {
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
-	HasNoDefaultLib             bool
 	UsesUriStyleNodeCoreModules core.Tristate
 	Identifiers                 map[string]string
 	IdentifierCount             int
@@ -10050,8 +10065,10 @@ type SourceFile struct {
 
 	// Fields set by language service
 
-	tokenCacheMu sync.Mutex
-	tokenCache   map[core.TextRange]*Node
+	tokenCacheMu     sync.Mutex
+	tokenCache       map[core.TextRange]*Node
+	declarationMapMu sync.Mutex
+	declarationMap   map[string][]*Node
 }
 
 func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
@@ -10140,7 +10157,6 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 	node.LanguageVariant = other.LanguageVariant
 	node.ScriptKind = other.ScriptKind
 	node.IsDeclarationFile = other.IsDeclarationFile
-	node.HasNoDefaultLib = other.HasNoDefaultLib
 	node.UsesUriStyleNodeCoreModules = other.UsesUriStyleNodeCoreModules
 	node.Identifiers = other.Identifiers
 	node.imports = other.imports
@@ -10234,6 +10250,136 @@ func (node *SourceFile) GetOrCreateToken(
 
 func IsSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile
+}
+
+func (node *SourceFile) GetDeclarationMap() map[string][]*Node {
+	node.declarationMapMu.Lock()
+	defer node.declarationMapMu.Unlock()
+	if node.declarationMap == nil {
+		node.declarationMap = node.computeDeclarationMap()
+	}
+	return node.declarationMap
+}
+
+func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
+	result := make(map[string][]*Node)
+
+	addDeclaration := func(declaration *Node) {
+		name := getDeclarationName(declaration)
+		if name != "" {
+			result[name] = append(result[name], declaration)
+		}
+	}
+
+	var visit func(*Node) bool
+	visit = func(node *Node) bool {
+		switch node.Kind {
+		case KindFunctionDeclaration, KindFunctionExpression, KindMethodDeclaration, KindMethodSignature:
+			declarationName := getDeclarationName(node)
+			if declarationName != "" {
+				declarations := result[declarationName]
+				var lastDeclaration *Node
+				if len(declarations) != 0 {
+					lastDeclaration = declarations[len(declarations)-1]
+				}
+				// Check whether this declaration belongs to an "overload group".
+				if lastDeclaration != nil && node.Parent == lastDeclaration.Parent && node.Symbol() == lastDeclaration.Symbol() {
+					// Overwrite the last declaration if it was an overload and this one is an implementation.
+					if node.Body() != nil && lastDeclaration.Body() == nil {
+						declarations[len(declarations)-1] = node
+					}
+				} else {
+					result[declarationName] = append(result[declarationName], node)
+				}
+			}
+			node.ForEachChild(visit)
+		case KindClassDeclaration, KindClassExpression, KindInterfaceDeclaration, KindTypeAliasDeclaration, KindEnumDeclaration, KindModuleDeclaration,
+			KindImportEqualsDeclaration, KindImportClause, KindNamespaceImport, KindGetAccessor, KindSetAccessor, KindTypeLiteral:
+			addDeclaration(node)
+			node.ForEachChild(visit)
+		case KindImportSpecifier, KindExportSpecifier:
+			if node.PropertyName() != nil {
+				addDeclaration(node)
+			}
+		case KindParameter:
+			// Only consider parameter properties
+			if !HasSyntacticModifier(node, ModifierFlagsParameterPropertyModifier) {
+				break
+			}
+			fallthrough
+		case KindVariableDeclaration, KindBindingElement:
+			name := node.Name()
+			if name != nil {
+				if IsBindingPattern(name) {
+					node.Name().ForEachChild(visit)
+				} else {
+					if node.Initializer() != nil {
+						visit(node.Initializer())
+					}
+					addDeclaration(node)
+				}
+			}
+		case KindEnumMember, KindPropertyDeclaration, KindPropertySignature:
+			addDeclaration(node)
+		case KindExportDeclaration:
+			// Handle named exports case e.g.:
+			//    export {a, b as B} from "mod";
+			exportClause := node.AsExportDeclaration().ExportClause
+			if exportClause != nil {
+				if IsNamedExports(exportClause) {
+					for _, element := range exportClause.AsNamedExports().Elements.Nodes {
+						visit(element)
+					}
+				} else {
+					visit(exportClause.AsNamespaceExport().Name())
+				}
+			}
+		case KindImportDeclaration:
+			importClause := node.AsImportDeclaration().ImportClause
+			if importClause != nil {
+				// Handle default import case e.g.:
+				//    import d from "mod";
+				if importClause.Name() != nil {
+					addDeclaration(importClause.Name())
+				}
+				// Handle named bindings in imports e.g.:
+				//    import * as NS from "mod";
+				//    import {a, b as B} from "mod";
+				namedBindings := importClause.AsImportClause().NamedBindings
+				if namedBindings != nil {
+					if namedBindings.Kind == KindNamespaceImport {
+						addDeclaration(namedBindings)
+					} else {
+						for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
+							visit(element)
+						}
+					}
+				}
+			}
+		default:
+			node.ForEachChild(visit)
+		}
+		return false
+	}
+	node.ForEachChild(visit)
+	return result
+}
+
+func getDeclarationName(declaration *Node) string {
+	name := GetNonAssignedNameOfDeclaration(declaration)
+	if name != nil {
+		if IsComputedPropertyName(name) {
+			if IsStringOrNumericLiteralLike(name.Expression()) {
+				return name.Expression().Text()
+			}
+			if IsPropertyAccessExpression(name.Expression()) {
+				return name.Expression().Name().Text()
+			}
+		} else if IsPropertyName(name) {
+			return name.Text()
+		}
+	}
+	return ""
 }
 
 type SourceFileLike interface {
