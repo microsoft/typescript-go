@@ -71,19 +71,23 @@ func TestIncremental(t *testing.T) {
                     type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;`,
 			}, "/home/src/workspaces/project"),
 			commandLineArgs: []string{"--incremental"},
-			// edits: [
-			//     noChangeRun,
-			//     {
-			//         caption: "modify public to protected",
-			//         edit: sys => sys.replaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "public", "protected"),
-			//     },
-			//     noChangeRun,
-			//     {
-			//         caption: "modify protected to public",
-			//         edit: sys => sys.replaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "protected", "public"),
-			//     },
-			//     noChangeRun,
-			// ],
+			edits: []*testTscEdit{
+				noChange,
+				{
+					caption: "modify public to protected",
+					edit: func(sys *testSys) {
+						sys.ReplaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "public", "protected")
+					},
+				},
+				noChange,
+				{
+					caption: "modify protected to public",
+					edit: func(sys *testSys) {
+						sys.ReplaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "protected", "public")
+					},
+				},
+				noChange,
+			},
 		},
 		{
 			subScenario: "change to modifier of class expression field",
@@ -108,19 +112,23 @@ func TestIncremental(t *testing.T) {
                     type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;`,
 			}, "/home/src/workspaces/project"),
 			commandLineArgs: []string{"--incremental"},
-			// edits: [
-			//     noChangeRun,
-			//     {
-			//         caption: "modify public to protected",
-			//         edit: sys => sys.replaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "public", "protected"),
-			//     },
-			//     noChangeRun,
-			//     {
-			//         caption: "modify protected to public",
-			//         edit: sys => sys.replaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "protected", "public"),
-			//     },
-			//     noChangeRun,
-			// ],
+			edits: []*testTscEdit{
+				noChange,
+				{
+					caption: "modify public to protected",
+					edit: func(sys *testSys) {
+						sys.ReplaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "public", "protected")
+					},
+				},
+				noChange,
+				{
+					caption: "modify protected to public",
+					edit: func(sys *testSys) {
+						sys.ReplaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "protected", "public")
+					},
+				},
+				noChange,
+			},
 		},
 	}
 

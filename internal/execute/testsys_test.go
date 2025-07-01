@@ -309,3 +309,12 @@ func (s *testSys) WriteFileNoError(path string, content string, writeByteOrderMa
 		panic(err)
 	}
 }
+
+func (s *testSys) ReplaceFileText(path string, oldText string, newText string) {
+	content, ok := s.FS().ReadFile(path)
+	if !ok {
+		panic("File not found: " + path)
+	}
+	content = strings.Replace(content, oldText, newText, 1)
+	s.WriteFileNoError(path, content, false)
+}
