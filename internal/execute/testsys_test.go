@@ -118,7 +118,10 @@ func (s *testSys) ensureLibPathExists(path string) {
 			s.fs.defaultLibs = collections.NewSetWithSizeHint[string](tsoptions.LibFilesSet.Len() + len(tsoptions.TargetToLibMap()) + 1)
 		}
 		s.fs.defaultLibs.Add(path)
-		s.TestFS().WriteFile(path, tscDefaultLibContent, false)
+		err := s.TestFS().WriteFile(path, tscDefaultLibContent, false)
+		if err != nil {
+			panic("Failed to write default library file: " + err.Error())
+		}
 	}
 }
 
