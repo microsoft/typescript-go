@@ -31,10 +31,10 @@ type emitFilesHandler struct {
 func (h *emitFilesHandler) getPendingEmitKindForEmitOptions(emitKind FileEmitKind, options compiler.EmitOptions) FileEmitKind {
 	pendingKind := getPendingEmitKind(emitKind, 0)
 	if options.EmitOnly == compiler.EmitOnlyDts {
-		pendingKind &= fileEmitKindAllDts
+		pendingKind &= FileEmitKindAllDts
 	}
 	if h.isForDtsErrors {
-		pendingKind &= fileEmitKindDtsErrors
+		pendingKind &= FileEmitKindDtsErrors
 	}
 	return pendingKind
 }
@@ -64,10 +64,10 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 				wg.Queue(func() {
 					// Determine if we can do partial emit
 					var emitOnly compiler.EmitOnly
-					if (pendingKind & fileEmitKindAllJs) != 0 {
+					if (pendingKind & FileEmitKindAllJs) != 0 {
 						emitOnly = compiler.EmitOnlyJs
 					}
-					if (pendingKind & fileEmitKindAllDts) != 0 {
+					if (pendingKind & FileEmitKindAllDts) != 0 {
 						if emitOnly == compiler.EmitOnlyJs {
 							emitOnly = compiler.EmitAll
 						} else {
