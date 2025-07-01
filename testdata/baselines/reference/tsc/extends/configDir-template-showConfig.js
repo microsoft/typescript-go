@@ -2,7 +2,7 @@
 currentDirectory::/home/src/projects/myproject
 useCaseSensitiveFileNames::true
 Input::--showConfig
-//// [/home/src/projects/configs/first/tsconfig.json] new file
+//// [/home/src/projects/configs/first/tsconfig.json] *new* 
 {
 	"extends": "../second/tsconfig.json",
 	"include": ["${configDir}/src"],
@@ -11,7 +11,7 @@ Input::--showConfig
 		"types": [],
 	},
 }
-//// [/home/src/projects/configs/second/tsconfig.json] new file
+//// [/home/src/projects/configs/second/tsconfig.json] *new* 
 {
 	"files": ["${configDir}/main.ts"],
 	"compilerOptions": {
@@ -26,23 +26,23 @@ Input::--showConfig
 		"excludeFiles": ["${configDir}/main.ts"],
 	},
 }
-//// [/home/src/projects/myproject/main.ts] new file
+//// [/home/src/projects/myproject/main.ts] *new* 
 
 	// some comment
 	export const y = 10;
 	import { x } from "@myscope/sometype";
 
-//// [/home/src/projects/myproject/root2/other/sometype2/index.d.ts] new file
+//// [/home/src/projects/myproject/root2/other/sometype2/index.d.ts] *new* 
 
 	export const k = 10;
 
-//// [/home/src/projects/myproject/src/secondary.ts] new file
+//// [/home/src/projects/myproject/src/secondary.ts] *new* 
 
 	// some comment
 	export const z = 10;
 	import { k } from "other/sometype2";
 
-//// [/home/src/projects/myproject/tsconfig.json] new file
+//// [/home/src/projects/myproject/tsconfig.json] *new* 
 {
 	"extends": "../configs/first/tsconfig.json",
 	"compilerOptions": {
@@ -51,7 +51,7 @@ Input::--showConfig
 		"traceResolution": true,
 	},
 }
-//// [/home/src/projects/myproject/types/sometype.ts] new file
+//// [/home/src/projects/myproject/types/sometype.ts] *new* 
 
 	export const x = 10;
 
@@ -63,11 +63,4 @@ CompilerOptions::{
 }
 Output::
 No output
-//// [/home/src/projects/configs/first/tsconfig.json] no change
-//// [/home/src/projects/configs/second/tsconfig.json] no change
-//// [/home/src/projects/myproject/main.ts] no change
-//// [/home/src/projects/myproject/root2/other/sometype2/index.d.ts] no change
-//// [/home/src/projects/myproject/src/secondary.ts] no change
-//// [/home/src/projects/myproject/tsconfig.json] no change
-//// [/home/src/projects/myproject/types/sometype.ts] no change
 

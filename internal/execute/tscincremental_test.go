@@ -2,18 +2,10 @@ package execute_test
 
 import (
 	"testing"
-
-	"github.com/microsoft/typescript-go/internal/bundled"
 )
 
 func TestIncremental(t *testing.T) {
 	t.Parallel()
-	if !bundled.Embedded {
-		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
-		// Just skip this for now.
-		t.Skip("bundled files are not embedded")
-	}
-
 	testCases := []*tscInput{
 		{
 			subScenario: "serializing error chain",
@@ -60,6 +52,9 @@ func TestIncremental(t *testing.T) {
                         const wrapper = () => Messageable();
                         type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
                         export default MessageablePerson;`,
+				tscLibPath + "/lib.d.ts": tscDefaultLibContent + `
+					type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
+                    type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;`,
 			}, "/home/src/workspaces/project"),
 			commandLineArgs: []string{"--incremental"},
 			// edits: [
@@ -94,6 +89,9 @@ func TestIncremental(t *testing.T) {
                         const wrapper = () => Messageable();
                         type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
                         export default MessageablePerson;`,
+				tscLibPath + "/lib.d.ts": tscDefaultLibContent + `
+					type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
+                    type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;`,
 			}, "/home/src/workspaces/project"),
 			commandLineArgs: []string{"--incremental"},
 			// edits: [
