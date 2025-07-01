@@ -2,6 +2,7 @@ package incremental
 
 import (
 	"context"
+	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -16,14 +17,14 @@ type emitUpdate struct {
 }
 
 type emitFilesHandler struct {
-	ctx                  context.Context
-	program              *Program
-	isForDtsErrors       bool
-	signatures           collections.SyncMap[tspath.Path, string]
-	emitSignatures       collections.SyncMap[tspath.Path, *emitSignature]
-	latestChangedDtsFile string
-	deletedPendingKinds  collections.Set[tspath.Path]
-	emitUpdates          collections.SyncMap[tspath.Path, *emitUpdate]
+	ctx                   context.Context
+	program               *Program
+	isForDtsErrors        bool
+	signatures            collections.SyncMap[tspath.Path, string]
+	emitSignatures        collections.SyncMap[tspath.Path, *emitSignature]
+	latestChangedDtsFiles collections.SyncSet[string]
+	deletedPendingKinds   collections.Set[tspath.Path]
+	emitUpdates           collections.SyncMap[tspath.Path, *emitUpdate]
 }
 
 // Determining what all is pending to be emitted based on previous options or previous file emit flags
@@ -206,7 +207,7 @@ func (h *emitFilesHandler) skipDtsOutputOfComposite(file *ast.SourceFile, output
 			data.DiffersOnlyInMap = true
 		}
 	} else {
-		h.latestChangedDtsFile = outputFileName
+		h.latestChangedDtsFiles.Add(outputFileName)
 	}
 	h.emitSignatures.Store(file.Path(), &emitSignature{signature: newSignature})
 	return false
@@ -227,8 +228,10 @@ func (h *emitFilesHandler) updateSnapshot() []*compiler.EmitResult {
 		h.program.snapshot.buildInfoEmitPending = true
 		return true
 	})
-	if h.latestChangedDtsFile != "" {
-		h.program.snapshot.latestChangedDtsFile = h.latestChangedDtsFile
+	latestChangedDtsFiles := h.latestChangedDtsFiles.ToArray()
+	slices.Sort(latestChangedDtsFiles)
+	if latestChangedDtsFile := core.LastOrNil(latestChangedDtsFiles); latestChangedDtsFile != "" {
+		h.program.snapshot.latestChangedDtsFile = latestChangedDtsFile
 		h.program.snapshot.buildInfoEmitPending = true
 	}
 	for file := range h.deletedPendingKinds.Keys() {

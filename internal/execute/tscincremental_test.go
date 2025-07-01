@@ -35,6 +35,20 @@ func TestIncremental(t *testing.T) {
 			}, "/home/src/workspaces/project"),
 		},
 		{
+			subScenario: "serializing composite project",
+			sys: newTestSys(FileMap{
+				"/home/src/workspaces/project/tsconfig.json": `{
+                    "compilerOptions": {
+                        "composite": true,
+                        "strict": true,
+                        "module": "esnext",
+                    },
+                }`,
+				"/home/src/workspaces/project/index.tsx": `export const a = 1;`,
+				"/home/src/workspaces/project/other.ts":  `export const b = 2;`,
+			}, "/home/src/workspaces/project"),
+		},
+		{
 			subScenario: "change to modifier of class expression field with declaration emit enabled",
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "module": "esnext", "declaration": true  } }`,

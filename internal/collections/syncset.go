@@ -22,3 +22,13 @@ func (s *SyncSet[T]) Range(fn func(key T) bool) {
 		return fn(key)
 	})
 }
+
+func (s *SyncSet[T]) ToArray() []T {
+	var arr []T
+	arr = make([]T, 0, s.m.Size())
+	s.m.Range(func(key T, value struct{}) bool {
+		arr = append(arr, key)
+		return true
+	})
+	return arr
+}
