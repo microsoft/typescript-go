@@ -25,7 +25,7 @@ func TestNoCheck(t *testing.T) {
 	}
 	for _, c := range cases {
 		(&tscInput{
-			subScenario: "outFile/" + c.subscenario,
+			subScenario: c.subscenario,
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/project/a.ts": c.aText,
 				"/home/src/workspaces/project/b.ts": `export const b = 10;`,
@@ -35,7 +35,6 @@ func TestNoCheck(t *testing.T) {
 	}
 }`,
 				// incremental: undefined, true
-				// ...options: {}, {module: amd, outfile: "outfile.js"}
 			}, "/home/src/workspaces/project"),
 			commandLineArgs: []string{"--noCheck", "--outFile", "built"},
 		}).verify(t, "noCheck")

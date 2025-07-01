@@ -2,9 +2,9 @@
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::-w --watchInterval 1000
-//// [/home/src/workspaces/project/first.ts] new file
+//// [/home/src/workspaces/project/first.ts] *new* 
 export const a = 1
-//// [/home/src/workspaces/project/tsconfig.json] new file
+//// [/home/src/workspaces/project/tsconfig.json] *new* 
 { "compilerOptions": { "strict": true, "noEmit": true  } }
 
 ExitStatus:: 0
@@ -37,6 +37,4 @@ ParsedCommandLine::{
 }
 Output::
 No output
-//// [/home/src/workspaces/project/first.ts] no change
-//// [/home/src/workspaces/project/tsconfig.json] no change
 

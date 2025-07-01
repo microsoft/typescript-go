@@ -10,46 +10,88 @@ import (
 	"strings"
 	"time"
 
-	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
+	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 )
 
-type FileMap map[string]string
+type FileMap map[string]any
+
+var (
+	tscLibPath           = "/home/src/tslibs/TS/Lib"
+	tscDefaultLibContent = `/// <reference no-default-lib="true"/>
+interface Boolean {}
+interface Function {}
+interface CallableFunction {}
+interface NewableFunction {}
+interface IArguments {}
+interface Number { toExponential: any; }
+interface Object {}
+interface RegExp {}
+interface String { charAt: any; }
+interface Array<T> { length: number; [n: number]: T; }
+interface ReadonlyArray<T> {}
+interface SymbolConstructor {
+    (desc?: string | number): symbol;
+    for(name: string): symbol;
+    readonly toStringTag: symbol;
+}
+declare var Symbol: SymbolConstructor;
+interface Symbol {
+    readonly [Symbol.toStringTag]: string;
+}
+declare const console: { log(msg: any): void; };`
+)
 
 func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 	if cwd == "" {
 		cwd = "/home/src/workspaces/project"
 	}
-	return &testSys{
-		fs:                 incrementaltestutil.NewFsHandlingBuildInfo(bundled.WrapFS(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/))),
-		defaultLibraryPath: bundled.LibPath(),
+	sys := &testSys{
+		fs:                 NewFSTrackingLibs(incrementaltestutil.NewFsHandlingBuildInfo(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/))),
+		defaultLibraryPath: tscLibPath,
 		cwd:                cwd,
 		files:              slices.Collect(maps.Keys(fileOrFolderList)),
 		output:             []string{},
 		currentWrite:       &strings.Builder{},
 		start:              time.Now(),
 	}
+
+	// Ensure the default library file is present
+	sys.ensureLibPathExists("lib.d.ts")
+	for _, libFile := range tsoptions.TargetToLibMap() {
+		sys.ensureLibPathExists(libFile)
+	}
+	for libFile := range tsoptions.LibFilesSet.Keys() {
+		sys.ensureLibPathExists(libFile)
+	}
+	return sys
+}
+
+type diffEntry struct {
+	content  string
+	fileInfo fs.FileInfo
+}
+
+type snapshot struct {
+	snap        map[string]*diffEntry
+	defaultLibs *collections.Set[string]
 }
 
 type testSys struct {
 	// todo: original has write to output as a string[] because the separations are needed for baselining
 	output         []string
 	currentWrite   *strings.Builder
-	serializedDiff map[string]string
+	serializedDiff *snapshot
 
-	fs                 *incrementaltestutil.FsHandlingBuildInfo
+	fs                 *testFsTrackingLibs
 	defaultLibraryPath string
 	cwd                string
 	files              []string
 
 	start time.Time
-}
-
-func (s *testSys) IsTestDone() bool {
-	// todo: test is done if there are no edits left. Edits are not yet implemented
-	return true
 }
 
 func (s *testSys) Now() time.Time {
@@ -66,7 +108,18 @@ func (s *testSys) FS() vfs.FS {
 }
 
 func (s *testSys) TestFS() *incrementaltestutil.FsHandlingBuildInfo {
-	return s.fs
+	return s.fs.fs.(*incrementaltestutil.FsHandlingBuildInfo)
+}
+
+func (s *testSys) ensureLibPathExists(path string) {
+	path = tscLibPath + "/" + path
+	if _, ok := s.TestFS().ReadFile(path); !ok {
+		if s.fs.defaultLibs == nil {
+			s.fs.defaultLibs = collections.NewSetWithSizeHint[string](tsoptions.LibFilesSet.Len() + len(tsoptions.TargetToLibMap()) + 1)
+		}
+		s.fs.defaultLibs.Add(path)
+		s.TestFS().WriteFile(path, tscDefaultLibContent, false)
+	}
 }
 
 func (s *testSys) DefaultLibraryPath() string {
@@ -115,7 +168,7 @@ func (s *testSys) baselineOutput(baseline io.Writer) {
 
 func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
-	snap := map[string]string{}
+	snap := map[string]*diffEntry{}
 
 	err := s.FS().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
@@ -130,37 +183,62 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		if !ok {
 			return nil
 		}
-		snap[path] = newContents
-		reportFSEntryDiff(baseline, s.serializedDiff[path], newContents, path)
+		fileInfo, err := d.Info()
+		if err != nil {
+			return nil
+		}
+		newEntry := &diffEntry{content: newContents, fileInfo: fileInfo}
+		snap[path] = newEntry
+		s.reportFSEntryDiff(baseline, newEntry, path)
 
 		return nil
 	})
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		panic("walkdir error during diff: " + err.Error())
 	}
-	for path, oldDirContents := range s.serializedDiff {
-		if s.FS().FileExists(path) {
-			_, ok := s.FS().ReadFile(path)
-			if !ok {
-				// report deleted
-				reportFSEntryDiff(baseline, oldDirContents, "", path)
+	if s.serializedDiff != nil {
+		for path := range s.serializedDiff.snap {
+			if s.FS().FileExists(path) {
+				_, ok := s.TestFS().FS().ReadFile(path)
+				if !ok {
+					// report deleted
+					s.reportFSEntryDiff(baseline, nil, path)
+				}
 			}
 		}
 	}
-	s.serializedDiff = snap
+	var defaultLibs *collections.Set[string]
+	if s.fs.defaultLibs != nil {
+		defaultLibs = s.fs.defaultLibs.Clone()
+	}
+	s.serializedDiff = &snapshot{
+		snap:        snap,
+		defaultLibs: defaultLibs,
+	}
 	fmt.Fprintln(baseline)
 }
 
-func reportFSEntryDiff(baseline io.Writer, oldDirContent string, newDirContent string, path string) {
+func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry, path string) {
+	var oldDirContent *diffEntry
+	var defaultLibs *collections.Set[string]
+	if s.serializedDiff != nil {
+		oldDirContent = s.serializedDiff.snap[path]
+		defaultLibs = s.serializedDiff.defaultLibs
+	}
 	// todo handle more cases of fs changes
-	if oldDirContent == "" {
-		fmt.Fprint(baseline, "//// [", path, "] new file\n", newDirContent, "\n")
-	} else if newDirContent == "" {
-		fmt.Fprint(baseline, "//// [", path, "] deleted\n")
-	} else if newDirContent == oldDirContent {
-		fmt.Fprint(baseline, "//// [", path, "] no change\n")
-	} else {
-		fmt.Fprint(baseline, "//// [", path, "] modified. new content:\n", newDirContent, "\n")
+	if oldDirContent == nil {
+		if s.fs.defaultLibs == nil || !s.fs.defaultLibs.Has(path) {
+			fmt.Fprint(baseline, "//// [", path, "] *new* \n", newDirContent.content, "\n")
+		}
+	} else if newDirContent == nil {
+		fmt.Fprint(baseline, "//// [", path, "] *deleted*\n")
+	} else if newDirContent.content != oldDirContent.content {
+		fmt.Fprint(baseline, "//// [", path, "] *modified* \n", newDirContent, "\n")
+	} else if newDirContent.fileInfo.ModTime() != oldDirContent.fileInfo.ModTime() {
+		fmt.Fprint(baseline, "//// [", path, "] *modified time*\n")
+	} else if defaultLibs != nil && defaultLibs.Has(path) && s.fs.defaultLibs != nil && !s.fs.defaultLibs.Has(path) {
+		// Lib file that was read
+		fmt.Fprint(baseline, "//// [", path, "] *Lib*\n", newDirContent.content, "\n")
 	}
 }
 

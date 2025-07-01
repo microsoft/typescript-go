@@ -2,9 +2,9 @@
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::-w
-//// [/home/src/workspaces/project/a.ts] new file
+//// [/home/src/workspaces/project/a.ts] *new* 
 const a = class { private p = 10; };
-//// [/home/src/workspaces/project/tsconfig.json] new file
+//// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
 	"compilerOptions": {
             "noEmit": true,
@@ -32,52 +32,68 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
-//// [/home/src/workspaces/project/a.ts] no change
-//// [/home/src/workspaces/project/tsconfig.json] no change
+//// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
+/// <reference no-default-lib="true"/>
+interface Boolean {}
+interface Function {}
+interface CallableFunction {}
+interface NewableFunction {}
+interface IArguments {}
+interface Number { toExponential: any; }
+interface Object {}
+interface RegExp {}
+interface String { charAt: any; }
+interface Array<T> { length: number; [n: number]: T; }
+interface ReadonlyArray<T> {}
+interface SymbolConstructor {
+    (desc?: string | number): symbol;
+    for(name: string): symbol;
+    readonly toStringTag: symbol;
+}
+declare var Symbol: SymbolConstructor;
+interface Symbol {
+    readonly [Symbol.toStringTag]: string;
+}
+declare const console: { log(msg: any): void; };
 
 
 
 Edit:: fix syntax error
 
 Output::
-//// [/home/src/workspaces/project/a.ts] modified. new content:
-const a = "hello";
-//// [/home/src/workspaces/project/tsconfig.json] no change
+//// [/home/src/workspaces/project/a.ts] *modified* 
+&{const a = "hello"; 0xc000e6cba0}
 
 
 
 Edit:: emit after fixing error
 
 Output::
-//// [/home/src/workspaces/project/a.d.ts] new file
+//// [/home/src/workspaces/project/a.d.ts] *new* 
 declare const a = "hello";
 
-//// [/home/src/workspaces/project/a.js] new file
+//// [/home/src/workspaces/project/a.js] *new* 
 const a = "hello";
 
-//// [/home/src/workspaces/project/a.ts] no change
-//// [/home/src/workspaces/project/tsconfig.json] modified. new content:
-{
+//// [/home/src/workspaces/project/tsconfig.json] *modified* 
+&{{
 	"compilerOptions": {
             "declaration": true
 	}
-}
+} 0xc000f2c600}
 
 
 
 Edit:: no emit run after fixing error
 
 Output::
-//// [/home/src/workspaces/project/a.d.ts] no change
-//// [/home/src/workspaces/project/a.js] no change
-//// [/home/src/workspaces/project/a.ts] no change
-//// [/home/src/workspaces/project/tsconfig.json] modified. new content:
-{
+//// [/home/src/workspaces/project/tsconfig.json] *modified* 
+&{{
 	"compilerOptions": {
             "noEmit": true,
             "declaration": true
 	}
-}
+} 0xc00070ed50}
 
 
 
@@ -96,11 +112,8 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
-//// [/home/src/workspaces/project/a.d.ts] no change
-//// [/home/src/workspaces/project/a.js] no change
-//// [/home/src/workspaces/project/a.ts] modified. new content:
-const a = class { private p = 10; };
-//// [/home/src/workspaces/project/tsconfig.json] no change
+//// [/home/src/workspaces/project/a.ts] *modified* 
+&{const a = class { private p = 10; }; 0xc0009e7d10}
 
 
 
@@ -119,25 +132,24 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
-//// [/home/src/workspaces/project/a.d.ts] modified. new content:
-declare const a: {
+//// [/home/src/workspaces/project/a.d.ts] *modified* 
+&{declare const a: {
     new (): {
         p: number;
     };
 };
-
-//// [/home/src/workspaces/project/a.js] modified. new content:
-const a = class {
+ 0xc000811200}
+//// [/home/src/workspaces/project/a.js] *modified* 
+&{const a = class {
     p = 10;
 };
-
-//// [/home/src/workspaces/project/a.ts] no change
-//// [/home/src/workspaces/project/tsconfig.json] modified. new content:
-{
+ 0xc000811230}
+//// [/home/src/workspaces/project/tsconfig.json] *modified* 
+&{{
 	"compilerOptions": {
             "declaration": true
 	}
-}
+} 0xc0008112f0}
 
 
 
@@ -156,14 +168,11 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
-//// [/home/src/workspaces/project/a.d.ts] no change
-//// [/home/src/workspaces/project/a.js] no change
-//// [/home/src/workspaces/project/a.ts] no change
-//// [/home/src/workspaces/project/tsconfig.json] modified. new content:
-{
+//// [/home/src/workspaces/project/tsconfig.json] *modified* 
+&{{
 	"compilerOptions": {
             "noEmit": true,
             "declaration": true
 	}
-}
+} 0xc000ac69f0}
 

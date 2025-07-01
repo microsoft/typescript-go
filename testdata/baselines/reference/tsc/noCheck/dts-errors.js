@@ -2,11 +2,11 @@
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::--noCheck --outFile built
-//// [/home/src/workspaces/project/a.ts] new file
+//// [/home/src/workspaces/project/a.ts] *new* 
 export const a = class { private p = 10; };
-//// [/home/src/workspaces/project/b.ts] new file
+//// [/home/src/workspaces/project/b.ts] *new* 
 export const b = 10;
-//// [/home/src/workspaces/project/tsconfig.json] new file
+//// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
 	"compilerOptions": {
 		"declaration": true,
@@ -32,14 +32,37 @@ Output::
 
 Found 1 error in a.ts[90m:1[0m
 
-//// [/home/src/workspaces/project/a.d.ts] new file
+//// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
+/// <reference no-default-lib="true"/>
+interface Boolean {}
+interface Function {}
+interface CallableFunction {}
+interface NewableFunction {}
+interface IArguments {}
+interface Number { toExponential: any; }
+interface Object {}
+interface RegExp {}
+interface String { charAt: any; }
+interface Array<T> { length: number; [n: number]: T; }
+interface ReadonlyArray<T> {}
+interface SymbolConstructor {
+    (desc?: string | number): symbol;
+    for(name: string): symbol;
+    readonly toStringTag: symbol;
+}
+declare var Symbol: SymbolConstructor;
+interface Symbol {
+    readonly [Symbol.toStringTag]: string;
+}
+declare const console: { log(msg: any): void; };
+//// [/home/src/workspaces/project/a.d.ts] *new* 
 export declare const a: {
     new (): {
         p: number;
     };
 };
 
-//// [/home/src/workspaces/project/a.js] new file
+//// [/home/src/workspaces/project/a.js] *new* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.a = void 0;
@@ -48,16 +71,13 @@ const a = class {
 };
 exports.a = a;
 
-//// [/home/src/workspaces/project/a.ts] no change
-//// [/home/src/workspaces/project/b.d.ts] new file
+//// [/home/src/workspaces/project/b.d.ts] *new* 
 export declare const b = 10;
 
-//// [/home/src/workspaces/project/b.js] new file
+//// [/home/src/workspaces/project/b.js] *new* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.b = void 0;
 exports.b = 10;
 
-//// [/home/src/workspaces/project/b.ts] no change
-//// [/home/src/workspaces/project/tsconfig.json] no change
 

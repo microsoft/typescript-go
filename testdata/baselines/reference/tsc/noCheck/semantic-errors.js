@@ -1,30 +1,23 @@
 
-currentDirectory::/home/src/workspaces/solution
+currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--p project
-//// [/home/src/workspaces/solution/project/index.ts] *new* 
-import { x } from "../utils";
-//// [/home/src/workspaces/solution/project/tsconfig.json] *new* 
-{
-	"references": [
-		{ "path": "../utils" },
-	],
-}
-//// [/home/src/workspaces/solution/utils/index.d.ts] *new* 
-export declare const x = 10;
-//// [/home/src/workspaces/solution/utils/index.ts] *new* 
-export const x = 10;
-//// [/home/src/workspaces/solution/utils/tsconfig.json] *new* 
+Input::--noCheck --outFile built
+//// [/home/src/workspaces/project/a.ts] *new* 
+export const a: number = "hello";
+//// [/home/src/workspaces/project/b.ts] *new* 
+export const b = 10;
+//// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
 	"compilerOptions": {
-		"composite": true,
-	},
+		"declaration": true,
+	}
 }
 
 ExitStatus:: 0
 
 CompilerOptions::{
-    "project": "/home/src/workspaces/solution/project"
+    "noCheck": true,
+    "outFile": "/home/src/workspaces/project/built"
 }
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
@@ -50,8 +43,22 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/home/src/workspaces/solution/project/index.js] *new* 
+//// [/home/src/workspaces/project/a.d.ts] *new* 
+export declare const a: number;
+
+//// [/home/src/workspaces/project/a.js] *new* 
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.a = void 0;
+exports.a = "hello";
+
+//// [/home/src/workspaces/project/b.d.ts] *new* 
+export declare const b = 10;
+
+//// [/home/src/workspaces/project/b.js] *new* 
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.b = void 0;
+exports.b = 10;
 
 

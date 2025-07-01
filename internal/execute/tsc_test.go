@@ -8,12 +8,6 @@ import (
 
 func TestTsc(t *testing.T) {
 	t.Parallel()
-	if !bundled.Embedded {
-		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
-		// Just skip this for now.
-		t.Skip("bundled files are not embedded")
-	}
-
 	testCases := []*tscInput{
 		{
 			subScenario: "show help with ExitStatus.DiagnosticsPresent_OutputsSkipped",
@@ -124,12 +118,6 @@ func TestTsc(t *testing.T) {
 
 func TestNoEmit(t *testing.T) {
 	t.Parallel()
-	if !bundled.Embedded {
-		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
-		// Just skip this for now.
-		t.Skip("bundled files are not embedded")
-	}
-
 	(&tscInput{
 		subScenario: "when project has strict true",
 		sys: newTestSys(FileMap{
@@ -147,12 +135,6 @@ func TestNoEmit(t *testing.T) {
 
 func TestExtends(t *testing.T) {
 	t.Parallel()
-	if !bundled.Embedded {
-		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
-		// Just skip this for now.
-		t.Skip("bundled files are not embedded")
-	}
-
 	extendsSysFiles := FileMap{
 		"/home/src/projects/configs/first/tsconfig.json": `{
 	"extends": "../second/tsconfig.json",
