@@ -7,7 +7,7 @@ import (
 
 type testFsTrackingLibs struct {
 	fs          vfs.FS
-	defaultLibs *collections.Set[string]
+	defaultLibs *collections.SyncSet[string]
 }
 
 var _ vfs.FS = (*testFsTrackingLibs)(nil)
