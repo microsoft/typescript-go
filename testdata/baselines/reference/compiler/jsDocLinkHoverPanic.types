@@ -1,0 +1,42 @@
+//// [tests/cases/compiler/jsDocLinkHoverPanic.ts] ////
+
+=== jsDocLinkHoverPanic.ts ===
+/**
+ * A function with JSDoc links that should not cause hover to panic.
+ * See {@link someFunction} for more details.
+ * Also check {@linkcode anotherFunction}.
+ * And {@linkplain plainLinkFunction}.
+ */
+function someFunction(): string {
+>someFunction : () => string
+
+    return "test";
+>"test" : "test"
+}
+
+/**
+ * Another function referenced in links.
+ */
+function anotherFunction(): number {
+>anotherFunction : () => number
+
+    return 42;
+>42 : 42
+}
+
+/**
+ * Plain link function.
+ */
+function plainLinkFunction(): boolean {
+>plainLinkFunction : () => boolean
+
+    return true;
+>true : true
+}
+
+// This should trigger hover functionality which may cause the panic
+const result = someFunction();
+>result : string
+>someFunction() : string
+>someFunction : () => string
+
