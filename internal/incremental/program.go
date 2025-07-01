@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"maps"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -40,7 +39,9 @@ func NewProgram(program *compiler.Program, oldProgram *Program, testing bool) *P
 	}
 
 	if testing {
-		incrementalProgram.semanticDiagnosticsPerFile = maps.Clone(incrementalProgram.snapshot.semanticDiagnosticsPerFile)
+		if oldProgram != nil {
+			incrementalProgram.semanticDiagnosticsPerFile = oldProgram.snapshot.semanticDiagnosticsPerFile
+		}
 		incrementalProgram.updatedSignatureKinds = &collections.SyncMap[tspath.Path, SignatureUpdateKind]{}
 	}
 	return incrementalProgram
