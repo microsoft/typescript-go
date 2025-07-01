@@ -278,7 +278,7 @@ func (b *BuildInfoFilePendingEmit) MarshalJSON() ([]byte, error) {
 	if b.EmitKind == 0 {
 		return json.Marshal(b.FileId)
 	}
-	if b.EmitKind == fileEmitKindDts {
+	if b.EmitKind == FileEmitKindDts {
 		fileListIds := []BuildInfoFileId{b.FileId}
 		return json.Marshal(fileListIds)
 	}
@@ -299,7 +299,7 @@ func (b *BuildInfoFilePendingEmit) UnmarshalJSON(data []byte) error {
 		if len(intTuple) == 1 {
 			*b = BuildInfoFilePendingEmit{
 				FileId:   BuildInfoFileId(intTuple[0]),
-				EmitKind: fileEmitKindDts,
+				EmitKind: FileEmitKindDts,
 			}
 			return nil
 		} else if len(intTuple) == 2 {

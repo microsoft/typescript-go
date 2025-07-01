@@ -325,7 +325,7 @@ func (h *affectedFilesHandler) handleDtsMayChangeOf(dtsMayChange dtsMayChange, p
 	if invalidateJsFiles {
 		dtsMayChange.addFileToAffectedFilesPendingEmit(path, GetFileEmitKind(h.program.snapshot.options))
 	} else if h.program.snapshot.options.GetEmitDeclarations() {
-		dtsMayChange.addFileToAffectedFilesPendingEmit(path, core.IfElse(h.program.snapshot.options.DeclarationMap.IsTrue(), fileEmitKindAllDts, fileEmitKindDts))
+		dtsMayChange.addFileToAffectedFilesPendingEmit(path, core.IfElse(h.program.snapshot.options.DeclarationMap.IsTrue(), FileEmitKindAllDts, FileEmitKindDts))
 	}
 }
 

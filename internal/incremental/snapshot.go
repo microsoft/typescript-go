@@ -3,7 +3,6 @@ package incremental
 import (
 	"context"
 	"maps"
-	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -31,77 +30,37 @@ func (f *fileInfo) ImpliedNodeFormat() core.ResolutionMode { return f.impliedNod
 type FileEmitKind uint32
 
 const (
-	fileEmitKindNone        FileEmitKind = 0
-	fileEmitKindJs          FileEmitKind = 1 << 0 // emit js file
-	fileEmitKindJsMap       FileEmitKind = 1 << 1 // emit js.map file
-	fileEmitKindJsInlineMap FileEmitKind = 1 << 2 // emit inline source map in js file
-	fileEmitKindDtsErrors   FileEmitKind = 1 << 3 // emit dts errors
-	fileEmitKindDtsEmit     FileEmitKind = 1 << 4 // emit d.ts file
-	fileEmitKindDtsMap      FileEmitKind = 1 << 5 // emit d.ts.map file
+	FileEmitKindNone        FileEmitKind = 0
+	FileEmitKindJs          FileEmitKind = 1 << 0 // emit js file
+	FileEmitKindJsMap       FileEmitKind = 1 << 1 // emit js.map file
+	FileEmitKindJsInlineMap FileEmitKind = 1 << 2 // emit inline source map in js file
+	FileEmitKindDtsErrors   FileEmitKind = 1 << 3 // emit dts errors
+	FileEmitKindDtsEmit     FileEmitKind = 1 << 4 // emit d.ts file
+	FileEmitKindDtsMap      FileEmitKind = 1 << 5 // emit d.ts.map file
 
-	fileEmitKindDts        = fileEmitKindDtsErrors | fileEmitKindDtsEmit
-	fileEmitKindAllJs      = fileEmitKindJs | fileEmitKindJsMap | fileEmitKindJsInlineMap
-	fileEmitKindAllDtsEmit = fileEmitKindDtsEmit | fileEmitKindDtsMap
-	fileEmitKindAllDts     = fileEmitKindDts | fileEmitKindDtsMap
-	fileEmitKindAll        = fileEmitKindAllJs | fileEmitKindAllDts
+	FileEmitKindDts        = FileEmitKindDtsErrors | FileEmitKindDtsEmit
+	FileEmitKindAllJs      = FileEmitKindJs | FileEmitKindJsMap | FileEmitKindJsInlineMap
+	FileEmitKindAllDtsEmit = FileEmitKindDtsEmit | FileEmitKindDtsMap
+	FileEmitKindAllDts     = FileEmitKindDts | FileEmitKindDtsMap
+	FileEmitKindAll        = FileEmitKindAllJs | FileEmitKindAllDts
 )
 
-func (fileEmitKind FileEmitKind) String() string {
-	var builder strings.Builder
-	addFlags := func(flags string) {
-		if builder.Len() == 0 {
-			builder.WriteString(flags)
-		} else {
-			builder.WriteString("|")
-			builder.WriteString(flags)
-		}
-	}
-	if fileEmitKind != 0 {
-		if (fileEmitKind & fileEmitKindJs) != 0 {
-			addFlags("Js")
-		}
-		if (fileEmitKind & fileEmitKindJsMap) != 0 {
-			addFlags("JsMap")
-		}
-		if (fileEmitKind & fileEmitKindJsInlineMap) != 0 {
-			addFlags("JsInlineMap")
-		}
-		if (fileEmitKind & fileEmitKindDts) == fileEmitKindDts {
-			addFlags("Dts")
-		} else {
-			if (fileEmitKind & fileEmitKindDtsEmit) != 0 {
-				addFlags("DtsEmit")
-			}
-			if (fileEmitKind & fileEmitKindDtsErrors) != 0 {
-				addFlags("DtsErrors")
-			}
-		}
-		if (fileEmitKind & fileEmitKindDtsMap) != 0 {
-			addFlags("DtsMap")
-		}
-	}
-	if builder.Len() != 0 {
-		return builder.String()
-	}
-	return "None"
-}
-
 func GetFileEmitKind(options *core.CompilerOptions) FileEmitKind {
-	result := fileEmitKindJs
+	result := FileEmitKindJs
 	if options.SourceMap.IsTrue() {
-		result |= fileEmitKindJsMap
+		result |= FileEmitKindJsMap
 	}
 	if options.InlineSourceMap.IsTrue() {
-		result |= fileEmitKindJsInlineMap
+		result |= FileEmitKindJsInlineMap
 	}
 	if options.GetEmitDeclarations() {
-		result |= fileEmitKindDts
+		result |= FileEmitKindDts
 	}
 	if options.DeclarationMap.IsTrue() {
-		result |= fileEmitKindDtsMap
+		result |= FileEmitKindDtsMap
 	}
 	if options.EmitDeclarationOnly.IsTrue() {
-		result &= fileEmitKindAllDts
+		result &= FileEmitKindAllDts
 	}
 	return result
 }
@@ -114,24 +73,24 @@ func getPendingEmitKindWithOptions(options *core.CompilerOptions, oldOptions *co
 
 func getPendingEmitKind(emitKind FileEmitKind, oldEmitKind FileEmitKind) FileEmitKind {
 	if oldEmitKind == emitKind {
-		return fileEmitKindNone
+		return FileEmitKindNone
 	}
 	if oldEmitKind == 0 || emitKind == 0 {
 		return emitKind
 	}
 	diff := oldEmitKind ^ emitKind
-	result := fileEmitKindNone
+	result := FileEmitKindNone
 	// If there is diff in Js emit, pending emit is js emit flags
-	if (diff & fileEmitKindAllJs) != 0 {
-		result |= emitKind & fileEmitKindAllJs
+	if (diff & FileEmitKindAllJs) != 0 {
+		result |= emitKind & FileEmitKindAllJs
 	}
 	// If dts errors pending, add dts errors flag
-	if (diff & fileEmitKindDtsErrors) != 0 {
-		result |= emitKind & fileEmitKindDtsErrors
+	if (diff & FileEmitKindDtsErrors) != 0 {
+		result |= emitKind & FileEmitKindDtsErrors
 	}
 	// If there is diff in Dts emit, pending emit is dts emit flags
-	if (diff & fileEmitKindAllDtsEmit) != 0 {
-		result |= emitKind & fileEmitKindAllDtsEmit
+	if (diff & FileEmitKindAllDtsEmit) != 0 {
+		result |= emitKind & FileEmitKindAllDtsEmit
 	}
 	return result
 }
@@ -447,7 +406,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 			} else {
 				pendingEmitKind = getPendingEmitKindWithOptions(snapshot.options, oldProgram.snapshot.options)
 			}
-			if pendingEmitKind != fileEmitKindNone {
+			if pendingEmitKind != FileEmitKindNone {
 				// Add all files to affectedFilesPendingEmit since emit changed
 				for _, file := range files {
 					// Add to affectedFilesPending emit only if not changed since any changed file will do full emit

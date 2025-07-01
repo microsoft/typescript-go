@@ -3,6 +3,7 @@ package incrementaltestutil
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -299,10 +300,50 @@ func (r *readableBuildInfo) setAffectedFilesPendingEmit() {
 		emitKind := core.IfElse(pendingEmit.EmitKind == 0, fullEmitKind, pendingEmit.EmitKind)
 		return &readableBuildInfoFilePendingEmit{
 			file:     r.toFilePath(pendingEmit.FileId),
-			emitKind: emitKind.String(),
+			emitKind: toReadableFileEmitKind(emitKind),
 			original: pendingEmit,
 		}
 	})
+}
+
+func toReadableFileEmitKind(fileEmitKind incremental.FileEmitKind) string {
+	var builder strings.Builder
+	addFlags := func(flags string) {
+		if builder.Len() == 0 {
+			builder.WriteString(flags)
+		} else {
+			builder.WriteString("|")
+			builder.WriteString(flags)
+		}
+	}
+	if fileEmitKind != 0 {
+		if (fileEmitKind & incremental.FileEmitKindJs) != 0 {
+			addFlags("Js")
+		}
+		if (fileEmitKind & incremental.FileEmitKindJsMap) != 0 {
+			addFlags("JsMap")
+		}
+		if (fileEmitKind & incremental.FileEmitKindJsInlineMap) != 0 {
+			addFlags("JsInlineMap")
+		}
+		if (fileEmitKind & incremental.FileEmitKindDts) == incremental.FileEmitKindDts {
+			addFlags("Dts")
+		} else {
+			if (fileEmitKind & incremental.FileEmitKindDtsEmit) != 0 {
+				addFlags("DtsEmit")
+			}
+			if (fileEmitKind & incremental.FileEmitKindDtsErrors) != 0 {
+				addFlags("DtsErrors")
+			}
+		}
+		if (fileEmitKind & incremental.FileEmitKindDtsMap) != 0 {
+			addFlags("DtsMap")
+		}
+	}
+	if builder.Len() != 0 {
+		return builder.String()
+	}
+	return "None"
 }
 
 func (r *readableBuildInfo) setEmitSignatures() {
