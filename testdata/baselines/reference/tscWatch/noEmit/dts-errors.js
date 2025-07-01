@@ -62,7 +62,7 @@ Edit:: fix syntax error
 
 Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
-&{const a = "hello"; 0xc000e6cba0}
+const a = "hello";
 
 
 
@@ -76,11 +76,11 @@ declare const a = "hello";
 const a = "hello";
 
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             "declaration": true
 	}
-} 0xc000f2c600}
+}
 
 
 
@@ -88,12 +88,12 @@ Edit:: no emit run after fixing error
 
 Output::
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             "noEmit": true,
             "declaration": true
 	}
-} 0xc00070ed50}
+}
 
 
 
@@ -113,7 +113,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/a.ts] *modified* 
-&{const a = class { private p = 10; }; 0xc0009e7d10}
+const a = class { private p = 10; };
 
 
 
@@ -133,23 +133,23 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
-&{declare const a: {
+declare const a: {
     new (): {
         p: number;
     };
 };
- 0xc000811200}
+
 //// [/home/src/workspaces/project/a.js] *modified* 
-&{const a = class {
+const a = class {
     p = 10;
 };
- 0xc000811230}
+
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             "declaration": true
 	}
-} 0xc0008112f0}
+}
 
 
 
@@ -169,10 +169,10 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             "noEmit": true,
             "declaration": true
 	}
-} 0xc000ac69f0}
+}
 

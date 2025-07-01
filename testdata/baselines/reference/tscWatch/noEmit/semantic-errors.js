@@ -57,7 +57,7 @@ Edit:: fix syntax error
 
 Output::
 //// [/home/src/workspaces/project/a.ts] *modified* 
-&{const a = "hello"; 0xc001001350}
+const a = "hello";
 
 
 
@@ -68,11 +68,11 @@ Output::
 const a = "hello";
 
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             
 	}
-} 0xc0002f0990}
+}
 
 
 
@@ -80,12 +80,12 @@ Edit:: no emit run after fixing error
 
 Output::
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             "noEmit": true,
             
 	}
-} 0xc000f2ce40}
+}
 
 
 
@@ -101,7 +101,7 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/a.ts] *modified* 
-&{const a: number = "hello" 0xc00100bc80}
+const a: number = "hello"
 
 
 
@@ -118,11 +118,11 @@ Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/a.js] *modified time*
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             
 	}
-} 0xc000b51d40}
+}
 
 
 
@@ -138,10 +138,10 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
-&{{
+{
 	"compilerOptions": {
             "noEmit": true,
             
 	}
-} 0xc000ee2e70}
+}
 

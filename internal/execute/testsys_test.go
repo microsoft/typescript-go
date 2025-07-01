@@ -233,7 +233,7 @@ func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry
 	} else if newDirContent == nil {
 		fmt.Fprint(baseline, "//// [", path, "] *deleted*\n")
 	} else if newDirContent.content != oldDirContent.content {
-		fmt.Fprint(baseline, "//// [", path, "] *modified* \n", newDirContent, "\n")
+		fmt.Fprint(baseline, "//// [", path, "] *modified* \n", newDirContent.content, "\n")
 	} else if newDirContent.fileInfo.ModTime() != oldDirContent.fileInfo.ModTime() {
 		fmt.Fprint(baseline, "//// [", path, "] *modified time*\n")
 	} else if defaultLibs != nil && defaultLibs.Has(path) && s.fs.defaultLibs != nil && !s.fs.defaultLibs.Has(path) {
