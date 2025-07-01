@@ -57,7 +57,7 @@ SemanticDiagnostics::
 Signatures::
 
 
-Edit:: fix syntax error
+Edit:: fix error
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = "hello";
 
@@ -70,7 +70,7 @@ SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/a.ts
 
 Signatures::
-(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
+(computed .d.ts) /home/src/workspaces/project/a.ts
 
 
 Edit:: emit after fixing error
@@ -89,12 +89,8 @@ const a = "hello";
 
 
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
-*refresh*    /home/src/workspaces/project/a.ts
 
 Signatures::
-(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
-(computed .d.ts) /home/src/workspaces/project/a.ts
 
 
 Edit:: no emit run after fixing error
@@ -111,12 +107,8 @@ Output::
 
 
 SemanticDiagnostics::
-*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
-*refresh*    /home/src/workspaces/project/a.ts
 
 Signatures::
-(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
-(computed .d.ts) /home/src/workspaces/project/a.ts
 
 
 Edit:: introduce error
@@ -136,7 +128,6 @@ Found 1 error in a.ts[90m:1[0m
 
 
 SemanticDiagnostics::
-*not cached* /home/src/tslibs/TS/Lib/lib.d.ts
 *not cached* /home/src/workspaces/project/a.ts
 
 Signatures::
@@ -166,11 +157,9 @@ const a = "hello;
 
 
 SemanticDiagnostics::
-*not cached* /home/src/tslibs/TS/Lib/lib.d.ts
 *not cached* /home/src/workspaces/project/a.ts
 
 Signatures::
-(used version)   /home/src/tslibs/TS/Lib/lib.d.ts
 (computed .d.ts) /home/src/workspaces/project/a.ts
 
 
@@ -196,7 +185,6 @@ Found 1 error in a.ts[90m:1[0m
 
 
 SemanticDiagnostics::
-*not cached* /home/src/tslibs/TS/Lib/lib.d.ts
 *not cached* /home/src/workspaces/project/a.ts
 
 Signatures::

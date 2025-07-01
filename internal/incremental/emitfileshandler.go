@@ -97,25 +97,25 @@ func (h *emitFilesHandler) emitAllAffectedFiles(options compiler.EmitOptions) *c
 		if h.ctx.Err() != nil {
 			return nil
 		}
-
-		// Get updated errors that were not included in affected files emit
-		for path, diagnostics := range h.program.snapshot.emitDiagnosticsPerFile {
-			if _, ok := h.emitUpdates.Load(path); !ok {
-				affectedFile := h.program.program.GetSourceFileByPath(path)
-				if affectedFile == nil || !h.program.program.SourceFileMayBeEmitted(affectedFile, false) {
-					h.deletedPendingKinds.Add(path)
-					continue
-				}
-				pendingKind := h.program.snapshot.affectedFilesPendingEmit[path]
-				h.emitUpdates.Store(path, &emitUpdate{pendingKind: pendingKind, result: &compiler.EmitResult{
-					EmitSkipped: true,
-					Diagnostics: diagnostics.getDiagnostics(h.program.program, affectedFile),
-				}})
-			}
-		}
-
-		results = h.updateSnapshot()
 	}
+
+	// Get updated errors that were not included in affected files emit
+	for path, diagnostics := range h.program.snapshot.emitDiagnosticsPerFile {
+		if _, ok := h.emitUpdates.Load(path); !ok {
+			affectedFile := h.program.program.GetSourceFileByPath(path)
+			if affectedFile == nil || !h.program.program.SourceFileMayBeEmitted(affectedFile, false) {
+				h.deletedPendingKinds.Add(path)
+				continue
+			}
+			pendingKind := h.program.snapshot.affectedFilesPendingEmit[path]
+			h.emitUpdates.Store(path, &emitUpdate{pendingKind: pendingKind, result: &compiler.EmitResult{
+				EmitSkipped: true,
+				Diagnostics: diagnostics.getDiagnostics(h.program.program, affectedFile),
+			}})
+		}
+	}
+
+	results = h.updateSnapshot()
 
 	// Combine results and update buildInfo
 	if h.isForDtsErrors && options.TargetSourceFile != nil {

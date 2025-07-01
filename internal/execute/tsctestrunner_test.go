@@ -25,6 +25,10 @@ var noChange = &testTscEdit{
 	edit:    func(sys *testSys) {},
 }
 
+var noChangeOnlyEdit = []*testTscEdit{
+	noChange,
+}
+
 type tscInput struct {
 	subScenario     string
 	commandLineArgs []string

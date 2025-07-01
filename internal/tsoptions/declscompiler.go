@@ -1187,7 +1187,7 @@ func optionsHaveChanges(oldOptions *core.CompilerOptions, newOptions *core.Compi
 	}
 	oldOptionsValue := reflect.ValueOf(oldOptions).Elem()
 	return ForEachCompilerOptionValue(newOptions, declFilter, func(option *CommandLineOption, value reflect.Value, i int) bool {
-		return !reflect.DeepEqual(value, oldOptionsValue.Field(i))
+		return !reflect.DeepEqual(value.Interface(), oldOptionsValue.Field(i).Interface())
 	})
 }
 
