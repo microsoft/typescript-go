@@ -143,6 +143,12 @@ func hasChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.Sou
 }
 
 func findChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.SourceFile) *ast.Node {
+	return findChild(containingNode, sourceFile, func(node *ast.Node) bool {
+		return node.Kind == kind
+	})
+}
+
+func findChild(containingNode *ast.Node, sourceFile *ast.SourceFile, predicate func(*ast.Node) bool) *ast.Node {
 	lastNodePos := containingNode.Pos()
 	scanner := scanner.GetScannerForSourceFile(sourceFile, lastNodePos)
 
@@ -158,14 +164,14 @@ func findChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.So
 			tokenFullStart := scanner.TokenFullStart()
 			tokenEnd := scanner.TokenEnd()
 			token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, containingNode)
-			if tokenKind == kind {
+			if predicate(token) {
 				foundChild = token
 				return true
 			}
 			startPos = tokenEnd
 			scanner.Scan()
 		}
-		if node.Kind == kind {
+		if predicate(node) {
 			foundChild = node
 			return true
 		}
@@ -188,7 +194,7 @@ func findChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.So
 		tokenFullStart := scanner.TokenFullStart()
 		tokenEnd := scanner.TokenEnd()
 		token := sourceFile.GetOrCreateToken(tokenKind, tokenFullStart, tokenEnd, containingNode)
-		if tokenKind == kind {
+		if predicate(token) {
 			return token
 		}
 		startPos = tokenEnd
