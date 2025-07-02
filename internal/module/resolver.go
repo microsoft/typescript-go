@@ -801,7 +801,9 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 			// logic may influence what files are pulled in by self-names, which in turn influences the output path shape, but it's all
 			// internally consistent so the paths should be stable so long as we prefer the "most general" (meaning: top-most-level directory) possible results first.
 			commonDir := tspath.GetNormalizedAbsolutePath(
-				outputpaths.GetCommonSourceDirectory(r.compilerOptions, func() []string { return []string{requestingFile, tspath.GetNormalizedAbsolutePath(packagePath, r.resolver.host.GetCurrentDirectory())} }, r.resolver.host.GetCurrentDirectory(), useCaseSensitiveFileNames),
+				outputpaths.GetCommonSourceDirectory(r.compilerOptions, func() []string {
+					return []string{requestingFile, tspath.GetNormalizedAbsolutePath(packagePath, r.resolver.host.GetCurrentDirectory())}
+				}, r.resolver.host.GetCurrentDirectory(), useCaseSensitiveFileNames),
 				r.resolver.host.GetCurrentDirectory(),
 			)
 			commonSourceDirGuesses = append(commonSourceDirGuesses, commonDir)
