@@ -6,25 +6,25 @@ Input::--p project
 import { E } from "../utils"; E.A;
 //// [/home/src/workspaces/solution/project/tsconfig.json] *new* 
 {
-					"compilerOptions": {
-						"isolatedModules": true,
-					},
-					"references": [
-						{ "path": "../utils" },
-					],
-				}
+    "compilerOptions": {
+        "isolatedModules": true,
+    },
+    "references": [
+        { "path": "../utils" },
+    ],
+}
 //// [/home/src/workspaces/solution/utils/index.d.ts] *new* 
 export declare const enum E { A = 1 }
 //// [/home/src/workspaces/solution/utils/index.ts] *new* 
 export const enum E { A = 1 }
 //// [/home/src/workspaces/solution/utils/tsconfig.json] *new* 
 {
-					"compilerOptions": {
-						"composite": true,
-						"declaration": true,
-						"preserveConstEnums": true,
-					},
-				}
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "preserveConstEnums": true,
+    },
+}
 
 ExitStatus:: 0
 

@@ -2,6 +2,8 @@ package execute_test
 
 import (
 	"testing"
+
+	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 )
 
 func TestTscCommandline(t *testing.T) {
@@ -60,32 +62,56 @@ func TestTscCommandline(t *testing.T) {
 		{
 			subScenario: "Project is empty string",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/project/first.ts":      `export const a = 1`,
-				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "strict": true, "noEmit": true  } }`,
+				"/home/src/workspaces/project/first.ts": `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"noEmit": true
+					}
+				}`),
 			}, ""),
 			commandLineArgs: []string{},
 		},
 		{
 			subScenario: "Parse -p",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/project/first.ts":      `export const a = 1`,
-				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "strict": true, "noEmit": true  } }`,
+				"/home/src/workspaces/project/first.ts": `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"noEmit": true
+					}
+				}`),
 			}, ""),
 			commandLineArgs: []string{"-p", "."},
 		},
 		{
 			subScenario: "Parse -p with path to tsconfig file",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/project/first.ts":      `export const a = 1`,
-				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "strict": true, "noEmit": true } }`,
+				"/home/src/workspaces/project/first.ts": `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"noEmit": true
+					}
+				}`),
 			}, ""),
 			commandLineArgs: []string{"-p", "/home/src/workspaces/project/tsconfig.json"},
 		},
 		{
 			subScenario: "Parse -p with path to tsconfig folder",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/project/first.ts":      `export const a = 1`,
-				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "strict": true, "noEmit": true  } }`,
+				"/home/src/workspaces/project/first.ts": `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"noEmit": true
+					}
+				}`),
 			}, ""),
 			commandLineArgs: []string{"-p", "/home/src/workspaces/project"},
 		},
@@ -97,8 +123,14 @@ func TestTscCommandline(t *testing.T) {
 		{
 			subScenario: "Parse watch interval option",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/project/first.ts":      `export const a = 1`,
-				"/home/src/workspaces/project/tsconfig.json": `{ "compilerOptions": { "strict": true, "noEmit": true  } }`,
+				"/home/src/workspaces/project/first.ts": `export const a = 1`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"strict": true,
+						"noEmit": true
+					}
+				}`),
 			}, ""),
 			commandLineArgs: []string{"-w", "--watchInterval", "1000"},
 		},
@@ -119,12 +151,13 @@ func TestNoEmit(t *testing.T) {
 	(&tscInput{
 		subScenario: "when project has strict true",
 		sys: newTestSys(FileMap{
-			"/home/src/workspaces/project/tsconfig.json": `{
-	"compilerOptions": {
-		"incremental": true,
-		"strict": true,
-	},
-}`,
+			"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+			{
+				"compilerOptions": {
+					"incremental": true,
+					"strict": true
+				}
+			}`),
 			"/home/src/workspaces/project/class1.ts": `export class class1 {}`,
 		}, ""),
 		commandLineArgs: []string{"--noEmit"},
@@ -133,67 +166,72 @@ func TestNoEmit(t *testing.T) {
 
 func TestExtends(t *testing.T) {
 	t.Parallel()
-	extendsSysFiles := FileMap{
-		"/home/src/projects/configs/first/tsconfig.json": `{
-	"extends": "../second/tsconfig.json",
-	"include": ["${configDir}/src"],
-	"compilerOptions": {
-		"typeRoots": ["root1", "${configDir}/root2", "root3"],
-		"types": [],
-	},
-}`,
-		"/home/src/projects/configs/second/tsconfig.json": `{
-	"files": ["${configDir}/main.ts"],
-	"compilerOptions": {
-		"declarationDir": "${configDir}/decls",
-		"paths": {
-			"@myscope/*": ["${configDir}/types/*"],
-			"other/*": ["other/*"],
-		},
-		"baseUrl": "${configDir}",
-	},
-	"watchOptions": {
-		"excludeFiles": ["${configDir}/main.ts"],
-	},
-}`,
-		"/home/src/projects/myproject/tsconfig.json": `{
-	"extends": "../configs/first/tsconfig.json",
-	"compilerOptions": {
-		"declaration": true,
-		"outDir": "outDir",
-		"traceResolution": true,
-	},
-}`,
-
-		"/home/src/projects/myproject/main.ts": `
-	// some comment
-	export const y = 10;
-	import { x } from "@myscope/sometype";
-`,
-		"/home/src/projects/myproject/src/secondary.ts": `
-	// some comment
-	export const z = 10;
-	import { k } from "other/sometype2";
-`,
-		"/home/src/projects/myproject/types/sometype.ts": `
-	export const x = 10;
-`,
-		"/home/src/projects/myproject/root2/other/sometype2/index.d.ts": `
-	export const k = 10;
-`,
+	extendsSys := func() *testSys {
+		return newTestSys(FileMap{
+			"/home/src/projects/configs/first/tsconfig.json": stringtestutil.Dedent(`
+		{
+			"extends": "../second/tsconfig.json",
+			"include": ["${configDir}/src"],
+			"compilerOptions": {
+				"typeRoots": ["root1", "${configDir}/root2", "root3"],
+				"types": [],
+			}
+		}`),
+			"/home/src/projects/configs/second/tsconfig.json": stringtestutil.Dedent(`
+		{
+			"files": ["${configDir}/main.ts"],
+			"compilerOptions": {
+				"declarationDir": "${configDir}/decls",
+				"paths": {
+					"@myscope/*": ["${configDir}/types/*"],
+					"other/*": ["other/*"],
+				},
+				"baseUrl": "${configDir}",
+			},
+			"watchOptions": {
+				"excludeFiles": ["${configDir}/main.ts"],
+			},
+		}`),
+			"/home/src/projects/myproject/tsconfig.json": stringtestutil.Dedent(`
+		{
+			"extends": "../configs/first/tsconfig.json",
+			"compilerOptions": {
+				"declaration": true,
+				"outDir": "outDir",
+				"traceResolution": true,
+			},
+		}`),
+			"/home/src/projects/myproject/main.ts": stringtestutil.Dedent(`
+			// some comment
+			export const y = 10;
+			import { x } from "@myscope/sometype";
+		`),
+			"/home/src/projects/myproject/src/secondary.ts": stringtestutil.Dedent(`
+			// some comment
+			export const z = 10;
+			import { k } from "other/sometype2";
+		`),
+			"/home/src/projects/myproject/types/sometype.ts": stringtestutil.Dedent(`
+			// some comment
+			export const x = 10;
+		`),
+			"/home/src/projects/myproject/root2/other/sometype2/index.d.ts": stringtestutil.Dedent(`
+			export const k = 10;
+		`),
+		}, "/home/src/projects/myproject")
 	}
 
 	cases := []tscInput{{
 		subScenario:     "configDir template",
-		sys:             newTestSys(extendsSysFiles, "/home/src/projects/myproject"),
+		sys:             extendsSys(),
 		commandLineArgs: []string{"--explainFiles"},
 	}, {
 		subScenario:     "configDir template showConfig",
-		sys:             newTestSys(extendsSysFiles, "/home/src/projects/myproject"),
+		sys:             extendsSys(),
 		commandLineArgs: []string{"--showConfig"},
 	}, {
 		subScenario:     "configDir template with commandline",
-		sys:             newTestSys(extendsSysFiles, "/home/src/projects/myproject"),
+		sys:             extendsSys(),
 		commandLineArgs: []string{"--explainFiles", "--outDir", "${configDir}/outDir"},
 	}}
 
@@ -206,20 +244,19 @@ func TestTypeAcquisition(t *testing.T) {
 	t.Parallel()
 	(&tscInput{
 		subScenario: "parse tsconfig with typeAcquisition",
-		sys: newTestSys(FileMap{"/home/src/workspaces/project/tsconfig.json": `{
-	"compilerOptions": {
-		"composite": true,
-		"noEmit": true,
-	},
-	"typeAcquisition": {
-		"enable": true,
-		"include": ["0.d.ts", "1.d.ts"],
-		"exclude": ["0.js", "1.js"],
-		"disableFilenameBasedTypeAcquisition": true,
-	},
-}`},
-			"/home/src/workspaces/project",
-		),
+		sys: newTestSys(FileMap{"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+		{
+			"compilerOptions": {
+				"composite": true,
+				"noEmit": true,
+			},
+			"typeAcquisition": {
+				"enable": true,
+				"include": ["0.d.ts", "1.d.ts"],
+				"exclude": ["0.js", "1.js"],
+				"disableFilenameBasedTypeAcquisition": true,
+			},
+		}`)}, "/home/src/workspaces/project"),
 		commandLineArgs: []string{},
 	}).run(t, "typeAcquisition")
 }

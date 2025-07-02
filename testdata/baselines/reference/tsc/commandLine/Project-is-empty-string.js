@@ -5,7 +5,12 @@ Input::
 //// [/home/src/workspaces/project/first.ts] *new* 
 export const a = 1
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
-{ "compilerOptions": { "strict": true, "noEmit": true  } }
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true
+    }
+}
 
 ExitStatus:: 0
 

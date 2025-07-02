@@ -100,7 +100,7 @@ func (t *toSnapshot) setFileInfoAndEmitSignatures() {
 		info := buildInfoFileInfo.GetFileInfo()
 		t.snapshot.fileInfos[path] = info
 		// Add default emit signature as file's signature
-		if info.signature != "" && len(t.snapshot.emitSignatures) != 0 {
+		if info.signature != "" && t.snapshot.emitSignatures != nil {
 			t.snapshot.emitSignatures[path] = &emitSignature{signature: info.signature}
 		}
 	}

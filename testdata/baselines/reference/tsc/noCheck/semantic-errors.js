@@ -8,9 +8,9 @@ export const a: number = "hello";
 export const b = 10;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
-	"compilerOptions": {
-		"declaration": true,
-	}
+    "compilerOptions": {
+        "declaration": true,
+    }
 }
 
 ExitStatus:: 0

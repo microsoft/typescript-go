@@ -6,43 +6,45 @@ Input::-p packages/main --pretty false
 export {};
 //// [/home/src/workspaces/packages/common/package.json] *new* 
 {
-						"name": "common",
-						"version": "1.0.0",
-						"type": "module",
-						"exports": {
-							".": {
-								"source": "./src/index.ts",
-								"default": "./dist/index.js"
-							}
-						}
-				}
+        "name": "common",
+        "version": "1.0.0",
+        "type": "module",
+        "exports": {
+            ".": {
+                "source": "./src/index.ts",
+                "default": "./dist/index.js"
+            }
+        }
+}
 //// [/home/src/workspaces/packages/common/src/index.ts] *new* 
 export {};
 //// [/home/src/workspaces/packages/common/tsconfig.json] *new* 
 {
-					"compilerOptions": {
-						"composite": true,
-						"rootDir": "src",
-						"outDir": "dist", 
-						"module": "nodenext"
-					}
-				}
+    "compilerOptions": {
+        "composite": true,
+        "rootDir": "src",
+        "outDir": "dist", 
+        "module": "nodenext"
+    }
+}
 //// [/home/src/workspaces/packages/main/package.json] *new* 
-{ "type": "module" }
+{
+    "type": "module"
+}
 //// [/home/src/workspaces/packages/main/src/index.ts] *new* 
 import {} from "../../common/src/index.ts";
 //// [/home/src/workspaces/packages/main/tsconfig.json] *new* 
 {
-					"compilerOptions": {
-						"module": "nodenext",
-						"rewriteRelativeImportExtensions": true,
-						"rootDir": "src",
-						"outDir": "dist"
-					},
-					"references": [
-						{ "path": "../common" }
-					]
-				}
+    "compilerOptions": {
+        "module": "nodenext",
+        "rewriteRelativeImportExtensions": true,
+        "rootDir": "src",
+        "outDir": "dist"
+    },
+    "references": [
+        { "path": "../common" }
+    ]
+}
 
 ExitStatus:: 2
 

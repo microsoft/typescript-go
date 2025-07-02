@@ -8,33 +8,33 @@ export {};
 export {};
 //// [/home/src/workspaces/solution/src/compiler/tsconfig.json] *new* 
 {
-					"extends": "../tsconfig-base.json",
-					"compilerOptions": {
-						"rootDir": ".",
-						"outDir": "../../dist/compiler"
-					}
-				}
+    "extends": "../tsconfig-base.json",
+    "compilerOptions": {
+        "rootDir": ".",
+        "outDir": "../../dist/compiler"
+    }
+}
 //// [/home/src/workspaces/solution/src/services/services.ts] *new* 
 import {} from "../compiler/parser.ts";
 //// [/home/src/workspaces/solution/src/services/tsconfig.json] *new* 
 {
-					"extends": "../tsconfig-base.json",
-					"compilerOptions": {
-						"rootDir": ".", 
-						"outDir": "../../dist/services"
-					},
-					"references": [
-						{ "path": "../compiler" }
-					]
-				}
+    "extends": "../tsconfig-base.json",
+    "compilerOptions": {
+        "rootDir": ".", 
+        "outDir": "../../dist/services"
+    },
+    "references": [
+        { "path": "../compiler" }
+    ]
+}
 //// [/home/src/workspaces/solution/src/tsconfig-base.json] *new* 
 {
-					"compilerOptions": { 
-						"module": "nodenext",
-						"composite": true,
-						"rewriteRelativeImportExtensions": true
-					}
-				}
+    "compilerOptions": { 
+        "module": "nodenext",
+        "composite": true,
+        "rewriteRelativeImportExtensions": true
+    }
+}
 
 ExitStatus:: 0
 

@@ -6,9 +6,9 @@ Input::--p project
 export const x = 10;
 //// [/home/src/workspaces/solution/project/tsconfig.json] *new* 
 {
-	"references": [
-		{ "path": "../utils" },
-	],
+    "references": [
+        { "path": "../utils" },
+    ],
 }
 
 ExitStatus:: 0

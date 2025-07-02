@@ -2,6 +2,8 @@ package execute_test
 
 import (
 	"testing"
+
+	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 )
 
 type noCheckScenario struct {
@@ -22,11 +24,12 @@ func TestNoCheck(t *testing.T) {
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/project/a.ts": c.aText,
 				"/home/src/workspaces/project/b.ts": `export const b = 10;`,
-				"/home/src/workspaces/project/tsconfig.json": `{
-	"compilerOptions": {
-		"declaration": true,
-	}
-}`,
+				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"declaration": true,
+					}
+				}`),
 				// incremental: undefined, true
 			}, "/home/src/workspaces/project"),
 			commandLineArgs: []string{"--noCheck"},

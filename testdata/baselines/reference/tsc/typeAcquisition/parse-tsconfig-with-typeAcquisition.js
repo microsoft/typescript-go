@@ -4,16 +4,16 @@ useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
-	"compilerOptions": {
-		"composite": true,
-		"noEmit": true,
-	},
-	"typeAcquisition": {
-		"enable": true,
-		"include": ["0.d.ts", "1.d.ts"],
-		"exclude": ["0.js", "1.js"],
-		"disableFilenameBasedTypeAcquisition": true,
-	},
+    "compilerOptions": {
+        "composite": true,
+        "noEmit": true,
+    },
+    "typeAcquisition": {
+        "enable": true,
+        "include": ["0.d.ts", "1.d.ts"],
+        "exclude": ["0.js", "1.js"],
+        "disableFilenameBasedTypeAcquisition": true,
+    },
 }
 
 ExitStatus:: 1

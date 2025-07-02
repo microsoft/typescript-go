@@ -25,26 +25,28 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-					type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
-                    type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
+type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;
 //// [/home/src/workspaces/project/MessageablePerson.ts] *new* 
-
-                        const Messageable = () => {
-                            return class MessageableClass {
-                                public message = 'hello';
-                            }
-                        };
-                        const wrapper = () => Messageable();
-                        type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
-                        export default MessageablePerson;
+const Messageable = () => {
+    return class MessageableClass {
+        public message = 'hello';
+    }
+};
+const wrapper = () => Messageable();
+type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
+export default MessageablePerson;
 //// [/home/src/workspaces/project/main.ts] *new* 
-
-                        import MessageablePerson from './MessageablePerson.js';
-                        function logMessage( person: MessageablePerson ) {
-                            console.log( person.message );
-                        }
+import MessageablePerson from './MessageablePerson.js';
+function logMessage( person: MessageablePerson ) {
+    console.log( person.message );
+}
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
-{ "compilerOptions": { "module": "esnext" } }
+{ 
+    "compilerOptions": { 
+        "module": "esnext"
+    }
+}
 
 ExitStatus:: 0
 
@@ -68,7 +70,7 @@ function logMessage(person) {
 export {};
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2","affectsGlobalScope":true,"impliedNodeFormat":1},"ff666de4fdc53b5500de60a9b8c073c9327a9e9326417ef4861b8d2473c7457a","36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c"],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]]}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21","affectsGlobalScope":true,"impliedNodeFormat":1},"3be6695caa91776ec738c01ffbc1250eb86f9bca0c22b02335b5e5c7c63bcbaa","1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de"],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -80,26 +82,26 @@ export {};
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
-      "signature": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
+      "version": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
+      "signature": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
+        "version": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./MessageablePerson.ts",
-      "version": "ff666de4fdc53b5500de60a9b8c073c9327a9e9326417ef4861b8d2473c7457a",
-      "signature": "ff666de4fdc53b5500de60a9b8c073c9327a9e9326417ef4861b8d2473c7457a",
+      "version": "3be6695caa91776ec738c01ffbc1250eb86f9bca0c22b02335b5e5c7c63bcbaa",
+      "signature": "3be6695caa91776ec738c01ffbc1250eb86f9bca0c22b02335b5e5c7c63bcbaa",
       "impliedNodeFormat": "CommonJS"
     },
     {
       "fileName": "./main.ts",
-      "version": "36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c",
-      "signature": "36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c",
+      "version": "1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de",
+      "signature": "1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de",
       "impliedNodeFormat": "CommonJS"
     }
   ],
@@ -141,30 +143,29 @@ Signatures::
 
 Edit:: modify public to protected
 //// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
-
-                        const Messageable = () => {
-                            return class MessageableClass {
-                                protected message = 'hello';
-                            }
-                        };
-                        const wrapper = () => Messageable();
-                        type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
-                        export default MessageablePerson;
+const Messageable = () => {
+    return class MessageableClass {
+        protected message = 'hello';
+    }
+};
+const wrapper = () => Messageable();
+type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
+export default MessageablePerson;
 
 ExitStatus:: 2
 Output::
-[96mmain.ts[0m:[93m4[0m:[93m49[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
+[96mmain.ts[0m:[93m3[0m:[93m25[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
 
-[7m4[0m                             console.log( person.message );
-[7m [0m [91m                                                ~~~~~~~[0m
+[7m3[0m     console.log( person.message );
+[7m [0m [91m                        ~~~~~~~[0m
 
 
-Found 1 error in main.ts[90m:4[0m
+Found 1 error in main.ts[90m:3[0m
 
 //// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
 //// [/home/src/workspaces/project/main.js] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"ab8b2498ae671bdc5aefe51a9de13bf17d8e0438f2f573353d18e104344dd81f","signature":"0858d1a081aa47feef2a37c5648868c3ecc110cde2469aea716091b9869a58ed","impliedNodeFormat":1},{"version":"36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c","signature":"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[3,[{"pos":204,"end":211,"code":2445,"category":1,"message":"Property 'message' is protected and only accessible within class 'MessageableClass' and its subclasses."}]]]}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"7605d26cb18fccfe18cf0d5b1771a538d665f6b2bb331c9617ebdf38d7c93b29","signature":"34f86a1082929a2d2c6b784bde116fadfb61a9ee55f5141d4906ef4ce16a89c9","impliedNodeFormat":1},{"version":"1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de","signature":"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]],"semanticDiagnosticsPerFile":[[3,[{"pos":131,"end":138,"code":2445,"category":1,"message":"Property 'message' is protected and only accessible within class 'MessageableClass' and its subclasses."}]]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -176,34 +177,34 @@ Found 1 error in main.ts[90m:4[0m
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
-      "signature": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
+      "version": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
+      "signature": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
+        "version": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./MessageablePerson.ts",
-      "version": "ab8b2498ae671bdc5aefe51a9de13bf17d8e0438f2f573353d18e104344dd81f",
-      "signature": "0858d1a081aa47feef2a37c5648868c3ecc110cde2469aea716091b9869a58ed",
+      "version": "7605d26cb18fccfe18cf0d5b1771a538d665f6b2bb331c9617ebdf38d7c93b29",
+      "signature": "34f86a1082929a2d2c6b784bde116fadfb61a9ee55f5141d4906ef4ce16a89c9",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "ab8b2498ae671bdc5aefe51a9de13bf17d8e0438f2f573353d18e104344dd81f",
-        "signature": "0858d1a081aa47feef2a37c5648868c3ecc110cde2469aea716091b9869a58ed",
+        "version": "7605d26cb18fccfe18cf0d5b1771a538d665f6b2bb331c9617ebdf38d7c93b29",
+        "signature": "34f86a1082929a2d2c6b784bde116fadfb61a9ee55f5141d4906ef4ce16a89c9",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./main.ts",
-      "version": "36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c",
+      "version": "1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de",
       "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c",
+        "version": "1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
         "impliedNodeFormat": 1
       }
@@ -227,8 +228,8 @@ Found 1 error in main.ts[90m:4[0m
       "./main.ts",
       [
         {
-          "pos": 204,
-          "end": 211,
+          "pos": 131,
+          "end": 138,
           "code": 2445,
           "category": 1,
           "message": "Property 'message' is protected and only accessible within class 'MessageableClass' and its subclasses."
@@ -253,13 +254,13 @@ Edit:: no change
 
 ExitStatus:: 2
 Output::
-[96mmain.ts[0m:[93m4[0m:[93m49[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
+[96mmain.ts[0m:[93m3[0m:[93m25[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
 
-[7m4[0m                             console.log( person.message );
-[7m [0m [91m                                                ~~~~~~~[0m
+[7m3[0m     console.log( person.message );
+[7m [0m [91m                        ~~~~~~~[0m
 
 
-Found 1 error in main.ts[90m:4[0m
+Found 1 error in main.ts[90m:3[0m
 
 
 
@@ -270,22 +271,21 @@ Signatures::
 
 Edit:: modify protected to public
 //// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
-
-                        const Messageable = () => {
-                            return class MessageableClass {
-                                public message = 'hello';
-                            }
-                        };
-                        const wrapper = () => Messageable();
-                        type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
-                        export default MessageablePerson;
+const Messageable = () => {
+    return class MessageableClass {
+        public message = 'hello';
+    }
+};
+const wrapper = () => Messageable();
+type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
+export default MessageablePerson;
 
 ExitStatus:: 0
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
 //// [/home/src/workspaces/project/main.js] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"ff666de4fdc53b5500de60a9b8c073c9327a9e9326417ef4861b8d2473c7457a","signature":"6ec1f7bdc192ba06258caff3fa202fd577f8f354d676f548500eeb232155cbbe","impliedNodeFormat":1},{"version":"36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c","signature":"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]]}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./MessageablePerson.ts","./main.ts"],"fileInfos":[{"version":"4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"3be6695caa91776ec738c01ffbc1250eb86f9bca0c22b02335b5e5c7c63bcbaa","signature":"6ec1f7bdc192ba06258caff3fa202fd577f8f354d676f548500eeb232155cbbe","impliedNodeFormat":1},{"version":"1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de","signature":"8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881","impliedNodeFormat":1}],"fileIdsList":[[2]],"options":{"module":99},"referencedMap":[[3,1]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified* 
 {
   "version": "FakeTSVersion",
@@ -297,34 +297,34 @@ Output::
   "fileInfos": [
     {
       "fileName": "../../tslibs/TS/Lib/lib.d.ts",
-      "version": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
-      "signature": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
+      "version": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
+      "signature": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "575a4e15624573144926595079b1ec30f9c7853bab32f43c0b7db2acfdf038e2",
+        "version": "4454fdb8db546b8967485a3a7254c948e6876fb850a20e51972933eaf60b5b21",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./MessageablePerson.ts",
-      "version": "ff666de4fdc53b5500de60a9b8c073c9327a9e9326417ef4861b8d2473c7457a",
+      "version": "3be6695caa91776ec738c01ffbc1250eb86f9bca0c22b02335b5e5c7c63bcbaa",
       "signature": "6ec1f7bdc192ba06258caff3fa202fd577f8f354d676f548500eeb232155cbbe",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "ff666de4fdc53b5500de60a9b8c073c9327a9e9326417ef4861b8d2473c7457a",
+        "version": "3be6695caa91776ec738c01ffbc1250eb86f9bca0c22b02335b5e5c7c63bcbaa",
         "signature": "6ec1f7bdc192ba06258caff3fa202fd577f8f354d676f548500eeb232155cbbe",
         "impliedNodeFormat": 1
       }
     },
     {
       "fileName": "./main.ts",
-      "version": "36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c",
+      "version": "1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de",
       "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "36f0b00de3c707929bf1919e32e5b6053c8730bb00aa779bcdd1925414d68b8c",
+        "version": "1fe1ef024191a0efa3b3b0ec73ee8e703a58d44f6d62caf49268591964dce1de",
         "signature": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
         "impliedNodeFormat": 1
       }

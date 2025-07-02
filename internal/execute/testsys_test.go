@@ -15,6 +15,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/incrementaltestutil"
+	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
@@ -22,9 +23,10 @@ import (
 
 type FileMap map[string]any
 
-var (
-	tscLibPath           = "/home/src/tslibs/TS/Lib"
-	tscDefaultLibContent = `/// <reference no-default-lib="true"/>
+var tscLibPath = "/home/src/tslibs/TS/Lib"
+
+var tscDefaultLibContent = stringtestutil.Dedent(`
+/// <reference no-default-lib="true"/>
 interface Boolean {}
 interface Function {}
 interface CallableFunction {}
@@ -45,8 +47,8 @@ declare var Symbol: SymbolConstructor;
 interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
-declare const console: { log(msg: any): void; };`
-)
+declare const console: { log(msg: any): void; };
+`)
 
 func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 	if cwd == "" {
@@ -252,12 +254,10 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	}
 	if s.serializedDiff != nil {
 		for path := range s.serializedDiff.snap {
-			if s.FS().FileExists(path) {
-				_, ok := s.TestFS().FS().ReadFile(path)
-				if !ok {
-					// report deleted
-					s.reportFSEntryDiff(baseline, nil, path)
-				}
+			_, ok := s.TestFS().FS().ReadFile(path)
+			if !ok {
+				// report deleted
+				s.reportFSEntryDiff(baseline, nil, path)
 			}
 		}
 	}
@@ -317,4 +317,20 @@ func (s *testSys) ReplaceFileText(path string, oldText string, newText string) {
 	}
 	content = strings.Replace(content, oldText, newText, 1)
 	s.WriteFileNoError(path, content, false)
+}
+
+func (s *testSys) AppendFile(path string, text string) {
+	content, ok := s.FS().ReadFile(path)
+	if !ok {
+		panic("File not found: " + path)
+	}
+	s.WriteFileNoError(path, content+text, false)
+}
+
+func (s *testSys) PrependFile(path string, text string) {
+	content, ok := s.FS().ReadFile(path)
+	if !ok {
+		panic("File not found: " + path)
+	}
+	s.WriteFileNoError(path, text+content, false)
 }

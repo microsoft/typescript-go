@@ -8,12 +8,12 @@ export const a = 1;
 export const b = 2;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
-                    "compilerOptions": {
-                        "composite": true,
-                        "strict": true,
-                        "module": "esnext",
-                    },
-                }
+    "compilerOptions": {
+        "composite": true,
+        "strict": true,
+        "module": "esnext",
+    },
+}
 
 ExitStatus:: 0
 

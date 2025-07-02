@@ -22,7 +22,6 @@ type testTscEdit struct {
 
 var noChange = &testTscEdit{
 	caption: "no change",
-	edit:    func(sys *testSys) {},
 }
 
 var noChangeOnlyEdit = []*testTscEdit{
@@ -38,44 +37,43 @@ type tscInput struct {
 
 func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
-	t.Run(test.getTestName(), func(t *testing.T) {
+	t.Run(test.subScenario+" tsc baseline", func(t *testing.T) {
 		t.Parallel()
-		t.Run("tsc baseline", func(t *testing.T) {
-			t.Parallel()
-			// initial test tsc compile
-			baselineBuilder := test.startBaseline()
+		// initial test tsc compile
+		baselineBuilder := test.startBaseline()
 
-			exit, parsedCommandLine, incrementalProgram, watcher := execute.CommandLine(test.sys, test.commandLineArgs, true)
-			baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
+		exit, parsedCommandLine, incrementalProgram, watcher := execute.CommandLine(test.sys, test.commandLineArgs, true)
+		baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
 
-			compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
-			baselineBuilder.WriteString("\n\nCompilerOptions::")
-			baselineBuilder.Write(compilerOptionsString)
+		compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
+		baselineBuilder.WriteString("\n\nCompilerOptions::")
+		baselineBuilder.Write(compilerOptionsString)
 
+		test.sys.serializeState(baselineBuilder)
+		test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
+		for _, do := range test.edits {
+			baselineBuilder.WriteString("\n\nEdit:: " + do.caption + "\n")
+			if do.edit != nil {
+				do.edit(test.sys)
+			}
+			test.sys.baselineFSwithDiff(baselineBuilder)
+
+			var incrementalProgram *incremental.Program
+			if watcher == nil {
+				exit, parsedCommandLine, incrementalProgram, watcher = execute.CommandLine(test.sys, core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs), true)
+				baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
+			} else {
+				watcher.DoCycle()
+			}
 			test.sys.serializeState(baselineBuilder)
 			test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
-			for _, do := range test.edits {
-				do.edit(test.sys)
-				baselineBuilder.WriteString("\n\nEdit:: " + do.caption + "\n")
-				test.sys.baselineFSwithDiff(baselineBuilder)
+		}
 
-				var incrementalProgram *incremental.Program
-				if watcher == nil {
-					exit, parsedCommandLine, incrementalProgram, watcher = execute.CommandLine(test.sys, core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs), true)
-					baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
-				} else {
-					watcher.DoCycle()
-				}
-				test.sys.serializeState(baselineBuilder)
-				test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
-			}
-
-			options, name := test.getBaselineName(scenario, "")
-			baseline.Run(t, name, baselineBuilder.String(), options)
-		})
-
-		// !!! sheetal TODO :: add incremental correctness
+		options, name := test.getBaselineName(scenario, "")
+		baseline.Run(t, name, baselineBuilder.String(), options)
 	})
+
+	// !!! sheetal TODO :: add incremental correctness
 }
 
 func (test *tscInput) getTestNamePrefix() string {
@@ -92,10 +90,6 @@ func (test *tscInput) getTestNamePrefix() string {
 		w = "Watch"
 	}
 	return commandName + w
-}
-
-func (test *tscInput) getTestName() string {
-	return test.subScenario + " " + strings.Join(test.commandLineArgs, " ")
 }
 
 func (test *tscInput) getBaselineName(scenario string, suffix string) (baseline.Options, string) {
@@ -120,7 +114,7 @@ func (test *tscInput) startBaseline() *strings.Builder {
 
 func (test *tscInput) verifyCommandLineParsing(t *testing.T, scenario string) {
 	t.Helper()
-	t.Run(test.getTestName(), func(t *testing.T) {
+	t.Run(test.subScenario, func(t *testing.T) {
 		t.Parallel()
 		t.Run("baseline for the tsc compiles", func(t *testing.T) {
 			t.Parallel()
