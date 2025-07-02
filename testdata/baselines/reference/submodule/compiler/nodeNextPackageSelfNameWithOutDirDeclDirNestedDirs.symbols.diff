@@ -5,8 +5,10 @@
 
  me.thing();
 ->me.thing : Symbol(me.thing, Decl(index.ts, 0, 8))
++>me.thing : Symbol(thing, Decl(index.ts, 0, 8))
  >me : Symbol(me, Decl(thing.ts, 7, 6))
 ->thing : Symbol(me.thing, Decl(index.ts, 0, 8))
++>thing : Symbol(thing, Decl(index.ts, 0, 8))
 
  export function srcthing(): void {}
  >srcthing : Symbol(srcthing, Decl(thing.ts, 9, 11))
