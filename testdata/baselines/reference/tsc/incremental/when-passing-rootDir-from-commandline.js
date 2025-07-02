@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--rootDir src
+Input::
 //// [/home/src/workspaces/project/src/main.ts] *new* 
 export const x = 10;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
@@ -12,11 +11,8 @@ export const x = 10;
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "rootDir": "/home/src/workspaces/project/src"
-}
+tsgo --rootDir src
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -83,20 +79,17 @@ exports.x = 10;
   "size": 344
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 
 
-Edit:: no change
+Edit [0]:: no change
 
-ExitStatus:: 0
+tsgo --rootDir src
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::

@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::-i a.ts --tsbuildinfofile a.tsbuildinfo
+Input::
 //// [/home/src/workspaces/project/a.ts] *new* 
 import {A} from "./c"
 let a = A.ONE
@@ -19,12 +18,8 @@ export const enum AWorker {
     ONE = 1
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "incremental": true,
-    "tsBuildInfoFile": "/home/src/workspaces/project/a.tsbuildinfo"
-}
+tsgo -i a.ts --tsbuildinfofile a.tsbuildinfo
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -124,24 +119,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 let b = b_1.A.ONE;
 
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/b.d.ts
 *refresh*    /home/src/workspaces/project/c.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 
 
-Edit:: change enum value
+Edit [0]:: change enum value
 //// [/home/src/workspaces/project/b.d.ts] *modified* 
 export const enum AWorker {
     ONE = 2
 }
 export { AWorker as A };
 
-ExitStatus:: 0
+tsgo -i a.ts --tsbuildinfofile a.tsbuildinfo
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified time*
 //// [/home/src/workspaces/project/a.tsbuildinfo] *modified* 
@@ -220,26 +214,25 @@ Output::
 }
 //// [/home/src/workspaces/project/c.js] *modified time*
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/b.d.ts
 *refresh*    /home/src/workspaces/project/c.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (used version)   /home/src/workspaces/project/b.d.ts
 (computed .d.ts) /home/src/workspaces/project/c.ts
 (computed .d.ts) /home/src/workspaces/project/a.ts
 
 
-Edit:: change enum value again
+Edit [1]:: change enum value again
 //// [/home/src/workspaces/project/b.d.ts] *modified* 
 export const enum AWorker {
     ONE = 3
 }
 export { AWorker as A };
 
-ExitStatus:: 0
+tsgo -i a.ts --tsbuildinfofile a.tsbuildinfo
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified time*
 //// [/home/src/workspaces/project/a.tsbuildinfo] *modified* 
@@ -313,26 +306,25 @@ Output::
 }
 //// [/home/src/workspaces/project/c.js] *modified time*
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/b.d.ts
 *refresh*    /home/src/workspaces/project/c.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (used version)   /home/src/workspaces/project/b.d.ts
 (computed .d.ts) /home/src/workspaces/project/c.ts
 (used version)   /home/src/workspaces/project/a.ts
 
 
-Edit:: something else changes in b.d.ts
+Edit [2]:: something else changes in b.d.ts
 //// [/home/src/workspaces/project/b.d.ts] *modified* 
 export const enum AWorker {
     ONE = 3
 }
 export { AWorker as A };export const randomThing = 10;
 
-ExitStatus:: 0
+tsgo -i a.ts --tsbuildinfofile a.tsbuildinfo
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified time*
 //// [/home/src/workspaces/project/a.tsbuildinfo] *modified* 
@@ -406,26 +398,25 @@ Output::
 }
 //// [/home/src/workspaces/project/c.js] *modified time*
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/b.d.ts
 *refresh*    /home/src/workspaces/project/c.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (used version)   /home/src/workspaces/project/b.d.ts
 (computed .d.ts) /home/src/workspaces/project/c.ts
 (used version)   /home/src/workspaces/project/a.ts
 
 
-Edit:: something else changes in b.d.ts again
+Edit [3]:: something else changes in b.d.ts again
 //// [/home/src/workspaces/project/b.d.ts] *modified* 
 export const enum AWorker {
     ONE = 3
 }
 export { AWorker as A };export const randomThing = 10;export const randomThing2 = 10;
 
-ExitStatus:: 0
+tsgo -i a.ts --tsbuildinfofile a.tsbuildinfo
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified time*
 //// [/home/src/workspaces/project/a.tsbuildinfo] *modified* 
@@ -499,12 +490,10 @@ Output::
 }
 //// [/home/src/workspaces/project/c.js] *modified time*
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/b.d.ts
 *refresh*    /home/src/workspaces/project/c.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (used version)   /home/src/workspaces/project/b.d.ts
 (computed .d.ts) /home/src/workspaces/project/c.ts

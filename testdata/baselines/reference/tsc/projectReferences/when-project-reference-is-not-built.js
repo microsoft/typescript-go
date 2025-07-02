@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/solution
 useCaseSensitiveFileNames::true
-Input::--p project
+Input::
 //// [/home/src/workspaces/solution/project/index.ts] *new* 
 import { x } from "../utils";
 //// [/home/src/workspaces/solution/project/tsconfig.json] *new* 
@@ -19,11 +18,8 @@ export const x = 10;
     }
 }
 
-ExitStatus:: 2
-
-CompilerOptions::{
-    "project": "/home/src/workspaces/solution/project"
-}
+tsgo --p project
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96mproject/index.ts[0m:[93m1[0m:[93m19[0m - [91merror[0m[90m TS6305: [0mOutput file '/home/src/workspaces/solution/utils/index.d.ts' has not been built from source file '/home/src/workspaces/solution/utils/index.ts'.
 

@@ -1,15 +1,11 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::index.ts --watch
+Input::
 //// [/home/src/workspaces/project/index.ts] *new* 
 
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "watch": true
-}
+tsgo index.ts --watch
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -37,9 +33,7 @@ declare const console: { log(msg: any): void; };
 //// [/home/src/workspaces/project/index.js] *new* 
 
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/index.ts
-
 Signatures::

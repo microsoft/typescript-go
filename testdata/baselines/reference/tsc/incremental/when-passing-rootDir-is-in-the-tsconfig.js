@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -13,9 +12,8 @@ export const x = 10;
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -82,20 +80,17 @@ exports.x = 10;
   "size": 341
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 
 
-Edit:: no change
+Edit [0]:: no change
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::

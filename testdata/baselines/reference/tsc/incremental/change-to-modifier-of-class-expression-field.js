@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--incremental
+Input::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *new* 
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -48,11 +47,8 @@ function logMessage( person: MessageablePerson ) {
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "incremental": true
-}
+tsgo --incremental
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.js] *new* 
 const Messageable = () => {
@@ -121,27 +117,24 @@ export {};
   "size": 452
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/MessageablePerson.ts
 *refresh*    /home/src/workspaces/project/main.ts
-
 Signatures::
 
 
-Edit:: no change
+Edit [0]:: no change
 
-ExitStatus:: 0
+tsgo --incremental
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: modify public to protected
+Edit [1]:: modify public to protected
 //// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
 const Messageable = () => {
     return class MessageableClass {
@@ -152,7 +145,8 @@ const wrapper = () => Messageable();
 type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
 export default MessageablePerson;
 
-ExitStatus:: 2
+tsgo --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96mmain.ts[0m:[93m3[0m:[93m25[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
 
@@ -240,19 +234,18 @@ Found 1 error in main.ts[90m:3[0m
   "size": 878
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/MessageablePerson.ts
 *refresh*    /home/src/workspaces/project/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/MessageablePerson.ts
 (computed .d.ts) /home/src/workspaces/project/main.ts
 
 
-Edit:: no change
+Edit [2]:: no change
 
-ExitStatus:: 2
+tsgo --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96mmain.ts[0m:[93m3[0m:[93m25[0m - [91merror[0m[90m TS2445: [0mProperty 'message' is protected and only accessible within class 'MessageableClass' and its subclasses.
 
@@ -263,13 +256,11 @@ Output::
 Found 1 error in main.ts[90m:3[0m
 
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: modify protected to public
+Edit [3]:: modify protected to public
 //// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
 const Messageable = () => {
     return class MessageableClass {
@@ -280,7 +271,8 @@ const wrapper = () => Messageable();
 type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
 export default MessageablePerson;
 
-ExitStatus:: 0
+tsgo --incremental
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
 //// [/home/src/workspaces/project/main.js] *modified time*
@@ -346,22 +338,19 @@ Output::
   "size": 678
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/MessageablePerson.ts
 *refresh*    /home/src/workspaces/project/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/MessageablePerson.ts
 (computed .d.ts) /home/src/workspaces/project/main.ts
 
 
-Edit:: no change
+Edit [4]:: no change
 
-ExitStatus:: 0
+tsgo --incremental
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::

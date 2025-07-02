@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--incremental
+Input::
 //// [/home/src/workspaces/project/src/another.d.ts] *new* 
 export const y = 10;
 //// [/home/src/workspaces/project/src/main.d.ts] *new* 
@@ -9,11 +8,8 @@ export const x = 10;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {}
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "incremental": true
-}
+tsgo --incremental
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -77,31 +73,29 @@ declare const console: { log(msg: any): void; };
   "size": 386
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/another.d.ts
 *refresh*    /home/src/workspaces/project/src/main.d.ts
-
 Signatures::
 
 
-Edit:: no change
+Edit [0]:: no change
 
-ExitStatus:: 0
+tsgo --incremental
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: modify d.ts file
+Edit [1]:: modify d.ts file
 //// [/home/src/workspaces/project/src/main.d.ts] *modified* 
 export const x = 10;export const xy = 100;
 
-ExitStatus:: 0
+tsgo --incremental
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./src/another.d.ts","./src/main.d.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},"4aa16e9a67a4820d1dc51507221b4c73b5626b3a759d79d7147ad4eabe37ef49","a701af2196ad5afd5fe2fb1f6c1c9ad538b85b9e4c37d747738ecc7f5d609540"]}
@@ -142,9 +136,7 @@ Output::
   "size": 386
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/src/main.d.ts
-
 Signatures::
 (used version)   /home/src/workspaces/project/src/main.d.ts

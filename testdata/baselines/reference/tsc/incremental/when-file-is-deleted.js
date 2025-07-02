@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -14,9 +13,8 @@ export class D { }
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -119,21 +117,20 @@ exports.D = D;
   "size": 685
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/file1.ts
 *refresh*    /home/src/workspaces/project/file2.ts
-
 Signatures::
 (stored at emit) /home/src/workspaces/project/file1.ts
 (stored at emit) /home/src/workspaces/project/file2.ts
 
 
-Edit:: delete file with imports
+Edit [0]:: delete file with imports
 //// [/home/src/workspaces/project/file2.ts] *deleted*
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/outDir/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","fileNames":["../../../tslibs/TS/Lib/lib.d.ts","../file1.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"e8197812b523db314f9f43881cab045172bec1a6893c27b62a52b128afbb19da","signature":"33031a47f740dde897da491c7c6ac0ef2224f9c807448ba058aadba8abd00433","impliedNodeFormat":1}],"options":{"composite":true,"outDir":"./"},"latestChangedDtsFile":"./file2.d.ts"}
@@ -177,7 +174,5 @@ Output::
   "size": 491
 }
 
-
 SemanticDiagnostics::
-
 Signatures::

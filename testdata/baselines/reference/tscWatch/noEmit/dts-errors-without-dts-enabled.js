@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::-w
+Input::
 //// [/home/src/workspaces/project/a.ts] *new* 
 const a = class { private p = 10; };
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
@@ -11,11 +10,8 @@ const a = class { private p = 10; };
 	}
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "watch": true
-}
+tsgo -w
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -41,31 +37,27 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 
 
-Edit:: fix error
+Edit [0]:: fix error
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = "hello";
 
 
 Output::
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/a.ts
 
 
-Edit:: emit after fixing error
+Edit [1]:: emit after fixing error
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -79,13 +71,11 @@ Output::
 const a = "hello";
 
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: no emit run after fixing error
+Edit [2]:: no emit run after fixing error
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -97,29 +87,25 @@ Edit:: no emit run after fixing error
 
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: introduce error
+Edit [3]:: introduce error
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = class { private p = 10; };
 
 
 Output::
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/a.ts
 
 
-Edit:: emit when error
+Edit [4]:: emit when error
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -135,13 +121,11 @@ const a = class {
 };
 
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: no emit run when error
+Edit [5]:: no emit run when error
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -153,7 +137,5 @@ Edit:: no emit run when error
 
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::

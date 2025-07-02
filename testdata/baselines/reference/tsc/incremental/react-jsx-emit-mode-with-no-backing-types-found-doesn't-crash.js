@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -28,9 +27,8 @@ export const App = () => <div propA={true}></div>;
     } 
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -113,10 +111,8 @@ exports.App = App;
   "size": 523
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/index.tsx
 *refresh*    /home/src/workspaces/project/node_modules/@types/react/index.d.ts
-
 Signatures::

@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -26,9 +25,8 @@ declare function Component(props: { children?: number }): any;
     },
 }
 
-ExitStatus:: 2
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96mindex.tsx[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
   The last overload gave the following error.
@@ -174,17 +172,16 @@ declare const console: { log(msg: any): void; };
   "size": 1181
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/index.tsx
-
 Signatures::
 
 
-Edit:: no change
+Edit [0]:: no change
 
-ExitStatus:: 2
+tsgo 
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96mindex.tsx[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
   The last overload gave the following error.
@@ -203,7 +200,5 @@ Output::
 Found 1 error in index.tsx[90m:10[0m
 
 
-
 SemanticDiagnostics::
-
 Signatures::

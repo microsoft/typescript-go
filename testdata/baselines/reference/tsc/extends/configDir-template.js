@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/projects/myproject
 useCaseSensitiveFileNames::true
-Input::--explainFiles
+Input::
 //// [/home/src/projects/configs/first/tsconfig.json] *new* 
 {
     "extends": "../second/tsconfig.json",
@@ -49,11 +48,8 @@ import { k } from "other/sometype2";
 // some comment
 export const x = 10;
 
-ExitStatus:: 2
-
-CompilerOptions::{
-    "explainFiles": true
-}
+tsgo --explainFiles
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96msrc/secondary.ts[0m:[93m3[0m:[93m19[0m - [91merror[0m[90m TS2307: [0mCannot find module 'other/sometype2' or its corresponding type declarations.
 

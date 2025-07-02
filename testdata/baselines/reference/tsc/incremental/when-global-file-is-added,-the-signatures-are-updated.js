@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -18,9 +17,8 @@ function main() { }
     "include": ["src/**/*.ts"],
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -155,37 +153,35 @@ function main() { }
   "size": 1056
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/filePresent.ts
 *refresh*    /home/src/workspaces/project/src/anotherFileWithSameReferenes.ts
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 (stored at emit) /home/src/workspaces/project/src/filePresent.ts
 (stored at emit) /home/src/workspaces/project/src/anotherFileWithSameReferenes.ts
 (stored at emit) /home/src/workspaces/project/src/main.ts
 
 
-Edit:: no change
+Edit [0]:: no change
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: Modify main file
+Edit [1]:: Modify main file
 //// [/home/src/workspaces/project/src/main.ts] *modified* 
 /// <reference path="./filePresent.ts"/>
 /// <reference path="./fileNotFound.ts"/>
 function main() { }something();
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/src/main.js] *modified* 
 /// <reference path="./filePresent.ts"/>
@@ -281,21 +277,20 @@ something();
   "size": 1056
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/src/main.ts
 
 
-Edit:: Modify main file again
+Edit [2]:: Modify main file again
 //// [/home/src/workspaces/project/src/main.ts] *modified* 
 /// <reference path="./filePresent.ts"/>
 /// <reference path="./fileNotFound.ts"/>
 function main() { }something();something();
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/src/main.js] *modified* 
 /// <reference path="./filePresent.ts"/>
@@ -392,15 +387,13 @@ something();
   "size": 1056
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/src/main.ts
 
 
-Edit:: Add new file and update main file
+Edit [3]:: Add new file and update main file
 //// [/home/src/workspaces/project/src/main.ts] *modified* 
 /// <reference path="./newFile.ts"/>
 /// <reference path="./filePresent.ts"/>
@@ -409,7 +402,8 @@ function main() { }something();something();foo();
 //// [/home/src/workspaces/project/src/newFile.ts] *new* 
 function foo() { return 20; }
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/src/main.js] *modified* 
 /// <reference path="./newFile.ts"/>
@@ -534,22 +528,21 @@ function foo() { return 20; }
   "size": 1292
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/newFile.ts
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/src/newFile.ts
 (computed .d.ts) /home/src/workspaces/project/src/main.ts
 
 
-Edit:: Write file that could not be resolved
+Edit [4]:: Write file that could not be resolved
 //// [/home/src/workspaces/project/src/fileNotFound.ts] *new* 
 function something2() { return 20; }
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/src/anotherFileWithSameReferenes.js] *modified time*
 //// [/home/src/workspaces/project/src/fileNotFound.d.ts] *new* 
@@ -680,27 +673,26 @@ function something2() { return 20; }
   "size": 1503
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/fileNotFound.ts
 *refresh*    /home/src/workspaces/project/src/anotherFileWithSameReferenes.ts
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/src/fileNotFound.ts
 (computed .d.ts) /home/src/workspaces/project/src/anotherFileWithSameReferenes.ts
 (computed .d.ts) /home/src/workspaces/project/src/main.ts
 
 
-Edit:: Modify main file
+Edit [5]:: Modify main file
 //// [/home/src/workspaces/project/src/main.ts] *modified* 
 /// <reference path="./newFile.ts"/>
 /// <reference path="./filePresent.ts"/>
 /// <reference path="./fileNotFound.ts"/>
 function main() { }something();something();foo();something();
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/src/main.js] *modified* 
 /// <reference path="./newFile.ts"/>
@@ -833,9 +825,7 @@ something();
   "size": 1503
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/src/main.ts

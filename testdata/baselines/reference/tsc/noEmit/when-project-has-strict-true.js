@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--noEmit
+Input::
 //// [/home/src/workspaces/project/class1.ts] *new* 
 export class class1 {}
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
@@ -12,11 +11,8 @@ export class class1 {}
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "noEmit": true
-}
+tsgo --noEmit
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -83,9 +79,7 @@ declare const console: { log(msg: any): void; };
   "size": 351
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/class1.ts
-
 Signatures::

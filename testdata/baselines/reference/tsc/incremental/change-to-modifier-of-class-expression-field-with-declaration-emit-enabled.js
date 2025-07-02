@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--incremental
+Input::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *new* 
 /// <reference no-default-lib="true"/>
 interface Boolean {}
@@ -49,11 +48,8 @@ function logMessage( person: MessageablePerson ) {
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "incremental": true
-}
+tsgo --incremental
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.d.ts] *new* 
 declare const wrapper: () => {
@@ -145,29 +141,26 @@ export {};
   "size": 697
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/MessageablePerson.ts
 *refresh*    /home/src/workspaces/project/main.ts
-
 Signatures::
 (stored at emit) /home/src/workspaces/project/MessageablePerson.ts
 (stored at emit) /home/src/workspaces/project/main.ts
 
 
-Edit:: no change
+Edit [0]:: no change
 
-ExitStatus:: 0
+tsgo --incremental
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: modify public to protected
+Edit [1]:: modify public to protected
 //// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
 const Messageable = () => {
     return class MessageableClass {
@@ -178,7 +171,8 @@ const wrapper = () => Messageable();
 type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
 export default MessageablePerson;
 
-ExitStatus:: 2
+tsgo --incremental
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96mMessageablePerson.ts[0m:[93m6[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'message' of exported anonymous class type may not be private or protected.
 
@@ -305,19 +299,18 @@ Errors  Files
   "size": 1203
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/MessageablePerson.ts
 *refresh*    /home/src/workspaces/project/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/MessageablePerson.ts
 (computed .d.ts) /home/src/workspaces/project/main.ts
 
 
-Edit:: no change
+Edit [2]:: no change
 
-ExitStatus:: 1
+tsgo --incremental
+ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [96mMessageablePerson.ts[0m:[93m6[0m:[93m7[0m - [91merror[0m[90m TS4094: [0mProperty 'message' of exported anonymous class type may not be private or protected.
 
@@ -343,13 +336,11 @@ Errors  Files
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified time*
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: modify protected to public
+Edit [3]:: modify protected to public
 //// [/home/src/workspaces/project/MessageablePerson.ts] *modified* 
 const Messageable = () => {
     return class MessageableClass {
@@ -360,7 +351,8 @@ const wrapper = () => Messageable();
 type MessageablePerson = InstanceType<ReturnType<typeof wrapper>>;
 export default MessageablePerson;
 
-ExitStatus:: 0
+tsgo --incremental
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/MessageablePerson.d.ts] *modified time*
 //// [/home/src/workspaces/project/MessageablePerson.js] *modified time*
@@ -429,22 +421,19 @@ Output::
   "size": 697
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/MessageablePerson.ts
 *refresh*    /home/src/workspaces/project/main.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/MessageablePerson.ts
 (computed .d.ts) /home/src/workspaces/project/main.ts
 
 
-Edit:: no change
+Edit [4]:: no change
 
-ExitStatus:: 0
+tsgo --incremental
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::

@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/solution
 useCaseSensitiveFileNames::true
-Input::--p project --pretty false
+Input::
 //// [/home/src/workspaces/solution/no-preserve/index.d.ts] *new* 
 export declare const enum F { A = 1 }
 //// [/home/src/workspaces/solution/no-preserve/index.ts] *new* 
@@ -43,12 +42,8 @@ F.A;
     ],
 }
 
-ExitStatus:: 2
-
-CompilerOptions::{
-    "project": "/home/src/workspaces/solution/project",
-    "pretty": false
-}
+tsgo --p project --pretty false
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 project/index.ts(2,10): error TS2748: Cannot access ambient const enums when 'verbatimModuleSyntax' is enabled.
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*

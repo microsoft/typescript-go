@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -39,9 +38,8 @@ export type Wrap<C> = {
     "include": ["src"],
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -192,20 +190,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
   "size": 950
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/box.ts
 *refresh*    /home/src/workspaces/project/src/wrap.ts
 *refresh*    /home/src/workspaces/project/src/bug.js
-
 Signatures::
 (stored at emit) /home/src/workspaces/project/src/box.ts
 (stored at emit) /home/src/workspaces/project/src/wrap.ts
 (stored at emit) /home/src/workspaces/project/src/bug.js
 
 
-Edit:: modify js file
+Edit [0]:: modify js file
 //// [/home/src/workspaces/project/src/bug.js] *modified* 
 import * as B from "./box.js"
 import * as W from "./wrap.js"
@@ -226,7 +222,8 @@ const box = (n = 0) => ({ unbox: () => n })
 
 export const bug = wrap({ n: box(1) });export const something = 1;
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/outDir/src/bug.d.ts] *modified* 
 import * as B from "./box.js";
@@ -336,9 +333,7 @@ exports.something = 1;
   "size": 949
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/src/bug.js
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/src/bug.js
