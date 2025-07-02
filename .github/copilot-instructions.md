@@ -9,22 +9,21 @@ Most of our development takes place in the `internal` directory, and most behavi
 
 Most development on the codebase is in Go.
 Standard Go commands and practices apply, but we primarily use a tool called `hereby` to build, run tests, and other tasks.
-Feel free to install `hereby` globally (`npm install -g hereby`) if it is easier, and run `hereby --list` to see all available commands.
+Run `hereby --list` to see all available commands.
 
 ```sh
-hereby build  # Build the project
-hereby test   # Run tests
-hereby format # Format the code
-hereby lint   # Run linters
+npx hereby build  # Build the project
+npx hereby test   # Run tests
+npx hereby format # Format the code
+npx hereby lint   # Run linters
+
+# To run a specific compiler test:
+go test -run='TestSubmodule/<test name>' ./internal/testrunner  # For submodule tests in _submodules/TypeScript
+go test -run='TestLocal/<test name>' ./internal/testrunner     # For local tests in testdata/tests/cases
 ```
 
 Always make sure code is formatted, linted, and tested before sending a pull request.
 
-## Running Specific Tests
-
-To run a specific compiler test:
-- For submodule tests in `_submodules/TypeScript`: `go test -run='TestSubmodule/<test name>' ./internal/testrunner`.
-- For local tests in `testdata/tests/cases`: `go test -run='TestLocal/<test name>' ./internal/testrunner`.
 
 ## Compiler Features, Fixes, and Tests
 
@@ -89,7 +88,9 @@ It is fine to implement more and more of a feature across commits, but be sure t
 
 ## Code Porting Reference
 
-This code is ported from code present in `_submodules/TypeScript`. When implementing features or fixing bugs, those files should be searched for similar functions when code is either missing or potentially wrong. The TypeScript submodule serves as the reference implementation for behavior and functionality.
+The code in `internal` is ported from the code in `_submodules/TypeScript`.
+When implementing features or fixing bugs, those files should be searched for similar functions when code is either missing or potentially wrong.
+The TypeScript submodule serves as the reference implementation for behavior and functionality.
 
 # Other Instructions
 
