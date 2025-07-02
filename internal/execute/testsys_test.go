@@ -55,7 +55,11 @@ func newTestSys(fileOrFolderList FileMap, cwd string) *testSys {
 		cwd = "/home/src/workspaces/project"
 	}
 	sys := &testSys{
-		fs:                 NewFSTrackingLibs(incrementaltestutil.NewFsHandlingBuildInfo(vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/))),
+		fs: &incrementaltestutil.FsHandlingBuildInfo{
+			FS: &testFs{
+				FS: vfstest.FromMap(fileOrFolderList, true /*useCaseSensitiveFileNames*/),
+			},
+		},
 		defaultLibraryPath: tscLibPath,
 		cwd:                cwd,
 		files:              slices.Collect(maps.Keys(fileOrFolderList)),
@@ -91,7 +95,7 @@ type testSys struct {
 	currentWrite   *strings.Builder
 	serializedDiff *snapshot
 
-	fs                 *testFsTrackingLibs
+	fs                 *incrementaltestutil.FsHandlingBuildInfo
 	defaultLibraryPath string
 	cwd                string
 	files              []string
@@ -114,18 +118,22 @@ func (s *testSys) FS() vfs.FS {
 	return s.fs
 }
 
-func (s *testSys) TestFS() *incrementaltestutil.FsHandlingBuildInfo {
-	return s.fs.FS.(*incrementaltestutil.FsHandlingBuildInfo)
+func (s *testSys) testFs() *testFs {
+	return s.fs.FS.(*testFs)
+}
+
+func (s *testSys) fsFromFileMap() vfs.FS {
+	return s.testFs().FS
 }
 
 func (s *testSys) ensureLibPathExists(path string) {
 	path = tscLibPath + "/" + path
-	if _, ok := s.TestFS().ReadFile(path); !ok {
-		if s.fs.defaultLibs == nil {
-			s.fs.defaultLibs = &collections.SyncSet[string]{}
+	if _, ok := s.fsFromFileMap().ReadFile(path); !ok {
+		if s.testFs().defaultLibs == nil {
+			s.testFs().defaultLibs = &collections.SyncSet[string]{}
 		}
-		s.fs.defaultLibs.Add(path)
-		err := s.TestFS().WriteFile(path, tscDefaultLibContent, false)
+		s.testFs().defaultLibs.Add(path)
+		err := s.fsFromFileMap().WriteFile(path, tscDefaultLibContent, false)
 		if err != nil {
 			panic("Failed to write default library file: " + err.Error())
 		}
@@ -219,6 +227,9 @@ func (s *testSys) baselineOutput(baseline io.Writer) {
 	}
 	// todo screen clears
 	s.printOutputs(baseline)
+}
+
+func (s *testSys) clearOutput() {
 	s.output = []string{}
 }
 
@@ -226,7 +237,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	// todo: baselines the entire fs, possibly doesn't correctly diff all cases of emitted files, since emit isn't fully implemented and doesn't always emit the same way as strada
 	snap := map[string]*diffEntry{}
 
-	err := s.FS().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
+	err := s.fsFromFileMap().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
 			return e
 		}
@@ -235,7 +246,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			return nil
 		}
 
-		newContents, ok := s.TestFS().InnerReadFile(path)
+		newContents, ok := s.fsFromFileMap().ReadFile(path)
 		if !ok {
 			return nil
 		}
@@ -254,7 +265,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	}
 	if s.serializedDiff != nil {
 		for path := range s.serializedDiff.snap {
-			_, ok := s.TestFS().InnerReadFile(path)
+			_, ok := s.fsFromFileMap().ReadFile(path)
 			if !ok {
 				// report deleted
 				s.reportFSEntryDiff(baseline, nil, path)
@@ -262,8 +273,8 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 		}
 	}
 	var defaultLibs collections.SyncSet[string]
-	if s.fs.defaultLibs != nil {
-		s.fs.defaultLibs.Range(func(libPath string) bool {
+	if s.testFs().defaultLibs != nil {
+		s.testFs().defaultLibs.Range(func(libPath string) bool {
 			defaultLibs.Add(libPath)
 			return true
 		})
@@ -284,7 +295,7 @@ func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry
 	}
 	// todo handle more cases of fs changes
 	if oldDirContent == nil {
-		if s.fs.defaultLibs == nil || !s.fs.defaultLibs.Has(path) {
+		if s.testFs().defaultLibs == nil || !s.testFs().defaultLibs.Has(path) {
 			fmt.Fprint(baseline, "//// [", path, "] *new* \n", newDirContent.content, "\n")
 		}
 	} else if newDirContent == nil {
@@ -293,7 +304,7 @@ func (s *testSys) reportFSEntryDiff(baseline io.Writer, newDirContent *diffEntry
 		fmt.Fprint(baseline, "//// [", path, "] *modified* \n", newDirContent.content, "\n")
 	} else if newDirContent.fileInfo.ModTime() != oldDirContent.fileInfo.ModTime() {
 		fmt.Fprint(baseline, "//// [", path, "] *modified time*\n")
-	} else if defaultLibs != nil && defaultLibs.Has(path) && s.fs.defaultLibs != nil && !s.fs.defaultLibs.Has(path) {
+	} else if defaultLibs != nil && defaultLibs.Has(path) && s.testFs().defaultLibs != nil && !s.testFs().defaultLibs.Has(path) {
 		// Lib file that was read
 		fmt.Fprint(baseline, "//// [", path, "] *Lib*\n", newDirContent.content, "\n")
 	}
@@ -304,33 +315,33 @@ func (s *testSys) printOutputs(baseline io.Writer) {
 	fmt.Fprint(baseline, strings.Join(s.output, "\n"))
 }
 
-func (s *testSys) WriteFileNoError(path string, content string, writeByteOrderMark bool) {
-	if err := s.FS().WriteFile(path, content, writeByteOrderMark); err != nil {
+func (s *testSys) writeFileNoError(path string, content string, writeByteOrderMark bool) {
+	if err := s.fsFromFileMap().WriteFile(path, content, writeByteOrderMark); err != nil {
 		panic(err)
 	}
 }
 
-func (s *testSys) ReplaceFileText(path string, oldText string, newText string) {
-	content, ok := s.FS().ReadFile(path)
+func (s *testSys) replaceFileText(path string, oldText string, newText string) {
+	content, ok := s.fsFromFileMap().ReadFile(path)
 	if !ok {
 		panic("File not found: " + path)
 	}
 	content = strings.Replace(content, oldText, newText, 1)
-	s.WriteFileNoError(path, content, false)
+	s.writeFileNoError(path, content, false)
 }
 
-func (s *testSys) AppendFile(path string, text string) {
-	content, ok := s.FS().ReadFile(path)
+func (s *testSys) appendFile(path string, text string) {
+	content, ok := s.fsFromFileMap().ReadFile(path)
 	if !ok {
 		panic("File not found: " + path)
 	}
-	s.WriteFileNoError(path, content+text, false)
+	s.writeFileNoError(path, content+text, false)
 }
 
-func (s *testSys) PrependFile(path string, text string) {
-	content, ok := s.FS().ReadFile(path)
+func (s *testSys) prependFile(path string, text string) {
+	content, ok := s.fsFromFileMap().ReadFile(path)
 	if !ok {
 		panic("File not found: " + path)
 	}
-	s.WriteFileNoError(path, text+content, false)
+	s.writeFileNoError(path, text+content, false)
 }

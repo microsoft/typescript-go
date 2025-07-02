@@ -11,12 +11,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/execute"
 	"github.com/microsoft/typescript-go/internal/incremental"
 	"github.com/microsoft/typescript-go/internal/testutil/baseline"
+	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type testTscEdit struct {
 	caption         string
 	commandLineArgs []string
 	edit            func(*testSys)
+	expectedDiff    string
 }
 
 var noChange = &testTscEdit{
@@ -30,13 +32,14 @@ var noChangeOnlyEdit = []*testTscEdit{
 type tscInput struct {
 	subScenario     string
 	commandLineArgs []string
-	sys             *testSys
+	files           FileMap
+	cwd             string
 	edits           []*testTscEdit
 }
 
-func (test *tscInput) executeCommand(baselineBuilder *strings.Builder, commandLineArgs []string) (*incremental.Program, *execute.Watcher) {
+func (test *tscInput) executeCommand(sys *testSys, baselineBuilder *strings.Builder, commandLineArgs []string) (*incremental.Program, *execute.Watcher) {
 	fmt.Fprint(baselineBuilder, "tsgo ", strings.Join(commandLineArgs, " "), "\n")
-	exit, incrementalProgram, watcher := execute.CommandLine(test.sys, commandLineArgs, true)
+	exit, incrementalProgram, watcher := execute.CommandLine(sys, commandLineArgs, true)
 	switch exit {
 	case execute.ExitStatusSuccess:
 		baselineBuilder.WriteString("ExitStatus:: Success")
@@ -63,39 +66,97 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 		t.Parallel()
 		// initial test tsc compile
 		baselineBuilder := &strings.Builder{}
+		sys := newTestSys(test.files, test.cwd)
 		fmt.Fprint(
 			baselineBuilder,
 			"currentDirectory::",
-			test.sys.GetCurrentDirectory(),
+			sys.GetCurrentDirectory(),
 			"\nuseCaseSensitiveFileNames::",
-			test.sys.FS().UseCaseSensitiveFileNames(),
+			sys.FS().UseCaseSensitiveFileNames(),
 			"\nInput::\n",
 		)
-		test.sys.baselineFSwithDiff(baselineBuilder)
-		incrementalProgram, watcher := test.executeCommand(baselineBuilder, test.commandLineArgs)
-		test.sys.serializeState(baselineBuilder)
-		test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
+		sys.baselineFSwithDiff(baselineBuilder)
+		incrementalProgram, watcher := test.executeCommand(sys, baselineBuilder, test.commandLineArgs)
+		sys.serializeState(baselineBuilder)
+		sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
 
 		for index, do := range test.edits {
-			baselineBuilder.WriteString(fmt.Sprintf("\n\nEdit [%d]:: %s\n", index, do.caption))
-			if do.edit != nil {
-				do.edit(test.sys)
-			}
-			test.sys.baselineFSwithDiff(baselineBuilder)
+			sys.clearOutput()
+			wg := core.NewWorkGroup(false)
+			var nonIncrementalSys *testSys
+			commandLineArgs := core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs)
+			wg.Queue(func() {
+				baselineBuilder.WriteString(fmt.Sprintf("\n\nEdit [%d]:: %s\n", index, do.caption))
+				if do.edit != nil {
+					do.edit(sys)
+				}
+				sys.baselineFSwithDiff(baselineBuilder)
 
-			var incrementalProgram *incremental.Program
-			if watcher == nil {
-				commandLineArgs := core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs)
-				incrementalProgram, watcher = test.executeCommand(baselineBuilder, commandLineArgs)
-			} else {
-				watcher.DoCycle()
+				var incrementalProgram *incremental.Program
+				if watcher == nil {
+					incrementalProgram, watcher = test.executeCommand(sys, baselineBuilder, commandLineArgs)
+				} else {
+					watcher.DoCycle()
+				}
+				sys.serializeState(baselineBuilder)
+				sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
+			})
+			wg.Queue(func() {
+				// !!! Compute build with all the edits
+				nonIncrementalSys = newTestSys(test.files, test.cwd)
+				for i := range index + 1 {
+					if test.edits[i].edit != nil {
+						test.edits[i].edit(nonIncrementalSys)
+					}
+				}
+				execute.CommandLine(nonIncrementalSys, commandLineArgs, true)
+			})
+			wg.RunAndWait()
+
+			diff := getDiffForIncremental(sys, nonIncrementalSys)
+			if diff != "" {
+				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s\n", core.IfElse(do.expectedDiff == "", "!!! Unexpected diff, please review and either fix or write explanation as expectedDiff !!!", do.expectedDiff)))
+				baselineBuilder.WriteString(diff)
+			} else if do.expectedDiff != "" {
+				baselineBuilder.WriteString(fmt.Sprintf("\n\nDiff:: %s !!! Diff not found but explanation present, please review and remove the explanation !!!\n", do.expectedDiff))
 			}
-			test.sys.serializeState(baselineBuilder)
-			test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
 		}
-
 		baseline.Run(t, strings.ReplaceAll(test.subScenario, " ", "-")+".js", baselineBuilder.String(), baseline.Options{Subfolder: filepath.Join(test.getBaselineSubFolder(), scenario)})
 	})
+}
+
+func getDiffForIncremental(incrementalSys *testSys, nonIncrementalSys *testSys) string {
+	var diffBuilder strings.Builder
+
+	nonIncrementalOutputs := nonIncrementalSys.testFs().writtenFiles.ToArray()
+	slices.Sort(nonIncrementalOutputs)
+	for _, nonIncrementalOutput := range nonIncrementalOutputs {
+		if tspath.FileExtensionIs(nonIncrementalOutput, tspath.ExtensionTsBuildInfo) ||
+			strings.HasSuffix(nonIncrementalOutput, ".readable.baseline.txt") {
+			// Just check existence
+			if !incrementalSys.fsFromFileMap().FileExists(nonIncrementalOutput) {
+				diffBuilder.WriteString(baseline.DiffText("nonIncremental "+nonIncrementalOutput, "incremental "+nonIncrementalOutput, "Exists", ""))
+				diffBuilder.WriteString("\n")
+			}
+		} else {
+			nonIncrementalText, ok := nonIncrementalSys.fsFromFileMap().ReadFile(nonIncrementalOutput)
+			if !ok {
+				panic("Written file not found " + nonIncrementalOutput)
+			}
+			incrementalText, ok := incrementalSys.fsFromFileMap().ReadFile(nonIncrementalOutput)
+			if !ok || incrementalText != nonIncrementalText {
+				diffBuilder.WriteString(baseline.DiffText("nonIncremental "+nonIncrementalOutput, "incremental "+nonIncrementalOutput, nonIncrementalText, incrementalText))
+				diffBuilder.WriteString("\n")
+			}
+		}
+	}
+
+	incrementalErrors := strings.Join(incrementalSys.output, "")
+	nonIncrementalErrors := strings.Join(nonIncrementalSys.output, "")
+	if incrementalErrors != nonIncrementalErrors {
+		diffBuilder.WriteString(baseline.DiffText("nonIncremental errors.txt", "incremental errors.txt", nonIncrementalErrors, incrementalErrors))
+	}
+	return diffBuilder.String()
 }
 
 func (test *tscInput) getBaselineSubFolder() string {

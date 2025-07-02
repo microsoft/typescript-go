@@ -10,9 +10,9 @@ func TestWatch(t *testing.T) {
 	testCases := []*tscInput{
 		{
 			subScenario: "watch with no tsconfig",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/index.ts": "",
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"index.ts", "--watch"},
 		},
 	}
@@ -54,39 +54,38 @@ func noEmitWatchTestInput(
 ) *tscInput {
 	noEmitOpt := `"noEmit": true`
 	tsconfigText, optionString := listToTsconfig(noEmitOpt, tsconfigOptions...)
-	sys := newTestSys(FileMap{
-		"/home/src/workspaces/project/a.ts":          aText,
-		"/home/src/workspaces/project/tsconfig.json": tsconfigText,
-	}, "/home/src/workspaces/project")
 	return &tscInput{
 		subScenario:     subScenario,
 		commandLineArgs: commandLineArgs,
-		sys:             sys,
+		files: FileMap{
+			"/home/src/workspaces/project/a.ts":          aText,
+			"/home/src/workspaces/project/tsconfig.json": tsconfigText,
+		},
 		edits: []*testTscEdit{
 			newTscEdit("fix error", func(sys *testSys) {
-				sys.WriteFileNoError("/home/src/workspaces/project/a.ts", `const a = "hello";`, false)
+				sys.writeFileNoError("/home/src/workspaces/project/a.ts", `const a = "hello";`, false)
 			}),
 			newTscEdit("emit after fixing error", func(sys *testSys) {
-				sys.WriteFileNoError("/home/src/workspaces/project/tsconfig.json", toTsconfig("", optionString), false)
+				sys.writeFileNoError("/home/src/workspaces/project/tsconfig.json", toTsconfig("", optionString), false)
 			}),
 			newTscEdit("no emit run after fixing error", func(sys *testSys) {
-				sys.WriteFileNoError("/home/src/workspaces/project/tsconfig.json", toTsconfig(noEmitOpt, optionString), false)
+				sys.writeFileNoError("/home/src/workspaces/project/tsconfig.json", toTsconfig(noEmitOpt, optionString), false)
 			}),
 			newTscEdit("introduce error", func(sys *testSys) {
-				sys.WriteFileNoError("/home/src/workspaces/project/a.ts", aText, false)
+				sys.writeFileNoError("/home/src/workspaces/project/a.ts", aText, false)
 			}),
 			newTscEdit("emit when error", func(sys *testSys) {
-				sys.WriteFileNoError("/home/src/workspaces/project/tsconfig.json", toTsconfig("", optionString), false)
+				sys.writeFileNoError("/home/src/workspaces/project/tsconfig.json", toTsconfig("", optionString), false)
 			}),
 			newTscEdit("no emit run when error", func(sys *testSys) {
-				sys.WriteFileNoError("/home/src/workspaces/project/tsconfig.json", toTsconfig(noEmitOpt, optionString), false)
+				sys.writeFileNoError("/home/src/workspaces/project/tsconfig.json", toTsconfig(noEmitOpt, optionString), false)
 			}),
 		},
 	}
 }
 
 func newTscEdit(name string, edit func(sys *testSys)) *testTscEdit {
-	return &testTscEdit{name, []string{}, edit}
+	return &testTscEdit{name, []string{}, edit, ""}
 }
 
 func TestTscNoEmitWatch(t *testing.T) {

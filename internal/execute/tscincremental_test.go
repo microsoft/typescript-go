@@ -3,7 +3,6 @@ package execute_test
 import (
 	"testing"
 
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 )
 
@@ -12,7 +11,7 @@ func TestIncremental(t *testing.T) {
 	testCases := []*tscInput{
 		{
 			subScenario: "serializing error chain",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
                     "compilerOptions": {
@@ -36,12 +35,12 @@ func TestIncremental(t *testing.T) {
                         <div />
                         <div />
                     </Component>)`),
-			}, "/home/src/workspaces/project"),
+			},
 			edits: noChangeOnlyEdit,
 		},
 		{
 			subScenario: "serializing composite project",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
                     "compilerOptions": {
@@ -52,11 +51,11 @@ func TestIncremental(t *testing.T) {
                 }`),
 				"/home/src/workspaces/project/index.tsx": `export const a = 1;`,
 				"/home/src/workspaces/project/other.ts":  `export const b = 2;`,
-			}, "/home/src/workspaces/project"),
+			},
 		},
 		{
 			subScenario: "change to modifier of class expression field with declaration emit enabled",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{ 
 					"compilerOptions": {
@@ -81,21 +80,21 @@ func TestIncremental(t *testing.T) {
 				tscLibPath + "/lib.d.ts": tscDefaultLibContent + "\n" + stringtestutil.Dedent(`
 					type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
                     type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;`),
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"--incremental"},
 			edits: []*testTscEdit{
 				noChange,
 				{
 					caption: "modify public to protected",
 					edit: func(sys *testSys) {
-						sys.ReplaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "public", "protected")
+						sys.replaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "public", "protected")
 					},
 				},
 				noChange,
 				{
 					caption: "modify protected to public",
 					edit: func(sys *testSys) {
-						sys.ReplaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "protected", "public")
+						sys.replaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "protected", "public")
 					},
 				},
 				noChange,
@@ -103,7 +102,7 @@ func TestIncremental(t *testing.T) {
 		},
 		{
 			subScenario: "change to modifier of class expression field",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{ 
 					"compilerOptions": { 
@@ -127,21 +126,21 @@ func TestIncremental(t *testing.T) {
 				tscLibPath + "/lib.d.ts": tscDefaultLibContent + "\n" + stringtestutil.Dedent(`
 					type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
                     type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: any) => infer R ? R : any;`),
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"--incremental"},
 			edits: []*testTscEdit{
 				noChange,
 				{
 					caption: "modify public to protected",
 					edit: func(sys *testSys) {
-						sys.ReplaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "public", "protected")
+						sys.replaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "public", "protected")
 					},
 				},
 				noChange,
 				{
 					caption: "modify protected to public",
 					edit: func(sys *testSys) {
-						sys.ReplaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "protected", "public")
+						sys.replaceFileText("/home/src/workspaces/project/MessageablePerson.ts", "protected", "public")
 					},
 				},
 				noChange,
@@ -149,7 +148,7 @@ func TestIncremental(t *testing.T) {
 		},
 		{
 			subScenario: "when passing filename for buildinfo on commandline",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
@@ -161,13 +160,13 @@ func TestIncremental(t *testing.T) {
                         "src/**/*.ts"
                     ],
                 }`),
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"--incremental", "--tsBuildInfoFile", ".tsbuildinfo", "--explainFiles"},
 			edits:           noChangeOnlyEdit,
 		},
 		{
 			subScenario: "when passing rootDir from commandline",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
@@ -176,31 +175,31 @@ func TestIncremental(t *testing.T) {
                         "outDir": "dist"
                     }
                 }`),
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"--rootDir", "src"},
 			edits:           noChangeOnlyEdit,
 		},
 		{
 			subScenario: "with only dts files",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/src/main.d.ts":    "export const x = 10;",
 				"/home/src/workspaces/project/src/another.d.ts": "export const y = 10;",
 				"/home/src/workspaces/project/tsconfig.json":    "{}",
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"--incremental"},
 			edits: []*testTscEdit{
 				noChange,
 				{
 					caption: "modify d.ts file",
 					edit: func(sys *testSys) {
-						sys.AppendFile("/home/src/workspaces/project/src/main.d.ts", "export const xy = 100;")
+						sys.appendFile("/home/src/workspaces/project/src/main.d.ts", "export const xy = 100;")
 					},
 				},
 			},
 		},
 		{
 			subScenario: "when passing rootDir is in the tsconfig",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/src/main.ts": "export const x = 10;",
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
@@ -210,30 +209,29 @@ func TestIncremental(t *testing.T) {
 						"rootDir": "./"
                     }
                 }`),
-			}, "/home/src/workspaces/project"),
+			},
 			edits: noChangeOnlyEdit,
 		},
 		{
 			subScenario: "tsbuildinfo has error",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/main.ts":              "export const x = 10;",
 				"/home/src/workspaces/project/tsconfig.json":        "{}",
 				"/home/src/workspaces/project/tsconfig.tsbuildinfo": "Some random string",
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"-i"},
 			edits: []*testTscEdit{
 				{
 					caption: "tsbuildinfo written has error",
 					edit: func(sys *testSys) {
-						sys.PrependFile("/home/src/workspaces/project/tsconfig.tsbuildinfo", "Some random string")
-						sys.ReplaceFileText("/home/src/workspaces/project/tsconfig.tsbuildinfo", `"version":"`+core.Version()+`"`, `"version":"FakeTSVersion"`) // build info won't parse, need to manually sterilize for baseline
+						sys.prependFile("/home/src/workspaces/project/tsconfig.tsbuildinfo", "Some random string")
 					},
 				},
 			},
 		},
 		{
 			subScenario: "when global file is added, the signatures are updated",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/src/main.ts": stringtestutil.Dedent(`
                     /// <reference path="./filePresent.ts"/>
                     /// <reference path="./fileNotFound.ts"/>
@@ -250,51 +248,51 @@ func TestIncremental(t *testing.T) {
                     "compilerOptions": { "composite": true },
                     "include": ["src/**/*.ts"],
                 }`),
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{},
 			edits: []*testTscEdit{
 				noChange,
 				{
 					caption: "Modify main file",
 					edit: func(sys *testSys) {
-						sys.AppendFile(`/home/src/workspaces/project/src/main.ts`, `something();`)
+						sys.appendFile(`/home/src/workspaces/project/src/main.ts`, `something();`)
 					},
 				},
 				{
 					caption: "Modify main file again",
 					edit: func(sys *testSys) {
-						sys.AppendFile(`/home/src/workspaces/project/src/main.ts`, `something();`)
+						sys.appendFile(`/home/src/workspaces/project/src/main.ts`, `something();`)
 					},
 				},
 				{
 					caption: "Add new file and update main file",
 					edit: func(sys *testSys) {
-						sys.WriteFileNoError(`/home/src/workspaces/project/src/newFile.ts`, "function foo() { return 20; }", false)
-						sys.PrependFile(
+						sys.writeFileNoError(`/home/src/workspaces/project/src/newFile.ts`, "function foo() { return 20; }", false)
+						sys.prependFile(
 							`/home/src/workspaces/project/src/main.ts`,
 							`/// <reference path="./newFile.ts"/>
 `,
 						)
-						sys.AppendFile(`/home/src/workspaces/project/src/main.ts`, `foo();`)
+						sys.appendFile(`/home/src/workspaces/project/src/main.ts`, `foo();`)
 					},
 				},
 				{
 					caption: "Write file that could not be resolved",
 					edit: func(sys *testSys) {
-						sys.WriteFileNoError(`/home/src/workspaces/project/src/fileNotFound.ts`, "function something2() { return 20; }", false)
+						sys.writeFileNoError(`/home/src/workspaces/project/src/fileNotFound.ts`, "function something2() { return 20; }", false)
 					},
 				},
 				{
 					caption: "Modify main file",
 					edit: func(sys *testSys) {
-						sys.AppendFile(`/home/src/workspaces/project/src/main.ts`, `something();`)
+						sys.appendFile(`/home/src/workspaces/project/src/main.ts`, `something();`)
 					},
 				},
 			},
 		},
 		{
 			subScenario: "react-jsx-emit-mode with no backing types found doesnt crash",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/node_modules/react/jsx-runtime.js": "export {}", // js needs to be present so there's a resolution result
 				"/home/src/workspaces/project/node_modules/@types/react/index.d.ts": stringtestutil.Dedent(`
 					export {};
@@ -318,11 +316,11 @@ func TestIncremental(t *testing.T) {
 						"jsxImportSource": "react" 
 					} 
 				}`),
-			}, "/home/src/workspaces/project"),
+			},
 		},
 		{
 			subScenario: "react-jsx-emit-mode with no backing types found doesnt crash under --strict",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/node_modules/react/jsx-runtime.js": "export {}", // js needs to be present so there's a resolution result
 				"/home/src/workspaces/project/node_modules/@types/react/index.d.ts": stringtestutil.Dedent(`
 					export {};
@@ -346,12 +344,12 @@ func TestIncremental(t *testing.T) {
 						"jsxImportSource": "react" 
 					} 
 				}`),
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"--strict"},
 		},
 		{
 			subScenario: "change to type that gets used as global through export in another file",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -363,19 +361,20 @@ func TestIncremental(t *testing.T) {
 					console.log(a);`),
 				"/home/src/workspaces/project/constants.ts": "export default 1;",
 				"/home/src/workspaces/project/types.d.ts":   `type MagicNumber = typeof import('./constants').default`,
-			}, "/home/src/workspaces/project"),
+			},
 			edits: []*testTscEdit{
 				{
 					caption: "Modify imports used in global file",
 					edit: func(sys *testSys) {
-						sys.WriteFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;", false)
+						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;", false)
 					},
+					expectedDiff: "Currently there is issue with d.ts emit for export default = 1 to widen in dts which is why we are not re-computing errors and results in incorrect error reporting",
 				},
 			},
 		},
 		{
 			subScenario: "change to type that gets used as global through export in another file through indirect import",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -388,19 +387,20 @@ func TestIncremental(t *testing.T) {
 				"/home/src/workspaces/project/constants.ts": "export default 1;",
 				"/home/src/workspaces/project/reexport.ts":  `export { default as ConstantNumber } from "./constants"`,
 				"/home/src/workspaces/project/types.d.ts":   `type MagicNumber = typeof import('./reexport').ConstantNumber`,
-			}, "/home/src/workspaces/project"),
+			},
 			edits: []*testTscEdit{
 				{
 					caption: "Modify imports used in global file",
 					edit: func(sys *testSys) {
-						sys.WriteFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;", false)
+						sys.writeFileNoError("/home/src/workspaces/project/constants.ts", "export default 2;", false)
 					},
+					expectedDiff: "Currently there is issue with d.ts emit for export default = 1 to widen in dts which is why we are not re-computing errors and results in incorrect error reporting",
 				},
 			},
 		},
 		{
 			subScenario: "when file is deleted",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -410,12 +410,12 @@ func TestIncremental(t *testing.T) {
 				}`),
 				"/home/src/workspaces/project/file1.ts": `export class  C { }`,
 				"/home/src/workspaces/project/file2.ts": `export class D { }`,
-			}, "/home/src/workspaces/project"),
+			},
 			edits: []*testTscEdit{
 				{
 					caption: "delete file with imports",
 					edit: func(sys *testSys) {
-						err := sys.FS().Remove("/home/src/workspaces/project/file2.ts")
+						err := sys.fsFromFileMap().Remove("/home/src/workspaces/project/file2.ts")
 						if err != nil {
 							panic(err)
 						}
@@ -425,7 +425,7 @@ func TestIncremental(t *testing.T) {
 		},
 		{
 			subScenario: "generates typerefs correctly",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -465,12 +465,12 @@ func TestIncremental(t *testing.T) {
                         [K in keyof C]: { wrapped: C[K] }
                     }
                 `),
-			}, "/home/src/workspaces/project"),
+			},
 			edits: []*testTscEdit{
 				{
 					caption: "modify js file",
 					edit: func(sys *testSys) {
-						sys.AppendFile("/home/src/workspaces/project/src/bug.js", `export const something = 1;`)
+						sys.appendFile("/home/src/workspaces/project/src/bug.js", `export const something = 1;`)
 					},
 				},
 			},
@@ -489,7 +489,7 @@ func TestIncremental(t *testing.T) {
 		getConstEnumTest(`export { AWorker as A } from "./worker";`, "/home/src/workspaces/project/worker.d.ts", " aliased in different file"),
 		{
 			subScenario: "option changes with composite",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -500,7 +500,7 @@ func TestIncremental(t *testing.T) {
 				"/home/src/workspaces/project/b.ts": `export const b = 10;const bLocal = 10;`,
 				"/home/src/workspaces/project/c.ts": `import { a } from "./a";export const c = a;`,
 				"/home/src/workspaces/project/d.ts": `import { b } from "./b";export const d = b;`,
-			}, "/home/src/workspaces/project"),
+			},
 			edits: []*testTscEdit{
 				{
 					caption:         "with sourceMap",
@@ -537,7 +537,7 @@ func TestIncremental(t *testing.T) {
 				{
 					caption: "local change",
 					edit: func(sys *testSys) {
-						sys.ReplaceFileText("/home/src/workspaces/project/a.ts", "Local = 1", "Local = 10")
+						sys.replaceFileText("/home/src/workspaces/project/a.ts", "Local = 1", "Local = 10")
 					},
 				},
 				{
@@ -559,7 +559,7 @@ func TestIncremental(t *testing.T) {
 				{
 					caption: "declarationMap enabling",
 					edit: func(sys *testSys) {
-						sys.ReplaceFileText("/home/src/workspaces/project/tsconfig.json", `"composite": true,`, `"composite": true,        "declarationMap": true`)
+						sys.replaceFileText("/home/src/workspaces/project/tsconfig.json", `"composite": true,`, `"composite": true,        "declarationMap": true`)
 					},
 				},
 				{
@@ -570,7 +570,7 @@ func TestIncremental(t *testing.T) {
 		},
 		{
 			subScenario: "option changes with incremental",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -581,7 +581,7 @@ func TestIncremental(t *testing.T) {
 				"/home/src/workspaces/project/b.ts": `export const b = 10;const bLocal = 10;`,
 				"/home/src/workspaces/project/c.ts": `import { a } from "./a";export const c = a;`,
 				"/home/src/workspaces/project/d.ts": `import { b } from "./b";export const d = b;`,
-			}, "/home/src/workspaces/project"),
+			},
 			edits: []*testTscEdit{
 				{
 					caption:         "with sourceMap",
@@ -608,7 +608,7 @@ func TestIncremental(t *testing.T) {
 				{
 					caption: "local change",
 					edit: func(sys *testSys) {
-						sys.ReplaceFileText("/home/src/workspaces/project/a.ts", "Local = 1", "Local = 10")
+						sys.replaceFileText("/home/src/workspaces/project/a.ts", "Local = 1", "Local = 10")
 					},
 				},
 				{
@@ -653,7 +653,7 @@ func TestIncremental(t *testing.T) {
 func getConstEnumTest(bdsContents string, changeEnumFile string, testSuffix string) *tscInput {
 	return &tscInput{
 		subScenario: "const enums" + testSuffix,
-		sys: newTestSys(FileMap{
+		files: FileMap{
 			"/home/src/workspaces/project/a.ts": stringtestutil.Dedent(`
 				import {A} from "./c"
 				let a = A.ONE
@@ -669,31 +669,31 @@ func getConstEnumTest(bdsContents string, changeEnumFile string, testSuffix stri
 					ONE = 1
 				}
 			`),
-		}, "/home/src/workspaces/project"),
+		},
 		commandLineArgs: []string{"-i", `a.ts`, "--tsbuildinfofile", "a.tsbuildinfo"},
 		edits: []*testTscEdit{
 			{
 				caption: "change enum value",
 				edit: func(sys *testSys) {
-					sys.ReplaceFileText(changeEnumFile, "1", "2")
+					sys.replaceFileText(changeEnumFile, "1", "2")
 				},
 			},
 			{
 				caption: "change enum value again",
 				edit: func(sys *testSys) {
-					sys.ReplaceFileText(changeEnumFile, "2", "3")
+					sys.replaceFileText(changeEnumFile, "2", "3")
 				},
 			},
 			{
 				caption: "something else changes in b.d.ts",
 				edit: func(sys *testSys) {
-					sys.AppendFile("/home/src/workspaces/project/b.d.ts", "export const randomThing = 10;")
+					sys.appendFile("/home/src/workspaces/project/b.d.ts", "export const randomThing = 10;")
 				},
 			},
 			{
 				caption: "something else changes in b.d.ts again",
 				edit: func(sys *testSys) {
-					sys.AppendFile("/home/src/workspaces/project/b.d.ts", "export const randomThing2 = 10;")
+					sys.appendFile("/home/src/workspaces/project/b.d.ts", "export const randomThing2 = 10;")
 				},
 			},
 		},

@@ -12,7 +12,7 @@ func TestProjectReferences(t *testing.T) {
 		// !!! sheetal todo verifyCompilerOptions - check for noEmit
 		{
 			subScenario: "when project references composite project with noEmit",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/solution/utils/index.ts": "export const x = 10;",
 				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
 				{
@@ -28,12 +28,13 @@ func TestProjectReferences(t *testing.T) {
 						{ "path": "../utils" },
 					],
 				}`),
-			}, "/home/src/workspaces/solution"),
+			},
+			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "project"},
 		},
 		{
 			subScenario: "when project references composite",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/solution/utils/index.ts":   "export const x = 10;",
 				"/home/src/workspaces/solution/utils/index.d.ts": "export declare const x = 10;",
 				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
@@ -49,12 +50,13 @@ func TestProjectReferences(t *testing.T) {
 						{ "path": "../utils" },
 					],
 				}`),
-			}, "/home/src/workspaces/solution"),
+			},
+			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "project"},
 		},
 		{
 			subScenario: "when project reference is not built",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/solution/utils/index.ts": "export const x = 10;",
 				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
 				{
@@ -69,13 +71,14 @@ func TestProjectReferences(t *testing.T) {
 						{ "path": "../utils" },
 					],
 				}`),
-			}, "/home/src/workspaces/solution"),
+			},
+			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "project"},
 		},
 		{
 			// !!! sheetal verifyProjectReferences - checks this
 			subScenario: "when project contains invalid project reference",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/solution/project/index.ts": `export const x = 10;`,
 				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
 				{
@@ -83,12 +86,13 @@ func TestProjectReferences(t *testing.T) {
 						{ "path": "../utils" },
 					],
 				}`),
-			}, "/home/src/workspaces/solution"),
+			},
+			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "project"},
 		},
 		{
 			subScenario: "default import interop uses referenced project settings",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/node_modules/ambiguous-package/package.json": stringtestutil.Dedent(`
 				{
 					"name": "ambiguous-package"
@@ -134,12 +138,12 @@ func TestProjectReferences(t *testing.T) {
 					import referencedSource from "../../lib/src/a"; // Error
 					import referencedDeclaration from "../../lib/dist/a"; // Error
 					import ambiguous from "ambiguous-package"; // Ok`),
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"--p", "app", "--pretty", "false"},
 		},
 		{
 			subScenario: "referencing ambient const enum from referenced project with preserveConstEnums",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/solution/utils/index.ts":   "export const enum E { A = 1 }",
 				"/home/src/workspaces/solution/utils/index.d.ts": "export declare const enum E { A = 1 }",
 				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
@@ -160,12 +164,13 @@ func TestProjectReferences(t *testing.T) {
 						{ "path": "../utils" },
 					],
 				}`),
-			}, "/home/src/workspaces/solution"),
+			},
+			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "project"},
 		},
 		{
 			subScenario: "importing const enum from referenced project with preserveConstEnums and verbatimModuleSyntax",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/solution/preserve/index.ts":   "export const enum E { A = 1 }",
 				"/home/src/workspaces/solution/preserve/index.d.ts": "export declare const enum E { A = 1 }",
 				"/home/src/workspaces/solution/preserve/tsconfig.json": stringtestutil.Dedent(`
@@ -202,12 +207,13 @@ func TestProjectReferences(t *testing.T) {
 						{ "path": "../no-preserve" },
 					],
 				}`),
-			}, "/home/src/workspaces/solution"),
+			},
+			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "project", "--pretty", "false"},
 		},
 		{
 			subScenario: "rewriteRelativeImportExtensionsProjectReferences1",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/packages/common/tsconfig.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -248,12 +254,13 @@ func TestProjectReferences(t *testing.T) {
 					"type": "module"
 				}`),
 				"/home/src/workspaces/packages/main/src/index.ts": `import {} from "../../common/src/index.ts";`,
-			}, "/home/src/workspaces"),
+			},
+			cwd:             "/home/src/workspaces",
 			commandLineArgs: []string{"-p", "packages/main", "--pretty", "false"},
 		},
 		{
 			subScenario: "rewriteRelativeImportExtensionsProjectReferences2",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/solution/src/tsconfig-base.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": {
@@ -280,12 +287,13 @@ func TestProjectReferences(t *testing.T) {
 					]
 				}`),
 				"/home/src/workspaces/solution/src/services/services.ts": `import {} from "../compiler/parser.ts";`,
-			}, "/home/src/workspaces/solution"),
+			},
+			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "src/services", "--pretty", "false"},
 		},
 		{
 			subScenario: "rewriteRelativeImportExtensionsProjectReferences3",
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/solution/src/tsconfig-base.json": stringtestutil.Dedent(`
 				{
 					"compilerOptions": { 
@@ -316,7 +324,8 @@ func TestProjectReferences(t *testing.T) {
 					]
 				}`),
 				"/home/src/workspaces/solution/src/services/services.ts": `import {} from "../compiler/parser.ts";`,
-			}, "/home/src/workspaces/solution"),
+			},
+			cwd:             "/home/src/workspaces/solution",
 			commandLineArgs: []string{"--p", "src/services", "--pretty", "false"},
 		},
 	}

@@ -21,7 +21,7 @@ func TestNoCheck(t *testing.T) {
 	for _, c := range cases {
 		(&tscInput{
 			subScenario: c.subscenario,
-			sys: newTestSys(FileMap{
+			files: FileMap{
 				"/home/src/workspaces/project/a.ts": c.aText,
 				"/home/src/workspaces/project/b.ts": `export const b = 10;`,
 				"/home/src/workspaces/project/tsconfig.json": stringtestutil.Dedent(`
@@ -31,7 +31,7 @@ func TestNoCheck(t *testing.T) {
 					}
 				}`),
 				// incremental: undefined, true
-			}, "/home/src/workspaces/project"),
+			},
 			commandLineArgs: []string{"--noCheck"},
 		}).run(t, "noCheck")
 	}
