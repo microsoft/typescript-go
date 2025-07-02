@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--strict
+Input::
 //// [/home/src/workspaces/project/node_modules/@types/react/index.d.ts] *new* 
 export {};
 declare global {
@@ -28,11 +27,8 @@ export const App = () => <div propA={true}></div>;
     } 
 }
 
-ExitStatus:: 2
-
-CompilerOptions::{
-    "strict": true
-}
+tsgo --strict
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96msrc/index.tsx[0m:[93m1[0m:[93m26[0m - [91merror[0m[90m TS7016: [0mCould not find a declaration file for module 'react/jsx-runtime'. '/home/src/workspaces/project/node_modules/react/jsx-runtime.js' implicitly has an 'any' type.
 
@@ -138,10 +134,8 @@ exports.App = App;
   "size": 792
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/index.tsx
 *refresh*    /home/src/workspaces/project/node_modules/@types/react/index.d.ts
-
 Signatures::

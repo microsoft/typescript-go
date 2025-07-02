@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::-p /home/src/workspaces/project/tsconfig.json
+Input::
 //// [/home/src/workspaces/project/first.ts] *new* 
 export const a = 1
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
@@ -12,33 +11,8 @@ export const a = 1
     }
 }
 
-ExitStatus:: 0
-
-ParsedCommandLine::{
-    "parsedConfig": {
-        "compilerOptions": {
-            "project": "/home/src/workspaces/project/tsconfig.json"
-        },
-        "watchOptions": {
-            "watchInterval": null,
-            "watchFile": 0,
-            "watchDirectory": 0,
-            "fallbackPolling": 0,
-            "synchronousWatchDirectory": null,
-            "excludeDirectories": null,
-            "excludeFiles": null
-        },
-        "typeAcquisition": null,
-        "fileNames": [],
-        "projectReferences": null
-    },
-    "configFile": null,
-    "errors": [],
-    "raw": {
-        "project": "/home/src/workspaces/project/tsconfig.json"
-    },
-    "compileOnSave": null
-}
+tsgo -p /home/src/workspaces/project/tsconfig.json
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>

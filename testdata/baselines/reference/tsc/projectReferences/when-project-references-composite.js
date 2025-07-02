@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/solution
 useCaseSensitiveFileNames::true
-Input::--p project
+Input::
 //// [/home/src/workspaces/solution/project/index.ts] *new* 
 import { x } from "../utils";
 //// [/home/src/workspaces/solution/project/tsconfig.json] *new* 
@@ -21,11 +20,8 @@ export const x = 10;
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "project": "/home/src/workspaces/solution/project"
-}
+tsgo --p project
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>

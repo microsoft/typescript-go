@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::-w --watchInterval 1000
+Input::
 //// [/home/src/workspaces/project/first.ts] *new* 
 export const a = 1
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
@@ -12,34 +11,8 @@ export const a = 1
     }
 }
 
-ExitStatus:: 0
-
-ParsedCommandLine::{
-    "parsedConfig": {
-        "compilerOptions": {
-            "watch": true
-        },
-        "watchOptions": {
-            "watchInterval": 1000,
-            "watchFile": 0,
-            "watchDirectory": 0,
-            "fallbackPolling": 0,
-            "synchronousWatchDirectory": null,
-            "excludeDirectories": null,
-            "excludeFiles": null
-        },
-        "typeAcquisition": null,
-        "fileNames": [],
-        "projectReferences": null
-    },
-    "configFile": null,
-    "errors": [],
-    "raw": {
-        "watch": true,
-        "watchInterval": 1000
-    },
-    "compileOnSave": null
-}
+tsgo -w --watchInterval 1000
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -65,3 +38,7 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
+SemanticDiagnostics::
+*refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
+*refresh*    /home/src/workspaces/project/first.ts
+Signatures::

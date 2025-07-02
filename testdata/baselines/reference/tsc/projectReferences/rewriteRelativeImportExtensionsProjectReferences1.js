@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces
 useCaseSensitiveFileNames::true
-Input::-p packages/main --pretty false
+Input::
 //// [/home/src/workspaces/packages/common/dist/index.d.ts] *new* 
 export {};
 //// [/home/src/workspaces/packages/common/package.json] *new* 
@@ -46,12 +45,8 @@ import {} from "../../common/src/index.ts";
     ]
 }
 
-ExitStatus:: 2
-
-CompilerOptions::{
-    "project": "/home/src/workspaces/packages/main",
-    "pretty": false
-}
+tsgo -p packages/main --pretty false
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 packages/main/src/index.ts(1,16): error TS2878: This import path is unsafe to rewrite because it resolves to another project, and the relative path between the projects' output files is not the same as the relative path between its input files.
 //// [/home/src/tslibs/TS/Lib/lib.esnext.full.d.ts] *Lib*

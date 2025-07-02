@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -17,9 +16,8 @@ import { b } from "./b";export const d = b;
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -177,14 +175,12 @@ exports.d = b_1.b;
   "size": 1086
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
 *refresh*    /home/src/workspaces/project/b.ts
 *refresh*    /home/src/workspaces/project/c.ts
 *refresh*    /home/src/workspaces/project/d.ts
-
 Signatures::
 (stored at emit) /home/src/workspaces/project/a.ts
 (stored at emit) /home/src/workspaces/project/b.ts
@@ -192,9 +188,10 @@ Signatures::
 (stored at emit) /home/src/workspaces/project/d.ts
 
 
-Edit:: with sourceMap
+Edit [0]:: with sourceMap
 
-ExitStatus:: 0
+tsgo --sourceMap
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified* 
 "use strict";
@@ -326,15 +323,14 @@ exports.d = b_1.b;
   "size": 1103
 }
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: should re-emit only js so they dont contain sourcemap
+Edit [1]:: should re-emit only js so they dont contain sourcemap
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified* 
 "use strict";
@@ -457,37 +453,34 @@ exports.d = b_1.b;
   "size": 1086
 }
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: with declaration should not emit anything
+Edit [2]:: with declaration should not emit anything
 
-ExitStatus:: 0
+tsgo --declaration
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: no change
+Edit [3]:: no change
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: with declaration and declarationMap
+Edit [4]:: with declaration and declarationMap
 
-ExitStatus:: 0
+tsgo --declaration --declarationMap
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
 export declare const a = 10;
@@ -604,15 +597,14 @@ export declare const d = 10;
   "size": 1127
 }
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: should re-emit only dts so they dont contain sourcemap
+Edit [5]:: should re-emit only dts so they dont contain sourcemap
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
 export declare const a = 10;
@@ -719,39 +711,36 @@ export declare const d = 10;
   "size": 1086
 }
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: with emitDeclarationOnly should not emit anything
+Edit [6]:: with emitDeclarationOnly should not emit anything
 
-ExitStatus:: 0
+tsgo --emitDeclarationOnly
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: no change
+Edit [7]:: no change
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: local change
+Edit [8]:: local change
 //// [/home/src/workspaces/project/a.ts] *modified* 
 export const a = 10;const aLocal = 100;
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified* 
 "use strict";
@@ -853,28 +842,26 @@ const aLocal = 100;
   "size": 1086
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/a.ts
 
 
-Edit:: with declaration should not emit anything
+Edit [9]:: with declaration should not emit anything
 
-ExitStatus:: 0
+tsgo --declaration
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: with inlineSourceMap
+Edit [10]:: with inlineSourceMap
 
-ExitStatus:: 0
+tsgo --inlineSourceMap
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified* 
 "use strict";
@@ -998,15 +985,14 @@ exports.d = b_1.b;
   "size": 1109
 }
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: with sourceMap
+Edit [11]:: with sourceMap
 
-ExitStatus:: 0
+tsgo --sourceMap
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified* 
 "use strict";
@@ -1135,13 +1121,11 @@ exports.d = b_1.b;
   "size": 1103
 }
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: declarationMap enabling
+Edit [12]:: declarationMap enabling
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
     "compilerOptions": {
@@ -1149,7 +1133,8 @@ Edit:: declarationMap enabling
     }
 }
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.d.ts] *modified* 
 export declare const a = 10;
@@ -1289,15 +1274,14 @@ exports.d = b_1.b;
   "size": 1108
 }
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: with sourceMap should not emit d.ts
+Edit [13]:: with sourceMap should not emit d.ts
 
-ExitStatus:: 0
+tsgo --sourceMap
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/a.js] *modified* 
 "use strict";
@@ -1426,7 +1410,5 @@ exports.d = b_1.b;
   "size": 1125
 }
 
-
 SemanticDiagnostics::
-
 Signatures::

@@ -142,7 +142,7 @@ func TestTscCommandline(t *testing.T) {
 	}
 
 	for _, testCase := range testCases {
-		testCase.verifyCommandLineParsing(t, "commandLine")
+		testCase.run(t, "commandLine")
 	}
 }
 

@@ -41,25 +41,20 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 	return b.String()
 }
 
-func CommandLine(sys System, commandLineArgs []string, testing bool) (ExitStatus, *tsoptions.ParsedCommandLine, *incremental.Program, *Watcher) {
+func CommandLine(sys System, commandLineArgs []string, testing bool) (ExitStatus, *incremental.Program, *Watcher) {
 	if len(commandLineArgs) > 0 {
 		// !!! build mode
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
 			fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
 			sys.EndWrite()
-			return ExitStatusNotImplemented, nil, nil, nil
+			return ExitStatusNotImplemented, nil, nil
 			// case "-f":
 			// 	return fmtMain(sys, commandLineArgs[1], commandLineArgs[1])
 		}
 	}
 
-	parsedCommandLine := tsoptions.ParseCommandLine(commandLineArgs, sys)
-	status, incrementalProgram, watcher := tscCompilation(sys, parsedCommandLine, testing)
-	if watcher != nil {
-		watcher.start()
-	}
-	return status, parsedCommandLine, incrementalProgram, watcher
+	return tscCompilation(sys, tsoptions.ParseCommandLine(commandLineArgs, sys), testing)
 }
 
 func fmtMain(sys System, input, output string) ExitStatus {
@@ -186,7 +181,9 @@ func tscCompilation(sys System, commandLine *tsoptions.ParsedCommandLine, testin
 		return ExitStatusSuccess, nil, nil
 	}
 	if configForCompilation.CompilerOptions().Watch.IsTrue() {
-		return ExitStatusSuccess, nil, createWatcher(sys, configForCompilation, reportDiagnostic, testing)
+		watcher := createWatcher(sys, configForCompilation, reportDiagnostic, testing)
+		watcher.start()
+		return ExitStatusSuccess, nil, watcher
 	} else if configForCompilation.CompilerOptions().IsIncremental() {
 		exitStatus, program := performIncrementalCompilation(
 			sys,

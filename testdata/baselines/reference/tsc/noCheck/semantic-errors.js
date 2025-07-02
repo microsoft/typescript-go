@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--noCheck
+Input::
 //// [/home/src/workspaces/project/a.ts] *new* 
 export const a: number = "hello";
 //// [/home/src/workspaces/project/b.ts] *new* 
@@ -13,11 +12,8 @@ export const b = 10;
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "noCheck": true
-}
+tsgo --noCheck
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>

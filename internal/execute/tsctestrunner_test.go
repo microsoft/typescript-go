@@ -1,7 +1,6 @@
 package execute_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"slices"
@@ -35,24 +34,50 @@ type tscInput struct {
 	edits           []*testTscEdit
 }
 
+func (test *tscInput) executeCommand(baselineBuilder *strings.Builder, commandLineArgs []string) (*incremental.Program, *execute.Watcher) {
+	fmt.Fprint(baselineBuilder, "tsgo ", strings.Join(commandLineArgs, " "), "\n")
+	exit, incrementalProgram, watcher := execute.CommandLine(test.sys, commandLineArgs, true)
+	switch exit {
+	case execute.ExitStatusSuccess:
+		baselineBuilder.WriteString("ExitStatus:: Success")
+	case execute.ExitStatusDiagnosticsPresent_OutputsSkipped:
+		baselineBuilder.WriteString("ExitStatus:: DiagnosticsPresent_OutputsSkipped")
+	case execute.ExitStatusDiagnosticsPresent_OutputsGenerated:
+		baselineBuilder.WriteString("ExitStatus:: DiagnosticsPresent_OutputsGenerated")
+	case execute.ExitStatusInvalidProject_OutputsSkipped:
+		baselineBuilder.WriteString("ExitStatus:: InvalidProject_OutputsSkipped")
+	case execute.ExitStatusProjectReferenceCycle_OutputsSkipped:
+		baselineBuilder.WriteString("ExitStatus:: ProjectReferenceCycle_OutputsSkipped")
+	case execute.ExitStatusNotImplemented:
+		baselineBuilder.WriteString("ExitStatus:: NotImplemented")
+	default:
+		panic(fmt.Sprintf("UnknownExitStatus %d", exit))
+	}
+	return incrementalProgram, watcher
+}
+
 func (test *tscInput) run(t *testing.T, scenario string) {
 	t.Helper()
+	// !!! sheetal TODO :: add incremental correctness
 	t.Run(test.subScenario+" tsc baseline", func(t *testing.T) {
 		t.Parallel()
 		// initial test tsc compile
-		baselineBuilder := test.startBaseline()
-
-		exit, parsedCommandLine, incrementalProgram, watcher := execute.CommandLine(test.sys, test.commandLineArgs, true)
-		baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
-
-		compilerOptionsString, _ := json.MarshalIndent(parsedCommandLine.CompilerOptions(), "", "    ")
-		baselineBuilder.WriteString("\n\nCompilerOptions::")
-		baselineBuilder.Write(compilerOptionsString)
-
+		baselineBuilder := &strings.Builder{}
+		fmt.Fprint(
+			baselineBuilder,
+			"currentDirectory::",
+			test.sys.GetCurrentDirectory(),
+			"\nuseCaseSensitiveFileNames::",
+			test.sys.FS().UseCaseSensitiveFileNames(),
+			"\nInput::\n",
+		)
+		test.sys.baselineFSwithDiff(baselineBuilder)
+		incrementalProgram, watcher := test.executeCommand(baselineBuilder, test.commandLineArgs)
 		test.sys.serializeState(baselineBuilder)
 		test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
-		for _, do := range test.edits {
-			baselineBuilder.WriteString("\n\nEdit:: " + do.caption + "\n")
+
+		for index, do := range test.edits {
+			baselineBuilder.WriteString(fmt.Sprintf("\n\nEdit [%d]:: %s\n", index, do.caption))
 			if do.edit != nil {
 				do.edit(test.sys)
 			}
@@ -60,8 +85,8 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 
 			var incrementalProgram *incremental.Program
 			if watcher == nil {
-				exit, parsedCommandLine, incrementalProgram, watcher = execute.CommandLine(test.sys, core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs), true)
-				baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
+				commandLineArgs := core.IfElse(do.commandLineArgs == nil, test.commandLineArgs, do.commandLineArgs)
+				incrementalProgram, watcher = test.executeCommand(baselineBuilder, commandLineArgs)
 			} else {
 				watcher.DoCycle()
 			}
@@ -69,14 +94,11 @@ func (test *tscInput) run(t *testing.T, scenario string) {
 			test.sys.baselineProgram(baselineBuilder, incrementalProgram, watcher)
 		}
 
-		options, name := test.getBaselineName(scenario, "")
-		baseline.Run(t, name, baselineBuilder.String(), options)
+		baseline.Run(t, strings.ReplaceAll(test.subScenario, " ", "-")+".js", baselineBuilder.String(), baseline.Options{Subfolder: filepath.Join(test.getBaselineSubFolder(), scenario)})
 	})
-
-	// !!! sheetal TODO :: add incremental correctness
 }
 
-func (test *tscInput) getTestNamePrefix() string {
+func (test *tscInput) getBaselineSubFolder() string {
 	commandName := "tsc"
 	if slices.ContainsFunc(test.commandLineArgs, func(arg string) bool {
 		return arg == "--build" || arg == "-b"
@@ -90,47 +112,4 @@ func (test *tscInput) getTestNamePrefix() string {
 		w = "Watch"
 	}
 	return commandName + w
-}
-
-func (test *tscInput) getBaselineName(scenario string, suffix string) (baseline.Options, string) {
-	return baseline.Options{Subfolder: filepath.Join(test.getTestNamePrefix(), scenario)},
-		strings.ReplaceAll(test.subScenario, " ", "-") + suffix + ".js"
-}
-
-func (test *tscInput) startBaseline() *strings.Builder {
-	s := &strings.Builder{}
-	fmt.Fprint(
-		s,
-		"\ncurrentDirectory::",
-		test.sys.GetCurrentDirectory(),
-		"\nuseCaseSensitiveFileNames::",
-		test.sys.FS().UseCaseSensitiveFileNames(),
-		"\nInput::",
-	)
-	fmt.Fprint(s, strings.Join(test.commandLineArgs, " "), "\n")
-	test.sys.baselineFSwithDiff(s)
-	return s
-}
-
-func (test *tscInput) verifyCommandLineParsing(t *testing.T, scenario string) {
-	t.Helper()
-	t.Run(test.subScenario, func(t *testing.T) {
-		t.Parallel()
-		t.Run("baseline for the tsc compiles", func(t *testing.T) {
-			t.Parallel()
-			// initial test tsc compile
-			baselineBuilder := test.startBaseline()
-
-			exit, parsedCommandLine, _, _ := execute.CommandLine(test.sys, test.commandLineArgs, true)
-			baselineBuilder.WriteString("ExitStatus:: " + fmt.Sprint(exit))
-			//nolint:musttag
-			parsedCommandLineString, _ := json.MarshalIndent(parsedCommandLine, "", "    ")
-			baselineBuilder.WriteString("\n\nParsedCommandLine::")
-			baselineBuilder.Write(parsedCommandLineString)
-
-			test.sys.serializeState(baselineBuilder)
-			options, name := test.getBaselineName(scenario, "")
-			baseline.Run(t, name, baselineBuilder.String(), options)
-		})
-	})
 }

@@ -172,7 +172,7 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 		return
 	}
 
-	baseline.WriteString("\nSemanticDiagnostics::\n")
+	baseline.WriteString("SemanticDiagnostics::\n")
 	semanticDiagnostics, diagnosticsFromOldProgram, updatedSignatureKinds := program.GetTestingData(program.GetProgram())
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if diagnostics, ok := semanticDiagnostics[file.Path()]; ok {
@@ -185,7 +185,7 @@ func (s *testSys) baselineProgram(baseline *strings.Builder, program *incrementa
 	}
 
 	// Write signature updates
-	baseline.WriteString("\nSignatures::\n")
+	baseline.WriteString("Signatures::\n")
 	for _, file := range program.GetProgram().GetSourceFiles() {
 		if kind, loaded := updatedSignatureKinds.Load(file.Path()); loaded {
 			switch kind {

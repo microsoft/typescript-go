@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -16,9 +15,8 @@ Input::
     },
 }
 
-ExitStatus:: 1
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: DiagnosticsPresent_OutputsSkipped
 Output::
 [91merror[0m[90m TS18003: [0mNo inputs were found in config file '/home/src/workspaces/project/tsconfig.json'. Specified 'include' paths were '["**/*"]' and 'exclude' paths were '[]'.
 
@@ -37,7 +35,5 @@ Found 1 error.
   "size": 85
 }
 
-
 SemanticDiagnostics::
-
 Signatures::

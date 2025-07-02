@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--p app --pretty false
+Input::
 //// [/home/src/workspaces/project/app/src/index.ts] *new* 
 import local from "./local"; // Error
 import esm from "esm-package"; // Error
@@ -53,12 +52,8 @@ export declare const esm: number;
     "type": "module"
 }
 
-ExitStatus:: 2
-
-CompilerOptions::{
-    "project": "/home/src/workspaces/project/app",
-    "pretty": false
-}
+tsgo --p app --pretty false
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 app/src/index.ts(1,8): error TS2613: Module '"/home/src/workspaces/project/app/src/local"' has no default export. Did you mean to use 'import { local } from "/home/src/workspaces/project/app/src/local"' instead?
 

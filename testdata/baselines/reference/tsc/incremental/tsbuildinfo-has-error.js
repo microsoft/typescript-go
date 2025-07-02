@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::-i
+Input::
 //// [/home/src/workspaces/project/main.ts] *new* 
 export const x = 10;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
@@ -9,11 +8,8 @@ export const x = 10;
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
 Some random string
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "incremental": true
-}
+tsgo -i
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -76,28 +72,25 @@ exports.x = 10;
   "size": 292
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/main.ts
-
 Signatures::
 
 
-Edit:: tsbuildinfo written has error
+Edit [0]:: tsbuildinfo written has error
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 Some random string{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./main.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},"03da4d6a46cc7950ba861120c64b47c14bc80b3c64f47ef17b61cb454358afd6"]}
 
-ExitStatus:: 0
+tsgo -i
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/main.js] *modified time*
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *modified* 
 {"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./main.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},"03da4d6a46cc7950ba861120c64b47c14bc80b3c64f47ef17b61cb454358afd6"]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *modified time*
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/main.ts
-
 Signatures::

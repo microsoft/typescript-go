@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--incremental --tsBuildInfoFile .tsbuildinfo --explainFiles
+Input::
 //// [/home/src/workspaces/project/src/main.ts] *new* 
 export const x = 10;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
@@ -15,13 +14,8 @@ export const x = 10;
     ],
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "incremental": true,
-    "tsBuildInfoFile": "/home/src/workspaces/project/.tsbuildinfo",
-    "explainFiles": true
-}
+tsgo --incremental --tsBuildInfoFile .tsbuildinfo --explainFiles
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -89,20 +83,17 @@ exports.x = void 0;
 exports.x = 10;
 
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/src/main.ts
-
 Signatures::
 
 
-Edit:: no change
+Edit [0]:: no change
 
-ExitStatus:: 0
+tsgo --incremental --tsBuildInfoFile .tsbuildinfo --explainFiles
+ExitStatus:: Success
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::

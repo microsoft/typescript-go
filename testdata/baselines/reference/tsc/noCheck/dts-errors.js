@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--noCheck
+Input::
 //// [/home/src/workspaces/project/a.ts] *new* 
 export const a = class { private p = 10; };
 //// [/home/src/workspaces/project/b.ts] *new* 
@@ -13,11 +12,8 @@ export const b = 10;
     }
 }
 
-ExitStatus:: 2
-
-CompilerOptions::{
-    "noCheck": true
-}
+tsgo --noCheck
+ExitStatus:: DiagnosticsPresent_OutputsGenerated
 Output::
 [96ma.ts[0m:[93m1[0m:[93m14[0m - [91merror[0m[90m TS4094: [0mProperty 'p' of exported anonymous class type may not be private or protected.
 

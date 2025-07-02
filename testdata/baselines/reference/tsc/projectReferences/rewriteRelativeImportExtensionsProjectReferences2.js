@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/solution
 useCaseSensitiveFileNames::true
-Input::--p src/services --pretty false
+Input::
 //// [/home/src/workspaces/solution/dist/compiler/parser.d.ts] *new* 
 export {};
 //// [/home/src/workspaces/solution/src/compiler/parser.ts] *new* 
@@ -32,12 +31,8 @@ import {} from "../compiler/parser.ts";
     }
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "project": "/home/src/workspaces/solution/src/services",
-    "pretty": false
-}
+tsgo --p src/services --pretty false
+ExitStatus:: Success
 Output::
 No output
 //// [/home/src/tslibs/TS/Lib/lib.esnext.full.d.ts] *Lib*
@@ -132,11 +127,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
   "size": 739
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.esnext.full.d.ts
 *refresh*    /home/src/workspaces/solution/dist/compiler/parser.d.ts
 *refresh*    /home/src/workspaces/solution/src/services/services.ts
-
 Signatures::
 (stored at emit) /home/src/workspaces/solution/src/services/services.ts

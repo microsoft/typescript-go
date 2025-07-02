@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -16,9 +15,8 @@ export default 1;
 //// [/home/src/workspaces/project/types.d.ts] *new* 
 type MagicNumber = typeof import('./constants').default
 
-ExitStatus:: 0
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -137,23 +135,22 @@ exports.default = 1;
   "size": 887
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/class1.ts
 *refresh*    /home/src/workspaces/project/constants.ts
 *refresh*    /home/src/workspaces/project/types.d.ts
-
 Signatures::
 (stored at emit) /home/src/workspaces/project/class1.ts
 (stored at emit) /home/src/workspaces/project/constants.ts
 
 
-Edit:: Modify imports used in global file
+Edit [0]:: Modify imports used in global file
 //// [/home/src/workspaces/project/constants.ts] *modified* 
 export default 2;
 
-ExitStatus:: 0
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/workspaces/project/constants.js] *modified* 
 "use strict";
@@ -238,9 +235,7 @@ exports.default = 2;
   "size": 887
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/workspaces/project/constants.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/constants.ts

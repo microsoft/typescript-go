@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/projects/myproject
 useCaseSensitiveFileNames::true
-Input::--showConfig
+Input::
 //// [/home/src/projects/configs/first/tsconfig.json] *new* 
 {
     "extends": "../second/tsconfig.json",
@@ -49,11 +48,8 @@ import { k } from "other/sometype2";
 // some comment
 export const x = 10;
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "showConfig": true
-}
+tsgo --showConfig
+ExitStatus:: Success
 Output::
 No output
 

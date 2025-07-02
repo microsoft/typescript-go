@@ -1,7 +1,6 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::-w
+Input::
 //// [/home/src/workspaces/project/a.ts] *new* 
 const a: number = "hello"
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
@@ -11,11 +10,8 @@ const a: number = "hello"
 	}
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{
-    "watch": true
-}
+tsgo -w
+ExitStatus:: Success
 Output::
 [96ma.ts[0m:[93m1[0m:[93m7[0m - [91merror[0m[90m TS2322: [0mType 'string' is not assignable to type 'number'.
 
@@ -49,31 +45,27 @@ interface Symbol {
 }
 declare const console: { log(msg: any): void; };
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 
 
-Edit:: fix error
+Edit [0]:: fix error
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a = "hello";
 
 
 Output::
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/a.ts
 
 
-Edit:: emit after fixing error
+Edit [1]:: emit after fixing error
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -87,13 +79,11 @@ Output::
 const a = "hello";
 
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: no emit run after fixing error
+Edit [2]:: no emit run after fixing error
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -105,13 +95,11 @@ Edit:: no emit run after fixing error
 
 Output::
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: introduce error
+Edit [3]:: introduce error
 //// [/home/src/workspaces/project/a.ts] *modified* 
 const a: number = "hello"
 
@@ -126,16 +114,14 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/a.ts
-
 Signatures::
 (computed .d.ts) /home/src/workspaces/project/a.ts
 
 
-Edit:: emit when error
+Edit [4]:: emit when error
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -155,13 +141,11 @@ Found 1 error in a.ts[90m:1[0m
 
 //// [/home/src/workspaces/project/a.js] *modified time*
 
-
 SemanticDiagnostics::
-
 Signatures::
 
 
-Edit:: no emit run when error
+Edit [5]:: no emit run when error
 //// [/home/src/workspaces/project/tsconfig.json] *modified* 
 {
 	"compilerOptions": {
@@ -181,7 +165,5 @@ Output::
 Found 1 error in a.ts[90m:1[0m
 
 
-
 SemanticDiagnostics::
-
 Signatures::

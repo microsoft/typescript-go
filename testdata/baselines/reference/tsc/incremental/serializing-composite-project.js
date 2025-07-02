@@ -1,4 +1,3 @@
-
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
@@ -15,9 +14,8 @@ export const b = 2;
     },
 }
 
-ExitStatus:: 0
-
-CompilerOptions::{}
+tsgo 
+ExitStatus:: Success
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -109,12 +107,10 @@ export const b = 2;
   "size": 693
 }
 
-
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
 *refresh*    /home/src/workspaces/project/index.tsx
 *refresh*    /home/src/workspaces/project/other.ts
-
 Signatures::
 (stored at emit) /home/src/workspaces/project/index.tsx
 (stored at emit) /home/src/workspaces/project/other.ts
