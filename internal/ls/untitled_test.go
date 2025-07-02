@@ -114,3 +114,43 @@ func TestUntitledFileNameDebugging(t *testing.T) {
 	
 	t.Logf("✅ Fix working: untitled paths are not resolved against current directory")
 }
+
+func TestUntitledFileIntegration(t *testing.T) {
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+
+	// This test simulates the exact scenario from the issue:
+	// 1. VS Code sends untitled:Untitled-2 URI
+	// 2. References/definitions should return untitled:Untitled-2 URIs, not file:// URIs
+
+	// Simulate exactly what happens in the LSP flow
+	originalURI := lsproto.DocumentUri("untitled:Untitled-2")
+	
+	// Step 1: URI gets converted to filename when file is opened
+	fileName := ls.DocumentURIToFileName(originalURI)
+	t.Logf("1. Opening file: URI '%s' -> fileName '%s'", originalURI, fileName)
+	
+	// Step 2: fileName gets processed through ToPath in project service
+	currentDir := "/home/daniel/TypeScript" // Current directory from the original issue
+	path := tspath.ToPath(fileName, currentDir, true)
+	t.Logf("2. Project service processes: fileName '%s' -> path '%s'", fileName, string(path))
+	
+	// Step 3: Verify path is NOT corrupted by current directory resolution
+	if strings.HasPrefix(string(path), currentDir) {
+		t.Fatalf("❌ BUG: Path was incorrectly resolved against current directory: %s", string(path))
+	}
+	
+	// Step 4: When references are found, the path gets converted back to URI
+	resultURI := ls.FileNameToDocumentURI(string(path))
+	t.Logf("3. References return: path '%s' -> URI '%s'", string(path), resultURI)
+	
+	// Step 5: Verify the round-trip conversion works
+	if string(resultURI) != string(originalURI) {
+		t.Fatalf("❌ Round-trip failed: %s != %s", originalURI, resultURI)
+	}
+	
+	t.Logf("✅ SUCCESS: Untitled file URIs are preserved correctly")
+	t.Logf("   Original URI: %s", originalURI)
+	t.Logf("   Final URI:    %s", resultURI)
+}
