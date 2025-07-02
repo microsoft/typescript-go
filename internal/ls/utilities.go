@@ -374,6 +374,9 @@ func isTypeReference(node *ast.Node) bool {
 }
 
 func isInRightSideOfInternalImportEqualsDeclaration(node *ast.Node) bool {
+	if node.Parent == nil {
+		return false
+	}
 	for node.Parent.Kind == ast.KindQualifiedName {
 		node = node.Parent
 	}
@@ -1321,7 +1324,7 @@ func getAllSuperTypeNodes(node *ast.Node) []*ast.TypeNode {
 	}
 	if ast.IsClassLike(node) {
 		return append(
-			[]*ast.Node{ast.GetClassExtendsHeritageElement(node)},
+			core.SingleElementSlice(ast.GetClassExtendsHeritageElement(node)),
 			ast.GetImplementsTypeNodes(node)...,
 		)
 	}

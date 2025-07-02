@@ -3,6 +3,8 @@ package fourslash
 import (
 	"fmt"
 	"io"
+	"maps"
+	"slices"
 	"strings"
 	"testing"
 	"unicode"
@@ -19,6 +21,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
+	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/vfstest"
 	"gotest.tools/v3/assert"
 )
@@ -28,13 +31,47 @@ type FourslashTest struct {
 	in     *lspWriter
 	out    *lspReader
 	id     int32
+	vfs    vfs.FS
 
-	testData *TestData
+	testData *TestData // !!! consolidate test files from test data and script info
+
+	scriptInfos map[string]*scriptInfo
+	converters  *ls.Converters
 
 	currentCaretPosition lsproto.Position
-	currentFilename      string
 	lastKnownMarkerName  string
 	activeFilename       string
+	selectionEnd         *lsproto.Position
+}
+
+type scriptInfo struct {
+	fileName string
+	content  string
+	lineMap  *ls.LineMap
+	version  int32
+}
+
+func newScriptInfo(fileName string, content string) *scriptInfo {
+	return &scriptInfo{
+		fileName: fileName,
+		content:  content,
+		lineMap:  ls.ComputeLineStarts(content),
+		version:  1,
+	}
+}
+
+func (s *scriptInfo) editContent(start int, end int, newText string) {
+	s.content = s.content[:start] + newText + s.content[end:]
+	s.lineMap = ls.ComputeLineStarts(s.content)
+	s.version++
+}
+
+func (s *scriptInfo) Text() string {
+	return s.content
+}
+
+func (s *scriptInfo) FileName() string {
+	return s.fileName
 }
 
 type lspReader struct {
@@ -101,10 +138,12 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 	rootDir := "/"
 	fileName := getFileNameFromTest(t)
 	testfs := make(map[string]string)
+	scriptInfos := make(map[string]*scriptInfo)
 	testData := ParseTestData(t, content, fileName)
 	for _, file := range testData.Files {
 		filePath := tspath.GetNormalizedAbsolutePath(file.fileName, rootDir)
 		testfs[filePath] = file.Content
+		scriptInfos[filePath] = newScriptInfo(filePath, file.Content)
 	}
 
 	compilerOptions := &core.CompilerOptions{}
@@ -113,7 +152,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 	inputReader, inputWriter := newLSPPipe()
 	outputReader, outputWriter := newLSPPipe()
-	fs := vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/)
+	fs := bundled.WrapFS(vfstest.FromMap(testfs, true /*useCaseSensitiveFileNames*/))
 
 	var err strings.Builder
 	server := lsp.NewServer(&lsp.ServerOptions{
@@ -123,7 +162,7 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 
 		Cwd:                "/",
 		NewLine:            core.NewLineKindLF,
-		FS:                 bundled.WrapFS(fs),
+		FS:                 fs,
 		DefaultLibraryPath: bundled.LibPath(),
 
 		ParsedFileCache: &parsedFileCache{},
@@ -139,18 +178,29 @@ func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, conten
 		}
 	}()
 
+	converters := ls.NewConverters(lsproto.PositionEncodingKindUTF8, func(fileName string) *ls.LineMap {
+		scriptInfo, ok := scriptInfos[fileName]
+		if !ok {
+			return nil
+		}
+		return scriptInfo.lineMap
+	})
+
 	f := &FourslashTest{
-		server:   server,
-		in:       inputWriter,
-		out:      outputReader,
-		testData: &testData,
+		server:      server,
+		in:          inputWriter,
+		out:         outputReader,
+		testData:    &testData,
+		vfs:         fs,
+		scriptInfos: scriptInfos,
+		converters:  converters,
 	}
 
 	// !!! temporary; remove when we have `handleDidChangeConfiguration`/implicit project config support
 	// !!! replace with a proper request *after initialize*
 	f.server.SetCompilerOptionsForInferredProjects(compilerOptions)
 	f.initialize(t, capabilities)
-	f.openFile(t, f.testData.Files[0])
+	f.openFile(t, f.testData.Files[0].fileName)
 
 	t.Cleanup(func() {
 		inputWriter.Close()
@@ -189,7 +239,7 @@ var (
 			InsertReplaceSupport:    ptrTrue,
 		},
 		CompletionList: &lsproto.CompletionListCapabilities{
-			ItemDefaults: &[]string{"commitCharacters"},
+			ItemDefaults: &[]string{"commitCharacters", "editRange"},
 		},
 	}
 )
@@ -251,34 +301,47 @@ func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
 		t.Fatalf("Marker %s not found", markerName)
 	}
 	f.ensureActiveFile(t, marker.FileName)
-	f.currentCaretPosition = marker.LSPosition
-	f.currentFilename = marker.FileName
+	f.goToPosition(t, marker.LSPosition)
 	f.lastKnownMarkerName = marker.Name
+}
+
+func (f *FourslashTest) GoToEOF(t *testing.T) {
+	script := f.getScriptInfo(f.activeFilename)
+	pos := len(script.content)
+	LSPPos := f.converters.PositionToLineAndCharacter(script, core.TextPos(pos))
+	f.goToPosition(t, LSPPos)
+}
+
+func (f *FourslashTest) goToPosition(t *testing.T, position lsproto.Position) {
+	f.currentCaretPosition = position
+	f.selectionEnd = nil
 }
 
 func (f *FourslashTest) Markers() []*Marker {
 	return f.testData.Markers
 }
 
+func (f *FourslashTest) Ranges() []*RangeMarker {
+	return f.testData.Ranges
+}
+
 func (f *FourslashTest) ensureActiveFile(t *testing.T, filename string) {
 	if f.activeFilename != filename {
-		file := core.Find(f.testData.Files, func(f *TestFileInfo) bool {
-			return f.fileName == filename
-		})
-		if file == nil {
-			t.Fatalf("File %s not found in test data", filename)
-		}
-		f.openFile(t, file)
+		f.openFile(t, filename)
 	}
 }
 
-func (f *FourslashTest) openFile(t *testing.T, file *TestFileInfo) {
-	f.activeFilename = file.fileName
+func (f *FourslashTest) openFile(t *testing.T, filename string) {
+	script := f.getScriptInfo(filename)
+	if script == nil {
+		t.Fatalf("File %s not found in test data", filename)
+	}
+	f.activeFilename = filename
 	f.sendNotification(t, lsproto.MethodTextDocumentDidOpen, &lsproto.DidOpenTextDocumentParams{
 		TextDocument: &lsproto.TextDocumentItem{
-			Uri:        ls.FileNameToDocumentURI(file.fileName),
-			LanguageId: getLanguageKind(file.fileName),
-			Text:       file.Content,
+			Uri:        ls.FileNameToDocumentURI(filename),
+			LanguageId: getLanguageKind(filename),
+			Text:       script.content,
 		},
 	})
 }
@@ -307,22 +370,35 @@ func getLanguageKind(filename string) lsproto.LanguageKind {
 	return lsproto.LanguageKindTypeScript // !!! should we error in this case?
 }
 
-// !!! break up this file into smaller files?
-// !!! add constant items like `classElementKeywords`
-type VerifyCompletionsExpectedList struct {
+type CompletionsExpectedList struct {
 	IsIncomplete bool
-	ItemDefaults *lsproto.CompletionItemDefaults
-	Items        *VerifyCompletionsExpectedItems
+	ItemDefaults *CompletionsExpectedItemDefaults
+	Items        *CompletionsExpectedItems
+}
+
+type Ignored = struct{}
+
+// *EditRange | Ignored
+type ExpectedCompletionEditRange = any
+
+type EditRange struct {
+	Insert  *RangeMarker
+	Replace *RangeMarker
+}
+
+type CompletionsExpectedItemDefaults struct {
+	CommitCharacters *[]string
+	EditRange        ExpectedCompletionEditRange
 }
 
 // *lsproto.CompletionItem | string
-type ExpectedCompletionItem = any
+type CompletionsExpectedItem = any
 
-// !!! unsorted completions? only used in 47 tests
-type VerifyCompletionsExpectedItems struct {
-	Includes []ExpectedCompletionItem
+type CompletionsExpectedItems struct {
+	Includes []CompletionsExpectedItem
 	Excludes []string
-	Exact    []ExpectedCompletionItem
+	Exact    []CompletionsExpectedItem
+	Unsorted []CompletionsExpectedItem
 }
 
 // string | *Marker | []string | []*Marker
@@ -331,7 +407,7 @@ type MarkerInput = any
 // !!! user preferences param
 // !!! completion context param
 // !!! go to marker: use current marker if none specified/support nil marker input
-func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput, expected *VerifyCompletionsExpectedList) {
+func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput, expected *CompletionsExpectedList) {
 	switch marker := markerInput.(type) {
 	case string:
 		f.verifyCompletionsAtMarker(t, marker, expected)
@@ -345,21 +421,23 @@ func (f *FourslashTest) VerifyCompletions(t *testing.T, markerInput MarkerInput,
 		for _, marker := range marker {
 			f.verifyCompletionsAtMarker(t, marker.Name, expected)
 		}
+	case nil:
+		f.verifyCompletionsWorker(t, expected)
 	default:
 		t.Fatalf("Invalid marker input type: %T. Expected string, *Marker, []string, or []*Marker.", markerInput)
 	}
 }
 
-func (f *FourslashTest) verifyCompletionsAtMarker(t *testing.T, markerName string, expected *VerifyCompletionsExpectedList) {
+func (f *FourslashTest) verifyCompletionsAtMarker(t *testing.T, markerName string, expected *CompletionsExpectedList) {
 	f.GoToMarker(t, markerName)
 	f.verifyCompletionsWorker(t, expected)
 }
 
-func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *VerifyCompletionsExpectedList) {
+func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) {
 	params := &lsproto.CompletionParams{
 		TextDocumentPositionParams: lsproto.TextDocumentPositionParams{
 			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.currentFilename),
+				Uri: ls.FileNameToDocumentURI(f.activeFilename),
 			},
 			Position: f.currentCaretPosition,
 		},
@@ -378,7 +456,7 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *VerifyCo
 	}
 }
 
-func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected *VerifyCompletionsExpectedList) {
+func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.CompletionList, expected *CompletionsExpectedList) {
 	prefix := fmt.Sprintf("At marker '%s': ", markerName)
 	if actual == nil {
 		if !isEmptyExpectedList(expected) {
@@ -390,21 +468,62 @@ func verifyCompletionsResult(t *testing.T, markerName string, actual *lsproto.Co
 		t.Fatalf(prefix+"Expected nil completion list but got non-nil: %s", cmp.Diff(actual, nil))
 	}
 	assert.Equal(t, actual.IsIncomplete, expected.IsIncomplete, prefix+"IsIncomplete mismatch")
-	assertDeepEqual(t, actual.ItemDefaults, expected.ItemDefaults, prefix+"ItemDefaults mismatch")
+	verifyCompletionsItemDefaults(t, actual.ItemDefaults, expected.ItemDefaults, prefix+"ItemDefaults mismatch: ")
 	verifyCompletionsItems(t, prefix, actual.Items, expected.Items)
 }
 
-func isEmptyExpectedList(expected *VerifyCompletionsExpectedList) bool {
+func isEmptyExpectedList(expected *CompletionsExpectedList) bool {
 	return expected == nil || (len(expected.Items.Exact) == 0 && len(expected.Items.Includes) == 0 && len(expected.Items.Excludes) == 0)
 }
 
-func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected *VerifyCompletionsExpectedItems) {
+func verifyCompletionsItemDefaults(t *testing.T, actual *lsproto.CompletionItemDefaults, expected *CompletionsExpectedItemDefaults, prefix string) {
+	if actual == nil {
+		if expected == nil {
+			return
+		}
+		t.Fatalf(prefix+"Expected non-nil completion item defaults but got nil: %s", cmp.Diff(actual, nil))
+	}
+	if expected == nil {
+		t.Fatalf(prefix+"Expected nil completion item defaults but got non-nil: %s", cmp.Diff(actual, nil))
+	}
+	assertDeepEqual(t, actual.CommitCharacters, expected.CommitCharacters, prefix+"CommitCharacters mismatch:")
+	switch editRange := expected.EditRange.(type) {
+	case *EditRange:
+		if actual.EditRange == nil {
+			t.Fatal(prefix + "Expected non-nil EditRange but got nil")
+		}
+		expectedInsert := editRange.Insert.LSRange
+		expectedReplace := editRange.Replace.LSRange
+		assertDeepEqual(
+			t,
+			actual.EditRange,
+			&lsproto.RangeOrEditRangeWithInsertReplace{
+				EditRangeWithInsertReplace: &lsproto.EditRangeWithInsertReplace{
+					Insert:  expectedInsert,
+					Replace: expectedReplace,
+				},
+			},
+			prefix+"EditRange mismatch:")
+	case nil:
+		if actual.EditRange != nil {
+			t.Fatalf(prefix+"Expected nil EditRange but got non-nil: %s", cmp.Diff(actual.EditRange, nil))
+		}
+	case Ignored:
+	default:
+		t.Fatalf(prefix+"Expected EditRange to be *EditRange or Ignored, got %T", editRange)
+	}
+}
+
+func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected *CompletionsExpectedItems) {
 	if expected.Exact != nil {
 		if expected.Includes != nil {
 			t.Fatal(prefix + "Expected exact completion list but also specified 'includes'.")
 		}
 		if expected.Excludes != nil {
 			t.Fatal(prefix + "Expected exact completion list but also specified 'excludes'.")
+		}
+		if expected.Unsorted != nil {
+			t.Fatal(prefix + "Expected exact completion list but also specified 'unsorted'.")
 		}
 		if len(actual) != len(expected.Exact) {
 			t.Fatalf(prefix+"Expected %d exact completion items but got %d: %s", len(expected.Exact), len(actual), cmp.Diff(actual, expected.Exact))
@@ -417,6 +536,38 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 	nameToActualItem := make(map[string]*lsproto.CompletionItem)
 	for _, item := range actual {
 		nameToActualItem[item.Label] = item
+	}
+	if expected.Unsorted != nil {
+		if expected.Includes != nil {
+			t.Fatal(prefix + "Expected unsorted completion list but also specified 'includes'.")
+		}
+		if expected.Excludes != nil {
+			t.Fatal(prefix + "Expected unsorted completion list but also specified 'excludes'.")
+		}
+		for _, item := range expected.Unsorted {
+			switch item := item.(type) {
+			case string:
+				_, ok := nameToActualItem[item]
+				if !ok {
+					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item, cmp.Diff(actual, nil))
+				}
+				delete(nameToActualItem, item)
+			case *lsproto.CompletionItem:
+				actualItem, ok := nameToActualItem[item.Label]
+				if !ok {
+					t.Fatalf("%sLabel '%s' not found in actual items. Actual items: %s", prefix, item.Label, cmp.Diff(actual, nil))
+				}
+				delete(nameToActualItem, item.Label)
+				verifyCompletionItem(t, prefix+"Includes completion item mismatch for label "+item.Label, actualItem, item)
+			default:
+				t.Fatalf("%sExpected completion item to be a string or *lsproto.CompletionItem, got %T", prefix, item)
+			}
+		}
+		if len(expected.Unsorted) != len(actual) {
+			unmatched := slices.Collect(maps.Keys(nameToActualItem))
+			t.Fatalf("%sAdditional completions found but not included in 'unsorted': %s", prefix, strings.Join(unmatched, "\n"))
+		}
+		return
 	}
 	if expected.Includes != nil {
 		for _, item := range expected.Includes {
@@ -444,11 +595,11 @@ func verifyCompletionsItems(t *testing.T, prefix string, actual []*lsproto.Compl
 	}
 }
 
-func verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected []ExpectedCompletionItem) {
+func verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.CompletionItem, expected []CompletionsExpectedItem) {
 	// Verify labels first
 	assertDeepEqual(t, core.Map(actual, func(item *lsproto.CompletionItem) string {
 		return item.Label
-	}), core.Map(expected, func(item ExpectedCompletionItem) string {
+	}), core.Map(expected, func(item CompletionsExpectedItem) string {
 		return getExpectedLabel(t, item)
 	}), prefix+"Labels mismatch")
 	for i, actualItem := range actual {
@@ -480,7 +631,7 @@ func verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.Completio
 	assertDeepEqual(t, actual.SortText, core.OrElse(expected.SortText, ptrTo(string(ls.SortTextLocationPriority))), prefix+" SortText mismatch")
 }
 
-func getExpectedLabel(t *testing.T, item ExpectedCompletionItem) string {
+func getExpectedLabel(t *testing.T, item CompletionsExpectedItem) string {
 	switch item := item.(type) {
 	case string:
 		return item
@@ -503,4 +654,174 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 
 func ptrTo[T any](v T) *T {
 	return &v
+}
+
+// Insert text at the current caret position.
+func (f *FourslashTest) Insert(t *testing.T, text string) {
+	f.typeText(t, text)
+}
+
+// Insert text and a new line at the current caret position.
+func (f *FourslashTest) InsertLine(t *testing.T, text string) {
+	f.typeText(t, text+"\n")
+}
+
+// Removes the text at the current caret position as if the user pressed backspace `count` times.
+func (f *FourslashTest) Backspace(t *testing.T, count int) {
+	script := f.getScriptInfo(f.activeFilename)
+	offset := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+
+	for range count {
+		offset--
+		f.editScriptAndUpdateMarkers(t, f.activeFilename, offset, offset+1, "")
+		f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(offset))
+		// Don't need to examine formatting because there are no formatting changes on backspace.
+	}
+
+	// f.checkPostEditInvariants() // !!! do we need this?
+}
+
+// Enters text as if the user had pasted it.
+func (f *FourslashTest) Paste(t *testing.T, text string) {
+	script := f.getScriptInfo(f.activeFilename)
+	start := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+	f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start, text)
+	// this.checkPostEditInvariants(); // !!! do we need this?
+}
+
+// Selects a line and replaces it with a new text.
+func (f *FourslashTest) ReplaceLine(t *testing.T, lineIndex int, text string) {
+	f.selectLine(t, lineIndex)
+	f.typeText(t, text)
+}
+
+func (f *FourslashTest) selectLine(t *testing.T, lineIndex int) {
+	script := f.getScriptInfo(f.activeFilename)
+	start := script.lineMap.LineStarts[lineIndex]
+	end := script.lineMap.LineStarts[lineIndex+1] - 1
+	f.selectRange(t, core.NewTextRange(int(start), int(end)))
+}
+
+func (f *FourslashTest) selectRange(t *testing.T, textRange core.TextRange) {
+	script := f.getScriptInfo(f.activeFilename)
+	start := f.converters.PositionToLineAndCharacter(script, core.TextPos(textRange.Pos()))
+	end := f.converters.PositionToLineAndCharacter(script, core.TextPos(textRange.End()))
+	f.goToPosition(t, start)
+	f.selectionEnd = &end
+}
+
+func (f *FourslashTest) getSelection() core.TextRange {
+	script := f.getScriptInfo(f.activeFilename)
+	if f.selectionEnd == nil {
+		return core.NewTextRange(
+			int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition)),
+			int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition)),
+		)
+	}
+	return core.NewTextRange(
+		int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition)),
+		int(f.converters.LineAndCharacterToPosition(script, *f.selectionEnd)),
+	)
+}
+
+func (f *FourslashTest) Replace(t *testing.T, start int, length int, text string) {
+	f.editScriptAndUpdateMarkers(t, f.activeFilename, start, start+length, text)
+	// f.checkPostEditInvariants() // !!! do we need this?
+}
+
+// Inserts the text currently at the caret position character by character, as if the user typed it.
+func (f *FourslashTest) typeText(t *testing.T, text string) {
+	script := f.getScriptInfo(f.activeFilename)
+	offset := int(f.converters.LineAndCharacterToPosition(script, f.currentCaretPosition))
+	selection := f.getSelection()
+	f.Replace(t, selection.Pos(), selection.End()-selection.Pos(), "")
+
+	totalSize := 0
+
+	for totalSize < len(text) {
+		r, size := utf8.DecodeRuneInString(text[totalSize:])
+		f.editScriptAndUpdateMarkers(t, f.activeFilename, totalSize+offset, totalSize+offset, string(r))
+
+		totalSize += size
+		f.currentCaretPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(totalSize+offset))
+
+		// !!! formatting
+		// Handle post-keystroke formatting
+		// if this.enableFormatting {
+		// 	const edits = this.languageService.getFormattingEditsAfterKeystroke(this.activeFile.fileName, offset, ch, this.formatCodeSettings)
+		// 	if edits.length {
+		// 		offset += this.applyEdits(this.activeFile.fileName, edits)
+		// 	}
+		// }
+
+	}
+
+	// f.checkPostEditInvariants() // !!! do we need this?
+}
+
+// Edits the script and updates marker and range positions accordingly.
+// This does not update the current caret position.
+func (f *FourslashTest) editScriptAndUpdateMarkers(t *testing.T, fileName string, editStart int, editEnd int, newText string) {
+	script := f.editScript(t, fileName, editStart, editEnd, newText)
+	for _, marker := range f.testData.Markers {
+		if marker.FileName == fileName {
+			marker.Position = updatePosition(marker.Position, editStart, editEnd, newText)
+			marker.LSPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(marker.Position))
+		}
+	}
+	for _, rangeMarker := range f.testData.Ranges {
+		if rangeMarker.FileName == fileName {
+			start := updatePosition(rangeMarker.Range.Pos(), editStart, editEnd, newText)
+			end := updatePosition(rangeMarker.Range.End(), editStart, editEnd, newText)
+			rangeMarker.Range = core.NewTextRange(start, end)
+			rangeMarker.LSRange = f.converters.ToLSPRange(script, rangeMarker.Range)
+		}
+	}
+	// !!! clean up ranges by text
+}
+
+func updatePosition(pos int, editStart int, editEnd int, newText string) int {
+	if pos <= editStart {
+		return pos
+	}
+	// If inside the edit, return -1 to mark as invalid
+	if pos < editEnd {
+		return -1
+	}
+	return pos + len(newText) - (editEnd - editStart)
+}
+
+func (f *FourslashTest) editScript(t *testing.T, fileName string, start int, end int, newText string) *scriptInfo {
+	script := f.getScriptInfo(fileName)
+	changeRange := f.converters.ToLSPRange(script, core.NewTextRange(start, end))
+	if script == nil {
+		panic(fmt.Sprintf("Script info for file %s not found", fileName))
+	}
+
+	script.editContent(start, end, newText)
+	err := f.vfs.WriteFile(fileName, script.content, false)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to write file %s: %v", fileName, err))
+	}
+	f.sendNotification(t, lsproto.MethodTextDocumentDidChange, &lsproto.DidChangeTextDocumentParams{
+		TextDocument: lsproto.VersionedTextDocumentIdentifier{
+			TextDocumentIdentifier: lsproto.TextDocumentIdentifier{
+				Uri: ls.FileNameToDocumentURI(fileName),
+			},
+			Version: script.version,
+		},
+		ContentChanges: []lsproto.TextDocumentContentChangeEvent{
+			{
+				TextDocumentContentChangePartial: &lsproto.TextDocumentContentChangePartial{
+					Range: changeRange,
+					Text:  newText,
+				},
+			},
+		},
+	})
+	return script
+}
+
+func (f *FourslashTest) getScriptInfo(fileName string) *scriptInfo {
+	return f.scriptInfos[fileName]
 }

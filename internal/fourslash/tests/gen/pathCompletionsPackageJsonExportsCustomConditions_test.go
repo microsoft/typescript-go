@@ -20,7 +20,7 @@ func TestPathCompletionsPackageJsonExportsCustomConditions(t *testing.T) {
   "exports": {
     "./only-with-custom-conditions": {
       "custom-condition": "./something.js"
-    },
+    }
   }
 }
 // @Filename: /node_modules/foo/something.d.ts
@@ -28,13 +28,14 @@ export const index = 0;
 // @Filename: /index.ts
 import { } from "foo//**/";`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Exact: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindFile), Label: "only-with-custom-conditions"}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Kind: ptrTo(lsproto.CompletionItemKindFile), Label: "only-with-custom-conditions"}},
 		},
 	})
 }

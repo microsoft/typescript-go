@@ -49,7 +49,7 @@ func getTokenAtPosition(
 	left := 0
 
 	testNode := func(node *ast.Node) int {
-		if node.End() == position && includePrecedingTokenAtEndPosition != nil {
+		if node.Kind != ast.KindEndOfFile && node.End() == position && includePrecedingTokenAtEndPosition != nil {
 			prevSubtree = node
 		}
 
@@ -133,8 +133,8 @@ func getTokenAtPosition(
 		// Check if the rightmost token of prevSubtree should be returned based on the
 		// `includePrecedingTokenAtEndPosition` callback.
 		if prevSubtree != nil {
-			child := findRightmostNode(prevSubtree)
-			if child.End() == position && includePrecedingTokenAtEndPosition(child) {
+			child := FindPrecedingTokenEx(sourceFile, position, prevSubtree, false /*excludeJSDoc*/)
+			if child != nil && child.End() == position && includePrecedingTokenAtEndPosition(child) {
 				// Optimization: includePrecedingTokenAtEndPosition only ever returns true
 				// for real AST nodes, so we don't run the scanner here.
 				return child
@@ -247,7 +247,7 @@ func FindPrecedingToken(sourceFile *ast.SourceFile, position int) *ast.Node {
 func FindPrecedingTokenEx(sourceFile *ast.SourceFile, position int, startNode *ast.Node, excludeJSDoc bool) *ast.Node {
 	var find func(node *ast.Node) *ast.Node
 	find = func(n *ast.Node) *ast.Node {
-		if ast.IsNonWhitespaceToken(n) {
+		if ast.IsNonWhitespaceToken(n) && n.Kind != ast.KindEndOfFile {
 			return n
 		}
 
@@ -511,7 +511,10 @@ func findRightmostValidToken(endPos int, sourceFile *ast.SourceFile, containingN
 
 		// Case 3: childless node.
 		if !hasChildren {
-			return n
+			if n != containingNode {
+				return n
+			}
+			return nil
 		}
 		// Case 1: recur on rightmostValidNode.
 		if rightmostValidNode != nil {

@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/checker"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/repo"
@@ -166,6 +167,11 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	payload := makeUnitsFromTest(test.content, test.filename)
 	compilerTest := newCompilerTest(t, testName, test.filename, &payload, config)
 
+	switch compilerTest.options.GetEmitModuleKind() {
+	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
+		t.Skipf("Skipping test %s with unsupported module kind %s", testName, compilerTest.options.GetEmitModuleKind())
+	}
+
 	compilerTest.verifyDiagnostics(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifyJavaScriptOutput(t, r.testSuitName, r.isSubmodule)
 	compilerTest.verifySourceMapOutput(t, r.testSuitName, r.isSubmodule)
@@ -174,6 +180,7 @@ func (r *CompilerBaselineRunner) runSingleConfigTest(t *testing.T, testName stri
 	// !!! Verify all baselines
 
 	compilerTest.verifyUnionOrdering(t)
+	compilerTest.verifyParentPointers(t)
 }
 
 type compilerFileBasedTest struct {
@@ -336,7 +343,7 @@ func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmo
 		tsbaseline.DoErrorBaseline(t, c.configuredName, files, c.result.Diagnostics, c.result.Options.Pretty.IsTrue(), baseline.Options{
 			Subfolder:           suiteName,
 			IsSubmodule:         isSubmodule,
-			IsSubmoduleAccepted: c.containsUnsupportedOptions(),
+			IsSubmoduleAccepted: c.containsUnsupportedOptionsForDiagnostics(),
 			DiffFixupOld: func(old string) string {
 				var sb strings.Builder
 				sb.Grow(len(old))
@@ -506,12 +513,46 @@ func (c *compilerTest) verifyUnionOrdering(t *testing.T) {
 	})
 }
 
-func (c *compilerTest) containsUnsupportedOptions() bool {
+func (c *compilerTest) verifyParentPointers(t *testing.T) {
+	t.Run("source file parent pointers", func(t *testing.T) {
+		var parent *ast.Node
+		var verifier func(n *ast.Node) bool
+		verifier = func(n *ast.Node) bool {
+			if n == nil {
+				return false
+			}
+			assert.Assert(t, n.Parent != nil, "parent node does not exist")
+			elab := ""
+			if !ast.NodeIsSynthesized(n) {
+				elab += ast.GetSourceFileOfNode(n).Text()[n.Loc.Pos():n.Loc.End()]
+			} else {
+				elab += "!synthetic! no text available"
+			}
+			if ((n.Parent.Kind == ast.KindBinaryExpression || n.Parent.Kind == ast.KindPropertyAccessExpression || n.Parent.Kind == ast.KindElementAccessExpression) && (parent.Kind == ast.KindJSExportAssignment || parent.Kind == ast.KindCommonJSExport)) ||
+				((parent.Kind == ast.KindBinaryExpression || parent.Kind == ast.KindPropertyAccessExpression || parent.Kind == ast.KindElementAccessExpression) && (n.Parent.Kind == ast.KindJSExportAssignment || n.Parent.Kind == ast.KindCommonJSExport)) ||
+				(ast.IsFunctionLike(n.Parent) && ast.IsFunctionLike(parent)) {
+				// known current violation of parent pointer invariant, ignore (type nodes on js exports/binary expressions, names on signatures)
+			} else {
+				assert.Assert(t, n.Parent == parent, "parent node does not match traversed parent: "+n.Kind.String()+": "+elab)
+			}
+			oldParent := parent
+			parent = n
+			n.ForEachChild(verifier)
+			parent = oldParent
+			return false
+		}
+		for _, f := range c.result.Program.GetSourceFiles() {
+			if c.result.Program.IsSourceFileDefaultLibrary(f.Path()) {
+				continue
+			}
+			parent = f.AsNode()
+			f.AsNode().ForEachChild(verifier)
+		}
+	})
+}
+
+func (c *compilerTest) containsUnsupportedOptionsForDiagnostics() bool {
 	if len(c.result.Program.UnsupportedExtensions()) != 0 {
-		return true
-	}
-	switch c.options.GetEmitModuleKind() {
-	case core.ModuleKindAMD, core.ModuleKindUMD, core.ModuleKindSystem:
 		return true
 	}
 	if c.options.BaseUrl != "" {

@@ -318,7 +318,13 @@ func (l *LanguageService) getCompletionsAtPosition(
 		previousToken.Kind == ast.KindContinueKeyword ||
 		previousToken.Kind == ast.KindIdentifier) &&
 		ast.IsBreakOrContinueStatement(previousToken.Parent) {
-		return l.getLabelCompletionsAtPosition(previousToken.Parent, clientOptions, file, position)
+		return l.getLabelCompletionsAtPosition(
+			previousToken.Parent,
+			clientOptions,
+			file,
+			position,
+			l.getOptionalReplacementSpan(previousToken, file),
+		)
 	}
 
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
@@ -330,6 +336,7 @@ func (l *LanguageService) getCompletionsAtPosition(
 
 	switch data := data.(type) {
 	case *completionDataData:
+		optionalReplacementSpan := l.getOptionalReplacementSpan(data.location, file)
 		response := l.completionInfoFromData(
 			ctx,
 			file,
@@ -339,11 +346,20 @@ func (l *LanguageService) getCompletionsAtPosition(
 			preferences,
 			position,
 			clientOptions,
+			optionalReplacementSpan,
 		)
 		// !!! check if response is incomplete
 		return response
 	case *completionDataKeyword:
-		return specificKeywordCompletionInfo(clientOptions, data.keywordCompletions, data.isNewIdentifierLocation)
+		optionalReplacementSpan := l.getOptionalReplacementSpan(previousToken, file)
+		return l.specificKeywordCompletionInfo(
+			clientOptions,
+			position,
+			file,
+			data.keywordCompletions,
+			data.isNewIdentifierLocation,
+			optionalReplacementSpan,
+		)
 	// !!! jsdoc completion data cases
 	default:
 		panic("getCompletionData() returned unexpected type: " + fmt.Sprintf("%T", data))
@@ -1181,7 +1197,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 			// List of property symbols of base type that are not private and already implemented
 			var baseTypeNodes []*ast.Node
 			if ast.IsClassLike(decl) && classElementModifierFlags&ast.ModifierFlagsOverride != 0 {
-				baseTypeNodes = []*ast.Node{ast.GetClassExtendsHeritageElement(decl)}
+				baseTypeNodes = core.SingleElementSlice(ast.GetClassExtendsHeritageElement(decl))
 			} else {
 				baseTypeNodes = getAllSuperTypeNodes(decl)
 			}
@@ -1505,6 +1521,7 @@ func (l *LanguageService) completionInfoFromData(
 	preferences *UserPreferences,
 	position int,
 	clientOptions *lsproto.CompletionClientCapabilities,
+	optionalReplacementSpan *lsproto.Range,
 ) *lsproto.CompletionList {
 	keywordFilters := data.keywordFilters
 	isNewIdentifierLocation := data.isNewIdentifierLocation
@@ -1547,11 +1564,9 @@ func (l *LanguageService) completionInfoFromData(
 		return nil
 	}
 
-	optionalReplacementSpan := l.getOptionalReplacementSpan(data.location, file)
 	uniqueNames, sortedEntries := l.getCompletionEntriesFromSymbols(
 		ctx,
 		data,
-		optionalReplacementSpan,
 		nil, /*replacementToken*/
 		position,
 		file,
@@ -1599,7 +1614,14 @@ func (l *LanguageService) completionInfoFromData(
 
 	// !!! exhaustive case completions
 
-	itemDefaults := setCommitCharacters(clientOptions, sortedEntries, &data.defaultCommitCharacters)
+	itemDefaults := l.setItemDefaults(
+		clientOptions,
+		position,
+		file,
+		sortedEntries,
+		&data.defaultCommitCharacters,
+		optionalReplacementSpan,
+	)
 
 	return &lsproto.CompletionList{
 		IsIncomplete: data.hasUnresolvedAutoImports,
@@ -1611,7 +1633,6 @@ func (l *LanguageService) completionInfoFromData(
 func (l *LanguageService) getCompletionEntriesFromSymbols(
 	ctx context.Context,
 	data *completionDataData,
-	optionalReplacementSpan *lsproto.Range,
 	replacementToken *ast.Node,
 	position int,
 	file *ast.SourceFile,
@@ -1679,7 +1700,6 @@ func (l *LanguageService) getCompletionEntriesFromSymbols(
 			preferences,
 			clientOptions,
 			isMemberCompletion,
-			optionalReplacementSpan,
 		)
 		if entry == nil {
 			continue
@@ -1747,7 +1767,6 @@ func (l *LanguageService) createCompletionItem(
 	preferences *UserPreferences,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	isMemberCompletion bool,
-	optionalReplacementSpan *lsproto.Range,
 ) *lsproto.CompletionItem {
 	contextToken := data.contextToken
 	var insertText string
@@ -1994,7 +2013,6 @@ func (l *LanguageService) createCompletionItem(
 		elementKind,
 		kindModifiers,
 		replacementSpan,
-		optionalReplacementSpan,
 		commitCharacters,
 		labelDetails,
 		file,
@@ -2186,81 +2204,79 @@ func shouldIncludeSymbol(
 ) bool {
 	allFlags := symbol.Flags
 	location := data.location
-	if !ast.IsSourceFile(location) {
-		// export = /**/ here we want to get all meanings, so any symbol is ok
-		if ast.IsExportAssignment(location.Parent) {
-			return true
-		}
+	// export = /**/ here we want to get all meanings, so any symbol is ok
+	if location.Parent != nil && ast.IsExportAssignment(location.Parent) {
+		return true
+	}
 
-		// Filter out variables from their own initializers
-		// `const a = /* no 'a' here */`
-		if closestSymbolDeclaration != nil &&
-			ast.IsVariableDeclaration(closestSymbolDeclaration) &&
-			symbol.ValueDeclaration == closestSymbolDeclaration {
-			return false
-		}
+	// Filter out variables from their own initializers
+	// `const a = /* no 'a' here */`
+	if closestSymbolDeclaration != nil &&
+		ast.IsVariableDeclaration(closestSymbolDeclaration) &&
+		symbol.ValueDeclaration == closestSymbolDeclaration {
+		return false
+	}
 
-		// Filter out current and latter parameters from defaults
-		// `function f(a = /* no 'a' and 'b' here */, b) { }` or
-		// `function f<T = /* no 'T' and 'T2' here */>(a: T, b: T2) { }`
-		var symbolDeclaration *ast.Declaration
-		if symbol.ValueDeclaration != nil {
-			symbolDeclaration = symbol.ValueDeclaration
-		} else if len(symbol.Declarations) > 0 {
-			symbolDeclaration = symbol.Declarations[0]
-		}
+	// Filter out current and latter parameters from defaults
+	// `function f(a = /* no 'a' and 'b' here */, b) { }` or
+	// `function f<T = /* no 'T' and 'T2' here */>(a: T, b: T2) { }`
+	var symbolDeclaration *ast.Declaration
+	if symbol.ValueDeclaration != nil {
+		symbolDeclaration = symbol.ValueDeclaration
+	} else if len(symbol.Declarations) > 0 {
+		symbolDeclaration = symbol.Declarations[0]
+	}
 
-		if closestSymbolDeclaration != nil && symbolDeclaration != nil {
-			if ast.IsParameter(closestSymbolDeclaration) && ast.IsParameter(symbolDeclaration) {
-				parameters := closestSymbolDeclaration.Parent.ParameterList()
-				if symbolDeclaration.Pos() >= closestSymbolDeclaration.Pos() &&
-					symbolDeclaration.Pos() < parameters.End() {
+	if closestSymbolDeclaration != nil && symbolDeclaration != nil {
+		if ast.IsParameter(closestSymbolDeclaration) && ast.IsParameter(symbolDeclaration) {
+			parameters := closestSymbolDeclaration.Parent.ParameterList()
+			if symbolDeclaration.Pos() >= closestSymbolDeclaration.Pos() &&
+				symbolDeclaration.Pos() < parameters.End() {
+				return false
+			}
+		} else if ast.IsTypeParameterDeclaration(closestSymbolDeclaration) &&
+			ast.IsTypeParameterDeclaration(symbolDeclaration) {
+			if closestSymbolDeclaration == symbolDeclaration && data.contextToken != nil && data.contextToken.Kind == ast.KindExtendsKeyword {
+				// filter out the directly self-recursive type parameters
+				// `type A<K extends /* no 'K' here*/> = K`
+				return false
+			}
+			if isInTypeParameterDefault(data.contextToken) && !ast.IsInferTypeNode(closestSymbolDeclaration.Parent) {
+				typeParameters := closestSymbolDeclaration.Parent.TypeParameterList()
+				if typeParameters != nil && symbolDeclaration.Pos() >= closestSymbolDeclaration.Pos() &&
+					symbolDeclaration.Pos() < typeParameters.End() {
 					return false
-				}
-			} else if ast.IsTypeParameterDeclaration(closestSymbolDeclaration) &&
-				ast.IsTypeParameterDeclaration(symbolDeclaration) {
-				if closestSymbolDeclaration == symbolDeclaration && data.contextToken != nil && data.contextToken.Kind == ast.KindExtendsKeyword {
-					// filter out the directly self-recursive type parameters
-					// `type A<K extends /* no 'K' here*/> = K`
-					return false
-				}
-				if isInTypeParameterDefault(data.contextToken) && !ast.IsInferTypeNode(closestSymbolDeclaration.Parent) {
-					typeParameters := closestSymbolDeclaration.Parent.TypeParameterList()
-					if typeParameters != nil && symbolDeclaration.Pos() >= closestSymbolDeclaration.Pos() &&
-						symbolDeclaration.Pos() < typeParameters.End() {
-						return false
-					}
 				}
 			}
 		}
+	}
 
-		// External modules can have global export declarations that will be
-		// available as global keywords in all scopes. But if the external module
-		// already has an explicit export and user only wants to use explicit
-		// module imports then the global keywords will be filtered out so auto
-		// import suggestions will win in the completion.
-		symbolOrigin := checker.SkipAlias(symbol, typeChecker)
-		// We only want to filter out the global keywords.
-		// Auto Imports are not available for scripts so this conditional is always false.
-		if file.AsSourceFile().ExternalModuleIndicator != nil &&
-			compilerOptions.AllowUmdGlobalAccess != core.TSTrue &&
-			data.symbolToSortTextMap[ast.GetSymbolId(symbol)] == SortTextGlobalsOrKeywords &&
-			(data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == SortTextAutoImportSuggestions ||
-				data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == SortTextLocationPriority) {
-			return false
-		}
+	// External modules can have global export declarations that will be
+	// available as global keywords in all scopes. But if the external module
+	// already has an explicit export and user only wants to use explicit
+	// module imports then the global keywords will be filtered out so auto
+	// import suggestions will win in the completion.
+	symbolOrigin := checker.SkipAlias(symbol, typeChecker)
+	// We only want to filter out the global keywords.
+	// Auto Imports are not available for scripts so this conditional is always false.
+	if file.AsSourceFile().ExternalModuleIndicator != nil &&
+		compilerOptions.AllowUmdGlobalAccess != core.TSTrue &&
+		data.symbolToSortTextMap[ast.GetSymbolId(symbol)] == SortTextGlobalsOrKeywords &&
+		(data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == SortTextAutoImportSuggestions ||
+			data.symbolToSortTextMap[ast.GetSymbolId(symbolOrigin)] == SortTextLocationPriority) {
+		return false
+	}
 
-		allFlags = allFlags | checker.GetCombinedLocalAndExportSymbolFlags(symbolOrigin)
+	allFlags = allFlags | checker.GetCombinedLocalAndExportSymbolFlags(symbolOrigin)
 
-		// import m = /**/ <-- It can only access namespace (if typing import = x. this would get member symbols and not namespace)
-		if isInRightSideOfInternalImportEqualsDeclaration(data.location) {
-			return allFlags&ast.SymbolFlagsNamespace != 0
-		}
+	// import m = /**/ <-- It can only access namespace (if typing import = x. this would get member symbols and not namespace)
+	if isInRightSideOfInternalImportEqualsDeclaration(data.location) {
+		return allFlags&ast.SymbolFlagsNamespace != 0
+	}
 
-		if data.isTypeOnlyLocation {
-			// It's a type, but you can reach it by namespace.type as well.
-			return symbolCanBeReferencedAtTypeLocation(symbol, typeChecker, collections.Set[ast.SymbolId]{})
-		}
+	if data.isTypeOnlyLocation {
+		// It's a type, but you can reach it by namespace.type as well.
+		return symbolCanBeReferencedAtTypeLocation(symbol, typeChecker, collections.Set[ast.SymbolId]{})
 	}
 
 	// expressions are value space (which includes the value namespaces)
@@ -3053,7 +3069,7 @@ func isFunctionLikeBodyKeyword(kind ast.Kind) bool {
 		kind == ast.KindAwaitKeyword ||
 		kind == ast.KindUsingKeyword ||
 		kind == ast.KindAsKeyword ||
-		kind == ast.KindAssertsKeyword ||
+		kind == ast.KindSatisfiesKeyword ||
 		kind == ast.KindTypeKeyword ||
 		!ast.IsContextualKeyword(kind) && !isClassMemberCompletionKeyword(kind)
 }
@@ -3660,7 +3676,6 @@ func tryGetObjectTypeDeclarationCompletionContainer(
 			return location.Parent
 		}
 		return nil
-	// !!! we don't include EOF token anymore, verify what we should do in this case.
 	case ast.KindEndOfFile:
 		stmtList := location.Parent.AsSourceFile().Statements
 		if stmtList != nil && len(stmtList.Nodes) > 0 && ast.IsObjectTypeDeclaration(stmtList.Nodes[len(stmtList.Nodes)-1]) {
@@ -3882,23 +3897,56 @@ func isTypeKeywordTokenOrIdentifier(node *ast.Node) bool {
 		ast.IsIdentifier(node) && scanner.IdentifierToKeywordKind(node.AsIdentifier()) == ast.KindTypeKeyword
 }
 
-// Returns the default commit characters for completion items, if that capability is supported.
-// Otherwise, if item commit characters are supported, sets the commit characters on each item.
-func setCommitCharacters(
+// Returns the item defaults for completion items, if that capability is supported.
+// Otherwise, if some item default is not supported by client, sets that property on each item.
+func (l *LanguageService) setItemDefaults(
 	clientOptions *lsproto.CompletionClientCapabilities,
+	position int,
+	file *ast.SourceFile,
 	items []*lsproto.CompletionItem,
 	defaultCommitCharacters *[]string,
+	optionalReplacementSpan *lsproto.Range,
 ) *lsproto.CompletionItemDefaults {
 	var itemDefaults *lsproto.CompletionItemDefaults
-	supportsItemCommitCharacters := clientSupportsItemCommitCharacters(clientOptions)
-	if clientSupportsDefaultCommitCharacters(clientOptions) && supportsItemCommitCharacters {
-		itemDefaults = &lsproto.CompletionItemDefaults{
-			CommitCharacters: defaultCommitCharacters,
+	if defaultCommitCharacters != nil {
+		supportsItemCommitCharacters := clientSupportsItemCommitCharacters(clientOptions)
+		if clientSupportsDefaultCommitCharacters(clientOptions) && supportsItemCommitCharacters {
+			itemDefaults = &lsproto.CompletionItemDefaults{
+				CommitCharacters: defaultCommitCharacters,
+			}
+		} else if supportsItemCommitCharacters {
+			for _, item := range items {
+				if item.CommitCharacters == nil {
+					item.CommitCharacters = defaultCommitCharacters
+				}
+			}
 		}
-	} else if supportsItemCommitCharacters {
-		for _, item := range items {
-			if item.CommitCharacters == nil {
-				item.CommitCharacters = defaultCommitCharacters
+	}
+	if optionalReplacementSpan != nil {
+		// Ported from vscode ts extension.
+		insertRange := lsproto.Range{
+			Start: optionalReplacementSpan.Start,
+			End:   l.createLspPosition(position, file),
+		}
+		if clientSupportsDefaultEditRange(clientOptions) {
+			itemDefaults = core.OrElse(itemDefaults, &lsproto.CompletionItemDefaults{})
+			itemDefaults.EditRange = &lsproto.RangeOrEditRangeWithInsertReplace{
+				EditRangeWithInsertReplace: &lsproto.EditRangeWithInsertReplace{
+					Insert:  insertRange,
+					Replace: *optionalReplacementSpan,
+				},
+			}
+		} else if clientSupportsItemInsertReplace(clientOptions) {
+			for _, item := range items {
+				if item.TextEdit == nil {
+					item.TextEdit = &lsproto.TextEditOrInsertReplaceEdit{
+						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
+							NewText: *core.OrElse(item.InsertText, &item.Label),
+							Insert:  insertRange,
+							Replace: *optionalReplacementSpan,
+						},
+					}
+				}
 			}
 		}
 	}
@@ -3906,16 +3954,22 @@ func setCommitCharacters(
 	return itemDefaults
 }
 
-func specificKeywordCompletionInfo(
+func (l *LanguageService) specificKeywordCompletionInfo(
 	clientOptions *lsproto.CompletionClientCapabilities,
+	position int,
+	file *ast.SourceFile,
 	items []*lsproto.CompletionItem,
 	isNewIdentifierLocation bool,
+	optionalReplacementSpan *lsproto.Range,
 ) *lsproto.CompletionList {
 	defaultCommitCharacters := getDefaultCommitCharacters(isNewIdentifierLocation)
-	itemDefaults := setCommitCharacters(
+	itemDefaults := l.setItemDefaults(
 		clientOptions,
+		position,
+		file,
 		items,
 		&defaultCommitCharacters,
+		optionalReplacementSpan,
 	)
 	return &lsproto.CompletionList{
 		IsIncomplete: false,
@@ -3973,7 +4027,6 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		ScriptElementKindClassElement,
 		collections.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
 		nil, /*replacementSpan*/
-		optionalReplacementSpan,
 		nil, /*commitCharacters*/
 		nil, /*labelDetails*/
 		file,
@@ -3986,7 +4039,14 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 		"",    /*source*/
 	)
 	items := []*lsproto.CompletionItem{item}
-	itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+	itemDefaults := l.setItemDefaults(
+		clientOptions,
+		position,
+		file,
+		items,
+		&defaultCommitCharacters,
+		optionalReplacementSpan,
+	)
 
 	return &lsproto.CompletionList{
 		IsIncomplete: false,
@@ -4003,7 +4063,6 @@ func (l *LanguageService) createLSPCompletionItem(
 	elementKind ScriptElementKind,
 	kindModifiers collections.Set[ScriptElementKindModifier],
 	replacementSpan *lsproto.Range,
-	optionalReplacementSpan *lsproto.Range,
 	commitCharacters *[]string,
 	labelDetails *lsproto.CompletionItemLabelDetails,
 	file *ast.SourceFile,
@@ -4025,22 +4084,6 @@ func (l *LanguageService) createLSPCompletionItem(
 				NewText: core.IfElse(insertText == "", name, insertText),
 				Range:   *replacementSpan,
 			},
-		}
-	} else {
-		// Ported from vscode ts extension.
-		if optionalReplacementSpan != nil && clientSupportsItemInsertReplace(clientOptions) {
-			insertRange := &lsproto.Range{
-				Start: optionalReplacementSpan.Start,
-				End:   l.createLspPosition(position, file),
-			}
-			replaceRange := optionalReplacementSpan
-			textEdit = &lsproto.TextEditOrInsertReplaceEdit{
-				InsertReplaceEdit: &lsproto.InsertReplaceEdit{
-					NewText: core.IfElse(insertText == "", name, insertText),
-					Insert:  *insertRange,
-					Replace: *replaceRange,
-				},
-			}
 		}
 	}
 
@@ -4144,13 +4187,21 @@ func (l *LanguageService) getLabelCompletionsAtPosition(
 	clientOptions *lsproto.CompletionClientCapabilities,
 	file *ast.SourceFile,
 	position int,
+	optionalReplacementSpan *lsproto.Range,
 ) *lsproto.CompletionList {
 	items := l.getLabelStatementCompletions(node, clientOptions, file, position)
 	if len(items) == 0 {
 		return nil
 	}
 	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
-	itemDefaults := setCommitCharacters(clientOptions, items, &defaultCommitCharacters)
+	itemDefaults := l.setItemDefaults(
+		clientOptions,
+		position,
+		file,
+		items,
+		&defaultCommitCharacters,
+		optionalReplacementSpan,
+	)
 	return &lsproto.CompletionList{
 		IsIncomplete: false,
 		ItemDefaults: itemDefaults,
@@ -4183,7 +4234,6 @@ func (l *LanguageService) getLabelStatementCompletions(
 					ScriptElementKindLabel,
 					collections.Set[ScriptElementKindModifier]{}, /*kindModifiers*/
 					nil, /*replacementSpan*/
-					nil, /*optionalReplacementSpan*/
 					nil, /*commitCharacters*/
 					nil, /*labelDetails*/
 					file,
@@ -4452,6 +4502,13 @@ func clientSupportsDefaultCommitCharacters(clientOptions *lsproto.CompletionClie
 		return false
 	}
 	return slices.Contains(*clientOptions.CompletionList.ItemDefaults, "commitCharacters")
+}
+
+func clientSupportsDefaultEditRange(clientOptions *lsproto.CompletionClientCapabilities) bool {
+	if clientOptions == nil || clientOptions.CompletionList == nil || clientOptions.CompletionList.ItemDefaults == nil {
+		return false
+	}
+	return slices.Contains(*clientOptions.CompletionList.ItemDefaults, "editRange")
 }
 
 type argumentInfoForCompletions struct {

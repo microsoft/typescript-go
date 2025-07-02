@@ -11,6 +11,7 @@ let inputFileSet: Set<string> | undefined;
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
 const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
 const failingTests = new Set(failingTestsList);
+const helperFilePath = path.join(import.meta.dirname, "../", "tests", "util_test.go");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
 
@@ -145,10 +146,62 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
         if (namespace.text === "goTo" && func.text === "marker") {
             return parseGoToMarkerArgs(callExpression.arguments);
         }
+        // `edit....`
+        if (namespace.text === "edit") {
+            const result = parseEditStatement(func.text, callExpression.arguments);
+            if (!result) {
+                return undefined;
+            }
+            return [result];
+        }
         // !!! other fourslash commands
     }
     console.error(`Unrecognized fourslash statement: ${statement.getText()}`);
     return undefined;
+}
+
+function parseEditStatement(funcName: string, args: readonly ts.Expression[]): EditCmd | undefined {
+    switch (funcName) {
+        case "insert":
+        case "paste":
+        case "insertLine":
+            if (args.length !== 1 || !ts.isStringLiteralLike(args[0])) {
+                console.error(`Expected a single string literal argument in edit.${funcName}, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            return {
+                kind: "edit",
+                goStatement: `f.${funcName.charAt(0).toUpperCase() + funcName.slice(1)}(t, ${getGoStringLiteral(args[0].text)})`,
+            };
+        case "replaceLine":
+            if (args.length !== 2 || !ts.isNumericLiteral(args[0]) || !ts.isStringLiteral(args[1])) {
+                console.error(`Expected a single string literal argument in edit.insert, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            return {
+                kind: "edit",
+                goStatement: `f.ReplaceLine(t, ${args[0].text}, ${getGoStringLiteral(args[1].text)})`,
+            };
+        case "backspace":
+            const arg = args[0];
+            if (arg) {
+                if (!ts.isNumericLiteral(arg)) {
+                    console.error(`Expected numeric literal argument in edit.backspace, got ${arg.getText()}`);
+                    return undefined;
+                }
+                return {
+                    kind: "edit",
+                    goStatement: `f.Backspace(t, ${arg.text})`,
+                };
+            }
+            return {
+                kind: "edit",
+                goStatement: `f.Backspace(t, 1)`,
+            };
+        default:
+            console.error(`Unrecognized edit function: ${funcName}`);
+            return undefined;
+    }
 }
 
 function getGoStringLiteral(text: string): string {
@@ -182,6 +235,28 @@ function parseVerifyCompletionsArgs(args: readonly ts.Expression[]): VerifyCompl
     }
     return cmds;
 }
+
+const completionConstants = new Map([
+    ["completion.globals", "completionGlobals"],
+    ["completion.globalTypes", "completionGlobalTypes"],
+    ["completion.classElementKeywords", "completionClassElementKeywords"],
+    ["completion.classElementInJsKeywords", "completionClassElementInJSKeywords"],
+    ["completion.constructorParameterKeywords", "completionConstructorParameterKeywords"],
+    ["completion.functionMembersWithPrototype", "completionFunctionMembersWithPrototype"],
+    ["completion.functionMembers", "completionFunctionMembers"],
+    ["completion.typeKeywords", "completionTypeKeywords"],
+    ["completion.undefinedVarEntry", "completionUndefinedVarItem"],
+    ["completion.typeAssertionKeywords", "completionTypeAssertionKeywords"],
+]);
+
+const completionPlus = new Map([
+    ["completion.globalsPlus", "completionGlobalsPlus"],
+    ["completion.globalTypesPlus", "completionGlobalTypesPlus"],
+    ["completion.functionMembersPlus", "completionFunctionMembersPlus"],
+    ["completion.functionMembersWithPrototypePlus", "completionFunctionMembersWithPrototypePlus"],
+    ["completion.globalsInJsPlus", "completionGlobalsInJSPlus"],
+    ["completion.typeKeywordsPlus", "completionTypeKeywordsPlus"],
+]);
 
 function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | undefined {
     let marker: string | undefined;
@@ -229,6 +304,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                 break;
             case "exact":
             case "includes":
+            case "unsorted":
                 if (init.getText() === "undefined") {
                     return {
                         kind: "verifyCompletions",
@@ -236,31 +312,87 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                         args: undefined,
                     };
                 }
-                let expected = "[]fourslash.ExpectedCompletionItem{";
-                if (ts.isArrayLiteralExpression(init)) {
-                    for (const elem of init.elements) {
+                let expected: string;
+                const initText = init.getText();
+                if (completionConstants.has(initText)) {
+                    expected = completionConstants.get(initText)!;
+                }
+                else if (completionPlus.keys().some(funcName => initText.startsWith(funcName))) {
+                    const tsFunc = completionPlus.keys().find(funcName => initText.startsWith(funcName));
+                    const funcName = completionPlus.get(tsFunc!)!;
+                    const items = (init as ts.CallExpression).arguments[0];
+                    const opts = (init as ts.CallExpression).arguments[1];
+                    if (!ts.isArrayLiteralExpression(items)) {
+                        console.error(`Expected array literal expression for completion.globalsPlus items, got ${items.getText()}`);
+                        return undefined;
+                    }
+                    expected = `${funcName}([]fourslash.CompletionsExpectedItem{`;
+                    for (const elem of items.elements) {
                         const result = parseExpectedCompletionItem(elem);
                         if (!result) {
                             return undefined;
                         }
                         expected += result + ", ";
                     }
+                    expected += "}";
+                    if (opts) {
+                        if (!ts.isObjectLiteralExpression(opts)) {
+                            console.error(`Expected object literal expression for completion.globalsPlus options, got ${opts.getText()}`);
+                            return undefined;
+                        }
+                        const noLib = opts.properties[0];
+                        if (noLib && ts.isPropertyAssignment(noLib) && noLib.name.getText() === "noLib") {
+                            if (noLib.initializer.kind === ts.SyntaxKind.TrueKeyword) {
+                                expected += ", true";
+                            }
+                            else if (noLib.initializer.kind === ts.SyntaxKind.FalseKeyword) {
+                                expected += ", false";
+                            }
+                            else {
+                                console.error(`Expected boolean literal for noLib, got ${noLib.initializer.getText()}`);
+                                return undefined;
+                            }
+                        }
+                        else {
+                            console.error(`Expected noLib property in completion.globalsPlus options, got ${opts.getText()}`);
+                            return undefined;
+                        }
+                    }
+                    else if (tsFunc === "completion.globalsPlus" || tsFunc === "completion.globalsInJsPlus") {
+                        expected += ", false"; // Default for noLib
+                    }
+                    expected += ")";
                 }
                 else {
-                    const result = parseExpectedCompletionItem(init);
-                    if (!result) {
-                        return undefined;
+                    expected = "[]fourslash.CompletionsExpectedItem{";
+                    if (ts.isArrayLiteralExpression(init)) {
+                        for (const elem of init.elements) {
+                            const result = parseExpectedCompletionItem(elem);
+                            if (!result) {
+                                return undefined;
+                            }
+                            expected += result + ", ";
+                        }
                     }
-                    expected += result;
+                    else {
+                        const result = parseExpectedCompletionItem(init);
+                        if (!result) {
+                            return undefined;
+                        }
+                        expected += result;
+                    }
+                    expected += "}";
                 }
-                expected += "}";
                 if (propName === "includes") {
                     (goArgs ??= {}).includes = expected;
                 }
-                else {
+                else if (propName === "exact") {
                     (goArgs ??= {}).exact = expected;
                 }
-                break; // !!! parse these args
+                else {
+                    (goArgs ??= {}).unsorted = expected;
+                }
+                break;
             case "excludes":
                 let excludes = "[]string{";
                 if (ts.isStringLiteral(init)) {
@@ -286,7 +418,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
             case "triggerCharacter":
             case "defaultCommitCharacters":
                 break; // !!! parse once they're supported in fourslash
-            case "optionalReplacementSpan":
+            case "optionalReplacementSpan": // the only two tests that use this will require manual conversion
             case "isGlobalCompletion":
                 break; // Ignored, unused
             default:
@@ -303,6 +435,9 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
 }
 
 function parseExpectedCompletionItem(expr: ts.Expression): string | undefined {
+    if (completionConstants.has(expr.getText())) {
+        return completionConstants.get(expr.getText())!;
+    }
     if (ts.isStringLiteral(expr)) {
         return getGoStringLiteral(expr.text);
     }
@@ -501,16 +636,16 @@ function parseSortText(expr: ts.Expression): string | undefined {
             return "ls.SortTextOptionalMember";
         case "completion.SortText.MemberDeclaredBySpreadAssignment":
             return "ls.SortTextMemberDeclaredBySpreadAssignment";
-        case "completion.SortText.SuggestedClassMember":
-            return "ls.SortTextSuggestedClassMember";
+        case "completion.SortText.SuggestedClassMembers":
+            return "ls.SortTextSuggestedClassMembers";
         case "completion.SortText.GlobalsOrKeywords":
             return "ls.SortTextGlobalsOrKeywords";
         case "completion.SortText.AutoImportSuggestions":
             return "ls.SortTextAutoImportSuggestions";
         case "completion.SortText.ClassMemberSnippets":
             return "ls.SortTextClassMemberSnippets";
-        case "completion.SortText.JavaScriptIdentifiers":
-            return "ls.SortTextJavaScriptIdentifiers";
+        case "completion.SortText.JavascriptIdentifiers":
+            return "ls.SortTextJavascriptIdentifiers";
         default:
             console.error(`Unrecognized sort text: ${text}`);
             return undefined; // !!! support deprecated/obj literal prop/etc
@@ -528,6 +663,7 @@ interface VerifyCompletionsArgs {
     includes?: string;
     excludes?: string;
     exact?: string;
+    unsorted?: string;
 }
 
 interface GoToMarkerCmd {
@@ -535,7 +671,12 @@ interface GoToMarkerCmd {
     marker: string;
 }
 
-type Cmd = VerifyCompletionsCmd | GoToMarkerCmd;
+interface EditCmd {
+    kind: "edit";
+    goStatement: string;
+}
+
+type Cmd = VerifyCompletionsCmd | GoToMarkerCmd | EditCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList = "nil";
@@ -544,15 +685,16 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: Ve
         if (args.includes) expected.push(`Includes: ${args.includes},`);
         if (args.excludes) expected.push(`Excludes: ${args.excludes},`);
         if (args.exact) expected.push(`Exact: ${args.exact},`);
+        if (args.unsorted) expected.push(`Unsorted: ${args.unsorted},`);
         // !!! isIncomplete
-        // !!! itemDefaults/commitCharacters from `isNewIdentifierLocation`
         const commitCharacters = isNewIdentifierLocation ? "[]string{}" : "defaultCommitCharacters";
-        expectedList = `&fourslash.VerifyCompletionsExpectedList{
+        expectedList = `&fourslash.CompletionsExpectedList{
     IsIncomplete: false,
-    ItemDefaults: &lsproto.CompletionItemDefaults{
+    ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
         CommitCharacters: &${commitCharacters},
+        EditRange: ignored,
     },
-    Items: &fourslash.VerifyCompletionsExpectedItems{
+    Items: &fourslash.CompletionsExpectedItems{
         ${expected.join("\n")}
     },
 }`;
@@ -570,6 +712,8 @@ function generateCmd(cmd: Cmd): string {
             return generateVerifyCompletions(cmd as VerifyCompletionsCmd);
         case "goToMarker":
             return generateGoToMarker(cmd as GoToMarkerCmd);
+        case "edit":
+            return cmd.goStatement;
         default:
             throw new Error(`Unknown command kind: ${cmd}`);
     }
@@ -614,14 +758,7 @@ func Test${testName}(t *testing.T) {
 }
 
 function generateHelperFile() {
-    const helper = `package fourslash_test
-
-func ptrTo[T any](v T) *T {
-	return &v
-}
-
-var defaultCommitCharacters = []string{".", ",", ";"}`;
-    fs.writeFileSync(path.join(outputDir, "util_test.go"), helper, "utf-8");
+    fs.copyFileSync(helperFilePath, path.join(outputDir, "util_test.go"));
 }
 
 main();

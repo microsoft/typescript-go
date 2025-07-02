@@ -49,9 +49,8 @@ func (e *emitter) emit() {
 	e.emitBuildInfo(e.paths.BuildInfoPath())
 }
 
-func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, sourceFile *ast.SourceFile, declarationFilePath string, declarationMapPath string) []*declarations.DeclarationTransformer {
-	emitResolver := e.host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
-	transform := declarations.NewDeclarationTransformer(e.host, emitResolver, emitContext, e.host.Options(), declarationFilePath, declarationMapPath)
+func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, declarationFilePath string, declarationMapPath string) []*declarations.DeclarationTransformer {
+	transform := declarations.NewDeclarationTransformer(e.host, emitContext, e.host.Options(), declarationFilePath, declarationMapPath)
 	return []*declarations.DeclarationTransformer{transform}
 }
 
@@ -86,7 +85,7 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	var emitResolver printer.EmitResolver
 	var referenceResolver binder.ReferenceResolver
 	if importElisionEnabled || options.GetJSXTransformEnabled() {
-		emitResolver = host.GetEmitResolver(sourceFile, false /*skipDiagnostics*/) // !!! conditionally skip diagnostics
+		emitResolver = host.GetEmitResolver()
 		emitResolver.MarkLinkedReferencesRecursively(sourceFile)
 		referenceResolver = emitResolver
 	} else {
@@ -133,7 +132,9 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 		return
 	}
 
-	emitContext := printer.NewEmitContext()
+	emitContext, putEmitContext := printer.GetEmitContext()
+	defer putEmitContext()
+
 	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 	}
@@ -175,8 +176,9 @@ func (e *emitter) emitDeclarationFile(sourceFile *ast.SourceFile, declarationFil
 	}
 
 	var diags []*ast.Diagnostic
-	emitContext := printer.NewEmitContext()
-	for _, transformer := range e.getDeclarationTransformers(emitContext, sourceFile, declarationFilePath, declarationMapPath) {
+	emitContext, putEmitContext := printer.GetEmitContext()
+	defer putEmitContext()
+	for _, transformer := range e.getDeclarationTransformers(emitContext, declarationFilePath, declarationMapPath) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 		diags = append(diags, transformer.GetDiagnostics()...)
 	}
@@ -375,6 +377,7 @@ type SourceFileMayBeEmittedHost interface {
 	IsSourceFileFromExternalLibrary(file *ast.SourceFile) bool
 	GetCurrentDirectory() string
 	UseCaseSensitiveFileNames() bool
+	SourceFiles() []*ast.SourceFile
 }
 
 func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmittedHost, forceDtsEmit bool) bool {
@@ -432,7 +435,7 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 	return true
 }
 
-func getSourceFilesToEmit(host printer.EmitHost, targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
+func getSourceFilesToEmit(host SourceFileMayBeEmittedHost, targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
 	// !!! outFile not yet implemented, may be deprecated
 	var sourceFiles []*ast.SourceFile
 	if targetSourceFile != nil {
@@ -449,13 +452,13 @@ func isSourceFileNotJson(file *ast.SourceFile) bool {
 	return !ast.IsJsonSourceFile(file)
 }
 
-func getDeclarationDiagnostics(host EmitHost, resolver printer.EmitResolver, file *ast.SourceFile) []*ast.Diagnostic {
+func getDeclarationDiagnostics(host EmitHost, file *ast.SourceFile) []*ast.Diagnostic {
 	fullFiles := core.Filter(getSourceFilesToEmit(host, file, false), isSourceFileNotJson)
 	if !core.Some(fullFiles, func(f *ast.SourceFile) bool { return f == file }) {
 		return []*ast.Diagnostic{}
 	}
 	options := host.Options()
-	transform := declarations.NewDeclarationTransformer(host, resolver, nil, options, "", "")
+	transform := declarations.NewDeclarationTransformer(host, nil, options, "", "")
 	transform.TransformSourceFile(file)
 	return transform.GetDiagnostics()
 }
