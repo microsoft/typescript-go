@@ -4,8 +4,7 @@ description: Setup Go
 inputs:
   go-version:
     description: Go version range to set up.
-    # Updated to 1.25.0-rc.1 to improve compilation time
-    default: '>=1.25.0-rc.1'
+    default: '>=1.24.0'
   cache-name:
     description: Name of scoped cache for this set up.
     default: 'cache'
