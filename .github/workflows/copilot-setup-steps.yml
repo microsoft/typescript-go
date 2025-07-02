@@ -28,3 +28,6 @@ jobs:
       - run: npm ci
       # pull dprint caches before network access is blocked
       - run: npx hereby check:format || true
+      # cache build and lint operations
+      - run: npx hereby build || true
+      - run: npx hereby lint || true

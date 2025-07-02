@@ -20,11 +20,19 @@ hereby lint   # Run linters
 
 Always make sure code is formatted, linted, and tested before sending a pull request.
 
+## Running Specific Tests
+
+To run a specific compiler test:
+- For submodule tests in `_submodules/TypeScript`: `go test -run='TestSubmodule/<test name>' ./internal/testrunner`.
+- For local tests in `testdata/tests/cases`: `go test -run='TestLocal/<test name>' ./internal/testrunner`.
+
 ## Compiler Features, Fixes, and Tests
 
 When fixing a bug or implementing a new feature, at least one minimal test case should always be added in advance to verify the fix.
 This project primarily uses snapshot/baseline/golden tests rather than unit tests.
 New compiler tests are written in `.ts`/`.tsx` files in the directory `testdata/tests/cases/compiler/`, and are written in the following format:
+
+**Note:** Issues with editor features cannot be tested with compiler tests in `testdata/tests/cases/`. Editor functionality requires integration testing with the language server.
 
 ```ts
 // @target: esnext
@@ -78,6 +86,10 @@ It is ideal to implement features and fixes in the following order, and commit c
 1. Run the tests again to ensure everything is working correctly. Accept the baselines.
 
 It is fine to implement more and more of a feature across commits, but be sure to update baselines every time so that reviewers can measure progress.
+
+## Code Porting Reference
+
+This code is ported from code present in `_submodules/TypeScript`. When implementing features or fixing bugs, those files should be searched for similar functions when code is either missing or potentially wrong. The TypeScript submodule serves as the reference implementation for behavior and functionality.
 
 # Other Instructions
 
