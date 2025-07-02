@@ -293,7 +293,7 @@ func TestIncremental(t *testing.T) {
 			},
 		},
 		{
-			subScenario: "react-jsx-emit-mode with no backing types found doesn't crash",
+			subScenario: "react-jsx-emit-mode with no backing types found doesnt crash",
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/project/node_modules/react/jsx-runtime.js": "export {}", // js needs to be present so there's a resolution result
 				"/home/src/workspaces/project/node_modules/@types/react/index.d.ts": stringtestutil.Dedent(`
@@ -321,7 +321,7 @@ func TestIncremental(t *testing.T) {
 			}, "/home/src/workspaces/project"),
 		},
 		{
-			subScenario: "react-jsx-emit-mode with no backing types found doesn't crash under --strict",
+			subScenario: "react-jsx-emit-mode with no backing types found doesnt crash under --strict",
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/project/node_modules/react/jsx-runtime.js": "export {}", // js needs to be present so there's a resolution result
 				"/home/src/workspaces/project/node_modules/@types/react/index.d.ts": stringtestutil.Dedent(`
