@@ -115,7 +115,7 @@ func (s *testSys) FS() vfs.FS {
 }
 
 func (s *testSys) TestFS() *incrementaltestutil.FsHandlingBuildInfo {
-	return s.fs.fs.(*incrementaltestutil.FsHandlingBuildInfo)
+	return s.fs.FS.(*incrementaltestutil.FsHandlingBuildInfo)
 }
 
 func (s *testSys) ensureLibPathExists(path string) {
@@ -235,7 +235,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 			return nil
 		}
 
-		newContents, ok := s.TestFS().FS().ReadFile(path)
+		newContents, ok := s.TestFS().InnerReadFile(path)
 		if !ok {
 			return nil
 		}
@@ -254,7 +254,7 @@ func (s *testSys) baselineFSwithDiff(baseline io.Writer) {
 	}
 	if s.serializedDiff != nil {
 		for path := range s.serializedDiff.snap {
-			_, ok := s.TestFS().FS().ReadFile(path)
+			_, ok := s.TestFS().InnerReadFile(path)
 			if !ok {
 				// report deleted
 				s.reportFSEntryDiff(baseline, nil, path)
