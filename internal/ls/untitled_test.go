@@ -21,10 +21,10 @@ func TestUntitledReferences(t *testing.T) {
 	untitledURI := lsproto.DocumentUri("untitled:Untitled-2")
 	convertedFileName := ls.DocumentURIToFileName(untitledURI)
 	t.Logf("URI '%s' converts to filename '%s'", untitledURI, convertedFileName)
-	
+
 	backToURI := ls.FileNameToDocumentURI(convertedFileName)
 	t.Logf("Filename '%s' converts back to URI '%s'", convertedFileName, backToURI)
-	
+
 	if string(backToURI) != string(untitledURI) {
 		t.Errorf("Round-trip conversion failed: '%s' -> '%s' -> '%s'", untitledURI, convertedFileName, backToURI)
 	}
@@ -37,10 +37,10 @@ x
 x++;`
 
 	// Use the converted filename that DocumentURIToFileName would produce
-	untitledFileName := convertedFileName  // "^/untitled/ts-nul-authority/Untitled-2"
+	untitledFileName := convertedFileName // "^/untitled/ts-nul-authority/Untitled-2"
 	t.Logf("Would use untitled filename: %s", untitledFileName)
-	
-	// Set up the file system with an untitled file - 
+
+	// Set up the file system with an untitled file -
 	// But use a regular file first to see the current behavior
 	files := map[string]any{
 		"/Untitled-2.ts": testContent,
@@ -98,20 +98,20 @@ func TestUntitledFileNameDebugging(t *testing.T) {
 	currentDir := "/home/daniel/TypeScript"
 	path := tspath.ToPath(convertedFileName, currentDir, true)
 	t.Logf("2. ToPath('%s', '%s') returns: '%s'", convertedFileName, currentDir, string(path))
-	
+
 	// Verify the path is NOT resolved against current directory
 	if strings.HasPrefix(string(path), currentDir) {
 		t.Errorf("Path was incorrectly resolved against current directory: %s", string(path))
 	}
-	
+
 	// Test converting back to URI
 	backToURI := ls.FileNameToDocumentURI(string(path))
 	t.Logf("3. Path '%s' converts back to URI '%s'", string(path), backToURI)
-	
+
 	if string(backToURI) != string(untitledURI) {
 		t.Errorf("Round-trip conversion failed: '%s' -> '%s' -> '%s'", untitledURI, string(path), backToURI)
 	}
-	
+
 	t.Logf("✅ Fix working: untitled paths are not resolved against current directory")
 }
 
@@ -126,30 +126,30 @@ func TestUntitledFileIntegration(t *testing.T) {
 
 	// Simulate exactly what happens in the LSP flow
 	originalURI := lsproto.DocumentUri("untitled:Untitled-2")
-	
+
 	// Step 1: URI gets converted to filename when file is opened
 	fileName := ls.DocumentURIToFileName(originalURI)
 	t.Logf("1. Opening file: URI '%s' -> fileName '%s'", originalURI, fileName)
-	
+
 	// Step 2: fileName gets processed through ToPath in project service
 	currentDir := "/home/daniel/TypeScript" // Current directory from the original issue
 	path := tspath.ToPath(fileName, currentDir, true)
 	t.Logf("2. Project service processes: fileName '%s' -> path '%s'", fileName, string(path))
-	
+
 	// Step 3: Verify path is NOT corrupted by current directory resolution
 	if strings.HasPrefix(string(path), currentDir) {
 		t.Fatalf("❌ BUG: Path was incorrectly resolved against current directory: %s", string(path))
 	}
-	
+
 	// Step 4: When references are found, the path gets converted back to URI
 	resultURI := ls.FileNameToDocumentURI(string(path))
 	t.Logf("3. References return: path '%s' -> URI '%s'", string(path), resultURI)
-	
+
 	// Step 5: Verify the round-trip conversion works
 	if string(resultURI) != string(originalURI) {
 		t.Fatalf("❌ Round-trip failed: %s != %s", originalURI, resultURI)
 	}
-	
+
 	t.Logf("✅ SUCCESS: Untitled file URIs are preserved correctly")
 	t.Logf("   Original URI: %s", originalURI)
 	t.Logf("   Final URI:    %s", resultURI)
