@@ -1,14 +1,48 @@
 // === findAllReferences ===
+// === /findAllReferencesLinkTag3.ts ===
+
+// namespace NPR {
+//     export class Consider {
+//         This = class {
+//             show() { }
+//         }[|
+//         m|]/*FIND ALL REFS*/() { }
+//     }
+//     /**
+//      * {@linkcode Consider.prototype.[|m|]}
+//      * {@linkplain Consider#m}
+//      * {@linkcode Consider#This#show}
+//      * {@linkplain Consider.This.show}
+// // --- (line: 13) skipped ---
 
 
 
 
 // === findAllReferences ===
+// === /findAllReferencesLinkTag3.ts ===
+
+// namespace NPR {
+//     export class Consider {
+//         This = class {[|
+//             show|]/*FIND ALL REFS*/() { }
+//         }
+//         m() { }
+//     }
+// // --- (line: 8) skipped ---
 
 
 
 
 // === findAllReferences ===
+// === /findAllReferencesLinkTag3.ts ===
+
+// namespace NPR {
+//     export class Consider {[|
+//         This|]/*FIND ALL REFS*/ = class {
+//             show() { }
+//         }
+//         m() { }
+// // --- (line: 7) skipped ---
 
 
 

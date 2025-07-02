@@ -4,6 +4,12 @@
 
 
 // === findAllReferences ===
+// === /a.js ===
+
+// /** @typedef {number} /*FIND ALL REFS*/[|T|] */
+// const T = 1;
+// /** @type {T} */
+// const n = T;
 
 
 

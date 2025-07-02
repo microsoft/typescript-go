@@ -1,14 +1,73 @@
 // === findAllReferences ===
+// === /findAllReferencesLinkTag1.ts ===
+
+// class C {[|
+//     m|]/*FIND ALL REFS*/() { }
+//     n = 1
+//     static s() { }
+//     /**
+//      * {@link m}
+//      * @see {m}
+//      * {@link C.m}
+//      * @see {C.m}
+//      * {@link C#m}
+//      * @see {C#m}
+//      * {@link C.prototype.[|m|]}
+//      * @see {C.prototype.m}
+//      */
+//     p() { }
+// // --- (line: 16) skipped ---
 
 
 
 
 // === findAllReferences ===
+// === /findAllReferencesLinkTag1.ts ===
+
+// class C {
+//     m() { }[|
+//     n|]/*FIND ALL REFS*/ = 1
+//     static s() { }
+//     /**
+//      * {@link m}
+// // --- (line: 7) skipped ---
+
+
+// --- (line: 19) skipped ---
+//      * @see {C.n}
+//      * {@link C#n}
+//      * @see {C#n}
+//      * {@link C.prototype.[|n|]}
+//      * @see {C.prototype.n}
+//      */
+//     q() { }
+// // --- (line: 27) skipped ---
 
 
 
 
 // === findAllReferences ===
+// === /findAllReferencesLinkTag1.ts ===
+
+// class C {
+//     m() { }
+//     n = 1
+//     static s/*FIND ALL REFS*/[| s|]() { }
+//     /**
+//      * {@link m}
+//      * @see {m}
+// // --- (line: 8) skipped ---
+
+
+// --- (line: 26) skipped ---
+//     /**
+//      * {@link s}
+//      * @see {s}
+//      * {@link C.[|s|]}
+//      * @see {C.s}
+//      */
+//     r() { }
+// // --- (line: 34) skipped ---
 
 
 
