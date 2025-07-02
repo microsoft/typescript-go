@@ -6,9 +6,9 @@ Input::--p project
 import { x } from "../utils";
 //// [/home/src/workspaces/solution/project/tsconfig.json] *new* 
 {
-	"references": [
-		{ "path": "../utils" },
-	],
+    "references": [
+        { "path": "../utils" },
+    ],
 }
 //// [/home/src/workspaces/solution/utils/index.d.ts] *new* 
 export declare const x = 10;
@@ -16,9 +16,9 @@ export declare const x = 10;
 export const x = 10;
 //// [/home/src/workspaces/solution/utils/tsconfig.json] *new* 
 {
-	"compilerOptions": {
-		"composite": true,
-	},
+    "compilerOptions": {
+        "composite": true
+    }
 }
 
 ExitStatus:: 0

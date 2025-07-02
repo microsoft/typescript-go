@@ -8,29 +8,29 @@ export {};
 export {};
 //// [/home/src/workspaces/solution/src/compiler/tsconfig.json] *new* 
 {
-					"extends": "../tsconfig-base.json",
-					"compilerOptions": {}
-				}
+    "extends": "../tsconfig-base.json",
+    "compilerOptions": {}
+}
 //// [/home/src/workspaces/solution/src/services/services.ts] *new* 
 import {} from "../compiler/parser.ts";
 //// [/home/src/workspaces/solution/src/services/tsconfig.json] *new* 
 {
-					"extends": "../tsconfig-base.json", 
-					"compilerOptions": {},
-					"references": [
-						{ "path": "../compiler" }
-					]
-				}
+    "extends": "../tsconfig-base.json",
+    "compilerOptions": {},
+    "references": [
+        { "path": "../compiler" }
+    ]
+}
 //// [/home/src/workspaces/solution/src/tsconfig-base.json] *new* 
 {
-					"compilerOptions": {
-						"module": "nodenext",
-						"composite": true,
-						"rootDir": ".",
-						"outDir": "../dist",
-						"rewriteRelativeImportExtensions": true
-					}
-				}
+    "compilerOptions": {
+        "module": "nodenext",
+        "composite": true,
+        "rootDir": ".",
+        "outDir": "../dist",
+        "rewriteRelativeImportExtensions": true
+    }
+}
 
 ExitStatus:: 0
 

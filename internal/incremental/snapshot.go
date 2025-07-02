@@ -322,7 +322,7 @@ func newSnapshotForProgram(program *compiler.Program, oldProgram *Program) *snap
 					snapshot.addFileToChangeSet(file.Path())
 				} else if newReferences != nil {
 					for refPath := range newReferences.Keys() {
-						if program.GetSourceFileByPath(refPath) == nil {
+						if program.GetSourceFileByPath(refPath) == nil && oldProgram.snapshot.fileInfos[refPath] != nil {
 							// Referenced file was deleted in the new program
 							snapshot.addFileToChangeSet(file.Path())
 							break

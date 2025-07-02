@@ -2,6 +2,8 @@ package execute_test
 
 import (
 	"testing"
+
+	"github.com/microsoft/typescript-go/internal/testutil/stringtestutil"
 )
 
 func TestProjectReferences(t *testing.T) {
@@ -12,21 +14,21 @@ func TestProjectReferences(t *testing.T) {
 			subScenario: "when project references composite project with noEmit",
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/solution/utils/index.ts": "export const x = 10;",
-				"/home/src/workspaces/solution/utils/tsconfig.json": `{
-			"compilerOptions": {
-				"composite": true,
-				"noEmit": true,
-			},
-		}`,
+				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true,
+						"noEmit": true
+					}
+				}`),
 				"/home/src/workspaces/solution/project/index.ts": `import { x } from "../utils";`,
-				"/home/src/workspaces/solution/project/tsconfig.json": `{
-			"references": [
-				{ "path": "../utils" },
-			],
-		}`,
-			},
-				"/home/src/workspaces/solution",
-			),
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"references": [
+						{ "path": "../utils" },
+					],
+				}`),
+			}, "/home/src/workspaces/solution"),
 			commandLineArgs: []string{"--p", "project"},
 		},
 		{
@@ -34,17 +36,19 @@ func TestProjectReferences(t *testing.T) {
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/solution/utils/index.ts":   "export const x = 10;",
 				"/home/src/workspaces/solution/utils/index.d.ts": "export declare const x = 10;",
-				"/home/src/workspaces/solution/utils/tsconfig.json": `{
-	"compilerOptions": {
-		"composite": true,
-	},
-}`,
+				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true
+					}
+				}`),
 				"/home/src/workspaces/solution/project/index.ts": `import { x } from "../utils";`,
-				"/home/src/workspaces/solution/project/tsconfig.json": `{
-	"references": [
-		{ "path": "../utils" },
-	],
-}`,
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"references": [
+						{ "path": "../utils" },
+					],
+				}`),
 			}, "/home/src/workspaces/solution"),
 			commandLineArgs: []string{"--p", "project"},
 		},
@@ -52,17 +56,19 @@ func TestProjectReferences(t *testing.T) {
 			subScenario: "when project reference is not built",
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/solution/utils/index.ts": "export const x = 10;",
-				"/home/src/workspaces/solution/utils/tsconfig.json": `{
-	"compilerOptions": {
-		"composite": true,
-	},
-}`,
+				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"compilerOptions": {
+						"composite": true
+					}
+				}`),
 				"/home/src/workspaces/solution/project/index.ts": `import { x } from "../utils";`,
-				"/home/src/workspaces/solution/project/tsconfig.json": `{
-	"references": [
-		{ "path": "../utils" },
-	],
-}`,
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"references": [
+						{ "path": "../utils" },
+					],
+				}`),
 			}, "/home/src/workspaces/solution"),
 			commandLineArgs: []string{"--p", "project"},
 		},
@@ -71,22 +77,31 @@ func TestProjectReferences(t *testing.T) {
 			subScenario: "when project contains invalid project reference",
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/solution/project/index.ts": `export const x = 10;`,
-				"/home/src/workspaces/solution/project/tsconfig.json": `{
-	"references": [
-		{ "path": "../utils" },
-	],
-}`,
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"references": [
+						{ "path": "../utils" },
+					],
+				}`),
 			}, "/home/src/workspaces/solution"),
 			commandLineArgs: []string{"--p", "project"},
 		},
 		{
 			subScenario: "default import interop uses referenced project settings",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/project/node_modules/ambiguous-package/package.json": `{ "name": "ambiguous-package" }`,
-				"/home/src/workspaces/project/node_modules/ambiguous-package/index.d.ts":   "export declare const ambiguous: number;",
-				"/home/src/workspaces/project/node_modules/esm-package/package.json":       `{ "name": "esm-package", "type": "module" }`,
-				"/home/src/workspaces/project/node_modules/esm-package/index.d.ts":         "export declare const esm: number;",
-				"/home/src/workspaces/project/lib/tsconfig.json": `{
+				"/home/src/workspaces/project/node_modules/ambiguous-package/package.json": stringtestutil.Dedent(`
+				{
+					"name": "ambiguous-package"
+				}`),
+				"/home/src/workspaces/project/node_modules/ambiguous-package/index.d.ts": "export declare const ambiguous: number;",
+				"/home/src/workspaces/project/node_modules/esm-package/package.json": stringtestutil.Dedent(`
+				{
+					"name": "esm-package",
+					"type": "module"
+				}`),
+				"/home/src/workspaces/project/node_modules/esm-package/index.d.ts": "export declare const esm: number;",
+				"/home/src/workspaces/project/lib/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"composite": true,
 						"declaration": true,
@@ -96,10 +111,11 @@ func TestProjectReferences(t *testing.T) {
 						"moduleResolution": "bundler",
 					},
 					"include": ["src"],
-				}`,
+				}`),
 				"/home/src/workspaces/project/lib/src/a.ts":    "export const a = 0;",
 				"/home/src/workspaces/project/lib/dist/a.d.ts": "export declare const a = 0;",
-				"/home/src/workspaces/project/app/tsconfig.json": `{
+				"/home/src/workspaces/project/app/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"module": "esnext",
 						"moduleResolution": "bundler",
@@ -110,14 +126,14 @@ func TestProjectReferences(t *testing.T) {
 					"references": [
 						{ "path": "../lib" },
 					],
-				}`,
+				}`),
 				"/home/src/workspaces/project/app/src/local.ts": "export const local = 0;",
-				"/home/src/workspaces/project/app/src/index.ts": `
+				"/home/src/workspaces/project/app/src/index.ts": stringtestutil.Dedent(`
 					import local from "./local"; // Error
 					import esm from "esm-package"; // Error
 					import referencedSource from "../../lib/src/a"; // Error
 					import referencedDeclaration from "../../lib/dist/a"; // Error
-					import ambiguous from "ambiguous-package"; // Ok`,
+					import ambiguous from "ambiguous-package"; // Ok`),
 			}, "/home/src/workspaces/project"),
 			commandLineArgs: []string{"--p", "app", "--pretty", "false"},
 		},
@@ -126,22 +142,24 @@ func TestProjectReferences(t *testing.T) {
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/solution/utils/index.ts":   "export const enum E { A = 1 }",
 				"/home/src/workspaces/solution/utils/index.d.ts": "export declare const enum E { A = 1 }",
-				"/home/src/workspaces/solution/utils/tsconfig.json": `{
+				"/home/src/workspaces/solution/utils/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"composite": true,
 						"declaration": true,
 						"preserveConstEnums": true,
 					},
-				}`,
+				}`),
 				"/home/src/workspaces/solution/project/index.ts": `import { E } from "../utils"; E.A;`,
-				"/home/src/workspaces/solution/project/tsconfig.json": `{
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"isolatedModules": true,
 					},
 					"references": [
 						{ "path": "../utils" },
 					],
-				}`,
+				}`),
 			}, "/home/src/workspaces/solution"),
 			commandLineArgs: []string{"--p", "project"},
 		},
@@ -150,28 +168,31 @@ func TestProjectReferences(t *testing.T) {
 			sys: newTestSys(FileMap{
 				"/home/src/workspaces/solution/preserve/index.ts":   "export const enum E { A = 1 }",
 				"/home/src/workspaces/solution/preserve/index.d.ts": "export declare const enum E { A = 1 }",
-				"/home/src/workspaces/solution/preserve/tsconfig.json": `{
+				"/home/src/workspaces/solution/preserve/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"composite": true,
 						"declaration": true,
 						"preserveConstEnums": true,
 					},
-				}`,
+				}`),
 				"/home/src/workspaces/solution/no-preserve/index.ts":   "export const enum E { A = 1 }",
 				"/home/src/workspaces/solution/no-preserve/index.d.ts": "export declare const enum F { A = 1 }",
-				"/home/src/workspaces/solution/no-preserve/tsconfig.json": `{
+				"/home/src/workspaces/solution/no-preserve/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"composite": true,
 						"declaration": true,
 						"preserveConstEnums": false,
 					},
-				}`,
-				"/home/src/workspaces/solution/project/index.ts": `
-				import { E } from "../preserve";
-				import { F } from "../no-preserve";
-				E.A;
-				F.A;`,
-				"/home/src/workspaces/solution/project/tsconfig.json": `{
+				}`),
+				"/home/src/workspaces/solution/project/index.ts": stringtestutil.Dedent(`
+					import { E } from "../preserve";
+					import { F } from "../no-preserve";
+					E.A;
+					F.A;`),
+				"/home/src/workspaces/solution/project/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"module": "preserve",
 						"verbatimModuleSyntax": true,
@@ -180,22 +201,24 @@ func TestProjectReferences(t *testing.T) {
 						{ "path": "../preserve" },
 						{ "path": "../no-preserve" },
 					],
-				}`,
+				}`),
 			}, "/home/src/workspaces/solution"),
 			commandLineArgs: []string{"--p", "project", "--pretty", "false"},
 		},
 		{
 			subScenario: "rewriteRelativeImportExtensionsProjectReferences1",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/packages/common/tsconfig.json": `{
+				"/home/src/workspaces/packages/common/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"composite": true,
 						"rootDir": "src",
 						"outDir": "dist", 
 						"module": "nodenext"
 					}
-				}`,
-				"/home/src/workspaces/packages/common/package.json": `{
+				}`),
+				"/home/src/workspaces/packages/common/package.json": stringtestutil.Dedent(`
+				{
 						"name": "common",
 						"version": "1.0.0",
 						"type": "module",
@@ -205,10 +228,11 @@ func TestProjectReferences(t *testing.T) {
 								"default": "./dist/index.js"
 							}
 						}
-				}`,
+				}`),
 				"/home/src/workspaces/packages/common/src/index.ts":    "export {};",
 				"/home/src/workspaces/packages/common/dist/index.d.ts": "export {};",
-				"/home/src/workspaces/packages/main/tsconfig.json": `{
+				"/home/src/workspaces/packages/main/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"module": "nodenext",
 						"rewriteRelativeImportExtensions": true,
@@ -218,8 +242,11 @@ func TestProjectReferences(t *testing.T) {
 					"references": [
 						{ "path": "../common" }
 					]
-				}`,
-				"/home/src/workspaces/packages/main/package.json": `{ "type": "module" }`,
+				}`),
+				"/home/src/workspaces/packages/main/package.json": stringtestutil.Dedent(`
+				{
+					"type": "module"
+				}`),
 				"/home/src/workspaces/packages/main/src/index.ts": `import {} from "../../common/src/index.ts";`,
 			}, "/home/src/workspaces"),
 			commandLineArgs: []string{"-p", "packages/main", "--pretty", "false"},
@@ -227,7 +254,8 @@ func TestProjectReferences(t *testing.T) {
 		{
 			subScenario: "rewriteRelativeImportExtensionsProjectReferences2",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/solution/src/tsconfig-base.json": `{
+				"/home/src/workspaces/solution/src/tsconfig-base.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": {
 						"module": "nodenext",
 						"composite": true,
@@ -235,20 +263,22 @@ func TestProjectReferences(t *testing.T) {
 						"outDir": "../dist",
 						"rewriteRelativeImportExtensions": true
 					}
-				}`,
-				"/home/src/workspaces/solution/src/compiler/tsconfig.json": `{
+				}`),
+				"/home/src/workspaces/solution/src/compiler/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"extends": "../tsconfig-base.json",
 					"compilerOptions": {}
-				}`,
+				}`),
 				"/home/src/workspaces/solution/src/compiler/parser.ts":    "export {};",
 				"/home/src/workspaces/solution/dist/compiler/parser.d.ts": "export {};",
-				"/home/src/workspaces/solution/src/services/tsconfig.json": `{
-					"extends": "../tsconfig-base.json", 
+				"/home/src/workspaces/solution/src/services/tsconfig.json": stringtestutil.Dedent(`
+				{
+					"extends": "../tsconfig-base.json",
 					"compilerOptions": {},
 					"references": [
 						{ "path": "../compiler" }
 					]
-				}`,
+				}`),
 				"/home/src/workspaces/solution/src/services/services.ts": `import {} from "../compiler/parser.ts";`,
 			}, "/home/src/workspaces/solution"),
 			commandLineArgs: []string{"--p", "src/services", "--pretty", "false"},
@@ -256,23 +286,26 @@ func TestProjectReferences(t *testing.T) {
 		{
 			subScenario: "rewriteRelativeImportExtensionsProjectReferences3",
 			sys: newTestSys(FileMap{
-				"/home/src/workspaces/solution/src/tsconfig-base.json": `{
+				"/home/src/workspaces/solution/src/tsconfig-base.json": stringtestutil.Dedent(`
+				{
 					"compilerOptions": { 
 						"module": "nodenext",
 						"composite": true,
 						"rewriteRelativeImportExtensions": true
 					}
-				}`,
-				"/home/src/workspaces/solution/src/compiler/tsconfig.json": `{
+				}`),
+				"/home/src/workspaces/solution/src/compiler/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"extends": "../tsconfig-base.json",
 					"compilerOptions": {
 						"rootDir": ".",
 						"outDir": "../../dist/compiler"
 					}
-				}`,
+				}`),
 				"/home/src/workspaces/solution/src/compiler/parser.ts":    "export {};",
 				"/home/src/workspaces/solution/dist/compiler/parser.d.ts": "export {};",
-				"/home/src/workspaces/solution/src/services/tsconfig.json": `{
+				"/home/src/workspaces/solution/src/services/tsconfig.json": stringtestutil.Dedent(`
+				{
 					"extends": "../tsconfig-base.json",
 					"compilerOptions": {
 						"rootDir": ".", 
@@ -281,7 +314,7 @@ func TestProjectReferences(t *testing.T) {
 					"references": [
 						{ "path": "../compiler" }
 					]
-				}`,
+				}`),
 				"/home/src/workspaces/solution/src/services/services.ts": `import {} from "../compiler/parser.ts";`,
 			}, "/home/src/workspaces/solution"),
 			commandLineArgs: []string{"--p", "src/services", "--pretty", "false"},

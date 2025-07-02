@@ -3,49 +3,48 @@ currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
 Input::
 //// [/home/src/workspaces/project/index.tsx] *new* 
+declare namespace JSX {
+    interface ElementChildrenAttribute { children: {}; }
+    interface IntrinsicElements { div: {} }
+}
 
-                    declare namespace JSX {
-                        interface ElementChildrenAttribute { children: {}; }
-                        interface IntrinsicElements { div: {} }
-                    }
+declare var React: any;
 
-                    declare var React: any;
-
-                    declare function Component(props: never): any;
-                    declare function Component(props: { children?: number }): any;
-                    (<Component>
-                        <div />
-                        <div />
-                    </Component>)
+declare function Component(props: never): any;
+declare function Component(props: { children?: number }): any;
+(<Component>
+    <div />
+    <div />
+</Component>)
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
-                    "compilerOptions": {
-                        "incremental": true,
-                        "strict": true,
-                        "jsx": "react",
-                        "module": "esnext",
-                    },
-                }
+    "compilerOptions": {
+        "incremental": true,
+        "strict": true,
+        "jsx": "react",
+        "module": "esnext",
+    },
+}
 
 ExitStatus:: 2
 
 CompilerOptions::{}
 Output::
-[96mindex.tsx[0m:[93m11[0m:[93m23[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
+[96mindex.tsx[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
   The last overload gave the following error.
     Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.
       Types of property 'children' are incompatible.
         Type 'any[]' is not assignable to type 'number'.
 
-[7m11[0m                     (<Component>
-[7m  [0m [91m                      ~~~~~~~~~[0m
+[7m10[0m (<Component>
+[7m  [0m [91m  ~~~~~~~~~[0m
 
-  [96mindex.tsx[0m:[93m10[0m:[93m38[0m - The last overload is declared here.
-    [7m10[0m                     declare function Component(props: { children?: number }): any;
-    [7m  [0m [96m                                     ~~~~~~~~~[0m
+  [96mindex.tsx[0m:[93m9[0m:[93m18[0m - The last overload is declared here.
+    [7m9[0m declare function Component(props: { children?: number }): any;
+    [7m [0m [96m                 ~~~~~~~~~[0m
 
 
-Found 1 error in index.tsx[90m:11[0m
+Found 1 error in index.tsx[90m:10[0m
 
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
 /// <reference no-default-lib="true"/>
@@ -74,7 +73,7 @@ declare const console: { log(msg: any): void; };
 (React.createElement(Component, null, React.createElement("div", null), React.createElement("div", null)));
 
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./index.tsx"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"c7980af975245f04431574a9c187c9abd1c0ba29d83a127ad2af4b952296f935","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"jsx":3,"module":99,"strict":true},"semanticDiagnosticsPerFile":[[2,[{"pos":426,"end":435,"code":2769,"category":1,"message":"No overload matches this call.","messageChain":[{"pos":426,"end":435,"code":2770,"category":1,"message":"The last overload gave the following error.","messageChain":[{"pos":426,"end":435,"code":2322,"category":1,"message":"Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.","messageChain":[{"pos":426,"end":435,"code":2326,"category":1,"message":"Types of property 'children' are incompatible.","messageChain":[{"pos":426,"end":435,"code":2322,"category":1,"message":"Type 'any[]' is not assignable to type 'number'."}]}]}]}],"relatedInformation":[{"pos":358,"end":367,"code":2771,"category":1,"message":"The last overload is declared here."}]}]]]}
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./index.tsx"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},{"version":"cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb","affectsGlobalScope":true,"impliedNodeFormat":1}],"options":{"jsx":3,"module":99,"strict":true},"semanticDiagnosticsPerFile":[[2,[{"pos":265,"end":274,"code":2769,"category":1,"message":"No overload matches this call.","messageChain":[{"pos":265,"end":274,"code":2770,"category":1,"message":"The last overload gave the following error.","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"message":"Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.","messageChain":[{"pos":265,"end":274,"code":2326,"category":1,"message":"Types of property 'children' are incompatible.","messageChain":[{"pos":265,"end":274,"code":2322,"category":1,"message":"Type 'any[]' is not assignable to type 'number'."}]}]}]}],"relatedInformation":[{"pos":217,"end":226,"code":2771,"category":1,"message":"The last overload is declared here."}]}]]]}
 //// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
@@ -97,12 +96,12 @@ declare const console: { log(msg: any): void; };
     },
     {
       "fileName": "./index.tsx",
-      "version": "c7980af975245f04431574a9c187c9abd1c0ba29d83a127ad2af4b952296f935",
-      "signature": "c7980af975245f04431574a9c187c9abd1c0ba29d83a127ad2af4b952296f935",
+      "version": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb",
+      "signature": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb",
       "affectsGlobalScope": true,
       "impliedNodeFormat": "CommonJS",
       "original": {
-        "version": "c7980af975245f04431574a9c187c9abd1c0ba29d83a127ad2af4b952296f935",
+        "version": "cbfe2ae7fcc8b0f6fb65b0cfded75399938c02edb19173808c499187b76be6cb",
         "affectsGlobalScope": true,
         "impliedNodeFormat": 1
       }
@@ -118,36 +117,36 @@ declare const console: { log(msg: any): void; };
       "./index.tsx",
       [
         {
-          "pos": 426,
-          "end": 435,
+          "pos": 265,
+          "end": 274,
           "code": 2769,
           "category": 1,
           "message": "No overload matches this call.",
           "messageChain": [
             {
-              "pos": 426,
-              "end": 435,
+              "pos": 265,
+              "end": 274,
               "code": 2770,
               "category": 1,
               "message": "The last overload gave the following error.",
               "messageChain": [
                 {
-                  "pos": 426,
-                  "end": 435,
+                  "pos": 265,
+                  "end": 274,
                   "code": 2322,
                   "category": 1,
                   "message": "Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.",
                   "messageChain": [
                     {
-                      "pos": 426,
-                      "end": 435,
+                      "pos": 265,
+                      "end": 274,
                       "code": 2326,
                       "category": 1,
                       "message": "Types of property 'children' are incompatible.",
                       "messageChain": [
                         {
-                          "pos": 426,
-                          "end": 435,
+                          "pos": 265,
+                          "end": 274,
                           "code": 2322,
                           "category": 1,
                           "message": "Type 'any[]' is not assignable to type 'number'."
@@ -161,8 +160,8 @@ declare const console: { log(msg: any): void; };
           ],
           "relatedInformation": [
             {
-              "pos": 358,
-              "end": 367,
+              "pos": 217,
+              "end": 226,
               "code": 2771,
               "category": 1,
               "message": "The last overload is declared here."
@@ -187,21 +186,21 @@ Edit:: no change
 
 ExitStatus:: 2
 Output::
-[96mindex.tsx[0m:[93m11[0m:[93m23[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
+[96mindex.tsx[0m:[93m10[0m:[93m3[0m - [91merror[0m[90m TS2769: [0mNo overload matches this call.
   The last overload gave the following error.
     Type '{ children: any[]; }' is not assignable to type '{ children?: number | undefined; }'.
       Types of property 'children' are incompatible.
         Type 'any[]' is not assignable to type 'number'.
 
-[7m11[0m                     (<Component>
-[7m  [0m [91m                      ~~~~~~~~~[0m
+[7m10[0m (<Component>
+[7m  [0m [91m  ~~~~~~~~~[0m
 
-  [96mindex.tsx[0m:[93m10[0m:[93m38[0m - The last overload is declared here.
-    [7m10[0m                     declare function Component(props: { children?: number }): any;
-    [7m  [0m [96m                                     ~~~~~~~~~[0m
+  [96mindex.tsx[0m:[93m9[0m:[93m18[0m - The last overload is declared here.
+    [7m9[0m declare function Component(props: { children?: number }): any;
+    [7m [0m [96m                 ~~~~~~~~~[0m
 
 
-Found 1 error in index.tsx[90m:11[0m
+Found 1 error in index.tsx[90m:10[0m
 
 
 

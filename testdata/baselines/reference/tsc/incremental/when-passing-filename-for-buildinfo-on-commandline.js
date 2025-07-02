@@ -1,21 +1,26 @@
 
 currentDirectory::/home/src/workspaces/project
 useCaseSensitiveFileNames::true
-Input::--noEmit
-//// [/home/src/workspaces/project/class1.ts] *new* 
-export class class1 {}
+Input::--incremental --tsBuildInfoFile .tsbuildinfo --explainFiles
+//// [/home/src/workspaces/project/src/main.ts] *new* 
+export const x = 10;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
     "compilerOptions": {
-        "incremental": true,
-        "strict": true
-    }
+        "target": "es5",
+        "module": "commonjs"
+    },
+    "include": [
+        "src/**/*.ts"
+    ],
 }
 
 ExitStatus:: 0
 
 CompilerOptions::{
-    "noEmit": true
+    "incremental": true,
+    "tsBuildInfoFile": "/home/src/workspaces/project/.tsbuildinfo",
+    "explainFiles": true
 }
 Output::
 //// [/home/src/tslibs/TS/Lib/lib.d.ts] *Lib*
@@ -41,14 +46,14 @@ interface Symbol {
     readonly [Symbol.toStringTag]: string;
 }
 declare const console: { log(msg: any): void; };
-//// [/home/src/workspaces/project/tsconfig.tsbuildinfo] *new* 
-{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./class1.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},"a7765a20d4489ae259632d5fe609919af401c278b7a90516894ef2774ce3bc97"],"options":{"strict":true},"affectedFilesPendingEmit":[2]}
-//// [/home/src/workspaces/project/tsconfig.tsbuildinfo.readable.baseline.txt] *new* 
+//// [/home/src/workspaces/project/.tsbuildinfo] *new* 
+{"version":"FakeTSVersion","fileNames":["../../tslibs/TS/Lib/lib.d.ts","./src/main.ts"],"fileInfos":[{"version":"7dee939514de4bde7a51760a39e2b3bfa068bfc4a2939e1dbad2bfdf2dc4662e","affectsGlobalScope":true,"impliedNodeFormat":1},"03da4d6a46cc7950ba861120c64b47c14bc80b3c64f47ef17b61cb454358afd6"],"options":{"module":1,"target":1,"tsBuildInfoFile":"./.tsbuildinfo"}}
+//// [/home/src/workspaces/project/.tsbuildinfo.readable.baseline.txt] *new* 
 {
   "version": "FakeTSVersion",
   "fileNames": [
     "../../tslibs/TS/Lib/lib.d.ts",
-    "./class1.ts"
+    "./src/main.ts"
   ],
   "fileInfos": [
     {
@@ -64,28 +69,40 @@ declare const console: { log(msg: any): void; };
       }
     },
     {
-      "fileName": "./class1.ts",
-      "version": "a7765a20d4489ae259632d5fe609919af401c278b7a90516894ef2774ce3bc97",
-      "signature": "a7765a20d4489ae259632d5fe609919af401c278b7a90516894ef2774ce3bc97",
+      "fileName": "./src/main.ts",
+      "version": "03da4d6a46cc7950ba861120c64b47c14bc80b3c64f47ef17b61cb454358afd6",
+      "signature": "03da4d6a46cc7950ba861120c64b47c14bc80b3c64f47ef17b61cb454358afd6",
       "impliedNodeFormat": "CommonJS"
     }
   ],
   "options": {
-    "strict": true
+    "module": 1,
+    "target": 1,
+    "tsBuildInfoFile": "./.tsbuildinfo"
   },
-  "affectedFilesPendingEmit": [
-    [
-      "./class1.ts",
-      "Js",
-      2
-    ]
-  ],
-  "size": 351
+  "size": 365
 }
+//// [/home/src/workspaces/project/src/main.js] *new* 
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.x = void 0;
+exports.x = 10;
+
 
 
 SemanticDiagnostics::
 *refresh*    /home/src/tslibs/TS/Lib/lib.d.ts
-*refresh*    /home/src/workspaces/project/class1.ts
+*refresh*    /home/src/workspaces/project/src/main.ts
+
+Signatures::
+
+
+Edit:: no change
+
+ExitStatus:: 0
+Output::
+
+
+SemanticDiagnostics::
 
 Signatures::

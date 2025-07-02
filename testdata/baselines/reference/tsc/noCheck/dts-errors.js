@@ -8,9 +8,9 @@ export const a = class { private p = 10; };
 export const b = 10;
 //// [/home/src/workspaces/project/tsconfig.json] *new* 
 {
-	"compilerOptions": {
-		"declaration": true,
-	}
+    "compilerOptions": {
+        "declaration": true,
+    }
 }
 
 ExitStatus:: 2
