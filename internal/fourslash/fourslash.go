@@ -127,13 +127,14 @@ func (c *parsedFileCache) CacheFile(opts ast.SourceFileParseOptions, text string
 
 var _ project.ParsedFileCache = (*parsedFileCache)(nil)
 
+const rootDir = "/"
+
 func NewFourslash(t *testing.T, capabilities *lsproto.ClientCapabilities, content string) *FourslashTest {
 	if !bundled.Embedded {
 		// Without embedding, we'd need to read all of the lib files out from disk into the MapFS.
 		// Just skip this for now.
 		t.Skip("bundled files are not embedded")
 	}
-	rootDir := "/"
 	fileName := getFileNameFromTest(t)
 	testfs := make(map[string]string)
 	scriptInfos := make(map[string]*scriptInfo)
@@ -313,6 +314,19 @@ func (f *FourslashTest) GoToEOF(t *testing.T) {
 func (f *FourslashTest) goToPosition(t *testing.T, position lsproto.Position) {
 	f.currentCaretPosition = position
 	f.selectionEnd = nil
+}
+
+func (f *FourslashTest) GoToFile(t *testing.T, filename string) {
+	filename = tspath.GetNormalizedAbsolutePath(filename, rootDir)
+	f.openFile(t, filename)
+}
+
+func (f *FourslashTest) GoToFileNumber(t *testing.T, index int) {
+	if index < 0 || index >= len(f.testData.Files) {
+		t.Fatalf("File index %d out of range (0-%d)", index, len(f.testData.Files)-1)
+	}
+	filename := f.testData.Files[index].fileName
+	f.openFile(t, filename)
 }
 
 func (f *FourslashTest) Markers() []*Marker {
