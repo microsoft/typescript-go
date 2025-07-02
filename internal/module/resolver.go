@@ -772,7 +772,7 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 		if r.compilerOptions.RootDir != "" {
 			// A `rootDir` compiler option strongly indicates the root location
 			rootDir = r.compilerOptions.RootDir
-		} else if r.compilerOptions.Composite.IsTrue() && r.compilerOptions.ConfigFilePath == "" {
+		} else if r.compilerOptions.Composite.IsTrue() && r.compilerOptions.ConfigFilePath != "" {
 			// A `composite` project is using project references and has it's common src dir set to `.`, so it shouldn't need to check any other locations
 			rootDir = r.compilerOptions.ConfigFilePath
 		} else {
