@@ -8535,6 +8535,13 @@ func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidate
 	if candidatesOutArray != nil {
 		*candidatesOutArray = s.candidates
 	}
+
+	if len(s.candidates) == 0 {
+		// In Strada we would error here, but no known repro doesn't have at least
+		// one other error in this codepath. Just return instead. See #54442
+		return c.unknownSignature
+	}
+
 	s.args = c.getEffectiveCallArguments(node)
 	// The excludeArgument array contains true for each context sensitive argument (an argument
 	// is context sensitive it is susceptible to a one-time permanent contextual typing).
@@ -16085,6 +16092,21 @@ func (c *Checker) padTupleType(t *Type, pattern *ast.Node) *Type {
 }
 
 func (c *Checker) widenTypeInferredFromInitializer(declaration *ast.Node, t *Type) *Type {
+	widened := c.getWidenedLiteralTypeForInitializer(declaration, t)
+	if ast.IsInJSFile(declaration) {
+		if c.isEmptyLiteralType(widened) {
+			c.reportImplicitAny(declaration, c.anyType, WideningKindNormal)
+			return c.anyType
+		}
+		if c.isEmptyArrayLiteralType(widened) {
+			c.reportImplicitAny(declaration, c.anyArrayType, WideningKindNormal)
+			return c.anyArrayType
+		}
+	}
+	return widened
+}
+
+func (c *Checker) getWidenedLiteralTypeForInitializer(declaration *ast.Node, t *Type) *Type {
 	if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsConstant != 0 || isDeclarationReadonly(declaration) {
 		return t
 	}
@@ -17205,7 +17227,7 @@ func (c *Checker) getTypeFromBindingElement(element *ast.Node, includePatternInT
 		if ast.IsBindingPattern(element.Name()) {
 			contextualType = c.getTypeFromBindingPattern(element.Name(), true /*includePatternInType*/, false /*reportErrors*/)
 		}
-		return c.addOptionality(c.widenTypeInferredFromInitializer(element, c.checkDeclarationInitializer(element, CheckModeNormal, contextualType)))
+		return c.addOptionality(c.getWidenedLiteralTypeForInitializer(element, c.checkDeclarationInitializer(element, CheckModeNormal, contextualType)))
 	}
 	if ast.IsBindingPattern(element.Name()) {
 		return c.getTypeFromBindingPattern(element.Name(), includePatternInType, reportErrors)
@@ -30565,9 +30587,9 @@ func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
 	return c.getTypeOfNode(node)
 }
 
-func (c *Checker) GetEmitResolver(file *ast.SourceFile) *emitResolver {
+func (c *Checker) GetEmitResolver() *emitResolver {
 	c.emitResolverOnce.Do(func() {
-		c.emitResolver = &emitResolver{checker: c}
+		c.emitResolver = newEmitResolver(c)
 	})
 
 	return c.emitResolver
