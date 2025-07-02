@@ -9,6 +9,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
+	"github.com/microsoft/typescript-go/internal/outputpaths"
 	"github.com/microsoft/typescript-go/internal/packagejson"
 	"github.com/microsoft/typescript-go/internal/semver"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -748,7 +749,122 @@ func (r *resolutionState) loadModuleFromTargetExportOrImport(extensions extensio
 }
 
 func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string, packagePath string, isImports bool) *resolved {
-	// !!!
+	// Replace any references to outputs for files in the program with the input files to support package self-names used with outDir
+	// PROBLEM: We don't know how to calculate the output paths yet, because the "common source directory" we use as the base of the file structure
+	// we reproduce into the output directory is based on the set of input files, which we're still in the process of traversing and resolving!
+	// _Given that_, we have to guess what the base of the output directory is (obviously the user wrote the export map, so has some idea what it is!).
+	// We are going to probe _so many_ possible paths. We limit where we'll do this to try to reduce the possibilities of false positive lookups.
+	if !r.isConfigLookup &&
+		(r.compilerOptions.DeclarationDir != "" || r.compilerOptions.OutDir != "") &&
+		!strings.Contains(finalPath, "/node_modules/") &&
+		(r.compilerOptions.ConfigFilePath == "" || tspath.ContainsPath(
+			tspath.GetDirectoryPath(packagePath),
+			tspath.GetNormalizedAbsolutePath(r.compilerOptions.ConfigFilePath, r.resolver.host.GetCurrentDirectory()),
+			tspath.ComparePathsOptions{UseCaseSensitiveFileNames: r.resolver.host.FS().UseCaseSensitiveFileNames()},
+		)) {
+		// So that all means we'll only try these guesses for files outside `node_modules` in a directory where the `package.json` and `tsconfig.json` are siblings.
+		// Even with all that, we still don't know if the root of the output file structure will be (relative to the package file)
+		// `.`, `./src` or any other deeper directory structure. (If project references are used, it's definitely `.` by fiat, so that should be pretty common.)
+
+		useCaseSensitiveFileNames := r.resolver.host.FS().UseCaseSensitiveFileNames()
+		var commonSourceDirGuesses []string
+
+		// A `rootDir` compiler option strongly indicates the root location
+		// A `composite` project is using project references and has its common src dir set to `.`, so it shouldn't need to check any other locations
+		if r.compilerOptions.RootDir != "" || (r.compilerOptions.Composite == core.TSTrue && r.compilerOptions.ConfigFilePath != "") {
+			commonDir := tspath.GetNormalizedAbsolutePath(
+				outputpaths.GetCommonSourceDirectory(r.compilerOptions, func() []string { return nil }, r.resolver.host.GetCurrentDirectory(), useCaseSensitiveFileNames),
+				r.resolver.host.GetCurrentDirectory(),
+			)
+			commonSourceDirGuesses = append(commonSourceDirGuesses, commonDir)
+		} else {
+			// However without either of those set we're in the dark. Let's say you have
+			//
+			// ./tools/index.ts
+			// ./src/index.ts
+			// ./dist/index.js
+			// ./package.json <-- references ./dist/index.js
+			// ./tsconfig.json <-- loads ./src/index.ts
+			//
+			// How do we know `./src` is the common src dir, and not `./tools`, given only the `./dist` out dir and `./dist/index.js` filename?
+			// Answer: We... don't. We know we're looking for an `index.ts` input file, but we have _no clue_ which subfolder it's supposed to be loaded from
+			// without more context.
+			// But we do have more context! Just a tiny bit more! We're resolving an import _for some other input file_! And that input file, too
+			// must be inside the common source directory! So we propagate that tidbit of info all the way to here via r.containingDirectory
+
+			requestingFile := tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(r.containingDirectory, "index.ts"), r.resolver.host.GetCurrentDirectory())
+			// And we can try every folder above the common folder for the request folder and the config/package base directory
+			// This technically can be wrong - we may load ./src/index.ts when ./src/sub/index.ts was right because we don't
+			// know if only `./src/sub` files were loaded by the program; but this has the best chance to be right of just about anything
+			// else we have. And, given that we're about to load `./src/index.ts` because we choose it as likely correct, there will then
+			// be a file outside of `./src/sub` in the program (the file we resolved to), making us de-facto right. So this fallback lookup
+			// logic may influence what files are pulled in by self-names, which in turn influences the output path shape, but it's all
+			// internally consistent so the paths should be stable so long as we prefer the "most general" (meaning: top-most-level directory) possible results first.
+			commonDir := tspath.GetNormalizedAbsolutePath(
+				outputpaths.GetCommonSourceDirectory(r.compilerOptions, func() []string { return []string{requestingFile, tspath.GetNormalizedAbsolutePath(packagePath, r.resolver.host.GetCurrentDirectory())} }, r.resolver.host.GetCurrentDirectory(), useCaseSensitiveFileNames),
+				r.resolver.host.GetCurrentDirectory(),
+			)
+			commonSourceDirGuesses = append(commonSourceDirGuesses, commonDir)
+
+			fragment := tspath.EnsureTrailingDirectorySeparator(commonDir)
+			for len(fragment) > 1 {
+				parts := tspath.GetPathComponents(fragment, "")
+				if len(parts) <= 1 {
+					break
+				}
+				parts = parts[:len(parts)-1] // remove a directory
+				commonDir := tspath.GetPathFromPathComponents(parts)
+				commonSourceDirGuesses = append([]string{commonDir}, commonSourceDirGuesses...)
+				fragment = tspath.EnsureTrailingDirectorySeparator(commonDir)
+			}
+		}
+
+		if len(commonSourceDirGuesses) > 1 {
+			if r.resolver.traceEnabled() {
+				if isImports {
+					r.resolver.host.Trace(diagnostics.The_project_root_is_ambiguous_but_is_required_to_resolve_import_map_entry_0_in_file_1_Supply_the_rootDir_compiler_option_to_disambiguate.Format(
+						core.IfElse(entry == "", ".", entry), // replace empty string with `.` - the reverse of the operation done when entries are built - so main entrypoint errors don't look weird
+						packagePath))
+				} else {
+					r.resolver.host.Trace(diagnostics.The_project_root_is_ambiguous_but_is_required_to_resolve_export_map_entry_0_in_file_1_Supply_the_rootDir_compiler_option_to_disambiguate.Format(
+						core.IfElse(entry == "", ".", entry), // replace empty string with `.` - the reverse of the operation done when entries are built - so main entrypoint errors don't look weird
+						packagePath))
+				}
+			}
+		}
+
+		for _, commonSourceDirGuess := range commonSourceDirGuesses {
+			candidateDirectories := r.getOutputDirectoriesForBaseDirectory(commonSourceDirGuess)
+			for _, candidateDir := range candidateDirectories {
+				if tspath.ContainsPath(candidateDir, finalPath, tspath.ComparePathsOptions{UseCaseSensitiveFileNames: useCaseSensitiveFileNames}) {
+					// The matched export is looking up something in either the out declaration or js dir, now map the written path back into the source dir and source extension
+					pathFragment := finalPath[len(candidateDir)+1:] // +1 to also remove directory separator
+					possibleInputBase := tspath.CombinePaths(commonSourceDirGuess, pathFragment)
+					jsAndDtsExtensions := []string{tspath.ExtensionMjs, tspath.ExtensionCjs, tspath.ExtensionJs, tspath.ExtensionJson, tspath.ExtensionDmts, tspath.ExtensionDcts, tspath.ExtensionDts}
+					for _, ext := range jsAndDtsExtensions {
+						if tspath.FileExtensionIs(possibleInputBase, ext) {
+							inputExts := getPossibleOriginalInputExtensionForExtension(possibleInputBase)
+							for _, possibleExt := range inputExts {
+								if !extensionIsOk(r.extensions, possibleExt) {
+									continue
+								}
+								possibleInputWithInputExtension := tspath.ChangeExtension(possibleInputBase, possibleExt)
+								if r.resolver.host.FS().FileExists(possibleInputWithInputExtension) {
+									packageScope := r.getPackageScopeForPath(tspath.GetDirectoryPath(packagePath))
+									return &resolved{
+										path:                     possibleInputWithInputExtension,
+										extension:                possibleExt,
+										resolvedUsingTsExtension: false, // This is mapping from output back to input, not a user-written TS extension
+										packageId:                r.getPackageId(possibleInputWithInputExtension, packageScope),
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 	return continueSearching()
 }
 
@@ -864,7 +980,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 		if rest == "" && packageInfo.Exists() &&
 			(packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeNotPresent || packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeNull) &&
 			r.esmMode {
-			// EsmMode disables index lookup in `loadNodeModuleFromDirectoryWorker` generally, however non-relative package resolutions still assume
+			// EsmMode disables index lookup in `loadNodeModuleFromDirectory` generally, however non-relative package resolutions still assume
 			// a default `index.js` entrypoint if no `main` or `exports` are present
 			if indexResult := r.loadModuleFromFile(extensions, tspath.CombinePaths(candidate, "index.js"), onlyRecordFailures); !indexResult.shouldContinueSearching() {
 				indexResult.packageId = r.getPackageId(packageDirectory, packageInfo)
@@ -1783,4 +1899,40 @@ func GetAutomaticTypeDirectiveNames(options *core.CompilerOptions, host Resoluti
 		}
 	}
 	return result
+}
+
+// getPossibleOriginalInputExtensionForExtension returns the possible input extensions
+// that could generate an output file with the given extension
+func getPossibleOriginalInputExtensionForExtension(path string) []string {
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDmts, tspath.ExtensionMjs, tspath.ExtensionMts}) {
+		return []string{tspath.ExtensionMts, tspath.ExtensionMjs}
+	}
+	if tspath.FileExtensionIsOneOf(path, []string{tspath.ExtensionDcts, tspath.ExtensionCjs, tspath.ExtensionCts}) {
+		return []string{tspath.ExtensionCts, tspath.ExtensionCjs}
+	}
+	if strings.HasSuffix(path, `.d.json.ts`) {
+		return []string{tspath.ExtensionJson}
+	}
+	return []string{tspath.ExtensionTsx, tspath.ExtensionTs, tspath.ExtensionJsx, tspath.ExtensionJs}
+}
+
+// getOutputDirectoriesForBaseDirectory returns the possible output directories for a base source directory
+func (r *resolutionState) getOutputDirectoriesForBaseDirectory(commonSourceDirGuess string) []string {
+	// Config file output paths are processed to be relative to the host's current directory, while
+	// otherwise the paths are resolved relative to the common source dir the compiler puts together
+	var currentDir string
+	if r.compilerOptions.ConfigFilePath != "" {
+		currentDir = r.resolver.host.GetCurrentDirectory()
+	} else {
+		currentDir = commonSourceDirGuess
+	}
+
+	var candidateDirectories []string
+	if r.compilerOptions.DeclarationDir != "" {
+		candidateDirectories = append(candidateDirectories, tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(currentDir, r.compilerOptions.DeclarationDir), r.resolver.host.GetCurrentDirectory()))
+	}
+	if r.compilerOptions.OutDir != "" && r.compilerOptions.OutDir != r.compilerOptions.DeclarationDir {
+		candidateDirectories = append(candidateDirectories, tspath.GetNormalizedAbsolutePath(tspath.CombinePaths(currentDir, r.compilerOptions.OutDir), r.resolver.host.GetCurrentDirectory()))
+	}
+	return candidateDirectories
 }
