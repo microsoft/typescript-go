@@ -844,6 +844,19 @@ func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmi
 	return sourceFileMayBeEmitted(sourceFile, &emitHost{program: p}, forceDtsEmit)
 }
 
+func (p *Program) GetPreEmitDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	var diagnostics []*ast.Diagnostic
+	diagnostics = append(diagnostics, p.GetConfigFileParsingDiagnostics()...)
+	diagnostics = append(diagnostics, p.GetOptionsDiagnostics(ctx)...)
+	diagnostics = append(diagnostics, p.GetSyntacticDiagnostics(ctx, sourceFile)...)
+	diagnostics = append(diagnostics, p.GetGlobalDiagnostics(ctx)...)
+	diagnostics = append(diagnostics, p.GetSemanticDiagnostics(ctx, sourceFile)...)
+	if p.Options().GetEmitDeclarations() {
+		diagnostics = append(diagnostics, p.GetDeclarationDiagnostics(ctx, sourceFile)...)
+	}
+	return SortAndDeduplicateDiagnostics(diagnostics)
+}
+
 var plainJSErrors = collections.NewSetFromItems(
 	// binder errors
 	diagnostics.Cannot_redeclare_block_scoped_variable_0.Code(),

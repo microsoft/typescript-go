@@ -13245,6 +13245,11 @@ func (c *Checker) checkExpressionForMutableLocation(node *ast.Node, checkMode Ch
 	}
 }
 
+func (c *Checker) getCachedResolvedSymbol(node *ast.Node) *ast.Symbol {
+	links := c.symbolNodeLinks.Get(node)
+	return links.resolvedSymbol
+}
+
 func (c *Checker) getResolvedSymbol(node *ast.Node) *ast.Symbol {
 	links := c.symbolNodeLinks.Get(node)
 	if links.resolvedSymbol == nil {
@@ -27122,8 +27127,16 @@ func isInternalModuleImportEqualsDeclaration(node *ast.Node) bool {
 }
 
 func (c *Checker) markIdentifierAliasReferenced(location *ast.IdentifierNode) {
-	symbol := c.getResolvedSymbol(location)
-	if symbol != nil && symbol != c.argumentsSymbol && symbol != c.unknownSymbol && !ast.IsThisInTypeQuery(location) {
+	if ast.IsThisInTypeQuery(location) {
+		return
+	}
+	symbol := c.getCachedResolvedSymbol(location)
+	if symbol == nil {
+		// lookup, no diagnostics
+		symbol = c.resolveName(location, location.AsIdentifier().Text, ast.SymbolFlagsValue|ast.SymbolFlagsExportValue,
+			nil, !isWriteOnlyAccess(location), false /*excludeGlobals*/)
+	}
+	if symbol != nil && symbol != c.argumentsSymbol && symbol != c.unknownSymbol {
 		c.markAliasReferenced(symbol, location)
 	}
 }
