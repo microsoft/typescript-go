@@ -164,6 +164,11 @@ func GetEncodedRootLength(path string) int {
 	}
 	ch0 := path[0]
 
+	// Untitled paths (e.g., "^/untitled/ts-nul-authority/Untitled-1")
+	if ch0 == '^' && ln > 1 && path[1] == '/' {
+		return 2 // Untitled: "^/"
+	}
+
 	// POSIX or UNC
 	if ch0 == '/' || ch0 == '\\' {
 		if ln == 1 || path[1] != ch0 {
