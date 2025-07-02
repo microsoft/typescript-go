@@ -209,11 +209,13 @@ function getGoStringLiteral(text: string): string {
 }
 
 function parseGoToMarkerArgs(args: readonly ts.Expression[]): GoToMarkerCmd[] | undefined {
-    if (args.length !== 1) {
-        console.error(`Expected exactly one argument in goTo.marker, got ${args.length}`);
-        return undefined;
-    }
     const arg = args[0];
+    if (arg === undefined) {
+        return [{
+            kind: "goToMarker",
+            marker: `""`,
+        }];
+    }
     if (!ts.isStringLiteral(arg)) {
         console.error(`Unrecognized argument in goTo.marker: ${arg.getText()}`);
         return undefined;

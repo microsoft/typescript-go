@@ -443,14 +443,14 @@ func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *Completi
 	}
 	resMsg := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
 	if resMsg == nil {
-		t.Fatalf("Nil response received for completion request at marker %s", f.lastKnownMarkerName)
+		t.Fatalf("Nil response received for completion request at marker '%s'", f.lastKnownMarkerName)
 	}
 	result := resMsg.AsResponse().Result
 	switch result := result.(type) {
 	case *lsproto.CompletionList:
 		verifyCompletionsResult(t, f.lastKnownMarkerName, result, expected)
 	default:
-		t.Fatalf("Unexpected response type for completion request at marker %s: %v", f.lastKnownMarkerName, result)
+		t.Fatalf("Unexpected response type for completion request at marker '%s': %v", f.lastKnownMarkerName, result)
 	}
 }
 
