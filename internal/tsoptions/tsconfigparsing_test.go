@@ -513,6 +513,225 @@ var parseJsonConfigFileTests = []parseJsonConfigTestCase{
 			allFileList:    map[string]string{"/app.ts": ""},
 		}},
 	},
+	{
+		title:               "issue 1267 scenario - extended files not picked up",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base/backend.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "dist",
+    "rootDir": "src",
+    "resolveJsonModule": true
+  },
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*"]
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base/backend.json": `{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Backend",
+  "compilerOptions": {
+    "allowJs": true,
+    "module": "nodenext",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "esnext",
+    "lib": ["ESNext"],
+    "incremental": false,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "moduleResolution": "nodenext",
+    "types": ["node", "vitest/globals"],
+    "sourceMap": true,
+    "strictPropertyInitialization": false
+  },
+  "files": [
+    "types/ical2json.d.ts",
+    "types/express.d.ts",
+    "types/multer.d.ts",
+    "types/reset.d.ts",
+    "types/stripe-custom-typings.d.ts",
+    "types/nestjs-modules.d.ts",
+    "types/luxon.d.ts",
+    "types/nestjs-pino.d.ts"
+  ],
+  "ts-node": {
+    "files": true
+  }
+}`,
+				"/tsconfig-base/types/ical2json.d.ts":             "export {}",
+				"/tsconfig-base/types/express.d.ts":               "export {}",
+				"/tsconfig-base/types/multer.d.ts":                "export {}",
+				"/tsconfig-base/types/reset.d.ts":                 "export {}",
+				"/tsconfig-base/types/stripe-custom-typings.d.ts": "export {}",
+				"/tsconfig-base/types/nestjs-modules.d.ts":        "export {}",
+				"/tsconfig-base/types/luxon.d.ts": `declare module 'luxon' {
+  interface TSSettings {
+    throwOnInvalid: true
+  }
+}
+export {}`,
+				"/tsconfig-base/types/nestjs-pino.d.ts": "export {}",
+				"/src/main.ts":                          "export {}",
+				"/src/utils.ts":                         "export {}",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in extended tsconfig - array fields",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null,
+    "typeRoots": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node", "@types/jest"],
+    "lib": ["es2020", "dom"],
+    "typeRoots": ["./types", "./node_modules/@types"]
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in extended tsconfig - string fields",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "outDir": null,
+    "baseUrl": null,
+    "rootDir": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "baseUrl": "./src",
+    "rootDir": "./src"
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in extended tsconfig - mixed field types",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "outDir": null,
+    "strict": false,
+    "lib": ["es2022"],
+    "allowJs": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020", "dom"],
+    "outDir": "./dist",
+    "strict": true,
+    "allowJs": true,
+    "target": "es2020"
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides with multiple extends levels",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-middle.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-middle.json": `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": ["jest"],
+    "outDir": "./build"
+  }
+}`,
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020"],
+    "outDir": "./dist",
+    "strict": true
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
+	{
+		title:               "null overrides in middle level of extends chain",
+		noSubmoduleBaseline: true,
+		input: []testConfig{{
+			jsonText: `{
+  "extends": "./tsconfig-middle.json",
+  "compilerOptions": {
+    "outDir": "./final"
+  }
+}`,
+			configFileName: "tsconfig.json",
+			basePath:       "/",
+			allFileList: map[string]string{
+				"/tsconfig-middle.json": `{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "types": null,
+    "lib": null,
+    "outDir": "./middle"
+  }
+}`,
+				"/tsconfig-base.json": `{
+  "compilerOptions": {
+    "types": ["node"],
+    "lib": ["es2020"],
+    "outDir": "./base",
+    "strict": true
+  }
+}`,
+				"/app.ts": "",
+			},
+		}},
+	},
 }
 
 var tsconfigWithExtends = `{

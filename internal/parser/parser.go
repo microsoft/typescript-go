@@ -70,6 +70,7 @@ type Parser struct {
 	identifierCount         int
 	notParenthesizedArrow   collections.Set[int]
 	nodeSlicePool           core.Pool[*ast.Node]
+	stringSlicePool         core.Pool[string]
 	jsdocCache              map[*ast.Node][]*ast.Node
 	possibleAwaitSpans      []int
 	jsdocCommentsSpace      []string
@@ -77,13 +78,22 @@ type Parser struct {
 	jsdocTagCommentsSpace   []string
 	reparseList             []*ast.Node
 	commonJSModuleIndicator *ast.Node
+
+	currentParent        *ast.Node
+	setParentFromContext ast.Visitor
+}
+
+func newParser() *Parser {
+	res := &Parser{}
+	res.initializeClosures()
+	return res
 }
 
 var viableKeywordSuggestions = scanner.GetViableKeywordSuggestions()
 
 var parserPool = sync.Pool{
 	New: func() any {
-		return &Parser{}
+		return newParser()
 	},
 }
 
@@ -92,7 +102,7 @@ func getParser() *Parser {
 }
 
 func putParser(p *Parser) {
-	*p = Parser{scanner: p.scanner}
+	*p = Parser{scanner: p.scanner, setParentFromContext: p.setParentFromContext}
 	parserPool.Put(p)
 }
 
@@ -107,13 +117,21 @@ func ParseSourceFile(opts ast.SourceFileParseOptions, sourceText string, scriptK
 	return p.parseSourceFileWorker()
 }
 
+func (p *Parser) initializeClosures() {
+	p.setParentFromContext = func(n *ast.Node) bool {
+		n.Parent = p.currentParent
+		return false
+	}
+}
+
 func (p *Parser) parseJSONText() *ast.SourceFile {
 	pos := p.nodePos()
 	var statements *ast.NodeList
+	var eof *ast.TokenNode
 
 	if p.token == ast.KindEndOfFile {
 		statements = p.newNodeList(core.NewTextRange(pos, p.nodePos()), nil)
-		p.parseTokenNode()
+		eof = p.parseTokenNode()
 	} else {
 		var expressions any // []*ast.Expression | *ast.Expression
 
@@ -166,9 +184,9 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 		statement := p.factory.NewExpressionStatement(expression)
 		p.finishNode(statement, pos)
 		statements = p.newNodeList(core.NewTextRange(pos, p.nodePos()), []*ast.Node{statement})
-		p.parseExpectedToken(ast.KindEndOfFile)
+		eof = p.parseExpectedToken(ast.KindEndOfFile)
 	}
-	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements, eof)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, false)
@@ -316,11 +334,19 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	}
 	pos := p.nodePos()
 	statements := p.parseListIndex(PCSourceElements, (*Parser).parseToplevelStatement)
+	end := p.nodePos()
+	endHasJSDoc := p.hasPrecedingJSDocComment()
 	eof := p.parseTokenNode()
+	p.withJSDoc(eof, endHasJSDoc)
 	if eof.Kind != ast.KindEndOfFile {
 		panic("Expected end of file token from scanner.")
 	}
-	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
+	if len(p.reparseList) > 0 {
+		statements = append(statements, p.reparseList...)
+		p.reparseList = nil
+		end = p.nodePos()
+	}
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, p.newNodeList(core.NewTextRange(pos, end), statements), eof)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, isDeclarationFile)
@@ -352,6 +378,7 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.TextCount = p.factory.TextCount()
 	result.IdentifierCount = p.identifierCount
 	result.SetJSDocCache(p.jsdocCache)
+
 	ast.SetExternalModuleIndicator(result, p.opts.ExternalModuleIndicatorOptions)
 }
 
@@ -457,11 +484,14 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		}
 	}
 
-	return p.factory.NewSourceFile(sourceFile.ParseOptions(), p.sourceText, p.newNodeList(sourceFile.Statements.Loc, statements))
+	result := p.factory.NewSourceFile(sourceFile.ParseOptions(), p.sourceText, p.newNodeList(sourceFile.Statements.Loc, statements), sourceFile.EndOfFileToken)
+	for _, s := range statements {
+		s.Parent = result.AsNode() // force (re)set parent to reparsed source file
+	}
+	return result
 }
 
-func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) *ast.NodeList {
-	pos := p.nodePos()
+func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) []*ast.Node {
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
 	list := make([]*ast.Node, 0, 16)
@@ -482,11 +512,13 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 	p.parsingContexts = saveParsingContexts
 	slice := p.nodeSlicePool.NewSlice(len(list))
 	copy(slice, list)
-	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), slice)
+	return slice
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
-	return p.parseListIndex(kind, func(p *Parser, _ int) *ast.Node { return parseElement(p) })
+	pos := p.nodePos()
+	nodes := p.parseListIndex(kind, func(p *Parser, _ int) *ast.Node { return parseElement(p) })
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), nodes)
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if parseElement returned nil
@@ -3562,6 +3594,7 @@ func (p *Parser) parseTupleElementType() *ast.TypeNode {
 		node := p.factory.NewOptionalTypeNode(typeNode.Type())
 		node.Flags = typeNode.Flags
 		node.Loc = typeNode.Loc
+		typeNode.Type().Parent = node
 		return node
 	}
 	return typeNode
@@ -4683,6 +4716,16 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 			p.finishNodeWithEnd(newClosingElement, end, end)
 			newLast := p.factory.NewJsxElement(lastChild.AsJsxElement().OpeningElement, lastChild.AsJsxElement().Children, newClosingElement)
 			p.finishNodeWithEnd(newLast, lastChild.AsJsxElement().OpeningElement.Pos(), end)
+			// force reset parent pointers from discarded parse result
+			if lastChild.AsJsxElement().OpeningElement != nil {
+				lastChild.AsJsxElement().OpeningElement.Parent = newLast
+			}
+			if lastChild.AsJsxElement().Children != nil {
+				for _, c := range lastChild.AsJsxElement().Children.Nodes {
+					c.Parent = newLast
+				}
+			}
+			newClosingElement.Parent = newLast
 			children = p.newNodeList(core.NewTextRange(children.Pos(), newLast.End()), append(children.Nodes[0:len(children.Nodes)-1], newLast))
 			closingElement = lastChild.AsJsxElement().ClosingElement
 		} else {
@@ -4699,6 +4742,7 @@ func (p *Parser) parseJsxElementOrSelfClosingElementOrFragment(inExpressionConte
 		}
 		result = p.factory.NewJsxElement(opening, children, closingElement)
 		p.finishNode(result, pos)
+		closingElement.Parent = result // force reset parent pointers from possibly discarded parse result
 	case ast.KindJsxOpeningFragment:
 		result = p.factory.NewJsxFragment(opening, p.parseJsxChildren(opening), p.parseJsxClosingFragment(inExpressionContext))
 		p.finishNode(result, pos)
@@ -5306,7 +5350,9 @@ func (p *Parser) parseMemberExpressionRest(pos int, expression *ast.Expression, 
 		if p.isTemplateStartOfTaggedTemplate() {
 			// Absorb type arguments into TemplateExpression when preceding expression is ExpressionWithTypeArguments
 			if questionDotToken == nil && ast.IsExpressionWithTypeArguments(expression) {
-				expression = p.parseTaggedTemplateRest(pos, expression.AsExpressionWithTypeArguments().Expression, questionDotToken, expression.AsExpressionWithTypeArguments().TypeArguments)
+				original := expression.AsExpressionWithTypeArguments()
+				expression = p.parseTaggedTemplateRest(pos, original.Expression, questionDotToken, original.TypeArguments)
+				p.unparseExpressionWithTypeArguments(original.Expression, original.TypeArguments, expression)
 			} else {
 				expression = p.parseTaggedTemplateRest(pos, expression, questionDotToken, nil /*typeArguments*/)
 			}
@@ -5421,10 +5467,12 @@ func (p *Parser) parseCallExpressionRest(pos int, expression *ast.Expression) *a
 				typeArguments = expression.AsExpressionWithTypeArguments().TypeArguments
 				expression = expression.AsExpressionWithTypeArguments().Expression
 			}
+			inner := expression
 			argumentList := p.parseArgumentList()
 			isOptionalChain := questionDotToken != nil || p.tryReparseOptionalChain(expression)
 			expression = p.factory.NewCallExpression(expression, questionDotToken, typeArguments, argumentList, core.IfElse(isOptionalChain, ast.NodeFlagsOptionalChain, ast.NodeFlagsNone))
 			p.finishNode(expression, pos)
+			p.unparseExpressionWithTypeArguments(inner, typeArguments, expression)
 			continue
 		}
 		if questionDotToken != nil {
@@ -5705,6 +5753,18 @@ func (p *Parser) parseDecoratedExpression() *ast.Expression {
 	return result
 }
 
+func (p *Parser) unparseExpressionWithTypeArguments(expression *ast.Node, typeArguments *ast.NodeList, result *ast.Node) {
+	// force overwrite the `.Parent` of the expression and type arguments to erase the fact that they may have originally been parsed as an ExpressionWithTypeArguments and be parented to such
+	if expression != nil {
+		expression.Parent = result
+	}
+	if typeArguments != nil {
+		for _, a := range typeArguments.Nodes {
+			a.Parent = result
+		}
+	}
+}
+
 func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
 	pos := p.nodePos()
 	p.parseExpected(ast.KindNewKeyword)
@@ -5731,6 +5791,7 @@ func (p *Parser) parseNewExpressionOrNewDotTarget() *ast.Node {
 	}
 	result := p.factory.NewNewExpression(expression, typeArguments, argumentList)
 	p.finishNode(result, pos)
+	p.unparseExpressionWithTypeArguments(expression, typeArguments, result)
 	return result
 }
 
@@ -5879,6 +5940,13 @@ func (p *Parser) finishNodeWithEnd(node *ast.Node, pos int, end int) {
 		node.Flags |= ast.NodeFlagsThisNodeHasError
 		p.hasParseError = false
 	}
+	p.overrideParentInImmediateChildren(node)
+}
+
+func (p *Parser) overrideParentInImmediateChildren(node *ast.Node) {
+	p.currentParent = node
+	node.ForEachChild(p.setParentFromContext)
+	p.currentParent = nil
 }
 
 func (p *Parser) nextTokenIsSlash() bool {
@@ -6442,7 +6510,7 @@ func extractPragmas(commentRange ast.CommentRange, text string) []ast.Pragma {
 		}
 	}
 	if commentRange.Kind == ast.KindMultiLineCommentTrivia {
-		text = text[:len(text)-2]
+		text = strings.TrimSuffix(text, "*/")
 		pos := 2
 		var pragmas []ast.Pragma
 		for {
@@ -6534,7 +6602,6 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 	context.TypeReferenceDirectives = nil
 	context.LibReferenceDirectives = nil
 	// context.AmdDependencies = nil
-	context.HasNoDefaultLib = false
 	for _, pragma := range context.Pragmas {
 		switch pragma.Name {
 		case "reference":
@@ -6546,7 +6613,7 @@ func (p *Parser) processPragmasIntoFields(context *ast.SourceFile) {
 			noDefaultLib, noDefaultLibOk := pragma.Args["no-default-lib"]
 			switch {
 			case noDefaultLibOk && noDefaultLib.Value == "true":
-				context.HasNoDefaultLib = true
+				// Ignored.
 			case typesOk:
 				var parsed core.ResolutionMode
 				if resolutionModeOk {

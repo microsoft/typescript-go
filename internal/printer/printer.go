@@ -136,6 +136,8 @@ type Printer struct {
 	inExtends                         bool // whether we are emitting the `extends` clause of a ConditionalType or InferType
 	nameGenerator                     NameGenerator
 	makeFileLevelOptimisticUniqueName func(string) string
+	commentStatePool                  core.Pool[commentState]
+	sourceMapStatePool                core.Pool[sourceMapState]
 }
 
 type detachedCommentsInfo struct {
@@ -3175,7 +3177,10 @@ func (p *Printer) emitEmptyStatement(node *ast.EmptyStatement, isEmbeddedStateme
 func (p *Printer) emitExpressionStatement(node *ast.ExpressionStatement) {
 	state := p.enterNode(node.AsNode())
 
-	if isImmediatelyInvokedFunctionExpressionOrArrowFunction(node.Expression) {
+	if p.currentSourceFile != nil && p.currentSourceFile.ScriptKind == core.ScriptKindJSON {
+		// !!! In strada, this was handled by an undefined parenthesizerRule, so this is a hack.
+		p.emitExpression(node.Expression, ast.OperatorPrecedenceComma)
+	} else if isImmediatelyInvokedFunctionExpressionOrArrowFunction(node.Expression) {
 		// !!! introduce parentheses around callee
 		p.emitExpression(node.Expression, ast.OperatorPrecedenceParentheses)
 	} else {
@@ -4990,7 +4995,9 @@ func (p *Printer) emitCommentsBeforeNode(node *ast.Node) *commentState {
 		p.commentsDisabled = true
 	}
 
-	return &commentState{emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd}
+	c := p.commentStatePool.New()
+	*c = commentState{emitFlags, commentRange, containerPos, containerEnd, declarationListContainerEnd}
+	return c
 }
 
 func (p *Printer) emitCommentsAfterNode(node *ast.Node, state *commentState) {
@@ -5043,7 +5050,7 @@ func (p *Printer) emitCommentsBeforeToken(token ast.Kind, pos int, contextNode *
 		p.decreaseIndentIf(needsIndent)
 	}
 
-	return &commentState{}, pos
+	return p.commentStatePool.New(), pos
 }
 
 func (p *Printer) emitCommentsAfterToken(token ast.Kind, pos int, contextNode *ast.Node, state *commentState) {
@@ -5483,7 +5490,9 @@ func (p *Printer) emitSourceMapsBeforeNode(node *ast.Node) *sourceMapState {
 		p.sourceMapsDisabled = true
 	}
 
-	return &sourceMapState{emitFlags, loc, false}
+	state := p.sourceMapStatePool.New()
+	*state = sourceMapState{emitFlags, loc, false}
+	return state
 }
 
 func (p *Printer) emitSourceMapsAfterNode(node *ast.Node, previousState *sourceMapState) {
@@ -5521,7 +5530,9 @@ func (p *Printer) emitSourceMapsBeforeToken(token ast.Kind, pos int, contextNode
 		}
 	}
 
-	return &sourceMapState{emitFlags, loc, hasLoc}
+	state := p.sourceMapStatePool.New()
+	*state = sourceMapState{emitFlags, loc, hasLoc}
+	return state
 }
 
 func (p *Printer) emitSourceMapsAfterToken(token ast.Kind, pos int, contextNode *ast.Node, previousState *sourceMapState) {
