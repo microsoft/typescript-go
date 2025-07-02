@@ -776,24 +776,16 @@ func (r *resolutionState) tryLoadInputFileForPath(finalPath string, entry string
 			// A `composite` project is using project references and has it's common src dir set to `.`, so it shouldn't need to check any other locations
 			rootDir = r.compilerOptions.ConfigFilePath
 		} else {
-			var diagnostic *ast.Diagnostic
-			if isImports {
-				diagnostic = ast.NewDiagnostic(
-					nil,
-					core.TextRange{},
+			diagnostic := ast.NewDiagnostic(
+				nil,
+				core.TextRange{},
+				core.IfElse(isImports,
 					diagnostics.The_project_root_is_ambiguous_but_is_required_to_resolve_import_map_entry_0_in_file_1_Supply_the_rootDir_compiler_option_to_disambiguate,
-					core.IfElse(entry == "", ".", entry), // replace empty string with `.` - the reverse of the operation done when entries are built - so main entrypoint errors don't look weird
-					packagePath,
-				)
-			} else {
-				diagnostic = ast.NewDiagnostic(
-					nil,
-					core.TextRange{},
 					diagnostics.The_project_root_is_ambiguous_but_is_required_to_resolve_export_map_entry_0_in_file_1_Supply_the_rootDir_compiler_option_to_disambiguate,
-					core.IfElse(entry == "", ".", entry),
-					packagePath,
-				)
-			}
+				),
+				core.IfElse(entry == "", ".", entry), // replace empty string with `.` - the reverse of the operation done when entries are built - so main entrypoint errors don't look weird
+				packagePath,
+			)
 			r.diagnostics = append(r.diagnostics, diagnostic)
 			return unresolved()
 		}
