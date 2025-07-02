@@ -16,18 +16,10 @@ type FsHandlingBuildInfo struct {
 	vfs.FS
 }
 
-func NewFsHandlingBuildInfo(fs vfs.FS) *FsHandlingBuildInfo {
-	return &FsHandlingBuildInfo{FS: fs}
-}
-
-func (f *FsHandlingBuildInfo) InnerReadFile(path string) (contents string, ok bool) {
-	return f.FS.ReadFile(path)
-}
-
 // ReadFile reads the file specified by path and returns the content.
 // If the file fails to be read, ok will be false.
 func (f *FsHandlingBuildInfo) ReadFile(path string) (contents string, ok bool) {
-	contents, ok = f.InnerReadFile(path)
+	contents, ok = f.FS.ReadFile(path)
 	if ok && tspath.FileExtensionIs(path, tspath.ExtensionTsBuildInfo) {
 		// read buildinfo and modify version
 		var buildInfo incremental.BuildInfo
