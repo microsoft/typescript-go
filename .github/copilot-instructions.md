@@ -9,7 +9,7 @@ Most of our development takes place in the `internal` directory, and most behavi
 
 Most development on the codebase is in Go.
 Standard Go commands and practices apply, but we primarily use a tool called `hereby` to build, run tests, and other tasks.
-Run `hereby --list` to see all available commands.
+Run `npx hereby --list` to see all available commands.
 
 ```sh
 npx hereby build  # Build the project
@@ -23,7 +23,6 @@ go test -run='TestLocal/<test name>' ./internal/testrunner     # For local tests
 ```
 
 Always make sure code is formatted, linted, and tested before sending a pull request.
-
 
 ## Compiler Features, Fixes, and Tests
 
