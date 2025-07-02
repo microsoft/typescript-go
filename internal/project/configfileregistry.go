@@ -77,7 +77,7 @@ func (c *ConfigFileRegistry) acquireConfig(fileName string, path tspath.Path, pr
 	entry, ok := c.ConfigFiles.Load(path)
 	if !ok {
 		// Create parsed command line
-		config, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c.Host, &c.ExtendedConfigCache)
+		config, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c.Host, nil)
 		var rootFilesWatch *watchedFiles[[]string]
 		client := c.Host.Client()
 		if c.Host.IsWatchEnabled() && client != nil {
@@ -104,7 +104,7 @@ func (c *ConfigFileRegistry) acquireConfig(fileName string, path tspath.Path, pr
 		entry.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(entry.commandLine, c.Host.FS())
 	case PendingReloadFull:
 		oldCommandLine := entry.commandLine
-		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c.Host, &c.ExtendedConfigCache)
+		entry.commandLine, _ = tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c.Host, nil)
 		c.updateExtendedConfigsUsedBy(path, entry, oldCommandLine)
 		c.updateRootFilesWatch(fileName, entry)
 	}

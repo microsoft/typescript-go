@@ -1,9 +1,9 @@
 package projectv2
 
 import (
-	"cmp"
 	"context"
 	"fmt"
+	"maps"
 	"slices"
 	"sync/atomic"
 
@@ -84,15 +84,16 @@ type Snapshot struct {
 
 	// Session options are immutable for the server lifetime,
 	// so can be a pointer.
-	sessionOptions *SessionOptions
-	parseCache     *parseCache
-	logger         *project.Logger
+	sessionOptions      *SessionOptions
+	parseCache          *parseCache
+	extendedConfigCache *extendedConfigCache
+	logger              *project.Logger
 
 	// Immutable state, cloned between snapshots
 	overlayFS          *overlayFS
 	compilerFS         *compilerFS
-	projectCollection  *projectCollection
-	configFileRegistry *configFileRegistry
+	projectCollection  *ProjectCollection
+	configFileRegistry *ConfigFileRegistry
 }
 
 // NewSnapshot
@@ -101,8 +102,9 @@ func NewSnapshot(
 	overlays map[tspath.Path]*overlay,
 	sessionOptions *SessionOptions,
 	parseCache *parseCache,
+	extendedConfigCache *extendedConfigCache,
 	logger *project.Logger,
-	configFileRegistry *configFileRegistry,
+	configFileRegistry *ConfigFileRegistry,
 ) *Snapshot {
 	cachedFS := cachedvfs.From(fs)
 	cachedFS.Enable()
@@ -110,11 +112,12 @@ func NewSnapshot(
 	s := &Snapshot{
 		id: id,
 
-		sessionOptions:     sessionOptions,
-		parseCache:         parseCache,
-		logger:             logger,
-		configFileRegistry: configFileRegistry,
-		projectCollection:  &projectCollection{},
+		sessionOptions:      sessionOptions,
+		parseCache:          parseCache,
+		extendedConfigCache: extendedConfigCache,
+		logger:              logger,
+		configFileRegistry:  configFileRegistry,
+		projectCollection:   &ProjectCollection{},
 
 		overlayFS: newOverlayFS(cachedFS, sessionOptions.PositionEncoding, overlays),
 	}
@@ -142,88 +145,6 @@ func (s *Snapshot) IsOpenFile(path tspath.Path) bool {
 	return ok
 }
 
-func (s *Snapshot) ConfiguredProjects() []*Project {
-	projects := make([]*Project, 0, len(s.projectCollection.configuredProjects))
-	s.fillConfiguredProjects(&projects)
-	return projects
-}
-
-func (s *Snapshot) fillConfiguredProjects(projects *[]*Project) {
-	for _, p := range s.projectCollection.configuredProjects {
-		*projects = append(*projects, p)
-	}
-	slices.SortFunc(*projects, func(a, b *Project) int {
-		return cmp.Compare(a.Name, b.Name)
-	})
-}
-
-func (s *Snapshot) Projects() []*Project {
-	if s.projectCollection.inferredProject == nil {
-		return s.ConfiguredProjects()
-	}
-	projects := make([]*Project, 0, len(s.projectCollection.configuredProjects)+1)
-	s.fillConfiguredProjects(&projects)
-	projects = append(projects, s.projectCollection.inferredProject)
-	return projects
-}
-
-func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
-	fileName := ls.DocumentURIToFileName(uri)
-	path := s.toPath(fileName)
-	var (
-		containingProjects                       []*Project
-		firstConfiguredProject                   *Project
-		firstNonSourceOfProjectReferenceRedirect *Project
-		multipleDirectInclusions                 bool
-	)
-	for _, p := range s.ConfiguredProjects() {
-		if p.containsFile(path) {
-			containingProjects = append(containingProjects, p)
-			if !multipleDirectInclusions && !p.IsSourceFromProjectReference(path) {
-				if firstNonSourceOfProjectReferenceRedirect == nil {
-					firstNonSourceOfProjectReferenceRedirect = p
-				} else {
-					multipleDirectInclusions = true
-				}
-			}
-			if firstConfiguredProject == nil {
-				firstConfiguredProject = p
-			}
-		}
-	}
-	if len(containingProjects) == 1 {
-		return containingProjects[0]
-	}
-	if len(containingProjects) == 0 {
-		if s.projectCollection.inferredProject != nil && s.projectCollection.inferredProject.containsFile(path) {
-			return s.projectCollection.inferredProject
-		}
-		return nil
-	}
-	if !multipleDirectInclusions {
-		if firstNonSourceOfProjectReferenceRedirect != nil {
-			// Multiple projects include the file, but only one is a direct inclusion.
-			return firstNonSourceOfProjectReferenceRedirect
-		}
-		// Multiple projects include the file, and none are direct inclusions.
-		return firstConfiguredProject
-	}
-	// Multiple projects include the file directly.
-	// !!! temporary!
-	builder := newProjectCollectionBuilder(context.Background(), s, s.projectCollection, s.configFileRegistry, snapshotChange{})
-	defer func() {
-		p, c := builder.finalize()
-		if p != s.projectCollection || c != s.configFileRegistry {
-			panic("temporary builder should have collected no changes for a find lookup")
-		}
-	}()
-
-	if defaultProject := builder.findDefaultConfiguredProject(fileName, path); defaultProject != nil {
-		return defaultProject
-	}
-	return firstConfiguredProject
-}
-
 type snapshotChange struct {
 	// fileChanges are the changes that have occurred since the last snapshot.
 	fileChanges FileChangeSummary
@@ -238,6 +159,7 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		session.fs.overlays,
 		s.sessionOptions,
 		s.parseCache,
+		s.extendedConfigCache,
 		s.logger,
 		nil,
 	)
@@ -247,13 +169,21 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		newSnapshot,
 		s.projectCollection,
 		s.configFileRegistry,
-		change,
 	)
 
 	for uri := range change.fileChanges.Opened.Keys() {
 		fileName := uri.FileName()
 		path := s.toPath(fileName)
+		// !!! finish out assignProjectToOpenedScriptInfo
 		projectCollectionBuilder.tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(fileName, path, projectLoadKindCreate)
+	}
+
+	projectCollectionBuilder.markFilesChanged(slices.Collect(maps.Keys(change.fileChanges.Changed.M)))
+
+	for _, uri := range change.requestedURIs {
+		fileName := uri.FileName()
+		path := s.toPath(fileName)
+		projectCollectionBuilder.ensureDefaultProjectForFile(fileName, path)
 	}
 
 	newSnapshot.projectCollection, newSnapshot.configFileRegistry = projectCollectionBuilder.finalize()

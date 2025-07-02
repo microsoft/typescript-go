@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -33,7 +32,7 @@ type compilerHost struct {
 	currentDirectory    string
 	fs                  vfs.FS
 	defaultLibraryPath  string
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	extendedConfigCache tsoptions.ExtendedConfigCache
 }
 
 func NewCachedFSCompilerHost(
@@ -41,7 +40,7 @@ func NewCachedFSCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 ) CompilerHost {
 	return NewCompilerHost(options, currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache)
 }
@@ -51,7 +50,7 @@ func NewCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 ) CompilerHost {
 	return &compilerHost{
 		options:             options,
@@ -98,6 +97,6 @@ func (h *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 }
 
 func (h *compilerHost) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, nil)
+	commandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, h, h.extendedConfigCache)
 	return commandLine
 }

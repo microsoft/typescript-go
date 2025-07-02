@@ -1,10 +1,7 @@
 package projectv2
 
 import (
-	"slices"
-
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
@@ -33,20 +30,25 @@ const (
 var _ compiler.CompilerHost = (*Project)(nil)
 var _ ls.Host = (*Project)(nil)
 
+// Project represents a TypeScript project.
+// If changing struct fields, also update the Clone method.
 type Project struct {
-	Name           string
-	Kind           Kind
-	configFileName string
-	configFilePath tspath.Path
+	Name             string
+	Kind             Kind
+	currentDirectory string
+	configFileName   string
+	configFilePath   tspath.Path
+
+	snapshot *Snapshot
+
+	dirty         bool
+	dirtyFilePath tspath.Path
 
 	CommandLine     *tsoptions.ParsedCommandLine
 	Program         *compiler.Program
 	LanguageService *ls.LanguageService
-	checkerPool     *project.CheckerPool
-	rootFileNames   *collections.OrderedMap[tspath.Path, string] // values are file names
-	snapshot        *Snapshot
 
-	currentDirectory string
+	checkerPool *project.CheckerPool
 }
 
 func NewConfiguredProject(
@@ -71,7 +73,6 @@ func NewProject(
 		Kind:             kind,
 		snapshot:         snapshot,
 		currentDirectory: currentDirectory,
-		rootFileNames:    &collections.OrderedMap[tspath.Path, string]{},
 	}
 }
 
@@ -92,7 +93,7 @@ func (p *Project) GetCurrentDirectory() string {
 
 // GetResolvedProjectReference implements compiler.CompilerHost.
 func (p *Project) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	panic("unimplemented")
+	return p.snapshot.configFileRegistry.GetConfig(path, p)
 }
 
 // GetSourceFile implements compiler.CompilerHost. GetSourceFile increments
@@ -117,8 +118,7 @@ func (p *Project) Trace(msg string) {
 
 // GetLineMap implements ls.Host.
 func (p *Project) GetLineMap(fileName string) *ls.LineMap {
-	// !!! cache
-	return ls.ComputeLineStarts(p.snapshot.GetFile(ls.FileNameToDocumentURI(fileName)).Content())
+	return p.snapshot.GetFile(ls.FileNameToDocumentURI(fileName)).LineMap()
 }
 
 // GetPositionEncoding implements ls.Host.
@@ -129,10 +129,6 @@ func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
 // GetProgram implements ls.Host.
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
-}
-
-func (p *Project) GetRootFileNames() []string {
-	return slices.Collect(p.rootFileNames.Values())
 }
 
 func (p *Project) getScriptKind(fileName string) core.ScriptKind {
@@ -149,7 +145,11 @@ func (p *Project) containsFile(path tspath.Path) bool {
 }
 
 func (p *Project) isRoot(path tspath.Path) bool {
-	return p.rootFileNames.Has(path)
+	if p.CommandLine == nil {
+		return false
+	}
+	_, ok := p.CommandLine.FileNamesByPath()[path]
+	return ok
 }
 
 func (p *Project) IsSourceFromProjectReference(path tspath.Path) bool {
@@ -160,9 +160,19 @@ func (p *Project) Clone(newSnapshot *Snapshot) *Project {
 	return &Project{
 		Name:             p.Name,
 		Kind:             p.Kind,
-		CommandLine:      p.CommandLine,
-		rootFileNames:    p.rootFileNames,
 		currentDirectory: p.currentDirectory,
-		snapshot:         newSnapshot,
+		configFileName:   p.configFileName,
+		configFilePath:   p.configFilePath,
+
+		snapshot: newSnapshot,
+
+		dirty:         p.dirty,
+		dirtyFilePath: p.dirtyFilePath,
+
+		CommandLine:     p.CommandLine,
+		Program:         p.Program,
+		LanguageService: p.LanguageService,
+
+		checkerPool: p.checkerPool,
 	}
 }

@@ -36,6 +36,9 @@ type ParsedCommandLine struct {
 
 	resolvedProjectReferencePaths     []string
 	resolvedProjectReferencePathsOnce sync.Once
+
+	fileNamesByPath     map[tspath.Path]string // maps file names to their paths, used for quick lookups
+	fileNamesByPathOnce sync.Once
 }
 
 type SourceAndProjectReference struct {
@@ -190,6 +193,17 @@ func (p *ParsedCommandLine) TypeAcquisition() *core.TypeAcquisition {
 // All file names matched by files, include, and exclude patterns
 func (p *ParsedCommandLine) FileNames() []string {
 	return p.ParsedConfig.FileNames
+}
+
+func (p *ParsedCommandLine) FileNamesByPath() map[tspath.Path]string {
+	p.fileNamesByPathOnce.Do(func() {
+		p.fileNamesByPath = make(map[tspath.Path]string, len(p.ParsedConfig.FileNames))
+		for _, fileName := range p.ParsedConfig.FileNames {
+			path := tspath.ToPath(fileName, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+			p.fileNamesByPath[path] = fileName
+		}
+	})
+	return p.fileNamesByPath
 }
 
 func (p *ParsedCommandLine) ProjectReferences() []*core.ProjectReference {

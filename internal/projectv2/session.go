@@ -24,13 +24,14 @@ type SessionOptions struct {
 }
 
 type Session struct {
-	options    SessionOptions
-	fs         *overlayFS
-	logger     *project.Logger
-	parseCache *parseCache
-	converters *ls.Converters
+	options             SessionOptions
+	fs                  *overlayFS
+	logger              *project.Logger
+	parseCache          *parseCache
+	extendedConfigCache *extendedConfigCache
+	converters          *ls.Converters
 
-	snapshotMu sync.Mutex
+	snapshotMu sync.RWMutex
 	snapshot   *Snapshot
 
 	pendingFileChangesMu sync.Mutex
@@ -43,19 +44,22 @@ func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Sess
 		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 		CurrentDirectory:          options.CurrentDirectory,
 	}}
+	extendedConfigCache := &extendedConfigCache{}
 
 	return &Session{
-		options:    options,
-		fs:         overlayFS,
-		logger:     logger,
-		parseCache: parseCache,
+		options:             options,
+		fs:                  overlayFS,
+		logger:              logger,
+		parseCache:          parseCache,
+		extendedConfigCache: extendedConfigCache,
 		snapshot: NewSnapshot(
 			overlayFS.fs,
 			overlayFS.overlays,
 			&options,
 			parseCache,
+			extendedConfigCache,
 			logger,
-			&configFileRegistry{},
+			&ConfigFileRegistry{},
 		),
 	}
 }
@@ -108,17 +112,30 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 }
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
+	var snapshot *Snapshot
 	changes := s.flushChanges(ctx)
-	if !changes.IsEmpty() {
-		s.UpdateSnapshot(ctx, snapshotChange{
+	updateSnapshot := !changes.IsEmpty()
+	if updateSnapshot {
+		// If there are pending file changes, we need to update the snapshot.
+		// Sending the requested URI ensures that the project for this URI is loaded.
+		snapshot = s.UpdateSnapshot(ctx, snapshotChange{
 			fileChanges:   changes,
 			requestedURIs: []lsproto.DocumentUri{uri},
 		})
+	} else {
+		// If there are no pending file changes, we can try to use the current snapshot.
+		s.snapshotMu.RLock()
+		snapshot = s.snapshot
+		s.snapshotMu.RUnlock()
 	}
 
-	s.snapshotMu.Lock()
-	defer s.snapshotMu.Unlock()
-	project := s.snapshot.GetDefaultProject(uri)
+	project := snapshot.projectCollection.GetDefaultProject(uri)
+	if project == nil && !updateSnapshot {
+		// The current snapshot does not have the project for the URI,
+		// so we need to update the snapshot to ensure the project is loaded.
+		snapshot = s.UpdateSnapshot(ctx, snapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
+		project = snapshot.projectCollection.GetDefaultProject(uri)
+	}
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)
 	}
@@ -128,10 +145,11 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return project.LanguageService, nil
 }
 
-func (s *Session) UpdateSnapshot(ctx context.Context, change snapshotChange) {
+func (s *Session) UpdateSnapshot(ctx context.Context, change snapshotChange) *Snapshot {
 	s.snapshotMu.Lock()
 	defer s.snapshotMu.Unlock()
 	s.snapshot = s.snapshot.Clone(ctx, change, s)
+	return s.snapshot
 }
 
 func (s *Session) Close() {

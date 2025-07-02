@@ -27,10 +27,10 @@ func newParseCacheKey(
 }
 
 type parseCacheEntry struct {
+	mu         sync.Mutex
 	sourceFile *ast.SourceFile
 	hash       [sha256.Size]byte
 	refCount   int
-	mu         sync.Mutex
 }
 
 type parseCache struct {
@@ -44,24 +44,13 @@ func (c *parseCache) acquireDocument(
 	scriptKind core.ScriptKind,
 ) *ast.SourceFile {
 	key := newParseCacheKey(opts, scriptKind)
-	entry, loaded := c.loadOrStoreNewEntry(key)
-	if loaded {
-		// Existing entry found, increment ref count and check hash
-		entry.mu.Lock()
-		entry.refCount++
-		if entry.hash != fh.Hash() {
-			// Reparse the file if the hash has changed
-			entry.sourceFile = parser.ParseSourceFile(opts, fh.Content(), scriptKind)
-			entry.hash = fh.Hash()
-		}
-		entry.mu.Unlock()
-		return entry.sourceFile
+	entry, loaded := c.loadOrStoreNewLockedEntry(key)
+	defer entry.mu.Unlock()
+	if !loaded || entry.hash != fh.Hash() {
+		// Reparse the file if the hash has changed, or parse for the first time.
+		entry.sourceFile = parser.ParseSourceFile(opts, fh.Content(), scriptKind)
+		entry.hash = fh.Hash()
 	}
-
-	// New entry created (still holding lock)
-	entry.sourceFile = parser.ParseSourceFile(opts, fh.Content(), scriptKind)
-	entry.hash = fh.Hash()
-	entry.mu.Unlock()
 	return entry.sourceFile
 }
 
@@ -78,11 +67,16 @@ func (c *parseCache) releaseDocument(file *ast.SourceFile) {
 	}
 }
 
-func (c *parseCache) loadOrStoreNewEntry(key parseCacheKey) (*parseCacheEntry, bool) {
+// loadOrStoreNewLockedEntry loads an existing entry or creates a new one. The returned
+// entry's mutex is locked and its refCount is incremented (or initialized to 1 in the
+// case of a new entry).
+func (c *parseCache) loadOrStoreNewLockedEntry(key parseCacheKey) (*parseCacheEntry, bool) {
 	entry := &parseCacheEntry{refCount: 1}
 	entry.mu.Lock()
 	existing, loaded := c.entries.LoadOrStore(key, entry)
 	if loaded {
+		existing.mu.Lock()
+		existing.refCount++
 		return existing, true
 	}
 	return entry, false

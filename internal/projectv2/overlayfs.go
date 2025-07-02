@@ -18,6 +18,7 @@ type fileHandle interface {
 	Hash() [sha256.Size]byte
 	Content() string
 	MatchesDiskText() bool
+	LineMap() *ls.LineMap
 }
 
 type fileBase struct {
@@ -183,6 +184,7 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 			// Assume the overlay does not match disk text after a change. This field
 			// is allowed to be a false negative.
 			o.matchesDiskText = false
+			newOverlays[path] = o
 		case FileChangeKindSave:
 			result.Saved.Add(change.URI)
 			o, ok := newOverlays[path]

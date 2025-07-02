@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
@@ -164,8 +163,8 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 
 	if configFileName != "" {
 		configStart := sys.Now()
-		extendedConfigCache := collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]{}
-		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, &extendedConfigCache)
+		extendedConfigCache := &extendedConfigCache{}
+		configParseResult, errors := tsoptions.GetParsedCommandLineOfConfigFile(configFileName, compilerOptionsFromCommandLine, sys, extendedConfigCache)
 		configTime := sys.Now().Sub(configStart)
 		if len(errors) != 0 {
 			// these are unrecoverable errors--exit to report them as diagnostics
@@ -188,7 +187,7 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			cb,
 			configParseResult,
 			reportDiagnostic,
-			&extendedConfigCache,
+			extendedConfigCache,
 			configTime,
 		), nil
 	} else {
@@ -232,7 +231,7 @@ func performCompilation(
 	cb cbType,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
+	extendedConfigCache tsoptions.ExtendedConfigCache,
 	configTime time.Duration,
 ) ExitStatus {
 	host := compiler.NewCachedFSCompilerHost(config.CompilerOptions(), sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
