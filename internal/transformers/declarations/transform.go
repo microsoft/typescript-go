@@ -53,7 +53,6 @@ type DeclarationTransformer struct {
 	needsScopeFixMarker              bool
 	resultHasScopeMarker             bool
 	enclosingDeclaration             *ast.Node
-	generatedDefaultExportIdentifier *ast.Node
 	resultHasExternalModuleIndicator bool
 	suppressNewDiagnosticContexts    bool
 	lateStatementReplacementMap      map[ast.NodeId]*ast.Node
