@@ -980,7 +980,7 @@ func (r *resolutionState) loadModuleFromSpecificNodeModulesDirectory(ext extensi
 		if rest == "" && packageInfo.Exists() &&
 			(packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeNotPresent || packageInfo.Contents.Exports.Type == packagejson.JSONValueTypeNull) &&
 			r.esmMode {
-			// EsmMode disables index lookup in `loadNodeModuleFromDirectory` generally, however non-relative package resolutions still assume
+			// EsmMode disables index lookup in `loadNodeModuleFromDirectoryWorker` generally, however non-relative package resolutions still assume
 			// a default `index.js` entrypoint if no `main` or `exports` are present
 			if indexResult := r.loadModuleFromFile(extensions, tspath.CombinePaths(candidate, "index.js"), onlyRecordFailures); !indexResult.shouldContinueSearching() {
 				indexResult.packageId = r.getPackageId(packageDirectory, packageInfo)
