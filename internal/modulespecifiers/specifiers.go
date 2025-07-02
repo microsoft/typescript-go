@@ -378,16 +378,9 @@ func computeModuleSpecifiers(
 			} else {
 				pathsSpecifiers = append(pathsSpecifiers, local)
 			}
-		} else if forAutoImport || !importedFileIsInNodeModules || modulePath.IsInNodeModules {
-			// Why this extra conditional, not just an `else`? If some path to the file contained
-			// 'node_modules', but we can't create a non-relative specifier (e.g. "@foo/bar/path/to/file"),
-			// that means we had to go through a *sibling's* node_modules, not one we can access directly.
-			// If some path to the file was in node_modules but another was not, this likely indicates that
-			// we have a monorepo structure with symlinks. In this case, the non-nodeModules path is
-			// probably the realpath, e.g. "../bar/path/to/file", but a relative path to another package
-			// in a monorepo is probably not portable. So, the module specifier we actually go with will be
-			// the relative path through node_modules, so that the declaration emitter can produce a
-			// portability error. (See declarationEmitReexportedSymlinkReference3)
+		} else if forAutoImport || (!importedFileIsInNodeModules || !modulePath.IsInNodeModules) {
+			// Only add to relative specifiers if this path is NOT in node_modules.
+			// For symlinked packages, we want node_modules paths to be prioritized over real paths.
 			relativeSpecifiers = append(relativeSpecifiers, local)
 		}
 	}
