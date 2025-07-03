@@ -46,7 +46,7 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 		// !!! build mode
 		switch strings.ToLower(commandLineArgs[0]) {
 		case "-b", "--b", "-build", "--build":
-			fmt.Fprint(sys.Writer(), "Build mode is currently unsupported."+sys.NewLine())
+			fmt.Fprintln(sys.Writer(), "Build mode is currently unsupported.")
 			sys.EndWrite()
 			return ExitStatusNotImplemented
 			// case "-f":
@@ -63,12 +63,12 @@ func CommandLine(sys System, cb cbType, commandLineArgs []string) ExitStatus {
 }
 
 func fmtMain(sys System, input, output string) ExitStatus {
-	ctx := format.WithFormatCodeSettings(context.Background(), format.GetDefaultFormatCodeSettings(sys.NewLine()), sys.NewLine())
+	ctx := format.WithFormatCodeSettings(context.Background(), format.GetDefaultFormatCodeSettings("\n"), "\n")
 	input = string(tspath.ToPath(input, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	output = string(tspath.ToPath(output, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	fileContent, ok := sys.FS().ReadFile(input)
 	if !ok {
-		fmt.Fprint(sys.Writer(), "File not found: "+input+sys.NewLine())
+		fmt.Fprintln(sys.Writer(), "File not found: "+input)
 		return ExitStatusNotImplemented
 	}
 	text := fileContent
@@ -82,7 +82,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 	newText := applyBulkEdits(text, edits)
 
 	if err := sys.FS().WriteFile(output, newText, false); err != nil {
-		fmt.Fprint(sys.Writer(), err.Error()+sys.NewLine())
+		fmt.Fprintln(sys.Writer(), err.Error())
 		return ExitStatusNotImplemented
 	}
 	return ExitStatusSuccess
@@ -374,7 +374,7 @@ func listFiles(sys System, program *compiler.Program) {
 	// !!! explainFiles
 	if options.ListFiles.IsTrue() || options.ListFilesOnly.IsTrue() {
 		for _, file := range program.GetSourceFiles() {
-			fmt.Fprintf(sys.Writer(), "%s%s", file.FileName(), sys.NewLine())
+			fmt.Fprintln(sys.Writer(), file.FileName())
 		}
 	}
 }

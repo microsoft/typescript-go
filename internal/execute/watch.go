@@ -42,12 +42,12 @@ func (w *watcher) doCycle() {
 		JSDocParsingMode: ast.JSDocParsingModeParseForTypeErrors,
 	})
 	if w.hasBeenModified(w.program) {
-		fmt.Fprint(w.sys.Writer(), "build starting at ", w.sys.Now(), w.sys.NewLine())
+		fmt.Fprintln(w.sys.Writer(), "build starting at ", w.sys.Now())
 		timeStart := w.sys.Now()
 		w.compileAndEmit()
-		fmt.Fprint(w.sys.Writer(), "build finished in ", w.sys.Now().Sub(timeStart), w.sys.NewLine())
+		fmt.Fprintln(w.sys.Writer(), "build finished in ", w.sys.Now().Sub(timeStart))
 	} else {
 		// print something???
-		// fmt.Fprint(w.sys.Writer(), "no changes detected at ", w.sys.Now(), w.sys.NewLine())
+		// fmt.Fprintln(w.sys.Writer(), "no changes detected at ", w.sys.Now())
 	}
 }

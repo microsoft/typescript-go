@@ -56,7 +56,7 @@ func (w *watcher) hasErrorsInTsConfig() bool {
 		}
 		// CompilerOptions contain fields which should not be compared; clone to get a copy without those set.
 		if !reflect.DeepEqual(w.options.CompilerOptions().Clone(), configParseResult.CompilerOptions().Clone()) {
-			// fmt.Fprint(w.sys.Writer(), "build triggered due to config change", w.sys.NewLine())
+			// fmt.Fprintln(w.sys.Writer(), "build triggered due to config change")
 			w.configModified = true
 		}
 		w.options = configParseResult
@@ -80,7 +80,7 @@ func (w *watcher) hasBeenModified(program *compiler.Program) bool {
 		currState[fileName] = s.ModTime()
 		if !filesModified {
 			if currState[fileName] != w.prevModified[fileName] {
-				// fmt.Fprint(w.sys.Writer(), "build triggered from ", fileName, ": ", w.prevModified[fileName], " -> ", currState[fileName], w.sys.NewLine())
+				// fmt.Fprintln(w.sys.Writer(), "build triggered from ", fileName, ": ", w.prevModified[fileName], " -> ", currState[fileName])
 				filesModified = true
 			}
 			// catch cases where no files are modified, but some were deleted
@@ -88,7 +88,7 @@ func (w *watcher) hasBeenModified(program *compiler.Program) bool {
 		}
 	}
 	if !filesModified && len(w.prevModified) > 0 {
-		// fmt.Fprint(w.sys.Writer(), "build triggered due to deleted file", w.sys.NewLine())
+		// fmt.Fprintln(w.sys.Writer(), "build triggered due to deleted file")
 		filesModified = true
 	}
 	w.prevModified = currState
