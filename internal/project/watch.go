@@ -89,7 +89,6 @@ func (w *watchedFiles[T]) update(ctx context.Context, newData T) {
 	}
 	w.watcherID = watcherID
 	w.p.Log(fmt.Sprintf("%s:: %s watches updated %s:\n%s", w.p.Name(), w.watchType, w.watcherID, formatFileList(w.globs, "\t", hr)))
-	return
 }
 
 func globMapperForTypingsInstaller(data map[tspath.Path]string) []string {

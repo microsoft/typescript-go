@@ -263,7 +263,7 @@ func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature
 			// We don't have any code to get this correct; instead, don't highlight a current parameter AT ALL
 			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(activeSignature.Parameters))))
 		}
-		if help.ActiveParameter != nil && *&help.ActiveParameter.Value > uint32(len(activeSignature.Parameters)-1) {
+		if help.ActiveParameter != nil && help.ActiveParameter.Value > uint32(len(activeSignature.Parameters)-1) {
 			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(activeSignature.Parameters) - 1)))
 		}
 	}
@@ -915,13 +915,13 @@ func getArgumentOrParameterListAndIndex(node *ast.Node, sourceFile *ast.SourceFi
 		case ast.KindNewExpression:
 			arguments = node.Parent.AsNewExpression().Arguments
 		case ast.KindParenthesizedExpression:
-			arguments = node.Parent.AsParenthesizedExpression().ExpressionBase.NodeBase.Node.ArgumentList() // !!!
+			arguments = node.Parent.AsParenthesizedExpression().ArgumentList() // !!!
 		case ast.KindMethodDeclaration:
-			arguments = node.Parent.AsMethodDeclaration().FunctionLikeWithBodyBase.Parameters
+			arguments = node.Parent.AsMethodDeclaration().Parameters
 		case ast.KindFunctionExpression:
-			arguments = node.Parent.AsFunctionExpression().FunctionLikeWithBodyBase.Parameters
+			arguments = node.Parent.AsFunctionExpression().Parameters
 		case ast.KindArrowFunction:
-			arguments = node.Parent.AsArrowFunction().FunctionLikeWithBodyBase.Parameters
+			arguments = node.Parent.AsArrowFunction().Parameters
 		}
 		// Find the index of the argument that contains the node.
 		argumentIndex := getArgumentIndex(node, arguments, sourceFile, c)
@@ -1022,9 +1022,8 @@ func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFi
 	case ast.KindBinaryExpression:
 		highestBinary := getHighestBinary(parent.AsBinaryExpression())
 		contextualType := c.GetContextualType(highestBinary.AsNode(), checker.ContextFlagsNone)
-		argumentIndex := ptrTo(0)
 		if node.Kind != ast.KindOpenParenToken {
-			argumentIndex = ptrTo(countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1)
+			argumentIndex := ptrTo(countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1)
 			argumentCount := countBinaryExpressionParameters(highestBinary)
 			if contextualType != nil {
 				return &contextualSignatureLocationInfo{

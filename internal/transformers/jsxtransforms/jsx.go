@@ -839,14 +839,14 @@ var htmlEntityMatcher = regexp2.MustCompile(`&((#((\d+)|x([\da-fA-F]+)))|(\w+));
 func htmlEntityReplacer(m regexp2.Match) string {
 	decimal := m.GroupByNumber(3)
 	if decimal != nil {
-		parsed, err := strconv.ParseInt(decimal.Capture.String(), 10, 32)
+		parsed, err := strconv.ParseInt(decimal.String(), 10, 32)
 		if err == nil {
 			return string(rune(parsed))
 		}
 	}
 	hex := m.GroupByNumber(4)
 	if hex != nil {
-		parsed, err := strconv.ParseInt(hex.Capture.String(), 16, 32)
+		parsed, err := strconv.ParseInt(hex.String(), 16, 32)
 		if err == nil {
 			return string(rune(parsed))
 		}
@@ -854,7 +854,7 @@ func htmlEntityReplacer(m regexp2.Match) string {
 	word := m.GroupByNumber(5)
 	if word != nil {
 		// If this is not a valid entity, then just use `match` (replace it with itself, i.e. don't replace)
-		res, ok := entities[word.Capture.String()]
+		res, ok := entities[word.String()]
 		if ok {
 			return string(res)
 		}

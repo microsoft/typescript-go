@@ -209,7 +209,7 @@ func appendTypesRegistryConfig(builder *strings.Builder, index int, entry string
 	if index > 0 {
 		builder.WriteString(",")
 	}
-	builder.WriteString(fmt.Sprintf("\n    \"%s\": {%s\n    }", entry, TypesRegistryConfigText()))
+	fmt.Fprintf(builder, "\n    \"%s\": {%s\n    }", entry, TypesRegistryConfigText())
 }
 
 func newProjectServiceHost[FileContents any](files map[string]FileContents) *ProjectServiceHost {
