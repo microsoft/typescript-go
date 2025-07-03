@@ -56,7 +56,7 @@ func ReadBuildInfoProgram(config *tsoptions.ParsedCommandLine, reader BuildInfoR
 
 	// Convert to information that can be used to create incremental program
 	incrementalProgram := &Program{
-		state: buildInfoToProgramState(buildInfo, buildInfoFileName, config),
+		snapshot: buildInfoToSnapshot(buildInfo, buildInfoFileName, config),
 	}
 	return incrementalProgram
 }

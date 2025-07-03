@@ -362,7 +362,9 @@ func emitFilesAndReportErrors(
 		emitResult = program.Emit(ctx, compiler.EmitOptions{})
 		result.emitTime = sys.Now().Sub(emitStart)
 	}
-	allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)
+	if emitResult != nil {
+		allDiagnostics = append(allDiagnostics, emitResult.Diagnostics...)
+	}
 
 	allDiagnostics = compiler.SortAndDeduplicateDiagnostics(allDiagnostics)
 	for _, diagnostic := range allDiagnostics {

@@ -15,9 +15,9 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func programStateToBuildInfo(state *programState, program *compiler.Program, buildInfoFileName string) *BuildInfo {
+func snapshotToBuildInfo(snapshot *snapshot, program *compiler.Program, buildInfoFileName string) *BuildInfo {
 	to := &toBuildInfo{
-		state:              state,
+		snapshot:           snapshot,
 		program:            program,
 		buildInfoDirectory: tspath.GetDirectoryPath(buildInfoFileName),
 		comparePathsOptions: tspath.ComparePathsOptions{
@@ -28,7 +28,7 @@ func programStateToBuildInfo(state *programState, program *compiler.Program, bui
 		fileNamesToFileIdListId: make(map[string]BuildInfoFileIdListId),
 	}
 	to.buildInfo.Version = core.Version()
-	if state.options.IsIncremental() {
+	if snapshot.options.IsIncremental() {
 		to.setFileInfoAndEmitSignatures()
 		to.setCompilerOptions()
 		to.setReferencedMap()
@@ -36,8 +36,8 @@ func programStateToBuildInfo(state *programState, program *compiler.Program, bui
 		to.setSemanticDiagnostics()
 		to.setEmitDiagnostics()
 		to.setAffectedFilesPendingEmit()
-		if state.latestChangedDtsFile != "" {
-			to.buildInfo.LatestChangedDtsFile = to.relativeToBuildInfo(state.latestChangedDtsFile)
+		if snapshot.latestChangedDtsFile != "" {
+			to.buildInfo.LatestChangedDtsFile = to.relativeToBuildInfo(snapshot.latestChangedDtsFile)
 		}
 	}
 	// else {
@@ -45,13 +45,13 @@ func programStateToBuildInfo(state *programState, program *compiler.Program, bui
 	//         root: arrayFrom(rootFileNames, r => relativeToBuildInfo(r)),
 	//     };
 	// }
-	to.buildInfo.Errors = state.hasErrors.IsTrue()
-	to.buildInfo.CheckPending = state.checkPending
+	to.buildInfo.Errors = snapshot.hasErrors.IsTrue()
+	to.buildInfo.CheckPending = snapshot.checkPending
 	return &to.buildInfo
 }
 
 type toBuildInfo struct {
-	state                   *programState
+	snapshot                *snapshot
 	program                 *compiler.Program
 	buildInfo               BuildInfo
 	buildInfoDirectory      string
@@ -171,32 +171,26 @@ func (t *toBuildInfo) toBuildInfoDiagnosticsOfFile(filePath tspath.Path, diags *
 
 func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 	t.buildInfo.FileInfos = core.Map(t.program.GetSourceFiles(), func(file *ast.SourceFile) *BuildInfoFileInfo {
-		info := t.state.fileInfos[file.Path()]
+		info := t.snapshot.fileInfos[file.Path()]
 		fileId := t.toFileId(file.Path())
 		//  tryAddRoot(key, fileId);
 		if t.buildInfo.FileNames[fileId-1] != t.relativeToBuildInfo(string(file.Path())) {
 			panic(fmt.Sprintf("File name at index %d does not match expected relative path: %s != %s", fileId-1, t.buildInfo.FileNames[fileId-1], t.relativeToBuildInfo(string(file.Path()))))
 		}
-		var actualSignature string
-		if oldSignature, gotOldSignature := t.state.oldSignatures[file.Path()]; gotOldSignature {
-			actualSignature = oldSignature
-		} else {
-			actualSignature = info.signature
-		}
-		if t.state.options.Composite.IsTrue() {
+		if t.snapshot.options.Composite.IsTrue() {
 			if !ast.IsJsonSourceFile(file) && t.program.SourceFileMayBeEmitted(file, false) {
-				emitSignature := t.state.emitSignatures[file.Path()]
+				emitSignature := t.snapshot.emitSignatures[file.Path()]
 				if emitSignature == nil {
 					t.buildInfo.EmitSignatures = append(t.buildInfo.EmitSignatures, &BuildInfoEmitSignature{
 						FileId: fileId,
 					})
-				} else if emitSignature.signature != actualSignature {
+				} else if emitSignature.signature != info.signature {
 					incrementalEmitSignature := &BuildInfoEmitSignature{
 						FileId: fileId,
 					}
 					if emitSignature.signature != "" {
 						incrementalEmitSignature.Signature = emitSignature.signature
-					} else if emitSignature.signatureWithDifferentOptions[0] == actualSignature {
+					} else if emitSignature.signatureWithDifferentOptions[0] == info.signature {
 						incrementalEmitSignature.DiffersOnlyInDtsMap = true
 					} else {
 						incrementalEmitSignature.Signature = emitSignature.signatureWithDifferentOptions[0]
@@ -206,22 +200,13 @@ func (t *toBuildInfo) setFileInfoAndEmitSignatures() {
 				}
 			}
 		}
-		if actualSignature == info.signature {
-			return newBuildInfoFileInfo(info)
-		} else {
-			return newBuildInfoFileInfo(&fileInfo{
-				version:            info.version,
-				signature:          actualSignature,
-				affectsGlobalScope: info.affectsGlobalScope,
-				impliedNodeFormat:  info.impliedNodeFormat,
-			})
-		}
+		return newBuildInfoFileInfo(info)
 	})
 }
 
 func (t *toBuildInfo) setCompilerOptions() {
 	tsoptions.ForEachCompilerOptionValue(
-		t.state.options,
+		t.snapshot.options,
 		func(option *tsoptions.CommandLineOption) bool {
 			return option.AffectsBuildInfo
 		},
@@ -240,13 +225,13 @@ func (t *toBuildInfo) setCompilerOptions() {
 }
 
 func (t *toBuildInfo) setReferencedMap() {
-	if !t.state.tracksReferences() {
+	if !t.snapshot.tracksReferences() {
 		return
 	}
-	keys := slices.Collect(maps.Keys(t.state.referencedMap.Keys()))
+	keys := slices.Collect(maps.Keys(t.snapshot.referencedMap.Keys()))
 	slices.Sort(keys)
 	t.buildInfo.ReferencedMap = core.Map(keys, func(filePath tspath.Path) *BuildInfoReferenceMapEntry {
-		references, _ := t.state.referencedMap.GetValues(filePath)
+		references, _ := t.snapshot.referencedMap.GetValues(filePath)
 		return &BuildInfoReferenceMapEntry{
 			FileId:       t.toFileId(filePath),
 			FileIdListId: t.toFileIdListId(references),
@@ -255,16 +240,16 @@ func (t *toBuildInfo) setReferencedMap() {
 }
 
 func (t *toBuildInfo) setChangeFileSet() {
-	files := slices.Collect(maps.Keys(t.state.changedFilesSet.Keys()))
+	files := slices.Collect(maps.Keys(t.snapshot.changedFilesSet.Keys()))
 	slices.Sort(files)
 	t.buildInfo.ChangeFileSet = core.Map(files, t.toFileId)
 }
 
 func (t *toBuildInfo) setSemanticDiagnostics() {
 	for _, file := range t.program.GetSourceFiles() {
-		value, ok := t.state.semanticDiagnosticsPerFile[file.Path()]
+		value, ok := t.snapshot.semanticDiagnosticsPerFile[file.Path()]
 		if !ok {
-			if !t.state.changedFilesSet.Has(file.Path()) {
+			if !t.snapshot.changedFilesSet.Has(file.Path()) {
 				t.buildInfo.SemanticDiagnosticsPerFile = append(t.buildInfo.SemanticDiagnosticsPerFile, &BuildInfoSemanticDiagnostic{
 					FileId: t.toFileId(file.Path()),
 				})
@@ -281,26 +266,26 @@ func (t *toBuildInfo) setSemanticDiagnostics() {
 }
 
 func (t *toBuildInfo) setEmitDiagnostics() {
-	files := slices.Collect(maps.Keys(t.state.emitDiagnosticsPerFile))
+	files := slices.Collect(maps.Keys(t.snapshot.emitDiagnosticsPerFile))
 	slices.Sort(files)
 	t.buildInfo.EmitDiagnosticsPerFile = core.Map(files, func(filePath tspath.Path) *BuildInfoDiagnosticsOfFile {
-		return t.toBuildInfoDiagnosticsOfFile(filePath, t.state.emitDiagnosticsPerFile[filePath])
+		return t.toBuildInfoDiagnosticsOfFile(filePath, t.snapshot.emitDiagnosticsPerFile[filePath])
 	})
 }
 
 func (t *toBuildInfo) setAffectedFilesPendingEmit() {
-	if len(t.state.affectedFilesPendingEmit) == 0 {
+	if len(t.snapshot.affectedFilesPendingEmit) == 0 {
 		return
 	}
-	files := slices.Collect(maps.Keys(t.state.affectedFilesPendingEmit))
+	files := slices.Collect(maps.Keys(t.snapshot.affectedFilesPendingEmit))
 	slices.Sort(files)
-	fullEmitKind := GetFileEmitKind(t.state.options)
+	fullEmitKind := GetFileEmitKind(t.snapshot.options)
 	for _, filePath := range files {
 		file := t.program.GetSourceFileByPath(filePath)
 		if file == nil || !t.program.SourceFileMayBeEmitted(file, false) {
 			continue
 		}
-		pendingEmit := t.state.affectedFilesPendingEmit[filePath]
+		pendingEmit := t.snapshot.affectedFilesPendingEmit[filePath]
 		t.buildInfo.AffectedFilesPendingEmit = append(t.buildInfo.AffectedFilesPendingEmit, &BuildInfoFilePendingEmit{
 			FileId:   t.toFileId(filePath),
 			EmitKind: core.IfElse(pendingEmit == fullEmitKind, 0, pendingEmit),

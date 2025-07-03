@@ -70,11 +70,9 @@ type buildInfoFileInfoNoSignature struct {
 	ImpliedNodeFormat  core.ResolutionMode `json:"impliedNodeFormat,omitzero"`
 }
 
-/**
- *   Signature is
- * 	 - undefined if FileInfo.version === FileInfo.signature
- * 	 - string actual signature
- */
+//	 Signature is
+//		 - undefined if FileInfo.version === FileInfo.signature
+//		 - string actual signature
 type buildInfoFileInfoWithSignature struct {
 	Version            string              `json:"version,omitzero"`
 	Signature          string              `json:"signature,omitzero"`
@@ -268,11 +266,9 @@ func (b *BuildInfoSemanticDiagnostic) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid BuildInfoSemanticDiagnostic: %s", data)
 }
 
-/**
- * fileId if pending emit is same as what compilerOptions suggest
- * [fileId] if pending emit is only dts file emit
- * [fileId, emitKind] if any other type emit is pending
- */
+// fileId if pending emit is same as what compilerOptions suggest
+// [fileId] if pending emit is only dts file emit
+// [fileId, emitKind] if any other type emit is pending
 type BuildInfoFilePendingEmit struct {
 	FileId   BuildInfoFileId
 	EmitKind FileEmitKind
@@ -318,10 +314,8 @@ func (b *BuildInfoFilePendingEmit) UnmarshalJSON(data []byte) error {
 	return fmt.Errorf("invalid BuildInfoFilePendingEmit: %s", data)
 }
 
-/**
- * [fileId, signature] if different from file's signature
- * fileId if file wasnt emitted
- */
+// [fileId, signature] if different from file's signature
+// fileId if file wasnt emitted
 type BuildInfoEmitSignature struct {
 	FileId              BuildInfoFileId
 	Signature           string // Signature if it is different from file's Signature
