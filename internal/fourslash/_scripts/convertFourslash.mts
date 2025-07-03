@@ -367,6 +367,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                 break;
             case "exact":
             case "includes":
+            case "unsorted":
                 if (init.getText() === "undefined") {
                     return {
                         kind: "verifyCompletions",
@@ -448,8 +449,11 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                 if (propName === "includes") {
                     (goArgs ??= {}).includes = expected;
                 }
-                else {
+                else if (propName === "exact") {
                     (goArgs ??= {}).exact = expected;
+                }
+                else {
+                    (goArgs ??= {}).unsorted = expected;
                 }
                 break;
             case "excludes":
@@ -722,6 +726,7 @@ interface VerifyCompletionsArgs {
     includes?: string;
     excludes?: string;
     exact?: string;
+    unsorted?: string;
 }
 
 interface GoToCmd {
@@ -745,6 +750,7 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: Ve
         if (args.includes) expected.push(`Includes: ${args.includes},`);
         if (args.excludes) expected.push(`Excludes: ${args.excludes},`);
         if (args.exact) expected.push(`Exact: ${args.exact},`);
+        if (args.unsorted) expected.push(`Unsorted: ${args.unsorted},`);
         // !!! isIncomplete
         const commitCharacters = isNewIdentifierLocation ? "[]string{}" : "defaultCommitCharacters";
         expectedList = `&fourslash.CompletionsExpectedList{
