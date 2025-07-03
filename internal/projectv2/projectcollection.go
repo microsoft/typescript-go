@@ -2,17 +2,13 @@ package projectv2
 
 import (
 	"cmp"
-	"context"
 	"maps"
 	"slices"
 
-	"github.com/microsoft/typescript-go/internal/ls"
-	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type ProjectCollection struct {
-	snapshot *Snapshot
 	// fileDefaultProjects is a map of file paths to the config file path (the key
 	// into `configuredProjects`) of the default project for that file. If the file
 	// belongs to the inferred project, the value is "". This map contains quick
@@ -52,10 +48,11 @@ func (c *ProjectCollection) Projects() []*Project {
 	return projects
 }
 
-func (c *ProjectCollection) GetDefaultProject(uri lsproto.DocumentUri) *Project {
-	fileName := ls.DocumentURIToFileName(uri)
-	path := c.snapshot.toPath(fileName)
+func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path) *Project {
 	if result, ok := c.fileDefaultProjects[path]; ok {
+		if result == "" {
+			return c.inferredProject
+		}
 		return c.configuredProjects[result]
 	}
 
@@ -99,18 +96,19 @@ func (c *ProjectCollection) GetDefaultProject(uri lsproto.DocumentUri) *Project 
 	}
 	// Multiple projects include the file directly.
 	// !!! I'm not sure of a less hacky way to do this without repeating a lot of code.
-	builder := newProjectCollectionBuilder(context.Background(), c.snapshot, c, c.snapshot.configFileRegistry)
-	defer func() {
-		c2, r2 := builder.finalize()
-		if c2 != c || r2 != c.snapshot.configFileRegistry {
-			panic("temporary builder should have collected no changes for a find lookup")
-		}
-	}()
+	panic("TODO")
+	// builder := newProjectCollectionBuilder(context.Background(), c.snapshot, c, c.snapshot.configFileRegistry)
+	// defer func() {
+	// 	c2, r2 := builder.Finalize()
+	// 	if c2 != c || r2 != c.snapshot.configFileRegistry {
+	// 		panic("temporary builder should have collected no changes for a find lookup")
+	// 	}
+	// }()
 
-	if entry := builder.findDefaultConfiguredProject(fileName, path); entry != nil {
-		return entry.project
-	}
-	return firstConfiguredProject
+	// if entry := builder.findDefaultConfiguredProject(fileName, path); entry != nil {
+	// 	return entry.project
+	// }
+	// return firstConfiguredProject
 }
 
 // clone creates a shallow copy of the project collection, without the

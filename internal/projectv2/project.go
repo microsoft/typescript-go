@@ -62,6 +62,40 @@ func NewConfiguredProject(
 	return p
 }
 
+func NewInferredProject(
+	currentDirectory string,
+	compilerOptions *core.CompilerOptions,
+	rootFileNames []string,
+	snapshot *Snapshot,
+) *Project {
+	p := NewProject("/dev/null/inferredProject", KindInferred, currentDirectory, snapshot)
+	if compilerOptions == nil {
+		compilerOptions = &core.CompilerOptions{
+			AllowJs:                    core.TSTrue,
+			Module:                     core.ModuleKindESNext,
+			ModuleResolution:           core.ModuleResolutionKindBundler,
+			Target:                     core.ScriptTargetES2022,
+			Jsx:                        core.JsxEmitReactJSX,
+			AllowImportingTsExtensions: core.TSTrue,
+			StrictNullChecks:           core.TSTrue,
+			StrictFunctionTypes:        core.TSTrue,
+			SourceMap:                  core.TSTrue,
+			ESModuleInterop:            core.TSTrue,
+			AllowNonTsExtensions:       core.TSTrue,
+			ResolveJsonModule:          core.TSTrue,
+		}
+	}
+	p.CommandLine = tsoptions.NewParsedCommandLine(
+		compilerOptions,
+		rootFileNames,
+		tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: snapshot.compilerFS.UseCaseSensitiveFileNames(),
+			CurrentDirectory:          currentDirectory,
+		},
+	)
+	return p
+}
+
 func NewProject(
 	name string,
 	kind Kind,
@@ -73,6 +107,7 @@ func NewProject(
 		Kind:             kind,
 		snapshot:         snapshot,
 		currentDirectory: currentDirectory,
+		dirty:            true,
 	}
 }
 

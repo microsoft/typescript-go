@@ -7,6 +7,7 @@ import (
 	"slices"
 	"sync/atomic"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -90,10 +91,11 @@ type Snapshot struct {
 	logger              *project.Logger
 
 	// Immutable state, cloned between snapshots
-	overlayFS          *overlayFS
-	compilerFS         *compilerFS
-	projectCollection  *ProjectCollection
-	configFileRegistry *ConfigFileRegistry
+	overlayFS                          *overlayFS
+	compilerFS                         *compilerFS
+	projectCollection                  *ProjectCollection
+	configFileRegistry                 *ConfigFileRegistry
+	compilerOptionsForInferredProjects *core.CompilerOptions
 }
 
 // NewSnapshot
@@ -105,6 +107,7 @@ func NewSnapshot(
 	extendedConfigCache *extendedConfigCache,
 	logger *project.Logger,
 	configFileRegistry *ConfigFileRegistry,
+	compilerOptionsForInferredProjects *core.CompilerOptions,
 ) *Snapshot {
 	cachedFS := cachedvfs.From(fs)
 	cachedFS.Enable()
@@ -145,12 +148,22 @@ func (s *Snapshot) IsOpenFile(path tspath.Path) bool {
 	return ok
 }
 
+func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
+	fileName := ls.DocumentURIToFileName(uri)
+	path := s.toPath(fileName)
+	return s.projectCollection.GetDefaultProject(fileName, path)
+}
+
 type snapshotChange struct {
 	// fileChanges are the changes that have occurred since the last snapshot.
 	fileChanges FileChangeSummary
 	// requestedURIs are URIs that were requested by the client.
 	// The new snapshot should ensure projects for these URIs have loaded programs.
 	requestedURIs []lsproto.DocumentUri
+	// compilerOptionsForInferredProjects is the compiler options to use for inferred projects.
+	// It should only be set the value in the next snapshot should be changed. If nil, the
+	// value from the previous snapshot will be copied to the new snapshot.
+	compilerOptionsForInferredProjects *core.CompilerOptions
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Session) *Snapshot {
@@ -162,7 +175,13 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		s.extendedConfigCache,
 		s.logger,
 		nil,
+		s.compilerOptionsForInferredProjects,
 	)
+
+	if change.compilerOptionsForInferredProjects != nil {
+		// !!! mark inferred projects as dirty?
+		newSnapshot.compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
+	}
 
 	projectCollectionBuilder := newProjectCollectionBuilder(
 		ctx,
@@ -172,21 +191,16 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 	)
 
 	for uri := range change.fileChanges.Opened.Keys() {
-		fileName := uri.FileName()
-		path := s.toPath(fileName)
-		// !!! finish out assignProjectToOpenedScriptInfo
-		projectCollectionBuilder.tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(fileName, path, projectLoadKindCreate)
+		projectCollectionBuilder.DidOpenFile(uri)
 	}
 
-	projectCollectionBuilder.markFilesChanged(slices.Collect(maps.Keys(change.fileChanges.Changed.M)))
+	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)))
 
 	for _, uri := range change.requestedURIs {
-		fileName := uri.FileName()
-		path := s.toPath(fileName)
-		projectCollectionBuilder.ensureDefaultProjectForFile(fileName, path)
+		projectCollectionBuilder.DidRequestFile(uri)
 	}
 
-	newSnapshot.projectCollection, newSnapshot.configFileRegistry = projectCollectionBuilder.finalize()
+	newSnapshot.projectCollection, newSnapshot.configFileRegistry = projectCollectionBuilder.Finalize()
 
 	return newSnapshot
 }

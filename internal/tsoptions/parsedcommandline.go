@@ -41,6 +41,20 @@ type ParsedCommandLine struct {
 	fileNamesByPathOnce sync.Once
 }
 
+func NewParsedCommandLine(
+	compilerOptions *core.CompilerOptions,
+	rootFileNames []string,
+	comparePathsOptions tspath.ComparePathsOptions,
+) *ParsedCommandLine {
+	return &ParsedCommandLine{
+		ParsedConfig: &core.ParsedOptions{
+			CompilerOptions: compilerOptions,
+			FileNames:       rootFileNames,
+		},
+		comparePathsOptions: comparePathsOptions,
+	}
+}
+
 type SourceAndProjectReference struct {
 	Source   string
 	Resolved *ParsedCommandLine

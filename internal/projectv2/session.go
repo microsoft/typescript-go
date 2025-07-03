@@ -6,6 +6,7 @@ import (
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/bundled"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
@@ -24,12 +25,12 @@ type SessionOptions struct {
 }
 
 type Session struct {
-	options             SessionOptions
-	fs                  *overlayFS
-	logger              *project.Logger
-	parseCache          *parseCache
-	extendedConfigCache *extendedConfigCache
-	converters          *ls.Converters
+	options                            SessionOptions
+	fs                                 *overlayFS
+	logger                             *project.Logger
+	parseCache                         *parseCache
+	extendedConfigCache                *extendedConfigCache
+	compilerOptionsForInferredProjects *core.CompilerOptions
 
 	snapshotMu sync.RWMutex
 	snapshot   *Snapshot
@@ -60,6 +61,7 @@ func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Sess
 			extendedConfigCache,
 			logger,
 			&ConfigFileRegistry{},
+			nil,
 		),
 	}
 }
@@ -129,12 +131,12 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 		s.snapshotMu.RUnlock()
 	}
 
-	project := snapshot.projectCollection.GetDefaultProject(uri)
+	project := snapshot.GetDefaultProject(uri)
 	if project == nil && !updateSnapshot {
 		// The current snapshot does not have the project for the URI,
 		// so we need to update the snapshot to ensure the project is loaded.
 		snapshot = s.UpdateSnapshot(ctx, snapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
-		project = snapshot.projectCollection.GetDefaultProject(uri)
+		project = snapshot.GetDefaultProject(uri)
 	}
 	if project == nil {
 		return nil, fmt.Errorf("no project found for URI %s", uri)

@@ -173,6 +173,7 @@ func (c *configFileRegistryBuilder) getConfigFileNames(path tspath.Path) *config
 	}
 	return &configFileNamesEntry{
 		c:               c,
+		key:             path,
 		configFileNames: names,
 		dirty:           inDirty,
 	}
