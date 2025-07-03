@@ -80,7 +80,7 @@ func (w *watcher) hasBeenModified(program *compiler.Program) bool {
 		currState[fileName] = s.ModTime()
 		if !filesModified {
 			if currState[fileName] != w.prevModified[fileName] {
-				// fmt.Fprintln(w.sys.Writer(), "build triggered from ", fileName, ": ", w.prevModified[fileName], " -> ", currState[fileName])
+				// fmt.Fprint(w.sys.Writer(), "build triggered from ", fileName, ": ", w.prevModified[fileName], " -> ", currState[fileName], "\n")
 				filesModified = true
 			}
 			// catch cases where no files are modified, but some were deleted

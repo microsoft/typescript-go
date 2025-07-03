@@ -68,7 +68,7 @@ func fmtMain(sys System, input, output string) ExitStatus {
 	output = string(tspath.ToPath(output, sys.GetCurrentDirectory(), sys.FS().UseCaseSensitiveFileNames()))
 	fileContent, ok := sys.FS().ReadFile(input)
 	if !ok {
-		fmt.Fprintln(sys.Writer(), "File not found: "+input)
+		fmt.Fprintln(sys.Writer(), "File not found:", input)
 		return ExitStatusNotImplemented
 	}
 	text := fileContent
