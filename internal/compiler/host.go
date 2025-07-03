@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -28,32 +27,28 @@ type FileInfo struct {
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
-	currentDirectory    string
-	fs                  vfs.FS
-	defaultLibraryPath  string
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry]
+	currentDirectory   string
+	fs                 vfs.FS
+	defaultLibraryPath string
 }
 
 func NewCachedFSCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 ) CompilerHost {
-	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath, extendedConfigCache)
+	return NewCompilerHost(currentDirectory, cachedvfs.From(fs), defaultLibraryPath)
 }
 
 func NewCompilerHost(
 	currentDirectory string,
 	fs vfs.FS,
 	defaultLibraryPath string,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 ) CompilerHost {
 	return &compilerHost{
-		currentDirectory:    currentDirectory,
-		fs:                  fs,
-		defaultLibraryPath:  defaultLibraryPath,
-		extendedConfigCache: extendedConfigCache,
+		currentDirectory:   currentDirectory,
+		fs:                 fs,
+		defaultLibraryPath: defaultLibraryPath,
 	}
 }
 

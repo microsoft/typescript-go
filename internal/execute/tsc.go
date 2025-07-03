@@ -188,7 +188,6 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 			cb,
 			configParseResult,
 			reportDiagnostic,
-			&extendedConfigCache,
 			configTime,
 		), nil
 	} else {
@@ -208,7 +207,6 @@ func executeCommandLineWorker(sys System, cb cbType, commandLine *tsoptions.Pars
 		cb,
 		commandLine,
 		reportDiagnostic,
-		nil,
 		0, /*configTime*/
 	), nil
 }
@@ -232,10 +230,9 @@ func performCompilation(
 	cb cbType,
 	config *tsoptions.ParsedCommandLine,
 	reportDiagnostic diagnosticReporter,
-	extendedConfigCache *collections.SyncMap[tspath.Path, *tsoptions.ExtendedConfigCacheEntry],
 	configTime time.Duration,
 ) ExitStatus {
-	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath(), extendedConfigCache)
+	host := compiler.NewCachedFSCompilerHost(sys.GetCurrentDirectory(), sys.FS(), sys.DefaultLibraryPath())
 	// todo: cache, statistics, tracing
 	parseStart := sys.Now()
 	program := compiler.NewProgram(compiler.ProgramOptions{
