@@ -23,7 +23,7 @@ type CommandLineOption struct {
 	Kind            CommandLineOptionKind
 
 	// used in parsing
-	isFilePath        bool
+	IsFilePath        bool
 	IsTSConfigOnly    bool
 	IsCommandLineOnly bool
 
@@ -100,12 +100,12 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 	"rootDirs": {
 		Name:       "rootDirs",
 		Kind:       CommandLineOptionTypeString,
-		isFilePath: true,
+		IsFilePath: true,
 	},
 	"typeRoots": {
 		Name:       "typeRoots",
 		Kind:       CommandLineOptionTypeString,
-		isFilePath: true,
+		IsFilePath: true,
 	},
 	"types": {
 		Name: "types",
@@ -148,13 +148,13 @@ var commandLineOptionElements = map[string]*CommandLineOption{
 	"excludeDirectories": {
 		Name:            "excludeDirectory",
 		Kind:            CommandLineOptionTypeString,
-		isFilePath:      true,
+		IsFilePath:      true,
 		extraValidation: true,
 	},
 	"excludeFiles": {
 		Name:            "excludeFile",
 		Kind:            CommandLineOptionTypeString,
-		isFilePath:      true,
+		IsFilePath:      true,
 		extraValidation: true,
 	},
 	// Test infra options

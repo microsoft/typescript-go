@@ -124,6 +124,10 @@ func (p *Program) GetRedirectForResolution(file ast.HasFileName) *tsoptions.Pars
 	return p.projectReferenceFileMapper.getRedirectForResolution(file)
 }
 
+func (p *Program) GetParseFileRedirect(fileName string) string {
+	return p.projectReferenceFileMapper.getParseFileRedirect(ast.NewHasFileName(fileName, p.toPath(fileName)))
+}
+
 func (p *Program) ForEachResolvedProjectReference(
 	fn func(path tspath.Path, config *tsoptions.ParsedCommandLine),
 ) {
@@ -875,9 +879,18 @@ func (p *Program) getBindDiagnosticsForFile(ctx context.Context, sourceFile *ast
 	return sourceFile.BindDiagnostics()
 }
 
+func FilterNoEmitSemanticDiagnostics(diagnostics []*ast.Diagnostic, options *core.CompilerOptions) []*ast.Diagnostic {
+	if !options.NoEmit.IsTrue() {
+		return diagnostics
+	}
+	return core.Filter(diagnostics, func(d *ast.Diagnostic) bool {
+		return !d.SkippedOnNoEmit()
+	})
+}
+
 func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	compilerOptions := p.Options()
-	if checker.SkipTypeChecking(sourceFile, compilerOptions, p) {
+	if checker.SkipTypeChecking(sourceFile, compilerOptions, p, false) {
 		return nil
 	}
 
@@ -908,13 +921,13 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
-		return core.Filter(diags, func(d *ast.Diagnostic) bool {
+		return FilterNoEmitSemanticDiagnostics(core.Filter(diags, func(d *ast.Diagnostic) bool {
 			return plainJSErrors.Has(d.Code())
-		})
+		}), p.Options())
 	}
 
 	if len(sourceFile.CommentDirectives) == 0 {
-		return diags
+		return FilterNoEmitSemanticDiagnostics(diags, p.Options())
 	}
 	// Build map of directives by line number
 	directivesByLine := make(map[int]ast.CommentDirective)
@@ -951,7 +964,7 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 			filtered = append(filtered, ast.NewDiagnostic(sourceFile, directive.Loc, diagnostics.Unused_ts_expect_error_directive))
 		}
 	}
-	return filtered
+	return FilterNoEmitSemanticDiagnostics(filtered, p.Options())
 }
 
 func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -971,7 +984,7 @@ func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFi
 }
 
 func (p *Program) getSuggestionDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if checker.SkipTypeChecking(sourceFile, p.Options(), p) {
+	if checker.SkipTypeChecking(sourceFile, p.Options(), p, false) {
 		return nil
 	}
 
@@ -1171,9 +1184,18 @@ func (p *Program) CommonSourceDirectory() string {
 	return p.commonSourceDirectory
 }
 
+type WriteFileData struct {
+	SourceMapUrlPos  int
+	BuildInfo        any
+	Diagnostics      []*ast.Diagnostic
+	DiffersOnlyInMap bool
+	SkippedDtsWrite  bool
+}
+
 type EmitOptions struct {
 	TargetSourceFile *ast.SourceFile // Single file to emit. If `nil`, emits all files
-	forceDtsEmit     bool
+	EmitOnly         EmitOnly
+	WriteFile        func(fileName string, text string, writeByteOrderMark bool, data *WriteFileData) error
 }
 
 type EmitResult struct {
@@ -1189,9 +1211,20 @@ type SourceMapEmitResult struct {
 	GeneratedFile        string
 }
 
-func (p *Program) Emit(options EmitOptions) *EmitResult {
+func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	// !!! performance measurement
 	p.BindSourceFiles()
+	if options.EmitOnly != EmitOnlyForcedDts {
+		result := HandleNoEmitOptions(
+			ctx,
+			p,
+			options.TargetSourceFile,
+		)
+		if result != nil {
+			return result
+		}
+		context.TODO()
+	}
 
 	writerPool := &sync.Pool{
 		New: func() any {
@@ -1200,18 +1233,18 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 	}
 	wg := core.NewWorkGroup(p.singleThreaded())
 	var emitters []*emitter
-	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFile, options.forceDtsEmit)
+	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFile, options.EmitOnly == EmitOnlyForcedDts)
 
 	for _, sourceFile := range sourceFiles {
 		emitter := &emitter{
-			emittedFilesList:  nil,
-			sourceMapDataList: nil,
-			writer:            nil,
-			sourceFile:        sourceFile,
+			writer:     nil,
+			sourceFile: sourceFile,
+			emitOnly:   options.EmitOnly,
+			writeFile:  options.WriteFile,
 		}
 		emitters = append(emitters, emitter)
 		wg.Queue(func() {
-			host, done := newEmitHost(context.TODO(), p, sourceFile)
+			host, done := newEmitHost(ctx, p, sourceFile)
 			defer done()
 			emitter.host = host
 
@@ -1221,7 +1254,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 
 			// attach writer and perform emit
 			emitter.writer = writer
-			emitter.paths = outputpaths.GetOutputPathsFor(sourceFile, host.Options(), host, options.forceDtsEmit)
+			emitter.paths = outputpaths.GetOutputPathsFor(sourceFile, host.Options(), host, options.EmitOnly == EmitOnlyForcedDts)
 			emitter.emit()
 			emitter.writer = nil
 
@@ -1234,20 +1267,9 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 	wg.RunAndWait()
 
 	// collect results from emit, preserving input order
-	result := &EmitResult{}
-	for _, emitter := range emitters {
-		if emitter.emitSkipped {
-			result.EmitSkipped = true
-		}
-		result.Diagnostics = append(result.Diagnostics, emitter.emitterDiagnostics.GetDiagnostics()...)
-		if emitter.emittedFilesList != nil {
-			result.EmittedFiles = append(result.EmittedFiles, emitter.emittedFilesList...)
-		}
-		if emitter.sourceMapDataList != nil {
-			result.SourceMaps = append(result.SourceMaps, emitter.sourceMapDataList...)
-		}
-	}
-	return result
+	return CombineEmitResults(core.Map(emitters, func(e *emitter) *EmitResult {
+		return &e.emitResult
+	}))
 }
 
 func (p *Program) toPath(filename string) tspath.Path {
@@ -1262,7 +1284,7 @@ func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
 func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFile {
 	file := p.GetSourceFile(fileName)
 	if file == nil {
-		filename := p.projectReferenceFileMapper.getParseFileRedirect(ast.NewHasFileName(fileName, p.toPath(fileName)))
+		filename := p.GetParseFileRedirect(fileName)
 		if filename != "" {
 			return p.GetSourceFile(filename)
 		}
@@ -1350,7 +1372,7 @@ func (p *Program) GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node {
 }
 
 func (p *Program) SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool {
-	return sourceFileMayBeEmitted(sourceFile, &emitHost{program: p}, forceDtsEmit)
+	return sourceFileMayBeEmitted(sourceFile, p, forceDtsEmit)
 }
 
 var plainJSErrors = collections.NewSetFromItems(
