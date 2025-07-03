@@ -19,6 +19,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/lsp"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
+	"github.com/microsoft/typescript-go/internal/testutil/baseline"
 	"github.com/microsoft/typescript-go/internal/testutil/harnessutil"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -34,6 +35,7 @@ type FourslashTest struct {
 	vfs    vfs.FS
 
 	testData *TestData // !!! consolidate test files from test data and script info
+	baseline *baselineFromTest
 
 	scriptInfos map[string]*scriptInfo
 	converters  *ls.Converters
@@ -300,7 +302,7 @@ func (f *FourslashTest) GoToMarker(t *testing.T, markerName string) {
 	if !ok {
 		t.Fatalf("Marker %s not found", markerName)
 	}
-	f.ensureActiveFile(t, marker.FileName)
+	f.ensureActiveFile(t, marker.FileName())
 	f.goToPosition(t, marker.LSPosition)
 	f.lastKnownMarkerName = marker.Name
 }
@@ -315,6 +317,14 @@ func (f *FourslashTest) GoToEOF(t *testing.T) {
 func (f *FourslashTest) goToPosition(t *testing.T, position lsproto.Position) {
 	f.currentCaretPosition = position
 	f.selectionEnd = nil
+}
+
+func (f *FourslashTest) GoToPosAndFile(t *testing.T, pos lsproto.Position, fileName string) {
+	// GoToRangeStart
+	f.ensureActiveFile(t, fileName)
+	f.currentCaretPosition = pos
+	f.activeFilename = fileName
+	// !!! this.selectionEnd = -1
 }
 
 func (f *FourslashTest) Markers() []*Marker {
@@ -344,6 +354,15 @@ func (f *FourslashTest) openFile(t *testing.T, filename string) {
 			Text:       script.content,
 		},
 	})
+}
+
+func (f *FourslashTest) currentTextDocumentPositionParams() lsproto.TextDocumentPositionParams {
+	return lsproto.TextDocumentPositionParams{
+		TextDocument: lsproto.TextDocumentIdentifier{
+			Uri: ls.FileNameToDocumentURI(f.activeFilename),
+		},
+		Position: f.currentCaretPosition,
+	}
 }
 
 func getLanguageKind(filename string) lsproto.LanguageKind {
@@ -435,13 +454,8 @@ func (f *FourslashTest) verifyCompletionsAtMarker(t *testing.T, markerName strin
 
 func (f *FourslashTest) verifyCompletionsWorker(t *testing.T, expected *CompletionsExpectedList) {
 	params := &lsproto.CompletionParams{
-		TextDocumentPositionParams: lsproto.TextDocumentPositionParams{
-			TextDocument: lsproto.TextDocumentIdentifier{
-				Uri: ls.FileNameToDocumentURI(f.activeFilename),
-			},
-			Position: f.currentCaretPosition,
-		},
-		Context: &lsproto.CompletionContext{},
+		TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
+		Context:                    &lsproto.CompletionContext{},
 	}
 	resMsg := f.sendRequest(t, lsproto.MethodTextDocumentCompletion, params)
 	if resMsg == nil {
@@ -652,6 +666,67 @@ func assertDeepEqual(t *testing.T, actual any, expected any, prefix string, opts
 	}
 }
 
+func (f *FourslashTest) VerifyBaselineFindAllReferences(
+	t *testing.T,
+	markers ...string,
+) {
+	// if there are no markers specified, use all ranges
+	var referenceLocations []MarkerOrRange
+	if len(markers) == 0 {
+		referenceLocations = core.Map(f.testData.Ranges, func(r *RangeMarker) MarkerOrRange { return r })
+	} else {
+		referenceLocations = core.Map(markers, func(markerName string) MarkerOrRange {
+			marker, ok := f.testData.MarkerPositions[markerName]
+			if !ok {
+				t.Fatalf("Marker %s not found", markerName)
+			}
+			return marker
+		})
+	}
+
+	if f.baseline != nil {
+		t.Fatalf("Error during test \"%s\": Another baseline is already in progress", t.Name())
+	} else {
+		f.baseline = &baselineFromTest{
+			content:      &strings.Builder{},
+			baselineName: "findAllRef/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline.jsonc",
+		}
+	}
+
+	// empty baseline after test completes
+	defer func() {
+		f.baseline = nil
+	}()
+
+	for _, markerOrRange := range referenceLocations {
+		// worker in `baselineEachMarkerOrRange`
+		f.GoToPosAndFile(t, markerOrRange.LSPos(), markerOrRange.FileName())
+		params := &lsproto.ReferenceParams{
+			TextDocumentPositionParams: f.currentTextDocumentPositionParams(),
+			Context:                    &lsproto.ReferenceContext{},
+		}
+		resMsg := f.sendRequest(t, lsproto.MethodTextDocumentReferences, params)
+		if resMsg == nil {
+			t.Fatalf("Nil response received for completion request at marker %s", f.lastKnownMarkerName)
+		}
+		result := resMsg.AsResponse().Result
+		if result, ok := result.([]*lsproto.Location); ok {
+			f.baseline.addResult("findAllReferences", f.getBaselineForLocationsWithFileContents(result, baselineFourslashLocationsOptions{
+				marker:     markerOrRange.GetMarker(),
+				markerName: "/*FIND ALL REFS*/",
+			}))
+		} else {
+			if f.lastKnownMarkerName == "" {
+				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, result)
+			} else {
+				t.Fatalf("Unexpected references response type at marker %s: %T", f.lastKnownMarkerName, result)
+			}
+		}
+	}
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
+}
+
 func ptrTo[T any](v T) *T {
 	return &v
 }
@@ -764,13 +839,13 @@ func (f *FourslashTest) typeText(t *testing.T, text string) {
 func (f *FourslashTest) editScriptAndUpdateMarkers(t *testing.T, fileName string, editStart int, editEnd int, newText string) {
 	script := f.editScript(t, fileName, editStart, editEnd, newText)
 	for _, marker := range f.testData.Markers {
-		if marker.FileName == fileName {
+		if marker.FileName() == fileName {
 			marker.Position = updatePosition(marker.Position, editStart, editEnd, newText)
 			marker.LSPosition = f.converters.PositionToLineAndCharacter(script, core.TextPos(marker.Position))
 		}
 	}
 	for _, rangeMarker := range f.testData.Ranges {
-		if rangeMarker.FileName == fileName {
+		if rangeMarker.FileName() == fileName {
 			start := updatePosition(rangeMarker.Range.Pos(), editStart, editEnd, newText)
 			end := updatePosition(rangeMarker.Range.End(), editStart, editEnd, newText)
 			rangeMarker.Range = core.NewTextRange(start, end)
