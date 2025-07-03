@@ -1644,6 +1644,10 @@ func IsModuleAugmentationExternal(node *Node) bool {
 	return false
 }
 
+func IsModuleWithStringLiteralName(node *Node) bool {
+	return IsModuleDeclaration(node) && node.Name().Kind == KindStringLiteral
+}
+
 func GetContainingClass(node *Node) *Node {
 	return FindAncestor(node.Parent, IsClassLike)
 }

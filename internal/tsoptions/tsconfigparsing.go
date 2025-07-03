@@ -34,7 +34,7 @@ type extendsResult struct {
 var compilerOptionsDeclaration = &CommandLineOption{
 	Name:           "compilerOptions",
 	Kind:           CommandLineOptionTypeObject,
-	ElementOptions: commandLineCompilerOptionsMap,
+	ElementOptions: CommandLineCompilerOptionsMap,
 }
 
 var compileOnSaveCommandLineOption = &CommandLineOption{
@@ -391,7 +391,7 @@ func startsWithConfigDirTemplate(value any) bool {
 }
 
 func normalizeNonListOptionValue(option *CommandLineOption, basePath string, value any) any {
-	if option.isFilePath {
+	if option.IsFilePath {
 		value = tspath.NormalizeSlashes(value.(string))
 		if !startsWithConfigDirTemplate(value) {
 			value = tspath.GetNormalizedAbsolutePath(value.(string), basePath)
@@ -543,7 +543,7 @@ func commandLineOptionsToMap(compilerOptions []*CommandLineOption) map[string]*C
 	return result
 }
 
-var commandLineCompilerOptionsMap map[string]*CommandLineOption = commandLineOptionsToMap(OptionsDeclarations)
+var CommandLineCompilerOptionsMap map[string]*CommandLineOption = commandLineOptionsToMap(OptionsDeclarations)
 
 func convertMapToOptions[O optionParser](compilerOptions *collections.OrderedMap[string, any], result O) O {
 	// this assumes any `key`, `value` pair in `options` will have `value` already be the correct type. this function should no error handling
@@ -836,7 +836,7 @@ func getDefaultTypeAcquisition(configFileName string) *core.TypeAcquisition {
 
 func convertCompilerOptionsFromJsonWorker(jsonOptions any, basePath string, configFileName string) (*core.CompilerOptions, []*ast.Diagnostic) {
 	options := getDefaultCompilerOptions(configFileName)
-	_, errors := convertOptionsFromJson(commandLineCompilerOptionsMap, jsonOptions, basePath, &compilerOptionsParser{options})
+	_, errors := convertOptionsFromJson(CommandLineCompilerOptionsMap, jsonOptions, basePath, &compilerOptionsParser{options})
 	if configFileName != "" {
 		options.ConfigFilePath = tspath.NormalizeSlashes(configFileName)
 	}
