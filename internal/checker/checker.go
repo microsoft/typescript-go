@@ -21201,15 +21201,26 @@ func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAl
 	return result
 }
 
+var activeMapperCache = sync.Pool{
+	New: func() any {
+		return make(map[string]*Type, 1)
+	},
+}
+
 func (c *Checker) pushActiveMapper(mapper *TypeMapper) {
 	c.activeMappers = append(c.activeMappers, mapper)
-	c.activeTypeMappersCaches = append(c.activeTypeMappersCaches, make(map[string]*Type))
+
+	c.activeTypeMappersCaches = append(c.activeTypeMappersCaches, activeMapperCache.Get().(map[string]*Type))
 }
 
 func (c *Checker) popActiveMapper() {
 	c.activeMappers[len(c.activeMappers)-1] = nil
-	c.activeTypeMappersCaches[len(c.activeTypeMappersCaches)-1] = nil
 	c.activeMappers = c.activeMappers[:len(c.activeMappers)-1]
+
+	cache := c.activeTypeMappersCaches[len(c.activeTypeMappersCaches)-1]
+	c.activeTypeMappersCaches[len(c.activeTypeMappersCaches)-1] = nil
+	clear(cache)
+	activeMapperCache.Put(cache)
 	c.activeTypeMappersCaches = c.activeTypeMappersCaches[:len(c.activeTypeMappersCaches)-1]
 }
 
