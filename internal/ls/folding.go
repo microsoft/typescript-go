@@ -36,16 +36,6 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 	current := 0
 
 	statements := sourceFile.Statements
-	// Includes the EOF Token so that comments which aren't attached to statements are included
-	var curr *ast.Node
-	currentTokenEnd := 0
-	if statements != nil && statements.Nodes != nil {
-		curr = statements.Nodes[len(statements.Nodes)-1]
-		currentTokenEnd = curr.End()
-	}
-	scanner := scanner.GetScannerForSourceFile(sourceFile, currentTokenEnd)
-	statements.Nodes = append(statements.Nodes, sourceFile.GetOrCreateToken(scanner.Token(), scanner.TokenFullStart(), scanner.TokenEnd(), curr))
-
 	n := len(statements.Nodes)
 	var foldingRange []*lsproto.FoldingRange
 	for current < n {
@@ -73,6 +63,16 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 				l))
 		}
 	}
+
+	// Includes the EOF Token so that comments which aren't attached to statements are included
+	var curr *ast.Node
+	currentTokenEnd := 0
+	if statements != nil && statements.Nodes != nil {
+		curr = statements.Nodes[len(statements.Nodes)-1]
+		currentTokenEnd = curr.End()
+	}
+	scanner := scanner.GetScannerForSourceFile(sourceFile, currentTokenEnd)
+	foldingRange = append(foldingRange, visitNode(sourceFile.GetOrCreateToken(scanner.Token(), scanner.TokenFullStart(), scanner.TokenEnd(), curr), depthRemaining, sourceFile, l)...)
 	return foldingRange
 }
 
