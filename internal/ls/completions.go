@@ -2183,8 +2183,8 @@ func getLineOfPosition(file *ast.SourceFile, pos int) int {
 }
 
 func getLineEndOfPosition(file *ast.SourceFile, pos int) int {
-	line := getLineOfPosition(file, pos);
-	lineStarts := scanner.GetLineStarts(file);
+	line := getLineOfPosition(file, pos)
+	lineStarts := scanner.GetLineStarts(file)
 	var lastCharPos int
 	if line+1 >= len(lineStarts) {
 		lastCharPos = file.End()
@@ -2197,7 +2197,7 @@ func getLineEndOfPosition(file *ast.SourceFile, pos int) int {
 	}
 	return lastCharPos
 }
-	
+
 func isClassLikeMemberCompletion(symbol *ast.Symbol, location *ast.Node, file *ast.SourceFile) bool {
 	// !!! class member completions
 	return false
