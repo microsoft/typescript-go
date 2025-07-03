@@ -146,10 +146,62 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
         if (namespace.text === "goTo" && func.text === "marker") {
             return parseGoToMarkerArgs(callExpression.arguments);
         }
+        // `edit....`
+        if (namespace.text === "edit") {
+            const result = parseEditStatement(func.text, callExpression.arguments);
+            if (!result) {
+                return undefined;
+            }
+            return [result];
+        }
         // !!! other fourslash commands
     }
     console.error(`Unrecognized fourslash statement: ${statement.getText()}`);
     return undefined;
+}
+
+function parseEditStatement(funcName: string, args: readonly ts.Expression[]): EditCmd | undefined {
+    switch (funcName) {
+        case "insert":
+        case "paste":
+        case "insertLine":
+            if (args.length !== 1 || !ts.isStringLiteralLike(args[0])) {
+                console.error(`Expected a single string literal argument in edit.${funcName}, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            return {
+                kind: "edit",
+                goStatement: `f.${funcName.charAt(0).toUpperCase() + funcName.slice(1)}(t, ${getGoStringLiteral(args[0].text)})`,
+            };
+        case "replaceLine":
+            if (args.length !== 2 || !ts.isNumericLiteral(args[0]) || !ts.isStringLiteral(args[1])) {
+                console.error(`Expected a single string literal argument in edit.insert, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            return {
+                kind: "edit",
+                goStatement: `f.ReplaceLine(t, ${args[0].text}, ${getGoStringLiteral(args[1].text)})`,
+            };
+        case "backspace":
+            const arg = args[0];
+            if (arg) {
+                if (!ts.isNumericLiteral(arg)) {
+                    console.error(`Expected numeric literal argument in edit.backspace, got ${arg.getText()}`);
+                    return undefined;
+                }
+                return {
+                    kind: "edit",
+                    goStatement: `f.Backspace(t, ${arg.text})`,
+                };
+            }
+            return {
+                kind: "edit",
+                goStatement: `f.Backspace(t, 1)`,
+            };
+        default:
+            console.error(`Unrecognized edit function: ${funcName}`);
+            return undefined;
+    }
 }
 
 function getGoStringLiteral(text: string): string {
@@ -252,6 +304,7 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                 break;
             case "exact":
             case "includes":
+            case "unsorted":
                 if (init.getText() === "undefined") {
                     return {
                         kind: "verifyCompletions",
@@ -333,8 +386,11 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                 if (propName === "includes") {
                     (goArgs ??= {}).includes = expected;
                 }
-                else {
+                else if (propName === "exact") {
                     (goArgs ??= {}).exact = expected;
+                }
+                else {
+                    (goArgs ??= {}).unsorted = expected;
                 }
                 break;
             case "excludes":
@@ -607,6 +663,7 @@ interface VerifyCompletionsArgs {
     includes?: string;
     excludes?: string;
     exact?: string;
+    unsorted?: string;
 }
 
 interface GoToMarkerCmd {
@@ -614,7 +671,12 @@ interface GoToMarkerCmd {
     marker: string;
 }
 
-type Cmd = VerifyCompletionsCmd | GoToMarkerCmd;
+interface EditCmd {
+    kind: "edit";
+    goStatement: string;
+}
+
+type Cmd = VerifyCompletionsCmd | GoToMarkerCmd | EditCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList = "nil";
@@ -623,6 +685,7 @@ function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: Ve
         if (args.includes) expected.push(`Includes: ${args.includes},`);
         if (args.excludes) expected.push(`Excludes: ${args.excludes},`);
         if (args.exact) expected.push(`Exact: ${args.exact},`);
+        if (args.unsorted) expected.push(`Unsorted: ${args.unsorted},`);
         // !!! isIncomplete
         const commitCharacters = isNewIdentifierLocation ? "[]string{}" : "defaultCommitCharacters";
         expectedList = `&fourslash.CompletionsExpectedList{
@@ -649,6 +712,8 @@ function generateCmd(cmd: Cmd): string {
             return generateVerifyCompletions(cmd as VerifyCompletionsCmd);
         case "goToMarker":
             return generateGoToMarker(cmd as GoToMarkerCmd);
+        case "edit":
+            return cmd.goStatement;
         default:
             throw new Error(`Unknown command kind: ${cmd}`);
     }
