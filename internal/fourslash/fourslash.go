@@ -315,6 +315,16 @@ func (f *FourslashTest) GoToEOF(t *testing.T) {
 	f.goToPosition(t, LSPPos)
 }
 
+func (f *FourslashTest) GoToBOF(t *testing.T) {
+	f.goToPosition(t, lsproto.Position{Line: 0, Character: 0})
+}
+
+func (f *FourslashTest) GoToPosition(t *testing.T, position int) {
+	script := f.getScriptInfo(f.activeFilename)
+	LSPPos := f.converters.PositionToLineAndCharacter(script, core.TextPos(position))
+	f.goToPosition(t, LSPPos)
+}
+
 func (f *FourslashTest) goToPosition(t *testing.T, position lsproto.Position) {
 	f.currentCaretPosition = position
 	f.selectionEnd = nil
@@ -338,6 +348,41 @@ func (f *FourslashTest) GoToEachMarker(t *testing.T, markerNames []string, actio
 		f.goToMarker(t, marker)
 		action(t, marker, i)
 	}
+}
+
+func (f *FourslashTest) GoToEachRange(t *testing.T, action func(t *testing.T, rangeMarker *RangeMarker)) {
+	ranges := f.Ranges()
+	for _, rangeMarker := range ranges {
+		f.goToPosition(t, rangeMarker.LSRange.Start)
+		action(t, rangeMarker)
+	}
+}
+
+func (f *FourslashTest) GoToRangeStart(t *testing.T, rangeMarker *RangeMarker) {
+	f.openFile(t, rangeMarker.FileName)
+	f.goToPosition(t, rangeMarker.LSRange.Start)
+}
+
+func (f *FourslashTest) GoToSelect(t *testing.T, startMarkerName string, endMarkerName string) {
+	startMarker := f.testData.MarkerPositions[startMarkerName]
+	if startMarker == nil {
+		t.Fatalf("Start marker '%s' not found", startMarkerName)
+	}
+	endMarker := f.testData.MarkerPositions[endMarkerName]
+	if endMarker == nil {
+		t.Fatalf("End marker '%s' not found", endMarkerName)
+	}
+	if startMarker.FileName != endMarker.FileName {
+		t.Fatalf("Markers '%s' and '%s' are in different files", startMarkerName, endMarkerName)
+	}
+	f.ensureActiveFile(t, startMarker.FileName)
+	f.goToPosition(t, startMarker.LSPosition)
+	f.selectionEnd = &endMarker.LSPosition
+}
+
+func (f *FourslashTest) GoToSelectRange(t *testing.T, rangeMarker *RangeMarker) {
+	f.GoToRangeStart(t, rangeMarker)
+	f.selectionEnd = &rangeMarker.LSRange.End
 }
 
 func (f *FourslashTest) GoToFile(t *testing.T, filename string) {
@@ -501,7 +546,8 @@ func (f *FourslashTest) verifyCompletionsResult(
 	position lsproto.Position,
 	actual *lsproto.CompletionList,
 	expected *CompletionsExpectedList,
-	prefix string) {
+	prefix string,
+) {
 	if actual == nil {
 		if !isEmptyExpectedList(expected) {
 			t.Fatal(prefix + "Expected completion list but got nil.")

@@ -79,7 +79,7 @@ func ParseTestData(t *testing.T, contents string, fileName string) TestData {
 				continue
 			}
 			if _, ok := markerPositions[*marker.Name]; ok {
-				t.Fatalf("Duplicate marker name: '%s'", marker.Name)
+				t.Fatalf("Duplicate marker name: '%s'", *marker.Name)
 			}
 			markerPositions[*marker.Name] = marker
 		}

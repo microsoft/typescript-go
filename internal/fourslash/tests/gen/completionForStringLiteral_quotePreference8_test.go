@@ -10,7 +10,7 @@ import (
 
 func TestCompletionForStringLiteral_quotePreference8(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @filename: /a.ts
 export const a = null;

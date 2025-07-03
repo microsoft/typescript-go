@@ -249,11 +249,37 @@ function parseGoToArgs(args: readonly ts.Expression[], funcName: string): GoToCm
             }
             console.error(`Expected string or number literal argument in goTo.file, got ${args[0].getText()}`);
             return undefined;
+        case "position":
+            if (args.length !== 1 || !ts.isNumericLiteral(args[0])) {
+                console.error(`Expected a single numeric literal argument in goTo.position, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            return [{
+                kind: "goTo",
+                funcName: "position",
+                args: [`${args[0].text}`],
+            }];
         case "eof":
             return [{
                 kind: "goTo",
                 funcName: "EOF",
                 args: [],
+            }];
+        case "bof":
+            return [{
+                kind: "goTo",
+                funcName: "BOF",
+                args: [],
+            }];
+        case "select":
+            if (args.length !== 2 || !ts.isStringLiteral(args[0]) || !ts.isStringLiteral(args[1])) {
+                console.error(`Expected two string literal arguments in goTo.select, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            return [{
+                kind: "goTo",
+                funcName: "select",
+                args: [getGoStringLiteral(args[0].text), getGoStringLiteral(args[1].text)],
             }];
         default:
             console.error(`Unrecognized goTo function: ${funcName}`);
@@ -700,7 +726,8 @@ interface VerifyCompletionsArgs {
 
 interface GoToCmd {
     kind: "goTo";
-    funcName: "marker" | "file" | "fileNumber" | "EOF";
+    // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
+    funcName: "marker" | "file" | "fileNumber" | "EOF" | "BOF" | "position" | "select";
     args: string[];
 }
 
