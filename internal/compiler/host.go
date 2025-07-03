@@ -19,11 +19,6 @@ type CompilerHost interface {
 	GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine
 }
 
-type FileInfo struct {
-	Name string
-	Size int64
-}
-
 var _ CompilerHost = (*compilerHost)(nil)
 
 type compilerHost struct {
