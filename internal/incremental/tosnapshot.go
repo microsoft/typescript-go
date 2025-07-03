@@ -7,8 +7,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
-func buildInfoToProgramState(buildInfo *BuildInfo, buildInfoFileName string, config *tsoptions.ParsedCommandLine) *programState {
-	to := &toProgramState{
+func buildInfoToSnapshot(buildInfo *BuildInfo, buildInfoFileName string, config *tsoptions.ParsedCommandLine) *snapshot {
+	to := &toSnapshot{
 		buildInfo:          buildInfo,
 		buildInfoDirectory: tspath.GetDirectoryPath(tspath.GetNormalizedAbsolutePath(buildInfoFileName, config.GetCurrentDirectory())),
 		filePaths:          make([]tspath.Path, 0, len(buildInfo.FileNames)),
@@ -32,34 +32,34 @@ func buildInfoToProgramState(buildInfo *BuildInfo, buildInfoFileName string, con
 	to.setEmitDiagnostics()
 	to.setAffectedFilesPendingEmit()
 	if buildInfo.LatestChangedDtsFile != "" {
-		to.state.latestChangedDtsFile = to.toAbsolutePath(buildInfo.LatestChangedDtsFile)
+		to.snapshot.latestChangedDtsFile = to.toAbsolutePath(buildInfo.LatestChangedDtsFile)
 	}
-	to.state.hasErrors = core.IfElse(buildInfo.Errors, core.TSTrue, core.TSFalse)
-	to.state.checkPending = buildInfo.CheckPending
-	return &to.state
+	to.snapshot.hasErrors = core.IfElse(buildInfo.Errors, core.TSTrue, core.TSFalse)
+	to.snapshot.checkPending = buildInfo.CheckPending
+	return &to.snapshot
 }
 
-type toProgramState struct {
+type toSnapshot struct {
 	buildInfo          *BuildInfo
 	buildInfoDirectory string
-	state              programState
+	snapshot           snapshot
 	filePaths          []tspath.Path
 	filePathSet        []*collections.Set[tspath.Path]
 }
 
-func (t *toProgramState) toAbsolutePath(path string) string {
+func (t *toSnapshot) toAbsolutePath(path string) string {
 	return tspath.GetNormalizedAbsolutePath(path, t.buildInfoDirectory)
 }
 
-func (t *toProgramState) toFilePath(fileId BuildInfoFileId) tspath.Path {
+func (t *toSnapshot) toFilePath(fileId BuildInfoFileId) tspath.Path {
 	return t.filePaths[fileId-1]
 }
 
-func (t *toProgramState) toFilePathSet(fileIdListId BuildInfoFileIdListId) *collections.Set[tspath.Path] {
+func (t *toSnapshot) toFilePathSet(fileIdListId BuildInfoFileIdListId) *collections.Set[tspath.Path] {
 	return t.filePathSet[fileIdListId-1]
 }
 
-func (t *toProgramState) toBuildInfoDiagnosticsWithFileName(diagnostics []*BuildInfoDiagnostic) []*buildInfoDiagnosticWithFileName {
+func (t *toSnapshot) toBuildInfoDiagnosticsWithFileName(diagnostics []*BuildInfoDiagnostic) []*buildInfoDiagnosticWithFileName {
 	return core.Map(diagnostics, func(d *BuildInfoDiagnostic) *buildInfoDiagnosticWithFileName {
 		var file tspath.Path
 		if d.File != 0 {
@@ -82,88 +82,88 @@ func (t *toProgramState) toBuildInfoDiagnosticsWithFileName(diagnostics []*Build
 	})
 }
 
-func (t *toProgramState) toDiagnosticsOrBuildInfoDiagnosticsWithFileName(dig *BuildInfoDiagnosticsOfFile) *diagnosticsOrBuildInfoDiagnosticsWithFileName {
+func (t *toSnapshot) toDiagnosticsOrBuildInfoDiagnosticsWithFileName(dig *BuildInfoDiagnosticsOfFile) *diagnosticsOrBuildInfoDiagnosticsWithFileName {
 	return &diagnosticsOrBuildInfoDiagnosticsWithFileName{
 		buildInfoDiagnostics: t.toBuildInfoDiagnosticsWithFileName(dig.Diagnostics),
 	}
 }
 
-func (t *toProgramState) setCompilerOptions() {
-	t.state.options = t.buildInfo.GetCompilerOptions(t.buildInfoDirectory)
+func (t *toSnapshot) setCompilerOptions() {
+	t.snapshot.options = t.buildInfo.GetCompilerOptions(t.buildInfoDirectory)
 }
 
-func (t *toProgramState) setFileInfoAndEmitSignatures() {
-	t.state.fileInfos = make(map[tspath.Path]*fileInfo, len(t.buildInfo.FileInfos))
-	t.state.createEmitSignaturesMap()
+func (t *toSnapshot) setFileInfoAndEmitSignatures() {
+	t.snapshot.fileInfos = make(map[tspath.Path]*fileInfo, len(t.buildInfo.FileInfos))
+	t.snapshot.createEmitSignaturesMap()
 	for index, buildInfoFileInfo := range t.buildInfo.FileInfos {
 		path := t.toFilePath(BuildInfoFileId(index + 1))
 		info := buildInfoFileInfo.GetFileInfo()
-		t.state.fileInfos[path] = info
+		t.snapshot.fileInfos[path] = info
 		// Add default emit signature as file's signature
-		if info.signature != "" && len(t.state.emitSignatures) != 0 {
-			t.state.emitSignatures[path] = &emitSignature{signature: info.signature}
+		if info.signature != "" && len(t.snapshot.emitSignatures) != 0 {
+			t.snapshot.emitSignatures[path] = &emitSignature{signature: info.signature}
 		}
 	}
 	// Fix up emit signatures
 	for _, value := range t.buildInfo.EmitSignatures {
 		if value.noEmitSignature() {
-			delete(t.state.emitSignatures, t.toFilePath(value.FileId))
+			delete(t.snapshot.emitSignatures, t.toFilePath(value.FileId))
 		} else {
 			path := t.toFilePath(value.FileId)
-			t.state.emitSignatures[path] = value.toEmitSignature(path, t.state.emitSignatures)
+			t.snapshot.emitSignatures[path] = value.toEmitSignature(path, t.snapshot.emitSignatures)
 		}
 	}
 }
 
-func (t *toProgramState) setReferencedMap() {
-	t.state.createReferenceMap()
+func (t *toSnapshot) setReferencedMap() {
+	t.snapshot.createReferenceMap()
 	for _, entry := range t.buildInfo.ReferencedMap {
-		t.state.referencedMap.Add(t.toFilePath(entry.FileId), t.toFilePathSet(entry.FileIdListId))
+		t.snapshot.referencedMap.Add(t.toFilePath(entry.FileId), t.toFilePathSet(entry.FileIdListId))
 	}
 }
 
-func (t *toProgramState) setChangeFileSet() {
-	t.state.changedFilesSet = collections.NewSetWithSizeHint[tspath.Path](len(t.buildInfo.ChangeFileSet))
+func (t *toSnapshot) setChangeFileSet() {
+	t.snapshot.changedFilesSet = collections.NewSetWithSizeHint[tspath.Path](len(t.buildInfo.ChangeFileSet))
 	for _, fileId := range t.buildInfo.ChangeFileSet {
 		filePath := t.toFilePath(fileId)
-		t.state.changedFilesSet.Add(filePath)
+		t.snapshot.changedFilesSet.Add(filePath)
 	}
 }
 
-func (t *toProgramState) setSemanticDiagnostics() {
-	t.state.semanticDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(t.state.fileInfos))
-	for path := range t.state.fileInfos {
+func (t *toSnapshot) setSemanticDiagnostics() {
+	t.snapshot.semanticDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(t.snapshot.fileInfos))
+	for path := range t.snapshot.fileInfos {
 		// Initialize to have no diagnostics if its not changed file
-		if !t.state.changedFilesSet.Has(path) {
-			t.state.semanticDiagnosticsPerFile[path] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{}
+		if !t.snapshot.changedFilesSet.Has(path) {
+			t.snapshot.semanticDiagnosticsPerFile[path] = &diagnosticsOrBuildInfoDiagnosticsWithFileName{}
 		}
 	}
 	for _, diagnostic := range t.buildInfo.SemanticDiagnosticsPerFile {
 		if diagnostic.FileId != 0 {
 			filePath := t.toFilePath(diagnostic.FileId)
-			delete(t.state.semanticDiagnosticsPerFile, filePath) // does not have cached diagnostics
+			delete(t.snapshot.semanticDiagnosticsPerFile, filePath) // does not have cached diagnostics
 		} else {
 			filePath := t.toFilePath(diagnostic.Diagnostics.FileId)
-			t.state.semanticDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic.Diagnostics)
+			t.snapshot.semanticDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic.Diagnostics)
 		}
 	}
 }
 
-func (t *toProgramState) setEmitDiagnostics() {
-	t.state.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(t.state.fileInfos))
+func (t *toSnapshot) setEmitDiagnostics() {
+	t.snapshot.emitDiagnosticsPerFile = make(map[tspath.Path]*diagnosticsOrBuildInfoDiagnosticsWithFileName, len(t.snapshot.fileInfos))
 	for _, diagnostic := range t.buildInfo.EmitDiagnosticsPerFile {
 		filePath := t.toFilePath(diagnostic.FileId)
-		t.state.emitDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic)
+		t.snapshot.emitDiagnosticsPerFile[filePath] = t.toDiagnosticsOrBuildInfoDiagnosticsWithFileName(diagnostic)
 	}
 }
 
-func (t *toProgramState) setAffectedFilesPendingEmit() {
+func (t *toSnapshot) setAffectedFilesPendingEmit() {
 	if len(t.buildInfo.AffectedFilesPendingEmit) == 0 {
 		return
 	}
-	ownOptionsEmitKind := GetFileEmitKind(t.state.options)
-	t.state.affectedFilesPendingEmit = make(map[tspath.Path]FileEmitKind, len(t.buildInfo.AffectedFilesPendingEmit))
+	ownOptionsEmitKind := GetFileEmitKind(t.snapshot.options)
+	t.snapshot.affectedFilesPendingEmit = make(map[tspath.Path]FileEmitKind, len(t.buildInfo.AffectedFilesPendingEmit))
 	for _, pendingEmit := range t.buildInfo.AffectedFilesPendingEmit {
-		t.state.affectedFilesPendingEmit[t.toFilePath(pendingEmit.FileId)] = core.IfElse(pendingEmit.EmitKind == 0, ownOptionsEmitKind, pendingEmit.EmitKind)
+		t.snapshot.affectedFilesPendingEmit[t.toFilePath(pendingEmit.FileId)] = core.IfElse(pendingEmit.EmitKind == 0, ownOptionsEmitKind, pendingEmit.EmitKind)
 	}
 }

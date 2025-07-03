@@ -484,15 +484,8 @@ type AnyProgram interface {
 	Emit(ctx context.Context, options EmitOptions) *EmitResult
 }
 
-func HandleNoEmitOptions(ctx context.Context, program AnyProgram, file *ast.SourceFile) *EmitResult {
-	options := program.Options()
-	if options.NoEmit.IsTrue() {
-		return &EmitResult{
-			EmitSkipped: true,
-		}
-	}
-
-	if !options.NoEmitOnError.IsTrue() {
+func HandleNoEmitOnError(ctx context.Context, program AnyProgram, file *ast.SourceFile) *EmitResult {
+	if !program.Options().NoEmitOnError.IsTrue() {
 		return nil // No emit on error is not set, so we can proceed with emitting
 	}
 
@@ -549,16 +542,19 @@ func GetDiagnosticsOfAnyProgram(
 
 func CombineEmitResults(results []*EmitResult) *EmitResult {
 	result := &EmitResult{}
-	for _, emitter := range results {
-		if emitter.EmitSkipped {
+	for _, emitResult := range results {
+		if emitResult == nil {
+			continue // Skip nil results
+		}
+		if emitResult.EmitSkipped {
 			result.EmitSkipped = true
 		}
-		result.Diagnostics = append(result.Diagnostics, emitter.Diagnostics...)
-		if emitter.EmittedFiles != nil {
-			result.EmittedFiles = append(result.EmittedFiles, emitter.EmittedFiles...)
+		result.Diagnostics = append(result.Diagnostics, emitResult.Diagnostics...)
+		if emitResult.EmittedFiles != nil {
+			result.EmittedFiles = append(result.EmittedFiles, emitResult.EmittedFiles...)
 		}
-		if emitter.SourceMaps != nil {
-			result.SourceMaps = append(result.SourceMaps, emitter.SourceMaps...)
+		if emitResult.SourceMaps != nil {
+			result.SourceMaps = append(result.SourceMaps, emitResult.SourceMaps...)
 		}
 	}
 	return result

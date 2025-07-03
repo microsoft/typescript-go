@@ -39,7 +39,6 @@ func (p *ProgramOptions) canUseProjectReferenceSource() bool {
 
 type Program struct {
 	opts        ProgramOptions
-	nodeModules map[string]*ast.SourceFile
 	checkerPool CheckerPool
 
 	comparePathsOptions tspath.ComparePathsOptions
@@ -178,7 +177,7 @@ func (p *Program) GetSourceFileFromReference(origin *ast.SourceFile, ref *ast.Fi
 func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
 	p.initCheckerPool()
-	p.processedFiles = processAllProgramFiles(p.opts, p.singleThreaded())
+	p.processedFiles = processAllProgramFiles(p.opts, p.SingleThreaded())
 	return p
 }
 
@@ -192,7 +191,6 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	}
 	result := &Program{
 		opts:                        p.opts,
-		nodeModules:                 p.nodeModules,
 		comparePathsOptions:         p.comparePathsOptions,
 		processedFiles:              p.processedFiles,
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
@@ -210,7 +208,7 @@ func (p *Program) initCheckerPool() {
 	if p.opts.CreateCheckerPool != nil {
 		p.checkerPool = p.opts.CreateCheckerPool(p)
 	} else {
-		p.checkerPool = newCheckerPool(core.IfElse(p.singleThreaded(), 1, 4), p)
+		p.checkerPool = newCheckerPool(core.IfElse(p.SingleThreaded(), 1, 4), p)
 	}
 }
 
@@ -250,12 +248,12 @@ func (p *Program) GetConfigFileParsingDiagnostics() []*ast.Diagnostic {
 	return slices.Clip(p.opts.Config.GetConfigFileParsingDiagnostics())
 }
 
-func (p *Program) singleThreaded() bool {
+func (p *Program) SingleThreaded() bool {
 	return p.opts.SingleThreaded.DefaultIfUnknown(p.Options().SingleThreaded).IsTrue()
 }
 
 func (p *Program) BindSourceFiles() {
-	wg := core.NewWorkGroup(p.singleThreaded())
+	wg := core.NewWorkGroup(p.SingleThreaded())
 	for _, file := range p.files {
 		if !file.IsBound() {
 			wg.Queue(func() {
@@ -266,14 +264,16 @@ func (p *Program) BindSourceFiles() {
 	wg.RunAndWait()
 }
 
-func (p *Program) CheckSourceFiles(ctx context.Context) {
-	wg := core.NewWorkGroup(p.singleThreaded())
+func (p *Program) CheckSourceFiles(ctx context.Context, files []*ast.SourceFile) {
+	wg := core.NewWorkGroup(p.SingleThreaded())
 	checkers, done := p.checkerPool.GetAllCheckers(ctx)
 	defer done()
 	for _, checker := range checkers {
 		wg.Queue(func() {
 			for file := range p.checkerPool.Files(checker) {
-				checker.CheckSourceFile(ctx, file)
+				if files == nil || slices.Contains(files, file) {
+					checker.CheckSourceFile(ctx, file)
+				}
 			}
 		})
 	}
@@ -328,6 +328,19 @@ func (p *Program) GetBindDiagnostics(ctx context.Context, sourceFile *ast.Source
 
 func (p *Program) GetSemanticDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	return p.getDiagnosticsHelper(ctx, sourceFile, true /*ensureBound*/, true /*ensureChecked*/, p.getSemanticDiagnosticsForFile)
+}
+
+func (p *Program) GetSemanticDiagnosticsNoFilter(ctx context.Context, sourceFiles []*ast.SourceFile) map[*ast.SourceFile][]*ast.Diagnostic {
+	p.BindSourceFiles()
+	p.CheckSourceFiles(ctx, sourceFiles)
+	if ctx.Err() != nil {
+		return nil
+	}
+	result := make(map[*ast.SourceFile][]*ast.Diagnostic, len(sourceFiles))
+	for _, file := range sourceFiles {
+		result[file] = SortAndDeduplicateDiagnostics(p.getSemanticDiagnosticsForFileNotFilter(ctx, file))
+	}
+	return result
 }
 
 func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -389,6 +402,14 @@ func FilterNoEmitSemanticDiagnostics(diagnostics []*ast.Diagnostic, options *cor
 }
 
 func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	diagnostics := p.getSemanticDiagnosticsForFileNotFilter(ctx, sourceFile)
+	if diagnostics == nil {
+		return nil
+	}
+	return FilterNoEmitSemanticDiagnostics(diagnostics, p.Options())
+}
+
+func (p *Program) getSemanticDiagnosticsForFileNotFilter(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	compilerOptions := p.Options()
 	if checker.SkipTypeChecking(sourceFile, compilerOptions, p, false) {
 		return nil
@@ -421,13 +442,13 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 
 	isPlainJS := ast.IsPlainJSFile(sourceFile, compilerOptions.CheckJs)
 	if isPlainJS {
-		return FilterNoEmitSemanticDiagnostics(core.Filter(diags, func(d *ast.Diagnostic) bool {
+		return core.Filter(diags, func(d *ast.Diagnostic) bool {
 			return plainJSErrors.Has(d.Code())
-		}), p.Options())
+		})
 	}
 
 	if len(sourceFile.CommentDirectives) == 0 {
-		return FilterNoEmitSemanticDiagnostics(diags, p.Options())
+		return diags
 	}
 	// Build map of directives by line number
 	directivesByLine := make(map[int]ast.CommentDirective)
@@ -464,7 +485,7 @@ func (p *Program) getSemanticDiagnosticsForFile(ctx context.Context, sourceFile 
 			filtered = append(filtered, ast.NewDiagnostic(sourceFile, directive.Loc, diagnostics.Unused_ts_expect_error_directive))
 		}
 	}
-	return FilterNoEmitSemanticDiagnostics(filtered, p.Options())
+	return filtered
 }
 
 func (p *Program) getDeclarationDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
@@ -575,7 +596,7 @@ func (p *Program) getDiagnosticsHelper(ctx context.Context, sourceFile *ast.Sour
 		p.BindSourceFiles()
 	}
 	if ensureChecked {
-		p.CheckSourceFiles(ctx)
+		p.CheckSourceFiles(ctx, nil)
 		if ctx.Err() != nil {
 			return nil
 		}
@@ -715,15 +736,14 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 	// !!! performance measurement
 	p.BindSourceFiles()
 	if options.EmitOnly != EmitOnlyForcedDts {
-		result := HandleNoEmitOptions(
+		result := HandleNoEmitOnError(
 			ctx,
 			p,
 			options.TargetSourceFile,
 		)
-		if result != nil {
+		if result != nil || ctx.Err() != nil {
 			return result
 		}
-		context.TODO()
 	}
 
 	writerPool := &sync.Pool{
@@ -731,7 +751,7 @@ func (p *Program) Emit(ctx context.Context, options EmitOptions) *EmitResult {
 			return printer.NewTextWriter(p.Options().NewLine.GetNewLineCharacter())
 		},
 	}
-	wg := core.NewWorkGroup(p.singleThreaded())
+	wg := core.NewWorkGroup(p.SingleThreaded())
 	var emitters []*emitter
 	sourceFiles := getSourceFilesToEmit(p, options.TargetSourceFile, options.EmitOnly == EmitOnlyForcedDts)
 
