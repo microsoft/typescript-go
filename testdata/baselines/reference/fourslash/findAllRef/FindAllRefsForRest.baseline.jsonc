@@ -4,7 +4,7 @@
 // interface Gen {
 //     x: number[|
 //     /*FIND ALL REFS*/parent|]: Gen;
-//     millennial: string;
+//     millenial: string;
 // }
 // let t: Gen;
 // var { x, ...rest } = t;
@@ -19,7 +19,7 @@
 // interface Gen {
 //     x: number[|
 //     parent|]: Gen;
-//     millennial: string;
+//     millenial: string;
 // }
 // let t: Gen;
 // var { x, ...rest } = t;

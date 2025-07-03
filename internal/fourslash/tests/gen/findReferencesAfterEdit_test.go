@@ -7,18 +7,23 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestFindAllRefsForRest(t *testing.T) {
+func TestFindReferencesAfterEdit(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `interface Gen {
-    x: number
-    /*1*/parent: Gen;
-    millenial: string;
+	const content = `// @Filename: a.ts
+interface A {
+    /*1*/foo: string;
 }
-let t: Gen;
-var { x, ...rest } = t;
-rest./*2*/parent;`
+// @Filename: b.ts
+///<reference path='a.ts'/>
+/**/
+function foo(x: A) {
+    x./*2*/foo
+}`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.VerifyBaselineFindAllReferences(t, "1", "2")
+	f.GoToMarker(t, "")
+	f.Insert(t, "\n")
 	f.VerifyBaselineFindAllReferences(t, "1", "2")
 }

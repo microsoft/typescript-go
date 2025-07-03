@@ -685,12 +685,12 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 	}
 
 	if f.baseline != nil {
-		t.Fatalf("Another baseline is already in progress")
+		t.Fatalf("Error during test \"%s\": Another baseline is already in progress", t.Name())
 	} else {
 		f.baseline = &baselineFromTest{
-			content:  &strings.Builder{},
-			testName: "findAllRef/" + strings.TrimPrefix(t.Name(), "Test"),
-			ext:      ".baseline.jsonc",
+			content:      &strings.Builder{},
+			baselineName: "findAllRef/" + strings.TrimPrefix(t.Name(), "Test"),
+			ext:          ".baseline.jsonc",
 		}
 	}
 
@@ -717,10 +717,14 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 				markerName: "/*FIND ALL REFS*/",
 			}))
 		} else {
-			t.Fatalf("Unexpected response type at marker %s: %v", f.lastKnownMarkerName, result)
+			if f.lastKnownMarkerName == "" {
+				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, result)
+			} else {
+				t.Fatalf("Unexpected references response type at marker %s: %T", f.lastKnownMarkerName, result)
+			}
 		}
 	}
-	baseline.Run(t, f.baseline.getBaselineName(), f.baseline.content.String(), baseline.Options{})
+	baseline.Run(t, f.baseline.getBaselineFileName(), f.baseline.content.String(), baseline.Options{})
 }
 
 func ptrTo[T any](v T) *T {

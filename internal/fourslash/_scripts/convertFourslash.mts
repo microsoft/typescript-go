@@ -69,7 +69,7 @@ function parseFileContent(filename: string, content: string): GoTest | undefined
     const sourceFile = ts.createSourceFile("temp.ts", content, ts.ScriptTarget.Latest, true /*setParentNodes*/);
     const statements = sourceFile.statements;
     const goTest: GoTest = {
-        name: filename.replace(".ts", ""),
+        name: filename.replace(".ts", "").replace(".", ""),
         content: getTestInput(content),
         commands: [],
     };

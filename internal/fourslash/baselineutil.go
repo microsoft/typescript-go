@@ -1,7 +1,9 @@
 package fourslash
 
 import (
+	"errors"
 	"fmt"
+	"io/fs"
 	"regexp"
 	"slices"
 	"strings"
@@ -10,12 +12,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type baselineFromTest struct {
 	content *strings.Builder
 
-	testName, ext string
+	baselineName, ext string
 }
 
 func (b *baselineFromTest) addResult(command, actual string) {
@@ -26,8 +29,8 @@ func (b *baselineFromTest) addResult(command, actual string) {
 	b.content.WriteString(`// === ` + command + " ===\n" + actual)
 }
 
-func (b *baselineFromTest) getBaselineName() string {
-	return b.testName + b.ext
+func (b *baselineFromTest) getBaselineFileName() string {
+	return "fourslash/" + b.baselineName + b.ext
 }
 
 type baselineFourslashLocationsOptions struct {
@@ -52,18 +55,36 @@ func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []*lsproto
 
 func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLocations *collections.MultiMap[lsproto.DocumentUri, *lsproto.Location], options baselineFourslashLocationsOptions) string {
 	baselineEntries := []string{}
-	// iterate through testdata.Files to keep order of files consistent
-	for _, testFile := range f.testData.Files {
-		locations := groupedLocations.Get(ls.FileNameToDocumentURI(testFile.fileName))
-		if len(locations) == 0 {
-			continue
+	err := f.server.FS().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
+		if e != nil {
+			return e
 		}
+
+		if !d.Type().IsRegular() {
+			return nil
+		}
+
+		locations := groupedLocations.Get(ls.FileNameToDocumentURI(path))
+		if len(locations) == 0 {
+			return nil
+		}
+
+		content, ok := f.server.FS().ReadFile(path)
+		if !ok {
+			return nil
+		}
+
 		documentSpans := core.Map(locations, func(location *lsproto.Location) *documentSpan {
 			return &documentSpan{
 				Location: *location,
 			}
 		})
-		baselineEntries = append(baselineEntries, f.getBaselineContentForFile(testFile.fileName, testFile.Content, documentSpans, nil, options))
+		baselineEntries = append(baselineEntries, f.getBaselineContentForFile(path, content, documentSpans, nil, options))
+		return nil
+	})
+
+	if err != nil && !errors.Is(err, fs.ErrNotExist) {
+		panic("walkdir error during fourslash baseline: " + err.Error())
 	}
 	// !!! foundMarker
 	// !!! foundAdditionalSpan
@@ -391,12 +412,9 @@ func (t *textWithContext) add(detail *baselineDetail) {
 		}
 	}
 	if detail == nil {
-		t.newContent.WriteString(t.content[int(t.converters.LineAndCharacterToPosition(t, t.pos)):])
+		t.newContent.WriteString(t.sliceOfContent(t.getIndex(t.pos), nil))
 	} else {
-		t.newContent.WriteString(t.sliceOfContent(
-			t.getIndex(t.pos),
-			t.getIndex(detail.pos),
-		))
+		t.newContent.WriteString(t.sliceOfContent(t.getIndex(t.pos), t.getIndex(detail.pos)))
 	}
 }
 
@@ -411,8 +429,8 @@ func (t *textWithContext) sliceOfContent(start *int, end *int) string {
 		start = ptrTo(0)
 	}
 
-	if end == nil || *end >= len(t.content) {
-		end = ptrTo(len(t.content) - 1)
+	if end == nil || *end > len(t.content) {
+		end = ptrTo(len(t.content))
 	}
 
 	if *start > *end {

@@ -7,23 +7,22 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestFindAllRefsJsDocImportTag(t *testing.T) {
+func TestFindAllRefs_importType_js4(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @allowJS: true
+	const content = `// @module: commonjs
+// @allowJs: true
 // @checkJs: true
-// @Filename: /b.ts
-export interface A { }
 // @Filename: /a.js
 /**
- * @import { A } from "./b";
+ * @callback /**/A
+ * @param {unknown} response
  */
 
-/**
- * @param { [|A/**/|] } a
- */
-function f(a) {}`
+module.exports = {};
+// @Filename: /b.js
+/** @typedef {import("./a").A} A */`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
 	f.VerifyBaselineFindAllReferences(t, "")
 }

@@ -1,9 +1,4 @@
 // === findAllReferences ===
-// === /infer.d.ts ===
-
-// export declare function infer(o: { m: Record<string, Function> } & ThisType<{[| x|]: number }>): void;
-
-
 // === /a.js ===
 
 // import { infer } from "./infer";
@@ -17,14 +12,14 @@
 // });
 
 
-
-
-// === findAllReferences ===
 // === /infer.d.ts ===
 
 // export declare function infer(o: { m: Record<string, Function> } & ThisType<{[| x|]: number }>): void;
 
 
+
+
+// === findAllReferences ===
 // === /a.js ===
 
 // import { infer } from "./infer";
@@ -49,3 +44,8 @@
 //         },
 //     }
 // });
+
+
+// === /infer.d.ts ===
+
+// export declare function infer(o: { m: Record<string, Function> } & ThisType<{[| x|]: number }>): void;

@@ -1,9 +1,4 @@
 // === findAllReferences ===
-// === /infer.d.ts ===
-
-// export declare function infer(o: { m(): void } & ThisType<{[| x|]: number }>): void;
-
-
 // === /a.js ===
 
 // import { infer } from "./infer";
@@ -13,6 +8,11 @@
 //         this./*FIND ALL REFS*/[|x|];
 //     },
 // });
+
+
+// === /infer.d.ts ===
+
+// export declare function infer(o: { m(): void } & ThisType<{[| x|]: number }>): void;
 
 
 
