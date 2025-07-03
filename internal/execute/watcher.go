@@ -60,7 +60,7 @@ func (w *watcher) hasErrorsInTsConfig() bool {
 			w.configModified = true
 		}
 		w.options = configParseResult
-		w.host = compiler.NewCompilerHost(w.options.CompilerOptions(), w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), &extendedConfigCache)
+		w.host = compiler.NewCompilerHost(w.sys.GetCurrentDirectory(), w.sys.FS(), w.sys.DefaultLibraryPath(), &extendedConfigCache)
 	}
 	return false
 }

@@ -126,11 +126,6 @@ func (s *Server) GetCurrentDirectory() string {
 	return s.cwd
 }
 
-// NewLine implements APIHost.
-func (s *Server) NewLine() string {
-	return s.newLine
-}
-
 func (s *Server) Run() error {
 	for {
 		messageType, method, payload, err := s.readRequest("")
