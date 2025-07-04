@@ -856,6 +856,8 @@ type Checker struct {
 	skipDirectInferenceNodes                    collections.Set[*ast.Node]
 	ctx                                         context.Context
 	packagesMap                                 map[string]bool
+	ambientModulesOnce                          sync.Once
+	ambientModules                              []*ast.Symbol
 }
 
 func NewChecker(program Program) *Checker {
@@ -2104,7 +2106,7 @@ func (c *Checker) getSymbol(symbols ast.SymbolTable, name string, meaning ast.Sy
 }
 
 func (c *Checker) CheckSourceFile(ctx context.Context, sourceFile *ast.SourceFile) {
-	if SkipTypeChecking(sourceFile, c.compilerOptions, c.program) {
+	if SkipTypeChecking(sourceFile, c.compilerOptions, c.program, false) {
 		return
 	}
 	c.checkSourceFile(ctx, sourceFile)
@@ -10088,7 +10090,7 @@ func (c *Checker) checkCollisionWithRequireExportsInGeneratedCode(node *ast.Node
 	parent := ast.GetDeclarationContainer(node)
 	if ast.IsSourceFile(parent) && ast.IsExternalOrCommonJSModule(parent.AsSourceFile()) {
 		// If the declaration happens to be in external module, report error that require and exports are reserved keywords
-		c.error(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
+		c.errorSkippedOnNoEmit(name, diagnostics.Duplicate_identifier_0_Compiler_reserves_name_1_in_top_level_scope_of_a_module, scanner.DeclarationNameToString(name), scanner.DeclarationNameToString(name))
 	}
 }
 
@@ -13340,6 +13342,12 @@ func (c *Checker) error(location *ast.Node, message *diagnostics.Message, args .
 	return diagnostic
 }
 
+func (c *Checker) errorSkippedOnNoEmit(location *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	diagnostic := c.error(location, message, args...)
+	diagnostic.SetSkippedOnNoEmit()
+	return diagnostic
+}
+
 func (c *Checker) errorOrSuggestion(isError bool, location *ast.Node, message *diagnostics.Message, args ...any) {
 	c.addErrorOrSuggestion(isError, NewDiagnosticForNode(location, message, args...))
 }
@@ -14834,6 +14842,17 @@ func (c *Checker) tryFindAmbientModule(moduleName string, withAugmentations bool
 		return c.getMergedSymbol(symbol)
 	}
 	return symbol
+}
+
+func (c *Checker) GetAmbientModules() []*ast.Symbol {
+	c.ambientModulesOnce.Do(func() {
+		for sym, global := range c.globals {
+			if strings.HasPrefix(sym, "\"") && strings.HasSuffix(sym, "\"") {
+				c.ambientModules = append(c.ambientModules, global)
+			}
+		}
+	})
+	return c.ambientModules
 }
 
 func (c *Checker) resolveExternalModuleSymbol(moduleSymbol *ast.Symbol, dontResolveAlias bool) *ast.Symbol {
