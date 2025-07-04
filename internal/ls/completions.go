@@ -2,6 +2,7 @@ package ls
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"maps"
 	"slices"
@@ -4542,4 +4543,164 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 		argumentIndex: *info.argumentIndex,
 		argumentCount: info.argumentCount,
 	}
+}
+
+type itemData struct {
+	documentURI lsproto.DocumentUri
+	position    lsproto.Position
+	source      string
+	name        string // !!! do we need this or can we just use label?
+	autoImport  *autoImportData
+}
+
+// !!! CompletionEntryDataAutoImport
+type autoImportData struct {
+}
+
+// Special values for `CompletionInfo['source']` used to disambiguate
+// completion items with the same `name`. (Each completion item must
+// have a unique name/source combination, because those two fields
+// comprise `CompletionEntryIdentifier` in `getCompletionEntryDetails`.
+//
+// When the completion item is an auto-import suggestion, the source
+// is the module specifier of the suggestion. To avoid collisions,
+// the values here should not be a module specifier we would ever
+// generate for an auto-import.
+const (
+	// Completions that require `this.` insertion text
+	SourceThisProperty = "ThisProperty/"
+	// Auto-import that comes attached to a class member snippet
+	SourceClassMemberSnippet = "ClassMemberSnippet/"
+	// A type-only import that needs to be promoted in order to be used at the completion location
+	SourceTypeOnlyAlias = "TypeOnlyAlias/"
+	// Auto-import that comes attached to an object literal method snippet
+	SourceObjectLiteralMethodSnippet = "ObjectLiteralMethodSnippet/"
+	// Case completions for switch statements
+	SourceSwitchCases = "SwitchCases/"
+	// Completions for an object literal expression
+	SourceObjectLiteralMemberWithComma = "ObjectLiteralMemberWithComma/"
+)
+
+func (l *LanguageService) ResolveCompletionItem(
+	ctx context.Context,
+	item *lsproto.CompletionItem,
+	clientOptions *lsproto.CompletionClientCapabilities,
+	preferences *UserPreferences,
+) (*lsproto.CompletionItem, error) {
+	data := item.Data
+	if data == nil {
+		return nil, fmt.Errorf("completion item data is nil")
+	}
+	itemData, err := l.getCompletionItemData(data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get completion item data: %w", err)
+	}
+
+	program, file := l.getProgramAndFile(itemData.documentURI)
+	position := int(l.converters.LineAndCharacterToPosition(file, itemData.position))
+	return l.getCompletionItemDetails(ctx, program, position, file, itemData, clientOptions, preferences), nil
+}
+
+func (l *LanguageService) getCompletionItemData(data any) (*itemData, error) {
+	bytes, err := json.Marshal(data)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal completion item data: %w", err)
+	}
+	var itemData itemData
+	if err := json.Unmarshal(bytes, &itemData); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal completion item data: %w", err)
+	}
+	return &itemData, nil
+}
+
+func (l *LanguageService) getCompletionItemDetails(
+	ctx context.Context,
+	program *compiler.Program,
+	position int,
+	file *ast.SourceFile,
+	itemData *itemData,
+	clientOptions *lsproto.CompletionClientCapabilities,
+	preferences *UserPreferences,
+) *lsproto.CompletionItem {
+	checker, done := program.GetTypeCheckerForFile(ctx, file)
+	defer done()
+	contextToken, previousToken := getRelevantTokens(position, file)
+	if IsInString(file, position, previousToken) {
+		// !!! string literal details
+	}
+
+	// Compute all the completion symbols again.
+	symbolCompletion := getSymbolCompletionFromItemData(program, checker, file, position, itemData, clientOptions, preferences)
+	// !!! todo
+}
+
+type detailsData struct {
+	symbol  *symbolDetails
+	request *completionDataKeyword
+	literal *literalValue
+	cases   *interface{}
+}
+
+type symbolDetails struct {
+	// !!!
+}
+
+func getSymbolCompletionFromItemData(
+	program *compiler.Program,
+	checker *checker.Checker,
+	file *ast.SourceFile,
+	position int,
+	itemData *itemData,
+	clientOptions *lsproto.CompletionClientCapabilities,
+	preferences *UserPreferences,
+) detailsData {
+	if itemData.source == SourceSwitchCases {
+		return detailsData{
+			cases: &casesDetails{},
+		}
+	}
+	if itemData.autoImport != nil {
+		// !!! auto-import
+		return detailsData{}
+	}
+
+	compilerOptions := program.Options()
+	completionData := getCompletionData(program, checker, file, position, preferences)
+	if completionData == nil {
+		return detailsData{}
+	}
+
+	if completionData, ok := completionData.(*completionDataKeyword); ok {
+		return detailsData{
+			request: completionData,
+		}
+	}
+
+	data := completionData.(*completionDataData)
+
+	var literal literalValue
+	for _, l := range data.literals {
+		if completionNameForLiteral(file, preferences, l) == itemData.name {
+			literal = l
+			break
+		}
+	}
+	if literal != nil {
+		return detailsData{
+			literal: &literal,
+		}
+	}
+
+	// Find the symbol with the matching entry name.
+	// We don't need to perform character checks here because we're only comparing the
+	// name against 'entryName' (which is known to be good), not building a new
+	// completion entry.
+	for _, symbol := range data.symbols {
+		symbolId := ast.GetSymbolId(symbol)
+		origin := data.symbolToOriginInfoMap[symbolId]
+		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind, data.isJsxIdentifierExpected)
+		if displayName == itemData.name && 
+	}
+
+	// !!! HERE
 }
