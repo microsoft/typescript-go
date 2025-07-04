@@ -176,11 +176,6 @@ func (s *Server) GetCurrentDirectory() string {
 	return s.cwd
 }
 
-// NewLine implements project.ServiceHost.
-func (s *Server) NewLine() string {
-	return s.newLine.GetNewLineCharacter()
-}
-
 // Trace implements project.ServiceHost.
 func (s *Server) Trace(msg string) {
 	s.Log(msg)
