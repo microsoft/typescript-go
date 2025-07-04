@@ -214,6 +214,7 @@ type Scanner struct {
 	JSDocParsingMode ast.JSDocParsingMode
 	scriptKind       core.ScriptKind
 	ScannerState
+	numberCache map[string]string
 }
 
 func defaultScanner() Scanner {
@@ -225,11 +226,15 @@ func defaultScanner() Scanner {
 
 func NewScanner() *Scanner {
 	s := defaultScanner()
+	s.numberCache = make(map[string]string)
 	return &s
 }
 
 func (s *Scanner) Reset() {
+	numberCache := s.numberCache
+	clear(numberCache)
 	*s = defaultScanner()
+	s.numberCache = numberCache
 }
 
 func (s *Scanner) Text() string {
@@ -1915,7 +1920,16 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 		s.pos++
 		return ast.KindBigIntLiteral
 	}
-	s.tokenValue = jsnum.FromString(s.tokenValue).String()
+	if cached, ok := s.numberCache[s.tokenValue]; ok {
+		s.tokenValue = cached
+	} else {
+		tokenValue := jsnum.FromString(s.tokenValue).String()
+		if tokenValue == s.tokenValue {
+			tokenValue = s.tokenValue
+		}
+		s.numberCache[s.tokenValue] = tokenValue
+		s.tokenValue = tokenValue
+	}
 	return ast.KindNumericLiteral
 }
 
