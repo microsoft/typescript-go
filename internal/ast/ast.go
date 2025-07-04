@@ -84,6 +84,7 @@ type NodeFactory struct {
 	stringLiteralPool                 core.Pool[StringLiteral]
 	tokenPool                         core.Pool[Token]
 	typeLiteralNodePool               core.Pool[TypeLiteralNode]
+	typeOperatorNodePool              core.Pool[TypeOperatorNode]
 	typeParameterDeclarationPool      core.Pool[TypeParameterDeclaration]
 	typeReferenceNodePool             core.Pool[TypeReferenceNode]
 	unionTypeNodePool                 core.Pool[UnionTypeNode]
@@ -7163,7 +7164,7 @@ type TypeOperatorNode struct {
 }
 
 func (f *NodeFactory) NewTypeOperatorNode(operator Kind, typeNode *TypeNode) *Node {
-	data := &TypeOperatorNode{}
+	data := f.typeOperatorNodePool.New()
 	data.Operator = operator
 	data.Type = typeNode
 	return f.newNode(KindTypeOperator, data)
