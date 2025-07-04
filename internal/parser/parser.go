@@ -66,18 +66,19 @@ type Parser struct {
 	hasDeprecatedTag            bool
 	hasParseError               bool
 
-	identifiers             map[string]string
-	identifierCount         int
-	notParenthesizedArrow   collections.Set[int]
-	nodeSlicePool           core.Pool[*ast.Node]
-	stringSlicePool         core.Pool[string]
-	jsdocCache              map[*ast.Node][]*ast.Node
-	possibleAwaitSpans      []int
-	jsdocCommentsSpace      []string
-	jsdocCommentRangesSpace []ast.CommentRange
-	jsdocTagCommentsSpace   []string
-	reparseList             []*ast.Node
-	commonJSModuleIndicator *ast.Node
+	identifiers                map[string]string
+	identifierCount            int
+	notParenthesizedArrow      collections.Set[int]
+	nodeSlicePool              core.Pool[*ast.Node]
+	stringSlicePool            core.Pool[string]
+	jsdocCache                 map[*ast.Node][]*ast.Node
+	possibleAwaitSpans         []int
+	jsdocCommentsSpace         []string
+	jsdocCommentRangesSpace    []ast.CommentRange
+	jsdocTagCommentsSpace      []string
+	jsdocTagCommentsPartsSpace []*ast.Node
+	reparseList                []*ast.Node
+	commonJSModuleIndicator    *ast.Node
 
 	currentParent        *ast.Node
 	setParentFromContext ast.Visitor

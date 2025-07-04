@@ -477,7 +477,8 @@ func (p *Parser) parseTagComments(indent int, initialMargin *string) *ast.NodeLi
 	commentsPos := p.nodePos()
 	comments := p.jsdocTagCommentsSpace
 	p.jsdocTagCommentsSpace = nil // !!! can parseTagComments call itself?
-	var parts []*ast.Node
+	parts := p.jsdocTagCommentsPartsSpace
+	p.jsdocTagCommentsPartsSpace = nil
 	linkEnd := -1
 	state := jsdocStateBeginningOfLine
 	if indent < 0 {
@@ -596,8 +597,11 @@ loop:
 		p.finishNode(text, commentStart)
 		parts = append(parts, text)
 	}
+
+	p.jsdocTagCommentsPartsSpace = parts[:0]
+
 	if len(parts) > 0 {
-		return p.newNodeList(core.NewTextRange(commentsPos, p.scanner.TokenEnd()), parts)
+		return p.newNodeList(core.NewTextRange(commentsPos, p.scanner.TokenEnd()), p.nodeSlicePool.Clone(parts))
 	}
 	return nil
 }
