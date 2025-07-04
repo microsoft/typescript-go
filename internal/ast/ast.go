@@ -50,6 +50,7 @@ func visitModifiers(v Visitor, modifiers *ModifierList) bool {
 
 type NodeFactory struct {
 	hooks                             NodeFactoryHooks
+	arrayTypeNodePool                 core.Pool[ArrayTypeNode]
 	binaryExpressionPool              core.Pool[BinaryExpression]
 	blockPool                         core.Pool[Block]
 	callExpressionPool                core.Pool[CallExpression]
@@ -7242,7 +7243,7 @@ type ArrayTypeNode struct {
 }
 
 func (f *NodeFactory) NewArrayTypeNode(elementType *TypeNode) *Node {
-	data := &ArrayTypeNode{}
+	data := f.arrayTypeNodePool.New()
 	data.ElementType = elementType
 	return f.newNode(KindArrayType, data)
 }
