@@ -641,6 +641,7 @@ func (s *Scanner) Scan() ast.Kind {
 			}
 		case '0':
 			if s.charAt(1) == 'X' || s.charAt(1) == 'x' {
+				start := s.pos
 				s.pos += 2
 				digits := s.scanHexDigits(1, true, true)
 				if digits == "" {
@@ -653,7 +654,12 @@ func (s *Scanner) Scan() ast.Kind {
 				if cachedValue, ok := s.hexNumberCache[digits]; ok {
 					s.tokenValue = cachedValue
 				} else {
-					s.tokenValue = "0x" + digits
+					rawText := s.text[start:s.pos]
+					if strings.HasPrefix(rawText, "0x") && rawText[2:] == digits {
+						s.tokenValue = rawText
+					} else {
+						s.tokenValue = "0x" + digits
+					}
 					s.hexNumberCache[digits] = s.tokenValue
 				}
 				s.tokenFlags |= ast.TokenFlagsHexSpecifier
