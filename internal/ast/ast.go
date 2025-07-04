@@ -83,6 +83,7 @@ type NodeFactory struct {
 	returnStatementPool               core.Pool[ReturnStatement]
 	stringLiteralPool                 core.Pool[StringLiteral]
 	tokenPool                         core.Pool[Token]
+	typeAliasDeclarationPool          core.Pool[TypeAliasDeclaration]
 	typeLiteralNodePool               core.Pool[TypeLiteralNode]
 	typeOperatorNodePool              core.Pool[TypeOperatorNode]
 	typeParameterDeclarationPool      core.Pool[TypeParameterDeclaration]
@@ -3805,7 +3806,7 @@ type TypeAliasDeclaration struct {
 }
 
 func (f *NodeFactory) newTypeAliasOrJSTypeAliasDeclaration(kind Kind, modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
-	data := &TypeAliasDeclaration{}
+	data := f.typeAliasDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
