@@ -1507,7 +1507,7 @@ func GetAssignmentDeclarationKind(bin *BinaryExpression) JSDeclarationKind {
 	if IsInJSFile(bin.Left) && bin.Left.Expression().Kind == KindThisKeyword {
 		return JSDeclarationKindThisProperty
 	}
-	if bin.Left.Kind == KindPropertyAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) && IsIdentifier(bin.Left.Name()) ||
+	if bin.Left.Kind == KindPropertyAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) && bin.Left.Name() != nil && IsIdentifier(bin.Left.Name()) ||
 		bin.Left.Kind == KindElementAccessExpression && IsEntityNameExpressionEx(bin.Left.Expression(), IsInJSFile(bin.Left)) {
 		return JSDeclarationKindProperty
 	}
