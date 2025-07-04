@@ -53,7 +53,9 @@ type NodeFactory struct {
 	binaryExpressionPool              core.Pool[BinaryExpression]
 	blockPool                         core.Pool[Block]
 	callExpressionPool                core.Pool[CallExpression]
+	conditionalExpressionPool         core.Pool[ConditionalExpression]
 	constructSignatureDeclarationPool core.Pool[ConstructSignatureDeclaration]
+	elementAccessExpressionPool       core.Pool[ElementAccessExpression]
 	expressionStatementPool           core.Pool[ExpressionStatement]
 	expressionWithTypeArgumentsPool   core.Pool[ExpressionWithTypeArguments]
 	functionDeclarationPool           core.Pool[FunctionDeclaration]
@@ -61,11 +63,13 @@ type NodeFactory struct {
 	heritageClausePool                core.Pool[HeritageClause]
 	identifierPool                    core.Pool[Identifier]
 	ifStatementPool                   core.Pool[IfStatement]
+	importSpecifierPool               core.Pool[ImportSpecifier]
 	indexedAccessTypeNodePool         core.Pool[IndexedAccessTypeNode]
 	interfaceDeclarationPool          core.Pool[InterfaceDeclaration]
 	jsdocDeprecatedTagPool            core.Pool[JSDocDeprecatedTag]
 	jsdocPool                         core.Pool[JSDoc]
 	jsdocTextPool                     core.Pool[JSDocText]
+	jsdocUnknownTagPool               core.Pool[JSDocUnknownTag]
 	keywordExpressionPool             core.Pool[KeywordExpression]
 	keywordTypeNodePool               core.Pool[KeywordTypeNode]
 	literalTypeNodePool               core.Pool[LiteralTypeNode]
@@ -4248,7 +4252,7 @@ type ImportSpecifier struct {
 }
 
 func (f *NodeFactory) NewImportSpecifier(isTypeOnly bool, propertyName *ModuleExportName, name *IdentifierNode) *Node {
-	data := &ImportSpecifier{}
+	data := f.importSpecifierPool.New()
 	data.IsTypeOnly = isTypeOnly
 	data.PropertyName = propertyName
 	data.name = name
@@ -6017,7 +6021,7 @@ type ConditionalExpression struct {
 }
 
 func (f *NodeFactory) NewConditionalExpression(condition *Expression, questionToken *TokenNode, whenTrue *Expression, colonToken *TokenNode, whenFalse *Expression) *Node {
-	data := &ConditionalExpression{}
+	data := f.conditionalExpressionPool.New()
 	data.Condition = condition
 	data.QuestionToken = questionToken
 	data.WhenTrue = whenTrue
@@ -6124,7 +6128,7 @@ type ElementAccessExpression struct {
 }
 
 func (f *NodeFactory) NewElementAccessExpression(expression *Expression, questionDotToken *TokenNode, argumentExpression *Expression, flags NodeFlags) *Node {
-	data := &ElementAccessExpression{}
+	data := f.elementAccessExpressionPool.New()
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.ArgumentExpression = argumentExpression
@@ -9203,7 +9207,7 @@ type JSDocUnknownTag struct {
 }
 
 func (f *NodeFactory) NewJSDocUnknownTag(tagName *IdentifierNode, comment *NodeList) *Node {
-	data := &JSDocUnknownTag{}
+	data := f.jsdocUnknownTagPool.New()
 	data.TagName = tagName
 	data.Comment = comment
 	return f.newNode(KindJSDocTag, data)
