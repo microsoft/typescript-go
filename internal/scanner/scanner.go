@@ -1426,6 +1426,7 @@ func (s *Scanner) scanIdentifierParts() string {
 func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
 	s.pos++
+	// Fast path for simple strings without escape sequences.
 	if !jsxAttributeString {
 		strLen := strings.IndexRune(s.text[s.pos:], quote)
 		if strLen == 0 {
