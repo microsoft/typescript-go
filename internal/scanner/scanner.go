@@ -1427,18 +1427,16 @@ func (s *Scanner) scanString(jsxAttributeString bool) string {
 	quote := s.char()
 	s.pos++
 	// Fast path for simple strings without escape sequences.
-	if !jsxAttributeString {
-		strLen := strings.IndexRune(s.text[s.pos:], quote)
-		if strLen == 0 {
-			s.pos++
-			return ""
-		}
-		if strLen > 0 {
-			str := s.text[s.pos : s.pos+strLen]
-			if !strings.ContainsAny(str, "\r\n\\") {
-				s.pos += strLen + 1
-				return str
-			}
+	strLen := strings.IndexRune(s.text[s.pos:], quote)
+	if strLen == 0 {
+		s.pos++
+		return ""
+	}
+	if strLen > 0 {
+		str := s.text[s.pos : s.pos+strLen]
+		if !jsxAttributeString && !strings.ContainsAny(str, "\r\n\\") {
+			s.pos += strLen + 1
+			return str
 		}
 	}
 	var sb strings.Builder
