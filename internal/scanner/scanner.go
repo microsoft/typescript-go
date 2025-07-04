@@ -214,7 +214,9 @@ type Scanner struct {
 	JSDocParsingMode ast.JSDocParsingMode
 	scriptKind       core.ScriptKind
 	ScannerState
-	numberCache map[string]string
+
+	numberCache    map[string]string
+	hexNumberCache map[string]string
 }
 
 func defaultScanner() Scanner {
@@ -226,15 +228,20 @@ func defaultScanner() Scanner {
 
 func NewScanner() *Scanner {
 	s := defaultScanner()
-	s.numberCache = make(map[string]string)
 	return &s
 }
 
 func (s *Scanner) Reset() {
-	numberCache := s.numberCache
-	clear(numberCache)
+	numberCache := cleared(s.numberCache)
+	hexNumberCache := cleared(s.hexNumberCache)
 	*s = defaultScanner()
 	s.numberCache = numberCache
+	s.hexNumberCache = hexNumberCache
+}
+
+func cleared[M ~map[K]V, K comparable, V any](m M) M {
+	clear(m)
+	return m
 }
 
 func (s *Scanner) Text() string {
@@ -637,7 +644,15 @@ func (s *Scanner) Scan() ast.Kind {
 					s.error(diagnostics.Hexadecimal_digit_expected)
 					digits = "0"
 				}
-				s.tokenValue = "0x" + digits
+				if s.hexNumberCache == nil {
+					s.hexNumberCache = make(map[string]string)
+				}
+				if cachedValue, ok := s.hexNumberCache[digits]; ok {
+					s.tokenValue = cachedValue
+				} else {
+					s.tokenValue = "0x" + digits
+					s.hexNumberCache[digits] = s.tokenValue
+				}
 				s.tokenFlags |= ast.TokenFlagsHexSpecifier
 				s.token = s.scanBigIntSuffix()
 				break
@@ -1921,6 +1936,9 @@ func (s *Scanner) scanBigIntSuffix() ast.Kind {
 		}
 		s.pos++
 		return ast.KindBigIntLiteral
+	}
+	if s.numberCache == nil {
+		s.numberCache = make(map[string]string)
 	}
 	if cached, ok := s.numberCache[s.tokenValue]; ok {
 		s.tokenValue = cached
