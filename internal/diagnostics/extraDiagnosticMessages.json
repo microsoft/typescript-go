@@ -10,5 +10,9 @@
     "Generate pprof CPU/memory profiles to the given directory.": {
         "category": "Message",
         "code": 100002
+    },
+    "Specify how much concurrency will be used.": {
+        "category": "Message",
+        "code": 100003
     }
 }
