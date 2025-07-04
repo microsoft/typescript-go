@@ -217,6 +217,7 @@ type Scanner struct {
 
 	numberCache    map[string]string
 	hexNumberCache map[string]string
+	hexDigitCache  map[string]string
 }
 
 func defaultScanner() Scanner {
@@ -234,9 +235,11 @@ func NewScanner() *Scanner {
 func (s *Scanner) Reset() {
 	numberCache := cleared(s.numberCache)
 	hexNumberCache := cleared(s.hexNumberCache)
+	hexDigitCache := cleared(s.hexDigitCache)
 	*s = defaultScanner()
 	s.numberCache = numberCache
 	s.hexNumberCache = hexNumberCache
+	s.hexDigitCache = hexDigitCache
 }
 
 func cleared[M ~map[K]V, K comparable, V any](m M) M {
@@ -1891,10 +1894,20 @@ func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHave
 		return ""
 	}
 	digits := s.text[start:s.pos]
-	if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
-		digits = strings.ReplaceAll(digits, "_", "")
+	if s.hexDigitCache == nil {
+		s.hexDigitCache = make(map[string]string)
 	}
-	return strings.ToLower(digits) // standardize hex literals to lowercase
+	if cached, ok := s.hexDigitCache[digits]; ok {
+		return cached
+	} else {
+		original := digits
+		if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
+			digits = strings.ReplaceAll(digits, "_", "")
+		}
+		digits = strings.ToLower(digits) // standardize hex literals to lowercase
+		s.hexDigitCache[original] = digits
+		return digits
+	}
 }
 
 func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
