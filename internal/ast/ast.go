@@ -49,41 +49,47 @@ func visitModifiers(v Visitor, modifiers *ModifierList) bool {
 // NodeFactory
 
 type NodeFactory struct {
-	hooks                            NodeFactoryHooks
-	binaryExpressionPool             core.Pool[BinaryExpression]
-	blockPool                        core.Pool[Block]
-	callExpressionPool               core.Pool[CallExpression]
-	expressionStatementPool          core.Pool[ExpressionStatement]
-	functionDeclarationPool          core.Pool[FunctionDeclaration]
-	functionTypeNodePool             core.Pool[FunctionTypeNode]
-	identifierPool                   core.Pool[Identifier]
-	ifStatementPool                  core.Pool[IfStatement]
-	interfaceDeclarationPool         core.Pool[InterfaceDeclaration]
-	jsdocPool                        core.Pool[JSDoc]
-	jsdocTextPool                    core.Pool[JSDocText]
-	keywordExpressionPool            core.Pool[KeywordExpression]
-	keywordTypeNodePool              core.Pool[KeywordTypeNode]
-	literalTypeNodePool              core.Pool[LiteralTypeNode]
-	methodSignatureDeclarationPool   core.Pool[MethodSignatureDeclaration]
-	modifierListPool                 core.Pool[ModifierList]
-	nodeListPool                     core.Pool[NodeList]
-	numericLiteralPool               core.Pool[NumericLiteral]
-	parameterDeclarationPool         core.Pool[ParameterDeclaration]
-	parenthesizedExpressionPool      core.Pool[ParenthesizedExpression]
-	parenthesizedTypeNodePool        core.Pool[ParenthesizedTypeNode]
-	prefixUnaryExpressionPool        core.Pool[PrefixUnaryExpression]
-	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
-	propertyAssignmentPool           core.Pool[PropertyAssignment]
-	propertySignatureDeclarationPool core.Pool[PropertySignatureDeclaration]
-	returnStatementPool              core.Pool[ReturnStatement]
-	stringLiteralPool                core.Pool[StringLiteral]
-	tokenPool                        core.Pool[Token]
-	typeLiteralNodePool              core.Pool[TypeLiteralNode]
-	typeReferenceNodePool            core.Pool[TypeReferenceNode]
-	unionTypeNodePool                core.Pool[UnionTypeNode]
-	variableDeclarationListPool      core.Pool[VariableDeclarationList]
-	variableDeclarationPool          core.Pool[VariableDeclaration]
-	variableStatementPool            core.Pool[VariableStatement]
+	hooks                             NodeFactoryHooks
+	binaryExpressionPool              core.Pool[BinaryExpression]
+	blockPool                         core.Pool[Block]
+	callExpressionPool                core.Pool[CallExpression]
+	constructSignatureDeclarationPool core.Pool[ConstructSignatureDeclaration]
+	expressionStatementPool           core.Pool[ExpressionStatement]
+	expressionWithTypeArgumentsPool   core.Pool[ExpressionWithTypeArguments]
+	functionDeclarationPool           core.Pool[FunctionDeclaration]
+	functionTypeNodePool              core.Pool[FunctionTypeNode]
+	heritageClausePool                core.Pool[HeritageClause]
+	identifierPool                    core.Pool[Identifier]
+	ifStatementPool                   core.Pool[IfStatement]
+	indexedAccessTypeNodePool         core.Pool[IndexedAccessTypeNode]
+	interfaceDeclarationPool          core.Pool[InterfaceDeclaration]
+	jsdocDeprecatedTagPool            core.Pool[JSDocDeprecatedTag]
+	jsdocPool                         core.Pool[JSDoc]
+	jsdocTextPool                     core.Pool[JSDocText]
+	keywordExpressionPool             core.Pool[KeywordExpression]
+	keywordTypeNodePool               core.Pool[KeywordTypeNode]
+	literalTypeNodePool               core.Pool[LiteralTypeNode]
+	methodSignatureDeclarationPool    core.Pool[MethodSignatureDeclaration]
+	modifierListPool                  core.Pool[ModifierList]
+	nodeListPool                      core.Pool[NodeList]
+	numericLiteralPool                core.Pool[NumericLiteral]
+	parameterDeclarationPool          core.Pool[ParameterDeclaration]
+	parenthesizedExpressionPool       core.Pool[ParenthesizedExpression]
+	parenthesizedTypeNodePool         core.Pool[ParenthesizedTypeNode]
+	prefixUnaryExpressionPool         core.Pool[PrefixUnaryExpression]
+	propertyAccessExpressionPool      core.Pool[PropertyAccessExpression]
+	propertyAssignmentPool            core.Pool[PropertyAssignment]
+	propertySignatureDeclarationPool  core.Pool[PropertySignatureDeclaration]
+	returnStatementPool               core.Pool[ReturnStatement]
+	stringLiteralPool                 core.Pool[StringLiteral]
+	tokenPool                         core.Pool[Token]
+	typeLiteralNodePool               core.Pool[TypeLiteralNode]
+	typeParameterDeclarationPool      core.Pool[TypeParameterDeclaration]
+	typeReferenceNodePool             core.Pool[TypeReferenceNode]
+	unionTypeNodePool                 core.Pool[UnionTypeNode]
+	variableDeclarationListPool       core.Pool[VariableDeclarationList]
+	variableDeclarationPool           core.Pool[VariableDeclaration]
+	variableStatementPool             core.Pool[VariableStatement]
 
 	nodeCount int
 	textCount int
@@ -2174,7 +2180,7 @@ type TypeParameterDeclaration struct {
 }
 
 func (f *NodeFactory) NewTypeParameterDeclaration(modifiers *ModifierList, name *IdentifierNode, constraint *TypeNode, defaultType *TypeNode) *Node {
-	data := &TypeParameterDeclaration{}
+	data := f.typeParameterDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.Constraint = constraint
@@ -3693,7 +3699,7 @@ type HeritageClause struct {
 }
 
 func (f *NodeFactory) NewHeritageClause(token Kind, types *NodeList) *Node {
-	data := &HeritageClause{}
+	data := f.heritageClausePool.New()
 	data.Token = token
 	data.Types = types
 	return f.newNode(KindHeritageClause, data)
@@ -4895,7 +4901,7 @@ type ConstructSignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *NodeList, parameters *NodeList, returnType *TypeNode) *Node {
-	data := &ConstructSignatureDeclaration{}
+	data := f.constructSignatureDeclarationPool.New()
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
@@ -7263,7 +7269,7 @@ type IndexedAccessTypeNode struct {
 }
 
 func (f *NodeFactory) NewIndexedAccessTypeNode(objectType *TypeNode, indexType *TypeNode) *Node {
-	data := &IndexedAccessTypeNode{}
+	data := f.indexedAccessTypeNodePool.New()
 	data.ObjectType = objectType
 	data.IndexType = indexType
 	return f.newNode(KindIndexedAccessType, data)
@@ -7340,7 +7346,7 @@ type ExpressionWithTypeArguments struct {
 }
 
 func (f *NodeFactory) NewExpressionWithTypeArguments(expression *Expression, typeArguments *NodeList) *Node {
-	data := &ExpressionWithTypeArguments{}
+	data := f.expressionWithTypeArgumentsPool.New()
 	data.Expression = expression
 	data.TypeArguments = typeArguments
 	return f.newNode(KindExpressionWithTypeArguments, data)
@@ -9523,7 +9529,7 @@ type JSDocDeprecatedTag struct {
 }
 
 func (f *NodeFactory) NewJSDocDeprecatedTag(tagName *IdentifierNode, comment *NodeList) *Node {
-	data := &JSDocDeprecatedTag{}
+	data := f.jsdocDeprecatedTagPool.New()
 	data.TagName = tagName
 	data.Comment = comment
 	return f.newNode(KindJSDocDeprecatedTag, data)
