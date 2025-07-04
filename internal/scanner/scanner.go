@@ -1844,18 +1844,16 @@ func (s *Scanner) scanDigits() (string, bool) {
 }
 
 func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHaveSeparators bool) string {
-	var sb strings.Builder
+	digitCount := 0
+	start := s.pos
 	allowSeparator := false
 	isPreviousTokenSeparator := false
-	for sb.Len() < minCount || scanAsManyAsPossible {
+	for digitCount < minCount || scanAsManyAsPossible {
 		ch := s.char()
 		if stringutil.IsHexDigit(ch) {
-			if ch >= 'A' && ch <= 'F' {
-				ch += 'a' - 'A' // standardize hex literals to lowercase
-			}
-			sb.WriteByte(byte(ch))
 			allowSeparator = canHaveSeparators
 			isPreviousTokenSeparator = false
+			digitCount++
 		} else if canHaveSeparators && ch == '_' {
 			s.tokenFlags |= ast.TokenFlagsContainsSeparator
 			if allowSeparator {
@@ -1874,10 +1872,14 @@ func (s *Scanner) scanHexDigits(minCount int, scanAsManyAsPossible bool, canHave
 	if isPreviousTokenSeparator {
 		s.errorAt(diagnostics.Numeric_separators_are_not_allowed_here, s.pos-1, 1)
 	}
-	if sb.Len() < minCount {
+	if digitCount < minCount {
 		return ""
 	}
-	return sb.String()
+	digits := s.text[start:s.pos]
+	if s.tokenFlags&ast.TokenFlagsContainsSeparator != 0 {
+		digits = strings.ReplaceAll(digits, "_", "")
+	}
+	return strings.ToLower(digits) // standardize hex literals to lowercase
 }
 
 func (s *Scanner) scanBinaryOrOctalDigits(base int32) string {
