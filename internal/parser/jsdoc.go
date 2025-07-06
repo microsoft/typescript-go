@@ -33,7 +33,7 @@ func (p *Parser) withJSDoc(node *ast.Node, hasJSDoc bool) []*ast.Node {
 	}
 
 	if p.jsdocCache == nil {
-		p.jsdocCache = make(map[*ast.Node][]*ast.Node)
+		p.jsdocCache = make(map[*ast.Node][]*ast.Node, strings.Count(p.sourceText, "/**"))
 	} else if _, ok := p.jsdocCache[node]; ok {
 		panic("tried to set JSDoc on a node with existing JSDoc")
 	}
