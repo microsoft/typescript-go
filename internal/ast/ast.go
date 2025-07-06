@@ -68,6 +68,7 @@ type NodeFactory struct {
 	indexedAccessTypeNodePool         core.Pool[IndexedAccessTypeNode]
 	interfaceDeclarationPool          core.Pool[InterfaceDeclaration]
 	jsdocDeprecatedTagPool            core.Pool[JSDocDeprecatedTag]
+	jsdocParameterOrPropertyTagPool   core.Pool[JSDocParameterOrPropertyTag]
 	jsdocPool                         core.Pool[JSDoc]
 	jsdocTextPool                     core.Pool[JSDocText]
 	jsdocUnknownTagPool               core.Pool[JSDocUnknownTag]
@@ -9288,7 +9289,7 @@ type (
 )
 
 func (f *NodeFactory) newJSDocParameterOrPropertyTag(kind Kind, tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
-	data := &JSDocParameterOrPropertyTag{}
+	data := f.jsdocParameterOrPropertyTagPool.New()
 	data.TagName = tagName
 	data.name = name
 	data.IsBracketed = isBracketed
