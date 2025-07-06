@@ -1504,12 +1504,12 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 	startedWithBacktick := s.char() == '`'
 	s.pos++
 	start := s.pos
-	b := strings.Builder{}
+	parts := make([]string, 0, 4)
 	var token ast.Kind
 	for {
 		ch := s.char()
 		if ch < 0 || ch == '`' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			if ch == '`' {
 				s.pos++
 			} else {
@@ -1520,32 +1520,32 @@ func (s *Scanner) scanTemplateAndSetTokenValue(shouldEmitInvalidEscapeError bool
 			break
 		}
 		if ch == '$' && s.charAt(1) == '{' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			s.pos += 2
 			token = core.IfElse(startedWithBacktick, ast.KindTemplateHead, ast.KindTemplateMiddle)
 			break
 		}
 		if ch == '\\' {
-			b.WriteString(s.text[start:s.pos])
-			b.WriteString(s.scanEscapeSequence(EscapeSequenceScanningFlagsString | core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0)))
+			parts = append(parts, s.text[start:s.pos])
+			parts = append(parts, s.scanEscapeSequence(EscapeSequenceScanningFlagsString|core.IfElse(shouldEmitInvalidEscapeError, EscapeSequenceScanningFlagsReportErrors, 0)))
 			start = s.pos
 			continue
 		}
 		// Speculated ECMAScript 6 Spec 11.8.6.1:
 		// <CR><LF> and <CR> LineTerminatorSequences are normalized to <LF> for Template Values
 		if ch == '\r' {
-			b.WriteString(s.text[start:s.pos])
+			parts = append(parts, s.text[start:s.pos])
 			s.pos++
 			if s.char() == '\n' {
 				s.pos++
 			}
-			b.WriteString("\n")
+			parts = append(parts, "\n")
 			start = s.pos
 			continue
 		}
 		s.pos++
 	}
-	s.tokenValue = b.String()
+	s.tokenValue = strings.Join(parts, "")
 	return token
 }
 
