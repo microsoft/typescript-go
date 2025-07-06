@@ -511,9 +511,7 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
-	copy(slice, list)
-	return slice
+	return p.nodeSlicePool.Clone(list)
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
@@ -577,9 +575,7 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
-	copy(slice, list)
-	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), slice)
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
 }
 
 // Return a non-nil (but possibly empty) NodeList if parsing was successful, or nil if opening token wasn't found
@@ -3846,9 +3842,7 @@ func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bo
 		}
 	}
 	if len(list) != 0 {
-		nodes := p.nodeSlicePool.NewSlice(len(list))
-		copy(nodes, list)
-		return p.newModifierList(core.NewTextRange(pos, p.nodePos()), nodes)
+		return p.newModifierList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
 	}
 	return nil
 }
