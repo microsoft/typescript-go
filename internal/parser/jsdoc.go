@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"bytes"
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -369,21 +368,20 @@ func (p *Parser) skipWhitespaceOrAsterisk() string {
 
 	precedingLineBreak := p.scanner.HasPrecedingLineBreak()
 	seenLineBreak := false
-	// bytes.Buffer instead of strings.Builder so Reset doesn't discard the underlying buffer.
-	var indentText bytes.Buffer
+	indents := make([]string, 0, 4)
 	for (precedingLineBreak && p.token == ast.KindAsteriskToken) || p.token == ast.KindWhitespaceTrivia || p.token == ast.KindNewLineTrivia {
-		indentText.WriteString(p.scanner.TokenText())
+		indents = append(indents, p.scanner.TokenText())
 		if p.token == ast.KindNewLineTrivia {
 			precedingLineBreak = true
 			seenLineBreak = true
-			indentText.Reset()
+			indents = indents[:0]
 		} else if p.token == ast.KindAsteriskToken {
 			precedingLineBreak = false
 		}
 		p.nextTokenJSDoc()
 	}
 	if seenLineBreak {
-		return indentText.String()
+		return strings.Join(indents, "")
 	} else {
 		return ""
 	}
