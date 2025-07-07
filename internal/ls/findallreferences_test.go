@@ -15,7 +15,7 @@ func runFindReferencesTest(t *testing.T, input string, expectedLocations map[str
 	testData := fourslash.ParseTestData(t, input, "/file1.ts")
 	markerPositions := testData.MarkerPositions
 	ctx := projecttestutil.WithRequestID(t.Context())
-	service, done := createLanguageService(ctx, testData.Files[0].FileName(), map[string]any{
+	service, done := createLanguageService(ctx, testData.Files[0].FileName(), map[string]string{
 		testData.Files[0].FileName(): testData.Files[0].Content,
 	})
 	defer done()
@@ -23,7 +23,7 @@ func runFindReferencesTest(t *testing.T, input string, expectedLocations map[str
 	// for each marker location, calculate the expected ref location ahead of time so we don't have to re-calculate each location for every reference call
 	allExpectedLocations := map[lsproto.Location]string{}
 	for _, expectedRange := range testData.Ranges {
-		allExpectedLocations[*service.GetExpectedReferenceFromMarker(expectedRange.FileName, expectedRange.Position)] = expectedRange.Name
+		allExpectedLocations[*service.GetExpectedReferenceFromMarker(expectedRange.FileName, expectedRange.Position)] = *expectedRange.Name
 	}
 
 	for requestMarkerName, expectedSet := range expectedLocations {
