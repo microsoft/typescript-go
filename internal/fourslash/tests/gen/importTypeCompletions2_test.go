@@ -7,22 +7,25 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestSatisfiesOperatorCompletion(t *testing.T) {
+func TestImportTypeCompletions2(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `type T = number;
-var x;
-var y = x satisfies /**/`
+	const content = `// @target: esnext
+// @filename: /foo.ts
+export const Foo = {};
+// @filename: /bar.ts
+[|import type F/**/|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.GoToFile(t, "/bar.ts")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
+			CommitCharacters: &[]string{},
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"T"},
+			Exact: []fourslash.CompletionsExpectedItem{},
 		},
 	})
 }

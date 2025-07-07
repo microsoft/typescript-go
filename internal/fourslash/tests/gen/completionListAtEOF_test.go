@@ -7,43 +7,43 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestCompletionListForUnicodeEscapeName(t *testing.T) {
+func TestCompletionListAtEOF(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `function \u0042 () { /*0*/ }
-export default function \u0043 () {}
-class \u0041 { /*2*/ }
-/*3*/`
+	const content = `var a;`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "0", &fourslash.CompletionsExpectedList{
+	f.GoToEOF(t)
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"B"},
+			Includes: []fourslash.CompletionsExpectedItem{"a"},
 		},
 	})
-	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &[]string{},
-			EditRange:        ignored,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Excludes: []string{"C", "A"},
-		},
-	})
-	f.VerifyCompletions(t, "3", &fourslash.CompletionsExpectedList{
+	f.InsertLine(t, "")
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"B", "A", "C"},
+			Includes: []fourslash.CompletionsExpectedItem{"a"},
+		},
+	})
+	f.InsertLine(t, "")
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{"a"},
 		},
 	})
 }

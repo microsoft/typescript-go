@@ -7,22 +7,26 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestSatisfiesOperatorCompletion(t *testing.T) {
+func TestCompletionListInFatArrow(t *testing.T) {
 	t.Parallel()
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `type T = number;
-var x;
-var y = x satisfies /**/`
+	const content = `var items = [0, 1, 2];
+items.forEach((n) => {
+    /**/
+    var q = n;
+});`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+	f.GoToMarker(t, "")
+	f.Insert(t, "it")
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"T"},
+			Includes: []fourslash.CompletionsExpectedItem{"items"},
 		},
 	})
 }
