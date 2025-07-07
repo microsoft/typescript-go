@@ -21201,27 +21201,28 @@ func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAl
 	return result
 }
 
-var activeMapperCache = sync.Pool{
-	New: func() any {
-		return make(map[string]*Type, 1)
-	},
-}
-
 func (c *Checker) pushActiveMapper(mapper *TypeMapper) {
 	c.activeMappers = append(c.activeMappers, mapper)
 
-	c.activeTypeMappersCaches = append(c.activeTypeMappersCaches, activeMapperCache.Get().(map[string]*Type))
+	lastIndex := len(c.activeTypeMappersCaches)
+	if cap(c.activeTypeMappersCaches) > lastIndex {
+		c.activeTypeMappersCaches = c.activeTypeMappersCaches[:lastIndex+1]
+		if c.activeTypeMappersCaches[lastIndex] == nil {
+			c.activeTypeMappersCaches[lastIndex] = make(map[string]*Type, 1)
+		}
+	} else {
+		c.activeTypeMappersCaches = append(c.activeTypeMappersCaches, make(map[string]*Type, 1))
+	}
 }
 
 func (c *Checker) popActiveMapper() {
 	c.activeMappers[len(c.activeMappers)-1] = nil
 	c.activeMappers = c.activeMappers[:len(c.activeMappers)-1]
 
-	cache := c.activeTypeMappersCaches[len(c.activeTypeMappersCaches)-1]
-	c.activeTypeMappersCaches[len(c.activeTypeMappersCaches)-1] = nil
-	clear(cache)
-	activeMapperCache.Put(cache)
-	c.activeTypeMappersCaches = c.activeTypeMappersCaches[:len(c.activeTypeMappersCaches)-1]
+	// Clear the map, but leave it in the list for later reuse.
+	lastIndex := len(c.activeTypeMappersCaches) - 1
+	clear(c.activeTypeMappersCaches[lastIndex])
+	c.activeTypeMappersCaches = c.activeTypeMappersCaches[:lastIndex]
 }
 
 func (c *Checker) findActiveMapper(mapper *TypeMapper) int {
