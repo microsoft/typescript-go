@@ -77,7 +77,7 @@ func TestCheckSrcCompiler(t *testing.T) {
 		Config: parsed,
 		Host:   host,
 	})
-	p.CheckSourceFiles(t.Context())
+	p.CheckSourceFiles(t.Context(), nil)
 }
 
 func BenchmarkNewChecker(b *testing.B) {
