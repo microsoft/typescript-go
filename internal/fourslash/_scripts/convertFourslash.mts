@@ -2,6 +2,7 @@ import * as cp from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import * as ts from "typescript";
+import * as url from "url";
 import which from "which";
 
 const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../", "_submodules", "TypeScript", "tests", "cases", "fourslash");
@@ -9,15 +10,18 @@ const stradaFourslashPath = path.resolve(import.meta.dirname, "../", "../", "../
 let inputFileSet: Set<string> | undefined;
 
 const failingTestsPath = path.join(import.meta.dirname, "failingTests.txt");
-const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
-const failingTests = new Set(failingTestsList);
 const helperFilePath = path.join(import.meta.dirname, "../", "tests", "util_test.go");
 
 const outputDir = path.join(import.meta.dirname, "../", "tests", "gen");
 
 const unparsedFiles: string[] = [];
 
-function main() {
+function getFailingTests(): Set<string> {
+    const failingTestsList = fs.readFileSync(failingTestsPath, "utf-8").split("\n").map(line => line.trim().substring(4)).filter(line => line.length > 0);
+    return new Set(failingTestsList);
+}
+
+export function main() {
     const args = process.argv.slice(2);
     const inputFilesPath = args[0];
     if (inputFilesPath) {
@@ -28,18 +32,17 @@ function main() {
         inputFileSet = new Set(inputFiles);
     }
 
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir, { recursive: true });
-    }
+    fs.rmSync(outputDir, { recursive: true, force: true });
+    fs.mkdirSync(outputDir, { recursive: true });
 
     generateHelperFile();
-    parseTypeScriptFiles(stradaFourslashPath);
+    parseTypeScriptFiles(getFailingTests(), stradaFourslashPath);
     console.log(unparsedFiles.join("\n"));
     const gofmt = which.sync("go");
     cp.execFileSync(gofmt, ["tool", "mvdan.cc/gofumpt", "-lang=go1.24", "-w", outputDir]);
 }
 
-function parseTypeScriptFiles(folder: string): void {
+function parseTypeScriptFiles(failingTests: Set<string>, folder: string): void {
     const files = fs.readdirSync(folder);
 
     files.forEach(file => {
@@ -50,13 +53,13 @@ function parseTypeScriptFiles(folder: string): void {
         }
 
         if (stat.isDirectory()) {
-            parseTypeScriptFiles(filePath);
+            parseTypeScriptFiles(failingTests, filePath);
         }
         else if (file.endsWith(".ts")) {
             const content = fs.readFileSync(filePath, "utf-8");
             const test = parseFileContent(file, content);
             if (test) {
-                const testContent = generateGoTest(test);
+                const testContent = generateGoTest(failingTests, test);
                 const testPath = path.join(outputDir, `${test.name}_test.go`);
                 fs.writeFileSync(testPath, testContent, "utf-8");
             }
@@ -149,9 +152,9 @@ function parseFourslashStatement(statement: ts.Statement): Cmd[] | undefined {
                     return [parseBaselineFindAllReferencesArgs(callExpression.arguments)];
             }
         }
-        // `goTo.marker(...)`
-        if (namespace.text === "goTo" && func.text === "marker") {
-            return parseGoToMarkerArgs(callExpression.arguments);
+        // `goTo....`
+        if (namespace.text === "goTo") {
+            return parseGoToArgs(callExpression.arguments, func.text);
         }
         // `edit....`
         if (namespace.text === "edit") {
@@ -215,20 +218,83 @@ function getGoStringLiteral(text: string): string {
     return `${JSON.stringify(text)}`;
 }
 
-function parseGoToMarkerArgs(args: readonly ts.Expression[]): GoToMarkerCmd[] | undefined {
-    if (args.length !== 1) {
-        console.error(`Expected exactly one argument in goTo.marker, got ${args.length}`);
-        return undefined;
+function parseGoToArgs(args: readonly ts.Expression[], funcName: string): GoToCmd[] | undefined {
+    switch (funcName) {
+        case "marker":
+            const arg = args[0];
+            if (arg === undefined) {
+                return [{
+                    kind: "goTo",
+                    funcName: "marker",
+                    args: [`""`],
+                }];
+            }
+            if (!ts.isStringLiteral(arg)) {
+                console.error(`Unrecognized argument in goTo.marker: ${arg.getText()}`);
+                return undefined;
+            }
+            return [{
+                kind: "goTo",
+                funcName: "marker",
+                args: [getGoStringLiteral(arg.text)],
+            }];
+        case "file":
+            if (args.length !== 1) {
+                console.error(`Expected a single argument in goTo.file, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            if (ts.isStringLiteral(args[0])) {
+                return [{
+                    kind: "goTo",
+                    funcName: "file",
+                    args: [getGoStringLiteral(args[0].text)],
+                }];
+            }
+            else if (ts.isNumericLiteral(args[0])) {
+                return [{
+                    kind: "goTo",
+                    funcName: "fileNumber",
+                    args: [args[0].text],
+                }];
+            }
+            console.error(`Expected string or number literal argument in goTo.file, got ${args[0].getText()}`);
+            return undefined;
+        case "position":
+            if (args.length !== 1 || !ts.isNumericLiteral(args[0])) {
+                console.error(`Expected a single numeric literal argument in goTo.position, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            return [{
+                kind: "goTo",
+                funcName: "position",
+                args: [`${args[0].text}`],
+            }];
+        case "eof":
+            return [{
+                kind: "goTo",
+                funcName: "EOF",
+                args: [],
+            }];
+        case "bof":
+            return [{
+                kind: "goTo",
+                funcName: "BOF",
+                args: [],
+            }];
+        case "select":
+            if (args.length !== 2 || !ts.isStringLiteral(args[0]) || !ts.isStringLiteral(args[1])) {
+                console.error(`Expected two string literal arguments in goTo.select, got ${args.map(arg => arg.getText()).join(", ")}`);
+                return undefined;
+            }
+            return [{
+                kind: "goTo",
+                funcName: "select",
+                args: [getGoStringLiteral(args[0].text), getGoStringLiteral(args[1].text)],
+            }];
+        default:
+            console.error(`Unrecognized goTo function: ${funcName}`);
+            return undefined;
     }
-    const arg = args[0];
-    if (!ts.isStringLiteral(arg)) {
-        console.error(`Unrecognized argument in goTo.marker: ${arg.getText()}`);
-        return undefined;
-    }
-    return [{
-        kind: "goToMarker",
-        marker: getGoStringLiteral(arg.text),
-    }];
 }
 
 function parseVerifyCompletionsArgs(args: readonly ts.Expression[]): VerifyCompletionsCmd[] | undefined {
@@ -700,9 +766,17 @@ interface VerifyBaselineFindAllReferencesCmd {
     ranges?: boolean;
 }
 
-interface GoToMarkerCmd {
-    kind: "goToMarker";
-    marker: string;
+interface VerifyBaselineFindAllReferencesCmd {
+    kind: "verifyBaselineFindAllReferences";
+    markers: string[];
+    ranges?: boolean;
+}
+
+interface GoToCmd {
+    kind: "goTo";
+    // !!! `selectRange` and `rangeStart` require parsing variables and `test.ranges()[n]`
+    funcName: "marker" | "file" | "fileNumber" | "EOF" | "BOF" | "position" | "select";
+    args: string[];
 }
 
 interface EditCmd {
@@ -710,7 +784,7 @@ interface EditCmd {
     goStatement: string;
 }
 
-type Cmd = VerifyCompletionsCmd | VerifyBaselineFindAllReferencesCmd | GoToMarkerCmd | EditCmd;
+type Cmd = VerifyCompletionsCmd | VerifyBaselineFindAllReferencesCmd | GoToCmd | EditCmd;
 
 function generateVerifyCompletions({ marker, args, isNewIdentifierLocation }: VerifyCompletionsCmd): string {
     let expectedList = "nil";
@@ -743,8 +817,9 @@ function generateBaselineFindAllReferences({ markers, ranges }: VerifyBaselineFi
     return `f.VerifyBaselineFindAllReferences(t, ${markers.join(", ")})`;
 }
 
-function generateGoToMarker({ marker }: GoToMarkerCmd): string {
-    return `f.GoToMarker(t, ${marker})`;
+function generateGoToCommand({ funcName, args }: GoToCmd): string {
+    const funcNameCapitalized = funcName.charAt(0).toUpperCase() + funcName.slice(1);
+    return `f.GoTo${funcNameCapitalized}(t, ${args.join(", ")})`;
 }
 
 function generateCmd(cmd: Cmd): string {
@@ -753,8 +828,8 @@ function generateCmd(cmd: Cmd): string {
             return generateVerifyCompletions(cmd as VerifyCompletionsCmd);
         case "verifyBaselineFindAllReferences":
             return generateBaselineFindAllReferences(cmd as VerifyBaselineFindAllReferencesCmd);
-        case "goToMarker":
-            return generateGoToMarker(cmd as GoToMarkerCmd);
+        case "goTo":
+            return generateGoToCommand(cmd as GoToCmd);
         case "edit":
             return cmd.goStatement;
         default:
@@ -768,7 +843,7 @@ interface GoTest {
     commands: Cmd[];
 }
 
-function generateGoTest(test: GoTest): string {
+function generateGoTest(failingTests: Set<string>, test: GoTest): string {
     const testName = test.name[0].toUpperCase() + test.name.substring(1);
     const content = test.content;
     const commands = test.commands.map(cmd => generateCmd(cmd)).join("\n");
@@ -804,4 +879,6 @@ function generateHelperFile() {
     fs.copyFileSync(helperFilePath, path.join(outputDir, "util_test.go"));
 }
 
-main();
+if (url.fileURLToPath(import.meta.url) == process.argv[1]) {
+    main();
+}
