@@ -42,7 +42,7 @@ x++;`
 
 	// Set up the file system with an untitled file -
 	// But use a regular file first to see the current behavior
-	files := map[string]any{
+	files := map[string]string{
 		"/Untitled-2.ts": testContent,
 	}
 
