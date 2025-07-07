@@ -27,11 +27,10 @@ func runFoldingRangeTest(t *testing.T, input string) {
 	sort.Slice(markerPositions, func(i, j int) bool {
 		if markerPositions[i].LSRange.Start.Line != markerPositions[j].LSRange.Start.Line {
 			return markerPositions[i].LSRange.Start.Line < markerPositions[j].LSRange.Start.Line
-		}
-		if markerPositions[i].LSRange.End.Line != markerPositions[j].LSRange.End.Line {
-			return markerPositions[i].LSRange.End.Line < markerPositions[j].LSRange.End.Line
 		} else if markerPositions[i].LSRange.Start.Character != markerPositions[j].LSRange.Start.Character {
 			return markerPositions[i].LSRange.Start.Character < markerPositions[j].LSRange.Start.Character
+		} else if markerPositions[i].LSRange.End.Line != markerPositions[j].LSRange.End.Line {
+			return markerPositions[i].LSRange.End.Line < markerPositions[j].LSRange.End.Line
 		}
 		return markerPositions[i].LSRange.End.Character < markerPositions[j].LSRange.End.Character
 	})

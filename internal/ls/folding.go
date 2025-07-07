@@ -20,13 +20,14 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 	sort.Slice(res, func(i, j int) bool {
 		if res[i].StartLine != res[j].StartLine {
 			return res[i].StartLine < res[j].StartLine
-		}
-		if res[i].EndLine != res[j].EndLine {
-			return res[i].EndLine < res[j].EndLine
 		} else if res[i].StartCharacter != nil && res[j].StartCharacter != nil {
 			return *res[i].StartCharacter < *res[j].StartCharacter
+		} else if res[i].EndLine != res[j].EndLine {
+			return res[i].EndLine < res[j].EndLine
+		} else if res[i].EndCharacter != nil && res[j].EndCharacter != nil {
+			return *res[i].EndCharacter < *res[j].EndCharacter
 		}
-		return *res[i].EndCharacter < *res[j].EndCharacter
+		return false
 	})
 	return res
 }
@@ -80,32 +81,31 @@ func (l *LanguageService) addRegionOutliningSpans(sourceFile *ast.SourceFile) []
 		if result == nil || isInComment(sourceFile, int(currentLineStart), nil) != nil {
 			continue
 		}
+
 		if result.isStart {
-			span := l.createLspPosition(strings.Index(sourceFile.Text()[currentLineStart:lineEnd], "//")+int(currentLineStart), sourceFile)
+			commentStart := l.createLspPosition(strings.Index(sourceFile.Text()[currentLineStart:lineEnd], "//")+int(currentLineStart), sourceFile)
 			foldingRangeKindRegion := lsproto.FoldingRangeKindRegion
-			collapsedTest := "#region"
+			collapsedText := "#region"
 			if result.name != "" {
-				collapsedTest = result.name
+				collapsedText = result.name
 			}
+			// Our spans start out with some initial data.
+			// On every `#endregion`, we'll come back to these `FoldingRange`s
+			// and fill in their EndLine/EndCharacter.
 			regions = append(regions, &lsproto.FoldingRange{
-				StartLine:      span.Line,
-				StartCharacter: &span.Character,
+				StartLine:      commentStart.Line,
+				StartCharacter: &commentStart.Character,
 				Kind:           &foldingRangeKindRegion,
-				CollapsedText:  &collapsedTest,
+				CollapsedText:  &collapsedText,
 			})
 		} else {
 			if len(regions) > 0 {
 				region := regions[len(regions)-1]
 				regions = regions[:len(regions)-1]
-				if region != nil {
-					if out == nil {
-						out = []*lsproto.FoldingRange{}
-					}
-					endingPosition := l.createLspPosition(lineEnd, sourceFile)
-					region.EndLine = endingPosition.Line
-					region.EndCharacter = &endingPosition.Character
-					out = append(out, region)
-				}
+				endingPosition := l.createLspPosition(lineEnd, sourceFile)
+				region.EndLine = endingPosition.Line
+				region.EndCharacter = &endingPosition.Character
+				out = append(out, region)
 			}
 		}
 	}
