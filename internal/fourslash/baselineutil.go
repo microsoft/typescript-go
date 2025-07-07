@@ -55,7 +55,7 @@ func (f *FourslashTest) getBaselineForLocationsWithFileContents(spans []*lsproto
 
 func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLocations *collections.MultiMap[lsproto.DocumentUri, *lsproto.Location], options baselineFourslashLocationsOptions) string {
 	baselineEntries := []string{}
-	err := f.server.FS().WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
+	err := f.vfs.WalkDir("/", func(path string, d vfs.DirEntry, e error) error {
 		if e != nil {
 			return e
 		}
@@ -69,7 +69,7 @@ func (f *FourslashTest) getBaselineForGroupedLocationsWithFileContents(groupedLo
 			return nil
 		}
 
-		content, ok := f.server.FS().ReadFile(path)
+		content, ok := f.vfs.ReadFile(path)
 		if !ok {
 			return nil
 		}
@@ -336,7 +336,7 @@ func newTextWithContext(fileName string, content string) *textWithContext {
 
 		readableContents: &strings.Builder{},
 
-		isLibFile:  regexp.MustCompile(`/lib.*\.d\.ts$/`).MatchString(fileName),
+		isLibFile:  regexp.MustCompile(`lib.*\.d\.ts$`).MatchString(fileName),
 		newContent: &strings.Builder{},
 		pos:        lsproto.Position{Line: 0, Character: 0},
 		fileName:   fileName,

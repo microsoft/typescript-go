@@ -60,7 +60,7 @@ func (lm *LineMap) ComputeIndexOfLineStart(targetPos core.TextPos) int {
 		// If the actual position was not found, the binary search returns where the target line start would be inserted
 		// if the target was in the slice.
 		// e.g. if the line starts at [5, 10, 23, 80] and the position requested was 20
-		// then the search will return -3.
+		// then the search will return (3, false).
 		//
 		// We want the index of the previous line start, so we subtract 1.
 		lineNumber = lineNumber - 1

@@ -678,14 +678,14 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 		referenceLocations = core.Map(markers, func(markerName string) MarkerOrRange {
 			marker, ok := f.testData.MarkerPositions[markerName]
 			if !ok {
-				t.Fatalf("Marker %s not found", markerName)
+				t.Fatalf("Marker '%s' not found", markerName)
 			}
 			return marker
 		})
 	}
 
 	if f.baseline != nil {
-		t.Fatalf("Error during test \"%s\": Another baseline is already in progress", t.Name())
+		t.Fatalf("Error during test '%s': Another baseline is already in progress", t.Name())
 	} else {
 		f.baseline = &baselineFromTest{
 			content:      &strings.Builder{},
@@ -708,7 +708,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 		}
 		resMsg := f.sendRequest(t, lsproto.MethodTextDocumentReferences, params)
 		if resMsg == nil {
-			t.Fatalf("Nil response received for completion request at marker %s", f.lastKnownMarkerName)
+			t.Fatalf("Nil response received for references request at marker '%s'", f.lastKnownMarkerName)
 		}
 		result := resMsg.AsResponse().Result
 		if result, ok := result.([]*lsproto.Location); ok {
@@ -720,7 +720,7 @@ func (f *FourslashTest) VerifyBaselineFindAllReferences(
 			if f.lastKnownMarkerName == "" {
 				t.Fatalf("Unexpected references response type at pos %v: %T", f.currentCaretPosition, result)
 			} else {
-				t.Fatalf("Unexpected references response type at marker %s: %T", f.lastKnownMarkerName, result)
+				t.Fatalf("Unexpected references response type at marker '%s': %T", f.lastKnownMarkerName, result)
 			}
 		}
 	}
