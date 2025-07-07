@@ -21206,6 +21206,7 @@ func (c *Checker) pushActiveMapper(mapper *TypeMapper) {
 
 	lastIndex := len(c.activeTypeMappersCaches)
 	if cap(c.activeTypeMappersCaches) > lastIndex {
+		// The cap may contain an empty map from popActiveMapper; reuse it.
 		c.activeTypeMappersCaches = c.activeTypeMappersCaches[:lastIndex+1]
 		if c.activeTypeMappersCaches[lastIndex] == nil {
 			c.activeTypeMappersCaches[lastIndex] = make(map[string]*Type, 1)
