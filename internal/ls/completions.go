@@ -4598,7 +4598,7 @@ func (l *LanguageService) ResolveCompletionItem(
 
 	program, file := l.getProgramAndFile(itemData.documentURI)
 	position := int(l.converters.LineAndCharacterToPosition(file, itemData.position))
-	return l.getCompletionItemDetails(ctx, program, position, file, itemData, clientOptions, preferences), nil
+	return l.getCompletionItemDetails(ctx, program, position, file, item, itemData, clientOptions, preferences), nil
 }
 
 func (l *LanguageService) getCompletionItemData(data any) (*itemData, error) {
@@ -4618,31 +4618,80 @@ func (l *LanguageService) getCompletionItemDetails(
 	program *compiler.Program,
 	position int,
 	file *ast.SourceFile,
+	item *lsproto.CompletionItem,
 	itemData *itemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
 ) *lsproto.CompletionItem {
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	contextToken, previousToken := getRelevantTokens(position, file)
+	_, previousToken := getRelevantTokens(position, file)
 	if IsInString(file, position, previousToken) {
 		// !!! string literal details
+		return nil
 	}
 
 	// Compute all the completion symbols again.
-	symbolCompletion := getSymbolCompletionFromItemData(program, checker, file, position, itemData, clientOptions, preferences)
-	// !!! todo
+	symbolCompletion := getSymbolCompletionFromItemData(
+		program,
+		checker,
+		file,
+		position,
+		itemData,
+		clientOptions,
+		preferences,
+	)
+	switch {
+	case symbolCompletion.request != nil:
+		request := symbolCompletion.request
+		// !!! JSDoc completions
+		if core.Some(request.keywordCompletions, func(c *lsproto.CompletionItem) bool {
+			return c.Label == itemData.name
+		}) {
+			return createSimpleDetails(item, itemData.name)
+		}
+		return nil
+	case symbolCompletion.symbol != nil:
+		symbolDetails := symbolCompletion.symbol
+		actions := getCompletionItemActions(symbolDetails.symbol)
+		return createCompletionDetailsForSymbol(
+			item,
+			checker,
+			symbolDetails.location,
+			actions,
+		)
+	case symbolCompletion.literal != nil:
+		literal := symbolCompletion.literal
+		return createSimpleDetails(item, completionNameForLiteral(file, preferences, *literal))
+	case symbolCompletion.cases != nil:
+		// !!! exhaustive case completions
+		return item
+	default:
+		// Didn't find a symbol with this name.  See if we can find a keyword instead.
+		if core.Some(allKeywordCompletions(), func(c *lsproto.CompletionItem) bool {
+			return c.Label == itemData.name
+		}) {
+			return createSimpleDetails(item, itemData.name)
+		}
+		return nil
+	}
 }
 
 type detailsData struct {
 	symbol  *symbolDetails
 	request *completionDataKeyword
 	literal *literalValue
-	cases   *interface{}
+	cases   *struct{}
 }
 
 type symbolDetails struct {
-	// !!!
+	symbol             *ast.Symbol
+	location           *ast.Node
+	origin             *symbolOriginInfo
+	previousToken      *ast.Node
+	contextToken       *ast.Node
+	jsxInitializer     jsxInitializer
+	isTypeOnlyLocation bool
 }
 
 func getSymbolCompletionFromItemData(
@@ -4656,7 +4705,7 @@ func getSymbolCompletionFromItemData(
 ) detailsData {
 	if itemData.source == SourceSwitchCases {
 		return detailsData{
-			cases: &casesDetails{},
+			cases: &struct{}{},
 		}
 	}
 	if itemData.autoImport != nil {
@@ -4664,7 +4713,6 @@ func getSymbolCompletionFromItemData(
 		return detailsData{}
 	}
 
-	compilerOptions := program.Options()
 	completionData := getCompletionData(program, checker, file, position, preferences)
 	if completionData == nil {
 		return detailsData{}
@@ -4699,8 +4747,77 @@ func getSymbolCompletionFromItemData(
 		symbolId := ast.GetSymbolId(symbol)
 		origin := data.symbolToOriginInfoMap[symbolId]
 		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind, data.isJsxIdentifierExpected)
-		if displayName == itemData.name && 
+		if displayName == itemData.name &&
+			(itemData.source == string(completionSourceClassMemberSnippet) && symbol.Flags&ast.SymbolFlagsClassMember != 0 ||
+				itemData.source == string(completionSourceObjectLiteralMethodSnippet) && symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 ||
+				getSourceFromOrigin(origin) == itemData.source ||
+				itemData.source == string(completionSourceObjectLiteralMemberWithComma)) {
+			return detailsData{
+				symbol: &symbolDetails{
+					symbol:             symbol,
+					location:           data.location,
+					origin:             origin,
+					previousToken:      data.previousToken,
+					contextToken:       data.contextToken,
+					jsxInitializer:     data.jsxInitializer,
+					isTypeOnlyLocation: data.isTypeOnlyLocation,
+				}}
+		}
 	}
+	return detailsData{}
+}
 
-	// !!! HERE
+func createSimpleDetails(
+	item *lsproto.CompletionItem,
+	name string,
+) *lsproto.CompletionItem {
+	return createCompletionDetails(item, name, "" /*documentation*/)
+}
+
+func createCompletionDetails(
+	item *lsproto.CompletionItem,
+	detail string,
+	documentation string,
+) *lsproto.CompletionItem {
+	// !!! fill in additionalTextEdits from code actions
+	if item.Detail == nil && detail != "" {
+		item.Detail = &detail
+	}
+	if documentation != "" {
+		item.Documentation = &lsproto.StringOrMarkupContent{
+			MarkupContent: &lsproto.MarkupContent{
+				Kind:  lsproto.MarkupKindMarkdown,
+				Value: documentation,
+			},
+		}
+	}
+	return item
+}
+
+type codeAction struct {
+	// Description of the code action to display in the UI of the editor
+	description string
+	// Text changes to apply to each file as part of the code action
+	changes []*lsproto.TextEdit
+}
+
+func createCompletionDetailsForSymbol(
+	item *lsproto.CompletionItem,
+	checker *checker.Checker,
+	location *ast.Node,
+	actions []codeAction,
+) *lsproto.CompletionItem {
+	details := make([]string, 0, len(actions)+1)
+	for _, action := range actions {
+		details = append(details, action.description)
+	}
+	quickInfo, documentation := getQuickInfoAndDocumentation(checker, location)
+	details = append(details, quickInfo)
+	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation)
+}
+
+// !!! auto-import
+// !!! snippets
+func getCompletionItemActions(symbol *ast.Symbol) []codeAction {
+	return nil
 }

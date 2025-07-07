@@ -27,18 +27,78 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 	}
 	c, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, getNodeForQuickInfo(node))
+	quickInfo, documentation := getQuickInfoAndDocumentation(c, node)
 	if quickInfo != "" {
 		return &lsproto.Hover{
 			Contents: lsproto.MarkupContentOrMarkedStringOrMarkedStrings{
 				MarkupContent: &lsproto.MarkupContent{
 					Kind:  lsproto.MarkupKindMarkdown,
-					Value: formatQuickInfoAndJSDoc(quickInfo, declaration),
+					Value: formatQuickInfo(quickInfo) + documentation,
 				},
 			},
 		}, nil
 	}
 	return nil, nil
+}
+
+func getQuickInfoAndDocumentation(c *checker.Checker, node *ast.Node) (string, string) {
+	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, getNodeForQuickInfo(node))
+	if quickInfo == "" {
+		return "", ""
+	}
+	var b strings.Builder
+	if declaration != nil {
+		if jsdoc := getJSDocOrTag(declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
+			writeComments(&b, jsdoc.Comments())
+			if jsdoc.Kind == ast.KindJSDoc {
+				if tags := jsdoc.AsJSDoc().Tags; tags != nil {
+					for _, tag := range tags.Nodes {
+						if tag.Kind == ast.KindJSDocTypeTag {
+							continue
+						}
+						b.WriteString("\n\n*@")
+						b.WriteString(tag.TagName().Text())
+						b.WriteString("*")
+						switch tag.Kind {
+						case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
+							writeOptionalEntityName(&b, tag.Name())
+						case ast.KindJSDocAugmentsTag:
+							writeOptionalEntityName(&b, tag.AsJSDocAugmentsTag().ClassName)
+						case ast.KindJSDocSeeTag:
+							writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
+						case ast.KindJSDocTemplateTag:
+							for i, tp := range tag.TypeParameters() {
+								if i != 0 {
+									b.WriteString(",")
+								}
+								writeOptionalEntityName(&b, tp.Name())
+							}
+						}
+						comments := tag.Comments()
+						if len(comments) != 0 {
+							if commentHasPrefix(comments, "```") {
+								b.WriteString("\n")
+							} else {
+								b.WriteString(" ")
+								if !commentHasPrefix(comments, "-") {
+									b.WriteString("— ")
+								}
+							}
+							writeComments(&b, comments)
+						}
+					}
+				}
+			}
+		}
+	}
+	return quickInfo, b.String()
+}
+
+func formatQuickInfo(quickInfo string) string {
+	var b strings.Builder
+	b.Grow(32)
+	writeCode(&b, "tsx", quickInfo)
+	return b.String()
 }
 
 func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, node *ast.Node) (string, *ast.Node) {
