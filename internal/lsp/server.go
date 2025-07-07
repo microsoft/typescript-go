@@ -29,7 +29,6 @@ type ServerOptions struct {
 	Err io.Writer
 
 	Cwd                string
-	NewLine            core.NewLineKind
 	FS                 vfs.FS
 	DefaultLibraryPath string
 	TypingsLocation    string
@@ -50,7 +49,6 @@ func NewServer(opts *ServerOptions) *Server {
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
 		pendingServerRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
 		cwd:                   opts.Cwd,
-		newLine:               opts.NewLine,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
 		typingsLocation:       opts.TypingsLocation,
@@ -134,7 +132,6 @@ type Server struct {
 	pendingServerRequestsMu sync.Mutex
 
 	cwd                string
-	newLine            core.NewLineKind
 	fs                 vfs.FS
 	defaultLibraryPath string
 	typingsLocation    string
