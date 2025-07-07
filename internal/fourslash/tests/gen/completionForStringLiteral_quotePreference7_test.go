@@ -4,17 +4,23 @@ import (
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/fourslash"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestSatisfiesOperatorCompletion(t *testing.T) {
+func TestCompletionForStringLiteral_quotePreference7(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `type T = number;
-var x;
-var y = x satisfies /**/`
+	const content = `// @filename: /a.ts
+export const a = null;
+// @filename: /b.ts
+import { a } from './a';
+
+const foo = { '#': null };
+foo[|./**/|]`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	f.GoToFile(t, "/b.ts")
 	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
@@ -22,7 +28,7 @@ var y = x satisfies /**/`
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"T"},
+			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "#", InsertText: ptrTo("['#']")}},
 		},
 	})
 }

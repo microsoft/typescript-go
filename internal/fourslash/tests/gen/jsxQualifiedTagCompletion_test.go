@@ -7,22 +7,28 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestSatisfiesOperatorCompletion(t *testing.T) {
+func TestJsxQualifiedTagCompletion(t *testing.T) {
 	t.Parallel()
-
+	t.Skip()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `type T = number;
-var x;
-var y = x satisfies /**/`
+	const content = `//@Filename: file.tsx
+ declare var React: any;
+ namespace NS {
+     export var Foo: any = null;
+ }
+ const j = <NS.Foo>Hello!/**/
+`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+	f.GoToMarker(t, "")
+	f.Insert(t, "</")
+	f.VerifyCompletions(t, nil, &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"T"},
+			Exact: []fourslash.CompletionsExpectedItem{"NS.Foo>"},
 		},
 	})
 }
