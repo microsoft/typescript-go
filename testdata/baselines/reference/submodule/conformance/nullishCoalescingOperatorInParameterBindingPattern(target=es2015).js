@@ -8,4 +8,4 @@ const a = (): string | undefined => undefined;
 //// [nullishCoalescingOperatorInParameterBindingPattern.js]
 // https://github.com/microsoft/TypeScript/issues/36295
 const a = () => undefined;
-(({ [a() ?? "d"]: c = "" }) => { })();
+(({ [(_a = a()) !== null && _a !== void 0 ? _a : "d"]: c = "" }) => { var _a; })();
