@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/module"
@@ -212,12 +213,121 @@ func (b *nodeBuilderImpl) createElidedInformationPlaceholder() *ast.TypeNode {
 	return b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
 }
 
-func (b *nodeBuilderImpl) mapToTypeNodes(list []*Type) *ast.NodeList {
+func (b *nodeBuilderImpl) mapToTypeNodes(list []*Type, isBareList bool) *ast.NodeList {
 	if len(list) == 0 {
 		return nil
 	}
-	contents := core.Map(list, b.typeToTypeNode)
-	return b.f.NewNodeList(contents)
+
+	if b.checkTruncationLength() {
+		if !isBareList {
+			var node *ast.Node
+			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
+				// addSyntheticLeadingComment(factory.createKeywordTypeNode(SyntaxKind.AnyKeyword), SyntaxKind.MultiLineCommentTrivia, `... ${types.length} elided ...`)
+				node = b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+			} else {
+				node = b.f.NewTypeReferenceNode(b.f.NewIdentifier("..."), nil /*typeArguments*/)
+			}
+			return b.f.NewNodeList([]*ast.Node{node})
+		} else if len(list) > 2 {
+			nodes := []*ast.Node{
+				b.typeToTypeNode(list[0]),
+				nil,
+				b.typeToTypeNode(list[len(list)-1]),
+			}
+
+			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
+				// addSyntheticLeadingComment(factory.createKeywordTypeNode(SyntaxKind.AnyKeyword), SyntaxKind.MultiLineCommentTrivia, `... ${types.length - 2} more elided ...`)
+				nodes[1] = b.f.NewKeywordTypeNode(ast.KindAnyKeyword)
+			} else {
+				text := fmt.Sprintf("... %d more ...", len(list)-2)
+				nodes[1] = b.f.NewTypeReferenceNode(b.f.NewIdentifier(text), nil /*typeArguments*/)
+			}
+			return b.f.NewNodeList(nodes)
+		}
+	}
+
+	mayHaveNameCollisions := b.ctx.flags&nodebuilder.FlagsUseFullyQualifiedType == 0
+	type seenName struct {
+		t *Type
+		i int
+	}
+	var seenNames *collections.MultiMap[string, seenName]
+	if mayHaveNameCollisions {
+		seenNames = &collections.MultiMap[string, seenName]{}
+	}
+
+	result := make([]*ast.Node, 0, len(list))
+
+	for i, t := range list {
+		if b.checkTruncationLength() && (i+2 < len(list)-1) {
+			if b.ctx.flags&nodebuilder.FlagsNoTruncation != 0 {
+				// addSyntheticLeadingComment(factory.createKeywordTypeNode(SyntaxKind.AnyKeyword), SyntaxKind.MultiLineCommentTrivia, `... ${types.length} elided ...`)
+				result = append(result, b.f.NewKeywordTypeNode(ast.KindAnyKeyword))
+			} else {
+				text := fmt.Sprintf("... %d more ...", len(list)-i)
+				result = append(result, b.f.NewTypeReferenceNode(b.f.NewIdentifier(text), nil /*typeArguments*/))
+			}
+			typeNode := b.typeToTypeNode(list[len(list)-1])
+			if typeNode != nil {
+				result = append(result, typeNode)
+			}
+			break
+		}
+		b.ctx.approximateLength += 2 // Account for whitespace + separator
+		typeNode := b.typeToTypeNode(t)
+		if typeNode != nil {
+			result = append(result, typeNode)
+			if seenNames != nil && isIdentifierTypeReference(typeNode) {
+				seenNames.Add(typeNode.AsTypeReferenceNode().TypeName.Text(), seenName{t, len(result) - 1})
+			}
+		}
+	}
+
+	if seenNames != nil {
+		// To avoid printing types like `[Foo, Foo]` or `Bar & Bar` where
+		// occurrences of the same name actually come from different
+		// namespaces, go through the single-identifier type reference nodes
+		// we just generated, and see if any names were generated more than
+		// once while referring to different types. If so, regenerate the
+		// type node for each entry by that name with the
+		// `UseFullyQualifiedType` flag enabled.
+		restoreFlags := b.saveRestoreFlags()
+		b.ctx.flags |= nodebuilder.FlagsUseFullyQualifiedType
+		for types := range seenNames.Values() {
+			if !arrayIsHomogeneous(types, func(a, b seenName) bool {
+				return typesAreSameReference(a.t, b.t)
+			}) {
+				for _, seen := range types {
+					result[seen.i] = b.typeToTypeNode(seen.t)
+				}
+			}
+		}
+		restoreFlags()
+	}
+
+	return b.f.NewNodeList(result)
+}
+
+func isIdentifierTypeReference(node *ast.Node) bool {
+	return ast.IsTypeReferenceNode(node) && ast.IsIdentifier(node.AsTypeReferenceNode().TypeName)
+}
+
+func arrayIsHomogeneous[T any](array []T, comparer func(a, B T) bool) bool {
+	if len(array) < 2 {
+		return true
+	}
+	first := array[0]
+	for i := 1; i < len(array); i++ {
+		target := array[i]
+		if !comparer(first, target) {
+			return false
+		}
+	}
+	return true
+}
+
+func typesAreSameReference(a, b *Type) bool {
+	return a == b || a.symbol != nil && a.symbol == b.symbol || a.alias != nil && a.alias == b.alias
 }
 
 func (b *nodeBuilderImpl) setCommentRange(node *ast.Node, range_ *ast.Node) {
@@ -819,7 +929,7 @@ func (b *nodeBuilderImpl) lookupTypeParameterNodes(chain []*ast.Symbol, index in
 			if targetMapper != nil {
 				params = core.Map(params, targetMapper.Map)
 			}
-			return b.mapToTypeNodes(params)
+			return b.mapToTypeNodes(params, false /*isBareList*/)
 		} else {
 			typeParameterNodes := b.typeParametersToTypeParameterDeclarations(symbol)
 			if len(typeParameterNodes) > 0 {
@@ -2486,7 +2596,7 @@ func (b *nodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 		})
 		if len(typeArguments) > 0 {
 			arity := b.ch.getTypeReferenceArity(t)
-			tupleConstituentNodes := b.mapToTypeNodes(typeArguments[0:arity])
+			tupleConstituentNodes := b.mapToTypeNodes(typeArguments[0:arity], false /*isBareList*/)
 			if tupleConstituentNodes != nil {
 				for i := 0; i < len(tupleConstituentNodes.Nodes); i++ {
 					flags := t.Target().AsTupleType().elementInfos[i].flags
@@ -2543,7 +2653,7 @@ func (b *nodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 				// the default outer type arguments), we don't show the group.
 
 				if !slices.Equal(outerTypeParameters[start:i], typeArguments[start:i]) {
-					typeArgumentSlice := b.mapToTypeNodes(typeArguments[start:i])
+					typeArgumentSlice := b.mapToTypeNodes(typeArguments[start:i], false /*isBareList*/)
 					restoreFlags := b.saveRestoreFlags()
 					b.ctx.flags |= nodebuilder.FlagsForbidIndexedAccessSymbolReferences
 					ref := b.symbolToTypeNode(parent, ast.SymbolFlagsType, typeArgumentSlice)
@@ -2582,7 +2692,7 @@ func (b *nodeBuilderImpl) typeReferenceToTypeNode(t *Type) *ast.TypeNode {
 				}
 			}
 
-			typeArgumentNodes = b.mapToTypeNodes(typeArguments[i:typeParameterCount])
+			typeArgumentNodes = b.mapToTypeNodes(typeArguments[i:typeParameterCount], false /*isBareList*/)
 		}
 		restoreFlags := b.saveRestoreFlags()
 		b.ctx.flags |= nodebuilder.FlagsForbidIndexedAccessSymbolReferences
@@ -2828,7 +2938,7 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 
 	if inTypeAlias == 0 && t.alias != nil && (b.ctx.flags&nodebuilder.FlagsUseAliasDefinedOutsideCurrentScope != 0 || b.ch.IsTypeSymbolAccessible(t.alias.Symbol(), b.ctx.enclosingDeclaration)) {
 		sym := t.alias.Symbol()
-		typeArgumentNodes := b.mapToTypeNodes(t.alias.TypeArguments())
+		typeArgumentNodes := b.mapToTypeNodes(t.alias.TypeArguments(), false /*isBareList*/)
 		if isReservedMemberName(sym.Name) && sym.Flags&ast.SymbolFlagsClass == 0 {
 			return b.f.NewTypeReferenceNode(b.f.NewIdentifier(""), typeArgumentNodes)
 		}
@@ -2896,7 +3006,7 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 		if len(types) == 1 {
 			return b.typeToTypeNode(types[0])
 		}
-		typeNodes := b.mapToTypeNodes(types)
+		typeNodes := b.mapToTypeNodes(types, true /*isBareList*/)
 		if typeNodes != nil && len(typeNodes.Nodes) > 0 {
 			if t.flags&TypeFlagsUnion != 0 {
 				return b.f.NewUnionTypeNode(typeNodes)
@@ -2970,5 +3080,5 @@ func (b *nodeBuilderImpl) typeToTypeNode(t *Type) *ast.TypeNode {
 // Direct serialization core functions for types, type aliases, and symbols
 
 func (t *TypeAlias) ToTypeReferenceNode(b *nodeBuilderImpl) *ast.Node {
-	return b.f.NewTypeReferenceNode(b.symbolToEntityNameNode(t.Symbol()), b.mapToTypeNodes(t.TypeArguments()))
+	return b.f.NewTypeReferenceNode(b.symbolToEntityNameNode(t.Symbol()), b.mapToTypeNodes(t.TypeArguments(), false /*isBareList*/))
 }
