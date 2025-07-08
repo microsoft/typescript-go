@@ -42,7 +42,11 @@ func (l *LanguageService) ProvideHover(ctx context.Context, documentURI lsproto.
 }
 
 func getQuickInfoAndDocumentation(c *checker.Checker, node *ast.Node) (string, string) {
-	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, getNodeForQuickInfo(node))
+	return getQuickInfoAndDocumentationForSymbol(c, c.GetSymbolAtLocation(node), getNodeForQuickInfo(node))
+}
+
+func getQuickInfoAndDocumentationForSymbol(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, string) {
+	quickInfo, declaration := getQuickInfoAndDeclarationAtLocation(c, symbol, node)
 	if quickInfo == "" {
 		return "", ""
 	}
@@ -101,8 +105,7 @@ func formatQuickInfo(quickInfo string) string {
 	return b.String()
 }
 
-func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, node *ast.Node) (string, *ast.Node) {
-	symbol := c.GetSymbolAtLocation(node)
+func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, symbol *ast.Symbol, node *ast.Node) (string, *ast.Node) {
 	isAlias := symbol != nil && symbol.Flags&ast.SymbolFlagsAlias != 0
 	if isAlias {
 		symbol = c.GetAliasedSymbol(symbol)
@@ -226,6 +229,9 @@ func getQuickInfoAndDeclarationAtLocation(c *checker.Checker, node *ast.Node) (s
 }
 
 func getNodeForQuickInfo(node *ast.Node) *ast.Node {
+	if node.Parent == nil {
+		return node
+	}
 	if ast.IsNewExpression(node.Parent) && node.Pos() == node.Parent.Pos() {
 		return node.Parent.Expression()
 	}
@@ -312,57 +318,6 @@ func writeSignatures(b *strings.Builder, c *checker.Checker, signatures []*check
 		b.WriteString(c.SymbolToStringEx(symbol, container, ast.SymbolFlagsNone, symbolFormatFlags))
 		b.WriteString(c.SignatureToStringEx(sig, container, typeFormatFlags|checker.TypeFormatFlagsWriteCallStyleSignature|checker.TypeFormatFlagsWriteTypeArgumentsOfSignature))
 	}
-}
-
-func formatQuickInfoAndJSDoc(quickInfo string, declaration *ast.Node) string {
-	var b strings.Builder
-	b.Grow(32)
-	writeCode(&b, "tsx", quickInfo)
-	if declaration != nil {
-		if jsdoc := getJSDocOrTag(declaration); jsdoc != nil && !containsTypedefTag(jsdoc) {
-			writeComments(&b, jsdoc.Comments())
-			if jsdoc.Kind == ast.KindJSDoc {
-				if tags := jsdoc.AsJSDoc().Tags; tags != nil {
-					for _, tag := range tags.Nodes {
-						if tag.Kind == ast.KindJSDocTypeTag {
-							continue
-						}
-						b.WriteString("\n\n*@")
-						b.WriteString(tag.TagName().Text())
-						b.WriteString("*")
-						switch tag.Kind {
-						case ast.KindJSDocParameterTag, ast.KindJSDocPropertyTag:
-							writeOptionalEntityName(&b, tag.Name())
-						case ast.KindJSDocAugmentsTag:
-							writeOptionalEntityName(&b, tag.AsJSDocAugmentsTag().ClassName)
-						case ast.KindJSDocSeeTag:
-							writeOptionalEntityName(&b, tag.AsJSDocSeeTag().NameExpression)
-						case ast.KindJSDocTemplateTag:
-							for i, tp := range tag.TypeParameters() {
-								if i != 0 {
-									b.WriteString(",")
-								}
-								writeOptionalEntityName(&b, tp.Name())
-							}
-						}
-						comments := tag.Comments()
-						if len(comments) != 0 {
-							if commentHasPrefix(comments, "```") {
-								b.WriteString("\n")
-							} else {
-								b.WriteString(" ")
-								if !commentHasPrefix(comments, "-") {
-									b.WriteString("— ")
-								}
-							}
-							writeComments(&b, comments)
-						}
-					}
-				}
-			}
-		}
-	}
-	return b.String()
 }
 
 func containsTypedefTag(jsdoc *ast.Node) bool {

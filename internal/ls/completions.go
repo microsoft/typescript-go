@@ -4662,6 +4662,7 @@ func (l *LanguageService) getCompletionItemDetails(
 		actions := getCompletionItemActions(symbolDetails.symbol)
 		return createCompletionDetailsForSymbol(
 			item,
+			symbolDetails.symbol,
 			checker,
 			symbolDetails.location,
 			actions,
@@ -4809,6 +4810,7 @@ type codeAction struct {
 
 func createCompletionDetailsForSymbol(
 	item *lsproto.CompletionItem,
+	symbol *ast.Symbol,
 	checker *checker.Checker,
 	location *ast.Node,
 	actions []codeAction,
@@ -4817,7 +4819,7 @@ func createCompletionDetailsForSymbol(
 	for _, action := range actions {
 		details = append(details, action.description)
 	}
-	quickInfo, documentation := getQuickInfoAndDocumentation(checker, location)
+	quickInfo, documentation := getQuickInfoAndDocumentationForSymbol(checker, symbol, location)
 	details = append(details, quickInfo)
 	return createCompletionDetails(item, strings.Join(details, "\n\n"), documentation)
 }
