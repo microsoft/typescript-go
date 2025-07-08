@@ -2,19 +2,24 @@ package projectv2
 
 import (
 	"cmp"
-	"maps"
 	"slices"
 
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
 type ProjectCollection struct {
+	toPath             func(fileName string) tspath.Path
+	configFileRegistry *ConfigFileRegistry
 	// fileDefaultProjects is a map of file paths to the config file path (the key
 	// into `configuredProjects`) of the default project for that file. If the file
 	// belongs to the inferred project, the value is "". This map contains quick
 	// lookups for only the associations discovered during the latest snapshot
 	// update.
 	fileDefaultProjects map[tspath.Path]tspath.Path
+	// fileAssociations is a map of file paths to project config file paths that
+	// include them.
+	fileAssociations map[tspath.Path]map[tspath.Path]struct{}
 	// configuredProjects is the set of loaded projects associated with a tsconfig
 	// file, keyed by the config file path.
 	configuredProjects map[tspath.Path]*Project
@@ -95,27 +100,69 @@ func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path)
 		return firstConfiguredProject
 	}
 	// Multiple projects include the file directly.
-	// !!! I'm not sure of a less hacky way to do this without repeating a lot of code.
-	panic("TODO")
-	// builder := newProjectCollectionBuilder(context.Background(), c.snapshot, c, c.snapshot.configFileRegistry)
-	// defer func() {
-	// 	c2, r2 := builder.Finalize()
-	// 	if c2 != c || r2 != c.snapshot.configFileRegistry {
-	// 		panic("temporary builder should have collected no changes for a find lookup")
-	// 	}
-	// }()
-
-	// if entry := builder.findDefaultConfiguredProject(fileName, path); entry != nil {
-	// 	return entry.project
-	// }
-	// return firstConfiguredProject
+	if defaultProject := c.findDefaultConfiguredProject(fileName, path); defaultProject != nil {
+		return defaultProject
+	}
+	return firstConfiguredProject
 }
 
-// clone creates a shallow copy of the project collection, without the
-// fileDefaultProjects map.
+func (c *ProjectCollection) findDefaultConfiguredProject(fileName string, path tspath.Path) *Project {
+	if configFileName := c.configFileRegistry.GetConfigFileName(path); configFileName != "" {
+		return c.findDefaultConfiguredProjectWorker(fileName, path, configFileName)
+	}
+	return nil
+}
+
+func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, path tspath.Path, configFileName string) *Project {
+	configFilePath := c.toPath(configFileName)
+	project, ok := c.configuredProjects[configFilePath]
+	if !ok {
+		return nil
+	}
+
+	// Look in the config's project and its references recursively.
+	found := core.BreadthFirstSearchParallel(
+		project,
+		func(project *Project) []*Project {
+			// Return the project references as neighbors.
+			if project.CommandLine == nil {
+				return nil
+			}
+			return core.Map(project.CommandLine.ResolvedProjectReferencePaths(), func(configFileName string) *Project {
+				return c.configuredProjects[c.toPath(configFileName)]
+			})
+		},
+		func(project *Project) (isResult bool, stop bool) {
+			if project.containsFile(path) {
+				return true, !project.IsSourceFromProjectReference(path)
+			}
+			return false, false
+		},
+	)
+	if len(found) > 0 {
+		// If we found a project that contains the file, return it.
+		return found[0]
+	}
+
+	// Look for tsconfig.json files higher up the directory tree and do the same. This handles
+	// the common case where a higher-level "solution" tsconfig.json contains all projects in a
+	// workspace.
+	if config := c.configFileRegistry.GetConfig(path); config != nil && config.CompilerOptions().DisableSolutionSearching.IsTrue() {
+		return nil
+	}
+	if ancestorConfigName := c.configFileRegistry.GetAncestorConfigFileName(path, configFileName); ancestorConfigName != "" {
+		return c.findDefaultConfiguredProjectWorker(fileName, path, ancestorConfigName)
+	}
+	return nil
+}
+
+// clone creates a shallow copy of the project collection.
 func (c *ProjectCollection) clone() *ProjectCollection {
 	return &ProjectCollection{
-		configuredProjects: maps.Clone(c.configuredProjects),
-		inferredProject:    c.inferredProject,
+		toPath:              c.toPath,
+		configuredProjects:  c.configuredProjects,
+		inferredProject:     c.inferredProject,
+		fileAssociations:    c.fileAssociations,
+		fileDefaultProjects: c.fileDefaultProjects,
 	}
 }

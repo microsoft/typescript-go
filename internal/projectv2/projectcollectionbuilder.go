@@ -6,13 +6,10 @@ import (
 	"maps"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -27,26 +24,42 @@ const (
 )
 
 type projectCollectionBuilder struct {
-	ctx                       context.Context
-	snapshot                  *Snapshot
-	configFileRegistryBuilder *configFileRegistryBuilder
-	base                      *ProjectCollection
-	configuredProjects        collections.SyncMap[tspath.Path, *Project]
-	inferredProject           *inferredProjectEntry
-	fileDefaultProjects       map[tspath.Path]tspath.Path
+	sessionOptions      *SessionOptions
+	parseCache          *parseCache
+	extendedConfigCache *extendedConfigCache
+
+	ctx                                context.Context
+	fs                                 *overlayFS
+	base                               *ProjectCollection
+	compilerOptionsForInferredProjects *core.CompilerOptions
+	configFileRegistryBuilder          *configFileRegistryBuilder
+
+	fileDefaultProjects map[tspath.Path]tspath.Path
+	// Keys are file paths, values are sets of project paths that contain the file.
+	fileAssociations   collections.SyncMap[tspath.Path, *collections.SyncSet[tspath.Path]]
+	configuredProjects collections.SyncMap[tspath.Path, *Project]
+	inferredProject    *inferredProjectEntry
 }
 
 func newProjectCollectionBuilder(
 	ctx context.Context,
-	newSnapshot *Snapshot,
+	fs *overlayFS,
 	oldProjectCollection *ProjectCollection,
 	oldConfigFileRegistry *ConfigFileRegistry,
+	compilerOptionsForInferredProjects *core.CompilerOptions,
+	sessionOptions *SessionOptions,
+	parseCache *parseCache,
+	extendedConfigCache *extendedConfigCache,
 ) *projectCollectionBuilder {
 	return &projectCollectionBuilder{
-		ctx:                       ctx,
-		snapshot:                  newSnapshot,
-		base:                      oldProjectCollection,
-		configFileRegistryBuilder: newConfigFileRegistryBuilder(newSnapshot, oldConfigFileRegistry),
+		ctx:                                ctx,
+		fs:                                 fs,
+		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
+		sessionOptions:                     sessionOptions,
+		parseCache:                         parseCache,
+		extendedConfigCache:                extendedConfigCache,
+		base:                               oldProjectCollection,
+		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions),
 	}
 }
 
@@ -58,6 +71,8 @@ func (b *projectCollectionBuilder) Finalize() (*ProjectCollection, *ConfigFileRe
 			newProjectCollection = newProjectCollection.clone()
 			if newProjectCollection.configuredProjects == nil {
 				newProjectCollection.configuredProjects = make(map[tspath.Path]*Project)
+			} else {
+				newProjectCollection.configuredProjects = maps.Clone(newProjectCollection.configuredProjects)
 			}
 			changed = true
 		}
@@ -79,6 +94,33 @@ func (b *projectCollectionBuilder) Finalize() (*ProjectCollection, *ConfigFileRe
 		}
 		newProjectCollection.inferredProject = b.inferredProject.project
 	}
+
+	// !!! clean up file associations of deleted projects, deleted files
+	var fileAssociationsChanged bool
+	b.fileAssociations.Range(func(filePath tspath.Path, projectPaths *collections.SyncSet[tspath.Path]) bool {
+		if !changed {
+			newProjectCollection = newProjectCollection.clone()
+			changed = true
+		}
+		if !fileAssociationsChanged {
+			if newProjectCollection.fileAssociations == nil {
+				newProjectCollection.fileAssociations = make(map[tspath.Path]map[tspath.Path]struct{})
+			} else {
+				newProjectCollection.fileAssociations = maps.Clone(newProjectCollection.fileAssociations)
+			}
+			fileAssociationsChanged = true
+		}
+		m, ok := newProjectCollection.fileAssociations[filePath]
+		if !ok {
+			m = make(map[tspath.Path]struct{})
+			newProjectCollection.fileAssociations[filePath] = m
+		}
+		projectPaths.Range(func(projectPath tspath.Path) bool {
+			m[projectPath] = struct{}{}
+			return true
+		})
+		return true
+	})
 
 	return newProjectCollection, b.configFileRegistryBuilder.finalize()
 }
@@ -106,7 +148,7 @@ func (b *projectCollectionBuilder) loadOrStoreNewConfiguredProject(
 			dirty:   false,
 		}, true
 	} else {
-		entry, loaded := b.configuredProjects.LoadOrStore(path, NewConfiguredProject(fileName, path, b.snapshot))
+		entry, loaded := b.configuredProjects.LoadOrStore(path, NewConfiguredProject(fileName, path, b))
 		return &projectCollectionBuilderEntry{
 			b:       b,
 			project: entry,
@@ -186,7 +228,7 @@ func (b *projectCollectionBuilder) getInferredProject() *inferredProjectEntry {
 
 func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 	fileName := uri.FileName()
-	path := b.snapshot.toPath(fileName)
+	path := b.toPath(fileName)
 	_ = b.tryFindDefaultConfiguredProjectAndLoadAncestorsForOpenScriptInfo(fileName, path, projectLoadKindCreate)
 	b.forEachProject(func(entry *projectCollectionBuilderEntry) bool {
 		entry.updateProgram()
@@ -199,7 +241,7 @@ func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 
 func (b *projectCollectionBuilder) DidChangeFiles(uris []lsproto.DocumentUri) {
 	paths := core.Map(uris, func(uri lsproto.DocumentUri) tspath.Path {
-		return uri.Path(b.snapshot.compilerFS.UseCaseSensitiveFileNames())
+		return uri.Path(b.fs.fs.UseCaseSensitiveFileNames())
 	})
 	b.forEachProject(func(entry *projectCollectionBuilderEntry) bool {
 		for _, path := range paths {
@@ -213,7 +255,7 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri) {
 	// See if we can find a default project for this file without doing
 	// any additional loading.
 	fileName := uri.FileName()
-	path := b.snapshot.toPath(fileName)
+	path := b.toPath(fileName)
 	if result := b.findDefaultProject(fileName, path); result != nil {
 		result.updateProgram()
 		return
@@ -229,7 +271,7 @@ func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri) {
 		// If the structure of other projects changed, we might need to move files
 		// in/out of the inferred project.
 		var inferredProjectFiles []string
-		for path, overlay := range b.snapshot.Overlays() {
+		for path, overlay := range b.fs.overlays {
 			if b.findDefaultConfiguredProject(overlay.FileName(), path) == nil {
 				inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
 			}
@@ -345,7 +387,7 @@ func (b *projectCollectionBuilder) tryFindDefaultConfiguredProjectFromReferences
 	}
 	for _, childConfigFileName := range config.ResolvedProjectReferencePaths() {
 		wg.Queue(func() {
-			childConfigFilePath := b.snapshot.toPath(childConfigFileName)
+			childConfigFilePath := b.toPath(childConfigFileName)
 			childConfig := b.configFileRegistryBuilder.findOrAcquireConfigForOpenFile(childConfigFileName, childConfigFilePath, path, loadKind)
 			if childConfig == nil || b.isDefaultConfigForScript(fileName, path, childConfigFileName, childConfigFilePath, childConfig, loadKind, result) {
 				return
@@ -381,7 +423,7 @@ func (b *projectCollectionBuilder) tryFindDefaultConfiguredProjectForScriptInfo(
 	result *openScriptInfoProjectResult,
 ) bool {
 	// Lookup from parsedConfig if available
-	configFilePath := b.snapshot.toPath(configFileName)
+	configFilePath := b.toPath(configFileName)
 	config := b.configFileRegistryBuilder.findOrAcquireConfigForOpenFile(configFileName, configFilePath, path, loadKind)
 	if config != nil {
 		if config.CompilerOptions().Composite == core.TSTrue {
@@ -480,13 +522,22 @@ func (b *projectCollectionBuilder) findDefaultProject(fileName string, path tspa
 }
 
 func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string, path tspath.Path) *projectCollectionBuilderEntry {
-	if b.snapshot.IsOpenFile(path) {
+	if b.isOpenFile(path) {
 		result := b.tryFindDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind)
 		if result != nil && result.project != nil {
 			return result.project
 		}
 	}
 	return nil
+}
+
+func (b *projectCollectionBuilder) toPath(fileName string) tspath.Path {
+	return tspath.ToPath(fileName, b.sessionOptions.CurrentDirectory, b.fs.fs.UseCaseSensitiveFileNames())
+}
+
+func (b *projectCollectionBuilder) isOpenFile(path tspath.Path) bool {
+	_, ok := b.fs.overlays[path]
+	return ok
 }
 
 type projectCollectionBuilderEntry struct {
@@ -499,17 +550,18 @@ type inferredProjectEntry projectCollectionBuilderEntry
 
 func (e *inferredProjectEntry) updateInferredProject(rootFileNames []string) bool {
 	if e.project == nil && len(rootFileNames) > 0 {
-		e.project = NewInferredProject(e.b.snapshot.sessionOptions.CurrentDirectory, e.b.snapshot.compilerOptionsForInferredProjects, rootFileNames, e.b.snapshot)
+		e.project = NewInferredProject(e.b.sessionOptions.CurrentDirectory, e.b.compilerOptionsForInferredProjects, rootFileNames, e.b)
 		e.dirty = true
 		e.b.inferredProject = e
 	} else if e.project != nil && len(rootFileNames) == 0 {
 		e.project = nil
 		e.dirty = true
 		e.b.inferredProject = e
+		return true
 	} else {
-		newCommandLine := tsoptions.NewParsedCommandLine(e.b.snapshot.compilerOptionsForInferredProjects, rootFileNames, tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: e.project.FS().UseCaseSensitiveFileNames(),
-			CurrentDirectory:          e.project.GetCurrentDirectory(),
+		newCommandLine := tsoptions.NewParsedCommandLine(e.b.compilerOptionsForInferredProjects, rootFileNames, tspath.ComparePathsOptions{
+			UseCaseSensitiveFileNames: e.b.fs.fs.UseCaseSensitiveFileNames(),
+			CurrentDirectory:          e.project.currentDirectory,
 		})
 		if maps.Equal(e.project.CommandLine.FileNamesByPath(), newCommandLine.FileNamesByPath()) {
 			return false
@@ -543,44 +595,11 @@ func (e *projectCollectionBuilderEntry) updateProgram() bool {
 		return false
 	}
 
-	oldProgram := e.project.Program
 	e.ensureProjectCloned()
-	var programCloned bool
-	var newProgram *compiler.Program
-	if e.project.dirtyFilePath != "" {
-		newProgram, programCloned = e.project.Program.UpdateProgram(e.project.dirtyFilePath, e.project)
-		if !programCloned {
-			// !!! wait until accepting snapshot to release documents!
-			// !!! make this less janky
-			// UpdateProgram called GetSourceFile (acquiring the document) but was unable to use it directly,
-			// so it called NewProgram which acquired it a second time. We need to decrement the ref count
-			// for the first acquisition.
-			e.b.snapshot.parseCache.releaseDocument(newProgram.GetSourceFileByPath(e.project.dirtyFilePath))
-		}
-	} else {
-		newProgram = compiler.NewProgram(
-			compiler.ProgramOptions{
-				Host:                        e.project,
-				Config:                      e.project.CommandLine,
-				UseSourceOfProjectReference: true,
-				TypingsLocation:             e.project.snapshot.sessionOptions.TypingsLocation,
-				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
-				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
-					e.project.checkerPool = project.NewCheckerPool(4, program, e.b.snapshot.Log)
-					return e.project.checkerPool
-				},
-			},
-		)
-	}
-
-	if !programCloned && oldProgram != nil {
-		for _, file := range oldProgram.GetSourceFiles() {
-			// !!! wait until accepting snapshot to release documents!
-			e.b.snapshot.parseCache.releaseDocument(file)
-		}
-	}
-
+	e.project.host = newCompilerHost(e.project.currentDirectory, e.project, e.b)
+	newProgram, checkerPool := e.project.CreateProgram()
 	e.project.Program = newProgram
+	e.project.checkerPool = checkerPool
 	// !!! unthread context
 	e.project.LanguageService = ls.NewLanguageService(e.b.ctx, e.project)
 	e.project.dirty = false
@@ -602,7 +621,7 @@ func (e *projectCollectionBuilderEntry) markFileChanged(path tspath.Path) {
 
 func (e *projectCollectionBuilderEntry) ensureProjectCloned() {
 	if !e.dirty {
-		e.project = e.project.Clone(e.b.snapshot)
+		e.project = e.project.Clone()
 		e.dirty = true
 		if e.project.Kind == KindInferred {
 			e.b.inferredProject = (*inferredProjectEntry)(e)

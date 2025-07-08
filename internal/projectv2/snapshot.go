@@ -18,66 +18,11 @@ import (
 
 var snapshotID atomic.Uint64
 
-var _ vfs.FS = (*compilerFS)(nil)
-
-type compilerFS struct {
-	snapshot *Snapshot
-}
-
-// DirectoryExists implements vfs.FS.
-func (fs *compilerFS) DirectoryExists(path string) bool {
-	return fs.snapshot.overlayFS.fs.DirectoryExists(path)
-}
-
-// FileExists implements vfs.FS.
-func (fs *compilerFS) FileExists(path string) bool {
-	if fh := fs.snapshot.GetFile(ls.FileNameToDocumentURI(path)); fh != nil {
-		return true
-	}
-	return fs.snapshot.overlayFS.fs.FileExists(path)
-}
-
-// GetAccessibleEntries implements vfs.FS.
-func (fs *compilerFS) GetAccessibleEntries(path string) vfs.Entries {
-	return fs.snapshot.overlayFS.fs.GetAccessibleEntries(path)
-}
-
-// ReadFile implements vfs.FS.
-func (fs *compilerFS) ReadFile(path string) (contents string, ok bool) {
-	if fh := fs.snapshot.GetFile(ls.FileNameToDocumentURI(path)); fh != nil {
-		return fh.Content(), true
-	}
-	return "", false
-}
-
-// Realpath implements vfs.FS.
-func (fs *compilerFS) Realpath(path string) string {
-	return fs.snapshot.overlayFS.fs.Realpath(path)
-}
-
-// Stat implements vfs.FS.
-func (fs *compilerFS) Stat(path string) vfs.FileInfo {
-	return fs.snapshot.overlayFS.fs.Stat(path)
-}
-
-// UseCaseSensitiveFileNames implements vfs.FS.
-func (fs *compilerFS) UseCaseSensitiveFileNames() bool {
-	return fs.snapshot.overlayFS.fs.UseCaseSensitiveFileNames()
-}
-
-// WalkDir implements vfs.FS.
-func (fs *compilerFS) WalkDir(root string, walkFn vfs.WalkDirFunc) error {
-	panic("unimplemented")
-}
-
-// WriteFile implements vfs.FS.
-func (fs *compilerFS) WriteFile(path string, data string, writeByteOrderMark bool) error {
-	panic("unimplemented")
-}
-
-// Remove implements vfs.FS.
-func (fs *compilerFS) Remove(path string) error {
-	panic("unimplemented")
+// !!! create some type safety for this to ensure caching
+func newSnapshotFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding lsproto.PositionEncodingKind) *overlayFS {
+	cachedFS := cachedvfs.From(fs)
+	cachedFS.Enable()
+	return newOverlayFS(cachedFS, positionEncoding, overlays)
 }
 
 type Snapshot struct {
@@ -85,14 +30,12 @@ type Snapshot struct {
 
 	// Session options are immutable for the server lifetime,
 	// so can be a pointer.
-	sessionOptions      *SessionOptions
-	parseCache          *parseCache
-	extendedConfigCache *extendedConfigCache
-	logger              *project.Logger
+	sessionOptions *SessionOptions
+	logger         *project.Logger
+	toPath         func(fileName string) tspath.Path
 
 	// Immutable state, cloned between snapshots
 	overlayFS                          *overlayFS
-	compilerFS                         *compilerFS
 	projectCollection                  *ProjectCollection
 	configFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
@@ -100,52 +43,27 @@ type Snapshot struct {
 
 // NewSnapshot
 func NewSnapshot(
-	fs vfs.FS,
-	overlays map[tspath.Path]*overlay,
+	fs *overlayFS,
 	sessionOptions *SessionOptions,
 	parseCache *parseCache,
 	extendedConfigCache *extendedConfigCache,
 	logger *project.Logger,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
+	toPath func(fileName string) tspath.Path,
 ) *Snapshot {
-	cachedFS := cachedvfs.From(fs)
-	cachedFS.Enable()
+
 	id := snapshotID.Add(1)
 	s := &Snapshot{
-		id: id,
-
-		sessionOptions:      sessionOptions,
-		parseCache:          parseCache,
-		extendedConfigCache: extendedConfigCache,
-		logger:              logger,
-		configFileRegistry:  configFileRegistry,
-		projectCollection:   &ProjectCollection{},
-
-		overlayFS: newOverlayFS(cachedFS, sessionOptions.PositionEncoding, overlays),
+		id:                 id,
+		overlayFS:          fs,
+		sessionOptions:     sessionOptions,
+		logger:             logger,
+		configFileRegistry: configFileRegistry,
+		projectCollection:  &ProjectCollection{},
 	}
 
-	s.compilerFS = &compilerFS{snapshot: s}
-
 	return s
-}
-
-// GetFile is stable over the lifetime of the snapshot. It first consults its
-// own cache (which includes keys for missing files), and only delegates to the
-// file system if the key is not known to the cache. GetFile respects the state
-// of overlays.
-func (s *Snapshot) GetFile(uri lsproto.DocumentUri) fileHandle {
-	return s.overlayFS.getFile(uri)
-}
-
-func (s *Snapshot) Overlays() map[tspath.Path]*overlay {
-	return s.overlayFS.overlays
-}
-
-func (s *Snapshot) IsOpenFile(path tspath.Path) bool {
-	// An open file is one that has an overlay.
-	_, ok := s.overlayFS.overlays[path]
-	return ok
 }
 
 func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
@@ -167,27 +85,22 @@ type snapshotChange struct {
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Session) *Snapshot {
-	newSnapshot := NewSnapshot(
-		session.fs.fs,
-		session.fs.overlays,
-		s.sessionOptions,
-		s.parseCache,
-		s.extendedConfigCache,
-		s.logger,
-		nil,
-		s.compilerOptionsForInferredProjects,
-	)
-
+	fs := newSnapshotFS(session.fs.fs, session.fs.overlays, session.fs.positionEncoding)
+	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
 		// !!! mark inferred projects as dirty?
-		newSnapshot.compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
+		compilerOptionsForInferredProjects = change.compilerOptionsForInferredProjects
 	}
 
 	projectCollectionBuilder := newProjectCollectionBuilder(
 		ctx,
-		newSnapshot,
+		fs,
 		s.projectCollection,
 		s.configFileRegistry,
+		compilerOptionsForInferredProjects,
+		s.sessionOptions,
+		session.parseCache,
+		session.extendedConfigCache,
 	)
 
 	for uri := range change.fileChanges.Opened.Keys() {
@@ -200,13 +113,20 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		projectCollectionBuilder.DidRequestFile(uri)
 	}
 
+	newSnapshot := NewSnapshot(
+		fs,
+		s.sessionOptions,
+		session.parseCache,
+		session.extendedConfigCache,
+		s.logger,
+		nil,
+		s.compilerOptionsForInferredProjects,
+		s.toPath,
+	)
+
 	newSnapshot.projectCollection, newSnapshot.configFileRegistry = projectCollectionBuilder.Finalize()
 
 	return newSnapshot
-}
-
-func (s *Snapshot) toPath(fileName string) tspath.Path {
-	return tspath.ToPath(fileName, s.sessionOptions.CurrentDirectory, s.overlayFS.fs.UseCaseSensitiveFileNames())
 }
 
 func (s *Snapshot) Log(msg string) {

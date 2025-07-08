@@ -83,6 +83,19 @@ func (m *OrderedMap[K, V]) GetOrZero(key K) V {
 	return m.mp[key]
 }
 
+// EntryAt retrieves the key-value pair at the specified index.
+func (m *OrderedMap[K, V]) EntryAt(index int) (K, V, bool) {
+	if index < 0 || index >= len(m.keys) {
+		var zero K
+		var zeroV V
+		return zero, zeroV, false
+	}
+
+	key := m.keys[index]
+	value := m.mp[key]
+	return key, value, true
+}
+
 // Has returns true if the map contains the key.
 func (m *OrderedMap[K, V]) Has(key K) bool {
 	_, ok := m.mp[key]

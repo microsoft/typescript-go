@@ -56,16 +56,26 @@ var _ tsoptions.ExtendedConfigCache = (*configFileRegistryBuilder)(nil)
 // configFileRegistry, producing a new clone with `finalize()` after
 // all changes have been made.
 type configFileRegistryBuilder struct {
-	snapshot             *Snapshot
+	fs                  *overlayFS
+	extendedConfigCache *extendedConfigCache
+	sessionOptions      *SessionOptions
+
 	base                 *ConfigFileRegistry
 	dirtyConfigs         collections.SyncMap[tspath.Path, *configFileEntry]
 	dirtyConfigFileNames map[tspath.Path]configFileNames
 }
 
-func newConfigFileRegistryBuilder(newSnapshot *Snapshot, oldConfigFileRegistry *ConfigFileRegistry) *configFileRegistryBuilder {
+func newConfigFileRegistryBuilder(
+	fs *overlayFS,
+	oldConfigFileRegistry *ConfigFileRegistry,
+	extendedConfigCache *extendedConfigCache,
+	sessionOptions *SessionOptions,
+) *configFileRegistryBuilder {
 	return &configFileRegistryBuilder{
-		snapshot: newSnapshot,
-		base:     oldConfigFileRegistry,
+		fs:                  fs,
+		base:                oldConfigFileRegistry,
+		sessionOptions:      sessionOptions,
+		extendedConfigCache: extendedConfigCache,
 	}
 }
 
@@ -244,11 +254,11 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 	searchPath := tspath.GetDirectoryPath(fileName)
 	result, _ := tspath.ForEachAncestorDirectory(searchPath, func(directory string) (result string, stop bool) {
 		tsconfigPath := tspath.CombinePaths(directory, "tsconfig.json")
-		if !skipSearchInDirectoryOfFile && c.snapshot.compilerFS.FileExists(tsconfigPath) {
+		if !skipSearchInDirectoryOfFile && c.FS().FileExists(tsconfigPath) {
 			return tsconfigPath, true
 		}
 		jsconfigPath := tspath.CombinePaths(directory, "jsconfig.json")
-		if !skipSearchInDirectoryOfFile && c.snapshot.compilerFS.FileExists(jsconfigPath) {
+		if !skipSearchInDirectoryOfFile && c.FS().FileExists(jsconfigPath) {
 			return jsconfigPath, true
 		}
 		if strings.HasSuffix(directory, "/node_modules") {
@@ -257,7 +267,7 @@ func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipS
 		skipSearchInDirectoryOfFile = false
 		return "", false
 	})
-	c.snapshot.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
+	// !!! c.snapshot.Logf("computeConfigFileName:: File: %s:: Result: %s", fileName, result)
 	return result
 }
 
@@ -277,7 +287,7 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 
 	configName := c.computeConfigFileName(fileName, false)
 
-	if c.snapshot.IsOpenFile(path) {
+	if _, ok := c.fs.overlays[path]; ok {
 		configFileNames.setConfigFileName(configName)
 	}
 	return configName
@@ -300,7 +310,7 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	// Look for config in parent folders of config file
 	result := c.computeConfigFileName(configFileName, true)
 
-	if c.snapshot.IsOpenFile(path) {
+	if _, ok := c.fs.overlays[path]; ok {
 		configFileNames.addAncestorConfigFileName(configFileName, result)
 	}
 	return result
@@ -308,18 +318,18 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 
 // FS implements tsoptions.ParseConfigHost.
 func (c *configFileRegistryBuilder) FS() vfs.FS {
-	return c.snapshot.compilerFS
+	return c.fs.fs
 }
 
 // GetCurrentDirectory implements tsoptions.ParseConfigHost.
 func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
-	return c.snapshot.sessionOptions.CurrentDirectory
+	return c.sessionOptions.CurrentDirectory
 }
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
 func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
-	fh := c.snapshot.GetFile(ls.FileNameToDocumentURI(fileName))
-	return c.snapshot.extendedConfigCache.acquire(fh, path, parse)
+	fh := c.fs.getFile(ls.FileNameToDocumentURI(fileName))
+	return c.extendedConfigCache.acquire(fh, path, parse)
 }
 
 // configFileBuilderEntry is a wrapper around `configFileEntry` that
@@ -479,7 +489,7 @@ func (e *configFileBuilderEntry) reloadIfNeeded(fileName string, path tspath.Pat
 
 	switch e.pendingReload {
 	case PendingReloadFileNames:
-		e.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(e.commandLine, e.b.snapshot.compilerFS)
+		e.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(e.commandLine, e.b.FS())
 	case PendingReloadFull:
 		newCommandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, e.b, e.b)
 		e.commandLine = newCommandLine

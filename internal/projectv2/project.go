@@ -9,7 +9,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
-	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
 type Kind int
@@ -27,7 +26,6 @@ const (
 	PendingReloadFull
 )
 
-var _ compiler.CompilerHost = (*Project)(nil)
 var _ ls.Host = (*Project)(nil)
 
 // Project represents a TypeScript project.
@@ -39,11 +37,10 @@ type Project struct {
 	configFileName   string
 	configFilePath   tspath.Path
 
-	snapshot *Snapshot
-
 	dirty         bool
 	dirtyFilePath tspath.Path
 
+	host            *compilerHost
 	CommandLine     *tsoptions.ParsedCommandLine
 	Program         *compiler.Program
 	LanguageService *ls.LanguageService
@@ -54,9 +51,9 @@ type Project struct {
 func NewConfiguredProject(
 	configFileName string,
 	configFilePath tspath.Path,
-	snapshot *Snapshot,
+	builder *projectCollectionBuilder,
 ) *Project {
-	p := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), snapshot)
+	p := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder)
 	p.configFileName = configFileName
 	p.configFilePath = configFilePath
 	return p
@@ -66,9 +63,9 @@ func NewInferredProject(
 	currentDirectory string,
 	compilerOptions *core.CompilerOptions,
 	rootFileNames []string,
-	snapshot *Snapshot,
+	builder *projectCollectionBuilder,
 ) *Project {
-	p := NewProject("/dev/null/inferredProject", KindInferred, currentDirectory, snapshot)
+	p := NewProject("/dev/null/inferredProject", KindInferred, currentDirectory, builder)
 	if compilerOptions == nil {
 		compilerOptions = &core.CompilerOptions{
 			AllowJs:                    core.TSTrue,
@@ -89,7 +86,7 @@ func NewInferredProject(
 		compilerOptions,
 		rootFileNames,
 		tspath.ComparePathsOptions{
-			UseCaseSensitiveFileNames: snapshot.compilerFS.UseCaseSensitiveFileNames(),
+			UseCaseSensitiveFileNames: builder.fs.fs.UseCaseSensitiveFileNames(),
 			CurrentDirectory:          currentDirectory,
 		},
 	)
@@ -100,76 +97,36 @@ func NewProject(
 	name string,
 	kind Kind,
 	currentDirectory string,
-	snapshot *Snapshot,
+	builder *projectCollectionBuilder,
 ) *Project {
-	return &Project{
+	project := &Project{
 		Name:             name,
 		Kind:             kind,
-		snapshot:         snapshot,
 		currentDirectory: currentDirectory,
 		dirty:            true,
 	}
-}
-
-// DefaultLibraryPath implements compiler.CompilerHost.
-func (p *Project) DefaultLibraryPath() string {
-	return p.snapshot.sessionOptions.DefaultLibraryPath
-}
-
-// FS implements compiler.CompilerHost.
-func (p *Project) FS() vfs.FS {
-	return p.snapshot.compilerFS
-}
-
-// GetCurrentDirectory implements compiler.CompilerHost.
-func (p *Project) GetCurrentDirectory() string {
-	return p.currentDirectory
-}
-
-// GetResolvedProjectReference implements compiler.CompilerHost.
-func (p *Project) GetResolvedProjectReference(fileName string, path tspath.Path) *tsoptions.ParsedCommandLine {
-	return p.snapshot.configFileRegistry.GetConfig(path, p)
-}
-
-// GetSourceFile implements compiler.CompilerHost. GetSourceFile increments
-// the ref count of source files it acquires in the parseCache. There should
-// be a corresponding release for each call made.
-func (p *Project) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
-	if fh := p.snapshot.GetFile(ls.FileNameToDocumentURI(opts.FileName)); fh != nil {
-		return p.snapshot.parseCache.acquireDocument(fh, opts, p.getScriptKind(opts.FileName))
-	}
-	return nil
-}
-
-// NewLine implements compiler.CompilerHost.
-func (p *Project) NewLine() string {
-	return p.snapshot.sessionOptions.NewLine
-}
-
-// Trace implements compiler.CompilerHost.
-func (p *Project) Trace(msg string) {
-	panic("unimplemented")
+	host := newCompilerHost(
+		currentDirectory,
+		project,
+		builder,
+	)
+	project.host = host
+	return project
 }
 
 // GetLineMap implements ls.Host.
 func (p *Project) GetLineMap(fileName string) *ls.LineMap {
-	return p.snapshot.GetFile(ls.FileNameToDocumentURI(fileName)).LineMap()
+	return p.host.overlayFS.getFile(ls.FileNameToDocumentURI(fileName)).LineMap()
 }
 
 // GetPositionEncoding implements ls.Host.
 func (p *Project) GetPositionEncoding() lsproto.PositionEncodingKind {
-	return p.snapshot.sessionOptions.PositionEncoding
+	return p.host.sessionOptions.PositionEncoding
 }
 
 // GetProgram implements ls.Host.
 func (p *Project) GetProgram() *compiler.Program {
 	return p.Program
-}
-
-func (p *Project) getScriptKind(fileName string) core.ScriptKind {
-	// Customizing script kind per file extension is a common plugin / LS host customization case
-	// which can probably be replaced with static info in the future
-	return core.GetScriptKindFromFileName(fileName)
 }
 
 func (p *Project) containsFile(path tspath.Path) bool {
@@ -191,7 +148,7 @@ func (p *Project) IsSourceFromProjectReference(path tspath.Path) bool {
 	return p.Program != nil && p.Program.IsSourceFromProjectReference(path)
 }
 
-func (p *Project) Clone(newSnapshot *Snapshot) *Project {
+func (p *Project) Clone() *Project {
 	return &Project{
 		Name:             p.Name,
 		Kind:             p.Kind,
@@ -199,15 +156,59 @@ func (p *Project) Clone(newSnapshot *Snapshot) *Project {
 		configFileName:   p.configFileName,
 		configFilePath:   p.configFilePath,
 
-		snapshot: newSnapshot,
-
 		dirty:         p.dirty,
 		dirtyFilePath: p.dirtyFilePath,
 
+		host:            p.host,
 		CommandLine:     p.CommandLine,
 		Program:         p.Program,
 		LanguageService: p.LanguageService,
 
 		checkerPool: p.checkerPool,
 	}
+}
+
+func (p *Project) CreateProgram() (*compiler.Program, *project.CheckerPool) {
+	var programCloned bool
+	var checkerPool *project.CheckerPool
+	var newProgram *compiler.Program
+	// oldProgram := p.Program
+	if p.dirtyFilePath != "" {
+		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
+		if !programCloned {
+			// !!! wait until accepting snapshot to release documents!
+			// !!! make this less janky
+			// UpdateProgram called GetSourceFile (acquiring the document) but was unable to use it directly,
+			// so it called NewProgram which acquired it a second time. We need to decrement the ref count
+			// for the first acquisition.
+			// p.snapshot.parseCache.releaseDocument(newProgram.GetSourceFileByPath(p.dirtyFilePath))
+		}
+	} else {
+		newProgram = compiler.NewProgram(
+			compiler.ProgramOptions{
+				Host:                        p.host,
+				Config:                      p.CommandLine,
+				UseSourceOfProjectReference: true,
+				TypingsLocation:             p.host.sessionOptions.TypingsLocation,
+				JSDocParsingMode:            ast.JSDocParsingModeParseAll,
+				CreateCheckerPool: func(program *compiler.Program) compiler.CheckerPool {
+					checkerPool = project.NewCheckerPool(4, program, p.log)
+					return checkerPool
+				},
+			},
+		)
+	}
+
+	// if !programCloned && oldProgram != nil {
+	// 	for _, file := range oldProgram.GetSourceFiles() {
+	// 		// !!! wait until accepting snapshot to release documents!
+	// 		// p.snapshot.parseCache.releaseDocument(file)
+	// 	}
+	// }
+
+	return newProgram, checkerPool
+}
+
+func (p *Project) log(msg string) {
+	// !!!
 }

@@ -47,6 +47,12 @@ func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Sess
 	}}
 	extendedConfigCache := &extendedConfigCache{}
 
+	currentDirectory := options.CurrentDirectory
+	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
+	toPath := func(fileName string) tspath.Path {
+		return tspath.ToPath(fileName, currentDirectory, useCaseSensitiveFileNames)
+	}
+
 	return &Session{
 		options:             options,
 		fs:                  overlayFS,
@@ -54,14 +60,14 @@ func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Sess
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		snapshot: NewSnapshot(
-			overlayFS.fs,
-			overlayFS.overlays,
+			newSnapshotFS(overlayFS.fs, overlayFS.overlays, options.PositionEncoding),
 			&options,
 			parseCache,
 			extendedConfigCache,
 			logger,
 			&ConfigFileRegistry{},
 			nil,
+			toPath,
 		),
 	}
 }

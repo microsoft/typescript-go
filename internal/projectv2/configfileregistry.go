@@ -1,7 +1,6 @@
 package projectv2
 
 import (
-	"fmt"
 	"maps"
 	"sync"
 
@@ -39,14 +38,25 @@ type configFileEntry struct {
 	retainingOpenFiles map[tspath.Path]struct{}
 }
 
-func (c *ConfigFileRegistry) GetConfig(path tspath.Path, project *Project) *tsoptions.ParsedCommandLine {
+func (c *ConfigFileRegistry) GetConfig(path tspath.Path) *tsoptions.ParsedCommandLine {
 	if entry, ok := c.configs[path]; ok {
-		if _, ok := entry.retainingProjects[project.configFilePath]; !ok {
-			panic(fmt.Sprintf("project %s should have called acquireConfig for config file %s during registry building", project.Name, path))
-		}
 		return entry.commandLine
 	}
 	return nil
+}
+
+func (c *ConfigFileRegistry) GetConfigFileName(path tspath.Path) string {
+	if entry, ok := c.configFileNames[path]; ok {
+		return entry.nearestConfigFileName
+	}
+	return ""
+}
+
+func (c *ConfigFileRegistry) GetAncestorConfigFileName(path tspath.Path, higherThanConfig string) string {
+	if entry, ok := c.configFileNames[path]; ok {
+		return entry.ancestors[higherThanConfig]
+	}
+	return ""
 }
 
 // clone creates a shallow copy of the configFileRegistry.
