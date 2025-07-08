@@ -16092,6 +16092,21 @@ func (c *Checker) padTupleType(t *Type, pattern *ast.Node) *Type {
 }
 
 func (c *Checker) widenTypeInferredFromInitializer(declaration *ast.Node, t *Type) *Type {
+	widened := c.getWidenedLiteralTypeForInitializer(declaration, t)
+	if ast.IsInJSFile(declaration) {
+		if c.isEmptyLiteralType(widened) {
+			c.reportImplicitAny(declaration, c.anyType, WideningKindNormal)
+			return c.anyType
+		}
+		if c.isEmptyArrayLiteralType(widened) {
+			c.reportImplicitAny(declaration, c.anyArrayType, WideningKindNormal)
+			return c.anyArrayType
+		}
+	}
+	return widened
+}
+
+func (c *Checker) getWidenedLiteralTypeForInitializer(declaration *ast.Node, t *Type) *Type {
 	if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsConstant != 0 || isDeclarationReadonly(declaration) {
 		return t
 	}
@@ -17212,7 +17227,7 @@ func (c *Checker) getTypeFromBindingElement(element *ast.Node, includePatternInT
 		if ast.IsBindingPattern(element.Name()) {
 			contextualType = c.getTypeFromBindingPattern(element.Name(), true /*includePatternInType*/, false /*reportErrors*/)
 		}
-		return c.addOptionality(c.widenTypeInferredFromInitializer(element, c.checkDeclarationInitializer(element, CheckModeNormal, contextualType)))
+		return c.addOptionality(c.getWidenedLiteralTypeForInitializer(element, c.checkDeclarationInitializer(element, CheckModeNormal, contextualType)))
 	}
 	if ast.IsBindingPattern(element.Name()) {
 		return c.getTypeFromBindingPattern(element.Name(), includePatternInType, reportErrors)
@@ -17864,6 +17879,7 @@ func (c *Checker) pushTypeResolution(target TypeSystemEntity, propertyName TypeS
 func (c *Checker) popTypeResolution() bool {
 	lastIndex := len(c.typeResolutions) - 1
 	result := c.typeResolutions[lastIndex].result
+	c.typeResolutions[lastIndex] = TypeResolution{} // Clear the last entry to avoid memory leaks
 	c.typeResolutions = c.typeResolutions[:lastIndex]
 	return result
 }
@@ -21118,6 +21134,9 @@ func (c *Checker) getDefaultOrUnknownFromTypeParameter(t *Type) *Type {
 }
 
 func (c *Checker) getNamedMembers(members ast.SymbolTable) []*ast.Symbol {
+	if len(members) == 0 {
+		return nil
+	}
 	result := make([]*ast.Symbol, 0, len(members))
 	for id, symbol := range members {
 		if c.isNamedMember(symbol, id) {
@@ -29336,7 +29355,9 @@ func (c *Checker) pushContextualType(node *ast.Node, t *Type, isCache bool) {
 }
 
 func (c *Checker) popContextualType() {
-	c.contextualInfos = c.contextualInfos[:len(c.contextualInfos)-1]
+	lastIndex := len(c.contextualInfos) - 1
+	c.contextualInfos[lastIndex] = ContextualInfo{}
+	c.contextualInfos = c.contextualInfos[:lastIndex]
 }
 
 func (c *Checker) findContextualNode(node *ast.Node, includeCaches bool) int {
@@ -29406,7 +29427,9 @@ func (c *Checker) pushInferenceContext(node *ast.Node, context *InferenceContext
 }
 
 func (c *Checker) popInferenceContext() {
-	c.inferenceContextInfos = c.inferenceContextInfos[:len(c.inferenceContextInfos)-1]
+	lastIndex := len(c.inferenceContextInfos) - 1
+	c.inferenceContextInfos[lastIndex] = InferenceContextInfo{}
+	c.inferenceContextInfos = c.inferenceContextInfos[:lastIndex]
 }
 
 func (c *Checker) getInferenceContext(node *ast.Node) *InferenceContext {

@@ -29,7 +29,6 @@ type ServerOptions struct {
 	Err io.Writer
 
 	Cwd                string
-	NewLine            core.NewLineKind
 	FS                 vfs.FS
 	DefaultLibraryPath string
 	TypingsLocation    string
@@ -50,7 +49,6 @@ func NewServer(opts *ServerOptions) *Server {
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
 		pendingServerRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
 		cwd:                   opts.Cwd,
-		newLine:               opts.NewLine,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
 		typingsLocation:       opts.TypingsLocation,
@@ -134,7 +132,6 @@ type Server struct {
 	pendingServerRequestsMu sync.Mutex
 
 	cwd                string
-	newLine            core.NewLineKind
 	fs                 vfs.FS
 	defaultLibraryPath string
 	typingsLocation    string
@@ -174,11 +171,6 @@ func (s *Server) TypingsLocation() string {
 // GetCurrentDirectory implements project.ServiceHost.
 func (s *Server) GetCurrentDirectory() string {
 	return s.cwd
-}
-
-// NewLine implements project.ServiceHost.
-func (s *Server) NewLine() string {
-	return s.newLine.GetNewLineCharacter()
 }
 
 // Trace implements project.ServiceHost.
@@ -496,6 +488,10 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return s.handleDocumentRangeFormat(ctx, req)
 	case *lsproto.DocumentOnTypeFormattingParams:
 		return s.handleDocumentOnTypeFormat(ctx, req)
+	case *lsproto.WorkspaceSymbolParams:
+		return s.handleWorkspaceSymbol(ctx, req)
+	case *lsproto.DocumentSymbolParams:
+		return s.handleDocumentSymbol(ctx, req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -572,6 +568,12 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 			DocumentOnTypeFormattingProvider: &lsproto.DocumentOnTypeFormattingOptions{
 				FirstTriggerCharacter: "{",
 				MoreTriggerCharacter:  &[]string{"}", ";", "\n"},
+			},
+			WorkspaceSymbolProvider: &lsproto.BooleanOrWorkspaceSymbolOptions{
+				Boolean: ptrTo(true),
+			},
+			DocumentSymbolProvider: &lsproto.BooleanOrDocumentSymbolOptions{
+				Boolean: ptrTo(true),
 			},
 		},
 	})
@@ -767,6 +769,30 @@ func (s *Server) handleDocumentOnTypeFormat(ctx context.Context, req *lsproto.Re
 		return err
 	}
 	s.sendResult(req.ID, res)
+	return nil
+}
+
+func (s *Server) handleWorkspaceSymbol(ctx context.Context, req *lsproto.RequestMessage) error {
+	programs := core.Map(s.projectService.Projects(), (*project.Project).GetProgram)
+	params := req.Params.(*lsproto.WorkspaceSymbolParams)
+	symbols, err := ls.ProvideWorkspaceSymbols(ctx, programs, s.projectService.Converters(), params.Query)
+	if err != nil {
+		return err
+	}
+	s.sendResult(req.ID, symbols)
+	return nil
+}
+
+func (s *Server) handleDocumentSymbol(ctx context.Context, req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.DocumentSymbolParams)
+	project := s.projectService.EnsureDefaultProjectForURI(params.TextDocument.Uri)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	defer done()
+	hover, err := languageService.ProvideDocumentSymbols(ctx, params.TextDocument.Uri)
+	if err != nil {
+		return err
+	}
+	s.sendResult(req.ID, hover)
 	return nil
 }
 

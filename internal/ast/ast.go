@@ -10017,10 +10017,11 @@ type SourceFile struct {
 	compositeNodeBase
 
 	// Fields set by NewSourceFile
-	fileName     string // For debugging convenience
-	parseOptions SourceFileParseOptions
-	text         string
-	Statements   *NodeList // NodeList[*Statement]
+	fileName       string // For debugging convenience
+	parseOptions   SourceFileParseOptions
+	text           string
+	Statements     *NodeList  // NodeList[*Statement]
+	EndOfFileToken *TokenNode // TokenNode[*EndOfFileToken]
 
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
@@ -10064,11 +10065,13 @@ type SourceFile struct {
 
 	// Fields set by language service
 
-	tokenCacheMu sync.Mutex
-	tokenCache   map[core.TextRange]*Node
+	tokenCacheMu     sync.Mutex
+	tokenCache       map[core.TextRange]*Node
+	declarationMapMu sync.Mutex
+	declarationMap   map[string][]*Node
 }
 
-func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList) *Node {
+func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, statements *NodeList, endOfFileToken *TokenNode) *Node {
 	if (tspath.GetEncodedRootLength(opts.FileName) == 0 && !strings.HasPrefix(opts.FileName, "^/")) || opts.FileName != tspath.NormalizePath(opts.FileName) {
 		panic(fmt.Sprintf("fileName should be normalized and absolute: %q", opts.FileName))
 	}
@@ -10077,6 +10080,7 @@ func (f *NodeFactory) NewSourceFile(opts SourceFileParseOptions, text string, st
 	data.parseOptions = opts
 	data.text = text
 	data.Statements = statements
+	data.EndOfFileToken = endOfFileToken
 	return f.newNode(KindSourceFile, data)
 }
 
@@ -10137,11 +10141,11 @@ func (node *SourceFile) SetBindDiagnostics(diags []*Diagnostic) {
 }
 
 func (node *SourceFile) ForEachChild(v Visitor) bool {
-	return visitNodeList(v, node.Statements)
+	return visitNodeList(v, node.Statements) || visit(v, node.EndOfFileToken)
 }
 
 func (node *SourceFile) VisitEachChild(v *NodeVisitor) *Node {
-	return v.Factory.UpdateSourceFile(node, v.visitTopLevelStatements(node.Statements))
+	return v.Factory.UpdateSourceFile(node, v.visitTopLevelStatements(node.Statements), v.visitToken(node.EndOfFileToken))
 }
 
 func (node *SourceFile) IsJS() bool {
@@ -10169,7 +10173,7 @@ func (node *SourceFile) copyFrom(other *SourceFile) {
 }
 
 func (node *SourceFile) Clone(f NodeFactoryCoercible) *Node {
-	updated := f.AsNodeFactory().NewSourceFile(node.parseOptions, node.text, node.Statements)
+	updated := f.AsNodeFactory().NewSourceFile(node.parseOptions, node.text, node.Statements, node.EndOfFileToken)
 	newFile := updated.AsSourceFile()
 	newFile.copyFrom(node)
 	return cloneNode(updated, node.AsNode(), f.AsNodeFactory().hooks)
@@ -10179,9 +10183,9 @@ func (node *SourceFile) computeSubtreeFacts() SubtreeFacts {
 	return propagateNodeListSubtreeFacts(node.Statements, propagateSubtreeFacts)
 }
 
-func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementList) *Node {
-	if statements != node.Statements {
-		updated := f.NewSourceFile(node.parseOptions, node.text, statements).AsSourceFile()
+func (f *NodeFactory) UpdateSourceFile(node *SourceFile, statements *StatementList, endOfFileToken *TokenNode) *Node {
+	if statements != node.Statements || endOfFileToken != node.EndOfFileToken {
+		updated := f.NewSourceFile(node.parseOptions, node.text, statements, endOfFileToken).AsSourceFile()
 		updated.copyFrom(node)
 		return updateNode(updated.AsNode(), node.AsNode(), f.hooks)
 	}
@@ -10246,6 +10250,136 @@ func (node *SourceFile) GetOrCreateToken(
 
 func IsSourceFile(node *Node) bool {
 	return node.Kind == KindSourceFile
+}
+
+func (node *SourceFile) GetDeclarationMap() map[string][]*Node {
+	node.declarationMapMu.Lock()
+	defer node.declarationMapMu.Unlock()
+	if node.declarationMap == nil {
+		node.declarationMap = node.computeDeclarationMap()
+	}
+	return node.declarationMap
+}
+
+func (node *SourceFile) computeDeclarationMap() map[string][]*Node {
+	result := make(map[string][]*Node)
+
+	addDeclaration := func(declaration *Node) {
+		name := getDeclarationName(declaration)
+		if name != "" {
+			result[name] = append(result[name], declaration)
+		}
+	}
+
+	var visit func(*Node) bool
+	visit = func(node *Node) bool {
+		switch node.Kind {
+		case KindFunctionDeclaration, KindFunctionExpression, KindMethodDeclaration, KindMethodSignature:
+			declarationName := getDeclarationName(node)
+			if declarationName != "" {
+				declarations := result[declarationName]
+				var lastDeclaration *Node
+				if len(declarations) != 0 {
+					lastDeclaration = declarations[len(declarations)-1]
+				}
+				// Check whether this declaration belongs to an "overload group".
+				if lastDeclaration != nil && node.Parent == lastDeclaration.Parent && node.Symbol() == lastDeclaration.Symbol() {
+					// Overwrite the last declaration if it was an overload and this one is an implementation.
+					if node.Body() != nil && lastDeclaration.Body() == nil {
+						declarations[len(declarations)-1] = node
+					}
+				} else {
+					result[declarationName] = append(result[declarationName], node)
+				}
+			}
+			node.ForEachChild(visit)
+		case KindClassDeclaration, KindClassExpression, KindInterfaceDeclaration, KindTypeAliasDeclaration, KindEnumDeclaration, KindModuleDeclaration,
+			KindImportEqualsDeclaration, KindImportClause, KindNamespaceImport, KindGetAccessor, KindSetAccessor, KindTypeLiteral:
+			addDeclaration(node)
+			node.ForEachChild(visit)
+		case KindImportSpecifier, KindExportSpecifier:
+			if node.PropertyName() != nil {
+				addDeclaration(node)
+			}
+		case KindParameter:
+			// Only consider parameter properties
+			if !HasSyntacticModifier(node, ModifierFlagsParameterPropertyModifier) {
+				break
+			}
+			fallthrough
+		case KindVariableDeclaration, KindBindingElement:
+			name := node.Name()
+			if name != nil {
+				if IsBindingPattern(name) {
+					node.Name().ForEachChild(visit)
+				} else {
+					if node.Initializer() != nil {
+						visit(node.Initializer())
+					}
+					addDeclaration(node)
+				}
+			}
+		case KindEnumMember, KindPropertyDeclaration, KindPropertySignature:
+			addDeclaration(node)
+		case KindExportDeclaration:
+			// Handle named exports case e.g.:
+			//    export {a, b as B} from "mod";
+			exportClause := node.AsExportDeclaration().ExportClause
+			if exportClause != nil {
+				if IsNamedExports(exportClause) {
+					for _, element := range exportClause.AsNamedExports().Elements.Nodes {
+						visit(element)
+					}
+				} else {
+					visit(exportClause.AsNamespaceExport().Name())
+				}
+			}
+		case KindImportDeclaration:
+			importClause := node.AsImportDeclaration().ImportClause
+			if importClause != nil {
+				// Handle default import case e.g.:
+				//    import d from "mod";
+				if importClause.Name() != nil {
+					addDeclaration(importClause.Name())
+				}
+				// Handle named bindings in imports e.g.:
+				//    import * as NS from "mod";
+				//    import {a, b as B} from "mod";
+				namedBindings := importClause.AsImportClause().NamedBindings
+				if namedBindings != nil {
+					if namedBindings.Kind == KindNamespaceImport {
+						addDeclaration(namedBindings)
+					} else {
+						for _, element := range namedBindings.AsNamedImports().Elements.Nodes {
+							visit(element)
+						}
+					}
+				}
+			}
+		default:
+			node.ForEachChild(visit)
+		}
+		return false
+	}
+	node.ForEachChild(visit)
+	return result
+}
+
+func getDeclarationName(declaration *Node) string {
+	name := GetNonAssignedNameOfDeclaration(declaration)
+	if name != nil {
+		if IsComputedPropertyName(name) {
+			if IsStringOrNumericLiteralLike(name.Expression()) {
+				return name.Expression().Text()
+			}
+			if IsPropertyAccessExpression(name.Expression()) {
+				return name.Expression().Name().Text()
+			}
+		} else if IsPropertyName(name) {
+			return name.Text()
+		}
+	}
+	return ""
 }
 
 type SourceFileLike interface {
