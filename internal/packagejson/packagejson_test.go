@@ -63,6 +63,8 @@ func BenchmarkPackageJSON(b *testing.B) {
 }
 
 func TestParse(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name    string
 		content string
@@ -86,6 +88,8 @@ func TestParse(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			got, err := packagejson.Parse([]byte(tt.content))
 			assert.NilError(t, err)
 			assert.DeepEqual(t, got, tt.want, cmpopts.IgnoreUnexported(
