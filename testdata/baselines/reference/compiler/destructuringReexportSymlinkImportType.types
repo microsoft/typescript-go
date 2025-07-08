@@ -1,31 +1,27 @@
 //// [tests/cases/compiler/destructuringReexportSymlinkImportType.ts] ////
 
-=== /packages/a/src/re_export.ts ===
+=== /real-packages/package-b/index.d.ts ===
+export interface B {
+  value: string;
+>value : string
+}
+
+=== /project/src/types.ts ===
 import type { B } from "package-b";
 >B : B
 
-declare function foo(): Promise<B>
->foo : () => Promise<B>
+export type { B };
+>B : B
 
-export const re = { foo };
->re : { foo: () => Promise<B>; }
->{ foo } : { foo: () => Promise<B>; }
->foo : () => Promise<B>
+=== /project/src/main.ts ===
+import type { B } from "./types";
+>B : B
 
-=== /packages/a/src/index.ts ===
-import { re } from "#re_export";
->re : { foo: () => Promise<import("package-b").B>; }
+export function useB(param: B): B {
+>useB : (param: B) => B
+>param : B
 
-const { foo } = re;
->foo : () => Promise<import("package-b").B>
->re : { foo: () => Promise<import("package-b").B>; }
-
-export { foo };
->foo : () => Promise<import("package-b").B>
-
-=== /packages/b/index.d.ts ===
-export interface B {
-	b: "b";
->b : "b"
+  return param;
+>param : B
 }
 

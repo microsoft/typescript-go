@@ -3,59 +3,42 @@
 //// [package.json]
 {
   "name": "package-b",
-  "type": "module",
-  "exports": {
-    ".": "./index.js"
-  }
+  "main": "./index.js",
+  "types": "./index.d.ts"
 }
-
-//// [index.js]
-export {};
 
 //// [index.d.ts]
 export interface B {
-	b: "b";
+  value: string;
 }
 
-//// [package.json]
-{
-  "name": "package-a",
-  "type": "module",
-  "imports": {
-    "#re_export": "./src/re_export.ts"
-  },
-  "exports": {
-    ".": "./dist/index.js"
-  }
+//// [types.ts]
+import type { B } from "package-b";
+export type { B };
+
+//// [main.ts]
+import type { B } from "./types";
+
+export function useB(param: B): B {
+  return param;
 }
 
 
-//// [re_export.ts]
+//// [types.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+//// [main.js]
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.useB = useB;
+function useB(param) {
+    return param;
+}
+
+
+//// [types.d.ts]
 import type { B } from "package-b";
-declare function foo(): Promise<B>
-export const re = { foo };
-
-//// [index.ts]
-import { re } from "#re_export";
-const { foo } = re;
-export { foo };
-
-
-//// [re_export.js]
-export const re = { foo };
-//// [index.js]
-import { re } from "#re_export";
-const { foo } = re;
-export { foo };
-
-
-//// [re_export.d.ts]
-import type { B } from "package-b";
-declare function foo(): Promise<B>;
-export declare const re: {
-    foo: typeof foo;
-};
-export {};
-//// [index.d.ts]
-declare const foo: () => Promise<import("package-b").B>;
-export { foo };
+export type { B };
+//// [main.d.ts]
+import type { B } from "./types";
+export declare function useB(param: B): B;

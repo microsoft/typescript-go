@@ -1,34 +1,31 @@
 //// [tests/cases/compiler/destructuringReexportSymlinkImportType.ts] ////
 
-=== /packages/a/src/re_export.ts ===
-import type { B } from "package-b";
->B : Symbol(B, Decl(re_export.ts, 0, 13))
-
-declare function foo(): Promise<B>
->foo : Symbol(foo, Decl(re_export.ts, 0, 35))
->Promise : Symbol(Promise, Decl(lib.es5.d.ts, --, --), Decl(lib.es2015.iterable.d.ts, --, --), Decl(lib.es2015.promise.d.ts, --, --), Decl(lib.es2015.symbol.wellknown.d.ts, --, --), Decl(lib.es2018.promise.d.ts, --, --))
->B : Symbol(B, Decl(re_export.ts, 0, 13))
-
-export const re = { foo };
->re : Symbol(re, Decl(re_export.ts, 2, 12))
->foo : Symbol(foo, Decl(re_export.ts, 2, 19))
-
-=== /packages/a/src/index.ts ===
-import { re } from "#re_export";
->re : Symbol(re, Decl(index.ts, 0, 8))
-
-const { foo } = re;
->foo : Symbol(foo, Decl(index.ts, 1, 7))
->re : Symbol(re, Decl(index.ts, 0, 8))
-
-export { foo };
->foo : Symbol(foo, Decl(index.ts, 2, 8))
-
-=== /packages/b/index.d.ts ===
+=== /real-packages/package-b/index.d.ts ===
 export interface B {
 >B : Symbol(B, Decl(index.d.ts, 0, 0))
 
-	b: "b";
->b : Symbol(b, Decl(index.d.ts, 0, 20))
+  value: string;
+>value : Symbol(value, Decl(index.d.ts, 0, 20))
+}
+
+=== /project/src/types.ts ===
+import type { B } from "package-b";
+>B : Symbol(B, Decl(types.ts, 0, 13))
+
+export type { B };
+>B : Symbol(B, Decl(types.ts, 1, 13))
+
+=== /project/src/main.ts ===
+import type { B } from "./types";
+>B : Symbol(B, Decl(main.ts, 0, 13))
+
+export function useB(param: B): B {
+>useB : Symbol(useB, Decl(main.ts, 0, 33))
+>param : Symbol(param, Decl(main.ts, 2, 21))
+>B : Symbol(B, Decl(main.ts, 0, 13))
+>B : Symbol(B, Decl(main.ts, 0, 13))
+
+  return param;
+>param : Symbol(param, Decl(main.ts, 2, 21))
 }
 

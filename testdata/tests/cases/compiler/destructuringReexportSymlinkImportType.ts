@@ -1,52 +1,28 @@
-// @Filename: /packages/b/package.json
+// Test case for destructuring re-exports using type from symlinked node-modules
+// Expected: import() types should use package names instead of relative paths
+// @declaration: true
+
+// @Filename: /real-packages/package-b/package.json
 {
   "name": "package-b",
-  "type": "module",
-  "exports": {
-    ".": "./index.js"
-  }
+  "main": "./index.js",
+  "types": "./index.d.ts"
 }
 
-// @Filename: /packages/b/index.js
-export {};
-
-// @Filename: /packages/b/index.d.ts
+// @Filename: /real-packages/package-b/index.d.ts
 export interface B {
-	b: "b";
+  value: string;
 }
 
-// @Filename: /packages/a/package.json
-{
-  "name": "package-a",
-  "type": "module",
-  "imports": {
-    "#re_export": "./src/re_export.ts"
-  },
-  "exports": {
-    ".": "./dist/index.js"
-  }
-}
-
-
-// @Filename: /packages/a/tsconfig.json
-{
-  "compilerOptions": {
-    "module": "nodenext",
-    "outDir": "dist",
-    "rootDir": "src",
-    "declaration": true,
-  },
-  "include": ["src/**/*.ts"]
-}
-
-// @Filename: /packages/a/src/re_export.ts
+// @Filename: /project/src/types.ts
 import type { B } from "package-b";
-declare function foo(): Promise<B>
-export const re = { foo };
+export type { B };
 
-// @Filename: /packages/a/src/index.ts
-import { re } from "#re_export";
-const { foo } = re;
-export { foo };
+// @Filename: /project/src/main.ts
+import type { B } from "./types";
 
-// @link: /packages/b -> /packages/a/node_modules/package-b
+export function useB(param: B): B {
+  return param;
+}
+
+// @link: /real-packages/package-b -> /project/node_modules/package-b
