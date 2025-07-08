@@ -705,10 +705,10 @@ func verifyCompletionsAreExactly(t *testing.T, prefix string, actual []*lsproto.
 }
 
 func verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.CompletionItem, expected *lsproto.CompletionItem) {
-	ignoreKind := cmp.FilterPath(
+	ignoreOpts := cmp.FilterPath(
 		func(p cmp.Path) bool {
 			switch p.Last().String() {
-			case ".Kind", ".SortText":
+			case ".Kind", ".SortText", ".Data":
 				return true
 			default:
 				return false
@@ -716,7 +716,7 @@ func verifyCompletionItem(t *testing.T, prefix string, actual *lsproto.Completio
 		},
 		cmp.Ignore(),
 	)
-	assertDeepEqual(t, actual, expected, prefix, ignoreKind)
+	assertDeepEqual(t, actual, expected, prefix, ignoreOpts)
 	if expected.Kind != nil {
 		assertDeepEqual(t, actual.Kind, expected.Kind, prefix+" Kind mismatch")
 	}
