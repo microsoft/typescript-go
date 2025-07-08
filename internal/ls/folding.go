@@ -1,10 +1,12 @@
 package ls
 
 import (
+	"cmp"
 	"context"
 	"regexp"
-	"sort"
+	"slices"
 	"strings"
+	"unicode"
 
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/astnav"
@@ -17,17 +19,20 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 	_, sourceFile := l.getProgramAndFile(documentURI)
 	res := l.addNodeOutliningSpans(sourceFile)
 	res = append(res, l.addRegionOutliningSpans(sourceFile)...)
-	sort.Slice(res, func(i, j int) bool {
-		if res[i].StartLine != res[j].StartLine {
-			return res[i].StartLine < res[j].StartLine
-		} else if res[i].StartCharacter != nil && res[j].StartCharacter != nil {
-			return *res[i].StartCharacter < *res[j].StartCharacter
-		} else if res[i].EndLine != res[j].EndLine {
-			return res[i].EndLine < res[j].EndLine
-		} else if res[i].EndCharacter != nil && res[j].EndCharacter != nil {
-			return *res[i].EndCharacter < *res[j].EndCharacter
+	slices.SortFunc(res, func(a, b *lsproto.FoldingRange) int {
+		if a.StartLine != b.StartLine {
+			return cmp.Compare(a.StartLine, b.StartLine)
 		}
-		return false
+		if a.StartCharacter != nil && b.StartCharacter != nil {
+			return cmp.Compare(*a.StartCharacter, *b.StartCharacter)
+		}
+		if a.EndLine != b.EndLine {
+			return cmp.Compare(a.EndLine, b.EndLine)
+		}
+		if a.EndCharacter != nil && b.EndCharacter != nil {
+			return cmp.Compare(*a.EndCharacter, *b.EndCharacter)
+		}
+		return 0
 	})
 	return res
 }
@@ -287,11 +292,11 @@ type regionDelimiterResult struct {
 func parseRegionDelimiter(lineText string) *regionDelimiterResult {
 	// We trim the leading whitespace and // without the regex since the
 	// multiple potential whitespace matches can make for some gnarly backtracking behavior
-	lineText = strings.TrimLeft(lineText, " \t")
+	lineText = strings.TrimLeftFunc(lineText, unicode.IsSpace)
 	if !strings.HasPrefix(lineText, "//") {
 		return nil
 	}
-	lineText = strings.TrimLeft(lineText[2:], " \t")
+	lineText = strings.TrimSpace(lineText[2:])
 	result := regionDelimiterRegExp.FindStringSubmatch(lineText)
 	if result != nil {
 		return &regionDelimiterResult{

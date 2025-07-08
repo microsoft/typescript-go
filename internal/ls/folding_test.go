@@ -1,7 +1,8 @@
 package ls_test
 
 import (
-	"sort"
+	"cmp"
+	"slices"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/collections"
@@ -24,15 +25,15 @@ func runFoldingRangeTest(t *testing.T, input string) {
 	if len(foldingRanges) != len(markerPositions) {
 		t.Fatalf("Expected %d folding ranges, got %d", len(markerPositions), len(foldingRanges))
 	}
-	sort.Slice(markerPositions, func(i, j int) bool {
-		if markerPositions[i].LSRange.Start.Line != markerPositions[j].LSRange.Start.Line {
-			return markerPositions[i].LSRange.Start.Line < markerPositions[j].LSRange.Start.Line
-		} else if markerPositions[i].LSRange.Start.Character != markerPositions[j].LSRange.Start.Character {
-			return markerPositions[i].LSRange.Start.Character < markerPositions[j].LSRange.Start.Character
-		} else if markerPositions[i].LSRange.End.Line != markerPositions[j].LSRange.End.Line {
-			return markerPositions[i].LSRange.End.Line < markerPositions[j].LSRange.End.Line
+	slices.SortFunc(markerPositions, func(a, b *fourslash.RangeMarker) int {
+		if a.LSRange.Start.Line != b.LSRange.Start.Line {
+			return cmp.Compare(a.LSRange.Start.Line, b.LSRange.Start.Line)
+		} else if a.LSRange.Start.Character != b.LSRange.Start.Character {
+			return cmp.Compare(a.LSRange.Start.Character, b.LSRange.Start.Character)
+		} else if a.LSRange.End.Line != b.LSRange.End.Line {
+			return cmp.Compare(a.LSRange.End.Line, b.LSRange.End.Line)
 		}
-		return markerPositions[i].LSRange.End.Character < markerPositions[j].LSRange.End.Character
+		return cmp.Compare(a.LSRange.End.Character, b.LSRange.End.Character)
 	})
 	for i, marker := range markerPositions {
 		assert.DeepEqual(t, marker.LSRange.Start.Line, foldingRanges[i].StartLine)
