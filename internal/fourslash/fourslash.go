@@ -297,6 +297,7 @@ func (f *FourslashTest) readMsg(t *testing.T) *lsproto.Message {
 	}
 	return msg
 }
+
 func (f *FourslashTest) GoToMarkerOrRange(t *testing.T, markerOrRange MarkerOrRange) {
 	// GoToRangeStart
 	f.goToMarker(t, markerOrRange.GetMarker())
@@ -338,13 +339,6 @@ func (f *FourslashTest) goToPosition(t *testing.T, position lsproto.Position) {
 	f.selectionEnd = nil
 }
 
-// func (f *FourslashTest) GoToPosAndFile(t *testing.T, pos lsproto.Position, fileName string) {
-// 	// GoToRangeStart
-// 	f.ensureActiveFile(t, fileName)
-// 	f.currentCaretPosition = pos
-// 	f.activeFilename = fileName
-// 	// !!! this.selectionEnd = -1
-// }
 func (f *FourslashTest) GoToEachMarker(t *testing.T, markerNames []string, action func(t *testing.T, marker *Marker, index int)) {
 	var markers []*Marker
 	if len(markers) == 0 {
