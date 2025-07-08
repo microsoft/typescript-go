@@ -4561,8 +4561,7 @@ type itemData struct {
 }
 
 // !!! CompletionEntryDataAutoImport
-type autoImportData struct {
-}
+type autoImportData struct{}
 
 // Special values for `CompletionInfo['source']` used to disambiguate
 // completion items with the same `name`. (Each completion item must
@@ -4768,7 +4767,8 @@ func getSymbolCompletionFromItemData(
 					contextToken:       data.contextToken,
 					jsxInitializer:     data.jsxInitializer,
 					isTypeOnlyLocation: data.isTypeOnlyLocation,
-				}}
+				},
+			}
 		}
 	}
 	return detailsData{}
