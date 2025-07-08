@@ -265,26 +265,33 @@ func getEachFileNameOfModule(
 
 	if preferSymlinks {
 		// Include both real paths and any symlink paths that point to them
-		// Let the module specifier generation logic choose the best one
+		// But only add symlink paths when they would provide a better import option
 		for _, target := range targets {
 			if shouldFilterIgnoredPaths && containsIgnoredPath(target) {
 				continue
 			}
 			
-			// Always include the real path
-			results = append(results, ModulePath{
-				FileName:        target,
-				IsInNodeModules: containsNodeModules(target),
-				IsRedirect:      referenceRedirect == target,
-			})
+			realPathAdded := false
 			
-			// Also try to find and include symlink paths
-			symlinkPath := findNodeModulesSymlinkToTarget(target, importingFileName, host)
-			if symlinkPath != "" && symlinkPath != target {
+			// Try to find and include symlink paths first, but only if they seem beneficial
+			if !containsNodeModules(target) {
+				symlinkPath := findNodeModulesSymlinkToTarget(target, importingFileName, host)
+				if symlinkPath != "" && symlinkPath != target {
+					results = append(results, ModulePath{
+						FileName:        symlinkPath,
+						IsInNodeModules: containsNodeModules(symlinkPath),
+						IsRedirect:      false,
+					})
+					realPathAdded = true // Don't add real path if we found a symlink
+				}
+			}
+			
+			// Always include the real path unless we found a better symlink
+			if !realPathAdded {
 				results = append(results, ModulePath{
-					FileName:        symlinkPath,
-					IsInNodeModules: containsNodeModules(symlinkPath),
-					IsRedirect:      false,
+					FileName:        target,
+					IsInNodeModules: containsNodeModules(target),
+					IsRedirect:      referenceRedirect == target,
 				})
 			}
 		}
@@ -304,7 +311,12 @@ func getEachFileNameOfModule(
 }
 
 // findNodeModulesSymlinkToTarget tries to find a symlink in a node_modules directory that points to the target
+// Only returns a symlink path if it would be beneficial (i.e., the target is not already in node_modules)
 func findNodeModulesSymlinkToTarget(target, importingFileName string, host ModuleSpecifierGenerationHost) string {
+	// Only look for symlinks if the target is not already in node_modules
+	if containsNodeModules(target) {
+		return ""
+	}
 	// Extract the target directory to look for package.json
 	targetDir := tspath.GetDirectoryPath(target)
 	packageJsonPath := tspath.CombinePaths(targetDir, "package.json")
