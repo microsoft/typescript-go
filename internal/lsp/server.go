@@ -498,6 +498,8 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return s.handleDocumentOnTypeFormat(ctx, req)
 	case *lsproto.WorkspaceSymbolParams:
 		return s.handleWorkspaceSymbol(ctx, req)
+	case *lsproto.CompletionItem:
+		return s.handleCompletionItemResolve(ctx, req)
 	default:
 		switch req.Method {
 		case lsproto.MethodShutdown:
@@ -560,6 +562,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 			},
 			CompletionProvider: &lsproto.CompletionOptions{
 				TriggerCharacters: &ls.TriggerCharacters,
+				ResolveProvider:   ptrTo(true),
 				// !!! other options
 			},
 			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
@@ -718,6 +721,26 @@ func (s *Server) handleCompletion(ctx context.Context, req *lsproto.RequestMessa
 		return err
 	}
 	s.sendResult(req.ID, list)
+	return nil
+}
+
+func (s *Server) handleCompletionItemResolve(ctx context.Context, req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.CompletionItem)
+	data, err := ls.GetCompletionItemData(params)
+	_, project := s.projectService.EnsureDefaultProjectForFile(data.FileName)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	defer done()
+	resolvedItem, err := languageService.ResolveCompletionItem(
+		ctx,
+		params,
+		data,
+		getCompletionClientCapabilities(s.initializeParams),
+		&ls.UserPreferences{},
+	)
+	if err != nil {
+		return err
+	}
+	s.sendResult(req.ID, resolvedItem)
 	return nil
 }
 

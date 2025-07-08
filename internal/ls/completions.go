@@ -4091,6 +4091,13 @@ func (l *LanguageService) createLSPCompletionItem(
 	source string,
 ) *lsproto.CompletionItem {
 	kind := getCompletionsSymbolKind(elementKind)
+	var data any = &itemData{
+		FileName:   file.FileName(),
+		Position:   position,
+		Source:     source,
+		Name:       name,
+		AutoImport: nil, // !!! auto-imports
+	}
 
 	// Text edit
 	var textEdit *lsproto.TextEditOrInsertReplaceEdit
@@ -4194,7 +4201,7 @@ func (l *LanguageService) createLSPCompletionItem(
 		InsertTextFormat: insertTextFormat,
 		TextEdit:         textEdit,
 		CommitCharacters: commitCharacters,
-		Data:             nil, // !!! auto-imports
+		Data:             &data,
 	}
 }
 
@@ -4546,11 +4553,11 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 }
 
 type itemData struct {
-	documentURI lsproto.DocumentUri
-	position    lsproto.Position
-	source      string
-	name        string // !!! do we need this or can we just use label?
-	autoImport  *autoImportData
+	FileName   string
+	Position   int
+	Source     string
+	Name       string // !!! do we need this or can we just use label?
+	AutoImport *autoImportData
 }
 
 // !!! CompletionEntryDataAutoImport
@@ -4584,25 +4591,24 @@ const (
 func (l *LanguageService) ResolveCompletionItem(
 	ctx context.Context,
 	item *lsproto.CompletionItem,
+	data *itemData,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
 ) (*lsproto.CompletionItem, error) {
-	data := item.Data
 	if data == nil {
 		return nil, fmt.Errorf("completion item data is nil")
 	}
-	itemData, err := l.getCompletionItemData(data)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get completion item data: %w", err)
+
+	program, file := l.tryGetProgramAndFile(data.FileName)
+	if file == nil {
+		return nil, fmt.Errorf("file not found: %s", data.FileName)
 	}
 
-	program, file := l.getProgramAndFile(itemData.documentURI)
-	position := int(l.converters.LineAndCharacterToPosition(file, itemData.position))
-	return l.getCompletionItemDetails(ctx, program, position, file, item, itemData, clientOptions, preferences), nil
+	return l.getCompletionItemDetails(ctx, program, data.Position, file, item, data, clientOptions, preferences), nil
 }
 
-func (l *LanguageService) getCompletionItemData(data any) (*itemData, error) {
-	bytes, err := json.Marshal(data)
+func GetCompletionItemData(item *lsproto.CompletionItem) (*itemData, error) {
+	bytes, err := json.Marshal(item.Data)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal completion item data: %w", err)
 	}
@@ -4646,9 +4652,9 @@ func (l *LanguageService) getCompletionItemDetails(
 		request := symbolCompletion.request
 		// !!! JSDoc completions
 		if core.Some(request.keywordCompletions, func(c *lsproto.CompletionItem) bool {
-			return c.Label == itemData.name
+			return c.Label == itemData.Name
 		}) {
-			return createSimpleDetails(item, itemData.name)
+			return createSimpleDetails(item, itemData.Name)
 		}
 		return nil
 	case symbolCompletion.symbol != nil:
@@ -4669,9 +4675,9 @@ func (l *LanguageService) getCompletionItemDetails(
 	default:
 		// Didn't find a symbol with this name.  See if we can find a keyword instead.
 		if core.Some(allKeywordCompletions(), func(c *lsproto.CompletionItem) bool {
-			return c.Label == itemData.name
+			return c.Label == itemData.Name
 		}) {
-			return createSimpleDetails(item, itemData.name)
+			return createSimpleDetails(item, itemData.Name)
 		}
 		return nil
 	}
@@ -4703,12 +4709,12 @@ func getSymbolCompletionFromItemData(
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
 ) detailsData {
-	if itemData.source == SourceSwitchCases {
+	if itemData.Source == SourceSwitchCases {
 		return detailsData{
 			cases: &struct{}{},
 		}
 	}
-	if itemData.autoImport != nil {
+	if itemData.AutoImport != nil {
 		// !!! auto-import
 		return detailsData{}
 	}
@@ -4728,7 +4734,7 @@ func getSymbolCompletionFromItemData(
 
 	var literal literalValue
 	for _, l := range data.literals {
-		if completionNameForLiteral(file, preferences, l) == itemData.name {
+		if completionNameForLiteral(file, preferences, l) == itemData.Name {
 			literal = l
 			break
 		}
@@ -4747,11 +4753,11 @@ func getSymbolCompletionFromItemData(
 		symbolId := ast.GetSymbolId(symbol)
 		origin := data.symbolToOriginInfoMap[symbolId]
 		displayName, _ := getCompletionEntryDisplayNameForSymbol(symbol, origin, data.completionKind, data.isJsxIdentifierExpected)
-		if displayName == itemData.name &&
-			(itemData.source == string(completionSourceClassMemberSnippet) && symbol.Flags&ast.SymbolFlagsClassMember != 0 ||
-				itemData.source == string(completionSourceObjectLiteralMethodSnippet) && symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 ||
-				getSourceFromOrigin(origin) == itemData.source ||
-				itemData.source == string(completionSourceObjectLiteralMemberWithComma)) {
+		if displayName == itemData.Name &&
+			(itemData.Source == string(completionSourceClassMemberSnippet) && symbol.Flags&ast.SymbolFlagsClassMember != 0 ||
+				itemData.Source == string(completionSourceObjectLiteralMethodSnippet) && symbol.Flags&(ast.SymbolFlagsProperty|ast.SymbolFlagsMethod) != 0 ||
+				getSourceFromOrigin(origin) == itemData.Source ||
+				itemData.Source == string(completionSourceObjectLiteralMemberWithComma)) {
 			return detailsData{
 				symbol: &symbolDetails{
 					symbol:             symbol,
