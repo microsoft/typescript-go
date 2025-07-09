@@ -353,6 +353,14 @@ func (p *Program) verifyCompilerOptions() {
 		return configFile.SourceFile
 	})
 
+	configFilePath := core.Memoize(func() string {
+		file := sourceFile()
+		if file != nil {
+			return file.FileName()
+		}
+		return ""
+	})
+
 	getCompilerOptionsPropertySyntax := core.Memoize(func() *ast.PropertyAssignment {
 		return tsoptions.ForEachTsConfigPropArray(sourceFile(), "compilerOptions", core.Identity)
 	})
@@ -437,8 +445,8 @@ func (p *Program) verifyCompilerOptions() {
 	if options.BaseUrl != "" {
 		// BaseUrl will have been turned absolute by this point.
 		var useInstead string
-		if sourceFile() != nil {
-			relative := tspath.GetRelativePathFromFile(sourceFile().FileName(), options.BaseUrl, p.comparePathsOptions)
+		if configFilePath() != "" {
+			relative := tspath.GetRelativePathFromFile(configFilePath(), options.BaseUrl, p.comparePathsOptions)
 			if !(strings.HasPrefix(relative, "./") || strings.HasPrefix(relative, "../")) {
 				relative = "./" + relative
 			}
@@ -500,6 +508,57 @@ func (p *Program) verifyCompilerOptions() {
 	// !!! Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBuildInfoFile_is_specified
 	// !!! verifyDeprecatedCompilerOptions
 	// !!! verifyProjectReferences
+
+	if options.Composite.IsTrue() {
+		var rootPaths collections.Set[tspath.Path]
+		for _, fileName := range p.opts.Config.FileNames() {
+			rootPaths.Add(p.toPath(fileName))
+		}
+
+		for _, file := range p.files {
+			if sourceFileMayBeEmitted(file, p, false) && !rootPaths.Has(file.Path()) {
+				p.programDiagnostics = append(p.programDiagnostics, ast.NewDiagnostic(
+					file,
+					core.TextRange{},
+					diagnostics.File_0_is_not_listed_within_the_file_list_of_project_1_Projects_must_list_all_files_or_use_an_include_pattern,
+					file.FileName(),
+					configFilePath(),
+				))
+			}
+		}
+	}
+
+	for key, value := range options.Paths.Entries() {
+		if !hasZeroOrOneAsteriskCharacter(key) {
+			// !!! createDiagnosticForOptionPaths
+			createDiagnosticForOption(true /*onKey*/, "paths", key, diagnostics.Pattern_0_can_have_at_most_one_Asterisk_character, key)
+		}
+		if len(value) == 0 {
+			// !!! createDiagnosticForOptionPaths
+			createDiagnosticForOption(true /*onKey*/, "paths", key, diagnostics.Substitutions_for_pattern_0_shouldn_t_be_an_empty_array, key)
+		}
+		for _, subst := range value {
+			if !hasZeroOrOneAsteriskCharacter(subst) {
+				// !!! createDiagnosticForOptionPathKeyValue
+				createDiagnosticForOption(true /*onKey*/, "paths", key, diagnostics.Substitution_0_in_pattern_1_can_have_at_most_one_Asterisk_character, subst, key)
+			}
+		}
+	}
+}
+
+func hasZeroOrOneAsteriskCharacter(str string) bool {
+	seenAsterisk := false
+	for _, ch := range str {
+		if ch == '*' {
+			if !seenAsterisk {
+				seenAsterisk = true
+			} else {
+				// have already seen asterisk
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
@@ -921,15 +980,19 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 	return result
 }
 
+func (p *Program) toPath(filename string) tspath.Path {
+	return tspath.ToPath(filename, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+}
+
 func (p *Program) GetSourceFile(filename string) *ast.SourceFile {
-	path := tspath.ToPath(filename, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())
+	path := p.toPath(filename)
 	return p.GetSourceFileByPath(path)
 }
 
 func (p *Program) GetSourceFileForResolvedModule(fileName string) *ast.SourceFile {
 	file := p.GetSourceFile(fileName)
 	if file == nil {
-		filename := p.projectReferenceFileMapper.getParseFileRedirect(ast.NewHasFileName(fileName, tspath.ToPath(fileName, p.GetCurrentDirectory(), p.UseCaseSensitiveFileNames())))
+		filename := p.projectReferenceFileMapper.getParseFileRedirect(ast.NewHasFileName(fileName, p.toPath(fileName)))
 		if filename != "" {
 			return p.GetSourceFile(filename)
 		}

@@ -1,8 +1,9 @@
 tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
   Use '"paths": {"*": "./*"}' instead.
+tsconfig.json(4,9): error TS5066: Substitutions for pattern '*' shouldn't be an empty array.
 
 
-==== tsconfig.json (1 errors) ====
+==== tsconfig.json (2 errors) ====
     {
         "compilerOptions": {
             "baseUrl": ".",
@@ -10,6 +11,8 @@ tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remo
 !!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
 !!! error TS5102:   Use '"paths": {"*": "./*"}' instead.
             "paths": {
+            ~~~~~~~
+!!! error TS5066: Substitutions for pattern '*' shouldn't be an empty array.
                 "*": "*"
             }
         }

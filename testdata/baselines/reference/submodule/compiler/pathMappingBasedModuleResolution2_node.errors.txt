@@ -1,8 +1,10 @@
 root/tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
   Use '"paths": {"*": "./src/*"}' instead.
+root/tsconfig.json(4,9): error TS5061: Pattern '*1*' can have at most one '*' character.
+root/tsconfig.json(4,9): error TS5062: Substitution '*2*' in pattern '*1*' can have at most one '*' character.
 
 
-==== root/tsconfig.json (1 errors) ====
+==== root/tsconfig.json (3 errors) ====
     {
         "compilerOptions": {
             "baseUrl": "./src",
@@ -10,6 +12,10 @@ root/tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please
 !!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
 !!! error TS5102:   Use '"paths": {"*": "./src/*"}' instead.
             "paths": {
+            ~~~~~~~
+!!! error TS5061: Pattern '*1*' can have at most one '*' character.
+            ~~~~~~~
+!!! error TS5062: Substitution '*2*' in pattern '*1*' can have at most one '*' character.
                 "*1*": [ "*2*" ]
             }
         }
