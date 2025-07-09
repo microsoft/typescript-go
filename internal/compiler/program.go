@@ -18,6 +18,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
 	"github.com/microsoft/typescript-go/internal/outputpaths"
+	"github.com/microsoft/typescript-go/internal/parser"
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/sourcemap"
@@ -416,6 +417,10 @@ func (p *Program) verifyCompilerOptions() {
 		createDiagnosticForOption(true /*onKey*/, option1, option2, message, newArgs...)
 	}
 
+	createOptionValueDiagnostic := func(option1 string, message *diagnostics.Message, value string, args ...any) {
+		createDiagnosticForOption(false /*onKey*/, option1, "", message, args...)
+	}
+
 	createRemovedOptionDiagnostic := func(name string, value string, useInstead string) {
 		var message *diagnostics.Message
 		var args []any
@@ -581,6 +586,59 @@ func (p *Program) verifyCompilerOptions() {
 
 	if options.Lib != nil && options.NoLib.IsTrue() {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_with_option_1, "lib", "noLib")
+	}
+
+	languageVersion := options.GetEmitScriptTarget()
+
+	firstNonAmbientExternalModuleSourceFile := core.Find(p.files, func(f *ast.SourceFile) bool { return ast.IsExternalModule(f) && !f.IsDeclarationFile })
+	if options.IsolatedModules.IsTrue() || options.VerbatimModuleSyntax.IsTrue() {
+		if options.Module == core.ModuleKindNone && languageVersion < core.ScriptTargetES2015 && options.IsolatedModules.IsTrue() {
+			// !!!
+			// createDiagnosticForOptionName(diagnostics.Option_isolatedModules_can_only_be_used_when_either_option_module_is_provided_or_option_target_is_ES2015_or_higher, "isolatedModules", "target")
+		}
+
+		if options.PreserveConstEnums.IsFalse() {
+			createDiagnosticForOptionName(diagnostics.Option_preserveConstEnums_cannot_be_disabled_when_0_is_enabled, core.IfElse(options.VerbatimModuleSyntax.IsTrue(), "verbatimModuleSyntax", "isolatedModules"), "preserveConstEnums")
+		}
+	} else if firstNonAmbientExternalModuleSourceFile != nil && languageVersion < core.ScriptTargetES2015 && options.Module == core.ModuleKindNone {
+		// !!!
+	}
+
+	if options.OutDir != "" ||
+		options.RootDir != "" ||
+		options.SourceRoot != "" ||
+		options.MapRoot != "" ||
+		(options.GetEmitDeclarations() && options.DeclarationDir != "") {
+		dir := p.CommonSourceDirectory()
+		if options.OutDir != "" && dir == "" && core.Some(p.files, func(f *ast.SourceFile) bool { return tspath.GetRootLength(f.FileName()) > 1 }) {
+			createDiagnosticForOptionName(diagnostics.Cannot_find_the_common_subdirectory_path_for_the_input_files, "outDir", "")
+		}
+	}
+
+	if options.CheckJs.IsTrue() && !options.GetAllowJS() {
+		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "checkJs", "allowJs")
+	}
+
+	if options.EmitDeclarationOnly.IsTrue() {
+		if !options.GetEmitDeclarations() {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1_or_option_2, "emitDeclarationOnly", "declaration", "composite")
+		}
+	}
+
+	// !!! emitDecoratorMetadata
+
+	if options.JsxFactory != "" {
+		if options.ReactNamespace != "" {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_with_option_1, "reactNamespace", "jsxFactory")
+		}
+		if options.Jsx == core.JsxEmitReactJSX || options.Jsx == core.JsxEmitReactJSXDev {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_when_option_jsx_is_1, "jsxFactory", tsoptions.InverseJsxOptionMap.GetOrZero(options.Jsx))
+		}
+		if parser.ParseIsolatedEntityName(options.JsxFactory) == nil {
+			createOptionValueDiagnostic("jsxFactory", diagnostics.Invalid_value_for_jsxFactory_0_is_not_a_valid_identifier_or_qualified_name, options.JsxFactory)
+		}
+	} else if options.ReactNamespace != "" && !scanner.IsIdentifierText(options.ReactNamespace, core.LanguageVariantStandard) {
+		createOptionValueDiagnostic("reactNamespace", diagnostics.Invalid_value_for_reactNamespace_0_is_not_a_valid_identifier, options.ReactNamespace)
 	}
 }
 

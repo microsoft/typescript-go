@@ -1,9 +1,7 @@
-error TS5067: Invalid value for 'jsxFactory'. '{0}' is not a valid identifier or qualified-name.
-test.tsx(12,5): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
-test.tsx(13,5): error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
+error TS5053: Option 'reactNamespace' cannot be specified with option 'jsxFactory'.
 
 
-!!! error TS5067: Invalid value for 'jsxFactory'. '{0}' is not a valid identifier or qualified-name.
+!!! error TS5053: Option 'reactNamespace' cannot be specified with option 'jsxFactory'.
 ==== Element.ts (0 errors) ====
     declare namespace JSX {
         interface Element {
@@ -35,7 +33,7 @@ test.tsx(13,5): error TS2874: This JSX tag requires 'React' to be in scope, but 
         return text[0].toLowerCase() + text.substring(1);
     }
     
-==== test.tsx (2 errors) ====
+==== test.tsx (0 errors) ====
     import { Element} from './Element';
     
     let c: {
@@ -48,11 +46,7 @@ test.tsx(13,5): error TS2874: This JSX tag requires 'React' to be in scope, but 
     	view() {
     		return [
     			<meta content="helloworld"></meta>,
-    			 ~~~~
-!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
     			<meta content={c.a!.b}></meta>
-    			 ~~~~
-!!! error TS2874: This JSX tag requires 'React' to be in scope, but it could not be found.
     		];
     	}
     }
