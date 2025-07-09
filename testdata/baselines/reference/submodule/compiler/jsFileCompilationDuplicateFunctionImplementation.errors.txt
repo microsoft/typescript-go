@@ -1,6 +1,8 @@
+error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
 a.ts(1,10): error TS2393: Duplicate function implementation.
 
 
+!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
 ==== b.js (0 errors) ====
     function foo() {
         return 10;

@@ -1,0 +1,11 @@
+--- old.checkJsdocOnEndOfFile.errors.txt
++++ new.checkJsdocOnEndOfFile.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
+ eof.js(2,20): error TS2304: Cannot find name 'bad'.
+
+
++!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
+ ==== eof.js (1 errors) ====
+     /**
+      * @typedef {Array<bad>} Should have error here

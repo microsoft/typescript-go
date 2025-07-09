@@ -192,6 +192,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 	if !canReplaceFileInProgram(oldFile, newFile) {
 		return NewProgram(p.opts), false
 	}
+	// TODO: reverify compiler options when config has changed?
 	result := &Program{
 		opts:                        p.opts,
 		nodeModules:                 p.nodeModules,
@@ -342,8 +343,6 @@ func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
 }
 
 func (p *Program) verifyCompilerOptions() {
-	// TODO: do this
-
 	options := p.Options()
 
 	sourceFile := core.Memoize(func() *ast.SourceFile {
@@ -447,6 +446,10 @@ func (p *Program) verifyCompilerOptions() {
 			useInstead = fmt.Sprintf(`"paths": {"*": %s}`, core.Must(json.Marshal(suggestion)))
 		}
 		createRemovedOptionDiagnostic("baseUrl", "", useInstead)
+	}
+
+	if options.OutFile != "" {
+		createRemovedOptionDiagnostic("outFile", "", "")
 	}
 
 	// TODO: find other removed stuff

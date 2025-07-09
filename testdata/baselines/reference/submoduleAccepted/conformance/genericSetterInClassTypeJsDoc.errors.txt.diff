@@ -1,0 +1,32 @@
+--- old.genericSetterInClassTypeJsDoc.errors.txt
++++ new.genericSetterInClassTypeJsDoc.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++
++
++!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++==== genericSetterInClassTypeJsDoc.js (0 errors) ====
++    /**
++     * @template T
++     */
++     class Box {
++        #value;
++    
++        /** @param {T} initialValue */
++        constructor(initialValue) {
++            this.#value = initialValue;
++        }
++        
++        /** @type {T} */
++        get value() {
++            return this.#value;
++        }
++    
++        set value(value) {
++            this.#value = value;
++        }
++    }
++    
++    new Box(3).value = 3;
++    

@@ -1,7 +1,9 @@
+error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
 /src/a.js(2,10): error TS17008: JSX element 'string' has no corresponding closing tag.
 /src/a.js(3,1): error TS1005: '</' expected.
 
 
+!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
 ==== /src/a.js (2 errors) ====
     0 as number;
     var v = <string>undefined;

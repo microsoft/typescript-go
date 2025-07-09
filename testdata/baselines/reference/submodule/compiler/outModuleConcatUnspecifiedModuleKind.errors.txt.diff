@@ -5,10 +5,14 @@
 -
 -
 -==== a.ts (1 errors) ====
--    export class A { } // module
++error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++
++
++!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++==== a.ts (0 errors) ====
+     export class A { } // module
 -                 ~
 -!!! error TS6131: Cannot compile modules using option 'outFile' unless the '--module' flag is 'amd' or 'system'.
--    
--==== b.ts (0 errors) ====
--    var x = 0; // global
-+<no content>
+     
+ ==== b.ts (0 errors) ====
+     var x = 0; // global

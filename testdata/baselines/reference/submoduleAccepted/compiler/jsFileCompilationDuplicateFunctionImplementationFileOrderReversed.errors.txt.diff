@@ -1,0 +1,11 @@
+--- old.jsFileCompilationDuplicateFunctionImplementationFileOrderReversed.errors.txt
++++ new.jsFileCompilationDuplicateFunctionImplementationFileOrderReversed.errors.txt
+@@= skipped -0, +0 lines =@@
++error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
+ a.ts(1,10): error TS2393: Duplicate function implementation.
+
+
++!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
+ ==== a.ts (1 errors) ====
+     function foo() {
+              ~~~

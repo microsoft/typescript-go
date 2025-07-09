@@ -1,0 +1,16 @@
+--- old.jsFileCompilationWithEnabledCompositeOption.errors.txt
++++ new.jsFileCompilationWithEnabledCompositeOption.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++
++
++!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++==== a.ts (0 errors) ====
++    class c {
++    }
++    
++==== b.js (0 errors) ====
++    function foo() {
++    }
++    

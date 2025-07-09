@@ -1,0 +1,24 @@
+--- old.signaturesUseJSDocForOptionalParameters.errors.txt
++++ new.signaturesUseJSDocForOptionalParameters.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++
++
++!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++==== jsDocOptionality.js (0 errors) ====
++    function MyClass() {
++      this.prop = null;
++    }
++    /**
++     * @param  {string} required
++     * @param  {string} [notRequired]
++     * @returns {MyClass}
++     */
++    MyClass.prototype.optionalParam = function(required, notRequired) {
++        return this;
++    };
++    let pInst = new MyClass();
++    let c1 = pInst.optionalParam('hello')
++    let c2 = pInst.optionalParam('hello', null)
++    

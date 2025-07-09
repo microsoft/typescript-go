@@ -5,8 +5,12 @@
 -
 -
 -==== /src/a.js (1 errors) ====
--    0!
++error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++
++
++!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
++==== /src/a.js (0 errors) ====
+     0!
 -    ~~
 -!!! error TS8013: Non-null assertions can only be used in TypeScript files.
--    
-+<no content>
+     

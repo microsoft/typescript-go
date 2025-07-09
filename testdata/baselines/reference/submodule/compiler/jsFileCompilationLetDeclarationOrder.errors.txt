@@ -1,0 +1,12 @@
+error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
+
+
+!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
+==== b.js (0 errors) ====
+    let a = 10;
+    b = 30;
+    
+==== a.ts (0 errors) ====
+    let b = 30;
+    a = 10;
+    

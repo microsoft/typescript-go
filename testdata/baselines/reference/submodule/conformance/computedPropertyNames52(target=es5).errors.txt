@@ -1,0 +1,13 @@
+error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
+
+
+!!! error TS5102: Option 'outFile' has been removed. Please remove it from your configuration.
+==== computedPropertyNames52.js (0 errors) ====
+    const array = [];
+    for (let i = 0; i < 10; ++i) {
+        array.push(class C {
+            [i] = () => C;
+            static [i] = 100;
+        })
+    }
+    
