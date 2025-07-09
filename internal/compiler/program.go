@@ -467,6 +467,16 @@ func (p *Program) verifyCompilerOptions() {
 	// 	createRemovedOptionDiagnostic("target", "ES5", "")
 	// }
 
+	if options.Module == core.ModuleKindAMD {
+		createRemovedOptionDiagnostic("module", "AMD", "")
+	}
+	if options.Module == core.ModuleKindSystem {
+		createRemovedOptionDiagnostic("module", "System", "")
+	}
+	if options.Module == core.ModuleKindUMD {
+		createRemovedOptionDiagnostic("module", "UMD", "")
+	}
+
 	// TODO: find other removed stuff
 
 	// TODO: the rest of the diagnostics
@@ -543,6 +553,34 @@ func (p *Program) verifyCompilerOptions() {
 				createDiagnosticForOption(true /*onKey*/, "paths", key, diagnostics.Substitution_0_in_pattern_1_can_have_at_most_one_Asterisk_character, subst, key)
 			}
 		}
+	}
+
+	if options.SourceMap.IsFalseOrUnknown() && options.InlineSourceMap.IsFalseOrUnknown() {
+		if options.InlineSources.IsTrue() {
+			createDiagnosticForOptionName(diagnostics.Option_0_can_only_be_used_when_either_option_inlineSourceMap_or_option_sourceMap_is_provided, "inlineSources", "")
+		}
+		if options.SourceRoot != "" {
+			createDiagnosticForOptionName(diagnostics.Option_0_can_only_be_used_when_either_option_inlineSourceMap_or_option_sourceMap_is_provided, "sourceRoot", "")
+		}
+	}
+
+	if options.MapRoot != "" && !(options.SourceMap.IsTrue() || options.DeclarationMap.IsTrue()) {
+		// Error to specify --mapRoot without --sourcemap
+		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1_or_option_2, "mapRoot", "sourceMap", "declarationMap")
+	}
+
+	if options.DeclarationDir != "" {
+		if !options.GetEmitDeclarations() {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1_or_option_2, "declarationDir", "declaration", "composite")
+		}
+	}
+
+	if options.DeclarationMap.IsTrue() && !options.GetEmitDeclarations() {
+		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1_or_option_2, "declarationMap", "declaration", "composite")
+	}
+
+	if options.Lib != nil && options.NoLib.IsTrue() {
+		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_with_option_1, "lib", "noLib")
 	}
 }
 
