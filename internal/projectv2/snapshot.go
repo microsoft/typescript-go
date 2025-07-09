@@ -10,7 +10,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
 	"github.com/microsoft/typescript-go/internal/vfs/cachedvfs"
@@ -31,7 +30,6 @@ type Snapshot struct {
 	// Session options are immutable for the server lifetime,
 	// so can be a pointer.
 	sessionOptions *SessionOptions
-	logger         *project.Logger
 	toPath         func(fileName string) tspath.Path
 
 	// Immutable state, cloned between snapshots
@@ -47,7 +45,6 @@ func NewSnapshot(
 	sessionOptions *SessionOptions,
 	parseCache *parseCache,
 	extendedConfigCache *extendedConfigCache,
-	logger *project.Logger,
 	configFileRegistry *ConfigFileRegistry,
 	compilerOptionsForInferredProjects *core.CompilerOptions,
 	toPath func(fileName string) tspath.Path,
@@ -55,12 +52,15 @@ func NewSnapshot(
 
 	id := snapshotID.Add(1)
 	s := &Snapshot{
-		id:                 id,
-		overlayFS:          fs,
-		sessionOptions:     sessionOptions,
-		logger:             logger,
-		configFileRegistry: configFileRegistry,
-		projectCollection:  &ProjectCollection{},
+		id: id,
+
+		sessionOptions: sessionOptions,
+		toPath:         toPath,
+
+		overlayFS:                          fs,
+		configFileRegistry:                 configFileRegistry,
+		projectCollection:                  &ProjectCollection{},
+		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 	}
 
 	return s

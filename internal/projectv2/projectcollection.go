@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"slices"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
@@ -108,23 +109,25 @@ func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path)
 
 func (c *ProjectCollection) findDefaultConfiguredProject(fileName string, path tspath.Path) *Project {
 	if configFileName := c.configFileRegistry.GetConfigFileName(path); configFileName != "" {
-		return c.findDefaultConfiguredProjectWorker(fileName, path, configFileName)
+		return c.findDefaultConfiguredProjectWorker(fileName, path, configFileName, nil, nil)
 	}
 	return nil
 }
 
-func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, path tspath.Path, configFileName string) *Project {
+func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, path tspath.Path, configFileName string, visited *collections.SyncSet[*Project], fallback *Project) *Project {
 	configFilePath := c.toPath(configFileName)
 	project, ok := c.configuredProjects[configFilePath]
 	if !ok {
 		return nil
 	}
+	if visited == nil {
+		visited = &collections.SyncSet[*Project]{}
+	}
 
 	// Look in the config's project and its references recursively.
-	found := core.BreadthFirstSearchParallel(
+	search := core.BreadthFirstSearchParallel(
 		project,
 		func(project *Project) []*Project {
-			// Return the project references as neighbors.
 			if project.CommandLine == nil {
 				return nil
 			}
@@ -138,22 +141,29 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, 
 			}
 			return false, false
 		},
+		visited,
 	)
-	if len(found) > 0 {
-		// If we found a project that contains the file, return it.
-		return found[0]
+
+	if search.Stopped {
+		// If we found a project that directly contains the file, return it.
+		return search.Path[0]
+	}
+	if len(search.Path) > 0 && fallback == nil {
+		// If we found a project that contains the file, but it is a source from
+		// a project reference, record it as a fallback.
+		fallback = search.Path[0]
 	}
 
 	// Look for tsconfig.json files higher up the directory tree and do the same. This handles
 	// the common case where a higher-level "solution" tsconfig.json contains all projects in a
 	// workspace.
 	if config := c.configFileRegistry.GetConfig(path); config != nil && config.CompilerOptions().DisableSolutionSearching.IsTrue() {
-		return nil
+		return fallback
 	}
 	if ancestorConfigName := c.configFileRegistry.GetAncestorConfigFileName(path, configFileName); ancestorConfigName != "" {
-		return c.findDefaultConfiguredProjectWorker(fileName, path, ancestorConfigName)
+		return c.findDefaultConfiguredProjectWorker(fileName, path, ancestorConfigName, visited, fallback)
 	}
-	return nil
+	return fallback
 }
 
 // clone creates a shallow copy of the project collection.

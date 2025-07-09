@@ -8,6 +8,11 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 )
 
+type BreadthFirstSearchResult[N comparable] struct {
+	Stopped bool
+	Path    []N
+}
+
 // BreadthFirstSearchParallel performs a breadth-first search on a graph
 // starting from the given node. It processes nodes in parallel and returns the path
 // from the first node that satisfies the `visit` function back to the start node.
@@ -15,8 +20,11 @@ func BreadthFirstSearchParallel[N comparable](
 	start N,
 	neighbors func(N) []N,
 	visit func(node N) (isResult bool, stop bool),
-) []N {
-	var visited collections.SyncSet[N]
+	visited *collections.SyncSet[N],
+) BreadthFirstSearchResult[N] {
+	if visited == nil {
+		visited = &collections.SyncSet[N]{}
+	}
 
 	type job struct {
 		node   N
@@ -50,15 +58,19 @@ func BreadthFirstSearchParallel[N comparable](
 					return // Stop processing if we already found a lower result
 				}
 
-				// If we have already visited this node, skip it
+				// If we have already visited this node, skip it.
 				if !visited.AddIfAbsent(j.node) {
+					// Note that if we are here, we already visited this node at a
+					// previous *level*, which means `visit` must have returned false,
+					// so we don't need to update our result indices. This holds true
+					// because we deduplicated jobs before queuing the level.
 					return
 				}
 
 				isResult, stop := visit(j.node)
 				if isResult {
 					// We found a result, so we will stop at this level, but an
-					// earlier job may still find the a true result at a lower index.
+					// earlier job may still find a true result at a lower index.
 					if stop {
 						updateMin(&lowestGoal, int64(i))
 						return
@@ -125,14 +137,14 @@ func BreadthFirstSearchParallel[N comparable](
 	for level.Size() > 0 {
 		result := processLevel(levelIndex, level)
 		if result.stop {
-			return createPath(result.job)
+			return BreadthFirstSearchResult[N]{Stopped: true, Path: createPath(result.job)}
 		} else if result.job != nil && fallback == nil {
 			fallback = result.job
 		}
 		level = result.next
 		levelIndex++
 	}
-	return createPath(fallback)
+	return BreadthFirstSearchResult[N]{Stopped: false, Path: createPath(fallback)}
 }
 
 // updateMin updates the atomic integer `a` to the candidate value if it is less than the current value.
