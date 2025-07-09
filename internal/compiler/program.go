@@ -452,6 +452,13 @@ func (p *Program) verifyCompilerOptions() {
 		createRemovedOptionDiagnostic("outFile", "", "")
 	}
 
+	// if options.Target == core.ScriptTargetES3 {
+	// 	createRemovedOptionDiagnostic("target", "ES3", "")
+	// }
+	// if options.Target == core.ScriptTargetES5 {
+	// 	createRemovedOptionDiagnostic("target", "ES5", "")
+	// }
+
 	// TODO: find other removed stuff
 
 	// TODO: the rest of the diagnostics
@@ -462,6 +469,37 @@ func (p *Program) verifyCompilerOptions() {
 	if options.ExactOptionalPropertyTypes.IsTrue() && !getStrictOptionValue(options.StrictNullChecks) {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "exactOptionalPropertyTypes", "strictNullChecks")
 	}
+
+	if options.IsolatedDeclarations.IsTrue() {
+		if options.GetAllowJS() {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_with_option_1, "allowJs", "isolatedDeclarations")
+		}
+		if !options.GetEmitDeclarations() {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1_or_option_2, "isolatedDeclarations", "declaration", "composite")
+		}
+	}
+
+	if options.InlineSourceMap.IsTrue() {
+		if options.SourceMap.IsTrue() {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_with_option_1, "sourceMap", "inlineSourceMap")
+		}
+		if options.MapRoot != "" {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_with_option_1, "mapRoot", "inlineSourceMap")
+		}
+	}
+
+	if options.Composite.IsTrue() {
+		if options.Declaration.IsFalse() {
+			createDiagnosticForOptionName(diagnostics.Composite_projects_may_not_disable_declaration_emit, "declaration", "")
+		}
+		if options.Incremental.IsFalse() {
+			createDiagnosticForOptionName(diagnostics.Composite_projects_may_not_disable_incremental_compilation, "declaration", "")
+		}
+	}
+
+	// !!! Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBuildInfoFile_is_specified
+	// !!! verifyDeprecatedCompilerOptions
+	// !!! verifyProjectReferences
 }
 
 func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
