@@ -26,7 +26,6 @@ type CompilerOptions struct {
 	AllowUnusedLabels                         Tristate                                  `json:"allowUnusedLabels,omitzero"`
 	AssumeChangesOnlyAffectDirectDependencies Tristate                                  `json:"assumeChangesOnlyAffectDirectDependencies,omitzero"`
 	AlwaysStrict                              Tristate                                  `json:"alwaysStrict,omitzero"`
-	BaseUrl                                   string                                    `json:"baseUrl,omitzero"`
 	Build                                     Tristate                                  `json:"build,omitzero"`
 	CheckJs                                   Tristate                                  `json:"checkJs,omitzero"`
 	CustomConditions                          []string                                  `json:"customConditions,omitzero"`
@@ -86,7 +85,6 @@ type CompilerOptions struct {
 	NoImplicitOverride                        Tristate                                  `json:"noImplicitOverride,omitzero"`
 	NoUncheckedSideEffectImports              Tristate                                  `json:"noUncheckedSideEffectImports,omitzero"`
 	OutDir                                    string                                    `json:"outDir,omitzero"`
-	OutFile                                   string                                    `json:"outFile,omitzero"`
 	Paths                                     *collections.OrderedMap[string, []string] `json:"paths,omitzero"`
 	PreserveConstEnums                        Tristate                                  `json:"preserveConstEnums,omitzero"`
 	PreserveSymlinks                          Tristate                                  `json:"preserveSymlinks,omitzero"`
@@ -120,6 +118,11 @@ type CompilerOptions struct {
 	UseUnknownInCatchVariables                Tristate                                  `json:"useUnknownInCatchVariables,omitzero"`
 	VerbatimModuleSyntax                      Tristate                                  `json:"verbatimModuleSyntax,omitzero"`
 	MaxNodeModuleJsDepth                      *int                                      `json:"maxNodeModuleJsDepth,omitzero"`
+
+	// Deprecated: Do not use outside of options parsing and validation.
+	BaseUrl string `json:"baseUrl,omitzero"`
+	// Deprecated: Do not use outside of options parsing and validation.
+	OutFile string `json:"outFile,omitzero"`
 
 	// Internal fields
 	ConfigFilePath      string   `json:"configFilePath,omitzero"`
