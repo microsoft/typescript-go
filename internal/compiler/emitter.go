@@ -436,7 +436,6 @@ func sourceFileMayBeEmitted(sourceFile *ast.SourceFile, host SourceFileMayBeEmit
 }
 
 func getSourceFilesToEmit(host SourceFileMayBeEmittedHost, targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
-	// !!! outFile not yet implemented, may be deprecated
 	var sourceFiles []*ast.SourceFile
 	if targetSourceFile != nil {
 		sourceFiles = []*ast.SourceFile{targetSourceFile}

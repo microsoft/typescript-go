@@ -200,8 +200,6 @@ func prepareDeclarationCompilationContext(
 		// Is this file going to be emitted separately
 		var sourceFileName string
 
-		////outFile := options.OutFile;
-		////if len(outFile) == 0 {
 		if len(options.OutDir) != 0 {
 			sourceFilePath := tspath.GetNormalizedAbsolutePath(sourceFile.FileName(), result.Program.GetCurrentDirectory())
 			sourceFilePath = strings.Replace(sourceFilePath, result.Program.CommonSourceDirectory(), "", 1)
@@ -209,10 +207,6 @@ func prepareDeclarationCompilationContext(
 		} else {
 			sourceFileName = sourceFile.FileName()
 		}
-		////} else {
-		////	// Goes to single --out file
-		////	sourceFileName = outFile
-		////}
 
 		dTsFileName := tspath.RemoveFileExtension(sourceFileName) + tspath.GetDeclarationEmitExtensionForPath(sourceFileName)
 		return result.DTS.GetOrZero(dTsFileName)
