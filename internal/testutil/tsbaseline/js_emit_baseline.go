@@ -26,11 +26,6 @@ func DoJSEmitBaseline(
 	harnessSettings *harnessutil.HarnessOptions,
 	opts baseline.Options,
 ) {
-	if options.OutFile != "" || options.Out != "" {
-		// Just return, no t.Skip; these options are not going to be supported so noting them is not helpful.
-		return
-	}
-
 	if !options.NoEmit.IsTrue() && !options.EmitDeclarationOnly.IsTrue() && result.JS.Size() == 0 && len(result.Diagnostics) == 0 {
 		t.Fatal("Expected at least one js file to be emitted or at least one error to be created.")
 	}

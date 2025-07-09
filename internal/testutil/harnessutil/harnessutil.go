@@ -648,40 +648,36 @@ func newCompilationResult(
 			}
 		}
 
-		if options.OutFile != "" {
-			/// !!! options.OutFile not yet supported
-		} else {
-			// using the order from the inputs, populate the outputs
-			for _, sourceFile := range program.GetSourceFiles() {
-				input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text()}
-				c.inputs = append(c.inputs, input)
-				if !tspath.IsDeclarationFileName(sourceFile.FileName()) {
-					extname := outputpaths.GetOutputExtension(sourceFile.FileName(), options.Jsx)
-					outputs := &CompilationOutput{
-						Inputs: []*TestFile{input},
-						JS:     js.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname)),
-						DTS:    dts.GetOrZero(c.getOutputPath(sourceFile.FileName(), tspath.GetDeclarationEmitExtensionForPath(sourceFile.FileName()))),
-						Map:    maps.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname+".map")),
-					}
-					c.inputsAndOutputs.Set(sourceFile.FileName(), outputs)
-					if outputs.JS != nil {
-						c.inputsAndOutputs.Set(outputs.JS.UnitName, outputs)
-						c.JS.Set(outputs.JS.UnitName, outputs.JS)
-						js.Delete(outputs.JS.UnitName)
-						c.outputs = append(c.outputs, outputs.JS)
-					}
-					if outputs.DTS != nil {
-						c.inputsAndOutputs.Set(outputs.DTS.UnitName, outputs)
-						c.DTS.Set(outputs.DTS.UnitName, outputs.DTS)
-						dts.Delete(outputs.DTS.UnitName)
-						c.outputs = append(c.outputs, outputs.DTS)
-					}
-					if outputs.Map != nil {
-						c.inputsAndOutputs.Set(outputs.Map.UnitName, outputs)
-						c.Maps.Set(outputs.Map.UnitName, outputs.Map)
-						maps.Delete(outputs.Map.UnitName)
-						c.outputs = append(c.outputs, outputs.Map)
-					}
+		// using the order from the inputs, populate the outputs
+		for _, sourceFile := range program.GetSourceFiles() {
+			input := &TestFile{UnitName: sourceFile.FileName(), Content: sourceFile.Text()}
+			c.inputs = append(c.inputs, input)
+			if !tspath.IsDeclarationFileName(sourceFile.FileName()) {
+				extname := outputpaths.GetOutputExtension(sourceFile.FileName(), options.Jsx)
+				outputs := &CompilationOutput{
+					Inputs: []*TestFile{input},
+					JS:     js.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname)),
+					DTS:    dts.GetOrZero(c.getOutputPath(sourceFile.FileName(), tspath.GetDeclarationEmitExtensionForPath(sourceFile.FileName()))),
+					Map:    maps.GetOrZero(c.getOutputPath(sourceFile.FileName(), extname+".map")),
+				}
+				c.inputsAndOutputs.Set(sourceFile.FileName(), outputs)
+				if outputs.JS != nil {
+					c.inputsAndOutputs.Set(outputs.JS.UnitName, outputs)
+					c.JS.Set(outputs.JS.UnitName, outputs.JS)
+					js.Delete(outputs.JS.UnitName)
+					c.outputs = append(c.outputs, outputs.JS)
+				}
+				if outputs.DTS != nil {
+					c.inputsAndOutputs.Set(outputs.DTS.UnitName, outputs)
+					c.DTS.Set(outputs.DTS.UnitName, outputs.DTS)
+					dts.Delete(outputs.DTS.UnitName)
+					c.outputs = append(c.outputs, outputs.DTS)
+				}
+				if outputs.Map != nil {
+					c.inputsAndOutputs.Set(outputs.Map.UnitName, outputs)
+					c.Maps.Set(outputs.Map.UnitName, outputs.Map)
+					maps.Delete(outputs.Map.UnitName)
+					c.outputs = append(c.outputs, outputs.Map)
 				}
 			}
 		}
@@ -706,28 +702,24 @@ func compareTestFiles(a *TestFile, b *TestFile) int {
 }
 
 func (c *CompilationResult) getOutputPath(path string, ext string) string {
-	if c.Options.OutFile != "" {
-		/// !!! options.OutFile not yet supported
-	} else {
-		path = tspath.ResolvePath(c.Program.GetCurrentDirectory(), path)
-		var outDir string
-		if ext == ".d.ts" || ext == ".d.mts" || ext == ".d.cts" || (strings.HasSuffix(ext, ".ts") && strings.Contains(ext, ".d.")) {
-			outDir = c.Options.DeclarationDir
-			if outDir == "" {
-				outDir = c.Options.OutDir
-			}
-		} else {
+	path = tspath.ResolvePath(c.Program.GetCurrentDirectory(), path)
+	var outDir string
+	if ext == ".d.ts" || ext == ".d.mts" || ext == ".d.cts" || (strings.HasSuffix(ext, ".ts") && strings.Contains(ext, ".d.")) {
+		outDir = c.Options.DeclarationDir
+		if outDir == "" {
 			outDir = c.Options.OutDir
 		}
-		if outDir != "" {
-			common := c.Program.CommonSourceDirectory()
-			if common != "" {
-				path = tspath.GetRelativePathFromDirectory(common, path, tspath.ComparePathsOptions{
-					UseCaseSensitiveFileNames: c.Program.UseCaseSensitiveFileNames(),
-					CurrentDirectory:          c.Program.GetCurrentDirectory(),
-				})
-				path = tspath.CombinePaths(tspath.ResolvePath(c.Program.GetCurrentDirectory(), c.Options.OutDir), path)
-			}
+	} else {
+		outDir = c.Options.OutDir
+	}
+	if outDir != "" {
+		common := c.Program.CommonSourceDirectory()
+		if common != "" {
+			path = tspath.GetRelativePathFromDirectory(common, path, tspath.ComparePathsOptions{
+				UseCaseSensitiveFileNames: c.Program.UseCaseSensitiveFileNames(),
+				CurrentDirectory:          c.Program.GetCurrentDirectory(),
+			})
+			path = tspath.CombinePaths(tspath.ResolvePath(c.Program.GetCurrentDirectory(), c.Options.OutDir), path)
 		}
 	}
 	return tspath.ChangeExtension(path, ext)

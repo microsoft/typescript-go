@@ -59,7 +59,6 @@ type CompilerOptions struct {
 	JsxFactory                                string                                    `json:"jsxFactory,omitzero"`
 	JsxFragmentFactory                        string                                    `json:"jsxFragmentFactory,omitzero"`
 	JsxImportSource                           string                                    `json:"jsxImportSource,omitzero"`
-	KeyofStringsOnly                          Tristate                                  `json:"keyofStringsOnly,omitzero"`
 	Lib                                       []string                                  `json:"lib,omitzero"`
 	LibReplacement                            Tristate                                  `json:"libReplacement,omitzero"`
 	Locale                                    string                                    `json:"locale,omitzero"`
@@ -86,7 +85,6 @@ type CompilerOptions struct {
 	NoResolve                                 Tristate                                  `json:"noResolve,omitzero"`
 	NoImplicitOverride                        Tristate                                  `json:"noImplicitOverride,omitzero"`
 	NoUncheckedSideEffectImports              Tristate                                  `json:"noUncheckedSideEffectImports,omitzero"`
-	Out                                       string                                    `json:"out,omitzero"`
 	OutDir                                    string                                    `json:"outDir,omitzero"`
 	OutFile                                   string                                    `json:"outFile,omitzero"`
 	Paths                                     *collections.OrderedMap[string, []string] `json:"paths,omitzero"`
