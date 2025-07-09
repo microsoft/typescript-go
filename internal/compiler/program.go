@@ -417,7 +417,7 @@ func (p *Program) verifyCompilerOptions() {
 		createDiagnosticForOption(true /*onKey*/, option1, option2, message, newArgs...)
 	}
 
-	createOptionValueDiagnostic := func(option1 string, message *diagnostics.Message, value string, args ...any) {
+	createOptionValueDiagnostic := func(option1 string, message *diagnostics.Message, args ...any) {
 		createDiagnosticForOption(false /*onKey*/, option1, "", message, args...)
 	}
 
@@ -481,10 +481,6 @@ func (p *Program) verifyCompilerOptions() {
 	if options.Module == core.ModuleKindUMD {
 		createRemovedOptionDiagnostic("module", "UMD", "")
 	}
-
-	// TODO: find other removed stuff
-
-	// TODO: the rest of the diagnostics
 
 	if options.StrictPropertyInitialization.IsTrue() && !getStrictOptionValue(options.StrictNullChecks) {
 		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "strictPropertyInitialization", "strictNullChecks")
@@ -640,6 +636,54 @@ func (p *Program) verifyCompilerOptions() {
 	} else if options.ReactNamespace != "" && !scanner.IsIdentifierText(options.ReactNamespace, core.LanguageVariantStandard) {
 		createOptionValueDiagnostic("reactNamespace", diagnostics.Invalid_value_for_reactNamespace_0_is_not_a_valid_identifier, options.ReactNamespace)
 	}
+
+	if options.JsxFragmentFactory != "" {
+		if options.JsxFactory == "" {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "jsxFragmentFactory", "jsxFactory")
+		}
+		if options.Jsx == core.JsxEmitReactJSX || options.Jsx == core.JsxEmitReactJSXDev {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_when_option_jsx_is_1, "jsxFragmentFactory", tsoptions.InverseJsxOptionMap.GetOrZero(options.Jsx))
+		}
+		if parser.ParseIsolatedEntityName(options.JsxFragmentFactory) == nil {
+			createOptionValueDiagnostic("jsxFragmentFactory", diagnostics.Invalid_value_for_jsxFragmentFactory_0_is_not_a_valid_identifier_or_qualified_name, options.JsxFragmentFactory)
+		}
+	}
+
+	if options.ReactNamespace != "" {
+		if options.Jsx == core.JsxEmitReactJSX || options.Jsx == core.JsxEmitReactJSXDev {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_when_option_jsx_is_1, "reactNamespace", tsoptions.InverseJsxOptionMap.GetOrZero(options.Jsx))
+		}
+	}
+
+	if options.JsxImportSource != "" {
+		if options.Jsx == core.JsxEmitReact {
+			createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_when_option_jsx_is_1, "jsxImportSource", tsoptions.InverseJsxOptionMap.GetOrZero(options.Jsx))
+		}
+	}
+
+	// moduleKind := options.GetEmitModuleKind()
+
+	if options.AllowImportingTsExtensions.IsTrue() && !(options.NoEmit.IsTrue() || options.EmitDeclarationOnly.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()) {
+		createOptionValueDiagnostic("allowImportingTsExtensions", diagnostics.Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set)
+	}
+
+	moduleResolution := options.GetModuleResolutionKind()
+	if options.ResolvePackageJsonExports.IsTrue() && !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
+		createDiagnosticForOptionName(diagnostics.Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler, "resolvePackageJsonExports", "")
+	}
+	if options.ResolvePackageJsonImports.IsTrue() && !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
+		createDiagnosticForOptionName(diagnostics.Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler, "resolvePackageJsonImports", "")
+	}
+	if options.CustomConditions != nil && !moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution) {
+		createDiagnosticForOptionName(diagnostics.Option_0_can_only_be_used_when_moduleResolution_is_set_to_node16_nodenext_or_bundler, "customConditions", "")
+	}
+
+	// !!!
+	// if moduleResolution == core.ModuleResolutionKindBundler && !emitModuleKindIsNonNodeESM(moduleKind) && moduleKind != core.ModuleKindPreserve {
+	// 	createOptionValueDiagnostic("moduleResolution", diagnostics.Option_0_can_only_be_used_when_module_is_set_to_preserve_or_to_es2015_or_later, "bundler")
+	// }
+
+	// TODO: continue
 }
 
 func hasZeroOrOneAsteriskCharacter(str string) bool {
@@ -655,6 +699,15 @@ func hasZeroOrOneAsteriskCharacter(str string) bool {
 		}
 	}
 	return true
+}
+
+func moduleResolutionSupportsPackageJsonExportsAndImports(moduleResolution core.ModuleResolutionKind) bool {
+	return moduleResolution >= core.ModuleResolutionKindNode16 && moduleResolution <= core.ModuleResolutionKindNodeNext ||
+		moduleResolution == core.ModuleResolutionKindBundler
+}
+
+func emitModuleKindIsNonNodeESM(moduleKind core.ModuleKind) bool {
+	return moduleKind >= core.ModuleKindES2015 && moduleKind <= core.ModuleKindESNext
 }
 
 func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
