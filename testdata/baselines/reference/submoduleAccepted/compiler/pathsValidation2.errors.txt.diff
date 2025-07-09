@@ -2,19 +2,21 @@
 +++ new.pathsValidation2.errors.txt
 @@= skipped -0, +0 lines =@@
 -tsconfig.json(5,19): error TS5064: Substitution '1' for pattern '*' has incorrect type, expected 'string', got 'number'.
--
--
--==== tsconfig.json (1 errors) ====
--    {
--        "compilerOptions": {
--            "baseUrl": ".",
--            "paths": {
--                "*": [1]
++tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
++  Use '"paths": {"*": "./*"}' instead.
+
+
+ ==== tsconfig.json (1 errors) ====
+     {
+         "compilerOptions": {
+             "baseUrl": ".",
++            ~~~~~~~~~
++!!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
++!!! error TS5102:   Use '"paths": {"*": "./*"}' instead.
+             "paths": {
+                 "*": [1]
 -                      ~
 -!!! error TS5064: Substitution '1' for pattern '*' has incorrect type, expected 'string', got 'number'.
--            }
--        }
--    }
--==== a.ts (0 errors) ====
--    let x = 1;
-+<no content>
+             }
+         }
+     }

@@ -1,0 +1,29 @@
+--- old.requireOfJsonFile_PathMapping.errors.txt
++++ new.requireOfJsonFile_PathMapping.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++/tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
++  Use '"paths": {"*": "./*"}' instead.
++
++
++==== /tsconfig.json (1 errors) ====
++    {
++        "compilerOptions": {
++            "baseUrl": ".",
++            ~~~~~~~~~
++!!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
++!!! error TS5102:   Use '"paths": {"*": "./*"}' instead.
++            "paths": {
++                "*": ["node_modules/*", "src/types"]
++            },
++            "allowJs": true,
++            "outDir": "bin"
++        }
++    }
++    
++==== /a.ts (0 errors) ====
++    import foobar from "foo/bar/foobar.json";
++    
++==== /node_modules/foo/bar/foobar.json (0 errors) ====
++    { "a": 10 }
++    

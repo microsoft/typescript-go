@@ -1,0 +1,22 @@
+tsconfig.json(4,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
+  Use '"paths": {"*": "./src/*"}' instead.
+
+
+==== tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "traceResolution": true,
+            "baseUrl": "./src",
+            ~~~~~~~~~
+!!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
+!!! error TS5102:   Use '"paths": {"*": "./src/*"}' instead.
+            "paths": {
+              "@interface/**/*" : ["./src/interface/*"],
+              "@service/**/*": ["./src/service/**/*"],
+              "@controller/*": ["controller/*"],
+            }
+        }
+    }
+    
+==== src/main.ts (0 errors) ====
+    import 'someModule';

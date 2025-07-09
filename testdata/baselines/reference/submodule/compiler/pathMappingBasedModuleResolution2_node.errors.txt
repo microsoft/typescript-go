@@ -1,0 +1,19 @@
+root/tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
+  Use '"paths": {"*": "./src/*"}' instead.
+
+
+==== root/tsconfig.json (1 errors) ====
+    {
+        "compilerOptions": {
+            "baseUrl": "./src",
+            ~~~~~~~~~
+!!! error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
+!!! error TS5102:   Use '"paths": {"*": "./src/*"}' instead.
+            "paths": {
+                "*1*": [ "*2*" ]
+            }
+        }
+    }
+    
+==== root/src/folder1/file1.ts (0 errors) ====
+    export var x = 1;
