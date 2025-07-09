@@ -2,8 +2,11 @@ package compiler
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"maps"
 	"slices"
+	"strings"
 	"sync"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -52,6 +55,8 @@ type Program struct {
 	commonSourceDirectoryOnce sync.Once
 
 	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
+
+	programDiagnostics []*ast.Diagnostic
 }
 
 // FileExists implements checker.Program.
@@ -175,6 +180,7 @@ func NewProgram(opts ProgramOptions) *Program {
 	p := &Program{opts: opts}
 	p.initCheckerPool()
 	p.processedFiles = processAllProgramFiles(p.opts, p.singleThreaded())
+	p.verifyCompilerOptions()
 	return p
 }
 
@@ -192,6 +198,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 		comparePathsOptions:         p.comparePathsOptions,
 		processedFiles:              p.processedFiles,
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
+		programDiagnostics:          p.programDiagnostics,
 	}
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
@@ -331,8 +338,127 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 }
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
-	// !!!
-	return SortAndDeduplicateDiagnostics(p.fileLoadDiagnostics.GetDiagnostics())
+	return SortAndDeduplicateDiagnostics(slices.Concat(p.programDiagnostics, p.fileLoadDiagnostics.GetDiagnostics()))
+}
+
+func (p *Program) verifyCompilerOptions() {
+	// TODO: do this
+
+	options := p.Options()
+
+	sourceFile := core.Memoize(func() *ast.SourceFile {
+		configFile := p.opts.Config.ConfigFile
+		if configFile == nil {
+			return nil
+		}
+		return configFile.SourceFile
+	})
+
+	getCompilerOptionsPropertySyntax := core.Memoize(func() *ast.PropertyAssignment {
+		return tsoptions.ForEachTsConfigPropArray(sourceFile(), "compilerOptions", core.Identity)
+	})
+
+	getCompilerOptionsObjectLiteralSyntax := core.Memoize(func() *ast.ObjectLiteralExpression {
+		compilerOptionsProperty := getCompilerOptionsPropertySyntax()
+		if compilerOptionsProperty != nil &&
+			compilerOptionsProperty.Initializer != nil &&
+			ast.IsObjectLiteralExpression(compilerOptionsProperty.Initializer) {
+			return compilerOptionsProperty.Initializer.AsObjectLiteralExpression()
+		}
+		return nil
+	})
+
+	createOptionDiagnosticInObjectLiteralSyntax := func(objectLiteral *ast.ObjectLiteralExpression, onKey bool, key1 string, key2 string, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+		diag := tsoptions.ForEachPropertyAssignment(objectLiteral, key1, func(property *ast.PropertyAssignment) *ast.Diagnostic {
+			return tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), core.IfElse(onKey, property.Name(), property.Initializer), message, args...)
+		}, key2)
+		if diag != nil {
+			p.programDiagnostics = append(p.programDiagnostics, diag)
+		}
+		return diag
+	}
+
+	createCompilerOptionsDiagnostic := func(message *diagnostics.Message, args ...any) *ast.Diagnostic {
+		compilerOptionsProperty := getCompilerOptionsPropertySyntax()
+		var diag *ast.Diagnostic
+		if compilerOptionsProperty != nil {
+			diag = tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), compilerOptionsProperty.Name(), message, args...)
+		} else {
+			diag = ast.NewCompilerDiagnostic(message, args...)
+		}
+		p.programDiagnostics = append(p.programDiagnostics, diag)
+		return diag
+	}
+
+	createDiagnosticForOption := func(onKey bool, option1 string, option2 string, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+		compilerOptionsObjectLiteralSyntax := getCompilerOptionsObjectLiteralSyntax()
+		var diag *ast.Diagnostic
+		if compilerOptionsObjectLiteralSyntax != nil {
+			diag = createOptionDiagnosticInObjectLiteralSyntax(compilerOptionsObjectLiteralSyntax, onKey, option1, option2, message, args...)
+		}
+		if diag == nil {
+			diag = createCompilerOptionsDiagnostic(message, args...)
+		}
+		return diag
+	}
+
+	createDiagnosticForOptionName := func(message *diagnostics.Message, option1 string, option2 string, args ...any) {
+		newArgs := make([]any, 0, len(args)+2)
+		newArgs = append(newArgs, option1, option2)
+		newArgs = append(newArgs, args...)
+		createDiagnosticForOption(true /*onKey*/, option1, option2, message, newArgs...)
+	}
+
+	createRemovedOptionDiagnostic := func(name string, value string, useInstead string) {
+		var message *diagnostics.Message
+		var args []any
+		if value == "" {
+			message = diagnostics.Option_0_has_been_removed_Please_remove_it_from_your_configuration
+			args = []any{name}
+		} else {
+			message = diagnostics.Option_0_1_has_been_removed_Please_remove_it_from_your_configuration
+			args = []any{name, value}
+		}
+
+		diag := createDiagnosticForOption(value == "", name, "", message, args...)
+		if useInstead != "" {
+			diag.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.Use_0_instead, useInstead))
+		}
+	}
+
+	getStrictOptionValue := func(value core.Tristate) bool {
+		if value != core.TSUnknown {
+			return value == core.TSTrue
+		}
+		return options.Strict == core.TSTrue
+	}
+
+	// Removed in TS7
+
+	if options.BaseUrl != "" {
+		// BaseUrl will have been turned absolute by this point.
+		var useInstead string
+		if sourceFile() != nil {
+			relative := tspath.GetRelativePathFromFile(sourceFile().FileName(), options.BaseUrl, p.comparePathsOptions)
+			if !(strings.HasPrefix(relative, "./") || strings.HasPrefix(relative, "../")) {
+				relative = "./" + relative
+			}
+			suggestion := tspath.CombinePaths(relative, "*")
+			useInstead = fmt.Sprintf(`"paths": {"*": %s}`, core.Must(json.Marshal(suggestion)))
+		}
+		createRemovedOptionDiagnostic("baseUrl", "", useInstead)
+	}
+
+	// TODO: find other removed stuff
+
+	// TODO: the rest of the diagnostics
+
+	if options.StrictPropertyInitialization.IsTrue() && !getStrictOptionValue(options.StrictNullChecks) {
+		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "strictPropertyInitialization", "strictNullChecks")
+	}
+	if options.ExactOptionalPropertyTypes.IsTrue() && !getStrictOptionValue(options.StrictNullChecks) {
+		createDiagnosticForOptionName(diagnostics.Option_0_cannot_be_specified_without_specifying_option_1, "exactOptionalPropertyTypes", "strictNullChecks")
+	}
 }
 
 func (p *Program) GetGlobalDiagnostics(ctx context.Context) []*ast.Diagnostic {
