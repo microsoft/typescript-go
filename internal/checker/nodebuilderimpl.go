@@ -2441,9 +2441,9 @@ func (b *nodeBuilderImpl) conditionalTypeToTypeNode(_t *Type) *ast.TypeNode {
 	saveInferTypeParameters := b.ctx.inferTypeParameters
 	b.ctx.inferTypeParameters = t.root.inferTypeParameters
 	extendsTypeNode := b.typeToTypeNode(t.extendsType)
+	b.ctx.inferTypeParameters = saveInferTypeParameters
 	trueTypeNode := b.typeToTypeNodeOrCircularityElision(b.ch.getTrueTypeFromConditionalType(_t))
 	falseTypeNode := b.typeToTypeNodeOrCircularityElision(b.ch.getFalseTypeFromConditionalType(_t))
-	b.ctx.inferTypeParameters = saveInferTypeParameters
 	return b.f.NewConditionalTypeNode(checkTypeNode, extendsTypeNode, trueTypeNode, falseTypeNode)
 }
 
