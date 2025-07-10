@@ -401,11 +401,7 @@ func (p *Program) verifyCompilerOptions() {
 	}
 
 	createDiagnosticForOption := func(onKey bool, option1 string, option2 string, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-		compilerOptionsObjectLiteralSyntax := getCompilerOptionsObjectLiteralSyntax()
-		var diag *ast.Diagnostic
-		if compilerOptionsObjectLiteralSyntax != nil {
-			diag = createOptionDiagnosticInObjectLiteralSyntax(compilerOptionsObjectLiteralSyntax, onKey, option1, option2, message, args...)
-		}
+		diag := createOptionDiagnosticInObjectLiteralSyntax(getCompilerOptionsObjectLiteralSyntax(), onKey, option1, option2, message, args...)
 		if diag == nil {
 			diag = createCompilerOptionsDiagnostic(message, args...)
 		}
@@ -541,19 +537,66 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
+	forEachOptionPathsSyntax := func(callback func(*ast.PropertyAssignment) *ast.Diagnostic) *ast.Diagnostic {
+		return tsoptions.ForEachPropertyAssignment(getCompilerOptionsObjectLiteralSyntax(), "paths", callback)
+	}
+
+	createDiagnosticForOptionPaths := func(onKey bool, key string, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+		diag := forEachOptionPathsSyntax(func(pathProp *ast.PropertyAssignment) *ast.Diagnostic {
+			if ast.IsObjectLiteralExpression(pathProp.Initializer) {
+				return createOptionDiagnosticInObjectLiteralSyntax(pathProp.Initializer.AsObjectLiteralExpression(), onKey, key, "", message, args...)
+			}
+			return nil
+		})
+		if diag == nil {
+			diag = createCompilerOptionsDiagnostic(message, args...)
+		}
+		return diag
+	}
+
+	createDiagnosticForOptionPathKeyValue := func(key string, valueIndex int, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+		diag := forEachOptionPathsSyntax(func(pathProp *ast.PropertyAssignment) *ast.Diagnostic {
+			if ast.IsObjectLiteralExpression(pathProp.Initializer) {
+				return tsoptions.ForEachPropertyAssignment(pathProp.Initializer.AsObjectLiteralExpression(), key, func(keyProps *ast.PropertyAssignment) *ast.Diagnostic {
+					initializer := keyProps.Initializer
+					if ast.IsArrayLiteralExpression(initializer) {
+						elements := initializer.AsArrayLiteralExpression().Elements
+						if elements != nil && len(elements.Nodes) > valueIndex {
+							diag := tsoptions.CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile(), elements.Nodes[valueIndex], message, args...)
+							p.programDiagnostics = append(p.programDiagnostics, diag)
+							return diag
+						}
+					}
+					return nil
+				})
+			}
+			return nil
+		})
+		if diag == nil {
+			diag = createCompilerOptionsDiagnostic(message, args...)
+		}
+		return diag
+	}
+
 	for key, value := range options.Paths.Entries() {
+		// !!! This code does not handle cases where where the path mappings have the wrong types,
+		// as that information is mostly lost during the parsing process.
 		if !hasZeroOrOneAsteriskCharacter(key) {
-			// !!! createDiagnosticForOptionPaths
-			createDiagnosticForOption(true /*onKey*/, "paths", key, diagnostics.Pattern_0_can_have_at_most_one_Asterisk_character, key)
+			createDiagnosticForOptionPaths(true /*onKey*/, key, diagnostics.Pattern_0_can_have_at_most_one_Asterisk_character, key)
 		}
-		if len(value) == 0 {
-			// !!! createDiagnosticForOptionPaths
-			createDiagnosticForOption(true /*onKey*/, "paths", key, diagnostics.Substitutions_for_pattern_0_shouldn_t_be_an_empty_array, key)
+		if value == nil {
+			createDiagnosticForOptionPaths(false /*onKey*/, key, diagnostics.Substitutions_for_pattern_0_should_be_an_array, key)
+		} else if len(value) == 0 {
+			createDiagnosticForOptionPaths(false /*onKey*/, key, diagnostics.Substitutions_for_pattern_0_shouldn_t_be_an_empty_array, key)
 		}
-		for _, subst := range value {
+		for i, subst := range value {
 			if !hasZeroOrOneAsteriskCharacter(subst) {
-				// !!! createDiagnosticForOptionPathKeyValue
-				createDiagnosticForOption(true /*onKey*/, "paths", key, diagnostics.Substitution_0_in_pattern_1_can_have_at_most_one_Asterisk_character, subst, key)
+				fmt.Println(key, value, i, subst)
+				createDiagnosticForOptionPathKeyValue(key, i, diagnostics.Substitution_0_in_pattern_1_can_have_at_most_one_Asterisk_character, subst, key)
+			}
+			if !tspath.PathIsRelative(subst) && !tspath.PathIsAbsolute(subst) {
+				// !!! This needs a better message that doesn't mention baseUrl
+				createDiagnosticForOptionPathKeyValue(key, i, diagnostics.Non_relative_paths_are_not_allowed_when_baseUrl_is_not_set_Did_you_forget_a_leading_Slash)
 			}
 		}
 	}

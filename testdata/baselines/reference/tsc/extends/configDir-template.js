@@ -62,6 +62,11 @@ CompilerOptions::{
     "explainFiles": true
 }
 Output::
+[96mtsconfig.json[0m:[93m3[0m:[93m2[0m - [91merror[0m[90m TS5090: [0mNon-relative paths are not allowed when 'baseUrl' is not set. Did you forget a leading './'?
+
+[7m3[0m  "compilerOptions": {
+[7m [0m [91m ~~~~~~~~~~~~~~~~~[0m
+
 [96mtsconfig.json[0m:[93m3[0m:[93m2[0m - [91merror[0m[90m TS5102: [0mOption 'baseUrl' has been removed. Please remove it from your configuration.
   Use '"paths": {"*": "./*"}' instead.
 
@@ -69,7 +74,7 @@ Output::
 [7m [0m [91m ~~~~~~~~~~~~~~~~~[0m
 
 
-Found 1 error in tsconfig.json[90m:3[0m
+Found 2 errors in the same file, starting at: tsconfig.json[90m:3[0m
 
 //// [/home/src/projects/configs/first/tsconfig.json] no change
 //// [/home/src/projects/configs/second/tsconfig.json] no change

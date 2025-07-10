@@ -7,9 +7,10 @@
 -==== /tsconfig.json (0 errors) ====
 +/tsconfig.json(3,9): error TS5102: Option 'baseUrl' has been removed. Please remove it from your configuration.
 +  Use '"paths": {"*": "./*"}' instead.
++/tsconfig.json(5,21): error TS5090: Non-relative paths are not allowed when 'baseUrl' is not set. Did you forget a leading './'?
 +
 +
-+==== /tsconfig.json (1 errors) ====
++==== /tsconfig.json (2 errors) ====
      {
          "compilerOptions": {
              "baseUrl": ".",
@@ -18,4 +19,8 @@
 +!!! error TS5102:   Use '"paths": {"*": "./*"}' instead.
              "paths": {
                  "foo": ["foo/foo.ts"]
++                        ~~~~~~~~~~~~
++!!! error TS5090: Non-relative paths are not allowed when 'baseUrl' is not set. Did you forget a leading './'?
              }
+         }
+     }

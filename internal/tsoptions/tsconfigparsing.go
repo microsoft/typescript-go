@@ -1387,7 +1387,7 @@ func ForEachTsConfigPropArray[T any](tsConfigSourceFile *ast.SourceFile, propKey
 	return nil
 }
 
-func ForEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression, key string, callback func(property *ast.PropertyAssignment) T, key2 ...string) T {
+func ForEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression, key string, callback func(property *ast.PropertyAssignment) *T, key2 ...string) *T {
 	if objectLiteral != nil {
 		for _, property := range objectLiteral.Properties.Nodes {
 			if !ast.IsPropertyAssignment(property) {
@@ -1400,7 +1400,7 @@ func ForEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression
 			}
 		}
 	}
-	return *new(T)
+	return nil
 }
 
 func getTsConfigObjectLiteralExpression(tsConfigSourceFile *ast.SourceFile) *ast.ObjectLiteralExpression {
