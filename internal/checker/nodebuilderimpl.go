@@ -2418,9 +2418,9 @@ func (b *nodeBuilderImpl) conditionalTypeToTypeNode(_t *Type) *ast.TypeNode {
 		saveInferTypeParameters := b.ctx.inferTypeParameters
 		b.ctx.inferTypeParameters = t.root.inferTypeParameters
 		extendsTypeNode := b.typeToTypeNode(b.ch.instantiateType(t.root.extendsType, newMapper))
-		b.ctx.inferTypeParameters = saveInferTypeParameters
 		trueTypeNode := b.typeToTypeNodeOrCircularityElision(b.ch.instantiateType(b.getTypeFromTypeNode(t.root.node.TrueType, false), newMapper))
 		falseTypeNode := b.typeToTypeNodeOrCircularityElision(b.ch.instantiateType(b.getTypeFromTypeNode(t.root.node.FalseType, false), newMapper))
+		b.ctx.inferTypeParameters = saveInferTypeParameters
 
 		// outermost conditional makes `T` a type parameter, allowing the inner conditionals to be distributive
 		// second conditional makes `T` have `T & checkType` substitution, so it is correctly usable as the checkType
@@ -2441,9 +2441,9 @@ func (b *nodeBuilderImpl) conditionalTypeToTypeNode(_t *Type) *ast.TypeNode {
 	saveInferTypeParameters := b.ctx.inferTypeParameters
 	b.ctx.inferTypeParameters = t.root.inferTypeParameters
 	extendsTypeNode := b.typeToTypeNode(t.extendsType)
-	b.ctx.inferTypeParameters = saveInferTypeParameters
 	trueTypeNode := b.typeToTypeNodeOrCircularityElision(b.ch.getTrueTypeFromConditionalType(_t))
 	falseTypeNode := b.typeToTypeNodeOrCircularityElision(b.ch.getFalseTypeFromConditionalType(_t))
+	b.ctx.inferTypeParameters = saveInferTypeParameters
 	return b.f.NewConditionalTypeNode(checkTypeNode, extendsTypeNode, trueTypeNode, falseTypeNode)
 }
 
