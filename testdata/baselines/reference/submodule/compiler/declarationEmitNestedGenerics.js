@@ -24,21 +24,18 @@ function g(x) {
 
 //// [declarationEmitNestedGenerics.d.ts]
 declare function f<T>(p: T): <T>(x: T) => T_1;
-declare function g<T>(x: T): T extends (infer T_1)[] ? infer T_1 : T;
+declare function g<T>(x: T): T extends (infer T_1)[] ? T_1 : T;
 
 
 //// [DtsFileErrors]
 
 
 declarationEmitNestedGenerics.d.ts(1,43): error TS2304: Cannot find name 'T_1'.
-declarationEmitNestedGenerics.d.ts(2,56): error TS1338: 'infer' declarations are only permitted in the 'extends' clause of a conditional type.
 
 
-==== declarationEmitNestedGenerics.d.ts (2 errors) ====
+==== declarationEmitNestedGenerics.d.ts (1 errors) ====
     declare function f<T>(p: T): <T>(x: T) => T_1;
                                               ~~~
 !!! error TS2304: Cannot find name 'T_1'.
-    declare function g<T>(x: T): T extends (infer T_1)[] ? infer T_1 : T;
-                                                           ~~~~~~~~~
-!!! error TS1338: 'infer' declarations are only permitted in the 'extends' clause of a conditional type.
+    declare function g<T>(x: T): T extends (infer T_1)[] ? T_1 : T;
     

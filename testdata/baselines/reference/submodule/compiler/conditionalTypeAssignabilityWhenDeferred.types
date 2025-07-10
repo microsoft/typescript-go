@@ -191,7 +191,7 @@ function testAssignabilityToConditionalType<T>() {
 
   // Infer type parameters: no good
   const o2: [T] extends [[infer U]] ? U : { b: number } = o;
->o2 : [T] extends [[infer U]] ? infer U : { b: number; }
+>o2 : [T] extends [[infer U]] ? U : { b: number; }
 >b : number
 >o : { a: number; b: number; }
 

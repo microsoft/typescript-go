@@ -69,38 +69,7 @@
  >x : T
  >y : ZeroOf<T>
 
-@@= skipped -234, +234 lines =@@
- >T52 : false
-
- function f22<T>(x: T extends (infer U)[] ? U[] : never) {
-->f22 : <T>(x: T extends (infer U)[] ? U[] : never) => void
-->x : T extends (infer U)[] ? U[] : never
-+>f22 : <T>(x: T extends (infer U)[] ? (infer U)[] : never) => void
-+>x : T extends (infer U)[] ? (infer U)[] : never
-
-     let e = x[0];  // {}
- >e : unknown
- >x[0] : unknown
-->x : T extends (infer U)[] ? U[] : never
-+>x : T extends (infer U)[] ? (infer U)[] : never
- >0 : 0
- }
-
- function f23<T extends string[]>(x: T extends (infer U)[] ? U[] : never) {
-->f23 : <T extends string[]>(x: T extends (infer U)[] ? U[] : never) => void
-->x : T extends (infer U)[] ? U[] : never
-+>f23 : <T extends string[]>(x: T extends (infer U)[] ? (infer U)[] : never) => void
-+>x : T extends (infer U)[] ? (infer U)[] : never
-
-     let e = x[0];  // string
- >e : string
- >x[0] : string
-->x : T extends (infer U)[] ? U[] : never
-+>x : T extends (infer U)[] ? (infer U)[] : never
- >0 : 0
- }
-
-@@= skipped -119, +119 lines =@@
+@@= skipped -353, +353 lines =@@
  >Baz : Baz<T>
 
  const convert2 = <T>(value: Foo<T>): Baz<T> => value;

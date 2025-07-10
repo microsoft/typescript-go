@@ -42,7 +42,7 @@ const b = a;
 //// [inferTypes2.d.ts]
 // Repros from #22755
 export declare function foo<T>(obj: T): T extends () => infer P ? P : never;
-export declare function bar<T>(obj: T): T extends () => infer P ? infer P : never;
+export declare function bar<T>(obj: T): T extends () => infer P ? P : never;
 export type BadNested<T> = {
     x: T extends number ? T : string;
 };
@@ -50,35 +50,5 @@ export declare function foo2<T>(obj: T): T extends {
     [K in keyof BadNested<infer P>]: BadNested<infer P>[K];
 } ? P : never;
 export declare function bar2<T>(obj: T): T extends {
-    x: infer P extends number ? P : string;
-} ? infer P : never;
-
-
-//// [DtsFileErrors]
-
-
-inferTypes2.d.ts(3,67): error TS1338: 'infer' declarations are only permitted in the 'extends' clause of a conditional type.
-inferTypes2.d.ts(11,33): error TS2304: Cannot find name 'P'.
-inferTypes2.d.ts(12,5): error TS1338: 'infer' declarations are only permitted in the 'extends' clause of a conditional type.
-
-
-==== inferTypes2.d.ts (3 errors) ====
-    // Repros from #22755
-    export declare function foo<T>(obj: T): T extends () => infer P ? P : never;
-    export declare function bar<T>(obj: T): T extends () => infer P ? infer P : never;
-                                                                      ~~~~~~~
-!!! error TS1338: 'infer' declarations are only permitted in the 'extends' clause of a conditional type.
-    export type BadNested<T> = {
-        x: T extends number ? T : string;
-    };
-    export declare function foo2<T>(obj: T): T extends {
-        [K in keyof BadNested<infer P>]: BadNested<infer P>[K];
-    } ? P : never;
-    export declare function bar2<T>(obj: T): T extends {
-        x: infer P extends number ? P : string;
-                                    ~
-!!! error TS2304: Cannot find name 'P'.
-    } ? infer P : never;
-        ~~~~~~~
-!!! error TS1338: 'infer' declarations are only permitted in the 'extends' clause of a conditional type.
-    
+    x: infer P extends number ? infer P : string;
+} ? P : never;

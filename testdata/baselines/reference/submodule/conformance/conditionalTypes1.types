@@ -670,24 +670,24 @@ type T52 = IsNever<any>;  // false
 >T52 : false
 
 function f22<T>(x: T extends (infer U)[] ? U[] : never) {
->f22 : <T>(x: T extends (infer U)[] ? (infer U)[] : never) => void
->x : T extends (infer U)[] ? (infer U)[] : never
+>f22 : <T>(x: T extends (infer U)[] ? U[] : never) => void
+>x : T extends (infer U)[] ? U[] : never
 
     let e = x[0];  // {}
 >e : unknown
 >x[0] : unknown
->x : T extends (infer U)[] ? (infer U)[] : never
+>x : T extends (infer U)[] ? U[] : never
 >0 : 0
 }
 
 function f23<T extends string[]>(x: T extends (infer U)[] ? U[] : never) {
->f23 : <T extends string[]>(x: T extends (infer U)[] ? (infer U)[] : never) => void
->x : T extends (infer U)[] ? (infer U)[] : never
+>f23 : <T extends string[]>(x: T extends (infer U)[] ? U[] : never) => void
+>x : T extends (infer U)[] ? U[] : never
 
     let e = x[0];  // string
 >e : string
 >x[0] : string
->x : T extends (infer U)[] ? (infer U)[] : never
+>x : T extends (infer U)[] ? U[] : never
 >0 : 0
 }
 
