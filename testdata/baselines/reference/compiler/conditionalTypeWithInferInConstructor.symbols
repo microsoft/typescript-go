@@ -1,0 +1,11 @@
+//// [tests/cases/compiler/conditionalTypeWithInferInConstructor.ts] ////
+
+=== conditionalTypeWithInferInConstructor.ts ===
+// This is the exact case from issue #1379
+type ExtractReturn<T> = T extends { new(): infer R } ? R : never;
+>ExtractReturn : Symbol(ExtractReturn, Decl(conditionalTypeWithInferInConstructor.ts, 0, 0))
+>T : Symbol(T, Decl(conditionalTypeWithInferInConstructor.ts, 1, 19))
+>T : Symbol(T, Decl(conditionalTypeWithInferInConstructor.ts, 1, 19))
+>R : Symbol(R, Decl(conditionalTypeWithInferInConstructor.ts, 1, 48))
+>R : Symbol(R, Decl(conditionalTypeWithInferInConstructor.ts, 1, 48))
+

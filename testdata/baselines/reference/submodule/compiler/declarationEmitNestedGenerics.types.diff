@@ -21,3 +21,18 @@
  }
 
  function g<T>(x: T) {
+->g : <T>(x: T) => T extends (infer T_1)[] ? T_1 : T
++>g : <T>(x: T) => T extends (infer T_1)[] ? infer T_1 : T
+ >x : T
+
+     let y: typeof x extends (infer T)[] ? T : typeof x = null as any;
+->y : T extends (infer T_1)[] ? T_1 : T
++>y : T extends (infer T_1)[] ? infer T_1 : T
+ >x : T
+ >x : T
+ >null as any : any
+
+     return y;
+->y : T extends (infer T_1)[] ? T_1 : T
++>y : T extends (infer T_1)[] ? infer T_1 : T
+ }

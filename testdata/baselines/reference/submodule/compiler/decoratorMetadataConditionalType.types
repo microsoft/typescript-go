@@ -12,7 +12,7 @@ abstract class BaseEntity<T> {
 >d : () => PropertyDecorator
 
     public attributes: T extends { attributes: infer A } ? A : undefined;
->attributes : T extends { attributes: infer A; } ? A : undefined
+>attributes : T extends { attributes: infer A; } ? infer A : undefined
 >attributes : A
 }
 class C {
