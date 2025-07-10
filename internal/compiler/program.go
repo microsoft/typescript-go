@@ -744,48 +744,51 @@ func (p *Program) verifyCompilerOptions() {
 		createOptionValueDiagnostic("module", diagnostics.Option_module_must_be_set_to_0_when_option_moduleResolution_is_set_to_1, moduleResolutionName, moduleResolutionName)
 	}
 
+	// !!! The below needs filesByName, which is not equivalent to p.filesByPath.
+
 	// If the emit is enabled make sure that every output file is unique and not overwriting any of the input files
-	// if !options.NoEmit.IsTrue() && !options.SuppressOutputPathCheck.IsTrue() {
-	// 	var emitFilesSeen collections.Set[string]
+	if !options.NoEmit.IsTrue() && !options.SuppressOutputPathCheck.IsTrue() {
+		var emitFilesSeen collections.Set[string]
 
-	// 	// Verify that all the emit files are unique and don't overwrite input files
-	// 	verifyEmitFilePath := func(emitFileName string) {
-	// 		if emitFileName != "" {
-	// 			emitFilePath := p.toPath(emitFileName)
-	// 			// Report error if the output overwrites input file
-	// 			if emitFilesSeen.Has(string(emitFilePath)) {
-	// 				diag := ast.NewCompilerDiagnostic(diagnostics.Cannot_write_file_0_because_it_would_overwrite_input_file, emitFileName)
-	// 				if configFilePath() == "" {
-	// 					// The program is from either an inferred project or an external project
-	// 					diag.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.Adding_a_tsconfig_json_file_will_help_organize_projects_that_contain_both_TypeScript_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig))
-	// 				}
-	// 				p.blockEmittingOfFile(emitFileName, diag)
-	// 			}
+		// Verify that all the emit files are unique and don't overwrite input files
+		verifyEmitFilePath := func(emitFileName string) {
+			if emitFileName != "" {
+				emitFilePath := p.toPath(emitFileName)
+				// Report error if the output overwrites input file
+				if _, ok := p.filesByPath[emitFilePath]; ok {
+					diag := ast.NewCompilerDiagnostic(diagnostics.Cannot_write_file_0_because_it_would_overwrite_input_file, emitFileName)
+					if configFilePath() == "" {
+						// The program is from either an inferred project or an external project
+						diag.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.Adding_a_tsconfig_json_file_will_help_organize_projects_that_contain_both_TypeScript_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig))
+					}
+					p.blockEmittingOfFile(emitFileName, diag)
+				}
 
-	// 			var emitFileKey string
-	// 			if !p.Host().FS().UseCaseSensitiveFileNames() {
-	// 				emitFileKey = tspath.ToFileNameLowerCase(string(emitFilePath))
-	// 			} else {
-	// 				emitFileKey = string(emitFilePath)
-	// 			}
+				var emitFileKey string
+				if !p.Host().FS().UseCaseSensitiveFileNames() {
+					emitFileKey = tspath.ToFileNameLowerCase(string(emitFilePath))
+				} else {
+					emitFileKey = string(emitFilePath)
+				}
 
-	// 			// Report error if multiple files write into same file
-	// 			if emitFilesSeen.Has(emitFileKey) {
-	// 				// Already seen the same emit file - report error
-	// 				p.blockEmittingOfFile(emitFileName, ast.NewCompilerDiagnostic(diagnostics.Cannot_write_file_0_because_it_would_be_overwritten_by_multiple_input_files, emitFileName))
-	// 			} else {
-	// 				emitFilesSeen.Add(emitFileKey)
-	// 			}
-	// 		}
-	// 	}
-	// 	outputpaths.ForEachEmittedFile(p, options, func(emitFileNames *outputpaths.OutputPaths, sourceFile *ast.SourceFile) bool {
-	// 		if !options.EmitDeclarationOnly.IsTrue() {
-	// 			verifyEmitFilePath(emitFileNames.JsFilePath())
-	// 		}
-	// 		verifyEmitFilePath(emitFileNames.DeclarationFilePath())
-	// 		return false
-	// 	}, p.files, false)
-	// }
+				// Report error if multiple files write into same file
+				if emitFilesSeen.Has(emitFileKey) {
+					// Already seen the same emit file - report error
+					p.blockEmittingOfFile(emitFileName, ast.NewCompilerDiagnostic(diagnostics.Cannot_write_file_0_because_it_would_be_overwritten_by_multiple_input_files, emitFileName))
+				} else {
+					emitFilesSeen.Add(emitFileKey)
+				}
+			}
+		}
+
+		outputpaths.ForEachEmittedFile(p, options, func(emitFileNames *outputpaths.OutputPaths, sourceFile *ast.SourceFile) bool {
+			if !options.EmitDeclarationOnly.IsTrue() {
+				verifyEmitFilePath(emitFileNames.JsFilePath())
+			}
+			verifyEmitFilePath(emitFileNames.DeclarationFilePath())
+			return false
+		}, getSourceFilesToEmit(p, nil, false), false)
+	}
 }
 
 func (p *Program) blockEmittingOfFile(emitFileName string, diag *ast.Diagnostic) {
