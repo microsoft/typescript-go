@@ -187,7 +187,7 @@ var jsxOptionMap = collections.NewOrderedMapFromList([]collections.MapEntry[stri
 	{Key: "react-jsxdev", Value: core.JsxEmitReactJSXDev},
 })
 
-var InverseJsxOptionMap = collections.NewOrderedMapFromList(func()[]collections.MapEntry[core.JsxEmit, string]{
+var InverseJsxOptionMap = collections.NewOrderedMapFromList(func() []collections.MapEntry[core.JsxEmit, string] {
 	entries := make([]collections.MapEntry[core.JsxEmit, string], 0, jsxOptionMap.Size())
 	for key, value := range jsxOptionMap.Entries() {
 		entries = append(entries, collections.MapEntry[core.JsxEmit, string]{
@@ -247,5 +247,3 @@ var fallbackEnumMap = collections.NewOrderedMapFromList([]collections.MapEntry[s
 	{Key: "dynamicpriority", Value: core.PollingKindDynamicPriority},
 	{Key: "fixedchunksize", Value: core.PollingKindFixedChunkSize},
 })
-
-
