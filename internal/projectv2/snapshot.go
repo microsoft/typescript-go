@@ -18,10 +18,10 @@ import (
 var snapshotID atomic.Uint64
 
 // !!! create some type safety for this to ensure caching
-func newSnapshotFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding lsproto.PositionEncodingKind) *overlayFS {
+func newSnapshotFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding lsproto.PositionEncodingKind, toPath func(string) tspath.Path) *overlayFS {
 	cachedFS := cachedvfs.From(fs)
 	cachedFS.Enable()
-	return newOverlayFS(cachedFS, positionEncoding, overlays)
+	return newOverlayFS(cachedFS, overlays, positionEncoding, toPath)
 }
 
 type Snapshot struct {
@@ -34,8 +34,8 @@ type Snapshot struct {
 
 	// Immutable state, cloned between snapshots
 	overlayFS                          *overlayFS
-	projectCollection                  *ProjectCollection
-	configFileRegistry                 *ConfigFileRegistry
+	ProjectCollection                  *ProjectCollection
+	ConfigFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	builderLogs                        *logCollector
 }
@@ -59,8 +59,8 @@ func NewSnapshot(
 		toPath:         toPath,
 
 		overlayFS:                          fs,
-		configFileRegistry:                 configFileRegistry,
-		projectCollection:                  &ProjectCollection{},
+		ConfigFileRegistry:                 configFileRegistry,
+		ProjectCollection:                  &ProjectCollection{},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 	}
 
@@ -70,10 +70,10 @@ func NewSnapshot(
 func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	fileName := ls.DocumentURIToFileName(uri)
 	path := s.toPath(fileName)
-	return s.projectCollection.GetDefaultProject(fileName, path)
+	return s.ProjectCollection.GetDefaultProject(fileName, path)
 }
 
-type snapshotChange struct {
+type SnapshotChange struct {
 	// fileChanges are the changes that have occurred since the last snapshot.
 	fileChanges FileChangeSummary
 	// requestedURIs are URIs that were requested by the client.
@@ -85,7 +85,7 @@ type snapshotChange struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 }
 
-func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Session) *Snapshot {
+func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Session) *Snapshot {
 	var logger *logCollector
 	if session.options.LoggingEnabled {
 		var close func()
@@ -93,7 +93,7 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		defer close()
 	}
 
-	fs := newSnapshotFS(session.fs.fs, session.fs.overlays, session.fs.positionEncoding)
+	fs := newSnapshotFS(session.fs.fs, session.fs.overlays, session.fs.positionEncoding, s.toPath)
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
 		// !!! mark inferred projects as dirty?
@@ -103,14 +103,18 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 	projectCollectionBuilder := newProjectCollectionBuilder(
 		ctx,
 		fs,
-		s.projectCollection,
-		s.configFileRegistry,
+		s.ProjectCollection,
+		s.ConfigFileRegistry,
 		compilerOptionsForInferredProjects,
 		s.sessionOptions,
 		session.parseCache,
 		session.extendedConfigCache,
 		logger,
 	)
+
+	for file := range change.fileChanges.Closed.Keys() {
+		projectCollectionBuilder.DidCloseFile(file)
+	}
 
 	for uri := range change.fileChanges.Opened.Keys() {
 		projectCollectionBuilder.DidOpenFile(uri)
@@ -132,7 +136,7 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		s.toPath,
 	)
 
-	newSnapshot.projectCollection, newSnapshot.configFileRegistry = projectCollectionBuilder.Finalize()
+	newSnapshot.ProjectCollection, newSnapshot.ConfigFileRegistry = projectCollectionBuilder.Finalize()
 
 	return newSnapshot
 }

@@ -37,18 +37,17 @@ type Session struct {
 }
 
 func NewSession(options SessionOptions, fs vfs.FS) *Session {
-	overlayFS := newOverlayFS(fs, options.PositionEncoding, make(map[tspath.Path]*overlay))
-	parseCache := &parseCache{options: tspath.ComparePathsOptions{
-		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
-		CurrentDirectory:          options.CurrentDirectory,
-	}}
-	extendedConfigCache := &extendedConfigCache{}
-
 	currentDirectory := options.CurrentDirectory
 	useCaseSensitiveFileNames := fs.UseCaseSensitiveFileNames()
 	toPath := func(fileName string) tspath.Path {
 		return tspath.ToPath(fileName, currentDirectory, useCaseSensitiveFileNames)
 	}
+	overlayFS := newOverlayFS(fs, make(map[tspath.Path]*overlay), options.PositionEncoding, toPath)
+	parseCache := &parseCache{options: tspath.ComparePathsOptions{
+		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
+		CurrentDirectory:          options.CurrentDirectory,
+	}}
+	extendedConfigCache := &extendedConfigCache{}
 
 	return &Session{
 		options:             options,
@@ -56,7 +55,7 @@ func NewSession(options SessionOptions, fs vfs.FS) *Session {
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		snapshot: NewSnapshot(
-			newSnapshotFS(overlayFS.fs, overlayFS.overlays, options.PositionEncoding),
+			newSnapshotFS(overlayFS.fs, overlayFS.overlays, options.PositionEncoding, toPath),
 			&options,
 			parseCache,
 			extendedConfigCache,
@@ -78,7 +77,7 @@ func (s *Session) DidOpenFile(ctx context.Context, uri lsproto.DocumentUri, vers
 	})
 	changes := s.flushChangesLocked(ctx)
 	s.pendingFileChangesMu.Unlock()
-	s.UpdateSnapshot(ctx, snapshotChange{
+	s.UpdateSnapshot(ctx, SnapshotChange{
 		fileChanges:   changes,
 		requestedURIs: []lsproto.DocumentUri{uri},
 	})
@@ -114,6 +113,13 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 	})
 }
 
+// !!! ref count and release
+func (s *Session) Snapshot() *Snapshot {
+	s.snapshotMu.RLock()
+	defer s.snapshotMu.RUnlock()
+	return s.snapshot
+}
+
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
 	var snapshot *Snapshot
 	changes := s.flushChanges(ctx)
@@ -121,7 +127,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	if updateSnapshot {
 		// If there are pending file changes, we need to update the snapshot.
 		// Sending the requested URI ensures that the project for this URI is loaded.
-		snapshot = s.UpdateSnapshot(ctx, snapshotChange{
+		snapshot = s.UpdateSnapshot(ctx, SnapshotChange{
 			fileChanges:   changes,
 			requestedURIs: []lsproto.DocumentUri{uri},
 		})
@@ -136,7 +142,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	if project == nil && !updateSnapshot {
 		// The current snapshot does not have the project for the URI,
 		// so we need to update the snapshot to ensure the project is loaded.
-		snapshot = s.UpdateSnapshot(ctx, snapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
+		snapshot = s.UpdateSnapshot(ctx, SnapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
 		project = snapshot.GetDefaultProject(uri)
 	}
 	if project == nil {
@@ -148,7 +154,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	return project.LanguageService, nil
 }
 
-func (s *Session) UpdateSnapshot(ctx context.Context, change snapshotChange) *Snapshot {
+func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Snapshot {
 	s.snapshotMu.Lock()
 	defer s.snapshotMu.Unlock()
 	s.snapshot = s.snapshot.Clone(ctx, change, s)

@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"github.com/microsoft/typescript-go/internal/collections"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -230,8 +229,8 @@ func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName stri
 	return entry.commandLine
 }
 
-// releaseConfigForProject removes the project from the config entry. Once no projects are
-// associated with the config entry, it will be removed on the next call to `cleanup`.
+// releaseConfigForProject removes the project from the config entry. Once no projects
+// or files are associated with the config entry, it will be removed on the next call to `cleanup`.
 func (c *configFileRegistryBuilder) releaseConfigForProject(path tspath.Path, project *Project) {
 	if entry, ok := c.load(path); ok {
 		entry.mu.Lock()
@@ -240,9 +239,9 @@ func (c *configFileRegistryBuilder) releaseConfigForProject(path tspath.Path, pr
 	}
 }
 
-// releaseConfigForOpenFile removes the project from the config entry. Once no projects are
-// associated with the config entry, it will be removed on the next call to `cleanup`.
-func (c *configFileRegistryBuilder) releaseConfigForOpenFile(path tspath.Path, openFilePath tspath.Path) {
+// releaseConfigsForOpenFile removes the open file from the config entry. Once no projects
+// or files are associated with the config entry, it will be removed on the next call to `cleanup`.
+func (c *configFileRegistryBuilder) releaseConfigsForOpenFile(openFilePath tspath.Path) {
 	if entry, ok := c.load(path); ok {
 		entry.mu.Lock()
 		defer entry.mu.Unlock()
@@ -328,7 +327,7 @@ func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
 func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
-	fh := c.fs.getFile(ls.FileNameToDocumentURI(fileName))
+	fh := c.fs.getFile(fileName)
 	return c.extendedConfigCache.acquire(fh, path, parse)
 }
 

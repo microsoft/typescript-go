@@ -5,7 +5,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
-	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -85,9 +84,10 @@ func (c *compilerHost) GetResolvedProjectReference(fileName string, path tspath.
 // be a corresponding release for each call made.
 func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	c.ensureAlive()
-	if fh := c.overlayFS.getFile(ls.FileNameToDocumentURI(opts.FileName)); fh != nil {
+	if fh := c.overlayFS.getFile(opts.FileName); fh != nil {
 		projectSet := &collections.SyncSet[tspath.Path]{}
-		projectSet, _ = c.builder.fileAssociations.LoadOrStore(fh.URI().Path(c.FS().UseCaseSensitiveFileNames()), projectSet)
+		// !!!
+		// projectSet, _ = c.builder.fileAssociations.LoadOrStore(fh.URI().Path(c.FS().UseCaseSensitiveFileNames()), projectSet)
 		projectSet.Add(c.project.configFilePath)
 		return c.builder.parseCache.acquireDocument(fh, opts, c.getScriptKind(opts.FileName))
 	}
@@ -123,7 +123,7 @@ func (fs *compilerFS) DirectoryExists(path string) bool {
 
 // FileExists implements vfs.FS.
 func (fs *compilerFS) FileExists(path string) bool {
-	if fh := fs.overlayFS.getFile(ls.FileNameToDocumentURI(path)); fh != nil {
+	if fh := fs.overlayFS.getFile(path); fh != nil {
 		return true
 	}
 	return fs.overlayFS.fs.FileExists(path)
@@ -136,7 +136,7 @@ func (fs *compilerFS) GetAccessibleEntries(path string) vfs.Entries {
 
 // ReadFile implements vfs.FS.
 func (fs *compilerFS) ReadFile(path string) (contents string, ok bool) {
-	if fh := fs.overlayFS.getFile(ls.FileNameToDocumentURI(path)); fh != nil {
+	if fh := fs.overlayFS.getFile(path); fh != nil {
 		return fh.Content(), true
 	}
 	return "", false

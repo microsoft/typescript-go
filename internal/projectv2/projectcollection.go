@@ -29,6 +29,10 @@ type ProjectCollection struct {
 	inferredProject *Project
 }
 
+func (c *ProjectCollection) ConfiguredProject(path tspath.Path) *Project {
+	return c.configuredProjects[path]
+}
+
 func (c *ProjectCollection) ConfiguredProjects() []*Project {
 	projects := make([]*Project, 0, len(c.configuredProjects))
 	c.fillConfiguredProjects(&projects)
@@ -52,6 +56,10 @@ func (c *ProjectCollection) Projects() []*Project {
 	c.fillConfiguredProjects(&projects)
 	projects = append(projects, c.inferredProject)
 	return projects
+}
+
+func (c *ProjectCollection) InferredProject() *Project {
+	return c.inferredProject
 }
 
 func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path) *Project {

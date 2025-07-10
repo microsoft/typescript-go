@@ -10,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/testutil/projectv2testutil"
+	"github.com/microsoft/typescript-go/internal/tspath"
 	"gotest.tools/v3/assert"
 )
 
@@ -24,36 +25,30 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		t.Parallel()
 		files := filesForSolutionConfigFile([]string{"./tsconfig-src.json"}, "", nil)
 		session := projectv2testutil.Setup(files)
-
-		// Open the file
-		ctx := context.Background()
-		uri := lsproto.DocumentUri("/user/username/projects/myproject/src/main.ts")
+		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
 		content := files["/user/username/projects/myproject/src/main.ts"].(string)
-		session.DidOpenFile(ctx, uri, 1, content, lsproto.LanguageKindTypeScript)
 
-		// Get the language service and verify it's using the right project
-		langService, err := session.GetLanguageService(ctx, uri)
+		// Ensure configured project is found for open file
+		session.DidOpenFile(context.Background(), uri, 1, content, lsproto.LanguageKindTypeScript)
+		snapAfterOpen := session.Snapshot()
+		assert.Equal(t, len(snapAfterOpen.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapAfterOpen.ProjectCollection.ConfiguredProject(tspath.Path("/user/username/projects/myproject/tsconfig-src.json")) != nil)
+
+		// Ensure request can use existing snapshot
+		_, err := session.GetLanguageService(context.Background(), uri)
 		assert.NilError(t, err)
-		assert.Assert(t, langService != nil)
-
-		// Test that we get the expected project type by checking the project structure
-		// Since we can't directly access the project, we'll test the behavior
-		// by checking that the language service can resolve imports correctly
-		// This implicitly tests that the right project (tsconfig-src.json) was used
+		assert.Equal(t, session.Snapshot(), snapAfterOpen)
 
 		// Close the file and open a different one
-		session.DidCloseFile(ctx, uri)
+		session.DidCloseFile(context.Background(), uri)
+		dummyUri := lsproto.DocumentUri("file:///user/username/workspaces/dummy/dummy.ts")
+		session.DidOpenFile(context.Background(), dummyUri, 1, "const x = 1;", lsproto.LanguageKindTypeScript)
+		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
+		assert.Assert(t, session.Snapshot().ProjectCollection.InferredProject())
 
-		dummyUri := lsproto.DocumentUri("/user/username/workspaces/dummy/dummy.ts")
-		session.DidOpenFile(ctx, dummyUri, 1, "const x = 1;", lsproto.LanguageKindTypeScript)
-
-		// Get language service for the dummy file - should use inferred project
-		dummyLangService, err := session.GetLanguageService(ctx, dummyUri)
-		assert.NilError(t, err)
-		assert.Assert(t, dummyLangService != nil)
-
-		// The language services should be different since they're from different projects
-		assert.Assert(t, langService != dummyLangService)
+		// Config files should have been released
+		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") == nil)
+		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig-src.json") == nil)
 	})
 }
 

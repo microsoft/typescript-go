@@ -116,7 +116,7 @@ func NewProject(
 
 // GetLineMap implements ls.Host.
 func (p *Project) GetLineMap(fileName string) *ls.LineMap {
-	return p.host.overlayFS.getFile(ls.FileNameToDocumentURI(fileName)).LineMap()
+	return p.host.overlayFS.getFile(fileName).LineMap()
 }
 
 // GetPositionEncoding implements ls.Host.
