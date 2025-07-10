@@ -1,0 +1,19 @@
+//// [tests/cases/compiler/callVsFunctionSignature.ts] ////
+
+=== callVsFunctionSignature.ts ===
+// Function type parenthesized
+type Test1<T> = T extends (() => infer R) ? R : never; 
+>Test1 : Symbol(Test1, Decl(callVsFunctionSignature.ts, 0, 0))
+>T : Symbol(T, Decl(callVsFunctionSignature.ts, 1, 11))
+>T : Symbol(T, Decl(callVsFunctionSignature.ts, 1, 11))
+>R : Symbol(R, Decl(callVsFunctionSignature.ts, 1, 38))
+>R : Symbol(R, Decl(callVsFunctionSignature.ts, 1, 38))
+
+// Call signature in type literal
+type Test2<T> = T extends { (): infer R } ? R : never;
+>Test2 : Symbol(Test2, Decl(callVsFunctionSignature.ts, 1, 54))
+>T : Symbol(T, Decl(callVsFunctionSignature.ts, 4, 11))
+>T : Symbol(T, Decl(callVsFunctionSignature.ts, 4, 11))
+>R : Symbol(R, Decl(callVsFunctionSignature.ts, 4, 37))
+>R : Symbol(R, Decl(callVsFunctionSignature.ts, 4, 37))
+
