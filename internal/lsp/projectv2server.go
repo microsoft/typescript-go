@@ -508,7 +508,7 @@ func (s *ProjectV2Server) handleInitialized(ctx context.Context, req *lsproto.Re
 		PositionEncoding:   s.positionEncoding,
 		WatchEnabled:       s.watchEnabled,
 		NewLine:            s.NewLine(),
-	}, s.fs, s.logger)
+	}, s.fs)
 
 	return nil
 }

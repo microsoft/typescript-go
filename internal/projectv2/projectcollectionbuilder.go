@@ -26,6 +26,7 @@ type projectCollectionBuilder struct {
 	sessionOptions      *SessionOptions
 	parseCache          *parseCache
 	extendedConfigCache *extendedConfigCache
+	logger              *logCollector
 
 	ctx                                context.Context
 	fs                                 *overlayFS
@@ -49,7 +50,11 @@ func newProjectCollectionBuilder(
 	sessionOptions *SessionOptions,
 	parseCache *parseCache,
 	extendedConfigCache *extendedConfigCache,
+	logger *logCollector,
 ) *projectCollectionBuilder {
+	if logger != nil {
+		logger = logger.Fork("projectCollectionBuilder", "")
+	}
 	return &projectCollectionBuilder{
 		ctx:                                ctx,
 		fs:                                 fs,
@@ -57,6 +62,7 @@ func newProjectCollectionBuilder(
 		sessionOptions:                     sessionOptions,
 		parseCache:                         parseCache,
 		extendedConfigCache:                extendedConfigCache,
+		logger:                             logger,
 		base:                               oldProjectCollection,
 		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions),
 	}
@@ -226,6 +232,9 @@ func (b *projectCollectionBuilder) getInferredProject() *inferredProjectEntry {
 }
 
 func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
+	if b.logger != nil {
+		b.logger.Logf("DidOpenFile: %s", uri)
+	}
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
 	_ = b.findOrLoadDefaultConfiguredProjectAndLoadAncestorsForOpenFile(fileName, path, projectLoadKindCreate)

@@ -5,14 +5,11 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/microsoft/typescript-go/internal/bundled"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
-	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
-	"github.com/microsoft/typescript-go/internal/vfs/osvfs"
 )
 
 type SessionOptions struct {
@@ -22,12 +19,12 @@ type SessionOptions struct {
 	PositionEncoding   lsproto.PositionEncodingKind
 	WatchEnabled       bool
 	NewLine            string
+	LoggingEnabled     bool
 }
 
 type Session struct {
 	options                            SessionOptions
 	fs                                 *overlayFS
-	logger                             *project.Logger
 	parseCache                         *parseCache
 	extendedConfigCache                *extendedConfigCache
 	compilerOptionsForInferredProjects *core.CompilerOptions
@@ -39,8 +36,8 @@ type Session struct {
 	pendingFileChanges   []FileChange
 }
 
-func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Session {
-	overlayFS := newOverlayFS(bundled.WrapFS(osvfs.FS()), options.PositionEncoding, make(map[tspath.Path]*overlay))
+func NewSession(options SessionOptions, fs vfs.FS) *Session {
+	overlayFS := newOverlayFS(fs, options.PositionEncoding, make(map[tspath.Path]*overlay))
 	parseCache := &parseCache{options: tspath.ComparePathsOptions{
 		UseCaseSensitiveFileNames: fs.UseCaseSensitiveFileNames(),
 		CurrentDirectory:          options.CurrentDirectory,
@@ -56,7 +53,6 @@ func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Sess
 	return &Session{
 		options:             options,
 		fs:                  overlayFS,
-		logger:              logger,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
 		snapshot: NewSnapshot(
@@ -64,7 +60,6 @@ func NewSession(options SessionOptions, fs vfs.FS, logger *project.Logger) *Sess
 			&options,
 			parseCache,
 			extendedConfigCache,
-			logger,
 			&ConfigFileRegistry{},
 			nil,
 			toPath,

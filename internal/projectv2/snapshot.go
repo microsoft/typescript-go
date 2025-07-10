@@ -37,6 +37,7 @@ type Snapshot struct {
 	projectCollection                  *ProjectCollection
 	configFileRegistry                 *ConfigFileRegistry
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	builderLogs                        *logCollector
 }
 
 // NewSnapshot
@@ -85,6 +86,13 @@ type snapshotChange struct {
 }
 
 func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Session) *Snapshot {
+	var logger *logCollector
+	if session.options.LoggingEnabled {
+		var close func()
+		logger, close = NewLogCollector(fmt.Sprintf("Cloning snapshot %d", s.id))
+		defer close()
+	}
+
 	fs := newSnapshotFS(session.fs.fs, session.fs.overlays, session.fs.positionEncoding)
 	compilerOptionsForInferredProjects := s.compilerOptionsForInferredProjects
 	if change.compilerOptionsForInferredProjects != nil {
@@ -101,6 +109,7 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		s.sessionOptions,
 		session.parseCache,
 		session.extendedConfigCache,
+		logger,
 	)
 
 	for uri := range change.fileChanges.Opened.Keys() {
@@ -118,7 +127,6 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 		s.sessionOptions,
 		session.parseCache,
 		session.extendedConfigCache,
-		s.logger,
 		nil,
 		s.compilerOptionsForInferredProjects,
 		s.toPath,
@@ -127,12 +135,4 @@ func (s *Snapshot) Clone(ctx context.Context, change snapshotChange, session *Se
 	newSnapshot.projectCollection, newSnapshot.configFileRegistry = projectCollectionBuilder.Finalize()
 
 	return newSnapshot
-}
-
-func (s *Snapshot) Log(msg string) {
-	s.logger.Info(msg)
-}
-
-func (s *Snapshot) Logf(format string, args ...any) {
-	s.logger.Info(fmt.Sprintf(format, args...))
 }
