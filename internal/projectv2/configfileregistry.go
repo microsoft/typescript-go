@@ -2,7 +2,6 @@ package projectv2
 
 import (
 	"maps"
-	"sync"
 
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -14,14 +13,10 @@ type ConfigFileRegistry struct {
 	// configFileNames is a map of open file paths to information
 	// about their ancestor config file names. It is only used as
 	// a cache during
-	configFileNames map[tspath.Path]configFileNames
+	configFileNames map[tspath.Path]*configFileNames
 }
 
 type configFileEntry struct {
-	// mu needs only be held by configFileRegistryBuilder methods,
-	// as configFileEntries are considered immutable once they move
-	// from the builder to the finalized registry.
-	mu            sync.Mutex
 	pendingReload PendingReload
 	commandLine   *tsoptions.ParsedCommandLine
 	// retainingProjects is the set of projects that have called acquireConfig
@@ -36,6 +31,17 @@ type configFileEntry struct {
 	// subsequent calls to `projectCollectionBuilder.findDefaultConfiguredProject`
 	// will use this config as part of the search, so it must be retained.
 	retainingOpenFiles map[tspath.Path]struct{}
+}
+
+// Clone creates a shallow copy of the configFileEntry, without maps.
+// A nil map is used in the builder to indicate that a dirty entry still
+// shares the same map as its original. During finalization, nil maps
+// should be replaced with the maps from the original entry.
+func (e *configFileEntry) Clone() *configFileEntry {
+	return &configFileEntry{
+		pendingReload: e.pendingReload,
+		commandLine:   e.commandLine,
+	}
 }
 
 func (c *ConfigFileRegistry) GetConfig(path tspath.Path) *tsoptions.ParsedCommandLine {
@@ -78,4 +84,11 @@ type configFileNames struct {
 	//			"/a/b/tsconfig.json": "/a/tsconfig.json"
 	//		}
 	ancestors map[string]string
+}
+
+func (c *configFileNames) Clone() *configFileNames {
+	return &configFileNames{
+		nearestConfigFileName: c.nearestConfigFileName,
+		ancestors:             maps.Clone(c.ancestors),
+	}
 }

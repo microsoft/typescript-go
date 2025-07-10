@@ -231,6 +231,12 @@ func (b *projectCollectionBuilder) getInferredProject() *inferredProjectEntry {
 	}
 }
 
+func (b *projectCollectionBuilder) DidCloseFile(uri lsproto.DocumentUri) {
+	fileName := uri.FileName()
+	path := b.toPath(fileName)
+	b.configFileRegistryBuilder.releaseConfigsForOpenFile(path)
+}
+
 func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 	if b.logger != nil {
 		b.logger.Logf("DidOpenFile: %s", uri)
