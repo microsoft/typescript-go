@@ -591,6 +591,9 @@ func (c *compilerTest) containsUnsupportedOptionsForDiagnostics() bool {
 	if c.options.RootDirs != nil {
 		return true
 	}
+	if c.options.OutFile != "" {
+		return true
+	}
 
 	return false
 }
