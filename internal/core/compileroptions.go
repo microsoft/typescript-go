@@ -386,9 +386,12 @@ type ModuleKind int32
 const (
 	ModuleKindNone     ModuleKind = 0
 	ModuleKindCommonJS ModuleKind = 1
-	ModuleKindAMD      ModuleKind = 2
-	ModuleKindUMD      ModuleKind = 3
-	ModuleKindSystem   ModuleKind = 4
+	// Deprecated: Do not use outside of options parsing and validation.
+	ModuleKindAMD ModuleKind = 2
+	// Deprecated: Do not use outside of options parsing and validation.
+	ModuleKindUMD ModuleKind = 3
+	// Deprecated: Do not use outside of options parsing and validation.
+	ModuleKindSystem ModuleKind = 4
 	// NOTE: ES module kinds should be contiguous to more easily check whether a module kind is *any* ES module kind.
 	//       Non-ES module kinds should not come between ES2015 (the earliest ES module kind) and ESNext (the last ES
 	//       module kind).
