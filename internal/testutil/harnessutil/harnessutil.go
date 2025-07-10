@@ -54,21 +54,17 @@ type NamedTestConfiguration struct {
 }
 
 type HarnessOptions struct {
-	AllowNonTsExtensions      bool
 	UseCaseSensitiveFileNames bool
 	BaselineFile              string
 	IncludeBuiltFile          string
 	FileName                  string
 	LibFiles                  []string
-	NoErrorTruncation         bool
-	SuppressOutputPathCheck   bool
 	NoImplicitReferences      bool
 	CurrentDirectory          string
 	Symlink                   string
 	Link                      string
 	NoTypesAndSymbols         bool
 	FullEmitPaths             bool
-	NoCheck                   bool
 	ReportDiagnostics         bool
 	CaptureSuggestions        bool
 	TypescriptVersion         string
@@ -294,7 +290,7 @@ func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compil
 		harnessOption := getHarnessOption(name)
 		if harnessOption != nil {
 			parsedValue := getOptionValue(t, harnessOption, value)
-			parseHarnessOption(t, harnessOption.Name, parsedValue, harnessOptions)
+			parseHarnessOption(t, harnessOption.Name, parsedValue, harnessOptions, compilerOptions)
 			continue
 		}
 
@@ -382,44 +378,44 @@ func getHarnessOption(name string) *tsoptions.CommandLineOption {
 	})
 }
 
-func parseHarnessOption(t *testing.T, key string, value any, options *HarnessOptions) {
+func parseHarnessOption(t *testing.T, key string, value any, harnessOptions *HarnessOptions, compilerOptions *core.CompilerOptions) {
 	switch key {
 	case "allowNonTsExtensions":
-		options.AllowNonTsExtensions = value.(bool)
+		compilerOptions.AllowNonTsExtensions = core.BoolToTristate(value.(bool))
 	case "useCaseSensitiveFileNames":
-		options.UseCaseSensitiveFileNames = value.(bool)
+		harnessOptions.UseCaseSensitiveFileNames = value.(bool)
 	case "baselineFile":
-		options.BaselineFile = value.(string)
+		harnessOptions.BaselineFile = value.(string)
 	case "includeBuiltFile":
-		options.IncludeBuiltFile = value.(string)
+		harnessOptions.IncludeBuiltFile = value.(string)
 	case "fileName":
-		options.FileName = value.(string)
+		harnessOptions.FileName = value.(string)
 	case "libFiles":
-		options.LibFiles = value.([]string)
+		harnessOptions.LibFiles = value.([]string)
 	case "noErrorTruncation":
-		options.NoErrorTruncation = value.(bool)
+		compilerOptions.NoErrorTruncation = core.BoolToTristate(value.(bool))
 	case "suppressOutputPathCheck":
-		options.SuppressOutputPathCheck = value.(bool)
+		compilerOptions.SuppressOutputPathCheck = core.BoolToTristate(value.(bool))
 	case "noImplicitReferences":
-		options.NoImplicitReferences = value.(bool)
+		harnessOptions.NoImplicitReferences = value.(bool)
 	case "currentDirectory":
-		options.CurrentDirectory = value.(string)
+		harnessOptions.CurrentDirectory = value.(string)
 	case "symlink":
-		options.Symlink = value.(string)
+		harnessOptions.Symlink = value.(string)
 	case "link":
-		options.Link = value.(string)
+		harnessOptions.Link = value.(string)
 	case "noTypesAndSymbols":
-		options.NoTypesAndSymbols = value.(bool)
+		harnessOptions.NoTypesAndSymbols = value.(bool)
 	case "fullEmitPaths":
-		options.FullEmitPaths = value.(bool)
+		harnessOptions.FullEmitPaths = value.(bool)
 	case "noCheck":
-		options.NoCheck = value.(bool)
+		compilerOptions.NoCheck = core.BoolToTristate(value.(bool))
 	case "reportDiagnostics":
-		options.ReportDiagnostics = value.(bool)
+		harnessOptions.ReportDiagnostics = value.(bool)
 	case "captureSuggestions":
-		options.CaptureSuggestions = value.(bool)
+		harnessOptions.CaptureSuggestions = value.(bool)
 	case "typescriptVersion":
-		options.TypescriptVersion = value.(string)
+		harnessOptions.TypescriptVersion = value.(string)
 	default:
 		t.Fatalf("Unknown harness option '%s'.", key)
 	}
