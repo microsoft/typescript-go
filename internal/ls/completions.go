@@ -3,6 +3,7 @@ package ls
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"maps"
 	"slices"
@@ -4553,11 +4554,11 @@ func getArgumentInfoForCompletions(node *ast.Node, position int, file *ast.Sourc
 }
 
 type itemData struct {
-	FileName   string
-	Position   int
-	Source     string
-	Name       string // !!! do we need this or can we just use label?
-	AutoImport *autoImportData
+	FileName   string          `json:"fileName"`
+	Position   int             `json:"position"`
+	Source     string          `json:"source,omitempty"`
+	Name       string          `json:"name,omitempty"`
+	AutoImport *autoImportData `json:"autoImport,omitempty"`
 }
 
 // !!! CompletionEntryDataAutoImport
@@ -4595,7 +4596,7 @@ func (l *LanguageService) ResolveCompletionItem(
 	preferences *UserPreferences,
 ) (*lsproto.CompletionItem, error) {
 	if data == nil {
-		return nil, fmt.Errorf("completion item data is nil")
+		return nil, errors.New("completion item data is nil")
 	}
 
 	program, file := l.tryGetProgramAndFile(data.FileName)

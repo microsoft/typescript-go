@@ -724,6 +724,9 @@ func (s *Server) handleCompletion(ctx context.Context, req *lsproto.RequestMessa
 func (s *Server) handleCompletionItemResolve(ctx context.Context, req *lsproto.RequestMessage) error {
 	params := req.Params.(*lsproto.CompletionItem)
 	data, err := ls.GetCompletionItemData(params)
+	if err != nil {
+		return err
+	}
 	_, project := s.projectService.EnsureDefaultProjectForFile(data.FileName)
 	languageService, done := project.GetLanguageServiceForRequest(ctx)
 	defer done()
