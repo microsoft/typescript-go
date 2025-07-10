@@ -519,7 +519,7 @@ func (p *Program) verifyCompilerOptions() {
 	}
 
 	// !!! Option_incremental_can_only_be_specified_using_tsconfig_emitting_to_single_file_or_when_option_tsBuildInfoFile_is_specified
-	// !!! verifyDeprecatedCompilerOptions
+
 	// !!! verifyProjectReferences
 
 	if options.Composite.IsTrue() {
