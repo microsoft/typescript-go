@@ -57,7 +57,8 @@ type Program struct {
 
 	declarationDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
 
-	programDiagnostics []*ast.Diagnostic
+	programDiagnostics         []*ast.Diagnostic
+	hasEmitBlockingDiagnostics collections.Set[tspath.Path]
 }
 
 // FileExists implements checker.Program.
@@ -201,6 +202,7 @@ func (p *Program) UpdateProgram(changedFilePath tspath.Path) (*Program, bool) {
 		processedFiles:              p.processedFiles,
 		usesUriStyleNodeCoreModules: p.usesUriStyleNodeCoreModules,
 		programDiagnostics:          p.programDiagnostics,
+		hasEmitBlockingDiagnostics:  p.hasEmitBlockingDiagnostics,
 	}
 	result.initCheckerPool()
 	index := core.FindIndex(result.files, func(file *ast.SourceFile) bool { return file.Path() == newFile.Path() })
@@ -661,7 +663,7 @@ func (p *Program) verifyCompilerOptions() {
 		}
 	}
 
-	// moduleKind := options.GetEmitModuleKind()
+	moduleKind := options.GetEmitModuleKind()
 
 	if options.AllowImportingTsExtensions.IsTrue() && !(options.NoEmit.IsTrue() || options.EmitDeclarationOnly.IsTrue() || options.RewriteRelativeImportExtensions.IsTrue()) {
 		createOptionValueDiagnostic("allowImportingTsExtensions", diagnostics.Option_allowImportingTsExtensions_can_only_be_used_when_either_noEmit_or_emitDeclarationOnly_is_set)
@@ -683,7 +685,69 @@ func (p *Program) verifyCompilerOptions() {
 	// 	createOptionValueDiagnostic("moduleResolution", diagnostics.Option_0_can_only_be_used_when_module_is_set_to_preserve_or_to_es2015_or_later, "bundler")
 	// }
 
-	// TODO: continue
+	if core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext &&
+		!(core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext) {
+		moduleKindName := moduleKind.String()
+		var moduleResolutionName string
+		if v, ok := core.ModuleKindToModuleResolutionKind[moduleKind]; ok {
+			moduleResolutionName = v.String()
+		} else {
+			moduleResolutionName = "Node16"
+		}
+		createOptionValueDiagnostic("moduleResolution", diagnostics.Option_moduleResolution_must_be_set_to_0_or_left_unspecified_when_option_module_is_set_to_1, moduleResolutionName, moduleKindName)
+	} else if core.ModuleResolutionKindNode16 <= moduleResolution && moduleResolution <= core.ModuleResolutionKindNodeNext &&
+		!(core.ModuleKindNode16 <= moduleKind && moduleKind <= core.ModuleKindNodeNext) {
+		moduleResolutionName := moduleResolution.String()
+		createOptionValueDiagnostic("module", diagnostics.Option_module_must_be_set_to_0_when_option_moduleResolution_is_set_to_1, moduleResolutionName, moduleResolutionName)
+	}
+
+	// If the emit is enabled make sure that every output file is unique and not overwriting any of the input files
+	// if !options.NoEmit.IsTrue() && !options.SuppressOutputPathCheck.IsTrue() {
+	// 	var emitFilesSeen collections.Set[string]
+
+	// 	// Verify that all the emit files are unique and don't overwrite input files
+	// 	verifyEmitFilePath := func(emitFileName string) {
+	// 		if emitFileName != "" {
+	// 			emitFilePath := p.toPath(emitFileName)
+	// 			// Report error if the output overwrites input file
+	// 			if emitFilesSeen.Has(string(emitFilePath)) {
+	// 				diag := ast.NewCompilerDiagnostic(diagnostics.Cannot_write_file_0_because_it_would_overwrite_input_file, emitFileName)
+	// 				if configFilePath() == "" {
+	// 					// The program is from either an inferred project or an external project
+	// 					diag.AddMessageChain(ast.NewCompilerDiagnostic(diagnostics.Adding_a_tsconfig_json_file_will_help_organize_projects_that_contain_both_TypeScript_and_JavaScript_files_Learn_more_at_https_Colon_Slash_Slashaka_ms_Slashtsconfig))
+	// 				}
+	// 				p.blockEmittingOfFile(emitFileName, diag)
+	// 			}
+
+	// 			var emitFileKey string
+	// 			if !p.Host().FS().UseCaseSensitiveFileNames() {
+	// 				emitFileKey = tspath.ToFileNameLowerCase(string(emitFilePath))
+	// 			} else {
+	// 				emitFileKey = string(emitFilePath)
+	// 			}
+
+	// 			// Report error if multiple files write into same file
+	// 			if emitFilesSeen.Has(emitFileKey) {
+	// 				// Already seen the same emit file - report error
+	// 				p.blockEmittingOfFile(emitFileName, ast.NewCompilerDiagnostic(diagnostics.Cannot_write_file_0_because_it_would_be_overwritten_by_multiple_input_files, emitFileName))
+	// 			} else {
+	// 				emitFilesSeen.Add(emitFileKey)
+	// 			}
+	// 		}
+	// 	}
+	// 	outputpaths.ForEachEmittedFile(p, options, func(emitFileNames *outputpaths.OutputPaths, sourceFile *ast.SourceFile) bool {
+	// 		if !options.EmitDeclarationOnly.IsTrue() {
+	// 			verifyEmitFilePath(emitFileNames.JsFilePath())
+	// 		}
+	// 		verifyEmitFilePath(emitFileNames.DeclarationFilePath())
+	// 		return false
+	// 	}, p.files, false)
+	// }
+}
+
+func (p *Program) blockEmittingOfFile(emitFileName string, diag *ast.Diagnostic) {
+	p.hasEmitBlockingDiagnostics.Add(p.toPath(emitFileName))
+	p.programDiagnostics = append(p.programDiagnostics, diag)
 }
 
 func hasZeroOrOneAsteriskCharacter(str string) bool {

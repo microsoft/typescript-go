@@ -436,6 +436,11 @@ const (
 	ModuleResolutionKindBundler  ModuleResolutionKind = 100
 )
 
+var ModuleKindToModuleResolutionKind = map[ModuleKind]ModuleResolutionKind{
+	ModuleKindNode16:   ModuleResolutionKindNode16,
+	ModuleKindNodeNext: ModuleResolutionKindNodeNext,
+}
+
 // We don't use stringer on this for now, because these values
 // are user-facing in --traceResolution, and stringer currently
 // lacks the ability to remove the "ModuleResolutionKind" prefix
