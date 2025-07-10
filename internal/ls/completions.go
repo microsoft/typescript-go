@@ -4630,10 +4630,18 @@ func (l *LanguageService) getCompletionItemDetails(
 ) *lsproto.CompletionItem {
 	checker, done := program.GetTypeCheckerForFile(ctx, file)
 	defer done()
-	_, previousToken := getRelevantTokens(position, file)
+	contextToken, previousToken := getRelevantTokens(position, file)
 	if IsInString(file, position, previousToken) {
-		// !!! string literal details
-		return nil
+		return l.getStringLiteralCompletionDetails(
+			ctx,
+			item,
+			itemData.Name,
+			file,
+			position,
+			contextToken,
+			program,
+			preferences,
+		)
 	}
 
 	// Compute all the completion symbols again.
