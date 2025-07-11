@@ -43,7 +43,7 @@ runs:
         fi
 
       env:
-        PREFIX: ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml') }}
+        PREFIX: ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml') }}-${{ github.workflow }}
         CACHE_NAME: ${{ inputs.cache-name }}
         RUN_ID: ${{ github.run_id }}
         CACHE_FROM_PREVIOUS_RUN: ${{ inputs.cache-from-previous-run }}
