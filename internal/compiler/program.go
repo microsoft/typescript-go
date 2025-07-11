@@ -392,6 +392,11 @@ func (p *Program) walkNodeForJSDiagnostics(node *ast.Node, parent *ast.Node, dia
 		return
 	}
 
+	// Bail out early if this node has NodeFlagsReparsed, as they are synthesized type annotations
+	if node.Flags&ast.NodeFlagsReparsed != 0 {
+		return
+	}
+
 	// Handle specific parent-child relationships first
 	switch parent.Kind {
 	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindMethodDeclaration:
