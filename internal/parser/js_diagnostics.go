@@ -17,8 +17,7 @@ type jsDiagnosticsVisitor struct {
 // getJSSyntacticDiagnosticsForFile returns diagnostics for TypeScript-only constructs in JavaScript files
 func getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	visitor := &jsDiagnosticsVisitor{
-		sourceFile:  sourceFile,
-		diagnostics: []*ast.Diagnostic{},
+		sourceFile: sourceFile,
 	}
 	visitor.walkNodeForJSDiagnostics = visitor.walkNodeForJSDiagnosticsWorker
 
