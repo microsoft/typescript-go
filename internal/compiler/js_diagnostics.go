@@ -15,11 +15,7 @@ type jsDiagnosticsVisitor struct {
 }
 
 // getJSSyntacticDiagnosticsForFile returns diagnostics for TypeScript-only constructs in JavaScript files
-func (p *Program) getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if result, ok := p.jsDiagnosticCache.Load(sourceFile); ok {
-		return result
-	}
-
+func getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	visitor := &jsDiagnosticsVisitor{
 		sourceFile:  sourceFile,
 		diagnostics: []*ast.Diagnostic{},
@@ -28,7 +24,12 @@ func (p *Program) getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) [
 	// Walk the entire AST to find TypeScript-only constructs
 	visitor.walkNodeForJSDiagnostics(sourceFile.AsNode(), sourceFile.AsNode())
 
-	diagnostics, _ := p.jsDiagnosticCache.LoadOrStore(sourceFile, visitor.diagnostics)
+	return visitor.diagnostics
+}
+
+// getJSSyntacticDiagnosticsForFile returns diagnostics for TypeScript-only constructs in JavaScript files
+func (p *Program) getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	diagnostics, _ := p.jsDiagnosticCache.LoadOrStore(sourceFile, getJSSyntacticDiagnosticsForFile(sourceFile))
 	return diagnostics
 }
 
