@@ -9,8 +9,9 @@ import (
 
 // jsDiagnosticsVisitor is used to find TypeScript-only constructs in JavaScript files
 type jsDiagnosticsVisitor struct {
-	sourceFile  *ast.SourceFile
-	diagnostics []*ast.Diagnostic
+	sourceFile               *ast.SourceFile
+	diagnostics              []*ast.Diagnostic
+	walkNodeForJSDiagnostics func(node *ast.Node) bool
 }
 
 // getJSSyntacticDiagnosticsForFile returns diagnostics for TypeScript-only constructs in JavaScript files
@@ -19,22 +20,25 @@ func getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnos
 		sourceFile:  sourceFile,
 		diagnostics: []*ast.Diagnostic{},
 	}
+	visitor.walkNodeForJSDiagnostics = visitor.walkNodeForJSDiagnosticsWorker
 
 	// Walk the entire AST to find TypeScript-only constructs
-	visitor.walkNodeForJSDiagnostics(sourceFile.AsNode(), sourceFile.AsNode())
+	sourceFile.ForEachChild(visitor.walkNodeForJSDiagnostics)
 
 	return visitor.diagnostics
 }
 
 // walkNodeForJSDiagnostics walks the AST and collects diagnostics for TypeScript-only constructs
-func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *ast.Node) {
+func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnosticsWorker(node *ast.Node) bool {
 	if node == nil {
-		return
+		return false
 	}
+
+	parent := node.Parent
 
 	// Bail out early if this node has NodeFlagsReparsed, as they are synthesized type annotations
 	if node.Flags&ast.NodeFlagsReparsed != 0 {
-		return
+		return false
 	}
 
 	// Handle specific parent-child relationships first
@@ -43,19 +47,19 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *
 		// Check for question token (optional markers)
 		if parent.Kind == ast.KindParameter && parent.AsParameterDeclaration() != nil && parent.AsParameterDeclaration().QuestionToken == node {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
-			return
+			return false
 		}
 		if parent.Kind == ast.KindPropertyDeclaration && parent.AsPropertyDeclaration() != nil && parent.AsPropertyDeclaration().PostfixToken == node {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
-			return
+			return false
 		}
 		if parent.Kind == ast.KindMethodDeclaration && parent.AsMethodDeclaration() != nil && parent.AsMethodDeclaration().PostfixToken == node {
 			if node.Kind == ast.KindExclamationToken && parent.Parent.Kind == ast.KindObjectLiteralExpression {
 				// This already gets a grammar error.
-				return
+				return false
 			}
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
-			return
+			return false
 		}
 		fallthrough
 	case ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor,
@@ -63,7 +67,7 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *
 		// Check for type annotations
 		if v.isTypeAnnotation(parent, node) {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
-			return
+			return false
 		}
 	}
 
@@ -72,46 +76,46 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *
 	case ast.KindImportClause:
 		if node.AsImportClause() != nil && node.AsImportClause().IsTypeOnly {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(parent, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import type"))
-			return
+			return false
 		}
 
 	case ast.KindExportDeclaration:
 		if node.AsExportDeclaration() != nil && node.AsExportDeclaration().IsTypeOnly {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export type"))
-			return
+			return false
 		}
 
 	case ast.KindImportSpecifier:
 		if node.AsImportSpecifier() != nil && node.AsImportSpecifier().IsTypeOnly {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import...type"))
-			return
+			return false
 		}
 
 	case ast.KindExportSpecifier:
 		if node.AsExportSpecifier() != nil && node.AsExportSpecifier().IsTypeOnly {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export...type"))
-			return
+			return false
 		}
 
 	case ast.KindImportEqualsDeclaration:
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_import_can_only_be_used_in_TypeScript_files))
-		return
+		return false
 
 	case ast.KindExportAssignment:
 		if node.AsExportAssignment() != nil && node.AsExportAssignment().IsExportEquals {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_export_can_only_be_used_in_TypeScript_files))
-			return
+			return false
 		}
 
 	case ast.KindHeritageClause:
 		if node.AsHeritageClause() != nil && node.AsHeritageClause().Token == ast.KindImplementsKeyword {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_implements_clauses_can_only_be_used_in_TypeScript_files))
-			return
+			return false
 		}
 
 	case ast.KindInterfaceDeclaration:
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "interface"))
-		return
+		return false
 
 	case ast.KindModuleDeclaration:
 		moduleKeyword := "module"
@@ -126,37 +130,37 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *
 			}
 		}
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, moduleKeyword))
-		return
+		return false
 
 	case ast.KindTypeAliasDeclaration:
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_aliases_can_only_be_used_in_TypeScript_files))
-		return
+		return false
 
 	case ast.KindEnumDeclaration:
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "enum"))
-		return
+		return false
 
 	case ast.KindNonNullExpression:
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Non_null_assertions_can_only_be_used_in_TypeScript_files))
-		return
+		return false
 
 	case ast.KindAsExpression:
 		if node.AsAsExpression() != nil {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node.AsAsExpression().Type, diagnostics.Type_assertion_expressions_can_only_be_used_in_TypeScript_files))
-			return
+			return false
 		}
 
 	case ast.KindSatisfiesExpression:
 		if node.AsSatisfiesExpression() != nil {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node.AsSatisfiesExpression().Type, diagnostics.Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files))
-			return
+			return false
 		}
 
 	case ast.KindConstructor, ast.KindMethodDeclaration, ast.KindFunctionDeclaration:
 		// Check for signature declarations (functions without bodies)
 		if v.isSignatureDeclaration(node) {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Signature_declarations_can_only_be_used_in_TypeScript_files))
-			return
+			return false
 		}
 	}
 
@@ -164,10 +168,9 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *
 	v.checkTypeParametersAndModifiers(node)
 
 	// Recursively walk children
-	node.ForEachChild(func(child *ast.Node) bool {
-		v.walkNodeForJSDiagnostics(child, node)
-		return false
-	})
+	node.ForEachChild(v.walkNodeForJSDiagnostics)
+
+	return false
 }
 
 // isTypeAnnotation checks if a node is a type annotation in relation to its parent
