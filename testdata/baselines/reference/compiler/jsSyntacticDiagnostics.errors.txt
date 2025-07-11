@@ -4,7 +4,7 @@ test.js(7,11): error TS8006: 'interface' declarations can only be used in TypeSc
 test.js(13,6): error TS8008: Type aliases can only be used in TypeScript files.
 test.js(16,6): error TS8006: 'enum' declarations can only be used in TypeScript files.
 test.js(23,8): error TS8006: 'module' declarations can only be used in TypeScript files.
-test.js(28,11): error TS8006: 'module' declarations can only be used in TypeScript files.
+test.js(28,11): error TS8006: 'namespace' declarations can only be used in TypeScript files.
 test.js(33,13): error TS8013: Non-null assertions can only be used in TypeScript files.
 test.js(36,24): error TS8016: Type assertion expressions can only be used in TypeScript files.
 test.js(39,17): error TS2741: Property 'name' is missing in type '{}' but required in type 'Config'.
@@ -83,7 +83,7 @@ test.js(94,11): error TS8006: 'interface' declarations can only be used in TypeS
     // Namespace declarations should be flagged as errors
     namespace MyNamespace {
               ~~~~~~~~~~~
-!!! error TS8006: 'module' declarations can only be used in TypeScript files.
+!!! error TS8006: 'namespace' declarations can only be used in TypeScript files.
         export var y = 2;
     }
     

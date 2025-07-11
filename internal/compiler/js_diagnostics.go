@@ -3,6 +3,7 @@ package compiler
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/binder"
+	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -108,7 +109,16 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *
 
 	case ast.KindModuleDeclaration:
 		moduleKeyword := "module"
-		// For now, we'll just use "module" as the default since we don't have a flag to distinguish namespace vs module
+		if node.AsModuleDeclaration() != nil {
+			switch node.AsModuleDeclaration().Keyword {
+			case ast.KindNamespaceKeyword:
+				moduleKeyword = "namespace"
+			case ast.KindModuleKeyword:
+				moduleKeyword = "module"
+			case ast.KindGlobalKeyword:
+				moduleKeyword = "global"
+			}
+		}
 		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, moduleKeyword))
 		return
 
@@ -207,8 +217,8 @@ func (v *jsDiagnosticsVisitor) checkTypeParametersAndModifiers(node *ast.Node) {
 	}
 
 	// Check type arguments
-	if v.hasTypeArguments(node) {
-		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_arguments_can_only_be_used_in_TypeScript_files))
+	if typeArgs := v.getTypeArguments(node); typeArgs != nil {
+		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNodeList(typeArgs, diagnostics.Type_arguments_can_only_be_used_in_TypeScript_files))
 	}
 
 	// Check modifiers
@@ -276,6 +286,55 @@ func (v *jsDiagnosticsVisitor) hasTypeParameters(node *ast.Node) bool {
 	}
 
 	return false // All type parameters are reparsed (JSDoc originated), so this is valid in JS
+}
+
+// getTypeArguments returns the type arguments for a node if it has any
+func (v *jsDiagnosticsVisitor) getTypeArguments(node *ast.Node) *ast.NodeList {
+	// Bail out early if this node has NodeFlagsReparsed
+	if node.Flags&ast.NodeFlagsReparsed != 0 {
+		return nil
+	}
+
+	var typeArguments *ast.NodeList
+	switch node.Kind {
+	case ast.KindCallExpression:
+		if node.AsCallExpression() != nil {
+			typeArguments = node.AsCallExpression().TypeArguments
+		}
+	case ast.KindNewExpression:
+		if node.AsNewExpression() != nil {
+			typeArguments = node.AsNewExpression().TypeArguments
+		}
+	case ast.KindExpressionWithTypeArguments:
+		if node.AsExpressionWithTypeArguments() != nil {
+			typeArguments = node.AsExpressionWithTypeArguments().TypeArguments
+		}
+	case ast.KindJsxSelfClosingElement:
+		if node.AsJsxSelfClosingElement() != nil {
+			typeArguments = node.AsJsxSelfClosingElement().TypeArguments
+		}
+	case ast.KindJsxOpeningElement:
+		if node.AsJsxOpeningElement() != nil {
+			typeArguments = node.AsJsxOpeningElement().TypeArguments
+		}
+	case ast.KindTaggedTemplateExpression:
+		if node.AsTaggedTemplateExpression() != nil {
+			typeArguments = node.AsTaggedTemplateExpression().TypeArguments
+		}
+	}
+
+	if typeArguments == nil {
+		return nil
+	}
+
+	// Check if all type arguments are reparsed (JSDoc originated)
+	for _, ta := range typeArguments.Nodes {
+		if ta.Flags&ast.NodeFlagsReparsed == 0 {
+			return typeArguments // Found a non-reparsed type argument, so return the type arguments
+		}
+	}
+
+	return nil // All type arguments are reparsed (JSDoc originated), so this is valid in JS
 }
 
 // hasTypeArguments checks if a node has type arguments
@@ -347,6 +406,18 @@ func (v *jsDiagnosticsVisitor) checkModifiers(node *ast.Node) {
 	case ast.KindParameter:
 		if node.AsParameterDeclaration() != nil && node.AsParameterDeclaration().Modifiers() != nil {
 			v.checkParameterModifiers(node.AsParameterDeclaration().Modifiers())
+		}
+	case ast.KindClassDeclaration:
+		if node.AsClassDeclaration() != nil && node.AsClassDeclaration().Modifiers() != nil {
+			v.checkModifierList(node.AsClassDeclaration().Modifiers(), false)
+		}
+	case ast.KindMethodDeclaration:
+		if node.AsMethodDeclaration() != nil && node.AsMethodDeclaration().Modifiers() != nil {
+			v.checkModifierList(node.AsMethodDeclaration().Modifiers(), false)
+		}
+	case ast.KindFunctionDeclaration:
+		if node.AsFunctionDeclaration() != nil && node.AsFunctionDeclaration().Modifiers() != nil {
+			v.checkModifierList(node.AsFunctionDeclaration().Modifiers(), false)
 		}
 	}
 }
@@ -435,4 +506,16 @@ func (v *jsDiagnosticsVisitor) isTypeScriptOnlyModifier(modifier *ast.Node) bool
 // createDiagnosticForNode creates a diagnostic for a specific node
 func (v *jsDiagnosticsVisitor) createDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
 	return ast.NewDiagnostic(v.sourceFile, binder.GetErrorRangeForNode(v.sourceFile, node), message, args...)
+}
+
+// createDiagnosticForNodeList creates a diagnostic for a NodeList
+func (v *jsDiagnosticsVisitor) createDiagnosticForNodeList(nodeList *ast.NodeList, message *diagnostics.Message, args ...any) *ast.Diagnostic {
+	// If the NodeList's location is not set correctly, fall back to using the first node
+	if nodeList.Loc.Pos() == nodeList.Loc.End() && len(nodeList.Nodes) > 0 {
+		// Calculate the range from the first to last node
+		start := nodeList.Nodes[0].Pos()
+		end := nodeList.Nodes[len(nodeList.Nodes)-1].End()
+		return ast.NewDiagnostic(v.sourceFile, core.NewTextRange(start, end), message, args...)
+	}
+	return ast.NewDiagnostic(v.sourceFile, nodeList.Loc, message, args...)
 }

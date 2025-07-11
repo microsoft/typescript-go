@@ -6,7 +6,7 @@
  plainJSGrammarErrors.js(21,5): error TS1089: 'async' modifier cannot appear on a constructor declaration.
 -plainJSGrammarErrors.js(22,5): error TS8009: The 'const' modifier can only be used in TypeScript files.
  plainJSGrammarErrors.js(22,11): error TS1248: A class member cannot have the 'const' keyword.
--plainJSGrammarErrors.js(23,5): error TS8009: The 'const' modifier can only be used in TypeScript files.
+ plainJSGrammarErrors.js(23,5): error TS8009: The 'const' modifier can only be used in TypeScript files.
  plainJSGrammarErrors.js(23,11): error TS1248: A class member cannot have the 'const' keyword.
  plainJSGrammarErrors.js(26,11): error TS1030: 'async' modifier already seen.
  plainJSGrammarErrors.js(28,11): error TS1029: 'static' modifier must precede 'async' modifier.
@@ -15,7 +15,7 @@
  plainJSGrammarErrors.js(30,5): error TS1031: 'export' modifier cannot appear on class elements of this kind.
  plainJSGrammarErrors.js(34,22): error TS1005: '{' expected.
  plainJSGrammarErrors.js(35,9): error TS1054: A 'get' accessor cannot have parameters.
-@@= skipped -24, +21 lines =@@
+@@= skipped -24, +22 lines =@@
  plainJSGrammarErrors.js(54,8): error TS1030: 'export' modifier already seen.
  plainJSGrammarErrors.js(55,8): error TS1044: 'static' modifier cannot appear on a module or namespace element.
  plainJSGrammarErrors.js(56,22): error TS1090: 'static' modifier cannot appear on a parameter.
@@ -45,7 +45,7 @@
 
 
 -==== plainJSGrammarErrors.js (102 errors) ====
-+==== plainJSGrammarErrors.js (94 errors) ====
++==== plainJSGrammarErrors.js (95 errors) ====
      class C {
          // #private mistakes
          q = #unbound
@@ -58,12 +58,7 @@
                ~
  !!! error TS1248: A class member cannot have the 'const' keyword.
          const y() {
--        ~~~~~
--!!! error TS8009: The 'const' modifier can only be used in TypeScript files.
-               ~
- !!! error TS1248: A class member cannot have the 'const' keyword.
-             return 12
-@@= skipped -21, +17 lines =@@
+@@= skipped -21, +19 lines =@@
          export cantExportProperty = 1
          ~~~~~~
  !!! error TS1031: 'export' modifier cannot appear on class elements of this kind.

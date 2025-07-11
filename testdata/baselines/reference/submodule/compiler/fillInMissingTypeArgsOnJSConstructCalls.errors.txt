@@ -4,7 +4,7 @@ BaseB.js(3,14): error TS2304: Cannot find name 'Class'.
 BaseB.js(3,14): error TS8010: Type annotations can only be used in TypeScript files.
 BaseB.js(4,25): error TS2304: Cannot find name 'Class'.
 BaseB.js(4,25): error TS8010: Type annotations can only be used in TypeScript files.
-SubB.js(3,35): error TS8011: Type arguments can only be used in TypeScript files.
+SubB.js(3,41): error TS8011: Type arguments can only be used in TypeScript files.
 
 
 ==== BaseA.js (0 errors) ====
@@ -38,7 +38,7 @@ SubB.js(3,35): error TS8011: Type arguments can only be used in TypeScript files
     import SubA from './SubA';
     import BaseB from './BaseB';
     export default class SubB extends BaseB<SubA> {
-                                      ~~~~~~~~~~~
+                                            ~~~~
 !!! error TS8011: Type arguments can only be used in TypeScript files.
         constructor() {
             super(SubA);

@@ -1,7 +1,7 @@
 index.js(4,14): error TS8004: Type parameter declarations can only be used in TypeScript files.
 index.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(8,14): error TS8004: Type parameter declarations can only be used in TypeScript files.
-index.js(8,27): error TS8011: Type arguments can only be used in TypeScript files.
+index.js(8,29): error TS8011: Type arguments can only be used in TypeScript files.
 index.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(13,11): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(19,11): error TS8010: Type annotations can only be used in TypeScript files.
@@ -36,7 +36,7 @@ index.js(68,11): error TS8010: Type annotations can only be used in TypeScript f
     export class N<U> extends M<U> {
                  ~
 !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-                              ~~~~
+                                ~
 !!! error TS8011: Type arguments can only be used in TypeScript files.
         other: U;
                ~

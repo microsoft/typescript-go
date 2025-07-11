@@ -6,6 +6,7 @@ plainJSGrammarErrors.js(17,9): error TS18041: A 'return' statement cannot be use
 plainJSGrammarErrors.js(20,5): error TS1089: 'static' modifier cannot appear on a constructor declaration.
 plainJSGrammarErrors.js(21,5): error TS1089: 'async' modifier cannot appear on a constructor declaration.
 plainJSGrammarErrors.js(22,11): error TS1248: A class member cannot have the 'const' keyword.
+plainJSGrammarErrors.js(23,5): error TS8009: The 'const' modifier can only be used in TypeScript files.
 plainJSGrammarErrors.js(23,11): error TS1248: A class member cannot have the 'const' keyword.
 plainJSGrammarErrors.js(26,11): error TS1030: 'async' modifier already seen.
 plainJSGrammarErrors.js(28,11): error TS1029: 'static' modifier must precede 'async' modifier.
@@ -94,7 +95,7 @@ plainJSGrammarErrors.js(204,30): message TS1450: Dynamic imports can only accept
 plainJSGrammarErrors.js(205,36): error TS1325: Argument of dynamic import cannot be spread element.
 
 
-==== plainJSGrammarErrors.js (94 errors) ====
+==== plainJSGrammarErrors.js (95 errors) ====
     class C {
         // #private mistakes
         q = #unbound
@@ -134,6 +135,8 @@ plainJSGrammarErrors.js(205,36): error TS1325: Argument of dynamic import cannot
               ~
 !!! error TS1248: A class member cannot have the 'const' keyword.
         const y() {
+        ~~~~~
+!!! error TS8009: The 'const' modifier can only be used in TypeScript files.
               ~
 !!! error TS1248: A class member cannot have the 'const' keyword.
             return 12
