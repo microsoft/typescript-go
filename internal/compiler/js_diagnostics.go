@@ -56,11 +56,11 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *
 			return
 		}
 		if parent.Kind == ast.KindMethodDeclaration && parent.AsMethodDeclaration() != nil && parent.AsMethodDeclaration().PostfixToken == node {
-			// Only check MethodDeclaration PostfixToken if it's in a class context
-			// Methods in object literals already error elsewhere
-			if v.isInClassContext(parent) {
-				v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
+			if node.Kind == ast.KindExclamationToken && parent.Parent.Kind == ast.KindObjectLiteralExpression {
+				// This already gets a grammar error.
+				return
 			}
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(node.Kind)))
 			return
 		}
 		fallthrough
@@ -523,17 +523,4 @@ func (v *jsDiagnosticsVisitor) createDiagnosticForNodeList(nodeList *ast.NodeLis
 		return ast.NewDiagnostic(v.sourceFile, core.NewTextRange(start, end), message, args...)
 	}
 	return ast.NewDiagnostic(v.sourceFile, nodeList.Loc, message, args...)
-}
-
-// isInClassContext checks if a node is within a class declaration context
-func (v *jsDiagnosticsVisitor) isInClassContext(node *ast.Node) bool {
-	// Walk up the parent chain to find if we're in a class
-	current := node
-	for current != nil {
-		if current.Kind == ast.KindClassDeclaration || current.Kind == ast.KindClassExpression {
-			return true
-		}
-		current = current.Parent
-	}
-	return false
 }
