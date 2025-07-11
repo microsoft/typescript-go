@@ -1,10 +1,10 @@
 test.js(2,18): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(2,27): error TS8010: Type annotations can only be used in TypeScript files.
-test.js(7,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
-test.js(13,1): error TS8008: Type aliases can only be used in TypeScript files.
-test.js(16,1): error TS8006: 'enum' declarations can only be used in TypeScript files.
-test.js(23,1): error TS8006: 'module' declarations can only be used in TypeScript files.
-test.js(28,1): error TS8006: 'module' declarations can only be used in TypeScript files.
+test.js(7,11): error TS8006: 'interface' declarations can only be used in TypeScript files.
+test.js(13,6): error TS8008: Type aliases can only be used in TypeScript files.
+test.js(16,6): error TS8006: 'enum' declarations can only be used in TypeScript files.
+test.js(23,8): error TS8006: 'module' declarations can only be used in TypeScript files.
+test.js(28,11): error TS8006: 'module' declarations can only be used in TypeScript files.
 test.js(33,13): error TS8013: Non-null assertions can only be used in TypeScript files.
 test.js(36,24): error TS8016: Type assertion expressions can only be used in TypeScript files.
 test.js(39,17): error TS2741: Property 'name' is missing in type '{}' but required in type 'Config'.
@@ -30,15 +30,15 @@ test.js(60,35): error TS8012: Parameter modifiers can only be used in TypeScript
 test.js(60,46): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(69,25): error TS8009: The '?' modifier can only be used in TypeScript files.
 test.js(69,28): error TS8010: Type annotations can only be used in TypeScript files.
-test.js(74,1): error TS8017: Signature declarations can only be used in TypeScript files.
-test.js(77,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
+test.js(74,10): error TS8017: Signature declarations can only be used in TypeScript files.
+test.js(77,10): error TS8004: Type parameter declarations can only be used in TypeScript files.
 test.js(77,24): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(77,28): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(82,19): error TS2693: 'string' only refers to a type, but is being used as a value here.
 test.js(82,27): error TS1109: Expression expected.
 test.js(85,29): error TS8005: 'implements' clauses can only be used in TypeScript files.
 test.js(90,22): error TS8010: Type annotations can only be used in TypeScript files.
-test.js(94,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
+test.js(94,11): error TS8006: 'interface' declarations can only be used in TypeScript files.
 
 
 ==== test.js (41 errors) ====
@@ -53,50 +53,39 @@ test.js(94,1): error TS8006: 'interface' declarations can only be used in TypeSc
     
     // Interface declarations should be flagged as errors
     interface Person {
-    ~~~~~~~~~~~~~~~~~~
-        name: string;
-    ~~~~~~~~~~~~~~~~~
-        age: number;
-    ~~~~~~~~~~~~~~~~
-    }
-    ~
+              ~~~~~~
 !!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+        name: string;
+        age: number;
+    }
     
     // Type alias declarations should be flagged as errors
     type StringOrNumber = string | number;
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         ~~~~~~~~~~~~~~
 !!! error TS8008: Type aliases can only be used in TypeScript files.
     
     // Enum declarations should be flagged as errors
     enum Color {
-    ~~~~~~~~~~~~
-        Red,
-    ~~~~~~~~
-        Green,
-    ~~~~~~~~~~
-        Blue
-    ~~~~~~~~
-    }
-    ~
+         ~~~~~
 !!! error TS8006: 'enum' declarations can only be used in TypeScript files.
+        Red,
+        Green,
+        Blue
+    }
     
     // Module declarations should be flagged as errors
     module MyModule {
-    ~~~~~~~~~~~~~~~~~
-        export var x = 1;
-    ~~~~~~~~~~~~~~~~~~~~~
-    }
-    ~
+           ~~~~~~~~
 !!! error TS8006: 'module' declarations can only be used in TypeScript files.
+        export var x = 1;
+    }
     
     // Namespace declarations should be flagged as errors
     namespace MyNamespace {
-    ~~~~~~~~~~~~~~~~~~~~~~~
-        export var y = 2;
-    ~~~~~~~~~~~~~~~~~~~~~
-    }
-    ~
+              ~~~~~~~~~~~
 !!! error TS8006: 'module' declarations can only be used in TypeScript files.
+        export var y = 2;
+    }
     
     // Non-null assertions should be flagged as errors
     let value = getValue()!;
@@ -192,21 +181,19 @@ test.js(94,1): error TS8006: 'interface' declarations can only be used in TypeSc
     
     // Signature declarations should be flagged as errors
     function signatureOnly(x: number): string;
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+             ~~~~~~~~~~~~~
 !!! error TS8017: Signature declarations can only be used in TypeScript files.
     
     // Type parameters should be flagged as errors
     function generic<T>(x: T): T {
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+             ~~~~~~~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
                            ~
 !!! error TS8010: Type annotations can only be used in TypeScript files.
                                ~
 !!! error TS8010: Type annotations can only be used in TypeScript files.
         return x;
-    ~~~~~~~~~~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     // Type arguments should be flagged as errors
     let array = Array<string>();
@@ -230,9 +217,7 @@ test.js(94,1): error TS8006: 'interface' declarations can only be used in TypeSc
     }
     
     interface Config {
-    ~~~~~~~~~~~~~~~~~~
-        name: string;
-    ~~~~~~~~~~~~~~~~~
-    }
-    ~
+              ~~~~~~
 !!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+        name: string;
+    }

@@ -2,11 +2,11 @@
 +++ new.jsDeclarationsClassesErr.errors.txt
 @@= skipped -0, +0 lines =@@
 -index.js(4,16): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+index.js(4,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
++index.js(4,14): error TS8004: Type parameter declarations can only be used in TypeScript files.
  index.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
 -index.js(8,16): error TS8004: Type parameter declarations can only be used in TypeScript files.
 -index.js(8,29): error TS8011: Type arguments can only be used in TypeScript files.
-+index.js(8,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
++index.js(8,14): error TS8004: Type parameter declarations can only be used in TypeScript files.
 +index.js(8,27): error TS8011: Type arguments can only be used in TypeScript files.
  index.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
  index.js(13,11): error TS8010: Type annotations can only be used in TypeScript files.
@@ -16,30 +16,19 @@
      
      export class M<T> {
 -                   ~
--!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-+    ~~~~~~~~~~~~~~~~~~~
++                 ~
+ !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
          field: T;
-+    ~~~~~~~~~~~~~
                 ~
- !!! error TS8010: Type annotations can only be used in TypeScript files.
+@@= skipped -8, +8 lines =@@
      }
-+    ~
-+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
      
      export class N<U> extends M<U> {
 -                   ~
--!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
++                 ~
+ !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
 -                                ~
-+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +                              ~~~~
  !!! error TS8011: Type arguments can only be used in TypeScript files.
          other: U;
-+    ~~~~~~~~~~~~~
                 ~
- !!! error TS8010: Type annotations can only be used in TypeScript files.
-     }
-+    ~
-+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-     
-     export class O {
-         [idx: string]: string;

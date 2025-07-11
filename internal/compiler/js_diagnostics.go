@@ -2,7 +2,7 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
 )
@@ -27,8 +27,8 @@ func (p *Program) getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) [
 	// Walk the entire AST to find TypeScript-only constructs
 	visitor.walkNodeForJSDiagnostics(sourceFile.AsNode(), sourceFile.AsNode())
 
-	p.jsDiagnosticCache.Store(sourceFile, visitor.diagnostics)
-	return visitor.diagnostics
+	diagnostics, _ := p.jsDiagnosticCache.LoadOrStore(sourceFile, visitor.diagnostics)
+	return diagnostics
 }
 
 // walkNodeForJSDiagnostics walks the AST and collects diagnostics for TypeScript-only constructs
@@ -384,7 +384,7 @@ func (v *jsDiagnosticsVisitor) checkPropertyModifiers(modifiers *ast.ModifierLis
 			continue
 		default:
 			if v.isTypeScriptOnlyModifier(modifier) {
-				v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, v.getTokenText(modifier)))
+				v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(modifier.Kind)))
 			}
 		}
 	}
@@ -416,7 +416,7 @@ func (v *jsDiagnosticsVisitor) checkModifier(modifier *ast.Node, isConstValid bo
 		}
 	case ast.KindPublicKeyword, ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindReadonlyKeyword,
 		ast.KindDeclareKeyword, ast.KindAbstractKeyword, ast.KindOverrideKeyword, ast.KindInKeyword, ast.KindOutKeyword:
-		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, v.getTokenText(modifier)))
+		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(modifier.Kind)))
 	case ast.KindStaticKeyword, ast.KindExportKeyword, ast.KindDefaultKeyword, ast.KindAccessorKeyword:
 		// These are valid in JavaScript
 	}
@@ -432,50 +432,7 @@ func (v *jsDiagnosticsVisitor) isTypeScriptOnlyModifier(modifier *ast.Node) bool
 	return false
 }
 
-// getTokenText returns the text representation of a token
-func (v *jsDiagnosticsVisitor) getTokenText(node *ast.Node) string {
-	switch node.Kind {
-	case ast.KindPublicKeyword:
-		return "public"
-	case ast.KindPrivateKeyword:
-		return "private"
-	case ast.KindProtectedKeyword:
-		return "protected"
-	case ast.KindReadonlyKeyword:
-		return "readonly"
-	case ast.KindDeclareKeyword:
-		return "declare"
-	case ast.KindAbstractKeyword:
-		return "abstract"
-	case ast.KindOverrideKeyword:
-		return "override"
-	case ast.KindInKeyword:
-		return "in"
-	case ast.KindOutKeyword:
-		return "out"
-	case ast.KindConstKeyword:
-		return "const"
-	case ast.KindStaticKeyword:
-		return "static"
-	case ast.KindAccessorKeyword:
-		return "accessor"
-	default:
-		return ""
-	}
-}
-
 // createDiagnosticForNode creates a diagnostic for a specific node
 func (v *jsDiagnosticsVisitor) createDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	return ast.NewDiagnostic(v.sourceFile, v.getErrorRangeForNode(node), message, args...)
-}
-
-// getErrorRangeForNode gets the error range for a node, skipping trivia
-func (v *jsDiagnosticsVisitor) getErrorRangeForNode(node *ast.Node) core.TextRange {
-	if node == nil {
-		return core.TextRange{}
-	}
-
-	// Use scanner to skip trivia for proper diagnostic positioning
-	start := scanner.SkipTrivia(v.sourceFile.Text(), node.Pos())
-	return core.NewTextRange(start, node.End())
+	return ast.NewDiagnostic(v.sourceFile, binder.GetErrorRangeForNode(v.sourceFile, node), message, args...)
 }

@@ -1,4 +1,4 @@
-BaseB.js(2,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
+BaseB.js(2,22): error TS8004: Type parameter declarations can only be used in TypeScript files.
 BaseB.js(2,25): error TS1005: ',' expected.
 BaseB.js(3,14): error TS2304: Cannot find name 'Class'.
 BaseB.js(3,14): error TS8010: Type annotations can only be used in TypeScript files.
@@ -17,28 +17,23 @@ SubB.js(3,35): error TS8011: Type arguments can only be used in TypeScript files
 ==== BaseB.js (6 errors) ====
     import BaseA from './BaseA';
     export default class B<T: BaseA> {
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                         ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
                             ~
 !!! error TS1005: ',' expected.
         _AClass: Class<T>;
-    ~~~~~~~~~~~~~~~~~~~~~~
                  ~~~~~
 !!! error TS2304: Cannot find name 'Class'.
                  ~~~~~~~~
 !!! error TS8010: Type annotations can only be used in TypeScript files.
         constructor(AClass: Class<T>) {
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             ~~~~~
 !!! error TS2304: Cannot find name 'Class'.
                             ~~~~~~~~
 !!! error TS8010: Type annotations can only be used in TypeScript files.
             this._AClass = AClass;
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
-    ~~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
 ==== SubB.js (1 errors) ====
     import SubA from './SubA';
     import BaseB from './BaseB';

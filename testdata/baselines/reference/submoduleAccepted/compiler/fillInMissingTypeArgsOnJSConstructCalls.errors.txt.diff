@@ -2,7 +2,7 @@
 +++ new.fillInMissingTypeArgsOnJSConstructCalls.errors.txt
 @@= skipped -0, +0 lines =@@
 -BaseB.js(2,24): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+BaseB.js(2,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
++BaseB.js(2,22): error TS8004: Type parameter declarations can only be used in TypeScript files.
  BaseB.js(2,25): error TS1005: ',' expected.
  BaseB.js(3,14): error TS2304: Cannot find name 'Class'.
  BaseB.js(3,14): error TS8010: Type annotations can only be used in TypeScript files.
@@ -18,30 +18,11 @@
      import BaseA from './BaseA';
      export default class B<T: BaseA> {
 -                           ~~~~~~~~
--!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++                         ~
+ !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
                              ~
  !!! error TS1005: ',' expected.
-         _AClass: Class<T>;
-+    ~~~~~~~~~~~~~~~~~~~~~~
-                  ~~~~~
- !!! error TS2304: Cannot find name 'Class'.
-                  ~~~~~~~~
- !!! error TS8010: Type annotations can only be used in TypeScript files.
-         constructor(AClass: Class<T>) {
-+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                             ~~~~~
- !!! error TS2304: Cannot find name 'Class'.
-                             ~~~~~~~~
- !!! error TS8010: Type annotations can only be used in TypeScript files.
-             this._AClass = AClass;
-+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         }
-+    ~~~~~
-     }
-+    ~
-+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
- ==== SubB.js (1 errors) ====
+@@= skipped -21, +21 lines =@@
      import SubA from './SubA';
      import BaseB from './BaseB';
      export default class SubB extends BaseB<SubA> {
