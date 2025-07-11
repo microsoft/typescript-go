@@ -45,14 +45,34 @@ func (v *jsDiagnosticsVisitor) walkNodeForJSDiagnostics(node *ast.Node, parent *
 
 	// Handle specific parent-child relationships first
 	switch parent.Kind {
-	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindMethodDeclaration:
-		// Check for question token (optional markers) - only parameters have question tokens
+	case ast.KindParameter, ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindPropertyAssignment, ast.KindMethodSignature, ast.KindPropertySignature:
+		// Check for question token (optional markers)
 		if parent.Kind == ast.KindParameter && parent.AsParameterDeclaration() != nil && parent.AsParameterDeclaration().QuestionToken == node {
 			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
 			return
 		}
+		if parent.Kind == ast.KindPropertyDeclaration && parent.AsPropertyDeclaration() != nil && parent.AsPropertyDeclaration().PostfixToken == node {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
+			return
+		}
+		if parent.Kind == ast.KindMethodDeclaration && parent.AsMethodDeclaration() != nil && parent.AsMethodDeclaration().PostfixToken == node {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
+			return
+		}
+		if parent.Kind == ast.KindPropertyAssignment && parent.AsPropertyAssignment() != nil && parent.AsPropertyAssignment().PostfixToken == node {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
+			return
+		}
+		if parent.Kind == ast.KindMethodSignature && parent.AsMethodSignatureDeclaration() != nil && parent.AsMethodSignatureDeclaration().PostfixToken == node {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
+			return
+		}
+		if parent.Kind == ast.KindPropertySignature && parent.AsPropertySignatureDeclaration() != nil && parent.AsPropertySignatureDeclaration().PostfixToken == node {
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
+			return
+		}
 		fallthrough
-	case ast.KindMethodSignature, ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor,
+	case ast.KindConstructor, ast.KindGetAccessor, ast.KindSetAccessor,
 		ast.KindFunctionExpression, ast.KindFunctionDeclaration, ast.KindArrowFunction, ast.KindVariableDeclaration:
 		// Check for type annotations
 		if v.isTypeAnnotation(parent, node) {

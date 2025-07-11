@@ -66,9 +66,12 @@ plainJSGrammarErrors.js(104,6): error TS1171: A comma expression is not allowed 
 plainJSGrammarErrors.js(105,5): error TS18016: Private identifiers are not allowed outside class bodies.
 plainJSGrammarErrors.js(106,5): error TS1042: 'export' modifier cannot be used here.
 plainJSGrammarErrors.js(108,25): error TS1162: An object member cannot be declared optional.
+plainJSGrammarErrors.js(108,25): error TS8009: The '?' modifier can only be used in TypeScript files.
 plainJSGrammarErrors.js(109,6): error TS1162: An object member cannot be declared optional.
+plainJSGrammarErrors.js(109,6): error TS8009: The '?' modifier can only be used in TypeScript files.
 plainJSGrammarErrors.js(110,15): error TS1255: A definite assignment assertion '!' is not permitted in this context.
 plainJSGrammarErrors.js(111,19): error TS1255: A definite assignment assertion '!' is not permitted in this context.
+plainJSGrammarErrors.js(111,19): error TS8009: The '?' modifier can only be used in TypeScript files.
 plainJSGrammarErrors.js(114,16): error TS1312: Did you mean to use a ':'? An '=' can only follow a property name when the containing object literal is part of a destructuring pattern.
 plainJSGrammarErrors.js(116,24): error TS1009: Trailing comma not allowed.
 plainJSGrammarErrors.js(117,29): error TS1097: 'extends' list cannot be empty.
@@ -101,7 +104,7 @@ plainJSGrammarErrors.js(204,30): message TS1450: Dynamic imports can only accept
 plainJSGrammarErrors.js(205,36): error TS1325: Argument of dynamic import cannot be spread element.
 
 
-==== plainJSGrammarErrors.js (101 errors) ====
+==== plainJSGrammarErrors.js (104 errors) ====
     class C {
         // #private mistakes
         q = #unbound
@@ -346,15 +349,21 @@ plainJSGrammarErrors.js(205,36): error TS1325: Argument of dynamic import cannot
         cantHaveQuestionMark?: 1,
                             ~
 !!! error TS1162: An object member cannot be declared optional.
+                            ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
         m?() { return 12 },
          ~
 !!! error TS1162: An object member cannot be declared optional.
+         ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
         definitely!,
                   ~
 !!! error TS1255: A definite assignment assertion '!' is not permitted in this context.
         definiteMethod!() { return 13 },
                       ~
 !!! error TS1255: A definite assignment assertion '!' is not permitted in this context.
+                      ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
     }
     const noAssignment = {
         assignment = 1,
