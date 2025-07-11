@@ -62,8 +62,6 @@ type Program struct {
 
 	sourceFilesToEmitOnce sync.Once
 	sourceFilesToEmit     []*ast.SourceFile
-
-	jsDiagnosticCache collections.SyncMap[*ast.SourceFile, []*ast.Diagnostic]
 }
 
 // FileExists implements checker.Program.
