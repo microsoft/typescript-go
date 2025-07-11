@@ -10085,11 +10085,6 @@ type SourceFile struct {
 	lineMapMu sync.RWMutex
 	lineMap   []core.TextPos
 
-	// Fields set by AdditionalSyntacticDiagnostics
-
-	additionalSyntacticDiagnosticsMu sync.RWMutex
-	additionalSyntacticDiagnostics   []*Diagnostic
-
 	// Fields set by language service
 
 	tokenCacheMu     sync.Mutex
@@ -10149,22 +10144,6 @@ func (node *SourceFile) JSDocDiagnostics() []*Diagnostic {
 
 func (node *SourceFile) SetJSDocDiagnostics(diags []*Diagnostic) {
 	node.jsdocDiagnostics = diags
-}
-
-func (node *SourceFile) AdditionalSyntacticDiagnostics() []*Diagnostic {
-	node.additionalSyntacticDiagnosticsMu.RLock()
-	diagnostics := node.additionalSyntacticDiagnostics
-	node.additionalSyntacticDiagnosticsMu.RUnlock()
-	if diagnostics == nil {
-		node.additionalSyntacticDiagnosticsMu.Lock()
-		defer node.additionalSyntacticDiagnosticsMu.Unlock()
-		diagnostics = node.additionalSyntacticDiagnostics
-		if diagnostics == nil {
-			diagnostics = getJSSyntacticDiagnosticsForFile(node)
-			node.additionalSyntacticDiagnostics = diagnostics
-		}
-	}
-	return diagnostics
 }
 
 func (node *SourceFile) JSDocCache() map[*Node][]*Node {
