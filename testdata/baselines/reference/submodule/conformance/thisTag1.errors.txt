@@ -1,0 +1,26 @@
+a.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(3,13): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== a.js (3 errors) ====
+    /** @this {{ n: number }} Mount Holyoke Preparatory School
+               ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     * @param {string} s
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     * @return {number}
+                ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     */
+    function f(s) {
+        return this.n + s.length
+    }
+    
+    const o = {
+        f,
+        n: 1
+    }
+    o.f('hi')
+    

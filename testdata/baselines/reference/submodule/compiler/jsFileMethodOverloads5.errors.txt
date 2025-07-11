@@ -1,0 +1,37 @@
+/a.js(2,5): error TS8017: Signature declarations can only be used in TypeScript files.
+/a.js(8,5): error TS8017: Signature declarations can only be used in TypeScript files.
+/a.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(16,4): error TS8009: The '?' modifier can only be used in TypeScript files.
+/a.js(16,12): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== /a.js (5 errors) ====
+    /**
+     * @overload
+        ~~~~~~~~
+!!! error TS8017: Signature declarations can only be used in TypeScript files.
+     * @param {string} a
+     * @return {void}
+     */
+    
+    /**
+     * @overload
+        ~~~~~~~~
+!!! error TS8017: Signature declarations can only be used in TypeScript files.
+     * @param {number} a
+     * @param {number} [b]
+     * @return {void}
+     */
+    
+    /**
+     * @param {string | number} a
+               ~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     * @param {number} [b]
+       ~~~~~~~~~~~~~~~~~~~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     */
+    export const foo = function (a, b) { }
+    

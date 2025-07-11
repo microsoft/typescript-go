@@ -1,41 +1,63 @@
+/a.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(20,12): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(21,14): error TS1064: The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<string>'?
+/a.js(21,14): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(27,12): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(28,7): error TS2322: Type '(str: string) => Promise<string>' is not assignable to type 'T1'.
   Type 'Promise<string>' is not assignable to type 'string'.
+/a.js(33,12): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(34,14): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(40,12): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(45,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== /types.d.ts (0 errors) ====
     declare class Thenable { then(): void; }
     
-==== /a.js (2 errors) ====
+==== /a.js (12 errors) ====
     /**
      * @callback T1
      * @param {string} str
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string}
      */
     
     /**
      * @callback T2
      * @param {string} str
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {Promise<string>}
      */
     
     /**
      * @callback T3
      * @param {string} str
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {Thenable}
      */
     
     /**
      * @param {string} str
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string}
                  ~~~~~~
 !!! error TS1064: The return type of an async function or method must be the global Promise<T> type. Did you mean to write 'Promise<string>'?
+                 ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const f1 = async str => {
         return str;
     }
     
     /** @type {T1} */
+               ~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const f2 = async str => {
           ~~
 !!! error TS2322: Type '(str: string) => Promise<string>' is not assignable to type 'T1'.
@@ -45,18 +67,26 @@
     
     /**
      * @param {string} str
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {Promise<string>}
+                 ~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const f3 = async str => {
         return str;
     }
     
     /** @type {T2} */
+               ~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const f4 = async str => {
         return str;
     }
     
     /** @type {T3} */
+               ~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const f5 = async str => {
         return str;
     }

@@ -2,6 +2,7 @@ a.js(1,7): error TS2339: Property 'Inner' does not exist on type 'typeof Outer'.
 a.js(5,7): error TS2339: Property 'i' does not exist on type 'typeof Outer'.
 b.js(1,18): error TS2339: Property 'i' does not exist on type 'typeof Outer'.
 b.js(3,13): error TS2702: 'Outer' only refers to a type, but is being used as a namespace here.
+b.js(3,13): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== def.js (0 errors) ====
@@ -18,7 +19,7 @@ b.js(3,13): error TS2702: 'Outer' only refers to a type, but is being used as a 
           ~
 !!! error TS2339: Property 'i' does not exist on type 'typeof Outer'.
     
-==== b.js (2 errors) ====
+==== b.js (3 errors) ====
     var msgs = Outer.i.messages()
                      ~
 !!! error TS2339: Property 'i' does not exist on type 'typeof Outer'.
@@ -26,6 +27,8 @@ b.js(3,13): error TS2702: 'Outer' only refers to a type, but is being used as a 
     /** @param {Outer.Inner} inner */
                 ~~~~~
 !!! error TS2702: 'Outer' only refers to a type, but is being used as a namespace here.
+                ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     function x(inner) {
     }
     

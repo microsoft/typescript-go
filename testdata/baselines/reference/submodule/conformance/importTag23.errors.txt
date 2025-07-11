@@ -1,3 +1,5 @@
+/b.js(2,4): error TS8006: 'import type' declarations can only be used in TypeScript files.
+/b.js(5,18): error TS8005: 'implements' clauses can only be used in TypeScript files.
 /b.js(6,14): error TS2420: Class 'C' incorrectly implements interface 'I'.
   Property 'foo' is missing in type 'C' but required in type 'I'.
 
@@ -7,12 +9,16 @@
         foo(): void;
     }
     
-==== /b.js (1 errors) ====
+==== /b.js (3 errors) ====
     /**
      * @import * as NS from './a'
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'import type' declarations can only be used in TypeScript files.
      */
     
     /** @implements {NS.I} */
+                     ~~~~
+!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
     export class C {}
                  ~
 !!! error TS2420: Class 'C' incorrectly implements interface 'I'.

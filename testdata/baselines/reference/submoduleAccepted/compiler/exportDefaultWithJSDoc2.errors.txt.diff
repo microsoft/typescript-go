@@ -1,0 +1,20 @@
+--- old.exportDefaultWithJSDoc2.errors.txt
++++ new.exportDefaultWithJSDoc2.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++a.js(6,27): error TS8016: Type assertion expressions can only be used in TypeScript files.
++
++
++==== a.js (1 errors) ====
++    /**
++     * A number, or a string containing a number.
++     * @typedef {(number|string)} NumberLike
++     */
++    
++    export default /** @type {NumberLike[]} */([ ]);
++                              ~~~~~~~~~~~~
++!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
++    
++==== b.ts (0 errors) ====
++    import A from './a'
++    A[0]

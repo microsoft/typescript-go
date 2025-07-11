@@ -5,16 +5,21 @@
 -
 -
 -==== a.js (1 errors) ====
++a.js(1,13): error TS8010: Type annotations can only be used in TypeScript files.
 +a.js(8,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
++a.js(12,13): error TS8010: Type annotations can only be used in TypeScript files.
 +a.js(15,16): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 +a.js(20,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 +
 +
-+==== a.js (3 errors) ====
++==== a.js (5 errors) ====
      /** @param {number} x */
++                ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
      function C(x) {
          this.x = x
-@@= skipped -9, +11 lines =@@
+     }
+@@= skipped -9, +15 lines =@@
          this.y = 12
      }
      var c = new C(1)
@@ -26,6 +31,8 @@
      c.y = undefined // ok
      
      /** @param {number} x */
++                ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
      function A(x) {
          if (!(this instanceof A)) {
              return new A(x)

@@ -1,0 +1,34 @@
+--- old.thisInFunctionCallJs.errors.txt
++++ new.thisInFunctionCallJs.errors.txt
+@@= skipped -0, +0 lines =@@
+ /a.js(9,26): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+ /a.js(15,31): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+-
+-
+-==== /a.js (2 errors) ====
++/a.js(21,20): error TS8010: Type annotations can only be used in TypeScript files.
++/a.js(29,20): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== /a.js (4 errors) ====
+     class Test {
+         constructor() {
+             /** @type {number[]} */
+@@= skipped -29, +31 lines =@@
+         forEacher() {
+             this.data.forEach(
+             /** @this {Test} */
++                       ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+             function (d) {
+                 console.log(d === this.data.length)
+             }, this)
+@@= skipped -8, +10 lines =@@
+         finder() {
+             this.data.find(
+             /** @this {Test} */
++                       ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+             function (d) {
+                 return d === this.data.length
+             }, this)

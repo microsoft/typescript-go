@@ -1,0 +1,22 @@
+a.js(2,16): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(4,16): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== typeFromPrivatePropertyAssignmentJs.js (0 errors) ====
+    
+==== a.js (2 errors) ====
+    class C {
+        /** @type {{ foo?: string } | undefined } */
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        #a;
+        /** @type {{ foo?: string } | undefined } */
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        #b;
+        m() {
+            const a = this.#a || {};
+            this.#b = this.#b || {};
+        }
+    }
+    

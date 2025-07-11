@@ -1,0 +1,45 @@
+--- old.jsdocAccessibilityTags.errors.txt
++++ new.jsdocAccessibilityTags.errors.txt
+@@= skipped -0, +0 lines =@@
++jsdocAccessibilityTag.js(5,8): error TS8009: The 'private' modifier can only be used in TypeScript files.
++jsdocAccessibilityTag.js(11,8): error TS8009: The 'protected' modifier can only be used in TypeScript files.
++jsdocAccessibilityTag.js(17,8): error TS8009: The 'public' modifier can only be used in TypeScript files.
+ jsdocAccessibilityTag.js(50,14): error TS2341: Property 'priv' is private and only accessible within class 'A'.
+ jsdocAccessibilityTag.js(55,14): error TS2341: Property 'priv2' is private and only accessible within class 'C'.
+ jsdocAccessibilityTag.js(58,9): error TS2341: Property 'priv' is private and only accessible within class 'A'.
+@@= skipped -9, +12 lines =@@
+ jsdocAccessibilityTag.js(61,25): error TS2445: Property 'prot2' is protected and only accessible within class 'C' and its subclasses.
+
+
+-==== jsdocAccessibilityTag.js (10 errors) ====
++==== jsdocAccessibilityTag.js (13 errors) ====
+     class A {
+         /**
+          * Ap docs
+          *
+          * @private
++           ~~~~~~~~
+          */
++    ~~~~~
++!!! error TS8009: The 'private' modifier can only be used in TypeScript files.
+         priv = 4;
+         /**
+          * Aq docs
+          *
+          * @protected
++           ~~~~~~~~~~
+          */
++    ~~~~~
++!!! error TS8009: The 'protected' modifier can only be used in TypeScript files.
+         prot = 5;
+         /**
+          * Ar docs
+          *
+          * @public
++           ~~~~~~~
+          */
++    ~~~~~
++!!! error TS8009: The 'public' modifier can only be used in TypeScript files.
+         pub = 6;
+         /** @public */
+         get ack() { return this.priv }

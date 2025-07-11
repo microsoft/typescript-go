@@ -1,0 +1,27 @@
+file.js(12,23): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== file.js (1 errors) ====
+    export class C {
+        #hello = "hello";
+        #world = 100;
+    
+        #calcHello() {
+            return this.#hello;
+        }
+    
+        get #screamingHello() {
+            return this.#hello.toUpperCase();
+        }
+        /** @param value {string} */
+                          ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        set #screamingHello(value) {
+            throw "NO";
+        }
+    
+        getWorld() {
+            return this.#world;
+        }
+    }
+    

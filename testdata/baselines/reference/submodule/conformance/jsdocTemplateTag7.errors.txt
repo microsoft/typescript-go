@@ -1,28 +1,57 @@
+a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 a.js(2,14): error TS1277: 'const' modifier can only appear on a type parameter of a function, method or class
+a.js(9,12): error TS8004: Type parameter declarations can only be used in TypeScript files.
 a.js(12,14): error TS1273: 'private' modifier cannot appear on a type parameter
+a.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(14,14): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== a.js (2 errors) ====
+==== a.js (6 errors) ====
     /**
+    ~~~
      * @template const T
+    ~~~~~~~~~~~~~~~~~~~~
                  ~~~~~
 !!! error TS1277: 'const' modifier can only appear on a type parameter of a function, method or class
      * @typedef {[T]} X
+    ~~~~~~~~~~~~~~~~~~~
      */
+    ~~~
+    
     
     /**
+    ~~~
      * @template const T
+    ~~~~~~~~~~~~~~~~~~~~
      */
+    ~~~
     class C { }
+    ~~~~~~~~~~~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+               
+    
     
     /**
+    ~~~
      * @template private T
+    ~~~~~~~~~~~~~~~~~~~~~~
                  ~~~~~~~
 !!! error TS1273: 'private' modifier cannot appear on a type parameter
      * @param {T} x
+    ~~~~~~~~~~~~~~~
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T}
+    ~~~~~~~~~~~~~~~
+                 ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
+    ~~~
     function f(x) {
+    ~~~~~~~~~~~~~~~
         return x;
+    ~~~~~~~~~~~~~
     }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     

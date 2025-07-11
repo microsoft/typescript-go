@@ -1,40 +1,64 @@
+index.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(7,12): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(16,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+index.js(16,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(19,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+index.js(19,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(22,12): error TS2315: Type 'Object' is not generic.
+index.js(22,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(22,18): error TS8020: JSDoc types can only be used inside documentation comments.
 
 
-==== index.js (4 errors) ====
+==== index.js (12 errors) ====
     /** @type {?} */
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const a = null;
     
     /** @type {*} */
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const b = null;
     
     /** @type {string?} */
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const c = null;
     
     /** @type {string=} */
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const d = null;
     
     /** @type {string!} */
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const e = null;
     
     /** @type {function(string, number): object} */
                ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 !!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
+               ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const f = null;
     
     /** @type {function(new: object, string, number)} */
                ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 !!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
+               ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const g = null;
     
     /** @type {Object.<string, number>} */
                ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
+               ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
                      ~
 !!! error TS8020: JSDoc types can only be used inside documentation comments.
     export const h = null;

@@ -3,11 +3,19 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +a.js(3,13): error TS2749: 'A' refers to a value, but is being used as a type here. Did you mean 'typeof A'?
++a.js(3,13): error TS8010: Type annotations can only be used in TypeScript files.
 +b.js(3,13): error TS2749: 'B' refers to a value, but is being used as a type here. Did you mean 'typeof B'?
++b.js(3,13): error TS8010: Type annotations can only be used in TypeScript files.
 +c.js(3,13): error TS2749: 'C' refers to a value, but is being used as a type here. Did you mean 'typeof C'?
++c.js(3,13): error TS8010: Type annotations can only be used in TypeScript files.
 +d.js(3,13): error TS2749: 'D' refers to a value, but is being used as a type here. Did you mean 'typeof D'?
++d.js(3,13): error TS8010: Type annotations can only be used in TypeScript files.
++e.js(3,13): error TS8010: Type annotations can only be used in TypeScript files.
 +f.js(5,13): error TS2749: 'F' refers to a value, but is being used as a type here. Did you mean 'typeof F'?
++f.js(5,13): error TS8010: Type annotations can only be used in TypeScript files.
 +g.js(5,13): error TS2749: 'G' refers to a value, but is being used as a type here. Did you mean 'typeof G'?
++g.js(5,13): error TS8010: Type annotations can only be used in TypeScript files.
++h.js(7,13): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
 +==== node.d.ts (0 errors) ====
@@ -19,12 +27,14 @@
 +        this.x = 1;
 +    };
 +    
-+==== a.js (1 errors) ====
++==== a.js (2 errors) ====
 +    const { A } = require("./a-ext");
 +    
 +    /** @param {A} p */
 +                ~
 +!!! error TS2749: 'A' refers to a value, but is being used as a type here. Did you mean 'typeof A'?
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function a(p) { p.x; }
 +    
 +==== b-ext.js (0 errors) ====
@@ -34,12 +44,14 @@
 +        }
 +    };
 +    
-+==== b.js (1 errors) ====
++==== b.js (2 errors) ====
 +    const { B } = require("./b-ext");
 +    
 +    /** @param {B} p */
 +                ~
 +!!! error TS2749: 'B' refers to a value, but is being used as a type here. Did you mean 'typeof B'?
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function b(p) { p.x; }
 +    
 +==== c-ext.js (0 errors) ====
@@ -47,12 +59,14 @@
 +        this.x = 1;
 +    }
 +    
-+==== c.js (1 errors) ====
++==== c.js (2 errors) ====
 +    const { C } = require("./c-ext");
 +    
 +    /** @param {C} p */
 +                ~
 +!!! error TS2749: 'C' refers to a value, but is being used as a type here. Did you mean 'typeof C'?
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function c(p) { p.x; }
 +    
 +==== d-ext.js (0 errors) ====
@@ -60,12 +74,14 @@
 +        this.x = 1;
 +    };
 +    
-+==== d.js (1 errors) ====
++==== d.js (2 errors) ====
 +    const { D } = require("./d-ext");
 +    
 +    /** @param {D} p */
 +                ~
 +!!! error TS2749: 'D' refers to a value, but is being used as a type here. Did you mean 'typeof D'?
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function d(p) { p.x; }
 +    
 +==== e-ext.js (0 errors) ====
@@ -75,13 +91,15 @@
 +        }
 +    }
 +    
-+==== e.js (0 errors) ====
++==== e.js (1 errors) ====
 +    const { E } = require("./e-ext");
 +    
 +    /** @param {E} p */
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function e(p) { p.x; }
 +    
-+==== f.js (1 errors) ====
++==== f.js (2 errors) ====
 +    var F = function () {
 +        this.x = 1;
 +    };
@@ -89,9 +107,11 @@
 +    /** @param {F} p */
 +                ~
 +!!! error TS2749: 'F' refers to a value, but is being used as a type here. Did you mean 'typeof F'?
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function f(p) { p.x; }
 +    
-+==== g.js (1 errors) ====
++==== g.js (2 errors) ====
 +    function G() {
 +        this.x = 1;
 +    }
@@ -99,9 +119,11 @@
 +    /** @param {G} p */
 +                ~
 +!!! error TS2749: 'G' refers to a value, but is being used as a type here. Did you mean 'typeof G'?
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function g(p) { p.x; }
 +    
-+==== h.js (0 errors) ====
++==== h.js (1 errors) ====
 +    class H {
 +        constructor() {
 +            this.x = 1;
@@ -109,4 +131,6 @@
 +    }
 +    
 +    /** @param {H} p */
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function h(p) { p.x; }

@@ -1,8 +1,9 @@
 a.js(3,12): error TS7006: Parameter 'callback' implicitly has an 'any' type.
+a.js(8,11): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(8,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 
 
-==== a.js (2 errors) ====
+==== a.js (3 errors) ====
     // from bcryptjs
     /** @param {function(...[*])} callback */
     function g(callback) {
@@ -13,6 +14,8 @@ a.js(8,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
     
     /**
      * @type {!function(...number):string}
+              ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
                ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 !!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.

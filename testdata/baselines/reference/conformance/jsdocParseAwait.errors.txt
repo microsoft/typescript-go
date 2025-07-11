@@ -1,24 +1,33 @@
+/a.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(7,7): error TS2322: Type 'number' is not assignable to type 'T'.
+/a.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== /a.js (1 errors) ====
+==== /a.js (4 errors) ====
     /**
      * @typedef {object} T
      * @property {boolean} await
      */
     
     /** @type {T} */
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const a = 1;
           ~
 !!! error TS2322: Type 'number' is not assignable to type 'T'.
     
     /** @type {T} */
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const b = {
         await: false,
     };
     
     /**
      * @param {boolean} await
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function c(await) {}
     

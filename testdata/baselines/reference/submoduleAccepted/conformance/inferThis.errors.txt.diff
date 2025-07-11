@@ -1,0 +1,69 @@
+--- old.inferThis.errors.txt
++++ new.inferThis.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++/a.js(1,17): error TS8004: Type parameter declarations can only be used in TypeScript files.
++/a.js(4,15): error TS8010: Type annotations can only be used in TypeScript files.
++/a.js(5,17): error TS8010: Type annotations can only be used in TypeScript files.
++/a.js(9,6): error TS8004: Type parameter declarations can only be used in TypeScript files.
++/a.js(13,15): error TS8010: Type annotations can only be used in TypeScript files.
++/a.js(14,17): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== /a.js (6 errors) ====
++    export class C {
++                    
++        /**
++    ~~~~~~~
++         * @template T
++    ~~~~~~~~~~~~~~~~~~
++         * @this {T}
++    ~~~~~~~~~~~~~~~~
++                  ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++         * @return {T}
++    ~~~~~~~~~~~~~~~~~~
++                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++         */
++    ~~~~~~~
++        static a() {
++    ~~~~~~~~~~~~~~~~
++            return this;
++    ~~~~~~~~~~~~~~~~~~~~
++        }
++    ~~~~~
++!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
++         
++    
++    
++        /**
++    ~~~~~~~
++         * @template T
++    ~~~~~~~~~~~~~~~~~~
++         * @this {T}
++    ~~~~~~~~~~~~~~~~
++                  ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++         * @return {T}
++    ~~~~~~~~~~~~~~~~~~
++                    ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++         */
++    ~~~~~~~
++        b() {
++    ~~~~~~~~~
++            return this;
++    ~~~~~~~~~~~~~~~~~~~~
++        }
++    ~~~~~
++!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
++    }
++    
++    const a = C.a();
++    a; // typeof C
++    
++    const c = new C();
++    const b = c.b();
++    b; // C
++    

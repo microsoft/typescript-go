@@ -1,0 +1,34 @@
+--- old.jsDeclarationsReexportedCjsAlias.errors.txt
++++ new.jsDeclarationsReexportedCjsAlias.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++lib.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== main.js (0 errors) ====
++    const { SomeClass, SomeClass: Another } = require('./lib');
++    
++    module.exports = {
++        SomeClass,
++        Another
++    }
++==== lib.js (1 errors) ====
++    /**
++     * @param {string} a
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    function bar(a) {
++        return a + a;
++    }
++    
++    class SomeClass {
++        a() {
++            return 1;
++        }
++    }
++    
++    module.exports = {
++        bar,
++        SomeClass
++    }

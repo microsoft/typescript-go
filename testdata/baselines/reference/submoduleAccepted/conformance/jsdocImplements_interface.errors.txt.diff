@@ -1,0 +1,41 @@
+--- old.jsdocImplements_interface.errors.txt
++++ new.jsdocImplements_interface.errors.txt
+@@= skipped -0, +0 lines =@@
++/a.js(1,17): error TS8005: 'implements' clauses can only be used in TypeScript files.
++/a.js(7,18): error TS8005: 'implements' clauses can only be used in TypeScript files.
+ /a.js(9,5): error TS2416: Property 'mNumber' in type 'B2' is not assignable to the same property in base type 'A'.
+   Type '() => string' is not assignable to type '() => number'.
+     Type 'string' is not assignable to type 'number'.
++/a.js(13,17): error TS8005: 'implements' clauses can only be used in TypeScript files.
+ /a.js(14,7): error TS2420: Class 'B3' incorrectly implements interface 'A'.
+   Property 'mNumber' is missing in type 'B3' but required in type 'A'.
+
+@@= skipped -8, +11 lines =@@
+     interface A {
+         mNumber(): number;
+     }
+-==== /a.js (2 errors) ====
++==== /a.js (5 errors) ====
+     /** @implements A */
++                    ~
++!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
+     class B {
+         mNumber() {
+             return 0;
+         }
+     }
+     /** @implements {A} */
++                     ~
++!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
+     class B2 {
+         mNumber() {
+         ~~~~~~~
+@@= skipped -18, +22 lines =@@
+         }
+     }
+     /** @implements A */
++                    ~
++!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
+     class B3 {
+           ~~
+ !!! error TS2420: Class 'B3' incorrectly implements interface 'A'.

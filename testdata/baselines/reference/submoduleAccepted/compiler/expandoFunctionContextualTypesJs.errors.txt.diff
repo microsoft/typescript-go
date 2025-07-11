@@ -2,10 +2,13 @@
 +++ new.expandoFunctionContextualTypesJs.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
++input.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
++input.js(26,12): error TS8010: Type annotations can only be used in TypeScript files.
++input.js(32,12): error TS8010: Type annotations can only be used in TypeScript files.
 +input.js(48,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
 +
-+==== input.js (1 errors) ====
++==== input.js (4 errors) ====
 +    /** @typedef {{ color: "red" | "blue" }} MyComponentProps */
 +    
 +    /**
@@ -14,6 +17,8 @@
 +    
 +     /**
 +      * @type {StatelessComponent<MyComponentProps>}
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +      */
 +    const MyComponent = () => /* @type {any} */(null);
 +    
@@ -32,12 +37,16 @@
 +    
 +    /**
 +      * @type {StatelessComponent<MyComponentProps>}
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    const check = MyComponent2;
 +    
 +    /**
 +     * 
 +     * @param {{ props: MyComponentProps }} p 
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    function expectLiteral(p) {}
 +    

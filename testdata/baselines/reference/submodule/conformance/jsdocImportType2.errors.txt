@@ -1,0 +1,32 @@
+use.js(3,11): error TS8010: Type annotations can only be used in TypeScript files.
+use.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== use.js (2 errors) ====
+    /// <reference path='./types.d.ts'/>
+    /** @typedef {import("./mod1")} C
+     * @type {C} */
+              ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    var c;
+    c.chunk;
+    
+    const D = require("./mod1");
+    /** @type {D} */
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    var d;
+    d.chunk;
+    
+==== types.d.ts (0 errors) ====
+    declare function require(name: string): any;
+    declare var exports: any;
+    declare var module: { exports: any };
+==== mod1.js (0 errors) ====
+    /// <reference path='./types.d.ts'/>
+    module.exports = class Chunk {
+        constructor() {
+            this.chunk = 1;
+        }
+    }
+    

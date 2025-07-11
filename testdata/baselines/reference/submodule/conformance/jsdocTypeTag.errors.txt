@@ -1,3 +1,27 @@
+a.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(7,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(16,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(19,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(22,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(25,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(28,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(31,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(34,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(37,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(40,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(43,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(46,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(49,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(52,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(55,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(58,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(61,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(64,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(67,12): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(70,12): error TS8010: Type annotations can only be used in TypeScript files.
 b.ts(1,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'S' must be of type 'String', but here has type 'string'.
 b.ts(3,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'N' must be of type 'Number', but here has type 'number'.
 b.ts(5,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'B' must be of type 'Boolean', but here has type 'boolean'.
@@ -6,77 +30,125 @@ b.ts(20,5): error TS2403: Subsequent variable declarations must have the same ty
 b.ts(21,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'obj' must be of type 'object', but here has type 'any'.
 
 
-==== a.js (0 errors) ====
+==== a.js (24 errors) ====
     /** @type {String} */
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var S;
     
     /** @type {string} */
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var s;
     
     /** @type {Number} */
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var N;
     
     /** @type {number} */
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var n;
     
     /** @type {BigInt} */
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var BI;
     
     /** @type {bigint} */
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var bi;
     
     /** @type {Boolean} */
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var B;
     
     /** @type {boolean} */
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var b;
     
     /** @type {Void} */
+               ~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var V;
     
     /** @type {void} */
+               ~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var v;
     
     /** @type {Undefined} */
+               ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var U;
     
     /** @type {undefined} */
+               ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var u;
     
     /** @type {Null} */
+               ~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var Nl;
     
     /** @type {null} */
+               ~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var nl;
     
     /** @type {Array} */
+               ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var A;
     
     /** @type {array} */
+               ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var a;
     
     /** @type {Promise} */
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var P;
     
     /** @type {promise} */
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var p;
     
     /** @type {?number} */
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var nullable;
     
     /** @type {Object} */
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var Obj;
     
     /** @type {object} */
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var obj;
     
     /** @type {Function} */
+               ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var Func;
     
     /** @type {(s: string) => number} */
+               ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var f;
     
     /** @type {new (s: string) => { s: string }} */
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var ctor;
     
 ==== b.ts (6 errors) ====

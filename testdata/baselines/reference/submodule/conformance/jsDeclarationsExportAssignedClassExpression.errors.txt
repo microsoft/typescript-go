@@ -1,0 +1,14 @@
+index.js(3,16): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== index.js (1 errors) ====
+    module.exports = class Thing {
+        /**
+         * @param {number} p
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+        constructor(p) {
+            this.t = 12 + p;
+        }
+    }

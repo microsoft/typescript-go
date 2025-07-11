@@ -2,14 +2,23 @@
 +++ new.jsDeclarationsMissingTypeParameters.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
++file.js(2,5): error TS8009: The '?' modifier can only be used in TypeScript files.
++file.js(2,13): error TS8010: Type annotations can only be used in TypeScript files.
++file.js(12,13): error TS8010: Type annotations can only be used in TypeScript files.
 +file.js(12,19): error TS8020: JSDoc types can only be used inside documentation comments.
 +file.js(12,20): error TS1099: Type argument list cannot be empty.
++file.js(18,13): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== file.js (2 errors) ====
++==== file.js (6 errors) ====
 +    /**
 +      * @param {Array=} y desc
++        ~~~~~~~~~~~~~~~~~~~~~~
++                ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +      */
++    ~~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
 +    function x(y) { }
 +    
 +    // @ts-ignore
@@ -19,6 +28,8 @@
 +    
 +    /**
 +     * @return {(Array.<> | null)} list of devices
++                ~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +                      ~
 +!!! error TS8020: JSDoc types can only be used inside documentation comments.
 +                       ~~
@@ -29,5 +40,7 @@
 +    /**
 +     * 
 +     * @return {?Promise} A promise
++                ~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    function w() { return null; }

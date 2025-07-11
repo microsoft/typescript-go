@@ -1,0 +1,40 @@
+--- old.contextualTypeFromJSDoc.errors.txt
++++ new.contextualTypeFromJSDoc.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++index.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(7,14): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(16,17): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== index.js (3 errors) ====
++    /** @type {Array<[string, {x?:number, y?:number}]>} */
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    const arr = [
++        ['a', { x: 1 }],
++        ['b', { y: 2 }]
++    ];
++    
++    /** @return {Array<[string, {x?:number, y?:number}]>} */
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    function f() {
++        return [
++            ['a', { x: 1 }],
++            ['b', { y: 2 }]
++        ];
++    }
++    
++    class C {
++        /** @param {Array<[string, {x?:number, y?:number}]>} value */
++                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++        set x(value) { }
++        get x() {
++            return [
++                ['a', { x: 1 }],
++                ['b', { y: 2 }]
++            ];
++        }
++    }

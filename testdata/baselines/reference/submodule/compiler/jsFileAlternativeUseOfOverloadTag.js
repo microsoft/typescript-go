@@ -109,16 +109,3 @@ const example3 = {
 
 //// [jsFileAlternativeUseOfOverloadTag.d.ts]
 export type callback = (error: any, result: any) ;
-
-
-//// [DtsFileErrors]
-
-
-dist/jsFileAlternativeUseOfOverloadTag.d.ts(1,50): error TS1005: '=>' expected.
-
-
-==== dist/jsFileAlternativeUseOfOverloadTag.d.ts (1 errors) ====
-    export type callback = (error: any, result: any) ;
-                                                     ~
-!!! error TS1005: '=>' expected.
-    

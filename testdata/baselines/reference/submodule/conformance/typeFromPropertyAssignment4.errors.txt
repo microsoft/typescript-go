@@ -1,14 +1,16 @@
 a.js(1,7): error TS2339: Property 'Inner' does not exist on type '{}'.
 a.js(8,12): error TS2503: Cannot find namespace 'Outer'.
+a.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(11,23): error TS2339: Property 'Inner' does not exist on type '{}'.
 b.js(1,12): error TS2503: Cannot find namespace 'Outer'.
+b.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
 b.js(4,19): error TS2339: Property 'Inner' does not exist on type '{}'.
 
 
 ==== def.js (0 errors) ====
     var Outer = {};
     
-==== a.js (3 errors) ====
+==== a.js (4 errors) ====
     Outer.Inner = class {
           ~~~~~
 !!! error TS2339: Property 'Inner' does not exist on type '{}'.
@@ -21,6 +23,8 @@ b.js(4,19): error TS2339: Property 'Inner' does not exist on type '{}'.
     /** @type {Outer.Inner} */
                ~~~~~
 !!! error TS2503: Cannot find namespace 'Outer'.
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var local
     local.y
     var inner = new Outer.Inner()
@@ -28,10 +32,12 @@ b.js(4,19): error TS2339: Property 'Inner' does not exist on type '{}'.
 !!! error TS2339: Property 'Inner' does not exist on type '{}'.
     inner.y
     
-==== b.js (2 errors) ====
+==== b.js (3 errors) ====
     /** @type {Outer.Inner} */
                ~~~~~
 !!! error TS2503: Cannot find namespace 'Outer'.
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var x
     x.y
     var z = new Outer.Inner()

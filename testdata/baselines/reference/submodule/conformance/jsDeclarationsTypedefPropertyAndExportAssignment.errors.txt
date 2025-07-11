@@ -1,10 +1,14 @@
 index.js(3,37): error TS2694: Namespace '"module".export=' has no exported member 'TaskGroup'.
+index.js(15,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(16,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(21,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+module.js(11,11): error TS8010: Type annotations can only be used in TypeScript files.
 module.js(24,12): error TS2315: Type 'Object' is not generic.
+module.js(24,12): error TS8010: Type annotations can only be used in TypeScript files.
 module.js(27,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 
 
-==== index.js (2 errors) ====
+==== index.js (4 errors) ====
     const {taskGroups, taskNameToGroup} = require('./module.js');
     
     /** @typedef {import('./module.js').TaskGroup} TaskGroup */
@@ -22,7 +26,11 @@ module.js(27,1): error TS2309: An export assignment cannot be used in a module w
     class MainThreadTasks {
         /**
          * @param {TaskGroup} x
+                   ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @param {TaskNode} y
+                   ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         constructor(x, y){}
     }
@@ -30,7 +38,7 @@ module.js(27,1): error TS2309: An export assignment cannot be used in a module w
     module.exports = MainThreadTasks;
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2309: An export assignment cannot be used in a module with other exported elements.
-==== module.js (2 errors) ====
+==== module.js (4 errors) ====
     /** @typedef {'parseHTML'|'styleLayout'} TaskGroupIds */
     
     /**
@@ -42,6 +50,8 @@ module.js(27,1): error TS2309: An export assignment cannot be used in a module w
     
     /**
      * @type {{[P in TaskGroupIds]: {id: P, label: string}}}
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const taskGroups = {
         parseHTML: {
@@ -57,6 +67,8 @@ module.js(27,1): error TS2309: An export assignment cannot be used in a module w
     /** @type {Object<string, TaskGroup>} */
                ~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
+               ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const taskNameToGroup = {};
     
     module.exports = {

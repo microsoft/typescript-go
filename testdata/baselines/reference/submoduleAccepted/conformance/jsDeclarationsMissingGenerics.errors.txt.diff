@@ -1,0 +1,21 @@
+--- old.jsDeclarationsMissingGenerics.errors.txt
++++ new.jsDeclarationsMissingGenerics.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++file.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
++file.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== file.js (2 errors) ====
++    /**
++     * @param {Array} x
++               ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    function x(x) {}
++    /**
++     * @param {Promise} x
++               ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    function y(x) {}

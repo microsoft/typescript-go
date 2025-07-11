@@ -1,0 +1,25 @@
+--- old.jsdocClassMissingTypeArguments.errors.txt
++++ new.jsdocClassMissingTypeArguments.errors.txt
+@@= skipped -0, +0 lines =@@
++/a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
+ /a.js(4,13): error TS2314: Generic type 'C<T>' requires 1 type argument(s).
+-
+-
+-==== /a.js (1 errors) ====
++/a.js(4,13): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== /a.js (3 errors) ====
+     /** @template T */
++    ~~~~~~~~~~~~~~~~~~
+     class C {}
++    ~~~~~~~~~~
++!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+     
+     /** @param {C} p */
+                 ~
+ !!! error TS2314: Generic type 'C<T>' requires 1 type argument(s).
++                ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     function f(p) {}
+     

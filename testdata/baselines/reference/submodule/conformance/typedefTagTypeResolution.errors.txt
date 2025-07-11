@@ -1,37 +1,81 @@
+github20832.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 github20832.js(2,15): error TS2304: Cannot find name 'U'.
+github20832.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
+github20832.js(6,13): error TS8010: Type annotations can only be used in TypeScript files.
+github20832.js(12,11): error TS8010: Type annotations can only be used in TypeScript files.
+github20832.js(13,13): error TS8004: Type parameter declarations can only be used in TypeScript files.
 github20832.js(17,12): error TS2304: Cannot find name 'V'.
+github20832.js(17,12): error TS8010: Type annotations can only be used in TypeScript files.
+github20832.js(21,12): error TS8010: Type annotations can only be used in TypeScript files.
+github20832.js(26,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== github20832.js (2 errors) ====
+==== github20832.js (10 errors) ====
     // #20832
+    ~~~~~~~~~
     /** @typedef {U} T - should be "error, can't find type named 'U' */
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                   ~
 !!! error TS2304: Cannot find name 'U'.
     /**
+    ~~~
      * @template U
+    ~~~~~~~~~~~~~~
      * @param {U} x
+    ~~~~~~~~~~~~~~~
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @return {T}
+    ~~~~~~~~~~~~~~
+                ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
+    ~~~
     function f(x) {
+    ~~~~~~~~~~~~~~~
         return x;
+    ~~~~~~~~~~~~~
     }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     /** @type T - should be fine, since T will be any */
+              ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const x = 3;
+                
+    
     
     /**
+    ~~~
      * @callback Cb
+    ~~~~~~~~~~~~~~~
      * @param {V} firstParam
+    ~~~~~~~~~~~~~~~~~~~~~~~~
                ~
 !!! error TS2304: Cannot find name 'V'.
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
+    ~~~
     /**
+    ~~~
      * @template V
+    ~~~~~~~~~~~~~~
      * @param {V} vvvvv
+    ~~~~~~~~~~~~~~~~~~~
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
+    ~~~
     function g(vvvvv) {
+    ~~~~~~~~~~~~~~~~~~~
     }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     /** @type {Cb} */
+               ~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const cb = x => {}
     

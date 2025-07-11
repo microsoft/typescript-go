@@ -1,3 +1,4 @@
+file1.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
 file1.js(2,7): error TS2322: Type 'C' is not assignable to type 'ClassComponent<any>'.
   Index signature for type 'number' is missing in type 'C'.
 tile1.ts(2,30): error TS2344: Type 'State' does not satisfy the constraint 'Lifecycle<Attrs, State>'.
@@ -58,8 +59,10 @@ tile1.ts(24,7): error TS2322: Type 'C' is not assignable to type 'ClassComponent
           ~~~~~
 !!! error TS2322: Type 'C' is not assignable to type 'ClassComponent<any>'.
 !!! error TS2322:   Index signature for type 'number' is missing in type 'C'.
-==== file1.js (1 errors) ====
+==== file1.js (2 errors) ====
     /** @type {ClassComponent<any>} */
+               ~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const test9 = new C();
           ~~~~~
 !!! error TS2322: Type 'C' is not assignable to type 'ClassComponent<any>'.

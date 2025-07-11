@@ -4,6 +4,7 @@
 -<no content>
 +index.js(7,19): error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
 +index.js(14,18): error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
++index.js(14,18): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
 +==== test.js (0 errors) ====
@@ -20,7 +21,7 @@
 +    }
 +    
 +    module.exports = { Rectangle };
-+==== index.js (2 errors) ====
++==== index.js (3 errors) ====
 +    const {Rectangle} = require('./rectangle');
 +    
 +    class Render {
@@ -39,6 +40,8 @@
 +         * @returns {Rectangle} the rect
 +                     ~~~~~~~~~
 +!!! error TS2749: 'Rectangle' refers to a value, but is being used as a type here. Did you mean 'typeof Rectangle'?
++                     ~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         */
 +        addRectangle() {
 +            const obj = new Rectangle();

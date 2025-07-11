@@ -1,17 +1,26 @@
+dtsEquivalent.js(1,19): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(1,12): error TS2304: Cannot find name 'AnyEffect'.
+index.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(3,12): error TS2304: Cannot find name 'Third'.
+index.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== dtsEquivalent.js (0 errors) ====
+==== dtsEquivalent.js (1 errors) ====
     /** @typedef {{[k: string]: any}} AnyEffect */
+                      ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     /** @typedef {number} Third */
-==== index.js (2 errors) ====
+==== index.js (4 errors) ====
     /** @type {AnyEffect} */
                ~~~~~~~~~
 !!! error TS2304: Cannot find name 'AnyEffect'.
+               ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     let b;
     /** @type {Third} */
                ~~~~~
 !!! error TS2304: Cannot find name 'Third'.
+               ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     let c;
     

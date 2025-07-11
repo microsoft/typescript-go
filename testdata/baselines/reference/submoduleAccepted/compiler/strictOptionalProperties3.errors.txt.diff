@@ -1,0 +1,35 @@
+--- old.strictOptionalProperties3.errors.txt
++++ new.strictOptionalProperties3.errors.txt
+@@= skipped -0, +0 lines =@@
++a.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
+ a.js(7,7): error TS2375: Type '{ value: undefined; }' is not assignable to type 'A' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+   Types of property 'value' are incompatible.
+     Type 'undefined' is not assignable to type 'number'.
++a.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
+ a.js(14,7): error TS2375: Type '{ value: undefined; }' is not assignable to type 'B' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+   Types of property 'value' are incompatible.
+     Type 'undefined' is not assignable to type 'number'.
+
+
+-==== a.js (2 errors) ====
++==== a.js (4 errors) ====
+     /**
+      * @typedef {object} A
+      * @property {number} [value]
+      */
+     
+     /** @type {A} */
++               ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     const a = { value: undefined }; // error
+           ~
+ !!! error TS2375: Type '{ value: undefined; }' is not assignable to type 'A' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+@@= skipped -23, +27 lines =@@
+      */
+     
+     /** @type {B} */
++               ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     const b = { value: undefined }; // error
+           ~
+ !!! error TS2375: Type '{ value: undefined; }' is not assignable to type 'B' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.

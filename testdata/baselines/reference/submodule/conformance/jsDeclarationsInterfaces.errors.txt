@@ -1,0 +1,310 @@
+index.js(1,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(4,22): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(8,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(29,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(33,14): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(37,20): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(42,20): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(43,22): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(47,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(51,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(55,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(59,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(63,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(65,32): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(69,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(73,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(78,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(82,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(84,32): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(89,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(93,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(98,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(103,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(105,32): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(109,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+index.js(113,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+
+
+==== index.js (26 errors) ====
+    // Pretty much all of this should be an error, (since interfaces are forbidden in js),
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // but we should be able to synthesize declarations from the symbols regardless
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+    export interface A {}
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+                         
+    
+    
+    export interface B {
+    ~~~~~~~~~~~~~~~~~~~~
+        cat: string;
+    ~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface C<T, U> {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        field: T & U;
+    ~~~~~~~~~~~~~~~~~
+        optionalField?: T;
+    ~~~~~~~~~~~~~~~~~~~~~~
+        readonly readonlyField: T & U;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        readonly readonlyOptionalField?: U;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        (): number;
+    ~~~~~~~~~~~~~~~
+        (x: T): U;
+    ~~~~~~~~~~~~~~
+        <Q>(x: Q): T & Q;
+    ~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        new (): string;
+    ~~~~~~~~~~~~~~~~~~~
+        new (x: T): U;
+    ~~~~~~~~~~~~~~~~~~
+        new <Q>(x: Q): T & Q;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        method<Q = number>(): number;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        method<Q>(a: T & Q): Q & number;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        method(a?: number): number;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        method(...args: any[]): number;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        optMethod?(): number;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    interface G {}
+    ~~~~~~~~~~~~~~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+    
+    export { G };
+                 
+    
+    
+    interface HH {}
+    ~~~~~~~~~~~~~~~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+    
+    export { HH as H };
+                       
+    
+    
+    export interface I {}
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+    export { I as II };
+    
+    export { J as JJ };
+                       
+    export interface J {}
+    ~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+                         
+    
+    
+    export interface K extends I,J {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        x: string;
+    ~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface L extends K {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        y: string;
+    ~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface M<T> {
+    ~~~~~~~~~~~~~~~~~~~~~~~
+        field: T;
+    ~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface N<U> extends M<U> {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        other: U;
+    ~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface O {
+    ~~~~~~~~~~~~~~~~~~~~
+        [idx: string]: string;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface P extends O {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+                                   
+    
+    
+    export interface Q extends O {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: string]: "ok";
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface R extends O {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: number]: "ok";
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface S extends O {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: string]: "ok";
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: number]: never;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface T {
+    ~~~~~~~~~~~~~~~~~~~~
+        [idx: number]: string;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface U extends T {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+                                   
+    
+    
+    
+    
+    export interface V extends T {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: string]: string;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface W extends T {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: number]: "ok";
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface X extends T {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: string]: string;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: number]: "ok";
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface Y {
+    ~~~~~~~~~~~~~~~~~~~~
+        [idx: string]: {x: number};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: number]: {x: number, y: number};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface Z extends Y {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+                                   
+    
+    
+    export interface AA extends Y {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: string]: {x: number, y: number};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface BB extends Y {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: number]: {x: 0, y: 0};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    export interface CC extends Y {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: string]: {x: number, y: number};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        [idx: number]: {x: 0, y: 0};
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+    

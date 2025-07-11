@@ -1,0 +1,7 @@
+a.js(1,1): error TS8009: The 'declare' modifier can only be used in TypeScript files.
+
+
+==== a.js (1 errors) ====
+    declare var v;
+    ~~~~~~~
+!!! error TS8009: The 'declare' modifier can only be used in TypeScript files.

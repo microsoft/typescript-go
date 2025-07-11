@@ -1,0 +1,19 @@
+/a.js(1,31): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(3,29): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
+
+
+==== /a.js (2 errors) ====
+    /** @typedef {{ move(distance: number): void }} Movable */
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    
+    const car = /** @satisfies {Movable & Record<string, unknown>} */ ({
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
+        start() { },
+        move(d) {
+            // d should be number
+        },
+        stop() { }
+    })
+    

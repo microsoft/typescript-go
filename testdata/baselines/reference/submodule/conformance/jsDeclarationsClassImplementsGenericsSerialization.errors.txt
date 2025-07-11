@@ -1,0 +1,45 @@
+lib.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
+lib.js(3,17): error TS8005: 'implements' clauses can only be used in TypeScript files.
+lib.js(7,16): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== interface.ts (0 errors) ====
+    export interface Encoder<T> {
+        encode(value: T): Uint8Array
+    }
+==== lib.js (3 errors) ====
+    /**
+    ~~~
+     * @template T
+    ~~~~~~~~~~~~~~
+     * @implements {IEncoder<T>}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                    ~~~~~~~~~~~
+!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
+     */
+    ~~~
+    export class Encoder {
+    ~~~~~~~~~~~~~~~~~~~~~~
+        /**
+    ~~~~~~~
+         * @param {T} value 
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        encode(value) {
+    ~~~~~~~~~~~~~~~~~~~
+            return new Uint8Array(0)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        }
+    ~~~~~
+    }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+    
+    
+    /**
+     * @template T
+     * @typedef {import('./interface').Encoder<T>} IEncoder
+     */

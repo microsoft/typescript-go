@@ -1,0 +1,17 @@
+file.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
+file.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== file.js (2 errors) ====
+    /**
+     * Adds
+     * @param {number} 𝑚
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     * @param {number} 𝑀
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     */
+    function foo(𝑚, 𝑀) {
+        console.log(𝑀 + 𝑚);
+    }

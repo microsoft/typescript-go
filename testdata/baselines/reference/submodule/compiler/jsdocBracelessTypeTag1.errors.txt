@@ -1,8 +1,10 @@
 index.js(12,14): error TS7006: Parameter 'arg' implicitly has an 'any' type.
+index.js(16,11): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(19,11): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(20,16): error TS2322: Type '"other"' is not assignable to type '"bar" | "foo"'.
 
 
-==== index.js (2 errors) ====
+==== index.js (4 errors) ====
     /** @type () => string */
     function fn1() {
       return 42;
@@ -21,9 +23,13 @@ index.js(20,16): error TS2322: Type '"other"' is not assignable to type '"bar" |
     }
     
     /** @type ({ type: 'foo' } | { type: 'bar' }) & { prop: number } */
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const obj1 = { type: "foo", prop: 10 };
     
     /** @type ({ type: 'foo' } | { type: 'bar' }) & { prop: number } */
+              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const obj2 = { type: "other", prop: 10 };
                    ~~~~
 !!! error TS2322: Type '"other"' is not assignable to type '"bar" | "foo"'.

@@ -3,6 +3,7 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +use.js(1,12): error TS2503: Cannot find namespace 'Outer'.
++use.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
 +use.js(5,22): error TS2339: Property 'Inner' does not exist on type '{}'.
 +work.js(1,7): error TS2339: Property 'Inner' does not exist on type '{}'.
 +work.js(2,7): error TS2339: Property 'Inner' does not exist on type '{}'.
@@ -22,10 +23,12 @@
 +        m() { }
 +    }
 +    
-+==== use.js (2 errors) ====
++==== use.js (3 errors) ====
 +    /** @type {Outer.Inner} */
 +               ~~~~~
 +!!! error TS2503: Cannot find namespace 'Outer'.
++               ~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var inner
 +    inner.x
 +    inner.m()

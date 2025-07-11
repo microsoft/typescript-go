@@ -1,26 +1,29 @@
 --- old.jsdocThisType.errors.txt
 +++ new.jsdocThisType.errors.txt
 @@= skipped -0, +0 lines =@@
++/a.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
  /a.js(3,10): error TS2339: Property 'test' does not exist on type 'Foo'.
 -/a.js(8,10): error TS2339: Property 'test' does not exist on type 'Foo'.
++/a.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
  /a.js(13,10): error TS2339: Property 'test' does not exist on type 'Foo'.
 -/a.js(18,10): error TS2339: Property 'test' does not exist on type 'Foo'.
 -/a.js(23,10): error TS2339: Property 'test' does not exist on type 'Foo'.
 -/a.js(28,10): error TS2339: Property 'test' does not exist on type 'Foo'.
 +/a.js(21,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
++/a.js(21,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
  ==== /types.d.ts (0 errors) ====
-@@= skipped -12, +9 lines =@@
+@@= skipped -14, +14 lines =@@
      
-     export type M = (this: Foo) => void;
-     
--==== /a.js (6 errors) ====
-+==== /a.js (3 errors) ====
+ ==== /a.js (6 errors) ====
      /** @type {import('./types').M} */
++               ~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
      export const f1 = function() {
          this.test();
-@@= skipped -11, +11 lines =@@
+              ~~~~
+@@= skipped -9, +11 lines =@@
      /** @type {import('./types').M} */
      export function f2() {
          this.test();
@@ -29,7 +32,12 @@
      }
      
      /** @type {(this: import('./types').Foo) => void} */
-@@= skipped -14, +12 lines =@@
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     export const f3 = function() {
+         this.test();
+              ~~~~
+@@= skipped -14, +14 lines =@@
      /** @type {(this: import('./types').Foo) => void} */
      export function f4() {
          this.test();
@@ -41,6 +49,8 @@
 +               ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 +!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
++               ~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
      export const f5 = function() {
          this.test();
 -             ~~~~

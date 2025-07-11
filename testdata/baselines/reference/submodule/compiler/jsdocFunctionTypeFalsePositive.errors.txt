@@ -1,8 +1,11 @@
+/a.js(1,13): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(1,13): error TS1098: Type parameter list cannot be empty.
 
 
-==== /a.js (1 errors) ====
+==== /a.js (2 errors) ====
     /** @param {<} x */
+                ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
                 ~~
 !!! error TS1098: Type parameter list cannot be empty.
     function f(x) {}

@@ -1,0 +1,10 @@
+a.js(1,19): error TS8009: The 'abstract' modifier can only be used in TypeScript files.
+
+
+==== a.js (1 errors) ====
+    abstract class c {
+                      
+        abstract x;
+    ~~~~~~~~~~~~
+!!! error TS8009: The 'abstract' modifier can only be used in TypeScript files.
+    }

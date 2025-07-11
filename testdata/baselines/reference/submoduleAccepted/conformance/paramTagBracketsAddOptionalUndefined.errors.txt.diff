@@ -1,0 +1,43 @@
+--- old.paramTagBracketsAddOptionalUndefined.errors.txt
++++ new.paramTagBracketsAddOptionalUndefined.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++a.js(2,4): error TS8009: The '?' modifier can only be used in TypeScript files.
++a.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
++a.js(3,4): error TS8009: The '?' modifier can only be used in TypeScript files.
++a.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
++a.js(4,4): error TS8009: The '?' modifier can only be used in TypeScript files.
++a.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== a.js (6 errors) ====
++    /**
++     * @param {number} [p]
++       ~~~~~~~~~~~~~~~~~~~
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {number=} q
++    ~~~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
++       ~~~~~~~~~~~~~~~~~~
++               ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {number} [r=101]
++    ~~~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
++       ~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    function f(p, q, r) {
++        p = undefined
++        q = undefined
++        // note that, unlike TS, JSDOC [r=101] retains | undefined because
++        // there's no code emitted to get rid of it.
++        r = undefined
++    }
++    f()
++    f(undefined, undefined, undefined)
++    f(1, 2, 3)
++    

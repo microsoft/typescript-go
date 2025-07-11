@@ -1,0 +1,15 @@
+foo.js(5,16): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== foo.js (1 errors) ====
+    export class Foo {
+        /**
+         * Bar.
+         *
+         * @param {{ prop: string }} baz Baz.
+                   ~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+        set bar({}) {}
+    }
+    

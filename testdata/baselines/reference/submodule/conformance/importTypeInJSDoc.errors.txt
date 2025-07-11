@@ -1,0 +1,36 @@
+index.js(5,20): error TS8016: Type assertion expressions can only be used in TypeScript files.
+index.js(7,22): error TS8016: Type assertion expressions can only be used in TypeScript files.
+index.js(8,22): error TS8016: Type assertion expressions can only be used in TypeScript files.
+
+
+==== externs.d.ts (0 errors) ====
+    declare namespace MyClass {
+        export interface Bar {
+            doer: (x: string) => void;
+        }
+    }
+    declare class MyClass {
+        field: string;
+        static Bar: (x: string, y?: number) => void;
+        constructor(x: MyClass.Bar);
+    }
+    declare global {
+        const Foo: typeof MyClass;
+    }
+    export = MyClass;
+==== index.js (3 errors) ====
+    /**
+     * @typedef {import("./externs")} Foo
+     */
+    
+    let a = /** @type {Foo} */(/** @type {*} */(undefined)); 
+                       ~~~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    a = new Foo({doer: Foo.Bar});
+    const q = /** @type {import("./externs").Bar} */({ doer: q => q });
+                         ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    const r = /** @type {typeof import("./externs").Bar} */(r => r);
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    

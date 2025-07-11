@@ -1,0 +1,20 @@
+a.js(6,22): error TS8016: Type assertion expressions can only be used in TypeScript files.
+a.js(9,22): error TS8016: Type assertion expressions can only be used in TypeScript files.
+
+
+==== a.js (2 errors) ====
+    /**
+     * @typedef Foo
+     * @property {number} [foo]
+     */
+    
+    const x = /** @type {Foo} */ ({});
+                         ~~~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    x.foo; // number | undefined
+    
+    const y = /** @type {Required<Foo>} */ ({});
+                         ~~~~~~~~~~~~~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    y.foo; // number
+    

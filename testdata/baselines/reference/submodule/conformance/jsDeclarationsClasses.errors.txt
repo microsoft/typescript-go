@@ -1,0 +1,438 @@
+index.js(13,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(14,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(17,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
+index.js(24,15): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(30,15): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(31,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
+index.js(38,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(40,34): error TS8016: Type assertion expressions can only be used in TypeScript files.
+index.js(43,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(48,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(50,34): error TS8016: Type assertion expressions can only be used in TypeScript files.
+index.js(53,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(58,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(59,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(65,15): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(71,15): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(72,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
+index.js(79,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(84,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(89,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(94,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(97,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
+index.js(104,15): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(108,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(109,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(111,25): error TS8004: Type parameter declarations can only be used in TypeScript files.
+index.js(115,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(116,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(153,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
+index.js(161,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(167,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
+index.js(173,23): error TS8011: Type arguments can only be used in TypeScript files.
+index.js(175,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(183,20): error TS8016: Type assertion expressions can only be used in TypeScript files.
+
+
+==== index.js (34 errors) ====
+    export class A {}
+    
+    export class B {
+        static cat = "cat";
+    }
+    
+    export class C {
+        static Cls = class {}
+    }
+    
+    export class D {
+        /**
+         * @param {number} a
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         * @param {number} b
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+        constructor(a, b) {}
+    }
+     
+    
+    
+    /**
+    ~~~
+     * @template T,U
+    ~~~~~~~~~~~~~~~~
+     */
+    ~~~
+    export class E {
+    ~~~~~~~~~~~~~~~~
+        /**
+    ~~~~~~~
+         * @type {T & U}
+    ~~~~~~~~~~~~~~~~~~~~
+                  ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        field;
+    ~~~~~~~~~~
+    
+    
+        // @readonly is currently unsupported, it seems - included here just in case that changes
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        /**
+    ~~~~~~~
+         * @type {T & U}
+    ~~~~~~~~~~~~~~~~~~~~
+                  ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         * @readonly
+    ~~~~~~~~~~~~~~~~
+           ~~~~~~~~~
+         */
+    ~~~~~~~
+    ~~~~~
+!!! error TS8009: The 'readonly' modifier can only be used in TypeScript files.
+        readonlyField;
+    ~~~~~~~~~~~~~~~~~~
+    
+    
+        initializedField = 12;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        /**
+    ~~~~~~~
+         * @return {U}
+    ~~~~~~~~~~~~~~~~~~
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        get f1() { return /** @type {*} */(null); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                     ~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    
+    
+        /**
+    ~~~~~~~
+         * @param {U} _p
+    ~~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        set f1(_p) {}
+    ~~~~~~~~~~~~~~~~~
+    
+    
+        /**
+    ~~~~~~~
+         * @return {U}
+    ~~~~~~~~~~~~~~~~~~
+                    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        get f2() { return /** @type {*} */(null); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                     ~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    
+    
+        /**
+    ~~~~~~~
+         * @param {U} _p
+    ~~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        set f3(_p) {}
+    ~~~~~~~~~~~~~~~~~
+    
+    
+        /**
+    ~~~~~~~
+         * @param {T} a
+    ~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         * @param {U} b
+    ~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        constructor(a, b) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+    
+    
+        /**
+    ~~~~~~~
+         * @type {string}
+    ~~~~~~~~~~~~~~~~~~~~~
+                  ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        static staticField;
+    ~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        // @readonly is currently unsupported, it seems - included here just in case that changes
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        /**
+    ~~~~~~~
+         * @type {string}
+    ~~~~~~~~~~~~~~~~~~~~~
+                  ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         * @readonly
+    ~~~~~~~~~~~~~~~~
+           ~~~~~~~~~
+         */
+    ~~~~~~~
+    ~~~~~
+!!! error TS8009: The 'readonly' modifier can only be used in TypeScript files.
+        static staticReadonlyField;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        static staticInitializedField = 12;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        /**
+    ~~~~~~~
+         * @return {string}
+    ~~~~~~~~~~~~~~~~~~~~~~~
+                    ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        static get s1() { return ""; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        /**
+    ~~~~~~~
+         * @param {string} _p
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        static set s1(_p) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        /**
+    ~~~~~~~
+         * @return {string}
+    ~~~~~~~~~~~~~~~~~~~~~~~
+                    ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        static get s2() { return ""; }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        /**
+    ~~~~~~~
+         * @param {string} _p
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        static set s3(_p) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+     
+    
+    
+    /**
+    ~~~
+     * @template T,U
+    ~~~~~~~~~~~~~~~~
+     */
+    ~~~
+    export class F {
+    ~~~~~~~~~~~~~~~~
+        /**
+    ~~~~~~~
+         * @type {T & U}
+    ~~~~~~~~~~~~~~~~~~~~
+                  ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        field;
+    ~~~~~~~~~~
+        /**
+    ~~~~~~~
+         * @param {T} a
+    ~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         * @param {U} b
+    ~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        constructor(a, b) {}
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+                            
+    
+    
+    
+        /**
+    ~~~~~~~
+    ~~~~~~~
+         * @template A,B
+    ~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~
+         * @param {A} a
+    ~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         * @param {B} b
+    ~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+    ~~~~~~~
+        static create(a, b) { return new F(a, b); }
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+    }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+    
+    class G {}
+    
+    export { G };
+    
+    class HH {}
+    
+    export { HH as H };
+    
+    export class I {}
+    export { I as II };
+    
+    export { J as JJ };
+    export class J {}
+    
+    
+    export class K {
+        constructor() {
+            this.p1 = 12;
+            this.p2 = "ok";
+        }
+    
+        method() {
+            return this.p1;
+        }
+    }
+    
+    export class L extends K {}
+    
+    export class M extends null {
+        constructor() {
+            this.prop = 12;
+        }
+    }
+     
+    
+    
+    
+    
+    /**
+    ~~~
+     * @template T
+    ~~~~~~~~~~~~~~
+     */
+    ~~~
+    export class N extends L {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+        /**
+    ~~~~~~~
+         * @param {T} param 
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        constructor(param) {
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+            super();
+    ~~~~~~~~~~~~~~~~
+            this.another = param;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        }
+    ~~~~~
+    }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+     
+    
+    
+    /**
+    ~~~
+     * @template U
+    ~~~~~~~~~~~~~~
+     * @extends {N<U>}
+    ~~~~~~~~~~~~~~~~~~
+     */
+    ~~~
+    export class O extends N {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~
+                          ~~
+!!! error TS8011: Type arguments can only be used in TypeScript files.
+        /**
+    ~~~~~~~
+         * @param {U} param 
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        constructor(param) {
+    ~~~~~~~~~~~~~~~~~~~~~~~~
+            super(param);
+    ~~~~~~~~~~~~~~~~~~~~~
+            this.another2 = param;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        }
+    ~~~~~
+    }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+    
+    var x = /** @type {*} */(null);
+                       ~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    
+    export class VariableBase extends x {}
+    
+    export class HasStatics {
+        static staticMethod() {}
+    }
+    
+    export class ExtendsStatics extends HasStatics {
+        static also() {}
+    }
+    

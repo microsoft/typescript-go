@@ -1,11 +1,22 @@
+assertionsAndNonReturningFunctions.js(1,22): error TS8010: Type annotations can only be used in TypeScript files.
+assertionsAndNonReturningFunctions.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
+assertionsAndNonReturningFunctions.js(14,12): error TS8010: Type annotations can only be used in TypeScript files.
+assertionsAndNonReturningFunctions.js(15,14): error TS8010: Type annotations can only be used in TypeScript files.
+assertionsAndNonReturningFunctions.js(22,14): error TS8010: Type annotations can only be used in TypeScript files.
+assertionsAndNonReturningFunctions.js(29,12): error TS8010: Type annotations can only be used in TypeScript files.
 assertionsAndNonReturningFunctions.js(46,9): error TS7027: Unreachable code detected.
+assertionsAndNonReturningFunctions.js(51,12): error TS8010: Type annotations can only be used in TypeScript files.
 assertionsAndNonReturningFunctions.js(58,5): error TS7027: Unreachable code detected.
 
 
-==== assertionsAndNonReturningFunctions.js (2 errors) ====
+==== assertionsAndNonReturningFunctions.js (9 errors) ====
     /** @typedef {(check: boolean) => asserts check} AssertFunc */
+                         ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     
     /** @type {AssertFunc} */
+               ~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const assert = check => {
         if (!check) throw new Error();
     }
@@ -17,7 +28,11 @@ assertionsAndNonReturningFunctions.js(58,5): error TS7027: Unreachable code dete
     
     /**
      * @param {boolean} check
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {asserts check}
+                 ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     */
     function assert2(check) {
         if (!check) throw new Error();
@@ -25,6 +40,8 @@ assertionsAndNonReturningFunctions.js(58,5): error TS7027: Unreachable code dete
     
     /**
      * @returns {never}
+                 ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function fail() {
         throw new Error();
@@ -32,6 +49,8 @@ assertionsAndNonReturningFunctions.js(58,5): error TS7027: Unreachable code dete
     
     /**
      * @param {*} x 
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function f1(x) {
         if (!!true) {
@@ -56,6 +75,8 @@ assertionsAndNonReturningFunctions.js(58,5): error TS7027: Unreachable code dete
     
     /**
      * @param {boolean} b 
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function f2(b) {
         switch (b) {

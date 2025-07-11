@@ -3,6 +3,7 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +use.js(3,12): error TS2749: 'MyEnum' refers to a value, but is being used as a type here. Did you mean 'typeof MyEnum'?
++use.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
 +==== def.js (0 errors) ====
@@ -13,11 +14,13 @@
 +    };
 +    export default MyEnum;
 +    
-+==== use.js (1 errors) ====
++==== use.js (2 errors) ====
 +    import MyEnum from "./def";
 +    
 +    /** @type {MyEnum} */
 +               ~~~~~~
 +!!! error TS2749: 'MyEnum' refers to a value, but is being used as a type here. Did you mean 'typeof MyEnum'?
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    const v = MyEnum.b;
 +    

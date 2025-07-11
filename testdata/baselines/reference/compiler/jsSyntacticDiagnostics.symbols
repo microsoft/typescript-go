@@ -1,0 +1,189 @@
+//// [tests/cases/compiler/jsSyntacticDiagnostics.ts] ////
+
+=== test.js ===
+// Type annotations should be flagged as errors
+function func(x: number): string {
+>func : Symbol(func, Decl(test.js, 0, 0))
+>x : Symbol(x, Decl(test.js, 1, 14))
+
+    return x.toString();
+>x.toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
+>x : Symbol(x, Decl(test.js, 1, 14))
+>toString : Symbol(toString, Decl(lib.es5.d.ts, --, --))
+}
+
+// Interface declarations should be flagged as errors
+interface Person {
+>Person : Symbol(Person, Decl(test.js, 3, 1))
+
+    name: string;
+>name : Symbol(name, Decl(test.js, 6, 18))
+
+    age: number;
+>age : Symbol(age, Decl(test.js, 7, 17))
+}
+
+// Type alias declarations should be flagged as errors
+type StringOrNumber = string | number;
+>StringOrNumber : Symbol(StringOrNumber, Decl(test.js, 9, 1))
+
+// Enum declarations should be flagged as errors
+enum Color {
+>Color : Symbol(Color, Decl(test.js, 12, 38))
+
+    Red,
+>Red : Symbol(Red, Decl(test.js, 15, 12))
+
+    Green,
+>Green : Symbol(Green, Decl(test.js, 16, 8))
+
+    Blue
+>Blue : Symbol(Blue, Decl(test.js, 17, 10))
+}
+
+// Module declarations should be flagged as errors
+module MyModule {
+>MyModule : Symbol(MyModule, Decl(test.js, 19, 1))
+
+    export var x = 1;
+>x : Symbol(x, Decl(test.js, 23, 14))
+}
+
+// Namespace declarations should be flagged as errors
+namespace MyNamespace {
+>MyNamespace : Symbol(MyNamespace, Decl(test.js, 24, 1))
+
+    export var y = 2;
+>y : Symbol(y, Decl(test.js, 28, 14))
+}
+
+// Non-null assertions should be flagged as errors
+let value = getValue()!;
+>value : Symbol(value, Decl(test.js, 32, 3))
+>getValue : Symbol(getValue, Decl(test.js, 87, 1))
+
+// Type assertions should be flagged as errors
+let result = (value as string).toUpperCase();
+>result : Symbol(result, Decl(test.js, 35, 3))
+>(value as string).toUpperCase : Symbol(toUpperCase, Decl(lib.es5.d.ts, --, --))
+>value : Symbol(value, Decl(test.js, 32, 3))
+>toUpperCase : Symbol(toUpperCase, Decl(lib.es5.d.ts, --, --))
+
+// Satisfies expressions should be flagged as errors
+let config = {} satisfies Config;
+>config : Symbol(config, Decl(test.js, 38, 3))
+>Config : Symbol(Config, Decl(test.js, 91, 1))
+
+// Import type should be flagged as errors
+import type { SomeType } from './other';
+>SomeType : Symbol(SomeType, Decl(test.js, 41, 13))
+
+// Export type should be flagged as errors
+export type { SomeType };
+>SomeType : Symbol(SomeType, Decl(test.js, 44, 13))
+
+// Import equals should be flagged as errors
+import lib = require('./lib');
+>lib : Symbol(lib, Decl(test.js, 44, 25))
+
+// Export equals should be flagged as errors
+export = MyModule;
+>MyModule : Symbol(MyModule, Decl(test.js, 19, 1))
+
+// TypeScript modifiers should be flagged as errors
+class MyClass {
+>MyClass : Symbol(MyClass, Decl(test.js, 50, 18))
+
+    public name: string;
+>name : Symbol(name, Decl(test.js, 53, 15))
+
+    private age: number;
+>age : Symbol(age, Decl(test.js, 54, 24))
+
+    protected id: number;
+>id : Symbol(id, Decl(test.js, 55, 24))
+
+    readonly value: number;
+>value : Symbol(value, Decl(test.js, 56, 25))
+    
+    constructor(public x: number, private y: number) {
+>x : Symbol(x, Decl(test.js, 59, 16))
+>y : Symbol(y, Decl(test.js, 59, 33))
+
+        this.name = '';
+>this.name : Symbol(name, Decl(test.js, 53, 15))
+>this : Symbol(MyClass, Decl(test.js, 50, 18))
+>name : Symbol(name, Decl(test.js, 53, 15))
+
+        this.age = 0;
+>this.age : Symbol(age, Decl(test.js, 54, 24))
+>this : Symbol(MyClass, Decl(test.js, 50, 18))
+>age : Symbol(age, Decl(test.js, 54, 24))
+
+        this.id = 0;
+>this.id : Symbol(id, Decl(test.js, 55, 24))
+>this : Symbol(MyClass, Decl(test.js, 50, 18))
+>id : Symbol(id, Decl(test.js, 55, 24))
+
+        this.value = 0;
+>this.value : Symbol(value, Decl(test.js, 56, 25))
+>this : Symbol(MyClass, Decl(test.js, 50, 18))
+>value : Symbol(value, Decl(test.js, 56, 25))
+    }
+}
+
+// Optional parameters should be flagged as errors
+function optionalParam(x?: number) {
+>optionalParam : Symbol(optionalParam, Decl(test.js, 65, 1))
+>x : Symbol(x, Decl(test.js, 68, 23))
+
+    return x || 0;
+>x : Symbol(x, Decl(test.js, 68, 23))
+}
+
+// Signature declarations should be flagged as errors
+function signatureOnly(x: number): string;
+>signatureOnly : Symbol(signatureOnly, Decl(test.js, 70, 1))
+>x : Symbol(x, Decl(test.js, 73, 23))
+
+// Type parameters should be flagged as errors
+function generic<T>(x: T): T {
+>generic : Symbol(generic, Decl(test.js, 73, 42))
+>T : Symbol(T, Decl(test.js, 76, 17))
+>x : Symbol(x, Decl(test.js, 76, 20))
+>T : Symbol(T, Decl(test.js, 76, 17))
+>T : Symbol(T, Decl(test.js, 76, 17))
+
+    return x;
+>x : Symbol(x, Decl(test.js, 76, 20))
+}
+
+// Type arguments should be flagged as errors
+let array = Array<string>();
+>array : Symbol(array, Decl(test.js, 81, 3))
+>Array : Symbol(Array, Decl(lib.es5.d.ts, --, --), Decl(lib.es5.d.ts, --, --))
+
+// Implements clause should be flagged as errors
+class MyClassWithImplements implements Person {
+>MyClassWithImplements : Symbol(MyClassWithImplements, Decl(test.js, 81, 28))
+>Person : Symbol(Person, Decl(test.js, 3, 1))
+
+    name = '';
+>name : Symbol(name, Decl(test.js, 84, 47))
+
+    age = 0;
+>age : Symbol(age, Decl(test.js, 85, 14))
+}
+
+function getValue(): any {
+>getValue : Symbol(getValue, Decl(test.js, 87, 1))
+
+    return null;
+}
+
+interface Config {
+>Config : Symbol(Config, Decl(test.js, 91, 1))
+
+    name: string;
+>name : Symbol(name, Decl(test.js, 93, 18))
+}

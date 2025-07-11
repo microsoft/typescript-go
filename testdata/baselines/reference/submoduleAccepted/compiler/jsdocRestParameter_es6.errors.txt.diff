@@ -1,0 +1,15 @@
+--- old.jsdocRestParameter_es6.errors.txt
++++ new.jsdocRestParameter_es6.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++/a.js(1,13): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== /a.js (1 errors) ====
++    /** @param {...number} a */
++                ~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    function f(...a) {
++        a; // number[]
++    }
++    

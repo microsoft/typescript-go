@@ -1,26 +1,61 @@
+0.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(14,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(19,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(26,4): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(28,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(33,4): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(36,4): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(41,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(43,4): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(45,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(50,4): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(56,12): error TS8010: Type annotations can only be used in TypeScript files.
+0.js(66,12): error TS8010: Type annotations can only be used in TypeScript files.
 0.js(70,20): error TS8024: JSDoc '@param' tag has name 'y', but there is no parameter with that name.
+0.js(71,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== 0.js (1 errors) ====
+==== 0.js (20 errors) ====
     // Object literal syntax
     /**
      * @param {{a: string, b: string}} obj
+               ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {string} x
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function good1({a, b}, x) {}
     /**
      * @param {{a: string, b: string}} obj
+               ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {{c: number, d: number}} OBJECTION
+               ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function good2({a, b}, {c, d}) {}
     /**
      * @param {number} x
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {{a: string, b: string}} obj
+               ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {string} y
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function good3(x, {a, b}, y) {}
     /**
      * @param {{a: string, b: string}} obj
+               ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function good4({a, b}) {}
     
@@ -28,36 +63,64 @@
     /**
      * @param {Object} obj
      * @param {string} obj.a - this is like the saddest way to specify a type
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * @param {string} obj.b - but it sure does allow a lot of documentation
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * @param {string} x
+    ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function good5({a, b}, x) {}
     /**
      * @param {Object} obj
      * @param {string} obj.a
+       ~~~~~~~~~~~~~~~~~~~~~
      * @param {string} obj.b - but it sure does allow a lot of documentation
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * @param {Object} OBJECTION - documentation here too
+    ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {string} OBJECTION.c
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * @param {string} OBJECTION.d - meh
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      */
+    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     function good6({a, b}, {c, d}) {}
     /**
      * @param {number} x
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {Object} obj
      * @param {string} obj.a
+       ~~~~~~~~~~~~~~~~~~~~~
      * @param {string} obj.b
+    ~~~~~~~~~~~~~~~~~~~~~~~~
      * @param {string} y
+    ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function good7(x, {a, b}, y) {}
     /**
      * @param {Object} obj
      * @param {string} obj.a
+       ~~~~~~~~~~~~~~~~~~~~~
      * @param {string} obj.b
+    ~~~~~~~~~~~~~~~~~~~~~~~~
      */
+    ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     function good8({a, b}) {}
     
     /**
      * @param {{ a: string }} argument
+               ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function good9({ a }) {
         console.log(arguments, a);
@@ -68,6 +131,8 @@
      * @param {string} obj.a
      * @param {string} obj.b - and x's type gets used for both parameters
      * @param {string} x
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function bad1(x, {a, b}) {}
     /**
@@ -75,6 +140,8 @@
                        ~
 !!! error TS8024: JSDoc '@param' tag has name 'y', but there is no parameter with that name.
      * @param {{a: string, b: string}} obj
+               ~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function bad2(x, {a, b}) {}
     

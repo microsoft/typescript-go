@@ -1,12 +1,18 @@
 /a.js(2,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
+/a.js(2,5): error TS8017: Signature declarations can only be used in TypeScript files.
 /a.js(7,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
+/a.js(7,5): error TS8017: Signature declarations can only be used in TypeScript files.
+/a.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(13,14): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== /a.js (2 errors) ====
+==== /a.js (6 errors) ====
     /**
      * @overload
         ~~~~~~~~
 !!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
+        ~~~~~~~~
+!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {number} x
      */
     
@@ -14,12 +20,18 @@
      * @overload
         ~~~~~~~~
 !!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
+        ~~~~~~~~
+!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {string} x
      */
     
     /**
      * @param {string | number} x
+               ~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string | number}
+                 ~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function id(x) {
         return x;

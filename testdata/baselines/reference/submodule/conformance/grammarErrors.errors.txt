@@ -1,3 +1,5 @@
+/a.js(1,1): error TS8006: 'import type' declarations can only be used in TypeScript files.
+/a.js(1,26): error TS8006: 'export type' declarations can only be used in TypeScript files.
 /b.ts(1,8): error TS1363: A type-only import can specify a default import or named bindings, but not both.
 /c.ts(4,1): error TS1392: An import alias cannot use 'import type'
 
@@ -12,9 +14,14 @@
            ~~~~~~~~~~~~~~~~
 !!! error TS1363: A type-only import can specify a default import or named bindings, but not both.
     
-==== /a.js (0 errors) ====
+==== /a.js (2 errors) ====
     import type A from './a';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'import type' declarations can only be used in TypeScript files.
+                             
     export type { A };
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'export type' declarations can only be used in TypeScript files.
     
 ==== /c.ts (1 errors) ====
     namespace ns {

@@ -1,0 +1,49 @@
+/a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
+/a.js(7,9): error TS8017: Signature declarations can only be used in TypeScript files.
+/a.js(12,16): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(17,12): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== /a.js (4 errors) ====
+    /**
+    ~~~
+     * @template T
+    ~~~~~~~~~~~~~~
+     */
+    ~~~
+    export class Foo {
+    ~~~~~~~~~~~~~~~~~~
+        /**
+    ~~~~~~~
+         * @constructor
+    ~~~~~~~~~~~~~~~~~~~
+         * @overload
+    ~~~~~~~~~~~~~~~~
+            ~~~~~~~~
+!!! error TS8017: Signature declarations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        constructor() { }
+    ~~~~~~~~~~~~~~~~~~~~~
+    
+    
+        /**
+    ~~~~~~~
+         * @param {T} value
+    ~~~~~~~~~~~~~~~~~~~~~~~
+                   ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+    ~~~~~~~
+        bar(value) { }
+    ~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+    
+    /** @type {Foo<number>} */
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    let foo;
+    foo = new Foo();
+    

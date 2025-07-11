@@ -1,10 +1,16 @@
+index.js(3,4): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(15,9): error TS7031: Binding element 'json' implicitly has an 'any[]' type.
+index.js(21,12): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(35,12): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(40,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== index.js (1 errors) ====
+==== index.js (5 errors) ====
     /**
      * @param {Object} [config]
      * @param {Partial<Record<'json' | 'jsonc' | 'json5', string[]>>} [config.additionalFiles]
+       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     export function prepareConfig({
         additionalFiles: {
@@ -25,8 +31,12 @@ index.js(15,9): error TS7031: Binding element 'json' implicitly has an 'any[]' t
     }
     
     /** @type {(param: {
+               ~~~~~~~~~
       additionalFiles?: Partial<Record<"json" | "jsonc" | "json5", string[]>>;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     }) => void} */
+    ~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const prepareConfigWithContextualSignature = ({
         additionalFiles: {
             json = []
@@ -39,11 +49,15 @@ index.js(15,9): error TS7031: Binding element 'json' implicitly has an 'any[]' t
     
     /**
      * @param {{ a?: { json?: string[] }}} [config]
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function f1({ a: { json = [] } = {} } = {}) { return json }
     
     /**
      * @param {[[string[]?]?]} [x]
+               ~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function f2([[json = []] = []] = []) { return json }
     

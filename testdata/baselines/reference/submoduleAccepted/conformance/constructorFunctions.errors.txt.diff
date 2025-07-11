@@ -11,11 +11,12 @@
 +index.js(23,15): error TS2350: Only a void function can be called with the 'new' keyword.
 +index.js(27,39): error TS2350: Only a void function can be called with the 'new' keyword.
 +index.js(31,15): error TS2350: Only a void function can be called with the 'new' keyword.
++index.js(51,12): error TS8010: Type annotations can only be used in TypeScript files.
  index.js(55,13): error TS2554: Expected 1 arguments, but got 0.
 
 
 -==== index.js (3 errors) ====
-+==== index.js (9 errors) ====
++==== index.js (10 errors) ====
      function C1() {
          if (!(this instanceof C1)) return new C1();
 +                                          ~~~~~~~~
@@ -70,3 +71,12 @@
      
      var c5_v1;
      c5_v1 = function f() { };
+@@= skipped -58, +77 lines =@@
+     /**
+      * @constructor
+      * @param {number} num
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+      */
+     function C7(num) {}
+     

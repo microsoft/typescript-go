@@ -2,9 +2,27 @@ typedefOnStatements.js(26,1): error TS1105: A 'break' statement can only be used
 typedefOnStatements.js(31,1): error TS1104: A 'continue' statement can only be used within an enclosing iteration statement.
 typedefOnStatements.js(33,1): error TS1101: 'with' statements are not allowed in strict mode.
 typedefOnStatements.js(33,1): error TS2410: The 'with' statement is not supported. All symbols in a 'with' block will have type 'any'.
+typedefOnStatements.js(53,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(54,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(55,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(56,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(57,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(58,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(59,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(60,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(61,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(62,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(63,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(64,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(65,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(66,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(67,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(68,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(69,12): error TS8010: Type annotations can only be used in TypeScript files.
+typedefOnStatements.js(73,16): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== typedefOnStatements.js (4 errors) ====
+==== typedefOnStatements.js (22 errors) ====
     /** @typedef {{a: string}} A */
     ;
     /** @typedef {{ b: string }} B */
@@ -66,26 +84,62 @@ typedefOnStatements.js(33,1): error TS2410: The 'with' statement is not supporte
     
     /**
      * @param {A} a
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {B} b
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {C} c
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {D} d
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {E} e
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {F} f
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {G} g
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {H} h
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {I} i
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {J} j
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {K} k
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {L} l
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {M} m
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {N} n
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {O} o
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {P} p
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {Q} q
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function proof (a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q) {
         console.log(a.a, b.b, c.c, d.d, e.e, f.f, g.g, h.h, i.i, j.j, k.k, l.l, m.m, n.n, o.o, p.p, q.q)
         /** @type {Alpha} */
+                   ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         var alpha = { alpha: "aleph" }
         /** @typedef {{ alpha: string }} Alpha */
         return

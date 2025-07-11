@@ -1,0 +1,28 @@
+--- old.jsdocNeverUndefinedNull.errors.txt
++++ new.jsdocNeverUndefinedNull.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++in.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
++in.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
++in.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
++in.js(5,14): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== in.js (4 errors) ====
++    /**
++     * @param {never} p1
++               ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {undefined} p2
++               ~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {null} p3
++               ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @returns {void} nothing
++                 ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    function f(p1, p2, p3) {
++    }
++    

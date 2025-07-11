@@ -1,0 +1,16 @@
+/b.js(2,16): error TS8011: Type arguments can only be used in TypeScript files.
+
+
+==== /a.d.ts (0 errors) ====
+    declare class A<T> { x: T }
+    
+==== /b.js (1 errors) ====
+    /** @augments A<number> */
+    class B extends A {
+                   ~~
+!!! error TS8011: Type arguments can only be used in TypeScript files.
+        m() {
+            return this.x;
+        }
+    }
+    

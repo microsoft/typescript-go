@@ -1,0 +1,29 @@
+--- old.importTag20.errors.txt
++++ new.importTag20.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++b.js(2,4): error TS8006: 'import type' declarations can only be used in TypeScript files.
++b.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== a.ts (0 errors) ====
++    export interface Foo {}
++    
++==== b.js (2 errors) ====
++    /**
++     * @import
++       ~~~~~~~
++     * { Foo
++    ~~~~~~~~
++     * } from './a'
++    ~~~~~~~~~~~~~~~
++!!! error TS8006: 'import type' declarations can only be used in TypeScript files.
++     */
++    
++    /**
++     * @param {Foo} a
++               ~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    export function foo(a) {}
++    

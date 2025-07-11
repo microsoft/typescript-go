@@ -1,0 +1,19 @@
+--- old.declarationEmitClassSetAccessorParamNameInJs3.errors.txt
++++ new.declarationEmitClassSetAccessorParamNameInJs3.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++foo.js(5,16): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== foo.js (1 errors) ====
++    export class Foo {
++        /**
++         * Bar.
++         *
++         * @param {{ prop: string | undefined }} baz Baz.
++                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++         */
++        set bar({ prop = 'foo' }) {}
++    }
++    

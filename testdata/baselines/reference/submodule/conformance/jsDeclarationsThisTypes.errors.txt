@@ -1,0 +1,16 @@
+index.js(2,19): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== index.js (1 errors) ====
+    export class A {
+        /** @returns {this} */
+                      ~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        method() {
+            return this;
+        }
+    }
+    export default class Base extends A {
+        // This method is required to reproduce #35932
+        verify() { }
+    }

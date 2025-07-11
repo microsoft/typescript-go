@@ -1,3 +1,4 @@
+mod.js(11,17): error TS8010: Type annotations can only be used in TypeScript files.
 use.js(3,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 use.js(4,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
@@ -17,7 +18,7 @@ use.js(4,9): error TS7009: 'new' expression, whose target lacks a construct sign
 ==== types.d.ts (0 errors) ====
     declare function require(name: string): any;
     declare var exports: any;
-==== mod.js (0 errors) ====
+==== mod.js (1 errors) ====
     /// <reference path='./types.d.ts'/>
     var A = function A() {
         this.a = 1
@@ -29,6 +30,8 @@ use.js(4,9): error TS7009: 'new' expression, whose target lacks a construct sign
     exports.B = B
     A.prototype = B.prototype = {
         /** @param {number} n */
+                    ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         m(n) {
             return n + 1
         }

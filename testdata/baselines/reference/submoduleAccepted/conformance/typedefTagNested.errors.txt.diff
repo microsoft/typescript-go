@@ -1,0 +1,56 @@
+--- old.typedefTagNested.errors.txt
++++ new.typedefTagNested.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++a.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
++a.js(26,12): error TS8010: Type annotations can only be used in TypeScript files.
++a.js(35,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== a.js (3 errors) ====
++    /** @typedef {Object} App
++     * @property {string} name
++     * @property {Object} icons
++     * @property {string} icons.image32
++     * @property {string} icons.image64
++     */
++    var ex;
++    
++    /** @type {App} */
++               ~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    const app = {
++        name: 'name',
++        icons: {
++            image32: 'x.png',
++            image64: 'y.png',
++        }
++    }
++    
++    /** @typedef {Object} Opp
++     * @property {string} name
++     * @property {Object} oops
++     * @property {string} horrible
++     * @type {string} idea
++     */
++    var intercessor = 1
++    
++    /** @type {Opp} */
++               ~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    var mistake;
++    
++    /** @typedef {Object} Upp
++     * @property {string} name
++     * @property {Object} not
++     * @property {string} nested
++     */
++    
++    /** @type {Upp} */
++               ~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    var sala = { name: 'uppsala', not: 0, nested: "ok" };
++    sala.name
++    sala.not
++    sala.nested
++    

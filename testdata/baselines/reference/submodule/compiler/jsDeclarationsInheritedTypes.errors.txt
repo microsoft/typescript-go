@@ -1,0 +1,43 @@
+a.js(13,15): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(20,15): error TS8010: Type annotations can only be used in TypeScript files.
+a.js(27,15): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== a.js (3 errors) ====
+    /**
+     * @typedef A
+     * @property {string} a
+     */
+    
+    /**
+     * @typedef B
+     * @property {number} b
+     */
+    
+     class C1 {
+        /**
+         * @type {A}
+                  ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+        value;
+    }
+    
+    class C2 extends C1 {
+        /**
+         * @type {A}
+                  ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+        value;
+    }
+    
+    class C3 extends C1 {
+        /**
+         * @type {A & B}
+                  ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+        value;
+    }
+    

@@ -1,0 +1,35 @@
+index.js(6,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(7,16): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== dash.d.ts (0 errors) ====
+    type ObjectIterator<TObject, TResult> = (value: TObject[keyof TObject], key: string, collection: TObject) => TResult;
+    
+    interface LoDashStatic {
+        mapValues<T extends object, TResult>(obj: T | null | undefined, callback: ObjectIterator<T, TResult>): { [P in keyof T]: TResult };
+    }
+    declare const _: LoDashStatic;
+    export = _;
+==== Consts.ts (0 errors) ====
+    export const INDEX_FIELD = '__INDEX';
+==== index.js (2 errors) ====
+    import * as _ from './dash';
+    import { INDEX_FIELD } from './Consts';
+    
+    export class Test {
+        /**
+         * @param {object} obj
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         * @param {object} vm
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+         */
+        test(obj, vm) {
+            let index = 0;
+            vm.objects = _.mapValues(
+                obj,
+                object => ({ ...object, [INDEX_FIELD]: index++ }),
+            );
+        }
+    }

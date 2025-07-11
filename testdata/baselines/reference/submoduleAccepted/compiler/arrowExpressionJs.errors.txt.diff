@@ -1,0 +1,25 @@
+--- old.arrowExpressionJs.errors.txt
++++ new.arrowExpressionJs.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++mytest.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
++mytest.js(4,14): error TS8010: Type annotations can only be used in TypeScript files.
++mytest.js(6,24): error TS8004: Type parameter declarations can only be used in TypeScript files.
++mytest.js(6,45): error TS8016: Type assertion expressions can only be used in TypeScript files.
++
++
++==== mytest.js (4 errors) ====
++    /**
++     * @template T
++     * @param {T|undefined} value value or not
++               ~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @returns {T} result value
++                 ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    const cloneObjectGood = value => /** @type {T} */({ ...value });
++                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
++                                                ~
++!!! error TS8016: Type assertion expressions can only be used in TypeScript files.

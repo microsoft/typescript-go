@@ -1,13 +1,17 @@
+returns.js(3,14): error TS8010: Type annotations can only be used in TypeScript files.
 returns.js(6,5): error TS2322: Type 'number' is not assignable to type 'string'.
+returns.js(10,14): error TS8010: Type annotations can only be used in TypeScript files.
 returns.js(13,5): error TS2322: Type 'number | boolean' is not assignable to type 'string | number'.
   Type 'boolean' is not assignable to type 'string | number'.
 returns.js(13,12): error TS2872: This kind of expression is always truthy.
 
 
-==== returns.js (3 errors) ====
+==== returns.js (5 errors) ====
     // @ts-check
     /**
      * @returns {string} This comment is not currently exposed
+                 ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function f() {
         return 5;
@@ -17,6 +21,8 @@ returns.js(13,12): error TS2872: This kind of expression is always truthy.
     
     /**
      * @returns {string | number} This comment is not currently exposed
+                 ~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function f1() {
         return 5 || true;

@@ -2,12 +2,32 @@
 +++ new.propertyAssignmentUseParentType2.errors.txt
 @@= skipped -0, +0 lines =@@
 -propertyAssignmentUseParentType2.js(11,14): error TS2322: Type '{ (): boolean; nuo: 1000; }' is not assignable to type '{ (): boolean; nuo: 789; }'.
++propertyAssignmentUseParentType2.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
++propertyAssignmentUseParentType2.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
++propertyAssignmentUseParentType2.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
 +propertyAssignmentUseParentType2.js(11,14): error TS2322: Type '{ (): true; nuo: 1000; }' is not assignable to type '{ (): boolean; nuo: 789; }'.
    Types of property 'nuo' are incompatible.
      Type '1000' is not assignable to type '789'.
 
-@@= skipped -15, +15 lines =@@
+
+-==== propertyAssignmentUseParentType2.js (1 errors) ====
++==== propertyAssignmentUseParentType2.js (4 errors) ====
      /** @type {{ (): boolean; nuo: 789 }} */
++               ~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     export const inlined = () => true
+     inlined.nuo = 789
+     
+     /** @type {{ (): boolean; nuo: 789 }} */
++               ~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     export const duplicated = () => true
+     /** @type {789} */
+     duplicated.nuo = 789
+     
+     /** @type {{ (): boolean; nuo: 789 }} */
++               ~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
      export const conflictingDuplicated = () => true
                   ~~~~~~~~~~~~~~~~~~~~~
 -!!! error TS2322: Type '{ (): boolean; nuo: 1000; }' is not assignable to type '{ (): boolean; nuo: 789; }'.

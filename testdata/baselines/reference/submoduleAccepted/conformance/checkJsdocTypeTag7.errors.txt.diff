@@ -1,0 +1,25 @@
+--- old.checkJsdocTypeTag7.errors.txt
++++ new.checkJsdocTypeTag7.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++test.js(2,17): error TS8010: Type annotations can only be used in TypeScript files.
++test.js(2,28): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== test.js (2 errors) ====
++    /**
++     * @typedef {(a: string, b: number) => void} Foo
++                    ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                               ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    
++    class C {
++        /** @type {Foo} */
++        foo(a, b) {}
++    
++        /** @type {(optional?) => void} */
++        methodWithOptionalParameters() {}
++    }
++    

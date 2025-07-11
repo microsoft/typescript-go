@@ -1,0 +1,19 @@
+--- old.thisTag2.errors.txt
++++ new.thisTag2.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++a.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
++a.js(4,10): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== a.js (2 errors) ====
++    /** @this {string} */
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    export function f1() {}
++    
++    /** @this */
++             
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    export function f2() {}
++    

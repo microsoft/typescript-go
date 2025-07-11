@@ -1,0 +1,32 @@
+--- old.parenthesizedJSDocCastAtReturnStatement.errors.txt
++++ new.parenthesizedJSDocCastAtReturnStatement.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++index.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(6,14): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(10,23): error TS8016: Type assertion expressions can only be used in TypeScript files.
++
++
++==== index.js (4 errors) ====
++    /** @type {Map<string, string | Set<string>>} */
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    const cache = new Map()
++    
++    /**
++     * @param {string} key
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @returns {() => string}
++                 ~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    const getStringGetter = (key) => {
++      return () => {
++        return /** @type {string} */ (cache.get(key))
++                          ~~~~~~
++!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
++      }
++    }
++    

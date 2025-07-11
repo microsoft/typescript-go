@@ -4,16 +4,22 @@
 -<no content>
 +/a.js(1,15): error TS2315: Type 'Object' is not generic.
 +/a.js(1,21): error TS8020: JSDoc types can only be used inside documentation comments.
++/a.js(1,34): error TS8010: Type annotations can only be used in TypeScript files.
++/a.js(3,27): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 +
 +
-+==== /a.js (2 errors) ====
++==== /a.js (4 errors) ====
 +    /** @typedef {Object.<string, (n: number) => boolean>} Predicates */
 +                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2315: Type 'Object' is not generic.
 +                        ~
 +!!! error TS8020: JSDoc types can only be used inside documentation comments.
++                                     ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    
 +    const p = /** @satisfies {Predicates} */ ({
++                              ~~~~~~~~~~
++!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 +        isEven: n => n % 2 === 0,
 +        isOdd: n => n % 2 === 1
 +    });

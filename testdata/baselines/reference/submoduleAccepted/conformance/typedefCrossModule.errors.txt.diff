@@ -3,7 +3,10 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +mod1.js(5,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
++use.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
 +use.js(1,29): error TS2694: Namespace 'C' has no exported member 'Both'.
++use.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
++use.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
 +==== commonjs.d.ts (0 errors) ====
@@ -40,14 +43,20 @@
 +        this.p = 1
 +    }
 +    
-+==== use.js (1 errors) ====
++==== use.js (4 errors) ====
 +    /** @type {import('./mod1').Both} */
++               ~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +                                ~~~~
 +!!! error TS2694: Namespace 'C' has no exported member 'Both'.
 +    var both1 = { type: 'a', x: 1 };
 +    /** @type {import('./mod2').Both} */
++               ~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var both2 = both1;
 +    /** @type {import('./mod3').Both} */
++               ~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var both3 = both2;
 +    
 +    

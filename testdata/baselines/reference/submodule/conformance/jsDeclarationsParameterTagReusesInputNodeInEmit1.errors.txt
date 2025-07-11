@@ -1,6 +1,9 @@
 base.js(11,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 file.js(1,15): error TS1340: Module './base' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./base')'?
 file.js(4,12): error TS1340: Module './base' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./base')'?
+file.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
+file.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
+file.js(12,14): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== base.js (1 errors) ====
@@ -18,7 +21,7 @@ file.js(4,12): error TS1340: Module './base' does not refer to a type, but is us
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
     
-==== file.js (2 errors) ====
+==== file.js (5 errors) ====
     /** @typedef {import('./base')} BaseFactory */
                   ~~~~~~~~~~~~~~~~
 !!! error TS1340: Module './base' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./base')'?
@@ -27,6 +30,8 @@ file.js(4,12): error TS1340: Module './base' does not refer to a type, but is us
      * @param {import('./base')} factory
                ~~~~~~~~~~~~~~~~
 !!! error TS1340: Module './base' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./base')'?
+               ~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     /** @enum {import('./base')} */
     const couldntThinkOfAny = {}
@@ -34,7 +39,11 @@ file.js(4,12): error TS1340: Module './base' does not refer to a type, but is us
     /**
      *
      * @param {InstanceType<BaseFactory["Base"]>} base
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {InstanceType<BaseFactory["Base"]>}
+                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const test = (base) => {
         return base;

@@ -1,0 +1,39 @@
+--- old.declarationEmitLateBoundJSAssignments.errors.txt
++++ new.declarationEmitLateBoundJSAssignments.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++file.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
++file.js(14,12): error TS8010: Type annotations can only be used in TypeScript files.
++file.js(16,12): error TS8010: Type annotations can only be used in TypeScript files.
++file.js(18,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== file.js (4 errors) ====
++    export function foo() {}
++    foo.bar = 12;
++    const _private = Symbol();
++    foo[_private] = "ok";
++    const strMem = "strMemName";
++    foo[strMem] = "ok";
++    const dashStrMem = "dashed-str-mem";
++    foo[dashStrMem] = "ok";
++    const numMem = 42;
++    foo[numMem] = "ok";
++    
++    /** @type {string} */
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    const x = foo[_private];
++    /** @type {string} */
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    const y = foo[strMem];
++    /** @type {string} */
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    const z = foo[numMem];
++    /** @type {string} */
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    const a = foo[dashStrMem];
++    

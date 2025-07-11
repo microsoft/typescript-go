@@ -1,0 +1,27 @@
+--- old.jsDeclarationsUniqueSymbolUsage.errors.txt
++++ new.jsDeclarationsUniqueSymbolUsage.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++b.js(2,14): error TS8010: Type annotations can only be used in TypeScript files.
++b.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== a.js (0 errors) ====
++    export const kSymbol = Symbol("my-symbol");
++    
++    /**
++     * @typedef {{[kSymbol]: true}} WithSymbol
++     */
++==== b.js (2 errors) ====
++    /**
++     * @returns {import('./a').WithSymbol} 
++                 ~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {import('./a').WithSymbol} value 
++               ~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    export function b(value) {
++        return value;
++    }
++    

@@ -1,0 +1,62 @@
+--- old.contextuallyTypedParametersOptionalInJSDoc.errors.txt
++++ new.contextuallyTypedParametersOptionalInJSDoc.errors.txt
+@@= skipped -0, +0 lines =@@
++index.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(8,17): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(8,28): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(14,6): error TS8009: The '?' modifier can only be used in TypeScript files.
+ index.js(17,15): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+   Type 'undefined' is not assignable to type 'number'.
++index.js(22,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(25,6): error TS8009: The '?' modifier can only be used in TypeScript files.
++index.js(25,14): error TS8010: Type annotations can only be used in TypeScript files.
+ index.js(28,15): error TS2345: Argument of type 'number | undefined' is not assignable to parameter of type 'number'.
+   Type 'undefined' is not assignable to type 'number'.
+
+
+-==== index.js (2 errors) ====
++==== index.js (10 errors) ====
+     /**
+      * 
+      * @param {number} num 
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+      */
+     function acceptNum(num) {}
+     
+     /**
+      * @typedef {(a: string, b: number) => void} Fn
++                    ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++                               ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+      */
+     
+     /** @type {Fn} */
++               ~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     const fn1 =
+       /**
+        * @param [b]
++         ~~~~~~~~~~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
+        */
+       function self(a, b) {
+         acceptNum(b); // error
+@@= skipped -29, +47 lines =@@
+       };
+     
+     /** @type {Fn} */
++               ~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+     const fn2 =
+       /**
+        * @param {number} [b]
++         ~~~~~~~~~~~~~~~~~~~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
++                 ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+        */
+       function self(a, b) {
+         acceptNum(b); // error

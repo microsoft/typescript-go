@@ -3,9 +3,10 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +source.js(1,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
++source.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== source.js (1 errors) ====
++==== source.js (2 errors) ====
 +    module.exports = MyClass;
 +    ~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
@@ -20,4 +21,6 @@
 +     *
 +     * @callback DoneCB
 +     * @param {number} failures - Number of failures that occurred.
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */

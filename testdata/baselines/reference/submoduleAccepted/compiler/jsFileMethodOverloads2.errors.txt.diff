@@ -1,0 +1,124 @@
+--- old.jsFileMethodOverloads2.errors.txt
++++ new.jsFileMethodOverloads2.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++jsFileMethodOverloads2.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
++jsFileMethodOverloads2.js(7,14): error TS8010: Type annotations can only be used in TypeScript files.
++jsFileMethodOverloads2.js(14,7): error TS8017: Signature declarations can only be used in TypeScript files.
++jsFileMethodOverloads2.js(18,7): error TS8017: Signature declarations can only be used in TypeScript files.
++jsFileMethodOverloads2.js(22,16): error TS8010: Type annotations can only be used in TypeScript files.
++jsFileMethodOverloads2.js(30,7): error TS8017: Signature declarations can only be used in TypeScript files.
++jsFileMethodOverloads2.js(34,7): error TS8017: Signature declarations can only be used in TypeScript files.
++jsFileMethodOverloads2.js(37,6): error TS8009: The '?' modifier can only be used in TypeScript files.
++jsFileMethodOverloads2.js(37,14): error TS8010: Type annotations can only be used in TypeScript files.
++jsFileMethodOverloads2.js(38,16): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== jsFileMethodOverloads2.js (10 errors) ====
++    // Also works if all @overload tags are combined in one comment.
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++    /**
++    ~~~
++     * @template T
++    ~~~~~~~~~~~~~~
++     */
++    ~~~
++     class Example {
++    ~~~~~~~~~~~~~~~~
++      /**
++    ~~~~~
++       * @param {T} value 
++    ~~~~~~~~~~~~~~~~~~~~~~
++                 ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++       */
++    ~~~~~
++      constructor(value) {
++    ~~~~~~~~~~~~~~~~~~~~~~
++        this.value = value;
++    ~~~~~~~~~~~~~~~~~~~~~~~
++      }
++    ~~~
++    
++    
++      /**
++    ~~~~~
++       * @overload
++    ~~~~~~~~~~~~~~
++          ~~~~~~~~
++!!! error TS8017: Signature declarations can only be used in TypeScript files.
++       * @param {Example<number>} this
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++       * @returns {'number'}
++    ~~~~~~~~~~~~~~~~~~~~~~~~
++       *
++    ~~~~
++       * @overload
++    ~~~~~~~~~~~~~~
++          ~~~~~~~~
++!!! error TS8017: Signature declarations can only be used in TypeScript files.
++       * @param {Example<string>} this
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++       * @returns {'string'}
++    ~~~~~~~~~~~~~~~~~~~~~~~~
++       *
++    ~~~~
++       * @returns {string}
++    ~~~~~~~~~~~~~~~~~~~~~~
++                   ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++       */
++    ~~~~~
++      getTypeName() {
++    ~~~~~~~~~~~~~~~~~
++        return typeof this.value;
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++      }
++    ~~~
++    
++    
++      /**
++    ~~~~~
++       * @template U
++    ~~~~~~~~~~~~~~~~
++       * @overload
++    ~~~~~~~~~~~~~~
++          ~~~~~~~~
++!!! error TS8017: Signature declarations can only be used in TypeScript files.
++       * @param {(y: T) => U} fn
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++       * @returns {U}
++    ~~~~~~~~~~~~~~~~~
++       *
++    ~~~~
++       * @overload
++    ~~~~~~~~~~~~~~
++          ~~~~~~~~
++!!! error TS8017: Signature declarations can only be used in TypeScript files.
++       * @returns {T}
++    ~~~~~~~~~~~~~~~~~
++       *
++    ~~~~
++       * @param {(y: T) => unknown} [fn]
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++                 ~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++       * @returns {unknown}
++    ~~~~~~~~~~~~~~~~~~~~~~~
++    ~~~~~
++!!! error TS8009: The '?' modifier can only be used in TypeScript files.
++                   ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++       */
++    ~~~~~
++      transform(fn) {
++    ~~~~~~~~~~~~~~~~~
++        return fn ? fn(this.value) : this.value;
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++      }
++    ~~~
++    }
++    ~
++!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
++    

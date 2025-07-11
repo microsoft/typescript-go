@@ -1,7 +1,8 @@
+file.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
 file.js(10,7): error TS2322: Type 'string' is not assignable to type 'number'.
 
 
-==== file.js (1 errors) ====
+==== file.js (2 errors) ====
     /**
      * @template T
      * @template {keyof T} K
@@ -11,6 +12,8 @@ file.js(10,7): error TS2322: Type 'string' is not assignable to type 'number'.
     const x = { a: 1 };
     
     /** @type {Foo<typeof x, "a">} */
+               ~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const y = "a";
           ~
 !!! error TS2322: Type 'string' is not assignable to type 'number'.

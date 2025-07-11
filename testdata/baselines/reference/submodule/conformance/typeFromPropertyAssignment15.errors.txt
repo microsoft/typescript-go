@@ -1,7 +1,8 @@
 a.js(10,12): error TS2503: Cannot find namespace 'Outer'.
+a.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== a.js (1 errors) ====
+==== a.js (2 errors) ====
     var Outer = {};
     
     Outer.Inner = class {
@@ -14,6 +15,8 @@ a.js(10,12): error TS2503: Cannot find namespace 'Outer'.
     /** @type {Outer.Inner} */
                ~~~~~
 !!! error TS2503: Cannot find namespace 'Outer'.
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var inner
     inner.x
     inner.m()

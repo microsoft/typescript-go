@@ -1,17 +1,22 @@
+test.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(7,5): error TS2322: Type '(prop: any) => void' is not assignable to type '{ prop: string; }'.
+test.js(26,12): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(27,7): error TS2322: Type '(more: any) => void' is not assignable to type '() => void'.
   Target signature provides too few arguments. Expected 1 or more, but got 0.
+test.js(29,12): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(30,7): error TS2322: Type '(more: any) => void' is not assignable to type '() => void'.
   Target signature provides too few arguments. Expected 1 or more, but got 0.
 
 
-==== test.js (3 errors) ====
+==== test.js (6 errors) ====
     /** @type {number} */
     function f() {
         return 1
     }
     
     /** @type {{ prop: string }} */
+               ~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var g = function (prop) {
         ~
 !!! error TS2322: Type '(prop: any) => void' is not assignable to type '{ prop: string; }'.
@@ -34,12 +39,16 @@ test.js(30,7): error TS2322: Type '(more: any) => void' is not assignable to typ
     function funcWithMoreParameters(more) {} // error
     
     /** @type {() => void} */
+               ~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const variableWithMoreParameters = function (more) {}; // error
           ~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2322: Type '(more: any) => void' is not assignable to type '() => void'.
 !!! error TS2322:   Target signature provides too few arguments. Expected 1 or more, but got 0.
     
     /** @type {() => void} */
+               ~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const arrowWithMoreParameters = (more) => {}; // error
           ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2322: Type '(more: any) => void' is not assignable to type '() => void'.

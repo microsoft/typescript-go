@@ -5,31 +5,50 @@
 -
 -
 -==== templateTagOnConstructorFunctions.js (1 errors) ====
--    /**
--     * @template U
--     * @typedef {(u: U) => U} Id
--     */
--    /**
--     * @param {T} t
--     * @template T
--     */
--    function Zet(t) {
--        /** @type {T} */
--        this.u
--        this.t = t
--    }
--    /**
--     * @param {T} v
--     * @param {Id<T>} id
--     */
--    Zet.prototype.add = function(v, id) {
--        this.u = v || this.t
--        return id(this.u)
--    }
--    var z = new Zet(1)
--    z.t = 2
--    z.u = false
++templateTagOnConstructorFunctions.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
++templateTagOnConstructorFunctions.js(3,17): error TS8010: Type annotations can only be used in TypeScript files.
++templateTagOnConstructorFunctions.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== templateTagOnConstructorFunctions.js (3 errors) ====
+     /**
++    ~~~
+      * @template U
++    ~~~~~~~~~~~~~~
+      * @typedef {(u: U) => U} Id
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++                    ~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+      */
++    ~~~
+     /**
++    ~~~
+      * @param {T} t
++    ~~~~~~~~~~~~~~~
++               ~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
+      * @template T
++    ~~~~~~~~~~~~~~
+      */
++    ~~~
+     function Zet(t) {
++    ~~~~~~~~~~~~~~~~~
+         /** @type {T} */
++    ~~~~~~~~~~~~~~~~~~~~
+         this.u
++    ~~~~~~~~~~
+         this.t = t
++    ~~~~~~~~~~~~~~
+     }
++    ~
++!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+     /**
+      * @param {T} v
+      * @param {Id<T>} id
+@@= skipped -25, +45 lines =@@
+     var z = new Zet(1)
+     z.t = 2
+     z.u = false
 -    ~~~
 -!!! error TS2322: Type 'boolean' is not assignable to type 'number'.
--    
-+<no content>
+     

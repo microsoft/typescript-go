@@ -1,8 +1,10 @@
 a.js(8,12): error TS2749: 'Outer' refers to a value, but is being used as a type here. Did you mean 'typeof Outer'?
+a.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(11,12): error TS2503: Cannot find namespace 'Outer'.
+a.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== a.js (2 errors) ====
+==== a.js (4 errors) ====
     var Outer = class O {
         m(x, y) { }
     }
@@ -13,11 +15,15 @@ a.js(11,12): error TS2503: Cannot find namespace 'Outer'.
     /** @type {Outer} */
                ~~~~~
 !!! error TS2749: 'Outer' refers to a value, but is being used as a type here. Did you mean 'typeof Outer'?
+               ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var si
     si.m
     /** @type {Outer.Inner} */
                ~~~~~
 !!! error TS2503: Cannot find namespace 'Outer'.
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var oi
     oi.n
     

@@ -1,10 +1,13 @@
 bug26885.js(2,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
+bug26885.js(7,16): error TS8010: Type annotations can only be used in TypeScript files.
+bug26885.js(8,18): error TS8010: Type annotations can only be used in TypeScript files.
 bug26885.js(11,21): error TS2339: Property '_map' does not exist on type '{ get(key: string): number; }'.
 bug26885.js(15,12): error TS2749: 'Multimap3' refers to a value, but is being used as a type here. Did you mean 'typeof Multimap3'?
+bug26885.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
 bug26885.js(16,13): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
-==== bug26885.js (4 errors) ====
+==== bug26885.js (7 errors) ====
     function Multimap3() {
         this._map = {};
         ~~~~
@@ -14,7 +17,11 @@ bug26885.js(16,13): error TS7009: 'new' expression, whose target lacks a constru
     Multimap3.prototype = {
         /**
          * @param {string} key
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @returns {number} the value ok
+                     ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         get(key) {
             return this._map[key + ''];
@@ -26,6 +33,8 @@ bug26885.js(16,13): error TS7009: 'new' expression, whose target lacks a constru
     /** @type {Multimap3} */
                ~~~~~~~~~
 !!! error TS2749: 'Multimap3' refers to a value, but is being used as a type here. Did you mean 'typeof Multimap3'?
+               ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     const map = new Multimap3();
                 ~~~~~~~~~~~~~~~
 !!! error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.

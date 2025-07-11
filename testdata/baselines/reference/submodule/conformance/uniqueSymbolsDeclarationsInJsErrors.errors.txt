@@ -1,22 +1,35 @@
+uniqueSymbolsDeclarationsInJsErrors.js(3,15): error TS8010: Type annotations can only be used in TypeScript files.
 uniqueSymbolsDeclarationsInJsErrors.js(5,12): error TS1331: A property of a class whose type is a 'unique symbol' type must be both 'static' and 'readonly'.
+uniqueSymbolsDeclarationsInJsErrors.js(7,15): error TS8010: Type annotations can only be used in TypeScript files.
+uniqueSymbolsDeclarationsInJsErrors.js(8,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
+uniqueSymbolsDeclarationsInJsErrors.js(12,15): error TS8010: Type annotations can only be used in TypeScript files.
 uniqueSymbolsDeclarationsInJsErrors.js(14,12): error TS1331: A property of a class whose type is a 'unique symbol' type must be both 'static' and 'readonly'.
 
 
-==== uniqueSymbolsDeclarationsInJsErrors.js (2 errors) ====
+==== uniqueSymbolsDeclarationsInJsErrors.js (6 errors) ====
     class C {
         /**
          * @type {unique symbol}
+                  ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         static readwriteStaticType;
                ~~~~~~~~~~~~~~~~~~~
 !!! error TS1331: A property of a class whose type is a 'unique symbol' type must be both 'static' and 'readonly'.
         /**
          * @type {unique symbol}
+                  ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @readonly
+           ~~~~~~~~~
          */
+    ~~~~~
+!!! error TS8009: The 'readonly' modifier can only be used in TypeScript files.
         static readonlyType;
         /**
          * @type {unique symbol}
+                  ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         static readwriteType;
                ~~~~~~~~~~~~~

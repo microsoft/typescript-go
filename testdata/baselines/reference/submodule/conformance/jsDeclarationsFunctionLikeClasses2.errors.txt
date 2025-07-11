@@ -1,11 +1,19 @@
 referencer.js(3,23): error TS2350: Only a void function can be called with the 'new' keyword.
+source.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 source.js(13,16): error TS2749: 'Vec' refers to a value, but is being used as a type here. Did you mean 'typeof Vec'?
+source.js(13,16): error TS8010: Type annotations can only be used in TypeScript files.
+source.js(35,12): error TS8010: Type annotations can only be used in TypeScript files.
+source.js(36,12): error TS8010: Type annotations can only be used in TypeScript files.
 source.js(40,16): error TS2350: Only a void function can be called with the 'new' keyword.
+source.js(53,16): error TS8010: Type annotations can only be used in TypeScript files.
+source.js(62,16): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== source.js (2 errors) ====
+==== source.js (8 errors) ====
     /**
      * @param {number} len
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     export function Vec(len) {
         /**
@@ -19,6 +27,8 @@ source.js(40,16): error TS2350: Only a void function can be called with the 'new
          * @param {Vec} other
                    ~~~
 !!! error TS2749: 'Vec' refers to a value, but is being used as a type here. Did you mean 'typeof Vec'?
+                   ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         dot(other) {
             if (other.storage.length !== this.storage.length) {
@@ -41,7 +51,11 @@ source.js(40,16): error TS2350: Only a void function can be called with the 'new
     
     /**
      * @param {number} x
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {number} y
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     export function Point2D(x, y) {
         if (!(this instanceof Point2D)) {
@@ -61,6 +75,8 @@ source.js(40,16): error TS2350: Only a void function can be called with the 'new
         },
         /**
          * @param {number} x
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         set x(x) {
             this.storage[0] = x;
@@ -70,6 +86,8 @@ source.js(40,16): error TS2350: Only a void function can be called with the 'new
         },
         /**
          * @param {number} y
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         set y(y) {
             this.storage[1] = y;

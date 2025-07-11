@@ -3,6 +3,8 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +base.js(11,1): error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
++file.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
++file.js(6,14): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
 +==== base.js (1 errors) ====
@@ -20,13 +22,17 @@
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS1203: Export assignment cannot be used when targeting ECMAScript modules. Consider using 'export default' or another module format instead.
 +    
-+==== file.js (0 errors) ====
++==== file.js (2 errors) ====
 +    /** @typedef {typeof import('./base')} BaseFactory */
 +    
 +    /**
 +     *
 +     * @param {InstanceType<BaseFactory["Base"]>} base
++               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @returns {InstanceType<BaseFactory["Base"]>}
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    const test = (base) => {
 +        return base;

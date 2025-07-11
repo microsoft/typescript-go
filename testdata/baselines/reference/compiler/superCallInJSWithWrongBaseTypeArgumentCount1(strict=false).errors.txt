@@ -1,0 +1,31 @@
+b.js(9,24): error TS8011: Type arguments can only be used in TypeScript files.
+b.js(15,24): error TS8011: Type arguments can only be used in TypeScript files.
+
+
+==== a.ts (0 errors) ====
+    export class A<T> {}
+    
+==== b.js (2 errors) ====
+    import { A } from './a.js';
+    
+    export class B1 extends A {
+        constructor() {
+            super();
+        }
+    }
+    
+    export class B2 extends A<string> {
+                           ~~~~~~~~~~
+!!! error TS8011: Type arguments can only be used in TypeScript files.
+        constructor() {
+            super();
+        }
+    }
+    
+    export class B3 extends A<string, string> {
+                           ~~~~~~~~~~~~~~~~~~
+!!! error TS8011: Type arguments can only be used in TypeScript files.
+        constructor() {
+            super();
+        }
+    }

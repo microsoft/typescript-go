@@ -4,9 +4,10 @@
 -<no content>
 +typedefTagExtraneousProperty.js(1,15): error TS2315: Type 'Object' is not generic.
 +typedefTagExtraneousProperty.js(1,21): error TS8020: JSDoc types can only be used inside documentation comments.
++typedefTagExtraneousProperty.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== typedefTagExtraneousProperty.js (2 errors) ====
++==== typedefTagExtraneousProperty.js (3 errors) ====
 +    /** @typedef {Object.<string,string>} Mmap
 +                  ~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2315: Type 'Object' is not generic.
@@ -16,6 +17,8 @@
 +     */
 +    
 +    /** @type {Mmap} */
++               ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var y = { bye: "no" };
 +    y
 +    y.ignoreMe = "ok but just because of the index signature"

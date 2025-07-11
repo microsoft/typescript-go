@@ -1,7 +1,8 @@
 /a.js(3,15): error TS2552: Cannot find name 'sting'. Did you mean 'string'?
+/a.js(6,13): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== /a.js (1 errors) ====
+==== /a.js (2 errors) ====
     /**
      * @typedef MyType
      * @property {sting} [x]
@@ -10,6 +11,8 @@
      */
     
     /** @param {MyType} p  */
+                ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export function f(p) { }
     
 ==== /b.js (0 errors) ====

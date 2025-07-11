@@ -2,63 +2,114 @@
 +++ new.jsDeclarationsJSDocRedirectedLookups.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
++index.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(5,12): error TS2304: Cannot find name 'Void'.
++index.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(6,12): error TS2304: Cannot find name 'Undefined'.
++index.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(7,12): error TS2304: Cannot find name 'Null'.
++index.js(7,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(10,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
++index.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(11,12): error TS2552: Cannot find name 'array'. Did you mean 'Array'?
++index.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(12,12): error TS2552: Cannot find name 'promise'. Did you mean 'Promise'?
++index.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(13,12): error TS2315: Type 'Object' is not generic.
++index.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(19,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(21,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(23,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(25,12): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(27,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(30,12): error TS2749: 'event' refers to a value, but is being used as a type here. Did you mean 'typeof event'?
++index.js(30,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== index.js (8 errors) ====
++==== index.js (25 errors) ====
 +    // these are recognized as TS concepts by the checker
 +    /** @type {String} */const a = "";
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {Number} */const b = 0;
++               ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {Boolean} */const c = true;
++               ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {Void} */const d = undefined;
 +               ~~~~
 +!!! error TS2304: Cannot find name 'Void'.
++               ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {Undefined} */const e = undefined;
 +               ~~~~~~~~~
 +!!! error TS2304: Cannot find name 'Undefined'.
++               ~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {Null} */const f = null;
 +               ~~~~
 +!!! error TS2304: Cannot find name 'Null'.
++               ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    
 +    /** @type {Function} */const g = () => void 0;
++               ~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {function} */const h = () => void 0;
 +               ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 +!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
++               ~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {array} */const i = [];
 +               ~~~~~
 +!!! error TS2552: Cannot find name 'array'. Did you mean 'Array'?
 +!!! related TS2728 lib.es5.d.ts:--:--: 'Array' is declared here.
++               ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {promise} */const j = Promise.resolve(0);
 +               ~~~~~~~
 +!!! error TS2552: Cannot find name 'promise'. Did you mean 'Promise'?
 +!!! related TS2728 lib.es2015.promise.d.ts:--:--: 'Promise' is declared here.
++               ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    /** @type {Object<string, string>} */const k = {x: "x"};
 +               ~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2315: Type 'Object' is not generic.
++               ~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    
 +    
 +    // these are not recognized as anything and should just be lookup failures
 +    // ignore the errors to try to ensure they're emitted as `any` in declaration emit
 +    // @ts-ignore
 +    /** @type {class} */const l = true;
++               ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    // @ts-ignore
 +    /** @type {bool} */const m = true;
++               ~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    // @ts-ignore
 +    /** @type {int} */const n = true;
++               ~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    // @ts-ignore
 +    /** @type {float} */const o = true;
++               ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    // @ts-ignore
 +    /** @type {integer} */const p = true;
++               ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    
 +    // or, in the case of `event` likely erroneously refers to the type of the global Event object
 +    /** @type {event} */const q = undefined;
 +               ~~~~~
 +!!! error TS2749: 'event' refers to a value, but is being used as a type here. Did you mean 'typeof event'?
++               ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.

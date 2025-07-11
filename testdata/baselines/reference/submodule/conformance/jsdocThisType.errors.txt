@@ -1,6 +1,9 @@
+/a.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(3,10): error TS2339: Property 'test' does not exist on type 'Foo'.
+/a.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(13,10): error TS2339: Property 'test' does not exist on type 'Foo'.
 /a.js(21,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
+/a.js(21,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== /types.d.ts (0 errors) ====
@@ -10,8 +13,10 @@
     
     export type M = (this: Foo) => void;
     
-==== /a.js (3 errors) ====
+==== /a.js (6 errors) ====
     /** @type {import('./types').M} */
+               ~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const f1 = function() {
         this.test();
              ~~~~
@@ -24,6 +29,8 @@
     }
     
     /** @type {(this: import('./types').Foo) => void} */
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const f3 = function() {
         this.test();
              ~~~~
@@ -39,6 +46,8 @@
                ~~~~~~~~
 !!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 !!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
+               ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     export const f5 = function() {
         this.test();
     }

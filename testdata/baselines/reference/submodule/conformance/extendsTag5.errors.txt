@@ -1,30 +1,57 @@
+/a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
+/a.js(13,15): error TS8010: Type annotations can only be used in TypeScript files.
+/a.js(26,16): error TS8011: Type arguments can only be used in TypeScript files.
 /a.js(29,16): error TS2344: Type '{ a: string; b: string; }' does not satisfy the constraint 'Foo'.
   Types of property 'b' are incompatible.
     Type 'string' is not assignable to type 'boolean | string[]'.
+/a.js(34,16): error TS8011: Type arguments can only be used in TypeScript files.
+/a.js(39,16): error TS8011: Type arguments can only be used in TypeScript files.
 /a.js(42,16): error TS2344: Type '{ a: string; b: string; }' does not satisfy the constraint 'Foo'.
   Types of property 'b' are incompatible.
     Type 'string' is not assignable to type 'boolean | string[]'.
+/a.js(44,16): error TS8011: Type arguments can only be used in TypeScript files.
 
 
-==== /a.js (2 errors) ====
+==== /a.js (8 errors) ====
     /**
+    ~~~
      * @typedef {{
+    ~~~~~~~~~~~~~~
     *     a: number | string;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
     *     b: boolean | string[];
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     * }} Foo
+    ~~~~~~~~
     */
+    ~~
+    
     
     /**
+    ~~~
     * @template {Foo} T
+    ~~~~~~~~~~~~~~~~~~~
     */
+    ~~
     class A {
+    ~~~~~~~~~
        /**
+    ~~~~~~
         * @param {T} a
+    ~~~~~~~~~~~~~~~~~~
+                  ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         */
+    ~~~~~~
        constructor(a) {
+    ~~~~~~~~~~~~~~~~~~~
            return a
+    ~~~~~~~~~~~~~~~
        }
+    ~~~~
     }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     /**
     * @extends {A<{
@@ -33,6 +60,8 @@
     * }>}
     */
     class B extends A {}
+                   ~~
+!!! error TS8011: Type arguments can only be used in TypeScript files.
     
     /**
      * @extends {A<{
@@ -48,11 +77,15 @@
 !!! error TS2344:     Type 'string' is not assignable to type 'boolean | string[]'.
      */
     class C extends A {}
+                   ~~
+!!! error TS8011: Type arguments can only be used in TypeScript files.
     
     /**
      * @extends {A<{a: string, b: string[]}>}
      */
     class D extends A {}
+                   ~~
+!!! error TS8011: Type arguments can only be used in TypeScript files.
     
     /**
      * @extends {A<{a: string, b: string}>}
@@ -62,4 +95,6 @@
 !!! error TS2344:     Type 'string' is not assignable to type 'boolean | string[]'.
      */
     class E extends A {}
+                   ~~
+!!! error TS8011: Type arguments can only be used in TypeScript files.
     

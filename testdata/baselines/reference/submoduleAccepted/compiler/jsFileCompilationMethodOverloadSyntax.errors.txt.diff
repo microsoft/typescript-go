@@ -2,13 +2,15 @@
 +++ new.jsFileCompilationMethodOverloadSyntax.errors.txt
 @@= skipped -0, +0 lines =@@
 -a.js(2,3): error TS8017: Signature declarations can only be used in TypeScript files.
--
--
--==== a.js (1 errors) ====
--    class A {
--      foo();
++a.js(1,10): error TS8017: Signature declarations can only be used in TypeScript files.
+
+
+ ==== a.js (1 errors) ====
+     class A {
++             
+       foo();
 -      ~~~
--!!! error TS8017: Signature declarations can only be used in TypeScript files.
--    }
--    
-+<no content>
++    ~~~~~~~~
+ !!! error TS8017: Signature declarations can only be used in TypeScript files.
+     }
+     

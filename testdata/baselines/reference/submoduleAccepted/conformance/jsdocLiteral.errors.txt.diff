@@ -1,0 +1,33 @@
+--- old.jsdocLiteral.errors.txt
++++ new.jsdocLiteral.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++in.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
++in.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
++in.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
++in.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
++in.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== in.js (5 errors) ====
++    /**
++     * @param {'literal'} p1
++               ~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {"literal"} p2
++               ~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {'literal' | 'other'} p3
++               ~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {'literal' | number} p4
++               ~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     * @param {12 | true | 'str'} p5
++               ~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++     */
++    function f(p1, p2, p3, p4, p5) {
++        return p1 + p2 + p3 + p4 + p5 + '.';
++    }
++    

@@ -1,0 +1,17 @@
+--- old.jsdocVariableDeclarationWithTypeAnnotation.errors.txt
++++ new.jsdocVariableDeclarationWithTypeAnnotation.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++foo.js(2,16): error TS8010: Type annotations can only be used in TypeScript files.
++foo.js(3,16): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== foo.js (2 errors) ====
++    /** @type {boolean} */
++    var /** @type {string} */ x,
++                   ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++        /** @type {number} */ y;
++                   ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    

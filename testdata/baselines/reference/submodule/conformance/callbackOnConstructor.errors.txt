@@ -1,12 +1,16 @@
+callbackOnConstructor.js(5,14): error TS8010: Type annotations can only be used in TypeScript files.
 callbackOnConstructor.js(12,12): error TS2304: Cannot find name 'ValueGetter_2'.
+callbackOnConstructor.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== callbackOnConstructor.js (1 errors) ====
+==== callbackOnConstructor.js (3 errors) ====
     export class Preferences {
       assignability = "no"
       /**
        * @callback ValueGetter_2
        * @param {string} name
+                 ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
        * @returns {boolean|number|string|undefined}
        */
       constructor() {}
@@ -16,5 +20,7 @@ callbackOnConstructor.js(12,12): error TS2304: Cannot find name 'ValueGetter_2'.
     /** @type {ValueGetter_2} */
                ~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'ValueGetter_2'.
+               ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     var ooscope2 = s => s.length > 0
     

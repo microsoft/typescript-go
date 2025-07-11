@@ -1,19 +1,41 @@
+index.js(2,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(5,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(8,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(11,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(44,9): error TS1051: A 'set' accessor cannot have an optional parameter.
+index.js(44,9): error TS8009: The '?' modifier can only be used in TypeScript files.
+index.js(44,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(54,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(64,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(74,17): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(82,9): error TS1051: A 'set' accessor cannot have an optional parameter.
+index.js(82,9): error TS8009: The '?' modifier can only be used in TypeScript files.
+index.js(82,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(87,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(92,17): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(97,17): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== index.js (2 errors) ====
+==== index.js (16 errors) ====
     class С1 {
         /** @type {string=} */
+                   ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         p1 = undefined;
     
         /** @type {string | undefined} */
+                   ~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         p2 = undefined;
     
         /** @type {?string} */
+                   ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         p3 = null;
     
         /** @type {string | null} */
+                   ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         p4 = null;
     }
     
@@ -49,6 +71,10 @@ index.js(82,9): error TS1051: A 'set' accessor cannot have an optional parameter
         /** @param {string=} value */
             ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS1051: A 'set' accessor cannot have an optional parameter.
+            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
+                    ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         set p1(value) {
             this.p1 = value;
         }
@@ -59,6 +85,8 @@ index.js(82,9): error TS1051: A 'set' accessor cannot have an optional parameter
         }
     
         /** @param {string | undefined} value */
+                    ~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         set p2(value) {
             this.p2 = value;
         }
@@ -69,6 +97,8 @@ index.js(82,9): error TS1051: A 'set' accessor cannot have an optional parameter
         }
     
         /** @param {?string} value */
+                    ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         set p3(value) {
             this.p3 = value;
         }
@@ -79,6 +109,8 @@ index.js(82,9): error TS1051: A 'set' accessor cannot have an optional parameter
         }
     
         /** @param {string | null} value */
+                    ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         set p4(value) {
             this.p4 = value;
         }
@@ -89,21 +121,31 @@ index.js(82,9): error TS1051: A 'set' accessor cannot have an optional parameter
         /** @param {string=} value */
             ~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS1051: A 'set' accessor cannot have an optional parameter.
+            ~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
+                    ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         set p1(value) {
             this.p1 = value;
         }
     
         /** @param {string | undefined} value */
+                    ~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         set p2(value) {
             this.p2 = value;
         }
     
         /** @param {?string} value */
+                    ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         set p3(value) {
             this.p3 = value;
         }
     
         /** @param {string | null} value */
+                    ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         set p4(value) {
             this.p4 = value;
         }

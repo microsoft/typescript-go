@@ -1,0 +1,26 @@
+--- old.jsDeclarationsSubclassWithExplicitNoArgumentConstructor.errors.txt
++++ new.jsDeclarationsSubclassWithExplicitNoArgumentConstructor.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++index.js(3,16): error TS8010: Type annotations can only be used in TypeScript files.
++index.js(4,16): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== index.js (2 errors) ====
++    export class Super {
++        /**
++         * @param {string} firstArg
++                   ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++         * @param {string} secondArg
++                   ~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++         */
++        constructor(firstArg, secondArg) { }
++    }
++    
++    export class Sub extends Super {
++        constructor() {
++            super('first', 'second');
++        }
++    }

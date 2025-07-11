@@ -1,0 +1,277 @@
+test.js(2,17): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(2,26): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(4,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+test.js(10,2): error TS8008: Type aliases can only be used in TypeScript files.
+test.js(13,39): error TS8006: 'enum' declarations can only be used in TypeScript files.
+test.js(20,2): error TS8006: 'module' declarations can only be used in TypeScript files.
+test.js(25,2): error TS8006: 'module' declarations can only be used in TypeScript files.
+test.js(33,12): error TS8013: Non-null assertions can only be used in TypeScript files.
+test.js(36,23): error TS8016: Type assertion expressions can only be used in TypeScript files.
+test.js(39,17): error TS2741: Property 'name' is missing in type '{}' but required in type 'Config'.
+test.js(39,26): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
+test.js(39,34): error TS8006: 'import type' declarations can only be used in TypeScript files.
+test.js(42,31): error TS2307: Cannot find module './other' or its corresponding type declarations.
+test.js(42,41): error TS8006: 'export type' declarations can only be used in TypeScript files.
+test.js(45,26): error TS8002: 'import ... =' can only be used in TypeScript files.
+test.js(48,22): error TS2307: Cannot find module './lib' or its corresponding type declarations.
+test.js(48,31): error TS8003: 'export =' can only be used in TypeScript files.
+test.js(51,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
+test.js(54,16): error TS8009: The 'public' modifier can only be used in TypeScript files.
+test.js(55,17): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(55,25): error TS8009: The 'private' modifier can only be used in TypeScript files.
+test.js(56,17): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(56,25): error TS8009: The 'protected' modifier can only be used in TypeScript files.
+test.js(57,18): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(57,26): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
+test.js(58,20): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(60,17): error TS8012: Parameter modifiers can only be used in TypeScript files.
+test.js(60,26): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(60,34): error TS8012: Parameter modifiers can only be used in TypeScript files.
+test.js(60,45): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(69,25): error TS8009: The '?' modifier can only be used in TypeScript files.
+test.js(69,27): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(71,2): error TS8017: Signature declarations can only be used in TypeScript files.
+test.js(74,43): error TS8004: Type parameter declarations can only be used in TypeScript files.
+test.js(77,23): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(77,27): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(82,19): error TS2693: 'string' only refers to a type, but is being used as a value here.
+test.js(82,27): error TS1109: Expression expected.
+test.js(85,28): error TS8005: 'implements' clauses can only be used in TypeScript files.
+test.js(90,21): error TS8010: Type annotations can only be used in TypeScript files.
+test.js(92,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
+
+
+==== test.js (41 errors) ====
+    // Type annotations should be flagged as errors
+    function func(x: number): string {
+                    ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+                             ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        return x.toString();
+    }
+     
+    
+    
+    // Interface declarations should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    interface Person {
+    ~~~~~~~~~~~~~~~~~~
+        name: string;
+    ~~~~~~~~~~~~~~~~~
+        age: number;
+    ~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
+     
+    
+    
+    // Type alias declarations should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    type StringOrNumber = string | number;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8008: Type aliases can only be used in TypeScript files.
+                                          
+    
+    
+    // Enum declarations should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    enum Color {
+    ~~~~~~~~~~~~
+        Red,
+    ~~~~~~~~
+        Green,
+    ~~~~~~~~~~
+        Blue
+    ~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'enum' declarations can only be used in TypeScript files.
+     
+    
+    
+    // Module declarations should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    module MyModule {
+    ~~~~~~~~~~~~~~~~~
+        export var x = 1;
+    ~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'module' declarations can only be used in TypeScript files.
+     
+    
+    
+    // Namespace declarations should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    namespace MyNamespace {
+    ~~~~~~~~~~~~~~~~~~~~~~~
+        export var y = 2;
+    ~~~~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'module' declarations can only be used in TypeScript files.
+    
+    // Non-null assertions should be flagged as errors
+    let value = getValue()!;
+               ~~~~~~~~~~~~
+!!! error TS8013: Non-null assertions can only be used in TypeScript files.
+    
+    // Type assertions should be flagged as errors
+    let result = (value as string).toUpperCase();
+                          ~~~~~~~
+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
+    
+    // Satisfies expressions should be flagged as errors
+    let config = {} satisfies Config;
+                    ~~~~~~~~~
+!!! error TS2741: Property 'name' is missing in type '{}' but required in type 'Config'.
+!!! related TS2728 test.js:95:5: 'name' is declared here.
+                             ~~~~~~~
+!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
+                                     
+    
+    
+    // Import type should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    import type { SomeType } from './other';
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'import type' declarations can only be used in TypeScript files.
+                                  ~~~~~~~~~
+!!! error TS2307: Cannot find module './other' or its corresponding type declarations.
+                                            
+    
+    
+    // Export type should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    export type { SomeType };
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8006: 'export type' declarations can only be used in TypeScript files.
+                             
+    
+    
+    // Import equals should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    import lib = require('./lib');
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8002: 'import ... =' can only be used in TypeScript files.
+                         ~~~~~~~
+!!! error TS2307: Cannot find module './lib' or its corresponding type declarations.
+                                  
+    
+    
+    // Export equals should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    export = MyModule;
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS8003: 'export =' can only be used in TypeScript files.
+    ~~~~~~~~~~~~~~~~~~
+!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
+    
+    // TypeScript modifiers should be flagged as errors
+    class MyClass {
+                   
+        public name: string;
+    ~~~~~~~~~~
+!!! error TS8009: The 'public' modifier can only be used in TypeScript files.
+                    ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+                            
+        private age: number;
+    ~~~~~~~~~~~
+!!! error TS8009: The 'private' modifier can only be used in TypeScript files.
+                    ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+                            
+        protected id: number;
+    ~~~~~~~~~~~~~
+!!! error TS8009: The 'protected' modifier can only be used in TypeScript files.
+                     ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+                             
+        readonly value: number;
+    ~~~~~~~~~~~~
+!!! error TS8009: The 'readonly' modifier can only be used in TypeScript files.
+                       ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        
+        constructor(public x: number, private y: number) {
+                    ~~~~~~
+!!! error TS8012: Parameter modifiers can only be used in TypeScript files.
+                             ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+                                     ~~~~~~~~
+!!! error TS8012: Parameter modifiers can only be used in TypeScript files.
+                                                ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+            this.name = '';
+            this.age = 0;
+            this.id = 0;
+            this.value = 0;
+        }
+    }
+    
+    // Optional parameters should be flagged as errors
+    function optionalParam(x?: number) {
+                            ~
+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
+                              ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        return x || 0;
+    }
+     
+    
+    
+    // Signature declarations should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    function signatureOnly(x: number): string;
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8017: Signature declarations can only be used in TypeScript files.
+                                              
+    
+    
+    // Type parameters should be flagged as errors
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    function generic<T>(x: T): T {
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                          ~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+                              ~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        return x;
+    ~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+    
+    // Type arguments should be flagged as errors
+    let array = Array<string>();
+                      ~~~~~~
+!!! error TS2693: 'string' only refers to a type, but is being used as a value here.
+                              ~
+!!! error TS1109: Expression expected.
+    
+    // Implements clause should be flagged as errors
+    class MyClassWithImplements implements Person {
+                               ~~~~~~~~~~~~~~~~~~
+!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
+        name = '';
+        age = 0;
+    }
+    
+    function getValue(): any {
+                        ~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+        return null;
+    }
+     
+    
+    
+    interface Config {
+    ~~~~~~~~~~~~~~~~~~
+        name: string;
+    ~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8006: 'interface' declarations can only be used in TypeScript files.

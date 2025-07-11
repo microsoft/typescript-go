@@ -1,12 +1,31 @@
 mod1.js(2,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 mod1.js(9,12): error TS2304: Cannot find name 'Type1'.
+mod1.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod1.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod1.js(11,14): error TS8010: Type annotations can only be used in TypeScript files.
+mod2.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod2.js(12,14): error TS8010: Type annotations can only be used in TypeScript files.
 mod3.js(4,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 mod3.js(10,12): error TS2304: Cannot find name 'StringOrNumber1'.
+mod3.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod3.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod3.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod3.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod3.js(14,14): error TS8010: Type annotations can only be used in TypeScript files.
 mod4.js(4,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
+mod4.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod4.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod4.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod4.js(14,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod4.js(15,14): error TS8010: Type annotations can only be used in TypeScript files.
+mod5.js(14,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod5.js(15,14): error TS8010: Type annotations can only be used in TypeScript files.
+mod6.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
+mod6.js(13,14): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== mod1.js (2 errors) ====
+==== mod1.js (5 errors) ====
     /** 
      * @typedef {function(string): boolean}
                  ~~~~~~~~
@@ -21,14 +40,20 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
      * @param {Type1} func The function to call.
                ~~~~~
 !!! error TS2304: Cannot find name 'Type1'.
+               ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {string} arg The argument to call it with.
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {boolean} The return.
+                 ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function callIt(func, arg) {
       return func(arg);
     }
     
-==== mod2.js (0 errors) ====
+==== mod2.js (2 errors) ====
     /** 
      * @typedef {{
      *   num: number,
@@ -40,13 +65,17 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
     /**
      * Makes use of a type with a multiline type expression.
      * @param {Type2} obj The object.
+               ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string|number} The return.
+                 ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function check(obj) {
       return obj.boo ? obj.num : obj.str;
     }
     
-==== mod3.js (2 errors) ====
+==== mod3.js (7 errors) ====
     /**
      * A function whose signature is very long.
      *
@@ -62,16 +91,26 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
      * @param {StringOrNumber1} func The function.
                ~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'StringOrNumber1'.
+               ~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {boolean} bool The condition.
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {string} str The string.
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {number} num The number.
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string|number} The return.
+                 ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function use1(func, bool, str, num) {
       return func(bool, str, num)
     }
     
-==== mod4.js (2 errors) ====
+==== mod4.js (7 errors) ====
     /**
      * A function whose signature is very long.
      *
@@ -88,16 +127,26 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
      * @param {StringOrNumber2} func The function.
                ~~~~~~~~~~~~~~~
 !!! error TS2304: Cannot find name 'StringOrNumber2'.
+               ~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {boolean} bool The condition.
+               ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {string} str The string.
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {number} num The number.
+               ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string|number} The return.
+                 ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function use2(func, bool, str, num) {
       return func(bool, str, num)
     }
     
-==== mod5.js (0 errors) ====
+==== mod5.js (2 errors) ====
     /** 
      * @typedef {{
      *   num:
@@ -112,13 +161,17 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
     /**
      * Makes use of a type with a multiline type expression.
      * @param {Type5} obj The object.
+               ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string|number} The return.
+                 ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function check5(obj) {
       return obj.boo ? obj.num : obj.str;
     }
     
-==== mod6.js (0 errors) ====
+==== mod6.js (2 errors) ====
     /** 
      * @typedef {{
      *   foo:
@@ -131,7 +184,11 @@ mod4.js(11,12): error TS2304: Cannot find name 'StringOrNumber2'.
     /**
      * Makes use of a type with a multiline type expression.
      * @param {Type6} obj The object.
+               ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {*} The return.
+                 ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function check6(obj) {
       return obj.foo;

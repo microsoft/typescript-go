@@ -1,0 +1,13 @@
+index.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== index.js (1 errors) ====
+    /**
+     * @param {Array<*>} list
+               ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     */
+    function thing(list) {
+        return list;
+    }
+    

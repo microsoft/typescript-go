@@ -1,0 +1,11 @@
+bug25097.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== bug25097.js (1 errors) ====
+    /** @type {C | null} */
+               ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    const c = null
+    class C {
+    }
+    

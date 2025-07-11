@@ -1,0 +1,28 @@
+38572.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
+38572.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
+38572.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== 38572.js (3 errors) ====
+    /**
+    ~~~
+     * @template T
+    ~~~~~~~~~~~~~~
+     * @param {T} a
+    ~~~~~~~~~~~~~~~
+               ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     * @param {{[K in keyof T]: (value: T[K]) => void }} b
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+     */
+    ~~~
+    function f(a, b) {
+    ~~~~~~~~~~~~~~~~~~
+    }
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
+    
+    f({ x: 42 }, { x(param) { param.toFixed() } });
+    

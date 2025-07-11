@@ -3,12 +3,15 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +foo.js(1,13): error TS2749: 'Image' refers to a value, but is being used as a type here. Did you mean 'typeof Image'?
++foo.js(1,13): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== foo.js (1 errors) ====
++==== foo.js (2 errors) ====
 +    /** @param {Image} image */
 +                ~~~~~
 +!!! error TS2749: 'Image' refers to a value, but is being used as a type here. Did you mean 'typeof Image'?
++                ~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function process(image) {
 +        return new image(1, 1)
 +    }

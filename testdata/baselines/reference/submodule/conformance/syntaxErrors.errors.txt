@@ -1,0 +1,18 @@
+badTypeArguments.js(4,13): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== dummyType.d.ts (0 errors) ====
+    declare class C<T> { t: T }
+    
+==== badTypeArguments.js (1 errors) ====
+    /** @param {C.<>} x */
+    /** @param {C.<number,>} y */
+    // @ts-ignore
+    /** @param {C.<number,>} skipped */
+                ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+    function f(x, y, skipped) {
+        return x.t + y.t;
+    }
+    var x = f({ t: 1000 }, { t: 3000 }, { t: 5000 });
+    

@@ -1,0 +1,27 @@
+--- old.annotatedThisPropertyInitializerDoesntNarrow.errors.txt
++++ new.annotatedThisPropertyInitializerDoesntNarrow.errors.txt
+@@= skipped -0, +0 lines =@@
+-<no content>
++Compilation.js(2,13): error TS8010: Type annotations can only be used in TypeScript files.
++Compilation.js(7,33): error TS8010: Type annotations can only be used in TypeScript files.
++
++
++==== Compilation.js (2 errors) ====
++    // from webpack/lib/Compilation.js and filed at #26427
++    /** @param {{ [s: string]: number }} map */
++                ~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++    function mappy(map) {}
++    
++    export class C {
++        constructor() {
++            /** @type {{ [assetName: string]: number}} */
++                                    ~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
++            this.assets = {};
++        }
++        m() {
++            mappy(this.assets)
++        }
++    }
++    

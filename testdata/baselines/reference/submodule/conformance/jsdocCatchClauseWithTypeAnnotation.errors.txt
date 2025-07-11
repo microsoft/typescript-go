@@ -1,15 +1,36 @@
+foo.js(11,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(12,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(13,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(14,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(16,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(17,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(18,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(19,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(20,31): error TS8010: Type annotations can only be used in TypeScript files.
 foo.js(20,54): error TS2339: Property 'foo' does not exist on type 'unknown'.
+foo.js(21,31): error TS8010: Type annotations can only be used in TypeScript files.
 foo.js(21,54): error TS2339: Property 'foo' does not exist on type 'unknown'.
 foo.js(22,31): error TS1196: Catch clause variable type annotation must be 'any' or 'unknown' if specified.
+foo.js(22,31): error TS8010: Type annotations can only be used in TypeScript files.
 foo.js(23,31): error TS1196: Catch clause variable type annotation must be 'any' or 'unknown' if specified.
+foo.js(23,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(27,23): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(34,14): error TS8010: Type annotations can only be used in TypeScript files.
 foo.js(35,7): error TS2492: Cannot redeclare identifier 'err' in catch clause.
+foo.js(39,14): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(44,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(45,31): error TS8010: Type annotations can only be used in TypeScript files.
+foo.js(46,31): error TS8010: Type annotations can only be used in TypeScript files.
 foo.js(46,45): error TS2339: Property 'x' does not exist on type '{}'.
+foo.js(47,31): error TS8010: Type annotations can only be used in TypeScript files.
 foo.js(47,45): error TS2339: Property 'x' does not exist on type '{}'.
 foo.js(48,31): error TS1196: Catch clause variable type annotation must be 'any' or 'unknown' if specified.
+foo.js(48,31): error TS8010: Type annotations can only be used in TypeScript files.
 foo.js(49,31): error TS1196: Catch clause variable type annotation must be 'any' or 'unknown' if specified.
+foo.js(49,31): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== foo.js (9 errors) ====
+==== foo.js (30 errors) ====
     /**
      * @typedef {any} Any
      */
@@ -21,30 +42,56 @@ foo.js(49,31): error TS1196: Catch clause variable type annotation must be 'any'
     function fn() {
         try { } catch (x) { }                                            // should be OK
         try { } catch (/** @type {any} */ err) { }                       // should be OK
+                                  ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {Any} */ err) { }                       // should be OK
+                                  ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {unknown} */ err) { }                   // should be OK
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {Unknown} */ err) { }                   // should be OK
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (err) { err.foo; }                                 // should be OK
         try { } catch (/** @type {any} */ err) { err.foo; }              // should be OK
+                                  ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {Any} */ err) { err.foo; }              // should be OK
+                                  ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {unknown} */ err) { console.log(err); } // should be OK
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {Unknown} */ err) { console.log(err); } // should be OK
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {unknown} */ err) { err.foo; }          // error in the body
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
                                                          ~~~
 !!! error TS2339: Property 'foo' does not exist on type 'unknown'.
         try { } catch (/** @type {Unknown} */ err) { err.foo; }          // error in the body
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
                                                          ~~~
 !!! error TS2339: Property 'foo' does not exist on type 'unknown'.
         try { } catch (/** @type {Error} */ err) { }                     // error in the type
                                   ~~~~~
 !!! error TS1196: Catch clause variable type annotation must be 'any' or 'unknown' if specified.
+                                  ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {object} */ err) { }                    // error in the type
                                   ~~~~~~
 !!! error TS1196: Catch clause variable type annotation must be 'any' or 'unknown' if specified.
+                                  ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     
         try { console.log(); }
         // @ts-ignore
         catch (/** @type {number} */ err) { // e should not be a `number`
+                          ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
             console.log(err.toLowerCase());
         }
     
@@ -52,6 +99,8 @@ foo.js(49,31): error TS1196: Catch clause variable type annotation must be 'any'
     	try { }
     	catch (err) {
     		/** @type {string} */
+    		           ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     		let err;
     		    ~~~
 !!! error TS2492: Cannot redeclare identifier 'err' in catch clause.
@@ -59,23 +108,37 @@ foo.js(49,31): error TS1196: Catch clause variable type annotation must be 'any'
     	try { }
     	catch (err) {
     		/** @type {boolean} */
+    		           ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     		var err;
     	}
     
         try { } catch ({ x }) { }                                        // should be OK
         try { } catch (/** @type {any} */ { x }) { x.foo; }              // should be OK
+                                  ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {Any} */ { x }) { x.foo;}               // should be OK
+                                  ~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {unknown} */ { x }) { console.log(x); } // error in the destructure
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
                                                 ~
 !!! error TS2339: Property 'x' does not exist on type '{}'.
         try { } catch (/** @type {Unknown} */ { x }) { console.log(x); } // error in the destructure
+                                  ~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
                                                 ~
 !!! error TS2339: Property 'x' does not exist on type '{}'.
         try { } catch (/** @type {Error} */ { x }) { }                   // error in the type
                                   ~~~~~
 !!! error TS1196: Catch clause variable type annotation must be 'any' or 'unknown' if specified.
+                                  ~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         try { } catch (/** @type {object} */ { x }) { }                  // error in the type
                                   ~~~~~~
 !!! error TS1196: Catch clause variable type annotation must be 'any' or 'unknown' if specified.
+                                  ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     }
     

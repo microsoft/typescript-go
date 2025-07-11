@@ -1,6 +1,8 @@
+a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 a.js(8,16): error TS2315: Type 'Object' is not generic.
 a.js(9,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 a.js(16,36): error TS7006: Parameter 'key' implicitly has an 'any' type.
+a.js(26,16): error TS8004: Type parameter declarations can only be used in TypeScript files.
 a.js(27,16): error TS2315: Type 'Object' is not generic.
 a.js(28,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 a.js(35,37): error TS7006: Parameter 'key' implicitly has an 'any' type.
@@ -9,21 +11,32 @@ a.js(48,10): error TS2339: Property '_map' does not exist on type '{ Multimap3: 
 a.js(55,40): error TS7006: Parameter 'key' implicitly has an 'any' type.
 
 
-==== a.js (9 errors) ====
+==== a.js (11 errors) ====
     /**
+    ~~~
      * Should work for function declarations
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * @constructor
+    ~~~~~~~~~~~~~~~
      * @template {string} K
+    ~~~~~~~~~~~~~~~~~~~~~~~
      * @template V
+    ~~~~~~~~~~~~~~
      */
+    ~~~
     function Multimap() {
+    ~~~~~~~~~~~~~~~~~~~~~
         /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                    ~~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
         this._map = {};
+    ~~~~~~~~~~~~~~~~~~~
         ~~~~
 !!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
     };
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     /**
      * @param {K} key the key ok
@@ -42,13 +55,18 @@ a.js(55,40): error TS7006: Parameter 'key' implicitly has an 'any' type.
      * @template V
      */
     var Multimap2 = function() {
+                   ~~~~~~~~~~~~~
         /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                    ~~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
         this._map = {};
+    ~~~~~~~~~~~~~~~~~~~
         ~~~~
 !!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
     };
+    ~
+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     /**
      * @param {K} key the key ok

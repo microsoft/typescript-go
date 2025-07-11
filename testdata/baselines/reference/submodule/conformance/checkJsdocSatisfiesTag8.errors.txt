@@ -1,8 +1,9 @@
 /a.js(1,15): error TS2315: Type 'Object' is not generic.
 /a.js(1,21): error TS8020: JSDoc types can only be used inside documentation comments.
+/a.js(4,27): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 
 
-==== /a.js (2 errors) ====
+==== /a.js (3 errors) ====
     /** @typedef {Object.<string, boolean>} Facts */
                   ~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
@@ -11,6 +12,8 @@
     
     // Should be able to detect a failure here
     const x = /** @satisfies {Facts} */ ({
+                              ~~~~~
+!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
         m: true,
         s: "false"
     })

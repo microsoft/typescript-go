@@ -1,0 +1,71 @@
+index.js(5,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(12,14): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(21,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(28,14): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(36,16): error TS8010: Type annotations can only be used in TypeScript files.
+index.js(46,14): error TS8010: Type annotations can only be used in TypeScript files.
+
+
+==== index.js (6 errors) ====
+    // same type accessors
+    export const obj1 = {
+      /**
+       * my awesome getter (first in source order)
+       * @returns {string}
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+       */
+      get x() {
+        return "";
+      },
+      /** 
+       * my awesome setter (second in source order)
+       * @param {string} a
+                 ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+       */
+      set x(a) {},
+    };
+    
+    // divergent accessors
+    export const obj2 = {
+      /** 
+       * my awesome getter
+       * @returns {string}
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+       */
+      get x() {
+        return "";
+      },
+      /** 
+       * my awesome setter
+       * @param {number} a
+                 ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+       */
+      set x(a) {},
+    };
+    
+    export const obj3 = {
+      /**
+       * my awesome getter
+       * @returns {string}
+                   ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+       */
+      get x() {
+        return "";
+      },
+    };
+    
+    export const obj4 = {
+      /**
+       * my awesome setter
+       * @param {number} a
+                 ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
+       */
+      set x(a) {},
+    };
+    

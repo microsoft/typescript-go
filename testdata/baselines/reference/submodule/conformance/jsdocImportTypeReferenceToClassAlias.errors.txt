@@ -1,4 +1,5 @@
 test.js(1,32): error TS2694: Namespace '"mod1"' has no exported member 'C'.
+test.js(2,13): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== mod1.js (0 errors) ====
@@ -7,11 +8,13 @@ test.js(1,32): error TS2694: Namespace '"mod1"' has no exported member 'C'.
     }
     module.exports.C = C
     
-==== test.js (1 errors) ====
+==== test.js (2 errors) ====
     /** @typedef {import('./mod1').C} X */
                                    ~
 !!! error TS2694: Namespace '"mod1"' has no exported member 'C'.
     /** @param {X} c */
+                ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
     function demo(c) {
         c.s
     }

@@ -1,25 +1,61 @@
+prefixPostfix.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(7,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
+prefixPostfix.js(16,12): error TS8010: Type annotations can only be used in TypeScript files.
 prefixPostfix.js(18,21): error TS7006: Parameter 'a' implicitly has an 'any' type.
 prefixPostfix.js(18,39): error TS7006: Parameter 'h' implicitly has an 'any' type.
 prefixPostfix.js(18,48): error TS7006: Parameter 'k' implicitly has an 'any' type.
 
 
-==== prefixPostfix.js (3 errors) ====
+==== prefixPostfix.js (15 errors) ====
     /**
      * @param {number![]} x - number[]
+               ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {!number[]} y - number[]
+               ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {(number[])!} z - number[]
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {number?[]} a - parse error without parentheses
      * @param {?number[]} b - number[] | null
+               ~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {(number[])?} c - number[] | null
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {...?number} e - (number | null)[]
+               ~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {...number?} f - number[] | null
+               ~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {...number!?} g - number[] | null
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {...number?!} h - parse error without parentheses (also nonsensical)
      * @param {...number[]} i - number[][]
+               ~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {...number![]?} j - number[][] | null
+               ~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {...number?[]!} k - parse error without parentheses
      * @param {number extends number ? true : false} l - conditional types work
+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {[number, number?]} m - [number, (number | undefined)?]
+               ~~~~~~~~~~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function f(x, y, z, a, b, c, e, f, g, h, i, j, k, l, m) {
                         ~

@@ -1,5 +1,7 @@
 other.js(2,11): error TS2503: Cannot find namespace 'Ns'.
+other.js(2,11): error TS8010: Type annotations can only be used in TypeScript files.
 other.js(7,11): error TS2503: Cannot find namespace 'Ns'.
+other.js(7,11): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== prototypePropertyAssignmentMergeAcrossFiles2.js (0 errors) ====
@@ -13,11 +15,13 @@ other.js(7,11): error TS2503: Cannot find namespace 'Ns'.
     Ns.Two.prototype = {
     }
     
-==== other.js (2 errors) ====
+==== other.js (4 errors) ====
     /**
      * @type {Ns.One}
               ~~
 !!! error TS2503: Cannot find namespace 'Ns'.
+              ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     var one;
     one.wat;
@@ -25,6 +29,8 @@ other.js(7,11): error TS2503: Cannot find namespace 'Ns'.
      * @type {Ns.Two}
               ~~
 !!! error TS2503: Cannot find namespace 'Ns'.
+              ~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     var two;
     two.wat;

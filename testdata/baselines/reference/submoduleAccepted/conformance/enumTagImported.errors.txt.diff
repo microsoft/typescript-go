@@ -3,26 +3,35 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +type.js(1,32): error TS2694: Namespace '"mod1"' has no exported member 'TestEnum'.
++type.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
++type.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
 +type.js(4,29): error TS2694: Namespace '"mod1"' has no exported member 'TestEnum'.
 +value.js(2,12): error TS2749: 'TestEnum' refers to a value, but is being used as a type here. Did you mean 'typeof TestEnum'?
++value.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== type.js (2 errors) ====
++==== type.js (4 errors) ====
 +    /** @typedef {import("./mod1").TestEnum} TE */
 +                                   ~~~~~~~~
 +!!! error TS2694: Namespace '"mod1"' has no exported member 'TestEnum'.
 +    /** @type {TE} */
++               ~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    const test = 'add'
 +    /** @type {import("./mod1").TestEnum} */
++               ~~~~~~~~~~~~~~~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +                                ~~~~~~~~
 +!!! error TS2694: Namespace '"mod1"' has no exported member 'TestEnum'.
 +    const tost = 'remove'
 +    
-+==== value.js (1 errors) ====
++==== value.js (2 errors) ====
 +    import { TestEnum } from "./mod1"
 +    /** @type {TestEnum} */
 +               ~~~~~~~~
 +!!! error TS2749: 'TestEnum' refers to a value, but is being used as a type here. Did you mean 'typeof TestEnum'?
++               ~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    const tist = TestEnum.ADD
 +    
 +    

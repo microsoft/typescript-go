@@ -4,9 +4,10 @@
 -<no content>
 +usage.js(2,13): error TS2339: Property 'Message' does not exist on type 'typeof Inner'.
 +usage.js(7,12): error TS2503: Cannot find namespace 'Outer'.
++usage.js(7,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== usage.js (2 errors) ====
++==== usage.js (3 errors) ====
 +    // note that usage is first in the compilation
 +    Outer.Inner.Message = function() {
 +                ~~~~~~~
@@ -18,6 +19,8 @@
 +    /** @type {Outer.Inner} should be instance type, not static type */
 +               ~~~~~
 +!!! error TS2503: Cannot find namespace 'Outer'.
++               ~~~~~~~~~~~
++!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var x;
 +    x.name
 +    
