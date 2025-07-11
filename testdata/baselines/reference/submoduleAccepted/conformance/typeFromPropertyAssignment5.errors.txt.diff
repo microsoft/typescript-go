@@ -3,7 +3,6 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +b.js(3,12): error TS2503: Cannot find namespace 'MC'.
-+b.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
 +==== a.js (0 errors) ====
@@ -13,13 +12,11 @@
 +    }
 +    MyClass.bar
 +    
-+==== b.js (2 errors) ====
++==== b.js (1 errors) ====
 +    import MC from './a'
 +    MC.bar
 +    /** @type {MC.bar} */
 +               ~~
 +!!! error TS2503: Cannot find namespace 'MC'.
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var x
 +    

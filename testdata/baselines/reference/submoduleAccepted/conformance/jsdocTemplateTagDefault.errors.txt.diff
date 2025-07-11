@@ -1,54 +1,26 @@
 --- old.jsdocTemplateTagDefault.errors.txt
 +++ new.jsdocTemplateTagDefault.errors.txt
 @@= skipped -0, +0 lines =@@
-+file.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
-+file.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
  file.js(9,20): error TS2322: Type 'number' is not assignable to type 'string'.
 -file.js(22,34): error TS1005: '=' expected.
 -file.js(27,35): error TS1110: Type expected.
-+file.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
-+file.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
 +file.js(13,21): error TS8004: Type parameter declarations can only be used in TypeScript files.
  file.js(33,14): error TS2706: Required type parameters may not follow optional type parameters.
  file.js(38,17): error TS2744: Type parameter defaults can only reference previously declared type parameters.
-+file.js(46,12): error TS8010: Type annotations can only be used in TypeScript files.
-+file.js(47,12): error TS8010: Type annotations can only be used in TypeScript files.
 +file.js(49,21): error TS8004: Type parameter declarations can only be used in TypeScript files.
  file.js(53,14): error TS2706: Required type parameters may not follow optional type parameters.
-+file.js(54,12): error TS8010: Type annotations can only be used in TypeScript files.
-+file.js(55,12): error TS8010: Type annotations can only be used in TypeScript files.
 +file.js(57,21): error TS8004: Type parameter declarations can only be used in TypeScript files.
  file.js(60,17): error TS2744: Type parameter defaults can only reference previously declared type parameters.
--
--
+
+
 -==== file.js (7 errors) ====
-+file.js(62,12): error TS8010: Type annotations can only be used in TypeScript files.
-+file.js(63,12): error TS8010: Type annotations can only be used in TypeScript files.
-+
-+
-+==== file.js (18 errors) ====
++==== file.js (8 errors) ====
      /**
       * @template {string | number} [T=string] - ok: defaults are permitted
       * @typedef {[T]} A
-      */
-     
-     /** @type {A} */ // ok, default for `T` in `A` is `string`
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     const aDefault1 = [""];
-     /** @type {A} */ // error: `number` is not assignable to string`
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     const aDefault2 = [0];
-                        ~
- !!! error TS2322: Type 'number' is not assignable to type 'string'.
-     /** @type {A<string>} */ // ok, `T` is provided for `A`
-+               ~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
+@@= skipped -22, +23 lines =@@
      const aString = [""];
      /** @type {A<number>} */ // ok, `T` is provided for `A`
-+               ~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
      const aNumber = [0];
 +                        
 +    
@@ -125,12 +97,8 @@
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       * @param {T} a
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {U} b
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
 +    ~~~
      function f1(a, b) {}
@@ -149,12 +117,8 @@
  !!! error TS2706: Required type parameters may not follow optional type parameters.
       * @param {T} a
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {U} b
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
 +    ~~~
      function f2(a, b) {}
@@ -173,12 +137,8 @@
 +    ~~~~~~~~~~~~~~~~~~
       * @param {T} a
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {U} b
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
 +    ~~~
      function f3(a, b) {}

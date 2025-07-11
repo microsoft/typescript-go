@@ -1,47 +1,23 @@
-jsFileFunctionOverloads2.js(3,5): error TS8017: Signature declarations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(7,5): error TS8017: Signature declarations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(11,5): error TS8017: Signature declarations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(16,14): error TS8010: Type annotations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(24,12): error TS8010: Type annotations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(25,14): error TS8010: Type annotations can only be used in TypeScript files.
 jsFileFunctionOverloads2.js(27,17): error TS8004: Type parameter declarations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(32,5): error TS8017: Signature declarations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(37,5): error TS8017: Signature declarations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(41,12): error TS8010: Type annotations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(42,12): error TS8010: Type annotations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(43,14): error TS8010: Type annotations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(46,14): error TS8010: Type annotations can only be used in TypeScript files.
-jsFileFunctionOverloads2.js(49,31): error TS8016: Type assertion expressions can only be used in TypeScript files.
 
 
-==== jsFileFunctionOverloads2.js (15 errors) ====
+==== jsFileFunctionOverloads2.js (1 errors) ====
     // Also works if all @overload tags are combined in one comment.
     /**
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {number} x
      * @returns {'number'}
      *
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {string} x
      * @returns {'string'}
      *
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {boolean} x
      * @returns {'boolean'}
      *
      * @param {unknown} x
-               ~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string}
-                 ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
      function getTypeName(x) {
       return typeof x;
@@ -50,11 +26,7 @@ jsFileFunctionOverloads2.js(49,31): error TS8016: Type assertion expressions can
     /**
      * @template T
      * @param {T} x 
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T}
-                 ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const identity = x => x;
                     ~~~~~~~
@@ -64,37 +36,23 @@ jsFileFunctionOverloads2.js(49,31): error TS8016: Type assertion expressions can
      * @template T
      * @template U
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {T[]} array 
      * @param {(x: T) => U[]} iterable 
      * @returns {U[]}
      *
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {T[][]} array
      * @returns {T[]}
      *
      * @param {unknown[]} array 
-               ~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {(x: unknown) => unknown} iterable 
-               ~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {unknown[]}
-                 ~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function flatMap(array, iterable = identity) {
       /** @type {unknown[]} */
-                 ~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
       const result = [];
       for (let i = 0; i < array.length; i += 1) {
         result.push(.../** @type {unknown[]} */(iterable(array[i])));
-                                  ~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
       }
       return result;
     }

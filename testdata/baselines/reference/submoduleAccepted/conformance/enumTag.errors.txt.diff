@@ -4,24 +4,14 @@
 -a.js(6,5): error TS2322: Type 'number' is not assignable to type 'string'.
 -a.js(12,5): error TS2322: Type 'string' is not assignable to type 'number'.
 +a.js(24,13): error TS2749: 'Target' refers to a value, but is being used as a type here. Did you mean 'typeof Target'?
-+a.js(24,13): error TS8010: Type annotations can only be used in TypeScript files.
 +a.js(25,12): error TS2749: 'Second' refers to a value, but is being used as a type here. Did you mean 'typeof Second'?
-+a.js(25,12): error TS8010: Type annotations can only be used in TypeScript files.
 +a.js(26,12): error TS2749: 'Fs' refers to a value, but is being used as a type here. Did you mean 'typeof Fs'?
-+a.js(26,12): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(29,16): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(31,16): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(33,16): error TS8010: Type annotations can only be used in TypeScript files.
 +a.js(35,16): error TS2749: 'Target' refers to a value, but is being used as a type here. Did you mean 'typeof Target'?
-+a.js(35,16): error TS8010: Type annotations can only be used in TypeScript files.
  a.js(37,16): error TS2339: Property 'UNKNOWN' does not exist on type '{ START: string; MIDDLE: string; END: string; MISTAKE: number; OK_I_GUESS: number; }'.
--
--
+
+
 -==== a.js (3 errors) ====
-+a.js(41,13): error TS8010: Type annotations can only be used in TypeScript files.
-+
-+
-+==== a.js (13 errors) ====
++==== a.js (5 errors) ====
      /** @enum {string} */
      const Target = {
          START: "start",
@@ -41,52 +31,27 @@
          OK: 1,
          /** @type {number} */
          FINE: 2,
-@@= skipped -31, +37 lines =@@
+@@= skipped -31, +29 lines =@@
      }
      
      /** @param {Target} t
 +                ~~~~~~
 +!!! error TS2749: 'Target' refers to a value, but is being used as a type here. Did you mean 'typeof Target'?
-+                ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {Second} s
 +               ~~~~~~
 +!!! error TS2749: 'Second' refers to a value, but is being used as a type here. Did you mean 'typeof Second'?
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {Fs} f
 +               ~~
 +!!! error TS2749: 'Fs' refers to a value, but is being used as a type here. Did you mean 'typeof Fs'?
-+               ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
      function consume(t,s,f) {
          /** @type {string} */
-+                   ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-         var str = t
-         /** @type {number} */
-+                   ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-         var num = s
+@@= skipped -11, +17 lines =@@
          /** @type {(n: number) => number} */
-+                   ~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
          var fun = f
          /** @type {Target} */
 +                   ~~~~~~
 +!!! error TS2749: 'Target' refers to a value, but is being used as a type here. Did you mean 'typeof Target'?
-+                   ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
          var v = Target.START
          v = Target.UNKNOWN // error, can't find 'UNKNOWN'
                     ~~~~~~~
-@@= skipped -19, +41 lines =@@
-         v = 'something else' // allowed, like Typescript's classic enums and unlike its string enums
-     }
-     /** @param {string} s */
-+                ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     function ff(s) {
-         // element access with arbitrary string is an error only with noImplicitAny
-         if (!Target[s]) {

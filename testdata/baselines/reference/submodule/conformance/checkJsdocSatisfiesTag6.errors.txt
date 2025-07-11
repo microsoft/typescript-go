@@ -1,8 +1,7 @@
-/a.js(8,27): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 /a.js(14,11): error TS2339: Property 'y' does not exist on type '{ x: number; }'.
 
 
-==== /a.js (2 errors) ====
+==== /a.js (1 errors) ====
     /**
      * @typedef {Object} Point2d
      * @property {number} x
@@ -11,8 +10,6 @@
     
     // Undesirable behavior today with type annotation
     const a = /** @satisfies {Partial<Point2d>} */ ({ x: 10 });
-                              ~~~~~~~~~~~~~~~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
     
     // Should OK
     console.log(a.x.toFixed());

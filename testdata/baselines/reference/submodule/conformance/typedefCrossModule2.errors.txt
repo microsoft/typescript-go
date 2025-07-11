@@ -6,25 +6,19 @@ mod1.js(10,1): error TS2309: An export assignment cannot be used in a module wit
 mod1.js(20,9): error TS2339: Property 'Quid' does not exist on type 'typeof import("mod1")'.
 mod1.js(23,1): error TS2300: Duplicate identifier 'export='.
 mod1.js(24,5): error TS2353: Object literal may only specify known properties, and 'Quack' does not exist in type '{ Baz: typeof Baz; }'.
-use.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 use.js(2,32): error TS2694: Namespace '"mod1".export=' has no exported member 'Baz'.
 use.js(4,12): error TS2503: Cannot find namespace 'mod'.
-use.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== use.js (4 errors) ====
+==== use.js (2 errors) ====
     var mod = require('./mod1.js');
     /** @type {import("./mod1.js").Baz} */
-               ~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                                    ~~~
 !!! error TS2694: Namespace '"mod1".export=' has no exported member 'Baz'.
     var b;
     /** @type {mod.Baz} */
                ~~~
 !!! error TS2503: Cannot find namespace 'mod'.
-               ~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var bb;
     var bbb = new mod.Baz();
     

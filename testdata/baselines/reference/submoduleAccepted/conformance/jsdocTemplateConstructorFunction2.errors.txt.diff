@@ -3,22 +3,14 @@
 @@= skipped -0, +0 lines =@@
 -templateTagWithNestedTypeLiteral.js(21,1): error TS2322: Type 'boolean' is not assignable to type 'number'.
 +templateTagWithNestedTypeLiteral.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+templateTagWithNestedTypeLiteral.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
-+templateTagWithNestedTypeLiteral.js(22,12): error TS8010: Type annotations can only be used in TypeScript files.
  templateTagWithNestedTypeLiteral.js(28,15): error TS2304: Cannot find name 'T'.
--
--
--==== templateTagWithNestedTypeLiteral.js (2 errors) ====
-+templateTagWithNestedTypeLiteral.js(30,12): error TS8010: Type annotations can only be used in TypeScript files.
-+
-+
-+==== templateTagWithNestedTypeLiteral.js (5 errors) ====
+
+
+ ==== templateTagWithNestedTypeLiteral.js (2 errors) ====
      /**
 +    ~~~
       * @param {T} t
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @template T
 +    ~~~~~~~~~~~~~~
       */
@@ -37,23 +29,12 @@
      /**
       * @param {T} v
       * @param {object} o
-@@= skipped -23, +38 lines =@@
+@@= skipped -23, +33 lines =@@
      var z = new Zet(1)
      z.t = 2
      z.u = false
 -    ~~~
 -!!! error TS2322: Type 'boolean' is not assignable to type 'number'.
      /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
      let answer = z.add(3, { nested: 4 })
-     
-     // lookup in typedef should not crash the compiler, even when the type is unknown
-@@= skipped -13, +13 lines =@@
- !!! error TS2304: Cannot find name 'T'.
-      */
-     /** @type {A} */
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     const options = { value: null };
      

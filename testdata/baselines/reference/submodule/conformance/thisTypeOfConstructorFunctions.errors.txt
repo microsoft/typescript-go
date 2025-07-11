@@ -1,18 +1,12 @@
 thisTypeOfConstructorFunctions.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-thisTypeOfConstructorFunctions.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
 thisTypeOfConstructorFunctions.js(15,18): error TS2526: A 'this' type is available only in a non-static member of a class or interface.
-thisTypeOfConstructorFunctions.js(15,18): error TS8010: Type annotations can only be used in TypeScript files.
 thisTypeOfConstructorFunctions.js(19,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
-thisTypeOfConstructorFunctions.js(24,12): error TS8010: Type annotations can only be used in TypeScript files.
 thisTypeOfConstructorFunctions.js(38,12): error TS2749: 'Cpp' refers to a value, but is being used as a type here. Did you mean 'typeof Cpp'?
-thisTypeOfConstructorFunctions.js(38,12): error TS8010: Type annotations can only be used in TypeScript files.
 thisTypeOfConstructorFunctions.js(41,12): error TS2749: 'Cp' refers to a value, but is being used as a type here. Did you mean 'typeof Cp'?
-thisTypeOfConstructorFunctions.js(41,12): error TS8010: Type annotations can only be used in TypeScript files.
 thisTypeOfConstructorFunctions.js(43,12): error TS2749: 'Cp' refers to a value, but is being used as a type here. Did you mean 'typeof Cp'?
-thisTypeOfConstructorFunctions.js(43,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== thisTypeOfConstructorFunctions.js (12 errors) ====
+==== thisTypeOfConstructorFunctions.js (6 errors) ====
     /**
     ~~~
      * @class
@@ -21,8 +15,6 @@ thisTypeOfConstructorFunctions.js(43,12): error TS8010: Type annotations can onl
     ~~~~~~~~~~~~~~
      * @param {T} t
     ~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function Cp(t) {
@@ -45,8 +37,6 @@ thisTypeOfConstructorFunctions.js(43,12): error TS8010: Type annotations can onl
         /** @return {this} */
                      ~~~~
 !!! error TS2526: A 'this' type is available only in a non-static member of a class or interface.
-                     ~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         m4() {
             this.z = this.y; return this
         }
@@ -62,8 +52,6 @@ thisTypeOfConstructorFunctions.js(43,12): error TS8010: Type annotations can onl
     ~~~~~~~~~~~~~~
      * @param {T} t
     ~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function Cpp(t) {
@@ -85,21 +73,15 @@ thisTypeOfConstructorFunctions.js(43,12): error TS8010: Type annotations can onl
     /** @type {Cpp<number>} */
                ~~~
 !!! error TS2749: 'Cpp' refers to a value, but is being used as a type here. Did you mean 'typeof Cpp'?
-               ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var cppn = cpp.m2()
     
     /** @type {Cp<number>} */
                ~~
 !!! error TS2749: 'Cp' refers to a value, but is being used as a type here. Did you mean 'typeof Cp'?
-               ~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var cpn = cp.m3()
     /** @type {Cp<number>} */
                ~~
 !!! error TS2749: 'Cp' refers to a value, but is being used as a type here. Did you mean 'typeof Cp'?
-               ~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var cpn = cp.m4()
     
     

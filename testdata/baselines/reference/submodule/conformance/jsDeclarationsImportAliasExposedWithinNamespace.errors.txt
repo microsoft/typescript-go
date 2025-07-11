@@ -1,27 +1,21 @@
 file.js(4,11): error TS2315: Type 'Object' is not generic.
-file.js(4,11): error TS8010: Type annotations can only be used in TypeScript files.
 file.js(10,51): error TS2300: Duplicate identifier 'myTypes'.
 file.js(13,13): error TS2300: Duplicate identifier 'myTypes'.
 file.js(14,15): error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
 file.js(18,15): error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
 file.js(18,39): error TS2300: Duplicate identifier 'myTypes'.
 file2.js(6,11): error TS2315: Type 'Object' is not generic.
-file2.js(6,11): error TS8010: Type annotations can only be used in TypeScript files.
 file2.js(12,23): error TS2702: 'myTypes' only refers to a type, but is being used as a namespace here.
 file2.js(17,12): error TS2702: 'testFnTypes' only refers to a type, but is being used as a namespace here.
-file2.js(17,12): error TS8010: Type annotations can only be used in TypeScript files.
-file2.js(18,14): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== file.js (7 errors) ====
+==== file.js (6 errors) ====
     /**
      * @namespace myTypes
      * @global
      * @type {Object<string,*>}
               ~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
-              ~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const myTypes = {
         // SOME PROPS HERE
@@ -48,7 +42,7 @@ file2.js(18,14): error TS8010: Type annotations can only be used in TypeScript f
 !!! error TS2300: Duplicate identifier 'myTypes'.
     
     export {myTypes};
-==== file2.js (6 errors) ====
+==== file2.js (3 errors) ====
     import {myTypes} from './file.js';
     
     /**
@@ -57,8 +51,6 @@ file2.js(18,14): error TS8010: Type annotations can only be used in TypeScript f
      * @type {Object<string,*>}
               ~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
-              ~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const testFnTypes = {
         // SOME PROPS HERE
@@ -74,11 +66,7 @@ file2.js(18,14): error TS8010: Type annotations can only be used in TypeScript f
      * @param {testFnTypes.input} input - Input.
                ~~~~~~~~~~~
 !!! error TS2702: 'testFnTypes' only refers to a type, but is being used as a namespace here.
-               ~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {number|null} Result.
-                 ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function testFn(input) {
         if (typeof input === 'number') {

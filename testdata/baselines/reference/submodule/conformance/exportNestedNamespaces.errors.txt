@@ -1,9 +1,7 @@
 mod.js(2,11): error TS2339: Property 'K' does not exist on type '{}'.
 use.js(3,17): error TS2339: Property 'K' does not exist on type '{}'.
-use.js(8,13): error TS8010: Type annotations can only be used in TypeScript files.
 use.js(8,15): error TS2694: Namespace '"mod"' has no exported member 'n'.
 use.js(9,13): error TS2749: 's.Classic' refers to a value, but is being used as a type here. Did you mean 'typeof s.Classic'?
-use.js(9,13): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== mod.js (1 errors) ====
@@ -19,7 +17,7 @@ use.js(9,13): error TS8010: Type annotations can only be used in TypeScript file
         }
     }
     
-==== use.js (5 errors) ====
+==== use.js (3 errors) ====
     import * as s from './mod'
     
     var k = new s.n.K()
@@ -30,15 +28,11 @@ use.js(9,13): error TS8010: Type annotations can only be used in TypeScript file
     
     
     /** @param {s.n.K} c
-                ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                   ~
 !!! error TS2694: Namespace '"mod"' has no exported member 'n'.
         @param {s.Classic} classic */
                 ~~~~~~~~~
 !!! error TS2749: 's.Classic' refers to a value, but is being used as a type here. Did you mean 'typeof s.Classic'?
-                ~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     function f(c, classic) {
         c.x
         classic.p

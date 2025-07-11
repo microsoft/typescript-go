@@ -1,15 +1,10 @@
-/a.js(2,17): error TS8005: 'implements' clauses can only be used in TypeScript files.
 /a.js(3,7): error TS2720: Class 'B' incorrectly implements class 'A'. Did you mean to extend 'A' and inherit its members as a subclass?
   Property 'x' is missing in type 'B' but required in type 'A'.
-/a.js(5,17): error TS8005: 'implements' clauses can only be used in TypeScript files.
-/a.js(10,18): error TS8005: 'implements' clauses can only be used in TypeScript files.
 
 
-==== /a.js (4 errors) ====
+==== /a.js (1 errors) ====
     class A { constructor() { this.x = 0; } }
     /** @implements A*/
-                    ~
-!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
     class B {}
           ~
 !!! error TS2720: Class 'B' incorrectly implements class 'A'. Did you mean to extend 'A' and inherit its members as a subclass?
@@ -17,15 +12,11 @@
 !!! related TS2728 /a.js:1:27: 'x' is declared here.
     
     /** @implements A*/
-                    ~
-!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
     class B2 {
         x = 10
     }
     
     /** @implements {A}*/
-                     ~
-!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
     class B3 {
         constructor() { this.x = 10 }
     }

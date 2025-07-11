@@ -3,14 +3,10 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +/a.js(1,17): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+/a.js(4,15): error TS8010: Type annotations can only be used in TypeScript files.
-+/a.js(5,17): error TS8010: Type annotations can only be used in TypeScript files.
 +/a.js(9,6): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+/a.js(13,15): error TS8010: Type annotations can only be used in TypeScript files.
-+/a.js(14,17): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== /a.js (6 errors) ====
++==== /a.js (2 errors) ====
 +    export class C {
 +                    
 +        /**
@@ -19,12 +15,8 @@
 +    ~~~~~~~~~~~~~~~~~~
 +         * @this {T}
 +    ~~~~~~~~~~~~~~~~
-+                  ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         * @return {T}
 +    ~~~~~~~~~~~~~~~~~~
-+                    ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         */
 +    ~~~~~~~
 +        static a() {
@@ -43,12 +35,8 @@
 +    ~~~~~~~~~~~~~~~~~~
 +         * @this {T}
 +    ~~~~~~~~~~~~~~~~
-+                  ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         * @return {T}
 +    ~~~~~~~~~~~~~~~~~~
-+                    ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         */
 +    ~~~~~~~
 +        b() {

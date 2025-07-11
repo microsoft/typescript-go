@@ -2,14 +2,10 @@
 +++ new.assertionTypePredicates2.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+assertionTypePredicates2.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
-+assertionTypePredicates2.js(11,14): error TS8010: Type annotations can only be used in TypeScript files.
-+assertionTypePredicates2.js(14,20): error TS8016: Type assertion expressions can only be used in TypeScript files.
-+assertionTypePredicates2.js(19,16): error TS8010: Type annotations can only be used in TypeScript files.
 +assertionTypePredicates2.js(21,5): error TS2775: Assertions require every name in the call target to be declared with an explicit type annotation.
 +
 +
-+==== assertionTypePredicates2.js (5 errors) ====
++==== assertionTypePredicates2.js (1 errors) ====
 +    /**
 +     * @typedef {{ x: number }} A
 +     */
@@ -20,23 +16,15 @@
 +    
 +    /**
 +     * @param {A} a
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @returns { asserts a is B }
-+                 ~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    const foo = (a) => {
 +        if (/** @type { B } */ (a).y !== 0) throw TypeError();
-+                       ~~
-+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
 +        return undefined;
 +    };
 +    
 +    export const main = () => {
 +        /** @type { A } */
-+                   ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +        const a = { x: 1 };
 +        foo(a);
 +        ~~~

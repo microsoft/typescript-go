@@ -3,24 +3,11 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +propertiesOfGenericConstructorFunctions.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(8,21): error TS8010: Type annotations can only be used in TypeScript files.
 +propertiesOfGenericConstructorFunctions.js(14,12): error TS2749: 'Multimap' refers to a value, but is being used as a type here. Did you mean 'typeof Multimap'?
-+propertiesOfGenericConstructorFunctions.js(14,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(19,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(21,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(23,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(25,12): error TS8010: Type annotations can only be used in TypeScript files.
 +propertiesOfGenericConstructorFunctions.js(26,24): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(31,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(43,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(45,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(47,12): error TS8010: Type annotations can only be used in TypeScript files.
-+propertiesOfGenericConstructorFunctions.js(49,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== propertiesOfGenericConstructorFunctions.js (16 errors) ====
++==== propertiesOfGenericConstructorFunctions.js (3 errors) ====
 +    /**
 +    ~~~
 +     * @template {string} K
@@ -29,20 +16,14 @@
 +    ~~~~~~~~~~~~~~
 +     * @param {string} ik
 +    ~~~~~~~~~~~~~~~~~~~~~
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @param {V} iv
 +    ~~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    ~~~
 +    function Multimap(ik, iv) {
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +        /** @type {{ [s: string]: V }} */
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+                        ~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +        this._map = {};
 +    ~~~~~~~~~~~~~~~~~~~
 +        // without type annotation
@@ -56,27 +37,17 @@
 +    /** @type {Multimap<"a" | "b", number>} with type annotation */
 +               ~~~~~~~~
 +!!! error TS2749: 'Multimap' refers to a value, but is being used as a type here. Did you mean 'typeof Multimap'?
-+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    const map = new Multimap("a", 1);
 +    // without type annotation
 +    const map2 = new Multimap("m", 2);
 +    
 +    /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var n = map._map['hi']
 +    /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var n = map._map2['hi']
 +    /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var n = map2._map['hi']
 +    /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var n = map._map2['hi']
 +                           
 +    
@@ -89,8 +60,6 @@
 +    ~~~~~~~~~~~~~~
 +     * @param {T} t
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    ~~~
 +    function Cp(t) {
@@ -109,20 +78,12 @@
 +    var cp = new Cp(1)
 +    
 +    /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var n = cp.x
 +    /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var n = cp.y
 +    /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var n = cp.m1()
 +    /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var n = cp.m2()
 +    
 +    

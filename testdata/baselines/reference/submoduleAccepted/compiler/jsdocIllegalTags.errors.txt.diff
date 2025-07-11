@@ -5,13 +5,10 @@
 +/a.js(1,10): error TS8004: Type parameter declarations can only be used in TypeScript files.
 +/a.js(2,9): error TS1092: Type parameters cannot appear on a constructor declaration.
  /a.js(6,18): error TS1093: Type annotation cannot appear on a constructor declaration.
--
--
+
+
 -==== /a.js (2 errors) ====
-+/a.js(6,18): error TS8010: Type annotations can only be used in TypeScript files.
-+
-+
-+==== /a.js (4 errors) ====
++==== /a.js (3 errors) ====
      class C {
 +             
          /** @template T */
@@ -25,10 +22,3 @@
      }
      class D {
          /** @return {number} */
-                      ~~~~~~
- !!! error TS1093: Type annotation cannot appear on a constructor declaration.
-+                     ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-         constructor() {}
-     }
-     

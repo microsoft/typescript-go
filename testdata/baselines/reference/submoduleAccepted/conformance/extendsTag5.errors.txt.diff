@@ -2,7 +2,6 @@
 +++ new.extendsTag5.errors.txt
 @@= skipped -0, +0 lines =@@
 +/a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+/a.js(13,15): error TS8010: Type annotations can only be used in TypeScript files.
 +/a.js(26,16): error TS8011: Type arguments can only be used in TypeScript files.
  /a.js(29,16): error TS2344: Type '{ a: string; b: string; }' does not satisfy the constraint 'Foo'.
    Types of property 'b' are incompatible.
@@ -18,7 +17,7 @@
 +/a.js(44,16): error TS8011: Type arguments can only be used in TypeScript files.
 +
 +
-+==== /a.js (8 errors) ====
++==== /a.js (7 errors) ====
      /**
 +    ~~~
       * @typedef {{
@@ -45,8 +44,6 @@
 +    ~~~~~~
          * @param {T} a
 +    ~~~~~~~~~~~~~~~~~~
-+                  ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
 +    ~~~~~~
         constructor(a) {
@@ -61,7 +58,7 @@
      
      /**
      * @extends {A<{
-@@= skipped -32, +59 lines =@@
+@@= skipped -32, +56 lines =@@
      * }>}
      */
      class B extends A {}

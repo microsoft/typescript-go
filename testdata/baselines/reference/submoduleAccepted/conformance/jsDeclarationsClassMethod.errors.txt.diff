@@ -8,9 +8,6 @@
 +jsDeclarationsClassMethod.js(19,36): error TS7006: Parameter 'y' implicitly has an 'any' type.
 +jsDeclarationsClassMethod.js(29,27): error TS7006: Parameter 'x' implicitly has an 'any' type.
 +jsDeclarationsClassMethod.js(29,30): error TS7006: Parameter 'y' implicitly has an 'any' type.
-+jsDeclarationsClassMethod.js(36,16): error TS8010: Type annotations can only be used in TypeScript files.
-+jsDeclarationsClassMethod.js(37,16): error TS8010: Type annotations can only be used in TypeScript files.
-+jsDeclarationsClassMethod.js(38,18): error TS8010: Type annotations can only be used in TypeScript files.
 +jsDeclarationsClassMethod.js(51,14): error TS2551: Property 'method2' does not exist on type 'C2'. Did you mean 'method1'?
 +jsDeclarationsClassMethod.js(51,34): error TS7006: Parameter 'x' implicitly has an 'any' type.
 +jsDeclarationsClassMethod.js(51,37): error TS7006: Parameter 'y' implicitly has an 'any' type.
@@ -18,7 +15,7 @@
 +jsDeclarationsClassMethod.js(61,30): error TS7006: Parameter 'y' implicitly has an 'any' type.
 +
 +
-+==== jsDeclarationsClassMethod.js (14 errors) ====
++==== jsDeclarationsClassMethod.js (11 errors) ====
 +    function C1() {
 +        /**
 +         * A comment prop
@@ -67,14 +64,8 @@
 +        /**
 +         * A comment method1
 +         * @param {number} x
-+                   ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         * @param {number} y
-+                   ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         * @returns {number}
-+                     ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         */
 +        method1(x, y) {
 +            return x + y;

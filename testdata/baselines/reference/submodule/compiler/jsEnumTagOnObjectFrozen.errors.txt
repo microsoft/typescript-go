@@ -1,11 +1,8 @@
 index.js(10,12): error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
-index.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(17,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(17,16): error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
-usage.js(12,16): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== usage.js (1 errors) ====
+==== usage.js (0 errors) ====
     const { Thing, useThing, cbThing } = require("./index");
     
     useThing(Thing.a);
@@ -18,15 +15,13 @@ usage.js(12,16): error TS8010: Type annotations can only be used in TypeScript f
     
     cbThing(type => {
         /** @type {LogEntry} */
-                   ~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         const logEntry = {
             time: Date.now(),
             type,
         };
     });
     
-==== index.js (4 errors) ====
+==== index.js (2 errors) ====
     /** @enum {string} */
     const Thing = Object.freeze({
         a: "thing",
@@ -39,8 +34,6 @@ usage.js(12,16): error TS8010: Type annotations can only be used in TypeScript f
      * @param {Thing} x
                ~~~~~
 !!! error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
-               ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function useThing(x) {}
     
@@ -48,8 +41,6 @@ usage.js(12,16): error TS8010: Type annotations can only be used in TypeScript f
     
     /**
      * @param {(x: Thing) => void} x
-               ~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                    ~~~~~
 !!! error TS2749: 'Thing' refers to a value, but is being used as a type here. Did you mean 'typeof Thing'?
      */

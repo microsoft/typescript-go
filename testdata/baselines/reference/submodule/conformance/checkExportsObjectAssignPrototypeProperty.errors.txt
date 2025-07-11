@@ -1,6 +1,4 @@
-mod1.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
 mod1.js(6,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
-mod1.js(16,17): error TS8010: Type annotations can only be used in TypeScript files.
 validator.ts(5,12): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
 
 
@@ -32,12 +30,10 @@ validator.ts(5,12): error TS7009: 'new' expression, whose target lacks a constru
     m1.setonlyAccessor = 0;
     
     
-==== mod1.js (3 errors) ====
+==== mod1.js (1 errors) ====
     /**
      * @constructor
      * @param {string} name
-               ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function Person(name) {
         this.name = name;
@@ -53,8 +49,6 @@ validator.ts(5,12): error TS7009: 'new' expression, whose target lacks a constru
     Object.defineProperty(Person.prototype, "readonlyAccessor", { get() { return 21.75 } });
     Object.defineProperty(Person.prototype, "setonlyAccessor", {
         /** @param {string} str */
-                    ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         set(str) {
             this.rwAccessors = Number(str)
         }

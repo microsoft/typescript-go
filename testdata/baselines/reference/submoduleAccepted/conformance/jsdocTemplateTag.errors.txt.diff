@@ -3,23 +3,18 @@
 @@= skipped -0, +0 lines =@@
 -forgot.js(23,1): error TS2322: Type '(keyframes: any[]) => void' is not assignable to type '(keyframes: Keyframe[] | PropertyIndexedKeyframes, options?: number | KeyframeAnimationOptions) => Animation'.
 +forgot.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+forgot.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 +forgot.js(8,15): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+forgot.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
 +forgot.js(13,14): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-+forgot.js(13,14): error TS8010: Type annotations can only be used in TypeScript files.
 +forgot.js(23,1): error TS2322: Type '(keyframes: Keyframe[] | PropertyIndexedKeyframes) => void' is not assignable to type '(keyframes: Keyframe[] | PropertyIndexedKeyframes, options?: number | KeyframeAnimationOptions) => Animation'.
    Type 'void' is not assignable to type 'Animation'.
 
 
 -==== forgot.js (1 errors) ====
-+==== forgot.js (7 errors) ====
++==== forgot.js (4 errors) ====
      /**
 +    ~~~
       * @param {T} a
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @template T
 +    ~~~~~~~~~~~~~~
       */
@@ -39,8 +34,6 @@
 +    ~~~
       * @param {T} a
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @template T
 +    ~~~~~~~~~~~~~~
       * @returns {function(): T}
@@ -48,8 +41,6 @@
 +                 ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 +!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
-+                 ~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
 +    ~~~
      function g(a) {
@@ -62,7 +53,7 @@
      let s = g('hi')()
      
      /**
-@@= skipped -26, +60 lines =@@
+@@= skipped -26, +51 lines =@@
       */
      Element.prototype.animate = function(keyframes) {};
      ~~~~~~~~~~~~~~~~~~~~~~~~~

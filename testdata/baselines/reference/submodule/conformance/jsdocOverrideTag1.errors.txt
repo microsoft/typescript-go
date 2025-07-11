@@ -1,23 +1,15 @@
-0.js(5,16): error TS8010: Type annotations can only be used in TypeScript files.
-0.js(6,18): error TS8010: Type annotations can only be used in TypeScript files.
-0.js(20,16): error TS8010: Type annotations can only be used in TypeScript files.
-0.js(21,18): error TS8010: Type annotations can only be used in TypeScript files.
 0.js(27,5): error TS4119: This member must have a JSDoc comment with an '@override' tag because it overrides a member in the base class 'A'.
 0.js(32,5): error TS4122: This member cannot have a JSDoc comment with an '@override' tag because it is not declared in the base class 'A'.
 0.js(40,5): error TS4121: This member cannot have a JSDoc comment with an '@override' tag because its containing class 'C' does not extend another class.
 
 
-==== 0.js (7 errors) ====
+==== 0.js (3 errors) ====
     class A {
     
         /**
          * @method
          * @param {string | number} a
-                   ~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @returns {boolean}
-                     ~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         foo (a) {
             return typeof a === 'string'
@@ -32,11 +24,7 @@
          * @override
          * @method
          * @param {string | number} a
-                   ~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @returns {boolean}
-                     ~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         foo (a) {
             return super.foo(a)

@@ -1,16 +1,13 @@
 bug43713.js(1,9): error TS2305: Module '"./commonJSAliasedExport"' has no exported member 'funky'.
-bug43713.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 commonJSAliasedExport.js(6,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 commonJSAliasedExport.js(7,16): error TS2339: Property 'funky' does not exist on type '(ast: any) => any'.
 
 
-==== bug43713.js (2 errors) ====
+==== bug43713.js (1 errors) ====
     const { funky } = require('./commonJSAliasedExport');
             ~~~~~
 !!! error TS2305: Module '"./commonJSAliasedExport"' has no exported member 'funky'.
     /** @type {boolean} */
-               ~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var diddy
     var diddy = funky(1)
     

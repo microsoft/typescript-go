@@ -8,10 +8,9 @@
 +index.js(4,11): error TS2339: Property 'Object' does not exist on type '{}'.
 +index.js(4,41): error TS2339: Property 'Object' does not exist on type '{}'.
 +index.js(6,12): error TS2503: Cannot find namespace 'Workspace'.
-+index.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== index.js (7 errors) ====
++==== index.js (6 errors) ====
 +    First.Item = class I {}
 +          ~~~~
 +!!! error TS2339: Property 'Item' does not exist on type '{}'.
@@ -30,8 +29,6 @@
 +    /** @type {Workspace.Object} */
 +               ~~~~~~~~~
 +!!! error TS2503: Cannot find namespace 'Workspace'.
-+               ~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var am;
 +    
 +==== roots.js (0 errors) ====

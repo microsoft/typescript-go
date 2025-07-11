@@ -1,19 +1,15 @@
-index.js(2,11): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(4,19): error TS2306: File 'mod1.js' is not a module.
-index.js(7,11): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(9,19): error TS2306: File 'mod2.js' is not a module.
 mod1.js(1,23): error TS2304: Cannot find name 'exports'.
 mod1.js(2,23): error TS2304: Cannot find name 'exports'.
 mod1.js(3,23): error TS2304: Cannot find name 'exports'.
 mod1.js(4,23): error TS2304: Cannot find name 'exports'.
 mod1.js(5,23): error TS2304: Cannot find name 'exports'.
-mod1.js(6,17): error TS8010: Type annotations can only be used in TypeScript files.
 mod2.js(1,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod2.js(2,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod2.js(3,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod2.js(4,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 mod2.js(5,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-mod2.js(6,17): error TS8010: Type annotations can only be used in TypeScript files.
 validator.ts(3,21): error TS2306: File 'mod1.js' is not a module.
 validator.ts(23,21): error TS2306: File 'mod2.js' is not a module.
 
@@ -65,7 +61,7 @@ validator.ts(23,21): error TS2306: File 'mod2.js' is not a module.
     m2.rwAccessors = "no";
     m2.setonlyAccessor = 0;
     
-==== mod1.js (6 errors) ====
+==== mod1.js (5 errors) ====
     Object.defineProperty(exports, "thing", { value: 42, writable: true });
                           ~~~~~~~
 !!! error TS2304: Cannot find name 'exports'.
@@ -82,14 +78,12 @@ validator.ts(23,21): error TS2306: File 'mod2.js' is not a module.
                           ~~~~~~~
 !!! error TS2304: Cannot find name 'exports'.
         /** @param {string} str */
-                    ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         set(str) {
             this.rwAccessors = Number(str) 
         }
     });
     
-==== mod2.js (6 errors) ====
+==== mod2.js (5 errors) ====
     Object.defineProperty(module.exports, "thing", { value: "yes", writable: true });
                           ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -106,18 +100,14 @@ validator.ts(23,21): error TS2306: File 'mod2.js' is not a module.
                           ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
         /** @param {string} str */
-                    ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         set(str) {
             this.rwAccessors = Number(str) 
         }
     });
     
-==== index.js (4 errors) ====
+==== index.js (2 errors) ====
     /**
      * @type {number}
-              ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const q = require("./mod1").thing;
                       ~~~~~~~~
@@ -125,8 +115,6 @@ validator.ts(23,21): error TS2306: File 'mod2.js' is not a module.
     
     /**
      * @type {string}
-              ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const u = require("./mod2").thing;
                       ~~~~~~~~

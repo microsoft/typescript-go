@@ -3,10 +3,9 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +bug27134.js(7,11): error TS2749: 'foo' refers to a value, but is being used as a type here. Did you mean 'typeof foo'?
-+bug27134.js(7,11): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== bug27134.js (2 errors) ====
++==== bug27134.js (1 errors) ====
 +    /**
 +     * @enum {number}
 +     */
@@ -16,8 +15,6 @@
 +     * @type {foo}
 +              ~~~
 +!!! error TS2749: 'foo' refers to a value, but is being used as a type here. Did you mean 'typeof foo'?
-+              ~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    var s;
 +    

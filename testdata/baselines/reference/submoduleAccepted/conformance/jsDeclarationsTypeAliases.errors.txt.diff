@@ -2,14 +2,10 @@
 +++ new.jsDeclarationsTypeAliases.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+index.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(24,12): error TS8010: Type annotations can only be used in TypeScript files.
-+mixed.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
-+mixed.js(6,14): error TS8010: Type annotations can only be used in TypeScript files.
 +mixed.js(14,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
 +
-+==== index.js (2 errors) ====
++==== index.js (0 errors) ====
 +    export {}; // flag file as module
 +    /**
 +     * @typedef {string | number | symbol} PropName 
@@ -20,8 +16,6 @@
 +     *
 +     * @callback NumberToStringCb
 +     * @param {number} a
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @returns {string}
 +     */
 +    
@@ -36,22 +30,16 @@
 +     * @template T
 +     * @callback Identity
 +     * @param {T} x
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @returns {T}
 +     */
 +    
-+==== mixed.js (3 errors) ====
++==== mixed.js (1 errors) ====
 +    /**
 +     * @typedef {{x: string} | number | LocalThing | ExportedThing} SomeType
 +     */
 +    /**
 +     * @param {number} x
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @returns {SomeType}
-+                 ~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    function doTheThing(x) {
 +        return {x: ""+x};

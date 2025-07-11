@@ -1,40 +1,22 @@
 a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-a.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
-a.js(4,14): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(11,64): error TS8004: Type parameter declarations can only be used in TypeScript files.
-a.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
-a.js(16,14): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(23,64): error TS8004: Type parameter declarations can only be used in TypeScript files.
-a.js(27,12): error TS8010: Type annotations can only be used in TypeScript files.
-a.js(28,14): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(34,24): error TS8004: Type parameter declarations can only be used in TypeScript files.
-a.js(38,12): error TS8010: Type annotations can only be used in TypeScript files.
-a.js(39,14): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(45,54): error TS8004: Type parameter declarations can only be used in TypeScript files.
-a.js(49,12): error TS8010: Type annotations can only be used in TypeScript files.
-a.js(50,14): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(56,62): error TS8004: Type parameter declarations can only be used in TypeScript files.
-a.js(63,16): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(65,22): error TS8004: Type parameter declarations can only be used in TypeScript files.
-a.js(69,16): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(77,40): error TS8004: Type parameter declarations can only be used in TypeScript files.
-a.js(81,12): error TS8010: Type annotations can only be used in TypeScript files.
-a.js(82,14): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== a.js (22 errors) ====
+==== a.js (8 errors) ====
     /**
     ~~~
      * @template const T
     ~~~~~~~~~~~~~~~~~~~~
      * @param {T} x
     ~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T}
     ~~~~~~~~~~~~~~~
-                 ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function f1(x) {
@@ -56,12 +38,8 @@ a.js(82,14): error TS8010: Type annotations can only be used in TypeScript files
     ~~~~~~~~~~~~~~~~~~~~~~~
      * @param {T} x
     ~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T}
     ~~~~~~~~~~~~~~~
-                 ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function f2(x) {
@@ -83,12 +61,8 @@ a.js(82,14): error TS8010: Type annotations can only be used in TypeScript files
     ~~~~~~~~~~~~~~~~~~~~
      * @param {T} x
     ~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T[]}
     ~~~~~~~~~~~~~~~~~
-                 ~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function f3(x) {
@@ -109,12 +83,8 @@ a.js(82,14): error TS8010: Type annotations can only be used in TypeScript files
     ~~~~~~~~~~~~~~~~~~~~
      * @param {[T, T]} x
     ~~~~~~~~~~~~~~~~~~~~
-               ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T}
     ~~~~~~~~~~~~~~~
-                 ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function f4(x) {
@@ -135,12 +105,8 @@ a.js(82,14): error TS8010: Type annotations can only be used in TypeScript files
     ~~~~~~~~~~~~~~~~~~~~
      * @param {{ x: T, y: T}} obj
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-               ~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T}
     ~~~~~~~~~~~~~~~
-                 ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function f5(obj) {
@@ -167,8 +133,6 @@ a.js(82,14): error TS8010: Type annotations can only be used in TypeScript files
     ~~~~~~~
          * @param {T} x
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         constructor(x) {}
@@ -186,8 +150,6 @@ a.js(82,14): error TS8010: Type annotations can only be used in TypeScript files
          * @param {U} x
     ~~~~~~~~~~~~~~~~~~~
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
     ~~~~~~~
@@ -216,12 +178,8 @@ a.js(82,14): error TS8010: Type annotations can only be used in TypeScript files
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * @param {T} args
     ~~~~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T}
     ~~~~~~~~~~~~~~~
-                 ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function f6(...args) {

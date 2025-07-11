@@ -5,58 +5,23 @@
 -
 -
 -==== 0.js (1 errors) ====
-+0.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
-+0.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
-+0.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
-+0.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
-+0.js(16,12): error TS8010: Type annotations can only be used in TypeScript files.
 +0.js(20,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-+0.js(20,12): error TS8010: Type annotations can only be used in TypeScript files.
 +0.js(24,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-+0.js(24,12): error TS8010: Type annotations can only be used in TypeScript files.
 +0.js(28,12): error TS2552: Cannot find name 'function'. Did you mean 'Function'?
-+0.js(28,12): error TS8010: Type annotations can only be used in TypeScript files.
-+0.js(33,11): error TS8010: Type annotations can only be used in TypeScript files.
-+0.js(38,11): error TS8010: Type annotations can only be used in TypeScript files.
 +0.js(40,5): error TS2403: Subsequent variable declarations must have the same type.  Variable 'props' must be of type 'object', but here has type 'Object'.
 +
 +
-+==== 0.js (14 errors) ====
++==== 0.js (4 errors) ====
      // @ts-check
      /** @type {String} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
      var S = "hello world";
-     
-     /** @type {number} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     var n = 10;
-     
-     /** @type {*} */
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     var anyT = 2;
-     anyT = "hello";
-     
-     /** @type {?} */
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     var anyT1 = 2;
-     anyT1 = "hi";
-     
-     /** @type {Function} */
-+               ~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     const x = (a) => a + 1;
+@@= skipped -21, +24 lines =@@
      x(1);
      
      /** @type {function} */
 +               ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 +!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
-+               ~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
      const y = (a) => a + 1;
      y(1);
      
@@ -66,8 +31,6 @@
 +               ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 +!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
-+               ~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
      const x1 = (a) => a + 1;
      x1(0);
      
@@ -75,22 +38,11 @@
 +               ~~~~~~~~
 +!!! error TS2552: Cannot find name 'function'. Did you mean 'Function'?
 +!!! related TS2728 lib.es5.d.ts:--:--: 'Function' is declared here.
-+               ~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
      const x2 = (a) => a + 1;
      x2(0);
      
-     /**
-      * @type {object}
-+              ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      */
-     var props = {};
-     
-     /**
+@@= skipped -22, +29 lines =@@
       * @type {Object}
-+              ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
      var props = {};
 +        ~~~~~

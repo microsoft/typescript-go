@@ -1,8 +1,7 @@
-/a.js(9,40): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 /a.js(11,26): error TS2353: Object literal may only specify known properties, and 'd' does not exist in type 'Color'.
 
 
-==== /a.js (2 errors) ====
+==== /a.js (1 errors) ====
     /**
      * @typedef {Object} Color
      * @property {number} r
@@ -12,8 +11,6 @@
     
     // All of these should be Colors, but I only use some of them here.
     export const Palette = /** @satisfies {Record<string, Color>} */ ({
-                                           ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
         white: { r: 255, g: 255, b: 255 },
         black: { r: 0, g: 0, d: 0 }, // <- oops! 'd' in place of 'b'
                              ~

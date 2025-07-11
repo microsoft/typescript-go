@@ -1,30 +1,20 @@
 index.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 index.js(2,28): error TS2304: Cannot find name 'B'.
-index.js(2,41): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(2,42): error TS2304: Cannot find name 'A'.
-index.js(2,47): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(2,48): error TS2304: Cannot find name 'B'.
 index.js(2,67): error TS2304: Cannot find name 'B'.
 index.js(10,12): error TS2315: Type 'Funcs' is not generic.
-index.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(11,14): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(14,21): error TS8016: Type assertion expressions can only be used in TypeScript files.
-index.js(20,19): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== index.js (12 errors) ====
+==== index.js (6 errors) ====
     /**
     ~~~
      * @typedef {{ [K in keyof B]: { fn: (a: A, b: B) => void; thing: B[K]; } }} Funcs
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                                ~
 !!! error TS2304: Cannot find name 'B'.
-                                            ~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                                              ~
 !!! error TS2304: Cannot find name 'A'.
-                                                  ~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                                                    ~
 !!! error TS2304: Cannot find name 'B'.
                                                                       ~
@@ -47,20 +37,14 @@ index.js(20,19): error TS8010: Type annotations can only be used in TypeScript f
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
                ~~~~~~~~~~~
 !!! error TS2315: Type 'Funcs' is not generic.
-               ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {[A, B]}
     ~~~~~~~~~~~~~~~~~~~~
-                 ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function foo(fns) {
     ~~~~~~~~~~~~~~~~~~~
       return /** @type {any} */ (null);
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                        ~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     }
     ~
 !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
@@ -69,8 +53,6 @@ index.js(20,19): error TS8010: Type annotations can only be used in TypeScript f
       bar: {
         fn:
           /** @param {string} a */
-                      ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
           (a) => {},
         thing: "asd",
       },

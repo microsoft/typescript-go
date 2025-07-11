@@ -1,17 +1,9 @@
-a.js(1,5): error TS8009: The '?' modifier can only be used in TypeScript files.
-a.js(1,13): error TS8010: Type annotations can only be used in TypeScript files.
 a.js(4,5): error TS2322: Type 'null' is not assignable to type 'number | undefined'.
 a.js(8,3): error TS2345: Argument of type 'null' is not assignable to parameter of type 'number | undefined'.
-a.js(12,5): error TS8009: The '?' modifier can only be used in TypeScript files.
-a.js(12,13): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== a.js (6 errors) ====
+==== a.js (2 errors) ====
     /** @param {number=} a */
-        ~~~~~~~~~~~~~~~~~~~
-!!! error TS8009: The '?' modifier can only be used in TypeScript files.
-                ~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     function f(a) {
         a = 1
         a = null // should not be allowed
@@ -27,10 +19,6 @@ a.js(12,13): error TS8010: Type annotations can only be used in TypeScript files
     f(1)
     
     /** @param {???!?number?=} a */
-        ~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8009: The '?' modifier can only be used in TypeScript files.
-                ~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     function g(a) {
         a = 1
         a = null

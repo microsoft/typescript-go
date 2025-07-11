@@ -1,17 +1,11 @@
 index.js(4,18): error TS2339: Property 'cat' does not exist on type '() => void'.
 index.js(7,18): error TS2339: Property 'Cls' does not exist on type '() => void'.
-index.js(14,57): error TS8016: Type assertion expressions can only be used in TypeScript files.
-index.js(22,57): error TS8016: Type assertion expressions can only be used in TypeScript files.
 index.js(31,18): error TS2339: Property 'self' does not exist on type '(a: any) => any'.
-index.js(34,12): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(35,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(35,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-index.js(44,12): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(45,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(45,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 
 
-==== index.js (11 errors) ====
+==== index.js (5 errors) ====
     module.exports.a = function a() {}
     
     module.exports.b = function b() {}
@@ -30,8 +24,6 @@ index.js(45,23): error TS2580: Cannot find name 'module'. Do you need to install
      * @return {string} 
      */
     module.exports.d = function d(a, b) { return /** @type {*} */(null); }
-                                                            ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     /**
      * @template T,U
@@ -40,8 +32,6 @@ index.js(45,23): error TS2580: Cannot find name 'module'. Do you need to install
      * @return {T & U} 
      */
     module.exports.e = function e(a, b) { return /** @type {*} */(null); }
-                                                            ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     /**
      * @template T
@@ -56,11 +46,7 @@ index.js(45,23): error TS2580: Cannot find name 'module'. Do you need to install
     
     /**
      * @param {{x: string}} a
-               ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {{y: typeof module.exports.b}} b
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                           ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
      */
@@ -72,11 +58,7 @@ index.js(45,23): error TS2580: Cannot find name 'module'. Do you need to install
     
     /**
      * @param {{x: string}} a
-               ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {{y: typeof module.exports.b}} b
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                           ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
      */

@@ -2,36 +2,25 @@
 +++ new.jsdocTemplateTag8.errors.txt
 @@= skipped -0, +0 lines =@@
 +a.js(2,14): error TS1274: 'out' modifier can only appear on a type parameter of a class, interface or type alias
-+a.js(8,11): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(13,11): error TS8010: Type annotations can only be used in TypeScript files.
  a.js(18,1): error TS2322: Type 'Covariant<unknown>' is not assignable to type 'Covariant<string>'.
    Type 'unknown' is not assignable to type 'string'.
 +a.js(21,14): error TS1274: 'in' modifier can only appear on a type parameter of a class, interface or type alias
-+a.js(23,18): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(27,11): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(32,11): error TS8010: Type annotations can only be used in TypeScript files.
  a.js(36,1): error TS2322: Type 'Contravariant<string>' is not assignable to type 'Contravariant<unknown>'.
    Type 'unknown' is not assignable to type 'string'.
 +a.js(40,14): error TS1274: 'in' modifier can only appear on a type parameter of a class, interface or type alias
-+a.js(42,18): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(46,11): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(51,11): error TS8010: Type annotations can only be used in TypeScript files.
  a.js(55,1): error TS2322: Type 'Invariant<string>' is not assignable to type 'Invariant<unknown>'.
    Types of property 'f' are incompatible.
      Type '(x: string) => string' is not assignable to type '(x: unknown) => unknown'.
-@@= skipped -9, +20 lines =@@
+@@= skipped -9, +12 lines =@@
  a.js(56,1): error TS2322: Type 'Invariant<unknown>' is not assignable to type 'Invariant<string>'.
    The types returned by 'f(...)' are incompatible between these types.
      Type 'unknown' is not assignable to type 'string'.
 +a.js(56,33): error TS8004: Type parameter declarations can only be used in TypeScript files.
  a.js(59,14): error TS1274: 'in' modifier can only appear on a type parameter of a class, interface or type alias
--
--
+
+
 -==== a.js (5 errors) ====
-+a.js(60,12): error TS8010: Type annotations can only be used in TypeScript files.
-+
-+
-+==== a.js (18 errors) ====
++==== a.js (9 errors) ====
      /**
       * @template out T
 +                 ~~~
@@ -39,22 +28,7 @@
       * @typedef {Object} Covariant
       * @property {T} x
       */
-     
-     /**
-      * @type {Covariant<unknown>}
-+              ~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      */
-     let super_covariant = { x: 1 };
-     
-     /**
-      * @type {Covariant<string>}
-+              ~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      */
-     let sub_covariant = { x: '' };
-     
-@@= skipped -28, +36 lines =@@
+@@= skipped -28, +31 lines =@@
      
      /**
       * @template in T
@@ -62,25 +36,8 @@
 +!!! error TS1274: 'in' modifier can only appear on a type parameter of a class, interface or type alias
       * @typedef {Object} Contravariant
       * @property {(x: T) => void} f
-+                     ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
-     
-     /**
-      * @type {Contravariant<unknown>}
-+              ~~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      */
-     let super_contravariant = { f: (x) => {} };
-     
-     /**
-      * @type {Contravariant<string>}
-+              ~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      */
-     let sub_contravariant = { f: (x) => {} };
-     
-@@= skipped -22, +30 lines =@@
+@@= skipped -22, +24 lines =@@
      
      /**
       * @template in out T
@@ -88,25 +45,8 @@
 +!!! error TS1274: 'in' modifier can only appear on a type parameter of a class, interface or type alias
       * @typedef {Object} Invariant
       * @property {(x: T) => T} f
-+                     ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
-     
-     /**
-      * @type {Invariant<unknown>}
-+              ~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      */
-     let super_invariant = { f: (x) => {} };
-     
-     /**
-      * @type {Invariant<string>}
-+              ~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      */
-     let sub_invariant = { f: (x) => { return "" } };
-     
-@@= skipped -26, +34 lines =@@
+@@= skipped -26, +28 lines =@@
  !!! error TS2322: Type 'Invariant<unknown>' is not assignable to type 'Invariant<string>'.
  !!! error TS2322:   The types returned by 'f(...)' are incompatible between these types.
  !!! error TS2322:     Type 'unknown' is not assignable to type 'string'.
@@ -121,8 +61,6 @@
  !!! error TS1274: 'in' modifier can only appear on a type parameter of a class, interface or type alias
       * @param {T} x
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
 +    ~~~
      function f(x) {}

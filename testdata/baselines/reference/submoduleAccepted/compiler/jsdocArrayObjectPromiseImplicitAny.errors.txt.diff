@@ -2,70 +2,40 @@
 +++ new.jsdocArrayObjectPromiseImplicitAny.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+jsdocArrayObjectPromiseImplicitAny.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(9,13): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(15,12): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(18,12): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(22,12): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(23,13): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(29,12): error TS8010: Type annotations can only be used in TypeScript files.
 +jsdocArrayObjectPromiseImplicitAny.js(30,18): error TS2322: Type 'number' is not assignable to type '() => Object'.
 +jsdocArrayObjectPromiseImplicitAny.js(32,12): error TS2315: Type 'Object' is not generic.
-+jsdocArrayObjectPromiseImplicitAny.js(32,12): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(36,12): error TS8010: Type annotations can only be used in TypeScript files.
-+jsdocArrayObjectPromiseImplicitAny.js(37,13): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== jsdocArrayObjectPromiseImplicitAny.js (14 errors) ====
++==== jsdocArrayObjectPromiseImplicitAny.js (2 errors) ====
 +    /** @type {Array} */
-+               ~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var anyArray = [5];
 +    
 +    /** @type {Array<number>} */
-+               ~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var numberArray = [5];
 +    
 +    /**
 +     * @param {Array} arr
-+               ~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @return {Array}
-+                ~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    function returnAnyArray(arr) {
 +      return arr;
 +    }
 +    
 +    /** @type {Promise} */
-+               ~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var anyPromise = Promise.resolve(5);
 +    
 +    /** @type {Promise<number>} */
-+               ~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var numberPromise = Promise.resolve(5);
 +    
 +    /**
 +     * @param {Promise} pr
-+               ~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @return {Promise}
-+                ~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    function returnAnyPromise(pr) {
 +      return pr;
 +    }
 +    
 +    /** @type {Object} */
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var anyObject = {valueOf: 1}; // not an error since assigning to any.
 +                     ~~~~~~~
 +!!! error TS2322: Type 'number' is not assignable to type '() => Object'.
@@ -73,17 +43,11 @@
 +    /** @type {Object<string, number>} */
 +               ~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2315: Type 'Object' is not generic.
-+               ~~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var paramedObject = {valueOf: 1};
 +    
 +    /**
 +     * @param {Object} obj
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @return {Object}
-+                ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    function returnAnyObject(obj) {
 +      return obj;

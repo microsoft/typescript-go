@@ -1,8 +1,7 @@
 index.js(9,11): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-index.js(9,11): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== index.js (2 errors) ====
+==== index.js (1 errors) ====
     /**
      * @module A
      */
@@ -14,8 +13,6 @@ index.js(9,11): error TS8010: Type annotations can only be used in TypeScript fi
      * @type {module:A}
               ~~~~~~
 !!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-              ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     export let el = null;
     

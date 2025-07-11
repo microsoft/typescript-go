@@ -1,12 +1,8 @@
-first.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
 first.js(21,19): error TS2507: Type '{ (numberOxen: number): void; circle: (wagons: any) => any; }' is not a constructor function type.
-first.js(27,16): error TS8010: Type annotations can only be used in TypeScript files.
 first.js(27,21): error TS8020: JSDoc types can only be used inside documentation comments.
-first.js(28,16): error TS8010: Type annotations can only be used in TypeScript files.
 first.js(44,4): error TS2339: Property 'numberOxen' does not exist on type 'Sql'.
 first.js(47,24): error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
 generic.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-generic.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
 generic.js(9,22): error TS8011: Type arguments can only be used in TypeScript files.
 generic.js(9,23): error TS2507: Type '<T>(flavour: T) => void' is not a constructor function type.
 generic.js(11,21): error TS2339: Property 'flavour' does not exist on type 'Chowder'.
@@ -18,12 +14,10 @@ second.ts(14,25): error TS2507: Type '{ (numberOxen: number): void; circle: (wag
 second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
 
 
-==== first.js (7 errors) ====
+==== first.js (4 errors) ====
     /**
      * @constructor
      * @param {number} numberOxen
-               ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function Wagon(numberOxen) {
         this.numberOxen = numberOxen
@@ -50,13 +44,9 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
         }
         /**
          * @param {Array.<string>} files
-                   ~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                         ~
 !!! error TS8020: JSDoc types can only be used inside documentation comments.
          * @param {"csv" | "json" | "xmlolololol"} format
-                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * This is not assignable, so should have a type error
          */
         load(files, format) {
@@ -117,15 +107,13 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
       ~~~~~~~~~~
 !!! error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
     
-==== generic.js (8 errors) ====
+==== generic.js (7 errors) ====
     /**
     ~~~
      * @template T
     ~~~~~~~~~~~~~~
      * @param {T} flavour
     ~~~~~~~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function Soup(flavour) {

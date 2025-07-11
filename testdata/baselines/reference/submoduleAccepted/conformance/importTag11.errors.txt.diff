@@ -6,17 +6,12 @@
 -
 -
 -==== /foo.js (2 errors) ====
-+/foo.js(2,4): error TS8006: 'import type' declarations can only be used in TypeScript files.
-+
-+
-+==== /foo.js (1 errors) ====
-     /**
-      * @import foo
+-    /**
+-     * @import foo
 -                  
 -!!! error TS1109: Expression expected.
-+       ~~~~~~~~~~~
-+!!! error TS8006: 'import type' declarations can only be used in TypeScript files.
-      */
+-     */
 -     
 -!!! error TS1005: 'from' expected.
-     
+-    
++<no content>

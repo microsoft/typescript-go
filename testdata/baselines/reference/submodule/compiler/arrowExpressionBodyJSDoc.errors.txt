@@ -1,32 +1,20 @@
-mytest.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
-mytest.js(4,14): error TS8010: Type annotations can only be used in TypeScript files.
 mytest.js(6,13): error TS8004: Type parameter declarations can only be used in TypeScript files.
-mytest.js(6,34): error TS8016: Type assertion expressions can only be used in TypeScript files.
 mytest.js(6,45): error TS2322: Type 'string' is not assignable to type 'T'.
   'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
-mytest.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
-mytest.js(11,14): error TS8010: Type annotations can only be used in TypeScript files.
 mytest.js(13,13): error TS8004: Type parameter declarations can only be used in TypeScript files.
-mytest.js(13,34): error TS8016: Type assertion expressions can only be used in TypeScript files.
 mytest.js(13,61): error TS2322: Type 'string' is not assignable to type 'T'.
   'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
 
 
-==== mytest.js (10 errors) ====
+==== mytest.js (4 errors) ====
     /**
      * @template T
      * @param {T|undefined} value value or not
-               ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T} result value
-                 ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const foo1 = value => /** @type {string} */({ ...value });
                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-                                     ~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                                 ~~~~~~~~~~~~
 !!! error TS2322: Type 'string' is not assignable to type 'T'.
 !!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.
@@ -34,17 +22,11 @@ mytest.js(13,61): error TS2322: Type 'string' is not assignable to type 'T'.
     /**
      * @template T
      * @param {T|undefined} value value or not
-               ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {T} result value
-                 ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const foo2 = value => /** @type {string} */(/** @type {T} */({ ...value }));
                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-                                     ~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                                                 ~~~~~~~~~~~~~~
 !!! error TS2322: Type 'string' is not assignable to type 'T'.
 !!! error TS2322:   'T' could be instantiated with an arbitrary type which could be unrelated to 'string'.

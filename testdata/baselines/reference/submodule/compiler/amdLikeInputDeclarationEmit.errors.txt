@@ -1,4 +1,3 @@
-ExtendedClass.js(4,13): error TS8010: Type annotations can only be used in TypeScript files.
 ExtendedClass.js(17,5): error TS1231: An export assignment must be at the top level of a file or module declaration.
 ExtendedClass.js(17,12): error TS2339: Property 'exports' does not exist on type '{}'.
 ExtendedClass.js(18,19): error TS2339: Property 'exports' does not exist on type '{}'.
@@ -13,13 +12,11 @@ ExtendedClass.js(18,19): error TS2339: Property 'exports' does not exist on type
         }
         export = BaseClass;
     }
-==== ExtendedClass.js (4 errors) ====
+==== ExtendedClass.js (3 errors) ====
     define("lib/ExtendedClass", ["deps/BaseClass"], 
     /**
      * {typeof import("deps/BaseClass")}
      * @param  {typeof import("deps/BaseClass")} BaseClass 
-                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns 
      */
     (BaseClass) => {    

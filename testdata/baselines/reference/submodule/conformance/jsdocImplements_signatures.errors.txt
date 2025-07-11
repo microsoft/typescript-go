@@ -1,4 +1,3 @@
-/a.js(1,18): error TS8005: 'implements' clauses can only be used in TypeScript files.
 /a.js(2,7): error TS2420: Class 'B' incorrectly implements interface 'Sig'.
   Index signature for type 'string' is missing in type 'B'.
 
@@ -7,10 +6,8 @@
     interface Sig {
         [index: string]: string
     }
-==== /a.js (2 errors) ====
+==== /a.js (1 errors) ====
     /** @implements {Sig} */
-                     ~~~
-!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
     class B  {
           ~
 !!! error TS2420: Class 'B' incorrectly implements interface 'Sig'.

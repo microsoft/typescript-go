@@ -1,17 +1,13 @@
 jsdocTypeReferenceToImport.js(3,12): error TS2749: 'C' refers to a value, but is being used as a type here. Did you mean 'typeof C'?
-jsdocTypeReferenceToImport.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
 jsdocTypeReferenceToImport.js(8,12): error TS2749: 'D' refers to a value, but is being used as a type here. Did you mean 'typeof D'?
-jsdocTypeReferenceToImport.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== jsdocTypeReferenceToImport.js (4 errors) ====
+==== jsdocTypeReferenceToImport.js (2 errors) ====
     const C = require('./ex').C;
     const D = require('./ex')?.C;
     /** @type {C} c */
                ~
 !!! error TS2749: 'C' refers to a value, but is being used as a type here. Did you mean 'typeof C'?
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var c = new C()
     c.start
     c.end
@@ -19,8 +15,6 @@ jsdocTypeReferenceToImport.js(8,12): error TS8010: Type annotations can only be 
     /** @type {D} c */
                ~
 !!! error TS2749: 'D' refers to a value, but is being used as a type here. Did you mean 'typeof D'?
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var d = new D()
     d.start
     d.end

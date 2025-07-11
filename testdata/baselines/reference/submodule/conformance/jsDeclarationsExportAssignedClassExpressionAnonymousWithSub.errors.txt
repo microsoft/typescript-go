@@ -1,17 +1,14 @@
 index.js(1,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-index.js(3,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(9,16): error TS2339: Property 'Sub' does not exist on type 'typeof exports'.
 
 
-==== index.js (3 errors) ====
+==== index.js (2 errors) ====
     module.exports = class {
     ~~~~~~~~~~~~~~~~~~~~~~~~
         /**
     ~~~~~~~
          * @param {number} p
     ~~~~~~~~~~~~~~~~~~~~~~~~
-                   ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         constructor(p) {

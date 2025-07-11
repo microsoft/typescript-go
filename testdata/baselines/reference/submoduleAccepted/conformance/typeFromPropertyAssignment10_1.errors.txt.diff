@@ -3,7 +3,6 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +main.js(4,12): error TS2503: Cannot find namespace 'Outer'.
-+main.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
 +==== module.js (0 errors) ====
@@ -42,15 +41,13 @@
 +        };
 +        return Application;
 +    })();
-+==== main.js (2 errors) ====
++==== main.js (1 errors) ====
 +    var app = new Outer.app.Application();
 +    var inner = new Outer.app.Inner();
 +    inner.y;
 +    /** @type {Outer.app.Inner} */
 +               ~~~~~
 +!!! error TS2503: Cannot find namespace 'Outer'.
-+               ~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var x;
 +    x.y;
 +    Outer.app.statische(101); // Infinity, duh

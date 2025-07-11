@@ -1,20 +1,9 @@
-/a.js(12,17): error TS8010: Type annotations can only be used in TypeScript files.
-/a.js(20,28): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
-/a.js(21,28): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 /a.js(21,44): error TS2353: Object literal may only specify known properties, and 'b' does not exist in type 'T1'.
-/a.js(22,28): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 /a.js(22,38): error TS2741: Property 'a' is missing in type '{}' but required in type 'T1'.
-/a.js(24,12): error TS8010: Type annotations can only be used in TypeScript files.
-/a.js(25,28): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
-/a.js(27,12): error TS8010: Type annotations can only be used in TypeScript files.
-/a.js(28,28): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
-/a.js(29,28): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
-/a.js(30,28): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
-/a.js(31,28): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 /a.js(31,49): error TS2353: Object literal may only specify known properties, and 'b' does not exist in type 'T4'.
 
 
-==== /a.js (14 errors) ====
+==== /a.js (3 errors) ====
     /**
      * @typedef {Object} T1
      * @property {number} a
@@ -27,8 +16,6 @@
     
     /**
      * @typedef {(x: string) => string} T3
-                    ~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     
     /**
@@ -37,42 +24,22 @@
      */
     
     const t1 = /** @satisfies {T1} */ ({ a: 1 });
-                               ~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
     const t2 = /** @satisfies {T1} */ ({ a: 1, b: 1 });
-                               ~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
                                                ~
 !!! error TS2353: Object literal may only specify known properties, and 'b' does not exist in type 'T1'.
     const t3 = /** @satisfies {T1} */ ({});
-                               ~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
                                          ~
 !!! error TS2741: Property 'a' is missing in type '{}' but required in type 'T1'.
 !!! related TS2728 /a.js:3:23: 'a' is declared here.
     
     /** @type {T2} */
-               ~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     const t4 = /** @satisfies {T2} */ ({ a: "a" });
-                               ~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
     
     /** @type {(m: string) => string} */
-               ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     const t5 = /** @satisfies {T3} */((m) => m.substring(0));
-                               ~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
     const t6 = /** @satisfies {[number, number]} */ ([1, 2]);
-                               ~~~~~~~~~~~~~~~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
     const t7 = /** @satisfies {T4} */ ({ a: 'test' });
-                               ~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
     const t8 = /** @satisfies {T4} */ ({ a: 'test', b: 'test' });
-                               ~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
                                                     ~
 !!! error TS2353: Object literal may only specify known properties, and 'b' does not exist in type 'T4'.
     

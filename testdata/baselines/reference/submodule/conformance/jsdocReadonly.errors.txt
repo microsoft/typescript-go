@@ -1,12 +1,11 @@
 jsdocReadonly.js(3,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
 jsdocReadonly.js(4,8): error TS8009: The 'private' modifier can only be used in TypeScript files.
-jsdocReadonly.js(5,15): error TS8010: Type annotations can only be used in TypeScript files.
 jsdocReadonly.js(9,9): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
 jsdocReadonly.js(11,9): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
 jsdocReadonly.js(23,3): error TS2540: Cannot assign to 'y' because it is a read-only property.
 
 
-==== jsdocReadonly.js (6 errors) ====
+==== jsdocReadonly.js (5 errors) ====
     class LOL {
         /**
          * @readonly
@@ -18,8 +17,6 @@ jsdocReadonly.js(23,3): error TS2540: Cannot assign to 'y' because it is a read-
          * @type {number}
     ~~~~~~~
 !!! error TS8009: The 'private' modifier can only be used in TypeScript files.
-                  ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * Order rules do not apply to JSDoc
          */
         x = 1

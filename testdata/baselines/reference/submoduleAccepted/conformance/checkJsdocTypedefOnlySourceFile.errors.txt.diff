@@ -8,10 +8,9 @@
 +0.js(3,5): error TS2441: Duplicate identifier 'exports'. Compiler reserves name 'exports' in top level scope of a module.
 +0.js(8,9): error TS2339: Property 'SomeName' does not exist on type '{}'.
 +0.js(10,12): error TS2503: Cannot find namespace 'exports'.
-+0.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== 0.js (4 errors) ====
++==== 0.js (3 errors) ====
      // @ts-check
      
      var exports = {};
@@ -30,7 +29,5 @@
 -!!! error TS2694: Namespace 'exports' has no exported member 'SomeName'.
 +               ~~~~~~~
 +!!! error TS2503: Cannot find namespace 'exports'.
-+               ~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
      const myString = 'str';
      

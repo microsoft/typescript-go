@@ -5,18 +5,15 @@
 -a.js(4,5): error TS7008: Member 'unknowable' implicitly has an 'any' type.
 -a.js(5,5): error TS7008: Member 'empty' implicitly has an 'any[]' type.
 +a.js(7,9): error TS7009: 'new' expression, whose target lacks a construct signature, implicitly has an 'any' type.
-+a.js(21,12): error TS8010: Type annotations can only be used in TypeScript files.
  a.js(25,29): error TS7006: Parameter 'l' implicitly has an 'any[]' type.
  a.js(27,5): error TS2322: Type 'undefined' is not assignable to type 'null'.
  a.js(29,5): error TS2322: Type '1' is not assignable to type 'null'.
-@@= skipped -7, +6 lines =@@
- a.js(31,5): error TS2322: Type '{}' is not assignable to type 'null'.
- a.js(32,5): error TS2322: Type '"ok"' is not assignable to type 'null'.
+@@= skipped -9, +7 lines =@@
  a.js(37,5): error TS2322: Type 'string' is not assignable to type 'number'.
-+a.js(55,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
- ==== a.js (10 errors) ====
+-==== a.js (10 errors) ====
++==== a.js (8 errors) ====
      function A () {
          // should get any on this-assignments in constructor
          this.unknown = null
@@ -35,21 +32,3 @@
      a.unknown = 1
      a.unknown = true
      a.unknown = {}
-@@= skipped -30, +27 lines =@@
-     a.empty.push('hi')
-     
-     /** @type {number | undefined} */
-+               ~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     var n;
-     
-     // should get any on parameter initialisers
-@@= skipped -48, +50 lines =@@
-     l.push('ok')
-     
-     /** @type {(v: unknown) => v is undefined} */
-+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-     const isUndef = v => v === undefined;
-     const e = [1, undefined];
-     

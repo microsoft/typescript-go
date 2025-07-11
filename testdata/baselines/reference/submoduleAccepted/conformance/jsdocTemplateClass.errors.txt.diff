@@ -2,26 +2,17 @@
 +++ new.jsdocTemplateClass.errors.txt
 @@= skipped -0, +0 lines =@@
 +templateTagOnClasses.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+templateTagOnClasses.js(3,17): error TS8010: Type annotations can only be used in TypeScript files.
-+templateTagOnClasses.js(7,22): error TS8010: Type annotations can only be used in TypeScript files.
-+templateTagOnClasses.js(8,17): error TS8010: Type annotations can only be used in TypeScript files.
-+templateTagOnClasses.js(14,16): error TS8010: Type annotations can only be used in TypeScript files.
-+templateTagOnClasses.js(15,16): error TS8010: Type annotations can only be used in TypeScript files.
-+templateTagOnClasses.js(16,16): error TS8010: Type annotations can only be used in TypeScript files.
-+templateTagOnClasses.js(17,17): error TS8010: Type annotations can only be used in TypeScript files.
  templateTagOnClasses.js(25,1): error TS2322: Type 'boolean' is not assignable to type 'number'.
 
 
 -==== templateTagOnClasses.js (1 errors) ====
-+==== templateTagOnClasses.js (9 errors) ====
++==== templateTagOnClasses.js (2 errors) ====
      /**
 +    ~~~
       * @template T
 +    ~~~~~~~~~~~~~~
       * @typedef {(t: T) => T} Id
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+                    ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
 +    ~~~
      /** @template T */
@@ -30,12 +21,8 @@
 +    ~~~~~~~~~~~
          /** @typedef {(t: T) => T} Id2 */
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+                         ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
          /** @param {T} x */
 +    ~~~~~~~~~~~~~~~~~~~~~~~
-+                    ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
          constructor (x) {
 +    ~~~~~~~~~~~~~~~~~~~~~
              this.a = x
@@ -48,20 +35,12 @@
 +    ~~~~~~~
           * @param {T} x 
 +    ~~~~~~~~~~~~~~~~~~~~
-+                   ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
           * @param {Id<T>} y
 +    ~~~~~~~~~~~~~~~~~~~~~~~
-+                   ~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
           * @param {Id2} alpha
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~
-+                   ~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
           * @return {T}
 +    ~~~~~~~~~~~~~~~~~~
-+                    ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
           */
 +    ~~~~~~~
          foo(x, y, alpha) {

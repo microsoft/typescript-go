@@ -1,22 +1,16 @@
 constructorFunctionMethodTypeParameters.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-constructorFunctionMethodTypeParameters.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
 constructorFunctionMethodTypeParameters.js(19,30): error TS8004: Type parameter declarations can only be used in TypeScript files.
 constructorFunctionMethodTypeParameters.js(22,16): error TS2304: Cannot find name 'T'.
-constructorFunctionMethodTypeParameters.js(22,16): error TS8010: Type annotations can only be used in TypeScript files.
-constructorFunctionMethodTypeParameters.js(23,16): error TS8010: Type annotations can only be used in TypeScript files.
 constructorFunctionMethodTypeParameters.js(24,17): error TS2304: Cannot find name 'T'.
-constructorFunctionMethodTypeParameters.js(24,17): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== constructorFunctionMethodTypeParameters.js (8 errors) ====
+==== constructorFunctionMethodTypeParameters.js (4 errors) ====
     /**
     ~~~
      * @template {string} T
     ~~~~~~~~~~~~~~~~~~~~~~~
      * @param {T} t
     ~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     function Cls(t) {
@@ -47,18 +41,12 @@ constructorFunctionMethodTypeParameters.js(24,17): error TS8010: Type annotation
     ~~~~~~~~~~~~~~~~~~~
                    ~
 !!! error TS2304: Cannot find name 'T'.
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @param {U} u
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @return {T}
     ~~~~~~~~~~~~~~~~~~
                     ~
 !!! error TS2304: Cannot find name 'T'.
-                    ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         function (t, u) {

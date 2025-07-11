@@ -2,27 +2,17 @@
 +++ new.jsdocTemplateTag3.errors.txt
 @@= skipped -0, +0 lines =@@
 +a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+a.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(7,12): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(8,12): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(11,13): error TS8010: Type annotations can only be used in TypeScript files.
  a.js(14,29): error TS2339: Property 'a' does not exist on type 'U'.
  a.js(14,35): error TS2339: Property 'b' does not exist on type 'U'.
 -a.js(21,3): error TS2345: Argument of type '{ a: number; }' is not assignable to parameter of type '{ a: number; b: string; }'.
 -  Property 'b' is missing in type '{ a: number; }' but required in type '{ a: number; b: string; }'.
 -a.js(24,15): error TS2304: Cannot find name 'NoLongerAllowed'.
 -a.js(25,2): error TS1069: Unexpected token. A type parameter name was expected without curly braces.
--
--
--==== a.js (5 errors) ====
 +a.js(21,3): error TS2741: Property 'b' is missing in type '{ a: number; }' but required in type '{ a: number; b: string; }'.
 +a.js(21,50): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+a.js(26,12): error TS8010: Type annotations can only be used in TypeScript files.
-+
-+
-+==== a.js (12 errors) ====
+
+
+ ==== a.js (5 errors) ====
      /**
 +    ~~~
       * @template {{ a: number, b: string }} T,U A Comment
@@ -35,28 +25,16 @@
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       * @param {T} t
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {U} u
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {V} v
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {W} w
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {X} x
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @return {W | X}
 +    ~~~~~~~~~~~~~~~~~~
-+                ~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
 +    ~~~
      function f(t, u, v, w, x) {
@@ -99,8 +77,6 @@
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       * @param {T} x
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       */
 +    ~~~
      function g(x) { }

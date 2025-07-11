@@ -9,31 +9,7 @@
  bad.js(9,14): error TS7006: Parameter 'x' implicitly has an 'any' type.
  bad.js(9,17): error TS7006: Parameter 'y' implicitly has an 'any' type.
  bad.js(9,20): error TS7006: Parameter 'z' implicitly has an 'any' type.
--
--
--==== good.js (0 errors) ====
-+good.js(3,5): error TS8010: Type annotations can only be used in TypeScript files.
-+good.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
-+good.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
-+
-+
-+==== good.js (3 errors) ====
-     /**
-      * @param
-      * {number} x Arg x.
-+        ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      * @param {number}
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      * y Arg y.
-      * @param {number} z
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      * Arg z.
-      */
-     function good(x, y, z) {
-@@= skipped -22, +26 lines =@@
+@@= skipped -22, +17 lines =@@
      good(1, 2, 3)
      
      

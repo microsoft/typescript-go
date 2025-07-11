@@ -1,25 +1,15 @@
-file.js(5,9): error TS8010: Type annotations can only be used in TypeScript files.
-file.js(7,19): error TS8010: Type annotations can only be used in TypeScript files.
 file.js(7,26): error TS8020: JSDoc types can only be used inside documentation comments.
-file.js(16,9): error TS8010: Type annotations can only be used in TypeScript files.
-file.js(20,19): error TS8010: Type annotations can only be used in TypeScript files.
 file.js(20,26): error TS8020: JSDoc types can only be used inside documentation comments.
 
 
-==== file.js (6 errors) ====
+==== file.js (2 errors) ====
     class X {
         /**
           * Cancels the request, sending a cancellation to the other party
           * @param {Object} error __auto_generated__
           * @param {string?} error.reason the error reason to send the cancellation with
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           * @param {string?} error.code the error code to send the cancellation with
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           * @returns {Promise.<*>} resolves when the event has been sent.
-    ~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
-                      ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                              ~
 !!! error TS8020: JSDoc types can only be used inside documentation comments.
           */ 
@@ -31,18 +21,10 @@ file.js(20,26): error TS8020: JSDoc types can only be used inside documentation 
           * Cancels the request, sending a cancellation to the other party
           * @param {Object} error __auto_generated__
           * @param {string?} error.reason the error reason to send the cancellation with
-            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           * @param {Object} error.suberr
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           * @param {string?} error.suberr.reason the error reason to send the cancellation with
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           * @param {string?} error.suberr.code the error code to send the cancellation with
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           * @returns {Promise.<*>} resolves when the event has been sent.
-    ~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
-                      ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                              ~
 !!! error TS8020: JSDoc types can only be used inside documentation comments.
           */ 

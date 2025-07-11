@@ -3,18 +3,9 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +jsFileMethodOverloads.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+jsFileMethodOverloads.js(6,14): error TS8010: Type annotations can only be used in TypeScript files.
-+jsFileMethodOverloads.js(13,7): error TS8017: Signature declarations can only be used in TypeScript files.
-+jsFileMethodOverloads.js(18,7): error TS8017: Signature declarations can only be used in TypeScript files.
-+jsFileMethodOverloads.js(23,16): error TS8010: Type annotations can only be used in TypeScript files.
-+jsFileMethodOverloads.js(31,7): error TS8017: Signature declarations can only be used in TypeScript files.
-+jsFileMethodOverloads.js(36,7): error TS8017: Signature declarations can only be used in TypeScript files.
-+jsFileMethodOverloads.js(40,6): error TS8009: The '?' modifier can only be used in TypeScript files.
-+jsFileMethodOverloads.js(40,14): error TS8010: Type annotations can only be used in TypeScript files.
-+jsFileMethodOverloads.js(41,16): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== jsFileMethodOverloads.js (10 errors) ====
++==== jsFileMethodOverloads.js (1 errors) ====
 +    /**
 +    ~~~
 +     * @template T
@@ -27,8 +18,6 @@
 +    ~~~~~
 +       * @param {T} value 
 +    ~~~~~~~~~~~~~~~~~~~~~~
-+                 ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +       */
 +    ~~~~~
 +      constructor(value) {
@@ -43,8 +32,6 @@
 +    ~~~~~
 +       * @overload
 +    ~~~~~~~~~~~~~~
-+          ~~~~~~~~
-+!!! error TS8017: Signature declarations can only be used in TypeScript files.
 +       * @param {Example<number>} this
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +       * @returns {'number'}
@@ -55,8 +42,6 @@
 +    ~~~~~
 +       * @overload
 +    ~~~~~~~~~~~~~~
-+          ~~~~~~~~
-+!!! error TS8017: Signature declarations can only be used in TypeScript files.
 +       * @param {Example<string>} this
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +       * @returns {'string'}
@@ -67,8 +52,6 @@
 +    ~~~~~
 +       * @returns {string}
 +    ~~~~~~~~~~~~~~~~~~~~~~
-+                   ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +       */
 +    ~~~~~
 +      getTypeName() {
@@ -85,8 +68,6 @@
 +    ~~~~~~~~~~~~~~~~
 +       * @overload
 +    ~~~~~~~~~~~~~~
-+          ~~~~~~~~
-+!!! error TS8017: Signature declarations can only be used in TypeScript files.
 +       * @param {(y: T) => U} fn
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +       * @returns {U}
@@ -97,8 +78,6 @@
 +    ~~~~~
 +       * @overload
 +    ~~~~~~~~~~~~~~
-+          ~~~~~~~~
-+!!! error TS8017: Signature declarations can only be used in TypeScript files.
 +       * @returns {T}
 +    ~~~~~~~~~~~~~~~~~
 +       */
@@ -107,15 +86,8 @@
 +    ~~~~~
 +       * @param {(y: T) => unknown} [fn]
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+                 ~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +       * @returns {unknown}
 +    ~~~~~~~~~~~~~~~~~~~~~~~
-+    ~~~~~
-+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
-+                   ~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +       */
 +    ~~~~~
 +      transform(fn) {

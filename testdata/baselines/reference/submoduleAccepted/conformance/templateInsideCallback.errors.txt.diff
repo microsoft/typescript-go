@@ -6,7 +6,6 @@
 -templateInsideCallback.js(9,5): error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
 -templateInsideCallback.js(10,12): error TS2304: Cannot find name 'T'.
  templateInsideCallback.js(15,11): error TS2315: Type 'Call' is not generic.
-+templateInsideCallback.js(15,11): error TS8010: Type annotations can only be used in TypeScript files.
 +templateInsideCallback.js(15,16): error TS2304: Cannot find name 'T'.
 +templateInsideCallback.js(17,17): error TS8004: Type parameter declarations can only be used in TypeScript files.
  templateInsideCallback.js(17,18): error TS7006: Parameter 'x' implicitly has an 'any' type.
@@ -24,17 +23,10 @@
 -!!! related TS7012 templateInsideCallback.js:37:5: This overload implicitly returns the type 'any' because it lacks a return type annotation.
 -==== templateInsideCallback.js (11 errors) ====
 +templateInsideCallback.js(29,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
-+templateInsideCallback.js(29,5): error TS8017: Signature declarations can only be used in TypeScript files.
 +templateInsideCallback.js(37,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
-+templateInsideCallback.js(37,5): error TS8017: Signature declarations can only be used in TypeScript files.
-+templateInsideCallback.js(43,12): error TS8010: Type annotations can only be used in TypeScript files.
-+templateInsideCallback.js(44,12): error TS8010: Type annotations can only be used in TypeScript files.
-+templateInsideCallback.js(45,14): error TS8010: Type annotations can only be used in TypeScript files.
-+templateInsideCallback.js(48,14): error TS8010: Type annotations can only be used in TypeScript files.
-+templateInsideCallback.js(51,31): error TS8016: Type assertion expressions can only be used in TypeScript files.
 +
 +
-+==== templateInsideCallback.js (14 errors) ====
++==== templateInsideCallback.js (6 errors) ====
      /**
       * @typedef Oops
 -                ~~~~
@@ -42,7 +34,7 @@
       * @template T
       * @property {T} a
       * @property {T} b
-@@= skipped -27, +23 lines =@@
+@@= skipped -27, +15 lines =@@
      /**
       * @callback Call
       * @template T
@@ -58,8 +50,6 @@
       * @type {Call<T>}
                ~~~~~~~
  !!! error TS2315: Type 'Call' is not generic.
-+              ~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +                   ~
 +!!! error TS2304: Cannot find name 'T'.
       */
@@ -69,7 +59,7 @@
                       ~
  !!! error TS7006: Parameter 'x' implicitly has an 'any' type.
      
-@@= skipped -10, +16 lines =@@
+@@= skipped -10, +14 lines =@@
       * @property {Object} oh
       * @property {number} oh.no
       * @template T
@@ -81,13 +71,11 @@
      
      /**
       * @overload
-+        ~~~~~~~~
-+!!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
-+        ~~~~~~~~
-+!!! error TS8017: Signature declarations can only be used in TypeScript files.
-      * @template T
--        ~~~~~~~~
+-     * @template T
+         ~~~~~~~~
 -!!! error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
++!!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
++     * @template T
       * @template U
       * @param {T[]} array
 -               ~
@@ -99,38 +87,14 @@
       */
      /**
       * @overload
-+        ~~~~~~~~
-+!!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
-+        ~~~~~~~~
-+!!! error TS8017: Signature declarations can only be used in TypeScript files.
-      * @template T
--        ~~~~~~~~
+-     * @template T
+         ~~~~~~~~
 -!!! error TS8039: A JSDoc '@template' tag may not follow a '@typedef', '@callback', or '@overload' tag
++!!! error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
++     * @template T
       * @param {T[][]} array
 -               ~
 -!!! error TS2304: Cannot find name 'T'.
       * @returns {T[]}
       */
      /**
-      * @param {unknown[]} array
-+               ~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      * @param {(x: unknown) => unknown} iterable
-+               ~~~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      * @returns {unknown[]}
-+                 ~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-      */
-     function flatMap(array, iterable = identity) {
-       /** @type {unknown[]} */
-+                 ~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
-       const result = [];
-       for (let i = 0; i < array.length; i += 1) {
-         result.push(.../** @type {unknown[]} */(iterable(array[i])));
-+                                  ~~~~~~~~~
-+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
-       }
-       return result;
-     }

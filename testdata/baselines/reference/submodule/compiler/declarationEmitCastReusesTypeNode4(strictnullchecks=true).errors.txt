@@ -1,97 +1,43 @@
-input.js(5,30): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(7,30): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(8,34): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(10,35): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(12,13): error TS8010: Type annotations can only be used in TypeScript files.
-input.js(13,59): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(16,24): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(17,44): error TS8016: Type assertion expressions can only be used in TypeScript files.
 input.js(18,9): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
-input.js(18,43): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(19,27): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(20,17): error TS8010: Type annotations can only be used in TypeScript files.
-input.js(21,46): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(23,40): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(25,33): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(29,27): error TS8016: Type assertion expressions can only be used in TypeScript files.
-input.js(34,12): error TS8010: Type annotations can only be used in TypeScript files.
-input.js(35,12): error TS8010: Type annotations can only be used in TypeScript files.
-input.js(37,70): error TS8016: Type assertion expressions can only be used in TypeScript files.
 
 
-==== input.js (19 errors) ====
+==== input.js (1 errors) ====
     /**
      * @typedef {{ } & { name?: string }} P
      */
     
     const something = /** @type {*} */(null);
-                                 ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     export let vLet = /** @type {P} */(something);
-                                 ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     export const vConst = /** @type {P} */(something);
-                                     ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     export function fn(p = /** @type {P} */(something)) {}
-                                      ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     /** @param {number} req */
-                ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     export function fnWithRequiredDefaultParam(p = /** @type {P} */(something), req) {}
-                                                              ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     export class C {
         field = /** @type {P} */(something);
-                           ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
         /** @optional */ optField = /** @type {P} */(something); // not a thing
-                                               ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
         /** @readonly */ roFiled = /** @type {P} */(something);
             ~~~~~~~~~~
 !!! error TS8009: The 'readonly' modifier can only be used in TypeScript files.
-                                              ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
         method(p = /** @type {P} */(something)) {}
-                              ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
         /** @param {number} req */
-                    ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         methodWithRequiredDefault(p = /** @type {P} */(something), req) {}
-                                                 ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
         constructor(ctorField = /** @type {P} */(something)) {}
-                                           ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
         get x() { return /** @type {P} */(something) }
-                                    ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
         set x(v) { }
     }
     
     export default /** @type {P} */(something);
-                              ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     // allows `undefined` on the input side, thanks to the initializer
     /**
      * 
      * @param {P} x
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {number} b
-               ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     export function fnWithPartialAnnotationOnDefaultparam(x = /** @type {P} */(something), b) {}
-                                                                         ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.

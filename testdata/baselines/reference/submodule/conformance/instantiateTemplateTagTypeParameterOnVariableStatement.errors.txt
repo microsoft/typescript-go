@@ -1,18 +1,11 @@
-instantiateTemplateTagTypeParameterOnVariableStatement.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
-instantiateTemplateTagTypeParameterOnVariableStatement.js(4,14): error TS8010: Type annotations can only be used in TypeScript files.
 instantiateTemplateTagTypeParameterOnVariableStatement.js(6,12): error TS8004: Type parameter declarations can only be used in TypeScript files.
-instantiateTemplateTagTypeParameterOnVariableStatement.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== instantiateTemplateTagTypeParameterOnVariableStatement.js (4 errors) ====
+==== instantiateTemplateTagTypeParameterOnVariableStatement.js (1 errors) ====
     /**
      * @template T
      * @param {T} a
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {(b: T) => T}
-                 ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     const seq = a => b => b;
                ~~~~~~~~~~~~
@@ -22,7 +15,5 @@ instantiateTemplateTagTypeParameterOnVariableStatement.js(11,12): error TS8010: 
     const text2 = "world";
     
     /** @type {string} */
-               ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var text3 = seq(text1)(text2);
     

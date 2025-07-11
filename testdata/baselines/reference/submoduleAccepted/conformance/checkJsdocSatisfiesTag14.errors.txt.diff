@@ -8,27 +8,23 @@
 -
 -
 -==== /a.js (4 errors) ====
-+/a.js(10,27): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
-+
-+
-+==== /a.js (1 errors) ====
-     /**
-      * @typedef {Object} T1
-      * @property {number} a
-@@= skipped -11, +8 lines =@@
-     
-     /**
-      * @satisfies T1
+-    /**
+-     * @typedef {Object} T1
+-     * @property {number} a
+-     */
+-    
+-    /**
+-     * @satisfies T1
 -                  ~~
 -!!! error TS1005: '{' expected.
-      */
+-     */
 -     
 -!!! error TS1005: '}' expected.
-     const t1 = { a: 1 };
-     const t2 = /** @satisfies T1 */ ({ a: 1 });
-                               ~~
+-    const t1 = { a: 1 };
+-    const t2 = /** @satisfies T1 */ ({ a: 1 });
+-                              ~~
 -!!! error TS1005: '{' expected.
 -                                 
 -!!! error TS1005: '}' expected.
-+!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
-     
+-    
++<no content>

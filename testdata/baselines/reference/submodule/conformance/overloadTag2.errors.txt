@@ -1,13 +1,9 @@
-overloadTag2.js(8,9): error TS8017: Signature declarations can only be used in TypeScript files.
 overloadTag2.js(14,9): error TS2394: This overload signature is not compatible with its implementation signature.
-overloadTag2.js(14,9): error TS8017: Signature declarations can only be used in TypeScript files.
-overloadTag2.js(19,9): error TS8017: Signature declarations can only be used in TypeScript files.
-overloadTag2.js(23,16): error TS8010: Type annotations can only be used in TypeScript files.
 overloadTag2.js(25,20): error TS7006: Parameter 'b' implicitly has an 'any' type.
 overloadTag2.js(30,9): error TS2554: Expected 1-2 arguments, but got 0.
 
 
-==== overloadTag2.js (7 errors) ====
+==== overloadTag2.js (3 errors) ====
     export class Foo {
         #a = true ? 1 : "1"
         #b
@@ -16,8 +12,6 @@ overloadTag2.js(30,9): error TS2554: Expected 1-2 arguments, but got 0.
          * Should not have an implicit any error, because constructor's return type is always implicit
          * @constructor
          * @overload
-            ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
          * @param {string} a
          * @param {number} b
          */
@@ -27,21 +21,15 @@ overloadTag2.js(30,9): error TS2554: Expected 1-2 arguments, but got 0.
             ~~~~~~~~
 !!! error TS2394: This overload signature is not compatible with its implementation signature.
 !!! related TS2750 overloadTag2.js:25:5: The implementation signature is declared here.
-            ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
          * @param {number} a
          */
         /**
          * @constructor
          * @overload
-            ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
          * @param {string} a
          *//**
          * @constructor
          * @param {number | string} a
-                   ~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         constructor(a, b) {
                        ~

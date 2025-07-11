@@ -1,40 +1,14 @@
-index.js(13,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(14,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(17,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
-index.js(24,15): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(30,15): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(31,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
-index.js(38,17): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(40,34): error TS8016: Type assertion expressions can only be used in TypeScript files.
-index.js(43,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(48,17): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(50,34): error TS8016: Type assertion expressions can only be used in TypeScript files.
-index.js(53,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(58,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(59,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(65,15): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(71,15): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(72,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
-index.js(79,17): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(84,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(89,17): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(94,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(97,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
-index.js(104,15): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(108,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(109,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(111,25): error TS8004: Type parameter declarations can only be used in TypeScript files.
-index.js(115,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(116,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(153,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
-index.js(161,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(167,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
 index.js(173,23): error TS8011: Type arguments can only be used in TypeScript files.
-index.js(175,16): error TS8010: Type annotations can only be used in TypeScript files.
-index.js(183,20): error TS8016: Type assertion expressions can only be used in TypeScript files.
 
 
-==== index.js (34 errors) ====
+==== index.js (8 errors) ====
     export class A {}
     
     export class B {
@@ -48,11 +22,7 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     export class D {
         /**
          * @param {number} a
-                   ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @param {number} b
-                   ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         constructor(a, b) {}
     }
@@ -71,8 +41,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @type {T & U}
     ~~~~~~~~~~~~~~~~~~~~
-                  ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         field;
@@ -85,8 +53,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @type {T & U}
     ~~~~~~~~~~~~~~~~~~~~
-                  ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @readonly
     ~~~~~~~~~~~~~~~~
            ~~~~~~~~~
@@ -106,22 +72,16 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @return {U}
     ~~~~~~~~~~~~~~~~~~
-                    ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         get f1() { return /** @type {*} */(null); }
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                     ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     
         /**
     ~~~~~~~
          * @param {U} _p
     ~~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         set f1(_p) {}
@@ -132,22 +92,16 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @return {U}
     ~~~~~~~~~~~~~~~~~~
-                    ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         get f2() { return /** @type {*} */(null); }
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                                     ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     
         /**
     ~~~~~~~
          * @param {U} _p
     ~~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         set f3(_p) {}
@@ -158,12 +112,8 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @param {T} a
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @param {U} b
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         constructor(a, b) {}
@@ -176,8 +126,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @type {string}
     ~~~~~~~~~~~~~~~~~~~~~
-                  ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         static staticField;
@@ -190,8 +138,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @type {string}
     ~~~~~~~~~~~~~~~~~~~~~
-                  ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @readonly
     ~~~~~~~~~~~~~~~~
            ~~~~~~~~~
@@ -211,8 +157,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @return {string}
     ~~~~~~~~~~~~~~~~~~~~~~~
-                    ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         static get s1() { return ""; }
@@ -223,8 +167,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @param {string} _p
     ~~~~~~~~~~~~~~~~~~~~~~~~~
-                   ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         static set s1(_p) {}
@@ -235,8 +177,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @return {string}
     ~~~~~~~~~~~~~~~~~~~~~~~
-                    ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         static get s2() { return ""; }
@@ -247,8 +187,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @param {string} _p
     ~~~~~~~~~~~~~~~~~~~~~~~~~
-                   ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         static set s3(_p) {}
@@ -271,8 +209,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @type {T & U}
     ~~~~~~~~~~~~~~~~~~~~
-                  ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         field;
@@ -281,12 +217,8 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @param {T} a
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @param {U} b
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         constructor(a, b) {}
@@ -304,13 +236,9 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
          * @param {A} a
     ~~~~~~~~~~~~~~~~~~~
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @param {B} b
     ~~~~~~~~~~~~~~~~~~~
     ~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
     ~~~~~~~
@@ -372,8 +300,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @param {T} param 
     ~~~~~~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         constructor(param) {
@@ -406,8 +332,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
     ~~~~~~~
          * @param {U} param 
     ~~~~~~~~~~~~~~~~~~~~~~~~
-                   ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
     ~~~~~~~
         constructor(param) {
@@ -423,8 +347,6 @@ index.js(183,20): error TS8016: Type assertion expressions can only be used in T
 !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     var x = /** @type {*} */(null);
-                       ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     export class VariableBase extends x {}
     

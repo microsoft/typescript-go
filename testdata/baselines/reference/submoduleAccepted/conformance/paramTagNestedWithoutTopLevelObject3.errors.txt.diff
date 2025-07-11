@@ -1,7 +1,6 @@
 --- old.paramTagNestedWithoutTopLevelObject3.errors.txt
 +++ new.paramTagNestedWithoutTopLevelObject3.errors.txt
 @@= skipped -0, +0 lines =@@
-+paramTagNestedWithoutTopLevelObject3.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
  paramTagNestedWithoutTopLevelObject3.js(3,20): error TS8032: Qualified name 'xyz.bar.p' is not allowed without a leading '@param {object} xyz.bar'.
 -
 -
@@ -9,14 +8,11 @@
 +paramTagNestedWithoutTopLevelObject3.js(6,16): error TS2339: Property 'bar' does not exist on type 'object'.
 +
 +
-+==== paramTagNestedWithoutTopLevelObject3.js (3 errors) ====
++==== paramTagNestedWithoutTopLevelObject3.js (2 errors) ====
      /**
       * @param {object} xyz
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
       * @param {number} xyz.bar.p
-                        ~~~~~~~~~
- !!! error TS8032: Qualified name 'xyz.bar.p' is not allowed without a leading '@param {object} xyz.bar'.
+@@= skipped -9, +10 lines =@@
       */
      function g(xyz) {
          return xyz.bar.p;

@@ -3,13 +3,11 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +MC.js(6,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-+MC.js(7,16): error TS8010: Type annotations can only be used in TypeScript files.
 +MW.js(1,15): error TS1340: Module './MC' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./MC')'?
-+MW.js(5,14): error TS8010: Type annotations can only be used in TypeScript files.
 +MW.js(12,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
 +
-+==== MC.js (2 errors) ====
++==== MC.js (1 errors) ====
 +    const MW = require("./MW");
 +    
 +    /** @typedef {number} Meyerhauser */
@@ -19,8 +17,6 @@
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +        /** @type {any} */
 +    ~~~~~~~~~~~~~~~~~~~~~~
-+                   ~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +        var x = {}
 +    ~~~~~~~~~~~~~~
 +        return new MW(x);
@@ -29,7 +25,7 @@
 +    ~
 +!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +    
-+==== MW.js (3 errors) ====
++==== MW.js (2 errors) ====
 +    /** @typedef {import("./MC")} MC */
 +                  ~~~~~~~~~~~~~~
 +!!! error TS1340: Module './MC' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./MC')'?
@@ -37,8 +33,6 @@
 +    class MW {
 +      /**
 +       * @param {MC} compiler the compiler
-+                 ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +       */
 +      constructor(compiler) {
 +        this.compiler = compiler;

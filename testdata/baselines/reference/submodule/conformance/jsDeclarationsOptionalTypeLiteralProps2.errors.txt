@@ -1,10 +1,9 @@
-foo.js(9,14): error TS8010: Type annotations can only be used in TypeScript files.
 foo.js(11,16): error TS7031: Binding element 'a' implicitly has an 'any' type.
 foo.js(11,19): error TS7031: Binding element 'b' implicitly has an 'any' type.
 foo.js(11,22): error TS7031: Binding element 'c' implicitly has an 'any' type.
 
 
-==== foo.js (4 errors) ====
+==== foo.js (3 errors) ====
     /**
      * foo
      *
@@ -14,8 +13,6 @@ foo.js(11,22): error TS7031: Binding element 'c' implicitly has an 'any' type.
      * @param {number} [opts.b]
      * @param {number} [opts.c]
      * @returns {number}
-                 ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function foo({ a, b, c }) {
                    ~

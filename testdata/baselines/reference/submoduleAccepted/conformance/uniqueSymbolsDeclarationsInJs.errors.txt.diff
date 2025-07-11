@@ -3,15 +3,12 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +uniqueSymbolsDeclarationsInJs.js(4,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
-+uniqueSymbolsDeclarationsInJs.js(8,15): error TS8010: Type annotations can only be used in TypeScript files.
 +uniqueSymbolsDeclarationsInJs.js(9,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
-+uniqueSymbolsDeclarationsInJs.js(13,15): error TS8010: Type annotations can only be used in TypeScript files.
 +uniqueSymbolsDeclarationsInJs.js(14,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
 +uniqueSymbolsDeclarationsInJs.js(20,8): error TS8009: The 'readonly' modifier can only be used in TypeScript files.
-+uniqueSymbolsDeclarationsInJs.js(26,12): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== uniqueSymbolsDeclarationsInJs.js (7 errors) ====
++==== uniqueSymbolsDeclarationsInJs.js (4 errors) ====
 +    // classes
 +    class C {
 +        /**
@@ -23,8 +20,6 @@
 +        static readonlyStaticCall = Symbol();
 +        /**
 +         * @type {unique symbol}
-+                  ~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         * @readonly
 +           ~~~~~~~~~
 +         */
@@ -33,8 +28,6 @@
 +        static readonlyStaticType;
 +        /**
 +         * @type {unique symbol}
-+                  ~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         * @readonly
 +           ~~~~~~~~~
 +         */
@@ -54,7 +47,5 @@
 +    }
 +    
 +    /** @type {unique symbol} */
-+               ~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    const a = Symbol();
 +    

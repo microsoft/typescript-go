@@ -1,67 +1,34 @@
-b.js(2,20): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(4,20): error TS8016: Type assertion expressions can only be used in TypeScript files.
 b.js(4,31): error TS2352: Conversion of type 'number' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
-b.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
-b.js(9,12): error TS8010: Type annotations can only be used in TypeScript files.
-b.js(12,20): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(13,25): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(43,23): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(44,23): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(45,23): error TS8016: Type assertion expressions can only be used in TypeScript files.
 b.js(45,36): error TS2741: Property 'p' is missing in type 'SomeOther' but required in type 'SomeBase'.
-b.js(47,26): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(48,26): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(49,26): error TS8016: Type assertion expressions can only be used in TypeScript files.
 b.js(49,42): error TS2739: Type 'SomeOther' is missing the following properties from type 'SomeDerived': p, x
-b.js(51,24): error TS8016: Type assertion expressions can only be used in TypeScript files.
 b.js(51,38): error TS2741: Property 'q' is missing in type 'SomeDerived' but required in type 'SomeOther'.
-b.js(52,24): error TS8016: Type assertion expressions can only be used in TypeScript files.
 b.js(52,38): error TS2741: Property 'q' is missing in type 'SomeBase' but required in type 'SomeOther'.
-b.js(53,24): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(59,23): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(62,12): error TS8010: Type annotations can only be used in TypeScript files.
-b.js(64,12): error TS8010: Type annotations can only be used in TypeScript files.
 b.js(66,15): error TS1228: A type predicate is only allowed in return type position for functions and methods.
-b.js(66,15): error TS8016: Type assertion expressions can only be used in TypeScript files.
 b.js(66,38): error TS2454: Variable 'numOrStr' is used before being assigned.
 b.js(67,2): error TS2322: Type 'string | number' is not assignable to type 'string'.
   Type 'number' is not assignable to type 'string'.
 b.js(67,8): error TS2454: Variable 'numOrStr' is used before being assigned.
-b.js(71,27): error TS8016: Type assertion expressions can only be used in TypeScript files.
-b.js(72,27): error TS8016: Type assertion expressions can only be used in TypeScript files.
 
 
 ==== a.ts (0 errors) ====
     var W: string;
     
-==== b.js (30 errors) ====
+==== b.js (9 errors) ====
     // @ts-check
     var W = /** @type {string} */(/** @type {*} */ (4));
-                       ~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     var W = /** @type {string} */(4); // Error
-                       ~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                   ~
 !!! error TS2352: Conversion of type 'number' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
     
     /** @type {*} */
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var a;
     
     /** @type {string} */
-               ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var s;
     
     var a = /** @type {*} */("" + 4);
-                       ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     var s = "" + /** @type {*} */(4);
-                            ~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     class SomeBase {
         constructor() {
@@ -92,68 +59,42 @@ b.js(72,27): error TS8016: Type assertion expressions can only be used in TypeSc
     var someFakeClass = new SomeFakeClass();
     
     someBase = /** @type {SomeBase} */(someDerived);
-                          ~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     someBase = /** @type {SomeBase} */(someBase);
-                          ~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     someBase = /** @type {SomeBase} */(someOther); // Error
-                          ~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                        ~~~~~~~~~
 !!! error TS2741: Property 'p' is missing in type 'SomeOther' but required in type 'SomeBase'.
 !!! related TS2728 b.js:17:9: 'p' is declared here.
     
     someDerived = /** @type {SomeDerived} */(someDerived);
-                             ~~~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     someDerived = /** @type {SomeDerived} */(someBase);
-                             ~~~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     someDerived = /** @type {SomeDerived} */(someOther); // Error
-                             ~~~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                              ~~~~~~~~~
 !!! error TS2739: Type 'SomeOther' is missing the following properties from type 'SomeDerived': p, x
     
     someOther = /** @type {SomeOther} */(someDerived); // Error
-                           ~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                          ~~~~~~~~~~~
 !!! error TS2741: Property 'q' is missing in type 'SomeDerived' but required in type 'SomeOther'.
 !!! related TS2728 b.js:28:9: 'q' is declared here.
     someOther = /** @type {SomeOther} */(someBase); // Error
-                           ~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                          ~~~~~~~~
 !!! error TS2741: Property 'q' is missing in type 'SomeBase' but required in type 'SomeOther'.
 !!! related TS2728 b.js:28:9: 'q' is declared here.
     someOther = /** @type {SomeOther} */(someOther);
-                           ~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     someFakeClass = someBase;
     someFakeClass = someDerived;
     
     someBase = someFakeClass; // Error
     someBase = /** @type {SomeBase} */(someFakeClass);
-                          ~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     
     // Type assertion cannot be a type-predicate type
     /** @type {number | string} */
-               ~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var numOrStr;
     /** @type {string} */
-               ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     var str;
     if(/** @type {numOrStr is string} */(numOrStr === undefined)) { // Error
                   ~~~~~~~~~~~~~~~~~~
 !!! error TS1228: A type predicate is only allowed in return type position for functions and methods.
-                  ~~~~~~~~~~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                          ~~~~~~~~
 !!! error TS2454: Variable 'numOrStr' is used before being assigned.
     	str = numOrStr; // Error, no narrowing occurred
@@ -166,10 +107,6 @@ b.js(72,27): error TS8016: Type assertion expressions can only be used in TypeSc
     
     
     var asConst1 = /** @type {const} */(1);
-                              ~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
     var asConst2 = /** @type {const} */({
-                              ~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
         x: 1
     });

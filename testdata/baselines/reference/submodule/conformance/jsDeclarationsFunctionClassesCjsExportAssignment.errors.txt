@@ -1,41 +1,28 @@
 context.js(4,14): error TS1340: Module './timer' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./timer')'?
 context.js(5,14): error TS1340: Module './hook' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./hook')'?
 context.js(6,31): error TS2694: Namespace 'Hook' has no exported member 'HookHandler'.
-context.js(29,12): error TS8010: Type annotations can only be used in TypeScript files.
 context.js(34,14): error TS2350: Only a void function can be called with the 'new' keyword.
-context.js(40,16): error TS8010: Type annotations can only be used in TypeScript files.
-context.js(41,16): error TS8010: Type annotations can only be used in TypeScript files.
-context.js(42,18): error TS8010: Type annotations can only be used in TypeScript files.
 context.js(48,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-hook.js(2,19): error TS8010: Type annotations can only be used in TypeScript files.
 hook.js(2,20): error TS1340: Module './context' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./context')'?
-hook.js(5,12): error TS8010: Type annotations can only be used in TypeScript files.
 hook.js(10,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-timer.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== timer.js (1 errors) ====
+==== timer.js (0 errors) ====
     /**
      * @param {number} timeout
-               ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function Timer(timeout) {
         this.timeout = timeout;
     }
     module.exports = Timer;
-==== hook.js (4 errors) ====
+==== hook.js (2 errors) ====
     /**
      * @typedef {(arg: import("./context")) => void} HookHandler
-                      ~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                        ~~~~~~~~~~~~~~~~~~~
 !!! error TS1340: Module './context' does not refer to a type, but is used as a type here. Did you mean 'typeof import('./context')'?
      */
     /**
      * @param {HookHandler} handle
-               ~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     function Hook(handle) {
         this.handle = handle;
@@ -44,7 +31,7 @@ timer.js(2,12): error TS8010: Type annotations can only be used in TypeScript fi
     ~~~~~~~~~~~~~~~~~~~~~
 !!! error TS2309: An export assignment cannot be used in a module with other exported elements.
     
-==== context.js (9 errors) ====
+==== context.js (5 errors) ====
     /**
      * Imports
      *
@@ -80,8 +67,6 @@ timer.js(2,12): error TS8010: Type annotations can only be used in TypeScript fi
      *
      * @class
      * @param {Input} input
-               ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     
     function Context(input) {
@@ -95,14 +80,8 @@ timer.js(2,12): error TS8010: Type annotations can only be used in TypeScript fi
     Context.prototype = {
         /**
          * @param {Input} input
-                   ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @param {HookHandler=} handle
-                   ~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          * @returns {State}
-                     ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
          */
         construct(input, handle = () => void 0) {
             return input;

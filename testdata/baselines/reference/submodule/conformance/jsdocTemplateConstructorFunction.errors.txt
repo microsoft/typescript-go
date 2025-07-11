@@ -1,25 +1,19 @@
 templateTagOnConstructorFunctions.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-templateTagOnConstructorFunctions.js(3,17): error TS8010: Type annotations can only be used in TypeScript files.
-templateTagOnConstructorFunctions.js(6,12): error TS8010: Type annotations can only be used in TypeScript files.
 
 
-==== templateTagOnConstructorFunctions.js (3 errors) ====
+==== templateTagOnConstructorFunctions.js (1 errors) ====
     /**
     ~~~
      * @template U
     ~~~~~~~~~~~~~~
      * @typedef {(u: U) => U} Id
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                    ~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     ~~~
     /**
     ~~~
      * @param {T} t
     ~~~~~~~~~~~~~~~
-               ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @template T
     ~~~~~~~~~~~~~~
      */

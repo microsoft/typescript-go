@@ -1,36 +1,23 @@
-/a.js(2,18): error TS8010: Type annotations can only be used in TypeScript files.
-/a.js(5,18): error TS8005: 'implements' clauses can only be used in TypeScript files.
-/a.js(10,17): error TS8005: 'implements' clauses can only be used in TypeScript files.
-/a.js(12,18): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(13,5): error TS2416: Property 'method' in type 'B2' is not assignable to the same property in base type 'A'.
   Type '() => string' is not assignable to type '() => number'.
     Type 'string' is not assignable to type 'number'.
-/a.js(16,18): error TS8005: 'implements' clauses can only be used in TypeScript files.
 /a.js(17,7): error TS2720: Class 'B3' incorrectly implements class 'A'. Did you mean to extend 'A' and inherit its members as a subclass?
   Property 'method' is missing in type 'B3' but required in type 'A'.
 
 
-==== /a.js (7 errors) ====
+==== /a.js (2 errors) ====
     class A {
         /** @return {number} */
-                     ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         method() { throw new Error(); }
     }
     /** @implements {A} */
-                     ~
-!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
     class B  {
         method() { return 0 }
     }
     
     /** @implements A */
-                    ~
-!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
     class B2  {
         /** @return {string} */
-                     ~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
         method() { return "" }
         ~~~~~~
 !!! error TS2416: Property 'method' in type 'B2' is not assignable to the same property in base type 'A'.
@@ -39,8 +26,6 @@
     }
     
     /** @implements {A} */
-                     ~
-!!! error TS8005: 'implements' clauses can only be used in TypeScript files.
     class B3  {
           ~~
 !!! error TS2720: Class 'B3' incorrectly implements class 'A'. Did you mean to extend 'A' and inherit its members as a subclass?

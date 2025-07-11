@@ -1,8 +1,4 @@
-/a.js(1,5): error TS8006: 'import type' declarations can only be used in TypeScript files.
-/a.js(2,5): error TS8006: 'import type' declarations can only be used in TypeScript files.
-/a.js(5,14): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(5,15): error TS2749: 'Import' refers to a value, but is being used as a type here. Did you mean 'typeof Import'?
-/a.js(12,14): error TS8010: Type annotations can only be used in TypeScript files.
 /a.js(12,15): error TS2749: 'Require' refers to a value, but is being used as a type here. Did you mean 'typeof Require'?
 
 
@@ -24,18 +20,12 @@
 ==== /node_modules/@types/foo/index.d.cts (0 errors) ====
     export declare const Require: "script";
     
-==== /a.js (6 errors) ====
+==== /a.js (2 errors) ====
     /** @import { Import } from 'foo' with { 'resolution-mode': 'import' } */
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8006: 'import type' declarations can only be used in TypeScript files.
     /** @import { Require } from 'foo' with { 'resolution-mode': 'require' } */
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8006: 'import type' declarations can only be used in TypeScript files.
     
     /**
      * @returns { Import }
-                 ~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                   ~~~~~~
 !!! error TS2749: 'Import' refers to a value, but is being used as a type here. Did you mean 'typeof Import'?
      */
@@ -45,8 +35,6 @@
     
     /**
      * @returns { Require }
-                 ~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                   ~~~~~~~
 !!! error TS2749: 'Require' refers to a value, but is being used as a type here. Did you mean 'typeof Require'?
      */

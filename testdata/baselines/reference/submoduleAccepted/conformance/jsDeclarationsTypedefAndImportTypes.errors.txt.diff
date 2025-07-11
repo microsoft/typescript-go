@@ -3,7 +3,6 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +conn.js(11,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
-+usage.js(7,16): error TS8010: Type annotations can only be used in TypeScript files.
 +usage.js(11,37): error TS2694: Namespace 'Conn' has no exported member 'Whatever'.
 +usage.js(16,1): error TS2309: An export assignment cannot be used in a module with other exported elements.
 +
@@ -23,7 +22,7 @@
 +    ~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS2309: An export assignment cannot be used in a module with other exported elements.
 +    
-+==== usage.js (3 errors) ====
++==== usage.js (2 errors) ====
 +    /**
 +     * @typedef {import("./conn")} Conn
 +     */
@@ -31,8 +30,6 @@
 +    class Wrap {
 +        /**
 +         * @param {Conn} c
-+                   ~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +         */
 +        constructor(c) {
 +            this.connItem = c.item;

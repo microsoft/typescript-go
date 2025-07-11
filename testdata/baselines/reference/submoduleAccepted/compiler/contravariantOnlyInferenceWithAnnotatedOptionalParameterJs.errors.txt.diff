@@ -3,38 +3,23 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +index.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+index.js(3,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(4,14): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(7,21): error TS8016: Type assertion expressions can only be used in TypeScript files.
-+index.js(12,6): error TS8009: The '?' modifier can only be used in TypeScript files.
-+index.js(12,14): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(19,6): error TS8009: The '?' modifier can only be used in TypeScript files.
-+index.js(19,14): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(20,6): error TS8009: The '?' modifier can only be used in TypeScript files.
-+index.js(20,14): error TS8010: Type annotations can only be used in TypeScript files.
 +
 +
-+==== index.js (10 errors) ====
++==== index.js (1 errors) ====
 +    /**
 +    ~~~
 +     * @template T
 +    ~~~~~~~~~~~~~~
 +     * @param {(value: T, index: number) => boolean} predicate
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @returns {T}
 +    ~~~~~~~~~~~~~~~
-+                 ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    ~~~
 +    function filter(predicate) {
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +      return /** @type {any} */ (null);
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+                        ~~~
-+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
 +    }
 +    ~
 +!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
@@ -42,10 +27,6 @@
 +    const a = filter(
 +      /**
 +       * @param {number} [pose]
-+         ~~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
-+                 ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +       */
 +      (pose) => true
 +    );
@@ -53,16 +34,7 @@
 +    const b = filter(
 +      /**
 +       * @param {number} [pose]
-+         ~~~~~~~~~~~~~~~~~~~~~~
-+                 ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +       * @param {number} [_]
-+    ~~~~~
-+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
-+         ~~~~~~~~~~~~~~~~~~~
-+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
-+                 ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +       */
 +      (pose, _) => true
 +    );

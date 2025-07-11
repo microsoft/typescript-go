@@ -2,28 +2,15 @@
 +++ new.jsDeclarationsFunctions.errors.txt
 @@= skipped -0, +0 lines =@@
 -<no content>
-+index.js(10,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(11,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(12,13): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(14,45): error TS8016: Type assertion expressions can only be used in TypeScript files.
 +index.js(14,59): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+index.js(18,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(19,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(20,13): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(22,45): error TS8016: Type assertion expressions can only be used in TypeScript files.
 +index.js(22,59): error TS8004: Type parameter declarations can only be used in TypeScript files.
-+index.js(26,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(34,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(35,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(38,21): error TS2349: This expression is not callable.
 +  Type '{ y: any; }' has no call signatures.
-+index.js(44,12): error TS8010: Type annotations can only be used in TypeScript files.
-+index.js(45,12): error TS8010: Type annotations can only be used in TypeScript files.
 +index.js(48,21): error TS2349: This expression is not callable.
 +  Type '{ y: any; }' has no call signatures.
 +
 +
-+==== index.js (17 errors) ====
++==== index.js (4 errors) ====
 +    export function a() {}
 +    
 +    export function b() {}
@@ -34,18 +21,10 @@
 +    
 +    /**
 +     * @param {number} a
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @param {number} b
-+               ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @return {string} 
-+                ~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    export function d(a, b) { return /** @type {*} */(null); }
-+                                                ~
-+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
 +                                                              
 +    
 +    
@@ -55,23 +34,15 @@
 +    ~~~~~~~~~~~~~~~~
 +     * @param {T} a
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @param {U} b
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @return {T & U} 
 +    ~~~~~~~~~~~~~~~~~~~
-+                ~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    ~~~
 +    export function e(a, b) { return /** @type {*} */(null); }
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 +!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-+                                                ~
-+!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
 +                                                              
 +    
 +    
@@ -81,8 +52,6 @@
 +    ~~~~~~~~~~~~~~
 +     * @param {T} a
 +    ~~~~~~~~~~~~~~~
-+               ~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    ~~~
 +    export function f(a) {
@@ -96,11 +65,7 @@
 +    
 +    /**
 +     * @param {{x: string}} a
-+               ~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @param {{y: typeof b}} b
-+               ~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    function g(a, b) {
 +        return a.x && b.y();
@@ -113,11 +78,7 @@
 +    
 +    /**
 +     * @param {{x: string}} a
-+               ~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     * @param {{y: typeof b}} b
-+               ~~~~~~~~~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +     */
 +    function hh(a, b) {
 +        return a.x && b.y();

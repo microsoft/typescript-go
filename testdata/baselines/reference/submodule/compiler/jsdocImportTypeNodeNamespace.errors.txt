@@ -1,4 +1,3 @@
-Main.js(2,21): error TS8016: Type assertion expressions can only be used in TypeScript files.
 Main.js(2,49): error TS2694: Namespace '"GeometryType"' has no exported member 'default'.
 
 
@@ -8,11 +7,9 @@ Main.js(2,49): error TS2694: Namespace '"GeometryType"' has no exported member '
     }
     export default _default;
     
-==== Main.js (2 errors) ====
+==== Main.js (1 errors) ====
     export default function () {
       return /** @type {import('./GeometryType.js').default} */ ('Point');
-                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8016: Type assertion expressions can only be used in TypeScript files.
                                                     ~~~~~~~
 !!! error TS2694: Namespace '"GeometryType"' has no exported member 'default'.
     }

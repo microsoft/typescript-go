@@ -1,27 +1,17 @@
-index.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(2,19): error TS2315: Type 'Boolean' is not generic.
-index2.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 index2.js(2,19): error TS2304: Cannot find name 'Void'.
-index3.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 index3.js(2,19): error TS2304: Cannot find name 'Undefined'.
-index4.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 index4.js(2,19): error TS2315: Type 'Function' is not generic.
-index5.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 index5.js(2,19): error TS2315: Type 'String' is not generic.
-index6.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 index6.js(2,19): error TS2315: Type 'Number' is not generic.
-index7.js(2,12): error TS8010: Type annotations can only be used in TypeScript files.
 index7.js(2,19): error TS2315: Type 'Object' is not generic.
 index8.js(4,12): error TS2749: 'fn' refers to a value, but is being used as a type here. Did you mean 'typeof fn'?
-index8.js(4,12): error TS8010: Type annotations can only be used in TypeScript files.
 index8.js(4,15): error TS2304: Cannot find name 'T'.
 
 
-==== index.js (2 errors) ====
+==== index.js (1 errors) ====
     /**
      * @param {<T>(m: Boolean<T>) => string} somebody
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                       ~~~~~~~~~~
 !!! error TS2315: Type 'Boolean' is not generic.
      */
@@ -29,11 +19,9 @@ index8.js(4,15): error TS2304: Cannot find name 'T'.
         return 'Hello ' + somebody;
     }
     
-==== index2.js (2 errors) ====
+==== index2.js (1 errors) ====
     /**
      * @param {<T>(m: Void<T>) => string} somebody
-               ~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                       ~~~~
 !!! error TS2304: Cannot find name 'Void'.
      */
@@ -42,11 +30,9 @@ index8.js(4,15): error TS2304: Cannot find name 'T'.
     }
     
     
-==== index3.js (2 errors) ====
+==== index3.js (1 errors) ====
     /**
      * @param {<T>(m: Undefined<T>) => string} somebody
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                       ~~~~~~~~~
 !!! error TS2304: Cannot find name 'Undefined'.
      */
@@ -55,11 +41,9 @@ index8.js(4,15): error TS2304: Cannot find name 'T'.
     }
     
     
-==== index4.js (2 errors) ====
+==== index4.js (1 errors) ====
     /**
      * @param {<T>(m: Function<T>) => string} somebody
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                       ~~~~~~~~~~~
 !!! error TS2315: Type 'Function' is not generic.
      */
@@ -68,11 +52,9 @@ index8.js(4,15): error TS2304: Cannot find name 'T'.
     }
     
     
-==== index5.js (2 errors) ====
+==== index5.js (1 errors) ====
     /**
      * @param {<T>(m: String<T>) => string} somebody
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                       ~~~~~~~~~
 !!! error TS2315: Type 'String' is not generic.
      */
@@ -81,11 +63,9 @@ index8.js(4,15): error TS2304: Cannot find name 'T'.
     }
     
     
-==== index6.js (2 errors) ====
+==== index6.js (1 errors) ====
     /**
      * @param {<T>(m: Number<T>) => string} somebody
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                       ~~~~~~~~~
 !!! error TS2315: Type 'Number' is not generic.
      */
@@ -94,11 +74,9 @@ index8.js(4,15): error TS2304: Cannot find name 'T'.
     }
     
     
-==== index7.js (2 errors) ====
+==== index7.js (1 errors) ====
     /**
      * @param {<T>(m: Object<T>) => string} somebody
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                       ~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
      */
@@ -106,15 +84,13 @@ index8.js(4,15): error TS2304: Cannot find name 'T'.
         return 'Hello ' + somebody;
     }
     
-==== index8.js (3 errors) ====
+==== index8.js (2 errors) ====
     function fn() {}
     
     /**
      * @param {fn<T>} somebody
                ~~
 !!! error TS2749: 'fn' refers to a value, but is being used as a type here. Did you mean 'typeof fn'?
-               ~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                   ~
 !!! error TS2304: Cannot find name 'T'.
      */

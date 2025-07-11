@@ -1,16 +1,9 @@
-/a.js(1,12): error TS8010: Type annotations can only be used in TypeScript files.
-/a.js(2,27): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 /a.js(3,7): error TS7006: Parameter 's' implicitly has an 'any' type.
-/a.js(8,17): error TS8037: Type satisfaction expressions can only be used in TypeScript files.
 
 
-==== /a.js (4 errors) ====
+==== /a.js (1 errors) ====
     /** @type {{ f(s: string): void } & Record<string, unknown> }} */
-               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     let obj = /** @satisfies {{ g(s: string): void } & Record<string, unknown>} */ ({
-                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
         f(s) { }, // "incorrect" implicit any on 's'
           ~
 !!! error TS7006: Parameter 's' implicitly has an 'any' type.
@@ -19,6 +12,4 @@
     
     // This needs to not crash (outer node is not expression)
     /** @satisfies {{ f(s: string): void }} */ ({ f(x) { } })
-                    ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8037: Type satisfaction expressions can only be used in TypeScript files.
     

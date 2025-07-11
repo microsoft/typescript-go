@@ -1,38 +1,21 @@
-overloadTag1.js(2,5): error TS8017: Signature declarations can only be used in TypeScript files.
-overloadTag1.js(7,5): error TS8017: Signature declarations can only be used in TypeScript files.
-overloadTag1.js(12,12): error TS8010: Type annotations can only be used in TypeScript files.
-overloadTag1.js(13,12): error TS8010: Type annotations can only be used in TypeScript files.
-overloadTag1.js(14,14): error TS8010: Type annotations can only be used in TypeScript files.
 overloadTag1.js(26,25): error TS2345: Argument of type 'boolean' is not assignable to parameter of type 'string | number'.
-overloadTag1.js(29,5): error TS8017: Signature declarations can only be used in TypeScript files.
-overloadTag1.js(34,5): error TS8017: Signature declarations can only be used in TypeScript files.
 
 
-==== overloadTag1.js (8 errors) ====
+==== overloadTag1.js (1 errors) ====
     /**
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {number} a 
      * @param {number} b
      * @returns {number} 
      *
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {string} a
      * @param {boolean} b
      * @returns {string}
      *
      * @param {string | number} a
-               ~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @param {string | number} b
-               ~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      * @returns {string | number}
-                 ~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     export function overloaded(a,b) {
       if (typeof a === "string" && typeof b === "string") {
@@ -50,15 +33,11 @@ overloadTag1.js(34,5): error TS8017: Signature declarations can only be used in 
     
     /**
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {number} a
      * @param {number} b
      * @returns {number}
      *
      * @overload
-        ~~~~~~~~
-!!! error TS8017: Signature declarations can only be used in TypeScript files.
      * @param {string} a
      * @param {boolean} b
      * @returns {string}

@@ -3,27 +3,16 @@
 @@= skipped -0, +0 lines =@@
 -<no content>
 +a.js(1,5): error TS1047: A rest parameter cannot be optional.
-+a.js(1,5): error TS8009: The '?' modifier can only be used in TypeScript files.
-+a.js(1,13): error TS8010: Type annotations can only be used in TypeScript files.
-+a.js(2,14): error TS8010: Type annotations can only be used in TypeScript files.
 +a.js(3,12): error TS2370: A rest parameter must be of an array type.
-+a.js(7,11): error TS8010: Type annotations can only be used in TypeScript files.
 +a.js(12,14): error TS7006: Parameter 'f' implicitly has an 'any' type.
 +
 +
-+==== a.js (7 errors) ====
++==== a.js (3 errors) ====
 +    /** @param {...*=} args
 +        ~~~~~~~~~~~~~~~~~~~
-+        ~~~~~~~~~~~~~~~~~~~
-+                ~~~~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +        @return {*=} */
 +    ~~~~
 +!!! error TS1047: A rest parameter cannot be optional.
-+    ~~~~
-+!!! error TS8009: The '?' modifier can only be used in TypeScript files.
-+                 ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    function f(...args) {
 +               ~~~~~~~
 +!!! error TS2370: A rest parameter must be of an array type.
@@ -31,8 +20,6 @@
 +    }
 +    
 +    /** @type *= */
-+              ~~
-+!!! error TS8010: Type annotations can only be used in TypeScript files.
 +    var x;
 +    
 +    

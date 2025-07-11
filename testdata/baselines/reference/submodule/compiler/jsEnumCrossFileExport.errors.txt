@@ -1,11 +1,8 @@
 enumDef.js(16,18): error TS2339: Property 'Blah' does not exist on type '{ Action: { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }; }'.
-index.js(4,16): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(4,17): error TS2503: Cannot find namespace 'Host'.
 index.js(8,21): error TS2304: Cannot find name 'Host'.
 index.js(13,11): error TS2503: Cannot find namespace 'Host'.
-index.js(13,11): error TS8010: Type annotations can only be used in TypeScript files.
 index.js(18,11): error TS2503: Cannot find namespace 'Host'.
-index.js(18,11): error TS8010: Type annotations can only be used in TypeScript files.
 
 
 ==== enumDef.js (1 errors) ====
@@ -29,13 +26,11 @@ index.js(18,11): error TS8010: Type annotations can only be used in TypeScript f
 !!! error TS2339: Property 'Blah' does not exist on type '{ Action: { WindowDocked: number; WindowUndocked: number; ScriptsBreakpointSet: number; TimelineStarted: number; }; }'.
         x: 12
     }
-==== index.js (7 errors) ====
+==== index.js (4 errors) ====
     var Other = {};
     Other.Cls = class {
         /**
          * @param {!Host.UserMetrics.Action} p
-                   ~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                     ~~~~
 !!! error TS2503: Cannot find namespace 'Host'.
          */
@@ -51,8 +46,6 @@ index.js(18,11): error TS8010: Type annotations can only be used in TypeScript f
      * @type {Host.UserMetrics.Bargh}
               ~~~~
 !!! error TS2503: Cannot find namespace 'Host'.
-              ~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     var x = "ok";
     
@@ -60,8 +53,6 @@ index.js(18,11): error TS8010: Type annotations can only be used in TypeScript f
      * @type {Host.UserMetrics.Blah}
               ~~~~
 !!! error TS2503: Cannot find namespace 'Host'.
-              ~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
      */
     var y = "ok";
     

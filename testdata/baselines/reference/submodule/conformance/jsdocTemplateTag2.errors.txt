@@ -1,18 +1,12 @@
-github17339.js(4,13): error TS8010: Type annotations can only be used in TypeScript files.
-github17339.js(5,15): error TS8010: Type annotations can only be used in TypeScript files.
 github17339.js(7,4): error TS8004: Type parameter declarations can only be used in TypeScript files.
 
 
-==== github17339.js (3 errors) ====
+==== github17339.js (1 errors) ====
     var obj = {
     	/**
     	 * @template T
     	 * @param {T} a
-    	           ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     	 * @returns {T}
-    	             ~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
     	 */
     	x: function (a) {
     	  ~~~~~~~~~~~~~~~
