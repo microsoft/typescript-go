@@ -453,15 +453,14 @@ func (v *jsDiagnosticsVisitor) checkPropertyModifiers(modifiers *ast.ModifierLis
 		if modifier.Flags&ast.NodeFlagsReparsed != 0 {
 			continue
 		}
-		// Property modifiers allow static and accessor, but not other TypeScript modifiers
+		// Property modifiers allow static and accessor, but all other modifiers are invalid
 		switch modifier.Kind {
 		case ast.KindStaticKeyword, ast.KindAccessorKeyword:
 			// These are valid in JavaScript
 			continue
 		default:
-			if v.isTypeScriptOnlyModifier(modifier) {
-				v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(modifier.Kind)))
-			}
+			// All other modifiers are invalid on properties in JavaScript
+			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, scanner.TokenToString(modifier.Kind)))
 		}
 	}
 }
@@ -477,9 +476,8 @@ func (v *jsDiagnosticsVisitor) checkParameterModifiers(modifiers *ast.ModifierLi
 		if modifier.Flags&ast.NodeFlagsReparsed != 0 {
 			continue
 		}
-		if v.isTypeScriptOnlyModifier(modifier) {
-			v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(modifier, diagnostics.Parameter_modifiers_can_only_be_used_in_TypeScript_files))
-		}
+		// All parameter modifiers are invalid in JavaScript
+		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(modifier, diagnostics.Parameter_modifiers_can_only_be_used_in_TypeScript_files))
 	}
 }
 
@@ -496,16 +494,6 @@ func (v *jsDiagnosticsVisitor) checkModifier(modifier *ast.Node, isConstValid bo
 	case ast.KindStaticKeyword, ast.KindExportKeyword, ast.KindDefaultKeyword, ast.KindAccessorKeyword:
 		// These are valid in JavaScript
 	}
-}
-
-// isTypeScriptOnlyModifier checks if a modifier is TypeScript-only
-func (v *jsDiagnosticsVisitor) isTypeScriptOnlyModifier(modifier *ast.Node) bool {
-	switch modifier.Kind {
-	case ast.KindPublicKeyword, ast.KindPrivateKeyword, ast.KindProtectedKeyword, ast.KindReadonlyKeyword,
-		ast.KindDeclareKeyword, ast.KindAbstractKeyword, ast.KindOverrideKeyword, ast.KindInKeyword, ast.KindOutKeyword:
-		return true
-	}
-	return false
 }
 
 // createDiagnosticForNode creates a diagnostic for a specific node
