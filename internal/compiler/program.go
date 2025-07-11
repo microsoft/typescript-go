@@ -370,7 +370,7 @@ func (p *Program) getSyntacticDiagnosticsForFile(ctx context.Context, sourceFile
 	// For JavaScript files, we report semantic errors for using TypeScript-only
 	// constructs from within a JavaScript file as syntactic errors.
 	if ast.IsSourceFileJS(sourceFile) {
-		return append(sourceFile.AdditionalSyntacticDiagnostics(), sourceFile.Diagnostics()...)
+		return slices.Concat(sourceFile.AdditionalSyntacticDiagnostics(), sourceFile.Diagnostics())
 	}
 	return sourceFile.Diagnostics()
 }

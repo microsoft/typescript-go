@@ -10046,28 +10046,28 @@ type SourceFile struct {
 	EndOfFileToken *TokenNode // TokenNode[*EndOfFileToken]
 
 	// Fields set by parser
-	diagnostics      []*Diagnostic
-	jsdocDiagnostics []*Diagnostic
-	LanguageVariant                core.LanguageVariant
-	ScriptKind                     core.ScriptKind
-	IsDeclarationFile              bool
-	UsesUriStyleNodeCoreModules    core.Tristate
-	Identifiers                    map[string]string
-	IdentifierCount                int
-	imports                        []*LiteralLikeNode // []LiteralLikeNode
-	ModuleAugmentations            []*ModuleName      // []ModuleName
-	AmbientModuleNames             []string
-	CommentDirectives              []CommentDirective
-	jsdocCache                     map[*Node][]*Node
-	Pragmas                        []Pragma
-	ReferencedFiles                []*FileReference
-	TypeReferenceDirectives        []*FileReference
-	LibReferenceDirectives         []*FileReference
-	CheckJsDirective               *CheckJsDirective
-	NodeCount                      int
-	TextCount                      int
-	CommonJSModuleIndicator        *Node
-	ExternalModuleIndicator        *Node
+	diagnostics                 []*Diagnostic
+	jsdocDiagnostics            []*Diagnostic
+	LanguageVariant             core.LanguageVariant
+	ScriptKind                  core.ScriptKind
+	IsDeclarationFile           bool
+	UsesUriStyleNodeCoreModules core.Tristate
+	Identifiers                 map[string]string
+	IdentifierCount             int
+	imports                     []*LiteralLikeNode // []LiteralLikeNode
+	ModuleAugmentations         []*ModuleName      // []ModuleName
+	AmbientModuleNames          []string
+	CommentDirectives           []CommentDirective
+	jsdocCache                  map[*Node][]*Node
+	Pragmas                     []Pragma
+	ReferencedFiles             []*FileReference
+	TypeReferenceDirectives     []*FileReference
+	LibReferenceDirectives      []*FileReference
+	CheckJsDirective            *CheckJsDirective
+	NodeCount                   int
+	TextCount                   int
+	CommonJSModuleIndicator     *Node
+	ExternalModuleIndicator     *Node
 
 	// Fields set by binder
 
@@ -10165,10 +10165,6 @@ func (node *SourceFile) AdditionalSyntacticDiagnostics() []*Diagnostic {
 		}
 	}
 	return diagnostics
-}
-
-func (node *SourceFile) SetAdditionalSyntacticDiagnostics(diags []*Diagnostic) {
-	node.additionalSyntacticDiagnostics = diags
 }
 
 func (node *SourceFile) JSDocCache() map[*Node][]*Node {
@@ -10491,5 +10487,3 @@ type PragmaSpecification struct {
 func (spec *PragmaSpecification) IsTripleSlash() bool {
 	return (spec.Kind & PragmaKindTripleSlashXML) > 0
 }
-
-

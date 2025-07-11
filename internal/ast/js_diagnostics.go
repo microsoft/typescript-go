@@ -8,7 +8,7 @@ import (
 // JS syntactic diagnostics functions
 
 func getJSSyntacticDiagnosticsForFile(sourceFile *SourceFile) []*Diagnostic {
-	var diagnostics []*Diagnostic
+	diagnostics := []*Diagnostic{}
 
 	// Walk the entire AST to find TypeScript-only constructs
 	walkNodeForJSDiagnostics(sourceFile, sourceFile.AsNode(), sourceFile.AsNode(), &diagnostics)
