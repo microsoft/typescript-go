@@ -2,7 +2,6 @@ package compiler
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/binder"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/scanner"
@@ -514,7 +513,7 @@ func (v *jsDiagnosticsVisitor) checkModifier(modifier *ast.Node, isConstValid bo
 
 // createDiagnosticForNode creates a diagnostic for a specific node
 func (v *jsDiagnosticsVisitor) createDiagnosticForNode(node *ast.Node, message *diagnostics.Message, args ...any) *ast.Diagnostic {
-	return ast.NewDiagnostic(v.sourceFile, binder.GetErrorRangeForNode(v.sourceFile, node), message, args...)
+	return ast.NewDiagnostic(v.sourceFile, scanner.GetErrorRangeForNode(v.sourceFile, node), message, args...)
 }
 
 // createDiagnosticForNodeList creates a diagnostic for a NodeList
