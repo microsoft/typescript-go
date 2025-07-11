@@ -1,21 +1,15 @@
-package projectv2
+package dirty
 
 import "maps"
 
-type cloneable[T any] interface {
-	Clone() T
+var _ Value[*cloneable] = (*MapEntry[any, *cloneable])(nil)
+
+type MapEntry[K comparable, V Cloneable[V]] struct {
+	m *Map[K, V]
+	mapEntry[K, V]
 }
 
-type dirtyMapEntry[K comparable, V cloneable[V]] struct {
-	m        *dirtyMap[K, V]
-	key      K
-	original V
-	value    V
-	dirty    bool
-	delete   bool
-}
-
-func (e *dirtyMapEntry[K, V]) Change(apply func(V)) {
+func (e *MapEntry[K, V]) Change(apply func(V)) {
 	if e.delete {
 		panic("tried to change a deleted entry")
 	}
@@ -27,39 +21,52 @@ func (e *dirtyMapEntry[K, V]) Change(apply func(V)) {
 	apply(e.value)
 }
 
-func (e *dirtyMapEntry[K, V]) Delete() {
+func (e *MapEntry[K, V]) ChangeIf(cond func(V) bool, apply func(V)) bool {
+	if cond(e.Value()) {
+		e.Change(apply)
+		return true
+	}
+	return false
+}
+
+func (e *MapEntry[K, V]) Delete() {
 	if !e.dirty {
 		e.m.dirty[e.key] = e
 	}
 	e.delete = true
 }
 
-type dirtyMap[K comparable, V cloneable[V]] struct {
+type Map[K comparable, V Cloneable[V]] struct {
 	base  map[K]V
-	dirty map[K]*dirtyMapEntry[K, V]
+	dirty map[K]*MapEntry[K, V]
 }
 
-func newDirtyMap[K comparable, V cloneable[V]](base map[K]V) *dirtyMap[K, V] {
-	return &dirtyMap[K, V]{
+func NewMap[K comparable, V Cloneable[V]](base map[K]V) *Map[K, V] {
+	return &Map[K, V]{
 		base:  base,
-		dirty: make(map[K]*dirtyMapEntry[K, V]),
+		dirty: make(map[K]*MapEntry[K, V]),
 	}
 }
 
-func (m *dirtyMap[K, V]) Get(key K) (*dirtyMapEntry[K, V], bool) {
+func (m *Map[K, V]) Get(key K) (*MapEntry[K, V], bool) {
 	if entry, ok := m.dirty[key]; ok {
+		if entry.delete {
+			return nil, false
+		}
 		return entry, true
 	}
 	value, ok := m.base[key]
 	if !ok {
 		return nil, false
 	}
-	return &dirtyMapEntry[K, V]{
-		m:        m,
-		key:      key,
-		original: value,
-		value:    value,
-		dirty:    false,
+	return &MapEntry[K, V]{
+		m: m,
+		mapEntry: mapEntry[K, V]{
+			key:      key,
+			original: value,
+			value:    value,
+			dirty:    false,
+		},
 	}, true
 }
 
@@ -68,17 +75,19 @@ func (m *dirtyMap[K, V]) Get(key K) (*dirtyMapEntry[K, V], bool) {
 // be a fresh value, mutable until finalized (i.e., it will not be cloned
 // before changing if a change is made). If modifying an entry that may
 // exist in the base map, use `Change` instead.
-func (m *dirtyMap[K, V]) Add(key K, value V) {
-	m.dirty[key] = &dirtyMapEntry[K, V]{
-		m:     m,
-		key:   key,
-		value: value,
-		dirty: true,
+func (m *Map[K, V]) Add(key K, value V) {
+	m.dirty[key] = &MapEntry[K, V]{
+		m: m,
+		mapEntry: mapEntry[K, V]{
+			key:   key,
+			value: value,
+			dirty: true,
+		},
 	}
 }
 
 // !!! Decide whether this, entry.Change(), or both should exist
-func (m *dirtyMap[K, V]) Change(key K, apply func(V)) {
+func (m *Map[K, V]) Change(key K, apply func(V)) {
 	if entry, ok := m.Get(key); ok {
 		entry.Change(apply)
 	} else {
@@ -86,7 +95,7 @@ func (m *dirtyMap[K, V]) Change(key K, apply func(V)) {
 	}
 }
 
-func (m *dirtyMap[K, V]) Delete(key K) {
+func (m *Map[K, V]) Delete(key K) {
 	if entry, ok := m.Get(key); ok {
 		entry.Delete()
 	} else {
@@ -94,7 +103,7 @@ func (m *dirtyMap[K, V]) Delete(key K) {
 	}
 }
 
-func (m *dirtyMap[K, V]) Range(fn func(*dirtyMapEntry[K, V]) bool) {
+func (m *Map[K, V]) Range(fn func(*MapEntry[K, V]) bool) {
 	seenInDirty := make(map[K]struct{})
 	for _, entry := range m.dirty {
 		seenInDirty[entry.key] = struct{}{}
@@ -106,13 +115,18 @@ func (m *dirtyMap[K, V]) Range(fn func(*dirtyMapEntry[K, V]) bool) {
 		if _, ok := seenInDirty[key]; ok {
 			continue // already processed in dirty entries
 		}
-		if !fn(&dirtyMapEntry[K, V]{m: m, key: key, original: value, value: value, dirty: false}) {
+		if !fn(&MapEntry[K, V]{m: m, mapEntry: mapEntry[K, V]{
+			key:      key,
+			original: value,
+			value:    value,
+			dirty:    false,
+		}}) {
 			break
 		}
 	}
 }
 
-func (m *dirtyMap[K, V]) Finalize() (result map[K]V, changed bool) {
+func (m *Map[K, V]) Finalize() (result map[K]V, changed bool) {
 	if len(m.dirty) == 0 {
 		return m.base, false // no changes, return base map
 	}

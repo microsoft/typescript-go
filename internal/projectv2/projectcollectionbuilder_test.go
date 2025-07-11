@@ -44,7 +44,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		dummyUri := lsproto.DocumentUri("file:///user/username/workspaces/dummy/dummy.ts")
 		session.DidOpenFile(context.Background(), dummyUri, 1, "const x = 1;", lsproto.LanguageKindTypeScript)
 		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ProjectCollection.InferredProject())
+		assert.Assert(t, session.Snapshot().ProjectCollection.InferredProject() != nil)
 
 		// Config files should have been released
 		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig("/user/username/projects/myproject/tsconfig.json") == nil)

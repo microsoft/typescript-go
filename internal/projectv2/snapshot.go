@@ -112,8 +112,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		logger,
 	)
 
-	for file := range change.fileChanges.Closed.Keys() {
-		projectCollectionBuilder.DidCloseFile(file)
+	for file, hash := range change.fileChanges.Closed {
+		projectCollectionBuilder.DidCloseFile(file, hash)
 	}
 
 	for uri := range change.fileChanges.Opened.Keys() {

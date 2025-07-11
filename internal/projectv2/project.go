@@ -11,6 +11,8 @@ import (
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
+const inferredProjectName = "/dev/null/inferredProject"
+
 type Kind int
 
 const (
@@ -31,7 +33,6 @@ var _ ls.Host = (*Project)(nil)
 // Project represents a TypeScript project.
 // If changing struct fields, also update the Clone method.
 type Project struct {
-	Name             string
 	Kind             Kind
 	currentDirectory string
 	configFileName   string
@@ -53,10 +54,7 @@ func NewConfiguredProject(
 	configFilePath tspath.Path,
 	builder *projectCollectionBuilder,
 ) *Project {
-	p := NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder)
-	p.configFileName = configFileName
-	p.configFilePath = configFilePath
-	return p
+	return NewProject(configFileName, KindConfigured, tspath.GetDirectoryPath(configFileName), builder)
 }
 
 func NewInferredProject(
@@ -65,7 +63,7 @@ func NewInferredProject(
 	rootFileNames []string,
 	builder *projectCollectionBuilder,
 ) *Project {
-	p := NewProject("/dev/null/inferredProject", KindInferred, currentDirectory, builder)
+	p := NewProject(inferredProjectName, KindInferred, currentDirectory, builder)
 	if compilerOptions == nil {
 		compilerOptions = &core.CompilerOptions{
 			AllowJs:                    core.TSTrue,
@@ -94,13 +92,13 @@ func NewInferredProject(
 }
 
 func NewProject(
-	name string,
+	configFileName string,
 	kind Kind,
 	currentDirectory string,
 	builder *projectCollectionBuilder,
 ) *Project {
 	project := &Project{
-		Name:             name,
+		configFileName:   configFileName,
 		Kind:             kind,
 		currentDirectory: currentDirectory,
 		dirty:            true,
@@ -111,7 +109,12 @@ func NewProject(
 		builder,
 	)
 	project.host = host
+	project.configFilePath = tspath.ToPath(configFileName, currentDirectory, builder.fs.fs.UseCaseSensitiveFileNames())
 	return project
+}
+
+func (p *Project) Name() string {
+	return p.configFileName
 }
 
 // GetLineMap implements ls.Host.
@@ -150,7 +153,6 @@ func (p *Project) IsSourceFromProjectReference(path tspath.Path) bool {
 
 func (p *Project) Clone() *Project {
 	return &Project{
-		Name:             p.Name,
 		Kind:             p.Kind,
 		currentDirectory: p.currentDirectory,
 		configFileName:   p.configFileName,

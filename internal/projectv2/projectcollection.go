@@ -18,9 +18,6 @@ type ProjectCollection struct {
 	// lookups for only the associations discovered during the latest snapshot
 	// update.
 	fileDefaultProjects map[tspath.Path]tspath.Path
-	// fileAssociations is a map of file paths to project config file paths that
-	// include them.
-	fileAssociations map[tspath.Path]map[tspath.Path]struct{}
 	// configuredProjects is the set of loaded projects associated with a tsconfig
 	// file, keyed by the config file path.
 	configuredProjects map[tspath.Path]*Project
@@ -44,7 +41,7 @@ func (c *ProjectCollection) fillConfiguredProjects(projects *[]*Project) {
 		*projects = append(*projects, p)
 	}
 	slices.SortFunc(*projects, func(a, b *Project) int {
-		return cmp.Compare(a.Name, b.Name)
+		return cmp.Compare(a.Name(), b.Name())
 	})
 }
 
@@ -180,7 +177,6 @@ func (c *ProjectCollection) clone() *ProjectCollection {
 		toPath:              c.toPath,
 		configuredProjects:  c.configuredProjects,
 		inferredProject:     c.inferredProject,
-		fileAssociations:    c.fileAssociations,
 		fileDefaultProjects: c.fileDefaultProjects,
 	}
 }

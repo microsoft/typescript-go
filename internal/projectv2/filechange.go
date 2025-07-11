@@ -1,6 +1,8 @@
 package projectv2
 
 import (
+	"crypto/sha256"
+
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 )
@@ -20,6 +22,7 @@ const (
 type FileChange struct {
 	Kind         FileChangeKind
 	URI          lsproto.DocumentUri
+	Hash         [sha256.Size]byte                        // Only set for Close
 	Version      int32                                    // Only set for Open/Change
 	Content      string                                   // Only set for Open
 	LanguageKind lsproto.LanguageKind                     // Only set for Open
@@ -27,8 +30,9 @@ type FileChange struct {
 }
 
 type FileChangeSummary struct {
-	Opened  collections.Set[lsproto.DocumentUri]
-	Closed  collections.Set[lsproto.DocumentUri]
+	Opened collections.Set[lsproto.DocumentUri]
+	// Values are the content hashes of the overlays before closing.
+	Closed  map[lsproto.DocumentUri][sha256.Size]byte
 	Changed collections.Set[lsproto.DocumentUri]
 	Saved   collections.Set[lsproto.DocumentUri]
 	Created collections.Set[lsproto.DocumentUri]
@@ -36,5 +40,5 @@ type FileChangeSummary struct {
 }
 
 func (f FileChangeSummary) IsEmpty() bool {
-	return f.Opened.Len() == 0 && f.Closed.Len() == 0 && f.Changed.Len() == 0 && f.Saved.Len() == 0 && f.Created.Len() == 0 && f.Deleted.Len() == 0
+	return f.Opened.Len() == 0 && len(f.Closed) == 0 && f.Changed.Len() == 0 && f.Saved.Len() == 0 && f.Created.Len() == 0 && f.Deleted.Len() == 0
 }

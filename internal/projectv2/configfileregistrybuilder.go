@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/dirty"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -22,8 +23,8 @@ type configFileRegistryBuilder struct {
 	sessionOptions      *SessionOptions
 
 	base            *ConfigFileRegistry
-	configs         *dirtySyncMap[tspath.Path, *configFileEntry]
-	configFileNames *dirtyMap[tspath.Path, *configFileNames]
+	configs         *dirty.SyncMap[tspath.Path, *configFileEntry]
+	configFileNames *dirty.Map[tspath.Path, *configFileNames]
 }
 
 func newConfigFileRegistryBuilder(
@@ -38,7 +39,7 @@ func newConfigFileRegistryBuilder(
 		sessionOptions:      sessionOptions,
 		extendedConfigCache: extendedConfigCache,
 
-		configs: newDirtySyncMap(oldConfigFileRegistry.configs, func(dirty *configFileEntry, original *configFileEntry) *configFileEntry {
+		configs: dirty.NewSyncMap(oldConfigFileRegistry.configs, func(dirty *configFileEntry, original *configFileEntry) *configFileEntry {
 			if dirty.retainingProjects == nil && original != nil {
 				dirty.retainingProjects = original.retainingProjects
 			}
@@ -47,7 +48,7 @@ func newConfigFileRegistryBuilder(
 			}
 			return dirty
 		}),
-		configFileNames: newDirtyMap(oldConfigFileRegistry.configFileNames),
+		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
 	}
 }
 
@@ -85,7 +86,7 @@ func (c *configFileRegistryBuilder) findOrAcquireConfigForOpenFile(
 	switch loadKind {
 	case projectLoadKindFind:
 		if entry, ok := c.configs.Load(configFilePath); ok {
-			return entry.value.commandLine
+			return entry.Value().commandLine
 		}
 		return nil
 	case projectLoadKindCreate:
@@ -119,7 +120,7 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, path tspath.Path, project *Project) *tsoptions.ParsedCommandLine {
 	entry, _ := c.configs.LoadOrStore(path, &configFileEntry{pendingReload: PendingReloadFull})
 	var needsRetainProject bool
-	entry = entry.ChangeIf(
+	entry.ChangeIf(
 		func(config *configFileEntry) bool {
 			_, alreadyRetaining := config.retainingProjects[project.configFilePath]
 			needsRetainProject = !alreadyRetaining
@@ -127,7 +128,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 		},
 		func(config *configFileEntry) {
 			if needsRetainProject {
-				config.retainingProjects = cloneMapIfNil(config, entry.original, func(e *configFileEntry) map[tspath.Path]struct{} {
+				config.retainingProjects = dirty.CloneMapIfNil(config, entry.Original(), func(e *configFileEntry) map[tspath.Path]struct{} {
 					return e.retainingProjects
 				})
 				config.retainingProjects[project.configFilePath] = struct{}{}
@@ -135,7 +136,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 			c.reloadIfNeeded(config, fileName, path)
 		},
 	)
-	return entry.value.commandLine
+	return entry.Value().commandLine
 }
 
 // acquireConfigForOpenFile loads a config file entry from the cache, or parses it if not already
@@ -145,7 +146,7 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName string, configFilePath tspath.Path, openFilePath tspath.Path) *tsoptions.ParsedCommandLine {
 	entry, _ := c.configs.LoadOrStore(configFilePath, &configFileEntry{pendingReload: PendingReloadFull})
 	var needsRetainOpenFile bool
-	entry = entry.ChangeIf(
+	entry.ChangeIf(
 		func(config *configFileEntry) bool {
 			_, alreadyRetaining := config.retainingOpenFiles[openFilePath]
 			needsRetainOpenFile = !alreadyRetaining
@@ -153,7 +154,7 @@ func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName stri
 		},
 		func(config *configFileEntry) {
 			if needsRetainOpenFile {
-				config.retainingOpenFiles = cloneMapIfNil(config, entry.original, func(e *configFileEntry) map[tspath.Path]struct{} {
+				config.retainingOpenFiles = dirty.CloneMapIfNil(config, entry.Original(), func(e *configFileEntry) map[tspath.Path]struct{} {
 					return e.retainingOpenFiles
 				})
 				config.retainingOpenFiles[openFilePath] = struct{}{}
@@ -161,36 +162,41 @@ func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName stri
 			c.reloadIfNeeded(config, configFileName, configFilePath)
 		},
 	)
-	return entry.value.commandLine
+	return entry.Value().commandLine
 }
 
 // releaseConfigForProject removes the project from the config entry. Once no projects
 // or files are associated with the config entry, it will be removed on the next call to `cleanup`.
-// func (c *configFileRegistryBuilder) releaseConfigForProject(path tspath.Path, project *Project) {
-// 	if entry, ok := c.load(path); ok {
-// 		entry.mu.Lock()
-// 		defer entry.mu.Unlock()
-// 		entry.releaseProject(project.configFilePath)
-// 	}
-// }
-
-// releaseConfigsForOpenFile removes the open file from the config entry. Once no projects
-// or files are associated with the config entry, it will be removed on the next call to `cleanup`.
-func (c *configFileRegistryBuilder) releaseConfigsForOpenFile(openFilePath tspath.Path) {
-	c.configs.Range(func(entry *dirtySyncMapEntry[tspath.Path, *configFileEntry]) bool {
+func (c *configFileRegistryBuilder) releaseConfigForProject(configFilePath tspath.Path, projectPath tspath.Path) {
+	if entry, ok := c.configs.Load(configFilePath); ok {
 		entry.ChangeIf(
 			func(config *configFileEntry) bool {
-				_, ok := config.retainingOpenFiles[openFilePath]
+				_, ok := config.retainingProjects[projectPath]
 				return ok
 			},
 			func(config *configFileEntry) {
-				delete(config.retainingOpenFiles, openFilePath)
+				delete(config.retainingProjects, projectPath)
+			},
+		)
+	}
+}
+
+// DidCloseFile removes the open file from the config entry. Once no projects
+// or files are associated with the config entry, it will be removed on the next call to `cleanup`.
+func (c *configFileRegistryBuilder) DidCloseFile(path tspath.Path) {
+	c.configFileNames.Delete(path)
+	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+		entry.ChangeIf(
+			func(config *configFileEntry) bool {
+				_, ok := config.retainingOpenFiles[path]
+				return ok
+			},
+			func(config *configFileEntry) {
+				delete(config.retainingOpenFiles, path)
 			},
 		)
 		return true
 	})
-
-	// !!! remove from configFileNames
 }
 
 func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool) string {
@@ -220,7 +226,7 @@ func (c *configFileRegistryBuilder) getConfigFileNameForFile(fileName string, pa
 	}
 
 	if entry, ok := c.configFileNames.Get(path); ok {
-		return entry.value.nearestConfigFileName
+		return entry.Value().nearestConfigFileName
 	}
 
 	if loadKind == projectLoadKindFind {
@@ -246,7 +252,7 @@ func (c *configFileRegistryBuilder) getAncestorConfigFileName(fileName string, p
 	if !ok {
 		return ""
 	}
-	if ancestorConfigName, found := entry.value.ancestors[configFileName]; found {
+	if ancestorConfigName, found := entry.Value().ancestors[configFileName]; found {
 		return ancestorConfigName
 	}
 
@@ -282,4 +288,13 @@ func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
 	fh := c.fs.getFile(fileName)
 	return c.extendedConfigCache.acquire(fh, path, parse)
+}
+
+func (c *configFileRegistryBuilder) Cleanup() {
+	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
+		entry.DeleteIf(func(value *configFileEntry) bool {
+			return len(value.retainingProjects) == 0 && len(value.retainingOpenFiles) == 0
+		})
+		return true
+	})
 }

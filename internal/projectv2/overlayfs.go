@@ -193,7 +193,10 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 			newOverlays[path] = o
 		case FileChangeKindClose:
 			// Remove the overlay for the closed file.
-			result.Closed.Add(change.URI)
+			if result.Closed == nil {
+				result.Closed = make(map[lsproto.DocumentUri][sha256.Size]byte)
+			}
+			result.Closed[change.URI] = change.Hash
 			delete(newOverlays, path)
 		case FileChangeKindWatchCreate:
 			result.Created.Add(change.URI)
