@@ -1220,21 +1220,46 @@ func (p *Program) hasTypeArguments(node *ast.Node) bool {
 		return false
 	}
 
+	var typeArguments *ast.NodeList
 	switch node.Kind {
 	case ast.KindCallExpression:
-		return node.AsCallExpression() != nil && node.AsCallExpression().TypeArguments != nil
+		if node.AsCallExpression() != nil {
+			typeArguments = node.AsCallExpression().TypeArguments
+		}
 	case ast.KindNewExpression:
-		return node.AsNewExpression() != nil && node.AsNewExpression().TypeArguments != nil
+		if node.AsNewExpression() != nil {
+			typeArguments = node.AsNewExpression().TypeArguments
+		}
 	case ast.KindExpressionWithTypeArguments:
-		return node.AsExpressionWithTypeArguments() != nil && node.AsExpressionWithTypeArguments().TypeArguments != nil
+		if node.AsExpressionWithTypeArguments() != nil {
+			typeArguments = node.AsExpressionWithTypeArguments().TypeArguments
+		}
 	case ast.KindJsxSelfClosingElement:
-		return node.AsJsxSelfClosingElement() != nil && node.AsJsxSelfClosingElement().TypeArguments != nil
+		if node.AsJsxSelfClosingElement() != nil {
+			typeArguments = node.AsJsxSelfClosingElement().TypeArguments
+		}
 	case ast.KindJsxOpeningElement:
-		return node.AsJsxOpeningElement() != nil && node.AsJsxOpeningElement().TypeArguments != nil
+		if node.AsJsxOpeningElement() != nil {
+			typeArguments = node.AsJsxOpeningElement().TypeArguments
+		}
 	case ast.KindTaggedTemplateExpression:
-		return node.AsTaggedTemplateExpression() != nil && node.AsTaggedTemplateExpression().TypeArguments != nil
+		if node.AsTaggedTemplateExpression() != nil {
+			typeArguments = node.AsTaggedTemplateExpression().TypeArguments
+		}
 	}
-	return false
+
+	if typeArguments == nil {
+		return false
+	}
+
+	// Check if all type arguments are reparsed (JSDoc originated)
+	for _, ta := range typeArguments.Nodes {
+		if ta.Flags&ast.NodeFlagsReparsed == 0 {
+			return true // Found a non-reparsed type argument, so this is a TypeScript-only construct
+		}
+	}
+
+	return false // All type arguments are reparsed (JSDoc originated), so this is valid in JS
 }
 
 func (p *Program) checkModifiers(sourceFile *ast.SourceFile, node *ast.Node, diags *[]*ast.Diagnostic) {

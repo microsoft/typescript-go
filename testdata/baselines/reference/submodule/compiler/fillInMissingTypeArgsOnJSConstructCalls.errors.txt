@@ -1,10 +1,10 @@
-BaseB.js(1,29): error TS8004: Type parameter declarations can only be used in TypeScript files.
+BaseB.js(2,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 BaseB.js(2,25): error TS1005: ',' expected.
-BaseB.js(3,13): error TS8010: Type annotations can only be used in TypeScript files.
 BaseB.js(3,14): error TS2304: Cannot find name 'Class'.
-BaseB.js(4,24): error TS8010: Type annotations can only be used in TypeScript files.
+BaseB.js(3,14): error TS8010: Type annotations can only be used in TypeScript files.
 BaseB.js(4,25): error TS2304: Cannot find name 'Class'.
-SubB.js(3,34): error TS8011: Type arguments can only be used in TypeScript files.
+BaseB.js(4,25): error TS8010: Type annotations can only be used in TypeScript files.
+SubB.js(3,35): error TS8011: Type arguments can only be used in TypeScript files.
 
 
 ==== BaseA.js (0 errors) ====
@@ -16,23 +16,22 @@ SubB.js(3,34): error TS8011: Type arguments can only be used in TypeScript files
     }
 ==== BaseB.js (6 errors) ====
     import BaseA from './BaseA';
-                                
     export default class B<T: BaseA> {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                             ~
 !!! error TS1005: ',' expected.
         _AClass: Class<T>;
     ~~~~~~~~~~~~~~~~~~~~~~
-                ~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                  ~~~~~
 !!! error TS2304: Cannot find name 'Class'.
+                 ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
         constructor(AClass: Class<T>) {
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                           ~~~~~~~~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                             ~~~~~
 !!! error TS2304: Cannot find name 'Class'.
+                            ~~~~~~~~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
             this._AClass = AClass;
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         }
@@ -44,7 +43,7 @@ SubB.js(3,34): error TS8011: Type arguments can only be used in TypeScript files
     import SubA from './SubA';
     import BaseB from './BaseB';
     export default class SubB extends BaseB<SubA> {
-                                     ~~~~~~~~~~~~
+                                      ~~~~~~~~~~~
 !!! error TS8011: Type arguments can only be used in TypeScript files.
         constructor() {
             super(SubA);

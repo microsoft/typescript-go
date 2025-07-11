@@ -1,7 +1,7 @@
 fileJs.js(1,1): error TS2304: Cannot find name 'a'.
 fileJs.js(1,5): error TS2304: Cannot find name 'b'.
-fileJs.js(1,14): error TS8010: Type annotations can only be used in TypeScript files.
 fileJs.js(1,15): error TS2304: Cannot find name 'd'.
+fileJs.js(1,15): error TS8010: Type annotations can only be used in TypeScript files.
 fileJs.js(1,20): error TS2304: Cannot find name 'e'.
 fileTs.ts(1,1): error TS2304: Cannot find name 'a'.
 fileTs.ts(1,5): error TS2304: Cannot find name 'b'.
@@ -15,10 +15,10 @@ fileTs.ts(1,20): error TS2304: Cannot find name 'e'.
 !!! error TS2304: Cannot find name 'a'.
         ~
 !!! error TS2304: Cannot find name 'b'.
-                 ~~
-!!! error TS8010: Type annotations can only be used in TypeScript files.
                   ~
 !!! error TS2304: Cannot find name 'd'.
+                  ~
+!!! error TS8010: Type annotations can only be used in TypeScript files.
                        ~
 !!! error TS2304: Cannot find name 'e'.
     

@@ -1,6 +1,6 @@
 b.js(3,25): error TS8026: Expected A<T> type arguments; provide these with an '@extends' tag.
-b.js(9,24): error TS8011: Type arguments can only be used in TypeScript files.
-b.js(15,24): error TS8011: Type arguments can only be used in TypeScript files.
+b.js(9,25): error TS8011: Type arguments can only be used in TypeScript files.
+b.js(15,25): error TS8011: Type arguments can only be used in TypeScript files.
 b.js(15,25): error TS8026: Expected A<T> type arguments; provide these with an '@extends' tag.
 
 
@@ -19,7 +19,7 @@ b.js(15,25): error TS8026: Expected A<T> type arguments; provide these with an '
     }
     
     export class B2 extends A<string> {
-                           ~~~~~~~~~~
+                            ~~~~~~~~~
 !!! error TS8011: Type arguments can only be used in TypeScript files.
         constructor() {
             super();
@@ -27,7 +27,7 @@ b.js(15,25): error TS8026: Expected A<T> type arguments; provide these with an '
     }
     
     export class B3 extends A<string, string> {
-                           ~~~~~~~~~~~~~~~~~~
+                            ~~~~~~~~~~~~~~~~~
 !!! error TS8011: Type arguments can only be used in TypeScript files.
                             ~~~~~~~~~~~~~~~~~
 !!! error TS8026: Expected A<T> type arguments; provide these with an '@extends' tag.

@@ -34,47 +34,42 @@
 -
 -
 -==== index.js (30 errors) ====
-+index.js(1,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(4,22): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(8,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(29,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(33,14): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(37,20): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(42,20): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(43,22): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(47,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(51,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(55,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(59,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(63,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(65,32): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(69,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(73,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(78,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(82,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(84,32): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(89,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(93,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(98,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(103,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(105,32): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(109,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
-+index.js(113,2): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(4,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(6,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(10,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(31,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(35,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(39,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(43,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(45,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(49,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(53,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(57,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(61,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(65,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(67,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(71,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(75,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(80,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(84,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(87,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(91,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(95,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(100,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(105,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(107,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(111,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
++index.js(115,1): error TS8006: 'interface' declarations can only be used in TypeScript files.
 +
 +
 +==== index.js (26 errors) ====
      // Pretty much all of this should be an error, (since interfaces are forbidden in js),
-+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      // but we should be able to synthesize declarations from the symbols regardless
-+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+    
      
      export interface A {}
 -                     ~
 +    ~~~~~~~~~~~~~~~~~~~~~
  !!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+                         
-+    
      
      export interface B {
 -                     ~
@@ -85,8 +80,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface C<T, U> {
 -                     ~
@@ -131,8 +124,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      interface G {}
 -              ~
@@ -142,8 +133,6 @@
      export { G };
 -             ~
 -!!! error TS18043: Types cannot appear in export declarations in JavaScript files.
-+                 
-+    
      
      interface HH {}
 -              ~~
@@ -153,8 +142,6 @@
      export { HH as H };
 -             ~~
 -!!! error TS18043: Types cannot appear in export declarations in JavaScript files.
-+                       
-+    
      
      export interface I {}
 -                     ~
@@ -167,13 +154,10 @@
      export { J as JJ };
 -             ~
 -!!! error TS18043: Types cannot appear in export declarations in JavaScript files.
-+                       
      export interface J {}
 -                     ~
 +    ~~~~~~~~~~~~~~~~~~~~~
  !!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+                         
-+    
      
      export interface K extends I,J {
 -                     ~
@@ -184,8 +168,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface L extends K {
 -                     ~
@@ -196,8 +178,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface M<T> {
 -                     ~
@@ -208,8 +188,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface N<U> extends M<U> {
 -                     ~
@@ -220,8 +198,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface O {
 -                     ~
@@ -232,15 +208,11 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface P extends O {}
 -                     ~
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  !!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+                                   
-+    
      
      export interface Q extends O {
 -                     ~
@@ -251,8 +223,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface R extends O {
 -                     ~
@@ -263,8 +233,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface S extends O {
 -                     ~
@@ -277,8 +245,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface T {
 -                     ~
@@ -289,16 +255,11 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface U extends T {}
 -                     ~
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  !!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+                                   
-+    
-+    
      
      
      export interface V extends T {
@@ -310,8 +271,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface W extends T {
 -                     ~
@@ -322,8 +281,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface X extends T {
 -                     ~
@@ -336,8 +293,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface Y {
 -                     ~
@@ -350,15 +305,11 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface Z extends Y {}
 -                     ~
 +    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  !!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+                                   
-+    
      
      export interface AA extends Y {
 -                     ~~
@@ -369,8 +320,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface BB extends Y {
 -                     ~~
@@ -381,8 +330,6 @@
      }
 +    ~
 +!!! error TS8006: 'interface' declarations can only be used in TypeScript files.
-+     
-+    
      
      export interface CC extends Y {
 -                     ~~

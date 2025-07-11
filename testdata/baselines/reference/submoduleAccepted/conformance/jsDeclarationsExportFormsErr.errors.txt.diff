@@ -2,18 +2,12 @@
 +++ new.jsDeclarationsExportFormsErr.errors.txt
 @@= skipped -0, +0 lines =@@
  bar.js(1,1): error TS8002: 'import ... =' can only be used in TypeScript files.
--bar.js(2,1): error TS8003: 'export =' can only be used in TypeScript files.
+ bar.js(2,1): error TS8003: 'export =' can only be used in TypeScript files.
 -bin.js(2,1): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+bar.js(1,30): error TS8003: 'export =' can only be used in TypeScript files.
  globalNs.js(2,1): error TS1315: Global module exports may only appear in declaration files.
 
 
-@@= skipped -10, +9 lines =@@
-     import ns = require("./cls");
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- !!! error TS8002: 'import ... =' can only be used in TypeScript files.
-+                                 
-     export = ns; // TS Only
+@@= skipped -14, +13 lines =@@
      ~~~~~~~~~~~~
  !!! error TS8003: 'export =' can only be used in TypeScript files.
      

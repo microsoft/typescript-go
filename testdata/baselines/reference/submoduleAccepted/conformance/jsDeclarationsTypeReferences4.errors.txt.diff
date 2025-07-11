@@ -2,15 +2,13 @@
 +++ new.jsDeclarationsTypeReferences4.errors.txt
 @@= skipped -0, +0 lines =@@
 -index.js(4,18): error TS8006: 'namespace' declarations can only be used in TypeScript files.
-+index.js(2,28): error TS8006: 'module' declarations can only be used in TypeScript files.
++index.js(4,1): error TS8006: 'module' declarations can only be used in TypeScript files.
 
 
  ==== index.js (1 errors) ====
-     /// <reference types="node" />
+@@= skipped -5, +5 lines =@@
      export const Something = 2; // to show conflict that can occur
-+                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      // @ts-ignore
-+    ~~~~~~~~~~~~~
      export namespace A {
 -                     ~
 -!!! error TS8006: 'namespace' declarations can only be used in TypeScript files.
