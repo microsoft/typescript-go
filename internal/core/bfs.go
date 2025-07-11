@@ -13,6 +13,40 @@ type BreadthFirstSearchResult[N comparable] struct {
 	Path    []N
 }
 
+type breadthFirstSearchJob[N comparable] struct {
+	node   N
+	parent *breadthFirstSearchJob[N]
+}
+
+type BreadthFirstSearchLevel[N comparable] struct {
+	jobs *collections.OrderedMap[N, *breadthFirstSearchJob[N]]
+}
+
+func (l *BreadthFirstSearchLevel[N]) Has(node N) bool {
+	return l.jobs.Has(node)
+}
+
+func (l *BreadthFirstSearchLevel[N]) Delete(node N) {
+	l.jobs.Delete(node)
+}
+
+func (l *BreadthFirstSearchLevel[N]) Range(f func(node N) bool) {
+	for node := range l.jobs.Keys() {
+		if !f(node) {
+			return
+		}
+	}
+}
+
+type BreadthFirstSearchOptions[N comparable] struct {
+	// Visited is a set of nodes that have already been visited.
+	// If nil, a new set will be created.
+	Visited *collections.SyncSet[N]
+	// PreprocessLevel is a function that, if provided, will be called
+	// before each level, giving the caller an opportunity to remove nodes.
+	PreprocessLevel func(*BreadthFirstSearchLevel[N])
+}
+
 // BreadthFirstSearchParallel performs a breadth-first search on a graph
 // starting from the given node. It processes nodes in parallel and returns the path
 // from the first node that satisfies the `visit` function back to the start node.
@@ -20,39 +54,49 @@ func BreadthFirstSearchParallel[N comparable](
 	start N,
 	neighbors func(N) []N,
 	visit func(node N) (isResult bool, stop bool),
-	visited *collections.SyncSet[N],
 ) BreadthFirstSearchResult[N] {
+	return BreadthFirstSearchParallelEx(start, neighbors, visit, BreadthFirstSearchOptions[N]{})
+}
+
+// BreadthFirstSearchParallelEx is an extension of BreadthFirstSearchParallel that allows
+// the caller to pass a pre-seeded set of already-visited nodes and a preprocessing function
+// that can be used to remove nodes from each level before parallel processing.
+func BreadthFirstSearchParallelEx[N comparable](
+	start N,
+	neighbors func(N) []N,
+	visit func(node N) (isResult bool, stop bool),
+	options BreadthFirstSearchOptions[N],
+) BreadthFirstSearchResult[N] {
+	visited := options.Visited
 	if visited == nil {
 		visited = &collections.SyncSet[N]{}
 	}
 
-	type job struct {
-		node   N
-		parent *job
-	}
-
 	type result struct {
 		stop bool
-		job  *job
-		next *collections.OrderedMap[N, *job]
+		job  *breadthFirstSearchJob[N]
+		next *collections.OrderedMap[N, *breadthFirstSearchJob[N]]
 	}
 
-	var fallback *job
+	var fallback *breadthFirstSearchJob[N]
 	// processLevel processes each node at the current level in parallel.
 	// It produces either a list of jobs to be processed in the next level,
 	// or a result if the visit function returns true for any node.
-	processLevel := func(index int, jobs *collections.OrderedMap[N, *job]) result {
+	processLevel := func(index int, jobs *collections.OrderedMap[N, *breadthFirstSearchJob[N]]) result {
 		var lowestFallback atomic.Int64
 		var lowestGoal atomic.Int64
 		var nextJobCount atomic.Int64
 		lowestGoal.Store(math.MaxInt64)
 		lowestFallback.Store(math.MaxInt64)
-		next := make([][]*job, jobs.Size())
+		if options.PreprocessLevel != nil {
+			options.PreprocessLevel(&BreadthFirstSearchLevel[N]{jobs: jobs})
+		}
+		next := make([][]*breadthFirstSearchJob[N], jobs.Size())
 		var wg sync.WaitGroup
 		i := 0
 		for j := range jobs.Values() {
 			wg.Add(1)
-			go func(i int, j *job) {
+			go func(i int, j *breadthFirstSearchJob[N]) {
 				defer wg.Done()
 				if int64(i) >= lowestGoal.Load() {
 					return // Stop processing if we already found a lower result
@@ -90,8 +134,8 @@ func BreadthFirstSearchParallel[N comparable](
 				neighborNodes := neighbors(j.node)
 				if len(neighborNodes) > 0 {
 					nextJobCount.Add(int64(len(neighborNodes)))
-					next[i] = Map(neighborNodes, func(child N) *job {
-						return &job{node: child, parent: j}
+					next[i] = Map(neighborNodes, func(child N) *breadthFirstSearchJob[N] {
+						return &breadthFirstSearchJob[N]{node: child, parent: j}
 					})
 				}
 			}(i, j)
@@ -108,7 +152,7 @@ func BreadthFirstSearchParallel[N comparable](
 				_, fallback, _ = jobs.EntryAt(int(index))
 			}
 		}
-		nextJobs := collections.NewOrderedMapWithSizeHint[N, *job](int(nextJobCount.Load()))
+		nextJobs := collections.NewOrderedMapWithSizeHint[N, *breadthFirstSearchJob[N]](int(nextJobCount.Load()))
 		for _, jobs := range next {
 			for _, j := range jobs {
 				if !nextJobs.Has(j.node) {
@@ -121,7 +165,7 @@ func BreadthFirstSearchParallel[N comparable](
 		return result{next: nextJobs}
 	}
 
-	createPath := func(job *job) []N {
+	createPath := func(job *breadthFirstSearchJob[N]) []N {
 		var path []N
 		for job != nil {
 			path = append(path, job.node)
@@ -131,8 +175,8 @@ func BreadthFirstSearchParallel[N comparable](
 	}
 
 	levelIndex := 0
-	level := collections.NewOrderedMapFromList([]collections.MapEntry[N, *job]{
-		{Key: start, Value: &job{node: start}},
+	level := collections.NewOrderedMapFromList([]collections.MapEntry[N, *breadthFirstSearchJob[N]]{
+		{Key: start, Value: &breadthFirstSearchJob[N]{node: start}},
 	})
 	for level.Size() > 0 {
 		result := processLevel(levelIndex, level)

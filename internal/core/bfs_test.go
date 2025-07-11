@@ -29,7 +29,7 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 			t.Parallel()
 			result := core.BreadthFirstSearchParallel("A", children, func(node string) (bool, bool) {
 				return node == "D", true
-			}, nil)
+			})
 			assert.Equal(t, result.Stopped, true, "Expected search to stop at D")
 			assert.DeepEqual(t, result.Path, []string{"D", "B", "A"})
 		})
@@ -40,7 +40,7 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 			result := core.BreadthFirstSearchParallel("A", children, func(node string) (bool, bool) {
 				visitedNodes = append(visitedNodes, node)
 				return false, false // Never stop early
-			}, nil)
+			})
 
 			// Should return nil since we never return true
 			assert.Equal(t, result.Stopped, false, "Expected search to not stop early")
@@ -71,9 +71,11 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 		}
 
 		var visited collections.SyncSet[string]
-		core.BreadthFirstSearchParallel("Root", children, func(node string) (bool, bool) {
+		core.BreadthFirstSearchParallelEx("Root", children, func(node string) (bool, bool) {
 			return node == "L2B", true // Stop at level 2
-		}, &visited)
+		}, core.BreadthFirstSearchOptions[string]{
+			Visited: &visited,
+		})
 
 		assert.Assert(t, visited.Has("Root"), "Expected to visit Root")
 		assert.Assert(t, visited.Has("L1A"), "Expected to visit L1A")
@@ -99,9 +101,11 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 		}
 
 		var visited collections.SyncSet[string]
-		result := core.BreadthFirstSearchParallel("A", children, func(node string) (bool, bool) {
+		result := core.BreadthFirstSearchParallelEx("A", children, func(node string) (bool, bool) {
 			return node == "A", false // Record A as a fallback, but do not stop
-		}, &visited)
+		}, core.BreadthFirstSearchOptions[string]{
+			Visited: &visited,
+		})
 
 		assert.Equal(t, result.Stopped, false, "Expected search to not stop early")
 		assert.DeepEqual(t, result.Path, []string{"A"})
@@ -133,7 +137,7 @@ func TestBreadthFirstSearchParallel(t *testing.T) {
 			default:
 				return false, false
 			}
-		}, nil)
+		})
 
 		assert.Equal(t, result.Stopped, true, "Expected search to stop at D")
 		assert.DeepEqual(t, result.Path, []string{"D", "B", "A"})

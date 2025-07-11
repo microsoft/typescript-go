@@ -133,18 +133,7 @@ func (p *Project) GetProgram() *compiler.Program {
 }
 
 func (p *Project) containsFile(path tspath.Path) bool {
-	if p.isRoot(path) {
-		return true
-	}
 	return p.Program != nil && p.Program.GetSourceFileByPath(path) != nil
-}
-
-func (p *Project) isRoot(path tspath.Path) bool {
-	if p.CommandLine == nil {
-		return false
-	}
-	_, ok := p.CommandLine.FileNamesByPath()[path]
-	return ok
 }
 
 func (p *Project) IsSourceFromProjectReference(path tspath.Path) bool {

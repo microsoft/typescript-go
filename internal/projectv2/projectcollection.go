@@ -59,9 +59,10 @@ func (c *ProjectCollection) InferredProject() *Project {
 	return c.inferredProject
 }
 
+// !!! this result could be cached
 func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path) *Project {
 	if result, ok := c.fileDefaultProjects[path]; ok {
-		if result == "" {
+		if result == inferredProjectName {
 			return c.inferredProject
 		}
 		return c.configuredProjects[result]
@@ -130,7 +131,7 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, 
 	}
 
 	// Look in the config's project and its references recursively.
-	search := core.BreadthFirstSearchParallel(
+	search := core.BreadthFirstSearchParallelEx(
 		project,
 		func(project *Project) []*Project {
 			if project.CommandLine == nil {
@@ -146,7 +147,9 @@ func (c *ProjectCollection) findDefaultConfiguredProjectWorker(fileName string, 
 			}
 			return false, false
 		},
-		visited,
+		core.BreadthFirstSearchOptions[*Project]{
+			Visited: visited,
+		},
 	)
 
 	if search.Stopped {

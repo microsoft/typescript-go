@@ -135,7 +135,7 @@ func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
 	var toRemoveProjects collections.Set[tspath.Path]
-	b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path)
+	openFileResult := b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path)
 	b.forEachProject(func(entry dirty.Value[*Project]) bool {
 		toRemoveProjects.Add(entry.Value().configFilePath)
 		b.updateProgram(entry)
@@ -155,7 +155,9 @@ func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 	}
 
 	for projectPath := range toRemoveProjects.Keys() {
-		b.deleteProject(projectPath)
+		if !openFileResult.retain.Has(projectPath) {
+			b.deleteProject(projectPath)
+		}
 	}
 	b.configFileRegistryBuilder.Cleanup()
 }
@@ -221,14 +223,14 @@ func (b *projectCollectionBuilder) findDefaultProject(fileName string, path tspa
 
 func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string, path tspath.Path) *dirty.SyncMapEntry[tspath.Path, *Project] {
 	if b.isOpenFile(path) {
-		return b.findOrCreateDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind)
+		return b.findOrCreateDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind).project
 	}
 	return nil
 }
 
-func (b *projectCollectionBuilder) ensureConfiguredProjectAndAncestorsForOpenFile(fileName string, path tspath.Path) {
+func (b *projectCollectionBuilder) ensureConfiguredProjectAndAncestorsForOpenFile(fileName string, path tspath.Path) searchResult {
 	result := b.findOrCreateDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindCreate)
-	if result != nil && result.Value() != nil {
+	if result.project != nil {
 		// !!! sheetal todo this later
 		// // Create ancestor tree for findAllRefs (dont load them right away)
 		// forEachAncestorProjectLoad(
@@ -245,11 +247,17 @@ func (b *projectCollectionBuilder) ensureConfiguredProjectAndAncestorsForOpenFil
 		// 	delayReloadedConfiguredProjects,
 		// );
 	}
+	return result
 }
 
 type searchNode struct {
 	configFileName string
 	loadKind       projectLoadKind
+}
+
+type searchResult struct {
+	project *dirty.SyncMapEntry[tspath.Path, *Project]
+	retain  collections.Set[tspath.Path]
 }
 
 func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
@@ -258,14 +266,14 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 	configFileName string,
 	loadKind projectLoadKind,
 	visited *collections.SyncSet[searchNode],
-	fallback *searchNode,
-) *dirty.SyncMapEntry[tspath.Path, *Project] {
+	fallback *searchResult,
+) searchResult {
 	var configs collections.SyncMap[tspath.Path, *tsoptions.ParsedCommandLine]
 	if visited == nil {
 		visited = &collections.SyncSet[searchNode]{}
 	}
 
-	search := core.BreadthFirstSearchParallel(
+	search := core.BreadthFirstSearchParallelEx(
 		searchNode{configFileName: configFileName, loadKind: loadKind},
 		func(node searchNode) []searchNode {
 			if config, ok := configs.Load(b.toPath(node.configFileName)); ok && len(config.ProjectReferences()) > 0 {
@@ -280,14 +288,6 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 			return nil
 		},
 		func(node searchNode) (isResult bool, stop bool) {
-			if node.loadKind == projectLoadKindFind && visited.Has(searchNode{configFileName: node.configFileName, loadKind: projectLoadKindCreate}) {
-				// We're being asked to find when we've already been asked to create, so we can skip this node.
-				// The create search node will have returned the same result we'd find here. (Note that if we
-				// cared about the returned search path being determinstic, we would need to figure out whether
-				// to return true or false here, but since we only care about the destination node, we can
-				// just return false.)
-				return false, false
-			}
 			configFilePath := b.toPath(node.configFileName)
 			config := b.configFileRegistryBuilder.findOrAcquireConfigForOpenFile(node.configFileName, configFilePath, path, node.loadKind)
 			if config == nil {
@@ -320,17 +320,47 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 
 			return false, false
 		},
-		visited,
+		core.BreadthFirstSearchOptions[searchNode]{
+			Visited: visited,
+			PreprocessLevel: func(level *core.BreadthFirstSearchLevel[searchNode]) {
+				level.Range(func(node searchNode) bool {
+					if node.loadKind == projectLoadKindFind && level.Has(searchNode{configFileName: node.configFileName, loadKind: projectLoadKindCreate}) {
+						// Remove find requests when a create request for the same project is already present.
+						level.Delete(node)
+					}
+					return true
+				})
+			},
+		},
 	)
 
-	if search.Stopped {
-		project, _ := b.configuredProjects.Load(b.toPath(search.Path[0].configFileName))
-		return project
-	}
+	var retain collections.Set[tspath.Path]
+	var project *dirty.SyncMapEntry[tspath.Path, *Project]
 	if len(search.Path) > 0 {
+		project, _ = b.configuredProjects.Load(b.toPath(search.Path[0].configFileName))
+		// If we found a project, we retain each project along the BFS path.
+		// We don't want to retain everything we visited since BFS can terminate
+		// early, and we don't want to retain nondeterministically.
+		for _, node := range search.Path {
+			retain.Add(b.toPath(node.configFileName))
+		}
+	}
+
+	if search.Stopped {
+		// Found a project that directly contains the file.
+		return searchResult{
+			project: project,
+			retain:  retain,
+		}
+	}
+
+	if project != nil {
 		// If we found a project that contains the file, but it is a source from
 		// a project reference, record it as a fallback.
-		fallback = &search.Path[0]
+		fallback = &searchResult{
+			project: project,
+			retain:  retain,
+		}
 	}
 
 	// Look for tsconfig.json files higher up the directory tree and do the same. This handles
@@ -338,42 +368,49 @@ func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectWorker(
 	// workspace.
 	if config, ok := configs.Load(b.toPath(configFileName)); ok && config.CompilerOptions().DisableSolutionSearching.IsTrue() {
 		if fallback != nil {
-			project, _ := b.configuredProjects.Load(b.toPath(fallback.configFileName))
-			return project
+			return *fallback
 		}
 	}
 	if ancestorConfigName := b.configFileRegistryBuilder.getAncestorConfigFileName(fileName, path, configFileName, loadKind); ancestorConfigName != "" {
 		return b.findOrCreateDefaultConfiguredProjectWorker(fileName, path, ancestorConfigName, loadKind, visited, fallback)
 	}
 	if fallback != nil {
-		project, _ := b.configuredProjects.Load(b.toPath(fallback.configFileName))
-		return project
+		return *fallback
 	}
-	return nil
+	// If we didn't find anything, we can retain everything we visited,
+	// since the whole graph must have been traversed (i.e., the set of
+	// retained projects is guaranteed to be deterministic).
+	visited.Range(func(node searchNode) bool {
+		retain.Add(b.toPath(node.configFileName))
+		return true
+	})
+	return searchResult{retain: retain}
 }
 
 func (b *projectCollectionBuilder) findOrCreateDefaultConfiguredProjectForOpenScriptInfo(
 	fileName string,
 	path tspath.Path,
 	loadKind projectLoadKind,
-) *dirty.SyncMapEntry[tspath.Path, *Project] {
+) searchResult {
 	if key, ok := b.fileDefaultProjects[path]; ok {
 		if key == inferredProjectName {
 			// The file belongs to the inferred project
-			return nil
+			return searchResult{}
 		}
 		entry, _ := b.configuredProjects.Load(key)
-		return entry
+		return searchResult{project: entry}
 	}
 	if configFileName := b.configFileRegistryBuilder.getConfigFileNameForFile(fileName, path, loadKind); configFileName != "" {
-		project := b.findOrCreateDefaultConfiguredProjectWorker(fileName, path, configFileName, loadKind, nil, nil)
-		if b.fileDefaultProjects == nil {
-			b.fileDefaultProjects = make(map[tspath.Path]tspath.Path)
+		result := b.findOrCreateDefaultConfiguredProjectWorker(fileName, path, configFileName, loadKind, nil, nil)
+		if result.project != nil {
+			if b.fileDefaultProjects == nil {
+				b.fileDefaultProjects = make(map[tspath.Path]tspath.Path)
+			}
+			b.fileDefaultProjects[path] = result.project.Value().configFilePath
 		}
-		b.fileDefaultProjects[path] = project.Value().configFilePath
-		return project
+		return result
 	}
-	return nil
+	return searchResult{}
 }
 
 func (b *projectCollectionBuilder) findOrCreateProject(
@@ -399,13 +436,22 @@ func (b *projectCollectionBuilder) isOpenFile(path tspath.Path) bool {
 }
 
 func (b *projectCollectionBuilder) updateInferredProject(rootFileNames []string) bool {
-	if b.inferredProject.Value() == nil && len(rootFileNames) > 0 {
+	if len(rootFileNames) == 0 {
+		if b.inferredProject.Value() != nil {
+			b.inferredProject.Delete()
+			return true
+		}
+		return false
+	}
+
+	if b.inferredProject.Value() == nil {
 		b.inferredProject.Set(NewInferredProject(b.sessionOptions.CurrentDirectory, b.compilerOptionsForInferredProjects, rootFileNames, b))
-	} else if b.inferredProject.Value() != nil && len(rootFileNames) == 0 {
-		b.inferredProject.Delete()
-		return true
 	} else {
-		newCommandLine := tsoptions.NewParsedCommandLine(b.compilerOptionsForInferredProjects, rootFileNames, tspath.ComparePathsOptions{
+		newCompilerOptions := b.inferredProject.Value().CommandLine.CompilerOptions()
+		if b.compilerOptionsForInferredProjects != nil {
+			newCompilerOptions = b.compilerOptionsForInferredProjects
+		}
+		newCommandLine := tsoptions.NewParsedCommandLine(newCompilerOptions, rootFileNames, tspath.ComparePathsOptions{
 			UseCaseSensitiveFileNames: b.fs.fs.UseCaseSensitiveFileNames(),
 			CurrentDirectory:          b.sessionOptions.CurrentDirectory,
 		})
@@ -481,8 +527,8 @@ func (b *projectCollectionBuilder) markFileChanged(path tspath.Path) {
 func (b *projectCollectionBuilder) deleteProject(path tspath.Path) {
 	if project, ok := b.configuredProjects.Load(path); ok {
 		if program := project.Value().Program; program != nil {
-			program.ForEachResolvedProjectReference(func(path tspath.Path, config *tsoptions.ParsedCommandLine) {
-				b.configFileRegistryBuilder.releaseConfigForProject(path, path)
+			program.ForEachResolvedProjectReference(func(referencePath tspath.Path, config *tsoptions.ParsedCommandLine) {
+				b.configFileRegistryBuilder.releaseConfigForProject(referencePath, path)
 			})
 		}
 		if project.Value().Kind == KindConfigured {

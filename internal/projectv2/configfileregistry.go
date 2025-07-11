@@ -33,14 +33,14 @@ type configFileEntry struct {
 	retainingOpenFiles map[tspath.Path]struct{}
 }
 
-// Clone creates a shallow copy of the configFileEntry, without maps.
-// A nil map is used in the builder to indicate that a dirty entry still
-// shares the same map as its original. During finalization, nil maps
-// should be replaced with the maps from the original entry.
 func (e *configFileEntry) Clone() *configFileEntry {
 	return &configFileEntry{
 		pendingReload: e.pendingReload,
 		commandLine:   e.commandLine,
+		// !!! eagerly cloning this maps makes everything more convenient,
+		// but it could be avoided if needed.
+		retainingProjects:  maps.Clone(e.retainingProjects),
+		retainingOpenFiles: maps.Clone(e.retainingOpenFiles),
 	}
 }
 

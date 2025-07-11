@@ -39,15 +39,7 @@ func newConfigFileRegistryBuilder(
 		sessionOptions:      sessionOptions,
 		extendedConfigCache: extendedConfigCache,
 
-		configs: dirty.NewSyncMap(oldConfigFileRegistry.configs, func(dirty *configFileEntry, original *configFileEntry) *configFileEntry {
-			if dirty.retainingProjects == nil && original != nil {
-				dirty.retainingProjects = original.retainingProjects
-			}
-			if dirty.retainingOpenFiles == nil && original != nil {
-				dirty.retainingOpenFiles = original.retainingOpenFiles
-			}
-			return dirty
-		}),
+		configs:         dirty.NewSyncMap(oldConfigFileRegistry.configs, nil),
 		configFileNames: dirty.NewMap(oldConfigFileRegistry.configFileNames),
 	}
 }
@@ -128,9 +120,9 @@ func (c *configFileRegistryBuilder) acquireConfigForProject(fileName string, pat
 		},
 		func(config *configFileEntry) {
 			if needsRetainProject {
-				config.retainingProjects = dirty.CloneMapIfNil(config, entry.Original(), func(e *configFileEntry) map[tspath.Path]struct{} {
-					return e.retainingProjects
-				})
+				if config.retainingProjects == nil {
+					config.retainingProjects = make(map[tspath.Path]struct{})
+				}
 				config.retainingProjects[project.configFilePath] = struct{}{}
 			}
 			c.reloadIfNeeded(config, fileName, path)
@@ -154,9 +146,9 @@ func (c *configFileRegistryBuilder) acquireConfigForOpenFile(configFileName stri
 		},
 		func(config *configFileEntry) {
 			if needsRetainOpenFile {
-				config.retainingOpenFiles = dirty.CloneMapIfNil(config, entry.Original(), func(e *configFileEntry) map[tspath.Path]struct{} {
-					return e.retainingOpenFiles
-				})
+				if config.retainingOpenFiles == nil {
+					config.retainingOpenFiles = make(map[tspath.Path]struct{})
+				}
 				config.retainingOpenFiles[openFilePath] = struct{}{}
 			}
 			c.reloadIfNeeded(config, configFileName, configFilePath)
