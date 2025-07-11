@@ -9,6 +9,7 @@ import (
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
+	"github.com/microsoft/typescript-go/internal/diagnostics"
 	"github.com/microsoft/typescript-go/internal/tspath"
 )
 
@@ -10086,6 +10087,10 @@ type SourceFile struct {
 	lineMapMu sync.RWMutex
 	lineMap   []core.TextPos
 
+	// Fields set by AdditionalSyntacticDiagnostics
+
+	additionalSyntacticDiagnosticsMu sync.RWMutex
+
 	// Fields set by language service
 
 	tokenCacheMu     sync.Mutex
@@ -10148,7 +10153,19 @@ func (node *SourceFile) SetJSDocDiagnostics(diags []*Diagnostic) {
 }
 
 func (node *SourceFile) AdditionalSyntacticDiagnostics() []*Diagnostic {
-	return node.additionalSyntacticDiagnostics
+	node.additionalSyntacticDiagnosticsMu.RLock()
+	diagnostics := node.additionalSyntacticDiagnostics
+	node.additionalSyntacticDiagnosticsMu.RUnlock()
+	if diagnostics == nil {
+		node.additionalSyntacticDiagnosticsMu.Lock()
+		defer node.additionalSyntacticDiagnosticsMu.Unlock()
+		diagnostics = node.additionalSyntacticDiagnostics
+		if diagnostics == nil {
+			diagnostics = node.getJSSyntacticDiagnosticsForFile()
+			node.additionalSyntacticDiagnostics = diagnostics
+		}
+	}
+	return diagnostics
 }
 
 func (node *SourceFile) SetAdditionalSyntacticDiagnostics(diags []*Diagnostic) {
@@ -10474,4 +10491,362 @@ type PragmaSpecification struct {
 
 func (spec *PragmaSpecification) IsTripleSlash() bool {
 	return (spec.Kind & PragmaKindTripleSlashXML) > 0
+}
+
+// JS syntactic diagnostics functions
+
+func (sourceFile *SourceFile) getJSSyntacticDiagnosticsForFile() []*Diagnostic {
+	var diagnostics []*Diagnostic
+
+	// Walk the entire AST to find TypeScript-only constructs
+	sourceFile.walkNodeForJSDiagnostics(sourceFile.AsNode(), sourceFile.AsNode(), &diagnostics)
+
+	return diagnostics
+}
+
+func (sourceFile *SourceFile) walkNodeForJSDiagnostics(node *Node, parent *Node, diags *[]*Diagnostic) {
+	if node == nil {
+		return
+	}
+
+	// Bail out early if this node has NodeFlagsReparsed, as they are synthesized type annotations
+	if node.Flags&NodeFlagsReparsed != 0 {
+		return
+	}
+
+	// Handle specific parent-child relationships first
+	switch parent.Kind {
+	case KindParameter, KindPropertyDeclaration, KindMethodDeclaration:
+		// Check for question token (optional markers) - only parameters have question tokens
+		if parent.Kind == KindParameter && parent.AsParameterDeclaration() != nil && parent.AsParameterDeclaration().QuestionToken == node {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "?"))
+			return
+		}
+		fallthrough
+	case KindMethodSignature, KindConstructor, KindGetAccessor, KindSetAccessor,
+		KindFunctionExpression, KindFunctionDeclaration, KindArrowFunction, KindVariableDeclaration:
+		// Check for type annotations
+		if sourceFile.isTypeAnnotation(parent, node) {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.Type_annotations_can_only_be_used_in_TypeScript_files))
+			return
+		}
+	}
+
+	// Check node-specific constructs
+	switch node.Kind {
+	case KindImportClause:
+		if node.AsImportClause() != nil && node.AsImportClause().IsTypeOnly {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(parent, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import type"))
+			return
+		}
+
+	case KindExportDeclaration:
+		if node.AsExportDeclaration() != nil && node.AsExportDeclaration().IsTypeOnly {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export type"))
+			return
+		}
+
+	case KindImportSpecifier:
+		if node.AsImportSpecifier() != nil && node.AsImportSpecifier().IsTypeOnly {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "import...type"))
+			return
+		}
+
+	case KindExportSpecifier:
+		if node.AsExportSpecifier() != nil && node.AsExportSpecifier().IsTypeOnly {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "export...type"))
+			return
+		}
+
+	case KindImportEqualsDeclaration:
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_import_can_only_be_used_in_TypeScript_files))
+		return
+
+	case KindExportAssignment:
+		if node.AsExportAssignment() != nil && node.AsExportAssignment().IsExportEquals {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_export_can_only_be_used_in_TypeScript_files))
+			return
+		}
+
+	case KindHeritageClause:
+		if node.AsHeritageClause() != nil && node.AsHeritageClause().Token == KindImplementsKeyword {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_implements_clauses_can_only_be_used_in_TypeScript_files))
+			return
+		}
+
+	case KindInterfaceDeclaration:
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "interface"))
+		return
+
+	case KindModuleDeclaration:
+		moduleKeyword := "module"
+		// For now, we'll just use "module" as the default since we don't have a flag to distinguish namespace vs module
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, moduleKeyword))
+		return
+
+	case KindTypeAliasDeclaration:
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.Type_aliases_can_only_be_used_in_TypeScript_files))
+		return
+
+	case KindEnumDeclaration:
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.X_0_declarations_can_only_be_used_in_TypeScript_files, "enum"))
+		return
+
+	case KindNonNullExpression:
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.Non_null_assertions_can_only_be_used_in_TypeScript_files))
+		return
+
+	case KindAsExpression:
+		if node.AsAsExpression() != nil {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node.AsAsExpression().Type, diagnostics.Type_assertion_expressions_can_only_be_used_in_TypeScript_files))
+			return
+		}
+
+	case KindSatisfiesExpression:
+		if node.AsSatisfiesExpression() != nil {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node.AsSatisfiesExpression().Type, diagnostics.Type_satisfaction_expressions_can_only_be_used_in_TypeScript_files))
+			return
+		}
+
+	case KindConstructor, KindMethodDeclaration, KindFunctionDeclaration:
+		// Check for signature declarations (functions without bodies)
+		if sourceFile.isSignatureDeclaration(node) {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.Signature_declarations_can_only_be_used_in_TypeScript_files))
+			return
+		}
+	}
+
+	// Check for type parameters, type arguments, and modifiers
+	sourceFile.checkTypeParametersAndModifiers(node, diags)
+
+	// Recursively walk children
+	node.ForEachChild(func(child *Node) bool {
+		sourceFile.walkNodeForJSDiagnostics(child, node, diags)
+		return false
+	})
+}
+
+func (sourceFile *SourceFile) isTypeAnnotation(parent *Node, node *Node) bool {
+	switch parent.Kind {
+	case KindFunctionDeclaration:
+		return parent.AsFunctionDeclaration() != nil && parent.AsFunctionDeclaration().Type == node
+	case KindFunctionExpression:
+		return parent.AsFunctionExpression() != nil && parent.AsFunctionExpression().Type == node
+	case KindArrowFunction:
+		return parent.AsArrowFunction() != nil && parent.AsArrowFunction().Type == node
+	case KindMethodDeclaration:
+		return parent.AsMethodDeclaration() != nil && parent.AsMethodDeclaration().Type == node
+	case KindGetAccessor:
+		return parent.AsGetAccessorDeclaration() != nil && parent.AsGetAccessorDeclaration().Type == node
+	case KindSetAccessor:
+		return parent.AsSetAccessorDeclaration() != nil && parent.AsSetAccessorDeclaration().Type == node
+	case KindConstructor:
+		return parent.AsConstructorDeclaration() != nil && parent.AsConstructorDeclaration().Type == node
+	case KindVariableDeclaration:
+		return parent.AsVariableDeclaration() != nil && parent.AsVariableDeclaration().Type == node
+	case KindParameter:
+		return parent.AsParameterDeclaration() != nil && parent.AsParameterDeclaration().Type == node
+	case KindPropertyDeclaration:
+		return parent.AsPropertyDeclaration() != nil && parent.AsPropertyDeclaration().Type == node
+	}
+	return false
+}
+
+func (sourceFile *SourceFile) isSignatureDeclaration(node *Node) bool {
+	switch node.Kind {
+	case KindFunctionDeclaration:
+		return node.AsFunctionDeclaration() != nil && node.AsFunctionDeclaration().Body == nil
+	case KindMethodDeclaration:
+		return node.AsMethodDeclaration() != nil && node.AsMethodDeclaration().Body == nil
+	case KindConstructor:
+		return node.AsConstructorDeclaration() != nil && node.AsConstructorDeclaration().Body == nil
+	}
+	return false
+}
+
+func (sourceFile *SourceFile) checkTypeParametersAndModifiers(node *Node, diags *[]*Diagnostic) {
+	// Check type parameters
+	if sourceFile.hasTypeParameters(node) {
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files))
+	}
+
+	// Check type arguments
+	if sourceFile.hasTypeArguments(node) {
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(node, diagnostics.Type_arguments_can_only_be_used_in_TypeScript_files))
+	}
+
+	// Check modifiers
+	sourceFile.checkModifiers(node, diags)
+}
+
+func (sourceFile *SourceFile) hasTypeParameters(node *Node) bool {
+	switch node.Kind {
+	case KindClassDeclaration:
+		return node.AsClassDeclaration() != nil && node.AsClassDeclaration().TypeParameters != nil
+	case KindClassExpression:
+		return node.AsClassExpression() != nil && node.AsClassExpression().TypeParameters != nil
+	case KindMethodDeclaration:
+		return node.AsMethodDeclaration() != nil && node.AsMethodDeclaration().TypeParameters != nil
+	case KindConstructor:
+		return node.AsConstructorDeclaration() != nil && node.AsConstructorDeclaration().TypeParameters != nil
+	case KindGetAccessor:
+		return node.AsGetAccessorDeclaration() != nil && node.AsGetAccessorDeclaration().TypeParameters != nil
+	case KindSetAccessor:
+		return node.AsSetAccessorDeclaration() != nil && node.AsSetAccessorDeclaration().TypeParameters != nil
+	case KindFunctionExpression:
+		return node.AsFunctionExpression() != nil && node.AsFunctionExpression().TypeParameters != nil
+	case KindFunctionDeclaration:
+		return node.AsFunctionDeclaration() != nil && node.AsFunctionDeclaration().TypeParameters != nil
+	case KindArrowFunction:
+		return node.AsArrowFunction() != nil && node.AsArrowFunction().TypeParameters != nil
+	}
+	return false
+}
+
+func (sourceFile *SourceFile) hasTypeArguments(node *Node) bool {
+	switch node.Kind {
+	case KindCallExpression:
+		return node.AsCallExpression() != nil && node.AsCallExpression().TypeArguments != nil
+	case KindNewExpression:
+		return node.AsNewExpression() != nil && node.AsNewExpression().TypeArguments != nil
+	case KindExpressionWithTypeArguments:
+		return node.AsExpressionWithTypeArguments() != nil && node.AsExpressionWithTypeArguments().TypeArguments != nil
+	case KindJsxSelfClosingElement:
+		return node.AsJsxSelfClosingElement() != nil && node.AsJsxSelfClosingElement().TypeArguments != nil
+	case KindJsxOpeningElement:
+		return node.AsJsxOpeningElement() != nil && node.AsJsxOpeningElement().TypeArguments != nil
+	case KindTaggedTemplateExpression:
+		return node.AsTaggedTemplateExpression() != nil && node.AsTaggedTemplateExpression().TypeArguments != nil
+	}
+	return false
+}
+
+func (sourceFile *SourceFile) checkModifiers(node *Node, diags *[]*Diagnostic) {
+	// Check for TypeScript-only modifiers on various declaration types
+	switch node.Kind {
+	case KindVariableStatement:
+		if node.AsVariableStatement() != nil && node.AsVariableStatement().Modifiers() != nil {
+			sourceFile.checkModifierList(node.AsVariableStatement().Modifiers(), true, diags)
+		}
+	case KindPropertyDeclaration:
+		if node.AsPropertyDeclaration() != nil && node.AsPropertyDeclaration().Modifiers() != nil {
+			sourceFile.checkPropertyModifiers(node.AsPropertyDeclaration().Modifiers(), diags)
+		}
+	case KindParameter:
+		if node.AsParameterDeclaration() != nil && node.AsParameterDeclaration().Modifiers() != nil {
+			sourceFile.checkParameterModifiers(node.AsParameterDeclaration().Modifiers(), diags)
+		}
+	}
+}
+
+func (sourceFile *SourceFile) checkModifierList(modifiers *ModifierList, isConstValid bool, diags *[]*Diagnostic) {
+	if modifiers == nil {
+		return
+	}
+
+	for _, modifier := range modifiers.Nodes {
+		sourceFile.checkModifier(modifier, isConstValid, diags)
+	}
+}
+
+func (sourceFile *SourceFile) checkPropertyModifiers(modifiers *ModifierList, diags *[]*Diagnostic) {
+	if modifiers == nil {
+		return
+	}
+
+	for _, modifier := range modifiers.Nodes {
+		// Property modifiers allow static and accessor, but not other TypeScript modifiers
+		switch modifier.Kind {
+		case KindStaticKeyword, KindAccessorKeyword:
+			// These are valid in JavaScript
+			continue
+		default:
+			if sourceFile.isTypeScriptOnlyModifier(modifier) {
+				*diags = append(*diags, sourceFile.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, sourceFile.getTokenText(modifier)))
+			}
+		}
+	}
+}
+
+func (sourceFile *SourceFile) checkParameterModifiers(modifiers *ModifierList, diags *[]*Diagnostic) {
+	if modifiers == nil {
+		return
+	}
+
+	for _, modifier := range modifiers.Nodes {
+		if sourceFile.isTypeScriptOnlyModifier(modifier) {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(modifier, diagnostics.Parameter_modifiers_can_only_be_used_in_TypeScript_files))
+		}
+	}
+}
+
+func (sourceFile *SourceFile) checkModifier(modifier *Node, isConstValid bool, diags *[]*Diagnostic) {
+	switch modifier.Kind {
+	case KindConstKeyword:
+		if !isConstValid {
+			*diags = append(*diags, sourceFile.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, "const"))
+		}
+	case KindPublicKeyword, KindPrivateKeyword, KindProtectedKeyword, KindReadonlyKeyword,
+		KindDeclareKeyword, KindAbstractKeyword, KindOverrideKeyword, KindInKeyword, KindOutKeyword:
+		*diags = append(*diags, sourceFile.createDiagnosticForNode(modifier, diagnostics.The_0_modifier_can_only_be_used_in_TypeScript_files, sourceFile.getTokenText(modifier)))
+	case KindStaticKeyword, KindExportKeyword, KindDefaultKeyword, KindAccessorKeyword:
+		// These are valid in JavaScript
+	}
+}
+
+func (sourceFile *SourceFile) isTypeScriptOnlyModifier(modifier *Node) bool {
+	switch modifier.Kind {
+	case KindPublicKeyword, KindPrivateKeyword, KindProtectedKeyword, KindReadonlyKeyword,
+		KindDeclareKeyword, KindAbstractKeyword, KindOverrideKeyword, KindInKeyword, KindOutKeyword:
+		return true
+	}
+	return false
+}
+
+func (sourceFile *SourceFile) getTokenText(node *Node) string {
+	switch node.Kind {
+	case KindPublicKeyword:
+		return "public"
+	case KindPrivateKeyword:
+		return "private"
+	case KindProtectedKeyword:
+		return "protected"
+	case KindReadonlyKeyword:
+		return "readonly"
+	case KindDeclareKeyword:
+		return "declare"
+	case KindAbstractKeyword:
+		return "abstract"
+	case KindOverrideKeyword:
+		return "override"
+	case KindInKeyword:
+		return "in"
+	case KindOutKeyword:
+		return "out"
+	case KindConstKeyword:
+		return "const"
+	case KindStaticKeyword:
+		return "static"
+	case KindAccessorKeyword:
+		return "accessor"
+	default:
+		return ""
+	}
+}
+
+func (sourceFile *SourceFile) createDiagnosticForNode(node *Node, message *diagnostics.Message, args ...any) *Diagnostic {
+	// Find the source file for this node
+	nodeSourceFile := GetSourceFileOfNode(node)
+	if nodeSourceFile == nil {
+		// Fallback to empty range if we can't find the source file
+		return NewDiagnostic(nil, core.TextRange{}, message, args...)
+	}
+	return NewDiagnostic(nodeSourceFile, sourceFile.getErrorRangeForNode(node), message, args...)
+}
+
+func (sourceFile *SourceFile) getErrorRangeForNode(node *Node) core.TextRange {
+	if node == nil {
+		return core.TextRange{}
+	}
+	return core.NewTextRange(node.Pos(), node.End())
 }
