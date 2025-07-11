@@ -742,6 +742,9 @@ function parseKindModifiers(expr: ts.Expression): { isOptional: boolean; isDepre
 }
 
 function parseSortText(expr: ts.Expression): string | undefined {
+    if (ts.isCallExpression(expr) && expr.expression.getText() === "completion.SortText.Deprecated") {
+        return `ls.DeprecateSortText(${parseSortText(expr.arguments[0])})`;
+    }
     const text = expr.getText();
     switch (text) {
         case "completion.SortText.LocalDeclarationPriority":
