@@ -1,84 +1,49 @@
-/a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 /a.js(2,3): error TS6205: All type parameters are unused.
 /a.js(8,14): error TS2339: Property 'p' does not exist on type 'C1<T, V>'.
-/a.js(10,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
 /a.js(13,3): error TS6205: All type parameters are unused.
-/a.js(17,2): error TS8004: Type parameter declarations can only be used in TypeScript files.
 /a.js(20,3): error TS6205: All type parameters are unused.
 /a.js(25,14): error TS2339: Property 'p' does not exist on type 'C3<T, V, X>'.
 
 
-==== /a.js (8 errors) ====
+==== /a.js (5 errors) ====
     /**
-    ~~~
      * @template T
-    ~~~~~~~~~~~~~~
       ~~~~~~~~~~~~
      * @template V
     ~~~~~~~~~~~~~~
-    ~~~~~~~~~~~~~~
      */
-    ~~~
     ~~
 !!! error TS6205: All type parameters are unused.
     class C1 {
-    ~~~~~~~~~~
         constructor() {
-    ~~~~~~~~~~~~~~~~~~~
             /** @type {T} */
-    ~~~~~~~~~~~~~~~~~~~~~~~~
             this.p;
-    ~~~~~~~~~~~~~~~
                  ~
 !!! error TS2339: Property 'p' does not exist on type 'C1<T, V>'.
         }
-    ~~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-     
-    
     
     /**
-    ~~~
      * @template T,V
-    ~~~~~~~~~~~~~~~~
       ~~~~~~~~~~~~~~
      */
-    ~~~
     ~~
 !!! error TS6205: All type parameters are unused.
     class C2 {
-    ~~~~~~~~~~
         constructor() { }
-    ~~~~~~~~~~~~~~~~~~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-     
-    
     
     /**
-    ~~~
      * @template T,V,X
-    ~~~~~~~~~~~~~~~~~~
       ~~~~~~~~~~~~~~~~
      */
-    ~~~
     ~~
 !!! error TS6205: All type parameters are unused.
     class C3 {
-    ~~~~~~~~~~
         constructor() {
-    ~~~~~~~~~~~~~~~~~~~
             /** @type {T} */
-    ~~~~~~~~~~~~~~~~~~~~~~~~
             this.p;
-    ~~~~~~~~~~~~~~~
                  ~
 !!! error TS2339: Property 'p' does not exist on type 'C3<T, V, X>'.
         }
-    ~~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.

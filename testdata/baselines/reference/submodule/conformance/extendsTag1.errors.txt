@@ -1,19 +1,12 @@
-bug25101.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 bug25101.js(5,17): error TS8011: Type arguments can only be used in TypeScript files.
 
 
-==== bug25101.js (2 errors) ====
+==== bug25101.js (1 errors) ====
     /**
-    ~~~
      * @template T
-    ~~~~~~~~~~~~~~
      * @extends {Set<T>} Should prefer this Set<T>, not the Set in the heritage clause
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      */
-    ~~~
     class My extends Set {}
-    ~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
                     ~~~~
 !!! error TS8011: Type arguments can only be used in TypeScript files.
     

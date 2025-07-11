@@ -177,6 +177,11 @@ func isSignatureDeclaration(node *Node) bool {
 }
 
 func checkTypeParametersAndModifiers(sourceFile *SourceFile, node *Node, diags *[]*Diagnostic) {
+	// Bail out early if this node has NodeFlagsReparsed
+	if node.Flags&NodeFlagsReparsed != 0 {
+		return
+	}
+
 	// Check type parameters
 	if hasTypeParameters(node) {
 		*diags = append(*diags, createDiagnosticForNode(sourceFile, node, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files))
@@ -192,30 +197,73 @@ func checkTypeParametersAndModifiers(sourceFile *SourceFile, node *Node, diags *
 }
 
 func hasTypeParameters(node *Node) bool {
+	// Bail out early if this node has NodeFlagsReparsed
+	if node.Flags&NodeFlagsReparsed != 0 {
+		return false
+	}
+
+	var typeParameters *NodeList
 	switch node.Kind {
 	case KindClassDeclaration:
-		return node.AsClassDeclaration() != nil && node.AsClassDeclaration().TypeParameters != nil
+		if node.AsClassDeclaration() != nil {
+			typeParameters = node.AsClassDeclaration().TypeParameters
+		}
 	case KindClassExpression:
-		return node.AsClassExpression() != nil && node.AsClassExpression().TypeParameters != nil
+		if node.AsClassExpression() != nil {
+			typeParameters = node.AsClassExpression().TypeParameters
+		}
 	case KindMethodDeclaration:
-		return node.AsMethodDeclaration() != nil && node.AsMethodDeclaration().TypeParameters != nil
+		if node.AsMethodDeclaration() != nil {
+			typeParameters = node.AsMethodDeclaration().TypeParameters
+		}
 	case KindConstructor:
-		return node.AsConstructorDeclaration() != nil && node.AsConstructorDeclaration().TypeParameters != nil
+		if node.AsConstructorDeclaration() != nil {
+			typeParameters = node.AsConstructorDeclaration().TypeParameters
+		}
 	case KindGetAccessor:
-		return node.AsGetAccessorDeclaration() != nil && node.AsGetAccessorDeclaration().TypeParameters != nil
+		if node.AsGetAccessorDeclaration() != nil {
+			typeParameters = node.AsGetAccessorDeclaration().TypeParameters
+		}
 	case KindSetAccessor:
-		return node.AsSetAccessorDeclaration() != nil && node.AsSetAccessorDeclaration().TypeParameters != nil
+		if node.AsSetAccessorDeclaration() != nil {
+			typeParameters = node.AsSetAccessorDeclaration().TypeParameters
+		}
 	case KindFunctionExpression:
-		return node.AsFunctionExpression() != nil && node.AsFunctionExpression().TypeParameters != nil
+		if node.AsFunctionExpression() != nil {
+			typeParameters = node.AsFunctionExpression().TypeParameters
+		}
 	case KindFunctionDeclaration:
-		return node.AsFunctionDeclaration() != nil && node.AsFunctionDeclaration().TypeParameters != nil
+		if node.AsFunctionDeclaration() != nil {
+			typeParameters = node.AsFunctionDeclaration().TypeParameters
+		}
 	case KindArrowFunction:
-		return node.AsArrowFunction() != nil && node.AsArrowFunction().TypeParameters != nil
+		if node.AsArrowFunction() != nil {
+			typeParameters = node.AsArrowFunction().TypeParameters
+		}
+	default:
+		return false
 	}
-	return false
+
+	if typeParameters == nil {
+		return false
+	}
+
+	// Check if all type parameters are reparsed (JSDoc originated)
+	for _, tp := range typeParameters.Nodes {
+		if tp.Flags&NodeFlagsReparsed == 0 {
+			return true // Found a non-reparsed type parameter, so this is a TypeScript-only construct
+		}
+	}
+
+	return false // All type parameters are reparsed (JSDoc originated), so this is valid in JS
 }
 
 func hasTypeArguments(node *Node) bool {
+	// Bail out early if this node has NodeFlagsReparsed
+	if node.Flags&NodeFlagsReparsed != 0 {
+		return false
+	}
+
 	switch node.Kind {
 	case KindCallExpression:
 		return node.AsCallExpression() != nil && node.AsCallExpression().TypeArguments != nil
@@ -234,6 +282,11 @@ func hasTypeArguments(node *Node) bool {
 }
 
 func checkModifiers(sourceFile *SourceFile, node *Node, diags *[]*Diagnostic) {
+	// Bail out early if this node has NodeFlagsReparsed
+	if node.Flags&NodeFlagsReparsed != 0 {
+		return
+	}
+
 	// Check for TypeScript-only modifiers on various declaration types
 	switch node.Kind {
 	case KindVariableStatement:
@@ -257,6 +310,10 @@ func checkModifierList(sourceFile *SourceFile, modifiers *ModifierList, isConstV
 	}
 
 	for _, modifier := range modifiers.Nodes {
+		// Bail out early if this modifier has NodeFlagsReparsed
+		if modifier.Flags&NodeFlagsReparsed != 0 {
+			continue
+		}
 		checkModifier(sourceFile, modifier, isConstValid, diags)
 	}
 }
@@ -267,6 +324,10 @@ func checkPropertyModifiers(sourceFile *SourceFile, modifiers *ModifierList, dia
 	}
 
 	for _, modifier := range modifiers.Nodes {
+		// Bail out early if this modifier has NodeFlagsReparsed
+		if modifier.Flags&NodeFlagsReparsed != 0 {
+			continue
+		}
 		// Property modifiers allow static and accessor, but not other TypeScript modifiers
 		switch modifier.Kind {
 		case KindStaticKeyword, KindAccessorKeyword:
@@ -286,6 +347,10 @@ func checkParameterModifiers(sourceFile *SourceFile, modifiers *ModifierList, di
 	}
 
 	for _, modifier := range modifiers.Nodes {
+		// Bail out early if this modifier has NodeFlagsReparsed
+		if modifier.Flags&NodeFlagsReparsed != 0 {
+			continue
+		}
 		if isTypeScriptOnlyModifier(modifier) {
 			*diags = append(*diags, createDiagnosticForNode(sourceFile, modifier, diagnostics.Parameter_modifiers_can_only_be_used_in_TypeScript_files))
 		}

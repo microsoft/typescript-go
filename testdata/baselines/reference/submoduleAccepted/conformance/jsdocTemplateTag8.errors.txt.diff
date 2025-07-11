@@ -11,16 +11,12 @@
  a.js(55,1): error TS2322: Type 'Invariant<string>' is not assignable to type 'Invariant<unknown>'.
    Types of property 'f' are incompatible.
      Type '(x: string) => string' is not assignable to type '(x: unknown) => unknown'.
-@@= skipped -9, +12 lines =@@
- a.js(56,1): error TS2322: Type 'Invariant<unknown>' is not assignable to type 'Invariant<string>'.
-   The types returned by 'f(...)' are incompatible between these types.
-     Type 'unknown' is not assignable to type 'string'.
-+a.js(56,33): error TS8004: Type parameter declarations can only be used in TypeScript files.
+@@= skipped -12, +15 lines =@@
  a.js(59,14): error TS1274: 'in' modifier can only appear on a type parameter of a class, interface or type alias
 
 
 -==== a.js (5 errors) ====
-+==== a.js (9 errors) ====
++==== a.js (8 errors) ====
      /**
       * @template out T
 +                 ~~~
@@ -28,7 +24,7 @@
       * @typedef {Object} Covariant
       * @property {T} x
       */
-@@= skipped -28, +31 lines =@@
+@@= skipped -25, +27 lines =@@
      
      /**
       * @template in T
@@ -46,24 +42,3 @@
       * @typedef {Object} Invariant
       * @property {(x: T) => T} f
       */
-@@= skipped -26, +28 lines =@@
- !!! error TS2322: Type 'Invariant<unknown>' is not assignable to type 'Invariant<string>'.
- !!! error TS2322:   The types returned by 'f(...)' are incompatible between these types.
- !!! error TS2322:     Type 'unknown' is not assignable to type 'string'.
-+                                    ~~~~~~~~~~
-+    
-     
-     /**
-+    ~~~
-      * @template in T
-+    ~~~~~~~~~~~~~~~~~
-                  ~~
- !!! error TS1274: 'in' modifier can only appear on a type parameter of a class, interface or type alias
-      * @param {T} x
-+    ~~~~~~~~~~~~~~~
-      */
-+    ~~~
-     function f(x) {}
-+    ~~~~~~~~~~~~~~~~
-+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-     

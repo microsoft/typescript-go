@@ -1,25 +1,15 @@
-constructorFunctionMethodTypeParameters.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
-constructorFunctionMethodTypeParameters.js(19,30): error TS8004: Type parameter declarations can only be used in TypeScript files.
 constructorFunctionMethodTypeParameters.js(22,16): error TS2304: Cannot find name 'T'.
 constructorFunctionMethodTypeParameters.js(24,17): error TS2304: Cannot find name 'T'.
 
 
-==== constructorFunctionMethodTypeParameters.js (4 errors) ====
+==== constructorFunctionMethodTypeParameters.js (2 errors) ====
     /**
-    ~~~
      * @template {string} T
-    ~~~~~~~~~~~~~~~~~~~~~~~
      * @param {T} t
-    ~~~~~~~~~~~~~~~
      */
-    ~~~
     function Cls(t) {
-    ~~~~~~~~~~~~~~~~~
         this.t = t;
-    ~~~~~~~~~~~~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     /**
      * @template {string} V
@@ -32,30 +22,19 @@ constructorFunctionMethodTypeParameters.js(24,17): error TS2304: Cannot find nam
     };
     
     Cls.prototype.nestedComment =
-                                 
         /**
-    ~~~~~~~
          * @template {string} U
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~
          * @param {T} t
-    ~~~~~~~~~~~~~~~~~~~
                    ~
 !!! error TS2304: Cannot find name 'T'.
          * @param {U} u
-    ~~~~~~~~~~~~~~~~~~~
          * @return {T}
-    ~~~~~~~~~~~~~~~~~~
                     ~
 !!! error TS2304: Cannot find name 'T'.
          */
-    ~~~~~~~
         function (t, u) {
-    ~~~~~~~~~~~~~~~~~~~~~
             return t
-    ~~~~~~~~~~~~~~~~
         };
-    ~~~~~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     var c = new Cls('a');
     const s = c.topLevelComment('a', 'b');

@@ -1,12 +1,11 @@
 templateInsideCallback.js(15,11): error TS2315: Type 'Call' is not generic.
 templateInsideCallback.js(15,16): error TS2304: Cannot find name 'T'.
-templateInsideCallback.js(17,17): error TS8004: Type parameter declarations can only be used in TypeScript files.
 templateInsideCallback.js(17,18): error TS7006: Parameter 'x' implicitly has an 'any' type.
 templateInsideCallback.js(29,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
 templateInsideCallback.js(37,5): error TS7012: This overload implicitly returns the type 'any' because it lacks a return type annotation.
 
 
-==== templateInsideCallback.js (6 errors) ====
+==== templateInsideCallback.js (5 errors) ====
     /**
      * @typedef Oops
      * @template T
@@ -28,8 +27,6 @@ templateInsideCallback.js(37,5): error TS7012: This overload implicitly returns 
 !!! error TS2304: Cannot find name 'T'.
      */
     const identity = x => x;
-                    ~~~~~~~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
                      ~
 !!! error TS7006: Parameter 'x' implicitly has an 'any' type.
     

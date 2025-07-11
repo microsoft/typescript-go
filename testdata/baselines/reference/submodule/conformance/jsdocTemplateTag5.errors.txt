@@ -1,10 +1,8 @@
-a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 a.js(8,16): error TS2315: Type 'Object' is not generic.
 a.js(9,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 a.js(14,16): error TS2304: Cannot find name 'K'.
 a.js(15,18): error TS2304: Cannot find name 'V'.
 a.js(18,21): error TS2339: Property '_map' does not exist on type '{ get(key: K): V; }'.
-a.js(28,16): error TS8004: Type parameter declarations can only be used in TypeScript files.
 a.js(29,16): error TS2315: Type 'Object' is not generic.
 a.js(30,5): error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
 a.js(35,16): error TS2304: Cannot find name 'K'.
@@ -17,32 +15,21 @@ a.js(58,18): error TS2304: Cannot find name 'V'.
 a.js(61,21): error TS2339: Property '_map' does not exist on type '{ get(key: K): V; }'.
 
 
-==== a.js (17 errors) ====
+==== a.js (15 errors) ====
     /**
-    ~~~
      * Should work for function declarations
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * @constructor
-    ~~~~~~~~~~~~~~~
      * @template {string} K
-    ~~~~~~~~~~~~~~~~~~~~~~~
      * @template V
-    ~~~~~~~~~~~~~~
      */
-    ~~~
     function Multimap() {
-    ~~~~~~~~~~~~~~~~~~~~~
         /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                    ~~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
         this._map = {};
-    ~~~~~~~~~~~~~~~~~~~
         ~~~~
 !!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
     };
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     Multimap.prototype = {
         /**
@@ -67,18 +54,13 @@ a.js(61,21): error TS2339: Property '_map' does not exist on type '{ get(key: K)
      * @template V
      */
     var Multimap2 = function() {
-                   ~~~~~~~~~~~~~
         /** @type {Object<string, V>} TODO: Remove the prototype from the fresh object */
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                    ~~~~~~~~~~~~~~~~~
 !!! error TS2315: Type 'Object' is not generic.
         this._map = {};
-    ~~~~~~~~~~~~~~~~~~~
         ~~~~
 !!! error TS2683: 'this' implicitly has type 'any' because it does not have a type annotation.
     };
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     Multimap2.prototype = {
         /**

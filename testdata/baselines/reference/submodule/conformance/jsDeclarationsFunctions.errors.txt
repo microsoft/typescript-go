@@ -1,12 +1,10 @@
-index.js(14,59): error TS8004: Type parameter declarations can only be used in TypeScript files.
-index.js(22,59): error TS8004: Type parameter declarations can only be used in TypeScript files.
 index.js(38,21): error TS2349: This expression is not callable.
   Type '{ y: any; }' has no call signatures.
 index.js(48,21): error TS2349: This expression is not callable.
   Type '{ y: any; }' has no call signatures.
 
 
-==== index.js (4 errors) ====
+==== index.js (2 errors) ====
     export function a() {}
     
     export function b() {}
@@ -21,42 +19,22 @@ index.js(48,21): error TS2349: This expression is not callable.
      * @return {string} 
      */
     export function d(a, b) { return /** @type {*} */(null); }
-                                                              
-    
     
     /**
-    ~~~
      * @template T,U
-    ~~~~~~~~~~~~~~~~
      * @param {T} a
-    ~~~~~~~~~~~~~~~
      * @param {U} b
-    ~~~~~~~~~~~~~~~
      * @return {T & U} 
-    ~~~~~~~~~~~~~~~~~~~
      */
-    ~~~
     export function e(a, b) { return /** @type {*} */(null); }
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
-                                                              
-    
     
     /**
-    ~~~
      * @template T
-    ~~~~~~~~~~~~~~
      * @param {T} a
-    ~~~~~~~~~~~~~~~
      */
-    ~~~
     export function f(a) {
-    ~~~~~~~~~~~~~~~~~~~~~~
         return a;
-    ~~~~~~~~~~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     f.self = f;
     
     /**

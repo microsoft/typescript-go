@@ -6,9 +6,7 @@
 +index.js(3,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(4,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(12,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+index.js(12,58): error TS8004: Type parameter declarations can only be used in TypeScript files.
 +index.js(22,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+index.js(22,58): error TS8004: Type parameter declarations can only be used in TypeScript files.
 +index.js(31,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(32,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +index.js(32,58): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -24,7 +22,7 @@
 +index.js(58,23): error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
 +
 +
-+==== index.js (20 errors) ====
++==== index.js (18 errors) ====
 +    Object.defineProperty(module.exports, "a", { value: function a() {} });
 +                          ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
@@ -45,47 +43,26 @@
 +    Object.defineProperty(module.exports, "d", { value: d });
 +                          ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+                                                             
-+    
-+    
 +    
 +    
 +    /**
-+    ~~~
 +     * @template T,U
-+    ~~~~~~~~~~~~~~~~
 +     * @param {T} a
-+    ~~~~~~~~~~~~~~~
 +     * @param {U} b
-+    ~~~~~~~~~~~~~~~
 +     * @return {T & U} 
-+    ~~~~~~~~~~~~~~~~~~~
 +     */
-+    ~~~
 +    function e(a, b) { return /** @type {*} */(null); }
-+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
 +    Object.defineProperty(module.exports, "e", { value: e });
 +                          ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.
-+                                                             
-+    
 +    
 +    /**
-+    ~~~
 +     * @template T
-+    ~~~~~~~~~~~~~~
 +     * @param {T} a
-+    ~~~~~~~~~~~~~~~
 +     */
-+    ~~~
 +    function f(a) {
-+    ~~~~~~~~~~~~~~~
 +        return a;
-+    ~~~~~~~~~~~~~
 +    }
-+    ~
-+!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
 +    Object.defineProperty(module.exports, "f", { value: f });
 +                          ~~~~~~
 +!!! error TS2580: Cannot find name 'module'. Do you need to install type definitions for node? Try `npm i --save-dev @types/node`.

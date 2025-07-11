@@ -1,13 +1,9 @@
-/a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 /a.js(1,15): error TS6196: 'T' is declared but never used.
 
 
-==== /a.js (2 errors) ====
+==== /a.js (1 errors) ====
     /** @template T */
-    ~~~~~~~~~~~~~~~~~~
                   ~
 !!! error TS6196: 'T' is declared but never used.
     function f() {}
-    ~~~~~~~~~~~~~~~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     

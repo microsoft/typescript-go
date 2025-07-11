@@ -1,4 +1,3 @@
-/a.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 /a.js(26,16): error TS8011: Type arguments can only be used in TypeScript files.
 /a.js(29,16): error TS2344: Type '{ a: string; b: string; }' does not satisfy the constraint 'Foo'.
   Types of property 'b' are incompatible.
@@ -11,44 +10,25 @@
 /a.js(44,16): error TS8011: Type arguments can only be used in TypeScript files.
 
 
-==== /a.js (7 errors) ====
+==== /a.js (6 errors) ====
     /**
-    ~~~
      * @typedef {{
-    ~~~~~~~~~~~~~~
     *     a: number | string;
-    ~~~~~~~~~~~~~~~~~~~~~~~~~
     *     b: boolean | string[];
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     * }} Foo
-    ~~~~~~~~
     */
-    ~~
-    
     
     /**
-    ~~~
     * @template {Foo} T
-    ~~~~~~~~~~~~~~~~~~~
     */
-    ~~
     class A {
-    ~~~~~~~~~
        /**
-    ~~~~~~
         * @param {T} a
-    ~~~~~~~~~~~~~~~~~~
         */
-    ~~~~~~
        constructor(a) {
-    ~~~~~~~~~~~~~~~~~~~
            return a
-    ~~~~~~~~~~~~~~~
        }
-    ~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     
     /**
     * @extends {A<{

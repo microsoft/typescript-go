@@ -1,8 +1,5 @@
-privateNamesIncompatibleModifiersJs.js(3,8): error TS8009: The 'public' modifier can only be used in TypeScript files.
 privateNamesIncompatibleModifiersJs.js(3,8): error TS18010: An accessibility modifier cannot be used with a private identifier.
-privateNamesIncompatibleModifiersJs.js(8,8): error TS8009: The 'private' modifier can only be used in TypeScript files.
 privateNamesIncompatibleModifiersJs.js(8,8): error TS18010: An accessibility modifier cannot be used with a private identifier.
-privateNamesIncompatibleModifiersJs.js(13,8): error TS8009: The 'protected' modifier can only be used in TypeScript files.
 privateNamesIncompatibleModifiersJs.js(13,8): error TS18010: An accessibility modifier cannot be used with a private identifier.
 privateNamesIncompatibleModifiersJs.js(18,8): error TS18010: An accessibility modifier cannot be used with a private identifier.
 privateNamesIncompatibleModifiersJs.js(23,8): error TS18010: An accessibility modifier cannot be used with a private identifier.
@@ -15,15 +12,12 @@ privateNamesIncompatibleModifiersJs.js(51,7): error TS18010: An accessibility mo
 privateNamesIncompatibleModifiersJs.js(55,8): error TS18010: An accessibility modifier cannot be used with a private identifier.
 
 
-==== privateNamesIncompatibleModifiersJs.js (15 errors) ====
+==== privateNamesIncompatibleModifiersJs.js (12 errors) ====
     class A {
         /**
          * @public
            ~~~~~~~
-           ~~~~~~~
          */
-    ~~~~~
-!!! error TS8009: The 'public' modifier can only be used in TypeScript files.
     ~~~~~
 !!! error TS18010: An accessibility modifier cannot be used with a private identifier.
         #a = 1;
@@ -31,10 +25,7 @@ privateNamesIncompatibleModifiersJs.js(55,8): error TS18010: An accessibility mo
         /**
          * @private
            ~~~~~~~~
-           ~~~~~~~~
          */
-    ~~~~~
-!!! error TS8009: The 'private' modifier can only be used in TypeScript files.
     ~~~~~
 !!! error TS18010: An accessibility modifier cannot be used with a private identifier.
         #b = 1;
@@ -42,10 +33,7 @@ privateNamesIncompatibleModifiersJs.js(55,8): error TS18010: An accessibility mo
         /**
          * @protected
            ~~~~~~~~~~
-           ~~~~~~~~~~
          */
-    ~~~~~
-!!! error TS8009: The 'protected' modifier can only be used in TypeScript files.
     ~~~~~
 !!! error TS18010: An accessibility modifier cannot be used with a private identifier.
         #c = 1;

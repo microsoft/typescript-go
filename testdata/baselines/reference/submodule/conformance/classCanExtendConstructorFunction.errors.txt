@@ -2,7 +2,6 @@ first.js(21,19): error TS2507: Type '{ (numberOxen: number): void; circle: (wago
 first.js(27,21): error TS8020: JSDoc types can only be used inside documentation comments.
 first.js(44,4): error TS2339: Property 'numberOxen' does not exist on type 'Sql'.
 first.js(47,24): error TS2507: Type '(numberEaten: number) => void' is not a constructor function type.
-generic.js(1,1): error TS8004: Type parameter declarations can only be used in TypeScript files.
 generic.js(9,22): error TS8011: Type arguments can only be used in TypeScript files.
 generic.js(9,23): error TS2507: Type '<T>(flavour: T) => void' is not a constructor function type.
 generic.js(11,21): error TS2339: Property 'flavour' does not exist on type 'Chowder'.
@@ -107,22 +106,14 @@ second.ts(26,3): error TS2339: Property 'numberOxen' does not exist on type 'Con
       ~~~~~~~~~~
 !!! error TS2339: Property 'numberOxen' does not exist on type 'Conestoga'.
     
-==== generic.js (7 errors) ====
+==== generic.js (6 errors) ====
     /**
-    ~~~
      * @template T
-    ~~~~~~~~~~~~~~
      * @param {T} flavour
-    ~~~~~~~~~~~~~~~~~~~~~
      */
-    ~~~
     function Soup(flavour) {
-    ~~~~~~~~~~~~~~~~~~~~~~~~
         this.flavour = flavour
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~
     }
-    ~
-!!! error TS8004: Type parameter declarations can only be used in TypeScript files.
     /** @extends {Soup<{ claim: "ignorant" | "malicious" }>} */
     class Chowder extends Soup {
                          ~~~~~
