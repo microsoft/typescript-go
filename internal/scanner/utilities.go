@@ -129,10 +129,6 @@ func GetErrorRangeForNode(sourceFile *ast.SourceFile, node *ast.Node) core.TextR
 			scanner.Scan()
 		}
 		return core.NewTextRange(start, scanner.TokenEnd())
-		// !!!
-		// case KindJSDocSatisfiesTag:
-		// 	pos := scanner.SkipTrivia(sourceFile.Text(), node.tagName.pos)
-		// 	return scanner.GetRangeOfTokenAtPosition(sourceFile, pos)
 	}
 	if errorNode == nil {
 		// If we don't have a better node, then just set the error on the first token of
