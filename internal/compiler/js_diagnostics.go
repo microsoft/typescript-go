@@ -29,6 +29,9 @@ func getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnos
 
 // getJSSyntacticDiagnosticsForFile returns diagnostics for TypeScript-only constructs in JavaScript files
 func (p *Program) getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
+	if cached, ok := p.jsDiagnosticCache.Load(sourceFile); ok {
+		return cached
+	}
 	diagnostics, _ := p.jsDiagnosticCache.LoadOrStore(sourceFile, getJSSyntacticDiagnosticsForFile(sourceFile))
 	return diagnostics
 }
