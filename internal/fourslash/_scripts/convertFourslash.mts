@@ -370,9 +370,11 @@ function parseVerifyCompletionArg(arg: ts.Expression): VerifyCompletionsCmd | un
                 else if (init.getText() === "test.markers()") {
                     marker = "f.Markers()";
                 }
-                else if (ts.isCallExpression(init)
+                else if (
+                    ts.isCallExpression(init)
                     && init.expression.getText() === "test.marker"
-                    && ts.isStringLiteralLike(init.arguments[0])) {
+                    && ts.isStringLiteralLike(init.arguments[0])
+                ) {
                     marker = getGoStringLiteral(init.arguments[0].text);
                 }
                 else {
