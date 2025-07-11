@@ -10,7 +10,7 @@ import (
 
 func TestCompletionsImport_umdDefaultNoCrash2(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @moduleResolution: node
 // @allowJs: true
@@ -52,7 +52,11 @@ import Dottie from 'dottie';
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "Dottie"}},
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label: "Dottie",
+				},
+			},
 		},
 	})
 }

@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListInObjectBindingPattern16(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowJs: true
 // @checkJs: true
@@ -32,7 +32,10 @@ function f({ /**/ }) {}`
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{"a", "b"},
+			Exact: []fourslash.CompletionsExpectedItem{
+				"a",
+				"b",
+			},
 		},
 	})
 }
