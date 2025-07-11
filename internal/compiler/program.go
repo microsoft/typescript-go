@@ -59,6 +59,9 @@ type Program struct {
 
 	programDiagnostics         []*ast.Diagnostic
 	hasEmitBlockingDiagnostics collections.Set[tspath.Path]
+
+	sourceFilesToEmitOnce sync.Once
+	sourceFilesToEmit     []*ast.SourceFile
 }
 
 // FileExists implements checker.Program.
@@ -343,6 +346,16 @@ func (p *Program) GetSuggestionDiagnostics(ctx context.Context, sourceFile *ast.
 
 func (p *Program) GetProgramDiagnostics() []*ast.Diagnostic {
 	return SortAndDeduplicateDiagnostics(slices.Concat(p.programDiagnostics, p.fileLoadDiagnostics.GetDiagnostics()))
+}
+
+func (p *Program) getSourceFilesToEmit(targetSourceFile *ast.SourceFile, forceDtsEmit bool) []*ast.SourceFile {
+	if targetSourceFile == nil && !forceDtsEmit {
+		p.sourceFilesToEmitOnce.Do(func() {
+			p.sourceFilesToEmit = getSourceFilesToEmit(p, nil, false)
+		})
+		return p.sourceFilesToEmit
+	}
+	return getSourceFilesToEmit(p, targetSourceFile, forceDtsEmit)
 }
 
 func (p *Program) verifyCompilerOptions() {
@@ -787,7 +800,7 @@ func (p *Program) verifyCompilerOptions() {
 			}
 			verifyEmitFilePath(emitFileNames.DeclarationFilePath())
 			return false
-		}, getSourceFilesToEmit(p, nil, false), false)
+		}, p.getSourceFilesToEmit(nil, false), false)
 	}
 }
 
@@ -1189,7 +1202,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 	}
 	wg := core.NewWorkGroup(p.singleThreaded())
 	var emitters []*emitter
-	sourceFiles := getSourceFilesToEmit(p, options.TargetSourceFile, options.forceDtsEmit)
+	sourceFiles := p.getSourceFilesToEmit(options.TargetSourceFile, options.forceDtsEmit)
 
 	for _, sourceFile := range sourceFiles {
 		emitter := &emitter{

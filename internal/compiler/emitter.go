@@ -452,6 +452,7 @@ func isSourceFileNotJson(file *ast.SourceFile) bool {
 }
 
 func getDeclarationDiagnostics(host EmitHost, file *ast.SourceFile) []*ast.Diagnostic {
+	// TODO: use p.getSourceFilesToEmit cache
 	fullFiles := core.Filter(getSourceFilesToEmit(host, file, false), isSourceFileNotJson)
 	if !core.Some(fullFiles, func(f *ast.SourceFile) bool { return f == file }) {
 		return []*ast.Diagnostic{}
