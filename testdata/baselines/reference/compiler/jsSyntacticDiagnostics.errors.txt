@@ -31,7 +31,7 @@ test.js(60,46): error TS8010: Type annotations can only be used in TypeScript fi
 test.js(69,25): error TS8009: The '?' modifier can only be used in TypeScript files.
 test.js(69,28): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(74,10): error TS8017: Signature declarations can only be used in TypeScript files.
-test.js(77,10): error TS8004: Type parameter declarations can only be used in TypeScript files.
+test.js(77,18): error TS8004: Type parameter declarations can only be used in TypeScript files.
 test.js(77,24): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(77,28): error TS8010: Type annotations can only be used in TypeScript files.
 test.js(82,19): error TS2693: 'string' only refers to a type, but is being used as a value here.
@@ -186,7 +186,7 @@ test.js(94,11): error TS8006: 'interface' declarations can only be used in TypeS
     
     // Type parameters should be flagged as errors
     function generic<T>(x: T): T {
-             ~~~~~~~
+                     ~
 !!! error TS8004: Type parameter declarations can only be used in TypeScript files.
                            ~
 !!! error TS8010: Type annotations can only be used in TypeScript files.

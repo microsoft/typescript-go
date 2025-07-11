@@ -212,8 +212,8 @@ func (v *jsDiagnosticsVisitor) checkTypeParametersAndModifiers(node *ast.Node) {
 	}
 
 	// Check type parameters
-	if v.hasTypeParameters(node) {
-		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNode(node, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files))
+	if typeParams := v.getTypeParameters(node); typeParams != nil {
+		v.diagnostics = append(v.diagnostics, v.createDiagnosticForNodeList(typeParams, diagnostics.Type_parameter_declarations_can_only_be_used_in_TypeScript_files))
 	}
 
 	// Check type arguments
@@ -225,11 +225,11 @@ func (v *jsDiagnosticsVisitor) checkTypeParametersAndModifiers(node *ast.Node) {
 	v.checkModifiers(node)
 }
 
-// hasTypeParameters checks if a node has type parameters
-func (v *jsDiagnosticsVisitor) hasTypeParameters(node *ast.Node) bool {
+// getTypeParameters returns the type parameters for a node if it has any non-reparsed ones
+func (v *jsDiagnosticsVisitor) getTypeParameters(node *ast.Node) *ast.NodeList {
 	// Bail out early if this node has NodeFlagsReparsed
 	if node.Flags&ast.NodeFlagsReparsed != 0 {
-		return false
+		return nil
 	}
 
 	var typeParameters *ast.NodeList
@@ -271,21 +271,26 @@ func (v *jsDiagnosticsVisitor) hasTypeParameters(node *ast.Node) bool {
 			typeParameters = node.AsArrowFunction().TypeParameters
 		}
 	default:
-		return false
+		return nil
 	}
 
 	if typeParameters == nil {
-		return false
+		return nil
 	}
 
 	// Check if all type parameters are reparsed (JSDoc originated)
 	for _, tp := range typeParameters.Nodes {
 		if tp.Flags&ast.NodeFlagsReparsed == 0 {
-			return true // Found a non-reparsed type parameter, so this is a TypeScript-only construct
+			return typeParameters // Found a non-reparsed type parameter, so return the type parameters
 		}
 	}
 
-	return false // All type parameters are reparsed (JSDoc originated), so this is valid in JS
+	return nil // All type parameters are reparsed (JSDoc originated), so this is valid in JS
+}
+
+// hasTypeParameters checks if a node has type parameters
+func (v *jsDiagnosticsVisitor) hasTypeParameters(node *ast.Node) bool {
+	return v.getTypeParameters(node) != nil
 }
 
 // getTypeArguments returns the type arguments for a node if it has any
