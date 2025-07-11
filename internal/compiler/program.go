@@ -869,8 +869,8 @@ func (p *Program) getOptionsDiagnosticsOfConfigFile() []*ast.Diagnostic {
 func (p *Program) getSyntacticDiagnosticsForFile(ctx context.Context, sourceFile *ast.SourceFile) []*ast.Diagnostic {
 	// For JavaScript files, we report semantic errors for using TypeScript-only
 	// constructs from within a JavaScript file as syntactic errors.
-	if ast.IsSourceFileJS(sourceFile) {
-		return slices.Concat(p.getJSSyntacticDiagnosticsForFile(sourceFile), sourceFile.Diagnostics())
+	if jsSyntacticDiagnostics := sourceFile.JSSyntacticDiagnostics(); len(jsSyntacticDiagnostics) > 0 {
+		return slices.Concat(jsSyntacticDiagnostics, sourceFile.Diagnostics())
 	}
 	return sourceFile.Diagnostics()
 }

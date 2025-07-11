@@ -1,4 +1,4 @@
-package compiler
+package parser
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -24,15 +24,6 @@ func getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnos
 	visitor.walkNodeForJSDiagnostics(sourceFile.AsNode(), sourceFile.AsNode())
 
 	return visitor.diagnostics
-}
-
-// getJSSyntacticDiagnosticsForFile returns diagnostics for TypeScript-only constructs in JavaScript files
-func (p *Program) getJSSyntacticDiagnosticsForFile(sourceFile *ast.SourceFile) []*ast.Diagnostic {
-	if cached, ok := p.jsDiagnosticCache.Load(sourceFile); ok {
-		return cached
-	}
-	diagnostics, _ := p.jsDiagnosticCache.LoadOrStore(sourceFile, getJSSyntacticDiagnosticsForFile(sourceFile))
-	return diagnostics
 }
 
 // walkNodeForJSDiagnostics walks the AST and collects diagnostics for TypeScript-only constructs

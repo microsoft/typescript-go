@@ -381,6 +381,11 @@ func (p *Parser) finishSourceFile(result *ast.SourceFile, isDeclarationFile bool
 	result.SetJSDocCache(p.jsdocCache)
 
 	ast.SetExternalModuleIndicator(result, p.opts.ExternalModuleIndicatorOptions)
+
+	if ast.IsSourceFileJS(result) {
+		// TODO: can these be done while parsing, rather than as a separate pass?
+		result.SetJSSyntacticDiagnostics(getJSSyntacticDiagnosticsForFile(result))
+	}
 }
 
 func (p *Parser) parseToplevelStatement(i int) *ast.Node {
