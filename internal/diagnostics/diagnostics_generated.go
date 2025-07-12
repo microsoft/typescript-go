@@ -4213,3 +4213,5 @@ var Do_not_print_diagnostics = &Message{code: 100000, category: CategoryMessage,
 var Run_in_single_threaded_mode = &Message{code: 100001, category: CategoryMessage, key: "Run_in_single_threaded_mode_100001", text: "Run in single threaded mode."}
 
 var Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory = &Message{code: 100002, category: CategoryMessage, key: "Generate_pprof_CPU_Slashmemory_profiles_to_the_given_directory_100002", text: "Generate pprof CPU/memory profiles to the given directory."}
+
+var Specify_how_much_concurrency_will_be_used = &Message{code: 100003, category: CategoryMessage, key: "Specify_how_much_concurrency_will_be_used_100003", text: "Specify how much concurrency will be used."}

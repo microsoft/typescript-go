@@ -347,7 +347,8 @@ var concurrentSkippedErrorBaselines = map[string]string{
 
 func (c *compilerTest) verifyDiagnostics(t *testing.T, suiteName string, isSubmodule bool) {
 	t.Run("error", func(t *testing.T) {
-		if !testutil.TestProgramIsSingleThreaded() {
+		concurrency, _ := core.TestProgramConcurrency()
+		if !concurrency.SingleThreaded() {
 			if msg, ok := concurrentSkippedErrorBaselines[c.basename]; ok {
 				t.Skipf("Skipping in concurrent mode: %s", msg)
 			}
