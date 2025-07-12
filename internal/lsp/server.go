@@ -233,14 +233,17 @@ func (s *Server) UnwatchFiles(ctx context.Context, handle project.WatcherHandle)
 
 // RefreshDiagnostics implements project.Client.
 func (s *Server) RefreshDiagnostics(ctx context.Context) error {
-	if s.initializeParams == nil || s.initializeParams.Capabilities == nil || s.initializeParams.Capabilities.Workspace == nil || s.initializeParams.Capabilities.Workspace.Diagnostics == nil {
+	if s.initializeParams.Capabilities == nil ||
+		s.initializeParams.Capabilities.Workspace == nil ||
+		s.initializeParams.Capabilities.Workspace.Diagnostics == nil ||
+		!ptrIsTrue(s.initializeParams.Capabilities.Workspace.Diagnostics.RefreshSupport) {
 		return nil
 	}
-	if ptrIsTrue(s.initializeParams.Capabilities.Workspace.Diagnostics.RefreshSupport) {
-		if _, err := s.sendRequest(ctx, lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
-			return fmt.Errorf("failed to refresh diagnostics: %w", err)
-		}
+
+	if _, err := s.sendRequest(ctx, lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
+		return fmt.Errorf("failed to refresh diagnostics: %w", err)
 	}
+
 	return nil
 }
 
