@@ -130,7 +130,18 @@ func createResolutionLookupGlobMapper(host ProjectHost) func(data map[tspath.Pat
 			if w == nil {
 				continue
 			}
-			globSet[w.dir] = globSet[w.dir] || !w.nonRecursive
+
+			dir := w.dir
+			if w.packageDir != nil && w.packageDirPath != nil {
+				realDir := host.FS().Realpath(*w.packageDir)
+				realPath := tspath.ToPath(realDir, "", host.FS().UseCaseSensitiveFileNames())
+
+				if realPath != *w.packageDirPath {
+					dir = realDir
+				}
+			}
+
+			globSet[dir] = globSet[dir] || !w.nonRecursive
 		}
 
 		globs := make([]string, 0, len(globSet))
