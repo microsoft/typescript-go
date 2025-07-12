@@ -134,10 +134,7 @@ func isEnclosingDeclaration(node *ast.Node) bool {
 }
 
 func isAlwaysType(node *ast.Node) bool {
-	if node.Kind == ast.KindInterfaceDeclaration {
-		return true
-	}
-	return false
+	return node.Kind == ast.KindInterfaceDeclaration
 }
 
 func maskModifierFlags(host DeclarationEmitHost, node *ast.Node, modifierMask ast.ModifierFlags, modifierAdditions ast.ModifierFlags) ast.ModifierFlags {

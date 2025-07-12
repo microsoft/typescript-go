@@ -263,7 +263,7 @@ func createSignatureHelpItems(candidates []*checker.Signature, resolvedSignature
 			// We don't have any code to get this correct; instead, don't highlight a current parameter AT ALL
 			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(activeSignature.Parameters))))
 		}
-		if help.ActiveParameter != nil && *&help.ActiveParameter.Value > uint32(len(activeSignature.Parameters)-1) {
+		if help.ActiveParameter != nil && help.ActiveParameter.Value > uint32(len(activeSignature.Parameters)-1) {
 			help.ActiveParameter = ptrTo(lsproto.ToNullable(uint32(len(activeSignature.Parameters) - 1)))
 		}
 	}
@@ -1008,9 +1008,8 @@ func getContextualSignatureLocationInfo(node *ast.Node, sourceFile *ast.SourceFi
 	case ast.KindBinaryExpression:
 		highestBinary := getHighestBinary(parent.AsBinaryExpression())
 		contextualType := c.GetContextualType(highestBinary.AsNode(), checker.ContextFlagsNone)
-		argumentIndex := ptrTo(0)
 		if node.Kind != ast.KindOpenParenToken {
-			argumentIndex = ptrTo(countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1)
+			argumentIndex := ptrTo(countBinaryExpressionParameters(parent.AsBinaryExpression()) - 1)
 			argumentCount := countBinaryExpressionParameters(highestBinary)
 			if contextualType != nil {
 				return &contextualSignatureLocationInfo{
