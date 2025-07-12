@@ -2,11 +2,14 @@ package ls
 
 import (
 	"context"
+	"iter"
 
 	"github.com/microsoft/typescript-go/internal/ast"
+	"github.com/microsoft/typescript-go/internal/astnav"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/format"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
+	"github.com/microsoft/typescript-go/internal/scanner"
 )
 
 func toFormatCodeSettings(opt *lsproto.FormattingOptions) *format.FormatCodeSettings {
@@ -119,6 +122,58 @@ func (l *LanguageService) getFormattingEditsAfterKeystroke(
 			return format.FormatOnEnter(ctx, file, position)
 		default:
 			return nil
+		}
+	}
+	return nil
+}
+
+// Unlike the TS implementation, this function *will not* compute default values for
+// `precedingToken` and `tokenAtPosition`.
+// It is the caller's responsibility to call `astnav.GetTokenAtPosition` to compute a default `tokenAtPosition`,
+// or `astnav.FindPrecedingToken` to compute a default `precedingToken`.
+func getRangeOfEnclosingComment(
+	file *ast.SourceFile,
+	position int,
+	precedingToken *ast.Node,
+	tokenAtPosition *ast.Node,
+) *ast.CommentRange {
+	jsdoc := ast.FindAncestor(tokenAtPosition, func(n *ast.Node) bool {
+		return n.Kind == ast.KindJSDoc
+	})
+	if jsdoc != nil {
+		tokenAtPosition = jsdoc.Parent
+	}
+	tokenStart := astnav.GetStartOfNode(tokenAtPosition, file, false /*includeJSDoc*/)
+	if tokenStart <= position && position < tokenAtPosition.End() {
+		return nil
+	}
+
+	// Between two consecutive tokens, all comments are either trailing on the former
+	// or leading on the latter (and none are in both lists).
+	var trailingRangesOfPreviousToken iter.Seq[ast.CommentRange]
+	if precedingToken != nil {
+		trailingRangesOfPreviousToken = scanner.GetTrailingCommentRanges(&ast.NodeFactory{}, file.Text(), position)
+	}
+	leadingRangesOfNextToken := getLeadingCommentRangesOfNode(tokenAtPosition, file)
+	commentRanges := core.ConcatenateSeq(trailingRangesOfPreviousToken, leadingRangesOfNextToken)
+	for commentRange := range commentRanges {
+		// The end marker of a single-line comment does not include the newline character.
+		// With caret at `^`, in the following case, we are inside a comment (^ denotes the cursor position):
+		//
+		//    // asdf   ^\n
+		//
+		// But for closed multi-line comments, we don't want to be inside the comment in the following case:
+		//
+		//    /* asdf */^
+		//
+		// However, unterminated multi-line comments *do* contain their end.
+		//
+		// Internally, we represent the end of the comment at the newline and closing '/', respectively.
+		//
+		if commentRange.ContainsExclusive(position) ||
+			position == commentRange.End() &&
+				(commentRange.Kind == ast.KindSingleLineCommentTrivia || position == len(file.Text())) {
+			return &commentRange
 		}
 	}
 	return nil
