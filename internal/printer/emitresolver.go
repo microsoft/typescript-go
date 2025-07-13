@@ -34,6 +34,7 @@ type EmitResolver interface {
 	GetExternalModuleFileFromDeclaration(node *ast.Node) *ast.SourceFile
 	GetEffectiveDeclarationFlags(node *ast.Node, flags ast.ModifierFlags) ast.ModifierFlags
 	GetResolutionModeOverride(node *ast.Node) core.ResolutionMode
+	GetPropertiesOfContainerFunction(node *ast.Node) []*ast.Symbol
 
 	// JSX Emit
 	GetJsxFactoryEntity(location *ast.Node) *ast.Node

@@ -9,9 +9,14 @@
  function q() { }
  q.val = (0, a_1.f)();
 
-@@= skipped -10, +10 lines =@@
+@@= skipped -9, +9 lines =@@
+ interface I {
  }
  export declare function f(): I;
- export {};
++export {};
 +//// [b.d.ts]
 +export declare function q(): void;
++export declare namespace q {
++    var val: I;
++}
+ export {};

@@ -46,3 +46,6 @@ if (Math.random()) {
 // https://github.com/microsoft/TypeScript/issues/56538
 export declare function X(): void;
 export declare function Y(): void;
+export declare namespace Y {
+    var test: string;
+}

@@ -61,6 +61,11 @@ type DeclarationTransformer struct {
 	rawLibReferenceDirectives        []*ast.FileReference
 }
 
+type ExportMapping struct {
+	PropertyName *ast.Identifier
+	Name         string
+}
+
 func NewDeclarationTransformer(host DeclarationEmitHost, context *printer.EmitContext, compilerOptions *core.CompilerOptions, declarationFilePath string, declarationMapPath string) *DeclarationTransformer {
 	resolver := host.GetEmitResolver()
 	state := &SymbolTrackerSharedState{isolatedDeclarations: compilerOptions.IsolatedDeclarations.IsTrue(), resolver: resolver}
@@ -1143,17 +1148,192 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 		tx.ensureType(input.AsNode(), false),
 		nil,
 	)
-	if updated == nil || !tx.resolver.IsExpandoFunctionDeclaration(input.AsNode()) || !shouldEmitFunctionProperties(input) {
-		return updated
-	}
-	// Add expando function properties to result
+	if updated != nil && tx.state.resolver.IsExpandoFunctionDeclaration(input.AsNode()) && shouldEmitFunctionProperties(input) {
+		props := tx.state.resolver.GetPropertiesOfContainerFunction(input.AsNode())
+		if tx.state.isolatedDeclarations {
+			// TODO: reportExpandoFunctionErrors
+			return updated
+		}
 
-	// !!! TODO: expando function support
-	// props := tx.resolver.GetPropertiesOfContainerFunction(input)
-	// if tx.state.isolatedDeclarations {
-	// 	tx.state.reportExpandoFunctionErrors(input.AsNode())
-	// }
-	return updated // !!!
+		synthesizedModuleDeclaration := tx.Factory().NewModuleDeclaration(
+			nil, /*modifiers*/
+			ast.KindNamespaceKeyword,
+			core.IfElse(input.Name() == nil, tx.Factory().NewIdentifier("_default"), input.Name()),
+			nil, /*body*/
+		)
+		synthesizedModuleDeclaration.Parent = tx.enclosingDeclaration
+		declarationData := synthesizedModuleDeclaration.DeclarationData()
+
+		parent := core.FirstOrNil(props)
+		if parent != nil {
+			declarationData.Symbol = &ast.Symbol{
+				Name:  parent.Name,
+				Flags: ast.SymbolFlagsNamespaceModule,
+			}
+		}
+
+		symbolTable := make(ast.SymbolTable, len(props))
+		for _, p := range props {
+			symbolTable[p.Name] = p
+		}
+
+		containerData := synthesizedModuleDeclaration.LocalsContainerData()
+		containerData.Locals = symbolTable
+
+		exportMappings := []ExportMapping{}
+		declarations := []*ast.Statement{}
+
+		for _, p := range props {
+			if p.ValueDeclaration == nil {
+				continue
+			}
+			if !ast.IsExpandoPropertyDeclaration(p.ValueDeclaration) {
+				continue
+			}
+			if !scanner.IsIdentifierText(p.Name, core.LanguageVariantStandard) {
+				continue
+			}
+
+			saveDiag := tx.state.getSymbolAccessibilityDiagnostic
+			tx.state.getSymbolAccessibilityDiagnostic = createGetSymbolAccessibilityDiagnosticForNode(p.ValueDeclaration)
+
+			t := tx.resolver.CreateTypeOfDeclaration(
+				tx.EmitContext(),
+				p.ValueDeclaration,
+				synthesizedModuleDeclaration,
+				declarationEmitNodeBuilderFlags,
+				declarationEmitInternalNodeBuilderFlags|nodebuilder.InternalFlagsNoSyntacticPrinter,
+				tx.tracker,
+			)
+
+			tx.state.getSymbolAccessibilityDiagnostic = saveDiag
+
+			nameToken := scanner.StringToToken(p.Name)
+			isNonContextualKeywordName := ast.IsNonContextualKeyword(nameToken)
+
+			name := core.IfElse(
+				isNonContextualKeywordName,
+				tx.Factory().NewGeneratedNameForNode(p.ValueDeclaration),
+				tx.Factory().NewIdentifier(p.Name),
+			)
+
+			if isNonContextualKeywordName {
+				exportMappings = append(exportMappings, ExportMapping{
+					PropertyName: name.AsIdentifier(),
+					Name:         p.Name,
+				})
+			}
+
+			variableDeclaration := tx.Factory().NewVariableDeclaration(
+				name,
+				nil, /*exclamationToken*/
+				t,
+				nil, /*initializer*/
+			)
+
+			declarations = append(declarations,
+				tx.Factory().NewVariableStatement(
+					core.IfElse(
+						isNonContextualKeywordName,
+						nil,
+						tx.Factory().NewModifierList([]*ast.Node{tx.Factory().NewModifier(ast.KindExportKeyword)}),
+					),
+					tx.Factory().NewVariableDeclarationList(
+						ast.NodeFlagsNone,
+						tx.Factory().NewNodeList([]*ast.Node{variableDeclaration}),
+					),
+				),
+			)
+		}
+
+		if len(exportMappings) == 0 {
+			for i, declaration := range declarations {
+				modifiers := tx.Factory().NewModifierList(ast.CreateModifiersFromModifierFlags(ast.ModifierFlagsNone, tx.Factory().NewModifier))
+				declarations[i] = ast.ReplaceModifiers(tx.Factory().AsNodeFactory(), declaration, modifiers)
+			}
+		} else {
+			exportSpecifiers := make([]*ast.Node, 0, len(exportMappings))
+			for _, mapping := range exportMappings {
+				exportSpecifiers = append(exportSpecifiers,
+					tx.Factory().NewExportSpecifier(
+						false, /*isTypeOnly*/
+						mapping.PropertyName.AsNode(),
+						tx.Factory().NewIdentifier(mapping.Name),
+					),
+				)
+			}
+
+			exportDeclaration := tx.Factory().NewExportDeclaration(
+				nil,   /*modifiers*/
+				false, /*isTypeOnly*/
+				tx.Factory().NewNamedExports(tx.Factory().NewNodeList(exportSpecifiers)),
+				nil, /*moduleSpecifier*/
+				nil, /*attributes*/
+			)
+
+			declarations = append(declarations, exportDeclaration)
+		}
+
+		namespaceDeclaration := tx.Factory().NewModuleDeclaration(
+			tx.ensureModifiers(input.AsNode()),
+			ast.KindNamespaceKeyword,
+			input.Name(),
+			tx.Factory().NewModuleBlock(tx.Factory().NewNodeList(declarations)),
+		)
+
+		if tx.host.GetEffectiveDeclarationFlags(tx.EmitContext().ParseNode(input.AsNode()), ast.ModifierFlagsDefault) == 0 {
+			return tx.Factory().NewSyntaxList([]*ast.Node{
+				updated,
+				namespaceDeclaration,
+			})
+		}
+
+		modifiers := tx.Factory().NewModifierList(
+			ast.CreateModifiersFromModifierFlags(
+				(updated.ModifierFlags()&^ast.ModifierFlagsExportDefault)|ast.ModifierFlagsAmbient,
+				tx.Factory().NewModifier,
+			),
+		)
+
+		updatedFunctionDeclaration := tx.Factory().UpdateFunctionDeclaration(
+			updated.AsFunctionDeclaration(),
+			modifiers,
+			nil, /*asteriskToken*/
+			updated.Name(),
+			updated.TypeParameterList(),
+			updated.ParameterList(),
+			updated.Type(),
+			nil, /*body*/
+		)
+
+		updatedNamespaceDeclaration := tx.Factory().UpdateModuleDeclaration(
+			namespaceDeclaration.AsModuleDeclaration(),
+			modifiers,
+			namespaceDeclaration.Kind,
+			namespaceDeclaration.Name(),
+			namespaceDeclaration.Body(),
+		)
+
+		exportDefaultDeclaration := tx.Factory().NewExportAssignment(
+			nil,   /*modifiers*/
+			false, /*isExportEquals*/
+			nil,   /*typeNode*/
+			namespaceDeclaration.Name(),
+		)
+
+		if ast.IsSourceFile(input.Parent) {
+			tx.resultHasExternalModuleIndicator = true
+		}
+
+		tx.resultHasScopeMarker = false
+
+		return tx.Factory().NewSyntaxList([]*ast.Node{
+			updatedFunctionDeclaration,
+			updatedNamespaceDeclaration,
+			exportDefaultDeclaration,
+		})
+	}
+	return updated
 }
 
 func (tx *DeclarationTransformer) transformModuleDeclaration(input *ast.ModuleDeclaration) *ast.Node {

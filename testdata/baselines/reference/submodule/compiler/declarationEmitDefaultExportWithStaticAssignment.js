@@ -82,14 +82,34 @@ C.B = B;
 export declare class Foo {
 }
 //// [index1.d.ts]
-export default function Example(): void;
+declare function Example(): void;
+declare module Example {
+    var Foo: typeof import("./foo").Foo;
+}
+export default Example;
+export {};
 //// [index2.d.ts]
 import { Foo } from './foo';
 export { Foo };
-export default function Example(): void;
+declare function Example(): void;
+declare module Example {
+    var Foo: typeof import("./foo").Foo;
+}
+export default Example;
+export {};
 //// [index3.d.ts]
 export declare class Bar {
 }
-export default function Example(): void;
+declare function Example(): void;
+declare module Example {
+    var Bar: typeof import("./index3").Bar;
+}
+export default Example;
+export {};
 //// [index4.d.ts]
 export declare function C(): any;
+export declare namespace C {
+    var A: () => void;
+    var B: () => void;
+}
+export {};
