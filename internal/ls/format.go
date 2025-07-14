@@ -164,9 +164,9 @@ func getRangeOfEnclosingComment(
 		//
 		//    /* asdf */^
 		//
-		// However, unterminated multi-line comments *do* contain their end.
+		// Internally, we represent the end of the comment prior to the newline and at the '/', respectively.
 		//
-		// Internally, we represent the end of the comment at the newline and closing '/', respectively.
+		// However, unterminated multi-line comments lack a `/`, end at the end of the file, and *do* contain their end.
 		//
 		if commentRange.ContainsExclusive(position) ||
 			position == commentRange.End() &&
