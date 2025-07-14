@@ -156,7 +156,7 @@ func getRangeOfEnclosingComment(
 	commentRanges := core.ConcatenateSeq(trailingRangesOfPreviousToken, leadingRangesOfNextToken)
 	for commentRange := range commentRanges {
 		// The end marker of a single-line comment does not include the newline character.
-		// With caret at `^`, in the following case, we are inside a comment (^ denotes the cursor position):
+		// In the following case where the cursor is at `^`, we are inside a comment:
 		//
 		//    // asdf   ^\n
 		//
