@@ -609,6 +609,9 @@ func (r *emitResolver) IsExpandoFunctionDeclaration(node *ast.Node) bool {
 		return false
 	}
 
+	r.checkerMu.Lock()
+	defer r.checkerMu.Unlock()
+
 	var symbol *ast.Symbol
 	if ast.IsVariableDeclaration(node) {
 		if node.Type() != nil || (!ast.IsInJSFile(node) && !ast.IsVarConstLike(node)) {
@@ -887,6 +890,9 @@ func (r *emitResolver) GetPropertiesOfContainerFunction(node *ast.Node) []*ast.S
 	}
 
 	if ast.IsFunctionDeclaration(node) {
+		r.checkerMu.Lock()
+		defer r.checkerMu.Unlock()
+
 		symbol := r.checker.getSymbolOfDeclaration(node)
 		if symbol == nil {
 			return props
