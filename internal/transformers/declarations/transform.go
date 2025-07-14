@@ -1322,7 +1322,7 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 			tx.resultHasExternalModuleIndicator = true
 		}
 
-		tx.resultHasScopeMarker = false
+		tx.resultHasScopeMarker = true
 
 		return tx.Factory().NewSyntaxList([]*ast.Node{
 			updatedFunctionDeclaration,

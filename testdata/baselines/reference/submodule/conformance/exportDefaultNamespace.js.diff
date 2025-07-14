@@ -1,7 +1,0 @@
---- old.exportDefaultNamespace.js
-+++ new.exportDefaultNamespace.js
-@@= skipped -23, +23 lines =@@
-     var someProp: string;
- }
- export default someFunc;
-+export {};

@@ -24,4 +24,3 @@ declare namespace someFunc {
     var someProp: string;
 }
 export default someFunc;
-export {};
