@@ -83,7 +83,7 @@ export declare class Foo {
 }
 //// [index1.d.ts]
 declare function Example(): void;
-declare module Example {
+declare namespace Example {
     var Foo: typeof import("./foo").Foo;
 }
 export default Example;
@@ -92,7 +92,7 @@ export {};
 import { Foo } from './foo';
 export { Foo };
 declare function Example(): void;
-declare module Example {
+declare namespace Example {
     var Foo: typeof import("./foo").Foo;
 }
 export default Example;
@@ -101,7 +101,7 @@ export {};
 export declare class Bar {
 }
 declare function Example(): void;
-declare module Example {
+declare namespace Example {
     var Bar: typeof import("./index3").Bar;
 }
 export default Example;

@@ -18,12 +18,7 @@
  Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return foo_1.Foo; } });
  function Example() { }
  Example.Foo = foo_1.Foo;
-@@= skipped -32, +32 lines =@@
- }
- //// [index1.d.ts]
- declare function Example(): void;
--declare namespace Example {
-+declare module Example {
+@@= skipped -36, +36 lines =@@
      var Foo: typeof import("./foo").Foo;
  }
  export default Example;
@@ -31,9 +26,7 @@
  //// [index2.d.ts]
  import { Foo } from './foo';
  export { Foo };
- declare function Example(): void;
--declare namespace Example {
-+declare module Example {
+@@= skipped -8, +9 lines =@@
      var Foo: typeof import("./foo").Foo;
  }
  export default Example;
@@ -41,9 +34,7 @@
  //// [index3.d.ts]
  export declare class Bar {
  }
- declare function Example(): void;
--declare namespace Example {
-+declare module Example {
+@@= skipped -8, +9 lines =@@
      var Bar: typeof import("./index3").Bar;
  }
  export default Example;

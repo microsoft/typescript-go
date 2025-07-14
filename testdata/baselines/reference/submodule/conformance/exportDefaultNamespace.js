@@ -20,7 +20,7 @@ someFunc.someProp = 'yo';
 
 //// [exportDefaultNamespace.d.ts]
 declare function someFunc(): string;
-declare module someFunc {
+declare namespace someFunc {
     var someProp: string;
 }
 export default someFunc;

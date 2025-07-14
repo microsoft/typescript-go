@@ -1166,10 +1166,7 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 
 		parent := core.FirstOrNil(props)
 		if parent != nil {
-			declarationData.Symbol = &ast.Symbol{
-				Name:  parent.Name,
-				Flags: ast.SymbolFlagsNamespaceModule,
-			}
+			declarationData.Symbol = parent
 		}
 
 		symbolTable := make(ast.SymbolTable, len(props))
@@ -1309,7 +1306,7 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 		updatedNamespaceDeclaration := tx.Factory().UpdateModuleDeclaration(
 			namespaceDeclaration.AsModuleDeclaration(),
 			modifiers,
-			namespaceDeclaration.Kind,
+			namespaceDeclaration.AsModuleDeclaration().Keyword,
 			namespaceDeclaration.Name(),
 			namespaceDeclaration.Body(),
 		)
