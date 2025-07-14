@@ -59,7 +59,7 @@ func (c *ProjectCollection) InferredProject() *Project {
 	return c.inferredProject
 }
 
-// !!! this result could be cached
+// !!! result could be cached
 func (c *ProjectCollection) GetDefaultProject(fileName string, path tspath.Path) *Project {
 	if result, ok := c.fileDefaultProjects[path]; ok {
 		if result == inferredProjectName {
@@ -182,4 +182,55 @@ func (c *ProjectCollection) clone() *ProjectCollection {
 		inferredProject:     c.inferredProject,
 		fileDefaultProjects: c.fileDefaultProjects,
 	}
+}
+
+// findDefaultConfiguredProjectFromProgramInclusion finds the default configured project for a file
+// based on the file's inclusion in existing projects. The projects should be sorted, as ties will
+// be broken by slice order. `getProject` should return a project with an up-to-date program.
+// Along with the resulting project path, a boolean is returned indicating whether there were multiple
+// direct inclusions of the file in different projects, indicating that the caller may want to perform
+// additional logic to determine the best project.
+func findDefaultConfiguredProjectFromProgramInclusion(
+	fileName string,
+	path tspath.Path,
+	projectPaths []tspath.Path,
+	getProject func(tspath.Path) *Project,
+) (result tspath.Path, multipleCandidates bool) {
+	var (
+		containingProjects                       []tspath.Path
+		firstConfiguredProject                   tspath.Path
+		firstNonSourceOfProjectReferenceRedirect tspath.Path
+		multipleDirectInclusions                 bool
+	)
+
+	for _, path := range projectPaths {
+		p := getProject(path)
+		if p.containsFile(path) {
+			containingProjects = append(containingProjects, path)
+			if !multipleDirectInclusions && !p.IsSourceFromProjectReference(path) {
+				if firstNonSourceOfProjectReferenceRedirect == "" {
+					firstNonSourceOfProjectReferenceRedirect = path
+				} else {
+					multipleDirectInclusions = true
+				}
+			}
+			if firstConfiguredProject == "" {
+				firstConfiguredProject = path
+			}
+		}
+	}
+
+	if len(containingProjects) == 1 {
+		return containingProjects[0], false
+	}
+	if !multipleDirectInclusions {
+		if firstNonSourceOfProjectReferenceRedirect != "" {
+			// Multiple projects include the file, but only one is a direct inclusion.
+			return firstNonSourceOfProjectReferenceRedirect, false
+		}
+		// Multiple projects include the file, and none are direct inclusions.
+		return firstConfiguredProject, false
+	}
+	// Multiple projects include the file directly.
+	return firstConfiguredProject, true
 }

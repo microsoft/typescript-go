@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"maps"
+	"slices"
 
 	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
@@ -136,21 +137,18 @@ func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 	path := b.toPath(fileName)
 	var toRemoveProjects collections.Set[tspath.Path]
 	openFileResult := b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path)
-	b.forEachProject(func(entry dirty.Value[*Project]) bool {
+	b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
 		toRemoveProjects.Add(entry.Value().configFilePath)
 		b.updateProgram(entry)
 		return true
 	})
-	if b.findDefaultProject(fileName, path) == nil {
-		b.addFileToInferredProject(fileName, path)
-	}
 
+	var inferredProjectFiles []string
 	for _, overlay := range b.fs.overlays {
-		if toRemoveProjects.Len() == 0 {
-			break
-		}
-		if p := b.findDefaultProject(overlay.FileName(), b.toPath(overlay.FileName())); p != nil {
+		if p := b.findDefaultConfiguredProject(overlay.FileName(), b.toPath(overlay.FileName())); p != nil {
 			toRemoveProjects.Delete(p.Value().configFilePath)
+		} else {
+			inferredProjectFiles = append(inferredProjectFiles, overlay.FileName())
 		}
 	}
 
@@ -159,6 +157,7 @@ func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 			b.deleteProject(projectPath)
 		}
 	}
+	b.updateInferredProject(inferredProjectFiles)
 	b.configFileRegistryBuilder.Cleanup()
 }
 
@@ -222,10 +221,27 @@ func (b *projectCollectionBuilder) findDefaultProject(fileName string, path tspa
 }
 
 func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string, path tspath.Path) *dirty.SyncMapEntry[tspath.Path, *Project] {
-	if b.isOpenFile(path) {
-		return b.findOrCreateDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind).project
+	// Sort configured projects so we can use a deterministic "first" as a last resort.
+	var configuredProjectPaths []tspath.Path
+	var configuredProjects map[tspath.Path]*dirty.SyncMapEntry[tspath.Path, *Project]
+	b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
+		configuredProjectPaths = append(configuredProjectPaths, entry.Key())
+		configuredProjects[entry.Key()] = entry
+		return true
+	})
+	slices.Sort(configuredProjectPaths)
+
+	project, multipleCandidates := findDefaultConfiguredProjectFromProgramInclusion(fileName, path, configuredProjectPaths, func(path tspath.Path) *Project {
+		return configuredProjects[path].Value()
+	})
+
+	if multipleCandidates {
+		if p := b.findOrCreateDefaultConfiguredProjectForOpenScriptInfo(fileName, path, projectLoadKindFind).project; p != nil {
+			return p
+		}
 	}
-	return nil
+
+	return configuredProjects[project]
 }
 
 func (b *projectCollectionBuilder) ensureConfiguredProjectAndAncestorsForOpenFile(fileName string, path tspath.Path) searchResult {
@@ -470,13 +486,6 @@ func (b *projectCollectionBuilder) updateInferredProject(rootFileNames []string)
 		}
 	}
 	return b.updateProgram(b.inferredProject)
-}
-
-func (b *projectCollectionBuilder) addFileToInferredProject(fileName string, path tspath.Path) bool {
-	if b.inferredProject.Value() == nil {
-		return b.updateInferredProject([]string{fileName})
-	}
-	return b.updateInferredProject(append(b.inferredProject.Value().CommandLine.FileNames(), fileName))
 }
 
 func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project]) bool {
