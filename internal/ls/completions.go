@@ -4031,7 +4031,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 	// the completion list at "1" and "2" will contain "MainComponent.Child" with a replacement span of closing tag name
 	hasClosingAngleBracket := findChildOfKind(jsxClosingElement, ast.KindGreaterThanToken, file) != nil
 	tagName := jsxClosingElement.Parent.AsJsxElement().OpeningElement.TagName()
-	closingTag := tagName.Text()
+	closingTag := scanner.GetTextOfNode(tagName)
 	fullClosingTag := closingTag + core.IfElse(hasClosingAngleBracket, "", ">")
 	optionalReplacementSpan := l.createLspRangeFromNode(jsxClosingElement.TagName(), file)
 	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
