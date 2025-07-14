@@ -8,6 +8,7 @@ import (
 )
 
 func TestUntitledPathHandling(t *testing.T) {
+	t.Parallel()
 	// Test that untitled paths are treated as rooted
 	untitledPath := "^/untitled/ts-nul-authority/Untitled-2"
 
@@ -31,6 +32,7 @@ func TestUntitledPathHandling(t *testing.T) {
 }
 
 func TestUntitledPathEdgeCases(t *testing.T) {
+	t.Parallel()
 	// Test edge cases
 	testCases := []struct {
 		path     string
@@ -48,6 +50,7 @@ func TestUntitledPathEdgeCases(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.path, func(t *testing.T) {
+			t.Parallel()
 			rootLength := tspath.GetEncodedRootLength(tc.path)
 			assert.Equal(t, rootLength, tc.expected, "GetEncodedRootLength for path %s", tc.path)
 

@@ -13,6 +13,7 @@ import (
 )
 
 func TestUntitledReferences(t *testing.T) {
+	t.Parallel()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
 	}
@@ -85,6 +86,7 @@ x++;`
 }
 
 func TestUntitledFileNameDebugging(t *testing.T) {
+	t.Parallel()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
 	}
@@ -116,6 +118,7 @@ func TestUntitledFileNameDebugging(t *testing.T) {
 }
 
 func TestUntitledFileIntegration(t *testing.T) {
+	t.Parallel()
 	if !bundled.Embedded {
 		t.Skip("bundled files are not embedded")
 	}
