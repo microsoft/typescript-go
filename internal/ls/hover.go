@@ -277,7 +277,7 @@ func getSignaturesAtLocation(c *checker.Checker, symbol *ast.Symbol, kind checke
 }
 
 func getCallOrNewExpression(node *ast.Node) *ast.Node {
-	if node.Parent == nil {
+	if ast.IsSourceFile(node) {
 		return nil
 	}
 	if ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node {
