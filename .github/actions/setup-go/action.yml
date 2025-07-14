@@ -19,15 +19,16 @@ runs:
         go-version: ${{ inputs.go-version }}
         cache: false
 
+    # There is more code downloaded and built than is covered by '**/go.sum',
+    # so give each job its own cache to try and not end up sharing the wrong
+    # cache between jobs, and hash the Herebyfile and golancgi-lint version.
+
     - name: Go cache
       uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
       with:
-        # There is more code downloaded and built than is covered by '**/go.sum',
-        # so give each job its own cache to try and not end up sharing the wrong
-        # cache between jobs.
         key: ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml') }}-${{ github.workflow }}-${{ inputs.cache-name }}
         restore-keys: |
-          ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml') }}
+          ts-setup-go-${{ runner.os }}-${{ steps.install-go.outputs.go-version }}-${{ hashFiles('**/go.sum', '**/Herebyfile.mjs', '**/.custom-gcl.yml') }}-${{ github.workflow }}-
         path: |
           ~/go/pkg/mod
           ~/.cache/go-build
