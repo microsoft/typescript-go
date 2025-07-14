@@ -137,9 +137,7 @@ func getRangeOfEnclosingComment(
 	precedingToken *ast.Node,
 	tokenAtPosition *ast.Node,
 ) *ast.CommentRange {
-	jsdoc := ast.FindAncestor(tokenAtPosition, func(n *ast.Node) bool {
-		return n.Kind == ast.KindJSDoc
-	})
+	jsdoc := ast.FindAncestor(tokenAtPosition, (*ast.Node).IsJSDoc)
 	if jsdoc != nil {
 		tokenAtPosition = jsdoc.Parent
 	}
