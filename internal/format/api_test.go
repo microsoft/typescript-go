@@ -36,6 +36,70 @@ func applyBulkEdits(text string, edits []core.TextChange) string {
 func TestFormat(t *testing.T) {
 	t.Parallel()
 
+	t.Run("format comment issue reproduction", func(t *testing.T) {
+		t.Parallel()
+		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
+			EditorSettings: format.EditorSettings{
+				TabSize:                4,
+				IndentSize:             4,
+				BaseIndentSize:         4,
+				NewLineCharacter:       "\n",
+				ConvertTabsToSpaces:    true,
+				IndentStyle:            format.IndentStyleSmart,
+				TrimTrailingWhitespace: true,
+			},
+			InsertSpaceBeforeTypeAnnotation: core.TSTrue,
+		}, "\n")
+		
+		// Original code that causes the bug
+		originalText := `class C {
+    /**
+     *
+    */
+    async x() {}
+}`
+		
+		sourceFile := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, originalText, core.ScriptKindTS)
+		
+		// Apply formatting once
+		edits := format.FormatDocument(ctx, sourceFile)
+		firstFormatted := applyBulkEdits(originalText, edits)
+		
+		// Debug output
+		t.Logf("Original text:\n%s", originalText)
+		t.Logf("First formatted text:\n%s", firstFormatted)
+		t.Logf("Edits: %+v", edits)
+		
+		// Verify that the comment and async keyword are preserved
+		assert.Assert(t, strings.Contains(firstFormatted, "/**"))
+		assert.Assert(t, strings.Contains(firstFormatted, "*/"))
+		assert.Assert(t, strings.Contains(firstFormatted, "async"))
+		assert.Assert(t, !strings.Contains(firstFormatted, " /\n")) // Should not have broken comment
+		
+		// Apply formatting again to the result
+		sourceFile2 := parser.ParseSourceFile(ast.SourceFileParseOptions{
+			FileName: "/test.ts",
+			Path:     "/test.ts",
+		}, firstFormatted, core.ScriptKindTS)
+		
+		edits2 := format.FormatDocument(ctx, sourceFile2)
+		secondFormatted := applyBulkEdits(firstFormatted, edits2)
+		
+		// Debug output
+		t.Logf("Second formatted text:\n%s", secondFormatted)
+		t.Logf("Second edits: %+v", edits2)
+		
+		// Should still preserve the comment and async keyword
+		assert.Assert(t, strings.Contains(secondFormatted, "/**"))
+		assert.Assert(t, strings.Contains(secondFormatted, "*/"))
+		assert.Assert(t, strings.Contains(secondFormatted, "async"))
+		assert.Assert(t, !strings.Contains(secondFormatted, " /\n")) // Should not have broken comment
+		assert.Assert(t, !strings.Contains(secondFormatted, "sync x()")) // Should not have corrupted async keyword
+	})
+
 	t.Run("format checker.ts", func(t *testing.T) {
 		t.Parallel()
 		ctx := format.WithFormatCodeSettings(t.Context(), &format.FormatCodeSettings{
