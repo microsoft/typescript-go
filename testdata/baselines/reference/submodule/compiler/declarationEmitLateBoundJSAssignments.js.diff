@@ -13,4 +13,3 @@
 +    var bar: number;
 +    var strMemName: string;
  }
-+export {};

@@ -18,8 +18,3 @@
  Object.defineProperty(exports, "Foo", { enumerable: true, get: function () { return foo_1.Foo; } });
  function Example() { }
  Example.Foo = foo_1.Foo;
-@@= skipped -58, +58 lines =@@
-     var A: () => void;
-     var B: () => void;
- }
-+export {};

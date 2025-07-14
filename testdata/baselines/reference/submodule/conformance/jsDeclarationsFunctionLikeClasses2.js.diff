@@ -68,7 +68,6 @@
 +        y: number;
 +    };
  }
-+export {};
  //// [referencer.d.ts]
 -export const origin: Point2D;
 -import { Point2D } from "./source";

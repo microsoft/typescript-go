@@ -30,4 +30,3 @@ export declare namespace foo {
     var bar: number;
     var strMemName: string;
 }
-export {};

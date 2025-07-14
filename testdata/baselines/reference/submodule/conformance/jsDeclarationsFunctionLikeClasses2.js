@@ -180,7 +180,6 @@ export declare namespace Point2D {
         y: number;
     };
 }
-export {};
 //// [referencer.d.ts]
 export declare const origin: any;
 // export const res = Point2D(2, 3).dot(origin); // TODO: when __proto__ works, validate this

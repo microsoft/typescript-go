@@ -1,7 +1,0 @@
---- old.declarationEmitLateBoundAssignments.js
-+++ new.declarationEmitLateBoundAssignments.js
-@@= skipped -39, +39 lines =@@
-     var bar: number;
-     var strMemName: string;
- }
-+export {};

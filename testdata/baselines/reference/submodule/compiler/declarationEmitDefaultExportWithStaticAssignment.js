@@ -109,4 +109,3 @@ export declare namespace C {
     var A: () => void;
     var B: () => void;
 }
-export {};

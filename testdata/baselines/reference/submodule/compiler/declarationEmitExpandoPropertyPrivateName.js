@@ -34,4 +34,3 @@ export declare function q(): void;
 export declare namespace q {
     var val: I;
 }
-export {};
