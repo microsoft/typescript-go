@@ -921,8 +921,7 @@ func (w *formatSpanWorker) indentMultilineComment(commentRange core.TextRange, i
 	startPos := commentRange.Pos()
 	for line := startLine; line < endLine; line++ {
 		endOfLine := scanner.GetEndLinePosition(w.sourceFile, line)
-		part := core.NewTextRange(startPos, endOfLine)
-		parts = append(parts, part)
+		parts = append(parts, core.NewTextRange(startPos, endOfLine))
 		startPos = int(scanner.GetLineStarts(w.sourceFile)[line+1])
 	}
 
