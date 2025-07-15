@@ -9,7 +9,7 @@ import (
 
 func TestJsxQualifiedTagCompletion(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
  declare var React: any;
@@ -28,7 +28,9 @@ func TestJsxQualifiedTagCompletion(t *testing.T) {
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{"NS.Foo>"},
+			Exact: []fourslash.CompletionsExpectedItem{
+				"NS.Foo>",
+			},
 		},
 	})
 }

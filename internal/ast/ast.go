@@ -49,41 +49,56 @@ func visitModifiers(v Visitor, modifiers *ModifierList) bool {
 // NodeFactory
 
 type NodeFactory struct {
-	hooks                            NodeFactoryHooks
-	binaryExpressionPool             core.Pool[BinaryExpression]
-	blockPool                        core.Pool[Block]
-	callExpressionPool               core.Pool[CallExpression]
-	expressionStatementPool          core.Pool[ExpressionStatement]
-	functionDeclarationPool          core.Pool[FunctionDeclaration]
-	functionTypeNodePool             core.Pool[FunctionTypeNode]
-	identifierPool                   core.Pool[Identifier]
-	ifStatementPool                  core.Pool[IfStatement]
-	interfaceDeclarationPool         core.Pool[InterfaceDeclaration]
-	jsdocPool                        core.Pool[JSDoc]
-	jsdocTextPool                    core.Pool[JSDocText]
-	keywordExpressionPool            core.Pool[KeywordExpression]
-	keywordTypeNodePool              core.Pool[KeywordTypeNode]
-	literalTypeNodePool              core.Pool[LiteralTypeNode]
-	methodSignatureDeclarationPool   core.Pool[MethodSignatureDeclaration]
-	modifierListPool                 core.Pool[ModifierList]
-	nodeListPool                     core.Pool[NodeList]
-	numericLiteralPool               core.Pool[NumericLiteral]
-	parameterDeclarationPool         core.Pool[ParameterDeclaration]
-	parenthesizedExpressionPool      core.Pool[ParenthesizedExpression]
-	parenthesizedTypeNodePool        core.Pool[ParenthesizedTypeNode]
-	prefixUnaryExpressionPool        core.Pool[PrefixUnaryExpression]
-	propertyAccessExpressionPool     core.Pool[PropertyAccessExpression]
-	propertyAssignmentPool           core.Pool[PropertyAssignment]
-	propertySignatureDeclarationPool core.Pool[PropertySignatureDeclaration]
-	returnStatementPool              core.Pool[ReturnStatement]
-	stringLiteralPool                core.Pool[StringLiteral]
-	tokenPool                        core.Pool[Token]
-	typeLiteralNodePool              core.Pool[TypeLiteralNode]
-	typeReferenceNodePool            core.Pool[TypeReferenceNode]
-	unionTypeNodePool                core.Pool[UnionTypeNode]
-	variableDeclarationListPool      core.Pool[VariableDeclarationList]
-	variableDeclarationPool          core.Pool[VariableDeclaration]
-	variableStatementPool            core.Pool[VariableStatement]
+	hooks                             NodeFactoryHooks
+	arrayTypeNodePool                 core.Pool[ArrayTypeNode]
+	binaryExpressionPool              core.Pool[BinaryExpression]
+	blockPool                         core.Pool[Block]
+	callExpressionPool                core.Pool[CallExpression]
+	conditionalExpressionPool         core.Pool[ConditionalExpression]
+	constructSignatureDeclarationPool core.Pool[ConstructSignatureDeclaration]
+	elementAccessExpressionPool       core.Pool[ElementAccessExpression]
+	expressionStatementPool           core.Pool[ExpressionStatement]
+	expressionWithTypeArgumentsPool   core.Pool[ExpressionWithTypeArguments]
+	functionDeclarationPool           core.Pool[FunctionDeclaration]
+	functionTypeNodePool              core.Pool[FunctionTypeNode]
+	heritageClausePool                core.Pool[HeritageClause]
+	identifierPool                    core.Pool[Identifier]
+	ifStatementPool                   core.Pool[IfStatement]
+	importSpecifierPool               core.Pool[ImportSpecifier]
+	indexedAccessTypeNodePool         core.Pool[IndexedAccessTypeNode]
+	interfaceDeclarationPool          core.Pool[InterfaceDeclaration]
+	intersectionTypeNodePool          core.Pool[IntersectionTypeNode]
+	jsdocDeprecatedTagPool            core.Pool[JSDocDeprecatedTag]
+	jsdocParameterOrPropertyTagPool   core.Pool[JSDocParameterOrPropertyTag]
+	jsdocPool                         core.Pool[JSDoc]
+	jsdocTextPool                     core.Pool[JSDocText]
+	jsdocUnknownTagPool               core.Pool[JSDocUnknownTag]
+	keywordExpressionPool             core.Pool[KeywordExpression]
+	keywordTypeNodePool               core.Pool[KeywordTypeNode]
+	literalTypeNodePool               core.Pool[LiteralTypeNode]
+	methodSignatureDeclarationPool    core.Pool[MethodSignatureDeclaration]
+	modifierListPool                  core.Pool[ModifierList]
+	nodeListPool                      core.Pool[NodeList]
+	numericLiteralPool                core.Pool[NumericLiteral]
+	parameterDeclarationPool          core.Pool[ParameterDeclaration]
+	parenthesizedExpressionPool       core.Pool[ParenthesizedExpression]
+	parenthesizedTypeNodePool         core.Pool[ParenthesizedTypeNode]
+	prefixUnaryExpressionPool         core.Pool[PrefixUnaryExpression]
+	propertyAccessExpressionPool      core.Pool[PropertyAccessExpression]
+	propertyAssignmentPool            core.Pool[PropertyAssignment]
+	propertySignatureDeclarationPool  core.Pool[PropertySignatureDeclaration]
+	returnStatementPool               core.Pool[ReturnStatement]
+	stringLiteralPool                 core.Pool[StringLiteral]
+	tokenPool                         core.Pool[Token]
+	typeAliasDeclarationPool          core.Pool[TypeAliasDeclaration]
+	typeLiteralNodePool               core.Pool[TypeLiteralNode]
+	typeOperatorNodePool              core.Pool[TypeOperatorNode]
+	typeParameterDeclarationPool      core.Pool[TypeParameterDeclaration]
+	typeReferenceNodePool             core.Pool[TypeReferenceNode]
+	unionTypeNodePool                 core.Pool[UnionTypeNode]
+	variableDeclarationListPool       core.Pool[VariableDeclarationList]
+	variableDeclarationPool           core.Pool[VariableDeclaration]
+	variableStatementPool             core.Pool[VariableStatement]
 
 	nodeCount int
 	textCount int
@@ -309,6 +324,12 @@ func (n *Node) Text() string {
 		return n.AsRegularExpressionLiteral().Text
 	case KindJSDocText:
 		return strings.Join(n.AsJSDocText().text, "")
+	case KindJSDocLink:
+		return strings.Join(n.AsJSDocLink().text, "")
+	case KindJSDocLinkCode:
+		return strings.Join(n.AsJSDocLinkCode().text, "")
+	case KindJSDocLinkPlain:
+		return strings.Join(n.AsJSDocLinkPlain().text, "")
 	}
 	panic(fmt.Sprintf("Unhandled case in Node.Text: %T", n.data))
 }
@@ -856,6 +877,20 @@ func (n *Node) Elements() []*Node {
 		return list.Nodes
 	}
 	return nil
+}
+
+func (n *Node) QuestionDotToken() *Node {
+	switch n.Kind {
+	case KindElementAccessExpression:
+		return n.AsElementAccessExpression().QuestionDotToken
+	case KindPropertyAccessExpression:
+		return n.AsPropertyAccessExpression().QuestionDotToken
+	case KindCallExpression:
+		return n.AsCallExpression().QuestionDotToken
+	case KindTaggedTemplateExpression:
+		return n.AsTaggedTemplateExpression().QuestionDotToken
+	}
+	panic("Unhandled case in Node.QuestionDotToken: " + n.Kind.String())
 }
 
 // Determines if `n` contains `descendant` by walking up the `Parent` pointers from `descendant`. This method panics if
@@ -1652,6 +1687,10 @@ func (n *Node) AsSyntaxList() *SyntaxList {
 	return n.data.(*SyntaxList)
 }
 
+func (n *Node) AsSyntheticReferenceExpression() *SyntheticReferenceExpression {
+	return n.data.(*SyntheticReferenceExpression)
+}
+
 // NodeData
 
 type nodeData interface {
@@ -2054,7 +2093,9 @@ func (node *Token) computeSubtreeFacts() SubtreeFacts {
 		return SubtreeContainsClassFields
 	case KindAsteriskAsteriskToken, KindAsteriskAsteriskEqualsToken:
 		return SubtreeContainsExponentiationOperator
-	case KindQuestionQuestionToken, KindQuestionDotToken:
+	case KindQuestionQuestionToken:
+		return SubtreeContainsNullishCoalescing
+	case KindQuestionDotToken:
 		return SubtreeContainsOptionalChaining
 	case KindQuestionQuestionEqualsToken, KindBarBarEqualsToken, KindAmpersandAmpersandEqualsToken:
 		return SubtreeContainsLogicalAssignments
@@ -2174,7 +2215,7 @@ type TypeParameterDeclaration struct {
 }
 
 func (f *NodeFactory) NewTypeParameterDeclaration(modifiers *ModifierList, name *IdentifierNode, constraint *TypeNode, defaultType *TypeNode) *Node {
-	data := &TypeParameterDeclaration{}
+	data := f.typeParameterDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.Constraint = constraint
@@ -3693,7 +3734,7 @@ type HeritageClause struct {
 }
 
 func (f *NodeFactory) NewHeritageClause(token Kind, types *NodeList) *Node {
-	data := &HeritageClause{}
+	data := f.heritageClausePool.New()
 	data.Token = token
 	data.Types = types
 	return f.newNode(KindHeritageClause, data)
@@ -3798,7 +3839,7 @@ type TypeAliasDeclaration struct {
 }
 
 func (f *NodeFactory) newTypeAliasOrJSTypeAliasDeclaration(kind Kind, modifiers *ModifierList, name *IdentifierNode, typeParameters *NodeList, typeNode *TypeNode) *Node {
-	data := &TypeAliasDeclaration{}
+	data := f.typeAliasDeclarationPool.New()
 	data.modifiers = modifiers
 	data.name = name
 	data.TypeParameters = typeParameters
@@ -4104,6 +4145,53 @@ func IsNotEmittedTypeElement(node *Node) bool {
 	return node.Kind == KindNotEmittedTypeElement
 }
 
+// SyntheticReferenceExpression
+// Used by optional chaining transform to shuffle a `this` arg expression between steps of a chain.
+// While this does implement the full expected interface of a node, and is used in place of a node in transforms,
+// it generally shouldn't be treated or visited like a normal node.
+
+type SyntheticReferenceExpression struct {
+	ExpressionBase
+	Expression *Expression
+	ThisArg    *Expression
+}
+
+func (f *NodeFactory) NewSyntheticReferenceExpression(expr *Expression, thisArg *Expression) *Node {
+	data := &SyntheticReferenceExpression{Expression: expr, ThisArg: thisArg}
+	return newNode(KindSyntheticReferenceExpression, data, f.hooks)
+}
+
+func (f *NodeFactory) UpdateSyntheticReferenceExpression(node *SyntheticReferenceExpression, expr *Expression, thisArg *Expression) *Node {
+	if expr != node.Expression || thisArg != node.ThisArg {
+		return updateNode(f.NewSyntheticReferenceExpression(expr, thisArg), node.AsNode(), f.hooks)
+	}
+	return node.AsNode()
+}
+
+func (node *SyntheticReferenceExpression) ForEachChild(v Visitor) bool {
+	return visit(v, node.Expression)
+}
+
+func (node *SyntheticReferenceExpression) VisitEachChild(v *NodeVisitor) *Node {
+	return v.Factory.UpdateSyntheticReferenceExpression(node, v.visitNode(node.Expression), node.ThisArg)
+}
+
+func (node *SyntheticReferenceExpression) Clone(f NodeFactoryCoercible) *Node {
+	return cloneNode(f.AsNodeFactory().NewSyntheticReferenceExpression(node.Expression, node.ThisArg), node.AsNode(), f.AsNodeFactory().hooks)
+}
+
+func (node *SyntheticReferenceExpression) computeSubtreeFacts() SubtreeFacts {
+	return propagateSubtreeFacts(node.Expression)
+}
+
+func (node *SyntheticReferenceExpression) propagateSubtreeFacts() SubtreeFacts {
+	return node.SubtreeFacts()
+}
+
+func IsSyntheticReferenceExpression(node *Node) bool {
+	return node.Kind == KindSyntheticReferenceExpression
+}
+
 // ImportEqualsDeclaration
 
 type ImportEqualsDeclaration struct {
@@ -4240,7 +4328,7 @@ type ImportSpecifier struct {
 }
 
 func (f *NodeFactory) NewImportSpecifier(isTypeOnly bool, propertyName *ModuleExportName, name *IdentifierNode) *Node {
-	data := &ImportSpecifier{}
+	data := f.importSpecifierPool.New()
 	data.IsTypeOnly = isTypeOnly
 	data.PropertyName = propertyName
 	data.name = name
@@ -4895,7 +4983,7 @@ type ConstructSignatureDeclaration struct {
 }
 
 func (f *NodeFactory) NewConstructSignatureDeclaration(typeParameters *NodeList, parameters *NodeList, returnType *TypeNode) *Node {
-	data := &ConstructSignatureDeclaration{}
+	data := f.constructSignatureDeclarationPool.New()
 	data.TypeParameters = typeParameters
 	data.Parameters = parameters
 	data.Type = returnType
@@ -6009,7 +6097,7 @@ type ConditionalExpression struct {
 }
 
 func (f *NodeFactory) NewConditionalExpression(condition *Expression, questionToken *TokenNode, whenTrue *Expression, colonToken *TokenNode, whenFalse *Expression) *Node {
-	data := &ConditionalExpression{}
+	data := f.conditionalExpressionPool.New()
 	data.Condition = condition
 	data.QuestionToken = questionToken
 	data.WhenTrue = whenTrue
@@ -6116,7 +6204,7 @@ type ElementAccessExpression struct {
 }
 
 func (f *NodeFactory) NewElementAccessExpression(expression *Expression, questionDotToken *TokenNode, argumentExpression *Expression, flags NodeFlags) *Node {
-	data := &ElementAccessExpression{}
+	data := f.elementAccessExpressionPool.New()
 	data.Expression = expression
 	data.QuestionDotToken = questionDotToken
 	data.ArgumentExpression = argumentExpression
@@ -7088,7 +7176,7 @@ func (f *NodeFactory) UpdateIntersectionTypeNode(node *IntersectionTypeNode, typ
 }
 
 func (f *NodeFactory) NewIntersectionTypeNode(types *NodeList) *Node {
-	data := &IntersectionTypeNode{}
+	data := f.intersectionTypeNodePool.New()
 	data.Types = types
 	return f.newNode(KindIntersectionType, data)
 }
@@ -7157,7 +7245,7 @@ type TypeOperatorNode struct {
 }
 
 func (f *NodeFactory) NewTypeOperatorNode(operator Kind, typeNode *TypeNode) *Node {
-	data := &TypeOperatorNode{}
+	data := f.typeOperatorNodePool.New()
 	data.Operator = operator
 	data.Type = typeNode
 	return f.newNode(KindTypeOperator, data)
@@ -7230,7 +7318,7 @@ type ArrayTypeNode struct {
 }
 
 func (f *NodeFactory) NewArrayTypeNode(elementType *TypeNode) *Node {
-	data := &ArrayTypeNode{}
+	data := f.arrayTypeNodePool.New()
 	data.ElementType = elementType
 	return f.newNode(KindArrayType, data)
 }
@@ -7263,7 +7351,7 @@ type IndexedAccessTypeNode struct {
 }
 
 func (f *NodeFactory) NewIndexedAccessTypeNode(objectType *TypeNode, indexType *TypeNode) *Node {
-	data := &IndexedAccessTypeNode{}
+	data := f.indexedAccessTypeNodePool.New()
 	data.ObjectType = objectType
 	data.IndexType = indexType
 	return f.newNode(KindIndexedAccessType, data)
@@ -7340,7 +7428,7 @@ type ExpressionWithTypeArguments struct {
 }
 
 func (f *NodeFactory) NewExpressionWithTypeArguments(expression *Expression, typeArguments *NodeList) *Node {
-	data := &ExpressionWithTypeArguments{}
+	data := f.expressionWithTypeArgumentsPool.New()
 	data.Expression = expression
 	data.TypeArguments = typeArguments
 	return f.newNode(KindExpressionWithTypeArguments, data)
@@ -8832,6 +8920,10 @@ func (node *JSDoc) Clone(f NodeFactoryCoercible) *Node {
 	return cloneNode(f.AsNodeFactory().NewJSDoc(node.Comment, node.Tags), node.AsNode(), f.AsNodeFactory().hooks)
 }
 
+func (node *Node) IsJSDoc() bool {
+	return node.Kind == KindJSDoc
+}
+
 type JSDocTagBase struct {
 	NodeBase
 	TagName *IdentifierNode
@@ -9195,7 +9287,7 @@ type JSDocUnknownTag struct {
 }
 
 func (f *NodeFactory) NewJSDocUnknownTag(tagName *IdentifierNode, comment *NodeList) *Node {
-	data := &JSDocUnknownTag{}
+	data := f.jsdocUnknownTagPool.New()
 	data.TagName = tagName
 	data.Comment = comment
 	return f.newNode(KindJSDocTag, data)
@@ -9275,7 +9367,7 @@ type (
 )
 
 func (f *NodeFactory) newJSDocParameterOrPropertyTag(kind Kind, tagName *IdentifierNode, name *EntityName, isBracketed bool, typeExpression *TypeNode, isNameFirst bool, comment *NodeList) *Node {
-	data := &JSDocParameterOrPropertyTag{}
+	data := f.jsdocParameterOrPropertyTagPool.New()
 	data.TagName = tagName
 	data.name = name
 	data.IsBracketed = isBracketed
@@ -9523,7 +9615,7 @@ type JSDocDeprecatedTag struct {
 }
 
 func (f *NodeFactory) NewJSDocDeprecatedTag(tagName *IdentifierNode, comment *NodeList) *Node {
-	data := &JSDocDeprecatedTag{}
+	data := f.jsdocDeprecatedTagPool.New()
 	data.TagName = tagName
 	data.Comment = comment
 	return f.newNode(KindJSDocDeprecatedTag, data)

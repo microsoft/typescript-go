@@ -22,7 +22,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
-	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -849,13 +848,13 @@ type Checker struct {
 	markNodeAssignments                         func(*ast.Node) bool
 	emitResolver                                *emitResolver
 	emitResolverOnce                            sync.Once
-	diagnosticConstructionContext               *printer.EmitContext
-	nodeBuilder                                 *NodeBuilder
 	_jsxNamespace                               string
 	_jsxFactoryEntity                           *ast.Node
 	skipDirectInferenceNodes                    collections.Set[*ast.Node]
 	ctx                                         context.Context
 	packagesMap                                 map[string]bool
+	activeMappers                               []*TypeMapper
+	activeTypeMappersCaches                     []map[string]*Type
 }
 
 func NewChecker(program Program) *Checker {
@@ -1068,8 +1067,6 @@ func NewChecker(program Program) *Checker {
 	c.getGlobalClassAccessorDecoratorTargetType = c.getGlobalTypeResolver("ClassAccessorDecoratorTarget", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassAccessorDecoratorResultType = c.getGlobalTypeResolver("ClassAccessorDecoratorResult", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassFieldDecoratorContextType = c.getGlobalTypeResolver("ClassFieldDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
-	c.diagnosticConstructionContext = printer.NewEmitContext()
-	c.nodeBuilder = NewNodeBuilder(c, c.diagnosticConstructionContext)
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()
@@ -1833,17 +1830,8 @@ func (c *Checker) isBlockScopedNameDeclaredBeforeUse(declaration *ast.Node, usag
 	useFile := ast.GetSourceFileOfNode(usage)
 	declContainer := ast.GetEnclosingBlockScopeContainer(declaration)
 	if declarationFile != useFile {
-		if (c.moduleKind != core.ModuleKindNone && (declarationFile.ExternalModuleIndicator != nil || useFile.ExternalModuleIndicator != nil)) || c.compilerOptions.OutFile == "" || IsInTypeQuery(usage) || declaration.Flags&ast.NodeFlagsAmbient != 0 {
-			// nodes are in different files and order cannot be determined
-			return true
-		}
-		// declaration is after usage
-		// can be legal if usage is deferred (i.e. inside function or in initializer of instance property)
-		if c.isUsedInFunctionOrInstanceProperty(usage, declaration, declContainer) {
-			return true
-		}
-		sourceFiles := c.program.SourceFiles()
-		return slices.Index(sourceFiles, declarationFile) <= slices.Index(sourceFiles, useFile)
+		// nodes are in different files and order cannot be determined
+		return true
 	}
 	// deferred usage in a type context is always OK regardless of the usage position:
 	if usage.Flags&ast.NodeFlagsJSDoc != 0 || IsInTypeQuery(usage) || c.isInAmbientOrTypeNode(usage) {
@@ -17879,6 +17867,7 @@ func (c *Checker) pushTypeResolution(target TypeSystemEntity, propertyName TypeS
 func (c *Checker) popTypeResolution() bool {
 	lastIndex := len(c.typeResolutions) - 1
 	result := c.typeResolutions[lastIndex].result
+	c.typeResolutions[lastIndex] = TypeResolution{} // Clear the last entry to avoid memory leaks
 	c.typeResolutions = c.typeResolutions[:lastIndex]
 	return result
 }
@@ -21177,12 +21166,64 @@ func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAl
 		c.error(c.currentNode, diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite)
 		return c.errorType
 	}
+	index := c.findActiveMapper(m)
+	if index == -1 {
+		c.pushActiveMapper(m)
+	}
+	var b KeyBuilder
+	b.WriteType(t)
+	b.WriteAlias(alias)
+	key := b.String()
+	cache := c.activeTypeMappersCaches[core.IfElse(index != -1, index, len(c.activeTypeMappersCaches)-1)]
+	if cachedType, ok := cache[key]; ok {
+		return cachedType
+	}
 	c.TotalInstantiationCount++
 	c.instantiationCount++
 	c.instantiationDepth++
 	result := c.instantiateTypeWorker(t, m, alias)
+	if index == -1 {
+		c.popActiveMapper()
+	} else {
+		cache[key] = result
+	}
 	c.instantiationDepth--
 	return result
+}
+
+func (c *Checker) pushActiveMapper(mapper *TypeMapper) {
+	c.activeMappers = append(c.activeMappers, mapper)
+
+	lastIndex := len(c.activeTypeMappersCaches)
+	if cap(c.activeTypeMappersCaches) > lastIndex {
+		// The cap may contain an empty map from popActiveMapper; reuse it.
+		c.activeTypeMappersCaches = c.activeTypeMappersCaches[:lastIndex+1]
+		if c.activeTypeMappersCaches[lastIndex] == nil {
+			c.activeTypeMappersCaches[lastIndex] = make(map[string]*Type, 1)
+		}
+	} else {
+		c.activeTypeMappersCaches = append(c.activeTypeMappersCaches, make(map[string]*Type, 1))
+	}
+}
+
+func (c *Checker) popActiveMapper() {
+	c.activeMappers[len(c.activeMappers)-1] = nil
+	c.activeMappers = c.activeMappers[:len(c.activeMappers)-1]
+
+	// Clear the map, but leave it in the list for later reuse.
+	lastIndex := len(c.activeTypeMappersCaches) - 1
+	clear(c.activeTypeMappersCaches[lastIndex])
+	c.activeTypeMappersCaches = c.activeTypeMappersCaches[:lastIndex]
+}
+
+func (c *Checker) findActiveMapper(mapper *TypeMapper) int {
+	return core.FindLastIndex(c.activeMappers, func(m *TypeMapper) bool { return m == mapper })
+}
+
+func (c *Checker) clearActiveMapperCaches() {
+	for _, cache := range c.activeTypeMappersCaches {
+		clear(cache)
+	}
 }
 
 // Return true if the given type could possibly reference a type parameter for which
@@ -29354,7 +29395,9 @@ func (c *Checker) pushContextualType(node *ast.Node, t *Type, isCache bool) {
 }
 
 func (c *Checker) popContextualType() {
-	c.contextualInfos = c.contextualInfos[:len(c.contextualInfos)-1]
+	lastIndex := len(c.contextualInfos) - 1
+	c.contextualInfos[lastIndex] = ContextualInfo{}
+	c.contextualInfos = c.contextualInfos[:lastIndex]
 }
 
 func (c *Checker) findContextualNode(node *ast.Node, includeCaches bool) int {
@@ -29424,7 +29467,9 @@ func (c *Checker) pushInferenceContext(node *ast.Node, context *InferenceContext
 }
 
 func (c *Checker) popInferenceContext() {
-	c.inferenceContextInfos = c.inferenceContextInfos[:len(c.inferenceContextInfos)-1]
+	lastIndex := len(c.inferenceContextInfos) - 1
+	c.inferenceContextInfos[lastIndex] = InferenceContextInfo{}
+	c.inferenceContextInfos = c.inferenceContextInfos[:lastIndex]
 }
 
 func (c *Checker) getInferenceContext(node *ast.Node) *InferenceContext {

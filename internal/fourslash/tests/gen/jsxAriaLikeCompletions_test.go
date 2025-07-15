@@ -11,7 +11,7 @@ import (
 
 func TestJsxAriaLikeCompletions(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `//@Filename: file.tsx
 declare var React: any;
@@ -31,7 +31,14 @@ const a = <div {...{}} /*1*/></div>;`
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: []fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "aria-whatever?", InsertText: ptrTo("aria-whatever"), FilterText: ptrTo("aria-whatever")}},
+			Exact: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "aria-whatever?",
+					InsertText: ptrTo("aria-whatever"),
+					FilterText: ptrTo("aria-whatever"),
+					SortText:   ptrTo(string(ls.SortTextOptionalMember)),
+				},
+			},
 		},
 	})
 }

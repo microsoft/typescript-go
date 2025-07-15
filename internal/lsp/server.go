@@ -233,11 +233,17 @@ func (s *Server) UnwatchFiles(ctx context.Context, handle project.WatcherHandle)
 
 // RefreshDiagnostics implements project.Client.
 func (s *Server) RefreshDiagnostics(ctx context.Context) error {
-	if ptrIsTrue(s.initializeParams.Capabilities.Workspace.Diagnostics.RefreshSupport) {
-		if _, err := s.sendRequest(ctx, lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
-			return fmt.Errorf("failed to refresh diagnostics: %w", err)
-		}
+	if s.initializeParams.Capabilities == nil ||
+		s.initializeParams.Capabilities.Workspace == nil ||
+		s.initializeParams.Capabilities.Workspace.Diagnostics == nil ||
+		!ptrIsTrue(s.initializeParams.Capabilities.Workspace.Diagnostics.RefreshSupport) {
+		return nil
 	}
+
+	if _, err := s.sendRequest(ctx, lsproto.MethodWorkspaceDiagnosticRefresh, nil); err != nil {
+		return fmt.Errorf("failed to refresh diagnostics: %w", err)
+	}
+
 	return nil
 }
 
@@ -492,6 +498,8 @@ func (s *Server) handleRequestOrNotification(ctx context.Context, req *lsproto.R
 		return s.handleWorkspaceSymbol(ctx, req)
 	case *lsproto.DocumentSymbolParams:
 		return s.handleDocumentSymbol(ctx, req)
+	case *lsproto.CompletionItem:
+		return s.handleCompletionItemResolve(ctx, req)
 	case *lsproto.FoldingRangeParams:
 		return s.handleFoldingRange(ctx, req)
 
@@ -557,6 +565,7 @@ func (s *Server) handleInitialize(req *lsproto.RequestMessage) {
 			},
 			CompletionProvider: &lsproto.CompletionOptions{
 				TriggerCharacters: &ls.TriggerCharacters,
+				ResolveProvider:   ptrTo(true),
 				// !!! other options
 			},
 			SignatureHelpProvider: &lsproto.SignatureHelpOptions{
@@ -731,6 +740,29 @@ func (s *Server) handleCompletion(ctx context.Context, req *lsproto.RequestMessa
 		return err
 	}
 	s.sendResult(req.ID, list)
+	return nil
+}
+
+func (s *Server) handleCompletionItemResolve(ctx context.Context, req *lsproto.RequestMessage) error {
+	params := req.Params.(*lsproto.CompletionItem)
+	data, err := ls.GetCompletionItemData(params)
+	if err != nil {
+		return err
+	}
+	_, project := s.projectService.EnsureDefaultProjectForFile(data.FileName)
+	languageService, done := project.GetLanguageServiceForRequest(ctx)
+	defer done()
+	resolvedItem, err := languageService.ResolveCompletionItem(
+		ctx,
+		params,
+		data,
+		getCompletionClientCapabilities(s.initializeParams),
+		&ls.UserPreferences{},
+	)
+	if err != nil {
+		return err
+	}
+	s.sendResult(req.ID, resolvedItem)
 	return nil
 }
 
