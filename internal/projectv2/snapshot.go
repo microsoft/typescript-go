@@ -25,7 +25,9 @@ func newSnapshotFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncodin
 }
 
 type Snapshot struct {
-	id uint64
+	id       uint64
+	parentId uint64
+	refCount atomic.Int32
 
 	// Session options are immutable for the server lifetime,
 	// so can be a pointer.
@@ -64,6 +66,7 @@ func NewSnapshot(
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 	}
 
+	s.refCount.Store(1)
 	return s
 }
 
@@ -145,7 +148,53 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		s.toPath,
 	)
 
+	newSnapshot.parentId = s.id
 	newSnapshot.ProjectCollection, newSnapshot.ConfigFileRegistry = projectCollectionBuilder.Finalize()
 
+	for _, project := range newSnapshot.ProjectCollection.Projects() {
+		if project.Program != nil {
+			project.host.freeze(newSnapshot.ConfigFileRegistry)
+			session.programCounter.Ref(project.Program)
+		}
+	}
+	for path, config := range newSnapshot.ConfigFileRegistry.configs {
+		if config.commandLine != nil && config.commandLine.ConfigFile != nil {
+			if prevConfig, ok := s.ConfigFileRegistry.configs[path]; ok {
+				if prevConfig.commandLine != nil && config.commandLine.ConfigFile == prevConfig.commandLine.ConfigFile {
+					for _, file := range prevConfig.commandLine.ExtendedSourceFiles() {
+						// Ref count extended configs that were already loaded in the previous snapshot.
+						// New/changed ones were handled during config file registry building.
+						session.extendedConfigCache.Ref(s.toPath(file))
+					}
+				}
+			}
+		}
+	}
+
 	return newSnapshot
+}
+
+func (s *Snapshot) Ref() {
+	s.refCount.Add(1)
+}
+
+func (s *Snapshot) Deref() bool {
+	return s.refCount.Add(-1) == 0
+}
+
+func (s *Snapshot) dispose(session *Session) {
+	for _, project := range s.ProjectCollection.Projects() {
+		if project.Program != nil && session.programCounter.Deref(project.Program) {
+			for _, file := range project.Program.SourceFiles() {
+				session.parseCache.Release(file)
+			}
+		}
+	}
+	for _, config := range s.ConfigFileRegistry.configs {
+		if config.commandLine != nil {
+			for _, file := range config.commandLine.ExtendedSourceFiles() {
+				session.extendedConfigCache.release(session.toPath(file))
+			}
+		}
+	}
 }

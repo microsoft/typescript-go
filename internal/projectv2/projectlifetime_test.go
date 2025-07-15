@@ -55,18 +55,22 @@ func TestProjectLifetime(t *testing.T) {
 			"/home/projects/TS/p3/config.ts":    `let x = 1, y = 2;`,
 		}
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		// Open files in two projects
 		uri1 := lsproto.DocumentUri("file:///home/projects/TS/p1/src/index.ts")
 		uri2 := lsproto.DocumentUri("file:///home/projects/TS/p2/src/index.ts")
 		session.DidOpenFile(context.Background(), uri1, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 		session.DidOpenFile(context.Background(), uri2, 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 2)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
 
 		// Close p1 file and open p3 file
 		session.DidCloseFile(context.Background(), uri1)
@@ -74,15 +78,17 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri3, 1, files["/home/projects/TS/p3/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should still have two projects, but p1 replaced by p3
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 2)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p3/tsconfig.json")) != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 2)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p3/tsconfig.json")) != nil)
 
 		// Config files should reflect the change
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tsconfig.json")) != nil)
 
 		// Close p2 and p3 files, open p1 file again
 		session.DidCloseFile(context.Background(), uri2)
@@ -90,13 +96,15 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri1, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should have one project (p1)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 
 		// Config files should reflect the change
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) == nil)
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p2/tsconfig.json")) == nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p3/tsconfig.json")) == nil)
 	})
 
 	t.Run("unrooted inferred projects", func(t *testing.T) {
@@ -113,7 +121,9 @@ func TestProjectLifetime(t *testing.T) {
 			"/home/projects/TS/p3/config.ts":    `let x = 1, y = 2;`,
 		}
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		// Open files without workspace roots (empty string) - should create single inferred project
 		uri1 := lsproto.DocumentUri("file:///home/projects/TS/p1/src/index.ts")
@@ -122,8 +132,10 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri2, 1, files["/home/projects/TS/p2/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should have one inferred project
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ProjectCollection.InferredProject() != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Close p1 file and open p3 file
 		session.DidCloseFile(context.Background(), uri1)
@@ -131,8 +143,10 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri3, 1, files["/home/projects/TS/p3/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should still have one inferred project
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ProjectCollection.InferredProject() != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 
 		// Close p2 and p3 files, open p1 file again
 		session.DidCloseFile(context.Background(), uri2)
@@ -140,8 +154,10 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), uri1, 1, files["/home/projects/TS/p1/src/index.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should still have one inferred project
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ProjectCollection.InferredProject() != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
 	})
 
 	t.Run("file moves from inferred to configured project", func(t *testing.T) {
@@ -165,30 +181,38 @@ func TestProjectLifetime(t *testing.T) {
 		session.DidOpenFile(context.Background(), fooUri, 1, files["/home/projects/ts/foo.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should have one inferred project
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ProjectCollection.InferredProject() != nil)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.InferredProject() != nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) == nil)
 
 		// Now open main.ts - should trigger discovery of tsconfig.json and move foo.ts to configured project
 		mainUri := lsproto.DocumentUri("file:///home/projects/ts/p1/main.ts")
 		session.DidOpenFile(context.Background(), mainUri, 1, files["/home/projects/ts/p1/main.ts"].(string), lsproto.LanguageKindTypeScript)
 
 		// Should now have one configured project and no inferred project
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ProjectCollection.InferredProject() == nil)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.InferredProject() == nil)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 
 		// Config file should be present
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 
 		// Close main.ts - configured project should remain because foo.ts is still open
 		session.DidCloseFile(context.Background(), mainUri)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ProjectCollection.ConfiguredProject(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 
 		// Close foo.ts - configured project should be retained until next file open
 		session.DidCloseFile(context.Background(), fooUri)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		assert.Assert(t, session.Snapshot().ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		assert.Assert(t, snapshot.ConfigFileRegistry.GetConfig(tspath.Path("/home/projects/ts/p1/tsconfig.json")) != nil)
 	})
 }

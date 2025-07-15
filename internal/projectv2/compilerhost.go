@@ -2,7 +2,6 @@ package projectv2
 
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
-	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/compiler"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -85,11 +84,7 @@ func (c *compilerHost) GetResolvedProjectReference(fileName string, path tspath.
 func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	c.ensureAlive()
 	if fh := c.overlayFS.getFile(opts.FileName); fh != nil {
-		projectSet := &collections.SyncSet[tspath.Path]{}
-		// !!!
-		// projectSet, _ = c.builder.fileAssociations.LoadOrStore(fh.URI().Path(c.FS().UseCaseSensitiveFileNames()), projectSet)
-		projectSet.Add(c.project.configFilePath)
-		return c.builder.parseCache.acquireDocument(fh, opts, c.getScriptKind(opts.FileName))
+		return c.builder.parseCache.Acquire(fh, opts, c.getScriptKind(opts.FileName))
 	}
 	return nil
 }

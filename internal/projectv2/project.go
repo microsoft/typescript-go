@@ -166,13 +166,14 @@ func (p *Project) CreateProgram() (*compiler.Program, *project.CheckerPool) {
 	// oldProgram := p.Program
 	if p.dirtyFilePath != "" {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
-		if !programCloned {
-			// !!! wait until accepting snapshot to release documents!
-			// !!! make this less janky
-			// UpdateProgram called GetSourceFile (acquiring the document) but was unable to use it directly,
-			// so it called NewProgram which acquired it a second time. We need to decrement the ref count
-			// for the first acquisition.
-			// p.snapshot.parseCache.releaseDocument(newProgram.GetSourceFileByPath(p.dirtyFilePath))
+		if programCloned {
+			for _, file := range newProgram.GetSourceFiles() {
+				if file.Path() != p.dirtyFilePath {
+					// UpdateProgram only called host.GetSourceFile for the dirty file.
+					// Increment ref count for all other files.
+					p.host.builder.parseCache.Ref(file)
+				}
+			}
 		}
 	} else {
 		newProgram = compiler.NewProgram(
@@ -189,13 +190,6 @@ func (p *Project) CreateProgram() (*compiler.Program, *project.CheckerPool) {
 			},
 		)
 	}
-
-	// if !programCloned && oldProgram != nil {
-	// 	for _, file := range oldProgram.GetSourceFiles() {
-	// 		// !!! wait until accepting snapshot to release documents!
-	// 		// p.snapshot.parseCache.releaseDocument(file)
-	// 	}
-	// }
 
 	return newProgram, checkerPool
 }

@@ -31,6 +31,14 @@ func (c *extendedConfigCache) acquire(fh FileHandle, path tspath.Path, parse fun
 	return entry.entry
 }
 
+func (c *extendedConfigCache) Ref(path tspath.Path) {
+	if entry, ok := c.entries.Load(path); ok {
+		entry.mu.Lock()
+		entry.refCount++
+		entry.mu.Unlock()
+	}
+}
+
 func (c *extendedConfigCache) release(path tspath.Path) {
 	if entry, ok := c.entries.Load(path); ok {
 		entry.mu.Lock()

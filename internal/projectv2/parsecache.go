@@ -38,7 +38,7 @@ type parseCache struct {
 	entries collections.SyncMap[parseCacheKey, *parseCacheEntry]
 }
 
-func (c *parseCache) acquireDocument(
+func (c *parseCache) Acquire(
 	fh FileHandle,
 	opts ast.SourceFileParseOptions,
 	scriptKind core.ScriptKind,
@@ -54,7 +54,18 @@ func (c *parseCache) acquireDocument(
 	return entry.sourceFile
 }
 
-func (c *parseCache) releaseDocument(file *ast.SourceFile) {
+func (c *parseCache) Ref(file *ast.SourceFile) {
+	key := newParseCacheKey(file.ParseOptions(), file.ScriptKind)
+	if entry, ok := c.entries.Load(key); ok {
+		entry.mu.Lock()
+		entry.refCount++
+		entry.mu.Unlock()
+	} else {
+		panic("parse cache entry not found")
+	}
+}
+
+func (c *parseCache) Release(file *ast.SourceFile) {
 	key := newParseCacheKey(file.ParseOptions(), file.ScriptKind)
 	if entry, ok := c.entries.Load(key); ok {
 		entry.mu.Lock()

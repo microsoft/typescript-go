@@ -24,10 +24,12 @@ type SessionOptions struct {
 
 type Session struct {
 	options                            SessionOptions
+	toPath                             func(string) tspath.Path
 	fs                                 *overlayFS
 	parseCache                         *parseCache
 	extendedConfigCache                *extendedConfigCache
 	compilerOptionsForInferredProjects *core.CompilerOptions
+	programCounter                     *programCounter
 
 	snapshotMu sync.RWMutex
 	snapshot   *Snapshot
@@ -51,9 +53,11 @@ func NewSession(options SessionOptions, fs vfs.FS) *Session {
 
 	return &Session{
 		options:             options,
+		toPath:              toPath,
 		fs:                  overlayFS,
 		parseCache:          parseCache,
 		extendedConfigCache: extendedConfigCache,
+		programCounter:      &programCounter{},
 		snapshot: NewSnapshot(
 			newSnapshotFS(overlayFS.fs, overlayFS.overlays, options.PositionEncoding, toPath),
 			&options,
@@ -114,11 +118,22 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 	})
 }
 
-// !!! ref count and release
-func (s *Session) Snapshot() *Snapshot {
+func (s *Session) Snapshot() (*Snapshot, func()) {
 	s.snapshotMu.RLock()
 	defer s.snapshotMu.RUnlock()
-	return s.snapshot
+	snapshot := s.snapshot
+	snapshot.Ref()
+	return snapshot, func() {
+		if snapshot.Deref() {
+			// The session itself accounts for one reference to the snapshot, and it derefs
+			// in UpdateSnapshot while holding the snapshotMu lock, so the only way to end
+			// up here is for an external caller to release the snapshot after the session
+			// has already dereferenced it and moved to a new snapshot. In other words, we
+			// can assume that `snapshot != s.snapshot`, and therefor there's no way for
+			// anyone else to acquire a reference to this snapshot again.
+			snapshot.dispose(s)
+		}
+	}
 }
 
 func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUri) (*ls.LanguageService, error) {
@@ -143,6 +158,7 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 	if project == nil && !updateSnapshot {
 		// The current snapshot does not have the project for the URI,
 		// so we need to update the snapshot to ensure the project is loaded.
+		// !!! Allow multiple projects to update in parallel
 		snapshot = s.UpdateSnapshot(ctx, SnapshotChange{requestedURIs: []lsproto.DocumentUri{uri}})
 		project = snapshot.GetDefaultProject(uri)
 	}
@@ -157,9 +173,15 @@ func (s *Session) GetLanguageService(ctx context.Context, uri lsproto.DocumentUr
 
 func (s *Session) UpdateSnapshot(ctx context.Context, change SnapshotChange) *Snapshot {
 	s.snapshotMu.Lock()
-	defer s.snapshotMu.Unlock()
-	s.snapshot = s.snapshot.Clone(ctx, change, s)
-	return s.snapshot
+	oldSnapshot := s.snapshot
+	newSnapshot := oldSnapshot.Clone(ctx, change, s)
+	s.snapshot = newSnapshot
+	shouldDispose := newSnapshot != oldSnapshot && oldSnapshot.Deref()
+	s.snapshotMu.Unlock()
+	if shouldDispose {
+		oldSnapshot.dispose(s)
+	}
+	return newSnapshot
 }
 
 func (s *Session) Close() {

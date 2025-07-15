@@ -26,13 +26,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files := filesForReferencedProjectProgram(false)
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/main/main.ts")
 		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/myproject/main/main.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -53,13 +57,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 			export declare function fn5(): void;
 		`
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/main/main.ts")
 		session.DidOpenFile(context.Background(), uri, 1, files["/user/username/projects/myproject/main/main.ts"].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -73,13 +81,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(false, "")
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file://" + aTest)
 		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -93,13 +105,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(true, "")
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file://" + aTest)
 		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -113,13 +129,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(false, "@issue/")
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file://" + aTest)
 		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -133,13 +153,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(true, "@issue/")
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file://" + aTest)
 		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -153,13 +177,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(false, "")
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file://" + aTest)
 		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -173,13 +201,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(true, "")
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file://" + aTest)
 		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -193,13 +225,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(false, "@issue/")
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file://" + aTest)
 		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 
@@ -213,13 +249,17 @@ func TestProjectReferencesProgram(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(true, "@issue/")
 		session := projectv2testutil.Setup(files)
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 0)
+		snapshot, release := session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
 
 		uri := lsproto.DocumentUri("file://" + aTest)
 		session.DidOpenFile(context.Background(), uri, 1, files[aTest].(string), lsproto.LanguageKindTypeScript)
 
-		assert.Equal(t, len(session.Snapshot().ProjectCollection.Projects()), 1)
-		projects := session.Snapshot().ProjectCollection.Projects()
+		snapshot, release = session.Snapshot()
+		defer release()
+		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 1)
+		projects := snapshot.ProjectCollection.Projects()
 		p := projects[0]
 		assert.Equal(t, p.Kind, projectv2.KindConfigured)
 

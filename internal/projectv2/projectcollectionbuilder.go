@@ -100,7 +100,7 @@ func (b *projectCollectionBuilder) Finalize() (*ProjectCollection, *ConfigFileRe
 }
 
 func (b *projectCollectionBuilder) forEachProject(fn func(entry dirty.Value[*Project]) bool) {
-	var keepGoing bool
+	keepGoing := true
 	b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
 		keepGoing = fn(entry)
 		return keepGoing
@@ -122,6 +122,15 @@ func (b *projectCollectionBuilder) DidCloseFile(uri lsproto.DocumentUri, hash [s
 			b.markFileChanged(path)
 			return true
 		})
+	}
+	if b.inferredProject.Value() != nil {
+		rootFilesMap := b.inferredProject.Value().CommandLine.FileNamesByPath()
+		if fileName, ok := rootFilesMap[path]; ok {
+			rootFiles := b.inferredProject.Value().CommandLine.FileNames()
+			index := slices.Index(rootFiles, fileName)
+			newRootFiles := slices.Delete(rootFiles, index, index+1)
+			b.updateInferredProject(newRootFiles)
+		}
 	}
 	b.configFileRegistryBuilder.DidCloseFile(path)
 	if fh == nil {
