@@ -43,7 +43,7 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 
 	statements := sourceFile.Statements
 	n := len(statements.Nodes)
-	var foldingRange []*lsproto.FoldingRange
+	foldingRange := make([]*lsproto.FoldingRange, 0, 40)
 	for current < n {
 		for current < n && !ast.IsAnyImportSyntax(statements.Nodes[current]) {
 			foldingRange = append(foldingRange, visitNode(statements.Nodes[current], depthRemaining, sourceFile, l)...)
@@ -76,8 +76,8 @@ func (l *LanguageService) addNodeOutliningSpans(sourceFile *ast.SourceFile) []*l
 }
 
 func (l *LanguageService) addRegionOutliningSpans(sourceFile *ast.SourceFile) []*lsproto.FoldingRange {
-	var regions []*lsproto.FoldingRange
-	var out []*lsproto.FoldingRange
+	regions := make([]*lsproto.FoldingRange, 0, 40)
+	out := make([]*lsproto.FoldingRange, 0, 40)
 	lineStarts := scanner.GetLineStarts(sourceFile)
 	for _, currentLineStart := range lineStarts {
 		lineEnd := scanner.GetLineEndOfPosition(sourceFile, int(currentLineStart))
@@ -122,7 +122,7 @@ func visitNode(n *ast.Node, depthRemaining int, sourceFile *ast.SourceFile, l *L
 		return nil
 	}
 	// cancellationToken.throwIfCancellationRequested();
-	var foldingRange []*lsproto.FoldingRange
+	foldingRange := make([]*lsproto.FoldingRange, 0, 40)
 	// !!! remove !ast.IsBinaryExpression(n) after JSDoc implementation
 	if (!ast.IsBinaryExpression(n) && ast.IsDeclaration(n)) || ast.IsVariableStatement(n) || ast.IsReturnStatement(n) || ast.IsCallOrNewExpression(n) || n.Kind == ast.KindEndOfFile {
 		foldingRange = append(foldingRange, addOutliningForLeadingCommentsForNode(n, sourceFile, l)...)
@@ -220,8 +220,7 @@ func addOutliningForLeadingCommentsForNode(n *ast.Node, sourceFile *ast.SourceFi
 
 func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
 	p := &printer.EmitContext{}
-
-	var foldingRange []*lsproto.FoldingRange
+	foldingRange := make([]*lsproto.FoldingRange, 0, 40)
 	firstSingleLineCommentStart := -1
 	lastSingleLineCommentEnd := -1
 	singleLineCommentCount := 0
