@@ -1652,7 +1652,9 @@ func (b *Binder) bindChildren(node *ast.Node) {
 		b.inAssignmentPattern = saveInAssignmentPattern
 		b.bindEachChild(node)
 	case ast.KindJSExportAssignment, ast.KindCommonJSExport:
-		// Reparsed nodes do not double-bind children, which are not reparsed
+		// TODO: Probably need some shenanigans in the checker to connect the original syntax's object literal symbols with the cloned, exported object's symbols
+		// or maybe the checker will be OK and it will be the services that have to worry about it.
+		b.bindEachChild(node)
 	default:
 		b.bindEachChild(node)
 	}
