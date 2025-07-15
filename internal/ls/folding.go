@@ -23,13 +23,13 @@ func (l *LanguageService) ProvideFoldingRange(ctx context.Context, documentURI l
 		if a.StartLine != b.StartLine {
 			return cmp.Compare(a.StartLine, b.StartLine)
 		}
-		if a.StartCharacter != nil && b.StartCharacter != nil {
+		if a.StartCharacter != nil && b.StartCharacter != nil && *a.StartCharacter != *b.StartCharacter {
 			return cmp.Compare(*a.StartCharacter, *b.StartCharacter)
 		}
 		if a.EndLine != b.EndLine {
 			return cmp.Compare(a.EndLine, b.EndLine)
 		}
-		if a.EndCharacter != nil && b.EndCharacter != nil {
+		if a.EndCharacter != nil && b.EndCharacter != nil && *a.EndCharacter != *b.EndCharacter {
 			return cmp.Compare(*a.EndCharacter, *b.EndCharacter)
 		}
 		return 0
@@ -220,7 +220,6 @@ func addOutliningForLeadingCommentsForNode(n *ast.Node, sourceFile *ast.SourceFi
 
 func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l *LanguageService) []*lsproto.FoldingRange {
 	p := &printer.EmitContext{}
-	comments := scanner.GetLeadingCommentRanges(&printer.NewNodeFactory(p).NodeFactory, sourceFile.Text(), pos)
 
 	var foldingRange []*lsproto.FoldingRange
 	firstSingleLineCommentStart := -1
@@ -237,7 +236,7 @@ func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l
 	}
 
 	sourceText := sourceFile.Text()
-	comments(func(comment ast.CommentRange) bool {
+	for comment := range scanner.GetLeadingCommentRanges(&printer.NewNodeFactory(p).NodeFactory, sourceText, pos) {
 		commentPos := comment.Pos()
 		commentEnd := comment.End()
 		// cancellationToken.throwIfCancellationRequested();
@@ -273,8 +272,7 @@ func addOutliningForLeadingCommentsForPos(pos int, sourceFile *ast.SourceFile, l
 		default:
 			// Debug.assertNever(kind);
 		}
-		return true
-	})
+	}
 	addedComments := combineAndAddMultipleSingleLineComments()
 	if addedComments != nil {
 		foldingRange = append(foldingRange, addedComments)
@@ -318,16 +316,16 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 		// to be the entire span of the parent.
 		switch n.Parent.Kind {
 		case ast.KindDoStatement, ast.KindForInStatement, ast.KindForOfStatement, ast.KindForStatement, ast.KindIfStatement, ast.KindWhileStatement, ast.KindWithStatement, ast.KindCatchClause:
-			return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart */, sourceFile, l)
+			return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 		case ast.KindTryStatement:
 			// Could be the try-block, or the finally-block.
 			tryStatement := n.Parent.AsTryStatement()
 			if tryStatement.TryBlock == n {
-				return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart */, sourceFile, l)
+				return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 			} else if tryStatement.FinallyBlock == n {
 				node := findChildOfKind(n.Parent, ast.KindFinallyKeyword, sourceFile)
 				if node != nil {
-					return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart */, sourceFile, l)
+					return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 				}
 			}
 		default:
@@ -336,17 +334,17 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 			return createFoldingRange(l.createLspRangeFromNode(n, sourceFile), "", "")
 		}
 	case ast.KindModuleBlock:
-		return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart */, sourceFile, l)
+		return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 	case ast.KindClassDeclaration, ast.KindClassExpression, ast.KindInterfaceDeclaration, ast.KindEnumDeclaration, ast.KindCaseBlock, ast.KindTypeLiteral, ast.KindObjectBindingPattern:
-		return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart */, sourceFile, l)
+		return spanForNode(n, ast.KindOpenBraceToken, true /*useFullStart*/, sourceFile, l)
 	case ast.KindTupleType:
-		return spanForNode(n, ast.KindOpenBracketToken, !ast.IsTupleTypeNode(n.Parent) /*useFullStart */, sourceFile, l)
+		return spanForNode(n, ast.KindOpenBracketToken, !ast.IsTupleTypeNode(n.Parent) /*useFullStart*/, sourceFile, l)
 	case ast.KindCaseClause, ast.KindDefaultClause:
 		return spanForNodeArray(n.AsCaseOrDefaultClause().Statements, sourceFile, l)
 	case ast.KindObjectLiteralExpression:
-		return spanForNode(n, ast.KindOpenBraceToken, !ast.IsArrayLiteralExpression(n.Parent) && !ast.IsCallExpression(n.Parent) /*useFullStart */, sourceFile, l)
+		return spanForNode(n, ast.KindOpenBraceToken, !ast.IsArrayLiteralExpression(n.Parent) && !ast.IsCallExpression(n.Parent) /*useFullStart*/, sourceFile, l)
 	case ast.KindArrayLiteralExpression:
-		return spanForNode(n, ast.KindOpenBracketToken, !ast.IsArrayLiteralExpression(n.Parent) && !ast.IsCallExpression(n.Parent) /*useFullStart */, sourceFile, l)
+		return spanForNode(n, ast.KindOpenBracketToken, !ast.IsArrayLiteralExpression(n.Parent) && !ast.IsCallExpression(n.Parent) /*useFullStart*/, sourceFile, l)
 	case ast.KindJsxElement, ast.KindJsxFragment:
 		return spanForJSXElement(n, sourceFile, l)
 	case ast.KindJsxSelfClosingElement, ast.KindJsxOpeningElement:
@@ -354,7 +352,7 @@ func getOutliningSpanForNode(n *ast.Node, sourceFile *ast.SourceFile, l *Languag
 	case ast.KindTemplateExpression, ast.KindNoSubstitutionTemplateLiteral:
 		return spanForTemplateLiteral(n, sourceFile, l)
 	case ast.KindArrayBindingPattern:
-		return spanForNode(n, ast.KindOpenBracketToken, !ast.IsBindingElement(n.Parent) /*useFullStart */, sourceFile, l)
+		return spanForNode(n, ast.KindOpenBracketToken, !ast.IsBindingElement(n.Parent) /*useFullStart*/, sourceFile, l)
 	case ast.KindArrowFunction:
 		return spanForArrowFunction(n, sourceFile, l)
 	case ast.KindCallExpression:
