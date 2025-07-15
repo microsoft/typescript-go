@@ -9,7 +9,7 @@ import (
 
 func TestJsdocTypedefTag1(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: jsdocCompletion_typedef.js
@@ -32,7 +32,9 @@ function a(my) {
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"charAt"},
+			Includes: []fourslash.CompletionsExpectedItem{
+				"charAt",
+			},
 		},
 	})
 }

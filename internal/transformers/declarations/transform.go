@@ -195,7 +195,7 @@ func (tx *DeclarationTransformer) transformSourceFile(node *ast.SourceFile) *ast
 		combinedStatements = withMarker
 	}
 	outputFilePath := tspath.GetDirectoryPath(tspath.NormalizeSlashes(tx.declarationFilePath))
-	result := tx.Factory().UpdateSourceFile(node, combinedStatements)
+	result := tx.Factory().UpdateSourceFile(node, combinedStatements, node.EndOfFileToken)
 	result.AsSourceFile().LibReferenceDirectives = tx.getLibReferences()
 	result.AsSourceFile().TypeReferenceDirectives = tx.getTypeReferences()
 	result.AsSourceFile().IsDeclarationFile = true
@@ -667,15 +667,12 @@ func (tx *DeclarationTransformer) recreateBindingPattern(input *ast.BindingPatte
 		return nil
 	}
 	if len(results) == 1 {
-		return results[1]
+		return results[0]
 	}
 	return tx.Factory().NewSyntaxList(results)
 }
 
 func (tx *DeclarationTransformer) recreateBindingElement(e *ast.BindingElement) *ast.Node {
-	if e.Kind == ast.KindBindingElement {
-		return nil
-	}
 	if e.Name() == nil {
 		return nil
 	}
@@ -830,7 +827,7 @@ func (tx *DeclarationTransformer) transformConstructSignatureDeclaration(input *
 		input,
 		tx.ensureTypeParams(input.AsNode(), input.TypeParameters),
 		tx.updateParamList(input.AsNode(), input.Parameters),
-		nil, // no return type
+		tx.ensureType(input.AsNode(), false),
 	)
 }
 

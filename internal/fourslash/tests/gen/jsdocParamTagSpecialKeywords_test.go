@@ -9,7 +9,7 @@ import (
 
 func TestJsdocParamTagSpecialKeywords(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `// @allowNonTsExtensions: true
 // @Filename: test.js
@@ -27,7 +27,9 @@ function test(type) {
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"charAt"},
+			Includes: []fourslash.CompletionsExpectedItem{
+				"charAt",
+			},
 		},
 	})
 }

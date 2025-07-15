@@ -10,7 +10,7 @@ import (
 
 func TestCompletionAfterNewline(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `let foo /*1*/
 /*2*/
@@ -24,7 +24,12 @@ func TestCompletionAfterNewline(t *testing.T) {
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Exact: completionGlobalsPlus([]fourslash.CompletionsExpectedItem{&lsproto.CompletionItem{Label: "foo"}}, false),
+			Exact: completionGlobalsPlus(
+				[]fourslash.CompletionsExpectedItem{
+					&lsproto.CompletionItem{
+						Label: "foo",
+					},
+				}, false),
 		},
 	})
 }

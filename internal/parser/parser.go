@@ -66,18 +66,19 @@ type Parser struct {
 	hasDeprecatedTag            bool
 	hasParseError               bool
 
-	identifiers             map[string]string
-	identifierCount         int
-	notParenthesizedArrow   collections.Set[int]
-	nodeSlicePool           core.Pool[*ast.Node]
-	stringSlicePool         core.Pool[string]
-	jsdocCache              map[*ast.Node][]*ast.Node
-	possibleAwaitSpans      []int
-	jsdocCommentsSpace      []string
-	jsdocCommentRangesSpace []ast.CommentRange
-	jsdocTagCommentsSpace   []string
-	reparseList             []*ast.Node
-	commonJSModuleIndicator *ast.Node
+	identifiers                map[string]string
+	identifierCount            int
+	notParenthesizedArrow      collections.Set[int]
+	nodeSlicePool              core.Pool[*ast.Node]
+	stringSlicePool            core.Pool[string]
+	jsdocCache                 map[*ast.Node][]*ast.Node
+	possibleAwaitSpans         []int
+	jsdocCommentsSpace         []string
+	jsdocCommentRangesSpace    []ast.CommentRange
+	jsdocTagCommentsSpace      []string
+	jsdocTagCommentsPartsSpace []*ast.Node
+	reparseList                []*ast.Node
+	commonJSModuleIndicator    *ast.Node
 
 	currentParent        *ast.Node
 	setParentFromContext ast.Visitor
@@ -127,10 +128,11 @@ func (p *Parser) initializeClosures() {
 func (p *Parser) parseJSONText() *ast.SourceFile {
 	pos := p.nodePos()
 	var statements *ast.NodeList
+	var eof *ast.TokenNode
 
 	if p.token == ast.KindEndOfFile {
 		statements = p.newNodeList(core.NewTextRange(pos, p.nodePos()), nil)
-		p.parseTokenNode()
+		eof = p.parseTokenNode()
 	} else {
 		var expressions any // []*ast.Expression | *ast.Expression
 
@@ -183,9 +185,9 @@ func (p *Parser) parseJSONText() *ast.SourceFile {
 		statement := p.factory.NewExpressionStatement(expression)
 		p.finishNode(statement, pos)
 		statements = p.newNodeList(core.NewTextRange(pos, p.nodePos()), []*ast.Node{statement})
-		p.parseExpectedToken(ast.KindEndOfFile)
+		eof = p.parseExpectedToken(ast.KindEndOfFile)
 	}
-	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements, eof)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, false)
@@ -333,11 +335,19 @@ func (p *Parser) parseSourceFileWorker() *ast.SourceFile {
 	}
 	pos := p.nodePos()
 	statements := p.parseListIndex(PCSourceElements, (*Parser).parseToplevelStatement)
+	end := p.nodePos()
+	endHasJSDoc := p.hasPrecedingJSDocComment()
 	eof := p.parseTokenNode()
+	p.withJSDoc(eof, endHasJSDoc)
 	if eof.Kind != ast.KindEndOfFile {
 		panic("Expected end of file token from scanner.")
 	}
-	node := p.factory.NewSourceFile(p.opts, p.sourceText, statements)
+	if len(p.reparseList) > 0 {
+		statements = append(statements, p.reparseList...)
+		p.reparseList = nil
+		end = p.nodePos()
+	}
+	node := p.factory.NewSourceFile(p.opts, p.sourceText, p.newNodeList(core.NewTextRange(pos, end), statements), eof)
 	p.finishNode(node, pos)
 	result := node.AsSourceFile()
 	p.finishSourceFile(result, isDeclarationFile)
@@ -475,15 +485,14 @@ func (p *Parser) reparseTopLevelAwait(sourceFile *ast.SourceFile) *ast.Node {
 		}
 	}
 
-	result := p.factory.NewSourceFile(sourceFile.ParseOptions(), p.sourceText, p.newNodeList(sourceFile.Statements.Loc, statements))
+	result := p.factory.NewSourceFile(sourceFile.ParseOptions(), p.sourceText, p.newNodeList(sourceFile.Statements.Loc, statements), sourceFile.EndOfFileToken)
 	for _, s := range statements {
 		s.Parent = result.AsNode() // force (re)set parent to reparsed source file
 	}
 	return result
 }
 
-func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) *ast.NodeList {
-	pos := p.nodePos()
+func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser, index int) *ast.Node) []*ast.Node {
 	saveParsingContexts := p.parsingContexts
 	p.parsingContexts |= 1 << kind
 	list := make([]*ast.Node, 0, 16)
@@ -502,13 +511,13 @@ func (p *Parser) parseListIndex(kind ParsingContext, parseElement func(p *Parser
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
-	copy(slice, list)
-	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), slice)
+	return p.nodeSlicePool.Clone(list)
 }
 
 func (p *Parser) parseList(kind ParsingContext, parseElement func(p *Parser) *ast.Node) *ast.NodeList {
-	return p.parseListIndex(kind, func(p *Parser, _ int) *ast.Node { return parseElement(p) })
+	pos := p.nodePos()
+	nodes := p.parseListIndex(kind, func(p *Parser, _ int) *ast.Node { return parseElement(p) })
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), nodes)
 }
 
 // Return a non-nil (but possibly empty) slice if parsing was successful, or nil if parseElement returned nil
@@ -566,9 +575,7 @@ func (p *Parser) parseDelimitedList(kind ParsingContext, parseElement func(p *Pa
 		}
 	}
 	p.parsingContexts = saveParsingContexts
-	slice := p.nodeSlicePool.NewSlice(len(list))
-	copy(slice, list)
-	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), slice)
+	return p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
 }
 
 // Return a non-nil (but possibly empty) NodeList if parsing was successful, or nil if opening token wasn't found
@@ -2528,12 +2535,12 @@ func (p *Parser) parseUnionOrIntersectionType(operator ast.Kind, parseConstituen
 		typeNode = parseConstituentType(p)
 	}
 	if p.token == operator || hasLeadingOperator {
-		types := p.nodeSlicePool.NewSlice(2)[:1]
+		types := make([]*ast.Node, 1, 8)
 		types[0] = typeNode
 		for p.parseOptional(operator) {
 			types = append(types, p.parseFunctionOrConstructorTypeToError(isUnionType, parseConstituentType))
 		}
-		typeNode = p.createUnionOrIntersectionTypeNode(operator, p.newNodeList(core.NewTextRange(pos, p.nodePos()), types))
+		typeNode = p.createUnionOrIntersectionTypeNode(operator, p.newNodeList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(types)))
 		p.finishNode(typeNode, pos)
 	}
 	return typeNode
@@ -3835,9 +3842,7 @@ func (p *Parser) parseModifiersEx(allowDecorators bool, permitConstAsModifier bo
 		}
 	}
 	if len(list) != 0 {
-		nodes := p.nodeSlicePool.NewSlice(len(list))
-		copy(nodes, list)
-		return p.newModifierList(core.NewTextRange(pos, p.nodePos()), nodes)
+		return p.newModifierList(core.NewTextRange(pos, p.nodePos()), p.nodeSlicePool.Clone(list))
 	}
 	return nil
 }
@@ -6332,16 +6337,26 @@ func (p *Parser) isUsingDeclaration() bool {
 	// 'using' always starts a lexical declaration if followed by an identifier. We also eagerly parse
 	// |ObjectBindingPattern| so that we can report a grammar error during check. We don't parse out
 	// |ArrayBindingPattern| since it potentially conflicts with element access (i.e., `using[x]`).
-	return p.lookAhead((*Parser).nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine)
+	return p.lookAhead(func(p *Parser) bool {
+		return p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine( /*disallowOf*/ false)
+	})
 }
 
-func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine() bool {
+func (p *Parser) nextTokenIsEqualsOrSemicolonOrColonToken() bool {
 	p.nextToken()
+	return p.token == ast.KindEqualsToken || p.token == ast.KindSemicolonToken || p.token == ast.KindColonToken
+}
+
+func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine(disallowOf bool) bool {
+	p.nextToken()
+	if disallowOf && p.token == ast.KindOfKeyword {
+		return p.lookAhead((*Parser).nextTokenIsEqualsOrSemicolonOrColonToken)
+	}
 	return p.isBindingIdentifier() || p.token == ast.KindOpenBraceToken && !p.hasPrecedingLineBreak()
 }
 
 func (p *Parser) nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLineDisallowOf() bool {
-	return p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine() && p.token != ast.KindOfKeyword
+	return p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine( /*disallowOf*/ true)
 }
 
 func (p *Parser) isAwaitUsingDeclaration() bool {
@@ -6349,7 +6364,7 @@ func (p *Parser) isAwaitUsingDeclaration() bool {
 }
 
 func (p *Parser) nextIsUsingKeywordThenBindingIdentifierOrStartOfObjectDestructuringOnSameLine() bool {
-	return p.nextToken() == ast.KindUsingKeyword && p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine()
+	return p.nextToken() == ast.KindUsingKeyword && p.nextTokenIsBindingIdentifierOrStartOfDestructuringOnSameLine( /*disallowOf*/ false)
 }
 
 func (p *Parser) nextTokenIsTokenStringLiteral() bool {

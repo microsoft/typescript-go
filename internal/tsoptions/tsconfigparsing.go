@@ -212,7 +212,7 @@ func parseOwnConfigOfJsonSourceFile(
 				propertySetErrors = append(propertySetErrors, err...)
 			} else if option == nil {
 				if keyText == "excludes" {
-					propertySetErrors = append(propertySetErrors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, propertyAssignment.Name(), diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
+					propertySetErrors = append(propertySetErrors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, propertyAssignment.Name(), diagnostics.Unknown_option_excludes_Did_you_mean_exclude))
 				}
 				if core.Find(OptionsDeclarations, func(option *CommandLineOption) bool { return option.Name == keyText }) != nil {
 					rootCompilerOptions = append(rootCompilerOptions, propertyAssignment.Name())
@@ -347,7 +347,7 @@ func validateJsonOptionValue(
 	if opt.extraValidation {
 		diag := specToDiagnostic(val.(string), false)
 		if diag != nil {
-			errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diag))
+			errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diag))
 			return nil, errors
 		}
 	}
@@ -423,7 +423,7 @@ func convertJsonOption(
 		if sourceFile == nil && nodeValue == nil {
 			return nil, []*ast.Diagnostic{ast.NewCompilerDiagnostic(diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name)}
 		} else {
-			return nil, []*ast.Diagnostic{createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, nodeValue, diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name)}
+			return nil, []*ast.Diagnostic{CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, nodeValue, diagnostics.Option_0_can_only_be_specified_on_command_line, opt.Name)}
 		}
 	}
 	if isCompilerOptionsValue(opt, value) {
@@ -447,7 +447,7 @@ func convertJsonOption(
 			return normalizeNonListOptionValue(opt, basePath, validatedValue), errors
 		}
 	} else {
-		return nil, []*ast.Diagnostic{createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, getCompilerOptionValueTypeString(opt))}
+		return nil, []*ast.Diagnostic{CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(sourceFile, valueExpression, diagnostics.Compiler_option_0_requires_a_value_of_type_1, opt.Name, getCompilerOptionValueTypeString(opt))}
 	}
 }
 
@@ -514,7 +514,7 @@ func getExtendsConfigPath(
 		if !host.FS().FileExists(extendedConfigPath) && !strings.HasSuffix(extendedConfigPath, tspath.ExtensionJson) {
 			extendedConfigPath = extendedConfigPath + tspath.ExtensionJson
 			if !host.FS().FileExists(extendedConfigPath) {
-				errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.File_0_not_found, extendedConfig))
+				errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.File_0_not_found, extendedConfig))
 				return "", errors
 			}
 		}
@@ -526,9 +526,9 @@ func getExtendsConfigPath(
 		return resolved.ResolvedFileName, errors
 	}
 	if extendedConfig == "" {
-		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"))
+		errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.Compiler_option_0_cannot_be_given_an_empty_string, "extends"))
 	} else {
-		errors = append(errors, createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.File_0_not_found, extendedConfig))
+		errors = append(errors, CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(errorFile, valueExpression, diagnostics.File_0_not_found, extendedConfig))
 	}
 	return "", errors
 }
@@ -893,7 +893,7 @@ func readJsonConfigFile(fileName string, path tspath.Path, readFile func(fileNam
 		}, diagnostic
 	} else {
 		file := &TsConfigSourceFile{
-			SourceFile: (&ast.NodeFactory{}).NewSourceFile(ast.SourceFileParseOptions{FileName: fileName, Path: path}, "", nil).AsSourceFile(),
+			SourceFile: (&ast.NodeFactory{}).NewSourceFile(ast.SourceFileParseOptions{FileName: fileName, Path: path}, "", nil, (&ast.NodeFactory{}).NewToken(ast.KindEndOfFile)).AsSourceFile(),
 		}
 		file.SourceFile.SetDiagnostics(diagnostic)
 		return file, diagnostic
@@ -1036,7 +1036,7 @@ func parseConfig(
 					result.compileOnSave = compileOnSave
 				}
 			}
-			mergeCompilerOptions(result.options, extendedConfig.options)
+			mergeCompilerOptions(result.options, extendedConfig.options, extendsRaw)
 		}
 	}
 
@@ -1070,7 +1070,7 @@ func parseConfig(
 				sourceFile.ExtendedSourceFiles = append(sourceFile.ExtendedSourceFiles, extendedSourceFile)
 			}
 		}
-		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options)
+		ownConfig.options = mergeCompilerOptions(result.options, ownConfig.options, ownConfig.raw)
 		// ownConfig.watchOptions = ownConfig.watchOptions && result.watchOptions ?
 		//     assignWatchOptions(result, ownConfig.watchOptions) :
 		//     ownConfig.watchOptions || result.watchOptions;
@@ -1114,7 +1114,7 @@ func parseJsonConfigFileContentWorker(
 	var errors []*ast.Diagnostic
 	resolutionStackString := []string{}
 	parsedConfig, errors := parseConfig(json, sourceFile, host, basePath, configFileName, resolutionStackString, extendedConfigCache)
-	mergeCompilerOptions(parsedConfig.options, existingOptions)
+	mergeCompilerOptions(parsedConfig.options, existingOptions, nil)
 	handleOptionConfigDirTemplateSubstitution(parsedConfig.options, basePathForFileNames)
 	rawConfig := parseJsonToStringKey(parsedConfig.raw)
 	if configFileName != "" && parsedConfig.options != nil {
@@ -1155,7 +1155,7 @@ func parseJsonConfigFileContentWorker(
 					fileName = "tsconfig.json"
 				}
 				diagnosticMessage := diagnostics.The_files_list_in_config_file_0_is_empty
-				nodeValue := forEachTsConfigPropArray(sourceFile.SourceFile, "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
+				nodeValue := ForEachTsConfigPropArray(sourceFile.SourceFile, "files", func(property *ast.PropertyAssignment) *ast.Node { return property.Initializer })
 				errors = append(errors, ast.NewDiagnostic(sourceFile.SourceFile, core.NewTextRange(scanner.SkipTrivia(sourceFile.SourceFile.Text(), nodeValue.Pos()), nodeValue.End()), diagnosticMessage, fileName))
 			} else {
 				errors = append(errors, ast.NewCompilerDiagnostic(diagnostics.The_files_list_in_config_file_0_is_empty, configFileName))
@@ -1297,7 +1297,7 @@ func shouldReportNoInputFiles(fileNames []string, canJsonReportNoInputFiles bool
 func validateSpecs(specs any, disallowTrailingRecursion bool, jsonSourceFile *ast.SourceFile, specKey string) ([]string, []*ast.Diagnostic) {
 	createDiagnostic := func(message *diagnostics.Message, spec string) *ast.Diagnostic {
 		element := getTsConfigPropArrayElementValue(jsonSourceFile, specKey, spec)
-		return createDiagnosticForNodeInSourceFileOrCompilerDiagnostic(jsonSourceFile, element.AsNode(), message, spec)
+		return CreateDiagnosticForNodeInSourceFileOrCompilerDiagnostic(jsonSourceFile, element.AsNode(), message, spec)
 	}
 	var errors []*ast.Diagnostic
 	var finalSpecs []string
@@ -1363,7 +1363,7 @@ func invalidDotDotAfterRecursiveWildcard(s string) bool {
 const invalidTrailingRecursionPattern = `(?:^|\/)\*\*\/?$`
 
 func getTsConfigPropArrayElementValue(tsConfigSourceFile *ast.SourceFile, propKey string, elementValue string) *ast.StringLiteral {
-	return forEachTsConfigPropArray(tsConfigSourceFile, propKey, func(property *ast.PropertyAssignment) *ast.StringLiteral {
+	return ForEachTsConfigPropArray(tsConfigSourceFile, propKey, func(property *ast.PropertyAssignment) *ast.StringLiteral {
 		if ast.IsArrayLiteralExpression(property.Initializer) {
 			value := core.Find(property.Initializer.AsArrayLiteralExpression().Elements.Nodes, func(element *ast.Node) bool {
 				return ast.IsStringLiteral(element) && element.AsStringLiteral().Text == elementValue
@@ -1376,14 +1376,14 @@ func getTsConfigPropArrayElementValue(tsConfigSourceFile *ast.SourceFile, propKe
 	})
 }
 
-func forEachTsConfigPropArray[T any](tsConfigSourceFile *ast.SourceFile, propKey string, callback func(property *ast.PropertyAssignment) *T) *T {
+func ForEachTsConfigPropArray[T any](tsConfigSourceFile *ast.SourceFile, propKey string, callback func(property *ast.PropertyAssignment) *T) *T {
 	if tsConfigSourceFile != nil {
-		return forEachPropertyAssignment(getTsConfigObjectLiteralExpression(tsConfigSourceFile), propKey, callback)
+		return ForEachPropertyAssignment(getTsConfigObjectLiteralExpression(tsConfigSourceFile), propKey, callback)
 	}
 	return nil
 }
 
-func forEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression, key string, callback func(property *ast.PropertyAssignment) T, key2 ...string) T {
+func ForEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression, key string, callback func(property *ast.PropertyAssignment) *T, key2 ...string) *T {
 	if objectLiteral != nil {
 		for _, property := range objectLiteral.Properties.Nodes {
 			if !ast.IsPropertyAssignment(property) {
@@ -1396,7 +1396,7 @@ func forEachPropertyAssignment[T any](objectLiteral *ast.ObjectLiteralExpression
 			}
 		}
 	}
-	return *new(T)
+	return nil
 }
 
 func getTsConfigObjectLiteralExpression(tsConfigSourceFile *ast.SourceFile) *ast.ObjectLiteralExpression {

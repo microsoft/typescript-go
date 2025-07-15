@@ -9,7 +9,7 @@ import (
 
 func TestCompletionListInUnclosedFunction11(t *testing.T) {
 	t.Parallel()
-	t.Skip()
+
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	const content = `interface MyType {
 }
@@ -25,7 +25,9 @@ function foo(x: string, y: number, z: boolean) {
 			EditRange:        ignored,
 		},
 		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{"MyType"},
+			Includes: []fourslash.CompletionsExpectedItem{
+				"MyType",
+			},
 		},
 	})
 }
