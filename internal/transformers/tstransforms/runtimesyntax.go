@@ -5,6 +5,7 @@ package tstransforms
 // !!! SourceMaps and Comments need to be validated
 
 import (
+	"context"
 	"slices"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -32,7 +33,9 @@ type RuntimeSyntaxTransformer struct {
 	enumMemberCache                     map[*ast.EnumDeclarationNode]map[string]evaluator.Result
 }
 
-func NewRuntimeSyntaxTransformer(emitContext *printer.EmitContext, compilerOptions *core.CompilerOptions, resolver binder.ReferenceResolver) *transformers.Transformer {
+func NewRuntimeSyntaxTransformer(ctx context.Context, resolver binder.ReferenceResolver) *transformers.Transformer {
+	compilerOptions := transformers.GetCompilerOptionsFromContext(ctx)
+	emitContext := transformers.GetEmitContextFromContext(ctx)
 	tx := &RuntimeSyntaxTransformer{compilerOptions: compilerOptions, resolver: resolver}
 	return tx.NewTransformer(tx.visit, emitContext)
 }

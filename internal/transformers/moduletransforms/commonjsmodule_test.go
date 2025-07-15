@@ -1,6 +1,7 @@
 package moduletransforms_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -9,6 +10,7 @@ import (
 	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/testutil/emittestutil"
 	"github.com/microsoft/typescript-go/internal/testutil/parsetestutil"
+	"github.com/microsoft/typescript-go/internal/transformers"
 	"github.com/microsoft/typescript-go/internal/transformers/moduletransforms"
 	"github.com/microsoft/typescript-go/internal/transformers/tstransforms"
 )
@@ -1047,9 +1049,10 @@ exports.a = a;`,
 
 			emitContext := printer.NewEmitContext()
 			resolver := binder.NewReferenceResolver(compilerOptions, binder.ReferenceResolverHooks{})
-
-			file = tstransforms.NewRuntimeSyntaxTransformer(emitContext, compilerOptions, resolver).TransformSourceFile(file)
-			file = moduletransforms.NewCommonJSModuleTransformer(emitContext, compilerOptions, resolver, fakeGetEmitModuleFormatOfFile).TransformSourceFile(file)
+			ctx := transformers.WithCompilerOptions(context.Background(), compilerOptions)
+			ctx = transformers.WithEmitContext(ctx, emitContext)
+			file = tstransforms.NewRuntimeSyntaxTransformer(ctx, resolver).TransformSourceFile(file)
+			file = moduletransforms.NewCommonJSModuleTransformer(ctx, resolver, fakeGetEmitModuleFormatOfFile).TransformSourceFile(file)
 			emittestutil.CheckEmit(t, emitContext, file, rec.output)
 		})
 	}

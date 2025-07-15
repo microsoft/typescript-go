@@ -1224,7 +1224,7 @@ func (p *Program) Emit(options EmitOptions) *EmitResult {
 			// attach writer and perform emit
 			emitter.writer = writer
 			emitter.paths = outputpaths.GetOutputPathsFor(sourceFile, host.Options(), host, options.forceDtsEmit)
-			emitter.emit()
+			emitter.emit(context.TODO())
 			emitter.writer = nil
 
 			// put the writer back in the pool

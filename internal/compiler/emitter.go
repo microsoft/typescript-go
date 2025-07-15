@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"context"
 	"encoding/base64"
 
 	"github.com/microsoft/typescript-go/internal/ast"
@@ -42,9 +43,9 @@ type emitter struct {
 	sourceFile         *ast.SourceFile
 }
 
-func (e *emitter) emit() {
+func (e *emitter) emit(ctx context.Context) {
 	// !!! tracing
-	e.emitJSFile(e.sourceFile, e.paths.JsFilePath(), e.paths.SourceMapFilePath())
+	e.emitJSFile(ctx, e.sourceFile, e.paths.JsFilePath(), e.paths.SourceMapFilePath())
 	e.emitDeclarationFile(e.sourceFile, e.paths.DeclarationFilePath(), e.paths.DeclarationMapPath())
 	e.emitBuildInfo(e.paths.BuildInfoPath())
 }
@@ -54,11 +55,11 @@ func (e *emitter) getDeclarationTransformers(emitContext *printer.EmitContext, d
 	return []*declarations.DeclarationTransformer{transform}
 }
 
-func getModuleTransformer(emitContext *printer.EmitContext, options *core.CompilerOptions, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
-	switch options.GetEmitModuleKind() {
+func getModuleTransformer(ctx context.Context, resolver binder.ReferenceResolver, getEmitModuleFormatOfFile func(file ast.HasFileName) core.ModuleKind) *transformers.Transformer {
+	switch transformers.GetCompilerOptionsFromContext(ctx).GetEmitModuleKind() {
 	case core.ModuleKindPreserve:
 		// `ESModuleTransformer` contains logic for preserving CJS input syntax in `--module preserve`
-		return moduletransforms.NewESModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+		return moduletransforms.NewESModuleTransformer(ctx, resolver, getEmitModuleFormatOfFile)
 
 	case core.ModuleKindESNext,
 		core.ModuleKindES2022,
@@ -68,14 +69,14 @@ func getModuleTransformer(emitContext *printer.EmitContext, options *core.Compil
 		core.ModuleKindNode16,
 		core.ModuleKindNodeNext,
 		core.ModuleKindCommonJS:
-		return moduletransforms.NewImpliedModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+		return moduletransforms.NewImpliedModuleTransformer(ctx, resolver, getEmitModuleFormatOfFile)
 
 	default:
-		return moduletransforms.NewCommonJSModuleTransformer(emitContext, options, resolver, getEmitModuleFormatOfFile)
+		return moduletransforms.NewCommonJSModuleTransformer(ctx, resolver, getEmitModuleFormatOfFile)
 	}
 }
 
-func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHost, sourceFile *ast.SourceFile) []*transformers.Transformer {
+func getScriptTransformers(ctx context.Context, host printer.EmitHost, sourceFile *ast.SourceFile) []*transformers.Transformer {
 	var tx []*transformers.Transformer
 	options := host.Options()
 
@@ -95,33 +96,33 @@ func getScriptTransformers(emitContext *printer.EmitContext, host printer.EmitHo
 	// transform TypeScript syntax
 	{
 		// erase types
-		tx = append(tx, tstransforms.NewTypeEraserTransformer(emitContext, options))
+		tx = append(tx, tstransforms.NewTypeEraserTransformer(ctx))
 
 		// elide imports
 		if importElisionEnabled {
-			tx = append(tx, tstransforms.NewImportElisionTransformer(emitContext, options, emitResolver))
+			tx = append(tx, tstransforms.NewImportElisionTransformer(ctx, emitResolver))
 		}
 
 		// transform `enum`, `namespace`, and parameter properties
-		tx = append(tx, tstransforms.NewRuntimeSyntaxTransformer(emitContext, options, referenceResolver))
+		tx = append(tx, tstransforms.NewRuntimeSyntaxTransformer(ctx, referenceResolver))
 	}
 
 	// !!! transform legacy decorator syntax
 	if options.GetJSXTransformEnabled() {
-		tx = append(tx, jsxtransforms.NewJSXTransformer(emitContext, options, emitResolver))
+		tx = append(tx, jsxtransforms.NewJSXTransformer(ctx, emitResolver))
 	}
 
-	downleveler := estransforms.GetESTransformer(options, emitContext)
+	downleveler := estransforms.GetESTransformer(ctx)
 	if downleveler != nil {
 		tx = append(tx, downleveler)
 	}
 
 	// transform module syntax
-	tx = append(tx, getModuleTransformer(emitContext, options, referenceResolver, host.GetEmitModuleFormatOfFile))
+	tx = append(tx, getModuleTransformer(ctx, referenceResolver, host.GetEmitModuleFormatOfFile))
 	return tx
 }
 
-func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sourceMapFilePath string) {
+func (e *emitter) emitJSFile(ctx context.Context, sourceFile *ast.SourceFile, jsFilePath string, sourceMapFilePath string) {
 	options := e.host.Options()
 
 	if sourceFile == nil || e.emitOnly != emitAll && e.emitOnly != emitOnlyJs || len(jsFilePath) == 0 {
@@ -135,7 +136,10 @@ func (e *emitter) emitJSFile(sourceFile *ast.SourceFile, jsFilePath string, sour
 	emitContext, putEmitContext := printer.GetEmitContext()
 	defer putEmitContext()
 
-	for _, transformer := range getScriptTransformers(emitContext, e.host, sourceFile) {
+	ctx = transformers.WithCompilerOptions(ctx, e.host.Options())
+	ctx = transformers.WithEmitContext(ctx, emitContext)
+
+	for _, transformer := range getScriptTransformers(ctx, e.host, sourceFile) {
 		sourceFile = transformer.TransformSourceFile(sourceFile)
 	}
 
