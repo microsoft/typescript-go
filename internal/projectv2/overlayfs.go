@@ -12,12 +12,13 @@ import (
 	"github.com/microsoft/typescript-go/internal/vfs"
 )
 
-type fileHandle interface {
+type FileHandle interface {
 	FileName() string
 	Version() int32
 	Hash() [sha256.Size]byte
 	Content() string
 	MatchesDiskText() bool
+	IsOverlay() bool
 	LineMap() *ls.LineMap
 }
 
@@ -63,7 +64,7 @@ func newDiskFile(fileName string, content string) *diskFile {
 	}
 }
 
-var _ fileHandle = (*diskFile)(nil)
+var _ FileHandle = (*diskFile)(nil)
 
 func (f *diskFile) Version() int32 {
 	return 0
@@ -73,7 +74,11 @@ func (f *diskFile) MatchesDiskText() bool {
 	return true
 }
 
-var _ fileHandle = (*overlay)(nil)
+func (f *diskFile) IsOverlay() bool {
+	return false
+}
+
+var _ FileHandle = (*overlay)(nil)
 
 type overlay struct {
 	fileBase
@@ -107,6 +112,10 @@ func (o *overlay) MatchesDiskText() bool {
 	return o.matchesDiskText
 }
 
+func (o *overlay) IsOverlay() bool {
+	return true
+}
+
 type overlayFS struct {
 	toPath           func(string) tspath.Path
 	fs               vfs.FS
@@ -125,7 +134,7 @@ func newOverlayFS(fs vfs.FS, overlays map[tspath.Path]*overlay, positionEncoding
 	}
 }
 
-func (fs *overlayFS) getFile(fileName string) fileHandle {
+func (fs *overlayFS) getFile(fileName string) FileHandle {
 	fs.mu.Lock()
 	overlays := fs.overlays
 	fs.mu.Unlock()

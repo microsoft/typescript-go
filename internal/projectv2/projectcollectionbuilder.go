@@ -223,7 +223,7 @@ func (b *projectCollectionBuilder) findDefaultProject(fileName string, path tspa
 func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string, path tspath.Path) *dirty.SyncMapEntry[tspath.Path, *Project] {
 	// Sort configured projects so we can use a deterministic "first" as a last resort.
 	var configuredProjectPaths []tspath.Path
-	var configuredProjects map[tspath.Path]*dirty.SyncMapEntry[tspath.Path, *Project]
+	configuredProjects := make(map[tspath.Path]*dirty.SyncMapEntry[tspath.Path, *Project])
 	b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
 		configuredProjectPaths = append(configuredProjectPaths, entry.Key())
 		configuredProjects[entry.Key()] = entry
@@ -444,11 +444,6 @@ func (b *projectCollectionBuilder) findOrCreateProject(
 
 func (b *projectCollectionBuilder) toPath(fileName string) tspath.Path {
 	return tspath.ToPath(fileName, b.sessionOptions.CurrentDirectory, b.fs.fs.UseCaseSensitiveFileNames())
-}
-
-func (b *projectCollectionBuilder) isOpenFile(path tspath.Path) bool {
-	_, ok := b.fs.overlays[path]
-	return ok
 }
 
 func (b *projectCollectionBuilder) updateInferredProject(rootFileNames []string) bool {

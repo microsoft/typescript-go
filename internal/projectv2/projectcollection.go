@@ -203,19 +203,19 @@ func findDefaultConfiguredProjectFromProgramInclusion(
 		multipleDirectInclusions                 bool
 	)
 
-	for _, path := range projectPaths {
-		p := getProject(path)
+	for _, projectPath := range projectPaths {
+		p := getProject(projectPath)
 		if p.containsFile(path) {
-			containingProjects = append(containingProjects, path)
+			containingProjects = append(containingProjects, projectPath)
 			if !multipleDirectInclusions && !p.IsSourceFromProjectReference(path) {
 				if firstNonSourceOfProjectReferenceRedirect == "" {
-					firstNonSourceOfProjectReferenceRedirect = path
+					firstNonSourceOfProjectReferenceRedirect = projectPath
 				} else {
 					multipleDirectInclusions = true
 				}
 			}
 			if firstConfiguredProject == "" {
-				firstConfiguredProject = path
+				firstConfiguredProject = projectPath
 			}
 		}
 	}

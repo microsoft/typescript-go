@@ -73,6 +73,15 @@ func (s *Snapshot) GetDefaultProject(uri lsproto.DocumentUri) *Project {
 	return s.ProjectCollection.GetDefaultProject(fileName, path)
 }
 
+func (s *Snapshot) ID() uint64 {
+	return s.id
+}
+
+func (s *Snapshot) GetFile(uri lsproto.DocumentUri) FileHandle {
+	fileName := ls.DocumentURIToFileName(uri)
+	return s.overlayFS.getFile(fileName)
+}
+
 type SnapshotChange struct {
 	// fileChanges are the changes that have occurred since the last snapshot.
 	fileChanges FileChangeSummary

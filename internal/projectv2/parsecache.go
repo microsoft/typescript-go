@@ -39,7 +39,7 @@ type parseCache struct {
 }
 
 func (c *parseCache) acquireDocument(
-	fh fileHandle,
+	fh FileHandle,
 	opts ast.SourceFileParseOptions,
 	scriptKind core.ScriptKind,
 ) *ast.SourceFile {
