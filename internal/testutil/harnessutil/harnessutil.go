@@ -298,23 +298,25 @@ func setOptionsFromTestConfig(t *testing.T, testConfig TestConfiguration, compil
 	}
 }
 
-var compilerOptions = append(
+var compilerOptions = core.Concatenate(
 	tsoptions.OptionsDeclarations,
-	&tsoptions.CommandLineOption{
-		Name: "allowNonTsExtensions",
-		Kind: tsoptions.CommandLineOptionTypeBoolean,
-	},
-	&tsoptions.CommandLineOption{
-		Name: "noErrorTruncation",
-		Kind: tsoptions.CommandLineOptionTypeBoolean,
-	},
-	&tsoptions.CommandLineOption{
-		Name: "suppressOutputPathCheck",
-		Kind: tsoptions.CommandLineOptionTypeBoolean,
-	},
-	&tsoptions.CommandLineOption{
-		Name: "noCheck",
-		Kind: tsoptions.CommandLineOptionTypeBoolean,
+	[]*tsoptions.CommandLineOption{
+		{
+			Name: "allowNonTsExtensions",
+			Kind: tsoptions.CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "noErrorTruncation",
+			Kind: tsoptions.CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "suppressOutputPathCheck",
+			Kind: tsoptions.CommandLineOptionTypeBoolean,
+		},
+		{
+			Name: "noCheck",
+			Kind: tsoptions.CommandLineOptionTypeBoolean,
+		},
 	},
 )
 
