@@ -1067,7 +1067,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 			existing.Add(element.PropertyNameOrName().Text())
 		}
 		uniques := core.Filter(exports, func(symbol *ast.Symbol) bool {
-			return symbol.Name != ast.InternalSymbolNameDefault && !existing.Has(symbol.Name)
+			return ast.SymbolName(symbol) != ast.InternalSymbolNameDefault && !existing.Has(ast.SymbolName(symbol))
 		})
 
 		symbols = append(symbols, uniques...)
@@ -1103,7 +1103,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 		uniques := core.Filter(
 			typeChecker.GetApparentProperties(typeChecker.GetTypeAtLocation(importAttributes)),
 			func(symbol *ast.Symbol) bool {
-				return !existing.Has(symbol.Name)
+				return !existing.Has(ast.SymbolName(symbol))
 			})
 		symbols = append(symbols, uniques...)
 		return globalsSearchSuccess
@@ -1278,7 +1278,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 		// Set sort texts.
 		for _, symbol := range filteredSymbols {
 			symbolId := ast.GetSymbolId(symbol)
-			if spreadMemberNames.Has(symbol.Name) {
+			if spreadMemberNames.Has(ast.SymbolName(symbol)) {
 				symbolToSortTextMap[symbolId] = SortTextMemberDeclaredBySpreadAssignment
 			}
 			if symbol.Flags&ast.SymbolFlagsOptional != 0 {
@@ -1374,7 +1374,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 			}
 		}
 
-		// Need to insert 'this.' before properties of `this` type, so only do that if `includeInsertTextCompletions`
+		// Need to insert 'this.' before properties of `this` type.
 		if scopeNode.Kind != ast.KindSourceFile {
 			thisType := typeChecker.TryGetThisTypeAtEx(
 				scopeNode,
@@ -1809,7 +1809,7 @@ func (l *LanguageService) createCompletionItem(
 		} else {
 			insertText = fmt.Sprintf(
 				"this%s%s",
-				core.IfElse(insertQuestionDot, "?.", ""),
+				core.IfElse(insertQuestionDot, "?.", "."),
 				name)
 		}
 	} else if data.propertyAccessToConvert != nil && (useBraces || insertQuestionDot) {
@@ -2051,9 +2051,9 @@ func isRecommendedCompletionMatch(localSymbol *ast.Symbol, recommendedCompletion
 		localSymbol.Flags&ast.SymbolFlagsExportValue != 0 && typeChecker.GetExportSymbolOfSymbol(localSymbol) == recommendedCompletion
 }
 
-// Ported from vscode's `USUAL_WORD_SEPARATORS`.
+// Ported from vscode.
 var wordSeparators = collections.NewSetFromItems(
-	'`', '~', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', '{', ']', '}', '\\', '|',
+	'`', '~', '!', '@', '%', '^', '&', '*', '(', ')', '-', '=', '+', '[', '{', ']', '}', '\\', '|',
 	';', ':', '\'', '"', ',', '.', '<', '>', '/', '?',
 )
 
@@ -2093,21 +2093,26 @@ func getFilterText(
 	isSnippet bool,
 	wordStart rune,
 ) string {
-	// Private field completion.
+	// Private field completion, e.g. label `#bar`.
 	if strings.HasPrefix(label, "#") {
-		// !!! document theses cases
 		if insertText != "" {
 			if strings.HasPrefix(insertText, "this.#") {
 				if wordStart == '#' {
+					// `method() { this.#| }`
 					return insertText
 				} else {
+					// `method() { this.| }`
+					// `method() { | }`
 					return strings.TrimPrefix(insertText, "this.#")
 				}
 			}
 		} else {
 			if wordStart == '#' {
+				// `method() { this.#| }`
 				return ""
 			} else {
+				// `method() { this.| }`
+				// `method() { | }`
 				return strings.TrimPrefix(label, "#")
 			}
 		}
@@ -2333,7 +2338,7 @@ func getCompletionEntryDisplayNameForSymbol(
 	if originIncludesSymbolName(origin) {
 		name = origin.symbolName()
 	} else {
-		name = symbol.Name
+		name = ast.SymbolName(symbol)
 	}
 	if name == "" ||
 		// If the symbol is external module, don't show it in the completion list
@@ -2427,7 +2432,7 @@ func originIsPromise(origin *symbolOriginInfo) bool {
 
 func getSourceFromOrigin(origin *symbolOriginInfo) string {
 	if originIsExport(origin) {
-		return stringutil.StripQuotes(origin.asExport().moduleSymbol.Name)
+		return stringutil.StripQuotes(ast.SymbolName(origin.asExport().moduleSymbol))
 	}
 
 	if originIsResolvedExport(origin) {
@@ -3193,7 +3198,7 @@ func getJSCompletionEntries(
 
 func (l *LanguageService) getOptionalReplacementSpan(location *ast.Node, file *ast.SourceFile) *lsproto.Range {
 	// StringLiteralLike locations are handled separately in stringCompletions.ts
-	if location != nil && location.Kind == ast.KindIdentifier {
+	if location != nil && (location.Kind == ast.KindIdentifier || location.Kind == ast.KindPrivateIdentifier) {
 		start := astnav.GetStartOfNode(location, file, false /*includeJSDoc*/)
 		return l.createLspRangeFromBounds(start, location.End(), file)
 	}
@@ -3840,7 +3845,7 @@ func filterClassMembersList(
 	}
 
 	return core.Filter(baseSymbols, func(propertySymbol *ast.Symbol) bool {
-		return !existingMemberNames.Has(propertySymbol.Name) &&
+		return !existingMemberNames.Has(ast.SymbolName(propertySymbol)) &&
 			len(propertySymbol.Declarations) > 0 &&
 			checker.GetDeclarationModifierFlagsFromSymbol(propertySymbol)&ast.ModifierFlagsPrivate == 0 &&
 			!(propertySymbol.ValueDeclaration != nil && ast.IsPrivateIdentifierClassElementDeclaration(propertySymbol.ValueDeclaration))
@@ -4133,41 +4138,26 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Filter text
 
 	// Ported from vscode ts extension.
-	wordRange, wordStart := getWordRange(file, position)
+	_, wordStart := getWordRange(file, position)
 	if filterText == "" {
 		filterText = getFilterText(file, position, insertText, name, isMemberCompletion, isSnippet, wordStart)
 	}
-	if isMemberCompletion && !isSnippet {
-		accessorRange, accessorText := getDotAccessorContext(file, position)
-		if accessorText != "" {
-			filterText = accessorText + core.IfElse(insertText != "", insertText, name)
-			if textEdit == nil {
-				insertText = filterText
-				if wordRange != nil && clientSupportsItemInsertReplace(clientOptions) {
-					textEdit = &lsproto.TextEditOrInsertReplaceEdit{
-						InsertReplaceEdit: &lsproto.InsertReplaceEdit{
-							NewText: insertText,
-							Insert: *l.createLspRangeFromBounds(
-								accessorRange.Pos(),
-								accessorRange.End(),
-								file),
-							Replace: *l.createLspRangeFromBounds(
-								min(accessorRange.Pos(), wordRange.Pos()),
-								accessorRange.End(),
-								file),
-						},
-					}
-				} else {
-					textEdit = &lsproto.TextEditOrInsertReplaceEdit{
-						TextEdit: &lsproto.TextEdit{
-							NewText: insertText,
-							Range:   *l.createLspRangeFromBounds(accessorRange.Pos(), accessorRange.End(), file),
-						},
-					}
-				}
-			}
-		}
-	}
+	// !!! TODO: remove?
+	// if isMemberCompletion && !isSnippet {
+	// 	accessorRange, accessorText := getDotAccessorContext(file, position)
+	// 	if accessorText != "" {
+	// 		filterText = accessorText + core.IfElse(insertText != "", insertText, name)
+	// 		if textEdit == nil {
+	// 			insertText = filterText
+	// 			textEdit = &lsproto.TextEditOrInsertReplaceEdit{
+	// 				TextEdit: &lsproto.TextEdit{
+	// 					NewText: insertText,
+	// 					Range:   *l.createLspRangeFromBounds(accessorRange.Pos(), accessorRange.End(), file),
+	// 				},
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
