@@ -428,7 +428,7 @@ func (p *Parser) reparseHosted(tag *ast.Node, parent *ast.Node, jsDoc *ast.Node)
 					nil, /* initializer */
 				)
 				if tag.AsJSDocThisTag().TypeExpression != nil {
-					thisParam.AsParameterDeclaration().Type = p.factory.DeepCloneReparse(tag.AsJSDocThisTag().TypeExpression)
+					thisParam.AsParameterDeclaration().Type = p.factory.DeepCloneReparse(tag.AsJSDocThisTag().TypeExpression.Type())
 				}
 				thisParam.Loc = tag.AsJSDocThisTag().TagName.Loc
 				thisParam.Flags = p.contextFlags | ast.NodeFlagsReparsed

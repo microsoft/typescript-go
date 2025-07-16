@@ -1455,6 +1455,8 @@ func getAssignedName(node *Node) *Node {
 					}
 				}
 			}
+		case KindCommonJSExport:
+			return parent.AsCommonJSExport().Name()
 		case KindVariableDeclaration:
 			name := parent.AsVariableDeclaration().Name()
 			if IsIdentifier(name) {
