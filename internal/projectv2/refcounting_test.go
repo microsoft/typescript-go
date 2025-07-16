@@ -26,7 +26,6 @@ func TestRefCountingCaches(t *testing.T) {
 			PositionEncoding:   lsproto.PositionEncodingKindUTF8,
 			WatchEnabled:       false,
 			LoggingEnabled:     true,
-			NewLine:            "\n",
 		}, fs)
 		return session
 	}

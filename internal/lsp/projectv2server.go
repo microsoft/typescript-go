@@ -36,7 +36,6 @@ func NewProjectV2Server(opts ServerOptions) *ProjectV2Server {
 		pendingClientRequests: make(map[lsproto.ID]pendingClientRequest),
 		pendingServerRequests: make(map[lsproto.ID]chan *lsproto.ResponseMessage),
 		cwd:                   opts.Cwd,
-		newLine:               opts.NewLine,
 		fs:                    opts.FS,
 		defaultLibraryPath:    opts.DefaultLibraryPath,
 		typingsLocation:       opts.TypingsLocation,
@@ -59,7 +58,6 @@ type ProjectV2Server struct {
 	pendingServerRequestsMu sync.Mutex
 
 	cwd                string
-	newLine            core.NewLineKind
 	fs                 vfs.FS
 	defaultLibraryPath string
 	typingsLocation    string
@@ -99,11 +97,6 @@ func (s *ProjectV2Server) TypingsLocation() string {
 // GetCurrentDirectory implements project.ServiceHost.
 func (s *ProjectV2Server) GetCurrentDirectory() string {
 	return s.cwd
-}
-
-// NewLine implements project.ServiceHost.
-func (s *ProjectV2Server) NewLine() string {
-	return s.newLine.GetNewLineCharacter()
 }
 
 // Trace implements project.ServiceHost.
@@ -507,7 +500,6 @@ func (s *ProjectV2Server) handleInitialized(ctx context.Context, req *lsproto.Re
 		TypingsLocation:    s.typingsLocation,
 		PositionEncoding:   s.positionEncoding,
 		WatchEnabled:       s.watchEnabled,
-		NewLine:            s.NewLine(),
 	}, s.fs)
 
 	return nil
@@ -538,8 +530,8 @@ func (s *ProjectV2Server) handleDidClose(ctx context.Context, req *lsproto.Reque
 }
 
 func (s *ProjectV2Server) handleDidChangeWatchedFiles(ctx context.Context, req *lsproto.RequestMessage) error {
-	// params := req.Params.(*lsproto.DidChangeWatchedFilesParams)
-	// return s.projectService.OnWatchedFilesChanged(ctx, params.Changes)
+	params := req.Params.(*lsproto.DidChangeWatchedFilesParams)
+	s.session.DidChangeWatchedFiles(ctx, params.Changes)
 	return nil
 }
 

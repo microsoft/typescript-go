@@ -88,11 +88,6 @@ func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.Sourc
 	return nil
 }
 
-// NewLine implements compiler.CompilerHost.
-func (c *compilerHost) NewLine() string {
-	return c.sessionOptions.NewLine
-}
-
 // Trace implements compiler.CompilerHost.
 func (c *compilerHost) Trace(msg string) {
 	panic("unimplemented")

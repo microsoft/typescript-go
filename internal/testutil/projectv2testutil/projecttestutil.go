@@ -20,7 +20,6 @@ func Setup(files map[string]any) *projectv2.Session {
 		PositionEncoding:   lsproto.PositionEncodingKindUTF8,
 		WatchEnabled:       false,
 		LoggingEnabled:     true,
-		NewLine:            "\n",
 	}, fs)
 	return session
 }
