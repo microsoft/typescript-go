@@ -660,6 +660,7 @@ var knownGenericTypeNames = map[string]struct{}{
 	"Readonly":         {},
 	"Pick":             {},
 	"Omit":             {},
+	"NonNullable":      {},
 }
 
 func isKnownGenericTypeName(name string) bool {
