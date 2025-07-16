@@ -46,7 +46,7 @@ func main() {
 		return
 	}
 
-	rawDiagnosticMessages := readRawMessages(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler", "diagnosticMessages.json"))
+	rawDiagnosticMessages, rawDiagnosticMessagesByCode := readRawMessages(filepath.Join(repo.TypeScriptSubmodulePath, "src", "compiler", "diagnosticMessages.json"))
 
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
@@ -54,7 +54,18 @@ func main() {
 	}
 	filename = filepath.FromSlash(filename) // runtime.Caller always returns forward slashes; https://go.dev/issues/3335, https://go.dev/cl/603275
 
-	rawExtraMessages := readRawMessages(filepath.Join(filepath.Dir(filename), "extraDiagnosticMessages.json"))
+	rawExtraMessages, rawExtraMessagesByCode := readRawMessages(filepath.Join(filepath.Dir(filename), "extraDiagnosticMessages.json"))
+
+	for code, key := range rawExtraMessagesByCode {
+		existing, ok := rawDiagnosticMessagesByCode[code]
+		if !ok {
+			continue
+		}
+		log.Printf("overriding %q with %q from extraDiagnosticMessages.json", existing, key)
+		delete(rawDiagnosticMessages, existing)
+		delete(rawDiagnosticMessagesByCode, code)
+	}
+
 	maps.Copy(rawDiagnosticMessages, rawExtraMessages)
 
 	diagnosticMessages := make([]*diagnosticMessage, 0, len(rawDiagnosticMessages))
@@ -103,21 +114,26 @@ func main() {
 	}
 }
 
-func readRawMessages(p string) map[string]*diagnosticMessage {
+func readRawMessages(p string) (map[string]*diagnosticMessage, map[int]string) {
 	file, err := os.Open(p)
 	if err != nil {
 		log.Fatalf("failed to open file: %v", err)
-		return nil
+		return nil, nil
 	}
 	defer file.Close()
 
 	var rawMessages map[string]*diagnosticMessage
 	if err := json.NewDecoder(file).Decode(&rawMessages); err != nil {
 		log.Fatalf("failed to decode file: %v", err)
-		return nil
+		return nil, nil
 	}
 
-	return rawMessages
+	codeToNessage := make(map[int]string, len(rawMessages))
+	for k, m := range rawMessages {
+		codeToNessage[m.Code] = k
+	}
+
+	return rawMessages, codeToNessage
 }
 
 var (
