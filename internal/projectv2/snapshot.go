@@ -128,8 +128,8 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		projectCollectionBuilder.DidCloseFile(file, hash)
 	}
 
-	for uri := range change.fileChanges.Opened.Keys() {
-		projectCollectionBuilder.DidOpenFile(uri)
+	if change.fileChanges.Opened != "" {
+		projectCollectionBuilder.DidOpenFile(change.fileChanges.Opened)
 	}
 
 	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)))

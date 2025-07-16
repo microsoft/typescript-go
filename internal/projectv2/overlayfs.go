@@ -166,79 +166,155 @@ func (fs *overlayFS) processChanges(changes []FileChange) FileChangeSummary {
 
 	var result FileChangeSummary
 	newOverlays := maps.Clone(fs.overlays)
+
+	// Reduced collection of changes that occurred on a single file
+	type fileEvents struct {
+		openChange   *FileChange
+		closeChange  *FileChange
+		watchChanged bool
+		changes      []*FileChange
+		saved        bool
+		created      bool
+		deleted      bool
+	}
+
+	fileEventMap := make(map[lsproto.DocumentUri]*fileEvents)
+
 	for _, change := range changes {
-		path := change.URI.Path(fs.fs.UseCaseSensitiveFileNames())
+		uri := change.URI
+		events, exists := fileEventMap[uri]
+		if exists {
+			if events.openChange != nil {
+				panic("should see no changes after open")
+			}
+		} else {
+			events = &fileEvents{}
+			fileEventMap[uri] = events
+		}
+
 		switch change.Kind {
 		case FileChangeKindOpen:
-			result.Opened.Add(change.URI)
-			newOverlays[path] = newOverlay(
-				ls.DocumentURIToFileName(change.URI),
-				change.Content,
-				change.Version,
-				ls.LanguageKindToScriptKind(change.LanguageKind),
-			)
+			events.openChange = &change
+			events.closeChange = nil
+			events.watchChanged = false
+			events.changes = nil
+			events.saved = false
+			events.created = false
+			events.deleted = false
+		case FileChangeKindClose:
+			events.closeChange = &change
+			events.changes = nil
+			events.saved = false
+			events.watchChanged = false
 		case FileChangeKindChange:
-			result.Changed.Add(change.URI)
-			o, ok := newOverlays[path]
-			if !ok {
-				panic("overlay not found for change")
+			if events.closeChange != nil {
+				panic("should see no changes after close")
 			}
-			converters := ls.NewConverters(fs.positionEncoding, func(fileName string) *ls.LineMap {
-				return o.LineMap()
-			})
-			for _, textChange := range change.Changes {
-				if partialChange := textChange.TextDocumentContentChangePartial; partialChange != nil {
-					newContent := converters.FromLSPTextChange(o, partialChange).ApplyTo(o.content)
-					o = newOverlay(o.fileName, newContent, o.version, o.kind)
-				} else if wholeChange := textChange.TextDocumentContentChangeWholeDocument; wholeChange != nil {
-					o = newOverlay(o.fileName, wholeChange.Text, o.version, o.kind)
-				}
-			}
-			o.version = change.Version
-			o.hash = sha256.Sum256([]byte(o.content))
-			// Assume the overlay does not match disk text after a change. This field
-			// is allowed to be a false negative.
-			o.matchesDiskText = false
-			newOverlays[path] = o
+			events.changes = append(events.changes, &change)
+			events.saved = false
+			events.watchChanged = false
 		case FileChangeKindSave:
-			result.Saved.Add(change.URI)
-			o, ok := newOverlays[path]
-			if !ok {
-				panic("overlay not found for save")
+			events.saved = true
+		case FileChangeKindWatchCreate:
+			if events.deleted {
+				// Delete followed by create becomes a change
+				events.deleted = false
+				events.watchChanged = true
+			} else {
+				events.created = true
+			}
+		case FileChangeKindWatchChange:
+			if !events.created {
+				events.watchChanged = true
+			}
+		case FileChangeKindWatchDelete:
+			events.watchChanged = false
+			events.saved = false
+			// Delete after create cancels out
+			if events.created {
+				events.created = false
+			} else {
+				events.deleted = true
+			}
+		}
+	}
+
+	// Process deduplicated events per file
+	for uri, events := range fileEventMap {
+		path := uri.Path(fs.fs.UseCaseSensitiveFileNames())
+		o := newOverlays[path]
+
+		if events.openChange != nil {
+			if result.Opened != "" {
+				panic("can only process one file open event at a time")
+			}
+			result.Opened = uri
+			newOverlays[path] = newOverlay(
+				ls.DocumentURIToFileName(uri),
+				events.openChange.Content,
+				events.openChange.Version,
+				ls.LanguageKindToScriptKind(events.openChange.LanguageKind),
+			)
+			continue
+		}
+
+		if events.closeChange != nil {
+			if result.Closed == nil {
+				result.Closed = make(map[lsproto.DocumentUri][sha256.Size]byte)
+			}
+			result.Closed[uri] = events.closeChange.Hash
+			delete(newOverlays, path)
+		}
+
+		if events.watchChanged {
+			result.Changed.Add(uri)
+			if o != nil && o.MatchesDiskText() {
+				o = newOverlay(o.FileName(), o.Content(), o.Version(), o.kind)
+				o.matchesDiskText = false
+				newOverlays[path] = o
+			}
+		}
+
+		if len(events.changes) > 0 {
+			result.Changed.Add(uri)
+			if o == nil {
+				panic("overlay not found for changed file: " + uri)
+			}
+			for _, change := range events.changes {
+				converters := ls.NewConverters(fs.positionEncoding, func(fileName string) *ls.LineMap {
+					return o.LineMap()
+				})
+				for _, textChange := range change.Changes {
+					if partialChange := textChange.TextDocumentContentChangePartial; partialChange != nil {
+						newContent := converters.FromLSPTextChange(o, partialChange).ApplyTo(o.content)
+						o = newOverlay(o.fileName, newContent, change.Version, o.kind)
+					} else if wholeChange := textChange.TextDocumentContentChangeWholeDocument; wholeChange != nil {
+						o = newOverlay(o.fileName, wholeChange.Text, change.Version, o.kind)
+					}
+				}
+				o.version = change.Version
+				o.hash = sha256.Sum256([]byte(o.content))
+				o.matchesDiskText = false
+				newOverlays[path] = o
+			}
+		}
+
+		if events.saved {
+			result.Saved.Add(uri)
+			if o == nil {
+				panic("overlay not found for saved file: " + uri)
 			}
 			o = newOverlay(o.FileName(), o.Content(), o.Version(), o.kind)
 			o.matchesDiskText = true
 			newOverlays[path] = o
-		case FileChangeKindClose:
-			// Remove the overlay for the closed file.
-			if result.Closed == nil {
-				result.Closed = make(map[lsproto.DocumentUri][sha256.Size]byte)
-			}
-			result.Closed[change.URI] = change.Hash
-			delete(newOverlays, path)
-		case FileChangeKindWatchCreate:
-			result.Created.Add(change.URI)
-		case FileChangeKindWatchChange:
-			if o, ok := newOverlays[path]; ok {
-				if o.matchesDiskText {
-					// Assume the overlay does not match disk text after a change.
-					newOverlays[path] = newOverlay(o.FileName(), o.Content(), o.Version(), o.kind)
-				}
-			} else {
-				// Only count this as a change if the file is closed.
-				result.Changed.Add(change.URI)
-			}
-		case FileChangeKindWatchDelete:
-			if o, ok := newOverlays[path]; ok {
-				if o.matchesDiskText {
-					newOverlays[path] = newOverlay(o.FileName(), o.Content(), o.Version(), o.kind)
-				}
-			} else {
-				// Only count this as a deletion if the file is closed.
-				result.Deleted.Add(change.URI)
-			}
-		default:
-			panic("unhandled file change kind")
+		}
+
+		if events.created {
+			result.Created.Add(uri)
+		}
+
+		if events.deleted {
+			result.Deleted.Add(uri)
 		}
 	}
 

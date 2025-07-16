@@ -30,7 +30,8 @@ type FileChange struct {
 }
 
 type FileChangeSummary struct {
-	Opened collections.Set[lsproto.DocumentUri]
+	// Only one file can be opened at a time per request
+	Opened lsproto.DocumentUri
 	// Values are the content hashes of the overlays before closing.
 	Closed  map[lsproto.DocumentUri][sha256.Size]byte
 	Changed collections.Set[lsproto.DocumentUri]
@@ -40,5 +41,5 @@ type FileChangeSummary struct {
 }
 
 func (f FileChangeSummary) IsEmpty() bool {
-	return f.Opened.Len() == 0 && len(f.Closed) == 0 && f.Changed.Len() == 0 && f.Saved.Len() == 0 && f.Created.Len() == 0 && f.Deleted.Len() == 0
+	return f.Opened == "" && len(f.Closed) == 0 && f.Changed.Len() == 0 && f.Saved.Len() == 0 && f.Created.Len() == 0 && f.Deleted.Len() == 0
 }

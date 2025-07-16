@@ -18,7 +18,6 @@ type SessionOptions struct {
 	TypingsLocation    string
 	PositionEncoding   lsproto.PositionEncodingKind
 	WatchEnabled       bool
-	NewLine            string
 	LoggingEnabled     bool
 }
 
@@ -116,6 +115,30 @@ func (s *Session) DidSaveFile(ctx context.Context, uri lsproto.DocumentUri) {
 		Kind: FileChangeKindSave,
 		URI:  uri,
 	})
+}
+
+func (s *Session) DidChangeWatchedFiles(ctx context.Context, changes []*lsproto.FileEvent) {
+	fileChanges := make([]FileChange, 0, len(changes))
+	for _, change := range changes {
+		var kind FileChangeKind
+		switch change.Type {
+		case lsproto.FileChangeTypeCreated:
+			kind = FileChangeKindWatchCreate
+		case lsproto.FileChangeTypeChanged:
+			kind = FileChangeKindWatchChange
+		case lsproto.FileChangeTypeDeleted:
+			kind = FileChangeKindWatchDelete
+		default:
+			continue // Ignore unknown change types.
+		}
+		fileChanges = append(fileChanges, FileChange{
+			Kind: kind,
+			URI:  change.Uri,
+		})
+	}
+	s.pendingFileChangesMu.Lock()
+	defer s.pendingFileChangesMu.Unlock()
+	s.pendingFileChanges = append(s.pendingFileChanges, fileChanges...)
 }
 
 func (s *Session) Snapshot() (*Snapshot, func()) {
