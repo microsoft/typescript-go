@@ -2099,7 +2099,8 @@ func getFilterText(
 			if strings.HasPrefix(insertText, "this.#") {
 				if wordStart == '#' {
 					// `method() { this.#| }`
-					return insertText
+					// `method() { #| }`
+					return ""
 				} else {
 					// `method() { this.| }`
 					// `method() { | }`
@@ -2118,7 +2119,7 @@ func getFilterText(
 		}
 	}
 
-	// For `this.` completions, generally don't set the filter text since we don't want them to be overly prioritized. microsoft/vscode#74164
+	// For `this.` completions, generally don't set the filter text since we don't want them to be overly deprioritized. microsoft/vscode#74164
 	if strings.HasPrefix(insertText, "this.") {
 		return ""
 	}
