@@ -10,6 +10,7 @@ assignees: ''
 This repository is a port of microsoft/TypeScript from TypeScript to Go. Since the port began, the following pull request was applied to microsoft/TypeScript. An equivalent change now needs to be applied here.
 
 ## PR to port
+
 - PR link: <!-- https://github.com/microsoft/TypeScript/pull/NNNNN -->
 - Squash commit diff: <!-- Copy the squash commit link and append ".patch", e.g. https://github.com/microsoft/TypeScript/commit/a271797c1a95494e5f7aa8075c01941ad25cad08.patch -->
 
