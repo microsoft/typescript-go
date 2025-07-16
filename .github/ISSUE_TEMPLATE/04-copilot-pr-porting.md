@@ -1,9 +1,9 @@
 ---
-name: Copilot PR porting
+name: '[TypeScript Team Use] Copilot PR porting'
 about: Instructions for Copilot to port a PR from microsoft/TypeScript
 title: 'Port TypeScript PR #[NNNNN]'
 labels: Porting PR
-assignees: andrewbranch
+assignees: ''
 
 ---
 
@@ -21,4 +21,5 @@ This repository is a port of microsoft/TypeScript from TypeScript to Go. Since t
    - Tip: search for functions and identifiers from the diff to find the right location to apply edits. Some files in microsoft/TypeScript have been split into multiple.
    - Tip: some changes have already been ported, like changes to diagnostic message text. Tests do not need to be ported as they are imported from the submodule.
 3. Refer to your copilot_instructions.md for guidance on how to build and test your change. Note the following differences to the typical development workflow:
-   - Since you are porting the implementation for a behavior that already has tests in the submodule, you don't need to add new tests. Instead, your change should change existing baselines. If done correctly, you should see removals in `.diff` baselines. These `.diff` removals are your ultimate source of truth: your change is not correct unless diffs are reduced.
+   - Since you are porting the implementation for a behavior that already has tests in the submodule, you don't need to add new tests. Instead, your change should change existing baselines.
+   - If done correctly, you should see removals in `.diff` baselines. These `.diff` removals are your ultimate source of truth: your change is not correct unless diffs are reduced.
