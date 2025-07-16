@@ -20,6 +20,7 @@ type FileHandle interface {
 	MatchesDiskText() bool
 	IsOverlay() bool
 	LineMap() *ls.LineMap
+	Kind() core.ScriptKind
 }
 
 type fileBase struct {
@@ -78,6 +79,10 @@ func (f *diskFile) IsOverlay() bool {
 	return false
 }
 
+func (f *diskFile) Kind() core.ScriptKind {
+	return core.GetScriptKindFromFileName(f.fileName)
+}
+
 var _ FileHandle = (*overlay)(nil)
 
 type overlay struct {
@@ -114,6 +119,10 @@ func (o *overlay) MatchesDiskText() bool {
 
 func (o *overlay) IsOverlay() bool {
 	return true
+}
+
+func (o *overlay) Kind() core.ScriptKind {
+	return o.kind
 }
 
 type overlayFS struct {

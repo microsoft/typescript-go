@@ -3,7 +3,6 @@ package projectv2
 import (
 	"github.com/microsoft/typescript-go/internal/ast"
 	"github.com/microsoft/typescript-go/internal/compiler"
-	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
 	"github.com/microsoft/typescript-go/internal/vfs"
@@ -84,7 +83,7 @@ func (c *compilerHost) GetResolvedProjectReference(fileName string, path tspath.
 func (c *compilerHost) GetSourceFile(opts ast.SourceFileParseOptions) *ast.SourceFile {
 	c.ensureAlive()
 	if fh := c.overlayFS.getFile(opts.FileName); fh != nil {
-		return c.builder.parseCache.Acquire(fh, opts, c.getScriptKind(opts.FileName))
+		return c.builder.parseCache.Acquire(fh, opts, fh.Kind())
 	}
 	return nil
 }
@@ -97,12 +96,6 @@ func (c *compilerHost) NewLine() string {
 // Trace implements compiler.CompilerHost.
 func (c *compilerHost) Trace(msg string) {
 	panic("unimplemented")
-}
-
-func (c *compilerHost) getScriptKind(fileName string) core.ScriptKind {
-	// Customizing script kind per file extension is a common plugin / LS host customization case
-	// which can probably be replaced with static info in the future
-	return core.GetScriptKindFromFileName(fileName)
 }
 
 var _ vfs.FS = (*compilerFS)(nil)
