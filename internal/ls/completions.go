@@ -2089,8 +2089,6 @@ func getFilterText(
 	position int,
 	insertText string,
 	label string,
-	isMemberCompletion bool,
-	isSnippet bool,
 	wordStart rune,
 ) string {
 	// Private field completion, e.g. label `#bar`.
@@ -2139,6 +2137,30 @@ func getFilterText(
 			return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `"]`), `["`)
 		}
 		return insertText
+	}
+
+	if strings.HasPrefix(insertText, "?.") {
+		// Handle this case like the case above:
+		// ```
+		// const xyz = { 'ab c': 1 } | undefined;
+		// xyz.ab|
+		// ```
+		// filterText should be `.ab c` instead of `?.['ab c']`.
+		if strings.HasPrefix(insertText, "?.[") {
+			if strings.HasPrefix(insertText, `?.['`) && strings.HasSuffix(insertText, `']`) {
+				return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `']`), `?.['`)
+			}
+			if strings.HasPrefix(insertText, `?.["`) && strings.HasSuffix(insertText, `"]`) {
+				return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `"]`), `?.["`)
+			}
+		} else {
+			// ```
+			// const xyz = { abc: 1 } | undefined;
+			// xyz.ab|
+			// ```
+			// filterText should be `.abc` instead of `?.abc.
+			return strings.TrimPrefix(insertText, "?")
+		}
 	}
 
 	// In all other cases, fall back to using the insertText.
@@ -4141,7 +4163,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Ported from vscode ts extension.
 	_, wordStart := getWordRange(file, position)
 	if filterText == "" {
-		filterText = getFilterText(file, position, insertText, name, isMemberCompletion, isSnippet, wordStart)
+		filterText = getFilterText(file, position, insertText, name, wordStart)
 	}
 	// !!! TODO: remove?
 	// if isMemberCompletion && !isSnippet {
