@@ -16,7 +16,7 @@ func TestCompletionFilterText3(t *testing.T) {
 declare const foo1: { b: number; "a bc": string; };
 if (true) {
     foo1[|.|]/*1*/
-}
+} 
 else {
     foo1[|.a|]/*2*/
 }
@@ -24,8 +24,10 @@ else {
 declare const foo2: { b: number; "a bc": string; } | undefined;
 if (true) {
     foo2[|.|]/*3*/
-} else {
+} else if (false) {
     foo2[|.a|]/*4*/
+} else {
+    foo2[|?.|]/*5*/
 }
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
@@ -117,6 +119,29 @@ if (true) {
 						TextEdit: &lsproto.TextEdit{
 							NewText: "?.[\"a bc\"]",
 							Range:   f.Ranges()[3].LSRange,
+						},
+					},
+				},
+			},
+		},
+	})
+	f.VerifyCompletions(t, "5", &fourslash.CompletionsExpectedList{
+		IsIncomplete: false,
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
+			CommitCharacters: &defaultCommitCharacters,
+		},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "a bc",
+					Kind:       ptrTo(lsproto.CompletionItemKindField),
+					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
+					InsertText: ptrTo("?.[\"a bc\"]"),
+					FilterText: ptrTo("?.a bc"),
+					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
+						TextEdit: &lsproto.TextEdit{
+							NewText: "?.[\"a bc\"]",
+							Range:   f.Ranges()[4].LSRange,
 						},
 					},
 				},

@@ -9,20 +9,14 @@ import (
 	"github.com/microsoft/typescript-go/internal/testutil"
 )
 
-func TestCompletionFilterText2(t *testing.T) {
+func TestCompletionFilterText4(t *testing.T) {
 	t.Parallel()
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
-	const content = `// @strict: true
-declare const foo1: { bar: string } | undefined;
-if (true) {
-    foo1[|.|]/*1*/
-}
-else {
-    foo1?./*2*/
-}
+	const content = `declare const x: [number, number];
+x[|.|]/**/;
 `
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
@@ -30,32 +24,17 @@ else {
 		Items: &fourslash.CompletionsExpectedItems{
 			Includes: []fourslash.CompletionsExpectedItem{
 				&lsproto.CompletionItem{
-					Label:      "bar",
+					Label:      "0",
 					Kind:       ptrTo(lsproto.CompletionItemKindField),
 					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
-					InsertText: ptrTo("?.bar"),
-					FilterText: ptrTo(".bar"),
+					InsertText: ptrTo("[0]"),
+					FilterText: ptrTo(".0"),
 					TextEdit: &lsproto.TextEditOrInsertReplaceEdit{
 						TextEdit: &lsproto.TextEdit{
-							NewText: "?.bar",
+							NewText: "[0]",
 							Range:   f.Ranges()[0].LSRange,
 						},
 					},
-				},
-			},
-		},
-	})
-	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
-		IsIncomplete: false,
-		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
-			CommitCharacters: &defaultCommitCharacters,
-		},
-		Items: &fourslash.CompletionsExpectedItems{
-			Includes: []fourslash.CompletionsExpectedItem{
-				&lsproto.CompletionItem{
-					Label:    "bar",
-					Kind:     ptrTo(lsproto.CompletionItemKindField),
-					SortText: ptrTo(string(ls.SortTextLocationPriority)),
 				},
 			},
 		},

@@ -2059,7 +2059,7 @@ var wordSeparators = collections.NewSetFromItems(
 
 // Finds the range of the word that ends at the given position.
 // e.g. for "abc def.ghi|jkl", the word range is "ghi" and the word start is 'g'.
-func getWordRange(sourceFile *ast.SourceFile, position int) (wordRange *core.TextRange, wordStart rune) {
+func getWordRange(sourceFile *ast.SourceFile, position int) (wordSize int, wordStart rune) {
 	// !!! Port other case of vscode's `DEFAULT_WORD_REGEXP` that covers words that start like numbers, e.g. -123.456abcd.
 	text := sourceFile.Text()[:position]
 	totalSize := 0
@@ -2076,11 +2076,22 @@ func getWordRange(sourceFile *ast.SourceFile, position int) (wordRange *core.Tex
 		totalSize -= 1
 		firstRune, _ = utf8.DecodeRuneInString(text[len(text)-totalSize:])
 	}
-	if totalSize == 0 {
-		return nil, firstRune
+	return totalSize, firstRune
+}
+
+// `["ab c"]` -> `ab c`
+// `['ab c']` -> `ab c`
+// `[123]` -> `123`
+func trimElementAccess(text string) string {
+	text = strings.TrimPrefix(text, "[")
+	text = strings.TrimSuffix(text, "]")
+	if strings.HasPrefix(text, `'`) && strings.HasSuffix(text, `'`) {
+		text = strings.TrimPrefix(strings.TrimSuffix(text, `'`), `'`)
 	}
-	textRange := core.NewTextRange(position-totalSize, position)
-	return &textRange, firstRune
+	if strings.HasPrefix(text, `"`) && strings.HasSuffix(text, `"`) {
+		text = strings.TrimPrefix(strings.TrimSuffix(text, `"`), `"`)
+	}
+	return text
 }
 
 // Ported from vscode ts extension: `getFilterText`.
@@ -2090,6 +2101,7 @@ func getFilterText(
 	insertText string,
 	label string,
 	wordStart rune,
+	dotAccessor string,
 ) string {
 	// Private field completion, e.g. label `#bar`.
 	if strings.HasPrefix(label, "#") {
@@ -2130,13 +2142,7 @@ func getFilterText(
 	// In which case we want to insert a bracket accessor but should use `.abc` as the filter text instead of
 	// the bracketed insert text.
 	if strings.HasPrefix(insertText, "[") {
-		if strings.HasPrefix(insertText, `['`) && strings.HasSuffix(insertText, `']`) {
-			return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `']`), `['`)
-		}
-		if strings.HasPrefix(insertText, `["`) && strings.HasSuffix(insertText, `"]`) {
-			return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `"]`), `["`)
-		}
-		return insertText
+		return dotAccessor + trimElementAccess(insertText)
 	}
 
 	if strings.HasPrefix(insertText, "?.") {
@@ -2147,19 +2153,14 @@ func getFilterText(
 		// ```
 		// filterText should be `.ab c` instead of `?.['ab c']`.
 		if strings.HasPrefix(insertText, "?.[") {
-			if strings.HasPrefix(insertText, `?.['`) && strings.HasSuffix(insertText, `']`) {
-				return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `']`), `?.['`)
-			}
-			if strings.HasPrefix(insertText, `?.["`) && strings.HasSuffix(insertText, `"]`) {
-				return "." + strings.TrimPrefix(strings.TrimSuffix(insertText, `"]`), `?.["`)
-			}
+			return dotAccessor + trimElementAccess(insertText[2:])
 		} else {
 			// ```
 			// const xyz = { abc: 1 } | undefined;
 			// xyz.ab|
 			// ```
 			// filterText should be `.abc` instead of `?.abc.
-			return strings.TrimPrefix(insertText, "?")
+			return dotAccessor + insertText[2:]
 		}
 	}
 
@@ -2168,27 +2169,18 @@ func getFilterText(
 }
 
 // Ported from vscode's `provideCompletionItems`.
-func getDotAccessorContext(file *ast.SourceFile, position int) (acessorRange *core.TextRange, accessorText string) {
+func getDotAccessor(file *ast.SourceFile, position int) string {
 	text := file.Text()[:position]
 	totalSize := 0
-	for r, size := utf8.DecodeLastRuneInString(text); size != 0; r, size = utf8.DecodeLastRuneInString(text[:len(text)-totalSize]) {
-		if !unicode.IsSpace(r) {
-			break
-		}
-		totalSize += size
-		text = text[:len(text)-size]
-	}
 	if strings.HasSuffix(text, "?.") {
 		totalSize += 2
-		newRange := core.NewTextRange(position-totalSize, position)
-		return &newRange, file.Text()[position-totalSize : position]
+		return file.Text()[position-totalSize : position]
 	}
 	if strings.HasSuffix(text, ".") {
 		totalSize += 1
-		newRange := core.NewTextRange(position-totalSize, position)
-		return &newRange, file.Text()[position-totalSize : position]
+		return file.Text()[position-totalSize : position]
 	}
-	return nil, ""
+	return ""
 }
 
 func strPtrTo(v string) *string {
@@ -4161,26 +4153,11 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Filter text
 
 	// Ported from vscode ts extension.
-	_, wordStart := getWordRange(file, position)
+	wordSize, wordStart := getWordRange(file, position)
+	dotAccessor := getDotAccessor(file, position-wordSize)
 	if filterText == "" {
-		filterText = getFilterText(file, position, insertText, name, wordStart)
+		filterText = getFilterText(file, position, insertText, name, wordStart, dotAccessor)
 	}
-	// !!! TODO: remove?
-	// if isMemberCompletion && !isSnippet {
-	// 	accessorRange, accessorText := getDotAccessorContext(file, position)
-	// 	if accessorText != "" {
-	// 		filterText = accessorText + core.IfElse(insertText != "", insertText, name)
-	// 		if textEdit == nil {
-	// 			insertText = filterText
-	// 			textEdit = &lsproto.TextEditOrInsertReplaceEdit{
-	// 				TextEdit: &lsproto.TextEdit{
-	// 					NewText: insertText,
-	// 					Range:   *l.createLspRangeFromBounds(accessorRange.Pos(), accessorRange.End(), file),
-	// 				},
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	// Adjustements based on kind modifiers.
 	var tags *[]lsproto.CompletionItemTag
