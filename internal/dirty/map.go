@@ -36,6 +36,10 @@ func (e *MapEntry[K, V]) Delete() {
 	e.delete = true
 }
 
+func (e *MapEntry[K, V]) Locked(fn func(Value[V])) {
+	fn(e)
+}
+
 type Map[K comparable, V Cloneable[V]] struct {
 	base  map[K]V
 	dirty map[K]*MapEntry[K, V]

@@ -163,8 +163,7 @@ func (p *Project) CreateProgram() (*compiler.Program, *project.CheckerPool) {
 	var programCloned bool
 	var checkerPool *project.CheckerPool
 	var newProgram *compiler.Program
-	// oldProgram := p.Program
-	if p.dirtyFilePath != "" {
+	if p.dirtyFilePath != "" && p.Program != nil && p.Program.CommandLine() == p.CommandLine {
 		newProgram, programCloned = p.Program.UpdateProgram(p.dirtyFilePath, p.host)
 		if programCloned {
 			for _, file := range newProgram.GetSourceFiles() {

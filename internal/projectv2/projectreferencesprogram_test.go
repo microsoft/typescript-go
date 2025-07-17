@@ -25,7 +25,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("program for referenced project", func(t *testing.T) {
 		t.Parallel()
 		files := filesForReferencedProjectProgram(false)
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -56,7 +56,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 			export declare function fn4(): void;
 			export declare function fn5(): void;
 		`
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -80,7 +80,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("references through symlink with index and typings", func(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(false, "")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -104,7 +104,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("references through symlink with index and typings with preserveSymlinks", func(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(true, "")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -128,7 +128,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("references through symlink with index and typings scoped package", func(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(false, "@issue/")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -152,7 +152,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("references through symlink with index and typings with scoped package preserveSymlinks", func(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferences(true, "@issue/")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -176,7 +176,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("references through symlink referencing from subFolder", func(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(false, "")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -200,7 +200,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("references through symlink referencing from subFolder with preserveSymlinks", func(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(true, "")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -224,7 +224,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("references through symlink referencing from subFolder scoped package", func(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(false, "@issue/")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -248,7 +248,7 @@ func TestProjectReferencesProgram(t *testing.T) {
 	t.Run("references through symlink referencing from subFolder with scoped package preserveSymlinks", func(t *testing.T) {
 		t.Parallel()
 		files, aTest, bFoo, bBar := filesForSymlinkReferencesInSubfolder(true, "@issue/")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)

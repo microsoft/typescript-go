@@ -31,16 +31,24 @@ type configFileEntry struct {
 	// subsequent calls to `projectCollectionBuilder.findDefaultConfiguredProject`
 	// will use this config as part of the search, so it must be retained.
 	retainingOpenFiles map[tspath.Path]struct{}
+	// retainingConfigs is the set of config files that extend this one. This
+	// provides a cheap reverse mapping for a project config's
+	// `commandLine.ExtendedSourceFiles()` that can be used to notify the
+	// extending projects when this config changes. An extended config file may
+	// or may not also be used directly by a project, so it's possible that
+	// when this is set, no other fields will be used.
+	retainingConfigs map[tspath.Path]struct{}
 }
 
 func (e *configFileEntry) Clone() *configFileEntry {
 	return &configFileEntry{
 		pendingReload: e.pendingReload,
 		commandLine:   e.commandLine,
-		// !!! eagerly cloning this maps makes everything more convenient,
+		// !!! eagerly cloning these maps makes everything more convenient,
 		// but it could be avoided if needed.
 		retainingProjects:  maps.Clone(e.retainingProjects),
 		retainingOpenFiles: maps.Clone(e.retainingOpenFiles),
+		retainingConfigs:   maps.Clone(e.retainingConfigs),
 	}
 }
 

@@ -7,12 +7,56 @@ import (
 	"github.com/microsoft/typescript-go/internal/collections"
 )
 
+var _ Value[*cloneable] = (*lockedEntry[any, *cloneable])(nil)
+
+type lockedEntry[K comparable, V Cloneable[V]] struct {
+	e *SyncMapEntry[K, V]
+}
+
+func (e *lockedEntry[K, V]) Value() V {
+	return e.e.Value()
+}
+
+func (e *lockedEntry[K, V]) Original() V {
+	return e.e.Original()
+}
+
+func (e *lockedEntry[K, V]) Dirty() bool {
+	return e.e.dirty
+}
+
+func (e *lockedEntry[K, V]) Change(apply func(V)) {
+	e.e.changeLocked(apply)
+}
+
+func (e *lockedEntry[K, V]) ChangeIf(cond func(V) bool, apply func(V)) bool {
+	if cond(e.e.Value()) {
+		e.e.changeLocked(apply)
+		return true
+	}
+	return false
+}
+
+func (e *lockedEntry[K, V]) Delete() {
+	e.e.deleteLocked()
+}
+
+func (e *lockedEntry[K, V]) Locked(fn func(Value[V])) {
+	fn(e)
+}
+
 var _ Value[*cloneable] = (*SyncMapEntry[any, *cloneable])(nil)
 
 type SyncMapEntry[K comparable, V Cloneable[V]] struct {
 	m  *SyncMap[K, V]
 	mu sync.Mutex
 	mapEntry[K, V]
+}
+
+func (e *SyncMapEntry[K, V]) Locked(fn func(Value[V])) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
+	fn(&lockedEntry[K, V]{e: e})
 }
 
 func (e *SyncMapEntry[K, V]) Change(apply func(V)) {

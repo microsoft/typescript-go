@@ -26,7 +26,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 	t.Run("when project found is solution referencing default project directly", func(t *testing.T) {
 		t.Parallel()
 		files := filesForSolutionConfigFile([]string{"./tsconfig-src.json"}, "", nil)
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
 		content := files["/user/username/projects/myproject/src/main.ts"].(string)
 
@@ -67,7 +67,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		files := filesForSolutionConfigFile([]string{"./tsconfig-indirect1.json", "./tsconfig-indirect2.json"}, "", nil)
 		applyIndirectProjectFiles(files, 1, "")
 		applyIndirectProjectFiles(files, 2, "")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
 		content := files["/user/username/projects/myproject/src/main.ts"].(string)
 
@@ -107,7 +107,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 	t.Run("when project found is solution with disableReferencedProjectLoad referencing default project directly", func(t *testing.T) {
 		t.Parallel()
 		files := filesForSolutionConfigFile([]string{"./tsconfig-src.json"}, `"disableReferencedProjectLoad": true`, nil)
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
 		content := files["/user/username/projects/myproject/src/main.ts"].(string)
 
@@ -145,7 +145,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		t.Parallel()
 		files := filesForSolutionConfigFile([]string{"./tsconfig-indirect1.json"}, "", nil)
 		applyIndirectProjectFiles(files, 1, `"disableReferencedProjectLoad": true`)
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
 		content := files["/user/username/projects/myproject/src/main.ts"].(string)
 
@@ -186,7 +186,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 		files := filesForSolutionConfigFile([]string{"./tsconfig-indirect1.json", "./tsconfig-indirect2.json"}, "", nil)
 		applyIndirectProjectFiles(files, 1, `"disableReferencedProjectLoad": true`)
 		applyIndirectProjectFiles(files, 2, "")
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
 		content := files["/user/username/projects/myproject/src/main.ts"].(string)
 
@@ -232,7 +232,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 			foo;
 			export function bar() {}
 		`
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///user/username/projects/myproject/src/main.ts")
 		content := files["/user/username/projects/myproject/src/main.ts"].(string)
 
@@ -312,7 +312,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
 				"files": []
 			}`,
 		}
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///home/src/projects/project/app/Component-demos.ts")
 		content := files["/home/src/projects/project/app/Component-demos.ts"].(string)
 
@@ -373,7 +373,7 @@ func TestProjectCollectionBuilder(t *testing.T) {
                 },
 			}`,
 		}
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		uri := lsproto.DocumentUri("file:///home/src/projects/project/src/index.d.ts")
 		content := files["/home/src/projects/project/src/index.d.ts"].(string)
 

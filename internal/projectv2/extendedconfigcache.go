@@ -20,7 +20,7 @@ type extendedConfigCacheEntry struct {
 	refCount int
 }
 
-func (c *extendedConfigCache) acquire(fh FileHandle, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
+func (c *extendedConfigCache) Acquire(fh FileHandle, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
 	entry, loaded := c.loadOrStoreNewLockedEntry(fh, path)
 	defer entry.mu.Unlock()
 	if !loaded || entry.hash != fh.Hash() {
@@ -39,7 +39,7 @@ func (c *extendedConfigCache) Ref(path tspath.Path) {
 	}
 }
 
-func (c *extendedConfigCache) release(path tspath.Path) {
+func (c *extendedConfigCache) Release(path tspath.Path) {
 	if entry, ok := c.entries.Load(path); ok {
 		entry.mu.Lock()
 		entry.refCount--
@@ -49,6 +49,11 @@ func (c *extendedConfigCache) release(path tspath.Path) {
 			c.entries.Delete(path)
 		}
 	}
+}
+
+func (c *extendedConfigCache) Has(path tspath.Path) bool {
+	_, ok := c.entries.Load(path)
+	return ok
 }
 
 // loadOrStoreNewLockedEntry loads an existing entry or creates a new one. The returned

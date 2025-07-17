@@ -54,7 +54,7 @@ func TestProjectLifetime(t *testing.T) {
 			"/home/projects/TS/p3/src/x.ts":     `export const x = 1;`,
 			"/home/projects/TS/p3/config.ts":    `let x = 1, y = 2;`,
 		}
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -120,7 +120,7 @@ func TestProjectLifetime(t *testing.T) {
 			"/home/projects/TS/p3/src/x.ts":     `export const x = 1;`,
 			"/home/projects/TS/p3/config.ts":    `let x = 1, y = 2;`,
 		}
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 		snapshot, release := session.Snapshot()
 		defer release()
 		assert.Equal(t, len(snapshot.ProjectCollection.Projects()), 0)
@@ -174,7 +174,7 @@ func TestProjectLifetime(t *testing.T) {
 			}`,
 			"/home/projects/ts/p1/main.ts": `import { foo } from "../foo"; console.log(foo);`,
 		}
-		session := projectv2testutil.Setup(files)
+		session, _ := projectv2testutil.Setup(files)
 
 		// Open foo.ts first - should create inferred project since no tsconfig found initially
 		fooUri := lsproto.DocumentUri("file:///home/projects/ts/foo.ts")

@@ -55,6 +55,10 @@ func (b *Box[T]) Delete() {
 	b.delete = true
 }
 
+func (b *Box[T]) Locked(fn func(Value[T])) {
+	fn(b)
+}
+
 func (b *Box[T]) Finalize() (T, bool) {
 	return b.Value(), b.dirty || b.delete
 }

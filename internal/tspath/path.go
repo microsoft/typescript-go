@@ -890,6 +890,10 @@ func ContainsPath(parent string, child string, options ComparePathsOptions) bool
 	return true
 }
 
+func (p Path) ContainsPath(child Path) bool {
+	return ContainsPath(string(p), string(child), ComparePathsOptions{UseCaseSensitiveFileNames: true})
+}
+
 func FileExtensionIs(path string, extension string) bool {
 	return len(path) > len(extension) && strings.HasSuffix(path, extension)
 }

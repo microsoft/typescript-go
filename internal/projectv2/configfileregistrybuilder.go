@@ -2,9 +2,12 @@ package projectv2
 
 import (
 	"fmt"
+	"maps"
 	"strings"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/dirty"
+	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
 	"github.com/microsoft/typescript-go/internal/project"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
 	"github.com/microsoft/typescript-go/internal/tspath"
@@ -44,9 +47,9 @@ func newConfigFileRegistryBuilder(
 	}
 }
 
-// finalize creates a new configFileRegistry based on the changes made in the builder.
+// Finalize creates a new configFileRegistry based on the changes made in the builder.
 // If no changes were made, it returns the original base registry.
-func (c *configFileRegistryBuilder) finalize() *ConfigFileRegistry {
+func (c *configFileRegistryBuilder) Finalize() *ConfigFileRegistry {
 	var changed bool
 	newRegistry := c.base
 	ensureCloned := func() {
@@ -97,12 +100,59 @@ func (c *configFileRegistryBuilder) reloadIfNeeded(entry *configFileEntry, fileN
 		entry.commandLine = tsoptions.ReloadFileNamesOfParsedCommandLine(entry.commandLine, c.fs.fs)
 	case PendingReloadFull:
 		newCommandLine, _ := tsoptions.GetParsedCommandLineOfConfigFilePath(fileName, path, nil, c, c)
+		c.updateExtendingConfigs(path, newCommandLine, entry.commandLine)
 		entry.commandLine = newCommandLine
-		// !!! release oldCommandLine extended configs on accepting new snapshot
 	default:
 		return
 	}
 	entry.pendingReload = PendingReloadNone
+}
+
+func (c *configFileRegistryBuilder) updateExtendingConfigs(extendingConfigPath tspath.Path, newCommandLine *tsoptions.ParsedCommandLine, oldCommandLine *tsoptions.ParsedCommandLine) {
+	var newExtendedConfigPaths collections.Set[tspath.Path]
+	if newCommandLine != nil {
+		for _, extendedConfig := range newCommandLine.ExtendedSourceFiles() {
+			extendedConfigPath := c.fs.toPath(extendedConfig)
+			newExtendedConfigPaths.Add(extendedConfigPath)
+			entry, loaded := c.configs.LoadOrStore(extendedConfigPath, &configFileEntry{
+				pendingReload:    PendingReloadFull,
+				retainingConfigs: map[tspath.Path]struct{}{extendingConfigPath: {}},
+			})
+			if loaded {
+				entry.ChangeIf(
+					func(config *configFileEntry) bool {
+						_, alreadyRetaining := config.retainingConfigs[extendingConfigPath]
+						return !alreadyRetaining
+					},
+					func(config *configFileEntry) {
+						if config.retainingConfigs == nil {
+							config.retainingConfigs = make(map[tspath.Path]struct{})
+						}
+						config.retainingConfigs[extendingConfigPath] = struct{}{}
+					},
+				)
+			}
+		}
+	}
+	if oldCommandLine != nil {
+		for _, extendedConfig := range oldCommandLine.ExtendedSourceFiles() {
+			extendedConfigPath := c.fs.toPath(extendedConfig)
+			if newExtendedConfigPaths.Has(extendedConfigPath) {
+				continue
+			}
+			if entry, ok := c.configs.Load(extendedConfigPath); ok {
+				entry.ChangeIf(
+					func(config *configFileEntry) bool {
+						_, ok := config.retainingConfigs[extendingConfigPath]
+						return ok
+					},
+					func(config *configFileEntry) {
+						delete(config.retainingConfigs, extendingConfigPath)
+					},
+				)
+			}
+		}
+	}
 }
 
 // acquireConfigForProject loads a config file entry from the cache, or parses it if not already
@@ -189,6 +239,75 @@ func (c *configFileRegistryBuilder) DidCloseFile(path tspath.Path) {
 		)
 		return true
 	})
+}
+
+type changeFileResult struct {
+	affectedProjects map[tspath.Path]struct{}
+	affectedFiles    map[tspath.Path]struct{}
+}
+
+func (c *configFileRegistryBuilder) DidChangeFile(path tspath.Path) changeFileResult {
+	return c.handlePossibleConfigChange(path, lsproto.FileChangeTypeChanged)
+}
+
+func (c *configFileRegistryBuilder) DidCreateFile(path tspath.Path) changeFileResult {
+	return c.handlePossibleConfigChange(path, lsproto.FileChangeTypeCreated)
+}
+
+func (c *configFileRegistryBuilder) DidDeleteFile(path tspath.Path) changeFileResult {
+	return c.handlePossibleConfigChange(path, lsproto.FileChangeTypeDeleted)
+}
+
+func (c *configFileRegistryBuilder) handlePossibleConfigChange(path tspath.Path, changeKind lsproto.FileChangeType) changeFileResult {
+	var affectedProjects map[tspath.Path]struct{}
+	if entry, ok := c.configs.Load(path); ok {
+		entry.Locked(func(entry dirty.Value[*configFileEntry]) {
+			affectedProjects = c.handleConfigChange(entry)
+			for extendingConfigPath := range entry.Value().retainingConfigs {
+				if extendingConfigEntry, ok := c.configs.Load(extendingConfigPath); ok {
+					if affectedProjects == nil {
+						affectedProjects = make(map[tspath.Path]struct{})
+					}
+					maps.Copy(affectedProjects, c.handleConfigChange(extendingConfigEntry))
+				}
+			}
+		})
+	}
+
+	var affectedFiles map[tspath.Path]struct{}
+	if changeKind != lsproto.FileChangeTypeChanged {
+		directoryPath := path.GetDirectoryPath()
+		if tspath.GetBaseFileName(string(path)) == "tsconfig.json" || tspath.GetBaseFileName(string(path)) == "jsconfig.json" {
+			c.configFileNames.Range(func(entry *dirty.MapEntry[tspath.Path, *configFileNames]) bool {
+				if directoryPath.ContainsPath(entry.Key()) {
+					if affectedFiles == nil {
+						affectedFiles = make(map[tspath.Path]struct{})
+					}
+					affectedFiles[entry.Key()] = struct{}{}
+					entry.Delete()
+				}
+				return true
+			})
+		}
+	}
+
+	return changeFileResult{
+		affectedProjects: affectedProjects,
+		affectedFiles:    affectedFiles,
+	}
+}
+
+func (c *configFileRegistryBuilder) handleConfigChange(entry dirty.Value[*configFileEntry]) map[tspath.Path]struct{} {
+	var affectedProjects map[tspath.Path]struct{}
+	changed := entry.ChangeIf(
+		func(config *configFileEntry) bool { return config.pendingReload != PendingReloadFull },
+		func(config *configFileEntry) { config.pendingReload = PendingReloadFull },
+	)
+	if changed {
+		affectedProjects = maps.Clone(entry.Value().retainingProjects)
+	}
+
+	return affectedProjects
 }
 
 func (c *configFileRegistryBuilder) computeConfigFileName(fileName string, skipSearchInDirectoryOfFile bool) string {
@@ -279,13 +398,13 @@ func (c *configFileRegistryBuilder) GetCurrentDirectory() string {
 // GetExtendedConfig implements tsoptions.ExtendedConfigCache.
 func (c *configFileRegistryBuilder) GetExtendedConfig(fileName string, path tspath.Path, parse func() *tsoptions.ExtendedConfigCacheEntry) *tsoptions.ExtendedConfigCacheEntry {
 	fh := c.fs.getFile(fileName)
-	return c.extendedConfigCache.acquire(fh, path, parse)
+	return c.extendedConfigCache.Acquire(fh, path, parse)
 }
 
 func (c *configFileRegistryBuilder) Cleanup() {
 	c.configs.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *configFileEntry]) bool {
 		entry.DeleteIf(func(value *configFileEntry) bool {
-			return len(value.retainingProjects) == 0 && len(value.retainingOpenFiles) == 0
+			return len(value.retainingProjects) == 0 && len(value.retainingOpenFiles) == 0 && len(value.retainingConfigs) == 0
 		})
 		return true
 	})

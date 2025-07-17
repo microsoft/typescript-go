@@ -37,9 +37,11 @@ type projectCollectionBuilder struct {
 	compilerOptionsForInferredProjects *core.CompilerOptions
 	configFileRegistryBuilder          *configFileRegistryBuilder
 
-	fileDefaultProjects map[tspath.Path]tspath.Path
-	configuredProjects  *dirty.SyncMap[tspath.Path, *Project]
-	inferredProject     *dirty.Box[*Project]
+	projectsAffectedByConfigChanges map[tspath.Path]struct{}
+	filesAffectedByConfigChanges    map[tspath.Path]struct{}
+	fileDefaultProjects             map[tspath.Path]tspath.Path
+	configuredProjects              *dirty.SyncMap[tspath.Path, *Project]
+	inferredProject                 *dirty.Box[*Project]
 }
 
 func newProjectCollectionBuilder(
@@ -65,6 +67,8 @@ func newProjectCollectionBuilder(
 		extendedConfigCache:                extendedConfigCache,
 		logger:                             logger,
 		base:                               oldProjectCollection,
+		projectsAffectedByConfigChanges:    make(map[tspath.Path]struct{}),
+		filesAffectedByConfigChanges:       make(map[tspath.Path]struct{}),
 		configFileRegistryBuilder:          newConfigFileRegistryBuilder(fs, oldConfigFileRegistry, extendedConfigCache, sessionOptions),
 		configuredProjects:                 dirty.NewSyncMap(oldProjectCollection.configuredProjects, nil),
 		inferredProject:                    dirty.NewBox(oldProjectCollection.inferredProject),
@@ -96,7 +100,9 @@ func (b *projectCollectionBuilder) Finalize() (*ProjectCollection, *ConfigFileRe
 		newProjectCollection.inferredProject = newInferredProject
 	}
 
-	return newProjectCollection, b.configFileRegistryBuilder.finalize()
+	configFileRegistry := b.configFileRegistryBuilder.Finalize()
+	newProjectCollection.configFileRegistry = configFileRegistry
+	return newProjectCollection, configFileRegistry
 }
 
 func (b *projectCollectionBuilder) forEachProject(fn func(entry dirty.Value[*Project]) bool) {
@@ -170,24 +176,70 @@ func (b *projectCollectionBuilder) DidOpenFile(uri lsproto.DocumentUri) {
 	b.configFileRegistryBuilder.Cleanup()
 }
 
+func (b *projectCollectionBuilder) DidDeleteFiles(uris []lsproto.DocumentUri) {
+	for _, uri := range uris {
+		path := uri.Path(b.fs.fs.UseCaseSensitiveFileNames())
+		result := b.configFileRegistryBuilder.DidDeleteFile(path)
+		maps.Copy(b.projectsAffectedByConfigChanges, result.affectedProjects)
+		maps.Copy(b.filesAffectedByConfigChanges, result.affectedFiles)
+	}
+}
+
+func (b *projectCollectionBuilder) DidCreateFiles(uris []lsproto.DocumentUri) {
+	for _, uri := range uris {
+		path := uri.Path(b.fs.fs.UseCaseSensitiveFileNames())
+		result := b.configFileRegistryBuilder.DidCreateFile(path)
+		maps.Copy(b.projectsAffectedByConfigChanges, result.affectedProjects)
+		maps.Copy(b.filesAffectedByConfigChanges, result.affectedFiles)
+	}
+}
+
 func (b *projectCollectionBuilder) DidChangeFiles(uris []lsproto.DocumentUri) {
 	for _, uri := range uris {
-		b.markFileChanged(uri.Path(b.fs.fs.UseCaseSensitiveFileNames()))
+		path := uri.Path(b.fs.fs.UseCaseSensitiveFileNames())
+		result := b.configFileRegistryBuilder.DidChangeFile(path)
+		maps.Copy(b.projectsAffectedByConfigChanges, result.affectedProjects)
+		maps.Copy(b.filesAffectedByConfigChanges, result.affectedFiles)
+		b.markFileChanged(path)
 	}
 }
 
 func (b *projectCollectionBuilder) DidRequestFile(uri lsproto.DocumentUri) {
-	// See if we can find a default project for this file without doing
-	// any additional loading.
+	// Mark projects affected by config changes as dirty.
+	for projectPath := range b.projectsAffectedByConfigChanges {
+		project, ok := b.configuredProjects.Load(projectPath)
+		if !ok {
+			panic(fmt.Sprintf("project %s affected by config change not found", projectPath))
+		}
+		project.ChangeIf(
+			func(p *Project) bool { return !p.dirty || p.dirtyFilePath != "" },
+			func(p *Project) {
+				p.dirty = true
+				p.dirtyFilePath = ""
+			},
+		)
+	}
+
+	var hasChanges bool
+
+	// Recompute default projects for open files that now have different config file presence.
+	for path := range b.filesAffectedByConfigChanges {
+		fileName := b.fs.overlays[path].FileName()
+		_ = b.ensureConfiguredProjectAndAncestorsForOpenFile(fileName, path)
+		hasChanges = true
+	}
+
+	// See if we can find a default project without updating a bunch of stuff.
 	fileName := uri.FileName()
 	path := b.toPath(fileName)
 	if result := b.findDefaultProject(fileName, path); result != nil {
-		b.updateProgram(result)
-		return
+		hasChanges = b.updateProgram(result)
+		if result.Value() != nil {
+			return
+		}
 	}
 
 	// Make sure all projects we know about are up to date...
-	var hasChanges bool
 	b.configuredProjects.Range(func(entry *dirty.SyncMapEntry[tspath.Path, *Project]) bool {
 		hasChanges = b.updateProgram(entry) || hasChanges
 		return true
@@ -230,6 +282,7 @@ func (b *projectCollectionBuilder) findDefaultProject(fileName string, path tspa
 }
 
 func (b *projectCollectionBuilder) findDefaultConfiguredProject(fileName string, path tspath.Path) *dirty.SyncMapEntry[tspath.Path, *Project] {
+	// !!! look in fileDefaultProjects first?
 	// Sort configured projects so we can use a deterministic "first" as a last resort.
 	var configuredProjectPaths []tspath.Path
 	configuredProjects := make(map[tspath.Path]*dirty.SyncMapEntry[tspath.Path, *Project])
@@ -493,32 +546,37 @@ func (b *projectCollectionBuilder) updateInferredProject(rootFileNames []string)
 }
 
 func (b *projectCollectionBuilder) updateProgram(entry dirty.Value[*Project]) bool {
-	var newCommandLine *tsoptions.ParsedCommandLine
-	return entry.ChangeIf(
-		func(project *Project) bool {
-			if project.Kind == KindConfigured {
-				commandLine := b.configFileRegistryBuilder.acquireConfigForProject(project.configFileName, project.configFilePath, project)
-				if project.CommandLine != commandLine {
-					newCommandLine = commandLine
-					return true
+	var updateProgram bool
+	entry.Locked(func(entry dirty.Value[*Project]) {
+		if entry.Value().Kind == KindConfigured {
+			commandLine := b.configFileRegistryBuilder.acquireConfigForProject(entry.Value().configFileName, entry.Value().configFilePath, entry.Value())
+			if entry.Value().CommandLine != commandLine {
+				updateProgram = true
+				if commandLine == nil {
+					entry.Delete()
+					return
 				}
+				entry.Change(func(p *Project) { p.CommandLine = commandLine })
 			}
-			return project.dirty
-		},
-		func(project *Project) {
-			if newCommandLine != nil {
-				project.CommandLine = newCommandLine
-			}
-			project.host = newCompilerHost(project.currentDirectory, project, b)
-			newProgram, checkerPool := project.CreateProgram()
-			project.Program = newProgram
-			project.checkerPool = checkerPool
-			// !!! unthread context
-			project.LanguageService = ls.NewLanguageService(b.ctx, project)
-			project.dirty = false
-			project.dirtyFilePath = ""
-		},
-	)
+		}
+		if !updateProgram {
+			updateProgram = entry.Value().dirty
+		}
+		if updateProgram {
+			entry.Change(func(project *Project) {
+				project.host = newCompilerHost(project.currentDirectory, project, b)
+				newProgram, checkerPool := project.CreateProgram()
+				project.Program = newProgram
+				project.checkerPool = checkerPool
+				// !!! unthread context
+				project.LanguageService = ls.NewLanguageService(b.ctx, project)
+				project.dirty = false
+				project.dirtyFilePath = ""
+			})
+			delete(b.projectsAffectedByConfigChanges, entry.Value().configFilePath)
+		}
+	})
+	return updateProgram
 }
 
 func (b *projectCollectionBuilder) markFileChanged(path tspath.Path) {

@@ -62,7 +62,7 @@ func NewSnapshot(
 
 		overlayFS:                          fs,
 		ConfigFileRegistry:                 configFileRegistry,
-		ProjectCollection:                  &ProjectCollection{},
+		ProjectCollection:                  &ProjectCollection{toPath: toPath},
 		compilerOptionsForInferredProjects: compilerOptionsForInferredProjects,
 	}
 
@@ -128,11 +128,13 @@ func (s *Snapshot) Clone(ctx context.Context, change SnapshotChange, session *Se
 		projectCollectionBuilder.DidCloseFile(file, hash)
 	}
 
+	projectCollectionBuilder.DidDeleteFiles(slices.Collect(maps.Keys(change.fileChanges.Deleted.M)))
+	projectCollectionBuilder.DidCreateFiles(slices.Collect(maps.Keys(change.fileChanges.Created.M)))
+	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)))
+
 	if change.fileChanges.Opened != "" {
 		projectCollectionBuilder.DidOpenFile(change.fileChanges.Opened)
 	}
-
-	projectCollectionBuilder.DidChangeFiles(slices.Collect(maps.Keys(change.fileChanges.Changed.M)))
 
 	for _, uri := range change.requestedURIs {
 		projectCollectionBuilder.DidRequestFile(uri)
@@ -193,7 +195,7 @@ func (s *Snapshot) dispose(session *Session) {
 	for _, config := range s.ConfigFileRegistry.configs {
 		if config.commandLine != nil {
 			for _, file := range config.commandLine.ExtendedSourceFiles() {
-				session.extendedConfigCache.release(session.toPath(file))
+				session.extendedConfigCache.Release(session.toPath(file))
 			}
 		}
 	}

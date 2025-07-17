@@ -17,4 +17,5 @@ type Value[T any] interface {
 	Change(apply func(T))
 	ChangeIf(cond func(T) bool, apply func(T)) bool
 	Delete()
+	Locked(fn func(Value[T]))
 }
