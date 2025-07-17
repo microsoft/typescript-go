@@ -29,7 +29,11 @@ func (p *Parser) reparseCommonJS(node *ast.Node, jsdoc []*ast.Node) {
 		mod.Flags = p.contextFlags | ast.NodeFlagsReparsed
 		mod.Loc = bin.Loc
 		// TODO: Name can sometimes be a string literal, so downstream code needs to handle this
-		export = p.factory.NewCommonJSExport(p.newModifierList(bin.Loc, p.nodeSlicePool.NewSlice1(mod)), p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(bin.Left)), nil /*typeNode*/, p.factory.DeepCloneReparse(bin.Right))
+		export = p.factory.NewCommonJSExport(
+			p.newModifierList(bin.Loc, p.nodeSlicePool.NewSlice1(mod)),
+			p.factory.DeepCloneReparse(ast.GetElementOrPropertyAccessName(bin.Left)),
+			nil, /*typeNode*/
+			p.factory.DeepCloneReparse(bin.Right))
 	}
 	if export != nil {
 		p.reparseList = append(p.reparseList, export)
@@ -182,9 +186,10 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 		return nil
 	}
 	if t.Kind == ast.KindJSDocTypeLiteral {
-		isArrayType := t.AsJSDocTypeLiteral().IsArrayType
+		jstypeliteral := t.AsJSDocTypeLiteral()
+		isArrayType := jstypeliteral.IsArrayType
 		properties := p.nodeSlicePool.NewSlice(0)
-		for _, prop := range t.AsJSDocTypeLiteral().JSDocPropertyTags {
+		for _, prop := range jstypeliteral.JSDocPropertyTags {
 			jsprop := prop.AsJSDocParameterOrPropertyTag()
 			name := prop.Name()
 			if name.Kind == ast.KindQualifiedName {
@@ -194,19 +199,15 @@ func (p *Parser) reparseJSDocTypeLiteral(t *ast.TypeNode) *ast.Node {
 			if jsprop.TypeExpression != nil {
 				property.AsPropertySignatureDeclaration().Type = p.reparseJSDocTypeLiteral(jsprop.TypeExpression.Type())
 			}
-			property.Loc = prop.Loc
-			property.Flags = p.contextFlags | ast.NodeFlagsReparsed
+			p.finishReparsedNode(property, prop)
 			properties = append(properties, property)
 		}
-		loc := t.Loc
-		t = p.factory.NewTypeLiteralNode(p.newNodeList(loc, properties))
-		t.Loc = loc
-		t.Flags = p.contextFlags | ast.NodeFlagsReparsed
+		t = p.factory.NewTypeLiteralNode(p.newNodeList(jstypeliteral.Loc, properties))
 		if isArrayType {
+			p.finishReparsedNode(t, jstypeliteral.AsNode())
 			t = p.factory.NewArrayTypeNode(t)
-			t.Flags = p.contextFlags | ast.NodeFlagsReparsed
-			t.Loc = loc
 		}
+		p.finishReparsedNode(t, jstypeliteral.AsNode())
 	}
 	return p.factory.DeepCloneReparse(t)
 }
@@ -254,7 +255,6 @@ func (p *Parser) gatherTypeParameters(j *ast.Node, tagWithTypeParameters *ast.No
 			} else {
 				reparse = p.factory.DeepCloneReparse(tp)
 			}
-			reparse.Flags |= ast.NodeFlagsReparsed
 			if typeParameters == nil {
 				typeParameters = p.nodeSlicePool.NewSlice(0)
 			}
