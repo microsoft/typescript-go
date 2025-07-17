@@ -399,6 +399,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 	isInSnippetScope := false
 	if insideComment != nil {
 		// !!! jsdoc
+		return nil
 	}
 
 	// The decision to provide completion depends on the contextToken, which is determined through the previousToken.
@@ -3684,7 +3685,10 @@ func setMemberDeclaredBySpreadAssignment(declaration *ast.Node, members *collect
 	if symbol != nil {
 		t = typeChecker.GetTypeOfSymbolAtLocation(symbol, expression)
 	}
-	properties := t.AsStructuredType().Properties()
+	var properties []*ast.Symbol
+	if t != nil {
+		properties = t.AsStructuredType().Properties()
+	}
 	for _, property := range properties {
 		members.Add(property.Name)
 	}
@@ -4070,7 +4074,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 	// the completion list at "1" and "2" will contain "MainComponent.Child" with a replacement span of closing tag name
 	hasClosingAngleBracket := findChildOfKind(jsxClosingElement, ast.KindGreaterThanToken, file) != nil
 	tagName := jsxClosingElement.Parent.AsJsxElement().OpeningElement.TagName()
-	closingTag := tagName.Text()
+	closingTag := scanner.GetTextOfNode(tagName)
 	fullClosingTag := closingTag + core.IfElse(hasClosingAngleBracket, "", ">")
 	optionalReplacementSpan := l.createLspRangeFromNode(jsxClosingElement.TagName(), file)
 	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)
