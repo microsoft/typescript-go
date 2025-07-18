@@ -13,6 +13,10 @@ const (
 	TSTrue
 )
 
+func (t Tristate) IsUnknown() bool {
+	return t == TSUnknown
+}
+
 func (t Tristate) IsTrue() bool {
 	return t == TSTrue
 }
