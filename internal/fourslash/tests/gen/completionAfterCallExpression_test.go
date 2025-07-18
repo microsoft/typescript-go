@@ -12,10 +12,12 @@ func TestCompletionAfterCallExpression(t *testing.T) {
 
 	defer testutil.RecoverAndFail(t, "Panic on fourslash test")
 	
+	const content = `let x = someCall() /*1*/
+let y = anotherCall(1, 2, 3) /*2*/`
+	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
+	
 	// Test case 1: Simple call expression followed by cursor
-	const content1 = `let x = someCall() /**/`
-	f := fourslash.NewFourslash(t, nil /*capabilities*/, content1)
-	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
@@ -30,9 +32,7 @@ func TestCompletionAfterCallExpression(t *testing.T) {
 	})
 	
 	// Test case 2: Call expression with arguments followed by cursor
-	const content2 = `let y = anotherCall(1, 2, 3) /**/`
-	f2 := fourslash.NewFourslash(t, nil /*capabilities*/, content2)
-	f2.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
+	f.VerifyCompletions(t, "2", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
 		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
