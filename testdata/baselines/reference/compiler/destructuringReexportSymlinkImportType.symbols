@@ -1,0 +1,31 @@
+//// [tests/cases/compiler/destructuringReexportSymlinkImportType.ts] ////
+
+=== /real-packages/package-b/index.d.ts ===
+export interface B {
+>B : Symbol(B, Decl(index.d.ts, 0, 0))
+
+  value: string;
+>value : Symbol(value, Decl(index.d.ts, 0, 20))
+}
+
+=== /project/src/types.ts ===
+import type { B } from "package-b";
+>B : Symbol(B, Decl(types.ts, 0, 13))
+
+export type { B };
+>B : Symbol(B, Decl(types.ts, 1, 13))
+
+=== /project/src/main.ts ===
+import type { B } from "./types";
+>B : Symbol(B, Decl(main.ts, 0, 13))
+
+export function useB(param: B): B {
+>useB : Symbol(useB, Decl(main.ts, 0, 33))
+>param : Symbol(param, Decl(main.ts, 2, 21))
+>B : Symbol(B, Decl(main.ts, 0, 13))
+>B : Symbol(B, Decl(main.ts, 0, 13))
+
+  return param;
+>param : Symbol(param, Decl(main.ts, 2, 21))
+}
+
