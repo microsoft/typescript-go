@@ -1006,21 +1006,6 @@ f</*1*/>(1, 2);`,
 				"1": {text: "eval(x: string): any", parameterCount: 1, parameterSpan: "x: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
-		{
-			title: "signatureHelpRangeIssue",
-			input: `let obj = {
-    foo(s: string): string {
-        return s;
-    }
-};
-
-let s = obj.foo("Hello, world!"/*insideCall*/)/*afterCall*/;`,
-			expected: map[string]verifySignatureHelpOptions{
-				"insideCall": {text: "foo(s: string): string", parameterCount: 1, parameterSpan: "s: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
-				// This should NOT have signature help
-				// "afterCall": nil,
-			},
-		},
 	}
 
 	for _, testCase := range testCases {
@@ -1056,16 +1041,6 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 	}
 	preferences := &ls.UserPreferences{}
 	
-	// Debug: Print all current signatures for debugging
-	for markerName, marker := range markerPositions {
-		result := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), marker.LSPosition, context, capabilities, preferences)
-		if result != nil {
-			t.Logf("DEBUG: Marker '%s' -> signature: %s", markerName, result.Signatures[*result.ActiveSignature].Label)
-		} else {
-			t.Logf("DEBUG: Marker '%s' -> no signature help", markerName)
-		}
-	}
-	
 	for markerName, expectedResult := range expected {
 		marker, ok := markerPositions[markerName]
 		if !ok {
@@ -1083,4 +1058,111 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 			assert.Equal(t, expectedResult.parameterSpan, *(*result.Signatures[*result.ActiveSignature].Parameters)[int(result.ActiveParameter.Value)].Label.String)
 		}
 	}
+}
+
+func runSignatureHelpTestWithNil(t *testing.T, input string, expected map[string]verifySignatureHelpOptions, expectedNil []string) {
+	testData := fourslash.ParseTestData(t, input, "/mainFile.ts")
+	file := testData.Files[0].FileName()
+	markerPositions := testData.MarkerPositions
+	ctx := projecttestutil.WithRequestID(t.Context())
+	languageService, done := createLanguageService(ctx, file, map[string]string{
+		file: testData.Files[0].Content,
+	})
+	defer done()
+	context := &lsproto.SignatureHelpContext{
+		TriggerKind:      lsproto.SignatureHelpTriggerKindInvoked,
+		TriggerCharacter: nil,
+	}
+	ptrTrue := ptrTo(true)
+	capabilities := &lsproto.SignatureHelpClientCapabilities{
+		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+			ActiveParameterSupport:   ptrTrue,
+			NoActiveParameterSupport: ptrTrue,
+			ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+				LabelOffsetSupport: ptrTrue,
+			},
+		},
+	}
+	preferences := &ls.UserPreferences{}
+	
+	// Check expected non-nil results
+	for markerName, expectedResult := range expected {
+		marker, ok := markerPositions[markerName]
+		if !ok {
+			t.Fatalf("No marker found for '%s'", markerName)
+		}
+		result := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), marker.LSPosition, context, capabilities, preferences)
+		if result == nil {
+			t.Fatalf("Expected signature help for marker '%s' but got nil", markerName)
+		}
+		assert.Equal(t, expectedResult.text, result.Signatures[*result.ActiveSignature].Label)
+		assert.Equal(t, expectedResult.parameterCount, len(*result.Signatures[*result.ActiveSignature].Parameters))
+		assert.DeepEqual(t, expectedResult.activeParameter, result.ActiveParameter)
+		// Checking the parameter span that will be highlighted in the editor
+		if expectedResult.activeParameter != nil && int(expectedResult.activeParameter.Value) < expectedResult.parameterCount {
+			assert.Equal(t, expectedResult.parameterSpan, *(*result.Signatures[*result.ActiveSignature].Parameters)[int(result.ActiveParameter.Value)].Label.String)
+		}
+	}
+	
+	// Check expected nil results
+	for _, markerName := range expectedNil {
+		marker, ok := markerPositions[markerName]
+		if !ok {
+			t.Fatalf("No marker found for '%s'", markerName)
+		}
+		result := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), marker.LSPosition, context, capabilities, preferences)
+		if result != nil {
+			t.Fatalf("Expected no signature help for marker '%s' but got: %s", markerName, result.Signatures[*result.ActiveSignature].Label)
+		}
+	}
+}
+
+func TestSignatureHelpRangeIssue(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+	
+	input := `let obj = {
+    foo(s: string): string {
+        return s;
+    }
+};
+
+let s = obj.foo("Hello, world!"/*insideCall*/)/*afterCall*/;`
+	
+	runSignatureHelpTestWithNil(t, input, 
+		map[string]verifySignatureHelpOptions{
+			"insideCall": {text: "foo(s: string): string", parameterCount: 1, parameterSpan: "s: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+		},
+		[]string{"afterCall"})
+}
+
+func TestSignatureHelpNestedCallPrecedence(t *testing.T) {
+	t.Parallel()
+	if !bundled.Embedded {
+		t.Skip("bundled files are not embedded")
+	}
+	
+	input := `function foo(x: any) {
+    return x;
+}
+
+function bar(x: any) {
+    return x;
+}
+
+foo(/*outerA*/ /*outerB*/bar/*callTarget*/(/*innerParam*/)/*outerC*/ /*outerD*/)`
+	
+	runSignatureHelpTest(t, input, map[string]verifySignatureHelpOptions{
+		// Outer call should take precedence for these positions
+		"outerA":      {text: "foo(x: any): any", parameterCount: 1, parameterSpan: "x: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+		"outerB":      {text: "foo(x: any): any", parameterCount: 1, parameterSpan: "x: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+		"callTarget":  {text: "foo(x: any): any", parameterCount: 1, parameterSpan: "x: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+		"outerC":      {text: "foo(x: any): any", parameterCount: 1, parameterSpan: "x: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+		"outerD":      {text: "foo(x: any): any", parameterCount: 1, parameterSpan: "x: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+		
+		// Inner call should only take precedence for this position
+		"innerParam":  {text: "bar(x: any): any", parameterCount: 1, parameterSpan: "x: any", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+	})
 }
