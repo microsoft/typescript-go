@@ -563,3 +563,25 @@ func IndexAfter(s string, pattern string, startIndex int) int {
 func ShouldRewriteModuleSpecifier(specifier string, compilerOptions *CompilerOptions) bool {
 	return compilerOptions.RewriteRelativeImportExtensions.IsTrue() && tspath.PathIsRelative(specifier) && !tspath.IsDeclarationFileName(specifier) && tspath.HasTSFileExtension(specifier)
 }
+
+func SingleElementSlice[T any](element *T) []*T {
+	if element == nil {
+		return nil
+	}
+	return []*T{element}
+}
+
+func ConcatenateSeq[T any](seqs ...iter.Seq[T]) iter.Seq[T] {
+	return func(yield func(T) bool) {
+		for _, seq := range seqs {
+			if seq == nil {
+				continue
+			}
+			for e := range seq {
+				if !yield(e) {
+					return
+				}
+			}
+		}
+	}
+}

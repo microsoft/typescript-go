@@ -22,7 +22,6 @@ import (
 	"github.com/microsoft/typescript-go/internal/jsnum"
 	"github.com/microsoft/typescript-go/internal/module"
 	"github.com/microsoft/typescript-go/internal/modulespecifiers"
-	"github.com/microsoft/typescript-go/internal/printer"
 	"github.com/microsoft/typescript-go/internal/scanner"
 	"github.com/microsoft/typescript-go/internal/stringutil"
 	"github.com/microsoft/typescript-go/internal/tsoptions"
@@ -539,6 +538,7 @@ type Program interface {
 	GetImportHelpersImportSpecifier(path tspath.Path) *ast.Node
 	SourceFileMayBeEmitted(sourceFile *ast.SourceFile, forceDtsEmit bool) bool
 	IsSourceFromProjectReference(path tspath.Path) bool
+	IsSourceFileDefaultLibrary(path tspath.Path) bool
 	GetSourceAndProjectReference(path tspath.Path) *tsoptions.SourceAndProjectReference
 	GetRedirectForResolution(file ast.HasFileName) *tsoptions.ParsedCommandLine
 	CommonSourceDirectory() string
@@ -727,6 +727,7 @@ type Checker struct {
 	unknownSignature                            *Signature
 	resolvingSignature                          *Signature
 	silentNeverSignature                        *Signature
+	cachedArgumentsReferenced                   map[*ast.Node]bool
 	enumNumberIndexInfo                         *IndexInfo
 	anyBaseTypeIndexInfo                        *IndexInfo
 	patternAmbientModules                       []*ast.PatternAmbientModule
@@ -847,13 +848,13 @@ type Checker struct {
 	markNodeAssignments                         func(*ast.Node) bool
 	emitResolver                                *emitResolver
 	emitResolverOnce                            sync.Once
-	diagnosticConstructionContext               *printer.EmitContext
-	nodeBuilder                                 *NodeBuilder
 	_jsxNamespace                               string
 	_jsxFactoryEntity                           *ast.Node
 	skipDirectInferenceNodes                    collections.Set[*ast.Node]
 	ctx                                         context.Context
 	packagesMap                                 map[string]bool
+	activeMappers                               []*TypeMapper
+	activeTypeMappersCaches                     []map[string]*Type
 }
 
 func NewChecker(program Program) *Checker {
@@ -1000,6 +1001,7 @@ func NewChecker(program Program) *Checker {
 	c.unknownSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.errorType, nil, 0)
 	c.resolvingSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.anyType, nil, 0)
 	c.silentNeverSignature = c.newSignature(SignatureFlagsNone, nil, nil, nil, nil, c.silentNeverType, nil, 0)
+	c.cachedArgumentsReferenced = make(map[*ast.Node]bool)
 	c.enumNumberIndexInfo = &IndexInfo{keyType: c.numberType, valueType: c.stringType, isReadonly: true}
 	c.anyBaseTypeIndexInfo = &IndexInfo{keyType: c.stringType, valueType: c.anyType, isReadonly: false}
 	c.emptyStringType = c.getStringLiteralType("")
@@ -1065,8 +1067,6 @@ func NewChecker(program Program) *Checker {
 	c.getGlobalClassAccessorDecoratorTargetType = c.getGlobalTypeResolver("ClassAccessorDecoratorTarget", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassAccessorDecoratorResultType = c.getGlobalTypeResolver("ClassAccessorDecoratorResult", 2 /*arity*/, true /*reportErrors*/)
 	c.getGlobalClassFieldDecoratorContextType = c.getGlobalTypeResolver("ClassFieldDecoratorContext", 2 /*arity*/, true /*reportErrors*/)
-	c.diagnosticConstructionContext = printer.NewEmitContext()
-	c.nodeBuilder = NewNodeBuilder(c, c.diagnosticConstructionContext)
 	c.initializeClosures()
 	c.initializeIterationResolvers()
 	c.initializeChecker()
@@ -1830,17 +1830,8 @@ func (c *Checker) isBlockScopedNameDeclaredBeforeUse(declaration *ast.Node, usag
 	useFile := ast.GetSourceFileOfNode(usage)
 	declContainer := ast.GetEnclosingBlockScopeContainer(declaration)
 	if declarationFile != useFile {
-		if (c.moduleKind != core.ModuleKindNone && (declarationFile.ExternalModuleIndicator != nil || useFile.ExternalModuleIndicator != nil)) || c.compilerOptions.OutFile == "" || IsInTypeQuery(usage) || declaration.Flags&ast.NodeFlagsAmbient != 0 {
-			// nodes are in different files and order cannot be determined
-			return true
-		}
-		// declaration is after usage
-		// can be legal if usage is deferred (i.e. inside function or in initializer of instance property)
-		if c.isUsedInFunctionOrInstanceProperty(usage, declaration, declContainer) {
-			return true
-		}
-		sourceFiles := c.program.SourceFiles()
-		return slices.Index(sourceFiles, declarationFile) <= slices.Index(sourceFiles, useFile)
+		// nodes are in different files and order cannot be determined
+		return true
 	}
 	// deferred usage in a type context is always OK regardless of the usage position:
 	if usage.Flags&ast.NodeFlagsJSDoc != 0 || IsInTypeQuery(usage) || c.isInAmbientOrTypeNode(usage) {
@@ -2554,6 +2545,7 @@ func (c *Checker) checkSignatureDeclaration(node *ast.Node) {
 		c.checkGrammarFunctionLikeDeclaration(node)
 	}
 	c.checkTypeParameters(node.TypeParameters())
+	c.checkUnmatchedJSDocParameters(node)
 	c.checkSourceElements(node.Parameters())
 	returnTypeNode := node.Type()
 	if returnTypeNode != nil {
@@ -8357,7 +8349,7 @@ func (c *Checker) isConstructorAccessible(node *ast.Node, signature *Signature) 
 }
 
 func (c *Checker) typeHasProtectedAccessibleBase(target *ast.Symbol, t *Type) bool {
-	baseTypes := c.getBaseTypes(t)
+	baseTypes := c.getBaseTypes(c.getTargetType(t))
 	if len(baseTypes) == 0 {
 		return false
 	}
@@ -8531,6 +8523,13 @@ func (c *Checker) resolveCall(node *ast.Node, signatures []*Signature, candidate
 	if candidatesOutArray != nil {
 		*candidatesOutArray = s.candidates
 	}
+
+	if len(s.candidates) == 0 {
+		// In Strada we would error here, but no known repro doesn't have at least
+		// one other error in this codepath. Just return instead. See #54442
+		return c.unknownSignature
+	}
+
 	s.args = c.getEffectiveCallArguments(node)
 	// The excludeArgument array contains true for each context sensitive argument (an argument
 	// is context sensitive it is susceptible to a one-time permanent contextual typing).
@@ -16081,6 +16080,21 @@ func (c *Checker) padTupleType(t *Type, pattern *ast.Node) *Type {
 }
 
 func (c *Checker) widenTypeInferredFromInitializer(declaration *ast.Node, t *Type) *Type {
+	widened := c.getWidenedLiteralTypeForInitializer(declaration, t)
+	if ast.IsInJSFile(declaration) {
+		if c.isEmptyLiteralType(widened) {
+			c.reportImplicitAny(declaration, c.anyType, WideningKindNormal)
+			return c.anyType
+		}
+		if c.isEmptyArrayLiteralType(widened) {
+			c.reportImplicitAny(declaration, c.anyArrayType, WideningKindNormal)
+			return c.anyArrayType
+		}
+	}
+	return widened
+}
+
+func (c *Checker) getWidenedLiteralTypeForInitializer(declaration *ast.Node, t *Type) *Type {
 	if c.getCombinedNodeFlagsCached(declaration)&ast.NodeFlagsConstant != 0 || isDeclarationReadonly(declaration) {
 		return t
 	}
@@ -17201,7 +17215,7 @@ func (c *Checker) getTypeFromBindingElement(element *ast.Node, includePatternInT
 		if ast.IsBindingPattern(element.Name()) {
 			contextualType = c.getTypeFromBindingPattern(element.Name(), true /*includePatternInType*/, false /*reportErrors*/)
 		}
-		return c.addOptionality(c.widenTypeInferredFromInitializer(element, c.checkDeclarationInitializer(element, CheckModeNormal, contextualType)))
+		return c.addOptionality(c.getWidenedLiteralTypeForInitializer(element, c.checkDeclarationInitializer(element, CheckModeNormal, contextualType)))
 	}
 	if ast.IsBindingPattern(element.Name()) {
 		return c.getTypeFromBindingPattern(element.Name(), includePatternInType, reportErrors)
@@ -17853,6 +17867,7 @@ func (c *Checker) pushTypeResolution(target TypeSystemEntity, propertyName TypeS
 func (c *Checker) popTypeResolution() bool {
 	lastIndex := len(c.typeResolutions) - 1
 	result := c.typeResolutions[lastIndex].result
+	c.typeResolutions[lastIndex] = TypeResolution{} // Clear the last entry to avoid memory leaks
 	c.typeResolutions = c.typeResolutions[:lastIndex]
 	return result
 }
@@ -21107,6 +21122,9 @@ func (c *Checker) getDefaultOrUnknownFromTypeParameter(t *Type) *Type {
 }
 
 func (c *Checker) getNamedMembers(members ast.SymbolTable) []*ast.Symbol {
+	if len(members) == 0 {
+		return nil
+	}
 	result := make([]*ast.Symbol, 0, len(members))
 	for id, symbol := range members {
 		if c.isNamedMember(symbol, id) {
@@ -21148,12 +21166,64 @@ func (c *Checker) instantiateTypeWithAlias(t *Type, m *TypeMapper, alias *TypeAl
 		c.error(c.currentNode, diagnostics.Type_instantiation_is_excessively_deep_and_possibly_infinite)
 		return c.errorType
 	}
+	index := c.findActiveMapper(m)
+	if index == -1 {
+		c.pushActiveMapper(m)
+	}
+	var b KeyBuilder
+	b.WriteType(t)
+	b.WriteAlias(alias)
+	key := b.String()
+	cache := c.activeTypeMappersCaches[core.IfElse(index != -1, index, len(c.activeTypeMappersCaches)-1)]
+	if cachedType, ok := cache[key]; ok {
+		return cachedType
+	}
 	c.TotalInstantiationCount++
 	c.instantiationCount++
 	c.instantiationDepth++
 	result := c.instantiateTypeWorker(t, m, alias)
+	if index == -1 {
+		c.popActiveMapper()
+	} else {
+		cache[key] = result
+	}
 	c.instantiationDepth--
 	return result
+}
+
+func (c *Checker) pushActiveMapper(mapper *TypeMapper) {
+	c.activeMappers = append(c.activeMappers, mapper)
+
+	lastIndex := len(c.activeTypeMappersCaches)
+	if cap(c.activeTypeMappersCaches) > lastIndex {
+		// The cap may contain an empty map from popActiveMapper; reuse it.
+		c.activeTypeMappersCaches = c.activeTypeMappersCaches[:lastIndex+1]
+		if c.activeTypeMappersCaches[lastIndex] == nil {
+			c.activeTypeMappersCaches[lastIndex] = make(map[string]*Type, 1)
+		}
+	} else {
+		c.activeTypeMappersCaches = append(c.activeTypeMappersCaches, make(map[string]*Type, 1))
+	}
+}
+
+func (c *Checker) popActiveMapper() {
+	c.activeMappers[len(c.activeMappers)-1] = nil
+	c.activeMappers = c.activeMappers[:len(c.activeMappers)-1]
+
+	// Clear the map, but leave it in the list for later reuse.
+	lastIndex := len(c.activeTypeMappersCaches) - 1
+	clear(c.activeTypeMappersCaches[lastIndex])
+	c.activeTypeMappersCaches = c.activeTypeMappersCaches[:lastIndex]
+}
+
+func (c *Checker) findActiveMapper(mapper *TypeMapper) int {
+	return core.FindLastIndex(c.activeMappers, func(m *TypeMapper) bool { return m == mapper })
+}
+
+func (c *Checker) clearActiveMapperCaches() {
+	for _, cache := range c.activeTypeMappersCaches {
+		clear(cache)
+	}
 }
 
 // Return true if the given type could possibly reference a type parameter for which
@@ -29325,7 +29395,9 @@ func (c *Checker) pushContextualType(node *ast.Node, t *Type, isCache bool) {
 }
 
 func (c *Checker) popContextualType() {
-	c.contextualInfos = c.contextualInfos[:len(c.contextualInfos)-1]
+	lastIndex := len(c.contextualInfos) - 1
+	c.contextualInfos[lastIndex] = ContextualInfo{}
+	c.contextualInfos = c.contextualInfos[:lastIndex]
 }
 
 func (c *Checker) findContextualNode(node *ast.Node, includeCaches bool) int {
@@ -29395,7 +29467,9 @@ func (c *Checker) pushInferenceContext(node *ast.Node, context *InferenceContext
 }
 
 func (c *Checker) popInferenceContext() {
-	c.inferenceContextInfos = c.inferenceContextInfos[:len(c.inferenceContextInfos)-1]
+	lastIndex := len(c.inferenceContextInfos) - 1
+	c.inferenceContextInfos[lastIndex] = InferenceContextInfo{}
+	c.inferenceContextInfos = c.inferenceContextInfos[:lastIndex]
 }
 
 func (c *Checker) getInferenceContext(node *ast.Node) *InferenceContext {
@@ -30189,12 +30263,28 @@ func (c *Checker) getSymbolAtLocation(node *ast.Node, ignoreErrors bool) *ast.Sy
 	}
 }
 
+func (c *Checker) getIndexSignaturesAtLocation(node *ast.Node) []*ast.Node {
+	var signatures []*ast.Node
+	if ast.IsIdentifier(node) && ast.IsPropertyAccessExpression(node.Parent) && node.Parent.Name() == node {
+		keyType := c.getLiteralTypeFromPropertyName(node)
+		objectType := c.getTypeOfExpression(node.Parent.Expression())
+		for _, t := range objectType.Distributed() {
+			for _, info := range c.getApplicableIndexInfos(t, keyType) {
+				if info.declaration != nil {
+					signatures = core.AppendIfUnique(signatures, info.declaration)
+				}
+			}
+		}
+	}
+	return signatures
+}
+
 func (c *Checker) getSymbolOfNameOrPropertyAccessExpression(name *ast.Node) *ast.Symbol {
 	if ast.IsDeclarationName(name) {
 		return c.getSymbolOfNode(name.Parent)
 	}
 
-	if name.Parent.Kind == ast.KindExportAssignment && ast.IsEntityNameExpression(name) {
+	if (name.Parent.Kind == ast.KindExportAssignment || name.Parent.Kind == ast.KindJSExportAssignment) && ast.IsEntityNameExpression(name) {
 		// Even an entity name expression that doesn't resolve as an entityname may still typecheck as a property access expression
 		success := c.resolveEntityName(
 			name,
@@ -30520,22 +30610,52 @@ func (c *Checker) getRegularTypeOfExpression(expr *ast.Node) *Type {
 	return c.getRegularTypeOfLiteralType(c.getTypeOfExpression(expr))
 }
 
+func (c *Checker) containsArgumentsReference(node *ast.Node) bool {
+	if node.Body() == nil {
+		return false
+	}
+
+	if containsArguments, ok := c.cachedArgumentsReferenced[node]; ok {
+		return containsArguments
+	}
+
+	var visit func(node *ast.Node) bool
+	visit = func(node *ast.Node) bool {
+		if node == nil {
+			return false
+		}
+		switch node.Kind {
+		case ast.KindIdentifier:
+			return node.Text() == c.argumentsSymbol.Name && c.IsArgumentsSymbol(c.getResolvedSymbol(node))
+		case ast.KindPropertyDeclaration, ast.KindMethodDeclaration, ast.KindGetAccessor, ast.KindSetAccessor:
+			if ast.IsComputedPropertyName(node.Name()) {
+				return visit(node.Name())
+			}
+		case ast.KindPropertyAccessExpression, ast.KindElementAccessExpression:
+			return visit(node.Expression())
+		case ast.KindPropertyAssignment:
+			return visit(node.AsPropertyAssignment().Initializer)
+		}
+		if nodeStartsNewLexicalEnvironment(node) || ast.IsPartOfTypeNode(node) {
+			return false
+		}
+		return node.ForEachChild(visit)
+	}
+
+	containsArguments := visit(node.Body())
+	c.cachedArgumentsReferenced[node] = containsArguments
+	return containsArguments
+}
+
 func (c *Checker) GetTypeAtLocation(node *ast.Node) *Type {
 	return c.getTypeOfNode(node)
 }
 
-func (c *Checker) GetEmitResolver(file *ast.SourceFile, skipDiagnostics bool) *emitResolver {
+func (c *Checker) GetEmitResolver() *emitResolver {
 	c.emitResolverOnce.Do(func() {
-		c.emitResolver = &emitResolver{checker: c}
+		c.emitResolver = newEmitResolver(c)
 	})
 
-	if !skipDiagnostics {
-		// Ensure we have all the type information in place for this file so that all the
-		// emitter questions of this resolver will return the right information.
-		c.emitResolver.checkerMu.Lock()
-		defer c.emitResolver.checkerMu.Unlock()
-		c.checkSourceFile(context.Background(), file)
-	}
 	return c.emitResolver
 }
 

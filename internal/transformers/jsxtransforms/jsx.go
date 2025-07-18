@@ -273,7 +273,7 @@ func (tx *JSXTransformer) visitSourceFile(file *ast.SourceFile) *ast.Node {
 	}
 
 	if statementsUpdated {
-		visited = tx.Factory().UpdateSourceFile(file, tx.Factory().NewNodeList(statements))
+		visited = tx.Factory().UpdateSourceFile(file, tx.Factory().NewNodeList(statements), file.EndOfFileToken)
 	}
 
 	tx.currentSourceFile = nil
@@ -399,7 +399,7 @@ func (tx *JSXTransformer) visitJsxOpeningLikeElementJSX(element *ast.Node, child
 
 func (tx *JSXTransformer) transformJsxAttributesToObjectProps(attrs []*ast.Node, childrenProp *ast.Node) *ast.Node {
 	target := tx.compilerOptions.GetEmitScriptTarget()
-	if target != core.ScriptTargetNone && target >= core.ScriptTargetES2018 {
+	if target >= core.ScriptTargetES2018 {
 		// target has object spreads, can keep as-is
 		return tx.Factory().NewObjectLiteralExpression(tx.Factory().NewNodeList(tx.transformJsxAttributesToProps(attrs, childrenProp)), false)
 	}

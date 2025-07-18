@@ -23,13 +23,27 @@ class Foo implements IFoo {
     /**/
 }`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &[]string{},
+			EditRange:        ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "a", InsertText: ptrTo("a?: number;"), FilterText: ptrTo("a")}, &lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextLocationPriority)), Label: "b", InsertText: ptrTo("b(x: number): void {\n}"), FilterText: ptrTo("b")}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "a",
+					InsertText: ptrTo("a?: number;"),
+					FilterText: ptrTo("a"),
+					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
+				},
+				&lsproto.CompletionItem{
+					Label:      "b",
+					InsertText: ptrTo("b(x: number): void {\n}"),
+					FilterText: ptrTo("b"),
+					SortText:   ptrTo(string(ls.SortTextLocationPriority)),
+				},
+			},
 		},
 	})
 }

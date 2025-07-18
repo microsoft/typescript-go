@@ -25,13 +25,21 @@ interface MyOptions {
 declare function bar<T extends MyOptions>(options?: Partial<T>): void;
 bar({ deep: {/*1*/} });`
 	f := fourslash.NewFourslash(t, nil /*capabilities*/, content)
-	f.VerifyCompletions(t, "1", &fourslash.VerifyCompletionsExpectedList{
+	f.VerifyCompletions(t, "1", &fourslash.CompletionsExpectedList{
 		IsIncomplete: false,
-		ItemDefaults: &lsproto.CompletionItemDefaults{
+		ItemDefaults: &fourslash.CompletionsExpectedItemDefaults{
 			CommitCharacters: &defaultCommitCharacters,
+			EditRange:        ignored,
 		},
-		Items: &fourslash.VerifyCompletionsExpectedItems{
-			Includes: []fourslash.ExpectedCompletionItem{&lsproto.CompletionItem{SortText: ptrTo(string(ls.SortTextOptionalMember)), Label: "another?", InsertText: ptrTo("another"), FilterText: ptrTo("another")}},
+		Items: &fourslash.CompletionsExpectedItems{
+			Includes: []fourslash.CompletionsExpectedItem{
+				&lsproto.CompletionItem{
+					Label:      "another?",
+					InsertText: ptrTo("another"),
+					FilterText: ptrTo("another"),
+					SortText:   ptrTo(string(ls.SortTextOptionalMember)),
+				},
+			},
 		},
 	})
 }

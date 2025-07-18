@@ -9,6 +9,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/microsoft/typescript-go/internal/collections"
 	"github.com/microsoft/typescript-go/internal/core"
 	"github.com/microsoft/typescript-go/internal/ls"
 	"github.com/microsoft/typescript-go/internal/lsp/lsproto"
@@ -118,14 +119,13 @@ func (s *Service) HasLevel(level LogLevel) bool {
 	return s.options.Logger.HasLevel(level)
 }
 
-// NewLine implements ProjectHost.
-func (s *Service) NewLine() string {
-	return s.host.NewLine()
-}
-
 // DefaultLibraryPath implements ProjectHost.
 func (s *Service) DefaultLibraryPath() string {
 	return s.host.DefaultLibraryPath()
+}
+
+func (s *Service) Converters() *ls.Converters {
+	return s.converters
 }
 
 // TypingsInstaller implements ProjectHost.
@@ -296,9 +296,15 @@ func (s *Service) Close() {
 }
 
 func (s *Service) OnWatchedFilesChanged(ctx context.Context, changes []*lsproto.FileEvent) error {
+	seen := collections.NewSetWithSizeHint[lsproto.FileEvent](len(changes))
+
 	s.projectsMu.RLock()
 	defer s.projectsMu.RUnlock()
 	for _, change := range changes {
+		if !seen.AddIfAbsent(*change) {
+			continue
+		}
+
 		fileName := ls.DocumentURIToFileName(change.Uri)
 		path := s.toPath(fileName)
 		if err, ok := s.configFileRegistry.onWatchedFilesChanged(path, change.Type); ok {

@@ -50,9 +50,11 @@ type processedFiles struct {
 	sourceFileMetaDatas           map[tspath.Path]ast.SourceFileMetaData
 	jsxRuntimeImportSpecifiers    map[tspath.Path]*jsxRuntimeImportSpecifier
 	importHelpersImportSpecifiers map[tspath.Path]*ast.Node
+	libFiles                      collections.Set[tspath.Path]
 	// List of present unsupported extensions
 	unsupportedExtensions                []string
 	sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
+	fileLoadDiagnostics                  *ast.DiagnosticsCollection
 }
 
 type jsxRuntimeImportSpecifier struct {
@@ -92,7 +94,7 @@ func processAllProgramFiles(
 	loader.resolver = module.NewResolver(loader.projectReferenceFileMapper.host, compilerOptions, opts.TypingsLocation, opts.ProjectName)
 
 	var libs []string
-	if compilerOptions.NoLib.IsFalseOrUnknown() {
+	if len(rootFiles) > 0 && compilerOptions.NoLib.IsFalseOrUnknown() {
 		if compilerOptions.Lib == nil {
 			name := tsoptions.GetDefaultLibFileName(compilerOptions)
 			libs = append(libs, loader.pathForLibFile(name))
@@ -108,7 +110,10 @@ func processAllProgramFiles(
 
 	loader.addRootTasks(rootFiles, false)
 	loader.addRootTasks(libs, true)
-	loader.addAutomaticTypeDirectiveTasks()
+
+	if len(rootFiles) > 0 {
+		loader.addAutomaticTypeDirectiveTasks()
+	}
 
 	loader.parseTasks.runAndWait(&loader, loader.rootTasks)
 	// Clear out loader and host to ensure its not used post program creation
@@ -130,6 +135,8 @@ func processAllProgramFiles(
 	var importHelpersImportSpecifiers map[tspath.Path]*ast.Node
 	var unsupportedExtensions []string
 	var sourceFilesFoundSearchingNodeModules collections.Set[tspath.Path]
+	var libFileSet collections.Set[tspath.Path]
+	fileLoadDiagnostics := &ast.DiagnosticsCollection{}
 
 	loader.parseTasks.collect(&loader, loader.rootTasks, func(task *parseTask, _ []tspath.Path) {
 		if task.isRedirected {
@@ -148,6 +155,7 @@ func processAllProgramFiles(
 		}
 		if task.isLib {
 			libFiles = append(libFiles, file)
+			libFileSet.Add(path)
 		} else {
 			files = append(files, file)
 		}
@@ -156,6 +164,7 @@ func processAllProgramFiles(
 		resolvedModules[path] = task.resolutionsInFile
 		typeResolutionsInFile[path] = task.typeResolutionsInFile
 		sourceFileMetaDatas[path] = task.metadata
+
 		if task.jsxRuntimeImportSpecifier != nil {
 			if jsxRuntimeImportSpecifiers == nil {
 				jsxRuntimeImportSpecifiers = make(map[tspath.Path]*jsxRuntimeImportSpecifier, totalFileCount)
@@ -180,8 +189,28 @@ func processAllProgramFiles(
 
 	allFiles := append(libFiles, files...)
 
+	for _, resolutions := range resolvedModules {
+		for _, resolvedModule := range resolutions {
+			for _, diag := range resolvedModule.ResolutionDiagnostics {
+				fileLoadDiagnostics.Add(diag)
+			}
+		}
+	}
+	for _, typeResolutions := range typeResolutionsInFile {
+		for _, resolvedTypeRef := range typeResolutions {
+			for _, diag := range resolvedTypeRef.ResolutionDiagnostics {
+				fileLoadDiagnostics.Add(diag)
+			}
+		}
+	}
+
 	loader.pathForLibFileResolutions.Range(func(key tspath.Path, value module.ModeAwareCache[*module.ResolvedModule]) bool {
 		resolvedModules[key] = value
+		for _, resolvedModule := range value {
+			for _, diag := range resolvedModule.ResolutionDiagnostics {
+				fileLoadDiagnostics.Add(diag)
+			}
+		}
 		return true
 	})
 
@@ -197,6 +226,8 @@ func processAllProgramFiles(
 		importHelpersImportSpecifiers:        importHelpersImportSpecifiers,
 		unsupportedExtensions:                unsupportedExtensions,
 		sourceFilesFoundSearchingNodeModules: sourceFilesFoundSearchingNodeModules,
+		libFiles:                             libFileSet,
+		fileLoadDiagnostics:                  fileLoadDiagnostics,
 	}
 }
 
@@ -368,6 +399,7 @@ func (p *fileLoader) resolveTypeReferenceDirectives(t *parseTask) {
 		resolutionMode := getModeForTypeReferenceDirectiveInFile(ref, file, meta, module.GetCompilerOptionsWithRedirect(p.opts.Config.CompilerOptions(), redirect))
 		resolved := p.resolver.ResolveTypeReferenceDirective(ref.FileName, file.FileName(), resolutionMode, redirect)
 		typeResolutionsInFile[module.ModeAwareCacheKey{Name: ref.FileName, Mode: resolutionMode}] = resolved
+
 		if resolved.IsResolved() {
 			t.addSubTask(resolvedRef{
 				fileName:              resolved.ResolvedFileName,
@@ -557,13 +589,13 @@ func getDefaultResolutionModeForFile(fileName string, meta ast.SourceFileMetaDat
 }
 
 func getModeForUsageLocation(fileName string, meta ast.SourceFileMetaData, usage *ast.StringLiteralLike, options *core.CompilerOptions) core.ResolutionMode {
-	if ast.IsImportDeclaration(usage.Parent) || ast.IsExportDeclaration(usage.Parent) || ast.IsJSDocImportTag(usage.Parent) {
+	if ast.IsImportDeclaration(usage.Parent) || usage.Parent.Kind == ast.KindJSImportDeclaration || ast.IsExportDeclaration(usage.Parent) || ast.IsJSDocImportTag(usage.Parent) {
 		isTypeOnly := ast.IsExclusivelyTypeOnlyImportOrExport(usage.Parent)
 		if isTypeOnly {
 			var override core.ResolutionMode
 			var ok bool
 			switch usage.Parent.Kind {
-			case ast.KindImportDeclaration:
+			case ast.KindImportDeclaration, ast.KindJSImportDeclaration:
 				override, ok = usage.Parent.AsImportDeclaration().Attributes.GetResolutionModeOverride()
 			case ast.KindExportDeclaration:
 				override, ok = usage.Parent.AsExportDeclaration().Attributes.GetResolutionModeOverride()
