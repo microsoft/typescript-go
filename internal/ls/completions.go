@@ -2058,9 +2058,9 @@ var wordSeparators = collections.NewSetFromItems(
 	';', ':', '\'', '"', ',', '.', '<', '>', '/', '?',
 )
 
-// Finds the range of the word that ends at the given position.
-// e.g. for "abc def.ghi|jkl", the word range is "ghi" and the word start is 'g'.
-func getWordRange(sourceFile *ast.SourceFile, position int) (wordSize int, wordStart rune) {
+// Finds the length and first rune of the word that ends at the given position.
+// e.g. for "abc def.ghi|jkl", the word length is 3 and the word start is 'g'.
+func getWordLengthAndStart(sourceFile *ast.SourceFile, position int) (wordLength int, wordStart rune) {
 	// !!! Port other case of vscode's `DEFAULT_WORD_REGEXP` that covers words that start like numbers, e.g. -123.456abcd.
 	text := sourceFile.Text()[:position]
 	totalSize := 0
@@ -4157,7 +4157,7 @@ func (l *LanguageService) createLSPCompletionItem(
 	// Filter text
 
 	// Ported from vscode ts extension.
-	wordSize, wordStart := getWordRange(file, position)
+	wordSize, wordStart := getWordLengthAndStart(file, position)
 	dotAccessor := getDotAccessor(file, position-wordSize)
 	if filterText == "" {
 		filterText = getFilterText(file, position, insertText, name, wordStart, dotAccessor)
