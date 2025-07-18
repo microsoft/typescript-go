@@ -10119,6 +10119,7 @@ type SourceFile struct {
 	// Fields set by parser
 	diagnostics                 []*Diagnostic
 	jsdocDiagnostics            []*Diagnostic
+	jsSyntacticDiagnostics      []*Diagnostic
 	LanguageVariant             core.LanguageVariant
 	ScriptKind                  core.ScriptKind
 	IsDeclarationFile           bool
@@ -10215,6 +10216,14 @@ func (node *SourceFile) JSDocDiagnostics() []*Diagnostic {
 
 func (node *SourceFile) SetJSDocDiagnostics(diags []*Diagnostic) {
 	node.jsdocDiagnostics = diags
+}
+
+func (node *SourceFile) JSSyntacticDiagnostics() []*Diagnostic {
+	return node.jsSyntacticDiagnostics
+}
+
+func (node *SourceFile) SetJSSyntacticDiagnostics(diags []*Diagnostic) {
+	node.jsSyntacticDiagnostics = diags
 }
 
 func (node *SourceFile) JSDocCache() map[*Node][]*Node {
