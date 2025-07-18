@@ -93,11 +93,12 @@ func (l *LanguageService) GetSignatureHelpItems(
 	candidateInfo := getCandidateOrTypeInfo(argumentInfo, typeChecker, sourceFile, startingToken, onlyUseSyntacticOwners)
 	// cancellationToken.throwIfCancellationRequested();
 
-	// if (!candidateInfo) { !!!
-	// 	// We didn't have any sig help items produced by the TS compiler.  If this is a JS
-	// 	// file, then see if we can figure out anything better.
-	// 	return isSourceFileJS(sourceFile) ? createJSSignatureHelpItems(argumentInfo, program, cancellationToken) : undefined;
-	// }
+	if candidateInfo == nil {
+		// We didn't have any sig help items produced by the TS compiler.  If this is a JS
+		// file, then see if we can figure out anything better.
+		// return isSourceFileJS(sourceFile) ? createJSSignatureHelpItems(argumentInfo, program, cancellationToken) : undefined;
+		return nil
+	}
 
 	// return typeChecker.runWithCancellationToken(cancellationToken, typeChecker =>
 	if candidateInfo.candidateInfo != nil {

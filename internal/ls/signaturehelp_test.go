@@ -1006,13 +1006,68 @@ f</*1*/>(1, 2);`,
 				"1": {text: "eval(x: string): any", parameterCount: 1, parameterSpan: "x: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
+		{
+			title: "signatureHelpParenthesizedCall",
+			input: `function someCall() { return 42; }
+let x = (someCall()/*1*/);`,
+			expected: map[string]verifySignatureHelpOptions{
+				// This test case should not crash but may return no signature help
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
 		t.Run(testCase.title, func(t *testing.T) {
 			t.Parallel()
-			runSignatureHelpTest(t, testCase.input, testCase.expected)
+			if testCase.title == "signatureHelpParenthesizedCall" {
+				runSignatureHelpCrashTest(t, testCase.input)
+			} else {
+				runSignatureHelpTest(t, testCase.input, testCase.expected)
+			}
 		})
+	}
+}
+
+func runSignatureHelpCrashTest(t *testing.T, input string) {
+	testData := fourslash.ParseTestData(t, input, "/mainFile.ts")
+	file := testData.Files[0].FileName()
+	markerPositions := testData.MarkerPositions
+	ctx := projecttestutil.WithRequestID(t.Context())
+	languageService, done := createLanguageService(ctx, file, map[string]string{
+		file: testData.Files[0].Content,
+	})
+	defer done()
+
+	// Use the specific trigger parameters from the issue
+	context := &lsproto.SignatureHelpContext{
+		TriggerKind:      lsproto.SignatureHelpTriggerKindTriggerCharacter,
+		TriggerCharacter: ptrTo("("),
+		IsRetrigger:      false,
+	}
+	ptrTrue := ptrTo(true)
+	capabilities := &lsproto.SignatureHelpClientCapabilities{
+		SignatureInformation: &lsproto.ClientSignatureInformationOptions{
+			ActiveParameterSupport:   ptrTrue,
+			NoActiveParameterSupport: ptrTrue,
+			ParameterInformation: &lsproto.ClientSignatureParameterInformationOptions{
+				LabelOffsetSupport: ptrTrue,
+			},
+		},
+	}
+	preferences := &ls.UserPreferences{}
+
+	marker, ok := markerPositions["1"]
+	if !ok {
+		t.Fatal("No marker found for '1'")
+	}
+
+	// This should not crash - we just want to ensure it doesn't panic
+	result := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), marker.LSPosition, context, capabilities, preferences)
+	// The result might be nil, which is fine - we just don't want a crash
+	if result != nil {
+		t.Logf("Signature help result: %v", result)
+	} else {
+		t.Log("No signature help result (this is expected and OK)")
 	}
 }
 
