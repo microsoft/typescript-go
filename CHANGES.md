@@ -24,12 +24,64 @@ JSDoc types are parsed in normal type annotation position but show a grammar err
 
 Corsa no longer parses the following JSDoc tags with a specific node type. They now parse as generic JSDocTag nodes.
 
-1. `@class`
+1. `@class`/`@constructor`
 2. `@throws`
 3. `@author`
 4. `@enum`
 
 ## Checker
+
+1. When `"strict": false`, Corsa no longer allows omitting arguments for parameters with type `undefined`, `unknown`, or `any`:
+
+
+```js
+/** @param {unknown} x */
+function f(x) { return x; }
+f(); // Previously allowed, now an error
+```
+
+`void` can still be omitted, regardless of strict mode:
+
+```js
+/** @param {void} x */
+function f(x) { return x; }
+f(); // Still allowed
+```
+
+### JSDoc Types
+
+1. JSDoc variadic types are now only synonyms for array types.
+
+```js
+/** @param {...number} ns */
+function sum(...ns) {}
+```
+
+is equivalent to
+
+
+```js
+/** @param {number[]} ns */
+function sum(...ns) {}
+```
+
+They have no other semantics.
+
+
+2. A variadic type on a parameter no longer makes it a rest parameter. The parameter must use standard rest syntax.
+
+```js
+/** @param {...number} ns */
+function sum(ns) {}
+```
+
+Must now be written as
+
+```js
+/** @param {...number} ns */
+function sum(...ns) {}
+```
+
 
 ### JSDoc Tags
 
@@ -85,9 +137,17 @@ This is identical to the Typescript rule.
 
 3. Error messages on async functions that incorrectly return non-Promises now use the same error as TS.
 
+4. `@typedef` and `@callback` in a class body are no longer accessible outside the class. 
+They must be moved outside the class to use them outside the class.
+
+5. `@class` or `@constructor` does not make a function into a constructor function.
+
+Corsa ignores `@class` and `@constructor`.
+This makes a difference on a function without this-property assignments or associated prototype-function assignments.
+
 ### Expandos
 
-1. Exporting `void 0` is no longer ignored as a special case:
+1. Expando assignments of `void 0` are no longer ignored as a special case:
 
 ```js
 var o = {}
@@ -95,6 +155,56 @@ o.y = void 0
 ```
 
 creates a property `y: undefined` on `o` (which will widen to `y: any` if strictNullChecks is off).
+
+2. A this-property expression with a type annotation in the constructor no longer creates a property:
+
+```js
+class SharedClass {
+    constructor() {
+        /** @type {SharedId} */
+        this.id;
+    }
+}
+```
+
+Provide an initializer or use a property declaration in the class body:
+
+```js
+class SharedClass1 {
+    /** @type {SharedId} */
+    id;
+}
+class SharedClass2 {
+    constructor() {
+        /** @type {SharedId} */
+        this.id = 1;
+    }
+}
+```
+
+3. Assigning an object literal to the `prototype` property of a function no longer makes it a constructor function:
+
+```js
+function Foo() {}
+Foo.prototype = {
+    /** @param {number} x */
+    bar(x) {
+        return x;
+    }
+};
+```
+
+If you still need to use constructor functions instead of classes, you should declare methods individually on the prototype:
+
+```js
+function Foo() {}
+/** @param {number} x */ 
+Foo.prototype.bar = function(x) {
+    return x;
+};
+```
+
+Although classes are a much better way to write this code.
 
 ### CommonJS
 
@@ -114,6 +224,8 @@ exports.x = void 0
 exports.x = theRealExport
 ```
 
+This exports `x: undefined` not `x: typeof theRealExport`.
+
 3. Type info for `module` shows a property with name of an instead of `exports`:
 
 ```js
@@ -121,3 +233,24 @@ module.exports = singleIdentifier
 ```
 
 results in `module: { singleIdentifier: any }`
+
+4. Property access on `require` no longer imports a single property from a module:
+
+```js
+const x = require("y").x
+```
+
+If you can't configure your package to use ESM syntax, you can use destructuring instead:
+
+```js
+const { x } = require("y")
+```
+
+5. `Object.defineProperty` on `exports` no longer creates an export:
+
+```js
+Object.defineProperty(exports, "x", { value: 12 })
+```
+
+This applies to `module.exports` as well.
+Use `exports.x = 12` instead.
