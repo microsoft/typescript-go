@@ -37,9 +37,11 @@ Host.UserMetrics.Action = {
  * @typedef {string}
  */
 Host.UserMetrics.Blah = {
+>Host.UserMetrics.Blah : Symbol(Blah, Decl(enumDef.js, 8, 2))
 >Host.UserMetrics : Symbol(UserMetrics, Decl(enumDef.js, 0, 14))
 >Host : Symbol(Host, Decl(enumDef.js, 0, 3), Decl(enumDef.js, 10, 3))
 >UserMetrics : Symbol(UserMetrics, Decl(enumDef.js, 0, 14))
+>Blah : Symbol(Blah, Decl(enumDef.js, 8, 2))
 
     x: 12
 >x : Symbol(x, Decl(enumDef.js, 15, 25))
