@@ -1006,6 +1006,21 @@ f</*1*/>(1, 2);`,
 				"1": {text: "eval(x: string): any", parameterCount: 1, parameterSpan: "x: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
 			},
 		},
+		{
+			title: "signatureHelpRangeIssue",
+			input: `let obj = {
+    foo(s: string): string {
+        return s;
+    }
+};
+
+let s = obj.foo("Hello, world!"/*insideCall*/)/*afterCall*/;`,
+			expected: map[string]verifySignatureHelpOptions{
+				"insideCall": {text: "foo(s: string): string", parameterCount: 1, parameterSpan: "s: string", activeParameter: &lsproto.Nullable[uint32]{Value: 0}},
+				// This should NOT have signature help
+				// "afterCall": nil,
+			},
+		},
 	}
 
 	for _, testCase := range testCases {
@@ -1040,12 +1055,26 @@ func runSignatureHelpTest(t *testing.T, input string, expected map[string]verify
 		},
 	}
 	preferences := &ls.UserPreferences{}
+	
+	// Debug: Print all current signatures for debugging
+	for markerName, marker := range markerPositions {
+		result := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), marker.LSPosition, context, capabilities, preferences)
+		if result != nil {
+			t.Logf("DEBUG: Marker '%s' -> signature: %s", markerName, result.Signatures[*result.ActiveSignature].Label)
+		} else {
+			t.Logf("DEBUG: Marker '%s' -> no signature help", markerName)
+		}
+	}
+	
 	for markerName, expectedResult := range expected {
 		marker, ok := markerPositions[markerName]
 		if !ok {
 			t.Fatalf("No marker found for '%s'", markerName)
 		}
 		result := languageService.ProvideSignatureHelp(ctx, ls.FileNameToDocumentURI(file), marker.LSPosition, context, capabilities, preferences)
+		if result == nil {
+			t.Fatalf("Expected signature help for marker '%s' but got nil", markerName)
+		}
 		assert.Equal(t, expectedResult.text, result.Signatures[*result.ActiveSignature].Label)
 		assert.Equal(t, expectedResult.parameterCount, len(*result.Signatures[*result.ActiveSignature].Parameters))
 		assert.DeepEqual(t, expectedResult.activeParameter, result.ActiveParameter)

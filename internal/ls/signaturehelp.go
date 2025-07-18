@@ -87,6 +87,13 @@ func (l *LanguageService) GetSignatureHelpItems(
 		return nil
 	}
 
+	// Check if position is actually within the applicable range
+	// Fix for issue where signature help is shown after closing parenthesis
+	argRange := argumentInfo.argumentsRange
+	if position < argRange.Pos() || position > argRange.End() {
+		return nil
+	}
+
 	// cancellationToken.throwIfCancellationRequested();
 
 	// Extra syntactic and semantic filtering of signature help
@@ -602,6 +609,14 @@ func getContainingArgumentInfo(node *ast.Node, sourceFile *ast.SourceFile, check
 		// If the node is not a subspan of its parent, this is a big problem.
 		// There have been crashes that might be caused by this violation.
 		// Debug.assert(rangeContainsRange(n.parent, n), "Not a subspan", () => `Child: ${Debug.formatSyntaxKind(n.kind)}, parent: ${Debug.formatSyntaxKind(n.parent.kind)}`);
+		
+		// Special case: if we're at a close paren token and the position is after its end, 
+		// don't provide signature help. This handles the case where the cursor is right 
+		// after the closing parenthesis
+		if n.Kind == ast.KindCloseParenToken && position >= n.End() {
+			continue
+		}
+		
 		argumentInfo := getImmediatelyContainingArgumentOrContextualParameterInfo(n, position, sourceFile, checker)
 		if argumentInfo != nil {
 			return argumentInfo
