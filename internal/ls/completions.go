@@ -28,7 +28,7 @@ import (
 func (l *LanguageService) ProvideCompletion(
 	ctx context.Context,
 	documentURI lsproto.DocumentUri,
-	position lsproto.Position,
+	LSPPosition lsproto.Position,
 	context *lsproto.CompletionContext,
 	clientOptions *lsproto.CompletionClientCapabilities,
 	preferences *UserPreferences,
@@ -38,15 +38,34 @@ func (l *LanguageService) ProvideCompletion(
 	if context != nil {
 		triggerCharacter = context.TriggerCharacter
 	}
-	return l.getCompletionsAtPosition(
+	position := int(l.converters.LineAndCharacterToPosition(file, LSPPosition))
+	completionList := l.getCompletionsAtPosition(
 		ctx,
 		program,
 		file,
-		int(l.converters.LineAndCharacterToPosition(file, position)),
+		position,
 		triggerCharacter,
 		preferences,
 		clientOptions,
-	), nil
+	)
+	return ensureItemData(file.FileName(), position, completionList), nil
+}
+
+func ensureItemData(fileName string, pos int, list *lsproto.CompletionList) *lsproto.CompletionList {
+	if list == nil {
+		return nil
+	}
+	for _, item := range list.Items {
+		if item.Data == nil {
+			var data any = &itemData{
+				FileName: fileName,
+				Position: pos,
+				Name:     item.Label,
+			}
+			item.Data = &data
+		}
+	}
+	return list
 }
 
 // *completionDataData | *completionDataKeyword
@@ -380,6 +399,7 @@ func getCompletionData(program *compiler.Program, typeChecker *checker.Checker, 
 	isInSnippetScope := false
 	if insideComment != nil {
 		// !!! jsdoc
+		return nil
 	}
 
 	// The decision to provide completion depends on the contextToken, which is determined through the previousToken.
@@ -3645,7 +3665,10 @@ func setMemberDeclaredBySpreadAssignment(declaration *ast.Node, members *collect
 	if symbol != nil {
 		t = typeChecker.GetTypeOfSymbolAtLocation(symbol, expression)
 	}
-	properties := t.AsStructuredType().Properties()
+	var properties []*ast.Symbol
+	if t != nil {
+		properties = t.AsStructuredType().Properties()
+	}
 	for _, property := range properties {
 		members.Add(property.Name)
 	}
@@ -4031,7 +4054,7 @@ func (l *LanguageService) getJsxClosingTagCompletion(
 	// the completion list at "1" and "2" will contain "MainComponent.Child" with a replacement span of closing tag name
 	hasClosingAngleBracket := findChildOfKind(jsxClosingElement, ast.KindGreaterThanToken, file) != nil
 	tagName := jsxClosingElement.Parent.AsJsxElement().OpeningElement.TagName()
-	closingTag := tagName.Text()
+	closingTag := scanner.GetTextOfNode(tagName)
 	fullClosingTag := closingTag + core.IfElse(hasClosingAngleBracket, "", ">")
 	optionalReplacementSpan := l.createLspRangeFromNode(jsxClosingElement.TagName(), file)
 	defaultCommitCharacters := getDefaultCommitCharacters(false /*isNewIdentifierLocation*/)

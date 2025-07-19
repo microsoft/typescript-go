@@ -3,6 +3,7 @@ package ls
 import (
 	"cmp"
 	"fmt"
+	"iter"
 	"slices"
 	"strings"
 
@@ -133,9 +134,8 @@ func isExportSpecifierAlias(referenceLocation *ast.Identifier, exportSpecifier *
 	}
 }
 
-// !!! formatting function
 func isInComment(file *ast.SourceFile, position int, tokenAtPosition *ast.Node) *ast.CommentRange {
-	return nil
+	return getRangeOfEnclosingComment(file, position, nil /*precedingToken*/, tokenAtPosition)
 }
 
 func hasChildOfKind(containingNode *ast.Node, kind ast.Kind, sourceFile *ast.SourceFile) bool {
@@ -393,7 +393,7 @@ func isInRightSideOfInternalImportEqualsDeclaration(node *ast.Node) bool {
 }
 
 func (l *LanguageService) createLspRangeFromNode(node *ast.Node, file *ast.SourceFile) *lsproto.Range {
-	return l.createLspRangeFromBounds(node.Pos(), node.End(), file)
+	return l.createLspRangeFromBounds(scanner.GetTokenPosOfNode(node, file, false /*includeJSDoc*/), node.End(), file)
 }
 
 func (l *LanguageService) createLspRangeFromBounds(start, end int, file *ast.SourceFile) *lsproto.Range {
@@ -1418,11 +1418,11 @@ func getPropertySymbolOfObjectBindingPatternWithoutPropertyName(symbol *ast.Symb
 	return nil
 }
 
-func getTargetLabel(referenceNode *ast.Node, labelName string) *ast.Identifier {
+func getTargetLabel(referenceNode *ast.Node, labelName string) *ast.Node {
 	// todo: rewrite as `ast.FindAncestor`
 	for referenceNode != nil {
 		if referenceNode.Kind == ast.KindLabeledStatement && referenceNode.AsLabeledStatement().Label.Text() == labelName {
-			return referenceNode.AsLabeledStatement().Label.AsIdentifier()
+			return referenceNode.AsLabeledStatement().Label
 		}
 		referenceNode = referenceNode.Parent
 	}
@@ -1627,4 +1627,11 @@ func findContainingList(node *ast.Node, file *ast.SourceFile) *ast.NodeList {
 	})
 	astnav.VisitEachChildAndJSDoc(node.Parent, file, nodeVisitor)
 	return list
+}
+
+func getLeadingCommentRangesOfNode(node *ast.Node, file *ast.SourceFile) iter.Seq[ast.CommentRange] {
+	if node.Kind == ast.KindJsxText {
+		return nil
+	}
+	return scanner.GetLeadingCommentRanges(&ast.NodeFactory{}, file.Text(), node.Pos())
 }
