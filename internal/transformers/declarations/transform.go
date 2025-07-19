@@ -1181,10 +1181,7 @@ func (tx *DeclarationTransformer) transformFunctionDeclaration(input *ast.Functi
 		declarations := []*ast.Statement{}
 
 		for _, p := range props {
-			if p.ValueDeclaration == nil {
-				continue
-			}
-			if !ast.IsExpandoPropertyDeclaration(p.ValueDeclaration) {
+			if p.ValueDeclaration == nil || p.Flags&ast.SymbolFlagsAssignment == 0 {
 				continue
 			}
 			if !scanner.IsIdentifierText(p.Name, core.LanguageVariantStandard) {

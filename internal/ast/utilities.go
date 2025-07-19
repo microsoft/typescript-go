@@ -3638,78 +3638,15 @@ func GetSemanticJsxChildren(children []*JsxChild) []*JsxChild {
 	})
 }
 
-func IsExpandoPropertyDeclaration(node *Node) bool {
-	if node == nil {
+func IsExpandoInitializer(initializer *Node) bool {
+	if initializer == nil {
 		return false
 	}
-	return IsPropertyAccessExpression(node) || IsElementAccessExpression(node) || IsBinaryExpression(node)
-}
-
-func GetExpandoInitializer(initializer *Node, isPrototypeAssignment bool) *Node {
-	if initializer.Kind == KindCallExpression {
-		expr := SkipParentheses(initializer.Expression())
-		if expr.Kind == KindFunctionExpression || expr.Kind == KindArrowFunction {
-			return initializer
-		}
-		return nil
+	if IsFunctionExpressionOrArrowFunction(initializer) {
+		return true
 	}
-
-	if initializer.Kind == KindFunctionExpression || initializer.Kind == KindCallExpression || initializer.Kind == KindArrowFunction {
-		return initializer
-	}
-
-	if initializer.Kind == KindObjectLiteralExpression && (len(initializer.Properties()) == 0 || isPrototypeAssignment) {
-		return initializer
-	}
-
-	return nil
-}
-
-func GetEffectiveInitializer(node *Node) *Expression {
-	if IsInJSFile(node) && node.Initializer() != nil && IsBinaryExpression(node.Initializer()) {
-		initializer := node.Initializer().AsBinaryExpression()
-		if initializer.OperatorToken.Kind == KindBarBarToken || initializer.OperatorToken.Kind == KindQuestionQuestionToken {
-			if node.Name() != nil && IsEntityNameExpressionEx(node.Name(), IsInJSFile(node)) && IsSameEntityName(node.Name(), initializer.Left) {
-				return initializer.Right
-			}
-		}
-	}
-	return node.Initializer()
-}
-
-func GetDeclaredExpandoInitializer(node *Node) *Expression {
-	initializer := GetEffectiveInitializer(node)
-	if initializer == nil {
-		return nil
-	}
-	return GetExpandoInitializer(initializer, IsPrototypeAccess(node.Name()))
-}
-
-func IsPrototypeAccess(node *Node) bool {
-	return IsBindableStaticAccessExpression(node, false /*excludeThisKeyword*/)
-}
-
-func IsLiteralLikeAccess(node *Node) bool {
-	return IsPropertyAccessExpression(node) || IsLiteralLikeElementAccess(node)
-}
-
-func GetNameOrArgument(node *Expression) *Expression {
-	if IsPropertyAccessExpression(node) {
-		return node.Name()
-	}
-	return node.AsElementAccessExpression().ArgumentExpression
-}
-
-func IsSameEntityName(name *Expression, initializer *Expression) bool {
-	if IsPropertyNameLiteral(name) && IsPropertyNameLiteral(initializer) {
-		return name.Text() == initializer.Text()
-	}
-	if IsMemberName(name) && IsLiteralLikeAccess(initializer) && (initializer.Expression().Kind == KindThisKeyword || IsIdentifier(initializer.Expression()) &&
-		(initializer.Expression().Text() == "window" || initializer.Expression().Text() == "self" || initializer.Expression().Text() == "global")) {
-		return IsSameEntityName(name, GetNameOrArgument(initializer))
-	}
-	if IsLiteralLikeAccess(name) && IsLiteralLikeAccess(initializer) {
-		return GetElementOrPropertyAccessName(name) == GetElementOrPropertyAccessName(initializer) && IsSameEntityName(name.Expression(), initializer.Expression())
+	if IsInJSFile(initializer) {
+		return IsClassExpression(initializer) || (IsObjectLiteralExpression(initializer) && len(initializer.AsObjectLiteralExpression().Properties.Nodes) == 0)
 	}
 	return false
 }

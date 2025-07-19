@@ -612,33 +612,33 @@ func (r *emitResolver) IsExpandoFunctionDeclaration(node *ast.Node) bool {
 	r.checkerMu.Lock()
 	defer r.checkerMu.Unlock()
 
-	var symbol *ast.Symbol
+	var declaration *ast.Node
 	if ast.IsVariableDeclaration(node) {
-		if node.Type() != nil || (!ast.IsInJSFile(node) && !ast.IsVarConstLike(node)) {
-			return false
+		initializer := node.Initializer()
+		if node.Type() == nil && (ast.IsInJSFile(node) || ast.IsVarConstLike(node)) && ast.IsExpandoInitializer(initializer) {
+			declaration = initializer
 		}
-		initializer := ast.GetDeclaredExpandoInitializer(node)
-		if initializer == nil || !ast.CanHaveSymbol(initializer) {
-			return false
-		}
-		symbol = r.checker.getSymbolOfDeclaration(initializer)
-	} else if ast.IsFunctionDeclaration(node) {
-		symbol = r.checker.getSymbolOfDeclaration(node)
 	}
 
+	if ast.IsFunctionDeclaration(node) {
+		declaration = node
+	}
+
+	if declaration == nil {
+		return false
+	}
+
+	symbol := r.checker.getSymbolOfDeclaration(declaration)
 	if symbol == nil || (symbol.Flags&(ast.SymbolFlagsFunction|ast.SymbolFlagsVariable)) == 0 {
 		return false
 	}
 
 	exports := r.checker.getExportsOfSymbol(symbol)
 	for _, p := range exports {
-		if p.Flags&ast.SymbolFlagsValue == 0 {
+		if p.ValueDeclaration == nil || p.Flags&ast.SymbolFlagsValue == 0 || p.Flags&ast.SymbolFlagsAssignment == 0 {
 			continue
 		}
-		if p.ValueDeclaration == nil {
-			continue
-		}
-		if ast.IsExpandoPropertyDeclaration(p.ValueDeclaration) {
+		if p.ValueDeclaration.Flags&ast.NodeFlagsAmbient == 0 {
 			return true
 		}
 	}
