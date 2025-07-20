@@ -3,6 +3,7 @@ package jsonsplit
 import (
 	"bytes"
 	"encoding/json"
+	"slices"
 
 	"github.com/go-json-experiment/jsonsplit"
 )
@@ -14,6 +15,11 @@ func init() {
 	codec.SetUnmarshalCallMode(jsonsplit.CallBothButReturnV2)
 
 	codec.ReportDifference = func(d jsonsplit.Difference) {
+		options := slices.Collect(d.OptionNames())
+		if len(options) == 1 && options[0] == "jsonv1.ReportErrorsWithLegacySemantics" {
+			return
+		}
+
 		var buf bytes.Buffer
 		enc := json.NewEncoder(&buf)
 		enc.SetIndent("", "    ")
